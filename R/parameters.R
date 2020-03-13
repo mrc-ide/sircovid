@@ -1,17 +1,29 @@
-generate_parameters_nCov_severity_model <- function(
+##' Create parameters for use with the model
+##' @title Create parameters
+##' @param transmission_model Model type
+##' @param country Country name
+##' @param age_limits Vector of age
+##' @param progression_parameters Progression parameters
+##' @param beta Beta, obvs.
+##' @param survey_pop A survey population perhaps
+##' @param output_parameter_table The table of output parameters
+##' @export
+##' @import socialmixr
+parameters <- function(
   transmission_model = "POLYMOD",
   country="United Kingdom",
   #check about 10 etc. being in first or second age group
-  age.limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),
+  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),
   progression_parameters = "SPI-M-Feb-2009",
   beta = 0.1,
-  survey.pop = NULL,
+  survey_pop = NULL,
   output_parameter_table = TRUE){
 
-  N_age <- length(age.limits)
+  N_age <- length(age_limits)
 
   if(progression_parameters == "SPI-M-Feb-2009"){
-    prog_par <- read.csv(file = "data/Final_COVID_severity.csv")
+    path <- system.file("data/Final_COVID_severity.csv", package = "sircovid")
+    prog_par <- utils::read.csv(file = path)
     #prog_par <- as.numeric(prog_par_table[,-1])
 
     #Age band from SPI-M model
@@ -64,31 +76,31 @@ generate_parameters_nCov_severity_model <- function(
 
     ## proportion based on demographic data from 2019
     proportion_70_80_vs_80_plus <-
-        survey.pop$population[survey.pop$lower.age.limit == 70] /
-        (survey.pop$population[survey.pop$lower.age.limit == 70] +
-         survey.pop$population[survey.pop$lower.age.limit == 80])
+        survey_pop$population[survey_pop$lower.age.limit == 70] /
+        (survey_pop$population[survey_pop$lower.age.limit == 70] +
+         survey_pop$population[survey_pop$lower.age.limit == 80])
 
     ## if you want to use the latest UK demographic data
-    if (! is.null(survey.pop)) {
+    if (! is.null(survey_pop)) {
 
-        survey.pop_subset <-
-            survey.pop[survey.pop$lower.age.limit %in%
+        survey_pop_subset <-
+            survey_pop[survey_pop$lower.age.limit %in%
                      c(0, 10, 20, 30, 40, 50, 60, 70), ]
 
         c_m <- contact_matrix(
-            polymod,
+            socialmixr::polymod,
             countries = country,
-            age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
+            age_limits = c(0, 10, 20, 30, 40, 50, 60, 70),
             symmetric = TRUE,
-            survey.pop = survey.pop_subset
+            survey_pop = survey_pop_subset
             )
 
     } else {
 
         c_m <- contact_matrix(
-            polymod,
+            socialmixr::polymod,
             countries = country,
-            age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
+            age_limits = c(0, 10, 20, 30, 40, 50, 60, 70),
             symmetric = TRUE
         )
     }
@@ -116,7 +128,7 @@ generate_parameters_nCov_severity_model <- function(
   trans_increase <- array(c(rep(0,N_age),rep(1,N_age),rep(10,N_age)), c(N_age,trans_classes))
 
   # if(transmission_model=="POLYMOD"){
-  #   c_m <- contact_matrix(polymod, countries = country, age.limits = age.limits, symmetric = TRUE)
+  #   c_m <- contact_matrix(polymod, countries = country, age_limits = age_limits, symmetric = TRUE)
   #
   # }
 

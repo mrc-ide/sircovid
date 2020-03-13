@@ -1,3 +1,3 @@
-#' @useDynLib sircovid
-#' @importFrom odin odin
+##' @useDynLib sircovid
+##' @importFrom odin odin
 NULL
