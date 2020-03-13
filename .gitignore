@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+inst/doc
+.Renviron
+vignettes/*.html
+build
+docs
+sircovid_*.tar.gz
+*.o
+*.so
+*.dll
