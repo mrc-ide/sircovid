@@ -12,6 +12,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     odin,
+    readxl,
     socialmixr
 Suggests:
     testthat
