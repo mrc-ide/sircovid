@@ -1,0 +1,15 @@
+Package: sircovid
+Title: SIR Model for COVID-19
+Version: 0.1.0
+Authors@R:
+    person(given = "Sangeeta",
+           family = "Bhatia",
+           role = c("aut", "cre"),
+           email = "s.bhatia@imperial.ac.uk")
+Description: Model for COVID-19, using odin.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests:
+    testthat
+RoxygenNote: 7.0.2
