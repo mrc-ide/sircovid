@@ -7,3 +7,6 @@ vignettes/*.html
 build
 docs
 sircovid_*.tar.gz
+*.o
+*.so
+*.dll
