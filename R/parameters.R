@@ -90,9 +90,9 @@ parameters <- function(
         c_m <- contact_matrix(
             socialmixr::polymod,
             countries = country,
-            age_limits = c(0, 10, 20, 30, 40, 50, 60, 70),
+            age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
             symmetric = TRUE,
-            survey_pop = survey_pop_subset
+            survey.pop = survey_pop_subset
             )
 
     } else {
@@ -100,7 +100,7 @@ parameters <- function(
         c_m <- contact_matrix(
             socialmixr::polymod,
             countries = country,
-            age_limits = c(0, 10, 20, 30, 40, 50, 60, 70),
+            age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
             symmetric = TRUE
         )
     }
@@ -128,7 +128,7 @@ parameters <- function(
   trans_increase <- array(c(rep(0,N_age),rep(1,N_age),rep(10,N_age)), c(N_age,trans_classes))
 
   # if(transmission_model=="POLYMOD"){
-  #   c_m <- contact_matrix(polymod, countries = country, age_limits = age_limits, symmetric = TRUE)
+  #   c_m <- contact_matrix(polymod, countries = country, age.limits = age_limits, symmetric = TRUE)
   #
   # }
 
