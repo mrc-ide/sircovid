@@ -93,7 +93,9 @@ aux_II_ILI[,1:s_ILI,] <- aux_II_ILI[i,j,k] - n_II_ILI[i,j,k]
 delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
 #Work out the I_hosp->I_hosp transitions
-aux_II_hosp[,1,] <- rbinom(n_II_ILI[i,s_ILI,k],1-p_recov_ILI[i])
+n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_recov_ILI[i])
+output(n_ILI_to_hosp[,]) <- TRUE
+aux_II_hosp[,1,] <- n_ILI_to_hosp[i,k]
 aux_II_hosp[,2:s_hosp,] <- n_II_hosp[i,j-1,k]
 aux_II_hosp[,1:s_hosp,] <- aux_II_hosp[i,j,k] - n_II_hosp[i,j,k]
 delta_I_hosp[,,] <- aux_II_hosp[i,j,k]
@@ -102,24 +104,27 @@ delta_I_hosp[,,] <- aux_II_hosp[i,j,k]
 n_death_hosp[,] <- rbinom(n_II_hosp[i,s_hosp,j], p_death_hosp[i])
 
 #Work out the I_ICU->I_ICU transitions
-aux_II_ICU[,1,] <- rbinom(n_II_hosp[i,s_hosp,k]-n_death_hosp[i,k],1-p_recov_hosp[i]-p_death_hosp[i])
+n_hosp_to_ICU[,] <- rbinom(n_II_hosp[i,s_hosp,j]-n_death_hosp[i,j],1-p_recov_hosp[i]-p_death_hosp[i])
+output(n_hosp_to_ICU[,])<- TRUE
+aux_II_ICU[,1,] <- n_hosp_to_ICU[i,k]
 aux_II_ICU[,2:s_ICU,] <- n_II_ICU[i,j-1,k]
 aux_II_ICU[,1:s_ICU,] <- aux_II_ICU[i,j,k] - n_II_ICU[i,j,k]
 delta_I_ICU[,,] <- aux_II_ICU[i,j,k]
 
 #Work out the R_hosp->R_hosp transitions
-aux_R_hosp[,1,] <- rbinom(n_II_ICU[i,s_ICU,k],p_recov_ICU[i])
+n_ICU_to_R_hosp[,] <- rbinom(n_II_ICU[i,s_ICU,j],p_recov_ICU[i])
+aux_R_hosp[,1,] <- n_ICU_to_R_hosp[i,k]
 aux_R_hosp[,2:s_rec,] <- n_R_hosp[i,j-1,k]
 aux_R_hosp[,1:s_rec,] <- aux_R_hosp[i,j,k] - n_R_hosp[i,j,k]
 delta_R_hosp[,,] <- aux_R_hosp[i,j,k]
 
 #Work out the number of deaths
-delta_D[] <- sum(n_II_ICU[,s_ICU,]) - sum(aux_R_hosp[,1,]) + sum(n_death_hosp[i,])
+delta_D[] <- sum(n_II_ICU[i,s_ICU,]) - sum(n_ICU_to_R_hosp[i,]) + sum(n_death_hosp[i,])
 
 #Work out the number of recovery
 delta_R[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
-  sum(n_II_ILI[i,s_ILI,]) - sum(aux_II_hosp[i,1,]) +
-  sum(n_II_hosp[i,s_hosp,]) - sum(aux_II_ICU[i,1,]) - sum(n_death_hosp[i,])+
+  sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_hosp[i,]) +
+  sum(n_II_hosp[i,s_hosp,]) - sum(n_hosp_to_ICU[i,]) - sum(n_death_hosp[i,])+
   sum(n_R_hosp[i,s_rec,])
 
 ## Total population size (odin will recompute this at each timestep)
@@ -283,6 +288,11 @@ dim(n_EI_asympt) <- c(N_age,trans_classes)
 dim(n_EI_mild) <- c(N_age,trans_classes)
 dim(n_EI_ILI) <- c(N_age,trans_classes)
 
+#Vectors handling number of new hospitalisations, ICU admissions and recoveries in hospital
+dim(n_hosp_to_ICU) <- c(N_age,trans_classes)
+dim(n_ILI_to_hosp) <- c(N_age,trans_classes)
+dim(n_ICU_to_R_hosp) <- c(N_age,trans_classes)
+
 #Vectors handling the severity profile
 dim(p_asympt) <- c(N_age)
 dim(p_sympt_ILI) <- c(N_age)
@@ -297,6 +307,9 @@ dim(m) <- c(N_age,N_age)
 dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
+
+N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
+output(N_tot) <- TRUE
 
 #Tracker of population size
 #dim(N) <- N_age
