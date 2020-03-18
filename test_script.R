@@ -36,6 +36,7 @@ if(1==1){
   pars_model$p_sympt_ILI <- rep(1,9)  #all with fever
   pars_model$p_recov_ILI <- rep(0,9) #none recover from ILI, all cases hospitalised
   pars_model$p_recov_hosp <- rep(1,9)
+  pars_model$p_death_hosp <- rep(0,9)
 }
 
 set.seed(1)
