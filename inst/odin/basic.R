@@ -104,7 +104,7 @@ delta_I_hosp[,,] <- aux_II_hosp[i,j,k]
 n_death_hosp[,] <- rbinom(n_II_hosp[i,s_hosp,j], p_death_hosp[i])
 
 #Work out the I_ICU->I_ICU transitions
-n_hosp_to_ICU[,] <- rbinom(n_II_hosp[i,s_hosp,j]-n_death_hosp[i,j],1-(p_recov_hosp[i]-p_death_hosp[i]))
+n_hosp_to_ICU[,] <- rbinom(n_II_hosp[i,s_hosp,j]-n_death_hosp[i,j],1-p_recov_hosp[i]-p_death_hosp[i])
 output(n_hosp_to_ICU[,])<- TRUE
 aux_II_ICU[,1,] <- n_hosp_to_ICU[i,k]
 aux_II_ICU[,2:s_ICU,] <- n_II_ICU[i,j-1,k]

@@ -2161,7 +2161,7 @@ void basic_rhs(basic_internal* internal, size_t step, double * state, double * s
   }
   for (int i = 1; i <= internal->dim_n_hosp_to_ICU_1; ++i) {
     for (int j = 1; j <= internal->dim_n_hosp_to_ICU_2; ++j) {
-      internal->n_hosp_to_ICU[i - 1 + internal->dim_n_hosp_to_ICU_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_hosp[internal->dim_n_II_hosp_12 * (j - 1) + internal->dim_n_II_hosp_1 * (internal->s_hosp - 1) + i - 1] - internal->n_death_hosp[internal->dim_n_death_hosp_1 * (j - 1) + i - 1]), 1 - (internal->p_recov_hosp[i - 1] - internal->p_death_hosp[i - 1]));
+      internal->n_hosp_to_ICU[i - 1 + internal->dim_n_hosp_to_ICU_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_hosp[internal->dim_n_II_hosp_12 * (j - 1) + internal->dim_n_II_hosp_1 * (internal->s_hosp - 1) + i - 1] - internal->n_death_hosp[internal->dim_n_death_hosp_1 * (j - 1) + i - 1]), 1 - internal->p_recov_hosp[i - 1] - internal->p_death_hosp[i - 1]);
     }
   }
   for (int i = 1; i <= internal->dim_aux_II_ICU_1; ++i) {
