@@ -1,7 +1,7 @@
 ## f <- function(i) {
 library(sircovid)
 
-survey_pop <- readRDS(file="~/Documents/survey_pop.Rds")
+survey_pop <- readRDS(file="survey_pop.Rds")
 
 pars_model <- parameters(
   beta = 0.042,
