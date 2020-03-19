@@ -31,17 +31,33 @@ if(1==0){
   pars_model$p_recov_ILI <- rep(1,9) #all recover from ILI, no hospitalisation
 }
 
+if(1==0){  
+  pars_model$p_asympt <- rep(0,9)  #all symptomatic
+  pars_model$p_sympt_ILI <- rep(1,9)  #all with fever
+  pars_model$p_recov_ILI <- rep(0,9) #none recover from ILI, all cases hospitalised
+  pars_model$p_recov_hosp <- rep(1,9) #all recover from hospitalisation, no death or ICU progression
+  pars_model$p_death_hosp <- rep(0,9) #no death from hospitalisation
+}
+
 if(1==1){  
   pars_model$p_asympt <- rep(0,9)  #all symptomatic
   pars_model$p_sympt_ILI <- rep(1,9)  #all with fever
   pars_model$p_recov_ILI <- rep(0,9) #none recover from ILI, all cases hospitalised
-  pars_model$p_recov_hosp <- rep(1,9)
-  pars_model$p_death_hosp <- rep(0,9)
+  pars_model$p_recov_hosp <- rep(0,9) #no one recover from hospitalisation, all ICU progression
+  pars_model$p_death_hosp <- rep(1,9) #no death from hospitalisation
+}
+
+if(1==0){  
+  pars_model$p_asympt <- rep(0,9)  #all symptomatic
+  pars_model$p_sympt_ILI <- rep(1,9)  #all with fever
+  pars_model$p_recov_ILI <- rep(0,9) #none recover from ILI, all cases hospitalised
+  pars_model$p_recov_hosp <- rep(0,9) #all progress to ICU, no death or recovery
+  pars_model$p_death_hosp <- rep(0,9) #no death from hospitalisation
 }
 
 set.seed(1)
 mod <- basic(user = pars_model)
-t <- seq(from=1, to=2, by = 1)
+t <- seq(from=1, to=200, by = 10)
 set.seed(1)
 tmp <- mod$run(t)
 results <- mod$transform_variables(tmp)
