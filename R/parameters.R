@@ -75,6 +75,7 @@ parameters <- function(
 
 
     ## proportion based on demographic data from 2019
+    ## how is this calculated if survey_pop is NULL?
     proportion_70_80_vs_80_plus <-
         survey_pop$population[survey_pop$lower.age.limit == 70] /
         (survey_pop$population[survey_pop$lower.age.limit == 70] +
@@ -94,6 +95,8 @@ parameters <- function(
             symmetric = TRUE,
             survey.pop = survey_pop_subset
             )
+        
+        pop <- survey_pop$population
 
     } else {
 
@@ -103,6 +106,11 @@ parameters <- function(
             age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
             symmetric = TRUE
         )
+        
+        pop <- round(c_m$demography$population)
+        pop <- c(pop, round(pop[8] * (1 - proportion_70_80_vs_80_plus)))
+        pop[8] <- pop[8] - pop[9]
+        
     }
     ## This is adjusting for the fact that socialmixr doesn't have
     ## contact data on 80+ for UK.
@@ -113,10 +121,6 @@ parameters <- function(
     m[,8] <- m[,8] * proportion_70_80_vs_80_plus
     m[,9] <- m[,9] * (1 - proportion_70_80_vs_80_plus)
     m[9,9] <- 0.6 ## this seems random. Check with Marc?
-
-    pop <- c_m$demography$population
-    pop <- c(pop, pop[8] * (1 - proportion_70_80_vs_80_plus))
-    pop[8] <- pop[8] - pop[9]
 
     m <- t(t(m)/pop)
 
