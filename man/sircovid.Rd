@@ -4,7 +4,7 @@
 \alias{sircovid}
 \title{Create a model}
 \usage{
-sircovid()
+sircovid(params)
 }
 \description{
 Create a model
