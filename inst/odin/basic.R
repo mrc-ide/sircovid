@@ -7,6 +7,11 @@
 N_age <- user()
 trans_classes <- user()
 
+#definition of the time-step and output as "time"
+dt <- user()
+time <- step * dt
+output(time) <- TRUE
+
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
 update(E[,,]) <- E[i,j,k] + delta_E[i,j,k]
@@ -26,15 +31,14 @@ update(D[]) <- D[i] + delta_D[i]
 
 
 ## Individual probabilities of transition:
-## TODO: check that the rescaling is for the right N[i]
-p_SE[] <- 1 - exp(-lambda[i]) # S to I - age dependent
-p_EE <- 1 - exp(-gamma_E) # progression of latent period
-p_II_asympt <- 1 - exp(-gamma_asympt) # progression of infectious period
-p_II_mild <- 1 - exp(-gamma_mild)
-p_II_ILI <- 1 - exp(-gamma_ILI)
-p_II_hosp <- 1 - exp(-gamma_hosp)
-p_II_ICU <- 1 - exp(-gamma_ICU)
-p_R_hosp <- 1 - exp(-gamma_rec)
+p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
+p_EE <- 1 - exp(-gamma_E*dt) # progression of latent period
+p_II_asympt <- 1 - exp(-gamma_asympt*dt) # progression of infectious period
+p_II_mild <- 1 - exp(-gamma_mild*dt)
+p_II_ILI <- 1 - exp(-gamma_ILI*dt)
+p_II_hosp <- 1 - exp(-gamma_hosp*dt)
+p_II_ICU <- 1 - exp(-gamma_ICU*dt)
+p_R_hosp <- 1 - exp(-gamma_rec*dt)
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
