@@ -7,5 +7,5 @@ sircovid <- function(params) {
   ## pars_model <- parameters(
   ##   beta = 0.042,
   ##   survey_pop = survey_pop)
-  basic(user = paramsl)
+  basic(user = params)
 }
