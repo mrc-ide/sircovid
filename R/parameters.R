@@ -16,6 +16,7 @@ parameters <- function(
   age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),
   progression_parameters = "SPI-M-Feb-2009",
   beta = 0.1,
+  dt = 0.25,
   survey_pop = NULL,
   output_parameter_table = TRUE){
 
@@ -158,6 +159,7 @@ parameters <- function(
 
   parameter_list <- list(N_age = N_age,
                        trans_classes = trans_classes,
+                       dt = dt,
                        S0 = S0,
                        E0 = E0,
                        I0_asympt = I0_asympt,
