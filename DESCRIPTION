@@ -11,9 +11,12 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
+    dplyr,
     odin,
+    purrr,
     readxl,
-    socialmixr
+    socialmixr,
+    tidyr
 Suggests:
     testthat
 RoxygenNote: 7.0.2
