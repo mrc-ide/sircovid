@@ -6,6 +6,9 @@
 \usage{
 sircovid(params)
 }
+\arguments{
+\item{params}{List of parameters of the model}
+}
 \description{
 Create a model
 }

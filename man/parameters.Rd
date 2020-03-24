@@ -10,6 +10,7 @@ parameters(
   age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),
   progression_parameters = "SPI-M-Feb-2009",
   beta = 0.1,
+  dt = 0.25,
   survey_pop = NULL,
   output_parameter_table = TRUE
 )
@@ -24,6 +25,8 @@ parameters(
 \item{progression_parameters}{Progression parameters}
 
 \item{beta}{Beta, obvs.}
+
+\item{dt}{Time-step to run the model in days}
 
 \item{survey_pop}{A survey population perhaps}
 

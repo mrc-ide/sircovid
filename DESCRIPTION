@@ -1,11 +1,11 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.1.2
+Version: 0.1.3
 Authors@R:
-    person(given = "Sangeeta",
-           family = "Bhatia",
+    person(given = "Marc",
+           family = "Baguelin",
            role = c("aut", "cre"),
-           email = "s.bhatia@imperial.ac.uk")
+           email = "m.baguelin@imperial.ac.uk")
 Description: Model for COVID-19, using odin.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -16,4 +16,4 @@ Imports:
     socialmixr
 Suggests:
     testthat
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
