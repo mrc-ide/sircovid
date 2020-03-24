@@ -3,5 +3,6 @@
 export(parameters)
 export(sircovid)
 import(socialmixr)
+importFrom(dde,difeq)
 importFrom(odin,odin)
 useDynLib(sircovid)
