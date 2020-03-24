@@ -5,6 +5,7 @@
 ##' @param age_limits Vector of age
 ##' @param progression_parameters Progression parameters
 ##' @param beta Beta, obvs.
+##' @param dt Time step
 ##' @param survey_pop A survey population perhaps
 ##' @param output_parameter_table The table of output parameters
 ##' @export
