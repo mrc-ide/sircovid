@@ -14,7 +14,7 @@ age_distribution <- function(infile = NULL,
                              age.limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)
                              ) {
     if (is.null(infile)) {
-      infile <- sircovid_file("data/WPP2019_INT_F03_1_POPULATION_BY_AGE_ANNUAL_BOTH_SEXES.xlsx")
+      infile <- sircovid_file("extdata/WPP2019_INT_F03_1_POPULATION_BY_AGE_ANNUAL_BOTH_SEXES.xlsx")
     }
 
     estimates <- readxl::read_xlsx(infile, sheet = "ESTIMATES", skip = 16)
