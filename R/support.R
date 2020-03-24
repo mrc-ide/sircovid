@@ -20,7 +20,7 @@ age_distribution <- function(infile = NULL,
     estimates <- readxl::read_xlsx(infile, sheet = "ESTIMATES", skip = 16)
     estimates <- estimates[estimates$`Region, subregion, country or area *` == country, ]
     estimates <- estimates[estimates[["Reference date (as of 1 July)"]] == year, ]
-    pop_by_age <- dplyr::select(estimates,`0`:`98`)
+    pop_by_age <- estimates[as.character(0:98)]
     pop_by_age <-tidyr::gather(pop_by_age, key = "age", value = "pop", convert = TRUE)
     pop_by_age$pop <- as.numeric(pop_by_age$pop)
 
