@@ -116,7 +116,7 @@ parameters <- function(
       
       pop <- survey_pop$population
       
-      m <- t(t(m)/pop)
+      m <- t(t(c_m$matrix)/pop)
       
     }
   
