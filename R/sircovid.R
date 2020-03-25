@@ -1,7 +1,7 @@
 ##' Create a model
 ##' @title Create a model
 ##' @export
-##' @param params
+##' @param params Params
 sircovid <- function(params) {
   survey_pop <- default_age_distribution()
   ## pars_model <- parameters(

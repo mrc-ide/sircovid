@@ -5,6 +5,7 @@
 ##' @param age_limits Vector of age
 ##' @param progression_parameters Progression parameters
 ##' @param beta Beta, obvs.
+##' @param dt Time step
 ##' @param survey_pop A survey population perhaps
 ##' @param output_parameter_table The table of output parameters
 ##' @export
@@ -23,7 +24,7 @@ parameters <- function(
   N_age <- length(age_limits)
 
   if(progression_parameters == "SPI-M-Feb-2009"){
-    path <- sircovid_file("data/Final_COVID_severity.csv")
+    path <- sircovid_file("extdata/Final_COVID_severity.csv")
     prog_par <- utils::read.csv(file = path)
     #prog_par <- as.numeric(prog_par_table[,-1])
 
