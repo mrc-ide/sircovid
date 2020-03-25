@@ -2,11 +2,11 @@ context("covid transmission model")
 
 ## Sanity Checks
 
-test_that("there are on infections when beta is 0", {
+test_that("there are no infections when beta is 0", {
 
     pars_model <- parameters(
         beta = 0,
-        survey_pop = survey_pop
+        survey_pop = NULL
     )
     mod <- basic(user = pars_model)
     t_max <- 150
@@ -26,7 +26,7 @@ test_that("everyone is infected when beta is Inf", {
 
     pars_model <- parameters(
         beta = 1e100,
-        survey_pop = survey_pop
+        survey_pop = NULL
     )
     mod <- basic(user = pars_model)
     t_max <- 150
@@ -45,7 +45,7 @@ test_that("everyone is infected when beta is Inf", {
 test_that("No one is infected if I and E are 0 at t = 0", {
     pars_model <- parameters(
         beta = 0.042,
-        survey_pop = survey_pop
+        survey_pop = NULL
     )
     pars_model$E0[,,]<- 0
     pars_model$I0_asympt[,,]<- 0
@@ -69,7 +69,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
 test_that("No one is hospitalised if p_sympt_ILI is 0", {
     pars_model <- parameters(
         beta = 0.042,
-        survey_pop = survey_pop
+        survey_pop = NULL
     )
     pars_model$p_sympt_ILI[]<-0
     mod <- basic(user = pars_model)
@@ -106,10 +106,10 @@ test_that("parameters can be generated", {
   t <- seq(from = 1, to = t_max)
   
   #p_sympt_ILI=0, no-one hospitalised
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
 
   #p_recov_ILI=1, no-one hospitalised
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$p_recov_ILI[]<-1
   mod <- basic(user = pars_model)
   
@@ -122,7 +122,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$D[,,1]==0))
 
   #p_recov_hosp=1, p_death_hosp=0 no-one goes into ICU, no deaths
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$p_recov_hosp[]<-1
   pars_model$p_death_hosp[]<-0
   mod <- basic(user = pars_model)
@@ -134,7 +134,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$D[,,1]==0)) 
 
   #p_death_hosp=1, p_recov_hosp=0 no-one goes into ICU, no recovery in hospital
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$p_recov_hosp[]<-0
   pars_model$p_death_hosp[]<-1
   mod <- basic(user = pars_model)
@@ -145,7 +145,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$R_hosp[,,,,1]==0)) 
 
   #p_recov_ICU=0, no-one recovers in hospital
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$p_recov_ICU[]<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -154,7 +154,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$R_hosp[,,,,1]==0)) 
 
   #gamma_E = Inf, E cases must progress in 1 time-step
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_E<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -163,7 +163,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$E[2:t_max,,2,,]==results$E[1:(t_max-1),,1,,])) 
 
   #gamma_asympt = Inf, I_asympt cases must progress in 1 time-step
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_asympt<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -172,7 +172,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_asympt[2:t_max,,2,,]==results$I_asympt[1:(t_max-1),,1,,])) 
 
   #gamma_mild = Inf, I_mild cases must progress in 1 time-step
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_mild<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -181,7 +181,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_mild[2:t_max,,2,,]==results$I_mild[1:(t_max-1),,1,,])) 
 
   #gamma_ILI = Inf, I_ILI cases must progress in 1 time-step
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_ILI<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -190,7 +190,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_ILI[2:t_max,,2,,]==results$I_ILI[1:(t_max-1),,1,,])) 
 
   #gamma_hosp = Inf, I_hosp cases must progress in 1 time-step
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_hosp<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -199,7 +199,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_hosp[2:t_max,,2,,]==results$I_hosp[1:(t_max-1),,1,,])) 
 
   #gamma_ICU = Inf, I_ICU cases must progress in 1 time-step
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_ICU<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -209,7 +209,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_ICU[2:t_max,,2,,]==results$I_ICU[1:(t_max-1),,1,,])) 
 
   #gamma_rec = Inf, R_hosp cases must progress in 1 time-step
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_rec<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -219,7 +219,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$R_hosp[2:t_max,,2,,]==results$R_hosp[1:(t_max-1),,1,,])) 
 
   #gamma_E=0, E stay in progression stage 1
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_E<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -228,7 +228,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$E[,,2,,]==0)) 
 
   #gamma_asympt=0, I_asympt stay in progression stage 1
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_asympt<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -237,7 +237,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_asympt[,,2,,]==0)) 
 
   #gamma_mild=0, I_mild stay in progression stage 1
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_mild<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -246,7 +246,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_mild[,,2,,]==0)) 
 
   #gamma_ILI=0, I_ILI stay in progression stage 1
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_ILI<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -255,7 +255,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_ILI[2:t_max,,2,,]==0)) 
 
   #gamma_hosp=0, I_hosp stay in progression stage 1
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_hosp<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -264,7 +264,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_hosp[2:t_max,,2,,]==0)) 
 
   #gamma_ICU=0, I_ICU stay in progression stage 1
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_ICU<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -273,7 +273,7 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_ICU[,,2,,]==0)) 
 
   #gamma_rec=0, R_hosp stay in progression stage 1
-  pars_model <- parameters(beta = .042, survey_pop = survey_pop)
+  pars_model <- parameters(beta = .042, survey_pop = NULL)
   pars_model$gamma_rec<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)

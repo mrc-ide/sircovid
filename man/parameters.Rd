@@ -26,7 +26,7 @@ parameters(
 
 \item{beta}{Beta, obvs.}
 
-\item{dt}{Time step}
+\item{dt}{Time-step to run the model in days}
 
 \item{survey_pop}{A survey population perhaps}
 

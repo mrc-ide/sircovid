@@ -5,7 +5,7 @@
 ##' @param age_limits Vector of age
 ##' @param progression_parameters Progression parameters
 ##' @param beta Beta, obvs.
-##' @param dt Time step
+##' @param dt Time-step to run the model in days
 ##' @param survey_pop A survey population perhaps
 ##' @param output_parameter_table The table of output parameters
 ##' @export
@@ -75,57 +75,51 @@ parameters <- function(
     #Proportion of hospitalised cases who die without receiveing critical care
     p_death_hosp <- as.numeric(prog_par[11,2:10])
 
-
-    ## proportion based on demographic data from 2019
-    ## how is this calculated if survey_pop is NULL?
-    proportion_70_80_vs_80_plus <-
-        survey_pop$population[survey_pop$lower.age.limit == 70] /
-        (survey_pop$population[survey_pop$lower.age.limit == 70] +
-         survey_pop$population[survey_pop$lower.age.limit == 80])
-
-    ## if you want to use the latest UK demographic data
-    if (! is.null(survey_pop)) {
-
-        survey_pop_subset <-
-            survey_pop[survey_pop$lower.age.limit %in%
+    #If survey_pop is not passed as an argument, get it from the package
+    if(is.null(survey_pop)){
+      survey_pop <- default_age_distribution()
+      
+      pop <- survey_pop$population
+      
+      #Get the contact matrix from socialmixr; problem no data in POLYMOD
+      #for over 80+
+      c_m <- contact_matrix(
+        socialmixr::polymod,
+        countries = country,
+        age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
+        symmetric = TRUE
+      )
+      
+      #transform the matrix in (symetrical) transmission matrix rather than the contact matrix
+      m <- t(t(c_m$matrix)/c_m$demography$population)
+      
+      #assumes that the probability of contact remains as in POLYMOD
+      #and that contacts are the same in 70+ and 80+
+      m <- cbind(m,m[,8])
+      m <- rbind(m,m[8,])
+      names_m_col <- colnames(m)
+      colnames(m) <- c(names_m_col[1:7],"[70,80)","80+")
+    } else
+    {
+      ##TODO this needs to be rewritten when a survey_pop is passed as an argument
+      survey_pop_subset <-
+        survey_pop[survey_pop$lower.age.limit %in%
                      c(0, 10, 20, 30, 40, 50, 60, 70), ]
-
-        c_m <- contact_matrix(
-            socialmixr::polymod,
-            countries = country,
-            age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
-            symmetric = TRUE,
-            survey.pop = survey_pop_subset
-            )
-        
-        pop <- survey_pop$population
-
-    } else {
-
-        c_m <- contact_matrix(
-            socialmixr::polymod,
-            countries = country,
-            age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
-            symmetric = TRUE
-        )
-        
-        pop <- round(c_m$demography$population)
-        pop <- c(pop, round(pop[8] * (1 - proportion_70_80_vs_80_plus)))
-        pop[8] <- pop[8] - pop[9]
-        
+      
+      c_m <- contact_matrix(
+        socialmixr::polymod,
+        countries = country,
+        age.limits = c(0, 10, 20, 30, 40, 50, 60, 70),
+        symmetric = TRUE,
+        survey.pop = survey_pop_subset
+      )
+      
+      pop <- survey_pop$population
+      
+      m <- t(t(c_m$matrix)/pop)
+      
     }
-    ## This is adjusting for the fact that socialmixr doesn't have
-    ## contact data on 80+ for UK.
-    m <- rbind(c_m$matrix,c_m$matrix[8,])
-    m <- cbind(m, m[,8])
-    m[8,] <- m[8,] * proportion_70_80_vs_80_plus
-    m[9,] <- m[9,] * (1 - proportion_70_80_vs_80_plus)
-    m[,8] <- m[,8] * proportion_70_80_vs_80_plus
-    m[,9] <- m[,9] * (1 - proportion_70_80_vs_80_plus)
-    m[9,9] <- 0.6 ## this seems random. Check with Marc?
-
-    m <- t(t(m)/pop)
-
+  
   }
 
   #Set up the heterogeneous offspring distribution #dnbinom(x=0,mu=2.2, size = 0.16)
@@ -133,13 +127,7 @@ parameters <- function(
   trans_profile <- array(c(rep(.65,N_age),rep(.2,N_age),rep(.15,N_age)), c(N_age,trans_classes))
   trans_increase <- array(c(rep(0,N_age),rep(1,N_age),rep(10,N_age)), c(N_age,trans_classes))
 
-  # if(transmission_model=="POLYMOD"){
-  #   c_m <- contact_matrix(polymod, countries = country, age.limits = age_limits, symmetric = TRUE)
-  #
-  # }
-
-
-
+  #TODO: flexible seeding
   #Set the initial conditions
   S0 <- pop
   E0 <- array(0, dim = c(N_age,s_E,trans_classes))

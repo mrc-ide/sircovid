@@ -7,7 +7,7 @@
 sircovid(params)
 }
 \arguments{
-\item{params}{Params}
+\item{params}{List of parameters of the model}
 }
 \description{
 Create a model
