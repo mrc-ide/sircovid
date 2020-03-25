@@ -16,3 +16,4 @@
 ^reference$
 ^README\.md\.in$
 ^pkgapi_.*\.tar\.gz$
+^\.travis\.yml$

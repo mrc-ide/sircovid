@@ -15,9 +15,12 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
+    dde,
     odin,
+    purrr,
     readxl,
-    socialmixr
+    socialmixr,
+    tidyr
 Suggests:
     testthat
 RoxygenNote: 7.1.0
