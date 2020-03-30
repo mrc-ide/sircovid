@@ -27,10 +27,22 @@ test_that("sampler runs without error", {
 
   pars_model$beta <- 0.125
   start_date <- as.Date("2020-02-02")
+  set.seed(1)
   X <- particle_filter(data = data, pars_model, pars_obs, n_particles = 100,
                        start_date = start_date,
                        time_steps_per_day = time_steps_per_day)
 
   expect_is(X, "list")
   expect_equal(names(X), "log_likelihood")
+
+  set.seed(1)
+  Y <- particle_filter(data = data, pars_model, pars_obs, n_particles = 100,
+                       start_date = start_date,
+                       time_steps_per_day = time_steps_per_day,
+                       output_states = TRUE,
+                       save_particles = TRUE)
+  expect_equal(X$log_likelihood, Y$log_likelihood)
+  expect_setequal(names(Y), c("log_likelihood", "states", "index"))
+  ##                            t   state  particles
+  expect_equal(dim(Y$states), c(58, 238,   100))
 })
