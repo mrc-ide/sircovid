@@ -19,9 +19,9 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
   n_days <- nrow(data)
   log_ave_weight <- rep(0,n_days)
   
-  mod <- sircovid::sircovid(params = pars_model)
+  mod <- sircovid(params = pars_model)
   
-  if (save_particles == TRUE){
+  if (save_particles) {
     tmp <- mod$run(step = seq(0, (n_days_before_data-1)*time_steps_per_day, time_steps_per_day),
                  replicate = n_particles)
     states <- unname(tmp[, seq_along(mod$initial()) + 1L, ])
@@ -33,7 +33,7 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
   index <- mod$transform_variables(seq_len(ncol(tmp)))
 
   for (t in seq_len(n_days)) {
-    if (save_particles==TRUE){
+    if (save_particles) {
       prev_states <- states[nrow(states),,]
       results <- particle_run_model(pars_model, states[nrow(states),,], time_steps_per_day, mod)
       states <- abind(states,results,along=1)
@@ -46,7 +46,7 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
     if (!is.na(data$itu[t]) && !is.na(data$deaths[t])){
       
       #calculate log weights from observation likelihood
-      log_weights <- rep(0,n_particles)
+      log_weights <- rep(0, n_particles)
       
       #contribution from itu/icu
       if (!is.na(data$itu[t])){
@@ -90,7 +90,7 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
   log_likelihood <- sum(log_ave_weight)
   
   if (forecast_days !=0){
-    if (save_particles==FALSE){
+    if (!save_particles){
       states <- array(states,dim=c(1,dim(states)))
     }
     for (t in seq_len(forecast_days)) {
@@ -99,7 +99,7 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
     }
   }
   
-  if (output_states==TRUE){
+  if (output_states){
     return(list(log_likelihood=log_likelihood,states=states,index=index))
   } else {
     return(list(log_likelihood=log_likelihood))
