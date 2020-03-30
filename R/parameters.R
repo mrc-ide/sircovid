@@ -207,20 +207,9 @@ generate_parameter_rtm <- function(
   age_lim <- c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80)
   age_lim_polym <- c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70)
   
-  # #Population for 2020
-  # pop_table <- read.csv("pop_uk.csv", header = TRUE, sep = ",")
-  
-  #Severity parameters from spreadsheet
+  ## Severity parameters from spreadsheet
   path <- sircovid_file("extdata/severity.csv")
-  severity_par <- read.csv(path, header = TRUE, sep = ",")
-  
-  #Summing up in the 5 age-bands
-  # pop_vec <- rep(0,17)
-  # for(i in 1:16)
-  # {
-  #   pop_vec[i] <- sum(pop_table[(4+i*5):(8+i*5)])
-  # }
-  # pop_vec[17] <- sum(pop_table[(4+17*5):length(pop_table[1,])])
+  severity_par <- utils::read.csv(path, header = TRUE, sep = ",")
   
   pop <- as.numeric(severity_par[1,2:18])
   
@@ -231,11 +220,12 @@ generate_parameter_rtm <- function(
     symmetric = TRUE
   )
   
-  #transform the matrix in (symetrical) transmission matrix rather than the contact matrix
+  ## transform the matrix in (symetrical) transmission matrix rather
+  ## than the contact matrix
   m <- t(t(c_m$matrix)/c_m$demography$population)
   
-  #assumes that the probability of contact remains as in POLYMOD
-  #and that contacts are the same in 70+ and 80+
+  ## assumes that the probability of contact remains as in POLYMOD and
+  ## that contacts are the same in 70+ and 80+
   m <- cbind(m,m[,15])
   m <- rbind(m,m[15,])
   m <- cbind(m,m[,16])
@@ -243,10 +233,10 @@ generate_parameter_rtm <- function(
   names_m_col <- colnames(m)
   colnames(m) <- c(names_m_col[1:14],"[70,75)","[75,80)","80+")
   
-  #Proportion of asymptomatic
+  ## Proportion of asymptomatic
   p_asympt <- 1-as.numeric(severity_par[2,2:18])
   
-  #Carried over from the initial NHS meeting
+  ## Carried over from the initial NHS meeting
   prop_symp_seek_HC <- c(0.3570377550, 0.3570377550, 0.3712946230,0.3712946230,	0.420792849,0.420792849,
                          0.459552523,0.459552523,	0.488704572,0.488704572,	0.578769171,0.578769171,	0.65754772,0.65754772,	0.73278164,0.73278164,0.76501082)
   

@@ -36,7 +36,7 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
     if (save_particles) {
       prev_states <- states[nrow(states),,]
       results <- particle_run_model(pars_model, states[nrow(states),,], time_steps_per_day, mod)
-      states <- abind(states,results,along=1)
+      states <- abind::abind(states,results,along=1)
     } else {
       prev_states <- states
       results <- particle_run_model(pars_model, states, time_steps_per_day, mod)
@@ -95,7 +95,7 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
     }
     for (t in seq_len(forecast_days)) {
       results <- particle_run_model(pars_model, states[nrow(states),,], time_steps_per_day, mod)
-      states <- abind(states,results,along=1)
+      states <- abind::abind(states,results,along=1)
     }
   }
   
