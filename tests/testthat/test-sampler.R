@@ -28,8 +28,11 @@ test_that("sampler runs without error", {
 
   pars_model$beta <- 0.125
   start_date <- as.Date("2020-02-02")
+
+  mod <- sircovid(params = pars_model)
+
   set.seed(1)
-  X <- particle_filter(data = data, pars_model, pars_obs, n_particles = 100,
+  X <- particle_filter(data, mod, pars_obs, n_particles = 100,
                        start_date = start_date,
                        time_steps_per_day = time_steps_per_day)
 

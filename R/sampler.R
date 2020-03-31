@@ -1,8 +1,12 @@
 ##' Run a particle filter
 ##'
 ##' @title Run a particle filter
-##' @param data data
-##' @param pars_model parameters of the model
+##'
+##' @param data Data to fit to.  We require a 'date' column here,
+##'   everything else is up to you.
+##'
+##' @param model An odin model, used to generate stochastic samples
+##'
 ##' @param pars_obs parameters of the observations
 ##' @param n_particles number of particles
 ##' @param start_date start date
@@ -11,35 +15,40 @@
 ##' @param output_states Logical, indicating if output of states is wanted
 ##' @param save_particles Logical, indicating if we save full particle histories
 ##' @export
-particle_filter <- function(data, pars_model, pars_obs, n_particles,
+particle_filter <- function(data, model, pars_obs, n_particles,
                             start_date, time_steps_per_day, forecast_days = 0,
                             output_states = FALSE, save_particles = FALSE) {
+  if (!("date" %in% names(data))) {
+    stop("Expected a column 'date' within 'data'")
+  }
+  if (!inherits(model, "odin_model")) {
+    stop("Expected 'model' to be an 'odin_model' object")
+  }
+
   #setup
   n_days_before_data <- as.numeric(as.Date(data$date[1])-as.Date(start_date))
   n_days <- nrow(data)
   log_ave_weight <- rep(0,n_days)
   
-  mod <- sircovid(params = pars_model)
-  
   if (save_particles) {
-    tmp <- mod$run(step = seq(0, (n_days_before_data-1)*time_steps_per_day, time_steps_per_day),
+    tmp <- model$run(step = seq(0, (n_days_before_data-1)*time_steps_per_day, time_steps_per_day),
                  replicate = n_particles)
-    states <- unname(tmp[, seq_along(mod$initial()) + 1L, ])
+    states <- unname(tmp[, seq_along(model$initial()) + 1L, ])
   } else {
-    tmp <- mod$run(step = c(0, (n_days_before_data-1)*time_steps_per_day),
+    tmp <- model$run(step = c(0, (n_days_before_data-1)*time_steps_per_day),
                    replicate = n_particles)
-    states <- unname(tmp[nrow(tmp), seq_along(mod$initial()) + 1L, ])
+    states <- unname(tmp[nrow(tmp), seq_along(model$initial()) + 1L, ])
   }
-  index <- mod$transform_variables(seq_len(ncol(tmp)))
+  index <- model$transform_variables(seq_len(ncol(tmp)))
 
   for (t in seq_len(n_days)) {
     if (save_particles) {
       prev_states <- states[nrow(states),,]
-      results <- particle_run_model(pars_model, states[nrow(states),,], time_steps_per_day, mod)
+      results <- particle_run_model(states[nrow(states),,], time_steps_per_day, model)
       states <- abind::abind(states,results,along=1)
     } else {
       prev_states <- states
-      results <- particle_run_model(pars_model, states, time_steps_per_day, mod)
+      results <- particle_run_model(states, time_steps_per_day, model)
       states <- results
     }
     
@@ -94,7 +103,7 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
       states <- array(states,dim=c(1,dim(states)))
     }
     for (t in seq_len(forecast_days)) {
-      results <- particle_run_model(pars_model, states[nrow(states),,], time_steps_per_day, mod)
+      results <- particle_run_model(states[nrow(states),,], time_steps_per_day, model)
       states <- abind::abind(states,results,along=1)
     }
   }
@@ -107,11 +116,11 @@ particle_filter <- function(data, pars_model, pars_obs, n_particles,
 }
 
 
-particle_run_model <- function(pars_model, y, step, mod) {
+particle_run_model <- function(y, step, model) {
   n_particles <- ncol(y)
   for (k in seq_len(n_particles)) {
-    y[, k] <- mod$run(c(0, step), y[, k],
-                      use_names = FALSE, return_minimal = TRUE)
+    y[, k] <- model$run(c(0, step), y[, k],
+                        use_names = FALSE, return_minimal = TRUE)
   }
   y
 }

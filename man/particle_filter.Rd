@@ -6,7 +6,7 @@
 \usage{
 particle_filter(
   data,
-  pars_model,
+  model,
   pars_obs,
   n_particles,
   start_date,
@@ -17,9 +17,10 @@ particle_filter(
 )
 }
 \arguments{
-\item{data}{data}
+\item{data}{Data to fit to.  We require a 'date' column here,
+everything else is up to you.}
 
-\item{pars_model}{parameters of the model}
+\item{model}{An odin model, used to generate stochastic samples}
 
 \item{pars_obs}{parameters of the observations}
 
