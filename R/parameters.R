@@ -290,7 +290,6 @@ generate_parameter_rtm <- function(
   trans_profile <- array(c(rep(1,N_age)), c(N_age,trans_classes))
   trans_increase <- array(c(rep(1,N_age)), c(N_age,trans_classes))
   
-  #TODO: flexible seeding
   #Set the initial conditions
   S0 <- pop
   E0 <- array(0, dim = c(N_age,s_E,trans_classes))
