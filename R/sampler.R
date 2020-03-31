@@ -95,7 +95,7 @@ particle_filter <- function(data, model, compare, n_particles,
 
   ret <- list(log_likelihood = log_likelihood)
   if (save_particles) {
-    date <- d$date[[1]] + seq_len(nrow(particles)) - 1L
+    date <- data$date[[1]] + seq_len(nrow(particles)) - 1L
     rownames(particles) <- as.character(date)
     attr(particles, "date") <- date
     ret$states <- particles

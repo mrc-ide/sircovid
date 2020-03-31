@@ -10,7 +10,7 @@ test_that("sampler runs without error", {
   d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
 
   pars_model <- generate_parameter_rtm(
-    seed_SSP=10,
+    seed_SSP = 10,
     dt = 1 / time_steps_per_day,
     beta = 0.125)
 
@@ -20,11 +20,11 @@ test_that("sampler runs without error", {
     ## what should this be?
     k_ICU = 2,
     ## current proportion of England deaths over UK deaths
-    phi_death = 926/1019,
+    phi_death = 926 / 1019,
     ## what should this be?
     k_death = 2,
     #rate for exponential noise, something big so noise is small (but non-zero))
-    exp_noise=1e6)
+    exp_noise = 1e6)
 
   mod <- sircovid(params = pars_model)
   compare <- compare_icu(odin_index(mod), pars_obs, d)
