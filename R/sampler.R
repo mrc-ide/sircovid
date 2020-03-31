@@ -26,25 +26,28 @@ particle_filter <- function(data, model, compare, n_particles,
   if (!inherits(model, "odin_model")) {
     stop("Expected 'model' to be an 'odin_model' object")
   }
+  if (n_particles < 2) {
+    stop("At least two particles required")
+  }
   if (forecast_days > 0 && !save_particles) {
     stop("forecasting only possible if particles are saved")
   }
+  if (forecast_days < 0) {
+    stop("forecast_days must be positive")
+  }
 
-  n_days <- nrow(data)
-  log_ave_weight <- rep(0, n_days)
+  i_state <- seq_along(mod$initial()) + 1L
 
-  n_state <- length(mod$initial())
-  i_state <- seq_len(n_state) + 1L
-  state <- matrix(rep(mod$initial(), n_particles), ncol = n_particles)
-
-  ## Special treatment for the burn-in phase:
+  ## Special treatment for the burn-in phase; later we might use this
+  ## same approach for skipping steps though.
   if (save_particles) {
     step <- seq(data$step_start[[1L]], data$step_end[[1L]],
                 attr(data, "steps_per_day"))
     tmp <- model$run(step, use_names = FALSE, replicate = n_particles)
 
     particles <- array(NA_real_,
-                       c(max(data$day_end) + 1L, n_state, n_particles))
+                       c(max(data$day_end) + 1L + forecast_days,
+                         length(i_state), n_particles))
     particles[seq_len(data$day_end[[1]] + 1), , ] <- tmp[, i_state, ]
   } else {
     particles <- NULL
@@ -55,7 +58,8 @@ particle_filter <- function(data, model, compare, n_particles,
   ## Current state of the system after burn-in: we'll update this in-place
   state <- tmp[nrow(tmp), i_state, , drop = TRUE]
 
-  for (t in seq_len(n_days)[-1L]) {
+  log_likelihood <- 0
+  for (t in seq_len(nrow(data))[-1L]) {
     step <- c(data$step_start[t], data$step_end[t])
     prev_state <- state
     state <- particle_run_model(state, step, model)
@@ -66,7 +70,7 @@ particle_filter <- function(data, model, compare, n_particles,
     log_weights <- compare(t, state, prev_state)
     if (!is.null(log_weights)) {
       tmp <- scale_log_weights(log_weights)
-      log_ave_weight[t] <- tmp$average
+      log_likelihood <- log_likelihood + tmp$average
       if (tmp$average == -Inf) {
         ## Everything is impossible, so stop here
         break
@@ -80,19 +84,16 @@ particle_filter <- function(data, model, compare, n_particles,
     }
   }
 
-  if (forecast_days != 0){
-    stop("This has not been checked")
-    if (!save_particles){
-      states <- array(states,dim=c(1,dim(states)))
-    }
-    for (t in seq_len(forecast_days)) {
-      stop("compute step here")
-      results <- particle_run_model(states[nrow(states),,], step, model)
-      states <- abind::abind(states,results,along=1)
-    }
+  if (forecast_days > 0) {
+    step <- seq(data$step_end[nrow(data)],
+                length.out = forecast_days + 1L,
+                by = attr(data, "steps_per_day"))
+    tmp <- model$run(step, state, replicate = n_particles, use_names = FALSE)
+    i <- seq(data$day_end[nrow(data)] + 1, length.out = forecast_days + 1L)
+    particles[i, , ] <- tmp[, i_state, ]
   }
 
-  ret <- list(log_likelihood = sum(log_ave_weight))
+  ret <- list(log_likelihood = log_likelihood)
   if (save_particles) {
     ret$states <- particles
   }
@@ -170,7 +171,7 @@ compare_icu <- function(index, pars_obs, data) {
     if (is.na(data$itu[t] || is.na(data$deaths[t]))) {
       return(NULL)
     }
-    
+
     ## calculate log weights from observation likelihood
     log_weights <- rep(0, ncol(results))
 
