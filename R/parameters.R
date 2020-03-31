@@ -35,7 +35,7 @@
 ##' 
 ##' @export
 ##' @import socialmixr
-parameters <- function(
+generate_parameters <- function(
   transmission_model = "POLYMOD",
   country="United Kingdom",
   age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),   #check about 10 etc. being in first or second age group
@@ -79,6 +79,14 @@ parameters <- function(
     contact_survey = socialmixr::polymod
   } else {
     stop("Only POLYMOD transmission model implemented")
+  }
+  
+  partitions = c('E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec')
+  if (any(!(partitions %in% names(slopes)))) {
+    stop("Slopes need to be defined for all partitions")
+  }
+  if (any(!(partitions %in% names(gammas)))) {
+    stop("Gammas need to be defined for all partitions")
   }
   
   # 
@@ -227,7 +235,7 @@ match_age_bins <- function(
 ## Sets proportion parameters using severity CSV file
 read_severity <- function(
   severity_file = "extdata/Final_COVID_severity.csv",
-  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),
+  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)
 ) 
 {
   # Set up severity file into table
