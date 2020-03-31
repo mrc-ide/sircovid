@@ -67,8 +67,7 @@ particle_filter <- function(data, model, compare, n_particles,
         break
       }
 
-      kappa <- resample(state, seq_len(n_particles), tmp$weights,
-                        "systematic")
+      kappa <- resample(tmp$weights, "systematic")
       state <- state[, kappa]
       if (save_particles) {
         particles <- particles[, , kappa]
@@ -108,39 +107,22 @@ particle_run_model <- function(y, step, model) {
 }
 
 
-resample <- function(y, index, weights, method) {
+resample <- function(weights, method) {
   if (method == "multinomial") {
-    sample(index, length(index), replace = TRUE, prob = weights)
+    sample.int(length(weights), replace = TRUE, prob = weights)
   } else if (method == "systematic") {
-    systematic_resample(index, length(index), weights)
+    systematic_resample(weights)
   }
 }
 
 
-systematic_resample <- function(
-  old_indexes,
-  n_samples,
-  weights){
-
-  u = runif(1,0,1/n_samples)+seq(0,by=1/n_samples,length.out=n_samples)
-
-  new_indexes <- integer(n_samples)
-  weights <- weights/sum(weights)
-  cum_weights <- cumsum(weights)
-  k <- 1
-  for (i in 1:n_samples) {
-    found = FALSE
-    while (!found){
-      if (u[i] > cum_weights[k]) {
-        k = k + 1
-      } else {
-        found = TRUE
-      }
-    }
-    new_indexes[i] = old_indexes[k]
-  }
-  return(new_indexes)
+systematic_resample <- function(weights) {
+  n <- length(weights)
+  u <- runif(1, 0, 1 / n) + seq(0, by = 1 / n, length.out = n)
+  cum_weights <- cumsum(weights / sum(weights))
+  findInterval(u, cum_weights) + 1L
 }
+
 
 ll_nbinom <- function(data, model,
                    phi, k, exp_noise) {

@@ -76,3 +76,39 @@ test_that("sampler runs without error", {
                    ylab = "ICU")
   }
 })
+
+
+test_that("systematic resample", {
+  ## Reference version, from 9f59938d9e5f7a241f5e27c9a71da2f8f643079c
+  ## with minimal changes for style.
+  ref <- function(weights) {
+    n <- length(weights)
+    old_indexes <- seq_len(n)
+    u <- runif(1, 0, 1 / n) + seq(0, by = 1 / n,length.out = n)
+    new_indexes <- integer(n)
+    weights <- weights / sum(weights)
+    cum_weights <- cumsum(weights)
+    k <- 1
+    for (i in seq_len(n)) {
+      found <- FALSE
+      while (!found){
+        if (u[i] > cum_weights[k]) {
+          k <- k + 1
+        } else {
+          found <- TRUE
+        }
+      }
+      new_indexes[i] <- old_indexes[k]
+    }
+    new_indexes
+  }
+
+  w <- lapply(rpois(400, 30), runif)
+
+  set.seed(1)
+  cmp <- lapply(w, ref)
+
+  set.seed(1)
+  ans <- lapply(w, systematic_resample)
+  expect_identical(cmp, ans)
+})
