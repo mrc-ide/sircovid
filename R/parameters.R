@@ -33,7 +33,7 @@
 ##' 
 ##' @param dt Time-step to run the model in days
 ##' 
-##' @param survey_pop A survey population. Set to NULL to
+##' @param survey_pop_in A survey population. Set to NULL to
 ##'   use \code{default_age_distribution()}
 ##' 
 ##' @export
@@ -53,7 +53,7 @@ generate_parameters <- function(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  survey_pop = NULL
+  survey_pop_in = NULL
   ) 
 {
   #
@@ -71,7 +71,7 @@ generate_parameters <- function(
   
   if (length(age_limits) != length(infection_seeding))
   {
-    stop("Length of age bins with length of infection seeds")
+    stop("Length of age bins mismatches length of infection seeds")
   }
   
   if (sum(trans_profile) != 1)
@@ -105,13 +105,22 @@ generate_parameters <- function(
   #
   # Set up the transmission matrix
   #
-  survey_pop <- get_survey_pop(survey_pop)
-  transmission_matrix <- get_transmission_matrix(
-    survey_pop = survey_pop,
-    contact_survey = contact_survey,
-    country = "United Kingdom",
-    age_limits = age_limits
-  )
+  survey_pop <- get_survey_pop(survey_pop_in)
+  if (is.null(survey_pop))
+  {
+    transmission_matrix <- get_transmission_matrix(
+      contact_survey = contact_survey,
+      country = "United Kingdom",
+      age_limits = age_limits
+    )
+  } else {
+    transmission_matrix <- get_transmission_matrix(
+      survey_pop = survey_pop,
+      contact_survey = contact_survey,
+      country = "United Kingdom",
+      age_limits = age_limits
+    )
+  }
 
   #
   # Set up the heterogeneous offspring distribution 
@@ -176,7 +185,7 @@ generate_parameters <- function(
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
                          beta_list = beta,
-                         beta = beta[1], # When odin is updated, set this list
+                         beta = beta[1], # When odin code is updated, set this list
                          beta_dates = beta_dates,
                          s_E = progression_groups$E,
                          gamma_E = gammas$E,
@@ -262,22 +271,22 @@ read_severity <- function(
 
   #Proportion seeking healthcare
   p_sympt_ILI <- as.numeric(severity_params[,'Proportion with any symptoms']) *
-    as.numeric(severity_params[,'Proportion of infections needing critical care'])
+    as.numeric(severity_params[,'Proportion of symptomatic cases seeking healthcare'])
   
   p_recov_ICU <-
-    1 - as.numeric(severity_params[,'Proportion of hospitalised cases needing critical care'])
+    1 - as.numeric(severity_params[,'Proportion of critical cases dying'])
   
   #Proportion of ILI who recover without hospitalisation
   p_recov_ILI <- 
-    1 - as.numeric(severity_params[,'Proportion of symptomatic cases hospitalised'])
+    1 - as.numeric(severity_params[,'Proportion of cases seeking healthcare who are hospitalised'])
   
   #Proportion of hospitalised cases who recover without needing ICU
   p_recov_hosp <- 
-    1 - as.numeric(severity_params[,"Proportion of cases seeking healthcare who are hospitalised"])
-      - as.numeric(severity_params[,"Proportion of critical cases dying"])
+    1 - as.numeric(severity_params[,"Proportion of hospitalised cases needing critical care"]) -
+      as.numeric(severity_params[,"Proportion of non-critical care cases dying"])
   
   #Proportion of hospitalised cases who die without receiveing critical care
-  p_death_hosp <- as.numeric(severity_params[,"Proportion of critical cases dying"])
+  p_death_hosp <- as.numeric(severity_params[,"Proportion of non-critical care cases dying"])
   
   props = list(
     asympt = p_asympt,
@@ -305,7 +314,7 @@ get_survey_pop <- function(survey_pop_in) {
 
 ## Gets a transmission matrix from requested model
 get_transmission_matrix <- function(
-  survey_pop,
+  survey_pop = NULL,
   contact_survey = socialmixr::polymod,
   country = "United Kingdom",
   age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)
@@ -313,13 +322,24 @@ get_transmission_matrix <- function(
 {
   # Get the contact matrix from socialmixr; polymod only
   # goes up to age 70
-  contact_matrix <- socialmixr::contact_matrix(
-    contact_survey,
-    countries = country,
-    age.limits = age_limits[age_limits <= 70],
-    survey.pop = survey_pop,
-    symmetric = TRUE
-  )
+  if (is.null(survey_pop))
+  {
+    contact_matrix <- socialmixr::contact_matrix(
+      contact_survey,
+      countries = country,
+      age.limits = age_limits[age_limits <= 70],
+      symmetric = TRUE
+    )
+  } else {
+    contact_matrix <- socialmixr::contact_matrix(
+      contact_survey,
+      survey.pop = survey_pop,
+      countries = country,
+      age.limits = age_limits[age_limits <= 70],
+      symmetric = TRUE
+    )
+  }
+
   
   #transform the matrix to the (symetrical) transmission matrix rather than the contact matrix
   transmission_matrix <- t(t(contact_matrix$matrix)/contact_matrix$demography$population)
