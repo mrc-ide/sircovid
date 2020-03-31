@@ -41,22 +41,23 @@ particle_filter <- function(data, model, compare, n_particles,
   ## Special treatment for the burn-in phase; later we might use this
   ## same approach for skipping steps though.
   if (save_particles) {
-    step <- seq(data$step_start[[1L]], data$step_end[[1L]],
-                attr(data, "steps_per_day"))
-    tmp <- model$run(step, use_names = FALSE, replicate = n_particles)
-
+    ## Storage for all particles:
     particles <- array(NA_real_,
                        c(max(data$day_end) + 1L + forecast_days,
                          length(i_state), n_particles))
-    particles[seq_len(data$day_end[[1]] + 1), , ] <- tmp[, i_state, ]
+    step <- seq(data$step_start[[1L]], data$step_end[[1L]],
+                attr(data, "steps_per_day"))
+    state_with_history <-
+      model$run(step, use_names = FALSE, replicate = n_particles)
+    particles[seq_len(data$day_end[[1]] + 1), , ] <-
+      state_with_history[, i_state, ]
+    state <- state_with_history[length(step), i_state, , drop = TRUE]
   } else {
     particles <- NULL
     step <- c(data$step_start[[1L]], data$step_end[[1L]])
-    tmp <- model$run(step = step, use_names = FALSE, replicate = n_particles)
+    state <- model$run(step = step, use_names = FALSE, replicate = n_particles,
+                       return_minimal = TRUE)[, 1, , drop = TRUE]
   }
-
-  ## Current state of the system after burn-in: we'll update this in-place
-  state <- tmp[nrow(tmp), i_state, , drop = TRUE]
 
   log_likelihood <- 0
   for (t in seq_len(nrow(data))[-1L]) {
@@ -88,9 +89,10 @@ particle_filter <- function(data, model, compare, n_particles,
     step <- seq(data$step_end[nrow(data)],
                 length.out = forecast_days + 1L,
                 by = attr(data, "steps_per_day"))
-    tmp <- model$run(step, state, replicate = n_particles, use_names = FALSE)
+    state_with_history <-
+      model$run(step, state, replicate = n_particles, use_names = FALSE)
     i <- seq(data$day_end[nrow(data)] + 1, length.out = forecast_days + 1L)
-    particles[i, , ] <- tmp[, i_state, ]
+    particles[i, , ] <- state_with_history[, i_state, ]
   }
 
   ret <- list(log_likelihood = log_likelihood)
