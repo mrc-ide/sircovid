@@ -44,14 +44,14 @@ particle_filter <- function(data, model, compare, n_particles,
   index <- model$transform_variables(seq_len(ncol(tmp)))
 
   for (t in seq_len(n_days)) {
+    step <- c(data2$step_start[t + 1L], data2$step_end[t + 1L])
     if (save_particles) {
       prev_states <- states[nrow(states),,]
-      results <- particle_run_model(states[nrow(states),,],
-                                    time_steps_per_day, model)
+      results <- particle_run_model(states[nrow(states),,], step, model)
       states <- abind::abind(states, results, along = 1)
     } else {
       prev_states <- states
-      results <- particle_run_model(states, time_steps_per_day, model)
+      results <- particle_run_model(states, step, model)
       states <- results
     }
     step <- step + time_steps_per_day
@@ -74,11 +74,13 @@ particle_filter <- function(data, model, compare, n_particles,
   log_likelihood <- sum(log_ave_weight)
 
   if (forecast_days !=0){
+    stop("This has not been checked")
     if (!save_particles){
       states <- array(states,dim=c(1,dim(states)))
     }
     for (t in seq_len(forecast_days)) {
-      results <- particle_run_model(states[nrow(states),,], time_steps_per_day, model)
+      stop("compute step here")
+      results <- particle_run_model(states[nrow(states),,], step, model)
       states <- abind::abind(states,results,along=1)
     }
   }
@@ -94,7 +96,7 @@ particle_filter <- function(data, model, compare, n_particles,
 particle_run_model <- function(y, step, model) {
   n_particles <- ncol(y)
   for (k in seq_len(n_particles)) {
-    y[, k] <- model$run(c(0, step), y[, k],
+    y[, k] <- model$run(step, y[, k],
                         use_names = FALSE, return_minimal = TRUE)
   }
   y
