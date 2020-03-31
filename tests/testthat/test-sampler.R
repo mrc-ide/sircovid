@@ -7,8 +7,7 @@ test_that("sampler runs without error", {
 
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
-
-  d <- sampler_prepare_data(data, "2020-02-02", 4)
+  d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
 
   pars_model <- generate_parameter_rtm(
     seed_SSP=10,
@@ -37,7 +36,6 @@ test_that("sampler runs without error", {
 
   set.seed(1)
   Y <- particle_filter(d, mod, compare, n_particles = 100,
-                       output_states = TRUE,
                        save_particles = TRUE)
   cmp <- readRDS("reference.rds")
   dimnames(cmp$states) <- NULL

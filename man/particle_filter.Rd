@@ -9,32 +9,25 @@ particle_filter(
   model,
   compare,
   n_particles,
-  start_date,
-  time_steps_per_day,
   forecast_days = 0,
-  output_states = FALSE,
   save_particles = FALSE
 )
 }
 \arguments{
-\item{data}{Data to fit to.  We require a 'date' column here,
-everything else is up to you.}
+\item{data}{Data to fit to.  This must be constructed with
+\code{particle_filter_data}}
 
 \item{model}{An odin model, used to generate stochastic samples}
 
 \item{compare}{A function to generate log-weights}
 
-\item{n_particles}{number of particles}
+\item{n_particles}{Number of particles}
 
-\item{start_date}{start date}
+\item{forecast_days}{Number of days to forecast forward from end
+states.  Requires that \code{save_particles} is \code{TRUE}.}
 
-\item{time_steps_per_day}{Number of timesteps per day}
-
-\item{forecast_days}{number of days to forecast forward from end states}
-
-\item{output_states}{Logical, indicating if output of states is wanted}
-
-\item{save_particles}{Logical, indicating if we save full particle histories}
+\item{save_particles}{Logical, indicating if we save full particle
+histories (this is slower).}
 }
 \description{
 Run a particle filter

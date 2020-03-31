@@ -2,27 +2,32 @@
 ##'
 ##' @title Run a particle filter
 ##'
-##' @param data Data to fit to.  We require a 'date' column here,
-##'   everything else is up to you.
+##' @param data Data to fit to.  This must be constructed with
+##'   \code{particle_filter_data}
 ##'
 ##' @param model An odin model, used to generate stochastic samples
 ##'
 ##' @param compare A function to generate log-weights
 ##'
-##' @param n_particles number of particles
+##' @param n_particles Number of particles
 ##'
-##' @param forecast_days number of days to forecast forward from end states
-##' @param output_states Logical, indicating if output of states is wanted
-##' @param save_particles Logical, indicating if we save full particle histories
+##' @param forecast_days Number of days to forecast forward from end
+##'   states.  Requires that \code{save_particles} is \code{TRUE}.
+##'
+##' @param save_particles Logical, indicating if we save full particle
+##'   histories (this is slower).
+##'
 ##' @export
 particle_filter <- function(data, model, compare, n_particles,
-                            forecast_days = 0,
-                            output_states = FALSE, save_particles = FALSE) {
-  if (!inherits(data, "sampler_data")) {
-    stop("Expected a data set derived from sampler_prepare_data")
+                            forecast_days = 0, save_particles = FALSE) {
+  if (!inherits(data, "particle_filter_data")) {
+    stop("Expected a data set derived from particle_filter_data")
   }
   if (!inherits(model, "odin_model")) {
     stop("Expected 'model' to be an 'odin_model' object")
+  }
+  if (forecast_days > 0 && !save_particles) {
+    stop("forecasting only possible if particles are saved")
   }
 
   n_days <- nrow(data)
@@ -90,8 +95,6 @@ particle_filter <- function(data, model, compare, n_particles,
   ret <- list(log_likelihood = sum(log_ave_weight))
   if (save_particles) {
     ret$states <- particles
-  } else if (output_states) {
-    ret$states <- state
   }
   ret
 }
@@ -217,7 +220,7 @@ scale_log_weights <- function(log_weights) {
 
 ## This is very clumsy way of avoiding fencepost/off by one errors in
 ## translation.  This creates our set of periods to run from.
-sampler_prepare_data <- function(data, start_date, steps_per_day) {
+particle_filter_data <- function(data, start_date, steps_per_day) {
   if (!inherits(data, "data.frame")) {
     stop("Expected a data.frame for 'data'")
   }
@@ -249,7 +252,7 @@ sampler_prepare_data <- function(data, start_date, steps_per_day) {
   ret$step_start <- ret$day_start * steps_per_day
   ret$step_end <- ret$day_end * steps_per_day
 
-  class(ret) <- c("sampler_data", "data.frame")
+  class(ret) <- c("particle_filter_data", "data.frame")
   attr(ret, "steps_per_day") <- steps_per_day
 
   ret
