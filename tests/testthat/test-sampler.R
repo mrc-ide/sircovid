@@ -36,9 +36,7 @@ test_that("sampler runs without error", {
   compare <- compare_icu(odin_index(mod), pars_obs, d)
 
   set.seed(1)
-  Y <- particle_filter(data = data, mod, compare, n_particles = 100,
-                       start_date = start_date,
-                       time_steps_per_day = time_steps_per_day,
+  Y <- particle_filter(d, mod, compare, n_particles = 100,
                        output_states = TRUE,
                        save_particles = TRUE)
   cmp <- readRDS("reference.rds")
@@ -46,9 +44,7 @@ test_that("sampler runs without error", {
   expect_equal(Y, cmp)
 
   set.seed(1)
-  X <- particle_filter(data, mod, compare, n_particles = 100,
-                       start_date = start_date,
-                       time_steps_per_day = time_steps_per_day)
+  X <- particle_filter(d, mod, compare, n_particles = 100)
   expect_equal(X$log_likelihood, Y$log_likelihood)
 
   expect_is(X, "list")

@@ -10,37 +10,36 @@
 ##' @param compare A function to generate log-weights
 ##'
 ##' @param n_particles number of particles
-##' @param start_date start date
-##' @param time_steps_per_day Number of timesteps per day
+##'
 ##' @param forecast_days number of days to forecast forward from end states
 ##' @param output_states Logical, indicating if output of states is wanted
 ##' @param save_particles Logical, indicating if we save full particle histories
 ##' @export
 particle_filter <- function(data, model, compare, n_particles,
-                            start_date, time_steps_per_day, forecast_days = 0,
+                            forecast_days = 0,
                             output_states = FALSE, save_particles = FALSE) {
-  if (!("date" %in% names(data))) {
-    stop("Expected a column 'date' within 'data'")
+  if (!inherits(data, "sampler_data")) {
+    stop("Expected a data set derived from sampler_prepare_data")
   }
   if (!inherits(model, "odin_model")) {
     stop("Expected 'model' to be an 'odin_model' object")
   }
 
-  data2 <- sampler_prepare_data(data, start_date, time_steps_per_day)
+  steps_per_day <- attr(data, "steps_per_day")
 
   n_days <- nrow(data)
   log_ave_weight <- rep(0, n_days)
 
   state <- matrix(rep(mod$initial(), n_particles), ncol = n_particles)
-  particles <- array(NA_real_, c(max(data2$day_end) + 1L, dim(state)))
+  particles <- array(NA_real_, c(max(data$day_end) + 1L, dim(state)))
 
   if (save_particles) {
-    step <- seq(data2$step_start[[1]], data2$step_end[[1]], time_steps_per_day)
+    step <- seq(data$step_start[[1]], data$step_end[[1]], steps_per_day)
     tmp <- model$run(step, use_names = FALSE, replicate = n_particles)
-    particles[seq_len(data2$day_end[[1]] + 1), , ] <-
+    particles[seq_len(data$day_end[[1]] + 1), , ] <-
       tmp[, seq_len(nrow(state)) + 1L, ]
   } else {
-    step <- c(data2$step_start[[1]], data2$step_end[[1]])
+    step <- c(data$step_start[[1]], data$step_end[[1]])
     tmp <- model$run(step = step, use_names = FALSE, replicate = n_particles)
   }
   state <- tmp[nrow(tmp), seq_len(nrow(state)) + 1L, , drop = TRUE]
@@ -48,15 +47,15 @@ particle_filter <- function(data, model, compare, n_particles,
   ## Keep this in for ease of comparison later - unused here though.
   index <- odin_index(model)
 
-  for (t in seq_len(n_days)) {
-    step <- c(data2$step_start[t + 1L], data2$step_end[t + 1L])
+  for (t in seq_len(n_days)[-1L]) {
+    step <- c(data$step_start[t], data$step_end[t])
     prev_state <- state
     state <- particle_run_model(state, step, model)
     if (save_particles) {
-      particles[data2$day_end[t + 1L] + 1L, , ] <- state
+      particles[data$day_end[t] + 1L, , ] <- state
     }
 
-    log_weights <- compare(t + 1L, state, prev_state)
+    log_weights <- compare(t, state, prev_state)
     if (!is.null(log_weights)) {
       tmp <- scale_log_weights(log_weights)
       log_ave_weight[t] <- tmp$average
@@ -263,6 +262,9 @@ sampler_prepare_data <- function(data, start_date, steps_per_day) {
 
   ret$step_start <- ret$day_start * steps_per_day
   ret$step_end <- ret$day_end * steps_per_day
+
+  class(ret) <- c("sampler_data", "data.frame")
+  attr(ret, "steps_per_day") <- steps_per_day
 
   ret
 }
