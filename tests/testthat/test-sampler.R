@@ -1,7 +1,8 @@
 context("sampler")
 
-## This is not a real test but simply ties to ruin the model
+## This is not a real test but simply tries to run the model
 test_that("sampler runs without error", {
+  set.seed(1)
   time_steps_per_day <- 4
 
   pars_model <- generate_parameter_rtm(
@@ -45,4 +46,7 @@ test_that("sampler runs without error", {
   expect_setequal(names(Y), c("log_likelihood", "states", "index"))
   ##                            t   state  particles
   expect_equal(dim(Y$states), c(58, 238,   100))
+
+  ## saveRDS(Y, "reference.rds")
+  expect_equal(Y, readRDS("reference.rds"))
 })
