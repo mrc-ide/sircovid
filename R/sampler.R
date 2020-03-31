@@ -7,7 +7,8 @@
 ##'
 ##' @param model An odin model, used to generate stochastic samples
 ##'
-##' @param pars_obs parameters of the observations
+##' @param compare A function to generate log-weights
+##'
 ##' @param n_particles number of particles
 ##' @param start_date start date
 ##' @param time_steps_per_day Number of timesteps per day
@@ -15,7 +16,7 @@
 ##' @param output_states Logical, indicating if output of states is wanted
 ##' @param save_particles Logical, indicating if we save full particle histories
 ##' @export
-particle_filter <- function(data, model, pars_obs, n_particles,
+particle_filter <- function(data, model, compare, n_particles,
                             start_date, time_steps_per_day, forecast_days = 0,
                             output_states = FALSE, save_particles = FALSE) {
   if (!("date" %in% names(data))) {
@@ -29,7 +30,7 @@ particle_filter <- function(data, model, pars_obs, n_particles,
   n_days_before_data <- as.numeric(as.Date(data$date[1])-as.Date(start_date))
   n_days <- nrow(data)
   log_ave_weight <- rep(0,n_days)
-  
+
   if (save_particles) {
     tmp <- model$run(step = seq(0, (n_days_before_data-1)*time_steps_per_day, time_steps_per_day),
                  replicate = n_particles)
@@ -44,60 +45,32 @@ particle_filter <- function(data, model, pars_obs, n_particles,
   for (t in seq_len(n_days)) {
     if (save_particles) {
       prev_states <- states[nrow(states),,]
-      results <- particle_run_model(states[nrow(states),,], time_steps_per_day, model)
-      states <- abind::abind(states,results,along=1)
+      results <- particle_run_model(states[nrow(states),,],
+                                    time_steps_per_day, model)
+      states <- abind::abind(states, results, along = 1)
     } else {
       prev_states <- states
       results <- particle_run_model(states, time_steps_per_day, model)
       states <- results
     }
-    
+
     if (!is.na(data$itu[t]) && !is.na(data$deaths[t])){
-      
-      #calculate log weights from observation likelihood
-      log_weights <- rep(0, n_particles)
-      
-      #contribution from itu/icu
-      if (!is.na(data$itu[t])){
-        #sum model output across ages/infectivities
-        model_icu <- colSums(results[c(index$I_ICU)-1L, ])
-        
-        log_weights <- log_weights+ll_nbinom(data = data$itu[t], model = model_icu,
-                            phi = pars_obs$phi_ICU, k = pars_obs$k_ICU,
-                            exp_noise = pars_obs$exp_noise)
-      }
-      
-      #contribution from deaths
-      if (!is.na(data$deaths[t])){
-        #sum model output across ages/infectivities
-        model_deaths <- colSums(results[c(index$D)-1L, ])-colSums(prev_states[c(index$D)-1L,])
-        
-        log_weights <- log_weights+ll_nbinom(data = data$deaths[t], model = model_deaths,
-                              phi = pars_obs$phi_death, k = pars_obs$k_death,
-                              exp_noise = pars_obs$exp_noise)
-      }
-      
-      max_log_weights <- max(log_weights)
-      if (max_log_weights == -Inf){
-        #if all log_weights at a time-step are -Inf, this should terminate the particle filter
-        #and output the marginal likelihood estimate as -Inf
-        log_ave_weight[t] <- -Inf
+      log_weights <- compare(t, results, prev_states)
+
+      tmp <- scale_log_weights(log_weights)
+      log_ave_weight[t] <- tmp$average
+      if (tmp$average == -Inf) {
+        ## Everything is impossible
         break
-      } else {
-        #calculation of weights, there is some rescaling here to avoid issues where exp(log_weights) might
-        #give computationally zero values
-        weights <- exp(log_weights - max_log_weights)
-        log_ave_weight[t] <- log(mean(weights)) + max_log_weights
       }
-      
-      # resample
-      states <- resample(states, seq_len(n_particles), weights, "systematic", save_particles)
-      
+
+      states <- resample(states, seq_len(n_particles), tmp$weights,
+                         "systematic", save_particles)
     }
   }
-  
+
   log_likelihood <- sum(log_ave_weight)
-  
+
   if (forecast_days !=0){
     if (!save_particles){
       states <- array(states,dim=c(1,dim(states)))
@@ -107,7 +80,7 @@ particle_filter <- function(data, model, pars_obs, n_particles,
       states <- abind::abind(states,results,along=1)
     }
   }
-  
+
   if (output_states){
     return(list(log_likelihood=log_likelihood,states=states,index=index))
   } else {
@@ -144,9 +117,9 @@ systematic_resample <- function(
   old_indexes,
   n_samples,
   weights){
-  
+
   u = runif(1,0,1/n_samples)+seq(0,by=1/n_samples,length.out=n_samples)
-  
+
   new_indexes <- integer(n_samples)
   weights <- weights/sum(weights)
   cum_weights <- cumsum(weights)
@@ -165,7 +138,7 @@ systematic_resample <- function(
   return(new_indexes)
 }
 
-ll_nbinom <- function(data, model, 
+ll_nbinom <- function(data, model,
                    phi, k, exp_noise) {
   out <- dnbinom(
     x = data,
@@ -189,4 +162,59 @@ plot_particles <- function(particles, particle_dates, data, data_dates, ylab) {
   ## Quantiles
   quantiles <- t(apply(particles, 1, quantile, c(0.025, 0.5, 0.975)))
   matlines(particle_dates, quantiles, col = "black", lty = "dashed")
+}
+
+
+compare_icu <- function(index, pars_obs, data) {
+  force(index)
+  force(pars_obs)
+
+  function(t, results, prev_states) {
+    if (!is.na(data$itu[t]) && !is.na(data$deaths[t])) {
+      ## calculate log weights from observation likelihood
+      log_weights <- rep(0, ncol(results))
+
+      ## contribution from itu/icu
+      if (!is.na(data$itu[t])){
+        ## sum model output across ages/infectivities
+        model_icu <- colSums(results[c(index$I_ICU) - 1L, ])
+
+        log_weights <- log_weights +
+          ll_nbinom(data = data$itu[t], model = model_icu,
+                    phi = pars_obs$phi_ICU, k = pars_obs$k_ICU,
+                    exp_noise = pars_obs$exp_noise)
+      }
+
+      ## contribution from deaths
+      if (!is.na(data$deaths[t])) {
+        ## sum model output across ages/infectivities
+        model_deaths <- colSums(results[c(index$D)-1L, ])-colSums(prev_states[c(index$D)-1L,])
+
+        log_weights <- log_weights +
+          ll_nbinom(data = data$deaths[t], model = model_deaths,
+                    phi = pars_obs$phi_death, k = pars_obs$k_death,
+                    exp_noise = pars_obs$exp_noise)
+      }
+    }
+    log_weights
+  }
+}
+
+
+scale_log_weights <- function(log_weights) {
+  max_log_weights <- max(log_weights)
+  if (max_log_weights == -Inf){
+    ## if all log_weights at a time-step are -Inf, this should
+    ## terminate the particle filter and output the marginal
+    ## likelihood estimate as -Inf
+    average <- -Inf
+    weights <- rep(NaN, length(log_weights))
+  } else {
+    ## calculation of weights, there is some rescaling here to avoid
+    ## issues where exp(log_weights) might give computationally zero
+    ## values
+    weights <- exp(log_weights - max_log_weights)
+    average <- log(mean(weights)) + max_log_weights
+  }
+  list(weights = weights, average = average)
 }

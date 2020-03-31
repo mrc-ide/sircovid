@@ -7,7 +7,7 @@
 particle_filter(
   data,
   model,
-  pars_obs,
+  compare,
   n_particles,
   start_date,
   time_steps_per_day,
@@ -22,7 +22,7 @@ everything else is up to you.}
 
 \item{model}{An odin model, used to generate stochastic samples}
 
-\item{pars_obs}{parameters of the observations}
+\item{compare}{A function to generate log-weights}
 
 \item{n_particles}{number of particles}
 
