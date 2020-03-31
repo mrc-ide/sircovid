@@ -41,6 +41,7 @@ test_that("sampler runs without error", {
                        save_particles = TRUE)
   cmp <- readRDS("reference.rds")
   dimnames(cmp$states) <- NULL
+  cmp$index <- NULL
   expect_equal(Y, cmp)
 
   set.seed(1)

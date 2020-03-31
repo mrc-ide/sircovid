@@ -25,27 +25,30 @@ particle_filter <- function(data, model, compare, n_particles,
     stop("Expected 'model' to be an 'odin_model' object")
   }
 
-  steps_per_day <- attr(data, "steps_per_day")
-
   n_days <- nrow(data)
   log_ave_weight <- rep(0, n_days)
 
+  n_state <- length(mod$initial())
+  i_state <- seq_len(n_state) + 1L
   state <- matrix(rep(mod$initial(), n_particles), ncol = n_particles)
-  particles <- array(NA_real_, c(max(data$day_end) + 1L, dim(state)))
 
+  ## Special treatment for the burn-in phase:
   if (save_particles) {
-    step <- seq(data$step_start[[1]], data$step_end[[1]], steps_per_day)
+    step <- seq(data$step_start[[1L]], data$step_end[[1L]],
+                attr(data, "steps_per_day"))
     tmp <- model$run(step, use_names = FALSE, replicate = n_particles)
-    particles[seq_len(data$day_end[[1]] + 1), , ] <-
-      tmp[, seq_len(nrow(state)) + 1L, ]
+
+    particles <- array(NA_real_,
+                       c(max(data$day_end) + 1L, n_state, n_particles))
+    particles[seq_len(data$day_end[[1]] + 1), , ] <- tmp[, i_state, ]
   } else {
-    step <- c(data$step_start[[1]], data$step_end[[1]])
+    particles <- NULL
+    step <- c(data$step_start[[1L]], data$step_end[[1L]])
     tmp <- model$run(step = step, use_names = FALSE, replicate = n_particles)
   }
-  state <- tmp[nrow(tmp), seq_len(nrow(state)) + 1L, , drop = TRUE]
 
-  ## Keep this in for ease of comparison later - unused here though.
-  index <- odin_index(model)
+  ## Current state of the system after burn-in: we'll update this in-place
+  state <- tmp[nrow(tmp), i_state, , drop = TRUE]
 
   for (t in seq_len(n_days)[-1L]) {
     step <- c(data$step_start[t], data$step_end[t])
@@ -88,10 +91,8 @@ particle_filter <- function(data, model, compare, n_particles,
   ret <- list(log_likelihood = sum(log_ave_weight))
   if (save_particles) {
     ret$states <- particles
-    ret$index <- index
   } else if (output_states) {
     ret$states <- state
-    ret$index <- index
   }
   ret
 }
@@ -235,6 +236,9 @@ scale_log_weights <- function(log_weights) {
 ## This is very clumsy way of avoiding fencepost/off by one errors in
 ## translation.  This creates our set of periods to run from.
 sampler_prepare_data <- function(data, start_date, steps_per_day) {
+  if (!inherits(data, "data.frame")) {
+    stop("Expected a data.frame for 'data'")
+  }
   if (!("date" %in% names(data))) {
     stop("Expected a column 'date' within 'data'")
   }
