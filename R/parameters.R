@@ -6,9 +6,11 @@
 ##' 
 ##' @param country Country name
 ##' 
+##' @param severity_data_file Location of file with severity data
+##' 
 ##' @param age_limits Vector of age bin (starting age of each bin)
 ##' 
-##' @param slopes List of number of progression groups in each partition
+##' @param progression_groups List of number of progression groups in each partition
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
 ##'   
 ##' @param gammas List of exponential distribution rates for time in each partition
@@ -39,12 +41,13 @@
 generate_parameters <- function(
   transmission_model = "POLYMOD",
   country="United Kingdom",
+  severity_data_file="extdata/Final_COVID_severity.csv",
   age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),   #check about 10 etc. being in first or second age group
   progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec = 2),
   gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7, rec = 2/3),
   infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0),
   beta = c(0.1, 0.1, 0.1),
-  beta_times = c('2020-02-01', '2020-03-01', '2020-04-01'),
+  beta_times = c('2020-02-02', '2020-03-01', '2020-04-01'),
   trans_profile = c(0.65, 0.2, 0.15),
   trans_increase = c(0, 1, 10),
   hosp_transmission = 0.1,
@@ -83,11 +86,11 @@ generate_parameters <- function(
   }
   
   partitions = c('E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec')
-  if (any(!(partitions %in% names(slopes)))) {
-    stop("Slopes need to be defined for all partitions")
+  if (any(!(partitions %in% names(progression_groups)))) {
+    stop("progression_groups need to be defined for all partitions")
   }
   if (any(!(partitions %in% names(gammas)))) {
-    stop("Gammas need to be defined for all partitions")
+    stop("gammas need to be defined for all partitions")
   }
   
   # 
@@ -95,7 +98,7 @@ generate_parameters <- function(
   # derived from the Final_COVID_severity.csv file
   #
   severity_params <- read_severity(
-    severity_file = "extdata/Final_COVID_severity.csv",
+    severity_file = severity_data_file,
     age_limits = age_limits
   )
   
@@ -254,8 +257,8 @@ read_severity <- function(
   age_bin_ends <- match_age_bins(age_limits, rownames(severity_params), severity_file)
   rownames(severity_params) <- age_bin_ends
   
-  # Proportion of symptomatic
-  p_sympt <- 1 - as.numeric(severity_params[,'Proportion with any symptoms'])
+  # Proportion of asymptomatic
+  p_asympt <- 1 - as.numeric(severity_params[,'Proportion with any symptoms'])
 
   #Proportion seeking healthcare
   p_sympt_ILI <- as.numeric(severity_params[,'Proportion with any symptoms']) *
@@ -277,12 +280,12 @@ read_severity <- function(
   p_death_hosp <- as.numeric(severity_params[,"Proportion of critical cases dying"])
   
   props = list(
-    sympt = p_sympt,
+    asympt = p_asympt,
     sympt_ILI = p_sympt_ILI,
     recov_ICU = p_recov_ICU,
     recov_ILI = p_recov_ILI,
-    recov_hosp = p_recov_hosp
-    
+    recov_hosp = p_recov_hosp,
+    death_hosp = p_death_hosp
   )
 }
 

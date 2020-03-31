@@ -7,6 +7,7 @@
 generate_parameters(
   transmission_model = "POLYMOD",
   country = "United Kingdom",
+  severity_data_file = "extdata/Final_COVID_severity.csv",
   age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),
   progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec
     = 2),
@@ -14,7 +15,7 @@ generate_parameters(
     rec = 2/3),
   infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0),
   beta = c(0.1, 0.1, 0.1),
-  beta_times = c("2020-02-01", "2020-03-01", "2020-04-01"),
+  beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
   trans_profile = c(0.65, 0.2, 0.15),
   trans_increase = c(0, 1, 10),
   hosp_transmission = 0.1,
@@ -28,7 +29,12 @@ generate_parameters(
 
 \item{country}{Country name}
 
+\item{severity_data_file}{Location of file with severity data}
+
 \item{age_limits}{Vector of age bin (starting age of each bin)}
+
+\item{progression_groups}{List of number of progression groups in each partition
+needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'}
 
 \item{gammas}{List of exponential distribution rates for time in each partition
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'}
@@ -52,9 +58,6 @@ into the most infective group}
 
 \item{survey_pop}{A survey population. Set to NULL to
 use \code{default_age_distribution()}}
-
-\item{slopes}{List of number of progression groups in each partition
-needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'}
 }
 \description{
 Create parameters for use with the model

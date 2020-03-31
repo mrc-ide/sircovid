@@ -5,10 +5,23 @@ test_that("sampler runs without error", {
   set.seed(1)
   time_steps_per_day <- 4
 
-  pars_model <- generate_parameter_rtm(
-    seed_SSP=10,
+  pars_model <- generate_parameters(
+    beta = rep(0.125, 3),
+    age_lim <- c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80),
+    severity_data_file = "extdata/severity.csv",
+    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+    gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
+    hosp_transmission = 0,
+    ICU_transmission = 0,
     dt = 1/time_steps_per_day
   )
+  
+  # Manually set this parameter, to match previous results
+  ## Carried over from the initial NHS meeting
+  prop_symp_seek_HC <- c(0.3570377550, 0.3570377550, 0.3712946230,0.3712946230,	0.420792849,0.420792849,
+                         0.459552523,0.459552523,	0.488704572,0.488704572,	0.578769171,0.578769171,	0.65754772,0.65754772,	0.73278164,0.73278164,0.76501082)
+  #Proportion seeking healthcare
+  pars_model$p_sympt_ILI <- rep(0.66,length(prop_symp_seek_HC))*prop_symp_seek_HC
 
   pars_obs <- list(
     ## what should this be?
@@ -26,7 +39,6 @@ test_that("sampler runs without error", {
                    stringsAsFactors = FALSE)
   data$date <- as.Date(data$date)
 
-  pars_model$beta <- 0.125
   start_date <- as.Date("2020-02-02")
   set.seed(1)
   X <- particle_filter(data = data, pars_model, pars_obs, n_particles = 100,
