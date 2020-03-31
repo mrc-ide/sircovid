@@ -3,6 +3,7 @@
 export(generate_parameter_rtm)
 export(parameters)
 export(particle_filter)
+export(particle_filter_data)
 export(sircovid)
 import(socialmixr)
 importFrom(dde,difeq)

@@ -101,6 +101,60 @@ particle_filter <- function(data, model, compare, n_particles,
 }
 
 
+##' Prepare data for use with the particle filter.  This function
+##' exists to make explicit how time changes through the model
+##' relative to the data and to odin's internal clock.
+##' @title Prepare particle filter data
+##'
+##' @param data A data.frame of observed data.  There must be a column
+##'   \code{date}, containing dates (or ISO-formatted strings for
+##'   conversion with \code{\link{as.Date}}.
+##'
+##' @param start_date The date to start the simulation from.  Must be
+##'   earlier than the first date in \code{data}.
+##'
+##' @param steps_per_day The number of steps per day
+##'
+##' @export
+particle_filter_data <- function(data, start_date, steps_per_day) {
+  if (!inherits(data, "data.frame")) {
+    stop("Expected a data.frame for 'data'")
+  }
+  if (!("date" %in% names(data))) {
+    stop("Expected a column 'date' within 'data'")
+  }
+  data$date <- as.Date(data$date)
+  if (any(diff(data$date) <= 0)) {
+    stop("'date' must be strictly increasing")
+  }
+  start_date <- as.Date(start_date)
+  if (start_date >= data$date[[1]]) {
+    stop("'start_date' must be less than the first date in data")
+  }
+
+  ## Then for each timestep we work out the start and end date
+  ret <- data
+  ret$day_start <- as.integer(data$date - start_date - 1L)
+  ret$day_end <- as.integer(data$date - start_date)
+
+  d0 <- ret[1, ]
+  d0[] <- NA
+  d0$date <- start_date
+  d0$day_start <- 0
+  d0$day_end <- ret$day_start[[1]]
+  ret <- rbind(d0, ret)
+  rownames(ret) <- NULL
+
+  ret$step_start <- ret$day_start * steps_per_day
+  ret$step_end <- ret$day_end * steps_per_day
+
+  class(ret) <- c("particle_filter_data", "data.frame")
+  attr(ret, "steps_per_day") <- steps_per_day
+
+  ret
+}
+
+
 particle_run_model <- function(y, step, model) {
   model$run(step, y, use_names = FALSE, return_minimal = TRUE,
             replicate = ncol(y))[, 1, , drop = TRUE]
@@ -211,44 +265,4 @@ scale_log_weights <- function(log_weights) {
     average <- log(mean(weights)) + max_log_weights
   }
   list(weights = weights, average = average)
-}
-
-## This is very clumsy way of avoiding fencepost/off by one errors in
-## translation.  This creates our set of periods to run from.
-particle_filter_data <- function(data, start_date, steps_per_day) {
-  if (!inherits(data, "data.frame")) {
-    stop("Expected a data.frame for 'data'")
-  }
-  if (!("date" %in% names(data))) {
-    stop("Expected a column 'date' within 'data'")
-  }
-  data$date <- as.Date(data$date)
-  if (any(diff(data$date) <= 0)) {
-    stop("'date' must be strictly increasing")
-  }
-  start_date <- as.Date(start_date)
-  if (start_date >= data$date[[1]]) {
-    stop("'start_date' must be less than the first date in data")
-  }
-
-  ## Then for each timestep we work out the start and end date
-  ret <- data
-  ret$day_start <- as.integer(data$date - start_date - 1L)
-  ret$day_end <- as.integer(data$date - start_date)
-
-  d0 <- ret[1, ]
-  d0[] <- NA
-  d0$date <- start_date
-  d0$day_start <- 0
-  d0$day_end <- ret$day_start[[1]]
-  ret <- rbind(d0, ret)
-  rownames(ret) <- NULL
-
-  ret$step_start <- ret$day_start * steps_per_day
-  ret$step_end <- ret$day_end * steps_per_day
-
-  class(ret) <- c("particle_filter_data", "data.frame")
-  attr(ret, "steps_per_day") <- steps_per_day
-
-  ret
 }
