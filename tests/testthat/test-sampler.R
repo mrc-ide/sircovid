@@ -27,7 +27,7 @@ test_that("sampler runs without error", {
     exp_noise = 1e6)
 
   mod <- sircovid(params = pars_model)
-  compare <- compare_icu(odin_index(mod), pars_obs, d)
+  compare <- compare_icu(mod, pars_obs, d)
 
   cmp <- readRDS("reference.rds")
   dimnames(cmp$states) <- NULL

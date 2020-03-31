@@ -160,6 +160,55 @@ particle_filter_data <- function(data, start_date, steps_per_day) {
 }
 
 
+##' Compare the model to ICU data for use with the particle filter
+##' @title Compare model to ICU data
+##' @param model An \code{odin_model} object
+##' @param pars_obs Parameters for the observations
+##' @param data The data to be compared against
+##' @export
+compare_icu <- function(model, pars_obs, data) {
+  index <- odin_index(model)
+
+  ## Unpack things that we will use repeatedly
+  phi_ICU <- pars_obs$phi_ICU
+  k_ICU <- pars_obs$k_ICU
+  phi_death <- pars_obs$phi_death
+  k_death <- pars_obs$k_death
+  exp_noise <- pars_obs$exp_noise
+  index_ICU <- c(index$I_ICU) - 1L
+  index_D <- c(index$D) - 1L
+
+  force(data)
+
+  ## This returns a closure, with the above variables bound, the
+  ## sampler will provide the arguments below.
+  function(t, state, prev_state) {
+    if (is.na(data$itu[t] || is.na(data$deaths[t]))) {
+      return(NULL)
+    }
+
+    log_weights <- rep(0, ncol(state))
+
+    if (!is.na(data$itu[t])) {
+      ## sum model output across ages/infectivities
+      model_icu <- colSums(state[index_ICU, ])
+      log_weights <- log_weights +
+        ll_nbinom(data$itu[t], model_icu, phi_ICU, k_ICU, exp_noise)
+    }
+
+    if (!is.na(data$deaths[t])) {
+      ## new deaths summed across ages/infectivities
+      model_deaths <- colSums(state[index_D, ]) -
+        colSums(prev_state[index_D, ])
+      log_weights <- log_weights +
+        ll_nbinom(data$deaths[t], model_deaths, phi_death, k_death, exp_noise)
+    }
+
+    log_weights
+  }
+}
+
+
 particle_run_model <- function(y, step, model) {
   model$run(step, y, use_names = FALSE, return_minimal = TRUE,
             replicate = ncol(y))[, 1, , drop = TRUE]
@@ -210,48 +259,6 @@ odin_index <- function(model) {
   n_out <- environment(model$initialize)$private$n_out %||% 0
   n_state <- length(model$initial())
   model$transform_variables(seq_len(1L + n_state + n_out))
-}
-
-
-compare_icu <- function(index, pars_obs, data) {
-  force(index)
-  force(pars_obs)
-
-  ## Unpack things that we will use repeatedly
-  phi_ICU <- pars_obs$phi_ICU
-  k_ICU <- pars_obs$k_ICU
-  phi_death <- pars_obs$phi_death
-  k_death <- pars_obs$k_death
-  exp_noise <- pars_obs$exp_noise
-  index_ICU <- c(index$I_ICU) - 1L
-  index_D <- c(index$D) - 1L
-
-  ## This returns a closure, with the above variables bound, the
-  ## sampler will provide the arguments below.
-  function(t, state, prev_state) {
-    if (is.na(data$itu[t] || is.na(data$deaths[t]))) {
-      return(NULL)
-    }
-
-    log_weights <- rep(0, ncol(state))
-
-    if (!is.na(data$itu[t])) {
-      ## sum model output across ages/infectivities
-      model_icu <- colSums(state[index_ICU, ])
-      log_weights <- log_weights +
-        ll_nbinom(data$itu[t], model_icu, phi_ICU, k_ICU, exp_noise)
-    }
-
-    if (!is.na(data$deaths[t])) {
-      ## new deaths summed across ages/infectivities
-      model_deaths <- colSums(state[index_D, ]) -
-        colSums(prev_state[index_D, ])
-      log_weights <- log_weights +
-        ll_nbinom(data$deaths[t], model_deaths, phi_death, k_death, exp_noise)
-    }
-
-    log_weights
-  }
 }
 
 
