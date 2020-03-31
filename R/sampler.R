@@ -116,6 +116,7 @@ resample <- function(weights, method) {
 }
 
 
+##' @importFrom stats runif
 systematic_resample <- function(weights) {
   n <- length(weights)
   u <- runif(1, 0, 1 / n) + seq(0, by = 1 / n, length.out = n)
@@ -124,17 +125,14 @@ systematic_resample <- function(weights) {
 }
 
 
-ll_nbinom <- function(data, model,
-                   phi, k, exp_noise) {
-  out <- dnbinom(
-    x = data,
-    size = k,
-    mu = phi*model+rexp(length(model),rate=exp_noise),
-    log = TRUE
-  )
-  out
+##' @importFrom stats dnbinom rexp
+ll_nbinom <- function(data, model, phi, k, exp_noise) {
+  mu <- phi * model + rexp(length(model), rate = exp_noise)
+  dnbinom(data, k, mu = mu, log = TRUE)
 }
 
+##' @importFrom graphics plot points matlines
+##' @importFrom stats quantile
 plot_particles <- function(particles, particle_dates, data, data_dates, ylab) {
   ## Need to set plot up first to get the dates to render on the axis
   ## (matplot does not cope with this)
