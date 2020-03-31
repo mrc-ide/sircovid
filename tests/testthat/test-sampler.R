@@ -29,10 +29,15 @@ test_that("sampler runs without error", {
   mod <- sircovid(params = pars_model)
   compare <- compare_icu(odin_index(mod), pars_obs, d)
 
+  cmp <- readRDS("reference.rds")
+  dimnames(cmp$states) <- NULL
+  cmp$index <- NULL
+
   set.seed(1)
   X <- particle_filter(d, mod, compare, n_particles = 100)
   expect_is(X, "list")
   expect_equal(names(X), "log_likelihood")
+  expect_equal(X$log_likelihood, cmp$log_likelihood)
 
   set.seed(1)
   Y <- particle_filter(d, mod, compare, n_particles = 100,
@@ -41,12 +46,6 @@ test_that("sampler runs without error", {
   expect_setequal(names(Y), c("log_likelihood", "states"))
   ##                            t   state  particles
   expect_equal(dim(Y$states), c(58, 238,   100))
-
-  expect_equal(X$log_likelihood, Y$log_likelihood)
-
-  cmp <- readRDS("reference.rds")
-  dimnames(cmp$states) <- NULL
-  cmp$index <- NULL
   expect_equal(Y, cmp)
 
   ## Testing plotting is always a nightmare

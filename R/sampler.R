@@ -102,12 +102,8 @@ particle_filter <- function(data, model, compare, n_particles,
 
 
 particle_run_model <- function(y, step, model) {
-  n_particles <- ncol(y)
-  for (k in seq_len(n_particles)) {
-    y[, k] <- model$run(step, y[, k],
-                        use_names = FALSE, return_minimal = TRUE)
-  }
-  y
+  mod$run(step, y, use_names = FALSE, return_minimal = TRUE,
+          replicate = ncol(y))[, 1, , drop = TRUE]
 }
 
 
