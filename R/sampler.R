@@ -26,17 +26,18 @@ particle_filter <- function(data, model, compare, n_particles,
     stop("Expected 'model' to be an 'odin_model' object")
   }
 
+  data2 <- sampler_prepare_data(data, start_date, time_steps_per_day)
+
   #setup
-  n_days_before_data <- as.numeric(as.Date(data$date[1])-as.Date(start_date))
   n_days <- nrow(data)
-  log_ave_weight <- rep(0,n_days)
+  log_ave_weight <- rep(0, n_days)
 
   if (save_particles) {
-    tmp <- model$run(step = seq(0, (n_days_before_data-1)*time_steps_per_day, time_steps_per_day),
-                 replicate = n_particles)
+    step <- seq(data2$step_start[[1]], data2$step_end[[1]], time_steps_per_day)
+    tmp <- model$run(step = step, replicate = n_particles)
     states <- unname(tmp[, seq_along(model$initial()) + 1L, ])
   } else {
-    tmp <- model$run(step = c(0, (n_days_before_data-1)*time_steps_per_day),
+    tmp <- model$run(step = c(data2$step_start[[1]], data2$step_end[[1]]),
                    replicate = n_particles)
     states <- unname(tmp[nrow(tmp), seq_along(model$initial()) + 1L, ])
   }
@@ -53,6 +54,7 @@ particle_filter <- function(data, model, compare, n_particles,
       results <- particle_run_model(states, time_steps_per_day, model)
       states <- results
     }
+    step <- step + time_steps_per_day
 
     if (!is.na(data$itu[t]) && !is.na(data$deaths[t])){
       log_weights <- compare(t, results, prev_states)
@@ -217,4 +219,38 @@ scale_log_weights <- function(log_weights) {
     average <- log(mean(weights)) + max_log_weights
   }
   list(weights = weights, average = average)
+}
+
+## This is very clumsy way of avoiding fencepost/off by one errors in
+## translation.  This creates our set of periods to run from.
+sampler_prepare_data <- function(data, start_date, steps_per_day) {
+  if (!("date" %in% names(data))) {
+    stop("Expected a column 'date' within 'data'")
+  }
+  data$date <- as.Date(data$date)
+  if (any(diff(data$date) <= 0)) {
+    stop("'date' must be strictly increasing")
+  }
+  start_date <- as.Date(start_date)
+  if (start_date >= data$date[[1]]) {
+    stop("'start_date' must be less than the first date in data")
+  }
+
+  ## Then for each timestep we work out the start and end date
+  ret <- data
+  ret$day_start <- as.integer(data$date - start_date - 1L)
+  ret$day_end <- as.integer(data$date - start_date)
+
+  d0 <- ret[1, ]
+  d0[] <- NA
+  d0$date <- start_date
+  d0$day_start <- 0
+  d0$day_end <- ret$day_start[[1]]
+  ret <- rbind(d0, ret)
+  rownames(ret) <- NULL
+
+  ret$step_start <- ret$day_start * steps_per_day
+  ret$step_end <- ret$day_end * steps_per_day
+
+  ret
 }
