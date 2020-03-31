@@ -49,4 +49,15 @@ test_that("sampler runs without error", {
 
   ## saveRDS(Y, "reference.rds")
   expect_equal(Y, readRDS("reference.rds"))
+
+  ## Testing plotting is always a nightmare
+  if (FALSE) {
+    date <- as.Date(start_date) + seq_len(nrow(Y$states)) - 1L
+    particles <- apply(Y$states[, c(Y$index$I_ICU) - 1L, ], c(1, 3), sum)
+    plot_particles(particles = particles,
+                   particle_dates = date,
+                   data = data$itu / pars_obs$phi_ICU,
+                   data_dates = data$date,
+                   ylab = "ICU")
+  }
 })

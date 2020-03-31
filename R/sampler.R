@@ -167,18 +167,17 @@ ll_nbinom <- function(data, model,
   out
 }
 
-plot_particles <- function(particles, particle_dates, data, data_dates, ylab){
-  quantiles<-array(0,dim=c(nrow(particles),3))
-  for (i in 1:nrow(particles)){
-    quantiles[i,]<-quantile(particles[i,],c(0.025,0.5,0.975))
-  }
-  plot(particle_dates,particles[,1],type='l',col="#ff444477",ylab=ylab,ylim=c(min(particles),max(particles)))
-  for (i in 2:1000){
-    lines(particle_dates,particles[,i],col="#ff444477")
-  }
-  k<-which(!is.na(data))
-  points(as.Date(data_dates[k]),data[k],col='black',pch=19)
-  for (i in 1:3){
-    lines(particle_dates,quantiles[,i],col='black',lty='dashed')
-  }
+plot_particles <- function(particles, particle_dates, data, data_dates, ylab) {
+  ## Need to set plot up first to get the dates to render on the axis
+  ## (matplot does not cope with this)
+  plot(particle_dates, particles[,1], type="n",
+       ylab = ylab, ylim = range(particles))
+  ## Individual traces
+  matlines(particle_dates, particles, col="#ff444477", lty = 1)
+  ## Observed data
+  k <- !is.na(data)
+  points(as.Date(data_dates[k]), data[k], col='black', pch=19)
+  ## Quantiles
+  quantiles <- t(apply(particles, 1, quantile, c(0.025, 0.5, 0.975)))
+  matlines(particle_dates, quantiles, col = "black", lty = "dashed")
 }
