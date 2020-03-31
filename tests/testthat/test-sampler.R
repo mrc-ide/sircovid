@@ -8,6 +8,8 @@ test_that("sampler runs without error", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
 
+  d <- sampler_prepare_data(data, "2020-02-02", 4)
+
   pars_model <- generate_parameter_rtm(
     seed_SSP=10,
     dt = 1/time_steps_per_day
@@ -31,14 +33,23 @@ test_that("sampler runs without error", {
 
   mod <- sircovid(params = pars_model)
 
-  ## TODO: this is a hack:
-  index <- mod$transform_variables(seq_len(326))
-  compare <- compare_icu(index, pars_obs, data)
+  compare <- compare_icu(odin_index(mod), pars_obs, d)
+
+  set.seed(1)
+  Y <- particle_filter(data = data, mod, compare, n_particles = 100,
+                       start_date = start_date,
+                       time_steps_per_day = time_steps_per_day,
+                       output_states = TRUE,
+                       save_particles = TRUE)
+  cmp <- readRDS("reference.rds")
+  dimnames(cmp$states) <- NULL
+  expect_equal(Y, cmp)
 
   set.seed(1)
   X <- particle_filter(data, mod, compare, n_particles = 100,
                        start_date = start_date,
                        time_steps_per_day = time_steps_per_day)
+  expect_equal(X$log_likelihood, Y$log_likelihood)
 
   expect_is(X, "list")
   expect_equal(names(X), "log_likelihood")

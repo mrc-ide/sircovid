@@ -46,7 +46,7 @@ particle_filter <- function(data, model, compare, n_particles,
   state <- tmp[nrow(tmp), seq_len(nrow(state)) + 1L, , drop = TRUE]
 
   ## Keep this in for ease of comparison later - unused here though.
-  index <- model$transform_variables(seq_len(ncol(tmp)))
+  index <- odin_index(model)
 
   for (t in seq_len(n_days)) {
     step <- c(data2$step_start[t + 1L], data2$step_end[t + 1L])
@@ -56,7 +56,7 @@ particle_filter <- function(data, model, compare, n_particles,
       particles[data2$day_end[t + 1L] + 1L, , ] <- state
     }
 
-    log_weights <- compare(t, state, prev_state)
+    log_weights <- compare(t + 1L, state, prev_state)
     if (!is.null(log_weights)) {
       tmp <- scale_log_weights(log_weights)
       log_ave_weight[t] <- tmp$average
@@ -74,7 +74,7 @@ particle_filter <- function(data, model, compare, n_particles,
     }
   }
 
-  if (forecast_days !=0){
+  if (forecast_days != 0){
     stop("This has not been checked")
     if (!save_particles){
       states <- array(states,dim=c(1,dim(states)))
@@ -166,6 +166,14 @@ plot_particles <- function(particles, particle_dates, data, data_dates, ylab) {
   ## Quantiles
   quantiles <- t(apply(particles, 1, quantile, c(0.025, 0.5, 0.975)))
   matlines(particle_dates, quantiles, col = "black", lty = "dashed")
+}
+
+
+## Awful hack that will do for now:
+odin_index <- function(model) {
+  n_out <- environment(model$initialize)$private$n_out %||% 0
+  n_state <- length(model$initial())
+  model$transform_variables(seq_len(1L + n_state + n_out))
 }
 
 
