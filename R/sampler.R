@@ -70,14 +70,14 @@ particle_filter <- function(data, model, compare, n_particles,
 
     log_weights <- compare(t, state, prev_state)
     if (!is.null(log_weights)) {
-      tmp <- scale_log_weights(log_weights)
-      log_likelihood <- log_likelihood + tmp$average
-      if (tmp$average == -Inf) {
+      weights <- scale_log_weights(log_weights)
+      log_likelihood <- log_likelihood + weights$average
+      if (weights$average == -Inf) {
         ## Everything is impossible, so stop here
         break
       }
 
-      kappa <- resample(tmp$weights, "systematic")
+      kappa <- resample(weights$weights, "systematic")
       state <- state[, kappa]
       if (save_particles) {
         particles <- particles[, , kappa]
