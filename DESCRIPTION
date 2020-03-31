@@ -19,9 +19,7 @@ Imports:
     dde,
     odin,
     purrr,
-    readxl,
-    socialmixr,
-    tidyr
+    socialmixr
 Suggests:
     testthat
 RoxygenNote: 7.1.0
