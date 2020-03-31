@@ -28,50 +28,52 @@ particle_filter <- function(data, model, compare, n_particles,
 
   data2 <- sampler_prepare_data(data, start_date, time_steps_per_day)
 
-  #setup
   n_days <- nrow(data)
   log_ave_weight <- rep(0, n_days)
 
+  state <- matrix(rep(mod$initial(), n_particles), ncol = n_particles)
+  particles <- array(NA_real_, c(max(data2$day_end) + 1L, dim(state)))
+
   if (save_particles) {
     step <- seq(data2$step_start[[1]], data2$step_end[[1]], time_steps_per_day)
-    tmp <- model$run(step = step, replicate = n_particles)
-    states <- unname(tmp[, seq_along(model$initial()) + 1L, ])
+    tmp <- model$run(step, use_names = FALSE, replicate = n_particles)
+    particles[seq_len(data2$day_end[[1]] + 1), , ] <-
+      tmp[, seq_len(nrow(state)) + 1L, ]
   } else {
-    tmp <- model$run(step = c(data2$step_start[[1]], data2$step_end[[1]]),
-                   replicate = n_particles)
-    states <- unname(tmp[nrow(tmp), seq_along(model$initial()) + 1L, ])
+    step <- c(data2$step_start[[1]], data2$step_end[[1]])
+    tmp <- model$run(step = step, use_names = FALSE, replicate = n_particles)
   }
+  state <- tmp[nrow(tmp), seq_len(nrow(state)) + 1L, , drop = TRUE]
+
+  ## Keep this in for ease of comparison later - unused here though.
   index <- model$transform_variables(seq_len(ncol(tmp)))
 
   for (t in seq_len(n_days)) {
     step <- c(data2$step_start[t + 1L], data2$step_end[t + 1L])
+    prev_state <- state
+    state <- particle_run_model(state, step, model)
     if (save_particles) {
-      prev_states <- states[nrow(states),,]
-      results <- particle_run_model(states[nrow(states),,], step, model)
-      states <- abind::abind(states, results, along = 1)
-    } else {
-      prev_states <- states
-      results <- particle_run_model(states, step, model)
-      states <- results
+      particles[data2$day_end[t + 1L] + 1L, , ] <- state
     }
-    step <- step + time_steps_per_day
 
-    if (!is.na(data$itu[t]) && !is.na(data$deaths[t])){
-      log_weights <- compare(t, results, prev_states)
+    if (!is.na(data$itu[t]) && !is.na(data$deaths[t])) {
+      log_weights <- compare(t, state, prev_state)
 
       tmp <- scale_log_weights(log_weights)
       log_ave_weight[t] <- tmp$average
       if (tmp$average == -Inf) {
-        ## Everything is impossible
+        ## Everything is impossible, so stop here
         break
       }
 
-      states <- resample(states, seq_len(n_particles), tmp$weights,
-                         "systematic", save_particles)
+      kappa <- resample(state, seq_len(n_particles), tmp$weights,
+                        "systematic")
+      state <- state[, kappa]
+      if (save_particles) {
+        particles <- particles[, , kappa]
+      }
     }
   }
-
-  log_likelihood <- sum(log_ave_weight)
 
   if (forecast_days !=0){
     stop("This has not been checked")
@@ -85,11 +87,15 @@ particle_filter <- function(data, model, compare, n_particles,
     }
   }
 
-  if (output_states){
-    return(list(log_likelihood=log_likelihood,states=states,index=index))
-  } else {
-    return(list(log_likelihood=log_likelihood))
+  ret <- list(log_likelihood = sum(log_ave_weight))
+  if (save_particles) {
+    ret$states <- particles
+    ret$index <- index
+  } else if (output_states) {
+    ret$states <- state
+    ret$index <- index
   }
+  ret
 }
 
 
@@ -103,16 +109,11 @@ particle_run_model <- function(y, step, model) {
 }
 
 
-resample <- function(y, index, weights, method, save_particles) {
+resample <- function(y, index, weights, method) {
   if (method == "multinomial") {
-    kappa <- sample(index, length(index), replace = TRUE, prob = weights)
+    sample(index, length(index), replace = TRUE, prob = weights)
   } else if (method == "systematic") {
-    kappa <- systematic_resample(index, length(index), weights)
-  }
-  if (save_particles==TRUE){
-    y[,, kappa]
-  } else {
-    y[, kappa]
+    systematic_resample(index, length(index), weights)
   }
 }
 
