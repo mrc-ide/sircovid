@@ -56,9 +56,8 @@ particle_filter <- function(data, model, compare, n_particles,
       particles[data2$day_end[t + 1L] + 1L, , ] <- state
     }
 
-    if (!is.na(data$itu[t]) && !is.na(data$deaths[t])) {
-      log_weights <- compare(t, state, prev_state)
-
+    log_weights <- compare(t, state, prev_state)
+    if (!is.null(log_weights)) {
       tmp <- scale_log_weights(log_weights)
       log_ave_weight[t] <- tmp$average
       if (tmp$average == -Inf) {
@@ -175,31 +174,33 @@ compare_icu <- function(index, pars_obs, data) {
   force(pars_obs)
 
   function(t, results, prev_states) {
-    if (!is.na(data$itu[t]) && !is.na(data$deaths[t])) {
-      ## calculate log weights from observation likelihood
-      log_weights <- rep(0, ncol(results))
+    if (is.na(data$itu[t] || is.na(data$deaths[t]))) {
+      return(NULL)
+    }
+    
+    ## calculate log weights from observation likelihood
+    log_weights <- rep(0, ncol(results))
 
-      ## contribution from itu/icu
-      if (!is.na(data$itu[t])){
-        ## sum model output across ages/infectivities
-        model_icu <- colSums(results[c(index$I_ICU) - 1L, ])
+    ## contribution from itu/icu
+    if (!is.na(data$itu[t])){
+      ## sum model output across ages/infectivities
+      model_icu <- colSums(results[c(index$I_ICU) - 1L, ])
 
-        log_weights <- log_weights +
-          ll_nbinom(data = data$itu[t], model = model_icu,
-                    phi = pars_obs$phi_ICU, k = pars_obs$k_ICU,
-                    exp_noise = pars_obs$exp_noise)
-      }
+      log_weights <- log_weights +
+        ll_nbinom(data = data$itu[t], model = model_icu,
+                  phi = pars_obs$phi_ICU, k = pars_obs$k_ICU,
+                  exp_noise = pars_obs$exp_noise)
+    }
 
-      ## contribution from deaths
-      if (!is.na(data$deaths[t])) {
-        ## sum model output across ages/infectivities
-        model_deaths <- colSums(results[c(index$D)-1L, ])-colSums(prev_states[c(index$D)-1L,])
+    ## contribution from deaths
+    if (!is.na(data$deaths[t])) {
+      ## sum model output across ages/infectivities
+      model_deaths <- colSums(results[c(index$D)-1L, ])-colSums(prev_states[c(index$D)-1L,])
 
-        log_weights <- log_weights +
-          ll_nbinom(data = data$deaths[t], model = model_deaths,
-                    phi = pars_obs$phi_death, k = pars_obs$k_death,
-                    exp_noise = pars_obs$exp_noise)
-      }
+      log_weights <- log_weights +
+        ll_nbinom(data = data$deaths[t], model = model_deaths,
+                  phi = pars_obs$phi_death, k = pars_obs$k_death,
+                  exp_noise = pars_obs$exp_noise)
     }
     log_weights
   }
