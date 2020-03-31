@@ -36,7 +36,7 @@ particle_filter <- function(data, model, compare, n_particles,
     stop("forecast_days must be positive")
   }
 
-  i_state <- seq_along(mod$initial()) + 1L
+  i_state <- seq_along(model$initial()) + 1L
 
   ## Special treatment for the burn-in phase; later we might use this
   ## same approach for skipping steps though.
@@ -102,8 +102,8 @@ particle_filter <- function(data, model, compare, n_particles,
 
 
 particle_run_model <- function(y, step, model) {
-  mod$run(step, y, use_names = FALSE, return_minimal = TRUE,
-          replicate = ncol(y))[, 1, , drop = TRUE]
+  model$run(step, y, use_names = FALSE, return_minimal = TRUE,
+            replicate = ncol(y))[, 1, , drop = TRUE]
 }
 
 
