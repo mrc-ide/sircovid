@@ -4,8 +4,8 @@
 ##' @param params List of parameters of the model
 sircovid <- function(params) {
   survey_pop <- default_age_distribution()
-  ## pars_model <- parameters(
-  ##   beta = 0.042,
-  ##   survey_pop = survey_pop)
+  ## pars_model <- generate_parameters(
+  ##   beta = rep(0.042,3))
+  ##basic(user = pars_model)
   basic(user = params)
 }

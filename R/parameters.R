@@ -330,8 +330,8 @@ get_transmission_matrix <- function(
   {
     for (extra_age in age_limits[age_limits > 70]) 
     {
-      m <- cbind(transmission_matrix, transmission_matrix[,nrow(transmission_matrix)])
-      m <- rbind(transmission_matrix, transmission_matrix[nrow(transmission_matrix),])
+      transmission_matrix <- cbind(transmission_matrix, transmission_matrix[,nrow(transmission_matrix)])
+      transmission_matrix <- rbind(transmission_matrix, transmission_matrix[nrow(transmission_matrix),])
       
       # Adds columns in the format [70,80),80+
       prev_end_age <- stringr::str_match(tail(colnames(transmission_matrix), n = 1), '(\\d+)\\+')[1,2]
