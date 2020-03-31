@@ -224,24 +224,26 @@ compare_icu <- function(index, pars_obs, data) {
   index_ICU <- c(index$I_ICU) - 1L
   index_D <- c(index$D) - 1L
 
-  function(t, results, prev_states) {
+  ## This returns a closure, with the above variables bound, the
+  ## sampler will provide the arguments below.
+  function(t, state, prev_state) {
     if (is.na(data$itu[t] || is.na(data$deaths[t]))) {
       return(NULL)
     }
 
-    log_weights <- rep(0, ncol(results))
+    log_weights <- rep(0, ncol(state))
 
     if (!is.na(data$itu[t])) {
       ## sum model output across ages/infectivities
-      model_icu <- colSums(results[index_ICU, ])
+      model_icu <- colSums(state[index_ICU, ])
       log_weights <- log_weights +
         ll_nbinom(data$itu[t], model_icu, phi_ICU, k_ICU, exp_noise)
     }
 
     if (!is.na(data$deaths[t])) {
       ## new deaths summed across ages/infectivities
-      model_deaths <- colSums(results[index_D, ]) -
-        colSums(prev_states[index_D, ])
+      model_deaths <- colSums(state[index_D, ]) -
+        colSums(prev_state[index_D, ])
       log_weights <- log_weights +
         ll_nbinom(data$deaths[t], model_deaths, phi_death, k_death, exp_noise)
     }
