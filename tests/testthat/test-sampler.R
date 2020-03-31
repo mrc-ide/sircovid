@@ -135,7 +135,7 @@ test_that("particle filter data", {
                      b = 0:30 * 2)
   steps_per_day <- 4
 
-  d <- particle_filter_data(data, start, time_steps_per_day)
+  d <- particle_filter_data(data, start, steps_per_day)
   expect_equal(attr(d, "steps_per_day"), steps_per_day)
   attr(d, "steps_per_day") <-  NULL
 
