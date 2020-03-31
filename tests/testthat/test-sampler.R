@@ -95,3 +95,54 @@ test_that("systematic resample", {
   ans <- lapply(w, systematic_resample)
   expect_identical(cmp, ans)
 })
+
+
+test_that("particle filter data; error validation", {
+  start <- Sys.Date()
+  date <- start + 1:4
+  steps_per_day <- 4
+  expect_error(
+    particle_filter_data(1, start, steps_per_day),
+    "Expected a data.frame")
+  expect_error(
+    particle_filter_data(data.frame(a = 1:10), start, steps_per_day),
+    "Expected a column 'date' within 'data'")
+  expect_error(
+    particle_filter_data(data.frame(date = start - 0:4), start,
+                         steps_per_day),
+    "'date' must be strictly increasing")
+  expect_error(
+    particle_filter_data(data.frame(date = start + c(0, 1, 1, 2)),
+                         start, steps_per_day),
+    "'date' must be strictly increasing")
+  expect_error(
+    particle_filter_data(data.frame(date = date - 1), start, steps_per_day),
+    "'start_date' must be less than the first date in data")
+})
+
+
+test_that("particle filter data", {
+  start <- as.Date("2020-02-02")
+  data <- data.frame(date = as.Date("2020-03-01") + 0:30,
+                     a = 0:30,
+                     b = 0:30 * 2)
+  steps_per_day <- 4
+
+  d <- particle_filter_data(data, start, time_steps_per_day)
+  expect_equal(attr(d, "steps_per_day"), steps_per_day)
+  attr(d, "steps_per_day") <-  NULL
+
+  expect_equal(as.list(d[1, ]),
+               list(date = start, a = NA_integer_, b = NA_real_,
+                    day_start = 0, day_end = 27,
+                    step_start = 0, step_end = 108))
+  expect_equal(as.list(d[2, ]),
+               list(date = data$date[[1]], a = 0L, b = 0,
+                    day_start = 27, day_end = 28,
+                    step_start = 108, step_end = 112))
+  expect_equal(nrow(d), 32)
+  expect_equal(as.list(d[32, ]),
+               list(date = data$date[[31]], a = 30L, b = 60,
+                    day_start = 57, day_end = 58,
+                    step_start = 228, step_end = 232))
+})
