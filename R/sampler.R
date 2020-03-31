@@ -95,6 +95,9 @@ particle_filter <- function(data, model, compare, n_particles,
 
   ret <- list(log_likelihood = log_likelihood)
   if (save_particles) {
+    date <- d$date[[1]] + seq_len(nrow(particles)) - 1L
+    rownames(particles) <- as.character(date)
+    attr(particles, "date") <- date
     ret$states <- particles
   }
   ret
@@ -187,19 +190,16 @@ ll_nbinom <- function(data, model, phi, k, exp_noise) {
 
 ##' @importFrom graphics plot points matlines
 ##' @importFrom stats quantile
-plot_particles <- function(particles, particle_dates, data, data_dates, ylab) {
+plot_particles <- function(particles, ylab) {
   ## Need to set plot up first to get the dates to render on the axis
   ## (matplot does not cope with this)
-  plot(particle_dates, particles[,1], type="n",
-       ylab = ylab, ylim = range(particles))
+  dates <- as.Date(rownames(particles))
+  plot(dates, particles[, 1], type = "n", ylab = ylab, ylim = range(particles))
   ## Individual traces
-  matlines(particle_dates, particles, col="#ff444477", lty = 1)
-  ## Observed data
-  k <- !is.na(data)
-  points(as.Date(data_dates[k]), data[k], col='black', pch=19)
+  matlines(dates, particles, col="#ff444477", lty = 1)
   ## Quantiles
   quantiles <- t(apply(particles, 1, quantile, c(0.025, 0.5, 0.975)))
-  matlines(particle_dates, quantiles, col = "black", lty = "dashed")
+  matlines(dates, quantiles, col = "black", lty = "dashed")
 }
 
 

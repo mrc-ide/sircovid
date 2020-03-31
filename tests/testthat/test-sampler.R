@@ -46,17 +46,24 @@ test_that("sampler runs without error", {
   expect_setequal(names(Y), c("log_likelihood", "states"))
   ##                            t   state  particles
   expect_equal(dim(Y$states), c(58, 238,   100))
+
+  date <- as.Date("2020-02-02") + seq_len(nrow(Y$states)) - 1L
+  expect_equal(attr(Y$states, "date"), date)
+  expect_equal(rownames(Y$states), as.character(date))
+  ## Reset for comparison
+  attr(Y$states, "date") <- NULL
+  dimnames(Y$states) <- NULL
   expect_equal(Y, cmp)
 
   ## Testing plotting is always a nightmare
   if (FALSE) {
-    date <- as.Date(start_date) + seq_len(nrow(Y$states)) - 1L
-    particles <- apply(Y$states[, c(Y$index$I_ICU) - 1L, ], c(1, 3), sum)
-    plot_particles(particles = particles,
-                   particle_dates = date,
-                   data = data$itu / pars_obs$phi_ICU,
-                   data_dates = data$date,
-                   ylab = "ICU")
+    set.seed(1)
+    Y <- particle_filter(d, mod, compare, n_particles = 100,
+                         save_particles = TRUE)
+    index <- c(odin_index(mod)$I_ICU) - 1L
+    particles <- apply(Y$states[, index, ], c(1, 3), sum)
+    plot_particles(particles, ylab = "ICU")
+    points(as.Date(data$date), data$itu / pars_obs$phi_ICU, pch = 19)
   }
 })
 
