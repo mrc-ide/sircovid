@@ -14,7 +14,8 @@
 ##' @param gammas List of exponential distribution rates for time in each partition
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
 ##' 
-##' @param infection_seeding Vector of initial cases in each age bin
+##' @param infection_seeding Vector of initial cases in each age bin. These are seeded
+##'   into the most infective group
 ##' 
 ##' @param beta Beta, for each time step in \code{beta_times}
 ##' 
@@ -56,7 +57,7 @@ generate_parameters <- function(
   # Input checks
   #
   # Currently only POLYMOD possible, throws otherwise
-  if (length(trans_profile) != length(trans_classes)) {
+  if (length(trans_profile) != length(trans_increase)) {
     stop("Lengths of transmission class arguments mismatching")
   }
   
@@ -65,7 +66,7 @@ generate_parameters <- function(
     stop("Length of beta mismatching with length of transition times")
   }
   
-  if (length(age_groups) != length(infection_seeding))
+  if (length(age_limits) != length(infection_seeding))
   {
     stop("Length of age bins with length of infection seeds")
   }
@@ -95,7 +96,7 @@ generate_parameters <- function(
   #
   severity_params <- read_severity(
     severity_file = "extdata/Final_COVID_severity.csv",
-    age_limits = age_limits,
+    age_limits = age_limits
   )
   
   #
@@ -106,7 +107,7 @@ generate_parameters <- function(
     survey_pop = survey_pop,
     contact_survey = contact_survey,
     country = "United Kingdom",
-    age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)
+    age_limits = age_limits
   )
 
   #
@@ -117,9 +118,9 @@ generate_parameters <- function(
 
   # Makes an array with rows as age bins, columns as classes
   # All age bins have the same transmission changes
-  trans_profile_array <- array(unlist(lapply(trans_profile, rep, length(age_limits))), 
+  trans_profile_array <- array(unlist(lapply(trans_profile, rep, N_age_bins)), 
                          c(N_age_bins, N_trans_classes))
-  trans_increase_array <- array(unlist(lapply(trans_increase, rep, length(age_limits))), 
+  trans_increase_array <- array(unlist(lapply(trans_increase, rep, N_age_bins)), 
                           c(N_age_bins, N_trans_classes))
 
   #
@@ -138,26 +139,26 @@ generate_parameters <- function(
   # S0 = N, everything else zero
   #
   S0 <- survey_pop$population
-  E0 <- array(0, dim = c(N_age, progression_groups$E, N_trans_classes))
-  I0_asympt <- array(0, dim = c(N_age, progression_groups$asympt, N_trans_classes))
-  I0_mild <- array(0, dim = c(N_age, progression_groups$mild, N_trans_classes))
-  I0_ILI <- array(0, dim = c(N_age, progression_groups$ILI, N_trans_classes))
-  I0_hosp <- array(0, dim = c(N_age, progression_groups$hosp, N_trans_classes))
-  I0_ICU <- array(0, dim = c(N_age, progression_groups$ICU, N_trans_classes))
-  R0_hosp <- array(0, dim = c(N_age, progression_groups$rec, N_trans_classes))
-  R0 <- rep(0, N_age)
-  D0 <- rep(0, N_age)
+  E0 <- array(0, dim = c(N_age_bins, progression_groups$E, N_trans_classes))
+  I0_asympt <- array(0, dim = c(N_age_bins, progression_groups$asympt, N_trans_classes))
+  I0_mild <- array(0, dim = c(N_age_bins, progression_groups$mild, N_trans_classes))
+  I0_ILI <- array(0, dim = c(N_age_bins, progression_groups$ILI, N_trans_classes))
+  I0_hosp <- array(0, dim = c(N_age_bins, progression_groups$hosp, N_trans_classes))
+  I0_ICU <- array(0, dim = c(N_age_bins, progression_groups$ICU, N_trans_classes))
+  R0_hosp <- array(0, dim = c(N_age_bins, progression_groups$rec, N_trans_classes))
+  R0 <- rep(0, N_age_bins)
+  D0 <- rep(0, N_age_bins)
   
   # Add some initial infections to I_asympt
   # Move from susceptible to infected
-  I0_asympt[,1,3] <- infection_seeding
+  I0_asympt[,1,N_trans_classes] <- infection_seeding
   S0 <- S0 - infection_seeding
 
   #
   # Returns parameters
   #
-  parameter_list <- list(N_age = N_age,
-                         N_trans_classes = N_trans_classes,
+  parameter_list <- list(N_age = N_age_bins,
+                         trans_classes = N_trans_classes,
                          dt = dt,
                          S0 = S0,
                          E0 = E0,
@@ -171,7 +172,8 @@ generate_parameters <- function(
                          D0 = R0,
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
-                         beta = beta,
+                         beta_list = beta,
+                         beta = beta[1], # When odin is updated, set this list
                          beta_dates = beta_dates,
                          s_E = progression_groups$E,
                          gamma_E = gammas$E,
@@ -192,11 +194,10 @@ generate_parameters <- function(
                          p_death_hosp = severity_params$death_hosp,
                          p_recov_ILI = severity_params$recov_ILI,
                          p_recov_ICU = severity_params$recov_ICU,
-                         p_asympt = props$asympt,
-                         p_sympt_ILI = props$sympt_ILI,
+                         p_asympt = severity_params$asympt,
+                         p_sympt_ILI = severity_params$sympt_ILI,
                          hosp_transmission = hosp_transmission,
-                         ICU_transmission = ICU_transmission,
-  )
+                         ICU_transmission = ICU_transmission)
 
   parameter_list
 }
@@ -241,7 +242,7 @@ read_severity <- function(
   # Set up severity file into table
   # Use readr to avoid horrible column names
   severity_file_in <- sircovid_file(severity_file)
-  severity_params <- readr::read_csv(file = severity_file)
+  severity_params <- readr::read_csv(file = severity_file_in, col_types = readr::cols())
   colnames(severity_params)[1] <- "age"
   
   # Transpose so columns are parameters, rownames are age groups
@@ -253,39 +254,43 @@ read_severity <- function(
   age_bin_ends <- match_age_bins(age_limits, rownames(severity_params), severity_file)
   rownames(severity_params) <- age_bin_ends
   
-  # Parameter list to return
-  props <- list()
-  
   # Proportion of symptomatic
-  props['sympt'] <- 1 - as.numeric(severity_params[,'Proportion with any symptoms'])
+  p_sympt <- 1 - as.numeric(severity_params[,'Proportion with any symptoms'])
 
   #Proportion seeking healthcare
-  props['sympt_ILI'] <- as.numeric(severity_params[,'Proportion with any symptoms']) *
+  p_sympt_ILI <- as.numeric(severity_params[,'Proportion with any symptoms']) *
     as.numeric(severity_params[,'Proportion of infections needing critical care'])
   
-  props['recov_ICU'] <-
+  p_recov_ICU <-
     1 - as.numeric(severity_params[,'Proportion of hospitalised cases needing critical care'])
   
   #Proportion of ILI who recover without hospitalisation
-  props['recov_ILI'] <- 
+  p_recov_ILI <- 
     1 - as.numeric(severity_params[,'Proportion of symptomatic cases hospitalised'])
   
   #Proportion of hospitalised cases who recover without needing ICU
-  props['recov_hosp'] <- 
-    1 - as.numeric(severity_params["Proportion of cases seeking healthcare who are hospitalised"])
-      - as.numeric(severity_params["Proportion of critical cases dying"])
+  p_recov_hosp <- 
+    1 - as.numeric(severity_params[,"Proportion of cases seeking healthcare who are hospitalised"])
+      - as.numeric(severity_params[,"Proportion of critical cases dying"])
   
   #Proportion of hospitalised cases who die without receiveing critical care
-  props['death_hosp'] <- as.numeric(severity_params["Proportion of critical cases dying"])
+  p_death_hosp <- as.numeric(severity_params[,"Proportion of critical cases dying"])
   
-  props
+  props = list(
+    sympt = p_sympt,
+    sympt_ILI = p_sympt_ILI,
+    recov_ICU = p_recov_ICU,
+    recov_ILI = p_recov_ILI,
+    recov_hosp = p_recov_hosp
+    
+  )
 }
 
 ## Gets the population age distribution
 get_survey_pop <- function(survey_pop_in) {
   # Use the default, if no contact survey passed
   if (is.null(survey_pop_in)) {
-    survey_pop <- default_age_distribution()$population
+    survey_pop <- default_age_distribution()
   } else {
     # TODO this may need looking at for other age bins
     survey_pop <-
@@ -328,7 +333,7 @@ get_transmission_matrix <- function(
       # Adds columns in the format [70,80),80+
       prev_end_age <- stringr::str_match(tail(colnames(transmission_matrix), n = 1), '(\\d+)\\+')[1,2]
       new_colnames <- c(paste0("[", prev_end_age, ",", extra_age, ")"), paste0(extra_age, "+"))
-      colnames(transmission_matrix) <- c(colnames(transmission_matrix)[1:ncol(transmission_matrix) - 2], 
+      colnames(transmission_matrix) <- c(colnames(transmission_matrix)[1:(ncol(transmission_matrix) - 2)], 
                                          new_colnames)
     }
   }

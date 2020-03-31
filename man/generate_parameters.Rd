@@ -33,7 +33,8 @@ generate_parameters(
 \item{gammas}{List of exponential distribution rates for time in each partition
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'}
 
-\item{infection_seeding}{Vector of initial cases in each age bin}
+\item{infection_seeding}{Vector of initial cases in each age bin. These are seeded
+into the most infective group}
 
 \item{beta}{Beta, for each time step in \code{beta_times}}
 
