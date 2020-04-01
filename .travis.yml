@@ -4,3 +4,5 @@ language: R
 cache: packages
 r_github_packages:
   - mrc-ide/dde
+r_packages:
+  - covr
