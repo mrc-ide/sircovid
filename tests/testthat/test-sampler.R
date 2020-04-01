@@ -44,17 +44,9 @@ test_that("sampler runs without error", {
   mod <- sircovid(params = pars_model)
   compare <- compare_icu(mod, pars_obs, d)
 
-<<<<<<< HEAD
-  start_date <- as.Date("2020-02-02")
-  set.seed(1)
-  X <- particle_filter(data = data, pars_model, pars_obs, n_particles = 100,
-                       start_date = start_date,
-                       time_steps_per_day = time_steps_per_day)
-=======
   cmp <- readRDS("reference.rds")
   dimnames(cmp$states) <- NULL
   cmp$index <- NULL
->>>>>>> master
 
   set.seed(1)
   X <- particle_filter(d, mod, compare, n_particles = 100)
