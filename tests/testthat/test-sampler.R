@@ -68,9 +68,16 @@ test_that("sampler runs without error", {
   expect_equal(attr(Y$states, "date"), date)
   expect_equal(rownames(Y$states), as.character(date))
   ## Reset for comparison
-  attr(Y$states, "date") <- NULL
-  dimnames(Y$states) <- NULL
-  expect_equal(Y, cmp)
+  Y2 <- Y
+  attr(Y2$states, "date") <- NULL
+  dimnames(Y2$states) <- NULL
+  expect_equal(Y2, cmp)
+
+  set.seed(1)
+  Z <- particle_filter(d, mod, compare, n_particles = 100,
+                       save_particles = TRUE, forecast_days = 5)
+  expect_equal(dim(Z$states), c(63, 238, 100))
+  expect_equal(Z$states[1:58, , ], Y$states, check.attributes = FALSE)
 
   ## Testing plotting is always a nightmare
   if (FALSE) {

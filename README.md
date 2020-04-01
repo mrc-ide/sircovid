@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![Build Status](https://travis-ci.com/mrc-ide/sircovid.svg?branch=master)](https://travis-ci.com/mrc-ide/sircovid)
+[![Codecov test coverage](https://codecov.io/gh/mrc-ide/sircovid/branch/master/graph/badge.svg)](https://codecov.io/gh/mrc-ide/sircovid?branch=master)
 <!-- badges: end -->
 
 * Make changes to the model in `inst/odin`
