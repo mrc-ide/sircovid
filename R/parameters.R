@@ -71,6 +71,10 @@ generate_parameters <- function(
     stop("Length of age bins mismatches length of infection seeds")
   }
   
+  if (any(!is.wholenumber(age_limits))){
+    stop("Not yet implemented decimal age bins")
+  }
+  
   if (sum(trans_profile) != 1) {
     stop("trans_profile proportions must sum to 1")
   }
@@ -350,5 +354,6 @@ get_transmission_matrix <- function(
   transmission_matrix
 }
 
-
-
+# from is.integer() docs
+is.wholenumber <-
+  function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
