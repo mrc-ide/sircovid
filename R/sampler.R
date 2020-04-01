@@ -161,10 +161,15 @@ particle_filter_data <- function(data, start_date, steps_per_day) {
 
 
 ##' Compare the model to ICU data for use with the particle filter
+##' 
 ##' @title Compare model to ICU data
+##' 
 ##' @param model An \code{odin_model} object
+##' 
 ##' @param pars_obs Parameters for the observations
+##' 
 ##' @param data The data to be compared against
+##' 
 ##' @export
 compare_icu <- function(model, pars_obs, data) {
   index <- odin_index(model)

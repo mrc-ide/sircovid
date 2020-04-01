@@ -37,6 +37,8 @@
 ##'   and use the population from polymod when estimating the
 ##'   transmission matrix
 ##' 
+##' @return List of parameters for use with \code{sircovid}
+##' 
 ##' @export
 ##' @import socialmixr
 generate_parameters <- function(
