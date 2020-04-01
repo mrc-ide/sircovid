@@ -180,9 +180,8 @@ generate_parameters <- function(
                          D0 = R0,
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
-                         beta_list = beta,
-                         beta = beta[1], # When odin code is updated, set this list
-                         beta_dates = beta_dates,
+                         beta_y = beta,
+                         beta_t = beta_dates,
                          s_E = progression_groups$E,
                          gamma_E = gammas$E,
                          s_asympt = progression_groups$asympt,

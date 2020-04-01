@@ -207,9 +207,9 @@ s_rec <- user()
 gamma_rec <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta <- interpolate(tt,y, "constant")
-tt[] <- user()
-y[] <- user()
+beta <- interpolate(beta_t, beta_y, "constant")
+beta_t[] <- user()
+beta_y[] <- user()
 
 m[,] <- user()
 trans_profile[,] <- user()
@@ -219,8 +219,8 @@ ICU_transmission <- user()
 
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
 
-dim(tt) <- user()
-dim(y) <- user()
+dim(beta_t) <- user()
+dim(beta_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
