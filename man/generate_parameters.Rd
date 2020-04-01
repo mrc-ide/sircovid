@@ -21,7 +21,7 @@ generate_parameters(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  survey_pop = NULL
+  survey_pop_in = NULL
 )
 }
 \arguments{
@@ -56,7 +56,7 @@ into the most infective group}
 
 \item{dt}{Time-step to run the model in days}
 
-\item{survey_pop}{A survey population. Set to NULL to
+\item{survey_pop_in}{A survey population. Set to NULL to
 use \code{default_age_distribution()}}
 }
 \description{

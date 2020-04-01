@@ -47,15 +47,13 @@ generate_parameters <- function(
   gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7, rec = 2/3),
   infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0),
   beta = c(0.1, 0.1, 0.1),
-  beta_times = c('2020-02-02', '2020-03-01', '2020-04-01'),
+  beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
   trans_profile = c(0.65, 0.2, 0.15),
   trans_increase = c(0, 1, 10),
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  survey_pop_in = NULL
-  ) 
-{
+  survey_pop_in = NULL) {
   #
   # Input checks
   #
@@ -64,18 +62,15 @@ generate_parameters <- function(
     stop("Lengths of transmission class arguments mismatching")
   }
   
-  if (length(beta) != length(beta_times))
-  {
+  if (length(beta) != length(beta_times)) {
     stop("Length of beta mismatching with length of transition times")
   }
   
-  if (length(age_limits) != length(infection_seeding))
-  {
+  if (length(age_limits) != length(infection_seeding)) {
     stop("Length of age bins mismatches length of infection seeds")
   }
   
-  if (sum(trans_profile) != 1)
-  {
+  if (sum(trans_profile) != 1) {
     stop("trans_profile proportions must sum to 1")
   }
   
@@ -85,12 +80,22 @@ generate_parameters <- function(
     stop("Only POLYMOD transmission model implemented")
   }
   
-  partitions = c('E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec')
+  partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
   if (any(!(partitions %in% names(progression_groups)))) {
     stop("progression_groups need to be defined for all partitions")
   }
   if (any(!(partitions %in% names(gammas)))) {
     stop("gammas need to be defined for all partitions")
+  }
+  
+  #
+  # Set up time-varying beta
+  # Times are in days from first day supplied
+  beta_dates <- as.Date(beta_times)
+  beta_dates <- as.numeric(beta_dates - beta_dates[[1]])
+  # Checks all dates are positive and ascending
+  if (any(diff(beta_dates) < 0)) {
+    stop("Supplied dates are not increasing")
   }
   
   # 
@@ -99,33 +104,29 @@ generate_parameters <- function(
   #
   severity_params <- read_severity(
     severity_file = severity_data_file,
-    age_limits = age_limits
-  )
+    age_limits = age_limits)
   
   #
   # Set up the transmission matrix
   #
   survey_pop <- get_survey_pop(survey_pop_in)
-  if (is.null(survey_pop))
-  {
+  if (is.null(survey_pop)) {
     transmission_matrix <- get_transmission_matrix(
       contact_survey = contact_survey,
       country = "United Kingdom",
-      age_limits = age_limits
-    )
+      age_limits = age_limits)
   } else {
     transmission_matrix <- get_transmission_matrix(
       survey_pop = survey_pop,
       contact_survey = contact_survey,
       country = "United Kingdom",
-      age_limits = age_limits
-    )
+      age_limits = age_limits)
   }
 
   #
   # Set up the heterogeneous offspring distribution 
   #
-  N_age_bins = length(age_limits)
+  N_age_bins <- length(age_limits)
   N_trans_classes <- length(trans_profile)
 
   # Makes an array with rows as age bins, columns as classes
@@ -134,17 +135,6 @@ generate_parameters <- function(
                          c(N_age_bins, N_trans_classes))
   trans_increase_array <- array(unlist(lapply(trans_increase, rep, N_age_bins)), 
                           c(N_age_bins, N_trans_classes))
-
-  #
-  # Set up time-varying beta
-  # Times are in days from first day supplied
-  beta_dates = sapply(beta_times, as.Date) - as.numeric(as.Date(beta_times[1]))
-  # Checks all dates are positive and ascending
-  if (any(beta_dates < 0) || 
-      any((beta_dates[-1] - head(beta_dates, n=-1) < 0)))
-  {
-    stop("Supplied dates not increasing")
-  }
 
   #
   # Set the initial conditions for each partition
@@ -218,84 +208,82 @@ generate_parameters <- function(
 # Internal functions
 #
 
-## Check age bins match with input file - WARNING if mismatch
+## Check age bins match with input file - MESSAGE if mismatch
 ## TODO - could average these when alternative bins are provided
-match_age_bins <- function(
-  age_limits,
-  column_headers,
-  severity_file
-) 
-{
-  parsed_header <- column_headers %>% stringr::str_match("(\\d+) to (\\d+)")
-  bin_start <- as.numeric(parsed_header[,2])
+match_age_bins <- function(age_limits, age_headers, severity_file) {
+  bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_headers)
+  bin_start <- as.numeric(bin_start)
   bin_start[-1] <- bin_start[-1] - 1 # offset of one in definitions, except for 0
-  bin_end <-  as.numeric(parsed_header[,3])
+  bin_end <- gsub("(\\d+) to (\\d+)", "\\2", age_headers)
+  bin_end <-  as.numeric(bin_end)
   
   if (any(bin_start != age_limits)) {
-    warning_message <- paste0('Passed age bins do not match those in ',
+    warning_message <- paste0("Passed age bins do not match those in ",
                               severity_file)
-    warning(warning_message)
+    message(warning_message)
   }
-  if (any(head(bin_end, -1)+1 != bin_start[-1]))
-  {
-    warning_message <- 'Passed age bins do not overlap correctly'
-    warning(warning_message)
+  if (any(head(bin_end, -1)+1 != bin_start[-1])) {
+    warning_message <- "Passed age bins do not overlap correctly"
+    message(warning_message)
   }
   
   bin_start
 }
 
 ## Sets proportion parameters using severity CSV file
-read_severity <- function(
-  severity_file = "extdata/Final_COVID_severity.csv",
-  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)
-) 
-{
+read_severity <- function(severity_file_in = NULL, age_limits = NULL) {
+  if (is.null(severity_file_in)) {
+    severity_file <- sircovid_file("extdata/Final_COVID_severity.csv")
+  } else {
+    severity_file <- sircovid_file(severity_file_in)
+  }
+  age_limits <- age_limits %||% c(0, 10, 20, 30, 40, 50, 60, 70, 80)
+
   # Set up severity file into table
-  # Use readr to avoid horrible column names
-  severity_file_in <- sircovid_file(severity_file)
-  severity_params <- readr::read_csv(file = severity_file_in, col_types = readr::cols())
+  severity_params <- read.csv(severity_file, stringsAsFactors = FALSE, check.names = FALSE)
   colnames(severity_params)[1] <- "age"
   
   # Transpose so columns are parameters, rownames are age groups
-  severity_params <- t(severity_params)
-  colnames(severity_params) <- severity_params[1,]
-  severity_params <- severity_params[-1,]
+  severity_data <- t(as.matrix(severity_params[-1]))
+  colnames(severity_data) <- severity_params[[1]]
+  severity_data <- cbind(age = rownames(severity_data),
+             data.frame(severity_data, check.names = FALSE),
+             stringsAsFactors = FALSE)
+  rownames(severity_data) <- NULL
 
   # Check passed bins match those in file
-  age_bin_ends <- match_age_bins(age_limits, rownames(severity_params), severity_file)
-  rownames(severity_params) <- age_bin_ends
+  age_bin_ends <- match_age_bins(age_limits, severity_data[["age"]], severity_file)
+  severity_data[["age"]] <- age_bin_ends
   
   # Proportion of asymptomatic
-  p_asympt <- 1 - as.numeric(severity_params[,'Proportion with any symptoms'])
+  p_asympt <- 1 - severity_data[["Proportion with any symptoms"]]
 
   #Proportion seeking healthcare
-  p_sympt_ILI <- as.numeric(severity_params[,'Proportion with any symptoms']) *
-    as.numeric(severity_params[,'Proportion of symptomatic cases seeking healthcare'])
+  p_sympt_ILI <- severity_data[["Proportion with any symptoms"]] *
+    severity_data[["Proportion of symptomatic cases seeking healthcare"]]
   
   p_recov_ICU <-
-    1 - as.numeric(severity_params[,'Proportion of critical cases dying'])
+    1 - severity_data[["Proportion of critical cases dying"]]
   
   #Proportion of ILI who recover without hospitalisation
   p_recov_ILI <- 
-    1 - as.numeric(severity_params[,'Proportion of cases seeking healthcare who are hospitalised'])
+    1 - severity_data[["Proportion of cases seeking healthcare who are hospitalised"]]
   
   #Proportion of hospitalised cases who recover without needing ICU
   p_recov_hosp <- 
-    1 - as.numeric(severity_params[,"Proportion of hospitalised cases needing critical care"]) -
-      as.numeric(severity_params[,"Proportion of non-critical care cases dying"])
+    1 - severity_data[["Proportion of hospitalised cases needing critical care"]] -
+        severity_data[["Proportion of non-critical care cases dying"]]
   
   #Proportion of hospitalised cases who die without receiveing critical care
-  p_death_hosp <- as.numeric(severity_params[,"Proportion of non-critical care cases dying"])
+  p_death_hosp <- severity_data[["Proportion of non-critical care cases dying"]]
   
-  props = list(
+  props <- list(
     asympt = p_asympt,
     sympt_ILI = p_sympt_ILI,
     recov_ICU = p_recov_ICU,
     recov_ILI = p_recov_ILI,
     recov_hosp = p_recov_hosp,
-    death_hosp = p_death_hosp
-  )
+    death_hosp = p_death_hosp)
 }
 
 ## Gets the population age distribution
@@ -317,47 +305,44 @@ get_transmission_matrix <- function(
   survey_pop = NULL,
   contact_survey = socialmixr::polymod,
   country = "United Kingdom",
-  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)
-) 
-{
+  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)) {
   # Get the contact matrix from socialmixr; polymod only
   # goes up to age 70
-  if (is.null(survey_pop))
-  {
+  if (is.null(survey_pop)) {
     contact_matrix <- socialmixr::contact_matrix(
       contact_survey,
       countries = country,
       age.limits = age_limits[age_limits <= 70],
-      symmetric = TRUE
-    )
+      symmetric = TRUE)
   } else {
     contact_matrix <- socialmixr::contact_matrix(
       contact_survey,
       survey.pop = survey_pop,
       countries = country,
       age.limits = age_limits[age_limits <= 70],
-      symmetric = TRUE
-    )
+      symmetric = TRUE)
   }
-
   
   #transform the matrix to the (symetrical) transmission matrix rather than the contact matrix
-  transmission_matrix <- t(t(contact_matrix$matrix)/contact_matrix$demography$population)
+  transmission_matrix <- 
+    contact_matrix$matrix /
+    rep(contact_matrix$demography$population,
+        each = ncol(contact_matrix$matrix))
   
-  #assumes that the probability of contact remains as in POLYMOD
-  #and that contacts are the same in 70+ and 80+
-  if (any(age_limits > 70))
-  {
-    for (extra_age in age_limits[age_limits > 70]) 
-    {
+  # POLYMOD has a max age of 70, so older bins need to be filled in
+  # assumes that the probability of contact remains as in POLYMOD
+  # and that contacts are the same in 70+ and 80+
+  if (any(age_limits > 70)) {
+    for (extra_age in age_limits[age_limits > 70]) {
       transmission_matrix <- cbind(transmission_matrix, transmission_matrix[,nrow(transmission_matrix)])
       transmission_matrix <- rbind(transmission_matrix, transmission_matrix[nrow(transmission_matrix),])
       
       # Adds columns in the format [70,80),80+
-      prev_end_age <- stringr::str_match(tail(colnames(transmission_matrix), n = 1), '(\\d+)\\+')[1,2]
-      new_colnames <- c(paste0("[", prev_end_age, ",", extra_age, ")"), paste0(extra_age, "+"))
-      colnames(transmission_matrix) <- c(colnames(transmission_matrix)[1:(ncol(transmission_matrix) - 2)], 
-                                         new_colnames)
+      n <- ncol(transmission_matrix)
+      prev_end_age <- sub("\\+$", "", colnames(transmission_matrix)[n - 1L])
+      new_colnames <- c(sprintf("[%s, %s)", prev_end_age, extra_age),
+                        sprintf("%s+", extra_age))
+      colnames(transmission_matrix)[n - (1:0)] <- new_colnames
     }
   }
   
