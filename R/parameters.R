@@ -177,7 +177,7 @@ generate_parameters <- function(
                          I0_ICU = I0_ICU,
                          R0_hosp = R0_hosp,
                          R0 = R0,
-                         D0 = R0,
+                         D0 = D0,
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
                          beta_y = beta,
