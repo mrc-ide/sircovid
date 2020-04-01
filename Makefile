@@ -43,4 +43,7 @@ vignettes: vignettes/traduire.Rmd
 	mkdir -p inst/doc
 	cp vignettes/*.html vignettes/*.Rmd inst/doc
 
+inst/extdata/age_distribution.csv: scripts/default_age_distribution.R scripts/WPP2019_INT_F03_1_POPULATION_BY_AGE_ANNUAL_BOTH_SEXES.xlsx
+	./scripts/default_age_distribution.R
+
 .PHONY: all test document install vignettes
