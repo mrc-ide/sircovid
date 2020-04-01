@@ -32,9 +32,10 @@
 ##' @param ICU_transmission Tranmissions rate of ICU cases
 ##' 
 ##' @param dt Time-step to run the model in days
-##' 
-##' @param survey_pop_in A survey population. Set to NULL to
-##'   use \code{default_age_distribution()}
+##'   
+##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
+##'   and use the population from polymod when estimating the
+##'   transmission matrix
 ##' 
 ##' @export
 ##' @import socialmixr
@@ -53,7 +54,7 @@ generate_parameters <- function(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  survey_pop_in = NULL) {
+  use_polymod_pop = FALSE) {
   #
   # Input checks
   #
@@ -109,9 +110,10 @@ generate_parameters <- function(
   #
   # Set up the transmission matrix
   #
-  survey_pop <- get_survey_pop(survey_pop_in)
-  if (is.null(survey_pop)) {
+  survey_pop <- get_survey_pop(severity_params$population, age_limits)
+  if (use_polymod_pop) {
     transmission_matrix <- get_transmission_matrix(
+      survey_pop = NULL,
       contact_survey = contact_survey,
       country = "United Kingdom",
       age_limits = age_limits)
@@ -213,7 +215,6 @@ generate_parameters <- function(
 match_age_bins <- function(age_limits, age_headers, severity_file) {
   bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_headers)
   bin_start <- as.numeric(bin_start)
-  bin_start[-1] <- bin_start[-1] - 1 # offset of one in definitions, except for 0
   bin_end <- gsub("(\\d+) to (\\d+)", "\\2", age_headers)
   bin_end <-  as.numeric(bin_end)
 
@@ -223,7 +224,7 @@ match_age_bins <- function(age_limits, age_headers, severity_file) {
     stop(warning_message)
   }
   if (any(head(bin_end, -1)+1 != bin_start[-1])) {
-    warning_message <- "Passed age bins do not overlap correctly"
+    warning_message <- "Passed age bins intervals do not overlap correctly"
     message(warning_message)
   }
   
@@ -289,15 +290,13 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
 }
 
 ## Gets the population age distribution
-get_survey_pop <- function(survey_pop_in) {
+get_survey_pop <- function(survey_pop_in, age_bins) {
   # Use the default, if no contact survey passed
   if (is.null(survey_pop_in)) {
     survey_pop <- default_age_distribution()
   } else {
-    # TODO this may need looking at for other age bins
-    survey_pop <-
-      survey_pop_in[survey_pop_in$lower.age.limit %in%
-                   c(0, 10, 20, 30, 40, 50, 60, 70), ]
+    survey_pop <- data.frame(lower.age.limit = age_bins,
+                             population = survey_pop_in)
   }
   survey_pop
 }
@@ -307,7 +306,7 @@ get_transmission_matrix <- function(
   survey_pop = NULL,
   contact_survey = socialmixr::polymod,
   country = "United Kingdom",
-  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80)) {
+  age_limits = seq(0, 80, 5)) {
   # Get the contact matrix from socialmixr; polymod only
   # goes up to age 70
   if (is.null(survey_pop)) {
