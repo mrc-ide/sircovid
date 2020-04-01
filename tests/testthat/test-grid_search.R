@@ -14,6 +14,7 @@ test_that("Small grid search works") {
 
   #ignoring ITU on 15/03
   data$itu[which(data$date == as.Date("2020-03-15"))] <- NA
+  data <- data[data$countriesAndTerritories=="United_Kingdom",]
  
   scan_results = scan_beta_date(
     min_beta = 0.1,

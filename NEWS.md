@@ -1,3 +1,8 @@
+# sircovid 0.2.1
+
+- Adds time varying beta
+- Adds parameter grid search function
+
 # sircovid 0.2.0
 
 * Refactor the particle filter and parameter handling
