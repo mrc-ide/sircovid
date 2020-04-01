@@ -227,7 +227,7 @@ match_age_bins <- function(age_limits, age_headers, severity_file) {
                               severity_file)
     stop(warning_message)
   }
-  if (any(head(bin_end, -1)+1 != bin_start[-1])) {
+  if (any(utils::head(bin_end, - 1) + 1 != bin_start[-1])) {
     warning_message <- "Passed age bins intervals do not overlap correctly"
     message(warning_message)
   }
@@ -244,7 +244,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   }
 
   # Set up severity file into table
-  severity_params <- read.csv(severity_file, stringsAsFactors = FALSE, check.names = FALSE)
+  severity_params <- utils::read.csv(severity_file, stringsAsFactors = FALSE, check.names = FALSE)
   colnames(severity_params)[1] <- "age"
 
   # Transpose so columns are parameters, rownames are age groups
