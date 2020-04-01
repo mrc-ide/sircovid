@@ -7,13 +7,13 @@
 generate_parameters(
   transmission_model = "POLYMOD",
   country = "United Kingdom",
-  severity_data_file = "extdata/Final_COVID_severity.csv",
-  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),
+  severity_data_file = NULL,
+  age_limits = seq(0, 80, by = 5),
   progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec
     = 2),
   gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7,
     rec = 2/3),
-  infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0),
+  infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   beta = c(0.1, 0.1, 0.1),
   beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
   trans_profile = c(0.65, 0.2, 0.15),
@@ -21,7 +21,7 @@ generate_parameters(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  survey_pop_in = NULL
+  use_polymod_pop = FALSE
 )
 }
 \arguments{
@@ -56,8 +56,9 @@ into the most infective group}
 
 \item{dt}{Time-step to run the model in days}
 
-\item{survey_pop_in}{A survey population. Set to NULL to
-use \code{default_age_distribution()}}
+\item{use_polymod_pop}{Set to ignore \code{survey_pop_in}
+and use the population from polymod when estimating the
+transmission matrix}
 }
 \description{
 Create parameters for use with the model
