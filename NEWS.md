@@ -1,16 +1,20 @@
-#### 0.1.3
+# sircovid 0.2.0
 
-Facilitate passing the default population structure into the model
+* Refactor the particle filter and parameter handling
 
-#### 0.1.2
+# sircovid 0.1.3
 
-allows for chosing a small time-step in the model, argument passed using "dt" in days
+* Facilitate passing the default population structure into the model
 
-#### 0.1.1
+# sircovid 0.1.2
 
-corrects a bug in the number of people leaving the ICU compartment
+* allows for chosing a small time-step in the model, argument passed using "dt" in days
 
-#### 0.1.0
+# sircovid 0.1.1
 
-initial version of the model
+* corrects a bug in the number of people leaving the ICU compartment
+
+# sircovid 0.1.0
+
+* initial version of the model
 
