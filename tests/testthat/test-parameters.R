@@ -18,9 +18,13 @@ test_that("Parameters are generated as before", {
     use_polymod_pop = TRUE
   )
 
-  pars_model$beta_list <- NULL
-  pars_model$beta_dates <- NULL  
-  
+  pars_model$beta_t <- NULL
+  pars_model$beta_y <- NULL
+
   cmp <- readRDS("reference_pars.rds")
+
+  pars_model$beta <- NULL
+  cmp$beta <- NULL
+
   expect_mapequal(pars_model, cmp)
 })

@@ -6,3 +6,5 @@ r_github_packages:
   - mrc-ide/dde
 r_packages:
   - covr
+after_success:
+  - Rscript -e 'covr::codecov(quiet = FALSE)'
