@@ -9,10 +9,27 @@ test_that("sampler runs without error", {
                    stringsAsFactors = FALSE)
   d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
 
-  pars_model <- generate_parameter_rtm(
-    seed_SSP = 10,
-    dt = 1 / time_steps_per_day,
-    beta = 0.125)
+  pars_model <- generate_parameters(
+    transmission_model = "POLYMOD",
+    beta = rep(0.125, 3),
+    age_limits = seq(0, 80, 5),
+    infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+    gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/time_steps_per_day,
+    use_polymod_pop = TRUE
+  )
+  
+  # Manually set this parameter, to match previous results
+  ## Carried over from the initial NHS meeting
+  prop_symp_seek_HC <- c(0.3570377550, 0.3570377550, 0.3712946230,0.3712946230,	0.420792849,0.420792849,
+                         0.459552523,0.459552523,	0.488704572,0.488704572,	0.578769171,0.578769171,	0.65754772,0.65754772,	0.73278164,0.73278164,0.76501082)
+  #Proportion seeking healthcare
+  pars_model$p_sympt_ILI <- rep(0.66,length(prop_symp_seek_HC))*prop_symp_seek_HC
 
   pars_obs <- list(
     ## what should this be?
@@ -112,10 +129,9 @@ test_that("particle_filter error cases", {
                    stringsAsFactors = FALSE)
   d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
 
-  pars_model <- generate_parameter_rtm(
-    seed_SSP = 10,
+  pars_model <- generate_parameters(
     dt = 1 / time_steps_per_day,
-    beta = 0.125)
+    beta = rep(0.125, 3))
   pars_obs <- list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019,
                    k_death = 2, exp_noise = 1e6)
 

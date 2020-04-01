@@ -13,7 +13,11 @@ Authors@R:
       person(given = "Rich",
            family = "FitzJohn",
            role = c("aut"),
-           email = "r.fitzjohn@imperial.ac.uk"))
+           email = "r.fitzjohn@imperial.ac.uk"),
+      person(given = "John",
+           family = "Lees",
+           role = c("aut"),
+           email = "j.lees@imperial.ac.uk"))
 Description: Model for COVID-19, using odin.
 License: MIT + file LICENSE
 Encoding: UTF-8
