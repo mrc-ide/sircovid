@@ -41,11 +41,11 @@
 generate_parameters <- function(
   transmission_model = "POLYMOD",
   country="United Kingdom",
-  severity_data_file="extdata/Final_COVID_severity.csv",
-  age_limits = c(0, 10, 20, 30, 40, 50, 60, 70, 80),   #check about 10 etc. being in first or second age group
+  severity_data_file=NULL,
+  age_limits = seq(0, 80, by = 5),
   progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec = 2),
   gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7, rec = 2/3),
-  infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0),
+  infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   beta = c(0.1, 0.1, 0.1),
   beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
   trans_profile = c(0.65, 0.2, 0.15),
@@ -103,7 +103,7 @@ generate_parameters <- function(
   # derived from the Final_COVID_severity.csv file
   #
   severity_params <- read_severity(
-    severity_file = severity_data_file,
+    severity_file_in = severity_data_file,
     age_limits = age_limits)
   
   #
@@ -140,7 +140,7 @@ generate_parameters <- function(
   # Set the initial conditions for each partition
   # S0 = N, everything else zero
   #
-  S0 <- survey_pop$population
+  S0 <- severity_params$population
   E0 <- array(0, dim = c(N_age_bins, progression_groups$E, N_trans_classes))
   I0_asympt <- array(0, dim = c(N_age_bins, progression_groups$asympt, N_trans_classes))
   I0_mild <- array(0, dim = c(N_age_bins, progression_groups$mild, N_trans_classes))
@@ -216,11 +216,11 @@ match_age_bins <- function(age_limits, age_headers, severity_file) {
   bin_start[-1] <- bin_start[-1] - 1 # offset of one in definitions, except for 0
   bin_end <- gsub("(\\d+) to (\\d+)", "\\2", age_headers)
   bin_end <-  as.numeric(bin_end)
-  
+
   if (any(bin_start != age_limits)) {
     warning_message <- paste0("Passed age bins do not match those in ",
                               severity_file)
-    message(warning_message)
+    stop(warning_message)
   }
   if (any(head(bin_end, -1)+1 != bin_start[-1])) {
     warning_message <- "Passed age bins do not overlap correctly"
@@ -231,18 +231,17 @@ match_age_bins <- function(age_limits, age_headers, severity_file) {
 }
 
 ## Sets proportion parameters using severity CSV file
-read_severity <- function(severity_file_in = NULL, age_limits = NULL) {
+read_severity <- function(severity_file_in = NULL, age_limits) {
   if (is.null(severity_file_in)) {
-    severity_file <- sircovid_file("extdata/Final_COVID_severity.csv")
+    severity_file <- sircovid_file("extdata/severity.csv")
   } else {
-    severity_file <- sircovid_file(severity_file_in)
+    stop("This is so unlikely to work that we will look at it later")
   }
-  age_limits <- age_limits %||% c(0, 10, 20, 30, 40, 50, 60, 70, 80)
 
   # Set up severity file into table
   severity_params <- read.csv(severity_file, stringsAsFactors = FALSE, check.names = FALSE)
   colnames(severity_params)[1] <- "age"
-  
+
   # Transpose so columns are parameters, rownames are age groups
   severity_data <- t(as.matrix(severity_params[-1]))
   colnames(severity_data) <- severity_params[[1]]
@@ -251,25 +250,27 @@ read_severity <- function(severity_file_in = NULL, age_limits = NULL) {
              stringsAsFactors = FALSE)
   rownames(severity_data) <- NULL
 
+  population <- severity_data[["Size of England population"]]
+  
   # Check passed bins match those in file
   age_bin_ends <- match_age_bins(age_limits, severity_data[["age"]], severity_file)
   severity_data[["age"]] <- age_bin_ends
+
+  prop_symp_seek_HC <- severity_data[["Proportion of symptomatic cases seeking healthcare"]]
   
   # Proportion of asymptomatic
-  p_asympt <- 1 - severity_data[["Proportion with any symptoms"]]
+  p_asympt <- 1 - severity_data[["Proportion with symptoms"]]
 
   #Proportion seeking healthcare
-  p_sympt_ILI <- severity_data[["Proportion with any symptoms"]] *
-    severity_data[["Proportion of symptomatic cases seeking healthcare"]]
+  p_sympt_ILI <- severity_data[["Proportion with symptoms"]] *
+    prop_symp_seek_HC
   
   p_recov_ICU <-
     1 - severity_data[["Proportion of critical cases dying"]]
+
+  p_recov_ILI <- 1 - severity_data[["Proportion of symptomatic cases hospitalised"]] /
+    prop_symp_seek_HC
   
-  #Proportion of ILI who recover without hospitalisation
-  p_recov_ILI <- 
-    1 - severity_data[["Proportion of cases seeking healthcare who are hospitalised"]]
-  
-  #Proportion of hospitalised cases who recover without needing ICU
   p_recov_hosp <- 
     1 - severity_data[["Proportion of hospitalised cases needing critical care"]] -
         severity_data[["Proportion of non-critical care cases dying"]]
@@ -277,7 +278,8 @@ read_severity <- function(severity_file_in = NULL, age_limits = NULL) {
   #Proportion of hospitalised cases who die without receiveing critical care
   p_death_hosp <- severity_data[["Proportion of non-critical care cases dying"]]
   
-  props <- list(
+  list(
+    population = population, # TODO: should be integers
     asympt = p_asympt,
     sympt_ILI = p_sympt_ILI,
     recov_ICU = p_recov_ICU,
