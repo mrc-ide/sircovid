@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.1.3
+Version: 0.2.0
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -10,6 +10,10 @@ Authors@R:
            family = "Bathia",
            role = c("aut"),
            email = "s.bathia@imperial.ac.uk"),
+      person(given = "Rich",
+           family = "FitzJohn",
+           role = c("aut"),
+           email = "r.fitzjohn@imperial.ac.uk"),
       person(given = "John",
            family = "Lees",
            role = c("aut"),
@@ -19,15 +23,9 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    abind,
-    dde,
+    dde (>= 1.0.2),
     odin,
-    purrr,
-    readr,
-    readxl,
-    socialmixr,
-    stringr,
-    tidyr
+    socialmixr
 Suggests:
     testthat
 RoxygenNote: 7.1.0
