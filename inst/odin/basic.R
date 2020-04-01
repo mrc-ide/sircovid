@@ -25,6 +25,7 @@ update(R_hosp[,,]) <- R_hosp[i,j,k] + delta_R_hosp[i,j,k]
 
 update(D[]) <- D[i] + delta_D[i]
 
+output(beta) <- TRUE
 
 ## Stuff we want to track in addition to number of individuals
 ## in each compartment.
@@ -206,7 +207,10 @@ s_rec <- user()
 gamma_rec <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta <- user(0.2)
+beta <- interpolate(beta_t, beta_y, "constant")
+beta_t[] <- user()
+beta_y[] <- user()
+
 m[,] <- user()
 trans_profile[,] <- user()
 trans_increase[,] <- user()
@@ -214,6 +218,9 @@ hosp_transmission <- user()
 ICU_transmission <- user()
 
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
+
+dim(beta_t) <- user()
+dim(beta_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
