@@ -127,10 +127,9 @@ test_that("particle_filter error cases", {
                    stringsAsFactors = FALSE)
   d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
 
-  pars_model <- generate_parameter_rtm(
-    seed_SSP = 10,
+  pars_model <- generate_parameters(
     dt = 1 / time_steps_per_day,
-    beta = 0.125)
+    beta = rep(0.125, 3))
   pars_obs <- list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019,
                    k_death = 2, exp_noise = 1e6)
 
