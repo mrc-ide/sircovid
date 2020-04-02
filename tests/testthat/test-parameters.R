@@ -90,7 +90,11 @@ test_that("Bad inputs", {
                "Supplied dates are not increasing")
 })
 
-test_that("Malformatted severity file", {
+test_that("Malformatted severity files", {
   expect_error(generate_parameters(severity_data_file="extdata/Final_COVID_severity.csv"), 
                "Could not find the following rows in the severity file:")
+  expect_error(generate_parameters(severity_data_file="testdata/severity_test1.csv"), 
+               "Not yet implemented decimal age bins")
+  expect_message(generate_parameters(severity_data_file="testdata/severity_test2.csv"), 
+               "Passed age bins intervals do not overlap correctly")
 })
