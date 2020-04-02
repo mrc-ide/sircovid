@@ -21,11 +21,15 @@
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
 ##'   in unit tests.
 ##'   
+##' @param pars_obs list of parameters to use in comparison
+##'   with \code{compare_icu}.
+##'   
 ##' @return List of beta and start date grid values, and
 ##'   normalised probabilities at each point
 ##' 
 ##' @export
 ##' @import furrr
+##' @import future
 scan_beta_date <- function(
   min_beta, 
   max_beta, 
@@ -107,9 +111,9 @@ scan_beta_date <- function(
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
   # Display likelihood/probability surfaces across grid
-  image(x=beta_1D, y=date_list, z=mat_log_ll,
+  graphics::image(x=beta_1D, y=date_list, z=mat_log_ll,
         xlab="beta", ylab="Start date", main = "Log-likelihood")
-  image(x=beta_1D, y=date_list, z=renorm_mat_LL,
+  graphics::image(x=beta_1D, y=date_list, z=renorm_mat_LL,
         xlab="beta", ylab="Start date", main = "Probability")
   
   results <- list(beta_vals=param_grid$beta, 

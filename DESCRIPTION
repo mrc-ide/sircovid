@@ -27,6 +27,7 @@ Imports:
     dde (>= 1.0.2),
     odin,
     socialmixr,
+    future,
     furrr
 Suggests:
     testthat

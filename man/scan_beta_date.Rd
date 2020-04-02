@@ -36,6 +36,9 @@ and \code{particle_filter_data()}}
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
 in unit tests.}
+
+\item{pars_obs}{list of parameters to use in comparison
+with \code{compare_icu}.}
 }
 \value{
 List of beta and start date grid values, and
