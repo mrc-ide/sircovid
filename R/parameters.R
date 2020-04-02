@@ -67,7 +67,7 @@ generate_parameters <- function(
     stop("Length of beta mismatching with length of transition times")
   }
   
-  if (length(infection_seeding$values) != length(infection_seeding$values)) {
+  if (length(infection_seeding$values) != length(infection_seeding$bins)) {
     stop("Each infection seeding value must correspond to one bin")
   }
   
@@ -203,8 +203,7 @@ generate_parameters <- function(
                          p_asympt = severity_params$asympt,
                          p_sympt_ILI = severity_params$sympt_ILI,
                          hosp_transmission = hosp_transmission,
-                         ICU_transmission = ICU_transmission,
-                         age_bins = severity_params$age_bin_starts)
+                         ICU_transmission = ICU_transmission)
 
   parameter_list
 }
