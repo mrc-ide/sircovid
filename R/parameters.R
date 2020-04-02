@@ -8,16 +8,13 @@
 ##' 
 ##' @param severity_data_file Location of file with severity data
 ##' 
-##' @param age_limits Vector of age bin (starting age of each bin)
-##' 
 ##' @param progression_groups List of number of progression groups in each partition
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
 ##'   
 ##' @param gammas List of exponential distribution rates for time in each partition
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
 ##' 
-##' @param infection_seeding Vector of initial cases in each age bin. These are seeded
-##'   into the most infective group
+##' @param infection_seeding List of how many cases to seed in age bin
 ##' 
 ##' @param beta Beta, for each time step in \code{beta_times}
 ##' 
@@ -45,10 +42,10 @@ generate_parameters <- function(
   transmission_model = "POLYMOD",
   country="United Kingdom",
   severity_data_file=NULL,
-  age_limits = seq(0, 80, by = 5),
   progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec = 2),
   gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7, rec = 2/3),
-  infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+  infection_seeding = list(values=c(10),
+                           bins=c('15 to 19')),
   beta = c(0.1, 0.1, 0.1),
   beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
   trans_profile = c(0.65, 0.2, 0.15),
@@ -69,8 +66,8 @@ generate_parameters <- function(
     stop("Length of beta mismatching with length of transition times")
   }
   
-  if (length(age_limits) != length(infection_seeding)) {
-    stop("Length of age bins mismatches length of infection seeds")
+  if (length(infection_seeding$values) != length(infection_seeding$values)) {
+    stop("Each infection seeding value must correspond to one bin")
   }
   
   if (any(!is.wholenumber(age_limits))){
@@ -107,34 +104,32 @@ generate_parameters <- function(
   
   # 
   # This section defines proportions between partitions
-  # derived from the Final_COVID_severity.csv file
+  # derived from the severity.csv file
   #
-  severity_params <- read_severity(
-    severity_file_in = severity_data_file,
-    age_limits = age_limits)
+  severity_params <- read_severity(severity_data_file)
   
   #
   # Set up the transmission matrix
   #
-  survey_pop <- get_survey_pop(severity_params$population, age_limits)
+  survey_pop <- get_survey_pop(severity_params$population, severity_params$age_bin_starts)
   if (use_polymod_pop) {
     transmission_matrix <- get_transmission_matrix(
       survey_pop = NULL,
       contact_survey = contact_survey,
       country = "United Kingdom",
-      age_limits = age_limits)
+      age_limits = severity_params$age_bin_starts)
   } else {
     transmission_matrix <- get_transmission_matrix(
       survey_pop = survey_pop,
       contact_survey = contact_survey,
       country = "United Kingdom",
-      age_limits = age_limits)
+      age_limits = severity_params$age_bin_starts)
   }
 
   #
   # Set up the heterogeneous offspring distribution 
   #
-  N_age_bins <- length(age_limits)
+  N_age_bins <- length(severity_params$age_bin_starts)
   N_trans_classes <- length(trans_profile)
 
   # Makes an array with rows as age bins, columns as classes
@@ -161,7 +156,9 @@ generate_parameters <- function(
   
   # Add some initial infections to I_asympt
   # Move from susceptible to infected
-  I0_asympt[,1,N_trans_classes] <- infection_seeding
+  seed_bins <- parse_age_bins(infection_seeding$bins)
+  seed_idx <- match(severity_params$age_bin_starts, parse_age_bins$age_bin_starts)
+  I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
   S0 <- S0 - infection_seeding
 
   #
@@ -206,7 +203,8 @@ generate_parameters <- function(
                          p_asympt = severity_params$asympt,
                          p_sympt_ILI = severity_params$sympt_ILI,
                          hosp_transmission = hosp_transmission,
-                         ICU_transmission = ICU_transmission)
+                         ICU_transmission = ICU_transmission,
+                         age_bins = severity_params$age_bin_starts)
 
   parameter_list
 }
@@ -214,26 +212,28 @@ generate_parameters <- function(
 #
 # Internal functions
 #
-
-## Check age bins match with input file - MESSAGE if mismatch
-## TODO - could average these when alternative bins are provided
-match_age_bins <- function(age_limits, age_headers, severity_file) {
+parse_age_bins <- function(age_bin_strings) {
   bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_headers)
   bin_start <- as.numeric(bin_start)
   bin_end <- gsub("(\\d+) to (\\d+)", "\\2", age_headers)
   bin_end <-  as.numeric(bin_end)
+  
+  list(bin_start=bin_start,
+       bin_end=bin_end)
+}
 
-  if (any(bin_start != age_limits)) {
-    warning_message <- paste0("Passed age bins do not match those in ",
-                              severity_file)
-    stop(warning_message)
-  }
-  if (any(utils::head(bin_end, - 1) + 1 != bin_start[-1])) {
+
+## Check age bins match with input file - MESSAGE if mismatch
+## TODO - could average these when alternative bins are provided
+check_age_bins <- function(age_headers) {
+  bins = parse_age_bins(age_headers)
+
+  if (any(utils::head(bins$bin_end, - 1) + 1 != bins$bin_start[-1])) {
     warning_message <- "Passed age bins intervals do not overlap correctly"
     message(warning_message)
   }
   
-  bin_start
+  bins
 }
 
 ## Sets proportion parameters using severity CSV file
@@ -241,7 +241,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   if (is.null(severity_file_in)) {
     severity_file <- sircovid_file("extdata/severity.csv")
   } else {
-    stop("This is so unlikely to work that we will look at it later")
+    severity_file <- sircovid_file(severity_file_in)
   }
 
   # Set up severity file into table
@@ -256,11 +256,34 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
              stringsAsFactors = FALSE)
   rownames(severity_data) <- NULL
 
-  population <- severity_data[["Size of England population"]]
+  # Check file format
+  expected_cols <- c(
+    "Size of England population",
+    "Proportion of symptomatic cases seeking healthcare",
+    "Proportion with symptoms",
+    "Unadjusted_IFR",
+    "Adjusted_IFR to 1%",
+    "IFR relative to 80",
+    "Age specific scaling of ifr to give hospitalisation",
+    "Proportion of infections hospitalised compared to age 80",
+    "Proportion of infections hospitalised",
+    "Proportion of infections needing critical care",
+    "Proportion of symptomatic cases hospitalised",
+    "Proportion of hospitalised cases needing critical care",
+    "Proportion of critical cases dying",
+    "Proportion of non-critical care cases dying")
+  if (any(!(expected_cols %in% colnames(severity_data)))) {
+    missing <- expected_cols[which(!(expected_cols %in% colnames(severity_data)))]
+    error_message <- paste("Could not find the following rows in the severity file:", 
+                           missing, sep=" ")
+    stop("error_message")
+  }
   
-  # Check passed bins match those in file
-  age_bin_ends <- match_age_bins(age_limits, severity_data[["age"]], severity_file)
-  severity_data[["age"]] <- age_bin_ends
+  # Parse the age bins. Useful to keep both start and end depending on what
+  # function expects
+  age_bins <- check_age_bins(age_limits, severity_data[["age"]])
+  
+  population <- severity_data[["Size of England population"]]
 
   prop_symp_seek_HC <- severity_data[["Proportion of symptomatic cases seeking healthcare"]]
   
@@ -285,7 +308,9 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_death_hosp <- severity_data[["Proportion of non-critical care cases dying"]]
   
   list(
-    population = population, # TODO: should be integers
+    population = population,
+    age_bin_starts = age_bins$bin_start,
+    age_bin_ends = age_bins$bin_end,
     asympt = p_asympt,
     sympt_ILI = p_sympt_ILI,
     recov_ICU = p_recov_ICU,
