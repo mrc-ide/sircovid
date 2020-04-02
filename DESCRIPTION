@@ -26,7 +26,8 @@ Depends: R (>= 3.5.0)
 Imports:
     dde (>= 1.0.2),
     odin,
-    socialmixr
+    socialmixr,
+    furrr
 Suggests:
     testthat
 RoxygenNote: 7.1.0

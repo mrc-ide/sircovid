@@ -25,7 +25,6 @@
 ##'   normalised probabilities at each point
 ##' 
 ##' @export
-##' @import future
 ##' @import furrr
 scan_beta_date <- function(
   min_beta, 
