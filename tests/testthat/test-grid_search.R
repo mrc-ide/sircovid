@@ -1,28 +1,95 @@
 context("grid_search")
 
-## This is not a real test but simply tries to run the model
-test_that("Small grid search works") {
+# Only tests that a grid search can be run
+test_that("Small grid search works", {
   set.seed(1)
 
-  data <- read.csv("combin_time_series.csv")
-  mortality_data <- readRDS("mortaility_data.Rds")
-  
-  names(data)[names(data) == "number_of_confirmed_covid_19_patients_in_hdu_itu_at_0800_total"] <- "itu"
-  data$date <- as.Date(data$date,format="%Y-%m-%d")
-  data <- subset(data,date >= as.Date("2020-03-01"), select=c(date, itu))
-  data <- merge(data, mortality_data, by.x="date", by.y="dateRep", all.x=TRUE, all.y=TRUE)
-
-  #ignoring ITU on 15/03
-  data$itu[which(data$date == as.Date("2020-03-15"))] <- NA
-  data <- data[data$countriesAndTerritories=="United_Kingdom",]
+  data <- read.csv(sircovid_file("extdata/example.csv"),
+                   stringsAsFactors = FALSE)
  
+  # Parameters for run
+  min_beta <- 0.1
+  max_beta <- 0.2
+  beta_step <- 0.05
+  first_start_date <- "2020-01-21"
+  last_start_date <- "2020-01-22"
+  day_step <- 1
+  
   scan_results = scan_beta_date(
-    min_beta = 0.1,
-    max_beta = 0.2,
-    beta_step = 0.05,
-    start_date = "2020-01-21", 
-    end_date = "2020-01-22", 
-    day_step = 1,
+    min_beta = min_beta,
+    max_beta = max_beta,
+    beta_step = beta_step,
+    first_start_date = first_start_date, 
+    last_start_date = last_start_date, 
+    day_step = day_step,
     data = data)
    
-}
+  expect_is(scan_results, "list")
+  
+  beta_grid = seq(min_beta, max_beta, beta_step)
+  date_grid = seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
+  expect_equal(scan_results$beta_vals, rep(beta_grid, length(date_grid)))
+  expect_equal(scan_results$start_dates, rep(date_grid, each=length(beta_grid)))
+  expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
+  expect_true(all(scan_results$renorm_mat_LL < 1 & scan_results$renorm_mat_LL > 0))
+  
+  # No test of plotting
+  
+})
+
+test_that("Transmission is more likely", {
+  set.seed(1)
+  
+  data <- read.csv(sircovid_file("extdata/example.csv"),
+                   stringsAsFactors = FALSE)
+  
+  # Parameters for run
+  min_beta <- 0
+  max_beta <- 0.1
+  beta_step <- 0.1
+  first_start_date <- "2020-01-21"
+  last_start_date <- "2020-01-21"
+  day_step <- 1
+  
+  scan_results = scan_beta_date(
+    min_beta = min_beta,
+    max_beta = max_beta,
+    beta_step = beta_step,
+    first_start_date = first_start_date, 
+    last_start_date = last_start_date, 
+    day_step = day_step,
+    data = data)
+  
+  # No transmission b = 0 much less likely than some transmission b = 0.1
+  expect_lt(scan_results$renorm_mat_LL[[1]], scan_results$renorm_mat_LL[[2]])
+  
+})
+
+test_that("Unreasonable start dates are less likely", {
+  set.seed(1)
+  
+  data <- read.csv(sircovid_file("extdata/example.csv"),
+                   stringsAsFactors = FALSE)
+  
+  # Parameters for run
+  min_beta <- 0.1
+  max_beta <- 0.1
+  beta_step <- 0.1
+  first_start_date <- "2020-01-01"
+  last_start_date <- "2020-02-29"
+  day_step <- 20
+  
+  scan_results = scan_beta_date(
+    min_beta = min_beta,
+    max_beta = max_beta,
+    beta_step = beta_step,
+    first_start_date = first_start_date, 
+    last_start_date = last_start_date, 
+    day_step = day_step,
+    data = data)
+  
+  # Mid Jan start most likely
+  expect_gt(scan_results$renorm_mat_LL[[2]], scan_results$renorm_mat_LL[[1]])
+  expect_gt(scan_results$renorm_mat_LL[[2]], scan_results$renorm_mat_LL[[3]])
+  
+})

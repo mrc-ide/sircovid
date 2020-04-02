@@ -8,8 +8,8 @@ scan_beta_date(
   min_beta,
   max_beta,
   beta_step,
-  start_date,
-  end_date,
+  first_start_date,
+  last_start_date,
   day_step,
   data,
   model_params = NULL,
@@ -24,9 +24,9 @@ scan_beta_date(
 
 \item{beta_step}{Step to increment beta between min and max}
 
-\item{start_date}{Earliest start date as 'yyyy-mm-dd'}
+\item{first_start_date}{Earliest start date as 'yyyy-mm-dd'}
 
-\item{end_date}{Latest start date as 'yyyy-mm-dd'}
+\item{last_start_date}{Latest start date as 'yyyy-mm-dd'}
 
 \item{day_step}{Step to increment date in days}
 
