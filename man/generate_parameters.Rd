@@ -60,6 +60,9 @@ into the most infective group}
 and use the population from polymod when estimating the
 transmission matrix}
 }
+\value{
+List of parameters for use with \code{sircovid}
+}
 \description{
 Create parameters for use with the model
 }
