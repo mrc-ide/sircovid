@@ -8,12 +8,11 @@ generate_parameters(
   transmission_model = "POLYMOD",
   country = "United Kingdom",
   severity_data_file = NULL,
-  age_limits = seq(0, 80, by = 5),
   progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec
     = 2),
   gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7,
     rec = 2/3),
-  infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+  infection_seeding = list(values = c(10), bins = c("15 to 19")),
   beta = c(0.1, 0.1, 0.1),
   beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
   trans_profile = c(0.65, 0.2, 0.15),
@@ -31,16 +30,14 @@ generate_parameters(
 
 \item{severity_data_file}{Location of file with severity data}
 
-\item{age_limits}{Vector of age bin (starting age of each bin)}
-
 \item{progression_groups}{List of number of progression groups in each partition
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'}
 
 \item{gammas}{List of exponential distribution rates for time in each partition
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'}
 
-\item{infection_seeding}{Vector of initial cases in each age bin. These are seeded
-into the most infective group}
+\item{infection_seeding}{List of vector \code{values} of how many cases to seed 
+in a correspond vector of age bins in \code{bins}.}
 
 \item{beta}{Beta, for each time step in \code{beta_times}}
 

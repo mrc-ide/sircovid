@@ -14,7 +14,8 @@
 ##' @param gammas List of exponential distribution rates for time in each partition
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
 ##' 
-##' @param infection_seeding List of how many cases to seed in age bin
+##' @param infection_seeding List of vector \code{values} of how many cases to seed 
+##'  in a correspond vector of age bins in \code{bins}.
 ##' 
 ##' @param beta Beta, for each time step in \code{beta_times}
 ##' 
@@ -68,10 +69,6 @@ generate_parameters <- function(
   
   if (length(infection_seeding$values) != length(infection_seeding$values)) {
     stop("Each infection seeding value must correspond to one bin")
-  }
-  
-  if (any(!is.wholenumber(age_limits))){
-    stop("Not yet implemented decimal age bins")
   }
   
   if (sum(trans_profile) != 1) {
@@ -157,9 +154,12 @@ generate_parameters <- function(
   # Add some initial infections to I_asympt
   # Move from susceptible to infected
   seed_bins <- parse_age_bins(infection_seeding$bins)
-  seed_idx <- match(severity_params$age_bin_starts, parse_age_bins$age_bin_starts)
+  seed_idx <- match(seed_bins$bin_start, severity_params$age_bin_starts)
+  if (any(duplicated(seed_idx))) {
+    stop("Seeding is into the same bin multiple times")
+  }
   I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
-  S0 <- S0 - infection_seeding
+  S0[seed_idx] <- S0[seed_idx] - infection_seeding$values
 
   #
   # Returns parameters
@@ -213,10 +213,14 @@ generate_parameters <- function(
 # Internal functions
 #
 parse_age_bins <- function(age_bin_strings) {
-  bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_headers)
+  bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_bin_strings)
   bin_start <- as.numeric(bin_start)
-  bin_end <- gsub("(\\d+) to (\\d+)", "\\2", age_headers)
+  bin_end <- gsub("(\\d+) to (\\d+)", "\\2", age_bin_strings)
   bin_end <-  as.numeric(bin_end)
+  
+  if (any(!is.wholenumber(bin_start)) || any(!is.wholenumber(bin_end))){
+    stop("Not yet implemented decimal age bins")
+  }
   
   list(bin_start=bin_start,
        bin_end=bin_end)
@@ -276,12 +280,12 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     missing <- expected_cols[which(!(expected_cols %in% colnames(severity_data)))]
     error_message <- paste("Could not find the following rows in the severity file:", 
                            missing, sep=" ")
-    stop("error_message")
+    stop(error_message)
   }
   
   # Parse the age bins. Useful to keep both start and end depending on what
   # function expects
-  age_bins <- check_age_bins(age_limits, severity_data[["age"]])
+  age_bins <- check_age_bins(severity_data[["age"]])
   
   population <- severity_data[["Size of England population"]]
 
