@@ -13,8 +13,7 @@ scan_beta_date(
   day_step,
   data,
   model_params = NULL,
-  pars_obs = list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926/1019, k_death = 2,
-    exp_noise = 1e+06)
+  pars_obs = NULL
 )
 }
 \arguments{
@@ -45,5 +44,7 @@ List of beta and start date grid values, and
   normalised probabilities at each point
 }
 \description{
-Run a grid search of the particle filter over beta and start date
+Run a grid search of the particle filter over beta and start date.
+This is parallelised, first run \code{plan(multiprocess)} to set 
+this up.
 }

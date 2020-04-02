@@ -24,17 +24,18 @@ test_that("Small grid search works", {
     day_step = day_step,
     data = data)
    
-  expect_is(scan_results, "list")
+  expect_is(scan_results, "sircovid_scan")
   
   beta_grid = seq(min_beta, max_beta, beta_step)
   date_grid = seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
-  expect_equal(scan_results$beta_vals, rep(beta_grid, length(date_grid)))
-  expect_equal(scan_results$start_dates, rep(date_grid, each=length(beta_grid)))
+  expect_equal(scan_results$x, beta_grid)
+  expect_equal(scan_results$y, date_grid)
+  expect_equal(dim(scan_results$renorm_mat_LL), dim(scan_results$mat_log_ll))
   expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
   expect_true(all(scan_results$renorm_mat_LL < 1 & scan_results$renorm_mat_LL > 0))
   
-  # No test of plotting
-  
+  # Plots run, but not checked
+  plot(scan_results)
 })
 
 test_that("Transmission is more likely", {

@@ -1,4 +1,6 @@
-##' Run a grid search of the particle filter over beta and start date
+##' Run a grid search of the particle filter over beta and start date.
+##' This is parallelised, first run \code{plan(multiprocess)} to set 
+##' this up.
 ##' 
 ##' @title Grid search of beta and start date
 ##' 
@@ -112,15 +114,23 @@ scan_beta_date <- function(
   prob_matrix <- exp(mat_log_ll)
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
-  # Display likelihood/probability surfaces across grid
-  graphics::image(x=beta_1D, y=date_list, z=mat_log_ll,
-        xlab="beta", ylab="Start date", main = "Log-likelihood")
-  graphics::image(x=beta_1D, y=date_list, z=renorm_mat_LL,
-        xlab="beta", ylab="Start date", main = "Probability")
-  
-  results <- list(beta_vals=param_grid$beta, 
-                  start_dates=param_grid$start_date,
+  results <- list(x=beta_1D, 
+                  y=date_list,
+                  mat_log_ll=mat_log_ll,
                   renorm_mat_LL=renorm_mat_LL)
-  
+  class(results) <- "sircovid_scan"
   results
 }
+
+##' @export
+plot.sircovid_scan <- function(x, ..., what = "likelihood") {
+  if (what == "likelihood") {
+    graphics::image(x=x$x, y=x$y, z=x$mat_log_ll,
+                    xlab="beta", ylab="Start date", main = "Log-likelihood")
+  } else if (what == "probability") {
+    graphics::image(x=x$x, y=x$y, z=x$renorm_mat_LL,
+                    xlab="beta", ylab="Start date", main = "Probability")
+  }
+}
+
+
