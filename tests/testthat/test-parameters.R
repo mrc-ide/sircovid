@@ -42,12 +42,8 @@ test_that("Parameters generated as expected", {
   expect_equal(test_params$trans_classes, length(trans_profile))
   expect_equal(dim(test_params$trans_profile), dim(test_params$trans_profile))
   
-  for (class_idx in 1:length(trans_increase)) {
-    expect_true(all(test_params$trans_increase[,class_idx] == trans_increase[class_idx]))
-  }
-  for (class_idx in 1:length(trans_increase)) {
-    expect_true(all(test_params$trans_profile[,class_idx] == trans_profile[class_idx]))
-  }
+  expect_true(all(apply(test_params$trans_increase, 1, identical, trans_increase)))
+  expect_true(all(apply(test_params$trans_profile, 1, identical, trans_profile)))
   
   # Check that partition dimensions are as expected
   expect_length(test_params$S0, test_params$N_age)
