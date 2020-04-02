@@ -12,8 +12,6 @@ test_that("sampler runs without error", {
   pars_model <- generate_parameters(
     transmission_model = "POLYMOD",
     beta = rep(0.125, 3),
-    age_limits = seq(0, 80, 5),
-    infection_seeding = c(0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
     gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
     hosp_transmission = 0,
