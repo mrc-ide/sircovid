@@ -29,7 +29,6 @@
 ##' 
 ##' @export
 ##' @import furrr
-##' @import future
 scan_beta_date <- function(
   min_beta, 
   max_beta, 
@@ -39,11 +38,7 @@ scan_beta_date <- function(
   day_step,
   data, 
   model_params = NULL,
-  pars_obs = list(phi_ICU = 0.95,
-                  k_ICU = 2,
-                  phi_death = 926 / 1019,
-                  k_death = 2,
-                  exp_noise = 1e6)) {
+  pars_obs = NULL) {
   #
   # Set up parameter space to scan
   #
@@ -74,11 +69,18 @@ scan_beta_date <- function(
     }
   }
   
+  if (is.null(pars_obs)) {
+    pars_obs <- list(phi_ICU = 0.95,
+                     k_ICU = 2,
+                     phi_death = 926 / 1019,
+                     k_death = 2,
+                     exp_noise = 1e6)
+  }
+  
   #
   # Multi-core futures with furrr (parallel purrr)
   #
   ## Particle filter outputs
-  plan(multiprocess)
   pf_run_outputs <- furrr::future_pmap(
     param_grid,
     function(beta, start_date) {
@@ -95,13 +97,13 @@ scan_beta_date <- function(
     }
   )
   ## Extract Log-likelihoods
-  log_ll <- furrr::future_map(pf_run_outputs, ~ .$log_likelihood) 
+  log_ll <- furrr::future_map_dbl(pf_run_outputs, ~ .$log_likelihood) 
   
   ## Construct a matrix with start_date as columns, and beta as rows
   ## order of return is set by order passed to expand.grid, above
   ## Returned column-major (down columns of varying beta) - set byrow = FALSE
   mat_log_ll <- matrix(
-    as.numeric(log_ll), 
+    log_ll, 
     nrow = length(beta_1D),
     ncol = length(date_list),
     byrow = FALSE)
