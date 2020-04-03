@@ -22,7 +22,7 @@ sample_grid_scan <- function(scan_results,
                              n_particles = 100) {
   
   # checks on args
-  assert_custom_class(scan_results, "sircovid_scan")
+  assert_is(scan_results, "sircovid_scan")
   assert_pos_int(n_sample_pairs)
   assert_pos_int(n_particles)
   
