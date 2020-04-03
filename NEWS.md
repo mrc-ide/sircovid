@@ -1,3 +1,11 @@
+# sircovid 0.2.3
+
+- Add data, model_params and pars_obs to grid search return
+
+# sircovid 0.2.2
+
+- Fixing issues in generate_parameters and changed default parameters
+
 # sircovid 0.2.1
 
 - Adds time varying beta

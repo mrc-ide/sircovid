@@ -114,6 +114,7 @@ scan_beta_date <- function(
   prob_matrix <- exp(mat_log_ll)
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
+
   results <- list(x = beta_1D, 
                   y = date_list,
                   mat_log_ll = mat_log_ll,
