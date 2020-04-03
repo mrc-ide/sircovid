@@ -117,7 +117,11 @@ scan_beta_date <- function(
   results <- list(x=beta_1D, 
                   y=date_list,
                   mat_log_ll=mat_log_ll,
-                  renorm_mat_LL=renorm_mat_LL)
+                  renorm_mat_LL=renorm_mat_LL,
+                  inputs = list(
+                    model_params = model_params,
+                    pars_obs = pars_obs,
+                    data = data))
   class(results) <- "sircovid_scan"
   results
 }
