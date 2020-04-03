@@ -128,8 +128,11 @@ test_that("parameters can be generated", {
   expect_true(any(results$E[,,,,1]>0)) #check there were E cases (if yes, should be TRUE)
   expect_true(all(results$E[2:t_max,,2,,]==results$E[1:(t_max-1),,1,,])) 
 
+  # Check progression groups work for these parameters, even though
+  # they are no longer the default
   #gamma_asympt = Inf, I_asympt cases must progress in 1 time-step
-  pars_model <- generate_parameters(beta = rep(0.042, 3))
+  pars_model <- generate_parameters(beta = rep(0.042, 3),
+                                    progression_groups = list(E = 2, asympt = 2, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2))
   pars_model$gamma_asympt<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -138,7 +141,8 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_asympt[2:t_max,,2,,]==results$I_asympt[1:(t_max-1),,1,,])) 
 
   #gamma_mild = Inf, I_mild cases must progress in 1 time-step
-  pars_model <- generate_parameters(beta = rep(0.042, 3))
+  pars_model <- generate_parameters(beta = rep(0.042, 3),
+                                    progression_groups = list(E = 2, asympt = 1, mild = 2, ILI = 1, hosp = 2, ICU = 2, rec = 2))
   pars_model$gamma_mild<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -147,7 +151,8 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_mild[2:t_max,,2,,]==results$I_mild[1:(t_max-1),,1,,])) 
 
   #gamma_ILI = Inf, I_ILI cases must progress in 1 time-step
-  pars_model <- generate_parameters(beta = rep(0.042, 3))
+  pars_model <- generate_parameters(beta = rep(0.042, 3),
+                                    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 2, hosp = 2, ICU = 2, rec = 2))
   pars_model$gamma_ILI<-Inf
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -194,7 +199,8 @@ test_that("parameters can be generated", {
   expect_true(all(results$E[,,2,,]==0)) 
 
   #gamma_asympt=0, I_asympt stay in progression stage 1
-  pars_model <- generate_parameters(beta = rep(0.042, 3))
+  pars_model <- generate_parameters(beta = rep(0.042, 3),
+                                    progression_groups = list(E = 2, asympt = 2, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2))
   pars_model$gamma_asympt<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -203,7 +209,8 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_asympt[,,2,,]==0)) 
 
   #gamma_mild=0, I_mild stay in progression stage 1
-  pars_model <- generate_parameters(beta = rep(0.042, 3))
+  pars_model <- generate_parameters(beta = rep(0.042, 3),
+                                    progression_groups = list(E = 2, asympt = 1, mild = 2, ILI = 1, hosp = 2, ICU = 2, rec = 2))
   pars_model$gamma_mild<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
@@ -212,7 +219,8 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_mild[,,2,,]==0)) 
 
   #gamma_ILI=0, I_ILI stay in progression stage 1
-  pars_model <- generate_parameters(beta = rep(0.042, 3))
+  pars_model <- generate_parameters(beta = rep(0.042, 3),
+                                    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 2, hosp = 2, ICU = 2, rec = 2))
   pars_model$gamma_ILI<-0
   mod <- basic(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
