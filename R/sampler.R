@@ -188,7 +188,7 @@ compare_icu <- function(model, pars_obs, data) {
   ## This returns a closure, with the above variables bound, the
   ## sampler will provide the arguments below.
   function(t, state, prev_state) {
-    if (is.na(data$itu[t] || is.na(data$deaths[t]))) {
+    if (is.na(data$itu[t] && is.na(data$deaths[t]))) {
       return(NULL)
     }
 

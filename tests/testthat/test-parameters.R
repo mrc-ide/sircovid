@@ -71,7 +71,7 @@ test_that("Parameters generated as expected", {
 
 test_that("Bad inputs", {
   expect_error(generate_parameters(trans_profile = c(0, 1)), 
-               "Lengths of transmission class arguments mismatching")
+               "Lengths of transmissibility class arguments mismatching")
   expect_error(generate_parameters(trans_profile = c(0.5, 1), trans_increase = c(1,2)), 
                "trans_profile proportions must sum to 1")
   expect_error(generate_parameters(beta_times = c(0, 1)), 

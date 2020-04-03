@@ -4,6 +4,7 @@
 inst/doc
 .Renviron
 vignettes/*.html
+tests/testthat/Rplots.pdf
 build
 docs
 sircovid_*.tar.gz

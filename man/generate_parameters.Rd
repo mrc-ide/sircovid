@@ -8,15 +8,15 @@ generate_parameters(
   transmission_model = "POLYMOD",
   country = "United Kingdom",
   severity_data_file = NULL,
-  progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec
+  progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec
     = 2),
-  gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7,
-    rec = 2/3),
+  gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU
+    = 2/5, rec = 2/5),
   infection_seeding = list(values = c(10), bins = c("15 to 19")),
   beta = c(0.1, 0.1, 0.1),
   beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
-  trans_profile = c(0.65, 0.2, 0.15),
-  trans_increase = c(0, 1, 10),
+  trans_profile = c(1),
+  trans_increase = c(1),
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
