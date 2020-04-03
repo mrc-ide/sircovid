@@ -43,14 +43,14 @@ generate_parameters <- function(
   transmission_model = "POLYMOD",
   country="United Kingdom",
   severity_data_file=NULL,
-  progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp = 2, ICU = 2, rec = 2),
-  gammas = list(E = 1/(4.59/2), asympt = 1, mild = 1, ILI = 1, hosp = 2/7, ICU = 2/7, rec = 2/3),
+  progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+  gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5),
   infection_seeding = list(values=c(10),
                            bins=c('15 to 19')),
   beta = c(0.1, 0.1, 0.1),
   beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
-  trans_profile = c(0.65, 0.2, 0.15),
-  trans_increase = c(0, 1, 10),
+  trans_profile = c(1),
+  trans_increase = c(1),
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
@@ -60,7 +60,7 @@ generate_parameters <- function(
   #
   # Currently only POLYMOD possible, throws otherwise
   if (length(trans_profile) != length(trans_increase)) {
-    stop("Lengths of transmission class arguments mismatching")
+    stop("Lengths of transmissibility class arguments mismatching")
   }
   
   if (length(beta) != length(beta_times)) {
@@ -304,11 +304,12 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     prop_symp_seek_HC
   
   p_recov_hosp <- 
-    1 - severity_data[["Proportion of hospitalised cases needing critical care"]] -
-        severity_data[["Proportion of non-critical care cases dying"]]
+    (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+    (1 - severity_data[["Proportion of non-critical care cases dying"]])
   
   #Proportion of hospitalised cases who die without receiveing critical care
-  p_death_hosp <- severity_data[["Proportion of non-critical care cases dying"]]
+  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+                   severity_data[["Proportion of non-critical care cases dying"]]
   
   list(
     population = population,
@@ -324,13 +325,10 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
 
 ## Gets the population age distribution
 get_survey_pop <- function(survey_pop_in, age_bins) {
-  # Use the default, if no contact survey passed
-  if (is.null(survey_pop_in)) {
-    survey_pop <- default_age_distribution()
-  } else {
-    survey_pop <- data.frame(lower.age.limit = age_bins,
-                             population = survey_pop_in)
-  }
+  # Always use the population size from the severity file
+  survey_pop <- data.frame(lower.age.limit = age_bins,
+                           population = survey_pop_in)
+
   survey_pop
 }
 
