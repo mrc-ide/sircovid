@@ -28,7 +28,10 @@ test_that("sample_grid_scan works", {
                                        n_sample_pairs = 10, 
                                        n_particles = 100)
   
-  expect_equal(dim(sample_grid_scan), c(69, 238, 10))
+  # check length based on model and dates
+  days_between <- length(as.Date(first_start_date) : as.Date(tail(rownames(trajectories[,,1]),1)))
+  mod <- sircovid(scan_results$inputs$model_params)
+  expect_equal(dim(trajectories), c(days_between, length(mod$initial()), 10))
   
   ## Testing plotting is always a nightmare
   if (FALSE) {
