@@ -25,6 +25,8 @@ test_that("Small grid search works", {
     data = data)
    
   expect_is(scan_results, "sircovid_scan")
+  expect_true("inputs" %in% names(scan_results))
+  expect_true(all(names(scan_results$inputs) == c("model_params","pars_obs","data")))
   
   beta_grid = seq(min_beta, max_beta, beta_step)
   date_grid = seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
