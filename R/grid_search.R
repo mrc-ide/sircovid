@@ -114,10 +114,14 @@ scan_beta_date <- function(
   prob_matrix <- exp(mat_log_ll)
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
-  results <- list(x=beta_1D, 
-                  y=date_list,
-                  mat_log_ll=mat_log_ll,
-                  renorm_mat_LL=renorm_mat_LL)
+  results <- list(x = beta_1D, 
+                  y = date_list,
+                  mat_log_ll = mat_log_ll,
+                  renorm_mat_LL = renorm_mat_LL,
+                  inputs = list(
+                    model_params = model_params,
+                    pars_obs = pars_obs,
+                    data = data))
   class(results) <- "sircovid_scan"
   results
 }
