@@ -19,7 +19,7 @@ sircovid <- function(params) {
 ##' @param case_data_file CSV file containing COVID-19 cases, from
 ##'   the ECDC website 
 ##' 
-##' @param time_series_file Admission totals, from ncov-outputs
+##' @param admissions_data_file Admission totals, from ncov-outputs
 ##' 
 ##' @param itu_colname Name of the column in the time series file
 ##'   to be used for fitting ITU cases
