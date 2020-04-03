@@ -1,3 +1,7 @@
+# sircovid 0.2.4
+
+- Adds main sircovid function which runs on ncov-outputs
+
 # sircovid 0.2.3
 
 - Add data, model_params and pars_obs to grid search return

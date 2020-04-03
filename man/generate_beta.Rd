@@ -19,8 +19,9 @@ generate_beta(
 
 \item{reduction_start}{Start of reduction in beta}
 
-\item{beta_reduction}{Amount by which beta is reduced
-default is 0.238, as estimated by Jarvis et al}
+\item{beta_reduction}{Factor by which beta is reduced
+default is 0.238, as estimated by Jarvis et al
+beta_reduced = beta - beta * (1 - beta_reduction)}
 
 \item{reduction_period}{Time, in days, over which the
 reduction in beta is achieved. Default 10 days}
