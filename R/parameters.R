@@ -9,8 +9,9 @@
 ##' 
 ##' @param reduction_start Start of reduction in beta
 ##' 
-##' @param beta_reduction Amount by which beta is reduced
-##' default is 0.238, as estimated by Jarvis et al
+##' @param beta_reduction Factor by which beta is reduced
+##'   default is 0.238, as estimated by Jarvis et al
+##'   beta_reduced = beta - beta * (1 - beta_reduction)
 ##' 
 ##' @param reduction_period Time, in days, over which the
 ##' reduction in beta is achieved. Default 10 days
@@ -21,25 +22,25 @@ generate_beta <- function(beta_start,
                           reduction_start = "2020-03-16",
                           beta_reduction = 0.238, 
                           reduction_period = 10) {
-  if (as.Date(start_date) > as.Date(end_date)) {
-    stop("Start date must be earlier than end date")
+  if (as.Date(start_date) > as.Date(reduction_start)) {
+    stop("Start date must be earlier than intervention date")
   }
-  if (beta_reduction > beta_start) {
-    stop("beta cannot be reduced below 0")
+  if (beta_reduction < 0 || beta_reduction > 1) {
+    stop("beta must decrease, and cannot be reduced below 0")
   }
   if (reduction_period > 100) {
     message("Reduction period over 100 days - is this correct?")
   }
   
-  beta <- c(as.Date(start_date), 
-            seq(as.Date(reduction_start), as.Date(reduction_start) + 10, by=1))
+  beta_times <- c(as.Date(start_date), 
+            seq(as.Date(reduction_start), as.Date(reduction_start) + reduction_period - 1, by=1))
   
-  #Corresponding change in beta
-  beta_times <- beta_start - (seq(0, reduction_period - 1) * beta_start /
-                                ((reduction_period - 1) * (1 - beta_reduction )))
+  # Corresponding change in beta
+  # 
+  beta_slope <- beta_start * (1 - (1 - beta_reduction ) * (seq(0, reduction_period - 1) / (reduction_period - 1)))
   
-  list(beta=beta_t,
-       beta_dates=as.character(beta_times))
+  list(beta=c(beta_start, beta_slope),
+       beta_times=as.character(beta_times))
 }
 
 ##' Create parameters for use with the model
