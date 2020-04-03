@@ -304,11 +304,12 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     prop_symp_seek_HC
   
   p_recov_hosp <- 
-    (1 - severity_data[["Proportion of hospitalised cases needing critical care"]])*
-        (1-severity_data[["Proportion of non-critical care cases dying"]])
+    (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+    (1 - severity_data[["Proportion of non-critical care cases dying"]])
   
   #Proportion of hospitalised cases who die without receiveing critical care
-  p_death_hosp <- severity_data[["Proportion of non-critical care cases dying"]]*(1 - severity_data[["Proportion of hospitalised cases needing critical care"]])
+  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+                   severity_data[["Proportion of non-critical care cases dying"]]
   
   list(
     population = population,
