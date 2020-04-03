@@ -1,3 +1,7 @@
+# sircovid 0.2.4
+
+- Fixes a small bug with non-integer population size
+
 # sircovid 0.2.3
 
 - Add data, model_params and pars_obs to grid search return
