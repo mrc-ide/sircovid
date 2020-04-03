@@ -7,7 +7,11 @@
 sircovid(params)
 }
 \arguments{
-\item{params}{List of parameters of the model}
+\item{params}{List of parameters of the model. Get
+with \code{generate_parameters}}
+}
+\value{
+model object for use with \code{particle_filter()}
 }
 \description{
 Create a model
