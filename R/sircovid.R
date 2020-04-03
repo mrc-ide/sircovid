@@ -64,25 +64,45 @@ run_particle_filter <- function(case_data_file,
                                                   exp_noise = 1e6),
                                 n_particles = 1000) {
   
+  # parameter checks
+  if (as.Date(first_data_date, "%Y-%m-%d") < as.Date(model_start_date, "%Y-%m-%d")) {
+    stop("Model start date is later than data start date")
+  }
+  
   # Read death data file, and manipulate. Select country only, 
   # and ensure dates match up
-  case_data_file <- read.csv(death_data_file, sep = ",")
-  case_data_file$dateRep <- as.Date(case_data_file$dateRep, format="%d/%m/%Y") - case_file_day_shift
-  case_data_file <- case_data_file[case_data_file$dateRep >= as.Date(first_data_date),]
-  case_data_file <- case_data_file[case_data_file$countriesAndTerritories == country_name,]
+  case_data <- read.csv(case_data_file, sep = ",")
+  case_data$dateRep <- as.Date(case_data$dateRep, format="%d/%m/%Y") - case_file_day_shift
+  case_data <- case_data[case_data$dateRep >= as.Date(first_data_date),]
+  case_data <- case_data[case_data$countriesAndTerritories == country_name,]
+  if (nrow(case_data) < 1) {
+    stop("No case data matching country and date filtering criteria")
+  }
   
   # Open a time series and format
   # these are by task XX on ncov-outputs
-  admissions_data <- read.csv(time_series_file)
-  names(admissions_data)[names(admissions_data) == itu_colname] <- "itu"
+  admissions_data <- read.csv(admissions_data_file)
+  if (!(itu_colname %in% names(admissions_data))) {
+    stop("itu_colname not found in time_series_file")
+  } else {
+    names(admissions_data)[names(admissions_data) == itu_colname] <- "itu"
+  }
   admissions_data$date <- as.Date(admissions_data$date, format="%Y-%m-%d")
-  admissions_data <- admissions_data[admissions_data$dateRep >= as.Date(first_data_date),]
+  admissions_data <- admissions_data[admissions_data$date >= as.Date(first_data_date),]
+  if (nrow(admissions_data) < 1) {
+    stop("No admissions data matching date filtering criteria")
+  }
   
   # Merge mortality and admissions data, allowing NAs where there
   # is no overlap
-  data <- merge(admissions_data, death_data, 
+  data <- merge(admissions_data, case_data, 
                 by.x="date", by.y="dateRep",
                 all.x=TRUE, all.y=TRUE)[,c("date", "deaths", "itu")]
+  if (nrow(data) < 1 || 
+      nrow(data) == nrow(admissions_data) + nrow(case_data) || 
+      ncol(data) != 3) {
+    stop("Merge of case and admissions data failed - do dates match?")
+  }
   
   # Ignoring ITU on passed dates
   data[data$date == as.Date(itu_ignore_dates), "itu"] <- NA
