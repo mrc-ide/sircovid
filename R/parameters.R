@@ -325,13 +325,10 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
 
 ## Gets the population age distribution
 get_survey_pop <- function(survey_pop_in, age_bins) {
-  # Use the default, if no contact survey passed
-  if (is.null(survey_pop_in)) {
-    survey_pop <- default_age_distribution()
-  } else {
-    survey_pop <- data.frame(lower.age.limit = age_bins,
-                             population = survey_pop_in)
-  }
+  # Always use the population size from the severity file
+  survey_pop <- data.frame(lower.age.limit = age_bins,
+                           population = survey_pop_in)
+
   survey_pop
 }
 
