@@ -14,17 +14,18 @@
 ##' @param forecast_days Number of days to forecast forward from end
 ##'   states.  Requires that \code{save_particles} is \code{TRUE}.
 ##'
-##' @param save_particles Either 
-##' - TRUE indicating that we save full particle histories 
-##'   (this is slower).
-##' - 'last' which saves a single particle trajectory at the 
-##'    final time point found in the data
-##' - or FALSE indicating that no particles are saved
+##' @param save_particles Logical, indicating if we save full particle
+##'   histories (this is slower).
 ##'   
-##'
+##' @param save_sample_trajectory Logical, indicating whether we should save a
+##'  single particle trajectory, chosen at random, at the final time point found 
+##'  in the data
+##'   
 ##' @export
+##' 
 particle_filter <- function(data, model, compare, n_particles,
-                            forecast_days = 0, save_particles = FALSE) {
+                            forecast_days = 0, save_particles = FALSE, 
+                            save_sample_trajectory = FALSE) {
   if (!inherits(data, "particle_filter_data")) {
     stop("Expected a data set derived from particle_filter_data")
   }
@@ -34,21 +35,18 @@ particle_filter <- function(data, model, compare, n_particles,
   if (n_particles < 2) {
     stop("At least two particles required")
   }
-  if (forecast_days > 0 && save_particles != TRUE) {
-    stop("forecasting only possible if all particles are saved")
+  if (forecast_days > 0 && !save_particles) {
+    stop("forecasting only possible if particles are saved")
   }
   if (forecast_days < 0) {
     stop("forecast_days must be positive")
-  }
-  if (!(save_particles %in% c(TRUE, FALSE, 'last'))) {
-    stop("save_particles must be either TRUE, FALSE or 'last'")
   }
 
   i_state <- seq_along(model$initial()) + 1L
 
   ## Special treatment for the burn-in phase; later we might use this
   ## same approach for skipping steps though.
-  if (save_particles == TRUE) {
+  if (save_particles) {
     ## Storage for all particles:
     particles <- array(NA_real_,
                        c(max(data$day_end) + 1L + forecast_days,
@@ -60,7 +58,7 @@ particle_filter <- function(data, model, compare, n_particles,
     particles[seq_len(data$day_end[[1]] + 1), , ] <-
       state_with_history[, i_state, ]
     state <- state_with_history[length(step), i_state, , drop = TRUE]
-  } else  {
+  } else {
     particles <- NULL
     step <- c(data$step_start[[1L]], data$step_end[[1L]])
     state <- model$run(step = step, use_names = FALSE, replicate = n_particles,
@@ -72,7 +70,7 @@ particle_filter <- function(data, model, compare, n_particles,
     step <- c(data$step_start[t], data$step_end[t])
     prev_state <- state
     state <- particle_run_model(state, step, model)
-    if (save_particles == TRUE) {
+    if (save_particles) {
       particles[data$day_end[t] + 1L, , ] <- state
     }
 
@@ -87,7 +85,7 @@ particle_filter <- function(data, model, compare, n_particles,
 
       kappa <- resample(weights$weights, "systematic")
       state <- state[, kappa]
-      if (save_particles == TRUE) {
+      if (save_particles) {
         particles <- particles[, , kappa]
       }
     }
@@ -104,14 +102,15 @@ particle_filter <- function(data, model, compare, n_particles,
   }
 
   ret <- list(log_likelihood = log_likelihood)
-  if (save_particles == TRUE) {
+  if (save_particles) {
     date <- data$date[[1]] + seq_len(nrow(particles)) - 1L
     rownames(particles) <- as.character(date)
     attr(particles, "date") <- date
     ret$states <- particles
-  } else if (save_particles == 'last') {
+  } 
+  if (save_sample_trajectory) {
     particle_chosen <- sample.int(n = n_particles, size = 1)
-    ret$states <- state[, particle_chosen]
+    ret$sample_trajectory <- state[, particle_chosen]
     ret$particle_chosen <- particle_chosen
   }
   ret

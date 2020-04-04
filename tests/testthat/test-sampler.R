@@ -82,12 +82,12 @@ test_that("sampler runs without error", {
   
   set.seed(1)
   Y3 <- particle_filter(d, mod, compare, n_particles = 100,
-                        save_particles = "last")
+                        save_sample_trajectory = TRUE)
   expect_equal(Y$log_likelihood, Y3$log_likelihood)
-  expect_setequal(names(Y3), c("log_likelihood", "states", "particle_chosen"))
-  expect_equal(length(Y3$states), dim(Y$states)[2])
+  expect_setequal(names(Y3), c("log_likelihood", "sample_trajectory", "particle_chosen"))
+  expect_equal(length(Y3$sample_trajectory), dim(Y$states)[2])
   expect_equal(Y$states[nrow(Y$states), , Y3$particle_chosen], 
-               Y3$states,  
+               Y3$sample_trajectory,  
                check.attributes = FALSE)
   
 
@@ -172,7 +172,7 @@ test_that("particle_filter error cases", {
     "At least two particles required")
   expect_error(
     particle_filter(d, mod, compare, 100, forecast_days = 1),
-    "forecasting only possible if all particles are saved")
+    "forecasting only possible if particles are saved")
   expect_error(
     particle_filter(d, mod, compare, 100, forecast_days = -1),
     "forecast_days must be positive")
