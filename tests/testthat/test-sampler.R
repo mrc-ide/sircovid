@@ -65,6 +65,7 @@ test_that("sampler runs without error", {
   date <- as.Date("2020-02-02") + seq_len(nrow(Y$states)) - 1L
   expect_equal(attr(Y$states, "date"), date)
   expect_equal(rownames(Y$states), as.character(date))
+  
   ## Reset for comparison
   Y2 <- Y
   attr(Y2$states, "date") <- NULL
@@ -76,6 +77,20 @@ test_that("sampler runs without error", {
                        save_particles = TRUE, forecast_days = 5)
   expect_equal(dim(Z$states), c(63, 238, 100))
   expect_equal(Z$states[1:58, , ], Y$states, check.attributes = FALSE)
+  
+  # Test that outputting with 'last' particles is equal to final state from outputting TRUE particles
+  
+  set.seed(1)
+  Y3 <- particle_filter(d, mod, compare, n_particles = 100,
+                        save_particles = "last")
+  expect_equal(Y$log_likelihood, Y3$log_likelihood)
+  expect_setequal(names(Y3), c("log_likelihood", "states", "particle_chosen"))
+  expect_equal(length(Y3$states), dim(Y$states)[2])
+  expect_equal(Y$states[nrow(Y$states), , Y3$particle_chosen], 
+               Y3$states,  
+               check.attributes = FALSE)
+  
+
 
   ## Testing plotting is always a nightmare
   if (FALSE) {
@@ -157,7 +172,7 @@ test_that("particle_filter error cases", {
     "At least two particles required")
   expect_error(
     particle_filter(d, mod, compare, 100, forecast_days = 1),
-    "forecasting only possible if particles are saved")
+    "forecasting only possible if all particles are saved")
   expect_error(
     particle_filter(d, mod, compare, 100, forecast_days = -1),
     "forecast_days must be positive")
