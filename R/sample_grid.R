@@ -12,11 +12,13 @@
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
 ##'   
-##' @return Array of trajectories. First dimension is time, second is the state
-##'   and the third dimension is the index of the trajectory
+##' @return List. First element is an array of trajectories, in which
+##'  first dimension is time, second is parameters chosen when sampling from 
+##'  the grid and the third dimension is alist of inputs.
 ##' 
 ##' @export
 ##' @import furrr
+##' @importFrom utils tail
 sample_grid_scan <- function(scan_results, 
                              n_sample_pairs = 10, 
                              n_particles = 100) {
@@ -77,10 +79,31 @@ sample_grid_scan <- function(scan_results,
   
   
   # collapse into an array of trajectories
-  trajectories <- array(unlist(traces), 
-                        dim = c(nrow(traces[[1]]), ncol(traces[[1]]), length(traces)),
-                        dimnames = list(rownames(traces[[1]]), NULL, NULL))
+  # the trajectories are different lengths in terms of dates
+  # so we will fill the arrays with NAs where needed
+  num_rows <- unlist(lapply(traces, nrow))
+  max_rows <- max(num_rows)
+  seq_max <- seq_len(max_rows)
+  trajectories <- array(NA, 
+                        dim = c(max_rows, ncol(traces[[1]]), length(traces)),
+                        dimnames = list(rownames(traces[[which.max(num_rows)]]), NULL, NULL))
   
-  return(trajectories)
+  # fill the tail of the array slice
+  for (i in seq_len(length(traces))){
+    trajectories[tail(seq_max, nrow(traces[[i]])), , i] <- traces[[i]]
+  }
+
+  # combine and return
+  res <- list("trajectories" = trajectories,
+              "param_grid" = param_grid,
+              inputs = list(
+                model_params = model_params,
+                pars_obs = pars_obs,
+                data = data,
+                model = sircovid(params = model_params)))
+  
+  class(res) <- "sample_grid_search"
+  
+  return(res)
   
 }

@@ -250,7 +250,7 @@ plot_particles <- function(particles, ylab) {
   ## Need to set plot up first to get the dates to render on the axis
   ## (matplot does not cope with this)
   dates <- as.Date(rownames(particles))
-  plot(dates, particles[, 1], type = "n", ylab = ylab, ylim = range(particles))
+  plot(dates, particles[, 1], type = "n", ylab = ylab, ylim = range(particles, na.rm = TRUE))
   ## Individual traces
   matlines(dates, particles, col="#ff444477", lty = 1)
   ## Quantiles

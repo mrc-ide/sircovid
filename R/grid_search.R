@@ -139,3 +139,27 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood") {
 }
 
 
+##' @export
+plot.sample_grid_search <- function(x, ..., what = "ICU") {
+  
+  # what are we plotting
+  
+  if (what == "ICU") {
+    
+    index <- c(odin_index(x$inputs$model)$I_ICU) - 1L
+    ylab <- "ICU"
+    particles <- apply(x$trajectories[, index, ], c(1, 3), sum, na.rm = TRUE)
+    plot_particles(particles, ylab = ylab)
+    points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
+    
+  } else if(what == "Deaths") {
+    
+    index <- c(odin_index(x$inputs$model)$D) - 1L
+    ylab <- "Deaths"
+    particles <- apply(x$trajectories[, index, ], c(1, 3), sum, na.rm = TRUE)
+    plot_particles(particles, ylab = ylab)
+    points(as.Date(x$inputs$data$date), cumsum(x$inputs$data$deaths), pch = 19)
+    
+  } 
+  
+}

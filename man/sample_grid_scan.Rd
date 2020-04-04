@@ -15,8 +15,9 @@ Default = 10.}
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
 }
 \value{
-Array of trajectories. First dimension is time, second is the state
-  and the third dimension is the index of the trajectory
+List. First element is an array of trajectories, in which
+ first dimension is time, second is parameters chosen when sampling from 
+ the grid and the third dimension is alist of inputs.
 }
 \description{
 Take a grid search produced by \code{\link{scan_beta_date}} and 

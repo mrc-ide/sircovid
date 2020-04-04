@@ -4,18 +4,35 @@ context("sample_grid_scan")
 test_that("sample_grid_scan works", {
   set.seed(1)
   
+  # grab the data
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   
-  # Parameters for run
-  min_beta <- 0.1
-  max_beta <- 0.2
-  beta_step <- 0.05
-  first_start_date <- "2020-01-21"
-  last_start_date <- "2020-01-22"
-  day_step <- 1
   
-  scan_results = scan_beta_date(
+  # filter and tidy it
+  # Don't start the data until it is after thid date
+  data <- data[data$date > as.Date("2020-02-29"),]
+  
+  # which dates should be set to NA
+  na_dates <- as.Date(c("2020-03-01","2020-03-02","2020-03-03","2020-03-04",
+                        "2020-03-05","2020-03-06","2020-03-07","2020-03-08",
+                        "2020-03-15","2020-03-16","2020-03-19"))
+  data$itu[data$date %in% na_dates] <- NA
+  
+  # bring the deaths back by 2 days as ECDC is out of sync
+  data$deaths[head(seq_len(nrow(data)), -2)] <- tail(data$deaths, -2)
+  data$deaths[tail(seq_len(nrow(data)), 2)] <- NA
+  
+  
+  # Parameters for run
+  min_beta <- 0.10
+  max_beta <- 0.18
+  beta_step <- 0.04
+  first_start_date <- "2020-01-29"
+  last_start_date <- "2020-02-14"
+  day_step <- 6
+  
+  scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
     beta_step = beta_step,
@@ -24,22 +41,19 @@ test_that("sample_grid_scan works", {
     day_step = day_step,
     data = data)
   
-  trajectories <- sample_grid_scan(scan_results = scan_results,
-                                       n_sample_pairs = 10, 
+  n_sample_pairs <- 20 
+  res <- sample_grid_scan(scan_results = scan_results,
+                                       n_sample_pairs = n_sample_pairs, 
                                        n_particles = 100)
   
   # check length based on model and dates
-  days_between <- length(as.Date(first_start_date) : as.Date(tail(rownames(trajectories[,,1]),1)))
-  mod <- sircovid(scan_results$inputs$model_params)
-  expect_equal(dim(trajectories), c(days_between, length(mod$initial()), 10))
+  days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
+  expect_equal(dim(res$trajectories), c(days_between, length(res$inputs$model$initial()), n_sample_pairs))
   
   ## Testing plotting is always a nightmare
-  if (FALSE) {
-    mod <- sircovid(params = scan_results$inputs$model_params)
-    index <- c(odin_index(mod)$I_ICU) - 1L
-    particles <- apply(trajectories[, index, ], c(1, 3), sum)
-    plot_particles(particles, ylab = "ICU")
-    points(as.Date(data$date), data$itu / pars_obs$phi_ICU, pch = 19)
+  if (TRUE) {
+    plot(res, what = "ICU")
+    plot(res, what = "Deaths")
   }
   
 })
