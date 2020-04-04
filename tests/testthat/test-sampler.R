@@ -82,14 +82,10 @@ test_that("sampler runs without error", {
   
   set.seed(1)
   Y3 <- particle_filter(d, mod, compare, n_particles = 100,
-                        save_sample_trajectory = TRUE)
+                        save_sample_state = TRUE)
   expect_equal(Y$log_likelihood, Y3$log_likelihood)
-  expect_setequal(names(Y3), c("log_likelihood", "sample_trajectory", "particle_chosen"))
-  expect_equal(length(Y3$sample_trajectory), dim(Y$states)[2])
-  expect_equal(Y$states[nrow(Y$states), , Y3$particle_chosen], 
-               Y3$sample_trajectory,  
-               check.attributes = FALSE)
-  
+  expect_setequal(names(Y3), c("log_likelihood", "sample_state"))
+  expect_equal(length(Y3$sample_state), dim(Y$states)[2])
 
 
   ## Testing plotting is always a nightmare
