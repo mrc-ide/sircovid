@@ -1,0 +1,327 @@
+context("pmcmc")
+
+data <- read.csv(system.file("extdata/example.csv", 
+                             package = "sircovid", 
+                             mustWork = TRUE), stringsAsFactors = FALSE)
+
+test_that("pmcmc runs without error", {
+ 
+  n_mcmc <- 10
+  set.seed(1)
+  X <- pmcmc(
+    data = data, 
+    n_mcmc = n_mcmc
+  )
+  
+  
+ expect_is(X, 'list')
+ expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
+ expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
+ expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
+ 
+ ## set likelihood to accept every time with outlandish proposals
+ Y <- pmcmc(
+   data = data, 
+   n_mcmc = n_mcmc,
+   pars_sd = list('beta' = 10, 'start_date' = 1e2), 
+   log_likelihood = function(pars, ...) {
+     list('log_likelihood' = 0,
+          'sample_state' = rep(1, 238))
+   }
+ )
+ expect_equal(Y$results$log_likelihood, rep(0, n_mcmc + 1L))
+ # check that all proposals have been accepted
+ expect_true(all(diff(Y$results$beta) != 0))
+ # check that all start_dates are before data
+ expect_true(max(Y$results$start_date) <= data$date[1])
+ # check beta is in specified range
+ expect_true(min(Y$results$beta) > 0)
+ expect_true(max(Y$results$beta) < 1)
+ 
+
+  
+  
+})
+
+test_that("pmcmc error cases", {
+  n_mcmc <- 10
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_init = list(0.5,
+                       as.Date("2020-02-01"))
+    ),
+    "pars_init must be a list of length two with names 'beta' and 'start_date'"
+  )
+
+  ## beta too low
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_init = list('beta' = -1,
+                       'start_date' = as.Date("2020-02-01"))
+    ),
+    'initial parameters are outside of specified range'
+  )
+  
+  ## start_date too late
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_init = list('beta' = -1,
+                       'start_date' = as.Date(data$date[3]))
+    ),
+    'initial parameters are outside of specified range'
+  )
+  
+  # incorrect names supplied to pars_min
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_min  = list(0.5, 0)
+    ),
+    "pars_min must be a list of length two with names 'beta' and 'start_date'"
+  )
+  
+  # incorrect format for pars_min
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_min  = c('beta' = 0.5,
+                       'start_date' = 0)
+    ),
+    "pars_min must be a list of length two with names 'beta' and 'start_date'"
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_min  = list('beta' = 0.5,
+                    'start_date' = as.Date(data$date[1]))
+    ),
+    "pars_min entries must be numeric"
+  )
+  
+  # incorrect names supplied to pars_max
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_max  = list(0.5, 1e3)
+    ),
+    "pars_max must be a list of length two with names 'beta' and 'start_date'"
+  )
+  
+  # incorrect format for pars_max
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_max  = c('beta' = 0.5,
+                    'start_date' = 1e3)
+    ),
+    "pars_max must be a list of length two with names 'beta' and 'start_date'"
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_max  = list('beta' = 0.5,
+                       'start_date' = as.Date(data$date[1]))
+    ),
+    "pars_max entries must be numeric"
+  )
+  
+  
+  # incorrect names supplied to pars_sd
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_sd = list(0.5, 3)
+    ),
+    "pars_sd must be a list of length two with names 'beta' and 'start_date'"
+  )
+  
+  # incorrect format for pars_sd
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_sd  = c('beta' = 0.5,
+                    'start_date' = 3)
+    ),
+    "pars_sd must be a list of length two with names 'beta' and 'start_date'"
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_sd  = list('beta' = 0.5,
+                      'start_date' = as.Date(data$date[1]))
+    ),
+    "pars_sd entries must be numeric"
+  )
+  
+  # incorrect names supplied to pars_discrete
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_discrete = list(FALSE,TRUE)
+    ),
+    "pars_discrete must be a list of length two with names 'beta' and 'start_date'"
+  )
+  # incorrect format for pars_discrete
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_discrete = c('beta' = FALSE, 'start_date' = TRUE)
+    ),
+    "pars_discrete must be a list of length two with names 'beta' and 'start_date'"
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_discrete  = list('beta' = 0.5,
+                       'start_date' = as.Date(data$date[1]))
+    ),
+    "pars_discrete entries must be logical"
+  )
+  
+  ### checks on supplied log prior function
+
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_prior = function(pars) {
+        dunif(pars, min = 0, max = 1e6, log = TRUE)
+      }
+    ),
+    'log_prior must return a single numeric representing the log prior'
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_prior = function(pars) {
+        sum(dunif(pars, min = 0, max = 1e6))
+      }
+    ),
+    'log_prior must be negative or zero'
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_prior = function(pars) {
+        sum(dunif(pars, min = 1e6-1, max = 1e6, log = TRUE))
+      }
+    ),
+    'initial parameters are not compatible with supplied prior'
+  )
+  
+  # checks on supplied log likelihood function
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_likelihood = function(pars) {
+        dunif(pars, min = 0, max = 1e6, log = TRUE)
+      }
+    ),
+    'log_likelihood function must be able to take unnamed arguments'
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_likelihood = function(pars, ...) {
+        x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
+        list('log_likelihood' = x)
+      }
+    ),
+    "log_likelihood function must return a list containing elements $log_likelihood and $sample_state"
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_likelihood = function(pars, ...) {
+        x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
+        list('log_likelihood' = x, "sample_state" = x)
+      }
+    ),
+    'sample_state must be a vector of non-negative numbers'
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_likelihood = function(pars, ...) {
+        x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
+        list(x, rep(1, 236))
+      }
+    ),
+    'log_likelihood function must return a list containing elements $log_likelihood and $sample_state'
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_likelihood = function(pars, ...) {
+        x <- dunif(pars, min = 0, max = 1e6, log = TRUE)
+        list('log_likelihood'= x, 'sample_state' = rep(1, 236))
+      }
+    ),
+    'log_likelihood must be a single numeric representing the estimated log likelihood'
+  )
+  
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_likelihood = function(pars, ...) {
+        x <- sum(dunif(pars, min = 0, max = 1e6, log = FALSE))
+        list('log_likelihood'= x, 'sample_state' = rep(1, 236))
+      }
+    ),
+    'log_likelihood must be negative or zero'
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      log_likelihood = function(pars, ...) {
+        x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
+        list('log_likelihood'= x, 'sample_state' = rep(-1, 236))
+      }
+    ),
+    'sample_state must be a vector of non-negative numbers'
+  )
+ 
+  
+})
+
+
