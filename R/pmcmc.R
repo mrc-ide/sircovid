@@ -393,16 +393,15 @@ calc_loglikelihood <- function(pars, data, model_params,  steps_per_day, pars_ob
   # create sir_covid model
   mod <- sircovid(params = model_params)
 
-  d <- particle_filter_data(data, 
+  d <- particle_filter_data(data,
                             start_date = start_date, 
                             steps_per_day = steps_per_day)
   compare <- compare_icu(mod, pars_obs, d)
   X <- particle_filter(data = d, 
                        model = mod, 
                        compare = compare, 
-                       n_particles = n_particles)
-  # This is currently a placeholder for when the particle filter function in the sircovid package
-  # function is changed to allow output of a sample state 
-  X$sample_state <- rep(1, 238)
+                       n_particles = n_particles, 
+                       save_sample_state = TRUE)
+
   X
 }
