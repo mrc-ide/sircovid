@@ -1,25 +1,30 @@
-require(coda)
-
-
 ##' Run a pmcmc sampler
 ##'
 ##' @title Run a pmcmc sampler
 ##' 
 ##' @param data Data to fit to.  This must be constructed with
 ##'   \code{particle_filter_data}
+##'   
 ##' @param model_params Model parameters, from a call to
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
 ##'   in unit tests.
+##'   
 ##' @param pars_obs list of parameters to use in comparison
 ##'   with \code{compare_icu}. If NULL, uses
 ##'   list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
+##' 
 ##' @param pars_init named list of initial inputs for parameters being sampled (currently beta and start_date)
+##' 
 ##' @param pars_min named list of lower reflecting boundaries for parameter proposals
+##' 
 ##' @param pars_max named list of upper reflecting boundaries for parameter proposals
+##' 
 ##' @param pars_sd named list of proposal sds for parameters (currently normal dists, but can easily be made MVNorm)
+##' 
 ##' @param pars_discrete named list of logicals, indicating if proposed jump should be discrete
+##' 
 ##' @param log_likelihood function to calculate log likelihood, must take named parameter vector as input, 
 ##'                 allow passing of implicit arguments corresponding to the main function arguments. 
 ##'                 Returns a named list, with entries:
@@ -27,10 +32,14 @@ require(coda)
 ##'                   - $sample_state, a numeric vector corresponding to the state of a single particle, chosen at random, 
 ##'                   at the final time point for which we have data.
 ##'                   If NULL, calculated using the function calc_loglikelihood.
+##'                   
 ##' @param log_prior function to calculate log prior, must take named parameter vector as input, returns a single numeric.
 ##'                  If NULL, uses uninformative priors which do not affect the posterior
+##'                  
 ##' @param compare A function to generate log-weights
+##' 
 ##' @param n_particles Number of particles
+##' 
 ##' @param steps_per_day Number of steps per day
 ##' 
 ##' @return list of length two containing
@@ -68,9 +77,9 @@ require(coda)
 ##'      
 ##'   If the proposed parameters and states are accepted then we update the current parameters and states
 ##'   to match the proposal, otherwise the previous parameters/states are retained for the next iteration.
-##'      
-
-
+##'   
+##' @export
+##' @import coda
 pmcmc <- function(data,
                   n_mcmc, 
                   model_params = NULL,

@@ -4,9 +4,13 @@
 \alias{generate_beta}
 \title{Generate beta}
 \usage{
-generate_beta(beta_start, start_date = "2020-02-02",
-  reduction_start = "2020-03-16", beta_reduction = 0.238,
-  reduction_period = 10)
+generate_beta(
+  beta_start,
+  start_date = "2020-02-02",
+  reduction_start = "2020-03-16",
+  beta_reduction = 0.238,
+  reduction_period = 10
+)
 }
 \arguments{
 \item{beta_start}{Value of beta before intervention}
