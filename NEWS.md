@@ -1,3 +1,8 @@
+# sircovid 0.2.7
+
+- Adds sample_grid_scan for sampling from a grid to produce trajectories
+- Plotting function for sample_grid_search output
+
 # sircovid 0.2.6
 
 - Adds a new main, exported, sircovid function, which fits to data using a time-varying beta

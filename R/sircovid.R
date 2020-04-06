@@ -71,7 +71,7 @@ run_particle_filter <- function(case_data_file,
   
   # Read death data file, and manipulate. Select country only, 
   # and ensure dates match up
-  case_data <- read.csv(case_data_file, sep = ",")
+  case_data <- utils::read.csv(case_data_file, sep = ",")
   case_data$dateRep <- as.Date(case_data$dateRep, format="%d/%m/%Y") - case_file_day_shift
   case_data <- case_data[case_data$dateRep >= as.Date(first_data_date),]
   case_data <- case_data[case_data$countriesAndTerritories == country_name,]
@@ -81,7 +81,7 @@ run_particle_filter <- function(case_data_file,
   
   # Open a time series and format
   # these are by task XX on ncov-outputs
-  admissions_data <- read.csv(admissions_data_file)
+  admissions_data <- utils::read.csv(admissions_data_file)
   if (!(itu_colname %in% names(admissions_data))) {
     stop("itu_colname not found in time_series_file")
   } else {
