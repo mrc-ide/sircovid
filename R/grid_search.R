@@ -2,7 +2,8 @@
 #' @noRd
 beta_date_particle_filter <- function(beta, start_date, 
                                       model_params, data, 
-                                      pars_obs, n_particles) {
+                                      pars_obs, n_particles,
+                                      forecast_days = 0) {
   
   # Edit beta in parameters
   model_params$beta_y <- beta
@@ -13,8 +14,9 @@ beta_date_particle_filter <- function(beta, start_date,
   model_run <- sircovid(params = model_params)
   compare_func <- compare_icu(model_run, pars_obs, pf_data)
   
-  X <- particle_filter(pf_data, model_run, compare_func, 
-                       n_particles = n_particles, save_particles = TRUE)
+  X <- particle_filter(data = pf_data, model = model_run, compare = compare_func, 
+                       n_particles = n_particles, save_particles = TRUE,
+                       forecast_days = forecast_days)
   
 }
 
@@ -110,7 +112,8 @@ scan_beta_date <- function(
   pf_run_outputs <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
     model_params = model_params, data = data, 
-    pars_obs = pars_obs, n_particles = n_particles
+    pars_obs = pars_obs, n_particles = n_particles,
+    forecast_days = 0
   )
   
   ## Extract Log-likelihoods
