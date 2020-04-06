@@ -58,8 +58,6 @@ If NULL, uses uninformative priors which do not affect the posterior}
 \item{n_particles}{Number of particles}
 
 \item{steps_per_day}{Number of steps per day}
-
-\item{compare}{A function to generate log-weights}
 }
 \value{
 list of length two containing

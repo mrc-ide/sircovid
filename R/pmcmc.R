@@ -35,9 +35,7 @@
 ##'                   
 ##' @param log_prior function to calculate log prior, must take named parameter vector as input, returns a single numeric.
 ##'                  If NULL, uses uninformative priors which do not affect the posterior
-##'                  
-##' @param compare A function to generate log-weights
-##' 
+##'                   
 ##' @param n_particles Number of particles
 ##' 
 ##' @param steps_per_day Number of steps per day
