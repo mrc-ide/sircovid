@@ -17,8 +17,6 @@ test_that("there are no infections when beta is 0", {
 )
 
 test_that("everyone is infected when beta is Inf", {
-    skip("Large beta test giving non-integer populations")
-
     pars_model <- generate_parameters(beta = rep(1e100, 3))
     mod <- basic(user = pars_model)
     t_max <- 150
