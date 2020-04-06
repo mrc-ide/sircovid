@@ -331,7 +331,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   # function expects
   age_bins <- check_age_bins(severity_data[["age"]])
   
-  population <- severity_data[["Size of England population"]]
+  population <- round(severity_data[["Size of England population"]])
 
   prop_symp_seek_HC <- severity_data[["Proportion of symptomatic cases seeking healthcare"]]
   

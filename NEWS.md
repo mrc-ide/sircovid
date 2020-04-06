@@ -1,6 +1,6 @@
 # sircovid 0.2.4
 
-- Adds main sircovid function which runs on ncov-outputs
+- Fixes a small bug with non-integer population size
 
 # sircovid 0.2.3
 

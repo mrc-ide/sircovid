@@ -4,14 +4,8 @@
 \alias{particle_filter}
 \title{Run a particle filter}
 \usage{
-particle_filter(
-  data,
-  model,
-  compare,
-  n_particles,
-  forecast_days = 0,
-  save_particles = FALSE
-)
+particle_filter(data, model, compare, n_particles, forecast_days = 0,
+  save_particles = FALSE, save_sample_state = FALSE)
 }
 \arguments{
 \item{data}{Data to fit to.  This must be constructed with
@@ -28,6 +22,10 @@ states.  Requires that \code{save_particles} is \code{TRUE}.}
 
 \item{save_particles}{Logical, indicating if we save full particle
 histories (this is slower).}
+
+\item{save_sample_state}{Logical, indicating whether we should save a
+single particle, chosen at random, at the final time point for which 
+we have data}
 }
 \description{
 Run a particle filter
