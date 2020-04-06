@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.2.4
+Version: 0.2.5
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -14,6 +14,10 @@ Authors@R:
            family = "Knock",
            role = c("aut"),
            email = "e.knock@imperial.ac.uk"),
+      person(given = "Lilith",
+           family = "Whittles",
+           role = c("aut"),
+           email = "l.whittles@imperial.ac.uk"),
       person(given = "Rich",
            family = "FitzJohn",
            role = c("aut"),
