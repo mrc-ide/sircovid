@@ -4,7 +4,12 @@
 \alias{sample_grid_scan}
 \title{Sample Grid Scan}
 \usage{
-sample_grid_scan(scan_results, n_sample_pairs = 10, n_particles = 100)
+sample_grid_scan(
+  scan_results,
+  n_sample_pairs = 10,
+  n_particles = 100,
+  forecast_days = 0
+)
 }
 \arguments{
 \item{scan_results}{Output of \code{\link{scan_beta_date}}.}
@@ -14,6 +19,8 @@ determine how many trajectories are returned. Integer. Default = 10. This
 will determine how many trajectories are returned.}
 
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
+
+\item{forecast_days}{Number of days being forecast. Default = 0}
 }
 \value{
 \code{\link{list}}. First element (trajectories) is a 3 

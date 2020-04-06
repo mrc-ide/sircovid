@@ -12,6 +12,8 @@
 ##'   will determine how many trajectories are returned. 
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
+##' 
+##' @param forecast_days Number of days being forecast. Default = 0
 ##'   
 ##' @return \code{\link{list}}. First element (trajectories) is a 3 
 ##'   dimensional array of trajectories (time, state, tranjectories). Second 
@@ -24,19 +26,22 @@
 ##' @importFrom utils tail
 sample_grid_scan <- function(scan_results, 
                              n_sample_pairs = 10, 
-                             n_particles = 100) {
+                             n_particles = 100, 
+                             forecast_days = 0) {
   
   # checks on args
   assert_is(scan_results, "sircovid_scan")
   assert_pos_int(n_sample_pairs)
   assert_pos_int(n_particles)
+  assert_pos_int(forecast_days)
   
   # grab the pobability matrix
   prob <- scan_results$renorm_mat_LL
   nr <- nrow(prob)
   nc <- ncol(prob)
   
-  # construct what the x and y dimensions look like
+  # construct what the grid of beta and start values that 
+  # correspond to the z axis matrix
   x_grid <- matrix(scan_results$x, nrow = nr, ncol = nc)
   y_grid <- matrix(as.character(scan_results$y), nrow = nr, 
                    ncol = nc, byrow = TRUE)
@@ -62,7 +67,8 @@ sample_grid_scan <- function(scan_results,
   pf_run_outputs <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
     model_params = model_params, data = data, 
-    pars_obs = pars_obs, n_particles = n_particles
+    pars_obs = pars_obs, n_particles = n_particles,
+    forecast_days = forecast_days
   )
   
   # sample 1 particle from each run

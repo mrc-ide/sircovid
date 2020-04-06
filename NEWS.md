@@ -1,3 +1,7 @@
+# sircovid 0.2.8
+
+- sample_grid_scan can now accept forecast_days
+
 # sircovid 0.2.7
 
 - Adds sample_grid_scan for sampling from a grid to produce trajectories
