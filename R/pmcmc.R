@@ -272,25 +272,29 @@ pmcmc <- function(data,
   curr_ss <- p_filter_est$sample_state
   
 
-  ## combine into a vector to add to the results at the end
-  out_init <- c(curr_pars, 
+  res_init <- c(curr_pars, 
                 'log_prior' = curr_lprior, 
                 'log_likelihood' = curr_ll, 
                 'log_posterior' = curr_lpost) 
   
-  ss_init <- curr_ss
-
-  
   ## initialise output arrays
   
   res <- matrix(data = NA, 
-                nrow = n_mcmc, 
-                ncol = length(out_init), 
-                dimnames = list(NULL, names(out_init)))
+                nrow = n_mcmc + 1L, 
+                ncol = length(res_init), 
+                dimnames = list(NULL, 
+                                names(res_init)))
   
   states <- matrix(data = NA,
-                   nrow = n_mcmc, 
-                   ncol = length(ss_init))
+                   nrow = n_mcmc + 1L, 
+                   ncol = length(curr_ss))
+  
+  
+  
+  ## record initial results
+  res[1, ] <- res_init
+  states[1, ] <- curr_ss
+  
   
   
   ## create function to reflect proposal boundaries at pars_min and pars_max
@@ -321,7 +325,7 @@ pmcmc <- function(data,
   pb <- txtProgressBar(min = 0, max = n_mcmc, style = 3)
   
   # main pmcmc loop
-  for(iter in seq_len(n_mcmc)) {
+  for(iter in seq_len(n_mcmc) + 1L) {
     
     setTxtProgressBar(pb, iter)
     
@@ -361,18 +365,14 @@ pmcmc <- function(data,
   close(pb)
   
   
-  # include starting conditions in output
-  res <- rbind(out_init, res, deparse.level = 0)
   res <- as.data.frame(res)
   
   tmp <- coda::as.mcmc(res)
   rejection_rate <- coda::rejectionRate(tmp)
   ess <- coda::effectiveSize(tmp)
-  
+
   res$start_date <- as.Date(data$date[1]) - res$start_date
   
-  states <- rbind(ss_init, states, deparse.level = 0)
-
   
   
  list('inputs' = inputs, 
