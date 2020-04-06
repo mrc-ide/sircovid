@@ -1,20 +1,23 @@
 ##' Take a grid search produced by \code{\link{scan_beta_date}} and 
 ##' sample \code{n_sample_pairs} from the parameter grid uses based
-##' on their probaility. For each parameter pair chosen, run particle
+##' on their probability. For each parameter pair chosen, run particle
 ##' filter with \code{num_particles} and sample 1 trajectory
 ##' 
 ##' @title Sample Grid Scan
 ##' 
 ##' @param scan_results Output of \code{\link{scan_beta_date}}.
 ##' 
-##' @param n_sample_pairs Number of parameter pairs to be sampled. Integer.
-##'   Default = 10.
+##' @param n_sample_pairs Number of parameter pairs to be sampled. This will 
+##'   determine how many trajectories are returned. Integer. Default = 10. This 
+##'   will determine how many trajectories are returned. 
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
 ##'   
-##' @return List. First element is an array of trajectories, in which
-##'  first dimension is time, second is parameters chosen when sampling from 
-##'  the grid and the third dimension is alist of inputs.
+##' @return \code{\link{list}}. First element (trajectories) is a 3 
+##'   dimensional array of trajectories (time, state, tranjectories). Second 
+##'   element (param_grid) is the parameters chosen when  sampling from the 
+##'   \code{scan_results} grid and the third dimension (inputs) is a list of
+##'   model inputs. 
 ##' 
 ##' @export
 ##' @import furrr
@@ -35,7 +38,8 @@ sample_grid_scan <- function(scan_results,
   
   # construct what the x and y dimensions look like
   x_grid <- matrix(scan_results$x, nrow = nr, ncol = nc)
-  y_grid <- matrix(as.character(scan_results$y), nrow = nr, ncol = nc, byrow = TRUE)
+  y_grid <- matrix(as.character(scan_results$y), nrow = nr, 
+                   ncol = nc, byrow = TRUE)
   
   # draw which grid pairs are chosen
   pairs <- sample(x =  length(prob), size = n_sample_pairs, 
@@ -56,20 +60,9 @@ sample_grid_scan <- function(scan_results,
   
   ## Particle filter outputs
   pf_run_outputs <- furrr::future_pmap(
-    param_grid,
-    function(beta, start_date) {
-      # Edit beta in parameters
-      model_params$beta_y <- beta
-      model_params$beta_t <- 0
-      
-      # Objects used by particle filter run
-      pf_data <- particle_filter_data(data, start_date, steps_per_day= 1/model_params$dt)
-      model_run <- sircovid(params = model_params)
-      compare_func <- compare_icu(model_run, pars_obs, pf_data)
-      
-      X <- particle_filter(pf_data, model_run, compare_func, 
-                           n_particles = n_particles, save_particles = TRUE)
-    }
+    .l = param_grid, .f = beta_date_particle_filter,
+    model_params = model_params, data = data, 
+    pars_obs = pars_obs, n_particles = n_particles
   )
   
   # sample 1 particle from each run
@@ -84,11 +77,15 @@ sample_grid_scan <- function(scan_results,
   num_rows <- unlist(lapply(traces, nrow))
   max_rows <- max(num_rows)
   seq_max <- seq_len(max_rows)
+  max_date_names <- rownames(traces[[which.max(unlist(lapply(traces, nrow)))]])
+  
   trajectories <- array(NA, 
                         dim = c(max_rows, ncol(traces[[1]]), length(traces)),
-                        dimnames = list(rownames(traces[[which.max(num_rows)]]), NULL, NULL))
+                        dimnames = list(max_date_names, NULL, NULL))
   
   # fill the tail of the array slice
+  # This is so that the end of the trajectories array is populated, 
+  # and the start is padded with NA if it's shorter than the max. 
   for (i in seq_len(length(traces))){
     trajectories[tail(seq_max, nrow(traces[[i]])), , i] <- traces[[i]]
   }

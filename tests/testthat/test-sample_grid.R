@@ -27,10 +27,10 @@ test_that("sample_grid_scan works", {
   # Parameters for run
   min_beta <- 0.10
   max_beta <- 0.18
-  beta_step <- 0.04
+  beta_step <- 0.08
   first_start_date <- "2020-01-29"
   last_start_date <- "2020-02-14"
-  day_step <- 6
+  day_step <- 12
   
   scan_results <- scan_beta_date(
     min_beta = min_beta,
@@ -41,10 +41,10 @@ test_that("sample_grid_scan works", {
     day_step = day_step,
     data = data)
   
-  n_sample_pairs <- 20 
+  n_sample_pairs <- 4 
   res <- sample_grid_scan(scan_results = scan_results,
                                        n_sample_pairs = n_sample_pairs, 
-                                       n_particles = 100)
+                                       n_particles = 10)
   
   # check length based on model and dates
   days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))

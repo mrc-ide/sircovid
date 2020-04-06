@@ -13,7 +13,8 @@ scan_beta_date(
   day_step,
   data,
   model_params = NULL,
-  pars_obs = NULL
+  pars_obs = NULL,
+  n_particles = 100
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ in unit tests.}
 
 \item{pars_obs}{list of parameters to use in comparison
 with \code{compare_icu}.}
+
+\item{n_particles}{Number of particles. Positive Integer. Default = 100}
 }
 \value{
 List of beta and start date grid values, and

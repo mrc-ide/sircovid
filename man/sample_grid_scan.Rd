@@ -9,19 +9,22 @@ sample_grid_scan(scan_results, n_sample_pairs = 10, n_particles = 100)
 \arguments{
 \item{scan_results}{Output of \code{\link{scan_beta_date}}.}
 
-\item{n_sample_pairs}{Number of parameter pairs to be sampled. Integer.
-Default = 10.}
+\item{n_sample_pairs}{Number of parameter pairs to be sampled. This will 
+determine how many trajectories are returned. Integer. Default = 10. This 
+will determine how many trajectories are returned.}
 
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
 }
 \value{
-List. First element is an array of trajectories, in which
- first dimension is time, second is parameters chosen when sampling from 
- the grid and the third dimension is alist of inputs.
+\code{\link{list}}. First element (trajectories) is a 3 
+  dimensional array of trajectories (time, state, tranjectories). Second 
+  element (param_grid) is the parameters chosen when  sampling from the 
+  \code{scan_results} grid and the third dimension (inputs) is a list of
+  model inputs.
 }
 \description{
 Take a grid search produced by \code{\link{scan_beta_date}} and 
 sample \code{n_sample_pairs} from the parameter grid uses based
-on their probaility. For each parameter pair chosen, run particle
+on their probability. For each parameter pair chosen, run particle
 filter with \code{num_particles} and sample 1 trajectory
 }
