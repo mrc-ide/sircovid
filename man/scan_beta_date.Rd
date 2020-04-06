@@ -4,9 +4,17 @@
 \alias{scan_beta_date}
 \title{Grid search of beta and start date}
 \usage{
-scan_beta_date(min_beta, max_beta, beta_step, first_start_date,
-  last_start_date, day_step, data, model_params = NULL,
-  pars_obs = NULL)
+scan_beta_date(
+  min_beta,
+  max_beta,
+  beta_step,
+  first_start_date,
+  last_start_date,
+  day_step,
+  data,
+  model_params = NULL,
+  pars_obs = NULL
+)
 }
 \arguments{
 \item{min_beta}{Minimum value of beta in the search}

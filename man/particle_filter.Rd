@@ -4,8 +4,15 @@
 \alias{particle_filter}
 \title{Run a particle filter}
 \usage{
-particle_filter(data, model, compare, n_particles, forecast_days = 0,
-  save_particles = FALSE, save_sample_state = FALSE)
+particle_filter(
+  data,
+  model,
+  compare,
+  n_particles,
+  forecast_days = 0,
+  save_particles = FALSE,
+  save_sample_state = FALSE
+)
 }
 \arguments{
 \item{data}{Data to fit to.  This must be constructed with
