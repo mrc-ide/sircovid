@@ -90,11 +90,31 @@ test_that("Bad inputs", {
                "Supplied dates are not increasing")
 })
 
-test_that("Malformatted severity files", {
+test_that("Malformatted severity files are rejected", {
   expect_error(generate_parameters(severity_data_file="extdata/Final_COVID_severity.csv"), 
                "Could not find the following rows in the severity file:")
   expect_error(generate_parameters(severity_data_file="testdata/severity_test1.csv"), 
                "Not yet implemented decimal age bins")
   expect_message(generate_parameters(severity_data_file="testdata/severity_test2.csv"), 
                "Passed age bins intervals do not overlap correctly")
+})
+
+test_that("Time varying betas can be generated", {
+  
+  # Test time varying beta can be generated, and goes in and
+  # out of generate_parameters() correctly
+  beta = generate_beta(0.4, reduction_period = 3)
+  params = generate_parameters(beta = beta$beta,
+                               beta_times = beta$beta_times)
+  expect_equal(params$beta_t, c(0, 43, 44, 45))
+  expect_equal(params$beta_y, c(0.4000, 0.4000, 0.2476, 0.0952))
+  
+  # Error checking
+  expect_error(generate_beta(0.4, start_date = "2021-02-02", reduction_start = "2020-03-16"),
+               "Start date must be earlier than intervention date")
+  expect_error(generate_beta(0.4, beta_reduction = 1.2),
+               "beta must decrease, and cannot be reduced below 0")
+  expect_message(generate_beta(0.4, reduction_period = 1000),
+                 "Reduction period over 100 days - is this correct?")
+    
 })
