@@ -143,6 +143,7 @@ generate_parameters <- function(
   if (any(diff(beta_dates) < 0)) {
     stop("Supplied dates are not increasing")
   }
+  beta_t <- beta_dates/dt
   
   # 
   # This section defines proportions between partitions
@@ -225,7 +226,7 @@ generate_parameters <- function(
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
                          beta_y = beta,
-                         beta_t = beta_dates,
+                         beta_t = beta_t,
                          s_E = progression_groups$E,
                          gamma_E = gammas$E,
                          s_asympt = progression_groups$asympt,
