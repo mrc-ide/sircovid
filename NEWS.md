@@ -1,3 +1,11 @@
+# sircovid 0.2.6
+
+- Adds a new main, exported, sircovid function, which fits to data using a time-varying beta
+
+# sircovid 0.2.5
+
+- Adds the 'last' option to save_particles 
+
 # sircovid 0.2.4
 
 - Fixes a small bug with non-integer population size
