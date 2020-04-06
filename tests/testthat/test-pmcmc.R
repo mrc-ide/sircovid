@@ -257,7 +257,7 @@ test_that("pmcmc error cases", {
         list('log_likelihood' = x)
       }
     ),
-    "log_likelihood function must return a list containing elements $log_likelihood and $sample_state"
+    'log_likelihood function must return a list containing elements log_likelihood and sample_state'
   )
   
   expect_error(
@@ -281,7 +281,7 @@ test_that("pmcmc error cases", {
         list(x, rep(1, 236))
       }
     ),
-    'log_likelihood function must return a list containing elements $log_likelihood and $sample_state'
+    'log_likelihood function must return a list containing elements log_likelihood and sample_state'
   )
   
   expect_error(
@@ -319,6 +319,16 @@ test_that("pmcmc error cases", {
       }
     ),
     'sample_state must be a vector of non-negative numbers'
+  )
+
+# check error on time-varying beta
+  expect_error(
+    pmcmc(
+      data = data,
+      model_params = generate_parameters(),
+      n_mcmc = n_mcmc
+    ),
+    "Time-varying beta not yet supported by pmcmc_sampler"
   )
  
   

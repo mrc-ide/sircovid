@@ -261,10 +261,10 @@ pmcmc <- function(data,
   }
   
   if(length(p_filter_est) != 2) {
-    stop('log_likelihood function must return a list containing elements $log_likelihood and $sample_state')
+    stop('log_likelihood function must return a list containing elements log_likelihood and sample_state')
   }
   if(!setequal(names(p_filter_est), c('log_likelihood', 'sample_state'))) {
-    stop('log_likelihood function must return a list containing elements $log_likelihood and $sample_state')
+    stop('log_likelihood function must return a list containing elements log_likelihood and sample_state')
   }
   if(length(p_filter_est$log_likelihood) > 1) {
     stop('log_likelihood must be a single numeric representing the estimated log likelihood')
