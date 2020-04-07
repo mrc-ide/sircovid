@@ -68,14 +68,8 @@ sample_grid_scan <- function(scan_results,
     .l = param_grid, .f = beta_date_particle_filter,
     model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
-    forecast_days = forecast_days
+    forecast_days = forecast_days, return = "sample"
   )
-  
-  # sample 1 particle from each run
-  traces <- lapply(pf_run_outputs, function(x) {
-    x$states[,,sample(n_particles, 1)]
-  })
-  
   
   # collapse into an array of trajectories
   # the trajectories are different lengths in terms of dates

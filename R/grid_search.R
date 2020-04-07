@@ -1,9 +1,19 @@
-## Particle filter outputs
-#' @noRd
+##' Particle filter outputs
+##' 
+##' Set return depending on what is needed. 'full' gives
+##' the entire particle filter output, 'll' gives the
+##' log-likelihood, 'sample' gives a sampled particle's
+##' trace
+##' 
+##' @noRd
 beta_date_particle_filter <- function(beta, start_date, 
                                       model_params, data, 
                                       pars_obs, n_particles,
-                                      forecast_days = 0) {
+                                      forecast_days = 0,
+                                      return = "full") {
+  if (!(return %in% c("full", "ll", "sample"))) {
+    stop("return argument must be full, ll or sample")
+  }
   
   # Edit beta in parameters
   model_params$beta_y <- beta
@@ -18,6 +28,14 @@ beta_date_particle_filter <- function(beta, start_date,
                        n_particles = n_particles, save_particles = TRUE,
                        forecast_days = forecast_days)
   
+  if (return == "ll") {
+    ret <- X$log_likelihood
+  } else if (return == "sample") {
+    ret <- X$states[, ,sample(n_particles, 1)]
+  } else if (return == "full") {
+    ret <- X
+  }
+  ret
 }
 
 
@@ -108,16 +126,13 @@ scan_beta_date <- function(
   #
   # Multi-core futures with furrr (parallel purrr)
   #
-  ## Particle filter outputs
-  pf_run_outputs <- furrr::future_pmap(
+  ## Particle filter outputs, extracting log-likelihoods
+  pf_run_outputs <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
     model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
-    forecast_days = 0
+    forecast_days = 0, return = "ll"
   )
-  
-  ## Extract Log-likelihoods
-  log_ll <- furrr::future_map_dbl(pf_run_outputs, ~ .$log_likelihood) 
   
   ## Construct a matrix with start_date as columns, and beta as rows
   ## order of return is set by order passed to expand.grid, above
