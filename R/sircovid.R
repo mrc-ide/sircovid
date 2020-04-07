@@ -113,7 +113,7 @@ generate_data <- function(death_data_file,
 ##' @param return Set return depending on what is needed. 'full' gives
 ##'   the entire particle filter output, 'll' gives the
 ##'   log-likelihood, 'sample' gives a sampled particle's
-##'   trace
+##'   trace, 'single' gives the final state
 ##' 
 ##' @returns Results from particle filter
 ##' 
@@ -131,8 +131,8 @@ run_particle_filter <- function(data,
                                 save_particles = FALSE,
                                 return = "full") {
   # parameter checks
-  if (!(return %in% c("full", "ll", "sample"))) {
-    stop("return argument must be full, ll or sample")
+  if (!(return %in% c("full", "ll", "sample", "single"))) {
+    stop("return argument must be full, ll, sample or single")
   }
   if (as.Date(data$date[1], "%Y-%m-%d") < as.Date(model_start_date, "%Y-%m-%d")) {
     stop("Model start date is later than data start date")
@@ -140,6 +140,15 @@ run_particle_filter <- function(data,
   if (!save_particles && return == "sample") {
     message("Must save particles to sample runs")
     save_particles <- TRUE
+  }
+  if (save_particles && return == "single") {
+    stop("Cannot save particles if only returning a single state")
+  }
+  
+  if (return == "single") {
+    save_sample_state <- TRUE
+  } else {
+    save_sample_state <- FALSE
   }
 
   #convert data into particle-filter form
@@ -158,14 +167,17 @@ run_particle_filter <- function(data,
                                 compare = compare_func, 
                                 n_particles = n_particles, 
                                 save_particles = save_particles,
-                                forecast_days = forecast_days)  
+                                forecast_days = forecast_days,
+                                save_sample_state = save_sample_state)  
   
   # Set return type
+  # 'full' and 'single' are handled by particle_filter()
+  # as long as the right parameters are given
   if (return == "ll") {
     ret <- pf_results$log_likelihood
   } else if (return == "sample") {
     ret <- pf_results$states[, ,sample(n_particles, 1)]
-  } else if (return == "full") {
+  } else if (return == "single" || return == "full") {
     ret <- pf_results
   }
   

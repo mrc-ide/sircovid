@@ -37,7 +37,7 @@ model to data in the particle filter}
 \item{return}{Set return depending on what is needed. 'full' gives
 the entire particle filter output, 'll' gives the
 log-likelihood, 'sample' gives a sampled particle's
-trace}
+trace, 'single' gives the final state}
 }
 \value{
 Results from particle filter

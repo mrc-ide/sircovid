@@ -87,5 +87,5 @@ test_that("Bad parameters throws errors", {
                                      n_particles = 1000,
                                      save_particles = FALSE,
                                      return = "lll"),
-                 "return argument must be full, ll or sample")
+                 "return argument must be full, ll, sample or single")
 })
