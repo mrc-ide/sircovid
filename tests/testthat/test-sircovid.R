@@ -19,7 +19,7 @@ test_that("Can be run on real data", {
                                                    exp_noise = 1e6),
                                  n_particles = 1000)
   # No check of correctness  
-  expect_equal(results$log_likelihood, -14074.79, tolerance=1e-3)
+  expect_equal(results$log_likelihood, -269.9478, tolerance=1e-3)
 })
 
 test_that("Poor formatting of real data errors", {
