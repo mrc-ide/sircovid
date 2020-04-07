@@ -59,14 +59,16 @@ test_that("Parameters generated as expected", {
   
   # Test date interpolation, and starts from zero, accounts for leap years (2020)
   beta <- c(0.1, 0.2, 0.3)
+  dt <- 0.25
   test_params <- generate_parameters(beta=beta,
-                                     beta_times=c("2020-03-02", "2020-03-15", "2020-04-01"))
+                                     beta_times=c("2020-03-02", "2020-03-15", "2020-04-01"),
+                                     dt = dt)
   expect_identical(test_params$beta_y, beta)
-  expect_identical(test_params$beta_t, c(0, 13, 30))
+  expect_identical(test_params$beta_t, c(0, 13, 30)/dt)
   
   test_params <- generate_parameters(beta=beta,
                                      beta_times=c("2020-02-02", "2020-02-15", "2020-03-01"))
-  expect_identical(test_params$beta_t, c(0, 13, 28))
+  expect_identical(test_params$beta_t, c(0, 13, 28)/dt)
 })
 
 test_that("Bad inputs", {
@@ -104,9 +106,11 @@ test_that("Time varying betas can be generated", {
   # Test time varying beta can be generated, and goes in and
   # out of generate_parameters() correctly
   beta = generate_beta(0.4, reduction_period = 3)
+  dt <- 0.25
   params = generate_parameters(beta = beta$beta,
-                               beta_times = beta$beta_times)
-  expect_equal(params$beta_t, c(0, 43, 44, 45))
+                               beta_times = beta$beta_times,
+                               dt = dt)
+  expect_equal(params$beta_t, c(0, 43, 44, 45)/dt)
   expect_equal(params$beta_y, c(0.4000, 0.4000, 0.2476, 0.0952))
   
   # Error checking

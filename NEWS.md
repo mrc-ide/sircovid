@@ -1,3 +1,7 @@
+# sircovid 0.2.9
+
+- Fixes a bug with time scaling of beta macthing coding in odin
+
 # sircovid 0.2.8
 
 - sample_grid_scan can now accept forecast_days
