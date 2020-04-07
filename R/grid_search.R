@@ -178,8 +178,11 @@ beta_date_particle_filter <- function(beta, start_date,
                                       return = "full") {
   
   # Edit beta in parameters
-  model_params$beta_y <- beta
-  model_params$beta_t <- 0
+  new_beta <- generate_beta(beta, start_date)
+  beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
+  
+  model_params$beta_y <- new_beta$beta
+  model_params$beta_t <- beta_t
 
   X <- run_particle_filter(data, model_params, start_date, pars_obs,
                            n_particles, forecast_days, save_particles, return)

@@ -137,14 +137,8 @@ generate_parameters <- function(
   #
   # Set up time-varying beta
   # Times are in days from first day supplied
-  beta_dates <- as.Date(beta_times)
-  beta_dates <- as.numeric(beta_dates - beta_dates[[1]])
-  # Checks all dates are positive and ascending
-  if (any(diff(beta_dates) < 0)) {
-    stop("Supplied dates are not increasing")
-  }
-  beta_t <- beta_dates/dt
-  
+  beta_t <- normalise_beta(beta_times, dt)
+
   # 
   # This section defines proportions between partitions
   # derived from the severity.csv file
@@ -257,6 +251,21 @@ generate_parameters <- function(
 #
 # Internal functions
 #
+
+# Generates vector of times for beta changes, in the same
+# terms as the odin code
+normalise_beta <- function(beta_times, dt) {
+  # Times are in days from first day supplied
+  beta_dates <- as.Date(beta_times)
+  beta_dates <- as.numeric(beta_dates - beta_dates[[1]])
+  # Checks all dates are positive and ascending
+  if (any(diff(beta_dates) < 0)) {
+    stop("Supplied dates are not increasing")
+  }
+  beta_t <- beta_dates/dt
+}
+
+
 parse_age_bins <- function(age_bin_strings) {
   bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_bin_strings)
   bin_start <- as.numeric(bin_start)
