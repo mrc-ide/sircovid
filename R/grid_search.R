@@ -90,7 +90,7 @@ scan_beta_date <- function(
     .l = param_grid, .f = beta_date_particle_filter,
     model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
-    forecast_days = 0, return = "ll"
+    forecast_days = 0, save_particles = FALSE, return = "ll"
   )
   
   ## Construct a matrix with start_date as columns, and beta as rows
@@ -174,6 +174,7 @@ beta_date_particle_filter <- function(beta, start_date,
                                       model_params, data, 
                                       pars_obs, n_particles,
                                       forecast_days = 0,
+                                      save_particles = FALSE,
                                       return = "full") {
   if (!(return %in% c("full", "ll", "sample"))) {
     stop("return argument must be full, ll or sample")
@@ -182,9 +183,9 @@ beta_date_particle_filter <- function(beta, start_date,
   # Edit beta in parameters
   model_params$beta_y <- beta
   model_params$beta_t <- 0
-  
+
   X <- run_particle_filter(data, model_params, start_date, pars_obs,
-                           n_particles, forecast_days, return = return)
+                           n_particles, forecast_days, save_particles, return)
   
   X
 }
