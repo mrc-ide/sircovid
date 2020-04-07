@@ -1,3 +1,7 @@
+# sircovid 0.2.10
+
+- Add varying beta in the model used to sample from a 2D grid
+
 # sircovid 0.2.9
 
 - Fixes a bug with time scaling of beta macthing coding in odin
