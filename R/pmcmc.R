@@ -352,9 +352,9 @@ pmcmc <- function(data,
   
   res <- as.data.frame(res)
   
-  tmp <- coda::as.mcmc(res)
-  rejection_rate <- coda::rejectionRate(tmp)
-  ess <- coda::effectiveSize(tmp)
+  coda_res <- coda::as.mcmc(res)
+  rejection_rate <- coda::rejectionRate(coda_res)
+  ess <- coda::effectiveSize(coda_res)
 
   res$start_date <- as.Date(data$date[1]) - res$start_date
   
@@ -397,14 +397,14 @@ propose_parameters <- function(pars, pars_sd, pars_discrete, pars_min, pars_max)
   
   ## proposed jumps are normal with mean pars and sd as input for parameter
   # this can easily be adapted to being multivariate normal with covariance to improve mixing
-  tmp <- rnorm(n = length(pars), mean = pars, sd = pars_sd)
+  jumps <- rnorm(n = length(pars), mean = pars, sd = pars_sd)
   # discretise if necessary
-  tmp[pars_discrete] <- round(tmp[pars_discrete])
+  jumps[pars_discrete] <- round(jumps[pars_discrete])
   # reflect proposal if it exceeds upper or lower parameter boundary
-  tmp <- reflect_proposal(x = tmp, 
+  jumps <- reflect_proposal(x = jumps, 
                           floor = pars_min, 
                           cap = pars_max)
-  tmp
+  jumps
 }
 
 
