@@ -5,13 +5,43 @@ beta_date_particle_filter <- function(beta, start_date,
                                       pars_obs, n_particles,
                                       forecast_days = 0) {
   
-  # Edit beta in parameters
-  model_params$beta_y <- beta
-  model_params$beta_t <- 0
+  #To simulate the effect of the lockdown, call a generate beta to output the
+  #reduction in beta
+  beta_list <- generate_beta(beta_start = beta,
+                             start_date = start_date,
+                             reduction_start = "2020-03-16",
+                             beta_reduction = 0.238, 
+                             reduction_period = 10)
+  
+  #regenerates the parameters with the new varying betas
+  new_params <- generate_parameters(
+    transmission_model = "POLYMOD",
+    progression_groups = list(E = model_params$s_E,
+                              asympt = model_params$s_asympt,
+                              mild = model_params$s_mild,
+                              ILI = model_params$s_ILI,
+                              hosp = model_params$s_hosp,
+                              ICU = model_params$s_ICU,
+                              rec = model_params$s_rec),
+    gammas = list(E = model_params$gamma_E,
+                  asympt = model_params$gamma_asympt,
+                  mild = model_params$gamma_mild,
+                  ILI = model_params$gamma_ILI,
+                  hosp = model_params$gamma_hosp,
+                  ICU = model_params$gamma_ICU,
+                  rec = model_params$gamma_rec),
+    beta = beta_list$beta,
+    beta_times = beta_list$beta_times,
+    hosp_transmission = model_params$hosp_transmission,
+    ICU_transmission = model_params$ICU_transmission,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = model_params$dt
+  )
   
   # Objects used by particle filter run
-  pf_data <- particle_filter_data(data, start_date, steps_per_day= 1/model_params$dt)
-  model_run <- sircovid(params = model_params)
+  pf_data <- particle_filter_data(data, start_date, steps_per_day= 1/new_params$dt)
+  model_run <- sircovid(params = new_params)
   compare_func <- compare_icu(model_run, pars_obs, pf_data)
   
   X <- particle_filter(data = pf_data, model = model_run, compare = compare_func, 
