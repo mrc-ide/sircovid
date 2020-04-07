@@ -215,7 +215,15 @@ pmcmc <- function(data,
     X
   }
   
+  # create shorthand function to propose new pars given main inputs
   
+  propose_jump <- function(pars) {
+    propose_parameters(pars = pars, 
+                 pars_sd = pars_sd,
+                 pars_discrete = pars_discrete,
+                 pars_min = pars_min,
+                 pars_max = pars_max)
+  }
   
   # convert the current parameters into format easier for mcmc to deal with
   curr_pars <- unlist(pars_init)
@@ -268,7 +276,6 @@ pmcmc <- function(data,
   # calculate posterior
   curr_ll <- p_filter_est$log_likelihood
   curr_lpost <- curr_lprior + curr_ll
-  
   curr_ss <- p_filter_est$sample_state
   
 
@@ -296,29 +303,7 @@ pmcmc <- function(data,
   states[1, ] <- curr_ss
   
   
-  
-  ## create function to reflect proposal boundaries at pars_min and pars_max
-  # this ensures the proposal is symetrical and we can simplify the MH step
-  
-  reflect_proposal <- function(x, floor, cap) {
-    interval <- cap - floor
-    abs((x + interval - floor) %% (2 * interval) - interval) + floor
-  }
-  
-  
-   # this can easily be adapted to being multivariate normal with covariance to improve mixing
-  propose_jump <- function(pars) {
-    
-    ## proposed jumps are normal with mean pars and sd as input for parameter
-    tmp <- rnorm(n = n_pars, mean = pars, sd = pars_sd)
-    # discretise if necessary
-    tmp[pars_discrete] <- round(tmp[pars_discrete])
-    # reflect proposal if it exceeds upper or lower parameter boundary
-    tmp <- reflect_proposal(x = tmp, 
-                            floor = pars_min, 
-                            cap = pars_max)
-    tmp
-  }
+
 
 
   # start progress bar  
@@ -405,3 +390,29 @@ calc_loglikelihood <- function(pars, data, model_params,  steps_per_day, pars_ob
 
   X
 }
+
+
+
+propose_parameters <- function(pars, pars_sd, pars_discrete, pars_min, pars_max) {
+  
+  ## proposed jumps are normal with mean pars and sd as input for parameter
+  # this can easily be adapted to being multivariate normal with covariance to improve mixing
+  tmp <- rnorm(n = length(pars), mean = pars, sd = pars_sd)
+  # discretise if necessary
+  tmp[pars_discrete] <- round(tmp[pars_discrete])
+  # reflect proposal if it exceeds upper or lower parameter boundary
+  tmp <- reflect_proposal(x = tmp, 
+                          floor = pars_min, 
+                          cap = pars_max)
+  tmp
+}
+
+
+## create function to reflect proposal boundaries at pars_min and pars_max
+# this ensures the proposal is symetrical and we can simplify the MH step
+
+reflect_proposal <- function(x, floor, cap) {
+  interval <- cap - floor
+  abs((x + interval - floor) %% (2 * interval) - interval) + floor
+}
+
