@@ -5,7 +5,9 @@ context("pmcmc")
 test_that("pmcmc runs without error", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
- 
+  
+  cmp <- readRDS("reference_pmcmc.rds")
+  
   n_mcmc <- 10
   set.seed(1)
   X <- pmcmc(
@@ -18,6 +20,10 @@ test_that("pmcmc runs without error", {
  expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
  expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
  expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
+ expect_equal(X, cmp)
+ 
+ 
+
  
  ## set likelihood to accept every time with outlandish proposals
  Y <- pmcmc(
