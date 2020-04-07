@@ -127,7 +127,7 @@ scan_beta_date <- function(
   # Multi-core futures with furrr (parallel purrr)
   #
   ## Particle filter outputs, extracting log-likelihoods
-  pf_run_outputs <- furrr::future_pmap_dbl(
+  pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
     model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
@@ -138,7 +138,7 @@ scan_beta_date <- function(
   ## order of return is set by order passed to expand.grid, above
   ## Returned column-major (down columns of varying beta) - set byrow = FALSE
   mat_log_ll <- matrix(
-    log_ll, 
+    pf_run_ll, 
     nrow = length(beta_1D),
     ncol = length(date_list),
     byrow = FALSE)
@@ -147,7 +147,6 @@ scan_beta_date <- function(
   prob_matrix <- exp(mat_log_ll)
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
-
   results <- list(x = beta_1D, 
                   y = date_list,
                   mat_log_ll = mat_log_ll,
@@ -156,6 +155,7 @@ scan_beta_date <- function(
                     model_params = model_params,
                     pars_obs = pars_obs,
                     data = data))
+  
   class(results) <- "sircovid_scan"
   results
 }

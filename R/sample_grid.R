@@ -64,7 +64,8 @@ sample_grid_scan <- function(scan_results,
   # Multi-core futures with furrr (parallel purrr)
   
   ## Particle filter outputs
-  pf_run_outputs <- furrr::future_pmap(
+  ## Sample one particle
+  traces <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
     model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
