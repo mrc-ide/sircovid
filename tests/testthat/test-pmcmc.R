@@ -85,6 +85,30 @@ test_that("pmcmc error cases", {
     'initial parameters are outside of specified range'
   )
   
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_init = list('beta' = 0.01,
+                       'start_date' = as.Date(data$date[1])), 
+      pars_min = list('beta' = 0, 'start_date' = 0)
+    ),
+    "'start_date' must be less than the first date in data"
+  )
+  
+
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      pars_init = list('beta' = -0.01,
+                       'start_date' =  as.Date("2020-02-01")), 
+      pars_min = list('beta' = -1 ,'start_date' = 0)
+    ),
+    "beta must not be negative"
+  )
+  
+  
   # incorrect names supplied to pars_min
   expect_error(
     pmcmc(

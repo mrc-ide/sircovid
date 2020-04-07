@@ -78,6 +78,7 @@
 ##'   
 ##' @export
 ##' @import coda
+
 pmcmc <- function(data,
                   n_mcmc, 
                   model_params = NULL,
@@ -224,11 +225,17 @@ pmcmc <- function(data,
   
   # convert the current parameters into format easier for mcmc to deal with
   curr_pars <- unlist(pars_init)
-  curr_pars[['start_date']] <- as.numeric(data$date[1] - pars_init$start_date) # convert to numeric
+  curr_pars['start_date'] <- as.numeric(data$date[1] - pars_init$start_date) # convert to numeric
   
   
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
+  }
+  if(curr_pars['beta'] < 0) {
+    stop('beta must not be negative')
+  }
+  if(curr_pars['start_date'] < 0) {
+    stop('start date must not be before first date of supplied data')
   }
   
 
