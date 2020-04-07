@@ -113,7 +113,7 @@ generate_data <- function(death_data_file,
 ##' @param return Set return depending on what is needed. 'full' gives
 ##'   the entire particle filter output, 'll' gives the
 ##'   log-likelihood, 'sample' gives a sampled particle's
-##'   trace
+##'   trace, 'single' gives the final state
 ##' 
 ##' @returns Results from particle filter
 ##' 
