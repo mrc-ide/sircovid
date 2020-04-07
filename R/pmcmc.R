@@ -135,12 +135,11 @@ pmcmc <- function(data,
     steps_per_day = steps_per_day)
   
   
-  par_names <- c('beta', 'start_date')
-  
-  
-  
+  # convert dates to be Date objects
+  data$date <- as.Date(data$date) 
+
   correct_format <- function(pars) {
-    is.list(pars) & setequal(names(pars), par_names)
+    is.list(pars) & setequal(names(pars), c('beta', 'start_date'))
   }
 
   if(!correct_format(pars_init)) {
@@ -176,8 +175,6 @@ pmcmc <- function(data,
     stop('pars_discrete entries must be logical')
   }
   
-
-  n_pars <- length(par_names)
   
   # needs to be a vector to pass to reflecting boundary function
   pars_min <- unlist(pars_min)  
@@ -227,8 +224,7 @@ pmcmc <- function(data,
   
   # convert the current parameters into format easier for mcmc to deal with
   curr_pars <- unlist(pars_init)
-  day_zero <- as.Date(data$date[1])
-  curr_pars[['start_date']] <- as.numeric(day_zero - pars_init$start_date) # convert to numeric
+  curr_pars[['start_date']] <- as.numeric(data$date[1] - pars_init$start_date) # convert to numeric
   
   
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
@@ -356,7 +352,7 @@ pmcmc <- function(data,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- as.Date(data$date[1]) - res$start_date
+  res$start_date <- data$date[1] - res$start_date
   
   
   
@@ -372,7 +368,7 @@ pmcmc <- function(data,
 
 calc_loglikelihood <- function(pars, data, model_params,  steps_per_day, pars_obs, n_particles) {
   
-  start_date <- as.Date(data$date[1]) - pars[['start_date']]
+  start_date <- data$date[1] - pars[['start_date']]
   model_params$beta_y <-  pars[['beta']]
   
   # create sir_covid model
