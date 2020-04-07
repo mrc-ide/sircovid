@@ -366,4 +366,31 @@ test_that("pmcmc error cases", {
   
 })
 
+test_that("reflect_proposal", {
+  
+  expect_equal(object = reflect_proposal(x = 6, floor = 1, cap = 5), 
+              expected = 4)
+  
+  expect_equal(object = reflect_proposal(x = 0, floor = 1, cap = 5), 
+               expected = 2)
+  
+  expect_equal(object = reflect_proposal(x = 10, floor = 1, cap = 5), 
+               expected = 2)
+  
 
+  
+  # check that the function behaves as expected when passed a vector
+  n <- 10
+  tmp <- data.frame(x = rnorm(n, 1), 
+                    floor = runif(n))
+  tmp$cap <- tmp$floor + runif(n)
+  
+  X <- with(tmp, reflect_proposal(x, floor, cap))
+  Y <- with(tmp, mapply(FUN = reflect_proposal, 
+                        x = x, 
+                        floor = floor, 
+                        cap = cap))
+  
+  expect_equal(X, Y)
+  
+})
