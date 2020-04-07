@@ -1,9 +1,10 @@
 context("pmcmc")
 
-data <- read.csv(sircovid_file("extdata/example.csv"),
-                 stringsAsFactors = FALSE)
+
 
 test_that("pmcmc runs without error", {
+  data <- read.csv(sircovid_file("extdata/example.csv"),
+                   stringsAsFactors = FALSE)
  
   n_mcmc <- 10
   set.seed(1)
@@ -43,6 +44,8 @@ test_that("pmcmc runs without error", {
 })
 
 test_that("pmcmc error cases", {
+  data <- read.csv(sircovid_file("extdata/example.csv"),
+                   stringsAsFactors = FALSE)
   n_mcmc <- 10
   expect_error(
     pmcmc(
