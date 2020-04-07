@@ -1,8 +1,7 @@
 context("pmcmc")
 
-data <- read.csv(system.file("extdata/example.csv", 
-                             package = "sircovid", 
-                             mustWork = TRUE), stringsAsFactors = FALSE)
+data <- read.csv(sircovid_file("extdata/example.csv"),
+                 stringsAsFactors = FALSE)
 
 test_that("pmcmc runs without error", {
  
