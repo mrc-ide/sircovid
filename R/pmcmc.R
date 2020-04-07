@@ -116,12 +116,7 @@ pmcmc <- function(data,
       trans_increase = 1,
       dt = 1/steps_per_day
     )
-  } else {
-    if (length(model_params$beta_y)) {
-      stop("Time-varying beta not yet supported by pmcmc_sampler")
-    }
   }
-  
   
   inputs <- list(
     data = data,
@@ -176,21 +171,17 @@ pmcmc <- function(data,
     stop('pars_discrete entries must be logical')
   }
   
-  
   # needs to be a vector to pass to reflecting boundary function
   pars_min <- unlist(pars_min)  
   pars_max <- unlist(pars_max)
   pars_sd <- unlist(pars_sd)
   pars_discrete <- unlist(pars_discrete)
   
-  
-  
   # create prior and likelihood functions given the inputs
- 
-   if(is.null(log_prior)) {
-     # set improper, uninformative prior
+  if(is.null(log_prior)) {
+    # set improper, uninformative prior
     log_prior <- function(pars) log(1e-10)
-   }
+  }
   calc_lprior <- log_prior
   
   if(is.null(log_likelihood)) {
@@ -199,9 +190,8 @@ pmcmc <- function(data,
     stop('log_likelihood function must be able to take unnamed arguments')
   }
   
-  
-  
   # create shorthand function to calc ll given main inputs
+  # binds these input parameters
   calc_ll <- function(pars) {  
     X <- log_likelihood(pars = pars, 
                             data = data, 
@@ -227,7 +217,6 @@ pmcmc <- function(data,
   curr_pars <- unlist(pars_init)
   curr_pars['start_date'] <- as.numeric(data$date[1] - pars_init$start_date) # convert to numeric
   
-  
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
   }
@@ -237,14 +226,12 @@ pmcmc <- function(data,
   if(curr_pars['start_date'] < 0) {
     stop('start date must not be before first date of supplied data')
   }
-  
 
   ## calculate initial prior
   curr_lprior <- calc_lprior(pars = curr_pars)
   
   # run particle filter on initial parameters
   p_filter_est <- calc_ll(pars = curr_pars)
-  
   
   # checks on log_prior and log_likelihood functions
   
@@ -274,21 +261,17 @@ pmcmc <- function(data,
     stop('sample_state must be a vector of non-negative numbers')
   }
   
-  
-  # extract loglikelihhod estimate and sample state
+  # extract loglikelihood estimate and sample state
   # calculate posterior
   curr_ll <- p_filter_est$log_likelihood
   curr_lpost <- curr_lprior + curr_ll
   curr_ss <- p_filter_est$sample_state
-  
 
+  ## initialise output arrays
   res_init <- c(curr_pars, 
                 'log_prior' = curr_lprior, 
                 'log_likelihood' = curr_ll, 
                 'log_posterior' = curr_lpost) 
-  
-  ## initialise output arrays
-  
   res <- matrix(data = NA, 
                 nrow = n_mcmc + 1L, 
                 ncol = length(res_init), 
@@ -299,15 +282,9 @@ pmcmc <- function(data,
                    nrow = n_mcmc + 1L, 
                    ncol = length(curr_ss))
   
-  
-  
   ## record initial results
   res[1, ] <- res_init
   states[1, ] <- curr_ss
-  
-  
-
-
 
   # start progress bar  
   pb <- txtProgressBar(min = 0, max = n_mcmc, style = 3)
@@ -375,23 +352,15 @@ pmcmc <- function(data,
 
 calc_loglikelihood <- function(pars, data, model_params,  steps_per_day, pars_obs, n_particles) {
   
-  start_date <- data$date[1] - pars[['start_date']]
-  model_params$beta_y <-  pars[['beta']]
+  pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
+                                         start_date = pars[['start_date']], 
+                                         model_params, data, 
+                                         pars_obs, n_particles,
+                                         forecast_days = 0,
+                                         save_particles = FALSE,
+                                         return = "single")
   
-  # create sir_covid model
-  mod <- sircovid(params = model_params)
-
-  d <- particle_filter_data(data,
-                            start_date = start_date, 
-                            steps_per_day = steps_per_day)
-  compare <- compare_icu(mod, pars_obs, d)
-  X <- particle_filter(data = d, 
-                       model = mod, 
-                       compare = compare, 
-                       n_particles = n_particles, 
-                       save_sample_state = TRUE)
-
-  X
+  pf_result
 }
 
 
