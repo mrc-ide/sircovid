@@ -120,6 +120,10 @@ pmcmc <- function(data,
       trans_increase = 1,
       dt = 1/steps_per_day
     )
+  } else {
+    if (length(model_params$beta_y) > 1) {
+      stop("Set beta variation through generate_beta, not model_params")
+    }
   }
   
   inputs <- list(

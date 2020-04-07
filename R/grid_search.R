@@ -69,8 +69,8 @@ scan_beta_date <- function(
       dt = 1/time_steps_per_day
     )
   } else {
-    if (length(model_params$beta_y)) {
-      stop("Time-varying beta not yet supported by grid search")
+    if (length(model_params$beta_y) > 1) {
+      stop("Set beta variation through generate_beta, not model_params")
     }
   }
   

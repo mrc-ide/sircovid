@@ -97,7 +97,29 @@ test_that("pmcmc error cases", {
     "'start_date' must be less than the first date in data"
   )
   
-
+  model_params <- generate_parameters(
+    transmission_model = "POLYMOD",
+    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+    gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 0.25)
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      model_params = model_params,
+      model_start_date =  as.Date(data$date[1]),
+      pars_init = list('beta' = 0.01,
+                       'start_date' = as.Date(data$date[1])), 
+      pars_min = list('beta' = 0, 'start_date' = 0)
+    ),
+    "Set beta variation through generate_beta, not model_params"
+  )
+  
   expect_error(
     pmcmc(
       data = data,
