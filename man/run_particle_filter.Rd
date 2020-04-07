@@ -39,6 +39,9 @@ the entire particle filter output, 'll' gives the
 log-likelihood, 'sample' gives a sampled particle's
 trace}
 }
+\value{
+Results from particle filter
+}
 \description{
 Create a model, and fit with the particle filter
 }

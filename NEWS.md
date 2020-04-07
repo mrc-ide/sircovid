@@ -1,6 +1,6 @@
 # sircovid 0.2.11
 
-- Adds MH-MCMC for beta and start date inference
+- Adds pMCMC for beta and start date inference
 
 # sircovid 0.2.10
 

@@ -9,6 +9,8 @@
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
 ##'   in unit tests.
 ##'   
+##' @param model_start_date Start date as in model_params
+##'   
 ##' @param pars_obs list of parameters to use in comparison
 ##'   with \code{compare_icu}. If NULL, uses
 ##'   list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
@@ -78,10 +80,12 @@
 ##'   
 ##' @export
 ##' @import coda
-
+##' @importFrom stats rnorm
+##' @importFrom utils txtProgressBar setTxtProgressBar
 pmcmc <- function(data,
                   n_mcmc, 
                   model_params = NULL,
+                  model_start_date = "2020-02-02",
                   pars_obs = list(phi_ICU = 0.95,
                                   k_ICU = 2,
                                   phi_death = 926 / 1019,
@@ -109,7 +113,7 @@ pmcmc <- function(data,
       progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
       gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
       beta = 0.1,
-      beta_times = "2020-01-01",
+      beta_times = model_start_date,
       hosp_transmission = 0,
       ICU_transmission = 0,
       trans_profile = 1,
@@ -194,23 +198,23 @@ pmcmc <- function(data,
   # binds these input parameters
   calc_ll <- function(pars) {  
     X <- log_likelihood(pars = pars, 
-                            data = data, 
-                            model_params = model_params,
-                            steps_per_day = steps_per_day, 
-                            pars_obs = pars_obs, 
-                            n_particles = n_particles
+                        data = data,
+                        model_start_date = model_start_date,
+                        model_params = model_params,
+                        steps_per_day = steps_per_day, 
+                        pars_obs = pars_obs, 
+                        n_particles = n_particles
     ) 
     X
   }
   
   # create shorthand function to propose new pars given main inputs
-  
   propose_jump <- function(pars) {
     propose_parameters(pars = pars, 
-                 pars_sd = pars_sd,
-                 pars_discrete = pars_discrete,
-                 pars_min = pars_min,
-                 pars_max = pars_max)
+                       pars_sd = pars_sd,
+                       pars_discrete = pars_discrete,
+                       pars_min = pars_min,
+                       pars_max = pars_max)
   }
   
   # convert the current parameters into format easier for mcmc to deal with
@@ -350,10 +354,11 @@ pmcmc <- function(data,
 }
 
 
-calc_loglikelihood <- function(pars, data, model_params,  steps_per_day, pars_obs, n_particles) {
-  
+calc_loglikelihood <- function(pars, data, model_params, model_start_date,
+                               steps_per_day, pars_obs, n_particles) {
+  start_date <- as.Date(pars[['start_date']], origin=model_start_date)
   pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
-                                         start_date = pars[['start_date']], 
+                                         start_date = start_date, 
                                          model_params, data, 
                                          pars_obs, n_particles,
                                          forecast_days = 0,

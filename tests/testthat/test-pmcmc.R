@@ -16,11 +16,11 @@ test_that("pmcmc runs without error", {
   )
   
   
- expect_is(X, 'list')
- expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
- expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
- expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
- expect_equal(X, cmp)
+  expect_is(X, 'list')
+  expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
+  expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
+  expect_equal(X, cmp)
  
  
 
@@ -89,6 +89,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      model_start_date =  as.Date(data$date[1]),
       pars_init = list('beta' = 0.01,
                        'start_date' = as.Date(data$date[1])), 
       pars_min = list('beta' = 0, 'start_date' = 0)
@@ -351,16 +352,6 @@ test_that("pmcmc error cases", {
       }
     ),
     'sample_state must be a vector of non-negative numbers'
-  )
-
-# check error on time-varying beta
-  expect_error(
-    pmcmc(
-      data = data,
-      model_params = generate_parameters(),
-      n_mcmc = n_mcmc
-    ),
-    "Time-varying beta not yet supported by pmcmc_sampler"
   )
  
   

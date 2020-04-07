@@ -4,14 +4,23 @@
 \alias{pmcmc}
 \title{Run a pmcmc sampler}
 \usage{
-pmcmc(data, n_mcmc, model_params = NULL, pars_obs = list(phi_ICU =
-  0.95, k_ICU = 2, phi_death = 926/1019, k_death = 2, exp_noise = 1e+06),
+pmcmc(
+  data,
+  n_mcmc,
+  model_params = NULL,
+  model_start_date = "2020-02-02",
+  pars_obs = list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926/1019, k_death = 2,
+    exp_noise = 1e+06),
   pars_init = list(beta = 0.14, start_date = as.Date("2020-02-07")),
-  pars_min = list(beta = 0, start_date = 0), pars_max = list(beta = 1,
-  start_date = 1e+06), pars_sd = list(beta = 0.001, start_date = 0.5),
+  pars_min = list(beta = 0, start_date = 0),
+  pars_max = list(beta = 1, start_date = 1e+06),
+  pars_sd = list(beta = 0.001, start_date = 0.5),
   pars_discrete = list(beta = FALSE, start_date = TRUE),
-  log_likelihood = NULL, log_prior = NULL, n_particles = 100,
-  steps_per_day = 4)
+  log_likelihood = NULL,
+  log_prior = NULL,
+  n_particles = 100,
+  steps_per_day = 4
+)
 }
 \arguments{
 \item{data}{Data to fit to.  This must be constructed with
@@ -22,6 +31,8 @@ pmcmc(data, n_mcmc, model_params = NULL, pars_obs = list(phi_ICU =
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
 in unit tests.}
+
+\item{model_start_date}{Start date as in model_params}
 
 \item{pars_obs}{list of parameters to use in comparison
 with \code{compare_icu}. If NULL, uses
