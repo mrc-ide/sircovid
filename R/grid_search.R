@@ -176,9 +176,6 @@ beta_date_particle_filter <- function(beta, start_date,
                                       forecast_days = 0,
                                       save_particles = FALSE,
                                       return = "full") {
-  if (!(return %in% c("full", "ll", "sample"))) {
-    stop("return argument must be full, ll or sample")
-  }
   
   # Edit beta in parameters
   model_params$beta_y <- beta
