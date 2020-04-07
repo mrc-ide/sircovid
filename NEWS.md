@@ -1,3 +1,7 @@
+# sircovid 0.2.11
+
+- Adds MH-MCMC for beta and start date inference
+
 # sircovid 0.2.10
 
 - Use a time-varying beta in the grid search
