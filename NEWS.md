@@ -1,3 +1,22 @@
+# sircovid 0.2.10
+
+- Use a time-varying beta in the grid search
+- Fix an issue with large memory usage in the grid search and sampling
+- Make the run_particle_filter() function more portable
+
+# sircovid 0.2.9
+
+- Fixes a bug with time scaling of beta macthing coding in odin
+
+# sircovid 0.2.8
+
+- sample_grid_scan can now accept forecast_days
+
+# sircovid 0.2.7
+
+- Adds sample_grid_scan for sampling from a grid to produce trajectories
+- Plotting function for sample_grid_search output
+
 # sircovid 0.2.6
 
 - Adds a new main, exported, sircovid function, which fits to data using a time-varying beta

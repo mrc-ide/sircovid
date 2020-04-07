@@ -26,6 +26,8 @@
 ##' @param pars_obs list of parameters to use in comparison
 ##'   with \code{compare_icu}.
 ##'   
+##' @param n_particles Number of particles. Positive Integer. Default = 100
+##' 
 ##' @return List of beta and start date grid values, and
 ##'   normalised probabilities at each point
 ##' 
@@ -40,7 +42,8 @@ scan_beta_date <- function(
   day_step,
   data, 
   model_params = NULL,
-  pars_obs = NULL) {
+  pars_obs = NULL,
+  n_particles = 100) {
   #
   # Set up parameter space to scan
   #
@@ -82,30 +85,19 @@ scan_beta_date <- function(
   #
   # Multi-core futures with furrr (parallel purrr)
   #
-  ## Particle filter outputs
-  pf_run_outputs <- furrr::future_pmap(
-    param_grid,
-    function(beta, start_date) {
-      # Edit beta in parameters
-      model_params$beta_y <- beta
-      model_params$beta_t <- 0
-      
-      # Objects used by particle filter run
-      pf_data <- particle_filter_data(data, start_date, steps_per_day= 1/model_params$dt)
-      model_run <- sircovid(params = model_params)
-      compare_func <- compare_icu(model_run, pars_obs, pf_data)
-      
-      X <- particle_filter(pf_data, model_run, compare_func, n_particles=100)
-    }
+  ## Particle filter outputs, extracting log-likelihoods
+  pf_run_ll <- furrr::future_pmap_dbl(
+    .l = param_grid, .f = beta_date_particle_filter,
+    model_params = model_params, data = data, 
+    pars_obs = pars_obs, n_particles = n_particles,
+    forecast_days = 0, save_particles = FALSE, return = "ll"
   )
-  ## Extract Log-likelihoods
-  log_ll <- furrr::future_map_dbl(pf_run_outputs, ~ .$log_likelihood) 
   
   ## Construct a matrix with start_date as columns, and beta as rows
   ## order of return is set by order passed to expand.grid, above
   ## Returned column-major (down columns of varying beta) - set byrow = FALSE
   mat_log_ll <- matrix(
-    log_ll, 
+    pf_run_ll, 
     nrow = length(beta_1D),
     ncol = length(date_list),
     byrow = FALSE)
@@ -114,14 +106,15 @@ scan_beta_date <- function(
   prob_matrix <- exp(mat_log_ll)
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
-  results <- list(x=beta_1D, 
-                  y=date_list,
-                  mat_log_ll=mat_log_ll,
-                  renorm_mat_LL=renorm_mat_LL,
+  results <- list(x = beta_1D, 
+                  y = date_list,
+                  mat_log_ll = mat_log_ll,
+                  renorm_mat_LL = renorm_mat_LL,
                   inputs = list(
                     model_params = model_params,
                     pars_obs = pars_obs,
                     data = data))
+  
   class(results) <- "sircovid_scan"
   results
 }
@@ -138,3 +131,61 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood") {
 }
 
 
+##' @export
+plot.sample_grid_search <- function(x, ..., what = "ICU") {
+  
+  # what are we plotting
+  
+  if (what == "ICU") {
+    
+    index <- c(odin_index(x$inputs$model)$I_ICU) - 1L
+    ylab <- "ICU"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
+      FUN.VALUE = numeric(dim(x$trajectories)[1]))
+    plot_particles(particles, ylab = ylab)
+    points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
+    
+  } else if(what == "Deaths") {
+    
+    index <- c(odin_index(x$inputs$model)$D) - 1L
+    ylab <- "Deaths"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
+      FUN.VALUE = numeric(dim(x$trajectories)[1]))
+    plot_particles(particles, ylab = ylab)
+    points(as.Date(x$inputs$data$date), cumsum(x$inputs$data$deaths), pch = 19)
+    
+  } else {
+    
+    stop("Requested what must be one of 'ICU' or 'Deaths'")
+    
+  } 
+  
+}
+
+##' Particle filter outputs
+##' 
+##' Helper function to run the particle filter with a
+##' new beta and start date
+##' 
+##' @noRd
+beta_date_particle_filter <- function(beta, start_date, 
+                                      model_params, data, 
+                                      pars_obs, n_particles,
+                                      forecast_days = 0,
+                                      save_particles = FALSE,
+                                      return = "full") {
+  
+  # Edit beta in parameters
+  new_beta <- generate_beta(beta, start_date)
+  beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
+  
+  model_params$beta_y <- new_beta$beta
+  model_params$beta_t <- beta_t
+
+  X <- run_particle_filter(data, model_params, start_date, pars_obs,
+                           n_particles, forecast_days, save_particles, return)
+  
+  X
+}

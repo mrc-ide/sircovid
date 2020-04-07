@@ -4,9 +4,18 @@
 \alias{scan_beta_date}
 \title{Grid search of beta and start date}
 \usage{
-scan_beta_date(min_beta, max_beta, beta_step, first_start_date,
-  last_start_date, day_step, data, model_params = NULL,
-  pars_obs = NULL)
+scan_beta_date(
+  min_beta,
+  max_beta,
+  beta_step,
+  first_start_date,
+  last_start_date,
+  day_step,
+  data,
+  model_params = NULL,
+  pars_obs = NULL,
+  n_particles = 100
+)
 }
 \arguments{
 \item{min_beta}{Minimum value of beta in the search}
@@ -30,6 +39,8 @@ in unit tests.}
 
 \item{pars_obs}{list of parameters to use in comparison
 with \code{compare_icu}.}
+
+\item{n_particles}{Number of particles. Positive Integer. Default = 100}
 }
 \value{
 List of beta and start date grid values, and
