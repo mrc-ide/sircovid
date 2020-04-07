@@ -4,21 +4,14 @@
 \alias{pmcmc}
 \title{Run a pmcmc sampler}
 \usage{
-pmcmc(
-  data,
-  n_mcmc,
-  model_params = NULL,
-  pars_obs = NULL,
-  pars_init = NULL,
-  pars_min = NULL,
-  pars_max = NULL,
-  pars_sd = NULL,
-  pars_discrete = NULL,
-  log_likelihood = NULL,
-  log_prior = NULL,
-  n_particles = 100,
-  steps_per_day = 4
-)
+pmcmc(data, n_mcmc, model_params = NULL, pars_obs = list(phi_ICU =
+  0.95, k_ICU = 2, phi_death = 926/1019, k_death = 2, exp_noise = 1e+06),
+  pars_init = list(beta = 0.14, start_date = as.Date("2020-02-07")),
+  pars_min = list(beta = 0, start_date = 0), pars_max = list(beta = 1,
+  start_date = 1e+06), pars_sd = list(beta = 0.001, start_date = 0.5),
+  pars_discrete = list(beta = FALSE, start_date = TRUE),
+  log_likelihood = NULL, log_prior = NULL, n_particles = 100,
+  steps_per_day = 4)
 }
 \arguments{
 \item{data}{Data to fit to.  This must be constructed with
