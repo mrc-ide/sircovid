@@ -10,6 +10,10 @@
 ##'   in unit tests.
 ##'   
 ##' @param model_start_date Start date as in model_params
+##' 
+##' @param generate_beta_func Function to generate time-varying
+##'   beta, taking an initial beta and start date. Default is
+##'   \code{generate_beta}.
 ##'   
 ##' @param pars_obs list of parameters to use in comparison
 ##'   with \code{compare_icu}. If NULL, uses
@@ -203,8 +207,9 @@ pmcmc <- function(data,
   calc_ll <- function(pars) {  
     X <- log_likelihood(pars = pars, 
                         data = data,
-                        model_start_date = model_start_date,
                         model_params = model_params,
+                        model_start_date = model_start_date,
+                        generate_beta_func = generate_beta_func,
                         steps_per_day = steps_per_day, 
                         pars_obs = pars_obs, 
                         n_particles = n_particles
@@ -359,10 +364,12 @@ pmcmc <- function(data,
 
 
 calc_loglikelihood <- function(pars, data, model_params, model_start_date,
-                               steps_per_day, pars_obs, n_particles) {
+                               generate_beta_func, steps_per_day,
+                               pars_obs, n_particles) {
   start_date <- as.Date(pars[['start_date']], origin=model_start_date)
   pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
-                                         start_date = start_date, 
+                                         start_date = start_date,
+                                         generate_beta_func = generate_beta_func,
                                          model_params, data, 
                                          pars_obs, n_particles,
                                          forecast_days = 0,

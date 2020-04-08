@@ -10,6 +10,10 @@
 ##' 
 ##' @param beta_step Step to increment beta between min and max
 ##' 
+##' @param generate_beta_func Function which gives a time series
+##'   of beta, given an initial value and start date. Default
+##'   is \code{generate_beta()}
+##' 
 ##' @param first_start_date Earliest start date as 'yyyy-mm-dd'
 ##' 
 ##' @param last_start_date Latest start date as 'yyyy-mm-dd'
@@ -36,7 +40,8 @@
 scan_beta_date <- function(
   min_beta, 
   max_beta, 
-  beta_step, 
+  beta_step,
+  generate_beta_func = generate_beta(),
   first_start_date, 
   last_start_date, 
   day_step,
@@ -70,7 +75,7 @@ scan_beta_date <- function(
     )
   } else {
     if (length(model_params$beta_y) > 1) {
-      stop("Set beta variation through generate_beta, not model_params")
+      stop("Set beta variation through beta_reduction, not model_params")
     }
   }
   
@@ -88,6 +93,7 @@ scan_beta_date <- function(
   ## Particle filter outputs, extracting log-likelihoods
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
+    generate_beta_func = generate_beta_func,
     model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
@@ -169,8 +175,12 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 ##' Helper function to run the particle filter with a
 ##' new beta and start date
 ##' 
+##' Generate_beta_func is generate_beta() with arguments
+##' beta_start and start_date, and others bound
+##' 
 ##' @noRd
-beta_date_particle_filter <- function(beta, start_date, 
+beta_date_particle_filter <- function(beta, start_date,
+                                      generate_beta_func,
                                       model_params, data, 
                                       pars_obs, n_particles,
                                       forecast_days = 0,
@@ -178,7 +188,7 @@ beta_date_particle_filter <- function(beta, start_date,
                                       return = "full") {
   
   # Edit beta in parameters
-  new_beta <- generate_beta(beta, start_date)
+  new_beta <- generate_beta_func(beta, start_date)
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
   model_params$beta_y <- new_beta$beta
