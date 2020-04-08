@@ -1,3 +1,7 @@
+# sircovid 0.2.12
+
+- When doing grid sample and projections plot deaths counts rather than cumulative
+
 # sircovid 0.2.11
 
 - Adds pMCMC for beta and start date inference
