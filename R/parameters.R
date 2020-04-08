@@ -12,6 +12,10 @@
 ##' @param beta_reduction Factor by which beta is reduced
 ##'   default is 0.238, as estimated by Jarvis et al
 ##'   beta_reduced = beta - beta * (1 - beta_reduction)
+##'   
+##' @param beta_end Overrides beta_reduction, giving the
+##'   final value of beta by the end of the reduction
+##'   period
 ##' 
 ##' @param reduction_period Time, in days, over which the
 ##' reduction in beta is achieved. Default 10 days
@@ -20,13 +24,20 @@
 generate_beta <- function(beta_start, 
                           start_date = "2020-02-02",
                           reduction_start = "2020-03-16",
-                          beta_reduction = 0.238, 
+                          beta_reduction = 0.238,
+                          beta_end = NULL,
                           reduction_period = 10) {
   if (as.Date(start_date) > as.Date(reduction_start)) {
     stop("Start date must be earlier than intervention date")
   }
-  if (beta_reduction < 0 || beta_reduction > 1) {
-    stop("beta must decrease, and cannot be reduced below 0")
+  if (!is.null(beta_end)) {
+    if (beta_end < 0 || beta_end > beta_start) {
+      stop("beta_end must be between 0 and beta_start")
+    }
+  } else {
+    if (beta_reduction < 0 || beta_reduction > 1) {
+      stop("beta must decrease, and cannot be reduced below 0")
+    }
   }
   if (reduction_period > 100) {
     message("Reduction period over 100 days - is this correct?")
@@ -36,7 +47,9 @@ generate_beta <- function(beta_start,
             seq(as.Date(reduction_start), as.Date(reduction_start) + reduction_period - 1, by=1))
   
   # Corresponding change in beta
-  # 
+  if (is.null(beta_end)) {
+    beta_reduction <- beta_end / beta_start
+  }
   beta_slope <- beta_start * (1 - (1 - beta_reduction ) * (seq(0, reduction_period - 1) / (reduction_period - 1)))
   
   list(beta=c(beta_start, beta_slope),
