@@ -151,10 +151,13 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     index <- c(odin_index(x$inputs$model)$D) - 1L
     ylab <- "Deaths"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
-      rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
+      out <- c(0,diff(rowSums(x$trajectories[,index,y], na.rm = TRUE)))
+      names(out)[1] <- rownames(x$trajectories)[1]
+      out}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
     plot_particles(particles, ylab = ylab)
-    points(as.Date(x$inputs$data$date), cumsum(x$inputs$data$deaths), pch = 19)
+    points(as.Date(x$inputs$data$date), 
+           x$inputs$data$deaths/ x$inputs$pars_obs$phi_death, pch = 19)
     
   } else {
     
