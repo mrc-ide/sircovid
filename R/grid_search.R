@@ -41,7 +41,9 @@ scan_beta_date <- function(
   min_beta, 
   max_beta, 
   beta_step,
-  generate_beta_func = generate_beta(),
+  generate_beta_func = function(beta_start, start_date) 
+                        {generate_beta(beta_start = beta_start,
+                                       start_date = start_date)},
   first_start_date, 
   last_start_date, 
   day_step,
@@ -75,7 +77,7 @@ scan_beta_date <- function(
     )
   } else {
     if (length(model_params$beta_y) > 1) {
-      stop("Set beta variation through beta_reduction, not model_params")
+      stop("Set beta variation through generate_beta_func, not model_params")
     }
   }
   
@@ -119,7 +121,8 @@ scan_beta_date <- function(
                   inputs = list(
                     model_params = model_params,
                     pars_obs = pars_obs,
-                    data = data))
+                    data = data),
+                  generate_beta_func = generate_beta_func)
   
   class(results) <- "sircovid_scan"
   results

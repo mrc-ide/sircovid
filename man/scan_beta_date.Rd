@@ -8,6 +8,8 @@ scan_beta_date(
   min_beta,
   max_beta,
   beta_step,
+  generate_beta_func = function(beta_start, start_date) {     generate_beta(beta_start =
+    beta_start, start_date = start_date) },
   first_start_date,
   last_start_date,
   day_step,
@@ -23,6 +25,10 @@ scan_beta_date(
 \item{max_beta}{Maximum value of beta in the search}
 
 \item{beta_step}{Step to increment beta between min and max}
+
+\item{generate_beta_func}{Function which gives a time series
+of beta, given an initial value and start date. Default
+is \code{generate_beta()}}
 
 \item{first_start_date}{Earliest start date as 'yyyy-mm-dd'}
 

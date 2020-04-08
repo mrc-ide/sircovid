@@ -9,6 +9,8 @@ pmcmc(
   n_mcmc,
   model_params = NULL,
   model_start_date = "2020-02-02",
+  generate_beta_func = function(beta_start, start_date) {     generate_beta(beta_start =
+    beta_start, start_date = start_date) },
   pars_obs = list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926/1019, k_death = 2,
     exp_noise = 1e+06),
   pars_init = list(beta = 0.14, start_date = as.Date("2020-02-07")),
@@ -33,6 +35,10 @@ pmcmc(
 in unit tests.}
 
 \item{model_start_date}{Start date as in model_params}
+
+\item{generate_beta_func}{Function to generate time-varying
+beta, taking an initial beta and start date. Default is
+\code{generate_beta}.}
 
 \item{pars_obs}{list of parameters to use in comparison
 with \code{compare_icu}. If NULL, uses

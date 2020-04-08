@@ -45,9 +45,9 @@ generate_beta <- function(beta_start,
   
   beta_times <- c(as.Date(start_date), 
             seq(as.Date(reduction_start), as.Date(reduction_start) + reduction_period - 1, by=1))
-  
+
   # Corresponding change in beta
-  if (is.null(beta_end)) {
+  if (!is.null(beta_end)) {
     beta_reduction <- beta_end / beta_start
   }
   beta_slope <- beta_start * (1 - (1 - beta_reduction ) * (seq(0, reduction_period - 1) / (reduction_period - 1)))

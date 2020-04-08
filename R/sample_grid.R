@@ -24,7 +24,7 @@
 ##' @export
 ##' @import furrr
 ##' @importFrom utils tail
-sample_grid_scan <- function(scan_results, 
+sample_grid_scan <- function(scan_results,
                              n_sample_pairs = 10, 
                              n_particles = 100, 
                              forecast_days = 0) {
@@ -67,6 +67,7 @@ sample_grid_scan <- function(scan_results,
   ## Sample one particle
   traces <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
+    generate_beta_func = scan_results$generate_beta_func,
     model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = forecast_days, 
