@@ -154,7 +154,8 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
     plot_particles(particles, ylab = ylab)
-    points(as.Date(x$inputs$data$date), cumsum(x$inputs$data$deaths), pch = 19)
+    points(as.Date(x$inputs$data$date), 
+           x$inputs$data$deaths/ x$inputs$pars_obs$phi_death, pch = 19)
     
   } else {
     
