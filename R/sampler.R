@@ -44,6 +44,9 @@ particle_filter <- function(data, model, compare, n_particles,
   if (forecast_days < 0) {
     stop("forecast_days must be positive")
   }
+  if (save_particles && save_end_states){
+    stop("Can not have both save_particles and save_end_states input as TRUE")
+  }
 
   i_state <- seq_along(model$initial()) + 1L
 

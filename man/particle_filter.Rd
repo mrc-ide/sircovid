@@ -11,7 +11,8 @@ particle_filter(
   n_particles,
   forecast_days = 0,
   save_particles = FALSE,
-  save_sample_state = FALSE
+  save_sample_state = FALSE,
+  save_end_states = FALSE
 )
 }
 \arguments{
@@ -32,7 +33,10 @@ histories (this is slower).}
 
 \item{save_sample_state}{Logical, indicating whether we should save a
 single particle, chosen at random, at the final time point for which 
-we have data}
+we have data
+
+@param save_end_states Logical, indicating whether we should save all
+particles at the final time point for which we have data}
 }
 \description{
 Run a particle filter
