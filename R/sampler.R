@@ -21,7 +21,7 @@
 ##'  single particle, chosen at random, at the final time point for which 
 ##'  we have data
 ##'  
-##'  @param save_end_states Logical, indicating whether we should save all
+##' @param save_end_states Logical, indicating whether we should save all
 ##'  particles at the final time point for which we have data
 ##'   
 ##' @export

@@ -33,9 +33,9 @@ histories (this is slower).}
 
 \item{save_sample_state}{Logical, indicating whether we should save a
 single particle, chosen at random, at the final time point for which 
-we have data
+we have data}
 
-@param save_end_states Logical, indicating whether we should save all
+\item{save_end_states}{Logical, indicating whether we should save all
 particles at the final time point for which we have data}
 }
 \description{
