@@ -1,3 +1,8 @@
+# sircovid 0.2.13
+
+- Adds a save_end_states option to particle_filter
+
+
 # sircovid 0.2.12
 
 - When doing grid sample and projections plot deaths counts rather than cumulative
