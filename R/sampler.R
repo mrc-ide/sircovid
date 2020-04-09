@@ -20,12 +20,15 @@
 ##' @param save_sample_state Logical, indicating whether we should save a
 ##'  single particle, chosen at random, at the final time point for which 
 ##'  we have data
+##'  
+##'  @param save_end_states Logical, indicating whether we should save all
+##'  particles at the final time point for which we have data
 ##'   
 ##' @export
 ##' 
 particle_filter <- function(data, model, compare, n_particles,
                             forecast_days = 0, save_particles = FALSE, 
-                            save_sample_state = FALSE) {
+                            save_sample_state = FALSE, save_end_states = FALSE) {
   if (!inherits(data, "particle_filter_data")) {
     stop("Expected a data set derived from particle_filter_data")
   }
@@ -111,6 +114,9 @@ particle_filter <- function(data, model, compare, n_particles,
   if (save_sample_state) {
     particle_chosen <- sample.int(n = n_particles, size = 1)
     ret$sample_state <- state[, particle_chosen]
+  }
+  if (save_end_states){
+    ret$states <- state
   }
   ret
 }
