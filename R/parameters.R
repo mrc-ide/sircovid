@@ -257,9 +257,22 @@ generate_parameters <- function(
                          p_sympt_ILI = severity_params$sympt_ILI,
                          hosp_transmission = hosp_transmission,
                          ICU_transmission = ICU_transmission)
-
+  class(parameter_list) <- "sircovid_parameters"
+  
   parameter_list
 }
+
+##' @export
+write.sircovid_parameters <- function(x, ..., what = "likelihood") {
+  if (what == "likelihood") {
+    graphics::image(x=x$x, y=x$y, z=x$mat_log_ll,
+                    xlab="beta", ylab="Start date", main = "Log-likelihood")
+  } else if (what == "probability") {
+    graphics::image(x=x$x, y=x$y, z=x$renorm_mat_LL,
+                    xlab="beta", ylab="Start date", main = "Probability")
+  }
+}
+
 
 #
 # Internal functions
