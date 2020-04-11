@@ -119,11 +119,12 @@ generate_data <- function(death_data_file,
 ##' 
 ##' @export
 run_particle_filter <- function(data,
-                                model_params,
+                                model,
                                 model_start_date = "2020-02-02",
+                                compare_fun,
                                 obs_params = list(phi_ICU = 0.95,
                                                   k_ICU = 2,
-                                                  phi_death = 1789/1651,
+                                                  phi_death = 1.25,
                                                   k_death = 2,
                                                   exp_noise = 1e6),
                                 n_particles = 1000,
@@ -154,14 +155,14 @@ run_particle_filter <- function(data,
   #convert data into particle-filter form
   data <- particle_filter_data(data = data, 
                                start_date = model_start_date, 
-                               steps_per_day = round(1 / model_params$dt)) 
-
+                               steps_per_day = round(1 / model_params$dt))
+  
   #set up model
-  model <- basic(user = model_params)
+  model <- model_fun(params = model_params)
   
   #set up compare for observation likelihood
-  compare_func <- compare_icu(model = model, pars_obs = obs_params, data = data)
-  
+  compare_func <- compare_fun(model = model, pars_obs = obs_params, data = data)
+
   pf_results <- particle_filter(data = data, 
                                 model = model,
                                 compare = compare_func, 

@@ -41,7 +41,9 @@ scan_beta_date <- function(
   last_start_date, 
   day_step,
   data, 
+  model_fun,
   model_params = NULL,
+  compare_fun,
   pars_obs = NULL,
   n_particles = 100) {
   #
@@ -77,7 +79,7 @@ scan_beta_date <- function(
   if (is.null(pars_obs)) {
     pars_obs <- list(phi_ICU = 0.95,
                      k_ICU = 2,
-                     phi_death = 926 / 1019,
+                     phi_death = 1.25,
                      k_death = 2,
                      exp_noise = 1e6)
   }
@@ -88,8 +90,8 @@ scan_beta_date <- function(
   ## Particle filter outputs, extracting log-likelihoods
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
-    model_params = model_params, data = data, 
-    pars_obs = pars_obs, n_particles = n_particles,
+    model_fun = model_fun, model_params = model_params, data = data, 
+    compare_fun = compare_fun, pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
   )
   
@@ -111,7 +113,9 @@ scan_beta_date <- function(
                   mat_log_ll = mat_log_ll,
                   renorm_mat_LL = renorm_mat_LL,
                   inputs = list(
+                    model_fun = model_fun,
                     model_params = model_params,
+                    compare_fun = compare_fun,
                     pars_obs = pars_obs,
                     data = data))
   
@@ -174,8 +178,8 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 ##' 
 ##' @noRd
 beta_date_particle_filter <- function(beta, start_date, 
-                                      model_params, data, 
-                                      pars_obs, n_particles,
+                                      model_fun, model_params, data, 
+                                      compare_fun, pars_obs, n_particles,
                                       forecast_days = 0,
                                       save_particles = FALSE,
                                       return = "full") {
@@ -186,8 +190,8 @@ beta_date_particle_filter <- function(beta, start_date,
   
   model_params$beta_y <- new_beta$beta
   model_params$beta_t <- beta_t
-
-  X <- run_particle_filter(data, model_params, start_date, pars_obs,
+  
+  X <- run_particle_filter(data, model_func, model_params, start_date, compare_fun, pars_obs,
                            n_particles, forecast_days, save_particles, return)
   
   X

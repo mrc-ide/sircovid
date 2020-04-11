@@ -56,10 +56,11 @@ sample_grid_scan <- function(scan_results,
   
   # recreate parameters for re running
   param_grid <- data.frame("beta" = beta, "start_date" = dates)
+  model_func <- scan_results$inputs$model_func
   model_params <- scan_results$inputs$model_params
-  pars_obs <- scan_results$inputs$pars_obs
   data <- scan_results$inputs$data
-  
+  compare_fun <- scan_reuslts$inputs$compare
+  pars_obs <- scan_results$inputs$pars_obs
   
   # Multi-core futures with furrr (parallel purrr)
   
@@ -67,8 +68,8 @@ sample_grid_scan <- function(scan_results,
   ## Sample one particle
   traces <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
-    model_params = model_params, data = data, 
-    pars_obs = pars_obs, n_particles = n_particles,
+    model_func = model_func, model_params = model_params, data = data, 
+    compare_func = compare_func, pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = forecast_days, 
     save_particles = TRUE, return = "sample"
   )
