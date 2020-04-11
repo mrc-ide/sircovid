@@ -159,10 +159,18 @@ run_particle_filter <- function(data,
                                steps_per_day = round(1 / model_params$dt))
   
   #set up model
-  model <- model_fun(params = model_params)
+  if (is.null(model_fun)){
+    model <- basic(user = model_params)
+  } else {
+    model <- model_fun(params = model_params)
+  }
   
   #set up compare for observation likelihood
-  compare_func <- compare_fun(model = model, pars_obs = obs_params, data = data)
+  if (is.null(compare_fun)){
+    compare_func <- compare_icu(model = model, pars_obs = obs_params, data = data)
+  } else {
+    compare_func <- compare_fun(model = model, pars_obs = obs_params, data = data)
+  }
 
   pf_results <- particle_filter(data = data, 
                                 model = model,

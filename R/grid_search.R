@@ -41,9 +41,9 @@ scan_beta_date <- function(
   last_start_date, 
   day_step,
   data, 
-  model_fun,
+  model_fun = NULL,
   model_params = NULL,
-  compare_fun,
+  compare_fun = NULL,
   pars_obs = NULL,
   n_particles = 100) {
   #
@@ -178,8 +178,8 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 ##' 
 ##' @noRd
 beta_date_particle_filter <- function(beta, start_date, 
-                                      model_fun, model_params, data, 
-                                      compare_fun, pars_obs, n_particles,
+                                      model_fun = NULL, model_params, data, 
+                                      compare_fun = NULL, pars_obs, n_particles,
                                       forecast_days = 0,
                                       save_particles = FALSE,
                                       return = "full") {

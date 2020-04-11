@@ -58,7 +58,7 @@ sample_grid_scan <- function(scan_results,
   param_grid <- data.frame("beta" = beta, "start_date" = dates)
   model_fun <- scan_results$inputs$model_fun
   model_params <- scan_results$inputs$model_params
-  compare_fun <- scan_reuslts$inputs$compare_fun
+  compare_fun <- scan_results$inputs$compare_fun
   pars_obs <- scan_results$inputs$pars_obs
   data <- scan_results$inputs$data
   
@@ -69,7 +69,7 @@ sample_grid_scan <- function(scan_results,
   traces <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
     model_fun = model_fun, model_params = model_params, data = data, 
-    compare_func = compare_func, pars_obs = pars_obs, n_particles = n_particles,
+    compare_fun = compare_fun, pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = forecast_days, 
     save_particles = TRUE, return = "sample"
   )
