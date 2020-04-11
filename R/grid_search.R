@@ -191,7 +191,7 @@ beta_date_particle_filter <- function(beta, start_date,
   model_params$beta_y <- new_beta$beta
   model_params$beta_t <- beta_t
   
-  X <- run_particle_filter(data, model_func, model_params, start_date, compare_fun, pars_obs,
+  X <- run_particle_filter(data, model_fun, model_params, start_date, compare_fun, pars_obs,
                            n_particles, forecast_days, save_particles, return)
   
   X

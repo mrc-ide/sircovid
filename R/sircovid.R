@@ -119,7 +119,8 @@ generate_data <- function(death_data_file,
 ##' 
 ##' @export
 run_particle_filter <- function(data,
-                                model,
+                                model_fun,
+                                model_params,
                                 model_start_date = "2020-02-02",
                                 compare_fun,
                                 obs_params = list(phi_ICU = 0.95,
