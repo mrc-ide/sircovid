@@ -125,7 +125,7 @@ run_particle_filter <- function(data,
                                 compare_fun,
                                 obs_params = list(phi_ICU = 0.95,
                                                   k_ICU = 2,
-                                                  phi_death = 1.25,
+                                                  phi_death = 1789/1651,
                                                   k_death = 2,
                                                   exp_noise = 1e6),
                                 n_particles = 1000,
@@ -162,7 +162,7 @@ run_particle_filter <- function(data,
   if (is.null(model_fun)){
     model <- basic(user = model_params)
   } else {
-    model <- model_fun(params = model_params)
+    model <- model_fun(user = model_params)
   }
   
   #set up compare for observation likelihood
