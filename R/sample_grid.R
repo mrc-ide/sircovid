@@ -24,7 +24,8 @@
 ##' @export
 ##' @import furrr
 ##' @importFrom utils tail
-sample_grid_scan <- function(scan_results, 
+sample_grid_scan <- function(scan_results,
+                             model_fun = NULL,
                              n_sample_pairs = 10, 
                              n_particles = 100, 
                              forecast_days = 0) {
@@ -56,7 +57,7 @@ sample_grid_scan <- function(scan_results,
   
   # recreate parameters for re running
   param_grid <- data.frame("beta" = beta, "start_date" = dates)
-  model_fun <- scan_results$inputs$model_fun
+  #model_fun <- scan_results$inputs$model_fun
   model_params <- scan_results$inputs$model_params
   compare_fun <- scan_results$inputs$compare_fun
   pars_obs <- scan_results$inputs$pars_obs
@@ -93,6 +94,12 @@ sample_grid_scan <- function(scan_results,
     trajectories[tail(seq_max, nrow(traces[[i]])), , i] <- traces[[i]]
   }
 
+  if (is.null(model_fun)){
+    model = sircovid(params = model_params)
+  } else {
+    model = model_fun(user = model_params)
+  }
+  
   # combine and return
   res <- list("trajectories" = trajectories,
               "param_grid" = param_grid,
@@ -100,7 +107,8 @@ sample_grid_scan <- function(scan_results,
                 model_params = model_params,
                 pars_obs = pars_obs,
                 data = data,
-                model = sircovid(params = model_params)))
+                model = model
+                ))
   
   class(res) <- "sample_grid_search"
   
