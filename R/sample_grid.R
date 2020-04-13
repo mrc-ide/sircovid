@@ -7,6 +7,9 @@
 ##' 
 ##' @param scan_results Output of \code{\link{scan_beta_date}}.
 ##' 
+##' @param model_fun An odin function used to create the model.
+##'   If NULL, uses basic.
+##' 
 ##' @param n_sample_pairs Number of parameter pairs to be sampled. This will 
 ##'   determine how many trajectories are returned. Integer. Default = 10. This 
 ##'   will determine how many trajectories are returned. 

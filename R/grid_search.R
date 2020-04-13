@@ -19,12 +19,17 @@
 ##' @param data Hosptial data to fit to. See \code{example.csv}
 ##'   and \code{particle_filter_data()}
 ##' 
+##' @param model_fun An odin function used to create the model.
+##'   If NULL, uses basic.
+##' 
 ##' @param model_params Model parameters, from a call to
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
 ##'   in unit tests.
+##'
+##' @param compare_fun function used to calculate the log weights
+##'   in the particle filter. If NULL, uses compare_icu.
 ##'   
-##' @param pars_obs list of parameters to use in comparison
-##'   with \code{compare_icu}.
+##' @param pars_obs list of parameters to use for the compare_fun.
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
 ##' 
