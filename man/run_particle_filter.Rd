@@ -13,7 +13,8 @@ run_particle_filter(
   n_particles = 1000,
   forecast_days = 0,
   save_particles = FALSE,
-  return = "full"
+  return = "full",
+  model = "basic"
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ model to data in the particle filter}
 the entire particle filter output, 'll' gives the
 log-likelihood, 'sample' gives a sampled particle's
 trace, 'single' gives the final state}
+
+\item{model}{Name of the model to use}
 }
 \value{
 Results from particle filter

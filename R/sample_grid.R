@@ -24,7 +24,7 @@
 ##' @export
 ##' @import furrr
 ##' @importFrom utils tail
-sample_grid_scan <- function(scan_results, 
+sample_grid_scan <- function(scan_results,
                              n_sample_pairs = 10, 
                              n_particles = 100, 
                              forecast_days = 0) {
@@ -56,6 +56,8 @@ sample_grid_scan <- function(scan_results,
   
   # recreate parameters for re running
   param_grid <- data.frame("beta" = beta, "start_date" = dates)
+  model_fun <- scan_results$inputs$model_fun
+  compare_fun <- scan_results$inputs$compare_fun
   model_params <- scan_results$inputs$model_params
   pars_obs <- scan_results$inputs$pars_obs
   data <- scan_results$inputs$data
@@ -67,8 +69,8 @@ sample_grid_scan <- function(scan_results,
   ## Sample one particle
   traces <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
-    model_params = model_params, data = data, 
-    pars_obs = pars_obs, n_particles = n_particles,
+    model_fun = model_fun, model_params = model_params, data = data, 
+    compare_fun = compare_fun, pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = forecast_days, 
     save_particles = TRUE, return = "sample"
   )
@@ -91,6 +93,8 @@ sample_grid_scan <- function(scan_results,
   for (i in seq_len(length(traces))){
     trajectories[tail(seq_max, nrow(traces[[i]])), , i] <- traces[[i]]
   }
+
+  browser()
 
   # combine and return
   res <- list("trajectories" = trajectories,
