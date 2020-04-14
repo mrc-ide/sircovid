@@ -142,15 +142,15 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood") {
   }
 }
 
-
 ##' @export
 plot.sample_grid_search <- function(x, ..., what = "ICU") {
-  
+
+  idx <- odin_index(x$inputs$model$model(user = x$inputs$model_params))
+
   # what are we plotting
-  
   if (what == "ICU") {
     
-    index <- c(odin_index(x$inputs$model)$I_ICU) - 1L
+    index <- c(idx$I_ICU) - 1L
     ylab <- "ICU"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
@@ -160,7 +160,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     
   } else if(what == "Deaths") {
     
-    index <- c(odin_index(x$inputs$model)$D) - 1L
+    index <- c(idx$D) - 1L
     ylab <- "Deaths"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       out <- c(0,diff(rowSums(x$trajectories[,index,y], na.rm = TRUE)))
