@@ -19,17 +19,14 @@
 ##' @param data Hosptial data to fit to. See \code{example.csv}
 ##'   and \code{particle_filter_data()}
 ##' 
-##' @param model_fun An odin function used to create the model.
-##'   If NULL, uses basic.
+##' @param model An odin model generator and comparison function.  If
+##'   \code{NULL} uses the basic model.
 ##'
 ##' @param model_params Model parameters, from a call to
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
 ##'   in unit tests.
 ##'
-##' @param compare_fun function used to calculate the log weights
-##'   in the particle filter. If NULL, uses compare_icu.
-##'   
-##' @param pars_obs list of parameters to use for the compare_fun.
+##' @param pars_obs list of parameters to use for the comparison function.
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
 ##' 
@@ -46,9 +43,8 @@ scan_beta_date <- function(
   last_start_date, 
   day_step,
   data,
-  model_fun = NULL,
+  model = NULL,
   model_params = NULL,
-  compare_fun = NULL,
   pars_obs = NULL,
   n_particles = 100) {
   #
@@ -80,6 +76,8 @@ scan_beta_date <- function(
       stop("Set beta variation through generate_beta, not model_params")
     }
   }
+
+  model <- sircovid_model(model)
   
   if (is.null(pars_obs)) {
     pars_obs <- list(phi_ICU = 0.95,
@@ -93,10 +91,16 @@ scan_beta_date <- function(
   # Multi-core futures with furrr (parallel purrr)
   #
   ## Particle filter outputs, extracting log-likelihoods
+  beta_date_particle_filter(param_grid$beta[[1]], param_grid$start_date[[1]],
+                            model = model, model_params = model_params, data = data,
+                            pars_obs = pars_obs, n_particles = n_particles,
+                            forecast_days = 0, save_particles = FALSE, return = "ll"
+  )
+
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
-    model_fun = model_fun, model_params = model_params, data = data, 
-    compare_fun = compare_fun, pars_obs = pars_obs, n_particles = n_particles,
+    model = model, model_params = model_params, data = data, 
+    pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
   )
   
@@ -118,9 +122,8 @@ scan_beta_date <- function(
                   mat_log_ll = mat_log_ll,
                   renorm_mat_LL = renorm_mat_LL,
                   inputs = list(
-                    model_fun = model_fun,
+                    model = model,
                     model_params = model_params,
-                    compare_fun = compare_fun,
                     pars_obs = pars_obs,
                     data = data))
   
@@ -183,13 +186,12 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 ##' 
 ##' @noRd
 beta_date_particle_filter <- function(beta, start_date,
-                                      model_fun,
+                                      model,
                                       model_params, data, 
-                                      compare_fun, pars_obs, n_particles,
+                                      pars_obs, n_particles,
                                       forecast_days = 0,
                                       save_particles = FALSE,
                                       return = "full") {
-  
   # Edit beta in parameters
   new_beta <- generate_beta(beta, start_date)
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
@@ -197,8 +199,9 @@ beta_date_particle_filter <- function(beta, start_date,
   model_params$beta_y <- new_beta$beta
   model_params$beta_t <- beta_t
 
-  X <- run_particle_filter(data, model_fun, model_params, start_date, compare_fun, pars_obs,
-                           n_particles, forecast_days, save_particles, return)
+  X <- run_particle_filter(data, model_params, start_date, pars_obs,
+                           n_particles, forecast_days, save_particles, return,
+                           model)
   
   X
 }

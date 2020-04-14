@@ -131,7 +131,7 @@ run_particle_filter <- function(data,
                                 n_particles = 1000,
                                 forecast_days = 0,
                                 save_particles = FALSE,
-                                return = "full", model = "basic") {
+                                return = "full", model = NULL) {
   # parameter checks
   if (!(return %in% c("full", "ll", "sample", "single"))) {
     stop("return argument must be full, ll, sample or single")
@@ -153,21 +153,7 @@ run_particle_filter <- function(data,
     save_sample_state <- FALSE
   }
 
-  if (model == "basic") {
-    model <- basic
-    compare_func <- compare_icu
-  } else {
-    path <- system.file("odin", package = "sircovid", mustWork = TRUE)
-    possible <- sub("\\.json$", "", dir(path, pattern = "\\.json$"))
-    if (name %in% possible) {
-      env <- asNamespace("sircovid")
-      model <- get(name, envir = env, mode = "function", inherits = FALSE)
-      compare_func <- get(paste0("compare_", name), envir = env,
-                          mode = "function", inherits = FALSE)
-    } else {
-      stop("Unknown model: ", model)
-    }
-  }
+  model <- sircovid_model(model)
 
   #convert data into particle-filter form
   data <- particle_filter_data(data = data, 
@@ -175,13 +161,13 @@ run_particle_filter <- function(data,
                                steps_per_day = round(1 / model_params$dt)) 
 
   #set up model
-  model <- basic(user = model_params)
+  model_func <- model$model(user = model_params)
   
   #set up compare for observation likelihood
-  compare_func <- compare_icu(model = model, pars_obs = obs_params, data = data)
- 
+  compare_func <- model$compare(model = model_func, pars_obs = obs_params, data = data)
+
   pf_results <- particle_filter(data = data, 
-                                model = model,
+                                model = model_func,
                                 compare = compare_func, 
                                 n_particles = n_particles, 
                                 save_particles = save_particles,
