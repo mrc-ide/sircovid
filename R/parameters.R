@@ -248,6 +248,62 @@ generate_parameters <- function(
   parameter_list
 }
 
+
+##' The \code{generate_parameters_new_hospital_model} function is a
+##' helper while we develop the new hospital model.
+##'
+##' @export
+##' @rdname generate_parameters
+generate_parameters_new_hospital_model <- function() {
+  param_mod <- generate_parameters()
+  
+  ## these next two lines are because scan_beta_date will give an error if beta_t and beta_y are vectors
+  param_mod$beta_t <- param_mod$beta_t[1]
+  param_mod$beta_y <- param_mod$beta_y[1]
+
+  param_mod$I0_hosp_D <- param_mod$I0_hosp
+  param_mod$I0_hosp_R <- param_mod$I0_hosp
+  param_mod$I0_ICU_R <- param_mod$I0_hosp
+  param_mod$I0_ICU_D <- param_mod$I0_hosp
+  param_mod$I0_triage <- param_mod$I0_hosp
+  param_mod$R0_stepdown <- param_mod$I0_hosp
+  
+  param_mod$R0_hosp <- NULL
+  param_mod$s_hosp <- NULL
+  param_mod$gamma_hosp <- NULL
+  param_mod$s_ICU <- NULL
+  param_mod$gamma_ICU <- NULL
+  param_mod$s_rec <- NULL
+  param_mod$gamma_rec <- NULL
+  
+  param_mod$s_hosp_D <- 2
+  param_mod$gamma_hosp_D <- 2/5
+  param_mod$s_hosp_R <- 2
+  param_mod$gamma_hosp_R <- 2/10
+  
+  param_mod$s_ICU_D <- 2
+  param_mod$gamma_ICU_D <- 2/5
+  param_mod$s_ICU_R <- 2
+  param_mod$gamma_ICU_R <- 2/10
+  
+  param_mod$s_stepdown <- 2
+  param_mod$gamma_stepdown <- 2/5
+  
+  param_mod$s_triage <- 2
+  param_mod$gamma_triage <- 2
+  
+  param_mod$p_death_ICU <- 1-param_mod$p_recov_ICU
+  param_mod$p_ICU_hosp <- 1- param_mod$p_recov_hosp - param_mod$p_death_hosp
+  param_mod$p_recov_ICU <- NULL
+  
+  param_mod$I0_hosp <- NULL
+  param_mod$I0_ICU <- NULL
+  param_mod$p_recov_hosp <- NULL
+  
+  param_mod
+}
+
+
 #
 # Internal functions
 #
