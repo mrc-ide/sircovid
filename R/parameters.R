@@ -261,6 +261,226 @@ generate_parameters <- function(
   parameter_list
 }
 
+
+##' Create parameters for use with new_hospital_model
+##' 
+##' @title Create parameters
+##' 
+##' @param transmission_model Model type. Only 'POLYMOD' currently supported
+##' 
+##' @param country Country name
+##' 
+##' @param severity_data_file Location of file with severity data
+##' 
+##' @param progression_groups List of number of progression groups in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
+##'   
+##' @param gammas List of exponential distribution rates for time in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
+##' 
+##' @param infection_seeding List of vector \code{values} of how many cases to seed 
+##'  in a correspond vector of age bins in \code{bins}.
+##' 
+##' @param beta Beta, for each time step in \code{beta_times}
+##' 
+##' @param beta_times Dates \code{beta} changes, in format yyyy-mm-dd
+##' 
+##' @param trans_profile Proportion in each infectivity group
+##' 
+##' @param trans_increase Relative infectivity of each group
+##' 
+##' @param hosp_transmission Transmission rate of hospital cases
+##'
+##' @param ICU_transmission Tranmissions rate of ICU cases
+##' 
+##' @param dt Time-step to run the model in days
+##'   
+##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
+##'   and use the population from polymod when estimating the
+##'   transmission matrix
+##' 
+##' @return List of parameters for use with new_hospital_model
+##' 
+##' @export
+##' @import socialmixr
+##' @rdname generate_parameters
+generate_parameters_new_hospital_model <- function(
+  transmission_model = "POLYMOD",
+  country="United Kingdom",
+  severity_data_file=NULL,
+  progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
+  gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5),
+  infection_seeding = list(values=c(10),
+                           bins=c('15 to 19')),
+  beta = 0.1,
+  beta_times = "2020-02-02",
+  trans_profile = c(1),
+  trans_increase = c(1),
+  hosp_transmission = 0.1,
+  ICU_transmission = 0.05,
+  dt = 0.25,
+  use_polymod_pop = FALSE) {
+  #
+  # Input checks
+  #
+  # Currently only POLYMOD possible, throws otherwise
+  if (length(trans_profile) != length(trans_increase)) {
+    stop("Lengths of transmissibility class arguments mismatching")
+  }
+  
+  if (length(beta) != length(beta_times)) {
+    stop("Length of beta mismatching with length of transition times")
+  }
+  
+  if (length(infection_seeding$values) != length(infection_seeding$bins)) {
+    stop("Each infection seeding value must correspond to one bin")
+  }
+  
+  if (sum(trans_profile) != 1) {
+    stop("trans_profile proportions must sum to 1")
+  }
+  
+  if (transmission_model == "POLYMOD") {
+    contact_survey = socialmixr::polymod
+  } else {
+    stop("Only POLYMOD transmission model implemented")
+  }
+  
+  partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown")
+  if (any(!(partitions %in% names(progression_groups)))) {
+    stop("progression_groups need to be defined for all partitions")
+  }
+  if (any(!(partitions %in% names(gammas)))) {
+    stop("gammas need to be defined for all partitions")
+  }
+  
+  #
+  # Set up time-varying beta
+  # Times are in days from first day supplied
+  beta_t <- normalise_beta(beta_times, dt)
+  
+  # 
+  # This section defines proportions between partitions
+  # derived from the severity.csv file
+  #
+  severity_params <- read_severity(severity_data_file)
+  
+  #
+  # Set up the transmission matrix
+  #
+  survey_pop <- get_survey_pop(severity_params$population, severity_params$age_bin_starts)
+  if (use_polymod_pop) {
+    transmission_matrix <- get_transmission_matrix(
+      survey_pop = NULL,
+      contact_survey = contact_survey,
+      country = "United Kingdom",
+      age_limits = severity_params$age_bin_starts)
+  } else {
+    transmission_matrix <- get_transmission_matrix(
+      survey_pop = survey_pop,
+      contact_survey = contact_survey,
+      country = "United Kingdom",
+      age_limits = severity_params$age_bin_starts)
+  }
+  
+  #
+  # Set up the heterogeneous offspring distribution 
+  #
+  N_age_bins <- length(severity_params$age_bin_starts)
+  N_trans_classes <- length(trans_profile)
+  
+  # Makes an array with rows as age bins, columns as classes
+  # All age bins have the same transmission changes
+  trans_profile_array <- array(unlist(lapply(trans_profile, rep, N_age_bins)), 
+                               c(N_age_bins, N_trans_classes))
+  trans_increase_array <- array(unlist(lapply(trans_increase, rep, N_age_bins)), 
+                                c(N_age_bins, N_trans_classes))
+  
+  #
+  # Set the initial conditions for each partition
+  # S0 = N, everything else zero
+  #
+  S0 <- severity_params$population
+  E0 <- array(0, dim = c(N_age_bins, progression_groups$E, N_trans_classes))
+  I0_asympt <- array(0, dim = c(N_age_bins, progression_groups$asympt, N_trans_classes))
+  I0_mild <- array(0, dim = c(N_age_bins, progression_groups$mild, N_trans_classes))
+  I0_ILI <- array(0, dim = c(N_age_bins, progression_groups$ILI, N_trans_classes))
+  I0_hosp_D <- array(0, dim = c(N_age_bins, progression_groups$hosp_D, N_trans_classes))
+  I0_hosp_R <- array(0, dim = c(N_age_bins, progression_groups$hosp_R, N_trans_classes))
+  I0_ICU_D <- array(0, dim = c(N_age_bins, progression_groups$ICU_D, N_trans_classes))
+  I0_ICU_R <- array(0, dim = c(N_age_bins, progression_groups$ICU_R, N_trans_classes))
+  I0_triage <- array(0, dim = c(N_age_bins, progression_groups$triage, N_trans_classes))
+  R0_stepdown <- array(0, dim = c(N_age_bins, progression_groups$stepdown, N_trans_classes))
+  R0 <- rep(0, N_age_bins)
+  D0 <- rep(0, N_age_bins)
+  
+  # Add some initial infections to I_asympt
+  # Move from susceptible to infected
+  seed_bins <- parse_age_bins(infection_seeding$bins)
+  seed_idx <- match(seed_bins$bin_start, severity_params$age_bin_starts)
+  if (any(duplicated(seed_idx))) {
+    stop("Seeding is into the same bin multiple times")
+  }
+  I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
+  S0[seed_idx] <- S0[seed_idx] - infection_seeding$values
+  
+  #
+  # Returns parameters
+  #
+  parameter_list <- list(N_age = N_age_bins,
+                         trans_classes = N_trans_classes,
+                         dt = dt,
+                         S0 = S0,
+                         E0 = E0,
+                         I0_asympt = I0_asympt,
+                         I0_mild = I0_mild,
+                         I0_ILI = I0_ILI,
+                         I0_hosp_D = I0_hosp_D,
+                         I0_hosp_R = I0_hosp_R,
+                         I0_ICU_D = I0_ICU_D,
+                         I0_ICU_R = I0_ICU_R,
+                         I0_triage = I0_triage,
+                         R0_stepdown = R0_stepdown,
+                         R0 = R0,
+                         D0 = D0,
+                         trans_increase = trans_increase_array,
+                         trans_profile = trans_profile_array,
+                         beta_y = beta,
+                         beta_t = beta_t,
+                         s_E = progression_groups$E,
+                         gamma_E = gammas$E,
+                         s_asympt = progression_groups$asympt,
+                         gamma_asympt = gammas$asympt,
+                         s_mild = progression_groups$mild,
+                         gamma_mild = gammas$mild,
+                         s_ILI = progression_groups$ILI,
+                         gamma_ILI = gammas$ILI,
+                         s_hosp_D = progression_groups$hosp_D,
+                         gamma_hosp_D = gammas$hosp_D,
+                         s_hosp_R = progression_groups$hosp_R,
+                         gamma_hosp_R = gammas$hosp_R,
+                         s_ICU_D = progression_groups$ICU_D,
+                         gamma_ICU_D = gammas$ICU_D,
+                         s_ICU_R = progression_groups$ICU_R,
+                         gamma_ICU_R = gammas$ICU_R,
+                         s_stepdown = progression_groups$stepdown,
+                         gamma_stepdown = gammas$stepdown,
+                         s_triage = progression_groups$triage,
+                         gamma_triage = gammas$triage,
+                         m = transmission_matrix,
+                         p_death_hosp = severity_params$death_hosp,
+                         p_death_ICU = severity_params$death_ICU,
+                         p_ICU_hosp = severity_params$ICU_hosp,
+                         p_recov_ILI = severity_params$recov_ILI,
+                         p_asympt = severity_params$asympt,
+                         p_sympt_ILI = severity_params$sympt_ILI,
+                         hosp_transmission = hosp_transmission,
+                         ICU_transmission = ICU_transmission)
+  
+  parameter_list
+}
+
+
 #
 # Internal functions
 #
@@ -379,6 +599,10 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
                    severity_data[["Proportion of non-critical care cases dying"]]
   
+  p_death_ICU <- 1 - p_recov_ICU
+  
+  p_ICU_hosp <- 1 - p_recov_hosp - p_death_hosp
+  
   list(
     population = population,
     age_bin_starts = age_bins$bin_start,
@@ -388,7 +612,9 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     recov_ICU = p_recov_ICU,
     recov_ILI = p_recov_ILI,
     recov_hosp = p_recov_hosp,
-    death_hosp = p_death_hosp)
+    death_hosp = p_death_hosp,
+    death_ICU = p_death_ICU,
+    ICU_hosp = p_ICU_hosp)
 }
 
 ## Gets the population age distribution

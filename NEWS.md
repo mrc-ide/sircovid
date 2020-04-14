@@ -1,3 +1,20 @@
+# sircovid 0.2.15
+
+- Generate parameter function for new_hospital_model
+
+# sircovid 0.2.14
+
+- 2nd model added to package - new_hospital_model
+
+# sircovid 0.2.13
+
+- Adds a save_end_states option to particle_filter
+
+
+# sircovid 0.2.12
+
+- When doing grid sample and projections plot deaths counts rather than cumulative
+
 # sircovid 0.2.11
 
 - Adds pMCMC for beta and start date inference

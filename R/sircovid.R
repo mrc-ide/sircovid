@@ -114,8 +114,10 @@ generate_data <- function(death_data_file,
 ##'   the entire particle filter output, 'll' gives the
 ##'   log-likelihood, 'sample' gives a sampled particle's
 ##'   trace, 'single' gives the final state
+##'
+##' @param model Name of the model to use
 ##' 
-##' @returns Results from particle filter
+##' @return Results from particle filter
 ##' 
 ##' @export
 run_particle_filter <- function(data,
@@ -129,7 +131,7 @@ run_particle_filter <- function(data,
                                 n_particles = 1000,
                                 forecast_days = 0,
                                 save_particles = FALSE,
-                                return = "full") {
+                                return = "full", model = NULL) {
   # parameter checks
   if (!(return %in% c("full", "ll", "sample", "single"))) {
     stop("return argument must be full, ll, sample or single")
@@ -151,19 +153,21 @@ run_particle_filter <- function(data,
     save_sample_state <- FALSE
   }
 
+  model <- sircovid_model(model)
+
   #convert data into particle-filter form
   data <- particle_filter_data(data = data, 
                                start_date = model_start_date, 
                                steps_per_day = round(1 / model_params$dt)) 
 
   #set up model
-  model <- basic(user = model_params)
+  model_func <- model$model(user = model_params)
   
   #set up compare for observation likelihood
-  compare_func <- compare_icu(model = model, pars_obs = obs_params, data = data)
-  
+  compare_func <- model$compare(model = model_func, pars_obs = obs_params, data = data)
+
   pf_results <- particle_filter(data = data, 
-                                model = model,
+                                model = model_func,
                                 compare = compare_func, 
                                 n_particles = n_particles, 
                                 save_particles = save_particles,

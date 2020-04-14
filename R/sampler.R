@@ -20,12 +20,15 @@
 ##' @param save_sample_state Logical, indicating whether we should save a
 ##'  single particle, chosen at random, at the final time point for which 
 ##'  we have data
+##'  
+##' @param save_end_states Logical, indicating whether we should save all
+##'  particles at the final time point for which we have data
 ##'   
 ##' @export
 ##' 
 particle_filter <- function(data, model, compare, n_particles,
                             forecast_days = 0, save_particles = FALSE, 
-                            save_sample_state = FALSE) {
+                            save_sample_state = FALSE, save_end_states = FALSE) {
   if (!inherits(data, "particle_filter_data")) {
     stop("Expected a data set derived from particle_filter_data")
   }
@@ -40,6 +43,9 @@ particle_filter <- function(data, model, compare, n_particles,
   }
   if (forecast_days < 0) {
     stop("forecast_days must be positive")
+  }
+  if (save_particles && save_end_states){
+    stop("Can not have both save_particles and save_end_states input as TRUE")
   }
 
   i_state <- seq_along(model$initial()) + 1L
@@ -112,6 +118,9 @@ particle_filter <- function(data, model, compare, n_particles,
     particle_chosen <- sample.int(n = n_particles, size = 1)
     ret$sample_state <- state[, particle_chosen]
   }
+  if (save_end_states){
+    ret$states <- state
+  }
   ret
 }
 
@@ -167,60 +176,6 @@ particle_filter_data <- function(data, start_date, steps_per_day) {
   attr(ret, "steps_per_day") <- steps_per_day
 
   ret
-}
-
-
-##' Compare the model to ICU data for use with the particle filter
-##' 
-##' @title Compare model to ICU data
-##' 
-##' @param model An \code{odin_model} object
-##' 
-##' @param pars_obs Parameters for the observations
-##' 
-##' @param data The data to be compared against
-##' 
-##' @export
-compare_icu <- function(model, pars_obs, data) {
-  index <- odin_index(model)
-
-  ## Unpack things that we will use repeatedly
-  phi_ICU <- pars_obs$phi_ICU
-  k_ICU <- pars_obs$k_ICU
-  phi_death <- pars_obs$phi_death
-  k_death <- pars_obs$k_death
-  exp_noise <- pars_obs$exp_noise
-  index_ICU <- c(index$I_ICU) - 1L
-  index_D <- c(index$D) - 1L
-
-  force(data)
-
-  ## This returns a closure, with the above variables bound, the
-  ## sampler will provide the arguments below.
-  function(t, state, prev_state) {
-    if (is.na(data$itu[t] && is.na(data$deaths[t]))) {
-      return(NULL)
-    }
-
-    log_weights <- rep(0, ncol(state))
-
-    if (!is.na(data$itu[t])) {
-      ## sum model output across ages/infectivities
-      model_icu <- colSums(state[index_ICU, ])
-      log_weights <- log_weights +
-        ll_nbinom(data$itu[t], model_icu, phi_ICU, k_ICU, exp_noise)
-    }
-
-    if (!is.na(data$deaths[t])) {
-      ## new deaths summed across ages/infectivities
-      model_deaths <- colSums(state[index_D, ]) -
-        colSums(prev_state[index_D, ])
-      log_weights <- log_weights +
-        ll_nbinom(data$deaths[t], model_deaths, phi_death, k_death, exp_noise)
-    }
-
-    log_weights
-  }
 }
 
 

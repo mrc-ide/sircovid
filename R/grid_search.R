@@ -23,12 +23,14 @@
 ##' @param data Hosptial data to fit to. See \code{example.csv}
 ##'   and \code{particle_filter_data()}
 ##' 
+##' @param model An odin model generator and comparison function.  If
+##'   \code{NULL} uses the basic model.
+##'
 ##' @param model_params Model parameters, from a call to
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
 ##'   in unit tests.
-##'   
-##' @param pars_obs list of parameters to use in comparison
-##'   with \code{compare_icu}.
+##'
+##' @param pars_obs list of parameters to use for the comparison function.
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
 ##' 
@@ -47,7 +49,8 @@ scan_beta_date <- function(
   first_start_date, 
   last_start_date, 
   day_step,
-  data, 
+  data,
+  model = NULL,
   model_params = NULL,
   pars_obs = NULL,
   n_particles = 100) {
@@ -80,6 +83,8 @@ scan_beta_date <- function(
       stop("Set beta variation through generate_beta_func, not model_params")
     }
   }
+
+  model <- sircovid_model(model)
   
   if (is.null(pars_obs)) {
     pars_obs <- list(phi_ICU = 0.95,
@@ -96,7 +101,7 @@ scan_beta_date <- function(
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
     generate_beta_func = generate_beta_func,
-    model_params = model_params, data = data, 
+    model = model, model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
   )
@@ -119,6 +124,7 @@ scan_beta_date <- function(
                   mat_log_ll = mat_log_ll,
                   renorm_mat_LL = renorm_mat_LL,
                   inputs = list(
+                    model = model,
                     model_params = model_params,
                     pars_obs = pars_obs,
                     data = data),
@@ -139,15 +145,15 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood") {
   }
 }
 
-
 ##' @export
 plot.sample_grid_search <- function(x, ..., what = "ICU") {
-  
+
+  idx <- odin_index(x$inputs$model$model(user = x$inputs$model_params))
+
   # what are we plotting
-  
   if (what == "ICU") {
     
-    index <- c(odin_index(x$inputs$model)$I_ICU) - 1L
+    index <- c(idx$I_ICU) - 1L
     ylab <- "ICU"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
@@ -157,13 +163,16 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     
   } else if(what == "Deaths") {
     
-    index <- c(odin_index(x$inputs$model)$D) - 1L
+    index <- c(idx$D) - 1L
     ylab <- "Deaths"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
-      rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
+      out <- c(0,diff(rowSums(x$trajectories[,index,y], na.rm = TRUE)))
+      names(out)[1] <- rownames(x$trajectories)[1]
+      out}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
     plot_particles(particles, ylab = ylab)
-    points(as.Date(x$inputs$data$date), cumsum(x$inputs$data$deaths), pch = 19)
+    points(as.Date(x$inputs$data$date), 
+           x$inputs$data$deaths/ x$inputs$pars_obs$phi_death, pch = 19)
     
   } else {
     
@@ -184,12 +193,12 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 ##' @noRd
 beta_date_particle_filter <- function(beta, start_date,
                                       generate_beta_func,
+                                      model,
                                       model_params, data, 
                                       pars_obs, n_particles,
                                       forecast_days = 0,
                                       save_particles = FALSE,
                                       return = "full") {
-  
   # Edit beta in parameters
   new_beta <- generate_beta_func(beta, start_date)
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
@@ -198,7 +207,8 @@ beta_date_particle_filter <- function(beta, start_date,
   model_params$beta_t <- beta_t
 
   X <- run_particle_filter(data, model_params, start_date, pars_obs,
-                           n_particles, forecast_days, save_particles, return)
+                           n_particles, forecast_days, save_particles, return,
+                           model)
   
   X
 }

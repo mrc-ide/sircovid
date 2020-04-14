@@ -14,6 +14,7 @@ scan_beta_date(
   last_start_date,
   day_step,
   data,
+  model = NULL,
   model_params = NULL,
   pars_obs = NULL,
   n_particles = 100
@@ -39,12 +40,14 @@ is \code{generate_beta()}}
 \item{data}{Hosptial data to fit to. See \code{example.csv}
 and \code{particle_filter_data()}}
 
+\item{model}{An odin model generator and comparison function.  If
+\code{NULL} uses the basic model.}
+
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
 in unit tests.}
 
-\item{pars_obs}{list of parameters to use in comparison
-with \code{compare_icu}.}
+\item{pars_obs}{list of parameters to use for the comparison function.}
 
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
 }
