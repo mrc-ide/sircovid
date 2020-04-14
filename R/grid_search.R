@@ -91,12 +91,6 @@ scan_beta_date <- function(
   # Multi-core futures with furrr (parallel purrr)
   #
   ## Particle filter outputs, extracting log-likelihoods
-  beta_date_particle_filter(param_grid$beta[[1]], param_grid$start_date[[1]],
-                            model = model, model_params = model_params, data = data,
-                            pars_obs = pars_obs, n_particles = n_particles,
-                            forecast_days = 0, save_particles = FALSE, return = "ll"
-  )
-
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
     model = model, model_params = model_params, data = data, 
