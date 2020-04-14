@@ -14,7 +14,7 @@ sircovid_model <- function(x) {
       compare <- get(paste0("compare_", x), envir = env,
                      mode = "function", inherits = FALSE)
     } else {
-      stop("Unknown model: ", model)
+      stop("Unknown model: ", x)
     }
   }
   ret <- list(model = model, compare = compare)

@@ -362,9 +362,12 @@ calc_loglikelihood <- function(pars, data, model_params, model_start_date,
                                steps_per_day, pars_obs, n_particles) {
   start_date <- as.Date(pars[['start_date']], origin=model_start_date)
   pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
-                                         start_date = start_date, 
-                                         model_params, data, 
-                                         pars_obs, n_particles,
+                                         start_date = start_date,
+                                         model = NULL,
+                                         model_params = model_params,
+                                         data = data, 
+                                         pars_obs = pars_obs,
+                                         n_particles = n_particles,
                                          forecast_days = 0,
                                          save_particles = FALSE,
                                          return = "single")
