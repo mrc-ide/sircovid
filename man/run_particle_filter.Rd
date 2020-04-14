@@ -14,7 +14,7 @@ run_particle_filter(
   forecast_days = 0,
   save_particles = FALSE,
   return = "full",
-  model = "basic"
+  model = NULL
 )
 }
 \arguments{

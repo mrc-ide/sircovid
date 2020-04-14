@@ -12,9 +12,8 @@ scan_beta_date(
   last_start_date,
   day_step,
   data,
-  model_fun = NULL,
+  model = NULL,
   model_params = NULL,
-  compare_fun = NULL,
   pars_obs = NULL,
   n_particles = 100
 )
@@ -35,17 +34,14 @@ scan_beta_date(
 \item{data}{Hosptial data to fit to. See \code{example.csv}
 and \code{particle_filter_data()}}
 
-\item{model_fun}{An odin function used to create the model.
-If NULL, uses basic.}
+\item{model}{An odin model generator and comparison function.  If
+\code{NULL} uses the basic model.}
 
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
 in unit tests.}
 
-\item{compare_fun}{function used to calculate the log weights
-in the particle filter. If NULL, uses compare_icu.}
-
-\item{pars_obs}{list of parameters to use for the compare_fun.}
+\item{pars_obs}{list of parameters to use for the comparison function.}
 
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
 }
