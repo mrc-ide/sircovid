@@ -1,23 +1,82 @@
-sircovid_model <- function(x) {
-  if (inherits(x, "sircovid_model")) {
+
+basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+                        gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5)) {
+  odin_model <- load_odin_model("basic")
+  generate_beta_func <- generate_beta
+  compare_model <- compare_output(type=model_class)
+  
+  model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
+  if (any(!(model_partitions %in% names(progression_groups)))) {
+    stop("progression_groups need to be defined for all partitions")
+  }
+  if (any(!(model_partitions %in% names(gammas)))) {
+    stop("gammas need to be defined for all partitions")
+  }
+  
+  basic <- list(odin_model = odin_model,
+                generate_beta_func = generate_beta_func,
+                progression_groups = progression_groups,
+                gammas = gammas,
+                compare_model = compare_model)
+  class(basic) <- ("sircovid_basic")
+}
+
+hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
+                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5)) {
+  model_class <- "sircovid_hospital"
+  odin_model <- load_odin_model("new_hospital_model")
+  generate_beta_func <- generate_beta
+  compare_model <- compare_output(type=model_class)
+  
+  model_partitions <- partition_names(model_class)
+  if (any(!(model_partitions %in% names(progression_groups)))) {
+    stop("progression_groups need to be defined for all partitions")
+  }
+  if (any(!(model_partitions %in% names(gammas)))) {
+    stop("gammas need to be defined for all partitions")
+  }
+  
+  basic <- list(odin_model = odin_model,
+                generate_beta_func = generate_beta_func,
+                progression_groups = progression_groups,
+                gammas = gammas,
+                compare_model = compare_model)
+  class(basic) <- c("sircovid_hospital", "sircovid_basic")
+}
+
+# Definitions of partition names
+partition_names <- function(model_name) {
+  if (inherits(x, "sircovid_basic")) {
+    model_partitions <- names(model$progression_groups)
+  } else {
+    if (model_name == "sircovid_basic") {
+      model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
+    } else if (model_name == "sircovid_hospital") {
+      model_partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown")
+    } else {
+      stop("Unknown model name")
+    }
+  }
+  model_partitions
+}
+
+#' Loads a model by its name
+#' Must be in inst/odin
+load_odin_model <- function(x) {
+  if (inherits(x, "sircovid_basic")) {
     return(x)
   }
   if (is.null(x) || x == "basic") {
     model <- basic
-    compare <- compare_icu
   } else {
     path <- system.file("odin", package = "sircovid", mustWork = TRUE)
     possible <- sub("\\.json$", "", dir(path, pattern = "\\.json$"))
     if (x %in% possible) {
       env <- asNamespace("sircovid")
       model <- get(x, envir = env, mode = "function", inherits = FALSE)
-      compare <- get(paste0("compare_", x), envir = env,
-                     mode = "function", inherits = FALSE)
     } else {
       stop("Unknown model: ", x)
     }
   }
-  ret <- list(model = model, compare = compare)
-  class(ret) <- "sircovid_model"
-  ret
+  model
 }
