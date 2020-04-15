@@ -34,9 +34,6 @@ scan_beta_date(
 \item{data}{Hosptial data to fit to. See \code{example.csv}
 and \code{particle_filter_data()}}
 
-\item{model}{An odin model generator and comparison function.  If
-\code{NULL} uses the basic model.}
-
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
 in unit tests.}
@@ -44,6 +41,8 @@ in unit tests.}
 \item{pars_obs}{list of parameters to use for the comparison function.}
 
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
+
+\item{sircovid_model}{An odin model generator and comparison function.}
 }
 \value{
 List of beta and start date grid values, and

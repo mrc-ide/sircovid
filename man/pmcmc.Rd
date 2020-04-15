@@ -7,6 +7,7 @@
 pmcmc(
   data,
   n_mcmc,
+  sircovid_model,
   model_params = NULL,
   model_start_date = "2020-02-02",
   pars_obs = list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926/1019, k_death = 2,
@@ -27,6 +28,8 @@ pmcmc(
 \code{particle_filter_data}}
 
 \item{n_mcmc}{number of mcmc mcmc iterations to perform}
+
+\item{sircovid_model}{An odin model generator and comparison function.}
 
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
