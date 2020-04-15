@@ -27,7 +27,6 @@ test_that("Parameters are generated as before", {
   pars_model$beta <- NULL
   cmp$beta <- NULL
 
-  browser()
   expect_mapequal(pars_model, cmp)
 })
 
