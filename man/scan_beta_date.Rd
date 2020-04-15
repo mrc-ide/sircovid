@@ -12,7 +12,7 @@ scan_beta_date(
   last_start_date,
   day_step,
   data,
-  sircovid_model = NULL,
+  sircovid_model = basic_model(),
   model_params = NULL,
   pars_obs = NULL,
   n_particles = 100

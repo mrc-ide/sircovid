@@ -56,6 +56,7 @@ test_that("Small grid search works with new model", {
   last_start_date <- "2020-01-22"
   day_step <- 1
   
+  skip("Skip until data for new model compare available")
   scan_results = scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,

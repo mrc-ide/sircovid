@@ -3,7 +3,6 @@ context("sircovid")
 test_that("Can be run on real data", {
   set.seed(1)
   time_steps_per_day <- 4
-  
   data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
                         admissions_data_file = "combin_time_series.csv")
   sircovid_model <- basic_model()
@@ -41,7 +40,7 @@ test_that("New model can be run on real data", {
                                       beta_times = vary_beta$beta_times,
                                       dt = 1/time_steps_per_day)
   
-  browser()
+  skip("Skip until data for new model compare available")
   results <- run_particle_filter(data = data,
                                  sircovid_model = sircovid_model,
                                  model_params = model_params,
@@ -52,6 +51,7 @@ test_that("New model can be run on real data", {
                                                    exp_noise = 1e6),
                                  n_particles = 1000)
   # No check of correctness  
+  # TODO update this ll
   expect_equal(results$log_likelihood, -269.9478, tolerance=1e-3)
 })
 
@@ -83,7 +83,7 @@ test_that("Poor formatting of real data throws errors", {
                                                      phi_death = 1789/1651,
                                                      k_death = 2,
                                                      exp_noise = 1e6),
-                                   n_particles = 1000),
+                                   n_particles = 10),
                "Model start date is later than data start date")
 })
 
@@ -107,7 +107,7 @@ test_that("Bad parameters throws errors", {
                                                      phi_death = 1789/1651,
                                                      k_death = 2,
                                                      exp_noise = 1e6),
-                                   n_particles = 1000,
+                                   n_particles = 10,
                                    save_particles = FALSE,
                                    return = "sample"),
                "Must save particles to sample runs")
@@ -120,7 +120,7 @@ test_that("Bad parameters throws errors", {
                                                      phi_death = 1789/1651,
                                                      k_death = 2,
                                                      exp_noise = 1e6),
-                                     n_particles = 1000,
+                                     n_particles = 10,
                                      save_particles = FALSE,
                                      return = "lll"),
                  "return argument must be full, ll, sample or single")

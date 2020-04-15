@@ -5,7 +5,7 @@
 \title{Create parameters}
 \usage{
 generate_parameters(
-  sircovid_model,
+  sircovid_model = basic_model(),
   transmission_model = "POLYMOD",
   country = "United Kingdom",
   severity_data_file = NULL,

@@ -1,3 +1,7 @@
+# sircovid 0.2.16
+
+- Options for using different models reimplemented
+
 # sircovid 0.2.15
 
 - Generate parameter function for new_hospital_model
