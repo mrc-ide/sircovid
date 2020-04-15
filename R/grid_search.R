@@ -42,7 +42,7 @@ scan_beta_date <- function(
   last_start_date, 
   day_step,
   data,
-  model = NULL,
+  sircovid_model = NULL,
   model_params = NULL,
   pars_obs = NULL,
   n_particles = 100) {
@@ -59,14 +59,10 @@ scan_beta_date <- function(
   if (is.null(model_params)) {
     time_steps_per_day <- 4
     model_params <- generate_parameters(
-      model = model,
+      sircovid_model = model,
       transmission_model = "POLYMOD",
-      progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
-      gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
       beta = 0.1,
       beta_times = "2020-01-01",
-      hosp_transmission = 0,
-      ICU_transmission = 0,
       trans_profile = 1,
       trans_increase = 1,
       dt = 1/time_steps_per_day
@@ -192,8 +188,7 @@ beta_date_particle_filter <- function(beta, start_date,
   model_params$beta_t <- beta_t
 
   X <- run_particle_filter(data, sircovid_model, model_params, start_date, pars_obs,
-                           n_particles, forecast_days, save_particles, return,
-                           model)
+                           n_particles, forecast_days, save_particles, return)
   
   X
 }
