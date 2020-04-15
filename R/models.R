@@ -13,7 +13,7 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
                         gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5)) {
   odin_model <- load_odin_model("basic")
   generate_beta_func <- generate_beta
-  compare_model <- compare_output(type=model_class)
+  compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
   
   model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
   if (any(!(model_partitions %in% names(progression_groups)))) {
@@ -29,6 +29,7 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
                 gammas = gammas,
                 compare_model = compare_model)
   class(basic) <- ("sircovid_basic")
+  basic
 }
 
 ##' Create a hosptial model
@@ -57,20 +58,21 @@ hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1
     stop("gammas need to be defined for all partitions")
   }
   
-  basic <- list(odin_model = odin_model,
+  hospital <- list(odin_model = odin_model,
                 generate_beta_func = generate_beta_func,
                 progression_groups = progression_groups,
                 gammas = gammas,
                 compare_model = compare_model)
-  class(basic) <- c("sircovid_hospital", "sircovid_basic")
+  class(hospital) <- c("sircovid_hospital", "sircovid_basic")
+  hospital
 }
 
 #' Internal functions
 #' 
 #' Definitions of partition names
 partition_names <- function(model_name) {
-  if (inherits(x, "sircovid_basic")) {
-    model_partitions <- names(model$progression_groups)
+  if (inherits(model_name, "sircovid_basic")) {
+    model_partitions <- names(model_name$progression_groups)
   } else {
     if (model_name == "sircovid_basic") {
       model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")

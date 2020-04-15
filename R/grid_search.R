@@ -42,7 +42,7 @@ scan_beta_date <- function(
   last_start_date, 
   day_step,
   data,
-  sircovid_model = NULL,
+  sircovid_model = basic_model(),
   model_params = NULL,
   pars_obs = NULL,
   n_particles = 100) {
@@ -59,7 +59,7 @@ scan_beta_date <- function(
   if (is.null(model_params)) {
     time_steps_per_day <- 4
     model_params <- generate_parameters(
-      sircovid_model = model,
+      sircovid_model = sircovid_model,
       transmission_model = "POLYMOD",
       beta = 0.1,
       beta_times = "2020-01-01",
@@ -87,7 +87,7 @@ scan_beta_date <- function(
   ## Particle filter outputs, extracting log-likelihoods
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
-    model = sircovid_model, model_params = model_params, data = data, 
+    sircovid_model = sircovid_model, model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
   )

@@ -22,7 +22,8 @@ test_that("Small grid search works", {
     first_start_date = first_start_date, 
     last_start_date = last_start_date, 
     day_step = day_step,
-    data = data)
+    data = data,
+    sircovid_model = )
    
   expect_is(scan_results, "sircovid_scan")
   expect_true("inputs" %in% names(scan_results))

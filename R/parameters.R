@@ -80,7 +80,7 @@ generate_beta <- function(beta_start,
 ##' @return List of parameters for use with \code{sircovid}
 ##' 
 generate_parameters <- function(
-  sircovid_model,
+  sircovid_model = basic_model(),
   transmission_model = "POLYMOD",
   country="United Kingdom",
   severity_data_file=NULL,
@@ -95,6 +95,10 @@ generate_parameters <- function(
   dt = 0.25,
   use_polymod_pop = FALSE) {
   
+  if (length(infection_seeding$values) != length(infection_seeding$bins)) {
+    stop("Each infection seeding value must correspond to one bin")
+  }
+  
   # Generate parameters used by all models
   parameter_list <- generate_parameters_base(transmission_model = transmission_model,
                                              country=country,
@@ -108,32 +112,31 @@ generate_parameters <- function(
   
   #
   # Set the initial conditions for each partition
-  # S0 = N, everything else zero
+  # S0 = N (set in generate_parameters_base), everything else zero
   #
   if (class(sircovid_model) == "sircovid_hospital") {
-    parameter_list$S0 <- parameter_list$population
-    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$E, parameter_list$N_trans_classes))
-    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$asympt, parameter_list$N_trans_classes))
-    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$mild, parameter_list$N_trans_classes))
-    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ILI, parameter_list$N_trans_classes))
-    parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$hosp_D, parameter_list$N_trans_classes))
-    parameter_list$I0_hosp_R <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$hosp_R, parameter_list$N_trans_classes))
-    parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$ICU_D, parameter_list$N_trans_classes))
-    parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$ICU_R, parameter_list$N_trans_classes))
-    parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$triage, parameter_list$N_trans_classes))
-    parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$stepdown, parameter_list$N_trans_classes))
-    parameter_list$R0 <- rep(0, parameter_list$N_age_bins)
-    parameter_list$D0 <- rep(0, parameter_list$N_age_bins)
+    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
+    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
+    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
+    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
+    parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
+    parameter_list$I0_hosp_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
+    parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
+    parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
+    parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age, sircovid_model$rogression_groups$triage, parameter_list$trans_classes))
+    parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
+    parameter_list$R0 <- rep(0, parameter_list$N_age)
+    parameter_list$D0 <- rep(0, parameter_list$N_age)
   } else if (class(sircovid_model) == "sircovid_basic") {
-    parameter_list$S0 <- parameter_list$population
-    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$E, parameter_list$N_trans_classes))
-    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$asympt, parameter_list$N_trans_classes))
-    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$mild, parameter_list$N_trans_classes))
-    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ILI, parameter_list$N_trans_classes))
-    parameter_list$I0_hosp <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$hosp, parameter_list$N_trans_classes))
-    parameter_list$I0_ICU <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ICU, parameter_list$N_trans_classes))
-    parameter_list$R0 <- rep(0, parameter_list$N_age_bins)
-    parameter_list$D0 <- rep(0, parameter_list$N_age_bins)
+    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
+    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
+    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
+    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
+    parameter_list$I0_hosp <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp, parameter_list$trans_classes))
+    parameter_list$I0_ICU <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU, parameter_list$trans_classes))
+    parameter_list$R0_hosp <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$rec, parameter_list$trans_classes))
+    parameter_list$R0 <- rep(0, parameter_list$N_age)
+    parameter_list$D0 <- rep(0, parameter_list$N_age)
   } else {
     stop("Model name not supported")
   }
@@ -145,16 +148,19 @@ generate_parameters <- function(
   if (any(duplicated(seed_idx))) {
     stop("Seeding is into the same bin multiple times")
   }
-  parameter_list$I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
-  parameter_list$S0[seed_idx] <- S0[seed_idx] - infection_seeding$values
+  parameter_list$I0_asympt[seed_idx,1,parameter_list$trans_classes] <- infection_seeding$values
+  parameter_list$S0[seed_idx] <- parameter_list$S0[seed_idx] - infection_seeding$values
   
   #
   # Set gamma and groups
   #
   for (partition in partition_names(sircovid_model)) {
-    parameter_list[paste0(c("s_", partition))] <- sircovid_model$progression_groups[[partition]]
-    parameter_list[paste0(c("gamma_", partition))] <- sircovid_model$gammas[[partition]]
+    parameter_list[paste0("s_", partition)] <- sircovid_model$progression_groups[[partition]]
+    parameter_list[paste0("gamma_", partition)] <- sircovid_model$gammas[[partition]]
   }
+  parameter_list$hosp_transmission <- hosp_transmission
+  parameter_list$ICU_transmission <- ICU_transmission
+  
   
   parameter_list
 }
@@ -207,10 +213,6 @@ generate_parameters_base <- function(
   
   if (length(beta) != length(beta_times)) {
     stop("Length of beta mismatching with length of transition times")
-  }
-  
-  if (length(infection_seeding$values) != length(infection_seeding$bins)) {
-    stop("Each infection seeding value must correspond to one bin")
   }
   
   if (sum(trans_profile) != 1) {
@@ -272,6 +274,7 @@ generate_parameters_base <- function(
                          age_bin_starts = severity_params$age_bin_starts,
                          trans_classes = N_trans_classes,
                          dt = dt,
+                         S0 = severity_params$population,
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
                          beta_y = beta,
