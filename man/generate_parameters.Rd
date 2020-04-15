@@ -40,7 +40,8 @@ generate_parameters_new_hospital_model(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  use_polymod_pop = FALSE
+  use_polymod_pop = FALSE,
+  hospital_fitted = TRUE
 )
 }
 \arguments{
