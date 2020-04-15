@@ -19,8 +19,7 @@
 ##' @param data Hosptial data to fit to. See \code{example.csv}
 ##'   and \code{particle_filter_data()}
 ##' 
-##' @param model An odin model generator and comparison function.  If
-##'   \code{NULL} uses the basic model.
+##' @param sircovid_model An odin model generator and comparison function.
 ##'
 ##' @param model_params Model parameters, from a call to
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
@@ -60,6 +59,7 @@ scan_beta_date <- function(
   if (is.null(model_params)) {
     time_steps_per_day <- 4
     model_params <- generate_parameters(
+      model = model,
       transmission_model = "POLYMOD",
       progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
       gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
@@ -77,8 +77,6 @@ scan_beta_date <- function(
     }
   }
 
-  model <- sircovid_model(model)
-  
   if (is.null(pars_obs)) {
     pars_obs <- list(phi_ICU = 0.95,
                      k_ICU = 2,
@@ -93,7 +91,7 @@ scan_beta_date <- function(
   ## Particle filter outputs, extracting log-likelihoods
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
-    model = model, model_params = model_params, data = data, 
+    model = sircovid_model, model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
   )
@@ -116,7 +114,7 @@ scan_beta_date <- function(
                   mat_log_ll = mat_log_ll,
                   renorm_mat_LL = renorm_mat_LL,
                   inputs = list(
-                    model = model,
+                    model = sircovid_model,
                     model_params = model_params,
                     pars_obs = pars_obs,
                     data = data))
@@ -180,20 +178,20 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 ##' 
 ##' @noRd
 beta_date_particle_filter <- function(beta, start_date,
-                                      model,
+                                      sircovid_model,
                                       model_params, data, 
                                       pars_obs, n_particles,
                                       forecast_days = 0,
                                       save_particles = FALSE,
                                       return = "full") {
   # Edit beta in parameters
-  new_beta <- generate_beta(beta, start_date)
+  new_beta <- sircovid_model$generate_beta(beta, start_date)
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
   model_params$beta_y <- new_beta$beta
   model_params$beta_t <- beta_t
 
-  X <- run_particle_filter(data, model_params, start_date, pars_obs,
+  X <- run_particle_filter(data, sircovid_model, model_params, start_date, pars_obs,
                            n_particles, forecast_days, save_particles, return,
                            model)
   

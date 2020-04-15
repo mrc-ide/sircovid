@@ -47,17 +47,14 @@ generate_beta <- function(beta_start,
 ##' 
 ##' @title Create parameters
 ##' 
+##' @param sircovid_model Model to use, \code{basic_model()} or
+##'   \code{hospital_model()}
+##' 
 ##' @param transmission_model Model type. Only 'POLYMOD' currently supported
 ##' 
 ##' @param country Country name
 ##' 
 ##' @param severity_data_file Location of file with severity data
-##' 
-##' @param progression_groups List of number of progression groups in each partition
-##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
-##'   
-##' @param gammas List of exponential distribution rates for time in each partition
-##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
 ##' 
 ##' @param infection_seeding List of vector \code{values} of how many cases to seed 
 ##'  in a correspond vector of age bins in \code{bins}.
@@ -82,8 +79,114 @@ generate_beta <- function(beta_start,
 ##' 
 ##' @return List of parameters for use with \code{sircovid}
 ##' 
-##' @export
+generate_parameters <- function(
+  sircovid_model,
+  transmission_model = "POLYMOD",
+  country="United Kingdom",
+  severity_data_file=NULL,
+  infection_seeding = list(values=c(10),
+                           bins=c('15 to 19')),
+  beta = c(0.1, 0.1, 0.1),
+  beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
+  trans_profile = c(1),
+  trans_increase = c(1),
+  hosp_transmission = 0.1,
+  ICU_transmission = 0.05,
+  dt = 0.25,
+  use_polymod_pop = FALSE) {
+  
+  # Generate parameters used by all models
+  parameter_list <- generate_parameters_base(transmission_model = transmission_model,
+                                             country=country,
+                                             severity_data_file=severity_data_file,
+                                             beta = beta,
+                                             beta_times = beta_times,
+                                             trans_profile = trans_profile,
+                                             trans_increase = trans_increase,
+                                             dt = dt,
+                                             use_polymod_pop = use_polymod_pop)
+  
+  #
+  # Set the initial conditions for each partition
+  # S0 = N, everything else zero
+  #
+  if (class(sircovid_model) == "sircovid_hospital") {
+    parameter_list$S0 <- parameter_list$population
+    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$E, parameter_list$N_trans_classes))
+    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$asympt, parameter_list$N_trans_classes))
+    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$mild, parameter_list$N_trans_classes))
+    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ILI, parameter_list$N_trans_classes))
+    parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$hosp_D, parameter_list$N_trans_classes))
+    parameter_list$I0_hosp_R <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$hosp_R, parameter_list$N_trans_classes))
+    parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$ICU_D, parameter_list$N_trans_classes))
+    parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$ICU_R, parameter_list$N_trans_classes))
+    parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$triage, parameter_list$N_trans_classes))
+    parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$stepdown, parameter_list$N_trans_classes))
+    parameter_list$R0 <- rep(0, parameter_list$N_age_bins)
+    parameter_list$D0 <- rep(0, parameter_list$N_age_bins)
+  } else if (class(sircovid_model) == "sircovid_basic") {
+    parameter_list$S0 <- parameter_list$population
+    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$E, parameter_list$N_trans_classes))
+    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$asympt, parameter_list$N_trans_classes))
+    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$mild, parameter_list$N_trans_classes))
+    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ILI, parameter_list$N_trans_classes))
+    parameter_list$I0_hosp <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$hosp, parameter_list$N_trans_classes))
+    parameter_list$I0_ICU <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ICU, parameter_list$N_trans_classes))
+    parameter_list$R0 <- rep(0, parameter_list$N_age_bins)
+    parameter_list$D0 <- rep(0, parameter_list$N_age_bins)
+  } else {
+    stop("Model name not supported")
+  }
+  
+  # Add some initial infections to I_asympt
+  # Move from susceptible to infected
+  seed_bins <- parse_age_bins(infection_seeding$bins)
+  seed_idx <- match(seed_bins$bin_start, parameter_list$age_bin_starts)
+  if (any(duplicated(seed_idx))) {
+    stop("Seeding is into the same bin multiple times")
+  }
+  parameter_list$I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
+  parameter_list$S0[seed_idx] <- S0[seed_idx] - infection_seeding$values
+  
+  #
+  # Set gamma and groups
+  #
+  for (partition in partition_names(sircovid_model)) {
+    parameter_list[paste0(c("s_", partition))] <- sircovid_model$progression_groups[[partition]]
+    parameter_list[paste0(c("gamma_", partition))] <- sircovid_model$gammas[[partition]]
+  }
+  
+  parameter_list
+}
+
+##' General parameter creation for use with any model
+##' 
+##' @title Create parameters base
+##' 
+##' @param transmission_model Model type. Only 'POLYMOD' currently supported
+##' 
+##' @param country Country name
+##' 
+##' @param severity_data_file Location of file with severity data
+##' 
+##' @param beta Beta, for each time step in \code{beta_times}
+##' 
+##' @param beta_times Dates \code{beta} changes, in format yyyy-mm-dd
+##' 
+##' @param trans_profile Proportion in each infectivity group
+##' 
+##' @param trans_increase Relative infectivity of each group
+##' 
+##' @param dt Time-step to run the model in days
+##'   
+##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
+##'   and use the population from polymod when estimating the
+##'   transmission matrix
+##' 
+##' @return List of parameters for use with \code{sircovid}
+##' 
 ##' @import socialmixr
+##' 
 generate_parameters_base <- function(
   transmission_model,
   country,
@@ -181,84 +284,6 @@ generate_parameters_base <- function(
                          p_asympt = severity_params$asympt,
                          p_sympt_ILI = severity_params$sympt_ILI)
 
-  parameter_list
-}
-
-generate_parameters <- function(
-  sircovid_model,
-  transmission_model = "POLYMOD",
-  country="United Kingdom",
-  severity_data_file=NULL,
-  infection_seeding = list(values=c(10),
-                           bins=c('15 to 19')),
-  beta = c(0.1, 0.1, 0.1),
-  beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
-  trans_profile = c(1),
-  trans_increase = c(1),
-  hosp_transmission = 0.1,
-  ICU_transmission = 0.05,
-  dt = 0.25,
-  use_polymod_pop = FALSE) {
-  parameter_list <- generate_parameters_base(transmission_model = transmission_model,
-                                        country=country,
-                                        severity_data_file=severity_data_file,
-                                        beta = beta,
-                                        beta_times = beta_times,
-                                        trans_profile = trans_profile,
-                                        trans_increase = trans_increase,
-                                        dt = dt,
-                                        use_polymod_pop = use_polymod_pop)
-  
-  #
-  # Set the initial conditions for each partition
-  # S0 = N, everything else zero
-  #
-  if (class(sircovid_model) == "sircovid_hospital") {
-    parameter_list$S0 <- parameter_list$population
-    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$E, parameter_list$N_trans_classes))
-    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$asympt, parameter_list$N_trans_classes))
-    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$mild, parameter_list$N_trans_classes))
-    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ILI, parameter_list$N_trans_classes))
-    parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$hosp_D, parameter_list$N_trans_classes))
-    parameter_list$I0_hosp_R <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$hosp_R, parameter_list$N_trans_classes))
-    parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$ICU_D, parameter_list$N_trans_classes))
-    parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$ICU_R, parameter_list$N_trans_classes))
-    parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$triage, parameter_list$N_trans_classes))
-    parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age_bins, progression_groups$stepdown, parameter_list$N_trans_classes))
-    parameter_list$R0 <- rep(0, parameter_list$N_age_bins)
-    parameter_list$D0 <- rep(0, parameter_list$N_age_bins)
-  } else if (class(sircovid_model) == "sircovid_basic") {
-    parameter_list$S0 <- parameter_list$population
-    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$E, parameter_list$N_trans_classes))
-    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$asympt, parameter_list$N_trans_classes))
-    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$mild, parameter_list$N_trans_classes))
-    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ILI, parameter_list$N_trans_classes))
-    parameter_list$I0_hosp <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$hosp, parameter_list$N_trans_classes))
-    parameter_list$I0_ICU <- array(0, dim = c(parameter_list$N_age_bins, sircovid_basic_model$progression_groups$ICU, parameter_list$N_trans_classes))
-    parameter_list$R0 <- rep(0, parameter_list$N_age_bins)
-    parameter_list$D0 <- rep(0, parameter_list$N_age_bins)
-  } else {
-    stop("Model name not supported")
-  }
-  
-  # Add some initial infections to I_asympt
-  # Move from susceptible to infected
-  seed_bins <- parse_age_bins(infection_seeding$bins)
-  seed_idx <- match(seed_bins$bin_start, parameter_list$age_bin_starts)
-  if (any(duplicated(seed_idx))) {
-    stop("Seeding is into the same bin multiple times")
-  }
-  parameter_list$I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
-  parameter_list$S0[seed_idx] <- S0[seed_idx] - infection_seeding$values
-  
-  #
-  # Set gamma and groups
-  #
-  for (partition in partition_names(sircovid_model)) {
-    parameter_list[paste0(c("s_", partition))] <- sircovid_model$progression_groups[[partition]]
-    parameter_list[paste0(c("gamma_", partition))] <- sircovid_model$gammas[[partition]]
-  }
-  
   parameter_list
 }
 

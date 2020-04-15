@@ -1,4 +1,14 @@
-
+##' Create a basic model 
+##' 
+##' @title Basic model
+##' 
+##' @param progression_groups List of number of progression groups in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
+##'   
+##' @param gammas List of exponential distribution rates for time in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'
+##'   
+##' @export
 basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
                         gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5)) {
   odin_model <- load_odin_model("basic")
@@ -21,6 +31,17 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
   class(basic) <- ("sircovid_basic")
 }
 
+##' Create a hosptial model
+##' 
+##' @title Hosptial model
+##' 
+##' @param progression_groups List of number of progression groups in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'
+##'   
+##' @param gammas List of exponential distribution rates for time in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'
+##'   
+##' @export
 hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
                            gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5)) {
   model_class <- "sircovid_hospital"
@@ -44,7 +65,9 @@ hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1
   class(basic) <- c("sircovid_hospital", "sircovid_basic")
 }
 
-# Definitions of partition names
+#' Internal functions
+#' 
+#' Definitions of partition names
 partition_names <- function(model_name) {
   if (inherits(x, "sircovid_basic")) {
     model_partitions <- names(model$progression_groups)

@@ -9,6 +9,8 @@
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
 ##'   in unit tests.
 ##'   
+##' @param sircovid_model An odin model generator and comparison function.
+##'   
 ##' @param model_start_date Start date as in model_params
 ##'   
 ##' @param pars_obs list of parameters to use in comparison
@@ -84,6 +86,7 @@
 ##' @importFrom utils txtProgressBar setTxtProgressBar
 pmcmc <- function(data,
                   n_mcmc, 
+                  sircovid_model,
                   model_params = NULL,
                   model_start_date = "2020-02-02",
                   pars_obs = list(phi_ICU = 0.95,
@@ -104,11 +107,11 @@ pmcmc <- function(data,
                   log_likelihood = NULL,
                   log_prior = NULL,
                   n_particles = 1e2,
-                  steps_per_day = 4
-                  ) {
+                  steps_per_day = 4) {
   
   if (is.null(model_params)) {
     model_params <- generate_parameters(
+      sircovid_model,
       transmission_model = "POLYMOD",
       progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
       gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
@@ -203,6 +206,7 @@ pmcmc <- function(data,
   calc_ll <- function(pars) {  
     X <- log_likelihood(pars = pars, 
                         data = data,
+                        sircovid_model = sircovid_model,
                         model_start_date = model_start_date,
                         model_params = model_params,
                         steps_per_day = steps_per_day, 
@@ -358,11 +362,12 @@ pmcmc <- function(data,
 }
 
 
-calc_loglikelihood <- function(pars, data, model_params, model_start_date,
+calc_loglikelihood <- function(pars, data, sircovid_model, model_params, model_start_date,
                                steps_per_day, pars_obs, n_particles) {
   start_date <- as.Date(pars[['start_date']], origin=model_start_date)
   pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
                                          start_date = start_date,
+                                         sircovid_model = sircovid_model,
                                          model = NULL,
                                          model_params = model_params,
                                          data = data, 
