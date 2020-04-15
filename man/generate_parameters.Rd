@@ -77,6 +77,10 @@ in a correspond vector of age bins in \code{bins}.}
 \item{use_polymod_pop}{Set to ignore \code{survey_pop_in}
 and use the population from polymod when estimating the
 transmission matrix}
+
+\item{hospital_fitted}{If TRUE the parameters describing the progression
+through the hospital compartments of the model are pulled from a set fitted
+to a hospital model}
 }
 \value{
 List of parameters for use with \code{sircovid}

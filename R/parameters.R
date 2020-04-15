@@ -281,6 +281,10 @@ generate_parameters <- function(
 ##' @param ICU_transmission Tranmissions rate of ICU cases
 ##' 
 ##' @param dt Time-step to run the model in days
+##' 
+##' @param hospital_fitted If TRUE the parameters describing the progression
+##' through the hospital compartments of the model are pulled from a set fitted
+##' to a hospital model
 ##'   
 ##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
 ##'   and use the population from polymod when estimating the
