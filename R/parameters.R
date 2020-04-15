@@ -383,7 +383,34 @@ generate_parameters_new_hospital_model <- function(
                                c(N_age_bins, N_trans_classes))
   trans_increase_array <- array(unlist(lapply(trans_increase, rep, N_age_bins)), 
                                 c(N_age_bins, N_trans_classes))
-  
+
+  #hospital_fitted is set to true, this will pull the fitted value from fitted_parameters.rds 
+  #this is calculated externally at the moment
+    if (hospital_fitted){
+    
+    fitted_parameter_file <- sircovid_file("extdata/fitted_parameters.rds")
+    
+    # Set up severity file into table
+    
+    
+    # Read file with fitted parameters (from Bob Verity's hospital model)
+    fitted_parameters <- readRDS(file = fitted_parameter_file)
+    
+    progression_groups$hosp_D <- fitted_parameters[fitted_parameters$parameter=="s_hosp_D","value"]
+    gammas$hosp_D <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_D","value"]
+    progression_groups$hosp_R <- fitted_parameters[fitted_parameters$parameter=="s_hosp_R","value"]
+    gammas$hosp_R <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_R","value"]
+    progression_groups$ICU_D <- fitted_parameters[fitted_parameters$parameter=="s_ICU_D","value"]
+    gammas$ICU_D <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_D","value"]
+    progression_groups$ICU_R <- fitted_parameters[fitted_parameters$parameter=="s_ICU_R","value"]
+    gammas$ICU_R <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_R","value"]
+    progression_groups$triage <- fitted_parameters[fitted_parameters$parameter=="s_triage","value"]
+    gammas$triage <- fitted_parameters[fitted_parameters$parameter=="gamma_triage","value"]
+    progression_groups$stepdown <- fitted_parameters[fitted_parameters$parameter=="s_stepdown","value"]
+    gammas$stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
+    
+  }
+    
   #
   # Set the initial conditions for each partition
   # S0 = N, everything else zero
@@ -411,26 +438,6 @@ generate_parameters_new_hospital_model <- function(
   }
   I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
   S0[seed_idx] <- S0[seed_idx] - infection_seeding$values
-  
-  if (hospital_fitted){
-  
-    # Read file with fitted parameters (from Bob Verity's hospital model)
-    fitted_parameters <- readRDS(file = "inst/extdata/fitted_parameters.rds")
-    
-    progression_groups$hosp_D <- fitted_parameters[fitted_parameters$parameter=="s_hosp_D","value"]
-    gammas$hosp_D <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_D","value"]
-    progression_groups$hosp_R <- fitted_parameters[fitted_parameters$parameter=="s_hosp_R","value"]
-    gammas$hosp_R <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_R","value"]
-    progression_groups$ICU_D <- fitted_parameters[fitted_parameters$parameter=="s_ICU_D","value"]
-    gammas$ICU_D <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_D","value"]
-    progression_groups$ICU_R <- fitted_parameters[fitted_parameters$parameter=="s_ICU_R","value"]
-    gammas$ICU_R <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_R","value"]
-    progression_groups$triage <- fitted_parameters[fitted_parameters$parameter=="s_triage","value"]
-    gammas$triage <- fitted_parameters[fitted_parameters$parameter=="gamma_triage","value"]
-    progression_groups$stepdown <- fitted_parameters[fitted_parameters$parameter=="s_stepdown","value"]
-    gammas$stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
-  
-  }
   
   #
   # Returns parameters
@@ -505,7 +512,6 @@ normalise_beta <- function(beta_times, dt) {
   }
   beta_t <- beta_dates/dt
 }
-
 
 parse_age_bins <- function(age_bin_strings) {
   bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_bin_strings)
