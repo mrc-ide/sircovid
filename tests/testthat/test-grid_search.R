@@ -35,7 +35,7 @@ test_that("Small grid search works", {
   expect_equal(scan_results$y, date_grid)
   expect_equal(dim(scan_results$renorm_mat_LL), dim(scan_results$mat_log_ll))
   expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
-  expect_true(all(scan_results$renorm_mat_LL < 1 & scan_results$renorm_mat_LL > 0))
+  expect_true(all(scan_results$renorm_mat_LL <= 1 & scan_results$renorm_mat_LL >= 0))
   
   # Plots run, but not checked
   plot(scan_results)

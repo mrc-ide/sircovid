@@ -483,7 +483,7 @@ generate_parameters_new_hospital_model <- function(
                          s_triage = progression_groups$triage,
                          gamma_triage = gammas$triage,
                          m = transmission_matrix,
-                         p_death_hosp = severity_params$death_hosp,
+                         p_death_hosp = severity_params$death_hosp_D,
                          p_death_ICU = severity_params$death_ICU,
                          p_ICU_hosp = severity_params$ICU_hosp,
                          p_recov_ILI = severity_params$recov_ILI,
@@ -598,7 +598,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_sympt_ILI <- severity_data[["Proportion with symptoms"]] *
     prop_symp_seek_HC
   
-  p_death_hosp <- severity_data[["Proportion of non-critical care cases dying"]]
+  p_death_hosp_D <- severity_data[["Proportion of non-critical care cases dying"]]
   
   p_ICU_hosp <- severity_data[["Proportion of hospitalised cases getting critical care"]]
   
@@ -612,6 +612,9 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     (1 - severity_data[["Proportion of non-critical care cases dying"]])
   
   p_recov_ICU <- 1-p_death_ICU
+  
+  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+    severity_data[["Proportion of non-critical care cases dying"]]
   
   list(
     population = population,
