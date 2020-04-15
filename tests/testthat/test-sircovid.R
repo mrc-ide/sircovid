@@ -27,6 +27,35 @@ test_that("Can be run on real data", {
   expect_equal(results$log_likelihood, -269.9478, tolerance=1e-3)
 })
 
+test_that("New model can be run on real data", {
+  set.seed(1)
+  time_steps_per_day <- 4
+  
+  data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
+                        admissions_data_file = "combin_time_series.csv")
+  sircovid_model <- hospital_model()
+  
+  vary_beta <- sircovid_model$generate_beta(0.1)
+  model_params <- generate_parameters(sircovid_model,
+                                      beta = vary_beta$beta,
+                                      beta_times = vary_beta$beta_times,
+                                      dt = 1/time_steps_per_day)
+  
+  browser()
+  results <- run_particle_filter(data = data,
+                                 sircovid_model = sircovid_model,
+                                 model_params = model_params,
+                                 obs_params = list(phi_ICU = 0.95,
+                                                   k_ICU = 2,
+                                                   phi_death = 1789/1651,
+                                                   k_death = 2,
+                                                   exp_noise = 1e6),
+                                 n_particles = 1000)
+  # No check of correctness  
+  expect_equal(results$log_likelihood, -269.9478, tolerance=1e-3)
+})
+
+
 test_that("Poor formatting of real data throws errors", {
   data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
                         admissions_data_file = "combin_time_series.csv")

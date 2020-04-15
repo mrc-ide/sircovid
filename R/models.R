@@ -49,7 +49,7 @@ hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1
   model_class <- "sircovid_hospital"
   odin_model <- load_odin_model("new_hospital_model")
   generate_beta_func <- generate_beta
-  compare_model <- compare_output(type=model_class)
+  compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
   
   model_partitions <- partition_names(model_class)
   if (any(!(model_partitions %in% names(progression_groups)))) {

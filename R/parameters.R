@@ -114,7 +114,7 @@ generate_parameters <- function(
   # Set the initial conditions for each partition
   # S0 = N (set in generate_parameters_base), everything else zero
   #
-  if (class(sircovid_model) == "sircovid_hospital") {
+  if (class(sircovid_model)[1] == "sircovid_hospital") {
     parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
     parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
     parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
@@ -127,7 +127,7 @@ generate_parameters <- function(
     parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
     parameter_list$R0 <- rep(0, parameter_list$N_age)
     parameter_list$D0 <- rep(0, parameter_list$N_age)
-  } else if (class(sircovid_model) == "sircovid_basic") {
+  } else if (class(sircovid_model)[1] == "sircovid_basic") {
     parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
     parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
     parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
@@ -163,6 +163,13 @@ generate_parameters <- function(
   
   # Remove parameters unused by odin
   parameter_list$age_bin_starts <- NULL
+  if (class(sircovid_model)[1] == "sircovid_hospital") {
+    parameter_list$p_recov_hosp <- NULL
+    parameter_list$p_recov_ICU <- NULL
+  } else if (class(sircovid_model)[1] == "sircovid_basic") {
+    parameter_list$p_death_ICU <- NULL
+    parameter_list$p_ICU_hosp <- NULL
+  }           
   
   parameter_list
 }
@@ -284,8 +291,10 @@ generate_parameters_base <- function(
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,
+                         p_ICU_hosp = severity_params$ICU_hosp,
                          p_recov_ILI = severity_params$recov_ILI,
                          p_recov_ICU = severity_params$recov_ICU,
+                         p_death_ICU = severity_params$death_ICU,
                          p_asympt = severity_params$asympt,
                          p_sympt_ILI = severity_params$sympt_ILI)
 
