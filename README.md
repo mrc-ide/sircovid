@@ -10,7 +10,7 @@
 
 sircovid implements a series of models to help modelling the transmission of the SARS-Cov-2 virus using a stochastic compartmental model. Sircovid also provides some tools to perfom evidence synthesis from several surveillance data streams in order infer transmission parameters.
 
-![]<img src="man/figures/sircovid_diagram.png" align="center" style = "border: none; float: center;" width = "800px">
+<img src="man/figures/sircovid_diagram.png" align="center" style = "border: none; float: center;" width = "800px">
 
 ## Installation
 
