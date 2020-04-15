@@ -31,6 +31,8 @@ test_that("sampler runs without error", {
   pars_model$p_sympt_ILI <- rep(0.66,length(prop_symp_seek_HC))*prop_symp_seek_HC
 
   pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
     ## what should this be?
     phi_ICU = 0.95,
     ## what should this be?
@@ -151,8 +153,13 @@ test_that("particle_filter error cases", {
     sircovid_model = sircovid_model,
     dt = 1 / time_steps_per_day,
     beta = rep(0.125, 3))
-  pars_obs <- list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019,
-                   k_death = 2, exp_noise = 1e6)
+  pars_obs <- list(phi_general = 0.95,
+                   k_general = 2, 
+                   phi_ICU = 0.95, 
+                   k_ICU = 2, 
+                   phi_death = 926 / 1019,
+                   k_death = 2, 
+                   exp_noise = 1e6)
 
   mod <- sircovid_model$odin_model(user = pars_model)
   compare <- sircovid_model$compare_model(mod, pars_obs, d)

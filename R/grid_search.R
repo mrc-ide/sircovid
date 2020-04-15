@@ -74,7 +74,9 @@ scan_beta_date <- function(
   }
 
   if (is.null(pars_obs)) {
-    pars_obs <- list(phi_ICU = 0.95,
+    pars_obs <- list(phi_general = 0.95,
+                     k_general = 2,
+                     phi_ICU = 0.95,
                      k_ICU = 2,
                      phi_death = 926 / 1019,
                      k_death = 2,

@@ -30,8 +30,7 @@ test_that("New model can be run on real data", {
   set.seed(1)
   time_steps_per_day <- 4
   
-  data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
-                        admissions_data_file = "combin_time_series.csv")
+  data <- readRDS("hospital_model_data.rds")
   sircovid_model <- hospital_model()
   
   vary_beta <- sircovid_model$generate_beta(0.1)
@@ -40,19 +39,19 @@ test_that("New model can be run on real data", {
                                       beta_times = vary_beta$beta_times,
                                       dt = 1/time_steps_per_day)
   
-  skip("Skip until data for new model compare available")
   results <- run_particle_filter(data = data,
                                  sircovid_model = sircovid_model,
                                  model_params = model_params,
-                                 obs_params = list(phi_ICU = 0.95,
+                                 obs_params = list(phi_general = 0.95,
+                                                   k_general = 2,
+                                                   phi_ICU = 0.95,
                                                    k_ICU = 2,
                                                    phi_death = 1789/1651,
                                                    k_death = 2,
                                                    exp_noise = 1e6),
                                  n_particles = 1000)
   # No check of correctness  
-  # TODO update this ll
-  expect_equal(results$log_likelihood, -269.9478, tolerance=1e-3)
+  expect_equal(results$log_likelihood, -798.9374, tolerance=1e-3)
 })
 
 

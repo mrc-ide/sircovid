@@ -36,7 +36,7 @@ test_that("Small grid search works", {
   expect_equal(scan_results$y, date_grid)
   expect_equal(dim(scan_results$renorm_mat_LL), dim(scan_results$mat_log_ll))
   expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
-  expect_true(all(scan_results$renorm_mat_LL < 1 & scan_results$renorm_mat_LL > 0))
+  expect_true(all(scan_results$renorm_mat_LL <= 1 & scan_results$renorm_mat_LL >= 0))
   
   # Plots run, but not checked
   plot(scan_results)
@@ -45,8 +45,7 @@ test_that("Small grid search works", {
 test_that("Small grid search works with new model", {
   set.seed(1)
 
-  data <- read.csv(sircovid_file("extdata/example.csv"),
-                   stringsAsFactors = FALSE)
+  data <- readRDS("hospital_model_data.rds")
  
   # Parameters for run
   min_beta <- 0.1
@@ -56,7 +55,6 @@ test_that("Small grid search works with new model", {
   last_start_date <- "2020-01-22"
   day_step <- 1
   
-  skip("Skip until data for new model compare available")
   scan_results = scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
@@ -72,13 +70,14 @@ test_that("Small grid search works with new model", {
   expect_setequal(names(scan_results$inputs),
                   c("model", "model_params", "pars_obs", "data"))
   
+  browser()
   beta_grid <- seq(min_beta, max_beta, beta_step)
   date_grid <- seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
   expect_equal(scan_results$x, beta_grid)
   expect_equal(scan_results$y, date_grid)
   expect_equal(dim(scan_results$renorm_mat_LL), dim(scan_results$mat_log_ll))
   expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
-  expect_true(all(scan_results$renorm_mat_LL < 1 & scan_results$renorm_mat_LL > 0))
+  expect_true(all(scan_results$renorm_mat_LL <= 1 & scan_results$renorm_mat_LL >= 0))
   
   # Plots run, but not checked
   plot(scan_results)

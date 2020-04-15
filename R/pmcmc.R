@@ -15,7 +15,7 @@
 ##'   
 ##' @param pars_obs list of parameters to use in comparison
 ##'   with \code{compare_icu}. If NULL, uses
-##'   list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
+##'   list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
@@ -89,7 +89,9 @@ pmcmc <- function(data,
                   sircovid_model,
                   model_params = NULL,
                   model_start_date = "2020-02-02",
-                  pars_obs = list(phi_ICU = 0.95,
+                  pars_obs = list(phi_general = 0.95,
+                                  k_general = 2,
+                                  phi_ICU = 0.95,
                                   k_ICU = 2,
                                   phi_death = 926 / 1019,
                                   k_death = 2,

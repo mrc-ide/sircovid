@@ -42,7 +42,6 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     }
 
     log_weights <- rep(0, ncol(state))
-
     if (!is.na(data$itu[t])) {
       ## sum model ITU cases output across ages/infectivities
       model_icu <- colSums(state[index_ICU, ])
