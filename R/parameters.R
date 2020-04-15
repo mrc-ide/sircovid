@@ -306,7 +306,8 @@ generate_parameters_new_hospital_model <- function(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  use_polymod_pop = FALSE) {
+  use_polymod_pop = FALSE,
+  hospital_fitted = TRUE) {
   #
   # Input checks
   #
@@ -410,6 +411,26 @@ generate_parameters_new_hospital_model <- function(
   }
   I0_asympt[seed_idx,1,N_trans_classes] <- infection_seeding$values
   S0[seed_idx] <- S0[seed_idx] - infection_seeding$values
+  
+  if (hospital_fitted){
+  
+    # Read file with fitted parameters (from Bob Verity's hospital model)
+    fitted_parameters <- readRDS(file = "inst/extdata/fitted_parameters.rds")
+    
+    progression_groups$hosp_D <- fitted_parameters[fitted_parameters$parameter=="s_hosp_D","value"]
+    gammas$hosp_D <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_D","value"]
+    progression_groups$hosp_R <- fitted_parameters[fitted_parameters$parameter=="s_hosp_R","value"]
+    gammas$hosp_R <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_R","value"]
+    progression_groups$ICU_D <- fitted_parameters[fitted_parameters$parameter=="s_ICU_D","value"]
+    gammas$ICU_D <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_D","value"]
+    progression_groups$ICU_R <- fitted_parameters[fitted_parameters$parameter=="s_ICU_R","value"]
+    gammas$ICU_R <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_R","value"]
+    progression_groups$triage <- fitted_parameters[fitted_parameters$parameter=="s_triage","value"]
+    gammas$triage <- fitted_parameters[fitted_parameters$parameter=="gamma_triage","value"]
+    progression_groups$stepdown <- fitted_parameters[fitted_parameters$parameter=="s_stepdown","value"]
+    gammas$stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
+  
+  }
   
   #
   # Returns parameters
@@ -539,7 +560,6 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Size of England population",
     "Proportion of symptomatic cases seeking healthcare",
     "Proportion with symptoms",
-    "Unadjusted_IFR",
     "Adjusted_IFR to 1%",
     "IFR relative to 80",
     "Age specific scaling of ifr to give hospitalisation",
@@ -547,7 +567,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Proportion of infections hospitalised",
     "Proportion of infections needing critical care",
     "Proportion of symptomatic cases hospitalised",
-    "Proportion of hospitalised cases needing critical care",
+    "Proportion of hospitalised cases getting critical care",
     "Proportion of critical cases dying",
     "Proportion of non-critical care cases dying")
   if (any(!(expected_cols %in% colnames(severity_data)))) {
@@ -572,8 +592,11 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_sympt_ILI <- severity_data[["Proportion with symptoms"]] *
     prop_symp_seek_HC
   
-  p_recov_ICU <-
-    1 - severity_data[["Proportion of critical cases dying"]]
+  p_death_hosp <- severity_data[["Proportion of non-critical care cases dying"]]
+  
+  p_ICU_hosp <- severity_data[["Proportion of hospitalised cases getting critical care"]]
+  
+  p_death_ICU <- severity_data[["Proportion of critical cases dying"]]
 
   p_recov_ILI <- 1 - severity_data[["Proportion of symptomatic cases hospitalised"]] /
     prop_symp_seek_HC
@@ -582,13 +605,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
     (1 - severity_data[["Proportion of non-critical care cases dying"]])
   
-  #Proportion of hospitalised cases who die without receiveing critical care
-  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
-                   severity_data[["Proportion of non-critical care cases dying"]]
-  
-  p_death_ICU <- 1 - p_recov_ICU
-  
-  p_ICU_hosp <- 1 - p_recov_hosp - p_death_hosp
+  p_recov_ICU <- 1-p_death_ICU
   
   list(
     population = population,
