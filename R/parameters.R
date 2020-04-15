@@ -350,8 +350,8 @@ generate_parameters_new_hospital_model <- function(
   # 
   # This section defines proportions between partitions
   # derived from the severity.csv file
-  #
-  severity_params <- read_severity(severity_data_file)
+   
+  severity_params <- read_severity(severity_file_in="extdata/severity_2020_04_12.csv")
   
   #
   # Set up the transmission matrix
@@ -573,7 +573,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Proportion of infections hospitalised",
     "Proportion of infections needing critical care",
     "Proportion of symptomatic cases hospitalised",
-    "Proportion of hospitalised cases getting critical care",
+    "Proportion of hospitalised cases needing critical care",
     "Proportion of critical cases dying",
     "Proportion of non-critical care cases dying")
   if (any(!(expected_cols %in% colnames(severity_data)))) {
