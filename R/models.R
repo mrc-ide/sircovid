@@ -11,6 +11,7 @@
 ##' @export
 basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
                         gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5)) {
+  model_class <- "sircovid_basic"
   odin_model <- load_odin_model("basic")
   generate_beta_func <- generate_beta
   compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
@@ -28,7 +29,7 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
                 progression_groups = progression_groups,
                 gammas = gammas,
                 compare_model = compare_model)
-  class(basic) <- ("sircovid_basic")
+  class(basic) <- (model_class)
   basic
 }
 
@@ -63,7 +64,7 @@ hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1
                 progression_groups = progression_groups,
                 gammas = gammas,
                 compare_model = compare_model)
-  class(hospital) <- c("sircovid_hospital", "sircovid_basic")
+  class(hospital) <- c(model_class, "sircovid_basic")
   hospital
 }
 
