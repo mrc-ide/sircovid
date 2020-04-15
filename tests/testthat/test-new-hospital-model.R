@@ -152,8 +152,9 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_triage[,,,,1] == 0))
   expect_true(all(results$R_stepdown[,,,,1] == 0))
   
-  #p_death_ICU=1, no-one recovers from ICU
+  #p_death_ICU=1, p_ICU_hosp=1 no-one goes in hosp_D/hosp_R, no recovery from ICU
   pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
+  pars_model$p_ICU_hosp[]<-1
   pars_model$p_death_ICU[]<-1
   mod <- new_hospital_model(user = pars_model)
   check_cases <- FALSE
@@ -162,13 +163,35 @@ test_that("parameters can be generated", {
     iter <- iter + 1
     tmp <- mod$run(t, replicate = 1)
     results <- mod$transform_variables(tmp)
-    if (any(results$I_triage[,,,,1] > 0) && any(results$I_ICU_D[,,,,1] > 0)){
+    if (any(results$I_ICU_D[,,,,1] > 0)){
       check_cases <- TRUE
     }
   }
-  expect_true(all(results$I_ICU_R[,,,,1]==0))
-  expect_true(all(results$R_stepdown[,,,,1]==0)) 
-
+  expect_true(any(results$I_hosp_R[,,,,1] == 0))
+  expect_true(all(results$I_hosp_D[,,,,1] == 0))
+  expect_true(all(results$I_ICU_R[,,,,1] == 0))
+  expect_true(all(results$R_stepdown[,,,,1] == 0))
+  
+  #p_death_ICU=0, p_ICU_hosp=1 no-one goes in hosp_D/hosp_R, no deaths
+  pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
+  pars_model$p_ICU_hosp[]<-1
+  pars_model$p_death_ICU[]<-1
+  mod <- new_hospital_model(user = pars_model)
+  check_cases <- FALSE
+  iter <- 0
+  while (!check_cases && iter<= max_iter){
+    iter <- iter + 1
+    tmp <- mod$run(t, replicate = 1)
+    results <- mod$transform_variables(tmp)
+    if (any(results$I_ICU_R[,,,,1] > 0)){
+      check_cases <- TRUE
+    }
+  }
+  expect_true(any(results$I_hosp_R[,,,,1] == 0))
+  expect_true(all(results$I_hosp_D[,,,,1] == 0))
+  expect_true(all(results$I_ICU_D[,,,,1] == 0))
+  expect_true(all(results$D[,,,,1] == 0))
+  
   #gamma_E = Inf, E cases must progress in 1 time-step
   pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
   pars_model$gamma_E<-Inf
