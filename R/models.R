@@ -68,9 +68,11 @@ hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1
   hospital
 }
 
-#' Internal functions
-#' 
-#' Definitions of partition names
+#
+# Internal functions
+#
+
+# Definitions of partition names
 partition_names <- function(model_name) {
   if (inherits(model_name, "sircovid_basic")) {
     model_partitions <- names(model_name$progression_groups)
@@ -86,8 +88,8 @@ partition_names <- function(model_name) {
   model_partitions
 }
 
-#' Loads a model by its name
-#' Must be in inst/odin
+# Loads a model by its name
+# Must be in inst/odin
 load_odin_model <- function(x) {
   if (inherits(x, "sircovid_basic")) {
     return(x)

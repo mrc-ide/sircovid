@@ -8,6 +8,9 @@
 ##' 
 ##' @param data The data to be compared against
 ##' 
+##' @param type The class of the model, either
+##'   \code{"sircovid_basic"} or \code{"sircovid_hospital"}
+##' 
 ##' @export
 compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
   index <- odin_index(model)

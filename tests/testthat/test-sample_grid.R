@@ -32,6 +32,8 @@ test_that("sample_grid_scan works", {
   last_start_date <- "2020-02-14"
   day_step <- 12
   
+  sircovid_model <- basic_model()
+  
   scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
@@ -39,14 +41,15 @@ test_that("sample_grid_scan works", {
     first_start_date = first_start_date, 
     last_start_date = last_start_date, 
     day_step = day_step,
-    data = data)
+    data = data,
+    sircovid_model = sircovid_model)
 
   n_sample_pairs <- 4 
   res <- sample_grid_scan(scan_results = scan_results,
                           n_sample_pairs = n_sample_pairs, 
                           n_particles = 10)
 
-  model <- res$inputs$model$model(user = res$inputs$model_params)
+  model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
   days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
   expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample_pairs))
