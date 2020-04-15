@@ -82,11 +82,11 @@ test_that("No one is hospitalised if p_sympt_ILI is 0", {
 )
 
 
-test_that("parameters can be generated", {
+test_that("No one is hospitalised if p_recov_ILI is 0", {
   t_max <- 150
   t <- seq(from = 1, to = t_max)
   max_iter <- 10
-
+  
   #p_recov_ILI=1, no-one hospitalised
   pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
   pars_model$p_recov_ILI[]<-1
@@ -108,89 +108,80 @@ test_that("parameters can be generated", {
   expect_true(all(results$I_triage[,,,,1] == 0))
   expect_true(all(results$R_stepdown[,,,,1] == 0))
   expect_true(all(results$D[,,1]==0))
+}
+)
 
-  #p_ICU_hosp=0, p_death_hosp=0 no-one goes into ICU, no deaths
-  pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
-  pars_model$p_ICU_hosp[]<-0
-  pars_model$p_death_hosp[]<-0
-  mod <- new_hospital_model(user = pars_model)
-  check_cases <- FALSE
-  iter <- 0
-  while (!check_cases && iter<= max_iter){
-    iter <- iter + 1
-    tmp <- mod$run(t, replicate = 1)
-    results <- mod$transform_variables(tmp)
-    if (any(results$I_hosp_R[,,,,1] > 0)){
-      check_cases <- TRUE
-    }
-  }
-  expect_true(all(results$I_hosp_D[,,,,1] == 0))
-  expect_true(all(results$I_ICU_R[,,,,1] == 0))
-  expect_true(all(results$I_ICU_D[,,,,1] == 0))
-  expect_true(all(results$I_triage[,,,,1] == 0))
-  expect_true(all(results$R_stepdown[,,,,1] == 0)) 
-  expect_true(all(results$D[,,1]==0)) 
-
-  #p_death_hosp=1, p_ICU_hosp=0 no-one goes into ICU, no recovery in hospital
-  pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
-  pars_model$p_ICU_hosp[]<-0
-  pars_model$p_death_hosp[]<-1
-  mod <- new_hospital_model(user = pars_model)
-  check_cases <- FALSE
-  iter <- 0
-  while (!check_cases && iter<= max_iter){
-    iter <- iter + 1
-    tmp <- mod$run(t, replicate = 1)
-    results <- mod$transform_variables(tmp)
-    if (any(results$I_hosp_D[,,,,1] > 0)){
-      check_cases <- TRUE
-    }
-  }
-  expect_true(all(results$I_hosp_R[,,,,1] == 0))
-  expect_true(all(results$I_ICU_R[,,,,1] == 0))
-  expect_true(all(results$I_ICU_D[,,,,1] == 0))
-  expect_true(all(results$I_triage[,,,,1] == 0))
-  expect_true(all(results$R_stepdown[,,,,1] == 0))
+test_that("setting hospital route probabilities to 0 or 1 result in correct path", {
   
-  #p_death_ICU=1, p_ICU_hosp=1 no-one goes in hosp_D/hosp_R, no recovery from ICU
-  pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
-  pars_model$p_ICU_hosp[]<-1
-  pars_model$p_death_ICU[]<-1
-  mod <- new_hospital_model(user = pars_model)
-  check_cases <- FALSE
-  iter <- 0
-  while (!check_cases && iter<= max_iter){
-    iter <- iter + 1
-    tmp <- mod$run(t, replicate = 1)
-    results <- mod$transform_variables(tmp)
-    if (any(results$I_ICU_D[,,,,1] > 0)){
-      check_cases <- TRUE
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  max_iter <- 10
+
+  check_hosp_probs <- function(
+    p_ICU_hosp,
+    p_death_ICU = NULL,
+    p_death_hosp = NULL,
+    cases, #name of comparment where we expect cases
+    zeroes #names of compartmens where we expect zeroes
+    ){
+    pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
+    pars_model$p_ICU_hosp[] <- p_ICU_hosp
+    if (!is.null(p_death_hosp)){
+      pars_model$p_death_hosp[] <- p_death_hosp
     }
+    if (!is.null(p_death_ICU)){
+      pars_model$p_death_ICU[] <- p_death_ICU
+    }
+    mod <- new_hospital_model(user = pars_model)
+    check_cases <- FALSE
+    iter <- 0
+    while (!check_cases && iter<= max_iter){
+      iter <- iter + 1
+      tmp <- mod$run(t, replicate = 1)
+      results <- mod$transform_variables(tmp)
+      if (any(results[[cases]] > 0)){
+        check_cases <- TRUE
+      }
+    }
+    zero_true <- rep(FALSE,length(zeroes))
+    for (i in seq_len(length(zeroes))){
+      zero_true[i] <- all(results[[zeroes[i]]] == 0)
+    }
+    expect_true(all(zero_true))
   }
-  expect_true(any(results$I_hosp_R[,,,,1] == 0))
-  expect_true(all(results$I_hosp_D[,,,,1] == 0))
-  expect_true(all(results$I_ICU_R[,,,,1] == 0))
-  expect_true(all(results$R_stepdown[,,,,1] == 0))
+  
+  #p_ICU_hosp=0, p_death_hosp=0 no-one goes into ICU, no deaths
+  check_hosp_probs(p_ICU_hosp = 0,
+                   p_death_hosp = 0,
+                   cases = "I_hosp_R",
+                   zeroes = c("I_hosp_D","I_ICU_R","I_ICU_D","I_triage","R_stepdown","D"))
+  
+  
+  #p_death_hosp=1, p_ICU_hosp=0 no-one goes into ICU, no recovery in hospital
+  check_hosp_probs(p_ICU_hosp = 0,
+                   p_death_hosp = 1,
+                   cases = "I_hosp_D",
+                   zeroes = c("I_hosp_R","I_ICU_R","I_ICU_D","I_triage","R_stepdown"))
+
+  #p_death_ICU=1, p_ICU_hosp=1 no-one goes in hosp_D/hosp_R, no recovery from ICU
+  check_hosp_probs(p_ICU_hosp = 1,
+                   p_death_ICU = 1,
+                   cases = "I_ICU_D",
+                   zeroes = c("I_hosp_R","I_hosp_D","I_ICU_R","R_stepdown"))
   
   #p_death_ICU=0, p_ICU_hosp=1 no-one goes in hosp_D/hosp_R, no deaths
-  pars_model <- generate_parameters_new_hospital_model(beta = 0.126, beta_times = "2020-02-01")
-  pars_model$p_ICU_hosp[]<-1
-  pars_model$p_death_ICU[]<-1
-  mod <- new_hospital_model(user = pars_model)
-  check_cases <- FALSE
-  iter <- 0
-  while (!check_cases && iter<= max_iter){
-    iter <- iter + 1
-    tmp <- mod$run(t, replicate = 1)
-    results <- mod$transform_variables(tmp)
-    if (any(results$I_ICU_R[,,,,1] > 0)){
-      check_cases <- TRUE
-    }
-  }
-  expect_true(any(results$I_hosp_R[,,,,1] == 0))
-  expect_true(all(results$I_hosp_D[,,,,1] == 0))
-  expect_true(all(results$I_ICU_D[,,,,1] == 0))
-  expect_true(all(results$D[,,,,1] == 0))
+  check_hosp_probs(p_ICU_hosp = 1,
+                   p_death_ICU = 0,
+                   cases = "I_ICU_R",
+                   zeroes = c("I_hosp_R","I_hosp_D","I_ICU_D","D"))
+  
+})
+
+
+test_that("setting a gamma to Inf or 1 results in progress in corresponding compartment in 1 time-step", {    
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  max_iter <- 10
   
   #function to test that setting a given gamma to Inf causes cases in corresponding compartment to
   #progress in 1 time-step
@@ -222,7 +213,12 @@ test_that("parameters can be generated", {
   test_gamma_inf('gamma_ICU_R','I_ICU_R')
   test_gamma_inf('gamma_ICU_D','I_ICU_D')
   test_gamma_inf('gamma_stepdown','R_stepdown')
+})
   
+test_that("setting a gamma to 0 results in cases in corresponding compartment to stay in progression stage 1", {  
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  max_iter <- 10
   
   #function to test that setting a given gamma to 0 causes cases in corresponding compartment to
   #stay in progression stage 1
