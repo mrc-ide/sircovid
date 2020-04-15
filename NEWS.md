@@ -1,6 +1,7 @@
 # sircovid 0.2.16
 
 - Options for using different models reimplemented
+- Changing beta generalised
 
 # sircovid 0.2.15
 

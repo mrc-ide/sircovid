@@ -37,7 +37,7 @@
 scan_beta_date <- function(
   min_beta, 
   max_beta, 
-  beta_step, 
+  beta_step,
   first_start_date, 
   last_start_date, 
   day_step,
