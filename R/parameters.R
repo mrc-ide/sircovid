@@ -161,6 +161,8 @@ generate_parameters <- function(
   parameter_list$hosp_transmission <- hosp_transmission
   parameter_list$ICU_transmission <- ICU_transmission
   
+  # Remove parameters unused by odin
+  parameter_list$age_bin_starts <- NULL
   
   parameter_list
 }

@@ -19,7 +19,6 @@ test_that("Parameters are generated as before", {
   # Remove newly generated parameters
   pars_model$beta_t <- NULL
   pars_model$beta_y <- NULL
-  pars_model$age_bins <- NULL
 
   cmp <- readRDS("reference_pars.rds")
 

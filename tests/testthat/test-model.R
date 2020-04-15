@@ -129,30 +129,33 @@ test_that("parameters can be generated", {
   # Check progression groups work for these parameters, even though
   # they are no longer the default
   #gamma_asympt = Inf, I_asympt cases must progress in 1 time-step
-  pars_model <- generate_parameters(beta = rep(0.126, 3),
-                                    progression_groups = list(E = 2, asympt = 2, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 2, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  pars_model <- generate_parameters(sircovid_model = sircovid_model,
+                                    beta = rep(0.126, 3))
   pars_model$gamma_asympt<-Inf
-  mod <- basic(user = pars_model)
+  mod <- sircovid_model$odin_model(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
   results <- mod$transform_variables(tmp)
   expect_true(any(results$I_asympt[,,,,1]>0)) #check there were I_asympt cases (if yes, should be TRUE)
   expect_true(all(results$I_asympt[2:t_max,,2,,]==results$I_asympt[1:(t_max-1),,1,,])) 
 
   #gamma_mild = Inf, I_mild cases must progress in 1 time-step
-  pars_model <- generate_parameters(beta = rep(0.126, 3),
-                                    progression_groups = list(E = 2, asympt = 1, mild = 2, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 2, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  pars_model <- generate_parameters(sircovid_model = sircovid_model,
+                                    beta = rep(0.126, 3))
   pars_model$gamma_mild<-Inf
-  mod <- basic(user = pars_model)
+  mod <- sircovid_model$odin_model(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
   results <- mod$transform_variables(tmp)
   expect_true(any(results$I_mild[,,,,1]>0)) #check there were I_mild cases (if yes, should be TRUE)
   expect_true(all(results$I_mild[2:t_max,,2,,]==results$I_mild[1:(t_max-1),,1,,])) 
 
   #gamma_ILI = Inf, I_ILI cases must progress in 1 time-step
-  pars_model <- generate_parameters(beta = rep(0.126, 3),
-                                    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 2, hosp = 2, ICU = 2, rec = 2))
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 2, hosp = 2, ICU = 2, rec = 2))
+  pars_model <- generate_parameters(sircovid_model = sircovid_model,
+                                    beta = rep(0.126, 3))
   pars_model$gamma_ILI<-Inf
-  mod <- basic(user = pars_model)
+  mod <- sircovid_model$odin_model(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
   results <- mod$transform_variables(tmp)
   expect_true(any(results$I_ILI[,,,,1]>0)) #check there were I_ILI cases (if yes, should be TRUE)
@@ -197,30 +200,33 @@ test_that("parameters can be generated", {
   expect_true(all(results$E[,,2,,]==0)) 
 
   #gamma_asympt=0, I_asympt stay in progression stage 1
-  pars_model <- generate_parameters(beta = rep(0.126, 3),
-                                    progression_groups = list(E = 2, asympt = 2, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 2, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  pars_model <- generate_parameters(sircovid_model = sircovid_model,
+                                    beta = rep(0.126, 3))
   pars_model$gamma_asympt<-0
-  mod <- basic(user = pars_model)
+  mod <- sircovid_model$odin_model(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
   results <- mod$transform_variables(tmp)
   expect_true(any(results$I_asympt[,,1,,]>0)) #check there are some I_asympt cases first (if yes, should be TRUE)
   expect_true(all(results$I_asympt[,,2,,]==0)) 
 
   #gamma_mild=0, I_mild stay in progression stage 1
-  pars_model <- generate_parameters(beta = rep(0.126, 3),
-                                    progression_groups = list(E = 2, asympt = 1, mild = 2, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 2, ILI = 1, hosp = 2, ICU = 2, rec = 2))
+  pars_model <- generate_parameters(sircovid_model = sircovid_model,
+                                    beta = rep(0.126, 3))
   pars_model$gamma_mild<-0
-  mod <- basic(user = pars_model)
+  mod <- sircovid_model$odin_model(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
   results <- mod$transform_variables(tmp)
   expect_true(any(results$I_mild[,,1,,]>0)) #check there are some I_mild cases first (if yes, should be TRUE)
   expect_true(all(results$I_mild[,,2,,]==0)) 
 
   #gamma_ILI=0, I_ILI stay in progression stage 1
-  pars_model <- generate_parameters(beta = rep(0.126, 3),
-                                    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 2, hosp = 2, ICU = 2, rec = 2))
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 2, hosp = 2, ICU = 2, rec = 2))
+  pars_model <- generate_parameters(sircovid_model = sircovid_model,
+                                    beta = rep(0.126, 3))
   pars_model$gamma_ILI<-0
-  mod <- basic(user = pars_model)
+  mod <- sircovid_model$odin_model(user = pars_model)
   tmp <- mod$run(t, replicate = 1)
   results <- mod$transform_variables(tmp)
   expect_true(any(results$I_ILI[,,1,,]>0)) #check there are some I_ILI cases first (if yes, should be TRUE)
