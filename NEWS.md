@@ -1,3 +1,8 @@
+# sircovid 0.2.17
+
+- Options for using different models reimplemented
+- Changing beta generalised
+
 # sircovid 0.2.16
 
 - Generate parameter function for new_hospital_model using fitted parameters from hospital model
@@ -13,7 +18,6 @@
 # sircovid 0.2.13
 
 - Adds a save_end_states option to particle_filter
-
 
 # sircovid 0.2.12
 

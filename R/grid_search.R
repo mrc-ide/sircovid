@@ -19,8 +19,7 @@
 ##' @param data Hosptial data to fit to. See \code{example.csv}
 ##'   and \code{particle_filter_data()}
 ##' 
-##' @param model An odin model generator and comparison function.  If
-##'   \code{NULL} uses the basic model.
+##' @param sircovid_model An odin model generator and comparison function.
 ##'
 ##' @param model_params Model parameters, from a call to
 ##'   \code{generate_parameters()}. If NULL, uses defaults as
@@ -38,12 +37,12 @@
 scan_beta_date <- function(
   min_beta, 
   max_beta, 
-  beta_step, 
+  beta_step,
   first_start_date, 
   last_start_date, 
   day_step,
   data,
-  model = NULL,
+  sircovid_model = basic_model(),
   model_params = NULL,
   pars_obs = NULL,
   n_particles = 100) {
@@ -60,27 +59,24 @@ scan_beta_date <- function(
   if (is.null(model_params)) {
     time_steps_per_day <- 4
     model_params <- generate_parameters(
+      sircovid_model = sircovid_model,
       transmission_model = "POLYMOD",
-      progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
-      gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
       beta = 0.1,
       beta_times = "2020-01-01",
-      hosp_transmission = 0,
-      ICU_transmission = 0,
       trans_profile = 1,
       trans_increase = 1,
       dt = 1/time_steps_per_day
     )
   } else {
     if (length(model_params$beta_y) > 1) {
-      stop("Set beta variation through generate_beta, not model_params")
+      stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
   }
 
-  model <- sircovid_model(model)
-  
   if (is.null(pars_obs)) {
-    pars_obs <- list(phi_ICU = 0.95,
+    pars_obs <- list(phi_general = 0.95,
+                     k_general = 2,
+                     phi_ICU = 0.95,
                      k_ICU = 2,
                      phi_death = 926 / 1019,
                      k_death = 2,
@@ -93,7 +89,7 @@ scan_beta_date <- function(
   ## Particle filter outputs, extracting log-likelihoods
   pf_run_ll <- furrr::future_pmap_dbl(
     .l = param_grid, .f = beta_date_particle_filter,
-    model = model, model_params = model_params, data = data, 
+    sircovid_model = sircovid_model, model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
   )
@@ -116,7 +112,7 @@ scan_beta_date <- function(
                   mat_log_ll = mat_log_ll,
                   renorm_mat_LL = renorm_mat_LL,
                   inputs = list(
-                    model = model,
+                    model = sircovid_model,
                     model_params = model_params,
                     pars_obs = pars_obs,
                     data = data))
@@ -139,12 +135,12 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood") {
 ##' @export
 plot.sample_grid_search <- function(x, ..., what = "ICU") {
 
-  idx <- odin_index(x$inputs$model$model(user = x$inputs$model_params))
+  idx <- odin_index(x$inputs$model$odin_model(user = x$inputs$model_params,
+                                              unused_user_action = "message"))
 
   # what are we plotting
   if (what == "ICU") {
-    
-    index <- c(idx$I_ICU) - 1L
+    index <- c(idx$I_ICU_D,idx$I_ICU_R) - 1L
     ylab <- "ICU"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
@@ -152,7 +148,19 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     plot_particles(particles, ylab = ylab)
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
     
-  } else if(what == "Deaths") {
+  } else if (what == "general") {
+    
+    index <- c(idx$I_triage,idx$I_hosp_R,idx$I_hosp_D,idx$R_stepdown) - 1L
+    ylab <- "General beds"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
+      FUN.VALUE = numeric(dim(x$trajectories)[1]))
+    plot_particles(particles, ylab = ylab)
+    points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
+    
+  }
+  
+  else if(what == "deaths") {
     
     index <- c(idx$D) - 1L
     ylab <- "Deaths"
@@ -167,7 +175,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     
   } else {
     
-    stop("Requested what must be one of 'ICU' or 'Deaths'")
+    stop("Requested what must be one of 'ICU', 'deaths' or 'general'")
     
   } 
   
@@ -180,22 +188,21 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 ##' 
 ##' @noRd
 beta_date_particle_filter <- function(beta, start_date,
-                                      model,
+                                      sircovid_model,
                                       model_params, data, 
                                       pars_obs, n_particles,
                                       forecast_days = 0,
                                       save_particles = FALSE,
                                       return = "full") {
   # Edit beta in parameters
-  new_beta <- generate_beta(beta, start_date)
+  new_beta <- sircovid_model$generate_beta_func(beta, start_date)
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
   model_params$beta_y <- new_beta$beta
   model_params$beta_t <- beta_t
 
-  X <- run_particle_filter(data, model_params, start_date, pars_obs,
-                           n_particles, forecast_days, save_particles, return,
-                           model)
+  X <- run_particle_filter(data, sircovid_model, model_params, start_date, pars_obs,
+                           n_particles, forecast_days, save_particles, return)
   
   X
 }

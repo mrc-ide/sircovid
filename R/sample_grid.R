@@ -56,7 +56,7 @@ sample_grid_scan <- function(scan_results,
   
   # recreate parameters for re running
   param_grid <- data.frame("beta" = beta, "start_date" = dates)
-  model <- scan_results$inputs$model
+  sircovid_model <- scan_results$inputs$model
   model_params <- scan_results$inputs$model_params
   pars_obs <- scan_results$inputs$pars_obs
   data <- scan_results$inputs$data
@@ -68,7 +68,8 @@ sample_grid_scan <- function(scan_results,
   ## Sample one particle
   traces <- furrr::future_pmap(
     .l = param_grid, .f = beta_date_particle_filter,
-    model = model, model_params = model_params, data = data,
+    sircovid_model = sircovid_model, 
+    model_params = model_params, data = data,
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = forecast_days, 
     save_particles = TRUE, return = "sample")
@@ -99,7 +100,7 @@ sample_grid_scan <- function(scan_results,
                 model_params = model_params,
                 pars_obs = pars_obs,
                 data = data,
-                model = model))
+                model = sircovid_model))
   
   class(res) <- "sample_grid_search"
   

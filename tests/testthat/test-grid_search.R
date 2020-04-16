@@ -22,7 +22,8 @@ test_that("Small grid search works", {
     first_start_date = first_start_date, 
     last_start_date = last_start_date, 
     day_step = day_step,
-    data = data)
+    data = data,
+    sircovid_model = basic_model())
    
   expect_is(scan_results, "sircovid_scan")
   expect_true("inputs" %in% names(scan_results))
@@ -44,8 +45,7 @@ test_that("Small grid search works", {
 test_that("Small grid search works with new model", {
   set.seed(1)
 
-  data <- read.csv(sircovid_file("extdata/example.csv"),
-                   stringsAsFactors = FALSE)
+  data <- readRDS("hospital_model_data.rds")
  
   # Parameters for run
   min_beta <- 0.1
@@ -55,7 +55,6 @@ test_that("Small grid search works with new model", {
   last_start_date <- "2020-01-22"
   day_step <- 1
   
-  skip("TODO: Add patched parameters here")
   scan_results = scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
@@ -64,7 +63,7 @@ test_that("Small grid search works with new model", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
-    model = "new_hospital_model")
+    sircovid_model = hospital_model())
 
   expect_is(scan_results, "sircovid_scan")
   expect_true("inputs" %in% names(scan_results))
@@ -77,10 +76,11 @@ test_that("Small grid search works with new model", {
   expect_equal(scan_results$y, date_grid)
   expect_equal(dim(scan_results$renorm_mat_LL), dim(scan_results$mat_log_ll))
   expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
-  expect_true(all(scan_results$renorm_mat_LL < 1 & scan_results$renorm_mat_LL > 0))
+  expect_true(all(scan_results$renorm_mat_LL <= 1 & scan_results$renorm_mat_LL >= 0))
   
   # Plots run, but not checked
-  plot(scan_results)
+  plot(scan_results, what = "likelihood")
+  plot(scan_results, what = "probability")
 })
 
 
@@ -153,12 +153,15 @@ test_that("Varying beta is set in the right place", {
   last_start_date <- "2020-02-29"
   day_step <- 20
   
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+                                gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))
   model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
-    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
-    gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
     hosp_transmission = 0,
     ICU_transmission = 0,
+    beta = c(0.1, 0.1, 0.1),
+    beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
     trans_profile = 1,
     trans_increase = 1,
     dt = 0.25)
@@ -172,5 +175,5 @@ test_that("Varying beta is set in the right place", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data),
-    "Set beta variation through generate_beta, not model_params")
+    "Set beta variation through generate_beta_func in sircovid_model, not model_params")
 })

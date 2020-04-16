@@ -9,6 +9,7 @@ generate_beta(
   start_date = "2020-02-02",
   reduction_start = "2020-03-16",
   beta_reduction = 0.238,
+  beta_end = NULL,
   reduction_period = 10
 )
 }
@@ -22,6 +23,10 @@ generate_beta(
 \item{beta_reduction}{Factor by which beta is reduced
 default is 0.238, as estimated by Jarvis et al
 beta_reduced = beta - beta * (1 - beta_reduction)}
+
+\item{beta_end}{Overrides beta_reduction, giving the
+final value of beta by the end of the reduction
+period}
 
 \item{reduction_period}{Time, in days, over which the
 reduction in beta is achieved. Default 10 days}

@@ -8,12 +8,13 @@ test_that("sampler runs without error", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
-
+  sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+                                gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))
+  
   pars_model <- generate_parameters(
+    sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
-    beta = rep(0.125, 3),
-    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
-    gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
+    beta = 0.125,
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -30,6 +31,8 @@ test_that("sampler runs without error", {
   pars_model$p_sympt_ILI <- rep(0.66,length(prop_symp_seek_HC))*prop_symp_seek_HC
 
   pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
     ## what should this be?
     phi_ICU = 0.95,
     ## what should this be?
@@ -41,8 +44,8 @@ test_that("sampler runs without error", {
     #rate for exponential noise, something big so noise is small (but non-zero))
     exp_noise = 1e6)
 
-  mod <- sircovid(params = pars_model)
-  compare <- compare_icu(mod, pars_obs, d)
+  mod <- sircovid_model$odin_model(user = pars_model)
+  compare <- sircovid_model$compare_model(mod, pars_obs, d)
 
   cmp <- readRDS("reference.rds")
   dimnames(cmp$states) <- NULL
@@ -144,15 +147,22 @@ test_that("particle_filter error cases", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
+  sircovid_model <- basic_model()
 
   pars_model <- generate_parameters(
+    sircovid_model = sircovid_model,
     dt = 1 / time_steps_per_day,
-    beta = rep(0.125, 3))
-  pars_obs <- list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019,
-                   k_death = 2, exp_noise = 1e6)
+    beta = 0.125)
+  pars_obs <- list(phi_general = 0.95,
+                   k_general = 2, 
+                   phi_ICU = 0.95, 
+                   k_ICU = 2, 
+                   phi_death = 926 / 1019,
+                   k_death = 2, 
+                   exp_noise = 1e6)
 
-  mod <- sircovid(params = pars_model)
-  compare <- compare_icu(mod, pars_obs, d)
+  mod <- sircovid_model$odin_model(user = pars_model)
+  compare <- sircovid_model$compare_model(mod, pars_obs, d)
 
   expect_error(
     particle_filter(NULL, mod, compare, 100),
