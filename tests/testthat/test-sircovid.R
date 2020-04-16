@@ -7,7 +7,7 @@ test_that("Can be run on real data", {
                         admissions_data_file = "combin_time_series.csv")
   sircovid_model <- basic_model()
   
-  vary_beta <- sircovid_model$generate_beta(0.1)
+  vary_beta <- sircovid_model$generate_beta_func(0.1)
   model_params <- generate_parameters(sircovid_model,
                                       beta = vary_beta$beta,
                                       beta_times = vary_beta$beta_times,
@@ -33,7 +33,7 @@ test_that("New model can be run on real data", {
   data <- readRDS("hospital_model_data.rds")
   sircovid_model <- hospital_model()
   
-  vary_beta <- sircovid_model$generate_beta(0.1)
+  vary_beta <- sircovid_model$generate_beta_func(0.1)
   model_params <- generate_parameters(sircovid_model,
                                       beta = vary_beta$beta,
                                       beta_times = vary_beta$beta_times,

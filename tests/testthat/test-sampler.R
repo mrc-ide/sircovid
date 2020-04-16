@@ -14,7 +14,7 @@ test_that("sampler runs without error", {
   pars_model <- generate_parameters(
     sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
-    beta = rep(0.125, 3),
+    beta = 0.125,
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -152,7 +152,7 @@ test_that("particle_filter error cases", {
   pars_model <- generate_parameters(
     sircovid_model = sircovid_model,
     dt = 1 / time_steps_per_day,
-    beta = rep(0.125, 3))
+    beta = 0.125)
   pars_obs <- list(phi_general = 0.95,
                    k_general = 2, 
                    phi_ICU = 0.95, 

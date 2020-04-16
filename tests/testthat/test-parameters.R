@@ -8,7 +8,7 @@ test_that("Parameters are generated as before", {
                                  gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5)),
     transmission_model = "POLYMOD",
     severity_data_file = "extdata/severity_first.csv",
-    beta = rep(0.125, 3),
+    beta = 0.125,
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -94,7 +94,8 @@ test_that("Bad inputs", {
   expect_error(generate_parameters(sircovid_model = 
                                      basic_model(gammas=list(mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))), 
                "gammas need to be defined for all partitions")
-  expect_error(generate_parameters(beta_times = c("2020-02-02", "2021-03-01", "2020-04-01")),
+  expect_error(generate_parameters(beta = rep(0.1, 3),
+                                   beta_times = c("2020-02-02", "2021-03-01", "2020-04-01")),
                "Supplied dates are not increasing")
 })
 

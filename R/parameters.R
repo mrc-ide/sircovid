@@ -92,6 +92,7 @@ generate_beta <- function(beta_start,
 ##' 
 ##' @return List of parameters for use with \code{sircovid}
 ##' 
+##' @export
 generate_parameters <- function(
   sircovid_model = basic_model(),
   transmission_model = "POLYMOD",
@@ -99,8 +100,8 @@ generate_parameters <- function(
   severity_data_file=NULL,
   infection_seeding = list(values=c(10),
                            bins=c('15 to 19')),
-  beta = c(0.1, 0.1, 0.1),
-  beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
+  beta = 0.1,
+  beta_times = "2020-02-02",
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,

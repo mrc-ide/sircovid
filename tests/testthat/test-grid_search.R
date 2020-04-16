@@ -78,8 +78,6 @@ test_that("Small grid search works with new model", {
   expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
   expect_true(all(scan_results$renorm_mat_LL <= 1 & scan_results$renorm_mat_LL >= 0))
   
-  browser()
-  
   # Plots run, but not checked
   plot(scan_results, what = "likelihood")
   plot(scan_results, what = "probability")
@@ -162,6 +160,8 @@ test_that("Varying beta is set in the right place", {
     transmission_model = "POLYMOD",
     hosp_transmission = 0,
     ICU_transmission = 0,
+    beta = c(0.1, 0.1, 0.1),
+    beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
     trans_profile = 1,
     trans_increase = 1,
     dt = 0.25)
@@ -175,5 +175,5 @@ test_that("Varying beta is set in the right place", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data),
-    "Set beta variation through generate_beta, not model_params")
+    "Set beta variation through sircovid_model$generate_beta_func, not model_params")
 })

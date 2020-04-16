@@ -125,7 +125,7 @@ pmcmc <- function(data,
     )
   } else {
     if (length(model_params$beta_y) > 1) {
-      stop("Set beta variation through generate_beta, not model_params")
+      stop("Set beta variation through sircovid_model$generate_beta_func, not model_params")
     }
   }
   

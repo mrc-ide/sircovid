@@ -134,6 +134,8 @@ test_that("pmcmc error cases", {
   model_params <- generate_parameters(
     sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
+    beta = c(0.1, 0.1, 0.1),
+    beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -151,7 +153,7 @@ test_that("pmcmc error cases", {
                        'start_date' = as.Date(data$date[1])), 
       pars_min = list('beta' = 0, 'start_date' = 0)
     ),
-    "Set beta variation through generate_beta, not model_params"
+    "Set beta variation through sircovid_model$generate_beta_func, not model_params"
   )
   
   expect_error(

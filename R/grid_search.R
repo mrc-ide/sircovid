@@ -69,7 +69,7 @@ scan_beta_date <- function(
     )
   } else {
     if (length(model_params$beta_y) > 1) {
-      stop("Set beta variation through generate_beta, not model_params")
+      stop("Set beta variation through sircovid_model$generate_beta_func, not model_params")
     }
   }
 
@@ -195,7 +195,7 @@ beta_date_particle_filter <- function(beta, start_date,
                                       save_particles = FALSE,
                                       return = "full") {
   # Edit beta in parameters
-  new_beta <- sircovid_model$generate_beta(beta, start_date)
+  new_beta <- sircovid_model$generate_beta_func(beta, start_date)
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
   model_params$beta_y <- new_beta$beta
