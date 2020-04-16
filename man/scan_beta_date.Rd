@@ -12,7 +12,7 @@ scan_beta_date(
   last_start_date,
   day_step,
   data,
-  model = NULL,
+  sircovid_model = basic_model(),
   model_params = NULL,
   pars_obs = NULL,
   n_particles = 100
@@ -34,8 +34,7 @@ scan_beta_date(
 \item{data}{Hosptial data to fit to. See \code{example.csv}
 and \code{particle_filter_data()}}
 
-\item{model}{An odin model generator and comparison function.  If
-\code{NULL} uses the basic model.}
+\item{sircovid_model}{An odin model generator and comparison function.}
 
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as

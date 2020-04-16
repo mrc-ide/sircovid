@@ -7,10 +7,11 @@
 pmcmc(
   data,
   n_mcmc,
+  sircovid_model,
   model_params = NULL,
   model_start_date = "2020-02-02",
-  pars_obs = list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926/1019, k_death = 2,
-    exp_noise = 1e+06),
+  pars_obs = list(phi_general = 0.95, k_general = 2, phi_ICU = 0.95, k_ICU = 2,
+    phi_death = 926/1019, k_death = 2, exp_noise = 1e+06),
   pars_init = list(beta = 0.14, start_date = as.Date("2020-02-07")),
   pars_min = list(beta = 0, start_date = 0),
   pars_max = list(beta = 1, start_date = 1e+06),
@@ -28,6 +29,8 @@ pmcmc(
 
 \item{n_mcmc}{number of mcmc mcmc iterations to perform}
 
+\item{sircovid_model}{An odin model generator and comparison function.}
+
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
 in unit tests.}
@@ -36,7 +39,7 @@ in unit tests.}
 
 \item{pars_obs}{list of parameters to use in comparison
 with \code{compare_icu}. If NULL, uses
-list(phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)}
+list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)}
 
 \item{pars_init}{named list of initial inputs for parameters being sampled (currently beta and start_date)}
 

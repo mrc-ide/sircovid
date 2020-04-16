@@ -3,16 +3,18 @@ context("sircovid")
 test_that("Can be run on real data", {
   set.seed(1)
   time_steps_per_day <- 4
-  
   data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
                         admissions_data_file = "combin_time_series.csv")
+  sircovid_model <- basic_model()
   
-  vary_beta <- generate_beta(0.1)
-  model_params <- generate_parameters(beta = vary_beta$beta,
+  vary_beta <- sircovid_model$generate_beta_func(0.1)
+  model_params <- generate_parameters(sircovid_model,
+                                      beta = vary_beta$beta,
                                       beta_times = vary_beta$beta_times,
                                       dt = 1/time_steps_per_day)
   
   results <- run_particle_filter(data = data,
+                                 sircovid_model = sircovid_model,
                                  model_params = model_params,
                                  obs_params = list(phi_ICU = 0.95,
                                                    k_ICU = 2,
@@ -23,6 +25,35 @@ test_that("Can be run on real data", {
   # No check of correctness  
   expect_equal(results$log_likelihood, -269.9478, tolerance=1e-3)
 })
+
+test_that("New model can be run on real data", {
+  set.seed(1)
+  time_steps_per_day <- 4
+  
+  data <- readRDS("hospital_model_data.rds")
+  sircovid_model <- hospital_model()
+  
+  vary_beta <- sircovid_model$generate_beta_func(0.1)
+  model_params <- generate_parameters(sircovid_model,
+                                      beta = vary_beta$beta,
+                                      beta_times = vary_beta$beta_times,
+                                      dt = 1/time_steps_per_day)
+  
+  results <- run_particle_filter(data = data,
+                                 sircovid_model = sircovid_model,
+                                 model_params = model_params,
+                                 obs_params = list(phi_general = 0.95,
+                                                   k_general = 2,
+                                                   phi_ICU = 0.95,
+                                                   k_ICU = 2,
+                                                   phi_death = 1789/1651,
+                                                   k_death = 2,
+                                                   exp_noise = 1e6),
+                                 n_particles = 1000)
+  # No check of correctness  
+  expect_equal(results$log_likelihood, -819.824, tolerance=1e-3)
+})
+
 
 test_that("Poor formatting of real data throws errors", {
   data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
@@ -51,20 +82,23 @@ test_that("Poor formatting of real data throws errors", {
                                                      phi_death = 1789/1651,
                                                      k_death = 2,
                                                      exp_noise = 1e6),
-                                   n_particles = 1000),
+                                   n_particles = 10),
                "Model start date is later than data start date")
 })
 
 test_that("Bad parameters throws errors", {
+  sircovid_model <- basic_model()
   data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
                         admissions_data_file = "combin_time_series.csv")
   
   vary_beta <- generate_beta(0.1)
-  model_params <- generate_parameters(beta = vary_beta$beta,
+  model_params <- generate_parameters(sircovid_model = sircovid_model,
+                                      beta = vary_beta$beta,
                                       beta_times = vary_beta$beta_times,
                                       dt = 0.25)
   
   expect_message(run_particle_filter(data = data,
+                                     sircovid_model = sircovid_model,
                                      model_params = model_params,
                                    model_start_date = "2020-02-02",
                                    obs_params = list(phi_ICU = 0.95,
@@ -72,19 +106,20 @@ test_that("Bad parameters throws errors", {
                                                      phi_death = 1789/1651,
                                                      k_death = 2,
                                                      exp_noise = 1e6),
-                                   n_particles = 1000,
+                                   n_particles = 10,
                                    save_particles = FALSE,
                                    return = "sample"),
                "Must save particles to sample runs")
   expect_error(run_particle_filter(data = data,
+                                   sircovid_model = sircovid_model,
                                    model_params = model_params,
-                                     model_start_date = "2020-02-02",
-                                     obs_params = list(phi_ICU = 0.95,
-                                                       k_ICU = 2,
-                                                       phi_death = 1789/1651,
-                                                       k_death = 2,
-                                                       exp_noise = 1e6),
-                                     n_particles = 1000,
+                                   model_start_date = "2020-02-02",
+                                   obs_params = list(phi_ICU = 0.95,
+                                                     k_ICU = 2,
+                                                     phi_death = 1789/1651,
+                                                     k_death = 2,
+                                                     exp_noise = 1e6),
+                                     n_particles = 10,
                                      save_particles = FALSE,
                                      return = "lll"),
                  "return argument must be full, ll, sample or single")

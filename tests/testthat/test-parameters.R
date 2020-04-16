@@ -4,10 +4,11 @@ test_that("Parameters are generated as before", {
   time_steps_per_day <- 4
 
   pars_model <- generate_parameters(
+    sircovid_model = basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
+                                 gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5)),
     transmission_model = "POLYMOD",
-    beta = rep(0.125, 3),
-    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
-    gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
+    severity_data_file = "extdata/severity_first.csv",
+    beta = 0.125,
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -19,14 +20,14 @@ test_that("Parameters are generated as before", {
   # Remove newly generated parameters
   pars_model$beta_t <- NULL
   pars_model$beta_y <- NULL
-  pars_model$age_bins <- NULL
 
   cmp <- readRDS("reference_pars.rds")
 
   # Remove parameters no longer generated
   pars_model$beta <- NULL
+  pars_model$age_bin_starts <- NULL
   cmp$beta <- NULL
-
+  
   expect_mapequal(pars_model, cmp)
 })
 
@@ -36,9 +37,10 @@ test_that("Parameters generated as expected", {
   trans_profile = c(0.5, 0.2, 0.3)
   trans_increase = c(1, 2, 5)
   progression_groups = list(E = 3, asympt = 3, mild = 3, ILI = 3, hosp = 3, ICU = 3, rec = 3)
-  test_params <- generate_parameters(trans_profile = trans_profile,
-                                     trans_increase = trans_increase,
-                                     progression_groups = progression_groups)
+  
+  test_params <- generate_parameters(sircovid_model = basic_model(progression_groups = progression_groups),
+                                     trans_profile = trans_profile,
+                                     trans_increase = trans_increase)
   expect_equal(test_params$trans_classes, length(trans_profile))
   expect_equal(dim(test_params$trans_profile), dim(test_params$trans_profile))
   
@@ -60,13 +62,15 @@ test_that("Parameters generated as expected", {
   # Test date interpolation, and starts from zero, accounts for leap years (2020)
   beta <- c(0.1, 0.2, 0.3)
   dt <- 0.25
-  test_params <- generate_parameters(beta=beta,
+  test_params <- generate_parameters(sircovid_model = basic_model(),
+                                     beta=beta,
                                      beta_times=c("2020-03-02", "2020-03-15", "2020-04-01"),
                                      dt = dt)
   expect_identical(test_params$beta_y, beta)
   expect_identical(test_params$beta_t, c(0, 13, 30)/dt)
   
-  test_params <- generate_parameters(beta=beta,
+  test_params <- generate_parameters(sircovid_model = basic_model(),
+                                     beta=beta,
                                      beta_times=c("2020-02-02", "2020-02-15", "2020-03-01"))
   expect_identical(test_params$beta_t, c(0, 13, 28)/dt)
 })
@@ -84,11 +88,14 @@ test_that("Bad inputs", {
                "Seeding is into the same bin multiple times")
   expect_error(generate_parameters(transmission_model="OLYMOD"), 
                "Only POLYMOD transmission model implemented")
-  expect_error(generate_parameters(progression_groups=list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2)), 
+  expect_error(generate_parameters(sircovid_model = 
+                                     basic_model(progression_groups=list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2))), 
                "progression_groups need to be defined for all partitions")
-  expect_error(generate_parameters(gammas=list(mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5)), 
+  expect_error(generate_parameters(sircovid_model = 
+                                     basic_model(gammas=list(mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))), 
                "gammas need to be defined for all partitions")
-  expect_error(generate_parameters(beta_times = c("2020-02-02", "2021-03-01", "2020-04-01")),
+  expect_error(generate_parameters(beta = rep(0.1, 3),
+                                   beta_times = c("2020-02-02", "2021-03-01", "2020-04-01")),
                "Supplied dates are not increasing")
 })
 
@@ -127,6 +134,6 @@ test_that("read Bob's parameters", {
   ## just verify that the new system works without error so that we
   ## can continue with it.
   expect_error(
-    generate_parameters_new_hospital_model(),
+    generate_parameters(sircovid_model = hospital_model()),
     NA)
 })

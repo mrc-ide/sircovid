@@ -10,9 +10,16 @@ test_that("pmcmc runs without error", {
   
   n_mcmc <- 10
   set.seed(1)
+  sircovid_model <- basic_model(gammas = list(E = 1/(2.5), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5))
   X <- pmcmc(
     data = data, 
-    n_mcmc = n_mcmc
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    pars_obs = list(phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death = 926 / 1019,
+                    k_death = 2,
+                    exp_noise = 1e6),
   )
   
   
@@ -29,6 +36,7 @@ test_that("pmcmc runs without error", {
  Y <- pmcmc(
    data = data, 
    n_mcmc = n_mcmc,
+   sircovid_model = sircovid_model,
    pars_sd = list('beta' = 10, 'start_date' = 1e2), 
    log_likelihood = function(pars, ...) {
      list('log_likelihood' = 0,
@@ -49,14 +57,37 @@ test_that("pmcmc runs without error", {
   
 })
 
+test_that("pmcmc with new model", {
+  data <- readRDS("hospital_model_data.rds")
+  
+  cmp <- readRDS("reference_pmcmc_hosp.rds")
+  
+  n_mcmc <- 10
+  set.seed(1)
+  sircovid_model <- hospital_model()
+  X <- pmcmc(
+    data = data, 
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model
+  )
+  
+  expect_is(X, 'list')
+  expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
+  expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 289))
+  expect_equal(X, cmp)
+})
+
 test_that("pmcmc error cases", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   n_mcmc <- 10
+  sircovid_model <- basic_model()
   expect_error(
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_init = list(0.5,
                        as.Date("2020-02-01"))
     ),
@@ -68,6 +99,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_init = list('beta' = -1,
                        'start_date' = as.Date("2020-02-01"))
     ),
@@ -79,6 +111,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_init = list('beta' = -1,
                        'start_date' = as.Date(data$date[3]))
     ),
@@ -89,6 +122,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       model_start_date =  as.Date(data$date[1]),
       pars_init = list('beta' = 0.01,
                        'start_date' = as.Date(data$date[1])), 
@@ -98,9 +132,10 @@ test_that("pmcmc error cases", {
   )
   
   model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
-    progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
-    gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5),
+    beta = c(0.1, 0.1, 0.1),
+    beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -111,19 +146,21 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       model_params = model_params,
       model_start_date =  as.Date(data$date[1]),
       pars_init = list('beta' = 0.01,
                        'start_date' = as.Date(data$date[1])), 
       pars_min = list('beta' = 0, 'start_date' = 0)
     ),
-    "Set beta variation through generate_beta, not model_params"
+    "Set beta variation through generate_beta_func in sircovid_model, not model_params"
   )
   
   expect_error(
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_init = list('beta' = -0.01,
                        'start_date' =  as.Date("2020-02-01")), 
       pars_min = list('beta' = -1 ,'start_date' = 0)
@@ -137,6 +174,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_min  = list(0.5, 0)
     ),
     "pars_min must be a list of length two with names 'beta' and 'start_date'"
@@ -147,6 +185,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_min  = c('beta' = 0.5,
                        'start_date' = 0)
     ),
@@ -157,6 +196,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_min  = list('beta' = 0.5,
                     'start_date' = as.Date(data$date[1]))
     ),
@@ -168,6 +208,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_max  = list(0.5, 1e3)
     ),
     "pars_max must be a list of length two with names 'beta' and 'start_date'"
@@ -178,6 +219,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_max  = c('beta' = 0.5,
                     'start_date' = 1e3)
     ),
@@ -188,6 +230,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_max  = list('beta' = 0.5,
                        'start_date' = as.Date(data$date[1]))
     ),
@@ -200,6 +243,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_sd = list(0.5, 3)
     ),
     "pars_sd must be a list of length two with names 'beta' and 'start_date'"
@@ -210,6 +254,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_sd  = c('beta' = 0.5,
                     'start_date' = 3)
     ),
@@ -220,6 +265,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_sd  = list('beta' = 0.5,
                       'start_date' = as.Date(data$date[1]))
     ),
@@ -231,6 +277,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_discrete = list(FALSE,TRUE)
     ),
     "pars_discrete must be a list of length two with names 'beta' and 'start_date'"
@@ -240,6 +287,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_discrete = c('beta' = FALSE, 'start_date' = TRUE)
     ),
     "pars_discrete must be a list of length two with names 'beta' and 'start_date'"
@@ -249,6 +297,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       pars_discrete  = list('beta' = 0.5,
                        'start_date' = as.Date(data$date[1]))
     ),
@@ -261,6 +310,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_prior = function(pars) {
         dunif(pars, min = 0, max = 1e6, log = TRUE)
       }
@@ -272,6 +322,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_prior = function(pars) {
         sum(dunif(pars, min = 0, max = 1e6))
       }
@@ -283,6 +334,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_prior = function(pars) {
         sum(dunif(pars, min = 1e6-1, max = 1e6, log = TRUE))
       }
@@ -296,6 +348,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_likelihood = function(pars) {
         dunif(pars, min = 0, max = 1e6, log = TRUE)
       }
@@ -307,6 +360,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_likelihood = function(pars, ...) {
         x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
         list('log_likelihood' = x)
@@ -319,6 +373,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_likelihood = function(pars, ...) {
         x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
         list('log_likelihood' = x, "sample_state" = x)
@@ -331,6 +386,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_likelihood = function(pars, ...) {
         x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
         list(x, rep(1, 236))
@@ -343,6 +399,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_likelihood = function(pars, ...) {
         x <- dunif(pars, min = 0, max = 1e6, log = TRUE)
         list('log_likelihood'= x, 'sample_state' = rep(1, 236))
@@ -356,6 +413,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_likelihood = function(pars, ...) {
         x <- sum(dunif(pars, min = 0, max = 1e6, log = FALSE))
         list('log_likelihood'= x, 'sample_state' = rep(1, 236))
@@ -368,6 +426,7 @@ test_that("pmcmc error cases", {
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
       log_likelihood = function(pars, ...) {
         x <- sum(dunif(pars, min = 0, max = 1e6, log = TRUE))
         list('log_likelihood'= x, 'sample_state' = rep(-1, 236))
