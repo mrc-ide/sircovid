@@ -388,17 +388,17 @@ generate_parameters_new_hospital_model <- function(
   trans_increase_array <- array(unlist(lapply(trans_increase, rep, N_age_bins)), 
                                 c(N_age_bins, N_trans_classes))
 
-  #hospital_fitted is set to true, this will pull the fitted value from fitted_parameters.rds 
+  #hospital_fitted is set to true, this will pull the fitted value from fitted_parameters.csv 
   #this is calculated externally at the moment
     if (hospital_fitted){
     
-    fitted_parameter_file <- sircovid_file("extdata/fitted_parameters.rds")
+    fitted_parameter_file <- sircovid_file("extdata/fitted_parameters.csv")
     
     # Set up severity file into table
     
     
     # Read file with fitted parameters (from Bob Verity's hospital model)
-    fitted_parameters <- readRDS(file = fitted_parameter_file)
+    fitted_parameters <- read.csv(file = fitted_parameter_file)
     
     progression_groups$hosp_D <- fitted_parameters[fitted_parameters$parameter=="s_hosp_D","value"]
     gammas$hosp_D <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_D","value"]
