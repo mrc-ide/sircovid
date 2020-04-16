@@ -57,6 +57,27 @@ test_that("pmcmc runs without error", {
   
 })
 
+test_that("pmcmc with new model", {
+  data <- readRDS("hospital_model_data.rds")
+  
+  cmp <- readRDS("reference_pmcmc_hosp.rds")
+  
+  n_mcmc <- 10
+  set.seed(1)
+  sircovid_model <- hospital_model()
+  X <- pmcmc(
+    data = data, 
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model
+  )
+  
+  expect_is(X, 'list')
+  expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
+  expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 289))
+  expect_equal(X, cmp)
+})
+
 test_that("pmcmc error cases", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
