@@ -122,3 +122,11 @@ test_that("Time varying betas can be generated", {
                  "Reduction period over 100 days - is this correct?")
     
 })
+
+test_that("read Bob's parameters", {
+  ## just verify that the new system works without error so that we
+  ## can continue with it.
+  expect_error(
+    generate_parameters_new_hospital_model(),
+    NA)
+})

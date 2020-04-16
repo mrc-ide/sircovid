@@ -40,7 +40,8 @@ generate_parameters_new_hospital_model(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  use_polymod_pop = FALSE
+  use_polymod_pop = FALSE,
+  hospital_fitted = TRUE
 )
 }
 \arguments{
@@ -76,6 +77,10 @@ in a correspond vector of age bins in \code{bins}.}
 \item{use_polymod_pop}{Set to ignore \code{survey_pop_in}
 and use the population from polymod when estimating the
 transmission matrix}
+
+\item{hospital_fitted}{If TRUE the parameters describing the progression
+through the hospital compartments of the model are pulled from a set fitted
+to a hospital model}
 }
 \value{
 List of parameters for use with \code{sircovid}
