@@ -140,8 +140,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
 
   # what are we plotting
   if (what == "ICU") {
-    
-    index <- c(idx$I_ICU) - 1L
+    index <- c(idx$I_ICU_D,idx$I_ICU_R) - 1L
     ylab <- "ICU"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
@@ -149,7 +148,19 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     plot_particles(particles, ylab = ylab)
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
     
-  } else if(what == "Deaths") {
+  } else if(what == "general") {
+    
+    index <- c(idx$I_triage,idx$I_hosp_R,idx$I_hosp_D,idx$R_stepdown) - 1L
+    ylab <- "General beds"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
+      FUN.VALUE = numeric(dim(x$trajectories)[1]))
+    plot_particles(particles, ylab = ylab)
+    points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
+    
+  }
+  
+  else if(what == "deaths") {
     
     index <- c(idx$D) - 1L
     ylab <- "Deaths"

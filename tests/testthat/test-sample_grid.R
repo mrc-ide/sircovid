@@ -57,7 +57,7 @@ test_that("sample_grid_scan works", {
   ## Testing plotting is always a nightmare
   if (TRUE) {
     plot(res, what = "ICU")
-    plot(res, what = "Deaths")
+    plot(res, what = "deaths")
   }
   
 })
