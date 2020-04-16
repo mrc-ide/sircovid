@@ -51,7 +51,7 @@ test_that("New model can be run on real data", {
                                                    exp_noise = 1e6),
                                  n_particles = 1000)
   # No check of correctness  
-  expect_equal(results$log_likelihood, -798.9374, tolerance=1e-3)
+  expect_equal(results$log_likelihood, -819.824, tolerance=1e-3)
 })
 
 

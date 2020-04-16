@@ -261,7 +261,7 @@ generate_parameters_base <- function(
   # This section defines proportions between partitions
   # derived from the severity.csv file
    
-  severity_params <- read_severity(severity_file_in="extdata/severity_2020_04_12.csv")
+  severity_params <- read_severity(severity_file_in=severity_data_file)
   
   #
   # Set up the transmission matrix

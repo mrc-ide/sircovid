@@ -7,6 +7,7 @@ test_that("Parameters are generated as before", {
     sircovid_model = basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
                                  gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5)),
     transmission_model = "POLYMOD",
+    severity_data_file = "extdata/severity_first.csv",
     beta = rep(0.125, 3),
     hosp_transmission = 0,
     ICU_transmission = 0,
@@ -132,6 +133,6 @@ test_that("read Bob's parameters", {
   ## just verify that the new system works without error so that we
   ## can continue with it.
   expect_error(
-    generate_parameters_new_hospital_model(),
+    generate_parameters(sircovid_model = hospital_model()),
     NA)
 })

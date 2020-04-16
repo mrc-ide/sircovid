@@ -70,7 +70,6 @@ test_that("Small grid search works with new model", {
   expect_setequal(names(scan_results$inputs),
                   c("model", "model_params", "pars_obs", "data"))
   
-  browser()
   beta_grid <- seq(min_beta, max_beta, beta_step)
   date_grid <- seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
   expect_equal(scan_results$x, beta_grid)

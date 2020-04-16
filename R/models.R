@@ -52,10 +52,11 @@ hospital_model <- function(use_fitted_parameters = TRUE,
   generate_beta_func <- generate_beta
   compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
   
+  # Overwrite with fitted parameters if loaded
   if (use_fitted_parameters) {
     fitted_parameters <- read_fitted_parameters()
-    progression_groups <- fitted_parameters$progression_groups 
-    gammas <- fitted_parameters$gammas
+    progression_groups[names(fitted_parameters$progression_groups)] <- fitted_parameters$progression_groups 
+    gammas[names(fitted_parameters$gammas)] <- fitted_parameters$gammas 
   }
   
   model_partitions <- partition_names(model_class)
