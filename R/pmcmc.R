@@ -117,6 +117,8 @@ pmcmc <- function(data,
       transmission_model = "POLYMOD",
       beta = 0.1,
       beta_times = model_start_date,
+      hosp_transmission = 0,
+      ICU_transmission = 0,
       trans_profile = 1,
       trans_increase = 1,
       dt = 1/steps_per_day

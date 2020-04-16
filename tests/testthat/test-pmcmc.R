@@ -10,11 +10,16 @@ test_that("pmcmc runs without error", {
   
   n_mcmc <- 10
   set.seed(1)
-  sircovid_model <- basic_model()
+  sircovid_model <- basic_model(gammas = list(E = 1/(2.5), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5))
   X <- pmcmc(
     data = data, 
     n_mcmc = n_mcmc,
-    sircovid_model = sircovid_model
+    sircovid_model = sircovid_model,
+    pars_obs = list(phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death = 926 / 1019,
+                    k_death = 2,
+                    exp_noise = 1e6),
   )
   
   
