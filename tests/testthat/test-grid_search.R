@@ -79,7 +79,9 @@ test_that("Small grid search works with new model", {
   expect_true(all(scan_results$renorm_mat_LL <= 1 & scan_results$renorm_mat_LL >= 0))
   
   # Plots run, but not checked
-  plot(scan_results)
+  plot(scan_results, what = "ICU")
+  plot(scan_results, what = "deaths")
+  plot(scan_results, what = "general")
 })
 
 

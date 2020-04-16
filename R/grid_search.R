@@ -148,7 +148,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     plot_particles(particles, ylab = ylab)
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
     
-  } else if(what == "general") {
+  } else if (what == "general") {
     
     index <- c(idx$I_triage,idx$I_hosp_R,idx$I_hosp_D,idx$R_stepdown) - 1L
     ylab <- "General beds"
