@@ -153,7 +153,7 @@ test_that("pmcmc error cases", {
                        'start_date' = as.Date(data$date[1])), 
       pars_min = list('beta' = 0, 'start_date' = 0)
     ),
-    "Set beta variation through sircovid_model$generate_beta_func, not model_params"
+    "Set beta variation through generate_beta_func in sircovid_model, not model_params"
   )
   
   expect_error(

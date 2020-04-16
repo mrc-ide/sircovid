@@ -175,5 +175,5 @@ test_that("Varying beta is set in the right place", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data),
-    "Set beta variation through sircovid_model$generate_beta_func, not model_params")
+    "Set beta variation through generate_beta_func in sircovid_model, not model_params")
 })

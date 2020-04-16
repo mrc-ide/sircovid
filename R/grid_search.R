@@ -69,7 +69,7 @@ scan_beta_date <- function(
     )
   } else {
     if (length(model_params$beta_y) > 1) {
-      stop("Set beta variation through sircovid_model$generate_beta_func, not model_params")
+      stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
   }
 
