@@ -206,6 +206,10 @@ generate_parameters <- function(
 ##' @param trans_increase Relative infectivity of each group
 ##' 
 ##' @param dt Time-step to run the model in days
+##' 
+##' @param hospital_fitted If TRUE the parameters describing the progression
+##' through the hospital compartments of the model are pulled from a set fitted
+##' to a hospital model
 ##'   
 ##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
 ##'   and use the population from polymod when estimating the
@@ -224,7 +228,8 @@ generate_parameters_base <- function(
   trans_profile,
   trans_increase,
   dt,
-  use_polymod_pop) {
+  use_polymod_pop,
+  hospital_fitted) {
   #
   # Input checks
   #
@@ -255,8 +260,8 @@ generate_parameters_base <- function(
   # 
   # This section defines proportions between partitions
   # derived from the severity.csv file
-  #
-  severity_params <- read_severity(severity_data_file)
+   
+  severity_params <- read_severity(severity_file_in="extdata/severity_2020_04_12.csv")
   
   #
   # Set up the transmission matrix
@@ -332,7 +337,6 @@ normalise_beta <- function(beta_times, dt) {
   beta_t <- beta_dates/dt
 }
 
-
 parse_age_bins <- function(age_bin_strings) {
   bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_bin_strings)
   bin_start <- as.numeric(bin_start)
@@ -364,7 +368,7 @@ check_age_bins <- function(age_headers) {
 ## Sets proportion parameters using severity CSV file
 read_severity <- function(severity_file_in = NULL, age_limits) {
   if (is.null(severity_file_in)) {
-    severity_file <- sircovid_file("extdata/severity.csv")
+    severity_file <- sircovid_file("extdata/severity_first.csv")
   } else {
     severity_file <- sircovid_file(severity_file_in)
   }
@@ -386,7 +390,6 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Size of England population",
     "Proportion of symptomatic cases seeking healthcare",
     "Proportion with symptoms",
-    "Unadjusted_IFR",
     "Adjusted_IFR to 1%",
     "IFR relative to 80",
     "Age specific scaling of ifr to give hospitalisation",
@@ -394,7 +397,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Proportion of infections hospitalised",
     "Proportion of infections needing critical care",
     "Proportion of symptomatic cases hospitalised",
-    "Proportion of hospitalised cases needing critical care",
+    "Proportion of hospitalised cases getting critical care",
     "Proportion of critical cases dying",
     "Proportion of non-critical care cases dying")
   if (any(!(expected_cols %in% colnames(severity_data)))) {
@@ -419,23 +422,23 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_sympt_ILI <- severity_data[["Proportion with symptoms"]] *
     prop_symp_seek_HC
   
-  p_recov_ICU <-
-    1 - severity_data[["Proportion of critical cases dying"]]
+  p_death_hosp_D <- severity_data[["Proportion of non-critical care cases dying"]]
+  
+  p_ICU_hosp <- severity_data[["Proportion of hospitalised cases getting critical care"]]
+  
+  p_death_ICU <- severity_data[["Proportion of critical cases dying"]]
 
   p_recov_ILI <- 1 - severity_data[["Proportion of symptomatic cases hospitalised"]] /
     prop_symp_seek_HC
   
   p_recov_hosp <- 
-    (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+    (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
     (1 - severity_data[["Proportion of non-critical care cases dying"]])
   
-  #Proportion of hospitalised cases who die without receiveing critical care
-  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
-                   severity_data[["Proportion of non-critical care cases dying"]]
+  p_recov_ICU <- 1-p_death_ICU
   
-  p_death_ICU <- 1 - p_recov_ICU
-  
-  p_ICU_hosp <- 1 - p_recov_hosp - p_death_hosp
+  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
+    severity_data[["Proportion of non-critical care cases dying"]]
   
   list(
     population = population,
@@ -447,6 +450,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     recov_ILI = p_recov_ILI,
     recov_hosp = p_recov_hosp,
     death_hosp = p_death_hosp,
+    death_hosp_D = p_death_hosp_D,
     death_ICU = p_death_ICU,
     ICU_hosp = p_ICU_hosp)
 }

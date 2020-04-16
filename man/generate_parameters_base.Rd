@@ -13,7 +13,8 @@ generate_parameters_base(
   trans_profile,
   trans_increase,
   dt,
-  use_polymod_pop
+  use_polymod_pop,
+  hospital_fitted
 )
 }
 \arguments{
@@ -36,6 +37,10 @@ generate_parameters_base(
 \item{use_polymod_pop}{Set to ignore \code{survey_pop_in}
 and use the population from polymod when estimating the
 transmission matrix}
+
+\item{hospital_fitted}{If TRUE the parameters describing the progression
+through the hospital compartments of the model are pulled from a set fitted
+to a hospital model}
 }
 \value{
 List of parameters for use with \code{sircovid}

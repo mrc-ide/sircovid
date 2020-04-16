@@ -44,12 +44,19 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'
 ##'   
 ##' @export
-hospital_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
+hospital_model <- function(use_fitted_parameters = TRUE,
+                           progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
                            gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5)) {
   model_class <- "sircovid_hospital"
   odin_model <- load_odin_model("new_hospital_model")
   generate_beta_func <- generate_beta
   compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
+  
+  if (use_fitted_parameters) {
+    fitted_parameters <- read_fitted_parameters()
+    progression_groups <- fitted_parameters$progression_groups 
+    gammas <- fitted_parameters$gammas
+  }
   
   model_partitions <- partition_names(model_class)
   if (any(!(model_partitions %in% names(progression_groups)))) {
@@ -87,6 +94,44 @@ partition_names <- function(model_name) {
   }
   model_partitions
 }
+
+# pull the fitted value from fitted_parameters.csv 
+# this is calculated externally at the moment
+read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.csv") {
+    fitted_parameter_file <- sircovid_file(parameter_file)
+    
+    # Read file with fitted parameters (from Bob Verity's hospital model)
+    fitted_parameters <- read.csv(file = fitted_parameter_file)
+    progression_groups <- list()
+
+    s_hosp_D <- fitted_parameters[fitted_parameters$parameter=="s_hosp_D","value"]
+    gamma_hosp_D <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_D","value"]
+    s_hosp_R <- fitted_parameters[fitted_parameters$parameter=="s_hosp_R","value"]
+    gamma_hosp_R <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_R","value"]
+    s_ICU_D <- fitted_parameters[fitted_parameters$parameter=="s_ICU_D","value"]
+    gamma_ICU_D <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_D","value"]
+    s_ICU_R <- fitted_parameters[fitted_parameters$parameter=="s_ICU_R","value"]
+    gamma_ICU_R <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_R","value"]
+    s_triage <- fitted_parameters[fitted_parameters$parameter=="s_triage","value"]
+    gamma_triage <- fitted_parameters[fitted_parameters$parameter=="gamma_triage","value"]
+    s_stepdown <- fitted_parameters[fitted_parameters$parameter=="s_stepdown","value"]
+    gamma_stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
+
+    parameters <- (list(progression_groups = list(hosp_D = s_hosp_D,
+                                          hosp_R = s_hosp_R,
+                                          ICU_D = s_ICU_D,
+                                          ICU_R = s_ICU_R,
+                                          triage = s_triage,
+                                          stepdown = s_stepdown),
+                gammas = list(hosp_D = gamma_hosp_D,
+                              hosp_R = gamma_hosp_R,
+                              ICU_D = gamma_ICU_D,
+                              ICU_R = gamma_ICU_R,
+                              triage = gamma_triage,
+                              stepdown = gamma_stepdown)))
+              
+    parameters
+  }
 
 # Loads a model by its name
 # Must be in inst/odin
