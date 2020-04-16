@@ -148,7 +148,7 @@ run_particle_filter <- function(data,
                                steps_per_day = round(1 / model_params$dt)) 
 
   #set up model
-  model_func <- sircovid_model$odin_model(user = model_params)
+  model_func <- sircovid_model$odin_model(user = model_params, unused_user_action = "message")
   
   #set up compare for observation likelihood
   compare_func <- sircovid_model$compare_model(model = model_func, pars_obs = obs_params, data = data)

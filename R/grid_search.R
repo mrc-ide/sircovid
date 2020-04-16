@@ -135,7 +135,8 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood") {
 ##' @export
 plot.sample_grid_search <- function(x, ..., what = "ICU") {
 
-  idx <- odin_index(x$inputs$model$odin_model(user = x$inputs$model_params))
+  idx <- odin_index(x$inputs$model$odin_model(user = x$inputs$model_params,
+                                              unused_user_action = "message"))
 
   # what are we plotting
   if (what == "ICU") {
