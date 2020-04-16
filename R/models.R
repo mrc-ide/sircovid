@@ -37,6 +37,9 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
 ##' 
 ##' @title Hosptial model
 ##' 
+##' @param use_fitted_parameters Override progression_groups and gammas with fitted
+##'   parameters loaded by \code{read_fitted_parameters()}
+##' 
 ##' @param progression_groups List of number of progression groups in each partition
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'
 ##'   

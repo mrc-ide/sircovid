@@ -13,6 +13,9 @@ hospital_model(
 )
 }
 \arguments{
+\item{use_fitted_parameters}{Override progression_groups and gammas with fitted
+parameters loaded by \code{read_fitted_parameters()}}
+
 \item{progression_groups}{List of number of progression groups in each partition
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'}
 
