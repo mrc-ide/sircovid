@@ -548,7 +548,7 @@ check_age_bins <- function(age_headers) {
 ## Sets proportion parameters using severity CSV file
 read_severity <- function(severity_file_in = NULL, age_limits) {
   if (is.null(severity_file_in)) {
-    severity_file <- sircovid_file("extdata/severity.csv")
+    severity_file <- sircovid_file("extdata/severity_first.csv")
   } else {
     severity_file <- sircovid_file(severity_file_in)
   }
@@ -577,7 +577,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Proportion of infections hospitalised",
     "Proportion of infections needing critical care",
     "Proportion of symptomatic cases hospitalised",
-    "Proportion of hospitalised cases needing critical care",
+    "Proportion of hospitalised cases getting critical care",
     "Proportion of critical cases dying",
     "Proportion of non-critical care cases dying")
   if (any(!(expected_cols %in% colnames(severity_data)))) {
@@ -612,12 +612,12 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     prop_symp_seek_HC
   
   p_recov_hosp <- 
-    (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+    (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
     (1 - severity_data[["Proportion of non-critical care cases dying"]])
   
   p_recov_ICU <- 1-p_death_ICU
   
-  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
     severity_data[["Proportion of non-critical care cases dying"]]
   
   list(
