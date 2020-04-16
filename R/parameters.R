@@ -630,6 +630,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     recov_ILI = p_recov_ILI,
     recov_hosp = p_recov_hosp,
     death_hosp = p_death_hosp,
+    death_hosp_D = p_death_hosp_D,
     death_ICU = p_death_ICU,
     ICU_hosp = p_ICU_hosp)
 }
