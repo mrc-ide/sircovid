@@ -78,10 +78,11 @@ test_that("Small grid search works with new model", {
   expect_equal(dim(scan_results$renorm_mat_LL), c(length(beta_grid), length(date_grid)))
   expect_true(all(scan_results$renorm_mat_LL <= 1 & scan_results$renorm_mat_LL >= 0))
   
+  browser()
+  
   # Plots run, but not checked
-  plot(scan_results, what = "ICU")
-  plot(scan_results, what = "deaths")
-  plot(scan_results, what = "general")
+  plot(scan_results, what = "likelihood")
+  plot(scan_results, what = "probability")
 })
 
 
