@@ -1,3 +1,7 @@
+# sircovid 0.2.16
+
+- Generate parameter function for new_hospital_model using fitted parameters from hospital model
+
 # sircovid 0.2.15
 
 - Generate parameter function for new_hospital_model

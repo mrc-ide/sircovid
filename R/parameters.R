@@ -281,6 +281,10 @@ generate_parameters <- function(
 ##' @param ICU_transmission Tranmissions rate of ICU cases
 ##' 
 ##' @param dt Time-step to run the model in days
+##' 
+##' @param hospital_fitted If TRUE the parameters describing the progression
+##' through the hospital compartments of the model are pulled from a set fitted
+##' to a hospital model
 ##'   
 ##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
 ##'   and use the population from polymod when estimating the
@@ -306,7 +310,8 @@ generate_parameters_new_hospital_model <- function(
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   dt = 0.25,
-  use_polymod_pop = FALSE) {
+  use_polymod_pop = FALSE,
+  hospital_fitted = TRUE) {
   #
   # Input checks
   #
@@ -349,8 +354,8 @@ generate_parameters_new_hospital_model <- function(
   # 
   # This section defines proportions between partitions
   # derived from the severity.csv file
-  #
-  severity_params <- read_severity(severity_data_file)
+   
+  severity_params <- read_severity(severity_file_in="extdata/severity_2020_04_12.csv")
   
   #
   # Set up the transmission matrix
@@ -382,7 +387,34 @@ generate_parameters_new_hospital_model <- function(
                                c(N_age_bins, N_trans_classes))
   trans_increase_array <- array(unlist(lapply(trans_increase, rep, N_age_bins)), 
                                 c(N_age_bins, N_trans_classes))
-  
+
+  #hospital_fitted is set to true, this will pull the fitted value from fitted_parameters.csv 
+  #this is calculated externally at the moment
+    if (hospital_fitted){
+    
+    fitted_parameter_file <- sircovid_file("extdata/fitted_parameters.csv")
+    
+    # Set up severity file into table
+    
+    
+    # Read file with fitted parameters (from Bob Verity's hospital model)
+    fitted_parameters <- read.csv(file = fitted_parameter_file)
+    
+    progression_groups$hosp_D <- fitted_parameters[fitted_parameters$parameter=="s_hosp_D","value"]
+    gammas$hosp_D <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_D","value"]
+    progression_groups$hosp_R <- fitted_parameters[fitted_parameters$parameter=="s_hosp_R","value"]
+    gammas$hosp_R <- fitted_parameters[fitted_parameters$parameter=="gamma_hosp_R","value"]
+    progression_groups$ICU_D <- fitted_parameters[fitted_parameters$parameter=="s_ICU_D","value"]
+    gammas$ICU_D <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_D","value"]
+    progression_groups$ICU_R <- fitted_parameters[fitted_parameters$parameter=="s_ICU_R","value"]
+    gammas$ICU_R <- fitted_parameters[fitted_parameters$parameter=="gamma_ICU_R","value"]
+    progression_groups$triage <- fitted_parameters[fitted_parameters$parameter=="s_triage","value"]
+    gammas$triage <- fitted_parameters[fitted_parameters$parameter=="gamma_triage","value"]
+    progression_groups$stepdown <- fitted_parameters[fitted_parameters$parameter=="s_stepdown","value"]
+    gammas$stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
+    
+  }
+    
   #
   # Set the initial conditions for each partition
   # S0 = N, everything else zero
@@ -455,7 +487,7 @@ generate_parameters_new_hospital_model <- function(
                          s_triage = progression_groups$triage,
                          gamma_triage = gammas$triage,
                          m = transmission_matrix,
-                         p_death_hosp = severity_params$death_hosp,
+                         p_death_hosp = severity_params$death_hosp_D,
                          p_death_ICU = severity_params$death_ICU,
                          p_ICU_hosp = severity_params$ICU_hosp,
                          p_recov_ILI = severity_params$recov_ILI,
@@ -484,7 +516,6 @@ normalise_beta <- function(beta_times, dt) {
   }
   beta_t <- beta_dates/dt
 }
-
 
 parse_age_bins <- function(age_bin_strings) {
   bin_start <- gsub("(\\d+) to (\\d+)", "\\1", age_bin_strings)
@@ -517,7 +548,7 @@ check_age_bins <- function(age_headers) {
 ## Sets proportion parameters using severity CSV file
 read_severity <- function(severity_file_in = NULL, age_limits) {
   if (is.null(severity_file_in)) {
-    severity_file <- sircovid_file("extdata/severity.csv")
+    severity_file <- sircovid_file("extdata/severity_first.csv")
   } else {
     severity_file <- sircovid_file(severity_file_in)
   }
@@ -539,7 +570,6 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Size of England population",
     "Proportion of symptomatic cases seeking healthcare",
     "Proportion with symptoms",
-    "Unadjusted_IFR",
     "Adjusted_IFR to 1%",
     "IFR relative to 80",
     "Age specific scaling of ifr to give hospitalisation",
@@ -547,7 +577,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Proportion of infections hospitalised",
     "Proportion of infections needing critical care",
     "Proportion of symptomatic cases hospitalised",
-    "Proportion of hospitalised cases needing critical care",
+    "Proportion of hospitalised cases getting critical care",
     "Proportion of critical cases dying",
     "Proportion of non-critical care cases dying")
   if (any(!(expected_cols %in% colnames(severity_data)))) {
@@ -572,23 +602,23 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_sympt_ILI <- severity_data[["Proportion with symptoms"]] *
     prop_symp_seek_HC
   
-  p_recov_ICU <-
-    1 - severity_data[["Proportion of critical cases dying"]]
+  p_death_hosp_D <- severity_data[["Proportion of non-critical care cases dying"]]
+  
+  p_ICU_hosp <- severity_data[["Proportion of hospitalised cases getting critical care"]]
+  
+  p_death_ICU <- severity_data[["Proportion of critical cases dying"]]
 
   p_recov_ILI <- 1 - severity_data[["Proportion of symptomatic cases hospitalised"]] /
     prop_symp_seek_HC
   
   p_recov_hosp <- 
-    (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
+    (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
     (1 - severity_data[["Proportion of non-critical care cases dying"]])
   
-  #Proportion of hospitalised cases who die without receiveing critical care
-  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases needing critical care"]]) *
-                   severity_data[["Proportion of non-critical care cases dying"]]
+  p_recov_ICU <- 1-p_death_ICU
   
-  p_death_ICU <- 1 - p_recov_ICU
-  
-  p_ICU_hosp <- 1 - p_recov_hosp - p_death_hosp
+  p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
+    severity_data[["Proportion of non-critical care cases dying"]]
   
   list(
     population = population,
@@ -600,6 +630,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     recov_ILI = p_recov_ILI,
     recov_hosp = p_recov_hosp,
     death_hosp = p_death_hosp,
+    death_hosp_D = p_death_hosp_D,
     death_ICU = p_death_ICU,
     ICU_hosp = p_ICU_hosp)
 }
