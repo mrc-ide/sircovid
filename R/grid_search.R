@@ -175,7 +175,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     
   } else {
     
-    stop("Requested what must be one of 'ICU' or 'Deaths'")
+    stop("Requested what must be one of 'ICU', 'deaths' or 'general'")
     
   } 
   
