@@ -69,6 +69,10 @@ test_that("No one is hospitalised if p_sympt_ILI is 0", {
     max_iter <- 10
     iter <- 0
     while (!check_cases && iter<= max_iter){
+      #We want to check that no-one moves from compartment E to compartment
+      #I_ILI (and other subsequent compartments). It's possible that no-one
+      #gets infected (so no-one is ever in compartment E), so we re-run the 
+      #model until there are cases in E (or max_iter is reached)
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
@@ -76,7 +80,7 @@ test_that("No one is hospitalised if p_sympt_ILI is 0", {
         check_cases <- TRUE
       }
     }
-    #check there were people infected (if yes, should be TRUE)
+    expect_true(any(results$E[,,,] > 0))
     expect_true(all(results$I_ILI[,,,] == 0))
     expect_true(all(results$I_hosp_R[,,,] == 0))
     expect_true(all(results$I_hosp_D[,,,] == 0))
@@ -101,6 +105,10 @@ test_that("No one is hospitalised if p_recov_ILI is 0", {
   max_iter <- 10
   iter <- 0
   while (!check_cases && iter<= max_iter){
+    #We want to check that no-one moves from compartment I_ILI to 
+    #any hospital compartments. It's possible that no-one ends up in
+    #I_ILI, so we re-run the model until there are cases in I_ILI
+    #(or max_iter is reached)
     iter <- iter + 1
     tmp <- mod$run(t)
     results <- mod$transform_variables(tmp)
@@ -108,6 +116,7 @@ test_that("No one is hospitalised if p_recov_ILI is 0", {
       check_cases <- TRUE
     }
   }
+  expect_true(any(results$I_ILI[,,,] > 0))
   expect_true(all(results$I_hosp_R[,,,] == 0))
   expect_true(all(results$I_hosp_D[,,,] == 0))
   expect_true(all(results$I_ICU_R[,,,] == 0))
@@ -129,14 +138,14 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
   check_hosp_probs <- function(
     p_ICU_hosp,
     p_death_ICU = NULL,
-    p_death_hosp = NULL,
+    p_death_hosp_D = NULL,
     cases, #name of comparment where we expect cases
-    zeroes #names of compartmens where we expect zeroes
+    zeroes #names of compartments where we expect zeroes
     ){
     pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
     pars_model$p_ICU_hosp[] <- p_ICU_hosp
-    if (!is.null(p_death_hosp)){
-      pars_model$p_death_hosp[] <- p_death_hosp
+    if (!is.null(p_death_hosp_D)){
+      pars_model$p_death_hosp_D[] <- p_death_hosp_D
     }
     if (!is.null(p_death_ICU)){
       pars_model$p_death_ICU[] <- p_death_ICU
@@ -145,13 +154,19 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
     check_cases <- FALSE
     iter <- 0
     while (!check_cases && iter<=max_iter){
+      #We want to check that certain probabilities result in only one possible route
+      #in hospital. It's possible that no-one enters hospital, so we re-run the model
+      #until we have cases in hospital (or max_iter is reached)
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
-      if (any(results[[cases]] > 0)){
+      if (any(results$n_ILI_to_hosp > 0)){
         check_cases <- TRUE
       }
     }
+    #check that there are hospital cases in the right compartment
+    expect_true(any(results[[cases]] > 0))
+    #check that all compartments on other hospital routes are empty
     zero_true <- rep(FALSE,length(zeroes))
     for (i in seq_len(length(zeroes))){
       zero_true[i] <- all(results[[zeroes[i]]] == 0)
@@ -159,16 +174,16 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
     expect_true(all(zero_true))
   }
   
-  #p_ICU_hosp=0, p_death_hosp=0 no-one goes into ICU, no deaths
+  #p_ICU_hosp=0, p_death_hosp_D=0 no-one goes into ICU, no deaths
   check_hosp_probs(p_ICU_hosp = 0,
-                   p_death_hosp = 0,
+                   p_death_hosp_D = 0,
                    cases = "I_hosp_R",
                    zeroes = c("I_hosp_D","I_ICU_R","I_ICU_D","I_triage","R_stepdown","D"))
   
   
   #p_death_hosp=1, p_ICU_hosp=0 no-one goes into ICU, no recovery in hospital
   check_hosp_probs(p_ICU_hosp = 0,
-                   p_death_hosp = 1,
+                   p_death_hosp_D = 1,
                    cases = "I_hosp_D",
                    zeroes = c("I_hosp_R","I_ICU_R","I_ICU_D","I_triage","R_stepdown"))
 
@@ -203,6 +218,9 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
     check_cases <- FALSE
     iter <- 0
     while (!check_cases && iter<= max_iter){
+      #We want to check that if a gamma is Inf, then cases progress in 1 time-step within 
+      #the corresponding compartment. We re-run the model until cases are observed in that
+      #compartment (or until max-iter is reached)
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
@@ -210,6 +228,7 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
         check_cases <- TRUE
       }
     }
+    expect_true(any(results[[compartment_name]][,,,] > 0))
     expect_true(all(results[[compartment_name]][2:t_max,,2,]==results[[compartment_name]][1:(t_max-1),,1,]))
   }
   
@@ -241,6 +260,9 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
     check_cases <- FALSE
     iter <- 0
     while (!check_cases && iter<= max_iter){
+      #We want to check that if a gamma is 0, then cases in the corresponding compartment stay in
+      #progression stage 1. We re-run the model until cases are observed in that compartment (or 
+      #until max-iter is reached)
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
@@ -248,6 +270,7 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
         check_cases <- TRUE
       }
     }
+    expect_true(any(results[[compartment_name]][,,,] > 0))
     expect_true(all(results[[compartment_name]][,,2,]==0))
   }
   
