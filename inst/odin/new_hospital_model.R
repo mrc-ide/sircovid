@@ -117,7 +117,7 @@ n_triage_to_ICU_R[,] <- n_II_triage[i,s_triage,j] - n_triage_to_ICU_D[i,j]
 
 #Work out the number progressing to general bed (all), hosp_D and hosp_R
 n_hosp_non_ICU[,] <- n_ILI_to_hosp[i,j] - n_ILI_to_triage[i,j]
-n_ILI_to_hosp_D[,] <- rbinom(n_hosp_non_ICU[i,j], p_death_hosp[i])
+n_ILI_to_hosp_D[,] <- rbinom(n_hosp_non_ICU[i,j], p_death_hosp_D[i])
 n_ILI_to_hosp_R[,] <- n_hosp_non_ICU[i,j] - n_ILI_to_hosp_D[i,j]
 
 #output the flows leaving the triage
@@ -242,7 +242,7 @@ gamma_hosp_R <- user(0.1)
 #Parameters of the I_hosp_D classes
 s_hosp_D <- user()
 gamma_hosp_D <- user(0.1)
-p_death_hosp[] <- user()
+p_death_hosp_D[] <- user()
 
 #Parameters of the I_ICU_R classes
 s_ICU_R <- user()
@@ -386,7 +386,7 @@ dim(p_asympt) <- c(N_age)
 dim(p_sympt_ILI) <- c(N_age)
 
 #Vectors handling the potential death in hospital (general beds and ICU)
-dim(p_death_hosp) <- c(N_age)
+dim(p_death_hosp_D) <- c(N_age)
 dim(p_death_ICU) <- c(N_age)
 
 #Vectors handling the age specific heterogeneous transmission process
