@@ -9,7 +9,6 @@ pmcmc(
   n_mcmc,
   sircovid_model,
   model_params = NULL,
-  model_start_date = "2020-02-02",
   pars_obs = list(phi_general = 0.95, k_general = 2, phi_ICU = 0.95, k_ICU = 2,
     phi_death = 926/1019, k_death = 2, exp_noise = 1e+06),
   pars_init = list(beta = 0.14, start_date = as.Date("2020-02-07")),
@@ -34,8 +33,6 @@ pmcmc(
 \item{model_params}{Model parameters, from a call to
 \code{generate_parameters()}. If NULL, uses defaults as
 in unit tests.}
-
-\item{model_start_date}{Start date as in model_params}
 
 \item{pars_obs}{list of parameters to use in comparison
 with \code{compare_icu}. If NULL, uses

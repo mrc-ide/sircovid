@@ -10,9 +10,7 @@
 ##'   in unit tests.
 ##'   
 ##' @param sircovid_model An odin model generator and comparison function.
-##'   
-##' @param model_start_date Start date as in model_params
-##'   
+
 ##' @param pars_obs list of parameters to use in comparison
 ##'   with \code{compare_icu}. If NULL, uses
 ##'   list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
@@ -88,7 +86,6 @@ pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
                   model_params = NULL,
-                  model_start_date = "2020-02-02",
                   pars_obs = list(phi_general = 0.95,
                                   k_general = 2,
                                   phi_ICU = 0.95,
@@ -111,12 +108,24 @@ pmcmc <- function(data,
                   n_particles = 1e2,
                   steps_per_day = 4) {
   
+  # test pars_init input
+  correct_format <- function(pars) {
+    is.list(pars) & setequal(names(pars), c('beta', 'start_date'))
+  }
+  
+  if(!correct_format(pars_init)) {
+    stop("pars_init must be a list of length two with names 'beta' and 'start_date'")
+  }
+  if(!correct_format(pars_min)) {
+    stop("pars_min must be a list of length two with names 'beta' and 'start_date'")
+  }
+  
   if (is.null(model_params)) {
     model_params <- generate_parameters(
       sircovid_model,
       transmission_model = "POLYMOD",
       beta = 0.1,
-      beta_times = model_start_date,
+      beta_times = pars_init$start_date,
       hosp_transmission = 0,
       ICU_transmission = 0,
       trans_profile = 1,
@@ -145,16 +154,7 @@ pmcmc <- function(data,
   # convert dates to be Date objects
   data$date <- as.Date(data$date) 
 
-  correct_format <- function(pars) {
-    is.list(pars) & setequal(names(pars), c('beta', 'start_date'))
-  }
 
-  if(!correct_format(pars_init)) {
-    stop("pars_init must be a list of length two with names 'beta' and 'start_date'")
-  }
-  if(!correct_format(pars_min)) {
-    stop("pars_min must be a list of length two with names 'beta' and 'start_date'")
-  }
   if(!correct_format(pars_max)) {
     stop("pars_max must be a list of length two with names 'beta' and 'start_date'")
   }
@@ -208,7 +208,6 @@ pmcmc <- function(data,
                         data = data,
                         sircovid_model = sircovid_model,
                         model_params = model_params,
-                        model_start_date = model_start_date,
                         steps_per_day = steps_per_day, 
                         pars_obs = pars_obs, 
                         n_particles = n_particles
@@ -362,9 +361,11 @@ pmcmc <- function(data,
 }
 
 
-calc_loglikelihood <- function(pars, data, sircovid_model, model_params, model_start_date,
+calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles) {
-  start_date <- as.Date(pars[['start_date']], origin=model_start_date)
+  # pars[['start_date']] argument is an integer reflecting the number of days between 
+  # the model start date and the first date in the data
+  start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
   pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
                                          start_date = start_date,
                                          sircovid_model = sircovid_model,
