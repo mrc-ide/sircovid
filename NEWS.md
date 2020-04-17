@@ -1,3 +1,7 @@
+# sircovid 0.2.18
+
+- Fix dates used in pMCMC
+
 # sircovid 0.2.17
 
 - Options for using different models reimplemented
