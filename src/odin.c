@@ -730,7 +730,7 @@ typedef struct new_hospital_model_internal {
   int dim_n_triage_to_ICU_R_1;
   int dim_n_triage_to_ICU_R_2;
   int dim_p_asympt;
-  int dim_p_death_hosp;
+  int dim_p_death_hosp_D;
   int dim_p_death_ICU;
   int dim_p_ICU_hosp;
   int dim_p_recov_ILI;
@@ -840,7 +840,7 @@ typedef struct new_hospital_model_internal {
   int offset_variable_I_triage;
   int offset_variable_R_stepdown;
   double *p_asympt;
-  double *p_death_hosp;
+  double *p_death_hosp_D;
   double *p_death_ICU;
   double p_EE;
   double *p_ICU_hosp;
@@ -3079,7 +3079,7 @@ void new_hospital_model_finalise(SEXP internal_p) {
     Free(internal->n_triage_to_ICU_D);
     Free(internal->n_triage_to_ICU_R);
     Free(internal->p_asympt);
-    Free(internal->p_death_hosp);
+    Free(internal->p_death_hosp_D);
     Free(internal->p_death_ICU);
     Free(internal->p_ICU_hosp);
     Free(internal->p_recov_ILI);
@@ -3171,7 +3171,7 @@ SEXP new_hospital_model_create(SEXP user) {
   internal->n_triage_to_ICU_D = NULL;
   internal->n_triage_to_ICU_R = NULL;
   internal->p_asympt = NULL;
-  internal->p_death_hosp = NULL;
+  internal->p_death_hosp_D = NULL;
   internal->p_death_ICU = NULL;
   internal->p_ICU_hosp = NULL;
   internal->p_recov_ILI = NULL;
@@ -3201,7 +3201,7 @@ SEXP new_hospital_model_create(SEXP user) {
   internal->m = NULL;
   internal->N_age = NA_INTEGER;
   internal->p_asympt = NULL;
-  internal->p_death_hosp = NULL;
+  internal->p_death_hosp_D = NULL;
   internal->p_death_ICU = NULL;
   internal->p_ICU_hosp = NULL;
   internal->p_recov_ILI = NULL;
@@ -3639,7 +3639,7 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   SET_VECTOR_ELT(contents, 314, ScalarInteger(internal->dim_n_triage_to_ICU_R_1));
   SET_VECTOR_ELT(contents, 315, ScalarInteger(internal->dim_n_triage_to_ICU_R_2));
   SET_VECTOR_ELT(contents, 316, ScalarInteger(internal->dim_p_asympt));
-  SET_VECTOR_ELT(contents, 317, ScalarInteger(internal->dim_p_death_hosp));
+  SET_VECTOR_ELT(contents, 317, ScalarInteger(internal->dim_p_death_hosp_D));
   SET_VECTOR_ELT(contents, 318, ScalarInteger(internal->dim_p_death_ICU));
   SET_VECTOR_ELT(contents, 319, ScalarInteger(internal->dim_p_ICU_hosp));
   SET_VECTOR_ELT(contents, 320, ScalarInteger(internal->dim_p_recov_ILI));
@@ -3886,9 +3886,9 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   SEXP p_asympt = PROTECT(allocVector(REALSXP, internal->dim_p_asympt));
   memcpy(REAL(p_asympt), internal->p_asympt, internal->dim_p_asympt * sizeof(double));
   SET_VECTOR_ELT(contents, 426, p_asympt);
-  SEXP p_death_hosp = PROTECT(allocVector(REALSXP, internal->dim_p_death_hosp));
-  memcpy(REAL(p_death_hosp), internal->p_death_hosp, internal->dim_p_death_hosp * sizeof(double));
-  SET_VECTOR_ELT(contents, 427, p_death_hosp);
+  SEXP p_death_hosp_D = PROTECT(allocVector(REALSXP, internal->dim_p_death_hosp_D));
+  memcpy(REAL(p_death_hosp_D), internal->p_death_hosp_D, internal->dim_p_death_hosp_D * sizeof(double));
+  SET_VECTOR_ELT(contents, 427, p_death_hosp_D);
   SEXP p_death_ICU = PROTECT(allocVector(REALSXP, internal->dim_p_death_ICU));
   memcpy(REAL(p_death_ICU), internal->p_death_ICU, internal->dim_p_death_ICU * sizeof(double));
   SET_VECTOR_ELT(contents, 428, p_death_ICU);
@@ -4265,7 +4265,7 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 314, mkChar("dim_n_triage_to_ICU_R_1"));
   SET_STRING_ELT(nms, 315, mkChar("dim_n_triage_to_ICU_R_2"));
   SET_STRING_ELT(nms, 316, mkChar("dim_p_asympt"));
-  SET_STRING_ELT(nms, 317, mkChar("dim_p_death_hosp"));
+  SET_STRING_ELT(nms, 317, mkChar("dim_p_death_hosp_D"));
   SET_STRING_ELT(nms, 318, mkChar("dim_p_death_ICU"));
   SET_STRING_ELT(nms, 319, mkChar("dim_p_ICU_hosp"));
   SET_STRING_ELT(nms, 320, mkChar("dim_p_recov_ILI"));
@@ -4375,7 +4375,7 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 424, mkChar("offset_variable_I_triage"));
   SET_STRING_ELT(nms, 425, mkChar("offset_variable_R_stepdown"));
   SET_STRING_ELT(nms, 426, mkChar("p_asympt"));
-  SET_STRING_ELT(nms, 427, mkChar("p_death_hosp"));
+  SET_STRING_ELT(nms, 427, mkChar("p_death_hosp_D"));
   SET_STRING_ELT(nms, 428, mkChar("p_death_ICU"));
   SET_STRING_ELT(nms, 429, mkChar("p_EE"));
   SET_STRING_ELT(nms, 430, mkChar("p_ICU_hosp"));
@@ -4620,7 +4620,7 @@ SEXP new_hospital_model_set_user(SEXP internal_p, SEXP user) {
   internal->dim_n_triage_to_ICU_R_1 = internal->N_age;
   internal->dim_n_triage_to_ICU_R_2 = internal->trans_classes;
   internal->dim_p_asympt = internal->N_age;
-  internal->dim_p_death_hosp = internal->N_age;
+  internal->dim_p_death_hosp_D = internal->N_age;
   internal->dim_p_death_ICU = internal->N_age;
   internal->dim_p_ICU_hosp = internal->N_age;
   internal->dim_p_recov_ILI = internal->N_age;
@@ -4792,7 +4792,7 @@ SEXP new_hospital_model_set_user(SEXP internal_p, SEXP user) {
   internal->offset_variable_D = internal->dim_S + internal->dim_R;
   internal->offset_variable_E = internal->dim_S + internal->dim_R + internal->dim_D;
   internal->p_asympt = (double*) user_get_array(user, false, internal->p_asympt, "p_asympt", NA_REAL, NA_REAL, 1, internal->dim_p_asympt);
-  internal->p_death_hosp = (double*) user_get_array(user, false, internal->p_death_hosp, "p_death_hosp", NA_REAL, NA_REAL, 1, internal->dim_p_death_hosp);
+  internal->p_death_hosp_D = (double*) user_get_array(user, false, internal->p_death_hosp_D, "p_death_hosp_D", NA_REAL, NA_REAL, 1, internal->dim_p_death_hosp_D);
   internal->p_death_ICU = (double*) user_get_array(user, false, internal->p_death_ICU, "p_death_ICU", NA_REAL, NA_REAL, 1, internal->dim_p_death_ICU);
   internal->p_ICU_hosp = (double*) user_get_array(user, false, internal->p_ICU_hosp, "p_ICU_hosp", NA_REAL, NA_REAL, 1, internal->dim_p_ICU_hosp);
   internal->p_recov_ILI = (double*) user_get_array(user, false, internal->p_recov_ILI, "p_recov_ILI", NA_REAL, NA_REAL, 1, internal->dim_p_recov_ILI);
@@ -5530,7 +5530,7 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
   }
   for (int i = 1; i <= internal->dim_n_ILI_to_hosp_D_1; ++i) {
     for (int j = 1; j <= internal->dim_n_ILI_to_hosp_D_2; ++j) {
-      internal->n_ILI_to_hosp_D[i - 1 + internal->dim_n_ILI_to_hosp_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_hosp_non_ICU[internal->dim_n_hosp_non_ICU_1 * (j - 1) + i - 1]), internal->p_death_hosp[i - 1]);
+      internal->n_ILI_to_hosp_D[i - 1 + internal->dim_n_ILI_to_hosp_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_hosp_non_ICU[internal->dim_n_hosp_non_ICU_1 * (j - 1) + i - 1]), internal->p_death_hosp_D[i - 1]);
     }
   }
   for (int i = 1; i <= internal->dim_n_SE; ++i) {

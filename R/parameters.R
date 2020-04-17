@@ -174,17 +174,19 @@ generate_parameters <- function(
   }
   parameter_list$hosp_transmission <- hosp_transmission
   parameter_list$ICU_transmission <- ICU_transmission
-  
+
   # Remove parameters unused by odin
   parameter_list$age_bin_starts <- NULL
   if (class(sircovid_model)[1] == "sircovid_hospital") {
     parameter_list$p_recov_hosp <- NULL
     parameter_list$p_recov_ICU <- NULL
+    parameter_list$p_death_hosp <- NULL
   } else if (class(sircovid_model)[1] == "sircovid_basic") {
     parameter_list$p_death_ICU <- NULL
     parameter_list$p_ICU_hosp <- NULL
+    parameter_list$p_death_hosp_D <- NULL
   }           
-  
+
   parameter_list
 }
 
@@ -310,6 +312,7 @@ generate_parameters_base <- function(
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,
+                         p_death_hosp_D = severity_params$death_hosp_D,
                          p_ICU_hosp = severity_params$ICU_hosp,
                          p_recov_ILI = severity_params$recov_ILI,
                          p_recov_ICU = severity_params$recov_ICU,

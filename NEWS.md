@@ -1,3 +1,7 @@
+# sircovid 0.2.19
+
+- Fix name error with p_death_hosp/_D in new odin model
+
 # sircovid 0.2.18
 
 - Fix dates used in pMCMC
