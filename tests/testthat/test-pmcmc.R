@@ -19,9 +19,8 @@ test_that("pmcmc runs without error", {
                     k_ICU = 2,
                     phi_death = 926 / 1019,
                     k_death = 2,
-                    exp_noise = 1e6),
+                    exp_noise = 1e6)
   )
-  
   
   expect_is(X, 'list')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
@@ -52,7 +51,22 @@ test_that("pmcmc runs without error", {
  expect_true(min(Y$results$beta) > 0)
  expect_true(max(Y$results$beta) < 1)
  
-
+ ## check that proposing jumps of size zero results in the initial parameter being retained
+ 
+ Z <- pmcmc(
+   data = data, 
+   n_mcmc = n_mcmc,
+   sircovid_model = sircovid_model,
+   pars_sd = list('beta' = 0, 'start_date' = 0)
+   
+ )
+ 
+ expect_equal(object = Z$results$beta, 
+              expected = rep(Z$inputs$pars$pars_init$beta, n_mcmc + 1))
+ expect_equal(object = Z$results$start_date, 
+              expected = rep(Z$inputs$pars$pars_init$start_date, n_mcmc + 1))
+ expect_true(!all(diff(Z$results$log_likelihood) == 0))
+ 
   
   
 })
@@ -123,7 +137,6 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      model_start_date =  as.Date(data$date[1]),
       pars_init = list('beta' = 0.01,
                        'start_date' = as.Date(data$date[1])), 
       pars_min = list('beta' = 0, 'start_date' = 0)
@@ -148,7 +161,6 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       model_params = model_params,
-      model_start_date =  as.Date(data$date[1]),
       pars_init = list('beta' = 0.01,
                        'start_date' = as.Date(data$date[1])), 
       pars_min = list('beta' = 0, 'start_date' = 0)
