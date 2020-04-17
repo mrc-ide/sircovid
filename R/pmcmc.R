@@ -363,6 +363,8 @@ pmcmc <- function(data,
 
 calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles) {
+  # pars[['start_date']] argument is an integer reflecting the number of days between 
+  # the model start date and the first date in the data
   start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
   pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
                                          start_date = start_date,
