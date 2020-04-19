@@ -127,23 +127,23 @@ scan_beta_date <- function(
 ##' 
 ##' @title Grid search of beta and start date
 ##' 
-##' @param min_beta Minimum value of beta in the search
+##' @param min_beta_start Minimum value of beta_start in the search
 ##' 
-##' @param max_beta Maximum value of beta in the search
+##' @param max_beta_start Maximum value of beta_start in the search
 ##' 
-##' @param beta_step Step to increment beta between min and max
+##' @param beta_start_step Step to increment beta_start between min and max
+##' 
+##' @param min_beta_end Minimum value of beta_end in the search
+##' 
+##' @param max_beta_end Maximum value of beta_end in the search
+##' 
+##' @param beta_end_step Step to increment beta_end between min and max
 ##' 
 ##' @param first_start_date Earliest start date as 'yyyy-mm-dd'
 ##' 
 ##' @param last_start_date Latest start date as 'yyyy-mm-dd'
 ##' 
 ##' @param day_step Step to increment date in days
-##' 
-##' @param min_beta_reduction Minimum value of beta_reduction in the search
-##' 
-##' @param max_beta_reduction Maximum value of beta_reduction in the search
-##' 
-##' @param beta_reduction_step Step to increment beta_reduction between min and max
 ##' 
 ##' @param data Hosptial data to fit to. See \code{example.csv}
 ##'   and \code{particle_filter_data()}
@@ -163,16 +163,16 @@ scan_beta_date <- function(
 ##' 
 ##' @export
 ##' @import furrr
-scan_beta_date_reduction <- function(
-  min_beta, 
-  max_beta, 
-  beta_step,
+scan_beta_lockdown_date <- function(
+  min_beta_start, 
+  max_beta_start, 
+  beta_start_step,
+  min_beta_end, 
+  max_beta_end, 
+  beta_end_step,
   first_start_date, 
   last_start_date, 
   day_step,
-  min_beta_reduction, 
-  max_beta_reduction, 
-  beta_reduction_step,
   data,
   sircovid_model = basic_model(),
   model_params = NULL,
@@ -181,10 +181,10 @@ scan_beta_date_reduction <- function(
   #
   # Set up parameter space to scan
   #
-  beta_1D <- seq(min_beta, max_beta, beta_step)
+  beta_start_1D <- seq(min_beta_start, max_beta_start, beta_start_step)
+  beta_end_1D <- seq(min_beta_end, max_beta_end, beta_end_step)
   date_list <- seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
-  beta_reduction_1D <- seq(min_beta_reduction, max_beta_reduction, beta_reduction_step)
-  param_grid <- expand.grid(beta = beta_1D, start_date = date_list, beta_reduction = beta_reduction_1D)
+  param_grid <- expand.grid(beta_start = beta_start_1D, beta_end = beta_end_1D, start_date = date_list)
   
   #
   # Set up calls to simulator runs
@@ -221,7 +221,7 @@ scan_beta_date_reduction <- function(
   #
   ## Particle filter outputs, extracting log-likelihoods
   pf_run_ll <- furrr::future_pmap_dbl(
-    .l = param_grid, .f = beta_date_reduction_particle_filter,
+    .l = param_grid, .f = beta_lockdown_date_particle_filter,
     sircovid_model = sircovid_model, model_params = model_params, data = data, 
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
@@ -232,16 +232,16 @@ scan_beta_date_reduction <- function(
   ## Returned column-major (down columns of varying beta) - set byrow = FALSE
   mat_log_ll <- array(
     pf_run_ll, 
-    dim = c(length(beta_1D), length(date_list), length(beta_reduction_1D))
+    dim = c(length(beta_start_1D), length(beta_end_1D), length(date_list))
     )
   
   # Exponentiate elements and normalise to 1 to get probabilities
-  prob_matrix <- exp(mat_log_ll)
+  prob_matrix <- exp(mat_log_ll-max(mat_log_ll))
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
-  results <- list(x = beta_1D, 
-                  y = date_list,
-                  z = beta_reduction_1D,
+  results <- list(x = beta_start_1D, 
+                  y = beta_end_1D,
+                  z = date_list,
                   mat_log_ll = mat_log_ll,
                   renorm_mat_LL = renorm_mat_LL,
                   inputs = list(
@@ -267,22 +267,22 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood") {
 
 ##' @export
 plot.sircovid_scan_3D <- function(x, ..., integrate_out = "start_date") {
-  if (integrate_out == "beta"){
-    z <- t(apply(x$renorm_mat_LL,c(2,3),sum))
-    xlab = "beta_reduction"
+  if (integrate_out == "beta_start"){
+    z <- apply(x$renorm_mat_LL,c(2,3),sum)
+    xlab = "beta_end"
     ylab = "Start date"
-    xx = x$z
-    yy = x$y
-  } else if (integrate_out == "start_date"){
+    xx = x$y
+    yy = x$z
+  } else if (integrate_out == "beta_end"){
     z <- apply(x$renorm_mat_LL,c(1,3),sum)
-    xlab = "beta"
-    ylab = "beta_reduction"
+    xlab = "beta_start"
+    ylab = "Start date"
     xx = x$x
     yy = x$z
-  } else if (integrate_out == "beta_reduction"){
+  } else if (integrate_out == "start_date"){
     z <- apply(x$renorm_mat_LL,c(1,2),sum)
-    xlab = "beta"
-    ylab = "Start date"
+    xlab = "beta_start"
+    ylab = "beta_end"
     xx = x$x
     yy = x$y
   }
@@ -371,23 +371,27 @@ beta_date_particle_filter <- function(beta, start_date,
 ##' new beta, start date and beta reduction
 ##' 
 ##' @noRd
-beta_date_reduction_particle_filter <- function(beta, start_date,
-                                                beta_reduction,
-                                                sircovid_model,
-                                                model_params, data, 
-                                                pars_obs, n_particles,
-                                                forecast_days = 0,
-                                                save_particles = FALSE,
-                                                return = "full") {
+beta_lockdown_date_particle_filter <- function(beta_start, beta_end,
+                                               start_date,
+                                               sircovid_model,
+                                               model_params, data, 
+                                               pars_obs, n_particles,
+                                               forecast_days = 0,
+                                               save_particles = FALSE,
+                                               return = "full") {
   # Edit beta in parameters
-  new_beta <- sircovid_model$generate_beta_func(beta_start = beta, start_date = start_date, beta_reduction = beta_reduction)
-  beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
-  model_params$beta_y <- new_beta$beta
-  model_params$beta_t <- beta_t
+  if (beta_end>beta_start){
+    X <- list(log_likelihood = -Inf)
+  } else {
+    new_beta <- sircovid_model$generate_beta_func(beta_start = beta_start, beta_end = beta_end, start_date = start_date)
+    beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
-  X <- run_particle_filter(data, sircovid_model, model_params, start_date, pars_obs,
+    model_params$beta_y <- new_beta$beta
+    model_params$beta_t <- beta_t
+  
+    X <- run_particle_filter(data, sircovid_model, model_params, start_date, pars_obs,
                            n_particles, forecast_days, save_particles, return)
-  
+  }
   X
 }

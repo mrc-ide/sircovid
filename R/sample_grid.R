@@ -147,25 +147,22 @@ sample_grid_scan_3d <- function(scan_results,
   
   # grab the pobability matrix
   prob <- scan_results$renorm_mat_LL
-  nx <- dim(prob)[1]
-  ny <- dim(prob)[2]
-  nz <- dim(prob)[3]
   
-  scan_param_grid <- expand.grid(beta = scan_results$x,
-                                 start_date = scan_results$y,
-                                 beta_reduction = scan_results$z)
+  scan_param_grid <- expand.grid(beta_start = scan_results$x,
+                                 beta_end = scan_results$y,
+                                 start_date = scan_results$z)
   
   # draw which grid pairs are chosen
   pairs <- sample(x =  length(prob), size = n_sample_pairs, 
                   replace = TRUE, prob = prob)
   
   # what are related beta and dates
-  beta <- scan_param_grid$beta[pairs]
+  beta_start <- scan_param_grid$beta_start[pairs]
+  beta_end <- scan_param_grid$beta_end[pairs]
   dates <- scan_param_grid$start_date[pairs]
-  beta_reduction <- scan_param_grid$beta_reduction[pairs]
   
   # recreate parameters for re running
-  param_grid <- data.frame("beta" = beta, "start_date" = dates, "beta_reduction" = beta_reduction)
+  param_grid <- data.frame("beta_start" = beta_start, "beta_end" = beta_end, "start_date" = dates)
   sircovid_model <- scan_results$inputs$model
   model_params <- scan_results$inputs$model_params
   pars_obs <- scan_results$inputs$pars_obs
@@ -177,7 +174,7 @@ sample_grid_scan_3d <- function(scan_results,
   ## Particle filter outputs
   ## Sample one particle
   traces <- furrr::future_pmap(
-    .l = param_grid, .f = beta_date_reduction_particle_filter,
+    .l = param_grid, .f = beta_lockdown_date_particle_filter,
     sircovid_model = sircovid_model, 
     model_params = model_params, data = data,
     pars_obs = pars_obs, n_particles = n_particles,
