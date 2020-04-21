@@ -114,30 +114,32 @@ sample_grid_scan <- function(scan_results,
 ##' 
 ##' @title Summarise grid forecast
 ##'
-##' @param sample_grid_results Results from \code{\link{sample_grid_scan}}
+##' @param object Results from \code{\link{sample_grid_scan}}
+##' 
+##' @param ... other arguments to \code{summary()}
 ##'
-##' @param what
+##' @param what Output to summaries. "deaths", "icu" or "hosp"
 ##'
 ##' @param quantiles Quantiles to summarise forecast variance.
 ##' 
 ##' @export
-summary.sample_grid_search <- function(x, ...,
+summary.sample_grid_search <- function(object, ...,
                                        what = "deaths",
                                        quantiles = seq(from=0.05, to=0.95, by=0.05)) {
-  totals <- sum_over_compartments(x)[[what]]
+  totals <- sum_over_compartments(object)[[what]]
   
   # Extract quantiles
   names(quantiles) <- sprintf("Quantile %s", quantiles)
   quantiles <- c(c(Value = 0.5), quantiles)
   
-  i <- tail(seq_len(nrow(what)), x$inputs$forecase_days)
-  d <- round(t(apply(x[i, ], 1, quantile, quantiles, names = FALSE)))
+  i <- tail(seq_len(nrow(what)), object$inputs$forecase_days)
+  d <- round(t(apply(object[i, ], 1, quantile, quantiles, names = FALSE)))
   colnames(d) <- names(quantiles)
 
   d
 }
 
-##' Sum sampled model over compartments
+# Sum sampled model over compartments
 sum_over_compartments <- function(sample_grid_res) {
   if ("odin_model" %in% names(sample_grid_res$inputs$model)) { # new version
     index <- odin_index(sample_grid_res$inputs$model$odin_model(

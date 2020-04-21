@@ -5,18 +5,20 @@
 \title{Summarise grid forecast}
 \usage{
 \method{summary}{sample_grid_search}(
-  x,
+  object,
   ...,
   what = "deaths",
   quantiles = seq(from = 0.05, to = 0.95, by = 0.05)
 )
 }
 \arguments{
-\item{what}{}
+\item{object}{Results from \code{\link{sample_grid_scan}}}
+
+\item{...}{other arguments to \code{summary()}}
+
+\item{what}{Output to summaries. "deaths", "icu" or "hosp"}
 
 \item{quantiles}{Quantiles to summarise forecast variance.}
-
-\item{sample_grid_results}{Results from \code{\link{sample_grid_scan}}}
 }
 \description{
 Take a sampled grid search produced by \code{\link{sample_grid_scan}} and 
