@@ -107,3 +107,58 @@ sample_grid_scan <- function(scan_results,
   return(res)
   
 }
+
+##' Take a sampled grid search produced by \code{\link{sample_grid_scan}} and 
+##' extract forecasts and quantiles in text format
+##' 
+##' @title Summarise grid forecast
+##'
+##' @param sample_grid_results Results from \code{\link{sample_grid_scan}}
+##'
+##' @param what
+##'
+##' @param quantiles Quantiles to summarise forecast variance.
+##' 
+##' @export
+summary.sample_grid_search <- function(x, ...,
+                                       what = "deaths",
+                                       quantiles = seq(from=0.05, to=0.95, by=0.05)) {
+  totals <- sum_over_compartments(x)[[what]]
+  
+  # Extract quantiles
+  names(quantiles) <- sprintf("Quantile %s", quantiles)
+  quantiles <- c(c(Value = 0.5), quantiles)
+  
+  i <- tail(seq_len(nrow(what)), last)
+  d <- round(t(apply(x[i, ], 1, quantile, quantiles, names = FALSE)))
+  colnames(d) <- names(p)
+
+  d
+}
+
+##' Sum sampled model over compartments
+sum_over_compartments <- function(sample_grid_res) {
+  if ("odin_model" %in% names(sample_grid_res$inputs$model)) { # new version
+    index <- odin_index(sample_grid_res$inputs$model$odin_model(
+      user = sample_grid_res$inputs$model_params))
+  } else {
+    index <- odin_index(x$inputs$model$model(
+      user = sample_grid_res$inputs$model_params))
+  }
+
+  ## filter out the ones that we actually have - this is unreasonably ugly:
+  n <- vapply(index, min, numeric(1)) - 1
+  keep <- names(which(n > 0 & n <= ncol(sample_grid_res$trajectories)))
+  f <- function(k) {
+    apply(sample_grid_res$trajectories[, k - 1, ], c(1, 3), sum)
+  }
+  totals <- lapply(index[keep], f)
+
+  ## Compute deaths, icu and hosptialised:
+  totals$deaths <- diff(totals$D)
+  totals$icu <- totals$I_ICU_R + totals$I_ICU_D
+  totals$hosp <- totals$I_triage + totals$I_hosp_R + totals$I_hosp_D +
+    totals$I_ICU_R + totals$I_ICU_D + totals$R_stepdown
+
+  totals
+}
