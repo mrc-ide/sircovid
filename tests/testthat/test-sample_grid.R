@@ -45,14 +45,26 @@ test_that("sample_grid_scan works", {
     sircovid_model = sircovid_model)
 
   n_sample_pairs <- 4 
+  forecast_days <- 5
   res <- sample_grid_scan(scan_results = scan_results,
                           n_sample_pairs = n_sample_pairs, 
-                          n_particles = 10)
+                          n_particles = 10,
+                          forecast_days = forecast_days)
 
   model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
   days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
   expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample_pairs))
+  
+  # check the summary is as expected
+  res_summary <- summary(res)
+  # dates correct
+  expect_equal(rownames(res_summary), 
+               as.character(seq(from = as.Date(tail(data$date, 1)) + 1, 
+                                to = as.Date(tail(data$date, 1)) + forecast_days, 
+                                by = 1)))
+  # quantiles increase
+  expect_true(all(res_summary[1,c(-1,-2)] - head(res_summary[1,-1], -1) >= 0))
   
   ## Testing plotting is always a nightmare
   if (TRUE) {

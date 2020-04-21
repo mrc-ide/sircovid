@@ -29,11 +29,18 @@
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
 ##' 
+##' @param scale_prior Set to use a gamma prior on beta, and report the 
+##'   posterior rather than the likelihood. Sets scale of gamma prior.
+##'   
+##' @param shape_prior Set to use a gamma prior on beta, and report the 
+##'   posterior rather than the likelihood. Sets shape of gamma prior.
+##' 
 ##' @return List of beta and start date grid values, and
 ##'   normalised probabilities at each point
 ##' 
 ##' @export
 ##' @import furrr
+##' @importFrom stats dgamma
 scan_beta_date <- function(
   min_beta, 
   max_beta, 
@@ -45,7 +52,17 @@ scan_beta_date <- function(
   sircovid_model = basic_model(),
   model_params = NULL,
   pars_obs = NULL,
-  n_particles = 100) {
+  n_particles = 100,
+  scale_prior = NULL,
+  shape_prior = NULL) {
+  
+  # Parameter checks
+  if (!is.null(scale_prior) || !is.null(shape_prior)) {
+    if (!is.numeric(scale_prior) || !is.numeric(shape_prior)) {
+      stop("If provided, both scale_prior and shape_prior must both be numeric")
+    }
+  }
+  
   #
   # Set up parameter space to scan
   #
@@ -107,6 +124,18 @@ scan_beta_date <- function(
   prob_matrix <- exp(mat_log_ll)
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
+  # Apply the prior, if provided
+  if (!is.null(shape_prior) && !is.null(scale_prior)) {
+    log_prior <- matrix(rep(dgamma(beta_1D,
+                                   shape = shape_prior,
+                                   scale = scale_prior,
+                                   log = TRUE), length(date_list)), 
+                        ncol=length(date_list))
+    mat_log_ll <- mat_log_ll + log_prior
+    exp_mat <- exp(mat_log_ll - max(mat_log_ll))
+    renorm_mat_LL <- exp_mat/sum(exp_mat)
+  }
+
   results <- list(x = beta_1D, 
                   y = date_list,
                   mat_log_ll = mat_log_ll,
@@ -122,18 +151,18 @@ scan_beta_date <- function(
 }
 
 ##' @export
-plot.sircovid_scan <- function(x, ..., what = "likelihood") {
+plot.sircovid_scan <- function(x, ..., what = "likelihood", title = NULL) {
   if (what == "likelihood") {
     graphics::image(x=x$x, y=x$y, z=x$mat_log_ll,
-                    xlab="beta", ylab="Start date", main = "Log-likelihood")
+                    xlab="beta", ylab="Start date", main = title)
   } else if (what == "probability") {
     graphics::image(x=x$x, y=x$y, z=x$renorm_mat_LL,
-                    xlab="beta", ylab="Start date", main = "Probability")
+                    xlab="beta", ylab="Start date", main = title)
   }
 }
 
 ##' @export
-plot.sample_grid_search <- function(x, ..., what = "ICU") {
+plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
 
   idx <- odin_index(x$inputs$model$odin_model(user = x$inputs$model_params,
                                               unused_user_action = "message"))
@@ -145,7 +174,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
-    plot_particles(particles, ylab = ylab)
+    plot_particles(particles, ylab = ylab, title = title)
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
     
   } else if (what == "general") {
@@ -155,7 +184,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
-    plot_particles(particles, ylab = ylab)
+    plot_particles(particles, ylab = ylab, title = title)
     points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
     
   }
@@ -169,7 +198,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
       names(out)[1] <- rownames(x$trajectories)[1]
       out}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
-    plot_particles(particles, ylab = ylab)
+    plot_particles(particles, ylab = ylab, title = title)
     points(as.Date(x$inputs$data$date), 
            x$inputs$data$deaths/ x$inputs$pars_obs$phi_death, pch = 19)
     

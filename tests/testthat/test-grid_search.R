@@ -63,7 +63,9 @@ test_that("Small grid search works with new model", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
-    sircovid_model = hospital_model())
+    sircovid_model = hospital_model(),
+    scale_prior = 0.003541667,
+    shape_prior = 36)
 
   expect_is(scan_results, "sircovid_scan")
   expect_true("inputs" %in% names(scan_results))
@@ -141,7 +143,7 @@ test_that("Unreasonable start dates are less likely", {
   
 })
 
-test_that("Varying beta is set in the right place", {
+test_that("Bad parameters create errors", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   
@@ -176,4 +178,27 @@ test_that("Varying beta is set in the right place", {
     day_step = day_step,
     data = data),
     "Set beta variation through generate_beta_func in sircovid_model, not model_params")
+  
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    beta = 0.1,
+    beta_times = "2020-02-02",
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 0.25)
+  
+  expect_error(scan_beta_date(
+    min_beta = min_beta,
+    max_beta = max_beta,
+    model_params = model_params,
+    beta_step = beta_step,
+    first_start_date = first_start_date, 
+    last_start_date = last_start_date, 
+    day_step = day_step,
+    data = data,
+    scale_prior = 36),
+    "If provided, both scale_prior and shape_prior must both be numeric")
 })

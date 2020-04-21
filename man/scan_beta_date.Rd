@@ -15,7 +15,9 @@ scan_beta_date(
   sircovid_model = basic_model(),
   model_params = NULL,
   pars_obs = NULL,
-  n_particles = 100
+  n_particles = 100,
+  scale_prior = NULL,
+  shape_prior = NULL
 )
 }
 \arguments{
@@ -43,6 +45,12 @@ in unit tests.}
 \item{pars_obs}{list of parameters to use for the comparison function.}
 
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
+
+\item{scale_prior}{Set to use a gamma prior on beta, and report the 
+posterior rather than the likelihood. Sets scale of gamma prior.}
+
+\item{shape_prior}{Set to use a gamma prior on beta, and report the 
+posterior rather than the likelihood. Sets shape of gamma prior.}
 }
 \value{
 List of beta and start date grid values, and
