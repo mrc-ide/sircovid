@@ -151,18 +151,18 @@ scan_beta_date <- function(
 }
 
 ##' @export
-plot.sircovid_scan <- function(x, ..., what = "likelihood") {
+plot.sircovid_scan <- function(x, ..., what = "likelihood", date = as.character(Sys.Date())) {
   if (what == "likelihood") {
     graphics::image(x=x$x, y=x$y, z=x$mat_log_ll,
-                    xlab="beta", ylab="Start date", main = "Log-likelihood")
+                    xlab="beta", ylab="Start date", main = paste0("Log-likelihood (run ", date ,")"))
   } else if (what == "probability") {
     graphics::image(x=x$x, y=x$y, z=x$renorm_mat_LL,
-                    xlab="beta", ylab="Start date", main = "Probability")
+                    xlab="beta", ylab="Start date", main = paste0("Probability (run ", date ,")"))
   }
 }
 
 ##' @export
-plot.sample_grid_search <- function(x, ..., what = "ICU") {
+plot.sample_grid_search <- function(x, ..., what = "ICU", date = as.character(Sys.Date())) {
 
   idx <- odin_index(x$inputs$model$odin_model(user = x$inputs$model_params,
                                               unused_user_action = "message"))
@@ -174,7 +174,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
-    plot_particles(particles, ylab = ylab)
+    plot_particles(particles, ylab = ylab, title = paste0("Forecast (run ", date ,")"))
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
     
   } else if (what == "general") {
@@ -184,7 +184,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[,index,y], na.rm = TRUE)}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
-    plot_particles(particles, ylab = ylab)
+    plot_particles(particles, ylab = ylab, title = paste0("Forecast (run ", date ,")"))
     points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
     
   }
@@ -198,7 +198,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU") {
       names(out)[1] <- rownames(x$trajectories)[1]
       out}, 
       FUN.VALUE = numeric(dim(x$trajectories)[1]))
-    plot_particles(particles, ylab = ylab)
+    plot_particles(particles, ylab = ylab, title = paste0("Forecast (run ", date ,")"))
     points(as.Date(x$inputs$data$date), 
            x$inputs$data$deaths/ x$inputs$pars_obs$phi_death, pch = 19)
     
