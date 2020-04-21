@@ -14,7 +14,8 @@ pmcmc(
   pars_init = list(beta = 0.14, start_date = as.Date("2020-02-07")),
   pars_min = list(beta = 0, start_date = 0),
   pars_max = list(beta = 1, start_date = 1e+06),
-  cov_mat = c(beta = 0.001^2, start_date = 0.5^2),
+  cov_mat = matrix(c(0.001^2, 0, 0, 0.5^2), nrow = 2, byrow = TRUE, dimnames =
+    list(c("beta", "start_date"), c("beta", "start_date"))),
   pars_discrete = list(beta = FALSE, start_date = TRUE),
   log_likelihood = NULL,
   log_prior = NULL,
@@ -44,7 +45,7 @@ list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 92
 
 \item{pars_max}{named list of upper reflecting boundaries for parameter proposals}
 
-\item{cov_mat}{named matrix or vector of proposal covariance for parameters}
+\item{cov_mat}{named matrix of proposal covariance for parameters}
 
 \item{pars_discrete}{named list of logicals, indicating if proposed jump should be discrete}
 

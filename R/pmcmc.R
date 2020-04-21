@@ -23,7 +23,7 @@
 ##' 
 ##' @param pars_max named list of upper reflecting boundaries for parameter proposals
 ##' 
-##' @param cov_mat named matrix or vector of proposal covariance for parameters 
+##' @param cov_mat named matrix of proposal covariance for parameters 
 ##' 
 ##' @param pars_discrete named list of logicals, indicating if proposed jump should be discrete
 ##' 
@@ -100,7 +100,12 @@ pmcmc <- function(data,
                                   'start_date' = 0),
                   pars_max = list('beta' = 1, 
                                   'start_date' = 1e6),
-                  cov_mat = c('beta' = 0.001^2, 'start_date' = 0.5^2),
+                  cov_mat = matrix(c(0.001^2, 0,
+                                     0, 0.5^2), 
+                                   nrow = 2, byrow = TRUE,
+                                   dimnames = list(
+                                     c('beta', 'start_date'),
+                                     c('beta', 'start_date'))),
                   pars_discrete = list('beta' = FALSE, 
                                        'start_date' = TRUE),
                   log_likelihood = NULL,
@@ -109,29 +114,34 @@ pmcmc <- function(data,
                   steps_per_day = 4) {
   
   # test pars_init input
-  correct_format <- function(pars, input = "") {
-    if(input == "cov_mat") { # cov_mat can be input as a matrix or a vector
-      if(is.matrix(pars)) {
-        setequal(rownames(pars),
-                 colnames(pars)) & 
-          setequal(rownames(pars),
-                 c('beta', 'start_date'))
-      } else {
-        is.numeric(pars) & setequal(names(pars), 
-                                    c('beta', 'start_date'))
-      }
-    } else{
+  correct_format_vec <- function(pars) {
       is.list(pars) & setequal(names(pars), 
                              c('beta', 'start_date'))
-    }
-   
   }
   
-  if(!correct_format(pars_init)) {
+  correct_format_mat <- function(pars) {
+       setequal(rownames(pars),
+                colnames(pars)) & 
+         setequal(rownames(pars),
+                   c('beta', 'start_date'))
+  }
+  
+  if(!correct_format_vec(pars_init)) {
     stop("pars_init must be a list of length two with names 'beta' and 'start_date'")
   }
-  if(!correct_format(pars_min)) {
+  if(!correct_format_vec(pars_min)) {
     stop("pars_min must be a list of length two with names 'beta' and 'start_date'")
+  }
+  
+  if(!correct_format_vec(pars_max)) {
+    stop("pars_max must be a list of length two with names 'beta' and 'start_date'")
+  }
+  if(!correct_format_vec(pars_discrete)) {
+    stop("pars_discrete must be a list of length two with names 'beta' and 'start_date'")
+  }
+  
+  if(!correct_format_mat(cov_mat)) {
+    stop("cov_mat must be a matrix or vector with names 'beta' and 'start_date'")
   }
   
   if (is.null(model_params)) {
@@ -169,16 +179,7 @@ pmcmc <- function(data,
   data$date <- as.Date(data$date) 
 
 
-  if(!correct_format(pars_max)) {
-    stop("pars_max must be a list of length two with names 'beta' and 'start_date'")
-  }
-  if(!correct_format(cov_mat, input = 'cov_mat')) {
-    stop("cov_mat must be a matrix or vector with names 'beta' and 'start_date'")
-  }
-  if(!correct_format(pars_discrete)) {
-    stop("pars_discrete must be a list of length two with names 'beta' and 'start_date'")
-  }
-  
+
   
   is.numeric.list <- function(x) all(vapply(X = x, is.numeric, logical(1)))
   is.logical.list <- function(x) all(vapply(X = x, is.logical, logical(1)))
@@ -396,12 +397,8 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
 propose_parameters <- function(pars, cov_mat, pars_discrete, pars_min, pars_max) {
   
   ## proposed jumps are normal with mean pars and sd as input for parameter
-  # this can easily be adapted to being multivariate normal with covariance to improve mixing
-  if(is.matrix(cov_mat)) {
-    jumps <- pars + drop(rmvnorm(n = 1,  sigma = cov_mat))
-  } else {
-    jumps <- rnorm(n = length(pars), mean = pars, sd = sqrt(cov_mat)) 
-  }
+  jumps <- pars + drop(rmvnorm(n = 1,  sigma = cov_mat))
+
 
   # discretise if necessary
   jumps[pars_discrete] <- round(jumps[pars_discrete])

@@ -43,7 +43,13 @@ test_that("pmcmc runs without error", {
    data = data, 
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   cov_mat = c('beta' = 10, 'start_date' = 1e2), 
+   cov_mat = matrix(c(1e2, 0,
+                      0, 1e4), 
+                    nrow = 2, byrow = TRUE,
+                    dimnames = list(
+                      c('beta', 'start_date'),
+                      c('beta', 'start_date')
+                    )), 
    log_likelihood = function(pars, ...) {
      list('log_likelihood' = 0,
           'sample_state' = rep(1, 238))
@@ -64,7 +70,12 @@ test_that("pmcmc runs without error", {
    data = data, 
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   cov_mat = c('beta' = 0, 'start_date' = 0)
+   cov_mat = matrix(rep(0, 4), 
+                    nrow = 2, byrow = TRUE,
+                    dimnames = list(
+                      c('beta', 'start_date'),
+                      c('beta', 'start_date')
+                    ))
    
  )
  
@@ -97,7 +108,28 @@ X2 <- pmcmc(
 
 # check equal except for inputs
 expect_equal(X[-1], X2[-1])
-  
+
+set.seed(1)
+X3 <- pmcmc(
+  data = data, 
+  n_mcmc = n_mcmc,
+  sircovid_model = sircovid_model,
+  pars_obs = list(phi_ICU = 0.95,
+                  k_ICU = 2,
+                  phi_death = 926 / 1019,
+                  k_death = 2,
+                  exp_noise = 1e6),
+  cov_mat = matrix(c(      0.001^2, 0.001*0.5*0.6,
+                     0.001*0.5*0.6, 0.5^2), 
+                   nrow = 2, byrow = TRUE,
+                   dimnames = list(
+                     c('beta', 'start_date'),
+                     c('beta', 'start_date')
+                   ))
+)
+
+expect_false(all(X$results == X3$results))
+
 })
 
 test_that("pmcmc with new model", {
