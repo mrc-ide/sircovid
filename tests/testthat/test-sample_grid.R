@@ -64,7 +64,7 @@ test_that("sample_grid_scan works", {
                                 to = as.Date(tail(data$date, 1)) + forecast_days, 
                                 by = 1)))
   # quantiles increase
-  expect_true(all(head(res_summary[1,c(-1,-2)] - res_summary[1,-1], -1) >= 0))
+  expect_true(all(res_summary[1,c(-1,-2)] - head(res_summary[1,-1], -1) >= 0))
   
   ## Testing plotting is always a nightmare
   if (TRUE) {
