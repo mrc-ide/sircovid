@@ -100,7 +100,8 @@ sample_grid_scan <- function(scan_results,
                 model_params = model_params,
                 pars_obs = pars_obs,
                 data = data,
-                model = sircovid_model))
+                model = sircovid_model,
+                forecast_days = forecast_days))
   
   class(res) <- "sample_grid_search"
   
@@ -129,9 +130,9 @@ summary.sample_grid_search <- function(x, ...,
   names(quantiles) <- sprintf("Quantile %s", quantiles)
   quantiles <- c(c(Value = 0.5), quantiles)
   
-  i <- tail(seq_len(nrow(what)), last)
+  i <- tail(seq_len(nrow(what)), x$inputs$forecase_days)
   d <- round(t(apply(x[i, ], 1, quantile, quantiles, names = FALSE)))
-  colnames(d) <- names(p)
+  colnames(d) <- names(quantiles)
 
   d
 }
@@ -142,7 +143,7 @@ sum_over_compartments <- function(sample_grid_res) {
     index <- odin_index(sample_grid_res$inputs$model$odin_model(
       user = sample_grid_res$inputs$model_params))
   } else {
-    index <- odin_index(x$inputs$model$model(
+    index <- odin_index(sample_grid_res$inputs$model$model(
       user = sample_grid_res$inputs$model_params))
   }
 

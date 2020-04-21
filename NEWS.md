@@ -1,3 +1,9 @@
+# sircovid 0.2.20
+
+- Add date stamp to plots
+- Add prior to beta grid search
+- Add summary function to sample grid results
+
 # sircovid 0.2.19
 
 - Fix name error with p_death_hosp/_D in new odin model

@@ -40,6 +40,7 @@
 ##' 
 ##' @export
 ##' @import furrr
+##' @importFrom stats dgamma
 scan_beta_date <- function(
   min_beta, 
   max_beta, 
@@ -125,13 +126,12 @@ scan_beta_date <- function(
   
   # Apply the prior, if provided
   if (!is.null(shape_prior) && !is.null(scale_prior)) {
-    n_date <- length(scan_results$y)
     log_prior <- matrix(rep(dgamma(beta_1D,
                                    shape = shape_prior,
                                    scale = scale_prior,
                                    log = TRUE), length(date_list)), 
                         ncol=length(date_list))
-    mat_log_ll <- mat_log_ll + lprior
+    mat_log_ll <- mat_log_ll + log_prior
     exp_mat <- exp(mat_log_ll - max(mat_log_ll))
     renorm_mat_LL <- exp_mat/sum(exp_mat)
   }
