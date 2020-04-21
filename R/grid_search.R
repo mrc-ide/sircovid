@@ -29,6 +29,12 @@
 ##'   
 ##' @param n_particles Number of particles. Positive Integer. Default = 100
 ##' 
+##' @param scale_prior Set to use a gamma prior on beta, and report the 
+##'   posterior rather than the likelihood. Sets scale of gamma prior.
+##'   
+##' @param shape_prior Set to use a gamma prior on beta, and report the 
+##'   posterior rather than the likelihood. Sets shape of gamma prior.
+##' 
 ##' @return List of beta and start date grid values, and
 ##'   normalised probabilities at each point
 ##' 
@@ -45,7 +51,17 @@ scan_beta_date <- function(
   sircovid_model = basic_model(),
   model_params = NULL,
   pars_obs = NULL,
-  n_particles = 100) {
+  n_particles = 100,
+  scale_prior = NULL,
+  shape_prior = NULL) {
+  
+  # Parameter checks
+  if (!is.null(scale_prior) || !is.null(shape_prior)) {
+    if (!is.numeric(scale_prior) || !is.numeric(shape_prior)) {
+      stop("If provided, both scale_prior and shape_prior must both be numeric")
+    }
+  }
+  
   #
   # Set up parameter space to scan
   #
@@ -107,6 +123,19 @@ scan_beta_date <- function(
   prob_matrix <- exp(mat_log_ll)
   renorm_mat_LL <- prob_matrix/sum(prob_matrix)
   
+  # Apply the prior, if provided
+  if (!is.null(shape_prior) && !is.null(scale_prior)) {
+    n_date <- length(scan_results$y)
+    log_prior <- matrix(rep(dgamma(beta_1D,
+                                   shape = shape_prior,
+                                   scale = scale_prior,
+                                   log = TRUE), length(date_list)), 
+                        ncol=length(date_list))
+    mat_log_ll <- mat_log_ll + lprior
+    exp_mat <- exp(mat_log_ll - max(mat_log_ll))
+    renorm_mat_LL <- exp_mat/sum(exp_mat)
+  }
+
   results <- list(x = beta_1D, 
                   y = date_list,
                   mat_log_ll = mat_log_ll,
