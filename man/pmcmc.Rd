@@ -14,7 +14,7 @@ pmcmc(
   pars_init = list(beta = 0.14, start_date = as.Date("2020-02-07")),
   pars_min = list(beta = 0, start_date = 0),
   pars_max = list(beta = 1, start_date = 1e+06),
-  pars_sd = list(beta = 0.001, start_date = 0.5),
+  cov_mat = c(beta = 0.001^2, start_date = 0.5^2),
   pars_discrete = list(beta = FALSE, start_date = TRUE),
   log_likelihood = NULL,
   log_prior = NULL,
@@ -44,7 +44,7 @@ list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 92
 
 \item{pars_max}{named list of upper reflecting boundaries for parameter proposals}
 
-\item{pars_sd}{named list of proposal sds for parameters (currently normal dists, but can easily be made MVNorm)}
+\item{cov_mat}{named matrix or vector of proposal covariance for parameters}
 
 \item{pars_discrete}{named list of logicals, indicating if proposed jump should be discrete}
 
@@ -84,10 +84,10 @@ The log posterior of the initial parameters given the data is then estimated by 
 log likelihood estimate.
 
 The pMCMC sampler then proceeds as follows, for n_mcmc iterations:
-At each loop iteration the pMCMC sampler performs three steps:
+At each loop iteration the pMCMC sampler perfsorms three steps:
   1. Propose new candidate samples for beta and start_date based on
     the current samples, using the proposal distribution 
-    (currently i.i.d Gaussian with user-input sd pars_sd, and reflecting boundaries)
+    (currently multivariate Gaussian with user-input covariance matrix (cov_mat), and reflecting boundaries defined by pars_min, pars_max)
   2. Calculate the log prior of the proposed parameters, 
      Use the particle filter to estimate log likelihood of the data given the proposed parameters, as described above,
      as well as proposing a model state space.

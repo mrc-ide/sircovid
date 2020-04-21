@@ -23,7 +23,7 @@
 ##' 
 ##' @param pars_max named list of upper reflecting boundaries for parameter proposals
 ##' 
-##' @param pars_sd named list of proposal sds for parameters (currently normal dists, but can easily be made MVNorm)
+##' @param cov_mat named matrix or vector of proposal covariance for parameters 
 ##' 
 ##' @param pars_discrete named list of logicals, indicating if proposed jump should be discrete
 ##' 
@@ -61,10 +61,10 @@
 ##' log likelihood estimate.
 ##' 
 ##' The pMCMC sampler then proceeds as follows, for n_mcmc iterations:
-##' At each loop iteration the pMCMC sampler performs three steps:
+##' At each loop iteration the pMCMC sampler perfsorms three steps:
 ##'   1. Propose new candidate samples for beta and start_date based on
 ##'     the current samples, using the proposal distribution 
-##'     (currently i.i.d Gaussian with user-input sd pars_sd, and reflecting boundaries)
+##'     (currently multivariate Gaussian with user-input covariance matrix (cov_mat), and reflecting boundaries defined by pars_min, pars_max)
 ##'   2. Calculate the log prior of the proposed parameters, 
 ##'      Use the particle filter to estimate log likelihood of the data given the proposed parameters, as described above,
 ##'      as well as proposing a model state space.
@@ -79,8 +79,9 @@
 ##'   to match the proposal, otherwise the previous parameters/states are retained for the next iteration.
 ##'   
 ##' @export
-##' @import coda
+##' @import coda 
 ##' @importFrom stats rnorm
+##' @importFrom mvtnorm rmvnorm
 ##' @importFrom utils txtProgressBar setTxtProgressBar
 pmcmc <- function(data,
                   n_mcmc, 
@@ -99,8 +100,7 @@ pmcmc <- function(data,
                                   'start_date' = 0),
                   pars_max = list('beta' = 1, 
                                   'start_date' = 1e6),
-                  pars_sd = list('beta' = 0.001, 
-                                 'start_date' = 0.5),
+                  cov_mat = c('beta' = 0.001^2, 'start_date' = 0.5^2),
                   pars_discrete = list('beta' = FALSE, 
                                        'start_date' = TRUE),
                   log_likelihood = NULL,
@@ -109,8 +109,22 @@ pmcmc <- function(data,
                   steps_per_day = 4) {
   
   # test pars_init input
-  correct_format <- function(pars) {
-    is.list(pars) & setequal(names(pars), c('beta', 'start_date'))
+  correct_format <- function(pars, input = "") {
+    if(input == "cov_mat") { # cov_mat can be input as a matrix or a vector
+      if(is.matrix(pars)) {
+        setequal(rownames(pars),
+                 colnames(pars)) & 
+          setequal(rownames(pars),
+                 c('beta', 'start_date'))
+      } else {
+        is.numeric(pars) & setequal(names(pars), 
+                                    c('beta', 'start_date'))
+      }
+    } else{
+      is.list(pars) & setequal(names(pars), 
+                             c('beta', 'start_date'))
+    }
+   
   }
   
   if(!correct_format(pars_init)) {
@@ -145,7 +159,7 @@ pmcmc <- function(data,
                 pars_init = pars_init, 
                 pars_min = pars_min, 
                 pars_max = pars_max, 
-                pars_sd = pars_sd,
+                cov_mat = cov_mat,
                 pars_discrete = pars_discrete), 
     n_particles = n_particles, 
     steps_per_day = steps_per_day)
@@ -158,8 +172,8 @@ pmcmc <- function(data,
   if(!correct_format(pars_max)) {
     stop("pars_max must be a list of length two with names 'beta' and 'start_date'")
   }
-  if(!correct_format(pars_sd)) {
-    stop("pars_sd must be a list of length two with names 'beta' and 'start_date'")
+  if(!correct_format(cov_mat, input = 'cov_mat')) {
+    stop("cov_mat must be a matrix or vector with names 'beta' and 'start_date'")
   }
   if(!correct_format(pars_discrete)) {
     stop("pars_discrete must be a list of length two with names 'beta' and 'start_date'")
@@ -175,9 +189,7 @@ pmcmc <- function(data,
   if(!is.numeric.list(pars_max)) {
     stop('pars_max entries must be numeric')
   }
-  if(!is.numeric.list(pars_sd)) {
-    stop('pars_sd entries must be numeric')
-  }
+
   if(!is.logical.list(pars_discrete)) {
     stop('pars_discrete entries must be logical')
   }
@@ -185,7 +197,6 @@ pmcmc <- function(data,
   # needs to be a vector to pass to reflecting boundary function
   pars_min <- unlist(pars_min)  
   pars_max <- unlist(pars_max)
-  pars_sd <- unlist(pars_sd)
   pars_discrete <- unlist(pars_discrete)
   
   # create prior and likelihood functions given the inputs
@@ -218,7 +229,7 @@ pmcmc <- function(data,
   # create shorthand function to propose new pars given main inputs
   propose_jump <- function(pars) {
     propose_parameters(pars = pars, 
-                       pars_sd = pars_sd,
+                       cov_mat = cov_mat,
                        pars_discrete = pars_discrete,
                        pars_min = pars_min,
                        pars_max = pars_max)
@@ -382,11 +393,16 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
 
 
 
-propose_parameters <- function(pars, pars_sd, pars_discrete, pars_min, pars_max) {
+propose_parameters <- function(pars, cov_mat, pars_discrete, pars_min, pars_max) {
   
   ## proposed jumps are normal with mean pars and sd as input for parameter
   # this can easily be adapted to being multivariate normal with covariance to improve mixing
-  jumps <- rnorm(n = length(pars), mean = pars, sd = pars_sd)
+  if(is.matrix(cov_mat)) {
+    jumps <- pars + drop(rmvnorm(n = 1,  sigma = cov_mat))
+  } else {
+    jumps <- rnorm(n = length(pars), mean = pars, sd = sqrt(cov_mat)) 
+  }
+
   # discretise if necessary
   jumps[pars_discrete] <- round(jumps[pars_discrete])
   # reflect proposal if it exceeds upper or lower parameter boundary
