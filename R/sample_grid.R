@@ -141,13 +141,8 @@ summary.sample_grid_search <- function(object, ...,
 
 # Sum sampled model over compartments
 sum_over_compartments <- function(sample_grid_res) {
-  if ("odin_model" %in% names(sample_grid_res$inputs$model)) { # new version
-    index <- odin_index(sample_grid_res$inputs$model$odin_model(
+  index <- odin_index(sample_grid_res$inputs$model$odin_model(
       user = sample_grid_res$inputs$model_params))
-  } else {
-    index <- odin_index(sample_grid_res$inputs$model$model(
-      user = sample_grid_res$inputs$model_params))
-  }
 
   ## filter out the ones that we actually have - this is unreasonably ugly:
   n <- vapply(index, min, numeric(1)) - 1

@@ -1,8 +1,12 @@
-# sircovid 0.2.20
+# sircovid 0.2.21
 
 - Add date stamp to plots
 - Add prior to beta grid search
 - Add summary function to sample grid results
+
+# sircovid 0.2.20
+
+- Multivariate normal proposals for pMCMC
 
 # sircovid 0.2.19
 
