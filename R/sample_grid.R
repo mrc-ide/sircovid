@@ -132,8 +132,8 @@ summary.sample_grid_search <- function(object, ...,
   names(quantiles) <- sprintf("Quantile %s", quantiles)
   quantiles <- c(c(Value = 0.5), quantiles)
   
-  i <- tail(seq_len(nrow(what)), object$inputs$forecase_days)
-  d <- round(t(apply(object[i, ], 1, quantile, quantiles, names = FALSE)))
+  i <- tail(seq_len(nrow(totals)), object$inputs$forecast_days)
+  d <- round(t(apply(totals[i, ], 1, quantile, quantiles, names = FALSE)))
   colnames(d) <- names(quantiles)
 
   d
