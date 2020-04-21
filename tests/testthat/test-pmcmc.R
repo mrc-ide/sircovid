@@ -7,10 +7,17 @@ test_that("pmcmc runs without error", {
                    stringsAsFactors = FALSE)
   
   cmp <- readRDS("reference_pmcmc.rds")
-  
+
   n_mcmc <- 10
   set.seed(1)
-  sircovid_model <- basic_model(gammas = list(E = 1/(2.5), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2, ICU = 2/5, rec = 2/5))
+  sircovid_model <- basic_model(gammas = list(E = 1/(2.5), 
+                                              asympt = 1/2.09, 
+                                              mild = 1/2.09, 
+                                              ILI = 1/4, 
+                                              hosp = 2, 
+                                              ICU = 2/5, 
+                                              rec = 2/5))
+
   X <- pmcmc(
     data = data, 
     n_mcmc = n_mcmc,
@@ -21,7 +28,7 @@ test_that("pmcmc runs without error", {
                     k_death = 2,
                     exp_noise = 1e6)
   )
-  
+
   expect_is(X, 'list')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
@@ -36,7 +43,13 @@ test_that("pmcmc runs without error", {
    data = data, 
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   pars_sd = list('beta' = 10, 'start_date' = 1e2), 
+   cov_mat = matrix(c(1e2, 0,
+                      0, 1e4), 
+                    nrow = 2, byrow = TRUE,
+                    dimnames = list(
+                      c('beta', 'start_date'),
+                      c('beta', 'start_date')
+                    )), 
    log_likelihood = function(pars, ...) {
      list('log_likelihood' = 0,
           'sample_state' = rep(1, 238))
@@ -57,7 +70,12 @@ test_that("pmcmc runs without error", {
    data = data, 
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   pars_sd = list('beta' = 0, 'start_date' = 0)
+   cov_mat = matrix(rep(0, 4), 
+                    nrow = 2, byrow = TRUE,
+                    dimnames = list(
+                      c('beta', 'start_date'),
+                      c('beta', 'start_date')
+                    ))
    
  )
  
@@ -66,14 +84,57 @@ test_that("pmcmc runs without error", {
  expect_equal(object = Z$results$start_date, 
               expected = rep(Z$inputs$pars$pars_init$start_date, n_mcmc + 1))
  expect_true(!all(diff(Z$results$log_likelihood) == 0))
+
  
-  
-  
+set.seed(1)
+
+X2 <- pmcmc(
+  data = data, 
+  n_mcmc = n_mcmc,
+  sircovid_model = sircovid_model,
+  pars_obs = list(phi_ICU = 0.95,
+                  k_ICU = 2,
+                  phi_death = 926 / 1019,
+                  k_death = 2,
+                  exp_noise = 1e6),
+  cov_mat = matrix(c(0.001^2, 0,
+                     0, 0.5^2), 
+                    nrow = 2, byrow = TRUE,
+                   dimnames = list(
+                     c('beta', 'start_date'),
+                     c('beta', 'start_date')
+                   ))
+)
+
+# check equal except for inputs
+expect_equal(X[-1], X2[-1])
+
+set.seed(1)
+X3 <- pmcmc(
+  data = data, 
+  n_mcmc = n_mcmc,
+  sircovid_model = sircovid_model,
+  pars_obs = list(phi_ICU = 0.95,
+                  k_ICU = 2,
+                  phi_death = 926 / 1019,
+                  k_death = 2,
+                  exp_noise = 1e6),
+  cov_mat = matrix(c(      0.001^2, 0.001*0.5*0.6,
+                     0.001*0.5*0.6, 0.5^2), 
+                   nrow = 2, byrow = TRUE,
+                   dimnames = list(
+                     c('beta', 'start_date'),
+                     c('beta', 'start_date')
+                   ))
+)
+
+expect_false(all(X$results == X3$results))
+
 })
 
 test_that("pmcmc with new model", {
   data <- readRDS("hospital_model_data.rds")
-  
+
   cmp <- readRDS("reference_pmcmc_hosp.rds")
   
   n_mcmc <- 10
@@ -250,39 +311,29 @@ test_that("pmcmc error cases", {
   )
   
   
-  # incorrect names supplied to pars_sd
+  # incorrect names supplied to cov_mat
   expect_error(
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_sd = list(0.5, 3)
+      cov_mat = list(0.5, 3)
     ),
-    "pars_sd must be a list of length two with names 'beta' and 'start_date'"
+    "cov_mat must be a matrix or vector with names 'beta' and 'start_date'"
   )
   
-  # incorrect format for pars_sd
+  # incorrect format for cov_mat
   expect_error(
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_sd  = c('beta' = 0.5,
+      cov_mat = list('beta' = 0.5,
                     'start_date' = 3)
     ),
-    "pars_sd must be a list of length two with names 'beta' and 'start_date'"
+    "cov_mat must be a matrix or vector with names 'beta' and 'start_date'"
   )
   
-  expect_error(
-    pmcmc(
-      data = data,
-      n_mcmc = n_mcmc,
-      sircovid_model = sircovid_model,
-      pars_sd  = list('beta' = 0.5,
-                      'start_date' = as.Date(data$date[1]))
-    ),
-    "pars_sd entries must be numeric"
-  )
   
   # incorrect names supplied to pars_discrete
   expect_error(

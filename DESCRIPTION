@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.2.19
+Version: 0.2.20
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -40,6 +40,7 @@ Imports:
     odin,
     socialmixr,
     furrr,
+    mvtnorm,
     coda
 Suggests:
     testthat
