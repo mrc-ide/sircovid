@@ -155,6 +155,13 @@ generate_parameters <- function(
     stop("Model name not supported")
   }
   
+  # Set the initial value of x0 in the
+  # beta diffusion model. Might be better to do this more
+  # formally
+  if (class(sircovid_model)[1] == "sircovid_beta_diffusion") {
+    parameter_list$x0 <- -0.2
+  }
+  
   # Add some initial infections to I_asympt
   # Move from susceptible to infected
   seed_bins <- parse_age_bins(infection_seeding$bins)
@@ -178,13 +185,13 @@ generate_parameters <- function(
   # Remove parameters unused by odin
   parameter_list$age_bin_starts <- NULL
   if (class(sircovid_model)[1] == "sircovid_basic") {
-    parameter_list$p_recov_hosp <- NULL
-    parameter_list$p_recov_ICU <- NULL
-    parameter_list$p_death_hosp <- NULL
-  } else if ("sircovid_hospital" %in% class(sircovid_model)) {
     parameter_list$p_death_ICU <- NULL
     parameter_list$p_ICU_hosp <- NULL
     parameter_list$p_death_hosp_D <- NULL
+  } else if ("sircovid_hospital" %in% class(sircovid_model)) {
+    parameter_list$p_recov_hosp <- NULL
+    parameter_list$p_recov_ICU <- NULL
+    parameter_list$p_death_hosp <- NULL
   }           
 
   parameter_list

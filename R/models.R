@@ -16,7 +16,7 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
   generate_beta_func <- generate_beta
   compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
   
-  model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
+  model_partitions <- partition_names(model_class)
   if (any(!(model_partitions %in% names(progression_groups)))) {
     stop("progression_groups need to be defined for all partitions")
   }
@@ -100,10 +100,10 @@ beta_diffusion_model <- function(use_fitted_parameters = TRUE,
   beta_diffusion <- hospital_model(use_fitted_parameters = use_fitted_parameters,
                                    progression_groups = progression_groups,
                                    gammas = gammas)
-  beta_diffusion$odin_model <- load_odin_model("beta_diffusion_model")
+  beta_diffusion$odin_model <- load_odin_model("diffusion_beta")
   
-  class(hospital) <- c(model_class, "sircovid_hospital")
-  hospital
+  class(beta_diffusion) <- c(model_class, "sircovid_hospital")
+  beta_diffusion
 }
 
 #
@@ -112,12 +112,12 @@ beta_diffusion_model <- function(use_fitted_parameters = TRUE,
 
 # Definitions of partition names
 partition_names <- function(model_name) {
-  if (inherits(model_name, "sircovid_basic")) {
+  if (inherits(model_name, "sircovid_basic") || inherits(model_name, "sircovid_hospital")) {
     model_partitions <- names(model_name$progression_groups)
   } else {
     if (model_name == "sircovid_basic") {
       model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
-    } else if (model_name == "sircovid_hospital") {
+    } else if (model_name == "sircovid_hospital" || model_name == "sircovid_beta_diffusion") {
       model_partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown")
     } else {
       stop("Unknown model name")

@@ -54,6 +54,35 @@ test_that("New model can be run on real data", {
   expect_equal(results$log_likelihood, -793.6385, tolerance=1e-3)
 })
 
+test_that("beta diffusion model can be run on real data", {
+  set.seed(1)
+  time_steps_per_day <- 4
+  
+  data <- readRDS("hospital_model_data.rds")
+  sircovid_model <- beta_diffusion_model()
+  
+  vary_beta <- sircovid_model$generate_beta_func(0.1)
+  model_params <- generate_parameters(sircovid_model,
+                                      beta = vary_beta$beta,
+                                      beta_times = vary_beta$beta_times,
+                                      dt = 1/time_steps_per_day)
+  
+  results <- run_particle_filter(data = data,
+                                 sircovid_model = sircovid_model,
+                                 model_params = model_params,
+                                 obs_params = list(phi_general = 0.95,
+                                                   k_general = 2,
+                                                   phi_ICU = 0.95,
+                                                   k_ICU = 2,
+                                                   phi_death = 1789/1651,
+                                                   k_death = 2,
+                                                   exp_noise = 1e6),
+                                 n_particles = 1000)
+  # No check of correctness
+  skip("Haven't fully tested new model")
+  expect_equal(results$log_likelihood, -793.6385, tolerance=1e-3)
+})
+
 
 test_that("Poor formatting of real data throws errors", {
   data <- generate_data(death_data_file = "covid_cases_2020_4_3.csv",
