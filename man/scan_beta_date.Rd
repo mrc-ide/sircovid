@@ -17,7 +17,8 @@ scan_beta_date(
   pars_obs = NULL,
   n_particles = 100,
   scale_prior = NULL,
-  shape_prior = NULL
+  shape_prior = NULL,
+  tolerance = 0.0000000001
 )
 }
 \arguments{
@@ -46,11 +47,14 @@ in unit tests.}
 
 \item{n_particles}{Number of particles. Positive Integer. Default = 100}
 
-\item{scale_prior}{Set to use a gamma prior on beta, and report the 
+\item{scale_prior}{Set to use a gamma prior on beta, and report the
 posterior rather than the likelihood. Sets scale of gamma prior.}
 
-\item{shape_prior}{Set to use a gamma prior on beta, and report the 
+\item{shape_prior}{Set to use a gamma prior on beta, and report the
 posterior rather than the likelihood. Sets shape of gamma prior.}
+
+\item{tolerance}{The smallest difference from 0 that is acceptable
+in the probability matrix.}
 }
 \value{
 List of beta and start date grid values, and
@@ -58,6 +62,6 @@ List of beta and start date grid values, and
 }
 \description{
 Run a grid search of the particle filter over beta and start date.
-This is parallelised, first run \code{plan(multiprocess)} to set 
+This is parallelised, first run \code{plan(multiprocess)} to set
 this up.
 }
