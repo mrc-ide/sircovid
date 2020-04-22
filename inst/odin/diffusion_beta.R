@@ -25,7 +25,7 @@ update(R_hosp[,,]) <- R_hosp[i,j,k] + delta_R_hosp[i,j,k]
 update(D[]) <- D[i] + delta_D[i]
 
 #x=log(beta) tracker of intensity of transmission
-update(x) <- x + rnorm(1, mean = x, sd = sd_x)
+update(x) <- x + rnorm(mean = x, sd = sd_x)
 
 #derive transmission from x
 beta <- exp(x)
