@@ -18,10 +18,13 @@ update(E[,,]) <- E[i,j,k] + delta_E[i,j,k]
 update(I_asympt[,,]) <- I_asympt[i,j,k] + delta_I_asympt[i,j,k]
 update(I_mild[,,]) <- I_mild[i,j,k] + delta_I_mild[i,j,k]
 update(I_ILI[,,]) <- I_ILI[i,j,k] + delta_I_ILI[i,j,k]
+update(I_triage[,,]) <- I_triage[i,j,k] + delta_I_triage[i,j,k]
+update(I_hosp_R[,,]) <- I_hosp_R[i,j,k] + delta_I_hosp_R[i,j,k]
+update(I_hosp_D[,,]) <- I_hosp_D[i,j,k] + delta_I_hosp_D[i,j,k]
+update(I_ICU_R[,,]) <- I_ICU_R[i,j,k] + delta_I_ICU_R[i,j,k]
+update(I_ICU_D[,,]) <- I_ICU_D[i,j,k] + delta_I_ICU_D[i,j,k]
+update(R_stepdown[,,]) <- R_stepdown[i,j,k] + delta_R_stepdown[i,j,k]
 update(R[]) <- R[i] + delta_R[i]
-update(I_hosp[,,]) <- I_hosp[i,j,k] + delta_I_hosp[i,j,k]
-update(I_ICU[,,]) <- I_ICU[i,j,k] + delta_I_ICU[i,j,k]
-update(R_hosp[,,]) <- R_hosp[i,j,k] + delta_R_hosp[i,j,k]
 update(D[]) <- D[i] + delta_D[i]
 
 #x=log(beta) tracker of intensity of transmission
@@ -30,7 +33,6 @@ update(x) <- x + rnorm(mean = x, sd = sd_x)
 #derive transmission from x
 beta <- exp(x)
 
-#output the value of transmission alongside state variables
 output(beta) <- TRUE
 
 ## Individual probabilities of transition:
@@ -39,9 +41,12 @@ p_EE <- 1 - exp(-gamma_E*dt) # progression of latent period
 p_II_asympt <- 1 - exp(-gamma_asympt*dt) # progression of infectious period
 p_II_mild <- 1 - exp(-gamma_mild*dt)
 p_II_ILI <- 1 - exp(-gamma_ILI*dt)
-p_II_hosp <- 1 - exp(-gamma_hosp*dt)
-p_II_ICU <- 1 - exp(-gamma_ICU*dt)
-p_R_hosp <- 1 - exp(-gamma_rec*dt)
+p_II_triage <- 1 - exp(-gamma_triage*dt)
+p_II_hosp_R <- 1 - exp(-gamma_hosp_R*dt)
+p_II_hosp_D <- 1 - exp(-gamma_hosp_D*dt)
+p_II_ICU_R <- 1 - exp(-gamma_ICU_R*dt)
+p_II_ICU_D <- 1 - exp(-gamma_ICU_D*dt)
+p_R_stepdown <- 1 - exp(-gamma_stepdown*dt)
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -50,9 +55,12 @@ n_EE[,,] <- rbinom(E[i,j,k], p_EE)
 n_II_asympt[,,] <- rbinom(I_asympt[i,j,k], p_II_asympt)
 n_II_mild[,,] <- rbinom(I_mild[i,j,k], p_II_mild)
 n_II_ILI[,,] <- rbinom(I_ILI[i,j,k], p_II_ILI)
-n_II_hosp[,,] <- rbinom(I_hosp[i,j,k], p_II_hosp)
-n_II_ICU[,,] <- rbinom(I_ICU[i,j,k], p_II_ICU)
-n_R_hosp[,,] <- rbinom(R_hosp[i,j,k], p_R_hosp)
+n_II_triage[,,] <- rbinom(I_triage[i,j,k], p_II_triage)
+n_II_hosp_R[,,] <- rbinom(I_hosp_R[i,j,k], p_II_hosp_R)
+n_II_hosp_D[,,] <- rbinom(I_hosp_D[i,j,k], p_II_hosp_D)
+n_II_ICU_R[,,] <- rbinom(I_ICU_R[i,j,k], p_II_ICU_R)
+n_II_ICU_D[,,] <- rbinom(I_ICU_D[i,j,k], p_II_ICU_D)
+n_R_stepdown[,,] <- rbinom(R_stepdown[i,j,k], p_R_stepdown)
 
 #Computes the number of asymptomatic
 n_EI_asympt[,] <- rbinom(n_EE[i,s_E,j], p_asympt[i])
@@ -98,50 +106,78 @@ aux_II_ILI[,2:s_ILI,] <- n_II_ILI[i,j-1,k]
 aux_II_ILI[,1:s_ILI,] <- aux_II_ILI[i,j,k] - n_II_ILI[i,j,k]
 delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
-#Work out the I_hosp->I_hosp transitions
+#Work out the flow from I_ILI -> hosp = hosp_D, hosp_R and hosp_triage
 n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_recov_ILI[i])
 output(n_ILI_to_hosp[,]) <- TRUE
-aux_II_hosp[,1,] <- n_ILI_to_hosp[i,k]
-aux_II_hosp[,2:s_hosp,] <- n_II_hosp[i,j-1,k]
-aux_II_hosp[,1:s_hosp,] <- aux_II_hosp[i,j,k] - n_II_hosp[i,j,k]
-delta_I_hosp[,,] <- aux_II_hosp[i,j,k]
 
-#Work out the death in hospital without getting critical care
-n_death_hosp[,] <- rbinom(n_II_hosp[i,s_hosp,j], p_death_hosp[i])
+#Work out the I_triage->I_triage transitions
+n_ILI_to_triage[,] <- rbinom(n_ILI_to_hosp[i,j],p_ICU_hosp[i])
+aux_II_triage[,1,] <- n_ILI_to_triage[i,k]
+aux_II_triage[,2:s_triage,] <- n_II_triage[i,j-1,k]
+aux_II_triage[,1:s_triage,] <- aux_II_triage[i,j,k] - n_II_triage[i,j,k]
+delta_I_triage[,,] <- aux_II_triage[i,j,k]
 
-#Work out the I_ICU->I_ICU transitions
-n_hosp_to_ICU[,] <- rbinom(n_II_hosp[i,s_hosp,j]-n_death_hosp[i,j],1-p_recov_hosp[i]-p_death_hosp[i])
-output(n_hosp_to_ICU[,])<- TRUE
-aux_II_ICU[,1,] <- n_hosp_to_ICU[i,k]
-aux_II_ICU[,2:s_ICU,] <- n_II_ICU[i,j-1,k]
-aux_II_ICU[,1:s_ICU,] <- aux_II_ICU[i,j,k] - n_II_ICU[i,j,k]
-delta_I_ICU[,,] <- aux_II_ICU[i,j,k]
+#Work out the number progressing to ICU (all), ICU_D and ICU_R
+n_triage_to_ICU_D[,] <- rbinom(n_II_triage[i,s_triage,j], p_death_ICU[i])
+n_triage_to_ICU_R[,] <- n_II_triage[i,s_triage,j] - n_triage_to_ICU_D[i,j]
 
-#Work out the R_hosp->R_hosp transitions
-n_ICU_to_R_hosp[,] <- rbinom(n_II_ICU[i,s_ICU,j],p_recov_ICU[i])
-aux_R_hosp[,1,] <- n_ICU_to_R_hosp[i,k]
-aux_R_hosp[,2:s_rec,] <- n_R_hosp[i,j-1,k]
-aux_R_hosp[,1:s_rec,] <- aux_R_hosp[i,j,k] - n_R_hosp[i,j,k]
-delta_R_hosp[,,] <- aux_R_hosp[i,j,k]
+#Work out the number progressing to general bed (all), hosp_D and hosp_R
+n_hosp_non_ICU[,] <- n_ILI_to_hosp[i,j] - n_ILI_to_triage[i,j]
+n_ILI_to_hosp_D[,] <- rbinom(n_hosp_non_ICU[i,j], p_death_hosp_D[i])
+n_ILI_to_hosp_R[,] <- n_hosp_non_ICU[i,j] - n_ILI_to_hosp_D[i,j]
+
+#output the flows leaving the triage
+output(n_ILI_to_hosp_R[,])<- TRUE
+output(n_ILI_to_hosp_D[,])<- TRUE
+output(n_triage_to_ICU_R[,])<- TRUE
+output(n_triage_to_ICU_D[,])<- TRUE
+
+#Work out the I_hosp_R->I_hosp_R transitions
+aux_II_hosp_R[,1,] <- n_ILI_to_hosp_R[i,k]
+aux_II_hosp_R[,2:s_hosp_R,] <- n_II_hosp_R[i,j-1,k]
+aux_II_hosp_R[,1:s_hosp_R,] <- aux_II_hosp_R[i,j,k] - n_II_hosp_R[i,j,k]
+delta_I_hosp_R[,,] <- aux_II_hosp_R[i,j,k]
+
+#Work out the I_hosp_D->I_hosp_D transitions
+aux_II_hosp_D[,1,] <- n_ILI_to_hosp_D[i,k]
+aux_II_hosp_D[,2:s_hosp_D,] <- n_II_hosp_D[i,j-1,k]
+aux_II_hosp_D[,1:s_hosp_D,] <- aux_II_hosp_D[i,j,k] - n_II_hosp_D[i,j,k]
+delta_I_hosp_D[,,] <- aux_II_hosp_D[i,j,k]
+
+#Work out the I_ICU_R->I_ICU_R transitions
+aux_II_ICU_R[,1,] <- n_triage_to_ICU_R[i,k]
+aux_II_ICU_R[,2:s_ICU_R,] <- n_II_ICU_R[i,j-1,k]
+aux_II_ICU_R[,1:s_ICU_R,] <- aux_II_ICU_R[i,j,k] - n_II_ICU_R[i,j,k]
+delta_I_ICU_R[,,] <- aux_II_ICU_R[i,j,k]
+
+#Work out the I_ICU_D->I_ICU_D transitions
+aux_II_ICU_D[,1,] <- n_triage_to_ICU_D[i,k]
+aux_II_ICU_D[,2:s_ICU_D,] <- n_II_ICU_D[i,j-1,k]
+aux_II_ICU_D[,1:s_ICU_D,] <- aux_II_ICU_D[i,j,k] - n_II_ICU_D[i,j,k]
+delta_I_ICU_D[,,] <- aux_II_ICU_D[i,j,k]
+
+#Work out the R_stepdown->R_stepdown transitions
+n_ICU_to_R_stepdown[,] <- n_II_ICU_R[i,s_ICU_R,j]
+aux_R_stepdown[,1,] <- n_ICU_to_R_stepdown[i,k]
+aux_R_stepdown[,2:s_stepdown,] <- n_R_stepdown[i,j-1,k]
+aux_R_stepdown[,1:s_stepdown,] <- aux_R_stepdown[i,j,k] - n_R_stepdown[i,j,k]
+delta_R_stepdown[,,] <- aux_R_stepdown[i,j,k]
 
 #Work out the number of deaths
-delta_D[] <- sum(n_II_ICU[i,s_ICU,]) - sum(n_ICU_to_R_hosp[i,]) + sum(n_death_hosp[i,])
+delta_D[] <- sum(n_II_hosp_D[i,s_hosp_D,]) + sum(n_II_ICU_D[i,s_ICU_D,])
 
 #Work out the number of recovery
 delta_R[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
-  sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_hosp[i,]) +
-  sum(n_II_hosp[i,s_hosp,]) - sum(n_hosp_to_ICU[i,]) - sum(n_death_hosp[i,])+
-  sum(n_R_hosp[i,s_rec,])
-
-## Total population size (odin will recompute this at each timestep)
-#N[] <- S[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mild[i,,]) + sum(I_ILI[i,,]) +
-#  + sum(I_hosp[i,,]) + sum(I_ILI[i,,]) + R[i]
+  sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_triage[i,]) +
+  sum(n_II_hosp_R[i,s_hosp_R,]) + sum(n_R_stepdown[i,s_stepdown,])
 
 #Compute the force of infection
 I_with_diff_trans[,] <- trans_increase[i,j]*(sum(I_asympt[i,,j])+
                                                sum(I_mild[i,,j])+sum(I_ILI[i,,j])+
-                                               hosp_transmission*sum(I_hosp[i,,j])+
-                                               ICU_transmission*sum(I_ICU[i,,j]))
+                                               hosp_transmission*
+                                               (sum(I_triage[i,,j])+sum(I_hosp_R[i,,j])+sum(I_hosp_D[i,,j]))+
+                                               ICU_transmission*
+                                                 (sum(I_ICU_R[i,,j])+sum(I_ICU_D[i,,j])))
 s_ij[,] <- m[i,j] * sum(I_with_diff_trans[j,])
 lambda[] <- beta*sum(s_ij[i,])
 
@@ -151,9 +187,12 @@ initial(E[,,]) <- E0[i,j,k] # will be user-defined
 initial(I_asympt[,,]) <- I0_asympt[i,j,k] # will be user-defined
 initial(I_mild[,,]) <- I0_mild[i,j,k] # will be user-defined
 initial(I_ILI[,,]) <- I0_ILI[i,j,k] # will be user-defined
-initial(I_hosp[,,]) <- I0_hosp[i,j,k]
-initial(I_ICU[,,]) <- I0_ICU[i,j,k]
-initial(R_hosp[,,]) <- R0_hosp[i,j,k]
+initial(I_triage[,,]) <- I0_triage[i,j,k]
+initial(I_hosp_R[,,]) <- I0_hosp_R[i,j,k]
+initial(I_hosp_D[,,]) <- I0_hosp_D[i,j,k]
+initial(I_ICU_R[,,]) <- I0_ICU_R[i,j,k]
+initial(I_ICU_D[,,]) <- I0_ICU_D[i,j,k]
+initial(R_stepdown[,,]) <- R0_stepdown[i,j,k]
 initial(R[]) <- R0[i]
 initial(D[]) <- D0[i]
 initial(x) <- x0
@@ -166,12 +205,18 @@ E0[,,] <- user()
 I0_asympt[,,] <- user()
 I0_mild[,,] <- user()
 I0_ILI[,,] <- user()
-I0_hosp[,,] <- user()
-I0_ICU[,,] <- user()
-R0_hosp[,,] <- user()
+I0_triage[,,] <- user()
+I0_hosp_R[,,] <- user()
+I0_hosp_D[,,] <- user()
+I0_ICU_R[,,] <- user()
+I0_ICU_D[,,] <- user()
+R0_stepdown[,,] <- user()
 R0[] <- user()
 D0[] <- user()
 x0 <- user()
+
+#parameters for the diffusion of beta
+sd_x <- user(0.05)
 
 #Parameters of the E classes
 s_E <- user()
@@ -194,23 +239,34 @@ s_ILI <- user()
 gamma_ILI <- user(0.1)
 p_recov_ILI[] <- user()
 
-#Parameters of the I_hosp classes
-s_hosp <- user()
-gamma_hosp <- user(0.1)
-p_recov_hosp[] <- user()
-p_death_hosp[] <- user()
+#Parameters of the I_triage classes
+s_triage <- user()
+gamma_triage <- user(0.1)
+
+#Proportion of hospital cases progressing to ICU
+p_ICU_hosp[] <- user()
+
+#Parameters of the I_hosp_R classes
+s_hosp_R <- user()
+gamma_hosp_R <- user(0.1)
+
+#Parameters of the I_hosp_D classes
+s_hosp_D <- user()
+gamma_hosp_D <- user(0.1)
+p_death_hosp_D[] <- user()
+
+#Parameters of the I_ICU_R classes
+s_ICU_R <- user()
+gamma_ICU_R <- user(0.1)
 
 #Parameters of the I_ICU classes
-s_ICU <- user()
-gamma_ICU <- user(0.1)
-p_recov_ICU[] <- user()
+s_ICU_D <- user()
+gamma_ICU_D <- user(0.1)
+p_death_ICU[] <- user()
 
-#Parameters of the R_hosp classes
-s_rec <- user()
-gamma_rec <- user(0.1)
-
-#Parameters of the age stratified transmission
-sd_x <- user(0.1)
+#Parameters of the R_stepdown classes
+s_stepdown <- user()
+gamma_stepdown <- user(0.1)
 
 m[,] <- user()
 trans_profile[,] <- user()
@@ -253,29 +309,50 @@ dim(delta_I_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(n_II_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(p_recov_ILI) <- c(N_age)
 
-#Vectors handling the I_hosp class
-dim(I_hosp) <- c(N_age,s_hosp,trans_classes)
-dim(I0_hosp) <- c(N_age,s_hosp,trans_classes)
-dim(aux_II_hosp) <- c(N_age,s_hosp,trans_classes)
-dim(delta_I_hosp) <- c(N_age,s_hosp,trans_classes)
-dim(n_II_hosp) <- c(N_age,s_hosp,trans_classes)
-dim(p_recov_hosp) <- c(N_age)
-dim(n_death_hosp) <- c(N_age,trans_classes)
+#Vectors handling the I_triage class
+dim(I_triage) <- c(N_age,s_triage,trans_classes)
+dim(I0_triage) <- c(N_age,s_triage,trans_classes)
+dim(aux_II_triage) <- c(N_age,s_triage,trans_classes)
+dim(delta_I_triage) <- c(N_age,s_triage,trans_classes)
+dim(n_II_triage) <- c(N_age,s_triage,trans_classes)
 
-#Vectors handling the I_ICU class
-dim(I_ICU) <- c(N_age,s_ICU,trans_classes)
-dim(I0_ICU) <- c(N_age,s_ICU,trans_classes)
-dim(aux_II_ICU) <- c(N_age,s_ICU,trans_classes)
-dim(delta_I_ICU) <- c(N_age,s_ICU,trans_classes)
-dim(n_II_ICU) <- c(N_age,s_ICU,trans_classes)
-dim(p_recov_ICU) <- c(N_age)
+#Vector handling who progress to ICU
+dim(p_ICU_hosp) <- c(N_age)
 
-#Vectors handling the R_hosp class
-dim(R_hosp) <- c(N_age,s_rec,trans_classes)
-dim(R0_hosp) <- c(N_age,s_rec,trans_classes)
-dim(aux_R_hosp) <- c(N_age,s_rec,trans_classes)
-dim(delta_R_hosp) <- c(N_age,s_rec,trans_classes)
-dim(n_R_hosp) <- c(N_age,s_rec,trans_classes)
+#Vectors handling the I_hosp_R class
+dim(I_hosp_R) <- c(N_age,s_hosp_R,trans_classes)
+dim(I0_hosp_R) <- c(N_age,s_hosp_R,trans_classes)
+dim(aux_II_hosp_R) <- c(N_age,s_hosp_R,trans_classes)
+dim(delta_I_hosp_R) <- c(N_age,s_hosp_R,trans_classes)
+dim(n_II_hosp_R) <- c(N_age,s_hosp_R,trans_classes)
+
+#Vectors handling the I_hosp_D class
+dim(I_hosp_D) <- c(N_age,s_hosp_D,trans_classes)
+dim(I0_hosp_D) <- c(N_age,s_hosp_D,trans_classes)
+dim(aux_II_hosp_D) <- c(N_age,s_hosp_D,trans_classes)
+dim(delta_I_hosp_D) <- c(N_age,s_hosp_D,trans_classes)
+dim(n_II_hosp_D) <- c(N_age,s_hosp_D,trans_classes)
+
+#Vectors handling the I_ICU_R class
+dim(I_ICU_R) <- c(N_age,s_ICU_R,trans_classes)
+dim(I0_ICU_R) <- c(N_age,s_ICU_R,trans_classes)
+dim(aux_II_ICU_R) <- c(N_age,s_ICU_R,trans_classes)
+dim(delta_I_ICU_R) <- c(N_age,s_ICU_R,trans_classes)
+dim(n_II_ICU_R) <- c(N_age,s_ICU_R,trans_classes)
+
+#Vectors handling the I_ICU_D class
+dim(I_ICU_D) <- c(N_age,s_ICU_D,trans_classes)
+dim(I0_ICU_D) <- c(N_age,s_ICU_D,trans_classes)
+dim(aux_II_ICU_D) <- c(N_age,s_ICU_D,trans_classes)
+dim(delta_I_ICU_D) <- c(N_age,s_ICU_D,trans_classes)
+dim(n_II_ICU_D) <- c(N_age,s_ICU_D,trans_classes)
+
+#Vectors handling the R_stepdown class
+dim(R_stepdown) <- c(N_age,s_stepdown,trans_classes)
+dim(R0_stepdown) <- c(N_age,s_stepdown,trans_classes)
+dim(aux_R_stepdown) <- c(N_age,s_stepdown,trans_classes)
+dim(delta_R_stepdown) <- c(N_age,s_stepdown,trans_classes)
+dim(n_R_stepdown) <- c(N_age,s_stepdown,trans_classes)
 
 #Vectors handling the R class
 dim(R) <- c(N_age)
@@ -298,16 +375,22 @@ dim(n_EI_mild) <- c(N_age,trans_classes)
 dim(n_EI_ILI) <- c(N_age,trans_classes)
 
 #Vectors handling number of new hospitalisations, ICU admissions and recoveries in hospital
-dim(n_hosp_to_ICU) <- c(N_age,trans_classes)
 dim(n_ILI_to_hosp) <- c(N_age,trans_classes)
-dim(n_ICU_to_R_hosp) <- c(N_age,trans_classes)
+dim(n_hosp_non_ICU) <- c(N_age,trans_classes)
+dim(n_ILI_to_hosp_D) <- c(N_age,trans_classes)
+dim(n_ILI_to_hosp_R) <- c(N_age,trans_classes)
+dim(n_ILI_to_triage) <- c(N_age,trans_classes)
+dim(n_triage_to_ICU_D) <- c(N_age,trans_classes)
+dim(n_triage_to_ICU_R) <- c(N_age,trans_classes)
+dim(n_ICU_to_R_stepdown) <- c(N_age,trans_classes)
 
 #Vectors handling the severity profile
 dim(p_asympt) <- c(N_age)
 dim(p_sympt_ILI) <- c(N_age)
 
-#Vectors handling the potential death in hospital before critical care
-dim(p_death_hosp) <- c(N_age)
+#Vectors handling the potential death in hospital (general beds and ICU)
+dim(p_death_hosp_D) <- c(N_age)
+dim(p_death_ICU) <- c(N_age)
 
 #Vectors handling the age specific heterogeneous transmission process
 dim(lambda) <- N_age
@@ -317,7 +400,8 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
-N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
+N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_triage) +
+  sum(I_hosp_R) + sum(I_hosp_D) + sum(I_ICU_R) + sum(I_ICU_D) + sum(R_stepdown)
 output(N_tot) <- TRUE
 
 #Tracker of population size

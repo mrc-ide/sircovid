@@ -25,8 +25,8 @@ basic <- function (beta_t, beta_y, D0, dt, E0, hosp_transmission, I0_asympt,
 }
 class(basic) <- "odin_generator"
 attr(basic, "ir") <- .basic$public_fields$ir
-.diffusion_beta <- odin:::odin_c_class("diffusion_beta", list(get_internal = "diffusion_beta_get_internal", finalise = "diffusion_beta_finalise", create = "diffusion_beta_create", initmod_desolve = "diffusion_beta_initmod_desolve", contents = "diffusion_beta_contents", set_user = "diffusion_beta_set_user", metadata = "diffusion_beta_metadata", initial_conditions = "diffusion_beta_initial_conditions", rhs = "diffusion_beta_rhs", rhs_dde = "diffusion_beta_rhs_dde", rhs_r = "diffusion_beta_rhs_r"), c("D0", "dt", "E0", "hosp_transmission", "I0_asympt", "I0_hosp", "I0_ICU", "I0_ILI", "I0_mild", "ICU_transmission", "m", "N_age", "p_asympt", "p_death_hosp", "p_recov_hosp", "p_recov_ICU", "p_recov_ILI", "p_sympt_ILI", "R0", "R0_hosp", "s_asympt", "s_E", "s_hosp", "s_ICU", "s_ILI", "s_mild", "s_rec", "S0", "trans_classes", "trans_increase", "trans_profile", "x0", "gamma_asympt", "gamma_E", "gamma_hosp", "gamma_ICU", "gamma_ILI", "gamma_mild", "gamma_rec", "sd_x"), list(discrete = TRUE, has_array = TRUE, has_output = TRUE, has_user = TRUE, has_delay = FALSE, has_interpolate = FALSE, has_stochastic = TRUE, has_include = FALSE, initial_time_dependent = FALSE), "sircovid", "odin/diffusion_beta.json", TRUE)
-diffusion_beta <- function (D0, dt, E0, hosp_transmission, I0_asympt, I0_hosp,
+.diffusion_beta_tmp <- odin:::odin_c_class("diffusion_beta_tmp", list(get_internal = "diffusion_beta_tmp_get_internal", finalise = "diffusion_beta_tmp_finalise", create = "diffusion_beta_tmp_create", initmod_desolve = "diffusion_beta_tmp_initmod_desolve", contents = "diffusion_beta_tmp_contents", set_user = "diffusion_beta_tmp_set_user", metadata = "diffusion_beta_tmp_metadata", initial_conditions = "diffusion_beta_tmp_initial_conditions", rhs = "diffusion_beta_tmp_rhs", rhs_dde = "diffusion_beta_tmp_rhs_dde", rhs_r = "diffusion_beta_tmp_rhs_r"), c("D0", "dt", "E0", "hosp_transmission", "I0_asympt", "I0_hosp", "I0_ICU", "I0_ILI", "I0_mild", "ICU_transmission", "m", "N_age", "p_asympt", "p_death_hosp", "p_recov_hosp", "p_recov_ICU", "p_recov_ILI", "p_sympt_ILI", "R0", "R0_hosp", "s_asympt", "s_E", "s_hosp", "s_ICU", "s_ILI", "s_mild", "s_rec", "S0", "trans_classes", "trans_increase", "trans_profile", "x0", "gamma_asympt", "gamma_E", "gamma_hosp", "gamma_ICU", "gamma_ILI", "gamma_mild", "gamma_rec", "sd_x"), list(discrete = TRUE, has_array = TRUE, has_output = TRUE, has_user = TRUE, has_delay = FALSE, has_interpolate = FALSE, has_stochastic = TRUE, has_include = FALSE, initial_time_dependent = FALSE), "sircovid", "odin/diffusion_beta_tmp.json", TRUE)
+diffusion_beta_tmp <- function (D0, dt, E0, hosp_transmission, I0_asympt, I0_hosp,
     I0_ICU, I0_ILI, I0_mild, ICU_transmission, m, N_age, p_asympt,
     p_death_hosp, p_recov_hosp, p_recov_ICU, p_recov_ILI, p_sympt_ILI,
     R0, R0_hosp, s_asympt, s_E, s_hosp, s_ICU, s_ILI, s_mild,
@@ -47,6 +47,39 @@ diffusion_beta <- function (D0, dt, E0, hosp_transmission, I0_asympt, I0_hosp,
         gamma_hosp = gamma_hosp, gamma_ICU = gamma_ICU, gamma_ILI = gamma_ILI,
         gamma_mild = gamma_mild, gamma_rec = gamma_rec, sd_x = sd_x),
     unused_user_action = NULL)
+{
+    .diffusion_beta_tmp$new(user, unused_user_action)
+}
+class(diffusion_beta_tmp) <- "odin_generator"
+attr(diffusion_beta_tmp, "ir") <- .diffusion_beta_tmp$public_fields$ir
+.diffusion_beta <- odin:::odin_c_class("diffusion_beta", list(get_internal = "diffusion_beta_get_internal", finalise = "diffusion_beta_finalise", create = "diffusion_beta_create", initmod_desolve = "diffusion_beta_initmod_desolve", contents = "diffusion_beta_contents", set_user = "diffusion_beta_set_user", metadata = "diffusion_beta_metadata", initial_conditions = "diffusion_beta_initial_conditions", rhs = "diffusion_beta_rhs", rhs_dde = "diffusion_beta_rhs_dde", rhs_r = "diffusion_beta_rhs_r"), c("D0", "dt", "E0", "hosp_transmission", "I0_asympt", "I0_hosp_D", "I0_hosp_R", "I0_ICU_D", "I0_ICU_R", "I0_ILI", "I0_mild", "I0_triage", "ICU_transmission", "m", "N_age", "p_asympt", "p_death_hosp_D", "p_death_ICU", "p_ICU_hosp", "p_recov_ILI", "p_sympt_ILI", "R0", "R0_stepdown", "s_asympt", "s_E", "s_hosp_D", "s_hosp_R", "s_ICU_D", "s_ICU_R", "s_ILI", "s_mild", "s_stepdown", "s_triage", "S0", "trans_classes", "trans_increase", "trans_profile", "x0", "gamma_asympt", "gamma_E", "gamma_hosp_D", "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_R", "gamma_ILI", "gamma_mild", "gamma_stepdown", "gamma_triage", "sd_x"), list(discrete = TRUE, has_array = TRUE, has_output = TRUE, has_user = TRUE, has_delay = FALSE, has_interpolate = FALSE, has_stochastic = TRUE, has_include = FALSE, initial_time_dependent = FALSE), "sircovid", "odin/diffusion_beta.json", TRUE)
+diffusion_beta <- function (D0, dt, E0, hosp_transmission, I0_asympt, I0_hosp_D,
+    I0_hosp_R, I0_ICU_D, I0_ICU_R, I0_ILI, I0_mild, I0_triage,
+    ICU_transmission, m, N_age, p_asympt, p_death_hosp_D, p_death_ICU,
+    p_ICU_hosp, p_recov_ILI, p_sympt_ILI, R0, R0_stepdown, s_asympt,
+    s_E, s_hosp_D, s_hosp_R, s_ICU_D, s_ICU_R, s_ILI, s_mild,
+    s_stepdown, s_triage, S0, trans_classes, trans_increase,
+    trans_profile, x0, gamma_asympt = NULL, gamma_E = NULL, gamma_hosp_D = NULL,
+    gamma_hosp_R = NULL, gamma_ICU_D = NULL, gamma_ICU_R = NULL,
+    gamma_ILI = NULL, gamma_mild = NULL, gamma_stepdown = NULL,
+    gamma_triage = NULL, sd_x = NULL, user = list(D0 = D0, dt = dt,
+        E0 = E0, hosp_transmission = hosp_transmission, I0_asympt = I0_asympt,
+        I0_hosp_D = I0_hosp_D, I0_hosp_R = I0_hosp_R, I0_ICU_D = I0_ICU_D,
+        I0_ICU_R = I0_ICU_R, I0_ILI = I0_ILI, I0_mild = I0_mild,
+        I0_triage = I0_triage, ICU_transmission = ICU_transmission,
+        m = m, N_age = N_age, p_asympt = p_asympt, p_death_hosp_D = p_death_hosp_D,
+        p_death_ICU = p_death_ICU, p_ICU_hosp = p_ICU_hosp, p_recov_ILI = p_recov_ILI,
+        p_sympt_ILI = p_sympt_ILI, R0 = R0, R0_stepdown = R0_stepdown,
+        s_asympt = s_asympt, s_E = s_E, s_hosp_D = s_hosp_D,
+        s_hosp_R = s_hosp_R, s_ICU_D = s_ICU_D, s_ICU_R = s_ICU_R,
+        s_ILI = s_ILI, s_mild = s_mild, s_stepdown = s_stepdown,
+        s_triage = s_triage, S0 = S0, trans_classes = trans_classes,
+        trans_increase = trans_increase, trans_profile = trans_profile,
+        x0 = x0, gamma_asympt = gamma_asympt, gamma_E = gamma_E,
+        gamma_hosp_D = gamma_hosp_D, gamma_hosp_R = gamma_hosp_R,
+        gamma_ICU_D = gamma_ICU_D, gamma_ICU_R = gamma_ICU_R,
+        gamma_ILI = gamma_ILI, gamma_mild = gamma_mild, gamma_stepdown = gamma_stepdown,
+        gamma_triage = gamma_triage, sd_x = sd_x), unused_user_action = NULL)
 {
     .diffusion_beta$new(user, unused_user_action)
 }
