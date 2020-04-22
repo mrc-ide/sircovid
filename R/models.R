@@ -33,9 +33,9 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
   basic
 }
 
-##' Create a hosptial model
+##' Create a hospital model
 ##' 
-##' @title Hosptial model
+##' @title Hospital model
 ##' 
 ##' @param use_fitted_parameters Override progression_groups and gammas with fitted
 ##'   parameters loaded by \code{read_fitted_parameters()}
@@ -75,6 +75,52 @@ hospital_model <- function(use_fitted_parameters = TRUE,
                 progression_groups = progression_groups,
                 gammas = gammas,
                 compare_model = compare_model)
+  class(hospital) <- c(model_class, "sircovid_basic")
+  hospital
+}
+
+##' Create a beta diffusion model
+##' 
+##' @title Beta diffusion model
+##' 
+##' @param use_fitted_parameters Override progression_groups and gammas with fitted
+##'   parameters loaded by \code{read_fitted_parameters()}
+##' 
+##' @param progression_groups List of number of progression groups in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'
+##'   
+##' @param gammas List of exponential distribution rates for time in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'
+##'   
+##' @export
+beta_diffusion_model <- function(use_fitted_parameters = TRUE,
+                           progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
+                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5)) {
+  model_class <- "sircovid_beta_diffusion"
+  odin_model <- load_odin_model("beta_diffusion_model")
+  generate_beta_func <- generate_beta
+  compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
+  
+  # Overwrite with fitted parameters if loaded
+  if (use_fitted_parameters) {
+    fitted_parameters <- read_fitted_parameters()
+    progression_groups[names(fitted_parameters$progression_groups)] <- fitted_parameters$progression_groups 
+    gammas[names(fitted_parameters$gammas)] <- fitted_parameters$gammas 
+  }
+  
+  model_partitions <- partition_names(model_class)
+  if (any(!(model_partitions %in% names(progression_groups)))) {
+    stop("progression_groups need to be defined for all partitions")
+  }
+  if (any(!(model_partitions %in% names(gammas)))) {
+    stop("gammas need to be defined for all partitions")
+  }
+  
+  hospital <- list(odin_model = odin_model,
+                   generate_beta_func = generate_beta_func,
+                   progression_groups = progression_groups,
+                   gammas = gammas,
+                   compare_model = compare_model)
   class(hospital) <- c(model_class, "sircovid_basic")
   hospital
 }
