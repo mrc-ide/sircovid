@@ -171,7 +171,7 @@ I0_ICU[,,] <- user()
 R0_hosp[,,] <- user()
 R0[] <- user()
 D0[] <- user()
-x0 <- user(-2)
+x0 <- user()
 
 #Parameters of the E classes
 s_E <- user()

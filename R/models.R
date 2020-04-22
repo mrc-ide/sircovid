@@ -79,7 +79,7 @@ hospital_model <- function(use_fitted_parameters = TRUE,
   hospital
 }
 
-##' Create a beta diffusion model
+##' Create a beta diffusion model. Inherits from hospital_model
 ##' 
 ##' @title Beta diffusion model
 ##' 
@@ -97,31 +97,12 @@ beta_diffusion_model <- function(use_fitted_parameters = TRUE,
                            progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
                            gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5)) {
   model_class <- "sircovid_beta_diffusion"
-  odin_model <- load_odin_model("beta_diffusion_model")
-  generate_beta_func <- generate_beta
-  compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
+  beta_diffusion <- hospital_model(use_fitted_parameters = use_fitted_parameters,
+                                   progression_groups = progression_groups,
+                                   gammas = gammas)
+  beta_diffusion$odin_model <- load_odin_model("beta_diffusion_model")
   
-  # Overwrite with fitted parameters if loaded
-  if (use_fitted_parameters) {
-    fitted_parameters <- read_fitted_parameters()
-    progression_groups[names(fitted_parameters$progression_groups)] <- fitted_parameters$progression_groups 
-    gammas[names(fitted_parameters$gammas)] <- fitted_parameters$gammas 
-  }
-  
-  model_partitions <- partition_names(model_class)
-  if (any(!(model_partitions %in% names(progression_groups)))) {
-    stop("progression_groups need to be defined for all partitions")
-  }
-  if (any(!(model_partitions %in% names(gammas)))) {
-    stop("gammas need to be defined for all partitions")
-  }
-  
-  hospital <- list(odin_model = odin_model,
-                   generate_beta_func = generate_beta_func,
-                   progression_groups = progression_groups,
-                   gammas = gammas,
-                   compare_model = compare_model)
-  class(hospital) <- c(model_class, "sircovid_basic")
+  class(hospital) <- c(model_class, "sircovid_hospital")
   hospital
 }
 
