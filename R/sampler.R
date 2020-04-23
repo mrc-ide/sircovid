@@ -8,6 +8,8 @@
 ##' @param model An odin model, used to generate stochastic samples
 ##'
 ##' @param compare A function to generate log-weights
+##' 
+##' @param seeding_func A function used to seed the epidemic
 ##'
 ##' @param n_particles Number of particles
 ##'
@@ -26,7 +28,7 @@
 ##'   
 ##' @export
 ##' 
-particle_filter <- function(data, model, compare, n_particles,
+particle_filter <- function(data, model, compare, seeding_func, n_particles,
                             forecast_days = 0, save_particles = FALSE, 
                             save_sample_state = FALSE, save_end_states = FALSE) {
   if (!inherits(data, "particle_filter_data")) {
@@ -49,27 +51,24 @@ particle_filter <- function(data, model, compare, n_particles,
   }
 
   i_state <- seq_along(model$initial()) + 1L
-
-  ## Special treatment for the burn-in phase; later we might use this
-  ## same approach for skipping steps though.
-  if (save_particles) {
+  
+  if (save_particles){
     ## Storage for all particles:
     particles <- array(NA_real_,
                        c(max(data$day_end) + 1L + forecast_days,
                          length(i_state), n_particles))
-    step <- seq(data$step_start[[1L]], data$step_end[[1L]],
-                attr(data, "steps_per_day"))
-    state_with_history <-
-      model$run(step, use_names = FALSE, replicate = n_particles)
-    particles[seq_len(data$day_end[[1]] + 1), , ] <-
-      state_with_history[, i_state, ]
-    state <- state_with_history[length(step), i_state, , drop = TRUE]
   } else {
     particles <- NULL
-    step <- c(data$step_start[[1L]], data$step_end[[1L]])
-    state <- model$run(step = step, use_names = FALSE, replicate = n_particles,
-                       return_minimal = TRUE)[, 1, , drop = TRUE]
   }
+
+  X <- pre_data_run(model = model,
+                    data = data,
+                    seeding_func = seeding_func, 
+                    n_particles = n_particles,
+                    i_state = i_state,
+                    particles = particles)
+  state <- X$state
+  particles <- X$particles
 
   log_likelihood <- 0
   for (t in seq_len(nrow(data))[-1L]) {
@@ -248,4 +247,52 @@ scale_log_weights <- function(log_weights) {
     average <- log(mean(weights)) + max_log_weights
   }
   list(weights = weights, average = average)
+}
+
+
+pre_data_run <- function(model, data, seeding_func,
+                         n_particles, i_state, particles){
+  
+  steps_per_day <- attr(data, "steps_per_day")
+  
+  state <- array(NA_real_,c(length(i_state),n_particles))
+  
+  seeding <- seeding_func(n_particles)
+  
+  if (!is.null(particles)) {
+    
+    for (i in seq_len(n_particles)){
+      #work out how many excess steps before next end of day
+      excess_steps <- (-seeding$step[i])%%steps_per_day
+      
+      if (excess_steps>0){
+        #run forward to next end of day
+        y <- model$run(step = c(seeding$step[i],seeding$step[i]+excess_steps), seeding$state[,i], 
+                       use_names = FALSE, return_minimal = TRUE)[, 1, drop = TRUE]
+        step <- seq(seeding$step[i]+excess_steps, data$step_end[[1L]],
+                    steps_per_day)
+        state_with_history <-
+          model$run(step, y, use_names = FALSE)
+        
+      } else {
+        step <- seq(seeding$step[i], data$step_end[[1L]],
+                steps_per_day)
+        state_with_history <-
+          model$run(step, use_names = FALSE)
+      }
+      particles[seq((seeding$step[i]+excess_steps)/steps_per_day,data$day_end[[1]]) + 1, , i] <-
+        state_with_history[, i_state]
+      state[,i] <- state_with_history[nrow(state_with_history), i_state, drop = TRUE]
+    }
+  
+  } else {
+    
+    for (i in seq_len(n_particles)){
+      state[,i] <- model$run(step = c(seeding$step[i],data$step_end[1L]), seeding$state[,i],
+                             use_names = FALSE, return_minimal = TRUE)[, 1, drop = TRUE]
+    }
+    
+  }
+  
+  list(state = state, particles = particles)
 }

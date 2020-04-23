@@ -14,6 +14,7 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
   model_class <- "sircovid_basic"
   odin_model <- load_odin_model("basic")
   generate_beta_func <- generate_beta
+  seeding_model <- seeding_function
   compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
   
   model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
@@ -28,6 +29,7 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
                 generate_beta_func = generate_beta_func,
                 progression_groups = progression_groups,
                 gammas = gammas,
+                seeding_model = seeding_model,
                 compare_model = compare_model)
   class(basic) <- (model_class)
   basic
@@ -53,6 +55,7 @@ hospital_model <- function(use_fitted_parameters = TRUE,
   model_class <- "sircovid_hospital"
   odin_model <- load_odin_model("new_hospital_model")
   generate_beta_func <- generate_beta
+  seeding_model <- seeding_function
   compare_model <- function(model, pars_obs, data) {compare_output(model, pars_obs, data, type=model_class)}
   
   # Overwrite with fitted parameters if loaded
@@ -74,6 +77,7 @@ hospital_model <- function(use_fitted_parameters = TRUE,
                 generate_beta_func = generate_beta_func,
                 progression_groups = progression_groups,
                 gammas = gammas,
+                seeding_model = seeding_model,
                 compare_model = compare_model)
   class(hospital) <- c(model_class, "sircovid_basic")
   hospital

@@ -1,3 +1,7 @@
+# sircovid 0.2.22
+
+- Add function for variable seeding of the epidemic
+
 # sircovid 0.2.21
 
 - Add date stamp to plots
