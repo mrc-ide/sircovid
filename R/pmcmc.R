@@ -391,6 +391,8 @@ pmcmc <- function(data,
       )
  
  if(output_proposals) {
+   proposals <- as.data.frame(proposals)
+   proposals$start_date <- data$date[1] - proposals$start_date
    out$proposals <- proposals
  }
  
