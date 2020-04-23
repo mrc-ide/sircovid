@@ -42,6 +42,8 @@
 ##' 
 ##' @param steps_per_day Number of steps per day
 ##' 
+##' @param output_proposals Logical indicating whether proposed parameter jumps should be output along with results
+##' 
 ##' @return list of length two containing
 ##' - List of inputs
 ##' - Matrix of accepted parameter samples, rows = iterations
@@ -111,7 +113,8 @@ pmcmc <- function(data,
                   log_likelihood = NULL,
                   log_prior = NULL,
                   n_particles = 1e2,
-                  steps_per_day = 4) {
+                  steps_per_day = 4, 
+                  output_proposals = FALSE) {
   
   # test pars_init input
   correct_format_vec <- function(pars) {
@@ -304,6 +307,16 @@ pmcmc <- function(data,
   states <- matrix(data = NA,
                    nrow = n_mcmc + 1L, 
                    ncol = length(curr_ss))
+    
+  
+  if(output_proposals) {
+    proposals <- matrix(data = NA, 
+                        nrow = n_mcmc + 1L, 
+                        ncol = length(res_init), 
+                        dimnames = list(NULL, 
+                                        names(res_init)))
+  }
+
   
   ## record initial results
   res[1, ] <- res_init
@@ -326,6 +339,13 @@ pmcmc <- function(data,
     prop_ll <- p_filter_est$log_likelihood
     prop_ss <- p_filter_est$sample_state
     prop_lpost <- prop_lprior + prop_ll
+    
+    if(output_proposals) {
+      proposals[iter, ] <- c(prop_pars, 
+                             'log_prior' = prop_lprior, 
+                             'log_likelihood' = prop_ll, 
+                             'log_posterior' = prop_lpost) 
+    }
     
     
     # calculate probability of acceptance
@@ -363,12 +383,18 @@ pmcmc <- function(data,
   
   
   
- list('inputs' = inputs, 
+ out <- list('inputs' = inputs, 
       'results' = as.data.frame(res),
       'states' = states, 
       'acceptance_rate' = 1-rejection_rate, 
       "ess" = ess
       )
+ 
+ if(output_proposals) {
+   out$proposals <- proposals
+ }
+ 
+ out
 
 }
 
