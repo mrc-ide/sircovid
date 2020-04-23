@@ -312,9 +312,10 @@ pmcmc <- function(data,
   if(output_proposals) {
     proposals <- matrix(data = NA, 
                         nrow = n_mcmc + 1L, 
-                        ncol = length(res_init), 
+                        ncol = length(res_init) + 1L, 
                         dimnames = list(NULL, 
-                                        names(res_init)))
+                                        c(names(res_init), 
+                                          'accept_prob')))
   }
 
   
@@ -340,13 +341,6 @@ pmcmc <- function(data,
     prop_ss <- p_filter_est$sample_state
     prop_lpost <- prop_lprior + prop_ll
     
-    if(output_proposals) {
-      proposals[iter, ] <- c(prop_pars, 
-                             'log_prior' = prop_lprior, 
-                             'log_likelihood' = prop_ll, 
-                             'log_posterior' = prop_lpost) 
-    }
-    
     
     # calculate probability of acceptance
     accept_prob <- exp(prop_lpost - curr_lpost)
@@ -367,6 +361,15 @@ pmcmc <- function(data,
                      'log_likelihood' = curr_ll, 
                      'log_posterior' = curr_lpost) 
     states[iter, ] <- curr_ss
+    
+    
+    if(output_proposals) {
+      proposals[iter, ] <- c(prop_pars, 
+                             'log_prior' = prop_lprior, 
+                             'log_likelihood' = prop_ll, 
+                             'log_posterior' = prop_lpost, 
+                             'accept_prob' = min(accept_prob, 1)) 
+    }
 
   }
   # end progress bar
