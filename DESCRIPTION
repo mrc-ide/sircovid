@@ -43,5 +43,8 @@ Imports:
     mvtnorm,
     coda
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 RoxygenNote: 7.1.0
+VignetteBuilder: knitr
