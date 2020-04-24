@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ## Write your new odin model
-Write a new odin model and save it as `inst/odin/<model_name>.R`. The easiest way to do this is copy an existing model and modfiy it. Things to bear in mind for the subsequent steps:
+Write a new odin model and save it as `inst/odin/<model_name>.R`. The easiest way to do this is copy an existing model and modify it. Things to bear in mind for the subsequent steps:
 
 * Have you added any `user` parameters which will need to be passed in?
 * Have you renamed any parameters?
