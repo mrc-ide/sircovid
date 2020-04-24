@@ -42,6 +42,32 @@ test_that("Small grid search works", {
   plot(scan_results)
 })
 
+test_that("Warning is issued if grid does not explore low likelihood regions", {
+
+  data <- readRDS("hospital_model_data.rds")
+  expect_warning(
+    scan_beta_date(
+    min_beta = 0.2,
+    max_beta = 0.2,
+    beta_step = 0.01,
+    first_start_date = "2020-01-21",
+    last_start_date = "2020-01-22",
+    day_step = 1,
+    data = data,
+    sircovid_model = hospital_model(),
+    scale_prior = 0.003541667,
+    shape_prior = 36,
+    n_particles = 2,
+    ## 292 0s before a non-zero number when I run stuff.
+    ## Hence I am setting tolerance to be very high.
+    ## In practice, we migh need less.
+    tolerance = 1e-10
+    ),
+    "Edges of the probability matrix are not close enough to 0."
+  )
+})
+
+
 test_that("Small grid search works with new model", {
   set.seed(1)
 
@@ -67,26 +93,6 @@ test_that("Small grid search works with new model", {
     scale_prior = 0.003541667,
     shape_prior = 36
     )
-
-
-  expect_warning(
-    scan_beta_date(
-    min_beta = min_beta,
-    max_beta = max_beta,
-    beta_step = beta_step,
-    first_start_date = first_start_date,
-    last_start_date = last_start_date,
-    day_step = day_step,
-    data = data,
-    sircovid_model = hospital_model(),
-    scale_prior = 0.003541667,
-    shape_prior = 36,
-    ## 292 0s before a non-zero number when I run stuff.
-    ## Hence I am setting tolerance to be very high.
-    ## In practice, we migh need less.
-    tolerance = 1e-300
-    )
-  )
 
 
 

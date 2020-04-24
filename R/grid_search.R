@@ -128,17 +128,9 @@ scan_beta_date <- function(
 
   # Exponentiate elements and normalise to 1 to get probabilities
   prob_matrix <- exp(mat_log_ll)
-  ## Check if the edges of the matrix in each dimension are close
-  ## enough to 0.
-  ## The first and last rows and the first and last columns
-  ## Or in case of multidimensional arrays, edges in each dimension.
-  close_enough <- zero_boundary(prob_matrix, tolerance = tolerance)
-
-  if (!close_enough) {
-    warning("Edges of the probability matrix are not close enough to 0.")
-  }
 
   renorm_mat_LL <- prob_matrix / sum(prob_matrix)
+
 
   # Apply the prior, if provided
   if (!is.null(shape_prior) && !is.null(scale_prior)) {
@@ -153,6 +145,18 @@ scan_beta_date <- function(
     exp_mat <- exp(mat_log_ll - max(mat_log_ll))
     renorm_mat_LL <- exp_mat / sum(exp_mat)
   }
+
+  ## Check if the edges of the matrix in each dimension are close
+  ## enough to 0.
+  ## The first and last rows and the first and last columns
+  ## Or in case of multidimensional arrays, edges in each dimension.
+
+  close_enough <- zero_boundary(renorm_mat_LL, tolerance = tolerance)
+
+  if (!close_enough) {
+    warning("Edges of the probability matrix are not close enough to 0.")
+  }
+
 
   results <- list(
     x = beta_1D,

@@ -17,8 +17,9 @@ sircovid_file <- function(path) {
 ##' @param dimension which dimension to pull
 ##' @param value along the dimension \code{dimension}, which value to
 ##' extract.
-##' @param drop
-##' @return
+##' @param drop logical. If TRUE the result is coerced to the lowest
+##' possible dimension. Recommend setting this to FALSE
+##' @return the appropriate edge of the aray
 ##' @details As an axample, if the dimensions of x are 3, 4, 5 then
 ##' \code{index_array(x, dimension = 1, value = 2)} will return
 ##' x[2, , ]
@@ -35,7 +36,6 @@ index_array <- function(x, dimension, value, drop = FALSE) {
     list(drop = drop)
   ))
   # Print it, just to make it easier to see what's going on
-  print(call)
 
   # Finally, evaluate it
   eval(call)
@@ -45,8 +45,10 @@ index_array <- function(x, dimension, value, drop = FALSE) {
 ##' tolerance of 0.
 ##'
 ##'
-##' @param array
-##' @param tolerance
+##' @param array Probability matrix whose edges need to be checked.
+##' Can be a matrix or an array.
+##' @param tolerance Edges of matrix should be at least this much away
+##' from 0.
 ##' @return TRUE if the each edge of array is within specified toleance
 ##' of 0, FALSE otherwise
 ##' @author Sangeeta Bhatia
