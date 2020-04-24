@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.2.22
+Version: 0.2.23
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -43,5 +43,8 @@ Imports:
     mvtnorm,
     coda
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 RoxygenNote: 7.1.0
+VignetteBuilder: knitr
