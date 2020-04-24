@@ -1,3 +1,7 @@
+# sircovid 0.2.22
+
+- Check grid search boundary is set correctly
+
 # sircovid 0.2.21
 
 - Add date stamp to plots
