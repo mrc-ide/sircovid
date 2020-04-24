@@ -53,12 +53,14 @@ particle_filter <- function(data, model, compare, seeding_func, n_particles,
   i_state <- seq_along(model$initial()) + 1L
   
   X <- pre_data_run(model = model,
-                    data = data,
                     seeding_func = seeding_func, 
+                    total_days = max(data$day_end) + 1L + forecast_days,
+                    steps_per_day = attr(data, "steps_per_day"),
+                    max_seeding_step = data$step_end[[1L]],
+                    max_seeding_day = data$day_end[[1L]],
                     n_particles = n_particles,
                     i_state = i_state,
-                    save_particles = save_particles,
-                    forecast_days = forecast_days)
+                    save_particles = save_particles)
   state <- X$state
   particles <- X$particles
 
@@ -242,10 +244,9 @@ scale_log_weights <- function(log_weights) {
 }
 
 
-pre_data_run <- function(model, data, seeding_func,
-                         n_particles, i_state, save_particles, forecast_days){
-  
-  steps_per_day <- attr(data, "steps_per_day")
+pre_data_run <- function(model, seeding_func, total_days, steps_per_day,
+                         max_seeding_step, max_seeding_day,
+                         n_particles, i_state, save_particles){
   
   state <- array(NA_real_,c(length(i_state),n_particles))
   
@@ -254,7 +255,7 @@ pre_data_run <- function(model, data, seeding_func,
   if (save_particles) {
     
     particles <- array(NA_real_,
-                       c(max(data$day_end) + 1L + forecast_days,
+                       c(total_days,
                          length(i_state), n_particles))
     
     for (i in seq_len(n_particles)){
@@ -265,18 +266,16 @@ pre_data_run <- function(model, data, seeding_func,
         #run forward to next end of day
         y <- model$run(step = c(seeding$step[i],seeding$step[i]+excess_steps), seeding$state[,i], 
                        use_names = FALSE, return_minimal = TRUE)[, 1, drop = TRUE]
-        step <- seq(seeding$step[i]+excess_steps, data$step_end[[1L]],
-                    steps_per_day)
+        step <- seq(seeding$step[i]+excess_steps, max_seeding_step, steps_per_day)
         state_with_history <-
           model$run(step, y, use_names = FALSE)
         
       } else {
-        step <- seq(seeding$step[i], data$step_end[[1L]],
-                steps_per_day)
+        step <- seq(seeding$step[i], max_seeding_step, steps_per_day)
         state_with_history <-
           model$run(step, use_names = FALSE)
       }
-      particles[seq((seeding$step[i]+excess_steps)/steps_per_day,data$day_end[[1]]) + 1, , i] <-
+      particles[seq((seeding$step[i]+excess_steps)/steps_per_day,max_seeding_day) + 1, , i] <-
         state_with_history[, i_state]
       state[,i] <- state_with_history[nrow(state_with_history), i_state, drop = TRUE]
     }
@@ -284,7 +283,7 @@ pre_data_run <- function(model, data, seeding_func,
   } else {
     
     for (i in seq_len(n_particles)){
-      state[,i] <- model$run(step = c(seeding$step[i],data$step_end[1L]), seeding$state[,i],
+      state[,i] <- model$run(step = c(seeding$step[i],max_seeding_step), seeding$state[,i],
                              use_names = FALSE, return_minimal = TRUE)[, 1, drop = TRUE]
     }
     particles <- NULL
