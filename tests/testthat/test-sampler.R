@@ -47,7 +47,7 @@ test_that("sampler runs without error", {
   mod <- sircovid_model$odin_model(user = pars_model)
   compare <- sircovid_model$compare_model(mod, pars_obs, d)
   
-  seeding_func <-sircovid_model$seeding_model(mod,d)
+  seeding_func <- sircovid_model$seeding_model(mod,d)
 
   cmp <- readRDS("reference.rds")
   dimnames(cmp$states) <- NULL
@@ -92,7 +92,6 @@ test_that("sampler runs without error", {
   expect_setequal(names(Y3), c("log_likelihood", "sample_state"))
   expect_equal(length(Y3$sample_state), dim(Y$states)[2])
 
-
   ## Testing plotting is always a nightmare
   if (FALSE) {
     set.seed(1)
@@ -103,6 +102,15 @@ test_that("sampler runs without error", {
     plot_particles(particles, ylab = "ICU")
     points(as.Date(data$date), data$itu / pars_obs$phi_ICU, pch = 19)
   }
+  
+  #Test when pars_seeding is not NULL
+  seeding_func <- sircovid_model$seeding_model(mod,d,pars_seeding = list(lambda = 20))
+  cmp <- readRDS('reference_seeding.rds')
+  set.seed(1)
+  X <- particle_filter(d, mod, compare, seeding_func, n_particles = 100, save_particles = TRUE, forecast_days = 5)
+  expect_equal(X$log_likelihood, cmp$log_likelihood)
+  expect_equal(X$states, cmp$states)
+    
 })
 
 
