@@ -117,6 +117,7 @@ run_particle_filter <- function(data,
                                                   phi_death = 1789/1651,
                                                   k_death = 2,
                                                   exp_noise = 1e6),
+                                pars_seeding = NULL,
                                 n_particles = 1000,
                                 forecast_days = 0,
                                 save_particles = FALSE,
@@ -153,7 +154,7 @@ run_particle_filter <- function(data,
   #set up compare for observation likelihood
   compare_func <- sircovid_model$compare_model(model = model_func, pars_obs = obs_params, data = data)
   
-  seeding_func <- sircovid_model$seeding_model(model = model_func, data = data, pars_seeding = NULL)
+  seeding_func <- sircovid_model$seeding_model(model = model_func, data = data, pars_seeding = pars_seeding)
 
   pf_results <- particle_filter(data = data, 
                                 model = model_func,
