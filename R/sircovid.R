@@ -153,7 +153,7 @@ run_particle_filter <- function(data,
   #set up compare for observation likelihood
   compare_func <- sircovid_model$compare_model(model = model_func, pars_obs = obs_params, data = data)
   
-  seeding_func <- sircovid_model$seeding_model(model = model, data = data, pars_seeding = NULL)
+  seeding_func <- sircovid_model$seeding_model(model = model_func, data = data, pars_seeding = NULL)
 
   pf_results <- particle_filter(data = data, 
                                 model = model_func,
