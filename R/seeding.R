@@ -1,8 +1,8 @@
 ##' Seeding function for use with the particle filter
 ##' 
-##' @title Compare model to ICU data
+##' @title Seeding function for use with the particle filter
 ##' 
-##' @param model An \code{odin_model} object
+##' @param odin_model An \code{odin_model} object
 ##' 
 ##' @param data The data, must be constructed with
 ##'   \code{particle_filter_data}
@@ -13,7 +13,7 @@
 ##' @importFrom extraDistr rtpois
 ##' 
 ##' @export
-seeding_function <- function(model,
+seeding_function <- function(odin_model,
                              data,
                              pars_seeding = NULL
 ){
@@ -28,7 +28,7 @@ seeding_function <- function(model,
     
       #if pars_seeding is NULL, then we seed all particles at start_date with same state  
       step <- rep(min_seeding_step,n_particles)
-      initial_state <- model$initial()
+      initial_state <- odin_model$initial()
       state <- array(initial_state,dim=c(length(initial_state),n_particles))
     
     } else {
@@ -40,7 +40,7 @@ seeding_function <- function(model,
                                        a = first_data_step - max_seeding_step - 1, b = first_data_step - min_seeding_step)
     
       #this does the same as when pars_seeding is NULL, but the seeding state could also be varied between particles
-      initial_state <- model$initial()
+      initial_state <- odin_model$initial()
       state <- array(initial_state,dim=c(length(initial_state),n_particles))
     }
   
