@@ -7,7 +7,8 @@
 ##' @param data The data, must be constructed with
 ##'   \code{particle_filter_data}
 ##'
-##' @param pars_seeding A list of parameters used for seeding 
+##' @param pars_seeding A list of parameters used for seeding,
+##' e.g. pars_seeding = list(lambda = 20) 
 ##' 
 ##' @importFrom extraDistr rtpois
 ##' 
