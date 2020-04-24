@@ -28,7 +28,7 @@ update(R[]) <- R[i] + delta_R[i]
 update(D[]) <- D[i] + delta_D[i]
 
 #x=log(beta) tracker of intensity of transmission
-update(x) <- x + rnorm(mean = x, sd = sd_x)
+update(x) <- rnorm(mean = x, sd = sd_x)
 
 #derive transmission from x
 beta <- exp(x)

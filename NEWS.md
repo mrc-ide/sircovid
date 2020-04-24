@@ -1,3 +1,7 @@
+# sircovid 0.2.22
+
+- Add a new model "beta diffusion" where beta is modelled as a brownian motion
+
 # sircovid 0.2.21
 
 - Add date stamp to plots

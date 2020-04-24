@@ -8061,7 +8061,7 @@ void diffusion_beta_rhs(diffusion_beta_internal* internal, size_t step, double *
   double * D = state + internal->offset_variable_D;
   double x = state[0];
   double beta = exp(x);
-  state_next[0] = x + Rf_rnorm(x, internal->sd_x);
+  state_next[0] = Rf_rnorm(x, internal->sd_x);
   for (int i = 1; i <= internal->dim_I_with_diff_trans_1; ++i) {
     for (int j = 1; j <= internal->dim_I_with_diff_trans_2; ++j) {
       internal->I_with_diff_trans[i - 1 + internal->dim_I_with_diff_trans_1 * (j - 1)] = internal->trans_increase[internal->dim_trans_increase_1 * (j - 1) + i - 1] * (odin_sum3(I_asympt, i - 1, i, 0, internal->dim_I_asympt_2, j - 1, j, internal->dim_I_asympt_1, internal->dim_I_asympt_12) + odin_sum3(I_mild, i - 1, i, 0, internal->dim_I_mild_2, j - 1, j, internal->dim_I_mild_1, internal->dim_I_mild_12) + odin_sum3(I_ILI, i - 1, i, 0, internal->dim_I_ILI_2, j - 1, j, internal->dim_I_ILI_1, internal->dim_I_ILI_12) + internal->hosp_transmission * (odin_sum3(I_triage, i - 1, i, 0, internal->dim_I_triage_2, j - 1, j, internal->dim_I_triage_1, internal->dim_I_triage_12) + odin_sum3(I_hosp_R, i - 1, i, 0, internal->dim_I_hosp_R_2, j - 1, j, internal->dim_I_hosp_R_1, internal->dim_I_hosp_R_12) + odin_sum3(I_hosp_D, i - 1, i, 0, internal->dim_I_hosp_D_2, j - 1, j, internal->dim_I_hosp_D_1, internal->dim_I_hosp_D_12)) + internal->ICU_transmission * (odin_sum3(I_ICU_R, i - 1, i, 0, internal->dim_I_ICU_R_2, j - 1, j, internal->dim_I_ICU_R_1, internal->dim_I_ICU_R_12) + odin_sum3(I_ICU_D, i - 1, i, 0, internal->dim_I_ICU_D_2, j - 1, j, internal->dim_I_ICU_D_1, internal->dim_I_ICU_D_12)));
