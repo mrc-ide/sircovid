@@ -2,12 +2,12 @@
 % Please edit documentation in R/seeding.R
 \name{seeding_function}
 \alias{seeding_function}
-\title{Compare model to ICU data}
+\title{Seeding function for use with the particle filter}
 \usage{
-seeding_function(model, data, pars_seeding = NULL)
+seeding_function(odin_model, data, pars_seeding = NULL)
 }
 \arguments{
-\item{model}{An \code{odin_model} object}
+\item{odin_model}{An \code{odin_model} object}
 
 \item{data}{The data, must be constructed with
 \code{particle_filter_data}}

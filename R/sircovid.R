@@ -92,6 +92,8 @@ generate_data <- function(death_data_file,
 ##' @param obs_params List of parameters used for comparing
 ##'   model to data in the particle filter
 ##'   
+##' @param pars_seeding List of parameters used for seeding
+##'   
 ##' @param n_particles Number of particles  
 ##' 
 ##' @param forecast_days Days ahead to include in output
