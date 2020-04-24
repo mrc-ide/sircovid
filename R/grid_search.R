@@ -131,11 +131,8 @@ scan_beta_date <- function(
   ## Check if the edges of the matrix in each dimension are close
   ## enough to 0.
   ## The first and last rows and the first and last columns
-  close_enough <- (all(prob_matrix[1, ] < tolerance) &
-    all(prob_matrix[, 1] < tolerance) &
-    all(prob_matrix[nrow(prob_matrix), ] < tolerance) &
-    all(prob_matrix[, ncol(prob_matrix)] < tolerance)
-  )
+  ## Or in case of multidimensional arrays, edges in each dimension.
+  close_enough <- zero_boundary(prob_matrix, tolerance = tolerance)
 
   if (!close_enough) {
     warning("Edges of the probability matrix are not close enough to 0.")
