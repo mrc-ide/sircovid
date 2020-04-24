@@ -12,7 +12,8 @@ seeding_function(model, data, pars_seeding = NULL)
 \item{data}{The data, must be constructed with
 \code{particle_filter_data}}
 
-\item{pars_seeding}{Parameters for seeding}
+\item{pars_seeding}{A list of parameters used for seeding,
+e.g. pars_seeding = list(lambda = 20)}
 }
 \description{
 Seeding function for use with the particle filter

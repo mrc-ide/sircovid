@@ -18,7 +18,7 @@ scan_beta_date(
   n_particles = 100,
   scale_prior = NULL,
   shape_prior = NULL,
-  tolerance = 0.0000000001
+  tolerance = 1e-10
 )
 }
 \arguments{
