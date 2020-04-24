@@ -263,28 +263,38 @@ pre_data_run <- function(model, seeding_func, total_days, steps_per_day,
       excess_steps <- (-seeding$step[i])%%steps_per_day
       
       if (excess_steps>0){
-        #run forward to next end of day
-        y <- model$run(step = c(seeding$step[i],seeding$step[i]+excess_steps), seeding$state[,i], 
-                       use_names = FALSE, return_minimal = TRUE)[, 1, drop = TRUE]
-        step <- seq(seeding$step[i]+excess_steps, max_seeding_step, steps_per_day)
-        state_with_history <-
-          model$run(step, y, use_names = FALSE)
-        
+        step <- c(seeding$step[i],seq(seeding$step[i]+excess_steps, max_seeding_step, steps_per_day))
       } else {
         step <- seq(seeding$step[i], max_seeding_step, steps_per_day)
-        state_with_history <-
-          model$run(step, use_names = FALSE)
       }
-      particles[seq((seeding$step[i]+excess_steps)/steps_per_day,max_seeding_day) + 1, , i] <-
-        state_with_history[, i_state]
-      state[,i] <- state_with_history[nrow(state_with_history), i_state, drop = TRUE]
+      if (length(step)==1){
+        particles[max_seeding_day + 1, , i] <- seeding$state[,i]
+      } else {
+        state_with_history <-  model$run(step, seeding$state[,i], use_names = FALSE)[,i_state]
+        if (excess_steps>0){
+          #only include full days
+          particles[seq((seeding$step[i]+excess_steps)/steps_per_day,max_seeding_day) + 1, , i] <-
+            state_with_history[2:nrow(state_with_history),]
+        } else {
+          particles[seq(seeding$step[i]/steps_per_day,max_seeding_day) + 1, , i] <-
+            state_with_history
+        }
+         
+      }
     }
   
+    state <- particles[max_seeding_day + 1, , , drop = TRUE]
+    
   } else {
     
     for (i in seq_len(n_particles)){
-      state[,i] <- model$run(step = c(seeding$step[i],max_seeding_step), seeding$state[,i],
+      step <- c(seeding$step[i],max_seeding_step)
+      if (step[1L]==step[2L]){
+        state[,i] <- seeding$state[,i]
+      } else {
+        state[,i] <- model$run(step = step, seeding$state[,i],
                              use_names = FALSE, return_minimal = TRUE)[, 1, drop = TRUE]
+      }
     }
     particles <- NULL
   }
