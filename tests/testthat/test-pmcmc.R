@@ -75,7 +75,8 @@ test_that("pmcmc runs without error", {
                     dimnames = list(
                       c('beta', 'start_date'),
                       c('beta', 'start_date')
-                    ))
+                    )), 
+   output_proposals = TRUE
    
  )
  
@@ -145,7 +146,7 @@ test_that("pmcmc with new model", {
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model
   )
-
+  
   expect_is(X, 'list')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
