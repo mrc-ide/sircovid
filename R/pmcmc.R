@@ -336,7 +336,7 @@ pmcmc <- function(data,
     
     ## calculate proposed prior / lhood / posterior 
     prop_lprior <- calc_lprior(pars = prop_pars)
-    p_filter_est <- calc_ll(pars = curr_pars)
+    p_filter_est <- calc_ll(pars = prop_pars)
     prop_ll <- p_filter_est$log_likelihood
     prop_ss <- p_filter_est$sample_state
     prop_lpost <- prop_lprior + prop_ll
