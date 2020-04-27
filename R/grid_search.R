@@ -175,6 +175,198 @@ scan_beta_date <- function(
   results
 }
 
+##' Run a grid search of the particle filter over beta_start and beta_end.
+##' This is parallelised, first run \code{plan(multiprocess)} to set
+##' this up.
+##'
+##' @title Grid search of beta_start and beta_end
+##'
+##' @param min_beta_start Minimum value of beta_start in the search
+##'
+##' @param max_beta_start Maximum value of beta_start in the search
+##'
+##' @param beta_start_step Step to increment beta_start between min and max
+##'
+##' @param min_beta_start Minimum value of beta_end in the search
+##'
+##' @param max_beta_start Maximum value of beta_end in the search
+##'
+##' @param beta_start_step Step to increment beta_end between min and max
+##'
+##' @param earliest_seeding_date Earliest date for seeding the epidemic
+##'
+##' @param data Hosptial data to fit to. See \code{example.csv}
+##'   and \code{particle_filter_data()}
+##'
+##' @param sircovid_model An odin model generator and comparison function.
+##'
+##' @param model_params Model parameters, from a call to
+##'   \code{generate_parameters()}. If NULL, uses defaults as
+##'   in unit tests.
+##'
+##' @param pars_obs list of parameters to use for the comparison function.
+##'
+##' @param pars_seeding list of parameters for seeding
+##'
+##' @param n_particles Number of particles. Positive Integer. Default = 100
+##'
+##' @param beta_start_prior List of parameters for a gamma prior on beta_start
+##'   (list should contain \code{shape} and \code{scale})
+##'
+##' @param beta_end_prior List of parameters for a gamma prior on beta_start
+##'   (list should contain \code{shape} and \code{scale})
+##'   
+##' @param tolerance The smallest difference from 0 that is acceptable
+##' in the probability matrix.
+##' 
+##' @return List of beta_start and beta_end grid values, and
+##'   normalised probabilities at each point
+##'
+##' @export
+##' @import furrr
+##' @importFrom stats dgamma
+scan_beta_date <- function(
+  min_beta_start,
+  max_beta_start,
+  beta_start_step,
+  min_beta_end,
+  max_beta_end,
+  beta_end_step,
+  earliest_seeding_date,
+  data,
+  sircovid_model = basic_model(),
+  model_params = NULL,
+  pars_obs = NULL,
+  pars_seeding = NULL,
+  n_particles = 100,
+  beta_start_prior = NULL,
+  beta_end_prior = NULL,
+  tolerance = 1e-10) {
+  
+  # Parameter checks
+  if (!is.null(beta_start_prior) || !is.null(beta_end_prior)) {
+    if (!is.numeric(beta_start_prior$scale) || !is.numeric(beta_start_prior$shape) || !is.numeric(beta_end_prior$scale) || !is.numeric(beta_end_prior$shape)) {
+      stop("If provided, scale and shape must both be numeric for beta_start_prior and beta_end_prior")
+    }
+  }
+  
+  #
+  # Set up parameter space to scan
+  #
+  beta_start_1D <- seq(min_beta_start, max_beta_start, beta_start_step)
+  beta_end_1D <- seq(min_beta_end, max_beta_end, beta_end_step)
+  param_grid <- expand.grid(beta_start = beta_start_1D, beta_end = beta_end_1D)
+  
+  #
+  # Set up calls to simulator runs
+  #
+  if (is.null(model_params)) {
+    time_steps_per_day <- 4
+    model_params <- generate_parameters(
+      sircovid_model = sircovid_model,
+      transmission_model = "POLYMOD",
+      beta = 0.1,
+      beta_times = "2020-01-01",
+      trans_profile = 1,
+      trans_increase = 1,
+      dt = 1 / time_steps_per_day
+    )
+  } else {
+    if (length(model_params$beta_y) > 1) {
+      stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
+    }
+  }
+  
+  if (is.null(pars_obs)) {
+    pars_obs <- list(
+      phi_general = 0.95,
+      k_general = 2,
+      phi_ICU = 0.95,
+      k_ICU = 2,
+      phi_death = 1.15,
+      k_death = 2,
+      exp_noise = 1e6
+    )
+  }
+  
+  #
+  # Multi-core futures with furrr (parallel purrr)
+  #
+  ## Particle filter outputs, extracting log-likelihoods
+  pf_run_ll <- furrr::future_pmap_dbl(
+    .l = param_grid, .f = beta_start_end_particle_filter,
+    sircovid_model = sircovid_model, model_params = model_params, data = data,
+    start_date = earliest_seeding_date, pars_obs = pars_obs,
+    pars_seeding = pars_seeding, n_particles = n_particles,
+    forecast_days = 0, save_particles = FALSE, return = "ll"
+  )
+  
+  ## Construct a matrix with start_date as columns, and beta as rows
+  ## order of return is set by order passed to expand.grid, above
+  ## Returned column-major (down columns of varying beta) - set byrow = FALSE
+  mat_log_ll <- matrix(
+    pf_run_ll,
+    nrow = length(beta_start_1D),
+    ncol = length(beta_end_1D),
+    byrow = FALSE
+  )
+  
+  # Exponentiate elements and normalise to 1 to get probabilities
+  prob_matrix <- exp(mat_log_ll)
+  
+  renorm_mat_LL <- prob_matrix / sum(prob_matrix)
+  
+  
+  # Apply the priors, if provided
+  if (!is.null(beta_start_prior) && !is.null(beta_end_prior)) {
+    log_prior <- matrix(rep(dgamma(beta_start_1D,
+                                   shape = beta_start_prior$shape,
+                                   scale = beta_start_prior$scale,
+                                   log = TRUE
+    ), length(beta_end_1D)),
+    ncol = length(beta_end_1D)
+    ) + t(matrix(rep(dgamma(beta_end_1D,
+                          shape = beta_end_prior$shape,
+                          scale = beta_end_prior$scale,
+                          log = TRUE
+    ), length(beta_start_1D)),
+    ncol = length(beta_start_1D)
+    ))
+    mat_log_ll <- mat_log_ll + log_prior
+    exp_mat <- exp(mat_log_ll - max(mat_log_ll))
+    renorm_mat_LL <- exp_mat / sum(exp_mat)
+  }
+  
+  ## Check if the edges of the matrix in each dimension are close
+  ## enough to 0.
+  ## The first and last rows and the first and last columns
+  ## Or in case of multidimensional arrays, edges in each dimension.
+  
+  close_enough <- zero_boundary(renorm_mat_LL, tolerance = tolerance)
+  
+  if (!close_enough) {
+    warning("Edges of the probability matrix are not close enough to 0.")
+  }
+  
+  
+  results <- list(
+    x = beta_start_1D,
+    y = beta_end_1D,
+    mat_log_ll = mat_log_ll,
+    renorm_mat_LL = renorm_mat_LL,
+    inputs = list(
+      model = sircovid_model,
+      model_params = model_params,
+      pars_obs = pars_obs,
+      data = data
+    )
+  )
+  
+  class(results) <- "sircovid_scan_beta_start_end"
+  results
+}
+
+
 ##' @export
 plot.sircovid_scan <- function(x, ..., what = "likelihood", title = NULL) {
   if (what == "likelihood") {
@@ -186,6 +378,21 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood", title = NULL) {
     graphics::image(
       x = x$x, y = x$y, z = x$renorm_mat_LL,
       xlab = "beta", ylab = "Start date", main = title
+    )
+  }
+}
+
+##' @export
+plot.sircovid_scan_beta_start_end <- function(x, ..., what = "likelihood", title = NULL) {
+  if (what == "likelihood") {
+    graphics::image(
+      x = x$x, y = x$y, z = x$mat_log_ll,
+      xlab = "beta_start", ylab = "beta_end", main = title
+    )
+  } else if (what == "probability") {
+    graphics::image(
+      x = x$x, y = x$y, z = x$renorm_mat_LL,
+      xlab = "beta_start", ylab = "beta_end", main = title
     )
   }
 }
@@ -265,5 +472,37 @@ beta_date_particle_filter <- function(beta, start_date,
     pars_seeding = NULL, n_particles, forecast_days, save_particles, return
   )
 
+  X
+}
+
+##' Particle filter outputs
+##'
+##' Helper function to run the particle filter with a
+##' new beta_start and beta_end
+##'
+##' @noRd
+beta_start_end_particle_filter <- function(beta_start, beta_end,
+                                      sircovid_model,
+                                      model_params, data,
+                                      start_date,
+                                      pars_obs, pars_seeding,
+                                      n_particles, 
+                                      forecast_days = 0,
+                                      save_particles = FALSE,
+                                      return = "full") {
+  # Edit beta in parameters
+  new_beta <- sircovid_model$generate_beta_func(beta_start = beta_start,
+                                                start_date = start_date,
+                                                beta_end = beta_end)
+  beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
+  
+  model_params$beta_y <- new_beta$beta
+  model_params$beta_t <- beta_t
+  
+  X <- run_particle_filter(
+    data, sircovid_model, model_params, start_date, pars_obs,
+    pars_seeding, n_particles, forecast_days, save_particles, return
+  )
+  
   X
 }
