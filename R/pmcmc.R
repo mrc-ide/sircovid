@@ -42,6 +42,8 @@
 ##' 
 ##' @param steps_per_day Number of steps per day
 ##' 
+##' @param output_proposals Logical indicating whether proposed parameter jumps should be output along with results
+##' 
 ##' @return list of length two containing
 ##' - List of inputs
 ##' - Matrix of accepted parameter samples, rows = iterations
@@ -111,7 +113,8 @@ pmcmc <- function(data,
                   log_likelihood = NULL,
                   log_prior = NULL,
                   n_particles = 1e2,
-                  steps_per_day = 4) {
+                  steps_per_day = 4, 
+                  output_proposals = FALSE) {
   
   # test pars_init input
   correct_format_vec <- function(pars) {
@@ -142,6 +145,10 @@ pmcmc <- function(data,
   
   if(!correct_format_mat(cov_mat)) {
     stop("cov_mat must be a matrix or vector with names 'beta' and 'start_date'")
+  }
+  
+  if(!is.logical(output_proposals) | length(output_proposals) != 1) {
+    stop("output_proposals must be either TRUE or FALSE")
   }
   
   if (is.null(model_params)) {
@@ -304,6 +311,17 @@ pmcmc <- function(data,
   states <- matrix(data = NA,
                    nrow = n_mcmc + 1L, 
                    ncol = length(curr_ss))
+    
+  
+  if(output_proposals) {
+    proposals <- matrix(data = NA, 
+                        nrow = n_mcmc + 1L, 
+                        ncol = length(res_init) + 1L, 
+                        dimnames = list(NULL, 
+                                        c(names(res_init), 
+                                          'accept_prob')))
+  }
+
   
   ## record initial results
   res[1, ] <- res_init
@@ -322,7 +340,7 @@ pmcmc <- function(data,
     
     ## calculate proposed prior / lhood / posterior 
     prop_lprior <- calc_lprior(pars = prop_pars)
-    p_filter_est <- calc_ll(pars = curr_pars)
+    p_filter_est <- calc_ll(pars = prop_pars)
     prop_ll <- p_filter_est$log_likelihood
     prop_ss <- p_filter_est$sample_state
     prop_lpost <- prop_lprior + prop_ll
@@ -343,10 +361,19 @@ pmcmc <- function(data,
     
     # record results
     res[iter, ] <- c(curr_pars, 
-                     'log_prior' = curr_lprior, 
-                     'log_likelihood' = curr_ll, 
-                     'log_posterior' = curr_lpost) 
+                     curr_lprior, 
+                     curr_ll, 
+                     curr_lpost) 
     states[iter, ] <- curr_ss
+    
+    
+    if(output_proposals) {
+      proposals[iter, ] <- c(prop_pars, 
+                             prop_lprior, 
+                             prop_ll, 
+                             prop_lpost, 
+                             min(accept_prob, 1)) 
+    }
 
   }
   # end progress bar
@@ -363,12 +390,20 @@ pmcmc <- function(data,
   
   
   
- list('inputs' = inputs, 
+ out <- list('inputs' = inputs, 
       'results' = as.data.frame(res),
       'states' = states, 
       'acceptance_rate' = 1-rejection_rate, 
       "ess" = ess
       )
+ 
+ if(output_proposals) {
+   proposals <- as.data.frame(proposals)
+   proposals$start_date <- data$date[1] - proposals$start_date
+   out$proposals <- proposals
+ }
+ 
+ out
 
 }
 
