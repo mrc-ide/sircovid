@@ -17,7 +17,7 @@
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
-##' @param pars_init named list of initial inputs for parameters being sampled (currently beta and start_date)
+##' @param pars_init named list of initial inputs for parameters being sampled (currently beta_start and start_date)
 ##' 
 ##' @param pars_min named list of lower reflecting boundaries for parameter proposals
 ##' 
@@ -49,7 +49,7 @@
 ##' - Matrix of accepted parameter samples, rows = iterations
 ##'   as well as log prior, (particle filter estimate of) log likelihood and log posterior
 ##'   
-##' @description The user inputs initial parameter values for beta and sample_date
+##' @description The user inputs initial parameter values for beta_start and sample_date
 ##' The log prior likelihood of these parameters is calculated based on the user-defined
 ##' prior distributions.
 ##' The log likelihood of the data given the initial parameters is estimated using a particle filter,
@@ -64,7 +64,7 @@
 ##' 
 ##' The pMCMC sampler then proceeds as follows, for n_mcmc iterations:
 ##' At each loop iteration the pMCMC sampler perfsorms three steps:
-##'   1. Propose new candidate samples for beta and start_date based on
+##'   1. Propose new candidate samples for beta_start and start_date based on
 ##'     the current samples, using the proposal distribution 
 ##'     (currently multivariate Gaussian with user-input covariance matrix (cov_mat), and reflecting boundaries defined by pars_min, pars_max)
 ##'   2. Calculate the log prior of the proposed parameters, 
@@ -96,19 +96,19 @@ pmcmc <- function(data,
                                   phi_death = 926 / 1019,
                                   k_death = 2,
                                   exp_noise = 1e6),
-                  pars_init = list('beta' = 0.14, 
+                  pars_init = list('beta_start' = 0.14, 
                                    'start_date' = as.Date("2020-02-07")),
-                  pars_min = list('beta' = 0, 
+                  pars_min = list('beta_start' = 0, 
                                   'start_date' = 0),
-                  pars_max = list('beta' = 1, 
+                  pars_max = list('beta_start' = 1, 
                                   'start_date' = 1e6),
                   cov_mat = matrix(c(0.001^2, 0,
                                      0, 0.5^2), 
                                    nrow = 2, byrow = TRUE,
                                    dimnames = list(
-                                     c('beta', 'start_date'),
-                                     c('beta', 'start_date'))),
-                  pars_discrete = list('beta' = FALSE, 
+                                     c('beta_start', 'start_date'),
+                                     c('beta_start', 'start_date'))),
+                  pars_discrete = list('beta_start' = FALSE, 
                                        'start_date' = TRUE),
                   log_likelihood = NULL,
                   log_prior = NULL,
@@ -119,32 +119,32 @@ pmcmc <- function(data,
   # test pars_init input
   correct_format_vec <- function(pars) {
       is.list(pars) & setequal(names(pars), 
-                             c('beta', 'start_date'))
+                             c('beta_start', 'start_date'))
   }
   
   correct_format_mat <- function(pars) {
        setequal(rownames(pars),
                 colnames(pars)) & 
          setequal(rownames(pars),
-                   c('beta', 'start_date'))
+                   c('beta_start', 'start_date'))
   }
   
   if(!correct_format_vec(pars_init)) {
-    stop("pars_init must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_init must be a list of length two with names 'beta_start' and 'start_date'")
   }
   if(!correct_format_vec(pars_min)) {
-    stop("pars_min must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_min must be a list of length two with names 'beta_start' and 'start_date'")
   }
   
   if(!correct_format_vec(pars_max)) {
-    stop("pars_max must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_max must be a list of length two with names 'beta_start' and 'start_date'")
   }
   if(!correct_format_vec(pars_discrete)) {
-    stop("pars_discrete must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_discrete must be a list of length two with names 'beta_start' and 'start_date'")
   }
   
   if(!correct_format_mat(cov_mat)) {
-    stop("cov_mat must be a matrix or vector with names 'beta' and 'start_date'")
+    stop("cov_mat must be a matrix or vector with names 'beta_start' and 'start_date'")
   }
   
   if(!is.logical(output_proposals) | length(output_proposals) != 1) {
@@ -250,7 +250,7 @@ pmcmc <- function(data,
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
   }
-  if(curr_pars['beta'] < 0) {
+  if(curr_pars['beta_start'] < 0) {
     stop('beta must not be negative')
   }
   if(curr_pars['start_date'] < 0) {
@@ -413,7 +413,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
   start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
-  pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
+  pf_result <- beta_date_particle_filter(beta = pars[['beta_start']], 
                                          start_date = start_date,
                                          sircovid_model = sircovid_model,
                                          model_params = model_params,
