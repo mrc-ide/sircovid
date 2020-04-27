@@ -75,15 +75,17 @@ test_that("pmcmc runs without error", {
                     dimnames = list(
                       c('beta', 'start_date'),
                       c('beta', 'start_date')
-                    ))
+                    )), 
+   output_proposals = TRUE
    
  )
- 
+
  expect_equal(object = Z$results$beta, 
               expected = rep(Z$inputs$pars$pars_init$beta, n_mcmc + 1))
  expect_equal(object = Z$results$start_date, 
               expected = rep(Z$inputs$pars$pars_init$start_date, n_mcmc + 1))
  expect_true(!all(diff(Z$results$log_likelihood) == 0))
+ expect_equal(dim(Z$proposals), c(n_mcmc + 1L, 6))
 
  
 set.seed(1)
@@ -145,7 +147,7 @@ test_that("pmcmc with new model", {
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model
   )
-
+  
   expect_is(X, 'list')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
@@ -366,6 +368,18 @@ test_that("pmcmc error cases", {
     ),
     "pars_discrete entries must be logical"
   )
+
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
+      output_proposals = 0:1
+    ),
+    "output_proposals must be either TRUE or FALSE"
+  )
+  
+  
   
   ### checks on supplied log prior function
 

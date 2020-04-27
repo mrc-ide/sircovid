@@ -20,7 +20,8 @@ pmcmc(
   log_likelihood = NULL,
   log_prior = NULL,
   n_particles = 100,
-  steps_per_day = 4
+  steps_per_day = 4,
+  output_proposals = FALSE
 )
 }
 \arguments{
@@ -63,6 +64,8 @@ If NULL, uses uninformative priors which do not affect the posterior}
 \item{n_particles}{Number of particles}
 
 \item{steps_per_day}{Number of steps per day}
+
+\item{output_proposals}{Logical indicating whether proposed parameter jumps should be output along with results}
 }
 \value{
 list of length two containing
