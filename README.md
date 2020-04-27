@@ -24,7 +24,7 @@ install.packages("sircovid")
 or install directly from GitHub with:
 
 ```r
-remotes::install_github("mrc-ide/sircovid")
+remotes::install_github("mrc-ide/sircovid", build_vignettes = TRUE)
 ```
 
 You will need the most recent version of `dde`, not yet on CRAN, to use the package.  That will be installed automatically if you install `sircovid` from drat, or manually with:
@@ -33,3 +33,12 @@ You will need the most recent version of `dde`, not yet on CRAN, to use the pack
 drat:::add("ncov-ic")
 install.packages("dde")
 ```
+
+## Documentation
+Run:
+```
+browseVignettes("sircovid")
+```
+
+Current vignettes:
+- Adding a new model

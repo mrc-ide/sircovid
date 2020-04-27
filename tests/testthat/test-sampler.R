@@ -46,19 +46,21 @@ test_that("sampler runs without error", {
 
   mod <- sircovid_model$odin_model(user = pars_model)
   compare <- sircovid_model$compare_model(mod, pars_obs, d)
+  
+  seeding_func <- sircovid_model$seeding_model(mod,d)
 
   cmp <- readRDS("reference.rds")
   dimnames(cmp$states) <- NULL
   cmp$index <- NULL
 
   set.seed(1)
-  X <- particle_filter(d, mod, compare, n_particles = 100)
+  X <- particle_filter(d, mod, compare, seeding_func, n_particles = 100)
   expect_is(X, "list")
   expect_equal(names(X), "log_likelihood")
   expect_equal(X$log_likelihood, cmp$log_likelihood)
 
   set.seed(1)
-  Y <- particle_filter(d, mod, compare, n_particles = 100,
+  Y <- particle_filter(d, mod, compare, seeding_func, n_particles = 100,
                        save_particles = TRUE)
   expect_equal(X$log_likelihood, Y$log_likelihood)
   expect_setequal(names(Y), c("log_likelihood", "states"))
@@ -76,7 +78,7 @@ test_that("sampler runs without error", {
   expect_equal(Y2, cmp)
 
   set.seed(1)
-  Z <- particle_filter(d, mod, compare, n_particles = 100,
+  Z <- particle_filter(d, mod, compare, seeding_func, n_particles = 100,
                        save_particles = TRUE, forecast_days = 5)
   expect_equal(dim(Z$states), c(63, 238, 100))
   expect_equal(Z$states[1:58, , ], Y$states, check.attributes = FALSE)
@@ -84,23 +86,40 @@ test_that("sampler runs without error", {
   # Test that outputting with 'last' particles is equal to final state from outputting TRUE particles
   
   set.seed(1)
-  Y3 <- particle_filter(d, mod, compare, n_particles = 100,
+  Y3 <- particle_filter(d, mod, compare, seeding_func, n_particles = 100,
                         save_sample_state = TRUE)
   expect_equal(Y$log_likelihood, Y3$log_likelihood)
   expect_setequal(names(Y3), c("log_likelihood", "sample_state"))
   expect_equal(length(Y3$sample_state), dim(Y$states)[2])
 
-
   ## Testing plotting is always a nightmare
   if (FALSE) {
     set.seed(1)
-    Y <- particle_filter(d, mod, compare, n_particles = 100,
+    Y <- particle_filter(d, mod, compare, seeding_func, n_particles = 100,
                          save_particles = TRUE)
     index <- c(odin_index(mod)$I_ICU) - 1L
     particles <- apply(Y$states[, index, ], c(1, 3), sum)
     plot_particles(particles, ylab = "ICU")
     points(as.Date(data$date), data$itu / pars_obs$phi_ICU, pch = 19)
   }
+  
+  #Test when pars_seeding is not NULL
+  seeding_func <- sircovid_model$seeding_model(mod,d,pars_seeding = list(lambda = 20))
+  #cmp <- readRDS('reference_seeding.rds')
+  #Test with save_particles
+  set.seed(1)
+  X <- particle_filter(d, mod, compare, seeding_func, n_particles = 100, save_particles = TRUE, forecast_days = 5)
+  #expect_equal(X$log_likelihood, cmp$log_likelihood)
+  #expect_equal(X$states, cmp$states)
+  #Test with !save_particles
+  set.seed(1)
+  Y <- particle_filter(d, mod, compare, seeding_func, n_particles = 100)
+  expect_equal(X$log_likelihood, Y$log_likelihood)
+  
+  seeding_func <- sircovid_model$seeding_model(mod,d,pars_seeding = list(lambda = 0.5))
+  set.seed(1)
+  X <- particle_filter(d, mod, compare, seeding_func, n_particles = 100, save_particles = TRUE, forecast_days = 5)
+    
 })
 
 
@@ -163,24 +182,25 @@ test_that("particle_filter error cases", {
 
   mod <- sircovid_model$odin_model(user = pars_model)
   compare <- sircovid_model$compare_model(mod, pars_obs, d)
+  seeding_func <-sircovid_model$seeding_model(mod,d)
 
   expect_error(
-    particle_filter(NULL, mod, compare, 100),
+    particle_filter(NULL, mod, compare, seeding_func, 100),
     "Expected a data set derived from particle_filter_data")
   expect_error(
-    particle_filter(data, mod, compare, 100),
+    particle_filter(data, mod, compare, seeding_func, 100),
     "Expected a data set derived from particle_filter_data")
   expect_error(
-    particle_filter(d, NULL, compare, 100),
+    particle_filter(d, NULL, compare, seeding_func, 100),
     "Expected 'model' to be an 'odin_model' object")
   expect_error(
-    particle_filter(d, mod, compare, 1),
+    particle_filter(d, mod, compare, seeding_func, 1),
     "At least two particles required")
   expect_error(
-    particle_filter(d, mod, compare, 100, forecast_days = 1),
+    particle_filter(d, mod, compare, seeding_func, 100, forecast_days = 1),
     "forecasting only possible if particles are saved")
   expect_error(
-    particle_filter(d, mod, compare, 100, forecast_days = -1),
+    particle_filter(d, mod, compare, seeding_func, 100, forecast_days = -1),
     "forecast_days must be positive")
 })
 
