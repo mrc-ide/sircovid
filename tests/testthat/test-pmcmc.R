@@ -368,6 +368,18 @@ test_that("pmcmc error cases", {
     ),
     "pars_discrete entries must be logical"
   )
+
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
+      output_proposals = 0:1
+    ),
+    "output_proposals must be either TRUE or FALSE"
+  )
+  
+  
   
   ### checks on supplied log prior function
 

@@ -147,6 +147,10 @@ pmcmc <- function(data,
     stop("cov_mat must be a matrix or vector with names 'beta' and 'start_date'")
   }
   
+  if(!is.logical(output_proposals) | length(output_proposals) != 1) {
+    stop("output_proposals must be either TRUE or FALSE")
+  }
+  
   if (is.null(model_params)) {
     model_params <- generate_parameters(
       sircovid_model,
