@@ -79,12 +79,13 @@ test_that("pmcmc runs without error", {
    output_proposals = TRUE
    
  )
- 
+
  expect_equal(object = Z$results$beta, 
               expected = rep(Z$inputs$pars$pars_init$beta, n_mcmc + 1))
  expect_equal(object = Z$results$start_date, 
               expected = rep(Z$inputs$pars$pars_init$start_date, n_mcmc + 1))
  expect_true(!all(diff(Z$results$log_likelihood) == 0))
+ expect_equal(dim(Z$proposals), c(n_mcmc + 1L, 6))
 
  
 set.seed(1)

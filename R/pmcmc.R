@@ -357,18 +357,18 @@ pmcmc <- function(data,
     
     # record results
     res[iter, ] <- c(curr_pars, 
-                     'log_prior' = curr_lprior, 
-                     'log_likelihood' = curr_ll, 
-                     'log_posterior' = curr_lpost) 
+                     curr_lprior, 
+                     curr_ll, 
+                     curr_lpost) 
     states[iter, ] <- curr_ss
     
     
     if(output_proposals) {
       proposals[iter, ] <- c(prop_pars, 
-                             'log_prior' = prop_lprior, 
-                             'log_likelihood' = prop_ll, 
-                             'log_posterior' = prop_lpost, 
-                             'accept_prob' = min(accept_prob, 1)) 
+                             prop_lprior, 
+                             prop_ll, 
+                             prop_lpost, 
+                             min(accept_prob, 1)) 
     }
 
   }
