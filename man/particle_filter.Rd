@@ -8,6 +8,7 @@ particle_filter(
   data,
   model,
   compare,
+  seeding_func,
   n_particles,
   forecast_days = 0,
   save_particles = FALSE,
@@ -22,6 +23,8 @@ particle_filter(
 \item{model}{An odin model, used to generate stochastic samples}
 
 \item{compare}{A function to generate log-weights}
+
+\item{seeding_func}{A function used to seed the epidemic}
 
 \item{n_particles}{Number of particles}
 

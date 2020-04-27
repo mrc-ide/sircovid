@@ -262,7 +262,7 @@ beta_date_particle_filter <- function(beta, start_date,
 
   X <- run_particle_filter(
     data, sircovid_model, model_params, start_date, pars_obs,
-    n_particles, forecast_days, save_particles, return
+    pars_seeding = NULL, n_particles, forecast_days, save_particles, return
   )
 
   X

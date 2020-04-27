@@ -92,6 +92,8 @@ generate_data <- function(death_data_file,
 ##' @param obs_params List of parameters used for comparing
 ##'   model to data in the particle filter
 ##'   
+##' @param pars_seeding List of parameters used for seeding
+##'   
 ##' @param n_particles Number of particles  
 ##' 
 ##' @param forecast_days Days ahead to include in output
@@ -117,6 +119,7 @@ run_particle_filter <- function(data,
                                                   phi_death = 1789/1651,
                                                   k_death = 2,
                                                   exp_noise = 1e6),
+                                pars_seeding = NULL,
                                 n_particles = 1000,
                                 forecast_days = 0,
                                 save_particles = FALSE,
@@ -152,10 +155,13 @@ run_particle_filter <- function(data,
   
   #set up compare for observation likelihood
   compare_func <- sircovid_model$compare_model(model = model_func, pars_obs = obs_params, data = data)
+  
+  seeding_func <- sircovid_model$seeding_model(odin_model = model_func, data = data, pars_seeding = pars_seeding)
 
   pf_results <- particle_filter(data = data, 
                                 model = model_func,
-                                compare = compare_func, 
+                                compare = compare_func,
+                                seeding_func = seeding_func,
                                 n_particles = n_particles, 
                                 save_particles = save_particles,
                                 forecast_days = forecast_days,
