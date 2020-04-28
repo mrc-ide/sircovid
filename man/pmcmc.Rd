@@ -11,12 +11,15 @@ pmcmc(
   model_params = NULL,
   pars_obs = list(phi_general = 0.95, k_general = 2, phi_ICU = 0.95, k_ICU = 2,
     phi_death = 926/1019, k_death = 2, exp_noise = 1e+06),
-  pars_init = list(beta_start = 0.14, start_date = as.Date("2020-02-07")),
-  pars_min = list(beta_start = 0, start_date = 0),
-  pars_max = list(beta_start = 1, start_date = 1e+06),
-  cov_mat = matrix(c(0.001^2, 0, 0, 0.5^2), nrow = 2, byrow = TRUE, dimnames =
-    list(c("beta_start", "start_date"), c("beta_start", "start_date"))),
-  pars_discrete = list(beta_start = FALSE, start_date = TRUE),
+  pars_to_sample = c(beta_start = TRUE, beta_end = TRUE, start_date = TRUE),
+  pars_init = list(beta_start = 0.14, beta_end = 0.14 * 0.238, start_date =
+    as.Date("2020-02-07")),
+  pars_min = list(beta_start = 0, beta_end = 0, start_date = 0),
+  pars_max = list(beta_start = 1, beta_end = 1, start_date = 1e+06),
+  cov_mat = matrix(c(0.001^2, 0, 0, 0, 0.001^2, 0, 0, 0, 0.5^2), nrow = 3, byrow =
+    TRUE, dimnames = list(c("beta_start", "beta_end", "start_date"), c("beta_start",
+    "beta_end", "start_date"))),
+  pars_discrete = list(beta_start = FALSE, beta_end = FALSE, start_date = TRUE),
   log_likelihood = NULL,
   log_prior = NULL,
   n_particles = 100,
@@ -40,7 +43,9 @@ in unit tests.}
 with \code{compare_icu}. If NULL, uses
 list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)}
 
-\item{pars_init}{named list of initial inputs for parameters being sampled (currently beta_start and start_date)}
+\item{pars_to_sample}{named vector of logicals indicating whether parameter should be sampled (currently beta_start, beta_end and start_date)}
+
+\item{pars_init}{named list of initial inputs for parameters being sampled}
 
 \item{pars_min}{named list of lower reflecting boundaries for parameter proposals}
 
@@ -89,7 +94,7 @@ log likelihood estimate.
 
 The pMCMC sampler then proceeds as follows, for n_mcmc iterations:
 At each loop iteration the pMCMC sampler perfsorms three steps:
-  1. Propose new candidate samples for beta_start and start_date based on
+  1. Propose new candidate samples for beta_start, beta_end and start_date based on
     the current samples, using the proposal distribution 
     (currently multivariate Gaussian with user-input covariance matrix (cov_mat), and reflecting boundaries defined by pars_min, pars_max)
   2. Calculate the log prior of the proposed parameters, 
