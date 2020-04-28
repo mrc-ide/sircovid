@@ -17,7 +17,9 @@
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
-##' @param pars_init named list of initial inputs for parameters being sampled (currently beta_start, beta_end and start_date)
+##' @param pars_to_sample named vector of logicals indicating whether parameter should be sampled (currently beta_start, beta_end and start_date)
+##' 
+##' @param pars_init named list of initial inputs for parameters being sampled 
 ##' 
 ##' @param pars_min named list of lower reflecting boundaries for parameter proposals
 ##' 
@@ -96,6 +98,9 @@ pmcmc <- function(data,
                                   phi_death = 926 / 1019,
                                   k_death = 2,
                                   exp_noise = 1e6),
+                  pars_to_sample = c('beta_start' = TRUE,
+                                     'beta_end' = TRUE, 
+                                     'start_date' = TRUE),
                   pars_init = list('beta_start' = 0.14, 
                                    'beta_end' = 0.14*0.238,
                                    'start_date' = as.Date("2020-02-07")),
@@ -122,34 +127,38 @@ pmcmc <- function(data,
                   output_proposals = FALSE) {
   
   # test pars_init input
+  
+  par_names <- c('beta_start', 'beta_end', 'start_date')
+  par_names <- par_names[pars_to_sample[par_names]]
+  
   correct_format_vec <- function(pars) {
       is.list(pars) & setequal(names(pars), 
-                             c('beta_start', 'beta_end', 'start_date'))
+                             par_names)
   }
   
   correct_format_mat <- function(pars) {
        setequal(rownames(pars),
                 colnames(pars)) & 
          setequal(rownames(pars),
-                   c('beta_start',  'beta_end', 'start_date'))
+                   par_names)
   }
   
   if(!correct_format_vec(pars_init)) {
-    stop("pars_init must be a list of length three with names 'beta_start', 'beta_end' and 'start_date'")
+    stop("pars_init must be a named list corresponding to the parameters being sampled")
   }
   if(!correct_format_vec(pars_min)) {
-    stop("pars_min must be a list of length three with names 'beta_start', 'beta_end' and 'start_date'")
+    stop("pars_min must be a named list corresponding to the parameters being sampled")
   }
   
   if(!correct_format_vec(pars_max)) {
-    stop("pars_max must be a list of length three with names 'beta_start', 'beta_end' and 'start_date'")
+    stop("pars_max must be a named list corresponding to the parameters being sampled")
   }
   if(!correct_format_vec(pars_discrete)) {
-    stop("pars_discrete must be a list of length three with names 'beta_start', 'beta_end' and 'start_date'")
+    stop("pars_discrete must be a named list corresponding to the parameters being sampled")
   }
   
   if(!correct_format_mat(cov_mat)) {
-    stop("cov_mat must be a matrix or vector with names 'beta_start', 'beta_end' and 'start_date'")
+    stop("cov_mat must be a matrix or vector with names corresponding to the parameters being sampled")
   }
   
   if(!is.logical(output_proposals) | length(output_proposals) != 1) {
@@ -255,8 +264,13 @@ pmcmc <- function(data,
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
   }
-  if(curr_pars['beta_start'] < 0 | curr_pars['beta_end'] < 0) {
-    stop('beta must not be negative')
+  if(curr_pars['beta_start'] < 0) {
+    stop('beta_start must not be negative')
+  }
+  if(pars_to_sample['beta_end']) {
+    if(curr_pars['beta_end'] < 0) {
+      stop('beta_end must not be negative')
+    }
   }
   if(curr_pars['start_date'] < 0) {
     stop('start date must not be before first date of supplied data')
@@ -419,9 +433,15 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   # the model start date and the first date in the data
   start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
   
-  new_beta <- sircovid_model$generate_beta_func(beta_start = pars[['beta_start']], 
-                                                start_date = start_date, 
-                                                beta_end = pars[['beta_end']])
+  
+  if('beta_end' %in% names(pars)) {
+    new_beta <- sircovid_model$generate_beta_func(beta_start = pars[['beta_start']], 
+                                                  start_date = start_date, 
+                                                  beta_end = pars[['beta_end']])
+  } else {
+    new_beta <- sircovid_model$generate_beta_func(beta_start = pars[['beta_start']], 
+                                                  start_date = start_date)
+  }
   
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
