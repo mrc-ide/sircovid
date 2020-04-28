@@ -187,6 +187,7 @@ test_that("pmcmc with new model", {
 })
 
 test_that("pmcmc error cases", {
+  
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   n_mcmc <- 10
@@ -199,7 +200,7 @@ test_that("pmcmc error cases", {
       pars_init = list(0.5,
                        as.Date("2020-02-01"))
     ),
-    "pars_init must be a list of length two with names 'beta_start' and 'start_date'"
+    "pars_init must be a named list corresponding to the parameters being sampled"
   )
 
   ## beta_start too low
@@ -209,6 +210,7 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_init = list('beta_start' = -1,
+                       'beta_end' = 0,
                        'start_date' = as.Date("2020-02-01"))
     ),
     'initial parameters are outside of specified range'
@@ -220,7 +222,8 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_init = list('beta_start' = -1,
+      pars_init = list('beta_start' = 0.123,
+                       'beta_end' = 0.03,
                        'start_date' = as.Date(data$date[3]))
     ),
     'initial parameters are outside of specified range'
@@ -231,9 +234,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_init = list('beta_start' = 0.01,
+      pars_init = list('beta_start' = 0.123,
+                       'beta_end' = 0.03,
                        'start_date' = as.Date(data$date[1])), 
-      pars_min = list('beta_start' = 0, 'start_date' = 0)
+      pars_min = list('beta_start' = 0, 
+                      'beta_end' = 0,
+                      'start_date' = 0)
     ),
     "'start_date' must be less than the first date in data"
   )
@@ -254,10 +260,7 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      model_params = model_params,
-      pars_init = list('beta_start' = 0.01,
-                       'start_date' = as.Date(data$date[1])), 
-      pars_min = list('beta_start' = 0, 'start_date' = 0)
+      model_params = model_params
     ),
     "Set beta variation through generate_beta_func in sircovid_model, not model_params"
   )
@@ -268,10 +271,28 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_init = list('beta_start' = -0.01,
+                       'beta_end' = 0.03,
                        'start_date' =  as.Date("2020-02-01")), 
-      pars_min = list('beta_start' = -1 ,'start_date' = 0)
+      pars_min = list('beta_start' = -1 ,
+                      'beta_end' = -1,
+                      'start_date' = 0)
     ),
-    "beta must not be negative"
+    "beta_start must not be negative"
+  )
+  
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
+      pars_init = list('beta_start' = 0.123,
+                       'beta_end' = -0.03,
+                       'start_date' =  as.Date("2020-02-01")), 
+      pars_min = list('beta_start' = -1 ,
+                      'beta_end' = -1,
+                      'start_date' = 0)
+    ),
+    "beta_end must not be negative"
   )
   
   
@@ -281,9 +302,9 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_min  = list(0.5, 0)
+      pars_min  = list(0.5, 0.03,0)
     ),
-    "pars_min must be a list of length two with names 'beta_start' and 'start_date'"
+    "pars_min must be a named list corresponding to the parameters being sampled"
   )
   
   # incorrect format for pars_min
@@ -293,9 +314,10 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_min  = c('beta_start' = 0.5,
+                    'beta_end' = 0.03, 
                        'start_date' = 0)
     ),
-    "pars_min must be a list of length two with names 'beta_start' and 'start_date'"
+    "pars_min must be a named list corresponding to the parameters being sampled"
   )
   
   expect_error(
@@ -304,6 +326,7 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_min  = list('beta_start' = 0.5,
+                       'beta_end' = 0.03, 
                     'start_date' = as.Date(data$date[1]))
     ),
     "pars_min entries must be numeric"
@@ -315,9 +338,9 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_max  = list(0.5, 1e3)
+      pars_max  = list(0.5, 1, 1e3)
     ),
-    "pars_max must be a list of length two with names 'beta_start' and 'start_date'"
+    "pars_max must be a named list corresponding to the parameters being sampled"
   )
   
   # incorrect format for pars_max
@@ -327,9 +350,10 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_max  = c('beta_start' = 0.5,
+                    'beta_end' = 0.03, 
                     'start_date' = 1e3)
     ),
-    "pars_max must be a list of length two with names 'beta_start' and 'start_date'"
+    "pars_max must be a named list corresponding to the parameters being sampled"
   )
   
   expect_error(
@@ -338,6 +362,7 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_max  = list('beta_start' = 0.5,
+                       'beta_end' = 1, 
                        'start_date' = as.Date(data$date[1]))
     ),
     "pars_max entries must be numeric"
@@ -350,9 +375,9 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      cov_mat = list(0.5, 3)
+      cov_mat = list(0.5, 0.5, 3)
     ),
-    "cov_mat must be a matrix or vector with names 'beta_start' and 'start_date'"
+    "cov_mat must be a matrix or vector with names corresponding to the parameters being sampled"
   )
   
   # incorrect format for cov_mat
@@ -362,9 +387,10 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       cov_mat = list('beta_start' = 0.5,
+                     'beta_end' = 0.5,
                     'start_date' = 3)
     ),
-    "cov_mat must be a matrix or vector with names 'beta_start' and 'start_date'"
+    "cov_mat must be a matrix or vector with names corresponding to the parameters being sampled"
   )
   
   
@@ -374,9 +400,9 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_discrete = list(FALSE,TRUE)
+      pars_discrete = list(FALSE, FALSE, TRUE)
     ),
-    "pars_discrete must be a list of length two with names 'beta_start' and 'start_date'"
+    "pars_discrete must be a named list corresponding to the parameters being sampled"
   )
   # incorrect format for pars_discrete
   expect_error(
@@ -384,9 +410,11 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      pars_discrete = c('beta_start' = FALSE, 'start_date' = TRUE)
+      pars_discrete = c('beta_start' = FALSE, 
+                        'beta_end' = FALSE,
+                        'start_date' = TRUE)
     ),
-    "pars_discrete must be a list of length two with names 'beta_start' and 'start_date'"
+    "pars_discrete must be a named list corresponding to the parameters being sampled"
   )
   
   expect_error(
@@ -395,6 +423,7 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_discrete  = list('beta_start' = 0.5,
+                            'beta_end' = 0.5,
                        'start_date' = as.Date(data$date[1]))
     ),
     "pars_discrete entries must be logical"
