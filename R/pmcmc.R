@@ -435,27 +435,33 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   
   
   if('beta_end' %in% names(pars)) {
+    
     new_beta <- sircovid_model$generate_beta_func(beta_start = pars[['beta_start']], 
                                                   start_date = start_date, 
                                                   beta_end = pars[['beta_end']])
   } else {
-    new_beta <- sircovid_model$generate_beta_func(beta_start = pars[['beta_start']], 
+    
+    new_beta <- sircovid_model$generate_beta_func(beta_start = pars['beta_start'], 
                                                   start_date = start_date)
+
   }
   
   beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
   
   model_params$beta_y <- new_beta$beta
   model_params$beta_t <- beta_t
-  
-  run_particle_filter(data = data,
-                      sircovid_model = sircovid_model,
-                      model_params = model_params,
-                      pars_seeding = NULL,
-                      n_particles = n_particles,
-                      forecast_days = 0,
-                      save_particles = FALSE,
-                      return = "single")
+
+  pf_result <- run_particle_filter(data = data,
+                                   sircovid_model = sircovid_model,
+                                   model_params = model_params,
+                                   model_start_date = start_date,
+                                   obs_params = pars_obs,
+                                   pars_seeding = NULL,
+                                   n_particles = n_particles,
+                                   forecast_days = 0,
+                                   save_particles = FALSE,
+                                   return = "single")
+  pf_result
 }
 
 
