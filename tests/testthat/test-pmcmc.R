@@ -5,28 +5,47 @@ context("pmcmc")
 test_that("pmcmc runs without error", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
-  
+
   cmp <- readRDS("reference_pmcmc.rds")
 
   n_mcmc <- 10
   set.seed(1)
-  sircovid_model <- basic_model(gammas = list(E = 1/(2.5), 
-                                              asympt = 1/2.09, 
-                                              mild = 1/2.09, 
-                                              ILI = 1/4, 
-                                              hosp = 2, 
-                                              ICU = 2/5, 
+  sircovid_model <- basic_model(gammas = list(E = 1/(2.5),
+                                              asympt = 1/2.09,
+                                              mild = 1/2.09,
+                                              ILI = 1/4,
+                                              hosp = 2,
+                                              ICU = 2/5,
                                               rec = 2/5))
 
   X <- pmcmc(
-    data = data, 
+    data = data,
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model,
     pars_obs = list(phi_ICU = 0.95,
                     k_ICU = 2,
                     phi_death = 926 / 1019,
                     k_death = 2,
-                    exp_noise = 1e6)
+                    exp_noise = 1e6),
+    pars_to_sample = c(
+      'beta_start' = TRUE,
+      'beta_end' = FALSE,
+      'start_date' = TRUE
+    ),
+    pars_init = list('beta_start' = 0.14,
+                     'start_date' = as.Date("2020-02-07")),
+    pars_min = list('beta_start' = 0,
+                    'start_date' = 0),
+    pars_max = list('beta_start' = 1,
+                    'start_date' = 1e6),
+    cov_mat = matrix(c(0.001^2, 0,
+                       0, 0.5^2),
+                     nrow = 2, byrow = TRUE,
+                     dimnames = list(
+                       c('beta_start', 'start_date'),
+                       c('beta_start', 'start_date'))),
+    pars_discrete = list('beta_start' = FALSE,
+                         'start_date' = TRUE)
   )
 
   expect_is(X, 'list')
@@ -34,22 +53,35 @@ test_that("pmcmc runs without error", {
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
   expect_equivalent(X, cmp)
- 
- 
 
- 
+
+  cmp <- readRDS('reference_pmcmc_three_par.rds')
+
+  ## test three par version
+  set.seed(2)
+ X2 <- pmcmc(
+   data = data,
+   n_mcmc = n_mcmc,
+   sircovid_model = sircovid_model
+ )
+
+ expect_equal(dim(X2$results), c(n_mcmc + 1L, 6))
+ expect_equivalent(X2, cmp)
+
  ## set likelihood to accept every time with outlandish proposals
+ set.seed(1)
  Y <- pmcmc(
-   data = data, 
+   data = data,
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   cov_mat = matrix(c(1e2, 0,
-                      0, 1e4), 
-                    nrow = 2, byrow = TRUE,
+   cov_mat = matrix(c(1e2, 0, 0,
+                      0, 1e2, 0,
+                      0,  0, 1e4),
+                    nrow = 3, byrow = TRUE,
                     dimnames = list(
-                      c('beta_start', 'start_date'),
-                      c('beta_start', 'start_date')
-                    )), 
+                      c('beta_start', 'beta_end', 'start_date'),
+                      c('beta_start', 'beta_end', 'start_date')
+                    )),
    log_likelihood = function(pars, ...) {
      list('log_likelihood' = 0,
           'sample_state' = rep(1, 238))
@@ -63,57 +95,36 @@ test_that("pmcmc runs without error", {
  # check beta_start is in specified range
  expect_true(min(Y$results$beta_start) > 0)
  expect_true(max(Y$results$beta_start) < 1)
- 
+ expect_true(min(Y$results$beta_end) > 0)
+ expect_true(max(Y$results$beta_end) < 1)
+
  ## check that proposing jumps of size zero results in the initial parameter being retained
- 
+
  Z <- pmcmc(
-   data = data, 
+   data = data,
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   cov_mat = matrix(rep(0, 4), 
-                    nrow = 2, byrow = TRUE,
+   cov_mat = matrix(rep(0, 9),
+                    nrow = 3, byrow = TRUE,
                     dimnames = list(
-                      c('beta_start', 'start_date'),
-                      c('beta_start', 'start_date')
-                    )), 
+                      c('beta_start', 'beta_end', 'start_date'),
+                      c('beta_start', 'beta_end', 'start_date')
+                    )),
    output_proposals = TRUE
-   
+
  )
 
- expect_equal(object = Z$results$beta_start, 
+ expect_equal(object = Z$results$beta_start,
               expected = rep(Z$inputs$pars$pars_init$beta_start, n_mcmc + 1))
- expect_equal(object = Z$results$start_date, 
+ expect_equal(object = Z$results$start_date,
               expected = rep(Z$inputs$pars$pars_init$start_date, n_mcmc + 1))
  expect_true(!all(diff(Z$results$log_likelihood) == 0))
- expect_equal(dim(Z$proposals), c(n_mcmc + 1L, 6))
+ expect_equal(dim(Z$proposals), c(n_mcmc + 1L, 7))
 
- 
-set.seed(1)
-
-X2 <- pmcmc(
-  data = data, 
-  n_mcmc = n_mcmc,
-  sircovid_model = sircovid_model,
-  pars_obs = list(phi_ICU = 0.95,
-                  k_ICU = 2,
-                  phi_death = 926 / 1019,
-                  k_death = 2,
-                  exp_noise = 1e6),
-  cov_mat = matrix(c(0.001^2, 0,
-                     0, 0.5^2), 
-                    nrow = 2, byrow = TRUE,
-                   dimnames = list(
-                     c('beta_start', 'start_date'),
-                     c('beta_start', 'start_date')
-                   ))
-)
-
-# check equal except for inputs
-expect_equal(X[-1], X2[-1])
-
-set.seed(1)
+## check non-zero covariance ihas an impact on proposals
+set.seed(2)
 X3 <- pmcmc(
-  data = data, 
+  data = data,
   n_mcmc = n_mcmc,
   sircovid_model = sircovid_model,
   pars_obs = list(phi_ICU = 0.95,
@@ -121,16 +132,17 @@ X3 <- pmcmc(
                   phi_death = 926 / 1019,
                   k_death = 2,
                   exp_noise = 1e6),
-  cov_mat = matrix(c(      0.001^2, 0.001*0.5*0.6,
-                     0.001*0.5*0.6, 0.5^2), 
-                   nrow = 2, byrow = TRUE,
+  cov_mat = matrix(c(      0.001^2,       0, 0.001*0.5*0.6,
+                                 0, 0.001^2, 0,
+                     0.001*0.5*0.6,       0, 0.5^2),
+                   nrow = 3, byrow = TRUE,
                    dimnames = list(
-                     c('beta_start', 'start_date'),
-                     c('beta_start', 'start_date')
+                     c('beta_start', 'beta_end', 'start_date'),
+                     c('beta_start', 'beta_end', 'start_date')
                    ))
 )
 
-expect_false(all(X$results == X3$results))
+expect_false(all(X2$results == X3$results))
 
 })
 
@@ -138,16 +150,35 @@ test_that("pmcmc with new model", {
   data <- readRDS("hospital_model_data.rds")
 
   cmp <- readRDS("reference_pmcmc_hosp.rds")
-  
+
   n_mcmc <- 10
   set.seed(1)
   sircovid_model <- hospital_model()
   X <- pmcmc(
-    data = data, 
+    data = data,
     n_mcmc = n_mcmc,
-    sircovid_model = sircovid_model
+    sircovid_model = sircovid_model,
+    pars_to_sample = c(
+      'beta_start' = TRUE,
+      'beta_end' = FALSE,
+      'start_date' = TRUE
+    ),
+    pars_init = list('beta_start' = 0.14,
+                     'start_date' = as.Date("2020-02-07")),
+    pars_min = list('beta_start' = 0,
+                    'start_date' = 0),
+    pars_max = list('beta_start' = 1,
+                    'start_date' = 1e6),
+    cov_mat = matrix(c(0.001^2, 0,
+                       0, 0.5^2),
+                     nrow = 2, byrow = TRUE,
+                     dimnames = list(
+                       c('beta_start', 'start_date'),
+                       c('beta_start', 'start_date'))),
+    pars_discrete = list('beta_start' = FALSE,
+                         'start_date' = TRUE)
   )
-  
+
   expect_is(X, 'list')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
