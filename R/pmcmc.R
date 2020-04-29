@@ -442,11 +442,24 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles) {
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
-  start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
-  
+  if ('start_date' %in% names(pars)) {
+    start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
+  } else {
+    start_date <- data$date[1]
+  }
+  if ('beta_end' %in% names(pars)) {
+    beta_end <- pars[['beta_end']]
+  } else {
+    beta_end <- NULL
+  }
+  if ('beta_start' %in% names(pars)) {
+    beta_start <- pars[['beta_start']]
+  } else {
+    beta_start <- NULL
+  }
   new_beta <- update_beta(sircovid_model, 
-                          pars[['beta_start']], 
-                          pars[['beta_end']], 
+                          beta_start, 
+                          beta_end, 
                           start_date,
                           model_params$dt)
   model_params$beta_y <- new_beta$beta_y
