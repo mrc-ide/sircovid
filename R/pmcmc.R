@@ -186,6 +186,9 @@ pmcmc <- function(data,
   inputs <- list(
     data = data,
     n_mcmc = n_mcmc,
+    model_params = model_params,
+    pars_obs = pars_obs,
+    sircovid_model = sircovid_model,
     pars = list(pars_obs = pars_obs, 
                 pars_init = pars_init, 
                 pars_min = pars_min, 
@@ -492,3 +495,117 @@ reflect_proposal <- function(x, floor, cap) {
 }
 
 
+
+summary.pmcmc <- function(x) {
+  
+  par_names <- names(x$inputs$pars$pars_init)
+  
+  ## convert start_date to numeric to calculate stats
+  data_start_date <- as.Date(x$inputs$data$date[1])
+  traces <- x$results[,par_names] 
+  traces$start_date <- as.numeric(data_start_date - traces$start_date)
+  
+  # calculate correlation matrix
+  corr_mat <- round(cor(traces),2)
+  
+  
+  # add in reduction in beta parameter
+  traces <- cbind(traces, 
+                  beta_red = traces$beta_end/traces$beta_start)
+  
+  
+  # compile summary
+  summ <- rbind(mean = colMeans(traces),
+                apply(traces, MARGIN = 2, quantile, c(0.025, 0.975))
+  )
+  summ <- as.data.frame(summ)
+  summ <- round(summ, 3)
+  
+  
+  sds <- round(apply(traces, 2, sd), 3)
+  # convert start_date back into dates
+  summ$start_date <- as.Date(-summ$start_date, data_start_date)
+  summ[c('2.5%', '97.5%'), 'start_date'] <- rev(summ[c('2.5%', '97.5%'), 'start_date'])
+  
+  out <- list('summary' = summ, 
+              'corr_mat' = corr_mat, 
+              'sd' = sds)
+  out
+  
+}
+
+
+plot.pmcmc <- function(x) {
+  
+  summ <- summary(x)
+  par_names <- names(x$inputs$pars$pars_init)
+  
+  traces <- x$results[, par_names]
+  cols <- viridis::cividis(nrow(traces))
+  cols <- cols[order(order(x$results$log_likelihood))]
+  
+  
+  
+  par_name <- 'beta_start'
+  print_summ <- function(par_name) {
+    x <- summ$summary
+    paste0(x['mean', par_name], 
+           '\n(', 
+           x['2.5%', par_name], 
+           ', ', 
+           x['97.5%', par_name], ')')
+  }
+  
+  
+  
+  n_pars <- length(par_names)
+  
+  
+  par( bty = 'n',
+       mfcol = c(n_pars, n_pars + 1L),
+       mar = c(3,3,2,1),
+       mgp = c(1.5, 0.5, 0), 
+       oma = c(1,1,1,1))
+  
+  
+  for (i in seq_len(n_pars)) {
+    for(j in seq_len(n_pars)) {
+      
+      if (i == j) { # plot hists on diagonal
+        par_name <- par_names[i]
+        breaks = ifelse(par_name == 'start_date', 
+                        yes = seq(as.Date('2019-12-01'), 
+                                  as.Date(x$inputs$data$date[1]), 7),
+                        no = 10)
+        hist(traces[[i]], 
+             main = print_summ(par_name), 
+             xlab = par_name, 
+             breaks = breaks,
+             cex.main = 1,
+             font.main = 1,
+             freq = FALSE)
+      } else if (i < j) {  # plot correlations on lower triangle
+        plot(x = traces[[i]], 
+             y = traces[[j]], 
+             xlab = par_names[i], 
+             ylab = par_names[j], 
+             col = cols, 
+             pch = 20)
+      } else if (i > j) { # print rho on upper triangle
+        plot.new()
+        text(x = 0.5, 
+             y=0.5, 
+             labels = paste('r =', 
+                            summ$corr_mat[i, j]))
+      }
+    }
+  }
+  
+  # print traces in final column
+  mapply(FUN = plot, traces, 
+         type = 'l', 
+         ylab = par_names, 
+         xlab = "Iteration")
+  
+  
+}
