@@ -48,16 +48,16 @@ test_that("pmcmc runs without error", {
                          'start_date' = TRUE)
   )
 
-  expect_is(X, 'list')
+  expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
   expect_equivalent(X[-1], cmp[-1])
-
+  
   # Plots run, but not checked
   plot(X)
   # run summary method
-  summX <- summary(X)
+  summary(X)
   
   
   cmp <- readRDS('reference_pmcmc_three_par.rds')
@@ -184,7 +184,7 @@ test_that("pmcmc with new model", {
                          'start_date' = TRUE)
   )
 
-  expect_is(X, 'list')
+  expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 289))
