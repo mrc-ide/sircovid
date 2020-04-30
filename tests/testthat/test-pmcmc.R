@@ -54,7 +54,12 @@ test_that("pmcmc runs without error", {
   expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
   expect_equivalent(X[-1], cmp[-1])
 
-
+  # Plots run, but not checked
+  plot(X)
+  # run summary method
+  summX <- summary(X)
+  
+  
   cmp <- readRDS('reference_pmcmc_three_par.rds')
 
   ## test three par version
