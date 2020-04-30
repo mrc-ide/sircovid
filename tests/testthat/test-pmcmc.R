@@ -52,7 +52,7 @@ test_that("pmcmc runs without error", {
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
-  expect_equivalent(X, cmp)
+  expect_equivalent(X[-1], cmp[-1])
 
 
   cmp <- readRDS('reference_pmcmc_three_par.rds')
@@ -66,7 +66,7 @@ test_that("pmcmc runs without error", {
  )
 
  expect_equal(dim(X2$results), c(n_mcmc + 1L, 6))
- expect_equivalent(X2, cmp)
+ expect_equivalent(X2[-1], cmp[-1])
 
  ## set likelihood to accept every time with outlandish proposals
  set.seed(1)
@@ -183,7 +183,7 @@ test_that("pmcmc with new model", {
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 289))
-  expect_equivalent(X, cmp)
+  expect_equivalent(X[-1], cmp[-1])
 })
 
 test_that("pmcmc error cases", {
