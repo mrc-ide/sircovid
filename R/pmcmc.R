@@ -718,8 +718,11 @@ summary.pmcmc <- function(x) {
   
   
   # add in reduction in beta parameter
-  traces <- cbind(traces, 
-                  beta_red = traces$beta_end/traces$beta_start)
+  if('beta_end' %in% par_names) {
+    traces <- cbind(traces, 
+                    beta_red = traces$beta_end/traces$beta_start)
+  }
+
   
   
   # compile summary
