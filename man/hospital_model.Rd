@@ -2,7 +2,7 @@
 % Please edit documentation in R/models.R
 \name{hospital_model}
 \alias{hospital_model}
-\title{Hosptial model}
+\title{Hospital model}
 \usage{
 hospital_model(
   use_fitted_parameters = TRUE,
@@ -23,5 +23,5 @@ needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triag
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'}
 }
 \description{
-Create a hosptial model
+Create a hospital model
 }
