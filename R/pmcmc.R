@@ -126,8 +126,9 @@ pmcmc <- function(data,
                   steps_per_day = 4, 
                   output_proposals = FALSE) {
   
-  # test pars_init input
-  
+  #
+  # Check pars_init input
+  #
   par_names <- c('beta_start', 'beta_end', 'start_date')
   par_names <- par_names[pars_to_sample[par_names]]
   
@@ -161,7 +162,7 @@ pmcmc <- function(data,
     stop("cov_mat must be a matrix or vector with names corresponding to the parameters being sampled")
   }
   
-  if(!is.logical(output_proposals) | length(output_proposals) != 1) {
+  if(!is.logical(output_proposals) || length(output_proposals) != 1) {
     stop("output_proposals must be either TRUE or FALSE")
   }
   
@@ -183,6 +184,9 @@ pmcmc <- function(data,
     }
   }
   
+  #
+  # Generate MCMC parameters
+  #
   inputs <- list(
     data = data,
     n_mcmc = n_mcmc,
@@ -198,12 +202,8 @@ pmcmc <- function(data,
     n_particles = n_particles, 
     steps_per_day = steps_per_day)
   
-  
   # convert dates to be Date objects
   data$date <- as.Date(data$date) 
-
-
-
   
   is.numeric.list <- function(x) all(vapply(X = x, is.numeric, logical(1)))
   is.logical.list <- function(x) all(vapply(X = x, is.logical, logical(1)))
@@ -224,7 +224,9 @@ pmcmc <- function(data,
   pars_max <- unlist(pars_max)
   pars_discrete <- unlist(pars_discrete)
   
+  #
   # create prior and likelihood functions given the inputs
+  #
   if(is.null(log_prior)) {
     # set improper, uninformative prior
     log_prior <- function(pars) log(1e-10)
@@ -279,6 +281,10 @@ pmcmc <- function(data,
     stop('start date must not be before first date of supplied data')
   }
 
+  #
+  # Set initial state
+  #
+
   ## calculate initial prior
   curr_lprior <- calc_lprior(pars = curr_pars)
   
@@ -319,7 +325,11 @@ pmcmc <- function(data,
   curr_lpost <- curr_lprior + curr_ll
   curr_ss <- p_filter_est$sample_state
 
-  ## initialise output arrays
+  #
+  # Create objects to store outputs
+  #
+  
+  # initialise output arrays
   res_init <- c(curr_pars, 
                 'log_prior' = curr_lprior, 
                 'log_likelihood' = curr_ll, 
@@ -344,15 +354,16 @@ pmcmc <- function(data,
                                           'accept_prob')))
   }
 
-  
   ## record initial results
   res[1, ] <- res_init
   states[1, ] <- curr_ss
 
+  #
+  # main pmcmc loop
+  #
+
   # start progress bar  
   pb <- txtProgressBar(min = 0, max = n_mcmc, style = 3)
-  
-  # main pmcmc loop
   for(iter in seq_len(n_mcmc) + 1L) {
     
     setTxtProgressBar(pb, iter)
@@ -435,25 +446,28 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles) {
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
-  start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
-  
-  
-  if('beta_end' %in% names(pars)) {
-    
-    new_beta <- sircovid_model$generate_beta_func(beta_start = pars[['beta_start']], 
-                                                  start_date = start_date, 
-                                                  beta_end = pars[['beta_end']])
+  if ('start_date' %in% names(pars)) {
+    start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
   } else {
-    
-    new_beta <- sircovid_model$generate_beta_func(beta_start = pars['beta_start'], 
-                                                  start_date = start_date)
-
+    start_date <- data$date[1]
   }
-  
-  beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
-  
-  model_params$beta_y <- new_beta$beta
-  model_params$beta_t <- beta_t
+  if ('beta_end' %in% names(pars)) {
+    beta_end <- pars[['beta_end']]
+  } else {
+    beta_end <- NULL
+  }
+  if ('beta_start' %in% names(pars)) {
+    beta_start <- pars[['beta_start']]
+  } else {
+    beta_start <- NULL
+  }
+  new_beta <- update_beta(sircovid_model, 
+                          beta_start, 
+                          beta_end, 
+                          start_date,
+                          model_params$dt)
+  model_params$beta_y <- new_beta$beta_y
+  model_params$beta_t <- new_beta$beta_t
 
   pf_result <- run_particle_filter(data = data,
                                    sircovid_model = sircovid_model,

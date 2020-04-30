@@ -1,3 +1,11 @@
+# sircovid 0.2.25
+
+- Three parameter pMCMC
+
+# sircovid 0.2.24
+
+- Working pMCMC (bug fix)
+
 # sircovid 0.2.23
 
 - Add function for variable seeding of the epidemic
