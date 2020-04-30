@@ -422,6 +422,7 @@ pmcmc <- function(data,
    out$proposals <- proposals
  }
  
+ class(out) <- 'pmcmc'
  out
 
 }
@@ -489,4 +490,5 @@ reflect_proposal <- function(x, floor, cap) {
   interval <- cap - floor
   abs((x + interval - floor) %% (2 * interval) - interval) + floor
 }
+
 
