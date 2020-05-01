@@ -204,7 +204,8 @@ test_that("pmcmc will run with multiple chains" , {
     sircovid_model = sircovid_model,
     pars_to_sample = c(
       'beta_start',
-      'start_date'
+      'start_date',
+      'beta_end'
     ),
     pars_init = list('beta_start' = 0.14,
                      'start_date' = as.Date("2020-02-07")),
@@ -223,7 +224,7 @@ test_that("pmcmc will run with multiple chains" , {
     n_chains = n_chains
   )
 
-  expect_is(X, 'mcmc_list')
+  expect_is(X, 'pmcmc_list')
   expect_equal(length(X$chains), n_chains)
 
   # Summary run, but not checked

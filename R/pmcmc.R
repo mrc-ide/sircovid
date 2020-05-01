@@ -327,7 +327,7 @@ pmcmc <- function(data,
                 rhat = rhat,
                 chains = lapply(chains, '[', -1))
 
-    class(res) <- 'mcmc_list'
+    class(res) <- 'pmcmc_list'
   } else {
     res <- chains[[1]]
   }
