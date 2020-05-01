@@ -204,13 +204,13 @@ ll_nbinom <- function(data, model, phi, k, exp_noise) {
 
 ##' @importFrom graphics plot points matlines
 ##' @importFrom stats quantile
-plot_particles <- function(particles, ylab, title) {
+plot_particles <- function(particles, ylab, title, col = "#44111144") {
   ## Need to set plot up first to get the dates to render on the axis
   ## (matplot does not cope with this)
   dates <- as.Date(rownames(particles))
   plot(dates, particles[, 1], type = "n", ylab = ylab, ylim = range(particles, na.rm = TRUE), main = title)
   ## Individual traces
-  matlines(dates, particles, col="#ff444477", lty = 1)
+  matlines(dates, particles, col=col, lty = 1)
   ## Quantiles
   quantiles <- t(apply(particles, 1, quantile, c(0.025, 0.5, 0.975)))
   matlines(dates, quantiles, col = "black", lty = "dashed")
