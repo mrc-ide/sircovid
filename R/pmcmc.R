@@ -17,7 +17,7 @@
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
-##' @param pars_to_sample named vector of logicals indicating whether parameter should be sampled (currently beta_start, beta_end and start_date)
+##' @param pars_to_sample names of parameters to be sampled (currently beta_start, beta_end and start_date)
 ##' 
 ##' @param pars_init named list of initial inputs for parameters being sampled 
 ##' 
@@ -99,9 +99,9 @@ pmcmc <- function(data,
                                   phi_death = 926 / 1019,
                                   k_death = 2,
                                   exp_noise = 1e6),
-                  pars_to_sample = c('beta_start' = TRUE,
-                                     'beta_end' = TRUE, 
-                                     'start_date' = TRUE),
+                  pars_to_sample = c('beta_start',
+                                     'beta_end', 
+                                     'start_date'),
                   pars_init = list('beta_start' = 0.14, 
                                    'beta_end' = 0.14*0.238,
                                    'start_date' = as.Date("2020-02-07")),
@@ -132,8 +132,7 @@ pmcmc <- function(data,
   # Check pars_init input
   #
   par_names <- c('beta_start', 'beta_end', 'start_date')
-  pars_to_sample <- pars_to_sample[par_names]  
-  par_names <- par_names[pars_to_sample]
+  par_names <- par_names[par_names %in% pars_to_sample]
   
   correct_format_vec <- function(pars) {
       is.list(pars) & setequal(names(pars), 
@@ -275,7 +274,7 @@ pmcmc <- function(data,
   if(curr_pars['beta_start'] < 0) {
     stop('beta_start must not be negative')
   }
-  if(pars_to_sample['beta_end']) {
+  if('beta_end' %in% pars_to_sample) {
     if(curr_pars['beta_end'] < 0) {
       stop('beta_end must not be negative')
     }
@@ -305,7 +304,7 @@ pmcmc <- function(data,
     chains_coda <- lapply(chains, function(x) {
         
         traces <- x$results
-        if(pars_to_sample['start_date']) {
+        if('start_date' %in% pars_to_sample) {
           traces$start_date <- as.numeric(as.Date(data$date[1]) - traces$start_date)
         }
         
@@ -535,60 +534,6 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                    return = "single")
   pf_result
 }
-
-
-
-
-
-pmcmc_multichain <- function(data,
-                             n_chains = 3,
-                  n_mcmc, 
-                  sircovid_model,
-                  model_params = NULL,
-                  pars_obs = list(phi_general = 0.95,
-                                  k_general = 2,
-                                  phi_ICU = 0.95,
-                                  k_ICU = 2,
-                                  phi_death = 926 / 1019,
-                                  k_death = 2,
-                                  exp_noise = 1e6),
-                  pars_to_sample = c('beta_start' = TRUE,
-                                     'beta_end' = TRUE, 
-                                     'start_date' = TRUE),
-                  pars_init = list('beta_start' = 0.14, 
-                                   'beta_end' = 0.14*0.238,
-                                   'start_date' = as.Date("2020-02-07")),
-                  pars_min = list('beta_start' = 0, 
-                                  'beta_end' = 0,
-                                  'start_date' = 0),
-                  pars_max = list('beta_start' = 1, 
-                                  'beta_end' = 1,
-                                  'start_date' = 1e6),
-                  cov_mat = matrix(c(0.001^2, 0, 0,
-                                     0, 0.001^2, 0,
-                                     0,       0, 0.5^2), 
-                                   nrow = 3, byrow = TRUE,
-                                   dimnames = list(
-                                     c('beta_start', 'beta_end', 'start_date'),
-                                     c('beta_start', 'beta_end', 'start_date'))),
-                  pars_discrete = list('beta_start' = FALSE,
-                                       'beta_end' = FALSE,
-                                       'start_date' = TRUE),
-                  log_likelihood = NULL,
-                  log_prior = NULL,
-                  n_particles = 1e2,
-                  steps_per_day = 4, 
-                  output_proposals = FALSE)  {
-  
-  
-
-}
-
-
-
-
-
-
 
 propose_parameters <- function(pars, cov_mat, pars_discrete, pars_min, pars_max) {
   

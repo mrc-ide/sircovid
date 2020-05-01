@@ -28,9 +28,8 @@ test_that("pmcmc runs without error", {
                     k_death = 2,
                     exp_noise = 1e6),
     pars_to_sample = c(
-      'beta_start' = TRUE,
-      'beta_end' = FALSE,
-      'start_date' = TRUE
+      'beta_start',
+      'start_date'
     ),
     pars_init = list('beta_start' = 0.14,
                      'start_date' = as.Date("2020-02-07")),
@@ -164,9 +163,8 @@ test_that("pmcmc with new model", {
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model,
     pars_to_sample = c(
-      'beta_start' = TRUE,
-      'beta_end' = FALSE,
-      'start_date' = TRUE
+      'beta_start',
+      'start_date'
     ),
     pars_init = list('beta_start' = 0.14,
                      'start_date' = as.Date("2020-02-07")),
@@ -189,6 +187,47 @@ test_that("pmcmc with new model", {
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 289))
   expect_equivalent(X[-1], cmp[-1])
+})
+
+test_that("pmcmc will run with multiple chains" , {
+  data <- readRDS("hospital_model_data.rds")
+
+  cmp <- readRDS("reference_pmcmc_hosp.rds")
+
+  n_mcmc <- 10
+  n_chains <- 2
+  set.seed(1)
+  sircovid_model <- hospital_model()
+  X <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    pars_to_sample = c(
+      'beta_start',
+      'start_date'
+    ),
+    pars_init = list('beta_start' = 0.14,
+                     'start_date' = as.Date("2020-02-07")),
+    pars_min = list('beta_start' = 0,
+                    'start_date' = 0),
+    pars_max = list('beta_start' = 1,
+                    'start_date' = 1e6),
+    cov_mat = matrix(c(0.001^2, 0,
+                       0, 0.5^2),
+                     nrow = 2, byrow = TRUE,
+                     dimnames = list(
+                       c('beta_start', 'start_date'),
+                       c('beta_start', 'start_date'))),
+    pars_discrete = list('beta_start' = FALSE,
+                         'start_date' = TRUE),
+    n_chains = n_chains
+  )
+
+  expect_is(X, 'mcmc_list')
+  expect_equal(length(X$chains), n_chains)
+
+  # Summary run, but not checked
+  summary(X)
 })
 
 test_that("pmcmc error cases", {
