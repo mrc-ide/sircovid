@@ -562,13 +562,14 @@ reflect_proposal <- function(x, floor, cap) {
 
 
 ##' @export
-summary.pmcmc <- function(x) {
+##' @importFrom stats cor sd 
+summary.pmcmc <- function(object, ...) {
   
-  par_names <- names(x$inputs$pars$pars_init)
+  par_names <- names(object$inputs$pars$pars_init)
   
   ## convert start_date to numeric to calculate stats
-  data_start_date <- as.Date(x$inputs$data$date[1])
-  traces <- x$results[,par_names] 
+  data_start_date <- as.Date(object$inputs$data$date[1])
+  traces <- object$results[,par_names] 
   traces$start_date <- as.numeric(data_start_date - traces$start_date)
   
   # calculate correlation matrix
@@ -602,13 +603,13 @@ summary.pmcmc <- function(x) {
 }
 
 ##' @export
-summary.pmcmc_list <- function(x, burn_in = 101) {
-  chains <- x$chains
+summary.pmcmc_list <- function(object, ..., burn_in = 101) {
+  chains <- object$chains
   master_chain <- do.call(what = rbind, 
                           args = lapply(chains, function(x) 
-                            x$results[-seq_len(burn_in), ]))
+                           object$results[-seq_len(burn_in), ]))
   
-  z <- list(inputs = x$inputs, 
+  z <- list(inputs = object$inputs, 
             results = master_chain)
   summary.pmcmc(z)
   
@@ -616,8 +617,9 @@ summary.pmcmc_list <- function(x, burn_in = 101) {
 
 
 ##' @export
-##' @importFrom viridis cividis 
-plot.pmcmc <- function(x) {
+##' @importFrom viridis cividis
+##' @importFrom graphics hist par plot.new text
+plot.pmcmc <- function(x, ...) {
   
   summ <- summary(x)
   par_names <- names(x$inputs$pars$pars_init)
