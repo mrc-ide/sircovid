@@ -721,8 +721,6 @@ summary.pmcmc <- function(x) {
     traces <- cbind(traces, 
                     beta_red = traces$beta_end/traces$beta_start)
   }
-
-  
   
   # compile summary
   summ <- rbind(mean = colMeans(traces),
@@ -744,7 +742,17 @@ summary.pmcmc <- function(x) {
   
 }
 
-
+summary.pmcmc_list <- function(x, burn_in = 101) {
+  chains <- x$chains
+  master_chain <- do.call(what = rbind, 
+                          args = lapply(chains, function(x) 
+                            x$results[-seq_len(burn_in), ]))
+  
+  z <- list(inputs = x$inputs, 
+            results = master_chain)
+  summary.pmcmc(z)
+  
+}
 
 
 
