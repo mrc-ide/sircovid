@@ -366,9 +366,6 @@ run_mcmc_chain <- function(inputs,
     stop('initial parameters are not compatible with supplied prior')
   }
   
-  if(curr_lprior > 0 ) {
-    stop('log_prior must be negative or zero')
-  }
   
   if(length(p_filter_est) != 2) {
     stop('log_likelihood function must return a list containing elements log_likelihood and sample_state')
