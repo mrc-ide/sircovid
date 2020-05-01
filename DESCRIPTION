@@ -42,7 +42,8 @@ Imports:
     furrr,
     mvtnorm,
     coda,
-    extraDistr
+    extraDistr,
+    viridis
 Suggests:
     testthat,
     knitr,

@@ -702,7 +702,7 @@ reflect_proposal <- function(x, floor, cap) {
 }
 
 
-
+##' @export
 summary.pmcmc <- function(x) {
   
   par_names <- names(x$inputs$pars$pars_init)
@@ -755,7 +755,8 @@ summary.pmcmc_list <- function(x, burn_in = 101) {
 }
 
 
-
+##' @export
+##' @importFrom viridis cividis 
 plot.pmcmc <- function(x) {
   
   summ <- summary(x)
