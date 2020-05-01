@@ -130,7 +130,8 @@ pmcmc <- function(data,
   # Check pars_init input
   #
   par_names <- c('beta_start', 'beta_end', 'start_date')
-  par_names <- par_names[pars_to_sample[par_names]]
+  pars_to_sample <- pars_to_sample[par_names]  
+  par_names <- par_names[pars_to_sample]
   
   correct_format_vec <- function(pars) {
       is.list(pars) & setequal(names(pars), 
@@ -296,9 +297,7 @@ pmcmc <- function(data,
   if(length(curr_lprior) > 1) {
     stop('log_prior must return a single numeric representing the log prior')
   }
-  if(curr_lprior > 0 ) {
-    stop('log_prior must be negative or zero')
-  }
+
   if(is.infinite(curr_lprior)) {
     stop('initial parameters are not compatible with supplied prior')
   }
