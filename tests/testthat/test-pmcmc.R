@@ -518,18 +518,7 @@ test_that("pmcmc error cases", {
     'log_prior must return a single numeric representing the log prior'
   )
   
-  expect_error(
-    pmcmc(
-      data = data,
-      n_mcmc = n_mcmc,
-      sircovid_model = sircovid_model,
-      log_prior = function(pars) {
-        sum(dunif(pars, min = 0, max = 1e6))
-      }
-    ),
-    'log_prior must be negative or zero'
-  )
-  
+
   expect_error(
     pmcmc(
       data = data,
