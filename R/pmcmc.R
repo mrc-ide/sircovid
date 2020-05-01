@@ -46,6 +46,8 @@
 ##' 
 ##' @param output_proposals Logical indicating whether proposed parameter jumps should be output along with results
 ##' 
+##' @param n_chains Number of chains to run
+##'
 ##' @return list of length two containing
 ##' - List of inputs
 ##' - Matrix of accepted parameter samples, rows = iterations
@@ -124,7 +126,8 @@ pmcmc <- function(data,
                   log_prior = NULL,
                   n_particles = 1e2,
                   steps_per_day = 4, 
-                  output_proposals = FALSE) {
+                  output_proposals = FALSE,
+                  n_chains = 1) {
   
   #
   # Check pars_init input
@@ -282,6 +285,65 @@ pmcmc <- function(data,
     stop('start date must not be before first date of supplied data')
   }
 
+  # Run the chains in parallel
+  chains <- furrr::future_pmap(
+      .l =  list(n_mcmc = rep(n_mcmc, n_chains)), 
+      .f = run_mcmc_chain,
+      inputs = inputs,
+      curr_pars = curr_pars,
+      calc_lprior = calc_lprior,
+      calc_ll = calc_ll,
+      propose_jump = propose_jump,
+      first_data_date = data$date[1],
+      output_proposals = output_proposals,
+      .progress = TRUE)
+  
+  if (n_chains > 1) {
+    names(chains) <- paste0('chain', seq_len(n_chains))  
+    
+    # calculating rhat
+    # convert parallel chains to a coda-friendly format
+    chains_coda <- lapply(chains, function(x) {
+        
+        traces <- x$results
+        if(pars_to_sample['start_date']) {
+          traces$start_date <- as.numeric(as.Date(data$date[1]) - traces$start_date)
+        }
+        
+      coda::as.mcmc(traces[, names(pars_init)])
+    })
+
+    rhat <- tryCatch(expr = {
+      x <- coda::gelman.diag(chains_coda)
+      x
+    }, error = function(e) {
+      print('unable to calculate rhat')
+      })
+    
+    
+    res <- list(inputs = chains[[1]]$inputs, 
+                rhat = rhat,
+                chains = lapply(chains, '[', -1))
+
+    class(res) <- 'mcmc_list'
+  } else {
+    res <- chains[[1]]
+  }
+
+  res
+
+}
+
+# Run a single pMCMC chain
+run_mcmc_chain <- function(inputs,
+                     curr_pars,
+                     calc_lprior,
+                     calc_ll,
+                     n_mcmc,
+                     propose_jump,
+                     first_data_date,
+                     output_proposals) {
+
   #
   # Set initial state
   #
@@ -411,27 +473,23 @@ pmcmc <- function(data,
   # end progress bar
   close(pb)
   
-  
   res <- as.data.frame(res)
   
   coda_res <- coda::as.mcmc(res)
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- data$date[1] - res$start_date
+  res$start_date <- first_data_date - res$start_date
   
-  
-  
- out <- list('inputs' = inputs, 
-      'results' = as.data.frame(res),
-      'states' = states, 
-      'acceptance_rate' = 1-rejection_rate, 
-      "ess" = ess
-      )
+  out <- list('inputs' = inputs, 
+              'results' = as.data.frame(res),
+              'states' = states, 
+              'acceptance_rate' = 1-rejection_rate, 
+              "ess" = ess)
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- data$date[1] - proposals$start_date
+   proposals$start_date <- first_data_date - proposals$start_date
    out$proposals <- proposals
  }
  
@@ -482,97 +540,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
 }
 
 
-##' Run multiple chains of a pmcmc sampler
-##'
-##' @title Run a multiple chains of a pmcmc sampler
-##' 
-##' @param data Data to fit to.  This must be constructed with
-##'   \code{particle_filter_data}
-##'   
-##' @param model_params Model parameters, from a call to
-##'   \code{generate_parameters()}. If NULL, uses defaults as
-##'   in unit tests.
-##'   
-##' @param sircovid_model An odin model generator and comparison function.
 
-##' @param pars_obs list of parameters to use in comparison
-##'   with \code{compare_icu}. If NULL, uses
-##'   list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
-##' 
-##' @param n_chains number of pmcmc chains to run in parallel
-##' 
-##' @param n_mcmc number of mcmc mcmc iterations to perform
-##' 
-##' @param pars_to_sample named vector of logicals indicating whether parameter should be sampled (currently beta_start, beta_end and start_date)
-##' 
-##' @param pars_init named list of initial inputs for parameters being sampled 
-##' 
-##' @param pars_min named list of lower reflecting boundaries for parameter proposals
-##' 
-##' @param pars_max named list of upper reflecting boundaries for parameter proposals
-##' 
-##' @param cov_mat named matrix of proposal covariance for parameters 
-##' 
-##' @param pars_discrete named list of logicals, indicating if proposed jump should be discrete
-##' 
-##' @param log_likelihood function to calculate log likelihood, must take named parameter vector as input, 
-##'                 allow passing of implicit arguments corresponding to the main function arguments. 
-##'                 Returns a named list, with entries:
-##'                   - $log_likelihood, a single numeric
-##'                   - $sample_state, a numeric vector corresponding to the state of a single particle, chosen at random, 
-##'                   at the final time point for which we have data.
-##'                   If NULL, calculated using the function calc_loglikelihood.
-##'                   
-##' @param log_prior function to calculate log prior, must take named parameter vector as input, returns a single numeric.
-##'                  If NULL, uses uninformative priors which do not affect the posterior
-##'                   
-##' @param n_particles Number of particles
-##' 
-##' @param steps_per_day Number of steps per day
-##' 
-##' @param output_proposals Logical indicating whether proposed parameter jumps should be output along with results
-##' 
-##' @return list of length two containing 
-##' - List of inputs
-##' - List of length n_chains, each containing a matrix of accepted parameter samples, rows = iterations
-##'   as well as log prior, (particle filter estimate of) log likelihood and log posterior
-##'   
-##' @description The user inputs initial parameter values for beta_start and sample_date
-##' The log prior likelihood of these parameters is calculated based on the user-defined
-##' prior distributions.
-##' The log likelihood of the data given the initial parameters is estimated using a particle filter,
-##' which has two functions:
-##'      - Firstly, to generate a set of 'n_particles' samples of the model state space,
-##'        at time points corresponding to the data, one of which is 
-##'        selected randomly to serve as the proposed state sequence sample at the final
-##'        data time point.
-##'      - Secondly, to produce an unbiased estimate of the likelihood of the data given the proposed parameters. 
-##' The log posterior of the initial parameters given the data is then estimated by adding the log prior and 
-##' log likelihood estimate.
-##' 
-##' The pMCMC sampler then proceeds as follows, for n_mcmc iterations:
-##' At each loop iteration the pMCMC sampler perfsorms three steps:
-##'   1. Propose new candidate samples for beta_start, beta_end and start_date based on
-##'     the current samples, using the proposal distribution 
-##'     (currently multivariate Gaussian with user-input covariance matrix (cov_mat), and reflecting boundaries defined by pars_min, pars_max)
-##'   2. Calculate the log prior of the proposed parameters, 
-##'      Use the particle filter to estimate log likelihood of the data given the proposed parameters, as described above,
-##'      as well as proposing a model state space.
-##'      Add the log prior and log likelihood estimate to estimate the log posterior of the proposed parameters given the data.
-##'   3. Metropolis-Hastings step: The joint canditate sample (consisting of the proposed parameters 
-##'      and state space) is then accepted with probability min(1, a), where the acceptance ratio is
-##'      simply the ratio of the posterior likelihood of the proposed parameters to the posterior likelihood
-##'      of the current parameters. Note that by choosing symmetric proposal distributions by including
-##'      reflecting boundaries, we avoid the the need to include the proposal likelihood in the MH ratio.
-##'      
-##'   If the proposed parameters and states are accepted then we update the current parameters and states
-##'   to match the proposal, otherwise the previous parameters/states are retained for the next iteration.
-##'   
-##' @export
-##' @import coda 
-##' @importFrom stats rnorm
-##' @importFrom mvtnorm rmvnorm
-##' @importFrom utils txtProgressBar setTxtProgressBar
 
 
 pmcmc_multichain <- function(data,
@@ -615,59 +583,7 @@ pmcmc_multichain <- function(data,
                   steps_per_day = 4, 
                   output_proposals = FALSE)  {
   
-  future::plan(future::multiprocess)
-  chains <- furrr::future_pmap(
-      .l =  list(n_mcmc = rep(n_mcmc, n_chains)), 
-      .f = pmcmc,
-      data = data, 
-      sircovid_model = sircovid_model, 
-      model_params = model_params,
-      pars_obs = pars_obs, 
-      pars_to_sample = pars_to_sample,
-      pars_init = pars_init,
-      pars_min = pars_min,
-      pars_max = pars_max, 
-      cov_mat = cov_mat,
-      pars_discrete = pars_discrete,
-      log_likelihood = log_likelihood,
-      log_prior = log_prior,
-      n_particles = n_particles,
-      steps_per_day = steps_per_day,
-      output_proposals = output_proposals
-    )
   
-  names(chains) <- paste0('chain', seq_len(n_chains))
-
-  
-  # calculating rhat
-  # convert parallel chains to a coda-friendly format
-  
-
-  chains_coda <- lapply(chains, function(x) {
-      
-      traces <- x$results
-      if(pars_to_sample['start_date']) {
-        traces$start_date <- as.numeric(as.Date(data$date[1]) - traces$start_date)
-      }
-      
-    coda::as.mcmc(traces[, names(pars_init)])
-  })
-
-  
-  rhat <- tryCatch(expr = {
-    x <- coda::gelman.diag(chains_coda)
-    x
-  }, error = function(e) {
-    print('unable to calculate rhat')
-    })
-  
-  
-  res <- list(inputs = chains[[1]]$inputs, 
-              rhat = rhat,
-              chains = lapply(chains, '[', -1))
-
-  class(res) <- 'mcmc_list'
-  res
 
 }
 
@@ -742,6 +658,7 @@ summary.pmcmc <- function(x) {
   
 }
 
+##' @export
 summary.pmcmc_list <- function(x, burn_in = 101) {
   chains <- x$chains
   master_chain <- do.call(what = rbind, 
