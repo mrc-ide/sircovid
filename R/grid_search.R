@@ -191,7 +191,7 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood", title = NULL) {
 }
 
 ##' @export
-plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
+plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL, col = 'grey80') {
   idx <- odin_index(x$inputs$model$odin_model(
     user = x$inputs$model_params,
     unused_user_action = "message"
@@ -206,7 +206,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
     },
     FUN.VALUE = numeric(dim(x$trajectories)[1])
     )
-    plot_particles(particles, ylab = ylab, title = title)
+    plot_particles(particles, ylab = ylab, title = title, col = col)
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
   } else if (what == "general") {
     index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
@@ -216,7 +216,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
     },
     FUN.VALUE = numeric(dim(x$trajectories)[1])
     )
-    plot_particles(particles, ylab = ylab, title = title)
+    plot_particles(particles, ylab = ylab, title = title, col = col)
     points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
   }
 
@@ -230,7 +230,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
     },
     FUN.VALUE = numeric(dim(x$trajectories)[1])
     )
-    plot_particles(particles, ylab = ylab, title = title)
+    plot_particles(particles, ylab = ylab, title = title, col = col)
     points(as.Date(x$inputs$data$date),
       x$inputs$data$deaths / x$inputs$pars_obs$phi_death,
       pch = 19
