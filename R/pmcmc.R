@@ -88,7 +88,6 @@
 ##' @import coda 
 ##' @importFrom stats rnorm
 ##' @importFrom mvtnorm rmvnorm
-##' @importFrom utils txtProgressBar setTxtProgressBar
 pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
@@ -364,6 +363,10 @@ run_mcmc_chain <- function(inputs,
     stop('initial parameters are not compatible with supplied prior')
   }
   
+  if(curr_lprior > 0 ) {
+    stop('log_prior must be negative or zero')
+  }
+  
   if(length(p_filter_est) != 2) {
     stop('log_likelihood function must return a list containing elements log_likelihood and sample_state')
   }
@@ -423,11 +426,7 @@ run_mcmc_chain <- function(inputs,
   # main pmcmc loop
   #
 
-  # start progress bar  
-  pb <- txtProgressBar(min = 0, max = n_mcmc, style = 3)
   for(iter in seq_len(n_mcmc) + 1L) {
-    
-    setTxtProgressBar(pb, iter)
     
     # propose new parameters
     prop_pars <- propose_jump(curr_pars)
@@ -470,8 +469,6 @@ run_mcmc_chain <- function(inputs,
     }
 
   }
-  # end progress bar
-  close(pb)
   
   res <- as.data.frame(res)
   
