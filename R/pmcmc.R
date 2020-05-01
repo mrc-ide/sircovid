@@ -664,7 +664,7 @@ pmcmc_multichain <- function(data,
   
   res <- list(inputs = chains[[1]]$inputs, 
               rhat = rhat,
-              lapply(chains, '[', -1))
+              chains = lapply(chains, '[', -1))
 
   class(res) <- 'mcmc_list'
   res
