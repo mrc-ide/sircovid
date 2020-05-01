@@ -202,25 +202,6 @@ test_that("pmcmc will run with multiple chains" , {
     data = data,
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model,
-    pars_to_sample = c(
-      'beta_start',
-      'start_date',
-      'beta_end'
-    ),
-    pars_init = list('beta_start' = 0.14,
-                     'start_date' = as.Date("2020-02-07")),
-    pars_min = list('beta_start' = 0,
-                    'start_date' = 0),
-    pars_max = list('beta_start' = 1,
-                    'start_date' = 1e6),
-    cov_mat = matrix(c(0.001^2, 0,
-                       0, 0.5^2),
-                     nrow = 2, byrow = TRUE,
-                     dimnames = list(
-                       c('beta_start', 'start_date'),
-                       c('beta_start', 'start_date'))),
-    pars_discrete = list('beta_start' = FALSE,
-                         'start_date' = TRUE),
     n_chains = n_chains
   )
 
@@ -228,7 +209,8 @@ test_that("pmcmc will run with multiple chains" , {
   expect_equal(length(X$chains), n_chains)
 
   # Summary run, but not checked
-  summary(X)
+  summary(X, burn_in = 1)
+  expect_error(summary(X, burn_in = 1E6), "Burn in greater than chain length")
 })
 
 test_that("pmcmc error cases", {

@@ -604,10 +604,13 @@ summary.pmcmc <- function(object, ...) {
 
 ##' @export
 summary.pmcmc_list <- function(object, ..., burn_in = 101) {
+  if (burn_in > nrow(object$chains$chain1$results)) {
+    stop("Burn in greater than chain length")
+  }
   chains <- object$chains
   master_chain <- do.call(what = rbind, 
                           args = lapply(chains, function(x) 
-                           object$results[-seq_len(burn_in), ]))
+                           x$results[-seq_len(burn_in), ]))
   
   z <- list(inputs = object$inputs, 
             results = master_chain)
