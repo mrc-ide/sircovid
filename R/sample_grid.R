@@ -67,7 +67,7 @@ sample_grid_scan <- function(scan_results,
   ## Particle filter outputs
   ## Sample one particle
   traces <- furrr::future_pmap(
-    .l = param_grid, .f = beta_date_particle_filter,
+    .l = param_grid, .f = run_grid_particle_filter,
     sircovid_model = sircovid_model, 
     model_params = model_params, data = data,
     pars_obs = pars_obs, n_particles = n_particles,

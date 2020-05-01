@@ -17,7 +17,9 @@
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
-##' @param pars_init named list of initial inputs for parameters being sampled (currently beta and start_date)
+##' @param pars_to_sample names of parameters to be sampled (currently beta_start, beta_end and start_date)
+##' 
+##' @param pars_init named list of initial inputs for parameters being sampled 
 ##' 
 ##' @param pars_min named list of lower reflecting boundaries for parameter proposals
 ##' 
@@ -44,12 +46,14 @@
 ##' 
 ##' @param output_proposals Logical indicating whether proposed parameter jumps should be output along with results
 ##' 
+##' @param n_chains Number of chains to run
+##'
 ##' @return list of length two containing
 ##' - List of inputs
 ##' - Matrix of accepted parameter samples, rows = iterations
 ##'   as well as log prior, (particle filter estimate of) log likelihood and log posterior
 ##'   
-##' @description The user inputs initial parameter values for beta and sample_date
+##' @description The user inputs initial parameter values for beta_start and sample_date
 ##' The log prior likelihood of these parameters is calculated based on the user-defined
 ##' prior distributions.
 ##' The log likelihood of the data given the initial parameters is estimated using a particle filter,
@@ -64,7 +68,7 @@
 ##' 
 ##' The pMCMC sampler then proceeds as follows, for n_mcmc iterations:
 ##' At each loop iteration the pMCMC sampler perfsorms three steps:
-##'   1. Propose new candidate samples for beta and start_date based on
+##'   1. Propose new candidate samples for beta_start, beta_end and start_date based on
 ##'     the current samples, using the proposal distribution 
 ##'     (currently multivariate Gaussian with user-input covariance matrix (cov_mat), and reflecting boundaries defined by pars_min, pars_max)
 ##'   2. Calculate the log prior of the proposed parameters, 
@@ -84,7 +88,6 @@
 ##' @import coda 
 ##' @importFrom stats rnorm
 ##' @importFrom mvtnorm rmvnorm
-##' @importFrom utils txtProgressBar setTxtProgressBar
 pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
@@ -96,58 +99,76 @@ pmcmc <- function(data,
                                   phi_death = 926 / 1019,
                                   k_death = 2,
                                   exp_noise = 1e6),
-                  pars_init = list('beta' = 0.14, 
+                  pars_to_sample = c('beta_start',
+                                     'beta_end', 
+                                     'start_date'),
+                  pars_init = list('beta_start' = 0.14, 
+                                   'beta_end' = 0.14*0.238,
                                    'start_date' = as.Date("2020-02-07")),
-                  pars_min = list('beta' = 0, 
+                  pars_min = list('beta_start' = 0, 
+                                  'beta_end' = 0,
                                   'start_date' = 0),
-                  pars_max = list('beta' = 1, 
+                  pars_max = list('beta_start' = 1, 
+                                  'beta_end' = 1,
                                   'start_date' = 1e6),
-                  cov_mat = matrix(c(0.001^2, 0,
-                                     0, 0.5^2), 
-                                   nrow = 2, byrow = TRUE,
+                  cov_mat = matrix(c(0.001^2, 0, 0,
+                                     0, 0.001^2, 0,
+                                     0,       0, 0.5^2), 
+                                   nrow = 3, byrow = TRUE,
                                    dimnames = list(
-                                     c('beta', 'start_date'),
-                                     c('beta', 'start_date'))),
-                  pars_discrete = list('beta' = FALSE, 
+                                     c('beta_start', 'beta_end', 'start_date'),
+                                     c('beta_start', 'beta_end', 'start_date'))),
+                  pars_discrete = list('beta_start' = FALSE,
+                                       'beta_end' = FALSE,
                                        'start_date' = TRUE),
                   log_likelihood = NULL,
                   log_prior = NULL,
                   n_particles = 1e2,
                   steps_per_day = 4, 
-                  output_proposals = FALSE) {
+                  output_proposals = FALSE,
+                  n_chains = 1) {
   
-  # test pars_init input
+  #
+  # Check pars_init input
+  #
+  par_names <- c('beta_start', 'beta_end', 'start_date')
+  par_names <- par_names[par_names %in% pars_to_sample]
+  
+  if (!all(c('beta_start', 'start_date') %in% par_names)) {
+    stop("Turning off beta and start date sampling unsupported")
+  }
+  
   correct_format_vec <- function(pars) {
       is.list(pars) & setequal(names(pars), 
-                             c('beta', 'start_date'))
+                             par_names)
   }
   
   correct_format_mat <- function(pars) {
        setequal(rownames(pars),
                 colnames(pars)) & 
          setequal(rownames(pars),
-                   c('beta', 'start_date'))
+                   par_names)
   }
   
   if(!correct_format_vec(pars_init)) {
-    stop("pars_init must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_init must be a named list corresponding to the parameters being sampled")
   }
   if(!correct_format_vec(pars_min)) {
-    stop("pars_min must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_min must be a named list corresponding to the parameters being sampled")
   }
   
   if(!correct_format_vec(pars_max)) {
-    stop("pars_max must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_max must be a named list corresponding to the parameters being sampled")
   }
   if(!correct_format_vec(pars_discrete)) {
-    stop("pars_discrete must be a list of length two with names 'beta' and 'start_date'")
+    stop("pars_discrete must be a named list corresponding to the parameters being sampled")
   }
   
   if(!correct_format_mat(cov_mat)) {
-    stop("cov_mat must be a matrix or vector with names 'beta' and 'start_date'")
+    stop("cov_mat must be a matrix or vector with names corresponding to the parameters being sampled")
   }
   
-  if(!is.logical(output_proposals) | length(output_proposals) != 1) {
+  if(!is.logical(output_proposals) || length(output_proposals) != 1) {
     stop("output_proposals must be either TRUE or FALSE")
   }
   
@@ -169,9 +190,15 @@ pmcmc <- function(data,
     }
   }
   
+  #
+  # Generate MCMC parameters
+  #
   inputs <- list(
     data = data,
     n_mcmc = n_mcmc,
+    model_params = model_params,
+    pars_obs = pars_obs,
+    sircovid_model = sircovid_model,
     pars = list(pars_obs = pars_obs, 
                 pars_init = pars_init, 
                 pars_min = pars_min, 
@@ -181,12 +208,8 @@ pmcmc <- function(data,
     n_particles = n_particles, 
     steps_per_day = steps_per_day)
   
-  
   # convert dates to be Date objects
   data$date <- as.Date(data$date) 
-
-
-
   
   is.numeric.list <- function(x) all(vapply(X = x, is.numeric, logical(1)))
   is.logical.list <- function(x) all(vapply(X = x, is.logical, logical(1)))
@@ -207,7 +230,9 @@ pmcmc <- function(data,
   pars_max <- unlist(pars_max)
   pars_discrete <- unlist(pars_discrete)
   
+  #
   # create prior and likelihood functions given the inputs
+  #
   if(is.null(log_prior)) {
     # set improper, uninformative prior
     log_prior <- function(pars) log(1e-10)
@@ -250,12 +275,80 @@ pmcmc <- function(data,
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
   }
-  if(curr_pars['beta'] < 0) {
-    stop('beta must not be negative')
+  if(curr_pars['beta_start'] < 0) {
+    stop('beta_start must not be negative')
+  }
+  if('beta_end' %in% pars_to_sample) {
+    if(curr_pars['beta_end'] < 0) {
+      stop('beta_end must not be negative')
+    }
   }
   if(curr_pars['start_date'] < 0) {
     stop('start date must not be before first date of supplied data')
   }
+
+  # Run the chains in parallel
+  chains <- furrr::future_pmap(
+      .l =  list(n_mcmc = rep(n_mcmc, n_chains)), 
+      .f = run_mcmc_chain,
+      inputs = inputs,
+      curr_pars = curr_pars,
+      calc_lprior = calc_lprior,
+      calc_ll = calc_ll,
+      propose_jump = propose_jump,
+      first_data_date = data$date[1],
+      output_proposals = output_proposals,
+      .progress = TRUE)
+  
+  if (n_chains > 1) {
+    names(chains) <- paste0('chain', seq_len(n_chains))  
+    
+    # calculating rhat
+    # convert parallel chains to a coda-friendly format
+    chains_coda <- lapply(chains, function(x) {
+        
+        traces <- x$results
+        if('start_date' %in% pars_to_sample) {
+          traces$start_date <- as.numeric(as.Date(data$date[1]) - traces$start_date)
+        }
+        
+      coda::as.mcmc(traces[, names(pars_init)])
+    })
+
+    rhat <- tryCatch(expr = {
+      x <- coda::gelman.diag(chains_coda)
+      x
+    }, error = function(e) {
+      print('unable to calculate rhat')
+      })
+    
+    
+    res <- list(inputs = chains[[1]]$inputs, 
+                rhat = rhat,
+                chains = lapply(chains, '[', -1))
+
+    class(res) <- 'pmcmc_list'
+  } else {
+    res <- chains[[1]]
+  }
+
+  res
+
+}
+
+# Run a single pMCMC chain
+run_mcmc_chain <- function(inputs,
+                     curr_pars,
+                     calc_lprior,
+                     calc_ll,
+                     n_mcmc,
+                     propose_jump,
+                     first_data_date,
+                     output_proposals) {
+
+  #
+  # Set initial state
+  #
 
   ## calculate initial prior
   curr_lprior <- calc_lprior(pars = curr_pars)
@@ -268,12 +361,11 @@ pmcmc <- function(data,
   if(length(curr_lprior) > 1) {
     stop('log_prior must return a single numeric representing the log prior')
   }
-  if(curr_lprior > 0 ) {
-    stop('log_prior must be negative or zero')
-  }
+
   if(is.infinite(curr_lprior)) {
     stop('initial parameters are not compatible with supplied prior')
   }
+  
   
   if(length(p_filter_est) != 2) {
     stop('log_likelihood function must return a list containing elements log_likelihood and sample_state')
@@ -297,7 +389,11 @@ pmcmc <- function(data,
   curr_lpost <- curr_lprior + curr_ll
   curr_ss <- p_filter_est$sample_state
 
-  ## initialise output arrays
+  #
+  # Create objects to store outputs
+  #
+  
+  # initialise output arrays
   res_init <- c(curr_pars, 
                 'log_prior' = curr_lprior, 
                 'log_likelihood' = curr_ll, 
@@ -322,18 +418,15 @@ pmcmc <- function(data,
                                           'accept_prob')))
   }
 
-  
   ## record initial results
   res[1, ] <- res_init
   states[1, ] <- curr_ss
 
-  # start progress bar  
-  pb <- txtProgressBar(min = 0, max = n_mcmc, style = 3)
-  
+  #
   # main pmcmc loop
+  #
+
   for(iter in seq_len(n_mcmc) + 1L) {
-    
-    setTxtProgressBar(pb, iter)
     
     # propose new parameters
     prop_pars <- propose_jump(curr_pars)
@@ -376,9 +469,6 @@ pmcmc <- function(data,
     }
 
   }
-  # end progress bar
-  close(pb)
-  
   
   res <- as.data.frame(res)
   
@@ -386,23 +476,21 @@ pmcmc <- function(data,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- data$date[1] - res$start_date
+  res$start_date <- first_data_date - res$start_date
   
-  
-  
- out <- list('inputs' = inputs, 
-      'results' = as.data.frame(res),
-      'states' = states, 
-      'acceptance_rate' = 1-rejection_rate, 
-      "ess" = ess
-      )
+  out <- list('inputs' = inputs, 
+              'results' = as.data.frame(res),
+              'states' = states, 
+              'acceptance_rate' = 1-rejection_rate, 
+              "ess" = ess)
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- data$date[1] - proposals$start_date
+   proposals$start_date <- first_data_date - proposals$start_date
    out$proposals <- proposals
  }
  
+ class(out) <- 'pmcmc'
  out
 
 }
@@ -412,22 +500,41 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles) {
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
-  start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
-  pf_result <- beta_date_particle_filter(beta = pars[['beta']], 
-                                         start_date = start_date,
-                                         sircovid_model = sircovid_model,
-                                         model_params = model_params,
-                                         data = data, 
-                                         pars_obs = pars_obs,
-                                         n_particles = n_particles,
-                                         forecast_days = 0,
-                                         save_particles = FALSE,
-                                         return = "single")
-  
+  if ('start_date' %in% names(pars)) {
+    start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
+  } else {
+    start_date <- data$date[1]
+  }
+  if ('beta_end' %in% names(pars)) {
+    beta_end <- pars[['beta_end']]
+  } else {
+    beta_end <- NULL
+  }
+  if ('beta_start' %in% names(pars)) {
+    beta_start <- pars[['beta_start']]
+  } else {
+    beta_start <- NULL
+  }
+  new_beta <- update_beta(sircovid_model, 
+                          beta_start, 
+                          beta_end, 
+                          start_date,
+                          model_params$dt)
+  model_params$beta_y <- new_beta$beta_y
+  model_params$beta_t <- new_beta$beta_t
+
+  pf_result <- run_particle_filter(data = data,
+                                   sircovid_model = sircovid_model,
+                                   model_params = model_params,
+                                   model_start_date = start_date,
+                                   obs_params = pars_obs,
+                                   pars_seeding = NULL,
+                                   n_particles = n_particles,
+                                   forecast_days = 0,
+                                   save_particles = FALSE,
+                                   return = "single")
   pf_result
 }
-
-
 
 propose_parameters <- function(pars, cov_mat, pars_discrete, pars_min, pars_max) {
   
@@ -453,3 +560,139 @@ reflect_proposal <- function(x, floor, cap) {
   abs((x + interval - floor) %% (2 * interval) - interval) + floor
 }
 
+
+##' @export
+##' @importFrom stats cor sd 
+summary.pmcmc <- function(object, ...) {
+  
+  par_names <- names(object$inputs$pars$pars_init)
+  
+  ## convert start_date to numeric to calculate stats
+  data_start_date <- as.Date(object$inputs$data$date[1])
+  traces <- object$results[,par_names] 
+  traces$start_date <- as.numeric(data_start_date - traces$start_date)
+  
+  # calculate correlation matrix
+  corr_mat <- round(cor(traces),2)
+  
+  
+  # add in reduction in beta parameter
+  if('beta_end' %in% par_names) {
+    traces <- cbind(traces, 
+                    beta_red = traces$beta_end/traces$beta_start)
+  }
+  
+  # compile summary
+  summ <- rbind(mean = colMeans(traces),
+                apply(traces, MARGIN = 2, quantile, c(0.025, 0.975))
+  )
+  summ <- as.data.frame(summ)
+  summ <- round(summ, 3)
+  
+  
+  sds <- round(apply(traces, 2, sd), 3)
+  # convert start_date back into dates
+  summ$start_date <- as.Date(-summ$start_date, data_start_date)
+  summ[c('2.5%', '97.5%'), 'start_date'] <- rev(summ[c('2.5%', '97.5%'), 'start_date'])
+  
+  out <- list('summary' = summ, 
+              'corr_mat' = corr_mat, 
+              'sd' = sds)
+  out
+  
+}
+
+##' @export
+summary.pmcmc_list <- function(object, ..., burn_in = 101) {
+  if (burn_in > nrow(object$chains$chain1$results)) {
+    stop("Burn in greater than chain length")
+  }
+  chains <- object$chains
+  master_chain <- do.call(what = rbind, 
+                          args = lapply(chains, function(x) 
+                           x$results[-seq_len(burn_in), ]))
+  
+  z <- list(inputs = object$inputs, 
+            results = master_chain)
+  summary.pmcmc(z)
+  
+}
+
+
+##' @export
+##' @importFrom viridis cividis
+##' @importFrom graphics hist par plot.new text
+plot.pmcmc <- function(x, ...) {
+  
+  summ <- summary(x)
+  par_names <- names(x$inputs$pars$pars_init)
+  
+  traces <- x$results[, par_names]
+  cols <- viridis::cividis(nrow(traces))
+  cols <- cols[order(order(x$results$log_likelihood))]
+  
+  
+  
+  par_name <- 'beta_start'
+  print_summ <- function(par_name) {
+    x <- summ$summary
+    paste0(x['mean', par_name], 
+           '\n(', 
+           x['2.5%', par_name], 
+           ', ', 
+           x['97.5%', par_name], ')')
+  }
+  
+  
+  
+  n_pars <- length(par_names)
+  
+  
+  par( bty = 'n',
+       mfcol = c(n_pars, n_pars + 1L),
+       mar = c(3,3,2,1),
+       mgp = c(1.5, 0.5, 0), 
+       oma = c(1,1,1,1))
+  
+  
+  for (i in seq_len(n_pars)) {
+    for(j in seq_len(n_pars)) {
+      
+      if (i == j) { # plot hists on diagonal
+        par_name <- par_names[i]
+        breaks = ifelse(par_name == 'start_date', 
+                        yes = seq(as.Date('2019-12-01'), 
+                                  as.Date(x$inputs$data$date[1]), 7),
+                        no = 10)
+        hist(traces[[i]], 
+             main = print_summ(par_name), 
+             xlab = par_name, 
+             breaks = breaks,
+             cex.main = 1,
+             font.main = 1,
+             freq = FALSE)
+      } else if (i < j) {  # plot correlations on lower triangle
+        plot(x = traces[[i]], 
+             y = traces[[j]], 
+             xlab = par_names[i], 
+             ylab = par_names[j], 
+             col = cols, 
+             pch = 20)
+      } else if (i > j) { # print rho on upper triangle
+        plot.new()
+        text(x = 0.5, 
+             y=0.5, 
+             labels = paste('r =', 
+                            summ$corr_mat[i, j]))
+      }
+    }
+  }
+  
+  # print traces in final column
+  mapply(FUN = plot, traces, 
+         type = 'l', 
+         ylab = par_names, 
+         xlab = "Iteration")
+  
+  
+}
