@@ -134,6 +134,10 @@ pmcmc <- function(data,
   par_names <- c('beta_start', 'beta_end', 'start_date')
   par_names <- par_names[par_names %in% pars_to_sample]
   
+  if (!all(c('beta_start', 'start_date') %in% par_names)) {
+    stop("Turning off beta and start date sampling unsupported")
+  }
+  
   correct_format_vec <- function(pars) {
       is.list(pars) & setequal(names(pars), 
                              par_names)

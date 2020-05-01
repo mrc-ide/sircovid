@@ -288,6 +288,25 @@ test_that("pmcmc error cases", {
     "'start_date' must be less than the first date in data"
   )
   
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
+      pars_to_sample = c(
+        'beta_start',
+        'beta_end'
+      ),
+      pars_init = list('beta_start' = 0.123,
+                       'beta_end' = 0.03,
+                       'start_date' = as.Date(data$date[1])), 
+      pars_min = list('beta_start' = 0, 
+                      'beta_end' = 0,
+                      'start_date' = 0)
+    ),
+    "Turning off beta and start date sampling unsupported"
+  )
+  
   model_params <- generate_parameters(
     sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
