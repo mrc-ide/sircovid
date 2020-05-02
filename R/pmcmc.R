@@ -699,3 +699,161 @@ plot.pmcmc <- function(x, ...) {
   
   
 }
+
+
+plot.pmcmc_list <- function(x, burn_in = 1, ...) {
+  
+  summ <- summary(x, burn_in = burn_in)
+  par_names <- names(x$inputs$pars$pars_init)
+  n_pars <- length(par_names)
+  
+  chains <- x$chains
+  n_chains <- length(chains)
+  cols_trace <- viridis::viridis(n_chains)[c(4, 1, 3, 2)]
+  
+  
+  # compile master chain and order by log posterior for plotting
+  
+  cols <- viridis::cividis(nrow(master_chain))
+  master_chain <- master_chain[order(master_chain$log_posterior), ]
+  cols <- cols[order(master_chain$log_posterior)]
+  
+  
+  
+  
+  traces <- lapply(par_names, FUN = function(par_name) {
+    lapply(X = chains, 
+           FUN = function(z) z$results[-seq_len(burn_in), par_name])
+  })
+  names(traces) <- par_names
+  
+  plot_traces <- function(trace, col) {
+    lines(x = seq_along(trace), 
+          y = trace, 
+          col = col)
+  }
+  
+  master_chain <- do.call(what = rbind, 
+                          args = lapply(X = chains, 
+                                        FUN = function(z) {
+                                          z$results[-seq_len(burn_in), ]
+                                        }
+                          )
+  )
+  
+  breaks <- lapply(par_names, function(par_name){
+    seq(from = min(master_chain[, par_name]), 
+        to =  max(master_chain[, par_name]), 
+        length.out = 20)
+  })
+  names(breaks) <- par_names
+  
+  hists <- lapply(par_names, FUN = function(par_name) {
+    lapply(X = traces[[par_name]], 
+           FUN = hist, 
+           plot = FALSE, 
+           breaks = breaks[[par_name]])
+  })
+  names(hists) <- par_names
+  
+  hist_ylim <- lapply(hists, function(h) {
+    chain_max <- sapply(h, function(chain) max(chain$density) )
+    c(0, max(chain_max))
+  })
+  
+  plot_hists <- function(h, col, breaks) {
+    with(h, lines(x =  breaks, 
+                  y = c(density, 
+                        density[length(density)]), 
+                  type = 's',
+                  col = col))
+  }
+  
+  
+  print_summ <- function(par_name) {
+    x <- summ$summary
+    paste0(x['mean', par_name], 
+           '\n(', 
+           x['2.5%', par_name], 
+           ', ', 
+           x['97.5%', par_name], ')')
+  }
+  
+  
+  par( bty = 'n',
+       mfcol = c(n_pars, n_pars + 1L),
+       mar = c(3,3,2,1),
+       mgp = c(1.5, 0.5, 0), 
+       oma = c(1,1,1,1))
+  
+  
+  for (i in seq_len(n_pars)) {
+    for(j in seq_len(n_pars)) {
+      
+      if (i == j) { # plot hists on diagonal
+        par_name <- par_names[i]
+        bs <- breaks[[par_name]]
+        plot(x = bs ,  # force date axis where needed
+             y = bs, 
+             type = 'n',
+             xlim = c(bs[1], bs[length(bs)]),
+             ylim = hist_ylim[[par_name]],
+             xlab = par_name, 
+             ylab = '',
+             main = print_summ(par_name), 
+             cex.main = 1,
+             font.main = 1
+        )
+        
+        mapply(FUN = plot_hists, 
+               h = hists[[par_name]],
+               breaks = bs,
+               col = cols_trace)
+        
+        
+      } else if (i < j) {  # plot correlations on lower triangle
+        plot(x = master_chain[[i]], 
+             y = master_chain[[j]], 
+             xlab = par_names[i], 
+             ylab = par_names[j], 
+             col = cols, 
+             pch = 20)
+      } else if (i > j) { # print rho on upper triangle
+        plot.new()
+        text(x = 0.5, 
+             y=0.5, 
+             labels = paste('r =', 
+                            summ$corr_mat[i, j]))
+      }
+    }
+  }
+  
+  
+  # print traces in final column
+  n_iter <- nrow(master_chain) / n_chains
+  
+  mapply(FUN = function(par_name, leg) {
+    plot(x = breaks[[par_name]],
+         y = breaks[[par_name]],
+         type = 'n', 
+         xlab = 'Iteration', 
+         ylab = par_name, 
+         xlim = c(0, n_iter), 
+         ylim <- range(master_chain[, par_name]))
+    
+    mapply(FUN = plot_traces,
+           trace = traces[[par_name]], 
+           col = cols_trace)
+    
+    if(leg) {
+      legend('top',
+             ncol = n_chains, 
+             legend = paste('Chain', seq_len(n_chains)),
+             fill = cols_trace, 
+             bty = 'n')
+    }
+  }, 
+  par_name = par_names, 
+  leg = c(TRUE, FALSE, FALSE))
+  
+}
