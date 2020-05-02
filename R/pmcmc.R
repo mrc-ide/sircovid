@@ -700,7 +700,10 @@ plot.pmcmc <- function(x, ...) {
   
 }
 
-
+##' @export
+##' @importFrom viridis cividis
+##' @importFrom graphics hist par plot.new text lines
+##' 
 plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   summ <- summary(x, burn_in = burn_in)
