@@ -1,3 +1,8 @@
+
+# sircovid 0.2.26
+
+- plot method for parallel pMCMC
+
 # sircovid 0.2.25
 
 - Three parameter pMCMC
