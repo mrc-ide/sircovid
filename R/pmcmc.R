@@ -702,7 +702,7 @@ plot.pmcmc <- function(x, ...) {
 
 ##' @export
 ##' @importFrom viridis cividis
-##' @importFrom graphics hist par plot.new text lines
+##' @importFrom graphics hist par plot.new text lines legend
 ##' 
 plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
