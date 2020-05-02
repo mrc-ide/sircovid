@@ -716,9 +716,16 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   
   # compile master chain and order by log posterior for plotting
-  
-  cols <- viridis::cividis(nrow(master_chain))
+  master_chain <- do.call(what = rbind, 
+                          args = lapply(X = chains, 
+                                        FUN = function(z) {
+                                          z$results[-seq_len(burn_in), ]
+                                        }
+                          )
+  )
+
   master_chain <- master_chain[order(master_chain$log_posterior), ]
+  cols <- viridis::cividis(nrow(master_chain))
   cols <- cols[order(master_chain$log_posterior)]
   
   
@@ -736,13 +743,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
           col = col)
   }
   
-  master_chain <- do.call(what = rbind, 
-                          args = lapply(X = chains, 
-                                        FUN = function(z) {
-                                          z$results[-seq_len(burn_in), ]
-                                        }
-                          )
-  )
+  
   
   breaks <- lapply(par_names, function(par_name){
     seq(from = min(master_chain[, par_name]), 

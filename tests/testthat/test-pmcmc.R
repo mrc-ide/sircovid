@@ -211,6 +211,9 @@ test_that("pmcmc will run with multiple chains" , {
   # Summary run, but not checked
   summary(X, burn_in = 1)
   expect_error(summary(X, burn_in = 1E6), "Burn in greater than chain length")
+  
+  ## plot called but not checked
+  plot(X, burn_in = 1)
 })
 
 test_that("pmcmc error cases", {
