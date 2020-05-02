@@ -584,7 +584,9 @@ summary.pmcmc <- function(object, ...) {
   
   # compile summary
   summ <- rbind(mean = colMeans(traces),
-                apply(traces, MARGIN = 2, quantile, c(0.025, 0.975))
+                apply(traces, MARGIN = 2, quantile, c(0.025, 0.975)), 
+                min = apply(traces, MARGIN = 2, min),
+                max =  apply(traces, MARGIN = 2, max)
   )
   summ <- as.data.frame(summ)
   summ <- round(summ, 3)
@@ -593,7 +595,8 @@ summary.pmcmc <- function(object, ...) {
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
   summ$start_date <- as.Date(-summ$start_date, data_start_date)
-  summ[c('2.5%', '97.5%'), 'start_date'] <- rev(summ[c('2.5%', '97.5%'), 'start_date'])
+  summ[c('2.5%', '97.5%', 'min', 'max'), 'start_date'] <- summ[c('97.5%', '2.5%', 'max', 'min'), 'start_date']
+
   
   out <- list('summary' = summ, 
               'corr_mat' = corr_mat, 
