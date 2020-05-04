@@ -211,9 +211,9 @@ test_that("pmcmc will run with multiple chains" , {
   
   ## test create_master_chain
   Y <- create_master_chain(X, burn_in = 1L) 
-  expect_error(create_master_chain(X, burn_in = 1e6L), 
+  expect_error(create_master_chain(X, burn_in = 1e6), 
                'burn_in is greater than chain length')
-  expect_error(create_master_chain(X, burn_in = 0.1), 
+  expect_error(create_master_chain(X, burn_in = '1'), 
                'burn_in must be an integer')
   expect_error(create_master_chain(X, burn_in = -1), 
                'burn_in must not be negative')

@@ -572,7 +572,7 @@ create_master_chain <- function(x, burn_in) {
   if(class(x) != 'pmcmc_list') {
     stop('x must be a pmcmc_list object')
   }
-  if(!is.integer(burn_in)) {
+  if(!is.numeric(burn_in)) {
     stop('burn_in must be an integer')
   }
   if(burn_in < 0) {
