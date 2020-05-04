@@ -48,7 +48,7 @@
 ##' 
 ##' @param n_chains Number of chains to run
 ##'
-##' @return list of length two containing
+##' @return an mcmc object containing
 ##' - List of inputs
 ##' - Matrix of accepted parameter samples, rows = iterations
 ##'   as well as log prior, (particle filter estimate of) log likelihood and log posterior
@@ -561,6 +561,33 @@ reflect_proposal <- function(x, floor, cap) {
 }
 
 
+
+##' @title create a master chain from a pmcmc_list object
+##' @param x a pmcmc_list object
+##' @param burn_in an integer denoting the number of samples to discard from each chain
+##' @export
+##' 
+create_master_chain <- function(x, burn_in) {
+  
+  if(class(x) != 'pmcmc_list') {
+    stop('x must be a pmcmc_list object')
+  }
+  if(!is.integer(burn_in)) {
+    stop('burn_in must be an integer')
+  }
+  if(burn_in >= x$inputs$n_mcmc) {
+    stop('burn_in is greater than chain length')
+  }
+  
+  chains <- lapply(
+    X = x$chains,
+    FUN = function(z) z$results[-seq_len(burn_in), ]
+  )
+  
+  do.call(what = rbind, args = chains)
+}
+
+
 ##' @export
 ##' @importFrom stats cor sd 
 summary.pmcmc <- function(object, ...) {
@@ -607,13 +634,9 @@ summary.pmcmc <- function(object, ...) {
 
 ##' @export
 summary.pmcmc_list <- function(object, ..., burn_in = 101) {
-  if (burn_in > nrow(object$chains$chain1$results)) {
-    stop("Burn in greater than chain length")
-  }
-  chains <- object$chains
-  master_chain <- do.call(what = rbind, 
-                          args = lapply(chains, function(x) 
-                           x$results[-seq_len(burn_in), ]))
+
+  master_chain <- create_master_chain(x = object, 
+                                      burn_in = burn_in)
   
   z <- list(inputs = object$inputs, 
             results = master_chain)
@@ -716,13 +739,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   
   # compile master chain and order by log posterior for plotting
-  master_chain <- do.call(what = rbind, 
-                          args = lapply(X = chains, 
-                                        FUN = function(z) {
-                                          z$results[-seq_len(burn_in), ]
-                                        }
-                          )
-  )
+  master_chain <- create_master_chain(x, burn_in = burn_in)
 
   master_chain <- master_chain[order(master_chain$log_posterior), ]
   cols <- viridis::cividis(nrow(master_chain))
