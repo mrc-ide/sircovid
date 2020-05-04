@@ -575,6 +575,9 @@ create_master_chain <- function(x, burn_in) {
   if(!is.integer(burn_in)) {
     stop('burn_in must be an integer')
   }
+  if(burn_in < 0) {
+    stop('burn_in must not be negative')
+  }
   if(burn_in >= x$inputs$n_mcmc) {
     stop('burn_in is greater than chain length')
   }
