@@ -76,7 +76,7 @@ If NULL, uses uninformative priors which do not affect the posterior}
 \item{n_chains}{Number of chains to run}
 }
 \value{
-list of length two containing
+an mcmc object containing
 - List of inputs
 - Matrix of accepted parameter samples, rows = iterations
   as well as log prior, (particle filter estimate of) log likelihood and log posterior
