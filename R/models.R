@@ -35,9 +35,9 @@ basic_model <- function(progression_groups = list(E = 2, asympt = 1, mild = 1, I
   basic
 }
 
-##' Create a hosptial model
+##' Create a hospital model
 ##' 
-##' @title Hosptial model
+##' @title Hospital model
 ##' 
 ##' @param use_fitted_parameters Override progression_groups and gammas with fitted
 ##'   parameters loaded by \code{read_fitted_parameters()}

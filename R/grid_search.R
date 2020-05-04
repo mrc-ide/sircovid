@@ -110,7 +110,7 @@ scan_beta_date <- function(
   #
   ## Particle filter outputs, extracting log-likelihoods
   pf_run_ll <- furrr::future_pmap_dbl(
-    .l = param_grid, .f = beta_date_particle_filter,
+    .l = param_grid, .f = run_grid_particle_filter,
     sircovid_model = sircovid_model, model_params = model_params, data = data,
     pars_obs = pars_obs, n_particles = n_particles,
     forecast_days = 0, save_particles = FALSE, return = "ll"
@@ -191,7 +191,7 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood", title = NULL) {
 }
 
 ##' @export
-plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
+plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL, col = 'grey80') {
   idx <- odin_index(x$inputs$model$odin_model(
     user = x$inputs$model_params,
     unused_user_action = "message"
@@ -206,7 +206,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
     },
     FUN.VALUE = numeric(dim(x$trajectories)[1])
     )
-    plot_particles(particles, ylab = ylab, title = title)
+    plot_particles(particles, ylab = ylab, title = title, col = col)
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
   } else if (what == "general") {
     index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
@@ -216,7 +216,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
     },
     FUN.VALUE = numeric(dim(x$trajectories)[1])
     )
-    plot_particles(particles, ylab = ylab, title = title)
+    plot_particles(particles, ylab = ylab, title = title, col = col)
     points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
   }
 
@@ -230,7 +230,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
     },
     FUN.VALUE = numeric(dim(x$trajectories)[1])
     )
-    plot_particles(particles, ylab = ylab, title = title)
+    plot_particles(particles, ylab = ylab, title = title, col = col)
     points(as.Date(x$inputs$data$date),
       x$inputs$data$deaths / x$inputs$pars_obs$phi_death,
       pch = 19
@@ -246,7 +246,7 @@ plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL) {
 ##' new beta and start date
 ##'
 ##' @noRd
-beta_date_particle_filter <- function(beta, start_date,
+run_grid_particle_filter <- function(beta, start_date,
                                       sircovid_model,
                                       model_params, data,
                                       pars_obs, n_particles,
@@ -254,11 +254,13 @@ beta_date_particle_filter <- function(beta, start_date,
                                       save_particles = FALSE,
                                       return = "full") {
   # Edit beta in parameters
-  new_beta <- sircovid_model$generate_beta_func(beta, start_date)
-  beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
-
-  model_params$beta_y <- new_beta$beta
-  model_params$beta_t <- beta_t
+  new_beta <- update_beta(sircovid_model, 
+                          beta_start = beta, 
+                          beta_end = NULL, 
+                          start_date,
+                          model_params$dt)
+  model_params$beta_y <- new_beta$beta_y
+  model_params$beta_t <- new_beta$beta_t
 
   X <- run_particle_filter(
     data, sircovid_model, model_params, start_date, pars_obs,
