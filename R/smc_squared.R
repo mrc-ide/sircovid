@@ -6,7 +6,7 @@
 ##'
 ##' @param sircovid_model An odin model generator and comparison function
 ##' 
-##' @param model_params Default set of parameters used in odin_model
+##' @param odin_params Default set of parameters used in odin_model
 ##' 
 ##' @param beta_params List of default parameters used for time-varying beta
 ##' 
@@ -33,7 +33,7 @@
 ##' @export
 smc_squared <- function(data,
                         sircovid_model,
-                        model_params,
+                        odin_params,
                         beta_params,
                         pars_obs,
                         pars_seeding,
@@ -51,20 +51,20 @@ smc_squared <- function(data,
     stop("At least two parameter sets required")
   }
   
-  ##convert data to for particle filter data form
+  ##convert data to particle filter data form
   data <- particle_filter_data(data = data, 
                                start_date = earliest_seeding_date, 
-                               steps_per_day = round(1 / model_params$dt))
+                               steps_per_day = round(1 / odin_params$dt))
 
-  odin_model <- sircovid_model$odin_model(user = model_params, unused_user_action = "message")
+  odin_model <- sircovid_model$odin_model(user = odin_params, unused_user_action = "message")
   
   i_state <- seq_along(odin_model$initial()) + 1L
   
   #Intialise fitted parameter sets (these are sampled from their prior distributions)
-  params <- initial_params(fitted_params,n_param_sets)
+  params <- initial_params(fitted_params, n_param_sets)
   
   ####Calculate log_prior for all parameter sets in params
-  log_prior <- calc_log_prior(params,fitted_params)
+  log_prior <- calc_log_prior(params, fitted_params)
   
   # create progress bar
   pb <- txtProgressBar(min = 0, max = nrow(data), style = 3)
@@ -73,10 +73,9 @@ smc_squared <- function(data,
   smc_sq_pre_data_run <- furrr::future_pmap(
     .l = list(k=seq_len(n_param_sets)), .f = smc_sq_pre_data_run_model,
     params = params, data = data, sircovid_model = sircovid_model,
-    model_params = model_params, beta_params = beta_params,
-    fitted_params = fitted_params, n_particles = n_particles,
-    pars_seeding = pars_seeding, earliest_seeding_date = earliest_seeding_date,
-    i_state = i_state
+    odin_params = odin_params, beta_params = beta_params,
+    pars_obs = pars_obs, pars_seeding = pars_seeding, n_particles = n_particles,
+    earliest_seeding_date = earliest_seeding_date, i_state = i_state
   )
   
   state <- array(unlist(smc_sq_pre_data_run), dim = c(length(i_state),n_particles,n_param_sets))
@@ -97,8 +96,9 @@ smc_squared <- function(data,
       .l = list(k=seq_len(n_param_sets)), .f = smc_sq_run_model_resample,
       t = t, data = data, sircovid_model = sircovid_model,
       state = state, prev_state = prev_state, params = params,
-      model_params = model_params, beta_params = beta_params,
-      pars_obs = pars_obs, step = step, earliest_seeding_date = earliest_seeding_date
+      odin_params = odin_params, beta_params = beta_params,
+      pars_obs = pars_obs, pars_seeding = pars_seeding, 
+      step = step, earliest_seeding_date = earliest_seeding_date
     )
     
     state <- array(unlist(furrr::future_map(model_run, ~ .$state)), dim = dim(state))
@@ -132,7 +132,7 @@ smc_squared <- function(data,
       
       ##MCMC move
       #propose new parameters
-      prop_params <- propose_new_params(params,covariance_scaling*weighted_covar$cov)
+      prop_params <- propose_new_params(params, covariance_scaling*weighted_covar$cov)
       #Calculate log prior for the proposed parameter sets
       prop_log_prior <- calc_log_prior(prop_params,fitted_params)
       #set up for below
@@ -145,10 +145,10 @@ smc_squared <- function(data,
       pf_run <- furrr::future_pmap(
         .l = list(k=kappa), .f = smc_sq_rerun_pf,
         data = data[seq_len(t),], sircovid_model = sircovid_model,
-        prop_params = prop_params, model_params = model_params, 
-        beta_params = beta_params, fitted_params = fitted_params,
-        pars_obs = pars_obs, pars_seeding = pars_seeding,
-        n_particles = n_particles, earliest_seeding_date = earliest_seeding_date
+        prop_params = prop_params, odin_params = odin_params, 
+        beta_params = beta_params, pars_obs = pars_obs, 
+        pars_seeding = pars_seeding, n_particles = n_particles,
+        earliest_seeding_date = earliest_seeding_date
       )
       
       prop_log_likelihood[kappa] <- furrr::future_map_dbl(pf_run, ~ .$log_likelihood)
@@ -171,21 +171,31 @@ smc_squared <- function(data,
     ESS_t[t]<-ESS
   }
 
+  setTxtProgressBar(pb,t)
   close(pb)
   attr(params,'ESS') <- ESS_t
   params
 }
 
 
-#this function outputs a model_params list with fitted parameters replaced by values in params
-setup_parameters <- function(params,model_params,beta_params,generate_beta_func,fitted_params,start_date){
+#this function outputs a list of the various parameter objects 
+#with fitted parameters replaced by values in params
+setup_parameters <- function(params, odin_params, beta_params,
+                             pars_obs, pars_seeding, 
+                             generate_beta_func, start_date){
   
-  for (i in seq_len(length(fitted_params))){
-    if (names(fitted_params)[i] %in% names(model_params)){
-      model_params[[names(fitted_params)[i]]] <- params[[names(fitted_params)[i]]]
+  for (i in seq_len(length(params))){
+    if (names(params)[i] %in% names(odin_params)){
+      odin_params[[names(params)[i]]] <- params[[names(params)[i]]]
     }
-    if (names(fitted_params)[i] %in% names(beta_params)){
-      beta_params[[names(fitted_params)[i]]] <- params[[names(fitted_params)[i]]]
+    if (names(params)[i] %in% names(beta_params)){
+      beta_params[[names(params)[i]]] <- params[[names(params)[i]]]
+    }
+    if (names(params)[i] %in% names(pars_obs)){
+      pars_obs[[names(params)[i]]] <- params[[names(params)[i]]]
+    }
+    if (names(params)[i] %in% names(pars_seeding)){
+      pars_seeding[[names(params)[i]]] <- params[[names(params)[i]]]
     }
   }
   
@@ -199,10 +209,12 @@ setup_parameters <- function(params,model_params,beta_params,generate_beta_func,
                                    beta_reduction = beta_params$beta_reduction)
   }
   
-  model_params$beta_t <- normalise_beta(new_beta$beta_times, model_params$dt)
-  model_params$beta_y <- new_beta$beta
+  odin_params$beta_t <- normalise_beta(new_beta$beta_times, odin_params$dt)
+  odin_params$beta_y <- new_beta$beta
   
-  model_params
+  list(odin_params = odin_params,
+       pars_obs = pars_obs,
+       pars_seeding = pars_seeding)
 }
 
 
@@ -210,12 +222,13 @@ setup_parameters <- function(params,model_params,beta_params,generate_beta_func,
 calc_log_prior <- function(pars,fitted_params){
   
   f<-function(par_name){
-    sapply(pars[[par_name]],FUN = fitted_params[[par_name]]$dprior)
+    sapply(pars[[par_name]], FUN = fitted_params[[par_name]]$dprior)
   }
   
   apply(sapply(names(fitted_params),FUN = f),1,sum)
   
 }
+
 
 ##function to initialise fitted parameters by sampling from the prior distributions
 initial_params <- function(fitted_params,n_param_sets){
@@ -231,17 +244,16 @@ initial_params <- function(fitted_params,n_param_sets){
   as.data.frame(t(replicate(n_param_sets,f(),simplify=TRUE)))
 }
 
+
 #function to propose new parameter sets
 ##' @importFrom mvtnorm rmvnorm
 propose_new_params <- function(params,sigma){
   
-  f <- function(pars){
-    #multivariate normal about a mean pars, with covariance matrix given by the weighted covariance, scaled by covariance_scaling
-    rmvnorm(1,mean = as.numeric(pars), sigma = sigma)
-  }
+  f <- 
   
-  #propose parameters
-  prop_params <- t(apply(params,1,FUN=f))
+  #propose parameters from a multivariate normal about a mean pars,
+  #with covariance matrix sigma
+  prop_params <- t(apply(params, 1, FUN = function(pars){rmvnorm(1,mean = as.numeric(pars), sigma = sigma)}))
   
   #just make sure prop_params is in same form as params  
   prop_params <- as.data.frame(prop_params)
@@ -254,16 +266,19 @@ propose_new_params <- function(params,sigma){
 
 
 smc_sq_pre_data_run_model <- function(k, params, data, sircovid_model,
-                                model_params, beta_params, 
-                                fitted_params, n_particles, pars_seeding,
+                                odin_params, beta_params, pars_obs,
+                                pars_seeding, n_particles,
                                 earliest_seeding_date, i_state){
   
   #Set up the model using the kth set of parameters in params
-  pars <- setup_parameters(params[k,],model_params,beta_params,sircovid_model$generate_beta_func,fitted_params,earliest_seeding_date)
+  pars <- setup_parameters(params[k,], odin_params, 
+                           beta_params, pars_obs, pars_seeding, 
+                           sircovid_model$generate_beta_func,
+                           earliest_seeding_date)
   
-  odin_model <- sircovid_model$odin_model(user = pars)
+  odin_model <- sircovid_model$odin_model(user = pars$odin_params)
   
-  seeding_func <- sircovid_model$seeding_model(odin_model,data,pars_seeding)
+  seeding_func <- sircovid_model$seeding_model(odin_model,data,pars$pars_seeding)
   
   X <- pre_data_run(model = odin_model,
                     seeding_func = seeding_func, 
@@ -280,18 +295,19 @@ smc_sq_pre_data_run_model <- function(k, params, data, sircovid_model,
 
 smc_sq_run_model_resample <- function(k, t, data, sircovid_model,
                                       state, prev_state, params,
-                                      model_params, beta_params,
-                                      pars_obs, step,
-                                      earliest_seeding_date){
+                                      odin_params, beta_params,
+                                      pars_obs, pars_seeding,
+                                      step, earliest_seeding_date){
   
   #Set up the model using the kth set of parameters in params
-  pars <- setup_parameters(params[k,],model_params,beta_params,sircovid_model$generate_beta_func,fitted_params,earliest_seeding_date)
+  pars <- setup_parameters(params[k,], odin_params, 
+                           beta_params, pars_obs, pars_seeding, 
+                           sircovid_model$generate_beta_func,
+                           earliest_seeding_date)
   
-  odin_model <- sircovid_model$odin_model(user = pars)
+  odin_model <- sircovid_model$odin_model(user = pars$odin_params)
   
-  compare <- sircovid_model$compare_model(odin_model,pars_obs,data)
-  
-  seeding_func <- sircovid_model$seeding_model(odin_model,data,pars_seeding)
+  compare <- sircovid_model$compare_model(odin_model, pars$pars_obs, data)
   
   state <- particle_run_model(state[,,k], step, odin_model)
   
@@ -311,20 +327,22 @@ smc_sq_run_model_resample <- function(k, t, data, sircovid_model,
 
 
 smc_sq_rerun_pf <- function(k, data, sircovid_model, 
-                            prop_params, model_params,
-                            beta_params, fitted_params,
-                            pars_obs, pars_seeding, n_particles,
-                            earliest_seeding_date){
+                            prop_params, odin_params,
+                            beta_params, pars_obs, pars_seeding,
+                            n_particles, earliest_seeding_date){
   
   #Set up the model using the kth set of parameters in params
-  pars <- setup_parameters(prop_params[k,],model_params,beta_params,sircovid_model$generate_beta_func,fitted_params,earliest_seeding_date)
+  pars <- setup_parameters(prop_params[k,], odin_params, 
+                           beta_params, pars_obs, pars_seeding, 
+                           sircovid_model$generate_beta_func, 
+                           earliest_seeding_date)
   
-  odin_model <- sircovid_model$odin_model(user = pars)
+  odin_model <- sircovid_model$odin_model(user = pars$odin_params)
   
-  compare <- sircovid_model$compare_model(odin_model,pars_obs,data)
+  compare <- sircovid_model$compare_model(odin_model, pars$pars_obs, data)
   
-  seeding_func <- sircovid_model$seeding_model(odin_model,data,pars_seeding)
+  seeding_func <- sircovid_model$seeding_model(odin_model, data, pars$pars_seeding)
   
-  #Run the particle filter for ith proposed parameter set, but only up until current time point t
-  particle_filter(data,odin_model,compare,seeding_func,n_particles,save_end_states = TRUE)
+  #Run the particle filter for ith proposed parameter set, up until current time point t
+  particle_filter(data, odin_model, compare, seeding_func, n_particles, save_end_states = TRUE)
 }
