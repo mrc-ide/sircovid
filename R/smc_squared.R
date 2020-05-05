@@ -84,7 +84,8 @@ smc_squared <- function(data,
   log_likelihood <- rep(0,n_param_sets)
   log_param_weights <- rep(0,n_param_sets)
   
-  ESS_t <- rep(0,nrow(data))
+  ESS_t <- rep(NA_real_,nrow(data))
+  acceptance_rate <- rep(NA_real_,nrow(data))
   
   for (t in seq_len(nrow(data))[-1L]) {
     setTxtProgressBar(pb, t-1)
@@ -167,14 +168,34 @@ smc_squared <- function(data,
       
       #reset weights for parameter sets (note that we do not reset when ESS is above threshold)
       log_param_weights[] <- 0
+      acceptance_rate[t] <- length(accepted)/n_param_sets
     }
     ESS_t[t]<-ESS
   }
 
   setTxtProgressBar(pb,t)
   close(pb)
-  attr(params,'ESS') <- ESS_t
-  params
+  
+  inputs <- list(data = data,
+                 sircovid_model = sircovid_model,
+                 odin_params = odin_params,
+                 beta_params = beta_params,
+                 pars_obs = pars_obs,
+                 pars_seeding = pars_seeding,
+                 earliest_seeding_date = earliest_seeding_date, 
+                 n_particles = n_particles,
+                 n_param_sets = n_param_sets,
+                 fitted_params = fitted_params,
+                 degeneracy_threshold = degeneracy_threshold,
+                 covariance_scaling = covariance_scaling)
+  
+  diagnostics = list(ESS = ESS_t,
+                     acceptance_rate = acceptance_rate)
+  
+  list(params = params,
+       inputs = inputs,
+       diagnostics = diagnostics
+       )
 }
 
 
