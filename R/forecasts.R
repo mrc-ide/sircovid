@@ -92,7 +92,7 @@ sample_grid_scan <- function(scan_results,
 
 
 ##' Take a parameter search produced by \code{\link{pmcmc}} and 
-##' sample \code{n_sample_pairs} from the parameter space
+##' sample \code{n_sample} from the parameter space
 ##' on their probability. For each parameter pair chosen, run particle
 ##' filter with \code{num_particles} and sample 1 trajectory
 ##' 
@@ -135,7 +135,7 @@ sample_pmcmc <- function(mcmc_results,
   pars_to_sample <- names(mcmc_results$inputs$pars$pars_init)
   chains <- create_master_chain(mcmc_results, burn_in)
   param_grid <- chains[sample.int(n = nrow(chains), 
-                                  size  = n_sample_pairs, 
+                                  size  = n_sample, 
                                   replace = FALSE), pars_to_sample]
   
   forecasts <- function(sampled_pars) {
