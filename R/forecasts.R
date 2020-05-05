@@ -73,7 +73,7 @@ sample_grid_scan <- function(scan_results,
     forecast_days = forecast_days, 
     save_particles = TRUE, return = "sample")
 
-  trajectories <- traces_to_trajectories(traces
+  trajectories <- traces_to_trajectories(traces)
   
   class(res) <- "sircovid_forecast"
   return(res)
