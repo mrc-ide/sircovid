@@ -75,6 +75,16 @@ sample_grid_scan <- function(scan_results,
 
   trajectories <- traces_to_trajectories(traces)
   
+  # combine and return
+  res <- list("trajectories" = trajectories,
+              "param_grid" = param_grid,
+              inputs = list(
+                model_params = model_params,
+                pars_obs = pars_obs,
+                data = data,
+                model = sircovid_model,
+                forecast_days = forecast_days))
+  
   class(res) <- "sircovid_forecast"
   return(res)
   
@@ -89,6 +99,8 @@ sample_grid_scan <- function(scan_results,
 ##' @title Sample pmcmc
 ##' 
 ##' @param mcmc_results Output of \code{\link{pmcmc}}.
+##' 
+##' @param burn_in Number of burn-in samples to discard
 ##' 
 ##' @param n_sample_pairs Number of parameter pairs to be sampled. This will 
 ##'   determine how many trajectories are returned. Integer. Default = 10. This 
@@ -113,7 +125,7 @@ sample_pmcmc <- function(mcmc_results,
                          forecast_days = 0) {
   
   # checks on args
-  assert_is(scan_results, "pmcmc_list")
+  assert_is(mcmc_results, "pmcmc_list")
   assert_pos_int(n_sample_pairs)
   assert_pos_int(n_particles)
   assert_pos_int(forecast_days)
@@ -146,7 +158,17 @@ sample_pmcmc <- function(mcmc_results,
   
   trajectories <- traces_to_trajectories(traces)
   
-  class(sample_res) <- "sircovid_forecast"
+  # combine and return
+  res <- list("trajectories" = trajectories,
+              "param_grid" = param_grid,
+              inputs = list(
+                model_params = mcmc_results$inputs$model_params,
+                pars_obs = mcmc_results$inputs$pars_obs,
+                data = mcmc_results$inputs$data,
+                model = mcmc_results$inputs$sircovid_model,
+                forecast_days = forecast_days))
+  
+  class(res) <- "sircovid_forecast"
   return(res)
   
 }

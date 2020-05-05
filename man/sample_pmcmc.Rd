@@ -15,6 +15,8 @@ sample_pmcmc(
 \arguments{
 \item{mcmc_results}{Output of \code{\link{pmcmc}}.}
 
+\item{burn_in}{Number of burn-in samples to discard}
+
 \item{n_sample_pairs}{Number of parameter pairs to be sampled. This will 
 determine how many trajectories are returned. Integer. Default = 10. This 
 will determine how many trajectories are returned.}

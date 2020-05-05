@@ -1,4 +1,4 @@
-context("sample_grid_scan")
+context("Sampling and forecasts")
 
 # Only tests that a grid search can be run
 test_that("sample_grid_scan works", {
@@ -106,6 +106,56 @@ test_that("sample_grid_scan works with new model", {
   res <- sample_grid_scan(scan_results = scan_results,
                           n_sample_pairs = n_sample_pairs, 
                           n_particles = 10)
+  
+  model <- res$inputs$model$odin_model(user = res$inputs$model_params)
+  # check length based on model and dates
+  days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
+  expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample_pairs))
+  
+  ## Testing plotting is always a nightmare
+  if (TRUE) {
+    plot(res, what = "ICU")
+    plot(res, what = "deaths")
+    plot(res, what = "general")
+  }
+  
+})
+
+
+test_that("sample_pmcmc works with new model", {
+  set.seed(1)
+  
+  # grab the data
+  data <- readRDS("hospital_model_data.rds")
+  
+  sircovid_model <- hospital_model()
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    severity_data_file = 'extdata/severity_2020_04_12.csv')
+  
+  
+  n_mcmc <- 10
+  n_chains <- 2
+  set.seed(1)
+  sircovid_model <- hospital_model()
+  mcmc_results <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    n_chains = n_chains
+  )
+  
+  sample_pmcmc <- function(mcmc_results,
+                           burn_in = 101,
+                           n_sample_pairs = 10, 
+                           n_particles = 100, 
+                           forecast_days = 0) 
+  
+  n_sample_pairs <- 4 
+  res <- sample_pmcmc(mcmc_results = mcmc_results,
+                      burn_in = 1,
+                      n_sample_pairs = n_sample_pairs, 
+                      n_particles = 10)
   
   model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
