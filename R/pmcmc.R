@@ -254,7 +254,9 @@ pmcmc <- function(data,
                         model_params = model_params,
                         steps_per_day = steps_per_day, 
                         pars_obs = pars_obs, 
-                        n_particles = n_particles
+                        n_particles = n_particles,
+                        forecast_days = 0,
+                        return = "ll"
     ) 
     X
   }
@@ -495,9 +497,49 @@ run_mcmc_chain <- function(inputs,
 
 }
 
-
+##' Calculate log-likelihood
+##'
+##' @title Run odin model to calculate log-likelihood
+##' 
+##' @pars Parameters for MCMC
+##' 
+##' @param data Data to fit to.  This must be constructed with
+##'   \code{particle_filter_data}
+##'   
+##' @param sircovid_model An odin model generator and comparison function.
+##' 
+##' @param model_params Model parameters, from a call to
+##'   \code{generate_parameters()}. If NULL, uses defaults as
+##'   in unit tests.
+##'   
+##' @param steps_per_day Number of steps per day
+##'   
+##' @param pars_obs list of parameters to use in comparison
+##'   with \code{compare_icu}. If NULL, uses
+##'   list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
+##'                   
+##' @param n_particles Number of particles
+##' 
+##' @param return Set to 'll' to return the log-likelihood (for MCMC) or to
+##'   'sample' for the particle trajectories (for forecasting)
+##'
+##' @return a double with the log-likelihood, or matrix of particle trajectories
+##'   
+##' @export
 calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
-                               steps_per_day, pars_obs, n_particles) {
+                               steps_per_day, pars_obs, n_particles,
+                               forecast_days = 0, return = "ll") {
+  if (return == "full") {
+    save_particles <- TRUE
+    pf_return <- "sample"
+  } else if (return == "ll") {
+    save_particles <- FALSE
+    forecast_days <- 0
+    pf_return <- "single"
+  } else {
+    stop("Unknown return type to calc_loglikelihood")
+  }
+  
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
   if ('start_date' %in% names(pars)) {
