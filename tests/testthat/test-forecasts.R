@@ -155,7 +155,7 @@ test_that("sample_pmcmc works with new model", {
   model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
   days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
-  expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample_pairs))
+  expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample))
   
   ## Testing plotting
   if (TRUE) {
