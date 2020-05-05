@@ -39,6 +39,7 @@ Imports:
     dde (>= 1.0.2),
     odin,
     socialmixr,
+    purrr,
     furrr,
     mvtnorm,
     coda,

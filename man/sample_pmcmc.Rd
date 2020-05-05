@@ -7,7 +7,7 @@
 sample_pmcmc(
   mcmc_results,
   burn_in = 101,
-  n_sample_pairs = 10,
+  n_sample = 10,
   n_particles = 100,
   forecast_days = 0
 )
@@ -17,7 +17,7 @@ sample_pmcmc(
 
 \item{burn_in}{Number of burn-in samples to discard}
 
-\item{n_sample_pairs}{Number of parameter pairs to be sampled. This will 
+\item{n_sample}{Number of parameter pairs to be sampled. This will 
 determine how many trajectories are returned. Integer. Default = 10. This 
 will determine how many trajectories are returned.}
 

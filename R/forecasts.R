@@ -102,7 +102,7 @@ sample_grid_scan <- function(scan_results,
 ##' 
 ##' @param burn_in Number of burn-in samples to discard
 ##' 
-##' @param n_sample_pairs Number of parameter pairs to be sampled. This will 
+##' @param n_sample Number of parameter pairs to be sampled. This will 
 ##'   determine how many trajectories are returned. Integer. Default = 10. This 
 ##'   will determine how many trajectories are returned. 
 ##'   
@@ -117,10 +117,11 @@ sample_grid_scan <- function(scan_results,
 ##'   model inputs. 
 ##' 
 ##' @export
-##' @import furrr
+##' @importFrom furrr future_map
+##' @importFrom purrr transpose
 sample_pmcmc <- function(mcmc_results,
                          burn_in = 101,
-                         n_sample_pairs = 10, 
+                         n_sample = 10, 
                          n_particles = 100, 
                          forecast_days = 0) {
   
@@ -130,32 +131,30 @@ sample_pmcmc <- function(mcmc_results,
   assert_pos_int(n_particles)
   assert_pos_int(forecast_days)
   
-  # discard 10% as burn-in
+  # discard burn-in
   pars_to_sample <- names(mcmc_results$inputs$pars$pars_init)
-  chains <- create_master_chain(mcmc_results, burn_in)$results
+  chains <- create_master_chain(mcmc_results, burn_in)
   param_grid <- chains[sample.int(n = nrow(chains), 
                                   size  = n_sample_pairs, 
                                   replace = FALSE), pars_to_sample]
   
   forecasts <- function(sampled_pars) {
-      pars <- as.list(sampled_pars)
-      trace <- calc_loglikelihood(pars, 
-              mcmc_results$inputs$data, 
-              mcmc_results$inputs$sircovid_model, 
-              mcmc_results$inputs$model_params,
-              mcmc_results$inputs$steps_per_day, 
-              mcmc_results$inputs$pars_obs, 
-              n_particles,
-              forecast_days,
-              return = "full")
-      trace
+    pars <- as.list(sampled_pars)
+    pars$start_date <- as.numeric(as.Date(mcmc_results$inputs$data$date[1])) - pars$start_date
+    trace <- calc_loglikelihood(pars, 
+                                mcmc_results$inputs$data, 
+                                mcmc_results$inputs$sircovid_model, 
+                                mcmc_results$inputs$model_params,
+                                mcmc_results$inputs$steps_per_day, 
+                                mcmc_results$inputs$pars_obs, 
+                                n_particles,
+                                forecast_days,
+                                return = "full")
+    trace
   }
 
   # Run forecasts in parallel
-  traces <- furrr::future_pmap(
-    .l = param_grid, 
-    .f = forecasts)
-  
+  traces <- furrr::future_map(.x = purrr::transpose(param_grid), .f = forecasts)
   trajectories <- traces_to_trajectories(traces)
   
   # combine and return
@@ -223,6 +222,56 @@ sum_over_compartments <- function(sample_grid_res) {
     totals$I_ICU_R + totals$I_ICU_D + totals$R_stepdown
 
   totals
+}
+
+##' @export
+plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'grey80') {
+  idx <- odin_index(x$inputs$model$odin_model(
+    user = x$inputs$model_params,
+    unused_user_action = "message"
+  ))
+  
+  # what are we plotting
+  if (what == "ICU") {
+    index <- c(idx$I_ICU_D, idx$I_ICU_R) - 1L
+    ylab <- "ICU"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      rowSums(x$trajectories[, index, y], na.rm = TRUE)
+    },
+    FUN.VALUE = numeric(dim(x$trajectories)[1])
+    )
+    plot_particles(particles, ylab = ylab, title = title, col = col)
+    points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
+  } else if (what == "general") {
+    index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
+    ylab <- "General beds"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      rowSums(x$trajectories[, index, y], na.rm = TRUE)
+    },
+    FUN.VALUE = numeric(dim(x$trajectories)[1])
+    )
+    plot_particles(particles, ylab = ylab, title = title, col = col)
+    points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
+  }
+  
+  else if (what == "deaths") {
+    index <- c(idx$D) - 1L
+    ylab <- "Deaths"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      out <- c(0, diff(rowSums(x$trajectories[, index, y], na.rm = TRUE)))
+      names(out)[1] <- rownames(x$trajectories)[1]
+      out
+    },
+    FUN.VALUE = numeric(dim(x$trajectories)[1])
+    )
+    plot_particles(particles, ylab = ylab, title = title, col = col)
+    points(as.Date(x$inputs$data$date),
+           x$inputs$data$deaths / x$inputs$pars_obs$phi_death,
+           pch = 19
+    )
+  } else {
+    stop("Requested what must be one of 'ICU', 'deaths' or 'general'")
+  }
 }
 
 ##' collapse into an array of trajectories
