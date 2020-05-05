@@ -127,7 +127,7 @@ sample_pmcmc <- function(mcmc_results,
   
   # checks on args
   assert_is(mcmc_results, "pmcmc_list")
-  assert_pos_int(n_sample_pairs)
+  assert_pos_int(n_sample)
   assert_pos_int(n_particles)
   assert_pos_int(forecast_days)
   
