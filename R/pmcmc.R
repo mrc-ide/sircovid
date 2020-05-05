@@ -738,7 +738,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   chains <- x$chains
   n_chains <- length(chains)
-  cols_trace <- viridis::viridis(n_chains)[c(4, 1, 3, 2)]
+  cols_trace <- rev(viridis::viridis(n_chains))
   
   
   # compile master chain and order by log posterior for plotting
