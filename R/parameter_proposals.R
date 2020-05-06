@@ -30,10 +30,10 @@ start_date_to_offset <- function(first_data_date, start_date)
   # string -> Date -> numeric
 
   # Convert any strings to Dates
-  if (class(first_data_date) == "character") {
+  if (class(first_data_date) == "character" || class(first_data_date) == "factor") {
     first_data_date = as.Date(first_data_date)
   }
-  if (class(start_date) == "character") {
+  if (class(start_date) == "character" || class(first_data_date) == "factor") {
     start_date = as.Date(start_date)
   }
 
@@ -56,10 +56,10 @@ offset_to_start_date <- function(first_data_date, start_date)
   # string -> Date -> numeric
 
   # Convert any strings to Dates
-  if (class(first_data_date) == "character") {
+  if (class(first_data_date) == "character" || class(first_data_date) == "factor") {
     first_data_date = as.Date(first_data_date)
   }
-  if (class(start_date) == "character") {
+  if (class(start_date) == "character" || class(first_data_date) == "factor") {
     start_date = as.Date(start_date)
   }
 
