@@ -272,7 +272,7 @@ pmcmc <- function(data,
   
   # convert the current parameters into format easier for mcmc to deal with
   curr_pars <- unlist(pars_init)
-  curr_pars['start_date'] <- as.numeric(data$date[1] - pars_init$start_date) # convert to numeric
+  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date) # convert to numeric
   
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
@@ -311,7 +311,7 @@ pmcmc <- function(data,
         
         traces <- x$results
         if('start_date' %in% pars_to_sample) {
-          traces$start_date <- as.numeric(as.Date(data$date[1]) - traces$start_date)
+          traces$start_date <- start_date_to_offset(data$date[1], traces$start_date)
         }
         
       coda::as.mcmc(traces[, names(pars_init)])
@@ -478,7 +478,7 @@ run_mcmc_chain <- function(inputs,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- first_data_date - res$start_date
+  res$start_date <- offset_to_start_date(first_data_date, res$start_date)
   
   out <- list('inputs' = inputs, 
               'results' = as.data.frame(res),
@@ -488,7 +488,7 @@ run_mcmc_chain <- function(inputs,
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- first_data_date - proposals$start_date
+   proposals$start_date <- offset_to_start_date(first_data_date, proposals$start_date)
    out$proposals <- proposals
  }
  
@@ -518,7 +518,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
   if ('start_date' %in% names(pars)) {
-    start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
+    start_date <- offset_to_start_date(data$date[1], pars[['start_date']])
   } else {
     start_date <- data$date[1]
   }
@@ -617,7 +617,7 @@ summary.pmcmc <- function(object, ...) {
   ## convert start_date to numeric to calculate stats
   data_start_date <- as.Date(object$inputs$data$date[1])
   traces <- object$results[,par_names] 
-  traces$start_date <- as.numeric(data_start_date - traces$start_date)
+  traces$start_date <- start_date_to_offset(data_start_date, traces$start_date)
   
   # calculate correlation matrix
   corr_mat <- round(cor(traces),2)

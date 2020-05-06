@@ -120,7 +120,7 @@ sample_grid_scan <- function(scan_results,
 ##' @importFrom furrr future_map
 ##' @importFrom purrr transpose
 sample_pmcmc <- function(mcmc_results,
-                         burn_in = 101,
+                         burn_in = 1,
                          n_sample = 10, 
                          n_particles = 100, 
                          forecast_days = 0) {
@@ -140,7 +140,8 @@ sample_pmcmc <- function(mcmc_results,
   
   forecasts <- function(sampled_pars) {
     pars <- as.list(sampled_pars)
-    pars$start_date <- as.numeric(as.Date(mcmc_results$inputs$data$date[1])) - pars$start_date
+    pars$start_date <- start_date_to_offset(first_data_date = mcmc_results$inputs$data$date[1],
+                                            start_date = pars$start_date)
     trace <- calc_loglikelihood(pars, 
                                 mcmc_results$inputs$data, 
                                 mcmc_results$inputs$sircovid_model, 

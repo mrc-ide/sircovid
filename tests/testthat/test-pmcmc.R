@@ -46,7 +46,7 @@ test_that("pmcmc runs without error", {
     pars_discrete = list('beta_start' = FALSE,
                          'start_date' = TRUE)
   )
-
+  
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
