@@ -755,7 +755,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   chains <- x$chains
   n_chains <- length(chains)
-  cols_trace <- viridis::viridis(n_chains)[c(4, 1, 3, 2)]
+  cols_trace <- rev(viridis::viridis(n_chains))
   
   
   # compile master chain and order by log posterior for plotting
@@ -834,8 +834,8 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
       if (i == j) { # plot hists on diagonal
         par_name <- par_names[i]
         bs <- breaks[[par_name]]
-        plot(x = bs ,  # force date axis where needed
-             y = bs, 
+        plot(x = bs[1] ,  # force date axis where needed
+             y = 1, 
              type = 'n',
              xlim = c(bs[1], bs[length(bs)]),
              ylim = hist_ylim[[par_name]],
