@@ -92,8 +92,8 @@ smc_squared <- function(data,
     step <- c(data$step_start[t], data$step_end[t])
     prev_state <- state
     
-    ##run the model forward for all the particles of each parameter set
-    model_run <- furrr::future_pmap(
+    ##run the model forward and resample the particles of each parameter set
+    model_run_resample <- furrr::future_pmap(
       .l = list(k=seq_len(n_param_sets)), .f = smc_sq_run_model_resample,
       t = t, data = data, sircovid_model = sircovid_model,
       state = state, prev_state = prev_state, params = params,
@@ -270,8 +270,6 @@ initial_params <- function(fitted_params,n_param_sets){
 ##' @importFrom mvtnorm rmvnorm
 propose_new_params <- function(params,sigma){
   
-  f <- 
-  
   #propose parameters from a multivariate normal about a mean pars,
   #with covariance matrix sigma
   prop_params <- t(apply(params, 1, FUN = function(pars){rmvnorm(1,mean = as.numeric(pars), sigma = sigma)}))
@@ -285,7 +283,7 @@ propose_new_params <- function(params,sigma){
 
 }
 
-
+#run the model up to the data for the kth set of parameters in params
 smc_sq_pre_data_run_model <- function(k, params, data, sircovid_model,
                                 odin_params, beta_params, pars_obs,
                                 pars_seeding, n_particles,
@@ -314,6 +312,7 @@ smc_sq_pre_data_run_model <- function(k, params, data, sircovid_model,
 }
 
 
+#run the model forward and resample for the kth set of parameters in params
 smc_sq_run_model_resample <- function(k, t, data, sircovid_model,
                                       state, prev_state, params,
                                       odin_params, beta_params,
@@ -347,6 +346,7 @@ smc_sq_run_model_resample <- function(k, t, data, sircovid_model,
 }
 
 
+#run a particle filter using the kth set of parameters in prop_params
 smc_sq_rerun_pf <- function(k, data, sircovid_model, 
                             prop_params, odin_params,
                             beta_params, pars_obs, pars_seeding,
