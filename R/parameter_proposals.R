@@ -48,24 +48,17 @@ start_date_to_offset <- function(first_data_date, start_date)
   first_data_date - start_date
 }
 
-# Converts dates from data into a numeric offset as used in the MCMC
+# Converts dates from from numeric offset as used in the MCMC to a Date
 # Automatically converts type
 offset_to_start_date <- function(first_data_date, start_date)
 {
-  # Format conversion cascades as required
-  # string -> Date -> numeric
+  if (class(start_date) != "numeric") {
+    stop("Offset start date must be numeric")
+  }
 
   # Convert any strings to Dates
   if (class(first_data_date) == "character" || class(first_data_date) == "factor") {
     first_data_date = as.Date(first_data_date)
-  }
-  if (class(start_date) == "character" || class(first_data_date) == "factor") {
-    start_date = as.Date(start_date)
-  }
-
-  # Convert any Dates to numerics
-  if (class(start_date) == "Date") {
-    start_date = as.numeric(start_date)
   }
 
   as.Date(-start_date, origin=first_data_date)

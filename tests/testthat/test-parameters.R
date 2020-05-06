@@ -137,3 +137,14 @@ test_that("read Bob's parameters", {
     generate_parameters(sircovid_model = hospital_model()),
     NA)
 })
+
+test_that("date conversion works", {
+  first_data_date <- "2020-03-05"
+  start_date <- "2020-03-01"
+  
+  offset <- start_date_to_offset(first_data_date, start_date)
+  expect_equal(offset, 
+               as.numeric(as.Date(first_data_date) - as.Date(start_date)))
+  expect_equal(offset_to_start_date(first_data_date, offset),
+               as.Date(start_date))
+})
