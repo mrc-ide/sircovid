@@ -46,7 +46,7 @@ test_that("pmcmc runs without error", {
     pars_discrete = list('beta_start' = FALSE,
                          'start_date' = TRUE)
   )
-
+  
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
@@ -208,9 +208,26 @@ test_that("pmcmc will run with multiple chains" , {
   expect_is(X, 'pmcmc_list')
   expect_equal(length(X$chains), n_chains)
 
+  
+  ## test create_master_chain
+  Y <- create_master_chain(X, burn_in = 1L) 
+  expect_error(create_master_chain(X, burn_in = 1e6), 
+               'burn_in is greater than chain length')
+  expect_error(create_master_chain(X, burn_in = '1'), 
+               'burn_in must be an integer')
+  expect_error(create_master_chain(X, burn_in = -1), 
+               'burn_in must not be negative')
+  expect_error(create_master_chain(X$chains, burn_in = 1L), 
+               'x must be a pmcmc_list object')
+
+
+  
   # Summary run, but not checked
   summary(X, burn_in = 1)
-  expect_error(summary(X, burn_in = 1E6), "Burn in greater than chain length")
+  
+  ## plot called but not checked
+  plot(X, burn_in = 1)
+  
 })
 
 test_that("pmcmc error cases", {

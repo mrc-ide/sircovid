@@ -1,3 +1,12 @@
+
+# sircovid 0.2.27
+
+- Sampler/forecasts for pMCMC results
+
+# sircovid 0.2.26
+
+- plot method for parallel pMCMC
+
 # sircovid 0.2.25
 
 - Three parameter pMCMC

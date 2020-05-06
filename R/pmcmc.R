@@ -48,7 +48,7 @@
 ##' 
 ##' @param n_chains Number of chains to run
 ##'
-##' @return list of length two containing
+##' @return an mcmc object containing
 ##' - List of inputs
 ##' - Matrix of accepted parameter samples, rows = iterations
 ##'   as well as log prior, (particle filter estimate of) log likelihood and log posterior
@@ -254,7 +254,9 @@ pmcmc <- function(data,
                         model_params = model_params,
                         steps_per_day = steps_per_day, 
                         pars_obs = pars_obs, 
-                        n_particles = n_particles
+                        n_particles = n_particles,
+                        forecast_days = 0,
+                        return = "ll"
     ) 
     X
   }
@@ -270,7 +272,7 @@ pmcmc <- function(data,
   
   # convert the current parameters into format easier for mcmc to deal with
   curr_pars <- unlist(pars_init)
-  curr_pars['start_date'] <- as.numeric(data$date[1] - pars_init$start_date) # convert to numeric
+  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date) # convert to numeric
   
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
@@ -309,7 +311,7 @@ pmcmc <- function(data,
         
         traces <- x$results
         if('start_date' %in% pars_to_sample) {
-          traces$start_date <- as.numeric(as.Date(data$date[1]) - traces$start_date)
+          traces$start_date <- start_date_to_offset(data$date[1], traces$start_date)
         }
         
       coda::as.mcmc(traces[, names(pars_init)])
@@ -476,7 +478,7 @@ run_mcmc_chain <- function(inputs,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- first_data_date - res$start_date
+  res$start_date <- offset_to_start_date(first_data_date, res$start_date)
   
   out <- list('inputs' = inputs, 
               'results' = as.data.frame(res),
@@ -486,7 +488,7 @@ run_mcmc_chain <- function(inputs,
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- first_data_date - proposals$start_date
+   proposals$start_date <- offset_to_start_date(first_data_date, proposals$start_date)
    out$proposals <- proposals
  }
  
@@ -495,13 +497,28 @@ run_mcmc_chain <- function(inputs,
 
 }
 
-
+# Run odin model to calculate log-likelihood
+# 
+# return: Set to 'll' to return the log-likelihood (for MCMC) or to
+#
 calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
-                               steps_per_day, pars_obs, n_particles) {
+                               steps_per_day, pars_obs, n_particles,
+                               forecast_days = 0, return = "ll") {
+  if (return == "full") {
+    save_particles <- TRUE
+    pf_return <- "sample"
+  } else if (return == "ll") {
+    save_particles <- FALSE
+    forecast_days <- 0
+    pf_return <- "single"
+  } else {
+    stop("Unknown return type to calc_loglikelihood")
+  }
+  
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
   if ('start_date' %in% names(pars)) {
-    start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
+    start_date <- offset_to_start_date(data$date[1], pars[['start_date']])
   } else {
     start_date <- data$date[1]
   }
@@ -531,8 +548,8 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                    pars_seeding = NULL,
                                    n_particles = n_particles,
                                    forecast_days = 0,
-                                   save_particles = FALSE,
-                                   return = "single")
+                                   save_particles = save_particles,
+                                   return = pf_return)
   pf_result
 }
 
@@ -561,6 +578,36 @@ reflect_proposal <- function(x, floor, cap) {
 }
 
 
+
+##' @title create a master chain from a pmcmc_list object
+##' @param x a pmcmc_list object
+##' @param burn_in an integer denoting the number of samples to discard from each chain
+##' @export
+##' 
+create_master_chain <- function(x, burn_in) {
+  
+  if(class(x) != 'pmcmc_list') {
+    stop('x must be a pmcmc_list object')
+  }
+  if(!is.numeric(burn_in)) {
+    stop('burn_in must be an integer')
+  }
+  if(burn_in < 0) {
+    stop('burn_in must not be negative')
+  }
+  if(burn_in >= x$inputs$n_mcmc) {
+    stop('burn_in is greater than chain length')
+  }
+  
+  chains <- lapply(
+    X = x$chains,
+    FUN = function(z) z$results[-seq_len(burn_in), ]
+  )
+  
+  do.call(what = rbind, args = chains)
+}
+
+
 ##' @export
 ##' @importFrom stats cor sd 
 summary.pmcmc <- function(object, ...) {
@@ -570,7 +617,7 @@ summary.pmcmc <- function(object, ...) {
   ## convert start_date to numeric to calculate stats
   data_start_date <- as.Date(object$inputs$data$date[1])
   traces <- object$results[,par_names] 
-  traces$start_date <- as.numeric(data_start_date - traces$start_date)
+  traces$start_date <- start_date_to_offset(data_start_date, traces$start_date)
   
   # calculate correlation matrix
   corr_mat <- round(cor(traces),2)
@@ -584,7 +631,9 @@ summary.pmcmc <- function(object, ...) {
   
   # compile summary
   summ <- rbind(mean = colMeans(traces),
-                apply(traces, MARGIN = 2, quantile, c(0.025, 0.975))
+                apply(traces, MARGIN = 2, quantile, c(0.025, 0.975)), 
+                min = apply(traces, MARGIN = 2, min),
+                max =  apply(traces, MARGIN = 2, max)
   )
   summ <- as.data.frame(summ)
   summ <- round(summ, 3)
@@ -593,7 +642,8 @@ summary.pmcmc <- function(object, ...) {
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
   summ$start_date <- as.Date(-summ$start_date, data_start_date)
-  summ[c('2.5%', '97.5%'), 'start_date'] <- rev(summ[c('2.5%', '97.5%'), 'start_date'])
+  summ[c('2.5%', '97.5%', 'min', 'max'), 'start_date'] <- summ[c('97.5%', '2.5%', 'max', 'min'), 'start_date']
+
   
   out <- list('summary' = summ, 
               'corr_mat' = corr_mat, 
@@ -604,13 +654,9 @@ summary.pmcmc <- function(object, ...) {
 
 ##' @export
 summary.pmcmc_list <- function(object, ..., burn_in = 101) {
-  if (burn_in > nrow(object$chains$chain1$results)) {
-    stop("Burn in greater than chain length")
-  }
-  chains <- object$chains
-  master_chain <- do.call(what = rbind, 
-                          args = lapply(chains, function(x) 
-                           x$results[-seq_len(burn_in), ]))
+
+  master_chain <- create_master_chain(x = object, 
+                                      burn_in = burn_in)
   
   z <- list(inputs = object$inputs, 
             results = master_chain)
@@ -694,5 +740,161 @@ plot.pmcmc <- function(x, ...) {
          ylab = par_names, 
          xlab = "Iteration")
   
+  
+}
+
+##' @export
+##' @importFrom viridis cividis
+##' @importFrom graphics hist par plot.new text lines legend
+##' 
+plot.pmcmc_list <- function(x, burn_in = 1, ...) {
+  
+  summ <- summary(x, burn_in = burn_in)
+  par_names <- names(x$inputs$pars$pars_init)
+  n_pars <- length(par_names)
+  
+  chains <- x$chains
+  n_chains <- length(chains)
+  cols_trace <- rev(viridis::viridis(n_chains))
+  
+  
+  # compile master chain and order by log posterior for plotting
+  master_chain <- create_master_chain(x, burn_in = burn_in)
+
+  master_chain <- master_chain[order(master_chain$log_posterior), ]
+  cols <- viridis::cividis(nrow(master_chain))
+  cols <- cols[order(master_chain$log_posterior)]
+  
+  
+  
+  
+  traces <- lapply(par_names, FUN = function(par_name) {
+    lapply(X = chains, 
+           FUN = function(z) z$results[-seq_len(burn_in), par_name])
+  })
+  names(traces) <- par_names
+  
+  plot_traces <- function(trace, col) {
+    lines(x = seq_along(trace), 
+          y = trace, 
+          col = col)
+  }
+  
+  
+  
+  breaks <- lapply(par_names, function(par_name){
+    seq(from = min(master_chain[, par_name]), 
+        to =  max(master_chain[, par_name]), 
+        length.out = 20)
+  })
+  names(breaks) <- par_names
+  
+  hists <- lapply(par_names, FUN = function(par_name) {
+    lapply(X = traces[[par_name]], 
+           FUN = hist, 
+           plot = FALSE, 
+           breaks = breaks[[par_name]])
+  })
+  names(hists) <- par_names
+  
+  hist_ylim <- lapply(hists, function(h) {
+    chain_max <- sapply(h, function(chain) max(chain$density) )
+    c(0, max(chain_max))
+  })
+  
+  plot_hists <- function(h, col, breaks) {
+    with(h, lines(x =  breaks, 
+                  y = c(density, 
+                        density[length(density)]), 
+                  type = 's',
+                  col = col))
+  }
+  
+  
+  print_summ <- function(par_name) {
+    x <- summ$summary
+    paste0(x['mean', par_name], 
+           '\n(', 
+           x['2.5%', par_name], 
+           ', ', 
+           x['97.5%', par_name], ')')
+  }
+  
+  
+  par( bty = 'n',
+       mfcol = c(n_pars, n_pars + 1L),
+       mar = c(3,3,2,1),
+       mgp = c(1.5, 0.5, 0), 
+       oma = c(1,1,1,1))
+  
+  
+  for (i in seq_len(n_pars)) {
+    for(j in seq_len(n_pars)) {
+      
+      if (i == j) { # plot hists on diagonal
+        par_name <- par_names[i]
+        bs <- breaks[[par_name]]
+        plot(x = bs[1] ,  # force date axis where needed
+             y = 1, 
+             type = 'n',
+             xlim = c(bs[1], bs[length(bs)]),
+             ylim = hist_ylim[[par_name]],
+             xlab = par_name, 
+             ylab = '',
+             main = print_summ(par_name), 
+             cex.main = 1,
+             font.main = 1
+        )
+        
+        mapply(FUN = plot_hists, 
+               h = hists[[par_name]],
+               breaks = bs,
+               col = cols_trace)
+        
+        
+      } else if (i < j) {  # plot correlations on lower triangle
+        plot(x = master_chain[[i]], 
+             y = master_chain[[j]], 
+             xlab = par_names[i], 
+             ylab = par_names[j], 
+             col = cols, 
+             pch = 20)
+      } else if (i > j) { # print rho on upper triangle
+        plot.new()
+        text(x = 0.5, 
+             y=0.5, 
+             labels = paste('r =', 
+                            summ$corr_mat[i, j]))
+      }
+    }
+  }
+  
+  
+  # print traces in final column
+  n_iter <- nrow(master_chain) / n_chains
+  
+  mapply(FUN = function(par_name, leg) {
+    plot(x = breaks[[par_name]],
+         y = breaks[[par_name]],
+         type = 'n', 
+         xlab = 'Iteration', 
+         ylab = par_name, 
+         xlim = c(0, n_iter), 
+         ylim <- range(master_chain[, par_name]))
+    
+    mapply(FUN = plot_traces,
+           trace = traces[[par_name]], 
+           col = cols_trace)
+    
+    if(leg) {
+      legend('top',
+             ncol = n_chains, 
+             legend = paste('Chain', seq_len(n_chains)),
+             fill = cols_trace, 
+             bty = 'n')
+    }
+  }, 
+  par_name = par_names, 
+  leg = c(TRUE, FALSE, FALSE))
   
 }
