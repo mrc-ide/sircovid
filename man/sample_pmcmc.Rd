@@ -6,7 +6,7 @@
 \usage{
 sample_pmcmc(
   mcmc_results,
-  burn_in = 101,
+  burn_in = 1,
   n_sample = 10,
   n_particles = 100,
   forecast_days = 0
@@ -34,7 +34,7 @@ will determine how many trajectories are returned.}
 }
 \description{
 Take a parameter search produced by \code{\link{pmcmc}} and 
-sample \code{n_sample_pairs} from the parameter space
+sample \code{n_sample} from the parameter space
 on their probability. For each parameter pair chosen, run particle
 filter with \code{num_particles} and sample 1 trajectory
 }
