@@ -190,56 +190,6 @@ plot.sircovid_scan <- function(x, ..., what = "likelihood", title = NULL) {
   }
 }
 
-##' @export
-plot.sample_grid_search <- function(x, ..., what = "ICU", title = NULL, col = 'grey80') {
-  idx <- odin_index(x$inputs$model$odin_model(
-    user = x$inputs$model_params,
-    unused_user_action = "message"
-  ))
-
-  # what are we plotting
-  if (what == "ICU") {
-    index <- c(idx$I_ICU_D, idx$I_ICU_R) - 1L
-    ylab <- "ICU"
-    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
-      rowSums(x$trajectories[, index, y], na.rm = TRUE)
-    },
-    FUN.VALUE = numeric(dim(x$trajectories)[1])
-    )
-    plot_particles(particles, ylab = ylab, title = title, col = col)
-    points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
-  } else if (what == "general") {
-    index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
-    ylab <- "General beds"
-    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
-      rowSums(x$trajectories[, index, y], na.rm = TRUE)
-    },
-    FUN.VALUE = numeric(dim(x$trajectories)[1])
-    )
-    plot_particles(particles, ylab = ylab, title = title, col = col)
-    points(as.Date(x$inputs$data$date), x$inputs$data$general / x$inputs$pars_obs$phi_general, pch = 19)
-  }
-
-  else if (what == "deaths") {
-    index <- c(idx$D) - 1L
-    ylab <- "Deaths"
-    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
-      out <- c(0, diff(rowSums(x$trajectories[, index, y], na.rm = TRUE)))
-      names(out)[1] <- rownames(x$trajectories)[1]
-      out
-    },
-    FUN.VALUE = numeric(dim(x$trajectories)[1])
-    )
-    plot_particles(particles, ylab = ylab, title = title, col = col)
-    points(as.Date(x$inputs$data$date),
-      x$inputs$data$deaths / x$inputs$pars_obs$phi_death,
-      pch = 19
-    )
-  } else {
-    stop("Requested what must be one of 'ICU', 'deaths' or 'general'")
-  }
-}
-
 ##' Particle filter outputs
 ##'
 ##' Helper function to run the particle filter with a

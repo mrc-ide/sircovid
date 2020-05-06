@@ -254,7 +254,9 @@ pmcmc <- function(data,
                         model_params = model_params,
                         steps_per_day = steps_per_day, 
                         pars_obs = pars_obs, 
-                        n_particles = n_particles
+                        n_particles = n_particles,
+                        forecast_days = 0,
+                        return = "ll"
     ) 
     X
   }
@@ -270,7 +272,7 @@ pmcmc <- function(data,
   
   # convert the current parameters into format easier for mcmc to deal with
   curr_pars <- unlist(pars_init)
-  curr_pars['start_date'] <- as.numeric(data$date[1] - pars_init$start_date) # convert to numeric
+  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date) # convert to numeric
   
   if(any(curr_pars < pars_min | curr_pars > pars_max)) {
     stop('initial parameters are outside of specified range')
@@ -309,7 +311,7 @@ pmcmc <- function(data,
         
         traces <- x$results
         if('start_date' %in% pars_to_sample) {
-          traces$start_date <- as.numeric(as.Date(data$date[1]) - traces$start_date)
+          traces$start_date <- start_date_to_offset(data$date[1], traces$start_date)
         }
         
       coda::as.mcmc(traces[, names(pars_init)])
@@ -476,7 +478,7 @@ run_mcmc_chain <- function(inputs,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- first_data_date - res$start_date
+  res$start_date <- offset_to_start_date(first_data_date, res$start_date)
   
   out <- list('inputs' = inputs, 
               'results' = as.data.frame(res),
@@ -486,7 +488,7 @@ run_mcmc_chain <- function(inputs,
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- first_data_date - proposals$start_date
+   proposals$start_date <- offset_to_start_date(first_data_date, proposals$start_date)
    out$proposals <- proposals
  }
  
@@ -495,13 +497,28 @@ run_mcmc_chain <- function(inputs,
 
 }
 
-
+# Run odin model to calculate log-likelihood
+# 
+# return: Set to 'll' to return the log-likelihood (for MCMC) or to
+#
 calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
-                               steps_per_day, pars_obs, n_particles) {
+                               steps_per_day, pars_obs, n_particles,
+                               forecast_days = 0, return = "ll") {
+  if (return == "full") {
+    save_particles <- TRUE
+    pf_return <- "sample"
+  } else if (return == "ll") {
+    save_particles <- FALSE
+    forecast_days <- 0
+    pf_return <- "single"
+  } else {
+    stop("Unknown return type to calc_loglikelihood")
+  }
+  
   # pars[['start_date']] argument is an integer reflecting the number of days between 
   # the model start date and the first date in the data
   if ('start_date' %in% names(pars)) {
-    start_date <- as.Date(-pars[['start_date']], origin=data$date[1])
+    start_date <- offset_to_start_date(data$date[1], pars[['start_date']])
   } else {
     start_date <- data$date[1]
   }
@@ -531,8 +548,8 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                    pars_seeding = NULL,
                                    n_particles = n_particles,
                                    forecast_days = 0,
-                                   save_particles = FALSE,
-                                   return = "single")
+                                   save_particles = save_particles,
+                                   return = pf_return)
   pf_result
 }
 
@@ -600,7 +617,7 @@ summary.pmcmc <- function(object, ...) {
   ## convert start_date to numeric to calculate stats
   data_start_date <- as.Date(object$inputs$data$date[1])
   traces <- object$results[,par_names] 
-  traces$start_date <- as.numeric(data_start_date - traces$start_date)
+  traces$start_date <- start_date_to_offset(data_start_date, traces$start_date)
   
   # calculate correlation matrix
   corr_mat <- round(cor(traces),2)
@@ -738,7 +755,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   chains <- x$chains
   n_chains <- length(chains)
-  cols_trace <- viridis::viridis(n_chains)[c(4, 1, 3, 2)]
+  cols_trace <- rev(viridis::viridis(n_chains))
   
   
   # compile master chain and order by log posterior for plotting
@@ -817,8 +834,8 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
       if (i == j) { # plot hists on diagonal
         par_name <- par_names[i]
         bs <- breaks[[par_name]]
-        plot(x = bs ,  # force date axis where needed
-             y = bs, 
+        plot(x = bs[1] ,  # force date axis where needed
+             y = 1, 
              type = 'n',
              xlim = c(bs[1], bs[length(bs)]),
              ylim = hist_ylim[[par_name]],
