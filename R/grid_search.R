@@ -53,7 +53,7 @@ scan_beta_date <- function(
                            data,
                            sircovid_model = basic_model(),
                            model_params = NULL,
-                           pars_obs = NULL,
+                           pars_obs,
                            n_particles = 100,
                            scale_prior = NULL,
                            shape_prior = NULL,
@@ -91,18 +91,6 @@ scan_beta_date <- function(
     if (length(model_params$beta_y) > 1) {
       stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
-  }
-
-  if (is.null(pars_obs)) {
-    pars_obs <- list(
-      phi_general = 0.95,
-      k_general = 2,
-      phi_ICU = 0.95,
-      k_ICU = 2,
-      phi_death = 926 / 1019,
-      k_death = 2,
-      exp_noise = 1e6
-    )
   }
 
   #

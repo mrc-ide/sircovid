@@ -14,8 +14,17 @@ test_that("Small grid search works", {
   first_start_date <- "2020-01-21"
   last_start_date <- "2020-01-22"
   day_step <- 1
-
-  scan_results = scan_beta_date(
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
+  
+  scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
     beta_step = beta_step,
@@ -23,7 +32,9 @@ test_that("Small grid search works", {
     last_start_date = last_start_date,
     day_step = day_step,
     data = data,
-    sircovid_model = basic_model())
+    pars_obs = pars_obs,
+    sircovid_model = basic_model()
+  )
 
   expect_is(scan_results, "sircovid_scan")
   expect_true("inputs" %in% names(scan_results))
@@ -45,6 +56,16 @@ test_that("Small grid search works", {
 test_that("Warning is issued if grid does not explore low likelihood regions", {
 
   data <- readRDS("hospital_model_data.rds")
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
+  
   expect_warning(
     scan_beta_date(
     min_beta = 0.2,
@@ -55,6 +76,7 @@ test_that("Warning is issued if grid does not explore low likelihood regions", {
     day_step = 1,
     data = data,
     sircovid_model = hospital_model(),
+    pars_obs = pars_obs,
     scale_prior = 0.003541667,
     shape_prior = 36,
     n_particles = 2,
@@ -80,6 +102,15 @@ test_that("Small grid search works with new model", {
   first_start_date <- "2020-01-21"
   last_start_date <- "2020-01-22"
   day_step <- 1
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
 
   scan_results = scan_beta_date(
     min_beta = min_beta,
@@ -90,6 +121,7 @@ test_that("Small grid search works with new model", {
     day_step = day_step,
     data = data,
     sircovid_model = hospital_model(),
+    pars_obs = pars_obs,
     scale_prior = 0.003541667,
     shape_prior = 36
     )
@@ -128,6 +160,15 @@ test_that("Transmission is more likely", {
   first_start_date <- "2020-01-21"
   last_start_date <- "2020-01-21"
   day_step <- 1
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
 
   scan_results = scan_beta_date(
     min_beta = min_beta,
@@ -136,6 +177,7 @@ test_that("Transmission is more likely", {
     first_start_date = first_start_date,
     last_start_date = last_start_date,
     day_step = day_step,
+    pars_obs = pars_obs,
     data = data)
 
   # No transmission b = 0 much less likely than some transmission b = 0.1
@@ -156,6 +198,15 @@ test_that("Unreasonable start dates are less likely", {
   first_start_date <- "2020-01-01"
   last_start_date <- "2020-02-29"
   day_step <- 20
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
 
   scan_results = scan_beta_date(
     min_beta = min_beta,
@@ -164,6 +215,7 @@ test_that("Unreasonable start dates are less likely", {
     first_start_date = first_start_date,
     last_start_date = last_start_date,
     day_step = day_step,
+    pars_obs = pars_obs,
     data = data)
 
   # Mid Jan start most likely
@@ -183,6 +235,15 @@ test_that("Bad parameters create errors", {
   first_start_date <- "2020-01-01"
   last_start_date <- "2020-02-29"
   day_step <- 20
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
 
   sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
                                 gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))
@@ -201,6 +262,7 @@ test_that("Bad parameters create errors", {
     min_beta = min_beta,
     max_beta = max_beta,
     model_params = model_params,
+    pars_obs = pars_obs,
     beta_step = beta_step,
     first_start_date = first_start_date,
     last_start_date = last_start_date,
@@ -223,6 +285,7 @@ test_that("Bad parameters create errors", {
     min_beta = min_beta,
     max_beta = max_beta,
     model_params = model_params,
+    pars_obs = pars_obs,
     beta_step = beta_step,
     first_start_date = first_start_date,
     last_start_date = last_start_date,

@@ -12,8 +12,14 @@
 ##' @param sircovid_model An odin model generator and comparison function.
 
 ##' @param pars_obs list of parameters to use in comparison
-##'   with \code{compare_icu}. If NULL, uses
-##'   list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
+##'   with \code{compare_icu}. Must be a list containing, e.g.
+##'   list(phi_general = 0.95, 
+##'   k_general = 2,
+##'   phi_ICU = 0.95, 
+##'   k_ICU = 2, 
+##'   phi_death = 926 / 1019, 
+##'   k_death = 2, 
+##'   exp_noise = 1e6)
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
@@ -92,13 +98,7 @@ pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
                   model_params = NULL,
-                  pars_obs = list(phi_general = 0.95,
-                                  k_general = 2,
-                                  phi_ICU = 0.95,
-                                  k_ICU = 2,
-                                  phi_death = 926 / 1019,
-                                  k_death = 2,
-                                  exp_noise = 1e6),
+                  pars_obs,
                   pars_to_sample = c('beta_start',
                                      'beta_end', 
                                      'start_date'),

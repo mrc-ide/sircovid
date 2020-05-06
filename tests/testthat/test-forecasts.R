@@ -8,7 +8,6 @@ test_that("sample_grid_scan works", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   
-  
   # filter and tidy it
   # Don't start the data until it is after thid date
   data <- data[data$date > as.Date("2020-02-29"),]
@@ -42,6 +41,11 @@ test_that("sample_grid_scan works", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
+    pars_obs = list(phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death = 926 / 1019,
+                    k_death = 2,
+                    exp_noise = 1e6),
     sircovid_model = sircovid_model)
 
   n_sample_pairs <- 4 
@@ -100,6 +104,15 @@ test_that("sample_grid_scan works with new model", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
+    pars_obs = list(
+      phi_general = 0.95,
+      k_general = 2,
+      phi_ICU = 0.95,
+      k_ICU = 2,
+      phi_death = 926 / 1019,
+      k_death = 2,
+      exp_noise = 1e6
+    ),
     sircovid_model = sircovid_model)
   
   n_sample_pairs <- 4 
@@ -141,6 +154,15 @@ test_that("sample_pmcmc works with new model", {
     data = data,
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model,
+    pars_obs = list(
+      phi_general = 0.95,
+      k_general = 2,
+      phi_ICU = 0.95,
+      k_ICU = 2,
+      phi_death = 926 / 1019,
+      k_death = 2,
+      exp_noise = 1e6
+    ),
     model_params = model_params,
     n_chains = n_chains
   )
