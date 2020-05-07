@@ -9,8 +9,7 @@ pmcmc(
   n_mcmc,
   sircovid_model,
   model_params = NULL,
-  pars_obs = list(phi_general = 0.95, k_general = 2, phi_ICU = 0.95, k_ICU = 2,
-    phi_death = 926/1019, k_death = 2, exp_noise = 1e+06),
+  pars_obs,
   pars_to_sample = c("beta_start", "beta_end", "start_date"),
   pars_init = list(beta_start = 0.14, beta_end = 0.14 * 0.238, start_date =
     as.Date("2020-02-07")),
@@ -41,8 +40,14 @@ pmcmc(
 in unit tests.}
 
 \item{pars_obs}{list of parameters to use in comparison
-with \code{compare_icu}. If NULL, uses
-list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)}
+with \code{compare_icu}. Must be a list containing, e.g.
+list(phi_general = 0.95, 
+k_general = 2,
+phi_ICU = 0.95, 
+k_ICU = 2, 
+phi_death = 926 / 1019, 
+k_death = 2, 
+exp_noise = 1e6)}
 
 \item{pars_to_sample}{names of parameters to be sampled (currently beta_start, beta_end and start_date)}
 

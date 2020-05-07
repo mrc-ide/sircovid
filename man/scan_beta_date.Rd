@@ -14,7 +14,7 @@ scan_beta_date(
   data,
   sircovid_model = basic_model(),
   model_params = NULL,
-  pars_obs = NULL,
+  pars_obs,
   n_particles = 100,
   scale_prior = NULL,
   shape_prior = NULL,
