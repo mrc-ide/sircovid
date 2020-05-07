@@ -874,8 +874,8 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   n_iter <- nrow(master_chain) / n_chains
   
   mapply(FUN = function(par_name, leg) {
-    plot(x = breaks[[par_name]],
-         y = breaks[[par_name]],
+    plot(x = 1,
+         y = breaks[[par_name]][1],
          type = 'n', 
          xlab = 'Iteration', 
          ylab = par_name, 
