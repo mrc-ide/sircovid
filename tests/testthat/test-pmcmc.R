@@ -37,7 +37,7 @@ test_that("pmcmc runs without error", {
                     'start_date' = 0),
     pars_max = list('beta_start' = 1,
                     'start_date' = 1e6),
-    cov_mat = matrix(c(0.001^2, 0,
+    proposal_kernel = matrix(c(0.001^2, 0,
                        0, 0.5^2),
                      nrow = 2, byrow = TRUE,
                      dimnames = list(
@@ -78,7 +78,7 @@ test_that("pmcmc runs without error", {
    data = data,
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   cov_mat = matrix(c(1e2, 0, 0,
+   proposal_kernel = matrix(c(1e2, 0, 0,
                       0, 1e2, 0,
                       0,  0, 1e4),
                     nrow = 3, byrow = TRUE,
@@ -108,7 +108,7 @@ test_that("pmcmc runs without error", {
    data = data,
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
-   cov_mat = matrix(rep(0, 9),
+   proposal_kernel = matrix(rep(0, 9),
                     nrow = 3, byrow = TRUE,
                     dimnames = list(
                       c('beta_start', 'beta_end', 'start_date'),
@@ -136,7 +136,7 @@ X3 <- pmcmc(
                   phi_death = 926 / 1019,
                   k_death = 2,
                   exp_noise = 1e6),
-  cov_mat = matrix(c(      0.001^2,       0, 0.001*0.5*0.6,
+  proposal_kernel = matrix(c(      0.001^2,       0, 0.001*0.5*0.6,
                                  0, 0.001^2, 0,
                      0.001*0.5*0.6,       0, 0.5^2),
                    nrow = 3, byrow = TRUE,
@@ -172,7 +172,7 @@ test_that("pmcmc with new model", {
                     'start_date' = 0),
     pars_max = list('beta_start' = 1,
                     'start_date' = 1e6),
-    cov_mat = matrix(c(0.001^2, 0,
+    proposal_kernel = matrix(c(0.001^2, 0,
                        0, 0.5^2),
                      nrow = 2, byrow = TRUE,
                      dimnames = list(
@@ -432,28 +432,28 @@ test_that("pmcmc error cases", {
   )
   
   
-  # incorrect names supplied to cov_mat
+  # incorrect names supplied to proposal_kernel
   expect_error(
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      cov_mat = list(0.5, 0.5, 3)
+      proposal_kernel = list(0.5, 0.5, 3)
     ),
-    "cov_mat must be a matrix or vector with names corresponding to the parameters being sampled"
+    "proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled"
   )
   
-  # incorrect format for cov_mat
+  # incorrect format for proposal_kernel
   expect_error(
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
-      cov_mat = list('beta_start' = 0.5,
+      proposal_kernel = list('beta_start' = 0.5,
                      'beta_end' = 0.5,
                     'start_date' = 3)
     ),
-    "cov_mat must be a matrix or vector with names corresponding to the parameters being sampled"
+    "proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled"
   )
   
   
