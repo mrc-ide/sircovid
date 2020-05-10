@@ -8,7 +8,7 @@ pmcmc(
   data,
   n_mcmc,
   sircovid_model,
-  model_params = NULL,
+  model_params,
   pars_obs,
   pars_to_sample = c("beta_start", "beta_end", "start_date"),
   pars_init = list(beta_start = 0.14, beta_end = 0.14 * 0.238, start_date =
@@ -36,8 +36,7 @@ pmcmc(
 \item{sircovid_model}{An odin model generator and comparison function.}
 
 \item{model_params}{Model parameters, from a call to
-\code{generate_parameters()}. If NULL, uses defaults as
-in unit tests.}
+\code{generate_parameters()}.}
 
 \item{pars_obs}{list of parameters to use in comparison
 with \code{compare_icu}. Must be a list containing, e.g.

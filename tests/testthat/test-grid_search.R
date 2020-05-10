@@ -46,7 +46,7 @@ test_that("Small grid search works", {
     data = data,
     pars_obs = pars_obs,
     model_params = model_params,
-    sircovid_model = sircovid_model,
+    sircovid_model = sircovid_model
   )
 
   expect_is(scan_results, "sircovid_scan")
