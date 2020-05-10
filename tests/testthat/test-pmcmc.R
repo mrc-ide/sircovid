@@ -235,6 +235,8 @@ test_that("pmcmc with new model", {
   proposal_kernel['start_date', 'start_date'] <- 25
   
   
+  cmp <- readRDS("reference_pmcmc_gammas.rds")
+
   set.seed(2)
   X2 <- pmcmc(
     data = data,
@@ -244,6 +246,14 @@ test_that("pmcmc with new model", {
     sircovid_model = sircovid_model
   )
   
+  expect_is(X2, 'pmcmc')
+  expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
+  expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample) + 3L))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
+  expect_equivalent(X2[-1], cmp[-1])
+  
+  
+
 })
 
 test_that("pmcmc will run with multiple chains" , {
