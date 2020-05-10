@@ -1,4 +1,9 @@
 
+# sircovid 0.2.28
+
+- generalised pMCMC to sample gammas
+- rename cov_mat -> proposal_kernel
+
 # sircovid 0.2.27
 
 - Sampler/forecasts for pMCMC results
