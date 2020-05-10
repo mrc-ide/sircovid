@@ -136,6 +136,8 @@ test_that("sample_pmcmc works with new model", {
   
   n_mcmc <- 10
   n_chains <- 2
+  pars_to_sample <- c('beta_start','beta_end', 'start_date',  'gamma_triage', 'gamma_hosp_R', 
+                      'gamma_hosp_D', 'gamma_ICU_R', 'gamma_ICU_D', 'gamma_stepdown')
   proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
   row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
   proposal_kernel['start_date', 'start_date'] <- 25
