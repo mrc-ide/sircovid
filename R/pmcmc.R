@@ -571,7 +571,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   fitted_gammas <- names(pars)[grep('gamma', names(pars))]
   
   for(par in fitted_gammas) {
-    model_params[[par]] <- pars[par]
+    model_params[[par]] <- pars[[par]]
   }
   
 
