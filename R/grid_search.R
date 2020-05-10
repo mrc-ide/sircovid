@@ -22,8 +22,7 @@
 ##' @param sircovid_model An odin model generator and comparison function.
 ##'
 ##' @param model_params Model parameters, from a call to
-##'   \code{generate_parameters()}. If NULL, uses defaults as
-##'   in unit tests.
+##'   \code{generate_parameters()}
 ##'
 ##' @param pars_obs list of parameters to use for the comparison function.
 ##'
@@ -52,7 +51,7 @@ scan_beta_date <- function(
                            day_step,
                            data,
                            sircovid_model = basic_model(),
-                           model_params = NULL,
+                           model_params,
                            pars_obs,
                            n_particles = 100,
                            scale_prior = NULL,
@@ -76,22 +75,10 @@ scan_beta_date <- function(
   #
   # Set up calls to simulator runs
   #
-  if (is.null(model_params)) {
-    time_steps_per_day <- 4
-    model_params <- generate_parameters(
-      sircovid_model = sircovid_model,
-      transmission_model = "POLYMOD",
-      beta = 0.1,
-      beta_times = "2020-01-01",
-      trans_profile = 1,
-      trans_increase = 1,
-      dt = 1 / time_steps_per_day
-    )
-  } else {
     if (length(model_params$beta_y) > 1) {
       stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
-  }
+
 
   #
   # Multi-core futures with furrr (parallel purrr)

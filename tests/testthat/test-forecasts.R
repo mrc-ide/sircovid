@@ -32,6 +32,20 @@ test_that("sample_grid_scan works", {
   day_step <- 12
   
   sircovid_model <- basic_model()
+
+  
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  
   
   scan_results <- scan_beta_date(
     min_beta = min_beta,
@@ -46,6 +60,7 @@ test_that("sample_grid_scan works", {
                     phi_death = 926 / 1019,
                     k_death = 2,
                     exp_noise = 1e6),
+    model_params = model_params,
     sircovid_model = sircovid_model)
 
   n_sample_pairs <- 4 
@@ -96,6 +111,19 @@ test_that("sample_grid_scan works with new model", {
   
   sircovid_model <- hospital_model()
   
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  
+  
   scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
@@ -113,6 +141,7 @@ test_that("sample_grid_scan works with new model", {
       k_death = 2,
       exp_noise = 1e6
     ),
+    model_params = model_params,
     sircovid_model = sircovid_model)
   
   n_sample_pairs <- 4 
