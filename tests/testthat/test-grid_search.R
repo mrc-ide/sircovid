@@ -23,6 +23,18 @@ test_that("Small grid search works", {
     k_death = 2,
     exp_noise = 1e6
   )
+  sircovid_model <- basic_model()
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
   
   scan_results <- scan_beta_date(
     min_beta = min_beta,
@@ -33,7 +45,8 @@ test_that("Small grid search works", {
     day_step = day_step,
     data = data,
     pars_obs = pars_obs,
-    sircovid_model = basic_model()
+    model_params = model_params,
+    sircovid_model = sircovid_model,
   )
 
   expect_is(scan_results, "sircovid_scan")
@@ -66,6 +79,20 @@ test_that("Warning is issued if grid does not explore low likelihood regions", {
     exp_noise = 1e6
   )
   
+  sircovid_model <- hospital_model()
+  
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  
   expect_warning(
     scan_beta_date(
     min_beta = 0.2,
@@ -75,8 +102,9 @@ test_that("Warning is issued if grid does not explore low likelihood regions", {
     last_start_date = "2020-01-22",
     day_step = 1,
     data = data,
-    sircovid_model = hospital_model(),
+    sircovid_model = sircovid_model,
     pars_obs = pars_obs,
+    model_params = model_params,
     scale_prior = 0.003541667,
     shape_prior = 36,
     n_particles = 2,
@@ -111,6 +139,20 @@ test_that("Small grid search works with new model", {
     k_death = 2,
     exp_noise = 1e6
   )
+  
+  sircovid_model <- hospital_model()
+  
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
 
   scan_results = scan_beta_date(
     min_beta = min_beta,
@@ -120,8 +162,9 @@ test_that("Small grid search works with new model", {
     last_start_date = last_start_date,
     day_step = day_step,
     data = data,
-    sircovid_model = hospital_model(),
+    sircovid_model = sircovid_model,
     pars_obs = pars_obs,
+    model_params = model_params,
     scale_prior = 0.003541667,
     shape_prior = 36
     )
@@ -169,6 +212,19 @@ test_that("Transmission is more likely", {
     k_death = 2,
     exp_noise = 1e6
   )
+  
+  sircovid_model <- basic_model()
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
 
   scan_results = scan_beta_date(
     min_beta = min_beta,
@@ -178,6 +234,7 @@ test_that("Transmission is more likely", {
     last_start_date = last_start_date,
     day_step = day_step,
     pars_obs = pars_obs,
+    model_params = model_params,
     data = data)
 
   # No transmission b = 0 much less likely than some transmission b = 0.1
@@ -207,6 +264,19 @@ test_that("Unreasonable start dates are less likely", {
     k_death = 2,
     exp_noise = 1e6
   )
+  
+  sircovid_model <- basic_model()
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
 
   scan_results = scan_beta_date(
     min_beta = min_beta,
@@ -215,7 +285,9 @@ test_that("Unreasonable start dates are less likely", {
     first_start_date = first_start_date,
     last_start_date = last_start_date,
     day_step = day_step,
+    sircovid_model = sircovid_model,
     pars_obs = pars_obs,
+    model_params = model_params,
     data = data)
 
   # Mid Jan start most likely
@@ -244,6 +316,7 @@ test_that("Bad parameters create errors", {
     k_death = 2,
     exp_noise = 1e6
   )
+
 
   sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
                                 gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))

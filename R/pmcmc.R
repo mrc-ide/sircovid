@@ -6,8 +6,7 @@
 ##'   \code{particle_filter_data}
 ##'   
 ##' @param model_params Model parameters, from a call to
-##'   \code{generate_parameters()}. If NULL, uses defaults as
-##'   in unit tests.
+##'   \code{generate_parameters()}. 
 ##'   
 ##' @param sircovid_model An odin model generator and comparison function.
 
@@ -97,7 +96,7 @@
 pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
-                  model_params = NULL,
+                  model_params,
                   pars_obs,
                   pars_to_sample = c('beta_start',
                                      'beta_end', 
@@ -172,24 +171,11 @@ pmcmc <- function(data,
     stop("output_proposals must be either TRUE or FALSE")
   }
   
-  if (is.null(model_params)) {
-    model_params <- generate_parameters(
-      sircovid_model,
-      transmission_model = "POLYMOD",
-      beta = 0.1,
-      beta_times = pars_init$start_date,
-      hosp_transmission = 0,
-      ICU_transmission = 0,
-      trans_profile = 1,
-      trans_increase = 1,
-      dt = 1/steps_per_day
-    )
-  } else {
+
     if (length(model_params$beta_y) > 1) {
       stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
-  }
-  
+
   #
   # Generate MCMC parameters
   #
