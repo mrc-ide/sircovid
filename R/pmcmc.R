@@ -17,7 +17,8 @@
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
-##' @param pars_to_sample names of parameters to be sampled (currently beta_start, beta_end and start_date)
+##' @param pars_to_sample names of parameters to be sampled (currently beta_start, beta_end and start_date,  gamma_triage, 
+##' gamma_hosp_R, gamma_hosp_D, gamma_ICU_R, gamma_ICU_D, and gamma_stepdown)
 ##' 
 ##' @param pars_init named list of initial inputs for parameters being sampled 
 ##' 
@@ -25,7 +26,7 @@
 ##' 
 ##' @param pars_max named list of upper reflecting boundaries for parameter proposals
 ##' 
-##' @param cov_mat named matrix of proposal covariance for parameters 
+##' @param proposal_kernel named matrix of proposal covariance for parameters 
 ##' 
 ##' @param pars_discrete named list of logicals, indicating if proposed jump should be discrete
 ##' 
@@ -70,7 +71,7 @@
 ##' At each loop iteration the pMCMC sampler perfsorms three steps:
 ##'   1. Propose new candidate samples for beta_start, beta_end and start_date based on
 ##'     the current samples, using the proposal distribution 
-##'     (currently multivariate Gaussian with user-input covariance matrix (cov_mat), and reflecting boundaries defined by pars_min, pars_max)
+##'     (currently multivariate Gaussian with user-input covariance matrix (proposal_kernel), and reflecting boundaries defined by pars_min, pars_max)
 ##'   2. Calculate the log prior of the proposed parameters, 
 ##'      Use the particle filter to estimate log likelihood of the data given the proposed parameters, as described above,
 ##'      as well as proposing a model state space.
@@ -101,26 +102,51 @@ pmcmc <- function(data,
                                   exp_noise = 1e6),
                   pars_to_sample = c('beta_start',
                                      'beta_end', 
-                                     'start_date'),
-                  pars_init = list('beta_start' = 0.14, 
-                                   'beta_end' = 0.14*0.238,
-                                   'start_date' = as.Date("2020-02-07")),
-                  pars_min = list('beta_start' = 0, 
-                                  'beta_end' = 0,
-                                  'start_date' = 0),
-                  pars_max = list('beta_start' = 1, 
-                                  'beta_end' = 1,
-                                  'start_date' = 1e6),
-                  cov_mat = matrix(c(0.001^2, 0, 0,
-                                     0, 0.001^2, 0,
-                                     0,       0, 0.5^2), 
-                                   nrow = 3, byrow = TRUE,
-                                   dimnames = list(
-                                     c('beta_start', 'beta_end', 'start_date'),
-                                     c('beta_start', 'beta_end', 'start_date'))),
-                  pars_discrete = list('beta_start' = FALSE,
-                                       'beta_end' = FALSE,
-                                       'start_date' = TRUE),
+                                     'start_date',  
+                                     'gamma_triage', 
+                                     'gamma_hosp_R', 
+                                     'gamma_hosp_D', 
+                                     'gamma_ICU_R', 
+                                     'gamma_ICU_D', 
+                                     'gamma_stepdown'),
+                  pars_init = list('beta_start'     = 0.14, 
+                                   'beta_end'       = 0.14*0.238,
+                                   'start_date'     = as.Date("2020-02-07"),
+                                   'gamma_triage'   = 0.5099579,
+                                   'gamma_hosp_R'   = 0.1092046,
+                                   'gamma_hosp_D'   = 0.2911154,
+                                   'gamma_ICU_R'    = 0.3541429,
+                                   'gamma_ICU_D'    = 0.2913861,
+                                   'gamma_stepdown' = 0.452381),
+                  pars_min = list('beta_start'     = 0, 
+                                  'beta_end'       = 0,
+                                  'start_date'     = 0,
+                                  'gamma_triage'   = 0,
+                                  'gamma_hosp_R'   = 0,
+                                  'gamma_hosp_D'   = 0,
+                                  'gamma_ICU_R'    = 0,
+                                  'gamma_ICU_D'    = 0,
+                                  'gamma_stepdown' = 0),
+                  pars_max = list('beta_start'     = 1, 
+                                  'beta_end'       = 1,
+                                  'start_date'     = 1e6,
+                                  'gamma_triage'   = 1,
+                                  'gamma_hosp_R'   = 1,
+                                  'gamma_hosp_D'   = 1,
+                                  'gamma_ICU_R'    = 1,
+                                  'gamma_ICU_D'    = 1,
+                                  'gamma_stepdown' = 1
+                                  ),
+                  proposal_kernel,
+                  pars_discrete = list('beta_start'     = FALSE,
+                                       'beta_end'       = FALSE,
+                                       'start_date'     = TRUE,
+                                       'gamma_triage'   = FALSE,
+                                       'gamma_hosp_R'   = FALSE,
+                                       'gamma_hosp_D'   = FALSE,
+                                       'gamma_ICU_R'    = FALSE,
+                                       'gamma_ICU_D'    = FALSE,
+                                       'gamma_stepdown' = FALSE),
                   log_likelihood = NULL,
                   log_prior = NULL,
                   n_particles = 1e2,
@@ -131,7 +157,9 @@ pmcmc <- function(data,
   #
   # Check pars_init input
   #
-  par_names <- c('beta_start', 'beta_end', 'start_date')
+  par_names <- c('beta_start', 'beta_end', 'start_date', 
+                 'gamma_triage', 'gamma_hosp_R', 'gamma_hosp_D', 
+                 'gamma_ICU_R',  'gamma_ICU_D', 'gamma_stepdown')
   par_names <- par_names[par_names %in% pars_to_sample]
   
   if (!all(c('beta_start', 'start_date') %in% par_names)) {
@@ -164,8 +192,8 @@ pmcmc <- function(data,
     stop("pars_discrete must be a named list corresponding to the parameters being sampled")
   }
   
-  if(!correct_format_mat(cov_mat)) {
-    stop("cov_mat must be a matrix or vector with names corresponding to the parameters being sampled")
+  if(!correct_format_mat(proposal_kernel)) {
+    stop("proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled")
   }
   
   if(!is.logical(output_proposals) || length(output_proposals) != 1) {
@@ -203,7 +231,7 @@ pmcmc <- function(data,
                 pars_init = pars_init, 
                 pars_min = pars_min, 
                 pars_max = pars_max, 
-                cov_mat = cov_mat,
+                proposal_kernel = proposal_kernel,
                 pars_discrete = pars_discrete), 
     n_particles = n_particles, 
     steps_per_day = steps_per_day)
@@ -264,7 +292,7 @@ pmcmc <- function(data,
   # create shorthand function to propose new pars given main inputs
   propose_jump <- function(pars) {
     propose_parameters(pars = pars, 
-                       cov_mat = cov_mat,
+                       proposal_kernel = proposal_kernel,
                        pars_discrete = pars_discrete,
                        pars_min = pars_min,
                        pars_max = pars_max)
@@ -539,6 +567,13 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                           model_params$dt)
   model_params$beta_y <- new_beta$beta_y
   model_params$beta_t <- new_beta$beta_t
+  
+  fitted_gammas <- names(pars)[grep('gamma', names(pars))]
+  
+  for(par in fitted_gammas) {
+    model_params[[par]] <- pars[par]
+  }
+  
 
   pf_result <- run_particle_filter(data = data,
                                    sircovid_model = sircovid_model,
@@ -553,10 +588,10 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   pf_result
 }
 
-propose_parameters <- function(pars, cov_mat, pars_discrete, pars_min, pars_max) {
+propose_parameters <- function(pars, proposal_kernel, pars_discrete, pars_min, pars_max) {
   
   ## proposed jumps are normal with mean pars and sd as input for parameter
-  jumps <- pars + drop(rmvnorm(n = 1,  sigma = cov_mat))
+  jumps <- pars + drop(rmvnorm(n = 1,  sigma = proposal_kernel))
 
 
   # discretise if necessary
