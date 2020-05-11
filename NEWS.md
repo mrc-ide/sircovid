@@ -1,3 +1,8 @@
+# sircovid 0.2.29
+
+- Allow beta_end > beta_start or beta_reduction > 1 in generate_beta
+
+
 # sircovid 0.2.28
 
 - Remove pars_obs and model_params defaults 
