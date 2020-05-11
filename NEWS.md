@@ -1,3 +1,7 @@
+# sircovid 0.2.28
+
+- Remove pars_obs and model_params defaults 
+
 
 # sircovid 0.2.28
 

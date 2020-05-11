@@ -13,8 +13,8 @@ scan_beta_date(
   day_step,
   data,
   sircovid_model = basic_model(),
-  model_params = NULL,
-  pars_obs = NULL,
+  model_params,
+  pars_obs,
   n_particles = 100,
   scale_prior = NULL,
   shape_prior = NULL,
@@ -40,8 +40,7 @@ and \code{particle_filter_data()}}
 \item{sircovid_model}{An odin model generator and comparison function.}
 
 \item{model_params}{Model parameters, from a call to
-\code{generate_parameters()}. If NULL, uses defaults as
-in unit tests.}
+\code{generate_parameters()}}
 
 \item{pars_obs}{list of parameters to use for the comparison function.}
 
