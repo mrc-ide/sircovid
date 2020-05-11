@@ -8,7 +8,6 @@ test_that("sample_grid_scan works", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   
-  
   # filter and tidy it
   # Don't start the data until it is after thid date
   data <- data[data$date > as.Date("2020-02-29"),]
@@ -33,6 +32,20 @@ test_that("sample_grid_scan works", {
   day_step <- 12
   
   sircovid_model <- basic_model()
+
+  
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  
   
   scan_results <- scan_beta_date(
     min_beta = min_beta,
@@ -42,6 +55,12 @@ test_that("sample_grid_scan works", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
+    pars_obs = list(phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death = 926 / 1019,
+                    k_death = 2,
+                    exp_noise = 1e6),
+    model_params = model_params,
     sircovid_model = sircovid_model)
 
   n_sample_pairs <- 4 
@@ -92,6 +111,19 @@ test_that("sample_grid_scan works with new model", {
   
   sircovid_model <- hospital_model()
   
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  
+  
   scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
@@ -100,6 +132,16 @@ test_that("sample_grid_scan works with new model", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
+    pars_obs = list(
+      phi_general = 0.95,
+      k_general = 2,
+      phi_ICU = 0.95,
+      k_ICU = 2,
+      phi_death = 926 / 1019,
+      k_death = 2,
+      exp_noise = 1e6
+    ),
+    model_params = model_params,
     sircovid_model = sircovid_model)
   
   n_sample_pairs <- 4 
@@ -141,6 +183,15 @@ test_that("sample_pmcmc works with new model", {
     data = data,
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model,
+    pars_obs = list(
+      phi_general = 0.95,
+      k_general = 2,
+      phi_ICU = 0.95,
+      k_ICU = 2,
+      phi_death = 926 / 1019,
+      k_death = 2,
+      exp_noise = 1e6
+    ),
     model_params = model_params,
     n_chains = n_chains
   )
