@@ -1,7 +1,13 @@
+# sircovid 0.2.29
+
+- generalised pMCMC to sample gammas
+- rename cov_mat -> proposal_kernel
+- Working sample_pmcmc (bug fix)
+
 # sircovid 0.2.28
 
-- Remove pars_obs and model_params defaults 
-
+- remove pars_obs and model_params as default arguments
+- fix axis naming bug in plot.pmcmc_list
 
 # sircovid 0.2.27
 

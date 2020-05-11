@@ -49,7 +49,7 @@ test_that("pmcmc runs without error", {
                     'start_date' = 0),
     pars_max = list('beta_start' = 1,
                     'start_date' = 1e6),
-    cov_mat = matrix(c(0.001^2, 0,
+    proposal_kernel = matrix(c(0.001^2, 0,
                        0, 0.5^2),
                      nrow = 2, byrow = TRUE,
                      dimnames = list(
@@ -74,6 +74,20 @@ test_that("pmcmc runs without error", {
   cmp <- readRDS('reference_pmcmc_three_par.rds')
 
   ## test three par version
+
+  pars_to_sample <- c('beta_start', 'beta_end', 'start_date')
+  pars_init <- list('beta_start' = 0.14, 
+                   'beta_end' = 0.14*0.238,
+                   'start_date' = as.Date("2020-02-07"))
+  pars_min <- list('beta_start' = 0, 
+                  'beta_end' = 0,
+                  'start_date' = 0)
+  pars_max <- list('beta_start' = 1, 
+                  'beta_end' = 1,
+                  'start_date' = 1e6)
+  pars_discrete <- list('beta_start' = FALSE,
+                       'beta_end' = FALSE,
+                       'start_date' = TRUE)
   
   pars_obs <- list(
     phi_general = 0.95,
@@ -85,10 +99,23 @@ test_that("pmcmc runs without error", {
     exp_noise = 1e6
   )
   
+  
   set.seed(2)
  X2 <- pmcmc(
    data = data,
    n_mcmc = n_mcmc,
+   pars_to_sample = pars_to_sample,
+   pars_init = pars_init,
+   pars_min = pars_min,
+   pars_max = pars_max, 
+   pars_discrete = pars_discrete,
+   proposal_kernel = matrix(c(0.001^2, 0, 0,
+                              0, 0.001^2, 0,
+                              0,       0, 0.5^2), 
+                            nrow = 3, byrow = TRUE,
+                            dimnames = list(
+                              pars_to_sample,
+                              pars_to_sample)),
    pars_obs = pars_obs, 
    model_params = model_params,
    sircovid_model = sircovid_model
@@ -97,15 +124,21 @@ test_that("pmcmc runs without error", {
  expect_equal(dim(X2$results), c(n_mcmc + 1L, 6))
  expect_equivalent(X2[-1], cmp[-1])
 
+ 
  ## set likelihood to accept every time with outlandish proposals
  set.seed(1)
  Y <- pmcmc(
    data = data,
    n_mcmc = n_mcmc,
    sircovid_model = sircovid_model,
+   pars_to_sample = pars_to_sample,
+   pars_init = pars_init,
+   pars_min = pars_min,
+   pars_max = pars_max, 
+   pars_discrete = pars_discrete,
    model_params = model_params,
    pars_obs = pars_obs,
-   cov_mat = matrix(c(1e2, 0, 0,
+   proposal_kernel = matrix(c(1e2, 0, 0,
                       0, 1e2, 0,
                       0,  0, 1e4),
                     nrow = 3, byrow = TRUE,
@@ -134,17 +167,18 @@ test_that("pmcmc runs without error", {
  Z <- pmcmc(
    data = data,
    n_mcmc = n_mcmc,
+   pars_to_sample = pars_to_sample,
+   pars_init = pars_init,
+   pars_min = pars_min,
+   pars_max = pars_max, 
+   pars_discrete = pars_discrete,
    sircovid_model = sircovid_model,
    pars_obs = pars_obs,
    model_params = model_params,
-   cov_mat = matrix(rep(0, 9),
+   proposal_kernel = matrix(rep(0, 9),
                     nrow = 3, byrow = TRUE,
-                    dimnames = list(
-                      c('beta_start', 'beta_end', 'start_date'),
-                      c('beta_start', 'beta_end', 'start_date')
-                    )),
+                    dimnames = list( pars_to_sample, pars_to_sample)),
    output_proposals = TRUE
-
  )
 
  expect_equal(object = Z$results$beta_start,
@@ -159,6 +193,11 @@ set.seed(2)
 X3 <- pmcmc(
   data = data,
   n_mcmc = n_mcmc,
+  pars_to_sample = pars_to_sample,
+  pars_init = pars_init,
+  pars_min = pars_min,
+  pars_max = pars_max, 
+  pars_discrete = pars_discrete,
   sircovid_model = sircovid_model,
   model_params = model_params,
   pars_obs = list(phi_ICU = 0.95,
@@ -166,14 +205,11 @@ X3 <- pmcmc(
                   phi_death = 926 / 1019,
                   k_death = 2,
                   exp_noise = 1e6),
-  cov_mat = matrix(c(      0.001^2,       0, 0.001*0.5*0.6,
-                                 0, 0.001^2, 0,
-                     0.001*0.5*0.6,       0, 0.5^2),
+  proposal_kernel = matrix(c( 0.001^2,       0, 0.001*0.5*0.6,
+                                    0, 0.001^2, 0,
+                        0.001*0.5*0.6,       0, 0.5^2),
                    nrow = 3, byrow = TRUE,
-                   dimnames = list(
-                     c('beta_start', 'beta_end', 'start_date'),
-                     c('beta_start', 'beta_end', 'start_date')
-                   ))
+                   dimnames = list( pars_to_sample,pars_to_sample))
 )
 
 expect_false(all(X2$results == X3$results))
@@ -224,7 +260,7 @@ test_that("pmcmc with new model", {
                     'start_date' = 0),
     pars_max = list('beta_start' = 1,
                     'start_date' = 1e6),
-    cov_mat = matrix(c(0.001^2, 0,
+    proposal_kernel = matrix(c(0.001^2, 0,
                        0, 0.5^2),
                      nrow = 2, byrow = TRUE,
                      dimnames = list(
@@ -239,6 +275,39 @@ test_that("pmcmc with new model", {
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 289))
   expect_equivalent(X[-1], cmp[-1])
+  
+  
+  ## test generalised version
+  
+  pars_to_sample <- c('beta_start','beta_end', 'start_date',  'gamma_triage', 'gamma_hosp_R', 
+                      'gamma_hosp_D', 'gamma_ICU_R', 'gamma_ICU_D', 'gamma_stepdown')
+  
+  proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
+  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
+  proposal_kernel['start_date', 'start_date'] <- 25
+  
+  
+  cmp <- readRDS("reference_pmcmc_gammas.rds")
+
+  set.seed(2)
+  X2 <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    pars_to_sample = pars_to_sample,
+    proposal_kernel = proposal_kernel,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs
+  )
+  
+  expect_is(X2, 'pmcmc')
+  expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
+  expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample) + 3L))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
+  expect_equivalent(X2[-1], cmp[-1])
+  
+  
+
 })
 
 test_that("pmcmc will run with multiple chains" , {
@@ -268,6 +337,27 @@ test_that("pmcmc will run with multiple chains" , {
     exp_noise = 1e6
   )
   cmp <- readRDS("reference_pmcmc_hosp.rds")
+  
+  pars_to_sample <- c('beta_start', 'beta_end', 'start_date')
+  pars_init <- list('beta_start' = 0.14, 
+                    'beta_end' = 0.14*0.238,
+                    'start_date' = as.Date("2020-02-07"))
+  pars_min <- list('beta_start' = 0, 
+                   'beta_end' = 0,
+                   'start_date' = 0)
+  pars_max <- list('beta_start' = 1, 
+                   'beta_end' = 1,
+                   'start_date' = 1e6)
+  pars_discrete <- list('beta_start' = FALSE,
+                        'beta_end' = FALSE,
+                        'start_date' = TRUE)
+  proposal_kernel <- matrix(c(0.001^2, 0, 0,
+                             0, 0.001^2, 0,
+                             0,       0, 0.5^2), 
+                           nrow = 3, byrow = TRUE,
+                           dimnames = list(
+                             pars_to_sample,
+                             pars_to_sample))
 
   n_mcmc <- 10
   n_chains <- 2
@@ -277,6 +367,12 @@ test_that("pmcmc will run with multiple chains" , {
     data = data,
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model,
+    pars_to_sample = pars_to_sample,
+    pars_init = pars_init,
+    pars_min = pars_min,
+    pars_max = pars_max, 
+    pars_discrete = pars_discrete,
+    proposal_kernel = proposal_kernel,
     model_params = model_params,
     pars_obs = pars_obs, 
     n_chains = n_chains
@@ -312,6 +408,28 @@ test_that("pmcmc error cases", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   sircovid_model <- basic_model()
+  
+  pars_to_sample <- c('beta_start', 'beta_end', 'start_date')
+  pars_init <- list('beta_start' = 0.14, 
+                    'beta_end' = 0.14*0.238,
+                    'start_date' = as.Date("2020-02-07"))
+  pars_min <- list('beta_start' = 0, 
+                   'beta_end' = 0,
+                   'start_date' = 0)
+  pars_max <- list('beta_start' = 1, 
+                   'beta_end' = 1,
+                   'start_date' = 1e6)
+  pars_discrete <- list('beta_start' = FALSE,
+                        'beta_end' = FALSE,
+                        'start_date' = TRUE)
+  proposal_kernel <- matrix(c(0.001^2, 0, 0,
+                              0, 0.001^2, 0,
+                              0,       0, 0.5^2), 
+                            nrow = 3, byrow = TRUE,
+                            dimnames = list(
+                              pars_to_sample,
+                              pars_to_sample))
+  
   model_params <- generate_parameters(
     sircovid_model,
     transmission_model = "POLYMOD",
@@ -342,7 +460,13 @@ test_that("pmcmc error cases", {
       model_params = model_params,
       pars_obs = pars_obs, 
       pars_init = list(0.5,
-                       as.Date("2020-02-01"))
+                       as.Date("2020-02-01")),
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
+      
     ),
     "pars_init must be a named list corresponding to the parameters being sampled"
   )
@@ -357,7 +481,12 @@ test_that("pmcmc error cases", {
       model_params = model_params,
       pars_init = list('beta_start' = -1,
                        'beta_end' = 0,
-                       'start_date' = as.Date("2020-02-01"))
+                       'start_date' = as.Date("2020-02-01")),
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     'initial parameters are outside of specified range'
   )
@@ -372,7 +501,12 @@ test_that("pmcmc error cases", {
       model_params = model_params,
       pars_init = list('beta_start' = 0.123,
                        'beta_end' = 0.03,
-                       'start_date' = as.Date(data$date[3]))
+                       'start_date' = as.Date(data$date[3])),
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     'initial parameters are outside of specified range'
   )
@@ -389,7 +523,11 @@ test_that("pmcmc error cases", {
                        'start_date' = as.Date(data$date[1])), 
       pars_min = list('beta_start' = 0, 
                       'beta_end' = 0,
-                      'start_date' = 0)
+                      'start_date' = 0),
+      pars_to_sample = pars_to_sample,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "'start_date' must be less than the first date in data"
   )
@@ -405,12 +543,11 @@ test_that("pmcmc error cases", {
         'beta_start',
         'beta_end'
       ),
-      pars_init = list('beta_start' = 0.123,
-                       'beta_end' = 0.03,
-                       'start_date' = as.Date(data$date[1])), 
-      pars_min = list('beta_start' = 0, 
-                      'beta_end' = 0,
-                      'start_date' = 0)
+      pars_init = pars_init, 
+      pars_min = pars_min,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "Turning off beta and start date sampling unsupported"
   )
@@ -421,6 +558,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_to_sample = pars_to_sample,
+      pars_init = pars_init,
+      pars_min = pars_min,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel,
       pars_obs = pars_obs, 
       model_params = generate_parameters(
         sircovid_model = sircovid_model,
@@ -448,7 +591,11 @@ test_that("pmcmc error cases", {
                        'start_date' =  as.Date("2020-02-01")), 
       pars_min = list('beta_start' = -1 ,
                       'beta_end' = -1,
-                      'start_date' = 0)
+                      'start_date' = 0),
+      pars_to_sample = pars_to_sample,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "beta_start must not be negative"
   )
@@ -465,7 +612,11 @@ test_that("pmcmc error cases", {
                        'start_date' =  as.Date("2020-02-01")), 
       pars_min = list('beta_start' = -1 ,
                       'beta_end' = -1,
-                      'start_date' = 0)
+                      'start_date' = 0),
+      pars_to_sample = pars_to_sample,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "beta_end must not be negative"
   )
@@ -477,9 +628,14 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_min  = list(0.5, 0.03,0),
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel,
       model_params = model_params,
-      pars_obs = pars_obs, 
-      pars_min  = list(0.5, 0.03,0)
+      pars_obs = pars_obs
     ),
     "pars_min must be a named list corresponding to the parameters being sampled"
   )
@@ -494,7 +650,12 @@ test_that("pmcmc error cases", {
       pars_obs = pars_obs, 
       pars_min  = c('beta_start' = 0.5,
                     'beta_end' = 0.03, 
-                       'start_date' = 0)
+                       'start_date' = 0), 
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "pars_min must be a named list corresponding to the parameters being sampled"
   )
@@ -508,7 +669,12 @@ test_that("pmcmc error cases", {
       pars_obs = pars_obs, 
       pars_min  = list('beta_start' = 0.5,
                        'beta_end' = 0.03, 
-                    'start_date' = as.Date(data$date[1]))
+                    'start_date' = as.Date(data$date[1])),
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_max = pars_max, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "pars_min entries must be numeric"
   )
@@ -519,9 +685,14 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_max  = list(0.5, 1, 1e3), 
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel,
       model_params = model_params,
-      pars_obs = pars_obs, 
-      pars_max  = list(0.5, 1, 1e3)
+      pars_obs = pars_obs
     ),
     "pars_max must be a named list corresponding to the parameters being sampled"
   )
@@ -536,7 +707,12 @@ test_that("pmcmc error cases", {
       pars_obs = pars_obs, 
       pars_max  = c('beta_start' = 0.5,
                     'beta_end' = 0.03, 
-                    'start_date' = 1e3)
+                    'start_date' = 1e3),
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "pars_max must be a named list corresponding to the parameters being sampled"
   )
@@ -550,26 +726,36 @@ test_that("pmcmc error cases", {
       pars_obs = pars_obs, 
       pars_max  = list('beta_start' = 0.5,
                        'beta_end' = 1, 
-                       'start_date' = as.Date(data$date[1]))
+                       'start_date' = as.Date(data$date[1])),
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_discrete = pars_discrete,
+      proposal_kernel = proposal_kernel
     ),
     "pars_max entries must be numeric"
   )
   
   
-  # incorrect names supplied to cov_mat
+  # incorrect names supplied to proposal_kernel
   expect_error(
     pmcmc(
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      proposal_kernel = list(0.5, 0.5, 3),
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      pars_discrete = pars_discrete,
       model_params = model_params,
-      pars_obs = pars_obs, 
-      cov_mat = list(0.5, 0.5, 3)
+      pars_obs = pars_obs
     ),
-    "cov_mat must be a matrix or vector with names corresponding to the parameters being sampled"
+    "proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled"
   )
   
-  # incorrect format for cov_mat
+  # incorrect format for proposal_kernel
   expect_error(
     pmcmc(
       data = data,
@@ -577,11 +763,16 @@ test_that("pmcmc error cases", {
       sircovid_model = sircovid_model,
       model_params = model_params,
       pars_obs = pars_obs, 
-      cov_mat = list('beta_start' = 0.5,
+      proposal_kernel = list('beta_start' = 0.5,
                      'beta_end' = 0.5,
-                    'start_date' = 3)
+                    'start_date' = 3),
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      pars_discrete = pars_discrete
     ),
-    "cov_mat must be a matrix or vector with names corresponding to the parameters being sampled"
+    "proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled"
   )
   
   
@@ -591,6 +782,11 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
       pars_discrete = list(FALSE, FALSE, TRUE)
@@ -603,6 +799,11 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
       pars_discrete = c('beta_start' = FALSE, 
@@ -617,6 +818,11 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
       pars_discrete  = list('beta_start' = 0.5,
@@ -631,6 +837,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       output_proposals = 0:1
@@ -647,6 +859,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_prior = function(pars) {
@@ -662,6 +880,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_prior = function(pars) {
@@ -678,6 +902,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_likelihood = function(pars) {
@@ -692,6 +922,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_likelihood = function(pars, ...) {
@@ -707,6 +943,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_likelihood = function(pars, ...) {
@@ -722,6 +964,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_likelihood = function(pars, ...) {
@@ -737,6 +985,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_likelihood = function(pars, ...) {
@@ -753,6 +1007,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_likelihood = function(pars, ...) {
@@ -768,6 +1028,12 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_init = pars_init,
+      pars_to_sample = pars_to_sample,
+      pars_min = pars_min, 
+      pars_max = pars_max,
+      proposal_kernel = proposal_kernel,
+      pars_discrete = pars_discrete,
       model_params = model_params,
       pars_obs = pars_obs, 
       log_likelihood = function(pars, ...) {
