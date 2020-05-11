@@ -123,8 +123,12 @@ test_that("Time varying betas can be generated", {
   # Error checking
   expect_error(generate_beta(0.4, start_date = "2021-02-02", reduction_start = "2020-03-16"),
                "Start date must be earlier than intervention date")
-  expect_error(generate_beta(0.4, beta_reduction = 1.2),
-               "beta must decrease, and cannot be reduced below 0")
+  expect_error(generate_beta(-1),
+               "beta_start must be non-negative")
+  expect_error(generate_beta(0.4, beta_end = -1),
+               "beta_end must be non-negative")
+  expect_error(generate_beta(0.4, beta_reduction = -1),
+               "beta cannot be reduced below 0")
   expect_message(generate_beta(0.4, reduction_period = 1000),
                  "Reduction period over 100 days - is this correct?")
     
