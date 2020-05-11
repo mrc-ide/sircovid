@@ -295,7 +295,9 @@ test_that("pmcmc with new model", {
     n_mcmc = n_mcmc,
     pars_to_sample = pars_to_sample,
     proposal_kernel = proposal_kernel,
-    sircovid_model = sircovid_model
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs
   )
   
   expect_is(X2, 'pmcmc')
