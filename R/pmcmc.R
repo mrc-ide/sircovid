@@ -6,14 +6,19 @@
 ##'   \code{particle_filter_data}
 ##'   
 ##' @param model_params Model parameters, from a call to
-##'   \code{generate_parameters()}. If NULL, uses defaults as
-##'   in unit tests.
+##'   \code{generate_parameters()}. 
 ##'   
 ##' @param sircovid_model An odin model generator and comparison function.
 
 ##' @param pars_obs list of parameters to use in comparison
-##'   with \code{compare_icu}. If NULL, uses
-##'   list(phi_general = 0.95, k_general = 2,phi_ICU = 0.95, k_ICU = 2, phi_death = 926 / 1019, k_death = 2, exp_noise = 1e6)
+##'   with \code{compare_icu}. Must be a list containing, e.g.
+##'   list(phi_general = 0.95, 
+##'   k_general = 2,
+##'   phi_ICU = 0.95, 
+##'   k_ICU = 2, 
+##'   phi_death = 926 / 1019, 
+##'   k_death = 2, 
+##'   exp_noise = 1e6)
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
@@ -91,14 +96,8 @@
 pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
-                  model_params = NULL,
-                  pars_obs = list(phi_general = 0.95,
-                                  k_general = 2,
-                                  phi_ICU = 0.95,
-                                  k_ICU = 2,
-                                  phi_death = 926 / 1019,
-                                  k_death = 2,
-                                  exp_noise = 1e6),
+                  model_params,
+                  pars_obs,
                   pars_to_sample = c('beta_start',
                                      'beta_end', 
                                      'start_date'),
@@ -172,24 +171,11 @@ pmcmc <- function(data,
     stop("output_proposals must be either TRUE or FALSE")
   }
   
-  if (is.null(model_params)) {
-    model_params <- generate_parameters(
-      sircovid_model,
-      transmission_model = "POLYMOD",
-      beta = 0.1,
-      beta_times = pars_init$start_date,
-      hosp_transmission = 0,
-      ICU_transmission = 0,
-      trans_profile = 1,
-      trans_increase = 1,
-      dt = 1/steps_per_day
-    )
-  } else {
+
     if (length(model_params$beta_y) > 1) {
       stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
-  }
-  
+
   #
   # Generate MCMC parameters
   #
@@ -874,8 +860,8 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   n_iter <- nrow(master_chain) / n_chains
   
   mapply(FUN = function(par_name, leg) {
-    plot(x = breaks[[par_name]],
-         y = breaks[[par_name]],
+    plot(x = 1,
+         y = breaks[[par_name]][1],
          type = 'n', 
          xlab = 'Iteration', 
          ylab = par_name, 
