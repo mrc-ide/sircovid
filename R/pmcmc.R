@@ -582,7 +582,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                    obs_params = pars_obs,
                                    pars_seeding = NULL,
                                    n_particles = n_particles,
-                                   forecast_days = 0,
+                                   forecast_days = forecast_days,
                                    save_particles = save_particles,
                                    return = pf_return)
   pf_result
