@@ -146,7 +146,7 @@ pmcmc <- function(data,
                                                FALSE,
                                                FALSE),
                                     stringAsFactors = FALSE),
-                  calc_lprior <- list('beta_start'     = function(pars) log(1e-10),
+                  pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
                                       'beta_end'       = function(pars) log(1e-10),
                                       'start_date'     = function(pars) log(1e-10),
                                       'gamma_triage'   = function(pars) log(1e-10),
@@ -277,7 +277,15 @@ pmcmc <- function(data,
     ) 
     X
   }
-  
+
+  # same thing for priors
+  calc_lprior <- function(pars) {
+    lprior <- 0
+    for (par in names(pars)) {
+      lprior <- lprior + pars_lprior[[par]](pars) 
+    }
+  }
+
   # create shorthand function to propose new pars given main inputs
   propose_jump <- function(pars) {
     propose_parameters(pars = pars, 
