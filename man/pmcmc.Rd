@@ -15,7 +15,7 @@ pmcmc(
     "gamma_stepdown"), init = c(0.14, 0.14 * 0.238, as.Date("2020-02-07"), 0.5099579,
     0.1092046, 0.2911154, 0.3541429, 0.2913861, 0.452381), min = c(0, 0, 0, 0, 0, 0, 0,
     0, 0), max = c(1, 1, 1e+06, 1, 1, 1, 1, 1, 1), discrete = c(FALSE, FALSE, TRUE,
-    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), stringAsFactors = FALSE),
+    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), stringsAsFactors = FALSE),
   pars_lprior = list(beta_start = function(pars) log(1e-10), beta_end = function(pars)
     log(1e-10), start_date = function(pars) log(1e-10), gamma_triage = function(pars)
     log(1e-10), gamma_hosp_R = function(pars) log(1e-10), gamma_hosp_D = function(pars)
