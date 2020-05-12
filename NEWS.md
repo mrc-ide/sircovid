@@ -1,3 +1,7 @@
+# sircovid 0.2.31
+
+- pMCMC over any parameter
+
 # sircovid 0.2.30
 
 - Allow beta_end > beta_start or beta_reduction > 1 in generate_beta

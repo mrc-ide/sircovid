@@ -99,7 +99,8 @@ pmcmc <- function(data,
                   sircovid_model,
                   model_params,
                   pars_obs,
-                  pars_to_sample = c('beta_start',
+                  pars_to_sample = data.frame(
+                                    names=c('beta_start',
                                      'beta_end', 
                                      'start_date',  
                                      'gamma_triage', 
@@ -108,66 +109,75 @@ pmcmc <- function(data,
                                      'gamma_ICU_R', 
                                      'gamma_ICU_D', 
                                      'gamma_stepdown'),
-                  pars_init = list('beta_start'     = 0.14, 
-                                   'beta_end'       = 0.14*0.238,
-                                   'start_date'     = as.Date("2020-02-07"),
-                                   'gamma_triage'   = 0.5099579,
-                                   'gamma_hosp_R'   = 0.1092046,
-                                   'gamma_hosp_D'   = 0.2911154,
-                                   'gamma_ICU_R'    = 0.3541429,
-                                   'gamma_ICU_D'    = 0.2913861,
-                                   'gamma_stepdown' = 0.452381),
-                  pars_min = list('beta_start'     = 0, 
-                                  'beta_end'       = 0,
-                                  'start_date'     = 0,
-                                  'gamma_triage'   = 0,
-                                  'gamma_hosp_R'   = 0,
-                                  'gamma_hosp_D'   = 0,
-                                  'gamma_ICU_R'    = 0,
-                                  'gamma_ICU_D'    = 0,
-                                  'gamma_stepdown' = 0),
-                  pars_max = list('beta_start'     = 1, 
-                                  'beta_end'       = 1,
-                                  'start_date'     = 1e6,
-                                  'gamma_triage'   = 1,
-                                  'gamma_hosp_R'   = 1,
-                                  'gamma_hosp_D'   = 1,
-                                  'gamma_ICU_R'    = 1,
-                                  'gamma_ICU_D'    = 1,
-                                  'gamma_stepdown' = 1
-                                  ),
+                                    init=c(0.14, 
+                                           0.14*0.238,
+                                           as.Date("2020-02-07"),
+                                           0.5099579,
+                                           0.1092046,
+                                           0.2911154,
+                                           0.3541429,
+                                           0.2913861,
+                                           0.452381),
+                                    min=c(0,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          0),
+                                    max=c(1,
+                                          1,
+                                          1e6,
+                                          1,
+                                          1,
+                                          1,
+                                          1,
+                                          1,
+                                          1),
+                                    discrete=c(FALSE,
+                                               FALSE,
+                                               TRUE,
+                                               FALSE,
+                                               FALSE,
+                                               FALSE,
+                                               FALSE,
+                                               FALSE,
+                                               FALSE),
+                                    stringAsFactors = FALSE),
+                  calc_lprior <- list('beta_start'     = function(pars) log(1e-10),
+                                      'beta_end'       = function(pars) log(1e-10),
+                                      'start_date'     = function(pars) log(1e-10),
+                                      'gamma_triage'   = function(pars) log(1e-10),
+                                      'gamma_hosp_R'   = function(pars) log(1e-10),
+                                      'gamma_hosp_D'   = function(pars) log(1e-10),
+                                      'gamma_ICU_R'    = function(pars) log(1e-10),
+                                      'gamma_ICU_D'    = function(pars) log(1e-10),
+                                      'gamma_stepdown' = function(pars) log(1e-10)),
                   proposal_kernel,
-                  pars_discrete = list('beta_start'     = FALSE,
-                                       'beta_end'       = FALSE,
-                                       'start_date'     = TRUE,
-                                       'gamma_triage'   = FALSE,
-                                       'gamma_hosp_R'   = FALSE,
-                                       'gamma_hosp_D'   = FALSE,
-                                       'gamma_ICU_R'    = FALSE,
-                                       'gamma_ICU_D'    = FALSE,
-                                       'gamma_stepdown' = FALSE),
-                  log_likelihood = NULL,
-                  log_prior = NULL,
                   n_particles = 1e2,
                   steps_per_day = 4, 
                   output_proposals = FALSE,
                   n_chains = 1) {
+
+  if(!is.logical(output_proposals) || length(output_proposals) != 1) {
+    stop("output_proposals must be either TRUE or FALSE")
+  }
+  
+  if (length(model_params$beta_y) > 1) {
+    stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
+  }
   
   #
   # Check pars_init input
   #
-  par_names <- c('beta_start', 'beta_end', 'start_date', 
-                 'gamma_triage', 'gamma_hosp_R', 'gamma_hosp_D', 
-                 'gamma_ICU_R',  'gamma_ICU_D', 'gamma_stepdown')
-  par_names <- par_names[par_names %in% pars_to_sample]
-  
+  par_names <- pars_to_sample$names
   if (!all(c('beta_start', 'start_date') %in% par_names)) {
     stop("Turning off beta and start date sampling unsupported")
   }
-  
-  correct_format_vec <- function(pars) {
-      is.list(pars) & setequal(names(pars), 
-                             par_names)
+  if(!all(names(priors) %in% par_names)) {
+    stop("All sampled parameters must have a defined prior")
   }
   
   correct_format_mat <- function(pars) {
@@ -176,33 +186,51 @@ pmcmc <- function(data,
          setequal(rownames(pars),
                    par_names)
   }
-  
-  if(!correct_format_vec(pars_init)) {
-    stop("pars_init must be a named list corresponding to the parameters being sampled")
-  }
-  if(!correct_format_vec(pars_min)) {
-    stop("pars_min must be a named list corresponding to the parameters being sampled")
-  }
-  
-  if(!correct_format_vec(pars_max)) {
-    stop("pars_max must be a named list corresponding to the parameters being sampled")
-  }
-  if(!correct_format_vec(pars_discrete)) {
-    stop("pars_discrete must be a named list corresponding to the parameters being sampled")
-  }
-  
+
   if(!correct_format_mat(proposal_kernel)) {
     stop("proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled")
   }
   
-  if(!is.logical(output_proposals) || length(output_proposals) != 1) {
-    stop("output_proposals must be either TRUE or FALSE")
+  # Convert data frame into named lists
+  df_col_to_list <- function(df, column) {
+    list_out <- as.list(df$column)
+    names(list_out) <- df$names
+    list_out
   }
-  
 
-    if (length(model_params$beta_y) > 1) {
-      stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
+  pars_init <- df_col_to_list(pars_to_sample, "init")
+  pars_min <- pars_to_sample(pars_to_sample, "min")
+  pars_max <- pars_to_sample(pars_to_sample, "max")
+  pars_discrete <- pars_to_sample(pars_to_sample, "discrete")
+
+  is.numeric.list <- function(x) all(vapply(X = x, is.numeric, logical(1)))
+  is.logical.list <- function(x) all(vapply(X = x, is.logical, logical(1)))
+  
+  if(!is.numeric.list(pars_min)) {
+    stop('pars_min entries must be numeric')
+  }
+  if(!is.numeric.list(pars_max)) {
+    stop('pars_max entries must be numeric')
+  }
+
+  if(!is.logical.list(pars_discrete)) {
+    stop('pars_discrete entries must be logical')
+  }
+
+  if(any(pars_init < pars_min | curr_pars > pars_init)) {
+    stop('initial parameters are outside of specified range')
+  }
+  if(pars_init['beta_start'] < 0) {
+    stop('beta_start must not be negative')
+  }
+  if('beta_end' %in% par_names) {
+    if(pars_init['beta_end'] < 0) {
+      stop('beta_end must not be negative')
     }
+  }
+  if(start_date_to_offset(data$date[1], pars_init['start_date']) < 0) {
+    stop('start date must not be before first date of supplied data')
+  }
 
   #
   # Generate MCMC parameters
@@ -225,39 +253,14 @@ pmcmc <- function(data,
   # convert dates to be Date objects
   data$date <- as.Date(data$date) 
   
-  is.numeric.list <- function(x) all(vapply(X = x, is.numeric, logical(1)))
-  is.logical.list <- function(x) all(vapply(X = x, is.logical, logical(1)))
-  
-  if(!is.numeric.list(pars_min)) {
-    stop('pars_min entries must be numeric')
-  }
-  if(!is.numeric.list(pars_max)) {
-    stop('pars_max entries must be numeric')
-  }
-
-  if(!is.logical.list(pars_discrete)) {
-    stop('pars_discrete entries must be logical')
-  }
-  
   # needs to be a vector to pass to reflecting boundary function
   pars_min <- unlist(pars_min)  
   pars_max <- unlist(pars_max)
   pars_discrete <- unlist(pars_discrete)
-  
-  #
-  # create prior and likelihood functions given the inputs
-  #
-  if(is.null(log_prior)) {
-    # set improper, uninformative prior
-    log_prior <- function(pars) log(1e-10)
-  }
-  calc_lprior <- log_prior
-  
-  if(is.null(log_likelihood)) {
-    log_likelihood <- calc_loglikelihood
-  } else if (!('...' %in% names(formals(log_likelihood)))){
-    stop('log_likelihood function must be able to take unnamed arguments')
-  }
+  curr_pars <- unlist(pars_init)
+
+  # convert the current parameters into format easier for mcmc to deal with
+  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date) # convert to numeric
   
   # create shorthand function to calc ll given main inputs
   # binds these input parameters
@@ -282,25 +285,6 @@ pmcmc <- function(data,
                        pars_discrete = pars_discrete,
                        pars_min = pars_min,
                        pars_max = pars_max)
-  }
-  
-  # convert the current parameters into format easier for mcmc to deal with
-  curr_pars <- unlist(pars_init)
-  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date) # convert to numeric
-  
-  if(any(curr_pars < pars_min | curr_pars > pars_max)) {
-    stop('initial parameters are outside of specified range')
-  }
-  if(curr_pars['beta_start'] < 0) {
-    stop('beta_start must not be negative')
-  }
-  if('beta_end' %in% pars_to_sample) {
-    if(curr_pars['beta_end'] < 0) {
-      stop('beta_end must not be negative')
-    }
-  }
-  if(curr_pars['start_date'] < 0) {
-    stop('start date must not be before first date of supplied data')
   }
 
   # Run the chains in parallel
