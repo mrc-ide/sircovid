@@ -45,7 +45,8 @@ test_that("No one is infected if I and E are 0 at t = 0", {
     pars_model$I0_hosp_D[,,] <- 0
     pars_model$I0_ICU_R[,,] <- 0
     pars_model$I0_ICU_D[,,] <- 0
-    pars_model$I0_triage[,,] <- 0
+    pars_model$I0_triage_D[,,] <- 0
+    pars_model$I0_triage_R[,,] <- 0
 
     mod <- sircovid_model$odin_model(user = pars_model)
     t_max <- 150
@@ -76,18 +77,19 @@ test_that("No one is hospitalised if p_sympt_ILI is 0", {
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
-      if (any(results$E[,,,] > 0)){
+      if (any(results$E > 0)){
         check_cases <- TRUE
       }
     }
-    expect_true(any(results$E[,,,] > 0))
-    expect_true(all(results$I_ILI[,,,] == 0))
-    expect_true(all(results$I_hosp_R[,,,] == 0))
-    expect_true(all(results$I_hosp_D[,,,] == 0))
-    expect_true(all(results$I_ICU_R[,,,] == 0))
-    expect_true(all(results$I_ICU_D[,,,] == 0))
-    expect_true(all(results$I_triage[,,,] == 0))
-    expect_true(all(results$R_stepdown[,,,] == 0))
+    expect_true(any(results$E > 0))
+    expect_true(all(results$I_ILI == 0))
+    expect_true(all(results$I_hosp_R == 0))
+    expect_true(all(results$I_hosp_D == 0))
+    expect_true(all(results$I_ICU_R == 0))
+    expect_true(all(results$I_ICU_D == 0))
+    expect_true(all(results$I_triage_R == 0))
+    expect_true(all(results$I_triage_D == 0))
+    expect_true(all(results$R_stepdown == 0))
     expect_true(all(results$D[,]==0))
  }
 )
@@ -112,18 +114,19 @@ test_that("No one is hospitalised if p_recov_ILI is 0", {
     iter <- iter + 1
     tmp <- mod$run(t)
     results <- mod$transform_variables(tmp)
-    if (any(results$I_ILI[,,,] > 0)){
+    if (any(results$I_ILI > 0)){
       check_cases <- TRUE
     }
   }
-  expect_true(any(results$I_ILI[,,,] > 0))
-  expect_true(all(results$I_hosp_R[,,,] == 0))
-  expect_true(all(results$I_hosp_D[,,,] == 0))
-  expect_true(all(results$I_ICU_R[,,,] == 0))
-  expect_true(all(results$I_ICU_D[,,,] == 0))
-  expect_true(all(results$I_triage[,,,] == 0))
-  expect_true(all(results$R_stepdown[,,,] == 0))
-  expect_true(all(results$D[,]==0))
+  expect_true(any(results$I_ILI > 0))
+  expect_true(all(results$I_hosp_R == 0))
+  expect_true(all(results$I_hosp_D == 0))
+  expect_true(all(results$I_ICU_R == 0))
+  expect_true(all(results$I_ICU_D == 0))
+  expect_true(all(results$I_triage_R == 0))
+  expect_true(all(results$I_triage_D == 0))
+  expect_true(all(results$R_stepdown == 0))
+  expect_true(all(results$D == 0))
 }
 )
 
@@ -178,14 +181,14 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
   check_hosp_probs(p_ICU_hosp = 0,
                    p_death_hosp_D = 0,
                    cases = "I_hosp_R",
-                   zeroes = c("I_hosp_D","I_ICU_R","I_ICU_D","I_triage","R_stepdown","D"))
+                   zeroes = c("I_hosp_D","I_ICU_R","I_ICU_D","I_triage_R","I_triage_D","R_stepdown","D"))
   
   
   #p_death_hosp=1, p_ICU_hosp=0 no-one goes into ICU, no recovery in hospital
   check_hosp_probs(p_ICU_hosp = 0,
                    p_death_hosp_D = 1,
                    cases = "I_hosp_D",
-                   zeroes = c("I_hosp_R","I_ICU_R","I_ICU_D","I_triage","R_stepdown"))
+                   zeroes = c("I_hosp_R","I_ICU_R","I_ICU_D","I_triage_R","I_triage_D","R_stepdown"))
 
   #p_death_ICU=1, p_ICU_hosp=1 no-one goes in hosp_D/hosp_R, no recovery from ICU
   check_hosp_probs(p_ICU_hosp = 1,
@@ -201,13 +204,69 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
   
 })
 
+test_that("No one seroconverts if p_seroconversion is 0", {
+    sircovid_model <- serology_model()
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
+  pars_model$p_seroconversion[] <- 0
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  check_cases <- FALSE
+  max_iter <- 10
+  iter <- 0
+  while (!check_cases && iter<= max_iter){
+    #We want to check that no-one seroconverts. It's possible 
+    #that no-one recovers, so we re-run the model until there 
+    #are cases in R_pos or R_neg (or max_iter is reached)
+    iter <- iter + 1
+    tmp <- mod$run(t)
+    results <- mod$transform_variables(tmp)
+    if (any(results$R_pos + results$R_neg > 0)){
+      check_cases <- TRUE
+    }
+  }
+  
+  expect_true(any(results$R_neg > 0))
+  expect_true(all(results$R_pre == 0))
+  expect_true(all(results$R_pos == 0))
+}
+)
+
+test_that("No one doesn't seroconvert if p_seroconversion is 1", {
+  sircovid_model <- serology_model()
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
+  pars_model$p_seroconversion[] <- 1
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  check_cases <- FALSE
+  max_iter <- 10
+  iter <- 0
+  while (!check_cases && iter<= max_iter){
+    #We want to check that no-one seroconverts. It's possible 
+    #that no-one recovers, so we re-run the model until there 
+    #are cases in R_pos or R_neg (or max_iter is reached)
+    iter <- iter + 1
+    tmp <- mod$run(t)
+    results <- mod$transform_variables(tmp)
+    if (any(results$R_pos + results$R_neg > 0)){
+      check_cases <- TRUE
+    }
+  }
+  
+  expect_true(any(results$R_pre > 0))
+  expect_true(all(results$R_pos > 0))
+  expect_true(all(results$R_neg == 0))
+}
+)
+
 
 test_that("setting a gamma to Inf results in progress in corresponding compartment in 1 time-step", {    
   t_max <- 150
   t <- seq(from = 1, to = t_max)
   max_iter <- 10
   
-  sircovid_model <- serology_model(use_fitted_parameters = FALSE ,progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2))
+  sircovid_model <- serology_model(use_fitted_parameters = FALSE ,progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
   
   #function to test that setting a given gamma to Inf causes cases in corresponding compartment to
   #progress in 1 time-step
@@ -224,24 +283,31 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
-      if (any(results[[compartment_name]][,,,] > 0)){
+      if (any(results[[compartment_name]] > 0)){
         check_cases <- TRUE
       }
     }
-    expect_true(any(results[[compartment_name]][,,,] > 0))
-    expect_true(all(results[[compartment_name]][2:t_max,,2,]==results[[compartment_name]][1:(t_max-1),,1,]))
+    expect_true(any(results[[compartment_name]] > 0))
+    if(!compartment_name %in% c('R_stepdown','R_pre')){
+      expect_true(all(results[[compartment_name]][2:t_max,,2,]==results[[compartment_name]][1:(t_max-1),,1,]))
+    } else {
+      expect_true(all(results[[compartment_name]][2:t_max,,2]==results[[compartment_name]][1:(t_max-1),,1]))
+    }
+    
   }
   
   test_gamma_inf('gamma_E','E')
   test_gamma_inf('gamma_asympt','I_asympt')
   test_gamma_inf('gamma_mild','I_mild')
   test_gamma_inf('gamma_ILI','I_ILI')
-  test_gamma_inf('gamma_triage','I_triage')
+  test_gamma_inf('gamma_triage','I_triage_R')
+  test_gamma_inf('gamma_triage','I_triage_D')
   test_gamma_inf('gamma_hosp_R','I_hosp_R')
   test_gamma_inf('gamma_hosp_D','I_hosp_D')
   test_gamma_inf('gamma_ICU_R','I_ICU_R')
   test_gamma_inf('gamma_ICU_D','I_ICU_D')
   test_gamma_inf('gamma_stepdown','R_stepdown')
+  test_gamma_inf('gamma_R_pre','R_pre')
 })
   
 test_that("setting a gamma to 0 results in cases in corresponding compartment to stay in progression stage 1", {  
@@ -249,7 +315,7 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
   t <- seq(from = 1, to = t_max)
   max_iter <- 10
   
-  sircovid_model <- serology_model(use_fitted_parameters = FALSE, progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2))
+  sircovid_model <- serology_model(use_fitted_parameters = FALSE, progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
   
   #function to test that setting a given gamma to 0 causes cases in corresponding compartment to
   #stay in progression stage 1
@@ -266,23 +332,29 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
-      if (any(results[[compartment_name]][,,,] > 0)){
+      if (any(results[[compartment_name]] > 0)){
         check_cases <- TRUE
       }
     }
-    expect_true(any(results[[compartment_name]][,,,] > 0))
-    expect_true(all(results[[compartment_name]][,,2,]==0))
+    expect_true(any(results[[compartment_name]] > 0))
+    if (!compartment_name %in% c('R_stepdown','R_pre')){
+      expect_true(all(results[[compartment_name]][,,2,]==0))
+    } else{
+      expect_true(all(results[[compartment_name]][,,2]==0))
+    }
   }
   
   test_gamma_zero('gamma_E','E')
   test_gamma_zero('gamma_asympt','I_asympt')
   test_gamma_zero('gamma_mild','I_mild')
   test_gamma_zero('gamma_ILI','I_ILI')
-  test_gamma_zero('gamma_triage','I_triage')
+  test_gamma_zero('gamma_triage','I_triage_R')
+  test_gamma_zero('gamma_triage','I_triage_D')
   test_gamma_zero('gamma_hosp_R','I_hosp_R')
   test_gamma_zero('gamma_hosp_D','I_hosp_D')
   test_gamma_zero('gamma_ICU_R','I_ICU_R')
   test_gamma_zero('gamma_ICU_D','I_ICU_D')
   test_gamma_zero('gamma_stepdown','R_stepdown')
+  test_gamma_zero('gamma_R_pre','R_pre')
   
 })

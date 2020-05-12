@@ -44,7 +44,7 @@ p_II_hosp_D <- 1 - exp(-gamma_hosp_D*dt)
 p_II_ICU_R <- 1 - exp(-gamma_ICU_R*dt)
 p_II_ICU_D <- 1 - exp(-gamma_ICU_D*dt)
 p_R_stepdown <- 1 - exp(-gamma_stepdown*dt)
-p_R_pre[] <- 1 - exp(-gamma_R_pre[i]*dt)
+p_R_pre[] <- 1 - exp(-gamma_R_pre*dt)
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -288,7 +288,7 @@ gamma_stepdown <- user(0.1)
 
 #Parameters of the R_pre classes
 s_R_pre <- user()
-gamma_R_pre[] <- user(0.1)
+gamma_R_pre <- user(0.1)
 p_seroconversion[] <- user()
 
 #Parameters of the age stratified transmission
@@ -397,7 +397,6 @@ dim(R0_pre) <- c(N_age, s_R_pre)
 dim(aux_R_pre) <- c(N_age, s_R_pre)
 dim(delta_R_pre) <- c(N_age, s_R_pre)
 dim(n_R_pre) <- c(N_age, s_R_pre)
-dim(gamma_R_pre) <- c(N_age)
 dim(p_R_pre) <- c(N_age)
 dim(p_seroconversion) <- c(N_age)
 
