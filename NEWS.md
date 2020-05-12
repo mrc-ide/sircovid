@@ -1,3 +1,26 @@
+# sircovid 0.2.30
+
+- Allow beta_end > beta_start or beta_reduction > 1 in generate_beta
+
+# sircovid 0.2.29
+
+- generalised pMCMC to sample gammas
+- rename cov_mat -> proposal_kernel
+- Working sample_pmcmc (bug fix)
+
+# sircovid 0.2.28
+
+- remove pars_obs and model_params as default arguments
+- fix axis naming bug in plot.pmcmc_list
+
+# sircovid 0.2.27
+
+- Sampler/forecasts for pMCMC results
+
+# sircovid 0.2.26
+
+- plot method for parallel pMCMC
+
 # sircovid 0.2.25
 
 - Three parameter pMCMC

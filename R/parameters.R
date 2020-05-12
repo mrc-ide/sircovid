@@ -30,13 +30,16 @@ generate_beta <- function(beta_start,
   if (as.Date(start_date) > as.Date(reduction_start)) {
     stop("Start date must be earlier than intervention date")
   }
+  if (beta_start < 0){
+    stop("beta_start must be non-negative")
+  }
   if (!is.null(beta_end)) {
-    if (beta_end < 0 || beta_end > beta_start) {
-      stop("beta_end must be between 0 and beta_start")
+    if (beta_end < 0) {
+      stop("beta_end must be non-negative")
     }
   } else {
-    if (beta_reduction < 0 || beta_reduction > 1) {
-      stop("beta must decrease, and cannot be reduced below 0")
+    if (beta_reduction < 0) {
+      stop("beta cannot be reduced below 0")
     }
   }
   if (reduction_period > 100) {

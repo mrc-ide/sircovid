@@ -1,4 +1,4 @@
-context("sample_grid_scan")
+context("Sampling and forecasts")
 
 # Only tests that a grid search can be run
 test_that("sample_grid_scan works", {
@@ -7,7 +7,6 @@ test_that("sample_grid_scan works", {
   # grab the data
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
-  
   
   # filter and tidy it
   # Don't start the data until it is after thid date
@@ -33,6 +32,20 @@ test_that("sample_grid_scan works", {
   day_step <- 12
   
   sircovid_model <- basic_model()
+
+  
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  
   
   scan_results <- scan_beta_date(
     min_beta = min_beta,
@@ -42,6 +55,12 @@ test_that("sample_grid_scan works", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
+    pars_obs = list(phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death = 926 / 1019,
+                    k_death = 2,
+                    exp_noise = 1e6),
+    model_params = model_params,
     sircovid_model = sircovid_model)
 
   n_sample_pairs <- 4 
@@ -92,6 +111,19 @@ test_that("sample_grid_scan works with new model", {
   
   sircovid_model <- hospital_model()
   
+  model_params <- generate_parameters(
+    sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  
+  
   scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
@@ -100,6 +132,16 @@ test_that("sample_grid_scan works with new model", {
     last_start_date = last_start_date, 
     day_step = day_step,
     data = data,
+    pars_obs = list(
+      phi_general = 0.95,
+      k_general = 2,
+      phi_ICU = 0.95,
+      k_ICU = 2,
+      phi_death = 926 / 1019,
+      k_death = 2,
+      exp_noise = 1e6
+    ),
+    model_params = model_params,
     sircovid_model = sircovid_model)
   
   n_sample_pairs <- 4 
@@ -113,6 +155,67 @@ test_that("sample_grid_scan works with new model", {
   expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample_pairs))
   
   ## Testing plotting is always a nightmare
+  if (TRUE) {
+    plot(res, what = "ICU")
+    plot(res, what = "deaths")
+    plot(res, what = "general")
+  }
+  
+})
+
+
+test_that("sample_pmcmc works with new model", {
+  set.seed(1)
+  
+  # grab the data
+  data <- readRDS("hospital_model_data.rds")
+  
+  sircovid_model <- hospital_model()
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    severity_data_file = 'extdata/severity_2020_04_12.csv')
+  
+  
+  n_mcmc <- 10
+  n_chains <- 2
+  pars_to_sample <- c('beta_start','beta_end', 'start_date',  'gamma_triage', 'gamma_hosp_R', 
+                      'gamma_hosp_D', 'gamma_ICU_R', 'gamma_ICU_D', 'gamma_stepdown')
+  proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
+  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
+  proposal_kernel['start_date', 'start_date'] <- 25
+  set.seed(1)
+  mcmc_results <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    pars_obs = list(
+      phi_general = 0.95,
+      k_general = 2,
+      phi_ICU = 0.95,
+      k_ICU = 2,
+      phi_death = 926 / 1019,
+      k_death = 2,
+      exp_noise = 1e6
+    ),
+    model_params = model_params,
+    proposal_kernel = proposal_kernel,
+    n_chains = n_chains
+  )
+
+  
+  n_sample <- 2
+  res <- sample_pmcmc(mcmc_results = mcmc_results,
+                      burn_in = 1,
+                      n_sample = n_sample, 
+                      n_particles = 10,
+                      forecast_days = 0)
+  
+  model <- res$inputs$model$odin_model(user = res$inputs$model_params)
+  # check length based on model and dates
+  days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
+  expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample))
+  
+  ## Testing plotting
   if (TRUE) {
     plot(res, what = "ICU")
     plot(res, what = "deaths")
