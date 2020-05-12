@@ -225,6 +225,10 @@ pmcmc <- function(data,
   #
   # Generate MCMC parameters
   #
+  
+  # This gets changed to numeric in data.frame
+  pars_init[['start_date']] <- as.Date(pars_init[['start_date']], origin = "1970-01-01")
+  
   inputs <- list(
     data = data,
     n_mcmc = n_mcmc,
@@ -286,16 +290,6 @@ pmcmc <- function(data,
                        pars_max = pars_max)
   }
 
-  # Run the chains in parallel
-  #chains <- run_mcmc_chain(
-  #    inputs = inputs,
-  #    curr_pars = curr_pars,
-  #    calc_lprior = calc_lprior,
-  #    calc_ll = calc_ll,
-  #    n_mcmc = n_mcmc,
-  #    propose_jump = propose_jump,
-  #    first_data_date = data$date[1],
-  #    output_proposals = output_proposals)
   chains <- furrr::future_pmap(
       .l =  list(n_mcmc = rep(n_mcmc, n_chains)), 
       .f = run_mcmc_chain,
@@ -309,6 +303,7 @@ pmcmc <- function(data,
       .progress = TRUE)
   
   if (n_chains > 1) {
+    browser()
     names(chains) <- paste0('chain', seq_len(n_chains))  
     
     # calculating rhat
@@ -316,7 +311,7 @@ pmcmc <- function(data,
     chains_coda <- lapply(chains, function(x) {
         
         traces <- x$results
-        if('start_date' %in% pars_to_sample) {
+        if('start_date' %in% pars_to_sample$names) {
           traces$start_date <- start_date_to_offset(data$date[1], traces$start_date)
         }
         
@@ -372,23 +367,6 @@ run_mcmc_chain <- function(inputs,
 
   if(is.infinite(curr_lprior)) {
     stop('initial parameters are not compatible with supplied prior')
-  }
-  
-  
-  if(length(p_filter_est) != 2) {
-    stop('log_likelihood function must return a list containing elements log_likelihood and sample_state')
-  }
-  if(!setequal(names(p_filter_est), c('log_likelihood', 'sample_state'))) {
-    stop('log_likelihood function must return a list containing elements log_likelihood and sample_state')
-  }
-  if(length(p_filter_est$log_likelihood) > 1) {
-    stop('log_likelihood must be a single numeric representing the estimated log likelihood')
-  }
-  if(p_filter_est$log_likelihood > 0) {
-    stop('log_likelihood must be negative or zero')
-  }
-  if(any(p_filter_est$sample_state < 0)) {
-    stop('sample_state must be a vector of non-negative numbers')
   }
   
   # extract loglikelihood estimate and sample state
@@ -535,9 +513,9 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
     } else if (par == "beta_end") {
       beta_end <- pars[[par]]
     } else if (par %in% names(model_params)) {
-      model_params$par <- pars[[par]]
+      model_params[[par]] <- pars[[par]]
     } else if (par %in% names(pars_obs)) {
-      pars_obs$par <- pars[[par]]
+      pars_obs[[par]] <- pars[[par]]
     } else {
       stop(paste0("Don't know how to update parameter: ", par))
     }
