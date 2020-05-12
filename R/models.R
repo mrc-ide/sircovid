@@ -98,9 +98,9 @@ hospital_model <- function(use_fitted_parameters = TRUE,
 ##'   
 ##' @export
 serology_model <- function(use_fitted_parameters = TRUE,
-                           progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2),
-                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5)) {
-  model_class <- "sircovid_hospital"
+                           progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2),
+                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5, R_pre = 1/5)) {
+  model_class <- "sircovid_serology"
   odin_model <- load_odin_model("hospital_with_serology")
   generate_beta_func <- generate_beta
   seeding_model <- seeding_function
@@ -145,6 +145,8 @@ partition_names <- function(model_name) {
       model_partitions <- c("E", "asympt", "mild", "ILI", "hosp", "ICU", "rec")
     } else if (model_name == "sircovid_hospital") {
       model_partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown")
+    } else if (model_name == "sircovid_serology") {
+      model_partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown", "R_pre")
     } else {
       stop("Unknown model name")
     }
@@ -173,19 +175,23 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
     gamma_triage <- fitted_parameters[fitted_parameters$parameter=="gamma_triage","value"]
     s_stepdown <- fitted_parameters[fitted_parameters$parameter=="s_stepdown","value"]
     gamma_stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
+    s_R_pre <- fitted_parameters[fitted_parameters$parameter=="s_R_pre","value"]
+    gamma_R_pre <- fitted_parameters[fitted_parameters$parameter=="gamma_R_pre","value"]
 
     parameters <- (list(progression_groups = list(hosp_D = s_hosp_D,
                                           hosp_R = s_hosp_R,
                                           ICU_D = s_ICU_D,
                                           ICU_R = s_ICU_R,
                                           triage = s_triage,
-                                          stepdown = s_stepdown),
+                                          stepdown = s_stepdown,
+                                          R_pre = s_R_pre),
                 gammas = list(hosp_D = gamma_hosp_D,
                               hosp_R = gamma_hosp_R,
                               ICU_D = gamma_ICU_D,
                               ICU_R = gamma_ICU_R,
                               triage = gamma_triage,
-                              stepdown = gamma_stepdown)))
+                              stepdown = gamma_stepdown,
+                              R_pre = gamma_R_pre)))
               
     parameters
   }

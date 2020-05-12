@@ -25,33 +25,6 @@ basic <- function (beta_t, beta_y, D0, dt, E0, hosp_transmission, I0_asympt,
 }
 class(basic) <- "odin_generator"
 attr(basic, "ir") <- .basic$public_fields$ir
-.diffusion_beta_tmp <- odin:::odin_c_class("diffusion_beta_tmp", list(get_internal = "diffusion_beta_tmp_get_internal", finalise = "diffusion_beta_tmp_finalise", create = "diffusion_beta_tmp_create", initmod_desolve = "diffusion_beta_tmp_initmod_desolve", contents = "diffusion_beta_tmp_contents", set_user = "diffusion_beta_tmp_set_user", metadata = "diffusion_beta_tmp_metadata", initial_conditions = "diffusion_beta_tmp_initial_conditions", rhs = "diffusion_beta_tmp_rhs", rhs_dde = "diffusion_beta_tmp_rhs_dde", rhs_r = "diffusion_beta_tmp_rhs_r"), c("D0", "dt", "E0", "hosp_transmission", "I0_asympt", "I0_hosp", "I0_ICU", "I0_ILI", "I0_mild", "ICU_transmission", "m", "N_age", "p_asympt", "p_death_hosp", "p_recov_hosp", "p_recov_ICU", "p_recov_ILI", "p_sympt_ILI", "R0", "R0_hosp", "s_asympt", "s_E", "s_hosp", "s_ICU", "s_ILI", "s_mild", "s_rec", "S0", "trans_classes", "trans_increase", "trans_profile", "x0", "gamma_asympt", "gamma_E", "gamma_hosp", "gamma_ICU", "gamma_ILI", "gamma_mild", "gamma_rec", "sd_x"), list(discrete = TRUE, has_array = TRUE, has_output = TRUE, has_user = TRUE, has_delay = FALSE, has_interpolate = FALSE, has_stochastic = TRUE, has_include = FALSE, initial_time_dependent = FALSE), "sircovid", "odin/diffusion_beta_tmp.json", TRUE)
-diffusion_beta_tmp <- function (D0, dt, E0, hosp_transmission, I0_asympt, I0_hosp,
-    I0_ICU, I0_ILI, I0_mild, ICU_transmission, m, N_age, p_asympt,
-    p_death_hosp, p_recov_hosp, p_recov_ICU, p_recov_ILI, p_sympt_ILI,
-    R0, R0_hosp, s_asympt, s_E, s_hosp, s_ICU, s_ILI, s_mild,
-    s_rec, S0, trans_classes, trans_increase, trans_profile,
-    x0, gamma_asympt = NULL, gamma_E = NULL, gamma_hosp = NULL,
-    gamma_ICU = NULL, gamma_ILI = NULL, gamma_mild = NULL, gamma_rec = NULL,
-    sd_x = NULL, user = list(D0 = D0, dt = dt, E0 = E0, hosp_transmission = hosp_transmission,
-        I0_asympt = I0_asympt, I0_hosp = I0_hosp, I0_ICU = I0_ICU,
-        I0_ILI = I0_ILI, I0_mild = I0_mild, ICU_transmission = ICU_transmission,
-        m = m, N_age = N_age, p_asympt = p_asympt, p_death_hosp = p_death_hosp,
-        p_recov_hosp = p_recov_hosp, p_recov_ICU = p_recov_ICU,
-        p_recov_ILI = p_recov_ILI, p_sympt_ILI = p_sympt_ILI,
-        R0 = R0, R0_hosp = R0_hosp, s_asympt = s_asympt, s_E = s_E,
-        s_hosp = s_hosp, s_ICU = s_ICU, s_ILI = s_ILI, s_mild = s_mild,
-        s_rec = s_rec, S0 = S0, trans_classes = trans_classes,
-        trans_increase = trans_increase, trans_profile = trans_profile,
-        x0 = x0, gamma_asympt = gamma_asympt, gamma_E = gamma_E,
-        gamma_hosp = gamma_hosp, gamma_ICU = gamma_ICU, gamma_ILI = gamma_ILI,
-        gamma_mild = gamma_mild, gamma_rec = gamma_rec, sd_x = sd_x),
-    unused_user_action = NULL)
-{
-    .diffusion_beta_tmp$new(user, unused_user_action)
-}
-class(diffusion_beta_tmp) <- "odin_generator"
-attr(diffusion_beta_tmp, "ir") <- .diffusion_beta_tmp$public_fields$ir
 .hospital_with_serology <- odin:::odin_c_class("hospital_with_serology", list(get_internal = "hospital_with_serology_get_internal", finalise = "hospital_with_serology_finalise", create = "hospital_with_serology_create", initmod_desolve = "hospital_with_serology_initmod_desolve", contents = "hospital_with_serology_contents", set_user = "hospital_with_serology_set_user", metadata = "hospital_with_serology_metadata", initial_conditions = "hospital_with_serology_initial_conditions", rhs = "hospital_with_serology_rhs", rhs_dde = "hospital_with_serology_rhs_dde", rhs_r = "hospital_with_serology_rhs_r"), c("beta_t", "beta_y", "D0", "dt", "E0", "hosp_transmission", "I0_asympt", "I0_hosp_D", "I0_hosp_R", "I0_ICU_D", "I0_ICU_R", "I0_ILI", "I0_mild", "I0_triage_D", "I0_triage_R", "ICU_transmission", "m", "N_age", "p_asympt", "p_death_hosp_D", "p_death_ICU", "p_ICU_hosp", "p_recov_ILI", "p_seroconversion", "p_sympt_ILI", "R0_neg", "R0_pos", "R0_pre", "R0_stepdown", "s_asympt", "s_E", "s_hosp_D", "s_hosp_R", "s_ICU_D", "s_ICU_R", "s_ILI", "s_mild", "s_R_pre", "s_stepdown", "s_triage", "S0", "trans_classes", "trans_increase", "trans_profile", "gamma_asympt", "gamma_E", "gamma_hosp_D", "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_R", "gamma_ILI", "gamma_mild", "gamma_R_pre", "gamma_stepdown", "gamma_triage"), list(discrete = TRUE, has_array = TRUE, has_output = TRUE, has_user = TRUE, has_delay = FALSE, has_interpolate = TRUE, has_stochastic = TRUE, has_include = FALSE, initial_time_dependent = FALSE), "sircovid", "odin/hospital_with_serology.json", TRUE)
 hospital_with_serology <- function (beta_t, beta_y, D0, dt, E0, hosp_transmission, I0_asympt,
     I0_hosp_D, I0_hosp_R, I0_ICU_D, I0_ICU_R, I0_ILI, I0_mild,
