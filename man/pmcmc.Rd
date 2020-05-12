@@ -10,24 +10,18 @@ pmcmc(
   sircovid_model,
   model_params,
   pars_obs,
-  pars_to_sample = c("beta_start", "beta_end", "start_date", "gamma_triage",
-    "gamma_hosp_R", "gamma_hosp_D", "gamma_ICU_R", "gamma_ICU_D", "gamma_stepdown"),
-  pars_init = list(beta_start = 0.14, beta_end = 0.14 * 0.238, start_date =
-    as.Date("2020-02-07"), gamma_triage = 0.5099579, gamma_hosp_R = 0.1092046,
-    gamma_hosp_D = 0.2911154, gamma_ICU_R = 0.3541429, gamma_ICU_D = 0.2913861,
-    gamma_stepdown = 0.452381),
-  pars_min = list(beta_start = 0, beta_end = 0, start_date = 0, gamma_triage = 0,
-    gamma_hosp_R = 0, gamma_hosp_D = 0, gamma_ICU_R = 0, gamma_ICU_D = 0, gamma_stepdown
-    = 0),
-  pars_max = list(beta_start = 1, beta_end = 1, start_date = 1e+06, gamma_triage = 1,
-    gamma_hosp_R = 1, gamma_hosp_D = 1, gamma_ICU_R = 1, gamma_ICU_D = 1, gamma_stepdown
-    = 1),
+  pars_to_sample = data.frame(names = c("beta_start", "beta_end", "start_date",
+    "gamma_triage", "gamma_hosp_R", "gamma_hosp_D", "gamma_ICU_R", "gamma_ICU_D",
+    "gamma_stepdown"), init = c(0.14, 0.14 * 0.238, as.Date("2020-02-07"), 0.5099579,
+    0.1092046, 0.2911154, 0.3541429, 0.2913861, 0.452381), min = c(0, 0, 0, 0, 0, 0, 0,
+    0, 0), max = c(1, 1, 1e+06, 1, 1, 1, 1, 1, 1), discrete = c(FALSE, FALSE, TRUE,
+    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE), stringAsFactors = FALSE),
+  pars_lprior = list(beta_start = function(pars) log(1e-10), beta_end = function(pars)
+    log(1e-10), start_date = function(pars) log(1e-10), gamma_triage = function(pars)
+    log(1e-10), gamma_hosp_R = function(pars) log(1e-10), gamma_hosp_D = function(pars)
+    log(1e-10), gamma_ICU_R = function(pars) log(1e-10), gamma_ICU_D = function(pars)
+    log(1e-10), gamma_stepdown = function(pars) log(1e-10)),
   proposal_kernel,
-  pars_discrete = list(beta_start = FALSE, beta_end = FALSE, start_date = TRUE,
-    gamma_triage = FALSE, gamma_hosp_R = FALSE, gamma_hosp_D = FALSE, gamma_ICU_R =
-    FALSE, gamma_ICU_D = FALSE, gamma_stepdown = FALSE),
-  log_likelihood = NULL,
-  log_prior = NULL,
   n_particles = 100,
   steps_per_day = 4,
   output_proposals = FALSE,
@@ -55,29 +49,15 @@ phi_death = 926 / 1019,
 k_death = 2, 
 exp_noise = 1e6)}
 
-\item{pars_to_sample}{names of parameters to be sampled (currently beta_start, beta_end and start_date,  gamma_triage, 
-gamma_hosp_R, gamma_hosp_D, gamma_ICU_R, gamma_ICU_D, and gamma_stepdown)}
+\item{pars_to_sample}{\code{data.frame} detailing parameters to sample. Must contain columns
+'names' (parameter names), 'init' (initial values), 'min' (minimum values), 'max' (maximum values),
+'discrete (boolean indicating whether a discrete quantity)'}
 
-\item{pars_init}{named list of initial inputs for parameters being sampled}
-
-\item{pars_min}{named list of lower reflecting boundaries for parameter proposals}
-
-\item{pars_max}{named list of upper reflecting boundaries for parameter proposals}
+\item{pars_lprior}{functions to calculate log prior for each parameter. A named list for each parameter
+listed in \code{pars_to_sample}. Each value must be a function which takes named parameter vector as 
+input, returns a single numeric which is log of the prior probability.}
 
 \item{proposal_kernel}{named matrix of proposal covariance for parameters}
-
-\item{pars_discrete}{named list of logicals, indicating if proposed jump should be discrete}
-
-\item{log_likelihood}{function to calculate log likelihood, must take named parameter vector as input, 
-allow passing of implicit arguments corresponding to the main function arguments. 
-Returns a named list, with entries:
-  - $log_likelihood, a single numeric
-  - $sample_state, a numeric vector corresponding to the state of a single particle, chosen at random, 
-  at the final time point for which we have data.
-  If NULL, calculated using the function calc_loglikelihood.}
-
-\item{log_prior}{function to calculate log prior, must take named parameter vector as input, returns a single numeric.
-If NULL, uses uninformative priors which do not affect the posterior}
 
 \item{n_particles}{Number of particles}
 

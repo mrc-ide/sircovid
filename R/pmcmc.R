@@ -22,30 +22,16 @@
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
-##' @param pars_to_sample names of parameters to be sampled (currently beta_start, beta_end and start_date,  gamma_triage, 
-##' gamma_hosp_R, gamma_hosp_D, gamma_ICU_R, gamma_ICU_D, and gamma_stepdown)
-##' 
-##' @param pars_init named list of initial inputs for parameters being sampled 
-##' 
-##' @param pars_min named list of lower reflecting boundaries for parameter proposals
-##' 
-##' @param pars_max named list of upper reflecting boundaries for parameter proposals
-##' 
+##' @param pars_to_sample \code{data.frame} detailing parameters to sample. Must contain columns
+##'   'names' (parameter names), 'init' (initial values), 'min' (minimum values), 'max' (maximum values),
+##'   'discrete (boolean indicating whether a discrete quantity)'
+##'                   
+##' @param pars_lprior functions to calculate log prior for each parameter. A named list for each parameter
+##'   listed in \code{pars_to_sample}. Each value must be a function which takes named parameter vector as 
+##'   input, returns a single numeric which is log of the prior probability.
+##'       
 ##' @param proposal_kernel named matrix of proposal covariance for parameters 
-##' 
-##' @param pars_discrete named list of logicals, indicating if proposed jump should be discrete
-##' 
-##' @param log_likelihood function to calculate log likelihood, must take named parameter vector as input, 
-##'                 allow passing of implicit arguments corresponding to the main function arguments. 
-##'                 Returns a named list, with entries:
-##'                   - $log_likelihood, a single numeric
-##'                   - $sample_state, a numeric vector corresponding to the state of a single particle, chosen at random, 
-##'                   at the final time point for which we have data.
-##'                   If NULL, calculated using the function calc_loglikelihood.
-##'                   
-##' @param log_prior function to calculate log prior, must take named parameter vector as input, returns a single numeric.
-##'                  If NULL, uses uninformative priors which do not affect the posterior
-##'                   
+##'
 ##' @param n_particles Number of particles
 ##' 
 ##' @param steps_per_day Number of steps per day
@@ -146,15 +132,15 @@ pmcmc <- function(data,
                                                FALSE,
                                                FALSE),
                                     stringAsFactors = FALSE),
-                  pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
-                                      'beta_end'       = function(pars) log(1e-10),
-                                      'start_date'     = function(pars) log(1e-10),
-                                      'gamma_triage'   = function(pars) log(1e-10),
-                                      'gamma_hosp_R'   = function(pars) log(1e-10),
-                                      'gamma_hosp_D'   = function(pars) log(1e-10),
-                                      'gamma_ICU_R'    = function(pars) log(1e-10),
-                                      'gamma_ICU_D'    = function(pars) log(1e-10),
-                                      'gamma_stepdown' = function(pars) log(1e-10)),
+                  pars_lprior = list('beta_start'     = function(pars) log(1e-10),
+                                     'beta_end'       = function(pars) log(1e-10),
+                                     'start_date'     = function(pars) log(1e-10),
+                                     'gamma_triage'   = function(pars) log(1e-10),
+                                     'gamma_hosp_R'   = function(pars) log(1e-10),
+                                     'gamma_hosp_D'   = function(pars) log(1e-10),
+                                     'gamma_ICU_R'    = function(pars) log(1e-10),
+                                     'gamma_ICU_D'    = function(pars) log(1e-10),
+                                     'gamma_stepdown' = function(pars) log(1e-10)),
                   proposal_kernel,
                   n_particles = 1e2,
                   steps_per_day = 4, 
@@ -176,7 +162,7 @@ pmcmc <- function(data,
   if (!all(c('beta_start', 'start_date') %in% par_names)) {
     stop("Turning off beta and start date sampling unsupported")
   }
-  if(!all(names(priors) %in% par_names)) {
+  if(!all(names(pars_lprior) %in% par_names)) {
     stop("All sampled parameters must have a defined prior")
   }
   
@@ -265,15 +251,15 @@ pmcmc <- function(data,
   # create shorthand function to calc ll given main inputs
   # binds these input parameters
   calc_ll <- function(pars) {  
-    X <- log_likelihood(pars = pars, 
-                        data = data,
-                        sircovid_model = sircovid_model,
-                        model_params = model_params,
-                        steps_per_day = steps_per_day, 
-                        pars_obs = pars_obs, 
-                        n_particles = n_particles,
-                        forecast_days = 0,
-                        return = "ll"
+    X <- calc_loglikelihood(pars = pars, 
+                            data = data,
+                            sircovid_model = sircovid_model,
+                            model_params = model_params,
+                            steps_per_day = steps_per_day, 
+                            pars_obs = pars_obs, 
+                            n_particles = n_particles,
+                            forecast_days = 0,
+                            return = "ll"
     ) 
     X
   }
