@@ -255,7 +255,8 @@ test_that("sample_pmcmc works with new model", {
     proposal_kernel = proposal_kernel,
     sircovid_model = sircovid_model,
     model_params = model_params,
-    pars_obs = pars_obs
+    pars_obs = pars_obs,
+    n_chains = n_chains
   )
 
   
