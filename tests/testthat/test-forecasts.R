@@ -233,7 +233,7 @@ test_that("sample_pmcmc works with new model", {
                FALSE,
                FALSE,
                FALSE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
                       'beta_end'       = function(pars) 0,
                       'start_date'     = function(pars) 0,

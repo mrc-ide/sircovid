@@ -41,7 +41,7 @@ test_that("pmcmc runs without error", {
     min=c(0, 0),
     max=c(1, 1e6),
     discrete=c(FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
                      'start_date' = function(pars) 0)
   
@@ -83,7 +83,7 @@ test_that("pmcmc runs without error", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
                      'beta_end' = function(pars) 0,
                      'start_date' = function(pars) 0)
@@ -186,7 +186,7 @@ test_that("pmcmc with new model", {
     min=c(0, 0),
     max=c(1, 1e6),
     discrete=c(FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
                      'start_date' = function(pars) 0)
   cmp <- readRDS("reference_pmcmc_hosp.rds")
@@ -265,7 +265,7 @@ test_that("pmcmc with new model", {
                FALSE,
                FALSE,
                FALSE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
                      'beta_end'       = function(pars) 0,
                      'start_date'     = function(pars) 0,
@@ -336,7 +336,7 @@ test_that("pmcmc will run with multiple chains" , {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
                      'beta_end' = function(pars) 0,
                      'start_date' = function(pars) 0)
@@ -402,7 +402,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
                      'beta_end' = function(pars) 0,
                      'start_date' = function(pars) 0)
@@ -444,7 +444,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -467,7 +467,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -489,7 +489,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0),
     max=c(1, 1),
     discrete=c(FALSE, FALSE),
-    stringAsFactors = FALSE) 
+    stringsAsFactors = FALSE) 
   expect_error(
     pmcmc(
       data = data,
@@ -511,7 +511,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -542,7 +542,7 @@ test_that("pmcmc error cases", {
     min=c(-1, -1, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE) 
+    stringsAsFactors = FALSE) 
   expect_error(
     pmcmc(
       data = data,
@@ -564,7 +564,7 @@ test_that("pmcmc error cases", {
     min=c(-1, -1, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -587,7 +587,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, as.character(as.Date(data$date[1]))),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -609,7 +609,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, as.character(as.Date(data$date[1]))),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)  
+    stringsAsFactors = FALSE)  
   expect_error(
     pmcmc(
       data = data,
@@ -632,7 +632,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -657,7 +657,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, 0.5, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -679,7 +679,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -706,7 +706,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -753,7 +753,7 @@ test_that("pmcmc error cases", {
     min=c(0, 0, 0, 0),
     max=c(1, 1, 1e6, 1),
     discrete=c(FALSE, FALSE, TRUE, FALSE),
-    stringAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   proposal_kernel <- matrix(c(0.001^2, 0, 0, 0,
                               0, 0.001^2, 0, 0,
                               0,       0, 0.5^2, 0,
