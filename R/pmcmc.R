@@ -274,6 +274,7 @@ pmcmc <- function(data,
     for (par in names(pars)) {
       lprior <- lprior + pars_lprior[[par]](pars) 
     }
+    lprior
   }
 
   # create shorthand function to propose new pars given main inputs
@@ -286,6 +287,15 @@ pmcmc <- function(data,
   }
 
   # Run the chains in parallel
+  #chains <- run_mcmc_chain(
+  #    inputs = inputs,
+  #    curr_pars = curr_pars,
+  #    calc_lprior = calc_lprior,
+  #    calc_ll = calc_ll,
+  #    n_mcmc = n_mcmc,
+  #    propose_jump = propose_jump,
+  #    first_data_date = data$date[1],
+  #    output_proposals = output_proposals)
   chains <- furrr::future_pmap(
       .l =  list(n_mcmc = rep(n_mcmc, n_chains)), 
       .f = run_mcmc_chain,

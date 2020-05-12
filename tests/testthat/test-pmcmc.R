@@ -28,6 +28,12 @@ test_that("pmcmc runs without error", {
     trans_increase = 1,
     dt = 1/4
   )
+  
+  pars_obs <- list(phi_ICU = 0.95,
+                   k_ICU = 2,
+                   phi_death = 926 / 1019,
+                   k_death = 2,
+                   exp_noise = 1e6)
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'start_date'),
@@ -44,11 +50,7 @@ test_that("pmcmc runs without error", {
     n_mcmc = n_mcmc,
     sircovid_model = sircovid_model,
     model_params = model_params,
-    pars_obs = list(phi_ICU = 0.95,
-                    k_ICU = 2,
-                    phi_death = 926 / 1019,
-                    k_death = 2,
-                    exp_noise = 1e6),
+    pars_obs = pars_obs,
     pars_to_sample = pars_to_sample,
     proposal_kernel = matrix(c(0.001^2, 0,
                        0, 0.5^2),
@@ -75,48 +77,32 @@ test_that("pmcmc runs without error", {
 
   ## test three par version
 
-  pars_to_sample <- c('beta_start', 'beta_end', 'start_date')
-  pars_init <- list('beta_start' = 0.14, 
-                   'beta_end' = 0.14*0.238,
-                   'start_date' = as.Date("2020-02-07"))
-  pars_min <- list('beta_start' = 0, 
-                  'beta_end' = 0,
-                  'start_date' = 0)
-  pars_max <- list('beta_start' = 1, 
-                  'beta_end' = 1,
-                  'start_date' = 1e6)
-  pars_discrete <- list('beta_start' = FALSE,
-                       'beta_end' = FALSE,
-                       'start_date' = TRUE)
-  
-  pars_obs <- list(
-    phi_general = 0.95,
-    k_general = 2,
-    phi_ICU = 0.95,
-    k_ICU = 2,
-    phi_death = 926 / 1019,
-    k_death = 2,
-    exp_noise = 1e6
-  )
+  pars_to_sample <- data.frame(
+    names=c('beta_start', 'beta_end', 'start_date'),
+    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    min=c(0, 0, 0),
+    max=c(1, 1, 1e6),
+    discrete=c(FALSE, FALSE, TRUE),
+    stringAsFactors = FALSE)
+  pars_lprior = list('beta_start' = function(pars) log(1e-10),
+                     'beta_end' = function(pars) 0,
+                     'start_date' = function(pars) 0)
   
   
-  set.seed(2)
+ set.seed(2)
  X2 <- pmcmc(
    data = data,
    n_mcmc = n_mcmc,
    pars_to_sample = pars_to_sample,
-   pars_init = pars_init,
-   pars_min = pars_min,
-   pars_max = pars_max, 
-   pars_discrete = pars_discrete,
    proposal_kernel = matrix(c(0.001^2, 0, 0,
                               0, 0.001^2, 0,
                               0,       0, 0.5^2), 
                             nrow = 3, byrow = TRUE,
                             dimnames = list(
-                              pars_to_sample,
-                              pars_to_sample)),
+                              pars_to_sample$names,
+                              pars_to_sample$names)),
    pars_obs = pars_obs, 
+   pars_lprior = pars_lprior,
    model_params = model_params,
    sircovid_model = sircovid_model
  )
@@ -124,34 +110,25 @@ test_that("pmcmc runs without error", {
  expect_equal(dim(X2$results), c(n_mcmc + 1L, 6))
  expect_equivalent(X2[-1], cmp[-1])
 
- 
  ## set likelihood to accept every time with outlandish proposals
  set.seed(1)
  Y <- pmcmc(
    data = data,
    n_mcmc = n_mcmc,
-   sircovid_model = sircovid_model,
    pars_to_sample = pars_to_sample,
-   pars_init = pars_init,
-   pars_min = pars_min,
-   pars_max = pars_max, 
-   pars_discrete = pars_discrete,
-   model_params = model_params,
-   pars_obs = pars_obs,
    proposal_kernel = matrix(c(1e2, 0, 0,
-                      0, 1e2, 0,
-                      0,  0, 1e4),
-                    nrow = 3, byrow = TRUE,
-                    dimnames = list(
-                      c('beta_start', 'beta_end', 'start_date'),
-                      c('beta_start', 'beta_end', 'start_date')
-                    )),
-   log_likelihood = function(pars, ...) {
-     list('log_likelihood' = 0,
-          'sample_state' = rep(1, 238))
-   }
+                              0, 1e2, 0,
+                              0, 0, 1e4), 
+                            nrow = 3, byrow = TRUE,
+                            dimnames = list(
+                              pars_to_sample$names,
+                              pars_to_sample$names)),
+   pars_obs = pars_obs, 
+   pars_lprior = pars_lprior,
+   model_params = model_params,
+   sircovid_model = sircovid_model
  )
- expect_equal(Y$results$log_likelihood, rep(0, n_mcmc + 1L))
+
  # check that all proposals have been accepted
  expect_true(all(diff(Y$results$beta_start) != 0))
  # check that all start_dates are before data
@@ -163,21 +140,19 @@ test_that("pmcmc runs without error", {
  expect_true(max(Y$results$beta_end) < 1)
 
  ## check that proposing jumps of size zero results in the initial parameter being retained
-
  Z <- pmcmc(
    data = data,
    n_mcmc = n_mcmc,
    pars_to_sample = pars_to_sample,
-   pars_init = pars_init,
-   pars_min = pars_min,
-   pars_max = pars_max, 
-   pars_discrete = pars_discrete,
-   sircovid_model = sircovid_model,
-   pars_obs = pars_obs,
+   proposal_kernel = matrix(rep(0, 9), 
+                            nrow = 3, byrow = TRUE,
+                            dimnames = list(
+                              pars_to_sample$names,
+                              pars_to_sample$names)),
+   pars_obs = pars_obs, 
+   pars_lprior = pars_lprior,
    model_params = model_params,
-   proposal_kernel = matrix(rep(0, 9),
-                    nrow = 3, byrow = TRUE,
-                    dimnames = list( pars_to_sample, pars_to_sample)),
+   sircovid_model = sircovid_model,
    output_proposals = TRUE
  )
 
@@ -194,22 +169,17 @@ X3 <- pmcmc(
   data = data,
   n_mcmc = n_mcmc,
   pars_to_sample = pars_to_sample,
-  pars_init = pars_init,
-  pars_min = pars_min,
-  pars_max = pars_max, 
-  pars_discrete = pars_discrete,
-  sircovid_model = sircovid_model,
+  proposal_kernel = matrix(c(0.001^2, 0, 0.001*0.5*0.6,
+                             0, 0.001^2, 0,
+                             0.001*0.5*0.6, 0, 0.5^2), 
+                           nrow = 3, byrow = TRUE,
+                           dimnames = list(
+                             pars_to_sample$names,
+                             pars_to_sample$names)),
+  pars_obs = pars_obs, 
+  pars_lprior = pars_lprior,
   model_params = model_params,
-  pars_obs = list(phi_ICU = 0.95,
-                  k_ICU = 2,
-                  phi_death = 926 / 1019,
-                  k_death = 2,
-                  exp_noise = 1e6),
-  proposal_kernel = matrix(c( 0.001^2,       0, 0.001*0.5*0.6,
-                                    0, 0.001^2, 0,
-                        0.001*0.5*0.6,       0, 0.5^2),
-                   nrow = 3, byrow = TRUE,
-                   dimnames = list( pars_to_sample,pars_to_sample))
+  sircovid_model = sircovid_model
 )
 
 expect_false(all(X2$results == X3$results))
