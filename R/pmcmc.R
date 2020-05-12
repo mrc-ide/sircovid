@@ -158,7 +158,11 @@ pmcmc <- function(data,
   #
   # Check pars_init input
   #
-  par_names <- pars_to_sample$names
+  if (!all(c("names", "init", "min", "max", "discrete") %in% colnames(pars_to_sample))) {
+    stop("pars_to_samples must contain columns 'names', 'init', 'min', 'max' and 'discrete'")
+  }
+  par_names <- as.character(pars_to_sample$names)
+  
   if (!all(c('beta_start', 'start_date') %in% par_names)) {
     stop("Turning off beta and start date sampling unsupported")
   }
@@ -179,15 +183,15 @@ pmcmc <- function(data,
   
   # Convert data frame into named lists
   df_col_to_list <- function(df, column) {
-    list_out <- as.list(df$column)
-    names(list_out) <- df$names
+    list_out <- as.list(df[[column]])
+    names(list_out) <- as.character(df$names)
     list_out
   }
 
   pars_init <- df_col_to_list(pars_to_sample, "init")
-  pars_min <- pars_to_sample(pars_to_sample, "min")
-  pars_max <- pars_to_sample(pars_to_sample, "max")
-  pars_discrete <- pars_to_sample(pars_to_sample, "discrete")
+  pars_min <- df_col_to_list(pars_to_sample, "min")
+  pars_max <- df_col_to_list(pars_to_sample, "max")
+  pars_discrete <- df_col_to_list(pars_to_sample, "discrete")
 
   is.numeric.list <- function(x) all(vapply(X = x, is.numeric, logical(1)))
   is.logical.list <- function(x) all(vapply(X = x, is.logical, logical(1)))
@@ -203,7 +207,7 @@ pmcmc <- function(data,
     stop('pars_discrete entries must be logical')
   }
 
-  if(any(pars_init < pars_min | curr_pars > pars_init)) {
+  if(any(pars_to_sample$init < pars_to_sample$min | pars_to_sample$init > pars_to_sample$max)) {
     stop('initial parameters are outside of specified range')
   }
   if(pars_init['beta_start'] < 0) {
@@ -214,7 +218,7 @@ pmcmc <- function(data,
       stop('beta_end must not be negative')
     }
   }
-  if(start_date_to_offset(data$date[1], pars_init['start_date']) < 0) {
+  if(start_date_to_offset(data$date[1], pars_init[['start_date']]) < 0) {
     stop('start date must not be before first date of supplied data')
   }
 
@@ -515,15 +519,15 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   # Update particle filter parameters from pars
   for (par in names(pars)) {
     if (par == "start_date") {
-      start_date <- offset_to_start_date(data$date[1], pars$par)
+      start_date <- offset_to_start_date(data$date[1], pars[[par]])
     } else if (par == "beta_start") {
-      beta_start <- pars$par
+      beta_start <- pars[[par]]
     } else if (par == "beta_end") {
-      beta_end <- pars$par
+      beta_end <- pars[[par]]
     } else if (par %in% names(model_params)) {
-      model_params$par <- pars$par
+      model_params$par <- pars[[par]]
     } else if (par %in% names(pars_obs)) {
-      pars_obs$par <- pars$par
+      pars_obs$par <- pars[[par]]
     } else {
       stop(paste0("Don't know how to update parameter: ", par))
     }
