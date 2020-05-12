@@ -147,7 +147,7 @@ pmcmc <- function(data,
                   output_proposals = FALSE,
                   n_chains = 1) {
 
-  if(!is.logical(output_proposals) || length(output_proposals) != 1) {
+  if(length(output_proposals) != 1 || !is.logical(output_proposals)) {
     stop("output_proposals must be either TRUE or FALSE")
   }
   
@@ -303,7 +303,6 @@ pmcmc <- function(data,
       .progress = TRUE)
   
   if (n_chains > 1) {
-    browser()
     names(chains) <- paste0('chain', seq_len(n_chains))  
     
     # calculating rhat

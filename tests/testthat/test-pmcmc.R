@@ -396,7 +396,13 @@ test_that("pmcmc error cases", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
   sircovid_model <- basic_model()
-  
+  pars_to_sample <- data.frame(
+    names=c('beta_start', 'beta_end', 'start_date'),
+    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    min=c(0, 0, 0),
+    max=c(1, 1, 1e6),
+    discrete=c(FALSE, FALSE, TRUE),
+    stringAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
                      'beta_end' = function(pars) 0,
                      'start_date' = function(pars) 0)
@@ -429,11 +435,12 @@ test_that("pmcmc error cases", {
     exp_noise = 1e6
   )
   n_mcmc <- 10
+  n_chains <- 2
 
   ## beta_start too low
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(-1, 0.14*0.238, as.Date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -473,29 +480,7 @@ test_that("pmcmc error cases", {
       pars_obs = pars_obs, 
       n_chains = n_chains
     ),
-    'initial parameters are outside of specified range'
-  )
-  
-  pars_to_sample <- data.frame(
-    names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date(data$date[1])),
-    min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
-    discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)
-  expect_error(
-    pmcmc(
-      data = data,
-      n_mcmc = n_mcmc,
-      sircovid_model = sircovid_model,
-      pars_to_sample = pars_to_sample,
-      pars_lprior = pars_lprior,
-      proposal_kernel = proposal_kernel,
-      model_params = model_params,
-      pars_obs = pars_obs, 
-      n_chains = n_chains
-    ),
-    "'start_date' must be less than the first date in data"
+    "start date must not be before first date of supplied data"
   )
   
   pars_to_sample <- data.frame(
@@ -536,7 +521,7 @@ test_that("pmcmc error cases", {
       pars_lprior = pars_lprior,
       proposal_kernel = proposal_kernel,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
       model_params = generate_parameters(
         sircovid_model = sircovid_model,
         transmission_model = "POLYMOD",
@@ -599,10 +584,10 @@ test_that("pmcmc error cases", {
  pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
-    min=c(0, 0, as.Date(data$date[1])),
+    min=c(0, 0, as.character(as.Date(data$date[1]))),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
-    stringAsFactors = FALSE)  
+    stringAsFactors = FALSE)
   expect_error(
     pmcmc(
       data = data,
@@ -622,7 +607,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, as.Date(data$date[1])),
+    max=c(1, 1, as.character(as.Date(data$date[1]))),
     discrete=c(FALSE, FALSE, TRUE),
     stringAsFactors = FALSE)  
   expect_error(
@@ -653,16 +638,14 @@ test_that("pmcmc error cases", {
       data = data,
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
+      pars_to_sample = pars_to_sample,
+      pars_lprior = pars_lprior,
       model_params = model_params,
       pars_obs = pars_obs, 
+      n_chains = n_chains,
       proposal_kernel = list('beta_start' = 0.5,
                      'beta_end' = 0.5,
                     'start_date' = 3),
-      pars_init = pars_init,
-      pars_to_sample = pars_to_sample,
-      pars_min = pars_min, 
-      pars_max = pars_max,
-      pars_discrete = pars_discrete
     ),
     "proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled"
   )
@@ -730,7 +713,6 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_to_sample = pars_to_sample,
-      pars_lprior = pars_lprior,
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
@@ -738,8 +720,8 @@ test_that("pmcmc error cases", {
       pars_lprior = list('beta_start' = function(pars) {
         dunif(pars, min = 0, max = 1e6, log = TRUE)
       },
-      'beta_end' = 0,
-      'start_date' = 0)
+      'beta_end' = function(pars) 0,
+      'start_date' = function(pars) 0)
     ),
     'log_prior must return a single numeric representing the log prior'
   )
@@ -751,7 +733,6 @@ test_that("pmcmc error cases", {
       n_mcmc = n_mcmc,
       sircovid_model = sircovid_model,
       pars_to_sample = pars_to_sample,
-      pars_lprior = pars_lprior,
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
@@ -759,12 +740,46 @@ test_that("pmcmc error cases", {
       pars_lprior = list('beta_start' = function(pars) {
         sum(dunif(pars, min = 1e6-1, max = 1e6, log = TRUE))
       },
-      'beta_end' = 0,
-      'start_date' = 0)
+      'beta_end' = function(pars) 0,
+      'start_date' = function(pars) 0)
     ),
     'initial parameters are not compatible with supplied prior'
   )
   
+  # Parameters not in pars_obs or model_params
+  pars_to_sample <- data.frame(
+    names=c('beta_start', 'beta_end', 'start_date', "amma_triage"),
+    init=c(0.14, 0.14*0.238, as.Date("2020-02-07"), 0.5099579),
+    min=c(0, 0, 0, 0),
+    max=c(1, 1, 1e6, 1),
+    discrete=c(FALSE, FALSE, TRUE, FALSE),
+    stringAsFactors = FALSE)
+  proposal_kernel <- matrix(c(0.001^2, 0, 0, 0,
+                              0, 0.001^2, 0, 0,
+                              0,       0, 0.5^2, 0,
+                              0, 0, 0, 0.1^2), 
+                            nrow = 4, byrow = TRUE,
+                            dimnames = list(
+                              pars_to_sample$names,
+                              pars_to_sample$names))
+  pars_lprior = list('beta_start' = function(pars) log(1e-10),
+                     'beta_end' = function(pars) 0,
+                     'start_date' = function(pars) 0,
+                     'amma_triage' = function(pars) 0)
+  expect_error(
+    pmcmc(
+      data = data,
+      n_mcmc = n_mcmc,
+      sircovid_model = sircovid_model,
+      pars_to_sample = pars_to_sample,
+      pars_lprior = pars_lprior,
+      proposal_kernel = proposal_kernel,
+      model_params = model_params,
+      pars_obs = pars_obs, 
+      n_chains = n_chains
+    ),
+    "Don't know how to update parameter: amma_triage"
+  )
   
 })
 

@@ -174,32 +174,88 @@ test_that("sample_pmcmc works with new model", {
   model_params <- generate_parameters(
     sircovid_model = sircovid_model,
     severity_data_file = 'extdata/severity_2020_04_12.csv')
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
   
   
   n_mcmc <- 10
   n_chains <- 2
-  pars_to_sample <- c('beta_start','beta_end', 'start_date',  'gamma_triage', 'gamma_hosp_R', 
-                      'gamma_hosp_D', 'gamma_ICU_R', 'gamma_ICU_D', 'gamma_stepdown')
-  proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
-  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
+  pars_to_sample <- data.frame(
+    names=c('beta_start',
+            'beta_end', 
+            'start_date',  
+            'gamma_triage', 
+            'gamma_hosp_R', 
+            'gamma_hosp_D', 
+            'gamma_ICU_R', 
+            'gamma_ICU_D', 
+            'gamma_stepdown'),
+    init=c(0.14, 
+           0.14*0.238,
+           as.Date("2020-02-07"),
+           0.5099579,
+           0.1092046,
+           0.2911154,
+           0.3541429,
+           0.2913861,
+           0.452381),
+    min=c(0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0),
+    max=c(1,
+          1,
+          1e6,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1),
+    discrete=c(FALSE,
+               FALSE,
+               TRUE,
+               FALSE,
+               FALSE,
+               FALSE,
+               FALSE,
+               FALSE,
+               FALSE),
+    stringAsFactors = FALSE)
+  pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
+                      'beta_end'       = function(pars) 0,
+                      'start_date'     = function(pars) 0,
+                      'gamma_triage'   = function(pars) 0,
+                      'gamma_hosp_R'   = function(pars) 0,
+                      'gamma_hosp_D'   = function(pars) 0,
+                      'gamma_ICU_R'    = function(pars) 0,
+                      'gamma_ICU_D'    = function(pars) 0,
+                      'gamma_stepdown' = function(pars) 0)
+  proposal_kernel <- diag(length(pars_to_sample$names)) * 0.01^2
+  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample$names
   proposal_kernel['start_date', 'start_date'] <- 25
   set.seed(1)
   mcmc_results <- pmcmc(
     data = data,
     n_mcmc = n_mcmc,
-    sircovid_model = sircovid_model,
-    pars_obs = list(
-      phi_general = 0.95,
-      k_general = 2,
-      phi_ICU = 0.95,
-      k_ICU = 2,
-      phi_death = 926 / 1019,
-      k_death = 2,
-      exp_noise = 1e6
-    ),
-    model_params = model_params,
+    pars_to_sample = pars_to_sample,
+    pars_lprior = pars_lprior,
     proposal_kernel = proposal_kernel,
-    n_chains = n_chains
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs
   )
 
   
