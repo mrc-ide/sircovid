@@ -513,23 +513,29 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
     stop("Unknown return type to calc_loglikelihood")
   }
   
-  # pars[['start_date']] argument is an integer reflecting the number of days between 
-  # the model start date and the first date in the data
-  if ('start_date' %in% names(pars)) {
-    start_date <- offset_to_start_date(data$date[1], pars[['start_date']])
-  } else {
-    start_date <- data$date[1]
+  # defaults if not being sampled
+  beta_start <- NULL
+  beta_end <- NULL
+  start_date <- data$date[1]
+  
+  # Update particle filter parameters from pars
+  for (par in names(pars)) {
+    if (par == "start_date") {
+      start_date <- offset_to_start_date(data$date[1], pars$par)
+    } else if (par == "beta_start") {
+      beta_start <- pars$par
+    } else if (par == "beta_end") {
+      beta_end <- pars$par
+    } else if (par %in% names(model_params)) {
+      model_params$par <- pars$par
+    } else if (par %in% names(pars_obs)) {
+      pars_obs$par <- pars$par
+    } else {
+      stop(paste0("Don't know how to update parameter: ", par))
+    }
   }
-  if ('beta_end' %in% names(pars)) {
-    beta_end <- pars[['beta_end']]
-  } else {
-    beta_end <- NULL
-  }
-  if ('beta_start' %in% names(pars)) {
-    beta_start <- pars[['beta_start']]
-  } else {
-    beta_start <- NULL
-  }
+
+  # Beta needs a transform applied
   new_beta <- update_beta(sircovid_model, 
                           beta_start, 
                           beta_end, 
@@ -537,13 +543,6 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                           model_params$dt)
   model_params$beta_y <- new_beta$beta_y
   model_params$beta_t <- new_beta$beta_t
-  
-  fitted_gammas <- names(pars)[grep('gamma', names(pars))]
-  
-  for(par in fitted_gammas) {
-    model_params[[par]] <- pars[[par]]
-  }
-  
 
   pf_result <- run_particle_filter(data = data,
                                    sircovid_model = sircovid_model,
