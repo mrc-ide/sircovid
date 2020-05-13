@@ -1,3 +1,7 @@
+# sircovid 0.2.31
+
+- Add beta post_lockdown
+
 # sircovid 0.2.30
 
 - Allow beta_end > beta_start or beta_reduction > 1 in generate_beta

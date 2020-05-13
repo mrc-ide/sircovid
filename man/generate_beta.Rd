@@ -10,7 +10,10 @@ generate_beta(
   reduction_start = "2020-03-16",
   beta_reduction = 0.238,
   beta_end = NULL,
-  reduction_period = 10
+  reduction_period = 10,
+  beta_pl = NULL,
+  pl_start = "2020-04-22",
+  pl_transition_period = 7
 )
 }
 \arguments{
@@ -30,6 +33,14 @@ period}
 
 \item{reduction_period}{Time, in days, over which the
 reduction in beta is achieved. Default 10 days}
+
+\item{beta_pl}{Value of beta after lockdown is eased}
+
+\item{pl_start}{Start of easing of lockdown}
+
+\item{pl_transition_period}{Time, in days, over which
+the change in beta after lockdown easing is achieved.
+Default 10 days}
 }
 \description{
 Create a linear time-varying beta for input into 

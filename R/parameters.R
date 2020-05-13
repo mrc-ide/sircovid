@@ -20,13 +20,24 @@
 ##' @param reduction_period Time, in days, over which the
 ##' reduction in beta is achieved. Default 10 days
 ##' 
+##' @param beta_pl Value of beta after lockdown is eased
+##' 
+##' @param pl_start Start of easing of lockdown
+##' 
+##' @param pl_transition_period Time, in days, over which
+##' the change in beta after lockdown easing is achieved.
+##' Default 10 days
+##' 
 ##' @export
 generate_beta <- function(beta_start, 
                           start_date = "2020-02-02",
                           reduction_start = "2020-03-16",
                           beta_reduction = 0.238,
                           beta_end = NULL,
-                          reduction_period = 10) {
+                          reduction_period = 10,
+                          beta_pl = NULL,
+                          pl_start = "2020-04-22",
+                          pl_transition_period = 7) {
   if (as.Date(start_date) > as.Date(reduction_start)) {
     stop("Start date must be earlier than intervention date")
   }
@@ -42,6 +53,12 @@ generate_beta <- function(beta_start,
       stop("beta cannot be reduced below 0")
     }
   }
+  if (!is.null(beta_pl)) {
+    if (beta_pl < 0) {
+      stop("beta_pl must be non-negative")
+    }
+  }
+  
   if (reduction_period > 100) {
     message("Reduction period over 100 days - is this correct?")
   }
@@ -55,8 +72,21 @@ generate_beta <- function(beta_start,
   }
   beta_slope <- beta_start * (1 - (1 - beta_reduction ) * (seq(0, reduction_period - 1) / (reduction_period - 1)))
   
-  list(beta=c(beta_start, beta_slope),
-       beta_times=as.character(beta_times))
+  beta <- c(beta_start, beta_slope)
+  
+  if (!(is.null(beta_pl))) {
+    beta_reduction_pl <- beta_pl / beta_end
+    beta_slope_pl <- beta_end * (1 - (1 - beta_reduction_pl ) * (seq(0, pl_transition_period - 1) / (pl_transition_period - 1)))
+    
+    beta <- c(beta,beta_slope_pl)
+    beta_times <- c(beta_times, 
+                    seq(as.Date(pl_start), as.Date(pl_start) + pl_transition_period - 1, by=1))
+  }
+  
+  beta_times <- as.character(beta_times)
+  
+  list(beta=beta,
+       beta_times=beta_times)
 }
 
 ##' Create parameters for use with the model

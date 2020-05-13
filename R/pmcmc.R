@@ -22,7 +22,7 @@
 ##'   
 ##' @param n_mcmc number of mcmc mcmc iterations to perform
 ##' 
-##' @param pars_to_sample names of parameters to be sampled (currently beta_start, beta_end and start_date,  gamma_triage, 
+##' @param pars_to_sample names of parameters to be sampled (currently beta_start, beta_end, beta_pl, and start_date,  gamma_triage, 
 ##' gamma_hosp_R, gamma_hosp_D, gamma_ICU_R, gamma_ICU_D, and gamma_stepdown)
 ##' 
 ##' @param pars_init named list of initial inputs for parameters being sampled 
@@ -101,6 +101,7 @@ pmcmc <- function(data,
                   pars_obs,
                   pars_to_sample = c('beta_start',
                                      'beta_end', 
+                                     'beta_pl',
                                      'start_date',  
                                      'gamma_triage', 
                                      'gamma_hosp_R', 
@@ -110,6 +111,7 @@ pmcmc <- function(data,
                                      'gamma_stepdown'),
                   pars_init = list('beta_start'     = 0.14, 
                                    'beta_end'       = 0.14*0.238,
+                                   'beta_pl'        = 0.14*0.238,
                                    'start_date'     = as.Date("2020-02-07"),
                                    'gamma_triage'   = 0.5099579,
                                    'gamma_hosp_R'   = 0.1092046,
@@ -119,6 +121,7 @@ pmcmc <- function(data,
                                    'gamma_stepdown' = 0.452381),
                   pars_min = list('beta_start'     = 0, 
                                   'beta_end'       = 0,
+                                  'beta_pl'        = 0,
                                   'start_date'     = 0,
                                   'gamma_triage'   = 0,
                                   'gamma_hosp_R'   = 0,
@@ -128,6 +131,7 @@ pmcmc <- function(data,
                                   'gamma_stepdown' = 0),
                   pars_max = list('beta_start'     = 1, 
                                   'beta_end'       = 1,
+                                  'beta_pl' =1,
                                   'start_date'     = 1e6,
                                   'gamma_triage'   = 1,
                                   'gamma_hosp_R'   = 1,
@@ -139,6 +143,7 @@ pmcmc <- function(data,
                   proposal_kernel,
                   pars_discrete = list('beta_start'     = FALSE,
                                        'beta_end'       = FALSE,
+                                       'beta_pl'        = FALSE,
                                        'start_date'     = TRUE,
                                        'gamma_triage'   = FALSE,
                                        'gamma_hosp_R'   = FALSE,
@@ -156,7 +161,7 @@ pmcmc <- function(data,
   #
   # Check pars_init input
   #
-  par_names <- c('beta_start', 'beta_end', 'start_date', 
+  par_names <- c('beta_start', 'beta_end', 'beta_pl', 'start_date', 
                  'gamma_triage', 'gamma_hosp_R', 'gamma_hosp_D', 
                  'gamma_ICU_R',  'gamma_ICU_D', 'gamma_stepdown')
   par_names <- par_names[par_names %in% pars_to_sample]
@@ -546,9 +551,16 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   } else {
     beta_start <- NULL
   }
+  if ('beta_pl' %in% names(pars)) {
+    beta_pl <- pars[['beta_pl']]
+  } else {
+    beta_pl <- NULL
+  }
+  
   new_beta <- update_beta(sircovid_model, 
                           beta_start, 
                           beta_end, 
+                          beta_pl,
                           start_date,
                           model_params$dt)
   model_params$beta_y <- new_beta$beta_y
