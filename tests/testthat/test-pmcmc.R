@@ -285,7 +285,52 @@ test_that("pmcmc with new model", {
   proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
   row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
   proposal_kernel['start_date', 'start_date'] <- 25
-  
+  pars_to_sample = c('beta_start',
+                     'beta_end', 
+                     'start_date',  
+                     'gamma_triage', 
+                     'gamma_hosp_R', 
+                     'gamma_hosp_D', 
+                     'gamma_ICU_R', 
+                     'gamma_ICU_D', 
+                     'gamma_stepdown')
+  pars_init = list('beta_start'     = 0.14, 
+                   'beta_end'       = 0.14*0.238,
+                   'start_date'     = as.Date("2020-02-07"),
+                   'gamma_triage'   = 0.5099579,
+                   'gamma_hosp_R'   = 0.1092046,
+                   'gamma_hosp_D'   = 0.2911154,
+                   'gamma_ICU_R'    = 0.3541429,
+                   'gamma_ICU_D'    = 0.2913861,
+                   'gamma_stepdown' = 0.452381)
+  pars_min = list('beta_start'     = 0, 
+                  'beta_end'       = 0,
+                  'start_date'     = 0,
+                  'gamma_triage'   = 0,
+                  'gamma_hosp_R'   = 0,
+                  'gamma_hosp_D'   = 0,
+                  'gamma_ICU_R'    = 0,
+                  'gamma_ICU_D'    = 0,
+                  'gamma_stepdown' = 0)
+  pars_max = list('beta_start'     = 1, 
+                  'beta_end'       = 1,
+                  'start_date'     = 1e6,
+                  'gamma_triage'   = 1,
+                  'gamma_hosp_R'   = 1,
+                  'gamma_hosp_D'   = 1,
+                  'gamma_ICU_R'    = 1,
+                  'gamma_ICU_D'    = 1,
+                  'gamma_stepdown' = 1
+  )
+  pars_discrete = list('beta_start'     = FALSE,
+                       'beta_end'       = FALSE,
+                       'start_date'     = TRUE,
+                       'gamma_triage'   = FALSE,
+                       'gamma_hosp_R'   = FALSE,
+                       'gamma_hosp_D'   = FALSE,
+                       'gamma_ICU_R'    = FALSE,
+                       'gamma_ICU_D'    = FALSE,
+                       'gamma_stepdown' = FALSE)
   
   cmp <- readRDS("reference_pmcmc_gammas.rds")
 
@@ -294,6 +339,10 @@ test_that("pmcmc with new model", {
     data = data,
     n_mcmc = n_mcmc,
     pars_to_sample = pars_to_sample,
+    pars_init = pars_init,
+    pars_min = pars_min,
+    pars_max = pars_max,
+    pars_discrete = pars_discrete,
     proposal_kernel = proposal_kernel,
     sircovid_model = sircovid_model,
     model_params = model_params,
