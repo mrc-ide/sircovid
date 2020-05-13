@@ -12,8 +12,8 @@ generate_beta(
   beta_end = NULL,
   reduction_period = 10,
   beta_pl = NULL,
-  pl_start = "2020-04-29",
-  pl_transition_period = 10
+  pl_start = "2020-04-22",
+  pl_transition_period = 7
 )
 }
 \arguments{
