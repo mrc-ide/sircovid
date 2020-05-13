@@ -10,22 +10,22 @@ pmcmc(
   sircovid_model,
   model_params,
   pars_obs,
-  pars_to_sample = c("beta_start", "beta_end", "start_date", "gamma_triage",
+  pars_to_sample = c("beta_start", "beta_end", "beta_pl", "start_date", "gamma_triage",
     "gamma_hosp_R", "gamma_hosp_D", "gamma_ICU_R", "gamma_ICU_D", "gamma_stepdown"),
-  pars_init = list(beta_start = 0.14, beta_end = 0.14 * 0.238, start_date =
-    as.Date("2020-02-07"), gamma_triage = 0.5099579, gamma_hosp_R = 0.1092046,
-    gamma_hosp_D = 0.2911154, gamma_ICU_R = 0.3541429, gamma_ICU_D = 0.2913861,
-    gamma_stepdown = 0.452381),
-  pars_min = list(beta_start = 0, beta_end = 0, start_date = 0, gamma_triage = 0,
-    gamma_hosp_R = 0, gamma_hosp_D = 0, gamma_ICU_R = 0, gamma_ICU_D = 0, gamma_stepdown
-    = 0),
-  pars_max = list(beta_start = 1, beta_end = 1, start_date = 1e+06, gamma_triage = 1,
-    gamma_hosp_R = 1, gamma_hosp_D = 1, gamma_ICU_R = 1, gamma_ICU_D = 1, gamma_stepdown
-    = 1),
+  pars_init = list(beta_start = 0.14, beta_end = 0.14 * 0.238, beta_pl = 0.14 * 0.238,
+    start_date = as.Date("2020-02-07"), gamma_triage = 0.5099579, gamma_hosp_R =
+    0.1092046, gamma_hosp_D = 0.2911154, gamma_ICU_R = 0.3541429, gamma_ICU_D =
+    0.2913861, gamma_stepdown = 0.452381),
+  pars_min = list(beta_start = 0, beta_end = 0, beta_pl = 0, start_date = 0,
+    gamma_triage = 0, gamma_hosp_R = 0, gamma_hosp_D = 0, gamma_ICU_R = 0, gamma_ICU_D =
+    0, gamma_stepdown = 0),
+  pars_max = list(beta_start = 1, beta_end = 1, beta_pl = 1, start_date = 1e+06,
+    gamma_triage = 1, gamma_hosp_R = 1, gamma_hosp_D = 1, gamma_ICU_R = 1, gamma_ICU_D =
+    1, gamma_stepdown = 1),
   proposal_kernel,
-  pars_discrete = list(beta_start = FALSE, beta_end = FALSE, start_date = TRUE,
-    gamma_triage = FALSE, gamma_hosp_R = FALSE, gamma_hosp_D = FALSE, gamma_ICU_R =
-    FALSE, gamma_ICU_D = FALSE, gamma_stepdown = FALSE),
+  pars_discrete = list(beta_start = FALSE, beta_end = FALSE, beta_pl = FALSE,
+    start_date = TRUE, gamma_triage = FALSE, gamma_hosp_R = FALSE, gamma_hosp_D = FALSE,
+    gamma_ICU_R = FALSE, gamma_ICU_D = FALSE, gamma_stepdown = FALSE),
   log_likelihood = NULL,
   log_prior = NULL,
   n_particles = 100,
@@ -55,7 +55,7 @@ phi_death = 926 / 1019,
 k_death = 2, 
 exp_noise = 1e6)}
 
-\item{pars_to_sample}{names of parameters to be sampled (currently beta_start, beta_end and start_date,  gamma_triage, 
+\item{pars_to_sample}{names of parameters to be sampled (currently beta_start, beta_end, beta_pl, and start_date,  gamma_triage, 
 gamma_hosp_R, gamma_hosp_D, gamma_ICU_R, gamma_ICU_D, and gamma_stepdown)}
 
 \item{pars_init}{named list of initial inputs for parameters being sampled}
