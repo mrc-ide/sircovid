@@ -46,7 +46,7 @@ test_that("sample_grid_scan works", {
     dt = 1/4
   )
   
-  
+
   scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
