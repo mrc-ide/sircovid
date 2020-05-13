@@ -73,7 +73,6 @@ generate_beta <- function(beta_start,
   beta_slope <- beta_start * (1 - (1 - beta_reduction ) * (seq(0, reduction_period - 1) / (reduction_period - 1)))
   
   beta <- c(beta_start, beta_slope)
-  beta_times <- as.character(beta_times)
   
   if (!(is.null(beta_pl))) {
     beta_reduction_pl <- beta_pl / beta_end
@@ -84,7 +83,7 @@ generate_beta <- function(beta_start,
                     seq(as.Date(pl_start), as.Date(pl_start) + pl_transition_period - 1, by=1))
   }
   
-  
+  beta_times <- as.character(beta_times)
   
   list(beta=beta,
        beta_times=beta_times)
