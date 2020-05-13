@@ -25,7 +25,8 @@
 ##' @param pl_start Start of easing of lockdown
 ##' 
 ##' @param pl_transition_period Time, in days, over which
-##' the change in beta after lockdown easing is achieved
+##' the change in beta after lockdown easing is achieved.
+##' Default 10 days
 ##' 
 ##' @export
 generate_beta <- function(beta_start, 
@@ -35,8 +36,8 @@ generate_beta <- function(beta_start,
                           beta_end = NULL,
                           reduction_period = 10,
                           beta_pl = NULL,
-                          pl_start = NULL,
-                          pl_transition_period = NULL) {
+                          pl_start = "2020-04-29",
+                          pl_transition_period = 10) {
   if (as.Date(start_date) > as.Date(reduction_start)) {
     stop("Start date must be earlier than intervention date")
   }
