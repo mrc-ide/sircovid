@@ -36,8 +36,8 @@ generate_beta <- function(beta_start,
                           beta_end = NULL,
                           reduction_period = 10,
                           beta_pl = NULL,
-                          pl_start = "2020-04-29",
-                          pl_transition_period = 10) {
+                          pl_start = "2020-04-22",
+                          pl_transition_period = 7) {
   if (as.Date(start_date) > as.Date(reduction_start)) {
     stop("Start date must be earlier than intervention date")
   }
