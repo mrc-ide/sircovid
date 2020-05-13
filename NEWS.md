@@ -1,3 +1,7 @@
+# sircovid 0.2.32
+
+- Fix bug in update_beta()
+
 # sircovid 0.2.31
 
 - Add beta post_lockdown

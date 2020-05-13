@@ -11,7 +11,7 @@ update_beta <- function(sircovid_model,
                                                   beta_pl = beta_pl,
                                                   start_date = start_date) 
   }
-  if(!is.null(beta_end)) {
+  else if(!is.null(beta_end)) {
     
     new_beta <- sircovid_model$generate_beta_func(beta_start = beta_start,
                                                   beta_end = beta_end, 
