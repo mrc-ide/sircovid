@@ -1,6 +1,77 @@
 context("pmcmc")
 
-
+test_that("pmcmc runs with beta_pl", {
+  
+  data <- readRDS("hospital_model_data.rds")
+  sircovid_model <- hospital_model()
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = '2020-01-01',
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    phi_death = 926 / 1019,
+    k_death = 2,
+    exp_noise = 1e6
+  )
+  
+  n_mcmc <- 10
+  pars_to_sample <- c('beta_start','beta_end', 'start_date', 'beta_pl')
+  
+  proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
+  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
+  proposal_kernel['start_date', 'start_date'] <- 25
+  
+  pars_init = list('beta_start'     = 0.14, 
+                   'beta_end'       = 0.14*0.238,
+                   'start_date'     = as.Date("2020-02-07"),
+                   'beta_pl'        = 0.14*0.238)
+  pars_min = list('beta_start'     = 0, 
+                  'beta_end'       = 0,
+                  'start_date'     = 0,
+                  'beta_pl'   = 0)
+  pars_max = list('beta_start'     = 1, 
+                  'beta_end'       = 1,
+                  'start_date'     = 1e6,
+                  'beta_pl' = 1
+  )
+  pars_discrete = list('beta_start'     = FALSE,
+                       'beta_end'       = FALSE,
+                       'start_date'     = TRUE,
+                       'beta_pl'        = FALSE)
+  
+  set.seed(2)
+  X2 <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    pars_to_sample = pars_to_sample,
+    pars_init = pars_init,
+    pars_min = pars_min,
+    pars_max = pars_max,
+    pars_discrete = pars_discrete,
+    proposal_kernel = proposal_kernel,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs
+  )
+  
+  expect_is(X2, 'pmcmc')
+  expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
+  expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample) + 3L))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
+  
+  
+})
 
 test_that("pmcmc runs without error", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
@@ -352,54 +423,7 @@ test_that("pmcmc with new model", {
 
 })
 
-test_that("pmcmc runs with beta_pl") {
-  pars_to_sample <- c('beta_start','beta_end', 'start_date', 'beta_pl')
-  
-  proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
-  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
-  proposal_kernel['start_date', 'start_date'] <- 25
 
-  pars_init = list('beta_start'     = 0.14, 
-                   'beta_end'       = 0.14*0.238,
-                   'start_date'     = as.Date("2020-02-07"),
-                   'beta_pl'        = 0.14*0.238)
-  pars_min = list('beta_start'     = 0, 
-                  'beta_end'       = 0,
-                  'start_date'     = 0,
-                  'beta_pl'   = 0)
-  pars_max = list('beta_start'     = 1, 
-                  'beta_end'       = 1,
-                  'start_date'     = 1e6,
-                  'beta_pl' = 1
-  )
-  pars_discrete = list('beta_start'     = FALSE,
-                       'beta_end'       = FALSE,
-                       'start_date'     = TRUE,
-                       'beta_pl'        = FALSE)
-
-  
-  set.seed(2)
-  X2 <- pmcmc(
-    data = data,
-    n_mcmc = n_mcmc,
-    pars_to_sample = pars_to_sample,
-    pars_init = pars_init,
-    pars_min = pars_min,
-    pars_max = pars_max,
-    pars_discrete = pars_discrete,
-    proposal_kernel = proposal_kernel,
-    sircovid_model = sircovid_model,
-    model_params = model_params,
-    pars_obs = pars_obs
-  )
-  
-  expect_is(X2, 'pmcmc')
-  expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
-  expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
-  
-  
-}
 
 test_that("pmcmc will run with multiple chains" , {
   
