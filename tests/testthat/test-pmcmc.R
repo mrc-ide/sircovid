@@ -31,7 +31,7 @@ test_that("pmcmc runs with beta_pl", {
     names=c('beta_start', 'beta_end', 'beta_pl', 'start_date'),
     init=c(0.14, 0.14*0.238, 0.14*0.238, as.Date("2020-02-07")),
     min=c(0, 0, 0, 0),
-    max=c(1, 1, 1, e6),
+    max=c(1, 1, 1, 1e6),
     discrete=c(FALSE, FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
@@ -57,7 +57,7 @@ test_that("pmcmc runs with beta_pl", {
   
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
-  expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample) + 3L))
+  expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
   expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
   
   
