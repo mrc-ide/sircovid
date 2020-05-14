@@ -1,6 +1,14 @@
-# sircovid 0.2.31
+# sircovid 0.2.33
 
 - pMCMC over any parameter
+
+# sircovid 0.2.32
+
+- Fix bug in update_beta()
+
+# sircovid 0.2.31
+
+- Add beta post_lockdown
 
 # sircovid 0.2.30
 

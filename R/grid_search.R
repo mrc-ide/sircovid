@@ -182,6 +182,7 @@ run_grid_particle_filter <- function(beta, start_date,
   new_beta <- update_beta(sircovid_model, 
                           beta_start = beta, 
                           beta_end = NULL, 
+                          beta_pl = NULL,
                           start_date,
                           model_params$dt)
   model_params$beta_y <- new_beta$beta_y

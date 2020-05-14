@@ -46,7 +46,7 @@ test_that("sample_grid_scan works", {
     dt = 1/4
   )
   
-  
+
   scan_results <- scan_beta_date(
     min_beta = min_beta,
     max_beta = max_beta,
@@ -189,7 +189,8 @@ test_that("sample_pmcmc works with new model", {
   n_chains <- 2
   pars_to_sample <- data.frame(
     names=c('beta_start',
-            'beta_end', 
+            'beta_end',
+            'beta_pl', 
             'start_date',  
             'gamma_triage', 
             'gamma_hosp_R', 
@@ -198,6 +199,7 @@ test_that("sample_pmcmc works with new model", {
             'gamma_ICU_D', 
             'gamma_stepdown'),
     init=c(0.14, 
+           0.14*0.238,
            0.14*0.238,
            as.Date("2020-02-07"),
            0.5099579,
@@ -214,8 +216,10 @@ test_that("sample_pmcmc works with new model", {
           0,
           0,
           0,
+          0,
           0),
     max=c(1,
+          1,
           1,
           1e6,
           1,
@@ -225,6 +229,7 @@ test_that("sample_pmcmc works with new model", {
           1,
           1),
     discrete=c(FALSE,
+               FALSE,
                FALSE,
                TRUE,
                FALSE,
@@ -236,6 +241,7 @@ test_that("sample_pmcmc works with new model", {
     stringsAsFactors = FALSE)
   pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
                       'beta_end'       = function(pars) 0,
+                      'beta_pl'        = function(pars) 0,
                       'start_date'     = function(pars) 0,
                       'gamma_triage'   = function(pars) 0,
                       'gamma_hosp_R'   = function(pars) 0,
