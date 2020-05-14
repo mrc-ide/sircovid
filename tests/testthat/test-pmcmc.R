@@ -26,40 +26,30 @@ test_that("pmcmc runs with beta_pl", {
   )
   
   n_mcmc <- 10
-  pars_to_sample <- c('beta_start','beta_end', 'start_date', 'beta_pl')
-  
-  proposal_kernel <- diag(length(pars_to_sample)) * 0.01^2
-  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample
+
+  pars_to_sample <- data.frame(
+    names=c('beta_start', 'beta_end', 'beta_pl', 'start_date'),
+    init=c(0.14, 0.14*0.238, 0.14*0.238, as.Date("2020-02-07")),
+    min=c(0, 0, 0, 0),
+    max=c(1, 1, 1, e6),
+    discrete=c(FALSE, FALSE, FALSE, TRUE),
+    stringsAsFactors = FALSE)
+  pars_lprior = list('beta_start' = function(pars) log(1e-10),
+                     'beta_end' = function(pars) 0,
+                     'beta_pl' = function(pars) 0,
+                     'start_date' = function(pars) 0)
+
+  proposal_kernel <- diag(nrow(pars_to_sample)) * 0.01^2
+  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample$names
   proposal_kernel['start_date', 'start_date'] <- 25
-  
-  pars_init = list('beta_start'     = 0.14, 
-                   'beta_end'       = 0.14*0.238,
-                   'start_date'     = as.Date("2020-02-07"),
-                   'beta_pl'        = 0.14*0.238)
-  pars_min = list('beta_start'     = 0, 
-                  'beta_end'       = 0,
-                  'start_date'     = 0,
-                  'beta_pl'   = 0)
-  pars_max = list('beta_start'     = 1, 
-                  'beta_end'       = 1,
-                  'start_date'     = 1e6,
-                  'beta_pl' = 1
-  )
-  pars_discrete = list('beta_start'     = FALSE,
-                       'beta_end'       = FALSE,
-                       'start_date'     = TRUE,
-                       'beta_pl'        = FALSE)
   
   set.seed(2)
   X2 <- pmcmc(
     data = data,
     n_mcmc = n_mcmc,
     pars_to_sample = pars_to_sample,
-    pars_init = pars_init,
-    pars_min = pars_min,
-    pars_max = pars_max,
-    pars_discrete = pars_discrete,
     proposal_kernel = proposal_kernel,
+    pars_lprior = pars_lprior,
     sircovid_model = sircovid_model,
     model_params = model_params,
     pars_obs = pars_obs
