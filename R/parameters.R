@@ -196,7 +196,7 @@ generate_parameters <- function(
     parameter_list$p_recov_ICU <- NULL
     parameter_list$p_death_hosp <- NULL
     if (!("sircovid_serology" %in% class(sircovid_model))) {
-          parameter_list$p_seroconversion <- NULL
+        parameter_list$p_seroconversion <- NULL
     }
   }         
 

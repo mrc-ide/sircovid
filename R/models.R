@@ -95,9 +95,13 @@ model_constructor <- function(model_class,
   model_partitions <- partition_names(model_class)
   if (any(!(model_partitions %in% names(progression_groups)))) {
     stop("progression_groups need to be defined for all partitions")
+  } else {
+    progression_groups <- progression_groups[model_partitions] 
   }
   if (any(!(model_partitions %in% names(gammas)))) {
     stop("gammas need to be defined for all partitions")
+  } else {
+    gammas <- gammas[model_partitions] 
   }
   
   model_object <- list(odin_model = odin_model,
@@ -112,7 +116,7 @@ model_constructor <- function(model_class,
 
 # Definitions of partition names
 partition_names <- function(model_name) {
-  if (inherits(model_name, "sircovid_basic")) {
+  if (inherits(model_name, "sircovid_basic") || inherits(model_name, "sircovid_hospital")) {
     model_partitions <- names(model_name$progression_groups)
   } else {
     if (model_name == "sircovid_basic") {
@@ -159,13 +163,13 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
                                           triage = s_triage,
                                           stepdown = s_stepdown,
                                           R_pre = s_R_pre),
-                gammas = list(hosp_D = gamma_hosp_D,
-                              hosp_R = gamma_hosp_R,
-                              ICU_D = gamma_ICU_D,
-                              ICU_R = gamma_ICU_R,
-                              triage = gamma_triage,
-                              stepdown = gamma_stepdown,
-                              R_pre = gamma_R_pre)))
+                        gammas = list(hosp_D = gamma_hosp_D,
+                                      hosp_R = gamma_hosp_R,
+                                      ICU_D = gamma_ICU_D,
+                                      ICU_R = gamma_ICU_R,
+                                      triage = gamma_triage,
+                                      stepdown = gamma_stepdown,
+                                      R_pre = gamma_R_pre)))
               
     parameters
   }
