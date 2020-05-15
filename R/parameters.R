@@ -38,7 +38,11 @@ generate_beta <- function(beta_start,
                           beta_pl = NULL,
                           pl_start = "2020-04-22",
                           pl_transition_period = 7) {
-  if (as.Date(start_date) > as.Date(reduction_start)) {
+  start_date <- sircovid_date(start_date)
+  reduction_start <- sircovid_date(reduction_start)
+  pl_start <- sircovid_date(pl_start)
+  
+  if (start_date > reduction_start) {
     stop("Start date must be earlier than intervention date")
   }
   if (beta_start < 0){
@@ -63,8 +67,7 @@ generate_beta <- function(beta_start,
     message("Reduction period over 100 days - is this correct?")
   }
   
-  beta_times <- c(as.Date(start_date), 
-            seq(as.Date(reduction_start), as.Date(reduction_start) + reduction_period - 1, by=1))
+  beta_times <- c(start_date, seq(reduction_start, reduction_start + reduction_period - 1, by=1))
 
   # Corresponding change in beta
   if (!is.null(beta_end)) {
@@ -79,11 +82,8 @@ generate_beta <- function(beta_start,
     beta_slope_pl <- beta_end * (1 - (1 - beta_reduction_pl ) * (seq(0, pl_transition_period - 1) / (pl_transition_period - 1)))
     
     beta <- c(beta,beta_slope_pl)
-    beta_times <- c(beta_times, 
-                    seq(as.Date(pl_start), as.Date(pl_start) + pl_transition_period - 1, by=1))
+    beta_times <- c(beta_times, seq(pl_start, pl_start + pl_transition_period - 1, by=1))
   }
-  
-  beta_times <- as.character(beta_times)
   
   list(beta=beta,
        beta_times=beta_times)
@@ -357,6 +357,21 @@ generate_parameters_base <- function(
 }
 
 
+##' Convert a date into the representation used in the sircovid package,
+##' which is days since the start of 2020 (i.e. 2020-01-01 = 1)
+##' 
+##' @title sircovid date
+##' 
+##' @param date Date as a string, or a format otherwise understood by lubridate
+##' 
+##' @return days that \code{date} is after the beginning of 2020
+##' 
+##' @import lubridate
+##' 
+sircovid_date <- function(date) {
+  lubridate::yday(date) + lubridate::year(date) - 2020
+}
+
 #
 # Internal functions
 #
@@ -365,8 +380,7 @@ generate_parameters_base <- function(
 # terms as the odin code
 normalise_beta <- function(beta_times, dt) {
   # Times are in days from first day supplied
-  beta_dates <- as.Date(beta_times)
-  beta_dates <- as.numeric(beta_dates - beta_dates[[1]])
+  beta_dates <- beta_dates - beta_dates[[1]]
   # Checks all dates are positive and ascending
   if (any(diff(beta_dates) < 0)) {
     stop("Supplied dates are not increasing")

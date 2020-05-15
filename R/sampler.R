@@ -140,11 +140,11 @@ particle_filter_data <- function(data, start_date, steps_per_day) {
   if (!("date" %in% names(data))) {
     stop("Expected a column 'date' within 'data'")
   }
-  data$date <- as.Date(data$date)
+  data$date <- sircovid_date(data$date)
   if (any(diff(data$date) <= 0)) {
     stop("'date' must be strictly increasing")
   }
-  start_date <- as.Date(start_date)
+  start_date <- sircovid_date(start_date)
   if (start_date >= data$date[[1]]) {
     stop("'start_date' must be less than the first date in data")
   }
@@ -207,7 +207,7 @@ ll_nbinom <- function(data, model, phi, k, exp_noise) {
 plot_particles <- function(particles, ylab, title, col = "#44111144") {
   ## Need to set plot up first to get the dates to render on the axis
   ## (matplot does not cope with this)
-  dates <- as.Date(rownames(particles))
+  dates <- as.Date(rownames(particles), offset="2019-12-31")
   plot(dates, particles[, 1], type = "n", ylab = ylab, ylim = range(particles, na.rm = TRUE), main = title)
   ## Individual traces
   matlines(dates, particles, col=col, lty = 1)

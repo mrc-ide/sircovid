@@ -20,23 +20,16 @@ update_beta <- function(sircovid_model,
 # Automatically converts type
 start_date_to_offset <- function(first_data_date, start_date)
 {
-  # Format conversion cascades as required
-  # string -> Date -> numeric
-
-  # Convert any strings to Dates
+  if (class(first_data_date) == "Date" || class(start_date) == "Date") {
+    stop("Do not use Date objects with offsets")
+  }
+  
+  # Convert any strings to days since start of 2020
   if (class(first_data_date) == "character" || class(first_data_date) == "factor") {
-    first_data_date = as.Date(first_data_date)
+    first_data_date = sircovid_date(first_data_date)
   }
-  if (class(start_date) == "character" || class(first_data_date) == "factor") {
-    start_date = as.Date(start_date)
-  }
-
-  # Convert any Dates to numerics
-  if (class(first_data_date) == "Date") {
-    first_data_date = as.numeric(first_data_date)
-  }
-  if (class(start_date) == "Date") {
-    start_date = as.numeric(start_date)
+  if (class(start_date) == "character" || class(start_date) == "factor") {
+    start_date = sircovid_date(start_date)
   }
 
   first_data_date - start_date
@@ -44,7 +37,7 @@ start_date_to_offset <- function(first_data_date, start_date)
 
 # Converts dates from from numeric offset as used in the MCMC to a Date
 # Automatically converts type
-offset_to_start_date <- function(first_data_date, start_date)
+offset_to_start_date <- function(first_data_date, offset)
 {
   if (class(start_date) != "numeric") {
     stop("Offset start date must be numeric")
@@ -52,8 +45,10 @@ offset_to_start_date <- function(first_data_date, start_date)
 
   # Convert any strings to Dates
   if (class(first_data_date) == "character" || class(first_data_date) == "factor") {
-    first_data_date = as.Date(first_data_date)
+    sircovid_date(first_data_date)
+  } else if (class(first_data_date) != "numeric") {
+    stop("Start date must be numeric")
   }
 
-  as.Date(-start_date, origin=first_data_date)
+  first_data_date - offset
 }

@@ -128,7 +128,7 @@ run_particle_filter <- function(data,
   if (!(return %in% c("full", "ll", "sample", "single"))) {
     stop("return argument must be full, ll, sample or single")
   }
-  if (as.Date(data$date[1], "%Y-%m-%d") < as.Date(model_start_date, "%Y-%m-%d")) {
+  if (sircovid_date(data$date[1]) < sircovid_date(model_start_date)) {
     stop("Model start date is later than data start date")
   }
   if (!save_particles && return == "sample") {
