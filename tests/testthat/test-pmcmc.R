@@ -278,6 +278,37 @@ test_that("pmcmc with new model", {
   expect_equivalent(X[-1], cmp[-1])
   
   
+  # Test that the parameter order doesn't matter
+  pars_to_sample <- data.frame(
+    names=c('start_date', 'beta_start'),
+    init=c(as.Date("2020-02-07"), 0.14),
+    min=c(0, 0),
+    max=c(1e6, 1),
+    discrete=c(TRUE, FALSE),
+    stringsAsFactors = FALSE)
+  set.seed(1)
+  X_reordered <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs,
+    pars_to_sample = pars_to_sample,
+    pars_lprior = pars_lprior,
+    proposal_kernel = matrix(c(0.001^2, 0,
+                               0, 0.5^2),
+                             nrow = 2, byrow = TRUE,
+                             dimnames = list(
+                               c('beta_start', 'start_date'),
+                               c('beta_start', 'start_date')))
+  )
+  # Results will be different as random numbers generated in a different
+  # order, but check that the right proposal has been made (0.5^2 vs 0.001^2 makes
+  # a big difference)
+  expect_true(all(X_reordered$ess[names(X_reordered$ess) != "log_prior"] > 0))
+  expect_true(all(X_reordered$acceptance_rate[names(X_reordered$acceptance_rate) != "log_prior"] > 0))
+  
+  
   ## test generalised version
   
   pars_to_sample <- data.frame(
@@ -362,7 +393,33 @@ test_that("pmcmc with new model", {
   expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
   expect_equivalent(X2[-1], cmp[-1])
   
-  
+  # test that pars_obs can be modified
+  pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
+                      'start_date'     = function(pars) 0,
+                      'phi_general'    = function(pars) dnorm(pars['phi_general'], 0.95, 0.01))
+  pars_to_sample <- data.frame(
+    names=c('start_date', 'beta_start', 'phi_general'),
+    init=c(as.Date("2020-02-07"), 0.14, 0.95),
+    min=c(0, 0, 0),
+    max=c(1e6, 1, 1),
+    discrete=c(TRUE, FALSE, FALSE),
+    stringsAsFactors = FALSE)
+  X_reordered <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs,
+    pars_to_sample = pars_to_sample,
+    pars_lprior = pars_lprior,
+    proposal_kernel = matrix(c(0.001^2, 0, 0,
+                               0, 0.5^2, 0,
+                               0, 0, 0.01^2),
+                             nrow = 3, byrow = TRUE,
+                             dimnames = list(
+                               c('beta_start', 'start_date', 'phi_general'),
+                               c('beta_start', 'start_date', 'phi_general')))
+  )
 
 })
 

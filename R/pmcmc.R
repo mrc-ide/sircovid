@@ -176,14 +176,16 @@ pmcmc <- function(data,
     stop("All sampled parameters must have a defined prior")
   }
   
-  correct_format_mat <- function(pars) {
+  correct_format_mat <- function(pars, names) {
        setequal(rownames(pars),
-                colnames(pars)) & 
+                colnames(pars)) && 
          setequal(rownames(pars),
-                   par_names)
+                   par_names) &&
+      nrow(pars) == length(names) &&
+      ncol(pars) == length(names)
   }
 
-  if(!correct_format_mat(proposal_kernel)) {
+  if(!correct_format_mat(proposal_kernel, par_names)) {
     stop("proposal_kernel must be a matrix or vector with names corresponding to the parameters being sampled")
   }
   
@@ -555,7 +557,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
 propose_parameters <- function(pars, proposal_kernel, pars_discrete, pars_min, pars_max) {
   
   ## proposed jumps are normal with mean pars and sd as input for parameter
-  jumps <- pars + drop(rmvnorm(n = 1,  sigma = proposal_kernel))
+  jumps <- pars + drop(rmvnorm(n = 1,  sigma = proposal_kernel[names(pars), names(pars)]))
 
 
   # discretise if necessary
