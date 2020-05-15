@@ -291,6 +291,7 @@ generate_parameters_base <- function(
   #
   # Set up time-varying beta
   # Times are in days from first day supplied
+  beta_times <- sircovid_date(beta_times)
   beta_t <- normalise_beta(beta_times, dt)
 
   # 
@@ -380,7 +381,7 @@ sircovid_date <- function(date) {
 # terms as the odin code
 normalise_beta <- function(beta_times, dt) {
   # Times are in days from first day supplied
-  beta_dates <- beta_dates - beta_dates[[1]]
+  beta_dates <- beta_times - beta_times[[1]]
   # Checks all dates are positive and ascending
   if (any(diff(beta_dates) < 0)) {
     stop("Supplied dates are not increasing")

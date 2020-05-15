@@ -39,7 +39,7 @@ start_date_to_offset <- function(first_data_date, start_date)
 # Automatically converts type
 offset_to_start_date <- function(first_data_date, offset)
 {
-  if (class(start_date) != "numeric") {
+  if (class(offset) != "numeric") {
     stop("Offset start date must be numeric")
   }
 
