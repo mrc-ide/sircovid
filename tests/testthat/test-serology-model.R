@@ -47,6 +47,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
     pars_model$I0_ICU_D[,,] <- 0
     pars_model$I0_triage_D[,,] <- 0
     pars_model$I0_triage_R[,,] <- 0
+    pars_model$I0_comm_D[,,] <- 0
 
     mod <- sircovid_model$odin_model(user = pars_model)
     t_max <- 150
@@ -58,7 +59,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
  }
 )
 
-test_that("No one is hospitalised if p_sympt_ILI is 0", {
+test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
     
     sircovid_model <- serology_model()
     pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.042)
@@ -90,16 +91,18 @@ test_that("No one is hospitalised if p_sympt_ILI is 0", {
     expect_true(all(results$I_triage_R == 0))
     expect_true(all(results$I_triage_D == 0))
     expect_true(all(results$R_stepdown == 0))
-    expect_true(all(results$D[,]==0))
+    expect_true(all(results$D_hosp == 0))
+    expect_true(all(results$I_comm_D == 0))
+    expect_true(all(results$D_comm == 0))
  }
 )
 
 
-test_that("No one is hospitalised if p_recov_ILI is 0", {
-  #p_recov_ILI=1, no-one hospitalised
+test_that("No one is hospitalised, no-one dies if p_recov_ILI is 1, p_death_comm is 0", {
   sircovid_model <- serology_model()
   pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
-  pars_model$p_recov_ILI[]<-1
+  pars_model$p_recov_ILI[] <- 1
+  pars_model$p_death_comm[] <- 0
   mod <- sircovid_model$odin_model(user = pars_model)
   t_max <- 150
   t <- seq(from = 1, to = t_max)
@@ -126,7 +129,52 @@ test_that("No one is hospitalised if p_recov_ILI is 0", {
   expect_true(all(results$I_triage_R == 0))
   expect_true(all(results$I_triage_D == 0))
   expect_true(all(results$R_stepdown == 0))
-  expect_true(all(results$D == 0))
+  expect_true(all(results$D_hosp == 0))
+  expect_true(all(results$I_comm_D == 0))
+  expect_true(all(results$D_comm == 0))
+}
+)
+
+test_that("No one is hospitalised, no-one recovers if p_recov_ILI is 0, p_death_comm is 1, p_asympt = 0, p_sympt_ILI = 1", {
+  sircovid_model <- serology_model()
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
+  #move initial infectives to ILI
+  pars_model$I0_ILI <- pars_model$I0_asympt
+  pars_model$I0_asympt[] <- 0
+  pars_model$p_sympt_ILI[] <- 1
+  pars_model$p_recov_ILI[] <- 0
+  pars_model$p_death_comm[] <- 1
+  pars_model$p_asympt[] <- 0
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  check_cases <- FALSE
+  max_iter <- 10
+  iter <- 0
+  while (!check_cases && iter<= max_iter){
+    #We want to check that no-one moves from compartment I_ILI to 
+    #any hospital compartments. It's possible that no-one ends up in
+    #I_ILI, so we re-run the model until there are cases in I_ILI
+    #(or max_iter is reached)
+    iter <- iter + 1
+    tmp <- mod$run(t)
+    results <- mod$transform_variables(tmp)
+    if (any(results$I_ILI > 0)){
+      check_cases <- TRUE
+    }
+  }
+  expect_true(any(results$I_ILI > 0))
+  expect_true(all(results$I_hosp_R == 0))
+  expect_true(all(results$I_hosp_D == 0))
+  expect_true(all(results$I_ICU_R == 0))
+  expect_true(all(results$I_ICU_D == 0))
+  expect_true(all(results$I_triage_R == 0))
+  expect_true(all(results$I_triage_D == 0))
+  expect_true(all(results$R_stepdown == 0))
+  expect_true(all(results$D_hosp == 0))
+  expect_true(all(results$R_pos == 0))
+  expect_true(all(results$R_neg == 0))
+  expect_true(all(results$R_pre == 0))
 }
 )
 
@@ -181,7 +229,7 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
   check_hosp_probs(p_ICU_hosp = 0,
                    p_death_hosp_D = 0,
                    cases = "I_hosp_R",
-                   zeroes = c("I_hosp_D","I_ICU_R","I_ICU_D","I_triage_R","I_triage_D","R_stepdown","D"))
+                   zeroes = c("I_hosp_D","I_ICU_R","I_ICU_D","I_triage_R","I_triage_D","R_stepdown","D_hosp"))
   
   
   #p_death_hosp=1, p_ICU_hosp=0 no-one goes into ICU, no recovery in hospital
@@ -200,7 +248,7 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
   check_hosp_probs(p_ICU_hosp = 1,
                    p_death_ICU = 0,
                    cases = "I_ICU_R",
-                   zeroes = c("I_hosp_R","I_hosp_D","I_ICU_D","D"))
+                   zeroes = c("I_hosp_R","I_hosp_D","I_ICU_D","D_hosp"))
   
 })
 
@@ -255,7 +303,7 @@ test_that("No one doesn't seroconvert if p_seroconversion is 1", {
   }
   
   expect_true(any(results$R_pre > 0))
-  expect_true(all(results$R_pos > 0))
+  expect_true(any(results$R_pos > 0))
   expect_true(all(results$R_neg == 0))
 }
 )
@@ -266,7 +314,7 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
   t <- seq(from = 1, to = t_max)
   max_iter <- 10
   
-  sircovid_model <- serology_model(use_fitted_parameters = FALSE ,progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
+  sircovid_model <- serology_model(use_fitted_parameters = FALSE ,progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, comm_D = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
   
   #function to test that setting a given gamma to Inf causes cases in corresponding compartment to
   #progress in 1 time-step
@@ -306,6 +354,7 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
   test_gamma_inf('gamma_hosp_D','I_hosp_D')
   test_gamma_inf('gamma_ICU_R','I_ICU_R')
   test_gamma_inf('gamma_ICU_D','I_ICU_D')
+  test_gamma_inf('gamma_comm_D','I_comm_D')
   test_gamma_inf('gamma_stepdown','R_stepdown')
   test_gamma_inf('gamma_R_pre','R_pre')
 })
@@ -315,7 +364,7 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
   t <- seq(from = 1, to = t_max)
   max_iter <- 10
   
-  sircovid_model <- serology_model(use_fitted_parameters = FALSE, progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
+  sircovid_model <- serology_model(use_fitted_parameters = FALSE, progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, comm_D = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
   
   #function to test that setting a given gamma to 0 causes cases in corresponding compartment to
   #stay in progression stage 1
@@ -356,5 +405,6 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
   test_gamma_zero('gamma_ICU_D','I_ICU_D')
   test_gamma_zero('gamma_stepdown','R_stepdown')
   test_gamma_zero('gamma_R_pre','R_pre')
+  test_gamma_zero('gamma_comm_D','I_comm_D')
   
 })

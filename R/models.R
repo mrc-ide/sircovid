@@ -58,8 +58,8 @@ hospital_model <- function(use_fitted_parameters = TRUE,
 ##'   
 ##' @export
 serology_model <- function(use_fitted_parameters = TRUE,
-                           progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2),
-                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5, R_pre = 1/5)) {
+                           progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, comm_D =2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2),
+                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, comm_D = 2/5, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5, R_pre = 1/5)) {
   model_class <- "sircovid_serology" 
   serology_model <- model_constructor(model_class, "hospital_with_serology", 
                                       use_fitted_parameters, progression_groups, gammas)
@@ -124,7 +124,7 @@ partition_names <- function(model_name) {
     } else if (model_name == "sircovid_hospital") {
       model_partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown")
     } else if (model_name == "sircovid_serology") {
-      model_partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown", "R_pre")
+      model_partitions <- c("E", "asympt", "mild", "ILI", "comm_D", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown", "R_pre")
     } else {
       stop("Unknown model name")
     }
@@ -155,6 +155,8 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
     gamma_stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
     s_R_pre <- fitted_parameters[fitted_parameters$parameter=="s_R_pre","value"]
     gamma_R_pre <- fitted_parameters[fitted_parameters$parameter=="gamma_R_pre","value"]
+    s_comm_D <- fitted_parameters[fitted_parameters$parameter=="s_comm_D","value"]
+    gamma_comm_D <- fitted_parameters[fitted_parameters$parameter=="gamma_comm_D","value"]
 
     parameters <- (list(progression_groups = list(hosp_D = s_hosp_D,
                                           hosp_R = s_hosp_R,
@@ -162,14 +164,16 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
                                           ICU_R = s_ICU_R,
                                           triage = s_triage,
                                           stepdown = s_stepdown,
-                                          R_pre = s_R_pre),
+                                          R_pre = s_R_pre,
+                                          comm_D = s_comm_D),
                         gammas = list(hosp_D = gamma_hosp_D,
                                       hosp_R = gamma_hosp_R,
                                       ICU_D = gamma_ICU_D,
                                       ICU_R = gamma_ICU_R,
                                       triage = gamma_triage,
                                       stepdown = gamma_stepdown,
-                                      R_pre = gamma_R_pre)))
+                                      R_pre = gamma_R_pre,
+                                      comm_D = gamma_comm_D)))
               
     parameters
   }
