@@ -2,6 +2,21 @@ context("serology model for covid transmission")
 
 ## Sanity Checks
 
+test_that("N_tot stays constant", {
+  
+  sircovid_model <- serology_model()
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.1)
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- 400
+  t <- seq(from = 1, to = t_max)
+  tmp <- mod$run(t)
+  results <- mod$transform_variables(tmp)
+  #should be TRUE
+  expect_true(all(results$N_tot == results$N_tot[1]))
+  
+}
+)
+
 test_that("there are no infections when beta is 0", {
     
     sircovid_model <- serology_model()
