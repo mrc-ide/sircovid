@@ -823,9 +823,11 @@ typedef struct new_hospital_model_internal {
   double *n_triage_to_ICU_R;
   int offset_output_n_EI_ILI;
   int offset_output_n_EI_mild;
+  int offset_output_n_hosp_non_ICU;
   int offset_output_n_ILI_to_hosp;
   int offset_output_n_ILI_to_hosp_D;
   int offset_output_n_ILI_to_hosp_R;
+  int offset_output_n_ILI_to_triage;
   int offset_output_n_triage_to_ICU_D;
   int offset_output_n_triage_to_ICU_R;
   int offset_variable_D;
@@ -3248,7 +3250,7 @@ void new_hospital_model_initmod_desolve(void(* odeparms) (int *, double *)) {
 }
 SEXP new_hospital_model_contents(SEXP internal_p) {
   new_hospital_model_internal *internal = new_hospital_model_get_internal(internal_p, 1);
-  SEXP contents = PROTECT(allocVector(VECSXP, 460));
+  SEXP contents = PROTECT(allocVector(VECSXP, 462));
   SEXP aux_EE = PROTECT(allocVector(REALSXP, internal->dim_aux_EE));
   memcpy(REAL(aux_EE), internal->aux_EE, internal->dim_aux_EE * sizeof(double));
   odin_set_dim(aux_EE, 3, internal->dim_aux_EE_1, internal->dim_aux_EE_2, internal->dim_aux_EE_3);
@@ -3867,87 +3869,89 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   SET_VECTOR_ELT(contents, 407, n_triage_to_ICU_R);
   SET_VECTOR_ELT(contents, 408, ScalarInteger(internal->offset_output_n_EI_ILI));
   SET_VECTOR_ELT(contents, 409, ScalarInteger(internal->offset_output_n_EI_mild));
-  SET_VECTOR_ELT(contents, 410, ScalarInteger(internal->offset_output_n_ILI_to_hosp));
-  SET_VECTOR_ELT(contents, 411, ScalarInteger(internal->offset_output_n_ILI_to_hosp_D));
-  SET_VECTOR_ELT(contents, 412, ScalarInteger(internal->offset_output_n_ILI_to_hosp_R));
-  SET_VECTOR_ELT(contents, 413, ScalarInteger(internal->offset_output_n_triage_to_ICU_D));
-  SET_VECTOR_ELT(contents, 414, ScalarInteger(internal->offset_output_n_triage_to_ICU_R));
-  SET_VECTOR_ELT(contents, 415, ScalarInteger(internal->offset_variable_D));
-  SET_VECTOR_ELT(contents, 416, ScalarInteger(internal->offset_variable_E));
-  SET_VECTOR_ELT(contents, 417, ScalarInteger(internal->offset_variable_I_asympt));
-  SET_VECTOR_ELT(contents, 418, ScalarInteger(internal->offset_variable_I_hosp_D));
-  SET_VECTOR_ELT(contents, 419, ScalarInteger(internal->offset_variable_I_hosp_R));
-  SET_VECTOR_ELT(contents, 420, ScalarInteger(internal->offset_variable_I_ICU_D));
-  SET_VECTOR_ELT(contents, 421, ScalarInteger(internal->offset_variable_I_ICU_R));
-  SET_VECTOR_ELT(contents, 422, ScalarInteger(internal->offset_variable_I_ILI));
-  SET_VECTOR_ELT(contents, 423, ScalarInteger(internal->offset_variable_I_mild));
-  SET_VECTOR_ELT(contents, 424, ScalarInteger(internal->offset_variable_I_triage));
-  SET_VECTOR_ELT(contents, 425, ScalarInteger(internal->offset_variable_R_stepdown));
+  SET_VECTOR_ELT(contents, 410, ScalarInteger(internal->offset_output_n_hosp_non_ICU));
+  SET_VECTOR_ELT(contents, 411, ScalarInteger(internal->offset_output_n_ILI_to_hosp));
+  SET_VECTOR_ELT(contents, 412, ScalarInteger(internal->offset_output_n_ILI_to_hosp_D));
+  SET_VECTOR_ELT(contents, 413, ScalarInteger(internal->offset_output_n_ILI_to_hosp_R));
+  SET_VECTOR_ELT(contents, 414, ScalarInteger(internal->offset_output_n_ILI_to_triage));
+  SET_VECTOR_ELT(contents, 415, ScalarInteger(internal->offset_output_n_triage_to_ICU_D));
+  SET_VECTOR_ELT(contents, 416, ScalarInteger(internal->offset_output_n_triage_to_ICU_R));
+  SET_VECTOR_ELT(contents, 417, ScalarInteger(internal->offset_variable_D));
+  SET_VECTOR_ELT(contents, 418, ScalarInteger(internal->offset_variable_E));
+  SET_VECTOR_ELT(contents, 419, ScalarInteger(internal->offset_variable_I_asympt));
+  SET_VECTOR_ELT(contents, 420, ScalarInteger(internal->offset_variable_I_hosp_D));
+  SET_VECTOR_ELT(contents, 421, ScalarInteger(internal->offset_variable_I_hosp_R));
+  SET_VECTOR_ELT(contents, 422, ScalarInteger(internal->offset_variable_I_ICU_D));
+  SET_VECTOR_ELT(contents, 423, ScalarInteger(internal->offset_variable_I_ICU_R));
+  SET_VECTOR_ELT(contents, 424, ScalarInteger(internal->offset_variable_I_ILI));
+  SET_VECTOR_ELT(contents, 425, ScalarInteger(internal->offset_variable_I_mild));
+  SET_VECTOR_ELT(contents, 426, ScalarInteger(internal->offset_variable_I_triage));
+  SET_VECTOR_ELT(contents, 427, ScalarInteger(internal->offset_variable_R_stepdown));
   SEXP p_asympt = PROTECT(allocVector(REALSXP, internal->dim_p_asympt));
   memcpy(REAL(p_asympt), internal->p_asympt, internal->dim_p_asympt * sizeof(double));
-  SET_VECTOR_ELT(contents, 426, p_asympt);
+  SET_VECTOR_ELT(contents, 428, p_asympt);
   SEXP p_death_hosp_D = PROTECT(allocVector(REALSXP, internal->dim_p_death_hosp_D));
   memcpy(REAL(p_death_hosp_D), internal->p_death_hosp_D, internal->dim_p_death_hosp_D * sizeof(double));
-  SET_VECTOR_ELT(contents, 427, p_death_hosp_D);
+  SET_VECTOR_ELT(contents, 429, p_death_hosp_D);
   SEXP p_death_ICU = PROTECT(allocVector(REALSXP, internal->dim_p_death_ICU));
   memcpy(REAL(p_death_ICU), internal->p_death_ICU, internal->dim_p_death_ICU * sizeof(double));
-  SET_VECTOR_ELT(contents, 428, p_death_ICU);
-  SET_VECTOR_ELT(contents, 429, ScalarReal(internal->p_EE));
+  SET_VECTOR_ELT(contents, 430, p_death_ICU);
+  SET_VECTOR_ELT(contents, 431, ScalarReal(internal->p_EE));
   SEXP p_ICU_hosp = PROTECT(allocVector(REALSXP, internal->dim_p_ICU_hosp));
   memcpy(REAL(p_ICU_hosp), internal->p_ICU_hosp, internal->dim_p_ICU_hosp * sizeof(double));
-  SET_VECTOR_ELT(contents, 430, p_ICU_hosp);
-  SET_VECTOR_ELT(contents, 431, ScalarReal(internal->p_II_asympt));
-  SET_VECTOR_ELT(contents, 432, ScalarReal(internal->p_II_hosp_D));
-  SET_VECTOR_ELT(contents, 433, ScalarReal(internal->p_II_hosp_R));
-  SET_VECTOR_ELT(contents, 434, ScalarReal(internal->p_II_ICU_D));
-  SET_VECTOR_ELT(contents, 435, ScalarReal(internal->p_II_ICU_R));
-  SET_VECTOR_ELT(contents, 436, ScalarReal(internal->p_II_ILI));
-  SET_VECTOR_ELT(contents, 437, ScalarReal(internal->p_II_mild));
-  SET_VECTOR_ELT(contents, 438, ScalarReal(internal->p_II_triage));
-  SET_VECTOR_ELT(contents, 439, ScalarReal(internal->p_R_stepdown));
+  SET_VECTOR_ELT(contents, 432, p_ICU_hosp);
+  SET_VECTOR_ELT(contents, 433, ScalarReal(internal->p_II_asympt));
+  SET_VECTOR_ELT(contents, 434, ScalarReal(internal->p_II_hosp_D));
+  SET_VECTOR_ELT(contents, 435, ScalarReal(internal->p_II_hosp_R));
+  SET_VECTOR_ELT(contents, 436, ScalarReal(internal->p_II_ICU_D));
+  SET_VECTOR_ELT(contents, 437, ScalarReal(internal->p_II_ICU_R));
+  SET_VECTOR_ELT(contents, 438, ScalarReal(internal->p_II_ILI));
+  SET_VECTOR_ELT(contents, 439, ScalarReal(internal->p_II_mild));
+  SET_VECTOR_ELT(contents, 440, ScalarReal(internal->p_II_triage));
+  SET_VECTOR_ELT(contents, 441, ScalarReal(internal->p_R_stepdown));
   SEXP p_recov_ILI = PROTECT(allocVector(REALSXP, internal->dim_p_recov_ILI));
   memcpy(REAL(p_recov_ILI), internal->p_recov_ILI, internal->dim_p_recov_ILI * sizeof(double));
-  SET_VECTOR_ELT(contents, 440, p_recov_ILI);
+  SET_VECTOR_ELT(contents, 442, p_recov_ILI);
   SEXP p_SE = PROTECT(allocVector(REALSXP, internal->dim_p_SE));
   memcpy(REAL(p_SE), internal->p_SE, internal->dim_p_SE * sizeof(double));
-  SET_VECTOR_ELT(contents, 441, p_SE);
+  SET_VECTOR_ELT(contents, 443, p_SE);
   SEXP p_sympt_ILI = PROTECT(allocVector(REALSXP, internal->dim_p_sympt_ILI));
   memcpy(REAL(p_sympt_ILI), internal->p_sympt_ILI, internal->dim_p_sympt_ILI * sizeof(double));
-  SET_VECTOR_ELT(contents, 442, p_sympt_ILI);
+  SET_VECTOR_ELT(contents, 444, p_sympt_ILI);
   SEXP R0 = PROTECT(allocVector(REALSXP, internal->dim_R0));
   memcpy(REAL(R0), internal->R0, internal->dim_R0 * sizeof(double));
-  SET_VECTOR_ELT(contents, 443, R0);
+  SET_VECTOR_ELT(contents, 445, R0);
   SEXP R0_stepdown = PROTECT(allocVector(REALSXP, internal->dim_R0_stepdown));
   memcpy(REAL(R0_stepdown), internal->R0_stepdown, internal->dim_R0_stepdown * sizeof(double));
   odin_set_dim(R0_stepdown, 3, internal->dim_R0_stepdown_1, internal->dim_R0_stepdown_2, internal->dim_R0_stepdown_3);
-  SET_VECTOR_ELT(contents, 444, R0_stepdown);
-  SET_VECTOR_ELT(contents, 445, ScalarInteger(internal->s_asympt));
-  SET_VECTOR_ELT(contents, 446, ScalarInteger(internal->s_E));
-  SET_VECTOR_ELT(contents, 447, ScalarInteger(internal->s_hosp_D));
-  SET_VECTOR_ELT(contents, 448, ScalarInteger(internal->s_hosp_R));
-  SET_VECTOR_ELT(contents, 449, ScalarInteger(internal->s_ICU_D));
-  SET_VECTOR_ELT(contents, 450, ScalarInteger(internal->s_ICU_R));
+  SET_VECTOR_ELT(contents, 446, R0_stepdown);
+  SET_VECTOR_ELT(contents, 447, ScalarInteger(internal->s_asympt));
+  SET_VECTOR_ELT(contents, 448, ScalarInteger(internal->s_E));
+  SET_VECTOR_ELT(contents, 449, ScalarInteger(internal->s_hosp_D));
+  SET_VECTOR_ELT(contents, 450, ScalarInteger(internal->s_hosp_R));
+  SET_VECTOR_ELT(contents, 451, ScalarInteger(internal->s_ICU_D));
+  SET_VECTOR_ELT(contents, 452, ScalarInteger(internal->s_ICU_R));
   SEXP s_ij = PROTECT(allocVector(REALSXP, internal->dim_s_ij));
   memcpy(REAL(s_ij), internal->s_ij, internal->dim_s_ij * sizeof(double));
   odin_set_dim(s_ij, 2, internal->dim_s_ij_1, internal->dim_s_ij_2);
-  SET_VECTOR_ELT(contents, 451, s_ij);
-  SET_VECTOR_ELT(contents, 452, ScalarInteger(internal->s_ILI));
-  SET_VECTOR_ELT(contents, 453, ScalarInteger(internal->s_mild));
-  SET_VECTOR_ELT(contents, 454, ScalarInteger(internal->s_stepdown));
-  SET_VECTOR_ELT(contents, 455, ScalarInteger(internal->s_triage));
+  SET_VECTOR_ELT(contents, 453, s_ij);
+  SET_VECTOR_ELT(contents, 454, ScalarInteger(internal->s_ILI));
+  SET_VECTOR_ELT(contents, 455, ScalarInteger(internal->s_mild));
+  SET_VECTOR_ELT(contents, 456, ScalarInteger(internal->s_stepdown));
+  SET_VECTOR_ELT(contents, 457, ScalarInteger(internal->s_triage));
   SEXP S0 = PROTECT(allocVector(REALSXP, internal->dim_S0));
   memcpy(REAL(S0), internal->S0, internal->dim_S0 * sizeof(double));
-  SET_VECTOR_ELT(contents, 456, S0);
-  SET_VECTOR_ELT(contents, 457, ScalarInteger(internal->trans_classes));
+  SET_VECTOR_ELT(contents, 458, S0);
+  SET_VECTOR_ELT(contents, 459, ScalarInteger(internal->trans_classes));
   SEXP trans_increase = PROTECT(allocVector(REALSXP, internal->dim_trans_increase));
   memcpy(REAL(trans_increase), internal->trans_increase, internal->dim_trans_increase * sizeof(double));
   odin_set_dim(trans_increase, 2, internal->dim_trans_increase_1, internal->dim_trans_increase_2);
-  SET_VECTOR_ELT(contents, 458, trans_increase);
+  SET_VECTOR_ELT(contents, 460, trans_increase);
   SEXP trans_profile = PROTECT(allocVector(REALSXP, internal->dim_trans_profile));
   memcpy(REAL(trans_profile), internal->trans_profile, internal->dim_trans_profile * sizeof(double));
   odin_set_dim(trans_profile, 2, internal->dim_trans_profile_1, internal->dim_trans_profile_2);
-  SET_VECTOR_ELT(contents, 459, trans_profile);
-  SEXP nms = PROTECT(allocVector(STRSXP, 460));
+  SET_VECTOR_ELT(contents, 461, trans_profile);
+  SEXP nms = PROTECT(allocVector(STRSXP, 462));
   SET_STRING_ELT(nms, 0, mkChar("aux_EE"));
   SET_STRING_ELT(nms, 1, mkChar("aux_II_asympt"));
   SET_STRING_ELT(nms, 2, mkChar("aux_II_hosp_D"));
@@ -4358,56 +4362,58 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 407, mkChar("n_triage_to_ICU_R"));
   SET_STRING_ELT(nms, 408, mkChar("offset_output_n_EI_ILI"));
   SET_STRING_ELT(nms, 409, mkChar("offset_output_n_EI_mild"));
-  SET_STRING_ELT(nms, 410, mkChar("offset_output_n_ILI_to_hosp"));
-  SET_STRING_ELT(nms, 411, mkChar("offset_output_n_ILI_to_hosp_D"));
-  SET_STRING_ELT(nms, 412, mkChar("offset_output_n_ILI_to_hosp_R"));
-  SET_STRING_ELT(nms, 413, mkChar("offset_output_n_triage_to_ICU_D"));
-  SET_STRING_ELT(nms, 414, mkChar("offset_output_n_triage_to_ICU_R"));
-  SET_STRING_ELT(nms, 415, mkChar("offset_variable_D"));
-  SET_STRING_ELT(nms, 416, mkChar("offset_variable_E"));
-  SET_STRING_ELT(nms, 417, mkChar("offset_variable_I_asympt"));
-  SET_STRING_ELT(nms, 418, mkChar("offset_variable_I_hosp_D"));
-  SET_STRING_ELT(nms, 419, mkChar("offset_variable_I_hosp_R"));
-  SET_STRING_ELT(nms, 420, mkChar("offset_variable_I_ICU_D"));
-  SET_STRING_ELT(nms, 421, mkChar("offset_variable_I_ICU_R"));
-  SET_STRING_ELT(nms, 422, mkChar("offset_variable_I_ILI"));
-  SET_STRING_ELT(nms, 423, mkChar("offset_variable_I_mild"));
-  SET_STRING_ELT(nms, 424, mkChar("offset_variable_I_triage"));
-  SET_STRING_ELT(nms, 425, mkChar("offset_variable_R_stepdown"));
-  SET_STRING_ELT(nms, 426, mkChar("p_asympt"));
-  SET_STRING_ELT(nms, 427, mkChar("p_death_hosp_D"));
-  SET_STRING_ELT(nms, 428, mkChar("p_death_ICU"));
-  SET_STRING_ELT(nms, 429, mkChar("p_EE"));
-  SET_STRING_ELT(nms, 430, mkChar("p_ICU_hosp"));
-  SET_STRING_ELT(nms, 431, mkChar("p_II_asympt"));
-  SET_STRING_ELT(nms, 432, mkChar("p_II_hosp_D"));
-  SET_STRING_ELT(nms, 433, mkChar("p_II_hosp_R"));
-  SET_STRING_ELT(nms, 434, mkChar("p_II_ICU_D"));
-  SET_STRING_ELT(nms, 435, mkChar("p_II_ICU_R"));
-  SET_STRING_ELT(nms, 436, mkChar("p_II_ILI"));
-  SET_STRING_ELT(nms, 437, mkChar("p_II_mild"));
-  SET_STRING_ELT(nms, 438, mkChar("p_II_triage"));
-  SET_STRING_ELT(nms, 439, mkChar("p_R_stepdown"));
-  SET_STRING_ELT(nms, 440, mkChar("p_recov_ILI"));
-  SET_STRING_ELT(nms, 441, mkChar("p_SE"));
-  SET_STRING_ELT(nms, 442, mkChar("p_sympt_ILI"));
-  SET_STRING_ELT(nms, 443, mkChar("R0"));
-  SET_STRING_ELT(nms, 444, mkChar("R0_stepdown"));
-  SET_STRING_ELT(nms, 445, mkChar("s_asympt"));
-  SET_STRING_ELT(nms, 446, mkChar("s_E"));
-  SET_STRING_ELT(nms, 447, mkChar("s_hosp_D"));
-  SET_STRING_ELT(nms, 448, mkChar("s_hosp_R"));
-  SET_STRING_ELT(nms, 449, mkChar("s_ICU_D"));
-  SET_STRING_ELT(nms, 450, mkChar("s_ICU_R"));
-  SET_STRING_ELT(nms, 451, mkChar("s_ij"));
-  SET_STRING_ELT(nms, 452, mkChar("s_ILI"));
-  SET_STRING_ELT(nms, 453, mkChar("s_mild"));
-  SET_STRING_ELT(nms, 454, mkChar("s_stepdown"));
-  SET_STRING_ELT(nms, 455, mkChar("s_triage"));
-  SET_STRING_ELT(nms, 456, mkChar("S0"));
-  SET_STRING_ELT(nms, 457, mkChar("trans_classes"));
-  SET_STRING_ELT(nms, 458, mkChar("trans_increase"));
-  SET_STRING_ELT(nms, 459, mkChar("trans_profile"));
+  SET_STRING_ELT(nms, 410, mkChar("offset_output_n_hosp_non_ICU"));
+  SET_STRING_ELT(nms, 411, mkChar("offset_output_n_ILI_to_hosp"));
+  SET_STRING_ELT(nms, 412, mkChar("offset_output_n_ILI_to_hosp_D"));
+  SET_STRING_ELT(nms, 413, mkChar("offset_output_n_ILI_to_hosp_R"));
+  SET_STRING_ELT(nms, 414, mkChar("offset_output_n_ILI_to_triage"));
+  SET_STRING_ELT(nms, 415, mkChar("offset_output_n_triage_to_ICU_D"));
+  SET_STRING_ELT(nms, 416, mkChar("offset_output_n_triage_to_ICU_R"));
+  SET_STRING_ELT(nms, 417, mkChar("offset_variable_D"));
+  SET_STRING_ELT(nms, 418, mkChar("offset_variable_E"));
+  SET_STRING_ELT(nms, 419, mkChar("offset_variable_I_asympt"));
+  SET_STRING_ELT(nms, 420, mkChar("offset_variable_I_hosp_D"));
+  SET_STRING_ELT(nms, 421, mkChar("offset_variable_I_hosp_R"));
+  SET_STRING_ELT(nms, 422, mkChar("offset_variable_I_ICU_D"));
+  SET_STRING_ELT(nms, 423, mkChar("offset_variable_I_ICU_R"));
+  SET_STRING_ELT(nms, 424, mkChar("offset_variable_I_ILI"));
+  SET_STRING_ELT(nms, 425, mkChar("offset_variable_I_mild"));
+  SET_STRING_ELT(nms, 426, mkChar("offset_variable_I_triage"));
+  SET_STRING_ELT(nms, 427, mkChar("offset_variable_R_stepdown"));
+  SET_STRING_ELT(nms, 428, mkChar("p_asympt"));
+  SET_STRING_ELT(nms, 429, mkChar("p_death_hosp_D"));
+  SET_STRING_ELT(nms, 430, mkChar("p_death_ICU"));
+  SET_STRING_ELT(nms, 431, mkChar("p_EE"));
+  SET_STRING_ELT(nms, 432, mkChar("p_ICU_hosp"));
+  SET_STRING_ELT(nms, 433, mkChar("p_II_asympt"));
+  SET_STRING_ELT(nms, 434, mkChar("p_II_hosp_D"));
+  SET_STRING_ELT(nms, 435, mkChar("p_II_hosp_R"));
+  SET_STRING_ELT(nms, 436, mkChar("p_II_ICU_D"));
+  SET_STRING_ELT(nms, 437, mkChar("p_II_ICU_R"));
+  SET_STRING_ELT(nms, 438, mkChar("p_II_ILI"));
+  SET_STRING_ELT(nms, 439, mkChar("p_II_mild"));
+  SET_STRING_ELT(nms, 440, mkChar("p_II_triage"));
+  SET_STRING_ELT(nms, 441, mkChar("p_R_stepdown"));
+  SET_STRING_ELT(nms, 442, mkChar("p_recov_ILI"));
+  SET_STRING_ELT(nms, 443, mkChar("p_SE"));
+  SET_STRING_ELT(nms, 444, mkChar("p_sympt_ILI"));
+  SET_STRING_ELT(nms, 445, mkChar("R0"));
+  SET_STRING_ELT(nms, 446, mkChar("R0_stepdown"));
+  SET_STRING_ELT(nms, 447, mkChar("s_asympt"));
+  SET_STRING_ELT(nms, 448, mkChar("s_E"));
+  SET_STRING_ELT(nms, 449, mkChar("s_hosp_D"));
+  SET_STRING_ELT(nms, 450, mkChar("s_hosp_R"));
+  SET_STRING_ELT(nms, 451, mkChar("s_ICU_D"));
+  SET_STRING_ELT(nms, 452, mkChar("s_ICU_R"));
+  SET_STRING_ELT(nms, 453, mkChar("s_ij"));
+  SET_STRING_ELT(nms, 454, mkChar("s_ILI"));
+  SET_STRING_ELT(nms, 455, mkChar("s_mild"));
+  SET_STRING_ELT(nms, 456, mkChar("s_stepdown"));
+  SET_STRING_ELT(nms, 457, mkChar("s_triage"));
+  SET_STRING_ELT(nms, 458, mkChar("S0"));
+  SET_STRING_ELT(nms, 459, mkChar("trans_classes"));
+  SET_STRING_ELT(nms, 460, mkChar("trans_increase"));
+  SET_STRING_ELT(nms, 461, mkChar("trans_profile"));
   setAttrib(contents, R_NamesSymbol, nms);
   UNPROTECT(88);
   return contents;
@@ -4928,9 +4934,11 @@ SEXP new_hospital_model_set_user(SEXP internal_p, SEXP user) {
   internal->m = (double*) user_get_array(user, false, internal->m, "m", NA_REAL, NA_REAL, 2, internal->dim_m_1, internal->dim_m_2);
   internal->offset_output_n_EI_ILI = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild;
   internal->offset_output_n_EI_mild = 3 + internal->dim_n_EI_asympt;
+  internal->offset_output_n_hosp_non_ICU = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D + internal->dim_n_triage_to_ICU_R + internal->dim_n_triage_to_ICU_D;
   internal->offset_output_n_ILI_to_hosp = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI;
   internal->offset_output_n_ILI_to_hosp_D = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R;
   internal->offset_output_n_ILI_to_hosp_R = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp;
+  internal->offset_output_n_ILI_to_triage = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D + internal->dim_n_triage_to_ICU_R + internal->dim_n_triage_to_ICU_D + internal->dim_n_hosp_non_ICU;
   internal->offset_output_n_triage_to_ICU_D = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D + internal->dim_n_triage_to_ICU_R;
   internal->offset_output_n_triage_to_ICU_R = 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D;
   internal->offset_variable_I_asympt = internal->dim_S + internal->dim_R + internal->dim_D + internal->dim_E;
@@ -5106,8 +5114,8 @@ SEXP new_hospital_model_metadata(SEXP internal_p) {
   SET_STRING_ELT(variable_names, 12, mkChar("R_stepdown"));
   SET_VECTOR_ELT(ret, 0, variable_length);
   UNPROTECT(2);
-  SEXP output_length = PROTECT(allocVector(VECSXP, 11));
-  SEXP output_names = PROTECT(allocVector(STRSXP, 11));
+  SEXP output_length = PROTECT(allocVector(VECSXP, 13));
+  SEXP output_names = PROTECT(allocVector(STRSXP, 13));
   setAttrib(output_length, R_NamesSymbol, output_names);
   SET_VECTOR_ELT(output_length, 0, R_NilValue);
   SET_VECTOR_ELT(output_length, 1, R_NilValue);
@@ -5144,6 +5152,14 @@ SEXP new_hospital_model_metadata(SEXP internal_p) {
   int * dim_n_triage_to_ICU_D = INTEGER(VECTOR_ELT(output_length, 10));
   dim_n_triage_to_ICU_D[0] = internal->dim_n_triage_to_ICU_D_1;
   dim_n_triage_to_ICU_D[1] = internal->dim_n_triage_to_ICU_D_2;
+  SET_VECTOR_ELT(output_length, 11, allocVector(INTSXP, 2));
+  int * dim_n_hosp_non_ICU = INTEGER(VECTOR_ELT(output_length, 11));
+  dim_n_hosp_non_ICU[0] = internal->dim_n_hosp_non_ICU_1;
+  dim_n_hosp_non_ICU[1] = internal->dim_n_hosp_non_ICU_2;
+  SET_VECTOR_ELT(output_length, 12, allocVector(INTSXP, 2));
+  int * dim_n_ILI_to_triage = INTEGER(VECTOR_ELT(output_length, 12));
+  dim_n_ILI_to_triage[0] = internal->dim_n_ILI_to_triage_1;
+  dim_n_ILI_to_triage[1] = internal->dim_n_ILI_to_triage_2;
   SET_STRING_ELT(output_names, 0, mkChar("time"));
   SET_STRING_ELT(output_names, 1, mkChar("beta"));
   SET_STRING_ELT(output_names, 2, mkChar("N_tot"));
@@ -5155,9 +5171,11 @@ SEXP new_hospital_model_metadata(SEXP internal_p) {
   SET_STRING_ELT(output_names, 8, mkChar("n_ILI_to_hosp_D"));
   SET_STRING_ELT(output_names, 9, mkChar("n_triage_to_ICU_R"));
   SET_STRING_ELT(output_names, 10, mkChar("n_triage_to_ICU_D"));
+  SET_STRING_ELT(output_names, 11, mkChar("n_hosp_non_ICU"));
+  SET_STRING_ELT(output_names, 12, mkChar("n_ILI_to_triage"));
   SET_VECTOR_ELT(ret, 1, output_length);
   UNPROTECT(2);
-  SET_VECTOR_ELT(ret, 2, ScalarInteger(3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D + internal->dim_n_triage_to_ICU_R + internal->dim_n_triage_to_ICU_D));
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D + internal->dim_n_triage_to_ICU_R + internal->dim_n_triage_to_ICU_D + internal->dim_n_hosp_non_ICU + internal->dim_n_ILI_to_triage));
   SEXP interpolate_t = PROTECT(allocVector(VECSXP, 3));
   SEXP interpolate_t_nms = PROTECT(allocVector(STRSXP, 3));
   setAttrib(interpolate_t, R_NamesSymbol, interpolate_t_nms);
@@ -5369,6 +5387,9 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
       }
     }
   }
+  for (int i = 1; i <= internal->dim_delta_R; ++i) {
+    internal->delta_R[i - 1] = odin_sum3(internal->n_II_asympt, i - 1, i, internal->s_asympt - 1, internal->s_asympt, 0, internal->dim_n_II_asympt_3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_12) + odin_sum3(internal->n_II_mild, i - 1, i, internal->s_mild - 1, internal->s_mild, 0, internal->dim_n_II_mild_3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_12) + odin_sum3(internal->n_II_ILI, i - 1, i, internal->s_ILI - 1, internal->s_ILI, 0, internal->dim_n_II_ILI_3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_12) - odin_sum2(internal->n_ILI_to_hosp, i - 1, i, 0, internal->dim_n_ILI_to_hosp_2, internal->dim_n_ILI_to_hosp_1) + odin_sum3(internal->n_II_hosp_R, i - 1, i, internal->s_hosp_R - 1, internal->s_hosp_R, 0, internal->dim_n_II_hosp_R_3, internal->dim_n_II_hosp_R_1, internal->dim_n_II_hosp_R_12) + odin_sum3(internal->n_R_stepdown, i - 1, i, internal->s_stepdown - 1, internal->s_stepdown, 0, internal->dim_n_R_stepdown_3, internal->dim_n_R_stepdown_1, internal->dim_n_R_stepdown_12);
+  }
   for (int i = 1; i <= internal->dim_lambda; ++i) {
     internal->lambda[i - 1] = beta * odin_sum2(internal->s_ij, i - 1, i, 0, internal->dim_s_ij_2, internal->dim_s_ij_1);
   }
@@ -5464,9 +5485,6 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
       }
     }
   }
-  for (int i = 1; i <= internal->dim_delta_R; ++i) {
-    internal->delta_R[i - 1] = odin_sum3(internal->n_II_asympt, i - 1, i, internal->s_asympt - 1, internal->s_asympt, 0, internal->dim_n_II_asympt_3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_12) + odin_sum3(internal->n_II_mild, i - 1, i, internal->s_mild - 1, internal->s_mild, 0, internal->dim_n_II_mild_3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_12) + odin_sum3(internal->n_II_ILI, i - 1, i, internal->s_ILI - 1, internal->s_ILI, 0, internal->dim_n_II_ILI_3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_12) - odin_sum2(internal->n_ILI_to_triage, i - 1, i, 0, internal->dim_n_ILI_to_triage_2, internal->dim_n_ILI_to_triage_1) + odin_sum3(internal->n_II_hosp_R, i - 1, i, internal->s_hosp_R - 1, internal->s_hosp_R, 0, internal->dim_n_II_hosp_R_3, internal->dim_n_II_hosp_R_1, internal->dim_n_II_hosp_R_12) + odin_sum3(internal->n_R_stepdown, i - 1, i, internal->s_stepdown - 1, internal->s_stepdown, 0, internal->dim_n_R_stepdown_3, internal->dim_n_R_stepdown_1, internal->dim_n_R_stepdown_12);
-  }
   for (int i = 1; i <= internal->dim_delta_R_stepdown_1; ++i) {
     for (int j = 1; j <= internal->dim_delta_R_stepdown_2; ++j) {
       for (int k = 1; k <= internal->dim_delta_R_stepdown_3; ++k) {
@@ -5486,6 +5504,9 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
   }
   for (int i = 1; i <= internal->dim_p_SE; ++i) {
     internal->p_SE[i - 1] = 1 - exp(-(internal->lambda[i - 1]) * internal->dt);
+  }
+  for (int i = 1; i <= internal->dim_R; ++i) {
+    state_next[internal->dim_S + i - 1] = R[i - 1] + internal->delta_R[i - 1];
   }
   for (int i = 1; i <= internal->dim_aux_II_ILI_1; ++i) {
     int j = 1;
@@ -5549,9 +5570,6 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
         state_next[internal->offset_variable_I_ICU_D + i - 1 + internal->dim_I_ICU_D_1 * (j - 1) + internal->dim_I_ICU_D_12 * (k - 1)] = I_ICU_D[internal->dim_I_ICU_D_12 * (k - 1) + internal->dim_I_ICU_D_1 * (j - 1) + i - 1] + internal->delta_I_ICU_D[internal->dim_delta_I_ICU_D_12 * (k - 1) + internal->dim_delta_I_ICU_D_1 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= internal->dim_R; ++i) {
-    state_next[internal->dim_S + i - 1] = R[i - 1] + internal->delta_R[i - 1];
   }
   for (int i = 1; i <= internal->dim_R_stepdown_1; ++i) {
     for (int j = 1; j <= internal->dim_R_stepdown_2; ++j) {
@@ -5724,8 +5742,10 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
   memcpy(output + internal->offset_output_n_ILI_to_hosp, internal->n_ILI_to_hosp, internal->dim_n_ILI_to_hosp * sizeof(double));
   memcpy(output + internal->offset_output_n_triage_to_ICU_D, internal->n_triage_to_ICU_D, internal->dim_n_triage_to_ICU_D * sizeof(double));
   memcpy(output + internal->offset_output_n_EI_mild, internal->n_EI_mild, internal->dim_n_EI_mild * sizeof(double));
+  memcpy(output + internal->offset_output_n_ILI_to_triage, internal->n_ILI_to_triage, internal->dim_n_ILI_to_triage * sizeof(double));
   memcpy(output + internal->offset_output_n_triage_to_ICU_R, internal->n_triage_to_ICU_R, internal->dim_n_triage_to_ICU_R * sizeof(double));
   memcpy(output + internal->offset_output_n_EI_ILI, internal->n_EI_ILI, internal->dim_n_EI_ILI * sizeof(double));
+  memcpy(output + internal->offset_output_n_hosp_non_ICU, internal->n_hosp_non_ICU, internal->dim_n_hosp_non_ICU * sizeof(double));
   memcpy(output + internal->offset_output_n_ILI_to_hosp_D, internal->n_ILI_to_hosp_D, internal->dim_n_ILI_to_hosp_D * sizeof(double));
   memcpy(output + internal->offset_output_n_ILI_to_hosp_R, internal->n_ILI_to_hosp_R, internal->dim_n_ILI_to_hosp_R * sizeof(double));
 }
@@ -5735,7 +5755,7 @@ void new_hospital_model_rhs_dde(size_t n_eq, size_t step, double * state, double
 SEXP new_hospital_model_rhs_r(SEXP internal_p, SEXP step, SEXP state) {
   SEXP state_next = PROTECT(allocVector(REALSXP, LENGTH(state)));
   new_hospital_model_internal *internal = new_hospital_model_get_internal(internal_p, 1);
-  SEXP output_ptr = PROTECT(allocVector(REALSXP, 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D + internal->dim_n_triage_to_ICU_R + internal->dim_n_triage_to_ICU_D));
+  SEXP output_ptr = PROTECT(allocVector(REALSXP, 3 + internal->dim_n_EI_asympt + internal->dim_n_EI_mild + internal->dim_n_EI_ILI + internal->dim_n_ILI_to_hosp + internal->dim_n_ILI_to_hosp_R + internal->dim_n_ILI_to_hosp_D + internal->dim_n_triage_to_ICU_R + internal->dim_n_triage_to_ICU_D + internal->dim_n_hosp_non_ICU + internal->dim_n_ILI_to_triage));
   setAttrib(state_next, install("output"), output_ptr);
   UNPROTECT(1);
   double *output = REAL(output_ptr);

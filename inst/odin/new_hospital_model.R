@@ -125,6 +125,8 @@ output(n_ILI_to_hosp_R[,])<- TRUE
 output(n_ILI_to_hosp_D[,])<- TRUE
 output(n_triage_to_ICU_R[,])<- TRUE
 output(n_triage_to_ICU_D[,])<- TRUE
+output(n_hosp_non_ICU[,]) <- TRUE
+output(n_ILI_to_triage[,]) <- TRUE
 
 #Work out the I_hosp_R->I_hosp_R transitions
 aux_II_hosp_R[,1,] <- n_ILI_to_hosp_R[i,k]
@@ -162,7 +164,7 @@ delta_D[] <- sum(n_II_hosp_D[i,s_hosp_D,]) + sum(n_II_ICU_D[i,s_ICU_D,])
 
 #Work out the number of recovery
 delta_R[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
-  sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_triage[i,]) +
+  sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_hosp[i,]) +
   sum(n_II_hosp_R[i,s_hosp_R,]) + sum(n_R_stepdown[i,s_stepdown,])
 
 #Compute the force of infection
