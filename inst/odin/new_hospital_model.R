@@ -125,8 +125,6 @@ output(n_ILI_to_hosp_R[,])<- TRUE
 output(n_ILI_to_hosp_D[,])<- TRUE
 output(n_triage_to_ICU_R[,])<- TRUE
 output(n_triage_to_ICU_D[,])<- TRUE
-output(n_hosp_non_ICU[,]) <- TRUE
-output(n_ILI_to_triage[,]) <- TRUE
 
 #Work out the I_hosp_R->I_hosp_R transitions
 aux_II_hosp_R[,1,] <- n_ILI_to_hosp_R[i,k]
