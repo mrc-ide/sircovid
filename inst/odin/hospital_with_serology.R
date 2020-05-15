@@ -188,6 +188,7 @@ delta_D_comm[] <- sum(n_II_comm_D[i,s_comm_D,])
 
 #Work out the number of people entering the seroconversion flow
 n_com_to_R_total[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
+                         sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_hosp[i,]) - sum(n_ILI_to_comm_D[i,]) +
                          sum(n_ILI_to_triage_R[i,]) + sum(n_ILI_to_hosp_R[i,]) 
 
 #Split the seroconversion flow between people who are going to seroconvert and people who are not
