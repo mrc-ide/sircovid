@@ -1,3 +1,7 @@
+# sircovid 0.2.33
+
+- Fix bug in miscalculation of R compartment in new_hospital_model
+
 # sircovid 0.2.32
 
 - Fix bug in update_beta()
