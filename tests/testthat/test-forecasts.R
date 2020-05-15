@@ -252,7 +252,7 @@ test_that("sample_pmcmc works with new model", {
   proposal_kernel <- diag(length(pars_to_sample$names)) * 0.01^2
   row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample$names
   proposal_kernel['start_date', 'start_date'] <- 25
-  set.seed(1)
+
   mcmc_results <- pmcmc(
     data = data,
     n_mcmc = n_mcmc,
@@ -277,6 +277,16 @@ test_that("sample_pmcmc works with new model", {
   # check length based on model and dates
   days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
   expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample))
+  
+  # check forecasting
+  forecast_days <- 2
+  res <- sample_pmcmc(mcmc_results = mcmc_results,
+                      burn_in = 1,
+                      n_sample = n_sample, 
+                      n_particles = 10,
+                      forecast_days = forecast_days)
+  expected_total_days <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(as.Date(data$date), 1) + forecast_days))
+  expect_equal(dim(res$trajectories)[1], expected_total_days)
   
   ## Testing plotting
   if (TRUE) {
