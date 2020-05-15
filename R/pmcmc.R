@@ -180,7 +180,7 @@ pmcmc <- function(data,
        setequal(rownames(pars),
                 colnames(pars)) && 
          setequal(rownames(pars),
-                   par_names) &&
+                   names) &&
       nrow(pars) == length(names) &&
       ncol(pars) == length(names)
   }
@@ -292,7 +292,7 @@ pmcmc <- function(data,
   # create shorthand function to propose new pars given main inputs
   propose_jump <- function(pars) {
     propose_parameters(pars = pars, 
-                       proposal_kernel = proposal_kernel,
+                       proposal_kernel = proposal_kernel[names(pars), names(pars)],
                        pars_discrete = pars_discrete,
                        pars_min = pars_min,
                        pars_max = pars_max)
@@ -557,7 +557,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
 propose_parameters <- function(pars, proposal_kernel, pars_discrete, pars_min, pars_max) {
   
   ## proposed jumps are normal with mean pars and sd as input for parameter
-  jumps <- pars + drop(rmvnorm(n = 1,  sigma = proposal_kernel[names(pars), names(pars)]))
+  jumps <- pars + drop(rmvnorm(n = 1,  sigma = proposal_kernel))
 
 
   # discretise if necessary
