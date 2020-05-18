@@ -55,7 +55,7 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
         ll_nbinom(data$itu[t], model_icu, phi_ICU, k_ICU, exp_noise)
     }
     
-    if (type == "sircovid_hospital" && !is.na(data$general[t])) {
+    if (type %in% c("sircovid_hospital","sircovid_serology")  && !is.na(data$general[t])) {
       ## sum model output across ages/infectivities
       model_general <- colSums(state[index_general, ])
       log_weights <- log_weights +
