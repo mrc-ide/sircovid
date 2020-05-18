@@ -253,9 +253,6 @@ pmcmc <- function(data,
     n_particles = n_particles, 
     steps_per_day = steps_per_day)
   
-  # convert dates days since start of 2020
-  data$date <- sircovid_date(data$date)
-  
   # needs to be a vector to pass to reflecting boundary function
   pars_min <- unlist(pars_min)  
   pars_max <- unlist(pars_max)

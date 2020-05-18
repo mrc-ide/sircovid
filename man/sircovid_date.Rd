@@ -16,3 +16,6 @@ days that \code{date} is after the beginning of 2020
 Convert a date into the representation used in the sircovid package,
 which is days since the start of 2020 (i.e. 2020-01-01 = 1)
 }
+\details{
+Only apply this once, to data or input parameters
+}

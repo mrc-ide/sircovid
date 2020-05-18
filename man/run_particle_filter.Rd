@@ -8,7 +8,7 @@ run_particle_filter(
   data,
   sircovid_model,
   model_params,
-  model_start_date = "2020-02-02",
+  model_start_date = sircovid_date("2020-02-02"),
   obs_params = list(phi_general = 0.95, k_general = 2, phi_ICU = 0.95, k_ICU = 2,
     phi_death = 1789/1651, k_death = 2, exp_noise = 1e+06),
   pars_seeding = NULL,
