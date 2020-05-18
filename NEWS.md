@@ -1,7 +1,11 @@
-# sircovid 0.2.33
+# sircovid 0.2.34
 
 - pMCMC over any parameter
 - Dates are now days into 2020 (days from 2019-12-31 onwards)
+
+# sircovid 0.2.33
+
+- Fix bug in miscalculation of R compartment in new_hospital_model
 
 # sircovid 0.2.32
 

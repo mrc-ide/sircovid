@@ -5369,6 +5369,9 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
       }
     }
   }
+  for (int i = 1; i <= internal->dim_delta_R; ++i) {
+    internal->delta_R[i - 1] = odin_sum3(internal->n_II_asympt, i - 1, i, internal->s_asympt - 1, internal->s_asympt, 0, internal->dim_n_II_asympt_3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_12) + odin_sum3(internal->n_II_mild, i - 1, i, internal->s_mild - 1, internal->s_mild, 0, internal->dim_n_II_mild_3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_12) + odin_sum3(internal->n_II_ILI, i - 1, i, internal->s_ILI - 1, internal->s_ILI, 0, internal->dim_n_II_ILI_3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_12) - odin_sum2(internal->n_ILI_to_hosp, i - 1, i, 0, internal->dim_n_ILI_to_hosp_2, internal->dim_n_ILI_to_hosp_1) + odin_sum3(internal->n_II_hosp_R, i - 1, i, internal->s_hosp_R - 1, internal->s_hosp_R, 0, internal->dim_n_II_hosp_R_3, internal->dim_n_II_hosp_R_1, internal->dim_n_II_hosp_R_12) + odin_sum3(internal->n_R_stepdown, i - 1, i, internal->s_stepdown - 1, internal->s_stepdown, 0, internal->dim_n_R_stepdown_3, internal->dim_n_R_stepdown_1, internal->dim_n_R_stepdown_12);
+  }
   for (int i = 1; i <= internal->dim_lambda; ++i) {
     internal->lambda[i - 1] = beta * odin_sum2(internal->s_ij, i - 1, i, 0, internal->dim_s_ij_2, internal->dim_s_ij_1);
   }
@@ -5464,9 +5467,6 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
       }
     }
   }
-  for (int i = 1; i <= internal->dim_delta_R; ++i) {
-    internal->delta_R[i - 1] = odin_sum3(internal->n_II_asympt, i - 1, i, internal->s_asympt - 1, internal->s_asympt, 0, internal->dim_n_II_asympt_3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_12) + odin_sum3(internal->n_II_mild, i - 1, i, internal->s_mild - 1, internal->s_mild, 0, internal->dim_n_II_mild_3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_12) + odin_sum3(internal->n_II_ILI, i - 1, i, internal->s_ILI - 1, internal->s_ILI, 0, internal->dim_n_II_ILI_3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_12) - odin_sum2(internal->n_ILI_to_triage, i - 1, i, 0, internal->dim_n_ILI_to_triage_2, internal->dim_n_ILI_to_triage_1) + odin_sum3(internal->n_II_hosp_R, i - 1, i, internal->s_hosp_R - 1, internal->s_hosp_R, 0, internal->dim_n_II_hosp_R_3, internal->dim_n_II_hosp_R_1, internal->dim_n_II_hosp_R_12) + odin_sum3(internal->n_R_stepdown, i - 1, i, internal->s_stepdown - 1, internal->s_stepdown, 0, internal->dim_n_R_stepdown_3, internal->dim_n_R_stepdown_1, internal->dim_n_R_stepdown_12);
-  }
   for (int i = 1; i <= internal->dim_delta_R_stepdown_1; ++i) {
     for (int j = 1; j <= internal->dim_delta_R_stepdown_2; ++j) {
       for (int k = 1; k <= internal->dim_delta_R_stepdown_3; ++k) {
@@ -5486,6 +5486,9 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
   }
   for (int i = 1; i <= internal->dim_p_SE; ++i) {
     internal->p_SE[i - 1] = 1 - exp(-(internal->lambda[i - 1]) * internal->dt);
+  }
+  for (int i = 1; i <= internal->dim_R; ++i) {
+    state_next[internal->dim_S + i - 1] = R[i - 1] + internal->delta_R[i - 1];
   }
   for (int i = 1; i <= internal->dim_aux_II_ILI_1; ++i) {
     int j = 1;
@@ -5549,9 +5552,6 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
         state_next[internal->offset_variable_I_ICU_D + i - 1 + internal->dim_I_ICU_D_1 * (j - 1) + internal->dim_I_ICU_D_12 * (k - 1)] = I_ICU_D[internal->dim_I_ICU_D_12 * (k - 1) + internal->dim_I_ICU_D_1 * (j - 1) + i - 1] + internal->delta_I_ICU_D[internal->dim_delta_I_ICU_D_12 * (k - 1) + internal->dim_delta_I_ICU_D_1 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= internal->dim_R; ++i) {
-    state_next[internal->dim_S + i - 1] = R[i - 1] + internal->delta_R[i - 1];
   }
   for (int i = 1; i <= internal->dim_R_stepdown_1; ++i) {
     for (int j = 1; j <= internal->dim_R_stepdown_2; ++j) {

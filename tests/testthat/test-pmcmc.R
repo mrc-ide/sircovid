@@ -461,7 +461,6 @@ test_that("pmcmc will run with multiple chains" , {
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
                      'beta_end' = function(pars) 0,
                      'start_date' = function(pars) 0)
-  cmp <- readRDS("reference_pmcmc_hosp.rds")
 
   proposal_kernel <- matrix(c(0.001^2, 0, 0,
                              0, 0.001^2, 0,
