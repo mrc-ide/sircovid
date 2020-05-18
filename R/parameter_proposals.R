@@ -5,10 +5,10 @@ update_beta <- function(sircovid_model,
                         beta_pl,
                         start_date,
                         dt) {
-    new_beta <- sircovid_model$generate_beta_func(beta_start = beta_start,
-                                                  beta_end = beta_end, 
-                                                  beta_pl = beta_pl,
-                                                  start_date = start_date) 
+  new_beta <- sircovid_model$generate_beta_func(beta_start = beta_start,
+                                                beta_end = beta_end, 
+                                                beta_pl = beta_pl,
+                                                start_date = start_date) 
   
   beta_t <- normalise_beta(new_beta$beta_times, dt)
   
@@ -26,10 +26,10 @@ start_date_to_offset <- function(first_data_date, start_date)
   
   # Convert any strings to days since start of 2020
   if (class(first_data_date) == "character" || class(first_data_date) == "factor") {
-    first_data_date = sircovid_date(first_data_date)
+    first_data_date = sircovid_date(as.character(first_data_date))
   }
   if (class(start_date) == "character" || class(start_date) == "factor") {
-    start_date = sircovid_date(start_date)
+    start_date = sircovid_date(as.character(start_date))
   }
 
   first_data_date - start_date
@@ -42,10 +42,13 @@ offset_to_start_date <- function(first_data_date, offset)
   if (class(offset) != "numeric") {
     stop("Offset start date must be numeric")
   }
+  if (class(first_data_date) == "Date") {
+    stop("Do not use Date objects with offsets")
+  }
 
   # Convert any strings to Dates
   if (class(first_data_date) == "character" || class(first_data_date) == "factor") {
-    sircovid_date(first_data_date)
+    first_data_date <- sircovid_date(as.character(first_data_date))
   } else if (class(first_data_date) != "numeric") {
     stop("Start date must be numeric")
   }

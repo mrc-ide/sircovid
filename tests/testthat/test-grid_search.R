@@ -11,7 +11,7 @@ test_that("Small grid search works", {
   min_beta <- 0.1
   max_beta <- 0.2
   beta_step <- 0.05
-  first_start_date <- "2020-01-21"
+  first_start_date <-"2020-01-21"
   last_start_date <- "2020-01-22"
   day_step <- 1
   pars_obs <- list(

@@ -150,7 +150,7 @@ test_that("date conversion works", {
   expect_equal(offset, 
                as.numeric(as.Date(first_data_date) - as.Date(start_date)))
   expect_equal(offset_to_start_date(first_data_date, offset),
-               as.Date(start_date))
+               sircovid_date(start_date))
   expect_error(offset_to_start_date(first_data_date, start_date), 
                "Offset start date must be numeric")
   

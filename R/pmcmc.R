@@ -254,7 +254,7 @@ pmcmc <- function(data,
     steps_per_day = steps_per_day)
   
   # convert dates days since start of 2020
-  data$date <- lubridate::yday(data$date) + lubridate::year(data$date) - 2020
+  data$date <- sircovid_date(data$date)
   
   # needs to be a vector to pass to reflecting boundary function
   pars_min <- unlist(pars_min)  
@@ -644,7 +644,7 @@ summary.pmcmc <- function(object, ...) {
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
   summ$start_date <- offset_to_start_date(data_start_date, summ$start_date)
-  summ$start_date <- as.Date(summ$start_date, offset="2019-12-31")
+  summ$start_date <- as.Date(summ$start_date, origin="2019-12-31")
   summ[c('2.5%', '97.5%', 'min', 'max'), 'start_date'] <- summ[c('97.5%', '2.5%', 'max', 'min'), 'start_date']
 
   

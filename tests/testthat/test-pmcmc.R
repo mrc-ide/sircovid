@@ -29,7 +29,7 @@ test_that("pmcmc runs with beta_pl", {
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'beta_pl', 'start_date'),
-    init=c(0.14, 0.14*0.238, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0, 0),
     max=c(1, 1, 1, 1e6),
     discrete=c(FALSE, FALSE, FALSE, TRUE),
@@ -98,7 +98,7 @@ test_that("pmcmc runs without error", {
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'start_date'),
-    init=c(0.14, as.Date("2020-02-07")),
+    init=c(0.14, sircovid_date("2020-02-07")),
     min=c(0, 0),
     max=c(1, 1e6),
     discrete=c(FALSE, TRUE),
@@ -140,7 +140,7 @@ test_that("pmcmc runs without error", {
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -243,7 +243,7 @@ test_that("pmcmc with new model", {
   )
   pars_to_sample <- data.frame(
     names=c('beta_start', 'start_date'),
-    init=c(0.14, as.Date("2020-02-07")),
+    init=c(0.14, sircovid_date("2020-02-07")),
     min=c(0, 0),
     max=c(1, 1e6),
     discrete=c(FALSE, TRUE),
@@ -281,7 +281,7 @@ test_that("pmcmc with new model", {
   # Test that the parameter order doesn't matter
   pars_to_sample <- data.frame(
     names=c('start_date', 'beta_start'),
-    init=c(as.Date("2020-02-07"), 0.14),
+    init=c(sircovid_date("2020-02-07"), 0.14),
     min=c(0, 0),
     max=c(1e6, 1),
     discrete=c(TRUE, FALSE),
@@ -323,7 +323,7 @@ test_that("pmcmc with new model", {
             'gamma_stepdown'),
     init=c(0.14, 
            0.14*0.238,
-           as.Date("2020-02-07"),
+           sircovid_date("2020-02-07"),
            0.5099579,
            0.1092046,
            0.2911154,
@@ -399,7 +399,7 @@ test_that("pmcmc with new model", {
                       'phi_general'    = function(pars) dnorm(pars['phi_general'], 0.95, 0.01))
   pars_to_sample <- data.frame(
     names=c('start_date', 'beta_start', 'phi_general'),
-    init=c(as.Date("2020-02-07"), 0.14, 0.95),
+    init=c(sircovid_date("2020-02-07"), 0.14, 0.95),
     min=c(0, 0, 0),
     max=c(1e6, 1, 1),
     discrete=c(TRUE, FALSE, FALSE),
@@ -453,7 +453,7 @@ test_that("pmcmc will run with multiple chains" , {
   )
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -519,7 +519,7 @@ test_that("pmcmc error cases", {
   sircovid_model <- basic_model()
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -561,7 +561,7 @@ test_that("pmcmc error cases", {
   ## beta_start too low
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(-1, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(-1, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -584,7 +584,7 @@ test_that("pmcmc error cases", {
   ## start_date too late
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date(data$date[3])),
+    init=c(0.14, 0.14*0.238, sircovid_date(data$date[3])),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -628,7 +628,7 @@ test_that("pmcmc error cases", {
   
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -659,7 +659,7 @@ test_that("pmcmc error cases", {
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(-0.01, 0.03, as.Date("2020-02-01")),
+    init=c(-0.01, 0.03, sircovid_date("2020-02-01")),
     min=c(-1, -1, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -681,7 +681,7 @@ test_that("pmcmc error cases", {
   
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.123, -0.03, as.Date("2020-02-01")),
+    init=c(0.123, -0.03, sircovid_date("2020-02-01")),
     min=c(-1, -1, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -704,8 +704,8 @@ test_that("pmcmc error cases", {
 
  pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
-    min=c(0, 0, as.character(as.Date(data$date[1]))),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
+    min=c(0, 0, as.character(sircovid_date(data$date[1]))),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
@@ -726,9 +726,9 @@ test_that("pmcmc error cases", {
   
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, as.character(as.Date(data$date[1]))),
+    max=c(1, 1, as.character(sircovid_date(data$date[1]))),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)  
   expect_error(
@@ -749,7 +749,7 @@ test_that("pmcmc error cases", {
   # incorrect format for proposal_kernel
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -774,7 +774,7 @@ test_that("pmcmc error cases", {
   
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, 0.5, TRUE),
@@ -796,7 +796,7 @@ test_that("pmcmc error cases", {
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -823,7 +823,7 @@ test_that("pmcmc error cases", {
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date'),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07")),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
     max=c(1, 1, 1e6),
     discrete=c(FALSE, FALSE, TRUE),
@@ -870,7 +870,7 @@ test_that("pmcmc error cases", {
   # Parameters not in pars_obs or model_params
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'start_date', "amma_triage"),
-    init=c(0.14, 0.14*0.238, as.Date("2020-02-07"), 0.5099579),
+    init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07"), 0.5099579),
     min=c(0, 0, 0, 0),
     max=c(1, 1, 1e6, 1),
     discrete=c(FALSE, FALSE, TRUE, FALSE),
