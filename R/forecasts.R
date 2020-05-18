@@ -217,10 +217,17 @@ sum_over_compartments <- function(sample_grid_res) {
   totals <- lapply(index[keep], f)
 
   ## Compute deaths, icu and hosptialised:
-  totals$deaths <- diff(totals$D)
-  totals$icu <- totals$I_ICU_R + totals$I_ICU_D
-  totals$hosp <- totals$I_triage + totals$I_hosp_R + totals$I_hosp_D +
-    totals$I_ICU_R + totals$I_ICU_D + totals$R_stepdown
+  if (sample_grid_res$model == "hospital_model"){
+    totals$deaths <- diff(totals$D)
+    totals$icu <- totals$I_ICU_R + totals$I_ICU_D
+    totals$hosp <- totals$I_triage + totals$I_hosp_R + totals$I_hosp_D +
+      totals$I_ICU_R + totals$I_ICU_D + totals$R_stepdown
+  } else if (sample_grid_res$model == "serology_model"){
+    totals$deaths <- diff(totals$D_hosp)
+    totals$icu <- totals$I_ICU_R + totals$I_ICU_D
+    totals$hosp <- totals$I_triage_R + totals$I_triage_D + totals$I_hosp_R + totals$I_hosp_D +
+      totals$I_ICU_R + totals$I_ICU_D + totals$R_stepdown
+  }
 
   totals
 }
@@ -244,7 +251,11 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
     plot_particles(particles, ylab = ylab, title = title, col = col)
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
   } else if (what == "general") {
-    index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
+    if (x$model == "hospital_model"){
+      index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
+    } else if (x$model == "serology_model"){
+      index <- c(idx$I_triage_R, idx$I_triage_D, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
+    }
     ylab <- "General beds"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[, index, y], na.rm = TRUE)
@@ -256,7 +267,12 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
   }
   
   else if (what == "deaths") {
-    index <- c(idx$D) - 1L
+    if (x$model == "hospital_model"){
+      index <- c(idx$D) - 1L
+    } else if (x$model == "serology_model"){
+      index <- c(idx$D_hosp) - 1L
+    }
+    
     ylab <- "Deaths"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       out <- c(0, diff(rowSums(x$trajectories[, index, y], na.rm = TRUE)))
