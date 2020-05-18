@@ -36,7 +36,7 @@ generate_beta <- function(beta_start,
                           beta_end = NULL,
                           reduction_period = 10,
                           beta_pl = NULL,
-                          pl_start = "2020-04-22",
+                          pl_start = sircovid_date("2020-04-22"),
                           pl_transition_period = 7) {
 
   if (start_date > reduction_start) {
@@ -131,7 +131,7 @@ generate_parameters <- function(
   infection_seeding = list(values=c(10),
                            bins=c('15 to 19')),
   beta = 0.1,
-  beta_times = "2020-02-02",
+  beta_times = sircovid_date("2020-02-02"),
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
@@ -288,7 +288,7 @@ generate_parameters_base <- function(
   #
   # Set up time-varying beta
   # Times are in days from first day supplied
-  beta_times <- sircovid_date(beta_times)
+  beta_times <- beta_times
   beta_t <- normalise_beta(beta_times, dt)
 
   # 
@@ -358,6 +358,8 @@ generate_parameters_base <- function(
 ##' Convert a date into the representation used in the sircovid package,
 ##' which is days since the start of 2020 (i.e. 2020-01-01 = 1)
 ##' 
+##' Only apply this once, to data or input parameters
+##' 
 ##' @title sircovid date
 ##' 
 ##' @param date Date as a string, or a format otherwise understood by lubridate
@@ -367,7 +369,11 @@ generate_parameters_base <- function(
 ##' @import lubridate
 ##' 
 sircovid_date <- function(date) {
-  as.numeric(lubridate::as_date(date) - lubridate::as_date('2019-12-31'))
+  days_into_2020 <- as.numeric(lubridate::as_date(date) - lubridate::as_date('2019-12-31'))
+  if (any(days_into_2020 < 0)) {
+    stop("Negative dates, sircovid_date likely applied twice")
+  }
+  days_into_2020
 }
 
 #

@@ -26,7 +26,7 @@ test_that("Two-level beta works the same with generate_beta/generate_parameters 
   
   sircovid_model <- hospital_model()
   
-  beta = sircovid_model$generate_beta_func(start_date = "2020-02-06",
+  beta = sircovid_model$generate_beta_func(start_date = sircovid_date("2020-02-06"),
                                            beta_start = 3,
                                            beta_end = 1.5)
   pars_model = generate_parameters(sircovid_model = sircovid_model,
@@ -38,7 +38,7 @@ test_that("Two-level beta works the same with generate_beta/generate_parameters 
                              beta_start = 3,
                              beta_end = 1.5,
                              beta_pl = NULL,
-                             start_date = "2020-02-06",
+                             start_date = sircovid_date("2020-02-06"),
                              dt = 0.25)
   
   expect_equal(pars_model$beta_t,beta_update$beta_t)
@@ -73,7 +73,7 @@ test_that("Three-level beta works the same with generate_beta/generate_parameter
   
   sircovid_model <- hospital_model()
   
-  beta = sircovid_model$generate_beta_func(start_date = "2020-02-06",
+  beta = sircovid_model$generate_beta_func(start_date = sircovid_date("2020-02-06"),
                                            beta_start = 3,
                                            beta_end = 1.5,
                                            beta_pl = 1.8)
@@ -86,7 +86,7 @@ test_that("Three-level beta works the same with generate_beta/generate_parameter
                              beta_start = 3,
                              beta_end = 1.5,
                              beta_pl = 1.8,
-                             start_date = "2020-02-06",
+                             start_date = sircovid_date("2020-02-06"),
                              dt = 0.25)
   
   expect_equal(pars_model$beta_t,beta_update$beta_t)

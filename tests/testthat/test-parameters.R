@@ -64,14 +64,14 @@ test_that("Parameters generated as expected", {
   dt <- 0.25
   test_params <- generate_parameters(sircovid_model = basic_model(),
                                      beta=beta,
-                                     beta_times=c("2020-03-02", "2020-03-15", "2020-04-01"),
+                                     beta_times=sircovid_date(c("2020-03-02", "2020-03-15", "2020-04-01")),
                                      dt = dt)
   expect_identical(test_params$beta_y, beta)
   expect_identical(test_params$beta_t, c(0, 13, 30)/dt)
   
   test_params <- generate_parameters(sircovid_model = basic_model(),
                                      beta=beta,
-                                     beta_times=c("2020-02-02", "2020-02-15", "2020-03-01"))
+                                     beta_times=sircovid_date(c("2020-02-02", "2020-02-15", "2020-03-01")))
   expect_identical(test_params$beta_t, c(0, 13, 28)/dt)
 })
 
@@ -95,7 +95,7 @@ test_that("Bad inputs", {
                                      basic_model(gammas=list(mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))), 
                "gammas need to be defined for all partitions")
   expect_error(generate_parameters(beta = rep(0.1, 3),
-                                   beta_times = c("2020-02-02", "2021-03-01", "2020-04-01")),
+                                   beta_times = sircovid_date(c("2020-02-02", "2021-03-01", "2020-04-01"))),
                "Supplied dates are not increasing")
 })
 

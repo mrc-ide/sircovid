@@ -144,7 +144,7 @@ particle_filter_data <- function(data, start_date, steps_per_day) {
   if (any(diff(data$date) <= 0)) {
     stop("'date' must be strictly increasing")
   }
-  start_date <- sircovid_date(start_date)
+
   if (start_date >= data$date[[1]]) {
     stop("'start_date' must be less than the first date in data")
   }
