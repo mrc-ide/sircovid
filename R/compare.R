@@ -30,6 +30,12 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     index_general <- c(c(index$I_triage),c(index$I_hosp_R),c(index$I_hosp_D),c(index$R_stepdown)) - 1L
     index_ICU <- c(c(index$I_ICU_R),c(index$I_ICU_D)) - 1L
     index_D <- c(index$D) - 1L
+  } else if (type == "sircovid_serology") {
+    phi_general <- pars_obs$phi_general
+    k_general <- pars_obs$k_general
+    index_general <- c(c(index$I_triage),c(index$I_hosp_R),c(index$I_hosp_D),c(index$R_stepdown)) - 1L
+    index_ICU <- c(c(index$I_ICU_R),c(index$I_ICU_D)) - 1L
+    index_D <- c(index$D_hosp) - 1L
   }
 
   force(data)
