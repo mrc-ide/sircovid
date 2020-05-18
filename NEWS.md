@@ -1,6 +1,7 @@
 # sircovid 0.2.33
 
 - pMCMC over any parameter
+- Dates are now days into 2020 (days from 2019-12-31 onwards)
 
 # sircovid 0.2.32
 
