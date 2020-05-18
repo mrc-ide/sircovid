@@ -78,6 +78,7 @@
 ##'   
 ##' @export
 ##' @import coda 
+##' @import lubridate
 ##' @importFrom stats rnorm
 ##' @importFrom mvtnorm rmvnorm
 pmcmc <- function(data,
@@ -99,7 +100,7 @@ pmcmc <- function(data,
                                     init=c(0.14, 
                                            0.14*0.238,
                                            0.14*0.238,
-                                           as.Date("2020-02-07"),
+                                           lubridate::yday("2020-02-07"),
                                            0.5099579,
                                            0.1092046,
                                            0.2911154,
@@ -204,6 +205,9 @@ pmcmc <- function(data,
   is.numeric.list <- function(x) all(vapply(X = x, is.numeric, logical(1)))
   is.logical.list <- function(x) all(vapply(X = x, is.logical, logical(1)))
   
+  if(!is.numeric.list(pars_init)) {
+    stop('pars_min entries must be numeric')
+  }
   if(!is.numeric.list(pars_min)) {
     stop('pars_min entries must be numeric')
   }
@@ -234,9 +238,6 @@ pmcmc <- function(data,
   # Generate MCMC parameters
   #
   
-  # This gets changed to numeric in data.frame
-  pars_init[['start_date']] <- as.Date(pars_init[['start_date']], origin = "1970-01-01")
-  
   inputs <- list(
     data = data,
     n_mcmc = n_mcmc,
@@ -252,9 +253,6 @@ pmcmc <- function(data,
     n_particles = n_particles, 
     steps_per_day = steps_per_day)
   
-  # convert dates to be Date objects
-  data$date <- as.Date(data$date) 
-  
   # needs to be a vector to pass to reflecting boundary function
   pars_min <- unlist(pars_min)  
   pars_max <- unlist(pars_max)
@@ -262,7 +260,7 @@ pmcmc <- function(data,
   curr_pars <- unlist(pars_init)
 
   # convert the current parameters into format easier for mcmc to deal with
-  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date) # convert to numeric
+  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date)
   
   # create shorthand function to calc ll given main inputs
   # binds these input parameters
@@ -616,7 +614,7 @@ summary.pmcmc <- function(object, ...) {
   par_names <- names(object$inputs$pars$pars_init)
   
   ## convert start_date to numeric to calculate stats
-  data_start_date <- as.Date(object$inputs$data$date[1])
+  data_start_date <- sircovid_date(object$inputs$data$date[1])
   traces <- object$results[,par_names] 
   traces$start_date <- start_date_to_offset(data_start_date, traces$start_date)
   
@@ -642,7 +640,8 @@ summary.pmcmc <- function(object, ...) {
   
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
-  summ$start_date <- as.Date(-summ$start_date, data_start_date)
+  summ$start_date <- offset_to_start_date(data_start_date, summ$start_date)
+  summ$start_date <- as.Date(summ$start_date, origin="2019-12-31")
   summ[c('2.5%', '97.5%', 'min', 'max'), 'start_date'] <- summ[c('97.5%', '2.5%', 'max', 'min'), 'start_date']
 
   

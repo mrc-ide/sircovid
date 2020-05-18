@@ -27,8 +27,8 @@ test_that("sample_grid_scan works", {
   min_beta <- 0.10
   max_beta <- 0.18
   beta_step <- 0.08
-  first_start_date <- "2020-01-29"
-  last_start_date <- "2020-02-14"
+  first_start_date <- sircovid_date("2020-01-29")
+  last_start_date <- sircovid_date("2020-02-14")
   day_step <- 12
   
   sircovid_model <- basic_model()
@@ -38,7 +38,7 @@ test_that("sample_grid_scan works", {
     sircovid_model,
     transmission_model = "POLYMOD",
     beta = 0.1,
-    beta_times = '2020-01-01',
+    beta_times = sircovid_date('2020-01-01'),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -72,15 +72,15 @@ test_that("sample_grid_scan works", {
 
   model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
-  days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
+  days_between <- length( min(res$param_grid$start_date) : tail(rownames(res$trajectories[,,1]),1))
   expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample_pairs))
   
   # check the summary is as expected
   res_summary <- summary(res)
   # dates correct
   expect_equal(rownames(res_summary), 
-               as.character(seq(from = as.Date(tail(data$date, 1)) + 1, 
-                                to = as.Date(tail(data$date, 1)) + forecast_days, 
+               as.character(seq(from = sircovid_date(tail(data$date, 1)) + 1, 
+                                to = sircovid_date(tail(data$date, 1)) + forecast_days, 
                                 by = 1)))
   # quantiles increase
   expect_true(all(res_summary[1,c(-1,-2)] - head(res_summary[1,-1], -1) >= 0))
@@ -105,8 +105,8 @@ test_that("sample_grid_scan works with new model", {
   min_beta <- 0.10
   max_beta <- 0.18
   beta_step <- 0.08
-  first_start_date <- "2020-01-29"
-  last_start_date <- "2020-02-14"
+  first_start_date <- sircovid_date("2020-01-29")
+  last_start_date <- sircovid_date("2020-02-14")
   day_step <- 12
   
   sircovid_model <- hospital_model()
@@ -115,7 +115,7 @@ test_that("sample_grid_scan works with new model", {
     sircovid_model,
     transmission_model = "POLYMOD",
     beta = 0.1,
-    beta_times = '2020-01-01',
+    beta_times = sircovid_date('2020-01-01'),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -151,7 +151,7 @@ test_that("sample_grid_scan works with new model", {
   
   model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
-  days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
+  days_between <- length( min(res$param_grid$start_date) : tail(rownames(res$trajectories[,,1]),1))
   expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample_pairs))
   
   ## Testing plotting is always a nightmare
@@ -201,7 +201,7 @@ test_that("sample_pmcmc works with new model", {
     init=c(0.14, 
            0.14*0.238,
            0.14*0.238,
-           as.Date("2020-02-07"),
+           sircovid_date("2020-02-07"),
            0.5099579,
            0.1092046,
            0.2911154,
@@ -275,7 +275,7 @@ test_that("sample_pmcmc works with new model", {
   
   model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
-  days_between <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(rownames(res$trajectories[,,1]),1)))
+  days_between <- length( min(res$param_grid$start_date) : tail(rownames(res$trajectories[,,1]),1))
   expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample))
   
   # check forecasting
@@ -285,7 +285,8 @@ test_that("sample_pmcmc works with new model", {
                       n_sample = n_sample, 
                       n_particles = 10,
                       forecast_days = forecast_days)
-  expected_total_days <- length( min(as.Date(res$param_grid$start_date)) : as.Date(tail(as.Date(data$date), 1) + forecast_days))
+  browser()
+  expected_total_days <- tail(sircovid_date(data$date), 1) + forecast_days - min(res$param_grid$start_date) + 1
   expect_equal(dim(res$trajectories)[1], expected_total_days)
   
   ## Testing plotting

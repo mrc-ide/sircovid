@@ -44,7 +44,8 @@ Imports:
     mvtnorm,
     coda,
     extraDistr,
-    viridis
+    viridis,
+    lubridate
 Suggests:
     testthat,
     knitr,

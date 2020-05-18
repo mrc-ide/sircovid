@@ -13,7 +13,7 @@ pmcmc(
   pars_to_sample = data.frame(names = c("beta_start", "beta_end", "beta_pl",
     "start_date", "gamma_triage", "gamma_hosp_R", "gamma_hosp_D", "gamma_ICU_R",
     "gamma_ICU_D", "gamma_stepdown"), init = c(0.14, 0.14 * 0.238, 0.14 * 0.238,
-    as.Date("2020-02-07"), 0.5099579, 0.1092046, 0.2911154, 0.3541429, 0.2913861,
+    lubridate::yday("2020-02-07"), 0.5099579, 0.1092046, 0.2911154, 0.3541429, 0.2913861,
     0.452381), min = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), max = c(1, 1, 1, 1e+06, 1, 1, 1, 1,
     1, 1), discrete = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
     FALSE), stringsAsFactors = FALSE),
