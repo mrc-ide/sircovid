@@ -285,7 +285,8 @@ test_that("sample_pmcmc works with new model", {
                       n_sample = n_sample, 
                       n_particles = 10,
                       forecast_days = forecast_days)
-  expected_total_days <- length( min(res$param_grid$start_date) : tail(sircovid_date(data$date), 1) + forecast_days)
+  browser()
+  expected_total_days <- tail(sircovid_date(data$date), 1) + forecast_days - min(res$param_grid$start_date) + 1
   expect_equal(dim(res$trajectories)[1], expected_total_days)
   
   ## Testing plotting
