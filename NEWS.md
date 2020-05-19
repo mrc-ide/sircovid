@@ -1,3 +1,7 @@
+# sircovid 0.2.34
+
+- Fix bug in plot.pmcmc_list
+
 # sircovid 0.2.33
 
 - Fix bug in miscalculation of R compartment in new_hospital_model
