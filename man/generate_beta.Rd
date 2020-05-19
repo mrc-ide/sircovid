@@ -6,13 +6,13 @@
 \usage{
 generate_beta(
   beta_start,
-  start_date = "2020-02-02",
-  reduction_start = "2020-03-16",
+  start_date = sircovid_date("2020-02-02"),
+  reduction_start = sircovid_date("2020-03-16"),
   beta_reduction = 0.238,
   beta_end = NULL,
   reduction_period = 10,
   beta_pl = NULL,
-  pl_start = "2020-04-22",
+  pl_start = sircovid_date("2020-04-22"),
   pl_transition_period = 7
 )
 }

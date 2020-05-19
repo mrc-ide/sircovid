@@ -69,7 +69,7 @@ scan_beta_date <- function(
   # Set up parameter space to scan
   #
   beta_1D <- seq(min_beta, max_beta, beta_step)
-  date_list <- seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
+  date_list <- seq(first_start_date, last_start_date, day_step)
   param_grid <- expand.grid(beta = beta_1D, start_date = date_list)
 
   #

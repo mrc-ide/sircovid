@@ -43,7 +43,7 @@ sample_grid_scan <- function(scan_results,
   # construct what the grid of beta and start values that 
   # correspond to the z axis matrix
   x_grid <- matrix(scan_results$x, nrow = nr, ncol = nc)
-  y_grid <- matrix(as.character(scan_results$y), nrow = nr, 
+  y_grid <- matrix(scan_results$y, nrow = nr, 
                    ncol = nc, byrow = TRUE)
   
   # draw which grid pairs are chosen
