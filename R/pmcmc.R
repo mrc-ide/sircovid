@@ -166,7 +166,7 @@ pmcmc <- function(data,
   # Check pars_init input
   #
   if (!all(c("names", "init", "min", "max", "discrete") %in% colnames(pars_to_sample))) {
-    stop("pars_to_samples must contain columns 'names', 'init', 'min', 'max' and 'discrete'")
+    stop("pars_to_sample must contain columns 'names', 'init', 'min', 'max' and 'discrete'")
   }
   par_names <- as.character(pars_to_sample$names)
   
