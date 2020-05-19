@@ -979,6 +979,652 @@ typedef struct hospital_with_serology_internal {
   double *trans_increase;
   double *trans_profile;
 } hospital_with_serology_internal;
+typedef struct hospital_with_serology_testing_internal {
+  double *aux_EE;
+  double *aux_II_asympt;
+  double *aux_II_comm_D;
+  double *aux_II_hosp_D_conf;
+  double *aux_II_hosp_D_unconf;
+  double *aux_II_hosp_R_conf;
+  double *aux_II_hosp_R_unconf;
+  double *aux_II_ICU_D;
+  double *aux_II_ICU_R;
+  double *aux_II_ILI;
+  double *aux_II_mild;
+  double *aux_II_triage_D;
+  double *aux_II_triage_R;
+  double *aux_p_bin;
+  double *aux_R_pre;
+  double *aux_R_stepdown;
+  double *beta_t;
+  double *beta_y;
+  double comm_D_transmission;
+  double *D0_comm;
+  double *D0_hosp;
+  double *delta_D_comm;
+  double *delta_D_hosp;
+  double *delta_E;
+  double *delta_I_asympt;
+  double *delta_I_comm_D;
+  double *delta_I_ICU_D;
+  double *delta_I_ICU_R;
+  double *delta_I_ILI;
+  double *delta_I_mild;
+  double *delta_I_triage_D;
+  double *delta_I_triage_R;
+  double *delta_R_neg;
+  double *delta_R_pos;
+  double *delta_R_pre;
+  double *delta_R_stepdown;
+  int dim_aux_EE;
+  int dim_aux_EE_1;
+  int dim_aux_EE_12;
+  int dim_aux_EE_2;
+  int dim_aux_EE_3;
+  int dim_aux_II_asympt;
+  int dim_aux_II_asympt_1;
+  int dim_aux_II_asympt_12;
+  int dim_aux_II_asympt_2;
+  int dim_aux_II_asympt_3;
+  int dim_aux_II_comm_D;
+  int dim_aux_II_comm_D_1;
+  int dim_aux_II_comm_D_12;
+  int dim_aux_II_comm_D_2;
+  int dim_aux_II_comm_D_3;
+  int dim_aux_II_hosp_D_conf;
+  int dim_aux_II_hosp_D_conf_1;
+  int dim_aux_II_hosp_D_conf_12;
+  int dim_aux_II_hosp_D_conf_2;
+  int dim_aux_II_hosp_D_conf_3;
+  int dim_aux_II_hosp_D_unconf;
+  int dim_aux_II_hosp_D_unconf_1;
+  int dim_aux_II_hosp_D_unconf_12;
+  int dim_aux_II_hosp_D_unconf_2;
+  int dim_aux_II_hosp_D_unconf_3;
+  int dim_aux_II_hosp_R_conf;
+  int dim_aux_II_hosp_R_conf_1;
+  int dim_aux_II_hosp_R_conf_12;
+  int dim_aux_II_hosp_R_conf_2;
+  int dim_aux_II_hosp_R_conf_3;
+  int dim_aux_II_hosp_R_unconf;
+  int dim_aux_II_hosp_R_unconf_1;
+  int dim_aux_II_hosp_R_unconf_12;
+  int dim_aux_II_hosp_R_unconf_2;
+  int dim_aux_II_hosp_R_unconf_3;
+  int dim_aux_II_ICU_D;
+  int dim_aux_II_ICU_D_1;
+  int dim_aux_II_ICU_D_12;
+  int dim_aux_II_ICU_D_2;
+  int dim_aux_II_ICU_D_3;
+  int dim_aux_II_ICU_R;
+  int dim_aux_II_ICU_R_1;
+  int dim_aux_II_ICU_R_12;
+  int dim_aux_II_ICU_R_2;
+  int dim_aux_II_ICU_R_3;
+  int dim_aux_II_ILI;
+  int dim_aux_II_ILI_1;
+  int dim_aux_II_ILI_12;
+  int dim_aux_II_ILI_2;
+  int dim_aux_II_ILI_3;
+  int dim_aux_II_mild;
+  int dim_aux_II_mild_1;
+  int dim_aux_II_mild_12;
+  int dim_aux_II_mild_2;
+  int dim_aux_II_mild_3;
+  int dim_aux_II_triage_D;
+  int dim_aux_II_triage_D_1;
+  int dim_aux_II_triage_D_12;
+  int dim_aux_II_triage_D_2;
+  int dim_aux_II_triage_D_3;
+  int dim_aux_II_triage_R;
+  int dim_aux_II_triage_R_1;
+  int dim_aux_II_triage_R_12;
+  int dim_aux_II_triage_R_2;
+  int dim_aux_II_triage_R_3;
+  int dim_aux_p_bin;
+  int dim_aux_p_bin_1;
+  int dim_aux_p_bin_2;
+  int dim_aux_R_pre;
+  int dim_aux_R_pre_1;
+  int dim_aux_R_pre_2;
+  int dim_aux_R_stepdown;
+  int dim_aux_R_stepdown_1;
+  int dim_aux_R_stepdown_2;
+  int dim_beta_t;
+  int dim_beta_y;
+  int dim_D_comm;
+  int dim_D_hosp;
+  int dim_D0_comm;
+  int dim_D0_hosp;
+  int dim_delta_D_comm;
+  int dim_delta_D_hosp;
+  int dim_delta_E;
+  int dim_delta_E_1;
+  int dim_delta_E_12;
+  int dim_delta_E_2;
+  int dim_delta_E_3;
+  int dim_delta_I_asympt;
+  int dim_delta_I_asympt_1;
+  int dim_delta_I_asympt_12;
+  int dim_delta_I_asympt_2;
+  int dim_delta_I_asympt_3;
+  int dim_delta_I_comm_D;
+  int dim_delta_I_comm_D_1;
+  int dim_delta_I_comm_D_12;
+  int dim_delta_I_comm_D_2;
+  int dim_delta_I_comm_D_3;
+  int dim_delta_I_ICU_D;
+  int dim_delta_I_ICU_D_1;
+  int dim_delta_I_ICU_D_12;
+  int dim_delta_I_ICU_D_2;
+  int dim_delta_I_ICU_D_3;
+  int dim_delta_I_ICU_R;
+  int dim_delta_I_ICU_R_1;
+  int dim_delta_I_ICU_R_12;
+  int dim_delta_I_ICU_R_2;
+  int dim_delta_I_ICU_R_3;
+  int dim_delta_I_ILI;
+  int dim_delta_I_ILI_1;
+  int dim_delta_I_ILI_12;
+  int dim_delta_I_ILI_2;
+  int dim_delta_I_ILI_3;
+  int dim_delta_I_mild;
+  int dim_delta_I_mild_1;
+  int dim_delta_I_mild_12;
+  int dim_delta_I_mild_2;
+  int dim_delta_I_mild_3;
+  int dim_delta_I_triage_D;
+  int dim_delta_I_triage_D_1;
+  int dim_delta_I_triage_D_12;
+  int dim_delta_I_triage_D_2;
+  int dim_delta_I_triage_D_3;
+  int dim_delta_I_triage_R;
+  int dim_delta_I_triage_R_1;
+  int dim_delta_I_triage_R_12;
+  int dim_delta_I_triage_R_2;
+  int dim_delta_I_triage_R_3;
+  int dim_delta_R_neg;
+  int dim_delta_R_pos;
+  int dim_delta_R_pre;
+  int dim_delta_R_pre_1;
+  int dim_delta_R_pre_2;
+  int dim_delta_R_stepdown;
+  int dim_delta_R_stepdown_1;
+  int dim_delta_R_stepdown_2;
+  int dim_E;
+  int dim_E_1;
+  int dim_E_12;
+  int dim_E_2;
+  int dim_E_3;
+  int dim_E0;
+  int dim_E0_1;
+  int dim_E0_12;
+  int dim_E0_2;
+  int dim_E0_3;
+  int dim_I_asympt;
+  int dim_I_asympt_1;
+  int dim_I_asympt_12;
+  int dim_I_asympt_2;
+  int dim_I_asympt_3;
+  int dim_I_comm_D;
+  int dim_I_comm_D_1;
+  int dim_I_comm_D_12;
+  int dim_I_comm_D_2;
+  int dim_I_comm_D_3;
+  int dim_I_hosp_D_conf;
+  int dim_I_hosp_D_conf_1;
+  int dim_I_hosp_D_conf_12;
+  int dim_I_hosp_D_conf_2;
+  int dim_I_hosp_D_conf_3;
+  int dim_I_hosp_D_unconf;
+  int dim_I_hosp_D_unconf_1;
+  int dim_I_hosp_D_unconf_12;
+  int dim_I_hosp_D_unconf_2;
+  int dim_I_hosp_D_unconf_3;
+  int dim_I_hosp_R_conf;
+  int dim_I_hosp_R_conf_1;
+  int dim_I_hosp_R_conf_12;
+  int dim_I_hosp_R_conf_2;
+  int dim_I_hosp_R_conf_3;
+  int dim_I_hosp_R_unconf;
+  int dim_I_hosp_R_unconf_1;
+  int dim_I_hosp_R_unconf_12;
+  int dim_I_hosp_R_unconf_2;
+  int dim_I_hosp_R_unconf_3;
+  int dim_I_ICU_D;
+  int dim_I_ICU_D_1;
+  int dim_I_ICU_D_12;
+  int dim_I_ICU_D_2;
+  int dim_I_ICU_D_3;
+  int dim_I_ICU_R;
+  int dim_I_ICU_R_1;
+  int dim_I_ICU_R_12;
+  int dim_I_ICU_R_2;
+  int dim_I_ICU_R_3;
+  int dim_I_ILI;
+  int dim_I_ILI_1;
+  int dim_I_ILI_12;
+  int dim_I_ILI_2;
+  int dim_I_ILI_3;
+  int dim_I_mild;
+  int dim_I_mild_1;
+  int dim_I_mild_12;
+  int dim_I_mild_2;
+  int dim_I_mild_3;
+  int dim_I_triage_D;
+  int dim_I_triage_D_1;
+  int dim_I_triage_D_12;
+  int dim_I_triage_D_2;
+  int dim_I_triage_D_3;
+  int dim_I_triage_R;
+  int dim_I_triage_R_1;
+  int dim_I_triage_R_12;
+  int dim_I_triage_R_2;
+  int dim_I_triage_R_3;
+  int dim_I_with_diff_trans;
+  int dim_I_with_diff_trans_1;
+  int dim_I_with_diff_trans_2;
+  int dim_I0_asympt;
+  int dim_I0_asympt_1;
+  int dim_I0_asympt_12;
+  int dim_I0_asympt_2;
+  int dim_I0_asympt_3;
+  int dim_I0_comm_D;
+  int dim_I0_comm_D_1;
+  int dim_I0_comm_D_12;
+  int dim_I0_comm_D_2;
+  int dim_I0_comm_D_3;
+  int dim_I0_hosp_D_conf;
+  int dim_I0_hosp_D_conf_1;
+  int dim_I0_hosp_D_conf_12;
+  int dim_I0_hosp_D_conf_2;
+  int dim_I0_hosp_D_conf_3;
+  int dim_I0_hosp_D_unconf;
+  int dim_I0_hosp_D_unconf_1;
+  int dim_I0_hosp_D_unconf_12;
+  int dim_I0_hosp_D_unconf_2;
+  int dim_I0_hosp_D_unconf_3;
+  int dim_I0_hosp_R_conf;
+  int dim_I0_hosp_R_conf_1;
+  int dim_I0_hosp_R_conf_12;
+  int dim_I0_hosp_R_conf_2;
+  int dim_I0_hosp_R_conf_3;
+  int dim_I0_hosp_R_unconf;
+  int dim_I0_hosp_R_unconf_1;
+  int dim_I0_hosp_R_unconf_12;
+  int dim_I0_hosp_R_unconf_2;
+  int dim_I0_hosp_R_unconf_3;
+  int dim_I0_ICU_D;
+  int dim_I0_ICU_D_1;
+  int dim_I0_ICU_D_12;
+  int dim_I0_ICU_D_2;
+  int dim_I0_ICU_D_3;
+  int dim_I0_ICU_R;
+  int dim_I0_ICU_R_1;
+  int dim_I0_ICU_R_12;
+  int dim_I0_ICU_R_2;
+  int dim_I0_ICU_R_3;
+  int dim_I0_ILI;
+  int dim_I0_ILI_1;
+  int dim_I0_ILI_12;
+  int dim_I0_ILI_2;
+  int dim_I0_ILI_3;
+  int dim_I0_mild;
+  int dim_I0_mild_1;
+  int dim_I0_mild_12;
+  int dim_I0_mild_2;
+  int dim_I0_mild_3;
+  int dim_I0_triage_D;
+  int dim_I0_triage_D_1;
+  int dim_I0_triage_D_12;
+  int dim_I0_triage_D_2;
+  int dim_I0_triage_D_3;
+  int dim_I0_triage_R;
+  int dim_I0_triage_R_1;
+  int dim_I0_triage_R_12;
+  int dim_I0_triage_R_2;
+  int dim_I0_triage_R_3;
+  int dim_lambda;
+  int dim_m;
+  int dim_m_1;
+  int dim_m_2;
+  int dim_n_com_to_R_pre;
+  int dim_n_com_to_R_total;
+  int dim_n_EE;
+  int dim_n_EE_1;
+  int dim_n_EE_12;
+  int dim_n_EE_2;
+  int dim_n_EE_3;
+  int dim_n_EI_asympt;
+  int dim_n_EI_asympt_1;
+  int dim_n_EI_asympt_2;
+  int dim_n_EI_ILI;
+  int dim_n_EI_ILI_1;
+  int dim_n_EI_ILI_2;
+  int dim_n_EI_mild;
+  int dim_n_EI_mild_1;
+  int dim_n_EI_mild_2;
+  int dim_n_hosp_non_ICU;
+  int dim_n_hosp_non_ICU_1;
+  int dim_n_hosp_non_ICU_2;
+  int dim_n_I_hosp_D_unconf_to_conf;
+  int dim_n_I_hosp_D_unconf_to_conf_1;
+  int dim_n_I_hosp_D_unconf_to_conf_12;
+  int dim_n_I_hosp_D_unconf_to_conf_2;
+  int dim_n_I_hosp_D_unconf_to_conf_3;
+  int dim_n_I_hosp_R_unconf_to_conf;
+  int dim_n_I_hosp_R_unconf_to_conf_1;
+  int dim_n_I_hosp_R_unconf_to_conf_12;
+  int dim_n_I_hosp_R_unconf_to_conf_2;
+  int dim_n_I_hosp_R_unconf_to_conf_3;
+  int dim_n_ICU_to_R_stepdown;
+  int dim_n_II_asympt;
+  int dim_n_II_asympt_1;
+  int dim_n_II_asympt_12;
+  int dim_n_II_asympt_2;
+  int dim_n_II_asympt_3;
+  int dim_n_II_comm_D;
+  int dim_n_II_comm_D_1;
+  int dim_n_II_comm_D_12;
+  int dim_n_II_comm_D_2;
+  int dim_n_II_comm_D_3;
+  int dim_n_II_hosp_D_conf;
+  int dim_n_II_hosp_D_conf_1;
+  int dim_n_II_hosp_D_conf_12;
+  int dim_n_II_hosp_D_conf_2;
+  int dim_n_II_hosp_D_conf_3;
+  int dim_n_II_hosp_D_unconf;
+  int dim_n_II_hosp_D_unconf_1;
+  int dim_n_II_hosp_D_unconf_12;
+  int dim_n_II_hosp_D_unconf_2;
+  int dim_n_II_hosp_D_unconf_3;
+  int dim_n_II_hosp_R_conf;
+  int dim_n_II_hosp_R_conf_1;
+  int dim_n_II_hosp_R_conf_12;
+  int dim_n_II_hosp_R_conf_2;
+  int dim_n_II_hosp_R_conf_3;
+  int dim_n_II_hosp_R_unconf;
+  int dim_n_II_hosp_R_unconf_1;
+  int dim_n_II_hosp_R_unconf_12;
+  int dim_n_II_hosp_R_unconf_2;
+  int dim_n_II_hosp_R_unconf_3;
+  int dim_n_II_ICU_D;
+  int dim_n_II_ICU_D_1;
+  int dim_n_II_ICU_D_12;
+  int dim_n_II_ICU_D_2;
+  int dim_n_II_ICU_D_3;
+  int dim_n_II_ICU_R;
+  int dim_n_II_ICU_R_1;
+  int dim_n_II_ICU_R_12;
+  int dim_n_II_ICU_R_2;
+  int dim_n_II_ICU_R_3;
+  int dim_n_II_ILI;
+  int dim_n_II_ILI_1;
+  int dim_n_II_ILI_12;
+  int dim_n_II_ILI_2;
+  int dim_n_II_ILI_3;
+  int dim_n_II_mild;
+  int dim_n_II_mild_1;
+  int dim_n_II_mild_12;
+  int dim_n_II_mild_2;
+  int dim_n_II_mild_3;
+  int dim_n_II_triage_D;
+  int dim_n_II_triage_D_1;
+  int dim_n_II_triage_D_12;
+  int dim_n_II_triage_D_2;
+  int dim_n_II_triage_D_3;
+  int dim_n_II_triage_R;
+  int dim_n_II_triage_R_1;
+  int dim_n_II_triage_R_12;
+  int dim_n_II_triage_R_2;
+  int dim_n_II_triage_R_3;
+  int dim_n_ILI_to_comm_D;
+  int dim_n_ILI_to_comm_D_1;
+  int dim_n_ILI_to_comm_D_2;
+  int dim_n_ILI_to_hosp;
+  int dim_n_ILI_to_hosp_1;
+  int dim_n_ILI_to_hosp_2;
+  int dim_n_ILI_to_hosp_D;
+  int dim_n_ILI_to_hosp_D_1;
+  int dim_n_ILI_to_hosp_D_2;
+  int dim_n_ILI_to_hosp_D_conf;
+  int dim_n_ILI_to_hosp_D_conf_1;
+  int dim_n_ILI_to_hosp_D_conf_2;
+  int dim_n_ILI_to_hosp_R;
+  int dim_n_ILI_to_hosp_R_1;
+  int dim_n_ILI_to_hosp_R_2;
+  int dim_n_ILI_to_hosp_R_conf;
+  int dim_n_ILI_to_hosp_R_conf_1;
+  int dim_n_ILI_to_hosp_R_conf_2;
+  int dim_n_ILI_to_triage;
+  int dim_n_ILI_to_triage_1;
+  int dim_n_ILI_to_triage_2;
+  int dim_n_ILI_to_triage_D;
+  int dim_n_ILI_to_triage_D_1;
+  int dim_n_ILI_to_triage_D_2;
+  int dim_n_ILI_to_triage_R;
+  int dim_n_ILI_to_triage_R_1;
+  int dim_n_ILI_to_triage_R_2;
+  int dim_n_R_pre;
+  int dim_n_R_pre_1;
+  int dim_n_R_pre_2;
+  int dim_n_R_stepdown;
+  int dim_n_R_stepdown_1;
+  int dim_n_R_stepdown_2;
+  int dim_n_SE;
+  int dim_new_I_hosp_D_conf;
+  int dim_new_I_hosp_D_conf_1;
+  int dim_new_I_hosp_D_conf_12;
+  int dim_new_I_hosp_D_conf_2;
+  int dim_new_I_hosp_D_conf_3;
+  int dim_new_I_hosp_D_unconf;
+  int dim_new_I_hosp_D_unconf_1;
+  int dim_new_I_hosp_D_unconf_12;
+  int dim_new_I_hosp_D_unconf_2;
+  int dim_new_I_hosp_D_unconf_3;
+  int dim_new_I_hosp_R_conf;
+  int dim_new_I_hosp_R_conf_1;
+  int dim_new_I_hosp_R_conf_12;
+  int dim_new_I_hosp_R_conf_2;
+  int dim_new_I_hosp_R_conf_3;
+  int dim_new_I_hosp_R_unconf;
+  int dim_new_I_hosp_R_unconf_1;
+  int dim_new_I_hosp_R_unconf_12;
+  int dim_new_I_hosp_R_unconf_2;
+  int dim_new_I_hosp_R_unconf_3;
+  int dim_p_admit_conf;
+  int dim_p_asympt;
+  int dim_p_death_comm;
+  int dim_p_death_hosp_D;
+  int dim_p_death_ICU;
+  int dim_p_ICU_hosp;
+  int dim_p_R_pre;
+  int dim_p_recov_ILI;
+  int dim_p_SE;
+  int dim_p_seroconversion;
+  int dim_p_sympt_ILI;
+  int dim_R_neg;
+  int dim_R_pos;
+  int dim_R_pre;
+  int dim_R_pre_1;
+  int dim_R_pre_2;
+  int dim_R_stepdown;
+  int dim_R_stepdown_1;
+  int dim_R_stepdown_2;
+  int dim_R0_neg;
+  int dim_R0_pos;
+  int dim_R0_pre;
+  int dim_R0_pre_1;
+  int dim_R0_pre_2;
+  int dim_R0_stepdown;
+  int dim_R0_stepdown_1;
+  int dim_R0_stepdown_2;
+  int dim_S;
+  int dim_s_ij;
+  int dim_s_ij_1;
+  int dim_s_ij_2;
+  int dim_S0;
+  int dim_trans_increase;
+  int dim_trans_increase_1;
+  int dim_trans_increase_2;
+  int dim_trans_profile;
+  int dim_trans_profile_1;
+  int dim_trans_profile_2;
+  double dt;
+  double *E0;
+  double gamma_asympt;
+  double gamma_comm_D;
+  double gamma_E;
+  double gamma_hosp_D;
+  double gamma_hosp_R;
+  double gamma_ICU_D;
+  double gamma_ICU_R;
+  double gamma_ILI;
+  double gamma_mild;
+  double gamma_R_pre;
+  double gamma_stepdown;
+  double gamma_test;
+  double gamma_triage;
+  double hosp_transmission;
+  double *I_with_diff_trans;
+  double *I0_asympt;
+  double *I0_comm_D;
+  double *I0_hosp_D_conf;
+  double *I0_hosp_D_unconf;
+  double *I0_hosp_R_conf;
+  double *I0_hosp_R_unconf;
+  double *I0_ICU_D;
+  double *I0_ICU_R;
+  double *I0_ILI;
+  double *I0_mild;
+  double *I0_triage_D;
+  double *I0_triage_R;
+  double ICU_transmission;
+  double *initial_D_comm;
+  double *initial_D_hosp;
+  double *initial_E;
+  double *initial_I_asympt;
+  double *initial_I_comm_D;
+  double *initial_I_hosp_D_conf;
+  double *initial_I_hosp_D_unconf;
+  double *initial_I_hosp_R_conf;
+  double *initial_I_hosp_R_unconf;
+  double *initial_I_ICU_D;
+  double *initial_I_ICU_R;
+  double *initial_I_ILI;
+  double *initial_I_mild;
+  double *initial_I_triage_D;
+  double *initial_I_triage_R;
+  double *initial_R_neg;
+  double *initial_R_pos;
+  double *initial_R_pre;
+  double *initial_R_stepdown;
+  double *initial_S;
+  void *interpolate_beta;
+  double *lambda;
+  double *m;
+  int N_age;
+  double *n_com_to_R_pre;
+  double *n_com_to_R_total;
+  double *n_EE;
+  double *n_EI_asympt;
+  double *n_EI_ILI;
+  double *n_EI_mild;
+  double *n_hosp_non_ICU;
+  double *n_I_hosp_D_unconf_to_conf;
+  double *n_I_hosp_R_unconf_to_conf;
+  double *n_ICU_to_R_stepdown;
+  double *n_II_asympt;
+  double *n_II_comm_D;
+  double *n_II_hosp_D_conf;
+  double *n_II_hosp_D_unconf;
+  double *n_II_hosp_R_conf;
+  double *n_II_hosp_R_unconf;
+  double *n_II_ICU_D;
+  double *n_II_ICU_R;
+  double *n_II_ILI;
+  double *n_II_mild;
+  double *n_II_triage_D;
+  double *n_II_triage_R;
+  double *n_ILI_to_comm_D;
+  double *n_ILI_to_hosp;
+  double *n_ILI_to_hosp_D;
+  double *n_ILI_to_hosp_D_conf;
+  double *n_ILI_to_hosp_R;
+  double *n_ILI_to_hosp_R_conf;
+  double *n_ILI_to_triage;
+  double *n_ILI_to_triage_D;
+  double *n_ILI_to_triage_R;
+  double *n_R_pre;
+  double *n_R_stepdown;
+  double *n_SE;
+  double *new_I_hosp_D_conf;
+  double *new_I_hosp_D_unconf;
+  double *new_I_hosp_R_conf;
+  double *new_I_hosp_R_unconf;
+  int offset_variable_D_comm;
+  int offset_variable_D_hosp;
+  int offset_variable_E;
+  int offset_variable_I_asympt;
+  int offset_variable_I_comm_D;
+  int offset_variable_I_hosp_D_conf;
+  int offset_variable_I_hosp_D_unconf;
+  int offset_variable_I_hosp_R_conf;
+  int offset_variable_I_hosp_R_unconf;
+  int offset_variable_I_ICU_D;
+  int offset_variable_I_ICU_R;
+  int offset_variable_I_ILI;
+  int offset_variable_I_mild;
+  int offset_variable_I_triage_D;
+  int offset_variable_I_triage_R;
+  int offset_variable_R_neg;
+  int offset_variable_R_pre;
+  int offset_variable_R_stepdown;
+  double *p_admit_conf;
+  double *p_asympt;
+  double *p_death_comm;
+  double *p_death_hosp_D;
+  double *p_death_ICU;
+  double p_EE;
+  double *p_ICU_hosp;
+  double p_II_asympt;
+  double p_II_comm_D;
+  double p_II_hosp_D;
+  double p_II_hosp_R;
+  double p_II_ICU_D;
+  double p_II_ICU_R;
+  double p_II_ILI;
+  double p_II_mild;
+  double p_II_triage;
+  double *p_R_pre;
+  double p_R_stepdown;
+  double *p_recov_ILI;
+  double *p_SE;
+  double *p_seroconversion;
+  double *p_sympt_ILI;
+  double p_test;
+  double *R0_neg;
+  double *R0_pos;
+  double *R0_pre;
+  double *R0_stepdown;
+  int s_asympt;
+  int s_comm_D;
+  int s_E;
+  int s_hosp_D;
+  int s_hosp_R;
+  int s_ICU_D;
+  int s_ICU_R;
+  double *s_ij;
+  int s_ILI;
+  int s_mild;
+  int s_R_pre;
+  int s_stepdown;
+  int s_triage;
+  double *S0;
+  int trans_classes;
+  double *trans_increase;
+  double *trans_profile;
+} hospital_with_serology_testing_internal;
 typedef struct new_hospital_model_internal {
   double *aux_EE;
   double *aux_II_asympt;
@@ -1463,6 +2109,17 @@ SEXP hospital_with_serology_initial_conditions(SEXP internal_p, SEXP step_ptr);
 void hospital_with_serology_rhs(hospital_with_serology_internal* internal, size_t step, double * state, double * state_next, double * output);
 void hospital_with_serology_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next, size_t n_out, double * output, void * internal);
 SEXP hospital_with_serology_rhs_r(SEXP internal_p, SEXP step, SEXP state);
+hospital_with_serology_testing_internal* hospital_with_serology_testing_get_internal(SEXP internal_p, int closed_error);
+static void hospital_with_serology_testing_finalise(SEXP internal_p);
+SEXP hospital_with_serology_testing_create(SEXP user);
+void hospital_with_serology_testing_initmod_desolve(void(* odeparms) (int *, double *));
+SEXP hospital_with_serology_testing_contents(SEXP internal_p);
+SEXP hospital_with_serology_testing_set_user(SEXP internal_p, SEXP user);
+SEXP hospital_with_serology_testing_metadata(SEXP internal_p);
+SEXP hospital_with_serology_testing_initial_conditions(SEXP internal_p, SEXP step_ptr);
+void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal* internal, size_t step, double * state, double * state_next, double * output);
+void hospital_with_serology_testing_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next, size_t n_out, double * output, void * internal);
+SEXP hospital_with_serology_testing_rhs_r(SEXP internal_p, SEXP step, SEXP state);
 new_hospital_model_internal* new_hospital_model_get_internal(SEXP internal_p, int closed_error);
 static void new_hospital_model_finalise(SEXP internal_p);
 SEXP new_hospital_model_create(SEXP user);
@@ -6965,6 +7622,3851 @@ SEXP hospital_with_serology_rhs_r(SEXP internal_p, SEXP step, SEXP state) {
   double *output = REAL(output_ptr);
   GetRNGstate();
   hospital_with_serology_rhs(internal, INTEGER(step)[0], REAL(state), REAL(state_next), output);
+  PutRNGstate();
+  UNPROTECT(1);
+  return state_next;
+}
+hospital_with_serology_testing_internal* hospital_with_serology_testing_get_internal(SEXP internal_p, int closed_error) {
+  hospital_with_serology_testing_internal *internal = NULL;
+  if (TYPEOF(internal_p) != EXTPTRSXP) {
+    Rf_error("Expected an external pointer");
+  }
+  internal = (hospital_with_serology_testing_internal*) R_ExternalPtrAddr(internal_p);
+  if (!internal && closed_error) {
+    Rf_error("Pointer has been invalidated");
+  }
+  return internal;
+}
+void hospital_with_serology_testing_finalise(SEXP internal_p) {
+  hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 0);
+  if (internal_p) {
+    cinterpolate_free(internal->interpolate_beta);
+    internal->interpolate_beta = NULL;
+    Free(internal->aux_EE);
+    Free(internal->aux_II_asympt);
+    Free(internal->aux_II_comm_D);
+    Free(internal->aux_II_hosp_D_conf);
+    Free(internal->aux_II_hosp_D_unconf);
+    Free(internal->aux_II_hosp_R_conf);
+    Free(internal->aux_II_hosp_R_unconf);
+    Free(internal->aux_II_ICU_D);
+    Free(internal->aux_II_ICU_R);
+    Free(internal->aux_II_ILI);
+    Free(internal->aux_II_mild);
+    Free(internal->aux_II_triage_D);
+    Free(internal->aux_II_triage_R);
+    Free(internal->aux_p_bin);
+    Free(internal->aux_R_pre);
+    Free(internal->aux_R_stepdown);
+    Free(internal->beta_t);
+    Free(internal->beta_y);
+    Free(internal->D0_comm);
+    Free(internal->D0_hosp);
+    Free(internal->delta_D_comm);
+    Free(internal->delta_D_hosp);
+    Free(internal->delta_E);
+    Free(internal->delta_I_asympt);
+    Free(internal->delta_I_comm_D);
+    Free(internal->delta_I_ICU_D);
+    Free(internal->delta_I_ICU_R);
+    Free(internal->delta_I_ILI);
+    Free(internal->delta_I_mild);
+    Free(internal->delta_I_triage_D);
+    Free(internal->delta_I_triage_R);
+    Free(internal->delta_R_neg);
+    Free(internal->delta_R_pos);
+    Free(internal->delta_R_pre);
+    Free(internal->delta_R_stepdown);
+    Free(internal->E0);
+    Free(internal->I_with_diff_trans);
+    Free(internal->I0_asympt);
+    Free(internal->I0_comm_D);
+    Free(internal->I0_hosp_D_conf);
+    Free(internal->I0_hosp_D_unconf);
+    Free(internal->I0_hosp_R_conf);
+    Free(internal->I0_hosp_R_unconf);
+    Free(internal->I0_ICU_D);
+    Free(internal->I0_ICU_R);
+    Free(internal->I0_ILI);
+    Free(internal->I0_mild);
+    Free(internal->I0_triage_D);
+    Free(internal->I0_triage_R);
+    Free(internal->initial_D_comm);
+    Free(internal->initial_D_hosp);
+    Free(internal->initial_E);
+    Free(internal->initial_I_asympt);
+    Free(internal->initial_I_comm_D);
+    Free(internal->initial_I_hosp_D_conf);
+    Free(internal->initial_I_hosp_D_unconf);
+    Free(internal->initial_I_hosp_R_conf);
+    Free(internal->initial_I_hosp_R_unconf);
+    Free(internal->initial_I_ICU_D);
+    Free(internal->initial_I_ICU_R);
+    Free(internal->initial_I_ILI);
+    Free(internal->initial_I_mild);
+    Free(internal->initial_I_triage_D);
+    Free(internal->initial_I_triage_R);
+    Free(internal->initial_R_neg);
+    Free(internal->initial_R_pos);
+    Free(internal->initial_R_pre);
+    Free(internal->initial_R_stepdown);
+    Free(internal->initial_S);
+    Free(internal->lambda);
+    Free(internal->m);
+    Free(internal->n_com_to_R_pre);
+    Free(internal->n_com_to_R_total);
+    Free(internal->n_EE);
+    Free(internal->n_EI_asympt);
+    Free(internal->n_EI_ILI);
+    Free(internal->n_EI_mild);
+    Free(internal->n_hosp_non_ICU);
+    Free(internal->n_I_hosp_D_unconf_to_conf);
+    Free(internal->n_I_hosp_R_unconf_to_conf);
+    Free(internal->n_ICU_to_R_stepdown);
+    Free(internal->n_II_asympt);
+    Free(internal->n_II_comm_D);
+    Free(internal->n_II_hosp_D_conf);
+    Free(internal->n_II_hosp_D_unconf);
+    Free(internal->n_II_hosp_R_conf);
+    Free(internal->n_II_hosp_R_unconf);
+    Free(internal->n_II_ICU_D);
+    Free(internal->n_II_ICU_R);
+    Free(internal->n_II_ILI);
+    Free(internal->n_II_mild);
+    Free(internal->n_II_triage_D);
+    Free(internal->n_II_triage_R);
+    Free(internal->n_ILI_to_comm_D);
+    Free(internal->n_ILI_to_hosp);
+    Free(internal->n_ILI_to_hosp_D);
+    Free(internal->n_ILI_to_hosp_D_conf);
+    Free(internal->n_ILI_to_hosp_R);
+    Free(internal->n_ILI_to_hosp_R_conf);
+    Free(internal->n_ILI_to_triage);
+    Free(internal->n_ILI_to_triage_D);
+    Free(internal->n_ILI_to_triage_R);
+    Free(internal->n_R_pre);
+    Free(internal->n_R_stepdown);
+    Free(internal->n_SE);
+    Free(internal->new_I_hosp_D_conf);
+    Free(internal->new_I_hosp_D_unconf);
+    Free(internal->new_I_hosp_R_conf);
+    Free(internal->new_I_hosp_R_unconf);
+    Free(internal->p_admit_conf);
+    Free(internal->p_asympt);
+    Free(internal->p_death_comm);
+    Free(internal->p_death_hosp_D);
+    Free(internal->p_death_ICU);
+    Free(internal->p_ICU_hosp);
+    Free(internal->p_R_pre);
+    Free(internal->p_recov_ILI);
+    Free(internal->p_SE);
+    Free(internal->p_seroconversion);
+    Free(internal->p_sympt_ILI);
+    Free(internal->R0_neg);
+    Free(internal->R0_pos);
+    Free(internal->R0_pre);
+    Free(internal->R0_stepdown);
+    Free(internal->s_ij);
+    Free(internal->S0);
+    Free(internal->trans_increase);
+    Free(internal->trans_profile);
+    Free(internal);
+    R_ClearExternalPtr(internal_p);
+  }
+}
+SEXP hospital_with_serology_testing_create(SEXP user) {
+  hospital_with_serology_testing_internal *internal = (hospital_with_serology_testing_internal*) Calloc(1, hospital_with_serology_testing_internal);
+  internal->aux_EE = NULL;
+  internal->aux_II_asympt = NULL;
+  internal->aux_II_comm_D = NULL;
+  internal->aux_II_hosp_D_conf = NULL;
+  internal->aux_II_hosp_D_unconf = NULL;
+  internal->aux_II_hosp_R_conf = NULL;
+  internal->aux_II_hosp_R_unconf = NULL;
+  internal->aux_II_ICU_D = NULL;
+  internal->aux_II_ICU_R = NULL;
+  internal->aux_II_ILI = NULL;
+  internal->aux_II_mild = NULL;
+  internal->aux_II_triage_D = NULL;
+  internal->aux_II_triage_R = NULL;
+  internal->aux_p_bin = NULL;
+  internal->aux_R_pre = NULL;
+  internal->aux_R_stepdown = NULL;
+  internal->beta_t = NULL;
+  internal->beta_y = NULL;
+  internal->D0_comm = NULL;
+  internal->D0_hosp = NULL;
+  internal->delta_D_comm = NULL;
+  internal->delta_D_hosp = NULL;
+  internal->delta_E = NULL;
+  internal->delta_I_asympt = NULL;
+  internal->delta_I_comm_D = NULL;
+  internal->delta_I_ICU_D = NULL;
+  internal->delta_I_ICU_R = NULL;
+  internal->delta_I_ILI = NULL;
+  internal->delta_I_mild = NULL;
+  internal->delta_I_triage_D = NULL;
+  internal->delta_I_triage_R = NULL;
+  internal->delta_R_neg = NULL;
+  internal->delta_R_pos = NULL;
+  internal->delta_R_pre = NULL;
+  internal->delta_R_stepdown = NULL;
+  internal->E0 = NULL;
+  internal->I_with_diff_trans = NULL;
+  internal->I0_asympt = NULL;
+  internal->I0_comm_D = NULL;
+  internal->I0_hosp_D_conf = NULL;
+  internal->I0_hosp_D_unconf = NULL;
+  internal->I0_hosp_R_conf = NULL;
+  internal->I0_hosp_R_unconf = NULL;
+  internal->I0_ICU_D = NULL;
+  internal->I0_ICU_R = NULL;
+  internal->I0_ILI = NULL;
+  internal->I0_mild = NULL;
+  internal->I0_triage_D = NULL;
+  internal->I0_triage_R = NULL;
+  internal->initial_D_comm = NULL;
+  internal->initial_D_hosp = NULL;
+  internal->initial_E = NULL;
+  internal->initial_I_asympt = NULL;
+  internal->initial_I_comm_D = NULL;
+  internal->initial_I_hosp_D_conf = NULL;
+  internal->initial_I_hosp_D_unconf = NULL;
+  internal->initial_I_hosp_R_conf = NULL;
+  internal->initial_I_hosp_R_unconf = NULL;
+  internal->initial_I_ICU_D = NULL;
+  internal->initial_I_ICU_R = NULL;
+  internal->initial_I_ILI = NULL;
+  internal->initial_I_mild = NULL;
+  internal->initial_I_triage_D = NULL;
+  internal->initial_I_triage_R = NULL;
+  internal->initial_R_neg = NULL;
+  internal->initial_R_pos = NULL;
+  internal->initial_R_pre = NULL;
+  internal->initial_R_stepdown = NULL;
+  internal->initial_S = NULL;
+  internal->lambda = NULL;
+  internal->m = NULL;
+  internal->n_com_to_R_pre = NULL;
+  internal->n_com_to_R_total = NULL;
+  internal->n_EE = NULL;
+  internal->n_EI_asympt = NULL;
+  internal->n_EI_ILI = NULL;
+  internal->n_EI_mild = NULL;
+  internal->n_hosp_non_ICU = NULL;
+  internal->n_I_hosp_D_unconf_to_conf = NULL;
+  internal->n_I_hosp_R_unconf_to_conf = NULL;
+  internal->n_ICU_to_R_stepdown = NULL;
+  internal->n_II_asympt = NULL;
+  internal->n_II_comm_D = NULL;
+  internal->n_II_hosp_D_conf = NULL;
+  internal->n_II_hosp_D_unconf = NULL;
+  internal->n_II_hosp_R_conf = NULL;
+  internal->n_II_hosp_R_unconf = NULL;
+  internal->n_II_ICU_D = NULL;
+  internal->n_II_ICU_R = NULL;
+  internal->n_II_ILI = NULL;
+  internal->n_II_mild = NULL;
+  internal->n_II_triage_D = NULL;
+  internal->n_II_triage_R = NULL;
+  internal->n_ILI_to_comm_D = NULL;
+  internal->n_ILI_to_hosp = NULL;
+  internal->n_ILI_to_hosp_D = NULL;
+  internal->n_ILI_to_hosp_D_conf = NULL;
+  internal->n_ILI_to_hosp_R = NULL;
+  internal->n_ILI_to_hosp_R_conf = NULL;
+  internal->n_ILI_to_triage = NULL;
+  internal->n_ILI_to_triage_D = NULL;
+  internal->n_ILI_to_triage_R = NULL;
+  internal->n_R_pre = NULL;
+  internal->n_R_stepdown = NULL;
+  internal->n_SE = NULL;
+  internal->new_I_hosp_D_conf = NULL;
+  internal->new_I_hosp_D_unconf = NULL;
+  internal->new_I_hosp_R_conf = NULL;
+  internal->new_I_hosp_R_unconf = NULL;
+  internal->p_admit_conf = NULL;
+  internal->p_asympt = NULL;
+  internal->p_death_comm = NULL;
+  internal->p_death_hosp_D = NULL;
+  internal->p_death_ICU = NULL;
+  internal->p_ICU_hosp = NULL;
+  internal->p_R_pre = NULL;
+  internal->p_recov_ILI = NULL;
+  internal->p_SE = NULL;
+  internal->p_seroconversion = NULL;
+  internal->p_sympt_ILI = NULL;
+  internal->R0_neg = NULL;
+  internal->R0_pos = NULL;
+  internal->R0_pre = NULL;
+  internal->R0_stepdown = NULL;
+  internal->s_ij = NULL;
+  internal->S0 = NULL;
+  internal->trans_increase = NULL;
+  internal->trans_profile = NULL;
+  internal->beta_t = NULL;
+  internal->beta_y = NULL;
+  internal->comm_D_transmission = NA_REAL;
+  internal->D0_comm = NULL;
+  internal->D0_hosp = NULL;
+  internal->dt = NA_REAL;
+  internal->E0 = NULL;
+  internal->hosp_transmission = NA_REAL;
+  internal->I0_asympt = NULL;
+  internal->I0_comm_D = NULL;
+  internal->I0_hosp_D_conf = NULL;
+  internal->I0_hosp_D_unconf = NULL;
+  internal->I0_hosp_R_conf = NULL;
+  internal->I0_hosp_R_unconf = NULL;
+  internal->I0_ICU_D = NULL;
+  internal->I0_ICU_R = NULL;
+  internal->I0_ILI = NULL;
+  internal->I0_mild = NULL;
+  internal->I0_triage_D = NULL;
+  internal->I0_triage_R = NULL;
+  internal->ICU_transmission = NA_REAL;
+  internal->m = NULL;
+  internal->N_age = NA_INTEGER;
+  internal->p_admit_conf = NULL;
+  internal->p_asympt = NULL;
+  internal->p_death_comm = NULL;
+  internal->p_death_hosp_D = NULL;
+  internal->p_death_ICU = NULL;
+  internal->p_ICU_hosp = NULL;
+  internal->p_recov_ILI = NULL;
+  internal->p_seroconversion = NULL;
+  internal->p_sympt_ILI = NULL;
+  internal->R0_neg = NULL;
+  internal->R0_pos = NULL;
+  internal->R0_pre = NULL;
+  internal->R0_stepdown = NULL;
+  internal->s_asympt = NA_INTEGER;
+  internal->s_comm_D = NA_INTEGER;
+  internal->s_E = NA_INTEGER;
+  internal->s_hosp_D = NA_INTEGER;
+  internal->s_hosp_R = NA_INTEGER;
+  internal->s_ICU_D = NA_INTEGER;
+  internal->s_ICU_R = NA_INTEGER;
+  internal->s_ILI = NA_INTEGER;
+  internal->s_mild = NA_INTEGER;
+  internal->s_R_pre = NA_INTEGER;
+  internal->s_stepdown = NA_INTEGER;
+  internal->s_triage = NA_INTEGER;
+  internal->S0 = NULL;
+  internal->trans_classes = NA_INTEGER;
+  internal->trans_increase = NULL;
+  internal->trans_profile = NULL;
+  internal->gamma_asympt = 0.10000000000000001;
+  internal->gamma_comm_D = 0.10000000000000001;
+  internal->gamma_E = 0.10000000000000001;
+  internal->gamma_hosp_D = 0.10000000000000001;
+  internal->gamma_hosp_R = 0.10000000000000001;
+  internal->gamma_ICU_D = 0.10000000000000001;
+  internal->gamma_ICU_R = 0.10000000000000001;
+  internal->gamma_ILI = 0.10000000000000001;
+  internal->gamma_mild = 0.10000000000000001;
+  internal->gamma_R_pre = 0.10000000000000001;
+  internal->gamma_stepdown = 0.10000000000000001;
+  internal->gamma_test = 0.10000000000000001;
+  internal->gamma_triage = 0.10000000000000001;
+  SEXP ptr = PROTECT(R_MakeExternalPtr(internal, R_NilValue, R_NilValue));
+  R_RegisterCFinalizer(ptr, hospital_with_serology_testing_finalise);
+  UNPROTECT(1);
+  return ptr;
+}
+static hospital_with_serology_testing_internal *hospital_with_serology_testing_internal_ds;
+void hospital_with_serology_testing_initmod_desolve(void(* odeparms) (int *, double *)) {
+  static DL_FUNC get_desolve_gparms = NULL;
+  if (get_desolve_gparms == NULL) {
+    get_desolve_gparms =
+      R_GetCCallable("deSolve", "get_deSolve_gparms");
+  }
+  hospital_with_serology_testing_internal_ds = hospital_with_serology_testing_get_internal(get_desolve_gparms(), 1);
+}
+SEXP hospital_with_serology_testing_contents(SEXP internal_p) {
+  hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 1);
+  SEXP contents = PROTECT(allocVector(VECSXP, 644));
+  SEXP aux_EE = PROTECT(allocVector(REALSXP, internal->dim_aux_EE));
+  memcpy(REAL(aux_EE), internal->aux_EE, internal->dim_aux_EE * sizeof(double));
+  odin_set_dim(aux_EE, 3, internal->dim_aux_EE_1, internal->dim_aux_EE_2, internal->dim_aux_EE_3);
+  SET_VECTOR_ELT(contents, 0, aux_EE);
+  SEXP aux_II_asympt = PROTECT(allocVector(REALSXP, internal->dim_aux_II_asympt));
+  memcpy(REAL(aux_II_asympt), internal->aux_II_asympt, internal->dim_aux_II_asympt * sizeof(double));
+  odin_set_dim(aux_II_asympt, 3, internal->dim_aux_II_asympt_1, internal->dim_aux_II_asympt_2, internal->dim_aux_II_asympt_3);
+  SET_VECTOR_ELT(contents, 1, aux_II_asympt);
+  SEXP aux_II_comm_D = PROTECT(allocVector(REALSXP, internal->dim_aux_II_comm_D));
+  memcpy(REAL(aux_II_comm_D), internal->aux_II_comm_D, internal->dim_aux_II_comm_D * sizeof(double));
+  odin_set_dim(aux_II_comm_D, 3, internal->dim_aux_II_comm_D_1, internal->dim_aux_II_comm_D_2, internal->dim_aux_II_comm_D_3);
+  SET_VECTOR_ELT(contents, 2, aux_II_comm_D);
+  SEXP aux_II_hosp_D_conf = PROTECT(allocVector(REALSXP, internal->dim_aux_II_hosp_D_conf));
+  memcpy(REAL(aux_II_hosp_D_conf), internal->aux_II_hosp_D_conf, internal->dim_aux_II_hosp_D_conf * sizeof(double));
+  odin_set_dim(aux_II_hosp_D_conf, 3, internal->dim_aux_II_hosp_D_conf_1, internal->dim_aux_II_hosp_D_conf_2, internal->dim_aux_II_hosp_D_conf_3);
+  SET_VECTOR_ELT(contents, 3, aux_II_hosp_D_conf);
+  SEXP aux_II_hosp_D_unconf = PROTECT(allocVector(REALSXP, internal->dim_aux_II_hosp_D_unconf));
+  memcpy(REAL(aux_II_hosp_D_unconf), internal->aux_II_hosp_D_unconf, internal->dim_aux_II_hosp_D_unconf * sizeof(double));
+  odin_set_dim(aux_II_hosp_D_unconf, 3, internal->dim_aux_II_hosp_D_unconf_1, internal->dim_aux_II_hosp_D_unconf_2, internal->dim_aux_II_hosp_D_unconf_3);
+  SET_VECTOR_ELT(contents, 4, aux_II_hosp_D_unconf);
+  SEXP aux_II_hosp_R_conf = PROTECT(allocVector(REALSXP, internal->dim_aux_II_hosp_R_conf));
+  memcpy(REAL(aux_II_hosp_R_conf), internal->aux_II_hosp_R_conf, internal->dim_aux_II_hosp_R_conf * sizeof(double));
+  odin_set_dim(aux_II_hosp_R_conf, 3, internal->dim_aux_II_hosp_R_conf_1, internal->dim_aux_II_hosp_R_conf_2, internal->dim_aux_II_hosp_R_conf_3);
+  SET_VECTOR_ELT(contents, 5, aux_II_hosp_R_conf);
+  SEXP aux_II_hosp_R_unconf = PROTECT(allocVector(REALSXP, internal->dim_aux_II_hosp_R_unconf));
+  memcpy(REAL(aux_II_hosp_R_unconf), internal->aux_II_hosp_R_unconf, internal->dim_aux_II_hosp_R_unconf * sizeof(double));
+  odin_set_dim(aux_II_hosp_R_unconf, 3, internal->dim_aux_II_hosp_R_unconf_1, internal->dim_aux_II_hosp_R_unconf_2, internal->dim_aux_II_hosp_R_unconf_3);
+  SET_VECTOR_ELT(contents, 6, aux_II_hosp_R_unconf);
+  SEXP aux_II_ICU_D = PROTECT(allocVector(REALSXP, internal->dim_aux_II_ICU_D));
+  memcpy(REAL(aux_II_ICU_D), internal->aux_II_ICU_D, internal->dim_aux_II_ICU_D * sizeof(double));
+  odin_set_dim(aux_II_ICU_D, 3, internal->dim_aux_II_ICU_D_1, internal->dim_aux_II_ICU_D_2, internal->dim_aux_II_ICU_D_3);
+  SET_VECTOR_ELT(contents, 7, aux_II_ICU_D);
+  SEXP aux_II_ICU_R = PROTECT(allocVector(REALSXP, internal->dim_aux_II_ICU_R));
+  memcpy(REAL(aux_II_ICU_R), internal->aux_II_ICU_R, internal->dim_aux_II_ICU_R * sizeof(double));
+  odin_set_dim(aux_II_ICU_R, 3, internal->dim_aux_II_ICU_R_1, internal->dim_aux_II_ICU_R_2, internal->dim_aux_II_ICU_R_3);
+  SET_VECTOR_ELT(contents, 8, aux_II_ICU_R);
+  SEXP aux_II_ILI = PROTECT(allocVector(REALSXP, internal->dim_aux_II_ILI));
+  memcpy(REAL(aux_II_ILI), internal->aux_II_ILI, internal->dim_aux_II_ILI * sizeof(double));
+  odin_set_dim(aux_II_ILI, 3, internal->dim_aux_II_ILI_1, internal->dim_aux_II_ILI_2, internal->dim_aux_II_ILI_3);
+  SET_VECTOR_ELT(contents, 9, aux_II_ILI);
+  SEXP aux_II_mild = PROTECT(allocVector(REALSXP, internal->dim_aux_II_mild));
+  memcpy(REAL(aux_II_mild), internal->aux_II_mild, internal->dim_aux_II_mild * sizeof(double));
+  odin_set_dim(aux_II_mild, 3, internal->dim_aux_II_mild_1, internal->dim_aux_II_mild_2, internal->dim_aux_II_mild_3);
+  SET_VECTOR_ELT(contents, 10, aux_II_mild);
+  SEXP aux_II_triage_D = PROTECT(allocVector(REALSXP, internal->dim_aux_II_triage_D));
+  memcpy(REAL(aux_II_triage_D), internal->aux_II_triage_D, internal->dim_aux_II_triage_D * sizeof(double));
+  odin_set_dim(aux_II_triage_D, 3, internal->dim_aux_II_triage_D_1, internal->dim_aux_II_triage_D_2, internal->dim_aux_II_triage_D_3);
+  SET_VECTOR_ELT(contents, 11, aux_II_triage_D);
+  SEXP aux_II_triage_R = PROTECT(allocVector(REALSXP, internal->dim_aux_II_triage_R));
+  memcpy(REAL(aux_II_triage_R), internal->aux_II_triage_R, internal->dim_aux_II_triage_R * sizeof(double));
+  odin_set_dim(aux_II_triage_R, 3, internal->dim_aux_II_triage_R_1, internal->dim_aux_II_triage_R_2, internal->dim_aux_II_triage_R_3);
+  SET_VECTOR_ELT(contents, 12, aux_II_triage_R);
+  SEXP aux_p_bin = PROTECT(allocVector(REALSXP, internal->dim_aux_p_bin));
+  memcpy(REAL(aux_p_bin), internal->aux_p_bin, internal->dim_aux_p_bin * sizeof(double));
+  odin_set_dim(aux_p_bin, 2, internal->dim_aux_p_bin_1, internal->dim_aux_p_bin_2);
+  SET_VECTOR_ELT(contents, 13, aux_p_bin);
+  SEXP aux_R_pre = PROTECT(allocVector(REALSXP, internal->dim_aux_R_pre));
+  memcpy(REAL(aux_R_pre), internal->aux_R_pre, internal->dim_aux_R_pre * sizeof(double));
+  odin_set_dim(aux_R_pre, 2, internal->dim_aux_R_pre_1, internal->dim_aux_R_pre_2);
+  SET_VECTOR_ELT(contents, 14, aux_R_pre);
+  SEXP aux_R_stepdown = PROTECT(allocVector(REALSXP, internal->dim_aux_R_stepdown));
+  memcpy(REAL(aux_R_stepdown), internal->aux_R_stepdown, internal->dim_aux_R_stepdown * sizeof(double));
+  odin_set_dim(aux_R_stepdown, 2, internal->dim_aux_R_stepdown_1, internal->dim_aux_R_stepdown_2);
+  SET_VECTOR_ELT(contents, 15, aux_R_stepdown);
+  SEXP beta_t = PROTECT(allocVector(REALSXP, internal->dim_beta_t));
+  memcpy(REAL(beta_t), internal->beta_t, internal->dim_beta_t * sizeof(double));
+  SET_VECTOR_ELT(contents, 16, beta_t);
+  SEXP beta_y = PROTECT(allocVector(REALSXP, internal->dim_beta_y));
+  memcpy(REAL(beta_y), internal->beta_y, internal->dim_beta_y * sizeof(double));
+  SET_VECTOR_ELT(contents, 17, beta_y);
+  SET_VECTOR_ELT(contents, 18, ScalarReal(internal->comm_D_transmission));
+  SEXP D0_comm = PROTECT(allocVector(REALSXP, internal->dim_D0_comm));
+  memcpy(REAL(D0_comm), internal->D0_comm, internal->dim_D0_comm * sizeof(double));
+  SET_VECTOR_ELT(contents, 19, D0_comm);
+  SEXP D0_hosp = PROTECT(allocVector(REALSXP, internal->dim_D0_hosp));
+  memcpy(REAL(D0_hosp), internal->D0_hosp, internal->dim_D0_hosp * sizeof(double));
+  SET_VECTOR_ELT(contents, 20, D0_hosp);
+  SEXP delta_D_comm = PROTECT(allocVector(REALSXP, internal->dim_delta_D_comm));
+  memcpy(REAL(delta_D_comm), internal->delta_D_comm, internal->dim_delta_D_comm * sizeof(double));
+  SET_VECTOR_ELT(contents, 21, delta_D_comm);
+  SEXP delta_D_hosp = PROTECT(allocVector(REALSXP, internal->dim_delta_D_hosp));
+  memcpy(REAL(delta_D_hosp), internal->delta_D_hosp, internal->dim_delta_D_hosp * sizeof(double));
+  SET_VECTOR_ELT(contents, 22, delta_D_hosp);
+  SEXP delta_E = PROTECT(allocVector(REALSXP, internal->dim_delta_E));
+  memcpy(REAL(delta_E), internal->delta_E, internal->dim_delta_E * sizeof(double));
+  odin_set_dim(delta_E, 3, internal->dim_delta_E_1, internal->dim_delta_E_2, internal->dim_delta_E_3);
+  SET_VECTOR_ELT(contents, 23, delta_E);
+  SEXP delta_I_asympt = PROTECT(allocVector(REALSXP, internal->dim_delta_I_asympt));
+  memcpy(REAL(delta_I_asympt), internal->delta_I_asympt, internal->dim_delta_I_asympt * sizeof(double));
+  odin_set_dim(delta_I_asympt, 3, internal->dim_delta_I_asympt_1, internal->dim_delta_I_asympt_2, internal->dim_delta_I_asympt_3);
+  SET_VECTOR_ELT(contents, 24, delta_I_asympt);
+  SEXP delta_I_comm_D = PROTECT(allocVector(REALSXP, internal->dim_delta_I_comm_D));
+  memcpy(REAL(delta_I_comm_D), internal->delta_I_comm_D, internal->dim_delta_I_comm_D * sizeof(double));
+  odin_set_dim(delta_I_comm_D, 3, internal->dim_delta_I_comm_D_1, internal->dim_delta_I_comm_D_2, internal->dim_delta_I_comm_D_3);
+  SET_VECTOR_ELT(contents, 25, delta_I_comm_D);
+  SEXP delta_I_ICU_D = PROTECT(allocVector(REALSXP, internal->dim_delta_I_ICU_D));
+  memcpy(REAL(delta_I_ICU_D), internal->delta_I_ICU_D, internal->dim_delta_I_ICU_D * sizeof(double));
+  odin_set_dim(delta_I_ICU_D, 3, internal->dim_delta_I_ICU_D_1, internal->dim_delta_I_ICU_D_2, internal->dim_delta_I_ICU_D_3);
+  SET_VECTOR_ELT(contents, 26, delta_I_ICU_D);
+  SEXP delta_I_ICU_R = PROTECT(allocVector(REALSXP, internal->dim_delta_I_ICU_R));
+  memcpy(REAL(delta_I_ICU_R), internal->delta_I_ICU_R, internal->dim_delta_I_ICU_R * sizeof(double));
+  odin_set_dim(delta_I_ICU_R, 3, internal->dim_delta_I_ICU_R_1, internal->dim_delta_I_ICU_R_2, internal->dim_delta_I_ICU_R_3);
+  SET_VECTOR_ELT(contents, 27, delta_I_ICU_R);
+  SEXP delta_I_ILI = PROTECT(allocVector(REALSXP, internal->dim_delta_I_ILI));
+  memcpy(REAL(delta_I_ILI), internal->delta_I_ILI, internal->dim_delta_I_ILI * sizeof(double));
+  odin_set_dim(delta_I_ILI, 3, internal->dim_delta_I_ILI_1, internal->dim_delta_I_ILI_2, internal->dim_delta_I_ILI_3);
+  SET_VECTOR_ELT(contents, 28, delta_I_ILI);
+  SEXP delta_I_mild = PROTECT(allocVector(REALSXP, internal->dim_delta_I_mild));
+  memcpy(REAL(delta_I_mild), internal->delta_I_mild, internal->dim_delta_I_mild * sizeof(double));
+  odin_set_dim(delta_I_mild, 3, internal->dim_delta_I_mild_1, internal->dim_delta_I_mild_2, internal->dim_delta_I_mild_3);
+  SET_VECTOR_ELT(contents, 29, delta_I_mild);
+  SEXP delta_I_triage_D = PROTECT(allocVector(REALSXP, internal->dim_delta_I_triage_D));
+  memcpy(REAL(delta_I_triage_D), internal->delta_I_triage_D, internal->dim_delta_I_triage_D * sizeof(double));
+  odin_set_dim(delta_I_triage_D, 3, internal->dim_delta_I_triage_D_1, internal->dim_delta_I_triage_D_2, internal->dim_delta_I_triage_D_3);
+  SET_VECTOR_ELT(contents, 30, delta_I_triage_D);
+  SEXP delta_I_triage_R = PROTECT(allocVector(REALSXP, internal->dim_delta_I_triage_R));
+  memcpy(REAL(delta_I_triage_R), internal->delta_I_triage_R, internal->dim_delta_I_triage_R * sizeof(double));
+  odin_set_dim(delta_I_triage_R, 3, internal->dim_delta_I_triage_R_1, internal->dim_delta_I_triage_R_2, internal->dim_delta_I_triage_R_3);
+  SET_VECTOR_ELT(contents, 31, delta_I_triage_R);
+  SEXP delta_R_neg = PROTECT(allocVector(REALSXP, internal->dim_delta_R_neg));
+  memcpy(REAL(delta_R_neg), internal->delta_R_neg, internal->dim_delta_R_neg * sizeof(double));
+  SET_VECTOR_ELT(contents, 32, delta_R_neg);
+  SEXP delta_R_pos = PROTECT(allocVector(REALSXP, internal->dim_delta_R_pos));
+  memcpy(REAL(delta_R_pos), internal->delta_R_pos, internal->dim_delta_R_pos * sizeof(double));
+  SET_VECTOR_ELT(contents, 33, delta_R_pos);
+  SEXP delta_R_pre = PROTECT(allocVector(REALSXP, internal->dim_delta_R_pre));
+  memcpy(REAL(delta_R_pre), internal->delta_R_pre, internal->dim_delta_R_pre * sizeof(double));
+  odin_set_dim(delta_R_pre, 2, internal->dim_delta_R_pre_1, internal->dim_delta_R_pre_2);
+  SET_VECTOR_ELT(contents, 34, delta_R_pre);
+  SEXP delta_R_stepdown = PROTECT(allocVector(REALSXP, internal->dim_delta_R_stepdown));
+  memcpy(REAL(delta_R_stepdown), internal->delta_R_stepdown, internal->dim_delta_R_stepdown * sizeof(double));
+  odin_set_dim(delta_R_stepdown, 2, internal->dim_delta_R_stepdown_1, internal->dim_delta_R_stepdown_2);
+  SET_VECTOR_ELT(contents, 35, delta_R_stepdown);
+  SET_VECTOR_ELT(contents, 36, ScalarInteger(internal->dim_aux_EE));
+  SET_VECTOR_ELT(contents, 37, ScalarInteger(internal->dim_aux_EE_1));
+  SET_VECTOR_ELT(contents, 38, ScalarInteger(internal->dim_aux_EE_12));
+  SET_VECTOR_ELT(contents, 39, ScalarInteger(internal->dim_aux_EE_2));
+  SET_VECTOR_ELT(contents, 40, ScalarInteger(internal->dim_aux_EE_3));
+  SET_VECTOR_ELT(contents, 41, ScalarInteger(internal->dim_aux_II_asympt));
+  SET_VECTOR_ELT(contents, 42, ScalarInteger(internal->dim_aux_II_asympt_1));
+  SET_VECTOR_ELT(contents, 43, ScalarInteger(internal->dim_aux_II_asympt_12));
+  SET_VECTOR_ELT(contents, 44, ScalarInteger(internal->dim_aux_II_asympt_2));
+  SET_VECTOR_ELT(contents, 45, ScalarInteger(internal->dim_aux_II_asympt_3));
+  SET_VECTOR_ELT(contents, 46, ScalarInteger(internal->dim_aux_II_comm_D));
+  SET_VECTOR_ELT(contents, 47, ScalarInteger(internal->dim_aux_II_comm_D_1));
+  SET_VECTOR_ELT(contents, 48, ScalarInteger(internal->dim_aux_II_comm_D_12));
+  SET_VECTOR_ELT(contents, 49, ScalarInteger(internal->dim_aux_II_comm_D_2));
+  SET_VECTOR_ELT(contents, 50, ScalarInteger(internal->dim_aux_II_comm_D_3));
+  SET_VECTOR_ELT(contents, 51, ScalarInteger(internal->dim_aux_II_hosp_D_conf));
+  SET_VECTOR_ELT(contents, 52, ScalarInteger(internal->dim_aux_II_hosp_D_conf_1));
+  SET_VECTOR_ELT(contents, 53, ScalarInteger(internal->dim_aux_II_hosp_D_conf_12));
+  SET_VECTOR_ELT(contents, 54, ScalarInteger(internal->dim_aux_II_hosp_D_conf_2));
+  SET_VECTOR_ELT(contents, 55, ScalarInteger(internal->dim_aux_II_hosp_D_conf_3));
+  SET_VECTOR_ELT(contents, 56, ScalarInteger(internal->dim_aux_II_hosp_D_unconf));
+  SET_VECTOR_ELT(contents, 57, ScalarInteger(internal->dim_aux_II_hosp_D_unconf_1));
+  SET_VECTOR_ELT(contents, 58, ScalarInteger(internal->dim_aux_II_hosp_D_unconf_12));
+  SET_VECTOR_ELT(contents, 59, ScalarInteger(internal->dim_aux_II_hosp_D_unconf_2));
+  SET_VECTOR_ELT(contents, 60, ScalarInteger(internal->dim_aux_II_hosp_D_unconf_3));
+  SET_VECTOR_ELT(contents, 61, ScalarInteger(internal->dim_aux_II_hosp_R_conf));
+  SET_VECTOR_ELT(contents, 62, ScalarInteger(internal->dim_aux_II_hosp_R_conf_1));
+  SET_VECTOR_ELT(contents, 63, ScalarInteger(internal->dim_aux_II_hosp_R_conf_12));
+  SET_VECTOR_ELT(contents, 64, ScalarInteger(internal->dim_aux_II_hosp_R_conf_2));
+  SET_VECTOR_ELT(contents, 65, ScalarInteger(internal->dim_aux_II_hosp_R_conf_3));
+  SET_VECTOR_ELT(contents, 66, ScalarInteger(internal->dim_aux_II_hosp_R_unconf));
+  SET_VECTOR_ELT(contents, 67, ScalarInteger(internal->dim_aux_II_hosp_R_unconf_1));
+  SET_VECTOR_ELT(contents, 68, ScalarInteger(internal->dim_aux_II_hosp_R_unconf_12));
+  SET_VECTOR_ELT(contents, 69, ScalarInteger(internal->dim_aux_II_hosp_R_unconf_2));
+  SET_VECTOR_ELT(contents, 70, ScalarInteger(internal->dim_aux_II_hosp_R_unconf_3));
+  SET_VECTOR_ELT(contents, 71, ScalarInteger(internal->dim_aux_II_ICU_D));
+  SET_VECTOR_ELT(contents, 72, ScalarInteger(internal->dim_aux_II_ICU_D_1));
+  SET_VECTOR_ELT(contents, 73, ScalarInteger(internal->dim_aux_II_ICU_D_12));
+  SET_VECTOR_ELT(contents, 74, ScalarInteger(internal->dim_aux_II_ICU_D_2));
+  SET_VECTOR_ELT(contents, 75, ScalarInteger(internal->dim_aux_II_ICU_D_3));
+  SET_VECTOR_ELT(contents, 76, ScalarInteger(internal->dim_aux_II_ICU_R));
+  SET_VECTOR_ELT(contents, 77, ScalarInteger(internal->dim_aux_II_ICU_R_1));
+  SET_VECTOR_ELT(contents, 78, ScalarInteger(internal->dim_aux_II_ICU_R_12));
+  SET_VECTOR_ELT(contents, 79, ScalarInteger(internal->dim_aux_II_ICU_R_2));
+  SET_VECTOR_ELT(contents, 80, ScalarInteger(internal->dim_aux_II_ICU_R_3));
+  SET_VECTOR_ELT(contents, 81, ScalarInteger(internal->dim_aux_II_ILI));
+  SET_VECTOR_ELT(contents, 82, ScalarInteger(internal->dim_aux_II_ILI_1));
+  SET_VECTOR_ELT(contents, 83, ScalarInteger(internal->dim_aux_II_ILI_12));
+  SET_VECTOR_ELT(contents, 84, ScalarInteger(internal->dim_aux_II_ILI_2));
+  SET_VECTOR_ELT(contents, 85, ScalarInteger(internal->dim_aux_II_ILI_3));
+  SET_VECTOR_ELT(contents, 86, ScalarInteger(internal->dim_aux_II_mild));
+  SET_VECTOR_ELT(contents, 87, ScalarInteger(internal->dim_aux_II_mild_1));
+  SET_VECTOR_ELT(contents, 88, ScalarInteger(internal->dim_aux_II_mild_12));
+  SET_VECTOR_ELT(contents, 89, ScalarInteger(internal->dim_aux_II_mild_2));
+  SET_VECTOR_ELT(contents, 90, ScalarInteger(internal->dim_aux_II_mild_3));
+  SET_VECTOR_ELT(contents, 91, ScalarInteger(internal->dim_aux_II_triage_D));
+  SET_VECTOR_ELT(contents, 92, ScalarInteger(internal->dim_aux_II_triage_D_1));
+  SET_VECTOR_ELT(contents, 93, ScalarInteger(internal->dim_aux_II_triage_D_12));
+  SET_VECTOR_ELT(contents, 94, ScalarInteger(internal->dim_aux_II_triage_D_2));
+  SET_VECTOR_ELT(contents, 95, ScalarInteger(internal->dim_aux_II_triage_D_3));
+  SET_VECTOR_ELT(contents, 96, ScalarInteger(internal->dim_aux_II_triage_R));
+  SET_VECTOR_ELT(contents, 97, ScalarInteger(internal->dim_aux_II_triage_R_1));
+  SET_VECTOR_ELT(contents, 98, ScalarInteger(internal->dim_aux_II_triage_R_12));
+  SET_VECTOR_ELT(contents, 99, ScalarInteger(internal->dim_aux_II_triage_R_2));
+  SET_VECTOR_ELT(contents, 100, ScalarInteger(internal->dim_aux_II_triage_R_3));
+  SET_VECTOR_ELT(contents, 101, ScalarInteger(internal->dim_aux_p_bin));
+  SET_VECTOR_ELT(contents, 102, ScalarInteger(internal->dim_aux_p_bin_1));
+  SET_VECTOR_ELT(contents, 103, ScalarInteger(internal->dim_aux_p_bin_2));
+  SET_VECTOR_ELT(contents, 104, ScalarInteger(internal->dim_aux_R_pre));
+  SET_VECTOR_ELT(contents, 105, ScalarInteger(internal->dim_aux_R_pre_1));
+  SET_VECTOR_ELT(contents, 106, ScalarInteger(internal->dim_aux_R_pre_2));
+  SET_VECTOR_ELT(contents, 107, ScalarInteger(internal->dim_aux_R_stepdown));
+  SET_VECTOR_ELT(contents, 108, ScalarInteger(internal->dim_aux_R_stepdown_1));
+  SET_VECTOR_ELT(contents, 109, ScalarInteger(internal->dim_aux_R_stepdown_2));
+  SET_VECTOR_ELT(contents, 110, ScalarInteger(internal->dim_beta_t));
+  SET_VECTOR_ELT(contents, 111, ScalarInteger(internal->dim_beta_y));
+  SET_VECTOR_ELT(contents, 112, ScalarInteger(internal->dim_D_comm));
+  SET_VECTOR_ELT(contents, 113, ScalarInteger(internal->dim_D_hosp));
+  SET_VECTOR_ELT(contents, 114, ScalarInteger(internal->dim_D0_comm));
+  SET_VECTOR_ELT(contents, 115, ScalarInteger(internal->dim_D0_hosp));
+  SET_VECTOR_ELT(contents, 116, ScalarInteger(internal->dim_delta_D_comm));
+  SET_VECTOR_ELT(contents, 117, ScalarInteger(internal->dim_delta_D_hosp));
+  SET_VECTOR_ELT(contents, 118, ScalarInteger(internal->dim_delta_E));
+  SET_VECTOR_ELT(contents, 119, ScalarInteger(internal->dim_delta_E_1));
+  SET_VECTOR_ELT(contents, 120, ScalarInteger(internal->dim_delta_E_12));
+  SET_VECTOR_ELT(contents, 121, ScalarInteger(internal->dim_delta_E_2));
+  SET_VECTOR_ELT(contents, 122, ScalarInteger(internal->dim_delta_E_3));
+  SET_VECTOR_ELT(contents, 123, ScalarInteger(internal->dim_delta_I_asympt));
+  SET_VECTOR_ELT(contents, 124, ScalarInteger(internal->dim_delta_I_asympt_1));
+  SET_VECTOR_ELT(contents, 125, ScalarInteger(internal->dim_delta_I_asympt_12));
+  SET_VECTOR_ELT(contents, 126, ScalarInteger(internal->dim_delta_I_asympt_2));
+  SET_VECTOR_ELT(contents, 127, ScalarInteger(internal->dim_delta_I_asympt_3));
+  SET_VECTOR_ELT(contents, 128, ScalarInteger(internal->dim_delta_I_comm_D));
+  SET_VECTOR_ELT(contents, 129, ScalarInteger(internal->dim_delta_I_comm_D_1));
+  SET_VECTOR_ELT(contents, 130, ScalarInteger(internal->dim_delta_I_comm_D_12));
+  SET_VECTOR_ELT(contents, 131, ScalarInteger(internal->dim_delta_I_comm_D_2));
+  SET_VECTOR_ELT(contents, 132, ScalarInteger(internal->dim_delta_I_comm_D_3));
+  SET_VECTOR_ELT(contents, 133, ScalarInteger(internal->dim_delta_I_ICU_D));
+  SET_VECTOR_ELT(contents, 134, ScalarInteger(internal->dim_delta_I_ICU_D_1));
+  SET_VECTOR_ELT(contents, 135, ScalarInteger(internal->dim_delta_I_ICU_D_12));
+  SET_VECTOR_ELT(contents, 136, ScalarInteger(internal->dim_delta_I_ICU_D_2));
+  SET_VECTOR_ELT(contents, 137, ScalarInteger(internal->dim_delta_I_ICU_D_3));
+  SET_VECTOR_ELT(contents, 138, ScalarInteger(internal->dim_delta_I_ICU_R));
+  SET_VECTOR_ELT(contents, 139, ScalarInteger(internal->dim_delta_I_ICU_R_1));
+  SET_VECTOR_ELT(contents, 140, ScalarInteger(internal->dim_delta_I_ICU_R_12));
+  SET_VECTOR_ELT(contents, 141, ScalarInteger(internal->dim_delta_I_ICU_R_2));
+  SET_VECTOR_ELT(contents, 142, ScalarInteger(internal->dim_delta_I_ICU_R_3));
+  SET_VECTOR_ELT(contents, 143, ScalarInteger(internal->dim_delta_I_ILI));
+  SET_VECTOR_ELT(contents, 144, ScalarInteger(internal->dim_delta_I_ILI_1));
+  SET_VECTOR_ELT(contents, 145, ScalarInteger(internal->dim_delta_I_ILI_12));
+  SET_VECTOR_ELT(contents, 146, ScalarInteger(internal->dim_delta_I_ILI_2));
+  SET_VECTOR_ELT(contents, 147, ScalarInteger(internal->dim_delta_I_ILI_3));
+  SET_VECTOR_ELT(contents, 148, ScalarInteger(internal->dim_delta_I_mild));
+  SET_VECTOR_ELT(contents, 149, ScalarInteger(internal->dim_delta_I_mild_1));
+  SET_VECTOR_ELT(contents, 150, ScalarInteger(internal->dim_delta_I_mild_12));
+  SET_VECTOR_ELT(contents, 151, ScalarInteger(internal->dim_delta_I_mild_2));
+  SET_VECTOR_ELT(contents, 152, ScalarInteger(internal->dim_delta_I_mild_3));
+  SET_VECTOR_ELT(contents, 153, ScalarInteger(internal->dim_delta_I_triage_D));
+  SET_VECTOR_ELT(contents, 154, ScalarInteger(internal->dim_delta_I_triage_D_1));
+  SET_VECTOR_ELT(contents, 155, ScalarInteger(internal->dim_delta_I_triage_D_12));
+  SET_VECTOR_ELT(contents, 156, ScalarInteger(internal->dim_delta_I_triage_D_2));
+  SET_VECTOR_ELT(contents, 157, ScalarInteger(internal->dim_delta_I_triage_D_3));
+  SET_VECTOR_ELT(contents, 158, ScalarInteger(internal->dim_delta_I_triage_R));
+  SET_VECTOR_ELT(contents, 159, ScalarInteger(internal->dim_delta_I_triage_R_1));
+  SET_VECTOR_ELT(contents, 160, ScalarInteger(internal->dim_delta_I_triage_R_12));
+  SET_VECTOR_ELT(contents, 161, ScalarInteger(internal->dim_delta_I_triage_R_2));
+  SET_VECTOR_ELT(contents, 162, ScalarInteger(internal->dim_delta_I_triage_R_3));
+  SET_VECTOR_ELT(contents, 163, ScalarInteger(internal->dim_delta_R_neg));
+  SET_VECTOR_ELT(contents, 164, ScalarInteger(internal->dim_delta_R_pos));
+  SET_VECTOR_ELT(contents, 165, ScalarInteger(internal->dim_delta_R_pre));
+  SET_VECTOR_ELT(contents, 166, ScalarInteger(internal->dim_delta_R_pre_1));
+  SET_VECTOR_ELT(contents, 167, ScalarInteger(internal->dim_delta_R_pre_2));
+  SET_VECTOR_ELT(contents, 168, ScalarInteger(internal->dim_delta_R_stepdown));
+  SET_VECTOR_ELT(contents, 169, ScalarInteger(internal->dim_delta_R_stepdown_1));
+  SET_VECTOR_ELT(contents, 170, ScalarInteger(internal->dim_delta_R_stepdown_2));
+  SET_VECTOR_ELT(contents, 171, ScalarInteger(internal->dim_E));
+  SET_VECTOR_ELT(contents, 172, ScalarInteger(internal->dim_E_1));
+  SET_VECTOR_ELT(contents, 173, ScalarInteger(internal->dim_E_12));
+  SET_VECTOR_ELT(contents, 174, ScalarInteger(internal->dim_E_2));
+  SET_VECTOR_ELT(contents, 175, ScalarInteger(internal->dim_E_3));
+  SET_VECTOR_ELT(contents, 176, ScalarInteger(internal->dim_E0));
+  SET_VECTOR_ELT(contents, 177, ScalarInteger(internal->dim_E0_1));
+  SET_VECTOR_ELT(contents, 178, ScalarInteger(internal->dim_E0_12));
+  SET_VECTOR_ELT(contents, 179, ScalarInteger(internal->dim_E0_2));
+  SET_VECTOR_ELT(contents, 180, ScalarInteger(internal->dim_E0_3));
+  SET_VECTOR_ELT(contents, 181, ScalarInteger(internal->dim_I_asympt));
+  SET_VECTOR_ELT(contents, 182, ScalarInteger(internal->dim_I_asympt_1));
+  SET_VECTOR_ELT(contents, 183, ScalarInteger(internal->dim_I_asympt_12));
+  SET_VECTOR_ELT(contents, 184, ScalarInteger(internal->dim_I_asympt_2));
+  SET_VECTOR_ELT(contents, 185, ScalarInteger(internal->dim_I_asympt_3));
+  SET_VECTOR_ELT(contents, 186, ScalarInteger(internal->dim_I_comm_D));
+  SET_VECTOR_ELT(contents, 187, ScalarInteger(internal->dim_I_comm_D_1));
+  SET_VECTOR_ELT(contents, 188, ScalarInteger(internal->dim_I_comm_D_12));
+  SET_VECTOR_ELT(contents, 189, ScalarInteger(internal->dim_I_comm_D_2));
+  SET_VECTOR_ELT(contents, 190, ScalarInteger(internal->dim_I_comm_D_3));
+  SET_VECTOR_ELT(contents, 191, ScalarInteger(internal->dim_I_hosp_D_conf));
+  SET_VECTOR_ELT(contents, 192, ScalarInteger(internal->dim_I_hosp_D_conf_1));
+  SET_VECTOR_ELT(contents, 193, ScalarInteger(internal->dim_I_hosp_D_conf_12));
+  SET_VECTOR_ELT(contents, 194, ScalarInteger(internal->dim_I_hosp_D_conf_2));
+  SET_VECTOR_ELT(contents, 195, ScalarInteger(internal->dim_I_hosp_D_conf_3));
+  SET_VECTOR_ELT(contents, 196, ScalarInteger(internal->dim_I_hosp_D_unconf));
+  SET_VECTOR_ELT(contents, 197, ScalarInteger(internal->dim_I_hosp_D_unconf_1));
+  SET_VECTOR_ELT(contents, 198, ScalarInteger(internal->dim_I_hosp_D_unconf_12));
+  SET_VECTOR_ELT(contents, 199, ScalarInteger(internal->dim_I_hosp_D_unconf_2));
+  SET_VECTOR_ELT(contents, 200, ScalarInteger(internal->dim_I_hosp_D_unconf_3));
+  SET_VECTOR_ELT(contents, 201, ScalarInteger(internal->dim_I_hosp_R_conf));
+  SET_VECTOR_ELT(contents, 202, ScalarInteger(internal->dim_I_hosp_R_conf_1));
+  SET_VECTOR_ELT(contents, 203, ScalarInteger(internal->dim_I_hosp_R_conf_12));
+  SET_VECTOR_ELT(contents, 204, ScalarInteger(internal->dim_I_hosp_R_conf_2));
+  SET_VECTOR_ELT(contents, 205, ScalarInteger(internal->dim_I_hosp_R_conf_3));
+  SET_VECTOR_ELT(contents, 206, ScalarInteger(internal->dim_I_hosp_R_unconf));
+  SET_VECTOR_ELT(contents, 207, ScalarInteger(internal->dim_I_hosp_R_unconf_1));
+  SET_VECTOR_ELT(contents, 208, ScalarInteger(internal->dim_I_hosp_R_unconf_12));
+  SET_VECTOR_ELT(contents, 209, ScalarInteger(internal->dim_I_hosp_R_unconf_2));
+  SET_VECTOR_ELT(contents, 210, ScalarInteger(internal->dim_I_hosp_R_unconf_3));
+  SET_VECTOR_ELT(contents, 211, ScalarInteger(internal->dim_I_ICU_D));
+  SET_VECTOR_ELT(contents, 212, ScalarInteger(internal->dim_I_ICU_D_1));
+  SET_VECTOR_ELT(contents, 213, ScalarInteger(internal->dim_I_ICU_D_12));
+  SET_VECTOR_ELT(contents, 214, ScalarInteger(internal->dim_I_ICU_D_2));
+  SET_VECTOR_ELT(contents, 215, ScalarInteger(internal->dim_I_ICU_D_3));
+  SET_VECTOR_ELT(contents, 216, ScalarInteger(internal->dim_I_ICU_R));
+  SET_VECTOR_ELT(contents, 217, ScalarInteger(internal->dim_I_ICU_R_1));
+  SET_VECTOR_ELT(contents, 218, ScalarInteger(internal->dim_I_ICU_R_12));
+  SET_VECTOR_ELT(contents, 219, ScalarInteger(internal->dim_I_ICU_R_2));
+  SET_VECTOR_ELT(contents, 220, ScalarInteger(internal->dim_I_ICU_R_3));
+  SET_VECTOR_ELT(contents, 221, ScalarInteger(internal->dim_I_ILI));
+  SET_VECTOR_ELT(contents, 222, ScalarInteger(internal->dim_I_ILI_1));
+  SET_VECTOR_ELT(contents, 223, ScalarInteger(internal->dim_I_ILI_12));
+  SET_VECTOR_ELT(contents, 224, ScalarInteger(internal->dim_I_ILI_2));
+  SET_VECTOR_ELT(contents, 225, ScalarInteger(internal->dim_I_ILI_3));
+  SET_VECTOR_ELT(contents, 226, ScalarInteger(internal->dim_I_mild));
+  SET_VECTOR_ELT(contents, 227, ScalarInteger(internal->dim_I_mild_1));
+  SET_VECTOR_ELT(contents, 228, ScalarInteger(internal->dim_I_mild_12));
+  SET_VECTOR_ELT(contents, 229, ScalarInteger(internal->dim_I_mild_2));
+  SET_VECTOR_ELT(contents, 230, ScalarInteger(internal->dim_I_mild_3));
+  SET_VECTOR_ELT(contents, 231, ScalarInteger(internal->dim_I_triage_D));
+  SET_VECTOR_ELT(contents, 232, ScalarInteger(internal->dim_I_triage_D_1));
+  SET_VECTOR_ELT(contents, 233, ScalarInteger(internal->dim_I_triage_D_12));
+  SET_VECTOR_ELT(contents, 234, ScalarInteger(internal->dim_I_triage_D_2));
+  SET_VECTOR_ELT(contents, 235, ScalarInteger(internal->dim_I_triage_D_3));
+  SET_VECTOR_ELT(contents, 236, ScalarInteger(internal->dim_I_triage_R));
+  SET_VECTOR_ELT(contents, 237, ScalarInteger(internal->dim_I_triage_R_1));
+  SET_VECTOR_ELT(contents, 238, ScalarInteger(internal->dim_I_triage_R_12));
+  SET_VECTOR_ELT(contents, 239, ScalarInteger(internal->dim_I_triage_R_2));
+  SET_VECTOR_ELT(contents, 240, ScalarInteger(internal->dim_I_triage_R_3));
+  SET_VECTOR_ELT(contents, 241, ScalarInteger(internal->dim_I_with_diff_trans));
+  SET_VECTOR_ELT(contents, 242, ScalarInteger(internal->dim_I_with_diff_trans_1));
+  SET_VECTOR_ELT(contents, 243, ScalarInteger(internal->dim_I_with_diff_trans_2));
+  SET_VECTOR_ELT(contents, 244, ScalarInteger(internal->dim_I0_asympt));
+  SET_VECTOR_ELT(contents, 245, ScalarInteger(internal->dim_I0_asympt_1));
+  SET_VECTOR_ELT(contents, 246, ScalarInteger(internal->dim_I0_asympt_12));
+  SET_VECTOR_ELT(contents, 247, ScalarInteger(internal->dim_I0_asympt_2));
+  SET_VECTOR_ELT(contents, 248, ScalarInteger(internal->dim_I0_asympt_3));
+  SET_VECTOR_ELT(contents, 249, ScalarInteger(internal->dim_I0_comm_D));
+  SET_VECTOR_ELT(contents, 250, ScalarInteger(internal->dim_I0_comm_D_1));
+  SET_VECTOR_ELT(contents, 251, ScalarInteger(internal->dim_I0_comm_D_12));
+  SET_VECTOR_ELT(contents, 252, ScalarInteger(internal->dim_I0_comm_D_2));
+  SET_VECTOR_ELT(contents, 253, ScalarInteger(internal->dim_I0_comm_D_3));
+  SET_VECTOR_ELT(contents, 254, ScalarInteger(internal->dim_I0_hosp_D_conf));
+  SET_VECTOR_ELT(contents, 255, ScalarInteger(internal->dim_I0_hosp_D_conf_1));
+  SET_VECTOR_ELT(contents, 256, ScalarInteger(internal->dim_I0_hosp_D_conf_12));
+  SET_VECTOR_ELT(contents, 257, ScalarInteger(internal->dim_I0_hosp_D_conf_2));
+  SET_VECTOR_ELT(contents, 258, ScalarInteger(internal->dim_I0_hosp_D_conf_3));
+  SET_VECTOR_ELT(contents, 259, ScalarInteger(internal->dim_I0_hosp_D_unconf));
+  SET_VECTOR_ELT(contents, 260, ScalarInteger(internal->dim_I0_hosp_D_unconf_1));
+  SET_VECTOR_ELT(contents, 261, ScalarInteger(internal->dim_I0_hosp_D_unconf_12));
+  SET_VECTOR_ELT(contents, 262, ScalarInteger(internal->dim_I0_hosp_D_unconf_2));
+  SET_VECTOR_ELT(contents, 263, ScalarInteger(internal->dim_I0_hosp_D_unconf_3));
+  SET_VECTOR_ELT(contents, 264, ScalarInteger(internal->dim_I0_hosp_R_conf));
+  SET_VECTOR_ELT(contents, 265, ScalarInteger(internal->dim_I0_hosp_R_conf_1));
+  SET_VECTOR_ELT(contents, 266, ScalarInteger(internal->dim_I0_hosp_R_conf_12));
+  SET_VECTOR_ELT(contents, 267, ScalarInteger(internal->dim_I0_hosp_R_conf_2));
+  SET_VECTOR_ELT(contents, 268, ScalarInteger(internal->dim_I0_hosp_R_conf_3));
+  SET_VECTOR_ELT(contents, 269, ScalarInteger(internal->dim_I0_hosp_R_unconf));
+  SET_VECTOR_ELT(contents, 270, ScalarInteger(internal->dim_I0_hosp_R_unconf_1));
+  SET_VECTOR_ELT(contents, 271, ScalarInteger(internal->dim_I0_hosp_R_unconf_12));
+  SET_VECTOR_ELT(contents, 272, ScalarInteger(internal->dim_I0_hosp_R_unconf_2));
+  SET_VECTOR_ELT(contents, 273, ScalarInteger(internal->dim_I0_hosp_R_unconf_3));
+  SET_VECTOR_ELT(contents, 274, ScalarInteger(internal->dim_I0_ICU_D));
+  SET_VECTOR_ELT(contents, 275, ScalarInteger(internal->dim_I0_ICU_D_1));
+  SET_VECTOR_ELT(contents, 276, ScalarInteger(internal->dim_I0_ICU_D_12));
+  SET_VECTOR_ELT(contents, 277, ScalarInteger(internal->dim_I0_ICU_D_2));
+  SET_VECTOR_ELT(contents, 278, ScalarInteger(internal->dim_I0_ICU_D_3));
+  SET_VECTOR_ELT(contents, 279, ScalarInteger(internal->dim_I0_ICU_R));
+  SET_VECTOR_ELT(contents, 280, ScalarInteger(internal->dim_I0_ICU_R_1));
+  SET_VECTOR_ELT(contents, 281, ScalarInteger(internal->dim_I0_ICU_R_12));
+  SET_VECTOR_ELT(contents, 282, ScalarInteger(internal->dim_I0_ICU_R_2));
+  SET_VECTOR_ELT(contents, 283, ScalarInteger(internal->dim_I0_ICU_R_3));
+  SET_VECTOR_ELT(contents, 284, ScalarInteger(internal->dim_I0_ILI));
+  SET_VECTOR_ELT(contents, 285, ScalarInteger(internal->dim_I0_ILI_1));
+  SET_VECTOR_ELT(contents, 286, ScalarInteger(internal->dim_I0_ILI_12));
+  SET_VECTOR_ELT(contents, 287, ScalarInteger(internal->dim_I0_ILI_2));
+  SET_VECTOR_ELT(contents, 288, ScalarInteger(internal->dim_I0_ILI_3));
+  SET_VECTOR_ELT(contents, 289, ScalarInteger(internal->dim_I0_mild));
+  SET_VECTOR_ELT(contents, 290, ScalarInteger(internal->dim_I0_mild_1));
+  SET_VECTOR_ELT(contents, 291, ScalarInteger(internal->dim_I0_mild_12));
+  SET_VECTOR_ELT(contents, 292, ScalarInteger(internal->dim_I0_mild_2));
+  SET_VECTOR_ELT(contents, 293, ScalarInteger(internal->dim_I0_mild_3));
+  SET_VECTOR_ELT(contents, 294, ScalarInteger(internal->dim_I0_triage_D));
+  SET_VECTOR_ELT(contents, 295, ScalarInteger(internal->dim_I0_triage_D_1));
+  SET_VECTOR_ELT(contents, 296, ScalarInteger(internal->dim_I0_triage_D_12));
+  SET_VECTOR_ELT(contents, 297, ScalarInteger(internal->dim_I0_triage_D_2));
+  SET_VECTOR_ELT(contents, 298, ScalarInteger(internal->dim_I0_triage_D_3));
+  SET_VECTOR_ELT(contents, 299, ScalarInteger(internal->dim_I0_triage_R));
+  SET_VECTOR_ELT(contents, 300, ScalarInteger(internal->dim_I0_triage_R_1));
+  SET_VECTOR_ELT(contents, 301, ScalarInteger(internal->dim_I0_triage_R_12));
+  SET_VECTOR_ELT(contents, 302, ScalarInteger(internal->dim_I0_triage_R_2));
+  SET_VECTOR_ELT(contents, 303, ScalarInteger(internal->dim_I0_triage_R_3));
+  SET_VECTOR_ELT(contents, 304, ScalarInteger(internal->dim_lambda));
+  SET_VECTOR_ELT(contents, 305, ScalarInteger(internal->dim_m));
+  SET_VECTOR_ELT(contents, 306, ScalarInteger(internal->dim_m_1));
+  SET_VECTOR_ELT(contents, 307, ScalarInteger(internal->dim_m_2));
+  SET_VECTOR_ELT(contents, 308, ScalarInteger(internal->dim_n_com_to_R_pre));
+  SET_VECTOR_ELT(contents, 309, ScalarInteger(internal->dim_n_com_to_R_total));
+  SET_VECTOR_ELT(contents, 310, ScalarInteger(internal->dim_n_EE));
+  SET_VECTOR_ELT(contents, 311, ScalarInteger(internal->dim_n_EE_1));
+  SET_VECTOR_ELT(contents, 312, ScalarInteger(internal->dim_n_EE_12));
+  SET_VECTOR_ELT(contents, 313, ScalarInteger(internal->dim_n_EE_2));
+  SET_VECTOR_ELT(contents, 314, ScalarInteger(internal->dim_n_EE_3));
+  SET_VECTOR_ELT(contents, 315, ScalarInteger(internal->dim_n_EI_asympt));
+  SET_VECTOR_ELT(contents, 316, ScalarInteger(internal->dim_n_EI_asympt_1));
+  SET_VECTOR_ELT(contents, 317, ScalarInteger(internal->dim_n_EI_asympt_2));
+  SET_VECTOR_ELT(contents, 318, ScalarInteger(internal->dim_n_EI_ILI));
+  SET_VECTOR_ELT(contents, 319, ScalarInteger(internal->dim_n_EI_ILI_1));
+  SET_VECTOR_ELT(contents, 320, ScalarInteger(internal->dim_n_EI_ILI_2));
+  SET_VECTOR_ELT(contents, 321, ScalarInteger(internal->dim_n_EI_mild));
+  SET_VECTOR_ELT(contents, 322, ScalarInteger(internal->dim_n_EI_mild_1));
+  SET_VECTOR_ELT(contents, 323, ScalarInteger(internal->dim_n_EI_mild_2));
+  SET_VECTOR_ELT(contents, 324, ScalarInteger(internal->dim_n_hosp_non_ICU));
+  SET_VECTOR_ELT(contents, 325, ScalarInteger(internal->dim_n_hosp_non_ICU_1));
+  SET_VECTOR_ELT(contents, 326, ScalarInteger(internal->dim_n_hosp_non_ICU_2));
+  SET_VECTOR_ELT(contents, 327, ScalarInteger(internal->dim_n_I_hosp_D_unconf_to_conf));
+  SET_VECTOR_ELT(contents, 328, ScalarInteger(internal->dim_n_I_hosp_D_unconf_to_conf_1));
+  SET_VECTOR_ELT(contents, 329, ScalarInteger(internal->dim_n_I_hosp_D_unconf_to_conf_12));
+  SET_VECTOR_ELT(contents, 330, ScalarInteger(internal->dim_n_I_hosp_D_unconf_to_conf_2));
+  SET_VECTOR_ELT(contents, 331, ScalarInteger(internal->dim_n_I_hosp_D_unconf_to_conf_3));
+  SET_VECTOR_ELT(contents, 332, ScalarInteger(internal->dim_n_I_hosp_R_unconf_to_conf));
+  SET_VECTOR_ELT(contents, 333, ScalarInteger(internal->dim_n_I_hosp_R_unconf_to_conf_1));
+  SET_VECTOR_ELT(contents, 334, ScalarInteger(internal->dim_n_I_hosp_R_unconf_to_conf_12));
+  SET_VECTOR_ELT(contents, 335, ScalarInteger(internal->dim_n_I_hosp_R_unconf_to_conf_2));
+  SET_VECTOR_ELT(contents, 336, ScalarInteger(internal->dim_n_I_hosp_R_unconf_to_conf_3));
+  SET_VECTOR_ELT(contents, 337, ScalarInteger(internal->dim_n_ICU_to_R_stepdown));
+  SET_VECTOR_ELT(contents, 338, ScalarInteger(internal->dim_n_II_asympt));
+  SET_VECTOR_ELT(contents, 339, ScalarInteger(internal->dim_n_II_asympt_1));
+  SET_VECTOR_ELT(contents, 340, ScalarInteger(internal->dim_n_II_asympt_12));
+  SET_VECTOR_ELT(contents, 341, ScalarInteger(internal->dim_n_II_asympt_2));
+  SET_VECTOR_ELT(contents, 342, ScalarInteger(internal->dim_n_II_asympt_3));
+  SET_VECTOR_ELT(contents, 343, ScalarInteger(internal->dim_n_II_comm_D));
+  SET_VECTOR_ELT(contents, 344, ScalarInteger(internal->dim_n_II_comm_D_1));
+  SET_VECTOR_ELT(contents, 345, ScalarInteger(internal->dim_n_II_comm_D_12));
+  SET_VECTOR_ELT(contents, 346, ScalarInteger(internal->dim_n_II_comm_D_2));
+  SET_VECTOR_ELT(contents, 347, ScalarInteger(internal->dim_n_II_comm_D_3));
+  SET_VECTOR_ELT(contents, 348, ScalarInteger(internal->dim_n_II_hosp_D_conf));
+  SET_VECTOR_ELT(contents, 349, ScalarInteger(internal->dim_n_II_hosp_D_conf_1));
+  SET_VECTOR_ELT(contents, 350, ScalarInteger(internal->dim_n_II_hosp_D_conf_12));
+  SET_VECTOR_ELT(contents, 351, ScalarInteger(internal->dim_n_II_hosp_D_conf_2));
+  SET_VECTOR_ELT(contents, 352, ScalarInteger(internal->dim_n_II_hosp_D_conf_3));
+  SET_VECTOR_ELT(contents, 353, ScalarInteger(internal->dim_n_II_hosp_D_unconf));
+  SET_VECTOR_ELT(contents, 354, ScalarInteger(internal->dim_n_II_hosp_D_unconf_1));
+  SET_VECTOR_ELT(contents, 355, ScalarInteger(internal->dim_n_II_hosp_D_unconf_12));
+  SET_VECTOR_ELT(contents, 356, ScalarInteger(internal->dim_n_II_hosp_D_unconf_2));
+  SET_VECTOR_ELT(contents, 357, ScalarInteger(internal->dim_n_II_hosp_D_unconf_3));
+  SET_VECTOR_ELT(contents, 358, ScalarInteger(internal->dim_n_II_hosp_R_conf));
+  SET_VECTOR_ELT(contents, 359, ScalarInteger(internal->dim_n_II_hosp_R_conf_1));
+  SET_VECTOR_ELT(contents, 360, ScalarInteger(internal->dim_n_II_hosp_R_conf_12));
+  SET_VECTOR_ELT(contents, 361, ScalarInteger(internal->dim_n_II_hosp_R_conf_2));
+  SET_VECTOR_ELT(contents, 362, ScalarInteger(internal->dim_n_II_hosp_R_conf_3));
+  SET_VECTOR_ELT(contents, 363, ScalarInteger(internal->dim_n_II_hosp_R_unconf));
+  SET_VECTOR_ELT(contents, 364, ScalarInteger(internal->dim_n_II_hosp_R_unconf_1));
+  SET_VECTOR_ELT(contents, 365, ScalarInteger(internal->dim_n_II_hosp_R_unconf_12));
+  SET_VECTOR_ELT(contents, 366, ScalarInteger(internal->dim_n_II_hosp_R_unconf_2));
+  SET_VECTOR_ELT(contents, 367, ScalarInteger(internal->dim_n_II_hosp_R_unconf_3));
+  SET_VECTOR_ELT(contents, 368, ScalarInteger(internal->dim_n_II_ICU_D));
+  SET_VECTOR_ELT(contents, 369, ScalarInteger(internal->dim_n_II_ICU_D_1));
+  SET_VECTOR_ELT(contents, 370, ScalarInteger(internal->dim_n_II_ICU_D_12));
+  SET_VECTOR_ELT(contents, 371, ScalarInteger(internal->dim_n_II_ICU_D_2));
+  SET_VECTOR_ELT(contents, 372, ScalarInteger(internal->dim_n_II_ICU_D_3));
+  SET_VECTOR_ELT(contents, 373, ScalarInteger(internal->dim_n_II_ICU_R));
+  SET_VECTOR_ELT(contents, 374, ScalarInteger(internal->dim_n_II_ICU_R_1));
+  SET_VECTOR_ELT(contents, 375, ScalarInteger(internal->dim_n_II_ICU_R_12));
+  SET_VECTOR_ELT(contents, 376, ScalarInteger(internal->dim_n_II_ICU_R_2));
+  SET_VECTOR_ELT(contents, 377, ScalarInteger(internal->dim_n_II_ICU_R_3));
+  SET_VECTOR_ELT(contents, 378, ScalarInteger(internal->dim_n_II_ILI));
+  SET_VECTOR_ELT(contents, 379, ScalarInteger(internal->dim_n_II_ILI_1));
+  SET_VECTOR_ELT(contents, 380, ScalarInteger(internal->dim_n_II_ILI_12));
+  SET_VECTOR_ELT(contents, 381, ScalarInteger(internal->dim_n_II_ILI_2));
+  SET_VECTOR_ELT(contents, 382, ScalarInteger(internal->dim_n_II_ILI_3));
+  SET_VECTOR_ELT(contents, 383, ScalarInteger(internal->dim_n_II_mild));
+  SET_VECTOR_ELT(contents, 384, ScalarInteger(internal->dim_n_II_mild_1));
+  SET_VECTOR_ELT(contents, 385, ScalarInteger(internal->dim_n_II_mild_12));
+  SET_VECTOR_ELT(contents, 386, ScalarInteger(internal->dim_n_II_mild_2));
+  SET_VECTOR_ELT(contents, 387, ScalarInteger(internal->dim_n_II_mild_3));
+  SET_VECTOR_ELT(contents, 388, ScalarInteger(internal->dim_n_II_triage_D));
+  SET_VECTOR_ELT(contents, 389, ScalarInteger(internal->dim_n_II_triage_D_1));
+  SET_VECTOR_ELT(contents, 390, ScalarInteger(internal->dim_n_II_triage_D_12));
+  SET_VECTOR_ELT(contents, 391, ScalarInteger(internal->dim_n_II_triage_D_2));
+  SET_VECTOR_ELT(contents, 392, ScalarInteger(internal->dim_n_II_triage_D_3));
+  SET_VECTOR_ELT(contents, 393, ScalarInteger(internal->dim_n_II_triage_R));
+  SET_VECTOR_ELT(contents, 394, ScalarInteger(internal->dim_n_II_triage_R_1));
+  SET_VECTOR_ELT(contents, 395, ScalarInteger(internal->dim_n_II_triage_R_12));
+  SET_VECTOR_ELT(contents, 396, ScalarInteger(internal->dim_n_II_triage_R_2));
+  SET_VECTOR_ELT(contents, 397, ScalarInteger(internal->dim_n_II_triage_R_3));
+  SET_VECTOR_ELT(contents, 398, ScalarInteger(internal->dim_n_ILI_to_comm_D));
+  SET_VECTOR_ELT(contents, 399, ScalarInteger(internal->dim_n_ILI_to_comm_D_1));
+  SET_VECTOR_ELT(contents, 400, ScalarInteger(internal->dim_n_ILI_to_comm_D_2));
+  SET_VECTOR_ELT(contents, 401, ScalarInteger(internal->dim_n_ILI_to_hosp));
+  SET_VECTOR_ELT(contents, 402, ScalarInteger(internal->dim_n_ILI_to_hosp_1));
+  SET_VECTOR_ELT(contents, 403, ScalarInteger(internal->dim_n_ILI_to_hosp_2));
+  SET_VECTOR_ELT(contents, 404, ScalarInteger(internal->dim_n_ILI_to_hosp_D));
+  SET_VECTOR_ELT(contents, 405, ScalarInteger(internal->dim_n_ILI_to_hosp_D_1));
+  SET_VECTOR_ELT(contents, 406, ScalarInteger(internal->dim_n_ILI_to_hosp_D_2));
+  SET_VECTOR_ELT(contents, 407, ScalarInteger(internal->dim_n_ILI_to_hosp_D_conf));
+  SET_VECTOR_ELT(contents, 408, ScalarInteger(internal->dim_n_ILI_to_hosp_D_conf_1));
+  SET_VECTOR_ELT(contents, 409, ScalarInteger(internal->dim_n_ILI_to_hosp_D_conf_2));
+  SET_VECTOR_ELT(contents, 410, ScalarInteger(internal->dim_n_ILI_to_hosp_R));
+  SET_VECTOR_ELT(contents, 411, ScalarInteger(internal->dim_n_ILI_to_hosp_R_1));
+  SET_VECTOR_ELT(contents, 412, ScalarInteger(internal->dim_n_ILI_to_hosp_R_2));
+  SET_VECTOR_ELT(contents, 413, ScalarInteger(internal->dim_n_ILI_to_hosp_R_conf));
+  SET_VECTOR_ELT(contents, 414, ScalarInteger(internal->dim_n_ILI_to_hosp_R_conf_1));
+  SET_VECTOR_ELT(contents, 415, ScalarInteger(internal->dim_n_ILI_to_hosp_R_conf_2));
+  SET_VECTOR_ELT(contents, 416, ScalarInteger(internal->dim_n_ILI_to_triage));
+  SET_VECTOR_ELT(contents, 417, ScalarInteger(internal->dim_n_ILI_to_triage_1));
+  SET_VECTOR_ELT(contents, 418, ScalarInteger(internal->dim_n_ILI_to_triage_2));
+  SET_VECTOR_ELT(contents, 419, ScalarInteger(internal->dim_n_ILI_to_triage_D));
+  SET_VECTOR_ELT(contents, 420, ScalarInteger(internal->dim_n_ILI_to_triage_D_1));
+  SET_VECTOR_ELT(contents, 421, ScalarInteger(internal->dim_n_ILI_to_triage_D_2));
+  SET_VECTOR_ELT(contents, 422, ScalarInteger(internal->dim_n_ILI_to_triage_R));
+  SET_VECTOR_ELT(contents, 423, ScalarInteger(internal->dim_n_ILI_to_triage_R_1));
+  SET_VECTOR_ELT(contents, 424, ScalarInteger(internal->dim_n_ILI_to_triage_R_2));
+  SET_VECTOR_ELT(contents, 425, ScalarInteger(internal->dim_n_R_pre));
+  SET_VECTOR_ELT(contents, 426, ScalarInteger(internal->dim_n_R_pre_1));
+  SET_VECTOR_ELT(contents, 427, ScalarInteger(internal->dim_n_R_pre_2));
+  SET_VECTOR_ELT(contents, 428, ScalarInteger(internal->dim_n_R_stepdown));
+  SET_VECTOR_ELT(contents, 429, ScalarInteger(internal->dim_n_R_stepdown_1));
+  SET_VECTOR_ELT(contents, 430, ScalarInteger(internal->dim_n_R_stepdown_2));
+  SET_VECTOR_ELT(contents, 431, ScalarInteger(internal->dim_n_SE));
+  SET_VECTOR_ELT(contents, 432, ScalarInteger(internal->dim_new_I_hosp_D_conf));
+  SET_VECTOR_ELT(contents, 433, ScalarInteger(internal->dim_new_I_hosp_D_conf_1));
+  SET_VECTOR_ELT(contents, 434, ScalarInteger(internal->dim_new_I_hosp_D_conf_12));
+  SET_VECTOR_ELT(contents, 435, ScalarInteger(internal->dim_new_I_hosp_D_conf_2));
+  SET_VECTOR_ELT(contents, 436, ScalarInteger(internal->dim_new_I_hosp_D_conf_3));
+  SET_VECTOR_ELT(contents, 437, ScalarInteger(internal->dim_new_I_hosp_D_unconf));
+  SET_VECTOR_ELT(contents, 438, ScalarInteger(internal->dim_new_I_hosp_D_unconf_1));
+  SET_VECTOR_ELT(contents, 439, ScalarInteger(internal->dim_new_I_hosp_D_unconf_12));
+  SET_VECTOR_ELT(contents, 440, ScalarInteger(internal->dim_new_I_hosp_D_unconf_2));
+  SET_VECTOR_ELT(contents, 441, ScalarInteger(internal->dim_new_I_hosp_D_unconf_3));
+  SET_VECTOR_ELT(contents, 442, ScalarInteger(internal->dim_new_I_hosp_R_conf));
+  SET_VECTOR_ELT(contents, 443, ScalarInteger(internal->dim_new_I_hosp_R_conf_1));
+  SET_VECTOR_ELT(contents, 444, ScalarInteger(internal->dim_new_I_hosp_R_conf_12));
+  SET_VECTOR_ELT(contents, 445, ScalarInteger(internal->dim_new_I_hosp_R_conf_2));
+  SET_VECTOR_ELT(contents, 446, ScalarInteger(internal->dim_new_I_hosp_R_conf_3));
+  SET_VECTOR_ELT(contents, 447, ScalarInteger(internal->dim_new_I_hosp_R_unconf));
+  SET_VECTOR_ELT(contents, 448, ScalarInteger(internal->dim_new_I_hosp_R_unconf_1));
+  SET_VECTOR_ELT(contents, 449, ScalarInteger(internal->dim_new_I_hosp_R_unconf_12));
+  SET_VECTOR_ELT(contents, 450, ScalarInteger(internal->dim_new_I_hosp_R_unconf_2));
+  SET_VECTOR_ELT(contents, 451, ScalarInteger(internal->dim_new_I_hosp_R_unconf_3));
+  SET_VECTOR_ELT(contents, 452, ScalarInteger(internal->dim_p_admit_conf));
+  SET_VECTOR_ELT(contents, 453, ScalarInteger(internal->dim_p_asympt));
+  SET_VECTOR_ELT(contents, 454, ScalarInteger(internal->dim_p_death_comm));
+  SET_VECTOR_ELT(contents, 455, ScalarInteger(internal->dim_p_death_hosp_D));
+  SET_VECTOR_ELT(contents, 456, ScalarInteger(internal->dim_p_death_ICU));
+  SET_VECTOR_ELT(contents, 457, ScalarInteger(internal->dim_p_ICU_hosp));
+  SET_VECTOR_ELT(contents, 458, ScalarInteger(internal->dim_p_R_pre));
+  SET_VECTOR_ELT(contents, 459, ScalarInteger(internal->dim_p_recov_ILI));
+  SET_VECTOR_ELT(contents, 460, ScalarInteger(internal->dim_p_SE));
+  SET_VECTOR_ELT(contents, 461, ScalarInteger(internal->dim_p_seroconversion));
+  SET_VECTOR_ELT(contents, 462, ScalarInteger(internal->dim_p_sympt_ILI));
+  SET_VECTOR_ELT(contents, 463, ScalarInteger(internal->dim_R_neg));
+  SET_VECTOR_ELT(contents, 464, ScalarInteger(internal->dim_R_pos));
+  SET_VECTOR_ELT(contents, 465, ScalarInteger(internal->dim_R_pre));
+  SET_VECTOR_ELT(contents, 466, ScalarInteger(internal->dim_R_pre_1));
+  SET_VECTOR_ELT(contents, 467, ScalarInteger(internal->dim_R_pre_2));
+  SET_VECTOR_ELT(contents, 468, ScalarInteger(internal->dim_R_stepdown));
+  SET_VECTOR_ELT(contents, 469, ScalarInteger(internal->dim_R_stepdown_1));
+  SET_VECTOR_ELT(contents, 470, ScalarInteger(internal->dim_R_stepdown_2));
+  SET_VECTOR_ELT(contents, 471, ScalarInteger(internal->dim_R0_neg));
+  SET_VECTOR_ELT(contents, 472, ScalarInteger(internal->dim_R0_pos));
+  SET_VECTOR_ELT(contents, 473, ScalarInteger(internal->dim_R0_pre));
+  SET_VECTOR_ELT(contents, 474, ScalarInteger(internal->dim_R0_pre_1));
+  SET_VECTOR_ELT(contents, 475, ScalarInteger(internal->dim_R0_pre_2));
+  SET_VECTOR_ELT(contents, 476, ScalarInteger(internal->dim_R0_stepdown));
+  SET_VECTOR_ELT(contents, 477, ScalarInteger(internal->dim_R0_stepdown_1));
+  SET_VECTOR_ELT(contents, 478, ScalarInteger(internal->dim_R0_stepdown_2));
+  SET_VECTOR_ELT(contents, 479, ScalarInteger(internal->dim_S));
+  SET_VECTOR_ELT(contents, 480, ScalarInteger(internal->dim_s_ij));
+  SET_VECTOR_ELT(contents, 481, ScalarInteger(internal->dim_s_ij_1));
+  SET_VECTOR_ELT(contents, 482, ScalarInteger(internal->dim_s_ij_2));
+  SET_VECTOR_ELT(contents, 483, ScalarInteger(internal->dim_S0));
+  SET_VECTOR_ELT(contents, 484, ScalarInteger(internal->dim_trans_increase));
+  SET_VECTOR_ELT(contents, 485, ScalarInteger(internal->dim_trans_increase_1));
+  SET_VECTOR_ELT(contents, 486, ScalarInteger(internal->dim_trans_increase_2));
+  SET_VECTOR_ELT(contents, 487, ScalarInteger(internal->dim_trans_profile));
+  SET_VECTOR_ELT(contents, 488, ScalarInteger(internal->dim_trans_profile_1));
+  SET_VECTOR_ELT(contents, 489, ScalarInteger(internal->dim_trans_profile_2));
+  SET_VECTOR_ELT(contents, 490, ScalarReal(internal->dt));
+  SEXP E0 = PROTECT(allocVector(REALSXP, internal->dim_E0));
+  memcpy(REAL(E0), internal->E0, internal->dim_E0 * sizeof(double));
+  odin_set_dim(E0, 3, internal->dim_E0_1, internal->dim_E0_2, internal->dim_E0_3);
+  SET_VECTOR_ELT(contents, 491, E0);
+  SET_VECTOR_ELT(contents, 492, ScalarReal(internal->gamma_asympt));
+  SET_VECTOR_ELT(contents, 493, ScalarReal(internal->gamma_comm_D));
+  SET_VECTOR_ELT(contents, 494, ScalarReal(internal->gamma_E));
+  SET_VECTOR_ELT(contents, 495, ScalarReal(internal->gamma_hosp_D));
+  SET_VECTOR_ELT(contents, 496, ScalarReal(internal->gamma_hosp_R));
+  SET_VECTOR_ELT(contents, 497, ScalarReal(internal->gamma_ICU_D));
+  SET_VECTOR_ELT(contents, 498, ScalarReal(internal->gamma_ICU_R));
+  SET_VECTOR_ELT(contents, 499, ScalarReal(internal->gamma_ILI));
+  SET_VECTOR_ELT(contents, 500, ScalarReal(internal->gamma_mild));
+  SET_VECTOR_ELT(contents, 501, ScalarReal(internal->gamma_R_pre));
+  SET_VECTOR_ELT(contents, 502, ScalarReal(internal->gamma_stepdown));
+  SET_VECTOR_ELT(contents, 503, ScalarReal(internal->gamma_test));
+  SET_VECTOR_ELT(contents, 504, ScalarReal(internal->gamma_triage));
+  SET_VECTOR_ELT(contents, 505, ScalarReal(internal->hosp_transmission));
+  SEXP I_with_diff_trans = PROTECT(allocVector(REALSXP, internal->dim_I_with_diff_trans));
+  memcpy(REAL(I_with_diff_trans), internal->I_with_diff_trans, internal->dim_I_with_diff_trans * sizeof(double));
+  odin_set_dim(I_with_diff_trans, 2, internal->dim_I_with_diff_trans_1, internal->dim_I_with_diff_trans_2);
+  SET_VECTOR_ELT(contents, 506, I_with_diff_trans);
+  SEXP I0_asympt = PROTECT(allocVector(REALSXP, internal->dim_I0_asympt));
+  memcpy(REAL(I0_asympt), internal->I0_asympt, internal->dim_I0_asympt * sizeof(double));
+  odin_set_dim(I0_asympt, 3, internal->dim_I0_asympt_1, internal->dim_I0_asympt_2, internal->dim_I0_asympt_3);
+  SET_VECTOR_ELT(contents, 507, I0_asympt);
+  SEXP I0_comm_D = PROTECT(allocVector(REALSXP, internal->dim_I0_comm_D));
+  memcpy(REAL(I0_comm_D), internal->I0_comm_D, internal->dim_I0_comm_D * sizeof(double));
+  odin_set_dim(I0_comm_D, 3, internal->dim_I0_comm_D_1, internal->dim_I0_comm_D_2, internal->dim_I0_comm_D_3);
+  SET_VECTOR_ELT(contents, 508, I0_comm_D);
+  SEXP I0_hosp_D_conf = PROTECT(allocVector(REALSXP, internal->dim_I0_hosp_D_conf));
+  memcpy(REAL(I0_hosp_D_conf), internal->I0_hosp_D_conf, internal->dim_I0_hosp_D_conf * sizeof(double));
+  odin_set_dim(I0_hosp_D_conf, 3, internal->dim_I0_hosp_D_conf_1, internal->dim_I0_hosp_D_conf_2, internal->dim_I0_hosp_D_conf_3);
+  SET_VECTOR_ELT(contents, 509, I0_hosp_D_conf);
+  SEXP I0_hosp_D_unconf = PROTECT(allocVector(REALSXP, internal->dim_I0_hosp_D_unconf));
+  memcpy(REAL(I0_hosp_D_unconf), internal->I0_hosp_D_unconf, internal->dim_I0_hosp_D_unconf * sizeof(double));
+  odin_set_dim(I0_hosp_D_unconf, 3, internal->dim_I0_hosp_D_unconf_1, internal->dim_I0_hosp_D_unconf_2, internal->dim_I0_hosp_D_unconf_3);
+  SET_VECTOR_ELT(contents, 510, I0_hosp_D_unconf);
+  SEXP I0_hosp_R_conf = PROTECT(allocVector(REALSXP, internal->dim_I0_hosp_R_conf));
+  memcpy(REAL(I0_hosp_R_conf), internal->I0_hosp_R_conf, internal->dim_I0_hosp_R_conf * sizeof(double));
+  odin_set_dim(I0_hosp_R_conf, 3, internal->dim_I0_hosp_R_conf_1, internal->dim_I0_hosp_R_conf_2, internal->dim_I0_hosp_R_conf_3);
+  SET_VECTOR_ELT(contents, 511, I0_hosp_R_conf);
+  SEXP I0_hosp_R_unconf = PROTECT(allocVector(REALSXP, internal->dim_I0_hosp_R_unconf));
+  memcpy(REAL(I0_hosp_R_unconf), internal->I0_hosp_R_unconf, internal->dim_I0_hosp_R_unconf * sizeof(double));
+  odin_set_dim(I0_hosp_R_unconf, 3, internal->dim_I0_hosp_R_unconf_1, internal->dim_I0_hosp_R_unconf_2, internal->dim_I0_hosp_R_unconf_3);
+  SET_VECTOR_ELT(contents, 512, I0_hosp_R_unconf);
+  SEXP I0_ICU_D = PROTECT(allocVector(REALSXP, internal->dim_I0_ICU_D));
+  memcpy(REAL(I0_ICU_D), internal->I0_ICU_D, internal->dim_I0_ICU_D * sizeof(double));
+  odin_set_dim(I0_ICU_D, 3, internal->dim_I0_ICU_D_1, internal->dim_I0_ICU_D_2, internal->dim_I0_ICU_D_3);
+  SET_VECTOR_ELT(contents, 513, I0_ICU_D);
+  SEXP I0_ICU_R = PROTECT(allocVector(REALSXP, internal->dim_I0_ICU_R));
+  memcpy(REAL(I0_ICU_R), internal->I0_ICU_R, internal->dim_I0_ICU_R * sizeof(double));
+  odin_set_dim(I0_ICU_R, 3, internal->dim_I0_ICU_R_1, internal->dim_I0_ICU_R_2, internal->dim_I0_ICU_R_3);
+  SET_VECTOR_ELT(contents, 514, I0_ICU_R);
+  SEXP I0_ILI = PROTECT(allocVector(REALSXP, internal->dim_I0_ILI));
+  memcpy(REAL(I0_ILI), internal->I0_ILI, internal->dim_I0_ILI * sizeof(double));
+  odin_set_dim(I0_ILI, 3, internal->dim_I0_ILI_1, internal->dim_I0_ILI_2, internal->dim_I0_ILI_3);
+  SET_VECTOR_ELT(contents, 515, I0_ILI);
+  SEXP I0_mild = PROTECT(allocVector(REALSXP, internal->dim_I0_mild));
+  memcpy(REAL(I0_mild), internal->I0_mild, internal->dim_I0_mild * sizeof(double));
+  odin_set_dim(I0_mild, 3, internal->dim_I0_mild_1, internal->dim_I0_mild_2, internal->dim_I0_mild_3);
+  SET_VECTOR_ELT(contents, 516, I0_mild);
+  SEXP I0_triage_D = PROTECT(allocVector(REALSXP, internal->dim_I0_triage_D));
+  memcpy(REAL(I0_triage_D), internal->I0_triage_D, internal->dim_I0_triage_D * sizeof(double));
+  odin_set_dim(I0_triage_D, 3, internal->dim_I0_triage_D_1, internal->dim_I0_triage_D_2, internal->dim_I0_triage_D_3);
+  SET_VECTOR_ELT(contents, 517, I0_triage_D);
+  SEXP I0_triage_R = PROTECT(allocVector(REALSXP, internal->dim_I0_triage_R));
+  memcpy(REAL(I0_triage_R), internal->I0_triage_R, internal->dim_I0_triage_R * sizeof(double));
+  odin_set_dim(I0_triage_R, 3, internal->dim_I0_triage_R_1, internal->dim_I0_triage_R_2, internal->dim_I0_triage_R_3);
+  SET_VECTOR_ELT(contents, 518, I0_triage_R);
+  SET_VECTOR_ELT(contents, 519, ScalarReal(internal->ICU_transmission));
+  SEXP initial_D_comm = PROTECT(allocVector(REALSXP, internal->dim_D_comm));
+  memcpy(REAL(initial_D_comm), internal->initial_D_comm, internal->dim_D_comm * sizeof(double));
+  SET_VECTOR_ELT(contents, 520, initial_D_comm);
+  SEXP initial_D_hosp = PROTECT(allocVector(REALSXP, internal->dim_D_hosp));
+  memcpy(REAL(initial_D_hosp), internal->initial_D_hosp, internal->dim_D_hosp * sizeof(double));
+  SET_VECTOR_ELT(contents, 521, initial_D_hosp);
+  SEXP initial_E = PROTECT(allocVector(REALSXP, internal->dim_E));
+  memcpy(REAL(initial_E), internal->initial_E, internal->dim_E * sizeof(double));
+  odin_set_dim(initial_E, 3, internal->dim_E_1, internal->dim_E_2, internal->dim_E_3);
+  SET_VECTOR_ELT(contents, 522, initial_E);
+  SEXP initial_I_asympt = PROTECT(allocVector(REALSXP, internal->dim_I_asympt));
+  memcpy(REAL(initial_I_asympt), internal->initial_I_asympt, internal->dim_I_asympt * sizeof(double));
+  odin_set_dim(initial_I_asympt, 3, internal->dim_I_asympt_1, internal->dim_I_asympt_2, internal->dim_I_asympt_3);
+  SET_VECTOR_ELT(contents, 523, initial_I_asympt);
+  SEXP initial_I_comm_D = PROTECT(allocVector(REALSXP, internal->dim_I_comm_D));
+  memcpy(REAL(initial_I_comm_D), internal->initial_I_comm_D, internal->dim_I_comm_D * sizeof(double));
+  odin_set_dim(initial_I_comm_D, 3, internal->dim_I_comm_D_1, internal->dim_I_comm_D_2, internal->dim_I_comm_D_3);
+  SET_VECTOR_ELT(contents, 524, initial_I_comm_D);
+  SEXP initial_I_hosp_D_conf = PROTECT(allocVector(REALSXP, internal->dim_I_hosp_D_conf));
+  memcpy(REAL(initial_I_hosp_D_conf), internal->initial_I_hosp_D_conf, internal->dim_I_hosp_D_conf * sizeof(double));
+  odin_set_dim(initial_I_hosp_D_conf, 3, internal->dim_I_hosp_D_conf_1, internal->dim_I_hosp_D_conf_2, internal->dim_I_hosp_D_conf_3);
+  SET_VECTOR_ELT(contents, 525, initial_I_hosp_D_conf);
+  SEXP initial_I_hosp_D_unconf = PROTECT(allocVector(REALSXP, internal->dim_I_hosp_D_unconf));
+  memcpy(REAL(initial_I_hosp_D_unconf), internal->initial_I_hosp_D_unconf, internal->dim_I_hosp_D_unconf * sizeof(double));
+  odin_set_dim(initial_I_hosp_D_unconf, 3, internal->dim_I_hosp_D_unconf_1, internal->dim_I_hosp_D_unconf_2, internal->dim_I_hosp_D_unconf_3);
+  SET_VECTOR_ELT(contents, 526, initial_I_hosp_D_unconf);
+  SEXP initial_I_hosp_R_conf = PROTECT(allocVector(REALSXP, internal->dim_I_hosp_R_conf));
+  memcpy(REAL(initial_I_hosp_R_conf), internal->initial_I_hosp_R_conf, internal->dim_I_hosp_R_conf * sizeof(double));
+  odin_set_dim(initial_I_hosp_R_conf, 3, internal->dim_I_hosp_R_conf_1, internal->dim_I_hosp_R_conf_2, internal->dim_I_hosp_R_conf_3);
+  SET_VECTOR_ELT(contents, 527, initial_I_hosp_R_conf);
+  SEXP initial_I_hosp_R_unconf = PROTECT(allocVector(REALSXP, internal->dim_I_hosp_R_unconf));
+  memcpy(REAL(initial_I_hosp_R_unconf), internal->initial_I_hosp_R_unconf, internal->dim_I_hosp_R_unconf * sizeof(double));
+  odin_set_dim(initial_I_hosp_R_unconf, 3, internal->dim_I_hosp_R_unconf_1, internal->dim_I_hosp_R_unconf_2, internal->dim_I_hosp_R_unconf_3);
+  SET_VECTOR_ELT(contents, 528, initial_I_hosp_R_unconf);
+  SEXP initial_I_ICU_D = PROTECT(allocVector(REALSXP, internal->dim_I_ICU_D));
+  memcpy(REAL(initial_I_ICU_D), internal->initial_I_ICU_D, internal->dim_I_ICU_D * sizeof(double));
+  odin_set_dim(initial_I_ICU_D, 3, internal->dim_I_ICU_D_1, internal->dim_I_ICU_D_2, internal->dim_I_ICU_D_3);
+  SET_VECTOR_ELT(contents, 529, initial_I_ICU_D);
+  SEXP initial_I_ICU_R = PROTECT(allocVector(REALSXP, internal->dim_I_ICU_R));
+  memcpy(REAL(initial_I_ICU_R), internal->initial_I_ICU_R, internal->dim_I_ICU_R * sizeof(double));
+  odin_set_dim(initial_I_ICU_R, 3, internal->dim_I_ICU_R_1, internal->dim_I_ICU_R_2, internal->dim_I_ICU_R_3);
+  SET_VECTOR_ELT(contents, 530, initial_I_ICU_R);
+  SEXP initial_I_ILI = PROTECT(allocVector(REALSXP, internal->dim_I_ILI));
+  memcpy(REAL(initial_I_ILI), internal->initial_I_ILI, internal->dim_I_ILI * sizeof(double));
+  odin_set_dim(initial_I_ILI, 3, internal->dim_I_ILI_1, internal->dim_I_ILI_2, internal->dim_I_ILI_3);
+  SET_VECTOR_ELT(contents, 531, initial_I_ILI);
+  SEXP initial_I_mild = PROTECT(allocVector(REALSXP, internal->dim_I_mild));
+  memcpy(REAL(initial_I_mild), internal->initial_I_mild, internal->dim_I_mild * sizeof(double));
+  odin_set_dim(initial_I_mild, 3, internal->dim_I_mild_1, internal->dim_I_mild_2, internal->dim_I_mild_3);
+  SET_VECTOR_ELT(contents, 532, initial_I_mild);
+  SEXP initial_I_triage_D = PROTECT(allocVector(REALSXP, internal->dim_I_triage_D));
+  memcpy(REAL(initial_I_triage_D), internal->initial_I_triage_D, internal->dim_I_triage_D * sizeof(double));
+  odin_set_dim(initial_I_triage_D, 3, internal->dim_I_triage_D_1, internal->dim_I_triage_D_2, internal->dim_I_triage_D_3);
+  SET_VECTOR_ELT(contents, 533, initial_I_triage_D);
+  SEXP initial_I_triage_R = PROTECT(allocVector(REALSXP, internal->dim_I_triage_R));
+  memcpy(REAL(initial_I_triage_R), internal->initial_I_triage_R, internal->dim_I_triage_R * sizeof(double));
+  odin_set_dim(initial_I_triage_R, 3, internal->dim_I_triage_R_1, internal->dim_I_triage_R_2, internal->dim_I_triage_R_3);
+  SET_VECTOR_ELT(contents, 534, initial_I_triage_R);
+  SEXP initial_R_neg = PROTECT(allocVector(REALSXP, internal->dim_R_neg));
+  memcpy(REAL(initial_R_neg), internal->initial_R_neg, internal->dim_R_neg * sizeof(double));
+  SET_VECTOR_ELT(contents, 535, initial_R_neg);
+  SEXP initial_R_pos = PROTECT(allocVector(REALSXP, internal->dim_R_pos));
+  memcpy(REAL(initial_R_pos), internal->initial_R_pos, internal->dim_R_pos * sizeof(double));
+  SET_VECTOR_ELT(contents, 536, initial_R_pos);
+  SEXP initial_R_pre = PROTECT(allocVector(REALSXP, internal->dim_R_pre));
+  memcpy(REAL(initial_R_pre), internal->initial_R_pre, internal->dim_R_pre * sizeof(double));
+  odin_set_dim(initial_R_pre, 2, internal->dim_R_pre_1, internal->dim_R_pre_2);
+  SET_VECTOR_ELT(contents, 537, initial_R_pre);
+  SEXP initial_R_stepdown = PROTECT(allocVector(REALSXP, internal->dim_R_stepdown));
+  memcpy(REAL(initial_R_stepdown), internal->initial_R_stepdown, internal->dim_R_stepdown * sizeof(double));
+  odin_set_dim(initial_R_stepdown, 2, internal->dim_R_stepdown_1, internal->dim_R_stepdown_2);
+  SET_VECTOR_ELT(contents, 538, initial_R_stepdown);
+  SEXP initial_S = PROTECT(allocVector(REALSXP, internal->dim_S));
+  memcpy(REAL(initial_S), internal->initial_S, internal->dim_S * sizeof(double));
+  SET_VECTOR_ELT(contents, 539, initial_S);
+  SEXP lambda = PROTECT(allocVector(REALSXP, internal->dim_lambda));
+  memcpy(REAL(lambda), internal->lambda, internal->dim_lambda * sizeof(double));
+  SET_VECTOR_ELT(contents, 541, lambda);
+  SEXP m = PROTECT(allocVector(REALSXP, internal->dim_m));
+  memcpy(REAL(m), internal->m, internal->dim_m * sizeof(double));
+  odin_set_dim(m, 2, internal->dim_m_1, internal->dim_m_2);
+  SET_VECTOR_ELT(contents, 542, m);
+  SET_VECTOR_ELT(contents, 543, ScalarInteger(internal->N_age));
+  SEXP n_com_to_R_pre = PROTECT(allocVector(REALSXP, internal->dim_n_com_to_R_pre));
+  memcpy(REAL(n_com_to_R_pre), internal->n_com_to_R_pre, internal->dim_n_com_to_R_pre * sizeof(double));
+  SET_VECTOR_ELT(contents, 544, n_com_to_R_pre);
+  SEXP n_com_to_R_total = PROTECT(allocVector(REALSXP, internal->dim_n_com_to_R_total));
+  memcpy(REAL(n_com_to_R_total), internal->n_com_to_R_total, internal->dim_n_com_to_R_total * sizeof(double));
+  SET_VECTOR_ELT(contents, 545, n_com_to_R_total);
+  SEXP n_EE = PROTECT(allocVector(REALSXP, internal->dim_n_EE));
+  memcpy(REAL(n_EE), internal->n_EE, internal->dim_n_EE * sizeof(double));
+  odin_set_dim(n_EE, 3, internal->dim_n_EE_1, internal->dim_n_EE_2, internal->dim_n_EE_3);
+  SET_VECTOR_ELT(contents, 546, n_EE);
+  SEXP n_EI_asympt = PROTECT(allocVector(REALSXP, internal->dim_n_EI_asympt));
+  memcpy(REAL(n_EI_asympt), internal->n_EI_asympt, internal->dim_n_EI_asympt * sizeof(double));
+  odin_set_dim(n_EI_asympt, 2, internal->dim_n_EI_asympt_1, internal->dim_n_EI_asympt_2);
+  SET_VECTOR_ELT(contents, 547, n_EI_asympt);
+  SEXP n_EI_ILI = PROTECT(allocVector(REALSXP, internal->dim_n_EI_ILI));
+  memcpy(REAL(n_EI_ILI), internal->n_EI_ILI, internal->dim_n_EI_ILI * sizeof(double));
+  odin_set_dim(n_EI_ILI, 2, internal->dim_n_EI_ILI_1, internal->dim_n_EI_ILI_2);
+  SET_VECTOR_ELT(contents, 548, n_EI_ILI);
+  SEXP n_EI_mild = PROTECT(allocVector(REALSXP, internal->dim_n_EI_mild));
+  memcpy(REAL(n_EI_mild), internal->n_EI_mild, internal->dim_n_EI_mild * sizeof(double));
+  odin_set_dim(n_EI_mild, 2, internal->dim_n_EI_mild_1, internal->dim_n_EI_mild_2);
+  SET_VECTOR_ELT(contents, 549, n_EI_mild);
+  SEXP n_hosp_non_ICU = PROTECT(allocVector(REALSXP, internal->dim_n_hosp_non_ICU));
+  memcpy(REAL(n_hosp_non_ICU), internal->n_hosp_non_ICU, internal->dim_n_hosp_non_ICU * sizeof(double));
+  odin_set_dim(n_hosp_non_ICU, 2, internal->dim_n_hosp_non_ICU_1, internal->dim_n_hosp_non_ICU_2);
+  SET_VECTOR_ELT(contents, 550, n_hosp_non_ICU);
+  SEXP n_I_hosp_D_unconf_to_conf = PROTECT(allocVector(REALSXP, internal->dim_n_I_hosp_D_unconf_to_conf));
+  memcpy(REAL(n_I_hosp_D_unconf_to_conf), internal->n_I_hosp_D_unconf_to_conf, internal->dim_n_I_hosp_D_unconf_to_conf * sizeof(double));
+  odin_set_dim(n_I_hosp_D_unconf_to_conf, 3, internal->dim_n_I_hosp_D_unconf_to_conf_1, internal->dim_n_I_hosp_D_unconf_to_conf_2, internal->dim_n_I_hosp_D_unconf_to_conf_3);
+  SET_VECTOR_ELT(contents, 551, n_I_hosp_D_unconf_to_conf);
+  SEXP n_I_hosp_R_unconf_to_conf = PROTECT(allocVector(REALSXP, internal->dim_n_I_hosp_R_unconf_to_conf));
+  memcpy(REAL(n_I_hosp_R_unconf_to_conf), internal->n_I_hosp_R_unconf_to_conf, internal->dim_n_I_hosp_R_unconf_to_conf * sizeof(double));
+  odin_set_dim(n_I_hosp_R_unconf_to_conf, 3, internal->dim_n_I_hosp_R_unconf_to_conf_1, internal->dim_n_I_hosp_R_unconf_to_conf_2, internal->dim_n_I_hosp_R_unconf_to_conf_3);
+  SET_VECTOR_ELT(contents, 552, n_I_hosp_R_unconf_to_conf);
+  SEXP n_ICU_to_R_stepdown = PROTECT(allocVector(REALSXP, internal->dim_n_ICU_to_R_stepdown));
+  memcpy(REAL(n_ICU_to_R_stepdown), internal->n_ICU_to_R_stepdown, internal->dim_n_ICU_to_R_stepdown * sizeof(double));
+  SET_VECTOR_ELT(contents, 553, n_ICU_to_R_stepdown);
+  SEXP n_II_asympt = PROTECT(allocVector(REALSXP, internal->dim_n_II_asympt));
+  memcpy(REAL(n_II_asympt), internal->n_II_asympt, internal->dim_n_II_asympt * sizeof(double));
+  odin_set_dim(n_II_asympt, 3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_2, internal->dim_n_II_asympt_3);
+  SET_VECTOR_ELT(contents, 554, n_II_asympt);
+  SEXP n_II_comm_D = PROTECT(allocVector(REALSXP, internal->dim_n_II_comm_D));
+  memcpy(REAL(n_II_comm_D), internal->n_II_comm_D, internal->dim_n_II_comm_D * sizeof(double));
+  odin_set_dim(n_II_comm_D, 3, internal->dim_n_II_comm_D_1, internal->dim_n_II_comm_D_2, internal->dim_n_II_comm_D_3);
+  SET_VECTOR_ELT(contents, 555, n_II_comm_D);
+  SEXP n_II_hosp_D_conf = PROTECT(allocVector(REALSXP, internal->dim_n_II_hosp_D_conf));
+  memcpy(REAL(n_II_hosp_D_conf), internal->n_II_hosp_D_conf, internal->dim_n_II_hosp_D_conf * sizeof(double));
+  odin_set_dim(n_II_hosp_D_conf, 3, internal->dim_n_II_hosp_D_conf_1, internal->dim_n_II_hosp_D_conf_2, internal->dim_n_II_hosp_D_conf_3);
+  SET_VECTOR_ELT(contents, 556, n_II_hosp_D_conf);
+  SEXP n_II_hosp_D_unconf = PROTECT(allocVector(REALSXP, internal->dim_n_II_hosp_D_unconf));
+  memcpy(REAL(n_II_hosp_D_unconf), internal->n_II_hosp_D_unconf, internal->dim_n_II_hosp_D_unconf * sizeof(double));
+  odin_set_dim(n_II_hosp_D_unconf, 3, internal->dim_n_II_hosp_D_unconf_1, internal->dim_n_II_hosp_D_unconf_2, internal->dim_n_II_hosp_D_unconf_3);
+  SET_VECTOR_ELT(contents, 557, n_II_hosp_D_unconf);
+  SEXP n_II_hosp_R_conf = PROTECT(allocVector(REALSXP, internal->dim_n_II_hosp_R_conf));
+  memcpy(REAL(n_II_hosp_R_conf), internal->n_II_hosp_R_conf, internal->dim_n_II_hosp_R_conf * sizeof(double));
+  odin_set_dim(n_II_hosp_R_conf, 3, internal->dim_n_II_hosp_R_conf_1, internal->dim_n_II_hosp_R_conf_2, internal->dim_n_II_hosp_R_conf_3);
+  SET_VECTOR_ELT(contents, 558, n_II_hosp_R_conf);
+  SEXP n_II_hosp_R_unconf = PROTECT(allocVector(REALSXP, internal->dim_n_II_hosp_R_unconf));
+  memcpy(REAL(n_II_hosp_R_unconf), internal->n_II_hosp_R_unconf, internal->dim_n_II_hosp_R_unconf * sizeof(double));
+  odin_set_dim(n_II_hosp_R_unconf, 3, internal->dim_n_II_hosp_R_unconf_1, internal->dim_n_II_hosp_R_unconf_2, internal->dim_n_II_hosp_R_unconf_3);
+  SET_VECTOR_ELT(contents, 559, n_II_hosp_R_unconf);
+  SEXP n_II_ICU_D = PROTECT(allocVector(REALSXP, internal->dim_n_II_ICU_D));
+  memcpy(REAL(n_II_ICU_D), internal->n_II_ICU_D, internal->dim_n_II_ICU_D * sizeof(double));
+  odin_set_dim(n_II_ICU_D, 3, internal->dim_n_II_ICU_D_1, internal->dim_n_II_ICU_D_2, internal->dim_n_II_ICU_D_3);
+  SET_VECTOR_ELT(contents, 560, n_II_ICU_D);
+  SEXP n_II_ICU_R = PROTECT(allocVector(REALSXP, internal->dim_n_II_ICU_R));
+  memcpy(REAL(n_II_ICU_R), internal->n_II_ICU_R, internal->dim_n_II_ICU_R * sizeof(double));
+  odin_set_dim(n_II_ICU_R, 3, internal->dim_n_II_ICU_R_1, internal->dim_n_II_ICU_R_2, internal->dim_n_II_ICU_R_3);
+  SET_VECTOR_ELT(contents, 561, n_II_ICU_R);
+  SEXP n_II_ILI = PROTECT(allocVector(REALSXP, internal->dim_n_II_ILI));
+  memcpy(REAL(n_II_ILI), internal->n_II_ILI, internal->dim_n_II_ILI * sizeof(double));
+  odin_set_dim(n_II_ILI, 3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_2, internal->dim_n_II_ILI_3);
+  SET_VECTOR_ELT(contents, 562, n_II_ILI);
+  SEXP n_II_mild = PROTECT(allocVector(REALSXP, internal->dim_n_II_mild));
+  memcpy(REAL(n_II_mild), internal->n_II_mild, internal->dim_n_II_mild * sizeof(double));
+  odin_set_dim(n_II_mild, 3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_2, internal->dim_n_II_mild_3);
+  SET_VECTOR_ELT(contents, 563, n_II_mild);
+  SEXP n_II_triage_D = PROTECT(allocVector(REALSXP, internal->dim_n_II_triage_D));
+  memcpy(REAL(n_II_triage_D), internal->n_II_triage_D, internal->dim_n_II_triage_D * sizeof(double));
+  odin_set_dim(n_II_triage_D, 3, internal->dim_n_II_triage_D_1, internal->dim_n_II_triage_D_2, internal->dim_n_II_triage_D_3);
+  SET_VECTOR_ELT(contents, 564, n_II_triage_D);
+  SEXP n_II_triage_R = PROTECT(allocVector(REALSXP, internal->dim_n_II_triage_R));
+  memcpy(REAL(n_II_triage_R), internal->n_II_triage_R, internal->dim_n_II_triage_R * sizeof(double));
+  odin_set_dim(n_II_triage_R, 3, internal->dim_n_II_triage_R_1, internal->dim_n_II_triage_R_2, internal->dim_n_II_triage_R_3);
+  SET_VECTOR_ELT(contents, 565, n_II_triage_R);
+  SEXP n_ILI_to_comm_D = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_comm_D));
+  memcpy(REAL(n_ILI_to_comm_D), internal->n_ILI_to_comm_D, internal->dim_n_ILI_to_comm_D * sizeof(double));
+  odin_set_dim(n_ILI_to_comm_D, 2, internal->dim_n_ILI_to_comm_D_1, internal->dim_n_ILI_to_comm_D_2);
+  SET_VECTOR_ELT(contents, 566, n_ILI_to_comm_D);
+  SEXP n_ILI_to_hosp = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_hosp));
+  memcpy(REAL(n_ILI_to_hosp), internal->n_ILI_to_hosp, internal->dim_n_ILI_to_hosp * sizeof(double));
+  odin_set_dim(n_ILI_to_hosp, 2, internal->dim_n_ILI_to_hosp_1, internal->dim_n_ILI_to_hosp_2);
+  SET_VECTOR_ELT(contents, 567, n_ILI_to_hosp);
+  SEXP n_ILI_to_hosp_D = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_hosp_D));
+  memcpy(REAL(n_ILI_to_hosp_D), internal->n_ILI_to_hosp_D, internal->dim_n_ILI_to_hosp_D * sizeof(double));
+  odin_set_dim(n_ILI_to_hosp_D, 2, internal->dim_n_ILI_to_hosp_D_1, internal->dim_n_ILI_to_hosp_D_2);
+  SET_VECTOR_ELT(contents, 568, n_ILI_to_hosp_D);
+  SEXP n_ILI_to_hosp_D_conf = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_hosp_D_conf));
+  memcpy(REAL(n_ILI_to_hosp_D_conf), internal->n_ILI_to_hosp_D_conf, internal->dim_n_ILI_to_hosp_D_conf * sizeof(double));
+  odin_set_dim(n_ILI_to_hosp_D_conf, 2, internal->dim_n_ILI_to_hosp_D_conf_1, internal->dim_n_ILI_to_hosp_D_conf_2);
+  SET_VECTOR_ELT(contents, 569, n_ILI_to_hosp_D_conf);
+  SEXP n_ILI_to_hosp_R = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_hosp_R));
+  memcpy(REAL(n_ILI_to_hosp_R), internal->n_ILI_to_hosp_R, internal->dim_n_ILI_to_hosp_R * sizeof(double));
+  odin_set_dim(n_ILI_to_hosp_R, 2, internal->dim_n_ILI_to_hosp_R_1, internal->dim_n_ILI_to_hosp_R_2);
+  SET_VECTOR_ELT(contents, 570, n_ILI_to_hosp_R);
+  SEXP n_ILI_to_hosp_R_conf = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_hosp_R_conf));
+  memcpy(REAL(n_ILI_to_hosp_R_conf), internal->n_ILI_to_hosp_R_conf, internal->dim_n_ILI_to_hosp_R_conf * sizeof(double));
+  odin_set_dim(n_ILI_to_hosp_R_conf, 2, internal->dim_n_ILI_to_hosp_R_conf_1, internal->dim_n_ILI_to_hosp_R_conf_2);
+  SET_VECTOR_ELT(contents, 571, n_ILI_to_hosp_R_conf);
+  SEXP n_ILI_to_triage = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_triage));
+  memcpy(REAL(n_ILI_to_triage), internal->n_ILI_to_triage, internal->dim_n_ILI_to_triage * sizeof(double));
+  odin_set_dim(n_ILI_to_triage, 2, internal->dim_n_ILI_to_triage_1, internal->dim_n_ILI_to_triage_2);
+  SET_VECTOR_ELT(contents, 572, n_ILI_to_triage);
+  SEXP n_ILI_to_triage_D = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_triage_D));
+  memcpy(REAL(n_ILI_to_triage_D), internal->n_ILI_to_triage_D, internal->dim_n_ILI_to_triage_D * sizeof(double));
+  odin_set_dim(n_ILI_to_triage_D, 2, internal->dim_n_ILI_to_triage_D_1, internal->dim_n_ILI_to_triage_D_2);
+  SET_VECTOR_ELT(contents, 573, n_ILI_to_triage_D);
+  SEXP n_ILI_to_triage_R = PROTECT(allocVector(REALSXP, internal->dim_n_ILI_to_triage_R));
+  memcpy(REAL(n_ILI_to_triage_R), internal->n_ILI_to_triage_R, internal->dim_n_ILI_to_triage_R * sizeof(double));
+  odin_set_dim(n_ILI_to_triage_R, 2, internal->dim_n_ILI_to_triage_R_1, internal->dim_n_ILI_to_triage_R_2);
+  SET_VECTOR_ELT(contents, 574, n_ILI_to_triage_R);
+  SEXP n_R_pre = PROTECT(allocVector(REALSXP, internal->dim_n_R_pre));
+  memcpy(REAL(n_R_pre), internal->n_R_pre, internal->dim_n_R_pre * sizeof(double));
+  odin_set_dim(n_R_pre, 2, internal->dim_n_R_pre_1, internal->dim_n_R_pre_2);
+  SET_VECTOR_ELT(contents, 575, n_R_pre);
+  SEXP n_R_stepdown = PROTECT(allocVector(REALSXP, internal->dim_n_R_stepdown));
+  memcpy(REAL(n_R_stepdown), internal->n_R_stepdown, internal->dim_n_R_stepdown * sizeof(double));
+  odin_set_dim(n_R_stepdown, 2, internal->dim_n_R_stepdown_1, internal->dim_n_R_stepdown_2);
+  SET_VECTOR_ELT(contents, 576, n_R_stepdown);
+  SEXP n_SE = PROTECT(allocVector(REALSXP, internal->dim_n_SE));
+  memcpy(REAL(n_SE), internal->n_SE, internal->dim_n_SE * sizeof(double));
+  SET_VECTOR_ELT(contents, 577, n_SE);
+  SEXP new_I_hosp_D_conf = PROTECT(allocVector(REALSXP, internal->dim_new_I_hosp_D_conf));
+  memcpy(REAL(new_I_hosp_D_conf), internal->new_I_hosp_D_conf, internal->dim_new_I_hosp_D_conf * sizeof(double));
+  odin_set_dim(new_I_hosp_D_conf, 3, internal->dim_new_I_hosp_D_conf_1, internal->dim_new_I_hosp_D_conf_2, internal->dim_new_I_hosp_D_conf_3);
+  SET_VECTOR_ELT(contents, 578, new_I_hosp_D_conf);
+  SEXP new_I_hosp_D_unconf = PROTECT(allocVector(REALSXP, internal->dim_new_I_hosp_D_unconf));
+  memcpy(REAL(new_I_hosp_D_unconf), internal->new_I_hosp_D_unconf, internal->dim_new_I_hosp_D_unconf * sizeof(double));
+  odin_set_dim(new_I_hosp_D_unconf, 3, internal->dim_new_I_hosp_D_unconf_1, internal->dim_new_I_hosp_D_unconf_2, internal->dim_new_I_hosp_D_unconf_3);
+  SET_VECTOR_ELT(contents, 579, new_I_hosp_D_unconf);
+  SEXP new_I_hosp_R_conf = PROTECT(allocVector(REALSXP, internal->dim_new_I_hosp_R_conf));
+  memcpy(REAL(new_I_hosp_R_conf), internal->new_I_hosp_R_conf, internal->dim_new_I_hosp_R_conf * sizeof(double));
+  odin_set_dim(new_I_hosp_R_conf, 3, internal->dim_new_I_hosp_R_conf_1, internal->dim_new_I_hosp_R_conf_2, internal->dim_new_I_hosp_R_conf_3);
+  SET_VECTOR_ELT(contents, 580, new_I_hosp_R_conf);
+  SEXP new_I_hosp_R_unconf = PROTECT(allocVector(REALSXP, internal->dim_new_I_hosp_R_unconf));
+  memcpy(REAL(new_I_hosp_R_unconf), internal->new_I_hosp_R_unconf, internal->dim_new_I_hosp_R_unconf * sizeof(double));
+  odin_set_dim(new_I_hosp_R_unconf, 3, internal->dim_new_I_hosp_R_unconf_1, internal->dim_new_I_hosp_R_unconf_2, internal->dim_new_I_hosp_R_unconf_3);
+  SET_VECTOR_ELT(contents, 581, new_I_hosp_R_unconf);
+  SET_VECTOR_ELT(contents, 582, ScalarInteger(internal->offset_variable_D_comm));
+  SET_VECTOR_ELT(contents, 583, ScalarInteger(internal->offset_variable_D_hosp));
+  SET_VECTOR_ELT(contents, 584, ScalarInteger(internal->offset_variable_E));
+  SET_VECTOR_ELT(contents, 585, ScalarInteger(internal->offset_variable_I_asympt));
+  SET_VECTOR_ELT(contents, 586, ScalarInteger(internal->offset_variable_I_comm_D));
+  SET_VECTOR_ELT(contents, 587, ScalarInteger(internal->offset_variable_I_hosp_D_conf));
+  SET_VECTOR_ELT(contents, 588, ScalarInteger(internal->offset_variable_I_hosp_D_unconf));
+  SET_VECTOR_ELT(contents, 589, ScalarInteger(internal->offset_variable_I_hosp_R_conf));
+  SET_VECTOR_ELT(contents, 590, ScalarInteger(internal->offset_variable_I_hosp_R_unconf));
+  SET_VECTOR_ELT(contents, 591, ScalarInteger(internal->offset_variable_I_ICU_D));
+  SET_VECTOR_ELT(contents, 592, ScalarInteger(internal->offset_variable_I_ICU_R));
+  SET_VECTOR_ELT(contents, 593, ScalarInteger(internal->offset_variable_I_ILI));
+  SET_VECTOR_ELT(contents, 594, ScalarInteger(internal->offset_variable_I_mild));
+  SET_VECTOR_ELT(contents, 595, ScalarInteger(internal->offset_variable_I_triage_D));
+  SET_VECTOR_ELT(contents, 596, ScalarInteger(internal->offset_variable_I_triage_R));
+  SET_VECTOR_ELT(contents, 597, ScalarInteger(internal->offset_variable_R_neg));
+  SET_VECTOR_ELT(contents, 598, ScalarInteger(internal->offset_variable_R_pre));
+  SET_VECTOR_ELT(contents, 599, ScalarInteger(internal->offset_variable_R_stepdown));
+  SEXP p_admit_conf = PROTECT(allocVector(REALSXP, internal->dim_p_admit_conf));
+  memcpy(REAL(p_admit_conf), internal->p_admit_conf, internal->dim_p_admit_conf * sizeof(double));
+  SET_VECTOR_ELT(contents, 600, p_admit_conf);
+  SEXP p_asympt = PROTECT(allocVector(REALSXP, internal->dim_p_asympt));
+  memcpy(REAL(p_asympt), internal->p_asympt, internal->dim_p_asympt * sizeof(double));
+  SET_VECTOR_ELT(contents, 601, p_asympt);
+  SEXP p_death_comm = PROTECT(allocVector(REALSXP, internal->dim_p_death_comm));
+  memcpy(REAL(p_death_comm), internal->p_death_comm, internal->dim_p_death_comm * sizeof(double));
+  SET_VECTOR_ELT(contents, 602, p_death_comm);
+  SEXP p_death_hosp_D = PROTECT(allocVector(REALSXP, internal->dim_p_death_hosp_D));
+  memcpy(REAL(p_death_hosp_D), internal->p_death_hosp_D, internal->dim_p_death_hosp_D * sizeof(double));
+  SET_VECTOR_ELT(contents, 603, p_death_hosp_D);
+  SEXP p_death_ICU = PROTECT(allocVector(REALSXP, internal->dim_p_death_ICU));
+  memcpy(REAL(p_death_ICU), internal->p_death_ICU, internal->dim_p_death_ICU * sizeof(double));
+  SET_VECTOR_ELT(contents, 604, p_death_ICU);
+  SET_VECTOR_ELT(contents, 605, ScalarReal(internal->p_EE));
+  SEXP p_ICU_hosp = PROTECT(allocVector(REALSXP, internal->dim_p_ICU_hosp));
+  memcpy(REAL(p_ICU_hosp), internal->p_ICU_hosp, internal->dim_p_ICU_hosp * sizeof(double));
+  SET_VECTOR_ELT(contents, 606, p_ICU_hosp);
+  SET_VECTOR_ELT(contents, 607, ScalarReal(internal->p_II_asympt));
+  SET_VECTOR_ELT(contents, 608, ScalarReal(internal->p_II_comm_D));
+  SET_VECTOR_ELT(contents, 609, ScalarReal(internal->p_II_hosp_D));
+  SET_VECTOR_ELT(contents, 610, ScalarReal(internal->p_II_hosp_R));
+  SET_VECTOR_ELT(contents, 611, ScalarReal(internal->p_II_ICU_D));
+  SET_VECTOR_ELT(contents, 612, ScalarReal(internal->p_II_ICU_R));
+  SET_VECTOR_ELT(contents, 613, ScalarReal(internal->p_II_ILI));
+  SET_VECTOR_ELT(contents, 614, ScalarReal(internal->p_II_mild));
+  SET_VECTOR_ELT(contents, 615, ScalarReal(internal->p_II_triage));
+  SEXP p_R_pre = PROTECT(allocVector(REALSXP, internal->dim_p_R_pre));
+  memcpy(REAL(p_R_pre), internal->p_R_pre, internal->dim_p_R_pre * sizeof(double));
+  SET_VECTOR_ELT(contents, 616, p_R_pre);
+  SET_VECTOR_ELT(contents, 617, ScalarReal(internal->p_R_stepdown));
+  SEXP p_recov_ILI = PROTECT(allocVector(REALSXP, internal->dim_p_recov_ILI));
+  memcpy(REAL(p_recov_ILI), internal->p_recov_ILI, internal->dim_p_recov_ILI * sizeof(double));
+  SET_VECTOR_ELT(contents, 618, p_recov_ILI);
+  SEXP p_SE = PROTECT(allocVector(REALSXP, internal->dim_p_SE));
+  memcpy(REAL(p_SE), internal->p_SE, internal->dim_p_SE * sizeof(double));
+  SET_VECTOR_ELT(contents, 619, p_SE);
+  SEXP p_seroconversion = PROTECT(allocVector(REALSXP, internal->dim_p_seroconversion));
+  memcpy(REAL(p_seroconversion), internal->p_seroconversion, internal->dim_p_seroconversion * sizeof(double));
+  SET_VECTOR_ELT(contents, 620, p_seroconversion);
+  SEXP p_sympt_ILI = PROTECT(allocVector(REALSXP, internal->dim_p_sympt_ILI));
+  memcpy(REAL(p_sympt_ILI), internal->p_sympt_ILI, internal->dim_p_sympt_ILI * sizeof(double));
+  SET_VECTOR_ELT(contents, 621, p_sympt_ILI);
+  SET_VECTOR_ELT(contents, 622, ScalarReal(internal->p_test));
+  SEXP R0_neg = PROTECT(allocVector(REALSXP, internal->dim_R0_neg));
+  memcpy(REAL(R0_neg), internal->R0_neg, internal->dim_R0_neg * sizeof(double));
+  SET_VECTOR_ELT(contents, 623, R0_neg);
+  SEXP R0_pos = PROTECT(allocVector(REALSXP, internal->dim_R0_pos));
+  memcpy(REAL(R0_pos), internal->R0_pos, internal->dim_R0_pos * sizeof(double));
+  SET_VECTOR_ELT(contents, 624, R0_pos);
+  SEXP R0_pre = PROTECT(allocVector(REALSXP, internal->dim_R0_pre));
+  memcpy(REAL(R0_pre), internal->R0_pre, internal->dim_R0_pre * sizeof(double));
+  odin_set_dim(R0_pre, 2, internal->dim_R0_pre_1, internal->dim_R0_pre_2);
+  SET_VECTOR_ELT(contents, 625, R0_pre);
+  SEXP R0_stepdown = PROTECT(allocVector(REALSXP, internal->dim_R0_stepdown));
+  memcpy(REAL(R0_stepdown), internal->R0_stepdown, internal->dim_R0_stepdown * sizeof(double));
+  odin_set_dim(R0_stepdown, 2, internal->dim_R0_stepdown_1, internal->dim_R0_stepdown_2);
+  SET_VECTOR_ELT(contents, 626, R0_stepdown);
+  SET_VECTOR_ELT(contents, 627, ScalarInteger(internal->s_asympt));
+  SET_VECTOR_ELT(contents, 628, ScalarInteger(internal->s_comm_D));
+  SET_VECTOR_ELT(contents, 629, ScalarInteger(internal->s_E));
+  SET_VECTOR_ELT(contents, 630, ScalarInteger(internal->s_hosp_D));
+  SET_VECTOR_ELT(contents, 631, ScalarInteger(internal->s_hosp_R));
+  SET_VECTOR_ELT(contents, 632, ScalarInteger(internal->s_ICU_D));
+  SET_VECTOR_ELT(contents, 633, ScalarInteger(internal->s_ICU_R));
+  SEXP s_ij = PROTECT(allocVector(REALSXP, internal->dim_s_ij));
+  memcpy(REAL(s_ij), internal->s_ij, internal->dim_s_ij * sizeof(double));
+  odin_set_dim(s_ij, 2, internal->dim_s_ij_1, internal->dim_s_ij_2);
+  SET_VECTOR_ELT(contents, 634, s_ij);
+  SET_VECTOR_ELT(contents, 635, ScalarInteger(internal->s_ILI));
+  SET_VECTOR_ELT(contents, 636, ScalarInteger(internal->s_mild));
+  SET_VECTOR_ELT(contents, 637, ScalarInteger(internal->s_R_pre));
+  SET_VECTOR_ELT(contents, 638, ScalarInteger(internal->s_stepdown));
+  SET_VECTOR_ELT(contents, 639, ScalarInteger(internal->s_triage));
+  SEXP S0 = PROTECT(allocVector(REALSXP, internal->dim_S0));
+  memcpy(REAL(S0), internal->S0, internal->dim_S0 * sizeof(double));
+  SET_VECTOR_ELT(contents, 640, S0);
+  SET_VECTOR_ELT(contents, 641, ScalarInteger(internal->trans_classes));
+  SEXP trans_increase = PROTECT(allocVector(REALSXP, internal->dim_trans_increase));
+  memcpy(REAL(trans_increase), internal->trans_increase, internal->dim_trans_increase * sizeof(double));
+  odin_set_dim(trans_increase, 2, internal->dim_trans_increase_1, internal->dim_trans_increase_2);
+  SET_VECTOR_ELT(contents, 642, trans_increase);
+  SEXP trans_profile = PROTECT(allocVector(REALSXP, internal->dim_trans_profile));
+  memcpy(REAL(trans_profile), internal->trans_profile, internal->dim_trans_profile * sizeof(double));
+  odin_set_dim(trans_profile, 2, internal->dim_trans_profile_1, internal->dim_trans_profile_2);
+  SET_VECTOR_ELT(contents, 643, trans_profile);
+  SEXP nms = PROTECT(allocVector(STRSXP, 644));
+  SET_STRING_ELT(nms, 0, mkChar("aux_EE"));
+  SET_STRING_ELT(nms, 1, mkChar("aux_II_asympt"));
+  SET_STRING_ELT(nms, 2, mkChar("aux_II_comm_D"));
+  SET_STRING_ELT(nms, 3, mkChar("aux_II_hosp_D_conf"));
+  SET_STRING_ELT(nms, 4, mkChar("aux_II_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 5, mkChar("aux_II_hosp_R_conf"));
+  SET_STRING_ELT(nms, 6, mkChar("aux_II_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 7, mkChar("aux_II_ICU_D"));
+  SET_STRING_ELT(nms, 8, mkChar("aux_II_ICU_R"));
+  SET_STRING_ELT(nms, 9, mkChar("aux_II_ILI"));
+  SET_STRING_ELT(nms, 10, mkChar("aux_II_mild"));
+  SET_STRING_ELT(nms, 11, mkChar("aux_II_triage_D"));
+  SET_STRING_ELT(nms, 12, mkChar("aux_II_triage_R"));
+  SET_STRING_ELT(nms, 13, mkChar("aux_p_bin"));
+  SET_STRING_ELT(nms, 14, mkChar("aux_R_pre"));
+  SET_STRING_ELT(nms, 15, mkChar("aux_R_stepdown"));
+  SET_STRING_ELT(nms, 16, mkChar("beta_t"));
+  SET_STRING_ELT(nms, 17, mkChar("beta_y"));
+  SET_STRING_ELT(nms, 18, mkChar("comm_D_transmission"));
+  SET_STRING_ELT(nms, 19, mkChar("D0_comm"));
+  SET_STRING_ELT(nms, 20, mkChar("D0_hosp"));
+  SET_STRING_ELT(nms, 21, mkChar("delta_D_comm"));
+  SET_STRING_ELT(nms, 22, mkChar("delta_D_hosp"));
+  SET_STRING_ELT(nms, 23, mkChar("delta_E"));
+  SET_STRING_ELT(nms, 24, mkChar("delta_I_asympt"));
+  SET_STRING_ELT(nms, 25, mkChar("delta_I_comm_D"));
+  SET_STRING_ELT(nms, 26, mkChar("delta_I_ICU_D"));
+  SET_STRING_ELT(nms, 27, mkChar("delta_I_ICU_R"));
+  SET_STRING_ELT(nms, 28, mkChar("delta_I_ILI"));
+  SET_STRING_ELT(nms, 29, mkChar("delta_I_mild"));
+  SET_STRING_ELT(nms, 30, mkChar("delta_I_triage_D"));
+  SET_STRING_ELT(nms, 31, mkChar("delta_I_triage_R"));
+  SET_STRING_ELT(nms, 32, mkChar("delta_R_neg"));
+  SET_STRING_ELT(nms, 33, mkChar("delta_R_pos"));
+  SET_STRING_ELT(nms, 34, mkChar("delta_R_pre"));
+  SET_STRING_ELT(nms, 35, mkChar("delta_R_stepdown"));
+  SET_STRING_ELT(nms, 36, mkChar("dim_aux_EE"));
+  SET_STRING_ELT(nms, 37, mkChar("dim_aux_EE_1"));
+  SET_STRING_ELT(nms, 38, mkChar("dim_aux_EE_12"));
+  SET_STRING_ELT(nms, 39, mkChar("dim_aux_EE_2"));
+  SET_STRING_ELT(nms, 40, mkChar("dim_aux_EE_3"));
+  SET_STRING_ELT(nms, 41, mkChar("dim_aux_II_asympt"));
+  SET_STRING_ELT(nms, 42, mkChar("dim_aux_II_asympt_1"));
+  SET_STRING_ELT(nms, 43, mkChar("dim_aux_II_asympt_12"));
+  SET_STRING_ELT(nms, 44, mkChar("dim_aux_II_asympt_2"));
+  SET_STRING_ELT(nms, 45, mkChar("dim_aux_II_asympt_3"));
+  SET_STRING_ELT(nms, 46, mkChar("dim_aux_II_comm_D"));
+  SET_STRING_ELT(nms, 47, mkChar("dim_aux_II_comm_D_1"));
+  SET_STRING_ELT(nms, 48, mkChar("dim_aux_II_comm_D_12"));
+  SET_STRING_ELT(nms, 49, mkChar("dim_aux_II_comm_D_2"));
+  SET_STRING_ELT(nms, 50, mkChar("dim_aux_II_comm_D_3"));
+  SET_STRING_ELT(nms, 51, mkChar("dim_aux_II_hosp_D_conf"));
+  SET_STRING_ELT(nms, 52, mkChar("dim_aux_II_hosp_D_conf_1"));
+  SET_STRING_ELT(nms, 53, mkChar("dim_aux_II_hosp_D_conf_12"));
+  SET_STRING_ELT(nms, 54, mkChar("dim_aux_II_hosp_D_conf_2"));
+  SET_STRING_ELT(nms, 55, mkChar("dim_aux_II_hosp_D_conf_3"));
+  SET_STRING_ELT(nms, 56, mkChar("dim_aux_II_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 57, mkChar("dim_aux_II_hosp_D_unconf_1"));
+  SET_STRING_ELT(nms, 58, mkChar("dim_aux_II_hosp_D_unconf_12"));
+  SET_STRING_ELT(nms, 59, mkChar("dim_aux_II_hosp_D_unconf_2"));
+  SET_STRING_ELT(nms, 60, mkChar("dim_aux_II_hosp_D_unconf_3"));
+  SET_STRING_ELT(nms, 61, mkChar("dim_aux_II_hosp_R_conf"));
+  SET_STRING_ELT(nms, 62, mkChar("dim_aux_II_hosp_R_conf_1"));
+  SET_STRING_ELT(nms, 63, mkChar("dim_aux_II_hosp_R_conf_12"));
+  SET_STRING_ELT(nms, 64, mkChar("dim_aux_II_hosp_R_conf_2"));
+  SET_STRING_ELT(nms, 65, mkChar("dim_aux_II_hosp_R_conf_3"));
+  SET_STRING_ELT(nms, 66, mkChar("dim_aux_II_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 67, mkChar("dim_aux_II_hosp_R_unconf_1"));
+  SET_STRING_ELT(nms, 68, mkChar("dim_aux_II_hosp_R_unconf_12"));
+  SET_STRING_ELT(nms, 69, mkChar("dim_aux_II_hosp_R_unconf_2"));
+  SET_STRING_ELT(nms, 70, mkChar("dim_aux_II_hosp_R_unconf_3"));
+  SET_STRING_ELT(nms, 71, mkChar("dim_aux_II_ICU_D"));
+  SET_STRING_ELT(nms, 72, mkChar("dim_aux_II_ICU_D_1"));
+  SET_STRING_ELT(nms, 73, mkChar("dim_aux_II_ICU_D_12"));
+  SET_STRING_ELT(nms, 74, mkChar("dim_aux_II_ICU_D_2"));
+  SET_STRING_ELT(nms, 75, mkChar("dim_aux_II_ICU_D_3"));
+  SET_STRING_ELT(nms, 76, mkChar("dim_aux_II_ICU_R"));
+  SET_STRING_ELT(nms, 77, mkChar("dim_aux_II_ICU_R_1"));
+  SET_STRING_ELT(nms, 78, mkChar("dim_aux_II_ICU_R_12"));
+  SET_STRING_ELT(nms, 79, mkChar("dim_aux_II_ICU_R_2"));
+  SET_STRING_ELT(nms, 80, mkChar("dim_aux_II_ICU_R_3"));
+  SET_STRING_ELT(nms, 81, mkChar("dim_aux_II_ILI"));
+  SET_STRING_ELT(nms, 82, mkChar("dim_aux_II_ILI_1"));
+  SET_STRING_ELT(nms, 83, mkChar("dim_aux_II_ILI_12"));
+  SET_STRING_ELT(nms, 84, mkChar("dim_aux_II_ILI_2"));
+  SET_STRING_ELT(nms, 85, mkChar("dim_aux_II_ILI_3"));
+  SET_STRING_ELT(nms, 86, mkChar("dim_aux_II_mild"));
+  SET_STRING_ELT(nms, 87, mkChar("dim_aux_II_mild_1"));
+  SET_STRING_ELT(nms, 88, mkChar("dim_aux_II_mild_12"));
+  SET_STRING_ELT(nms, 89, mkChar("dim_aux_II_mild_2"));
+  SET_STRING_ELT(nms, 90, mkChar("dim_aux_II_mild_3"));
+  SET_STRING_ELT(nms, 91, mkChar("dim_aux_II_triage_D"));
+  SET_STRING_ELT(nms, 92, mkChar("dim_aux_II_triage_D_1"));
+  SET_STRING_ELT(nms, 93, mkChar("dim_aux_II_triage_D_12"));
+  SET_STRING_ELT(nms, 94, mkChar("dim_aux_II_triage_D_2"));
+  SET_STRING_ELT(nms, 95, mkChar("dim_aux_II_triage_D_3"));
+  SET_STRING_ELT(nms, 96, mkChar("dim_aux_II_triage_R"));
+  SET_STRING_ELT(nms, 97, mkChar("dim_aux_II_triage_R_1"));
+  SET_STRING_ELT(nms, 98, mkChar("dim_aux_II_triage_R_12"));
+  SET_STRING_ELT(nms, 99, mkChar("dim_aux_II_triage_R_2"));
+  SET_STRING_ELT(nms, 100, mkChar("dim_aux_II_triage_R_3"));
+  SET_STRING_ELT(nms, 101, mkChar("dim_aux_p_bin"));
+  SET_STRING_ELT(nms, 102, mkChar("dim_aux_p_bin_1"));
+  SET_STRING_ELT(nms, 103, mkChar("dim_aux_p_bin_2"));
+  SET_STRING_ELT(nms, 104, mkChar("dim_aux_R_pre"));
+  SET_STRING_ELT(nms, 105, mkChar("dim_aux_R_pre_1"));
+  SET_STRING_ELT(nms, 106, mkChar("dim_aux_R_pre_2"));
+  SET_STRING_ELT(nms, 107, mkChar("dim_aux_R_stepdown"));
+  SET_STRING_ELT(nms, 108, mkChar("dim_aux_R_stepdown_1"));
+  SET_STRING_ELT(nms, 109, mkChar("dim_aux_R_stepdown_2"));
+  SET_STRING_ELT(nms, 110, mkChar("dim_beta_t"));
+  SET_STRING_ELT(nms, 111, mkChar("dim_beta_y"));
+  SET_STRING_ELT(nms, 112, mkChar("dim_D_comm"));
+  SET_STRING_ELT(nms, 113, mkChar("dim_D_hosp"));
+  SET_STRING_ELT(nms, 114, mkChar("dim_D0_comm"));
+  SET_STRING_ELT(nms, 115, mkChar("dim_D0_hosp"));
+  SET_STRING_ELT(nms, 116, mkChar("dim_delta_D_comm"));
+  SET_STRING_ELT(nms, 117, mkChar("dim_delta_D_hosp"));
+  SET_STRING_ELT(nms, 118, mkChar("dim_delta_E"));
+  SET_STRING_ELT(nms, 119, mkChar("dim_delta_E_1"));
+  SET_STRING_ELT(nms, 120, mkChar("dim_delta_E_12"));
+  SET_STRING_ELT(nms, 121, mkChar("dim_delta_E_2"));
+  SET_STRING_ELT(nms, 122, mkChar("dim_delta_E_3"));
+  SET_STRING_ELT(nms, 123, mkChar("dim_delta_I_asympt"));
+  SET_STRING_ELT(nms, 124, mkChar("dim_delta_I_asympt_1"));
+  SET_STRING_ELT(nms, 125, mkChar("dim_delta_I_asympt_12"));
+  SET_STRING_ELT(nms, 126, mkChar("dim_delta_I_asympt_2"));
+  SET_STRING_ELT(nms, 127, mkChar("dim_delta_I_asympt_3"));
+  SET_STRING_ELT(nms, 128, mkChar("dim_delta_I_comm_D"));
+  SET_STRING_ELT(nms, 129, mkChar("dim_delta_I_comm_D_1"));
+  SET_STRING_ELT(nms, 130, mkChar("dim_delta_I_comm_D_12"));
+  SET_STRING_ELT(nms, 131, mkChar("dim_delta_I_comm_D_2"));
+  SET_STRING_ELT(nms, 132, mkChar("dim_delta_I_comm_D_3"));
+  SET_STRING_ELT(nms, 133, mkChar("dim_delta_I_ICU_D"));
+  SET_STRING_ELT(nms, 134, mkChar("dim_delta_I_ICU_D_1"));
+  SET_STRING_ELT(nms, 135, mkChar("dim_delta_I_ICU_D_12"));
+  SET_STRING_ELT(nms, 136, mkChar("dim_delta_I_ICU_D_2"));
+  SET_STRING_ELT(nms, 137, mkChar("dim_delta_I_ICU_D_3"));
+  SET_STRING_ELT(nms, 138, mkChar("dim_delta_I_ICU_R"));
+  SET_STRING_ELT(nms, 139, mkChar("dim_delta_I_ICU_R_1"));
+  SET_STRING_ELT(nms, 140, mkChar("dim_delta_I_ICU_R_12"));
+  SET_STRING_ELT(nms, 141, mkChar("dim_delta_I_ICU_R_2"));
+  SET_STRING_ELT(nms, 142, mkChar("dim_delta_I_ICU_R_3"));
+  SET_STRING_ELT(nms, 143, mkChar("dim_delta_I_ILI"));
+  SET_STRING_ELT(nms, 144, mkChar("dim_delta_I_ILI_1"));
+  SET_STRING_ELT(nms, 145, mkChar("dim_delta_I_ILI_12"));
+  SET_STRING_ELT(nms, 146, mkChar("dim_delta_I_ILI_2"));
+  SET_STRING_ELT(nms, 147, mkChar("dim_delta_I_ILI_3"));
+  SET_STRING_ELT(nms, 148, mkChar("dim_delta_I_mild"));
+  SET_STRING_ELT(nms, 149, mkChar("dim_delta_I_mild_1"));
+  SET_STRING_ELT(nms, 150, mkChar("dim_delta_I_mild_12"));
+  SET_STRING_ELT(nms, 151, mkChar("dim_delta_I_mild_2"));
+  SET_STRING_ELT(nms, 152, mkChar("dim_delta_I_mild_3"));
+  SET_STRING_ELT(nms, 153, mkChar("dim_delta_I_triage_D"));
+  SET_STRING_ELT(nms, 154, mkChar("dim_delta_I_triage_D_1"));
+  SET_STRING_ELT(nms, 155, mkChar("dim_delta_I_triage_D_12"));
+  SET_STRING_ELT(nms, 156, mkChar("dim_delta_I_triage_D_2"));
+  SET_STRING_ELT(nms, 157, mkChar("dim_delta_I_triage_D_3"));
+  SET_STRING_ELT(nms, 158, mkChar("dim_delta_I_triage_R"));
+  SET_STRING_ELT(nms, 159, mkChar("dim_delta_I_triage_R_1"));
+  SET_STRING_ELT(nms, 160, mkChar("dim_delta_I_triage_R_12"));
+  SET_STRING_ELT(nms, 161, mkChar("dim_delta_I_triage_R_2"));
+  SET_STRING_ELT(nms, 162, mkChar("dim_delta_I_triage_R_3"));
+  SET_STRING_ELT(nms, 163, mkChar("dim_delta_R_neg"));
+  SET_STRING_ELT(nms, 164, mkChar("dim_delta_R_pos"));
+  SET_STRING_ELT(nms, 165, mkChar("dim_delta_R_pre"));
+  SET_STRING_ELT(nms, 166, mkChar("dim_delta_R_pre_1"));
+  SET_STRING_ELT(nms, 167, mkChar("dim_delta_R_pre_2"));
+  SET_STRING_ELT(nms, 168, mkChar("dim_delta_R_stepdown"));
+  SET_STRING_ELT(nms, 169, mkChar("dim_delta_R_stepdown_1"));
+  SET_STRING_ELT(nms, 170, mkChar("dim_delta_R_stepdown_2"));
+  SET_STRING_ELT(nms, 171, mkChar("dim_E"));
+  SET_STRING_ELT(nms, 172, mkChar("dim_E_1"));
+  SET_STRING_ELT(nms, 173, mkChar("dim_E_12"));
+  SET_STRING_ELT(nms, 174, mkChar("dim_E_2"));
+  SET_STRING_ELT(nms, 175, mkChar("dim_E_3"));
+  SET_STRING_ELT(nms, 176, mkChar("dim_E0"));
+  SET_STRING_ELT(nms, 177, mkChar("dim_E0_1"));
+  SET_STRING_ELT(nms, 178, mkChar("dim_E0_12"));
+  SET_STRING_ELT(nms, 179, mkChar("dim_E0_2"));
+  SET_STRING_ELT(nms, 180, mkChar("dim_E0_3"));
+  SET_STRING_ELT(nms, 181, mkChar("dim_I_asympt"));
+  SET_STRING_ELT(nms, 182, mkChar("dim_I_asympt_1"));
+  SET_STRING_ELT(nms, 183, mkChar("dim_I_asympt_12"));
+  SET_STRING_ELT(nms, 184, mkChar("dim_I_asympt_2"));
+  SET_STRING_ELT(nms, 185, mkChar("dim_I_asympt_3"));
+  SET_STRING_ELT(nms, 186, mkChar("dim_I_comm_D"));
+  SET_STRING_ELT(nms, 187, mkChar("dim_I_comm_D_1"));
+  SET_STRING_ELT(nms, 188, mkChar("dim_I_comm_D_12"));
+  SET_STRING_ELT(nms, 189, mkChar("dim_I_comm_D_2"));
+  SET_STRING_ELT(nms, 190, mkChar("dim_I_comm_D_3"));
+  SET_STRING_ELT(nms, 191, mkChar("dim_I_hosp_D_conf"));
+  SET_STRING_ELT(nms, 192, mkChar("dim_I_hosp_D_conf_1"));
+  SET_STRING_ELT(nms, 193, mkChar("dim_I_hosp_D_conf_12"));
+  SET_STRING_ELT(nms, 194, mkChar("dim_I_hosp_D_conf_2"));
+  SET_STRING_ELT(nms, 195, mkChar("dim_I_hosp_D_conf_3"));
+  SET_STRING_ELT(nms, 196, mkChar("dim_I_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 197, mkChar("dim_I_hosp_D_unconf_1"));
+  SET_STRING_ELT(nms, 198, mkChar("dim_I_hosp_D_unconf_12"));
+  SET_STRING_ELT(nms, 199, mkChar("dim_I_hosp_D_unconf_2"));
+  SET_STRING_ELT(nms, 200, mkChar("dim_I_hosp_D_unconf_3"));
+  SET_STRING_ELT(nms, 201, mkChar("dim_I_hosp_R_conf"));
+  SET_STRING_ELT(nms, 202, mkChar("dim_I_hosp_R_conf_1"));
+  SET_STRING_ELT(nms, 203, mkChar("dim_I_hosp_R_conf_12"));
+  SET_STRING_ELT(nms, 204, mkChar("dim_I_hosp_R_conf_2"));
+  SET_STRING_ELT(nms, 205, mkChar("dim_I_hosp_R_conf_3"));
+  SET_STRING_ELT(nms, 206, mkChar("dim_I_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 207, mkChar("dim_I_hosp_R_unconf_1"));
+  SET_STRING_ELT(nms, 208, mkChar("dim_I_hosp_R_unconf_12"));
+  SET_STRING_ELT(nms, 209, mkChar("dim_I_hosp_R_unconf_2"));
+  SET_STRING_ELT(nms, 210, mkChar("dim_I_hosp_R_unconf_3"));
+  SET_STRING_ELT(nms, 211, mkChar("dim_I_ICU_D"));
+  SET_STRING_ELT(nms, 212, mkChar("dim_I_ICU_D_1"));
+  SET_STRING_ELT(nms, 213, mkChar("dim_I_ICU_D_12"));
+  SET_STRING_ELT(nms, 214, mkChar("dim_I_ICU_D_2"));
+  SET_STRING_ELT(nms, 215, mkChar("dim_I_ICU_D_3"));
+  SET_STRING_ELT(nms, 216, mkChar("dim_I_ICU_R"));
+  SET_STRING_ELT(nms, 217, mkChar("dim_I_ICU_R_1"));
+  SET_STRING_ELT(nms, 218, mkChar("dim_I_ICU_R_12"));
+  SET_STRING_ELT(nms, 219, mkChar("dim_I_ICU_R_2"));
+  SET_STRING_ELT(nms, 220, mkChar("dim_I_ICU_R_3"));
+  SET_STRING_ELT(nms, 221, mkChar("dim_I_ILI"));
+  SET_STRING_ELT(nms, 222, mkChar("dim_I_ILI_1"));
+  SET_STRING_ELT(nms, 223, mkChar("dim_I_ILI_12"));
+  SET_STRING_ELT(nms, 224, mkChar("dim_I_ILI_2"));
+  SET_STRING_ELT(nms, 225, mkChar("dim_I_ILI_3"));
+  SET_STRING_ELT(nms, 226, mkChar("dim_I_mild"));
+  SET_STRING_ELT(nms, 227, mkChar("dim_I_mild_1"));
+  SET_STRING_ELT(nms, 228, mkChar("dim_I_mild_12"));
+  SET_STRING_ELT(nms, 229, mkChar("dim_I_mild_2"));
+  SET_STRING_ELT(nms, 230, mkChar("dim_I_mild_3"));
+  SET_STRING_ELT(nms, 231, mkChar("dim_I_triage_D"));
+  SET_STRING_ELT(nms, 232, mkChar("dim_I_triage_D_1"));
+  SET_STRING_ELT(nms, 233, mkChar("dim_I_triage_D_12"));
+  SET_STRING_ELT(nms, 234, mkChar("dim_I_triage_D_2"));
+  SET_STRING_ELT(nms, 235, mkChar("dim_I_triage_D_3"));
+  SET_STRING_ELT(nms, 236, mkChar("dim_I_triage_R"));
+  SET_STRING_ELT(nms, 237, mkChar("dim_I_triage_R_1"));
+  SET_STRING_ELT(nms, 238, mkChar("dim_I_triage_R_12"));
+  SET_STRING_ELT(nms, 239, mkChar("dim_I_triage_R_2"));
+  SET_STRING_ELT(nms, 240, mkChar("dim_I_triage_R_3"));
+  SET_STRING_ELT(nms, 241, mkChar("dim_I_with_diff_trans"));
+  SET_STRING_ELT(nms, 242, mkChar("dim_I_with_diff_trans_1"));
+  SET_STRING_ELT(nms, 243, mkChar("dim_I_with_diff_trans_2"));
+  SET_STRING_ELT(nms, 244, mkChar("dim_I0_asympt"));
+  SET_STRING_ELT(nms, 245, mkChar("dim_I0_asympt_1"));
+  SET_STRING_ELT(nms, 246, mkChar("dim_I0_asympt_12"));
+  SET_STRING_ELT(nms, 247, mkChar("dim_I0_asympt_2"));
+  SET_STRING_ELT(nms, 248, mkChar("dim_I0_asympt_3"));
+  SET_STRING_ELT(nms, 249, mkChar("dim_I0_comm_D"));
+  SET_STRING_ELT(nms, 250, mkChar("dim_I0_comm_D_1"));
+  SET_STRING_ELT(nms, 251, mkChar("dim_I0_comm_D_12"));
+  SET_STRING_ELT(nms, 252, mkChar("dim_I0_comm_D_2"));
+  SET_STRING_ELT(nms, 253, mkChar("dim_I0_comm_D_3"));
+  SET_STRING_ELT(nms, 254, mkChar("dim_I0_hosp_D_conf"));
+  SET_STRING_ELT(nms, 255, mkChar("dim_I0_hosp_D_conf_1"));
+  SET_STRING_ELT(nms, 256, mkChar("dim_I0_hosp_D_conf_12"));
+  SET_STRING_ELT(nms, 257, mkChar("dim_I0_hosp_D_conf_2"));
+  SET_STRING_ELT(nms, 258, mkChar("dim_I0_hosp_D_conf_3"));
+  SET_STRING_ELT(nms, 259, mkChar("dim_I0_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 260, mkChar("dim_I0_hosp_D_unconf_1"));
+  SET_STRING_ELT(nms, 261, mkChar("dim_I0_hosp_D_unconf_12"));
+  SET_STRING_ELT(nms, 262, mkChar("dim_I0_hosp_D_unconf_2"));
+  SET_STRING_ELT(nms, 263, mkChar("dim_I0_hosp_D_unconf_3"));
+  SET_STRING_ELT(nms, 264, mkChar("dim_I0_hosp_R_conf"));
+  SET_STRING_ELT(nms, 265, mkChar("dim_I0_hosp_R_conf_1"));
+  SET_STRING_ELT(nms, 266, mkChar("dim_I0_hosp_R_conf_12"));
+  SET_STRING_ELT(nms, 267, mkChar("dim_I0_hosp_R_conf_2"));
+  SET_STRING_ELT(nms, 268, mkChar("dim_I0_hosp_R_conf_3"));
+  SET_STRING_ELT(nms, 269, mkChar("dim_I0_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 270, mkChar("dim_I0_hosp_R_unconf_1"));
+  SET_STRING_ELT(nms, 271, mkChar("dim_I0_hosp_R_unconf_12"));
+  SET_STRING_ELT(nms, 272, mkChar("dim_I0_hosp_R_unconf_2"));
+  SET_STRING_ELT(nms, 273, mkChar("dim_I0_hosp_R_unconf_3"));
+  SET_STRING_ELT(nms, 274, mkChar("dim_I0_ICU_D"));
+  SET_STRING_ELT(nms, 275, mkChar("dim_I0_ICU_D_1"));
+  SET_STRING_ELT(nms, 276, mkChar("dim_I0_ICU_D_12"));
+  SET_STRING_ELT(nms, 277, mkChar("dim_I0_ICU_D_2"));
+  SET_STRING_ELT(nms, 278, mkChar("dim_I0_ICU_D_3"));
+  SET_STRING_ELT(nms, 279, mkChar("dim_I0_ICU_R"));
+  SET_STRING_ELT(nms, 280, mkChar("dim_I0_ICU_R_1"));
+  SET_STRING_ELT(nms, 281, mkChar("dim_I0_ICU_R_12"));
+  SET_STRING_ELT(nms, 282, mkChar("dim_I0_ICU_R_2"));
+  SET_STRING_ELT(nms, 283, mkChar("dim_I0_ICU_R_3"));
+  SET_STRING_ELT(nms, 284, mkChar("dim_I0_ILI"));
+  SET_STRING_ELT(nms, 285, mkChar("dim_I0_ILI_1"));
+  SET_STRING_ELT(nms, 286, mkChar("dim_I0_ILI_12"));
+  SET_STRING_ELT(nms, 287, mkChar("dim_I0_ILI_2"));
+  SET_STRING_ELT(nms, 288, mkChar("dim_I0_ILI_3"));
+  SET_STRING_ELT(nms, 289, mkChar("dim_I0_mild"));
+  SET_STRING_ELT(nms, 290, mkChar("dim_I0_mild_1"));
+  SET_STRING_ELT(nms, 291, mkChar("dim_I0_mild_12"));
+  SET_STRING_ELT(nms, 292, mkChar("dim_I0_mild_2"));
+  SET_STRING_ELT(nms, 293, mkChar("dim_I0_mild_3"));
+  SET_STRING_ELT(nms, 294, mkChar("dim_I0_triage_D"));
+  SET_STRING_ELT(nms, 295, mkChar("dim_I0_triage_D_1"));
+  SET_STRING_ELT(nms, 296, mkChar("dim_I0_triage_D_12"));
+  SET_STRING_ELT(nms, 297, mkChar("dim_I0_triage_D_2"));
+  SET_STRING_ELT(nms, 298, mkChar("dim_I0_triage_D_3"));
+  SET_STRING_ELT(nms, 299, mkChar("dim_I0_triage_R"));
+  SET_STRING_ELT(nms, 300, mkChar("dim_I0_triage_R_1"));
+  SET_STRING_ELT(nms, 301, mkChar("dim_I0_triage_R_12"));
+  SET_STRING_ELT(nms, 302, mkChar("dim_I0_triage_R_2"));
+  SET_STRING_ELT(nms, 303, mkChar("dim_I0_triage_R_3"));
+  SET_STRING_ELT(nms, 304, mkChar("dim_lambda"));
+  SET_STRING_ELT(nms, 305, mkChar("dim_m"));
+  SET_STRING_ELT(nms, 306, mkChar("dim_m_1"));
+  SET_STRING_ELT(nms, 307, mkChar("dim_m_2"));
+  SET_STRING_ELT(nms, 308, mkChar("dim_n_com_to_R_pre"));
+  SET_STRING_ELT(nms, 309, mkChar("dim_n_com_to_R_total"));
+  SET_STRING_ELT(nms, 310, mkChar("dim_n_EE"));
+  SET_STRING_ELT(nms, 311, mkChar("dim_n_EE_1"));
+  SET_STRING_ELT(nms, 312, mkChar("dim_n_EE_12"));
+  SET_STRING_ELT(nms, 313, mkChar("dim_n_EE_2"));
+  SET_STRING_ELT(nms, 314, mkChar("dim_n_EE_3"));
+  SET_STRING_ELT(nms, 315, mkChar("dim_n_EI_asympt"));
+  SET_STRING_ELT(nms, 316, mkChar("dim_n_EI_asympt_1"));
+  SET_STRING_ELT(nms, 317, mkChar("dim_n_EI_asympt_2"));
+  SET_STRING_ELT(nms, 318, mkChar("dim_n_EI_ILI"));
+  SET_STRING_ELT(nms, 319, mkChar("dim_n_EI_ILI_1"));
+  SET_STRING_ELT(nms, 320, mkChar("dim_n_EI_ILI_2"));
+  SET_STRING_ELT(nms, 321, mkChar("dim_n_EI_mild"));
+  SET_STRING_ELT(nms, 322, mkChar("dim_n_EI_mild_1"));
+  SET_STRING_ELT(nms, 323, mkChar("dim_n_EI_mild_2"));
+  SET_STRING_ELT(nms, 324, mkChar("dim_n_hosp_non_ICU"));
+  SET_STRING_ELT(nms, 325, mkChar("dim_n_hosp_non_ICU_1"));
+  SET_STRING_ELT(nms, 326, mkChar("dim_n_hosp_non_ICU_2"));
+  SET_STRING_ELT(nms, 327, mkChar("dim_n_I_hosp_D_unconf_to_conf"));
+  SET_STRING_ELT(nms, 328, mkChar("dim_n_I_hosp_D_unconf_to_conf_1"));
+  SET_STRING_ELT(nms, 329, mkChar("dim_n_I_hosp_D_unconf_to_conf_12"));
+  SET_STRING_ELT(nms, 330, mkChar("dim_n_I_hosp_D_unconf_to_conf_2"));
+  SET_STRING_ELT(nms, 331, mkChar("dim_n_I_hosp_D_unconf_to_conf_3"));
+  SET_STRING_ELT(nms, 332, mkChar("dim_n_I_hosp_R_unconf_to_conf"));
+  SET_STRING_ELT(nms, 333, mkChar("dim_n_I_hosp_R_unconf_to_conf_1"));
+  SET_STRING_ELT(nms, 334, mkChar("dim_n_I_hosp_R_unconf_to_conf_12"));
+  SET_STRING_ELT(nms, 335, mkChar("dim_n_I_hosp_R_unconf_to_conf_2"));
+  SET_STRING_ELT(nms, 336, mkChar("dim_n_I_hosp_R_unconf_to_conf_3"));
+  SET_STRING_ELT(nms, 337, mkChar("dim_n_ICU_to_R_stepdown"));
+  SET_STRING_ELT(nms, 338, mkChar("dim_n_II_asympt"));
+  SET_STRING_ELT(nms, 339, mkChar("dim_n_II_asympt_1"));
+  SET_STRING_ELT(nms, 340, mkChar("dim_n_II_asympt_12"));
+  SET_STRING_ELT(nms, 341, mkChar("dim_n_II_asympt_2"));
+  SET_STRING_ELT(nms, 342, mkChar("dim_n_II_asympt_3"));
+  SET_STRING_ELT(nms, 343, mkChar("dim_n_II_comm_D"));
+  SET_STRING_ELT(nms, 344, mkChar("dim_n_II_comm_D_1"));
+  SET_STRING_ELT(nms, 345, mkChar("dim_n_II_comm_D_12"));
+  SET_STRING_ELT(nms, 346, mkChar("dim_n_II_comm_D_2"));
+  SET_STRING_ELT(nms, 347, mkChar("dim_n_II_comm_D_3"));
+  SET_STRING_ELT(nms, 348, mkChar("dim_n_II_hosp_D_conf"));
+  SET_STRING_ELT(nms, 349, mkChar("dim_n_II_hosp_D_conf_1"));
+  SET_STRING_ELT(nms, 350, mkChar("dim_n_II_hosp_D_conf_12"));
+  SET_STRING_ELT(nms, 351, mkChar("dim_n_II_hosp_D_conf_2"));
+  SET_STRING_ELT(nms, 352, mkChar("dim_n_II_hosp_D_conf_3"));
+  SET_STRING_ELT(nms, 353, mkChar("dim_n_II_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 354, mkChar("dim_n_II_hosp_D_unconf_1"));
+  SET_STRING_ELT(nms, 355, mkChar("dim_n_II_hosp_D_unconf_12"));
+  SET_STRING_ELT(nms, 356, mkChar("dim_n_II_hosp_D_unconf_2"));
+  SET_STRING_ELT(nms, 357, mkChar("dim_n_II_hosp_D_unconf_3"));
+  SET_STRING_ELT(nms, 358, mkChar("dim_n_II_hosp_R_conf"));
+  SET_STRING_ELT(nms, 359, mkChar("dim_n_II_hosp_R_conf_1"));
+  SET_STRING_ELT(nms, 360, mkChar("dim_n_II_hosp_R_conf_12"));
+  SET_STRING_ELT(nms, 361, mkChar("dim_n_II_hosp_R_conf_2"));
+  SET_STRING_ELT(nms, 362, mkChar("dim_n_II_hosp_R_conf_3"));
+  SET_STRING_ELT(nms, 363, mkChar("dim_n_II_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 364, mkChar("dim_n_II_hosp_R_unconf_1"));
+  SET_STRING_ELT(nms, 365, mkChar("dim_n_II_hosp_R_unconf_12"));
+  SET_STRING_ELT(nms, 366, mkChar("dim_n_II_hosp_R_unconf_2"));
+  SET_STRING_ELT(nms, 367, mkChar("dim_n_II_hosp_R_unconf_3"));
+  SET_STRING_ELT(nms, 368, mkChar("dim_n_II_ICU_D"));
+  SET_STRING_ELT(nms, 369, mkChar("dim_n_II_ICU_D_1"));
+  SET_STRING_ELT(nms, 370, mkChar("dim_n_II_ICU_D_12"));
+  SET_STRING_ELT(nms, 371, mkChar("dim_n_II_ICU_D_2"));
+  SET_STRING_ELT(nms, 372, mkChar("dim_n_II_ICU_D_3"));
+  SET_STRING_ELT(nms, 373, mkChar("dim_n_II_ICU_R"));
+  SET_STRING_ELT(nms, 374, mkChar("dim_n_II_ICU_R_1"));
+  SET_STRING_ELT(nms, 375, mkChar("dim_n_II_ICU_R_12"));
+  SET_STRING_ELT(nms, 376, mkChar("dim_n_II_ICU_R_2"));
+  SET_STRING_ELT(nms, 377, mkChar("dim_n_II_ICU_R_3"));
+  SET_STRING_ELT(nms, 378, mkChar("dim_n_II_ILI"));
+  SET_STRING_ELT(nms, 379, mkChar("dim_n_II_ILI_1"));
+  SET_STRING_ELT(nms, 380, mkChar("dim_n_II_ILI_12"));
+  SET_STRING_ELT(nms, 381, mkChar("dim_n_II_ILI_2"));
+  SET_STRING_ELT(nms, 382, mkChar("dim_n_II_ILI_3"));
+  SET_STRING_ELT(nms, 383, mkChar("dim_n_II_mild"));
+  SET_STRING_ELT(nms, 384, mkChar("dim_n_II_mild_1"));
+  SET_STRING_ELT(nms, 385, mkChar("dim_n_II_mild_12"));
+  SET_STRING_ELT(nms, 386, mkChar("dim_n_II_mild_2"));
+  SET_STRING_ELT(nms, 387, mkChar("dim_n_II_mild_3"));
+  SET_STRING_ELT(nms, 388, mkChar("dim_n_II_triage_D"));
+  SET_STRING_ELT(nms, 389, mkChar("dim_n_II_triage_D_1"));
+  SET_STRING_ELT(nms, 390, mkChar("dim_n_II_triage_D_12"));
+  SET_STRING_ELT(nms, 391, mkChar("dim_n_II_triage_D_2"));
+  SET_STRING_ELT(nms, 392, mkChar("dim_n_II_triage_D_3"));
+  SET_STRING_ELT(nms, 393, mkChar("dim_n_II_triage_R"));
+  SET_STRING_ELT(nms, 394, mkChar("dim_n_II_triage_R_1"));
+  SET_STRING_ELT(nms, 395, mkChar("dim_n_II_triage_R_12"));
+  SET_STRING_ELT(nms, 396, mkChar("dim_n_II_triage_R_2"));
+  SET_STRING_ELT(nms, 397, mkChar("dim_n_II_triage_R_3"));
+  SET_STRING_ELT(nms, 398, mkChar("dim_n_ILI_to_comm_D"));
+  SET_STRING_ELT(nms, 399, mkChar("dim_n_ILI_to_comm_D_1"));
+  SET_STRING_ELT(nms, 400, mkChar("dim_n_ILI_to_comm_D_2"));
+  SET_STRING_ELT(nms, 401, mkChar("dim_n_ILI_to_hosp"));
+  SET_STRING_ELT(nms, 402, mkChar("dim_n_ILI_to_hosp_1"));
+  SET_STRING_ELT(nms, 403, mkChar("dim_n_ILI_to_hosp_2"));
+  SET_STRING_ELT(nms, 404, mkChar("dim_n_ILI_to_hosp_D"));
+  SET_STRING_ELT(nms, 405, mkChar("dim_n_ILI_to_hosp_D_1"));
+  SET_STRING_ELT(nms, 406, mkChar("dim_n_ILI_to_hosp_D_2"));
+  SET_STRING_ELT(nms, 407, mkChar("dim_n_ILI_to_hosp_D_conf"));
+  SET_STRING_ELT(nms, 408, mkChar("dim_n_ILI_to_hosp_D_conf_1"));
+  SET_STRING_ELT(nms, 409, mkChar("dim_n_ILI_to_hosp_D_conf_2"));
+  SET_STRING_ELT(nms, 410, mkChar("dim_n_ILI_to_hosp_R"));
+  SET_STRING_ELT(nms, 411, mkChar("dim_n_ILI_to_hosp_R_1"));
+  SET_STRING_ELT(nms, 412, mkChar("dim_n_ILI_to_hosp_R_2"));
+  SET_STRING_ELT(nms, 413, mkChar("dim_n_ILI_to_hosp_R_conf"));
+  SET_STRING_ELT(nms, 414, mkChar("dim_n_ILI_to_hosp_R_conf_1"));
+  SET_STRING_ELT(nms, 415, mkChar("dim_n_ILI_to_hosp_R_conf_2"));
+  SET_STRING_ELT(nms, 416, mkChar("dim_n_ILI_to_triage"));
+  SET_STRING_ELT(nms, 417, mkChar("dim_n_ILI_to_triage_1"));
+  SET_STRING_ELT(nms, 418, mkChar("dim_n_ILI_to_triage_2"));
+  SET_STRING_ELT(nms, 419, mkChar("dim_n_ILI_to_triage_D"));
+  SET_STRING_ELT(nms, 420, mkChar("dim_n_ILI_to_triage_D_1"));
+  SET_STRING_ELT(nms, 421, mkChar("dim_n_ILI_to_triage_D_2"));
+  SET_STRING_ELT(nms, 422, mkChar("dim_n_ILI_to_triage_R"));
+  SET_STRING_ELT(nms, 423, mkChar("dim_n_ILI_to_triage_R_1"));
+  SET_STRING_ELT(nms, 424, mkChar("dim_n_ILI_to_triage_R_2"));
+  SET_STRING_ELT(nms, 425, mkChar("dim_n_R_pre"));
+  SET_STRING_ELT(nms, 426, mkChar("dim_n_R_pre_1"));
+  SET_STRING_ELT(nms, 427, mkChar("dim_n_R_pre_2"));
+  SET_STRING_ELT(nms, 428, mkChar("dim_n_R_stepdown"));
+  SET_STRING_ELT(nms, 429, mkChar("dim_n_R_stepdown_1"));
+  SET_STRING_ELT(nms, 430, mkChar("dim_n_R_stepdown_2"));
+  SET_STRING_ELT(nms, 431, mkChar("dim_n_SE"));
+  SET_STRING_ELT(nms, 432, mkChar("dim_new_I_hosp_D_conf"));
+  SET_STRING_ELT(nms, 433, mkChar("dim_new_I_hosp_D_conf_1"));
+  SET_STRING_ELT(nms, 434, mkChar("dim_new_I_hosp_D_conf_12"));
+  SET_STRING_ELT(nms, 435, mkChar("dim_new_I_hosp_D_conf_2"));
+  SET_STRING_ELT(nms, 436, mkChar("dim_new_I_hosp_D_conf_3"));
+  SET_STRING_ELT(nms, 437, mkChar("dim_new_I_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 438, mkChar("dim_new_I_hosp_D_unconf_1"));
+  SET_STRING_ELT(nms, 439, mkChar("dim_new_I_hosp_D_unconf_12"));
+  SET_STRING_ELT(nms, 440, mkChar("dim_new_I_hosp_D_unconf_2"));
+  SET_STRING_ELT(nms, 441, mkChar("dim_new_I_hosp_D_unconf_3"));
+  SET_STRING_ELT(nms, 442, mkChar("dim_new_I_hosp_R_conf"));
+  SET_STRING_ELT(nms, 443, mkChar("dim_new_I_hosp_R_conf_1"));
+  SET_STRING_ELT(nms, 444, mkChar("dim_new_I_hosp_R_conf_12"));
+  SET_STRING_ELT(nms, 445, mkChar("dim_new_I_hosp_R_conf_2"));
+  SET_STRING_ELT(nms, 446, mkChar("dim_new_I_hosp_R_conf_3"));
+  SET_STRING_ELT(nms, 447, mkChar("dim_new_I_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 448, mkChar("dim_new_I_hosp_R_unconf_1"));
+  SET_STRING_ELT(nms, 449, mkChar("dim_new_I_hosp_R_unconf_12"));
+  SET_STRING_ELT(nms, 450, mkChar("dim_new_I_hosp_R_unconf_2"));
+  SET_STRING_ELT(nms, 451, mkChar("dim_new_I_hosp_R_unconf_3"));
+  SET_STRING_ELT(nms, 452, mkChar("dim_p_admit_conf"));
+  SET_STRING_ELT(nms, 453, mkChar("dim_p_asympt"));
+  SET_STRING_ELT(nms, 454, mkChar("dim_p_death_comm"));
+  SET_STRING_ELT(nms, 455, mkChar("dim_p_death_hosp_D"));
+  SET_STRING_ELT(nms, 456, mkChar("dim_p_death_ICU"));
+  SET_STRING_ELT(nms, 457, mkChar("dim_p_ICU_hosp"));
+  SET_STRING_ELT(nms, 458, mkChar("dim_p_R_pre"));
+  SET_STRING_ELT(nms, 459, mkChar("dim_p_recov_ILI"));
+  SET_STRING_ELT(nms, 460, mkChar("dim_p_SE"));
+  SET_STRING_ELT(nms, 461, mkChar("dim_p_seroconversion"));
+  SET_STRING_ELT(nms, 462, mkChar("dim_p_sympt_ILI"));
+  SET_STRING_ELT(nms, 463, mkChar("dim_R_neg"));
+  SET_STRING_ELT(nms, 464, mkChar("dim_R_pos"));
+  SET_STRING_ELT(nms, 465, mkChar("dim_R_pre"));
+  SET_STRING_ELT(nms, 466, mkChar("dim_R_pre_1"));
+  SET_STRING_ELT(nms, 467, mkChar("dim_R_pre_2"));
+  SET_STRING_ELT(nms, 468, mkChar("dim_R_stepdown"));
+  SET_STRING_ELT(nms, 469, mkChar("dim_R_stepdown_1"));
+  SET_STRING_ELT(nms, 470, mkChar("dim_R_stepdown_2"));
+  SET_STRING_ELT(nms, 471, mkChar("dim_R0_neg"));
+  SET_STRING_ELT(nms, 472, mkChar("dim_R0_pos"));
+  SET_STRING_ELT(nms, 473, mkChar("dim_R0_pre"));
+  SET_STRING_ELT(nms, 474, mkChar("dim_R0_pre_1"));
+  SET_STRING_ELT(nms, 475, mkChar("dim_R0_pre_2"));
+  SET_STRING_ELT(nms, 476, mkChar("dim_R0_stepdown"));
+  SET_STRING_ELT(nms, 477, mkChar("dim_R0_stepdown_1"));
+  SET_STRING_ELT(nms, 478, mkChar("dim_R0_stepdown_2"));
+  SET_STRING_ELT(nms, 479, mkChar("dim_S"));
+  SET_STRING_ELT(nms, 480, mkChar("dim_s_ij"));
+  SET_STRING_ELT(nms, 481, mkChar("dim_s_ij_1"));
+  SET_STRING_ELT(nms, 482, mkChar("dim_s_ij_2"));
+  SET_STRING_ELT(nms, 483, mkChar("dim_S0"));
+  SET_STRING_ELT(nms, 484, mkChar("dim_trans_increase"));
+  SET_STRING_ELT(nms, 485, mkChar("dim_trans_increase_1"));
+  SET_STRING_ELT(nms, 486, mkChar("dim_trans_increase_2"));
+  SET_STRING_ELT(nms, 487, mkChar("dim_trans_profile"));
+  SET_STRING_ELT(nms, 488, mkChar("dim_trans_profile_1"));
+  SET_STRING_ELT(nms, 489, mkChar("dim_trans_profile_2"));
+  SET_STRING_ELT(nms, 490, mkChar("dt"));
+  SET_STRING_ELT(nms, 491, mkChar("E0"));
+  SET_STRING_ELT(nms, 492, mkChar("gamma_asympt"));
+  SET_STRING_ELT(nms, 493, mkChar("gamma_comm_D"));
+  SET_STRING_ELT(nms, 494, mkChar("gamma_E"));
+  SET_STRING_ELT(nms, 495, mkChar("gamma_hosp_D"));
+  SET_STRING_ELT(nms, 496, mkChar("gamma_hosp_R"));
+  SET_STRING_ELT(nms, 497, mkChar("gamma_ICU_D"));
+  SET_STRING_ELT(nms, 498, mkChar("gamma_ICU_R"));
+  SET_STRING_ELT(nms, 499, mkChar("gamma_ILI"));
+  SET_STRING_ELT(nms, 500, mkChar("gamma_mild"));
+  SET_STRING_ELT(nms, 501, mkChar("gamma_R_pre"));
+  SET_STRING_ELT(nms, 502, mkChar("gamma_stepdown"));
+  SET_STRING_ELT(nms, 503, mkChar("gamma_test"));
+  SET_STRING_ELT(nms, 504, mkChar("gamma_triage"));
+  SET_STRING_ELT(nms, 505, mkChar("hosp_transmission"));
+  SET_STRING_ELT(nms, 506, mkChar("I_with_diff_trans"));
+  SET_STRING_ELT(nms, 507, mkChar("I0_asympt"));
+  SET_STRING_ELT(nms, 508, mkChar("I0_comm_D"));
+  SET_STRING_ELT(nms, 509, mkChar("I0_hosp_D_conf"));
+  SET_STRING_ELT(nms, 510, mkChar("I0_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 511, mkChar("I0_hosp_R_conf"));
+  SET_STRING_ELT(nms, 512, mkChar("I0_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 513, mkChar("I0_ICU_D"));
+  SET_STRING_ELT(nms, 514, mkChar("I0_ICU_R"));
+  SET_STRING_ELT(nms, 515, mkChar("I0_ILI"));
+  SET_STRING_ELT(nms, 516, mkChar("I0_mild"));
+  SET_STRING_ELT(nms, 517, mkChar("I0_triage_D"));
+  SET_STRING_ELT(nms, 518, mkChar("I0_triage_R"));
+  SET_STRING_ELT(nms, 519, mkChar("ICU_transmission"));
+  SET_STRING_ELT(nms, 520, mkChar("initial_D_comm"));
+  SET_STRING_ELT(nms, 521, mkChar("initial_D_hosp"));
+  SET_STRING_ELT(nms, 522, mkChar("initial_E"));
+  SET_STRING_ELT(nms, 523, mkChar("initial_I_asympt"));
+  SET_STRING_ELT(nms, 524, mkChar("initial_I_comm_D"));
+  SET_STRING_ELT(nms, 525, mkChar("initial_I_hosp_D_conf"));
+  SET_STRING_ELT(nms, 526, mkChar("initial_I_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 527, mkChar("initial_I_hosp_R_conf"));
+  SET_STRING_ELT(nms, 528, mkChar("initial_I_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 529, mkChar("initial_I_ICU_D"));
+  SET_STRING_ELT(nms, 530, mkChar("initial_I_ICU_R"));
+  SET_STRING_ELT(nms, 531, mkChar("initial_I_ILI"));
+  SET_STRING_ELT(nms, 532, mkChar("initial_I_mild"));
+  SET_STRING_ELT(nms, 533, mkChar("initial_I_triage_D"));
+  SET_STRING_ELT(nms, 534, mkChar("initial_I_triage_R"));
+  SET_STRING_ELT(nms, 535, mkChar("initial_R_neg"));
+  SET_STRING_ELT(nms, 536, mkChar("initial_R_pos"));
+  SET_STRING_ELT(nms, 537, mkChar("initial_R_pre"));
+  SET_STRING_ELT(nms, 538, mkChar("initial_R_stepdown"));
+  SET_STRING_ELT(nms, 539, mkChar("initial_S"));
+  SET_STRING_ELT(nms, 540, mkChar("interpolate_beta"));
+  SET_STRING_ELT(nms, 541, mkChar("lambda"));
+  SET_STRING_ELT(nms, 542, mkChar("m"));
+  SET_STRING_ELT(nms, 543, mkChar("N_age"));
+  SET_STRING_ELT(nms, 544, mkChar("n_com_to_R_pre"));
+  SET_STRING_ELT(nms, 545, mkChar("n_com_to_R_total"));
+  SET_STRING_ELT(nms, 546, mkChar("n_EE"));
+  SET_STRING_ELT(nms, 547, mkChar("n_EI_asympt"));
+  SET_STRING_ELT(nms, 548, mkChar("n_EI_ILI"));
+  SET_STRING_ELT(nms, 549, mkChar("n_EI_mild"));
+  SET_STRING_ELT(nms, 550, mkChar("n_hosp_non_ICU"));
+  SET_STRING_ELT(nms, 551, mkChar("n_I_hosp_D_unconf_to_conf"));
+  SET_STRING_ELT(nms, 552, mkChar("n_I_hosp_R_unconf_to_conf"));
+  SET_STRING_ELT(nms, 553, mkChar("n_ICU_to_R_stepdown"));
+  SET_STRING_ELT(nms, 554, mkChar("n_II_asympt"));
+  SET_STRING_ELT(nms, 555, mkChar("n_II_comm_D"));
+  SET_STRING_ELT(nms, 556, mkChar("n_II_hosp_D_conf"));
+  SET_STRING_ELT(nms, 557, mkChar("n_II_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 558, mkChar("n_II_hosp_R_conf"));
+  SET_STRING_ELT(nms, 559, mkChar("n_II_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 560, mkChar("n_II_ICU_D"));
+  SET_STRING_ELT(nms, 561, mkChar("n_II_ICU_R"));
+  SET_STRING_ELT(nms, 562, mkChar("n_II_ILI"));
+  SET_STRING_ELT(nms, 563, mkChar("n_II_mild"));
+  SET_STRING_ELT(nms, 564, mkChar("n_II_triage_D"));
+  SET_STRING_ELT(nms, 565, mkChar("n_II_triage_R"));
+  SET_STRING_ELT(nms, 566, mkChar("n_ILI_to_comm_D"));
+  SET_STRING_ELT(nms, 567, mkChar("n_ILI_to_hosp"));
+  SET_STRING_ELT(nms, 568, mkChar("n_ILI_to_hosp_D"));
+  SET_STRING_ELT(nms, 569, mkChar("n_ILI_to_hosp_D_conf"));
+  SET_STRING_ELT(nms, 570, mkChar("n_ILI_to_hosp_R"));
+  SET_STRING_ELT(nms, 571, mkChar("n_ILI_to_hosp_R_conf"));
+  SET_STRING_ELT(nms, 572, mkChar("n_ILI_to_triage"));
+  SET_STRING_ELT(nms, 573, mkChar("n_ILI_to_triage_D"));
+  SET_STRING_ELT(nms, 574, mkChar("n_ILI_to_triage_R"));
+  SET_STRING_ELT(nms, 575, mkChar("n_R_pre"));
+  SET_STRING_ELT(nms, 576, mkChar("n_R_stepdown"));
+  SET_STRING_ELT(nms, 577, mkChar("n_SE"));
+  SET_STRING_ELT(nms, 578, mkChar("new_I_hosp_D_conf"));
+  SET_STRING_ELT(nms, 579, mkChar("new_I_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 580, mkChar("new_I_hosp_R_conf"));
+  SET_STRING_ELT(nms, 581, mkChar("new_I_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 582, mkChar("offset_variable_D_comm"));
+  SET_STRING_ELT(nms, 583, mkChar("offset_variable_D_hosp"));
+  SET_STRING_ELT(nms, 584, mkChar("offset_variable_E"));
+  SET_STRING_ELT(nms, 585, mkChar("offset_variable_I_asympt"));
+  SET_STRING_ELT(nms, 586, mkChar("offset_variable_I_comm_D"));
+  SET_STRING_ELT(nms, 587, mkChar("offset_variable_I_hosp_D_conf"));
+  SET_STRING_ELT(nms, 588, mkChar("offset_variable_I_hosp_D_unconf"));
+  SET_STRING_ELT(nms, 589, mkChar("offset_variable_I_hosp_R_conf"));
+  SET_STRING_ELT(nms, 590, mkChar("offset_variable_I_hosp_R_unconf"));
+  SET_STRING_ELT(nms, 591, mkChar("offset_variable_I_ICU_D"));
+  SET_STRING_ELT(nms, 592, mkChar("offset_variable_I_ICU_R"));
+  SET_STRING_ELT(nms, 593, mkChar("offset_variable_I_ILI"));
+  SET_STRING_ELT(nms, 594, mkChar("offset_variable_I_mild"));
+  SET_STRING_ELT(nms, 595, mkChar("offset_variable_I_triage_D"));
+  SET_STRING_ELT(nms, 596, mkChar("offset_variable_I_triage_R"));
+  SET_STRING_ELT(nms, 597, mkChar("offset_variable_R_neg"));
+  SET_STRING_ELT(nms, 598, mkChar("offset_variable_R_pre"));
+  SET_STRING_ELT(nms, 599, mkChar("offset_variable_R_stepdown"));
+  SET_STRING_ELT(nms, 600, mkChar("p_admit_conf"));
+  SET_STRING_ELT(nms, 601, mkChar("p_asympt"));
+  SET_STRING_ELT(nms, 602, mkChar("p_death_comm"));
+  SET_STRING_ELT(nms, 603, mkChar("p_death_hosp_D"));
+  SET_STRING_ELT(nms, 604, mkChar("p_death_ICU"));
+  SET_STRING_ELT(nms, 605, mkChar("p_EE"));
+  SET_STRING_ELT(nms, 606, mkChar("p_ICU_hosp"));
+  SET_STRING_ELT(nms, 607, mkChar("p_II_asympt"));
+  SET_STRING_ELT(nms, 608, mkChar("p_II_comm_D"));
+  SET_STRING_ELT(nms, 609, mkChar("p_II_hosp_D"));
+  SET_STRING_ELT(nms, 610, mkChar("p_II_hosp_R"));
+  SET_STRING_ELT(nms, 611, mkChar("p_II_ICU_D"));
+  SET_STRING_ELT(nms, 612, mkChar("p_II_ICU_R"));
+  SET_STRING_ELT(nms, 613, mkChar("p_II_ILI"));
+  SET_STRING_ELT(nms, 614, mkChar("p_II_mild"));
+  SET_STRING_ELT(nms, 615, mkChar("p_II_triage"));
+  SET_STRING_ELT(nms, 616, mkChar("p_R_pre"));
+  SET_STRING_ELT(nms, 617, mkChar("p_R_stepdown"));
+  SET_STRING_ELT(nms, 618, mkChar("p_recov_ILI"));
+  SET_STRING_ELT(nms, 619, mkChar("p_SE"));
+  SET_STRING_ELT(nms, 620, mkChar("p_seroconversion"));
+  SET_STRING_ELT(nms, 621, mkChar("p_sympt_ILI"));
+  SET_STRING_ELT(nms, 622, mkChar("p_test"));
+  SET_STRING_ELT(nms, 623, mkChar("R0_neg"));
+  SET_STRING_ELT(nms, 624, mkChar("R0_pos"));
+  SET_STRING_ELT(nms, 625, mkChar("R0_pre"));
+  SET_STRING_ELT(nms, 626, mkChar("R0_stepdown"));
+  SET_STRING_ELT(nms, 627, mkChar("s_asympt"));
+  SET_STRING_ELT(nms, 628, mkChar("s_comm_D"));
+  SET_STRING_ELT(nms, 629, mkChar("s_E"));
+  SET_STRING_ELT(nms, 630, mkChar("s_hosp_D"));
+  SET_STRING_ELT(nms, 631, mkChar("s_hosp_R"));
+  SET_STRING_ELT(nms, 632, mkChar("s_ICU_D"));
+  SET_STRING_ELT(nms, 633, mkChar("s_ICU_R"));
+  SET_STRING_ELT(nms, 634, mkChar("s_ij"));
+  SET_STRING_ELT(nms, 635, mkChar("s_ILI"));
+  SET_STRING_ELT(nms, 636, mkChar("s_mild"));
+  SET_STRING_ELT(nms, 637, mkChar("s_R_pre"));
+  SET_STRING_ELT(nms, 638, mkChar("s_stepdown"));
+  SET_STRING_ELT(nms, 639, mkChar("s_triage"));
+  SET_STRING_ELT(nms, 640, mkChar("S0"));
+  SET_STRING_ELT(nms, 641, mkChar("trans_classes"));
+  SET_STRING_ELT(nms, 642, mkChar("trans_increase"));
+  SET_STRING_ELT(nms, 643, mkChar("trans_profile"));
+  setAttrib(contents, R_NamesSymbol, nms);
+  UNPROTECT(130);
+  return contents;
+}
+SEXP hospital_with_serology_testing_set_user(SEXP internal_p, SEXP user) {
+  hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 1);
+  internal->beta_t = (double*) user_get_array_dim(user, false, internal->beta_t, "beta_t", 1, NA_REAL, NA_REAL, &internal->dim_beta_t);
+  internal->beta_y = (double*) user_get_array_dim(user, false, internal->beta_y, "beta_y", 1, NA_REAL, NA_REAL, &internal->dim_beta_y);
+  internal->comm_D_transmission = user_get_scalar_double(user, "comm_D_transmission", internal->comm_D_transmission, NA_REAL, NA_REAL);
+  internal->dt = user_get_scalar_double(user, "dt", internal->dt, NA_REAL, NA_REAL);
+  internal->gamma_asympt = user_get_scalar_double(user, "gamma_asympt", internal->gamma_asympt, NA_REAL, NA_REAL);
+  internal->gamma_comm_D = user_get_scalar_double(user, "gamma_comm_D", internal->gamma_comm_D, NA_REAL, NA_REAL);
+  internal->gamma_E = user_get_scalar_double(user, "gamma_E", internal->gamma_E, NA_REAL, NA_REAL);
+  internal->gamma_hosp_D = user_get_scalar_double(user, "gamma_hosp_D", internal->gamma_hosp_D, NA_REAL, NA_REAL);
+  internal->gamma_hosp_R = user_get_scalar_double(user, "gamma_hosp_R", internal->gamma_hosp_R, NA_REAL, NA_REAL);
+  internal->gamma_ICU_D = user_get_scalar_double(user, "gamma_ICU_D", internal->gamma_ICU_D, NA_REAL, NA_REAL);
+  internal->gamma_ICU_R = user_get_scalar_double(user, "gamma_ICU_R", internal->gamma_ICU_R, NA_REAL, NA_REAL);
+  internal->gamma_ILI = user_get_scalar_double(user, "gamma_ILI", internal->gamma_ILI, NA_REAL, NA_REAL);
+  internal->gamma_mild = user_get_scalar_double(user, "gamma_mild", internal->gamma_mild, NA_REAL, NA_REAL);
+  internal->gamma_R_pre = user_get_scalar_double(user, "gamma_R_pre", internal->gamma_R_pre, NA_REAL, NA_REAL);
+  internal->gamma_stepdown = user_get_scalar_double(user, "gamma_stepdown", internal->gamma_stepdown, NA_REAL, NA_REAL);
+  internal->gamma_test = user_get_scalar_double(user, "gamma_test", internal->gamma_test, NA_REAL, NA_REAL);
+  internal->gamma_triage = user_get_scalar_double(user, "gamma_triage", internal->gamma_triage, NA_REAL, NA_REAL);
+  internal->hosp_transmission = user_get_scalar_double(user, "hosp_transmission", internal->hosp_transmission, NA_REAL, NA_REAL);
+  internal->ICU_transmission = user_get_scalar_double(user, "ICU_transmission", internal->ICU_transmission, NA_REAL, NA_REAL);
+  internal->N_age = user_get_scalar_int(user, "N_age", internal->N_age, NA_REAL, NA_REAL);
+  internal->s_asympt = user_get_scalar_int(user, "s_asympt", internal->s_asympt, NA_REAL, NA_REAL);
+  internal->s_comm_D = user_get_scalar_int(user, "s_comm_D", internal->s_comm_D, NA_REAL, NA_REAL);
+  internal->s_E = user_get_scalar_int(user, "s_E", internal->s_E, NA_REAL, NA_REAL);
+  internal->s_hosp_D = user_get_scalar_int(user, "s_hosp_D", internal->s_hosp_D, NA_REAL, NA_REAL);
+  internal->s_hosp_R = user_get_scalar_int(user, "s_hosp_R", internal->s_hosp_R, NA_REAL, NA_REAL);
+  internal->s_ICU_D = user_get_scalar_int(user, "s_ICU_D", internal->s_ICU_D, NA_REAL, NA_REAL);
+  internal->s_ICU_R = user_get_scalar_int(user, "s_ICU_R", internal->s_ICU_R, NA_REAL, NA_REAL);
+  internal->s_ILI = user_get_scalar_int(user, "s_ILI", internal->s_ILI, NA_REAL, NA_REAL);
+  internal->s_mild = user_get_scalar_int(user, "s_mild", internal->s_mild, NA_REAL, NA_REAL);
+  internal->s_R_pre = user_get_scalar_int(user, "s_R_pre", internal->s_R_pre, NA_REAL, NA_REAL);
+  internal->s_stepdown = user_get_scalar_int(user, "s_stepdown", internal->s_stepdown, NA_REAL, NA_REAL);
+  internal->s_triage = user_get_scalar_int(user, "s_triage", internal->s_triage, NA_REAL, NA_REAL);
+  internal->trans_classes = user_get_scalar_int(user, "trans_classes", internal->trans_classes, NA_REAL, NA_REAL);
+  internal->dim_aux_EE_1 = internal->N_age;
+  internal->dim_aux_EE_2 = internal->s_E;
+  internal->dim_aux_EE_3 = internal->trans_classes;
+  internal->dim_aux_II_asympt_1 = internal->N_age;
+  internal->dim_aux_II_asympt_2 = internal->s_asympt;
+  internal->dim_aux_II_asympt_3 = internal->trans_classes;
+  internal->dim_aux_II_comm_D_1 = internal->N_age;
+  internal->dim_aux_II_comm_D_2 = internal->s_comm_D;
+  internal->dim_aux_II_comm_D_3 = internal->trans_classes;
+  internal->dim_aux_II_hosp_D_conf_1 = internal->N_age;
+  internal->dim_aux_II_hosp_D_conf_2 = internal->s_hosp_D;
+  internal->dim_aux_II_hosp_D_conf_3 = internal->trans_classes;
+  internal->dim_aux_II_hosp_D_unconf_1 = internal->N_age;
+  internal->dim_aux_II_hosp_D_unconf_2 = internal->s_hosp_D;
+  internal->dim_aux_II_hosp_D_unconf_3 = internal->trans_classes;
+  internal->dim_aux_II_hosp_R_conf_1 = internal->N_age;
+  internal->dim_aux_II_hosp_R_conf_2 = internal->s_hosp_R;
+  internal->dim_aux_II_hosp_R_conf_3 = internal->trans_classes;
+  internal->dim_aux_II_hosp_R_unconf_1 = internal->N_age;
+  internal->dim_aux_II_hosp_R_unconf_2 = internal->s_hosp_R;
+  internal->dim_aux_II_hosp_R_unconf_3 = internal->trans_classes;
+  internal->dim_aux_II_ICU_D_1 = internal->N_age;
+  internal->dim_aux_II_ICU_D_2 = internal->s_ICU_D;
+  internal->dim_aux_II_ICU_D_3 = internal->trans_classes;
+  internal->dim_aux_II_ICU_R_1 = internal->N_age;
+  internal->dim_aux_II_ICU_R_2 = internal->s_ICU_R;
+  internal->dim_aux_II_ICU_R_3 = internal->trans_classes;
+  internal->dim_aux_II_ILI_1 = internal->N_age;
+  internal->dim_aux_II_ILI_2 = internal->s_ILI;
+  internal->dim_aux_II_ILI_3 = internal->trans_classes;
+  internal->dim_aux_II_mild_1 = internal->N_age;
+  internal->dim_aux_II_mild_2 = internal->s_mild;
+  internal->dim_aux_II_mild_3 = internal->trans_classes;
+  internal->dim_aux_II_triage_D_1 = internal->N_age;
+  internal->dim_aux_II_triage_D_2 = internal->s_triage;
+  internal->dim_aux_II_triage_D_3 = internal->trans_classes;
+  internal->dim_aux_II_triage_R_1 = internal->N_age;
+  internal->dim_aux_II_triage_R_2 = internal->s_triage;
+  internal->dim_aux_II_triage_R_3 = internal->trans_classes;
+  internal->dim_aux_p_bin_1 = internal->N_age;
+  internal->dim_aux_p_bin_2 = internal->trans_classes;
+  internal->dim_aux_R_pre_1 = internal->N_age;
+  internal->dim_aux_R_pre_2 = internal->s_R_pre;
+  internal->dim_aux_R_stepdown_1 = internal->N_age;
+  internal->dim_aux_R_stepdown_2 = internal->s_stepdown;
+  internal->dim_D_comm = internal->N_age;
+  internal->dim_D_hosp = internal->N_age;
+  internal->dim_D0_comm = internal->N_age;
+  internal->dim_D0_hosp = internal->N_age;
+  internal->dim_delta_D_comm = internal->N_age;
+  internal->dim_delta_D_hosp = internal->N_age;
+  internal->dim_delta_E_1 = internal->N_age;
+  internal->dim_delta_E_2 = internal->s_E;
+  internal->dim_delta_E_3 = internal->trans_classes;
+  internal->dim_delta_I_asympt_1 = internal->N_age;
+  internal->dim_delta_I_asympt_2 = internal->s_asympt;
+  internal->dim_delta_I_asympt_3 = internal->trans_classes;
+  internal->dim_delta_I_comm_D_1 = internal->N_age;
+  internal->dim_delta_I_comm_D_2 = internal->s_comm_D;
+  internal->dim_delta_I_comm_D_3 = internal->trans_classes;
+  internal->dim_delta_I_ICU_D_1 = internal->N_age;
+  internal->dim_delta_I_ICU_D_2 = internal->s_ICU_D;
+  internal->dim_delta_I_ICU_D_3 = internal->trans_classes;
+  internal->dim_delta_I_ICU_R_1 = internal->N_age;
+  internal->dim_delta_I_ICU_R_2 = internal->s_ICU_R;
+  internal->dim_delta_I_ICU_R_3 = internal->trans_classes;
+  internal->dim_delta_I_ILI_1 = internal->N_age;
+  internal->dim_delta_I_ILI_2 = internal->s_ILI;
+  internal->dim_delta_I_ILI_3 = internal->trans_classes;
+  internal->dim_delta_I_mild_1 = internal->N_age;
+  internal->dim_delta_I_mild_2 = internal->s_mild;
+  internal->dim_delta_I_mild_3 = internal->trans_classes;
+  internal->dim_delta_I_triage_D_1 = internal->N_age;
+  internal->dim_delta_I_triage_D_2 = internal->s_triage;
+  internal->dim_delta_I_triage_D_3 = internal->trans_classes;
+  internal->dim_delta_I_triage_R_1 = internal->N_age;
+  internal->dim_delta_I_triage_R_2 = internal->s_triage;
+  internal->dim_delta_I_triage_R_3 = internal->trans_classes;
+  internal->dim_delta_R_neg = internal->N_age;
+  internal->dim_delta_R_pos = internal->N_age;
+  internal->dim_delta_R_pre_1 = internal->N_age;
+  internal->dim_delta_R_pre_2 = internal->s_R_pre;
+  internal->dim_delta_R_stepdown_1 = internal->N_age;
+  internal->dim_delta_R_stepdown_2 = internal->s_stepdown;
+  internal->dim_E_1 = internal->N_age;
+  internal->dim_E_2 = internal->s_E;
+  internal->dim_E_3 = internal->trans_classes;
+  internal->dim_E0_1 = internal->N_age;
+  internal->dim_E0_2 = internal->s_E;
+  internal->dim_E0_3 = internal->trans_classes;
+  internal->dim_I_asympt_1 = internal->N_age;
+  internal->dim_I_asympt_2 = internal->s_asympt;
+  internal->dim_I_asympt_3 = internal->trans_classes;
+  internal->dim_I_comm_D_1 = internal->N_age;
+  internal->dim_I_comm_D_2 = internal->s_comm_D;
+  internal->dim_I_comm_D_3 = internal->trans_classes;
+  internal->dim_I_hosp_D_conf_1 = internal->N_age;
+  internal->dim_I_hosp_D_conf_2 = internal->s_hosp_D;
+  internal->dim_I_hosp_D_conf_3 = internal->trans_classes;
+  internal->dim_I_hosp_D_unconf_1 = internal->N_age;
+  internal->dim_I_hosp_D_unconf_2 = internal->s_hosp_D;
+  internal->dim_I_hosp_D_unconf_3 = internal->trans_classes;
+  internal->dim_I_hosp_R_conf_1 = internal->N_age;
+  internal->dim_I_hosp_R_conf_2 = internal->s_hosp_R;
+  internal->dim_I_hosp_R_conf_3 = internal->trans_classes;
+  internal->dim_I_hosp_R_unconf_1 = internal->N_age;
+  internal->dim_I_hosp_R_unconf_2 = internal->s_hosp_R;
+  internal->dim_I_hosp_R_unconf_3 = internal->trans_classes;
+  internal->dim_I_ICU_D_1 = internal->N_age;
+  internal->dim_I_ICU_D_2 = internal->s_ICU_D;
+  internal->dim_I_ICU_D_3 = internal->trans_classes;
+  internal->dim_I_ICU_R_1 = internal->N_age;
+  internal->dim_I_ICU_R_2 = internal->s_ICU_R;
+  internal->dim_I_ICU_R_3 = internal->trans_classes;
+  internal->dim_I_ILI_1 = internal->N_age;
+  internal->dim_I_ILI_2 = internal->s_ILI;
+  internal->dim_I_ILI_3 = internal->trans_classes;
+  internal->dim_I_mild_1 = internal->N_age;
+  internal->dim_I_mild_2 = internal->s_mild;
+  internal->dim_I_mild_3 = internal->trans_classes;
+  internal->dim_I_triage_D_1 = internal->N_age;
+  internal->dim_I_triage_D_2 = internal->s_triage;
+  internal->dim_I_triage_D_3 = internal->trans_classes;
+  internal->dim_I_triage_R_1 = internal->N_age;
+  internal->dim_I_triage_R_2 = internal->s_triage;
+  internal->dim_I_triage_R_3 = internal->trans_classes;
+  internal->dim_I_with_diff_trans_1 = internal->N_age;
+  internal->dim_I_with_diff_trans_2 = internal->trans_classes;
+  internal->dim_I0_asympt_1 = internal->N_age;
+  internal->dim_I0_asympt_2 = internal->s_asympt;
+  internal->dim_I0_asympt_3 = internal->trans_classes;
+  internal->dim_I0_comm_D_1 = internal->N_age;
+  internal->dim_I0_comm_D_2 = internal->s_comm_D;
+  internal->dim_I0_comm_D_3 = internal->trans_classes;
+  internal->dim_I0_hosp_D_conf_1 = internal->N_age;
+  internal->dim_I0_hosp_D_conf_2 = internal->s_hosp_D;
+  internal->dim_I0_hosp_D_conf_3 = internal->trans_classes;
+  internal->dim_I0_hosp_D_unconf_1 = internal->N_age;
+  internal->dim_I0_hosp_D_unconf_2 = internal->s_hosp_D;
+  internal->dim_I0_hosp_D_unconf_3 = internal->trans_classes;
+  internal->dim_I0_hosp_R_conf_1 = internal->N_age;
+  internal->dim_I0_hosp_R_conf_2 = internal->s_hosp_R;
+  internal->dim_I0_hosp_R_conf_3 = internal->trans_classes;
+  internal->dim_I0_hosp_R_unconf_1 = internal->N_age;
+  internal->dim_I0_hosp_R_unconf_2 = internal->s_hosp_R;
+  internal->dim_I0_hosp_R_unconf_3 = internal->trans_classes;
+  internal->dim_I0_ICU_D_1 = internal->N_age;
+  internal->dim_I0_ICU_D_2 = internal->s_ICU_D;
+  internal->dim_I0_ICU_D_3 = internal->trans_classes;
+  internal->dim_I0_ICU_R_1 = internal->N_age;
+  internal->dim_I0_ICU_R_2 = internal->s_ICU_R;
+  internal->dim_I0_ICU_R_3 = internal->trans_classes;
+  internal->dim_I0_ILI_1 = internal->N_age;
+  internal->dim_I0_ILI_2 = internal->s_ILI;
+  internal->dim_I0_ILI_3 = internal->trans_classes;
+  internal->dim_I0_mild_1 = internal->N_age;
+  internal->dim_I0_mild_2 = internal->s_mild;
+  internal->dim_I0_mild_3 = internal->trans_classes;
+  internal->dim_I0_triage_D_1 = internal->N_age;
+  internal->dim_I0_triage_D_2 = internal->s_triage;
+  internal->dim_I0_triage_D_3 = internal->trans_classes;
+  internal->dim_I0_triage_R_1 = internal->N_age;
+  internal->dim_I0_triage_R_2 = internal->s_triage;
+  internal->dim_I0_triage_R_3 = internal->trans_classes;
+  internal->dim_lambda = internal->N_age;
+  internal->dim_m_1 = internal->N_age;
+  internal->dim_m_2 = internal->N_age;
+  internal->dim_n_com_to_R_pre = internal->N_age;
+  internal->dim_n_com_to_R_total = internal->N_age;
+  internal->dim_n_EE_1 = internal->N_age;
+  internal->dim_n_EE_2 = internal->s_E;
+  internal->dim_n_EE_3 = internal->trans_classes;
+  internal->dim_n_EI_asympt_1 = internal->N_age;
+  internal->dim_n_EI_asympt_2 = internal->trans_classes;
+  internal->dim_n_EI_ILI_1 = internal->N_age;
+  internal->dim_n_EI_ILI_2 = internal->trans_classes;
+  internal->dim_n_EI_mild_1 = internal->N_age;
+  internal->dim_n_EI_mild_2 = internal->trans_classes;
+  internal->dim_n_hosp_non_ICU_1 = internal->N_age;
+  internal->dim_n_hosp_non_ICU_2 = internal->trans_classes;
+  internal->dim_n_I_hosp_D_unconf_to_conf_1 = internal->N_age;
+  internal->dim_n_I_hosp_D_unconf_to_conf_2 = internal->s_hosp_D;
+  internal->dim_n_I_hosp_D_unconf_to_conf_3 = internal->trans_classes;
+  internal->dim_n_I_hosp_R_unconf_to_conf_1 = internal->N_age;
+  internal->dim_n_I_hosp_R_unconf_to_conf_2 = internal->s_hosp_R;
+  internal->dim_n_I_hosp_R_unconf_to_conf_3 = internal->trans_classes;
+  internal->dim_n_ICU_to_R_stepdown = internal->N_age;
+  internal->dim_n_II_asympt_1 = internal->N_age;
+  internal->dim_n_II_asympt_2 = internal->s_asympt;
+  internal->dim_n_II_asympt_3 = internal->trans_classes;
+  internal->dim_n_II_comm_D_1 = internal->N_age;
+  internal->dim_n_II_comm_D_2 = internal->s_comm_D;
+  internal->dim_n_II_comm_D_3 = internal->trans_classes;
+  internal->dim_n_II_hosp_D_conf_1 = internal->N_age;
+  internal->dim_n_II_hosp_D_conf_2 = internal->s_hosp_D;
+  internal->dim_n_II_hosp_D_conf_3 = internal->trans_classes;
+  internal->dim_n_II_hosp_D_unconf_1 = internal->N_age;
+  internal->dim_n_II_hosp_D_unconf_2 = internal->s_hosp_D;
+  internal->dim_n_II_hosp_D_unconf_3 = internal->trans_classes;
+  internal->dim_n_II_hosp_R_conf_1 = internal->N_age;
+  internal->dim_n_II_hosp_R_conf_2 = internal->s_hosp_R;
+  internal->dim_n_II_hosp_R_conf_3 = internal->trans_classes;
+  internal->dim_n_II_hosp_R_unconf_1 = internal->N_age;
+  internal->dim_n_II_hosp_R_unconf_2 = internal->s_hosp_R;
+  internal->dim_n_II_hosp_R_unconf_3 = internal->trans_classes;
+  internal->dim_n_II_ICU_D_1 = internal->N_age;
+  internal->dim_n_II_ICU_D_2 = internal->s_ICU_D;
+  internal->dim_n_II_ICU_D_3 = internal->trans_classes;
+  internal->dim_n_II_ICU_R_1 = internal->N_age;
+  internal->dim_n_II_ICU_R_2 = internal->s_ICU_R;
+  internal->dim_n_II_ICU_R_3 = internal->trans_classes;
+  internal->dim_n_II_ILI_1 = internal->N_age;
+  internal->dim_n_II_ILI_2 = internal->s_ILI;
+  internal->dim_n_II_ILI_3 = internal->trans_classes;
+  internal->dim_n_II_mild_1 = internal->N_age;
+  internal->dim_n_II_mild_2 = internal->s_mild;
+  internal->dim_n_II_mild_3 = internal->trans_classes;
+  internal->dim_n_II_triage_D_1 = internal->N_age;
+  internal->dim_n_II_triage_D_2 = internal->s_triage;
+  internal->dim_n_II_triage_D_3 = internal->trans_classes;
+  internal->dim_n_II_triage_R_1 = internal->N_age;
+  internal->dim_n_II_triage_R_2 = internal->s_triage;
+  internal->dim_n_II_triage_R_3 = internal->trans_classes;
+  internal->dim_n_ILI_to_comm_D_1 = internal->N_age;
+  internal->dim_n_ILI_to_comm_D_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_hosp_1 = internal->N_age;
+  internal->dim_n_ILI_to_hosp_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_hosp_D_1 = internal->N_age;
+  internal->dim_n_ILI_to_hosp_D_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_hosp_D_conf_1 = internal->N_age;
+  internal->dim_n_ILI_to_hosp_D_conf_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_hosp_R_1 = internal->N_age;
+  internal->dim_n_ILI_to_hosp_R_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_hosp_R_conf_1 = internal->N_age;
+  internal->dim_n_ILI_to_hosp_R_conf_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_triage_1 = internal->N_age;
+  internal->dim_n_ILI_to_triage_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_triage_D_1 = internal->N_age;
+  internal->dim_n_ILI_to_triage_D_2 = internal->trans_classes;
+  internal->dim_n_ILI_to_triage_R_1 = internal->N_age;
+  internal->dim_n_ILI_to_triage_R_2 = internal->trans_classes;
+  internal->dim_n_R_pre_1 = internal->N_age;
+  internal->dim_n_R_pre_2 = internal->s_R_pre;
+  internal->dim_n_R_stepdown_1 = internal->N_age;
+  internal->dim_n_R_stepdown_2 = internal->s_stepdown;
+  internal->dim_n_SE = internal->N_age;
+  internal->dim_new_I_hosp_D_conf_1 = internal->N_age;
+  internal->dim_new_I_hosp_D_conf_2 = internal->s_hosp_D;
+  internal->dim_new_I_hosp_D_conf_3 = internal->trans_classes;
+  internal->dim_new_I_hosp_D_unconf_1 = internal->N_age;
+  internal->dim_new_I_hosp_D_unconf_2 = internal->s_hosp_D;
+  internal->dim_new_I_hosp_D_unconf_3 = internal->trans_classes;
+  internal->dim_new_I_hosp_R_conf_1 = internal->N_age;
+  internal->dim_new_I_hosp_R_conf_2 = internal->s_hosp_R;
+  internal->dim_new_I_hosp_R_conf_3 = internal->trans_classes;
+  internal->dim_new_I_hosp_R_unconf_1 = internal->N_age;
+  internal->dim_new_I_hosp_R_unconf_2 = internal->s_hosp_R;
+  internal->dim_new_I_hosp_R_unconf_3 = internal->trans_classes;
+  internal->dim_p_admit_conf = internal->N_age;
+  internal->dim_p_asympt = internal->N_age;
+  internal->dim_p_death_comm = internal->N_age;
+  internal->dim_p_death_hosp_D = internal->N_age;
+  internal->dim_p_death_ICU = internal->N_age;
+  internal->dim_p_ICU_hosp = internal->N_age;
+  internal->dim_p_R_pre = internal->N_age;
+  internal->dim_p_recov_ILI = internal->N_age;
+  internal->dim_p_SE = internal->N_age;
+  internal->dim_p_seroconversion = internal->N_age;
+  internal->dim_p_sympt_ILI = internal->N_age;
+  internal->dim_R_neg = internal->N_age;
+  internal->dim_R_pos = internal->N_age;
+  internal->dim_R_pre_1 = internal->N_age;
+  internal->dim_R_pre_2 = internal->s_R_pre;
+  internal->dim_R_stepdown_1 = internal->N_age;
+  internal->dim_R_stepdown_2 = internal->s_stepdown;
+  internal->dim_R0_neg = internal->N_age;
+  internal->dim_R0_pos = internal->N_age;
+  internal->dim_R0_pre_1 = internal->N_age;
+  internal->dim_R0_pre_2 = internal->s_R_pre;
+  internal->dim_R0_stepdown_1 = internal->N_age;
+  internal->dim_R0_stepdown_2 = internal->s_stepdown;
+  internal->dim_S = internal->N_age;
+  internal->dim_s_ij_1 = internal->N_age;
+  internal->dim_s_ij_2 = internal->N_age;
+  internal->dim_S0 = internal->N_age;
+  internal->dim_trans_increase_1 = internal->N_age;
+  internal->dim_trans_increase_2 = internal->trans_classes;
+  internal->dim_trans_profile_1 = internal->N_age;
+  internal->dim_trans_profile_2 = internal->trans_classes;
+  interpolate_check_y(internal->dim_beta_t, internal->dim_beta_y, 0, "beta_y", "beta");
+  cinterpolate_free(internal->interpolate_beta);
+  internal->interpolate_beta = cinterpolate_alloc("constant", internal->dim_beta_t, 1, internal->beta_t, internal->beta_y, true, false);
+  internal->p_EE = 1 - exp(-(internal->gamma_E) * internal->dt);
+  internal->p_II_asympt = 1 - exp(-(internal->gamma_asympt) * internal->dt);
+  internal->p_II_comm_D = 1 - exp(-(internal->gamma_comm_D) * internal->dt);
+  internal->p_II_hosp_D = 1 - exp(-(internal->gamma_hosp_D) * internal->dt);
+  internal->p_II_hosp_R = 1 - exp(-(internal->gamma_hosp_R) * internal->dt);
+  internal->p_II_ICU_D = 1 - exp(-(internal->gamma_ICU_D) * internal->dt);
+  internal->p_II_ICU_R = 1 - exp(-(internal->gamma_ICU_R) * internal->dt);
+  internal->p_II_ILI = 1 - exp(-(internal->gamma_ILI) * internal->dt);
+  internal->p_II_mild = 1 - exp(-(internal->gamma_mild) * internal->dt);
+  internal->p_II_triage = 1 - exp(-(internal->gamma_triage) * internal->dt);
+  internal->p_R_stepdown = 1 - exp(-(internal->gamma_stepdown) * internal->dt);
+  internal->p_test = 1 - exp(-(internal->gamma_test) * internal->dt);
+  Free(internal->delta_D_comm);
+  internal->delta_D_comm = (double*) Calloc(internal->dim_delta_D_comm, double);
+  Free(internal->delta_D_hosp);
+  internal->delta_D_hosp = (double*) Calloc(internal->dim_delta_D_hosp, double);
+  Free(internal->delta_R_neg);
+  internal->delta_R_neg = (double*) Calloc(internal->dim_delta_R_neg, double);
+  Free(internal->delta_R_pos);
+  internal->delta_R_pos = (double*) Calloc(internal->dim_delta_R_pos, double);
+  Free(internal->initial_D_comm);
+  internal->initial_D_comm = (double*) Calloc(internal->dim_D_comm, double);
+  Free(internal->initial_D_hosp);
+  internal->initial_D_hosp = (double*) Calloc(internal->dim_D_hosp, double);
+  Free(internal->initial_R_neg);
+  internal->initial_R_neg = (double*) Calloc(internal->dim_R_neg, double);
+  Free(internal->initial_R_pos);
+  internal->initial_R_pos = (double*) Calloc(internal->dim_R_pos, double);
+  Free(internal->initial_S);
+  internal->initial_S = (double*) Calloc(internal->dim_S, double);
+  Free(internal->lambda);
+  internal->lambda = (double*) Calloc(internal->dim_lambda, double);
+  Free(internal->n_com_to_R_pre);
+  internal->n_com_to_R_pre = (double*) Calloc(internal->dim_n_com_to_R_pre, double);
+  Free(internal->n_com_to_R_total);
+  internal->n_com_to_R_total = (double*) Calloc(internal->dim_n_com_to_R_total, double);
+  Free(internal->n_ICU_to_R_stepdown);
+  internal->n_ICU_to_R_stepdown = (double*) Calloc(internal->dim_n_ICU_to_R_stepdown, double);
+  Free(internal->n_SE);
+  internal->n_SE = (double*) Calloc(internal->dim_n_SE, double);
+  Free(internal->p_R_pre);
+  internal->p_R_pre = (double*) Calloc(internal->dim_p_R_pre, double);
+  Free(internal->p_SE);
+  internal->p_SE = (double*) Calloc(internal->dim_p_SE, double);
+  internal->D0_comm = (double*) user_get_array(user, false, internal->D0_comm, "D0_comm", NA_REAL, NA_REAL, 1, internal->dim_D0_comm);
+  internal->D0_hosp = (double*) user_get_array(user, false, internal->D0_hosp, "D0_hosp", NA_REAL, NA_REAL, 1, internal->dim_D0_hosp);
+  internal->dim_aux_EE = internal->dim_aux_EE_1 * internal->dim_aux_EE_2 * internal->dim_aux_EE_3;
+  internal->dim_aux_EE_12 = internal->dim_aux_EE_1 * internal->dim_aux_EE_2;
+  internal->dim_aux_II_asympt = internal->dim_aux_II_asympt_1 * internal->dim_aux_II_asympt_2 * internal->dim_aux_II_asympt_3;
+  internal->dim_aux_II_asympt_12 = internal->dim_aux_II_asympt_1 * internal->dim_aux_II_asympt_2;
+  internal->dim_aux_II_comm_D = internal->dim_aux_II_comm_D_1 * internal->dim_aux_II_comm_D_2 * internal->dim_aux_II_comm_D_3;
+  internal->dim_aux_II_comm_D_12 = internal->dim_aux_II_comm_D_1 * internal->dim_aux_II_comm_D_2;
+  internal->dim_aux_II_hosp_D_conf = internal->dim_aux_II_hosp_D_conf_1 * internal->dim_aux_II_hosp_D_conf_2 * internal->dim_aux_II_hosp_D_conf_3;
+  internal->dim_aux_II_hosp_D_conf_12 = internal->dim_aux_II_hosp_D_conf_1 * internal->dim_aux_II_hosp_D_conf_2;
+  internal->dim_aux_II_hosp_D_unconf = internal->dim_aux_II_hosp_D_unconf_1 * internal->dim_aux_II_hosp_D_unconf_2 * internal->dim_aux_II_hosp_D_unconf_3;
+  internal->dim_aux_II_hosp_D_unconf_12 = internal->dim_aux_II_hosp_D_unconf_1 * internal->dim_aux_II_hosp_D_unconf_2;
+  internal->dim_aux_II_hosp_R_conf = internal->dim_aux_II_hosp_R_conf_1 * internal->dim_aux_II_hosp_R_conf_2 * internal->dim_aux_II_hosp_R_conf_3;
+  internal->dim_aux_II_hosp_R_conf_12 = internal->dim_aux_II_hosp_R_conf_1 * internal->dim_aux_II_hosp_R_conf_2;
+  internal->dim_aux_II_hosp_R_unconf = internal->dim_aux_II_hosp_R_unconf_1 * internal->dim_aux_II_hosp_R_unconf_2 * internal->dim_aux_II_hosp_R_unconf_3;
+  internal->dim_aux_II_hosp_R_unconf_12 = internal->dim_aux_II_hosp_R_unconf_1 * internal->dim_aux_II_hosp_R_unconf_2;
+  internal->dim_aux_II_ICU_D = internal->dim_aux_II_ICU_D_1 * internal->dim_aux_II_ICU_D_2 * internal->dim_aux_II_ICU_D_3;
+  internal->dim_aux_II_ICU_D_12 = internal->dim_aux_II_ICU_D_1 * internal->dim_aux_II_ICU_D_2;
+  internal->dim_aux_II_ICU_R = internal->dim_aux_II_ICU_R_1 * internal->dim_aux_II_ICU_R_2 * internal->dim_aux_II_ICU_R_3;
+  internal->dim_aux_II_ICU_R_12 = internal->dim_aux_II_ICU_R_1 * internal->dim_aux_II_ICU_R_2;
+  internal->dim_aux_II_ILI = internal->dim_aux_II_ILI_1 * internal->dim_aux_II_ILI_2 * internal->dim_aux_II_ILI_3;
+  internal->dim_aux_II_ILI_12 = internal->dim_aux_II_ILI_1 * internal->dim_aux_II_ILI_2;
+  internal->dim_aux_II_mild = internal->dim_aux_II_mild_1 * internal->dim_aux_II_mild_2 * internal->dim_aux_II_mild_3;
+  internal->dim_aux_II_mild_12 = internal->dim_aux_II_mild_1 * internal->dim_aux_II_mild_2;
+  internal->dim_aux_II_triage_D = internal->dim_aux_II_triage_D_1 * internal->dim_aux_II_triage_D_2 * internal->dim_aux_II_triage_D_3;
+  internal->dim_aux_II_triage_D_12 = internal->dim_aux_II_triage_D_1 * internal->dim_aux_II_triage_D_2;
+  internal->dim_aux_II_triage_R = internal->dim_aux_II_triage_R_1 * internal->dim_aux_II_triage_R_2 * internal->dim_aux_II_triage_R_3;
+  internal->dim_aux_II_triage_R_12 = internal->dim_aux_II_triage_R_1 * internal->dim_aux_II_triage_R_2;
+  internal->dim_aux_p_bin = internal->dim_aux_p_bin_1 * internal->dim_aux_p_bin_2;
+  internal->dim_aux_R_pre = internal->dim_aux_R_pre_1 * internal->dim_aux_R_pre_2;
+  internal->dim_aux_R_stepdown = internal->dim_aux_R_stepdown_1 * internal->dim_aux_R_stepdown_2;
+  internal->dim_delta_E = internal->dim_delta_E_1 * internal->dim_delta_E_2 * internal->dim_delta_E_3;
+  internal->dim_delta_E_12 = internal->dim_delta_E_1 * internal->dim_delta_E_2;
+  internal->dim_delta_I_asympt = internal->dim_delta_I_asympt_1 * internal->dim_delta_I_asympt_2 * internal->dim_delta_I_asympt_3;
+  internal->dim_delta_I_asympt_12 = internal->dim_delta_I_asympt_1 * internal->dim_delta_I_asympt_2;
+  internal->dim_delta_I_comm_D = internal->dim_delta_I_comm_D_1 * internal->dim_delta_I_comm_D_2 * internal->dim_delta_I_comm_D_3;
+  internal->dim_delta_I_comm_D_12 = internal->dim_delta_I_comm_D_1 * internal->dim_delta_I_comm_D_2;
+  internal->dim_delta_I_ICU_D = internal->dim_delta_I_ICU_D_1 * internal->dim_delta_I_ICU_D_2 * internal->dim_delta_I_ICU_D_3;
+  internal->dim_delta_I_ICU_D_12 = internal->dim_delta_I_ICU_D_1 * internal->dim_delta_I_ICU_D_2;
+  internal->dim_delta_I_ICU_R = internal->dim_delta_I_ICU_R_1 * internal->dim_delta_I_ICU_R_2 * internal->dim_delta_I_ICU_R_3;
+  internal->dim_delta_I_ICU_R_12 = internal->dim_delta_I_ICU_R_1 * internal->dim_delta_I_ICU_R_2;
+  internal->dim_delta_I_ILI = internal->dim_delta_I_ILI_1 * internal->dim_delta_I_ILI_2 * internal->dim_delta_I_ILI_3;
+  internal->dim_delta_I_ILI_12 = internal->dim_delta_I_ILI_1 * internal->dim_delta_I_ILI_2;
+  internal->dim_delta_I_mild = internal->dim_delta_I_mild_1 * internal->dim_delta_I_mild_2 * internal->dim_delta_I_mild_3;
+  internal->dim_delta_I_mild_12 = internal->dim_delta_I_mild_1 * internal->dim_delta_I_mild_2;
+  internal->dim_delta_I_triage_D = internal->dim_delta_I_triage_D_1 * internal->dim_delta_I_triage_D_2 * internal->dim_delta_I_triage_D_3;
+  internal->dim_delta_I_triage_D_12 = internal->dim_delta_I_triage_D_1 * internal->dim_delta_I_triage_D_2;
+  internal->dim_delta_I_triage_R = internal->dim_delta_I_triage_R_1 * internal->dim_delta_I_triage_R_2 * internal->dim_delta_I_triage_R_3;
+  internal->dim_delta_I_triage_R_12 = internal->dim_delta_I_triage_R_1 * internal->dim_delta_I_triage_R_2;
+  internal->dim_delta_R_pre = internal->dim_delta_R_pre_1 * internal->dim_delta_R_pre_2;
+  internal->dim_delta_R_stepdown = internal->dim_delta_R_stepdown_1 * internal->dim_delta_R_stepdown_2;
+  internal->dim_E = internal->dim_E_1 * internal->dim_E_2 * internal->dim_E_3;
+  internal->dim_E_12 = internal->dim_E_1 * internal->dim_E_2;
+  internal->dim_E0 = internal->dim_E0_1 * internal->dim_E0_2 * internal->dim_E0_3;
+  internal->dim_E0_12 = internal->dim_E0_1 * internal->dim_E0_2;
+  internal->dim_I_asympt = internal->dim_I_asympt_1 * internal->dim_I_asympt_2 * internal->dim_I_asympt_3;
+  internal->dim_I_asympt_12 = internal->dim_I_asympt_1 * internal->dim_I_asympt_2;
+  internal->dim_I_comm_D = internal->dim_I_comm_D_1 * internal->dim_I_comm_D_2 * internal->dim_I_comm_D_3;
+  internal->dim_I_comm_D_12 = internal->dim_I_comm_D_1 * internal->dim_I_comm_D_2;
+  internal->dim_I_hosp_D_conf = internal->dim_I_hosp_D_conf_1 * internal->dim_I_hosp_D_conf_2 * internal->dim_I_hosp_D_conf_3;
+  internal->dim_I_hosp_D_conf_12 = internal->dim_I_hosp_D_conf_1 * internal->dim_I_hosp_D_conf_2;
+  internal->dim_I_hosp_D_unconf = internal->dim_I_hosp_D_unconf_1 * internal->dim_I_hosp_D_unconf_2 * internal->dim_I_hosp_D_unconf_3;
+  internal->dim_I_hosp_D_unconf_12 = internal->dim_I_hosp_D_unconf_1 * internal->dim_I_hosp_D_unconf_2;
+  internal->dim_I_hosp_R_conf = internal->dim_I_hosp_R_conf_1 * internal->dim_I_hosp_R_conf_2 * internal->dim_I_hosp_R_conf_3;
+  internal->dim_I_hosp_R_conf_12 = internal->dim_I_hosp_R_conf_1 * internal->dim_I_hosp_R_conf_2;
+  internal->dim_I_hosp_R_unconf = internal->dim_I_hosp_R_unconf_1 * internal->dim_I_hosp_R_unconf_2 * internal->dim_I_hosp_R_unconf_3;
+  internal->dim_I_hosp_R_unconf_12 = internal->dim_I_hosp_R_unconf_1 * internal->dim_I_hosp_R_unconf_2;
+  internal->dim_I_ICU_D = internal->dim_I_ICU_D_1 * internal->dim_I_ICU_D_2 * internal->dim_I_ICU_D_3;
+  internal->dim_I_ICU_D_12 = internal->dim_I_ICU_D_1 * internal->dim_I_ICU_D_2;
+  internal->dim_I_ICU_R = internal->dim_I_ICU_R_1 * internal->dim_I_ICU_R_2 * internal->dim_I_ICU_R_3;
+  internal->dim_I_ICU_R_12 = internal->dim_I_ICU_R_1 * internal->dim_I_ICU_R_2;
+  internal->dim_I_ILI = internal->dim_I_ILI_1 * internal->dim_I_ILI_2 * internal->dim_I_ILI_3;
+  internal->dim_I_ILI_12 = internal->dim_I_ILI_1 * internal->dim_I_ILI_2;
+  internal->dim_I_mild = internal->dim_I_mild_1 * internal->dim_I_mild_2 * internal->dim_I_mild_3;
+  internal->dim_I_mild_12 = internal->dim_I_mild_1 * internal->dim_I_mild_2;
+  internal->dim_I_triage_D = internal->dim_I_triage_D_1 * internal->dim_I_triage_D_2 * internal->dim_I_triage_D_3;
+  internal->dim_I_triage_D_12 = internal->dim_I_triage_D_1 * internal->dim_I_triage_D_2;
+  internal->dim_I_triage_R = internal->dim_I_triage_R_1 * internal->dim_I_triage_R_2 * internal->dim_I_triage_R_3;
+  internal->dim_I_triage_R_12 = internal->dim_I_triage_R_1 * internal->dim_I_triage_R_2;
+  internal->dim_I_with_diff_trans = internal->dim_I_with_diff_trans_1 * internal->dim_I_with_diff_trans_2;
+  internal->dim_I0_asympt = internal->dim_I0_asympt_1 * internal->dim_I0_asympt_2 * internal->dim_I0_asympt_3;
+  internal->dim_I0_asympt_12 = internal->dim_I0_asympt_1 * internal->dim_I0_asympt_2;
+  internal->dim_I0_comm_D = internal->dim_I0_comm_D_1 * internal->dim_I0_comm_D_2 * internal->dim_I0_comm_D_3;
+  internal->dim_I0_comm_D_12 = internal->dim_I0_comm_D_1 * internal->dim_I0_comm_D_2;
+  internal->dim_I0_hosp_D_conf = internal->dim_I0_hosp_D_conf_1 * internal->dim_I0_hosp_D_conf_2 * internal->dim_I0_hosp_D_conf_3;
+  internal->dim_I0_hosp_D_conf_12 = internal->dim_I0_hosp_D_conf_1 * internal->dim_I0_hosp_D_conf_2;
+  internal->dim_I0_hosp_D_unconf = internal->dim_I0_hosp_D_unconf_1 * internal->dim_I0_hosp_D_unconf_2 * internal->dim_I0_hosp_D_unconf_3;
+  internal->dim_I0_hosp_D_unconf_12 = internal->dim_I0_hosp_D_unconf_1 * internal->dim_I0_hosp_D_unconf_2;
+  internal->dim_I0_hosp_R_conf = internal->dim_I0_hosp_R_conf_1 * internal->dim_I0_hosp_R_conf_2 * internal->dim_I0_hosp_R_conf_3;
+  internal->dim_I0_hosp_R_conf_12 = internal->dim_I0_hosp_R_conf_1 * internal->dim_I0_hosp_R_conf_2;
+  internal->dim_I0_hosp_R_unconf = internal->dim_I0_hosp_R_unconf_1 * internal->dim_I0_hosp_R_unconf_2 * internal->dim_I0_hosp_R_unconf_3;
+  internal->dim_I0_hosp_R_unconf_12 = internal->dim_I0_hosp_R_unconf_1 * internal->dim_I0_hosp_R_unconf_2;
+  internal->dim_I0_ICU_D = internal->dim_I0_ICU_D_1 * internal->dim_I0_ICU_D_2 * internal->dim_I0_ICU_D_3;
+  internal->dim_I0_ICU_D_12 = internal->dim_I0_ICU_D_1 * internal->dim_I0_ICU_D_2;
+  internal->dim_I0_ICU_R = internal->dim_I0_ICU_R_1 * internal->dim_I0_ICU_R_2 * internal->dim_I0_ICU_R_3;
+  internal->dim_I0_ICU_R_12 = internal->dim_I0_ICU_R_1 * internal->dim_I0_ICU_R_2;
+  internal->dim_I0_ILI = internal->dim_I0_ILI_1 * internal->dim_I0_ILI_2 * internal->dim_I0_ILI_3;
+  internal->dim_I0_ILI_12 = internal->dim_I0_ILI_1 * internal->dim_I0_ILI_2;
+  internal->dim_I0_mild = internal->dim_I0_mild_1 * internal->dim_I0_mild_2 * internal->dim_I0_mild_3;
+  internal->dim_I0_mild_12 = internal->dim_I0_mild_1 * internal->dim_I0_mild_2;
+  internal->dim_I0_triage_D = internal->dim_I0_triage_D_1 * internal->dim_I0_triage_D_2 * internal->dim_I0_triage_D_3;
+  internal->dim_I0_triage_D_12 = internal->dim_I0_triage_D_1 * internal->dim_I0_triage_D_2;
+  internal->dim_I0_triage_R = internal->dim_I0_triage_R_1 * internal->dim_I0_triage_R_2 * internal->dim_I0_triage_R_3;
+  internal->dim_I0_triage_R_12 = internal->dim_I0_triage_R_1 * internal->dim_I0_triage_R_2;
+  internal->dim_m = internal->dim_m_1 * internal->dim_m_2;
+  internal->dim_n_EE = internal->dim_n_EE_1 * internal->dim_n_EE_2 * internal->dim_n_EE_3;
+  internal->dim_n_EE_12 = internal->dim_n_EE_1 * internal->dim_n_EE_2;
+  internal->dim_n_EI_asympt = internal->dim_n_EI_asympt_1 * internal->dim_n_EI_asympt_2;
+  internal->dim_n_EI_ILI = internal->dim_n_EI_ILI_1 * internal->dim_n_EI_ILI_2;
+  internal->dim_n_EI_mild = internal->dim_n_EI_mild_1 * internal->dim_n_EI_mild_2;
+  internal->dim_n_hosp_non_ICU = internal->dim_n_hosp_non_ICU_1 * internal->dim_n_hosp_non_ICU_2;
+  internal->dim_n_I_hosp_D_unconf_to_conf = internal->dim_n_I_hosp_D_unconf_to_conf_1 * internal->dim_n_I_hosp_D_unconf_to_conf_2 * internal->dim_n_I_hosp_D_unconf_to_conf_3;
+  internal->dim_n_I_hosp_D_unconf_to_conf_12 = internal->dim_n_I_hosp_D_unconf_to_conf_1 * internal->dim_n_I_hosp_D_unconf_to_conf_2;
+  internal->dim_n_I_hosp_R_unconf_to_conf = internal->dim_n_I_hosp_R_unconf_to_conf_1 * internal->dim_n_I_hosp_R_unconf_to_conf_2 * internal->dim_n_I_hosp_R_unconf_to_conf_3;
+  internal->dim_n_I_hosp_R_unconf_to_conf_12 = internal->dim_n_I_hosp_R_unconf_to_conf_1 * internal->dim_n_I_hosp_R_unconf_to_conf_2;
+  internal->dim_n_II_asympt = internal->dim_n_II_asympt_1 * internal->dim_n_II_asympt_2 * internal->dim_n_II_asympt_3;
+  internal->dim_n_II_asympt_12 = internal->dim_n_II_asympt_1 * internal->dim_n_II_asympt_2;
+  internal->dim_n_II_comm_D = internal->dim_n_II_comm_D_1 * internal->dim_n_II_comm_D_2 * internal->dim_n_II_comm_D_3;
+  internal->dim_n_II_comm_D_12 = internal->dim_n_II_comm_D_1 * internal->dim_n_II_comm_D_2;
+  internal->dim_n_II_hosp_D_conf = internal->dim_n_II_hosp_D_conf_1 * internal->dim_n_II_hosp_D_conf_2 * internal->dim_n_II_hosp_D_conf_3;
+  internal->dim_n_II_hosp_D_conf_12 = internal->dim_n_II_hosp_D_conf_1 * internal->dim_n_II_hosp_D_conf_2;
+  internal->dim_n_II_hosp_D_unconf = internal->dim_n_II_hosp_D_unconf_1 * internal->dim_n_II_hosp_D_unconf_2 * internal->dim_n_II_hosp_D_unconf_3;
+  internal->dim_n_II_hosp_D_unconf_12 = internal->dim_n_II_hosp_D_unconf_1 * internal->dim_n_II_hosp_D_unconf_2;
+  internal->dim_n_II_hosp_R_conf = internal->dim_n_II_hosp_R_conf_1 * internal->dim_n_II_hosp_R_conf_2 * internal->dim_n_II_hosp_R_conf_3;
+  internal->dim_n_II_hosp_R_conf_12 = internal->dim_n_II_hosp_R_conf_1 * internal->dim_n_II_hosp_R_conf_2;
+  internal->dim_n_II_hosp_R_unconf = internal->dim_n_II_hosp_R_unconf_1 * internal->dim_n_II_hosp_R_unconf_2 * internal->dim_n_II_hosp_R_unconf_3;
+  internal->dim_n_II_hosp_R_unconf_12 = internal->dim_n_II_hosp_R_unconf_1 * internal->dim_n_II_hosp_R_unconf_2;
+  internal->dim_n_II_ICU_D = internal->dim_n_II_ICU_D_1 * internal->dim_n_II_ICU_D_2 * internal->dim_n_II_ICU_D_3;
+  internal->dim_n_II_ICU_D_12 = internal->dim_n_II_ICU_D_1 * internal->dim_n_II_ICU_D_2;
+  internal->dim_n_II_ICU_R = internal->dim_n_II_ICU_R_1 * internal->dim_n_II_ICU_R_2 * internal->dim_n_II_ICU_R_3;
+  internal->dim_n_II_ICU_R_12 = internal->dim_n_II_ICU_R_1 * internal->dim_n_II_ICU_R_2;
+  internal->dim_n_II_ILI = internal->dim_n_II_ILI_1 * internal->dim_n_II_ILI_2 * internal->dim_n_II_ILI_3;
+  internal->dim_n_II_ILI_12 = internal->dim_n_II_ILI_1 * internal->dim_n_II_ILI_2;
+  internal->dim_n_II_mild = internal->dim_n_II_mild_1 * internal->dim_n_II_mild_2 * internal->dim_n_II_mild_3;
+  internal->dim_n_II_mild_12 = internal->dim_n_II_mild_1 * internal->dim_n_II_mild_2;
+  internal->dim_n_II_triage_D = internal->dim_n_II_triage_D_1 * internal->dim_n_II_triage_D_2 * internal->dim_n_II_triage_D_3;
+  internal->dim_n_II_triage_D_12 = internal->dim_n_II_triage_D_1 * internal->dim_n_II_triage_D_2;
+  internal->dim_n_II_triage_R = internal->dim_n_II_triage_R_1 * internal->dim_n_II_triage_R_2 * internal->dim_n_II_triage_R_3;
+  internal->dim_n_II_triage_R_12 = internal->dim_n_II_triage_R_1 * internal->dim_n_II_triage_R_2;
+  internal->dim_n_ILI_to_comm_D = internal->dim_n_ILI_to_comm_D_1 * internal->dim_n_ILI_to_comm_D_2;
+  internal->dim_n_ILI_to_hosp = internal->dim_n_ILI_to_hosp_1 * internal->dim_n_ILI_to_hosp_2;
+  internal->dim_n_ILI_to_hosp_D = internal->dim_n_ILI_to_hosp_D_1 * internal->dim_n_ILI_to_hosp_D_2;
+  internal->dim_n_ILI_to_hosp_D_conf = internal->dim_n_ILI_to_hosp_D_conf_1 * internal->dim_n_ILI_to_hosp_D_conf_2;
+  internal->dim_n_ILI_to_hosp_R = internal->dim_n_ILI_to_hosp_R_1 * internal->dim_n_ILI_to_hosp_R_2;
+  internal->dim_n_ILI_to_hosp_R_conf = internal->dim_n_ILI_to_hosp_R_conf_1 * internal->dim_n_ILI_to_hosp_R_conf_2;
+  internal->dim_n_ILI_to_triage = internal->dim_n_ILI_to_triage_1 * internal->dim_n_ILI_to_triage_2;
+  internal->dim_n_ILI_to_triage_D = internal->dim_n_ILI_to_triage_D_1 * internal->dim_n_ILI_to_triage_D_2;
+  internal->dim_n_ILI_to_triage_R = internal->dim_n_ILI_to_triage_R_1 * internal->dim_n_ILI_to_triage_R_2;
+  internal->dim_n_R_pre = internal->dim_n_R_pre_1 * internal->dim_n_R_pre_2;
+  internal->dim_n_R_stepdown = internal->dim_n_R_stepdown_1 * internal->dim_n_R_stepdown_2;
+  internal->dim_new_I_hosp_D_conf = internal->dim_new_I_hosp_D_conf_1 * internal->dim_new_I_hosp_D_conf_2 * internal->dim_new_I_hosp_D_conf_3;
+  internal->dim_new_I_hosp_D_conf_12 = internal->dim_new_I_hosp_D_conf_1 * internal->dim_new_I_hosp_D_conf_2;
+  internal->dim_new_I_hosp_D_unconf = internal->dim_new_I_hosp_D_unconf_1 * internal->dim_new_I_hosp_D_unconf_2 * internal->dim_new_I_hosp_D_unconf_3;
+  internal->dim_new_I_hosp_D_unconf_12 = internal->dim_new_I_hosp_D_unconf_1 * internal->dim_new_I_hosp_D_unconf_2;
+  internal->dim_new_I_hosp_R_conf = internal->dim_new_I_hosp_R_conf_1 * internal->dim_new_I_hosp_R_conf_2 * internal->dim_new_I_hosp_R_conf_3;
+  internal->dim_new_I_hosp_R_conf_12 = internal->dim_new_I_hosp_R_conf_1 * internal->dim_new_I_hosp_R_conf_2;
+  internal->dim_new_I_hosp_R_unconf = internal->dim_new_I_hosp_R_unconf_1 * internal->dim_new_I_hosp_R_unconf_2 * internal->dim_new_I_hosp_R_unconf_3;
+  internal->dim_new_I_hosp_R_unconf_12 = internal->dim_new_I_hosp_R_unconf_1 * internal->dim_new_I_hosp_R_unconf_2;
+  internal->dim_R_pre = internal->dim_R_pre_1 * internal->dim_R_pre_2;
+  internal->dim_R_stepdown = internal->dim_R_stepdown_1 * internal->dim_R_stepdown_2;
+  internal->dim_R0_pre = internal->dim_R0_pre_1 * internal->dim_R0_pre_2;
+  internal->dim_R0_stepdown = internal->dim_R0_stepdown_1 * internal->dim_R0_stepdown_2;
+  internal->dim_s_ij = internal->dim_s_ij_1 * internal->dim_s_ij_2;
+  internal->dim_trans_increase = internal->dim_trans_increase_1 * internal->dim_trans_increase_2;
+  internal->dim_trans_profile = internal->dim_trans_profile_1 * internal->dim_trans_profile_2;
+  internal->offset_variable_D_comm = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp;
+  internal->offset_variable_D_hosp = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg;
+  internal->offset_variable_R_neg = internal->dim_S + internal->dim_R_pos;
+  internal->offset_variable_R_stepdown = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm;
+  internal->p_admit_conf = (double*) user_get_array(user, false, internal->p_admit_conf, "p_admit_conf", NA_REAL, NA_REAL, 1, internal->dim_p_admit_conf);
+  internal->p_asympt = (double*) user_get_array(user, false, internal->p_asympt, "p_asympt", NA_REAL, NA_REAL, 1, internal->dim_p_asympt);
+  internal->p_death_comm = (double*) user_get_array(user, false, internal->p_death_comm, "p_death_comm", NA_REAL, NA_REAL, 1, internal->dim_p_death_comm);
+  internal->p_death_hosp_D = (double*) user_get_array(user, false, internal->p_death_hosp_D, "p_death_hosp_D", NA_REAL, NA_REAL, 1, internal->dim_p_death_hosp_D);
+  internal->p_death_ICU = (double*) user_get_array(user, false, internal->p_death_ICU, "p_death_ICU", NA_REAL, NA_REAL, 1, internal->dim_p_death_ICU);
+  internal->p_ICU_hosp = (double*) user_get_array(user, false, internal->p_ICU_hosp, "p_ICU_hosp", NA_REAL, NA_REAL, 1, internal->dim_p_ICU_hosp);
+  internal->p_recov_ILI = (double*) user_get_array(user, false, internal->p_recov_ILI, "p_recov_ILI", NA_REAL, NA_REAL, 1, internal->dim_p_recov_ILI);
+  internal->p_seroconversion = (double*) user_get_array(user, false, internal->p_seroconversion, "p_seroconversion", NA_REAL, NA_REAL, 1, internal->dim_p_seroconversion);
+  internal->p_sympt_ILI = (double*) user_get_array(user, false, internal->p_sympt_ILI, "p_sympt_ILI", NA_REAL, NA_REAL, 1, internal->dim_p_sympt_ILI);
+  internal->R0_neg = (double*) user_get_array(user, false, internal->R0_neg, "R0_neg", NA_REAL, NA_REAL, 1, internal->dim_R0_neg);
+  internal->R0_pos = (double*) user_get_array(user, false, internal->R0_pos, "R0_pos", NA_REAL, NA_REAL, 1, internal->dim_R0_pos);
+  internal->S0 = (double*) user_get_array(user, false, internal->S0, "S0", NA_REAL, NA_REAL, 1, internal->dim_S0);
+  Free(internal->aux_EE);
+  internal->aux_EE = (double*) Calloc(internal->dim_aux_EE, double);
+  Free(internal->aux_II_asympt);
+  internal->aux_II_asympt = (double*) Calloc(internal->dim_aux_II_asympt, double);
+  Free(internal->aux_II_comm_D);
+  internal->aux_II_comm_D = (double*) Calloc(internal->dim_aux_II_comm_D, double);
+  Free(internal->aux_II_hosp_D_conf);
+  internal->aux_II_hosp_D_conf = (double*) Calloc(internal->dim_aux_II_hosp_D_conf, double);
+  Free(internal->aux_II_hosp_D_unconf);
+  internal->aux_II_hosp_D_unconf = (double*) Calloc(internal->dim_aux_II_hosp_D_unconf, double);
+  Free(internal->aux_II_hosp_R_conf);
+  internal->aux_II_hosp_R_conf = (double*) Calloc(internal->dim_aux_II_hosp_R_conf, double);
+  Free(internal->aux_II_hosp_R_unconf);
+  internal->aux_II_hosp_R_unconf = (double*) Calloc(internal->dim_aux_II_hosp_R_unconf, double);
+  Free(internal->aux_II_ICU_D);
+  internal->aux_II_ICU_D = (double*) Calloc(internal->dim_aux_II_ICU_D, double);
+  Free(internal->aux_II_ICU_R);
+  internal->aux_II_ICU_R = (double*) Calloc(internal->dim_aux_II_ICU_R, double);
+  Free(internal->aux_II_ILI);
+  internal->aux_II_ILI = (double*) Calloc(internal->dim_aux_II_ILI, double);
+  Free(internal->aux_II_mild);
+  internal->aux_II_mild = (double*) Calloc(internal->dim_aux_II_mild, double);
+  Free(internal->aux_II_triage_D);
+  internal->aux_II_triage_D = (double*) Calloc(internal->dim_aux_II_triage_D, double);
+  Free(internal->aux_II_triage_R);
+  internal->aux_II_triage_R = (double*) Calloc(internal->dim_aux_II_triage_R, double);
+  Free(internal->aux_p_bin);
+  internal->aux_p_bin = (double*) Calloc(internal->dim_aux_p_bin, double);
+  Free(internal->aux_R_pre);
+  internal->aux_R_pre = (double*) Calloc(internal->dim_aux_R_pre, double);
+  Free(internal->aux_R_stepdown);
+  internal->aux_R_stepdown = (double*) Calloc(internal->dim_aux_R_stepdown, double);
+  Free(internal->delta_E);
+  internal->delta_E = (double*) Calloc(internal->dim_delta_E, double);
+  Free(internal->delta_I_asympt);
+  internal->delta_I_asympt = (double*) Calloc(internal->dim_delta_I_asympt, double);
+  Free(internal->delta_I_comm_D);
+  internal->delta_I_comm_D = (double*) Calloc(internal->dim_delta_I_comm_D, double);
+  Free(internal->delta_I_ICU_D);
+  internal->delta_I_ICU_D = (double*) Calloc(internal->dim_delta_I_ICU_D, double);
+  Free(internal->delta_I_ICU_R);
+  internal->delta_I_ICU_R = (double*) Calloc(internal->dim_delta_I_ICU_R, double);
+  Free(internal->delta_I_ILI);
+  internal->delta_I_ILI = (double*) Calloc(internal->dim_delta_I_ILI, double);
+  Free(internal->delta_I_mild);
+  internal->delta_I_mild = (double*) Calloc(internal->dim_delta_I_mild, double);
+  Free(internal->delta_I_triage_D);
+  internal->delta_I_triage_D = (double*) Calloc(internal->dim_delta_I_triage_D, double);
+  Free(internal->delta_I_triage_R);
+  internal->delta_I_triage_R = (double*) Calloc(internal->dim_delta_I_triage_R, double);
+  Free(internal->delta_R_pre);
+  internal->delta_R_pre = (double*) Calloc(internal->dim_delta_R_pre, double);
+  Free(internal->delta_R_stepdown);
+  internal->delta_R_stepdown = (double*) Calloc(internal->dim_delta_R_stepdown, double);
+  Free(internal->I_with_diff_trans);
+  internal->I_with_diff_trans = (double*) Calloc(internal->dim_I_with_diff_trans, double);
+  Free(internal->initial_E);
+  internal->initial_E = (double*) Calloc(internal->dim_E, double);
+  Free(internal->initial_I_asympt);
+  internal->initial_I_asympt = (double*) Calloc(internal->dim_I_asympt, double);
+  Free(internal->initial_I_comm_D);
+  internal->initial_I_comm_D = (double*) Calloc(internal->dim_I_comm_D, double);
+  Free(internal->initial_I_hosp_D_conf);
+  internal->initial_I_hosp_D_conf = (double*) Calloc(internal->dim_I_hosp_D_conf, double);
+  Free(internal->initial_I_hosp_D_unconf);
+  internal->initial_I_hosp_D_unconf = (double*) Calloc(internal->dim_I_hosp_D_unconf, double);
+  Free(internal->initial_I_hosp_R_conf);
+  internal->initial_I_hosp_R_conf = (double*) Calloc(internal->dim_I_hosp_R_conf, double);
+  Free(internal->initial_I_hosp_R_unconf);
+  internal->initial_I_hosp_R_unconf = (double*) Calloc(internal->dim_I_hosp_R_unconf, double);
+  Free(internal->initial_I_ICU_D);
+  internal->initial_I_ICU_D = (double*) Calloc(internal->dim_I_ICU_D, double);
+  Free(internal->initial_I_ICU_R);
+  internal->initial_I_ICU_R = (double*) Calloc(internal->dim_I_ICU_R, double);
+  Free(internal->initial_I_ILI);
+  internal->initial_I_ILI = (double*) Calloc(internal->dim_I_ILI, double);
+  Free(internal->initial_I_mild);
+  internal->initial_I_mild = (double*) Calloc(internal->dim_I_mild, double);
+  Free(internal->initial_I_triage_D);
+  internal->initial_I_triage_D = (double*) Calloc(internal->dim_I_triage_D, double);
+  Free(internal->initial_I_triage_R);
+  internal->initial_I_triage_R = (double*) Calloc(internal->dim_I_triage_R, double);
+  Free(internal->initial_R_pre);
+  internal->initial_R_pre = (double*) Calloc(internal->dim_R_pre, double);
+  Free(internal->initial_R_stepdown);
+  internal->initial_R_stepdown = (double*) Calloc(internal->dim_R_stepdown, double);
+  Free(internal->n_EE);
+  internal->n_EE = (double*) Calloc(internal->dim_n_EE, double);
+  Free(internal->n_EI_asympt);
+  internal->n_EI_asympt = (double*) Calloc(internal->dim_n_EI_asympt, double);
+  Free(internal->n_EI_ILI);
+  internal->n_EI_ILI = (double*) Calloc(internal->dim_n_EI_ILI, double);
+  Free(internal->n_EI_mild);
+  internal->n_EI_mild = (double*) Calloc(internal->dim_n_EI_mild, double);
+  Free(internal->n_hosp_non_ICU);
+  internal->n_hosp_non_ICU = (double*) Calloc(internal->dim_n_hosp_non_ICU, double);
+  Free(internal->n_I_hosp_D_unconf_to_conf);
+  internal->n_I_hosp_D_unconf_to_conf = (double*) Calloc(internal->dim_n_I_hosp_D_unconf_to_conf, double);
+  Free(internal->n_I_hosp_R_unconf_to_conf);
+  internal->n_I_hosp_R_unconf_to_conf = (double*) Calloc(internal->dim_n_I_hosp_R_unconf_to_conf, double);
+  Free(internal->n_II_asympt);
+  internal->n_II_asympt = (double*) Calloc(internal->dim_n_II_asympt, double);
+  Free(internal->n_II_comm_D);
+  internal->n_II_comm_D = (double*) Calloc(internal->dim_n_II_comm_D, double);
+  Free(internal->n_II_hosp_D_conf);
+  internal->n_II_hosp_D_conf = (double*) Calloc(internal->dim_n_II_hosp_D_conf, double);
+  Free(internal->n_II_hosp_D_unconf);
+  internal->n_II_hosp_D_unconf = (double*) Calloc(internal->dim_n_II_hosp_D_unconf, double);
+  Free(internal->n_II_hosp_R_conf);
+  internal->n_II_hosp_R_conf = (double*) Calloc(internal->dim_n_II_hosp_R_conf, double);
+  Free(internal->n_II_hosp_R_unconf);
+  internal->n_II_hosp_R_unconf = (double*) Calloc(internal->dim_n_II_hosp_R_unconf, double);
+  Free(internal->n_II_ICU_D);
+  internal->n_II_ICU_D = (double*) Calloc(internal->dim_n_II_ICU_D, double);
+  Free(internal->n_II_ICU_R);
+  internal->n_II_ICU_R = (double*) Calloc(internal->dim_n_II_ICU_R, double);
+  Free(internal->n_II_ILI);
+  internal->n_II_ILI = (double*) Calloc(internal->dim_n_II_ILI, double);
+  Free(internal->n_II_mild);
+  internal->n_II_mild = (double*) Calloc(internal->dim_n_II_mild, double);
+  Free(internal->n_II_triage_D);
+  internal->n_II_triage_D = (double*) Calloc(internal->dim_n_II_triage_D, double);
+  Free(internal->n_II_triage_R);
+  internal->n_II_triage_R = (double*) Calloc(internal->dim_n_II_triage_R, double);
+  Free(internal->n_ILI_to_comm_D);
+  internal->n_ILI_to_comm_D = (double*) Calloc(internal->dim_n_ILI_to_comm_D, double);
+  Free(internal->n_ILI_to_hosp);
+  internal->n_ILI_to_hosp = (double*) Calloc(internal->dim_n_ILI_to_hosp, double);
+  Free(internal->n_ILI_to_hosp_D);
+  internal->n_ILI_to_hosp_D = (double*) Calloc(internal->dim_n_ILI_to_hosp_D, double);
+  Free(internal->n_ILI_to_hosp_D_conf);
+  internal->n_ILI_to_hosp_D_conf = (double*) Calloc(internal->dim_n_ILI_to_hosp_D_conf, double);
+  Free(internal->n_ILI_to_hosp_R);
+  internal->n_ILI_to_hosp_R = (double*) Calloc(internal->dim_n_ILI_to_hosp_R, double);
+  Free(internal->n_ILI_to_hosp_R_conf);
+  internal->n_ILI_to_hosp_R_conf = (double*) Calloc(internal->dim_n_ILI_to_hosp_R_conf, double);
+  Free(internal->n_ILI_to_triage);
+  internal->n_ILI_to_triage = (double*) Calloc(internal->dim_n_ILI_to_triage, double);
+  Free(internal->n_ILI_to_triage_D);
+  internal->n_ILI_to_triage_D = (double*) Calloc(internal->dim_n_ILI_to_triage_D, double);
+  Free(internal->n_ILI_to_triage_R);
+  internal->n_ILI_to_triage_R = (double*) Calloc(internal->dim_n_ILI_to_triage_R, double);
+  Free(internal->n_R_pre);
+  internal->n_R_pre = (double*) Calloc(internal->dim_n_R_pre, double);
+  Free(internal->n_R_stepdown);
+  internal->n_R_stepdown = (double*) Calloc(internal->dim_n_R_stepdown, double);
+  Free(internal->new_I_hosp_D_conf);
+  internal->new_I_hosp_D_conf = (double*) Calloc(internal->dim_new_I_hosp_D_conf, double);
+  Free(internal->new_I_hosp_D_unconf);
+  internal->new_I_hosp_D_unconf = (double*) Calloc(internal->dim_new_I_hosp_D_unconf, double);
+  Free(internal->new_I_hosp_R_conf);
+  internal->new_I_hosp_R_conf = (double*) Calloc(internal->dim_new_I_hosp_R_conf, double);
+  Free(internal->new_I_hosp_R_unconf);
+  internal->new_I_hosp_R_unconf = (double*) Calloc(internal->dim_new_I_hosp_R_unconf, double);
+  Free(internal->s_ij);
+  internal->s_ij = (double*) Calloc(internal->dim_s_ij, double);
+  internal->E0 = (double*) user_get_array(user, false, internal->E0, "E0", NA_REAL, NA_REAL, 3, internal->dim_E0_1, internal->dim_E0_2, internal->dim_E0_3);
+  internal->I0_asympt = (double*) user_get_array(user, false, internal->I0_asympt, "I0_asympt", NA_REAL, NA_REAL, 3, internal->dim_I0_asympt_1, internal->dim_I0_asympt_2, internal->dim_I0_asympt_3);
+  internal->I0_comm_D = (double*) user_get_array(user, false, internal->I0_comm_D, "I0_comm_D", NA_REAL, NA_REAL, 3, internal->dim_I0_comm_D_1, internal->dim_I0_comm_D_2, internal->dim_I0_comm_D_3);
+  internal->I0_hosp_D_conf = (double*) user_get_array(user, false, internal->I0_hosp_D_conf, "I0_hosp_D_conf", NA_REAL, NA_REAL, 3, internal->dim_I0_hosp_D_conf_1, internal->dim_I0_hosp_D_conf_2, internal->dim_I0_hosp_D_conf_3);
+  internal->I0_hosp_D_unconf = (double*) user_get_array(user, false, internal->I0_hosp_D_unconf, "I0_hosp_D_unconf", NA_REAL, NA_REAL, 3, internal->dim_I0_hosp_D_unconf_1, internal->dim_I0_hosp_D_unconf_2, internal->dim_I0_hosp_D_unconf_3);
+  internal->I0_hosp_R_conf = (double*) user_get_array(user, false, internal->I0_hosp_R_conf, "I0_hosp_R_conf", NA_REAL, NA_REAL, 3, internal->dim_I0_hosp_R_conf_1, internal->dim_I0_hosp_R_conf_2, internal->dim_I0_hosp_R_conf_3);
+  internal->I0_hosp_R_unconf = (double*) user_get_array(user, false, internal->I0_hosp_R_unconf, "I0_hosp_R_unconf", NA_REAL, NA_REAL, 3, internal->dim_I0_hosp_R_unconf_1, internal->dim_I0_hosp_R_unconf_2, internal->dim_I0_hosp_R_unconf_3);
+  internal->I0_ICU_D = (double*) user_get_array(user, false, internal->I0_ICU_D, "I0_ICU_D", NA_REAL, NA_REAL, 3, internal->dim_I0_ICU_D_1, internal->dim_I0_ICU_D_2, internal->dim_I0_ICU_D_3);
+  internal->I0_ICU_R = (double*) user_get_array(user, false, internal->I0_ICU_R, "I0_ICU_R", NA_REAL, NA_REAL, 3, internal->dim_I0_ICU_R_1, internal->dim_I0_ICU_R_2, internal->dim_I0_ICU_R_3);
+  internal->I0_ILI = (double*) user_get_array(user, false, internal->I0_ILI, "I0_ILI", NA_REAL, NA_REAL, 3, internal->dim_I0_ILI_1, internal->dim_I0_ILI_2, internal->dim_I0_ILI_3);
+  internal->I0_mild = (double*) user_get_array(user, false, internal->I0_mild, "I0_mild", NA_REAL, NA_REAL, 3, internal->dim_I0_mild_1, internal->dim_I0_mild_2, internal->dim_I0_mild_3);
+  internal->I0_triage_D = (double*) user_get_array(user, false, internal->I0_triage_D, "I0_triage_D", NA_REAL, NA_REAL, 3, internal->dim_I0_triage_D_1, internal->dim_I0_triage_D_2, internal->dim_I0_triage_D_3);
+  internal->I0_triage_R = (double*) user_get_array(user, false, internal->I0_triage_R, "I0_triage_R", NA_REAL, NA_REAL, 3, internal->dim_I0_triage_R_1, internal->dim_I0_triage_R_2, internal->dim_I0_triage_R_3);
+  for (int i = 1; i <= internal->dim_D_comm; ++i) {
+    internal->initial_D_comm[i - 1] = internal->D0_comm[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_D_hosp; ++i) {
+    internal->initial_D_hosp[i - 1] = internal->D0_hosp[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R_neg; ++i) {
+    internal->initial_R_neg[i - 1] = internal->R0_neg[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R_pos; ++i) {
+    internal->initial_R_pos[i - 1] = internal->R0_pos[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_S; ++i) {
+    internal->initial_S[i - 1] = internal->S0[i - 1];
+  }
+  internal->m = (double*) user_get_array(user, false, internal->m, "m", NA_REAL, NA_REAL, 2, internal->dim_m_1, internal->dim_m_2);
+  internal->offset_variable_E = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre;
+  internal->offset_variable_I_asympt = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E;
+  internal->offset_variable_I_comm_D = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI;
+  internal->offset_variable_I_hosp_D_conf = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R + internal->dim_I_triage_D + internal->dim_I_hosp_R_unconf + internal->dim_I_hosp_R_conf + internal->dim_I_hosp_D_unconf;
+  internal->offset_variable_I_hosp_D_unconf = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R + internal->dim_I_triage_D + internal->dim_I_hosp_R_unconf + internal->dim_I_hosp_R_conf;
+  internal->offset_variable_I_hosp_R_conf = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R + internal->dim_I_triage_D + internal->dim_I_hosp_R_unconf;
+  internal->offset_variable_I_hosp_R_unconf = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R + internal->dim_I_triage_D;
+  internal->offset_variable_I_ICU_D = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R + internal->dim_I_triage_D + internal->dim_I_hosp_R_unconf + internal->dim_I_hosp_R_conf + internal->dim_I_hosp_D_unconf + internal->dim_I_hosp_D_conf + internal->dim_I_ICU_R;
+  internal->offset_variable_I_ICU_R = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R + internal->dim_I_triage_D + internal->dim_I_hosp_R_unconf + internal->dim_I_hosp_R_conf + internal->dim_I_hosp_D_unconf + internal->dim_I_hosp_D_conf;
+  internal->offset_variable_I_ILI = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild;
+  internal->offset_variable_I_mild = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt;
+  internal->offset_variable_I_triage_D = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R;
+  internal->offset_variable_I_triage_R = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D;
+  internal->offset_variable_R_pre = internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown;
+  for (int i = 1; i <= internal->dim_p_R_pre; ++i) {
+    internal->p_R_pre[i - 1] = 1 - exp(-(internal->gamma_R_pre) * internal->dt);
+  }
+  internal->R0_pre = (double*) user_get_array(user, false, internal->R0_pre, "R0_pre", NA_REAL, NA_REAL, 2, internal->dim_R0_pre_1, internal->dim_R0_pre_2);
+  internal->R0_stepdown = (double*) user_get_array(user, false, internal->R0_stepdown, "R0_stepdown", NA_REAL, NA_REAL, 2, internal->dim_R0_stepdown_1, internal->dim_R0_stepdown_2);
+  internal->trans_increase = (double*) user_get_array(user, false, internal->trans_increase, "trans_increase", NA_REAL, NA_REAL, 2, internal->dim_trans_increase_1, internal->dim_trans_increase_2);
+  internal->trans_profile = (double*) user_get_array(user, false, internal->trans_profile, "trans_profile", NA_REAL, NA_REAL, 2, internal->dim_trans_profile_1, internal->dim_trans_profile_2);
+  for (int i = 1; i <= internal->dim_aux_p_bin_1; ++i) {
+    int j = 1;
+    internal->aux_p_bin[i - 1 + internal->dim_aux_p_bin_1 * (j - 1)] = internal->trans_profile[internal->dim_trans_profile_1 * 0 + i - 1];
+  }
+  for (int i = 1; i <= internal->dim_aux_p_bin_1; ++i) {
+    for (int j = 2; j <= (internal->trans_classes - 1); ++j) {
+      internal->aux_p_bin[i - 1 + internal->dim_aux_p_bin_1 * (j - 1)] = internal->trans_profile[internal->dim_trans_profile_1 * (j - 1) + i - 1] / (double) odin_sum2(internal->trans_profile, i - 1, i, j - 1, internal->trans_classes, internal->dim_trans_profile_1);
+    }
+  }
+  for (int i = 1; i <= internal->dim_E_1; ++i) {
+    for (int j = 1; j <= internal->dim_E_2; ++j) {
+      for (int k = 1; k <= internal->dim_E_3; ++k) {
+        internal->initial_E[i - 1 + internal->dim_E_1 * (j - 1) + internal->dim_E_12 * (k - 1)] = internal->E0[internal->dim_E0_12 * (k - 1) + internal->dim_E0_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_asympt_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_asympt_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_asympt_3; ++k) {
+        internal->initial_I_asympt[i - 1 + internal->dim_I_asympt_1 * (j - 1) + internal->dim_I_asympt_12 * (k - 1)] = internal->I0_asympt[internal->dim_I0_asympt_12 * (k - 1) + internal->dim_I0_asympt_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_comm_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_comm_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_comm_D_3; ++k) {
+        internal->initial_I_comm_D[i - 1 + internal->dim_I_comm_D_1 * (j - 1) + internal->dim_I_comm_D_12 * (k - 1)] = internal->I0_comm_D[internal->dim_I0_comm_D_12 * (k - 1) + internal->dim_I0_comm_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_D_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_D_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_D_conf_3; ++k) {
+        internal->initial_I_hosp_D_conf[i - 1 + internal->dim_I_hosp_D_conf_1 * (j - 1) + internal->dim_I_hosp_D_conf_12 * (k - 1)] = internal->I0_hosp_D_conf[internal->dim_I0_hosp_D_conf_12 * (k - 1) + internal->dim_I0_hosp_D_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_D_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_D_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_D_unconf_3; ++k) {
+        internal->initial_I_hosp_D_unconf[i - 1 + internal->dim_I_hosp_D_unconf_1 * (j - 1) + internal->dim_I_hosp_D_unconf_12 * (k - 1)] = internal->I0_hosp_D_unconf[internal->dim_I0_hosp_D_unconf_12 * (k - 1) + internal->dim_I0_hosp_D_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_R_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_R_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_R_conf_3; ++k) {
+        internal->initial_I_hosp_R_conf[i - 1 + internal->dim_I_hosp_R_conf_1 * (j - 1) + internal->dim_I_hosp_R_conf_12 * (k - 1)] = internal->I0_hosp_R_conf[internal->dim_I0_hosp_R_conf_12 * (k - 1) + internal->dim_I0_hosp_R_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_R_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_R_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_R_unconf_3; ++k) {
+        internal->initial_I_hosp_R_unconf[i - 1 + internal->dim_I_hosp_R_unconf_1 * (j - 1) + internal->dim_I_hosp_R_unconf_12 * (k - 1)] = internal->I0_hosp_R_unconf[internal->dim_I0_hosp_R_unconf_12 * (k - 1) + internal->dim_I0_hosp_R_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_ICU_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_ICU_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_ICU_D_3; ++k) {
+        internal->initial_I_ICU_D[i - 1 + internal->dim_I_ICU_D_1 * (j - 1) + internal->dim_I_ICU_D_12 * (k - 1)] = internal->I0_ICU_D[internal->dim_I0_ICU_D_12 * (k - 1) + internal->dim_I0_ICU_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_ICU_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_ICU_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_ICU_R_3; ++k) {
+        internal->initial_I_ICU_R[i - 1 + internal->dim_I_ICU_R_1 * (j - 1) + internal->dim_I_ICU_R_12 * (k - 1)] = internal->I0_ICU_R[internal->dim_I0_ICU_R_12 * (k - 1) + internal->dim_I0_ICU_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_ILI_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_ILI_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_ILI_3; ++k) {
+        internal->initial_I_ILI[i - 1 + internal->dim_I_ILI_1 * (j - 1) + internal->dim_I_ILI_12 * (k - 1)] = internal->I0_ILI[internal->dim_I0_ILI_12 * (k - 1) + internal->dim_I0_ILI_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_mild_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_mild_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_mild_3; ++k) {
+        internal->initial_I_mild[i - 1 + internal->dim_I_mild_1 * (j - 1) + internal->dim_I_mild_12 * (k - 1)] = internal->I0_mild[internal->dim_I0_mild_12 * (k - 1) + internal->dim_I0_mild_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_triage_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_triage_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_triage_D_3; ++k) {
+        internal->initial_I_triage_D[i - 1 + internal->dim_I_triage_D_1 * (j - 1) + internal->dim_I_triage_D_12 * (k - 1)] = internal->I0_triage_D[internal->dim_I0_triage_D_12 * (k - 1) + internal->dim_I0_triage_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_triage_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_triage_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_triage_R_3; ++k) {
+        internal->initial_I_triage_R[i - 1 + internal->dim_I_triage_R_1 * (j - 1) + internal->dim_I_triage_R_12 * (k - 1)] = internal->I0_triage_R[internal->dim_I0_triage_R_12 * (k - 1) + internal->dim_I0_triage_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->dim_R_pre_2; ++j) {
+      internal->initial_R_pre[i - 1 + internal->dim_R_pre_1 * (j - 1)] = internal->R0_pre[internal->dim_R0_pre_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_R_stepdown_1; ++i) {
+    for (int j = 1; j <= internal->dim_R_stepdown_2; ++j) {
+      internal->initial_R_stepdown[i - 1 + internal->dim_R_stepdown_1 * (j - 1)] = internal->R0_stepdown[internal->dim_R0_stepdown_1 * (j - 1) + i - 1];
+    }
+  }
+  return R_NilValue;
+}
+SEXP hospital_with_serology_testing_metadata(SEXP internal_p) {
+  hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 1);
+  SEXP ret = PROTECT(allocVector(VECSXP, 4));
+  SEXP nms = PROTECT(allocVector(STRSXP, 4));
+  SET_STRING_ELT(nms, 0, mkChar("variable_order"));
+  SET_STRING_ELT(nms, 1, mkChar("output_order"));
+  SET_STRING_ELT(nms, 2, mkChar("n_out"));
+  SET_STRING_ELT(nms, 3, mkChar("interpolate_t"));
+  setAttrib(ret, R_NamesSymbol, nms);
+  SEXP variable_length = PROTECT(allocVector(VECSXP, 20));
+  SEXP variable_names = PROTECT(allocVector(STRSXP, 20));
+  setAttrib(variable_length, R_NamesSymbol, variable_names);
+  SET_VECTOR_ELT(variable_length, 0, ScalarInteger(internal->dim_S));
+  SET_VECTOR_ELT(variable_length, 1, ScalarInteger(internal->dim_R_pos));
+  SET_VECTOR_ELT(variable_length, 2, ScalarInteger(internal->dim_R_neg));
+  SET_VECTOR_ELT(variable_length, 3, ScalarInteger(internal->dim_D_hosp));
+  SET_VECTOR_ELT(variable_length, 4, ScalarInteger(internal->dim_D_comm));
+  SET_VECTOR_ELT(variable_length, 5, allocVector(INTSXP, 2));
+  int * dim_R_stepdown = INTEGER(VECTOR_ELT(variable_length, 5));
+  dim_R_stepdown[0] = internal->dim_R_stepdown_1;
+  dim_R_stepdown[1] = internal->dim_R_stepdown_2;
+  SET_VECTOR_ELT(variable_length, 6, allocVector(INTSXP, 2));
+  int * dim_R_pre = INTEGER(VECTOR_ELT(variable_length, 6));
+  dim_R_pre[0] = internal->dim_R_pre_1;
+  dim_R_pre[1] = internal->dim_R_pre_2;
+  SET_VECTOR_ELT(variable_length, 7, allocVector(INTSXP, 3));
+  int * dim_E = INTEGER(VECTOR_ELT(variable_length, 7));
+  dim_E[0] = internal->dim_E_1;
+  dim_E[1] = internal->dim_E_2;
+  dim_E[2] = internal->dim_E_3;
+  SET_VECTOR_ELT(variable_length, 8, allocVector(INTSXP, 3));
+  int * dim_I_asympt = INTEGER(VECTOR_ELT(variable_length, 8));
+  dim_I_asympt[0] = internal->dim_I_asympt_1;
+  dim_I_asympt[1] = internal->dim_I_asympt_2;
+  dim_I_asympt[2] = internal->dim_I_asympt_3;
+  SET_VECTOR_ELT(variable_length, 9, allocVector(INTSXP, 3));
+  int * dim_I_mild = INTEGER(VECTOR_ELT(variable_length, 9));
+  dim_I_mild[0] = internal->dim_I_mild_1;
+  dim_I_mild[1] = internal->dim_I_mild_2;
+  dim_I_mild[2] = internal->dim_I_mild_3;
+  SET_VECTOR_ELT(variable_length, 10, allocVector(INTSXP, 3));
+  int * dim_I_ILI = INTEGER(VECTOR_ELT(variable_length, 10));
+  dim_I_ILI[0] = internal->dim_I_ILI_1;
+  dim_I_ILI[1] = internal->dim_I_ILI_2;
+  dim_I_ILI[2] = internal->dim_I_ILI_3;
+  SET_VECTOR_ELT(variable_length, 11, allocVector(INTSXP, 3));
+  int * dim_I_comm_D = INTEGER(VECTOR_ELT(variable_length, 11));
+  dim_I_comm_D[0] = internal->dim_I_comm_D_1;
+  dim_I_comm_D[1] = internal->dim_I_comm_D_2;
+  dim_I_comm_D[2] = internal->dim_I_comm_D_3;
+  SET_VECTOR_ELT(variable_length, 12, allocVector(INTSXP, 3));
+  int * dim_I_triage_R = INTEGER(VECTOR_ELT(variable_length, 12));
+  dim_I_triage_R[0] = internal->dim_I_triage_R_1;
+  dim_I_triage_R[1] = internal->dim_I_triage_R_2;
+  dim_I_triage_R[2] = internal->dim_I_triage_R_3;
+  SET_VECTOR_ELT(variable_length, 13, allocVector(INTSXP, 3));
+  int * dim_I_triage_D = INTEGER(VECTOR_ELT(variable_length, 13));
+  dim_I_triage_D[0] = internal->dim_I_triage_D_1;
+  dim_I_triage_D[1] = internal->dim_I_triage_D_2;
+  dim_I_triage_D[2] = internal->dim_I_triage_D_3;
+  SET_VECTOR_ELT(variable_length, 14, allocVector(INTSXP, 3));
+  int * dim_I_hosp_R_unconf = INTEGER(VECTOR_ELT(variable_length, 14));
+  dim_I_hosp_R_unconf[0] = internal->dim_I_hosp_R_unconf_1;
+  dim_I_hosp_R_unconf[1] = internal->dim_I_hosp_R_unconf_2;
+  dim_I_hosp_R_unconf[2] = internal->dim_I_hosp_R_unconf_3;
+  SET_VECTOR_ELT(variable_length, 15, allocVector(INTSXP, 3));
+  int * dim_I_hosp_R_conf = INTEGER(VECTOR_ELT(variable_length, 15));
+  dim_I_hosp_R_conf[0] = internal->dim_I_hosp_R_conf_1;
+  dim_I_hosp_R_conf[1] = internal->dim_I_hosp_R_conf_2;
+  dim_I_hosp_R_conf[2] = internal->dim_I_hosp_R_conf_3;
+  SET_VECTOR_ELT(variable_length, 16, allocVector(INTSXP, 3));
+  int * dim_I_hosp_D_unconf = INTEGER(VECTOR_ELT(variable_length, 16));
+  dim_I_hosp_D_unconf[0] = internal->dim_I_hosp_D_unconf_1;
+  dim_I_hosp_D_unconf[1] = internal->dim_I_hosp_D_unconf_2;
+  dim_I_hosp_D_unconf[2] = internal->dim_I_hosp_D_unconf_3;
+  SET_VECTOR_ELT(variable_length, 17, allocVector(INTSXP, 3));
+  int * dim_I_hosp_D_conf = INTEGER(VECTOR_ELT(variable_length, 17));
+  dim_I_hosp_D_conf[0] = internal->dim_I_hosp_D_conf_1;
+  dim_I_hosp_D_conf[1] = internal->dim_I_hosp_D_conf_2;
+  dim_I_hosp_D_conf[2] = internal->dim_I_hosp_D_conf_3;
+  SET_VECTOR_ELT(variable_length, 18, allocVector(INTSXP, 3));
+  int * dim_I_ICU_R = INTEGER(VECTOR_ELT(variable_length, 18));
+  dim_I_ICU_R[0] = internal->dim_I_ICU_R_1;
+  dim_I_ICU_R[1] = internal->dim_I_ICU_R_2;
+  dim_I_ICU_R[2] = internal->dim_I_ICU_R_3;
+  SET_VECTOR_ELT(variable_length, 19, allocVector(INTSXP, 3));
+  int * dim_I_ICU_D = INTEGER(VECTOR_ELT(variable_length, 19));
+  dim_I_ICU_D[0] = internal->dim_I_ICU_D_1;
+  dim_I_ICU_D[1] = internal->dim_I_ICU_D_2;
+  dim_I_ICU_D[2] = internal->dim_I_ICU_D_3;
+  SET_STRING_ELT(variable_names, 0, mkChar("S"));
+  SET_STRING_ELT(variable_names, 1, mkChar("R_pos"));
+  SET_STRING_ELT(variable_names, 2, mkChar("R_neg"));
+  SET_STRING_ELT(variable_names, 3, mkChar("D_hosp"));
+  SET_STRING_ELT(variable_names, 4, mkChar("D_comm"));
+  SET_STRING_ELT(variable_names, 5, mkChar("R_stepdown"));
+  SET_STRING_ELT(variable_names, 6, mkChar("R_pre"));
+  SET_STRING_ELT(variable_names, 7, mkChar("E"));
+  SET_STRING_ELT(variable_names, 8, mkChar("I_asympt"));
+  SET_STRING_ELT(variable_names, 9, mkChar("I_mild"));
+  SET_STRING_ELT(variable_names, 10, mkChar("I_ILI"));
+  SET_STRING_ELT(variable_names, 11, mkChar("I_comm_D"));
+  SET_STRING_ELT(variable_names, 12, mkChar("I_triage_R"));
+  SET_STRING_ELT(variable_names, 13, mkChar("I_triage_D"));
+  SET_STRING_ELT(variable_names, 14, mkChar("I_hosp_R_unconf"));
+  SET_STRING_ELT(variable_names, 15, mkChar("I_hosp_R_conf"));
+  SET_STRING_ELT(variable_names, 16, mkChar("I_hosp_D_unconf"));
+  SET_STRING_ELT(variable_names, 17, mkChar("I_hosp_D_conf"));
+  SET_STRING_ELT(variable_names, 18, mkChar("I_ICU_R"));
+  SET_STRING_ELT(variable_names, 19, mkChar("I_ICU_D"));
+  SET_VECTOR_ELT(ret, 0, variable_length);
+  UNPROTECT(2);
+  SEXP output_length = PROTECT(allocVector(VECSXP, 3));
+  SEXP output_names = PROTECT(allocVector(STRSXP, 3));
+  setAttrib(output_length, R_NamesSymbol, output_names);
+  SET_VECTOR_ELT(output_length, 0, R_NilValue);
+  SET_VECTOR_ELT(output_length, 1, R_NilValue);
+  SET_VECTOR_ELT(output_length, 2, R_NilValue);
+  SET_STRING_ELT(output_names, 0, mkChar("time"));
+  SET_STRING_ELT(output_names, 1, mkChar("beta"));
+  SET_STRING_ELT(output_names, 2, mkChar("N_tot"));
+  SET_VECTOR_ELT(ret, 1, output_length);
+  UNPROTECT(2);
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(3));
+  SEXP interpolate_t = PROTECT(allocVector(VECSXP, 3));
+  SEXP interpolate_t_nms = PROTECT(allocVector(STRSXP, 3));
+  setAttrib(interpolate_t, R_NamesSymbol, interpolate_t_nms);
+  SET_VECTOR_ELT(interpolate_t, 0, ScalarReal(internal->beta_t[0]));
+  SET_VECTOR_ELT(interpolate_t, 1, ScalarReal(R_PosInf));
+  SET_STRING_ELT(interpolate_t_nms, 0, mkChar("min"));
+  SET_STRING_ELT(interpolate_t_nms, 1, mkChar("max"));
+  SET_VECTOR_ELT(ret, 3, interpolate_t);
+  UNPROTECT(2);
+  UNPROTECT(2);
+  return ret;
+}
+SEXP hospital_with_serology_testing_initial_conditions(SEXP internal_p, SEXP step_ptr) {
+  hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 1);
+  SEXP r_state = PROTECT(allocVector(REALSXP, internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R + internal->dim_I_triage_D + internal->dim_I_hosp_R_unconf + internal->dim_I_hosp_R_conf + internal->dim_I_hosp_D_unconf + internal->dim_I_hosp_D_conf + internal->dim_I_ICU_R + internal->dim_I_ICU_D));
+  double * state = REAL(r_state);
+  memcpy(state + 0, internal->initial_S, internal->dim_S * sizeof(double));
+  memcpy(state + internal->dim_S, internal->initial_R_pos, internal->dim_R_pos * sizeof(double));
+  memcpy(state + internal->offset_variable_R_neg, internal->initial_R_neg, internal->dim_R_neg * sizeof(double));
+  memcpy(state + internal->offset_variable_D_hosp, internal->initial_D_hosp, internal->dim_D_hosp * sizeof(double));
+  memcpy(state + internal->offset_variable_D_comm, internal->initial_D_comm, internal->dim_D_comm * sizeof(double));
+  memcpy(state + internal->offset_variable_R_stepdown, internal->initial_R_stepdown, internal->dim_R_stepdown * sizeof(double));
+  memcpy(state + internal->offset_variable_R_pre, internal->initial_R_pre, internal->dim_R_pre * sizeof(double));
+  memcpy(state + internal->offset_variable_E, internal->initial_E, internal->dim_E * sizeof(double));
+  memcpy(state + internal->offset_variable_I_asympt, internal->initial_I_asympt, internal->dim_I_asympt * sizeof(double));
+  memcpy(state + internal->offset_variable_I_mild, internal->initial_I_mild, internal->dim_I_mild * sizeof(double));
+  memcpy(state + internal->offset_variable_I_ILI, internal->initial_I_ILI, internal->dim_I_ILI * sizeof(double));
+  memcpy(state + internal->offset_variable_I_comm_D, internal->initial_I_comm_D, internal->dim_I_comm_D * sizeof(double));
+  memcpy(state + internal->offset_variable_I_triage_R, internal->initial_I_triage_R, internal->dim_I_triage_R * sizeof(double));
+  memcpy(state + internal->offset_variable_I_triage_D, internal->initial_I_triage_D, internal->dim_I_triage_D * sizeof(double));
+  memcpy(state + internal->offset_variable_I_hosp_R_unconf, internal->initial_I_hosp_R_unconf, internal->dim_I_hosp_R_unconf * sizeof(double));
+  memcpy(state + internal->offset_variable_I_hosp_R_conf, internal->initial_I_hosp_R_conf, internal->dim_I_hosp_R_conf * sizeof(double));
+  memcpy(state + internal->offset_variable_I_hosp_D_unconf, internal->initial_I_hosp_D_unconf, internal->dim_I_hosp_D_unconf * sizeof(double));
+  memcpy(state + internal->offset_variable_I_hosp_D_conf, internal->initial_I_hosp_D_conf, internal->dim_I_hosp_D_conf * sizeof(double));
+  memcpy(state + internal->offset_variable_I_ICU_R, internal->initial_I_ICU_R, internal->dim_I_ICU_R * sizeof(double));
+  memcpy(state + internal->offset_variable_I_ICU_D, internal->initial_I_ICU_D, internal->dim_I_ICU_D * sizeof(double));
+  UNPROTECT(1);
+  return r_state;
+}
+void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal* internal, size_t step, double * state, double * state_next, double * output) {
+  double * S = state + 0;
+  double * E = state + internal->offset_variable_E;
+  double * I_asympt = state + internal->offset_variable_I_asympt;
+  double * I_mild = state + internal->offset_variable_I_mild;
+  double * I_ILI = state + internal->offset_variable_I_ILI;
+  double * I_comm_D = state + internal->offset_variable_I_comm_D;
+  double * I_triage_R = state + internal->offset_variable_I_triage_R;
+  double * I_triage_D = state + internal->offset_variable_I_triage_D;
+  double * I_hosp_R_unconf = state + internal->offset_variable_I_hosp_R_unconf;
+  double * I_hosp_R_conf = state + internal->offset_variable_I_hosp_R_conf;
+  double * I_hosp_D_unconf = state + internal->offset_variable_I_hosp_D_unconf;
+  double * I_hosp_D_conf = state + internal->offset_variable_I_hosp_D_conf;
+  double * I_ICU_R = state + internal->offset_variable_I_ICU_R;
+  double * I_ICU_D = state + internal->offset_variable_I_ICU_D;
+  double * R_stepdown = state + internal->offset_variable_R_stepdown;
+  double * R_pre = state + internal->offset_variable_R_pre;
+  double * R_pos = state + internal->dim_S;
+  double * R_neg = state + internal->offset_variable_R_neg;
+  double * D_hosp = state + internal->offset_variable_D_hosp;
+  double * D_comm = state + internal->offset_variable_D_comm;
+  double beta = 0.0;
+  cinterpolate_eval(step, internal->interpolate_beta, &beta);
+  for (int i = 1; i <= internal->dim_I_with_diff_trans_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_with_diff_trans_2; ++j) {
+      internal->I_with_diff_trans[i - 1 + internal->dim_I_with_diff_trans_1 * (j - 1)] = internal->trans_increase[internal->dim_trans_increase_1 * (j - 1) + i - 1] * (odin_sum3(I_asympt, i - 1, i, 0, internal->dim_I_asympt_2, j - 1, j, internal->dim_I_asympt_1, internal->dim_I_asympt_12) + odin_sum3(I_mild, i - 1, i, 0, internal->dim_I_mild_2, j - 1, j, internal->dim_I_mild_1, internal->dim_I_mild_12) + odin_sum3(I_ILI, i - 1, i, 0, internal->dim_I_ILI_2, j - 1, j, internal->dim_I_ILI_1, internal->dim_I_ILI_12) + internal->hosp_transmission * (odin_sum3(I_triage_R, i - 1, i, 0, internal->dim_I_triage_R_2, j - 1, j, internal->dim_I_triage_R_1, internal->dim_I_triage_R_12) + odin_sum3(I_triage_D, i - 1, i, 0, internal->dim_I_triage_D_2, j - 1, j, internal->dim_I_triage_D_1, internal->dim_I_triage_D_12) + odin_sum3(I_hosp_R_unconf, i - 1, i, 0, internal->dim_I_hosp_R_unconf_2, j - 1, j, internal->dim_I_hosp_R_unconf_1, internal->dim_I_hosp_R_unconf_12) + odin_sum3(I_hosp_R_conf, i - 1, i, 0, internal->dim_I_hosp_R_conf_2, j - 1, j, internal->dim_I_hosp_R_conf_1, internal->dim_I_hosp_R_conf_12) + odin_sum3(I_hosp_D_unconf, i - 1, i, 0, internal->dim_I_hosp_D_unconf_2, j - 1, j, internal->dim_I_hosp_D_unconf_1, internal->dim_I_hosp_D_unconf_12) + odin_sum3(I_hosp_D_conf, i - 1, i, 0, internal->dim_I_hosp_D_conf_2, j - 1, j, internal->dim_I_hosp_D_conf_1, internal->dim_I_hosp_D_conf_12)) + internal->ICU_transmission * (odin_sum3(I_ICU_R, i - 1, i, 0, internal->dim_I_ICU_R_2, j - 1, j, internal->dim_I_ICU_R_1, internal->dim_I_ICU_R_12) + odin_sum3(I_ICU_D, i - 1, i, 0, internal->dim_I_ICU_D_2, j - 1, j, internal->dim_I_ICU_D_1, internal->dim_I_ICU_D_12)) + internal->comm_D_transmission * odin_sum3(I_comm_D, i - 1, i, 0, internal->dim_I_comm_D_2, j - 1, j, internal->dim_I_comm_D_1, internal->dim_I_comm_D_12));
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_EE_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_EE_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_EE_3; ++k) {
+        internal->n_EE[i - 1 + internal->dim_n_EE_1 * (j - 1) + internal->dim_n_EE_12 * (k - 1)] = Rf_rbinom(round(E[internal->dim_E_12 * (k - 1) + internal->dim_E_1 * (j - 1) + i - 1]), internal->p_EE);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_asympt_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_asympt_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_asympt_3; ++k) {
+        internal->n_II_asympt[i - 1 + internal->dim_n_II_asympt_1 * (j - 1) + internal->dim_n_II_asympt_12 * (k - 1)] = Rf_rbinom(round(I_asympt[internal->dim_I_asympt_12 * (k - 1) + internal->dim_I_asympt_1 * (j - 1) + i - 1]), internal->p_II_asympt);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_comm_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_comm_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_comm_D_3; ++k) {
+        internal->n_II_comm_D[i - 1 + internal->dim_n_II_comm_D_1 * (j - 1) + internal->dim_n_II_comm_D_12 * (k - 1)] = Rf_rbinom(round(I_comm_D[internal->dim_I_comm_D_12 * (k - 1) + internal->dim_I_comm_D_1 * (j - 1) + i - 1]), internal->p_II_comm_D);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_hosp_D_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_hosp_D_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_hosp_D_conf_3; ++k) {
+        internal->n_II_hosp_D_conf[i - 1 + internal->dim_n_II_hosp_D_conf_1 * (j - 1) + internal->dim_n_II_hosp_D_conf_12 * (k - 1)] = Rf_rbinom(round(I_hosp_D_conf[internal->dim_I_hosp_D_conf_12 * (k - 1) + internal->dim_I_hosp_D_conf_1 * (j - 1) + i - 1]), internal->p_II_hosp_D);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_hosp_D_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_hosp_D_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_hosp_D_unconf_3; ++k) {
+        internal->n_II_hosp_D_unconf[i - 1 + internal->dim_n_II_hosp_D_unconf_1 * (j - 1) + internal->dim_n_II_hosp_D_unconf_12 * (k - 1)] = Rf_rbinom(round(I_hosp_D_unconf[internal->dim_I_hosp_D_unconf_12 * (k - 1) + internal->dim_I_hosp_D_unconf_1 * (j - 1) + i - 1]), internal->p_II_hosp_D);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_hosp_R_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_hosp_R_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_hosp_R_conf_3; ++k) {
+        internal->n_II_hosp_R_conf[i - 1 + internal->dim_n_II_hosp_R_conf_1 * (j - 1) + internal->dim_n_II_hosp_R_conf_12 * (k - 1)] = Rf_rbinom(round(I_hosp_R_conf[internal->dim_I_hosp_R_conf_12 * (k - 1) + internal->dim_I_hosp_R_conf_1 * (j - 1) + i - 1]), internal->p_II_hosp_R);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_hosp_R_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_hosp_R_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_hosp_R_unconf_3; ++k) {
+        internal->n_II_hosp_R_unconf[i - 1 + internal->dim_n_II_hosp_R_unconf_1 * (j - 1) + internal->dim_n_II_hosp_R_unconf_12 * (k - 1)] = Rf_rbinom(round(I_hosp_R_unconf[internal->dim_I_hosp_R_unconf_12 * (k - 1) + internal->dim_I_hosp_R_unconf_1 * (j - 1) + i - 1]), internal->p_II_hosp_R);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_ICU_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_ICU_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_ICU_D_3; ++k) {
+        internal->n_II_ICU_D[i - 1 + internal->dim_n_II_ICU_D_1 * (j - 1) + internal->dim_n_II_ICU_D_12 * (k - 1)] = Rf_rbinom(round(I_ICU_D[internal->dim_I_ICU_D_12 * (k - 1) + internal->dim_I_ICU_D_1 * (j - 1) + i - 1]), internal->p_II_ICU_D);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_ICU_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_ICU_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_ICU_R_3; ++k) {
+        internal->n_II_ICU_R[i - 1 + internal->dim_n_II_ICU_R_1 * (j - 1) + internal->dim_n_II_ICU_R_12 * (k - 1)] = Rf_rbinom(round(I_ICU_R[internal->dim_I_ICU_R_12 * (k - 1) + internal->dim_I_ICU_R_1 * (j - 1) + i - 1]), internal->p_II_ICU_R);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_ILI_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_ILI_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_ILI_3; ++k) {
+        internal->n_II_ILI[i - 1 + internal->dim_n_II_ILI_1 * (j - 1) + internal->dim_n_II_ILI_12 * (k - 1)] = Rf_rbinom(round(I_ILI[internal->dim_I_ILI_12 * (k - 1) + internal->dim_I_ILI_1 * (j - 1) + i - 1]), internal->p_II_ILI);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_mild_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_mild_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_mild_3; ++k) {
+        internal->n_II_mild[i - 1 + internal->dim_n_II_mild_1 * (j - 1) + internal->dim_n_II_mild_12 * (k - 1)] = Rf_rbinom(round(I_mild[internal->dim_I_mild_12 * (k - 1) + internal->dim_I_mild_1 * (j - 1) + i - 1]), internal->p_II_mild);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_triage_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_triage_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_triage_D_3; ++k) {
+        internal->n_II_triage_D[i - 1 + internal->dim_n_II_triage_D_1 * (j - 1) + internal->dim_n_II_triage_D_12 * (k - 1)] = Rf_rbinom(round(I_triage_D[internal->dim_I_triage_D_12 * (k - 1) + internal->dim_I_triage_D_1 * (j - 1) + i - 1]), internal->p_II_triage);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_II_triage_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_II_triage_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_II_triage_R_3; ++k) {
+        internal->n_II_triage_R[i - 1 + internal->dim_n_II_triage_R_1 * (j - 1) + internal->dim_n_II_triage_R_12 * (k - 1)] = Rf_rbinom(round(I_triage_R[internal->dim_I_triage_R_12 * (k - 1) + internal->dim_I_triage_R_1 * (j - 1) + i - 1]), internal->p_II_triage);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_R_pre_2; ++j) {
+      internal->n_R_pre[i - 1 + internal->dim_n_R_pre_1 * (j - 1)] = Rf_rbinom(round(R_pre[internal->dim_R_pre_1 * (j - 1) + i - 1]), internal->p_R_pre[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_R_stepdown_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_R_stepdown_2; ++j) {
+      internal->n_R_stepdown[i - 1 + internal->dim_n_R_stepdown_1 * (j - 1)] = Rf_rbinom(round(R_stepdown[internal->dim_R_stepdown_1 * (j - 1) + i - 1]), internal->p_R_stepdown);
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_D_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_aux_II_hosp_D_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_D_conf_3; ++k) {
+        internal->aux_II_hosp_D_conf[i - 1 + internal->dim_aux_II_hosp_D_conf_1 * (j - 1) + internal->dim_aux_II_hosp_D_conf_12 * (k - 1)] = I_hosp_D_conf[internal->dim_I_hosp_D_conf_12 * (k - 1) + internal->dim_I_hosp_D_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_D_conf_1; ++i) {
+    for (int j = 2; j <= internal->s_hosp_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_D_conf_3; ++k) {
+        internal->aux_II_hosp_D_conf[i - 1 + internal->dim_aux_II_hosp_D_conf_1 * (j - 1) + internal->dim_aux_II_hosp_D_conf_12 * (k - 1)] = internal->aux_II_hosp_D_conf[internal->dim_aux_II_hosp_D_conf_12 * (k - 1) + internal->dim_aux_II_hosp_D_conf_1 * (j - 1) + i - 1] + internal->n_II_hosp_D_conf[internal->dim_n_II_hosp_D_conf_12 * (k - 1) + internal->dim_n_II_hosp_D_conf_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_D_conf_1; ++i) {
+    for (int j = 1; j <= internal->s_hosp_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_D_conf_3; ++k) {
+        internal->aux_II_hosp_D_conf[i - 1 + internal->dim_aux_II_hosp_D_conf_1 * (j - 1) + internal->dim_aux_II_hosp_D_conf_12 * (k - 1)] = internal->aux_II_hosp_D_conf[internal->dim_aux_II_hosp_D_conf_12 * (k - 1) + internal->dim_aux_II_hosp_D_conf_1 * (j - 1) + i - 1] - internal->n_II_hosp_D_conf[internal->dim_n_II_hosp_D_conf_12 * (k - 1) + internal->dim_n_II_hosp_D_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_D_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_aux_II_hosp_D_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_D_unconf_3; ++k) {
+        internal->aux_II_hosp_D_unconf[i - 1 + internal->dim_aux_II_hosp_D_unconf_1 * (j - 1) + internal->dim_aux_II_hosp_D_unconf_12 * (k - 1)] = I_hosp_D_unconf[internal->dim_I_hosp_D_unconf_12 * (k - 1) + internal->dim_I_hosp_D_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_D_unconf_1; ++i) {
+    for (int j = 2; j <= internal->s_hosp_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_D_unconf_3; ++k) {
+        internal->aux_II_hosp_D_unconf[i - 1 + internal->dim_aux_II_hosp_D_unconf_1 * (j - 1) + internal->dim_aux_II_hosp_D_unconf_12 * (k - 1)] = internal->aux_II_hosp_D_unconf[internal->dim_aux_II_hosp_D_unconf_12 * (k - 1) + internal->dim_aux_II_hosp_D_unconf_1 * (j - 1) + i - 1] + internal->n_II_hosp_D_unconf[internal->dim_n_II_hosp_D_unconf_12 * (k - 1) + internal->dim_n_II_hosp_D_unconf_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_D_unconf_1; ++i) {
+    for (int j = 1; j <= internal->s_hosp_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_D_unconf_3; ++k) {
+        internal->aux_II_hosp_D_unconf[i - 1 + internal->dim_aux_II_hosp_D_unconf_1 * (j - 1) + internal->dim_aux_II_hosp_D_unconf_12 * (k - 1)] = internal->aux_II_hosp_D_unconf[internal->dim_aux_II_hosp_D_unconf_12 * (k - 1) + internal->dim_aux_II_hosp_D_unconf_1 * (j - 1) + i - 1] - internal->n_II_hosp_D_unconf[internal->dim_n_II_hosp_D_unconf_12 * (k - 1) + internal->dim_n_II_hosp_D_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_R_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_aux_II_hosp_R_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_R_conf_3; ++k) {
+        internal->aux_II_hosp_R_conf[i - 1 + internal->dim_aux_II_hosp_R_conf_1 * (j - 1) + internal->dim_aux_II_hosp_R_conf_12 * (k - 1)] = I_hosp_R_conf[internal->dim_I_hosp_R_conf_12 * (k - 1) + internal->dim_I_hosp_R_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_R_conf_1; ++i) {
+    for (int j = 2; j <= internal->s_hosp_R; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_R_conf_3; ++k) {
+        internal->aux_II_hosp_R_conf[i - 1 + internal->dim_aux_II_hosp_R_conf_1 * (j - 1) + internal->dim_aux_II_hosp_R_conf_12 * (k - 1)] = internal->aux_II_hosp_R_conf[internal->dim_aux_II_hosp_R_conf_12 * (k - 1) + internal->dim_aux_II_hosp_R_conf_1 * (j - 1) + i - 1] + internal->n_II_hosp_R_conf[internal->dim_n_II_hosp_R_conf_12 * (k - 1) + internal->dim_n_II_hosp_R_conf_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_R_conf_1; ++i) {
+    for (int j = 1; j <= internal->s_hosp_R; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_R_conf_3; ++k) {
+        internal->aux_II_hosp_R_conf[i - 1 + internal->dim_aux_II_hosp_R_conf_1 * (j - 1) + internal->dim_aux_II_hosp_R_conf_12 * (k - 1)] = internal->aux_II_hosp_R_conf[internal->dim_aux_II_hosp_R_conf_12 * (k - 1) + internal->dim_aux_II_hosp_R_conf_1 * (j - 1) + i - 1] - internal->n_II_hosp_R_conf[internal->dim_n_II_hosp_R_conf_12 * (k - 1) + internal->dim_n_II_hosp_R_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_R_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_aux_II_hosp_R_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_R_unconf_3; ++k) {
+        internal->aux_II_hosp_R_unconf[i - 1 + internal->dim_aux_II_hosp_R_unconf_1 * (j - 1) + internal->dim_aux_II_hosp_R_unconf_12 * (k - 1)] = I_hosp_R_unconf[internal->dim_I_hosp_R_unconf_12 * (k - 1) + internal->dim_I_hosp_R_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_R_unconf_1; ++i) {
+    for (int j = 2; j <= internal->s_hosp_R; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_R_unconf_3; ++k) {
+        internal->aux_II_hosp_R_unconf[i - 1 + internal->dim_aux_II_hosp_R_unconf_1 * (j - 1) + internal->dim_aux_II_hosp_R_unconf_12 * (k - 1)] = internal->aux_II_hosp_R_unconf[internal->dim_aux_II_hosp_R_unconf_12 * (k - 1) + internal->dim_aux_II_hosp_R_unconf_1 * (j - 1) + i - 1] + internal->n_II_hosp_R_unconf[internal->dim_n_II_hosp_R_unconf_12 * (k - 1) + internal->dim_n_II_hosp_R_unconf_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_hosp_R_unconf_1; ++i) {
+    for (int j = 1; j <= internal->s_hosp_R; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_hosp_R_unconf_3; ++k) {
+        internal->aux_II_hosp_R_unconf[i - 1 + internal->dim_aux_II_hosp_R_unconf_1 * (j - 1) + internal->dim_aux_II_hosp_R_unconf_12 * (k - 1)] = internal->aux_II_hosp_R_unconf[internal->dim_aux_II_hosp_R_unconf_12 * (k - 1) + internal->dim_aux_II_hosp_R_unconf_1 * (j - 1) + i - 1] - internal->n_II_hosp_R_unconf[internal->dim_n_II_hosp_R_unconf_12 * (k - 1) + internal->dim_n_II_hosp_R_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ICU_D_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_ICU_D_3; ++k) {
+      internal->aux_II_ICU_D[i - 1 + internal->dim_aux_II_ICU_D_1 * (j - 1) + internal->dim_aux_II_ICU_D_12 * (k - 1)] = internal->n_II_triage_D[internal->dim_n_II_triage_D_12 * (k - 1) + internal->dim_n_II_triage_D_1 * (internal->s_triage - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ICU_D_1; ++i) {
+    for (int j = 2; j <= internal->s_ICU_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_ICU_D_3; ++k) {
+        internal->aux_II_ICU_D[i - 1 + internal->dim_aux_II_ICU_D_1 * (j - 1) + internal->dim_aux_II_ICU_D_12 * (k - 1)] = internal->n_II_ICU_D[internal->dim_n_II_ICU_D_12 * (k - 1) + internal->dim_n_II_ICU_D_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ICU_D_1; ++i) {
+    for (int j = 1; j <= internal->s_ICU_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_ICU_D_3; ++k) {
+        internal->aux_II_ICU_D[i - 1 + internal->dim_aux_II_ICU_D_1 * (j - 1) + internal->dim_aux_II_ICU_D_12 * (k - 1)] = internal->aux_II_ICU_D[internal->dim_aux_II_ICU_D_12 * (k - 1) + internal->dim_aux_II_ICU_D_1 * (j - 1) + i - 1] - internal->n_II_ICU_D[internal->dim_n_II_ICU_D_12 * (k - 1) + internal->dim_n_II_ICU_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ICU_R_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_ICU_R_3; ++k) {
+      internal->aux_II_ICU_R[i - 1 + internal->dim_aux_II_ICU_R_1 * (j - 1) + internal->dim_aux_II_ICU_R_12 * (k - 1)] = internal->n_II_triage_R[internal->dim_n_II_triage_R_12 * (k - 1) + internal->dim_n_II_triage_R_1 * (internal->s_triage - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ICU_R_1; ++i) {
+    for (int j = 2; j <= internal->s_ICU_R; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_ICU_R_3; ++k) {
+        internal->aux_II_ICU_R[i - 1 + internal->dim_aux_II_ICU_R_1 * (j - 1) + internal->dim_aux_II_ICU_R_12 * (k - 1)] = internal->n_II_ICU_R[internal->dim_n_II_ICU_R_12 * (k - 1) + internal->dim_n_II_ICU_R_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ICU_R_1; ++i) {
+    for (int j = 1; j <= internal->s_ICU_R; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_ICU_R_3; ++k) {
+        internal->aux_II_ICU_R[i - 1 + internal->dim_aux_II_ICU_R_1 * (j - 1) + internal->dim_aux_II_ICU_R_12 * (k - 1)] = internal->aux_II_ICU_R[internal->dim_aux_II_ICU_R_12 * (k - 1) + internal->dim_aux_II_ICU_R_1 * (j - 1) + i - 1] - internal->n_II_ICU_R[internal->dim_n_II_ICU_R_12 * (k - 1) + internal->dim_n_II_ICU_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_D_comm; ++i) {
+    internal->delta_D_comm[i - 1] = odin_sum3(internal->n_II_comm_D, i - 1, i, internal->s_comm_D - 1, internal->s_comm_D, 0, internal->dim_n_II_comm_D_3, internal->dim_n_II_comm_D_1, internal->dim_n_II_comm_D_12);
+  }
+  for (int i = 1; i <= internal->dim_delta_D_hosp; ++i) {
+    internal->delta_D_hosp[i - 1] = odin_sum3(internal->n_II_hosp_D_unconf, i - 1, i, internal->s_hosp_D - 1, internal->s_hosp_D, 0, internal->dim_n_II_hosp_D_unconf_3, internal->dim_n_II_hosp_D_unconf_1, internal->dim_n_II_hosp_D_unconf_12) + odin_sum3(internal->n_II_hosp_D_conf, i - 1, i, internal->s_hosp_D - 1, internal->s_hosp_D, 0, internal->dim_n_II_hosp_D_conf_3, internal->dim_n_II_hosp_D_conf_1, internal->dim_n_II_hosp_D_conf_12) + odin_sum3(internal->n_II_ICU_D, i - 1, i, internal->s_ICU_D - 1, internal->s_ICU_D, 0, internal->dim_n_II_ICU_D_3, internal->dim_n_II_ICU_D_1, internal->dim_n_II_ICU_D_12);
+  }
+  for (int i = 1; i <= internal->dim_delta_R_pos; ++i) {
+    internal->delta_R_pos[i - 1] = internal->n_R_pre[internal->dim_n_R_pre_1 * (internal->s_R_pre - 1) + i - 1];
+  }
+  for (int i = 1; i <= internal->dim_n_EI_asympt_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_EI_asympt_2; ++j) {
+      internal->n_EI_asympt[i - 1 + internal->dim_n_EI_asympt_1 * (j - 1)] = Rf_rbinom(round(internal->n_EE[internal->dim_n_EE_12 * (j - 1) + internal->dim_n_EE_1 * (internal->s_E - 1) + i - 1]), internal->p_asympt[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ICU_to_R_stepdown; ++i) {
+    internal->n_ICU_to_R_stepdown[i - 1] = odin_sum3(internal->n_II_ICU_R, i - 1, i, internal->s_ICU_R - 1, internal->s_ICU_R, 0, internal->dim_n_II_ICU_R_3, internal->dim_n_II_ICU_R_1, internal->dim_n_II_ICU_R_12);
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_hosp_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_hosp_2; ++j) {
+      internal->n_ILI_to_hosp[i - 1 + internal->dim_n_ILI_to_hosp_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_ILI[internal->dim_n_II_ILI_12 * (j - 1) + internal->dim_n_II_ILI_1 * (internal->s_ILI - 1) + i - 1]), 1 - internal->p_recov_ILI[i - 1] - internal->p_death_comm[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_s_ij_1; ++i) {
+    for (int j = 1; j <= internal->dim_s_ij_2; ++j) {
+      internal->s_ij[i - 1 + internal->dim_s_ij_1 * (j - 1)] = internal->m[internal->dim_m_1 * (j - 1) + i - 1] * odin_sum2(internal->I_with_diff_trans, j - 1, j, 0, internal->dim_I_with_diff_trans_2, internal->dim_I_with_diff_trans_1);
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_asympt_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_asympt_3; ++k) {
+      internal->aux_II_asympt[i - 1 + internal->dim_aux_II_asympt_1 * (j - 1) + internal->dim_aux_II_asympt_12 * (k - 1)] = internal->n_EI_asympt[internal->dim_n_EI_asympt_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_asympt_1; ++i) {
+    for (int j = 2; j <= internal->s_asympt; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_asympt_3; ++k) {
+        internal->aux_II_asympt[i - 1 + internal->dim_aux_II_asympt_1 * (j - 1) + internal->dim_aux_II_asympt_12 * (k - 1)] = internal->n_II_asympt[internal->dim_n_II_asympt_12 * (k - 1) + internal->dim_n_II_asympt_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_asympt_1; ++i) {
+    for (int j = 1; j <= internal->s_asympt; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_asympt_3; ++k) {
+        internal->aux_II_asympt[i - 1 + internal->dim_aux_II_asympt_1 * (j - 1) + internal->dim_aux_II_asympt_12 * (k - 1)] = internal->aux_II_asympt[internal->dim_aux_II_asympt_12 * (k - 1) + internal->dim_aux_II_asympt_1 * (j - 1) + i - 1] - internal->n_II_asympt[internal->dim_n_II_asympt_12 * (k - 1) + internal->dim_n_II_asympt_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_R_stepdown_1; ++i) {
+    int j = 1;
+    internal->aux_R_stepdown[i - 1 + internal->dim_aux_R_stepdown_1 * (j - 1)] = internal->n_ICU_to_R_stepdown[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_aux_R_stepdown_1; ++i) {
+    for (int j = 2; j <= internal->s_stepdown; ++j) {
+      internal->aux_R_stepdown[i - 1 + internal->dim_aux_R_stepdown_1 * (j - 1)] = internal->n_R_stepdown[internal->dim_n_R_stepdown_1 * (j - 1 - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_R_stepdown_1; ++i) {
+    for (int j = 1; j <= internal->s_stepdown; ++j) {
+      internal->aux_R_stepdown[i - 1 + internal->dim_aux_R_stepdown_1 * (j - 1)] = internal->aux_R_stepdown[internal->dim_aux_R_stepdown_1 * (j - 1) + i - 1] - internal->n_R_stepdown[internal->dim_n_R_stepdown_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_ICU_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_ICU_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_ICU_D_3; ++k) {
+        internal->delta_I_ICU_D[i - 1 + internal->dim_delta_I_ICU_D_1 * (j - 1) + internal->dim_delta_I_ICU_D_12 * (k - 1)] = internal->aux_II_ICU_D[internal->dim_aux_II_ICU_D_12 * (k - 1) + internal->dim_aux_II_ICU_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_ICU_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_ICU_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_ICU_R_3; ++k) {
+        internal->delta_I_ICU_R[i - 1 + internal->dim_delta_I_ICU_R_1 * (j - 1) + internal->dim_delta_I_ICU_R_12 * (k - 1)] = internal->aux_II_ICU_R[internal->dim_aux_II_ICU_R_12 * (k - 1) + internal->dim_aux_II_ICU_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_lambda; ++i) {
+    internal->lambda[i - 1] = beta * odin_sum2(internal->s_ij, i - 1, i, 0, internal->dim_s_ij_2, internal->dim_s_ij_1);
+  }
+  for (int i = 1; i <= internal->dim_n_EI_mild_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_EI_mild_2; ++j) {
+      internal->n_EI_mild[i - 1 + internal->dim_n_EI_mild_1 * (j - 1)] = Rf_rbinom(round(internal->n_EE[internal->dim_n_EE_12 * (j - 1) + internal->dim_n_EE_1 * (internal->s_E - 1) + i - 1] - internal->n_EI_asympt[internal->dim_n_EI_asympt_1 * (j - 1) + i - 1]), 1 - internal->p_sympt_ILI[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_I_hosp_D_unconf_to_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_I_hosp_D_unconf_to_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_I_hosp_D_unconf_to_conf_3; ++k) {
+        internal->n_I_hosp_D_unconf_to_conf[i - 1 + internal->dim_n_I_hosp_D_unconf_to_conf_1 * (j - 1) + internal->dim_n_I_hosp_D_unconf_to_conf_12 * (k - 1)] = Rf_rbinom(round(internal->aux_II_hosp_D_conf[internal->dim_aux_II_hosp_D_conf_12 * (k - 1) + internal->dim_aux_II_hosp_D_conf_1 * (j - 1) + i - 1]), internal->p_test);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_I_hosp_R_unconf_to_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_I_hosp_R_unconf_to_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_n_I_hosp_R_unconf_to_conf_3; ++k) {
+        internal->n_I_hosp_R_unconf_to_conf[i - 1 + internal->dim_n_I_hosp_R_unconf_to_conf_1 * (j - 1) + internal->dim_n_I_hosp_R_unconf_to_conf_12 * (k - 1)] = Rf_rbinom(round(internal->aux_II_hosp_R_conf[internal->dim_aux_II_hosp_R_conf_12 * (k - 1) + internal->dim_aux_II_hosp_R_conf_1 * (j - 1) + i - 1]), internal->p_test);
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_comm_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_comm_D_2; ++j) {
+      internal->n_ILI_to_comm_D[i - 1 + internal->dim_n_ILI_to_comm_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_ILI[internal->dim_n_II_ILI_12 * (j - 1) + internal->dim_n_II_ILI_1 * (internal->s_ILI - 1) + i - 1] - internal->n_ILI_to_hosp[internal->dim_n_ILI_to_hosp_1 * (j - 1) + i - 1]), internal->p_death_comm[i - 1] / (double) (internal->p_recov_ILI[i - 1] + internal->p_death_comm[i - 1]));
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_triage_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_triage_2; ++j) {
+      internal->n_ILI_to_triage[i - 1 + internal->dim_n_ILI_to_triage_1 * (j - 1)] = Rf_rbinom(round(internal->n_ILI_to_hosp[internal->dim_n_ILI_to_hosp_1 * (j - 1) + i - 1]), internal->p_ICU_hosp[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_D_comm; ++i) {
+    state_next[internal->offset_variable_D_comm + i - 1] = D_comm[i - 1] + internal->delta_D_comm[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_D_hosp; ++i) {
+    state_next[internal->offset_variable_D_hosp + i - 1] = D_hosp[i - 1] + internal->delta_D_hosp[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R_pos; ++i) {
+    state_next[internal->dim_S + i - 1] = R_pos[i - 1] + internal->delta_R_pos[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_aux_II_comm_D_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_comm_D_3; ++k) {
+      internal->aux_II_comm_D[i - 1 + internal->dim_aux_II_comm_D_1 * (j - 1) + internal->dim_aux_II_comm_D_12 * (k - 1)] = internal->n_ILI_to_comm_D[internal->dim_n_ILI_to_comm_D_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_comm_D_1; ++i) {
+    for (int j = 2; j <= internal->s_comm_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_comm_D_3; ++k) {
+        internal->aux_II_comm_D[i - 1 + internal->dim_aux_II_comm_D_1 * (j - 1) + internal->dim_aux_II_comm_D_12 * (k - 1)] = internal->n_II_comm_D[internal->dim_n_II_comm_D_12 * (k - 1) + internal->dim_n_II_comm_D_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_comm_D_1; ++i) {
+    for (int j = 1; j <= internal->s_comm_D; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_comm_D_3; ++k) {
+        internal->aux_II_comm_D[i - 1 + internal->dim_aux_II_comm_D_1 * (j - 1) + internal->dim_aux_II_comm_D_12 * (k - 1)] = internal->aux_II_comm_D[internal->dim_aux_II_comm_D_12 * (k - 1) + internal->dim_aux_II_comm_D_1 * (j - 1) + i - 1] - internal->n_II_comm_D[internal->dim_n_II_comm_D_12 * (k - 1) + internal->dim_n_II_comm_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_mild_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_mild_3; ++k) {
+      internal->aux_II_mild[i - 1 + internal->dim_aux_II_mild_1 * (j - 1) + internal->dim_aux_II_mild_12 * (k - 1)] = internal->n_EI_mild[internal->dim_n_EI_mild_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_mild_1; ++i) {
+    for (int j = 2; j <= internal->s_mild; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_mild_3; ++k) {
+        internal->aux_II_mild[i - 1 + internal->dim_aux_II_mild_1 * (j - 1) + internal->dim_aux_II_mild_12 * (k - 1)] = internal->n_II_mild[internal->dim_n_II_mild_12 * (k - 1) + internal->dim_n_II_mild_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_mild_1; ++i) {
+    for (int j = 1; j <= internal->s_mild; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_mild_3; ++k) {
+        internal->aux_II_mild[i - 1 + internal->dim_aux_II_mild_1 * (j - 1) + internal->dim_aux_II_mild_12 * (k - 1)] = internal->aux_II_mild[internal->dim_aux_II_mild_12 * (k - 1) + internal->dim_aux_II_mild_1 * (j - 1) + i - 1] - internal->n_II_mild[internal->dim_n_II_mild_12 * (k - 1) + internal->dim_n_II_mild_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_asympt_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_asympt_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_asympt_3; ++k) {
+        internal->delta_I_asympt[i - 1 + internal->dim_delta_I_asympt_1 * (j - 1) + internal->dim_delta_I_asympt_12 * (k - 1)] = internal->aux_II_asympt[internal->dim_aux_II_asympt_12 * (k - 1) + internal->dim_aux_II_asympt_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_R_stepdown_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_R_stepdown_2; ++j) {
+      internal->delta_R_stepdown[i - 1 + internal->dim_delta_R_stepdown_1 * (j - 1)] = internal->aux_R_stepdown[internal->dim_aux_R_stepdown_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_EI_ILI_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_EI_ILI_2; ++j) {
+      internal->n_EI_ILI[i - 1 + internal->dim_n_EI_ILI_1 * (j - 1)] = internal->n_EE[internal->dim_n_EE_12 * (j - 1) + internal->dim_n_EE_1 * (internal->s_E - 1) + i - 1] - internal->n_EI_asympt[internal->dim_n_EI_asympt_1 * (j - 1) + i - 1] - internal->n_EI_mild[internal->dim_n_EI_mild_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_hosp_non_ICU_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_hosp_non_ICU_2; ++j) {
+      internal->n_hosp_non_ICU[i - 1 + internal->dim_n_hosp_non_ICU_1 * (j - 1)] = internal->n_ILI_to_hosp[internal->dim_n_ILI_to_hosp_1 * (j - 1) + i - 1] - internal->n_ILI_to_triage[internal->dim_n_ILI_to_triage_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_triage_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_triage_D_2; ++j) {
+      internal->n_ILI_to_triage_D[i - 1 + internal->dim_n_ILI_to_triage_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_ILI_to_triage[internal->dim_n_ILI_to_triage_1 * (j - 1) + i - 1]), internal->p_death_ICU[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_p_SE; ++i) {
+    internal->p_SE[i - 1] = 1 - exp(-(internal->lambda[i - 1]) * internal->dt);
+  }
+  for (int i = 1; i <= internal->dim_I_ICU_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_ICU_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_ICU_D_3; ++k) {
+        state_next[internal->offset_variable_I_ICU_D + i - 1 + internal->dim_I_ICU_D_1 * (j - 1) + internal->dim_I_ICU_D_12 * (k - 1)] = I_ICU_D[internal->dim_I_ICU_D_12 * (k - 1) + internal->dim_I_ICU_D_1 * (j - 1) + i - 1] + internal->delta_I_ICU_D[internal->dim_delta_I_ICU_D_12 * (k - 1) + internal->dim_delta_I_ICU_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_ICU_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_ICU_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_ICU_R_3; ++k) {
+        state_next[internal->offset_variable_I_ICU_R + i - 1 + internal->dim_I_ICU_R_1 * (j - 1) + internal->dim_I_ICU_R_12 * (k - 1)] = I_ICU_R[internal->dim_I_ICU_R_12 * (k - 1) + internal->dim_I_ICU_R_1 * (j - 1) + i - 1] + internal->delta_I_ICU_R[internal->dim_delta_I_ICU_R_12 * (k - 1) + internal->dim_delta_I_ICU_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ILI_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_ILI_3; ++k) {
+      internal->aux_II_ILI[i - 1 + internal->dim_aux_II_ILI_1 * (j - 1) + internal->dim_aux_II_ILI_12 * (k - 1)] = internal->n_EI_ILI[internal->dim_n_EI_ILI_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ILI_1; ++i) {
+    for (int j = 2; j <= internal->s_ILI; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_ILI_3; ++k) {
+        internal->aux_II_ILI[i - 1 + internal->dim_aux_II_ILI_1 * (j - 1) + internal->dim_aux_II_ILI_12 * (k - 1)] = internal->n_II_ILI[internal->dim_n_II_ILI_12 * (k - 1) + internal->dim_n_II_ILI_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_ILI_1; ++i) {
+    for (int j = 1; j <= internal->s_ILI; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_ILI_3; ++k) {
+        internal->aux_II_ILI[i - 1 + internal->dim_aux_II_ILI_1 * (j - 1) + internal->dim_aux_II_ILI_12 * (k - 1)] = internal->aux_II_ILI[internal->dim_aux_II_ILI_12 * (k - 1) + internal->dim_aux_II_ILI_1 * (j - 1) + i - 1] - internal->n_II_ILI[internal->dim_n_II_ILI_12 * (k - 1) + internal->dim_n_II_ILI_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_triage_D_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_triage_D_3; ++k) {
+      internal->aux_II_triage_D[i - 1 + internal->dim_aux_II_triage_D_1 * (j - 1) + internal->dim_aux_II_triage_D_12 * (k - 1)] = internal->n_ILI_to_triage_D[internal->dim_n_ILI_to_triage_D_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_triage_D_1; ++i) {
+    for (int j = 2; j <= internal->s_triage; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_triage_D_3; ++k) {
+        internal->aux_II_triage_D[i - 1 + internal->dim_aux_II_triage_D_1 * (j - 1) + internal->dim_aux_II_triage_D_12 * (k - 1)] = internal->n_II_triage_D[internal->dim_n_II_triage_D_12 * (k - 1) + internal->dim_n_II_triage_D_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_triage_D_1; ++i) {
+    for (int j = 1; j <= internal->s_triage; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_triage_D_3; ++k) {
+        internal->aux_II_triage_D[i - 1 + internal->dim_aux_II_triage_D_1 * (j - 1) + internal->dim_aux_II_triage_D_12 * (k - 1)] = internal->aux_II_triage_D[internal->dim_aux_II_triage_D_12 * (k - 1) + internal->dim_aux_II_triage_D_1 * (j - 1) + i - 1] - internal->n_II_triage_D[internal->dim_n_II_triage_D_12 * (k - 1) + internal->dim_n_II_triage_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_comm_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_comm_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_comm_D_3; ++k) {
+        internal->delta_I_comm_D[i - 1 + internal->dim_delta_I_comm_D_1 * (j - 1) + internal->dim_delta_I_comm_D_12 * (k - 1)] = internal->aux_II_comm_D[internal->dim_aux_II_comm_D_12 * (k - 1) + internal->dim_aux_II_comm_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_mild_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_mild_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_mild_3; ++k) {
+        internal->delta_I_mild[i - 1 + internal->dim_delta_I_mild_1 * (j - 1) + internal->dim_delta_I_mild_12 * (k - 1)] = internal->aux_II_mild[internal->dim_aux_II_mild_12 * (k - 1) + internal->dim_aux_II_mild_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_hosp_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_hosp_D_2; ++j) {
+      internal->n_ILI_to_hosp_D[i - 1 + internal->dim_n_ILI_to_hosp_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_hosp_non_ICU[internal->dim_n_hosp_non_ICU_1 * (j - 1) + i - 1]), internal->p_death_hosp_D[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_triage_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_triage_R_2; ++j) {
+      internal->n_ILI_to_triage_R[i - 1 + internal->dim_n_ILI_to_triage_R_1 * (j - 1)] = internal->n_ILI_to_triage[internal->dim_n_ILI_to_triage_1 * (j - 1) + i - 1] - internal->n_ILI_to_triage_D[internal->dim_n_ILI_to_triage_D_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_SE; ++i) {
+    internal->n_SE[i - 1] = Rf_rbinom(round(S[i - 1]), internal->p_SE[i - 1]);
+  }
+  for (int i = 1; i <= internal->dim_I_asympt_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_asympt_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_asympt_3; ++k) {
+        state_next[internal->offset_variable_I_asympt + i - 1 + internal->dim_I_asympt_1 * (j - 1) + internal->dim_I_asympt_12 * (k - 1)] = I_asympt[internal->dim_I_asympt_12 * (k - 1) + internal->dim_I_asympt_1 * (j - 1) + i - 1] + internal->delta_I_asympt[internal->dim_delta_I_asympt_12 * (k - 1) + internal->dim_delta_I_asympt_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_R_stepdown_1; ++i) {
+    for (int j = 1; j <= internal->dim_R_stepdown_2; ++j) {
+      state_next[internal->offset_variable_R_stepdown + i - 1 + internal->dim_R_stepdown_1 * (j - 1)] = R_stepdown[internal->dim_R_stepdown_1 * (j - 1) + i - 1] + internal->delta_R_stepdown[internal->dim_delta_R_stepdown_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_EE_1; ++i) {
+    int j = 1;
+    int k = 1;
+    internal->aux_EE[i - 1 + internal->dim_aux_EE_1 * (j - 1) + internal->dim_aux_EE_12 * (k - 1)] = Rf_rbinom(round(internal->n_SE[i - 1]), internal->aux_p_bin[internal->dim_aux_p_bin_1 * 0 + i - 1]);
+  }
+  for (int i = 1; i <= internal->dim_aux_EE_1; ++i) {
+    int j = 1;
+    for (int k = 2; k <= (internal->trans_classes - 1); ++k) {
+      internal->aux_EE[i - 1 + internal->dim_aux_EE_1 * (j - 1) + internal->dim_aux_EE_12 * (k - 1)] = Rf_rbinom(round(internal->n_SE[i - 1] - odin_sum3(internal->aux_EE, i - 1, i, 0, 1, 0, k - 1, internal->dim_aux_EE_1, internal->dim_aux_EE_12)), internal->aux_p_bin[internal->dim_aux_p_bin_1 * (k - 1) + i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_EE_1; ++i) {
+    int j = 1;
+    int k = internal->trans_classes;
+    internal->aux_EE[i - 1 + internal->dim_aux_EE_1 * (j - 1) + internal->dim_aux_EE_12 * (k - 1)] = internal->n_SE[i - 1] - odin_sum3(internal->aux_EE, i - 1, i, 0, 1, 0, internal->trans_classes - 1, internal->dim_aux_EE_1, internal->dim_aux_EE_12);
+  }
+  for (int i = 1; i <= internal->dim_aux_EE_1; ++i) {
+    for (int j = 2; j <= internal->s_E; ++j) {
+      for (int k = 1; k <= internal->dim_aux_EE_3; ++k) {
+        internal->aux_EE[i - 1 + internal->dim_aux_EE_1 * (j - 1) + internal->dim_aux_EE_12 * (k - 1)] = internal->n_EE[internal->dim_n_EE_12 * (k - 1) + internal->dim_n_EE_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_EE_1; ++i) {
+    for (int j = 1; j <= internal->s_E; ++j) {
+      for (int k = 1; k <= internal->dim_aux_EE_3; ++k) {
+        internal->aux_EE[i - 1 + internal->dim_aux_EE_1 * (j - 1) + internal->dim_aux_EE_12 * (k - 1)] = internal->aux_EE[internal->dim_aux_EE_12 * (k - 1) + internal->dim_aux_EE_1 * (j - 1) + i - 1] - internal->n_EE[internal->dim_n_EE_12 * (k - 1) + internal->dim_n_EE_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_triage_R_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_aux_II_triage_R_3; ++k) {
+      internal->aux_II_triage_R[i - 1 + internal->dim_aux_II_triage_R_1 * (j - 1) + internal->dim_aux_II_triage_R_12 * (k - 1)] = internal->n_ILI_to_triage_R[internal->dim_n_ILI_to_triage_R_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_triage_R_1; ++i) {
+    for (int j = 2; j <= internal->s_triage; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_triage_R_3; ++k) {
+        internal->aux_II_triage_R[i - 1 + internal->dim_aux_II_triage_R_1 * (j - 1) + internal->dim_aux_II_triage_R_12 * (k - 1)] = internal->n_II_triage_R[internal->dim_n_II_triage_R_12 * (k - 1) + internal->dim_n_II_triage_R_1 * (j - 1 - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_II_triage_R_1; ++i) {
+    for (int j = 1; j <= internal->s_triage; ++j) {
+      for (int k = 1; k <= internal->dim_aux_II_triage_R_3; ++k) {
+        internal->aux_II_triage_R[i - 1 + internal->dim_aux_II_triage_R_1 * (j - 1) + internal->dim_aux_II_triage_R_12 * (k - 1)] = internal->aux_II_triage_R[internal->dim_aux_II_triage_R_12 * (k - 1) + internal->dim_aux_II_triage_R_1 * (j - 1) + i - 1] - internal->n_II_triage_R[internal->dim_n_II_triage_R_12 * (k - 1) + internal->dim_n_II_triage_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_ILI_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_ILI_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_ILI_3; ++k) {
+        internal->delta_I_ILI[i - 1 + internal->dim_delta_I_ILI_1 * (j - 1) + internal->dim_delta_I_ILI_12 * (k - 1)] = internal->aux_II_ILI[internal->dim_aux_II_ILI_12 * (k - 1) + internal->dim_aux_II_ILI_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_triage_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_triage_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_triage_D_3; ++k) {
+        internal->delta_I_triage_D[i - 1 + internal->dim_delta_I_triage_D_1 * (j - 1) + internal->dim_delta_I_triage_D_12 * (k - 1)] = internal->aux_II_triage_D[internal->dim_aux_II_triage_D_12 * (k - 1) + internal->dim_aux_II_triage_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_hosp_D_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_hosp_D_conf_2; ++j) {
+      internal->n_ILI_to_hosp_D_conf[i - 1 + internal->dim_n_ILI_to_hosp_D_conf_1 * (j - 1)] = Rf_rbinom(round(internal->n_ILI_to_hosp_D[internal->dim_n_ILI_to_hosp_D_1 * (j - 1) + i - 1]), internal->p_admit_conf[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_hosp_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_hosp_R_2; ++j) {
+      internal->n_ILI_to_hosp_R[i - 1 + internal->dim_n_ILI_to_hosp_R_1 * (j - 1)] = internal->n_hosp_non_ICU[internal->dim_n_hosp_non_ICU_1 * (j - 1) + i - 1] - internal->n_ILI_to_hosp_D[internal->dim_n_ILI_to_hosp_D_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_comm_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_comm_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_comm_D_3; ++k) {
+        state_next[internal->offset_variable_I_comm_D + i - 1 + internal->dim_I_comm_D_1 * (j - 1) + internal->dim_I_comm_D_12 * (k - 1)] = I_comm_D[internal->dim_I_comm_D_12 * (k - 1) + internal->dim_I_comm_D_1 * (j - 1) + i - 1] + internal->delta_I_comm_D[internal->dim_delta_I_comm_D_12 * (k - 1) + internal->dim_delta_I_comm_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_mild_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_mild_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_mild_3; ++k) {
+        state_next[internal->offset_variable_I_mild + i - 1 + internal->dim_I_mild_1 * (j - 1) + internal->dim_I_mild_12 * (k - 1)] = I_mild[internal->dim_I_mild_12 * (k - 1) + internal->dim_I_mild_1 * (j - 1) + i - 1] + internal->delta_I_mild[internal->dim_delta_I_mild_12 * (k - 1) + internal->dim_delta_I_mild_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_S; ++i) {
+    state_next[0 + i - 1] = S[i - 1] - internal->n_SE[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_delta_E_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_E_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_E_3; ++k) {
+        internal->delta_E[i - 1 + internal->dim_delta_E_1 * (j - 1) + internal->dim_delta_E_12 * (k - 1)] = internal->aux_EE[internal->dim_aux_EE_12 * (k - 1) + internal->dim_aux_EE_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_I_triage_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_I_triage_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_delta_I_triage_R_3; ++k) {
+        internal->delta_I_triage_R[i - 1 + internal->dim_delta_I_triage_R_1 * (j - 1) + internal->dim_delta_I_triage_R_12 * (k - 1)] = internal->aux_II_triage_R[internal->dim_aux_II_triage_R_12 * (k - 1) + internal->dim_aux_II_triage_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_com_to_R_total; ++i) {
+    internal->n_com_to_R_total[i - 1] = odin_sum3(internal->n_II_asympt, i - 1, i, internal->s_asympt - 1, internal->s_asympt, 0, internal->dim_n_II_asympt_3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_12) + odin_sum3(internal->n_II_mild, i - 1, i, internal->s_mild - 1, internal->s_mild, 0, internal->dim_n_II_mild_3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_12) + odin_sum3(internal->n_II_ILI, i - 1, i, internal->s_ILI - 1, internal->s_ILI, 0, internal->dim_n_II_ILI_3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_12) - odin_sum2(internal->n_ILI_to_hosp, i - 1, i, 0, internal->dim_n_ILI_to_hosp_2, internal->dim_n_ILI_to_hosp_1) - odin_sum2(internal->n_ILI_to_comm_D, i - 1, i, 0, internal->dim_n_ILI_to_comm_D_2, internal->dim_n_ILI_to_comm_D_1) + odin_sum2(internal->n_ILI_to_triage_R, i - 1, i, 0, internal->dim_n_ILI_to_triage_R_2, internal->dim_n_ILI_to_triage_R_1) + odin_sum2(internal->n_ILI_to_hosp_R, i - 1, i, 0, internal->dim_n_ILI_to_hosp_R_2, internal->dim_n_ILI_to_hosp_R_1);
+  }
+  for (int i = 1; i <= internal->dim_n_ILI_to_hosp_R_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_n_ILI_to_hosp_R_conf_2; ++j) {
+      internal->n_ILI_to_hosp_R_conf[i - 1 + internal->dim_n_ILI_to_hosp_R_conf_1 * (j - 1)] = Rf_rbinom(round(internal->n_ILI_to_hosp_R[internal->dim_n_ILI_to_hosp_R_1 * (j - 1) + i - 1]), internal->p_admit_conf[i - 1]);
+    }
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_D_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_new_I_hosp_D_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_new_I_hosp_D_conf_3; ++k) {
+        internal->new_I_hosp_D_conf[i - 1 + internal->dim_new_I_hosp_D_conf_1 * (j - 1) + internal->dim_new_I_hosp_D_conf_12 * (k - 1)] = internal->aux_II_hosp_D_conf[internal->dim_aux_II_hosp_D_conf_12 * (k - 1) + internal->dim_aux_II_hosp_D_conf_1 * (j - 1) + i - 1] + internal->n_I_hosp_D_unconf_to_conf[internal->dim_n_I_hosp_D_unconf_to_conf_12 * (k - 1) + internal->dim_n_I_hosp_D_unconf_to_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_D_conf_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_new_I_hosp_D_conf_3; ++k) {
+      internal->new_I_hosp_D_conf[i - 1 + internal->dim_new_I_hosp_D_conf_1 * (j - 1) + internal->dim_new_I_hosp_D_conf_12 * (k - 1)] = internal->new_I_hosp_D_conf[internal->dim_new_I_hosp_D_conf_12 * (k - 1) + internal->dim_new_I_hosp_D_conf_1 * 0 + i - 1] + internal->n_ILI_to_hosp_D_conf[internal->dim_n_ILI_to_hosp_D_conf_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_D_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_new_I_hosp_D_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_new_I_hosp_D_unconf_3; ++k) {
+        internal->new_I_hosp_D_unconf[i - 1 + internal->dim_new_I_hosp_D_unconf_1 * (j - 1) + internal->dim_new_I_hosp_D_unconf_12 * (k - 1)] = internal->aux_II_hosp_D_unconf[internal->dim_aux_II_hosp_D_unconf_12 * (k - 1) + internal->dim_aux_II_hosp_D_unconf_1 * (j - 1) + i - 1] - internal->n_I_hosp_D_unconf_to_conf[internal->dim_n_I_hosp_D_unconf_to_conf_12 * (k - 1) + internal->dim_n_I_hosp_D_unconf_to_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_D_unconf_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_new_I_hosp_D_unconf_3; ++k) {
+      internal->new_I_hosp_D_unconf[i - 1 + internal->dim_new_I_hosp_D_unconf_1 * (j - 1) + internal->dim_new_I_hosp_D_unconf_12 * (k - 1)] = internal->new_I_hosp_D_unconf[internal->dim_new_I_hosp_D_unconf_12 * (k - 1) + internal->dim_new_I_hosp_D_unconf_1 * 0 + i - 1] + internal->n_ILI_to_hosp_D[internal->dim_n_ILI_to_hosp_D_1 * (k - 1) + i - 1] - internal->n_ILI_to_hosp_D_conf[internal->dim_n_ILI_to_hosp_D_conf_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_ILI_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_ILI_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_ILI_3; ++k) {
+        state_next[internal->offset_variable_I_ILI + i - 1 + internal->dim_I_ILI_1 * (j - 1) + internal->dim_I_ILI_12 * (k - 1)] = I_ILI[internal->dim_I_ILI_12 * (k - 1) + internal->dim_I_ILI_1 * (j - 1) + i - 1] + internal->delta_I_ILI[internal->dim_delta_I_ILI_12 * (k - 1) + internal->dim_delta_I_ILI_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_triage_D_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_triage_D_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_triage_D_3; ++k) {
+        state_next[internal->offset_variable_I_triage_D + i - 1 + internal->dim_I_triage_D_1 * (j - 1) + internal->dim_I_triage_D_12 * (k - 1)] = I_triage_D[internal->dim_I_triage_D_12 * (k - 1) + internal->dim_I_triage_D_1 * (j - 1) + i - 1] + internal->delta_I_triage_D[internal->dim_delta_I_triage_D_12 * (k - 1) + internal->dim_delta_I_triage_D_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_n_com_to_R_pre; ++i) {
+    internal->n_com_to_R_pre[i - 1] = Rf_rbinom(round(internal->n_com_to_R_total[i - 1]), internal->p_seroconversion[i - 1]);
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_R_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_new_I_hosp_R_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_new_I_hosp_R_conf_3; ++k) {
+        internal->new_I_hosp_R_conf[i - 1 + internal->dim_new_I_hosp_R_conf_1 * (j - 1) + internal->dim_new_I_hosp_R_conf_12 * (k - 1)] = internal->aux_II_hosp_R_conf[internal->dim_aux_II_hosp_R_conf_12 * (k - 1) + internal->dim_aux_II_hosp_R_conf_1 * (j - 1) + i - 1] + internal->n_I_hosp_R_unconf_to_conf[internal->dim_n_I_hosp_R_unconf_to_conf_12 * (k - 1) + internal->dim_n_I_hosp_R_unconf_to_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_R_conf_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_new_I_hosp_R_conf_3; ++k) {
+      internal->new_I_hosp_R_conf[i - 1 + internal->dim_new_I_hosp_R_conf_1 * (j - 1) + internal->dim_new_I_hosp_R_conf_12 * (k - 1)] = internal->new_I_hosp_R_conf[internal->dim_new_I_hosp_R_conf_12 * (k - 1) + internal->dim_new_I_hosp_R_conf_1 * 0 + i - 1] + internal->n_ILI_to_hosp_R_conf[internal->dim_n_ILI_to_hosp_R_conf_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_R_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_new_I_hosp_R_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_new_I_hosp_R_unconf_3; ++k) {
+        internal->new_I_hosp_R_unconf[i - 1 + internal->dim_new_I_hosp_R_unconf_1 * (j - 1) + internal->dim_new_I_hosp_R_unconf_12 * (k - 1)] = internal->aux_II_hosp_R_unconf[internal->dim_aux_II_hosp_R_unconf_12 * (k - 1) + internal->dim_aux_II_hosp_R_unconf_1 * (j - 1) + i - 1] - internal->n_I_hosp_R_unconf_to_conf[internal->dim_n_I_hosp_R_unconf_to_conf_12 * (k - 1) + internal->dim_n_I_hosp_R_unconf_to_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_new_I_hosp_R_unconf_1; ++i) {
+    int j = 1;
+    for (int k = 1; k <= internal->dim_new_I_hosp_R_unconf_3; ++k) {
+      internal->new_I_hosp_R_unconf[i - 1 + internal->dim_new_I_hosp_R_unconf_1 * (j - 1) + internal->dim_new_I_hosp_R_unconf_12 * (k - 1)] = internal->new_I_hosp_R_unconf[internal->dim_new_I_hosp_R_unconf_12 * (k - 1) + internal->dim_new_I_hosp_R_unconf_1 * 0 + i - 1] + internal->n_ILI_to_hosp_R[internal->dim_n_ILI_to_hosp_R_1 * (k - 1) + i - 1] - internal->n_ILI_to_hosp_R_conf[internal->dim_n_ILI_to_hosp_R_conf_1 * (k - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_E_1; ++i) {
+    for (int j = 1; j <= internal->dim_E_2; ++j) {
+      for (int k = 1; k <= internal->dim_E_3; ++k) {
+        state_next[internal->offset_variable_E + i - 1 + internal->dim_E_1 * (j - 1) + internal->dim_E_12 * (k - 1)] = E[internal->dim_E_12 * (k - 1) + internal->dim_E_1 * (j - 1) + i - 1] + internal->delta_E[internal->dim_delta_E_12 * (k - 1) + internal->dim_delta_E_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_D_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_D_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_D_conf_3; ++k) {
+        state_next[internal->offset_variable_I_hosp_D_conf + i - 1 + internal->dim_I_hosp_D_conf_1 * (j - 1) + internal->dim_I_hosp_D_conf_12 * (k - 1)] = internal->new_I_hosp_D_conf[internal->dim_new_I_hosp_D_conf_12 * (k - 1) + internal->dim_new_I_hosp_D_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_D_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_D_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_D_unconf_3; ++k) {
+        state_next[internal->offset_variable_I_hosp_D_unconf + i - 1 + internal->dim_I_hosp_D_unconf_1 * (j - 1) + internal->dim_I_hosp_D_unconf_12 * (k - 1)] = internal->new_I_hosp_D_unconf[internal->dim_new_I_hosp_D_unconf_12 * (k - 1) + internal->dim_new_I_hosp_D_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_triage_R_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_triage_R_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_triage_R_3; ++k) {
+        state_next[internal->offset_variable_I_triage_R + i - 1 + internal->dim_I_triage_R_1 * (j - 1) + internal->dim_I_triage_R_12 * (k - 1)] = I_triage_R[internal->dim_I_triage_R_12 * (k - 1) + internal->dim_I_triage_R_1 * (j - 1) + i - 1] + internal->delta_I_triage_R[internal->dim_delta_I_triage_R_12 * (k - 1) + internal->dim_delta_I_triage_R_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
+    int j = 1;
+    internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->n_com_to_R_pre[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
+    for (int j = 2; j <= internal->s_R_pre; ++j) {
+      internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->n_R_pre[internal->dim_n_R_pre_1 * (j - 1 - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->s_R_pre; ++j) {
+      internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->aux_R_pre[internal->dim_aux_R_pre_1 * (j - 1) + i - 1] - internal->n_R_pre[internal->dim_n_R_pre_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_R_neg; ++i) {
+    internal->delta_R_neg[i - 1] = internal->n_com_to_R_total[i - 1] - internal->n_com_to_R_pre[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_R_conf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_R_conf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_R_conf_3; ++k) {
+        state_next[internal->offset_variable_I_hosp_R_conf + i - 1 + internal->dim_I_hosp_R_conf_1 * (j - 1) + internal->dim_I_hosp_R_conf_12 * (k - 1)] = internal->new_I_hosp_R_conf[internal->dim_new_I_hosp_R_conf_12 * (k - 1) + internal->dim_new_I_hosp_R_conf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_I_hosp_R_unconf_1; ++i) {
+    for (int j = 1; j <= internal->dim_I_hosp_R_unconf_2; ++j) {
+      for (int k = 1; k <= internal->dim_I_hosp_R_unconf_3; ++k) {
+        state_next[internal->offset_variable_I_hosp_R_unconf + i - 1 + internal->dim_I_hosp_R_unconf_1 * (j - 1) + internal->dim_I_hosp_R_unconf_12 * (k - 1)] = internal->new_I_hosp_R_unconf[internal->dim_new_I_hosp_R_unconf_12 * (k - 1) + internal->dim_new_I_hosp_R_unconf_1 * (j - 1) + i - 1];
+      }
+    }
+  }
+  for (int i = 1; i <= internal->dim_delta_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_R_pre_2; ++j) {
+      internal->delta_R_pre[i - 1 + internal->dim_delta_R_pre_1 * (j - 1)] = internal->aux_R_pre[internal->dim_aux_R_pre_1 * (j - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_R_neg; ++i) {
+    state_next[internal->offset_variable_R_neg + i - 1] = R_neg[i - 1] + internal->delta_R_neg[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->dim_R_pre_2; ++j) {
+      state_next[internal->offset_variable_R_pre + i - 1 + internal->dim_R_pre_1 * (j - 1)] = R_pre[internal->dim_R_pre_1 * (j - 1) + i - 1] + internal->delta_R_pre[internal->dim_delta_R_pre_1 * (j - 1) + i - 1];
+    }
+  }
+  double N_tot = odin_sum1(S, 0, internal->dim_S) + odin_sum1(R_pre, 0, internal->dim_R_pre) + odin_sum1(R_pos, 0, internal->dim_R_pos) + odin_sum1(R_neg, 0, internal->dim_R_neg) + odin_sum1(D_hosp, 0, internal->dim_D_hosp) + odin_sum1(E, 0, internal->dim_E) + odin_sum1(I_asympt, 0, internal->dim_I_asympt) + odin_sum1(I_mild, 0, internal->dim_I_mild) + odin_sum1(I_ILI, 0, internal->dim_I_ILI) + odin_sum1(I_triage_D, 0, internal->dim_I_triage_D) + odin_sum1(I_hosp_D_conf, 0, internal->dim_I_hosp_D_conf) + odin_sum1(I_hosp_D_unconf, 0, internal->dim_I_hosp_D_unconf) + odin_sum1(I_ICU_D, 0, internal->dim_I_ICU_D) + odin_sum1(I_comm_D, 0, internal->dim_I_comm_D) + odin_sum1(D_comm, 0, internal->dim_D_comm);
+  double time = step * internal->dt;
+  output[2] = N_tot;
+  output[0] = time;
+  output[1] = beta;
+}
+void hospital_with_serology_testing_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next, size_t n_out, double * output, void * internal) {
+  hospital_with_serology_testing_rhs((hospital_with_serology_testing_internal*)internal, step, state, state_next, output);
+}
+SEXP hospital_with_serology_testing_rhs_r(SEXP internal_p, SEXP step, SEXP state) {
+  SEXP state_next = PROTECT(allocVector(REALSXP, LENGTH(state)));
+  hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 1);
+  SEXP output_ptr = PROTECT(allocVector(REALSXP, 3));
+  setAttrib(state_next, install("output"), output_ptr);
+  UNPROTECT(1);
+  double *output = REAL(output_ptr);
+  GetRNGstate();
+  hospital_with_serology_testing_rhs(internal, INTEGER(step)[0], REAL(state), REAL(state_next), output);
   PutRNGstate();
   UNPROTECT(1);
   return state_next;
