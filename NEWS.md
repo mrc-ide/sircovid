@@ -1,6 +1,11 @@
-# sircovid 0.2.34
+# sircovid 0.2.35
 
 - Fix bug in plot.pmcmc_list
+
+# sircovid 0.2.34
+
+- pMCMC over any parameter
+- Dates are now days into 2020 (days from 2019-12-31 onwards)
 
 # sircovid 0.2.33
 

@@ -75,7 +75,7 @@ test_that("Poor formatting of real data throws errors", {
                "No case data matching country and date filtering criteria")
   
   expect_error(run_particle_filter(data = data,
-                                   model_start_date = "2020-03-02",
+                                   model_start_date = sircovid_date("2020-03-02"),
                                    model_params = model_params,
                                    obs_params = list(phi_ICU = 0.95,
                                                      k_ICU = 2,
@@ -100,7 +100,7 @@ test_that("Bad parameters throws errors", {
   expect_message(run_particle_filter(data = data,
                                      sircovid_model = sircovid_model,
                                      model_params = model_params,
-                                   model_start_date = "2020-02-02",
+                                   model_start_date = sircovid_date("2020-02-02"),
                                    obs_params = list(phi_ICU = 0.95,
                                                      k_ICU = 2,
                                                      phi_death = 1789/1651,

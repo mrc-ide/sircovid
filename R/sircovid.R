@@ -111,7 +111,7 @@ generate_data <- function(death_data_file,
 run_particle_filter <- function(data,
                                 sircovid_model,
                                 model_params,
-                                model_start_date = "2020-02-02",
+                                model_start_date = sircovid_date("2020-02-02"),
                                 obs_params = list(phi_general = 0.95,
                                                   k_general = 2,
                                                   phi_ICU = 0.95,
@@ -128,7 +128,7 @@ run_particle_filter <- function(data,
   if (!(return %in% c("full", "ll", "sample", "single"))) {
     stop("return argument must be full, ll, sample or single")
   }
-  if (as.Date(data$date[1], "%Y-%m-%d") < as.Date(model_start_date, "%Y-%m-%d")) {
+  if (sircovid_date(data$date[1]) < model_start_date) {
     stop("Model start date is later than data start date")
   }
   if (!save_particles && return == "sample") {

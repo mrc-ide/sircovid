@@ -11,8 +11,8 @@ test_that("Small grid search works", {
   min_beta <- 0.1
   max_beta <- 0.2
   beta_step <- 0.05
-  first_start_date <- "2020-01-21"
-  last_start_date <- "2020-01-22"
+  first_start_date <- sircovid_date("2020-01-21")
+  last_start_date <- sircovid_date("2020-01-22")
   day_step <- 1
   pars_obs <- list(
     phi_general = 0.95,
@@ -28,7 +28,7 @@ test_that("Small grid search works", {
     sircovid_model,
     transmission_model = "POLYMOD",
     beta = 0.1,
-    beta_times = '2020-01-01',
+    beta_times = sircovid_date('2020-01-01'),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -55,7 +55,7 @@ test_that("Small grid search works", {
                   c("model", "model_params", "pars_obs", "data"))
 
   beta_grid <- seq(min_beta, max_beta, beta_step)
-  date_grid <- seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
+  date_grid <- seq(first_start_date, last_start_date, day_step)
   expect_equal(scan_results$x, beta_grid)
   expect_equal(scan_results$y, date_grid)
   expect_equal(dim(scan_results$renorm_mat_LL), dim(scan_results$mat_log_ll))
@@ -85,7 +85,7 @@ test_that("Warning is issued if grid does not explore low likelihood regions", {
     sircovid_model,
     transmission_model = "POLYMOD",
     beta = 0.1,
-    beta_times = '2020-01-01',
+    beta_times = sircovid_date('2020-01-01'),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -98,8 +98,8 @@ test_that("Warning is issued if grid does not explore low likelihood regions", {
     min_beta = 0.2,
     max_beta = 0.2,
     beta_step = 0.01,
-    first_start_date = "2020-01-21",
-    last_start_date = "2020-01-22",
+    first_start_date = sircovid_date("2020-01-21"),
+    last_start_date = sircovid_date("2020-01-22"),
     day_step = 1,
     data = data,
     sircovid_model = sircovid_model,
@@ -127,8 +127,8 @@ test_that("Small grid search works with new model", {
   min_beta <- 0.1
   max_beta <- 0.2
   beta_step <- 0.05
-  first_start_date <- "2020-01-21"
-  last_start_date <- "2020-01-22"
+  first_start_date <- sircovid_date("2020-01-21")
+  last_start_date <- sircovid_date("2020-01-22")
   day_step <- 1
   pars_obs <- list(
     phi_general = 0.95,
@@ -146,7 +146,7 @@ test_that("Small grid search works with new model", {
     sircovid_model,
     transmission_model = "POLYMOD",
     beta = 0.1,
-    beta_times = '2020-01-01',
+    beta_times = sircovid_date('2020-01-01'),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -177,7 +177,7 @@ test_that("Small grid search works with new model", {
                   c("model", "model_params", "pars_obs", "data"))
 
   beta_grid <- seq(min_beta, max_beta, beta_step)
-  date_grid <- seq(as.Date(first_start_date), as.Date(last_start_date), day_step)
+  date_grid <- seq(first_start_date, last_start_date, day_step)
   expect_equal(scan_results$x, beta_grid)
   expect_equal(scan_results$y, date_grid)
   expect_equal(dim(scan_results$renorm_mat_LL), dim(scan_results$mat_log_ll))
@@ -200,8 +200,8 @@ test_that("Transmission is more likely", {
   min_beta <- 0
   max_beta <- 0.1
   beta_step <- 0.1
-  first_start_date <- "2020-01-21"
-  last_start_date <- "2020-01-21"
+  first_start_date <- sircovid_date("2020-01-21")
+  last_start_date <- sircovid_date("2020-01-21")
   day_step <- 1
   pars_obs <- list(
     phi_general = 0.95,
@@ -218,7 +218,7 @@ test_that("Transmission is more likely", {
     sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
     beta = 0.1,
-    beta_times = '2020-01-01',
+    beta_times = sircovid_date('2020-01-01'),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -252,8 +252,8 @@ test_that("Unreasonable start dates are less likely", {
   min_beta <- 0.1
   max_beta <- 0.1
   beta_step <- 0.1
-  first_start_date <- "2020-01-01"
-  last_start_date <- "2020-02-29"
+  first_start_date <- sircovid_date("2020-01-01")
+  last_start_date <- sircovid_date("2020-02-29")
   day_step <- 20
   pars_obs <- list(
     phi_general = 0.95,
@@ -270,7 +270,7 @@ test_that("Unreasonable start dates are less likely", {
     sircovid_model = sircovid_model,
     transmission_model = "POLYMOD",
     beta = 0.1,
-    beta_times = '2020-01-01',
+    beta_times = sircovid_date('2020-01-01'),
     hosp_transmission = 0,
     ICU_transmission = 0,
     trans_profile = 1,
@@ -304,8 +304,8 @@ test_that("Bad parameters create errors", {
   min_beta <- 0.1
   max_beta <- 0.1
   beta_step <- 0.1
-  first_start_date <- "2020-01-01"
-  last_start_date <- "2020-02-29"
+  first_start_date <- sircovid_date("2020-01-01")
+  last_start_date <- sircovid_date("2020-02-29")
   day_step <- 20
   pars_obs <- list(
     phi_general = 0.95,
@@ -326,7 +326,7 @@ test_that("Bad parameters create errors", {
     hosp_transmission = 0,
     ICU_transmission = 0,
     beta = c(0.1, 0.1, 0.1),
-    beta_times = c("2020-02-02", "2020-03-01", "2020-04-01"),
+    beta_times = sircovid_date(c("2020-02-02", "2020-03-01", "2020-04-01")),
     trans_profile = 1,
     trans_increase = 1,
     dt = 0.25)
@@ -349,7 +349,7 @@ test_that("Bad parameters create errors", {
     hosp_transmission = 0,
     ICU_transmission = 0,
     beta = 0.1,
-    beta_times = "2020-02-02",
+    beta_times = sircovid_date("2020-02-02"),
     trans_profile = 1,
     trans_increase = 1,
     dt = 0.25)
