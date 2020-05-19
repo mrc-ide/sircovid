@@ -33,6 +33,8 @@ update(R_pos[]) <- R_pos[i] + delta_R_pos[i]
 update(R_neg[]) <- R_neg[i] + delta_R_neg[i]
 update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
 update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
+update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf)
+update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf)
 
 output(beta) <- TRUE
 
@@ -251,6 +253,8 @@ initial(R_pos[]) <- R0_pos[i]
 initial(R_neg[]) <- R0_neg[i]
 initial(D_hosp[]) <- D0_hosp[i]
 initial(D_comm[]) <- D0_comm[i]
+initial(cum_admit_conf) <- 0
+initial(cum_new_conf) <- 0
 
 ## User defined parameters - default in parentheses:
 
