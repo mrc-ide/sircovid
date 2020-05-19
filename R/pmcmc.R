@@ -856,7 +856,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   par( bty = 'n',
        mfcol = c(n_pars, n_pars + 1L),
-       mar = c(3,3,2,1),
+       mar = c(2.5,2.5,1.5,0),
        mgp = c(1.5, 0.5, 0), 
        oma = c(1,1,1,1))
   
@@ -879,9 +879,12 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
              font.main = 1
         )
         
-        mapply(FUN = plot_hists, 
+        mapply(FUN = function(h, col) {
+          plot_hists(h = h, 
+                     col = col, 
+                     breaks = bs)
+        }, 
                h = hists[[par_name]],
-               breaks = bs,
                col = cols_trace)
         
         
@@ -928,6 +931,6 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
     }
   }, 
   par_name = par_names, 
-  leg = c(TRUE, FALSE, FALSE))
+  leg = c(TRUE, rep(FALSE, length(par_names) - 1)))
   
 }
