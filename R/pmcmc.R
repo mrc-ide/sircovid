@@ -729,7 +729,7 @@ plot.pmcmc <- function(x, ...) {
   
   par( bty = 'n',
        mfcol = c(n_pars, n_pars + 1L),
-       mar = c(3,3,2,1),
+       mar = c(2.5,2.5,2,1.5),
        mgp = c(1.5, 0.5, 0), 
        oma = c(1,1,1,1))
   
@@ -898,7 +898,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
       } else if (i > j) { # print rho on upper triangle
         plot.new()
         text(x = 0.5, 
-             y=0.5, 
+             y=0.5, cex = 1.5,
              labels = paste('r =', 
                             summ$corr_mat[i, j]))
       }
