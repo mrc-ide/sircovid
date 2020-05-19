@@ -259,9 +259,7 @@ pmcmc <- function(data,
   pars_discrete <- unlist(pars_discrete)
   curr_pars <- unlist(pars_init)
 
-  # convert the current parameters into format easier for mcmc to deal with
-  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date)
-  
+
   # create shorthand function to calc ll given main inputs
   # binds these input parameters
   calc_ll <- function(pars) {  

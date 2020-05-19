@@ -1,3 +1,7 @@
+# sircovid 0.2.35
+
+- fix bug in pMCMC
+
 # sircovid 0.2.34
 
 - pMCMC over any parameter
