@@ -14,7 +14,7 @@ compare_output(model, pars_obs, data, type = "sircovid_basic")
 \item{data}{The data to be compared against}
 
 \item{type}{The class of the model, either
-\code{"sircovid_basic"} or \code{"sircovid_hospital"}}
+\code{"sircovid_basic"},  \code{"sircovid_hospital"} or \code{"sircovid_serology"}}
 }
 \description{
 Compare the model to ICU data for use with the particle filter

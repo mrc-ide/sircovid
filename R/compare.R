@@ -9,7 +9,7 @@
 ##' @param data The data to be compared against
 ##' 
 ##' @param type The class of the model, either
-##'   \code{"sircovid_basic"} or \code{"sircovid_hospital"}
+##'   \code{"sircovid_basic"},  \code{"sircovid_hospital"} or \code{"sircovid_serology"}
 ##' 
 ##' @export
 compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
@@ -33,8 +33,14 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
   } else if (type == "sircovid_serology") {
     phi_general <- pars_obs$phi_general
     k_general <- pars_obs$k_general
-    index_general <- c(c(index$I_triage_R),c(index$I_triage_D),c(index$I_hosp_R),c(index$I_hosp_D),c(index$R_stepdown)) - 1L
-    index_ICU <- c(c(index$I_ICU_R),c(index$I_ICU_D)) - 1L
+    phi_admitted <- pars_obs$phi_admitted
+    k_admitted <- pars_obs$k_admitted
+    phi_new <- pars_obs$phi_new
+    k_new <- pars_obs$k_new
+    index_general <- c(c(index$I_triage_R_conf),c(index$I_triage_D_conf),c(index$I_hosp_R_conf),c(index$I_hosp_D_conf),c(index$R_stepdown_conf)) - 1L
+    index_admit <- c(index$cum_admit_conf) - 1L
+    index_new <- c(index$cum_new_conf) - 1L
+    index_ICU <- c(c(index$I_ICU_R_conf),c(index$I_ICU_D_conf)) - 1L
     index_D <- c(index$D_hosp) - 1L
   }
 
@@ -68,6 +74,22 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
         colSums(prev_state[index_D, ])
       log_weights <- log_weights +
         ll_nbinom(data$deaths[t], model_deaths, phi_death, k_death, exp_noise)
+    }
+    
+    if (type %in% c("sircovid_serology")  && !is.na(data$admitted[t])) {
+      ## sum model output across ages/infectivities
+      model_admitted <- colSums(state[index_admit, ,drop = FALSE]) -
+        colSums(prev_state[index_admit, ,drop = FALSE])
+      log_weights <- log_weights +
+        ll_nbinom(data$admitted[t], model_admitted, phi_admitted, k_admitted, exp_noise)
+    }
+    
+    if (type %in% c("sircovid_serology")  && !is.na(data$new[t])) {
+      ## sum model output across ages/infectivities
+      model_new <- colSums(state[index_new, ,drop = FALSE]) -
+        colSums(prev_state[index_new, ,drop = FALSE])
+      log_weights <- log_weights +
+        ll_nbinom(data$new[t], model_new, phi_new, k_new, exp_noise)
     }
 
     log_weights

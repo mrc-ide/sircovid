@@ -21,7 +21,7 @@ parameters loaded by \code{read_fitted_parameters()}}
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre'}
 
 \item{gammas}{List of exponential distribution rates for time in each partition
-needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre'}
+needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre', 'test'}
 }
 \description{
 Create a serology model

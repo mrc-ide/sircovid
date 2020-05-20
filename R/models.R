@@ -54,7 +54,7 @@ hospital_model <- function(use_fitted_parameters = TRUE,
 ##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre'
 ##'   
 ##' @param gammas List of exponential distribution rates for time in each partition
-##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre'
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre', 'test'
 ##'   
 ##' @export
 serology_model <- function(use_fitted_parameters = TRUE,
