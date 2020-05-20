@@ -115,12 +115,11 @@ pmcmc <- function(data,
                                           0,
                                           0,
                                           0,
-                                          0,
                                           0),
                                     max=c(1,
                                           1,
                                           1,
-                                          1e6,
+                                          lubridate::yday("2020-03-15"),
                                           1,
                                           1,
                                           1,
@@ -315,7 +314,7 @@ pmcmc <- function(data,
         
         traces <- x$results
         if('start_date' %in% pars_to_sample$names) {
-          traces$start_date <- start_date_to_offset(data$date[1], traces$start_date)
+          traces$start_date <- sircovid_date(traces$start_date)
         }
         
       coda::as.mcmc(traces[, names(pars_init)])
@@ -511,7 +510,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   # Update particle filter parameters from pars
   for (par in names(pars)) {
     if (par == "start_date") {
-      start_date <- sircovid_date_to_date(pars[[par]])
+      start_date <- pars[[par]]
     } else if (par == "beta_start") {
       beta_start <- pars[[par]]
     } else if (par == "beta_end") {
@@ -614,7 +613,7 @@ summary.pmcmc <- function(object, ...) {
   ## convert start_date to numeric to calculate stats
   data_start_date <- sircovid_date(object$inputs$data$date[1])
   traces <- object$results[,par_names] 
-  traces$start_date <- start_date_to_offset(data_start_date, traces$start_date)
+  traces$start_date <- sircovid_date(traces$start_date)
   
   # calculate correlation matrix
   corr_mat <- round(cor(traces),2)
@@ -639,8 +638,7 @@ summary.pmcmc <- function(object, ...) {
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
   summ$start_date <- sircovid_date_to_date(summ$start_date)
-  summ$start_date <- as.Date(summ$start_date, origin="2019-12-31")
-  summ[c('2.5%', '97.5%', 'min', 'max'), 'start_date'] <- summ[c('97.5%', '2.5%', 'max', 'min'), 'start_date']
+
 
   
   out <- list('summary' = summ, 
