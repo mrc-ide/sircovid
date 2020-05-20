@@ -229,7 +229,7 @@ pmcmc <- function(data,
       stop('beta_end must not be negative')
     }
   }
-  if(start_date_to_offset(data$date[1], pars_init[['start_date']]) < 0) {
+  if(sircovid_date(data$date[1]) < pars_init[['start_date']])) {
     stop('start date must not be before first date of supplied data')
   }
 

@@ -142,16 +142,3 @@ test_that("read Bob's parameters", {
     NA)
 })
 
-test_that("date conversion works", {
-  first_data_date <- "2020-03-05"
-  start_date <- "2020-03-01"
-  
-  offset <- start_date_to_offset(first_data_date, start_date)
-  expect_equal(offset, 
-               as.numeric(as.Date(first_data_date) - as.Date(start_date)))
-  expect_equal(offset_to_start_date(first_data_date, offset),
-               sircovid_date(start_date))
-  expect_error(offset_to_start_date(first_data_date, start_date), 
-               "Offset start date must be numeric")
-  
-})
