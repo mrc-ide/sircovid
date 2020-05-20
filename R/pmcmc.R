@@ -464,7 +464,7 @@ run_mcmc_chain <- function(inputs,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- sircovid_date_to_date(res$start_date)
+  res$start_date <- sircovid_date_to_Date(res$start_date)
   
   out <- list('inputs' = inputs, 
               'results' = as.data.frame(res),
@@ -474,7 +474,7 @@ run_mcmc_chain <- function(inputs,
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- sircovid_date_to_date(proposals$start_date)
+   proposals$start_date <- sircovid_date_to_Date(proposals$start_date)
    out$proposals <- proposals
  }
  
@@ -637,10 +637,8 @@ summary.pmcmc <- function(object, ...) {
   
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
-  summ$start_date <- sircovid_date_to_date(summ$start_date)
+  summ$start_date <- sircovid_date_to_Date(summ$start_date)
 
-
-  
   out <- list('summary' = summ, 
               'corr_mat' = corr_mat, 
               'sd' = sds)

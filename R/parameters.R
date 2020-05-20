@@ -378,7 +378,7 @@ sircovid_date <- function(date) {
 
 # Converts dates from from sircovid_Date as used in the MCMC to a Date
 # Automatically converts type
-sircovid_date_to_date <- function(sircovid_date)
+sircovid_date_as_Date <- function(sircovid_date)
 {
   if (class(sircovid_date) != "numeric") {
     stop("sircovid_date must be numeric")
