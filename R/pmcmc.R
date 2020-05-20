@@ -100,7 +100,7 @@ pmcmc <- function(data,
                                     init=c(0.14, 
                                            0.14*0.238,
                                            0.14*0.238,
-                                           lubridate::yday("2020-02-07"),
+                                           sircovid_date("2020-02-07"),
                                            0.5099579,
                                            0.1092046,
                                            0.2911154,
@@ -115,12 +115,11 @@ pmcmc <- function(data,
                                           0,
                                           0,
                                           0,
-                                          0,
                                           0),
                                     max=c(1,
                                           1,
                                           1,
-                                          1e6,
+                                          sircovid_date("2020-03-15"),
                                           1,
                                           1,
                                           1,
@@ -230,7 +229,7 @@ pmcmc <- function(data,
       stop('beta_end must not be negative')
     }
   }
-  if(start_date_to_offset(data$date[1], pars_init[['start_date']]) < 0) {
+  if(sircovid_date(data$date[1]) < pars_init[['start_date']]) {
     stop('start date must not be before first date of supplied data')
   }
 
@@ -259,9 +258,7 @@ pmcmc <- function(data,
   pars_discrete <- unlist(pars_discrete)
   curr_pars <- unlist(pars_init)
 
-  # convert the current parameters into format easier for mcmc to deal with
-  curr_pars['start_date'] <- start_date_to_offset(data$date[1], pars_init$start_date)
-  
+
   # create shorthand function to calc ll given main inputs
   # binds these input parameters
   calc_ll <- function(pars) {  
@@ -317,7 +314,7 @@ pmcmc <- function(data,
         
         traces <- x$results
         if('start_date' %in% pars_to_sample$names) {
-          traces$start_date <- start_date_to_offset(data$date[1], traces$start_date)
+          traces$start_date <- sircovid_date(traces$start_date)
         }
         
       coda::as.mcmc(traces[, names(pars_init)])
@@ -467,7 +464,7 @@ run_mcmc_chain <- function(inputs,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- offset_to_start_date(first_data_date, res$start_date)
+  res$start_date <- sircovid_date_as_Date(res$start_date)
   
   out <- list('inputs' = inputs, 
               'results' = as.data.frame(res),
@@ -477,7 +474,7 @@ run_mcmc_chain <- function(inputs,
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- offset_to_start_date(first_data_date, proposals$start_date)
+   proposals$start_date <- sircovid_date_as_Date(proposals$start_date)
    out$proposals <- proposals
  }
  
@@ -513,7 +510,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   # Update particle filter parameters from pars
   for (par in names(pars)) {
     if (par == "start_date") {
-      start_date <- offset_to_start_date(data$date[1], pars[[par]])
+      start_date <- pars[[par]]
     } else if (par == "beta_start") {
       beta_start <- pars[[par]]
     } else if (par == "beta_end") {
@@ -616,7 +613,7 @@ summary.pmcmc <- function(object, ...) {
   ## convert start_date to numeric to calculate stats
   data_start_date <- sircovid_date(object$inputs$data$date[1])
   traces <- object$results[,par_names] 
-  traces$start_date <- start_date_to_offset(data_start_date, traces$start_date)
+  traces$start_date <- sircovid_date(traces$start_date)
   
   # calculate correlation matrix
   corr_mat <- round(cor(traces),2)
@@ -640,11 +637,8 @@ summary.pmcmc <- function(object, ...) {
   
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
-  summ$start_date <- offset_to_start_date(data_start_date, summ$start_date)
-  summ$start_date <- as.Date(summ$start_date, origin="2019-12-31")
-  summ[c('2.5%', '97.5%', 'min', 'max'), 'start_date'] <- summ[c('97.5%', '2.5%', 'max', 'min'), 'start_date']
+  summ$start_date <- sircovid_date_as_Date(summ$start_date)
 
-  
   out <- list('summary' = summ, 
               'corr_mat' = corr_mat, 
               'sd' = sds)

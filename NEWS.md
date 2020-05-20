@@ -1,3 +1,7 @@
+# sircovid 0.2.35
+
+- remove date offsets from pMCMC
+
 # sircovid 0.2.34
 
 - pMCMC over any parameter
