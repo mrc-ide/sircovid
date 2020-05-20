@@ -43,7 +43,7 @@ sample_grid_scan <- function(scan_results,
   # construct what the grid of beta and start values that 
   # correspond to the z axis matrix
   x_grid <- matrix(scan_results$x, nrow = nr, ncol = nc)
-  y_grid <- matrix(as.character(scan_results$y), nrow = nr, 
+  y_grid <- matrix(scan_results$y, nrow = nr, 
                    ncol = nc, byrow = TRUE)
   
   # draw which grid pairs are chosen
@@ -140,8 +140,7 @@ sample_pmcmc <- function(mcmc_results,
   
   forecasts <- function(sampled_pars) {
     pars <- as.list(sampled_pars)
-    pars$start_date <- start_date_to_offset(first_data_date = mcmc_results$inputs$data$date[1],
-                                            start_date = pars$start_date)
+    pars$start_date <- sircovid_date(pars$start_date)
     trace <- calc_loglikelihood(pars, 
                                 mcmc_results$inputs$data, 
                                 mcmc_results$inputs$sircovid_model, 
@@ -302,7 +301,6 @@ traces_to_trajectories <- function(traces) {
   max_rows <- max(num_rows)
   seq_max <- seq_len(max_rows)
   max_date_names <- rownames(traces[[which.max(unlist(lapply(traces, nrow)))]])
-  
   trajectories <- array(NA, 
                         dim = c(max_rows, ncol(traces[[1]]), length(traces)),
                         dimnames = list(max_date_names, NULL, NULL))

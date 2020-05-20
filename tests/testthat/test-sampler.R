@@ -7,7 +7,7 @@ test_that("sampler runs without error", {
   time_steps_per_day <- 4
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
-  d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
+  d <- particle_filter_data(data, sircovid_date("2020-02-02"), time_steps_per_day)
   sircovid_model <- basic_model(progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2, rec = 2),
                                 gammas = list(E = 1/2.5, asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2/1, ICU = 2/5, rec = 2/5))
   
@@ -68,8 +68,7 @@ test_that("sampler runs without error", {
   expect_equal(dim(Y$states), c(58, 238,   100))
 
   date <- as.Date("2020-02-02") + seq_len(nrow(Y$states)) - 1L
-  expect_equal(attr(Y$states, "date"), date)
-  expect_equal(rownames(Y$states), as.character(date))
+  expect_equal(rownames(Y$states), as.character(sircovid_date(date)))
   
   ## Reset for comparison
   Y2 <- Y
@@ -165,7 +164,7 @@ test_that("particle_filter error cases", {
   time_steps_per_day <- 4
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
-  d <- particle_filter_data(data, "2020-02-02", time_steps_per_day)
+  d <- particle_filter_data(data, sircovid_date("2020-02-02"), time_steps_per_day)
   sircovid_model <- basic_model()
 
   pars_model <- generate_parameters(
@@ -230,7 +229,7 @@ test_that("particle filter data; error validation", {
 
 
 test_that("particle filter data", {
-  start <- as.Date("2020-02-02")
+  start <- sircovid_date("2020-02-02")
   data <- data.frame(date = as.Date("2020-03-01") + 0:30,
                      a = 0:30,
                      b = 0:30 * 2)
@@ -245,12 +244,12 @@ test_that("particle filter data", {
                     day_start = 0, day_end = 27,
                     step_start = 0, step_end = 108))
   expect_equal(as.list(d[2, ]),
-               list(date = data$date[[1]], a = 0L, b = 0,
+               list(date = sircovid_date(data$date[[1]]), a = 0L, b = 0,
                     day_start = 27, day_end = 28,
                     step_start = 108, step_end = 112))
   expect_equal(nrow(d), 32)
   expect_equal(as.list(d[32, ]),
-               list(date = data$date[[31]], a = 30L, b = 60,
+               list(date = sircovid_date(data$date[[31]]), a = 30L, b = 60,
                     day_start = 57, day_end = 58,
                     step_start = 228, step_end = 232))
 })

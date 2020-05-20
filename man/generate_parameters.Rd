@@ -11,7 +11,7 @@ generate_parameters(
   severity_data_file = NULL,
   infection_seeding = list(values = c(10), bins = c("15 to 19")),
   beta = 0.1,
-  beta_times = "2020-02-02",
+  beta_times = sircovid_date("2020-02-02"),
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,

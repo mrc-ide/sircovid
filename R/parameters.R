@@ -30,15 +30,16 @@
 ##' 
 ##' @export
 generate_beta <- function(beta_start, 
-                          start_date = "2020-02-02",
-                          reduction_start = "2020-03-16",
+                          start_date = sircovid_date("2020-02-02"),
+                          reduction_start = sircovid_date("2020-03-16"),
                           beta_reduction = 0.238,
                           beta_end = NULL,
                           reduction_period = 10,
                           beta_pl = NULL,
-                          pl_start = "2020-04-22",
+                          pl_start = sircovid_date("2020-04-22"),
                           pl_transition_period = 7) {
-  if (as.Date(start_date) > as.Date(reduction_start)) {
+
+  if (start_date > reduction_start) {
     stop("Start date must be earlier than intervention date")
   }
   if (beta_start < 0){
@@ -63,8 +64,7 @@ generate_beta <- function(beta_start,
     message("Reduction period over 100 days - is this correct?")
   }
   
-  beta_times <- c(as.Date(start_date), 
-            seq(as.Date(reduction_start), as.Date(reduction_start) + reduction_period - 1, by=1))
+  beta_times <- c(start_date, seq(reduction_start, reduction_start + reduction_period - 1, by=1))
 
   # Corresponding change in beta
   if (!is.null(beta_end)) {
@@ -79,11 +79,8 @@ generate_beta <- function(beta_start,
     beta_slope_pl <- beta_end * (1 - (1 - beta_reduction_pl ) * (seq(0, pl_transition_period - 1) / (pl_transition_period - 1)))
     
     beta <- c(beta,beta_slope_pl)
-    beta_times <- c(beta_times, 
-                    seq(as.Date(pl_start), as.Date(pl_start) + pl_transition_period - 1, by=1))
+    beta_times <- c(beta_times, seq(pl_start, pl_start + pl_transition_period - 1, by=1))
   }
-  
-  beta_times <- as.character(beta_times)
   
   list(beta=beta,
        beta_times=beta_times)
@@ -136,7 +133,7 @@ generate_parameters <- function(
   infection_seeding = list(values=c(10),
                            bins=c('15 to 19')),
   beta = 0.1,
-  beta_times = "2020-02-02",
+  beta_times = sircovid_date("2020-02-02"),
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
@@ -330,6 +327,7 @@ generate_parameters_base <- function(
   #
   # Set up time-varying beta
   # Times are in days from first day supplied
+  beta_times <- beta_times
   beta_t <- normalise_beta(beta_times, dt)
 
   # 
@@ -399,6 +397,38 @@ generate_parameters_base <- function(
 }
 
 
+##' Convert a date into the representation used in the sircovid package,
+##' which is days since the start of 2020 (i.e. 2020-01-01 = 1)
+##' 
+##' Only apply this once, to data or input parameters
+##' 
+##' @title sircovid date
+##' 
+##' @param date Date as a string, or a format otherwise understood by lubridate
+##' 
+##' @return days that \code{date} is after the beginning of 2020
+##' 
+##' @import lubridate
+##' 
+sircovid_date <- function(date) {
+  days_into_2020 <- as.numeric(lubridate::as_date(date) - lubridate::as_date('2019-12-31'))
+  if (any(days_into_2020 < 0)) {
+    stop("Negative dates, sircovid_date likely applied twice")
+  }
+  days_into_2020
+}
+
+# Converts dates from from sircovid_Date as used in the MCMC to a Date
+# Automatically converts type
+sircovid_date_as_Date <- function(sircovid_date)
+{
+  if (class(sircovid_date) != "numeric") {
+    stop("sircovid_date must be numeric")
+  }
+
+  lubridate::as_date('2019-12-31') + sircovid_date
+}
+
 #
 # Internal functions
 #
@@ -407,8 +437,7 @@ generate_parameters_base <- function(
 # terms as the odin code
 normalise_beta <- function(beta_times, dt) {
   # Times are in days from first day supplied
-  beta_dates <- as.Date(beta_times)
-  beta_dates <- as.numeric(beta_dates - beta_dates[[1]])
+  beta_dates <- beta_times - beta_times[[1]]
   # Checks all dates are positive and ascending
   if (any(diff(beta_dates) < 0)) {
     stop("Supplied dates are not increasing")

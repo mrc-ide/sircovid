@@ -1,3 +1,12 @@
+# sircovid 0.2.35
+
+- remove date offsets from pMCMC
+
+# sircovid 0.2.34
+
+- pMCMC over any parameter
+- Dates are now days into 2020 (days from 2019-12-31 onwards)
+
 # sircovid 0.2.33
 
 - 3rd model added to package - serology_model
