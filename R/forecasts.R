@@ -285,7 +285,6 @@ traces_to_trajectories <- function(traces) {
   max_rows <- max(num_rows)
   seq_max <- seq_len(max_rows)
   max_date_names <- rownames(traces[[which.max(unlist(lapply(traces, nrow)))]])
-  max_date_names <- as.character(sircovid_date_to_date(as.numeric(max_date_names)))
   trajectories <- array(NA, 
                         dim = c(max_rows, ncol(traces[[1]]), length(traces)),
                         dimnames = list(max_date_names, NULL, NULL))
