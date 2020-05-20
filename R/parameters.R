@@ -179,7 +179,6 @@ generate_parameters <- function(
     parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
     parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
     parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
-    parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
     parameter_list$R0 <- rep(0, parameter_list$N_age)
     if ("sircovid_serology" %in% class(sircovid_model)) {
       parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
@@ -197,6 +196,8 @@ generate_parameters <- function(
       parameter_list$I0_triage_D_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
       parameter_list$I0_ICU_R_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
       parameter_list$I0_ICU_R_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
+      parameter_list$I0_ICU_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
+      parameter_list$I0_ICU_D_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
       parameter_list$D0_hosp <- rep(0, parameter_list$N_age)
       parameter_list$D0_comm <- rep(0, parameter_list$N_age)
     } else {
@@ -205,6 +206,7 @@ generate_parameters <- function(
       parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
       parameter_list$I0_hosp_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
       parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
+      parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
       parameter_list$D0 <- rep(0, parameter_list$N_age)
     }
   } else {
