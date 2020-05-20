@@ -1,6 +1,6 @@
 # sircovid 0.2.35
 
-- fix bug in pMCMC
+- remove date offsets from pMCMC
 
 # sircovid 0.2.34
 
