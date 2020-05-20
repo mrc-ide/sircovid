@@ -59,9 +59,9 @@ hospital_model <- function(use_fitted_parameters = TRUE,
 ##' @export
 serology_model <- function(use_fitted_parameters = TRUE,
                            progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, comm_D =2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2),
-                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, comm_D = 2/5, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5, R_pre = 1/5)) {
+                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, comm_D = 2/5, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5, R_pre = 1/5, test = 3/10)) {
   model_class <- "sircovid_serology" 
-  serology_model <- model_constructor(model_class, "hospital_with_serology", 
+  serology_model <- model_constructor(model_class, "hospital_with_serology_testing", 
                                       use_fitted_parameters, progression_groups, gammas)
   
   # This inherits from the sircovid_hospital model, it only adds new partitions/parameters
@@ -101,7 +101,15 @@ model_constructor <- function(model_class,
   if (any(!(model_partitions %in% names(gammas)))) {
     stop("gammas need to be defined for all partitions")
   } else {
-    gammas <- gammas[model_partitions] 
+    if(model_class == "sircovid_serology"){
+      if (!("test" %in% names(gammas))){
+        stop("gamma needs to be defined for test")
+      } else {
+        gammas <- gammas[c(model_partitions,"test")] 
+      }
+    } else {
+      gammas <- gammas[model_partitions] 
+    }
   }
   
   model_object <- list(odin_model = odin_model,
@@ -157,6 +165,7 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
     gamma_R_pre <- fitted_parameters[fitted_parameters$parameter=="gamma_R_pre","value"]
     s_comm_D <- fitted_parameters[fitted_parameters$parameter=="s_comm_D","value"]
     gamma_comm_D <- fitted_parameters[fitted_parameters$parameter=="gamma_comm_D","value"]
+    gamma_test <- fitted_parameters[fitted_parameters$parameter=="gamma_test","value"]
 
     parameters <- (list(progression_groups = list(hosp_D = s_hosp_D,
                                           hosp_R = s_hosp_R,
@@ -173,7 +182,8 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
                                       triage = gamma_triage,
                                       stepdown = gamma_stepdown,
                                       R_pre = gamma_R_pre,
-                                      comm_D = gamma_comm_D)))
+                                      comm_D = gamma_comm_D,
+                                      test = gamma_test)))
               
     parameters
   }

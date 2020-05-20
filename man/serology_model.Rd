@@ -10,7 +10,7 @@ serology_model(
     2, hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2),
   gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, comm_D =
     2/5, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown =
-    2/5, R_pre = 1/5)
+    2/5, R_pre = 1/5, test = 3/10)
 )
 }
 \arguments{

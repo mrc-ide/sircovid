@@ -31,6 +31,7 @@ update(R_stepdown[,]) <- R_stepdown[i,j] + delta_R_stepdown[i,j]
 update(R_pre[,]) <- R_pre[i,j] + delta_R_pre[i,j]
 update(R_pos[]) <- R_pos[i] + delta_R_pos[i]
 update(R_neg[]) <- R_neg[i] + delta_R_neg[i]
+update(R[]) <- R[i] + delta_R[i]
 update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
 update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf)
@@ -156,7 +157,7 @@ aux_II_hosp_R_unconf[,1:s_hosp_R,] <- aux_II_hosp_R_unconf[i,j,k] - n_II_hosp_R_
 aux_II_hosp_R_conf[,,] <- I_hosp_R_conf[i,j,k]
 aux_II_hosp_R_conf[,2:s_hosp_R,] <- aux_II_hosp_R_conf[i,j,k] + n_II_hosp_R_conf[i,j-1,k]
 aux_II_hosp_R_conf[,1:s_hosp_R,] <- aux_II_hosp_R_conf[i,j,k] - n_II_hosp_R_conf[i,j,k]
-n_I_hosp_R_unconf_to_conf[,,] <- rbinom(aux_II_hosp_R_conf[i,j,k],p_test)
+n_I_hosp_R_unconf_to_conf[,,] <- rbinom(aux_II_hosp_R_unconf[i,j,k],p_test)
 new_I_hosp_R_unconf[,,] <- aux_II_hosp_R_unconf[i,j,k] - n_I_hosp_R_unconf_to_conf[i,j,k]
 new_I_hosp_R_unconf[,1,] <- new_I_hosp_R_unconf[i,1,k] + n_ILI_to_hosp_R[i,k] - n_ILI_to_hosp_R_conf[i,k]
 new_I_hosp_R_conf[,,] <- aux_II_hosp_R_conf[i,j,k] + n_I_hosp_R_unconf_to_conf[i,j,k]
@@ -169,7 +170,7 @@ aux_II_hosp_D_unconf[,1:s_hosp_D,] <- aux_II_hosp_D_unconf[i,j,k] - n_II_hosp_D_
 aux_II_hosp_D_conf[,,] <- I_hosp_D_conf[i,j,k]
 aux_II_hosp_D_conf[,2:s_hosp_D,] <- aux_II_hosp_D_conf[i,j,k] + n_II_hosp_D_conf[i,j-1,k]
 aux_II_hosp_D_conf[,1:s_hosp_D,] <- aux_II_hosp_D_conf[i,j,k] - n_II_hosp_D_conf[i,j,k]
-n_I_hosp_D_unconf_to_conf[,,] <- rbinom(aux_II_hosp_D_conf[i,j,k],p_test)
+n_I_hosp_D_unconf_to_conf[,,] <- rbinom(aux_II_hosp_D_unconf[i,j,k],p_test)
 new_I_hosp_D_unconf[,,] <- aux_II_hosp_D_unconf[i,j,k] - n_I_hosp_D_unconf_to_conf[i,j,k]
 new_I_hosp_D_unconf[,1,] <- new_I_hosp_D_unconf[i,1,k] + n_ILI_to_hosp_D[i,k] - n_ILI_to_hosp_D_conf[i,k]
 new_I_hosp_D_conf[,,] <- aux_II_hosp_D_conf[i,j,k] + n_I_hosp_D_unconf_to_conf[i,j,k]
@@ -218,6 +219,12 @@ delta_R_pre[,] <- aux_R_pre[i,j]
 #Calculate the number of new seroconversion
 delta_R_pos[] <- n_R_pre[i,s_R_pre]
 
+#Work out the total number of recovery
+delta_R[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
+  sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_hosp[i,]) - sum(n_ILI_to_comm_D[i,]) +
+  sum(n_II_hosp_R_conf[i,s_hosp_R,]) + sum(n_II_hosp_R_unconf[i,s_hosp_R,]) +
+  sum(n_R_stepdown[i,s_stepdown])
+
 #Compute the force of infection
 I_with_diff_trans[,] <- trans_increase[i,j]*(sum(I_asympt[i,,j])+
                                                sum(I_mild[i,,j])+sum(I_ILI[i,,j])+
@@ -251,6 +258,7 @@ initial(R_stepdown[,]) <- R0_stepdown[i,j]
 initial(R_pre[,]) <- R0_pre[i,j]
 initial(R_pos[]) <- R0_pos[i]
 initial(R_neg[]) <- R0_neg[i]
+initial(R[]) <- R0[i]
 initial(D_hosp[]) <- D0_hosp[i]
 initial(D_comm[]) <- D0_comm[i]
 initial(cum_admit_conf) <- 0
@@ -274,6 +282,7 @@ I0_hosp_D_conf[,,] <- user()
 I0_ICU_R[,,] <- user()
 I0_ICU_D[,,] <- user()
 R0_stepdown[,] <- user()
+R0[] <- user()
 R0_pre[,] <- user()
 R0_neg[] <- user()
 R0_pos[] <- user()
@@ -465,6 +474,11 @@ dim(aux_R_stepdown) <- c(N_age,s_stepdown)
 dim(delta_R_stepdown) <- c(N_age,s_stepdown)
 dim(n_R_stepdown) <- c(N_age,s_stepdown)
 
+#Vectors handling the R_pos class
+dim(R) <- c(N_age)
+dim(R0) <- c(N_age)
+dim(delta_R) <- c(N_age)
+
 #Vectors handling the R_pre class and seroconversion
 dim(R_pre) <- c(N_age, s_R_pre)
 dim(R0_pre) <- c(N_age, s_R_pre)
@@ -542,10 +556,17 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
-#Total population is sum of all compartment apart from triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's
-N_tot <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(D_hosp) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) +
-  sum(I_triage_D) + sum(I_hosp_D_conf) + sum(I_hosp_D_unconf) + sum(I_ICU_D) + sum(I_comm_D) + sum(D_comm)
+#Total population
+N_tot <- sum(S) + sum(R) + sum(D_hosp) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) +
+  sum(I_triage_D) + sum(I_triage_R) + sum(I_hosp_R_conf) + sum(I_hosp_R_unconf) +
+  sum(I_hosp_D_conf) + sum(I_hosp_D_unconf) + sum(I_ICU_R) + sum(I_ICU_D) + 
+  sum(R_stepdown) + sum(I_comm_D) + sum(D_comm)
 output(N_tot) <- TRUE
+
+#Total population calculated with seroconversion flow, exclude triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's
+N_tot2 <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(D_hosp) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) +
+  sum(I_triage_D) + sum(I_hosp_D_conf) + sum(I_hosp_D_unconf) + sum(I_ICU_D) + sum(I_comm_D) + sum(D_comm)
+output(N_tot2) <- TRUE
 
 #Tracker of population size
 #dim(N) <- N_age

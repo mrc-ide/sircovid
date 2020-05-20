@@ -2,7 +2,7 @@ context("serology model for covid transmission")
 
 ## Sanity Checks
 
-test_that("N_tot stays constant", {
+test_that("N_tot and N_tot2 stay constant", {
   
   sircovid_model <- serology_model()
   pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.1)
@@ -13,7 +13,7 @@ test_that("N_tot stays constant", {
   results <- mod$transform_variables(tmp)
   #should be TRUE
   expect_true(all(results$N_tot == results$N_tot[1]))
-  
+  expect_true(all(results$N_tot2 == results$N_tot2[1]))
 }
 )
 
@@ -56,8 +56,10 @@ test_that("No one is infected if I and E are 0 at t = 0", {
     pars_model$I0_asympt[,,]<- 0
     pars_model$I0_mild[,,]<- 0
     pars_model$I0_ILI[,,] <- 0
-    pars_model$I0_hosp_R[,,] <- 0
-    pars_model$I0_hosp_D[,,] <- 0
+    pars_model$I0_hosp_R_unconf[,,] <- 0
+    pars_model$I0_hosp_R_conf[,,] <- 0
+    pars_model$I0_hosp_D_unconf[,,] <- 0
+    pars_model$I0_hosp_D_conf[,,] <- 0
     pars_model$I0_ICU_R[,,] <- 0
     pars_model$I0_ICU_D[,,] <- 0
     pars_model$I0_triage_D[,,] <- 0
@@ -99,8 +101,10 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
     }
     expect_true(any(results$E > 0))
     expect_true(all(results$I_ILI == 0))
-    expect_true(all(results$I_hosp_R == 0))
-    expect_true(all(results$I_hosp_D == 0))
+    expect_true(all(results$I_hosp_R_unconf == 0))
+    expect_true(all(results$I_hosp_R_conf == 0))
+    expect_true(all(results$I_hosp_D_unconf == 0))
+    expect_true(all(results$I_hosp_D_conf == 0))
     expect_true(all(results$I_ICU_R == 0))
     expect_true(all(results$I_ICU_D == 0))
     expect_true(all(results$I_triage_R == 0))
@@ -137,8 +141,10 @@ test_that("No one is hospitalised, no-one dies if p_recov_ILI is 1, p_death_comm
     }
   }
   expect_true(any(results$I_ILI > 0))
-  expect_true(all(results$I_hosp_R == 0))
-  expect_true(all(results$I_hosp_D == 0))
+  expect_true(all(results$I_hosp_R_unconf == 0))
+  expect_true(all(results$I_hosp_R_conf == 0))
+  expect_true(all(results$I_hosp_D_unconf == 0))
+  expect_true(all(results$I_hosp_D_conf == 0))
   expect_true(all(results$I_ICU_R == 0))
   expect_true(all(results$I_ICU_D == 0))
   expect_true(all(results$I_triage_R == 0))
@@ -179,8 +185,10 @@ test_that("No one is hospitalised, no-one recovers if p_recov_ILI is 0, p_death_
     }
   }
   expect_true(any(results$I_ILI > 0))
-  expect_true(all(results$I_hosp_R == 0))
-  expect_true(all(results$I_hosp_D == 0))
+  expect_true(all(results$I_hosp_R_unconf == 0))
+  expect_true(all(results$I_hosp_R_conf == 0))
+  expect_true(all(results$I_hosp_D_unconf == 0))
+  expect_true(all(results$I_hosp_D_conf == 0))
   expect_true(all(results$I_ICU_R == 0))
   expect_true(all(results$I_ICU_D == 0))
   expect_true(all(results$I_triage_R == 0))
@@ -230,6 +238,10 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
         check_cases <- TRUE
       }
     }
+    
+    results$I_hosp_R <- results$I_hosp_R_unconf + results$I_hosp_R_conf
+    results$I_hosp_D <- results$I_hosp_D_unconf + results$I_hosp_D_conf
+    
     #check that there are hospital cases in the right compartment
     expect_true(any(results[[cases]] > 0))
     #check that all compartments on other hospital routes are empty
@@ -346,6 +358,8 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
+      results$I_hosp_R <- results$I_hosp_R_unconf + results$I_hosp_R_conf
+      results$I_hosp_D <- results$I_hosp_D_unconf + results$I_hosp_D_conf
       if (any(results[[compartment_name]] > 0)){
         check_cases <- TRUE
       }
@@ -396,6 +410,8 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
+      results$I_hosp_R <- results$I_hosp_R_unconf + results$I_hosp_R_conf
+      results$I_hosp_D <- results$I_hosp_D_unconf + results$I_hosp_D_conf
       if (any(results[[compartment_name]] > 0)){
         check_cases <- TRUE
       }
@@ -423,3 +439,100 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
   test_gamma_zero('gamma_comm_D','I_comm_D')
   
 })
+
+test_that("No one is unconfirmed, if p_admit_conf = 1", {
+  sircovid_model <- serology_model()
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
+  pars_model$p_admit_conf[] <- 1
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  check_cases <- FALSE
+  max_iter <- 10
+  iter <- 0
+  while (!check_cases && iter<= max_iter){
+    #We want to check that no-one is unconfirmed. It's possible that no-one
+    #is confirmed either, so we re-run the model until there are cases in 
+    #confirmed compartments (or max_iter is reached)
+    iter <- iter + 1
+    tmp <- mod$run(t)
+    results <- mod$transform_variables(tmp)
+    if (all(c(any(results$I_hosp_R_conf > 0)),any(results$I_hosp_D_conf > 0))){
+      check_cases <- TRUE
+    }
+  }
+  expect_true(all(results$I_hosp_R_unconf == 0))
+  expect_true(any(results$I_hosp_R_conf == 0))
+  expect_true(all(results$I_hosp_D_unconf == 0))
+  expect_true(any(results$I_hosp_D_conf == 0))
+}
+)
+
+test_that("No one is unconfirmed, if p_admit_conf = 0 and gamma_test = 0", {
+  sircovid_model <- serology_model()
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
+  pars_model$p_admit_conf[] <- 0
+  pars_model$gamma_test <- 0
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  check_cases <- FALSE
+  max_iter <- 10
+  iter <- 0
+  while (!check_cases && iter<= max_iter){
+    #We want to check that no-one is confirmed. It's possible that no-one
+    #is unconfirmed either, so we re-run the model until there are cases in 
+    #unconfirmed compartments (or max_iter is reached)
+    iter <- iter + 1
+    tmp <- mod$run(t)
+    results <- mod$transform_variables(tmp)
+    if (all(c(any(results$I_hosp_R_unconf > 0)),any(results$I_hosp_D_unconf > 0))){
+      check_cases <- TRUE
+    }
+  }
+  expect_true(any(results$I_hosp_R_unconf == 0))
+  expect_true(all(results$I_hosp_R_conf == 0))
+  expect_true(any(results$I_hosp_D_unconf == 0))
+  expect_true(all(results$I_hosp_D_conf == 0))
+}
+)
+
+test_that("Confirmation in one time-step, if p_admit_conf = 0 and gamma_test = Inf", {
+  sircovid_model <- serology_model(use_fitted_parameters = FALSE, progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, comm_D = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
+  pars_model$p_admit_conf[] <- 0
+  pars_model$gamma_test <- Inf
+  pars_model$gamma_triage <- Inf
+  pars_model$gamma_hosp_R <- Inf
+  pars_model$gamma_hosp_D <- Inf
+  pars_model$gamma_ICU_R <- Inf
+  pars_model$gamma_ICU_D <- Inf
+  pars_model$gamma_stepdown <- Inf
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- 150
+  t <- seq(from = 1, to = t_max)
+  check_cases <- FALSE
+  max_iter <- 10
+  iter <- 0
+  while (!check_cases && iter<= max_iter){
+    #We want to check there are cases in compartments first (or max_iter is reached)
+    iter <- iter + 1
+    tmp <- mod$run(t)
+    results <- mod$transform_variables(tmp)
+    if (all(c(any(results$I_hosp_R_unconf > 0),
+              any(results$I_hosp_R_conf > 0),
+              any(results$I_hosp_D_unconf > 0),
+              any(results$I_hosp_D_conf > 0)))){
+      check_cases <- TRUE
+    }
+  }
+  #check hosp_R
+  expect_true(all(results$I_hosp_R_conf[,,1,] == 0))
+  expect_true(all(results$I_hosp_R_conf[2:t_max,,2,] == results$I_hosp_R_unconf[1:(t_max-1),,1,]))
+  expect_true(all(results$I_hosp_R_unconf[,,2,] == 0))
+  #check hosp_D
+  expect_true(all(results$I_hosp_D_conf[,,1,] == 0))
+  expect_true(all(results$I_hosp_D_conf[2:t_max,,2,] == results$I_hosp_D_unconf[1:(t_max-1),,1,]))
+  expect_true(all(results$I_hosp_D_unconf[,,2,] == 0))
+}
+)
