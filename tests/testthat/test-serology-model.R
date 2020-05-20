@@ -63,7 +63,8 @@ test_that("No one is infected if I and E are 0 at t = 0", {
     pars_model$I0_ICU_R[,,] <- 0
     pars_model$I0_ICU_D[,,] <- 0
     pars_model$I0_triage_D[,,] <- 0
-    pars_model$I0_triage_R[,,] <- 0
+    pars_model$I0_triage_R_unconf[,,] <- 0
+    pars_model$I0_triage_R_conf[,,] <- 0
     pars_model$I0_comm_D[,,] <- 0
 
     mod <- sircovid_model$odin_model(user = pars_model)
@@ -107,7 +108,8 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
     expect_true(all(results$I_hosp_D_conf == 0))
     expect_true(all(results$I_ICU_R == 0))
     expect_true(all(results$I_ICU_D == 0))
-    expect_true(all(results$I_triage_R == 0))
+    expect_true(all(results$I_triage_R_unconf == 0))
+    expect_true(all(results$I_triage_R_conf == 0))
     expect_true(all(results$I_triage_D == 0))
     expect_true(all(results$R_stepdown == 0))
     expect_true(all(results$D_hosp == 0))
@@ -147,7 +149,8 @@ test_that("No one is hospitalised, no-one dies if p_recov_ILI is 1, p_death_comm
   expect_true(all(results$I_hosp_D_conf == 0))
   expect_true(all(results$I_ICU_R == 0))
   expect_true(all(results$I_ICU_D == 0))
-  expect_true(all(results$I_triage_R == 0))
+  expect_true(all(results$I_triage_R_unconf == 0))
+  expect_true(all(results$I_triage_R_conf == 0))
   expect_true(all(results$I_triage_D == 0))
   expect_true(all(results$R_stepdown == 0))
   expect_true(all(results$D_hosp == 0))
@@ -191,7 +194,8 @@ test_that("No one is hospitalised, no-one recovers if p_recov_ILI is 0, p_death_
   expect_true(all(results$I_hosp_D_conf == 0))
   expect_true(all(results$I_ICU_R == 0))
   expect_true(all(results$I_ICU_D == 0))
-  expect_true(all(results$I_triage_R == 0))
+  expect_true(all(results$I_triage_R_unconf == 0))
+  expect_true(all(results$I_triage_R_conf == 0))
   expect_true(all(results$I_triage_D == 0))
   expect_true(all(results$R_stepdown == 0))
   expect_true(all(results$D_hosp == 0))
@@ -241,6 +245,7 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
     
     results$I_hosp_R <- results$I_hosp_R_unconf + results$I_hosp_R_conf
     results$I_hosp_D <- results$I_hosp_D_unconf + results$I_hosp_D_conf
+    results$I_triage_R <- results$I_triage_R_unconf + results$I_triage_R_conf
     
     #check that there are hospital cases in the right compartment
     expect_true(any(results[[cases]] > 0))
@@ -360,6 +365,7 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
       results <- mod$transform_variables(tmp)
       results$I_hosp_R <- results$I_hosp_R_unconf + results$I_hosp_R_conf
       results$I_hosp_D <- results$I_hosp_D_unconf + results$I_hosp_D_conf
+      results$I_triage_R <- results$I_triage_R_unconf + results$I_triage_R_conf
       if (any(results[[compartment_name]] > 0)){
         check_cases <- TRUE
       }
@@ -412,6 +418,7 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
       results <- mod$transform_variables(tmp)
       results$I_hosp_R <- results$I_hosp_R_unconf + results$I_hosp_R_conf
       results$I_hosp_D <- results$I_hosp_D_unconf + results$I_hosp_D_conf
+      results$I_triage_R <- results$I_triage_R_unconf + results$I_triage_R_conf
       if (any(results[[compartment_name]] > 0)){
         check_cases <- TRUE
       }
@@ -457,14 +464,18 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
     iter <- iter + 1
     tmp <- mod$run(t)
     results <- mod$transform_variables(tmp)
-    if (all(c(any(results$I_hosp_R_conf > 0)),any(results$I_hosp_D_conf > 0))){
+    if (all(c(any(results$I_hosp_R_conf > 0),
+              any(results$I_hosp_D_conf > 0),
+              any(results$I_triage_R_conf > 0)))){
       check_cases <- TRUE
     }
   }
   expect_true(all(results$I_hosp_R_unconf == 0))
-  expect_true(any(results$I_hosp_R_conf == 0))
+  expect_true(any(results$I_hosp_R_conf > 0))
   expect_true(all(results$I_hosp_D_unconf == 0))
-  expect_true(any(results$I_hosp_D_conf == 0))
+  expect_true(any(results$I_hosp_D_conf > 0))
+  expect_true(all(results$I_triage_R_unconf == 0))
+  expect_true(any(results$I_hosp_R_conf > 0))
 }
 )
 
@@ -486,14 +497,18 @@ test_that("No one is unconfirmed, if p_admit_conf = 0 and gamma_test = 0", {
     iter <- iter + 1
     tmp <- mod$run(t)
     results <- mod$transform_variables(tmp)
-    if (all(c(any(results$I_hosp_R_unconf > 0)),any(results$I_hosp_D_unconf > 0))){
+    if (all(c(any(results$I_hosp_R_unconf > 0),
+              any(results$I_hosp_D_unconf > 0),
+              any(results$I_triage_R_unconf > 0)))){
       check_cases <- TRUE
     }
   }
-  expect_true(any(results$I_hosp_R_unconf == 0))
+  expect_true(any(results$I_hosp_R_unconf > 0))
   expect_true(all(results$I_hosp_R_conf == 0))
-  expect_true(any(results$I_hosp_D_unconf == 0))
+  expect_true(any(results$I_hosp_D_unconf > 0))
   expect_true(all(results$I_hosp_D_conf == 0))
+  expect_true(any(results$I_triage_R_unconf > 0))
+  expect_true(all(results$I_triage_R_conf == 0))
 }
 )
 
@@ -534,5 +549,9 @@ test_that("Confirmation in one time-step, if p_admit_conf = 0 and gamma_test = I
   expect_true(all(results$I_hosp_D_conf[,,1,] == 0))
   expect_true(all(results$I_hosp_D_conf[2:t_max,,2,] == results$I_hosp_D_unconf[1:(t_max-1),,1,]))
   expect_true(all(results$I_hosp_D_unconf[,,2,] == 0))
+  #check hosp_D
+  expect_true(all(results$I_triage_R_conf[,,1,] == 0))
+  expect_true(all(results$I_triage_R_conf[2:t_max,,2,] == results$I_triage_R_unconf[1:(t_max-1),,1,]))
+  expect_true(all(results$I_triage_R_unconf[,,2,] == 0))
 }
 )
