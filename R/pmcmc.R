@@ -465,7 +465,7 @@ run_mcmc_chain <- function(inputs,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- offset_to_start_date(first_data_date, res$start_date)
+  res$start_date <- sircovid_date_to_date(res$start_date)
   
   out <- list('inputs' = inputs, 
               'results' = as.data.frame(res),
@@ -475,7 +475,7 @@ run_mcmc_chain <- function(inputs,
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- offset_to_start_date(first_data_date, proposals$start_date)
+   proposals$start_date <- sircovid_date_to_date(proposals$start_date)
    out$proposals <- proposals
  }
  
@@ -511,7 +511,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   # Update particle filter parameters from pars
   for (par in names(pars)) {
     if (par == "start_date") {
-      start_date <- offset_to_start_date(data$date[1], pars[[par]])
+      start_date <- sircovid_date_to_date(pars[[par]])
     } else if (par == "beta_start") {
       beta_start <- pars[[par]]
     } else if (par == "beta_end") {
@@ -638,7 +638,7 @@ summary.pmcmc <- function(object, ...) {
   
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
-  summ$start_date <- offset_to_start_date(data_start_date, summ$start_date)
+  summ$start_date <- sircovid_date_to_date(summ$start_date)
   summ$start_date <- as.Date(summ$start_date, origin="2019-12-31")
   summ[c('2.5%', '97.5%', 'min', 'max'), 'start_date'] <- summ[c('97.5%', '2.5%', 'max', 'min'), 'start_date']
 
