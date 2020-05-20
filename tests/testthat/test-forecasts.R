@@ -272,7 +272,7 @@ test_that("sample_pmcmc works with new model", {
                       n_sample = n_sample, 
                       n_particles = 10,
                       forecast_days = 0)
-  
+  browser()
   model <- res$inputs$model$odin_model(user = res$inputs$model_params)
   # check length based on model and dates
   days_between <- length( min(res$param_grid$start_date) : tail(rownames(res$trajectories[,,1]),1))

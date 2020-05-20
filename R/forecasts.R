@@ -140,8 +140,7 @@ sample_pmcmc <- function(mcmc_results,
   
   forecasts <- function(sampled_pars) {
     pars <- as.list(sampled_pars)
-    pars$start_date <- start_date_to_offset(first_data_date = mcmc_results$inputs$data$date[1],
-                                            start_date = pars$start_date)
+    pars$start_date <- sircovid_date(pars$start_date)
     trace <- calc_loglikelihood(pars, 
                                 mcmc_results$inputs$data, 
                                 mcmc_results$inputs$sircovid_model, 
@@ -286,7 +285,7 @@ traces_to_trajectories <- function(traces) {
   max_rows <- max(num_rows)
   seq_max <- seq_len(max_rows)
   max_date_names <- rownames(traces[[which.max(unlist(lapply(traces, nrow)))]])
-  
+  max_date_names <- as.character(sircovid_date_to_date(as.numeric(max_date_names)))
   trajectories <- array(NA, 
                         dim = c(max_rows, ncol(traces[[1]]), length(traces)),
                         dimnames = list(max_date_names, NULL, NULL))
