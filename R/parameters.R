@@ -233,6 +233,10 @@ generate_parameters <- function(
   parameter_list$hosp_transmission <- hosp_transmission
   parameter_list$ICU_transmission <- ICU_transmission
   parameter_list$comm_D_transmission <- comm_D_transmission
+  
+  if ("sircovid_serology" %in% class(sircovid_model)){
+   parameter_list$gamma_test <- sircovid_model$gammas[["test"]] 
+  }
 
   # Remove parameters unused by odin
   parameter_list$age_bin_starts <- NULL
