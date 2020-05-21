@@ -416,7 +416,7 @@ sircovid_date <- function(date) {
 ##' 
 ##' @import lubridate
 ##' 
-##' 
+
 sircovid_date_as_Date <- function(sircovid_date)
 {
   if (class(sircovid_date) != "numeric") {
