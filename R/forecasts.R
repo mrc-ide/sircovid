@@ -218,9 +218,9 @@ sum_over_compartments <- function(sample_grid_res) {
   ## Compute deaths, icu and hosptialised:
   if ("sircovid_serology" %in% class(sample_grid_res$inputs$model)){
     totals$deaths <- diff(totals$D_hosp)
-    totals$icu <- totals$I_ICU_R + totals$I_ICU_D
-    totals$hosp <- totals$I_triage_R + totals$I_triage_D + totals$I_hosp_R + totals$I_hosp_D +
-      totals$I_ICU_R + totals$I_ICU_D + totals$R_stepdown
+    totals$icu <- totals$I_ICU_R_conf + totals$I_ICU_D_conf
+    totals$hosp <- totals$I_triage_R_conf + totals$I_triage_D_conf + totals$I_hosp_R_conf + totals$I_hosp_D_conf +
+      totals$I_ICU_R_conf + totals$I_ICU_D_conf + totals$R_stepdown_conf
   } else {
     totals$deaths <- diff(totals$D)
     totals$icu <- totals$I_ICU_R + totals$I_ICU_D
@@ -242,7 +242,7 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
   if (what == "ICU") {
     if ("sircovid_serology" %in% class(x$inputs$model)){
       index <- c(idx$I_ICU_D_conf, idx$I_ICU_R_conf) - 1L
-      ylab <- "Confirmed covid patients in ICU"
+      ylab <- "Confirmed covid-19 patients in ICU"
     } else {
       index <- c(idx$I_ICU_D, idx$I_ICU_R) - 1L
       ylab <- "ICU" 
@@ -257,7 +257,7 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
   } else if (what == "general") {
     if ("sircovid_serology" %in% class(x$inputs$model)){
       index <- c(idx$I_triage_R_conf, idx$I_triage_D_conf, idx$I_hosp_R_conf, idx$I_hosp_D_conf, idx$R_stepdown_conf) - 1L
-      ylab <- "Confirmed covid patients in general beds"
+      ylab <- "Confirmed covid-19 patients in general beds"
     } else {
       index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
       ylab <- "General beds" 
@@ -293,7 +293,7 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
     )
   } else if (what == "admitted") {
     index <- c(idx$cum_admit_conf) - 1L
-    ylab <- "Covid-confirmed admissions"
+    ylab <- "Patients admitted with covid-19"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       out <- c(0, diff(rowSums(x$trajectories[, index, y, drop = FALSE], na.rm = TRUE)))
       names(out)[1] <- rownames(x$trajectories)[1]
@@ -309,7 +309,7 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
     
   } else if (what == "new") {
     index <- c(idx$cum_new_conf) - 1L
-    ylab <- "Newly covid-confirmed inpatients"
+    ylab <- "Inpatients newly-diagnosed with covid-19"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       out <- c(0, diff(rowSums(x$trajectories[, index, y, drop = FALSE], na.rm = TRUE)))
       names(out)[1] <- rownames(x$trajectories)[1]
