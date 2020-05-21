@@ -165,7 +165,7 @@ pmcmc <- function(data,
   # Check pars_init input
   #
   if (!all(c("names", "init", "min", "max", "discrete") %in% colnames(pars_to_sample))) {
-    stop("pars_to_samples must contain columns 'names', 'init', 'min', 'max' and 'discrete'")
+    stop("pars_to_sample must contain columns 'names', 'init', 'min', 'max' and 'discrete'")
   }
   par_names <- as.character(pars_to_sample$names)
   
@@ -518,7 +518,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
     } else if (par == "beta_pl") {
       beta_pl <- pars[[par]]
     } else if (par %in% names(model_params)) {
-      model_params[[par]] <- pars[[par]]
+      model_params[[par]] <- model_params[[par]] * pars[[par]] / max(model_params[[par]])
     } else if (par %in% names(pars_obs)) {
       pars_obs[[par]] <- pars[[par]]
     } else {
@@ -690,7 +690,7 @@ plot.pmcmc <- function(x, ...) {
   
   par( bty = 'n',
        mfcol = c(n_pars, n_pars + 1L),
-       mar = c(3,3,2,1),
+       mar = c(2.5,2.5,2,1.5),
        mgp = c(1.5, 0.5, 0), 
        oma = c(1,1,1,1))
   
@@ -817,7 +817,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   
   par( bty = 'n',
        mfcol = c(n_pars, n_pars + 1L),
-       mar = c(3,3,2,1),
+       mar = c(2.5,2.5,1.5,0),
        mgp = c(1.5, 0.5, 0), 
        oma = c(1,1,1,1))
   
@@ -840,9 +840,12 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
              font.main = 1
         )
         
-        mapply(FUN = plot_hists, 
+        mapply(FUN = function(h, col) {
+          plot_hists(h = h, 
+                     col = col, 
+                     breaks = bs)
+        }, 
                h = hists[[par_name]],
-               breaks = bs,
                col = cols_trace)
         
         
@@ -856,7 +859,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
       } else if (i > j) { # print rho on upper triangle
         plot.new()
         text(x = 0.5, 
-             y=0.5, 
+             y=0.5, cex = 1.5,
              labels = paste('r =', 
                             summ$corr_mat[i, j]))
       }
@@ -889,6 +892,6 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
     }
   }, 
   par_name = par_names, 
-  leg = c(TRUE, FALSE, FALSE))
+  leg = c(TRUE, rep(FALSE, length(par_names) - 1)))
   
 }

@@ -5,17 +5,26 @@
 \title{sircovid date}
 \usage{
 sircovid_date(date)
+
+sircovid_date(date)
 }
 \arguments{
 \item{date}{Date as a string, or a format otherwise understood by lubridate}
 }
 \value{
 days that \code{date} is after the beginning of 2020
+
+days that \code{date} is after the beginning of 2020
 }
 \description{
 Convert a date into the representation used in the sircovid package,
 which is days since the start of 2020 (i.e. 2020-01-01 = 1)
+
+Convert a date into the representation used in the sircovid package,
+which is days since the start of 2020 (i.e. 2020-01-01 = 1)
 }
 \details{
+Only apply this once, to data or input parameters
+
 Only apply this once, to data or input parameters
 }
