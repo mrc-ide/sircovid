@@ -1,6 +1,11 @@
+# sircovid 0.2.36
+
+- Allow sampling of parameters with age-dependent structure
+- Fix bug in plot.pmcmc_list
+
 # sircovid 0.2.35
 
-- Fix bug in plot.pmcmc_list
+- remove date offsets from pMCMC
 
 # sircovid 0.2.34
 

@@ -31,7 +31,7 @@ test_that("pmcmc runs with beta_pl", {
     names=c('beta_start', 'beta_end', 'beta_pl', 'start_date'),
     init=c(0.14, 0.14*0.238, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0, 0),
-    max=c(1, 1, 1, 1e6),
+    max=c(1, 1, 1, sircovid_date("2020-03-15")),
     discrete=c(FALSE, FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
@@ -42,7 +42,6 @@ test_that("pmcmc runs with beta_pl", {
   proposal_kernel <- diag(nrow(pars_to_sample)) * 0.01^2
   row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample$names
   proposal_kernel['start_date', 'start_date'] <- 25
-  
   set.seed(2)
   X2 <- pmcmc(
     data = data,
@@ -54,7 +53,6 @@ test_that("pmcmc runs with beta_pl", {
     model_params = model_params,
     pars_obs = pars_obs
   )
-  
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
@@ -100,7 +98,7 @@ test_that("pmcmc runs without error", {
     names=c('beta_start', 'start_date'),
     init=c(0.14, sircovid_date("2020-02-07")),
     min=c(0, 0),
-    max=c(1, 1e6),
+    max=c(1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, TRUE),
     stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
@@ -127,7 +125,6 @@ test_that("pmcmc runs without error", {
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
   expect_equivalent(X[-1], cmp[-1])
-  
   # Plots run, but not checked
   plot(X)
   # run summary method
@@ -142,7 +139,7 @@ test_that("pmcmc runs without error", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
@@ -191,7 +188,7 @@ test_that("pmcmc runs without error", {
  expect_equal(object = Z$results$beta_start,
               expected = rep(Z$inputs$pars$pars_init$beta_start, n_mcmc + 1))
  expect_equal(object = Z$results$start_date,
-              expected = rep(Z$inputs$pars$pars_init$start_date, n_mcmc + 1))
+              expected = rep(lubridate::as_date("2019-12-31") + Z$inputs$pars$pars_init$start_date, n_mcmc + 1))
  expect_true(!all(diff(Z$results$log_likelihood) == 0))
  expect_equal(dim(Z$proposals), c(n_mcmc + 1L, 7))
 
@@ -245,7 +242,7 @@ test_that("pmcmc with new model", {
     names=c('beta_start', 'start_date'),
     init=c(0.14, sircovid_date("2020-02-07")),
     min=c(0, 0),
-    max=c(1, 1e6),
+    max=c(1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, TRUE),
     stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
@@ -270,7 +267,6 @@ test_that("pmcmc with new model", {
                        c('beta_start', 'start_date'),
                        c('beta_start', 'start_date')))
   )
-
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
@@ -283,7 +279,7 @@ test_that("pmcmc with new model", {
     names=c('start_date', 'beta_start'),
     init=c(sircovid_date("2020-02-07"), 0.14),
     min=c(0, 0),
-    max=c(1e6, 1),
+    max=c(sircovid_date("2020-03-16"), 1),
     discrete=c(TRUE, FALSE),
     stringsAsFactors = FALSE)
   set.seed(1)
@@ -341,7 +337,7 @@ test_that("pmcmc with new model", {
           0),
     max=c(1,
           1,
-          1e6,
+          sircovid_date("2020-03-16"),
           1,
           1,
           1,
@@ -401,7 +397,7 @@ test_that("pmcmc with new model", {
     names=c('start_date', 'beta_start', 'phi_general'),
     init=c(sircovid_date("2020-02-07"), 0.14, 0.95),
     min=c(0, 0, 0),
-    max=c(1e6, 1, 1),
+    max=c(sircovid_date("2020-03-16"), 1, 1),
     discrete=c(TRUE, FALSE, FALSE),
     stringsAsFactors = FALSE)
   X_reordered <- pmcmc(
@@ -455,7 +451,7 @@ test_that("pmcmc will run with multiple chains" , {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
@@ -519,7 +515,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   pars_lprior = list('beta_start' = function(pars) log(1e-10),
@@ -584,7 +580,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date(data$date[3])),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -628,7 +624,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -659,7 +655,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(-0.01, 0.03, sircovid_date("2020-02-01")),
     min=c(-1, -1, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE) 
   expect_error(
@@ -681,7 +677,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.123, -0.03, sircovid_date("2020-02-01")),
     min=c(-1, -1, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -704,7 +700,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, as.character(sircovid_date(data$date[1]))),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -749,7 +745,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -774,7 +770,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, 0.5, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -796,7 +792,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -823,7 +819,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date'),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07")),
     min=c(0, 0, 0),
-    max=c(1, 1, 1e6),
+    max=c(1, 1, sircovid_date("2020-03-16")),
     discrete=c(FALSE, FALSE, TRUE),
     stringsAsFactors = FALSE)
   expect_error(
@@ -870,7 +866,7 @@ test_that("pmcmc error cases", {
     names=c('beta_start', 'beta_end', 'start_date', "amma_triage"),
     init=c(0.14, 0.14*0.238, sircovid_date("2020-02-07"), 0.5099579),
     min=c(0, 0, 0, 0),
-    max=c(1, 1, 1e6, 1),
+    max=c(1, 1, sircovid_date("2020-03-16"), 1),
     discrete=c(FALSE, FALSE, TRUE, FALSE),
     stringsAsFactors = FALSE)
   proposal_kernel <- matrix(c(0.001^2, 0, 0, 0,

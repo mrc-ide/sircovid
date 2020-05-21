@@ -207,7 +207,7 @@ ll_nbinom <- function(data, model, phi, k, exp_noise) {
 plot_particles <- function(particles, ylab, title, col = "#44111144") {
   ## Need to set plot up first to get the dates to render on the axis
   ## (matplot does not cope with this)
-  dates <- as.Date(as.numeric(rownames(particles)), origin="2019-12-31")
+  dates <- sircovid_date_as_Date(as.numeric(rownames(particles)))
   plot(dates, particles[, 1], type = "n", ylab = ylab, ylim = range(particles, na.rm = TRUE), main = title)
   ## Individual traces
   matlines(dates, particles, col=col, lty = 1)
