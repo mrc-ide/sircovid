@@ -415,7 +415,7 @@ sircovid_date <- function(date) {
 ##' @return \code{date} 
 ##' 
 ##' @import lubridate
-##' 
+##' @export
 
 sircovid_date_as_Date <- function(sircovid_date)
 {
