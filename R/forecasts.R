@@ -240,8 +240,13 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
   
   # what are we plotting
   if (what == "ICU") {
-    index <- c(idx$I_ICU_D, idx$I_ICU_R) - 1L
-    ylab <- "ICU"
+    if ("sircovid_serology" %in% class(x$inputs$model)){
+      index <- c(idx$I_ICU_D_conf, idx$I_ICU_R_conf) - 1L
+      ylab <- "Confirmed covid patients in ICU"
+    } else {
+      index <- c(idx$I_ICU_D, idx$I_ICU_R) - 1L
+      ylab <- "ICU" 
+    }
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[, index, y], na.rm = TRUE)
     },
@@ -251,11 +256,12 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
     points(as.Date(x$inputs$data$date), x$inputs$data$itu / x$inputs$pars_obs$phi_ICU, pch = 19)
   } else if (what == "general") {
     if ("sircovid_serology" %in% class(x$inputs$model)){
-      index <- c(idx$I_triage_R, idx$I_triage_D, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
+      index <- c(idx$I_triage_R_conf, idx$I_triage_D_conf, idx$I_hosp_R_conf, idx$I_hosp_D_conf, idx$R_stepdown_conf) - 1L
+      ylab <- "Confirmed covid patients in general beds"
     } else {
       index <- c(idx$I_triage, idx$I_hosp_R, idx$I_hosp_D, idx$R_stepdown) - 1L
+      ylab <- "General beds" 
     }
-    ylab <- "General beds"
     particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
       rowSums(x$trajectories[, index, y], na.rm = TRUE)
     },
@@ -285,8 +291,40 @@ plot.sircovid_forecast <- function(x, ..., what = "ICU", title = NULL, col = 'gr
            x$inputs$data$deaths / x$inputs$pars_obs$phi_death,
            pch = 19
     )
+  } else if (what == "admitted") {
+    index <- c(idx$cum_admit_conf) - 1L
+    ylab <- "Covid-confirmed admissions"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      out <- c(0, diff(rowSums(x$trajectories[, index, y, drop = FALSE], na.rm = TRUE)))
+      names(out)[1] <- rownames(x$trajectories)[1]
+      out
+    },
+    FUN.VALUE = numeric(dim(x$trajectories)[1])
+    )
+    plot_particles(particles, ylab = ylab, title = title, col = col)
+    points(as.Date(x$inputs$data$date),
+           x$inputs$data$admitted / x$inputs$pars_obs$phi_admitted,
+           pch = 19
+    )
+    
+  } else if (what == "new") {
+    index <- c(idx$cum_new_conf) - 1L
+    ylab <- "Newly covid-confirmed inpatients"
+    particles <- vapply(seq_len(dim(x$trajectories)[3]), function(y) {
+      out <- c(0, diff(rowSums(x$trajectories[, index, y, drop = FALSE], na.rm = TRUE)))
+      names(out)[1] <- rownames(x$trajectories)[1]
+      out
+    },
+    FUN.VALUE = numeric(dim(x$trajectories)[1])
+    )
+    plot_particles(particles, ylab = ylab, title = title, col = col)
+    points(as.Date(x$inputs$data$date),
+           x$inputs$data$new / x$inputs$pars_obs$phi_new,
+           pch = 19
+    )
+    
   } else {
-    stop("Requested what must be one of 'ICU', 'deaths' or 'general'")
+    stop("Request what must be one of 'ICU', 'deaths', 'general', 'admitted' or 'new'")
   }
 }
 
