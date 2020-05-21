@@ -501,7 +501,6 @@ test_that("pmcmc will run with multiple chains" , {
   
   # Summary run, but not checked
   summary(X, burn_in = 1)
-  
   ## plot called but not checked
   plot(X, burn_in = 1)
   

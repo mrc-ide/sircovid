@@ -1,6 +1,11 @@
-# sircovid 0.2.36
+# sircovid 0.2.37
 
 - 3rd model added to package - serology_model
+
+# sircovid 0.2.36
+
+- Allow sampling of parameters with age-dependent structure
+- Fix bug in plot.pmcmc_list
 
 # sircovid 0.2.35
 

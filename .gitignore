@@ -11,3 +11,4 @@ sircovid_*.tar.gz
 *.o
 *.so
 *.dll
+.DS_Store

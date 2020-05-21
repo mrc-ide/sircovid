@@ -259,6 +259,33 @@ generate_parameters <- function(
   parameter_list
 }
 
+
+##' Convert a date into the representation used in the sircovid package,
+##' which is days since the start of 2020 (i.e. 2020-01-01 = 1)
+##' 
+##' Only apply this once, to data or input parameters
+##' 
+##' @title sircovid date
+##' 
+##' @param date Date as a string, or a format otherwise understood by lubridate
+##' 
+##' @return days that \code{date} is after the beginning of 2020
+##' 
+##' @import lubridate
+##'
+##' @export 
+sircovid_date <- function(date) {
+  days_into_2020 <- as.numeric(lubridate::as_date(date) - lubridate::as_date('2019-12-31'))
+  if (any(days_into_2020 < 0)) {
+    stop("Negative dates, sircovid_date likely applied twice")
+  }
+  days_into_2020
+}
+
+#
+# Internal functions
+#
+
 ##' General parameter creation for use with any model
 ##' 
 ##' @title Create parameters base
@@ -327,7 +354,6 @@ generate_parameters_base <- function(
   #
   # Set up time-varying beta
   # Times are in days from first day supplied
-  beta_times <- beta_times
   beta_t <- normalise_beta(beta_times, dt)
 
   # 
@@ -409,7 +435,7 @@ generate_parameters_base <- function(
 ##' @return days that \code{date} is after the beginning of 2020
 ##' 
 ##' @import lubridate
-##' 
+##' @export
 sircovid_date <- function(date) {
   days_into_2020 <- as.numeric(lubridate::as_date(date) - lubridate::as_date('2019-12-31'))
   if (any(days_into_2020 < 0)) {
@@ -418,8 +444,21 @@ sircovid_date <- function(date) {
   days_into_2020
 }
 
-# Converts dates from from sircovid_Date as used in the MCMC to a Date
-# Automatically converts type
+
+
+##' Convert a date from the representation used in the sircovid package,
+##' which is days since the start of 2020 (i.e. 2020-01-01 = 1) into 
+##' a lubridate 
+##' 
+##' @title sircovid_date_as_Date
+##' 
+##' @param sircovid_date numeric days since the start of 2020 (i.e. 2020-01-01 = 1)
+##' 
+##' @return \code{date} 
+##' 
+##' @import lubridate
+##' @export
+
 sircovid_date_as_Date <- function(sircovid_date)
 {
   if (class(sircovid_date) != "numeric") {
@@ -432,7 +471,6 @@ sircovid_date_as_Date <- function(sircovid_date)
 #
 # Internal functions
 #
-
 # Generates vector of times for beta changes, in the same
 # terms as the odin code
 normalise_beta <- function(beta_times, dt) {
