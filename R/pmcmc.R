@@ -518,7 +518,7 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
     } else if (par == "beta_pl") {
       beta_pl <- pars[[par]]
     } else if (par %in% names(model_params)) {
-      model_params[[par]] <- pars[[par]]
+      model_params[[par]] <- model_params[[par]] * pars[[par]] / max(model_params[[par]])
     } else if (par %in% names(pars_obs)) {
       pars_obs[[par]] <- pars[[par]]
     } else {
