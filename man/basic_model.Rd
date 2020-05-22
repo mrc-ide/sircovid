@@ -5,6 +5,7 @@
 \title{Basic model}
 \usage{
 basic_model(
+  use_fitted_parameters = FALSE,
   progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, hosp = 2, ICU = 2,
     rec = 2),
   gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, hosp = 2,
@@ -12,6 +13,9 @@ basic_model(
 )
 }
 \arguments{
+\item{use_fitted_parameters}{Override progression_groups and gammas with fitted
+parameters loaded by \code{read_fitted_parameters()}}
+
 \item{progression_groups}{List of number of progression groups in each partition
 needs 'E', 'asympt', 'mild', 'ILI', 'hosp', 'ICU', 'rec'}
 

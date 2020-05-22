@@ -1,3 +1,8 @@
+# sircovid 0.3.0
+
+- 3rd model added to package - serology_model
+- also now split the hospital compartment into confirmed and unconfirmed
+
 # sircovid 0.2.36
 
 - Allow sampling of parameters with age-dependent structure

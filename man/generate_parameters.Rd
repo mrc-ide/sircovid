@@ -16,6 +16,7 @@ generate_parameters(
   trans_increase = c(1),
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
+  comm_D_transmission = 0.05,
   dt = 0.25,
   use_polymod_pop = FALSE
 )
@@ -44,6 +45,8 @@ in a correspond vector of age bins in \code{bins}.}
 \item{hosp_transmission}{Transmission rate of hospital cases}
 
 \item{ICU_transmission}{Tranmissions rate of ICU cases}
+
+\item{comm_D_transmission}{Transmission rate of cases dying in the community}
 
 \item{dt}{Time-step to run the model in days}
 

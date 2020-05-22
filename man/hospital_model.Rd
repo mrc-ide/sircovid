@@ -17,10 +17,10 @@ hospital_model(
 parameters loaded by \code{read_fitted_parameters()}}
 
 \item{progression_groups}{List of number of progression groups in each partition
-needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'}
+needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown'}
 
 \item{gammas}{List of exponential distribution rates for time in each partition
-needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'rec'}
+needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown'}
 }
 \description{
 Create a hospital model

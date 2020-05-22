@@ -114,6 +114,8 @@ generate_beta <- function(beta_start,
 ##'
 ##' @param ICU_transmission Tranmissions rate of ICU cases
 ##' 
+##' @param comm_D_transmission Transmission rate of cases dying in the community
+##' 
 ##' @param dt Time-step to run the model in days
 ##'   
 ##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
@@ -136,6 +138,7 @@ generate_parameters <- function(
   trans_increase = c(1),
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
+  comm_D_transmission = 0.05,
   dt = 0.25,
   use_polymod_pop = FALSE) {
   
@@ -158,20 +161,7 @@ generate_parameters <- function(
   # Set the initial conditions for each partition
   # S0 = N (set in generate_parameters_base), everything else zero
   #
-  if (class(sircovid_model)[1] == "sircovid_hospital") {
-    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
-    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
-    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
-    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
-    parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
-    parameter_list$I0_hosp_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
-    parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
-    parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
-    parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
-    parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
-    parameter_list$R0 <- rep(0, parameter_list$N_age)
-    parameter_list$D0 <- rep(0, parameter_list$N_age)
-  } else if (class(sircovid_model)[1] == "sircovid_basic") {
+  if ("sircovid_basic" %in% class(sircovid_model)) {
     parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
     parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
     parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
@@ -181,6 +171,44 @@ generate_parameters <- function(
     parameter_list$R0_hosp <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$rec, parameter_list$trans_classes))
     parameter_list$R0 <- rep(0, parameter_list$N_age)
     parameter_list$D0 <- rep(0, parameter_list$N_age)
+  } else if ("sircovid_hospital" %in% class(sircovid_model)) {
+    parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
+    parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
+    parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
+    parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
+    parameter_list$R0 <- rep(0, parameter_list$N_age)
+    if ("sircovid_serology" %in% class(sircovid_model)) {
+      parameter_list$R0_stepdown_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
+      parameter_list$R0_stepdown_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
+      parameter_list$R0_neg <- rep(0, parameter_list$N_age)
+      parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
+      parameter_list$R0_pos <- rep(0, parameter_list$N_age)
+      parameter_list$I0_comm_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$comm_D, parameter_list$trans_classes))
+      parameter_list$I0_hosp_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
+      parameter_list$I0_hosp_D_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
+      parameter_list$I0_hosp_R_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
+      parameter_list$I0_hosp_R_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
+      parameter_list$I0_triage_R_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
+      parameter_list$I0_triage_R_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
+      parameter_list$I0_triage_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
+      parameter_list$I0_triage_D_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
+      parameter_list$I0_ICU_R_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
+      parameter_list$I0_ICU_R_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
+      parameter_list$I0_ICU_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
+      parameter_list$I0_ICU_D_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
+      parameter_list$D0_hosp <- rep(0, parameter_list$N_age)
+      parameter_list$D0_comm <- rep(0, parameter_list$N_age)
+      parameter_list$cum0_admit_conf <- 0
+      parameter_list$cum0_new_conf <- 0
+    } else {
+      parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
+      parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
+      parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
+      parameter_list$I0_hosp_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
+      parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes))
+      parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
+      parameter_list$D0 <- rep(0, parameter_list$N_age)
+    }
   } else {
     stop("Model name not supported")
   }
@@ -204,18 +232,33 @@ generate_parameters <- function(
   }
   parameter_list$hosp_transmission <- hosp_transmission
   parameter_list$ICU_transmission <- ICU_transmission
+  parameter_list$comm_D_transmission <- comm_D_transmission
+  
+  if ("sircovid_serology" %in% class(sircovid_model)){
+   parameter_list$gamma_test <- sircovid_model$gammas[["test"]] 
+  }
 
   # Remove parameters unused by odin
   parameter_list$age_bin_starts <- NULL
-  if (class(sircovid_model)[1] == "sircovid_hospital") {
-    parameter_list$p_recov_hosp <- NULL
-    parameter_list$p_recov_ICU <- NULL
-    parameter_list$p_death_hosp <- NULL
-  } else if (class(sircovid_model)[1] == "sircovid_basic") {
+  if ("sircovid_basic" %in% class(sircovid_model)) {
     parameter_list$p_death_ICU <- NULL
     parameter_list$p_ICU_hosp <- NULL
     parameter_list$p_death_hosp_D <- NULL
-  }           
+    parameter_list$p_seroconversion <- NULL
+    parameter_list$p_death_comm <- NULL
+    parameter_list$comm_D_transmission <- NULL
+    parameter_list$p_admit_conf <- NULL
+  } else if ("sircovid_hospital" %in% class(sircovid_model)) {
+    parameter_list$p_recov_hosp <- NULL
+    parameter_list$p_recov_ICU <- NULL
+    parameter_list$p_death_hosp <- NULL
+    if (!("sircovid_serology" %in% class(sircovid_model))) {
+        parameter_list$p_seroconversion <- NULL
+        parameter_list$p_death_comm <- NULL
+        parameter_list$comm_D_transmission <- NULL
+        parameter_list$p_admit_conf <- NULL
+    }
+  }         
 
   parameter_list
 }
@@ -375,7 +418,10 @@ generate_parameters_base <- function(
                          p_recov_ICU = severity_params$recov_ICU,
                          p_death_ICU = severity_params$death_ICU,
                          p_asympt = severity_params$asympt,
-                         p_sympt_ILI = severity_params$sympt_ILI)
+                         p_sympt_ILI = severity_params$sympt_ILI,
+                         p_seroconversion = severity_params$seroconversion,
+                         p_death_comm = severity_params$death_comm,
+                         p_admit_conf = severity_params$admit_conf)
 
   parameter_list
 }
@@ -503,7 +549,9 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     "Proportion of symptomatic cases hospitalised",
     "Proportion of hospitalised cases getting critical care",
     "Proportion of critical cases dying",
-    "Proportion of non-critical care cases dying")
+    "Proportion of non-critical care cases dying",
+    "Proportion of cases that seroconvert",
+    "Proportion of severe cases dying in the community")
   if (any(!(expected_cols %in% colnames(severity_data)))) {
     missing <- expected_cols[which(!(expected_cols %in% colnames(severity_data)))]
     error_message <- paste("Could not find the following rows in the severity file:", 
@@ -544,6 +592,12 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_death_hosp <- (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
     severity_data[["Proportion of non-critical care cases dying"]]
   
+  p_seroconversion <- severity_data[["Proportion of cases that seroconvert"]]
+  
+  p_death_comm <- severity_data[["Proportion of severe cases dying in the community"]]
+  
+  p_admit_conf <- severity_data[["Proportion of hospitalised cases admitted as confirmed"]]
+  
   list(
     population = population,
     age_bin_starts = age_bins$bin_start,
@@ -556,7 +610,10 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     death_hosp = p_death_hosp,
     death_hosp_D = p_death_hosp_D,
     death_ICU = p_death_ICU,
-    ICU_hosp = p_ICU_hosp)
+    ICU_hosp = p_ICU_hosp,
+    seroconversion = p_seroconversion,
+    death_comm = p_death_comm,
+    admit_conf = p_admit_conf)
 }
 
 ## Gets the population age distribution
