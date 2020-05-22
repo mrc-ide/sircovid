@@ -1,6 +1,7 @@
 # sircovid 0.2.37
 
 - 3rd model added to package - serology_model
+- also now split the hospital compartment into confirmed and unconfirmed
 
 # sircovid 0.2.36
 
