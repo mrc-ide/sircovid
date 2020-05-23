@@ -81,6 +81,7 @@
 ##' @import lubridate
 ##' @importFrom stats rnorm
 ##' @importFrom mvtnorm rmvnorm
+##' @importFrom graphics matplot
 pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
@@ -108,6 +109,7 @@ pmcmc <- function(data,
                                            0.2913861,
                                            0.452381),
                                     min=c(0,
+                                          0,
                                           0,
                                           0,
                                           0,
@@ -871,18 +873,19 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
   n_iter <- nrow(master_chain) / n_chains
   
   mapply(FUN = function(par_name, leg) {
-    plot(x = 1,
-         y = breaks[[par_name]][1],
-         type = 'n', 
-         xlab = 'Iteration', 
-         ylab = par_name, 
-         xlim = c(0, n_iter), 
-         ylim <- range(master_chain[, par_name]))
-    
-    mapply(FUN = plot_traces,
-           trace = traces[[par_name]], 
-           col = cols_trace)
-    
+
+    trace <- do.call(cbind, traces[[par_name]])
+    if(par_name == "start_date") {
+      trace <- lubridate::as_date(trace, origin = "1970-01-01")
+    }
+    matplot(x = seq_len(nrow(trace)),
+            y = trace, 
+            type = "l", 
+            col = cols_trace,
+            lty = 1,
+            xlab = 'Iteration', 
+            ylab = par_name, )
+
     if(leg) {
       legend('top',
              ncol = n_chains, 

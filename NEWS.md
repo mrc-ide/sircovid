@@ -1,3 +1,8 @@
+# sircovid 0.3.1
+
+- fix bug in sum_over_compartments and export
+- add pmcmc and forecasts tests for serology model
+
 # sircovid 0.3.0
 
 - 3rd model added to package - serology_model
