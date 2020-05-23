@@ -211,7 +211,7 @@ sum_over_compartments <- function(sample_grid_res) {
   n <- vapply(index, min, numeric(1)) - 1
   keep <- names(which(n > 0 & n <= ncol(sample_grid_res$trajectories)))
   f <- function(k) {
-    apply(sample_grid_res$trajectories[, k - 1, ], c(1, 3), sum)
+    apply(sample_grid_res$trajectories[, k - 1, , drop = FALSE], c(1, 3), sum)
   }
   totals <- lapply(index[keep], f)
 
