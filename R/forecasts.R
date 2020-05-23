@@ -202,7 +202,15 @@ summary.sircovid_forecast <- function(object, ...,
   d
 }
 
-# Sum sampled model over compartments
+##' Take a sampled grid search produced by \code{\link{sample_grid_scan}} summarise trajectories 
+##' over compartmets
+##' 
+##' @title Summarise trajectories
+##'
+##' @param object Results from \code{\link{sample_grid_scan}}
+##' 
+##' @export
+##' 
 sum_over_compartments <- function(sample_grid_res) {
   index <- odin_index(sample_grid_res$inputs$model$odin_model(
       user = sample_grid_res$inputs$model_params))
