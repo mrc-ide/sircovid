@@ -81,6 +81,7 @@
 ##' @import lubridate
 ##' @importFrom stats rnorm
 ##' @importFrom mvtnorm rmvnorm
+##' @importFrom graphics matplot
 pmcmc <- function(data,
                   n_mcmc, 
                   sircovid_model,
