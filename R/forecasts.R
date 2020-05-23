@@ -207,7 +207,7 @@ summary.sircovid_forecast <- function(object, ...,
 ##' 
 ##' @title Summarise trajectories
 ##'
-##' @param object Results from \code{\link{sample_grid_scan}}
+##' @param sample_grid_res Results from \code{\link{sample_grid_scan}}
 ##' 
 ##' @export
 ##' 

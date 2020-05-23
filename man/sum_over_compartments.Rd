@@ -7,7 +7,7 @@
 sum_over_compartments(sample_grid_res)
 }
 \arguments{
-\item{object}{Results from \code{\link{sample_grid_scan}}}
+\item{sample_grid_res}{Results from \code{\link{sample_grid_scan}}}
 }
 \description{
 Take a sampled grid search produced by \code{\link{sample_grid_scan}} summarise trajectories 
