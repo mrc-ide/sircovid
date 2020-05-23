@@ -878,7 +878,7 @@ plot.pmcmc_list <- function(x, burn_in = 1, ...) {
          xlab = 'Iteration', 
          ylab = par_name, 
          xlim = c(0, n_iter), 
-         ylim <- range(master_chain[, par_name]))
+         ylim <- range(master_chain[, par_name])*c(0.9, 1.1))
     
     mapply(FUN = plot_traces,
            trace = traces[[par_name]], 
