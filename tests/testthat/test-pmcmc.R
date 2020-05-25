@@ -25,7 +25,8 @@ test_that("pmcmc with serology model", {
                     k_new = 2,
                     phi_admitted = 0.95,
                     k_admitted = 2,
-                    exp_noise = 1e6)
+                    exp_noise = 1e6,
+                    p_specificity = 0.9)
   
   par_names <- c('beta_start',
                  'beta_end', 
