@@ -647,11 +647,13 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
+dim(N_tot) <- N_age
+
 #Total population
-N_tot <- sum(S) + sum(R) + sum(D_hosp) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) +
-  sum(I_triage_D_conf) + sum(I_triage_D_unconf) + sum(I_triage_R_conf) + sum(I_triage_R_unconf)  + sum(I_hosp_R_conf) + sum(I_hosp_R_unconf) +
-  sum(I_hosp_D_conf) + sum(I_hosp_D_unconf) + sum(I_ICU_R_conf) + sum(I_ICU_R_unconf) + sum(I_ICU_D_conf) + sum(I_ICU_D_unconf) +
-  sum(R_stepdown_conf) + sum(R_stepdown_unconf) + sum(I_comm_D) + sum(D_comm)
+N_tot[] <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mild[i,,]) + sum(I_ILI[i,,]) +
+  sum(I_triage_D_conf[i,,]) + sum(I_triage_D_unconf[i,,]) + sum(I_triage_R_conf[i,,]) + sum(I_triage_R_unconf[i,,])  + sum(I_hosp_R_conf[i,,]) + sum(I_hosp_R_unconf[i,,]) +
+  sum(I_hosp_D_conf[i,,]) + sum(I_hosp_D_unconf[i,,]) + sum(I_ICU_R_conf[i,,]) + sum(I_ICU_R_unconf[i,,]) + sum(I_ICU_D_conf[i,,]) + sum(I_ICU_D_unconf[i,,]) +
+  sum(R_stepdown_conf[i,]) + sum(R_stepdown_unconf[i,]) + sum(I_comm_D[i,,]) + D_comm[i]
 output(N_tot) <- TRUE
 
 #Total population calculated with seroconversion flow, exclude triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's

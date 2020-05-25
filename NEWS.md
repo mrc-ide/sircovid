@@ -1,3 +1,7 @@
+# sircovid 0.3.2
+
+- add serology to likelihood
+
 # sircovid 0.3.1
 
 - fix bug in sum_over_compartments and export

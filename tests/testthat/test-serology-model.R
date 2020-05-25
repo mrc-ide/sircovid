@@ -12,7 +12,7 @@ test_that("N_tot and N_tot2 stay constant", {
   tmp <- mod$run(t)
   results <- mod$transform_variables(tmp)
   #should be TRUE
-  expect_true(all(results$N_tot == results$N_tot[1]))
+  expect_true(all(t(results$N_tot) == results$N_tot[1,]))
   expect_true(all(results$N_tot2 == results$N_tot2[1]))
 }
 )

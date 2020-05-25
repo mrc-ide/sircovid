@@ -25,7 +25,8 @@ test_that("pmcmc with serology model", {
                     k_new = 2,
                     phi_admitted = 0.95,
                     k_admitted = 2,
-                    exp_noise = 1e6)
+                    exp_noise = 1e6,
+                    p_specificity = 0.9)
   
   par_names <- c('beta_start',
                  'beta_end', 
@@ -60,7 +61,7 @@ test_that("pmcmc with serology model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 597))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 580))
   expect_equivalent(X, cmp)
   
   

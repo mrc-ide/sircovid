@@ -385,6 +385,7 @@ test_that("sample_pmcmc works with serology model", {
   summary(res, what = "deaths")
   summary(res, what = "icu")
   summary(res, what = "hosp")
+  summary(res, what = "infections")
 
   ## Testing plotting
   if (TRUE) {

@@ -225,10 +225,11 @@ sum_over_compartments <- function(sample_grid_res) {
 
   ## Compute deaths, icu and hosptialised:
   if ("sircovid_serology" %in% class(sample_grid_res$inputs$model)){
-    totals$deaths <- diff(totals$D_hosp)
+    totals$deaths <- diff(totals$D_hosp + totals$D_comm)
     totals$icu <- totals$I_ICU_R_conf + totals$I_ICU_D_conf
     totals$hosp <- totals$I_triage_R_conf + totals$I_triage_D_conf + totals$I_hosp_R_conf + totals$I_hosp_D_conf +
       totals$I_ICU_R_conf + totals$I_ICU_D_conf + totals$R_stepdown_conf
+    totals$infections <- -diff(totals$S)
   } else {
     totals$deaths <- diff(totals$D)
     totals$icu <- totals$I_ICU_R + totals$I_ICU_D
