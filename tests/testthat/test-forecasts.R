@@ -164,7 +164,7 @@ test_that("sample_grid_scan works with new model", {
 })
 
 
-test_that("sample_pmcmc works with new model", {
+test_that("sample_pmcmc works with hospital model", {
   set.seed(1)
   
   # grab the data
@@ -293,6 +293,106 @@ test_that("sample_pmcmc works with new model", {
     plot(res, what = "ICU")
     plot(res, what = "deaths")
     plot(res, what = "general")
+  }
+  
+})
+
+
+test_that("sample_pmcmc works with serology model", {
+
+  
+  # grab the data
+  data <- readRDS("serology_model_data.rds")
+  sircovid_model <- serology_model()
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = sircovid_date('2020-01-01'),
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  pars_obs <-  list(phi_general = 0.95,
+                    k_general = 2,
+                    phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death = 1.15,
+                    k_death = 2,
+                    phi_new = 0.95,
+                    k_new = 2,
+                    phi_admitted = 0.95,
+                    k_admitted = 2,
+                    exp_noise = 1e6)
+  
+  par_names <- c('beta_start',
+                 'beta_end', 
+                 'beta_pl',
+                 'start_date',  
+                 'gamma_triage', 
+                 'gamma_hosp_R', 
+                 'gamma_hosp_D', 
+                 'gamma_ICU_R', 
+                 'gamma_ICU_D', 
+                 'gamma_stepdown')
+  
+  
+  n_mcmc <- 10
+  n_particles <- 10
+  set.seed(1)
+  proposal_kernel <- diag(10)*0.001^2
+  rownames(proposal_kernel) <- colnames(proposal_kernel) <- par_names
+  proposal_kernel["start_date", "start_date"] <- 1
+  
+  
+  mcmc_results <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs,
+    proposal_kernel = proposal_kernel, 
+    n_particles = n_particles, 
+    n_chains = 2
+  )
+
+  
+  n_sample <- 2
+  res <- sample_pmcmc(mcmc_results = mcmc_results,
+                      burn_in = 1,
+                      n_sample = n_sample, 
+                      n_particles = 10,
+                      forecast_days = 0)
+  
+  model <- res$inputs$model$odin_model(user = res$inputs$model_params)
+  # check length based on model and dates
+  days_between <- length( sircovid_date(min(res$param_grid$start_date)) : tail(rownames(res$trajectories[,,1]),1))
+  expect_equal(dim(res$trajectories), c(days_between, length(model$initial()), n_sample))
+  
+  # check forecasting
+  forecast_days <- 2
+  res <- sample_pmcmc(mcmc_results = mcmc_results,
+                      burn_in = 1,
+                      n_sample = n_sample, 
+                      n_particles = 10,
+                      forecast_days = forecast_days)
+  expected_total_days <- tail(sircovid_date(data$date), 1) + forecast_days - sircovid_date(min(res$param_grid$start_date)) + 1
+  expect_equal(dim(res$trajectories)[1], expected_total_days)
+  
+  ## Testing summary
+  summary(res, what = "deaths")
+  summary(res, what = "icu")
+  summary(res, what = "hosp")
+
+  ## Testing plotting
+  if (TRUE) {
+    plot(res, what = "ICU")
+    plot(res, what = "deaths")
+    plot(res, what = "general")
+    plot(res, what = "admitted")
+    plot(res, what = "new")
   }
   
 })
