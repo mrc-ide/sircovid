@@ -518,7 +518,7 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
 }
 )
 
-test_that("No one is unconfirmed, if p_admit_conf = 0 and gamma_test = 0", {
+test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
   sircovid_model <- serology_model()
   pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
   pars_model$p_admit_conf[] <- 0
