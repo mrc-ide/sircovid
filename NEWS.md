@@ -1,3 +1,7 @@
+# sircovid 0.3.3
+
+- Accounting for false negatives in serology likelihood
+
 # sircovid 0.3.2
 
 - add serology to likelihood
