@@ -6,6 +6,7 @@
 #Number of age classes & number of transmissibility classes
 N_age <- user()
 trans_classes <- user()
+test_classes <- user()
 
 #definition of the time-step and output as "time"
 dt <- user()
@@ -41,6 +42,7 @@ update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
 update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_I_hosp_D_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
+update(I_triage_R[,,,]) <- I_triage_R[i,j,k,l]
 
 output(beta) <- TRUE
 
@@ -316,6 +318,7 @@ initial(D_hosp[]) <- D0_hosp[i]
 initial(D_comm[]) <- D0_comm[i]
 initial(cum_admit_conf) <- cum0_admit_conf
 initial(cum_new_conf) <- cum0_new_conf
+initial(I_triage_R[,,,]) <- I0_triage_R[i,j,k,l]
 
 ## User defined parameters - default in parentheses:
 
@@ -348,6 +351,7 @@ D0_hosp[] <- user()
 D0_comm[] <- user()
 cum0_admit_conf <- user()
 cum0_new_conf <- user()
+I0_triage_R[,,,] <- user()
 
 #Parameters of the E classes
 s_E <- user()
@@ -482,6 +486,9 @@ dim(aux_II_triage_R_conf) <- c(N_age,s_triage,trans_classes)
 dim(new_I_triage_R_conf) <- c(N_age,s_triage,trans_classes)
 dim(n_II_triage_R_conf) <- c(N_age,s_triage,trans_classes)
 dim(n_I_triage_R_unconf_to_conf) <- c(N_age,s_triage,trans_classes)
+
+dim(I_triage_R) <- c(N_age,s_triage,trans_classes,test_classes)
+dim(I0_triage_R) <- c(N_age,s_triage,trans_classes,test_classes)
 
 #Vectors handling the I_triage_D class
 dim(I_triage_D_unconf) <- c(N_age,s_triage,trans_classes)

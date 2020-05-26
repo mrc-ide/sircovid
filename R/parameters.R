@@ -178,6 +178,7 @@ generate_parameters <- function(
     parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
     parameter_list$R0 <- rep(0, parameter_list$N_age)
     if ("sircovid_serology" %in% class(sircovid_model)) {
+      parameter_list$test_classes <- 2
       parameter_list$R0_stepdown_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_stepdown_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_neg <- rep(0, parameter_list$N_age)
@@ -188,6 +189,7 @@ generate_parameters <- function(
       parameter_list$I0_hosp_D_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
       parameter_list$I0_hosp_R_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
       parameter_list$I0_hosp_R_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_R, parameter_list$trans_classes))
+      parameter_list$I0_triage_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes, parameter_list$test_classes))
       parameter_list$I0_triage_R_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
       parameter_list$I0_triage_R_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
       parameter_list$I0_triage_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
