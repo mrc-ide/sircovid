@@ -179,8 +179,7 @@ generate_parameters <- function(
     parameter_list$R0 <- rep(0, parameter_list$N_age)
     if ("sircovid_serology" %in% class(sircovid_model)) {
       parameter_list$test_classes <- 2L
-      parameter_list$R0_stepdown_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
-      parameter_list$R0_stepdown_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
+      parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$test_classes))
       parameter_list$R0_neg <- rep(0, parameter_list$N_age)
       parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
       parameter_list$R0_pos <- rep(0, parameter_list$N_age)
