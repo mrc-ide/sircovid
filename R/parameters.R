@@ -190,8 +190,7 @@ generate_parameters <- function(
       parameter_list$I0_triage_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes, parameter_list$test_classes))
       parameter_list$I0_triage_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes, parameter_list$test_classes))
       parameter_list$I0_ICU_R <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_R, parameter_list$trans_classes, parameter_list$test_classes))
-      parameter_list$I0_ICU_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
-      parameter_list$I0_ICU_D_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes))
+      parameter_list$I0_ICU_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ICU_D, parameter_list$trans_classes, parameter_list$test_classes))
       parameter_list$D0_hosp <- rep(0, parameter_list$N_age)
       parameter_list$D0_comm <- rep(0, parameter_list$N_age)
       parameter_list$cum0_admit_conf <- 0
