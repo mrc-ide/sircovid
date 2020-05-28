@@ -1,5 +1,9 @@
 # sircovid 0.3.3
 
+- Reparameterised in serology model - p_hosp_ILI now used instead of p_recov_ILI
+
+# sircovid 0.3.3
+
 - Accounting for false negatives in serology likelihood
 
 # sircovid 0.3.2
