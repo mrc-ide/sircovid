@@ -38,10 +38,10 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     phi_new <- pars_obs$phi_new
     k_new <- pars_obs$k_new
     p_specificity <- pars_obs$p_specificity
-    index_general <- c(c(index$I_triage_R_conf),c(index$I_triage_D_conf),c(index$I_hosp_R_conf),c(index$I_hosp_D_conf),c(index$R_stepdown_conf)) - 1L
+    index_general <- c(c(index$I_triage_R[,,,2]),c(index$I_triage_D[,,,2]),c(index$I_hosp_R[,,,2]),c(index$I_hosp_D[,,,2]),c(index$R_stepdown[,,2])) - 1L
     index_admit <- c(index$cum_admit_conf) - 1L
     index_new <- c(index$cum_new_conf) - 1L
-    index_ICU <- c(c(index$I_ICU_R_conf),c(index$I_ICU_D_conf)) - 1L
+    index_ICU <- c(c(index$I_ICU_R[,,,2]),c(index$I_ICU_D[,,,2])) - 1L
     index_D <- c(index$D_hosp,c(index$D_comm)) - 1L
     index_R_pos <- c(index$R_pos) - 1L
     
