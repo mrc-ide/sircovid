@@ -1012,9 +1012,9 @@ typedef struct hospital_with_serology_testing_internal {
   int dim_p_death_comm;
   int dim_p_death_hosp_D;
   int dim_p_death_ICU;
+  int dim_p_hosp_ILI;
   int dim_p_ICU_hosp;
   int dim_p_R_pre;
-  int dim_p_recov_ILI;
   int dim_p_SE;
   int dim_p_seroconversion;
   int dim_p_sympt_ILI;
@@ -1210,6 +1210,7 @@ typedef struct hospital_with_serology_testing_internal {
   double *p_death_hosp_D;
   double *p_death_ICU;
   double p_EE;
+  double *p_hosp_ILI;
   double *p_ICU_hosp;
   double p_II_asympt;
   double p_II_comm_D;
@@ -1222,7 +1223,6 @@ typedef struct hospital_with_serology_testing_internal {
   double p_II_triage;
   double *p_R_pre;
   double p_R_stepdown;
-  double *p_recov_ILI;
   double *p_SE;
   double *p_seroconversion;
   double *p_sympt_ILI;
@@ -4002,9 +4002,9 @@ void hospital_with_serology_testing_finalise(SEXP internal_p) {
     Free(internal->p_death_comm);
     Free(internal->p_death_hosp_D);
     Free(internal->p_death_ICU);
+    Free(internal->p_hosp_ILI);
     Free(internal->p_ICU_hosp);
     Free(internal->p_R_pre);
-    Free(internal->p_recov_ILI);
     Free(internal->p_SE);
     Free(internal->p_seroconversion);
     Free(internal->p_sympt_ILI);
@@ -4171,9 +4171,9 @@ SEXP hospital_with_serology_testing_create(SEXP user) {
   internal->p_death_comm = NULL;
   internal->p_death_hosp_D = NULL;
   internal->p_death_ICU = NULL;
+  internal->p_hosp_ILI = NULL;
   internal->p_ICU_hosp = NULL;
   internal->p_R_pre = NULL;
-  internal->p_recov_ILI = NULL;
   internal->p_SE = NULL;
   internal->p_seroconversion = NULL;
   internal->p_sympt_ILI = NULL;
@@ -4221,8 +4221,8 @@ SEXP hospital_with_serology_testing_create(SEXP user) {
   internal->p_death_comm = NULL;
   internal->p_death_hosp_D = NULL;
   internal->p_death_ICU = NULL;
+  internal->p_hosp_ILI = NULL;
   internal->p_ICU_hosp = NULL;
-  internal->p_recov_ILI = NULL;
   internal->p_seroconversion = NULL;
   internal->p_sympt_ILI = NULL;
   internal->R0 = NULL;
@@ -4975,9 +4975,9 @@ SEXP hospital_with_serology_testing_contents(SEXP internal_p) {
   SET_VECTOR_ELT(contents, 596, ScalarInteger(internal->dim_p_death_comm));
   SET_VECTOR_ELT(contents, 597, ScalarInteger(internal->dim_p_death_hosp_D));
   SET_VECTOR_ELT(contents, 598, ScalarInteger(internal->dim_p_death_ICU));
-  SET_VECTOR_ELT(contents, 599, ScalarInteger(internal->dim_p_ICU_hosp));
-  SET_VECTOR_ELT(contents, 600, ScalarInteger(internal->dim_p_R_pre));
-  SET_VECTOR_ELT(contents, 601, ScalarInteger(internal->dim_p_recov_ILI));
+  SET_VECTOR_ELT(contents, 599, ScalarInteger(internal->dim_p_hosp_ILI));
+  SET_VECTOR_ELT(contents, 600, ScalarInteger(internal->dim_p_ICU_hosp));
+  SET_VECTOR_ELT(contents, 601, ScalarInteger(internal->dim_p_R_pre));
   SET_VECTOR_ELT(contents, 602, ScalarInteger(internal->dim_p_SE));
   SET_VECTOR_ELT(contents, 603, ScalarInteger(internal->dim_p_seroconversion));
   SET_VECTOR_ELT(contents, 604, ScalarInteger(internal->dim_p_sympt_ILI));
@@ -5489,25 +5489,25 @@ SEXP hospital_with_serology_testing_contents(SEXP internal_p) {
   memcpy(REAL(p_death_ICU), internal->p_death_ICU, internal->dim_p_death_ICU * sizeof(double));
   SET_VECTOR_ELT(contents, 795, p_death_ICU);
   SET_VECTOR_ELT(contents, 796, ScalarReal(internal->p_EE));
+  SEXP p_hosp_ILI = PROTECT(allocVector(REALSXP, internal->dim_p_hosp_ILI));
+  memcpy(REAL(p_hosp_ILI), internal->p_hosp_ILI, internal->dim_p_hosp_ILI * sizeof(double));
+  SET_VECTOR_ELT(contents, 797, p_hosp_ILI);
   SEXP p_ICU_hosp = PROTECT(allocVector(REALSXP, internal->dim_p_ICU_hosp));
   memcpy(REAL(p_ICU_hosp), internal->p_ICU_hosp, internal->dim_p_ICU_hosp * sizeof(double));
-  SET_VECTOR_ELT(contents, 797, p_ICU_hosp);
-  SET_VECTOR_ELT(contents, 798, ScalarReal(internal->p_II_asympt));
-  SET_VECTOR_ELT(contents, 799, ScalarReal(internal->p_II_comm_D));
-  SET_VECTOR_ELT(contents, 800, ScalarReal(internal->p_II_hosp_D));
-  SET_VECTOR_ELT(contents, 801, ScalarReal(internal->p_II_hosp_R));
-  SET_VECTOR_ELT(contents, 802, ScalarReal(internal->p_II_ICU_D));
-  SET_VECTOR_ELT(contents, 803, ScalarReal(internal->p_II_ICU_R));
-  SET_VECTOR_ELT(contents, 804, ScalarReal(internal->p_II_ILI));
-  SET_VECTOR_ELT(contents, 805, ScalarReal(internal->p_II_mild));
-  SET_VECTOR_ELT(contents, 806, ScalarReal(internal->p_II_triage));
+  SET_VECTOR_ELT(contents, 798, p_ICU_hosp);
+  SET_VECTOR_ELT(contents, 799, ScalarReal(internal->p_II_asympt));
+  SET_VECTOR_ELT(contents, 800, ScalarReal(internal->p_II_comm_D));
+  SET_VECTOR_ELT(contents, 801, ScalarReal(internal->p_II_hosp_D));
+  SET_VECTOR_ELT(contents, 802, ScalarReal(internal->p_II_hosp_R));
+  SET_VECTOR_ELT(contents, 803, ScalarReal(internal->p_II_ICU_D));
+  SET_VECTOR_ELT(contents, 804, ScalarReal(internal->p_II_ICU_R));
+  SET_VECTOR_ELT(contents, 805, ScalarReal(internal->p_II_ILI));
+  SET_VECTOR_ELT(contents, 806, ScalarReal(internal->p_II_mild));
+  SET_VECTOR_ELT(contents, 807, ScalarReal(internal->p_II_triage));
   SEXP p_R_pre = PROTECT(allocVector(REALSXP, internal->dim_p_R_pre));
   memcpy(REAL(p_R_pre), internal->p_R_pre, internal->dim_p_R_pre * sizeof(double));
-  SET_VECTOR_ELT(contents, 807, p_R_pre);
-  SET_VECTOR_ELT(contents, 808, ScalarReal(internal->p_R_stepdown));
-  SEXP p_recov_ILI = PROTECT(allocVector(REALSXP, internal->dim_p_recov_ILI));
-  memcpy(REAL(p_recov_ILI), internal->p_recov_ILI, internal->dim_p_recov_ILI * sizeof(double));
-  SET_VECTOR_ELT(contents, 809, p_recov_ILI);
+  SET_VECTOR_ELT(contents, 808, p_R_pre);
+  SET_VECTOR_ELT(contents, 809, ScalarReal(internal->p_R_stepdown));
   SEXP p_SE = PROTECT(allocVector(REALSXP, internal->dim_p_SE));
   memcpy(REAL(p_SE), internal->p_SE, internal->dim_p_SE * sizeof(double));
   SET_VECTOR_ELT(contents, 810, p_SE);
@@ -6167,9 +6167,9 @@ SEXP hospital_with_serology_testing_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 596, mkChar("dim_p_death_comm"));
   SET_STRING_ELT(nms, 597, mkChar("dim_p_death_hosp_D"));
   SET_STRING_ELT(nms, 598, mkChar("dim_p_death_ICU"));
-  SET_STRING_ELT(nms, 599, mkChar("dim_p_ICU_hosp"));
-  SET_STRING_ELT(nms, 600, mkChar("dim_p_R_pre"));
-  SET_STRING_ELT(nms, 601, mkChar("dim_p_recov_ILI"));
+  SET_STRING_ELT(nms, 599, mkChar("dim_p_hosp_ILI"));
+  SET_STRING_ELT(nms, 600, mkChar("dim_p_ICU_hosp"));
+  SET_STRING_ELT(nms, 601, mkChar("dim_p_R_pre"));
   SET_STRING_ELT(nms, 602, mkChar("dim_p_SE"));
   SET_STRING_ELT(nms, 603, mkChar("dim_p_seroconversion"));
   SET_STRING_ELT(nms, 604, mkChar("dim_p_sympt_ILI"));
@@ -6365,19 +6365,19 @@ SEXP hospital_with_serology_testing_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 794, mkChar("p_death_hosp_D"));
   SET_STRING_ELT(nms, 795, mkChar("p_death_ICU"));
   SET_STRING_ELT(nms, 796, mkChar("p_EE"));
-  SET_STRING_ELT(nms, 797, mkChar("p_ICU_hosp"));
-  SET_STRING_ELT(nms, 798, mkChar("p_II_asympt"));
-  SET_STRING_ELT(nms, 799, mkChar("p_II_comm_D"));
-  SET_STRING_ELT(nms, 800, mkChar("p_II_hosp_D"));
-  SET_STRING_ELT(nms, 801, mkChar("p_II_hosp_R"));
-  SET_STRING_ELT(nms, 802, mkChar("p_II_ICU_D"));
-  SET_STRING_ELT(nms, 803, mkChar("p_II_ICU_R"));
-  SET_STRING_ELT(nms, 804, mkChar("p_II_ILI"));
-  SET_STRING_ELT(nms, 805, mkChar("p_II_mild"));
-  SET_STRING_ELT(nms, 806, mkChar("p_II_triage"));
-  SET_STRING_ELT(nms, 807, mkChar("p_R_pre"));
-  SET_STRING_ELT(nms, 808, mkChar("p_R_stepdown"));
-  SET_STRING_ELT(nms, 809, mkChar("p_recov_ILI"));
+  SET_STRING_ELT(nms, 797, mkChar("p_hosp_ILI"));
+  SET_STRING_ELT(nms, 798, mkChar("p_ICU_hosp"));
+  SET_STRING_ELT(nms, 799, mkChar("p_II_asympt"));
+  SET_STRING_ELT(nms, 800, mkChar("p_II_comm_D"));
+  SET_STRING_ELT(nms, 801, mkChar("p_II_hosp_D"));
+  SET_STRING_ELT(nms, 802, mkChar("p_II_hosp_R"));
+  SET_STRING_ELT(nms, 803, mkChar("p_II_ICU_D"));
+  SET_STRING_ELT(nms, 804, mkChar("p_II_ICU_R"));
+  SET_STRING_ELT(nms, 805, mkChar("p_II_ILI"));
+  SET_STRING_ELT(nms, 806, mkChar("p_II_mild"));
+  SET_STRING_ELT(nms, 807, mkChar("p_II_triage"));
+  SET_STRING_ELT(nms, 808, mkChar("p_R_pre"));
+  SET_STRING_ELT(nms, 809, mkChar("p_R_stepdown"));
   SET_STRING_ELT(nms, 810, mkChar("p_SE"));
   SET_STRING_ELT(nms, 811, mkChar("p_seroconversion"));
   SET_STRING_ELT(nms, 812, mkChar("p_sympt_ILI"));
@@ -6794,9 +6794,9 @@ SEXP hospital_with_serology_testing_set_user(SEXP internal_p, SEXP user) {
   internal->dim_p_death_comm = internal->N_age;
   internal->dim_p_death_hosp_D = internal->N_age;
   internal->dim_p_death_ICU = internal->N_age;
+  internal->dim_p_hosp_ILI = internal->N_age;
   internal->dim_p_ICU_hosp = internal->N_age;
   internal->dim_p_R_pre = internal->N_age;
-  internal->dim_p_recov_ILI = internal->N_age;
   internal->dim_p_SE = internal->N_age;
   internal->dim_p_seroconversion = internal->N_age;
   internal->dim_p_sympt_ILI = internal->N_age;
@@ -7111,8 +7111,8 @@ SEXP hospital_with_serology_testing_set_user(SEXP internal_p, SEXP user) {
   internal->p_death_comm = (double*) user_get_array(user, false, internal->p_death_comm, "p_death_comm", NA_REAL, NA_REAL, 1, internal->dim_p_death_comm);
   internal->p_death_hosp_D = (double*) user_get_array(user, false, internal->p_death_hosp_D, "p_death_hosp_D", NA_REAL, NA_REAL, 1, internal->dim_p_death_hosp_D);
   internal->p_death_ICU = (double*) user_get_array(user, false, internal->p_death_ICU, "p_death_ICU", NA_REAL, NA_REAL, 1, internal->dim_p_death_ICU);
+  internal->p_hosp_ILI = (double*) user_get_array(user, false, internal->p_hosp_ILI, "p_hosp_ILI", NA_REAL, NA_REAL, 1, internal->dim_p_hosp_ILI);
   internal->p_ICU_hosp = (double*) user_get_array(user, false, internal->p_ICU_hosp, "p_ICU_hosp", NA_REAL, NA_REAL, 1, internal->dim_p_ICU_hosp);
-  internal->p_recov_ILI = (double*) user_get_array(user, false, internal->p_recov_ILI, "p_recov_ILI", NA_REAL, NA_REAL, 1, internal->dim_p_recov_ILI);
   internal->p_seroconversion = (double*) user_get_array(user, false, internal->p_seroconversion, "p_seroconversion", NA_REAL, NA_REAL, 1, internal->dim_p_seroconversion);
   internal->p_sympt_ILI = (double*) user_get_array(user, false, internal->p_sympt_ILI, "p_sympt_ILI", NA_REAL, NA_REAL, 1, internal->dim_p_sympt_ILI);
   internal->R0 = (double*) user_get_array(user, false, internal->R0, "R0", NA_REAL, NA_REAL, 1, internal->dim_R0);
@@ -8245,7 +8245,7 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
   }
   for (int i = 1; i <= internal->dim_n_ILI_to_hosp_1; ++i) {
     for (int j = 1; j <= internal->dim_n_ILI_to_hosp_2; ++j) {
-      internal->n_ILI_to_hosp[i - 1 + internal->dim_n_ILI_to_hosp_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_ILI[internal->dim_n_II_ILI_12 * (j - 1) + internal->dim_n_II_ILI_1 * (internal->s_ILI - 1) + i - 1]), 1 - internal->p_recov_ILI[i - 1] - internal->p_death_comm[i - 1]);
+      internal->n_ILI_to_hosp[i - 1 + internal->dim_n_ILI_to_hosp_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_ILI[internal->dim_n_II_ILI_12 * (j - 1) + internal->dim_n_II_ILI_1 * (internal->s_ILI - 1) + i - 1]), internal->p_hosp_ILI[i - 1]);
     }
   }
   for (int i = 1; i <= internal->dim_s_ij_1; ++i) {
@@ -8325,7 +8325,7 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
   }
   for (int i = 1; i <= internal->dim_n_ILI_to_comm_D_1; ++i) {
     for (int j = 1; j <= internal->dim_n_ILI_to_comm_D_2; ++j) {
-      internal->n_ILI_to_comm_D[i - 1 + internal->dim_n_ILI_to_comm_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_ILI[internal->dim_n_II_ILI_12 * (j - 1) + internal->dim_n_II_ILI_1 * (internal->s_ILI - 1) + i - 1] - internal->n_ILI_to_hosp[internal->dim_n_ILI_to_hosp_1 * (j - 1) + i - 1]), internal->p_death_comm[i - 1] / (double) (internal->p_recov_ILI[i - 1] + internal->p_death_comm[i - 1]));
+      internal->n_ILI_to_comm_D[i - 1 + internal->dim_n_ILI_to_comm_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_II_ILI[internal->dim_n_II_ILI_12 * (j - 1) + internal->dim_n_II_ILI_1 * (internal->s_ILI - 1) + i - 1] - internal->n_ILI_to_hosp[internal->dim_n_ILI_to_hosp_1 * (j - 1) + i - 1]), internal->p_death_comm[i - 1] / (double) (1 - internal->p_hosp_ILI[i - 1]));
     }
   }
   for (int i = 1; i <= internal->dim_n_ILI_to_triage_1; ++i) {

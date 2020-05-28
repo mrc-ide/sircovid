@@ -248,6 +248,7 @@ generate_parameters <- function(
     parameter_list$p_death_comm <- NULL
     parameter_list$comm_D_transmission <- NULL
     parameter_list$p_admit_conf <- NULL
+    parameter_list$p_hosp_ILI <- NULL
   } else if ("sircovid_hospital" %in% class(sircovid_model)) {
     parameter_list$p_recov_hosp <- NULL
     parameter_list$p_recov_ICU <- NULL
@@ -257,6 +258,9 @@ generate_parameters <- function(
         parameter_list$p_death_comm <- NULL
         parameter_list$comm_D_transmission <- NULL
         parameter_list$p_admit_conf <- NULL
+        parameter_list$p_hosp_ILI <- NULL
+    } else {
+      parameter_list$p_recov_ILI <- NULL
     }
   }         
 
@@ -414,6 +418,7 @@ generate_parameters_base <- function(
                          p_death_hosp = severity_params$death_hosp,
                          p_death_hosp_D = severity_params$death_hosp_D,
                          p_ICU_hosp = severity_params$ICU_hosp,
+                         p_hosp_ILI = severity_params$hosp_ILI,
                          p_recov_ILI = severity_params$recov_ILI,
                          p_recov_ICU = severity_params$recov_ICU,
                          p_death_ICU = severity_params$death_ICU,
@@ -583,6 +588,8 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_recov_ILI <- 1 - severity_data[["Proportion of symptomatic cases hospitalised"]] /
     prop_symp_seek_HC
   
+  p_hosp_ILI <- 1 - p_recov_ILI
+  
   p_recov_hosp <- 
     (1 - severity_data[["Proportion of hospitalised cases getting critical care"]]) *
     (1 - severity_data[["Proportion of non-critical care cases dying"]])
@@ -606,6 +613,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
     sympt_ILI = p_sympt_ILI,
     recov_ICU = p_recov_ICU,
     recov_ILI = p_recov_ILI,
+    hosp_ILI = p_hosp_ILI,
     recov_hosp = p_recov_hosp,
     death_hosp = p_death_hosp,
     death_hosp_D = p_death_hosp_D,
