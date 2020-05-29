@@ -69,7 +69,6 @@ test_that("pmcmc with serology model", {
 
 
 
-
 test_that("pmcmc runs with beta_pl", {
   
   data <- readRDS("hospital_model_data.rds")
@@ -96,6 +95,7 @@ test_that("pmcmc runs with beta_pl", {
   )
   
   n_mcmc <- 10
+  n_particles <- 10
 
   pars_to_sample <- data.frame(
     names=c('beta_start', 'beta_end', 'beta_pl', 'start_date'),
@@ -121,7 +121,8 @@ test_that("pmcmc runs with beta_pl", {
     pars_lprior = pars_lprior,
     sircovid_model = sircovid_model,
     model_params = model_params,
-    pars_obs = pars_obs
+    pars_obs = pars_obs,
+    n_particles = n_particles
   )
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
@@ -138,6 +139,7 @@ test_that("pmcmc runs without error", {
   cmp <- readRDS("reference_pmcmc.rds")
 
   n_mcmc <- 10
+  n_particles <- 10
   set.seed(1)
   sircovid_model <- basic_model(gammas = list(E = 1/(2.5),
                                               asympt = 1/2.09,
@@ -187,7 +189,8 @@ test_that("pmcmc runs without error", {
                      dimnames = list(
                        c('beta_start', 'start_date'),
                        c('beta_start', 'start_date'))),
-    pars_lprior = pars_lprior
+    pars_lprior = pars_lprior,
+    n_particles = n_particles
   )
   
   expect_is(X, 'pmcmc')
@@ -232,7 +235,8 @@ test_that("pmcmc runs without error", {
    pars_obs = pars_obs, 
    pars_lprior = pars_lprior,
    model_params = model_params,
-   sircovid_model = sircovid_model
+   sircovid_model = sircovid_model,
+   n_particles = n_particles
  )
 
  expect_equal(dim(X2$results), c(n_mcmc + 1L, 6))
@@ -252,6 +256,7 @@ test_that("pmcmc runs without error", {
    pars_lprior = pars_lprior,
    model_params = model_params,
    sircovid_model = sircovid_model,
+   n_particles = n_particles,
    output_proposals = TRUE
  )
 
@@ -278,7 +283,8 @@ X3 <- pmcmc(
   pars_obs = pars_obs, 
   pars_lprior = pars_lprior,
   model_params = model_params,
-  sircovid_model = sircovid_model
+  sircovid_model = sircovid_model,
+  n_particles = n_particles
 )
 
 expect_false(all(X2$results == X3$results))
@@ -320,6 +326,7 @@ test_that("pmcmc with new model", {
   cmp <- readRDS("reference_pmcmc_hosp.rds")
 
   n_mcmc <- 10
+  n_particles <- 10
   set.seed(1)
 
   X <- pmcmc(
@@ -335,7 +342,8 @@ test_that("pmcmc with new model", {
                      nrow = 2, byrow = TRUE,
                      dimnames = list(
                        c('beta_start', 'start_date'),
-                       c('beta_start', 'start_date')))
+                       c('beta_start', 'start_date'))),
+    n_particles = n_particles
   )
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
@@ -366,7 +374,8 @@ test_that("pmcmc with new model", {
                              nrow = 2, byrow = TRUE,
                              dimnames = list(
                                c('beta_start', 'start_date'),
-                               c('beta_start', 'start_date')))
+                               c('beta_start', 'start_date'))),
+    n_particles = n_particles
   )
   # Results will be different as random numbers generated in a different
   # order, but check that the right proposal has been made (0.5^2 vs 0.001^2 makes
@@ -450,7 +459,8 @@ test_that("pmcmc with new model", {
     proposal_kernel = proposal_kernel,
     sircovid_model = sircovid_model,
     model_params = model_params,
-    pars_obs = pars_obs
+    pars_obs = pars_obs,
+    n_particles = n_particles
   )
   
   expect_is(X2, 'pmcmc')
@@ -484,7 +494,8 @@ test_that("pmcmc with new model", {
                              nrow = 3, byrow = TRUE,
                              dimnames = list(
                                c('beta_start', 'start_date', 'phi_general'),
-                               c('beta_start', 'start_date', 'phi_general')))
+                               c('beta_start', 'start_date', 'phi_general'))),
+    n_particles = n_particles
   )
 
 })
@@ -537,6 +548,7 @@ test_that("pmcmc will run with multiple chains" , {
                              pars_to_sample$names))
 
   n_mcmc <- 10
+  n_particles <- 10
   n_chains <- 2
   set.seed(1)
 
@@ -549,7 +561,8 @@ test_that("pmcmc will run with multiple chains" , {
     proposal_kernel = proposal_kernel,
     model_params = model_params,
     pars_obs = pars_obs, 
-    n_chains = n_chains
+    n_chains = n_chains,
+    n_particles = n_particles
   )
 
   expect_is(X, 'pmcmc_list')
@@ -620,6 +633,7 @@ test_that("pmcmc error cases", {
     exp_noise = 1e6
   )
   n_mcmc <- 10
+  n_particles <- 10
   n_chains <- 2
 
   ## beta_start too low
@@ -640,7 +654,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     'initial parameters are outside of specified range'
   )
@@ -663,7 +678,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "start date must not be before first date of supplied data"
   )
@@ -685,7 +701,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "Turning off beta and start date sampling unsupported"
   )
@@ -707,6 +724,7 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       pars_obs = pars_obs, 
       n_chains = n_chains,
+      n_particles = n_particles,
       model_params = generate_parameters(
         sircovid_model = sircovid_model,
         transmission_model = "POLYMOD",
@@ -738,7 +756,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "beta_start must not be negative"
   )
@@ -760,7 +779,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "beta_end must not be negative"
   )
@@ -783,7 +803,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "pars_min entries must be numeric"
   )
@@ -805,7 +826,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "pars_max entries must be numeric"
   )
@@ -828,6 +850,7 @@ test_that("pmcmc error cases", {
       model_params = model_params,
       pars_obs = pars_obs, 
       n_chains = n_chains,
+      n_particles = n_particles,
       proposal_kernel = list('beta_start' = 0.5,
                      'beta_end' = 0.5,
                     'start_date' = 3),
@@ -853,7 +876,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "pars_discrete entries must be logical"
   )
@@ -876,6 +900,7 @@ test_that("pmcmc error cases", {
       model_params = model_params,
       pars_obs = pars_obs, 
       n_chains = n_chains,
+      n_particles = n_particles,
       output_proposals = 0:1
     ),
     "output_proposals must be either TRUE or FALSE"
@@ -902,6 +927,7 @@ test_that("pmcmc error cases", {
       model_params = model_params,
       pars_obs = pars_obs, 
       n_chains = n_chains,
+      n_particles = n_particles,
       pars_lprior = list('beta_start' = function(pars) {
         dunif(pars, min = 0, max = 1e6, log = TRUE)
       },
@@ -922,6 +948,7 @@ test_that("pmcmc error cases", {
       model_params = model_params,
       pars_obs = pars_obs, 
       n_chains = n_chains,
+      n_particles = n_particles,
       pars_lprior = list('beta_start' = function(pars) {
         sum(dunif(pars, min = 1e6-1, max = 1e6, log = TRUE))
       },
@@ -961,7 +988,8 @@ test_that("pmcmc error cases", {
       proposal_kernel = proposal_kernel,
       model_params = model_params,
       pars_obs = pars_obs, 
-      n_chains = n_chains
+      n_chains = n_chains,
+      n_particles = n_particles
     ),
     "Don't know how to update parameter: amma_triage"
   )

@@ -12,7 +12,7 @@ generate_beta(
   beta_end = NULL,
   reduction_period = 10,
   beta_pl = NULL,
-  pl_start = sircovid_date("2020-04-22"),
+  pl_start = sircovid_date("2020-05-11"),
   pl_transition_period = 7
 )
 }
