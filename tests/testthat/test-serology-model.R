@@ -126,10 +126,10 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
 )
 
 
-test_that("No one is hospitalised, no-one dies if p_recov_ILI is 1, p_death_comm is 0", {
+test_that("No one is hospitalised, no-one dies if p_hosp_ILI is 0, p_death_comm is 0", {
   sircovid_model <- serology_model()
   pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
-  pars_model$p_recov_ILI[] <- 1
+  pars_model$p_hosp_ILI[] <- 0
   pars_model$p_death_comm[] <- 0
   mod <- sircovid_model$odin_model(user = pars_model)
   t_max <- 150
@@ -170,14 +170,14 @@ test_that("No one is hospitalised, no-one dies if p_recov_ILI is 1, p_death_comm
 }
 )
 
-test_that("No one is hospitalised, no-one recovers if p_recov_ILI is 0, p_death_comm is 1, p_asympt = 0, p_sympt_ILI = 1", {
+test_that("No one is hospitalised, no-one recovers if p_hosp_ILI is 0, p_death_comm is 1, p_asympt = 0, p_sympt_ILI = 1", {
   sircovid_model <- serology_model()
   pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
   #move initial infectives to ILI
   pars_model$I0_ILI <- pars_model$I0_asympt
   pars_model$I0_asympt[] <- 0
   pars_model$p_sympt_ILI[] <- 1
-  pars_model$p_recov_ILI[] <- 0
+  pars_model$p_hosp_ILI[] <- 0
   pars_model$p_death_comm[] <- 1
   pars_model$p_asympt[] <- 0
   mod <- sircovid_model$odin_model(user = pars_model)

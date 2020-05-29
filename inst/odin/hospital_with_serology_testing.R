@@ -127,10 +127,10 @@ aux_II_ILI[,1:s_ILI,] <- aux_II_ILI[i,j,k] - n_II_ILI[i,j,k]
 delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
 #Work out the flow from I_ILI -> hosp = hosp_D, hosp_R, triage_R and triage_D
-n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_recov_ILI[i]-p_death_comm[i])
+n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],p_hosp_ILI[i])
 
 #Work out the flow from I_ILI -> I_comm_D
-n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j]-n_ILI_to_hosp[i,j],p_death_comm[i]/(p_recov_ILI[i]+p_death_comm[i]))
+n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j]-n_ILI_to_hosp[i,j],p_death_comm[i]/(1-p_hosp_ILI[i]))
 
 #Work out the I_comm_D -> I_comm_D transitions
 aux_II_comm_D[,1,] <- n_ILI_to_comm_D[i,k]
@@ -368,7 +368,7 @@ gamma_mild <- user(0.1)
 #Parameters of the I_ILI classes
 s_ILI <- user()
 gamma_ILI <- user(0.1)
-p_recov_ILI[] <- user()
+p_hosp_ILI[] <- user()
 
 #Parameters of the I_comm_D class
 s_comm_D <- user()
@@ -460,7 +460,7 @@ dim(I0_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(aux_II_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(delta_I_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(n_II_ILI) <- c(N_age,s_ILI,trans_classes)
-dim(p_recov_ILI) <- c(N_age)
+dim(p_hosp_ILI) <- c(N_age)
 
 #Vectors handling the I_comm_D class
 dim(I_comm_D) <- c(N_age,s_comm_D,trans_classes)
