@@ -1,3 +1,7 @@
+# sircovid 0.3.5
+
+- updated default beta_pl change date
+
 # sircovid 0.3.4
 
 - Reparameterised in serology model - p_hosp_ILI now used instead of p_recov_ILI
