@@ -214,10 +214,7 @@ test_that("No one is hospitalised, no-one recovers if p_hosp_ILI is 0, p_death_c
   expect_true(all(results$R_stepdown_unconf == 0))
   expect_true(all(results$R_stepdown_conf == 0))
   expect_true(all(results$D_hosp == 0))
-  expect_true(all(results$R_pos == 0))
-  expect_true(all(results$R_neg == 0))
-  expect_true(all(results$R_pre == 0))
-}
+  }
 )
 
 test_that("setting hospital route probabilities to 0 or 1 result in correct path", {

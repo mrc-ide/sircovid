@@ -8238,6 +8238,9 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
   for (int i = 1; i <= internal->dim_delta_R_pos; ++i) {
     internal->delta_R_pos[i - 1] = internal->n_R_pre[internal->dim_n_R_pre_1 * (internal->s_R_pre - 1) + i - 1];
   }
+  for (int i = 1; i <= internal->dim_n_com_to_R_total; ++i) {
+    internal->n_com_to_R_total[i - 1] = odin_sum3(internal->n_EE, i - 1, i, internal->s_E - 1, internal->s_E, 0, internal->dim_n_EE_3, internal->dim_n_EE_1, internal->dim_n_EE_12);
+  }
   for (int i = 1; i <= internal->dim_n_EI_asympt_1; ++i) {
     for (int j = 1; j <= internal->dim_n_EI_asympt_2; ++j) {
       internal->n_EI_asympt[i - 1 + internal->dim_n_EI_asympt_1 * (j - 1)] = Rf_rbinom(round(internal->n_EE[internal->dim_n_EE_12 * (j - 1) + internal->dim_n_EE_1 * (internal->s_E - 1) + i - 1]), internal->p_asympt[i - 1]);
@@ -8275,6 +8278,9 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
   }
   for (int i = 1; i <= internal->dim_lambda; ++i) {
     internal->lambda[i - 1] = beta * odin_sum2(internal->s_ij, i - 1, i, 0, internal->dim_s_ij_2, internal->dim_s_ij_1);
+  }
+  for (int i = 1; i <= internal->dim_n_com_to_R_pre; ++i) {
+    internal->n_com_to_R_pre[i - 1] = Rf_rbinom(round(internal->n_com_to_R_total[i - 1]), internal->p_seroconversion[i - 1]);
   }
   for (int i = 1; i <= internal->dim_n_EI_mild_1; ++i) {
     for (int j = 1; j <= internal->dim_n_EI_mild_2; ++j) {
@@ -8387,6 +8393,20 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
       }
     }
   }
+  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
+    int j = 1;
+    internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->n_com_to_R_pre[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
+    for (int j = 2; j <= internal->s_R_pre; ++j) {
+      internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->n_R_pre[internal->dim_n_R_pre_1 * (j - 1 - 1) + i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->s_R_pre; ++j) {
+      internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->aux_R_pre[internal->dim_aux_R_pre_1 * (j - 1) + i - 1] - internal->n_R_pre[internal->dim_n_R_pre_1 * (j - 1) + i - 1];
+    }
+  }
   for (int i = 1; i <= internal->dim_delta_I_asympt_1; ++i) {
     for (int j = 1; j <= internal->dim_delta_I_asympt_2; ++j) {
       for (int k = 1; k <= internal->dim_delta_I_asympt_3; ++k) {
@@ -8396,6 +8416,9 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
   }
   for (int i = 1; i <= internal->dim_delta_R; ++i) {
     internal->delta_R[i - 1] = odin_sum3(internal->n_II_asympt, i - 1, i, internal->s_asympt - 1, internal->s_asympt, 0, internal->dim_n_II_asympt_3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_12) + odin_sum3(internal->n_II_mild, i - 1, i, internal->s_mild - 1, internal->s_mild, 0, internal->dim_n_II_mild_3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_12) + odin_sum3(internal->n_II_ILI, i - 1, i, internal->s_ILI - 1, internal->s_ILI, 0, internal->dim_n_II_ILI_3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_12) - odin_sum2(internal->n_ILI_to_hosp, i - 1, i, 0, internal->dim_n_ILI_to_hosp_2, internal->dim_n_ILI_to_hosp_1) - odin_sum2(internal->n_ILI_to_comm_D, i - 1, i, 0, internal->dim_n_ILI_to_comm_D_2, internal->dim_n_ILI_to_comm_D_1) + odin_sum3(internal->n_II_hosp_R_conf, i - 1, i, internal->s_hosp_R - 1, internal->s_hosp_R, 0, internal->dim_n_II_hosp_R_conf_3, internal->dim_n_II_hosp_R_conf_1, internal->dim_n_II_hosp_R_conf_12) + odin_sum3(internal->n_II_hosp_R_unconf, i - 1, i, internal->s_hosp_R - 1, internal->s_hosp_R, 0, internal->dim_n_II_hosp_R_unconf_3, internal->dim_n_II_hosp_R_unconf_1, internal->dim_n_II_hosp_R_unconf_12) + odin_sum2(internal->n_R_stepdown_conf, i - 1, i, internal->s_stepdown - 1, internal->s_stepdown, internal->dim_n_R_stepdown_conf_1) + odin_sum2(internal->n_R_stepdown_unconf, i - 1, i, internal->s_stepdown - 1, internal->s_stepdown, internal->dim_n_R_stepdown_unconf_1);
+  }
+  for (int i = 1; i <= internal->dim_delta_R_neg; ++i) {
+    internal->delta_R_neg[i - 1] = internal->n_com_to_R_total[i - 1] - internal->n_com_to_R_pre[i - 1];
   }
   for (int i = 1; i <= internal->dim_n_EI_ILI_1; ++i) {
     for (int j = 1; j <= internal->dim_n_EI_ILI_2; ++j) {
@@ -8488,6 +8511,11 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
       }
     }
   }
+  for (int i = 1; i <= internal->dim_delta_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->dim_delta_R_pre_2; ++j) {
+      internal->delta_R_pre[i - 1 + internal->dim_delta_R_pre_1 * (j - 1)] = internal->aux_R_pre[internal->dim_aux_R_pre_1 * (j - 1) + i - 1];
+    }
+  }
   for (int i = 1; i <= internal->dim_n_ILI_to_hosp_D_1; ++i) {
     for (int j = 1; j <= internal->dim_n_ILI_to_hosp_D_2; ++j) {
       internal->n_ILI_to_hosp_D[i - 1 + internal->dim_n_ILI_to_hosp_D_1 * (j - 1)] = Rf_rbinom(round(internal->n_hosp_non_ICU[internal->dim_n_hosp_non_ICU_1 * (j - 1) + i - 1]), internal->p_death_hosp_D[i - 1]);
@@ -8543,6 +8571,9 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
   }
   for (int i = 1; i <= internal->dim_R; ++i) {
     state_next[internal->offset_variable_R + i - 1] = R[i - 1] + internal->delta_R[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R_neg; ++i) {
+    state_next[internal->offset_variable_R_neg + i - 1] = R_neg[i - 1] + internal->delta_R_neg[i - 1];
   }
   for (int i = 1; i <= internal->dim_R_stepdown_conf_1; ++i) {
     for (int j = 1; j <= internal->dim_R_stepdown_conf_2; ++j) {
@@ -8646,6 +8677,11 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
       }
     }
   }
+  for (int i = 1; i <= internal->dim_R_pre_1; ++i) {
+    for (int j = 1; j <= internal->dim_R_pre_2; ++j) {
+      state_next[internal->offset_variable_R_pre + i - 1 + internal->dim_R_pre_1 * (j - 1)] = R_pre[internal->dim_R_pre_1 * (j - 1) + i - 1] + internal->delta_R_pre[internal->dim_delta_R_pre_1 * (j - 1) + i - 1];
+    }
+  }
   for (int i = 1; i <= internal->dim_S; ++i) {
     state_next[2 + i - 1] = S[i - 1] - internal->n_SE[i - 1];
   }
@@ -8655,9 +8691,6 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
         internal->delta_E[i - 1 + internal->dim_delta_E_1 * (j - 1) + internal->dim_delta_E_12 * (k - 1)] = internal->aux_EE[internal->dim_aux_EE_12 * (k - 1) + internal->dim_aux_EE_1 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= internal->dim_n_com_to_R_total; ++i) {
-    internal->n_com_to_R_total[i - 1] = odin_sum3(internal->n_II_asympt, i - 1, i, internal->s_asympt - 1, internal->s_asympt, 0, internal->dim_n_II_asympt_3, internal->dim_n_II_asympt_1, internal->dim_n_II_asympt_12) + odin_sum3(internal->n_II_mild, i - 1, i, internal->s_mild - 1, internal->s_mild, 0, internal->dim_n_II_mild_3, internal->dim_n_II_mild_1, internal->dim_n_II_mild_12) + odin_sum3(internal->n_II_ILI, i - 1, i, internal->s_ILI - 1, internal->s_ILI, 0, internal->dim_n_II_ILI_3, internal->dim_n_II_ILI_1, internal->dim_n_II_ILI_12) - odin_sum2(internal->n_ILI_to_hosp, i - 1, i, 0, internal->dim_n_ILI_to_hosp_2, internal->dim_n_ILI_to_hosp_1) - odin_sum2(internal->n_ILI_to_comm_D, i - 1, i, 0, internal->dim_n_ILI_to_comm_D_2, internal->dim_n_ILI_to_comm_D_1) + odin_sum2(internal->n_ILI_to_triage_R, i - 1, i, 0, internal->dim_n_ILI_to_triage_R_2, internal->dim_n_ILI_to_triage_R_1) + odin_sum2(internal->n_ILI_to_hosp_R, i - 1, i, 0, internal->dim_n_ILI_to_hosp_R_2, internal->dim_n_ILI_to_hosp_R_1);
   }
   for (int i = 1; i <= internal->dim_n_ILI_to_hosp_R_conf_1; ++i) {
     for (int j = 1; j <= internal->dim_n_ILI_to_hosp_R_conf_2; ++j) {
@@ -8737,9 +8770,6 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
       }
     }
   }
-  for (int i = 1; i <= internal->dim_n_com_to_R_pre; ++i) {
-    internal->n_com_to_R_pre[i - 1] = Rf_rbinom(round(internal->n_com_to_R_total[i - 1]), internal->p_seroconversion[i - 1]);
-  }
   for (int i = 1; i <= internal->dim_new_I_hosp_R_conf_1; ++i) {
     for (int j = 1; j <= internal->dim_new_I_hosp_R_conf_2; ++j) {
       for (int k = 1; k <= internal->dim_new_I_hosp_R_conf_3; ++k) {
@@ -8802,23 +8832,6 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
       }
     }
   }
-  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
-    int j = 1;
-    internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->n_com_to_R_pre[i - 1];
-  }
-  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
-    for (int j = 2; j <= internal->s_R_pre; ++j) {
-      internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->n_R_pre[internal->dim_n_R_pre_1 * (j - 1 - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= internal->dim_aux_R_pre_1; ++i) {
-    for (int j = 1; j <= internal->s_R_pre; ++j) {
-      internal->aux_R_pre[i - 1 + internal->dim_aux_R_pre_1 * (j - 1)] = internal->aux_R_pre[internal->dim_aux_R_pre_1 * (j - 1) + i - 1] - internal->n_R_pre[internal->dim_n_R_pre_1 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= internal->dim_delta_R_neg; ++i) {
-    internal->delta_R_neg[i - 1] = internal->n_com_to_R_total[i - 1] - internal->n_com_to_R_pre[i - 1];
-  }
   for (int i = 1; i <= internal->dim_I_hosp_R_conf_1; ++i) {
     for (int j = 1; j <= internal->dim_I_hosp_R_conf_2; ++j) {
       for (int k = 1; k <= internal->dim_I_hosp_R_conf_3; ++k) {
@@ -8833,20 +8846,7 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
       }
     }
   }
-  for (int i = 1; i <= internal->dim_delta_R_pre_1; ++i) {
-    for (int j = 1; j <= internal->dim_delta_R_pre_2; ++j) {
-      internal->delta_R_pre[i - 1 + internal->dim_delta_R_pre_1 * (j - 1)] = internal->aux_R_pre[internal->dim_aux_R_pre_1 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= internal->dim_R_neg; ++i) {
-    state_next[internal->offset_variable_R_neg + i - 1] = R_neg[i - 1] + internal->delta_R_neg[i - 1];
-  }
-  for (int i = 1; i <= internal->dim_R_pre_1; ++i) {
-    for (int j = 1; j <= internal->dim_R_pre_2; ++j) {
-      state_next[internal->offset_variable_R_pre + i - 1 + internal->dim_R_pre_1 * (j - 1)] = R_pre[internal->dim_R_pre_1 * (j - 1) + i - 1] + internal->delta_R_pre[internal->dim_delta_R_pre_1 * (j - 1) + i - 1];
-    }
-  }
-  double N_tot2 = odin_sum1(S, 0, internal->dim_S) + odin_sum1(R_pre, 0, internal->dim_R_pre) + odin_sum1(R_pos, 0, internal->dim_R_pos) + odin_sum1(R_neg, 0, internal->dim_R_neg) + odin_sum1(D_hosp, 0, internal->dim_D_hosp) + odin_sum1(E, 0, internal->dim_E) + odin_sum1(I_asympt, 0, internal->dim_I_asympt) + odin_sum1(I_mild, 0, internal->dim_I_mild) + odin_sum1(I_ILI, 0, internal->dim_I_ILI) + odin_sum1(I_triage_D_conf, 0, internal->dim_I_triage_D_conf) + odin_sum1(I_triage_D_unconf, 0, internal->dim_I_triage_D_unconf) + odin_sum1(I_hosp_D_conf, 0, internal->dim_I_hosp_D_conf) + odin_sum1(I_hosp_D_unconf, 0, internal->dim_I_hosp_D_unconf) + odin_sum1(I_ICU_D_conf, 0, internal->dim_I_ICU_D_conf) + odin_sum1(I_ICU_D_unconf, 0, internal->dim_I_ICU_D_unconf) + odin_sum1(I_comm_D, 0, internal->dim_I_comm_D) + odin_sum1(D_comm, 0, internal->dim_D_comm);
+  double N_tot2 = odin_sum1(S, 0, internal->dim_S) + odin_sum1(R_pre, 0, internal->dim_R_pre) + odin_sum1(R_pos, 0, internal->dim_R_pos) + odin_sum1(R_neg, 0, internal->dim_R_neg) + odin_sum1(E, 0, internal->dim_E);
   double time = step * internal->dt;
   output[2] = N_tot2;
   output[0] = time;
