@@ -14,6 +14,7 @@ test_that("N_tot and N_tot2 stay constant", {
   #should be TRUE
   expect_true(all(t(results$N_tot) == results$N_tot[1,]))
   expect_true(all(results$N_tot2 == results$N_tot2[1]))
+  expect_true(results$N_tot2[1] == sum(results$N_tot[1,]))
 }
 )
 
@@ -323,7 +324,6 @@ test_that("No one seroconverts if p_seroconversion is 0", {
   }
   
   expect_true(any(results$R_neg > 0))
-  expect_true(all(results$R_pre == 0))
   expect_true(all(results$R_pos == 0))
 }
 )
@@ -350,7 +350,6 @@ test_that("No one doesn't seroconvert if p_seroconversion is 1", {
     }
   }
   
-  expect_true(any(results$R_pre > 0))
   expect_true(any(results$R_pos > 0))
   expect_true(all(results$R_neg == 0))
 }
