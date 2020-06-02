@@ -222,6 +222,11 @@ generate_parameters <- function(
   }
   parameter_list$I0_asympt[seed_idx,1,parameter_list$trans_classes] <- infection_seeding$values
   parameter_list$S0[seed_idx] <- parameter_list$S0[seed_idx] - infection_seeding$values
+  if ("sircovid_serology" %in% class(sircovid_model)){
+   #Put the initial infectives into the sero flow
+   parameter_list$R0_pre[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+  }
+  
   
   #
   # Set gamma and groups

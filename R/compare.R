@@ -105,8 +105,8 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     
     if (type %in% c("sircovid_serology")  && !is.na(data$ntot_0_14[t]) && !is.na(data$npos_0_14[t])) {
       agegroups <- seq.int(1,3)
-      prob_true_pos <- colSums(state[index_R_pos[agegroups], ,drop = FALSE]) / (sum(N_tot[agegroups]) - colSums(state[index_D[agegroups], ,drop = FALSE]))
-      prob_false_pos <- (1 - p_specificity) * (1 - colSums(state[c(index_R_pos[agegroups], index_R_neg[agegroups], c(index_R_pre[agegroups,])), ,drop = FALSE]) / (sum(N_tot[agegroups]) - colSums(state[index_D[agegroups], ,drop = FALSE])))
+      prob_true_pos <- colSums(state[index_R_pos[agegroups], ,drop = FALSE]) / sum(N_tot[agegroups])
+      prob_false_pos <- (1 - p_specificity) * (1 - colSums(state[c(index_R_pos[agegroups], index_R_neg[agegroups], c(index_R_pre[agegroups,])), ,drop = FALSE]) / sum(N_tot[agegroups]))
         
       log_weights <- log_weights +
         dbinom(data$npos_0_14[t], size = data$ntot_0_14[t], prob = prob_true_pos + prob_false_pos, log = TRUE)
@@ -114,8 +114,8 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     
     if (type %in% c("sircovid_serology")  && !is.na(data$ntot_15_64[t]) && !is.na(data$npos_15_64[t])) {
       agegroups <- seq.int(4,13)
-      prob_true_pos <- colSums(state[index_R_pos[agegroups], ,drop = FALSE]) / (sum(N_tot[agegroups]) - colSums(state[index_D[agegroups], ,drop = FALSE]))
-      prob_false_pos <- (1 - p_specificity) * (1 - colSums(state[c(index_R_pos[agegroups], index_R_neg[agegroups], c(index_R_pre[agegroups,])), ,drop = FALSE]) / (sum(N_tot[agegroups]) - colSums(state[index_D[agegroups], ,drop = FALSE])))
+      prob_true_pos <- colSums(state[index_R_pos[agegroups], ,drop = FALSE]) / sum(N_tot[agegroups])
+      prob_false_pos <- (1 - p_specificity) * (1 - colSums(state[c(index_R_pos[agegroups], index_R_neg[agegroups], c(index_R_pre[agegroups,])), ,drop = FALSE]) / sum(N_tot[agegroups]))
       
       log_weights <- log_weights +
         dbinom(data$npos_15_64[t], size = data$ntot_15_64[t], prob = prob_true_pos + prob_false_pos, log = TRUE)
@@ -123,8 +123,8 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     
     if (type %in% c("sircovid_serology")  && !is.na(data$ntot_65plus[t]) && !is.na(data$npos_65plus[t])) {
       agegroups <- seq.int(14,17)
-      prob_true_pos <- colSums(state[index_R_pos[agegroups], ,drop = FALSE]) / (sum(N_tot[agegroups]) - colSums(state[index_D[agegroups], ,drop = FALSE]))
-      prob_false_pos <- (1 - p_specificity) * (1 - colSums(state[c(index_R_pos[agegroups], index_R_neg[agegroups], c(index_R_pre[agegroups,])), ,drop = FALSE]) / (sum(N_tot[agegroups]) - colSums(state[index_D[agegroups], ,drop = FALSE])))
+      prob_true_pos <- colSums(state[index_R_pos[agegroups], ,drop = FALSE]) / sum(N_tot[agegroups])
+      prob_false_pos <- (1 - p_specificity) * (1 - colSums(state[c(index_R_pos[agegroups], index_R_neg[agegroups], c(index_R_pre[agegroups,])), ,drop = FALSE]) / sum(N_tot[agegroups])) 
       
       log_weights <- log_weights +
         dbinom(data$npos_65plus[t], size = data$ntot_65plus[t], prob = prob_true_pos + prob_false_pos, log = TRUE)

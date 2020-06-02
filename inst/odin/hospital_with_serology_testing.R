@@ -248,22 +248,17 @@ delta_D_hosp[] <- sum(n_II_hosp_D_unconf[i,s_hosp_D,]) + sum(n_II_hosp_D_conf[i,
 delta_D_comm[] <- sum(n_II_comm_D[i,s_comm_D,])
 
 #Work out the number of people entering the seroconversion flow
-n_com_to_R_total[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
-                         sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_hosp[i,]) - sum(n_ILI_to_comm_D[i,]) +
-                         sum(n_ILI_to_triage_R[i,]) + sum(n_ILI_to_hosp_R[i,]) 
+n_com_to_R_pre[] <- sum(n_EE[i,s_E,]) 
 
 #Split the seroconversion flow between people who are going to seroconvert and people who are not
-n_com_to_R_pre[] <- rbinom(n_com_to_R_total[i],p_seroconversion[i])
-delta_R_neg[] <- n_com_to_R_total[i] - n_com_to_R_pre[i]
+delta_R_pos[] <- rbinom(n_R_pre[i,s_R_pre],p_seroconversion[i])
+delta_R_neg[] <- n_R_pre[i,s_R_pre] - delta_R_pos[i]
 
 #Work out the R_pre->R_pre transitions
 aux_R_pre[,1] <- n_com_to_R_pre[i]
 aux_R_pre[,2:s_R_pre] <- n_R_pre[i,j-1]
 aux_R_pre[,1:s_R_pre] <- aux_R_pre[i,j] - n_R_pre[i,j]
 delta_R_pre[,] <- aux_R_pre[i,j]
-
-#Calculate the number of new seroconversion
-delta_R_pos[] <- n_R_pre[i,s_R_pre]
 
 #Work out the total number of recovery
 delta_R[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
@@ -625,7 +620,6 @@ dim(n_ILI_to_triage_D) <- c(N_age,trans_classes)
 dim(n_ILI_to_triage_D_conf) <- c(N_age,trans_classes)
 
 #Vectors handling the serology flow
-dim(n_com_to_R_total) <- c(N_age)
 dim(n_com_to_R_pre) <- c(N_age)
 
 #Vectors handling the severity profile
@@ -657,8 +651,7 @@ N_tot[] <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mi
 output(N_tot) <- TRUE
 
 #Total population calculated with seroconversion flow, exclude triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's
-N_tot2 <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(D_hosp) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) +
-  sum(I_triage_D_conf) + sum(I_triage_D_unconf) + sum(I_hosp_D_conf) + sum(I_hosp_D_unconf) + sum(I_ICU_D_conf) + sum(I_ICU_D_unconf) + sum(I_comm_D) + sum(D_comm)
+N_tot2 <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 output(N_tot2) <- TRUE
 
 #Tracker of population size

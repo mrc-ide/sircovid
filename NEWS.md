@@ -1,3 +1,7 @@
+# sircovid 0.3.6
+
+- sero flow in the serology model switched to starting at the end of the E compartment
+
 # sircovid 0.3.5
 
 - updated default beta_pl change date
