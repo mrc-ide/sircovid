@@ -491,7 +491,8 @@ run_mcmc_chain <- function(inputs,
 #
 calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles,
-                               forecast_days = 0, return = "ll") {
+                               forecast_days = 0, return = "ll",
+                               beta_changepoints = NULL) {
   if (return == "full") {
     save_particles <- TRUE
     pf_return <- "sample"
@@ -523,18 +524,33 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
       model_params[[par]] <- model_params[[par]] * pars[[par]] / max(model_params[[par]])
     } else if (par %in% names(pars_obs)) {
       pars_obs[[par]] <- pars[[par]]
-    } else {
+    } else if (!grepl("beta\\d+$",par)){
       stop(paste0("Don't know how to update parameter: ", par))
     }
   }
 
-  # Beta needs a transform applied
-  new_beta <- update_beta(sircovid_model, 
-                          beta_start, 
-                          beta_end, 
-                          beta_pl,
-                          start_date,
-                          model_params$dt)
+  if (any(grepl("beta\\d+$",names(pars)))){
+    beta_k <- unlist(pars[grep("beta\\d+$",names(pars))])
+    beta_k <- unname(beta_k[order(as.numeric(gsub("beta","",names(beta_k))))])
+    
+    # Beta needs a transform applied
+    new_beta <- update_beta_piecewise_linear(sircovid_model, 
+                                             beta_k, 
+                                             beta_changepoints,
+                                             start_date,
+                                             model_params$dt)
+    
+  } else {
+  
+    # Beta needs a transform applied
+    new_beta <- update_beta(sircovid_model, 
+                            beta_start, 
+                            beta_end, 
+                            beta_pl,
+                            start_date,
+                            model_params$dt)
+  }
+  
   model_params$beta_y <- new_beta$beta_y
   model_params$beta_t <- new_beta$beta_t
 

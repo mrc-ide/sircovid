@@ -138,6 +138,12 @@ sample_pmcmc <- function(mcmc_results,
                                   size  = n_sample, 
                                   replace = FALSE), pars_to_sample]
   
+  if ("beta_changepoints" %in% names(mcmc_results$inputs)){
+    beta_changepoints <- mcmc_results$inputs$beta_changepoints
+  } else {
+    beta_changepoints <- NULL
+  }
+  
   forecasts <- function(sampled_pars) {
     pars <- as.list(sampled_pars)
     pars$start_date <- sircovid_date(pars$start_date)
@@ -149,7 +155,8 @@ sample_pmcmc <- function(mcmc_results,
                                 mcmc_results$inputs$pars_obs, 
                                 n_particles,
                                 forecast_days,
-                                return = "full")
+                                return = "full",
+                                beta_changepoints)
     trace
   }
 
@@ -157,16 +164,28 @@ sample_pmcmc <- function(mcmc_results,
   traces <- furrr::future_map(.x = purrr::transpose(param_grid), .f = forecasts)
   trajectories <- traces_to_trajectories(traces)
   
-  # combine and return
-  res <- list("trajectories" = trajectories,
-              "param_grid" = param_grid,
-              inputs = list(
-                model_params = mcmc_results$inputs$model_params,
-                pars_obs = mcmc_results$inputs$pars_obs,
-                data = mcmc_results$inputs$data,
-                model = mcmc_results$inputs$sircovid_model,
-                forecast_days = forecast_days))
-  
+  if (is.null(beta_changepoints)){
+    # combine and return
+    res <- list("trajectories" = trajectories,
+                "param_grid" = param_grid,
+                inputs = list(
+                  model_params = mcmc_results$inputs$model_params,
+                  pars_obs = mcmc_results$inputs$pars_obs,
+                  data = mcmc_results$inputs$data,
+                  model = mcmc_results$inputs$sircovid_model,
+                  forecast_days = forecast_days))
+  } else {
+    res <- list("trajectories" = trajectories,
+                "param_grid" = param_grid,
+                inputs = list(
+                  model_params = mcmc_results$inputs$model_params,
+                  pars_obs = mcmc_results$inputs$pars_obs,
+                  data = mcmc_results$inputs$data,
+                  model = mcmc_results$inputs$sircovid_model,
+                  forecast_days = forecast_days,
+                  beta_changepoints = beta_changepoints))
+  }
+    
   class(res) <- "sircovid_forecast"
   return(res)
   
