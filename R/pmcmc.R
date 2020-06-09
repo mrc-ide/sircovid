@@ -489,7 +489,7 @@ run_mcmc_chain <- function(inputs,
 # 
 # return: Set to 'll' to return the log-likelihood (for MCMC) or to
 #
-calc_loglikelihood <- function(pars, changepoints, data, sircovid_model, model_params,
+calc_loglikelihood <- function(pars, beta_changepoints, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles,
                                forecast_days = 0, return = "ll") {
   if (return == "full") {
@@ -503,11 +503,7 @@ calc_loglikelihood <- function(pars, changepoints, data, sircovid_model, model_p
     stop("Unknown return type to calc_loglikelihood")
   }
   
-  # defaults if not being sampled
-  beta_start <- NULL
-  beta_end <- NULL
-  beta_pl <- NULL
-  start_date <- data$date[1]
+ start_date <- data$date[1]
   
   # Update particle filter parameters from pars
   for (par in names(pars)) {
@@ -529,7 +525,7 @@ calc_loglikelihood <- function(pars, changepoints, data, sircovid_model, model_p
   # Beta needs a transform applied
   new_beta <- update_beta(sircovid_model, 
                           beta_k, 
-                          t_k,
+                          beta_changepoints,
                           start_date,
                           model_params$dt)
   model_params$beta_y <- new_beta$beta_y

@@ -4,7 +4,7 @@ update_beta <- function(sircovid_model,
                         t_k,
                         start_date,
                         dt) {
-  new_beta <- sircovid_model$generate_beta_func(beta_start = beta_k,
+  new_beta <- sircovid_model$generate_beta_func(beta_k = beta_k,
                                                 t_k = t_k, 
                                                 start_date = start_date,
                                                 dt = 1) 
