@@ -164,16 +164,28 @@ sample_pmcmc <- function(mcmc_results,
   traces <- furrr::future_map(.x = purrr::transpose(param_grid), .f = forecasts)
   trajectories <- traces_to_trajectories(traces)
   
-  # combine and return
-  res <- list("trajectories" = trajectories,
-              "param_grid" = param_grid,
-              inputs = list(
-                model_params = mcmc_results$inputs$model_params,
-                pars_obs = mcmc_results$inputs$pars_obs,
-                data = mcmc_results$inputs$data,
-                model = mcmc_results$inputs$sircovid_model,
-                forecast_days = forecast_days))
-  
+  if (is.null(beta_changepoints)){
+    # combine and return
+    res <- list("trajectories" = trajectories,
+                "param_grid" = param_grid,
+                inputs = list(
+                  model_params = mcmc_results$inputs$model_params,
+                  pars_obs = mcmc_results$inputs$pars_obs,
+                  data = mcmc_results$inputs$data,
+                  model = mcmc_results$inputs$sircovid_model,
+                  forecast_days = forecast_days))
+  } else {
+    res <- list("trajectories" = trajectories,
+                "param_grid" = param_grid,
+                inputs = list(
+                  model_params = mcmc_results$inputs$model_params,
+                  pars_obs = mcmc_results$inputs$pars_obs,
+                  data = mcmc_results$inputs$data,
+                  model = mcmc_results$inputs$sircovid_model,
+                  forecast_days = forecast_days,
+                  beta_changepoints = beta_changepoints))
+  }
+    
   class(res) <- "sircovid_forecast"
   return(res)
   
