@@ -1,3 +1,7 @@
+# sircovid 0.3.7
+
+- Introduced a piecewise linear generate beta function
+
 # sircovid 0.3.6
 
 - sero flow in the serology model switched to starting at the end of the E compartment

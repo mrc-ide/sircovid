@@ -137,13 +137,17 @@ sample_pmcmc <- function(mcmc_results,
   param_grid <- chains[sample.int(n = nrow(chains), 
                                   size  = n_sample, 
                                   replace = FALSE), pars_to_sample]
-  beta_changepoints <- mcmc_results$inputs$beta_changepoints
+  
+  if ("beta_changepoints" %in% names(mcmc_results$inputs)){
+    beta_changepoints <- mcmc_results$inputs$beta_changepoints
+  } else {
+    beta_changepoints <- NULL
+  }
   
   forecasts <- function(sampled_pars) {
     pars <- as.list(sampled_pars)
     pars$start_date <- sircovid_date(pars$start_date)
-    trace <- calc_loglikelihood(pars,
-                                beta_changepoints,
+    trace <- calc_loglikelihood(pars, 
                                 mcmc_results$inputs$data, 
                                 mcmc_results$inputs$sircovid_model, 
                                 mcmc_results$inputs$model_params,
@@ -151,7 +155,8 @@ sample_pmcmc <- function(mcmc_results,
                                 mcmc_results$inputs$pars_obs, 
                                 n_particles,
                                 forecast_days,
-                                return = "full")
+                                return = "full",
+                                beta_changepoints)
     trace
   }
 
