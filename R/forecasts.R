@@ -137,11 +137,14 @@ sample_pmcmc <- function(mcmc_results,
   param_grid <- chains[sample.int(n = nrow(chains), 
                                   size  = n_sample, 
                                   replace = FALSE), pars_to_sample]
+  changepoints <- mcmc_results$inputs$changepoints
+  
   
   forecasts <- function(sampled_pars) {
     pars <- as.list(sampled_pars)
     pars$start_date <- sircovid_date(pars$start_date)
-    trace <- calc_loglikelihood(pars, 
+    trace <- calc_loglikelihood(pars,
+                                changepoints,
                                 mcmc_results$inputs$data, 
                                 mcmc_results$inputs$sircovid_model, 
                                 mcmc_results$inputs$model_params,

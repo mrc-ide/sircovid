@@ -489,7 +489,7 @@ run_mcmc_chain <- function(inputs,
 # 
 # return: Set to 'll' to return the log-likelihood (for MCMC) or to
 #
-calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
+calc_loglikelihood <- function(pars, changepoints, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles,
                                forecast_days = 0, return = "ll") {
   if (return == "full") {
@@ -513,12 +513,6 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   for (par in names(pars)) {
     if (par == "start_date") {
       start_date <- pars[[par]]
-    } else if (par == "beta_start") {
-      beta_start <- pars[[par]]
-    } else if (par == "beta_end") {
-      beta_end <- pars[[par]]
-    } else if (par == "beta_pl") {
-      beta_pl <- pars[[par]]
     } else if (par %in% names(model_params)) {
       model_params[[par]] <- model_params[[par]] * pars[[par]] / max(model_params[[par]])
     } else if (par %in% names(pars_obs)) {
@@ -528,11 +522,14 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
     }
   }
 
+  if (any(startsWith(names(pars)),"beta")){
+    beta_k <- pars[order(names(pars)[grep("beta\\d+$",names(pars))])]
+  }
+  
   # Beta needs a transform applied
   new_beta <- update_beta(sircovid_model, 
-                          beta_start, 
-                          beta_end, 
-                          beta_pl,
+                          beta_k, 
+                          t_k,
                           start_date,
                           model_params$dt)
   model_params$beta_y <- new_beta$beta_y

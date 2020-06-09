@@ -86,6 +86,62 @@ generate_beta <- function(beta_start,
        beta_times=beta_times)
 }
 
+
+##' Create a piecewise linear time-varying beta for input into 
+##' \code{create_parameters()}
+##' 
+##' @title Generate beta piecewise linear
+##' 
+##' @param beta_k Value of beta at changepoints
+##' 
+##' @param t_k Time of changepoints
+##' 
+##' @param start_date Start date for simulations
+##' 
+##' @param dt step size
+##' 
+##' @export
+generate_beta_piecewise_linear <- function(beta_k,
+                                           t_k,
+                                           start_date = sircovid_date("2020-02-02"),
+                                           dt) {
+  
+  if (any(start_date > t_k)) {
+    stop("Start date must be earlier than dates in t_k")
+  }
+  if (any(beta_k < 0)){
+    stop("beta_k must be non-negative")
+  }
+  if (is.unsorted(t_k,strictly = TRUE)){
+    stop("t_k must be strictly increasing")
+  }
+  if (!length(t_k)==length(beta_k)){
+    stop("t_k and beta_k must be of same length")
+  }
+  
+  beta_times <- c(start_date, seq(t_k[1], t_k[length(t_k)], by=dt))
+  
+  #set beta as flat until first changepoint
+  t_k <- c(start_date,t_k)
+  beta_k <- c(beta_k[1],beta_k)
+  
+  beta_fun <- function(t){
+    if (t %in% t_k){
+      b <- beta_k[which(t_k==t)]
+    } else {
+      k <- max(which(t_k<=t))
+      b <- (t - t_k[k])/(t_k[k+1] - t_k[k])*beta_k[k+1] + (t_k[k+1] - t)/(t_k[k+1] - t_k[k])*beta_k[k]
+    }
+    b
+  }
+  
+  beta <- sapply(beta_times,beta_fun)
+  
+  list(beta=beta,
+       beta_times=beta_times)
+}
+
+
 ##' Create parameters for use with the model
 ##' 
 ##' @title Create parameters
