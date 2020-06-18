@@ -10,6 +10,8 @@ generate_parameters_base(
   severity_data_file,
   beta,
   beta_times,
+  lambda_external,
+  lambda_external_times,
   trans_profile,
   trans_increase,
   dt,

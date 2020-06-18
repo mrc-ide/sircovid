@@ -190,6 +190,8 @@ generate_parameters <- function(
                            bins=c('15 to 19')),
   beta = 0.1,
   beta_times = sircovid_date("2020-02-02"),
+  lambda_external = 0.1,
+  lambda_external_times = sircovid_date("2020-02-02"),
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
@@ -208,6 +210,8 @@ generate_parameters <- function(
                                              severity_data_file=severity_data_file,
                                              beta = beta,
                                              beta_times = beta_times,
+                                             lambda_external = lambda_external,
+                                             lambda_external_times = lambda_external_times,
                                              trans_profile = trans_profile,
                                              trans_increase = trans_increase,
                                              dt = dt,
@@ -237,7 +241,7 @@ generate_parameters <- function(
       parameter_list$R0_stepdown_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_stepdown_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_neg <- rep(0, parameter_list$N_age)
-      parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
+      
       parameter_list$R0_pos <- rep(0, parameter_list$N_age)
       parameter_list$I0_comm_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$comm_D, parameter_list$trans_classes))
       parameter_list$I0_hosp_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
@@ -256,6 +260,15 @@ generate_parameters <- function(
       parameter_list$D0_comm <- rep(0, parameter_list$N_age)
       parameter_list$cum0_admit_conf <- 0
       parameter_list$cum0_new_conf <- 0
+      if ("sircovid_serology2" %in% class(sircovid_model)){
+        parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, 2))
+        parameter_list$p_R_pre_1 <- 0.5
+        lambda_external_y <- 0
+        lambda_external_t <- 0
+        parameter_list$PCR0_pos <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$PCR_pos))
+      } else {
+        parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
+      }
     } else {
       parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
       parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
@@ -282,6 +295,10 @@ generate_parameters <- function(
    #Put the initial infectives into the sero flow
    parameter_list$R0_pre[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
   }
+  if ("sircovid_serology2" %in% class(sircovid_model)){
+    #Put the initial infectives into PCR pos flow
+    parameter_list$PCR0_pos[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+  }
   
   
   #
@@ -297,6 +314,10 @@ generate_parameters <- function(
   
   if ("sircovid_serology" %in% class(sircovid_model)){
    parameter_list$gamma_test <- sircovid_model$gammas[["test"]] 
+  }
+  if ("sircovid_serology2" %in% class(sircovid_model)){
+    parameter_list$gamma_R_pre_1 <- sircovid_model$gammas[["R_pre_1"]] 
+    parameter_list$gamma_R_pre_2 <- sircovid_model$gammas[["R_pre_2"]] 
   }
 
   # Remove parameters unused by odin
@@ -323,8 +344,13 @@ generate_parameters <- function(
     } else {
       parameter_list$p_recov_ILI <- NULL
     }
-  }         
+  }
+  if (!("sircovid_serology" %in% class(sircovid_model))) {
+    parameter_list$lambda_external_y <- NULL
+    parameter_list$lambda_external_t <- NULL
+  }
 
+  
   parameter_list
 }
 
@@ -393,6 +419,8 @@ generate_parameters_base <- function(
   severity_data_file,
   beta,
   beta_times,
+  lambda_external,
+  lambda_external_times,
   trans_profile,
   trans_increase,
   dt,
@@ -424,6 +452,8 @@ generate_parameters_base <- function(
   # Set up time-varying beta
   # Times are in days from first day supplied
   beta_t <- normalise_beta(beta_times, dt)
+  
+  lambda_external_t <- normalise_beta(lambda_external_times,dt)
 
   # 
   # This section defines proportions between partitions
@@ -474,6 +504,8 @@ generate_parameters_base <- function(
                          trans_profile = trans_profile_array,
                          beta_y = beta,
                          beta_t = beta_t,
+                         lambda_external_y = lambda_external,
+                         lambda_external_t = lambda_external_t, 
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,

@@ -13,6 +13,10 @@
 "gamma_stepdown",0.452381010083587
 "s_R_pre",1
 "gamma_R_pre",0.07790747
+"gamma_R_pre_1",0.07790747
+"gamma_R_pre_2",0.07790747
 "s_comm_D",2
 "gamma_comm_D",0.4
+"s_PCR_pos",2
+"gamma_PCR_pos",0.2
 "gamma_test",0.2857
