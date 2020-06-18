@@ -190,7 +190,7 @@ generate_parameters <- function(
                            bins=c('15 to 19')),
   beta = 0.1,
   beta_times = sircovid_date("2020-02-02"),
-  lambda_external = 0.1,
+  lambda_external = 0,
   lambda_external_times = sircovid_date("2020-02-02"),
   trans_profile = c(1),
   trans_increase = c(1),
@@ -241,7 +241,7 @@ generate_parameters <- function(
       parameter_list$R0_stepdown_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_stepdown_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_neg <- rep(0, parameter_list$N_age)
-      
+      parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
       parameter_list$R0_pos <- rep(0, parameter_list$N_age)
       parameter_list$I0_comm_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$comm_D, parameter_list$trans_classes))
       parameter_list$I0_hosp_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
@@ -263,11 +263,7 @@ generate_parameters <- function(
       if ("sircovid_serology2" %in% class(sircovid_model)){
         parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, 2))
         parameter_list$p_R_pre_1 <- 0.5
-        lambda_external_y <- 0
-        lambda_external_t <- 0
         parameter_list$PCR0_pos <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$PCR_pos))
-      } else {
-        parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
       }
     } else {
       parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
@@ -345,7 +341,7 @@ generate_parameters <- function(
       parameter_list$p_recov_ILI <- NULL
     }
   }
-  if (!("sircovid_serology" %in% class(sircovid_model))) {
+  if (!("sircovid_serology2" %in% class(sircovid_model))) {
     parameter_list$lambda_external_y <- NULL
     parameter_list$lambda_external_t <- NULL
   }
