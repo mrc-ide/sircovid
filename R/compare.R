@@ -18,46 +18,46 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
   index <- odin_index(model)
 
   ## Unpack things that we will use repeatedly
-  if (phi_ICU %in% pars_obs){
+  if ("phi_ICU" %in% names(pars_obs)){
     phi_ICU <- pars_obs$phi_ICU
   }
-  if (k_ICU %in% pars_obs){
+  if ("k_ICU" %in% names(pars_obs)){
     k_ICU <- pars_obs$k_ICU
   }
-  if (phi_death %in% pars_obs){
+  if ("phi_death" %in% names(pars_obs)){
     phi_death <- pars_obs$phi_death
   }
-  if (k_death %in% pars_obs){
+  if ("k_death" %in% names(pars_obs)){
     k_death <- pars_obs$k_death
   }
-  if (phi_death_hosp %in% pars_obs){
+  if ("phi_death_hosp" %in% names(pars_obs)){
     phi_death_hosp <- pars_obs$phi_death_hosp
   }
-  if (k_death_hosp %in% pars_obs){
+  if ("k_death_hosp" %in% names(pars_obs)){
     k_death_hosp <- pars_obs$k_death_hosp
   }
-  if (phi_death_comm %in% pars_obs){
+  if ("phi_death_comm" %in% names(pars_obs)){
     phi_death_comm <- pars_obs$phi_death_comm
   }
-  if (k_death_comm %in% pars_obs){
+  if ("k_death_comm" %in% names(pars_obs)){
     k_death_comm <- pars_obs$k_death_comm
   }
-  if (phi_general %in% pars_obs){
+  if ("phi_general" %in% names(pars_obs)){
     phi_general <- pars_obs$phi_general
   }
-  if (k_general %in% pars_obs){
+  if ("k_general" %in% names(pars_obs)){
     k_general <- pars_obs$k_general
   }
-  if (phi_admitted %in% pars_obs){
+  if ("phi_admitted" %in% names(pars_obs)){
     phi_admitted <- pars_obs$phi_admitted
   }
-  if (k_admitted %in% pars_obs){
+  if ("k_admitted" %in% names(pars_obs)){
     k_admitted <- pars_obs$k_admitted
   }
-  if (phi_new %in% pars_obs){
+  if ("phi_new" %in% names(pars_obs)){
     phi_new <- pars_obs$phi_new
   }
-  if (k_new %in% pars_obs){
+  if ("k_new" %in% names(pars_obs)){
     k_new <- pars_obs$k_new
   }
   exp_noise <- pars_obs$exp_noise
