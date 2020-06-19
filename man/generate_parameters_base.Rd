@@ -30,6 +30,10 @@ generate_parameters_base(
 
 \item{beta_times}{Dates \code{beta} changes, in format yyyy-mm-dd}
 
+\item{lambda_external}{lambda_external, for each time step in \code{lambda_external_times}}
+
+\item{lambda_external_times}{Dates \code{lambda_external} changes, must use \code{sircovid_date}}
+
 \item{trans_profile}{Proportion in each infectivity group}
 
 \item{trans_increase}{Relative infectivity of each group}

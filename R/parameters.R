@@ -395,6 +395,10 @@ sircovid_date <- function(date) {
 ##' 
 ##' @param beta_times Dates \code{beta} changes, in format yyyy-mm-dd
 ##' 
+##' @param lambda_external lambda_external, for each time step in \code{lambda_external_times}
+##' 
+##' @param lambda_external_times Dates \code{lambda_external} changes, must use \code{sircovid_date}
+##' 
 ##' @param trans_profile Proportion in each infectivity group
 ##' 
 ##' @param trans_increase Relative infectivity of each group
