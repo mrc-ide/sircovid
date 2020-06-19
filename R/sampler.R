@@ -195,13 +195,6 @@ systematic_resample <- function(weights) {
   findInterval(u, cum_weights) + 1L
 }
 
-
-##' @importFrom stats dnbinom rexp
-ll_nbinom <- function(data, model, phi, k, exp_noise) {
-  mu <- phi * model + rexp(length(model), rate = exp_noise)
-  dnbinom(data, k, mu = mu, log = TRUE)
-}
-
 ##' @importFrom graphics plot points matlines
 ##' @importFrom stats quantile
 plot_particles <- function(particles, ylab, title, col = "#44111144") {
