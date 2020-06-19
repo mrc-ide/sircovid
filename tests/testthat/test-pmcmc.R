@@ -67,7 +67,97 @@ test_that("pmcmc with serology model", {
   
 })
 
-
+test_that("pmcmc with serology2 model", {
+  data <- readRDS("serology_model_data2.rds")
+  sircovid_model <- serology2_model()
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = sircovid_date('2020-01-01'),
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  pars_obs <-  list(phi_general = 0.95,
+                    k_general = 2,
+                    phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death_hosp = 1.15,
+                    k_death_hosp = 2,
+                    phi_death_comm = 1,
+                    k_death_comm = 2,
+                    phi_new = 0.95,
+                    k_new = 2,
+                    phi_admitted = 0.95,
+                    k_admitted = 2,
+                    exp_noise = 1e6,
+                    p_specificity = 0.9)
+  
+  par_names <- c('beta_start',
+                 'beta_end', 
+                 'beta_pl',
+                 'start_date',  
+                 'gamma_triage', 
+                 'gamma_hosp_R', 
+                 'gamma_hosp_D', 
+                 'gamma_ICU_R', 
+                 'gamma_ICU_D', 
+                 'gamma_stepdown')
+  
+  data$deaths <- NA
+  
+  cmp <- readRDS("reference_pmcmc_serology2.rds")
+  
+  n_mcmc <- 10
+  n_particles <- 10
+  set.seed(1)
+  proposal_kernel <- diag(10)*0.001^2
+  rownames(proposal_kernel) <- colnames(proposal_kernel) <- par_names
+  proposal_kernel["start_date", "start_date"] <- 1
+  
+  X <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs,
+    proposal_kernel = proposal_kernel, 
+    n_particles = n_particles, output_proposals = TRUE
+  )
+  #saveRDS(X,"reference_pmcmc_serology2.rds")
+  expect_is(X, 'pmcmc')
+  expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
+  expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 631))
+  expect_equivalent(X, cmp)
+  
+  
+  data <- readRDS("serology_model_data2.rds")
+  pars_obs$k_death_hosp <- NULL
+  pars_obs$k_death_comm <- NULL
+  pars_obs$k_death <- 2
+  
+  cmp <- readRDS("reference_pmcmc_serology2_combineddeaths.rds")
+  
+  X2 <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_obs = pars_obs,
+    proposal_kernel = proposal_kernel, 
+    n_particles = n_particles, output_proposals = TRUE
+  )
+  #saveRDS(X2,"reference_pmcmc_serology2_combineddeaths.rds")
+  expect_is(X2, 'pmcmc')
+  expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
+  expect_equal(dim(X2$results), c(n_mcmc + 1L, 13))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 631))
+  expect_equivalent(X2, cmp)
+})
 
 test_that("pmcmc runs with beta_pl", {
   

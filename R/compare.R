@@ -122,7 +122,15 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
           ll_nbinom(data$deaths[t], phi_death * model_deaths, k_death, exp_noise)
       }
     } else {
-      if(!is.na(data$deaths_hosp[t]) || !is.na(data$deaths_comm[t])){
+      if (!is.na(data$deaths[t])) {
+        ## new deaths summed across ages/infectivities
+        model_deaths_hosp <- colSums(state[index_D_hosp, ]) -
+          colSums(prev_state[index_D_hosp, ])
+        model_deaths_comm <- colSums(state[index_D_comm, ]) -
+          colSums(prev_state[index_D_comm, ])
+        log_weights <- log_weights +
+          ll_nbinom(data$deaths[t], phi_death_hosp * model_deaths_hosp + phi_death_comm * model_deaths_comm, k_death, exp_noise)
+      } else {
         if (!is.na(data$deaths_hosp[t])) {
           ## new deaths summed across ages/infectivities
           model_deaths_hosp <- colSums(state[index_D_hosp, ]) -
@@ -137,15 +145,7 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
           log_weights <- log_weights +
             ll_nbinom(data$deaths_comm[t], phi_death_comm * model_deaths_comm, k_death_comm, exp_noise)
         }
-      } else if (!is.na(data$deaths[t])) {
-          ## new deaths summed across ages/infectivities
-          model_deaths_hosp <- colSums(state[index_D_hosp, ]) -
-            colSums(prev_state[index_D_hosp, ])
-          model_deaths_comm <- colSums(state[index_D_comm, ]) -
-            colSums(prev_state[index_D_comm, ])
-          log_weights <- log_weights +
-            ll_nbinom(data$deaths[t], phi_death_hosp * model_deaths_hosp + phi_death_comm * model_deaths_comm, k_death, exp_noise)
-      }
+      } 
     }
     
     if (type %in% c("sircovid_serology","sircovid_serology2")  && !is.na(data$admitted[t])) {
