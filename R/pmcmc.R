@@ -546,6 +546,8 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                              start_date,
                                              model_params$dt)
     
+    model_params$beta_changepoints <- NULL
+    
   } else {
   
     # Beta needs a transform applied
