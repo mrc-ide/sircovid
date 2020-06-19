@@ -240,6 +240,7 @@ generate_parameters <- function(
       if ("sircovid_serology2" %in% class(sircovid_model)){
         parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, 2))
         parameter_list$p_R_pre_1 <- 0.5
+        parameter_list$PCR0_pos <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$PCR_pos))
       } else {
         parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
       }
@@ -287,6 +288,10 @@ generate_parameters <- function(
   if ("sircovid_serology" %in% class(sircovid_model)){
    #Put the initial infectives into the sero flow
    parameter_list$R0_pre[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+  }
+  if ("sircovid_serology" %in% class(sircovid_model)){
+    #Put the initial infectives into the PCR pos flow
+    parameter_list$PCR0_pos[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
   }
   
   
