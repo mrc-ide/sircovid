@@ -1,6 +1,7 @@
 # sircovid 0.3.8
 
 - 4th model added to package - serology2_model
+- PMCMC now supports piecewise linear beta
 
 # sircovid 0.3.7
 
