@@ -233,11 +233,16 @@ generate_parameters <- function(
     parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
     parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
     parameter_list$R0 <- rep(0, parameter_list$N_age)
-    if ("sircovid_serology" %in% class(sircovid_model)) {
+    if ("sircovid_serology" %in% class(sircovid_model)){
       parameter_list$R0_stepdown_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_stepdown_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_neg <- rep(0, parameter_list$N_age)
-      parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
+      if ("sircovid_serology2" %in% class(sircovid_model)){
+        parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, 2))
+        parameter_list$p_R_pre_1 <- 0.5
+      } else {
+        parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$R_pre))
+      }
       parameter_list$R0_pos <- rep(0, parameter_list$N_age)
       parameter_list$I0_comm_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$comm_D, parameter_list$trans_classes))
       parameter_list$I0_hosp_D_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
@@ -256,6 +261,7 @@ generate_parameters <- function(
       parameter_list$D0_comm <- rep(0, parameter_list$N_age)
       parameter_list$cum0_admit_conf <- 0
       parameter_list$cum0_new_conf <- 0
+      
     } else {
       parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
       parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
@@ -298,7 +304,12 @@ generate_parameters <- function(
   if ("sircovid_serology" %in% class(sircovid_model)){
    parameter_list$gamma_test <- sircovid_model$gammas[["test"]] 
   }
-
+  if ("sircovid_serology2" %in% class(sircovid_model)){
+    parameter_list$gamma_R_pre_1 <- sircovid_model$gammas[["R_pre_1"]] 
+    parameter_list$gamma_R_pre_2 <- sircovid_model$gammas[["R_pre_2"]] 
+  }
+  
+  
   # Remove parameters unused by odin
   parameter_list$age_bin_starts <- NULL
   if ("sircovid_basic" %in% class(sircovid_model)) {
