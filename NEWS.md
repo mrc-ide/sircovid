@@ -1,3 +1,7 @@
+# sircovid 0.3.8
+
+- 4th model added to package - serology2_model
+
 # sircovid 0.3.7
 
 - Introduced a piecewise linear generate beta function
