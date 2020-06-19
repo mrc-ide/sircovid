@@ -60,12 +60,6 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
   if ("k_new" %in% names(pars_obs)){
     k_new <- pars_obs$k_new
   }
-  if ("p_PCR_specificity" %in% names(pars_obs)){
-    p_PCR_specificity <- pars_obs$p_PCR_specificity
-  }
-  if ("p_PCR_sensitivity" %in% names(pars_obs)){
-    p_PCR_sensitivity <- pars_obs$p_PCR_sensitivity
-  }
   
   exp_noise <- pars_obs$exp_noise
   
@@ -92,10 +86,6 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     tmp <- model$run(1)
     res <- model$transform_variables(tmp)
     N_tot <- res$N_tot[1,]
-    
-    if (type == "sircovid_serology2"){
-      index_PCR_pos <- c(index$PCR_pos) - 1L
-    }
     
   }
 
@@ -199,13 +189,6 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
       
       log_weights <- log_weights +
         dbinom(data$npos_65plus[t], size = data$ntot_65plus[t], prob = prob_true_pos + prob_false_pos, log = TRUE)
-    }
-    
-    if (type == "sircovid_serology2" && !is.na(data$PCR_pos[t])) {
-      prob_pos <- colSums(state[index_PCR_pos, ,drop = FALSE]) / sum(N_tot)
-      
-      log_weights <- log_weights +
-        dbinom(data$PCR_pos[t], size = data$PCR_tot[t], prob = p_PCR_specificity * prob_pos + (1 - p_PCR_sensitivity) * prob_pos, log = TRUE)
     }
     
     log_weights
