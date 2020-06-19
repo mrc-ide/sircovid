@@ -190,6 +190,8 @@ generate_parameters <- function(
                            bins=c('15 to 19')),
   beta = 0.1,
   beta_times = sircovid_date("2020-02-02"),
+  lambda_external = 0,
+  lambda_external_times = sircovid_date("2020-02-02"),
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
@@ -208,6 +210,8 @@ generate_parameters <- function(
                                              severity_data_file=severity_data_file,
                                              beta = beta,
                                              beta_times = beta_times,
+                                             lambda_external = lambda_external,
+                                             lambda_external_times = lambda_external_times,
                                              trans_profile = trans_profile,
                                              trans_increase = trans_increase,
                                              dt = dt,
@@ -256,6 +260,11 @@ generate_parameters <- function(
       parameter_list$D0_comm <- rep(0, parameter_list$N_age)
       parameter_list$cum0_admit_conf <- 0
       parameter_list$cum0_new_conf <- 0
+      if ("sircovid_serology2" %in% class(sircovid_model)){
+        parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, 2))
+        parameter_list$p_R_pre_1 <- 0.5
+        parameter_list$PCR0_pos <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$PCR_pos))
+      }
     } else {
       parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
       parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
@@ -279,8 +288,12 @@ generate_parameters <- function(
   parameter_list$I0_asympt[seed_idx,1,parameter_list$trans_classes] <- infection_seeding$values
   parameter_list$S0[seed_idx] <- parameter_list$S0[seed_idx] - infection_seeding$values
   if ("sircovid_serology" %in% class(sircovid_model)){
-   #Put the initial infectives into the sero flow
-   parameter_list$R0_pre[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+    #Put the initial infectives into the sero flow
+    parameter_list$R0_pre[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+  }
+  if ("sircovid_serology2" %in% class(sircovid_model)){
+    #Put the initial infectives into PCR pos flow
+    parameter_list$PCR0_pos[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
   }
   
   
@@ -296,9 +309,13 @@ generate_parameters <- function(
   parameter_list$comm_D_transmission <- comm_D_transmission
   
   if ("sircovid_serology" %in% class(sircovid_model)){
-   parameter_list$gamma_test <- sircovid_model$gammas[["test"]] 
+    parameter_list$gamma_test <- sircovid_model$gammas[["test"]] 
   }
-
+  if ("sircovid_serology2" %in% class(sircovid_model)){
+    parameter_list$gamma_R_pre_1 <- sircovid_model$gammas[["R_pre_1"]] 
+    parameter_list$gamma_R_pre_2 <- sircovid_model$gammas[["R_pre_2"]] 
+  }
+  
   # Remove parameters unused by odin
   parameter_list$age_bin_starts <- NULL
   if ("sircovid_basic" %in% class(sircovid_model)) {
@@ -315,16 +332,21 @@ generate_parameters <- function(
     parameter_list$p_recov_ICU <- NULL
     parameter_list$p_death_hosp <- NULL
     if (!("sircovid_serology" %in% class(sircovid_model))) {
-        parameter_list$p_seroconversion <- NULL
-        parameter_list$p_death_comm <- NULL
-        parameter_list$comm_D_transmission <- NULL
-        parameter_list$p_admit_conf <- NULL
-        parameter_list$p_hosp_ILI <- NULL
+      parameter_list$p_seroconversion <- NULL
+      parameter_list$p_death_comm <- NULL
+      parameter_list$comm_D_transmission <- NULL
+      parameter_list$p_admit_conf <- NULL
+      parameter_list$p_hosp_ILI <- NULL
     } else {
       parameter_list$p_recov_ILI <- NULL
     }
-  }         
-
+  }
+  if (!("sircovid_serology2" %in% class(sircovid_model))) {
+    parameter_list$lambda_external_y <- NULL
+    parameter_list$lambda_external_t <- NULL
+  }
+  
+  
   parameter_list
 }
 
@@ -393,6 +415,8 @@ generate_parameters_base <- function(
   severity_data_file,
   beta,
   beta_times,
+  lambda_external,
+  lambda_external_times,
   trans_profile,
   trans_increase,
   dt,
@@ -424,11 +448,13 @@ generate_parameters_base <- function(
   # Set up time-varying beta
   # Times are in days from first day supplied
   beta_t <- normalise_beta(beta_times, dt)
-
+  
+  lambda_external_t <- normalise_beta(lambda_external_times,dt)
+  
   # 
   # This section defines proportions between partitions
   # derived from the severity.csv file
-   
+  
   severity_params <- read_severity(severity_file_in=severity_data_file)
   
   #
@@ -448,20 +474,20 @@ generate_parameters_base <- function(
       country = "United Kingdom",
       age_limits = severity_params$age_bin_starts)
   }
-
+  
   #
   # Set up the heterogeneous offspring distribution 
   #
   N_age_bins <- length(severity_params$age_bin_starts)
   N_trans_classes <- length(trans_profile)
-
+  
   # Makes an array with rows as age bins, columns as classes
   # All age bins have the same transmission changes
   trans_profile_array <- array(unlist(lapply(trans_profile, rep, N_age_bins)), 
-                         c(N_age_bins, N_trans_classes))
+                               c(N_age_bins, N_trans_classes))
   trans_increase_array <- array(unlist(lapply(trans_increase, rep, N_age_bins)), 
-                          c(N_age_bins, N_trans_classes))
-
+                                c(N_age_bins, N_trans_classes))
+  
   #
   # Returns parameters
   #
@@ -474,6 +500,8 @@ generate_parameters_base <- function(
                          trans_profile = trans_profile_array,
                          beta_y = beta,
                          beta_t = beta_t,
+                         lambda_external_y = lambda_external,
+                         lambda_external_t = lambda_external_t, 
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,
@@ -488,7 +516,7 @@ generate_parameters_base <- function(
                          p_seroconversion = severity_params$seroconversion,
                          p_death_comm = severity_params$death_comm,
                          p_admit_conf = severity_params$admit_conf)
-
+  
   parameter_list
 }
 
@@ -534,7 +562,7 @@ sircovid_date_as_Date <- function(sircovid_date)
   if (class(sircovid_date) != "numeric") {
     stop("sircovid_date must be numeric")
   }
-
+  
   lubridate::as_date('2019-12-31') + sircovid_date
 }
 
@@ -572,7 +600,7 @@ parse_age_bins <- function(age_bin_strings) {
 ## TODO - could average these when alternative bins are provided
 check_age_bins <- function(age_headers) {
   bins = parse_age_bins(age_headers)
-
+  
   if (any(utils::head(bins$bin_end, - 1) + 1 != bins$bin_start[-1])) {
     warning_message <- "Passed age bins intervals do not overlap correctly"
     message(warning_message)
@@ -588,19 +616,19 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   } else {
     severity_file <- sircovid_file(severity_file_in)
   }
-
+  
   # Set up severity file into table
   severity_params <- utils::read.csv(severity_file, stringsAsFactors = FALSE, check.names = FALSE)
   colnames(severity_params)[1] <- "age"
-
+  
   # Transpose so columns are parameters, rownames are age groups
   severity_data <- t(as.matrix(severity_params[-1]))
   colnames(severity_data) <- severity_params[[1]]
   severity_data <- cbind(age = rownames(severity_data),
-             data.frame(severity_data, check.names = FALSE),
-             stringsAsFactors = FALSE)
+                         data.frame(severity_data, check.names = FALSE),
+                         stringsAsFactors = FALSE)
   rownames(severity_data) <- NULL
-
+  
   # Check file format
   expected_cols <- c(
     "Size of England population",
@@ -630,12 +658,12 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   age_bins <- check_age_bins(severity_data[["age"]])
   
   population <- round(severity_data[["Size of England population"]])
-
+  
   prop_symp_seek_HC <- severity_data[["Proportion of symptomatic cases seeking healthcare"]]
   
   # Proportion of asymptomatic
   p_asympt <- 1 - severity_data[["Proportion with symptoms"]]
-
+  
   #Proportion seeking healthcare
   p_sympt_ILI <- severity_data[["Proportion with symptoms"]] *
     prop_symp_seek_HC
@@ -645,7 +673,7 @@ read_severity <- function(severity_file_in = NULL, age_limits) {
   p_ICU_hosp <- severity_data[["Proportion of hospitalised cases getting critical care"]]
   
   p_death_ICU <- severity_data[["Proportion of critical cases dying"]]
-
+  
   p_recov_ILI <- 1 - severity_data[["Proportion of symptomatic cases hospitalised"]] /
     prop_symp_seek_HC
   
@@ -690,7 +718,7 @@ get_survey_pop <- function(survey_pop_in, age_bins) {
   # Always use the population size from the severity file
   survey_pop <- data.frame(lower.age.limit = age_bins,
                            population = survey_pop_in)
-
+  
   survey_pop
 }
 
