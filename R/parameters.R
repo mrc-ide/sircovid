@@ -160,7 +160,11 @@ generate_beta_piecewise_linear <- function(beta_k,
 ##' 
 ##' @param beta Beta, for each time step in \code{beta_times}
 ##' 
-##' @param beta_times Dates \code{beta} changes, in format yyyy-mm-dd
+##' @param beta_times Dates \code{beta} changes, must use \code{sircovid_date}
+##'
+##' @param lambda_external lambda_external, for each time step in \code{lambda_external_times}
+##' 
+##' @param lambda_external_times Dates \code{lambda_external} changes, must use \code{sircovid_date}
 ##' 
 ##' @param trans_profile Proportion in each infectivity group
 ##' 

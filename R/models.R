@@ -70,18 +70,18 @@ serology_model <- function(use_fitted_parameters = TRUE,
 }
 
 
-##' Create a care home model
+##' Create a serology2 model
 ##' 
-##' @title Care home model
+##' @title serology2 model
 ##' 
 ##' @param use_fitted_parameters Override progression_groups and gammas with fitted
 ##'   parameters loaded by \code{read_fitted_parameters()}
 ##' 
 ##' @param progression_groups List of number of progression groups in each partition
-##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre'
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'PCR_pos'
 ##'   
 ##' @param gammas List of exponential distribution rates for time in each partition
-##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre', 'test'
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre_1', 'R_pre_2', 'test', 'PCR_pos'
 ##'   
 ##' @export
 serology2_model <- function(use_fitted_parameters = TRUE,
@@ -91,7 +91,7 @@ serology2_model <- function(use_fitted_parameters = TRUE,
   serology2_model <- model_constructor(model_class, "serology2", 
                                       use_fitted_parameters, progression_groups, gammas)
   
-  # This inherits from the sircovid_hospital model, it only adds new partitions/parameters
+  # This inherits from the sircovid_hospital and sircovid_serology models, it only adds new partitions/parameters
   class(serology2_model) <- c(model_class, "sircovid_hospital","sircovid_serology")
   serology2_model
 }

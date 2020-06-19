@@ -38,7 +38,11 @@ in a correspond vector of age bins in \code{bins}.}
 
 \item{beta}{Beta, for each time step in \code{beta_times}}
 
-\item{beta_times}{Dates \code{beta} changes, in format yyyy-mm-dd}
+\item{beta_times}{Dates \code{beta} changes, must use \code{sircovid_date}}
+
+\item{lambda_external}{lambda_external, for each time step in \code{lambda_external_times}}
+
+\item{lambda_external_times}{Dates \code{lambda_external} changes, must use \code{sircovid_date}}
 
 \item{trans_profile}{Proportion in each infectivity group}
 

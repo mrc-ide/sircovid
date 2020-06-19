@@ -2,7 +2,7 @@
 % Please edit documentation in R/models.R
 \name{serology2_model}
 \alias{serology2_model}
-\title{Care home model}
+\title{serology2 model}
 \usage{
 serology2_model(
   use_fitted_parameters = TRUE,
@@ -18,11 +18,11 @@ serology2_model(
 parameters loaded by \code{read_fitted_parameters()}}
 
 \item{progression_groups}{List of number of progression groups in each partition
-needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre'}
+needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'PCR_pos'}
 
 \item{gammas}{List of exponential distribution rates for time in each partition
-needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre', 'test'}
+needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre_1', 'R_pre_2', 'test', 'PCR_pos'}
 }
 \description{
-Create a care home model
+Create a serology2 model
 }
