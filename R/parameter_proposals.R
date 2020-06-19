@@ -25,7 +25,7 @@ update_beta_piecewise_linear <- function(sircovid_model,
   new_beta <- sircovid_model$generate_beta_func(beta_k = beta_k,
                                                 t_k = t_k, 
                                                 start_date = start_date,
-                                                dt = 1) 
+                                                dt = dt) 
   
   beta_t <- normalise_beta(new_beta$beta_times, dt)
   
