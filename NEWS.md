@@ -2,6 +2,7 @@
 
 - 4th model added to package - serology2_model
 - PMCMC now supports piecewise linear beta
+- Fixed bug in serology_model where there was some double counting in cum_new_conf
 
 # sircovid 0.3.7
 
