@@ -127,7 +127,6 @@ test_that("pmcmc with serology2 model", {
     proposal_kernel = proposal_kernel, 
     n_particles = n_particles, output_proposals = TRUE
   )
-  #saveRDS(X,"reference_pmcmc_serology2.rds")
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
@@ -151,7 +150,6 @@ test_that("pmcmc with serology2 model", {
     proposal_kernel = proposal_kernel, 
     n_particles = n_particles, output_proposals = TRUE
   )
-  #saveRDS(X2,"reference_pmcmc_serology2_combineddeaths.rds")
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, 13))
