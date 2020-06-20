@@ -52,7 +52,17 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
   ## This returns a closure, with the above variables bound, the
   ## sampler will provide the arguments below.
   function(t, state, prev_state) {
-    if (is.na(data$itu[t] && is.na(data$deaths[t]))) {
+    
+    if (type == 'sircovid_basic'){
+      data_names <- c("itu","deaths")
+    } else if (type == 'sircovid_hospital'){
+      data_names <- c("itu","deaths","general")
+    } else if (type == 'sircovid_serology'){
+      data_names <- c("itu","deaths","general","admitted","new","ntot_0_14","npos_0_14","ntot_15_64","npos_15_64","ntot_65plus","npos_65plus")
+    } else if (type == 'sircovid_serology2'){
+      data_names <- c("itu","deaths","deaths_hosp","deaths_comm","general","admitted","new","ntot_0_14","npos_0_14","ntot_15_64","npos_15_64","ntot_65plus","npos_65plus")
+    }
+    if (all(is.na(subset(data,select=data_names)[t,]))) {
       return(NULL)
     }
 
@@ -95,14 +105,14 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
           log_weights <- log_weights +
             ll_nbinom(data$deaths_comm[t], phi_death_comm * model_deaths_comm, k_death_comm, exp_noise)
         }
-      } else {
-        ## new deaths summed across ages/infectivities
-        model_deaths_hosp <- colSums(state[index_D_hosp, ]) -
-          colSums(prev_state[index_D_hosp, ])
-        model_deaths_comm <- colSums(state[index_D_comm, ]) -
-          colSums(prev_state[index_D_comm, ])
-        log_weights <- log_weights +
-          ll_nbinom(data$deaths[t], phi_death_hosp * model_deaths_hosp + phi_death_comm * model_deaths_comm, k_death, exp_noise)
+      } else if (!is.na(data$deaths[t])){
+          ## new deaths summed across ages/infectivities
+          model_deaths_hosp <- colSums(state[index_D_hosp, ]) -
+            colSums(prev_state[index_D_hosp, ])
+          model_deaths_comm <- colSums(state[index_D_comm, ]) -
+            colSums(prev_state[index_D_comm, ])
+          log_weights <- log_weights +
+            ll_nbinom(data$deaths[t], phi_death_hosp * model_deaths_hosp + phi_death_comm * model_deaths_comm, k_death, exp_noise)
       } 
     }
     

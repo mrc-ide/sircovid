@@ -58,6 +58,7 @@ test_that("pmcmc with serology model", {
     proposal_kernel = proposal_kernel, 
     n_particles = n_particles, output_proposals = TRUE
      )
+  saveRDS(X,"reference_pmcmc_serology.rds")
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
@@ -107,8 +108,6 @@ test_that("pmcmc with serology2 model", {
                  'gamma_ICU_D', 
                  'gamma_stepdown')
   
-  data$deaths <- NA
-  
   cmp <- readRDS("reference_pmcmc_serology2.rds")
   
   n_mcmc <- 10
@@ -139,8 +138,11 @@ test_that("pmcmc with serology2 model", {
   pars_obs$k_death_comm <- NULL
   pars_obs$k_death <- 2
   
-  cmp <- readRDS("reference_pmcmc_serology2_combineddeaths.rds")
+  data$deaths_comm <- NA
+  data$deaths_hosp <- NA
   
+  cmp <- readRDS("reference_pmcmc_serology2_combineddeaths.rds")
+  set.seed(1)
   X2 <- pmcmc(
     data = data,
     n_mcmc = n_mcmc,
