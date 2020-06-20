@@ -471,9 +471,15 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
 })
 
 test_that("No one is unconfirmed, if p_admit_conf = 1", {
-  sircovid_model <- serology_model()
+  sircovid_model <- serology_model(use_fitted_parameters = FALSE, progression_groups = list(E = 2, asympt = 2, mild = 2, ILI = 2, comm_D = 2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, R_pre = 2))
   pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.126)
   pars_model$p_admit_conf[] <- 1
+  pars_model$gamma_triage <- Inf
+  pars_model$gamma_hosp_R <- Inf
+  pars_model$gamma_hosp_D <- Inf
+  pars_model$gamma_ICU_R <- Inf
+  pars_model$gamma_ICU_D <- Inf
+  pars_model$gamma_stepdown <- Inf
   mod <- sircovid_model$odin_model(user = pars_model)
   t_max <- 150
   t <- seq(from = 1, to = t_max)
@@ -511,6 +517,9 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
   expect_true(any(results$I_ICU_D_conf > 0))
   expect_true(all(results$R_stepdown_unconf == 0))
   expect_true(any(results$R_stepdown_conf > 0))
+  admit_conf <- apply(results$I_hosp_R_conf[,,1,] + results$I_hosp_D_conf[,,1,] + results$I_triage_R_conf[,,1,] + results$I_triage_D_conf[,,1,],1,sum)
+  expect_true(all(diff(results$cum_admit_conf) == admit_conf[2:t_max]))
+  expect_true(all(results$cum_new_conf == 0))
 }
 )
 
@@ -556,6 +565,8 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
   expect_true(all(results$I_ICU_D_conf == 0))
   expect_true(any(results$R_stepdown_unconf > 0))
   expect_true(all(results$R_stepdown_conf == 0))
+  expect_true(all(results$admit_new_conf == 0))
+  expect_true(all(results$cum_new_conf == 0))
 }
 )
 
@@ -621,5 +632,10 @@ test_that("Confirmation in one time-step, if p_admit_conf = 0 and gamma_test = I
   I_ICU_R_conf <- apply(results$I_ICU_R_conf,c(1,2,3),sum)
   expect_true(all(results$R_stepdown_conf[2:t_max,,1] == I_ICU_R_conf[1:(t_max-1),,2]))
   expect_true(all(results$R_stepdown_unconf[,,2] == 0))
+  
+  new_conf <- apply(results$I_hosp_R_conf[,,2,] + results$I_hosp_D_conf[,,2,] + results$I_triage_R_conf[,,2,] + results$I_triage_D_conf[,,2,],1,sum)
+  new_conf[2] <- new_conf[2] + sum(results$I_ICU_R_conf[2,,2,] + results$I_ICU_D_conf[2,,2,] + results$R_stepdown_conf[2,,2])
+  expect_true(all(diff(results$cum_new_conf) == new_conf[2:t_max]))
+  expect_true(all(results$cum_admit_conf == 0))
 }
 )
