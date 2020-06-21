@@ -90,7 +90,7 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
           ll_nbinom(data$deaths[t], phi_death * model_deaths, k_death, exp_noise)
       }
     } else {
-      if (!is.na(data$deaths_hosp[t] || !is.na(data$deaths_comm[t]))){
+      if (!is.na(data$deaths_hosp[t]) || !is.na(data$deaths_comm[t])){
         if (!is.na(data$deaths_hosp[t])) {
           ## new deaths summed across ages/infectivities
           model_deaths_hosp <- colSums(state[index_D_hosp, ]) -
