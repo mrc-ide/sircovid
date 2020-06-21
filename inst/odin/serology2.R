@@ -33,12 +33,13 @@ update(I_ICU_D_unconf[,,]) <- new_I_ICU_D_unconf[i,j,k]
 update(I_ICU_D_conf[,,]) <- new_I_ICU_D_conf[i,j,k]
 update(R_stepdown_unconf[,]) <- new_R_stepdown_unconf[i,j]
 update(R_stepdown_conf[,]) <- new_R_stepdown_conf[i,j]
-update(R_pre[,]) <- R_pre[i,j] + delta_R_pre[i,j]
+update(R_pre[,]) <- R_pre[i,j] + n_com_to_R_pre[i,j] - n_R_pre[i,j]
 update(R_pos[]) <- R_pos[i] + delta_R_pos[i]
 update(R_neg[]) <- R_neg[i] + delta_R_neg[i]
 update(R[]) <- R[i] + delta_R[i]
 update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
 update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
+update(PCR_pos[,]) <- PCR_pos[i,j] + delta_PCR_pos[i,j]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
 
@@ -57,8 +58,9 @@ p_II_hosp_D <- 1 - exp(-gamma_hosp_D*dt)
 p_II_ICU_R <- 1 - exp(-gamma_ICU_R*dt)
 p_II_ICU_D <- 1 - exp(-gamma_ICU_D*dt)
 p_R_stepdown <- 1 - exp(-gamma_stepdown*dt)
-p_R_pre[] <- 1 - exp(-gamma_R_pre*dt)
+p_R_pre[,] <- 1 - exp(-gamma_R_pre[j]*dt)
 p_test <- 1- exp(-gamma_test*dt)
+p_PCR_pos <- 1 - exp(-gamma_PCR_pos*dt)
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -82,7 +84,8 @@ n_II_ICU_D_unconf[,,] <- rbinom(I_ICU_D_unconf[i,j,k], p_II_ICU_D)
 n_II_ICU_D_conf[,,] <- rbinom(I_ICU_D_conf[i,j,k], p_II_ICU_D)
 n_R_stepdown_unconf[,] <- rbinom(R_stepdown_unconf[i,j], p_R_stepdown)
 n_R_stepdown_conf[,] <- rbinom(R_stepdown_conf[i,j], p_R_stepdown)
-n_R_pre[,] <- rbinom(R_pre[i,j], p_R_pre[i])
+n_R_pre[,] <- rbinom(R_pre[i,j], p_R_pre[i,j])
+n_PCR_pos[,] <- rbinom(PCR_pos[i,j], p_PCR_pos)
 
 
 #Computes the number of asymptomatic
@@ -126,11 +129,10 @@ aux_II_ILI[,2:s_ILI,] <- n_II_ILI[i,j-1,k]
 aux_II_ILI[,1:s_ILI,] <- aux_II_ILI[i,j,k] - n_II_ILI[i,j,k]
 delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
-#Work out the flow from I_ILI -> hosp = hosp_D, hosp_R, triage_R and triage_D
-n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],p_hosp_ILI[i])
-
-#Work out the flow from I_ILI -> I_comm_D
-n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j]-n_ILI_to_hosp[i,j],p_death_comm[i]/(1-p_hosp_ILI[i]))
+#Work out the flow from I_ILI -> R, comm_D, hosp
+n_ILI_to_R[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_hosp_ILI[i])
+n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j] - n_ILI_to_R[i,j],p_death_comm[i])
+n_ILI_to_hosp[,] <- n_II_ILI[i,s_ILI,j] - n_ILI_to_R[i,j] - n_ILI_to_comm_D[i,j]
 
 #Work out the I_comm_D -> I_comm_D transitions
 aux_II_comm_D[,1,] <- n_ILI_to_comm_D[i,k]
@@ -248,23 +250,22 @@ delta_D_hosp[] <- sum(n_II_hosp_D_unconf[i,s_hosp_D,]) + sum(n_II_hosp_D_conf[i,
 delta_D_comm[] <- sum(n_II_comm_D[i,s_comm_D,])
 
 #Work out the number of people entering the seroconversion flow
-n_com_to_R_pre[] <- sum(n_EE[i,s_E,]) 
+n_com_to_R_pre[,1] <- rbinom(sum(n_EE[i,s_E,]),p_R_pre_1)
+n_com_to_R_pre[,2] <- sum(n_EE[i,s_E,]) - n_com_to_R_pre[i,1]
 
 #Split the seroconversion flow between people who are going to seroconvert and people who are not
-delta_R_pos[] <- rbinom(n_R_pre[i,s_R_pre],p_seroconversion[i])
-delta_R_neg[] <- n_R_pre[i,s_R_pre] - delta_R_pos[i]
-
-#Work out the R_pre->R_pre transitions
-aux_R_pre[,1] <- n_com_to_R_pre[i]
-aux_R_pre[,2:s_R_pre] <- n_R_pre[i,j-1]
-aux_R_pre[,1:s_R_pre] <- aux_R_pre[i,j] - n_R_pre[i,j]
-delta_R_pre[,] <- aux_R_pre[i,j]
+delta_R_pos[] <- rbinom(sum(n_R_pre[i,]),p_seroconversion[i])
+delta_R_neg[] <- sum(n_R_pre[i,]) - delta_R_pos[i]
 
 #Work out the total number of recovery
-delta_R[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) +
-  sum(n_II_ILI[i,s_ILI,]) - sum(n_ILI_to_hosp[i,]) - sum(n_ILI_to_comm_D[i,]) +
+delta_R[] <- sum(n_II_asympt[i,s_asympt,]) + sum(n_II_mild[i,s_mild,]) + sum(n_ILI_to_R[i,]) +
   sum(n_II_hosp_R_conf[i,s_hosp_R,]) + sum(n_II_hosp_R_unconf[i,s_hosp_R,]) +
   sum(n_R_stepdown_conf[i,s_stepdown]) + sum(n_R_stepdown_unconf[i,s_stepdown])
+
+#Work out the PCR positivity
+delta_PCR_pos[,1] <- n_SE[i]
+delta_PCR_pos[,2:s_PCR_pos] <- n_PCR_pos[i,j-1]
+delta_PCR_pos[,] <- delta_PCR_pos[i,j] - n_PCR_pos[i,j]
 
 #Compute the force of infection
 I_with_diff_trans[,] <- trans_increase[i,j]*(sum(I_asympt[i,,j])+
@@ -280,7 +281,7 @@ I_with_diff_trans[,] <- trans_increase[i,j]*(sum(I_asympt[i,,j])+
                                                comm_D_transmission*
                                                  sum(I_comm_D[i,,j]))
 s_ij[,] <- m[i,j] * sum(I_with_diff_trans[j,])
-lambda[] <- beta*sum(s_ij[i,])
+lambda[] <- beta*sum(s_ij[i,]) + lambda_external/N_tot2
 
 ## Initial states:
 initial(S[]) <- S0[i] # will be user-defined
@@ -309,6 +310,7 @@ initial(R_neg[]) <- R0_neg[i]
 initial(R[]) <- R0[i]
 initial(D_hosp[]) <- D0_hosp[i]
 initial(D_comm[]) <- D0_comm[i]
+initial(PCR_pos[,]) <- PCR0_pos[i,j]
 initial(cum_admit_conf) <- cum0_admit_conf
 initial(cum_new_conf) <- cum0_new_conf
 
@@ -341,6 +343,7 @@ R0_neg[] <- user()
 R0_pos[] <- user()
 D0_hosp[] <- user()
 D0_comm[] <- user()
+PCR0_pos[,] <- user()
 cum0_admit_conf <- user()
 cum0_new_conf <- user()
 
@@ -400,18 +403,30 @@ s_stepdown <- user()
 gamma_stepdown <- user(0.1)
 
 #Parameters of the R_pre classes
-s_R_pre <- user()
-gamma_R_pre <- user(0.1)
+gamma_R_pre_1 <- user(0.1)
+gamma_R_pre_2 <- user(0.1)
+gamma_R_pre[1] <- gamma_R_pre_1
+gamma_R_pre[2] <- gamma_R_pre_2
+p_R_pre_1 <- user()
 p_seroconversion[] <- user()
 
 #Parameters relating to testing
 gamma_test <- user(0.1)
 p_admit_conf[] <- user()
 
+#Parameters relating to PCR positivity
+s_PCR_pos <- user()
+gamma_PCR_pos <- user(0.1)
+
 #Parameters of the age stratified transmission
 beta <- interpolate(beta_t, beta_y, "constant")
 beta_t[] <- user()
 beta_y[] <- user()
+
+#Parameters of the external infection rate
+lambda_external <- interpolate(lambda_external_t, lambda_external_y, "constant")
+lambda_external_t[] <- user()
+lambda_external_y[] <- user()
 
 m[,] <- user()
 trans_profile[,] <- user()
@@ -423,6 +438,8 @@ comm_D_transmission <- user()
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
 dim(beta_t) <- user()
 dim(beta_y) <- user()
+dim(lambda_external_t) <- user()
+dim(lambda_external_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
@@ -565,12 +582,11 @@ dim(R0) <- c(N_age)
 dim(delta_R) <- c(N_age)
 
 #Vectors handling the R_pre class and seroconversion
-dim(R_pre) <- c(N_age, s_R_pre)
-dim(R0_pre) <- c(N_age, s_R_pre)
-dim(aux_R_pre) <- c(N_age, s_R_pre)
-dim(delta_R_pre) <- c(N_age, s_R_pre)
-dim(n_R_pre) <- c(N_age, s_R_pre)
-dim(p_R_pre) <- c(N_age)
+dim(R_pre) <- c(N_age, 2)
+dim(R0_pre) <- c(N_age, 2)
+dim(n_R_pre) <- c(N_age, 2)
+dim(gamma_R_pre) <- c(2)
+dim(p_R_pre) <- c(N_age,2)
 dim(p_seroconversion) <- c(N_age)
 
 #Vectors handling the R_pos class
@@ -593,6 +609,12 @@ dim(D_comm) <- c(N_age)
 dim(D0_comm) <- c(N_age)
 dim(delta_D_comm) <- c(N_age)
 
+#Vectors handling the R_pos class
+dim(PCR_pos) <- c(N_age,s_PCR_pos)
+dim(PCR0_pos) <- c(N_age,s_PCR_pos)
+dim(delta_PCR_pos) <- c(N_age,s_PCR_pos)
+dim(n_PCR_pos) <- c(N_age,s_PCR_pos)
+
 #Vectors handling the S->E transition where infected are split between level of infectivity
 dim(p_SE) <- N_age
 dim(n_SE) <- N_age
@@ -603,8 +625,9 @@ dim(n_EI_asympt) <- c(N_age,trans_classes)
 dim(n_EI_mild) <- c(N_age,trans_classes)
 dim(n_EI_ILI) <- c(N_age,trans_classes)
 
-#vectors handling I_ILI to I_comm_D transition
+#vectors handling I_ILI to R, I_comm_D transition
 dim(n_ILI_to_comm_D) <- c(N_age,trans_classes)
+dim(n_ILI_to_R) <- c(N_age,trans_classes)
 
 #Vectors handling number of new hospitalisations, ICU admissions and recoveries in hospital
 dim(n_ILI_to_hosp) <- c(N_age,trans_classes)
@@ -620,7 +643,7 @@ dim(n_ILI_to_triage_D) <- c(N_age,trans_classes)
 dim(n_ILI_to_triage_D_conf) <- c(N_age,trans_classes)
 
 #Vectors handling the serology flow
-dim(n_com_to_R_pre) <- c(N_age)
+dim(n_com_to_R_pre) <- c(N_age,2)
 
 #Vectors handling the severity profile
 dim(p_asympt) <- c(N_age)

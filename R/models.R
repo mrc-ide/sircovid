@@ -70,6 +70,32 @@ serology_model <- function(use_fitted_parameters = TRUE,
 }
 
 
+##' Create a serology2 model
+##' 
+##' @title serology2 model
+##' 
+##' @param use_fitted_parameters Override progression_groups and gammas with fitted
+##'   parameters loaded by \code{read_fitted_parameters()}
+##' 
+##' @param progression_groups List of number of progression groups in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'PCR_pos'
+##'   
+##' @param gammas List of exponential distribution rates for time in each partition
+##'   needs 'E', 'asympt', 'mild', 'ILI', 'hosp_D', 'hosp_R', 'ICU_D', 'ICU_R', 'triage', 'stepdown', 'R_pre_1', 'R_pre_2', 'test', 'PCR_pos'
+##'   
+##' @export
+serology2_model <- function(use_fitted_parameters = TRUE,
+                           progression_groups = list(E = 2, asympt = 1, mild = 1, ILI = 1, comm_D =2, hosp_D = 2 , hosp_R = 2, ICU_D = 2, ICU_R = 2, triage = 2, stepdown = 2, PCR_pos = 2),
+                           gammas = list(E = 1/(4.59/2), asympt = 1/2.09, mild = 1/2.09, ILI = 1/4, comm_D = 2/5, hosp_D = 2/5, hosp_R = 2/10, ICU_D = 2/5, ICU_R = 2/10, triage = 2, stepdown = 2/5, R_pre_1 = 1/5, R_pre_2 = 1/10, test = 3/10, PCR_pos = 1/5)) {
+  model_class <- "sircovid_serology2" 
+  serology2_model <- model_constructor(model_class, "serology2", 
+                                      use_fitted_parameters, progression_groups, gammas)
+  
+  # This inherits from the sircovid_hospital and sircovid_serology models, it only adds new partitions/parameters
+  class(serology2_model) <- c(model_class, "sircovid_hospital","sircovid_serology")
+  serology2_model
+}
+
 #
 # Internal functions
 #
@@ -107,6 +133,13 @@ model_constructor <- function(model_class,
       } else {
         gammas <- gammas[c(model_partitions,"test")] 
       }
+    }
+    else if(model_class == "sircovid_serology2"){
+      if (!("test" %in% names(gammas) && "R_pre_1" %in% names(gammas) && "R_pre_2" %in% names(gammas))){
+          stop("gamma needs to be defined for test, R_pre_1 and R_pre_2")
+      } else {
+          gammas <- gammas[c(model_partitions,"test, R_pre_1, R_pre_2")] 
+      }
     } else {
       gammas <- gammas[model_partitions] 
     }
@@ -133,6 +166,8 @@ partition_names <- function(model_name) {
       model_partitions <- c("E", "asympt", "mild", "ILI", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown")
     } else if (model_name == "sircovid_serology") {
       model_partitions <- c("E", "asympt", "mild", "ILI", "comm_D", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown", "R_pre")
+    } else if (model_name == "sircovid_serology2") {
+      model_partitions <- c("E", "asympt", "mild", "ILI", "comm_D", "hosp_D", "hosp_R", "ICU_D", "ICU_R", "triage", "stepdown", "PCR_pos")  
     } else {
       stop("Unknown model name")
     }
@@ -163,6 +198,8 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
     gamma_stepdown <- fitted_parameters[fitted_parameters$parameter=="gamma_stepdown","value"]
     s_R_pre <- fitted_parameters[fitted_parameters$parameter=="s_R_pre","value"]
     gamma_R_pre <- fitted_parameters[fitted_parameters$parameter=="gamma_R_pre","value"]
+    gamma_R_pre_1 <- fitted_parameters[fitted_parameters$parameter=="gamma_R_pre_1","value"]
+    gamma_R_pre_2 <- fitted_parameters[fitted_parameters$parameter=="gamma_R_pre_2","value"]
     s_comm_D <- fitted_parameters[fitted_parameters$parameter=="s_comm_D","value"]
     gamma_comm_D <- fitted_parameters[fitted_parameters$parameter=="gamma_comm_D","value"]
     gamma_test <- fitted_parameters[fitted_parameters$parameter=="gamma_test","value"]

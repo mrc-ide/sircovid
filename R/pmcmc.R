@@ -171,7 +171,7 @@ pmcmc <- function(data,
   }
   par_names <- as.character(pars_to_sample$names)
   
-  if (!all(c('beta_start', 'start_date') %in% par_names)) {
+  if (!(any(c('beta_start', 'beta1') %in% par_names) && 'start_date' %in% par_names)) {
     stop("Turning off beta and start date sampling unsupported")
   }
   if(!all(names(pars_lprior) %in% par_names)) {
@@ -223,12 +223,19 @@ pmcmc <- function(data,
   if(any(pars_to_sample$init < pars_to_sample$min | pars_to_sample$init > pars_to_sample$max)) {
     stop('initial parameters are outside of specified range')
   }
-  if(pars_init['beta_start'] < 0) {
-    stop('beta_start must not be negative')
+  if('beta_start' %in% par_names) {
+    if(pars_init['beta_start'] < 0) {
+      stop('beta_start must not be negative')
+    }
   }
   if('beta_end' %in% par_names) {
     if(pars_init['beta_end'] < 0) {
       stop('beta_end must not be negative')
+    }
+  }
+  if(any(grepl("beta\\d+$",par_names))) {
+    if(any(pars_init[grep("beta\\d+$",par_names)]<0)) {
+      stop('beta must not be negative')
     }
   }
   if(sircovid_date(data$date[1]) < pars_init[['start_date']]) {
@@ -491,8 +498,7 @@ run_mcmc_chain <- function(inputs,
 #
 calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles,
-                               forecast_days = 0, return = "ll",
-                               beta_changepoints = NULL) {
+                               forecast_days = 0, return = "ll") {
   if (return == "full") {
     save_particles <- TRUE
     pf_return <- "sample"
@@ -536,9 +542,11 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
     # Beta needs a transform applied
     new_beta <- update_beta_piecewise_linear(sircovid_model, 
                                              beta_k, 
-                                             beta_changepoints,
+                                             model_params$beta_changepoints,
                                              start_date,
                                              model_params$dt)
+    
+    model_params$beta_changepoints <- NULL
     
   } else {
   
