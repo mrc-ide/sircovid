@@ -1,3 +1,6 @@
+# sircovid 0.3.9
+- Fixed bug where some gammas were missing from generate_parameters for serology2_model
+
 # sircovid 0.3.8
 
 - 4th model added to package - serology2_model

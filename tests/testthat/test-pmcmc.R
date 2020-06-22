@@ -116,7 +116,7 @@ test_that("pmcmc with serology2 model", {
   proposal_kernel <- diag(10)*0.001^2
   rownames(proposal_kernel) <- colnames(proposal_kernel) <- par_names
   proposal_kernel["start_date", "start_date"] <- 1
-  
+
   X <- pmcmc(
     data = data,
     n_mcmc = n_mcmc,
