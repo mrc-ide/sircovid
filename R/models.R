@@ -138,7 +138,7 @@ model_constructor <- function(model_class,
       if (!("test" %in% names(gammas) && "R_pre_1" %in% names(gammas) && "R_pre_2" %in% names(gammas))){
           stop("gamma needs to be defined for test, R_pre_1 and R_pre_2")
       } else {
-          gammas <- gammas[c(model_partitions,"test, R_pre_1, R_pre_2")] 
+          gammas <- gammas[c(model_partitions,"test", "R_pre_1", "R_pre_2")] 
       }
     } else {
       gammas <- gammas[model_partitions] 
@@ -220,7 +220,9 @@ read_fitted_parameters <- function(parameter_file = "extdata/fitted_parameters.c
                                       stepdown = gamma_stepdown,
                                       R_pre = gamma_R_pre,
                                       comm_D = gamma_comm_D,
-                                      test = gamma_test)))
+                                      test = gamma_test,
+                                      R_pre_1 = gamma_R_pre_1,
+                                      R_pre_2 = gamma_R_pre_2)))
               
     parameters
   }
@@ -245,3 +247,4 @@ load_odin_model <- function(x) {
   }
   model
 }
+
