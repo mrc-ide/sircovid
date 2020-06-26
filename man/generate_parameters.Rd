@@ -12,8 +12,10 @@ generate_parameters(
   infection_seeding = list(values = c(10), bins = c("15 to 19")),
   beta = 0.1,
   beta_times = sircovid_date("2020-02-02"),
-  lambda_external = 0,
-  lambda_external_times = sircovid_date("2020-02-02"),
+  importation = FALSE,
+  importation_levels = 100,
+  importation_times = sircovid_date("2020-02-02"),
+  psi = 0,
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
@@ -40,9 +42,14 @@ in a correspond vector of age bins in \code{bins}.}
 
 \item{beta_times}{Dates \code{beta} changes, must use \code{sircovid_date}}
 
-\item{lambda_external}{lambda_external, for each time step in \code{lambda_external_times}}
+\item{importation}{Logical, if TRUE then there is importation in the model and there are zero initial
+infectives}
 
-\item{lambda_external_times}{Dates \code{lambda_external} changes, must use \code{sircovid_date}}
+\item{importation_levels}{importation levels, for each time step in \code{importation_times}}
+
+\item{importation_times}{Dates importation changes, must use \code{sircovid_date}}
+
+\item{psi}{parameter for scaling importation}
 
 \item{trans_profile}{Proportion in each infectivity group}
 

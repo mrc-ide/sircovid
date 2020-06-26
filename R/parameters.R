@@ -161,10 +161,15 @@ generate_beta_piecewise_linear <- function(beta_k,
 ##' @param beta Beta, for each time step in \code{beta_times}
 ##' 
 ##' @param beta_times Dates \code{beta} changes, must use \code{sircovid_date}
+##' 
+##' @param importation Logical, if TRUE then there is importation in the model and there are zero initial
+##'  infectives
 ##'
 ##' @param importation_levels importation levels, for each time step in \code{importation_times}
 ##' 
 ##' @param importation_times Dates importation changes, must use \code{sircovid_date}
+##' 
+##' @param psi parameter for scaling importation
 ##' 
 ##' @param trans_profile Proportion in each infectivity group
 ##' 

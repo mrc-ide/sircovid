@@ -10,8 +10,8 @@ generate_parameters_base(
   severity_data_file,
   beta,
   beta_times,
-  lambda_external,
-  lambda_external_times,
+  importation_levels,
+  importation_times,
   trans_profile,
   trans_increase,
   dt,
@@ -30,9 +30,9 @@ generate_parameters_base(
 
 \item{beta_times}{Dates \code{beta} changes, in format yyyy-mm-dd}
 
-\item{lambda_external}{lambda_external, for each time step in \code{lambda_external_times}}
+\item{importation_levels}{importation level, for each time step in \code{importation_times}}
 
-\item{lambda_external_times}{Dates \code{lambda_external} changes, must use \code{sircovid_date}}
+\item{importation_times}{Dates importation changes, must use \code{sircovid_date}}
 
 \item{trans_profile}{Proportion in each infectivity group}
 
