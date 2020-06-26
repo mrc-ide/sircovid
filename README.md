@@ -1,4 +1,4 @@
-# sircovid
+# sircovid <img src='man/figures/logo.png' align="right" height="138.5" />
 
 <!-- badges: start -->
 [![Build Status](https://travis-ci.com/mrc-ide/sircovid.svg?branch=master)](https://travis-ci.com/mrc-ide/sircovid)
