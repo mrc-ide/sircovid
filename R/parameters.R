@@ -161,10 +161,15 @@ generate_beta_piecewise_linear <- function(beta_k,
 ##' @param beta Beta, for each time step in \code{beta_times}
 ##' 
 ##' @param beta_times Dates \code{beta} changes, must use \code{sircovid_date}
-##'
-##' @param lambda_external lambda_external, for each time step in \code{lambda_external_times}
 ##' 
-##' @param lambda_external_times Dates \code{lambda_external} changes, must use \code{sircovid_date}
+##' @param importation Logical, if TRUE then there is importation in the model and there are zero initial
+##'  infectives
+##'
+##' @param importation_levels importation levels, for each time step in \code{importation_times}
+##' 
+##' @param importation_times Dates importation changes, must use \code{sircovid_date}
+##' 
+##' @param psi parameter for scaling importation
 ##' 
 ##' @param trans_profile Proportion in each infectivity group
 ##' 
@@ -194,8 +199,10 @@ generate_parameters <- function(
                            bins=c('15 to 19')),
   beta = 0.1,
   beta_times = sircovid_date("2020-02-02"),
-  lambda_external = 0,
-  lambda_external_times = sircovid_date("2020-02-02"),
+  importation = FALSE,
+  importation_levels = 100,
+  importation_times = sircovid_date("2020-02-02"),
+  psi = 0,
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
@@ -214,8 +221,8 @@ generate_parameters <- function(
                                              severity_data_file=severity_data_file,
                                              beta = beta,
                                              beta_times = beta_times,
-                                             lambda_external = lambda_external,
-                                             lambda_external_times = lambda_external_times,
+                                             importation_levels = importation_levels,
+                                             importation_times = importation_times,
                                              trans_profile = trans_profile,
                                              trans_increase = trans_increase,
                                              dt = dt,
@@ -289,15 +296,17 @@ generate_parameters <- function(
   if (any(duplicated(seed_idx))) {
     stop("Seeding is into the same bin multiple times")
   }
-  parameter_list$I0_asympt[seed_idx,1,parameter_list$trans_classes] <- infection_seeding$values
-  parameter_list$S0[seed_idx] <- parameter_list$S0[seed_idx] - infection_seeding$values
-  if ("sircovid_serology" %in% class(sircovid_model)){
-   #Put the initial infectives into the sero flow
-   parameter_list$R0_pre[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
-  }
-  if ("sircovid_serology2" %in% class(sircovid_model)){
-    #Put the initial infectives into PCR pos flow
-    parameter_list$PCR0_pos[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+  if (!(importation && "sircovid_serology2" %in% class(sircovid_model))){
+    parameter_list$I0_asympt[seed_idx,1,parameter_list$trans_classes] <- infection_seeding$values
+    parameter_list$S0[seed_idx] <- parameter_list$S0[seed_idx] - infection_seeding$values
+    if ("sircovid_serology" %in% class(sircovid_model)){
+      #Put the initial infectives into the sero flow
+      parameter_list$R0_pre[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+    }
+    if ("sircovid_serology2" %in% class(sircovid_model)){
+      #Put the initial infectives into PCR pos flow
+      parameter_list$PCR0_pos[,1] <- parameter_list$I0_asympt[,1,parameter_list$trans_classes]
+    }
   }
   
   
@@ -318,6 +327,11 @@ generate_parameters <- function(
   if ("sircovid_serology2" %in% class(sircovid_model)){
     parameter_list$gamma_R_pre_1 <- sircovid_model$gammas[["R_pre_1"]] 
     parameter_list$gamma_R_pre_2 <- sircovid_model$gammas[["R_pre_2"]] 
+    if (importation){
+      parameter_list$psi <- psi
+    } else {
+      parameter_list$importation_y[] <- 0
+    }
   }
 
   # Remove parameters unused by odin
@@ -346,8 +360,8 @@ generate_parameters <- function(
     }
   }
   if (!("sircovid_serology2" %in% class(sircovid_model))) {
-    parameter_list$lambda_external_y <- NULL
-    parameter_list$lambda_external_t <- NULL
+    parameter_list$importation_y <- NULL
+    parameter_list$importation_t <- NULL
   }
 
   
@@ -395,9 +409,9 @@ sircovid_date <- function(date) {
 ##' 
 ##' @param beta_times Dates \code{beta} changes, in format yyyy-mm-dd
 ##' 
-##' @param lambda_external lambda_external, for each time step in \code{lambda_external_times}
+##' @param importation_levels importation level, for each time step in \code{importation_times}
 ##' 
-##' @param lambda_external_times Dates \code{lambda_external} changes, must use \code{sircovid_date}
+##' @param importation_times Dates importation changes, must use \code{sircovid_date}
 ##' 
 ##' @param trans_profile Proportion in each infectivity group
 ##' 
@@ -423,8 +437,8 @@ generate_parameters_base <- function(
   severity_data_file,
   beta,
   beta_times,
-  lambda_external,
-  lambda_external_times,
+  importation_levels,
+  importation_times,
   trans_profile,
   trans_increase,
   dt,
@@ -457,7 +471,7 @@ generate_parameters_base <- function(
   # Times are in days from first day supplied
   beta_t <- normalise_beta(beta_times, dt)
   
-  lambda_external_t <- normalise_beta(lambda_external_times,dt)
+  importation_t <- normalise_beta(importation_times,dt)
 
   # 
   # This section defines proportions between partitions
@@ -508,8 +522,8 @@ generate_parameters_base <- function(
                          trans_profile = trans_profile_array,
                          beta_y = beta,
                          beta_t = beta_t,
-                         lambda_external_y = lambda_external,
-                         lambda_external_t = lambda_external_t, 
+                         importation_y = importation_levels,
+                         importation_t = importation_t, 
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,
