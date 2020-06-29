@@ -171,8 +171,8 @@ pmcmc <- function(data,
   }
   par_names <- as.character(pars_to_sample$names)
   
-  if (!(any(c('beta_start', 'beta1') %in% par_names) && 'start_date' %in% par_names)) {
-    stop("Turning off beta and start date sampling unsupported")
+  if (!any(c('beta_start', 'beta1') %in% par_names) ) {
+    stop("Turning off beta sampling unsupported")
   }
   if(!all(names(pars_lprior) %in% par_names)) {
     stop("All sampled parameters must have a defined prior")
@@ -238,8 +238,10 @@ pmcmc <- function(data,
       stop('beta must not be negative')
     }
   }
-  if(sircovid_date(data$date[1]) < pars_init[['start_date']]) {
-    stop('start date must not be before first date of supplied data')
+  if ('start_date' %in% par_names){
+    if(sircovid_date(data$date[1]) < pars_init[['start_date']]) {
+      stop('start date must not be before first date of supplied data')
+    }
   }
 
   #
@@ -473,7 +475,9 @@ run_mcmc_chain <- function(inputs,
   rejection_rate <- coda::rejectionRate(coda_res)
   ess <- coda::effectiveSize(coda_res)
 
-  res$start_date <- sircovid_date_as_Date(res$start_date)
+  if ("start_date" %in% names(res)){
+    res$start_date <- sircovid_date_as_Date(res$start_date)
+  }
   
   out <- list('inputs' = inputs, 
               'results' = as.data.frame(res),
@@ -483,7 +487,9 @@ run_mcmc_chain <- function(inputs,
  
  if(output_proposals) {
    proposals <- as.data.frame(proposals)
-   proposals$start_date <- sircovid_date_as_Date(proposals$start_date)
+   if ("start_date" %in% names(proposals)){
+    proposals$start_date <- sircovid_date_as_Date(proposals$start_date)
+   }
    out$proposals <- proposals
  }
  
@@ -514,7 +520,12 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
   beta_start <- NULL
   beta_end <- NULL
   beta_pl <- NULL
-  start_date <- data$date[1]
+  if ("start_date" %in% names(model_params)){
+    start_date <- model_params$start_date
+    model_params$start_date <- NULL
+  } else {
+    start_date <- data$date[1]
+  }
   
   # Update particle filter parameters from pars
   for (par in names(pars)) {
@@ -527,7 +538,11 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
     } else if (par == "beta_pl") {
       beta_pl <- pars[[par]]
     } else if (par %in% names(model_params)) {
-      model_params[[par]] <- model_params[[par]] * pars[[par]] / max(model_params[[par]])
+      if (length(model_params[[par]]==1)){
+        model_params[[par]] <- pars[[par]]
+      } else {
+        model_params[[par]] <- model_params[[par]] * pars[[par]] / max(model_params[[par]])
+      }
     } else if (par %in% names(pars_obs)) {
       pars_obs[[par]] <- pars[[par]]
     } else if (!grepl("beta\\d+$",par)){
@@ -638,8 +653,10 @@ summary.pmcmc <- function(object, ...) {
   
   ## convert start_date to numeric to calculate stats
   data_start_date <- sircovid_date(object$inputs$data$date[1])
-  traces <- object$results[,par_names] 
-  traces$start_date <- sircovid_date(traces$start_date)
+  traces <- object$results[,par_names]
+  if ("start_date" %in% par_names){
+    traces$start_date <- sircovid_date(traces$start_date)
+  }
   
   # calculate correlation matrix
   corr_mat <- round(cor(traces),2)
@@ -663,7 +680,9 @@ summary.pmcmc <- function(object, ...) {
   
   sds <- round(apply(traces, 2, sd), 3)
   # convert start_date back into dates
-  summ$start_date <- sircovid_date_as_Date(summ$start_date)
+  if ("start_date" %in% names(summ)){
+    summ$start_date <- sircovid_date_as_Date(summ$start_date)
+  }
 
   out <- list('summary' = summ, 
               'corr_mat' = corr_mat, 

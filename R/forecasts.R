@@ -140,7 +140,9 @@ sample_pmcmc <- function(mcmc_results,
   
   forecasts <- function(sampled_pars) {
     pars <- as.list(sampled_pars)
-    pars$start_date <- sircovid_date(pars$start_date)
+    if ("start_date" %in% names(pars)){
+      pars$start_date <- sircovid_date(pars$start_date)
+    }
     trace <- calc_loglikelihood(pars, 
                                 mcmc_results$inputs$data, 
                                 mcmc_results$inputs$sircovid_model, 

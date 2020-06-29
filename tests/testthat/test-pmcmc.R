@@ -287,6 +287,89 @@ test_that("pmcmc runs with piecewise-linear beta", {
   
 })
 
+test_that("pmcmc with importation", {
+  data <- readRDS("serology_model_data2.rds")
+  sircovid_model <- serology2_model()
+  sircovid_model$generate_beta_func <- generate_beta_piecewise_linear
+  model_params <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = sircovid_date('2020-01-01'),
+    importation = TRUE,
+    importation_levels = c(0,100,0),
+    importation_times = sircovid_date(c('2020-02-01','2020-02-15','2020-04-01')),
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+  pars_obs <-  list(phi_general = 0.95,
+                    k_general = 2,
+                    phi_ICU = 0.95,
+                    k_ICU = 2,
+                    phi_death_hosp = 1.15,
+                    k_death_hosp = 2,
+                    phi_death_comm = 1,
+                    k_death_comm = 2,
+                    phi_new = 0.95,
+                    k_new = 2,
+                    phi_admitted = 0.95,
+                    k_admitted = 2,
+                    exp_noise = 1e6,
+                    p_specificity = 0.9)
+  
+  model_params$beta_changepoints <- sircovid_date(c("2020-03-16",
+                                                    "2020-03-25",
+                                                    "2020-05-15"))
+  model_params$start_date <- sircovid_date("2020-02-01")
+  model_params$importation_times <- sircovid_date(c('2020-02-01','2020-02-15','2020-04-01'))
+  
+  n_mcmc <- 10
+  n_particles <- 10
+  
+  pars_to_sample <- data.frame(
+    names=c('beta1', 'beta2', 'beta3', 'psi'),
+    init=c(0.14, 0.14*0.238, 0.14*0.238, 0.1),
+    min=c(0, 0, 0, 0),
+    max=c(1, 1, 1, 1),
+    discrete=c(FALSE, FALSE, FALSE, FALSE),
+    stringsAsFactors = FALSE)
+  pars_lprior = list('beta1' = function(pars) log(1e-10),
+                     'beta2' = function(pars) 0,
+                     'beta3' = function(pars) 0,
+                     'psi' = function(pars) log(1e-10))
+  proposal_kernel <- diag(nrow(pars_to_sample)) * 0.01^2
+  row.names(proposal_kernel) <- colnames(proposal_kernel) <- pars_to_sample$names
+  
+  
+  cmp <- readRDS("reference_pmcmc_serology2_importation.rds")
+  
+  n_mcmc <- 10
+  n_particles <- 10
+  set.seed(1)
+  
+  X <- pmcmc(
+    data = data,
+    n_mcmc = n_mcmc,
+    sircovid_model = sircovid_model,
+    model_params = model_params,
+    pars_to_sample = pars_to_sample,
+    pars_lprior = pars_lprior,
+    pars_obs = pars_obs,
+    proposal_kernel = proposal_kernel, 
+    n_particles = n_particles, output_proposals = TRUE
+  )
+  
+  expect_is(X, 'pmcmc')
+  expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
+  expect_equal(dim(X$results), c(n_mcmc + 1L, 7))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 631))
+  expect_equivalent(X, cmp)
+  
+})
+
 test_that("pmcmc runs without error", {
   data <- read.csv(sircovid_file("extdata/example.csv"),
                    stringsAsFactors = FALSE)
@@ -840,7 +923,7 @@ test_that("pmcmc error cases", {
   )
   
   pars_to_sample <- data.frame(
-    names=c('beta_start', 'beta_end'),
+    names=c('beta_pl', 'beta_end'),
     init=c(0.14, 0.14*0.238),
     min=c(0, 0),
     max=c(1, 1),
@@ -859,7 +942,7 @@ test_that("pmcmc error cases", {
       n_chains = n_chains,
       n_particles = n_particles
     ),
-    "Turning off beta and start date sampling unsupported"
+    "Turning off beta sampling unsupported"
   )
   
   pars_to_sample <- data.frame(
