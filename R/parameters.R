@@ -155,6 +155,9 @@ generate_beta_piecewise_linear <- function(beta_k,
 ##' 
 ##' @param severity_data_file Location of file with severity data
 ##' 
+##' @param population vector of population size with age bins corresponding to \code{severity_data_file}.
+##'    Overrides the values from \code{severity_data_file} if not NULL.
+##' 
 ##' @param infection_seeding List of vector \code{values} of how many cases to seed 
 ##'  in a correspond vector of age bins in \code{bins}.
 ##' 
@@ -195,6 +198,7 @@ generate_parameters <- function(
   transmission_model = "POLYMOD",
   country="United Kingdom",
   severity_data_file=NULL,
+  population=NULL,
   infection_seeding = list(values=c(10),
                            bins=c('15 to 19')),
   beta = 0.1,
@@ -202,12 +206,18 @@ generate_parameters <- function(
   importation = FALSE,
   importation_levels = 100,
   importation_times = sircovid_date("2020-02-02"),
-  psi = 0,
+  psi = 0.1,
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   comm_D_transmission = 0.05,
+  include_care_homes = FALSE,
+  n_care_home_residents = 0,
+  n_care_workers = 0,
+  eps = 0,
+  C_1 = 0,
+  C_2 = 0,
   dt = 0.25,
   use_polymod_pop = FALSE) {
   
@@ -226,7 +236,44 @@ generate_parameters <- function(
                                              trans_profile = trans_profile,
                                              trans_increase = trans_increase,
                                              dt = dt,
-                                             use_polymod_pop = use_polymod_pop)
+                                             use_polymod_pop = use_polymod_pop,
+                                             population = population)
+  
+  
+  if (include_care_homes){
+    CW_groups <- which(parameter_list$age_bin_starts>=25 & parameter_list$age_bin_starts<65)
+    CHR_group <- which.max(parameter_list$age_bin_starts)
+    
+    for (i in which(startsWith(names(parameter_list),"p_"))){
+      #add values in all probability vectors for CW (weighted mean of 25-64) and CHR (same as oldest group)
+      parameter_list[[i]]<-c(parameter_list[[i]],
+                             weighted.mean(parameter_list[[i]][CW_groups],parameter_list$S0[CW_groups]),
+                             parameter_list[[i]][CHR_group])
+    }
+    
+    #set up contact matrix with general population agegroups
+    m <- matrix(0,nrow = parameter_list$N_age+2,ncol = parameter_list$N_age+2)
+    colnames(m) <- rownames(m) <- c(colnames(parameter_list$m),"CW","CHR")
+    m[1:parameter_list$N_age,1:parameter_list$N_age] <- parameter_list$m
+    
+    #contact rates for care workers with general population
+    m[parameter_list$N_age+1,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+1] <- sapply(seq_len(parameter_list$N_age), FUN = function(i){weighted.mean(parameter_list$m[i,CW_groups],parameter_list$S0[CW_groups])})
+    
+    #care worker to care worker contact rate
+    #m[parameter_list$N_age+1,parameter_list$N_age+1] <- ?
+    
+    #contact rates for care home residents with general population
+    m[parameter_list$N_age+2,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+2] <-  m[CHR_group,1:parameter_list$N_age]
+
+    #care worker to care home resident contact rate
+    m[parameter_list$N_age+1,parameter_list$N_age+2] <- m[parameter_list$N_age+2,parameter_list$N_age+1] <- C_1
+    
+    #care worker to care home resident contact rate
+    m[parameter_list$N_age+2,parameter_list$N_age+2] <- C_2
+    
+    #parameter_list$S0 <- ?
+    parameter_list$N_age <- parameter_list$N_age+2
+  }
   
   #
   # Set the initial conditions for each partition
@@ -443,6 +490,7 @@ generate_parameters_base <- function(
   trans_increase,
   dt,
   use_polymod_pop,
+  population,
   hospital_fitted) {
   #
   # Input checks
@@ -478,6 +526,14 @@ generate_parameters_base <- function(
   # derived from the severity.csv file
    
   severity_params <- read_severity(severity_file_in=severity_data_file)
+  
+  if (!is.null(population)){
+    if (length(population)!=length(severity_params$population)){
+      stop('Input population vector must have same number of age bins as in severity_data_file')
+    } else {
+      severity_params$population <- population
+    }
+  }
   
   #
   # Set up the transmission matrix
