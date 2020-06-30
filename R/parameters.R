@@ -297,7 +297,7 @@ generate_parameters <- function(
     CHR_weightings <- c(0.05,0.05,0.15,0.75)
     
     parameter_list$S0 <- c(parameter_list$S0,n_care_workers,n_care_home_residents)
-    parameter_list$S0[CHR_groups] <- round(parameter_list$S0[CW_groups] - n_carehome_residents * CHR_weightings)
+    parameter_list$S0[CHR_groups] <- round(parameter_list$S0[CHR_groups] - n_care_home_residents * CHR_weightings)
     if (any(parameter_list$S0<0)){
       stop("Not enough population to meet care home occupancy")
     }
@@ -305,6 +305,18 @@ generate_parameters <- function(
     if (any(parameter_list$S0<0)){
       stop("Not enough population to be care workers")
     }
+    
+    trans_profile <- matrix(0, nrow = parameter_list$N_age + 2, ncol = parameter_list$trans_classes)
+    trans_profile[1:parameter_list$N_age,] <- parameter_list$trans_profile[1:parameter_list$N_age,]
+    trans_profile[parameter_list$N_age + 1,] <- sapply(seq_len(parameter_list$trans_classes), FUN = function(i){weighted.mean(parameter_list$trans_profile[CW_groups,i], parameter_list$S0[CW_groups])})
+    trans_profile[parameter_list$N_age + 2,] <- trans_profile[parameter_list$N_age,]
+    parameter_list$trans_profile <- trans_profile
+    
+    trans_increase <- matrix(0, nrow = parameter_list$N_age + 2, ncol = parameter_list$trans_classes)
+    trans_increase[1:parameter_list$N_age,] <- parameter_list$trans_increase[1:parameter_list$N_age,]
+    trans_increase[parameter_list$N_age + 1,] <- sapply(seq_len(parameter_list$trans_classes), FUN = function(i){weighted.mean(parameter_list$trans_increase[CW_groups,i], parameter_list$S0[CW_groups])})
+    trans_increase[parameter_list$N_age + 2,] <- trans_increase[parameter_list$N_age,]
+    parameter_list$trans_increase <- trans_increase
     
     parameter_list$N_age <- parameter_list$N_age + 2
   }
