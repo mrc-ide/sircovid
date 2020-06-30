@@ -257,13 +257,13 @@ generate_parameters <- function(
     m[1:parameter_list$N_age,1:parameter_list$N_age] <- parameter_list$m
     
     #contact rates for care workers with general population
-    m[parameter_list$N_age+1,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+1] <- sapply(seq_len(parameter_list$N_age), FUN = function(i){weighted.mean(parameter_list$m[i,CW_groups],parameter_list$S0[CW_groups])})
+    m[parameter_list$N_age+1,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+1] <- sapply(seq_len(parameter_list$N_age), FUN = function(i){weighted.mean(m[i,CW_groups],parameter_list$S0[CW_groups])})
     
     #care worker to care worker contact rate
     #m[parameter_list$N_age+1,parameter_list$N_age+1] <- ?
     
     #contact rates for care home residents with general population
-    m[parameter_list$N_age+2,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+2] <-  m[CHR_group,1:parameter_list$N_age]
+    m[parameter_list$N_age+2,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+2] <-  eps * m[CHR_group,1:parameter_list$N_age]
 
     #care worker to care home resident contact rate
     m[parameter_list$N_age+1,parameter_list$N_age+2] <- m[parameter_list$N_age+2,parameter_list$N_age+1] <- C_1
