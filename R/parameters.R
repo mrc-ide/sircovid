@@ -271,6 +271,8 @@ generate_parameters <- function(
     #care worker to care home resident contact rate
     m[parameter_list$N_age+2,parameter_list$N_age+2] <- C_2
     
+    parameter_list$m <- m
+    
     #parameter_list$S0 <- ?
     parameter_list$N_age <- parameter_list$N_age+2
   }
