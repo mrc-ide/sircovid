@@ -184,6 +184,23 @@ generate_beta_piecewise_linear <- function(beta_k,
 ##' 
 ##' @param comm_D_transmission Transmission rate of cases dying in the community
 ##' 
+##' @param include_care_homes Logical, if TRUE care homes are included
+##' 
+##' @param n_care_home_beds Number of care home beds
+##' 
+##' @param care_home_occupancy Occupancy of care home beds, in range [0,1]
+##' 
+##' @param care_workers_per_resident ratio of care workers to care home residents
+##' 
+##' @param eps Scaling parameter for contact rates of care home residents, 
+##'   relative to oldest general population group
+##'
+##' @param C_1 contact rate for care worker-to-care worker and care-worker-to-resident
+##' 
+##' @param C_2 contact rate for care home resident-to-resident
+##' 
+##' @param p_death_care_home Probability of severe cases in care homes dying in care home (rather than hospitalisation)
+##' 
 ##' @param dt Time-step to run the model in days
 ##'   
 ##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
@@ -213,11 +230,13 @@ generate_parameters <- function(
   ICU_transmission = 0.05,
   comm_D_transmission = 0.05,
   include_care_homes = FALSE,
-  n_care_home_residents = 0,
-  n_care_workers = 0,
-  eps = 0,
+  n_care_home_beds = 0,
+  care_home_occupancy = 0.8,
+  care_workers_per_resident = 1,
+  eps = 0.01,
   C_1 = 0,
   C_2 = 0,
+  p_death_care_home = 0,
   dt = 0.25,
   use_polymod_pop = FALSE) {
   
@@ -241,15 +260,19 @@ generate_parameters <- function(
   
   
   if (include_care_homes){
+    n_care_home_residents <- round(n_care_home_beds * care_home_occupancy)
+    n_care_workers <- round(n_care_home_residents * care_workers_per_resident)
+    
+    
     CW_groups <- which(parameter_list$age_bin_starts>=25 & parameter_list$age_bin_starts<65)
-    CHR_group <- which.max(parameter_list$age_bin_starts)
     
     for (i in which(startsWith(names(parameter_list),"p_"))){
       #add values in all probability vectors for CW (weighted mean of 25-64) and CHR (same as oldest group)
       parameter_list[[i]]<-c(parameter_list[[i]],
                              weighted.mean(parameter_list[[i]][CW_groups],parameter_list$S0[CW_groups]),
-                             parameter_list[[i]][CHR_group])
+                             parameter_list[[i]][parameter_list$N_age])
     }
+    parameter_list$p_death_comm[parameter_list$N_age + 2] <- p_death_care_home
     
     #set up contact matrix with general population agegroups
     m <- matrix(0,nrow = parameter_list$N_age+2,ncol = parameter_list$N_age+2)
@@ -257,24 +280,33 @@ generate_parameters <- function(
     m[1:parameter_list$N_age,1:parameter_list$N_age] <- parameter_list$m
     
     #contact rates for care workers with general population
-    m[parameter_list$N_age+1,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+1] <- sapply(seq_len(parameter_list$N_age), FUN = function(i){weighted.mean(m[i,CW_groups],parameter_list$S0[CW_groups])})
-    
-    #care worker to care worker contact rate
-    #m[parameter_list$N_age+1,parameter_list$N_age+1] <- ?
+    m[parameter_list$N_age + 1, 1:parameter_list$N_age] <- m[1:parameter_list$N_age, parameter_list$N_age + 1] <- sapply(seq_len(parameter_list$N_age), FUN = function(i){weighted.mean(m[i,CW_groups],parameter_list$S0[CW_groups])})
     
     #contact rates for care home residents with general population
-    m[parameter_list$N_age+2,1:parameter_list$N_age] <- m[1:parameter_list$N_age,parameter_list$N_age+2] <-  eps * m[CHR_group,1:parameter_list$N_age]
+    m[parameter_list$N_age + 2, 1:parameter_list$N_age] <- m[1:parameter_list$N_age, parameter_list$N_age + 2] <-  eps * m[parameter_list$N_age, 1:parameter_list$N_age]
 
-    #care worker to care home resident contact rate
-    m[parameter_list$N_age+1,parameter_list$N_age+2] <- m[parameter_list$N_age+2,parameter_list$N_age+1] <- C_1
+    # care worker to care worker contact rate and care worker to care home resident contact rate
+    m[parameter_list$N_age + 1, parameter_list$N_age + 1] <- m[parameter_list$N_age + 1, parameter_list$N_age + 2] <- m[parameter_list$N_age + 2, parameter_list$N_age + 1] <- C_1
     
     #care worker to care home resident contact rate
-    m[parameter_list$N_age+2,parameter_list$N_age+2] <- C_2
+    m[parameter_list$N_age + 2, parameter_list$N_age + 2] <- C_2
     
     parameter_list$m <- m
     
-    #parameter_list$S0 <- ?
-    parameter_list$N_age <- parameter_list$N_age+2
+    CHR_groups <- which(parameter_list$age_bin_starts>=65)
+    CHR_weightings <- c(0.05,0.05,0.15,0.75)
+    
+    parameter_list$S0 <- c(parameter_list$S0,n_care_workers,n_care_home_residents)
+    parameter_list$S0[CHR_groups] <- round(parameter_list$S0[CW_groups] - n_carehome_residents * CHR_weightings)
+    if (any(parameter_list$S0<0)){
+      stop("Not enough population to meet care home occupancy")
+    }
+    parameter_list$S0[CW_groups] <- round(parameter_list$S0[CW_groups] - n_care_workers * parameter_list$S0[CW_groups]/sum(parameter_list$S0[CW_groups]))
+    if (any(parameter_list$S0<0)){
+      stop("Not enough population to be care workers")
+    }
+    
+    parameter_list$N_age <- parameter_list$N_age + 2
   }
   
   #
