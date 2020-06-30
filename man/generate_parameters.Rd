@@ -9,18 +9,27 @@ generate_parameters(
   transmission_model = "POLYMOD",
   country = "United Kingdom",
   severity_data_file = NULL,
+  population = NULL,
   infection_seeding = list(values = c(10), bins = c("15 to 19")),
   beta = 0.1,
   beta_times = sircovid_date("2020-02-02"),
   importation = FALSE,
   importation_levels = 100,
   importation_times = sircovid_date("2020-02-02"),
-  psi = 0,
+  psi = 0.1,
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
   ICU_transmission = 0.05,
   comm_D_transmission = 0.05,
+  include_care_homes = FALSE,
+  n_care_home_beds = 0,
+  care_home_occupancy = 0.8,
+  care_workers_per_resident = 1,
+  eps = 0.01,
+  C_1 = 0,
+  C_2 = 0,
+  p_death_care_home = 0,
   dt = 0.25,
   use_polymod_pop = FALSE
 )
@@ -34,6 +43,9 @@ generate_parameters(
 \item{country}{Country name}
 
 \item{severity_data_file}{Location of file with severity data}
+
+\item{population}{vector of population size with age bins corresponding to \code{severity_data_file}.
+Overrides the values from \code{severity_data_file} if not NULL.}
 
 \item{infection_seeding}{List of vector \code{values} of how many cases to seed 
 in a correspond vector of age bins in \code{bins}.}
@@ -60,6 +72,23 @@ infectives}
 \item{ICU_transmission}{Tranmissions rate of ICU cases}
 
 \item{comm_D_transmission}{Transmission rate of cases dying in the community}
+
+\item{include_care_homes}{Logical, if TRUE care homes are included}
+
+\item{n_care_home_beds}{Number of care home beds}
+
+\item{care_home_occupancy}{Occupancy of care home beds, between 0 and 1}
+
+\item{care_workers_per_resident}{ratio of care workers to care home residents}
+
+\item{eps}{Scaling parameter for contact rates of care home residents, 
+relative to oldest general population group}
+
+\item{C_1}{contact rate for care worker-to-care worker and care-worker-to-resident}
+
+\item{C_2}{contact rate for care home resident-to-resident}
+
+\item{p_death_care_home}{Probability of severe cases in care homes dying in care home (rather than hospitalisation)}
 
 \item{dt}{Time-step to run the model in days}
 
