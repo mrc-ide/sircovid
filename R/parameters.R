@@ -188,7 +188,7 @@ generate_beta_piecewise_linear <- function(beta_k,
 ##' 
 ##' @param n_care_home_beds Number of care home beds
 ##' 
-##' @param care_home_occupancy Occupancy of care home beds, in range [0,1]
+##' @param care_home_occupancy Occupancy of care home beds, between 0 and 1 
 ##' 
 ##' @param care_workers_per_resident ratio of care workers to care home residents
 ##' 
@@ -507,6 +507,10 @@ sircovid_date <- function(date) {
 ##' @param use_polymod_pop Set to ignore \code{survey_pop_in}
 ##'   and use the population from polymod when estimating the
 ##'   transmission matrix
+##' 
+##' @param population vector of population size with age bins corresponding to \code{severity_data_file}.
+##'    Overrides the values from \code{severity_data_file} if not NULL.
+##'
 ##' 
 ##' @return List of parameters for use with \code{sircovid}
 ##' 
