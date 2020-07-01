@@ -379,6 +379,7 @@ test_that("pmcmc with importation", {
     beta = 0.1,
     beta_times = sircovid_date('2020-01-01'),
     importation = TRUE,
+    psi = 0,
     importation_levels = c(0,100,0),
     importation_times = sircovid_date(c('2020-02-01','2020-02-15','2020-04-01')),
     hosp_transmission = 0,
