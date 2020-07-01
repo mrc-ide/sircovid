@@ -1,3 +1,6 @@
+# sircovid 0.3.11
+- start_date no longer required to be a fitted parameter in PMCMC
+
 # sircovid 0.3.10
 - Can now setup care home inclusion in generate_parameters, with PMCMC support
 
