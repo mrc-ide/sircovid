@@ -1,3 +1,6 @@
+# sircovid 0.3.10
+- Can now setup care home inclusion in generate_parameters, with PMCMC support
+
 # sircovid 0.3.9
 - Fixed bug where some gammas were missing from generate_parameters for serology2_model
 

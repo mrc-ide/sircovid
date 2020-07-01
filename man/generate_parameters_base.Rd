@@ -10,12 +10,13 @@ generate_parameters_base(
   severity_data_file,
   beta,
   beta_times,
-  lambda_external,
-  lambda_external_times,
+  importation_levels,
+  importation_times,
   trans_profile,
   trans_increase,
   dt,
   use_polymod_pop,
+  population,
   hospital_fitted
 )
 }
@@ -30,9 +31,9 @@ generate_parameters_base(
 
 \item{beta_times}{Dates \code{beta} changes, in format yyyy-mm-dd}
 
-\item{lambda_external}{lambda_external, for each time step in \code{lambda_external_times}}
+\item{importation_levels}{importation level, for each time step in \code{importation_times}}
 
-\item{lambda_external_times}{Dates \code{lambda_external} changes, must use \code{sircovid_date}}
+\item{importation_times}{Dates importation changes, must use \code{sircovid_date}}
 
 \item{trans_profile}{Proportion in each infectivity group}
 
@@ -43,6 +44,9 @@ generate_parameters_base(
 \item{use_polymod_pop}{Set to ignore \code{survey_pop_in}
 and use the population from polymod when estimating the
 transmission matrix}
+
+\item{population}{vector of population size with age bins corresponding to \code{severity_data_file}.
+Overrides the values from \code{severity_data_file} if not NULL.}
 
 \item{hospital_fitted}{If TRUE the parameters describing the progression
 through the hospital compartments of the model are pulled from a set fitted

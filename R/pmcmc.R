@@ -526,6 +526,12 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
       beta_end <- pars[[par]]
     } else if (par == "beta_pl") {
       beta_pl <- pars[[par]]
+    } else if (par == "eps"){
+      model_params$m[model_params$N_age, 1:(model_params$N_age - 2)] <- model_params$m[1:(model_params$N_age - 2), model_params$N_age] <- pars[[par]] * model_params$m[model_params$N_age - 2, 1:(model_params$N_age - 2)]
+    } else if (par == "C_1"){
+      model_params$m[model_params$N_age - 1, model_params$N_age - 1] <- model_params$m[model_params$N_age, model_params$N_age - 1] <- model_params$m[model_params$N_age - 1, model_params$N_age]  <- pars[[par]]
+    } else if (par == "C_2"){
+      model_params$m[model_params$N_age, model_params$N_age] <- pars[[par]]
     } else if (par %in% names(model_params)) {
       model_params[[par]] <- model_params[[par]] * pars[[par]] / max(model_params[[par]])
     } else if (par %in% names(pars_obs)) {

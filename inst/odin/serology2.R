@@ -281,7 +281,7 @@ I_with_diff_trans[,] <- trans_increase[i,j]*(sum(I_asympt[i,,j])+
                                                comm_D_transmission*
                                                  sum(I_comm_D[i,,j]))
 s_ij[,] <- m[i,j] * sum(I_with_diff_trans[j,])
-lambda[] <- beta*sum(s_ij[i,]) + lambda_external/N_tot2
+lambda[] <- beta*sum(s_ij[i,]) + psi*importation/N_tot2
 
 ## Initial states:
 initial(S[]) <- S0[i] # will be user-defined
@@ -424,9 +424,10 @@ beta_t[] <- user()
 beta_y[] <- user()
 
 #Parameters of the external infection rate
-lambda_external <- interpolate(lambda_external_t, lambda_external_y, "constant")
-lambda_external_t[] <- user()
-lambda_external_y[] <- user()
+importation <- interpolate(importation_t, importation_y, "constant")
+importation_t[] <- user()
+importation_y[] <- user()
+psi <- user(0.1)
 
 m[,] <- user()
 trans_profile[,] <- user()
@@ -438,8 +439,9 @@ comm_D_transmission <- user()
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
 dim(beta_t) <- user()
 dim(beta_y) <- user()
-dim(lambda_external_t) <- user()
-dim(lambda_external_y) <- user()
+
+dim(importation_t) <- user()
+dim(importation_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age

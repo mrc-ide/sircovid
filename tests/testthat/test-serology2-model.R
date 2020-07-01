@@ -5,7 +5,7 @@ context("serology2 model for covid transmission")
 test_that("N_tot and N_tot2 stay constant", {
   
   sircovid_model <- serology2_model()
-  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.1)
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.1, importation = TRUE, psi = 0.01)
   mod <- sircovid_model$odin_model(user = pars_model)
   t_max <- 400
   t <- seq(from = 1, to = t_max)
@@ -18,10 +18,10 @@ test_that("N_tot and N_tot2 stay constant", {
 }
 )
 
-test_that("there are no infections when beta and lambda_external are 0", {
+test_that("there are no infections when beta and psi are 0", {
     
     sircovid_model <- serology2_model()
-    pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0, lambda_external = 0)
+    pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0, importation = TRUE, psi = 0)
     mod <- sircovid_model$odin_model(user = pars_model)
     t_max <- 150
     t <- seq(from = 1, to = t_max)
@@ -33,10 +33,10 @@ test_that("there are no infections when beta and lambda_external are 0", {
   }
 )
 
-test_that("everyone is infected when beta is Inf", {
+test_that("everyone is infected when beta is Inf and no importations", {
   
     sircovid_model <- serology2_model()
-    pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = Inf, lambda_external = 0.1)
+    pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = Inf)
     mod <- sircovid_model$odin_model(user = pars_model)
     t_max <- 150
     t <- seq(from = 1, to = t_max)
@@ -48,10 +48,10 @@ test_that("everyone is infected when beta is Inf", {
 
 )
 
-test_that("everyone is infected when lambda_external is Inf", {
+test_that("everyone is infected when psi is Inf", {
   
   sircovid_model <- serology2_model()
-  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.1, lambda_external = Inf)
+  pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.1, importation = TRUE, psi = Inf)
   mod <- sircovid_model$odin_model(user = pars_model)
   t_max <- 150
   t <- seq(from = 1, to = t_max)
@@ -64,10 +64,10 @@ test_that("everyone is infected when lambda_external is Inf", {
 )
 
 
-test_that("No one is infected if I and E are 0 at t = 0 and lambda_external = 0", {
+test_that("No one is infected if I and E are 0 at t = 0 and psi = 0", {
   
     sircovid_model <- serology2_model()
-    pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.042, lambda_external = 0)
+    pars_model <- generate_parameters(sircovid_model = sircovid_model, beta = 0.042, importation = TRUE, psi = 0)
     pars_model$E0[,,]<- 0
     pars_model$I0_asympt[,,]<- 0
     pars_model$I0_mild[,,]<- 0
