@@ -202,7 +202,7 @@ generate_parameters <- function(
   importation = FALSE,
   importation_levels = 100,
   importation_times = sircovid_date("2020-02-02"),
-  psi = 0,
+  psi = 0.1,
   trans_profile = c(1),
   trans_increase = c(1),
   hosp_transmission = 0.1,
