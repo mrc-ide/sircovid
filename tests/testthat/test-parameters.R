@@ -27,6 +27,7 @@ test_that("Parameters are generated as before", {
   pars_model$beta <- NULL
   pars_model$age_bin_starts <- NULL
   pars_model$beta2 <- NULL
+  pars_model$importation2 <- NULL
   cmp$beta <- NULL
   
   expect_mapequal(pars_model, cmp)

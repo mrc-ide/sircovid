@@ -424,6 +424,7 @@ generate_parameters <- function(
       parameter_list$psi <- psi
     } else {
       parameter_list$importation_y[] <- 0
+      parameter_list$importation2[] <- 0
     }
   }
 
@@ -574,6 +575,9 @@ generate_parameters_base <- function(
   
   importation_t <- normalise_beta(importation_times, dt)
 
+  importation_fun <- cinterpolate::interpolation_function(importation_t, importation_levels, "constant")
+  importation2 <- importation_fun(seq.int(min(importation_t), max(importation_t)))
+
   # 
   # This section defines proportions between partitions
   # derived from the severity.csv file
@@ -634,6 +638,7 @@ generate_parameters_base <- function(
                          beta2 = beta2,
                          importation_y = importation_levels,
                          importation_t = importation_t, 
+                         importation2 = importation2,
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,

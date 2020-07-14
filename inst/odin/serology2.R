@@ -436,6 +436,13 @@ output(beta_new) <- TRUE
 importation <- interpolate(importation_t, importation_y, "constant")
 importation_t[] <- user()
 importation_y[] <- user()
+
+importation2[] <- user()
+dim(importation2) <- user()
+importation_new <- if (step >= length(importation2)) importation2[length(importation2)] else importation2[step + 1]
+output(importation_new) <- TRUE
+output(importation) <- TRUE
+
 psi <- user(0.1)
 
 m[,] <- user()
