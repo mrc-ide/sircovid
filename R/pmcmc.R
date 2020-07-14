@@ -564,9 +564,8 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                             start_date,
                             model_params$dt)
   }
-  
-  model_params$beta_y <- new_beta$beta_y
-  model_params$beta_t <- new_beta$beta_t
+
+  model_params[names(new_beta)] <- new_beta
 
   pf_result <- run_particle_filter(data = data,
                                    sircovid_model = sircovid_model,
