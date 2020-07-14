@@ -419,8 +419,7 @@ s_PCR_pos <- user()
 gamma_PCR_pos <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta_old <- interpolate(beta_t, beta_y, "constant")
-output(beta_old) <- TRUE
+beta <- interpolate(beta_t, beta_y, "constant")
 beta_t[] <- user()
 beta_y[] <- user()
 
@@ -430,7 +429,8 @@ dim(beta2) <- user()
 ## supported by odin (it could be made to support this). This code
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
-beta <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
+beta_new <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
+output(beta_new) <- TRUE
 
 #Parameters of the external infection rate
 importation <- interpolate(importation_t, importation_y, "constant")
