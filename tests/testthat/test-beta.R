@@ -1,5 +1,29 @@
 context("testing time-varying beta works correctly")
 
+test_that("One-level beta works in odin as expected", {
+  sircovid_model <- hospital_model()
+
+  pars_model <- generate_parameters(
+    sircovid_model = sircovid_model,
+    transmission_model = "POLYMOD",
+    beta = 0.1,
+    beta_times = sircovid_date('2020-01-01'),
+    hosp_transmission = 0,
+    ICU_transmission = 0,
+    trans_profile = 1,
+    trans_increase = 1,
+    dt = 1/4
+  )
+
+  mod <- sircovid_model$odin_model(user = pars_model)
+  t_max <- max(pars_model$beta_t)+50
+  t <- seq(from = 1, to = t_max)
+  tmp <- mod$run(t)
+  results <- mod$transform_variables(tmp)
+
+  expect_equal(results$beta, rep(0.1, length(t)))
+})
+
 test_that("Two-level beta works in odin as expected", {
   
   sircovid_model <- hospital_model()

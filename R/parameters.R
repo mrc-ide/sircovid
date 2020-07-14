@@ -568,8 +568,11 @@ generate_parameters_base <- function(
   # Set up time-varying beta
   # Times are in days from first day supplied
   beta_t <- normalise_beta(beta_times, dt)
+
+  beta_fun <- cinterpolate::interpolation_function(beta_t, beta, "constant")
+  beta2 <- beta_fun(seq.int(min(beta_t), max(beta_t)))
   
-  importation_t <- normalise_beta(importation_times,dt)
+  importation_t <- normalise_beta(importation_times, dt)
 
   # 
   # This section defines proportions between partitions
@@ -628,6 +631,7 @@ generate_parameters_base <- function(
                          trans_profile = trans_profile_array,
                          beta_y = beta,
                          beta_t = beta_t,
+                         beta2 = beta2,
                          importation_y = importation_levels,
                          importation_t = importation_t, 
                          m = transmission_matrix,

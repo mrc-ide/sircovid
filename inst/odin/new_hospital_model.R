@@ -258,9 +258,18 @@ s_stepdown <- user()
 gamma_stepdown <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta <- interpolate(beta_t, beta_y, "constant")
+beta_old <- interpolate(beta_t, beta_y, "constant")
+output(beta_old) <- TRUE
 beta_t[] <- user()
 beta_y[] <- user()
+
+beta2[] <- user()
+dim(beta2) <- user()
+## What we really want is min(step + 1, length(beta2)) but that's not
+## supported by odin (it could be made to support this). This code
+## does currently create a compiler warning with -Wsign-compare on
+## because we have an unsigned/signed integer comparison
+beta <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
 
 m[,] <- user()
 trans_profile[,] <- user()
