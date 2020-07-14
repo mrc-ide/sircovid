@@ -12510,6 +12510,10 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
   double N_tot = odin_sum1(S, 0, internal->dim_S) + odin_sum1(R, 0, internal->dim_R) + odin_sum1(D, 0, internal->dim_D) + odin_sum1(E, 0, internal->dim_E) + odin_sum1(I_asympt, 0, internal->dim_I_asympt) + odin_sum1(I_mild, 0, internal->dim_I_mild) + odin_sum1(I_ILI, 0, internal->dim_I_ILI) + odin_sum1(I_triage, 0, internal->dim_I_triage) + odin_sum1(I_hosp_R, 0, internal->dim_I_hosp_R) + odin_sum1(I_hosp_D, 0, internal->dim_I_hosp_D) + odin_sum1(I_ICU_R, 0, internal->dim_I_ICU_R) + odin_sum1(I_ICU_D, 0, internal->dim_I_ICU_D) + odin_sum1(R_stepdown, 0, internal->dim_R_stepdown);
   double time = step * internal->dt;
   double beta_new = (step >= internal->dim_beta2 ? internal->beta2[internal->dim_beta2 - 1] : internal->beta2[step + 1 - 1]);
+  if (beta != beta_new) {
+    Rf_error("beta disagreement (old: %2.5f, new: %2.5f) @ %d",
+             beta, beta_new, step);
+  }
   output[3] = N_tot;
   output[0] = time;
   output[1] = beta;
