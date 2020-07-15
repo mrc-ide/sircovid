@@ -43,8 +43,6 @@ update(PCR_pos[,]) <- PCR_pos[i,j] + delta_PCR_pos[i,j]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
 
-output(beta_old) <- TRUE
-
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
 p_EE <- 1 - exp(-gamma_E*dt) # progression of latent period
@@ -419,10 +417,6 @@ s_PCR_pos <- user()
 gamma_PCR_pos <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta_old <- interpolate(beta_t, beta_y, "constant")
-beta_t[] <- user()
-beta_y[] <- user()
-
 beta2[] <- user()
 dim(beta2) <- user()
 ## What we really want is min(step + 1, length(beta2)) but that's not
@@ -433,15 +427,9 @@ beta <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
 output(beta) <- TRUE
 
 #Parameters of the external infection rate
-importation_old <- interpolate(importation_t, importation_y, "constant")
-importation_t[] <- user()
-importation_y[] <- user()
-
 importation2[] <- user()
 dim(importation2) <- user()
 importation <- if (step >= length(importation2)) importation2[length(importation2)] else importation2[step + 1]
-output(importation) <- TRUE
-output(importation_old) <- TRUE
 
 psi <- user(0.1)
 
@@ -453,11 +441,6 @@ ICU_transmission <- user()
 comm_D_transmission <- user()
 
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
-dim(beta_t) <- user()
-dim(beta_y) <- user()
-
-dim(importation_t) <- user()
-dim(importation_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age

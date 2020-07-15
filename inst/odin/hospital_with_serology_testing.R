@@ -42,8 +42,6 @@ update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
 
-output(beta_old) <- TRUE
-
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
 p_EE <- 1 - exp(-gamma_E*dt) # progression of latent period
@@ -409,10 +407,6 @@ gamma_test <- user(0.1)
 p_admit_conf[] <- user()
 
 #Parameters of the age stratified transmission
-beta_old <- interpolate(beta_t, beta_y, "constant")
-beta_t[] <- user()
-beta_y[] <- user()
-
 beta2[] <- user()
 dim(beta2) <- user()
 ## What we really want is min(step + 1, length(beta2)) but that's not
@@ -430,8 +424,6 @@ ICU_transmission <- user()
 comm_D_transmission <- user()
 
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
-dim(beta_t) <- user()
-dim(beta_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
