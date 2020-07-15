@@ -27,7 +27,7 @@ update(R_stepdown[,,]) <- R_stepdown[i,j,k] + delta_R_stepdown[i,j,k]
 update(R[]) <- R[i] + delta_R[i]
 update(D[]) <- D[i] + delta_D[i]
 
-output(beta) <- TRUE
+output(beta_old) <- TRUE
 
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
@@ -258,7 +258,7 @@ s_stepdown <- user()
 gamma_stepdown <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta <- interpolate(beta_t, beta_y, "constant")
+beta_old <- interpolate(beta_t, beta_y, "constant")
 beta_t[] <- user()
 beta_y[] <- user()
 
@@ -268,8 +268,8 @@ dim(beta2) <- user()
 ## supported by odin (it could be made to support this). This code
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
-beta_new <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
-output(beta_new) <- TRUE
+beta <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
+output(beta) <- TRUE
 
 m[,] <- user()
 trans_profile[,] <- user()

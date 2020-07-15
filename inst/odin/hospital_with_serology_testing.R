@@ -42,7 +42,7 @@ update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
 
-output(beta) <- TRUE
+output(beta_old) <- TRUE
 
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
@@ -409,7 +409,7 @@ gamma_test <- user(0.1)
 p_admit_conf[] <- user()
 
 #Parameters of the age stratified transmission
-beta <- interpolate(beta_t, beta_y, "constant")
+beta_old <- interpolate(beta_t, beta_y, "constant")
 beta_t[] <- user()
 beta_y[] <- user()
 
@@ -419,8 +419,8 @@ dim(beta2) <- user()
 ## supported by odin (it could be made to support this). This code
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
-beta_new <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
-output(beta_new) <- TRUE
+beta <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
+output(beta) <- TRUE
 
 m[,] <- user()
 trans_profile[,] <- user()
