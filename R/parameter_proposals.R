@@ -1,4 +1,4 @@
-# Generates beta2 correctly for use in the odin model
+# Generates beta_step correctly for use in the odin model
 update_beta <- function(sircovid_model, 
                         beta_start,
                         beta_end,
@@ -14,12 +14,12 @@ update_beta <- function(sircovid_model,
 
   beta_fun <- cinterpolate::interpolation_function(beta_t, new_beta$beta,
                                                    "constant")
-  beta2 <- beta_fun(seq.int(min(beta_t), max(beta_t)))
+  beta_step <- beta_fun(seq.int(min(beta_t), max(beta_t)))
   
-  list(beta2 = beta2)
+  list(beta_step = beta_step)
 }
 
-# Generates beta2 correctly for use in the odin model
+# Generates beta_step correctly for use in the odin model
 update_beta_piecewise_linear <- function(sircovid_model, 
                                          beta_k,
                                          t_k,
@@ -34,7 +34,7 @@ update_beta_piecewise_linear <- function(sircovid_model,
 
   beta_fun <- cinterpolate::interpolation_function(beta_t, new_beta$beta,
                                                    "constant")
-  beta2 <- beta_fun(seq.int(min(beta_t), max(beta_t)))
+  beta_step <- beta_fun(seq.int(min(beta_t), max(beta_t)))
   
-  list(beta2 = beta2)
+  list(beta_step = beta_step)
 }

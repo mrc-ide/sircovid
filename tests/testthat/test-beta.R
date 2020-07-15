@@ -75,7 +75,7 @@ test_that("Two-level beta works the same with generate_beta/generate_parameters 
                              start_date = sircovid_date("2020-02-06"),
                              dt = 0.25)
   
-  expect_equal(pars_model$beta2,beta_update$beta2)
+  expect_equal(pars_model$beta_step,beta_update$beta_step)
 
 })
 
@@ -127,6 +127,6 @@ test_that("Three-level beta works the same with generate_beta/generate_parameter
                              start_date = sircovid_date("2020-02-06"),
                              dt = 0.25)
   
-  expect_equal(pars_model$beta2,beta_update$beta2)
+  expect_equal(pars_model$beta_step,beta_update$beta_step)
   
 })

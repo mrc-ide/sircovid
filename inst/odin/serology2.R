@@ -417,19 +417,19 @@ s_PCR_pos <- user()
 gamma_PCR_pos <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta2[] <- user()
-dim(beta2) <- user()
-## What we really want is min(step + 1, length(beta2)) but that's not
+beta_step[] <- user()
+dim(beta_step) <- user()
+## What we really want is min(step + 1, length(beta_step)) but that's not
 ## supported by odin (it could be made to support this). This code
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
-beta <- if (step >= length(beta2)) beta2[length(beta2)] else beta2[step + 1]
+beta <- if (step >= length(beta_step)) beta_step[length(beta_step)] else beta_step[step + 1]
 output(beta) <- TRUE
 
 #Parameters of the external infection rate
-importation2[] <- user()
-dim(importation2) <- user()
-importation <- if (step >= length(importation2)) importation2[length(importation2)] else importation2[step + 1]
+importation_step[] <- user()
+dim(importation_step) <- user()
+importation <- if (step >= length(importation_step)) importation_step[length(importation_step)] else importation_step[step + 1]
 
 psi <- user(0.1)
 

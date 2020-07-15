@@ -75,7 +75,7 @@ scan_beta_date <- function(
   #
   # Set up calls to simulator runs
   #
-    if (length(model_params$beta2) > 1) {
+    if (length(model_params$beta_step) > 1) {
       stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
 
