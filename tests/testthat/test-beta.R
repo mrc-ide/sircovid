@@ -16,6 +16,11 @@ test_that("One-level beta works in odin as expected", {
   )
 
   mod <- sircovid_model$odin_model(user = pars_model)
+
+  ## As in the old version:
+  pars_model$beta_t <- 0
+  pars_model$beta_y <- 0.1
+
   t_max <- max(pars_model$beta_t)+50
   t <- seq(from = 1, to = t_max)
   tmp <- mod$run(t)
@@ -34,6 +39,11 @@ test_that("Two-level beta works in odin as expected", {
                                beta = beta$beta,
                                beta_times = beta$beta_times)
   mod <- sircovid_model$odin_model(user = pars_model)
+
+  ## As in the old version:
+  pars_model$beta_t <- normalise_beta(beta$beta_times, pars_model$dt)
+  pars_model$beta_y <- beta$beta
+
   t_max <- max(pars_model$beta_t)+50
   t <- seq(from = 1, to = t_max)
   tmp <- mod$run(t)
@@ -65,9 +75,8 @@ test_that("Two-level beta works the same with generate_beta/generate_parameters 
                              start_date = sircovid_date("2020-02-06"),
                              dt = 0.25)
   
-  expect_equal(pars_model$beta_t,beta_update$beta_t)
-  expect_equal(pars_model$beta_y,beta_update$beta_y)
-    
+  expect_equal(pars_model$beta2,beta_update$beta2)
+
 })
 
 test_that("Three-level beta works in odin as expected", {
@@ -81,6 +90,11 @@ test_that("Three-level beta works in odin as expected", {
                                    beta = beta$beta,
                                    beta_times = beta$beta_times)
   mod <- sircovid_model$odin_model(user = pars_model)
+
+  ## As in the old version:
+  pars_model$beta_t <- normalise_beta(beta$beta_times, pars_model$dt)
+  pars_model$beta_y <- beta$beta
+
   t_max <- max(pars_model$beta_t)+50
   t <- seq(from = 1, to = t_max)
   tmp <- mod$run(t)
@@ -113,7 +127,6 @@ test_that("Three-level beta works the same with generate_beta/generate_parameter
                              start_date = sircovid_date("2020-02-06"),
                              dt = 0.25)
   
-  expect_equal(pars_model$beta_t,beta_update$beta_t)
-  expect_equal(pars_model$beta_y,beta_update$beta_y)
+  expect_equal(pars_model$beta2,beta_update$beta2)
   
 })

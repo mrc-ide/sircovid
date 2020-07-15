@@ -64,17 +64,24 @@ test_that("Parameters generated as expected", {
   # Test date interpolation, and starts from zero, accounts for leap years (2020)
   beta <- c(0.1, 0.2, 0.3)
   dt <- 0.25
+  beta_times <- sircovid_date(c("2020-03-02", "2020-03-15", "2020-04-01"))
   test_params <- generate_parameters(sircovid_model = basic_model(),
                                      beta=beta,
-                                     beta_times=sircovid_date(c("2020-03-02", "2020-03-15", "2020-04-01")),
+                                     beta_times=beta_times,
                                      dt = dt)
+
+  ## As in the old version:
+  test_params$beta_t <- normalise_beta(beta_times, test_params$dt)
+  test_params$beta_y <- beta
+
   expect_identical(test_params$beta_y, beta)
   expect_identical(test_params$beta_t, c(0, 13, 30)/dt)
-  
+
+  beta_times <- sircovid_date(c("2020-02-02", "2020-02-15", "2020-03-01"))
   test_params <- generate_parameters(sircovid_model = basic_model(),
                                      beta=beta,
-                                     beta_times=sircovid_date(c("2020-02-02", "2020-02-15", "2020-03-01")))
-  expect_identical(test_params$beta_t, c(0, 13, 28)/dt)
+                                     beta_times=beta_times)
+  expect_equal(normalise_beta(beta_times, test_params$dt), c(0, 13, 28)/dt)
 })
 
 test_that("Bad inputs", {
@@ -119,6 +126,11 @@ test_that("Time varying betas can be generated", {
   params = generate_parameters(beta = beta$beta,
                                beta_times = beta$beta_times,
                                dt = dt)
+
+  ## As in the old version:
+  params$beta_t <- normalise_beta(beta$beta_times, params$dt)
+  params$beta_y <- beta$beta
+
   expect_equal(params$beta_t, c(0, 43, 44, 45)/dt)
   expect_equal(params$beta_y, c(0.4000, 0.4000, 0.2476, 0.0952))
   

@@ -1,4 +1,4 @@
-# Generates beta_y and beta_t correctly for use in the odin model
+# Generates beta2 correctly for use in the odin model
 update_beta <- function(sircovid_model, 
                         beta_start,
                         beta_end,
@@ -16,12 +16,10 @@ update_beta <- function(sircovid_model,
                                                    "constant")
   beta2 <- beta_fun(seq.int(min(beta_t), max(beta_t)))
   
-  list(beta_y = new_beta$beta,
-       beta_t = beta_t,
-       beta2 = beta2)
+  list(beta2 = beta2)
 }
 
-# Generates beta_y and beta_t correctly for use in the odin model
+# Generates beta2 correctly for use in the odin model
 update_beta_piecewise_linear <- function(sircovid_model, 
                                          beta_k,
                                          t_k,
@@ -38,7 +36,5 @@ update_beta_piecewise_linear <- function(sircovid_model,
                                                    "constant")
   beta2 <- beta_fun(seq.int(min(beta_t), max(beta_t)))
   
-  list(beta_y = new_beta$beta,
-       beta_t = beta_t,
-       beta2 = beta2)
+  list(beta2 = beta2)
 }
