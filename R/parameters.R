@@ -423,7 +423,6 @@ generate_parameters <- function(
     if (importation){
       parameter_list$psi <- psi
     } else {
-      parameter_list$importation_y[] <- 0
       parameter_list$importation2[] <- 0
     }
   }
@@ -454,8 +453,6 @@ generate_parameters <- function(
     }
   }
   if (!("sircovid_serology2" %in% class(sircovid_model))) {
-    parameter_list$importation_y <- NULL
-    parameter_list$importation_t <- NULL
     parameter_list$importation2 <- NULL
   }
 
@@ -634,11 +631,7 @@ generate_parameters_base <- function(
                          S0 = severity_params$population,
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
-                         ## beta_y = beta,
-                         ## beta_t = beta_t,
                          beta2 = beta2,
-                         importation_y = importation_levels,
-                         importation_t = importation_t, 
                          importation2 = importation2,
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
