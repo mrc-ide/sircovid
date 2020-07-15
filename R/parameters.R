@@ -456,6 +456,7 @@ generate_parameters <- function(
   if (!("sircovid_serology2" %in% class(sircovid_model))) {
     parameter_list$importation_y <- NULL
     parameter_list$importation_t <- NULL
+    parameter_list$importation2 <- NULL
   }
 
   
