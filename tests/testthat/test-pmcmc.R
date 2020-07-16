@@ -61,7 +61,7 @@ test_that("pmcmc with serology model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 580))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 582))
   
   expect_equivalent(X[names(X) != "inputs"], cmp[names(cmp) != "inputs"])
   

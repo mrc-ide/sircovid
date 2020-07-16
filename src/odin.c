@@ -273,7 +273,7 @@ typedef struct basic_internal {
   double *I0_ILI;
   double *I0_mild;
   double ICU_transmission;
-  double initial_beta;
+  double initial_beta_out;
   double *initial_D;
   double *initial_E;
   double *initial_I_asympt;
@@ -1017,7 +1017,7 @@ typedef struct hospital_with_serology_testing_internal {
   double *I0_triage_R_conf;
   double *I0_triage_R_unconf;
   double ICU_transmission;
-  double initial_beta;
+  double initial_beta_out;
   double initial_cum_admit_conf;
   double initial_cum_new_conf;
   double *initial_D_comm;
@@ -1549,7 +1549,7 @@ typedef struct new_hospital_model_internal {
   double *I0_mild;
   double *I0_triage;
   double ICU_transmission;
-  double initial_beta;
+  double initial_beta_out;
   double *initial_D;
   double *initial_E;
   double *initial_I_asympt;
@@ -2333,7 +2333,7 @@ typedef struct serology2_internal {
   double *I0_triage_R_unconf;
   double ICU_transmission;
   double *importation_step;
-  double initial_beta;
+  double initial_beta_out;
   double initial_cum_admit_conf;
   double initial_cum_new_conf;
   double *initial_D_comm;
@@ -3125,7 +3125,7 @@ SEXP basic_contents(SEXP internal_p) {
   odin_set_dim(I0_mild, 3, internal->dim_I0_mild_1, internal->dim_I0_mild_2, internal->dim_I0_mild_3);
   SET_VECTOR_ELT(contents, 266, I0_mild);
   SET_VECTOR_ELT(contents, 267, ScalarReal(internal->ICU_transmission));
-  SET_VECTOR_ELT(contents, 268, ScalarReal(internal->initial_beta));
+  SET_VECTOR_ELT(contents, 268, ScalarReal(internal->initial_beta_out));
   SEXP initial_D = PROTECT(allocVector(REALSXP, internal->dim_D));
   memcpy(REAL(initial_D), internal->initial_D, internal->dim_D * sizeof(double));
   SET_VECTOR_ELT(contents, 269, initial_D);
@@ -3571,7 +3571,7 @@ SEXP basic_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 265, mkChar("I0_ILI"));
   SET_STRING_ELT(nms, 266, mkChar("I0_mild"));
   SET_STRING_ELT(nms, 267, mkChar("ICU_transmission"));
-  SET_STRING_ELT(nms, 268, mkChar("initial_beta"));
+  SET_STRING_ELT(nms, 268, mkChar("initial_beta_out"));
   SET_STRING_ELT(nms, 269, mkChar("initial_D"));
   SET_STRING_ELT(nms, 270, mkChar("initial_E"));
   SET_STRING_ELT(nms, 271, mkChar("initial_I_asympt"));
@@ -3816,6 +3816,7 @@ SEXP basic_set_user(SEXP internal_p, SEXP user) {
   internal->dim_trans_increase_2 = internal->trans_classes;
   internal->dim_trans_profile_1 = internal->N_age;
   internal->dim_trans_profile_2 = internal->trans_classes;
+  internal->initial_beta_out = internal->beta_step[0];
   internal->p_EE = 1 - exp(-(internal->gamma_E) * internal->dt);
   internal->p_II_asympt = 1 - exp(-(internal->gamma_asympt) * internal->dt);
   internal->p_II_hosp = 1 - exp(-(internal->gamma_hosp) * internal->dt);
@@ -4152,7 +4153,7 @@ SEXP basic_metadata(SEXP internal_p) {
   dim_R_hosp[1] = internal->dim_R_hosp_2;
   dim_R_hosp[2] = internal->dim_R_hosp_3;
   SET_STRING_ELT(variable_names, 0, mkChar("time"));
-  SET_STRING_ELT(variable_names, 1, mkChar("beta"));
+  SET_STRING_ELT(variable_names, 1, mkChar("beta_out"));
   SET_STRING_ELT(variable_names, 2, mkChar("S"));
   SET_STRING_ELT(variable_names, 3, mkChar("R"));
   SET_STRING_ELT(variable_names, 4, mkChar("D"));
@@ -4202,15 +4203,11 @@ SEXP basic_metadata(SEXP internal_p) {
   return ret;
 }
 SEXP basic_initial_conditions(SEXP internal_p, SEXP step_ptr) {
-  int step = INTEGER(step_ptr)[0];
   basic_internal *internal = basic_get_internal(internal_p, 1);
-  GetRNGstate();
-  internal->initial_beta = internal->beta_step[step - 1];
-  PutRNGstate();
   SEXP r_state = PROTECT(allocVector(REALSXP, 2 + internal->dim_S + internal->dim_R + internal->dim_D + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_hosp + internal->dim_I_ICU + internal->dim_R_hosp));
   double * state = REAL(r_state);
   state[0] = internal->initial_time;
-  state[1] = internal->initial_beta;
+  state[1] = internal->initial_beta_out;
   memcpy(state + 2, internal->initial_S, internal->dim_S * sizeof(double));
   memcpy(state + internal->offset_variable_R, internal->initial_R, internal->dim_R * sizeof(double));
   memcpy(state + internal->offset_variable_D, internal->initial_D, internal->dim_D * sizeof(double));
@@ -4235,9 +4232,9 @@ void basic_rhs(basic_internal* internal, size_t step, double * state, double * s
   double * I_ICU = state + internal->offset_variable_I_ICU;
   double * R_hosp = state + internal->offset_variable_R_hosp;
   double * D = state + internal->offset_variable_D;
-  double beta = state[1];
   state_next[0] = (step + 1) * internal->dt;
-  state_next[1] = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
+  double beta = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
+  state_next[1] = beta;
   for (int i = 1; i <= internal->dim_I_with_diff_trans_1; ++i) {
     for (int j = 1; j <= internal->dim_I_with_diff_trans_2; ++j) {
       internal->I_with_diff_trans[i - 1 + internal->dim_I_with_diff_trans_1 * (j - 1)] = internal->trans_increase[internal->dim_trans_increase_1 * (j - 1) + i - 1] * (odin_sum3(I_asympt, i - 1, i, 0, internal->dim_I_asympt_2, j - 1, j, internal->dim_I_asympt_1, internal->dim_I_asympt_12) + odin_sum3(I_mild, i - 1, i, 0, internal->dim_I_mild_2, j - 1, j, internal->dim_I_mild_1, internal->dim_I_mild_12) + odin_sum3(I_ILI, i - 1, i, 0, internal->dim_I_ILI_2, j - 1, j, internal->dim_I_ILI_1, internal->dim_I_ILI_12) + internal->hosp_transmission * odin_sum3(I_hosp, i - 1, i, 0, internal->dim_I_hosp_2, j - 1, j, internal->dim_I_hosp_1, internal->dim_I_hosp_12) + internal->ICU_transmission * odin_sum3(I_ICU, i - 1, i, 0, internal->dim_I_ICU_2, j - 1, j, internal->dim_I_ICU_1, internal->dim_I_ICU_12));
@@ -5882,7 +5879,7 @@ SEXP hospital_with_serology_testing_contents(SEXP internal_p) {
   odin_set_dim(I0_triage_R_unconf, 3, internal->dim_I0_triage_R_unconf_1, internal->dim_I0_triage_R_unconf_2, internal->dim_I0_triage_R_unconf_3);
   SET_VECTOR_ELT(contents, 669, I0_triage_R_unconf);
   SET_VECTOR_ELT(contents, 670, ScalarReal(internal->ICU_transmission));
-  SET_VECTOR_ELT(contents, 671, ScalarReal(internal->initial_beta));
+  SET_VECTOR_ELT(contents, 671, ScalarReal(internal->initial_beta_out));
   SET_VECTOR_ELT(contents, 672, ScalarReal(internal->initial_cum_admit_conf));
   SET_VECTOR_ELT(contents, 673, ScalarReal(internal->initial_cum_new_conf));
   SEXP initial_D_comm = PROTECT(allocVector(REALSXP, internal->dim_D_comm));
@@ -7016,7 +7013,7 @@ SEXP hospital_with_serology_testing_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 668, mkChar("I0_triage_R_conf"));
   SET_STRING_ELT(nms, 669, mkChar("I0_triage_R_unconf"));
   SET_STRING_ELT(nms, 670, mkChar("ICU_transmission"));
-  SET_STRING_ELT(nms, 671, mkChar("initial_beta"));
+  SET_STRING_ELT(nms, 671, mkChar("initial_beta_out"));
   SET_STRING_ELT(nms, 672, mkChar("initial_cum_admit_conf"));
   SET_STRING_ELT(nms, 673, mkChar("initial_cum_new_conf"));
   SET_STRING_ELT(nms, 674, mkChar("initial_D_comm"));
@@ -7598,6 +7595,7 @@ SEXP hospital_with_serology_testing_set_user(SEXP internal_p, SEXP user) {
   internal->dim_trans_increase_2 = internal->trans_classes;
   internal->dim_trans_profile_1 = internal->N_age;
   internal->dim_trans_profile_2 = internal->trans_classes;
+  internal->initial_beta_out = internal->beta_step[0];
   internal->initial_cum_admit_conf = internal->cum0_admit_conf;
   internal->initial_cum_new_conf = internal->cum0_new_conf;
   internal->p_EE = 1 - exp(-(internal->gamma_E) * internal->dt);
@@ -8426,7 +8424,7 @@ SEXP hospital_with_serology_testing_metadata(SEXP internal_p) {
   SET_STRING_ELT(variable_names, 0, mkChar("time"));
   SET_STRING_ELT(variable_names, 1, mkChar("cum_admit_conf"));
   SET_STRING_ELT(variable_names, 2, mkChar("cum_new_conf"));
-  SET_STRING_ELT(variable_names, 3, mkChar("beta"));
+  SET_STRING_ELT(variable_names, 3, mkChar("beta_out"));
   SET_STRING_ELT(variable_names, 4, mkChar("S"));
   SET_STRING_ELT(variable_names, 5, mkChar("R_pos"));
   SET_STRING_ELT(variable_names, 6, mkChar("R_neg"));
@@ -8469,17 +8467,13 @@ SEXP hospital_with_serology_testing_metadata(SEXP internal_p) {
   return ret;
 }
 SEXP hospital_with_serology_testing_initial_conditions(SEXP internal_p, SEXP step_ptr) {
-  int step = INTEGER(step_ptr)[0];
   hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 1);
-  GetRNGstate();
-  internal->initial_beta = internal->beta_step[step - 1];
-  PutRNGstate();
   SEXP r_state = PROTECT(allocVector(REALSXP, 4 + internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_R + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown_unconf + internal->dim_R_stepdown_conf + internal->dim_R_pre + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R_unconf + internal->dim_I_triage_R_conf + internal->dim_I_triage_D_unconf + internal->dim_I_triage_D_conf + internal->dim_I_hosp_R_unconf + internal->dim_I_hosp_R_conf + internal->dim_I_hosp_D_unconf + internal->dim_I_hosp_D_conf + internal->dim_I_ICU_R_unconf + internal->dim_I_ICU_R_conf + internal->dim_I_ICU_D_unconf + internal->dim_I_ICU_D_conf));
   double * state = REAL(r_state);
   state[0] = internal->initial_time;
   state[1] = internal->initial_cum_admit_conf;
   state[2] = internal->initial_cum_new_conf;
-  state[3] = internal->initial_beta;
+  state[3] = internal->initial_beta_out;
   memcpy(state + 4, internal->initial_S, internal->dim_S * sizeof(double));
   memcpy(state + internal->offset_variable_R_pos, internal->initial_R_pos, internal->dim_R_pos * sizeof(double));
   memcpy(state + internal->offset_variable_R_neg, internal->initial_R_neg, internal->dim_R_neg * sizeof(double));
@@ -8538,9 +8532,9 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
   double * D_comm = state + internal->offset_variable_D_comm;
   double cum_admit_conf = state[1];
   double cum_new_conf = state[2];
-  double beta = state[3];
   state_next[0] = (step + 1) * internal->dt;
-  state_next[3] = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
+  double beta = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
+  state_next[3] = beta;
   for (int i = 1; i <= internal->dim_I_with_diff_trans_1; ++i) {
     for (int j = 1; j <= internal->dim_I_with_diff_trans_2; ++j) {
       internal->I_with_diff_trans[i - 1 + internal->dim_I_with_diff_trans_1 * (j - 1)] = internal->trans_increase[internal->dim_trans_increase_1 * (j - 1) + i - 1] * (odin_sum3(I_asympt, i - 1, i, 0, internal->dim_I_asympt_2, j - 1, j, internal->dim_I_asympt_1, internal->dim_I_asympt_12) + odin_sum3(I_mild, i - 1, i, 0, internal->dim_I_mild_2, j - 1, j, internal->dim_I_mild_1, internal->dim_I_mild_12) + odin_sum3(I_ILI, i - 1, i, 0, internal->dim_I_ILI_2, j - 1, j, internal->dim_I_ILI_1, internal->dim_I_ILI_12) + internal->hosp_transmission * (odin_sum3(I_triage_R_unconf, i - 1, i, 0, internal->dim_I_triage_R_unconf_2, j - 1, j, internal->dim_I_triage_R_unconf_1, internal->dim_I_triage_R_unconf_12) + odin_sum3(I_triage_R_conf, i - 1, i, 0, internal->dim_I_triage_R_conf_2, j - 1, j, internal->dim_I_triage_R_conf_1, internal->dim_I_triage_R_conf_12) + odin_sum3(I_triage_D_unconf, i - 1, i, 0, internal->dim_I_triage_D_unconf_2, j - 1, j, internal->dim_I_triage_D_unconf_1, internal->dim_I_triage_D_unconf_12) + odin_sum3(I_triage_D_conf, i - 1, i, 0, internal->dim_I_triage_D_conf_2, j - 1, j, internal->dim_I_triage_D_conf_1, internal->dim_I_triage_D_conf_12) + odin_sum3(I_hosp_R_unconf, i - 1, i, 0, internal->dim_I_hosp_R_unconf_2, j - 1, j, internal->dim_I_hosp_R_unconf_1, internal->dim_I_hosp_R_unconf_12) + odin_sum3(I_hosp_R_conf, i - 1, i, 0, internal->dim_I_hosp_R_conf_2, j - 1, j, internal->dim_I_hosp_R_conf_1, internal->dim_I_hosp_R_conf_12) + odin_sum3(I_hosp_D_unconf, i - 1, i, 0, internal->dim_I_hosp_D_unconf_2, j - 1, j, internal->dim_I_hosp_D_unconf_1, internal->dim_I_hosp_D_unconf_12) + odin_sum3(I_hosp_D_conf, i - 1, i, 0, internal->dim_I_hosp_D_conf_2, j - 1, j, internal->dim_I_hosp_D_conf_1, internal->dim_I_hosp_D_conf_12)) + internal->ICU_transmission * (odin_sum3(I_ICU_R_unconf, i - 1, i, 0, internal->dim_I_ICU_R_unconf_2, j - 1, j, internal->dim_I_ICU_R_unconf_1, internal->dim_I_ICU_R_unconf_12) + odin_sum3(I_ICU_R_conf, i - 1, i, 0, internal->dim_I_ICU_R_conf_2, j - 1, j, internal->dim_I_ICU_R_conf_1, internal->dim_I_ICU_R_conf_12) + odin_sum3(I_ICU_D_unconf, i - 1, i, 0, internal->dim_I_ICU_D_unconf_2, j - 1, j, internal->dim_I_ICU_D_unconf_1, internal->dim_I_ICU_D_unconf_12) + odin_sum3(I_ICU_D_conf, i - 1, i, 0, internal->dim_I_ICU_D_conf_2, j - 1, j, internal->dim_I_ICU_D_conf_1, internal->dim_I_ICU_D_conf_12)) + internal->comm_D_transmission * odin_sum3(I_comm_D, i - 1, i, 0, internal->dim_I_comm_D_2, j - 1, j, internal->dim_I_comm_D_1, internal->dim_I_comm_D_12));
@@ -10355,7 +10349,7 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   odin_set_dim(I0_triage, 3, internal->dim_I0_triage_1, internal->dim_I0_triage_2, internal->dim_I0_triage_3);
   SET_VECTOR_ELT(contents, 365, I0_triage);
   SET_VECTOR_ELT(contents, 366, ScalarReal(internal->ICU_transmission));
-  SET_VECTOR_ELT(contents, 367, ScalarReal(internal->initial_beta));
+  SET_VECTOR_ELT(contents, 367, ScalarReal(internal->initial_beta_out));
   SEXP initial_D = PROTECT(allocVector(REALSXP, internal->dim_D));
   memcpy(REAL(initial_D), internal->initial_D, internal->dim_D * sizeof(double));
   SET_VECTOR_ELT(contents, 368, initial_D);
@@ -10952,7 +10946,7 @@ SEXP new_hospital_model_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 364, mkChar("I0_mild"));
   SET_STRING_ELT(nms, 365, mkChar("I0_triage"));
   SET_STRING_ELT(nms, 366, mkChar("ICU_transmission"));
-  SET_STRING_ELT(nms, 367, mkChar("initial_beta"));
+  SET_STRING_ELT(nms, 367, mkChar("initial_beta_out"));
   SET_STRING_ELT(nms, 368, mkChar("initial_D"));
   SET_STRING_ELT(nms, 369, mkChar("initial_E"));
   SET_STRING_ELT(nms, 370, mkChar("initial_I_asympt"));
@@ -11278,6 +11272,7 @@ SEXP new_hospital_model_set_user(SEXP internal_p, SEXP user) {
   internal->dim_trans_increase_2 = internal->trans_classes;
   internal->dim_trans_profile_1 = internal->N_age;
   internal->dim_trans_profile_2 = internal->trans_classes;
+  internal->initial_beta_out = internal->beta_step[0];
   internal->p_EE = 1 - exp(-(internal->gamma_E) * internal->dt);
   internal->p_II_asympt = 1 - exp(-(internal->gamma_asympt) * internal->dt);
   internal->p_II_hosp_D = 1 - exp(-(internal->gamma_hosp_D) * internal->dt);
@@ -11728,7 +11723,7 @@ SEXP new_hospital_model_metadata(SEXP internal_p) {
   dim_R_stepdown[1] = internal->dim_R_stepdown_2;
   dim_R_stepdown[2] = internal->dim_R_stepdown_3;
   SET_STRING_ELT(variable_names, 0, mkChar("time"));
-  SET_STRING_ELT(variable_names, 1, mkChar("beta"));
+  SET_STRING_ELT(variable_names, 1, mkChar("beta_out"));
   SET_STRING_ELT(variable_names, 2, mkChar("S"));
   SET_STRING_ELT(variable_names, 3, mkChar("R"));
   SET_STRING_ELT(variable_names, 4, mkChar("D"));
@@ -11796,15 +11791,11 @@ SEXP new_hospital_model_metadata(SEXP internal_p) {
   return ret;
 }
 SEXP new_hospital_model_initial_conditions(SEXP internal_p, SEXP step_ptr) {
-  int step = INTEGER(step_ptr)[0];
   new_hospital_model_internal *internal = new_hospital_model_get_internal(internal_p, 1);
-  GetRNGstate();
-  internal->initial_beta = internal->beta_step[step - 1];
-  PutRNGstate();
   SEXP r_state = PROTECT(allocVector(REALSXP, 2 + internal->dim_S + internal->dim_R + internal->dim_D + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_triage + internal->dim_I_hosp_R + internal->dim_I_hosp_D + internal->dim_I_ICU_R + internal->dim_I_ICU_D + internal->dim_R_stepdown));
   double * state = REAL(r_state);
   state[0] = internal->initial_time;
-  state[1] = internal->initial_beta;
+  state[1] = internal->initial_beta_out;
   memcpy(state + 2, internal->initial_S, internal->dim_S * sizeof(double));
   memcpy(state + internal->offset_variable_R, internal->initial_R, internal->dim_R * sizeof(double));
   memcpy(state + internal->offset_variable_D, internal->initial_D, internal->dim_D * sizeof(double));
@@ -11835,9 +11826,9 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
   double * R_stepdown = state + internal->offset_variable_R_stepdown;
   double * R = state + internal->offset_variable_R;
   double * D = state + internal->offset_variable_D;
-  double beta = state[1];
   state_next[0] = (step + 1) * internal->dt;
-  state_next[1] = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
+  double beta = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
+  state_next[1] = beta;
   for (int i = 1; i <= internal->dim_I_with_diff_trans_1; ++i) {
     for (int j = 1; j <= internal->dim_I_with_diff_trans_2; ++j) {
       internal->I_with_diff_trans[i - 1 + internal->dim_I_with_diff_trans_1 * (j - 1)] = internal->trans_increase[internal->dim_trans_increase_1 * (j - 1) + i - 1] * (odin_sum3(I_asympt, i - 1, i, 0, internal->dim_I_asympt_2, j - 1, j, internal->dim_I_asympt_1, internal->dim_I_asympt_12) + odin_sum3(I_mild, i - 1, i, 0, internal->dim_I_mild_2, j - 1, j, internal->dim_I_mild_1, internal->dim_I_mild_12) + odin_sum3(I_ILI, i - 1, i, 0, internal->dim_I_ILI_2, j - 1, j, internal->dim_I_ILI_1, internal->dim_I_ILI_12) + internal->hosp_transmission * (odin_sum3(I_triage, i - 1, i, 0, internal->dim_I_triage_2, j - 1, j, internal->dim_I_triage_1, internal->dim_I_triage_12) + odin_sum3(I_hosp_R, i - 1, i, 0, internal->dim_I_hosp_R_2, j - 1, j, internal->dim_I_hosp_R_1, internal->dim_I_hosp_R_12) + odin_sum3(I_hosp_D, i - 1, i, 0, internal->dim_I_hosp_D_2, j - 1, j, internal->dim_I_hosp_D_1, internal->dim_I_hosp_D_12)) + internal->ICU_transmission * (odin_sum3(I_ICU_R, i - 1, i, 0, internal->dim_I_ICU_R_2, j - 1, j, internal->dim_I_ICU_R_1, internal->dim_I_ICU_R_12) + odin_sum3(I_ICU_D, i - 1, i, 0, internal->dim_I_ICU_D_2, j - 1, j, internal->dim_I_ICU_D_1, internal->dim_I_ICU_D_12)));
@@ -13666,7 +13657,7 @@ SEXP serology2_contents(SEXP internal_p) {
   SEXP importation_step = PROTECT(allocVector(REALSXP, internal->dim_importation_step));
   memcpy(REAL(importation_step), internal->importation_step, internal->dim_importation_step * sizeof(double));
   SET_VECTOR_ELT(contents, 688, importation_step);
-  SET_VECTOR_ELT(contents, 689, ScalarReal(internal->initial_beta));
+  SET_VECTOR_ELT(contents, 689, ScalarReal(internal->initial_beta_out));
   SET_VECTOR_ELT(contents, 690, ScalarReal(internal->initial_cum_admit_conf));
   SET_VECTOR_ELT(contents, 691, ScalarReal(internal->initial_cum_new_conf));
   SEXP initial_D_comm = PROTECT(allocVector(REALSXP, internal->dim_D_comm));
@@ -14840,7 +14831,7 @@ SEXP serology2_contents(SEXP internal_p) {
   SET_STRING_ELT(nms, 686, mkChar("I0_triage_R_unconf"));
   SET_STRING_ELT(nms, 687, mkChar("ICU_transmission"));
   SET_STRING_ELT(nms, 688, mkChar("importation_step"));
-  SET_STRING_ELT(nms, 689, mkChar("initial_beta"));
+  SET_STRING_ELT(nms, 689, mkChar("initial_beta_out"));
   SET_STRING_ELT(nms, 690, mkChar("initial_cum_admit_conf"));
   SET_STRING_ELT(nms, 691, mkChar("initial_cum_new_conf"));
   SET_STRING_ELT(nms, 692, mkChar("initial_D_comm"));
@@ -15443,6 +15434,7 @@ SEXP serology2_set_user(SEXP internal_p, SEXP user) {
   internal->dim_trans_increase_2 = internal->trans_classes;
   internal->dim_trans_profile_1 = internal->N_age;
   internal->dim_trans_profile_2 = internal->trans_classes;
+  internal->initial_beta_out = internal->beta_step[0];
   internal->initial_cum_admit_conf = internal->cum0_admit_conf;
   internal->initial_cum_new_conf = internal->cum0_new_conf;
   internal->p_EE = 1 - exp(-(internal->gamma_E) * internal->dt);
@@ -16302,7 +16294,7 @@ SEXP serology2_metadata(SEXP internal_p) {
   SET_STRING_ELT(variable_names, 0, mkChar("time"));
   SET_STRING_ELT(variable_names, 1, mkChar("cum_admit_conf"));
   SET_STRING_ELT(variable_names, 2, mkChar("cum_new_conf"));
-  SET_STRING_ELT(variable_names, 3, mkChar("beta"));
+  SET_STRING_ELT(variable_names, 3, mkChar("beta_out"));
   SET_STRING_ELT(variable_names, 4, mkChar("S"));
   SET_STRING_ELT(variable_names, 5, mkChar("R_pos"));
   SET_STRING_ELT(variable_names, 6, mkChar("R_neg"));
@@ -16346,17 +16338,13 @@ SEXP serology2_metadata(SEXP internal_p) {
   return ret;
 }
 SEXP serology2_initial_conditions(SEXP internal_p, SEXP step_ptr) {
-  int step = INTEGER(step_ptr)[0];
   serology2_internal *internal = serology2_get_internal(internal_p, 1);
-  GetRNGstate();
-  internal->initial_beta = internal->beta_step[step - 1];
-  PutRNGstate();
   SEXP r_state = PROTECT(allocVector(REALSXP, 4 + internal->dim_S + internal->dim_R_pos + internal->dim_R_neg + internal->dim_R + internal->dim_D_hosp + internal->dim_D_comm + internal->dim_R_stepdown_unconf + internal->dim_R_stepdown_conf + internal->dim_R_pre + internal->dim_PCR_pos + internal->dim_E + internal->dim_I_asympt + internal->dim_I_mild + internal->dim_I_ILI + internal->dim_I_comm_D + internal->dim_I_triage_R_unconf + internal->dim_I_triage_R_conf + internal->dim_I_triage_D_unconf + internal->dim_I_triage_D_conf + internal->dim_I_hosp_R_unconf + internal->dim_I_hosp_R_conf + internal->dim_I_hosp_D_unconf + internal->dim_I_hosp_D_conf + internal->dim_I_ICU_R_unconf + internal->dim_I_ICU_R_conf + internal->dim_I_ICU_D_unconf + internal->dim_I_ICU_D_conf));
   double * state = REAL(r_state);
   state[0] = internal->initial_time;
   state[1] = internal->initial_cum_admit_conf;
   state[2] = internal->initial_cum_new_conf;
-  state[3] = internal->initial_beta;
+  state[3] = internal->initial_beta_out;
   memcpy(state + 4, internal->initial_S, internal->dim_S * sizeof(double));
   memcpy(state + internal->offset_variable_R_pos, internal->initial_R_pos, internal->dim_R_pos * sizeof(double));
   memcpy(state + internal->offset_variable_R_neg, internal->initial_R_neg, internal->dim_R_neg * sizeof(double));
@@ -16417,11 +16405,11 @@ void serology2_rhs(serology2_internal* internal, size_t step, double * state, do
   double * PCR_pos = state + internal->offset_variable_PCR_pos;
   double cum_admit_conf = state[1];
   double cum_new_conf = state[2];
-  double beta = state[3];
   double N_tot2 = odin_sum1(S, 0, internal->dim_S) + odin_sum1(R_pre, 0, internal->dim_R_pre) + odin_sum1(R_pos, 0, internal->dim_R_pos) + odin_sum1(R_neg, 0, internal->dim_R_neg) + odin_sum1(E, 0, internal->dim_E);
   state_next[0] = (step + 1) * internal->dt;
+  double beta = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
   double importation = (step >= internal->dim_importation_step ? internal->importation_step[internal->dim_importation_step - 1] : internal->importation_step[step + 1 - 1]);
-  state_next[3] = (step >= internal->dim_beta_step ? internal->beta_step[internal->dim_beta_step - 1] : internal->beta_step[step + 1 - 1]);
+  state_next[3] = beta;
   for (int i = 1; i <= internal->dim_I_with_diff_trans_1; ++i) {
     for (int j = 1; j <= internal->dim_I_with_diff_trans_2; ++j) {
       internal->I_with_diff_trans[i - 1 + internal->dim_I_with_diff_trans_1 * (j - 1)] = internal->trans_increase[internal->dim_trans_increase_1 * (j - 1) + i - 1] * (odin_sum3(I_asympt, i - 1, i, 0, internal->dim_I_asympt_2, j - 1, j, internal->dim_I_asympt_1, internal->dim_I_asympt_12) + odin_sum3(I_mild, i - 1, i, 0, internal->dim_I_mild_2, j - 1, j, internal->dim_I_mild_1, internal->dim_I_mild_12) + odin_sum3(I_ILI, i - 1, i, 0, internal->dim_I_ILI_2, j - 1, j, internal->dim_I_ILI_1, internal->dim_I_ILI_12) + internal->hosp_transmission * (odin_sum3(I_triage_R_unconf, i - 1, i, 0, internal->dim_I_triage_R_unconf_2, j - 1, j, internal->dim_I_triage_R_unconf_1, internal->dim_I_triage_R_unconf_12) + odin_sum3(I_triage_R_conf, i - 1, i, 0, internal->dim_I_triage_R_conf_2, j - 1, j, internal->dim_I_triage_R_conf_1, internal->dim_I_triage_R_conf_12) + odin_sum3(I_triage_D_unconf, i - 1, i, 0, internal->dim_I_triage_D_unconf_2, j - 1, j, internal->dim_I_triage_D_unconf_1, internal->dim_I_triage_D_unconf_12) + odin_sum3(I_triage_D_conf, i - 1, i, 0, internal->dim_I_triage_D_conf_2, j - 1, j, internal->dim_I_triage_D_conf_1, internal->dim_I_triage_D_conf_12) + odin_sum3(I_hosp_R_unconf, i - 1, i, 0, internal->dim_I_hosp_R_unconf_2, j - 1, j, internal->dim_I_hosp_R_unconf_1, internal->dim_I_hosp_R_unconf_12) + odin_sum3(I_hosp_R_conf, i - 1, i, 0, internal->dim_I_hosp_R_conf_2, j - 1, j, internal->dim_I_hosp_R_conf_1, internal->dim_I_hosp_R_conf_12) + odin_sum3(I_hosp_D_unconf, i - 1, i, 0, internal->dim_I_hosp_D_unconf_2, j - 1, j, internal->dim_I_hosp_D_unconf_1, internal->dim_I_hosp_D_unconf_12) + odin_sum3(I_hosp_D_conf, i - 1, i, 0, internal->dim_I_hosp_D_conf_2, j - 1, j, internal->dim_I_hosp_D_conf_1, internal->dim_I_hosp_D_conf_12)) + internal->ICU_transmission * (odin_sum3(I_ICU_R_unconf, i - 1, i, 0, internal->dim_I_ICU_R_unconf_2, j - 1, j, internal->dim_I_ICU_R_unconf_1, internal->dim_I_ICU_R_unconf_12) + odin_sum3(I_ICU_R_conf, i - 1, i, 0, internal->dim_I_ICU_R_conf_2, j - 1, j, internal->dim_I_ICU_R_conf_1, internal->dim_I_ICU_R_conf_12) + odin_sum3(I_ICU_D_unconf, i - 1, i, 0, internal->dim_I_ICU_D_unconf_2, j - 1, j, internal->dim_I_ICU_D_unconf_1, internal->dim_I_ICU_D_unconf_12) + odin_sum3(I_ICU_D_conf, i - 1, i, 0, internal->dim_I_ICU_D_conf_2, j - 1, j, internal->dim_I_ICU_D_conf_1, internal->dim_I_ICU_D_conf_12)) + internal->comm_D_transmission * odin_sum3(I_comm_D, i - 1, i, 0, internal->dim_I_comm_D_2, j - 1, j, internal->dim_I_comm_D_1, internal->dim_I_comm_D_12));
