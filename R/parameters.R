@@ -423,7 +423,7 @@ generate_parameters <- function(
     if (importation){
       parameter_list$psi <- psi
     } else {
-      parameter_list$importation_y[] <- 0
+      parameter_list$importation_step[] <- 0
     }
   }
 
@@ -453,8 +453,7 @@ generate_parameters <- function(
     }
   }
   if (!("sircovid_serology2" %in% class(sircovid_model))) {
-    parameter_list$importation_y <- NULL
-    parameter_list$importation_t <- NULL
+    parameter_list$importation_step <- NULL
   }
 
   
@@ -568,8 +567,14 @@ generate_parameters_base <- function(
   # Set up time-varying beta
   # Times are in days from first day supplied
   beta_t <- normalise_beta(beta_times, dt)
+
+  beta_fun <- cinterpolate::interpolation_function(beta_t, beta, "constant")
+  beta_step <- beta_fun(seq.int(min(beta_t), max(beta_t)))
   
-  importation_t <- normalise_beta(importation_times,dt)
+  importation_t <- normalise_beta(importation_times, dt)
+
+  importation_fun <- cinterpolate::interpolation_function(importation_t, importation_levels, "constant")
+  importation_step <- importation_fun(seq.int(min(importation_t), max(importation_t)))
 
   # 
   # This section defines proportions between partitions
@@ -626,10 +631,8 @@ generate_parameters_base <- function(
                          S0 = severity_params$population,
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
-                         beta_y = beta,
-                         beta_t = beta_t,
-                         importation_y = importation_levels,
-                         importation_t = importation_t, 
+                         beta_step = beta_step,
+                         importation_step = importation_step,
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,

@@ -62,8 +62,8 @@ test_that("pmcmc with serology model", {
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 580))
-  expect_equivalent(X, cmp)
   
+  expect_equivalent(X[names(X) != "inputs"], cmp[names(cmp) != "inputs"])
   
 })
 
@@ -129,7 +129,7 @@ test_that("pmcmc with serology2 model", {
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 631))
-  expect_equivalent(X, cmp)
+  expect_equivalent(X[names(X) != "inputs"], cmp[names(cmp) != "inputs"])
   
   
   data <- readRDS("serology_model_data2.rds")
@@ -155,7 +155,7 @@ test_that("pmcmc with serology2 model", {
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, 13))
   expect_equal(dim(X2$states), c(n_mcmc + 1L, 631))
-  expect_equivalent(X2, cmp)
+  expect_equivalent(X2[names(X2) != "inputs"], cmp[names(cmp) != "inputs"])
 })
 
 test_that("pmcmc runs with beta_pl", {

@@ -1,3 +1,7 @@
+# sircovid 0.3.11
+
+- No longer use `cinterpolate`'s interpolation function in the generated C (#113)
+
 # sircovid 0.3.10
 - Can now setup care home inclusion in generate_parameters, with PMCMC support
 

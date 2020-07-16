@@ -27,8 +27,6 @@ update(R_stepdown[,,]) <- R_stepdown[i,j,k] + delta_R_stepdown[i,j,k]
 update(R[]) <- R[i] + delta_R[i]
 update(D[]) <- D[i] + delta_D[i]
 
-output(beta) <- TRUE
-
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
 p_EE <- 1 - exp(-gamma_E*dt) # progression of latent period
@@ -258,9 +256,14 @@ s_stepdown <- user()
 gamma_stepdown <- user(0.1)
 
 #Parameters of the age stratified transmission
-beta <- interpolate(beta_t, beta_y, "constant")
-beta_t[] <- user()
-beta_y[] <- user()
+beta_step[] <- user()
+dim(beta_step) <- user()
+## What we really want is min(step + 1, length(beta_step)) but that's not
+## supported by odin (it could be made to support this). This code
+## does currently create a compiler warning with -Wsign-compare on
+## because we have an unsigned/signed integer comparison
+beta <- if (step >= length(beta_step)) beta_step[length(beta_step)] else beta_step[step + 1]
+output(beta) <- TRUE
 
 m[,] <- user()
 trans_profile[,] <- user()
@@ -269,9 +272,6 @@ hosp_transmission <- user()
 ICU_transmission <- user()
 
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
-
-dim(beta_t) <- user()
-dim(beta_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
