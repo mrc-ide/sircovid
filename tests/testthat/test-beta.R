@@ -50,7 +50,7 @@ test_that("Two-level beta works in odin as expected", {
   results <- mod$transform_variables(tmp)
   
   expect_equal(results$beta,pars_model$beta_y[sapply(t,FUN=function(t){
-    max(which(pars_model$beta_t<=t))
+    max(which(pars_model$beta_t<t))
   })])
   
   
@@ -101,7 +101,7 @@ test_that("Three-level beta works in odin as expected", {
   results <- mod$transform_variables(tmp)
   
   expect_equal(results$beta,pars_model$beta_y[sapply(t,FUN=function(t){
-    max(which(pars_model$beta_t<=t))
+    max(which(pars_model$beta_t<t))
   })])
   
   
@@ -137,7 +137,7 @@ test_that("Piecewise-linear beta works in odin as expected", {
   results <- mod$transform_variables(tmp)
   
   expect_equal(results$beta,pars_model$beta_y[sapply(t,FUN=function(t){
-    max(which(pars_model$beta_t<=t))
+    max(which(pars_model$beta_t<t))
   })])
   
   

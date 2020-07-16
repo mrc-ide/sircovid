@@ -9,8 +9,8 @@ trans_classes <- user()
 
 #definition of the time-step and output as "time"
 dt <- user()
-time <- step * dt
-output(time) <- TRUE
+initial(time) <- 0
+update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
@@ -211,8 +211,8 @@ dim(beta_step) <- user()
 ## supported by odin (it could be made to support this). This code
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
-beta <- if (step >= length(beta_step)) beta_step[length(beta_step)] else beta_step[step + 1]
-output(beta) <- TRUE
+initial(beta) <- beta_step[step]
+update(beta) <- if (step >= length(beta_step)) beta_step[length(beta_step)] else beta_step[step + 1]
 
 m[,] <- user()
 trans_profile[,] <- user()
