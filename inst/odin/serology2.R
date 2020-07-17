@@ -132,6 +132,10 @@ n_ILI_to_R[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_hosp_ILI[i])
 n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j] - n_ILI_to_R[i,j],p_death_comm[i])
 n_ILI_to_hosp[,] <- n_II_ILI[i,s_ILI,j] - n_ILI_to_R[i,j] - n_ILI_to_comm_D[i,j]
 
+initial(n_ILI_to_hosp_out[,]) <- 0
+update(n_ILI_to_hosp_out[,]) <- n_ILI_to_hosp_out[i, j]
+dim(n_ILI_to_hosp_out) <- c(N_age,trans_classes)
+
 #Work out the I_comm_D -> I_comm_D transitions
 aux_II_comm_D[,1,] <- n_ILI_to_comm_D[i,k]
 aux_II_comm_D[,2:s_comm_D,] <- n_II_comm_D[i,j-1,k]

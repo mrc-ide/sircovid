@@ -102,6 +102,9 @@ delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_recov_ILI[i])
 output(n_ILI_to_hosp[,]) <- TRUE
 
+initial(n_ILI_to_hosp_out) <- 0
+update(n_ILI_to_hosp_out) <- n_ILI_to_hosp_out
+
 #Work out the I_triage->I_triage transitions
 n_ILI_to_triage[,] <- rbinom(n_ILI_to_hosp[i,j],p_ICU_hosp[i])
 aux_II_triage[,1,] <- n_ILI_to_triage[i,k]

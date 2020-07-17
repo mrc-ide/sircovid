@@ -66,7 +66,7 @@ test_that("pmcmc with serology model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 600))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 617))
   
   expect_equivalent(drop_testing(X), drop_testing(cmp))
   
@@ -133,7 +133,7 @@ test_that("pmcmc with serology2 model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 651))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 668))
   expect_equivalent(drop_testing(X), drop_testing(cmp))
   
   
@@ -159,7 +159,7 @@ test_that("pmcmc with serology2 model", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 651))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 668))
   expect_equivalent(drop_testing(X2), drop_testing(cmp))
 })
 
@@ -221,7 +221,7 @@ test_that("pmcmc runs with beta_pl", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 292))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 293))
   
   
 })
@@ -303,7 +303,7 @@ test_that("pmcmc runs with care homes", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 727))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 746))
   
   
 })
@@ -369,7 +369,7 @@ test_that("pmcmc runs with piecewise-linear beta", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 292))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 293))
   
   
 })
@@ -590,7 +590,7 @@ test_that("pmcmc with new model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 292))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 293))
   expect_equivalent(drop_testing(X), drop_testing(cmp))
   
   
@@ -708,7 +708,7 @@ test_that("pmcmc with new model", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample$names) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 292))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 293))
   expect_equivalent(drop_testing(X2), drop_testing(cmp))
   
   # test that pars_obs can be modified

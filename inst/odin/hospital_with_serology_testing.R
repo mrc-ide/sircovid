@@ -127,6 +127,10 @@ delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 #Work out the flow from I_ILI -> hosp = hosp_D, hosp_R, triage_R and triage_D
 n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],p_hosp_ILI[i])
 
+initial(n_ILI_to_hosp_out[,]) <- 0
+update(n_ILI_to_hosp_out[,]) <- n_ILI_to_hosp_out[i, j]
+dim(n_ILI_to_hosp_out) <- c(N_age,trans_classes)
+
 #Work out the flow from I_ILI -> I_comm_D
 n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j]-n_ILI_to_hosp[i,j],p_death_comm[i]/(1-p_hosp_ILI[i]))
 
