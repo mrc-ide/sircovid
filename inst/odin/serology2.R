@@ -681,5 +681,12 @@ output(N_tot) <- TRUE
 N_tot2 <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 output(N_tot2) <- TRUE
 
+## initial(N_tot_out[]) <- N_tot[i]
+## update(N_tot_out[]) <- N_tot[i]
+## dim(N_tot_out) <- length(N_tot)
+## initial(N_tot2_out) <- N_tot2
+## update(N_tot2_out) <- N_tot2
+
+
 #Tracker of population size
 #dim(N) <- N_age
