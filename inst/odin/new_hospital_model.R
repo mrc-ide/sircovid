@@ -404,7 +404,7 @@ N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I
   sum(I_hosp_R) + sum(I_hosp_D) + sum(I_ICU_R) + sum(I_ICU_D) + sum(R_stepdown)
 output(N_tot) <- TRUE
 
-initial(N_tot_out) <- N_tot
+initial(N_tot_out) <- 0
 update(N_tot_out) <- N_tot
 
 #Tracker of population size
