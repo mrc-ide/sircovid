@@ -56,15 +56,12 @@ n_R_stepdown[,,] <- rbinom(R_stepdown[i,j,k], p_R_stepdown)
 
 #Computes the number of asymptomatic
 n_EI_asympt[,] <- rbinom(n_EE[i,s_E,j], p_asympt[i])
-output(n_EI_asympt[,]) <- TRUE
 
 #Computes the number of mild cases - p_sympt_ILI gives the proportion of febrile/ILI cases among the symptomatics
 n_EI_mild[,] <- rbinom(n_EE[i,s_E,j]-n_EI_asympt[i,j], 1-p_sympt_ILI[i])
-output(n_EI_mild[,]) <- TRUE
 
 #Computes the number of ILI cases
 n_EI_ILI[,] <- n_EE[i,s_E,j]-n_EI_asympt[i,j]-n_EI_mild[i,j]
-output(n_EI_ILI[,]) <- TRUE
 
 #Compute the aux_p_bin matrix of binom nested coeff
 aux_p_bin[,1] <- trans_profile[i,1]
@@ -100,7 +97,6 @@ delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
 #Work out the flow from I_ILI -> hosp = hosp_D, hosp_R and hosp_triage
 n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_recov_ILI[i])
-output(n_ILI_to_hosp[,]) <- TRUE
 
 initial(n_ILI_to_hosp_out) <- 0
 update(n_ILI_to_hosp_out) <- n_ILI_to_hosp_out
@@ -120,12 +116,6 @@ n_triage_to_ICU_R[,] <- n_II_triage[i,s_triage,j] - n_triage_to_ICU_D[i,j]
 n_hosp_non_ICU[,] <- n_ILI_to_hosp[i,j] - n_ILI_to_triage[i,j]
 n_ILI_to_hosp_D[,] <- rbinom(n_hosp_non_ICU[i,j], p_death_hosp_D[i])
 n_ILI_to_hosp_R[,] <- n_hosp_non_ICU[i,j] - n_ILI_to_hosp_D[i,j]
-
-#output the flows leaving the triage
-output(n_ILI_to_hosp_R[,])<- TRUE
-output(n_ILI_to_hosp_D[,])<- TRUE
-output(n_triage_to_ICU_R[,])<- TRUE
-output(n_triage_to_ICU_D[,])<- TRUE
 
 #Work out the I_hosp_R->I_hosp_R transitions
 aux_II_hosp_R[,1,] <- n_ILI_to_hosp_R[i,k]
@@ -405,10 +395,11 @@ dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
 N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_triage) +
   sum(I_hosp_R) + sum(I_hosp_D) + sum(I_ICU_R) + sum(I_ICU_D) + sum(R_stepdown)
-output(N_tot) <- TRUE
 
 initial(N_tot_out) <- 0
 update(N_tot_out) <- N_tot
 
 #Tracker of population size
 #dim(N) <- N_age
+
+output(N_tot) <- TRUE

@@ -52,16 +52,13 @@ n_R_hosp[,,] <- rbinom(R_hosp[i,j,k], p_R_hosp)
 
 #Computes the number of asymptomatic
 n_EI_asympt[,] <- rbinom(n_EE[i,s_E,j], p_asympt[i])
-output(n_EI_asympt[,]) <- TRUE
 
 
 #Computes the number of mild cases - p_sympt_ILI gives the proportion of febrile/ILI cases among the symptomatics
 n_EI_mild[,] <- rbinom(n_EE[i,s_E,j]-n_EI_asympt[i,j], 1-p_sympt_ILI[i])
-output(n_EI_mild[,]) <- TRUE
 
 #Computes the number of ILI cases
 n_EI_ILI[,] <- n_EE[i,s_E,j]-n_EI_asympt[i,j]-n_EI_mild[i,j]
-output(n_EI_ILI[,]) <- TRUE
 
 #Compute the aux_p_bin matrix of binom nested coeff
 aux_p_bin[,1] <- trans_profile[i,1]
@@ -97,7 +94,6 @@ delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
 #Work out the I_hosp->I_hosp transitions
 n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_recov_ILI[i])
-output(n_ILI_to_hosp[,]) <- TRUE
 aux_II_hosp[,1,] <- n_ILI_to_hosp[i,k]
 aux_II_hosp[,2:s_hosp,] <- n_II_hosp[i,j-1,k]
 aux_II_hosp[,1:s_hosp,] <- aux_II_hosp[i,j,k] - n_II_hosp[i,j,k]
@@ -108,7 +104,6 @@ n_death_hosp[,] <- rbinom(n_II_hosp[i,s_hosp,j], p_death_hosp[i])
 
 #Work out the I_ICU->I_ICU transitions
 n_hosp_to_ICU[,] <- rbinom(n_II_hosp[i,s_hosp,j]-n_death_hosp[i,j],1-p_recov_hosp[i]-p_death_hosp[i])
-output(n_hosp_to_ICU[,])<- TRUE
 aux_II_ICU[,1,] <- n_hosp_to_ICU[i,k]
 aux_II_ICU[,2:s_ICU,] <- n_II_ICU[i,j-1,k]
 aux_II_ICU[,1:s_ICU,] <- aux_II_ICU[i,j,k] - n_II_ICU[i,j,k]
@@ -323,10 +318,11 @@ dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
 N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
-output(N_tot) <- TRUE
 
 initial(N_tot_out) <- 0
 update(N_tot_out) <- N_tot
 
 #Tracker of population size
 #dim(N) <- N_age
+
+output(N_tot) <- TRUE

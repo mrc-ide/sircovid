@@ -679,11 +679,9 @@ N_tot[] <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mi
   sum(I_triage_D_conf[i,,]) + sum(I_triage_D_unconf[i,,]) + sum(I_triage_R_conf[i,,]) + sum(I_triage_R_unconf[i,,])  + sum(I_hosp_R_conf[i,,]) + sum(I_hosp_R_unconf[i,,]) +
   sum(I_hosp_D_conf[i,,]) + sum(I_hosp_D_unconf[i,,]) + sum(I_ICU_R_conf[i,,]) + sum(I_ICU_R_unconf[i,,]) + sum(I_ICU_D_conf[i,,]) + sum(I_ICU_D_unconf[i,,]) +
   sum(R_stepdown_conf[i,]) + sum(R_stepdown_unconf[i,]) + sum(I_comm_D[i,,]) + D_comm[i]
-output(N_tot) <- TRUE
 
 #Total population calculated with seroconversion flow, exclude triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's
 N_tot2 <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
-output(N_tot2) <- TRUE
 
 initial(N_tot_out[]) <- 0
 update(N_tot_out[]) <- N_tot[i]
@@ -694,3 +692,5 @@ update(N_tot2_out) <- N_tot2
 
 #Tracker of population size
 #dim(N) <- N_age
+
+output(N_tot) <- TRUE
