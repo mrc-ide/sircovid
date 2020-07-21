@@ -4170,14 +4170,8 @@ SEXP basic_metadata(SEXP internal_p) {
   SET_STRING_ELT(variable_names, 12, mkChar("R_hosp"));
   SET_VECTOR_ELT(ret, 0, variable_length);
   UNPROTECT(2);
-  SEXP output_length = PROTECT(allocVector(VECSXP, 1));
-  SEXP output_names = PROTECT(allocVector(STRSXP, 1));
-  setAttrib(output_length, R_NamesSymbol, output_names);
-  SET_VECTOR_ELT(output_length, 0, R_NilValue);
-  SET_STRING_ELT(output_names, 0, mkChar("N_tot"));
-  SET_VECTOR_ELT(ret, 1, output_length);
-  UNPROTECT(2);
-  SET_VECTOR_ELT(ret, 2, ScalarInteger(1));
+  SET_VECTOR_ELT(ret, 1, R_NilValue);
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(0));
   UNPROTECT(2);
   return ret;
 }
@@ -4583,7 +4577,6 @@ void basic_rhs(basic_internal* internal, size_t step, double * state, double * s
       }
     }
   }
-  output[0] = N_tot;
 }
 void basic_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next, size_t n_out, double * output, void * internal) {
   basic_rhs((basic_internal*)internal, step, state, state_next, output);
@@ -4591,10 +4584,7 @@ void basic_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next
 SEXP basic_rhs_r(SEXP internal_p, SEXP step, SEXP state) {
   SEXP state_next = PROTECT(allocVector(REALSXP, LENGTH(state)));
   basic_internal *internal = basic_get_internal(internal_p, 1);
-  SEXP output_ptr = PROTECT(allocVector(REALSXP, 1));
-  setAttrib(state_next, install("output"), output_ptr);
-  UNPROTECT(1);
-  double *output = REAL(output_ptr);
+  double *output = NULL;
   GetRNGstate();
   basic_rhs(internal, INTEGER(step)[0], REAL(state), REAL(state_next), output);
   PutRNGstate();
@@ -8484,14 +8474,8 @@ SEXP hospital_with_serology_testing_metadata(SEXP internal_p) {
   SET_STRING_ELT(variable_names, 32, mkChar("I_ICU_D_conf"));
   SET_VECTOR_ELT(ret, 0, variable_length);
   UNPROTECT(2);
-  SEXP output_length = PROTECT(allocVector(VECSXP, 1));
-  SEXP output_names = PROTECT(allocVector(STRSXP, 1));
-  setAttrib(output_length, R_NamesSymbol, output_names);
-  SET_VECTOR_ELT(output_length, 0, ScalarInteger(internal->dim_N_tot));
-  SET_STRING_ELT(output_names, 0, mkChar("N_tot"));
-  SET_VECTOR_ELT(ret, 1, output_length);
-  UNPROTECT(2);
-  SET_VECTOR_ELT(ret, 2, ScalarInteger(internal->dim_N_tot));
+  SET_VECTOR_ELT(ret, 1, R_NilValue);
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(0));
   UNPROTECT(2);
   return ret;
 }
@@ -9648,7 +9632,6 @@ void hospital_with_serology_testing_rhs(hospital_with_serology_testing_internal*
       }
     }
   }
-  memcpy(output + 0, internal->N_tot, internal->dim_N_tot * sizeof(double));
 }
 void hospital_with_serology_testing_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next, size_t n_out, double * output, void * internal) {
   hospital_with_serology_testing_rhs((hospital_with_serology_testing_internal*)internal, step, state, state_next, output);
@@ -9656,10 +9639,7 @@ void hospital_with_serology_testing_rhs_dde(size_t n_eq, size_t step, double * s
 SEXP hospital_with_serology_testing_rhs_r(SEXP internal_p, SEXP step, SEXP state) {
   SEXP state_next = PROTECT(allocVector(REALSXP, LENGTH(state)));
   hospital_with_serology_testing_internal *internal = hospital_with_serology_testing_get_internal(internal_p, 1);
-  SEXP output_ptr = PROTECT(allocVector(REALSXP, internal->dim_N_tot));
-  setAttrib(state_next, install("output"), output_ptr);
-  UNPROTECT(1);
-  double *output = REAL(output_ptr);
+  double *output = NULL;
   GetRNGstate();
   hospital_with_serology_testing_rhs(internal, INTEGER(step)[0], REAL(state), REAL(state_next), output);
   PutRNGstate();
@@ -11769,14 +11749,8 @@ SEXP new_hospital_model_metadata(SEXP internal_p) {
   SET_STRING_ELT(variable_names, 16, mkChar("R_stepdown"));
   SET_VECTOR_ELT(ret, 0, variable_length);
   UNPROTECT(2);
-  SEXP output_length = PROTECT(allocVector(VECSXP, 1));
-  SEXP output_names = PROTECT(allocVector(STRSXP, 1));
-  setAttrib(output_length, R_NamesSymbol, output_names);
-  SET_VECTOR_ELT(output_length, 0, R_NilValue);
-  SET_STRING_ELT(output_names, 0, mkChar("N_tot"));
-  SET_VECTOR_ELT(ret, 1, output_length);
-  UNPROTECT(2);
-  SET_VECTOR_ELT(ret, 2, ScalarInteger(1));
+  SET_VECTOR_ELT(ret, 1, R_NilValue);
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(0));
   UNPROTECT(2);
   return ret;
 }
@@ -12334,7 +12308,6 @@ void new_hospital_model_rhs(new_hospital_model_internal* internal, size_t step, 
       }
     }
   }
-  output[0] = N_tot;
 }
 void new_hospital_model_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next, size_t n_out, double * output, void * internal) {
   new_hospital_model_rhs((new_hospital_model_internal*)internal, step, state, state_next, output);
@@ -12342,10 +12315,7 @@ void new_hospital_model_rhs_dde(size_t n_eq, size_t step, double * state, double
 SEXP new_hospital_model_rhs_r(SEXP internal_p, SEXP step, SEXP state) {
   SEXP state_next = PROTECT(allocVector(REALSXP, LENGTH(state)));
   new_hospital_model_internal *internal = new_hospital_model_get_internal(internal_p, 1);
-  SEXP output_ptr = PROTECT(allocVector(REALSXP, 1));
-  setAttrib(state_next, install("output"), output_ptr);
-  UNPROTECT(1);
-  double *output = REAL(output_ptr);
+  double *output = NULL;
   GetRNGstate();
   new_hospital_model_rhs(internal, INTEGER(step)[0], REAL(state), REAL(state_next), output);
   PutRNGstate();
@@ -16366,14 +16336,8 @@ SEXP serology2_metadata(SEXP internal_p) {
   SET_STRING_ELT(variable_names, 33, mkChar("I_ICU_D_conf"));
   SET_VECTOR_ELT(ret, 0, variable_length);
   UNPROTECT(2);
-  SEXP output_length = PROTECT(allocVector(VECSXP, 1));
-  SEXP output_names = PROTECT(allocVector(STRSXP, 1));
-  setAttrib(output_length, R_NamesSymbol, output_names);
-  SET_VECTOR_ELT(output_length, 0, ScalarInteger(internal->dim_N_tot));
-  SET_STRING_ELT(output_names, 0, mkChar("N_tot"));
-  SET_VECTOR_ELT(ret, 1, output_length);
-  UNPROTECT(2);
-  SET_VECTOR_ELT(ret, 2, ScalarInteger(internal->dim_N_tot));
+  SET_VECTOR_ELT(ret, 1, R_NilValue);
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(0));
   UNPROTECT(2);
   return ret;
 }
@@ -17548,7 +17512,6 @@ void serology2_rhs(serology2_internal* internal, size_t step, double * state, do
       }
     }
   }
-  memcpy(output + 0, internal->N_tot, internal->dim_N_tot * sizeof(double));
 }
 void serology2_rhs_dde(size_t n_eq, size_t step, double * state, double * state_next, size_t n_out, double * output, void * internal) {
   serology2_rhs((serology2_internal*)internal, step, state, state_next, output);
@@ -17556,10 +17519,7 @@ void serology2_rhs_dde(size_t n_eq, size_t step, double * state, double * state_
 SEXP serology2_rhs_r(SEXP internal_p, SEXP step, SEXP state) {
   SEXP state_next = PROTECT(allocVector(REALSXP, LENGTH(state)));
   serology2_internal *internal = serology2_get_internal(internal_p, 1);
-  SEXP output_ptr = PROTECT(allocVector(REALSXP, internal->dim_N_tot));
-  setAttrib(state_next, install("output"), output_ptr);
-  UNPROTECT(1);
-  double *output = REAL(output_ptr);
+  double *output = NULL;
   GetRNGstate();
   serology2_rhs(internal, INTEGER(step)[0], REAL(state), REAL(state_next), output);
   PutRNGstate();

@@ -668,4 +668,3 @@ update(N_tot2_out) <- N_tot2
 
 #Tracker of population size
 #dim(N) <- N_age
-output(N_tot) <- TRUE
