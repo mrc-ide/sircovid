@@ -9,8 +9,8 @@ trans_classes <- user()
 
 #definition of the time-step and output as "time"
 dt <- user()
-time <- step * dt
-output(time) <- TRUE
+initial(time) <- 0
+update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
@@ -56,15 +56,12 @@ n_R_stepdown[,,] <- rbinom(R_stepdown[i,j,k], p_R_stepdown)
 
 #Computes the number of asymptomatic
 n_EI_asympt[,] <- rbinom(n_EE[i,s_E,j], p_asympt[i])
-output(n_EI_asympt[,]) <- TRUE
 
 #Computes the number of mild cases - p_sympt_ILI gives the proportion of febrile/ILI cases among the symptomatics
 n_EI_mild[,] <- rbinom(n_EE[i,s_E,j]-n_EI_asympt[i,j], 1-p_sympt_ILI[i])
-output(n_EI_mild[,]) <- TRUE
 
 #Computes the number of ILI cases
 n_EI_ILI[,] <- n_EE[i,s_E,j]-n_EI_asympt[i,j]-n_EI_mild[i,j]
-output(n_EI_ILI[,]) <- TRUE
 
 #Compute the aux_p_bin matrix of binom nested coeff
 aux_p_bin[,1] <- trans_profile[i,1]
@@ -100,7 +97,9 @@ delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
 #Work out the flow from I_ILI -> hosp = hosp_D, hosp_R and hosp_triage
 n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_recov_ILI[i])
-output(n_ILI_to_hosp[,]) <- TRUE
+
+initial(n_ILI_to_hosp_out) <- 0
+update(n_ILI_to_hosp_out) <- n_ILI_to_hosp_out
 
 #Work out the I_triage->I_triage transitions
 n_ILI_to_triage[,] <- rbinom(n_ILI_to_hosp[i,j],p_ICU_hosp[i])
@@ -117,12 +116,6 @@ n_triage_to_ICU_R[,] <- n_II_triage[i,s_triage,j] - n_triage_to_ICU_D[i,j]
 n_hosp_non_ICU[,] <- n_ILI_to_hosp[i,j] - n_ILI_to_triage[i,j]
 n_ILI_to_hosp_D[,] <- rbinom(n_hosp_non_ICU[i,j], p_death_hosp_D[i])
 n_ILI_to_hosp_R[,] <- n_hosp_non_ICU[i,j] - n_ILI_to_hosp_D[i,j]
-
-#output the flows leaving the triage
-output(n_ILI_to_hosp_R[,])<- TRUE
-output(n_ILI_to_hosp_D[,])<- TRUE
-output(n_triage_to_ICU_R[,])<- TRUE
-output(n_triage_to_ICU_D[,])<- TRUE
 
 #Work out the I_hosp_R->I_hosp_R transitions
 aux_II_hosp_R[,1,] <- n_ILI_to_hosp_R[i,k]
@@ -263,7 +256,10 @@ dim(beta_step) <- user()
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
 beta <- if (step >= length(beta_step)) beta_step[length(beta_step)] else beta_step[step + 1]
-output(beta) <- TRUE
+
+# Useful for debugging
+initial(beta_out) <- beta_step[1]
+update(beta_out) <- beta
 
 m[,] <- user()
 trans_profile[,] <- user()
@@ -397,9 +393,10 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
-N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_triage) +
+initial(N_tot) <- N0_tot
+N0_tot <- user()
+update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_triage) +
   sum(I_hosp_R) + sum(I_hosp_D) + sum(I_ICU_R) + sum(I_ICU_D) + sum(R_stepdown)
-output(N_tot) <- TRUE
 
 #Tracker of population size
 #dim(N) <- N_age

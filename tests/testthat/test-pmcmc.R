@@ -1,6 +1,5 @@
 context("pmcmc")
 
-
 test_that("pmcmc with serology model", {
   data <- readRDS("serology_model_data.rds")
   sircovid_model <- serology_model()
@@ -61,9 +60,9 @@ test_that("pmcmc with serology model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 580))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 617))
   
-  expect_equivalent(X[names(X) != "inputs"], cmp[names(cmp) != "inputs"])
+  expect_equivalent(X, cmp)
   
 })
 
@@ -128,8 +127,8 @@ test_that("pmcmc with serology2 model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 631))
-  expect_equivalent(X[names(X) != "inputs"], cmp[names(cmp) != "inputs"])
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 668))
+  expect_equivalent(X, cmp)
   
   
   data <- readRDS("serology_model_data2.rds")
@@ -154,8 +153,8 @@ test_that("pmcmc with serology2 model", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, 13))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 631))
-  expect_equivalent(X2[names(X2) != "inputs"], cmp[names(cmp) != "inputs"])
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 668))
+  expect_equivalent(X2, cmp)
 })
 
 test_that("pmcmc runs with beta_pl", {
@@ -216,7 +215,7 @@ test_that("pmcmc runs with beta_pl", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 293))
   
   
 })
@@ -298,7 +297,7 @@ test_that("pmcmc runs with care homes", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 705))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 746))
   
   
 })
@@ -364,7 +363,7 @@ test_that("pmcmc runs with piecewise-linear beta", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, nrow(pars_to_sample) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 293))
   
   
 })
@@ -433,8 +432,8 @@ test_that("pmcmc runs without error", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 238))
-  expect_equivalent(X[-1], cmp[-1])
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 241))
+  expect_equivalent(X, cmp)
   # Plots run, but not checked
   plot(X)
   # run summary method
@@ -477,7 +476,7 @@ test_that("pmcmc runs without error", {
  )
 
  expect_equal(dim(X2$results), c(n_mcmc + 1L, 6))
- expect_equivalent(X2[-1], cmp[-1])
+ expect_equivalent(X2, cmp)
 
  ## check that proposing jumps of size zero results in the initial parameter being retained
  Z <- pmcmc(
@@ -585,8 +584,8 @@ test_that("pmcmc with new model", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 289))
-  expect_equivalent(X[-1], cmp[-1])
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 293))
+  expect_equivalent(X, cmp)
   
   
   # Test that the parameter order doesn't matter
@@ -597,7 +596,7 @@ test_that("pmcmc with new model", {
     max=c(sircovid_date("2020-03-16"), 1),
     discrete=c(TRUE, FALSE),
     stringsAsFactors = FALSE)
-  set.seed(1)
+  set.seed(2)
   X_reordered <- pmcmc(
     data = data,
     n_mcmc = n_mcmc,
@@ -703,8 +702,8 @@ test_that("pmcmc with new model", {
   expect_is(X2, 'pmcmc')
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample$names) + 3L))
-  expect_equal(dim(X2$states), c(n_mcmc + 1L, 289))
-  expect_equivalent(X2[-1], cmp[-1])
+  expect_equal(dim(X2$states), c(n_mcmc + 1L, 293))
+  expect_equivalent(X2, cmp)
   
   # test that pars_obs can be modified
   pars_lprior <- list('beta_start'     = function(pars) log(1e-10),

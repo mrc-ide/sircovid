@@ -23,13 +23,6 @@ test_that("Parameters are generated as before", {
 
   cmp <- readRDS("reference_pars.rds")
 
-  # Remove parameters no longer generated
-  pars_model$beta <- NULL
-  pars_model$age_bin_starts <- NULL
-  pars_model$beta_step <- NULL
-  pars_model$importation_step <- NULL
-  cmp$beta <- NULL
-  
   expect_mapequal(pars_model, cmp)
 })
 
