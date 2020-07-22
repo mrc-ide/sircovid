@@ -1,11 +1,5 @@
 context("pmcmc")
 
-
-drop_testing <- function(x) {
-  x[!(names(x) %in% c("inputs", "states"))]
-}
-
-
 test_that("pmcmc with serology model", {
   data <- readRDS("serology_model_data.rds")
   sircovid_model <- serology_model()
@@ -68,7 +62,7 @@ test_that("pmcmc with serology model", {
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 617))
   
-  expect_equivalent(drop_testing(X), drop_testing(cmp))
+  expect_equivalent(X, cmp)
   
 })
 
@@ -134,7 +128,7 @@ test_that("pmcmc with serology2 model", {
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 13))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 668))
-  expect_equivalent(drop_testing(X), drop_testing(cmp))
+  expect_equivalent(X, cmp)
   
   
   data <- readRDS("serology_model_data2.rds")
@@ -160,7 +154,7 @@ test_that("pmcmc with serology2 model", {
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, 13))
   expect_equal(dim(X2$states), c(n_mcmc + 1L, 668))
-  expect_equivalent(drop_testing(X2), drop_testing(cmp))
+  expect_equivalent(X2, cmp)
 })
 
 test_that("pmcmc runs with beta_pl", {
@@ -439,7 +433,7 @@ test_that("pmcmc runs without error", {
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 241))
-  expect_equivalent(drop_testing(X), drop_testing(cmp))
+  expect_equivalent(X, cmp)
   # Plots run, but not checked
   plot(X)
   # run summary method
@@ -482,7 +476,7 @@ test_that("pmcmc runs without error", {
  )
 
  expect_equal(dim(X2$results), c(n_mcmc + 1L, 6))
- expect_equivalent(drop_testing(X2), drop_testing(cmp))
+ expect_equivalent(X2, cmp)
 
  ## check that proposing jumps of size zero results in the initial parameter being retained
  Z <- pmcmc(
@@ -591,7 +585,7 @@ test_that("pmcmc with new model", {
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 5))
   expect_equal(dim(X$states), c(n_mcmc + 1L, 293))
-  expect_equivalent(drop_testing(X), drop_testing(cmp))
+  expect_equivalent(X, cmp)
   
   
   # Test that the parameter order doesn't matter
@@ -709,7 +703,7 @@ test_that("pmcmc with new model", {
   expect_setequal(names(X2), c('inputs', 'results', 'states', 'acceptance_rate', 'ess'))
   expect_equal(dim(X2$results), c(n_mcmc + 1L, length(pars_to_sample$names) + 3L))
   expect_equal(dim(X2$states), c(n_mcmc + 1L, 293))
-  expect_equivalent(drop_testing(X2), drop_testing(cmp))
+  expect_equivalent(X2, cmp)
   
   # test that pars_obs can be modified
   pars_lprior <- list('beta_start'     = function(pars) log(1e-10),
