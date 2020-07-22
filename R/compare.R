@@ -134,7 +134,6 @@ compare_output <- function(model, pars_obs, data, type="sircovid_basic") {
     
     if (type %in% c("sircovid_serology","sircovid_serology2")  && !is.na(data$ntot_0_14[t]) && !is.na(data$npos_0_14[t])) {
       agegroups <- seq.int(1,3)
-      browser()
       prob_true_pos <- colSums(state[index_R_pos[agegroups], ,drop = FALSE]) / sum(N_tot[agegroups])
       prob_false_pos <- (1 - p_specificity) * (1 - colSums(state[c(index_R_pos[agegroups], index_R_neg[agegroups], c(index_R_pre[agegroups,])), ,drop = FALSE]) / sum(N_tot[agegroups]))
         
