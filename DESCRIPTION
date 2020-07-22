@@ -36,6 +36,9 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0)
 Language: en-GB
+LinkingTo:
+    cpp11,
+    dust
 Suggests:
     testthat
 RoxygenNote: 7.1.0
