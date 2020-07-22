@@ -9,8 +9,8 @@ trans_classes <- user()
 
 #definition of the time-step and output as "time"
 dt <- user()
-time <- step * dt
-output(time) <- TRUE
+initial(time) <- 0
+update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
@@ -41,8 +41,6 @@ update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
 update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
-
-output(beta) <- TRUE
 
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
@@ -128,6 +126,10 @@ delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 
 #Work out the flow from I_ILI -> hosp = hosp_D, hosp_R, triage_R and triage_D
 n_ILI_to_hosp[,] <- rbinom(n_II_ILI[i,s_ILI,j],p_hosp_ILI[i])
+
+initial(n_ILI_to_hosp_out[,]) <- 0
+update(n_ILI_to_hosp_out[,]) <- n_ILI_to_hosp_out[i, j]
+dim(n_ILI_to_hosp_out) <- c(N_age,trans_classes)
 
 #Work out the flow from I_ILI -> I_comm_D
 n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j]-n_ILI_to_hosp[i,j],p_death_comm[i]/(1-p_hosp_ILI[i]))
@@ -409,9 +411,17 @@ gamma_test <- user(0.1)
 p_admit_conf[] <- user()
 
 #Parameters of the age stratified transmission
-beta <- interpolate(beta_t, beta_y, "constant")
-beta_t[] <- user()
-beta_y[] <- user()
+beta_step[] <- user()
+dim(beta_step) <- user()
+## What we really want is min(step + 1, length(beta_step)) but that's not
+## supported by odin (it could be made to support this). This code
+## does currently create a compiler warning with -Wsign-compare on
+## because we have an unsigned/signed integer comparison
+beta <- if (step >= length(beta_step)) beta_step[length(beta_step)] else beta_step[step + 1]
+
+# Useful for debugging
+initial(beta_out) <- beta_step[1]
+update(beta_out) <- beta
 
 m[,] <- user()
 trans_profile[,] <- user()
@@ -421,8 +431,6 @@ ICU_transmission <- user()
 comm_D_transmission <- user()
 
 ##Dimensions of the different "vectors" here vectors stand for multi-dimensional arrays
-dim(beta_t) <- user()
-dim(beta_y) <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
@@ -641,18 +649,21 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
-dim(N_tot) <- N_age
 
 #Total population
-N_tot[] <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mild[i,,]) + sum(I_ILI[i,,]) +
+initial(N_tot[]) <- N0_tot[i]
+N0_tot[] <- user()
+update(N_tot[]) <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mild[i,,]) + sum(I_ILI[i,,]) +
   sum(I_triage_D_conf[i,,]) + sum(I_triage_D_unconf[i,,]) + sum(I_triage_R_conf[i,,]) + sum(I_triage_R_unconf[i,,])  + sum(I_hosp_R_conf[i,,]) + sum(I_hosp_R_unconf[i,,]) +
   sum(I_hosp_D_conf[i,,]) + sum(I_hosp_D_unconf[i,,]) + sum(I_ICU_R_conf[i,,]) + sum(I_ICU_R_unconf[i,,]) + sum(I_ICU_D_conf[i,,]) + sum(I_ICU_D_unconf[i,,]) +
   sum(R_stepdown_conf[i,]) + sum(R_stepdown_unconf[i,]) + sum(I_comm_D[i,,]) + D_comm[i]
-output(N_tot) <- TRUE
+dim(N_tot) <- c(N_age)
+dim(N0_tot) <- c(N_age)
 
 #Total population calculated with seroconversion flow, exclude triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's
-N_tot2 <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
-output(N_tot2) <- TRUE
+initial(N_tot2) <- N0_tot2
+N0_tot2 <- user()
+update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 
 #Tracker of population size
 #dim(N) <- N_age

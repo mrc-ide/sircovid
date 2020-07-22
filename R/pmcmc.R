@@ -159,7 +159,7 @@ pmcmc <- function(data,
     stop("output_proposals must be either TRUE or FALSE")
   }
   
-  if (length(model_params$beta_y) > 1) {
+  if (length(model_params$beta_step) > 1) {
     stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
   }
   
@@ -579,9 +579,8 @@ calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                             start_date,
                             model_params$dt)
   }
-  
-  model_params$beta_y <- new_beta$beta_y
-  model_params$beta_t <- new_beta$beta_t
+
+  model_params[names(new_beta)] <- new_beta
 
   pf_result <- run_particle_filter(data = data,
                                    sircovid_model = sircovid_model,

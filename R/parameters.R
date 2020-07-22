@@ -326,6 +326,7 @@ generate_parameters <- function(
   # S0 = N (set in generate_parameters_base), everything else zero
   #
   if ("sircovid_basic" %in% class(sircovid_model)) {
+    parameter_list$N0_tot <- sum(parameter_list$S0)
     parameter_list$E0 <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$E, parameter_list$trans_classes))
     parameter_list$I0_asympt <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$asympt, parameter_list$trans_classes))
     parameter_list$I0_mild <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$mild, parameter_list$trans_classes))
@@ -342,6 +343,8 @@ generate_parameters <- function(
     parameter_list$I0_ILI <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$ILI, parameter_list$trans_classes))
     parameter_list$R0 <- rep(0, parameter_list$N_age)
     if ("sircovid_serology" %in% class(sircovid_model)) {
+      parameter_list$N0_tot <- parameter_list$S0
+      parameter_list$N0_tot2 <- sum(parameter_list$S0)
       parameter_list$R0_stepdown_unconf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_stepdown_conf <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown))
       parameter_list$R0_neg <- rep(0, parameter_list$N_age)
@@ -370,6 +373,7 @@ generate_parameters <- function(
         parameter_list$PCR0_pos <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$PCR_pos))
       }
     } else {
+      parameter_list$N0_tot <- sum(parameter_list$S0)
       parameter_list$R0_stepdown <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$stepdown, parameter_list$trans_classes))
       parameter_list$I0_triage <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$triage, parameter_list$trans_classes))
       parameter_list$I0_hosp_D <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$hosp_D, parameter_list$trans_classes))
@@ -423,7 +427,7 @@ generate_parameters <- function(
     if (importation){
       parameter_list$psi <- psi
     } else {
-      parameter_list$importation_y[] <- 0
+      parameter_list$importation_step[] <- 0
     }
   }
 
@@ -453,8 +457,7 @@ generate_parameters <- function(
     }
   }
   if (!("sircovid_serology2" %in% class(sircovid_model))) {
-    parameter_list$importation_y <- NULL
-    parameter_list$importation_t <- NULL
+    parameter_list$importation_step <- NULL
   }
 
   
@@ -568,8 +571,14 @@ generate_parameters_base <- function(
   # Set up time-varying beta
   # Times are in days from first day supplied
   beta_t <- normalise_beta(beta_times, dt)
+
+  beta_fun <- cinterpolate::interpolation_function(beta_t, beta, "constant")
+  beta_step <- beta_fun(seq.int(min(beta_t), max(beta_t)))
   
-  importation_t <- normalise_beta(importation_times,dt)
+  importation_t <- normalise_beta(importation_times, dt)
+
+  importation_fun <- cinterpolate::interpolation_function(importation_t, importation_levels, "constant")
+  importation_step <- importation_fun(seq.int(min(importation_t), max(importation_t)))
 
   # 
   # This section defines proportions between partitions
@@ -626,10 +635,8 @@ generate_parameters_base <- function(
                          S0 = severity_params$population,
                          trans_increase = trans_increase_array,
                          trans_profile = trans_profile_array,
-                         beta_y = beta,
-                         beta_t = beta_t,
-                         importation_y = importation_levels,
-                         importation_t = importation_t, 
+                         beta_step = beta_step,
+                         importation_step = importation_step,
                          m = transmission_matrix,
                          p_recov_hosp = severity_params$recov_hosp,
                          p_death_hosp = severity_params$death_hosp,

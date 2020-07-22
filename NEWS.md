@@ -1,5 +1,8 @@
-# sircovid 0.3.11
+# sircovid 0.3.13
 - start_date no longer required to be a fitted parameter in PMCMC
+
+# sircovid 0.3.11
+- No longer use `cinterpolate`'s interpolation function in the generated C (#113)
 
 # sircovid 0.3.10
 - Can now setup care home inclusion in generate_parameters, with PMCMC support

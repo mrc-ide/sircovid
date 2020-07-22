@@ -75,7 +75,7 @@ scan_beta_date <- function(
   #
   # Set up calls to simulator runs
   #
-    if (length(model_params$beta_y) > 1) {
+    if (length(model_params$beta_step) > 1) {
       stop("Set beta variation through generate_beta_func in sircovid_model, not model_params")
     }
 
@@ -185,8 +185,7 @@ run_grid_particle_filter <- function(beta, start_date,
                           beta_pl = NULL,
                           start_date,
                           model_params$dt)
-  model_params$beta_y <- new_beta$beta_y
-  model_params$beta_t <- new_beta$beta_t
+  model_params[names(new_beta)] <- new_beta
 
   X <- run_particle_filter(
     data, sircovid_model, model_params, start_date, pars_obs,

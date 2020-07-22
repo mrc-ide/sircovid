@@ -36,6 +36,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0)
 Imports:
+    cinterpolate,
     dde (>= 1.0.2),
     odin,
     socialmixr,
