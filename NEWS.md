@@ -1,3 +1,7 @@
+# sircovid 0.3.12
+
+- No longer use `output()` in odin code (#130)
+
 # sircovid 0.3.11
 
 - No longer use `cinterpolate`'s interpolation function in the generated C (#113)
