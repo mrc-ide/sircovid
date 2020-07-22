@@ -602,7 +602,7 @@ test_that("pmcmc with new model", {
     max=c(sircovid_date("2020-03-16"), 1),
     discrete=c(TRUE, FALSE),
     stringsAsFactors = FALSE)
-  set.seed(1)
+  set.seed(2)
   X_reordered <- pmcmc(
     data = data,
     n_mcmc = n_mcmc,
