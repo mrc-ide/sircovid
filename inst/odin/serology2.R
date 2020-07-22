@@ -672,23 +672,21 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
-dim(N_tot) <- N_age
 
 #Total population
-N_tot[] <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mild[i,,]) + sum(I_ILI[i,,]) +
+initial(N_tot[]) <- N0_tot[i]
+N0_tot[] <- user()
+update(N_tot[]) <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mild[i,,]) + sum(I_ILI[i,,]) +
   sum(I_triage_D_conf[i,,]) + sum(I_triage_D_unconf[i,,]) + sum(I_triage_R_conf[i,,]) + sum(I_triage_R_unconf[i,,])  + sum(I_hosp_R_conf[i,,]) + sum(I_hosp_R_unconf[i,,]) +
   sum(I_hosp_D_conf[i,,]) + sum(I_hosp_D_unconf[i,,]) + sum(I_ICU_R_conf[i,,]) + sum(I_ICU_R_unconf[i,,]) + sum(I_ICU_D_conf[i,,]) + sum(I_ICU_D_unconf[i,,]) +
   sum(R_stepdown_conf[i,]) + sum(R_stepdown_unconf[i,]) + sum(I_comm_D[i,,]) + D_comm[i]
+dim(N_tot) <- c(N_age)
+dim(N0_tot) <- c(N_age)
 
 #Total population calculated with seroconversion flow, exclude triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's
-N_tot2 <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
-
-initial(N_tot_out[]) <- 0
-update(N_tot_out[]) <- N_tot[i]
-dim(N_tot_out) <- length(N_tot)
-initial(N_tot2_out) <- 0
-update(N_tot2_out) <- N_tot2
-
+initial(N_tot2) <- N0_tot2
+N0_tot2 <- user()
+update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 
 #Tracker of population size
 #dim(N) <- N_age

@@ -393,11 +393,10 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
-N_tot <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_triage) +
+initial(N_tot) <- N0_tot
+N0_tot <- user()
+update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_triage) +
   sum(I_hosp_R) + sum(I_hosp_D) + sum(I_ICU_R) + sum(I_ICU_D) + sum(R_stepdown)
-
-initial(N_tot_out) <- 0
-update(N_tot_out) <- N_tot
 
 #Tracker of population size
 #dim(N) <- N_age
