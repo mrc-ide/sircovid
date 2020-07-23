@@ -3,5 +3,7 @@ cache: packages
 dist: xenial
 r_packages:
   - covr
+r_github_packages:
+  - mrc-ide/dust
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'

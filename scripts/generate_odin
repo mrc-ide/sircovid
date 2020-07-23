@@ -1,0 +1,2 @@
+#!/usr/bin/env Rscript
+odin.dust::odin_dust_package(here::here())

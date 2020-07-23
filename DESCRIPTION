@@ -34,8 +34,10 @@ Description: Model for COVID-19, using odin.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.5.0)
 Language: en-GB
+LinkingTo:
+    cpp11,
+    dust
 Suggests:
     testthat
 RoxygenNote: 7.1.0

@@ -4,4 +4,5 @@ linters: with_defaults(
     todo_comment_linter = NULL,
     cyclocomp_linter = NULL
     )
-exclusions: list("tests/testthat.R", "R/cpp11.R")
+# This should work but does not
+exclusions: list("R/cpp11.R")
