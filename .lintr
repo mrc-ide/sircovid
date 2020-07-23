@@ -5,4 +5,4 @@ linters: with_defaults(
     cyclocomp_linter = NULL
     )
 # This should work but does not
-exclusions: list("R/cpp11.R")
+exclusions: list("R/cpp11.R", "tests/testthat.R")
