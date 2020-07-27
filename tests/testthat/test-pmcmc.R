@@ -447,7 +447,7 @@ test_that("pmcmc with importation", {
   expect_is(X, 'pmcmc')
   expect_setequal(names(X), c('inputs', 'results', 'states', 'acceptance_rate', 'ess', 'proposals'))
   expect_equal(dim(X$results), c(n_mcmc + 1L, 7))
-  expect_equal(dim(X$states), c(n_mcmc + 1L, 631))
+  expect_equal(dim(X$states), c(n_mcmc + 1L, 668))
   expect_equivalent(X, cmp)
   
 })
