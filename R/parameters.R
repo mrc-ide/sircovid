@@ -367,6 +367,7 @@ generate_parameters <- function(
       parameter_list$D0_comm <- rep(0, parameter_list$N_age)
       parameter_list$cum0_admit_conf <- 0
       parameter_list$cum0_new_conf <- 0
+      parameter_list$cum0_admit_by_age <- rep(0, parameter_list$N_age)
       if ("sircovid_serology2" %in% class(sircovid_model)){
         parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, 2))
         parameter_list$p_R_pre_1 <- 0.5
