@@ -312,7 +312,7 @@ initial(D_comm[]) <- D0_comm[i]
 initial(PCR_pos[,]) <- PCR0_pos[i,j]
 initial(cum_admit_conf) <- cum0_admit_conf
 initial(cum_new_conf) <- cum0_new_conf
-initial(cum_admit_by_age[]) <- cum0_admit_by_age
+initial(cum_admit_by_age[]) <- cum0_admit_by_age[i]
 
 ## User defined parameters - default in parentheses:
 
@@ -346,7 +346,7 @@ D0_comm[] <- user()
 PCR0_pos[,] <- user()
 cum0_admit_conf <- user()
 cum0_new_conf <- user()
-cum0_admit_by_age <- user()
+cum0_admit_by_age[] <- user()
 
 #Parameters of the E classes
 s_E <- user()
@@ -664,6 +664,7 @@ dim(p_death_ICU) <- c(N_age)
 dim(p_admit_conf) <- c(N_age)
 
 dim(cum_admit_by_age) <- c(N_age)
+dim(cum0_admit_by_age) <- c(N_age)
 
 #Vectors handling the age specific heterogeneous transmission process
 dim(lambda) <- N_age
