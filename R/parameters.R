@@ -371,6 +371,7 @@ generate_parameters <- function(
         parameter_list$R0_pre <- array(0, dim = c(parameter_list$N_age, 2))
         parameter_list$p_R_pre_1 <- 0.5
         parameter_list$PCR0_pos <- array(0, dim = c(parameter_list$N_age, sircovid_model$progression_groups$PCR_pos))
+        parameter_list$cum0_admit_by_age <- rep(0, parameter_list$N_age)
       }
     } else {
       parameter_list$N0_tot <- sum(parameter_list$S0)

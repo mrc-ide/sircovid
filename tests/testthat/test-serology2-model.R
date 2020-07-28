@@ -296,7 +296,7 @@ test_that("setting hospital route probabilities to 0 or 1 result in correct path
       iter <- iter + 1
       tmp <- mod$run(t)
       results <- mod$transform_variables(tmp)
-      if (any(results$n_ILI_to_hosp_out > 0)){
+      if (any(results$cum_admit_by_age > 0)){
         check_cases <- TRUE
       }
     }

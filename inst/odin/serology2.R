@@ -42,6 +42,7 @@ update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
 update(PCR_pos[,]) <- PCR_pos[i,j] + delta_PCR_pos[i,j]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
+update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
@@ -131,10 +132,6 @@ delta_I_ILI[,,] <- aux_II_ILI[i,j,k]
 n_ILI_to_R[,] <- rbinom(n_II_ILI[i,s_ILI,j],1-p_hosp_ILI[i])
 n_ILI_to_comm_D[,] <- rbinom(n_II_ILI[i,s_ILI,j] - n_ILI_to_R[i,j],p_death_comm[i])
 n_ILI_to_hosp[,] <- n_II_ILI[i,s_ILI,j] - n_ILI_to_R[i,j] - n_ILI_to_comm_D[i,j]
-
-initial(n_ILI_to_hosp_out[,]) <- 0
-update(n_ILI_to_hosp_out[,]) <- n_ILI_to_hosp_out[i, j]
-dim(n_ILI_to_hosp_out) <- c(N_age,trans_classes)
 
 #Work out the I_comm_D -> I_comm_D transitions
 aux_II_comm_D[,1,] <- n_ILI_to_comm_D[i,k]
@@ -315,6 +312,7 @@ initial(D_comm[]) <- D0_comm[i]
 initial(PCR_pos[,]) <- PCR0_pos[i,j]
 initial(cum_admit_conf) <- cum0_admit_conf
 initial(cum_new_conf) <- cum0_new_conf
+initial(cum_admit_by_age[]) <- cum0_admit_by_age[i]
 
 ## User defined parameters - default in parentheses:
 
@@ -348,6 +346,7 @@ D0_comm[] <- user()
 PCR0_pos[,] <- user()
 cum0_admit_conf <- user()
 cum0_new_conf <- user()
+cum0_admit_by_age[] <- user()
 
 #Parameters of the E classes
 s_E <- user()
@@ -663,6 +662,9 @@ dim(p_death_ICU) <- c(N_age)
 
 #Vector handling the probability of being admitted as confirmed
 dim(p_admit_conf) <- c(N_age)
+
+dim(cum_admit_by_age) <- c(N_age)
+dim(cum0_admit_by_age) <- c(N_age)
 
 #Vectors handling the age specific heterogeneous transmission process
 dim(lambda) <- N_age
