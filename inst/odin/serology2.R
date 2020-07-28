@@ -42,6 +42,7 @@ update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
 update(PCR_pos[,]) <- PCR_pos[i,j] + delta_PCR_pos[i,j]
 update(cum_admit_conf) <- cum_admit_conf + sum(n_ILI_to_hosp_D_conf) + sum(n_ILI_to_hosp_R_conf) + sum(n_ILI_to_triage_D_conf) + sum(n_ILI_to_triage_R_conf)
 update(cum_new_conf) <- cum_new_conf + sum(n_I_hosp_D_unconf_to_conf) + sum(n_I_hosp_R_unconf_to_conf) + sum(n_I_triage_D_unconf_to_conf) + sum(n_I_triage_R_unconf_to_conf) + sum(n_I_ICU_D_unconf_to_conf) + sum(n_I_ICU_R_unconf_to_conf) + sum(n_R_stepdown_unconf_to_conf)
+update(cum_admit_by_age[]) <- cum_admit[i] + sum(n_ILI_to_hosp[i, ]) - sum(n_ILI_to_comm_D[i, ])
 
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i]*dt) # S to I - age dependent
@@ -315,6 +316,7 @@ initial(D_comm[]) <- D0_comm[i]
 initial(PCR_pos[,]) <- PCR0_pos[i,j]
 initial(cum_admit_conf) <- cum0_admit_conf
 initial(cum_new_conf) <- cum0_new_conf
+initial(cum_admit_by_age[]) <- cum0_admit_by_age
 
 ## User defined parameters - default in parentheses:
 
@@ -348,6 +350,7 @@ D0_comm[] <- user()
 PCR0_pos[,] <- user()
 cum0_admit_conf <- user()
 cum0_new_conf <- user()
+cum0_admit_by_age <- user()
 
 #Parameters of the E classes
 s_E <- user()
