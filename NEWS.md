@@ -1,5 +1,5 @@
 # sircovid 0.3.13
-- Output admissions to hospital by age
+- Output admissions to hospital by age in serology2
 
 # sircovid 0.3.12
 - No longer use `output()` in odin code (#130)
