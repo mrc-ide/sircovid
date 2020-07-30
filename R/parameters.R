@@ -18,10 +18,32 @@ sircovid_age_bins <- function() {
 
 
 ## These could be moved to be defaults within the models
-sircovid_parameters_shared <- function() {
+sircovid_parameters_shared <- function(start_date, region) {
+  dt <- 0.25
+  assert_sircovid_date(start_date)
   list(psi = 0.1,
        hosp_transmission = 0.1,
        ICU_transmission = 0.05,
-       dt = 0.25,
-       N_age = length(sircovid_age_bins()$start))
+       dt = dt,
+       initial_step = start_date / dt,
+       N_age = length(sircovid_age_bins()$start),
+       population = sircovid_population(region))
+}
+
+
+sircovid_population <- function(region) {
+  if (is.null(region)) {
+    stop("'region' must not be NULL")
+  }
+
+  ## TODO: cache this file read as it's constant within a session
+  data <- read_csv(sircovid_file("extdata/population.csv"))
+  population <- data[[tolower(region)]]
+  if (is.null(population)) {
+    valid <- paste(squote(setdiff(names(data), "age")), collapse = ", ")
+    stop(sprintf("Population not found for '%s': must be one of %s",
+                 region, valid))
+  }
+
+  population
 }

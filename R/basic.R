@@ -1,12 +1,54 @@
-basic_parameters <- function(beta_date = NULL, beta_value = NULL,
+basic_parameters <- function(start_date, region,
+                             beta_date = NULL, beta_value = NULL,
                              severity_path = NULL) {
-  ret <- sircovid_parameters_shared()
+  ret <- sircovid_parameters_shared(start_date, region)
   ret$beta_step <-
     sircovid_parameters_beta(beta_date, beta_value %||% 0.08, ret$dt)
   ret$m <- sircovid_transmission_matrix()
   c(ret,
     sircovid_parameters_severity(severity_path),
     basic_parameters_progression())
+}
+
+
+basic_index <- function(info) {
+  ## TODO: this will simplify once we get the index here, see
+  ## odin.dust issue #24
+  len <- vnapply(info, prod)
+  start <- cumsum(len) - len + 1L
+  c(start[["I_ICU_tot"]], start[["D_tot"]])
+}
+
+
+basic_initial <- function(info, n_particles, pars) {
+  ## TODO: this will simplify once we get the index here, see
+  ## odin.dust issue #24
+  len <- vnapply(info, prod)
+  start <- cumsum(len) - len + 1L
+  state <- numeric(sum(len))
+
+  ## Always start with 10, again for compatibility
+  initial_I <- 10
+
+  ## This corresponds to the 15-19y age bracket for compatibility with
+  ## our first version, will be replaced by better seeding model, but
+  ## probably has limited impact.
+  seed_age_band <- 3L
+  index_I <- start[["I_asympt"]] + seed_age_band
+
+  ## ONS populations, subtracting the seed for pedantry.
+  index_S <- seq.int(start[["S"]], length.out = len[["S"]])
+  initial_S <- pars$population
+  initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
+
+  index_N_tot <- start[["N_tot"]]
+
+  state[index_S] <- initial_S
+  state[index_I] <- initial_I
+  state[index_N_tot] <- sum(pars$population)
+
+  list(state = state,
+       step = pars$initial_step)
 }
 
 

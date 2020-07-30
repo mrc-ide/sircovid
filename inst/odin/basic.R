@@ -151,6 +151,13 @@ initial(R[]) <- 0
 initial(D[]) <- 0
 initial(N_tot) <- 0
 
+## aggregate our reporting statistics
+initial(I_ICU_tot) <- 0
+update(I_ICU_tot) <- sum(I_ICU)
+
+initial(D_tot) <- 0
+update(D_tot) <- sum(D)
+
 ## User defined parameters - default in parentheses:
 
 #Parameters of the E classes

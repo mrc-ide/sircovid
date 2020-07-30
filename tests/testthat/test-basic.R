@@ -13,6 +13,18 @@ test_that("can run the basic model", {
 
 
 test_that("can run the basic model", {
-  p <- basic_parameters()
+  p <- basic_parameters(sircovid_date("2020-02-07"), "england")
   mod <- basic$new(p, 0, 10)
+  end <- sircovid_date("2020-07-31") / p$dt
+
+  initial <- basic_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  mod$set_index(basic_index(mod$info()))
+  res <- mod$run(end)
+  expected <-
+    rbind(c(1352, 2102, 1714, 1498, 878, 729, 604, 1037, 1206, 1424),
+          c(275842, 273785, 275310, 275167, 276831, 276762, 277848, 276574,
+            276184, 275348))
+  expect_equal(res, expected)
 })

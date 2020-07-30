@@ -8,8 +8,14 @@ sircovid_date <- function(date) {
 
 
 sircovid_date_as_date <- function(date) {
-  if (!is.numeric(date)) {
-    stop("'date' must be numeric")
-  }
+  assert_sircovid_date(date)
   as_date("2019-12-31") + date
+}
+
+
+assert_sircovid_date <- function(date) {
+  if (!is.numeric(date)) {
+    stop("'date' must be numeric - did you forget sircovid_date()?")
+  }
+  date
 }
