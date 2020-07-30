@@ -16,7 +16,29 @@ basic_index <- function(info) {
   ## odin.dust issue #24
   len <- vnapply(info, prod)
   start <- cumsum(len) - len + 1L
-  c(start[["I_ICU_tot"]], start[["D_tot"]])
+  list(run = c(start[["I_ICU_tot"]], start[["D_tot"]]))
+}
+
+
+basic_compare <- function(state, prev_state, observed, pars) {
+  if (is.na(observed$itu) && is.na(observed$deaths)) {
+    return(NULL)
+  }
+
+  ## sum model ITU cases output across ages/infectivities
+  ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
+  model_icu <- state[1, ]
+  model_deaths <- state[2, ] - prev_state[2, ]
+
+  ## Noise parameter shared across both deaths and icu
+  exp_noise <- pars$exp_noise
+
+  ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
+                      pars$k_ICU, exp_noise)
+  ll_deaths <- ll_nbinom(observed$deaths, pars$phi_death * model_deaths,
+                         pars$k_death, exp_noise)
+
+  ll_itu + ll_deaths
 }
 
 

@@ -28,3 +28,51 @@ test_that("can run the basic model", {
             276184, 275348))
   expect_equal(res, expected)
 })
+
+
+test_that("can run the particle filter on the model", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- basic_parameters(start_date, "england")
+
+  ## Some horrid off-by-one still lurking here. See here for more
+  ## details, and the accompanying PR
+  ## https://github.com/mrc-ide/mcstate/commit/97e68ade560c9028204e691bc7b57ef2ef2ef557
+  ## To make this work, we've manually inserted a fake reporting
+  ## period at the first row of the file so that our compare works
+  ## correctly; this should be something that mcstate can do for us.
+  data <- read_csv(sircovid_file("extdata/example.csv"))
+  data$date <- sircovid_date(data$date)
+  rate <- 1 / pars$dt
+  data <- mcstate::particle_filter_data(data, "date", rate, start_date)
+
+  n_particles <- 100
+  pf <- mcstate::particle_filter$new(
+    data, basic, n_particles,
+    compare = basic_compare,
+    initial = basic_initial,
+    index = basic_index)
+
+  pars_obs <- list(
+    phi_general = 0.95,
+    k_general = 2,
+    # what should this be?
+    phi_ICU = 0.95,
+    # what should this be?
+    k_ICU = 2,
+    # current proportion of England deaths over UK deaths
+    phi_death = 926 / 1019,
+    # what should this be?
+    k_death = 2,
+    # rate for exponential noise, something big so noise is small (but
+    # non-zero))
+    exp_noise = 1e6)
+
+
+  pf$run(pars, pars_obs, pars)
+
+  end <- sircovid_date("2020-07-31") / p$dt
+
+  initial <- basic_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+})
