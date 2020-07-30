@@ -139,29 +139,20 @@ lambda[] <- beta*sum(s_ij[i,])
 
 ## Initial states:
 initial(S[]) <- S0[i] # will be user-defined
-initial(E[,,]) <- E0[i,j,k] # will be user-defined
-initial(I_asympt[,,]) <- I0_asympt[i,j,k] # will be user-defined
-initial(I_mild[,,]) <- I0_mild[i,j,k] # will be user-defined
-initial(I_ILI[,,]) <- I0_ILI[i,j,k] # will be user-defined
-initial(I_hosp[,,]) <- I0_hosp[i,j,k]
-initial(I_ICU[,,]) <- I0_ICU[i,j,k]
-initial(R_hosp[,,]) <- R0_hosp[i,j,k]
-initial(R[]) <- R0[i]
-initial(D[]) <- D0[i]
+initial(E[,,]) <- 0
+initial(I_asympt[,,]) <- 0
+initial(I_mild[,,]) <- 0
+initial(I_ILI[,,]) <- 0
+initial(I_hosp[,,]) <- 0
+initial(I_ICU[,,]) <- 0
+initial(R_hosp[,,]) <- 0
+initial(R[]) <- 0
+initial(D[]) <- 0
 
 ## User defined parameters - default in parentheses:
 
 #Initial vectors
 S0[] <- user()
-E0[,,] <- user()
-I0_asympt[,,] <- user()
-I0_mild[,,] <- user()
-I0_ILI[,,] <- user()
-I0_hosp[,,] <- user()
-I0_ICU[,,] <- user()
-R0_hosp[,,] <- user()
-R0[] <- user()
-D0[] <- user()
 
 #Parameters of the E classes
 s_E <- user()
@@ -226,28 +217,24 @@ dim(S0) <- N_age
 
 #Vectors handling the E class
 dim(E) <- c(N_age,s_E,trans_classes)
-dim(E0) <- c(N_age,s_E,trans_classes)
 dim(aux_EE) <- c(N_age,s_E,trans_classes)
 dim(delta_E) <- c(N_age,s_E,trans_classes)
 dim(n_EE) <- c(N_age,s_E,trans_classes)
 
 #Vectors handling the I_asympt class
 dim(I_asympt) <- c(N_age,s_asympt,trans_classes)
-dim(I0_asympt) <- c(N_age,s_asympt,trans_classes)
 dim(aux_II_asympt) <- c(N_age,s_asympt,trans_classes)
 dim(delta_I_asympt) <- c(N_age,s_asympt,trans_classes)
 dim(n_II_asympt) <- c(N_age,s_asympt,trans_classes)
 
 #Vectors handling the I_mild class
 dim(I_mild) <- c(N_age,s_mild,trans_classes)
-dim(I0_mild) <- c(N_age,s_mild,trans_classes)
 dim(aux_II_mild) <- c(N_age,s_mild,trans_classes)
 dim(delta_I_mild) <- c(N_age,s_mild,trans_classes)
 dim(n_II_mild) <- c(N_age,s_mild,trans_classes)
 
 #Vectors handling the I_ILI class
 dim(I_ILI) <- c(N_age,s_ILI,trans_classes)
-dim(I0_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(aux_II_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(delta_I_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(n_II_ILI) <- c(N_age,s_ILI,trans_classes)
@@ -255,7 +242,6 @@ dim(p_recov_ILI) <- c(N_age)
 
 #Vectors handling the I_hosp class
 dim(I_hosp) <- c(N_age,s_hosp,trans_classes)
-dim(I0_hosp) <- c(N_age,s_hosp,trans_classes)
 dim(aux_II_hosp) <- c(N_age,s_hosp,trans_classes)
 dim(delta_I_hosp) <- c(N_age,s_hosp,trans_classes)
 dim(n_II_hosp) <- c(N_age,s_hosp,trans_classes)
@@ -264,7 +250,6 @@ dim(n_death_hosp) <- c(N_age,trans_classes)
 
 #Vectors handling the I_ICU class
 dim(I_ICU) <- c(N_age,s_ICU,trans_classes)
-dim(I0_ICU) <- c(N_age,s_ICU,trans_classes)
 dim(aux_II_ICU) <- c(N_age,s_ICU,trans_classes)
 dim(delta_I_ICU) <- c(N_age,s_ICU,trans_classes)
 dim(n_II_ICU) <- c(N_age,s_ICU,trans_classes)
@@ -272,19 +257,16 @@ dim(p_recov_ICU) <- c(N_age)
 
 #Vectors handling the R_hosp class
 dim(R_hosp) <- c(N_age,s_rec,trans_classes)
-dim(R0_hosp) <- c(N_age,s_rec,trans_classes)
 dim(aux_R_hosp) <- c(N_age,s_rec,trans_classes)
 dim(delta_R_hosp) <- c(N_age,s_rec,trans_classes)
 dim(n_R_hosp) <- c(N_age,s_rec,trans_classes)
 
 #Vectors handling the R class
 dim(R) <- c(N_age)
-dim(R0) <- c(N_age)
 dim(delta_R) <- c(N_age)
 
 #Vectors handling the D class
 dim(D) <- c(N_age)
-dim(D0) <- c(N_age)
 dim(delta_D) <- c(N_age)
 
 #Vectors handling the S->E transition where infected are split between level of infectivity
