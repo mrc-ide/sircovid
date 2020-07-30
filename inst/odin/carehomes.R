@@ -442,8 +442,11 @@ importation <- if (step >= length(importation_step)) importation_step[length(imp
 psi <- user(0.1)
 
 m[,] <- user()
-trans_profile[,] <- user()
-trans_increase[,] <- user()
+# TODO: trans_profile and trans_increase can be removed as not used;
+# this will required removing one layer off many variables so be
+# careful.
+trans_profile[,] <- 1
+trans_increase[,] <- 1
 hosp_transmission <- user()
 ICU_transmission <- user()
 comm_D_transmission <- user()

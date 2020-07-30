@@ -10,3 +10,9 @@ test_that("can run the basic model", {
   res <- mod$run(300)
   expect_equal(res, matrix(numeric(0), 0, 10))
 })
+
+
+test_that("can run the basic model", {
+  p <- basic_parameters()
+  mod <- basic$new(p, 0, 10)
+})

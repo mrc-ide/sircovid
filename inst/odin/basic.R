@@ -5,7 +5,7 @@
 
 #Number of age classes & number of transmissibility classes
 N_age <- user()
-trans_classes <- user()
+trans_classes <- user(1)
 
 #definition of the time-step and output as "time"
 dt <- user()
@@ -137,8 +137,9 @@ I_with_diff_trans[,] <- trans_increase[i,j]*(sum(I_asympt[i,,j])+
 s_ij[,] <- m[i,j] * sum(I_with_diff_trans[j,])
 lambda[] <- beta*sum(s_ij[i,])
 
-## Initial states:
-initial(S[]) <- S0[i] # will be user-defined
+## Initial states are all zerod as we will provide a state vector
+## setting S and I based on the seeding model.
+initial(S[]) <- 0
 initial(E[,,]) <- 0
 initial(I_asympt[,,]) <- 0
 initial(I_mild[,,]) <- 0
@@ -148,11 +149,9 @@ initial(I_ICU[,,]) <- 0
 initial(R_hosp[,,]) <- 0
 initial(R[]) <- 0
 initial(D[]) <- 0
+initial(N_tot) <- 0
 
 ## User defined parameters - default in parentheses:
-
-#Initial vectors
-S0[] <- user()
 
 #Parameters of the E classes
 s_E <- user()
@@ -204,8 +203,11 @@ initial(beta_out) <- beta_step[1]
 update(beta_out) <- beta
 
 m[,] <- user()
-trans_profile[,] <- user()
-trans_increase[,] <- user()
+# TODO: trans_profile and trans_increase can be removed as not used;
+# this will required removing one layer off many variables so be
+# careful.
+trans_profile[,] <- 1
+trans_increase[,] <- 1
 hosp_transmission <- user()
 ICU_transmission <- user()
 
@@ -213,7 +215,6 @@ ICU_transmission <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
-dim(S0) <- N_age
 
 #Vectors handling the E class
 dim(E) <- c(N_age,s_E,trans_classes)
@@ -299,8 +300,6 @@ dim(trans_profile) <- c(N_age,trans_classes)
 dim(trans_increase) <- c(N_age,trans_classes)
 dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
-initial(N_tot) <- N0_tot
-N0_tot <- user()
 update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild) + sum(I_ILI) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
 
 #Tracker of population size
