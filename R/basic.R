@@ -1,9 +1,8 @@
 basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
                              severity_path = NULL) {
-  ret <- sircovid_parameters_shared(start_date, region)
-  ret$beta_step <-
-    sircovid_parameters_beta(beta_date, beta_value %||% 0.08, ret$dt)
+  ret <- sircovid_parameters_shared(start_date, region,
+                                    beta_date, beta_value)
   ret$m <- sircovid_transmission_matrix()
   c(ret,
     sircovid_parameters_severity(severity_path),
@@ -55,7 +54,7 @@ basic_initial <- function(info, n_particles, pars) {
   ## This corresponds to the 15-19y age bracket for compatibility with
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
-  seed_age_band <- 3L
+  seed_age_band <- 4L
   index_I <- start[["I_asympt"]] + seed_age_band
 
   ## ONS populations, subtracting the seed for pedantry.

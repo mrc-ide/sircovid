@@ -5,8 +5,11 @@
 #k for the infectivity group
 
 #Number of age classes & number of transmissibility classes
+
+## TODO: this should be renamed as it includes the CHW and CHR groups,
+## so it's N_age plus 2 now! N_group is ok but more vague than ideal.
 N_age <- user()
-trans_classes <- user()
+trans_classes <- user(1)
 
 #definition of the time-step and output as "time"
 dt <- user()
@@ -284,71 +287,41 @@ I_with_diff_trans[,] <- trans_increase[i,j]*(sum(I_asympt[i,,j])+
                                                comm_D_transmission*
                                                  sum(I_comm_D[i,,j]))
 s_ij[,] <- m[i,j] * sum(I_with_diff_trans[j,])
-lambda[] <- beta*sum(s_ij[i,]) + psi*importation/N_tot2
+lambda[] <- beta*sum(s_ij[i,])
 
-## Initial states:
-initial(S[]) <- S0[i] # will be user-defined
-initial(E[,,]) <- E0[i,j,k] # will be user-defined
-initial(I_asympt[,,]) <- I0_asympt[i,j,k] # will be user-defined
-initial(I_mild[,,]) <- I0_mild[i,j,k] # will be user-defined
-initial(I_ILI[,,]) <- I0_ILI[i,j,k] # will be user-defined
-initial(I_comm_D[,,]) <- I0_comm_D[i,j,k]
-initial(I_triage_R_unconf[,,]) <- I0_triage_R_unconf[i,j,k]
-initial(I_triage_R_conf[,,]) <- I0_triage_R_conf[i,j,k]
-initial(I_triage_D_unconf[,,]) <- I0_triage_D_unconf[i,j,k]
-initial(I_triage_D_conf[,,]) <- I0_triage_D_conf[i,j,k]
-initial(I_hosp_R_unconf[,,]) <- I0_hosp_R_unconf[i,j,k]
-initial(I_hosp_R_conf[,,]) <- I0_hosp_R_conf[i,j,k]
-initial(I_hosp_D_unconf[,,]) <- I0_hosp_D_unconf[i,j,k]
-initial(I_hosp_D_conf[,,]) <- I0_hosp_D_conf[i,j,k]
-initial(I_ICU_R_unconf[,,]) <- I0_ICU_R_unconf[i,j,k]
-initial(I_ICU_R_conf[,,]) <- I0_ICU_R_conf[i,j,k]
-initial(I_ICU_D_unconf[,,]) <- I0_ICU_D_unconf[i,j,k]
-initial(I_ICU_D_conf[,,]) <- I0_ICU_D_conf[i,j,k]
-initial(R_stepdown_unconf[,]) <- R0_stepdown_unconf[i,j]
-initial(R_stepdown_conf[,]) <- R0_stepdown_conf[i,j]
-initial(R_pre[,]) <- R0_pre[i,j]
-initial(R_pos[]) <- R0_pos[i]
-initial(R_neg[]) <- R0_neg[i]
-initial(R[]) <- R0[i]
-initial(D_hosp[]) <- D0_hosp[i]
-initial(D_comm[]) <- D0_comm[i]
-initial(PCR_pos[,]) <- PCR0_pos[i,j]
-initial(cum_admit_conf) <- cum0_admit_conf
-initial(cum_new_conf) <- cum0_new_conf
+## Initial states are all zerod as we will provide a state vector
+## setting S and I based on the seeding model.
+initial(S[]) <- 0
+initial(E[,,]) <- 0
+initial(I_asympt[,,]) <- 0
+initial(I_mild[,,]) <- 0
+initial(I_ILI[,,]) <- 0
+initial(I_comm_D[,,]) <- 0
+initial(I_triage_R_unconf[,,]) <- 0
+initial(I_triage_R_conf[,,]) <- 0
+initial(I_triage_D_unconf[,,]) <- 0
+initial(I_triage_D_conf[,,]) <- 0
+initial(I_hosp_R_unconf[,,]) <- 0
+initial(I_hosp_R_conf[,,]) <- 0
+initial(I_hosp_D_unconf[,,]) <- 0
+initial(I_hosp_D_conf[,,]) <- 0
+initial(I_ICU_R_unconf[,,]) <- 0
+initial(I_ICU_R_conf[,,]) <- 0
+initial(I_ICU_D_unconf[,,]) <- 0
+initial(I_ICU_D_conf[,,]) <- 0
+initial(R_stepdown_unconf[,]) <- 0
+initial(R_stepdown_conf[,]) <- 0
+initial(R_pre[,]) <- 0
+initial(R_pos[]) <- 0
+initial(R_neg[]) <- 0
+initial(R[]) <- 0
+initial(D_hosp[]) <- 0
+initial(D_comm[]) <- 0
+initial(PCR_pos[,]) <- 0
+initial(cum_admit_conf) <- 0
+initial(cum_new_conf) <- 0
 
 ## User defined parameters - default in parentheses:
-
-#Initial vectors
-S0[] <- user()
-E0[,,] <- user()
-I0_asympt[,,] <- user()
-I0_mild[,,] <- user()
-I0_ILI[,,] <- user()
-I0_comm_D[,,] <- user()
-I0_triage_R_unconf[,,] <- user()
-I0_triage_R_conf[,,] <- user()
-I0_triage_D_unconf[,,] <- user()
-I0_triage_D_conf[,,] <- user()
-I0_hosp_R_unconf[,,] <- user()
-I0_hosp_R_conf[,,] <- user()
-I0_hosp_D_unconf[,,] <- user()
-I0_hosp_D_conf[,,] <- user()
-I0_ICU_R_unconf[,,] <- user()
-I0_ICU_R_conf[,,] <- user()
-I0_ICU_D_unconf[,,] <- user()
-I0_ICU_D_conf[,,] <- user()
-R0_stepdown_unconf[,] <- user()
-R0_stepdown_conf[,] <- user()
-R0[] <- user()
-R0_pre[,] <- user()
-R0_neg[] <- user()
-R0_pos[] <- user()
-D0_hosp[] <- user()
-D0_comm[] <- user()
-PCR0_pos[,] <- user()
-cum0_admit_conf <- user()
-cum0_new_conf <- user()
 
 #Parameters of the E classes
 s_E <- user()
@@ -410,7 +383,8 @@ gamma_R_pre_1 <- user(0.1)
 gamma_R_pre_2 <- user(0.1)
 gamma_R_pre[1] <- gamma_R_pre_1
 gamma_R_pre[2] <- gamma_R_pre_2
-p_R_pre_1 <- user()
+# Governs the mixing - pretty much only makes sense at 0.5
+p_R_pre_1 <- user(0.5)
 p_seroconversion[] <- user()
 
 #Parameters relating to testing
@@ -434,13 +408,6 @@ beta <- if (step >= length(beta_step)) beta_step[length(beta_step)] else beta_st
 initial(beta_out) <- beta_step[1]
 update(beta_out) <- beta
 
-#Parameters of the external infection rate
-importation_step[] <- user()
-dim(importation_step) <- user()
-importation <- if (step >= length(importation_step)) importation_step[length(importation_step)] else importation_step[step + 1]
-
-psi <- user(0.1)
-
 m[,] <- user()
 # TODO: trans_profile and trans_increase can be removed as not used;
 # this will required removing one layer off many variables so be
@@ -455,32 +422,27 @@ comm_D_transmission <- user()
 
 #Vectors handling the S class
 dim(S) <- N_age
-dim(S0) <- N_age
 
 #Vectors handling the E class
 dim(E) <- c(N_age,s_E,trans_classes)
-dim(E0) <- c(N_age,s_E,trans_classes)
 dim(aux_EE) <- c(N_age,s_E,trans_classes)
 dim(delta_E) <- c(N_age,s_E,trans_classes)
 dim(n_EE) <- c(N_age,s_E,trans_classes)
 
 #Vectors handling the I_asympt class
 dim(I_asympt) <- c(N_age,s_asympt,trans_classes)
-dim(I0_asympt) <- c(N_age,s_asympt,trans_classes)
 dim(aux_II_asympt) <- c(N_age,s_asympt,trans_classes)
 dim(delta_I_asympt) <- c(N_age,s_asympt,trans_classes)
 dim(n_II_asympt) <- c(N_age,s_asympt,trans_classes)
 
 #Vectors handling the I_mild class
 dim(I_mild) <- c(N_age,s_mild,trans_classes)
-dim(I0_mild) <- c(N_age,s_mild,trans_classes)
 dim(aux_II_mild) <- c(N_age,s_mild,trans_classes)
 dim(delta_I_mild) <- c(N_age,s_mild,trans_classes)
 dim(n_II_mild) <- c(N_age,s_mild,trans_classes)
 
 #Vectors handling the I_ILI class
 dim(I_ILI) <- c(N_age,s_ILI,trans_classes)
-dim(I0_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(aux_II_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(delta_I_ILI) <- c(N_age,s_ILI,trans_classes)
 dim(n_II_ILI) <- c(N_age,s_ILI,trans_classes)
@@ -488,7 +450,6 @@ dim(p_hosp_ILI) <- c(N_age)
 
 #Vectors handling the I_comm_D class
 dim(I_comm_D) <- c(N_age,s_comm_D,trans_classes)
-dim(I0_comm_D) <- c(N_age,s_comm_D,trans_classes)
 dim(aux_II_comm_D) <- c(N_age,s_comm_D,trans_classes)
 dim(delta_I_comm_D) <- c(N_age,s_comm_D,trans_classes)
 dim(n_II_comm_D) <- c(N_age,s_comm_D,trans_classes)
@@ -496,12 +457,10 @@ dim(p_death_comm) <- c(N_age)
 
 #Vectors handling the I_triage_R class
 dim(I_triage_R_unconf) <- c(N_age,s_triage,trans_classes)
-dim(I0_triage_R_unconf) <- c(N_age,s_triage,trans_classes)
 dim(aux_II_triage_R_unconf) <- c(N_age,s_triage,trans_classes)
 dim(new_I_triage_R_unconf) <- c(N_age,s_triage,trans_classes)
 dim(n_II_triage_R_unconf) <- c(N_age,s_triage,trans_classes)
 dim(I_triage_R_conf) <- c(N_age,s_triage,trans_classes)
-dim(I0_triage_R_conf) <- c(N_age,s_triage,trans_classes)
 dim(aux_II_triage_R_conf) <- c(N_age,s_triage,trans_classes)
 dim(new_I_triage_R_conf) <- c(N_age,s_triage,trans_classes)
 dim(n_II_triage_R_conf) <- c(N_age,s_triage,trans_classes)
@@ -509,12 +468,10 @@ dim(n_I_triage_R_unconf_to_conf) <- c(N_age,s_triage,trans_classes)
 
 #Vectors handling the I_triage_D class
 dim(I_triage_D_unconf) <- c(N_age,s_triage,trans_classes)
-dim(I0_triage_D_unconf) <- c(N_age,s_triage,trans_classes)
 dim(aux_II_triage_D_unconf) <- c(N_age,s_triage,trans_classes)
 dim(new_I_triage_D_unconf) <- c(N_age,s_triage,trans_classes)
 dim(n_II_triage_D_unconf) <- c(N_age,s_triage,trans_classes)
 dim(I_triage_D_conf) <- c(N_age,s_triage,trans_classes)
-dim(I0_triage_D_conf) <- c(N_age,s_triage,trans_classes)
 dim(aux_II_triage_D_conf) <- c(N_age,s_triage,trans_classes)
 dim(new_I_triage_D_conf) <- c(N_age,s_triage,trans_classes)
 dim(n_II_triage_D_conf) <- c(N_age,s_triage,trans_classes)
@@ -525,12 +482,10 @@ dim(p_ICU_hosp) <- c(N_age)
 
 #Vectors handling the I_hosp_R class
 dim(I_hosp_R_unconf) <- c(N_age,s_hosp_R,trans_classes)
-dim(I0_hosp_R_unconf) <- c(N_age,s_hosp_R,trans_classes)
 dim(aux_II_hosp_R_unconf) <- c(N_age,s_hosp_R,trans_classes)
 dim(new_I_hosp_R_unconf) <- c(N_age,s_hosp_R,trans_classes)
 dim(n_II_hosp_R_unconf) <- c(N_age,s_hosp_R,trans_classes)
 dim(I_hosp_R_conf) <- c(N_age,s_hosp_R,trans_classes)
-dim(I0_hosp_R_conf) <- c(N_age,s_hosp_R,trans_classes)
 dim(aux_II_hosp_R_conf) <- c(N_age,s_hosp_R,trans_classes)
 dim(new_I_hosp_R_conf) <- c(N_age,s_hosp_R,trans_classes)
 dim(n_II_hosp_R_conf) <- c(N_age,s_hosp_R,trans_classes)
@@ -538,12 +493,10 @@ dim(n_I_hosp_R_unconf_to_conf) <- c(N_age,s_hosp_R,trans_classes)
 
 #Vectors handling the I_hosp_D class
 dim(I_hosp_D_unconf) <- c(N_age,s_hosp_D,trans_classes)
-dim(I0_hosp_D_unconf) <- c(N_age,s_hosp_D,trans_classes)
 dim(aux_II_hosp_D_unconf) <- c(N_age,s_hosp_D,trans_classes)
 dim(new_I_hosp_D_unconf) <- c(N_age,s_hosp_D,trans_classes)
 dim(n_II_hosp_D_unconf) <- c(N_age,s_hosp_D,trans_classes)
 dim(I_hosp_D_conf) <- c(N_age,s_hosp_D,trans_classes)
-dim(I0_hosp_D_conf) <- c(N_age,s_hosp_D,trans_classes)
 dim(aux_II_hosp_D_conf) <- c(N_age,s_hosp_D,trans_classes)
 dim(new_I_hosp_D_conf) <- c(N_age,s_hosp_D,trans_classes)
 dim(n_II_hosp_D_conf) <- c(N_age,s_hosp_D,trans_classes)
@@ -551,12 +504,10 @@ dim(n_I_hosp_D_unconf_to_conf) <- c(N_age,s_hosp_D,trans_classes)
 
 #Vectors handling the I_ICU_R class
 dim(I_ICU_R_unconf) <- c(N_age,s_ICU_R,trans_classes)
-dim(I0_ICU_R_unconf) <- c(N_age,s_ICU_R,trans_classes)
 dim(aux_II_ICU_R_unconf) <- c(N_age,s_ICU_R,trans_classes)
 dim(new_I_ICU_R_unconf) <- c(N_age,s_ICU_R,trans_classes)
 dim(n_II_ICU_R_unconf) <- c(N_age,s_ICU_R,trans_classes)
 dim(I_ICU_R_conf) <- c(N_age,s_ICU_R,trans_classes)
-dim(I0_ICU_R_conf) <- c(N_age,s_ICU_R,trans_classes)
 dim(aux_II_ICU_R_conf) <- c(N_age,s_ICU_R,trans_classes)
 dim(new_I_ICU_R_conf) <- c(N_age,s_ICU_R,trans_classes)
 dim(n_II_ICU_R_conf) <- c(N_age,s_ICU_R,trans_classes)
@@ -564,12 +515,10 @@ dim(n_I_ICU_R_unconf_to_conf) <- c(N_age,s_ICU_R,trans_classes)
 
 #Vectors handling the I_ICU_D class
 dim(I_ICU_D_unconf) <- c(N_age,s_ICU_D,trans_classes)
-dim(I0_ICU_D_unconf) <- c(N_age,s_ICU_D,trans_classes)
 dim(aux_II_ICU_D_unconf) <- c(N_age,s_ICU_D,trans_classes)
 dim(new_I_ICU_D_unconf) <- c(N_age,s_ICU_D,trans_classes)
 dim(n_II_ICU_D_unconf) <- c(N_age,s_ICU_D,trans_classes)
 dim(I_ICU_D_conf) <- c(N_age,s_ICU_D,trans_classes)
-dim(I0_ICU_D_conf) <- c(N_age,s_ICU_D,trans_classes)
 dim(aux_II_ICU_D_conf) <- c(N_age,s_ICU_D,trans_classes)
 dim(new_I_ICU_D_conf) <- c(N_age,s_ICU_D,trans_classes)
 dim(n_II_ICU_D_conf) <- c(N_age,s_ICU_D,trans_classes)
@@ -577,12 +526,10 @@ dim(n_I_ICU_D_unconf_to_conf) <- c(N_age,s_ICU_D,trans_classes)
 
 #Vectors handling the R_stepdown class
 dim(R_stepdown_unconf) <- c(N_age,s_stepdown)
-dim(R0_stepdown_unconf) <- c(N_age,s_stepdown)
 dim(aux_R_stepdown_unconf) <- c(N_age,s_stepdown)
 dim(new_R_stepdown_unconf) <- c(N_age,s_stepdown)
 dim(n_R_stepdown_unconf) <- c(N_age,s_stepdown)
 dim(R_stepdown_conf) <- c(N_age,s_stepdown)
-dim(R0_stepdown_conf) <- c(N_age,s_stepdown)
 dim(aux_R_stepdown_conf) <- c(N_age,s_stepdown)
 dim(new_R_stepdown_conf) <- c(N_age,s_stepdown)
 dim(n_R_stepdown_conf) <- c(N_age,s_stepdown)
@@ -590,12 +537,10 @@ dim(n_R_stepdown_unconf_to_conf) <- c(N_age,s_stepdown)
 
 #Vectors handling the R_pos class
 dim(R) <- c(N_age)
-dim(R0) <- c(N_age)
 dim(delta_R) <- c(N_age)
 
 #Vectors handling the R_pre class and seroconversion
 dim(R_pre) <- c(N_age, 2)
-dim(R0_pre) <- c(N_age, 2)
 dim(n_R_pre) <- c(N_age, 2)
 dim(gamma_R_pre) <- c(2)
 dim(p_R_pre) <- c(N_age,2)
@@ -603,27 +548,22 @@ dim(p_seroconversion) <- c(N_age)
 
 #Vectors handling the R_pos class
 dim(R_pos) <- c(N_age)
-dim(R0_pos) <- c(N_age)
 dim(delta_R_pos) <- c(N_age)
 
 #Vectors handling the R_neg class
 dim(R_neg) <- c(N_age)
-dim(R0_neg) <- c(N_age)
 dim(delta_R_neg) <- c(N_age)
 
 #Vectors handling the D_hosp class
 dim(D_hosp) <- c(N_age)
-dim(D0_hosp) <- c(N_age)
 dim(delta_D_hosp) <- c(N_age)
 
 #Vectors handling the D_comm class
 dim(D_comm) <- c(N_age)
-dim(D0_comm) <- c(N_age)
 dim(delta_D_comm) <- c(N_age)
 
 #Vectors handling the R_pos class
 dim(PCR_pos) <- c(N_age,s_PCR_pos)
-dim(PCR0_pos) <- c(N_age,s_PCR_pos)
 dim(delta_PCR_pos) <- c(N_age,s_PCR_pos)
 dim(n_PCR_pos) <- c(N_age,s_PCR_pos)
 
@@ -678,21 +618,57 @@ dim(I_with_diff_trans) <- c(N_age,trans_classes)
 
 
 #Total population
-initial(N_tot[]) <- N0_tot[i]
-N0_tot[] <- user()
+initial(N_tot[]) <- 0
 update(N_tot[]) <- S[i] + R[i] + D_hosp[i] + sum(E[i,,]) + sum(I_asympt[i,,]) + sum(I_mild[i,,]) + sum(I_ILI[i,,]) +
   sum(I_triage_D_conf[i,,]) + sum(I_triage_D_unconf[i,,]) + sum(I_triage_R_conf[i,,]) + sum(I_triage_R_unconf[i,,])  + sum(I_hosp_R_conf[i,,]) + sum(I_hosp_R_unconf[i,,]) +
   sum(I_hosp_D_conf[i,,]) + sum(I_hosp_D_unconf[i,,]) + sum(I_ICU_R_conf[i,,]) + sum(I_ICU_R_unconf[i,,]) + sum(I_ICU_D_conf[i,,]) + sum(I_ICU_D_unconf[i,,]) +
   sum(R_stepdown_conf[i,]) + sum(R_stepdown_unconf[i,]) + sum(I_comm_D[i,,]) + D_comm[i]
 dim(N_tot) <- c(N_age)
-dim(N0_tot) <- c(N_age)
 
 #Total population calculated with seroconversion flow, exclude triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with R's
-initial(N_tot2) <- N0_tot2
-N0_tot2 <- user()
+initial(N_tot2) <- 0
 update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 
-#Tracker of population size
-#dim(N) <- N_age
+## Aggregate our reporting statistics by summing across age (simple
+## for everything except for seropositivity data, done last)
+initial(I_ICU_tot) <- 0
+update(I_ICU_tot) <- sum(I_ICU_R_conf) + sum(I_ICU_D_conf)
+
+initial(general_tot) <- 0
+update(general_tot) <- sum(I_triage_R_conf) + sum(I_triage_D_conf) +
+  sum(I_hosp_R_conf) + sum(I_hosp_D_conf) + sum(R_stepdown_conf)
+
+initial(D_hosp_tot) <- 0
+update(D_hosp_tot) <- sum(D_hosp)
+
+initial(D_comm_tot) <- 0
+update(D_comm_tot) <- sum(D_comm)
+
+initial(D_tot) <- 0
+update(D_tot) <- D_hosp_tot + D_comm_tot
+
+## Our age groups for serology are fixed: we break them down into the
+##
+## * 0-14 (1, 2, 3)
+## * 15-64 (4, 5, ..., 13)
+## * 65-100 (14, 15, ..., 17)
+##
+## NOTE: this excludes CHW (18) and CHR (19) but we probably should
+## sum in CHW into the figures here.
+##
+## To fit with the data currently available, we currently only
+## consider the middle group, though this could be expanded easily by
+## more statements like the ones below.
+##
+## NOTE: the R_pre_tot sum sweeps out the second compartment used to
+## model the mixture of exponentials.
+initial(R_pre_15_64) <- 0
+update(R_pre_15_64) <- sum(R_pre[4:13, ])
+
+initial(R_neg_15_64) <- 0
+update(R_neg_15_64) <- sum(R_neg[4:13])
+
+initial(R_pos_15_64) <- 0
+update(R_pos_15_64) <- sum(R_pos[4:13])
 
 #nolint end

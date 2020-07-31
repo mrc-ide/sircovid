@@ -20,7 +20,7 @@ test_that("can run the basic model", {
   initial <- basic_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
 
-  mod$set_index(basic_index(mod$info()))
+  mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
   expected <-
     rbind(c(1352, 2102, 1714, 1498, 878, 729, 604, 1037, 1206, 1424),
