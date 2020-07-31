@@ -60,3 +60,37 @@ test_that("Use constant age bins", {
     list(start = seq(0, 80, by = 5),
          end = c(seq(4, 79, by = 5), 100)))
 })
+
+
+test_that("ll_nbinom", {
+  f <- function(model) {
+    set.seed(1)
+    dnbinom(10, 0.1, mu = model + rexp(length(model), rate = 1e6), log = TRUE)
+  }
+
+  set.seed(1)
+  expect_equal(
+    ll_nbinom(10, 10, 0.1, 1e6),
+    f(10))
+
+  x <- 1:10
+  set.seed(1)
+  expect_equal(
+    ll_nbinom(10, x, 0.1, 1e6),
+    f(x))
+
+  x <- rep(10, 10)
+  expect_lt(
+    diff(range(ll_nbinom(10, x, 0.1, 1e6))),
+    diff(range(ll_nbinom(10, x, 0.1, 1e2))))
+})
+
+
+test_that("ll_nbinom returns a vector of zeros if data missing", {
+  expect_equal(
+    ll_nbinom(NA, 10, 0.1, 1e6),
+    0)
+  expect_equal(
+    ll_nbinom(NA, rep(10, 5), 0.1, 1e6),
+    rep(0, 5))
+})
