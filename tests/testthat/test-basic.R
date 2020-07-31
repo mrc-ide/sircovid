@@ -67,12 +67,5 @@ test_that("can run the particle filter on the model", {
     # non-zero))
     exp_noise = 1e6)
 
-
   pf$run(pars, pars_obs, pars)
-
-  end <- sircovid_date("2020-07-31") / p$dt
-
-  initial <- basic_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
-
 })
