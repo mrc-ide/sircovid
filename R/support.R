@@ -122,3 +122,12 @@ sircovid_transmission_matrix <- function() {
 
   cache$transmission_matrix
 }
+
+
+severity_default <- function() {
+  if (is.null(cache$severity_default)) {
+    cache$severity_default <-
+      read_csv(sircovid_file("extdata/severity_default.csv"))
+  }
+  cache$severity_default
+}

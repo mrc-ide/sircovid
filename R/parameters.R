@@ -35,10 +35,11 @@ sircovid_parameters_beta <- function(date, value, dt) {
 }
 
 
-sircovid_parameters_severity <- function(path) {
+sircovid_parameters_severity <- function(params) {
   ## Set up severity file into table
-  path <- path %||% sircovid_file("extdata/severity_default.csv")
-  params <- read_csv(path)
+  if (is.null(params)) {
+    params <- severity_default()
+  }
 
   ## Transpose so columns are parameters, rownames are age groups
   data <- t(as.matrix(params[-1L]))

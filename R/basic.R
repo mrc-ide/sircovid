@@ -1,11 +1,11 @@
 basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
-                             severity_path = NULL) {
+                             severity_data = NULL) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
   ret$m <- sircovid_transmission_matrix()
   c(ret,
-    sircovid_parameters_severity(severity_path),
+    sircovid_parameters_severity(severity_data),
     basic_parameters_progression())
 }
 

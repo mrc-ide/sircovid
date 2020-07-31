@@ -1,7 +1,7 @@
 ## To add: C_1, C_2 (defaults 1e-7)
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
-                                 severity_path = NULL) {
+                                 severity_data = NULL) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
@@ -30,7 +30,7 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
-  severity <- carehomes_parameters_severity(severity_path, ret$population,
+  severity <- carehomes_parameters_severity(severity_data, ret$population,
                                             p_death_carehome)
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, ret$population)
@@ -170,9 +170,9 @@ carehomes_severity <- function(p, population) {
 }
 
 
-carehomes_parameters_severity <- function(severity_path, population,
+carehomes_parameters_severity <- function(severity_data, population,
                                           p_death_carehome) {
-  severity <- sircovid_parameters_severity(severity_path)
+  severity <- sircovid_parameters_severity(severity_data)
   severity <- lapply(severity, carehomes_severity, population)
   severity$p_death_comm[length(severity$p_death_comm)] <- p_death_carehome
   severity

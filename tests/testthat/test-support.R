@@ -134,3 +134,10 @@ test_that("transmission matrix", {
   skip_on_cran()
   expect_equal(sum(m), 4.8849272139437937e-5)
 })
+
+
+test_that("read default severity", {
+  clear_cache()
+  d <- severity_default()
+  expect_identical(d, cache$severity_default)
+})
