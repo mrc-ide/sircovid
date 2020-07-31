@@ -35,11 +35,13 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
+Requires: R (>= 3.1.0)
 Imports:
-    mcstate
+    mcstate (== 0.1.1),
+    socialmixr
 LinkingTo:
     cpp11,
-    dust
+    dust (== 0.2.4)
 Suggests:
     testthat
 RoxygenNote: 7.1.0
