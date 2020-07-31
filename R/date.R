@@ -19,3 +19,14 @@ assert_sircovid_date <- function(date) {
   }
   date
 }
+
+
+as_sircovid_date <- function(date) {
+  if (is.character(date)) {
+    sircovid_date(as_date(date))
+  } else if (is_date(date)) {
+    sircovid_date(date)
+  } else {
+    assert_sircovid_date(date)
+  }
+}

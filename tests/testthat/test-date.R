@@ -21,3 +21,10 @@ test_that("assert sircovid date throws on non sircovid dates", {
                "'date' must be numeric - did you forget sircovid_date()?",
                fixed = TRUE)
 })
+
+
+test_that("helper function can convert somewhat helpfully", {
+  expect_equal(as_sircovid_date("2020-02-01"), 32)
+  expect_equal(as_sircovid_date(as_date("2020-02-01")), 32)
+  expect_equal(as_sircovid_date(32), 32)
+})
