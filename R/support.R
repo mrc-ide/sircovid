@@ -21,6 +21,17 @@ check_age_bins <- function(age_headers) {
 }
 
 
+##' Convert a date into the number of days into (or past) 2020
+##'
+##' @title Convert date to number
+##'
+##' @param date A Date object, or something that can be converted to one
+##'
+##' @return An integer, being the number of days into 2020
+##' @export
+##' @examples
+##' sircovid_date("2020-01-01")
+##' sircovid_date(c("2020-03-01", "2020-10-01"))
 sircovid_date <- function(date) {
   days_into_2020 <- as.numeric(as_date(date) - as_date("2019-12-31"))
   if (any(days_into_2020 < 0)) {
