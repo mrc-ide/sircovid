@@ -31,7 +31,7 @@ test_that("helper function can convert somewhat helpfully", {
 
 
 test_that("read population", {
-  cache$population <- NULL
+  clear_cache()
   n <- sircovid_population("south_west")
   expect_s3_class(cache$population, "data.frame")
   expected <- c(296855, 325583, 307586, 304574, 339548, 337183, 327525,
@@ -108,4 +108,21 @@ test_that("ll_nbinom returns a vector of zeros if data missing", {
   expect_equal(
     ll_nbinom(NA, rep(10, 5), 0.1, 1e6),
     rep(0, 5))
+})
+
+
+test_that("transmission matrix", {
+  clear_cache()
+  m <- sircovid_transmission_matrix()
+  expect_identical(m, cache$transmission_matrix)
+  expect_equal(dim(m), c(17, 17))
+
+  nms <- c("[0,4)", "[5,9)", "[10,14)", "[15,19)", "[20,24)", "[25,29)",
+           "[30,34)", "[35,39)", "[40,44)", "[45,49)", "[50,54)", "[55,59)",
+           "[60,64)", "[65,69)", "[70,74)", "[75,79)", "[80,100)")
+  expect_equal(dimnames(m), list(nms, nms))
+
+  ## Be notified when this changes
+  skip_on_cran()
+  expect_equal(sum(m), 4.8849272139437937e-5)
 })
