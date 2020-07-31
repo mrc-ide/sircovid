@@ -15,19 +15,19 @@ verify_names <- function(x, required = NULL, optional = NULL,
   if (anyDuplicated(nms)) {
     dups <- unique(nms[duplicated(nms)])
     stop(sprintf("Duplicate element names in '%s': %s",
-                 dups, paste(squote(x), collapse = ", ")))
+                 name, paste(squote(dups), collapse = ", ")))
   }
   if (!allow_extra) {
     extra <- setdiff(nms, c(required, optional))
     if (length(extra) > 0) {
       stop(sprintf("Extra elements in '%s': %s",
-                   name, paste(squote(x), collapse = ", ")))
+                   name, paste(squote(extra), collapse = ", ")))
     }
   }
   msg <- setdiff(required, nms)
   if (length(msg) > 0) {
     stop(sprintf("Elements missing from '%s': %s",
-                 name, paste(squote(x), collapse = ", ")))
+                 name, paste(squote(msg), collapse = ", ")))
   }
   invisible(x)
 }
@@ -53,12 +53,17 @@ read_csv <- function(...) {
 }
 
 
+write_csv <- function(...) {
+  utils::write.csv(..., row.names = FALSE)
+}
+
+
 data_frame <- function(...) {
   data.frame(..., check.names = FALSE, stringsAsFactors = FALSE)
 }
 
 
-is_integer <- function(x, tol = .Machine$double.eps^0.5) {
+is_integer <- function(x, tol = sqrt(.Machine$double.eps)) {
   abs(x - round(x)) < tol
 }
 
@@ -72,7 +77,7 @@ rename <- function(x, from, to, name = deparse(substitute(x))) {
 
 
 is_date <- function(x) {
-  inherits(date, "Date")
+  inherits(x, "Date")
 }
 
 
@@ -84,14 +89,4 @@ as_date <- function(date) {
     stop("Expected ISO dates or R dates - please convert")
   }
   as.Date(date)
-}
-
-
-##' @importFrom stats dnbinom rexp
-ll_nbinom <- function(data, model, k, exp_noise) {
-  if (is.na(data)) {
-    return(numeric(length(model)))
-  }
-  mu <- model + rexp(length(model), rate = exp_noise)
-  dnbinom(data, k, mu = mu, log = TRUE)
 }
