@@ -83,6 +83,7 @@ carehomes_index <- function(info) {
   len <- vnapply(info, prod)
   start <- cumsum(len) - len + 1L
   list(run = c(start[["I_ICU_tot"]],
+               start[["general_tot"]],
                start[["D_comm_tot"]],
                start[["D_hosp_tot"]],
                start[["D_tot"]],
@@ -91,6 +92,67 @@ carehomes_index <- function(info) {
                start[["R_pre_15_64"]],
                start[["R_neg_15_64"]],
                start[["R_pos_15_64"]]))
+}
+
+
+## TODO: we might refactor this to produce a subset of comparisons
+## (and indices above) to suit either the SPI-M or paper fits as we're
+## using different streams; that will make the comparisons a touch
+## faster and data copying smaller.
+carehomes_compare <- function(state, prev_state, observed, pars) {
+  ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
+  model_icu <- state[1, ]
+  model_general <- state[2, ]
+  model_deaths_comm <- state[3, ] - prev_state[3, ]
+  model_deaths_hosp <- state[4, ] - prev_state[4, ]
+  model_deaths_tot <- state[5, ] - prev_state[5, ]
+  model_admitted <- state[6, ] - prev_state[6, ]
+  model_new <- state[7, ] - prev_state[7, ]
+  model_R_pre_15_64 <- state[8, ]
+  model_R_neg_15_64 <- state[9, ]
+  model_R_pos_15_64 <- state[10, ]
+
+  ## Noise parameter shared across both deaths and icu
+  exp_noise <- pars$exp_noise
+
+  ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
+                      pars$k_ICU, exp_noise)
+  ll_general <- ll_nbinom(data$general, pars$phi_general * model_general,
+                          pars$k_general, exp_noise)
+  ll_deaths_hosp <- ll_nbinom(data$deaths_hosp,
+                              pars$phi_death_hosp * pars$model_deaths_hosp,
+                              pars$k_death_hosp, exp_noise)
+  ll_deaths_comm <- ll_nbinom(data$deaths_comm,
+                              pars$phi_death_comm * pars$model_deaths_comm,
+                              pars$k_death_comm, exp_noise)
+  ll_deaths <- ll_nbinom(data$deaths,
+                         pars$phi_death_hosp * pars$model_deaths_hosp +
+                         pars$phi_death_comm * model_deaths_comm,
+                         pars$k_death, exp_noise)
+  ll_admitted <- ll_nbinom(data$admitted,
+                           pars$phi_admitted * pars$model_admitted,
+                           pars$k_admitted, exp_noise)
+  ll_new <- ll_nbinom(data$new, pars$phi_new * pars$model_new,
+                      pars$k_new, exp_noise)
+
+  ## TODO: it would be easy to return the true_pos and positive tests
+  ## as two numbers rather than these three from the odin code
+  true_pos <- model_R_pos_15_64 + model_R_neg_15_64 + model_R_pre_15_64
+  prob_true_pos <- model_R_pos_15_64 / pars$N_tot_15_64
+  prob_false_pos <- (1 - pars$p_specificity) * (1 - true_pos / pars$N_tot_15_64)
+
+  if (is.na(data$npos_15_64) || is.na(data$ntot_15_64)) {
+    ll_serology <- 0
+  } else {
+    ## TODO: would be tidier to do this in a helper function like
+    ## ll_binom; Ed can you convert this at some point please?
+    ll_serology <- dbinom(data$npos_15_64, data$ntot_15_64,
+                          prob_true_pos + prob_false_pos,
+                          log = TRUE)
+  }
+
+  ll_itu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
+    ll_admitted + ll_new + ll_serology
 }
 
 
@@ -245,4 +307,34 @@ sircovid_carehome_beds <- function(region) {
   }
 
   data$carehome_beds[[i]]
+}
+
+
+## TODO: p_specificity here needs to be tuneable, as that will be fit
+## within the mcmc
+carehomes_parameters_observation <- function() {
+  list(
+    ## People currently in ICU
+    phi_ICU = 0.95,
+    k_ICU = 2,
+    ## People currently in general beds
+    phi_general = 0.95,
+    k_general = 2,
+    ## Daily hospital deaths
+    phi_death_hosp = 1.15,
+    k_death_hosp = 2,
+    ## Daily community deaths
+    phi_death_comm = 1,
+    k_death_comm = 2,
+    ## Daily new confirmed admissions
+    phi_admitted = 0.95,
+    k_admitted = 2,
+    ## Daily new inpatient diagnoses
+    phi_new = 0.95,
+    k_new = 2,
+    ## Specificity for serology tests
+    p_specificity = 0.9,
+    # Rate for exponential noise, something big so noise is small (but
+    # non-zero))
+    exp_noise = 1e6)
 }

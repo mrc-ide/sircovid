@@ -26,6 +26,7 @@ test_that("can run the carehomes model", {
 
   expected <- rbind(
     c(37,       9,        34,       37,       108),
+    c(160,      67,       95,       123,      432),
     c(15836,    15870,    15742,    15942,    15594),
     c(295120,   294381,   294951,   294656,   295499),
     c(310956,   310250,   310693,   310598,   311088),
@@ -35,4 +36,23 @@ test_that("can run the carehomes model", {
     c(5245130,  5244105,  5247884,  5241942,  5237992),
     c(24088623, 24093283, 24089393, 24085759, 24074383))
   expect_equal(res, expected)
+})
+
+
+test_that("can run the particle filter on the model", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- carehomes_parameters(start_date, "england")
+  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                        start_date, pars$dt)
+
+  n_particles <- 100
+  pf <- mcstate::particle_filter$new(
+    data, carehomes, n_particles,
+    compare = carehomes_compare,
+    initial = carehomes_initial,
+    index = carehomes_index)
+
+  pars_obs <- carehomes_parameters_observation()
+
+  pf$run(pars, pars_obs, pars)
 })

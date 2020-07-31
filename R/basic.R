@@ -24,7 +24,6 @@ basic_compare <- function(state, prev_state, observed, pars) {
     return(NULL)
   }
 
-  ## sum model ITU cases output across ages/infectivities
   ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
   model_icu <- state[1, ]
   model_deaths <- state[2, ] - prev_state[2, ]
@@ -95,4 +94,22 @@ basic_parameters_progression <- function() {
        gamma_hosp = 2,
        gamma_ICU = 2 / 5,
        gamma_rec = 2 / 5)
+}
+
+
+basic_parameters_observation <- function() {
+  list(
+    phi_general = 0.95,
+    k_general = 2,
+    # what should this be?
+    phi_ICU = 0.95,
+    # what should this be?
+    k_ICU = 2,
+    # current proportion of England deaths over UK deaths
+    phi_death = 926 / 1019,
+    # what should this be?
+    k_death = 2,
+    # rate for exponential noise, something big so noise is small (but
+    # non-zero))
+    exp_noise = 1e6)
 }
