@@ -99,17 +99,19 @@ basic_parameters_progression <- function() {
 
 basic_parameters_observation <- function() {
   list(
+    ## People currently in general beds
     phi_general = 0.95,
     k_general = 2,
-    # what should this be?
+    ## People currently in ICU
     phi_ICU = 0.95,
-    # what should this be?
     k_ICU = 2,
-    # current proportion of England deaths over UK deaths
+    ## Daily deaths
+    ##
+    ## current proportion of England deaths over UK deaths (as of
+    ## end of March 2020)
     phi_death = 926 / 1019,
-    # what should this be?
     k_death = 2,
-    # rate for exponential noise, something big so noise is small (but
-    # non-zero))
+    ## rate for exponential noise, something big so noise is small (but
+    ## non-zero))
     exp_noise = 1e6)
 }

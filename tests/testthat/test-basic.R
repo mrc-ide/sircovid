@@ -31,20 +31,7 @@ test_that("can run the particle filter on the model", {
     initial = basic_initial,
     index = basic_index)
 
-  pars_obs <- list(
-    phi_general = 0.95,
-    k_general = 2,
-    # what should this be?
-    phi_ICU = 0.95,
-    # what should this be?
-    k_ICU = 2,
-    # current proportion of England deaths over UK deaths
-    phi_death = 926 / 1019,
-    # what should this be?
-    k_death = 2,
-    # rate for exponential noise, something big so noise is small (but
-    # non-zero))
-    exp_noise = 1e6)
+  pars_obs <- basic_parameters_observation()
 
   ## TODO: this is not yet reliable, nor probably correct
   expect_type(pf$run(pars, pars_obs, pars), "double")
