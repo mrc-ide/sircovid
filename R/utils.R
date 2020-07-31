@@ -33,11 +33,6 @@ verify_names <- function(x, required = NULL, optional = NULL,
 }
 
 
-vlapply <- function(fun, x, ...) {
-  vapply(fun, x, TRUE, ...)
-}
-
-
 vnapply <- function(fun, x, ...) {
   vapply(fun, x, 1.0, ...)
 }

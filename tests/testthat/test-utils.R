@@ -100,4 +100,7 @@ test_that("can convert and check R's dates", {
   expect_false(is_date("2020-05-02"))
   date <- as_date("2020-05-02")
   expect_identical(as_date(date), date)
+  expect_error(
+    as_date("02-05-2020"),
+    "Expected ISO dates or R dates - please convert")
 })
