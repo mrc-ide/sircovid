@@ -40,6 +40,9 @@ assert_sircovid_date <- function(date) {
   if (!is.numeric(date)) {
     stop("'date' must be numeric - did you forget sircovid_date()?")
   }
+  if (any(date < 0)) {
+    stop("Negative dates, sircovid_date likely applied twice")
+  }
   date
 }
 

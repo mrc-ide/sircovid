@@ -30,6 +30,14 @@ test_that("helper function can convert somewhat helpfully", {
 })
 
 
+test_that("negative numbers are not allowed", {
+  expect_error(assert_sircovid_date(-1),
+               "Negative dates, sircovid_date likely applied twice")
+  expect_error(assert_sircovid_date(c(10, -1, 29)),
+               "Negative dates, sircovid_date likely applied twice")
+})
+
+
 test_that("read population", {
   clear_cache()
   n <- sircovid_population("south_west")
