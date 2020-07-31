@@ -35,7 +35,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
-Requires: R (>= 3.1.0)
+Depends: R (>= 3.1.0)
 Imports:
     mcstate (== 0.1.1),
     socialmixr

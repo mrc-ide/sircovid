@@ -99,6 +99,7 @@ carehomes_index <- function(info) {
 ## (and indices above) to suit either the SPI-M or paper fits as we're
 ## using different streams; that will make the comparisons a touch
 ## faster and data copying smaller.
+##' @importFrom stats dbinom
 carehomes_compare <- function(state, prev_state, observed, pars) {
   ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
   model_icu <- state[1, ]
@@ -117,22 +118,22 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
                       pars$k_ICU, exp_noise)
-  ll_general <- ll_nbinom(data$general, pars$phi_general * model_general,
+  ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
                           pars$k_general, exp_noise)
-  ll_deaths_hosp <- ll_nbinom(data$deaths_hosp,
+  ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
                               pars$phi_death_hosp * pars$model_deaths_hosp,
                               pars$k_death_hosp, exp_noise)
-  ll_deaths_comm <- ll_nbinom(data$deaths_comm,
+  ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
                               pars$phi_death_comm * pars$model_deaths_comm,
                               pars$k_death_comm, exp_noise)
-  ll_deaths <- ll_nbinom(data$deaths,
+  ll_deaths <- ll_nbinom(observed$deaths,
                          pars$phi_death_hosp * pars$model_deaths_hosp +
                          pars$phi_death_comm * model_deaths_comm,
                          pars$k_death, exp_noise)
-  ll_admitted <- ll_nbinom(data$admitted,
+  ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * pars$model_admitted,
                            pars$k_admitted, exp_noise)
-  ll_new <- ll_nbinom(data$new, pars$phi_new * pars$model_new,
+  ll_new <- ll_nbinom(observed$new, pars$phi_new * pars$model_new,
                       pars$k_new, exp_noise)
 
   ## TODO: it would be easy to return the true_pos and positive tests
@@ -141,12 +142,12 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   prob_true_pos <- model_R_pos_15_64 / pars$N_tot_15_64
   prob_false_pos <- (1 - pars$p_specificity) * (1 - true_pos / pars$N_tot_15_64)
 
-  if (is.na(data$npos_15_64) || is.na(data$ntot_15_64)) {
+  if (is.na(observed$npos_15_64) || is.na(observed$ntot_15_64)) {
     ll_serology <- 0
   } else {
     ## TODO: would be tidier to do this in a helper function like
     ## ll_binom; Ed can you convert this at some point please?
-    ll_serology <- dbinom(data$npos_15_64, data$ntot_15_64,
+    ll_serology <- dbinom(observed$npos_15_64, observed$ntot_15_64,
                           prob_true_pos + prob_false_pos,
                           log = TRUE)
   }
@@ -162,6 +163,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 ##   [1..N_age, workers, residents]
 ##
 ## so we have length of N_age + 2
+##' @importFrom stats weighted.mean
 carehomes_severity <- function(p, population) {
   index_workers <- carehomes_index_workers()
   p_workers <- weighted.mean(p[index_workers], population[index_workers])

@@ -22,10 +22,11 @@
 ##' @examples
 ##' # A data sert that has data from the first of February to the first of
 ##' # March (one column of data called 'x')
-##' from <- as_date("2020-02-01")
-##' to <- as_date("2020-03-01")
-##' d <- data_frame(date = seq(from, to, by = 1),
-##'                  x = runif(to - from + 1))
+##' from <- as.Date("2020-02-01")
+##' to <- as.Date("2020-03-01")
+##' d <- data.frame(date = seq(from, to, by = 1),
+##'                 x = runif(to - from + 1),
+##'                 stringsAsFactors = FALSE)
 ##'
 ##' # Get this ready for sircovid/mcstate assuming the seeding starts on
 ##' # the 15th of January and we take 4 steps per day.
