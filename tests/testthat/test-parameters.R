@@ -58,6 +58,8 @@ test_that("dates must be sircovid_dates", {
 
 
 test_that("can read the default severity file", {
+  data <- sircovid_parameters_severity(NULL)
+
   expect_identical(
     sircovid_parameters_severity(severity_default()),
     data)

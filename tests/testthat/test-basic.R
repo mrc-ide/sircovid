@@ -46,5 +46,6 @@ test_that("can run the particle filter on the model", {
     # non-zero))
     exp_noise = 1e6)
 
-  pf$run(pars, pars_obs, pars)
+  ## TODO: this is not yet reliable, nor probably correct
+  expect_type(pf$run(pars, pars_obs, pars), "double")
 })

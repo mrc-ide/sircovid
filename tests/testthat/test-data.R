@@ -3,7 +3,7 @@ context("data")
 test_that("can create augmented data frame with sircovid_data", {
   start <- as_date("2020-01-15")
   from <- as_date("2020-02-01")
-  to <- as_date("2020-02-01")
+  to <- as_date("2020-03-01")
   d <- data_frame(date = seq(from, to, by = 1),
                   x = runif(to - from + 1))
   res <- sircovid_data(d, start_date = start, 1 / 4)
