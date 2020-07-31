@@ -266,7 +266,7 @@ carehomes_parameters_progression <- function() {
        s_mild = 1,
        s_ILI = 1,
        s_comm_D = 2,
-       s_hosp_D = 2 ,
+       s_hosp_D = 2,
        s_hosp_R = 2,
        s_ICU_D = 2,
        s_ICU_R = 2,

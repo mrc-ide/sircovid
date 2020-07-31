@@ -1,3 +1,5 @@
+# nolint start
+
 #E and R stage indexed by i,j,k with
 #i for the age group
 #j for the progression (not exponential latent and infectious period)
@@ -311,3 +313,5 @@ update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) + sum(I_mild)
 
 #Tracker of population size
 #dim(N) <- N_age
+
+# nolint end

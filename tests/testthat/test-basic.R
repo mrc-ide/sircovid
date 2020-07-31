@@ -33,17 +33,8 @@ test_that("can run the basic model", {
 test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england")
-
-  ## Some horrid off-by-one still lurking here. See here for more
-  ## details, and the accompanying PR
-  ## https://github.com/mrc-ide/mcstate/commit/97e68ade560c9028204e691bc7b57ef2ef2ef557
-  ## To make this work, we've manually inserted a fake reporting
-  ## period at the first row of the file so that our compare works
-  ## correctly; this should be something that mcstate can do for us.
-  data <- read_csv(sircovid_file("extdata/example.csv"))
-  data$date <- sircovid_date(data$date)
-  rate <- 1 / pars$dt
-  data <- mcstate::particle_filter_data(data, "date", rate, start_date)
+  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                        start_date, pars$dt)
 
   n_particles <- 100
   pf <- mcstate::particle_filter$new(
