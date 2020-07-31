@@ -46,3 +46,6 @@ Suggests:
     testthat
 RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
+Remotes:
+    mrc-ide/dust@87bb1e5,
+    mrc-ide/mcstate@05ccb23
