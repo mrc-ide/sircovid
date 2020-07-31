@@ -9,6 +9,18 @@ sircovid_age_bins <- function() {
 }
 
 
+check_age_bins <- function(age_headers) {
+  bins <- sircovid_age_bins()
+  expected <- sprintf("%d to %d", bins$start, bins$end)
+  if (!identical(age_headers, expected)) {
+    stop(sprintf("Incorrect age bands:\nexpected: %s\ngiven: %s",
+                 paste(squote(expected), collapse = ", "),
+                 paste(squote(age_headers), collapse = ", ")))
+  }
+  bins
+}
+
+
 sircovid_date <- function(date) {
   days_into_2020 <- as.numeric(as_date(date) - as_date("2019-12-31"))
   if (any(days_into_2020 < 0)) {

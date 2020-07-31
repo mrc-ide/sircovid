@@ -62,6 +62,21 @@ test_that("Use constant age bins", {
 })
 
 
+test_that("validate data against age bins", {
+  good <- sprintf("%d to %d", seq(0, 80, by = 5), c(seq(4, 79, by = 5), 100))
+  expect_equal(check_age_bins(good), sircovid_age_bins())
+
+  expect_error(check_age_bins(good[-1]),
+               "Incorrect age bands:")
+  expect_error(check_age_bins(good[-1]),
+               "expected: '0 to 4', '5 to 9'")
+  expect_error(check_age_bins(good[-1]),
+               "expected: '0 to 4', '5 to 9'")
+  expect_error(check_age_bins(good[-1]),
+               "given: '5 to 9', '10 to 14'")
+})
+
+
 test_that("ll_nbinom", {
   f <- function(model) {
     set.seed(1)
