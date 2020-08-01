@@ -1,3 +1,43 @@
+##' Parameters for the "basic" model.
+##'
+##' @title Parameters for the basic model
+##'
+##' @param start_date Thee start date, as a [sircovid_date()] (i.e.,
+##'   the number of days into 2020)
+##'
+##' @param region The region to run the model for. This will bee used
+##'   to get population data, which is currently fixed within the
+##'   package and is limited to "uk", the four constituent nations
+##'   ("england", "wales", "scotland", "northern_ireland") and thee 7
+##'   NHS regions (e.g., "midlands"). These names are case
+##'   insensitive.
+##'
+##' @param beta_date A vector of dates for changes in beta (the
+##'   contact rate parameter), or `NULL` if a single value is used for
+##'   all times (see [sircovid_parameters_beta()], where this is
+##'   passed as `date`).
+##'
+##' @param beta_value A vector of values for beta (the contact rate
+##'   parameter). If not given, and if `beta_date` is null then a
+##'   value of 0.08 will be used through the whole simulation,
+##'   otherwise if `beta_date` is `NULL` this must be a scalar. If
+##'   `beta_date` is given then `beta_date` and `beta_value` must have
+##'   the same length (see [sircovid_parameters_beta()], where this is
+##'   passed as `value`).
+##'
+##' @param severity_data A `data.frame` of severity data, or `NULL` to
+##'   use the default value within the package.  New severity data
+##'   comes from Bob Verity via the markovid package, and needs to be
+##'   carefully calibrated with the progression parameters.
+##'
+##' @return A list of inputs to the model, many of which are fixed and
+##'   represent data. These correspond largely to `user()` calls
+##'   within the odin code, though some are also used in processing
+##'   just before the model is run.
+##'
+##' @export
+##' @examples
+##' basic_parameters(sircovid_date("2020-02-01"), "uk")
 basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
                              severity_data = NULL) {
@@ -97,7 +137,7 @@ basic_parameters_progression <- function() {
 }
 
 
-basic_parameters_observation <- function() {
+basic_parameters_observation <- function(exp_noise = 1e6) {
   list(
     ## People currently in general beds
     phi_general = 0.95,
@@ -111,7 +151,7 @@ basic_parameters_observation <- function() {
     ## end of March 2020)
     phi_death = 926 / 1019,
     k_death = 2,
-    ## rate for exponential noise, something big so noise is small (but
-    ## non-zero))
-    exp_noise = 1e6)
+    ## rate for exponential noise, generally something big so noise is
+    ## small (but non-zero))
+    exp_noise = exp_noise)
 }

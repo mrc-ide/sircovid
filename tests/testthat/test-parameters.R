@@ -88,6 +88,17 @@ test_that("can validate a severity input", {
 })
 
 
+test_that("shared parameters accepts a beta vector", {
+  date <- sircovid_date("2020-02-01")
+  beta_date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
+  beta_value <- c(3, 1, 2)
+  pars <- sircovid_parameters_shared(date, "england", beta_date, beta_value)
+  expect_equal(
+    pars$beta_step,
+    sircovid_parameters_beta(beta_date, beta_value, 0.25))
+})
+
+
 test_that("shared parameters", {
   date <- sircovid_date("2020-02-01")
   pars <- sircovid_parameters_shared(date, "england", NULL, 0.1)
@@ -96,4 +107,5 @@ test_that("shared parameters", {
     c("hosp_transmission", "ICU_transmission", "comm_D_transmission",
       "dt", "initial_step", "N_age", "beta_step", "population"))
   expect_equal(pars$beta_step, 0.1)
+  expect_equal(pars$initial_step, date * 4)
 })

@@ -15,6 +15,56 @@ sircovid_parameters_shared <- function(start_date, region,
 }
 
 
+##' Construct the `beta` (contact rate) over time array for use within
+##' sircovid models.
+##'
+##' @title Construct beta array
+##'
+##' @param date Either `NULL`, if one value of beta will be used for
+##'   all time steps, or a vector of times that will be used as change
+##'   points. Must be provided as a [sircovid_date()], i.e., days into
+##'   2020.
+##'
+##' @param value A vector of values to use for beta - either a scalar
+##'   (if `date` is `NULL`) or a vector the same length as `date`.
+##'
+##' @param dt The timestep that will be used in the simulation. This
+##'   must be of the form `1 / n` where `n` is an integer representing
+##'   the number of steps per day. Ordinarily this is set by sircovid
+##'   internally to be `0.25` but this will become tuneable in a
+##'   future version.
+##'
+##' @return Returns a vector of beta values, one per timestep, until
+##'   the beta values stabilise.  After this point beta is assumed to
+##'   be constant.
+##'
+##' @export
+##' # If "date" is NULL, then beta is constant and this function is
+##' # trivial:
+##' sircovid_parameters_beta(NULL, 0.1, 0.25)
+##'
+##' # If a vector of dates is provided then, it's more complex. We'll
+##' # use dt of 1 here as it's easier to visualise
+##' t <- seq(0, 100, by = 1)
+##'
+##' date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
+##' value <- c(3, 1, 2)
+##' beta <- sircovid_parameters_beta(date, value, 1)
+##'
+##' # The implied time series looks like this:
+##' t <- seq(0, date[[3]])
+##' plot(t, beta, type = "o")
+##' points(date, value, pch = 19, col = "red")
+##'
+##' # After 2020-03-15, the beta value will be fixed at 2, the value
+##' # that it reached at that date.
+##'
+##' # If dt is less than 1, this is scaled, but the pattern of beta
+##' # change is the same
+##' beta <- sircovid_parameters_beta(date, value, 0.5)
+##' t <- seq(0, date[[3]], by = 0.5)
+##' plot(t, beta, type = "o", cex = 0.25)
+##' points(date, value, pch = 19, col = "red")
 sircovid_parameters_beta <- function(date, value, dt) {
   if (is.null(date)) {
     if (length(value) != 1L) {
