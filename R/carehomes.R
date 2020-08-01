@@ -1,13 +1,36 @@
-## To add: C_1, C_2 (defaults 1e-7)
+##' @name carehomes
+##' @title The carehomes sircovid model
+##'
+##' Our "current" sircovid model. This is a dust model.
+##'
+##' @export carehomes
+NULL
+
+
+##' Parameters for the "[carehomes]" model.
+##'
+##' @title Parameters for the carehomes model
+##'
+##' @inheritParams parameters_basic
+##'
+##' @return A list of inputs to the model, many of which are fixed and
+##'   represent data. These correspond largely to `user()` calls
+##'   within the odin code, though some are also used in processing
+##'   just before the model is run.
+##'
+##' @export
+##' @examples
+##' carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity_data = NULL) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
-  ## These should be flexible and will be set in the pmcmc so will
-  ## move up to the argument list of this function; these are used
-  ## only here in the setup and are not used in the model itself.
+  ## TODO: These should be flexible and will be set in the pmcmc so
+  ## will move up to the argument list of this function; these are
+  ## used only here in the setup and are not used in the model itself,
+  ## which means we need to think how this interacts with the pmcmc
   p_death_carehome <- 0.7
   eps <- 0.1
   C_1 <- 4e-5
@@ -68,9 +91,9 @@ carehomes_parameters <- function(start_date, region,
 
   ret$N_tot <- N_tot
 
-  ## Adding this here, but better would be to pass N_age as-is, then
-  ## update the leading dimension to something more accurate (e.g.,
-  ## N_groups, setting this as N_groups <- N_age + 2)
+  ## TODO: Adding this here, but better would be to pass N_age as-is,
+  ## then update the leading dimension to something more accurate
+  ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
   c(ret,
@@ -79,6 +102,25 @@ carehomes_parameters <- function(start_date, region,
 }
 
 
+##' Index of "interesting" elements for the carehomes model. This function
+##' conforms to the mcstate interface.
+##'
+##' @title Index of carehomes model
+##'
+##' @inheritParams basic_index
+##'
+##' @return A list with element `run`, indicating the locations of (in
+##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
+##'   in hospital, (5) total deaths, (6) cumulative confirmed
+##'   admissions,(7) cumulative confirmed new admissions, (8)
+##'   recovered pre seroconversion (15 - 64 year olds only), (9)
+##'   recovered seronegative and (10) recovered seropositive.
+##'
+##' @export
+##' @examples
+##' p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+##' mod <- carehomes$new(p, 0, 10)
+##' carehomes_index(mod$info())
 carehomes_index <- function(info) {
   len <- vnapply(info, prod)
   start <- cumsum(len) - len + 1L
@@ -219,6 +261,19 @@ carehomes_transmission_matrix <- function(eps, C_1, C_2, population) {
 }
 
 
+##' Create initial conditions for the carehomes model. This matches the
+##' interface required for mcstate
+##'
+##' @title Initial conditions for the carehomes model
+##'
+##' @inheritParams basic_initial
+##'
+##' @return A numeric vector of initial conditions
+##' @export
+##' @examples
+##' p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+##' mod <- carehomes$new(p, 0, 10)
+##' carehomes_initial(mod$info(), 10, p)
 carehomes_initial <- function(info, n_particles, pars) {
   ## TODO: this will simplify once we get the index here, see
   ## odin.dust issue #24
@@ -229,10 +284,10 @@ carehomes_initial <- function(info, n_particles, pars) {
   ## This corresponds to the 15-19y age bracket for compatibility with
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
-  seed_age_band <- 3L
-  index_I <- start[["I_asympt"]] + seed_age_band
-  index_R_pre <- start[["R_pre"]] + seed_age_band
-  index_PCR_pos <- start[["PCR_pos"]] + seed_age_band
+  seed_age_band <- 4L
+  index_I <- start[["I_asympt"]] + seed_age_band - 1L
+  index_R_pre <- start[["R_pre"]] + seed_age_band - 1L
+  index_PCR_pos <- start[["PCR_pos"]] + seed_age_band - 1L
   index_S <- seq.int(start[["S"]], length.out = len[["S"]])
   index_N_tot <- seq.int(start[["N_tot"]], length.out = len[["N_tot"]])
   index_N_tot2 <- start[["N_tot2"]]
@@ -312,9 +367,18 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-## TODO: p_specificity here needs to be tuneable, as that will be fit
-## within the mcmc
-carehomes_parameters_observation <- function() {
+##' Parameters for the observation function for the carehomes model. Used
+##' in [carehomes_compare()]
+##'
+##' @title Observation parameters for the carehomes model
+##'
+##' @inheritParams basic_parameters_observation
+##'
+##' @return A list of parameters
+##' @export
+##' @examples
+##' carehomes_parameters_observation()
+carehomes_parameters_observation <- function(exp_noise = 1e6) {
   list(
     ## People currently in ICU
     phi_ICU = 0.95,
@@ -335,8 +399,11 @@ carehomes_parameters_observation <- function() {
     phi_new = 0.95,
     k_new = 2,
     ## Specificity for serology tests
+    ##
+    ## TODO: p_specificity here needs to be tuneable, as that will be
+    ## fit within the mcmc
     p_specificity = 0.9,
-    # Rate for exponential noise, something big so noise is small (but
-    # non-zero))
-    exp_noise = 1e6)
+    ## rate for exponential noise, generally something big so noise is
+    ## small (but non-zero))
+    exp_noise = exp_noise)
 }

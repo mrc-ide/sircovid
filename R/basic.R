@@ -1,7 +1,7 @@
 ##' @name basic
 ##' @title The basic sircovid model
 ##'
-##' The "basic" sircovid model. This is a dust model
+##' The "basic" sircovid model. This is a dust model.
 ##' @export basic
 ##' @examples
 ##' # Set up the basic model for England with default parameters and
@@ -25,7 +25,7 @@
 ##' mod$state(1:6)
 NULL
 
-##' Parameters for the "basic" model.
+##' Parameters for the "[basic]" model.
 ##'
 ##' @title Parameters for the basic model
 ##'
@@ -230,7 +230,7 @@ basic_parameters_progression <- function() {
 }
 
 
-##' Paramters for the observation function for the basic model. Used
+##' Parameters for the observation function for the basic model. Used
 ##' in [basic_compare()]
 ##'
 ##' @title Observation parameters for the basic model
