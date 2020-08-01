@@ -101,6 +101,35 @@ basic_index <- function(info) {
 }
 
 
+##' Compare observed and modelled data from the basic model. This
+##' conforms to the mcstate interface.s
+##'
+##' @title Compare observed and modelled data for the basic model
+##'
+##' @param state State vector for the end of the current day. This is
+##'   assumed to be filtered following [basic_index()] so contains
+##'   rows corresponding to itu and deaths.
+##'
+##' @param prev_state State vector for the end of the previous day, as
+##'   for `state`.
+##'
+##' @param observed Observed data. This will be a list with elements
+##'   `itu` (number of itu/icu beds occupied) and `deaths` (number of
+##'   deaths over this day).
+##'
+##' @param pars A list of observation parameters, as created by
+##'
+##' @return A vector of log likelihoods, the same length as the number
+##'   of particles (the number of columns in the modelled state)
+##'
+##' @export
+##' @examples
+##' state <- rbind(10:15, 1:6) # ICU, D
+##' prev_state <- matrix(1, 2, 6)
+##' observed <- list(itu = 13, deaths = 3)
+##' pars <- basic_parameters_observation()
+##' basic_compare(state, prev_state, observed, pars)
+##' basic_compare(state * 5, prev_state, observed, pars)
 basic_compare <- function(state, prev_state, observed, pars) {
   if (is.na(observed$itu) && is.na(observed$deaths)) {
     return(NULL)
@@ -201,6 +230,20 @@ basic_parameters_progression <- function() {
 }
 
 
+##' Paramters for the observation function for the basic model. Used
+##' in [basic_compare()]
+##'
+##' @title Observation parameters for the basic model
+##'
+##' @param exp_noise Rate of exponential noise - typically set to a
+##'   large value so that noise is small but non-zero. If set to `Inf`
+##'   then there is no noise in the observation process (not realistic
+##'   but useful for testing).
+##'
+##' @return A list of parameters
+##' @export
+##' @examples
+##' basic_parameters_observation()
 basic_parameters_observation <- function(exp_noise = 1e6) {
   list(
     ## People currently in general beds
