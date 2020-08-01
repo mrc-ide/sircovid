@@ -79,3 +79,31 @@ test_that("observation function correctly combines likelihoods", {
   expect_equal(ll2, ll_deaths)
   expect_equal(ll3, ll1 + ll2)
 })
+
+
+test_that("can compute initial conditions", {
+  p <- basic_parameters(sircovid_date("2020-02-07"), "england")
+  mod <- basic$new(p, 0, 10)
+  info <- mod$info()
+
+  initial <- basic_initial(info, 10, p)
+  expect_setequal(names(initial), c("state", "step"))
+  expect_equal(initial$step, p$initial_step)
+
+  ## TODO: this index faff simplifies away after odin.dust improvements
+  len <- vnapply(info, prod)
+  start <- cumsum(len) - len + 1L
+  expect_equal(
+    initial$state[[start[["N_tot"]]]],
+    sum(p$population))
+
+  i_S <- seq(start[["S"]], by = 1, length.out = info[["S"]])
+  i_I <- seq(start[["I_asympt"]], by = 1, length.out = info[["I_asympt"]][[1]])
+  expect_equal(
+    initial$state[i_S] + initial$state[i_I],
+    p$population)
+
+  expect_equal(
+    initial$state[i_I],
+    append(rep(0, 16), 10, after = 3))
+})
