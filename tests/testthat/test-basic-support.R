@@ -13,6 +13,7 @@ test_that("basic progression parameters", {
   ## you write tests here that reflect that?
 })
 
+
 test_that("basic_parameters returns a list of parameters", {
   date <- sircovid_date("2020-02-01")
   beta_date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
@@ -28,6 +29,15 @@ test_that("basic_parameters returns a list of parameters", {
 
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   expect_identical(p[names(shared)], shared)
+})
+
+
+test_that("can tune the noise parameter", {
+  p1 <- basic_parameters_observation()
+  p2 <- basic_parameters_observation(1e4)
+  expect_setequal(names(p1), names(p2))
+  v <- setdiff(names(p1), "exp_noise")
+  expect_mapequal(
 })
 
 
