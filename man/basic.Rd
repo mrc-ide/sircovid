@@ -4,11 +4,11 @@
 \alias{basic}
 \title{The basic sircovid model
 
-The "basic" sircovid model. This is a dust model}
+The "basic" sircovid model. This is a dust model.}
 \description{
 The basic sircovid model
 
-The "basic" sircovid model. This is a dust model
+The "basic" sircovid model. This is a dust model.
 }
 \examples{
 # Set up the basic model for England with default parameters and

@@ -11,7 +11,7 @@ NULL
 ##'
 ##' @title Parameters for the carehomes model
 ##'
-##' @inheritParams parameters_basic
+##' @inheritParams basic_parameters
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls

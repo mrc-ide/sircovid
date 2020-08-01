@@ -16,7 +16,7 @@ but useful for testing).}
 A list of parameters
 }
 \description{
-Paramters for the observation function for the basic model. Used
+Parameters for the observation function for the basic model. Used
 in \code{\link[=basic_compare]{basic_compare()}}
 }
 \examples{
