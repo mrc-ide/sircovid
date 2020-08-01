@@ -113,7 +113,7 @@ carehomes_parameters <- function(start_date, region,
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
 ##'   admissions,(7) cumulative confirmed new admissions, (8)
-##'   recovered pre seroconversion (15 - 64 year olds only), (9)
+##'   recovered pre seroconversion (15 - 64 year-olds only), (9)
 ##'   recovered seronegative and (10) recovered seropositive.
 ##'
 ##' @export
@@ -137,12 +137,45 @@ carehomes_index <- function(info) {
 }
 
 
-## TODO: we might refactor this to produce a subset of comparisons
-## (and indices above) to suit either the SPI-M or paper fits as we're
-## using different streams; that will make the comparisons a touch
-## faster and data copying smaller.
+##' Compare observed and modelled data from the [carehomes] model. This
+##' conforms to the mcstate interface.
+##'
+##' @title Compare observed and modelled data for the carehomes model
+##'
+##' @param state State vector for the end of the current day. This is
+##'   assumed to be filtered following [carehomes_index()] so contains
+##'   10 rows corresponding to itu, admissions, deaths and
+##'   seroconversion compartments.
+##'
+##' @param prev_state State vector for the end of the previous day, as
+##'   for `state`.
+##'
+##' @param observed Observed data. This will be a list with elements
+##'   `itu` (number of itu/icu beds occupied), `general` (number of
+##'   general beds occupied), `deaths_hosp` (cumulative deaths in
+##'   hospital settings), `deaths_comm` (cumulative deaths in
+##'   community settings), `deaths` (combined deaths - used by some
+##'   nations - if given then `deaths_hosp` and `deaths_comm` must be
+##'   `NA`), `admitted` (hospital admissions), `new` (new cases),
+##'   `npos_15_64` (number of people seropositive in ages 15-64) and
+##'   `ntot_15_64` (number of people tested in ages 15-64).
+##'
+##'
+##' @param pars A list of observation parameters, as created by
+##'   [carehomes_parameters_observation()]
+##'
+##' @return A vector of log likelihoods, the same length as the number
+##'   of particles (the number of columns in the modelled state)
+##'
+##' @export
 ##' @importFrom stats dbinom
 carehomes_compare <- function(state, prev_state, observed, pars) {
+  ## TODO: we might refactor this to produce a subset of comparisons
+  ## (and indices above) to suit either the SPI-M or paper fits as
+  ## we're using different streams; that will make the comparisons a
+  ## touch faster and data copying smaller. This requires a bit of a
+  ## rethink though as it affects how we do index functions too.
+
   ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
   model_icu <- state[1, ]
   model_general <- state[2, ]

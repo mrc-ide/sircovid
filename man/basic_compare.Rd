@@ -18,7 +18,8 @@ for \code{state}.}
 \code{itu} (number of itu/icu beds occupied) and \code{deaths} (number of
 deaths over this day).}
 
-\item{pars}{A list of observation parameters, as created by}
+\item{pars}{A list of observation parameters, as created by
+\code{\link[=basic_parameters_observation]{basic_parameters_observation()}}}
 }
 \value{
 A vector of log likelihoods, the same length as the number
@@ -26,7 +27,7 @@ of particles (the number of columns in the modelled state)
 }
 \description{
 Compare observed and modelled data from the basic model. This
-conforms to the mcstate interface.s
+conforms to the mcstate interface.
 }
 \examples{
 state <- rbind(10:15, 1:6) # ICU, D

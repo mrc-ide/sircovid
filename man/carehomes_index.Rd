@@ -15,7 +15,7 @@ A list with element \code{run}, indicating the locations of (in
 order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 in hospital, (5) total deaths, (6) cumulative confirmed
 admissions,(7) cumulative confirmed new admissions, (8)
-recovered pre seroconversion (15 - 64 year olds only), (9)
+recovered pre seroconversion (15 - 64 year-olds only), (9)
 recovered seronegative and (10) recovered seropositive.
 }
 \description{
