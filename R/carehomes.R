@@ -59,41 +59,17 @@ carehomes_parameters <- function(start_date, region,
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, ret$population)
 
-  ## Our core S0 calculation is more complicated than the basic model
-  ## because we have to add the carehome workers and residents, *and*
-  ## remove them from the core population. This extracts carehome
-  ## residents from the older groups of the population, weighted
-  ## towards the oldest, and extracts carehome workers from most
-  ## working ages, evenly across the population.
-  N_tot <- c(ret$population, carehome_workers, carehome_residents)
-
-  index_workers <- carehomes_index_workers()
-  weights_workers <- N_tot[index_workers] / sum(N_tot[index_workers])
-  index_residents <- which(sircovid_age_bins()$start >= 65)
-  weights_residents <- c(0.05, 0.05, 0.15, 0.75)
-
-  N_tot[index_residents] <-
-    round(N_tot[index_residents] - carehome_residents * weights_residents)
-  N_tot[index_workers] <-
-    round(N_tot[index_workers] - carehome_workers * weights_workers)
+  ret$N_tot <- carehomes_population(ret$population, carehome_workers,
+                                    carehome_residents)
 
   ## This is used to normalise the serology counts (converting them
   ## from number of positive/negative tests into a fraction). This is
   ## constant over the simulation, being the total population size of
   ## 15 to 64 year olds.
-  N_tot_15_64 <- sum(N_tot[4:13])
+  N_tot_15_64 <- sum(ret$N_tot[4:13])
 
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise, N_tot_15_64)
-
-  if (any(N_tot[index_residents] < 0)) {
-    stop("Not enough population to meet care home occupancy")
-  }
-  if (any(N_tot[index_workers] < 0)) {
-    stop("Not enough population to be care workers")
-  }
-
-  ret$N_tot <- N_tot
 
   ## TODO: Adding this here, but better would be to pass N_age as-is,
   ## then update the leading dimension to something more accurate
@@ -436,4 +412,34 @@ carehomes_parameters_observation <- function(exp_noise, N_tot_15_64) {
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)
+}
+
+
+carehomes_population <- function(population, carehome_workers,
+                                 carehome_residents) {
+  ## Our core S0 calculation is more complicated than the basic model
+  ## because we have to add the carehome workers and residents, *and*
+  ## remove them from the core population. This extracts carehome
+  ## residents from the older groups of the population, weighted
+  ## towards the oldest, and extracts carehome workers from most
+  ## working ages, evenly across the population.
+  N_tot <- c(population, carehome_workers, carehome_residents)
+
+  index_workers <- carehomes_index_workers()
+  weights_workers <- N_tot[index_workers] / sum(N_tot[index_workers])
+  index_residents <- which(sircovid_age_bins()$start >= 65)
+  weights_residents <- c(0.05, 0.05, 0.15, 0.75)
+
+  N_tot[index_residents] <-
+    round(N_tot[index_residents] - carehome_residents * weights_residents)
+  N_tot[index_workers] <-
+    round(N_tot[index_workers] - carehome_workers * weights_workers)
+
+  if (any(N_tot[index_residents] < 0)) {
+    stop("Not enough population to meet care home occupancy")
+  }
+  if (any(N_tot[index_workers] < 0)) {
+    stop("Not enough population to be care workers")
+  }
+  N_tot
 }
