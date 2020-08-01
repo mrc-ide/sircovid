@@ -39,6 +39,7 @@ sircovid_parameters_shared <- function(start_date, region,
 ##'   be constant.
 ##'
 ##' @export
+##' @examples
 ##' # If "date" is NULL, then beta is constant and this function is
 ##' # trivial:
 ##' sircovid_parameters_beta(NULL, 0.1, 0.25)
