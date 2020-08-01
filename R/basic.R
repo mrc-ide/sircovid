@@ -57,6 +57,11 @@ NULL
 ##'   comes from Bob Verity via the markovid package, and needs to be
 ##'   carefully calibrated with the progression parameters.
 ##'
+##' @param exp_noise Rate of exponential noise used in the compare
+##'   function - typically set to a large value so that noise is small
+##'   but non-zero. If set to `Inf` then there is no noise in the
+##'   observation process (not realistic but useful for testing).
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -67,10 +72,12 @@ NULL
 ##' basic_parameters(sircovid_date("2020-02-01"), "uk")
 basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
-                             severity_data = NULL) {
+                             severity_data = NULL,
+                             exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
   ret$m <- sircovid_transmission_matrix()
+  ret$observation <- basic_parameters_observation(exp_noise)
   c(ret,
     sircovid_parameters_severity(severity_data),
     basic_parameters_progression())
@@ -117,8 +124,8 @@ basic_index <- function(info) {
 ##'   `itu` (number of itu/icu beds occupied) and `deaths` (number of
 ##'   deaths over this day).
 ##'
-##' @param pars A list of observation parameters, as created by
-##'   [basic_parameters_observation()]
+##' @param pars A list of parameters, as created by
+##'   [basic_parameters()]
 ##'
 ##' @return A vector of log likelihoods, the same length as the number
 ##'   of particles (the number of columns in the modelled state)
@@ -128,7 +135,7 @@ basic_index <- function(info) {
 ##' state <- rbind(10:15, 1:6) # ICU, D
 ##' prev_state <- matrix(1, 2, 6)
 ##' observed <- list(itu = 13, deaths = 3)
-##' pars <- basic_parameters_observation()
+##' pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
 ##' basic_compare(state, prev_state, observed, pars)
 ##' basic_compare(state * 5, prev_state, observed, pars)
 basic_compare <- function(state, prev_state, observed, pars) {
@@ -141,6 +148,7 @@ basic_compare <- function(state, prev_state, observed, pars) {
   model_deaths <- state[2, ] - prev_state[2, ]
 
   ## Noise parameter shared across both deaths and icu
+  pars <- pars$observation
   exp_noise <- pars$exp_noise
 
   ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
@@ -231,21 +239,7 @@ basic_parameters_progression <- function() {
 }
 
 
-##' Parameters for the observation function for the basic model. Used
-##' in [basic_compare()]
-##'
-##' @title Observation parameters for the basic model
-##'
-##' @param exp_noise Rate of exponential noise - typically set to a
-##'   large value so that noise is small but non-zero. If set to `Inf`
-##'   then there is no noise in the observation process (not realistic
-##'   but useful for testing).
-##'
-##' @return A list of parameters
-##' @export
-##' @examples
-##' basic_parameters_observation()
-basic_parameters_observation <- function(exp_noise = 1e6) {
+basic_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in general beds
     phi_general = 0.95,

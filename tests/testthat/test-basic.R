@@ -31,8 +31,7 @@ test_that("can run the particle filter on the model", {
     initial = basic_initial,
     index = basic_index)
 
-  pars_obs <- basic_parameters_observation()
-
   ## TODO: this is not yet reliable, nor probably correct
-  expect_type(pf$run(pars, pars_obs, pars), "double")
+  ## TODO: mcstate should spread out parameters like this for us by default
+  expect_type(pf$run(pars, pars, pars), "double")
 })

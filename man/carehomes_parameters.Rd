@@ -9,7 +9,8 @@ carehomes_parameters(
   region,
   beta_date = NULL,
   beta_value = NULL,
-  severity_data = NULL
+  severity_data = NULL,
+  exp_noise = 1e+06
 )
 }
 \arguments{
@@ -40,6 +41,11 @@ passed as \code{value}).}
 use the default value within the package.  New severity data
 comes from Bob Verity via the markovid package, and needs to be
 carefully calibrated with the progression parameters.}
+
+\item{exp_noise}{Rate of exponential noise used in the compare
+function - typically set to a large value so that noise is small
+but non-zero. If set to \code{Inf} then there is no noise in the
+observation process (not realistic but useful for testing).}
 }
 \value{
 A list of inputs to the model, many of which are fixed and

@@ -25,8 +25,8 @@ nations - if given then \code{deaths_hosp} and \code{deaths_comm} must be
 \code{npos_15_64} (number of people seropositive in ages 15-64) and
 \code{ntot_15_64} (number of people tested in ages 15-64).}
 
-\item{pars}{A list of observation parameters, as created by
-\code{\link[=carehomes_parameters_observation]{carehomes_parameters_observation()}}}
+\item{pars}{A list of parameters, as created by
+\code{\link[=carehomes_parameters]{carehomes_parameters()}}}
 }
 \value{
 A vector of log likelihoods, the same length as the number

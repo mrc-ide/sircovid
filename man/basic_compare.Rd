@@ -18,8 +18,8 @@ for \code{state}.}
 \code{itu} (number of itu/icu beds occupied) and \code{deaths} (number of
 deaths over this day).}
 
-\item{pars}{A list of observation parameters, as created by
-\code{\link[=basic_parameters_observation]{basic_parameters_observation()}}}
+\item{pars}{A list of parameters, as created by
+\code{\link[=basic_parameters]{basic_parameters()}}}
 }
 \value{
 A vector of log likelihoods, the same length as the number
@@ -33,7 +33,7 @@ conforms to the mcstate interface.
 state <- rbind(10:15, 1:6) # ICU, D
 prev_state <- matrix(1, 2, 6)
 observed <- list(itu = 13, deaths = 3)
-pars <- basic_parameters_observation()
+pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
 basic_compare(state, prev_state, observed, pars)
 basic_compare(state * 5, prev_state, observed, pars)
 }

@@ -42,8 +42,14 @@ test_that("carehomes_parameters returns a list of parameters", {
   severity <- carehomes_parameters_severity(NULL, p$population, 0.7)
   expect_identical(p[names(severity)], severity)
 
+  expect_equal(
+    p$observation,
+    carehomes_parameters_observation(1e6, p$observation$N_tot_15_64))
+  expect_equal(p$observation$N_tot_15_64, sum(p$N_tot[4:13]))
+
   extra <- setdiff(names(p),
-                   c("m", names(shared), names(progression), names(severity)))
+                   c("m", "observation",
+                     names(shared), names(progression), names(severity)))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers"))
@@ -90,13 +96,14 @@ test_that("Can compute transmission matrix for carehomes model", {
 
 
 test_that("can tune the noise parameter", {
-  p1 <- carehomes_parameters_observation()
-  p2 <- carehomes_parameters_observation(1e4)
+  p1 <- carehomes_parameters_observation(1e6, 100)
+  p2 <- carehomes_parameters_observation(1e4, 100)
   expect_setequal(names(p1), names(p2))
   v <- setdiff(names(p1), "exp_noise")
   expect_mapequal(p1[v], p2[v])
-  expect_equal(p1$exp_noise, 1e6) # default
-  expect_equal(p2$exp_noise, 1e4) # given
+  expect_equal(p1$exp_noise, 1e6)
+  expect_equal(p2$exp_noise, 1e4)
+  expect_equal(p1$N_tot_15_64, 100)
 })
 
 

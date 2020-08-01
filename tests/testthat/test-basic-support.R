@@ -33,7 +33,7 @@ test_that("basic_parameters returns a list of parameters", {
 
 
 test_that("can tune the noise parameter", {
-  p1 <- basic_parameters_observation()
+  p1 <- basic_parameters_observation(1e6)
   p2 <- basic_parameters_observation(1e4)
   expect_setequal(names(p1), names(p2))
   v <- setdiff(names(p1), "exp_noise")
@@ -64,7 +64,7 @@ test_that("basic compare function returns NULL if no data present", {
   state <- c(0, 0) # ICU, D
   prev_state <- c(0, 0) # ICU, D
   observed <- list(itu = NA, deaths = NA)
-  pars <- basic_parameters_observation(Inf)
+  pars <- basic_parameters(sircovid_date("2020-01-01"), "uk", exp_noise = Inf)
   expect_null(basic_compare(state, prev_state, observed, pars))
 })
 
@@ -76,17 +76,18 @@ test_that("observation function correctly combines likelihoods", {
   observed2 <- list(itu = NA, deaths = 3)
   observed3 <- list(itu = 13, deaths = 3)
 
-  pars <- basic_parameters_observation(Inf)
+  pars <- basic_parameters(sircovid_date("2020-01-01"), "uk", exp_noise = Inf)
   ll1 <- basic_compare(state, prev_state, observed1, pars)
   ll2 <- basic_compare(state, prev_state, observed2, pars)
   ll3 <- basic_compare(state, prev_state, observed3, pars)
 
   expect_length(ll3, 6)
 
-  ll_itu <- ll_nbinom(observed3$itu, pars$phi_ICU * state[1, ],
-                      pars$k_ICU, Inf)
-  ll_deaths <- ll_nbinom(observed3$deaths, pars$phi_death * (state[2, ] - 1),
-                         pars$k_death, Inf)
+  ll_itu <- ll_nbinom(observed3$itu, pars$observation$phi_ICU * state[1, ],
+                      pars$observation$k_ICU, Inf)
+  ll_deaths <- ll_nbinom(observed3$deaths,
+                         pars$observation$phi_death * (state[2, ] - 1),
+                         pars$observation$k_death, Inf)
   expect_equal(ll1, ll_itu)
   expect_equal(ll2, ll_deaths)
   expect_equal(ll3, ll1 + ll2)
