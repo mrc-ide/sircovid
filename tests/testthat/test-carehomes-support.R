@@ -159,3 +159,17 @@ test_that("Can compute initial conditions", {
   ## 19 (S) + 19 (N_tot) + 4 (N_tot2 + I_asympt[4] + R_pre[4] + PCR_pos[4])
   expect_equal(sum(initial$state != 0), 42)
 })
+
+
+test_that("get carehomes population can get the population", {
+  expect_equal(sircovid_carehome_beds("uk"), 537521)
+  expect_equal(sircovid_carehome_beds("UK"), 537521)
+})
+
+
+test_that("sircovid_carehome_beds throws sensible error on invalid input", {
+  expect_error(sircovid_carehome_beds(NULL), "'region' must not be NULL")
+  expect_error(
+    sircovid_carehome_beds("oxfordshire"),
+    "Carehome beds not found for 'oxfordshire': must be one of 'east_of_")
+})
