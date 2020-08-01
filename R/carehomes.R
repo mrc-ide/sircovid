@@ -23,7 +23,8 @@ NULL
 ##' carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
-                                 severity_data = NULL) {
+                                 severity_data = NULL,
+                                 exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
@@ -81,6 +82,9 @@ carehomes_parameters <- function(start_date, region,
   ## constant over the simulation, being the total population size of
   ## 15 to 64 year olds.
   N_tot_15_64 <- sum(N_tot[4:13])
+
+  ## All observation parameters:
+  ret$observation <- carehomes_parameters_observation(exp_noise, N_tot_15_64)
 
   if (any(N_tot[index_residents] < 0)) {
     stop("Not enough population to meet care home occupancy")
@@ -161,8 +165,8 @@ carehomes_index <- function(info) {
 ##'   `ntot_15_64` (number of people tested in ages 15-64).
 ##'
 ##'
-##' @param pars A list of observation parameters, as created by
-##'   [carehomes_parameters_observation()]
+##' @param pars A list of parameters, as created by
+##'   [carehomes_parameters()]
 ##'
 ##' @return A vector of log likelihoods, the same length as the number
 ##'   of particles (the number of columns in the modelled state)
@@ -188,7 +192,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_R_neg_15_64 <- state[9, ]
   model_R_pos_15_64 <- state[10, ]
 
-  ## Noise parameter shared across both deaths and icu
+  pars <- pars$observation
   exp_noise <- pars$exp_noise
 
   ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
@@ -196,19 +200,19 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
                           pars$k_general, exp_noise)
   ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
-                              pars$phi_death_hosp * pars$model_deaths_hosp,
+                              pars$phi_death_hosp * model_deaths_hosp,
                               pars$k_death_hosp, exp_noise)
   ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
-                              pars$phi_death_comm * pars$model_deaths_comm,
+                              pars$phi_death_comm * model_deaths_comm,
                               pars$k_death_comm, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths,
-                         pars$phi_death_hosp * pars$model_deaths_hosp +
+                         pars$phi_death_hosp * model_deaths_hosp +
                          pars$phi_death_comm * model_deaths_comm,
                          pars$k_death, exp_noise)
   ll_admitted <- ll_nbinom(observed$admitted,
-                           pars$phi_admitted * pars$model_admitted,
+                           pars$phi_admitted * model_admitted,
                            pars$k_admitted, exp_noise)
-  ll_new <- ll_nbinom(observed$new, pars$phi_new * pars$model_new,
+  ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$k_new, exp_noise)
 
   ## TODO: it would be easy to return the true_pos and positive tests
@@ -400,18 +404,7 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-##' Parameters for the observation function for the carehomes model. Used
-##' in [carehomes_compare()]
-##'
-##' @title Observation parameters for the carehomes model
-##'
-##' @inheritParams basic_parameters_observation
-##'
-##' @return A list of parameters
-##' @export
-##' @examples
-##' carehomes_parameters_observation()
-carehomes_parameters_observation <- function(exp_noise = 1e6) {
+carehomes_parameters_observation <- function(exp_noise, N_tot_15_64) {
   list(
     ## People currently in ICU
     phi_ICU = 0.95,
@@ -425,6 +418,8 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
     ## Daily community deaths
     phi_death_comm = 1,
     k_death_comm = 2,
+    ## Daily total deaths (if not split)
+    k_death = 2,
     ## Daily new confirmed admissions
     phi_admitted = 0.95,
     k_admitted = 2,
@@ -436,6 +431,8 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
     ## TODO: p_specificity here needs to be tuneable, as that will be
     ## fit within the mcmc
     p_specificity = 0.9,
+    ## Population size of eligible 15-64 year olds for serology testing
+    N_tot_15_64 = N_tot_15_64,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)

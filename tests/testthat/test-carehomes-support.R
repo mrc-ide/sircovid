@@ -173,3 +173,58 @@ test_that("sircovid_carehome_beds throws sensible error on invalid input", {
     sircovid_carehome_beds("oxfordshire"),
     "Carehome beds not found for 'oxfordshire': must be one of 'east_of_")
 })
+
+
+## TODO: Ed - you had said that you had ideas for some more systematic
+## testing here.  This will also get easier to do if we move to having
+## a function generator given a data set.
+test_that("carehomes_compare combines likelihood correctly", {
+  state <- rbind(
+    10:15, # ICU
+    20:25, # general
+    1:6,   # D_comm_tot
+    3:8,   # D_hosp_tot
+    4:9,   # D_tot
+    50:55, # cum_admit_conf
+    60:65, # cum_new_conf
+    80:85, # R_pre_15_64
+    30:35, # R_neg_15_64
+    40:45) # R_pos_15_64
+  prev_state <- array(1, dim(state))
+  observed <- list(
+    itu = 13,
+    general = 23,
+    deaths_hosp = 5,
+    deaths_comm = 3,
+    deaths = 8,
+    admitted = 53,
+    new = 63,
+    npos_15_64 = 43,
+    ntot_15_64 = 83)
+  date <- sircovid_date("2020-01-01")
+  pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
+
+  observed_keep <- function(nms) {
+    observed[setdiff(names(observed), nms)] <- NA_real_
+    observed
+  }
+  observed_drop <- function(nms) {
+    observed[nms] <- NA_real_
+    observed
+  }
+
+  ## This function is more complicated to test than the basic model
+  ## because it's not a simple sum
+  nms_sero <- c("npos_15_64", "ntot_15_64")
+  parts <- c(as.list(setdiff(names(observed), nms_sero)), list(nms_sero))
+
+  ll_parts <- lapply(parts, function(x)
+    carehomes_compare(state, prev_state, observed_keep(x), pars))
+
+  ## Extremely light testing, though this has already flushed out some
+  ## issues
+  expect_true(all(lengths(ll_parts) == 6))
+  expect_equal(
+    carehomes_compare(state, prev_state, observed, pars),
+    rowSums(do.call(cbind, ll_parts)))
+})
