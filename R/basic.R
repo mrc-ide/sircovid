@@ -1,3 +1,30 @@
+##' @name basic
+##' @title The basic sircovid model
+##'
+##' The "basic" sircovid model. This is a dust model
+##' @export basic
+##' @examples
+##' # Set up the basic model for England with default parameters and
+##' # an initial seeding of early February:
+##' p <- basic_parameters(sircovid_date("2020-02-07"), "england")
+##' mod <- basic$new(p, 0, 10)
+##'
+##' # Set the initial state and index as we would us for a run
+##' # (without setting an initial state there is no seeding)
+##' initial <- basic_initial(mod$info(), 10, p)
+##' mod$set_state(initial$state, initial$step)
+##' mod$set_index(basic_index(mod$info())$run)
+##'
+##' # Run the model up to the end of march
+##' step_end <- sircovid_date("2020-03-31") / p$dt
+##'
+##' # The filtered state is returned at the end of the run
+##' mod$run(step_end)
+##'
+##' # More state can be retrieved using the "state" method
+##' mod$state(1:6)
+NULL
+
 ##' Parameters for the "basic" model.
 ##'
 ##' @title Parameters for the basic model
@@ -50,6 +77,21 @@ basic_parameters <- function(start_date, region,
 }
 
 
+##' Index of "interesting" elements for the basic model. This function
+##' conforms to the mcstate interface.
+##' @title Index of basic model
+##'
+##' @param info The result of running the `$info()` method on an
+##'   initialised [basic] model
+##'
+##' @return A list with element `run`, indicating the locations of the
+##'   ICU and D compartments.
+##'
+##' @export
+##' @examples
+##' p <- basic_parameters(sircovid_date("2020-02-07"), "england")
+##' mod <- basic$new(p, 0, 10)
+##' basic_index(mod$info())
 basic_index <- function(info) {
   ## TODO: this will simplify once we get the index here, see
   ## odin.dust issue #24
@@ -80,6 +122,28 @@ basic_compare <- function(state, prev_state, observed, pars) {
 }
 
 
+##' Create initial conditions for the basic model. This matches the
+##' interface required for mcstate
+##'
+##' @title Initial conditions for the basic model
+##'
+##' @param info The result of running the `$info()` method on an
+##'   initialised [basic] model
+##'
+##' @param n_particles The number of particles required. Currently
+##'   only uniform initial seeding is implemented so this has no
+##'   effect
+##'
+##' @param pars A parameter list created by [basic_parameters()]; from
+##'   this list we will use the `population` and `initial_step`
+##'   elements.
+##'
+##' @return A numeric vector of initial conditions
+##' @export
+##' @examples
+##' p <- basic_parameters(sircovid_date("2020-02-07"), "england")
+##' mod <- basic$new(p, 0, 10)
+##' basic_initial(mod$info(), 10, p)
 basic_initial <- function(info, n_particles, pars) {
   ## TODO: this will simplify once we get the index here, see
   ## odin.dust issue #24

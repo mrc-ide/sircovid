@@ -37,7 +37,9 @@ test_that("can tune the noise parameter", {
   p2 <- basic_parameters_observation(1e4)
   expect_setequal(names(p1), names(p2))
   v <- setdiff(names(p1), "exp_noise")
-  expect_mapequal(
+  expect_mapequal(p1[v], p2[v])
+  expect_equal(p1$exp_noise, 1e6) # default
+  expect_equal(p2$exp_noise, 1e4) # given
 })
 
 
