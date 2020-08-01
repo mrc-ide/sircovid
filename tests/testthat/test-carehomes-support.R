@@ -163,7 +163,10 @@ test_that("Can compute initial conditions", {
   expect_equal(
     initial$state[[start[["PCR_pos"]] + 3]], 10)
 
-  ## 19 (S) + 19 (N_tot) + 4 (N_tot2 + I_asympt[4] + R_pre[4] + PCR_pos[4])
+  ## 42 here, derived from;
+  ## * 19 (S)
+  ## * 19 (N_tot)
+  ## * 4 values as N_tot2 + I_asympt[4] + R_pre[4] + PCR_pos[4]
   expect_equal(sum(initial$state != 0), 42)
 })
 
