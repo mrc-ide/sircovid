@@ -4,7 +4,7 @@ dist: xenial
 r_packages:
   - covr
 r_github_packages:
-  - mrc-ide/dust@87bb1e5
-  - mrc-ide/mcstate@05ccb23
+  - mrc-ide/dust
+  - mrc-ide/mcstate
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'
