@@ -25,7 +25,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_equal(p$beta_step, 0.08)
 
   ## Transmission matrix is more complicated - see below
-  expect_identical(p$m[1:17, 1:17], sircovid_transmission_matrix())
+  expect_identical(p$m[1:17, 1:17], sircovid_transmission_matrix("uk"))
   expect_identical(
     p$m,
     carehomes_transmission_matrix(0.1, 4e-5, 5e-4, p$population))
@@ -85,7 +85,7 @@ test_that("Can compute transmission matrix for carehomes model", {
   expect_equal(rownames(m)[18:19], c("CHW", "CHR"))
   expect_equal(colnames(m)[18:19], c("CHW", "CHR"))
   expect_equal(dim(m), c(19, 19))
-  expect_equal(m[1:17, 1:17], sircovid_transmission_matrix())
+  expect_equal(m[1:17, 1:17], sircovid_transmission_matrix("uk"))
   expect_equal(unname(m[18:19, 18:19]),
                matrix(rep(c(4e-5, 5e-4), c(3, 1)), 2))
   expect_equal(m, t(m))
