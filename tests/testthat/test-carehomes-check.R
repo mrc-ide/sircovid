@@ -132,7 +132,7 @@ test_that("No one is hospitalised, no-one dies if p_hosp_ILI is 0", {
 })
 
 
-test_that("No one is hospitalised, no-one recovers if p_hosp_ILI is 1, p_death_comm is 1, p_asympt = 0, p_sympt_ILI = 1", {
+test_that("No one is hospitalised, no-one recovers in edge case", {
   p <- carehomes_parameters(0, "england")
   p$I0_asympt[] <- 0
   p$p_sympt_ILI[] <- 1
@@ -173,7 +173,7 @@ test_that("No one is hospitalised, no-one recovers if p_hosp_ILI is 1, p_death_c
 })
 
 
-test_that("No one is hospitalised, no-one recovers if p_hosp_ILI is 1, p_death_comm is 1, p_asympt = 0, p_sympt_ILI = 1", {
+test_that("No one is hospitalised, no-one recovers in edge case 2", {
   p <- carehomes_parameters(0, "england")
   p$p_sympt_ILI[] <- 1
   p$p_hosp_ILI[] <- 1
@@ -230,8 +230,7 @@ test_that("No one dies in the community if p_death_comm is 0", {
 })
 
 
-test_that("setting hospital route probabilities to 0 or 1 result in correct path", {
-
+test_that("forcing hospital route results in correct path", {
   ## We're going to try a number of very similar tests here, so a
   ## helper function will help run a model with given probabilities
   ## and verify that some compartments have cases (nonzero) and others
@@ -374,8 +373,7 @@ test_that("R_pre parameters work as expected", {
 })
 
 
-test_that("setting a gamma to Inf results in progress in corresponding compartment in 1 time-step", {
-
+test_that("setting a gamma to Inf results immediate progression", {
   helper <- function(gamma_name, progression_name, compartment_name) {
     p <- carehomes_parameters(0, "england")
     p[[gamma_name]] <- Inf
@@ -424,7 +422,7 @@ test_that("setting a gamma to Inf results in progress in corresponding compartme
 })
 
 
-test_that("setting a gamma to 0 results in cases in corresponding compartment to stay in progression stage 1", {
+test_that("setting a gamma to 0 results in no progression", {
   helper <- function(gamma_name, progression_name, compartment_name) {
     p <- carehomes_parameters(0, "england")
     p[[gamma_name]] <- 0
@@ -449,7 +447,7 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
 
     expect_true(any(z > 0))
 
-    if (!compartment_name %in% c("R_stepdown","PCR_pos")){
+    if (!compartment_name %in% c("R_stepdown", "PCR_pos")) {
       expect_true(all(z[, 2, , ] == 0))
     } else {
       expect_true(all(z[, 2, ] == 0))
@@ -544,7 +542,7 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
 })
 
 
-test_that("Confirmation in one time-step, if p_admit_conf = 0 and gamma_test = Inf", {
+test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   p <- carehomes_parameters(0, "england")
   p$p_admit_conf[] <- 0
   p$gamma_test <- Inf
