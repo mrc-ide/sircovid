@@ -185,6 +185,15 @@ test_that("sircovid_carehome_beds throws sensible error on invalid input", {
 })
 
 
+test_that("sircovid_carehome_beds caches data", {
+  clear_cache()
+  n <- sircovid_carehome_beds("uk")
+  expect_s3_class(cache$carehomes, "data.frame")
+  expect_equal(cache$carehomes$carehome_beds[cache$carehomes$region == "uk"],
+               n)
+})
+
+
 ## TODO: Ed - you had said that you had ideas for some more systematic
 ## testing here.  This will also get easier to do if we move to having
 ## a function generator given a data set.

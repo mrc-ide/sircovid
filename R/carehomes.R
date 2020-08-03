@@ -367,16 +367,18 @@ sircovid_carehome_beds <- function(region) {
     stop("'region' must not be NULL")
   }
 
-  ## TODO: cache this file read as it's constant within a session
-  data <- read_csv(sircovid_file("extdata/carehomes.csv"))
-  i <- match(tolower(region), data$region)
+  if (is.null(cache$carehomes)) {
+    cache$carehomes <- read_csv(sircovid_file("extdata/carehomes.csv"))
+  }
+
+  i <- match(tolower(region), cache$carehomes$region)
   if (is.na(i)) {
-    valid <- paste(squote(data$region), collapse = ", ")
+    valid <- paste(squote(cache$carehomes$region), collapse = ", ")
     stop(sprintf("Carehome beds not found for '%s': must be one of %s",
                  region, valid))
   }
 
-  data$carehome_beds[[i]]
+  cache$carehomes$carehome_beds[[i]]
 }
 
 
