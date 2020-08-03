@@ -372,3 +372,102 @@ test_that("R_pre parameters work as expected", {
   expect_equal(diff(t(y$R_pos + y$R_neg)),
                t(apply(y$R_pre[, , -n], c(1, 3), sum)))
 })
+
+
+test_that("setting a gamma to Inf results in progress in corresponding compartment in 1 time-step", {
+
+  helper <- function(gamma_name, progression_name, compartment_name) {
+    p <- carehomes_parameters(0, "england")
+    p[[gamma_name]] <- Inf
+    p[[progression_name]] <- max(p[[progression_name]], 2)
+
+    mod <- carehomes$new(p, 0, 1)
+
+    info <- mod$info()
+    mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+    mod$set_index(integer(0))
+    y <- mod$transform_variables(drop(dust::dust_simulate(mod, 0:400)))
+
+    y$I_hosp_R <- y$I_hosp_R_unconf + y$I_hosp_R_conf
+    y$I_hosp_D <- y$I_hosp_D_unconf + y$I_hosp_D_conf
+    y$I_triage_R <- y$I_triage_R_unconf + y$I_triage_R_conf
+    y$I_triage_D <- y$I_triage_D_unconf + y$I_triage_D_conf
+    y$I_ICU_R <- y$I_ICU_R_unconf + y$I_ICU_R_conf
+    y$I_ICU_D <- y$I_ICU_D_unconf + y$I_ICU_D_conf
+    y$R_stepdown <- y$R_stepdown_unconf + y$R_stepdown_conf
+
+    z <- y[[compartment_name]]
+
+    expect_true(any(z > 0))
+
+    i <- seq_len(length(y$time) - 1L)
+    if (length(dim(z)) == 4) {
+      expect_equal(z[, 2, , i + 1], z[, 1, , i])
+    } else {
+      expect_equal(z[, 2, i + 1], z[, 1, i])
+    }
+  }
+
+  helper("gamma_E", "s_E", "E")
+  helper("gamma_asympt", "s_asympt", "I_asympt")
+  helper("gamma_mild", "s_mild", "I_mild")
+  helper("gamma_ILI", "s_ILI", "I_ILI")
+  helper("gamma_triage", "s_triage", "I_triage_R")
+  helper("gamma_triage", "s_triage", "I_triage_D")
+  helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R")
+  helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D")
+  helper("gamma_ICU_R", "s_ICU_R", "I_ICU_R")
+  helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D")
+  helper("gamma_comm_D", "s_comm_D", "I_comm_D")
+  helper("gamma_stepdown", "s_stepdown", "R_stepdown")
+  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos")
+})
+
+
+test_that("setting a gamma to 0 results in cases in corresponding compartment to stay in progression stage 1", {
+  helper <- function(gamma_name, progression_name, compartment_name) {
+    p <- carehomes_parameters(0, "england")
+    p[[gamma_name]] <- 0
+    p[[progression_name]] <- max(p[[progression_name]], 2)
+
+    mod <- carehomes$new(p, 0, 1)
+
+    info <- mod$info()
+    mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+    mod$set_index(integer(0))
+    y <- mod$transform_variables(drop(dust::dust_simulate(mod, 0:400)))
+
+    y$I_hosp_R <- y$I_hosp_R_unconf + y$I_hosp_R_conf
+    y$I_hosp_D <- y$I_hosp_D_unconf + y$I_hosp_D_conf
+    y$I_triage_R <- y$I_triage_R_unconf + y$I_triage_R_conf
+    y$I_triage_D <- y$I_triage_D_unconf + y$I_triage_D_conf
+    y$I_ICU_R <- y$I_ICU_R_unconf + y$I_ICU_R_conf
+    y$I_ICU_D <- y$I_ICU_D_unconf + y$I_ICU_D_conf
+    y$R_stepdown <- y$R_stepdown_unconf + y$R_stepdown_conf
+
+    z <- y[[compartment_name]]
+
+    expect_true(any(z > 0))
+
+    if (!compartment_name %in% c("R_stepdown","PCR_pos")){
+      expect_true(all(z[, 2, , ] == 0))
+    } else {
+      expect_true(all(z[, 2, ] == 0))
+    }
+  }
+
+  p <- carehomes_parameters(0, "england")
+  helper("gamma_E", "s_E", "E")
+  helper("gamma_asympt", "s_asympt", "I_asympt")
+  helper("gamma_mild", "s_mild", "I_mild")
+  helper("gamma_ILI", "s_ILI", "I_ILI")
+  helper("gamma_triage", "s_triage", "I_triage_R")
+  helper("gamma_triage", "s_triage", "I_triage_D")
+  helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R")
+  helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D")
+  helper("gamma_ICU_R", "s_ICU_R", "I_ICU_R")
+  helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D")
+  helper("gamma_comm_D", "s_comm_D", "I_comm_D")
+  helper("gamma_stepdown", "s_stepdown", "R_stepdown")
+  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos")
+})
