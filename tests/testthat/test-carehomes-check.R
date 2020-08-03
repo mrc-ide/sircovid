@@ -471,3 +471,148 @@ test_that("setting a gamma to 0 results in cases in corresponding compartment to
   helper("gamma_stepdown", "s_stepdown", "R_stepdown")
   helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos")
 })
+
+
+test_that("No one is unconfirmed, if p_admit_conf = 1", {
+  p <- carehomes_parameters(0, "england")
+  p$p_admit_conf[] <- 1
+  p$gamma_triage <- Inf
+  p$gamma_hosp_R <- Inf
+  p$gamma_hosp_D <- Inf
+  p$gamma_ICU_R <- Inf
+  p$gamma_ICU_D <- Inf
+  p$gamma_stepdown <- Inf
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(drop(dust::dust_simulate(mod, 0:400)))
+
+  expect_true(all(y$I_hosp_R_unconf == 0))
+  expect_true(any(y$I_hosp_R_conf > 0))
+  expect_true(all(y$I_hosp_D_unconf == 0))
+  expect_true(any(y$I_hosp_D_conf > 0))
+  expect_true(all(y$I_triage_R_unconf == 0))
+  expect_true(any(y$I_triage_R_conf > 0))
+  expect_true(all(y$I_triage_D_unconf == 0))
+  expect_true(any(y$I_triage_D_conf > 0))
+  expect_true(all(y$I_ICU_R_unconf == 0))
+  expect_true(any(y$I_ICU_R_conf > 0))
+  expect_true(all(y$I_ICU_D_unconf == 0))
+  expect_true(any(y$I_ICU_D_conf > 0))
+  expect_true(all(y$R_stepdown_unconf == 0))
+  expect_true(any(y$R_stepdown_conf > 0))
+
+  admit_conf <- apply(y$I_hosp_R_conf[, 1, , ] +
+                      y$I_hosp_D_conf[, 1, , ] +
+                      y$I_triage_R_conf[, 1, , ] +
+                      y$I_triage_D_conf[, 1, , ], 1, sum)
+
+  expect_true(all(diff(y$cum_admit_conf) == admit_conf[-1]))
+  expect_true(all(y$cum_new_conf == 0))
+})
+
+
+test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
+  p <- carehomes_parameters(0, "england")
+  p$p_admit_conf[] <- 0
+  p$gamma_test <- 0
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(drop(dust::dust_simulate(mod, 0:400)))
+
+  expect_true(any(y$I_hosp_R_unconf > 0))
+  expect_true(all(y$I_hosp_R_conf == 0))
+  expect_true(any(y$I_hosp_D_unconf > 0))
+  expect_true(all(y$I_hosp_D_conf == 0))
+  expect_true(any(y$I_triage_R_unconf > 0))
+  expect_true(all(y$I_triage_R_conf == 0))
+  expect_true(any(y$I_triage_D_unconf > 0))
+  expect_true(all(y$I_triage_D_conf == 0))
+  expect_true(any(y$I_ICU_R_unconf > 0))
+  expect_true(all(y$I_ICU_R_conf == 0))
+  expect_true(any(y$I_ICU_D_unconf > 0))
+  expect_true(all(y$I_ICU_D_conf == 0))
+  expect_true(any(y$R_stepdown_unconf > 0))
+  expect_true(all(y$R_stepdown_conf == 0))
+  expect_true(all(y$admit_new_conf == 0))
+  expect_true(all(y$cum_new_conf == 0))
+})
+
+
+test_that("Confirmation in one time-step, if p_admit_conf = 0 and gamma_test = Inf", {
+  p <- carehomes_parameters(0, "england")
+  p$p_admit_conf[] <- 0
+  p$gamma_test <- Inf
+  p$gamma_triage <- Inf
+  p$gamma_hosp_R <- Inf
+  p$gamma_hosp_D <- Inf
+  p$gamma_ICU_R <- Inf
+  p$gamma_ICU_D <- Inf
+  p$gamma_stepdown <- Inf
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+
+  ## We want to set I_ICU_R_unconf[, 1, ] and I_ICU_D_unconf[, 1, ] to 50
+  y0[info$index$I_ICU_R_unconf[1:19]] <- 50
+  y0[info$index$I_ICU_D_unconf[1:19]] <- 50
+
+  mod$set_state(y0, 0)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(drop(dust::dust_simulate(mod, 0:400)))
+  n <- length(y$time)
+
+  ## Check hosp_R
+  expect_true(all(y$I_hosp_R_conf[, 1, , ] == 0))
+  expect_equal(y$I_hosp_R_conf[, 2, , -1], y$I_hosp_R_unconf[, 1, , -n])
+  expect_true(all(y$I_hosp_R_unconf[, 2, , ] == 0))
+
+  ## Check hosp_D
+  expect_true(all(y$I_hosp_D_conf[, 1, , ] == 0))
+  expect_equal(y$I_hosp_D_conf[, 2, , -1], y$I_hosp_D_unconf[, 1, , -n])
+  expect_true(all(y$I_hosp_D_unconf[, 2, , ] == 0))
+
+  ## Check triage_R
+  expect_true(all(y$I_triage_R_conf[, 1, , ] == 0))
+  expect_equal(y$I_triage_R_conf[, 2, , -1], y$I_triage_R_unconf[, 1, , -n])
+  expect_true(all(y$I_triage_R_unconf[, 2, , ] == 0))
+
+  ## Check triage_D
+  expect_true(all(y$I_triage_D_conf[, 1, , ] == 0))
+  expect_equal(y$I_triage_D_conf[, 2, , -1], y$I_triage_D_unconf[, 1, , -n])
+  expect_true(all(y$I_triage_D_unconf[, 2, , ] == 0))
+
+  ## Check ICU_R
+  expect_equal(y$I_ICU_R_conf[, 2, , 2], y$I_ICU_R_unconf[, 1, , 1])
+  expect_equal(y$I_ICU_R_conf[, 1, , -1], y$I_triage_R_conf[, 2, , -n])
+  expect_true(all(y$I_ICU_R_unconf[, 2, , ] == 0))
+
+  ## Check ICU_D
+  expect_equal(y$I_ICU_D_conf[, 2, , 2], y$I_ICU_D_unconf[, 1, , 1])
+  expect_equal(y$I_ICU_D_conf[, 1, , -1], y$I_triage_D_conf[, 2, , -n])
+  expect_true(all(y$I_ICU_D_unconf[, 2, , ] == 0))
+
+  ## Check stepdown
+  expect_equal(y$R_stepdown_conf[, 2, 2], y$R_stepdown_unconf[, 1, 1])
+  I_ICU_R_conf <- drop(y$I_ICU_R_conf)
+  expect_equal(y$R_stepdown_conf[, 1, -1], I_ICU_R_conf[, 2, -n])
+  expect_true(all(y$R_stepdown_unconf[, 2, ] == 0))
+
+  new_conf <- apply(y$I_hosp_R_conf[, 2, , ] +
+                    y$I_hosp_D_conf[, 2, , ] +
+                    y$I_triage_R_conf[, 2, , ] +
+                    y$I_triage_D_conf[, 2, , ], 2, sum)
+  new_conf[2] <- new_conf[2] +
+    sum(y$I_ICU_R_conf[, 2, , 2] +
+        y$I_ICU_D_conf[, 2, , 2] +
+        y$R_stepdown_conf[, 2, 2])
+  expect_true(all(diff(y$cum_new_conf) == new_conf[-1]))
+
+  expect_true(all(y$cum_admit_conf == 0))
+})
