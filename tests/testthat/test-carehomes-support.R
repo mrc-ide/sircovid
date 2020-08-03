@@ -144,9 +144,6 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot2, sum(p$population))
   expect_equal(initial_y$N_tot, p$N_tot)
 
-  i_S <- seq(start[["S"]], by = 1, length.out = info[["S"]])
-  i_I <- seq(start[["I_asympt"]], by = 1, length.out = info[["I_asympt"]][[1]])
-
   expect_equal(initial_y$S + drop(initial_y$I_asympt), p$N_tot)
   expect_equal(drop(initial_y$I_asympt),
                append(rep(0, 18), 10, after = 3))
