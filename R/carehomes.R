@@ -102,18 +102,17 @@ carehomes_parameters <- function(start_date, region,
 ##' mod <- carehomes$new(p, 0, 10)
 ##' carehomes_index(mod$info())
 carehomes_index <- function(info) {
-  len <- vnapply(info, prod)
-  start <- cumsum(len) - len + 1L
-  list(run = c(start[["I_ICU_tot"]],
-               start[["general_tot"]],
-               start[["D_comm_tot"]],
-               start[["D_hosp_tot"]],
-               start[["D_tot"]],
-               start[["cum_admit_conf"]],
-               start[["cum_new_conf"]],
-               start[["R_pre_15_64"]],
-               start[["R_neg_15_64"]],
-               start[["R_pos_15_64"]]))
+  index <- info$index
+  list(run = c(index[["I_ICU_tot"]],
+               index[["general_tot"]],
+               index[["D_comm_tot"]],
+               index[["D_hosp_tot"]],
+               index[["D_tot"]],
+               index[["cum_admit_conf"]],
+               index[["cum_new_conf"]],
+               index[["R_pre_15_64"]],
+               index[["R_neg_15_64"]],
+               index[["R_pos_15_64"]]))
 }
 
 
@@ -288,25 +287,23 @@ carehomes_transmission_matrix <- function(eps, C_1, C_2, population) {
 ##' mod <- carehomes$new(p, 0, 10)
 ##' carehomes_initial(mod$info(), 10, p)
 carehomes_initial <- function(info, n_particles, pars) {
-  ## TODO: this will simplify once we get the index here, see
-  ## odin.dust issue #24
-  len <- vnapply(info, prod)
-  start <- cumsum(len) - len + 1L
-  state <- numeric(sum(len))
+  index <- info$index
+  state <- numeric(info$len)
+
+  ## Always start with 10, again for compatibility
+  initial_I <- 10
 
   ## This corresponds to the 15-19y age bracket for compatibility with
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
   seed_age_band <- 4L
-  index_I <- start[["I_asympt"]] + seed_age_band - 1L
-  index_R_pre <- start[["R_pre"]] + seed_age_band - 1L
-  index_PCR_pos <- start[["PCR_pos"]] + seed_age_band - 1L
-  index_S <- seq.int(start[["S"]], length.out = len[["S"]])
-  index_N_tot <- seq.int(start[["N_tot"]], length.out = len[["N_tot"]])
-  index_N_tot2 <- start[["N_tot2"]]
+  index_I <- index[["I_asympt"]][[1L]] + seed_age_band - 1L
+  index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
+  index_PCR_pos <- index[["PCR_pos"]][[1L]] + seed_age_band - 1L
+  index_N_tot2 <- index[["N_tot2"]][[1L]]
 
-  ## Always start with 10, again for compatibility
-  initial_I <- 10
+  index_S <- index[["S"]]
+  index_N_tot <- index[["N_tot"]]
 
   ## S0 is the population totals, minus the seeded infected
   ## individuals

@@ -100,11 +100,8 @@ basic_parameters <- function(start_date, region,
 ##' mod <- basic$new(p, 0, 10)
 ##' basic_index(mod$info())
 basic_index <- function(info) {
-  ## TODO: this will simplify once we get the index here, see
-  ## odin.dust issue #24
-  len <- vnapply(info, prod)
-  start <- cumsum(len) - len + 1L
-  list(run = c(start[["I_ICU_tot"]], start[["D_tot"]]))
+  index <- info$index
+  list(run = c(index[["I_ICU_tot"]], index[["D_tot"]]))
 }
 
 
@@ -183,11 +180,8 @@ basic_compare <- function(state, prev_state, observed, pars) {
 ##' mod <- basic$new(p, 0, 10)
 ##' basic_initial(mod$info(), 10, p)
 basic_initial <- function(info, n_particles, pars) {
-  ## TODO: this will simplify once we get the index here, see
-  ## odin.dust issue #24
-  len <- vnapply(info, prod)
-  start <- cumsum(len) - len + 1L
-  state <- numeric(sum(len))
+  index <- info$index
+  state <- numeric(info$len)
 
   ## Always start with 10, again for compatibility
   initial_I <- 10
@@ -196,14 +190,14 @@ basic_initial <- function(info, n_particles, pars) {
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
   seed_age_band <- 4L
-  index_I <- start[["I_asympt"]] + seed_age_band - 1L
+  index_I <- index[["I_asympt"]][[1]] + seed_age_band - 1L
 
   ## ONS populations, subtracting the seed for pedantry.
-  index_S <- seq.int(start[["S"]], length.out = len[["S"]])
+  index_S <- index[["S"]]
   initial_S <- pars$population
   initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
 
-  index_N_tot <- start[["N_tot"]]
+  index_N_tot <- index[["N_tot"]]
 
   state[index_S] <- initial_S
   state[index_I] <- initial_I
