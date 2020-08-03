@@ -112,16 +112,16 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   mod <- carehomes$new(p, 0, 10)
   info <- mod$info()
   index <- carehomes_index(info)
-  expect_equal(index$run[[1]], which(names(info) == "I_ICU_tot"))
-  expect_equal(index$run[[2]], which(names(info) == "general_tot"))
-  expect_equal(index$run[[3]], which(names(info) == "D_comm_tot"))
-  expect_equal(index$run[[4]], which(names(info) == "D_hosp_tot"))
-  expect_equal(index$run[[5]], which(names(info) == "D_tot"))
-  expect_equal(index$run[[6]], which(names(info) == "cum_admit_conf"))
-  expect_equal(index$run[[7]], which(names(info) == "cum_new_conf"))
-  expect_equal(index$run[[8]], which(names(info) == "R_pre_15_64"))
-  expect_equal(index$run[[9]], which(names(info) == "R_neg_15_64"))
-  expect_equal(index$run[[10]], which(names(info) == "R_pos_15_64"))
+  expect_equal(index$run[[1]], which(names(info$index) == "I_ICU_tot"))
+  expect_equal(index$run[[2]], which(names(info$index) == "general_tot"))
+  expect_equal(index$run[[3]], which(names(info$index) == "D_comm_tot"))
+  expect_equal(index$run[[4]], which(names(info$index) == "D_hosp_tot"))
+  expect_equal(index$run[[5]], which(names(info$index) == "D_tot"))
+  expect_equal(index$run[[6]], which(names(info$index) == "cum_admit_conf"))
+  expect_equal(index$run[[7]], which(names(info$index) == "cum_new_conf"))
+  expect_equal(index$run[[8]], which(names(info$index) == "R_pre_15_64"))
+  expect_equal(index$run[[9]], which(names(info$index) == "R_neg_15_64"))
+  expect_equal(index$run[[10]], which(names(info$index) == "R_pos_15_64"))
 })
 
 
@@ -139,29 +139,18 @@ test_that("Can compute initial conditions", {
   expect_setequal(names(initial), c("state", "step"))
   expect_equal(initial$step, p$initial_step)
 
-  ## TODO: this index faff simplifies away after odin.dust improvements
-  len <- vnapply(info, prod)
-  start <- cumsum(len) - len + 1L
-  expect_equal(
-    initial$state[[start[["N_tot2"]]]],
-    sum(p$population))
-  expect_equal(
-    initial$state[seq(start[["N_tot"]], length.out = len[["N_tot"]])],
-    p$N_tot)
+  initial_y <- mod$transform_variables(initial$state)
 
-  i_S <- seq(start[["S"]], by = 1, length.out = info[["S"]])
-  i_I <- seq(start[["I_asympt"]], by = 1, length.out = info[["I_asympt"]][[1]])
+  expect_equal(initial_y$N_tot2, sum(p$population))
+  expect_equal(initial_y$N_tot, p$N_tot)
 
-  expect_equal(
-    initial$state[i_S] + initial$state[i_I],
-    p$N_tot)
-  expect_equal(
-    initial$state[i_I],
-    append(rep(0, 18), 10, after = 3))
-  expect_equal(
-    initial$state[[start[["R_pre"]] + 3]], 10)
-  expect_equal(
-    initial$state[[start[["PCR_pos"]] + 3]], 10)
+  expect_equal(initial_y$S + drop(initial_y$I_asympt), p$N_tot)
+  expect_equal(drop(initial_y$I_asympt),
+               append(rep(0, 18), 10, after = 3))
+  expect_equal(initial_y$R_pre[, 1],
+               append(rep(0, 18), 10, after = 3))
+  expect_equal(initial_y$PCR_pos[, 1],
+               append(rep(0, 18), 10, after = 3))
 
   ## 42 here, derived from;
   ## * 19 (S)

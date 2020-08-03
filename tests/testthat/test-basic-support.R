@@ -44,8 +44,7 @@ test_that("can tune the noise parameter", {
 
 
 test_that("basic_index identifies ICU and D_tot", {
-  info <- list(time = 1, N_tot = 1, I_ICU_tot = 1, D_tot = 1, beta_out = 1,
-               S = 17)
+  info <- list(index = list(I_ICU_tot = 3L, D_tot = 4L))
   expect_equal(basic_index(info), list(run = 3:4))
 })
 
@@ -55,8 +54,8 @@ test_that("basic_index identifies ICU and D_tot in real model", {
   mod <- basic$new(p, 0, 10)
   info <- mod$info()
   index <- basic_index(info)
-  expect_equal(index$run[[1]], which(names(info) == "I_ICU_tot"))
-  expect_equal(index$run[[2]], which(names(info) == "D_tot"))
+  expect_equal(index$run[[1]], which(names(info$index) == "I_ICU_tot"))
+  expect_equal(index$run[[2]], which(names(info$index) == "D_tot"))
 })
 
 
@@ -103,20 +102,12 @@ test_that("can compute initial conditions", {
   expect_setequal(names(initial), c("state", "step"))
   expect_equal(initial$step, p$initial_step)
 
-  ## TODO: this index faff simplifies away after odin.dust improvements
-  len <- vnapply(info, prod)
-  start <- cumsum(len) - len + 1L
-  expect_equal(
-    initial$state[[start[["N_tot"]]]],
-    sum(p$population))
+  initial_y <- mod$transform_variables(initial$state)
+  expect_equal(initial_y$N_tot, sum(p$population))
+  expect_equal(initial_y$S + drop(initial_y$I_asympt), p$population)
+  expect_equal(drop(initial_y$I_asympt), append(rep(0, 16), 10, after = 3))
 
-  i_S <- seq(start[["S"]], by = 1, length.out = info[["S"]])
-  i_I <- seq(start[["I_asympt"]], by = 1, length.out = info[["I_asympt"]][[1]])
-  expect_equal(
-    initial$state[i_S] + initial$state[i_I],
-    p$population)
-
-  expect_equal(
-    initial$state[i_I],
-    append(rep(0, 16), 10, after = 3))
+  remaining <- initial$state[-c(info$index$N_tot, info$index$S,
+                                info$index$I_asympt)]
+  expect_true(all(remaining == 0))
 })

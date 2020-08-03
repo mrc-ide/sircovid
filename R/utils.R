@@ -33,11 +33,6 @@ verify_names <- function(x, required = NULL, optional = NULL,
 }
 
 
-vnapply <- function(fun, x, ...) {
-  vapply(fun, x, 1.0, ...)
-}
-
-
 sircovid_file <- function(...) {
   system.file(..., package = "sircovid2", mustWork = TRUE)
 }
