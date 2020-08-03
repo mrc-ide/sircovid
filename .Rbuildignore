@@ -19,3 +19,6 @@
 ^\.travis\.yml$
 ^codecov\.yml$
 ^\.covrignore$
+^\.lintr$
+^TODO.md$
+^src/CPPLINT\.cfg$

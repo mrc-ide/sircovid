@@ -1,4 +1,5 @@
 R/cpp11.R
 R/dust.R
 src/carehomes.cpp
+src/basic.cpp
 src/cpp11.cpp

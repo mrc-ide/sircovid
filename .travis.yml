@@ -5,5 +5,6 @@ r_packages:
   - covr
 r_github_packages:
   - mrc-ide/dust
+  - mrc-ide/mcstate
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'

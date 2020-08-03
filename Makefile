@@ -42,4 +42,7 @@ vignettes: vignettes/traduire.Rmd
 	mkdir -p inst/doc
 	cp vignettes/*.html vignettes/*.Rmd inst/doc
 
+clean:
+	$(RM) src/*.o src/*.so src/*.dll
+
 .PHONY: all test document install vignettes
