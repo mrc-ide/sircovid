@@ -76,7 +76,7 @@ basic_parameters <- function(start_date, region,
                              exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
-  ret$m <- sircovid_transmission_matrix()
+  ret$m <- sircovid_transmission_matrix(region)
   ret$observation <- basic_parameters_observation(exp_noise)
   c(ret,
     sircovid_parameters_severity(severity_data),

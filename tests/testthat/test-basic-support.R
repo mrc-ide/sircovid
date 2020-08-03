@@ -22,7 +22,7 @@ test_that("basic_parameters returns a list of parameters", {
   p <- basic_parameters(date, "uk")
   expect_type(p, "list")
   expect_length(p$beta_step, 1)
-  expect_identical(p$m, sircovid_transmission_matrix())
+  expect_identical(p$m, sircovid_transmission_matrix("uk"))
 
   progression <- basic_parameters_progression()
   expect_identical(p[names(progression)], progression)

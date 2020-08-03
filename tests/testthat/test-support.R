@@ -121,8 +121,8 @@ test_that("ll_nbinom returns a vector of zeros if data missing", {
 
 test_that("transmission matrix", {
   clear_cache()
-  m <- sircovid_transmission_matrix()
-  expect_identical(m, cache$transmission_matrix)
+  m <- sircovid_transmission_matrix("uk")
+  expect_identical(m, cache$transmission_matrix$uk)
   expect_equal(dim(m), c(17, 17))
 
   nms <- c("[0,4)", "[5,9)", "[10,14)", "[15,19)", "[20,24)", "[25,29)",
@@ -132,7 +132,14 @@ test_that("transmission matrix", {
 
   ## Be notified when this changes
   skip_on_cran()
-  expect_equal(sum(m), 4.8849272139437937e-5)
+  expect_equal(sum(m), 4.4980269728090259e-05)
+})
+
+
+test_that("transmission matrices are region specific", {
+  m1 <- sircovid_transmission_matrix("uk")
+  m2 <- sircovid_transmission_matrix("south_west")
+  expect_false(all(abs(m1 - m2) < 1e-5))
 })
 
 

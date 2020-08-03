@@ -57,7 +57,7 @@ carehomes_parameters <- function(start_date, region,
   severity <- carehomes_parameters_severity(severity_data, ret$population,
                                             p_death_carehome)
 
-  ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, ret$population)
+  ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
                                     carehome_residents)
@@ -241,9 +241,9 @@ carehomes_index_workers <- function() {
 }
 
 
-carehomes_transmission_matrix <- function(eps, C_1, C_2, population) {
+carehomes_transmission_matrix <- function(eps, C_1, C_2, region, population) {
   index_workers <- carehomes_index_workers()
-  m <- sircovid_transmission_matrix()
+  m <- sircovid_transmission_matrix(region)
   N_age <- nrow(m)
 
   m_chw <- apply(m[seq_len(N_age), index_workers], 1, weighted.mean,
