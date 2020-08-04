@@ -101,7 +101,8 @@ basic_parameters <- function(start_date, region,
 ##' basic_index(mod$info())
 basic_index <- function(info) {
   index <- info$index
-  list(run = c(index[["I_ICU_tot"]], index[["D_tot"]]))
+  list(run = c(icu = index[["I_ICU_tot"]],
+               deaths = index[["D_tot"]]))
 }
 
 
@@ -129,8 +130,8 @@ basic_index <- function(info) {
 ##'
 ##' @export
 ##' @examples
-##' state <- rbind(10:15, 1:6) # ICU, D
-##' prev_state <- matrix(1, 2, 6)
+##' state <- rbind(icu = 10:15, deaths = 1:6)
+##' prev_state <- matrix(1, 2, 6, dimnames = dimnames(state))
 ##' observed <- list(itu = 13, deaths = 3)
 ##' pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
 ##' basic_compare(state, prev_state, observed, pars)
@@ -140,9 +141,8 @@ basic_compare <- function(state, prev_state, observed, pars) {
     return(NULL)
   }
 
-  ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
-  model_icu <- state[1, ]
-  model_deaths <- state[2, ] - prev_state[2, ]
+  model_icu <- state["icu", ]
+  model_deaths <- state["deaths", ] - prev_state["deaths", ]
 
   ## Noise parameter shared across both deaths and icu
   pars <- pars$observation

@@ -112,16 +112,32 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   mod <- carehomes$new(p, 0, 10)
   info <- mod$info()
   index <- carehomes_index(info)
-  expect_equal(index$run[[1]], which(names(info$index) == "I_ICU_tot"))
-  expect_equal(index$run[[2]], which(names(info$index) == "general_tot"))
-  expect_equal(index$run[[3]], which(names(info$index) == "D_comm_tot"))
-  expect_equal(index$run[[4]], which(names(info$index) == "D_hosp_tot"))
-  expect_equal(index$run[[5]], which(names(info$index) == "D_tot"))
-  expect_equal(index$run[[6]], which(names(info$index) == "cum_admit_conf"))
-  expect_equal(index$run[[7]], which(names(info$index) == "cum_new_conf"))
-  expect_equal(index$run[[8]], which(names(info$index) == "R_pre_15_64"))
-  expect_equal(index$run[[9]], which(names(info$index) == "R_neg_15_64"))
-  expect_equal(index$run[[10]], which(names(info$index) == "R_pos_15_64"))
+
+  expect_equal(
+    names(index$run),
+    c("icu", "general", "deaths_comm", "deaths_hosp", "deaths_tot",
+      "admitted", "new", "R_pre_15_64", "R_neg_15_64", "R_pos_15_64"))
+
+  expect_equal(index$run[["icu"]],
+               which(names(info$index) == "I_ICU_tot"))
+  expect_equal(index$run[["general"]],
+               which(names(info$index) == "general_tot"))
+  expect_equal(index$run[["deaths_comm"]],
+               which(names(info$index) == "D_comm_tot"))
+  expect_equal(index$run[["deaths_hosp"]],
+               which(names(info$index) == "D_hosp_tot"))
+  expect_equal(index$run[["deaths_tot"]],
+               which(names(info$index) == "D_tot"))
+  expect_equal(index$run[["admitted"]],
+               which(names(info$index) == "cum_admit_conf"))
+  expect_equal(index$run[["new"]],
+               which(names(info$index) == "cum_new_conf"))
+  expect_equal(index$run[["R_pre_15_64"]],
+               which(names(info$index) == "R_pre_15_64"))
+  expect_equal(index$run[["R_neg_15_64"]],
+               which(names(info$index) == "R_neg_15_64"))
+  expect_equal(index$run[["R_pos_15_64"]],
+               which(names(info$index) == "R_pos_15_64"))
 })
 
 
@@ -188,17 +204,17 @@ test_that("sircovid_carehome_beds caches data", {
 ## a function generator given a data set.
 test_that("carehomes_compare combines likelihood correctly", {
   state <- rbind(
-    10:15, # ICU
-    20:25, # general
-    1:6,   # D_comm_tot
-    3:8,   # D_hosp_tot
-    4:9,   # D_tot
-    50:55, # cum_admit_conf
-    60:65, # cum_new_conf
-    80:85, # R_pre_15_64
-    30:35, # R_neg_15_64
-    40:45) # R_pos_15_64
-  prev_state <- array(1, dim(state))
+    icu = 10:15,
+    general = 20:25,
+    deaths_comm = 1:6,
+    deaths_hosp = 3:8,
+    deaths_tot = 4:9,
+    admitted = 50:55,
+    new = 60:65,
+    R_pre_15_64 = 80:85,
+    R_neg_15_64 = 30:35,
+    R_pos_15_64 = 40:45)
+  prev_state <- array(1, dim(state), dimnames = dimnames(state))
   observed <- list(
     itu = 13,
     general = 23,

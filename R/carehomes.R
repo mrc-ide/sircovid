@@ -103,16 +103,16 @@ carehomes_parameters <- function(start_date, region,
 ##' carehomes_index(mod$info())
 carehomes_index <- function(info) {
   index <- info$index
-  list(run = c(index[["I_ICU_tot"]],
-               index[["general_tot"]],
-               index[["D_comm_tot"]],
-               index[["D_hosp_tot"]],
-               index[["D_tot"]],
-               index[["cum_admit_conf"]],
-               index[["cum_new_conf"]],
-               index[["R_pre_15_64"]],
-               index[["R_neg_15_64"]],
-               index[["R_pos_15_64"]]))
+  list(run = c(icu = index[["I_ICU_tot"]],
+               general = index[["general_tot"]],
+               deaths_comm = index[["D_comm_tot"]],
+               deaths_hosp = index[["D_hosp_tot"]],
+               deaths_tot = index[["D_tot"]],
+               admitted = index[["cum_admit_conf"]],
+               new = index[["cum_new_conf"]],
+               R_pre_15_64 = index[["R_pre_15_64"]],
+               R_neg_15_64 = index[["R_neg_15_64"]],
+               R_pos_15_64 = index[["R_pos_15_64"]]))
 }
 
 
@@ -155,17 +155,16 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ## touch faster and data copying smaller. This requires a bit of a
   ## rethink though as it affects how we do index functions too.
 
-  ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
-  model_icu <- state[1, ]
-  model_general <- state[2, ]
-  model_deaths_comm <- state[3, ] - prev_state[3, ]
-  model_deaths_hosp <- state[4, ] - prev_state[4, ]
-  model_deaths_tot <- state[5, ] - prev_state[5, ]
-  model_admitted <- state[6, ] - prev_state[6, ]
-  model_new <- state[7, ] - prev_state[7, ]
-  model_R_pre_15_64 <- state[8, ]
-  model_R_neg_15_64 <- state[9, ]
-  model_R_pos_15_64 <- state[10, ]
+  model_icu <- state["icu", ]
+  model_general <- state["general", ]
+  model_deaths_comm <- state["deaths_comm", ] - prev_state["deaths_comm", ]
+  model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
+  model_deaths_tot <- state["deaths_tot", ] - prev_state["deaths_tot", ]
+  model_admitted <- state["admitted", ] - prev_state["admitted", ]
+  model_new <- state["new", ] - prev_state["new", ]
+  model_R_pre_15_64 <- state["R_pre_15_64", ]
+  model_R_neg_15_64 <- state["R_neg_15_64", ]
+  model_R_pos_15_64 <- state["R_pos_15_64", ]
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
