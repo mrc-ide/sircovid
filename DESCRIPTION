@@ -46,3 +46,4 @@ Suggests:
     testthat
 RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
+SystemRequirements: C++11
