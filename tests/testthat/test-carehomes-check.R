@@ -10,8 +10,6 @@ test_that("N_tot and N_tot2 stay constant", {
   y <- mod$transform_variables(
     drop(dust::dust_simulate(mod, seq(0, 400, by = 4))))
 
-  skip("This needs checking")
-
   ## This is not quite correct, and I don't really know why. I think
   ## that this is the rounding that we're doing to shuffle the
   ## carehome residents around. However, it does mean that this is

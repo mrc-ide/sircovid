@@ -315,7 +315,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_R_pre] <- initial_I
   state[index_PCR_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
-  state[index_N_tot2] <- sum(pars$population)
+  state[index_N_tot2] <- sum(pars$N_tot)
 
   list(state = state,
        step = pars$initial_step)
