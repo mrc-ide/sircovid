@@ -101,7 +101,8 @@ basic_parameters <- function(start_date, region,
 ##' basic_index(mod$info())
 basic_index <- function(info) {
   index <- info$index
-  list(run = c(index[["I_ICU_tot"]], index[["D_tot"]]))
+  list(run = c(icu = index[["I_ICU_tot"]],
+               deaths = index[["D_tot"]]))
 }
 
 
@@ -140,9 +141,8 @@ basic_compare <- function(state, prev_state, observed, pars) {
     return(NULL)
   }
 
-  ## TODO: tidy up in mcstate to pull index over - see mcstate issue #35
-  model_icu <- state[1, ]
-  model_deaths <- state[2, ] - prev_state[2, ]
+  model_icu <- state["icu", ]
+  model_deaths <- state["deaths", ] - prev_state["deaths", ]
 
   ## Noise parameter shared across both deaths and icu
   pars <- pars$observation
