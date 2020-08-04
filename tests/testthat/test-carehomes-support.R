@@ -141,7 +141,7 @@ test_that("Can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
 
-  expect_equal(initial_y$N_tot2, sum(p$population))
+  expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
   expect_equal(initial_y$S + drop(initial_y$I_asympt), p$N_tot)
