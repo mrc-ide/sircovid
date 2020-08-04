@@ -130,8 +130,8 @@ basic_index <- function(info) {
 ##'
 ##' @export
 ##' @examples
-##' state <- rbind(10:15, 1:6) # ICU, D
-##' prev_state <- matrix(1, 2, 6)
+##' state <- rbind(icu = 10:15, deaths = 1:6)
+##' prev_state <- matrix(1, 2, 6, dimnames = dimnames(state))
 ##' observed <- list(itu = 13, deaths = 3)
 ##' pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
 ##' basic_compare(state, prev_state, observed, pars)
