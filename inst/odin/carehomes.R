@@ -36,12 +36,12 @@ update(I_ICU_D_unconf[, , ]) <- new_I_ICU_D_unconf[i, j, k]
 update(I_ICU_D_conf[, , ]) <- new_I_ICU_D_conf[i, j, k]
 update(R_stepdown_unconf[, ]) <- new_R_stepdown_unconf[i, j]
 update(R_stepdown_conf[, ]) <- new_R_stepdown_conf[i, j]
-update(R_pre[, ]) <- R_pre[i, j] + n_com_to_R_pre[i, j] - n_R_pre[i, j]
-update(R_pos[]) <- R_pos[i] + delta_R_pos[i]
-update(R_neg[]) <- R_neg[i] + delta_R_neg[i]
+update(R_pre[, ]) <- new_R_pre[i, j]
+update(R_pos[]) <- new_R_pos[i]
+update(R_neg[]) <- new_R_neg[i]
 update(R[]) <- R[i] + delta_R[i]
-update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
-update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
+update(D_hosp[]) <- new_D_hosp[i]
+update(D_comm[]) <- new_D_comm[i]
 update(PCR_pos[, ]) <- PCR_pos[i, j] + delta_PCR_pos[i, j]
 update(cum_admit_conf) <-
   cum_admit_conf +
@@ -345,18 +345,24 @@ delta_D_hosp[] <-
   sum(n_II_hosp_D_conf[i, s_hosp_D, ]) +
   sum(n_II_ICU_D_unconf[i, s_ICU_D, ]) +
   sum(n_II_ICU_D_conf[i, s_ICU_D, ])
+new_D_hosp[] <- D_hosp[i] + delta_D_hosp[i]
 
 ## Work out the number of deaths in the community
 delta_D_comm[] <- sum(n_II_comm_D[i, s_comm_D, ])
+new_D_comm[] <- D_comm[i] + delta_D_comm[i]
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_R_pre[, 1] <- rbinom(sum(n_EE[i, s_E, ]), p_R_pre_1)
 n_com_to_R_pre[, 2] <- sum(n_EE[i, s_E, ]) - n_com_to_R_pre[i, 1]
+new_R_pre[,] <- R_pre[i, j] + n_com_to_R_pre[i, j] - n_R_pre[i, j]
+
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
 delta_R_pos[] <- rbinom(sum(n_R_pre[i, ]), p_seroconversion[i])
+new_R_pos[] <- R_pos[i] + delta_R_pos[i]
 delta_R_neg[] <- sum(n_R_pre[i, ]) - delta_R_pos[i]
+new_R_neg[] <- R_neg[i] + delta_R_neg[i]
 
 ## Work out the total number of recovery
 delta_R[] <-
@@ -651,6 +657,7 @@ dim(delta_R) <- N_age
 
 ## Vectors handling the R_pre class and seroconversion
 dim(R_pre) <- c(N_age, 2)
+dim(new_R_pre) <- c(N_age, 2)
 dim(n_R_pre) <- c(N_age, 2)
 dim(gamma_R_pre) <- c(2)
 dim(p_R_pre) <- c(N_age, 2)
@@ -658,18 +665,22 @@ dim(p_seroconversion) <- N_age
 
 ## Vectors handling the R_pos class
 dim(R_pos) <- N_age
+dim(new_R_pos) <- N_age
 dim(delta_R_pos) <- N_age
 
 ## Vectors handling the R_neg class
 dim(R_neg) <- N_age
+dim(new_R_neg) <- N_age
 dim(delta_R_neg) <- N_age
 
 ## Vectors handling the D_hosp class
 dim(D_hosp) <- N_age
+dim(new_D_hosp) <- N_age
 dim(delta_D_hosp) <- N_age
 
 ## Vectors handling the D_comm class
 dim(D_comm) <- N_age
+dim(new_D_comm) <- N_age
 dim(delta_D_comm) <- N_age
 
 ## Vectors handling the R_pos class
@@ -753,20 +764,22 @@ update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
 initial(I_ICU_tot) <- 0
-update(I_ICU_tot) <- sum(I_ICU_R_conf) + sum(I_ICU_D_conf)
+update(I_ICU_tot) <- sum(new_I_ICU_R_conf) + sum(new_I_ICU_D_conf)
 
 initial(general_tot) <- 0
-update(general_tot) <- sum(I_triage_R_conf) + sum(I_triage_D_conf) +
-  sum(I_hosp_R_conf) + sum(I_hosp_D_conf) + sum(R_stepdown_conf)
+update(general_tot) <- sum(new_I_triage_R_conf) + sum(new_I_triage_D_conf) +
+  sum(new_I_hosp_R_conf) + sum(new_I_hosp_D_conf) + sum(new_R_stepdown_conf)
 
 initial(D_hosp_tot) <- 0
-update(D_hosp_tot) <- sum(D_hosp)
+new_D_hosp_tot <- sum(new_D_hosp)
+update(D_hosp_tot) <- new_D_hosp_tot
 
 initial(D_comm_tot) <- 0
-update(D_comm_tot) <- sum(D_comm)
+new_D_comm_tot <- sum(new_D_comm)
+update(D_comm_tot) <- new_D_comm_tot
 
 initial(D_tot) <- 0
-update(D_tot) <- D_hosp_tot + D_comm_tot
+update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
@@ -784,10 +797,10 @@ update(D_tot) <- D_hosp_tot + D_comm_tot
 ## NOTE: the R_pre_tot sum sweeps out the second compartment used to
 ## model the mixture of exponentials.
 initial(R_pre_15_64) <- 0
-update(R_pre_15_64) <- sum(R_pre[4:13, ])
+update(R_pre_15_64) <- sum(new_R_pre[4:13, ])
 
 initial(R_neg_15_64) <- 0
-update(R_neg_15_64) <- sum(R_neg[4:13])
+update(R_neg_15_64) <- sum(new_R_neg[4:13])
 
 initial(R_pos_15_64) <- 0
-update(R_pos_15_64) <- sum(R_pos[4:13])
+update(R_pos_15_64) <- sum(new_R_pos[4:13])
