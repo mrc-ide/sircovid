@@ -168,10 +168,10 @@ initial(N_tot) <- 0
 
 ## aggregate our reporting statistics
 initial(I_ICU_tot) <- 0
-update(I_ICU_tot) <- sum(I_ICU)
+update(I_ICU_tot) <- sum(new_I_ICU)
 
 initial(D_tot) <- 0
-update(D_tot) <- sum(D)
+update(D_tot) <- sum(new_D)
 
 ## User defined parameters - default in parentheses:
 

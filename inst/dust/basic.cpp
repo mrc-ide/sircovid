@@ -347,8 +347,6 @@ public:
     const real_t * I_ICU = state + internal.offset_variable_I_ICU;
     const real_t * R_hosp = state + internal.offset_variable_R_hosp;
     const real_t * D = state + internal.offset_variable_D;
-    state_next[3] = odin_sum1(D, 0, internal.dim_D);
-    state_next[2] = odin_sum1(I_ICU, 0, internal.dim_I_ICU);
     state_next[1] = odin_sum1(S, 0, internal.dim_S) + odin_sum1(R, 0, internal.dim_R) + odin_sum1(D, 0, internal.dim_D) + odin_sum1(E, 0, internal.dim_E) + odin_sum1(I_asympt, 0, internal.dim_I_asympt) + odin_sum1(I_mild, 0, internal.dim_I_mild) + odin_sum1(I_ILI, 0, internal.dim_I_ILI) + odin_sum1(I_hosp, 0, internal.dim_I_hosp) + odin_sum1(I_ICU, 0, internal.dim_I_ICU) + odin_sum1(R_hosp, 0, internal.dim_R_hosp);
     state_next[0] = (step + 1) * internal.dt;
     real_t beta = (step >= internal.dim_beta_step ? internal.beta_step[internal.dim_beta_step - 1] : internal.beta_step[step + 1 - 1]);
@@ -620,6 +618,7 @@ public:
     for (int_t i = 1; i <= internal.dim_D; ++i) {
       state_next[internal.offset_variable_D + i - 1] = internal.new_D[i - 1];
     }
+    state_next[3] = odin_sum1(internal.new_D.data(), 0, internal.dim_new_D);
     for (int_t i = 1; i <= internal.dim_I_asympt_1; ++i) {
       for (int_t j = 1; j <= internal.dim_I_asympt_2; ++j) {
         for (int_t k = 1; k <= internal.dim_I_asympt_3; ++k) {
@@ -705,6 +704,7 @@ public:
         }
       }
     }
+    state_next[2] = odin_sum1(internal.new_I_ICU.data(), 0, internal.dim_new_I_ICU);
     for (int_t i = 1; i <= internal.dim_I_ILI_1; ++i) {
       for (int_t j = 1; j <= internal.dim_I_ILI_2; ++j) {
         for (int_t k = 1; k <= internal.dim_I_ILI_3; ++k) {
