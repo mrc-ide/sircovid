@@ -801,7 +801,7 @@ initial(prob_pos) <- 0
 
 ##prob_pos = prob_true_pos +
 ##           prob_false_pos
-update(prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 + 
-  (1 - p_specificity) * 
-  (1 - (sum(new_R_pre[4:13, ]) + 
+update(prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
+  (1 - p_specificity) *
+  (1 - (sum(new_R_pre[4:13, ]) +
           sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)
