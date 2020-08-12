@@ -122,12 +122,12 @@ test_that("ll_binom", {
   f <- function(model_prob) {
     dbinom(5, 10, prob = model_prob, log = TRUE)
   }
-  
+
   set.seed(1)
   expect_equal(
     ll_binom(5, 10, 0.2),
     f(0.2))
-  
+
   x <- seq(0, 1, 0.1)
   expect_equal(
     ll_binom(5, 10, x),

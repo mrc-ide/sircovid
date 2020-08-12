@@ -67,7 +67,7 @@ carehomes_parameters <- function(start_date, region,
   ## constant over the simulation, being the total population size of
   ## 15 to 64 year olds.
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
-  
+
   ## Specificity for serology tests
   ret$p_specificity <- 0.9
 
@@ -163,7 +163,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
   model_prob_pos <- state["prob_pos", ]
-  
+
   pars <- pars$observation
   exp_noise <- pars$exp_noise
 
@@ -186,11 +186,11 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                            pars$k_admitted, exp_noise)
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$k_new, exp_noise)
-  
-  ll_serology <- ll_binom(observed$npos_15_64, 
+
+  ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
                           model_prob_pos)
-  
+
   ll_itu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_serology
 }
