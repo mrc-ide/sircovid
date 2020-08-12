@@ -778,9 +778,6 @@ initial(D_comm_tot) <- 0
 new_D_comm_tot <- sum(new_D_comm)
 update(D_comm_tot) <- new_D_comm_tot
 
-initial(D_tot) <- 0
-update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
-
 ## Our age groups for serology are fixed: we break them down into the
 ##
 ## * 0-14 (1, 2, 3)

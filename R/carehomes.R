@@ -159,7 +159,6 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_general <- state["general", ]
   model_deaths_comm <- state["deaths_comm", ] - prev_state["deaths_comm", ]
   model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
-  model_deaths_tot <- state["deaths_tot", ] - prev_state["deaths_tot", ]
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
   model_R_pre_15_64 <- state["R_pre_15_64", ]
