@@ -195,16 +195,10 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   prob_true_pos <- model_R_pos_15_64 / pars$N_tot_15_64
   prob_false_pos <- (1 - pars$p_specificity) * (1 - true_pos / pars$N_tot_15_64)
 
-  if (is.na(observed$npos_15_64) || is.na(observed$ntot_15_64)) {
-    ll_serology <- 0
-  } else {
-    ## TODO: would be tidier to do this in a helper function like
-    ## ll_binom; Ed can you convert this at some point please?
-    ll_serology <- dbinom(observed$npos_15_64, observed$ntot_15_64,
-                          prob_true_pos + prob_false_pos,
-                          log = TRUE)
-  }
-
+  ll_serology <- ll_binom(observed$npos_15_64, 
+                          observed$ntot_15_64,
+                          prob_true_pos + prob_false_pos)
+  
   ll_itu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_serology
 }
