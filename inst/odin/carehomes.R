@@ -351,7 +351,7 @@ new_D_comm[] <- D_comm[i] + delta_D_comm[i]
 ## Work out the number of people entering the seroconversion flow
 n_com_to_R_pre[, 1] <- rbinom(sum(n_EE[i, s_E, ]), p_R_pre_1)
 n_com_to_R_pre[, 2] <- sum(n_EE[i, s_E, ]) - n_com_to_R_pre[i, 1]
-new_R_pre[,] <- R_pre[i, j] + n_com_to_R_pre[i, j] - n_R_pre[i, j]
+new_R_pre[, ] <- R_pre[i, j] + n_com_to_R_pre[i, j] - n_R_pre[i, j]
 
 
 ## Split the seroconversion flow between people who are going to
@@ -801,5 +801,7 @@ initial(prob_pos) <- 0
 
 ##prob_pos = prob_true_pos +
 ##           prob_false_pos
-update(prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
-                    (1 - p_specificity) * (1 - (sum(new_R_pre[4:13, ]) + sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)
+update(prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 + 
+  (1 - p_specificity) * 
+  (1 - (sum(new_R_pre[4:13, ]) + 
+          sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)

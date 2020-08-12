@@ -69,7 +69,7 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
   
   ## Specificity for serology tests
-  ret$p_specificity = 0.9
+  ret$p_specificity <- 0.9
 
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise)
@@ -186,7 +186,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                            pars$k_admitted, exp_noise)
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$k_new, exp_noise)
-
+  
   ll_serology <- ll_binom(observed$npos_15_64, 
                           observed$ntot_15_64,
                           model_prob_pos)

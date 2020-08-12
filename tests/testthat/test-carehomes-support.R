@@ -52,7 +52,8 @@ test_that("carehomes_parameters returns a list of parameters", {
                      names(shared), names(progression), names(severity)))
   expect_setequal(
     extra,
-    c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers", "p_specificity", "N_tot_15_64"))
+    c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
+      "p_specificity", "N_tot_15_64"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -114,7 +115,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_comm", "deaths_hosp", 
+    c("icu", "general", "deaths_comm", "deaths_hosp",
       "admitted", "new", "prob_pos"))
 
   expect_equal(index$run[["icu"]],
@@ -203,9 +204,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
-    prob_pos = (4:9)/10)
+    prob_pos = (4:9) / 10)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
-  prev_state["prob_pos",] <- 1/10
+  prev_state["prob_pos", ] <- 1 / 10
   observed <- list(
     itu = 13,
     general = 23,

@@ -146,13 +146,13 @@ test_that("ll_binom returns a vector of zeros if data missing", {
     ll_binom(NA, 10, 0.5),
     0)
   expect_equal(
-    ll_binom(NA, NA, rep(0.5,5)),
+    ll_binom(NA, NA, rep(0.5, 5)),
     rep(0, 5))
   expect_equal(
-    ll_binom(5, NA, rep(0.5,5)),
+    ll_binom(5, NA, rep(0.5, 5)),
     rep(0, 5))
   expect_equal(
-    ll_binom(NA, 10, rep(0.5,5)),
+    ll_binom(NA, 10, rep(0.5, 5)),
     rep(0, 5))
 })
 
