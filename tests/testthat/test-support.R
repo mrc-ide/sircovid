@@ -118,6 +118,44 @@ test_that("ll_nbinom returns a vector of zeros if data missing", {
     rep(0, 5))
 })
 
+test_that("ll_binom", {
+  f <- function(model_prob) {
+    dbinom(5, 10, prob = model_prob, log = TRUE)
+  }
+  
+  set.seed(1)
+  expect_equal(
+    ll_binom(5, 10, 0.2),
+    f(0.2))
+  
+  x <- seq(0, 1, 0.1)
+  expect_equal(
+    ll_binom(5, 10, x),
+    f(x))
+})
+
+
+test_that("ll_binom returns a vector of zeros if data missing", {
+  expect_equal(
+    ll_binom(NA, NA, 0.5),
+    0)
+  expect_equal(
+    ll_binom(5, NA, 0.5),
+    0)
+  expect_equal(
+    ll_binom(NA, 10, 0.5),
+    0)
+  expect_equal(
+    ll_binom(NA, NA, rep(0.5,5)),
+    rep(0, 5))
+  expect_equal(
+    ll_binom(5, NA, rep(0.5,5)),
+    rep(0, 5))
+  expect_equal(
+    ll_binom(NA, 10, rep(0.5,5)),
+    rep(0, 5))
+})
+
 
 test_that("transmission matrix", {
   clear_cache()
