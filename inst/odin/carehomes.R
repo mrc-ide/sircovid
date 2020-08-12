@@ -793,11 +793,13 @@ update(D_comm_tot) <- new_D_comm_tot
 ##
 ## NOTE: the R_pre_tot sum sweeps out the second compartment used to
 ## model the mixture of exponentials.
-initial(R_pre_15_64) <- 0
-update(R_pre_15_64) <- sum(new_R_pre[4:13, ])
 
-initial(R_neg_15_64) <- 0
-update(R_neg_15_64) <- sum(new_R_neg[4:13])
+p_specificity <- user()
+N_tot_15_64 <- user()
 
-initial(R_pos_15_64) <- 0
-update(R_pos_15_64) <- sum(new_R_pos[4:13])
+initial(prob_pos) <- 0
+
+##prob_pos = prob_true_pos +
+##           prob_false_pos
+update(prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
+                    (1 - p_specificity) * (1 - (sum(new_R_pre[4:13, ]) + sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)
