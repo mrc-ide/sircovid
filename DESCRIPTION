@@ -41,7 +41,7 @@ Imports:
     socialmixr
 LinkingTo:
     cpp11,
-    dust (>= 0.4.3)
+    dust (>= 0.4.4)
 Suggests:
     testthat
 RoxygenNote: 7.1.0
