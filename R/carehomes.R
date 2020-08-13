@@ -167,6 +167,8 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   pars <- pars$observation
   exp_noise <- pars$exp_noise
 
+  ## Note that in ll_nbinom, the purpose of exp_noise is to allow a non-zero probability when
+  ## the model value is 0 and the observed value is non-zero (i.e. there is overreporting)
   ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
                       pars$k_ICU, exp_noise)
   ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
@@ -187,6 +189,10 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$k_new, exp_noise)
 
+  ## Note we do not use exp_noise here as the only circumstances in which a zero probability
+  ## can be produced are when model_prob_pos = 1 and there are some negative tests, or when
+  ## model_prob_pos = 0 and there are some positive tests. Such circumstances can only arise
+  ## with extreme (0%/100%) specificity or sensitivity, which is wholly unrealistic.
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
                           model_prob_pos)
