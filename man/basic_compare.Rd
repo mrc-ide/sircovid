@@ -9,13 +9,13 @@ basic_compare(state, prev_state, observed, pars)
 \arguments{
 \item{state}{State vector for the end of the current day. This is
 assumed to be filtered following \code{\link[=basic_index]{basic_index()}} so contains
-rows corresponding to icu and deaths.}
+rows corresponding to ICU and deaths.}
 
 \item{prev_state}{State vector for the end of the previous day, as
 for \code{state}.}
 
 \item{observed}{Observed data. This will be a list with elements
-\code{icu} (number of icu beds occupied) and \code{deaths} (number of
+\code{icu} (number of ICU beds occupied) and \code{deaths} (number of
 deaths over this day).}
 
 \item{pars}{A list of parameters, as created by

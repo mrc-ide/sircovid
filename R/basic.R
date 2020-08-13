@@ -113,13 +113,13 @@ basic_index <- function(info) {
 ##'
 ##' @param state State vector for the end of the current day. This is
 ##'   assumed to be filtered following [basic_index()] so contains
-##'   rows corresponding to icu and deaths.
+##'   rows corresponding to ICU and deaths.
 ##'
 ##' @param prev_state State vector for the end of the previous day, as
 ##'   for `state`.
 ##'
 ##' @param observed Observed data. This will be a list with elements
-##'   `icu` (number of icu beds occupied) and `deaths` (number of
+##'   `icu` (number of ICU beds occupied) and `deaths` (number of
 ##'   deaths over this day).
 ##'
 ##' @param pars A list of parameters, as created by
@@ -148,12 +148,12 @@ basic_compare <- function(state, prev_state, observed, pars) {
   pars <- pars$observation
   exp_noise <- pars$exp_noise
 
-  ll_itu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
+  ll_icu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
                       pars$k_ICU, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths, pars$phi_death * model_deaths,
                          pars$k_death, exp_noise)
 
-  ll_itu + ll_deaths
+  ll_icu + ll_deaths
 }
 
 
