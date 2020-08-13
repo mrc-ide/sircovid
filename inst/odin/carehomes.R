@@ -778,6 +778,11 @@ initial(D_comm_tot) <- 0
 new_D_comm_tot <- sum(new_D_comm)
 update(D_comm_tot) <- new_D_comm_tot
 
+p_specificity <- user()
+N_tot_15_64 <- user()
+
+initial(prob_pos) <- 0
+
 ## Our age groups for serology are fixed: we break them down into the
 ##
 ## * 0-14 (1, 2, 3)
@@ -791,16 +796,8 @@ update(D_comm_tot) <- new_D_comm_tot
 ## consider the middle group, though this could be expanded easily by
 ## more statements like the ones below.
 ##
-## NOTE: the R_pre_tot sum sweeps out the second compartment used to
+## NOTE: the R_pre sum sweeps out the second compartment used to
 ## model the mixture of exponentials.
-
-p_specificity <- user()
-N_tot_15_64 <- user()
-
-initial(prob_pos) <- 0
-
-##prob_pos = prob_true_pos +
-##           prob_false_pos
 update(prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
   (1 - p_specificity) *
   (1 - (sum(new_R_pre[4:13, ]) +
