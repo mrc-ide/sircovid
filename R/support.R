@@ -99,6 +99,15 @@ ll_nbinom <- function(data, model, k, exp_noise) {
 }
 
 
+##' @importFrom stats dbinom
+ll_binom <- function(data_x, data_size, model_prob) {
+  if (is.na(data_x) || is.na(data_size)) {
+    return(numeric(length(model_prob)))
+  }
+  dbinom(data_x, data_size, model_prob, log = TRUE)
+}
+
+
 sircovid_transmission_matrix <- function(region) {
   if (is.null(cache$transmission_matrix[[region]])) {
     if (is.null(cache$transmission_matrix)) {

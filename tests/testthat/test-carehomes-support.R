@@ -44,15 +44,16 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   expect_equal(
     p$observation,
-    carehomes_parameters_observation(1e6, p$observation$N_tot_15_64))
-  expect_equal(p$observation$N_tot_15_64, sum(p$N_tot[4:13]))
+    carehomes_parameters_observation(1e6))
+  expect_equal(p$N_tot_15_64, sum(p$N_tot[4:13]))
 
   extra <- setdiff(names(p),
                    c("m", "observation",
                      names(shared), names(progression), names(severity)))
   expect_setequal(
     extra,
-    c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers"))
+    c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
+      "p_specificity", "N_tot_15_64"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -96,14 +97,13 @@ test_that("Can compute transmission matrix for carehomes model", {
 
 
 test_that("can tune the noise parameter", {
-  p1 <- carehomes_parameters_observation(1e6, 100)
-  p2 <- carehomes_parameters_observation(1e4, 100)
+  p1 <- carehomes_parameters_observation(1e6)
+  p2 <- carehomes_parameters_observation(1e4)
   expect_setequal(names(p1), names(p2))
   v <- setdiff(names(p1), "exp_noise")
   expect_mapequal(p1[v], p2[v])
   expect_equal(p1$exp_noise, 1e6)
   expect_equal(p2$exp_noise, 1e4)
-  expect_equal(p1$N_tot_15_64, 100)
 })
 
 
@@ -115,8 +115,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_comm", "deaths_hosp", "deaths_tot",
-      "admitted", "new", "R_pre_15_64", "R_neg_15_64", "R_pos_15_64"))
+    c("icu", "general", "deaths_comm", "deaths_hosp",
+      "admitted", "new", "prob_pos"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "I_ICU_tot"))
@@ -126,18 +126,12 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "D_comm_tot"))
   expect_equal(index$run[["deaths_hosp"]],
                which(names(info$index) == "D_hosp_tot"))
-  expect_equal(index$run[["deaths_tot"]],
-               which(names(info$index) == "D_tot"))
   expect_equal(index$run[["admitted"]],
                which(names(info$index) == "cum_admit_conf"))
   expect_equal(index$run[["new"]],
                which(names(info$index) == "cum_new_conf"))
-  expect_equal(index$run[["R_pre_15_64"]],
-               which(names(info$index) == "R_pre_15_64"))
-  expect_equal(index$run[["R_neg_15_64"]],
-               which(names(info$index) == "R_neg_15_64"))
-  expect_equal(index$run[["R_pos_15_64"]],
-               which(names(info$index) == "R_pos_15_64"))
+  expect_equal(index$run[["prob_pos"]],
+               which(names(info$index) == "prob_pos"))
 })
 
 
@@ -208,13 +202,11 @@ test_that("carehomes_compare combines likelihood correctly", {
     general = 20:25,
     deaths_comm = 1:6,
     deaths_hosp = 3:8,
-    deaths_tot = 4:9,
     admitted = 50:55,
     new = 60:65,
-    R_pre_15_64 = 80:85,
-    R_neg_15_64 = 30:35,
-    R_pos_15_64 = 40:45)
+    prob_pos = (4:9) / 10)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
+  prev_state["prob_pos", ] <- 1 / 10
   observed <- list(
     itu = 13,
     general = 23,

@@ -20,10 +20,10 @@ update(I_mild[, , ]) <- I_mild[i, j, k] + delta_I_mild[i, j, k]
 update(I_ILI[, , ]) <- I_ILI[i, j, k] + delta_I_ILI[i, j, k]
 update(R[]) <- R[i] + delta_R[i]
 update(I_hosp[, , ]) <- I_hosp[i, j, k] + delta_I_hosp[i, j, k]
-update(I_ICU[, , ]) <- I_ICU[i, j, k] + delta_I_ICU[i, j, k]
+update(I_ICU[, , ]) <- new_I_ICU[i, j, k]
 update(R_hosp[, , ]) <- R_hosp[i, j, k] + delta_R_hosp[i, j, k]
 
-update(D[]) <- D[i] + delta_D[i]
+update(D[]) <- new_D[i]
 
 ## Stuff we want to track in addition to number of individuals
 ## in each compartment.
@@ -115,6 +115,8 @@ aux_II_ICU[, 2:s_ICU, ] <- n_II_ICU[i, j - 1, k]
 aux_II_ICU[, 1:s_ICU, ] <- aux_II_ICU[i, j, k] - n_II_ICU[i, j, k]
 delta_I_ICU[, , ] <- aux_II_ICU[i, j, k]
 
+new_I_ICU[, , ] <- I_ICU[i, j, k] + delta_I_ICU[i, j, k]
+
 ## Work out the R_hosp -> R_hosp transitions
 n_ICU_to_R_hosp[, ] <- rbinom(n_II_ICU[i, s_ICU, j], p_recov_ICU[i])
 aux_R_hosp[, 1, ] <- n_ICU_to_R_hosp[i, k]
@@ -125,6 +127,8 @@ delta_R_hosp[, , ] <- aux_R_hosp[i, j, k]
 ## Work out the number of deaths
 delta_D[] <- sum(n_II_ICU[i, s_ICU, ]) - sum(n_ICU_to_R_hosp[i, ]) +
   sum(n_death_hosp[i, ])
+
+new_D[] <- D[i] + delta_D[i]
 
 ## Work out the number of recovery
 delta_R[] <-
@@ -164,10 +168,10 @@ initial(N_tot) <- 0
 
 ## aggregate our reporting statistics
 initial(I_ICU_tot) <- 0
-update(I_ICU_tot) <- sum(I_ICU)
+update(I_ICU_tot) <- sum(new_I_ICU)
 
 initial(D_tot) <- 0
-update(D_tot) <- sum(D)
+update(D_tot) <- sum(new_D)
 
 ## User defined parameters - default in parentheses:
 
@@ -276,6 +280,7 @@ dim(aux_II_ICU) <- c(N_age, s_ICU, trans_classes)
 dim(delta_I_ICU) <- c(N_age, s_ICU, trans_classes)
 dim(n_II_ICU) <- c(N_age, s_ICU, trans_classes)
 dim(p_recov_ICU) <- c(N_age)
+dim(new_I_ICU) <- c(N_age, s_ICU, trans_classes)
 
 ## Vectors handling the R_hosp class
 dim(R_hosp) <- c(N_age, s_rec, trans_classes)
@@ -290,6 +295,7 @@ dim(delta_R) <- c(N_age)
 ## Vectors handling the D class
 dim(D) <- c(N_age)
 dim(delta_D) <- c(N_age)
+dim(new_D) <- c(N_age)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity

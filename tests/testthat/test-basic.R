@@ -11,9 +11,9 @@ test_that("can run the basic model", {
   mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
   expected <-
-    rbind(icu = c(81, 112, 313, 196, 228, 113, 101, 87, 60, 90),
-          deaths = c(290040, 290250, 289270, 289768, 288659, 289774,
-                     290519, 289045, 290380, 289536))
+    rbind(icu = c(73, 110, 300, 193, 224, 107, 100, 84, 59, 85),
+          deaths = c(290053, 290254, 289298, 289782, 288671, 289787,
+                     290523, 289053, 290382, 289544))
   expect_equal(res, expected)
 })
 
@@ -33,5 +33,5 @@ test_that("can run the particle filter on the model", {
 
   ## TODO: this is not yet reliable, nor probably correct
   ## TODO: mcstate should spread out parameters like this for us by default
-  expect_type(pf$run(pars, pars, pars), "double")
+  expect_type(pf$run(pars), "double")
 })

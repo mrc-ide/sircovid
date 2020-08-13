@@ -66,10 +66,13 @@ carehomes_parameters <- function(start_date, region,
   ## from number of positive/negative tests into a fraction). This is
   ## constant over the simulation, being the total population size of
   ## 15 to 64 year olds.
-  N_tot_15_64 <- sum(ret$N_tot[4:13])
+  ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
+
+  ## Specificity for serology tests
+  ret$p_specificity <- 0.9
 
   ## All observation parameters:
-  ret$observation <- carehomes_parameters_observation(exp_noise, N_tot_15_64)
+  ret$observation <- carehomes_parameters_observation(exp_noise)
 
   ## TODO: Adding this here, but better would be to pass N_age as-is,
   ## then update the leading dimension to something more accurate
@@ -110,9 +113,7 @@ carehomes_index <- function(info) {
                deaths_tot = index[["D_tot"]],
                admitted = index[["cum_admit_conf"]],
                new = index[["cum_new_conf"]],
-               R_pre_15_64 = index[["R_pre_15_64"]],
-               R_neg_15_64 = index[["R_neg_15_64"]],
-               R_pos_15_64 = index[["R_pos_15_64"]]))
+               prob_pos = index[["prob_pos"]]))
 }
 
 
@@ -159,16 +160,16 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_general <- state["general", ]
   model_deaths_comm <- state["deaths_comm", ] - prev_state["deaths_comm", ]
   model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
-  model_deaths_tot <- state["deaths_tot", ] - prev_state["deaths_tot", ]
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
-  model_R_pre_15_64 <- state["R_pre_15_64", ]
-  model_R_neg_15_64 <- state["R_neg_15_64", ]
-  model_R_pos_15_64 <- state["R_pos_15_64", ]
+  model_prob_pos <- state["prob_pos", ]
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
 
+  ## Note that in ll_nbinom, the purpose of exp_noise is to allow a
+  ## non-zero probability when the model value is 0 and the observed
+  ## value is non-zero (i.e. there is overreporting)
   ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
                       pars$k_ICU, exp_noise)
   ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
@@ -189,21 +190,15 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$k_new, exp_noise)
 
-  ## TODO: it would be easy to return the true_pos and positive tests
-  ## as two numbers rather than these three from the odin code
-  true_pos <- model_R_pos_15_64 + model_R_neg_15_64 + model_R_pre_15_64
-  prob_true_pos <- model_R_pos_15_64 / pars$N_tot_15_64
-  prob_false_pos <- (1 - pars$p_specificity) * (1 - true_pos / pars$N_tot_15_64)
-
-  if (is.na(observed$npos_15_64) || is.na(observed$ntot_15_64)) {
-    ll_serology <- 0
-  } else {
-    ## TODO: would be tidier to do this in a helper function like
-    ## ll_binom; Ed can you convert this at some point please?
-    ll_serology <- dbinom(observed$npos_15_64, observed$ntot_15_64,
-                          prob_true_pos + prob_false_pos,
-                          log = TRUE)
-  }
+  ## Note we do not use exp_noise here as the only circumstances in
+  ## which a zero probability can be produced are when model_prob_pos
+  ## = 1 and there are some negative tests, or when model_prob_pos = 0
+  ## and there are some positive tests. Such circumstances can only
+  ## arise with extreme (0%/100%) specificity or sensitivity, which is
+  ## wholly unrealistic.
+  ll_serology <- ll_binom(observed$npos_15_64,
+                          observed$ntot_15_64,
+                          model_prob_pos)
 
   ll_itu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_serology
@@ -378,7 +373,7 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-carehomes_parameters_observation <- function(exp_noise, N_tot_15_64) {
+carehomes_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in ICU
     phi_ICU = 0.95,
@@ -400,13 +395,6 @@ carehomes_parameters_observation <- function(exp_noise, N_tot_15_64) {
     ## Daily new inpatient diagnoses
     phi_new = 0.95,
     k_new = 2,
-    ## Specificity for serology tests
-    ##
-    ## TODO: p_specificity here needs to be tuneable, as that will be
-    ## fit within the mcmc
-    p_specificity = 0.9,
-    ## Population size of eligible 15-64 year olds for serology testing
-    N_tot_15_64 = N_tot_15_64,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)
