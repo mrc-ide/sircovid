@@ -18,9 +18,8 @@ test_that("can run the carehomes model", {
     deaths_hosp = c(305578, 305933, 305954, 305572, 306014),
     admitted = c(151349, 150757, 151137, 150569, 150964),
     new = c(483755, 484827, 484942, 483498, 483546),
-    prob_pos = c(0.7239, 0.7238, 0.7239, 0.7238, 0.7238))
-  #round prob_pos in res so they should match above
-  res[seq(7, 35, 7)] <- round(res[seq(7, 35, 7)], 4)
+    prob_pos = c(0.723911065300095, 0.723769622060999, 0.723852644013753, 
+                 0.723847861727815, 0.723785265474777))
   expect_equal(res, expected)
 })
 
