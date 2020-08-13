@@ -194,7 +194,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ## which a zero probability can be produced are when model_prob_pos
   ## = 1 and there are some negative tests, or when model_prob_pos = 0
   ## and there are some positive tests. Such circumstances can only
-  ## arise with extreme (0%/100%) specificity or sensitivity, which is 
+  ## arise with extreme (0%/100%) specificity or sensitivity, which is
   ## wholly unrealistic.
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
