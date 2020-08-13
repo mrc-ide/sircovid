@@ -9,14 +9,14 @@ carehomes_compare(state, prev_state, observed, pars)
 \arguments{
 \item{state}{State vector for the end of the current day. This is
 assumed to be filtered following \code{\link[=carehomes_index]{carehomes_index()}} so contains
-10 rows corresponding to itu, admissions, deaths and
+10 rows corresponding to ICU, general beds, admissions, deaths and
 seroconversion compartments.}
 
 \item{prev_state}{State vector for the end of the previous day, as
 for \code{state}.}
 
 \item{observed}{Observed data. This will be a list with elements
-\code{itu} (number of itu/icu beds occupied), \code{general} (number of
+\code{icu} (number of ICU beds occupied), \code{general} (number of
 general beds occupied), \code{deaths_hosp} (cumulative deaths in
 hospital settings), \code{deaths_comm} (cumulative deaths in
 community settings), \code{deaths} (combined deaths - used by some
