@@ -208,7 +208,7 @@ test_that("carehomes_compare combines likelihood correctly", {
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
   prev_state["prob_pos", ] <- 1 / 10
   observed <- list(
-    itu = 13,
+    icu = 13,
     general = 23,
     deaths_hosp = 5,
     deaths_comm = 3,

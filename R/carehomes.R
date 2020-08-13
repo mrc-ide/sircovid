@@ -124,14 +124,14 @@ carehomes_index <- function(info) {
 ##'
 ##' @param state State vector for the end of the current day. This is
 ##'   assumed to be filtered following [carehomes_index()] so contains
-##'   10 rows corresponding to itu, admissions, deaths and
+##'   10 rows corresponding to icu, admissions, deaths and
 ##'   seroconversion compartments.
 ##'
 ##' @param prev_state State vector for the end of the previous day, as
 ##'   for `state`.
 ##'
 ##' @param observed Observed data. This will be a list with elements
-##'   `itu` (number of itu/icu beds occupied), `general` (number of
+##'   `icu` (number of icu beds occupied), `general` (number of
 ##'   general beds occupied), `deaths_hosp` (cumulative deaths in
 ##'   hospital settings), `deaths_comm` (cumulative deaths in
 ##'   community settings), `deaths` (combined deaths - used by some
@@ -170,7 +170,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ## Note that in ll_nbinom, the purpose of exp_noise is to allow a
   ## non-zero probability when the model value is 0 and the observed
   ## value is non-zero (i.e. there is overreporting)
-  ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
+  ll_itu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
                       pars$k_ICU, exp_noise)
   ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
                           pars$k_general, exp_noise)

@@ -113,13 +113,13 @@ basic_index <- function(info) {
 ##'
 ##' @param state State vector for the end of the current day. This is
 ##'   assumed to be filtered following [basic_index()] so contains
-##'   rows corresponding to itu and deaths.
+##'   rows corresponding to icu and deaths.
 ##'
 ##' @param prev_state State vector for the end of the previous day, as
 ##'   for `state`.
 ##'
 ##' @param observed Observed data. This will be a list with elements
-##'   `itu` (number of itu/icu beds occupied) and `deaths` (number of
+##'   `icu` (number of icu beds occupied) and `deaths` (number of
 ##'   deaths over this day).
 ##'
 ##' @param pars A list of parameters, as created by
@@ -132,12 +132,12 @@ basic_index <- function(info) {
 ##' @examples
 ##' state <- rbind(icu = 10:15, deaths = 1:6)
 ##' prev_state <- matrix(1, 2, 6, dimnames = dimnames(state))
-##' observed <- list(itu = 13, deaths = 3)
+##' observed <- list(icu = 13, deaths = 3)
 ##' pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
 ##' basic_compare(state, prev_state, observed, pars)
 ##' basic_compare(state * 5, prev_state, observed, pars)
 basic_compare <- function(state, prev_state, observed, pars) {
-  if (is.na(observed$itu) && is.na(observed$deaths)) {
+  if (is.na(observed$icu) && is.na(observed$deaths)) {
     return(NULL)
   }
 
@@ -148,7 +148,7 @@ basic_compare <- function(state, prev_state, observed, pars) {
   pars <- pars$observation
   exp_noise <- pars$exp_noise
 
-  ll_itu <- ll_nbinom(observed$itu, pars$phi_ICU * model_icu,
+  ll_itu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
                       pars$k_ICU, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths, pars$phi_death * model_deaths,
                          pars$k_death, exp_noise)
