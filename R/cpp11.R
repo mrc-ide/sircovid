@@ -36,6 +36,10 @@ dust_basic_rng_state <- function(ptr) {
   .Call("_sircovid2_dust_basic_rng_state", ptr)
 }
 
+dust_basic_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, seed) {
+  .Call("_sircovid2_dust_basic_simulate", r_steps, r_data, r_state, r_index, n_threads, seed)
+}
+
 dust_carehomes_alloc <- function(r_data, step, n_particles, n_threads, seed) {
   .Call("_sircovid2_dust_carehomes_alloc", r_data, step, n_particles, n_threads, seed)
 }
@@ -70,4 +74,8 @@ dust_carehomes_reorder <- function(ptr, r_index) {
 
 dust_carehomes_rng_state <- function(ptr) {
   .Call("_sircovid2_dust_carehomes_rng_state", ptr)
+}
+
+dust_carehomes_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, seed) {
+  .Call("_sircovid2_dust_carehomes_simulate", r_steps, r_data, r_state, r_index, n_threads, seed)
 }
