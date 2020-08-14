@@ -496,6 +496,7 @@ run_mcmc_chain <- function(inputs,
 # 
 # return: Set to 'll' to return the log-likelihood (for MCMC) or to
 #
+##' @export
 calc_loglikelihood <- function(pars, data, sircovid_model, model_params,
                                steps_per_day, pars_obs, n_particles,
                                forecast_days = 0, return = "ll") {
