@@ -97,7 +97,11 @@ carehomes_parameters <- function(start_date, region,
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
 ##'   admissions,(7) cumulative confirmed new admissions, (8)
 ##'   recovered pre seroconversion (15 - 64 year-olds only), (9)
-##'   recovered seronegative and (10) recovered seropositive.
+##'   recovered seronegative and (10) recovered seropositive, and with
+##'   element `state` containing the same values followed by 17 S
+##'   compartments (one per age group, then one for carehome workers
+##'   and carehome residents respectively) and 17 "cumulative
+##'   admission" compartments.
 ##'
 ##' @export
 ##' @examples
@@ -106,14 +110,26 @@ carehomes_parameters <- function(start_date, region,
 ##' carehomes_index(mod$info())
 carehomes_index <- function(info) {
   index <- info$index
-  list(run = c(icu = index[["I_ICU_tot"]],
-               general = index[["general_tot"]],
-               deaths_comm = index[["D_comm_tot"]],
-               deaths_hosp = index[["D_hosp_tot"]],
-               deaths_tot = index[["D_tot"]],
-               admitted = index[["cum_admit_conf"]],
-               new = index[["cum_new_conf"]],
-               prob_pos = index[["prob_pos"]]))
+
+  ## Variables required for the particle filter to run:
+  index_run <- c(icu = index[["I_ICU_tot"]],
+                 general = index[["general_tot"]],
+                 deaths_comm = index[["D_comm_tot"]],
+                 deaths_hosp = index[["D_hosp_tot"]],
+                 deaths_tot = index[["D_tot"]],
+                 admitted = index[["cum_admit_conf"]],
+                 new = index[["cum_new_conf"]],
+                 prob_pos = index[["prob_pos"]])
+
+  ## Variables that we want to save for post-processing
+  suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
+  index_S <- set_names(index[["S"]],
+                       paste0("S", suffix))
+  index_cum_admit <- set_names(index[["cum_admit_by_age"]],
+                               paste0("cum_admit", suffix))
+
+  list(run = index_run,
+       state = c(index_run, index_S, index_cum_admit))
 }
 
 

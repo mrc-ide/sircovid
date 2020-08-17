@@ -266,3 +266,15 @@ test_that("carehomes_population preserves population", {
   expect_equal(res[1:5], population[1:5])
   expect_true(all(res[6:17] < population[6:17]))
 })
+
+
+test_that("carehomes_index returns S compartments", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  mod <- carehomes$new(p, 0, 5, seed = 1L)
+  index <- carehomes_index(mod$info())
+  expect_equal(
+    unname(index$state),
+    c(unname(index$run),
+      mod$info()$index$S,
+      mod$info()$index$cum_admit_by_age))
+})
