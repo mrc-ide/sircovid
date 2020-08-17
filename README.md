@@ -14,8 +14,6 @@
 
 Alternatively, run `./scripts/generate_odin`
 
-If generating the dust code from odin, we currently require an in-development version of `odin.dust` (currently branch `i24-info-index`, version 0.0.9). If you use an older version, this will generate code incompatible with the version of `dust` that we require.
-
 ## License
 
 MIT © Imperial College of Science, Technology and Medicine
