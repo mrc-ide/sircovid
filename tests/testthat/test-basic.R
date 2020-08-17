@@ -2,7 +2,7 @@ context("basic")
 
 test_that("can run the basic model", {
   p <- basic_parameters(sircovid_date("2020-02-07"), "england")
-  mod <- basic$new(p, 0, 10)
+  mod <- basic$new(p, 0, 10, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
 
   initial <- basic_initial(mod$info(), 10, p)

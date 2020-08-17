@@ -2,7 +2,7 @@ context("carehomes")
 
 test_that("can run the carehomes model", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-  mod <- carehomes$new(p, 0, 5)
+  mod <- carehomes$new(p, 0, 5, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
 
   initial <- carehomes_initial(mod$info(), 10, p)
