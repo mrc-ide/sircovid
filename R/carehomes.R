@@ -480,3 +480,41 @@ carehomes_population <- function(population, carehome_workers,
   }
   N_tot
 }
+
+
+##' Construct a particle filter using the [`carehomes`] model. This is
+##' a convenience function, ensuring that compatible functions are
+##' used together.
+##'
+##' @title Carehomes particle filter
+##'
+##' @param data Data suitable for use with with the
+##'   [`mcstate::particle_filter`], created by created by
+##'   [mcstate::particle_filter_data()]. We require columns "icu",
+##'   "general", "deaths_hosp", "deaths_comm", "deaths", "admitted",
+##'   "new", "npos_15_64", "ntot_15_64", though thse may be entirely
+##'   `NA` if no data are present.
+##'
+##' @param n_particles Number of particles to use
+##'
+##' @param n_threads Number of threads to use
+##'
+##' @param seed Random seed to use
+##'
+##' @return A [`mcstate::particle`] filter object
+##' @export
+carehomes_particle_filter <- function(data, n_particles,
+                                      n_threads = 1L, seed = NULL) {
+  required <- c("icu", "general", "deaths_hosp", "deaths_comm", "deaths",
+                "admitted", "new", "npos_15_64", "ntot_15_64")
+  verify_names(data, required, allow_extra = TRUE)
+  mcstate::particle_filter$new(
+    data,
+    sircovid2::carehomes,
+    n_particles,
+    sircovid2::carehomes_compare,
+    sircovid2::carehomes_index,
+    sircovid2::carehomes_initial,
+    n_threads,
+    seed)
+}

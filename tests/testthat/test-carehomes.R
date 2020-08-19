@@ -25,20 +25,22 @@ test_that("can run the carehomes model", {
 
 
 test_that("can run the particle filter on the model", {
-  skip("Work in progress - needs new data")
   start_date <- sircovid_date("2020-02-02")
   pars <- carehomes_parameters(start_date, "england")
   data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
                         start_date, pars$dt)
+  ## Add additional columns
+  data$deaths_hosp <- data$deaths
+  data$deaths_comm <- NA
+  data$deaths <- NA
+  data$general <- NA
+  data$admitted <- NA
+  data$new <- NA
+  data$npos_15_64 <- NA
+  data$ntot_15_64 <- NA
 
-  n_particles <- 100
-  pf <- mcstate::particle_filter$new(
-    data, carehomes, n_particles,
-    compare = carehomes_compare,
-    initial = carehomes_initial,
-    index = carehomes_index)
+  pf <- carehomes_particle_filter(data, 10)
+  expect_s3_class(pf, "particle_filter")
 
-  pars_obs <- carehomes_parameters_observation()
-
-  pf$run(pars, pars_obs, pars)
+  pf$run(pars)
 })
