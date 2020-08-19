@@ -764,11 +764,16 @@ update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
 initial(I_ICU_tot) <- 0
-update(I_ICU_tot) <- sum(new_I_ICU_R_conf) + sum(new_I_ICU_D_conf)
+new_I_ICU_tot <- sum(new_I_ICU_R_conf) + sum(new_I_ICU_D_conf)
+update(I_ICU_tot) <- new_I_ICU_tot
 
 initial(general_tot) <- 0
-update(general_tot) <- sum(new_I_triage_R_conf) + sum(new_I_triage_D_conf) +
+new_general_tot <- sum(new_I_triage_R_conf) + sum(new_I_triage_D_conf) +
   sum(new_I_hosp_R_conf) + sum(new_I_hosp_D_conf) + sum(new_R_stepdown_conf)
+update(general_tot) <- new_general_tot
+
+initial(hosp_tot) <- 0
+update(hosp_tot) <- new_I_ICU_tot + new_general_tot
 
 initial(D_hosp_tot) <- 0
 new_D_hosp_tot <- sum(new_D_hosp)
@@ -777,6 +782,9 @@ update(D_hosp_tot) <- new_D_hosp_tot
 initial(D_comm_tot) <- 0
 new_D_comm_tot <- sum(new_D_comm)
 update(D_comm_tot) <- new_D_comm_tot
+
+initial(D_tot) <- 0
+update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
 
 p_specificity <- user()
 N_tot_15_64 <- user()
