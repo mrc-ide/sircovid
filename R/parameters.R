@@ -87,15 +87,6 @@ sircovid_parameters_beta <- function(date, value, dt) {
 
 
 sircovid_parameters_severity <- function(params) {
-  params <- sircovid_parameters_severity_load(params)
-  sircovid_parameters_process(params)
-}
-
-
-## This loads parameters in the format as provided by Bob, translating
-## names and transposing so that we're in a format closer to what we
-## require.
-sircovid_parameters_severity_load <- function(params) {
   if (is.null(params)) {
     params <- severity_default()
   }
@@ -119,42 +110,17 @@ sircovid_parameters_severity_load <- function(params) {
     p_seroconversion = "Proportion of cases that seroconvert",
     p_death_comm = "Proportion of severe cases dying in the community",
     p_admit_conf = "Proportion of hospitalised cases admitted as confirmed")
-  rename(data, required, names(required))[c("age", names(required))]
-}
+  data <- rename(data, required, names(required))
 
-
-## This does the second half of the processing, computing derived
-## quantities
-sircovid_parameters_severity_process <- function(params) {
-  ## Even though we'd not normally do this sort of validation in code
-  ## that is not user-facing, the handling of this data is
-  ## sufficiently nasty that we'll do it here anyway.
-  cols <- c("age", "population", "p_sympt_seek_hc", "p_sympt",
-            "p_sympt_hosp", "p_ICU_hosp", "p_death_ICU",
-            "p_death_hosp_D", "p_seroconversion", "p_death_comm",
-            "p_admit_conf")
-  verify_names(params, cols)
-
-  ## Nontrivial transformations here
-  p_recov_ILI <- 1 - params[["p_sympt_hosp"]] / params[["p_sympt_seek_hc"]]
-  p_recov_hosp <- (1 - params[["p_ICU_hosp"]]) *
-    (1 - params[["p_death_hosp_D"]])
-  p_death_hosp <- (1 - params[["p_ICU_hosp"]]) *
-    params[["p_death_hosp_D"]]
-
-  ## Trivial transformations only here
   list(
-    p_asympt = 1 - params[["p_sympt"]],
-    p_sympt_ILI = params[["p_sympt"]] * params[["p_sympt_seek_hc"]],
-    p_recov_ICU = 1 - params[["p_death_ICU"]],
-    p_recov_ILI = p_recov_ILI,
-    p_hosp_ILI = 1 - p_recov_ILI,
-    p_recov_hosp = p_recov_hosp,
-    p_death_hosp = p_death_hosp,
-    p_death_hosp_D = params[["p_death_hosp_D"]],
-    p_death_ICU = params[["p_death_ICU"]],
-    p_ICU_hosp = params[["p_ICU_hosp"]],
-    p_seroconversion = params[["p_seroconversion"]],
-    p_death_comm = params[["p_death_comm"]],
-    p_admit_conf = params[["p_admit_conf"]])
+    p_admit_conf = data[["p_admit_conf"]],
+    p_asympt = 1 - data[["p_sympt"]],
+    p_death_comm = data[["p_death_comm"]],
+    p_death_hosp_D = data[["p_death_hosp_D"]],
+    p_death_ICU = data[["p_death_ICU"]],
+    p_hosp_ILI = data[["p_sympt_hosp"]] / data[["p_sympt_seek_hc"]],
+    p_ICU_hosp = data[["p_ICU_hosp"]],
+    p_recov_ICU = 1 - data[["p_death_ICU"]],
+    p_seroconversion = data[["p_seroconversion"]],
+    p_sympt_ILI = data[["p_sympt"]] * data[["p_sympt_seek_hc"]])
 }

@@ -78,8 +78,23 @@ basic_parameters <- function(start_date, region,
                                     beta_date, beta_value)
   ret$m <- sircovid_transmission_matrix(region)
   ret$observation <- basic_parameters_observation(exp_noise)
+  severity <- sircovid_parameters_severity(severity_data)
+
+  ## Some additional processing of derived quantities used in the
+  ## basic model; we could do these transformations in the odin code
+  ## perhaps, which would reduce carrying redundant dependencies
+  ## between parameters
+  severity$p_recov_ICU <- 1 - severity[["p_death_ICU"]]
+  severity$p_recov_hosp <-
+    (1 - severity[["p_ICU_hosp"]]) *
+    (1 - severity[["p_death_hosp_D"]])
+  severity$p_death_hosp <-
+    (1 - severity[["p_ICU_hosp"]]) *
+    severity[["p_death_hosp_D"]]
+  severity$p_recov_ILI <- 1 - severity[["p_hosp_ILI"]]
+
   c(ret,
-    sircovid_parameters_severity(severity_data),
+    severity,
     basic_parameters_progression())
 }
 
