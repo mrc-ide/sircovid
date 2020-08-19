@@ -505,11 +505,8 @@ carehomes_population <- function(population, carehome_workers,
 ##' @export
 carehomes_particle_filter <- function(data, n_particles,
                                       n_threads = 1L, seed = NULL) {
-  required <- c("icu", "general", "deaths_hosp", "deaths_comm", "deaths",
-                "admitted", "new", "npos_15_64", "ntot_15_64")
-  verify_names(data, required, allow_extra = TRUE)
   mcstate::particle_filter$new(
-    data,
+    carehomes_particle_filter_data(data),
     sircovid2::carehomes,
     n_particles,
     sircovid2::carehomes_compare,
@@ -517,4 +514,16 @@ carehomes_particle_filter <- function(data, n_particles,
     sircovid2::carehomes_initial,
     n_threads,
     seed)
+}
+
+
+carehomes_particle_filter_data <- function(data) {
+  required <- c("icu", "general", "deaths_hosp", "deaths_comm", "deaths",
+                "admitted", "new", "npos_15_64", "ntot_15_64")
+  verify_names(data, required, allow_extra = TRUE)
+  if (any(!is.na(data$deaths) &
+           (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
+    stop("Deaths are not consistently split into total vs community/hospital")
+  }
+  data
 }
