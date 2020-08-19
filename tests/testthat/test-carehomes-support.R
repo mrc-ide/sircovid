@@ -275,6 +275,8 @@ test_that("carehomes_index returns S compartments", {
   expect_equal(
     unname(index$state),
     c(unname(index$run),
+      mod$info()$index$hosp_tot,
+      mod$info()$index$D_tot,
       mod$info()$index$S,
       mod$info()$index$cum_admit_by_age))
 })

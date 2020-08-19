@@ -116,20 +116,22 @@ carehomes_index <- function(info) {
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
-                 deaths_tot = index[["D_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
                  prob_pos = index[["prob_pos"]])
 
   ## Variables that we want to save for post-processing
+  index_save <- c(hosp = index[["hosp_tot"]],
+                  deaths = index[["D_tot"]])
   suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
   index_S <- set_names(index[["S"]],
                        paste0("S", suffix))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
 
+
   list(run = index_run,
-       state = c(index_run, index_S, index_cum_admit))
+       state = c(index_run, index_save, index_S, index_cum_admit))
 }
 
 
