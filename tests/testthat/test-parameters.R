@@ -88,6 +88,16 @@ test_that("can validate a severity input", {
 })
 
 
+test_that("can update a severity input, and update dependent parameters", {
+  params <- sircovid_parameters_severity_load(NULL)
+  params$p_death_ICU <- params$p_death_ICU / 2
+  params$p_sympt_hosp <- params$p_sympt_hosp / 2
+  d <- sircovid_parameters_severity_process(params)
+  expect_equal(d$p_death_ICU + d$p_recov_ICU, rep(1, nrow(params)))
+  expect_equal(d$p_recov_ILI + d$p_hosp_ILI, rep(1, nrow(params)))
+})
+
+
 test_that("shared parameters accepts a beta vector", {
   date <- sircovid_date("2020-02-01")
   beta_date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
