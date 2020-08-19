@@ -16,7 +16,6 @@ carehomes_parameters(
   eps = 0.1,
   C_1 = 4e-05,
   C_2 = 5e-04,
-  phi_death_hosp = 1.15,
   exp_noise = 1e+06
 )
 }
@@ -65,8 +64,6 @@ with the progression parameters.}
 residents or workers}
 
 \item{C_2}{Contact rate between carehome residents}
-
-\item{phi_death_hosp}{For use within the observation function}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

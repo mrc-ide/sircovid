@@ -35,8 +35,6 @@ NULL
 ##'
 ##' @param C_2 Contact rate between carehome residents
 ##'
-##' @param phi_death_hosp For use within the observation function
-##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -54,7 +52,6 @@ carehomes_parameters <- function(start_date, region,
                                  eps = 0.1,
                                  C_1 = 4e-5,
                                  C_2 = 5e-4,
-                                 phi_death_hosp = 1.15,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -96,7 +93,7 @@ carehomes_parameters <- function(start_date, region,
   ret$p_specificity <- p_specificity
 
   ## All observation parameters:
-  ret$observation <- carehomes_parameters_observation(exp_noise, phi_death_hosp)
+  ret$observation <- carehomes_parameters_observation(exp_noise)
 
   ## TODO: Adding this here, but better would be to pass N_age as-is,
   ## then update the leading dimension to something more accurate
@@ -424,16 +421,16 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-carehomes_parameters_observation <- function(exp_noise, phi_death_hosp = 1.15) {
+carehomes_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in ICU
-    phi_ICU = 0.95,
+    phi_ICU = 1,
     k_ICU = 2,
     ## People currently in general beds
-    phi_general = 0.95,
+    phi_general = 1,
     k_general = 2,
     ## Daily hospital deaths
-    phi_death_hosp = phi_death_hosp,
+    phi_death_hosp = 1,
     k_death_hosp = 2,
     ## Daily community deaths
     phi_death_comm = 1,
@@ -441,10 +438,10 @@ carehomes_parameters_observation <- function(exp_noise, phi_death_hosp = 1.15) {
     ## Daily total deaths (if not split)
     k_death = 2,
     ## Daily new confirmed admissions
-    phi_admitted = 0.95,
+    phi_admitted = 1,
     k_admitted = 2,
     ## Daily new inpatient diagnoses
-    phi_new = 0.95,
+    phi_new = 1,
     k_new = 2,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
