@@ -129,7 +129,7 @@ carehomes_index <- function(info) {
                        paste0("S", suffix))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
-  
+
 
   list(run = index_run,
        state = c(index_run, index_save, index_S, index_cum_admit))
