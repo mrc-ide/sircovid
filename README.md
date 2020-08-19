@@ -15,7 +15,7 @@
 
 Install from the ncov drat:
 
-```
+```r
 drat:::add("ncov-ic")
 install.packages("sircovid2")
 ```
