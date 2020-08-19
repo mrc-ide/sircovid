@@ -352,52 +352,41 @@ carehomes_initial <- function(info, n_particles, pars) {
        step = pars$initial_step)
 }
 
-carehomes_parameters_progression <- function(update = NULL) {
+carehomes_parameters_progression <- function() {
   ## These need to be aligned with Bob's severity outputs, and we will
   ## come up with a better way of correlating the two.
 
   ## The s_ parameters are the scaling parameters for the Erlang
   ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
   ## parameters of that distribution.
+  list(s_E = 2,
+       s_asympt = 1,
+       s_mild = 1,
+       s_ILI = 1,
+       s_comm_D = 2,
+       s_hosp_D = 2,
+       s_hosp_R = 2,
+       s_ICU_D = 2,
+       s_ICU_R = 2,
+       s_triage = 2,
+       s_stepdown = 2,
+       s_PCR_pos = 2,
 
-  ## Passing in a named list as 'update' allows replacing a few of
-  ## these with new values.
-  ret <- list(
-    s_E = 2,
-    s_asympt = 1,
-    s_mild = 1,
-    s_ILI = 1,
-    s_comm_D = 2,
-    s_hosp_D = 2,
-    s_hosp_R = 2,
-    s_ICU_D = 2,
-    s_ICU_R = 2,
-    s_triage = 2,
-    s_stepdown = 2,
-    s_PCR_pos = 2,
-
-    gamma_E = 1 / (4.59 / 2),
-    gamma_asympt = 1 / 2.09,
-    gamma_mild = 1 / 2.09,
-    gamma_ILI = 1 / 4,
-    gamma_comm_D = 2 / 5,
-    gamma_hosp_D = 2 / 5,
-    gamma_hosp_R = 2 / 10,
-    gamma_ICU_D = 2 / 5,
-    gamma_ICU_R = 2 / 10,
-    gamma_triage = 2,
-    gamma_stepdown = 2 / 5,
-    gamma_R_pre_1 = 1 / 5,
-    gamma_R_pre_2 = 1 / 10,
-    gamma_test = 3 / 10,
-    gamma_PCR_pos = 1 / 5)
-
-  if (length(update) > 0) {
-    verify_names(ret, names(update), allow_extra = TRUE)
-    ret[names(update)] <- update
-  }
-
-  ret
+       gamma_E = 1 / (4.59 / 2),
+       gamma_asympt = 1 / 2.09,
+       gamma_mild = 1 / 2.09,
+       gamma_ILI = 1 / 4,
+       gamma_comm_D = 2 / 5,
+       gamma_hosp_D = 2 / 5,
+       gamma_hosp_R = 2 / 10,
+       gamma_ICU_D = 2 / 5,
+       gamma_ICU_R = 2 / 10,
+       gamma_triage = 2,
+       gamma_stepdown = 2 / 5,
+       gamma_R_pre_1 = 1 / 5,
+       gamma_R_pre_2 = 1 / 10,
+       gamma_test = 3 / 10,
+       gamma_PCR_pos = 1 / 5)
 }
 
 
