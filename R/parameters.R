@@ -86,10 +86,28 @@ sircovid_parameters_beta <- function(date, value, dt) {
 }
 
 
+##' Process severity data
+##' @title Process severity data
+##'
+##' @param params Severity data, via Bob Verity's `markovid`
+##'   package. This needs to be `NULL` (use the default bundled data
+##'   version in the package), a [data.frame] object (for raw severity
+##'   data) or a list (for data that has already been processed by
+##'   `sircovid` for use).  New severity data comes from Bob Verity
+##'   via the markovid package, and needs to be carefully calibrated
+##'   with the progression parameters.
+##'
+##' @return A list of age-structured probabilities
+##' @export
 sircovid_parameters_severity <- function(params) {
-  ## Set up severity file into table
   if (is.null(params)) {
     params <- severity_default()
+  } else if (!is.data.frame(params)) {
+    expected <- c("p_admit_conf", "p_asympt", "p_death_comm",
+                  "p_death_hosp_D", "p_death_ICU", "p_hosp_ILI",
+                  "p_ICU_hosp", "p_seroconversion", "p_sympt_ILI")
+    verify_names(params, expected)
+    return(params)
   }
 
   ## Transpose so columns are parameters, rownames are age groups
@@ -113,24 +131,14 @@ sircovid_parameters_severity <- function(params) {
     p_admit_conf = "Proportion of hospitalised cases admitted as confirmed")
   data <- rename(data, required, names(required))
 
-  # Parse the age bins. Useful to keep both start and end depending on what
-  # function expects
-  age_bins <- check_age_bins(data[["age"]])
-
-  p_recov_ILI <- 1 - data[["p_sympt_hosp"]] / data[["p_sympt_seek_hc"]]
-
   list(
+    p_admit_conf = data[["p_admit_conf"]],
     p_asympt = 1 - data[["p_sympt"]],
-    p_sympt_ILI = data[["p_sympt"]] * data[["p_sympt_seek_hc"]],
-    p_recov_ICU = 1 - data[["p_death_ICU"]],
-    p_recov_ILI = p_recov_ILI,
-    p_hosp_ILI = 1 - p_recov_ILI,
-    p_recov_hosp = (1 - data[["p_ICU_hosp"]]) * (1 - data[["p_death_hosp_D"]]),
-    p_death_hosp = (1 - data[["p_ICU_hosp"]]) * data[["p_death_hosp_D"]],
+    p_death_comm = data[["p_death_comm"]],
     p_death_hosp_D = data[["p_death_hosp_D"]],
     p_death_ICU = data[["p_death_ICU"]],
+    p_hosp_ILI = data[["p_sympt_hosp"]] / data[["p_sympt_seek_hc"]],
     p_ICU_hosp = data[["p_ICU_hosp"]],
     p_seroconversion = data[["p_seroconversion"]],
-    p_death_comm = data[["p_death_comm"]],
-    p_admit_conf = data[["p_admit_conf"]])
+    p_sympt_ILI = data[["p_sympt"]] * data[["p_sympt_seek_hc"]])
 }

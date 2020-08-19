@@ -280,3 +280,20 @@ test_that("carehomes_index returns S compartments", {
       mod$info()$index$S,
       mod$info()$index$cum_admit_by_age))
 })
+
+
+test_that("carehomes_particle_filter_data requires consistent deaths", {
+  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                        1, 0.25)
+  ## Add additional columns
+  data$deaths_hosp <- data$deaths
+  data$deaths_comm <- NA
+  data$general <- NA
+  data$admitted <- NA
+  data$new <- NA
+  data$npos_15_64 <- NA
+  data$ntot_15_64 <- NA
+  expect_error(
+    carehomes_particle_filter(data),
+    "Deaths are not consistently split into total vs community/hospital")
+})

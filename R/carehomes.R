@@ -13,6 +13,28 @@ NULL
 ##'
 ##' @inheritParams basic_parameters
 ##'
+##' @param severity Severity data, via Bob Verity's `markovid`
+##'   package. This needs to be `NULL` (use the default bundled data
+##'   version in the package), a [data.frame] object (for raw severity
+##'   data) or a list (for data that has already been processed by
+##'   `sircovid` for use).  New severity data comes from Bob Verity
+##'   via the markovid package, and needs to be carefully calibrated
+##'   with the progression parameters.
+##'
+##' @param p_death_carehome Probability of death within carehomes
+##'   (conditional on having an "inflenza-like-illness")
+##'
+##' @param p_specificity Specificity of the serology test
+##'
+##' @param progression Progression data
+##'
+##' @param eps Change in contact rate for carehome residents
+##'
+##' @param C_1 Contact rate between carehome workers and either
+##'   residents or workers
+##'
+##' @param C_2 Contact rate between carehome residents
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -23,19 +45,16 @@ NULL
 ##' carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
-                                 severity_data = NULL,
+                                 severity = NULL,
+                                 p_death_carehome = 0.7,
+                                 p_specificity = 0.9,
+                                 progression = NULL,
+                                 eps = 0.1,
+                                 C_1 = 4e-5,
+                                 C_2 = 5e-4,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
-
-  ## TODO: These should be flexible and will be set in the pmcmc so
-  ## will move up to the argument list of this function; these are
-  ## used only here in the setup and are not used in the model itself,
-  ## which means we need to think how this interacts with the pmcmc
-  p_death_carehome <- 0.7
-  eps <- 0.1
-  C_1 <- 4e-5
-  C_2 <- 5e-4
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
@@ -54,8 +73,10 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
-  severity <- carehomes_parameters_severity(severity_data, ret$population,
-                                            p_death_carehome)
+  severity <- carehomes_parameters_severity(
+    severity, ret$population, p_death_carehome)
+
+  progression <- progression %||% carehomes_parameters_progression()
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
@@ -69,7 +90,7 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
 
   ## Specificity for serology tests
-  ret$p_specificity <- 0.9
+  ret$p_specificity <- p_specificity
 
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise)
@@ -79,9 +100,7 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  c(ret,
-    severity,
-    carehomes_parameters_progression())
+  c(ret, severity, progression)
 }
 
 
@@ -238,9 +257,9 @@ carehomes_severity <- function(p, population) {
 }
 
 
-carehomes_parameters_severity <- function(severity_data, population,
+carehomes_parameters_severity <- function(severity, population,
                                           p_death_carehome) {
-  severity <- sircovid_parameters_severity(severity_data)
+  severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity, population)
   severity$p_death_comm[length(severity$p_death_comm)] <- p_death_carehome
   severity
@@ -333,9 +352,20 @@ carehomes_initial <- function(info, n_particles, pars) {
        step = pars$initial_step)
 }
 
+
+##' Carehomes progression parameters.  The `s_` parameters are the
+##' scaling parameters for the Erlang distibution (a.k.a 'k'), while
+##' the `gamma_` parameters are the gamma parameters of that
+##' distribution.  These need to be aligned with Bob's severity
+##' outputs, and we will come up with a better way of coordinating the
+##' two.
+##'
+##' @title Carehomes progression parameters
+##'
+##' @return A list of parameter values
+##'
+##' @export
 carehomes_parameters_progression <- function() {
-  ## These need to be aligned with Bob's severity outputs, and we will
-  ## come up with a better way of correlating the two.
 
   ## The s_ parameters are the scaling parameters for the Erlang
   ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
@@ -394,13 +424,13 @@ sircovid_carehome_beds <- function(region) {
 carehomes_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in ICU
-    phi_ICU = 0.95,
+    phi_ICU = 1,
     k_ICU = 2,
     ## People currently in general beds
-    phi_general = 0.95,
+    phi_general = 1,
     k_general = 2,
     ## Daily hospital deaths
-    phi_death_hosp = 1.15,
+    phi_death_hosp = 1,
     k_death_hosp = 2,
     ## Daily community deaths
     phi_death_comm = 1,
@@ -408,10 +438,10 @@ carehomes_parameters_observation <- function(exp_noise) {
     ## Daily total deaths (if not split)
     k_death = 2,
     ## Daily new confirmed admissions
-    phi_admitted = 0.95,
+    phi_admitted = 1,
     k_admitted = 2,
     ## Daily new inpatient diagnoses
-    phi_new = 0.95,
+    phi_new = 1,
     k_new = 2,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
@@ -446,4 +476,51 @@ carehomes_population <- function(population, carehome_workers,
     stop("Not enough population to be care workers")
   }
   N_tot
+}
+
+
+##' Construct a particle filter using the [`carehomes`] model. This is
+##' a convenience function, ensuring that compatible functions are
+##' used together.
+##'
+##' @title Carehomes particle filter
+##'
+##' @param data Data suitable for use with with the
+##'   [`mcstate::particle_filter`], created by created by
+##'   [mcstate::particle_filter_data()]. We require columns "icu",
+##'   "general", "deaths_hosp", "deaths_comm", "deaths", "admitted",
+##'   "new", "npos_15_64", "ntot_15_64", though thse may be entirely
+##'   `NA` if no data are present.
+##'
+##' @param n_particles Number of particles to use
+##'
+##' @param n_threads Number of threads to use
+##'
+##' @param seed Random seed to use
+##'
+##' @return A [`mcstate::particle_filter`] object
+##' @export
+carehomes_particle_filter <- function(data, n_particles,
+                                      n_threads = 1L, seed = NULL) {
+  mcstate::particle_filter$new(
+    carehomes_particle_filter_data(data),
+    sircovid2::carehomes,
+    n_particles,
+    sircovid2::carehomes_compare,
+    sircovid2::carehomes_index,
+    sircovid2::carehomes_initial,
+    n_threads,
+    seed)
+}
+
+
+carehomes_particle_filter_data <- function(data) {
+  required <- c("icu", "general", "deaths_hosp", "deaths_comm", "deaths",
+                "admitted", "new", "npos_15_64", "ntot_15_64")
+  verify_names(data, required, allow_extra = TRUE)
+  if (any(!is.na(data$deaths) &
+           (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
+    stop("Deaths are not consistently split into total vs community/hospital")
+  }
+  data
 }

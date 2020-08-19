@@ -9,7 +9,7 @@ basic_parameters(
   region,
   beta_date = NULL,
   beta_value = NULL,
-  severity_data = NULL,
+  severity = NULL,
   exp_noise = 1e+06
 )
 }
@@ -37,10 +37,13 @@ otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 the same length (see \code{\link[=sircovid_parameters_beta]{sircovid_parameters_beta()}}, where this is
 passed as \code{value}).}
 
-\item{severity_data}{A \code{data.frame} of severity data, or \code{NULL} to
-use the default value within the package.  New severity data
-comes from Bob Verity via the markovid package, and needs to be
-carefully calibrated with the progression parameters.}
+\item{severity}{Severity data, via Bob Verity's \code{markovid}
+package. This needs to be \code{NULL} (use the default bundled data
+version in the package), a \link{data.frame} object (for raw severity
+data) or a list (for data that has already been processed by
+\code{sircovid} for use).  New severity data comes from Bob Verity
+via the markovid package, and needs to be carefully calibrated
+with the progression parameters.}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

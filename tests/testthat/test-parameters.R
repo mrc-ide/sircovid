@@ -67,10 +67,9 @@ test_that("can read the default severity file", {
   expect_true(all(lengths(data) == 17))
   expect_setequal(
     names(data),
-    c("p_asympt", "p_sympt_ILI", "p_recov_ICU", "p_recov_ILI", "p_hosp_ILI",
-      "p_recov_hosp", "p_death_hosp", "p_death_hosp_D", "p_death_ICU",
-      "p_ICU_hosp", "p_seroconversion", "p_death_comm", "p_admit_conf"))
-
+    c("p_admit_conf", "p_asympt", "p_death_comm", "p_death_hosp_D",
+      "p_death_ICU", "p_hosp_ILI", "p_ICU_hosp", "p_seroconversion",
+      "p_sympt_ILI"))
   expect_true(
     all(data$p_serocoversion == data$p_serocoversion[[1]]))
   expect_equal(
@@ -85,6 +84,17 @@ test_that("can validate a severity input", {
   expect_error(
     sircovid_parameters_severity(d[-2, ]),
     "Elements missing from 'data': 'Proportion with symptoms'")
+})
+
+
+test_that("can reprocess severity", {
+  s <- sircovid_parameters_severity(NULL)
+  expect_identical(
+    sircovid_parameters_severity(s),
+    s)
+  expect_error(
+    sircovid_parameters_severity(s[-1]),
+    "Elements missing from 'params': 'p_admit_conf'")
 })
 
 

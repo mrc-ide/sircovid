@@ -52,10 +52,13 @@ NULL
 ##'   the same length (see [sircovid_parameters_beta()], where this is
 ##'   passed as `value`).
 ##'
-##' @param severity_data A `data.frame` of severity data, or `NULL` to
-##'   use the default value within the package.  New severity data
-##'   comes from Bob Verity via the markovid package, and needs to be
-##'   carefully calibrated with the progression parameters.
+##' @param severity Severity data, via Bob Verity's `markovid`
+##'   package. This needs to be `NULL` (use the default bundled data
+##'   version in the package), a [data.frame] object (for raw severity
+##'   data) or a list (for data that has already been processed by
+##'   `sircovid` for use).  New severity data comes from Bob Verity
+##'   via the markovid package, and needs to be carefully calibrated
+##'   with the progression parameters.
 ##'
 ##' @param exp_noise Rate of exponential noise used in the compare
 ##'   function - typically set to a large value so that noise is small
@@ -72,14 +75,29 @@ NULL
 ##' basic_parameters(sircovid_date("2020-02-01"), "uk")
 basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
-                             severity_data = NULL,
+                             severity = NULL,
                              exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
   ret$m <- sircovid_transmission_matrix(region)
   ret$observation <- basic_parameters_observation(exp_noise)
+  severity <- sircovid_parameters_severity(severity)
+
+  ## Some additional processing of derived quantities used in the
+  ## basic model; we could do these transformations in the odin code
+  ## perhaps, which would reduce carrying redundant dependencies
+  ## between parameters
+  severity$p_recov_ICU <- 1 - severity[["p_death_ICU"]]
+  severity$p_recov_hosp <-
+    (1 - severity[["p_ICU_hosp"]]) *
+    (1 - severity[["p_death_hosp_D"]])
+  severity$p_death_hosp <-
+    (1 - severity[["p_ICU_hosp"]]) *
+    severity[["p_death_hosp_D"]]
+  severity$p_recov_ILI <- 1 - severity[["p_hosp_ILI"]]
+
   c(ret,
-    sircovid_parameters_severity(severity_data),
+    severity,
     basic_parameters_progression())
 }
 
