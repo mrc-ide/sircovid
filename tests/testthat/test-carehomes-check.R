@@ -622,16 +622,16 @@ test_that("tots all summed correctly ", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  
-  expect_true(all(y$general_tot == apply(y$I_triage_R_conf,4,sum) + 
-                    apply(y$I_triage_D_conf,4,sum) +
-                    apply(y$I_hosp_R_conf,4,sum) + 
-                    apply(y$I_hosp_D_conf,4,sum) +
-                    apply(y$R_stepdown_conf,3,sum)))
-  expect_true(all(y$I_ICU_tot == apply(y$I_ICU_R_conf,4,sum) + 
-                    apply(y$I_ICU_D_conf,4,sum)))
+
+  expect_true(all(y$general_tot == apply(y$I_triage_R_conf, 4, sum) +
+                    apply(y$I_triage_D_conf, 4, sum) +
+                    apply(y$I_hosp_R_conf, 4, sum) +
+                    apply(y$I_hosp_D_conf, 4, sum) +
+                    apply(y$R_stepdown_conf, 3, sum)))
+  expect_true(all(y$I_ICU_tot == apply(y$I_ICU_R_conf, 4, sum) +
+                    apply(y$I_ICU_D_conf, 4, sum)))
   expect_true(all(y$hosp_tot == y$I_ICU_tot + y$general_tot))
-  expect_true(all(y$D_hosp_tot == apply(y$D_hosp,2,sum)))
-  expect_true(all(y$D_comm_tot == apply(y$D_comm,2,sum)))
+  expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
+  expect_true(all(y$D_comm_tot == apply(y$D_comm, 2, sum)))
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
 })
