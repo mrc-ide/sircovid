@@ -498,7 +498,7 @@ carehomes_population <- function(population, carehome_workers,
 ##'
 ##' @param seed Random seed to use
 ##'
-##' @return A [`mcstate::particle`] filter object
+##' @return A [`mcstate::particle_filter`] object
 ##' @export
 carehomes_particle_filter <- function(data, n_particles,
                                       n_threads = 1L, seed = NULL) {

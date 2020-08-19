@@ -21,7 +21,7 @@ carehomes_particle_filter(data, n_particles, n_threads = 1L, seed = NULL)
 \item{seed}{Random seed to use}
 }
 \value{
-A \code{\link[mcstate:particle]{mcstate::particle}} filter object
+A \code{\link[mcstate:particle_filter]{mcstate::particle_filter}} object
 }
 \description{
 Construct a particle filter using the \code{\link{carehomes}} model. This is
