@@ -7,7 +7,7 @@
 [![codecov.io](https://codecov.io/github/mrc-ide/sircovid2/coverage.svg?branch=master)](https://codecov.io/github/mrc-ide/sircovid2?branch=master)
 <!-- badges: end -->
 
-`sircovid2` implements a series of models to help modelling the transmission of the SARS-Cov-2 virus using a stochastic compartmental model. `sircovid2` also provides some tools to perfom evidence synthesis from several surveillance data streams in order infer transmission parameters.
+`sircovid2` implements a series of mechanistic models to help modelling the transmission of the SARS-Cov-2 virus using stochastic compartmental models. `sircovid2` also provides some tools to perfom Bayesian evidence synthesis from several surveillance data streams through the estimation of transmission parameters.
 
 <img src="man/figures/sircovid_diagram.png" align="center" style = "border: none; float: center;" width = "800px">
 
