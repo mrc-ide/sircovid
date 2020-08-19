@@ -13,6 +13,30 @@ NULL
 ##'
 ##' @inheritParams basic_parameters
 ##'
+##' @param severity Severity data, via Bob Verity's `markovid`
+##'   package. This needs to be `NULL` (use the default bundled data
+##'   version in the package), a [data.frame] object (for raw severity
+##'   data) or a list (for data that has already been processed by
+##'   `sircovid` for use).  New severity data comes from Bob Verity
+##'   via the markovid package, and needs to be carefully calibrated
+##'   with the progression parameters.
+##'
+##' @param p_death_carehome Probability of death within carehomes
+##'   (conditional on having an "inflenza-like-illness")
+##'
+##' @param p_specificity Specificity of the serology test
+##'
+##' @param progression Progression data
+##'
+##' @param eps Change in contact rate for carehome residents
+##'
+##' @param C_1 Contact rate between carehome workers and either
+##'   residents or workers
+##'
+##' @param C_2 Contact rate between carehome residents
+##'
+##' @param phi_death_hosp For use within the observation function
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -23,19 +47,17 @@ NULL
 ##' carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
-                                 severity_data = NULL,
+                                 severity = NULL,
+                                 p_death_carehome = 0.7,
+                                 p_specificity = 0.9,
+                                 progression = NULL,
+                                 eps = 0.1,
+                                 C_1 = 4e-5,
+                                 C_2 = 5e-4,
+                                 phi_death_hosp = 1.15,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
-
-  ## TODO: These should be flexible and will be set in the pmcmc so
-  ## will move up to the argument list of this function; these are
-  ## used only here in the setup and are not used in the model itself,
-  ## which means we need to think how this interacts with the pmcmc
-  p_death_carehome <- 0.7
-  eps <- 0.1
-  C_1 <- 4e-5
-  C_2 <- 5e-4
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
@@ -54,8 +76,10 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
-  severity <- carehomes_parameters_severity(severity_data, ret$population,
-                                            p_death_carehome)
+  severity <- carehomes_parameters_severity(
+    severity, ret$population, p_death_carehome)
+
+  progression <- progression %||% carehomes_parameters_progression()
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
@@ -69,19 +93,17 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
 
   ## Specificity for serology tests
-  ret$p_specificity <- 0.9
+  ret$p_specificity <- p_specificity
 
   ## All observation parameters:
-  ret$observation <- carehomes_parameters_observation(exp_noise)
+  ret$observation <- carehomes_parameters_observation(exp_noise, phi_death_hosp)
 
   ## TODO: Adding this here, but better would be to pass N_age as-is,
   ## then update the leading dimension to something more accurate
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  c(ret,
-    severity,
-    carehomes_parameters_progression())
+  c(ret, severity, progression)
 }
 
 
@@ -238,9 +260,9 @@ carehomes_severity <- function(p, population) {
 }
 
 
-carehomes_parameters_severity <- function(severity_data, population,
+carehomes_parameters_severity <- function(severity, population,
                                           p_death_carehome) {
-  severity <- sircovid_parameters_severity(severity_data)
+  severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity, population)
   severity$p_death_comm[length(severity$p_death_comm)] <- p_death_carehome
   severity
@@ -333,41 +355,52 @@ carehomes_initial <- function(info, n_particles, pars) {
        step = pars$initial_step)
 }
 
-carehomes_parameters_progression <- function() {
+carehomes_parameters_progression <- function(update = NULL) {
   ## These need to be aligned with Bob's severity outputs, and we will
   ## come up with a better way of correlating the two.
 
   ## The s_ parameters are the scaling parameters for the Erlang
   ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
   ## parameters of that distribution.
-  list(s_E = 2,
-       s_asympt = 1,
-       s_mild = 1,
-       s_ILI = 1,
-       s_comm_D = 2,
-       s_hosp_D = 2,
-       s_hosp_R = 2,
-       s_ICU_D = 2,
-       s_ICU_R = 2,
-       s_triage = 2,
-       s_stepdown = 2,
-       s_PCR_pos = 2,
 
-       gamma_E = 1 / (4.59 / 2),
-       gamma_asympt = 1 / 2.09,
-       gamma_mild = 1 / 2.09,
-       gamma_ILI = 1 / 4,
-       gamma_comm_D = 2 / 5,
-       gamma_hosp_D = 2 / 5,
-       gamma_hosp_R = 2 / 10,
-       gamma_ICU_D = 2 / 5,
-       gamma_ICU_R = 2 / 10,
-       gamma_triage = 2,
-       gamma_stepdown = 2 / 5,
-       gamma_R_pre_1 = 1 / 5,
-       gamma_R_pre_2 = 1 / 10,
-       gamma_test = 3 / 10,
-       gamma_PCR_pos = 1 / 5)
+  ## Passing in a named list as 'update' allows replacing a few of
+  ## these with new values.
+  ret <- list(
+    s_E = 2,
+    s_asympt = 1,
+    s_mild = 1,
+    s_ILI = 1,
+    s_comm_D = 2,
+    s_hosp_D = 2,
+    s_hosp_R = 2,
+    s_ICU_D = 2,
+    s_ICU_R = 2,
+    s_triage = 2,
+    s_stepdown = 2,
+    s_PCR_pos = 2,
+
+    gamma_E = 1 / (4.59 / 2),
+    gamma_asympt = 1 / 2.09,
+    gamma_mild = 1 / 2.09,
+    gamma_ILI = 1 / 4,
+    gamma_comm_D = 2 / 5,
+    gamma_hosp_D = 2 / 5,
+    gamma_hosp_R = 2 / 10,
+    gamma_ICU_D = 2 / 5,
+    gamma_ICU_R = 2 / 10,
+    gamma_triage = 2,
+    gamma_stepdown = 2 / 5,
+    gamma_R_pre_1 = 1 / 5,
+    gamma_R_pre_2 = 1 / 10,
+    gamma_test = 3 / 10,
+    gamma_PCR_pos = 1 / 5)
+
+  if (length(update) > 0) {
+    verify_names(ret, names(update), allow_extra = TRUE)
+    ret[names(update)] <- update
+  }
+
+  ret
 }
 
 
@@ -391,7 +424,7 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-carehomes_parameters_observation <- function(exp_noise) {
+carehomes_parameters_observation <- function(exp_noise, phi_death_hosp = 1.15) {
   list(
     ## People currently in ICU
     phi_ICU = 0.95,
@@ -400,7 +433,7 @@ carehomes_parameters_observation <- function(exp_noise) {
     phi_general = 0.95,
     k_general = 2,
     ## Daily hospital deaths
-    phi_death_hosp = 1.15,
+    phi_death_hosp = phi_death_hosp,
     k_death_hosp = 2,
     ## Daily community deaths
     phi_death_comm = 1,
