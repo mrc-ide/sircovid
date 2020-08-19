@@ -352,9 +352,20 @@ carehomes_initial <- function(info, n_particles, pars) {
        step = pars$initial_step)
 }
 
+
+##' Carehomes progression parameters.  The `s_` parameters are the
+##' scaling parameters for the Erlang distibution (a.k.a 'k'), while
+##' the `gamma_` parameters are the gamma parameters of that
+##' distribution.  These need to be aligned with Bob's severity
+##' outputs, and we will come up with a better way of coordinating the
+##' two.
+##'
+##' @title Carehomes progression parameters
+##'
+##' @return A list of parameter values
+##'
+##' @export
 carehomes_parameters_progression <- function() {
-  ## These need to be aligned with Bob's severity outputs, and we will
-  ## come up with a better way of correlating the two.
 
   ## The s_ parameters are the scaling parameters for the Erlang
   ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
