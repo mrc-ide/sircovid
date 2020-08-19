@@ -86,6 +86,19 @@ sircovid_parameters_beta <- function(date, value, dt) {
 }
 
 
+##' Process severity data
+##' @title Process severity data
+##'
+##' @param params Severity data, via Bob Verity's `markovid`
+##'   package. This needs to be `NULL` (use the default bundled data
+##'   version in the package), a [data.frame] object (for raw severity
+##'   data) or a list (for data that has already been processed by
+##'   `sircovid` for use).  New severity data comes from Bob Verity
+##'   via the markovid package, and needs to be carefully calibrated
+##'   with the progression parameters.
+##'
+##' @return A list of age-structured probabilities
+##' @export
 sircovid_parameters_severity <- function(params) {
   if (is.null(params)) {
     params <- severity_default()
