@@ -116,7 +116,6 @@ carehomes_index <- function(info) {
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
-                 deaths_tot = index[["D_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
                  prob_pos = index[["prob_pos"]])
