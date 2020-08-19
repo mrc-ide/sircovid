@@ -89,6 +89,12 @@ sircovid_parameters_beta <- function(date, value, dt) {
 sircovid_parameters_severity <- function(params) {
   if (is.null(params)) {
     params <- severity_default()
+  } else if (!is.data.frame(params)) {
+    expected <- c("p_admit_conf", "p_asympt", "p_death_comm",
+                  "p_death_hosp_D", "p_death_ICU", "p_hosp_ILI",
+                  "p_ICU_hosp", "p_seroconversion", "p_sympt_ILI")
+    verify_names(params, expected)
+    return(params)
   }
 
   ## Transpose so columns are parameters, rownames are age groups
