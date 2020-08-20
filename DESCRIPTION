@@ -1,6 +1,6 @@
 Package: sircovid2
 Title: SIR Model for COVID-19
-Version: 0.5.9
+Version: 0.5.10
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -32,6 +32,8 @@ Authors@R:
            email = "o.watson15@imperial.ac.uk"))
 Description: Model for COVID-19, using odin.
 License: MIT + file LICENSE
+URL: https://github.com/mrc-ide/sircovid2
+BugReports: https://github.com/mrc-ide/sircovid2/issues
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
@@ -44,6 +46,6 @@ LinkingTo:
     dust (>= 0.4.6)
 Suggests:
     testthat
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
