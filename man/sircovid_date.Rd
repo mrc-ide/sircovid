@@ -23,10 +23,10 @@ one, or a "sircovid date"; see Details}
 An integer, being the number of days into 2020
 }
 \description{
-We need to map "dates" onto \code{\link{dust}}'s concept of model "step" and
-we do this by mapping a date such as \code{2020-03-02} into the number
-of days into 2020 (62 here, with the 1st of January being day
-1). We call this integer number a "sircovid date".
+We need to map "dates" onto \code{\link[dust:dust]{dust::dust}}'s concept of model
+"step" and we do this by mapping a date such as \code{2020-03-02} into
+the number of days into 2020 (62 here, with the 1st of January
+being day 1). We call this integer number a "sircovid date".
 }
 \details{
 There are several related functions here

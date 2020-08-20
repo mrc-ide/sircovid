@@ -1,7 +1,7 @@
-##' We need to map "dates" onto [`dust`]'s concept of model "step" and
-##' we do this by mapping a date such as `2020-03-02` into the number
-##' of days into 2020 (62 here, with the 1st of January being day
-##' 1). We call this integer number a "sircovid date".
+##' We need to map "dates" onto [`dust::dust`]'s concept of model
+##' "step" and we do this by mapping a date such as `2020-03-02` into
+##' the number of days into 2020 (62 here, with the 1st of January
+##' being day 1). We call this integer number a "sircovid date".
 ##'
 ##' There are several related functions here
 ##'
