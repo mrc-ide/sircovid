@@ -31,8 +31,8 @@ carehomes_Rt <- function(step, S, p) {
     ## Next-Generation-Matrix
     ngm <- beta[t] * outer(mean_duration, S[, t]) * p$m
 
-    ## Care home workers (CHW) and residents (CHR) in last two
-    ## rows/column
+    ## Care home workers (CHW) and residents (CHR) in last two rows
+    ## and columns
     if (drop_carehomes) {
       i <- seq_len(nrow(ngm) - 2L)
       ngm <- ngm[i, i]
@@ -58,7 +58,7 @@ carehomes_Rt <- function(step, S, p) {
 
 ## Here we expect 'S' in order:
 ##
-##   state / sample / step
+##   state x sample x step
 ##
 ## We expect 'pars' to be a list along sample (or a shared parameter set)
 ## We expect 'step' to be a vector along step
@@ -136,8 +136,8 @@ carehomes_Rt_mean_duration <- function(pars) {
 
   mean_duration <- mean_duration +
     pars$hosp_transmission * (
-      p_hosp_R * pars$s_hosp_R/(1 - exp(- dt * pars$gamma_hosp_R)) +
-      p_hosp_D * pars$s_hosp_D/(1 - exp(- dt * pars$gamma_hosp_D)) +
+      p_hosp_R * pars$s_hosp_R / (1 - exp(- dt * pars$gamma_hosp_R)) +
+      p_hosp_D * pars$s_hosp_D / (1 - exp(- dt * pars$gamma_hosp_D)) +
       (p_ICU_R + p_ICU_D) * pars$s_triage /
       (1 - exp(- dt * pars$gamma_triage))) +
     pars$ICU_transmission * (
