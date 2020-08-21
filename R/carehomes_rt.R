@@ -1,6 +1,17 @@
-## Compute Rt for one trajectory, given the number of susceptibles
-## (S), the beta over time (same length as S) and other carehomes
-## parameters.  This will be the result of one simulation.
+##' Compute "Rt" for a single simulated trajectory and parameter set.
+##'
+##' @title Compute "Rt"
+##'
+##' @param step A vector of steps that the model was run over
+##'
+##' @param S A 19 x steps matrix of "S" compartment counts
+##'
+##' @param p A [carehomes_parameters()] object
+##'
+##' @return A list with elements `step`, `beta`, `eff_Rt_all`,
+##'   `eff_Rt_general`, `Rt_all` and `Rt_general`
+##'
+##' @export
 carehomes_Rt <- function(step, S, p) {
   if (nrow(S) != nrow(p$m)) {
     stop(sprintf(
@@ -51,6 +62,36 @@ carehomes_Rt <- function(step, S, p) {
 ##
 ## We expect 'pars' to be a list along sample (or a shared parameter set)
 ## We expect 'step' to be a vector along step
+
+##' Compute "Rt" for a set of simulated trajectories (e.g., the result
+##' of [dust::dust_iterate()], [mcstate::pmcmc()] or
+##' [mcstate::pmcmc_predict()]. The trajectories may or may not share
+##' parameters.
+##'
+##' @title Compute Rt for a set of trajectories
+##'
+##' @param step A vector of steps
+##'
+##' @param S A 3d (19 x n trajectories x n steps) array of "S"
+##'   compartment counts
+##'
+##' @param pars Either a single [carehomes_parameters()] object
+##'   (shared parameters) or an unnamed list of
+##'   [carehomes_parameters()] objects, the same length as `ncol(S)`.
+##'
+##' @param initial_step_from_parameters If `TRUE`, then `step[[1]]` is
+##'   replaced by the value of `initial_step` from the parameters.
+##'   This is usually what you want.
+##'
+##' @param shared_parameters Should `pars` be treated as a single
+##'   shared list? Leave as `NULL` to detect automatically, set to
+##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
+##'   other which may give more easily interpretable error messages.
+##'
+##' @return As for [carehomes_Rt()], except that every element is a
+##'   matrix, not a vector.
+##'
+##' @export
 carehomes_Rt_trajectories <- function(step, S, pars,
                                       initial_step_from_parameters = TRUE,
                                       shared_parameters = NULL) {
