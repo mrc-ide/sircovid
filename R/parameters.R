@@ -86,6 +86,24 @@ sircovid_parameters_beta <- function(date, value, dt) {
 }
 
 
+##' Expand `beta_step` based on a series of `step`s.  Use this to
+##' convert between the values passed to [sircovid_beta_step()] and
+##' the actual beta values for a given set of steps.
+##'
+##' @title Expand beta steps
+##'
+##' @param step A vector of steps
+##'
+##' @param beta_step A vector of betas
+##'
+##' @return A numeric vector the same length as `step`
+##'
+##' @export
+sircovid_beta_expand <- function(step, beta_step) {
+  beta_step[pmin(step, length(beta_step))]
+}
+
+
 ##' Process severity data
 ##' @title Process severity data
 ##'

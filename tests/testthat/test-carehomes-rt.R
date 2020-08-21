@@ -83,6 +83,7 @@ test_that("validate inputs in rt trajectories calculation", {
 
 
 test_that("Can set initial time", {
+  ## This test also checks that we can alter parameter inputs
   d <- reference_data_rt()
 
   steps <- d$inputs$steps
@@ -103,4 +104,36 @@ test_that("Can set initial time", {
                                     initial_step_from_parameters = TRUE)
   expect_equal(res2$step[1, ], step0)
   expect_equal(res2$step[-1, ], res1$step[-1, ])
+})
+
+
+test_that("Can vary beta over time", {
+  d <- reference_data_rt()
+
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  p <- d$inputs$p
+  dt <- p$dt
+  initial_date <- p$initial_step * dt
+  beta_date <- initial_date + c(0, 21, 62)
+  beta_value <- p$beta_step * c(1, 0.5, 0.8)
+  p$beta_step <- sircovid_parameters_beta(beta_date, beta_value, dt)
+  p <- rep(list(p), ncol(y))
+  p[[3]]$beta_step <- p[[3]]$beta_step / 2
+
+  res <- carehomes_Rt_trajectories(steps, y, p,
+                                   initial_step_from_parameters = FALSE)
+
+  expect_equal(
+    res$beta,
+    cbind(sircovid_beta_expand(steps, p[[1]]$beta_step),
+          sircovid_beta_expand(steps, p[[2]]$beta_step),
+          sircovid_beta_expand(steps, p[[3]]$beta_step)))
+
+  ## Check the Rt calculation (from eff_Rt) - compare the first test
+  expect_true(length(unique(res$Rt_all)) > 1)
+  expect_true(length(unique(res$Rt_general)) > 1)
+  expect_equal(res$Rt_all[[1]], res$eff_Rt_all[[1]])
+  expect_equal(res$Rt_general[[1]], res$eff_Rt_general[[1]])
 })
