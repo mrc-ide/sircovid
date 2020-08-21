@@ -23,7 +23,7 @@ carehomes_Rt <- function(step, S, p) {
                  length(step)))
   }
 
-  beta <- sircovid_beta_expand(step, p$beta_step)
+  beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration(p)
 
   calculate_ev <- function(t, drop_carehomes) {

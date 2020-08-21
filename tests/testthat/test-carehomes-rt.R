@@ -127,9 +127,9 @@ test_that("Can vary beta over time", {
 
   expect_equal(
     res$beta,
-    cbind(sircovid_beta_expand(steps, p[[1]]$beta_step),
-          sircovid_beta_expand(steps, p[[2]]$beta_step),
-          sircovid_beta_expand(steps, p[[3]]$beta_step)))
+    cbind(sircovid_parameters_beta_expand(steps, p[[1]]$beta_step),
+          sircovid_parameters_beta_expand(steps, p[[2]]$beta_step),
+          sircovid_parameters_beta_expand(steps, p[[3]]$beta_step)))
 
   ## Check the Rt calculation (from eff_Rt) - compare the first test
   expect_true(length(unique(res$Rt_all)) > 1)

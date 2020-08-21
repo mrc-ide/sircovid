@@ -38,6 +38,8 @@ sircovid_parameters_shared <- function(start_date, region,
 ##'   the beta values stabilise.  After this point beta is assumed to
 ##'   be constant.
 ##'
+##' @seealso [sircovid_parameters_beta_expand()] - see examples below
+##'
 ##' @export
 ##' @examples
 ##' # If "date" is NULL, then beta is constant and this function is
@@ -57,12 +59,12 @@ sircovid_parameters_shared <- function(start_date, region,
 ##' # After 2020-03-15, the beta value will be fixed at 2, the value
 ##' # that it reached at that date.
 ##'
-##' # You can see this using sircovid_beta_expand
+##' # You can see this using sircovid_parameters_beta_expand
 ##' # If a vector of dates is provided then, it's more complex. We'll
 ##' # use dt of 1 here as it's easier to visualise
 ##' t <- seq(0, 100, by = 1)
-##' sircovid2::sircovid_beta_expand(t, beta)
-##' plot(t, sircovid2::sircovid_beta_expand(t, beta), type = "o")
+##' sircovid2::sircovid_parameters_beta_expand(t, beta)
+##' plot(t, sircovid2::sircovid_parameters_beta_expand(t, beta), type = "o")
 ##' points(date, value, pch = 19, col = "red")
 ##'
 ##' # If dt is less than 1, this is scaled, but the pattern of beta
@@ -104,7 +106,7 @@ sircovid_parameters_beta <- function(date, value, dt) {
 ##' @return A numeric vector the same length as `step`
 ##'
 ##' @export
-sircovid_beta_expand <- function(step, beta_step) {
+sircovid_parameters_beta_expand <- function(step, beta_step) {
   beta_step[pmin(step, length(beta_step) - 1L) + 1L]
 }
 

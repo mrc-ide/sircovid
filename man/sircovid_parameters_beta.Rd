@@ -33,15 +33,12 @@ sircovid models.
 \examples{
 # If "date" is NULL, then beta is constant and this function is
 # trivial:
-sircovid_parameters_beta(NULL, 0.1, 0.25)
+sircovid2::sircovid_parameters_beta(NULL, 0.1, 0.25)
 
-# If a vector of dates is provided then, it's more complex. We'll
-# use dt of 1 here as it's easier to visualise
-t <- seq(0, 100, by = 1)
-
-date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
+date <- sircovid2::sircovid_date(
+   c("2020-02-01", "2020-02-14", "2020-03-15"))
 value <- c(3, 1, 2)
-beta <- sircovid_parameters_beta(date, value, 1)
+beta <- sircovid2::sircovid_parameters_beta(date, value, 1)
 
 # The implied time series looks like this:
 t <- seq(0, date[[3]])
@@ -51,10 +48,21 @@ points(date, value, pch = 19, col = "red")
 # After 2020-03-15, the beta value will be fixed at 2, the value
 # that it reached at that date.
 
+# You can see this using sircovid_parameters_beta_expand
+# If a vector of dates is provided then, it's more complex. We'll
+# use dt of 1 here as it's easier to visualise
+t <- seq(0, 100, by = 1)
+sircovid2::sircovid_parameters_beta_expand(t, beta)
+plot(t, sircovid2::sircovid_parameters_beta_expand(t, beta), type = "o")
+points(date, value, pch = 19, col = "red")
+
 # If dt is less than 1, this is scaled, but the pattern of beta
 # change is the same
-beta <- sircovid_parameters_beta(date, value, 0.5)
+beta <- sircovid2::sircovid_parameters_beta(date, value, 0.5)
 t <- seq(0, date[[3]], by = 0.5)
 plot(t, beta, type = "o", cex = 0.25)
 points(date, value, pch = 19, col = "red")
+}
+\seealso{
+\code{\link[=sircovid_parameters_beta_expand]{sircovid_parameters_beta_expand()}} - see examples below
 }
