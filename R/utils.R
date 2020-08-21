@@ -70,3 +70,8 @@ set_names <- function(x, nms) {
   names(x) <- nms
   x
 }
+
+
+vnapply <- function(x, fun, ...) {
+  vapply(x, fun, numeric(1), ...)
+}
