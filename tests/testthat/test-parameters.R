@@ -119,3 +119,25 @@ test_that("shared parameters", {
   expect_equal(pars$beta_step, 0.1)
   expect_equal(pars$initial_step, date * 4)
 })
+
+
+test_that("can expand beta", {
+  date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
+  value <- c(3, 1, 2)
+  beta <- sircovid_parameters_beta(date, value, 1)
+
+  # The implied time series looks like this:
+  t1 <- seq(0, date[[3]])
+  res1 <- cbind(t1, beta, deparse.level = 0)
+
+  expect_equal(sircovid_parameters_beta_expand(t1, beta), beta)
+
+  t2 <- seq(0, 100, by = 1)
+  beta2 <- sircovid_parameters_beta_expand(t2, beta)
+  expect_equal(beta2[seq_along(beta)], beta)
+  expect_equal(beta2[-seq_along(beta)], rep(beta[length(beta)], 25))
+
+  t3 <- t2[1:65]
+  beta3 <- sircovid_parameters_beta_expand(t3, beta)
+  expect_equal(beta3, beta[1:65])
+})

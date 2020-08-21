@@ -33,6 +33,30 @@ drat:::add("ncov-ic")
 install.packages(c("dust", "mcstate"))
 ```
 
+
+We use OpenMP for parallelism, and this may not be available on your system. If not then compilation will fail with an error like:
+
+```r
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [basic.o] Error 1
+ERROR: compilation failed for package ‘sircovid2’
+```
+
+You can either install OpenMP support, or edit your personal `Makevars` file to tell R that you do not have it. To do this, you can run
+
+```r
+usethis::edit_r_makevars("user")
+```
+
+and add the lines
+
+```r
+SHLIB_OPENMP_CFLAGS=
+SHLIB_OPENMP_CXXFLAGS=
+```
+
+after which compilation will succeed, but the model will only run on one core.
+
 ## Development
 
 In addition to the above you need to install [`odin`](https://mrc-ide.github.io/odin) and [`odin.dust`](https://mrc-ide.github.io/odin.dust/)
