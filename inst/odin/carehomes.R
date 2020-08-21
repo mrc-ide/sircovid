@@ -102,6 +102,9 @@ n_R_stepdown_conf[, ] <- rbinom(R_stepdown_conf[i, j], p_R_stepdown)
 n_R_pre[, ] <- rbinom(R_pre[i, j], p_R_pre[i, j])
 n_PCR_pos[, ] <- rbinom(PCR_pos[i, j], p_PCR_pos)
 
+## Cumulative infections, summed over all age groups
+initial(cum_infections) <- 0
+update(cum_infections) <- cum_infections + sum(n_SE)
 
 ## Computes the number of asymptomatic
 n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], p_asympt[i])
