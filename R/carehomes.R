@@ -52,7 +52,8 @@ carehomes_parameters <- function(start_date, region,
                                  eps = 0.1,
                                  C_1 = 4e-5,
                                  C_2 = 5e-4,
-                                 exp_noise = 1e6) {
+                                 exp_noise = 1e6,
+                                 phi_pillar2 = 10) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
@@ -93,7 +94,8 @@ carehomes_parameters <- function(start_date, region,
   ret$p_specificity <- p_specificity
 
   ## All observation parameters:
-  ret$observation <- carehomes_parameters_observation(exp_noise)
+  ret$observation <- carehomes_parameters_observation(exp_noise,
+                                                      phi_pillar2)
 
   ## TODO: Adding this here, but better would be to pass N_age as-is,
   ## then update the leading dimension to something more accurate
@@ -429,7 +431,7 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-carehomes_parameters_observation <- function(exp_noise) {
+carehomes_parameters_observation <- function(exp_noise, phi_pillar2) {
   list(
     ## People currently in ICU
     phi_ICU = 1,
@@ -452,7 +454,7 @@ carehomes_parameters_observation <- function(exp_noise) {
     phi_new = 1,
     k_new = 2,
     ## Pillar 2 testing
-    phi_pillar2 = 10,
+    phi_pillar2 = phi_pillar2,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)
