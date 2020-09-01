@@ -115,10 +115,10 @@ carehomes_parameters <- function(start_date, region,
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
 ##'   admissions,(7) cumulative confirmed new admissions, (8)
-##'   probability of a positive sero test, (9) probability of a positive 
-##'   pillar 2 test, and with element `state` containing the same values 
-##'   followed by 17 S compartments (one per age group, then one for 
-##'   carehome workers and carehome residents respectively) and 17 
+##'   probability of a positive sero test, (9) probability of a positive
+##'   pillar 2 test, and with element `state` containing the same values
+##'   followed by 17 S compartments (one per age group, then one for
+##'   carehome workers and carehome residents respectively) and 17
 ##'   "cumulative admission" compartments.
 ##'
 ##' @export
@@ -240,7 +240,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
                           model_sero_prob_pos)
-  
+
   ll_pillar2 <- ll_binom(observed$pillar2_pos,
                          observed$pillar2_tot,
                          pars$phi_pillar2 * model_pillar2_prob_pos)

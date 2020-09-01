@@ -234,7 +234,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     observed[nms] <- NA_real_
     observed
   }
-  
+
   ## This function is more complicated to test than the basic model
   ## because it's not a simple sum
   nms_sero <- c("npos_15_64", "ntot_15_64")
