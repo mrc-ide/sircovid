@@ -23,7 +23,9 @@ community settings), \code{deaths} (combined deaths - used by some
 nations - if given then \code{deaths_hosp} and \code{deaths_comm} must be
 \code{NA}), \code{admitted} (hospital admissions), \code{new} (new cases),
 \code{npos_15_64} (number of people seropositive in ages 15-64) and
-\code{ntot_15_64} (number of people tested in ages 15-64).}
+\code{ntot_15_64} (number of people tested in ages 15-64), \code{pillar2_pos}
+(number of pillar 2 positives), \code{pillar2_tot} (number of pillar 2
+tests)}
 
 \item{pars}{A list of parameters, as created by
 \code{\link[=carehomes_parameters]{carehomes_parameters()}}}

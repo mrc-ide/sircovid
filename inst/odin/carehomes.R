@@ -17,11 +17,11 @@ update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
-update(E[, , ]) <- E[i, j, k] + delta_E[i, j, k]
-update(I_asympt[, , ]) <- I_asympt[i, j, k] + delta_I_asympt[i, j, k]
-update(I_mild[, , ]) <- I_mild[i, j, k] + delta_I_mild[i, j, k]
-update(I_ILI[, , ]) <- I_ILI[i, j, k] + delta_I_ILI[i, j, k]
-update(I_comm_D[, , ]) <- I_comm_D[i, j, k] + delta_I_comm_D[i, j, k]
+update(E[, , ]) <- new_E[i, j, k]
+update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
+update(I_mild[, , ]) <- new_I_mild[i, j, k]
+update(I_ILI[, , ]) <- new_I_ILI[i, j, k]
+update(I_comm_D[, , ]) <- new_I_comm_D[i, j, k]
 update(I_triage_R_unconf[, , ]) <- new_I_triage_R_unconf[i, j, k]
 update(I_triage_R_conf[, , ]) <- new_I_triage_R_conf[i, j, k]
 update(I_triage_D_unconf[, , ]) <- new_I_triage_D_unconf[i, j, k]
@@ -132,25 +132,25 @@ aux_EE[, 1, trans_classes] <-
 ## Work out the E->E transitions
 aux_EE[, 2:s_E, ] <- n_EE[i, j - 1, k]
 aux_EE[, 1:s_E, ] <- aux_EE[i, j, k] - n_EE[i, j, k]
-delta_E[, , ] <- aux_EE[i, j, k]
+new_E[, , ] <- E[i, j, k] + aux_EE[i, j, k]
 
 ## Work out the I_asympt->I_asympt transitions
 aux_II_asympt[, 1, ] <- n_EI_asympt[i, k]
 aux_II_asympt[, 2:s_asympt, ] <- n_II_asympt[i, j - 1, k]
 aux_II_asympt[, 1:s_asympt, ] <- aux_II_asympt[i, j, k] - n_II_asympt[i, j, k]
-delta_I_asympt[, , ] <- aux_II_asympt[i, j, k]
+new_I_asympt[, , ] <- I_asympt[i, j, k] + aux_II_asympt[i, j, k]
 
 ## Work out the I_mild->I_mild transitions
 aux_II_mild[, 1, ] <- n_EI_mild[i, k]
 aux_II_mild[, 2:s_mild, ] <- n_II_mild[i, j - 1, k]
 aux_II_mild[, 1:s_mild, ] <- aux_II_mild[i, j, k] - n_II_mild[i, j, k]
-delta_I_mild[, , ] <- aux_II_mild[i, j, k]
+new_I_mild[, , ] <- I_mild[i, j, k] + aux_II_mild[i, j, k]
 
 ## Work out the I_ILI->I_ILI transitions
 aux_II_ILI[, 1, ] <- n_EI_ILI[i, k]
 aux_II_ILI[, 2:s_ILI, ] <- n_II_ILI[i, j - 1, k]
 aux_II_ILI[, 1:s_ILI, ] <- aux_II_ILI[i, j, k] - n_II_ILI[i, j, k]
-delta_I_ILI[, , ] <- aux_II_ILI[i, j, k]
+new_I_ILI[, , ] <- I_ILI[i, j, k] + aux_II_ILI[i, j, k]
 
 ## Work out the flow from I_ILI -> R, comm_D, hosp
 n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j], 1 - p_hosp_ILI[i])
@@ -163,7 +163,7 @@ n_ILI_to_hosp[, ] <-
 aux_II_comm_D[, 1, ] <- n_ILI_to_comm_D[i, k]
 aux_II_comm_D[, 2:s_comm_D, ] <- n_II_comm_D[i, j - 1, k]
 aux_II_comm_D[, 1:s_comm_D, ] <- aux_II_comm_D[i, j, k] - n_II_comm_D[i, j, k]
-delta_I_comm_D[, , ] <- aux_II_comm_D[i, j, k]
+new_I_comm_D[, , ] <- I_comm_D[i, j, k] + aux_II_comm_D[i, j, k]
 
 ## Work out the split in hospitals between hosp_D, hosp_R, triage_R
 ## and triage_D
@@ -543,32 +543,32 @@ dim(S) <- N_age
 ## Vectors handling the E class
 dim(E) <- c(N_age, s_E, trans_classes)
 dim(aux_EE) <- c(N_age, s_E, trans_classes)
-dim(delta_E) <- c(N_age, s_E, trans_classes)
+dim(new_E) <- c(N_age, s_E, trans_classes)
 dim(n_EE) <- c(N_age, s_E, trans_classes)
 
 ## Vectors handling the I_asympt class
 dim(I_asympt) <- c(N_age, s_asympt, trans_classes)
 dim(aux_II_asympt) <- c(N_age, s_asympt, trans_classes)
-dim(delta_I_asympt) <- c(N_age, s_asympt, trans_classes)
+dim(new_I_asympt) <- c(N_age, s_asympt, trans_classes)
 dim(n_II_asympt) <- c(N_age, s_asympt, trans_classes)
 
 ## Vectors handling the I_mild class
 dim(I_mild) <- c(N_age, s_mild, trans_classes)
 dim(aux_II_mild) <- c(N_age, s_mild, trans_classes)
-dim(delta_I_mild) <- c(N_age, s_mild, trans_classes)
+dim(new_I_mild) <- c(N_age, s_mild, trans_classes)
 dim(n_II_mild) <- c(N_age, s_mild, trans_classes)
 
 ## Vectors handling the I_ILI class
 dim(I_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(aux_II_ILI) <- c(N_age, s_ILI, trans_classes)
-dim(delta_I_ILI) <- c(N_age, s_ILI, trans_classes)
+dim(new_I_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(n_II_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(p_hosp_ILI) <- N_age
 
 ## Vectors handling the I_comm_D class
 dim(I_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(aux_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
-dim(delta_I_comm_D) <- c(N_age, s_comm_D, trans_classes)
+dim(new_I_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(n_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(p_death_comm) <- N_age
 
@@ -792,7 +792,7 @@ update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
 p_specificity <- user()
 N_tot_15_64 <- user()
 
-initial(prob_pos) <- 0
+initial(sero_prob_pos) <- 0
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
@@ -809,7 +809,10 @@ initial(prob_pos) <- 0
 ##
 ## NOTE: the R_pre sum sweeps out the second compartment used to
 ## model the mixture of exponentials.
-update(prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
+update(sero_prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
   (1 - p_specificity) *
   (1 - (sum(new_R_pre[4:13, ]) +
           sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)
+
+initial(pillar2_prob_pos) <- 0
+update(pillar2_prob_pos) <- (sum(new_I_ILI) + sum(new_I_mild)) / sum(N_tot)

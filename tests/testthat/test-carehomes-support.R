@@ -116,7 +116,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("icu", "general", "deaths_comm", "deaths_hosp",
-      "admitted", "new", "prob_pos"))
+      "admitted", "new", "sero_prob_pos", "pillar2_prob_pos"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "I_ICU_tot"))
@@ -130,8 +130,10 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "cum_admit_conf"))
   expect_equal(index$run[["new"]],
                which(names(info$index) == "cum_new_conf"))
-  expect_equal(index$run[["prob_pos"]],
-               which(names(info$index) == "prob_pos"))
+  expect_equal(index$run[["sero_prob_pos"]],
+               which(names(info$index) == "sero_prob_pos"))
+  expect_equal(index$run[["pillar2_prob_pos"]],
+               which(names(info$index) == "pillar2_prob_pos"))
 })
 
 
@@ -204,9 +206,11 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
-    prob_pos = (4:9) / 10)
+    sero_prob_pos = (4:9) / 10,
+    pillar2_prob_pos = (1:6) / 1000)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
-  prev_state["prob_pos", ] <- 1 / 10
+  prev_state["sero_prob_pos", ] <- 1 / 10
+  prev_state["pillar2_prob_pos", ] <- 1 / 1000
   observed <- list(
     icu = 13,
     general = 23,
@@ -216,7 +220,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     admitted = 53,
     new = 63,
     npos_15_64 = 43,
-    ntot_15_64 = 83)
+    ntot_15_64 = 83,
+    pillar2_pos = 15,
+    pillar2_tot = 600)
   date <- sircovid_date("2020-01-01")
   pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
 
@@ -228,11 +234,13 @@ test_that("carehomes_compare combines likelihood correctly", {
     observed[nms] <- NA_real_
     observed
   }
-
+  
   ## This function is more complicated to test than the basic model
   ## because it's not a simple sum
   nms_sero <- c("npos_15_64", "ntot_15_64")
-  parts <- c(as.list(setdiff(names(observed), nms_sero)), list(nms_sero))
+  nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
+  parts <- c(as.list(setdiff(names(observed), c(nms_sero, nms_pillar2))),
+             list(nms_sero), list(nms_pillar2))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
