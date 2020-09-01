@@ -16,7 +16,8 @@ carehomes_parameters(
   eps = 0.1,
   C_1 = 4e-05,
   C_2 = 5e-04,
-  exp_noise = 1e+06
+  exp_noise = 1e+06,
+  phi_pillar2 = 10
 )
 }
 \arguments{
