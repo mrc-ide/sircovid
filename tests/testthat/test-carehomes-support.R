@@ -44,7 +44,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   expect_equal(
     p$observation,
-    carehomes_parameters_observation(1e6))
+    carehomes_parameters_observation(1e6, 10))
   expect_equal(p$N_tot_15_64, sum(p$N_tot[4:13]))
 
   extra <- setdiff(names(p),
@@ -97,8 +97,8 @@ test_that("Can compute transmission matrix for carehomes model", {
 
 
 test_that("can tune the noise parameter", {
-  p1 <- carehomes_parameters_observation(1e6)
-  p2 <- carehomes_parameters_observation(1e4)
+  p1 <- carehomes_parameters_observation(1e6, 10)
+  p2 <- carehomes_parameters_observation(1e4, 10)
   expect_setequal(names(p1), names(p2))
   v <- setdiff(names(p1), "exp_noise")
   expect_mapequal(p1[v], p2[v])

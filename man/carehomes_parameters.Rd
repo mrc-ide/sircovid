@@ -16,7 +16,8 @@ carehomes_parameters(
   eps = 0.1,
   C_1 = 4e-05,
   C_2 = 5e-04,
-  exp_noise = 1e+06
+  exp_noise = 1e+06,
+  phi_pillar2 = 10
 )
 }
 \arguments{
@@ -69,6 +70,8 @@ residents or workers}
 function - typically set to a large value so that noise is small
 but non-zero. If set to \code{Inf} then there is no noise in the
 observation process (not realistic but useful for testing).}
+
+\item{phi_pillar2}{Over/underreporting multiplier for pillar 2 tests}
 }
 \value{
 A list of inputs to the model, many of which are fixed and
