@@ -15,12 +15,11 @@ A list with element \code{run}, indicating the locations of (in
 order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 in hospital, (5) total deaths, (6) cumulative confirmed
 admissions,(7) cumulative confirmed new admissions, (8)
-recovered pre seroconversion (15 - 64 year-olds only), (9)
-recovered seronegative and (10) recovered seropositive, and with
-element \code{state} containing the same values followed by 17 S
-compartments (one per age group, then one for carehome workers
-and carehome residents respectively) and 17 "cumulative
-admission" compartments.
+probability of a positive sero test, (9) probability of a positive
+pillar 2 test, and with element \code{state} containing the same values
+followed by 17 S compartments (one per age group, then one for
+carehome workers and carehome residents respectively) and 17
+"cumulative admission" compartments.
 }
 \description{
 Index of "interesting" elements for the carehomes model. This function

@@ -115,12 +115,11 @@ carehomes_parameters <- function(start_date, region,
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
 ##'   admissions,(7) cumulative confirmed new admissions, (8)
-##'   recovered pre seroconversion (15 - 64 year-olds only), (9)
-##'   recovered seronegative and (10) recovered seropositive, and with
-##'   element `state` containing the same values followed by 17 S
-##'   compartments (one per age group, then one for carehome workers
-##'   and carehome residents respectively) and 17 "cumulative
-##'   admission" compartments.
+##'   probability of a positive sero test, (9) probability of a positive
+##'   pillar 2 test, and with element `state` containing the same values
+##'   followed by 17 S compartments (one per age group, then one for
+##'   carehome workers and carehome residents respectively) and 17
+##'   "cumulative admission" compartments.
 ##'
 ##' @export
 ##' @examples
@@ -137,7 +136,8 @@ carehomes_index <- function(info) {
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
-                 prob_pos = index[["prob_pos"]])
+                 sero_prob_pos = index[["sero_prob_pos"]],
+                 pillar2_prob_pos = index[["pillar2_prob_pos"]])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -176,7 +176,9 @@ carehomes_index <- function(info) {
 ##'   nations - if given then `deaths_hosp` and `deaths_comm` must be
 ##'   `NA`), `admitted` (hospital admissions), `new` (new cases),
 ##'   `npos_15_64` (number of people seropositive in ages 15-64) and
-##'   `ntot_15_64` (number of people tested in ages 15-64).
+##'   `ntot_15_64` (number of people tested in ages 15-64), `pillar2_pos`
+##'   (number of pillar 2 positives), `pillar2_tot` (number of pillar 2
+##'   tests)
 ##'
 ##'
 ##' @param pars A list of parameters, as created by
@@ -200,7 +202,8 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
-  model_prob_pos <- state["prob_pos", ]
+  model_sero_prob_pos <- state["sero_prob_pos", ]
+  model_pillar2_prob_pos <- state["pillar2_prob_pos", ]
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
@@ -229,14 +232,18 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                       pars$k_new, exp_noise)
 
   ## Note we do not use exp_noise here as the only circumstances in
-  ## which a zero probability can be produced are when model_prob_pos
+  ## which a zero probability can be produced are when model_sero_prob_pos
   ## = 1 and there are some negative tests, or when model_prob_pos = 0
   ## and there are some positive tests. Such circumstances can only
   ## arise with extreme (0%/100%) specificity or sensitivity, which is
   ## wholly unrealistic.
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
-                          model_prob_pos)
+                          model_sero_prob_pos)
+
+  ll_pillar2 <- ll_binom(observed$pillar2_pos,
+                         observed$pillar2_tot,
+                         pars$phi_pillar2 * model_pillar2_prob_pos)
 
   ll_icu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_serology
@@ -444,6 +451,8 @@ carehomes_parameters_observation <- function(exp_noise) {
     ## Daily new inpatient diagnoses
     phi_new = 1,
     k_new = 2,
+    ## Pillar 2 testing
+    phi_pillar2 = 10,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)
