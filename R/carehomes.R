@@ -34,6 +34,8 @@ NULL
 ##'   residents or workers
 ##'
 ##' @param C_2 Contact rate between carehome residents
+##' 
+##' @param phi_pillar2 Over/underreporting multiplier for pillar 2 tests
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
