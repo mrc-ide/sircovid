@@ -248,7 +248,6 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## Extremely light testing, though this has already flushed out some
   ## issues
   expect_true(all(lengths(ll_parts) == 6))
-  expect_true
   expect_equal(
     carehomes_compare(state, prev_state, observed, pars),
     rowSums(do.call(cbind, ll_parts)))
