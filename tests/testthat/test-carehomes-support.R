@@ -251,6 +251,11 @@ test_that("carehomes_compare combines likelihood correctly", {
   expect_equal(
     carehomes_compare(state, prev_state, observed, pars),
     rowSums(do.call(cbind, ll_parts)))
+
+  ## Test that there are non-zero values for each log-likelihood part.
+  ## This helps make sure all parts contribute to the log-likelihood.
+  expect_true(all(sapply(ll_parts, function(x) any(x != 0))))
+
 })
 
 
