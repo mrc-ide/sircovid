@@ -250,7 +250,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                          pars$phi_pillar2 * model_pillar2_prob_pos)
 
   ll_icu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_serology
+    ll_admitted + ll_new + ll_serology + ll_pillar2
 }
 
 
