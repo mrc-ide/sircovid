@@ -1,6 +1,6 @@
 Package: sircovid2
 Title: SIR Model for COVID-19
-Version: 0.5.16
+Version: 0.5.17
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -49,3 +49,6 @@ Suggests:
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
+Remotes:
+    mrc-ide/dust,
+    mrc-ide/mcstate

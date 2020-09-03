@@ -22,3 +22,4 @@
 ^\.lintr$
 ^TODO.md$
 ^src/CPPLINT\.cfg$
+^\.github$
