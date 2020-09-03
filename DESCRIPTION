@@ -49,3 +49,6 @@ Suggests:
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
+Remotes:
+    mrc-ide/dust,
+    mrc-ide/mcstate
