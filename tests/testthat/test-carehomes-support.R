@@ -53,7 +53,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "p_specificity", "N_tot_15_64", "pillar2_specificity", "prop_noncovid_sympt"))
+      "p_specificity", "N_tot_15_64", "pillar2_specificity",
+      "prop_noncovid_sympt"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -234,7 +235,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     observed[nms] <- NA_real_
     observed
   }
-  
+
   ## This function is more complicated to test than the basic model
   ## because it's not a simple sum
   nms_sero <- c("npos_15_64", "ntot_15_64")
@@ -244,7 +245,7 @@ test_that("carehomes_compare combines likelihood correctly", {
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
-  
+
   ## Extremely light testing, though this has already flushed out some
   ## issues
   expect_true(all(lengths(ll_parts) == 6))

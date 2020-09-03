@@ -36,7 +36,7 @@ NULL
 ##' @param C_2 Contact rate between carehome residents
 ##'
 ##' @param pillar2_specificity Specificity of the Pillar 2 test
-##' 
+##'
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
@@ -98,10 +98,10 @@ carehomes_parameters <- function(start_date, region,
 
   ## Specificity for serology tests
   ret$p_specificity <- p_specificity
-  
+
   ## Specificity for Pillar 2 testing
   ret$pillar2_specificity <- pillar2_specificity
-  
+
   ## Proportion of population with covid-like symptoms without covid
   ret$prop_noncovid_sympt <- prop_noncovid_sympt
 
@@ -217,10 +217,10 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_new <- state["new", ] - prev_state["new", ]
   model_sero_prob_pos <- state["sero_prob_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
-  
-  pillar2_negs <- pars$prop_noncovid_sympt * 
+
+  pillar2_negs <- pars$prop_noncovid_sympt *
     (sum(pars$N_tot) - model_sympt_cases)
-  model_pillar2_prob_pos <- (model_sympt_cases + 
+  model_pillar2_prob_pos <- (model_sympt_cases +
                                (1 - pars$pillar2_specificity) * pillar2_negs) /
     (model_sympt_cases + pillar2_negs)
 
@@ -264,7 +264,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                          observed$pillar2_tot,
                          model_pillar2_prob_pos,
                          pars$rho_pillar2_tests)
-  
+
   ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
                                 pars$phi_pillar2_cases * model_sympt_cases,
                                 pars$k_pillar2_cases, exp_noise)
