@@ -586,6 +586,7 @@ public:
     real_t initial_cum_admit_conf;
     real_t initial_cum_infections;
     real_t initial_cum_new_conf;
+    real_t initial_cum_sympt_cases;
     std::vector<real_t> initial_D_comm;
     real_t initial_D_comm_tot;
     std::vector<real_t> initial_D_hosp;
@@ -614,7 +615,6 @@ public:
     std::vector<real_t> initial_N_tot;
     real_t initial_N_tot2;
     std::vector<real_t> initial_PCR_pos;
-    real_t initial_pillar2_prob_pos;
     std::vector<real_t> initial_R;
     std::vector<real_t> initial_R_neg;
     std::vector<real_t> initial_R_pos;
@@ -789,7 +789,7 @@ public:
     state[10] = internal.initial_D_comm_tot;
     state[11] = internal.initial_D_tot;
     state[12] = internal.initial_sero_prob_pos;
-    state[13] = internal.initial_pillar2_prob_pos;
+    state[13] = internal.initial_cum_sympt_cases;
     std::copy(internal.initial_S.begin(), internal.initial_S.end(), state.begin() + 14);
     std::copy(internal.initial_R_pos.begin(), internal.initial_R_pos.end(), state.begin() + internal.offset_variable_R_pos);
     std::copy(internal.initial_R_neg.begin(), internal.initial_R_neg.end(), state.begin() + internal.offset_variable_R_neg);
@@ -856,7 +856,7 @@ public:
     const real_t cum_new_conf = state[3];
     const real_t * cum_admit_by_age = state + internal.offset_variable_cum_admit_by_age;
     const real_t cum_infections = state[1];
-    const real_t * N_tot = state + internal.offset_variable_N_tot;
+    const real_t cum_sympt_cases = state[13];
     state_next[5] = odin_sum1(S, 0, internal.dim_S) + odin_sum1(R_pre, 0, internal.dim_R_pre) + odin_sum1(R_pos, 0, internal.dim_R_pos) + odin_sum1(R_neg, 0, internal.dim_R_neg) + odin_sum1(E, 0, internal.dim_E);
     state_next[0] = (step + 1) * internal.dt;
     real_t beta = (step >= internal.dim_beta_step ? internal.beta_step[internal.dim_beta_step - 1] : internal.beta_step[step + 1 - 1]);
@@ -1615,6 +1615,7 @@ public:
     for (int_t i = 1; i <= internal.dim_cum_admit_by_age; ++i) {
       state_next[internal.offset_variable_cum_admit_by_age + i - 1] = cum_admit_by_age[i - 1] + odin_sum2(internal.n_ILI_to_hosp.data(), i - 1, i, 0, internal.dim_n_ILI_to_hosp_2, internal.dim_n_ILI_to_hosp_1);
     }
+    state_next[13] = cum_sympt_cases + odin_sum1(internal.n_EI_mild.data(), 0, internal.dim_n_EI_mild) + odin_sum1(internal.n_EI_ILI.data(), 0, internal.dim_n_EI_ILI);
     state_next[10] = new_D_comm_tot;
     state_next[9] = new_D_hosp_tot;
     state_next[11] = new_D_hosp_tot + new_D_comm_tot;
@@ -1772,7 +1773,6 @@ public:
         }
       }
     }
-    state_next[13] = (odin_sum1(internal.new_I_ILI.data(), 0, internal.dim_new_I_ILI) + odin_sum1(internal.new_I_mild.data(), 0, internal.dim_new_I_mild)) / (real_t) odin_sum1(N_tot, 0, internal.dim_N_tot);
     for (int_t i = 1; i <= internal.dim_S; ++i) {
       state_next[14 + i - 1] = S[i - 1] - internal.n_SE[i - 1];
     }
@@ -2248,6 +2248,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.initial_cum_admit_conf = 0;
   internal.initial_cum_infections = 0;
   internal.initial_cum_new_conf = 0;
+  internal.initial_cum_sympt_cases = 0;
   internal.initial_D_comm_tot = 0;
   internal.initial_D_hosp_tot = 0;
   internal.initial_D_tot = 0;
@@ -2255,7 +2256,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.initial_hosp_tot = 0;
   internal.initial_I_ICU_tot = 0;
   internal.initial_N_tot2 = 0;
-  internal.initial_pillar2_prob_pos = 0;
   internal.initial_sero_prob_pos = 0;
   internal.initial_time = 0;
   internal.gamma_R_pre = std::vector<real_t>(internal.dim_gamma_R_pre);
@@ -3233,7 +3233,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
 }
 template <>
 cpp11::sexp dust_info<carehomes>(const carehomes::init_t& internal) {
-  cpp11::writable::strings nms({"time", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "I_ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_tot", "sero_prob_pos", "pillar2_prob_pos", "S", "R_pos", "R_neg", "R", "D_hosp", "D_comm", "cum_admit_by_age", "N_tot", "R_stepdown_unconf", "R_stepdown_conf", "R_pre", "PCR_pos", "E", "I_asympt", "I_mild", "I_ILI", "I_comm_D", "I_triage_R_unconf", "I_triage_R_conf", "I_triage_D_unconf", "I_triage_D_conf", "I_hosp_R_unconf", "I_hosp_R_conf", "I_hosp_D_unconf", "I_hosp_D_conf", "I_ICU_R_unconf", "I_ICU_R_conf", "I_ICU_D_unconf", "I_ICU_D_conf"});
+  cpp11::writable::strings nms({"time", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "I_ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_tot", "sero_prob_pos", "cum_sympt_cases", "S", "R_pos", "R_neg", "R", "D_hosp", "D_comm", "cum_admit_by_age", "N_tot", "R_stepdown_unconf", "R_stepdown_conf", "R_pre", "PCR_pos", "E", "I_asympt", "I_mild", "I_ILI", "I_comm_D", "I_triage_R_unconf", "I_triage_R_conf", "I_triage_D_unconf", "I_triage_D_conf", "I_hosp_R_unconf", "I_hosp_R_conf", "I_hosp_D_unconf", "I_hosp_D_conf", "I_ICU_R_unconf", "I_ICU_R_conf", "I_ICU_D_unconf", "I_ICU_D_conf"});
   cpp11::writable::list dim(43);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});

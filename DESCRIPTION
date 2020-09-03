@@ -1,6 +1,6 @@
 Package: sircovid2
 Title: SIR Model for COVID-19
-Version: 0.5.17
+Version: 0.5.18
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -40,7 +40,8 @@ Language: en-GB
 Depends: R (>= 3.1.0)
 Imports:
     mcstate (>= 0.2.7),
-    socialmixr
+    socialmixr,
+    VGAM
 LinkingTo:
     cpp11 (>= 0.2.1),
     dust (>= 0.4.9)
