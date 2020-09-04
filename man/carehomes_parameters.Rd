@@ -16,8 +16,10 @@ carehomes_parameters(
   eps = 0.1,
   C_1 = 4e-05,
   C_2 = 5e-04,
-  exp_noise = 1e+06,
-  phi_pillar2 = 10
+  pillar2_specificity = 0.99,
+  pillar2_sensitivity = 0.99,
+  prop_noncovid_sympt = 0.01,
+  exp_noise = 1e+06
 )
 }
 \arguments{
@@ -66,12 +68,17 @@ residents or workers}
 
 \item{C_2}{Contact rate between carehome residents}
 
+\item{pillar2_specificity}{Specificity of the Pillar 2 test}
+
+\item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
+
+\item{prop_noncovid_sympt}{Proportion of population who do not have
+covid but have covid-like symptoms}
+
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
 but non-zero. If set to \code{Inf} then there is no noise in the
 observation process (not realistic but useful for testing).}
-
-\item{phi_pillar2}{Over/underreporting multiplier for pillar 2 tests}
 }
 \value{
 A list of inputs to the model, many of which are fixed and

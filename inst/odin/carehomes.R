@@ -814,5 +814,5 @@ update(sero_prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
   (1 - (sum(new_R_pre[4:13, ]) +
           sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)
 
-initial(pillar2_prob_pos) <- 0
-update(pillar2_prob_pos) <- (sum(new_I_ILI) + sum(new_I_mild)) / sum(N_tot)
+initial(cum_sympt_cases) <- 0
+update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)

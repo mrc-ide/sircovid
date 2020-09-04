@@ -35,7 +35,12 @@ NULL
 ##'
 ##' @param C_2 Contact rate between carehome residents
 ##'
-##' @param phi_pillar2 Over/underreporting multiplier for pillar 2 tests
+##' @param pillar2_specificity Specificity of the Pillar 2 test
+##'
+##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
+##'
+##' @param prop_noncovid_sympt Proportion of population who do not have
+##'   covid but have covid-like symptoms
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -54,8 +59,10 @@ carehomes_parameters <- function(start_date, region,
                                  eps = 0.1,
                                  C_1 = 4e-5,
                                  C_2 = 5e-4,
-                                 exp_noise = 1e6,
-                                 phi_pillar2 = 10) {
+                                 pillar2_specificity = 0.99,
+                                 pillar2_sensitivity = 0.99,
+                                 prop_noncovid_sympt = 0.01,
+                                 exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
@@ -95,9 +102,15 @@ carehomes_parameters <- function(start_date, region,
   ## Specificity for serology tests
   ret$p_specificity <- p_specificity
 
+  ## Specificity and sensitivity for Pillar 2 testing
+  ret$pillar2_specificity <- pillar2_specificity
+  ret$pillar2_sensitivity <- pillar2_sensitivity
+
+  ## Proportion of population with covid-like symptoms without covid
+  ret$prop_noncovid_sympt <- prop_noncovid_sympt
+
   ## All observation parameters:
-  ret$observation <- carehomes_parameters_observation(exp_noise,
-                                                      phi_pillar2)
+  ret$observation <- carehomes_parameters_observation(exp_noise)
 
   ## TODO: Adding this here, but better would be to pass N_age as-is,
   ## then update the leading dimension to something more accurate
@@ -141,7 +154,7 @@ carehomes_index <- function(info) {
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
                  sero_prob_pos = index[["sero_prob_pos"]],
-                 pillar2_prob_pos = index[["pillar2_prob_pos"]])
+                 sympt_cases = index[["cum_sympt_cases"]])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -207,7 +220,13 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
   model_sero_prob_pos <- state["sero_prob_pos", ]
-  model_pillar2_prob_pos <- state["pillar2_prob_pos", ]
+  model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
+
+  pillar2_negs <- pars$prop_noncovid_sympt *
+    (sum(pars$N_tot) - model_sympt_cases)
+  model_pillar2_prob_pos <- (pars$pillar2_sensitivity * model_sympt_cases +
+                               (1 - pars$pillar2_specificity) * pillar2_negs) /
+    (model_sympt_cases + pillar2_negs)
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
@@ -245,12 +264,17 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                           observed$ntot_15_64,
                           model_sero_prob_pos)
 
-  ll_pillar2 <- ll_binom(observed$pillar2_pos,
+  ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
                          observed$pillar2_tot,
-                         pars$phi_pillar2 * model_pillar2_prob_pos)
+                         model_pillar2_prob_pos,
+                         pars$rho_pillar2_tests)
+
+  ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
+                                pars$phi_pillar2_cases * model_sympt_cases,
+                                pars$k_pillar2_cases, exp_noise)
 
   ll_icu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_serology + ll_pillar2
+    ll_admitted + ll_new + ll_serology + ll_pillar2_tests + ll_pillar2_cases
 }
 
 
@@ -433,7 +457,7 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-carehomes_parameters_observation <- function(exp_noise, phi_pillar2) {
+carehomes_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in ICU
     phi_ICU = 1,
@@ -456,7 +480,11 @@ carehomes_parameters_observation <- function(exp_noise, phi_pillar2) {
     phi_new = 1,
     k_new = 2,
     ## Pillar 2 testing
-    phi_pillar2 = phi_pillar2,
+    phi_pillar2_cases = 1,
+    k_pillar2_cases = 2,
+    ##
+    rho_pillar2_tests = 0.1,
+    ##
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)

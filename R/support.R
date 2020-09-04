@@ -60,6 +60,29 @@ ll_binom <- function(data_x, data_size, model_prob) {
 }
 
 
+ll_betabinom <- function(data_x, data_size, model_prob, rho) {
+  if (is.na(data_x) || is.na(data_size)) {
+    return(numeric(length(model_prob)))
+  }
+  dbetabinom(data_x, data_size, model_prob, rho, log = TRUE)
+}
+
+
+dbetabinom <- function(x, size, prob, rho, log = FALSE) {
+
+  a <- prob * (1 / rho - 1)
+  b <- (1 - prob) * (1 / rho - 1)
+
+  out <- lchoose(size, x) + lbeta(x + a, size - x + b) - lbeta(a, b)
+
+  if (!log) {
+    out <- exp(out)
+  }
+
+  out
+}
+
+
 sircovid_transmission_matrix <- function(region) {
   if (is.null(cache$transmission_matrix[[region]])) {
     if (is.null(cache$transmission_matrix)) {

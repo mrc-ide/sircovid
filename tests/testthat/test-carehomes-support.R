@@ -44,7 +44,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   expect_equal(
     p$observation,
-    carehomes_parameters_observation(1e6, 10))
+    carehomes_parameters_observation(1e6))
   expect_equal(p$N_tot_15_64, sum(p$N_tot[4:13]))
 
   extra <- setdiff(names(p),
@@ -53,7 +53,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "p_specificity", "N_tot_15_64"))
+      "p_specificity", "N_tot_15_64", "pillar2_specificity",
+      "pillar2_sensitivity", "prop_noncovid_sympt"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -97,8 +98,8 @@ test_that("Can compute transmission matrix for carehomes model", {
 
 
 test_that("can tune the noise parameter", {
-  p1 <- carehomes_parameters_observation(1e6, 10)
-  p2 <- carehomes_parameters_observation(1e4, 10)
+  p1 <- carehomes_parameters_observation(1e6)
+  p2 <- carehomes_parameters_observation(1e4)
   expect_setequal(names(p1), names(p2))
   v <- setdiff(names(p1), "exp_noise")
   expect_mapequal(p1[v], p2[v])
@@ -116,7 +117,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("icu", "general", "deaths_comm", "deaths_hosp",
-      "admitted", "new", "sero_prob_pos", "pillar2_prob_pos"))
+      "admitted", "new", "sero_prob_pos", "sympt_cases"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "I_ICU_tot"))
@@ -132,8 +133,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "cum_new_conf"))
   expect_equal(index$run[["sero_prob_pos"]],
                which(names(info$index) == "sero_prob_pos"))
-  expect_equal(index$run[["pillar2_prob_pos"]],
-               which(names(info$index) == "pillar2_prob_pos"))
+  expect_equal(index$run[["sympt_cases"]],
+               which(names(info$index) == "cum_sympt_cases"))
 })
 
 
@@ -207,10 +208,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     admitted = 50:55,
     new = 60:65,
     sero_prob_pos = (4:9) / 10,
-    pillar2_prob_pos = (1:6) / 1000)
+    sympt_cases = 100:105)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
   prev_state["sero_prob_pos", ] <- 1 / 10
-  prev_state["pillar2_prob_pos", ] <- 1 / 1000
   observed <- list(
     icu = 13,
     general = 23,
@@ -221,8 +221,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     new = 63,
     npos_15_64 = 43,
     ntot_15_64 = 83,
-    pillar2_pos = 15,
-    pillar2_tot = 600)
+    pillar2_pos = 35,
+    pillar2_tot = 600,
+    pillar2_cases = 35)
   date <- sircovid_date("2020-01-01")
   pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
 

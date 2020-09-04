@@ -20,9 +20,7 @@ test_that("can run the carehomes model", {
     new = c(484244, 483918, 483997, 484935, 484355),
     sero_prob_pos = c(0.723860522215455, 0.723923883973212, 0.724058180618437,
                  0.723865988088634, 0.723862084297041),
-    pillar2_prob_pos = c(1.4212883915311252e-06, 2.0964003775084099e-06,
-                         4.7968483214175475e-07, 2.8958750977446676e-06,
-                         5.6851535661245008e-07))
+    sympt_cases = c(30885159, 30883639, 30887886, 30874524, 30871135))
   expect_equal(res, expected)
 })
 
@@ -43,6 +41,7 @@ test_that("can run the particle filter on the model", {
   data$ntot_15_64 <- NA
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
+  data$pillar2_cases <- NA
 
   pf <- carehomes_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")
