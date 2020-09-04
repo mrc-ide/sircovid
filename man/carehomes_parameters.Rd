@@ -17,6 +17,7 @@ carehomes_parameters(
   C_1 = 4e-05,
   C_2 = 5e-04,
   pillar2_specificity = 0.99,
+  pillar2_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
   exp_noise = 1e+06
 )
@@ -68,6 +69,8 @@ residents or workers}
 \item{C_2}{Contact rate between carehome residents}
 
 \item{pillar2_specificity}{Specificity of the Pillar 2 test}
+
+\item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
 
 \item{prop_noncovid_sympt}{Proportion of population who do not have
 covid but have covid-like symptoms}
