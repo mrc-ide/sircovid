@@ -68,14 +68,14 @@ ll_betabinom <- function(data_x, data_size, model_prob, rho) {
 }
 
 
-dbetabinom <- function(x, size, prob, rho, log = FALSE){
+dbetabinom <- function(x, size, prob, rho, log = FALSE) {
 
-  a = prob * (1 / rho - 1)
-  b= (1 - prob) * (1 / rho - 1)
+  a <- prob * (1 / rho - 1)
+  b <- (1 - prob) * (1 / rho - 1)
 
   out <- lchoose(size, x) + lbeta(x + a, size - x + b) - lbeta(a, b)
 
-  if (!log){
+  if (!log) {
     out <- exp(out)
   }
 
