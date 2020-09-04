@@ -165,10 +165,6 @@ test_that("ll_betabinom", {
     ll_betabinom(5, 10, 0.2, 0.01),
     f(0.2))
 
-  expect_equal(
-    exp(ll_betabinom(5, 10, 0.2, 0.01)),
-    f(0.2, FALSE))
-
   x <- seq(0, 1, 0.1)
   expect_equal(
     ll_betabinom(5, 10, x, 0.01),
@@ -195,6 +191,35 @@ test_that("ll_betabinom returns a vector of zeros if data missing", {
   expect_equal(
     ll_betabinom(NA, 10, rep(0.5, 5), 0.01),
     rep(0, 5))
+})
+
+
+test_that("dbetabinom", {
+  
+  ## when prob = 1/2, rho = 1/3 (equivalently a = b = 1),
+  ## equivalent to discrete uniform from 0 to size
+  expect_equal(dbetabinom(4, 35, 1 / 2, 1 / 3), 1 / 36)
+  expect_equal(dbetabinom(4, 35, 1 / 2, 1 / 3, log = TRUE), log(1 / 36))
+  
+  
+  ## compare with extraDistr::dbbinom (uses a and b as parameters - to match
+  ## use prob = a / (a + b) and rho = 1 / (a + b + 1))
+  f <- function(x, size, a, b, log = FALSE){
+   prob  = a / (a + b)
+   rho = 1 / (a + b + 1)
+   
+   dbetabinom(x, size, prob, rho, log)
+  }
+  
+  ## extraDistr::dbbinom(15, 63, 2, 5) ~ 0.03613356
+  expect_equal(f(15, 63, 2, 5), 0.03613356, tolerance = 1e-8)
+  ## extraDistr::dbbinom(15, 63, 2, 5, log = TRUE) ~ -3.320533
+  expect_equal(f(15, 63, 2, 5, log = TRUE), -3.320533, tolerance = 1e-6)
+  
+  ## extraDistr::dbbinom(672, 50454, 3, 2) ~ 4.18089e-08
+  expect_equal(f(672, 50454, 3, 2), 4.18089e-08, tolerance = 1e-13)
+  ## extraDistr::dbbinom(15, 63, 2, 5, log = TRUE) ~ -16.99016
+  expect_equal(f(672, 50454, 3, 2, log = TRUE), -16.99016, tolerance = 1e-5)
 })
 
 
