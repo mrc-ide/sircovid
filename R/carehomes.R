@@ -36,7 +36,7 @@ NULL
 ##' @param C_2 Contact rate between carehome residents
 ##'
 ##' @param pillar2_specificity Specificity of the Pillar 2 test
-##' 
+##'
 ##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
 ##'
 ##' @param prop_noncovid_sympt Proportion of population who do not have
