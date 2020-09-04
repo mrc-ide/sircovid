@@ -195,7 +195,6 @@ test_that("ll_betabinom returns a vector of zeros if data missing", {
 
 
 test_that("dbetabinom", {
-
   ## when prob = 1/2, rho = 1/3 (equivalently a = b = 1),
   ## equivalent to discrete uniform from 0 to size
   expect_equal(dbetabinom(4, 35, 1 / 2, 1 / 3), 1 / 36)
