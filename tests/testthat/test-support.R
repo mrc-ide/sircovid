@@ -207,7 +207,7 @@ test_that("dbetabinom", {
   f <- function(x, size, a, b, log = FALSE) {
    prob  <- a / (a + b)
    rho <- 1 / (a + b + 1)
- 
+
    dbetabinom(x, size, prob, rho, log)
   }
 
