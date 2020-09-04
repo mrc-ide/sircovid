@@ -36,6 +36,8 @@ NULL
 ##' @param C_2 Contact rate between carehome residents
 ##'
 ##' @param pillar2_specificity Specificity of the Pillar 2 test
+##' 
+##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
 ##'
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
@@ -58,6 +60,7 @@ carehomes_parameters <- function(start_date, region,
                                  C_1 = 4e-5,
                                  C_2 = 5e-4,
                                  pillar2_specificity = 0.99,
+                                 pillar2_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
@@ -99,8 +102,9 @@ carehomes_parameters <- function(start_date, region,
   ## Specificity for serology tests
   ret$p_specificity <- p_specificity
 
-  ## Specificity for Pillar 2 testing
+  ## Specificity and sensitivity for Pillar 2 testing
   ret$pillar2_specificity <- pillar2_specificity
+  ret$pillar2_sensitivity <- pillar2_sensitivity
 
   ## Proportion of population with covid-like symptoms without covid
   ret$prop_noncovid_sympt <- prop_noncovid_sympt
@@ -220,7 +224,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   pillar2_negs <- pars$prop_noncovid_sympt *
     (sum(pars$N_tot) - model_sympt_cases)
-  model_pillar2_prob_pos <- (model_sympt_cases +
+  model_pillar2_prob_pos <- (pars$pillar2_sensitivity * model_sympt_cases +
                                (1 - pars$pillar2_specificity) * pillar2_negs) /
     (model_sympt_cases + pillar2_negs)
 

@@ -156,6 +156,44 @@ test_that("ll_binom returns a vector of zeros if data missing", {
     rep(0, 5))
 })
 
+test_that("ll_betabinom", {
+  f <- function(model_prob) {
+    VGAM::dbetabinom(5, 10, prob = model_prob, 0.01, log = TRUE)
+  }
+  
+  set.seed(1)
+  expect_equal(
+    ll_betabinom(5, 10, 0.2, 0.01),
+    f(0.2))
+  
+  x <- seq(0, 1, 0.1)
+  expect_equal(
+    ll_betabinom(5, 10, x, 0.01),
+    f(x))
+})
+
+
+test_that("ll_betabinom returns a vector of zeros if data missing", {
+  expect_equal(
+    ll_betabinom(NA, NA, 0.5, 0.01),
+    0)
+  expect_equal(
+    ll_betabinom(5, NA, 0.5, 0.01),
+    0)
+  expect_equal(
+    ll_betabinom(NA, 10, 0.5, 0.01),
+    0)
+  expect_equal(
+    ll_betabinom(NA, NA, rep(0.5, 5), 0.01),
+    rep(0, 5))
+  expect_equal(
+    ll_betabinom(5, NA, rep(0.5, 5), 0.01),
+    rep(0, 5))
+  expect_equal(
+    ll_betabinom(NA, 10, rep(0.5, 5), 0.01),
+    rep(0, 5))
+})
+
 
 test_that("transmission matrix", {
   clear_cache()
