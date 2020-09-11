@@ -136,7 +136,8 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   p$p_sympt_ILI[] <- 1
   p$p_hosp_ILI_step <- 1
   p$psi_hosp_ILI[] <- 1
-  p$p_death_comm[] <- 1
+  p$p_death_comm_step <-1
+  p$psi_death_comm[] <- 1
   p$p_asympt[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -177,7 +178,8 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   p$p_sympt_ILI[] <- 1
   p$p_hosp_ILI_step <- 1
   p$psi_hosp_ILI[] <- 1
-  p$p_death_comm[] <- 1
+  p$p_death_comm_step <- 1
+  p$psi_death_comm[] <- 1
   p$p_asympt[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -213,9 +215,9 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 })
 
 
-test_that("No one dies in the community if p_death_comm is 0", {
+test_that("No one dies in the community if psi_death_comm is 0", {
   p <- carehomes_parameters(0, "england")
-  p$p_death_comm[] <- 0
+  p$psi_death_comm[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()

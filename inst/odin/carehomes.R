@@ -82,10 +82,6 @@ p_hosp_ILI <- if (step >= length(p_hosp_ILI_step))
   p_hosp_ILI_step[length(p_hosp_ILI_step)] else p_hosp_ILI_step[step + 1]
 prob_hosp_ILI[] <- p_hosp_ILI * psi_hosp_ILI[i]
 
-update(prob_hosp_ILI_out[]) <- prob_hosp_ILI[i]
-dim(prob_hosp_ILI_out) <- c(N_age)
-initial(prob_hosp_ILI_out[]) <- 0
-
 p_death_ICU <- if (step >= length(p_death_ICU_step))
   p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
 prob_death_ICU[] <- p_death_ICU * psi_death_ICU[i]
@@ -94,6 +90,10 @@ p_death_hosp_D <- if (step >= length(p_death_hosp_D_step))
   p_death_hosp_D_step[length(p_death_hosp_D_step)] else
     p_death_hosp_D_step[step + 1]
 prob_death_hosp_D[] <- p_death_hosp_D * psi_death_hosp_D[i]
+
+p_death_comm <- if (step >= length(p_death_comm_step))
+  p_death_comm_step[length(p_death_comm_step)] else p_death_comm_step[step + 1]
+prob_death_comm[] <- p_death_comm * psi_death_comm[i]
 
 
 ## Draws from binomial distributions for numbers changing between
@@ -174,7 +174,7 @@ new_I_ILI[, , ] <- I_ILI[i, j, k] + aux_II_ILI[i, j, k]
 ## Work out the flow from I_ILI -> R, comm_D, hosp
 n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j], 1 - prob_hosp_ILI[i])
 n_ILI_to_comm_D[, ] <-
-  rbinom(n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j], p_death_comm[i])
+  rbinom(n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j], prob_death_comm[i])
 n_ILI_to_hosp[, ] <-
   n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j] - n_ILI_to_comm_D[i, j]
 
@@ -483,7 +483,9 @@ psi_hosp_ILI[] <- user()
 ## Parameters of the I_comm_D class
 s_comm_D <- user()
 gamma_comm_D <- user(0.1)
-p_death_comm[] <- user()
+dim(p_death_comm_step) <- user()
+p_death_comm_step[] <- user()
+psi_death_comm[] <- user()
 
 ## Parameters of the I_triage classes
 s_triage <- user()
@@ -596,7 +598,8 @@ dim(I_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(aux_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(new_I_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(n_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
-dim(p_death_comm) <- N_age
+dim(prob_death_comm) <- N_age
+dim(psi_death_comm) <- N_age
 
 ## Vectors handling the I_triage_R class
 dim(I_triage_R_unconf) <- c(N_age, s_triage, trans_classes)

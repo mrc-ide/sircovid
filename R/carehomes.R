@@ -98,6 +98,9 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_death_hosp_D <- severity$p_death_hosp_D /
     max(severity$p_death_hosp_D)
   severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
+  ## probability of patient requiring hospital treatment dying in community
+  severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
+  severity$p_death_comm_step <- max(severity$p_death_comm)
 
   progression <- progression %||% carehomes_parameters_progression()
 
