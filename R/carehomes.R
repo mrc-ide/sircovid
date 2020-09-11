@@ -219,6 +219,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
+  model_new_admitted <- model_admitted + model_new
   model_sero_prob_pos <- state["sero_prob_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
 
@@ -253,6 +254,9 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                            pars$k_admitted, exp_noise)
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$k_new, exp_noise)
+  ll_new_admitted <- ll_nbinom(observed$new_admitted,
+                               pars$phi_new_admitted * model_new_admitted,
+                               pars$k_new_admitted, exp_noise)
 
   ## Note we do not use exp_noise here as the only circumstances in
   ## which a zero probability can be produced are when model_sero_prob_pos
@@ -274,7 +278,8 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                 pars$k_pillar2_cases, exp_noise)
 
   ll_icu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_serology + ll_pillar2_tests + ll_pillar2_cases
+    ll_admitted + ll_new + ll_new_admitted + ll_serology +
+    ll_pillar2_tests + ll_pillar2_cases
 }
 
 
@@ -479,6 +484,9 @@ carehomes_parameters_observation <- function(exp_noise) {
     ## Daily new inpatient diagnoses
     phi_new = 1,
     k_new = 2,
+    ## Daily combined new confirmed admissions and new inpatient diagnoses
+    phi_new_admitted = 1,
+    k_new_admitted = 2,
     ## Pillar 2 testing
     phi_pillar2_cases = 1,
     k_pillar2_cases = 2,

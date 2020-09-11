@@ -207,6 +207,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
+    new_admitted = 113:118,
     sero_prob_pos = (4:9) / 10,
     sympt_cases = 100:105)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
@@ -219,6 +220,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths = 8,
     admitted = 53,
     new = 63,
+    new_admitted = 116,
     npos_15_64 = 43,
     ntot_15_64 = 83,
     pillar2_pos = 35,
