@@ -200,9 +200,11 @@ n_ILI_to_hosp_D_conf[, ] <- rbinom(n_ILI_to_hosp_D[i, j], prob_admit_conf[i])
 n_ILI_to_hosp_R[, ] <- n_hosp_non_ICU[i, j] - n_ILI_to_hosp_D[i, j]
 n_ILI_to_hosp_R_conf[, ] <- rbinom(n_ILI_to_hosp_R[i, j], prob_admit_conf[i])
 n_ILI_to_triage_D[, ] <- rbinom(n_ILI_to_triage[i, j], prob_death_ICU[i])
-n_ILI_to_triage_D_conf[, ] <- rbinom(n_ILI_to_triage_D[i, j], prob_admit_conf[i])
+n_ILI_to_triage_D_conf[, ] <- rbinom(n_ILI_to_triage_D[i, j],
+                                     prob_admit_conf[i])
 n_ILI_to_triage_R[, ] <- n_ILI_to_triage[i, j] - n_ILI_to_triage_D[i, j]
-n_ILI_to_triage_R_conf[, ] <- rbinom(n_ILI_to_triage_R[i, j], prob_admit_conf[i])
+n_ILI_to_triage_R_conf[, ] <- rbinom(n_ILI_to_triage_R[i, j],
+                                     prob_admit_conf[i])
 
 ## Work out the I_triage_R -> I_triage_R transitions
 aux_II_triage_R_unconf[, , ] <- I_triage_R_unconf[i, j, k]
