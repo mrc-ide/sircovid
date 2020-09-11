@@ -78,6 +78,10 @@ p_test <- 1 - exp(-gamma_test * dt)
 p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 
 ## Work out time-varying probabilities
+p_ICU_hosp <- if (step >= length(p_ICU_hosp_step))
+  p_ICU_hosp_step[length(p_ICU_hosp_step)] else p_ICU_hosp_step[step + 1]
+prob_ICU_hosp[] <- p_ICU_hosp * psi_ICU_hosp[i]
+
 p_hosp_ILI <- if (step >= length(p_hosp_ILI_step))
   p_hosp_ILI_step[length(p_hosp_ILI_step)] else p_hosp_ILI_step[step + 1]
 prob_hosp_ILI[] <- p_hosp_ILI * psi_hosp_ILI[i]
@@ -186,7 +190,7 @@ new_I_comm_D[, , ] <- I_comm_D[i, j, k] + aux_II_comm_D[i, j, k]
 
 ## Work out the split in hospitals between hosp_D, hosp_R, triage_R
 ## and triage_D
-n_ILI_to_triage[, ] <- rbinom(n_ILI_to_hosp[i, j], p_ICU_hosp[i])
+n_ILI_to_triage[, ] <- rbinom(n_ILI_to_hosp[i, j], prob_ICU_hosp[i])
 n_hosp_non_ICU[, ] <- n_ILI_to_hosp[i, j] - n_ILI_to_triage[i, j]
 n_ILI_to_hosp_D[, ] <- rbinom(n_hosp_non_ICU[i, j], prob_death_hosp_D[i])
 n_ILI_to_hosp_D_conf[, ] <- rbinom(n_ILI_to_hosp_D[i, j], p_admit_conf[i])
@@ -492,7 +496,9 @@ s_triage <- user()
 gamma_triage <- user(0.1)
 
 ## Proportion of hospital cases progressing to ICU
-p_ICU_hosp[] <- user()
+dim(p_ICU_hosp_step) <- user()
+p_ICU_hosp_step[] <- user()
+psi_ICU_hosp[] <- user()
 
 ## Parameters of the I_hosp_R classes
 s_hosp_R <- user()
@@ -624,7 +630,8 @@ dim(n_II_triage_D_conf) <- c(N_age, s_triage, trans_classes)
 dim(n_I_triage_D_unconf_to_conf) <- c(N_age, s_triage, trans_classes)
 
 ## Vector handling who progress to ICU
-dim(p_ICU_hosp) <- N_age
+dim(prob_ICU_hosp) <- N_age
+dim(psi_ICU_hosp) <- N_age
 
 ## Vectors handling the I_hosp_R class
 dim(I_hosp_R_unconf) <- c(N_age, s_hosp_R, trans_classes)

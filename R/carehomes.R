@@ -91,6 +91,9 @@ carehomes_parameters <- function(start_date, region,
   ## probability of ILI patient requiring hospital treatment
   severity$psi_hosp_ILI <- severity$p_hosp_ILI / max(severity$p_hosp_ILI)
   severity$p_hosp_ILI_step <- max(severity$p_hosp_ILI)
+  ## probability of hospitalised patient going to ICU
+  severity$psi_ICU_hosp <- severity$p_ICU_hosp / max(severity$p_ICU_hosp)
+  severity$p_ICU_hosp_step <- max(severity$p_ICU_hosp)
   ## probability of ICU patient dying
   severity$psi_death_ICU <- severity$p_death_ICU / max(severity$p_death_ICU)
   severity$p_death_ICU_step <- max(severity$p_death_ICU)
