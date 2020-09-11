@@ -78,9 +78,18 @@ p_test <- 1 - exp(-gamma_test * dt)
 p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 
 ## Work out time-varying probabilities
+p_hosp_ILI <- if (step >= length(p_hosp_ILI_step))
+  p_hosp_ILI_step[length(p_hosp_ILI_step)] else p_hosp_ILI_step[step + 1]
+prob_hosp_ILI[] <- p_hosp_ILI * psi_hosp_ILI[i]
+
+update(prob_hosp_ILI_out[]) <- prob_hosp_ILI[i]
+dim(prob_hosp_ILI_out) <- c(N_age)
+initial(prob_hosp_ILI_out[]) <- 0
+
 p_death_ICU <- if (step >= length(p_death_ICU_step))
   p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
 prob_death_ICU[] <- p_death_ICU * psi_death_ICU[i]
+
 p_death_hosp_D <- if (step >= length(p_death_hosp_D_step))
   p_death_hosp_D_step[length(p_death_hosp_D_step)] else
     p_death_hosp_D_step[step + 1]
@@ -163,7 +172,7 @@ aux_II_ILI[, 1:s_ILI, ] <- aux_II_ILI[i, j, k] - n_II_ILI[i, j, k]
 new_I_ILI[, , ] <- I_ILI[i, j, k] + aux_II_ILI[i, j, k]
 
 ## Work out the flow from I_ILI -> R, comm_D, hosp
-n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j], 1 - p_hosp_ILI[i])
+n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j], 1 - prob_hosp_ILI[i])
 n_ILI_to_comm_D[, ] <-
   rbinom(n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j], p_death_comm[i])
 n_ILI_to_hosp[, ] <-
@@ -467,7 +476,9 @@ gamma_mild <- user(0.1)
 ## Parameters of the I_ILI classes
 s_ILI <- user()
 gamma_ILI <- user(0.1)
-p_hosp_ILI[] <- user()
+dim(p_hosp_ILI_step) <- user()
+p_hosp_ILI_step[] <- user()
+psi_hosp_ILI[] <- user()
 
 ## Parameters of the I_comm_D class
 s_comm_D <- user()
@@ -577,7 +588,8 @@ dim(I_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(aux_II_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(new_I_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(n_II_ILI) <- c(N_age, s_ILI, trans_classes)
-dim(p_hosp_ILI) <- N_age
+dim(prob_hosp_ILI) <- N_age
+dim(psi_hosp_ILI) <- N_age
 
 ## Vectors handling the I_comm_D class
 dim(I_comm_D) <- c(N_age, s_comm_D, trans_classes)
