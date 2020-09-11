@@ -85,6 +85,15 @@ carehomes_parameters <- function(start_date, region,
 
   severity <- carehomes_parameters_severity(
     severity, ret$population, p_death_carehome)
+  
+  ## TODO Rich, these parameters are now time-varying. We may want to rethink
+  ## implementation of severity parameters
+  ## probability of ICU patient dying
+  severity$psi_death_ICU <- severity$p_death_ICU / max(severity$p_death_ICU)
+  severity$p_death_ICU_step <- max(severity$p_death_ICU)
+  ## probability of non-ICU hospital patient dying
+  severity$psi_death_hosp_D <- severity$p_death_hosp_D / max(severity$p_death_hosp_D)
+  severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
 
   progression <- progression %||% carehomes_parameters_progression()
 

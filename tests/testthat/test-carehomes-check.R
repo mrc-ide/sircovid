@@ -233,12 +233,16 @@ test_that("forcing hospital route results in correct path", {
   ## helper function will help run a model with given probabilities
   ## and verify that some compartments have cases (nonzero) and others
   ## area all zeros.
-  helper <- function(p_ICU_hosp, p_death_ICU, p_death_hosp_D,
+  helper <- function(p_ICU_hosp, prob_death_ICU, prob_death_hosp_D,
                      expect_cases, expect_zero) {
     p <- carehomes_parameters(0, "england")
     p$p_ICU_hosp[] <- p_ICU_hosp %||% p$p_ICU_hosp[]
-    p$p_death_hosp_D[] <- p_death_hosp_D %||% p$p_death_hosp_D[]
-    p$p_death_ICU[] <- p_death_ICU %||% p$p_death_ICU[]
+    p$p_death_hosp_D_step <- ifelse(is.null(prob_death_hosp_D),
+                                 p$p_death_hosp_D_step, 1)
+    p$psi_death_hosp_D[] <- prob_death_hosp_D %||% p$psi_death_hosp_D[]
+    p$p_death_ICU_step <- ifelse(is.null(prob_death_ICU),
+                                 p$p_death_ICU_step, 1)
+    p$psi_death_ICU[] <- prob_death_ICU %||% p$psi_death_ICU[]
 
     mod <- carehomes$new(p, 0, 1)
     info <- mod$info()
