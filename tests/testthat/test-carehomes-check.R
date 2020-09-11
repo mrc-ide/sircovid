@@ -136,7 +136,7 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   p$p_sympt_ILI[] <- 1
   p$p_hosp_ILI_step <- 1
   p$psi_hosp_ILI[] <- 1
-  p$p_death_comm_step <-1
+  p$p_death_comm_step <- 1
   p$psi_death_comm[] <- 1
   p$p_asympt[] <- 0
 
