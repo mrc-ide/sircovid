@@ -481,7 +481,8 @@ test_that("setting a gamma to 0 results in no progression", {
 
 test_that("No one is unconfirmed, if p_admit_conf = 1", {
   p <- carehomes_parameters(0, "england")
-  p$p_admit_conf[] <- 1
+  p$p_admit_conf_step <- 1
+  p$psi_admit_conf[] <- 1
   p$gamma_triage <- Inf
   p$gamma_hosp_R <- Inf
   p$gamma_hosp_D <- Inf
@@ -522,7 +523,7 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
 
 test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
   p <- carehomes_parameters(0, "england")
-  p$p_admit_conf[] <- 0
+  p$psi_admit_conf[] <- 0
   p$gamma_test <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -552,7 +553,7 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
 
 test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   p <- carehomes_parameters(0, "england")
-  p$p_admit_conf[] <- 0
+  p$psi_admit_conf[] <- 0
   p$gamma_test <- Inf
   p$gamma_triage <- Inf
   p$gamma_hosp_R <- Inf

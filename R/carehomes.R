@@ -104,6 +104,9 @@ carehomes_parameters <- function(start_date, region,
   ## probability of patient requiring hospital treatment dying in community
   severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
   severity$p_death_comm_step <- max(severity$p_death_comm)
+  ## probability of an admission already being confirmed covid
+  severity$psi_admit_conf <- severity$p_admit_conf / max(severity$p_admit_conf)
+  severity$p_admit_conf_step <- max(severity$p_admit_conf)
 
   progression <- progression %||% carehomes_parameters_progression()
 

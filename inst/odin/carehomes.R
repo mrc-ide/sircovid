@@ -99,6 +99,9 @@ p_death_comm <- if (step >= length(p_death_comm_step))
   p_death_comm_step[length(p_death_comm_step)] else p_death_comm_step[step + 1]
 prob_death_comm[] <- p_death_comm * psi_death_comm[i]
 
+p_admit_conf <- if (step >= length(p_admit_conf_step))
+  p_admit_conf_step[length(p_admit_conf_step)] else p_admit_conf_step[step + 1]
+prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -193,13 +196,13 @@ new_I_comm_D[, , ] <- I_comm_D[i, j, k] + aux_II_comm_D[i, j, k]
 n_ILI_to_triage[, ] <- rbinom(n_ILI_to_hosp[i, j], prob_ICU_hosp[i])
 n_hosp_non_ICU[, ] <- n_ILI_to_hosp[i, j] - n_ILI_to_triage[i, j]
 n_ILI_to_hosp_D[, ] <- rbinom(n_hosp_non_ICU[i, j], prob_death_hosp_D[i])
-n_ILI_to_hosp_D_conf[, ] <- rbinom(n_ILI_to_hosp_D[i, j], p_admit_conf[i])
+n_ILI_to_hosp_D_conf[, ] <- rbinom(n_ILI_to_hosp_D[i, j], prob_admit_conf[i])
 n_ILI_to_hosp_R[, ] <- n_hosp_non_ICU[i, j] - n_ILI_to_hosp_D[i, j]
-n_ILI_to_hosp_R_conf[, ] <- rbinom(n_ILI_to_hosp_R[i, j], p_admit_conf[i])
+n_ILI_to_hosp_R_conf[, ] <- rbinom(n_ILI_to_hosp_R[i, j], prob_admit_conf[i])
 n_ILI_to_triage_D[, ] <- rbinom(n_ILI_to_triage[i, j], prob_death_ICU[i])
-n_ILI_to_triage_D_conf[, ] <- rbinom(n_ILI_to_triage_D[i, j], p_admit_conf[i])
+n_ILI_to_triage_D_conf[, ] <- rbinom(n_ILI_to_triage_D[i, j], prob_admit_conf[i])
 n_ILI_to_triage_R[, ] <- n_ILI_to_triage[i, j] - n_ILI_to_triage_D[i, j]
-n_ILI_to_triage_R_conf[, ] <- rbinom(n_ILI_to_triage_R[i, j], p_admit_conf[i])
+n_ILI_to_triage_R_conf[, ] <- rbinom(n_ILI_to_triage_R[i, j], prob_admit_conf[i])
 
 ## Work out the I_triage_R -> I_triage_R transitions
 aux_II_triage_R_unconf[, , ] <- I_triage_R_unconf[i, j, k]
@@ -537,7 +540,9 @@ p_seroconversion[] <- user()
 
 ## Parameters relating to testing
 gamma_test <- user(0.1)
-p_admit_conf[] <- user()
+dim(p_admit_conf_step) <- user()
+p_admit_conf_step[] <- user()
+psi_admit_conf[] <- user()
 
 ## Parameters relating to PCR positivity
 s_PCR_pos <- user()
@@ -769,7 +774,8 @@ dim(prob_death_ICU) <- N_age
 dim(psi_death_ICU) <- N_age
 
 ## Vector handling the probability of being admitted as confirmed
-dim(p_admit_conf) <- N_age
+dim(prob_admit_conf) <- N_age
+dim(psi_admit_conf) <- N_age
 
 dim(cum_admit_by_age) <- N_age
 
