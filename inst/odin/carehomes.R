@@ -82,7 +82,8 @@ p_death_ICU <- if (step >= length(p_death_ICU_step))
   p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
 prob_death_ICU[] <- p_death_ICU * psi_death_ICU[i]
 p_death_hosp_D <- if (step >= length(p_death_hosp_D_step))
-  p_death_hosp_D_step[length(p_death_hosp_D_step)] else p_death_hosp_D_step[step + 1]
+  p_death_hosp_D_step[length(p_death_hosp_D_step)] else
+    p_death_hosp_D_step[step + 1]
 prob_death_hosp_D[] <- p_death_hosp_D * psi_death_hosp_D[i]
 
 
