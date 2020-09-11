@@ -100,14 +100,14 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
 test_that("No one is hospitalised, no-one dies if psi_hosp_ILI is 0", {
   p <- carehomes_parameters(0, "england")
   p$psi_hosp_ILI[] <- 0
-  
+
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  
+
   expect_true(any(y$E > 0L))
   expect_true(any(y$I_ILI > 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
