@@ -23,8 +23,10 @@ test_that("Can calculate Rt", {
   ## Check the Rt calculation (from eff_Rt)
   expect_true(length(unique(res$Rt_all)) == 1)
   expect_true(length(unique(res$Rt_general)) == 1)
-  expect_equal(res$Rt_all[[1]], res$eff_Rt_all[[1]])
-  expect_equal(res$Rt_general[[1]], res$eff_Rt_general[[1]])
+  
+  ## Effective Rt lower than Rt
+  expect_true(all(res$Rt_all >= res$eff_Rt_all))
+  expect_true(all(res$Rt_general >= res$eff_Rt_general))
 
   ## General population effective Rt lower than total
   expect_true(all(res$eff_Rt_all >= res$eff_Rt_general))
@@ -134,6 +136,6 @@ test_that("Can vary beta over time", {
   ## Check the Rt calculation (from eff_Rt) - compare the first test
   expect_true(length(unique(res$Rt_all)) > 1)
   expect_true(length(unique(res$Rt_general)) > 1)
-  expect_equal(res$Rt_all[[1]], res$eff_Rt_all[[1]])
-  expect_equal(res$Rt_general[[1]], res$eff_Rt_general[[1]])
+  expect_true(all(res$Rt_all >= res$eff_Rt_all))
+  expect_true(all(res$Rt_general >= res$eff_Rt_general))
 })

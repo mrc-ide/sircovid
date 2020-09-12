@@ -26,7 +26,7 @@ carehomes_Rt <- function(step, S, p) {
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration(p)
 
-  calculate_ev <- function(t, drop_carehomes) {
+  calculate_ev <- function(t, S, drop_carehomes) {
     ## Next-Generation-Matrix
     ngm <- beta[t] * outer(mean_duration, S[, t]) * p$m
 
@@ -43,15 +43,17 @@ carehomes_Rt <- function(step, S, p) {
   }
 
   t <- seq_along(step)
-  eff_Rt_all <- vnapply(t, calculate_ev, drop_carehomes = FALSE)
-  eff_Rt_general <- vnapply(t, calculate_ev, drop_carehomes = TRUE)
+  eff_Rt_all <- vnapply(t, calculate_ev, S = S, drop_carehomes = FALSE)
+  eff_Rt_general <- vnapply(t, calculate_ev, S = S, drop_carehomes = TRUE)
+  Rt_all <- vnapply(t, calculate_ev, S = array(p$N_tot, dim = dim(S)), drop_carehomes = FALSE)
+  Rt_general <- vnapply(t, calculate_ev, S = array(p$N_tot, dim = dim(S)), drop_carehomes = TRUE)
 
   list(step = step,
        beta = beta,
        eff_Rt_all = eff_Rt_all,
        eff_Rt_general = eff_Rt_general,
-       Rt_all = eff_Rt_all[[1]] / beta[[1]] * beta,
-       Rt_general = eff_Rt_general[[1]] / beta[[1]] * beta)
+       Rt_all = Rt_all,
+       Rt_general = Rt_general)
 }
 
 
