@@ -23,7 +23,7 @@ test_that("Can calculate Rt", {
   ## Check the Rt calculation (from eff_Rt)
   expect_true(length(unique(res$Rt_all)) == 1)
   expect_true(length(unique(res$Rt_general)) == 1)
-  
+
   ## Effective Rt lower than Rt
   expect_true(all(res$Rt_all >= res$eff_Rt_all))
   expect_true(all(res$Rt_general >= res$eff_Rt_general))

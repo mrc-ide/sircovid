@@ -43,10 +43,12 @@ carehomes_Rt <- function(step, S, p) {
   }
 
   t <- seq_along(step)
-  eff_Rt_all <- vnapply(t, calculate_ev, S = S, drop_carehomes = FALSE)
-  eff_Rt_general <- vnapply(t, calculate_ev, S = S, drop_carehomes = TRUE)
-  Rt_all <- vnapply(t, calculate_ev, S = array(p$N_tot, dim = dim(S)), drop_carehomes = FALSE)
-  Rt_general <- vnapply(t, calculate_ev, S = array(p$N_tot, dim = dim(S)), drop_carehomes = TRUE)
+  eff_Rt_all <- vnapply(t, calculate_ev, S, drop_carehomes = FALSE)
+  eff_Rt_general <- vnapply(t, calculate_ev, S, drop_carehomes = TRUE)
+  Rt_all <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+                    drop_carehomes = FALSE)
+  Rt_general <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+                        drop_carehomes = TRUE)
 
   list(step = step,
        beta = beta,
