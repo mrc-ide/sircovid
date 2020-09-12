@@ -54,7 +54,11 @@ test_that("carehomes_parameters returns a list of parameters", {
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
       "p_specificity", "N_tot_15_64", "pillar2_specificity",
-      "pillar2_sensitivity", "prop_noncovid_sympt"))
+      "pillar2_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
+      "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
+      "psi_hosp_ILI", "p_hosp_ILI_step", "psi_death_comm",
+      "p_death_comm_step", "psi_ICU_hosp", "p_ICU_hosp_step",
+      "psi_admit_conf", "p_admit_conf_step"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -207,6 +211,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
+    new_admitted = 113:118,
     sero_prob_pos = (4:9) / 10,
     sympt_cases = 100:105)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
@@ -219,6 +224,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths = 8,
     admitted = 53,
     new = 63,
+    new_admitted = 116,
     npos_15_64 = 43,
     ntot_15_64 = 83,
     pillar2_pos = 35,

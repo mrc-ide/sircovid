@@ -24,11 +24,11 @@ carehomes_Rt <- function(step, S, p) {
   }
 
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
-  mean_duration <- carehomes_Rt_mean_duration(p)
+  mean_duration <- carehomes_Rt_mean_duration(step, p)
 
-  calculate_ev <- function(t, drop_carehomes) {
+  calculate_ev <- function(t, S, drop_carehomes) {
     ## Next-Generation-Matrix
-    ngm <- beta[t] * outer(mean_duration, S[, t]) * p$m
+    ngm <- beta[t] * outer(mean_duration[, t], S[, t]) * p$m
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns
@@ -43,15 +43,19 @@ carehomes_Rt <- function(step, S, p) {
   }
 
   t <- seq_along(step)
-  eff_Rt_all <- vnapply(t, calculate_ev, drop_carehomes = FALSE)
-  eff_Rt_general <- vnapply(t, calculate_ev, drop_carehomes = TRUE)
+  eff_Rt_all <- vnapply(t, calculate_ev, S, drop_carehomes = FALSE)
+  eff_Rt_general <- vnapply(t, calculate_ev, S, drop_carehomes = TRUE)
+  Rt_all <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+                    drop_carehomes = FALSE)
+  Rt_general <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+                        drop_carehomes = TRUE)
 
   list(step = step,
        beta = beta,
        eff_Rt_all = eff_Rt_all,
        eff_Rt_general = eff_Rt_general,
-       Rt_all = eff_Rt_all[[1]] / beta[[1]] * beta,
-       Rt_general = eff_Rt_general[[1]] / beta[[1]] * beta)
+       Rt_all = Rt_all,
+       Rt_general = Rt_general)
 }
 
 
@@ -99,16 +103,21 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 }
 
 
-carehomes_Rt_mean_duration <- function(pars) {
+carehomes_Rt_mean_duration <- function(step, pars) {
   dt <- pars$dt
-  p_ICU_hosp  <- pars$p_ICU_hosp
-  p_ICU_hosp <- pars$p_ICU_hosp
+
   p_asympt <- pars$p_asympt
-  p_death_ICU <- pars$p_death_ICU
-  p_death_comm <- pars$p_death_comm
-  p_death_hosp_D <- pars$p_death_hosp_D
-  p_hosp_ILI <- pars$p_hosp_ILI
   p_sympt_ILI <- pars$p_sympt_ILI
+  p_hosp_ILI <- outer(pars$psi_hosp_ILI,
+                    sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
+  p_ICU_hosp <- outer(pars$psi_ICU_hosp,
+                    sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
+  p_death_ICU <- outer(pars$psi_death_ICU,
+                   sircovid_parameters_beta_expand(step, pars$p_death_ICU_step))
+  p_death_hosp_D <- outer(pars$psi_death_hosp_D,
+                sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
+  p_death_comm <- outer(pars$psi_death_comm,
+                  sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
   p_mild <- (1 - p_asympt) * (1 - p_sympt_ILI)
   p_ILI <- (1 - p_asympt) * p_sympt_ILI

@@ -86,6 +86,28 @@ carehomes_parameters <- function(start_date, region,
   severity <- carehomes_parameters_severity(
     severity, ret$population, p_death_carehome)
 
+  ## TODO Rich, these parameters are now time-varying. We may want to rethink
+  ## implementation of severity parameters
+  ## probability of ILI patient requiring hospital treatment
+  severity$psi_hosp_ILI <- severity$p_hosp_ILI / max(severity$p_hosp_ILI)
+  severity$p_hosp_ILI_step <- max(severity$p_hosp_ILI)
+  ## probability of hospitalised patient going to ICU
+  severity$psi_ICU_hosp <- severity$p_ICU_hosp / max(severity$p_ICU_hosp)
+  severity$p_ICU_hosp_step <- max(severity$p_ICU_hosp)
+  ## probability of ICU patient dying
+  severity$psi_death_ICU <- severity$p_death_ICU / max(severity$p_death_ICU)
+  severity$p_death_ICU_step <- max(severity$p_death_ICU)
+  ## probability of non-ICU hospital patient dying
+  severity$psi_death_hosp_D <- severity$p_death_hosp_D /
+    max(severity$p_death_hosp_D)
+  severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
+  ## probability of patient requiring hospital treatment dying in community
+  severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
+  severity$p_death_comm_step <- max(severity$p_death_comm)
+  ## probability of an admission already being confirmed covid
+  severity$psi_admit_conf <- severity$p_admit_conf / max(severity$p_admit_conf)
+  severity$p_admit_conf_step <- max(severity$p_admit_conf)
+
   progression <- progression %||% carehomes_parameters_progression()
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
@@ -219,6 +241,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
+  model_new_admitted <- model_admitted + model_new
   model_sero_prob_pos <- state["sero_prob_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
 
@@ -253,6 +276,9 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                            pars$k_admitted, exp_noise)
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$k_new, exp_noise)
+  ll_new_admitted <- ll_nbinom(observed$new_admitted,
+                               pars$phi_new_admitted * model_new_admitted,
+                               pars$k_new_admitted, exp_noise)
 
   ## Note we do not use exp_noise here as the only circumstances in
   ## which a zero probability can be produced are when model_sero_prob_pos
@@ -274,7 +300,8 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                 pars$k_pillar2_cases, exp_noise)
 
   ll_icu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_serology + ll_pillar2_tests + ll_pillar2_cases
+    ll_admitted + ll_new + ll_new_admitted + ll_serology +
+    ll_pillar2_tests + ll_pillar2_cases
 }
 
 
@@ -479,6 +506,9 @@ carehomes_parameters_observation <- function(exp_noise) {
     ## Daily new inpatient diagnoses
     phi_new = 1,
     k_new = 2,
+    ## Daily combined new confirmed admissions and new inpatient diagnoses
+    phi_new_admitted = 1,
+    k_new_admitted = 2,
     ## Pillar 2 testing
     phi_pillar2_cases = 1,
     k_pillar2_cases = 2,

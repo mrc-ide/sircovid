@@ -37,6 +37,7 @@ test_that("can run the particle filter on the model", {
   data$general <- NA
   data$admitted <- NA
   data$new <- NA
+  data$new_admitted <- NA
   data$npos_15_64 <- NA
   data$ntot_15_64 <- NA
   data$pillar2_pos <- NA
