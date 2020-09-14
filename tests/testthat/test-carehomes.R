@@ -35,6 +35,7 @@ test_that("can run the particle filter on the model", {
   data$deaths_comm <- NA
   data$deaths <- NA
   data$general <- NA
+  data$hosp <- NA
   data$admitted <- NA
   data$new <- NA
   data$new_admitted <- NA
