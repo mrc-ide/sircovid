@@ -252,7 +252,6 @@ test_that("carehomes_compare combines likelihood correctly", {
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
 
-  saveRDS(ll_parts,"res2.RDS")
   ## Extremely light testing, though this has already flushed out some
   ## issues
   expect_true(all(lengths(ll_parts) == 6))
