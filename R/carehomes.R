@@ -237,6 +237,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   model_icu <- state["icu", ]
   model_general <- state["general", ]
+  model_hosp <- model_icu + model_general
   model_deaths_comm <- state["deaths_comm", ] - prev_state["deaths_comm", ]
   model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
@@ -264,6 +265,8 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                       pars$k_ICU, exp_noise)
   ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
                           pars$k_general, exp_noise)
+  ll_hosp <- ll_nbinom(observed$hosp, pars$phi_hosp * model_hosp,
+                       pars$k_hosp, exp_noise)
   ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
                               pars$phi_death_hosp * model_deaths_hosp,
                               pars$k_death_hosp, exp_noise)
@@ -302,7 +305,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                 pars$phi_pillar2_cases * model_sympt_cases,
                                 pars$k_pillar2_cases, exp_noise)
 
-  ll_icu + ll_general + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
+  ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_new_admitted + ll_serology +
     ll_pillar2_tests + ll_pillar2_cases
 }
@@ -495,6 +498,9 @@ carehomes_parameters_observation <- function(exp_noise) {
     ## People currently in general beds
     phi_general = 1,
     k_general = 2,
+    ## People currently in all hospital beds
+    phi_hosp = 1,
+    k_hosp = 2,
     ## Daily hospital deaths
     phi_death_hosp = 1,
     k_death_hosp = 2,

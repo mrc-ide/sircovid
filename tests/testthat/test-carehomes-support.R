@@ -211,7 +211,6 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
-    new_admitted = 113:118,
     sero_prob_pos = (4:9) / 10,
     sympt_cases = 100:105)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
@@ -219,6 +218,7 @@ test_that("carehomes_compare combines likelihood correctly", {
   observed <- list(
     icu = 13,
     general = 23,
+    hosp = 36,
     deaths_hosp = 5,
     deaths_comm = 3,
     deaths = 8,
@@ -252,6 +252,7 @@ test_that("carehomes_compare combines likelihood correctly", {
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
 
+  saveRDS(ll_parts,"res2.RDS")
   ## Extremely light testing, though this has already flushed out some
   ## issues
   expect_true(all(lengths(ll_parts) == 6))
