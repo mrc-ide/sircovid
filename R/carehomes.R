@@ -245,11 +245,14 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_sero_prob_pos <- state["sero_prob_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
 
-  pillar2_negs <- pars$prop_noncovid_sympt *
+  ## Add some small exponential noise in case the number of model cases is 0
+  pillar2_pos <- model_sympt_cases +
+    rexp(length(model_sympt_cases), pars$observation$exp_noise)
+  pillar2_neg <- pars$prop_noncovid_sympt *
     (sum(pars$N_tot) - model_sympt_cases)
-  model_pillar2_prob_pos <- (pars$pillar2_sensitivity * model_sympt_cases +
-                               (1 - pars$pillar2_specificity) * pillar2_negs) /
-    (model_sympt_cases + pillar2_negs)
+  model_pillar2_prob_pos <- (pars$pillar2_sensitivity * pillar2_pos +
+                               (1 - pars$pillar2_specificity) * pillar2_neg) /
+    (pillar2_pos + pillar2_neg)
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
