@@ -1488,13 +1488,13 @@ public:
         internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = internal.m[internal.dim_m_1 * (j - 1) + i - 1] * odin_sum2(internal.I_with_diff_trans.data(), j - 1, j, 0, internal.dim_I_with_diff_trans_2, internal.dim_I_with_diff_trans_1);
       }
     }
-    for (int_t i = 1; i <= (internal.N_age - 2); ++i) {
-      for (int_t j = 1; j <= internal.N_age; ++j) {
+    for (int_t i = 1; i <= 17; ++i) {
+      for (int_t j = 1; j <= 19; ++j) {
         internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = beta * internal.s_ij[internal.dim_s_ij_1 * (j - 1) + i - 1];
       }
     }
-    for (int_t i = (internal.N_age - 1); i <= internal.N_age; ++i) {
-      for (int_t j = 1; j <= (internal.N_age - 2); ++j) {
+    for (int_t i = 18; i <= 19; ++i) {
+      for (int_t j = 1; j <= 17; ++j) {
         internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = beta * internal.s_ij[internal.dim_s_ij_1 * (j - 1) + i - 1];
       }
     }
