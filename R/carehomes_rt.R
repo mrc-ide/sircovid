@@ -28,7 +28,13 @@ carehomes_Rt <- function(step, S, p) {
 
   calculate_ev <- function(t, S, drop_carehomes) {
     ## Next-Generation-Matrix
-    ngm <- beta[t] * outer(mean_duration[, t], S[, t]) * p$m
+    m <- p$m
+    ages <- seq_len(p$N_age - 2)
+    ch <- seq(to = 19, length.out = 2)
+    m[ages, c(ages, ch)] <- beta[t] * m[ages, c(ages, ch)]
+    m[ch, ages] <- beta[t] * m[ch, ages]
+
+    ngm <- outer(mean_duration[, t], S[, t]) * m
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns
