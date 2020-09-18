@@ -31,7 +31,7 @@ carehomes_Rt <- function(step, S, p) {
     m <- p$m
     ages <- seq_len(p$N_age - 2)
     ch <- seq(to = p$N_age, length.out = 2)
-    m[ages,  ] <- beta[t] * m[ages,  ]
+    m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
     ngm <- outer(mean_duration[, t], S[, t]) * m
