@@ -428,7 +428,10 @@ I_with_diff_trans[, ] <-
     comm_D_transmission * sum(I_comm_D[i, , j]))
 
 s_ij[, ] <- m[i, j] * sum(I_with_diff_trans[j, ])
-lambda[] <- beta * sum(s_ij[i, ])
+## beta applied to all contacts except within care home contacts
+s_ij[1:(N_age - 2), 1:N_age] <- beta * s_ij[i, j]
+s_ij[(N_age - 1):N_age, 1:(N_age - 2)] <- beta * s_ij[i, j]
+lambda[] <- sum(s_ij[i, ])
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.

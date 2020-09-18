@@ -28,7 +28,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p$m[1:17, 1:17], sircovid_transmission_matrix("uk"))
   expect_identical(
     p$m,
-    carehomes_transmission_matrix(0.1, 4e-5, 5e-4, "uk", p$population))
+    carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk", p$population))
 
   progression <- carehomes_parameters_progression()
   expect_identical(p[names(progression)], progression)

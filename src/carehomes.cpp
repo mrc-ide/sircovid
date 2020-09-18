@@ -1493,6 +1493,16 @@ public:
         internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = internal.m[internal.dim_m_1 * (j - 1) + i - 1] * odin_sum2(internal.I_with_diff_trans.data(), j - 1, j, 0, internal.dim_I_with_diff_trans_2, internal.dim_I_with_diff_trans_1);
       }
     }
+    for (int_t i = 1; i <= (internal.N_age - 2); ++i) {
+      for (int_t j = 1; j <= internal.N_age; ++j) {
+        internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = beta * internal.s_ij[internal.dim_s_ij_1 * (j - 1) + i - 1];
+      }
+    }
+    for (int_t i = (internal.N_age - 1); i <= internal.N_age; ++i) {
+      for (int_t j = 1; j <= (internal.N_age - 2); ++j) {
+        internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = beta * internal.s_ij[internal.dim_s_ij_1 * (j - 1) + i - 1];
+      }
+    }
     for (int_t i = 1; i <= internal.dim_aux_II_comm_D_1; ++i) {
       int_t j = 1;
       for (int_t k = 1; k <= internal.dim_aux_II_comm_D_3; ++k) {
@@ -1537,7 +1547,7 @@ public:
       internal.delta_R_neg[i - 1] = odin_sum2(internal.n_R_pre.data(), i - 1, i, 0, internal.dim_n_R_pre_2, internal.dim_n_R_pre_1) - internal.delta_R_pos[i - 1];
     }
     for (int_t i = 1; i <= internal.dim_lambda; ++i) {
-      internal.lambda[i - 1] = beta * odin_sum2(internal.s_ij.data(), i - 1, i, 0, internal.dim_s_ij_2, internal.dim_s_ij_1);
+      internal.lambda[i - 1] = odin_sum2(internal.s_ij.data(), i - 1, i, 0, internal.dim_s_ij_2, internal.dim_s_ij_1);
     }
     for (int_t i = 1; i <= internal.dim_n_EI_ILI_1; ++i) {
       for (int_t j = 1; j <= internal.dim_n_EI_ILI_2; ++j) {
