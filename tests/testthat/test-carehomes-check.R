@@ -34,8 +34,8 @@ test_that("there are no infections when beta is 0", {
 })
 
 
-test_that("everyone is infected when beta is Inf", {
-  p <- carehomes_parameters(0, "england", beta_value = Inf)
+test_that("everyone is infected when beta is large", {
+  p <- carehomes_parameters(0, "england", beta_value = 1e9)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)

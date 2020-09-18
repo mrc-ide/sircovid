@@ -427,8 +427,13 @@ I_with_diff_trans[, ] <-
       sum(I_ICU_D_conf[i, , j])) +
     comm_D_transmission * sum(I_comm_D[i, , j]))
 
+
+## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
+## beta to all contacts *except* within care home contacts
 s_ij[, ] <- m[i, j] * sum(I_with_diff_trans[j, ])
-lambda[] <- beta * sum(s_ij[i, ])
+s_ij[1:17, 1:19] <- beta * s_ij[i, j]
+s_ij[18:19, 1:17] <- beta * s_ij[i, j]
+lambda[] <- sum(s_ij[i, ])
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.
