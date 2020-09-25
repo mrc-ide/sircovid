@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIR Model for COVID-19 • sircovid2</title>
+<title>SIR Model for COVID-19 • sircovid</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -37,8 +37,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">sircovid2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.23</span>
+        <a class="navbar-link" href="index.html">sircovid</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/mrc-ide/sircovid2/">
+  <a href="https://github.com/mrc-ide/sircovid/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -73,14 +73,14 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="sircovid2-" class="section level1">
+<div id="sircovid-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#sircovid2-" class="anchor"></a>sircovid2 <img src="reference/figures/logo.png" align="right" height="138.5">
+<a href="#sircovid-" class="anchor"></a>sircovid <img src="reference/figures/logo.png" align="right" height="138.5">
 </h1></div>
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p><code>sircovid2</code> implements a series of mechanistic models to help modelling the transmission of the SARS-Cov-2 virus using stochastic compartmental models. <code>sircovid2</code> also provides some tools to perfom Bayesian evidence synthesis from several surveillance data streams through the estimation of transmission parameters.</p>
+<p><code>sircovid</code> implements a series of mechanistic models to help modelling the transmission of the SARS-Cov-2 virus using stochastic compartmental models. <code>sircovid</code> also provides some tools to perfom Bayesian evidence synthesis from several surveillance data streams through the estimation of transmission parameters.</p>
 <p><img src="reference/figures/sircovid_diagram.png" align="center" style="border: none; float: center;" width="800px"></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -88,18 +88,18 @@
 <p>Install from the ncov drat:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"sircovid2"</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"sircovid"</span><span class="op">)</span></pre></div>
 <p>or install directly from GitHub with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mrc-ide/sircovid2"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
-<p>You will need the most recent version of <a href="https://mrc-ide.github.io/dust"><code>dust</code></a> and <a href="https://mrc-ide.github.io/mcstate"><code>mcstate</code></a> to use the package. These will be installed automatically if you install <code>sircovid2</code> from drat, or manually with:</p>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mrc-ide/sircovid"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
+<p>You will need the most recent version of <a href="https://mrc-ide.github.io/dust"><code>dust</code></a> and <a href="https://mrc-ide.github.io/mcstate"><code>mcstate</code></a> to use the package. These will be installed automatically if you install <code>sircovid</code> from drat, or manually with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dust"</span>, <span class="st">"mcstate"</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p>We use OpenMP for parallelism, and this may not be available on your system. If not then compilation will fail with an error like:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>clang<span class="op">:</span><span class="st"> </span>error<span class="op">:</span><span class="st"> </span>unsupported option <span class="st">'-fopenmp'</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a>make[<span class="dv">1</span>]<span class="op">:</span><span class="st"> </span><span class="er">***</span><span class="st"> </span>[basic.o] Error <span class="dv">1</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>ERROR<span class="op">:</span><span class="st"> </span>compilation failed <span class="cf">for</span> package ‘sircovid2’</span></code></pre></div>
+<span id="cb4-3"><a href="#cb4-3"></a>ERROR<span class="op">:</span><span class="st"> </span>compilation failed <span class="cf">for</span> package ‘sircovid’</span></code></pre></div>
 <p>You can either install OpenMP support, or edit your personal <code>Makevars</code> file to tell R that you do not have it. To do this, you can run</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_makevars</span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span></pre></div>
@@ -135,9 +135,9 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/mrc-ide/sircovid2/">https://​github.com/​mrc-ide/​sircovid2/​</a>
+<li>Browse source code at <br><a href="https://github.com/mrc-ide/sircovid/">https://​github.com/​mrc-ide/​sircovid/​</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/mrc-ide/sircovid2/issues">https://​github.com/​mrc-ide/​sircovid2/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/mrc-ide/sircovid/issues">https://​github.com/​mrc-ide/​sircovid/​issues</a>
 </li>
 </ul>
 </div>
@@ -165,9 +165,9 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a></li>
-<li><a href="https://github.com/mrc-ide/sircovid2/actions"><img src="https://github.com/mrc-ide/sircovid2/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://www.codefactor.io/repository/github/mrc-ide/sircovid2"><img src="https://www.codefactor.io/repository/github/mrc-ide/sircovid2/badge" alt="CodeFactor"></a></li>
-<li><a href="https://codecov.io/gh/mrc-ide/sircovid2?branch=master"><img src="https://codecov.io/gh/mrc-ide/sircovid2/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/mrc-ide/sircovid/actions"><img src="https://github.com/mrc-ide/sircovid/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://www.codefactor.io/repository/github/mrc-ide/sircovid"><img src="https://www.codefactor.io/repository/github/mrc-ide/sircovid/badge" alt="CodeFactor"></a></li>
+<li><a href="https://codecov.io/gh/mrc-ide/sircovid?branch=master"><img src="https://codecov.io/gh/mrc-ide/sircovid/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 </div>
