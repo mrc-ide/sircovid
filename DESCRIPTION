@@ -1,0 +1,54 @@
+Package: sircovid2
+Title: SIR Model for COVID-19
+Version: 0.5.23
+Authors@R:
+    c(person(given = "Marc",
+           family = "Baguelin",
+           role = c("aut", "cre"),
+           email = "m.baguelin@imperial.ac.uk"),
+      person(given = "Sangeeta",
+           family = "Bhatia",
+           role = c("ctb"),
+           email = "s.bathia@imperial.ac.uk"),
+      person(given = "Edward",
+           family = "Knock",
+           role = c("aut"),
+           email = "e.knock@imperial.ac.uk"),
+      person(given = "Lilith",
+           family = "Whittles",
+           role = c("aut"),
+           email = "l.whittles@imperial.ac.uk"),
+      person(given = "Rich",
+           family = "FitzJohn",
+           role = c("aut"),
+           email = "r.fitzjohn@imperial.ac.uk"),
+      person(given = "John",
+           family = "Lees",
+           role = c("aut"),
+           email = "j.lees@imperial.ac.uk"),
+      person(given = "OJ",
+           family = "Watson",
+           role = c("ctb"),
+           email = "o.watson15@imperial.ac.uk"))
+Description: Model for COVID-19, using odin.
+License: MIT + file LICENSE
+URL: https://github.com/mrc-ide/sircovid2
+BugReports: https://github.com/mrc-ide/sircovid2/issues
+Encoding: UTF-8
+LazyData: true
+Language: en-GB
+Depends: R (>= 3.1.0)
+Imports:
+    mcstate (>= 0.2.7),
+    socialmixr
+LinkingTo:
+    cpp11 (>= 0.2.1),
+    dust (>= 0.4.9)
+Suggests:
+    testthat
+RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
+SystemRequirements: C++11
+Remotes:
+    mrc-ide/dust,
+    mrc-ide/mcstate
