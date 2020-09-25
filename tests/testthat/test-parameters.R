@@ -67,10 +67,9 @@ test_that("can read the default severity file", {
   expect_true(all(lengths(data) == 17))
   expect_setequal(
     names(data),
-    c("p_asympt", "p_sympt_ILI", "p_recov_ICU", "p_recov_ILI", "p_hosp_ILI",
-      "p_recov_hosp", "p_death_hosp", "p_death_hosp_D", "p_death_ICU",
-      "p_ICU_hosp", "p_seroconversion", "p_death_comm", "p_admit_conf"))
-
+    c("p_admit_conf", "p_asympt", "p_death_comm", "p_death_hosp_D",
+      "p_death_ICU", "p_hosp_ILI", "p_ICU_hosp", "p_seroconversion",
+      "p_sympt_ILI"))
   expect_true(
     all(data$p_serocoversion == data$p_serocoversion[[1]]))
   expect_equal(
@@ -85,6 +84,17 @@ test_that("can validate a severity input", {
   expect_error(
     sircovid_parameters_severity(d[-2, ]),
     "Elements missing from 'data': 'Proportion with symptoms'")
+})
+
+
+test_that("can reprocess severity", {
+  s <- sircovid_parameters_severity(NULL)
+  expect_identical(
+    sircovid_parameters_severity(s),
+    s)
+  expect_error(
+    sircovid_parameters_severity(s[-1]),
+    "Elements missing from 'params': 'p_admit_conf'")
 })
 
 
@@ -108,4 +118,26 @@ test_that("shared parameters", {
       "dt", "initial_step", "N_age", "beta_step", "population"))
   expect_equal(pars$beta_step, 0.1)
   expect_equal(pars$initial_step, date * 4)
+})
+
+
+test_that("can expand beta", {
+  date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
+  value <- c(3, 1, 2)
+  beta <- sircovid_parameters_beta(date, value, 1)
+
+  # The implied time series looks like this:
+  t1 <- seq(0, date[[3]])
+  res1 <- cbind(t1, beta, deparse.level = 0)
+
+  expect_equal(sircovid_parameters_beta_expand(t1, beta), beta)
+
+  t2 <- seq(0, 100, by = 1)
+  beta2 <- sircovid_parameters_beta_expand(t2, beta)
+  expect_equal(beta2[seq_along(beta)], beta)
+  expect_equal(beta2[-seq_along(beta)], rep(beta[length(beta)], 25))
+
+  t3 <- t2[1:65]
+  beta3 <- sircovid_parameters_beta_expand(t3, beta)
+  expect_equal(beta3, beta[1:65])
 })

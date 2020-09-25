@@ -9,7 +9,16 @@ carehomes_parameters(
   region,
   beta_date = NULL,
   beta_value = NULL,
-  severity_data = NULL,
+  severity = NULL,
+  p_death_carehome = 0.7,
+  p_specificity = 0.9,
+  progression = NULL,
+  eps = 0.1,
+  C_1 = 4e-06,
+  C_2 = 5e-05,
+  pillar2_specificity = 0.99,
+  pillar2_sensitivity = 0.99,
+  prop_noncovid_sympt = 0.01,
   exp_noise = 1e+06
 )
 }
@@ -37,10 +46,34 @@ otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 the same length (see \code{\link[=sircovid_parameters_beta]{sircovid_parameters_beta()}}, where this is
 passed as \code{value}).}
 
-\item{severity_data}{A \code{data.frame} of severity data, or \code{NULL} to
-use the default value within the package.  New severity data
-comes from Bob Verity via the markovid package, and needs to be
-carefully calibrated with the progression parameters.}
+\item{severity}{Severity data, via Bob Verity's \code{markovid}
+package. This needs to be \code{NULL} (use the default bundled data
+version in the package), a \link{data.frame} object (for raw severity
+data) or a list (for data that has already been processed by
+\code{sircovid} for use).  New severity data comes from Bob Verity
+via the markovid package, and needs to be carefully calibrated
+with the progression parameters.}
+
+\item{p_death_carehome}{Probability of death within carehomes
+(conditional on having an "inflenza-like-illness")}
+
+\item{p_specificity}{Specificity of the serology test}
+
+\item{progression}{Progression data}
+
+\item{eps}{Change in contact rate for carehome residents}
+
+\item{C_1}{Contact rate between carehome workers and either
+residents or workers}
+
+\item{C_2}{Contact rate between carehome residents}
+
+\item{pillar2_specificity}{Specificity of the Pillar 2 test}
+
+\item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
+
+\item{prop_noncovid_sympt}{Proportion of population who do not have
+covid but have covid-like symptoms}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

@@ -34,8 +34,8 @@ test_that("there are no infections when beta is 0", {
 })
 
 
-test_that("everyone is infected when beta is Inf", {
-  p <- carehomes_parameters(0, "england", beta_value = Inf)
+test_that("everyone is infected when beta is large", {
+  p <- carehomes_parameters(0, "england", beta_value = 1e9)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -97,9 +97,9 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
 })
 
 
-test_that("No one is hospitalised, no-one dies if p_hosp_ILI is 0", {
+test_that("No one is hospitalised, no-one dies if psi_hosp_ILI is 0", {
   p <- carehomes_parameters(0, "england")
-  p$p_hosp_ILI[] <- 0
+  p$psi_hosp_ILI[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -134,8 +134,10 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   p <- carehomes_parameters(0, "england")
   p$I0_asympt[] <- 0
   p$p_sympt_ILI[] <- 1
-  p$p_hosp_ILI[] <- 1
-  p$p_death_comm[] <- 1
+  p$p_hosp_ILI_step <- 1
+  p$psi_hosp_ILI[] <- 1
+  p$p_death_comm_step <- 1
+  p$psi_death_comm[] <- 1
   p$p_asympt[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -174,8 +176,10 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
 test_that("No one is hospitalised, no-one recovers in edge case 2", {
   p <- carehomes_parameters(0, "england")
   p$p_sympt_ILI[] <- 1
-  p$p_hosp_ILI[] <- 1
-  p$p_death_comm[] <- 1
+  p$p_hosp_ILI_step <- 1
+  p$psi_hosp_ILI[] <- 1
+  p$p_death_comm_step <- 1
+  p$psi_death_comm[] <- 1
   p$p_asympt[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -211,9 +215,9 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 })
 
 
-test_that("No one dies in the community if p_death_comm is 0", {
+test_that("No one dies in the community if psi_death_comm is 0", {
   p <- carehomes_parameters(0, "england")
-  p$p_death_comm[] <- 0
+  p$psi_death_comm[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -233,12 +237,18 @@ test_that("forcing hospital route results in correct path", {
   ## helper function will help run a model with given probabilities
   ## and verify that some compartments have cases (nonzero) and others
   ## area all zeros.
-  helper <- function(p_ICU_hosp, p_death_ICU, p_death_hosp_D,
+  helper <- function(prob_ICU_hosp, prob_death_ICU, prob_death_hosp_D,
                      expect_cases, expect_zero) {
     p <- carehomes_parameters(0, "england")
-    p$p_ICU_hosp[] <- p_ICU_hosp %||% p$p_ICU_hosp[]
-    p$p_death_hosp_D[] <- p_death_hosp_D %||% p$p_death_hosp_D[]
-    p$p_death_ICU[] <- p_death_ICU %||% p$p_death_ICU[]
+    p$p_ICU_hosp_step <- ifelse(is.null(prob_ICU_hosp),
+                                    p$p_ICU_hosp_step, 1)
+    p$psi_ICU_hosp[] <- prob_ICU_hosp %||% p$psi_ICU_hosp[]
+    p$p_death_hosp_D_step <- ifelse(is.null(prob_death_hosp_D),
+                                 p$p_death_hosp_D_step, 1)
+    p$psi_death_hosp_D[] <- prob_death_hosp_D %||% p$psi_death_hosp_D[]
+    p$p_death_ICU_step <- ifelse(is.null(prob_death_ICU),
+                                 p$p_death_ICU_step, 1)
+    p$psi_death_ICU[] <- prob_death_ICU %||% p$psi_death_ICU[]
 
     mod <- carehomes$new(p, 0, 1)
     info <- mod$info()
@@ -471,7 +481,8 @@ test_that("setting a gamma to 0 results in no progression", {
 
 test_that("No one is unconfirmed, if p_admit_conf = 1", {
   p <- carehomes_parameters(0, "england")
-  p$p_admit_conf[] <- 1
+  p$p_admit_conf_step <- 1
+  p$psi_admit_conf[] <- 1
   p$gamma_triage <- Inf
   p$gamma_hosp_R <- Inf
   p$gamma_hosp_D <- Inf
@@ -512,7 +523,7 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
 
 test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
   p <- carehomes_parameters(0, "england")
-  p$p_admit_conf[] <- 0
+  p$psi_admit_conf[] <- 0
   p$gamma_test <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -542,7 +553,7 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
 
 test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   p <- carehomes_parameters(0, "england")
-  p$p_admit_conf[] <- 0
+  p$psi_admit_conf[] <- 0
   p$gamma_test <- Inf
   p$gamma_triage <- Inf
   p$gamma_hosp_R <- Inf
@@ -611,4 +622,27 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   expect_true(all(diff(y$cum_new_conf) == new_conf[-1]))
 
   expect_true(all(y$cum_admit_conf == 0))
+})
+
+test_that("tots all summed correctly ", {
+  p <- carehomes_parameters(0, "england")
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+
+  expect_true(all(y$general_tot == apply(y$I_triage_R_conf, 4, sum) +
+                    apply(y$I_triage_D_conf, 4, sum) +
+                    apply(y$I_hosp_R_conf, 4, sum) +
+                    apply(y$I_hosp_D_conf, 4, sum) +
+                    apply(y$R_stepdown_conf, 3, sum)))
+  expect_true(all(y$I_ICU_tot == apply(y$I_ICU_R_conf, 4, sum) +
+                    apply(y$I_ICU_D_conf, 4, sum)))
+  expect_true(all(y$hosp_tot == y$I_ICU_tot + y$general_tot))
+  expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
+  expect_true(all(y$D_comm_tot == apply(y$D_comm, 2, sum)))
+  expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
 })

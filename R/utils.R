@@ -66,23 +66,12 @@ rename <- function(x, from, to, name = deparse(substitute(x))) {
 }
 
 
-is_date <- function(x) {
-  inherits(x, "Date")
-}
-
-
-as_date <- function(date) {
-  if (is_date(date)) {
-    return(date)
-  }
-  if (!all(grepl("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", date))) {
-    stop("Expected ISO dates or R dates - please convert")
-  }
-  as.Date(date)
-}
-
-
 set_names <- function(x, nms) {
   names(x) <- nms
   x
+}
+
+
+vnapply <- function(x, fun, ...) {
+  vapply(x, fun, numeric(1), ...)
 }

@@ -28,7 +28,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p$m[1:17, 1:17], sircovid_transmission_matrix("uk"))
   expect_identical(
     p$m,
-    carehomes_transmission_matrix(0.1, 4e-5, 5e-4, "uk", p$population))
+    carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk", p$population))
 
   progression <- carehomes_parameters_progression()
   expect_identical(p[names(progression)], progression)
@@ -53,7 +53,12 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "p_specificity", "N_tot_15_64"))
+      "p_specificity", "N_tot_15_64", "pillar2_specificity",
+      "pillar2_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
+      "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
+      "psi_hosp_ILI", "p_hosp_ILI_step", "psi_death_comm",
+      "p_death_comm_step", "psi_ICU_hosp", "p_ICU_hosp_step",
+      "psi_admit_conf", "p_admit_conf_step"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -116,7 +121,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("icu", "general", "deaths_comm", "deaths_hosp",
-      "admitted", "new", "prob_pos"))
+      "admitted", "new", "sero_prob_pos", "sympt_cases"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "I_ICU_tot"))
@@ -130,8 +135,10 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "cum_admit_conf"))
   expect_equal(index$run[["new"]],
                which(names(info$index) == "cum_new_conf"))
-  expect_equal(index$run[["prob_pos"]],
-               which(names(info$index) == "prob_pos"))
+  expect_equal(index$run[["sero_prob_pos"]],
+               which(names(info$index) == "sero_prob_pos"))
+  expect_equal(index$run[["sympt_cases"]],
+               which(names(info$index) == "cum_sympt_cases"))
 })
 
 
@@ -204,19 +211,25 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
-    prob_pos = (4:9) / 10)
+    sero_prob_pos = (4:9) / 10,
+    sympt_cases = 100:105)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
-  prev_state["prob_pos", ] <- 1 / 10
+  prev_state["sero_prob_pos", ] <- 1 / 10
   observed <- list(
     icu = 13,
     general = 23,
+    hosp = 36,
     deaths_hosp = 5,
     deaths_comm = 3,
     deaths = 8,
     admitted = 53,
     new = 63,
+    new_admitted = 116,
     npos_15_64 = 43,
-    ntot_15_64 = 83)
+    ntot_15_64 = 83,
+    pillar2_pos = 35,
+    pillar2_tot = 600,
+    pillar2_cases = 35)
   date <- sircovid_date("2020-01-01")
   pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
 
@@ -232,7 +245,9 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## This function is more complicated to test than the basic model
   ## because it's not a simple sum
   nms_sero <- c("npos_15_64", "ntot_15_64")
-  parts <- c(as.list(setdiff(names(observed), nms_sero)), list(nms_sero))
+  nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
+  parts <- c(as.list(setdiff(names(observed), c(nms_sero, nms_pillar2))),
+             list(nms_sero), list(nms_pillar2))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
@@ -243,6 +258,11 @@ test_that("carehomes_compare combines likelihood correctly", {
   expect_equal(
     carehomes_compare(state, prev_state, observed, pars),
     rowSums(do.call(cbind, ll_parts)))
+
+  ## Test that there are non-zero values for each log-likelihood part.
+  ## This helps make sure all parts contribute to the log-likelihood.
+  expect_true(all(sapply(ll_parts, function(x) any(x != 0))))
+
 })
 
 
@@ -275,6 +295,26 @@ test_that("carehomes_index returns S compartments", {
   expect_equal(
     unname(index$state),
     c(unname(index$run),
+      mod$info()$index$hosp_tot,
+      mod$info()$index$D_tot,
+      mod$info()$index$cum_infections,
       mod$info()$index$S,
       mod$info()$index$cum_admit_by_age))
+})
+
+
+test_that("carehomes_particle_filter_data requires consistent deaths", {
+  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                        1, 0.25)
+  ## Add additional columns
+  data$deaths_hosp <- data$deaths
+  data$deaths_comm <- NA
+  data$general <- NA
+  data$admitted <- NA
+  data$new <- NA
+  data$npos_15_64 <- NA
+  data$ntot_15_64 <- NA
+  expect_error(
+    carehomes_particle_filter(data),
+    "Deaths are not consistently split into total vs community/hospital")
 })
