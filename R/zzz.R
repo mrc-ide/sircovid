@@ -1,4 +1,4 @@
-##' @useDynLib sircovid2, .registration = TRUE
+##' @useDynLib sircovid, .registration = TRUE
 NULL
 
 cache <- new.env(parent = emptyenv())

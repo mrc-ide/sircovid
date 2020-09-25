@@ -1,6 +1,6 @@
-Package: sircovid2
+Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.5.23
+Version: 0.6.0
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -32,8 +32,8 @@ Authors@R:
            email = "o.watson15@imperial.ac.uk"))
 Description: Model for COVID-19, using odin.
 License: MIT + file LICENSE
-URL: https://github.com/mrc-ide/sircovid2
-BugReports: https://github.com/mrc-ide/sircovid2/issues
+URL: https://github.com/mrc-ide/sircovid
+BugReports: https://github.com/mrc-ide/sircovid/issues
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
