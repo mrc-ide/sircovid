@@ -1,14 +1,14 @@
 Package: sircovid2
 Title: SIR Model for COVID-19
-Version: 0.5.22
+Version: 0.5.23
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
            role = c("aut", "cre"),
            email = "m.baguelin@imperial.ac.uk"),
       person(given = "Sangeeta",
-           family = "Bathia",
-           role = c("aut"),
+           family = "Bhatia",
+           role = c("ctb"),
            email = "s.bathia@imperial.ac.uk"),
       person(given = "Edward",
            family = "Knock",
@@ -28,7 +28,7 @@ Authors@R:
            email = "j.lees@imperial.ac.uk"),
       person(given = "OJ",
            family = "Watson",
-           role = c("aut"),
+           role = c("ctb"),
            email = "o.watson15@imperial.ac.uk"))
 Description: Model for COVID-19, using odin.
 License: MIT + file LICENSE
