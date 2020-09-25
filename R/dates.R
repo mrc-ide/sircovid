@@ -22,7 +22,7 @@
 ##'   is a helper that avoids conversion to `NA`, instead throwing an
 ##'   error)
 ##'
-##' @title Date handling for sircovid2
+##' @title Date handling for sircovid
 ##'
 ##' @param date A Date object, or something that can be converted to
 ##'   one, or a "sircovid date"; see Details
@@ -31,21 +31,21 @@
 ##' @export
 ##' @examples
 ##' # Convert dates into sircovid dates:
-##' sircovid2::sircovid_date("2020-01-01")
-##' sircovid2::sircovid_date(c("2020-03-01", "2020-10-01"))
+##' sircovid::sircovid_date("2020-01-01")
+##' sircovid::sircovid_date(c("2020-03-01", "2020-10-01"))
 ##'
 ##' # Reverse the conversion:
-##' sircovid2::sircovid_date_as_date(1)
-##' sircovid2::sircovid_date_as_date(c(61, 275))
+##' sircovid::sircovid_date_as_date(1)
+##' sircovid::sircovid_date_as_date(c(61, 275))
 ##'
 ##' # Double conversion not possible with sircovid_date...
-##' try(sircovid2::sircovid_date(61))
+##' try(sircovid::sircovid_date(61))
 ##' # ...but allowed with as_sircovid_date
-##' sircovid2::as_sircovid_date(61)
+##' sircovid::as_sircovid_date(61)
 ##'
 ##' # Strict date conversion with as_date
-##' sircovid2::as_date("2020-03-01")
-##' try(sircovid2::as_date("03-01-2020"))
+##' sircovid::as_date("2020-03-01")
+##' try(sircovid::as_date("03-01-2020"))
 sircovid_date <- function(date) {
   days_into_2020 <- as.numeric(as_date(date) - as_date("2019-12-31"))
   if (any(days_into_2020 < 0)) {

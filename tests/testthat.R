@@ -1,4 +1,4 @@
 library(testthat)
-library(sircovid2)
+library(sircovid)
 
-test_check("sircovid2")
+test_check("sircovid")

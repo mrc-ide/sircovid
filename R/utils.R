@@ -34,7 +34,7 @@ verify_names <- function(x, required = NULL, optional = NULL,
 
 
 sircovid_file <- function(...) {
-  system.file(..., package = "sircovid2", mustWork = TRUE)
+  system.file(..., package = "sircovid", mustWork = TRUE)
 }
 
 

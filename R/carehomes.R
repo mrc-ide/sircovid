@@ -585,11 +585,11 @@ carehomes_particle_filter <- function(data, n_particles,
                                       n_threads = 1L, seed = NULL) {
   mcstate::particle_filter$new(
     carehomes_particle_filter_data(data),
-    sircovid2::carehomes,
+    carehomes,
     n_particles,
-    sircovid2::carehomes_compare,
-    sircovid2::carehomes_index,
-    sircovid2::carehomes_initial,
+    carehomes_compare,
+    carehomes_index,
+    carehomes_initial,
     n_threads,
     seed)
 }

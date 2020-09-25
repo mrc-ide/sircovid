@@ -5,7 +5,7 @@
 \alias{sircovid_date_as_date}
 \alias{as_sircovid_date}
 \alias{as_date}
-\title{Date handling for sircovid2}
+\title{Date handling for sircovid}
 \usage{
 sircovid_date(date)
 
@@ -48,19 +48,19 @@ error)
 }
 \examples{
 # Convert dates into sircovid dates:
-sircovid2::sircovid_date("2020-01-01")
-sircovid2::sircovid_date(c("2020-03-01", "2020-10-01"))
+sircovid::sircovid_date("2020-01-01")
+sircovid::sircovid_date(c("2020-03-01", "2020-10-01"))
 
 # Reverse the conversion:
-sircovid2::sircovid_date_as_date(1)
-sircovid2::sircovid_date_as_date(c(61, 275))
+sircovid::sircovid_date_as_date(1)
+sircovid::sircovid_date_as_date(c(61, 275))
 
 # Double conversion not possible with sircovid_date...
-try(sircovid2::sircovid_date(61))
+try(sircovid::sircovid_date(61))
 # ...but allowed with as_sircovid_date
-sircovid2::as_sircovid_date(61)
+sircovid::as_sircovid_date(61)
 
 # Strict date conversion with as_date
-sircovid2::as_date("2020-03-01")
-try(sircovid2::as_date("03-01-2020"))
+sircovid::as_date("2020-03-01")
+try(sircovid::as_date("03-01-2020"))
 }
