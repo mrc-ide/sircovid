@@ -841,6 +841,7 @@ initial(D_tot) <- 0
 update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
 
 p_specificity <- user()
+p_sensitivity <- user()
 N_tot_15_64 <- user()
 
 initial(sero_prob_pos) <- 0
@@ -860,10 +861,8 @@ initial(sero_prob_pos) <- 0
 ##
 ## NOTE: the R_pre sum sweeps out the second compartment used to
 ## model the mixture of exponentials.
-update(sero_prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
-  (1 - p_specificity) *
-  (1 - (sum(new_R_pre[4:13, ]) +
-          sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)
+update(sero_prob_pos) <- p_sensitivity * sum(new_R_pos[4:13]) / N_tot_15_64 +
+  (1 - p_specificity) * (1 - sum(new_R_pos[4:13]) / N_tot_15_64)
 
 initial(cum_sympt_cases) <- 0
 update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)

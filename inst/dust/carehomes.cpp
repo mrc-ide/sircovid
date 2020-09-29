@@ -755,6 +755,7 @@ public:
     real_t p_R_pre_1;
     real_t p_R_stepdown;
     std::vector<real_t> p_SE;
+    real_t p_sensitivity;
     std::vector<real_t> p_seroconversion;
     real_t p_specificity;
     std::vector<real_t> p_sympt_ILI;
@@ -1720,6 +1721,7 @@ public:
         state_next[internal.offset_variable_R_stepdown_unconf + i - 1 + internal.dim_R_stepdown_unconf_1 * (j - 1)] = internal.new_R_stepdown_unconf[internal.dim_new_R_stepdown_unconf_1 * (j - 1) + i - 1];
       }
     }
+    state_next[12] = internal.p_sensitivity * odin_sum1(internal.new_R_pos.data(), 3, 13) / (real_t) internal.N_tot_15_64 + (1 - internal.p_specificity) * (1 - odin_sum1(internal.new_R_pos.data(), 3, 13) / (real_t) internal.N_tot_15_64);
     for (int_t i = 1; i <= internal.dim_n_hosp_non_ICU_1; ++i) {
       for (int_t j = 1; j <= internal.dim_n_hosp_non_ICU_2; ++j) {
         internal.n_hosp_non_ICU[i - 1 + internal.dim_n_hosp_non_ICU_1 * (j - 1)] = internal.n_ILI_to_hosp[internal.dim_n_ILI_to_hosp_1 * (j - 1) + i - 1] - internal.n_ILI_to_triage[internal.dim_n_ILI_to_triage_1 * (j - 1) + i - 1];
@@ -1758,7 +1760,6 @@ public:
     for (int_t i = 1; i <= internal.dim_R_neg; ++i) {
       state_next[internal.offset_variable_R_neg + i - 1] = internal.new_R_neg[i - 1];
     }
-    state_next[12] = odin_sum1(internal.new_R_pos.data(), 3, 13) / (real_t) internal.N_tot_15_64 + (1 - internal.p_specificity) * (1 - (odin_sum2(internal.new_R_pre.data(), 3, 13, 0, internal.dim_new_R_pre_2, internal.dim_new_R_pre_1) + odin_sum1(internal.new_R_neg.data(), 3, 13) + odin_sum1(internal.new_R_pos.data(), 3, 13)) / (real_t) internal.N_tot_15_64);
     for (int_t i = 1; i <= internal.dim_aux_EE_1; ++i) {
       int_t j = 1;
       int_t k = 1;
@@ -2318,6 +2319,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.ICU_transmission = NA_REAL;
   internal.N_age = NA_INTEGER;
   internal.N_tot_15_64 = NA_REAL;
+  internal.p_sensitivity = NA_REAL;
   internal.p_specificity = NA_REAL;
   internal.s_asympt = NA_INTEGER;
   internal.s_comm_D = NA_INTEGER;
@@ -2391,6 +2393,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.p_ICU_hosp_step = user_get_array_variable<real_t, 1>(user, "p_ICU_hosp_step", internal.p_ICU_hosp_step, dim_p_ICU_hosp_step, NA_REAL, NA_REAL);
   internal.dim_p_ICU_hosp_step = internal.p_ICU_hosp_step.size();
   internal.p_R_pre_1 = user_get_scalar<real_t>(user, "p_R_pre_1", internal.p_R_pre_1, NA_REAL, NA_REAL);
+  internal.p_sensitivity = user_get_scalar<real_t>(user, "p_sensitivity", internal.p_sensitivity, NA_REAL, NA_REAL);
   internal.p_specificity = user_get_scalar<real_t>(user, "p_specificity", internal.p_specificity, NA_REAL, NA_REAL);
   internal.s_asympt = user_get_scalar<int_t>(user, "s_asympt", internal.s_asympt, NA_REAL, NA_REAL);
   internal.s_comm_D = user_get_scalar<int_t>(user, "s_comm_D", internal.s_comm_D, NA_REAL, NA_REAL);

@@ -53,7 +53,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "p_specificity", "N_tot_15_64", "pillar2_specificity",
+      "p_specificity", "p_sensitivity", "N_tot_15_64", "pillar2_specificity",
       "pillar2_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
       "psi_hosp_ILI", "p_hosp_ILI_step", "psi_death_comm",

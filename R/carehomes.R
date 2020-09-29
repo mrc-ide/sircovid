@@ -26,6 +26,8 @@ NULL
 ##'
 ##' @param p_specificity Specificity of the serology test
 ##'
+##' @param p_sensitivity Sensitivity of the serology test
+##'
 ##' @param progression Progression data
 ##'
 ##' @param eps Change in contact rate for carehome residents
@@ -55,6 +57,7 @@ carehomes_parameters <- function(start_date, region,
                                  severity = NULL,
                                  p_death_carehome = 0.7,
                                  p_specificity = 0.9,
+                                 p_sensitivity = 0.99,
                                  progression = NULL,
                                  eps = 0.1,
                                  C_1 = 4e-6,
@@ -121,8 +124,9 @@ carehomes_parameters <- function(start_date, region,
   ## 15 to 64 year olds.
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
 
-  ## Specificity for serology tests
+  ## Specificity and sensitivity for serology tests
   ret$p_specificity <- p_specificity
+  ret$p_sensitivity <- p_sensitivity
 
   ## Specificity and sensitivity for Pillar 2 testing
   ret$pillar2_specificity <- pillar2_specificity
