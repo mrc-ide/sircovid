@@ -334,18 +334,29 @@ plot(mcmc)
 This is a poor MCMC run. We can try and improve this by setting the proposal distribution to be the same as the observed covariance between samples in this prototype run by setting `proposal = cov(samples$pars)`.
 
 ```{r tuned_mcmc, eval=FALSE}
+beta1_param <- mcstate::pmcmc_parameter("beta1", 
+                                        initial = summary(mcmc)$quantiles["beta1", "50%"], 
+                                        min = beta_min, max = beta_max)
+beta2_param <- mcstate::pmcmc_parameter("beta2", 
+                                        initial = summary(mcmc)$quantiles["beta2", "50%"], 
+                                        min = beta_min, max = beta_max)
+beta3_param <- mcstate::pmcmc_parameter("beta3", 
+                                        initial = summary(mcmc)$quantiles["beta3", "50%"], 
+                                        min = beta_min, max = beta_max)
+mcmc_param_list <- list(start_date_param, beta1_param, beta2_param, beta3_param)
+
 mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list, 
                                              cov(samples$pars), 
                                              parameter_transform(beta_date))
 
 n_chains <- 2L
 samples_tuned <- mcstate::pmcmc(mcmc_params, 
-                                sircovid_first_wave_pf, 
+                                sircovid_pf, 
                                 n_steps = n_steps,
                                 n_chains = n_chains,
                                 save_trajectories = TRUE, 
                                 progress = TRUE)
-saveRDS(samples, file = "samples_tuned.Rds")
+saveRDS(samples_tuned, file = "samples_tuned.Rds")
 ```
 
 TODO this didn't work well either
@@ -383,12 +394,30 @@ plot(first_wave_data$date,
 
 This is only for the final trajectory of the first chain. The `sircovid::carehomes_Rt_trajectories()` function can be used to conveniently calculate this for all of the chains at once.
 
+TODO: haven't done any testing below here
+
+```{r eval=FALSE, include=FALSE}
+pars <- lapply(seq_len(nrow(samples$pars)),
+               function(i) samples$predict$transform(samples$pars[i, ]))
+  
+Rt_estimates <- 
+  sircovid::carehomes_Rt_trajectories(
+    step,
+    S,
+    pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE
+  )
+Rt_estimates$date <- Rt_estimates$step * pars[[1]]$dt
+```
+
+TODO make some plots
 
 # Creating forecasts from a fitted model
 
 TODO
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 message("Running forecasts")
 samples_predict <-
   mcstate::pmcmc_sample(samples, control$n_sample, control$burnin)
