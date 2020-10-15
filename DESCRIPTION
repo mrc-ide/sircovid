@@ -45,10 +45,13 @@ LinkingTo:
     cpp11 (>= 0.2.1),
     dust (>= 0.4.9)
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,
     mrc-ide/mcstate
+VignetteBuilder: knitr
