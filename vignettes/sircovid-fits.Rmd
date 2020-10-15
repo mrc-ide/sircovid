@@ -85,14 +85,13 @@ Here we will demonstrate how death data from the Office of National Statistics (
 We will use publicly available data from the Office for National Statistics, licensed under the Open Government Licence:
 
 - Deaths registered https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
-- Deaths in care homes notified to the Care Quality Commission https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/numberofdeathsincarehomesnotifiedtothecarequalitycommissionengland 
 - The COVID-19 infection survey https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/datasets/coronaviruscovid19infectionsurveydata
 
 For simplicity, we will just fit to a single region here (England), but as most of this data is available subdivided into subregions it would also be possible to run independent model fits for each one. The data used here was accessed on 2020-10-12.
 
 ### Daily deaths
 
-The daily deaths, where COVID-19 was mentioned on the death certification, can be downloaded above, and found in the 'Covid-19 - Daily occurrences' tab. We will only fit from 2020-Mar-14 onwards. This is also combined with the ONS data reporting deaths in carehomes. We include a CSV of this information here. 
+The daily deaths, where COVID-19 was mentioned on the death certification, can be downloaded above, and found in the 'Covid-19 - Daily occurrences' tab. We will only fit from 2020-Mar-14 onwards. We include a CSV of this information here, the raw data sources can be found in `inst/extdata`. 
 
 ```{r}
 # Read the data from the CSV
@@ -102,11 +101,13 @@ death_data <- read.table("ons_deaths.csv",
                          row.names = NULL, 
                          stringsAsFactors = FALSE)
 rmarkdown::paged_table(death_data)
+
+# sircovid deaths need to be cumulative
 ```
 
 ### Seroconversion
 
-We can combine this with a single data-point from a serosurvey provided by the ONS on 2020-Sep-08:
+We can combine this with two data-points from a serosurvey provided by the ONS on 2020-May-04 and 2020-Sep-08:
 
 ```{r}
 serology <- read.table("ons_serology.csv", 
@@ -116,6 +117,7 @@ serology <- read.table("ons_serology.csv",
                        stringsAsFactors = FALSE)
 serology
 
+# Combine with the death data
 i <- match(death_data$date, serology$date)
 serology <- serology[i, ]
 rownames(serology) <- NULL
@@ -124,31 +126,38 @@ data <- cbind(death_data, serology[setdiff(names(serology), "date")])
 
 ### Cleaning
 
-The last few days of the data is empty, and some of the most recent days have not yet had all deaths reported. Here we simply remove the final week of the data to negate this issue.
+We will run this analysis over the first wave, covering the start of lockdown until initial easing of restrictions on 2020-May-11.
 
 ```{r}
-data_rows <- min(which(is.na(data$England_ons_death_noncarehome))) - 7L
-i <- seq_len(data_rows)
-data <- data[i,]
-data[,'date'] <- as.Date(data[,'date'])
+data[,'date'] <- as.Date(data[,'date'], format = "%d/%m/%y")
+
+# Cut out outside date range
+data <- data[data$date >= as.Date("2020-03-14"), ]
+
+# Prepare for sircovid. Here only analyse up until restrictions ease
+first_wave_data <- data[data$date < as.Date("2020-05-11"), ]
 ```
 
 We must give the columns their correct names for `sircovid::carehomes_particle_filter()`, adding columns of missing data for any data streams not being fitted:
 
 ```{r}
-colnames(data) <- c("date", "deaths_comm", "deaths_hosp", "npos_15_64", "ntot_15_64")
-missing_cols <- c("icu", "hosp", "pillar2_cases", "pillar2_pos", "general", "deaths", "admitted", "new", "new_admitted")
-na_col <- as.data.frame(matrix(NA_integer_, nrow = nrow(data), ncol = length(missing_cols)), 
+# Deaths need to be the cumulative count
+first_wave_data$deaths <- cumsum(first_wave_data$deaths)
+
+colnames(first_wave_data) <- c("date", "deaths", "npos_15_64", "ntot_15_64")
+missing_cols <- c("icu", "hosp", "pillar2_cases", "pillar2_pos", "general", "deaths_comm", "deaths_hosp", "admitted", "new", "new_admitted")
+na_col <- as.data.frame(matrix(NA_integer_, 
+                               nrow = nrow(first_wave_data),
+                               ncol = length(missing_cols)), 
                         row.names = NULL)
 colnames(na_col) <- missing_cols
-data <- cbind(data, na_col)
+first_wave_data <- cbind(first_wave_data, na_col)
 ```
 
-Let's now have a look at the two death data-streams over the epidemic so far:
+Let's also have a look at the full death data-stream over the epidemic so far:
 
 ```{r}
-plot(data$date, data$deaths_hosp, type = 'l', xlab = "Date", ylab = "COVID-19 deaths")
-points(data$date, data$deaths_comm, type = 'l', col='red')
+plot(data$date, data$deaths, type = 'l', xlab = "Date", ylab = "COVID-19 deaths (England)")
 ```
 
 ## Setting up sircovid with the data
@@ -162,7 +171,7 @@ We can use this to process the data into the standard `mcstate` data format as f
 
 ```{r}
 steps_per_day <- 4L
-pf_data <- sircovid::sircovid_data(data, 
+pf_data <- sircovid::sircovid_data(first_wave_data, 
                                    start_date = "2020-01-01", 
                                    dt = 1 / steps_per_day)
 ```
@@ -178,11 +187,28 @@ sircovid_pf <- sircovid::carehomes_particle_filter(pf_data,
                                                    seed = 1L)
 ```
 
-We can run this particle filter with a single parameter set to calculate the likelihood of the parameters given the data $\mathcal{L}(\theta|D)$:
+We can run this particle filter with a single parameter set to calculate the likelihood of the parameters given the data $\mathcal{L}(\theta|D)$. Here we will look at changing the start date and beta, and how that affects the model likelihood:
 
-TODO
+```{r}
+# Dates are sircovid_date
+set.seed(1)
+sircovid_pf$run(pars = sircovid::carehomes_parameters(start_date = 15, 
+                                                      region = "England", 
+                                                      beta_value = 0.05))
+sircovid_pf$run(pars = sircovid::carehomes_parameters(start_date = 30, 
+                                                      region = "England", 
+                                                      beta_value = 0.05))
+sircovid_pf$run(pars = sircovid::carehomes_parameters(start_date = 15, 
+                                                      region = "England", 
+                                                      beta_value = 0.1))
+sircovid_pf$run(pars = sircovid::carehomes_parameters(start_date = 30, 
+                                                      region = "England", 
+                                                      beta_value = 0.05))
+```
 
-We will now use [pMCMC](https://doi.org/10.1016/j.epidem.2019.100363) to iterate this and calculate posterior likelihoods for model parameters.
+A start date of 15-Jan-2020 and $\beta = 0.1$ appear to be best in this small grid search. We will now use [pMCMC](https://doi.org/10.1016/j.epidem.2019.100363) to iterate this and calculate full posterior likelihoods for model parameters.
+
+_Note:_ as the particle filter picks up from the last run's random number state, to make runs of the same particle filter reproducible you would need to either set up a new particle filter object, or use the `dust::reset()` function. This is automated in `mcstate` and `sircovid`.
 
 ## Setting up the parameter inference
 
@@ -201,7 +227,7 @@ In deciding how to operate parameters, the first thing to do is to look at the o
 
 ```{r}
 sircovid::carehomes_parameters(region = "england",
-                               start_date = 15) # as sircovid_date i.e. 2020-01-15
+                               start_date = 1) # as sircovid_date i.e. 2020-01-01
 ```
 
 `start_date` is special in sircovid, and is set from the data in `sircovid::sircovid_data()`, and can be sampled by using the `start_date` name.
@@ -278,23 +304,15 @@ mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list,
                                              parameter_transform(beta_date))
 ```
 
-We can now run the inference. This will take a long time, so increasing the number of threads above can be helpful. For real inference, running for at least 2000 steps on more than one chain is recommended. We also cut the data off at the end of April for demonstration purposes, a full run is shown below.
+We can now run the inference. This will take a long time (~1hr), so increasing the number of threads above can be helpful. For real inference, running for at least 2000 steps on more than one chain is recommended.
 
 ```{r mcmc_run, eval=FALSE}
-# Only run the first couple of months here
-first_wave_data <- data[data$date < as.Date("2020-04-30"), ]
-pf_first_wave_data <- sircovid::sircovid_data(first_wave_data,
-                                              start_date = "2020-01-01", 
-                                              dt = 1 / steps_per_day)
-sircovid_first_wave_pf <- sircovid::carehomes_particle_filter(pf_first_wave_data,
-                                                              n_particles = 100L,
-                                                              n_threads = 2L,
-                                                              seed = 1L)
-
+n_steps <- 2000L
+n_chains <- 1L
 samples <- mcstate::pmcmc(mcmc_params, 
-                          sircovid_first_wave_pf, 
-                          n_steps = 2000L,
-                          n_chains = 2L,
+                          sircovid_pf, 
+                          n_steps = n_steps,
+                          n_chains = n_chains,
                           save_trajectories = TRUE, 
                           progress = TRUE)
 saveRDS(samples, file = "samples.Rds")
@@ -320,7 +338,6 @@ mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list,
                                              cov(samples$pars), 
                                              parameter_transform(beta_date))
 
-n_steps <- 2000L
 n_chains <- 2L
 samples_tuned <- mcstate::pmcmc(mcmc_params, 
                                 sircovid_first_wave_pf, 
@@ -366,76 +383,10 @@ plot(first_wave_data$date,
 
 This is only for the final trajectory of the first chain. The `sircovid::carehomes_Rt_trajectories()` function can be used to conveniently calculate this for all of the chains at once.
 
-### Nine parameter fit
-
-To demonstrate an extension of these, we can attempt to model Rt over the course of the epidemic, which will also be informed by the seroprevalence survey taken in September. We now have eight $\beta$ parameters, and the full range of data:
-
-```{r}
-# Set up betas
-beta1_param <- mcstate::pmcmc_parameter("beta1", initial = 0.1, min = beta_min, max = beta_max)
-beta2_param <- mcstate::pmcmc_parameter("beta2", initial = 0.05, min = beta_min, max = beta_max)
-beta3_param <- mcstate::pmcmc_parameter("beta3", initial = 0.028, min = beta_min, max = beta_max)
-beta4_param <- mcstate::pmcmc_parameter("beta4", initial = 0.019, min = beta_min, max = beta_max)
-beta5_param <- mcstate::pmcmc_parameter("beta5", initial = 0.024, min = beta_min, max = beta_max)
-beta6_param <- mcstate::pmcmc_parameter("beta6", initial = 0.023, min = beta_min, max = beta_max)
-beta7_param <- mcstate::pmcmc_parameter("beta7", initial = 0.023, min = beta_min, max = beta_max)
-beta8_param <- mcstate::pmcmc_parameter("beta8", initial = 0.026, min = beta_min, max = beta_max)
-
-mcmc_param_list <- list(start_date_param, beta1, beta2, beta3, beta4, beta5, beta6, beta7, beta8)
-
-# Transform between mcstate and odin model
-parameter_transform <- function(pars) {
-  start_date <- pars[["start_date"]]
-  beta_value <- unname(pars[c("beta1", "beta2", "beta3", "beta4",
-                              "beta5", "beta6", "beta7", "beta8")])
-  sircovid::carehomes_parameters(region = "england",
-                                 start_date = start_date, 
-                                 beta_value = beta_value,
-                                 beta_date = beta_date)
-}
-
-## Actual dates of Rt change 
-## 1. 2020-03-16 - PM advises WFH, against non-essential travel etc
-## 2. 2020-03-23 - PM announces full lockdown
-## 3. 2020-03-25 - lockdown into full effect
-## 4. 2020-05-11 - initial easing of lockdown
-## 5. 2020-06-15 - non-essential shops can open
-## 6. 2020-07-04 - restaurants, pubs etc can open
-## 7. 2020-08-01 - "Eat out to help out" scheme starts
-## 8. 2020-09-01 - schools re-open
-beta_date <- c("2020-03-16", "2020-03-23", "2020-03-25",
-               "2020-05-11", "2020-06-15", "2020-07-04",
-               "2020-08-01", "2020-09-01")
-beta_date <- sircovid::sircovid_date(beta_date)
-
-# MCMC proposals
-mcmc_proposals <- matrix(0, nrow = length(mcmc_params), ncol = length(mcmc_params))
-diag(mcmc_proposals) <- c(5.0, 0.01, 0.0025, 0.000625, 0.000625, 0.000625, 0.000625, 0.000625, 0.000625)
-
-mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list, 
-                                             mcmc_proposals, 
-                                             parameter_transform)
-```
-
-Now we can run this fit:
-
-```{r mcmc_run_full, eval=FALSE}
-samples_full <- mcstate::pmcmc(mcmc_params, 
-                               sircovid_pf, # defined earlier 
-                               n_steps = 2000L,
-                               n_chains = 2L,
-                               save_trajectories = TRUE, 
-                               progress = TRUE)
-saveRDS(samples_full, file = "samples_full.Rds")
-```
-
-```{r include=FALSE}
-samples_full <- readRDS("samples_full.Rds")
-```
-
-
 
 # Creating forecasts from a fitted model
+
+TODO
 
 ```{r}
 message("Running forecasts")
