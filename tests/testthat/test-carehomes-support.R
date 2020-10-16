@@ -319,10 +319,17 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$deaths_hosp <- data$deaths
   data$deaths_comm <- NA
   data$general <- NA
+  data$hosp <- NA
   data$admitted <- NA
   data$new <- NA
+  data$new_admitted <- NA
   data$npos_15_64 <- NA
   data$ntot_15_64 <- NA
+  data$pillar2_pos <- NA
+  data$pillar2_tot <- NA
+  data$pillar2_cases <- NA
+  data$react_pos <- NA
+  data$react_tot <- NA
   expect_error(
     carehomes_particle_filter(data),
     "Deaths are not consistently split into total vs community/hospital")
