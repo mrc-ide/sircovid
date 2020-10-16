@@ -39,6 +39,10 @@ NULL
 ##'
 ##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
 ##'
+##' @param react_specificity Specificity of the REACT test
+##'
+##' @param react_sensitivity Sensitivity of the REACT test
+##'
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
@@ -61,6 +65,8 @@ carehomes_parameters <- function(start_date, region,
                                  C_2 = 5e-5,
                                  pillar2_specificity = 0.99,
                                  pillar2_sensitivity = 0.99,
+                                 react_specificity = 0.99,
+                                 react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
@@ -128,6 +134,10 @@ carehomes_parameters <- function(start_date, region,
   ret$pillar2_specificity <- pillar2_specificity
   ret$pillar2_sensitivity <- pillar2_sensitivity
 
+  ## Specificity and sensitivity for REACT testing
+  ret$react_specificity <- react_specificity
+  ret$react_sensitivity <- react_sensitivity
+
   ## Proportion of population with covid-like symptoms without covid
   ret$prop_noncovid_sympt <- prop_noncovid_sympt
 
@@ -176,7 +186,8 @@ carehomes_index <- function(info) {
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
                  sero_prob_pos = index[["sero_prob_pos"]],
-                 sympt_cases = index[["cum_sympt_cases"]])
+                 sympt_cases = index[["cum_sympt_cases"]],
+                 react_pos = index[["react_pos"]])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -245,6 +256,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_new_admitted <- model_admitted + model_new
   model_sero_prob_pos <- state["sero_prob_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
+  model_react_pos <- state["react_pos", ]
 
   ## Add some small exponential noise in case the number of model cases is 0
   pillar2_pos <- model_sympt_cases +
@@ -254,6 +266,14 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_pillar2_prob_pos <- (pars$pillar2_sensitivity * pillar2_pos +
                                (1 - pars$pillar2_specificity) * pillar2_neg) /
     (pillar2_pos + pillar2_neg)
+
+  ## Note that for REACT we exclude group 1 (0-4) and 19 (CHR)
+  react_pos <- model_react_pos +
+    rexp(length(model_react_pos), pars$observation$exp_noise)
+  react_neg <- sum(pars$N_tot[2:18]) - model_react_pos
+  model_react_prob_pos <- (pars$react_sensitivity * react_pos +
+                             (1 - pars$react_specificity) * react_neg) /
+    (react_pos + react_neg)
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
@@ -305,9 +325,13 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                 pars$phi_pillar2_cases * model_sympt_cases,
                                 pars$k_pillar2_cases, exp_noise)
 
+  ll_react <- ll_binom(observed$react_pos,
+                       observed$react_tot,
+                       model_react_prob_pos)
+
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_new_admitted + ll_serology +
-    ll_pillar2_tests + ll_pillar2_cases
+    ll_pillar2_tests + ll_pillar2_cases + ll_react
 }
 
 
@@ -401,6 +425,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
   index_PCR_pos <- index[["PCR_pos"]][[1L]] + seed_age_band - 1L
   index_N_tot2 <- index[["N_tot2"]][[1L]]
+  index_N_tot3 <- index[["N_tot3"]][[1L]]
 
   index_S <- index[["S"]]
   index_N_tot <- index[["N_tot"]]
@@ -416,6 +441,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_PCR_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
+  state[index_N_tot3] <- sum(pars$N_tot)
 
   list(state = state,
        step = pars$initial_step)
@@ -450,6 +476,7 @@ carehomes_parameters_progression <- function() {
        s_ICU_R = 2,
        s_triage = 2,
        s_stepdown = 2,
+       s_PCR_pre = 2,
        s_PCR_pos = 2,
 
        gamma_E = 1 / (4.59 / 2),
@@ -466,6 +493,7 @@ carehomes_parameters_progression <- function() {
        gamma_R_pre_1 = 1 / 5,
        gamma_R_pre_2 = 1 / 10,
        gamma_test = 3 / 10,
+       gamma_PCR_pre = 2 / 3,
        gamma_PCR_pos = 1 / 5)
 }
 
@@ -596,8 +624,10 @@ carehomes_particle_filter <- function(data, n_particles,
 
 
 carehomes_particle_filter_data <- function(data) {
-  required <- c("icu", "general", "deaths_hosp", "deaths_comm", "deaths",
-                "admitted", "new", "npos_15_64", "ntot_15_64")
+  required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
+                "deaths", "admitted", "new", "new_admitted", "npos_15_64",
+                "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+                "react_pos", "react_tot")
   verify_names(data, required, allow_extra = TRUE)
   if (any(!is.na(data$deaths) &
            (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
