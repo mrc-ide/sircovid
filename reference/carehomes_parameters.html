@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -139,6 +139,8 @@
   C_2 <span class='op'>=</span> <span class='fl'>5e-05</span>,
   pillar2_specificity <span class='op'>=</span> <span class='fl'>0.99</span>,
   pillar2_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
+  react_specificity <span class='op'>=</span> <span class='fl'>0.99</span>,
+  react_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
   prop_noncovid_sympt <span class='op'>=</span> <span class='fl'>0.01</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
 <span class='op'>)</span></pre>
@@ -220,6 +222,14 @@ residents or workers</p></td>
     <tr>
       <th>pillar2_sensitivity</th>
       <td><p>Sensitivity of the Pillar 2 test</p></td>
+    </tr>
+    <tr>
+      <th>react_specificity</th>
+      <td><p>Specificity of the REACT test</p></td>
+    </tr>
+    <tr>
+      <th>react_sensitivity</th>
+      <td><p>Sensitivity of the REACT test</p></td>
     </tr>
     <tr>
       <th>prop_noncovid_sympt</th>
@@ -375,6 +385,12 @@ just before the model is run.</p>
 #&gt; [1] 0.99
 #&gt; 
 #&gt; $pillar2_sensitivity
+#&gt; [1] 0.99
+#&gt; 
+#&gt; $react_specificity
+#&gt; [1] 0.99
+#&gt; 
+#&gt; $react_sensitivity
 #&gt; [1] 0.99
 #&gt; 
 #&gt; $prop_noncovid_sympt
@@ -564,6 +580,9 @@ just before the model is run.</p>
 #&gt; $s_stepdown
 #&gt; [1] 2
 #&gt; 
+#&gt; $s_PCR_pre
+#&gt; [1] 2
+#&gt; 
 #&gt; $s_PCR_pos
 #&gt; [1] 2
 #&gt; 
@@ -608,6 +627,9 @@ just before the model is run.</p>
 #&gt; 
 #&gt; $gamma_test
 #&gt; [1] 0.3
+#&gt; 
+#&gt; $gamma_PCR_pre
+#&gt; [1] 0.6666667
 #&gt; 
 #&gt; $gamma_PCR_pos
 #&gt; [1] 0.2
