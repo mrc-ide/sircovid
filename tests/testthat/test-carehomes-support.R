@@ -4,12 +4,12 @@ test_that("carehomes progression parameters", {
   p <- carehomes_parameters_progression()
   expect_setequal(
     names(p),
-    c("s_E", "s_asympt", "s_mild", "s_ILI", "s_comm_D", "s_hosp_D",
-      "s_hosp_R", "s_ICU_D", "s_ICU_R", "s_triage", "s_stepdown", "s_PCR_pos",
+    c("s_E", "s_asympt", "s_mild", "s_ILI", "s_comm_D", "s_hosp_D", "s_hosp_R",
+      "s_ICU_D", "s_ICU_R", "s_triage", "s_stepdown", "s_PCR_pos", "s_PCR_pre",
       "gamma_E", "gamma_asympt", "gamma_mild", "gamma_ILI", "gamma_comm_D",
       "gamma_hosp_D", "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_R",
       "gamma_triage", "gamma_stepdown", "gamma_R_pre_1", "gamma_R_pre_2",
-      "gamma_test", "gamma_PCR_pos"))
+      "gamma_test", "gamma_PCR_pos", "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
@@ -54,7 +54,8 @@ test_that("carehomes_parameters returns a list of parameters", {
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
       "p_specificity", "N_tot_15_64", "pillar2_specificity",
-      "pillar2_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
+      "pillar2_sensitivity", "react_specificity", "react_sensitivity",
+      "prop_noncovid_sympt", "psi_death_ICU",
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
       "psi_hosp_ILI", "p_hosp_ILI_step", "psi_death_comm",
       "p_death_comm_step", "psi_ICU_hosp", "p_ICU_hosp_step",
@@ -121,7 +122,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("icu", "general", "deaths_comm", "deaths_hosp",
-      "admitted", "new", "sero_prob_pos", "sympt_cases"))
+      "admitted", "new", "sero_prob_pos", "sympt_cases", "react_pos"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "I_ICU_tot"))
@@ -139,6 +140,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "sero_prob_pos"))
   expect_equal(index$run[["sympt_cases"]],
                which(names(info$index) == "cum_sympt_cases"))
+  expect_equal(index$run[["react_pos"]],
+               which(names(info$index) == "react_pos"))
 })
 
 
@@ -158,6 +161,7 @@ test_that("Can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
 
+  expect_equal(initial_y$N_tot3, sum(p$N_tot))
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
@@ -172,8 +176,8 @@ test_that("Can compute initial conditions", {
   ## 42 here, derived from;
   ## * 19 (S)
   ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + I_asympt[4] + R_pre[4] + PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 42)
+  ## * 4 values as N_tot2 + N_tot3 + I_asympt[4] + R_pre[4] + PCR_pos[4]
+  expect_equal(sum(initial$state != 0), 43)
 })
 
 
@@ -212,7 +216,8 @@ test_that("carehomes_compare combines likelihood correctly", {
     admitted = 50:55,
     new = 60:65,
     sero_prob_pos = (4:9) / 10,
-    sympt_cases = 100:105)
+    sympt_cases = 100:105,
+    react_pos = 2:7)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
   prev_state["sero_prob_pos", ] <- 1 / 10
   observed <- list(
@@ -229,7 +234,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     ntot_15_64 = 83,
     pillar2_pos = 35,
     pillar2_tot = 600,
-    pillar2_cases = 35)
+    pillar2_cases = 35,
+    react_pos = 3,
+    react_tot = 500)
   date <- sircovid_date("2020-01-01")
   pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
 
@@ -246,8 +253,10 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## because it's not a simple sum
   nms_sero <- c("npos_15_64", "ntot_15_64")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
-  parts <- c(as.list(setdiff(names(observed), c(nms_sero, nms_pillar2))),
-             list(nms_sero), list(nms_pillar2))
+  nms_react <- c("react_pos", "react_tot")
+  parts <- c(as.list(setdiff(names(observed),
+                             c(nms_sero, nms_pillar2, nms_react))),
+             list(nms_sero), list(nms_pillar2), list(nms_react))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
