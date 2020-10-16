@@ -267,6 +267,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                (1 - pars$pillar2_specificity) * pillar2_neg) /
     (pillar2_pos + pillar2_neg)
 
+  ## Note that for REACT we exclude group 1 (0-4) and 19 (CHR)
   react_pos <- model_react_pos +
     rexp(length(model_react_pos), pars$observation$exp_noise)
   react_neg <- sum(pars$N_tot[2:18]) - model_react_pos
