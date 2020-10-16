@@ -46,7 +46,7 @@ test_that("can run the particle filter on the model", {
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
   data$react_pos <- NA
-  data$react_neg <- NA
+  data$react_tot <- NA
 
   pf <- carehomes_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")

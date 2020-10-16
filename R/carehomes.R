@@ -475,8 +475,8 @@ carehomes_parameters_progression <- function() {
        s_ICU_R = 2,
        s_triage = 2,
        s_stepdown = 2,
-       s_PCR_pos = 2,
        s_PCR_pre = 2,
+       s_PCR_pos = 2,
 
        gamma_E = 1 / (4.59 / 2),
        gamma_asympt = 1 / 2.09,
@@ -623,8 +623,10 @@ carehomes_particle_filter <- function(data, n_particles,
 
 
 carehomes_particle_filter_data <- function(data) {
-  required <- c("icu", "general", "deaths_hosp", "deaths_comm", "deaths",
-                "admitted", "new", "npos_15_64", "ntot_15_64")
+  required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
+                "deaths", "admitted", "new", "new_admitted", "npos_15_64",
+                "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+                "react_pos", "react_tot")
   verify_names(data, required, allow_extra = TRUE)
   if (any(!is.na(data$deaths) &
            (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
