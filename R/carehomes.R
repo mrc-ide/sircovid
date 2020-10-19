@@ -62,7 +62,7 @@ carehomes_parameters <- function(start_date, region,
                                  pillar2_specificity = 0.99,
                                  pillar2_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
-                                 rel_lambda = 1,
+                                 rel_susc = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -111,7 +111,7 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
   
-  vaccination <- carehomes_parameters_vaccination(rel_lambda)
+  vaccination <- carehomes_parameters_vaccination(rel_susc)
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
@@ -433,9 +433,9 @@ carehomes_initial <- function(info, n_particles, pars) {
 ##' @return A list of parameter values
 ##'
 ##' @export
-carehomes_parameters_vaccination <- function(rel_lambda = 1) {
-  list(N_vacc_classes = length(rel_lambda),
-       rel_lambda = rel_lambda
+carehomes_parameters_vaccination <- function(rel_susc = 1) {
+  list(N_vacc_classes = length(rel_susc),
+       rel_susc = rel_susc
   )
 }
 
