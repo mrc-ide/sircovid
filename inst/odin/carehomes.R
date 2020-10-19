@@ -9,7 +9,7 @@
 ## so it's N_age plus 2 now! N_group is ok but more vague than ideal.
 N_age <- user()
 trans_classes <- user(1)
-vacc_classes <- user(1)
+N_vacc_classes <- user(1)
 
 ## Definition of the time-step and output as "time"
 dt <- user()
@@ -587,7 +587,7 @@ comm_D_transmission <- user()
 ## multi-dimensional arrays
 
 ## Vectors handling the S class
-dim(S) <- c(N_age, vacc_classes)
+dim(S) <- c(N_age, N_vacc_classes)
 
 ## Vectors handling the E class
 dim(E) <- c(N_age, s_E, trans_classes)
@@ -743,8 +743,8 @@ dim(n_PCR_pos) <- c(N_age, s_PCR_pos)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
-dim(p_SE) <- c(N_age, vacc_classes)
-dim(n_SE) <- c(N_age, vacc_classes)
+dim(p_SE) <- c(N_age, N_vacc_classes)
+dim(n_SE) <- c(N_age, N_vacc_classes)
 dim(aux_p_bin) <- c(N_age, trans_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases

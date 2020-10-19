@@ -62,6 +62,7 @@ carehomes_parameters <- function(start_date, region,
                                  pillar2_specificity = 0.99,
                                  pillar2_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
+                                 vaccination = NULL,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -109,6 +110,8 @@ carehomes_parameters <- function(start_date, region,
   severity$p_admit_conf_step <- max(severity$p_admit_conf)
 
   progression <- progression %||% carehomes_parameters_progression()
+  
+  vaccination <- vaccination %||% carehomes_parameters_vaccination()
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
@@ -139,7 +142,7 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  c(ret, severity, progression)
+  c(ret, severity, progression, vaccination)
 }
 
 
@@ -422,6 +425,23 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
+##' Carehomes vaccination parameters.  
+##'
+##' @title Carehomes vaccination parameters
+##'
+##' @return A list of parameter values
+##'
+##' @export
+carehomes_parameters_vaccination <- function() {
+
+  N_vacc_classes <- 1
+
+  list(N_vacc_classes = N_vacc_classes,
+       rel_lambda = rep(1, N_vacc_classes)
+  )
+}
+
+
 ##' Carehomes progression parameters.  The `s_` parameters are the
 ##' scaling parameters for the Erlang distibution (a.k.a 'k'), while
 ##' the `gamma_` parameters are the gamma parameters of that
@@ -435,7 +455,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 ##'
 ##' @export
 carehomes_parameters_progression <- function() {
-
+  
   ## The s_ parameters are the scaling parameters for the Erlang
   ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
   ## parameters of that distribution.
@@ -451,7 +471,7 @@ carehomes_parameters_progression <- function() {
        s_triage = 2,
        s_stepdown = 2,
        s_PCR_pos = 2,
-
+       
        gamma_E = 1 / (4.59 / 2),
        gamma_asympt = 1 / 2.09,
        gamma_mild = 1 / 2.09,
