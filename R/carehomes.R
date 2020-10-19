@@ -111,7 +111,7 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
   
-  vaccination <- vaccination %||% carehomes_parameters_vaccination()
+  vaccination <- vaccination %||% carehomes_parameters_vaccination(rel_lambda)
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
@@ -406,6 +406,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_N_tot2 <- index[["N_tot2"]][[1L]]
 
   index_S <- index[["S"]]
+  index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
   index_N_tot <- index[["N_tot"]]
 
   ## S0 is the population totals, minus the seeded infected
@@ -413,7 +414,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   initial_S <- pars$N_tot
   initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
 
-  state[index_S] <- initial_S
+  state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
   state[index_R_pre] <- initial_I
   state[index_PCR_pos] <- initial_I
@@ -432,12 +433,9 @@ carehomes_initial <- function(info, n_particles, pars) {
 ##' @return A list of parameter values
 ##'
 ##' @export
-carehomes_parameters_vaccination <- function() {
-
-  N_vacc_classes <- 1
-
-  list(N_vacc_classes = N_vacc_classes,
-       rel_lambda = rep(1, N_vacc_classes)
+carehomes_parameters_vaccination <- function(rel_lambda = 1) {
+  list(N_vacc_classes = length(rel_lambda),
+       rel_lambda = rel_lambda
   )
 }
 
