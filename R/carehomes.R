@@ -42,6 +42,10 @@ NULL
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
+##' @param rel_susc A vector of values representing the relative susceptibility
+##'   of individuals in different vaccination groups. The first value should be
+##'   1 (for the non-vaccinated group) and subsequent values be between 0 and 1.
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -66,6 +70,10 @@ carehomes_parameters <- function(start_date, region,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
+
+  ## TO DO: we should add some checks for pillar2_specificity,
+  ## pillar2_sensitivity, prop_noncovid_sympt, rel_susc which should all only
+  ## contain values between 0 and 1
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
@@ -110,7 +118,7 @@ carehomes_parameters <- function(start_date, region,
   severity$p_admit_conf_step <- max(severity$p_admit_conf)
 
   progression <- progression %||% carehomes_parameters_progression()
-  
+
   vaccination <- carehomes_parameters_vaccination(rel_susc)
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
@@ -426,7 +434,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-##' Carehomes vaccination parameters.  
+##' Carehomes vaccination parameters.
 ##'
 ##' @title Carehomes vaccination parameters
 ##'
@@ -453,7 +461,7 @@ carehomes_parameters_vaccination <- function(rel_susc = 1) {
 ##'
 ##' @export
 carehomes_parameters_progression <- function() {
-  
+
   ## The s_ parameters are the scaling parameters for the Erlang
   ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
   ## parameters of that distribution.
@@ -469,7 +477,7 @@ carehomes_parameters_progression <- function() {
        s_triage = 2,
        s_stepdown = 2,
        s_PCR_pos = 2,
-       
+
        gamma_E = 1 / (4.59 / 2),
        gamma_asympt = 1 / 2.09,
        gamma_mild = 1 / 2.09,

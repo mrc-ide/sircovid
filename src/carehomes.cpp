@@ -567,7 +567,7 @@ public:
     int_t dim_R_stepdown_unconf;
     int_t dim_R_stepdown_unconf_1;
     int_t dim_R_stepdown_unconf_2;
-    int_t dim_rel_lambda;
+    int_t dim_rel_susc;
     int_t dim_S;
     int_t dim_S_1;
     int_t dim_S_2;
@@ -784,7 +784,7 @@ public:
     std::vector<real_t> psi_death_ICU;
     std::vector<real_t> psi_hosp_ILI;
     std::vector<real_t> psi_ICU_hosp;
-    std::vector<real_t> rel_lambda;
+    std::vector<real_t> rel_susc;
     int_t s_asympt;
     int_t s_comm_D;
     int_t s_E;
@@ -1678,7 +1678,7 @@ public:
     }
     for (int_t i = 1; i <= internal.dim_p_SE_1; ++i) {
       for (int_t j = 1; j <= internal.dim_p_SE_2; ++j) {
-        internal.p_SE[i - 1 + internal.dim_p_SE_1 * (j - 1)] = 1 - std::exp(- internal.lambda[i - 1] * internal.rel_lambda[j - 1] * internal.dt);
+        internal.p_SE[i - 1 + internal.dim_p_SE_1 * (j - 1)] = 1 - std::exp(- internal.lambda[i - 1] * internal.rel_susc[j - 1] * internal.dt);
       }
     }
     for (int_t i = 1; i <= internal.dim_cum_admit_by_age; ++i) {
@@ -2757,7 +2757,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_R_stepdown_conf_2 = internal.s_stepdown;
   internal.dim_R_stepdown_unconf_1 = internal.N_age;
   internal.dim_R_stepdown_unconf_2 = internal.s_stepdown;
-  internal.dim_rel_lambda = internal.N_vacc_classes;
+  internal.dim_rel_susc = internal.N_vacc_classes;
   internal.dim_S_1 = internal.N_age;
   internal.dim_S_2 = internal.N_vacc_classes;
   internal.dim_s_ij_1 = internal.N_age;
@@ -3038,7 +3038,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.psi_death_ICU = user_get_array_fixed<real_t, 1>(user, "psi_death_ICU", internal.psi_death_ICU, {internal.dim_psi_death_ICU}, NA_REAL, NA_REAL);
   internal.psi_hosp_ILI = user_get_array_fixed<real_t, 1>(user, "psi_hosp_ILI", internal.psi_hosp_ILI, {internal.dim_psi_hosp_ILI}, NA_REAL, NA_REAL);
   internal.psi_ICU_hosp = user_get_array_fixed<real_t, 1>(user, "psi_ICU_hosp", internal.psi_ICU_hosp, {internal.dim_psi_ICU_hosp}, NA_REAL, NA_REAL);
-  internal.rel_lambda = user_get_array_fixed<real_t, 1>(user, "rel_lambda", internal.rel_lambda, {internal.dim_rel_lambda}, NA_REAL, NA_REAL);
+  internal.rel_susc = user_get_array_fixed<real_t, 1>(user, "rel_susc", internal.rel_susc, {internal.dim_rel_susc}, NA_REAL, NA_REAL);
   internal.aux_EE = std::vector<real_t>(internal.dim_aux_EE);
   internal.aux_II_asympt = std::vector<real_t>(internal.dim_aux_II_asympt);
   internal.aux_II_comm_D = std::vector<real_t>(internal.dim_aux_II_comm_D);

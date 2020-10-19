@@ -42,7 +42,7 @@ test_that("everyone is infected when beta is large", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  expect_true(all(y$S[, -1] == 0))
+  expect_true(all(y$S[, 1, -1] == 0))
 })
 
 

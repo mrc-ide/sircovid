@@ -472,7 +472,7 @@ initial(cum_admit_by_age[]) <- 0
 ## User defined parameters - default in parentheses:
 
 ## Parameters of the S classes
-rel_susc[] <- user() 
+rel_susc[] <- user()
 dim(rel_susc) <- N_vacc_classes
 
 ## Parameters of the E classes
