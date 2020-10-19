@@ -404,7 +404,7 @@ delta_R[] <-
   sum(n_R_stepdown_unconf[i, s_stepdown])
 
 ## Work out the PCR positivity
-delta_PCR_pos[, 1] <- n_SE[i]
+delta_PCR_pos[, 1] <- sum(n_SE[i, ])
 delta_PCR_pos[, 2:s_PCR_pos] <- n_PCR_pos[i, j - 1]
 delta_PCR_pos[, ] <- delta_PCR_pos[i, j] - n_PCR_pos[i, j]
 
@@ -473,6 +473,7 @@ initial(cum_admit_by_age[]) <- 0
 
 ## Parameters of the S classes
 rel_lambda[] <- user() 
+dim(rel_lambda) <- N_vacc_classes
 
 ## Parameters of the E classes
 s_E <- user()

@@ -62,7 +62,7 @@ carehomes_parameters <- function(start_date, region,
                                  pillar2_specificity = 0.99,
                                  pillar2_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
-                                 vaccination = NULL,
+                                 rel_lambda = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -111,7 +111,7 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
   
-  vaccination <- vaccination %||% carehomes_parameters_vaccination(rel_lambda)
+  vaccination <- carehomes_parameters_vaccination(rel_lambda)
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
