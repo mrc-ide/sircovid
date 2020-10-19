@@ -9,6 +9,7 @@
 ## so it's N_age plus 2 now! N_group is ok but more vague than ideal.
 N_age <- user()
 trans_classes <- user(1)
+vacc_classes <- user(1)
 
 ## Definition of the time-step and output as "time"
 dt <- user()
@@ -16,7 +17,7 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
-update(S[]) <- S[i] - n_SE[i]
+update(S[, ]) <- S[i, j] - n_SE[i, j] # age / vaccination status
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
@@ -61,7 +62,7 @@ update(cum_new_conf) <-
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
-p_SE[] <- 1 - exp(-lambda[i] * dt) # S to I - age dependent
+p_SE[, ] <- 1 - exp(-lambda[i] * rel_lambda[j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
 p_II_mild <- 1 - exp(-gamma_mild * dt)
@@ -105,7 +106,7 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
-n_SE[] <- rbinom(S[i], p_SE[i])
+n_SE[, ] <- rbinom(S[i, j], p_SE[i, j])
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
@@ -149,11 +150,11 @@ aux_p_bin[, 2:(trans_classes - 1)] <-
   trans_profile[i, j] / sum(trans_profile[i, j:trans_classes])
 
 ## Implementation of multinom via nested binomial
-aux_EE[, 1, 1] <- rbinom(n_SE[i], aux_p_bin[i, 1])
+aux_EE[, 1, 1] <- rbinom(sum(n_SE[i, ]), aux_p_bin[i, 1])
 aux_EE[, 1, 2:(trans_classes - 1)] <-
-  rbinom(n_SE[i] - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
+  rbinom(sum(n_SE[i, ]) - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
 aux_EE[, 1, trans_classes] <-
-  n_SE[i] - sum(aux_EE[i, 1, 1:(trans_classes - 1)])
+  sum(n_SE[i, ]) - sum(aux_EE[i, 1, 1:(trans_classes - 1)])
 
 ## Work out the E->E transitions
 aux_EE[, 2:s_E, ] <- n_EE[i, j - 1, k]
@@ -437,7 +438,7 @@ lambda[] <- sum(s_ij[i, ])
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.
-initial(S[]) <- 0
+initial(S[, ]) <- 0
 initial(E[, , ]) <- 0
 initial(I_asympt[, , ]) <- 0
 initial(I_mild[, , ]) <- 0
@@ -469,6 +470,9 @@ initial(cum_new_conf) <- 0
 initial(cum_admit_by_age[]) <- 0
 
 ## User defined parameters - default in parentheses:
+
+## Parameters of the S classes
+rel_lambda[] <- user() 
 
 ## Parameters of the E classes
 s_E <- user()
@@ -583,7 +587,7 @@ comm_D_transmission <- user()
 ## multi-dimensional arrays
 
 ## Vectors handling the S class
-dim(S) <- N_age
+dim(S) <- c(N_age, vacc_classes)
 
 ## Vectors handling the E class
 dim(E) <- c(N_age, s_E, trans_classes)
@@ -739,8 +743,8 @@ dim(n_PCR_pos) <- c(N_age, s_PCR_pos)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
-dim(p_SE) <- N_age
-dim(n_SE) <- N_age
+dim(p_SE) <- c(N_age, vacc_classes)
+dim(n_SE) <- c(N_age, vacc_classes)
 dim(aux_p_bin) <- c(N_age, trans_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
@@ -797,7 +801,7 @@ dim(I_with_diff_trans) <- c(N_age, trans_classes)
 
 ## Total population
 initial(N_tot[]) <- 0
-update(N_tot[]) <- S[i] + R[i] + D_hosp[i] + sum(E[i, , ]) +
+update(N_tot[]) <- sum(S[i, ]) + R[i] + D_hosp[i] + sum(E[i, , ]) +
   sum(I_asympt[i, , ]) + sum(I_mild[i, , ]) + sum(I_ILI[i, , ]) +
   sum(I_triage_D_conf[i, , ]) + sum(I_triage_D_unconf[i, , ]) +
   sum(I_triage_R_conf[i, , ]) + sum(I_triage_R_unconf[i, , ])  +
