@@ -1,9 +1,9 @@
 ## E and R stage indexed by i, j, k with
 ## i for the age group
 ## j for the progression (not exponential latent and infectious period)
-## k for the infectivity group
+## k for the infectivity group (for I) or vacc. group (for S)
 
-## Number of age classes & number of transmissibility classes
+## Number of classes (age transmissibility & vaccination)
 
 ## TODO: this should be renamed as it includes the CHW and CHR groups,
 ## so it's N_age plus 2 now! N_group is ok but more vague than ideal.
