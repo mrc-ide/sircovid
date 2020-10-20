@@ -26,3 +26,32 @@ test_that("there are no infections if everyone is vaccinated with a vaccine
   ## Noone changes compartment within the vaccinated individuals
   expect_true(all(s[, 2, ] == s[, 2, 1]))
 })
+
+
+test_that("Can calculate Rt with a vaccination class", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1))
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  d <- reference_data_rt()
+
+  skip("This test needs fixing!")
+  rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all <- carehomes_Rt_trajectories(steps, y, p)
+
+  expect_equal(rt_1, d$outputs$rt_1)
+  expect_equal(rt_all, d$outputs$rt_all)
+})
