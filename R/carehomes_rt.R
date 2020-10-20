@@ -13,7 +13,7 @@
 ##'
 ##' @export
 carehomes_Rt <- function(step, S, p) {
-  if (nrow(S) != nrow(p$m)) {
+  if (nrow(S) != length(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows, following transmission matrix",
       nrow(p$m)))
@@ -34,7 +34,17 @@ carehomes_Rt <- function(step, S, p) {
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
-    ngm <- outer(mean_duration[, t], S[, t]) * m
+    ## when several vaccination groups,
+    ## need to take the weighted means of the S
+    ## (weights given by rel_susceptibility)
+    S_mat <- matrix(S[, t], nrow = p$N_age, ncol = length(p$rel_susceptibility))
+    rel_susceptibility_weights <- matrix(
+      rep(p$rel_susceptibility, each = p$N_age),
+      nrow = p$N_age,
+      ncol = length(p$rel_susceptibility))
+    S_weighted <- rowSums(S_mat * rel_susceptibility_weights)
+
+    ngm <- outer(mean_duration[, t], S_weighted) * m
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns
