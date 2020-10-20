@@ -43,7 +43,9 @@ update(R_neg[]) <- new_R_neg[i]
 update(R[]) <- R[i] + delta_R[i]
 update(D_hosp[]) <- new_D_hosp[i]
 update(D_comm[]) <- new_D_comm[i]
-update(PCR_pos[, ]) <- PCR_pos[i, j] + delta_PCR_pos[i, j]
+update(PCR_pre[, ]) <- new_PCR_pre[i, j]
+update(PCR_pos[, ]) <- new_PCR_pos[i, j]
+update(PCR_neg[]) <- PCR_neg[i] + n_PCR_pos[i, s_PCR_pos]
 update(cum_admit_conf) <-
   cum_admit_conf +
   sum(n_ILI_to_hosp_D_conf) +
@@ -76,6 +78,7 @@ p_II_ICU_D <- 1 - exp(-gamma_ICU_D * dt)
 p_R_stepdown <- 1 - exp(-gamma_stepdown * dt)
 p_R_pre[, ] <- 1 - exp(-gamma_R_pre[j] * dt)
 p_test <- 1 - exp(-gamma_test * dt)
+p_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
 p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 
 ## Work out time-varying probabilities
@@ -127,6 +130,7 @@ n_II_ICU_D_conf[, , ] <- rbinom(I_ICU_D_conf[i, j, k], p_II_ICU_D)
 n_R_stepdown_unconf[, ] <- rbinom(R_stepdown_unconf[i, j], p_R_stepdown)
 n_R_stepdown_conf[, ] <- rbinom(R_stepdown_conf[i, j], p_R_stepdown)
 n_R_pre[, ] <- rbinom(R_pre[i, j], p_R_pre[i, j])
+n_PCR_pre[, ] <- rbinom(PCR_pre[i, j], p_PCR_pre)
 n_PCR_pos[, ] <- rbinom(PCR_pos[i, j], p_PCR_pos)
 
 ## Cumulative infections, summed over all age groups
@@ -405,8 +409,14 @@ delta_R[] <-
 
 ## Work out the PCR positivity
 delta_PCR_pos[, 1] <- sum(n_SE[i, ])
+delta_PCR_pre[, 2:s_PCR_pre] <- n_PCR_pre[i, j - 1]
+delta_PCR_pre[, ] <- delta_PCR_pre[i, j] - n_PCR_pre[i, j]
+new_PCR_pre[, ] <- PCR_pre[i, j] + delta_PCR_pre[i, j]
+
+delta_PCR_pos[, 1] <- n_PCR_pre[i, s_PCR_pre]
 delta_PCR_pos[, 2:s_PCR_pos] <- n_PCR_pos[i, j - 1]
 delta_PCR_pos[, ] <- delta_PCR_pos[i, j] - n_PCR_pos[i, j]
+new_PCR_pos[, ] <- PCR_pos[i, j] + delta_PCR_pos[i, j]
 
 ## Compute the force of infection
 I_with_diff_trans[, ] <-
@@ -464,7 +474,9 @@ initial(R_neg[]) <- 0
 initial(R[]) <- 0
 initial(D_hosp[]) <- 0
 initial(D_comm[]) <- 0
+initial(PCR_pre[, ]) <- 0
 initial(PCR_pos[, ]) <- 0
+initial(PCR_neg[]) <- 0
 initial(cum_admit_conf) <- 0
 initial(cum_new_conf) <- 0
 initial(cum_admit_by_age[]) <- 0
@@ -557,6 +569,8 @@ p_admit_conf_step[] <- user()
 psi_admit_conf[] <- user()
 
 ## Parameters relating to PCR positivity
+s_PCR_pre <- user()
+gamma_PCR_pre <- user(0.1)
 s_PCR_pos <- user()
 gamma_PCR_pos <- user(0.1)
 
@@ -737,10 +751,16 @@ dim(D_comm) <- N_age
 dim(new_D_comm) <- N_age
 dim(delta_D_comm) <- N_age
 
-## Vectors handling the R_pos class
+## Vectors handling the PCR classes
+dim(PCR_pre) <- c(N_age, s_PCR_pre)
+dim(delta_PCR_pre) <- c(N_age, s_PCR_pre)
+dim(n_PCR_pre) <- c(N_age, s_PCR_pre)
+dim(new_PCR_pre) <- c(N_age, s_PCR_pre)
 dim(PCR_pos) <- c(N_age, s_PCR_pos)
 dim(delta_PCR_pos) <- c(N_age, s_PCR_pos)
 dim(n_PCR_pos) <- c(N_age, s_PCR_pos)
+dim(new_PCR_pos) <- c(N_age, s_PCR_pos)
+dim(PCR_neg) <- c(N_age)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
@@ -814,11 +834,13 @@ update(N_tot[]) <- sum(S[i, ]) + R[i] + D_hosp[i] + sum(E[i, , ]) +
   sum(I_comm_D[i, , ]) + D_comm[i]
 dim(N_tot) <- N_age
 
-## Total population calculated with seroconversion flow, exclude
-## triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with
-## R's
+## Total population calculated with seroconversion flow
 initial(N_tot2) <- 0
 update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
+
+## Total population calculated with PCR flow
+initial(N_tot3) <- 0
+update(N_tot3) <- sum(S) + sum(PCR_pre) + sum(PCR_pos) + sum(PCR_neg)
 
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
@@ -872,3 +894,7 @@ update(sero_prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
 
 initial(cum_sympt_cases) <- 0
 update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)
+
+## For REACT we exclude the 0-4 and CHR groups
+initial(react_pos) <- 0
+update(react_pos) <- sum(new_PCR_pos[2:18, ])

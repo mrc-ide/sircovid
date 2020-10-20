@@ -1,6 +1,6 @@
 context("carehomes (check)")
 
-test_that("N_tot and N_tot2 stay constant", {
+test_that("N_tot, N_tot2 and N_tot3 stay constant", {
   p <- carehomes_parameters(0, "uk")
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -15,9 +15,11 @@ test_that("N_tot and N_tot2 stay constant", {
   ## carehome residents around. However, it does mean that this is
   ## different between runs.  Do a careful check with the sircovid
   ## model. We are off by one! individual.
+  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
   expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
   expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
 })
 
 
@@ -426,6 +428,7 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D")
   helper("gamma_comm_D", "s_comm_D", "I_comm_D")
   helper("gamma_stepdown", "s_stepdown", "R_stepdown")
+  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre")
   helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos")
 })
 
@@ -455,7 +458,7 @@ test_that("setting a gamma to 0 results in no progression", {
 
     expect_true(any(z > 0))
 
-    if (!compartment_name %in% c("R_stepdown", "PCR_pos")) {
+    if (!compartment_name %in% c("R_stepdown", "PCR_pos", "PCR_pre")) {
       expect_true(all(z[, 2, , ] == 0))
     } else {
       expect_true(all(z[, 2, ] == 0))
@@ -475,6 +478,7 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D")
   helper("gamma_comm_D", "s_comm_D", "I_comm_D")
   helper("gamma_stepdown", "s_stepdown", "R_stepdown")
+  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre")
   helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos")
 })
 

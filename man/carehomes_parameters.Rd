@@ -18,6 +18,8 @@ carehomes_parameters(
   C_2 = 5e-05,
   pillar2_specificity = 0.99,
   pillar2_sensitivity = 0.99,
+  react_specificity = 0.99,
+  react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
   exp_noise = 1e+06
 )
@@ -71,6 +73,10 @@ residents or workers}
 \item{pillar2_specificity}{Specificity of the Pillar 2 test}
 
 \item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
+
+\item{react_specificity}{Specificity of the REACT test}
+
+\item{react_sensitivity}{Sensitivity of the REACT test}
 
 \item{prop_noncovid_sympt}{Proportion of population who do not have
 covid but have covid-like symptoms}
