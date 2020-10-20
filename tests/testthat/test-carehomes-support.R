@@ -154,6 +154,15 @@ test_that("carehome worker index is sensible", {
 })
 
 
+test_that("carehomes_index is properly named", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  mod <- carehomes$new(p, 0, 10)
+  info <- mod$info()
+  index <- carehomes_index(info)
+  expect_false(any(is.na(names(index))))
+})
+
+
 test_that("Can compute initial conditions", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   mod <- carehomes$new(p, 0, 10)

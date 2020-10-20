@@ -202,11 +202,24 @@ carehomes_index <- function(info) {
                   deaths = index[["D_tot"]],
                   infections = index[["cum_infections"]])
   suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
+  ## NOTE: We do use the S category for the Rt calculation in some
+  ## downstream work, so this is going to require some work to get
+  ## right.
+
+  n_vacc_classes <- info$dim$S[[2]]
+
+  ## To name our S categories following age and vaccine classes, we
+  ## use two suffixes. The first vaccination class is special and so
+  ## has an empty suffix so that we retain our model without
+  ## vaccination if needed.
+  ## S_0, S_5, ..., S_CHW, S_CHR, S_0_1, S_5_1, ..., S_CHW_1, S_CHR_1, ...
+  s_type <- rep(c("", sprintf("_%s", seq_len(n_vacc_classes - 1L))),
+                each = length(suffix))
+
   index_S <- set_names(index[["S"]],
-                       paste0("S", suffix))
+                       paste0("S", suffix, s_type))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
-
 
   list(run = index_run,
        state = c(index_run, index_save, index_S, index_cum_admit))
