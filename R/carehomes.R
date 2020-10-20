@@ -470,11 +470,6 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-##' Carehomes vaccination parameters.
-##'
-##' @title Carehomes vaccination parameters
-##'
-##' @return A list of parameter values
 carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
   check_rel_susceptibility(rel_susceptibility)
   list(

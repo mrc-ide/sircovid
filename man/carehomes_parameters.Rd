@@ -21,7 +21,7 @@ carehomes_parameters(
   react_specificity = 0.99,
   react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
-  rel_susc = 1,
+  rel_susceptibility = 1,
   exp_noise = 1e+06
 )
 }
@@ -82,9 +82,10 @@ residents or workers}
 \item{prop_noncovid_sympt}{Proportion of population who do not have
 covid but have covid-like symptoms}
 
-\item{rel_susc}{A vector of values representing the relative susceptibility
-of individuals in different vaccination groups. The first value should be
-1 (for the non-vaccinated group) and subsequent values be between 0 and 1.}
+\item{rel_susceptibility}{A vector of values representing the relative
+susceptibility of individuals in different vaccination groups. The first
+value should be 1 (for the non-vaccinated group) and subsequent values be
+between 0 and 1.}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
