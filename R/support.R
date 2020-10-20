@@ -82,6 +82,13 @@ dbetabinom <- function(x, size, prob, rho, log = FALSE) {
   out
 }
 
+test_prob_pos <- function(pos, neg, sensitivity, specificity, exp_noise) {
+  pos <- pos + rexp(length(pos), exp_noise)
+  neg <- neg + rexp(length(pos), exp_noise)
+  prob_pos <- (sensitivity * pos + (1 - specificity) * neg) / (pos + neg)
+  prob_pos
+}
+
 
 sircovid_transmission_matrix <- function(region) {
   if (is.null(cache$transmission_matrix[[region]])) {
