@@ -24,7 +24,9 @@ NULL
 ##' @param p_death_carehome Probability of death within carehomes
 ##'   (conditional on having an "inflenza-like-illness")
 ##'
-##' @param p_specificity Specificity of the serology test
+##' @param sero_specificity Specificity of the serology test
+##'
+##' @param sero_sensitivity Sensitivity of the serology test
 ##'
 ##' @param progression Progression data
 ##'
@@ -58,7 +60,8 @@ carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
                                  p_death_carehome = 0.7,
-                                 p_specificity = 0.9,
+                                 sero_specificity = 0.9,
+                                 sero_sensitivity = 0.99,
                                  progression = NULL,
                                  eps = 0.1,
                                  C_1 = 4e-6,
@@ -128,7 +131,8 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
 
   ## Specificity for serology tests
-  ret$p_specificity <- p_specificity
+  ret$sero_specificity <- sero_specificity
+  ret$sero_sensitivity <- sero_sensitivity
 
   ## Specificity and sensitivity for Pillar 2 testing
   ret$pillar2_specificity <- pillar2_specificity
@@ -185,7 +189,7 @@ carehomes_index <- function(info) {
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
-                 sero_prob_pos = index[["sero_prob_pos"]],
+                 sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  react_pos = index[["react_pos"]])
 
@@ -254,26 +258,31 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
   model_new_admitted <- model_admitted + model_new
-  model_sero_prob_pos <- state["sero_prob_pos", ]
+  model_sero_pos <- state["sero_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
   model_react_pos <- state["react_pos", ]
 
-  ## Add some small exponential noise in case the number of model cases is 0
-  pillar2_pos <- model_sympt_cases +
-    rexp(length(model_sympt_cases), pars$observation$exp_noise)
-  pillar2_neg <- pars$prop_noncovid_sympt *
-    (sum(pars$N_tot) - model_sympt_cases)
-  model_pillar2_prob_pos <- (pars$pillar2_sensitivity * pillar2_pos +
-                               (1 - pars$pillar2_specificity) * pillar2_neg) /
-    (pillar2_pos + pillar2_neg)
+  ## calculate test positive probabilities for the various test data streams
+  model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
+                                          pars$prop_noncovid_sympt *
+                                            (sum(pars$N_tot)
+                                             - model_sympt_cases),
+                                          pars$pillar2_sensitivity,
+                                          pars$pillar2_specificity,
+                                          pars$observation$exp_noise)
 
   ## Note that for REACT we exclude group 1 (0-4) and 19 (CHR)
-  react_pos <- model_react_pos +
-    rexp(length(model_react_pos), pars$observation$exp_noise)
-  react_neg <- sum(pars$N_tot[2:18]) - model_react_pos
-  model_react_prob_pos <- (pars$react_sensitivity * react_pos +
-                             (1 - pars$react_specificity) * react_neg) /
-    (react_pos + react_neg)
+  model_react_prob_pos <- test_prob_pos(model_react_pos,
+                                        sum(pars$N_tot[2:18]) - model_react_pos,
+                                        pars$react_sensitivity,
+                                        pars$react_specificity,
+                                        pars$observation$exp_noise)
+
+  model_sero_prob_pos <- test_prob_pos(model_sero_pos,
+                                       pars$N_tot_15_64 - model_sero_pos,
+                                       pars$sero_sensitivity,
+                                       pars$sero_specificity,
+                                       pars$observation$exp_noise)
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
