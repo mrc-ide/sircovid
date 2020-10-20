@@ -53,9 +53,9 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "p_specificity", "N_tot_15_64", "pillar2_specificity",
-      "pillar2_sensitivity", "react_specificity", "react_sensitivity",
-      "prop_noncovid_sympt", "psi_death_ICU",
+      "sero_specificity", "sero_sensitivity", "N_tot_15_64",
+      "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
+      "react_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
       "psi_hosp_ILI", "p_hosp_ILI_step", "psi_death_comm",
       "p_death_comm_step", "psi_ICU_hosp", "p_ICU_hosp_step",
@@ -122,7 +122,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("icu", "general", "deaths_comm", "deaths_hosp",
-      "admitted", "new", "sero_prob_pos", "sympt_cases", "react_pos"))
+      "admitted", "new", "sero_pos", "sympt_cases", "react_pos"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "I_ICU_tot"))
@@ -136,8 +136,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "cum_admit_conf"))
   expect_equal(index$run[["new"]],
                which(names(info$index) == "cum_new_conf"))
-  expect_equal(index$run[["sero_prob_pos"]],
-               which(names(info$index) == "sero_prob_pos"))
+  expect_equal(index$run[["sero_pos"]],
+               which(names(info$index) == "sero_pos"))
   expect_equal(index$run[["sympt_cases"]],
                which(names(info$index) == "cum_sympt_cases"))
   expect_equal(index$run[["react_pos"]],
@@ -215,11 +215,10 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
-    sero_prob_pos = (4:9) / 10,
+    sero_pos = 4:9,
     sympt_cases = 100:105,
     react_pos = 2:7)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
-  prev_state["sero_prob_pos", ] <- 1 / 10
   observed <- list(
     icu = 13,
     general = 23,
