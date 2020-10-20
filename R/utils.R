@@ -76,18 +76,20 @@ vnapply <- function(x, fun, ...) {
   vapply(x, fun, numeric(1), ...)
 }
 
+
 check_rel_susceptibility <- function(rel_susceptibility) {
-  between_zero_and_one <- all(rel_susceptibility >= 0 & rel_susceptibility <= 1)
-  first_group_is_reference <- rel_susceptibility[1] == 1
-  if (length(rel_susceptibility) > 1) {
-    # relative susceptibility is lowest in vaccinated group and then increases
-    waning_immunity <- all(diff(rel_susceptibility[-1]) > 0)
-  } else waning_immunity <- TRUE
-  message <- paste("rel_susceptibility does not have the expected format i.e.:",
-                   "- all values between 0 and 1, ",
-                   "- first value is 1,",
-                   "- and values thereafter are increasing.",
-                   sep = "\n")
-  if (!(between_zero_and_one & first_group_is_reference & waning_immunity))
-    stop(message)
+  if (length(rel_susceptibility) == 0) {
+    stop("At least one value required for 'rel_susceptibility'")
+  }
+  if (any(rel_susceptibility < 0 | rel_susceptibility > 1)) {
+    stop("All values of 'rel_susceptibility' must lie in [0, 1]")
+  }
+  if (rel_susceptibility[[1]] != 1) {
+    stop("First value of 'rel_susceptibility' must be 1")
+  }
+  if (!all(diff(rel_susceptibility[-1]) > 0)) {
+    stop(paste(
+      "All values after the first value in 'rel_susceptibility' must be",
+      "increasing"))
+  }
 }
