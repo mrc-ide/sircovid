@@ -69,6 +69,13 @@ extern "C" SEXP _sircovid_dust_basic_rng_state(SEXP ptr, SEXP first_only) {
   END_CPP11
 }
 // basic.cpp
+SEXP dust_basic_set_rng_state(SEXP ptr, cpp11::raws rng_state);
+extern "C" SEXP _sircovid_dust_basic_set_rng_state(SEXP ptr, SEXP rng_state) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_basic_set_rng_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::raws>>(rng_state)));
+  END_CPP11
+}
+// basic.cpp
 SEXP dust_basic_simulate(cpp11::sexp r_steps, cpp11::list r_data, cpp11::doubles_matrix r_state, cpp11::sexp r_index, const size_t n_threads, cpp11::sexp r_seed);
 extern "C" SEXP _sircovid_dust_basic_simulate(SEXP r_steps, SEXP r_data, SEXP r_state, SEXP r_index, SEXP n_threads, SEXP r_seed) {
   BEGIN_CPP11
@@ -147,6 +154,13 @@ extern "C" SEXP _sircovid_dust_carehomes_rng_state(SEXP ptr, SEXP first_only) {
   END_CPP11
 }
 // carehomes.cpp
+SEXP dust_carehomes_set_rng_state(SEXP ptr, cpp11::raws rng_state);
+extern "C" SEXP _sircovid_dust_carehomes_set_rng_state(SEXP ptr, SEXP rng_state) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_carehomes_set_rng_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::raws>>(rng_state)));
+  END_CPP11
+}
+// carehomes.cpp
 SEXP dust_carehomes_simulate(cpp11::sexp r_steps, cpp11::list r_data, cpp11::doubles_matrix r_state, cpp11::sexp r_index, const size_t n_threads, cpp11::sexp r_seed);
 extern "C" SEXP _sircovid_dust_carehomes_simulate(SEXP r_steps, SEXP r_data, SEXP r_state, SEXP r_index, SEXP n_threads, SEXP r_seed) {
   BEGIN_CPP11
@@ -170,6 +184,7 @@ extern SEXP _sircovid_dust_basic_reset(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_run(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_index(SEXP, SEXP);
+extern SEXP _sircovid_dust_basic_set_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_state(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_simulate(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_state(SEXP, SEXP);
@@ -181,34 +196,37 @@ extern SEXP _sircovid_dust_carehomes_reset(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_run(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_index(SEXP, SEXP);
+extern SEXP _sircovid_dust_carehomes_set_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_state(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_simulate(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_step(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_sircovid_dust_basic_alloc",          (DL_FUNC) &_sircovid_dust_basic_alloc,          5},
-    {"_sircovid_dust_basic_has_openmp",     (DL_FUNC) &_sircovid_dust_basic_has_openmp,     0},
-    {"_sircovid_dust_basic_reorder",        (DL_FUNC) &_sircovid_dust_basic_reorder,        2},
-    {"_sircovid_dust_basic_reset",          (DL_FUNC) &_sircovid_dust_basic_reset,          3},
-    {"_sircovid_dust_basic_rng_state",      (DL_FUNC) &_sircovid_dust_basic_rng_state,      2},
-    {"_sircovid_dust_basic_run",            (DL_FUNC) &_sircovid_dust_basic_run,            2},
-    {"_sircovid_dust_basic_set_index",      (DL_FUNC) &_sircovid_dust_basic_set_index,      2},
-    {"_sircovid_dust_basic_set_state",      (DL_FUNC) &_sircovid_dust_basic_set_state,      3},
-    {"_sircovid_dust_basic_simulate",       (DL_FUNC) &_sircovid_dust_basic_simulate,       6},
-    {"_sircovid_dust_basic_state",          (DL_FUNC) &_sircovid_dust_basic_state,          2},
-    {"_sircovid_dust_basic_step",           (DL_FUNC) &_sircovid_dust_basic_step,           1},
-    {"_sircovid_dust_carehomes_alloc",      (DL_FUNC) &_sircovid_dust_carehomes_alloc,      5},
-    {"_sircovid_dust_carehomes_has_openmp", (DL_FUNC) &_sircovid_dust_carehomes_has_openmp, 0},
-    {"_sircovid_dust_carehomes_reorder",    (DL_FUNC) &_sircovid_dust_carehomes_reorder,    2},
-    {"_sircovid_dust_carehomes_reset",      (DL_FUNC) &_sircovid_dust_carehomes_reset,      3},
-    {"_sircovid_dust_carehomes_rng_state",  (DL_FUNC) &_sircovid_dust_carehomes_rng_state,  2},
-    {"_sircovid_dust_carehomes_run",        (DL_FUNC) &_sircovid_dust_carehomes_run,        2},
-    {"_sircovid_dust_carehomes_set_index",  (DL_FUNC) &_sircovid_dust_carehomes_set_index,  2},
-    {"_sircovid_dust_carehomes_set_state",  (DL_FUNC) &_sircovid_dust_carehomes_set_state,  3},
-    {"_sircovid_dust_carehomes_simulate",   (DL_FUNC) &_sircovid_dust_carehomes_simulate,   6},
-    {"_sircovid_dust_carehomes_state",      (DL_FUNC) &_sircovid_dust_carehomes_state,      2},
-    {"_sircovid_dust_carehomes_step",       (DL_FUNC) &_sircovid_dust_carehomes_step,       1},
+    {"_sircovid_dust_basic_alloc",             (DL_FUNC) &_sircovid_dust_basic_alloc,             5},
+    {"_sircovid_dust_basic_has_openmp",        (DL_FUNC) &_sircovid_dust_basic_has_openmp,        0},
+    {"_sircovid_dust_basic_reorder",           (DL_FUNC) &_sircovid_dust_basic_reorder,           2},
+    {"_sircovid_dust_basic_reset",             (DL_FUNC) &_sircovid_dust_basic_reset,             3},
+    {"_sircovid_dust_basic_rng_state",         (DL_FUNC) &_sircovid_dust_basic_rng_state,         2},
+    {"_sircovid_dust_basic_run",               (DL_FUNC) &_sircovid_dust_basic_run,               2},
+    {"_sircovid_dust_basic_set_index",         (DL_FUNC) &_sircovid_dust_basic_set_index,         2},
+    {"_sircovid_dust_basic_set_rng_state",     (DL_FUNC) &_sircovid_dust_basic_set_rng_state,     2},
+    {"_sircovid_dust_basic_set_state",         (DL_FUNC) &_sircovid_dust_basic_set_state,         3},
+    {"_sircovid_dust_basic_simulate",          (DL_FUNC) &_sircovid_dust_basic_simulate,          6},
+    {"_sircovid_dust_basic_state",             (DL_FUNC) &_sircovid_dust_basic_state,             2},
+    {"_sircovid_dust_basic_step",              (DL_FUNC) &_sircovid_dust_basic_step,              1},
+    {"_sircovid_dust_carehomes_alloc",         (DL_FUNC) &_sircovid_dust_carehomes_alloc,         5},
+    {"_sircovid_dust_carehomes_has_openmp",    (DL_FUNC) &_sircovid_dust_carehomes_has_openmp,    0},
+    {"_sircovid_dust_carehomes_reorder",       (DL_FUNC) &_sircovid_dust_carehomes_reorder,       2},
+    {"_sircovid_dust_carehomes_reset",         (DL_FUNC) &_sircovid_dust_carehomes_reset,         3},
+    {"_sircovid_dust_carehomes_rng_state",     (DL_FUNC) &_sircovid_dust_carehomes_rng_state,     2},
+    {"_sircovid_dust_carehomes_run",           (DL_FUNC) &_sircovid_dust_carehomes_run,           2},
+    {"_sircovid_dust_carehomes_set_index",     (DL_FUNC) &_sircovid_dust_carehomes_set_index,     2},
+    {"_sircovid_dust_carehomes_set_rng_state", (DL_FUNC) &_sircovid_dust_carehomes_set_rng_state, 2},
+    {"_sircovid_dust_carehomes_set_state",     (DL_FUNC) &_sircovid_dust_carehomes_set_state,     3},
+    {"_sircovid_dust_carehomes_simulate",      (DL_FUNC) &_sircovid_dust_carehomes_simulate,      6},
+    {"_sircovid_dust_carehomes_state",         (DL_FUNC) &_sircovid_dust_carehomes_state,         2},
+    {"_sircovid_dust_carehomes_step",          (DL_FUNC) &_sircovid_dust_carehomes_step,          1},
     {NULL, NULL, 0}
 };
 }
