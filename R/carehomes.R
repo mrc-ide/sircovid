@@ -78,10 +78,6 @@ carehomes_parameters <- function(start_date, region,
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
-  ## TO DO: we should add some checks for pillar2_specificity,
-  ## pillar2_sensitivity, prop_noncovid_sympt, rel_susceptibility
-  ## which should all only contain values between 0 and 1
-
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
   carehome_workers_per_resident <- 1
@@ -467,6 +463,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 ##'
 ##' @return A list of parameter values
 carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
+  check_rel_susceptibility(rel_susceptibility)
   list(
     # leaving this function as will add more vaccination parameters later
     rel_susceptibility = rel_susceptibility

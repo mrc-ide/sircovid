@@ -79,7 +79,7 @@ vnapply <- function(x, fun, ...) {
 check_rel_susceptibility <- function(rel_susceptibility) {
   between_zero_and_one <- all(rel_susceptibility >= 0 & rel_susceptibility <= 1)
   first_group_is_reference <- rel_susceptibility[1] == 1
-  if(length(rel_susceptibility) > 1) {
+  if (length(rel_susceptibility) > 1) {
     # relative susceptibility is lowest in vaccinated group and then increases
     waning_immunity <- all(diff(rel_susceptibility[-1]) > 0)
   } else waning_immunity <- TRUE
@@ -88,6 +88,6 @@ check_rel_susceptibility <- function(rel_susceptibility) {
                    "- first value is 1,",
                    "- and values thereafter are increasing.",
                    sep = "\n")
-  if(!(between_zero_and_one & first_group_is_reference & waning_immunity))
+  if (!(between_zero_and_one & first_group_is_reference & waning_immunity))
     stop(message)
 }
