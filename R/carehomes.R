@@ -466,8 +466,9 @@ carehomes_initial <- function(info, n_particles, pars) {
 ##'
 ##' @return A list of parameter values
 carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
-  list(N_vacc_classes = length(rel_susceptibility),
-       rel_susceptibility = rel_susceptibility
+  list(
+    # leaving this function as will add more vaccination parameters later
+    rel_susceptibility = rel_susceptibility 
   )
 }
 

@@ -9,7 +9,6 @@
 ## so it's N_age plus 2 now! N_group is ok but more vague than ideal.
 N_age <- user()
 trans_classes <- user(1)
-N_vacc_classes <- user(1)
 
 ## Definition of the time-step and output as "time"
 dt <- user()
@@ -17,7 +16,7 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
-update(S[, ]) <- S[i, j] - n_SE[i, j] # age / vaccination status
+update(S[, ]) <- S[i, j] - n_SE[i, j] # age, vaccination status
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
@@ -485,7 +484,8 @@ initial(cum_admit_by_age[]) <- 0
 
 ## Parameters of the S classes
 rel_susceptibility[] <- user()
-dim(rel_susceptibility) <- N_vacc_classes
+dim(rel_susceptibility) <- user() # use length as provided by the user
+N_vacc_classes <- length(rel_susceptibility)
 
 ## Parameters of the E classes
 s_E <- user()
