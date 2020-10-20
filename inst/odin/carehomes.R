@@ -63,7 +63,8 @@ update(cum_new_conf) <-
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
-p_SE[, ] <- 1 - exp(-lambda[i] * rel_susceptibility[j] * dt) # S to I age/vacc dependent
+p_SE[, ] <- 1 - exp(-lambda[i] *
+                      rel_susceptibility[j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
 p_II_mild <- 1 - exp(-gamma_mild * dt)

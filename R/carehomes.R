@@ -46,9 +46,10 @@ NULL
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
-##' @param rel_susceptibility A vector of values representing the relative susceptibility
-##'   of individuals in different vaccination groups. The first value should be
-##'   1 (for the non-vaccinated group) and subsequent values be between 0 and 1.
+##' @param rel_susceptibility A vector of values representing the relative
+##'   susceptibility of individuals in different vaccination groups. The first
+##'   value should be 1 (for the non-vaccinated group) and subsequent values be
+##'   between 0 and 1.
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -78,8 +79,8 @@ carehomes_parameters <- function(start_date, region,
                                     beta_date, beta_value)
 
   ## TO DO: we should add some checks for pillar2_specificity,
-  ## pillar2_sensitivity, prop_noncovid_sympt, rel_susceptibility which should all only
-  ## contain values between 0 and 1
+  ## pillar2_sensitivity, prop_noncovid_sympt, rel_susceptibility
+  ## which should all only contain values between 0 and 1
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
@@ -468,7 +469,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
   list(
     # leaving this function as will add more vaccination parameters later
-    rel_susceptibility = rel_susceptibility 
+    rel_susceptibility = rel_susceptibility
   )
 }
 
