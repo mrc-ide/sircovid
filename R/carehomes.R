@@ -46,7 +46,7 @@ NULL
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
-##' @param rel_susc A vector of values representing the relative susceptibility
+##' @param rel_susceptibility A vector of values representing the relative susceptibility
 ##'   of individuals in different vaccination groups. The first value should be
 ##'   1 (for the non-vaccinated group) and subsequent values be between 0 and 1.
 ##'
@@ -72,13 +72,13 @@ carehomes_parameters <- function(start_date, region,
                                  react_specificity = 0.99,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
-                                 rel_susc = 1,
+                                 rel_susceptibility = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
   ## TO DO: we should add some checks for pillar2_specificity,
-  ## pillar2_sensitivity, prop_noncovid_sympt, rel_susc which should all only
+  ## pillar2_sensitivity, prop_noncovid_sympt, rel_susceptibility which should all only
   ## contain values between 0 and 1
 
   ## These are only used here, and are fixed
@@ -125,7 +125,7 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
 
-  vaccination <- carehomes_parameters_vaccination(rel_susc)
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility)
 
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
@@ -465,11 +465,9 @@ carehomes_initial <- function(info, n_particles, pars) {
 ##' @title Carehomes vaccination parameters
 ##'
 ##' @return A list of parameter values
-##'
-##' @export
-carehomes_parameters_vaccination <- function(rel_susc = 1) {
-  list(N_vacc_classes = length(rel_susc),
-       rel_susc = rel_susc
+carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
+  list(N_vacc_classes = length(rel_susceptibility),
+       rel_susceptibility = rel_susceptibility
   )
 }
 
