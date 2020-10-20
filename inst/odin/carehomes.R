@@ -408,7 +408,7 @@ delta_R[] <-
   sum(n_R_stepdown_unconf[i, s_stepdown])
 
 ## Work out the PCR positivity
-delta_PCR_pos[, 1] <- sum(n_SE[i, ])
+delta_PCR_pre[, 1] <- sum(n_SE[i, ])
 delta_PCR_pre[, 2:s_PCR_pre] <- n_PCR_pre[i, j - 1]
 delta_PCR_pre[, ] <- delta_PCR_pre[i, j] - n_PCR_pre[i, j]
 new_PCR_pre[, ] <- PCR_pre[i, j] + delta_PCR_pre[i, j]

@@ -1416,14 +1416,18 @@ public:
     for (int_t i = 1; i <= internal.dim_delta_D_hosp; ++i) {
       internal.delta_D_hosp[i - 1] = odin_sum3(internal.n_II_hosp_D_unconf.data(), i - 1, i, internal.s_hosp_D - 1, internal.s_hosp_D, 0, internal.dim_n_II_hosp_D_unconf_3, internal.dim_n_II_hosp_D_unconf_1, internal.dim_n_II_hosp_D_unconf_12) + odin_sum3(internal.n_II_hosp_D_conf.data(), i - 1, i, internal.s_hosp_D - 1, internal.s_hosp_D, 0, internal.dim_n_II_hosp_D_conf_3, internal.dim_n_II_hosp_D_conf_1, internal.dim_n_II_hosp_D_conf_12) + odin_sum3(internal.n_II_ICU_D_unconf.data(), i - 1, i, internal.s_ICU_D - 1, internal.s_ICU_D, 0, internal.dim_n_II_ICU_D_unconf_3, internal.dim_n_II_ICU_D_unconf_1, internal.dim_n_II_ICU_D_unconf_12) + odin_sum3(internal.n_II_ICU_D_conf.data(), i - 1, i, internal.s_ICU_D - 1, internal.s_ICU_D, 0, internal.dim_n_II_ICU_D_conf_3, internal.dim_n_II_ICU_D_conf_1, internal.dim_n_II_ICU_D_conf_12);
     }
-    for (int_t i = 1; i <= internal.dim_delta_PCR_pre_1; ++i) {
-      for (int_t j = 2; j <= internal.s_PCR_pre; ++j) {
-        internal.delta_PCR_pre[i - 1 + internal.dim_delta_PCR_pre_1 * (j - 1)] = internal.n_PCR_pre[internal.dim_n_PCR_pre_1 * (j - 1 - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_delta_PCR_pos_1; ++i) {
+      int_t j = 1;
+      internal.delta_PCR_pos[i - 1 + internal.dim_delta_PCR_pos_1 * (j - 1)] = internal.n_PCR_pre[internal.dim_n_PCR_pre_1 * (internal.s_PCR_pre - 1) + i - 1];
+    }
+    for (int_t i = 1; i <= internal.dim_delta_PCR_pos_1; ++i) {
+      for (int_t j = 2; j <= internal.s_PCR_pos; ++j) {
+        internal.delta_PCR_pos[i - 1 + internal.dim_delta_PCR_pos_1 * (j - 1)] = internal.n_PCR_pos[internal.dim_n_PCR_pos_1 * (j - 1 - 1) + i - 1];
       }
     }
-    for (int_t i = 1; i <= internal.dim_delta_PCR_pre_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_delta_PCR_pre_2; ++j) {
-        internal.delta_PCR_pre[i - 1 + internal.dim_delta_PCR_pre_1 * (j - 1)] = internal.delta_PCR_pre[internal.dim_delta_PCR_pre_1 * (j - 1) + i - 1] - internal.n_PCR_pre[internal.dim_n_PCR_pre_1 * (j - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_delta_PCR_pos_1; ++i) {
+      for (int_t j = 1; j <= internal.dim_delta_PCR_pos_2; ++j) {
+        internal.delta_PCR_pos[i - 1 + internal.dim_delta_PCR_pos_1 * (j - 1)] = internal.delta_PCR_pos[internal.dim_delta_PCR_pos_1 * (j - 1) + i - 1] - internal.n_PCR_pos[internal.dim_n_PCR_pos_1 * (j - 1) + i - 1];
       }
     }
     for (int_t i = 1; i <= internal.dim_I_with_diff_trans_1; ++i) {
@@ -1546,9 +1550,9 @@ public:
     for (int_t i = 1; i <= internal.dim_new_D_hosp; ++i) {
       internal.new_D_hosp[i - 1] = D_hosp[i - 1] + internal.delta_D_hosp[i - 1];
     }
-    for (int_t i = 1; i <= internal.dim_new_PCR_pre_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_new_PCR_pre_2; ++j) {
-        internal.new_PCR_pre[i - 1 + internal.dim_new_PCR_pre_1 * (j - 1)] = PCR_pre[internal.dim_PCR_pre_1 * (j - 1) + i - 1] + internal.delta_PCR_pre[internal.dim_delta_PCR_pre_1 * (j - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_new_PCR_pos_1; ++i) {
+      for (int_t j = 1; j <= internal.dim_new_PCR_pos_2; ++j) {
+        internal.new_PCR_pos[i - 1 + internal.dim_new_PCR_pos_1 * (j - 1)] = PCR_pos[internal.dim_PCR_pos_1 * (j - 1) + i - 1] + internal.delta_PCR_pos[internal.dim_delta_PCR_pos_1 * (j - 1) + i - 1];
       }
     }
     for (int_t i = 1; i <= internal.dim_new_R_pre_1; ++i) {
@@ -1684,9 +1688,9 @@ public:
     for (int_t i = 1; i <= internal.dim_D_hosp; ++i) {
       state_next[internal.offset_variable_D_hosp + i - 1] = internal.new_D_hosp[i - 1];
     }
-    for (int_t i = 1; i <= internal.dim_PCR_pre_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_PCR_pre_2; ++j) {
-        state_next[internal.offset_variable_PCR_pre + i - 1 + internal.dim_PCR_pre_1 * (j - 1)] = internal.new_PCR_pre[internal.dim_new_PCR_pre_1 * (j - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_PCR_pos_1; ++i) {
+      for (int_t j = 1; j <= internal.dim_PCR_pos_2; ++j) {
+        state_next[internal.offset_variable_PCR_pos + i - 1 + internal.dim_PCR_pos_1 * (j - 1)] = internal.new_PCR_pos[internal.dim_new_PCR_pos_1 * (j - 1) + i - 1];
       }
     }
     for (int_t i = 1; i <= internal.dim_R; ++i) {
@@ -1697,6 +1701,7 @@ public:
         state_next[internal.offset_variable_R_pre + i - 1 + internal.dim_R_pre_1 * (j - 1)] = internal.new_R_pre[internal.dim_new_R_pre_1 * (j - 1) + i - 1];
       }
     }
+    state_next[15] = odin_sum2(internal.new_PCR_pos.data(), 1, 18, 0, internal.dim_new_PCR_pos_2, internal.dim_new_PCR_pos_1);
     for (int_t i = 1; i <= internal.dim_aux_II_ILI_1; ++i) {
       int_t j = 1;
       for (int_t k = 1; k <= internal.dim_aux_II_ILI_3; ++k) {
@@ -1871,22 +1876,18 @@ public:
         }
       }
     }
-    for (int_t i = 1; i <= internal.dim_delta_PCR_pos_1; ++i) {
+    for (int_t i = 1; i <= internal.dim_delta_PCR_pre_1; ++i) {
       int_t j = 1;
-      internal.delta_PCR_pos[i - 1 + internal.dim_delta_PCR_pos_1 * (j - 1)] = odin_sum2(internal.n_SE.data(), i - 1, i, 0, internal.dim_n_SE_2, internal.dim_n_SE_1);
+      internal.delta_PCR_pre[i - 1 + internal.dim_delta_PCR_pre_1 * (j - 1)] = odin_sum2(internal.n_SE.data(), i - 1, i, 0, internal.dim_n_SE_2, internal.dim_n_SE_1);
     }
-    for (int_t i = 1; i <= internal.dim_delta_PCR_pos_1; ++i) {
-      int_t j = 1;
-      internal.delta_PCR_pos[i - 1 + internal.dim_delta_PCR_pos_1 * (j - 1)] = internal.n_PCR_pre[internal.dim_n_PCR_pre_1 * (internal.s_PCR_pre - 1) + i - 1];
-    }
-    for (int_t i = 1; i <= internal.dim_delta_PCR_pos_1; ++i) {
-      for (int_t j = 2; j <= internal.s_PCR_pos; ++j) {
-        internal.delta_PCR_pos[i - 1 + internal.dim_delta_PCR_pos_1 * (j - 1)] = internal.n_PCR_pos[internal.dim_n_PCR_pos_1 * (j - 1 - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_delta_PCR_pre_1; ++i) {
+      for (int_t j = 2; j <= internal.s_PCR_pre; ++j) {
+        internal.delta_PCR_pre[i - 1 + internal.dim_delta_PCR_pre_1 * (j - 1)] = internal.n_PCR_pre[internal.dim_n_PCR_pre_1 * (j - 1 - 1) + i - 1];
       }
     }
-    for (int_t i = 1; i <= internal.dim_delta_PCR_pos_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_delta_PCR_pos_2; ++j) {
-        internal.delta_PCR_pos[i - 1 + internal.dim_delta_PCR_pos_1 * (j - 1)] = internal.delta_PCR_pos[internal.dim_delta_PCR_pos_1 * (j - 1) + i - 1] - internal.n_PCR_pos[internal.dim_n_PCR_pos_1 * (j - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_delta_PCR_pre_1; ++i) {
+      for (int_t j = 1; j <= internal.dim_delta_PCR_pre_2; ++j) {
+        internal.delta_PCR_pre[i - 1 + internal.dim_delta_PCR_pre_1 * (j - 1)] = internal.delta_PCR_pre[internal.dim_delta_PCR_pre_1 * (j - 1) + i - 1] - internal.n_PCR_pre[internal.dim_n_PCR_pre_1 * (j - 1) + i - 1];
       }
     }
     for (int_t i = 1; i <= internal.dim_n_ILI_to_hosp_D_1; ++i) {
@@ -1965,9 +1966,9 @@ public:
         internal.new_I_triage_D_unconf[i - 1 + internal.dim_new_I_triage_D_unconf_1 * (j - 1) + internal.dim_new_I_triage_D_unconf_12 * (k - 1)] = internal.new_I_triage_D_unconf[internal.dim_new_I_triage_D_unconf_12 * (k - 1) + internal.dim_new_I_triage_D_unconf_1 * 0 + i - 1] + internal.n_ILI_to_triage_D[internal.dim_n_ILI_to_triage_D_1 * (k - 1) + i - 1] - internal.n_ILI_to_triage_D_conf[internal.dim_n_ILI_to_triage_D_conf_1 * (k - 1) + i - 1];
       }
     }
-    for (int_t i = 1; i <= internal.dim_new_PCR_pos_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_new_PCR_pos_2; ++j) {
-        internal.new_PCR_pos[i - 1 + internal.dim_new_PCR_pos_1 * (j - 1)] = PCR_pos[internal.dim_PCR_pos_1 * (j - 1) + i - 1] + internal.delta_PCR_pos[internal.dim_delta_PCR_pos_1 * (j - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_new_PCR_pre_1; ++i) {
+      for (int_t j = 1; j <= internal.dim_new_PCR_pre_2; ++j) {
+        internal.new_PCR_pre[i - 1 + internal.dim_new_PCR_pre_1 * (j - 1)] = PCR_pre[internal.dim_PCR_pre_1 * (j - 1) + i - 1] + internal.delta_PCR_pre[internal.dim_delta_PCR_pre_1 * (j - 1) + i - 1];
       }
     }
     for (int_t i = 1; i <= internal.dim_n_ILI_to_hosp_R_conf_1; ++i) {
@@ -2048,12 +2049,11 @@ public:
         }
       }
     }
-    for (int_t i = 1; i <= internal.dim_PCR_pos_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_PCR_pos_2; ++j) {
-        state_next[internal.offset_variable_PCR_pos + i - 1 + internal.dim_PCR_pos_1 * (j - 1)] = internal.new_PCR_pos[internal.dim_new_PCR_pos_1 * (j - 1) + i - 1];
+    for (int_t i = 1; i <= internal.dim_PCR_pre_1; ++i) {
+      for (int_t j = 1; j <= internal.dim_PCR_pre_2; ++j) {
+        state_next[internal.offset_variable_PCR_pre + i - 1 + internal.dim_PCR_pre_1 * (j - 1)] = internal.new_PCR_pre[internal.dim_new_PCR_pre_1 * (j - 1) + i - 1];
       }
     }
-    state_next[15] = odin_sum2(internal.new_PCR_pos.data(), 1, 18, 0, internal.dim_new_PCR_pos_2, internal.dim_new_PCR_pos_1);
     for (int_t i = 1; i <= internal.dim_new_I_hosp_R_conf_1; ++i) {
       for (int_t j = 1; j <= internal.dim_new_I_hosp_R_conf_2; ++j) {
         for (int_t k = 1; k <= internal.dim_new_I_hosp_R_conf_3; ++k) {
