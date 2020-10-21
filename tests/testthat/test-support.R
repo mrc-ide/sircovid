@@ -222,6 +222,22 @@ test_that("dbetabinom", {
   expect_equal(f(672, 50454, 3, 2, log = TRUE), -16.99016, tolerance = 1e-5)
 })
 
+test_that("test_prob_pos", {
+  ## test_prob_pos outputs between 0 and 1 even when specificity and sensitivity
+  ## are 100% and there are no positive individuals
+  p <- test_prob_pos(0, 5e7, 1, 1, 1e6)
+  expect_true(
+    p > 0 & p < 1
+  )
+
+  ## test_prob_pos outputs between 0 and 1 even when specificity and sensitivity
+  ## are 100% and there are no negative individuals
+  p <- test_prob_pos(5e7, 0, 1, 1, 1e6)
+  expect_true(
+    p > 0 & p < 1
+  )
+})
+
 
 test_that("transmission matrix", {
   clear_cache()
