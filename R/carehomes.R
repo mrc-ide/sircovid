@@ -655,12 +655,25 @@ carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
                 "deaths", "admitted", "new", "new_admitted", "npos_15_64",
                 "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
-                "pillar2_ove25_pos", "pillar2_over25_tot",
+                "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot")
+
   verify_names(data, required, allow_extra = TRUE)
+
   if (any(!is.na(data$deaths) &
            (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
     stop("Deaths are not consistently split into total vs community/hospital")
   }
+
+  pillar2_streams <- sum(c(any(!is.na(data$pillar2_pos)) |
+                             any(!is.na(data$pillar2_tot)),
+                           any(!is.na(data$pillar2_cases)),
+                           any(!is.na(data$pillar2_over25_pos)) |
+                             any(!is.na(data$pillar2_over25_tot)),
+                           any(!is.na(data$pillar2_over25_cases))))
+  if (pillar2_streams > 1) {
+    stop("Cannot fit to more than one pillar 2 data stream")
+  }
+
   data
 }

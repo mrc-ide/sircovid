@@ -345,3 +345,67 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
     carehomes_particle_filter(data),
     "Deaths are not consistently split into total vs community/hospital")
 })
+
+
+test_that("carehomes_particle_filter_data does not allow more than one pillar 2
+          data stream", {
+  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                        1, 0.25)
+  ## Add additional columns
+  data$deaths_hosp <- NA
+  data$deaths_comm <- NA
+  data$general <- NA
+  data$hosp <- NA
+  data$admitted <- NA
+  data$new <- NA
+  data$new_admitted <- NA
+  data$npos_15_64 <- NA
+  data$ntot_15_64 <- NA
+  data$pillar2_pos <- NA
+  data$pillar2_tot <- NA
+  data$pillar2_cases <- NA
+  data$pillar2_over25_pos <- NA
+  data$pillar2_over25_tot <- NA
+  data$pillar2_over25_cases <- NA
+  data$react_pos <- NA
+  data$react_tot <- NA
+
+  ## Example that should not cause error
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  pf <- carehomes_particle_filter(data, 10)
+  expect_s3_class(pf, "particle_filter")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_cases <- 5
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_cases <- NA
+  data$pillar2_over25_cases <- 5
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_over25_cases <- 5
+  data$pillar2_over25_pos <- 3
+  data$pillar2_over25_tot <- 6
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+
+  data$pillar2_pos <- NA
+  data$pillar2_tot <- NA
+  data$pillar2_over25_cases <- 5
+  data$pillar2_over25_pos <- 3
+  data$pillar2_over25_tot <- 6
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+})
