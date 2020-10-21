@@ -94,7 +94,7 @@ test_prob_pos <- function(pos, neg, sensitivity, specificity, exp_noise) {
   ## circumstances to prevent the particle filter from breaking.
 
   pos <- pos + rexp(length(pos), exp_noise)
-  neg <- neg + rexp(length(pos), exp_noise)
+  neg <- neg + rexp(length(neg), exp_noise)
 
   prob_pos <- (sensitivity * pos + (1 - specificity) * neg) / (pos + neg)
   prob_pos
