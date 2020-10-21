@@ -881,6 +881,11 @@ update(sero_pos) <- sum(new_R_pos[4:13])
 initial(cum_sympt_cases) <- 0
 update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)
 
-## For REACT we exclude the 0-4 and CHR groups
+## only over 25s (exclude groups 1 to 5)
+initial(cum_sympt_cases_over25) <- 0
+update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
+  sum(n_EI_mild[6:19, ]) + sum(n_EI_ILI[6:19, ])
+
+## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
 update(react_pos) <- sum(new_PCR_pos[2:18, ])

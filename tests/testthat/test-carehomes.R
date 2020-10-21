@@ -20,6 +20,7 @@ test_that("can run the carehomes model", {
     new = c(484264, 485023, 484041, 484970, 484513),
     sero_pos = c(25153428, 25148482, 25147612, 25145074, 25152018),
     sympt_cases = c(30886202, 30881184, 30872615, 30878988, 30880678),
+    sympt_cases_over25 = c(20922501, 20920145, 20913635, 20920082, 20921007),
     react_pos = c(311, 524, 415, 1906, 186))
   expect_equal(res, expected)
 })
@@ -44,6 +45,9 @@ test_that("can run the particle filter on the model", {
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
+  data$pillar2_over25_pos <- NA
+  data$pillar2_over25_tot <- NA
+  data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
 
