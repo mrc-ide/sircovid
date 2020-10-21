@@ -336,6 +336,9 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
+  data$pillar2_over25_pos <- NA
+  data$pillar2_over25_tot <- NA
+  data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
   expect_error(
