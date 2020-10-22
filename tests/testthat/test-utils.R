@@ -125,15 +125,14 @@ test_that("check_rel_susceptibility rejects out of bounds errors", {
   expect_error(
     check_rel_susceptibility(c(0.9, 0.8)),
     "First value of 'rel_susceptibility' must be 1")
-  expect_error(
-    check_rel_susceptibility(c(1, 0.8, 0.7)))
-    "All values after the first value in 'rel_susceptibility'"
 })
 
 
 test_that("check_rel_susceptibility allows sensible inputs", {
   expect_silent(
     check_rel_susceptibility(c(1, 0.5, 0.7)))
+  expect_silent(
+    check_rel_susceptibility(c(1, 0.7, 0.5)))
   expect_silent(
     check_rel_susceptibility(1))
   expect_silent(

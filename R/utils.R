@@ -99,9 +99,4 @@ check_rel_susceptibility <- function(rel_susceptibility) {
   if (rel_susceptibility[[1]] != 1) {
     stop("First value of 'rel_susceptibility' must be 1")
   }
-  if (!all(diff(rel_susceptibility[-1]) > 0)) {
-    stop(paste(
-      "All values after the first value in 'rel_susceptibility' must be",
-      "increasing"))
-  }
 }
