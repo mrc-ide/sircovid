@@ -142,3 +142,11 @@ test_that("check_rel_susceptibility allows sensible inputs", {
   expect_silent(
     check_rel_susceptibility(c(1, 0, 1)))
 })
+
+test_that("check_rel_susceptibility rejects objects of the wrong dimension", {
+  expect_error(
+    build_rel_susceptibility(
+    rel_susceptibility = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE), 
+    N_age = 3),
+    "'rel_susceptibility' should have as many rows as age groups")
+})

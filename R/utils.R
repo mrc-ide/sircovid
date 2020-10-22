@@ -78,6 +78,9 @@ vnapply <- function(x, fun, ...) {
 
 build_rel_susceptibility <- function(rel_susceptibility, N_age) {
   if (is.matrix(rel_susceptibility)) {
+    if (nrow(rel_susceptibility) != N_age) {
+      stop("'rel_susceptibility' should have as many rows as age groups")
+    }
     for (i in seq_len(nrow(rel_susceptibility))) {
       check_rel_susceptibility(rel_susceptibility[i, ])
     }
