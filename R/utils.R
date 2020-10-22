@@ -103,3 +103,12 @@ check_rel_susceptibility <- function(rel_susceptibility) {
     stop("First value of 'rel_susceptibility' must be 1")
   }
 }
+
+## TO DO: add checks that 
+
+# vaccination_rate is a vector of length N_age
+# (eventually needs to make it possible to vary over time)
+
+# vaccine_progression_rate is a matrix 
+# with N_age rows and N_vacc_classes - 2 columns
+
