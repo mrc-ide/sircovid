@@ -46,10 +46,16 @@ NULL
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
-##' @param rel_susceptibility A vector of values representing the relative
-##'   susceptibility of individuals in different vaccination groups. The first
-##'   value should be 1 (for the non-vaccinated group) and subsequent values be
-##'   between 0 and 1.
+##' @param rel_susceptibility A vector or matrix of values representing the 
+##'   relative susceptibility of individuals in different vaccination groups. 
+##'   If a vector, the first value should be 1 (for the non-vaccinated group) 
+##'   and subsequent values be between 0 and 1. In that case relative 
+##'   susceptibility will be the same across all age groups within one 
+##'   vaccination category. Specifying a matrix instead of a vector allows
+##'   different relative susceptibilities by age (rows of the matrix) and 
+##'   vaccination group (columns of the matrix); in that case, in each row of 
+##'   the matrix, the first value should be 1 (for the non-vaccinated group) 
+##'   and subsequent values be between 0 and 1 
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -122,8 +128,6 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
 
-  vaccination <- carehomes_parameters_vaccination(rel_susceptibility)
-
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
@@ -156,6 +160,8 @@ carehomes_parameters <- function(start_date, region,
   ## then update the leading dimension to something more accurate
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
+  
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility, N_age)
 
   c(ret, severity, progression, vaccination)
 }
@@ -470,8 +476,8 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
-  check_rel_susceptibility(rel_susceptibility)
+carehomes_parameters_vaccination <- function(rel_susceptibility = 1, N_age) {
+  rel_susceptibility <- build_rel_susceptibility(rel_susceptibility, N_age)
   list(
     # leaving this function as will add more vaccination parameters later
     rel_susceptibility = rel_susceptibility

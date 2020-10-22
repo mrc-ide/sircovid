@@ -64,7 +64,7 @@ update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
 p_SE[, ] <- 1 - exp(-lambda[i] *
-                      rel_susceptibility[j] * dt) # S to I age/vacc dependent
+                      rel_susceptibility[i,j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
 p_II_mild <- 1 - exp(-gamma_mild * dt)
@@ -484,9 +484,9 @@ initial(cum_admit_by_age[]) <- 0
 ## User defined parameters - default in parentheses:
 
 ## Parameters of the S classes
-rel_susceptibility[] <- user()
+rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
-N_vacc_classes <- length(rel_susceptibility)
+N_vacc_classes <- dim(rel_susceptibility, 2)
 
 ## Parameters of the E classes
 s_E <- user()
