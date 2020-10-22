@@ -8,7 +8,7 @@ test_that("Can calculate Rt", {
   d <- reference_data_rt()
 
   ## adding rel_susceptibility here as was not in parameters when data generated
-  d$inputs$p$rel_susceptibility <- 1
+  d$inputs$p$rel_susceptibility <- build_rel_susceptibility(1, d$inputs$p$N_age)
 
   p <- d$inputs$p
   steps <- d$inputs$steps
@@ -45,7 +45,7 @@ test_that("validate inputs in rt calculation", {
   d <- reference_data_rt()
 
   ## adding rel_susceptibility here as was not in parameters when data generated
-  d$inputs$p$rel_susceptibility <- 1
+  d$inputs$p$rel_susceptibility <- build_rel_susceptibility(1, d$inputs$p$N_age)
 
   p <- d$inputs$p
   steps <- d$inputs$steps
@@ -66,7 +66,7 @@ test_that("validate inputs in rt trajectories calculation", {
   d <- reference_data_rt()
 
   ## adding rel_susceptibility here as was not in parameters when data generated
-  d$inputs$p$rel_susceptibility <- 1
+  d$inputs$p$rel_susceptibility <- build_rel_susceptibility(1, d$inputs$p$N_age)
 
   p <- d$inputs$p
   steps <- d$inputs$steps
@@ -98,7 +98,7 @@ test_that("Can set initial time", {
   d <- reference_data_rt()
 
   ## adding rel_susceptibility here as was not in parameters when data generated
-  d$inputs$p$rel_susceptibility <- 1
+  d$inputs$p$rel_susceptibility <- build_rel_susceptibility(1, d$inputs$p$N_age)
 
   steps <- d$inputs$steps
   y <- d$inputs$y
@@ -125,7 +125,7 @@ test_that("Can vary beta over time", {
   d <- reference_data_rt()
 
   ## adding rel_susceptibility here as was not in parameters when data generated
-  d$inputs$p$rel_susceptibility <- 1
+  d$inputs$p$rel_susceptibility <- build_rel_susceptibility(1, d$inputs$p$N_age)
 
   steps <- d$inputs$steps
   y <- d$inputs$y

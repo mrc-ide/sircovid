@@ -79,8 +79,9 @@ vnapply <- function(x, fun, ...) {
 build_rel_susceptibility <- function(rel_susceptibility, N_age) {
   if (is.matrix(rel_susceptibility)) {
     for (i in 1:nrow(rel_susceptibility)) {
-      check_rel_susceptibility_vector(rel_susceptibility[i,])
+      check_rel_susceptibility(rel_susceptibility[i,])
     }
+    mat_rel_susceptibility <- rel_susceptibility
   } else { # create matrix by repeating rel_susceptibility for each age group 
     mat_rel_susceptibility <- 
       matrix(rep(rel_susceptibility, each = N_age), nrow = N_age)
@@ -88,7 +89,7 @@ build_rel_susceptibility <- function(rel_susceptibility, N_age) {
   mat_rel_susceptibility
 }
 
-check_rel_susceptibility_vector <- function(rel_susceptibility) {
+check_rel_susceptibility <- function(rel_susceptibility) {
   if (length(rel_susceptibility) == 0) {
     stop("At least one value required for 'rel_susceptibility'")
   }

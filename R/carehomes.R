@@ -165,7 +165,7 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
   
-  vaccination <- carehomes_parameters_vaccination(rel_susceptibility, N_age)
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility, ret$N_age)
 
   c(ret, severity, progression, vaccination)
 }

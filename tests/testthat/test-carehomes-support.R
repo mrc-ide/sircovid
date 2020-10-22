@@ -33,7 +33,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   progression <- carehomes_parameters_progression()
   expect_identical(p[names(progression)], progression)
 
-  vaccination <- carehomes_parameters_vaccination()
+  vaccination <- carehomes_parameters_vaccination(p$rel_susceptibility,
+                                                  p$N_age)
   expect_identical(p[names(vaccination)], vaccination)
 
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
