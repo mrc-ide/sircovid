@@ -24,7 +24,9 @@ NULL
 ##' @param p_death_carehome Probability of death within carehomes
 ##'   (conditional on having an "inflenza-like-illness")
 ##'
-##' @param p_specificity Specificity of the serology test
+##' @param sero_specificity Specificity of the serology test
+##'
+##' @param sero_sensitivity Sensitivity of the serology test
 ##'
 ##' @param progression Progression data
 ##'
@@ -58,7 +60,8 @@ carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
                                  p_death_carehome = 0.7,
-                                 p_specificity = 0.9,
+                                 sero_specificity = 0.9,
+                                 sero_sensitivity = 0.99,
                                  progression = NULL,
                                  eps = 0.1,
                                  C_1 = 4e-6,
@@ -128,7 +131,8 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
 
   ## Specificity for serology tests
-  ret$p_specificity <- p_specificity
+  ret$sero_specificity <- sero_specificity
+  ret$sero_sensitivity <- sero_sensitivity
 
   ## Specificity and sensitivity for Pillar 2 testing
   ret$pillar2_specificity <- pillar2_specificity
@@ -185,8 +189,9 @@ carehomes_index <- function(info) {
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
-                 sero_prob_pos = index[["sero_prob_pos"]],
+                 sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
+                 sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                  react_pos = index[["react_pos"]])
 
   ## Variables that we want to save for post-processing
@@ -254,26 +259,44 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
   model_new_admitted <- model_admitted + model_new
-  model_sero_prob_pos <- state["sero_prob_pos", ]
+  model_sero_pos <- state["sero_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
+  model_sympt_cases_over25 <- state["sympt_cases_over25", ] -
+    prev_state["sympt_cases_over25", ]
   model_react_pos <- state["react_pos", ]
 
-  ## Add some small exponential noise in case the number of model cases is 0
-  pillar2_pos <- model_sympt_cases +
-    rexp(length(model_sympt_cases), pars$observation$exp_noise)
-  pillar2_neg <- pars$prop_noncovid_sympt *
-    (sum(pars$N_tot) - model_sympt_cases)
-  model_pillar2_prob_pos <- (pars$pillar2_sensitivity * pillar2_pos +
-                               (1 - pars$pillar2_specificity) * pillar2_neg) /
-    (pillar2_pos + pillar2_neg)
+  ## calculate test positive probabilities for the various test data streams
+  ## Pillar 2
+  pillar2_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot)
+                                              - model_sympt_cases)
+  model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
+                                          pillar2_negs,
+                                          pars$pillar2_sensitivity,
+                                          pars$pillar2_specificity,
+                                          pars$observation$exp_noise)
 
-  ## Note that for REACT we exclude group 1 (0-4) and 19 (CHR)
-  react_pos <- model_react_pos +
-    rexp(length(model_react_pos), pars$observation$exp_noise)
-  react_neg <- sum(pars$N_tot[2:18]) - model_react_pos
-  model_react_prob_pos <- (pars$react_sensitivity * react_pos +
-                             (1 - pars$react_specificity) * react_neg) /
-    (react_pos + react_neg)
+  ## Pillar 2 over 25s
+  pillar2_over25_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot[6:19])
+                                              - model_sympt_cases_over25)
+  model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
+                                                 pillar2_over25_negs,
+                                                 pars$pillar2_sensitivity,
+                                                 pars$pillar2_specificity,
+                                                 pars$observation$exp_noise)
+
+  ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
+  model_react_prob_pos <- test_prob_pos(model_react_pos,
+                                        sum(pars$N_tot[2:18]) - model_react_pos,
+                                        pars$react_sensitivity,
+                                        pars$react_specificity,
+                                        pars$observation$exp_noise)
+
+  ## serology
+  model_sero_prob_pos <- test_prob_pos(model_sero_pos,
+                                       pars$N_tot_15_64 - model_sero_pos,
+                                       pars$sero_sensitivity,
+                                       pars$sero_specificity,
+                                       pars$observation$exp_noise)
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
@@ -306,12 +329,6 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                pars$phi_new_admitted * model_new_admitted,
                                pars$k_new_admitted, exp_noise)
 
-  ## Note we do not use exp_noise here as the only circumstances in
-  ## which a zero probability can be produced are when model_sero_prob_pos
-  ## = 1 and there are some negative tests, or when model_prob_pos = 0
-  ## and there are some positive tests. Such circumstances can only
-  ## arise with extreme (0%/100%) specificity or sensitivity, which is
-  ## wholly unrealistic.
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
                           model_sero_prob_pos)
@@ -325,13 +342,24 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                 pars$phi_pillar2_cases * model_sympt_cases,
                                 pars$k_pillar2_cases, exp_noise)
 
+  ll_pillar2_over25_tests <- ll_betabinom(observed$pillar2_over25_pos,
+                                          observed$pillar2_over25_tot,
+                                          model_pillar2_over25_prob_pos,
+                                          pars$rho_pillar2_tests)
+
+  ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
+                                       pars$phi_pillar2_cases *
+                                         model_sympt_cases_over25,
+                                       pars$k_pillar2_cases, exp_noise)
+
   ll_react <- ll_binom(observed$react_pos,
                        observed$react_tot,
                        model_react_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_new_admitted + ll_serology +
-    ll_pillar2_tests + ll_pillar2_cases + ll_react
+    ll_admitted + ll_new + ll_new_admitted + ll_serology + ll_pillar2_tests +
+    ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
+    ll_react
 }
 
 
@@ -627,11 +655,25 @@ carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
                 "deaths", "admitted", "new", "new_admitted", "npos_15_64",
                 "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
-                "react_pos", "react_tot")
+                "pillar2_over25_pos", "pillar2_over25_tot",
+                "pillar2_over25_cases", "react_pos", "react_tot")
+
   verify_names(data, required, allow_extra = TRUE)
+
   if (any(!is.na(data$deaths) &
            (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
     stop("Deaths are not consistently split into total vs community/hospital")
   }
+
+  pillar2_streams <- sum(c(any(!is.na(data$pillar2_pos)) |
+                             any(!is.na(data$pillar2_tot)),
+                           any(!is.na(data$pillar2_cases)),
+                           any(!is.na(data$pillar2_over25_pos)) |
+                             any(!is.na(data$pillar2_over25_tot)),
+                           any(!is.na(data$pillar2_over25_cases))))
+  if (pillar2_streams > 1) {
+    stop("Cannot fit to more than one pillar 2 data stream")
+  }
+
   data
 }

@@ -53,9 +53,9 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "p_specificity", "N_tot_15_64", "pillar2_specificity",
-      "pillar2_sensitivity", "react_specificity", "react_sensitivity",
-      "prop_noncovid_sympt", "psi_death_ICU",
+      "sero_specificity", "sero_sensitivity", "N_tot_15_64",
+      "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
+      "react_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
       "psi_hosp_ILI", "p_hosp_ILI_step", "psi_death_comm",
       "p_death_comm_step", "psi_ICU_hosp", "p_ICU_hosp_step",
@@ -121,8 +121,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_comm", "deaths_hosp",
-      "admitted", "new", "sero_prob_pos", "sympt_cases", "react_pos"))
+    c("icu", "general", "deaths_comm", "deaths_hosp", "admitted", "new",
+      "sero_pos", "sympt_cases", "sympt_cases_over25", "react_pos"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "I_ICU_tot"))
@@ -136,10 +136,12 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "cum_admit_conf"))
   expect_equal(index$run[["new"]],
                which(names(info$index) == "cum_new_conf"))
-  expect_equal(index$run[["sero_prob_pos"]],
-               which(names(info$index) == "sero_prob_pos"))
+  expect_equal(index$run[["sero_pos"]],
+               which(names(info$index) == "sero_pos"))
   expect_equal(index$run[["sympt_cases"]],
                which(names(info$index) == "cum_sympt_cases"))
+  expect_equal(index$run[["sympt_cases_over25"]],
+               which(names(info$index) == "cum_sympt_cases_over25"))
   expect_equal(index$run[["react_pos"]],
                which(names(info$index) == "react_pos"))
 })
@@ -215,11 +217,11 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp = 3:8,
     admitted = 50:55,
     new = 60:65,
-    sero_prob_pos = (4:9) / 10,
+    sero_pos = 4:9,
     sympt_cases = 100:105,
+    sympt_cases_over25 = 80:85,
     react_pos = 2:7)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
-  prev_state["sero_prob_pos", ] <- 1 / 10
   observed <- list(
     icu = 13,
     general = 23,
@@ -235,6 +237,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     pillar2_pos = 35,
     pillar2_tot = 600,
     pillar2_cases = 35,
+    pillar2_over25_pos = 25,
+    pillar2_over25_tot = 500,
+    pillar2_over25_cases = 25,
     react_pos = 3,
     react_tot = 500)
   date <- sircovid_date("2020-01-01")
@@ -253,10 +258,13 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## because it's not a simple sum
   nms_sero <- c("npos_15_64", "ntot_15_64")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
+  nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
   nms_react <- c("react_pos", "react_tot")
   parts <- c(as.list(setdiff(names(observed),
-                             c(nms_sero, nms_pillar2, nms_react))),
-             list(nms_sero), list(nms_pillar2), list(nms_react))
+                             c(nms_sero, nms_pillar2,
+                               nms_pillar2_over25, nms_react))),
+             list(nms_sero), list(nms_pillar2), list(nms_pillar2_over25),
+             list(nms_react))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
@@ -328,9 +336,76 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
+  data$pillar2_over25_pos <- NA
+  data$pillar2_over25_tot <- NA
+  data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
   expect_error(
     carehomes_particle_filter(data),
     "Deaths are not consistently split into total vs community/hospital")
+})
+
+
+test_that("carehomes_particle_filter_data does not allow more than one pillar 2
+          data stream", {
+  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                        1, 0.25)
+  ## Add additional columns
+  data$deaths_hosp <- NA
+  data$deaths_comm <- NA
+  data$general <- NA
+  data$hosp <- NA
+  data$admitted <- NA
+  data$new <- NA
+  data$new_admitted <- NA
+  data$npos_15_64 <- NA
+  data$ntot_15_64 <- NA
+  data$pillar2_pos <- NA
+  data$pillar2_tot <- NA
+  data$pillar2_cases <- NA
+  data$pillar2_over25_pos <- NA
+  data$pillar2_over25_tot <- NA
+  data$pillar2_over25_cases <- NA
+  data$react_pos <- NA
+  data$react_tot <- NA
+
+  ## Example that should not cause error
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  pf <- carehomes_particle_filter(data, 10)
+  expect_s3_class(pf, "particle_filter")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_cases <- 5
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_cases <- NA
+  data$pillar2_over25_cases <- 5
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_over25_cases <- 5
+  data$pillar2_over25_pos <- 3
+  data$pillar2_over25_tot <- 6
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+
+  data$pillar2_pos <- NA
+  data$pillar2_tot <- NA
+  data$pillar2_over25_cases <- 5
+  data$pillar2_over25_pos <- 3
+  data$pillar2_over25_tot <- 6
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
 })
