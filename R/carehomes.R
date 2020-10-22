@@ -349,7 +349,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
                                        pars$phi_pillar2_cases *
-                                         model_sympt_cases,
+                                         model_sympt_cases_over25,
                                        pars$k_pillar2_cases, exp_noise)
 
   ll_react <- ll_binom(observed$react_pos,
