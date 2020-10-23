@@ -27,6 +27,22 @@ test_that("there are no infections if everyone is vaccinated with a vaccine
   expect_true(all(s[, 2, ] == s[, 2, 1]))
 })
 
+test_that("Everyone moves to vaccinated and stays there if everyone quickly
+          gets vaccinated with a vaccine preventing 100% of acquisition
+          and no waning immunity", {
+            p <- carehomes_parameters(0, "england", 
+                                      rel_susceptibility = c(1, 0, 0),
+                                      vaccination_rate = 1e9,
+                                      vaccine_progression_rate = 0)
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+            mod$set_state(carehomes_initial(info, 1, p)$state)
+            mod$set_index(integer(0))
+            y <- mod$transform_variables(drop(
+              dust::dust_iterate(mod, seq(0, 400, by = 4))))
+            expect_true(all(y$S[, 1, 1] == y$S[, 2, 2] + rowSums(y$E[,,,2])))
+            expect_true(all(y$S[, , 101] == y$S[, , 2]))
+})
 
 test_that("Can calculate Rt with a vaccination class", {
 

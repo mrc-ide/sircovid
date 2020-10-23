@@ -2058,13 +2058,17 @@ public:
       }
     }
     for (int_t i = 1; i <= internal.dim_S_1; ++i) {
-      for (int_t j = 1; j <= (internal.N_vacc_classes - 1); ++j) {
-        state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * (j - 1) + i - 1] - internal.n_SS[internal.dim_n_SS_1 * (j - 1) + i - 1] - internal.n_SE[internal.dim_n_SE_1 * (j - 1) + i - 1];
+      int_t j = 1;
+      state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * 0 + i - 1] - internal.n_SS[internal.dim_n_SS_1 * 0 + i - 1] - internal.n_SE[internal.dim_n_SE_1 * 0 + i - 1];
+    }
+    for (int_t i = 1; i <= internal.dim_S_1; ++i) {
+      for (int_t j = 2; j <= (internal.N_vacc_classes - 1); ++j) {
+        state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * (j - 1) + i - 1] - internal.n_SS[internal.dim_n_SS_1 * (j - 1) + i - 1] + internal.n_SS[internal.dim_n_SS_1 * (j - 1 - 1) + i - 1] - internal.n_SE[internal.dim_n_SE_1 * (j - 1) + i - 1];
       }
     }
     for (int_t i = 1; i <= internal.dim_S_1; ++i) {
       int_t j = internal.N_vacc_classes;
-      state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * (internal.N_vacc_classes - 1) + i - 1] - internal.n_SE[internal.dim_n_SE_1 * (internal.N_vacc_classes - 1) + i - 1];
+      state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * (internal.N_vacc_classes - 1) + i - 1] + internal.n_SS[internal.dim_n_SS_1 * (internal.N_vacc_classes - 1 - 1) + i - 1] - internal.n_SE[internal.dim_n_SE_1 * (internal.N_vacc_classes - 1) + i - 1];
     }
     for (int_t i = 1; i <= internal.dim_new_E_1; ++i) {
       for (int_t j = 1; j <= internal.dim_new_E_2; ++j) {
