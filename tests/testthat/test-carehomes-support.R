@@ -34,6 +34,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(p$rel_susceptibility,
+                                                  p$vaccination_rate,
+                                                  p$vaccine_progression_rate,
                                                   p$N_age)
   expect_identical(p[names(vaccination)], vaccination)
 

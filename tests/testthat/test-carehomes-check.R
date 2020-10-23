@@ -32,7 +32,7 @@ test_that("there are no infections when beta is 0", {
   s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
 
   ## Susceptible population is never drawn down:
-  expect_equal(s, array(s[, , 1], c(19, 1, 101)))
+  expect_equal(s, array(s[, , 1], c(dim(s)[1], 1, 101)))
 })
 
 
@@ -62,7 +62,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
 
   ## Susceptible population is never drawn down:
-  expect_equal(s, array(s[, , 1], c(19, 1, 101)))
+  expect_equal(s, array(s[, , 1], c(dim(s)[1], 1, 101)))
 })
 
 

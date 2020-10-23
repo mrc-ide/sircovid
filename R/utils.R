@@ -104,30 +104,26 @@ check_rel_susceptibility <- function(rel_susceptibility) {
   }
 }
 
-build_vaccination_rate <- function(vaccination_rate, N_age, N_vacc_classes) {
-  if (N_vacc_classes < 3) { 
-    stop("'N_vacc_classes' should be at least 3")
-  } else {
-    if (length(vaccination_rate) > 1) {
-      if (length(vaccination_rate) != N_age) {
-        stop("'vaccination_rate' should have as many elements as age groups")
-      }
-      if (any(vaccination_rate < 0)) {
-        stop("'vaccination_rate' must have only non-negative values")
-      }
-      vect_vaccination_rate <- vaccination_rate
-    } else { # create vector by repeating vaccination_rate for each age group
-      vect_vaccination_rate <- rep(vaccination_rate, each = N_age)
+build_vaccination_rate <- function(vaccination_rate, N_age) {
+  if (length(vaccination_rate) > 1) {
+    if (length(vaccination_rate) != N_age) {
+      stop("'vaccination_rate' should have as many elements as age groups")
     }
+    if (any(vaccination_rate < 0)) {
+      stop("'vaccination_rate' must have only non-negative values")
+    }
+    vect_vaccination_rate <- vaccination_rate
+  } else { # create vector by repeating vaccination_rate for each age group
+    vect_vaccination_rate <- rep(vaccination_rate, each = N_age)
   }
   vect_vaccination_rate
 }
 
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            N_age, N_vacc_classes) {
-  if (N_vacc_classes < 3) { 
+  if (N_vacc_classes < 3) {
     stop("'N_vacc_classes' should be at least 3")
-  } 
+  }
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
     mat_vaccine_progression_rate <- matrix(0, N_age, N_vacc_classes - 2)

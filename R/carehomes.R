@@ -519,15 +519,14 @@ carehomes_parameters_vaccination <-
     N_vacc_classes <- 3
     save_rel_susceptibility <- rel_susceptibility
     rel_susceptibility <- matrix(NA, N_age, N_vacc_classes)
-    rel_susceptibility[, seq_len(ncol(save_rel_susceptibility))] <- 
+    rel_susceptibility[, seq_len(ncol(save_rel_susceptibility))] <-
       save_rel_susceptibility
     rel_susceptibility[, -seq_len(ncol(save_rel_susceptibility))] <- 1
   } else {
     N_vacc_classes <- ncol(rel_susceptibility)
   }
   vaccination_rate <- build_vaccination_rate(vaccination_rate,
-                                             N_age,
-                                             N_vacc_classes)
+                                             N_age)
   vaccine_progression_rate <- build_vaccine_progression_rate(
     vaccine_progression_rate,
     N_age,
