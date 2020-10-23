@@ -84,7 +84,7 @@ carehomes_parameters <- function(start_date, region,
                                  prop_noncovid_sympt = 0.01,
                                  rel_susceptibility = 1,
                                  vaccination_rate = 0,
-                                 vaccine_progression_rate,
+                                 vaccine_progression_rate = NULL,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -513,7 +513,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 carehomes_parameters_vaccination <-
   function(rel_susceptibility = 1,
            vaccination_rate = 0,
-           vaccine_progression_rate,
+           vaccine_progression_rate = NULL,
            N_age,
            N_vacc_cclasses) {
   rel_susceptibility <- build_rel_susceptibility(rel_susceptibility, N_age)

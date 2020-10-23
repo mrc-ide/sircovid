@@ -195,7 +195,18 @@ test_that("build_vaccination_rate allows sensible inputs & works as expected", {
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = 1,
                                    N_age = 5, N_vacc_classes = 3))
+  expect_equal(
+    build_vaccine_progression_rate(vaccine_progression_rate = 1,
+                                   N_age = 5, N_vacc_classes = 3),
+    matrix(rep(1, 5), nrow = 5))
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(1, 10, 3),
                                    N_age = 10, N_vacc_classes = 5))
+  expect_silent(
+    build_vaccine_progression_rate(vaccine_progression_rate = NULL,
+                                   N_age = 10, N_vacc_classes = 5))
+  expect_equal(
+    build_vaccine_progression_rate(vaccine_progression_rate = NULL,
+                                   N_age = 10, N_vacc_classes = 5),
+    matrix(0, 10, 3))
 })
