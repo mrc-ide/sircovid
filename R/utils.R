@@ -127,7 +127,7 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            N_age, N_vacc_classes) {
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
-    if (N_vacc_classes <= 2) { 
+    if (N_vacc_classes <= 2) {
       mat_vaccine_progression_rate <- matrix(0, N_age, 1)
     } else {
       mat_vaccine_progression_rate <- matrix(0, N_age, N_vacc_classes - 2)
