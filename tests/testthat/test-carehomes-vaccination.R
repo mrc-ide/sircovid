@@ -30,7 +30,7 @@ test_that("there are no infections if everyone is vaccinated with a vaccine
 test_that("Everyone moves to vaccinated and stays there if everyone quickly
           gets vaccinated with a vaccine preventing 100% of acquisition
           and no waning immunity", {
-            p <- carehomes_parameters(0, "england", 
+            p <- carehomes_parameters(0, "england",
                                       rel_susceptibility = c(1, 0, 0),
                                       vaccination_rate = 1e9,
                                       vaccine_progression_rate = 0)
@@ -40,14 +40,14 @@ test_that("Everyone moves to vaccinated and stays there if everyone quickly
             mod$set_index(integer(0))
             y <- mod$transform_variables(drop(
               dust::dust_iterate(mod, seq(0, 400, by = 4))))
-            expect_true(all(y$S[, 1, 1] == y$S[, 2, 2] + rowSums(y$E[,,,2])))
+            expect_true(all(y$S[, 1, 1] == y$S[, 2, 2] + rowSums(y$E[, , , 2])))
             expect_true(all(y$S[, , 101] == y$S[, , 2]))
 })
 
 
-test_that("Everyone moves to waning immunity stage and stays there if everyone 
+test_that("Everyone moves to waning immunity stage and stays there if everyone
           quickly gets vaccinated and loses immunity", {
-            p <- carehomes_parameters(0, "england", 
+            p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0, 0),
                                       vaccination_rate = 1e9,
@@ -62,9 +62,9 @@ test_that("Everyone moves to waning immunity stage and stays there if everyone
             expect_true(all(y$S[, , 101] == y$S[, , 2]))
 })
 
-test_that("Everyone moves to last of 5 waning immunity stage and stays there if 
+test_that("Everyone moves to last of 5 waning immunity stage and stays there if
           everyone quickly gets vaccinated and loses immunity", {
-            p <- carehomes_parameters(0, "england", 
+            p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0, rep(0, 10)),
                                       vaccination_rate = 1e9,
@@ -126,4 +126,3 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   expect_equal(rt_1, rt_1_single_class)
   expect_equal(rt_all, rt_all_single_class)
 })
-
