@@ -1835,7 +1835,7 @@ public:
       }
     }
     for (int_t i = 1; i <= internal.dim_n_S_out_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_n_S_out_2; ++j) {
+      for (int_t j = 1; j <= internal.N_vacc_classes_minus_1; ++j) {
         internal.n_S_out[i - 1 + internal.dim_n_S_out_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1]), internal.p_SE[internal.dim_p_SE_1 * (j - 1) + i - 1] + internal.p_SS[internal.dim_p_SS_1 * (j - 1) + i - 1]);
       }
     }
@@ -1907,9 +1907,13 @@ public:
       }
     }
     for (int_t i = 1; i <= internal.dim_n_SE_1; ++i) {
-      for (int_t j = 1; j <= internal.dim_n_SE_2; ++j) {
+      for (int_t j = 1; j <= internal.N_vacc_classes_minus_1; ++j) {
         internal.n_SE[i - 1 + internal.dim_n_SE_1 * (j - 1)] = internal.n_S_out[internal.dim_n_S_out_1 * (j - 1) + i - 1] - internal.n_SS[internal.dim_n_SS_1 * (j - 1) + i - 1];
       }
+    }
+    for (int_t i = 1; i <= internal.dim_n_SE_1; ++i) {
+      int_t j = internal.N_vacc_classes;
+      internal.n_SE[i - 1 + internal.dim_n_SE_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1]), internal.p_SE[internal.dim_p_SE_1 * (j - 1) + i - 1]);
     }
     for (int_t i = 1; i <= internal.dim_new_I_triage_D_conf_1; ++i) {
       for (int_t j = 1; j <= internal.dim_new_I_triage_D_conf_2; ++j) {

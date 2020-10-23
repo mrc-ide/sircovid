@@ -116,9 +116,10 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 ## compartments:
 
 # competing risk of infection and progression through vaccine classes
-n_S_out[, ] <- rbinom(S[i, j], p_SE[i, j] + p_SS[i, j])
+n_S_out[, 1:N_vacc_classes_minus_1] <- rbinom(S[i, j], p_SE[i, j] + p_SS[i, j])
 n_SS[, ] <- rbinom(n_S_out[i, j], p_SS[i, j] / (p_SE[i, j] + p_SS[i, j]))
-n_SE[, ] <- n_S_out[i, j] - n_SS[i, j]
+n_SE[, 1:N_vacc_classes_minus_1] <- n_S_out[i, j] - n_SS[i, j]
+n_SE[, N_vacc_classes] <- rbinom(S[i, j], p_SE[i, j])
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
