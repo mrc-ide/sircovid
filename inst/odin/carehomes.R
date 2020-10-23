@@ -16,9 +16,9 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
-update(S[, 1:(N_vacc_classes - 1)]) <- S[i, j] - 
+update(S[, 1:(N_vacc_classes - 1)]) <- S[i, j] -
   n_SS[i, j] - n_SE[i, j] # age, vaccination status
-update(S[, N_vacc_classes]) <- S[i, N_vacc_classes] - n_SE[i, N_vacc_classes] 
+update(S[, N_vacc_classes]) <- S[i, N_vacc_classes] - n_SE[i, N_vacc_classes]
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
@@ -66,7 +66,8 @@ update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
 p_SS[, 1] <- 1 - exp(-vaccination_rate[i] * dt)
-p_SS[, 2:(N_vacc_classes - 1)] <- 1 - exp(-vaccine_progression_rate[i, j-1] * dt)
+p_SS[, 2:(N_vacc_classes - 1)] <- 1 -
+  exp(-vaccine_progression_rate[i, j - 1] * dt)
 p_SE[, ] <- 1 - exp(-lambda[i] *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
@@ -116,7 +117,7 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 
 # competing risk of infection and progression through vaccine classes
 n_S_out[, ] <- rbinom(S[i, j], p_SE[i, j] + p_SS[i, j])
-n_SS[, ] <- rbinom(n_S_out[i, j], p_SS[i, j] / (p_SE[i, j] + p_SS[i, j]) )
+n_SS[, ] <- rbinom(n_S_out[i, j], p_SS[i, j] / (p_SE[i, j] + p_SS[i, j]))
 n_SE[, ] <- n_S_out[i, j] - n_SS[i, j]
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)

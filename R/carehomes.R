@@ -167,7 +167,7 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  vaccination <- carehomes_parameters_vaccination(rel_susceptibility, 
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
                                                   vaccination_rate,
                                                   vaccine_progression_rate,
                                                   ret$N_age,
@@ -510,17 +510,17 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- 
+carehomes_parameters_vaccination <-
   function(rel_susceptibility = 1,
            vaccination_rate = 0,
            vaccine_progression_rate,
            N_age,
            N_vacc_cclasses) {
   rel_susceptibility <- build_rel_susceptibility(rel_susceptibility, N_age)
-  vaccination_rate <- build_vaccination_rate(vaccination_rate, 
-                                             N_age, 
+  vaccination_rate <- build_vaccination_rate(vaccination_rate,
+                                             N_age,
                                              N_vacc_cclasses)
-  vaccine_progression_rate <- build_vaccination_rate(vaccine_progression_rate, 
+  vaccine_progression_rate <- build_vaccination_rate(vaccine_progression_rate,
                                                      N_age,
                                                      N_vacc_cclasses)
   list(
