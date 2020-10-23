@@ -83,6 +83,8 @@ carehomes_parameters <- function(start_date, region,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
                                  rel_susceptibility = 1,
+                                 vaccination_rate = 0,
+                                 vaccine_progression_rate,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -165,7 +167,11 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  vaccination <- carehomes_parameters_vaccination(rel_susceptibility, ret$N_age)
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility, 
+                                                  vaccination_rate,
+                                                  vaccine_progression_rate,
+                                                  ret$N_age,
+                                                  ret$N_vacc_cclasses)
 
   c(ret, severity, progression, vaccination)
 }
@@ -504,11 +510,24 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- function(rel_susceptibility = 1, N_age) {
+carehomes_parameters_vaccination <- 
+  function(rel_susceptibility = 1,
+           vaccination_rate = 0,
+           vaccine_progression_rate,
+           N_age,
+           N_vacc_cclasses) {
   rel_susceptibility <- build_rel_susceptibility(rel_susceptibility, N_age)
+  vaccination_rate <- build_vaccination_rate(vaccination_rate, 
+                                             N_age, 
+                                             N_vacc_cclasses)
+  vaccine_progression_rate <- build_vaccination_rate(vaccine_progression_rate, 
+                                                     N_age,
+                                                     N_vacc_cclasses)
   list(
     # leaving this function as will add more vaccination parameters later
-    rel_susceptibility = rel_susceptibility
+    rel_susceptibility = rel_susceptibility,
+    vaccination_rate = vaccination_rate,
+    vaccine_progression_rate = vaccine_progression_rate
   )
 }
 
