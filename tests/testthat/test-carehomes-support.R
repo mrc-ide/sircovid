@@ -33,6 +33,9 @@ test_that("carehomes_parameters returns a list of parameters", {
   progression <- carehomes_parameters_progression()
   expect_identical(p[names(progression)], progression)
 
+  vaccination <- carehomes_parameters_vaccination()
+  expect_identical(p[names(vaccination)], vaccination)
+
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   ## NOTE: This is updated with CHR and CHW but may be renamed later;
   ## see comment in carehomes_parameters()
@@ -49,7 +52,8 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   extra <- setdiff(names(p),
                    c("m", "observation",
-                     names(shared), names(progression), names(severity)))
+                     names(shared), names(progression), names(severity),
+                     names(vaccination)))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
@@ -152,6 +156,15 @@ test_that("carehome worker index is sensible", {
 })
 
 
+test_that("carehomes_index is properly named", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  mod <- carehomes$new(p, 0, 10)
+  info <- mod$info()
+  index <- carehomes_index(info)
+  expect_false(any(is.na(names(index))))
+})
+
+
 test_that("Can compute initial conditions", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   mod <- carehomes$new(p, 0, 10)
@@ -167,7 +180,7 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
-  expect_equal(initial_y$S + drop(initial_y$I_asympt), p$N_tot)
+  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_asympt), p$N_tot)
   expect_equal(drop(initial_y$I_asympt),
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$R_pre[, 1],

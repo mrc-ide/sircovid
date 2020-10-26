@@ -48,6 +48,11 @@ NULL
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
+##' @param rel_susceptibility A vector of values representing the relative
+##'   susceptibility of individuals in different vaccination groups. The first
+##'   value should be 1 (for the non-vaccinated group) and subsequent values be
+##'   between 0 and 1.
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -71,6 +76,7 @@ carehomes_parameters <- function(start_date, region,
                                  react_specificity = 0.99,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
+                                 rel_susceptibility = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -119,6 +125,8 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
 
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility)
+
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
@@ -153,7 +161,7 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  c(ret, severity, progression)
+  c(ret, severity, progression, vaccination)
 }
 
 
@@ -199,11 +207,24 @@ carehomes_index <- function(info) {
                   deaths = index[["D_tot"]],
                   infections = index[["cum_infections"]])
   suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
+  ## NOTE: We do use the S category for the Rt calculation in some
+  ## downstream work, so this is going to require some work to get
+  ## right.
+
+  n_vacc_classes <- info$dim$S[[2]]
+
+  ## To name our S categories following age and vaccine classes, we
+  ## use two suffixes. The first vaccination class is special and so
+  ## has an empty suffix so that we retain our model without
+  ## vaccination if needed.
+  ## S_0, S_5, ..., S_CHW, S_CHR, S_0_1, S_5_1, ..., S_CHW_1, S_CHR_1, ...
+  s_type <- rep(c("", sprintf("_%s", seq_len(n_vacc_classes - 1L))),
+                each = length(suffix))
+
   index_S <- set_names(index[["S"]],
-                       paste0("S", suffix))
+                       paste0("S", suffix, s_type))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
-
 
   list(run = index_run,
        state = c(index_run, index_save, index_S, index_cum_admit))
@@ -456,6 +477,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_N_tot3 <- index[["N_tot3"]][[1L]]
 
   index_S <- index[["S"]]
+  index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
   index_N_tot <- index[["N_tot"]]
 
   ## S0 is the population totals, minus the seeded infected
@@ -463,7 +485,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   initial_S <- pars$N_tot
   initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
 
-  state[index_S] <- initial_S
+  state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
   state[index_R_pre] <- initial_I
   state[index_PCR_pos] <- initial_I
@@ -473,6 +495,15 @@ carehomes_initial <- function(info, n_particles, pars) {
 
   list(state = state,
        step = pars$initial_step)
+}
+
+
+carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
+  check_rel_susceptibility(rel_susceptibility)
+  list(
+    # leaving this function as will add more vaccination parameters later
+    rel_susceptibility = rel_susceptibility
+  )
 }
 
 
