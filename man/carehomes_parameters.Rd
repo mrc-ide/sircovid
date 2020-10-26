@@ -23,6 +23,8 @@ carehomes_parameters(
   react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
   rel_susceptibility = 1,
+  vaccination_rate = 0,
+  vaccine_progression_rate = NULL,
   exp_noise = 1e+06
 )
 }
@@ -85,10 +87,16 @@ residents or workers}
 \item{prop_noncovid_sympt}{Proportion of population who do not have
 covid but have covid-like symptoms}
 
-\item{rel_susceptibility}{A vector of values representing the relative
-susceptibility of individuals in different vaccination groups. The first
-value should be 1 (for the non-vaccinated group) and subsequent values be
-between 0 and 1.}
+\item{rel_susceptibility}{A vector or matrix of values representing the
+relative susceptibility of individuals in different vaccination groups.
+If a vector, the first value should be 1 (for the non-vaccinated group)
+and subsequent values be between 0 and 1. In that case relative
+susceptibility will be the same across all age groups within one
+vaccination category. Specifying a matrix instead of a vector allows
+different relative susceptibilities by age (rows of the matrix) and
+vaccination group (columns of the matrix); in that case, in each row of
+the matrix, the first value should be 1 (for the non-vaccinated group)
+and subsequent values be between 0 and 1}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
