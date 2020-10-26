@@ -58,17 +58,17 @@ NULL
 ##'   vaccination group (columns of the matrix); in that case, in each row of
 ##'   the matrix, the first value should be 1 (for the non-vaccinated group)
 ##'   and subsequent values be between 0 and 1
-##'   
+##'
 ##' @param vaccination_rate A single value or vector of values representing the
 ##'   rate of vaccination of susceptibles. If a single value, the same rate is
 ##'   used for all age groups; if a vector, its length needs to match the number
 ##'   of age groups and it should contain age-specific vaccination rates
 ##'
 ##' @param vaccine_progression_rate A vector or matrix of values representing
-##'   the rate of movement between different vaccination classes following 
+##'   the rate of movement between different vaccination classes following
 ##'   vaccination. If a vector, it should have as many values as vaccination
-##'   classes - 1, and the same rates of progression will be used for all age 
-##'   groups; if a matrix, the element on row i and column j is the rate of 
+##'   classes - 1, and the same rates of progression will be used for all age
+##'   groups; if a matrix, the element on row i and column j is the rate of
 ##'   progression from the jth vaccination class to the (j+1)th for age group i.
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
