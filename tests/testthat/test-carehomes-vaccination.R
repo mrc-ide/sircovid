@@ -126,3 +126,49 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   expect_equal(rt_1, rt_1_single_class)
   expect_equal(rt_all, rt_all_single_class)
 })
+
+test_that("Effective Rt reduced by rel_susceptbility if all vaccinated", {
+
+  reduced_susceptibility <- 0.2 # can put anything here
+
+  ## run model with unvaccinated & vaccinated (with susceptibility halved)
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, reduced_susceptibility))
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all <- carehomes_Rt_trajectories(steps, y, p)
+
+  ## move all individuals to vaccinated
+  y_with_vacc <- y
+  y_with_vacc[seq(p$N_age + 1, 2 * p$N_age), , ] <-
+    y_with_vacc[seq_len(p$N_age), , ]
+  y_with_vacc[seq_len(p$N_age), , ] <- 0
+
+  rt_1_vacc <- carehomes_Rt(steps, y_with_vacc[, 1, ], p)
+  rt_all_vacc <- carehomes_Rt_trajectories(steps, y_with_vacc, p)
+
+  expect_equal(rt_1$eff_Rt_all * reduced_susceptibility,
+               rt_1_vacc$eff_Rt_all)
+  expect_equal(rt_1$eff_Rt_general * reduced_susceptibility,
+               rt_1_vacc$eff_Rt_general)
+
+  expect_equal(rt_all$eff_Rt_all * reduced_susceptibility,
+               rt_all_vacc$eff_Rt_all)
+  expect_equal(rt_all$eff_Rt_general * reduced_susceptibility,
+               rt_all_vacc$eff_Rt_general)
+
+})
