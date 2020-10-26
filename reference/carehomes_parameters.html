@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
       </span>
     </div>
 
@@ -143,6 +143,7 @@
   react_specificity <span class='op'>=</span> <span class='fl'>0.99</span>,
   react_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
   prop_noncovid_sympt <span class='op'>=</span> <span class='fl'>0.01</span>,
+  rel_susceptibility <span class='op'>=</span> <span class='fl'>1</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
 <span class='op'>)</span></pre>
 
@@ -240,6 +241,13 @@ residents or workers</p></td>
       <th>prop_noncovid_sympt</th>
       <td><p>Proportion of population who do not have
 covid but have covid-like symptoms</p></td>
+    </tr>
+    <tr>
+      <th>rel_susceptibility</th>
+      <td><p>A vector of values representing the relative
+susceptibility of individuals in different vaccination groups. The first
+value should be 1 (for the non-vaccinated group) and subsequent values be
+between 0 and 1.</p></td>
     </tr>
     <tr>
       <th>exp_noise</th>
@@ -641,6 +649,9 @@ just before the model is run.</p>
 #&gt; 
 #&gt; $gamma_PCR_pos
 #&gt; [1] 0.2
+#&gt; 
+#&gt; $rel_susceptibility
+#&gt; [1] 1
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
