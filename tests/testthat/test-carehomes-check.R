@@ -368,13 +368,15 @@ test_that("R_pre parameters work as expected", {
   ## time-step to R_neg/R_pos just from R_pre_1
   y <- helper(0.5, Inf, 0)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)), t(y$R_pre[, 1, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
+               t(y$R_pre[, 1, -n]))
 
   ## gamma_R_pre_1 = 0, gamma_R_pre_2 = Inf, expect progression in one
   ## time-step to R_neg/R_pos just from R_pre_2
   y <- helper(0.5, 0, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)), t(y$R_pre[, 2, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
+               t(y$R_pre[, 2, -n]))
 
   ## gamma_R_pre_1 = Inf, gamma_R_pre_2 = Inf, expect progression in
   ## one time-step to R_neg/R_pos from both R_pre_1 and R_pre_2
@@ -652,7 +654,7 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
   expect_true(all(y$D_comm_tot == apply(y$D_comm, 2, sum)))
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
-  
+
   # check the positivity sums
   expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , ], 3, sum)))
