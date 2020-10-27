@@ -256,7 +256,7 @@ For each of the parameters above we will use improper (flat) priors, the default
 ```{r}
 start_date_param <-
   mcstate::pmcmc_parameter("start_date",
-                           initial = sircovid::sircovid_date("2020-01-24"),
+                           initial = sircovid::sircovid_date("2020-02-08"),
                            min = sircovid::sircovid_date("2020-01-01"),
                            max = sircovid::sircovid_date("2020-03-15"),
                            discrete = TRUE)
@@ -264,8 +264,8 @@ start_date_param <-
 beta_date <- c("2020-03-16", "2020-03-23", "2020-03-25")
 beta_min <- 0
 beta_max <- 1
-beta1_param <- mcstate::pmcmc_parameter("beta1", initial = 0.1, min = beta_min, max = beta_max)
-beta2_param <- mcstate::pmcmc_parameter("beta2", initial = 0.1, min = beta_min, max = beta_max)
+beta1_param <- mcstate::pmcmc_parameter("beta1", initial = 0.15, min = beta_min, max = beta_max)
+beta2_param <- mcstate::pmcmc_parameter("beta2", initial = 0.04, min = beta_min, max = beta_max)
 beta3_param <- mcstate::pmcmc_parameter("beta3", initial = 0.03, min = beta_min, max = beta_max)
 
 
@@ -299,7 +299,7 @@ The final element required to build and run the MCMC object is a proposal distri
 
 ```{r}
 mcmc_proposals <- matrix(0, nrow = length(mcmc_param_list), ncol = length(mcmc_param_list))
-diag(mcmc_proposals) <- c(0.5, 5e-6, 4e-4, 2e-6)
+diag(mcmc_proposals) <- c(5, 5e-5, 2e-4, 7e-7)
 
 mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list, 
                                              mcmc_proposals, 
@@ -326,7 +326,7 @@ saveRDS(samples, file = "samples.Rds")
 samples <- readRDS("samples.Rds")
 
 # extract trajectories that we are fitting
-cum_deaths <- samples$trajectories$state[c("deaths_hosp", "deaths_comm"), n_steps, ]
+cum_deaths <- samples$trajectories$state[c("deaths_hosp", "deaths_comm"), 2000, ]
 deaths <- apply(cum_deaths, 1, diff)
 deaths <- cbind(deaths = rowSums(deaths), deaths)
 dx <- sircovid::sircovid_date_as_date(samples$trajectories$step / samples$trajectories$rate)
@@ -376,8 +376,17 @@ saveRDS(samples_tuned, file = "samples_tuned.Rds")
 
 TODO this didn't work well either
 
-```{r include=FALSE}
+```{r include=TRUE}
 samples_tuned <- readRDS("samples_tuned.Rds")
+
+cum_deaths <- samples_tuned$trajectories$state[c("deaths_hosp", "deaths_comm"),2000, ]
+deaths <- apply(cum_deaths, 1, diff)
+deaths <- cbind(deaths = rowSums(deaths), deaths)
+dx <- sircovid::sircovid_date_as_date(samples_tuned$trajectories$step / samples_tuned$trajectories$rate)
+# plot against the data
+par(bty = "n", mar = c(3, 3, 1, 1))
+matplot(dx[-1], deaths, type = "l", lty = 1, ylim = c(0, max(data$deaths, deaths)))
+points(data$date, data$deaths)
 ```
 
 ```{r fig.height=5, fig.width=7}
