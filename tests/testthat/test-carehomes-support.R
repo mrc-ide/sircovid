@@ -5,11 +5,12 @@ test_that("carehomes progression parameters", {
   expect_setequal(
     names(p),
     c("s_E", "s_asympt", "s_mild", "s_ILI", "s_comm_D", "s_hosp_D", "s_hosp_R",
-      "s_ICU_D", "s_ICU_R", "s_triage", "s_stepdown", "s_PCR_pos", "s_PCR_pre",
-      "gamma_E", "gamma_asympt", "gamma_mild", "gamma_ILI", "gamma_comm_D",
-      "gamma_hosp_D", "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_R",
-      "gamma_triage", "gamma_stepdown", "gamma_R_pre_1", "gamma_R_pre_2",
-      "gamma_test", "gamma_PCR_pos", "gamma_PCR_pre"))
+      "s_ICU_D", "s_ICU_R", "s_triage", "s_stepdown", "s_R_pos", "s_PCR_pos",
+      "s_PCR_pre", "gamma_E", "gamma_asympt", "gamma_mild", "gamma_ILI",
+      "gamma_comm_D", "gamma_hosp_D", "gamma_hosp_R", "gamma_ICU_D",
+      "gamma_ICU_R", "gamma_triage", "gamma_stepdown", "gamma_R_pos",
+      "gamma_R_pre_1", "gamma_R_pre_2", "gamma_test", "gamma_PCR_pos",
+      "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
