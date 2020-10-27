@@ -31,6 +31,8 @@ test_that("Everyone moves to vaccinated and stays there if everyone quickly
           gets vaccinated with a vaccine preventing 100% of acquisition
           and no waning immunity", {
             p <- carehomes_parameters(0, "england",
+                                      beta_value = c(0, 0, 1),
+                                      beta_date = c(0, 4, 5),
                                       rel_susceptibility = c(1, 0, 0),
                                       vaccination_rate = 1e9,
                                       vaccine_progression_rate = 0)
