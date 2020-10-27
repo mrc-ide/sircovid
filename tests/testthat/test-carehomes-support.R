@@ -19,7 +19,7 @@ test_that("carehomes progression parameters", {
 
 test_that("carehomes vaccination parameters", {
   N_age <- 19
-  
+
   # test default values
   p <- carehomes_parameters_vaccination(N_age = N_age)
   expect_setequal(
@@ -30,14 +30,14 @@ test_that("carehomes vaccination parameters", {
   expect_equal(length(p$vaccination_rate), N_age)
   expect_equal(nrow(p$vaccine_progression_rate), N_age)
   expect_equal(ncol(p$vaccine_progression_rate), 1)
-  
+
   # test when more vaccinated categories than default
   rel_susceptibility <- c(1, 0.75, 0.5, 0.75)
   vaccination_rate <- 1
   vaccine_progression_rate <- c(1, 1)
   p <- carehomes_parameters_vaccination(rel_susceptibility = rel_susceptibility,
                                         vaccination_rate = vaccination_rate,
-                                        vaccine_progression_rate = 
+                                        vaccine_progression_rate =
                                           vaccine_progression_rate,
                                         N_age = N_age)
   expect_setequal(
@@ -47,7 +47,7 @@ test_that("carehomes vaccination parameters", {
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
   expect_equal(length(p$vaccination_rate), N_age)
   expect_equal(nrow(p$vaccine_progression_rate), N_age)
-  expect_equal(ncol(p$vaccine_progression_rate), 
+  expect_equal(ncol(p$vaccine_progression_rate),
                length(vaccine_progression_rate))
 })
 
