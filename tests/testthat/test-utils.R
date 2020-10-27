@@ -170,6 +170,14 @@ test_that("build_vaccination_rate allows sensible inputs & works as expected", {
 
 
 test_that("build_vaccine_progression_rate rejects insensible inputs", {
+  expect_error(
+    build_vaccine_progression_rate(vaccine_progression_rate = c(1, 1),
+                                   N_age = 5, N_vacc_classes = 1),
+    "'N_vacc_classes' should be at least 3")
+  expect_error(
+    build_vaccine_progression_rate(vaccine_progression_rate = c(-1, 1),
+                                   N_age = 5, N_vacc_classes = 4),
+  "'vaccine_progression_rate' must have only non-negative values")
   msg1 <- "'vaccine_progression_rate' must be either:"
   msg2 <- "a vector of length 'N_vacc_classes - 2'"
   msg3 <- "or a matrix with 'N_age' rows and 'N_vacc_classes - 2' columns"
