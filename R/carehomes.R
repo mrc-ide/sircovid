@@ -209,8 +209,8 @@ carehomes_index <- function(info) {
 ##'
 ##' @param observed Observed data. This will be a list with elements
 ##'   `icu` (number of ICU beds occupied), `general` (number of
-##'   general beds occupied), `deaths_hosp` (cumulative deaths in
-##'   hospital settings), `deaths_comm` (cumulative deaths in
+##'   general beds occupied), `deaths_hosp` (daily deaths in
+##'   hospital settings), `deaths_comm` (daily deaths in
 ##'   community settings), `deaths` (combined deaths - used by some
 ##'   nations - if given then `deaths_hosp` and `deaths_comm` must be
 ##'   `NA`), `admitted` (hospital admissions), `new` (new cases),
