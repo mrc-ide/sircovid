@@ -175,8 +175,9 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
                                    N_age = 5, N_vacc_classes = 1),
     "'N_vacc_classes' should be at least 3")
   expect_error(
-    build_vaccine_progression_rate(vaccine_progression_rate = c(-1, 1),
-                                   N_age = 5, N_vacc_classes = 4),
+    build_vaccine_progression_rate(vaccine_progression_rate = 
+                                     rbind(c(-1, 1), c(-1, 1)),
+                                   N_age = 2, N_vacc_classes = 4),
   "'vaccine_progression_rate' must have only non-negative values")
   msg1 <- "'vaccine_progression_rate' must be either:"
   msg2 <- "a vector of length 'N_vacc_classes - 2'"
