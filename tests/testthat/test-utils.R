@@ -191,7 +191,7 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
     "'vaccine_progression_rate' must have as many rows as age groups")
 })
 
-test_that("build_vaccination_rate allows sensible inputs & works as expected", {
+test_that("build_vaccine_progression_rate allows sensible inputs and works", {
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = 1,
                                    N_age = 5, N_vacc_classes = 3))
