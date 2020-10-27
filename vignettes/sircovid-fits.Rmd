@@ -308,7 +308,7 @@ mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list,
 
 We can now run the inference. This will take a long time (~1hr), so increasing the number of threads above can be helpful. For real inference, running for at least 2000 steps on more than one chain is recommended.
 
-```{r mcmc_run, eval=TRUE}
+```{r mcmc_run, eval=FALSE}
 n_steps <- 2e3
 n_chains <- 1L
 samples <- mcstate::pmcmc(mcmc_params, 
@@ -348,7 +348,7 @@ plot(mcmc)
 
 This is a poor MCMC run. We can try and improve this by setting the proposal distribution to be the same as the observed covariance between samples in this prototype run by setting `proposal = cov(samples$pars)`.
 
-```{r tuned_mcmc, eval=TRUE}
+```{r tuned_mcmc, eval=FALSE}
 beta1_param <- mcstate::pmcmc_parameter("beta1", 
                                         initial = summary(mcmc)$quantiles["beta1", "50%"], 
                                         min = beta_min, max = beta_max)
