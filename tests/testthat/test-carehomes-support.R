@@ -180,7 +180,7 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot3, sum(p$N_tot))
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
-
+  
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_asympt), p$N_tot)
   expect_equal(drop(initial_y$I_asympt),
                append(rep(0, 18), 10, after = 3))
@@ -188,12 +188,13 @@ test_that("Can compute initial conditions", {
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$PCR_pos[, 1],
                append(rep(0, 18), 10, after = 3))
+  expect_equal(initial_y$react_pos, 10)
 
   ## 42 here, derived from;
   ## * 19 (S)
   ## * 19 (N_tot)
   ## * 4 values as N_tot2 + N_tot3 + I_asympt[4] + R_pre[4] + PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 43)
+  expect_equal(sum(initial$state != 0), 44)
 })
 
 
