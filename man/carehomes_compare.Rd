@@ -17,8 +17,8 @@ for \code{state}.}
 
 \item{observed}{Observed data. This will be a list with elements
 \code{icu} (number of ICU beds occupied), \code{general} (number of
-general beds occupied), \code{deaths_hosp} (cumulative deaths in
-hospital settings), \code{deaths_comm} (cumulative deaths in
+general beds occupied), \code{deaths_hosp} (daily deaths in
+hospital settings), \code{deaths_comm} (daily deaths in
 community settings), \code{deaths} (combined deaths - used by some
 nations - if given then \code{deaths_hosp} and \code{deaths_comm} must be
 \code{NA}), \code{admitted} (hospital admissions), \code{new} (new cases),
