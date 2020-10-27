@@ -544,7 +544,6 @@ carehomes_parameters_vaccination <-
     N_age,
     N_vacc_classes)
   list(
-    # leaving this function as will add more vaccination parameters later
     rel_susceptibility = rel_susceptibility,
     vaccination_rate = vaccination_rate,
     vaccine_progression_rate = vaccine_progression_rate
