@@ -250,8 +250,7 @@ carehomes_parameters <- function(start_date, region,
 
   vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
                                                   vaccination_rate,
-                                                  vaccine_progression_rate,
-                                                  ret$N_age)
+                                                  vaccine_progression_rate)
 
   c(ret, severity, progression, vaccination)
 }
@@ -593,12 +592,12 @@ carehomes_initial <- function(info, n_particles, pars) {
 carehomes_parameters_vaccination <-
   function(rel_susceptibility = 1,
            vaccination_rate = 0,
-           vaccine_progression_rate = NULL,
-           N_age) {
-  rel_susceptibility <- build_rel_susceptibility(rel_susceptibility, N_age)
+           vaccine_progression_rate = NULL) {
+  rel_susceptibility <- build_rel_susceptibility(rel_susceptibility)
   if (ncol(rel_susceptibility) < 3) {
     N_vacc_classes <- 3
     save_rel_susceptibility <- rel_susceptibility
+    N_age <- get_n_groups()
     rel_susceptibility <- matrix(1, N_age, N_vacc_classes)
     i <- seq_len(ncol(save_rel_susceptibility))
     rel_susceptibility[, i] <- save_rel_susceptibility
@@ -606,9 +605,9 @@ carehomes_parameters_vaccination <-
   } else {
     N_vacc_classes <- ncol(rel_susceptibility)
   }
-  vaccination_rate <- build_vaccination_rate(vaccination_rate, N_age)
+  vaccination_rate <- build_vaccination_rate(vaccination_rate)
   vaccine_progression_rate <- build_vaccine_progression_rate(
-    vaccine_progression_rate, N_age, N_vacc_classes)
+    vaccine_progression_rate, N_vacc_classes)
   list(
     rel_susceptibility = rel_susceptibility,
     vaccination_rate = vaccination_rate,
@@ -817,4 +816,9 @@ carehomes_particle_filter_data <- function(data) {
   }
 
   data
+}
+
+
+get_n_groups <- function() {
+  length(sircovid_age_bins()$start) + 2L
 }

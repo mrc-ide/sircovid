@@ -1,4 +1,5 @@
-build_rel_susceptibility <- function(rel_susceptibility, N_age) {
+build_rel_susceptibility <- function(rel_susceptibility) {
+  N_age <- get_n_groups()
   if (is.matrix(rel_susceptibility)) {
     if (nrow(rel_susceptibility) != N_age) {
       stop("'rel_susceptibility' should have as many rows as age groups")
@@ -26,7 +27,8 @@ check_rel_susceptibility <- function(rel_susceptibility) {
   }
 }
 
-build_vaccination_rate <- function(vaccination_rate, N_age) {
+build_vaccination_rate <- function(vaccination_rate) {
+  N_age <- get_n_groups()
   if (length(vaccination_rate) > 1) {
     if (length(vaccination_rate) != N_age) {
       stop("'vaccination_rate' should have as many elements as age groups")
@@ -42,7 +44,8 @@ build_vaccination_rate <- function(vaccination_rate, N_age) {
 }
 
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
-                                           N_age, N_vacc_classes) {
+                                           N_vacc_classes) {
+  N_age <- get_n_groups()
   if (N_vacc_classes < 3) {
     stop("'N_vacc_classes' should be at least 3")
   }

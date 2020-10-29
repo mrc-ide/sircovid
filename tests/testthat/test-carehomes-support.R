@@ -18,10 +18,9 @@ test_that("carehomes progression parameters", {
 
 
 test_that("carehomes vaccination parameters", {
-  N_age <- length(sircovid:::sircovid_age_bins()$start) + 2
-
+  N_age <- get_n_groups()
   # test default values
-  p <- carehomes_parameters_vaccination(N_age = N_age)
+  p <- carehomes_parameters_vaccination()
   expect_setequal(
     names(p),
     c("rel_susceptibility", "vaccination_rate", "vaccine_progression_rate"))
@@ -38,8 +37,7 @@ test_that("carehomes vaccination parameters", {
   p <- carehomes_parameters_vaccination(rel_susceptibility = rel_susceptibility,
                                         vaccination_rate = vaccination_rate,
                                         vaccine_progression_rate =
-                                          vaccine_progression_rate,
-                                        N_age = N_age)
+                                          vaccine_progression_rate)
   expect_setequal(
     names(p),
     c("rel_susceptibility", "vaccination_rate", "vaccine_progression_rate"))
@@ -69,8 +67,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   vaccination <- carehomes_parameters_vaccination(p$rel_susceptibility,
                                                   p$vaccination_rate,
-                                                  p$vaccine_progression_rate,
-                                                  p$N_age)
+                                                  p$vaccine_progression_rate)
   expect_identical(p[names(vaccination)], vaccination)
 
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
@@ -458,4 +455,8 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
   expect_error(
     carehomes_particle_filter(data),
     "Cannot fit to more than one pillar 2 data stream")
+})
+
+test_that("sircovid_age_bins has 19 age groups", {
+  expect_equal(get_n_groups(), 19)
 })
