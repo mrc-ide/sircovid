@@ -315,7 +315,8 @@ test_that("No one seroconverts if p_seroconversion is 0", {
 })
 
 
-test_that("No one does not seroconvert if p_seroconversion is 1", {
+test_that("No one does not seroconvert and no one seroreverts
+          if p_seroconversion is 1 and gamma_R_pos is 0", {
   p <- carehomes_parameters(0, "england")
   p$p_seroconversion[] <- 1
   ## set gamma_R_pos to 0 so no-one seroreverts
