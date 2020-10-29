@@ -189,7 +189,7 @@ vaccination_rate <- c(0.06, rep(0.03, N_age - 1))
 vaccine_progression_rate <- cbind(rep(1/(2*7), N_age),
 c(1/(13*7), rep(1/(26*7), N_age - 1)))
 
-##' # generate model parameters
+# generate model parameters
 p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
 rel_susceptibility = rel_susceptibility,
 vaccination_rate = vaccination_rate,
