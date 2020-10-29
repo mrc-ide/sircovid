@@ -75,4 +75,3 @@ set_names <- function(x, nms) {
 vnapply <- function(x, fun, ...) {
   vapply(x, fun, numeric(1), ...)
 }
-
