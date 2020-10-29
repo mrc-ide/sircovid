@@ -5,11 +5,12 @@ test_that("carehomes progression parameters", {
   expect_setequal(
     names(p),
     c("s_E", "s_asympt", "s_mild", "s_ILI", "s_comm_D", "s_hosp_D", "s_hosp_R",
-      "s_ICU_D", "s_ICU_R", "s_triage", "s_stepdown", "s_PCR_pos", "s_PCR_pre",
-      "gamma_E", "gamma_asympt", "gamma_mild", "gamma_ILI", "gamma_comm_D",
-      "gamma_hosp_D", "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_R",
-      "gamma_triage", "gamma_stepdown", "gamma_R_pre_1", "gamma_R_pre_2",
-      "gamma_test", "gamma_PCR_pos", "gamma_PCR_pre"))
+      "s_ICU_D", "s_ICU_R", "s_triage", "s_stepdown", "s_R_pos", "s_PCR_pos",
+      "s_PCR_pre", "gamma_E", "gamma_asympt", "gamma_mild", "gamma_ILI",
+      "gamma_comm_D", "gamma_hosp_D", "gamma_hosp_R", "gamma_ICU_D",
+      "gamma_ICU_R", "gamma_triage", "gamma_stepdown", "gamma_R_pos",
+      "gamma_R_pre_1", "gamma_R_pre_2", "gamma_test", "gamma_PCR_pos",
+      "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
@@ -187,12 +188,13 @@ test_that("Can compute initial conditions", {
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$PCR_pos[, 1],
                append(rep(0, 18), 10, after = 3))
+  expect_equal(initial_y$react_pos, 10)
 
   ## 42 here, derived from;
   ## * 19 (S)
   ## * 19 (N_tot)
   ## * 4 values as N_tot2 + N_tot3 + I_asympt[4] + R_pre[4] + PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 43)
+  expect_equal(sum(initial$state != 0), 44)
 })
 
 
