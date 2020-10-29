@@ -599,10 +599,11 @@ carehomes_parameters_vaccination <-
   if (ncol(rel_susceptibility) < 3) {
     N_vacc_classes <- 3
     save_rel_susceptibility <- rel_susceptibility
-    rel_susceptibility <- matrix(NA, N_age, N_vacc_classes)
-    rel_susceptibility[, seq_len(ncol(save_rel_susceptibility))] <-
+    rel_susceptibility <- matrix(1, N_age, N_vacc_classes)
+    i <- seq_len(ncol(save_rel_susceptibility))
+    rel_susceptibility[, i] <-
       save_rel_susceptibility
-    rel_susceptibility[, -seq_len(ncol(save_rel_susceptibility))] <- 1
+    rel_susceptibility[, -i] <- 1
   } else {
     N_vacc_classes <- ncol(rel_susceptibility)
   }
