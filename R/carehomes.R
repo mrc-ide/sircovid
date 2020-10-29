@@ -79,6 +79,43 @@ NULL
 ##' @export
 ##' @examples
 ##' carehomes_parameters(sircovid_date("2020-02-01"), "uk")
+##' 
+##' ### example set up of vaccination parameters independent of age
+##' ### 4 groups: 1) unvaccinated, 2) vaccinated with partial immunity
+##' ### 3) fully vaccinated (but with an imperfect vaccine) and
+##' ### 4) vaccinated but immunity has completely waned
+##' 
+##' # Assumption: immediately after vaccination susceptibility is reduced by
+##' # 25%, and then by 50% when you reach full effect of the vaccination, 
+##' # then susceptibility returns to 100% with waning of vaccine=induced 
+##' # immunity
+##' # effect of vaccination similar across all age groups
+##' rel_susceptibility <- c(1, 0.75, 0.5, 1)
+##' 
+##' # Vaccination occurs at a constant rate of 0.03 per day, 
+##' # (i.e. average time to vaccination is 33 days)
+##' # similar across all age groups
+##' vaccination_rate <- 0.03
+##' 
+##' # the period of build-up of immunity following vaccination is exponentially
+##' # distributed and lasts on average two weeks; 
+##' # vaccine-induced immunity wanes after a period which is exponentially
+##' # distributed and lasts on average 26 weeks (half a year); 
+##' # there are similar across all age groups
+##' vaccine_progression_rate <- c(1/(2*7), 1/(26*7))
+##' 
+##' # generate model parameters
+##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
+##' rel_susceptibility = rel_susceptibility, 
+##' vaccination_rate = vaccination_rate,
+##' vaccine_progression_rate = vaccine_progression_rate)
+##' 
+##' # vaccination parameters are automatically copied across all age groups
+##' p$rel_susceptibility
+##' p$vaccination_rate
+##' p$vaccine_progression_rate
+##' 
+##' 
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
