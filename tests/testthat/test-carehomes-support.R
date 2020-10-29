@@ -18,7 +18,7 @@ test_that("carehomes progression parameters", {
 
 
 test_that("carehomes vaccination parameters", {
-  N_age <- 19
+  N_age <- length(sircovid:::sircovid_age_bins()$start) + 2
 
   # test default values
   p <- carehomes_parameters_vaccination(N_age = N_age)
