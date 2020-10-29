@@ -564,6 +564,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_I <- index[["I_asympt"]][[1L]] + seed_age_band - 1L
   index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
   index_PCR_pos <- index[["PCR_pos"]][[1L]] + seed_age_band - 1L
+  index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot2 <- index[["N_tot2"]][[1L]]
   index_N_tot3 <- index[["N_tot3"]][[1L]]
 
@@ -580,6 +581,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_I] <- initial_I
   state[index_R_pre] <- initial_I
   state[index_PCR_pos] <- initial_I
+  state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
   state[index_N_tot3] <- sum(pars$N_tot)
@@ -644,6 +646,7 @@ carehomes_parameters_progression <- function() {
        s_ICU_R = 2,
        s_triage = 2,
        s_stepdown = 2,
+       s_R_pos = 2,
        s_PCR_pre = 2,
        s_PCR_pos = 2,
 
@@ -660,6 +663,7 @@ carehomes_parameters_progression <- function() {
        gamma_stepdown = 2 / 5,
        gamma_R_pre_1 = 1 / 5,
        gamma_R_pre_2 = 1 / 10,
+       gamma_R_pos = 1 / 25,
        gamma_test = 3 / 10,
        gamma_PCR_pre = 2 / 3,
        gamma_PCR_pos = 1 / 5)

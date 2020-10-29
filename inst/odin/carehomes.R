@@ -41,7 +41,7 @@ update(I_ICU_D_conf[, , ]) <- new_I_ICU_D_conf[i, j, k]
 update(R_stepdown_unconf[, ]) <- new_R_stepdown_unconf[i, j]
 update(R_stepdown_conf[, ]) <- new_R_stepdown_conf[i, j]
 update(R_pre[, ]) <- new_R_pre[i, j]
-update(R_pos[]) <- new_R_pos[i]
+update(R_pos[, ]) <- new_R_pos[i, j]
 update(R_neg[]) <- new_R_neg[i]
 update(R[]) <- R[i] + delta_R[i]
 update(D_hosp[]) <- new_D_hosp[i]
@@ -84,6 +84,7 @@ p_II_ICU_R <- 1 - exp(-gamma_ICU_R * dt)
 p_II_ICU_D <- 1 - exp(-gamma_ICU_D * dt)
 p_R_stepdown <- 1 - exp(-gamma_stepdown * dt)
 p_R_pre[, ] <- 1 - exp(-gamma_R_pre[j] * dt)
+p_R_pos <- 1 - exp(-gamma_R_pos * dt)
 p_test <- 1 - exp(-gamma_test * dt)
 p_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
 p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
@@ -142,6 +143,7 @@ n_II_ICU_D_conf[, , ] <- rbinom(I_ICU_D_conf[i, j, k], p_II_ICU_D)
 n_R_stepdown_unconf[, ] <- rbinom(R_stepdown_unconf[i, j], p_R_stepdown)
 n_R_stepdown_conf[, ] <- rbinom(R_stepdown_conf[i, j], p_R_stepdown)
 n_R_pre[, ] <- rbinom(R_pre[i, j], p_R_pre[i, j])
+n_R_pos[, ] <- rbinom(R_pos[i, j], p_R_pos)
 n_PCR_pre[, ] <- rbinom(PCR_pre[i, j], p_PCR_pre)
 n_PCR_pos[, ] <- rbinom(PCR_pos[i, j], p_PCR_pos)
 
@@ -404,9 +406,15 @@ new_R_pre[, ] <- R_pre[i, j] + n_com_to_R_pre[i, j] - n_R_pre[i, j]
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
-delta_R_pos[] <- rbinom(sum(n_R_pre[i, ]), p_seroconversion[i])
-new_R_pos[] <- R_pos[i] + delta_R_pos[i]
-delta_R_neg[] <- sum(n_R_pre[i, ]) - delta_R_pos[i]
+n_R_pre_to_R_pos[] <- rbinom(sum(n_R_pre[i, ]), p_seroconversion[i])
+
+delta_R_pos[, 1] <- n_R_pre_to_R_pos[i]
+delta_R_pos[, 2:s_R_pos] <- n_R_pos[i, j - 1]
+delta_R_pos[, ] <- delta_R_pos[i, j] - n_R_pos[i, j]
+new_R_pos[, ] <- R_pos[i, j] + delta_R_pos[i, j]
+
+delta_R_neg[] <- sum(n_R_pre[i, ]) - n_R_pre_to_R_pos[i] +
+  sum(n_R_pos[i, s_R_pos])
 new_R_neg[] <- R_neg[i] + delta_R_neg[i]
 
 ## Work out the total number of recovery
@@ -481,7 +489,7 @@ initial(I_ICU_D_conf[, , ]) <- 0
 initial(R_stepdown_unconf[, ]) <- 0
 initial(R_stepdown_conf[, ]) <- 0
 initial(R_pre[, ]) <- 0
-initial(R_pos[]) <- 0
+initial(R_pos[, ]) <- 0
 initial(R_neg[]) <- 0
 initial(R[]) <- 0
 initial(D_hosp[]) <- 0
@@ -579,6 +587,11 @@ gamma_R_pre[2] <- gamma_R_pre_2
 ## Governs the mixing - pretty much only makes sense at 0.5
 p_R_pre_1 <- user(0.5)
 p_seroconversion[] <- user()
+
+
+# Parameters of the R_pos classes
+s_R_pos <- user()
+gamma_R_pos <- user(0.1)
 
 ## Parameters relating to testing
 gamma_test <- user(0.1)
@@ -750,9 +763,11 @@ dim(p_R_pre) <- c(N_age, 2)
 dim(p_seroconversion) <- N_age
 
 ## Vectors handling the R_pos class
-dim(R_pos) <- N_age
-dim(new_R_pos) <- N_age
-dim(delta_R_pos) <- N_age
+dim(R_pos) <- c(N_age, s_R_pos)
+dim(n_R_pos) <- c(N_age, s_R_pos)
+dim(new_R_pos) <- c(N_age, s_R_pos)
+dim(delta_R_pos) <- c(N_age, s_R_pos)
+dim(n_R_pre_to_R_pos) <- c(N_age)
 
 ## Vectors handling the R_neg class
 dim(R_neg) <- N_age
@@ -905,7 +920,7 @@ update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
 ## more statements like the ones below.
 ##
 initial(sero_pos) <- 0
-update(sero_pos) <- sum(new_R_pos[4:13])
+update(sero_pos) <- sum(new_R_pos[4:13, ])
 
 initial(cum_sympt_cases) <- 0
 update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)
