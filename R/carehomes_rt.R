@@ -57,9 +57,15 @@ carehomes_Rt <- function(step, S, p) {
   t <- seq_along(step)
   eff_Rt_all <- vnapply(t, calculate_ev, S, drop_carehomes = FALSE)
   eff_Rt_general <- vnapply(t, calculate_ev, S, drop_carehomes = TRUE)
-  Rt_all <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+  N_tot_non_vacc <- array(p$N_tot, dim = c(p$N_age, ncol(S)))
+  N_tot_all_vacc_groups <- N_tot_non_vacc
+  for (i in seq(2, ncol(p$rel_susceptibility))) {
+    N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
+                                   0 * N_tot_non_vacc)
+  }
+  Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
                     drop_carehomes = FALSE)
-  Rt_general <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+  Rt_general <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
                         drop_carehomes = TRUE)
 
   list(step = step,
