@@ -23,6 +23,7 @@ carehomes_parameters(
   react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
   rel_susceptibility = 1,
+  waning_rate = 0,
   exp_noise = 1e+06
 )
 }
