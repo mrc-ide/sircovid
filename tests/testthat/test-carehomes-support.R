@@ -37,6 +37,9 @@ test_that("carehomes_parameters returns a list of parameters", {
   vaccination <- carehomes_parameters_vaccination()
   expect_identical(p[names(vaccination)], vaccination)
 
+  waning <- carehomes_parameters_waning()
+  expect_identical(p[names(waning)], waning)
+
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   ## NOTE: This is updated with CHR and CHW but may be renamed later;
   ## see comment in carehomes_parameters()
@@ -54,7 +57,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   extra <- setdiff(names(p),
                    c("m", "observation",
                      names(shared), names(progression), names(severity),
-                     names(vaccination)))
+                     names(vaccination), names(waning)))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
