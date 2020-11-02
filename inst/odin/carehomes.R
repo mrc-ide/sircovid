@@ -137,7 +137,7 @@ n_R_pos[, ] <- rbinom(R_pos[i, j], p_R_pos)
 n_PCR_pre[, ] <- rbinom(PCR_pre[i, j], p_PCR_pre)
 n_PCR_pos[, ] <- rbinom(PCR_pos[i, j], p_PCR_pos)
 n_RS_tmp[] <- rbinom(R[i], p_RS[i])
-n_RS[] <- min(n_RS_tmp[i], R_neg[i], PCR_neg[i]) 
+n_RS[] <- min(n_RS_tmp[i], R_neg[i], PCR_neg[i])
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
