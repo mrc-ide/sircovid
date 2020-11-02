@@ -48,7 +48,7 @@ test_that("everyone is infected when beta is large", {
 })
 
 
-test_that("noone stays in R or R_neg if waning rate is very large", {
+test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
   p <- carehomes_parameters(0, "england", beta_value = 0,
                             waning_rate = 1e9)
   mod <- carehomes$new(p, 0, 1)
@@ -60,8 +60,10 @@ test_that("noone stays in R or R_neg if waning rate is very large", {
   index_S <- array(info$index$S, info$dim$S)
   index_R <- array(info$index$R, info$dim$R)
   index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
+  index_PCR_neg <- array(info$index$PCR_neg, info$dim$PCR_neg)
   state[index_R] <- state[index_S]
   state[index_R_neg] <- state[index_S]
+  state[index_PCR_neg] <- state[index_S]
   state[index_S] <- 0
 
   mod$set_state(state)
