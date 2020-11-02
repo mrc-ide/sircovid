@@ -95,13 +95,16 @@ check_rel_susceptibility <- function(rel_susceptibility) {
 }
 
 build_waning_rate <- function(waning_rate) {
+  if (length(waning_rate) == 0) {
+    stop("At least one value required for 'rel_susceptibility'")
+  }
   N_age <- get_n_groups()
+  if (any(waning_rate < 0)) {
+    stop("'waning_rate' must have only non-negative values")
+  }
   if (length(waning_rate) > 1) {
     if (length(waning_rate) != N_age) {
       stop("'waning_rate' should have as many elements as age groups")
-    }
-    if (any(waning_rate < 0)) {
-      stop("'waning_rate' must have only non-negative values")
     }
     vect_waning_rate <- waning_rate
   } else { # create vector by repeating waning_rate for each age group
