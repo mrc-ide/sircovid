@@ -52,9 +52,9 @@ NULL
 ##'   susceptibility of individuals in different vaccination groups. The first
 ##'   value should be 1 (for the non-vaccinated group) and subsequent values be
 ##'   between 0 and 1.
-##'   
-##' @param waning_rate A single value or a vector of values representing the 
-##'   rates of waning of immunity after infection; if a single value the same 
+##'
+##' @param waning_rate A single value or a vector of values representing the
+##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
