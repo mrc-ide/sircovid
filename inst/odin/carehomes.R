@@ -85,28 +85,28 @@ p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 ## Work out time-varying probabilities
 p_ICU_hosp <- if (step >= length(p_ICU_hosp_step))
   p_ICU_hosp_step[length(p_ICU_hosp_step)] else p_ICU_hosp_step[step + 1]
-prob_ICU_hosp[] <- p_ICU_hosp * psi_ICU_hosp[i]
+prob_ICU_hosp[] <- p_ICU_hosp * relative_probability_ICU_hosp[i]
 
 p_hosp_ILI <- if (step >= length(p_hosp_ILI_step))
   p_hosp_ILI_step[length(p_hosp_ILI_step)] else p_hosp_ILI_step[step + 1]
-prob_hosp_ILI[] <- p_hosp_ILI * psi_hosp_ILI[i]
+prob_hosp_ILI[] <- p_hosp_ILI * relative_probability_hosp_ILI[i]
 
 p_death_ICU <- if (step >= length(p_death_ICU_step))
   p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
-prob_death_ICU[] <- p_death_ICU * psi_death_ICU[i]
+prob_death_ICU[] <- p_death_ICU * relative_probability_death_ICU[i]
 
 p_death_hosp_D <- if (step >= length(p_death_hosp_D_step))
   p_death_hosp_D_step[length(p_death_hosp_D_step)] else
     p_death_hosp_D_step[step + 1]
-prob_death_hosp_D[] <- p_death_hosp_D * psi_death_hosp_D[i]
+prob_death_hosp_D[] <- p_death_hosp_D * relative_probability_death_hosp_D[i]
 
 p_death_comm <- if (step >= length(p_death_comm_step))
   p_death_comm_step[length(p_death_comm_step)] else p_death_comm_step[step + 1]
-prob_death_comm[] <- p_death_comm * psi_death_comm[i]
+prob_death_comm[] <- p_death_comm * relative_probability_death_comm[i]
 
 p_admit_conf <- if (step >= length(p_admit_conf_step))
   p_admit_conf_step[length(p_admit_conf_step)] else p_admit_conf_step[step + 1]
-prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
+prob_admit_conf[] <- p_admit_conf * relative_probability_admit_conf[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -518,14 +518,14 @@ s_ILI <- user()
 gamma_ILI <- user(0.1)
 dim(p_hosp_ILI_step) <- user()
 p_hosp_ILI_step[] <- user()
-psi_hosp_ILI[] <- user()
+relative_probability_hosp_ILI[] <- user()
 
 ## Parameters of the I_comm_D class
 s_comm_D <- user()
 gamma_comm_D <- user(0.1)
 dim(p_death_comm_step) <- user()
 p_death_comm_step[] <- user()
-psi_death_comm[] <- user()
+relative_probability_death_comm[] <- user()
 
 ## Parameters of the I_triage classes
 s_triage <- user()
@@ -534,7 +534,7 @@ gamma_triage <- user(0.1)
 ## Proportion of hospital cases progressing to ICU
 dim(p_ICU_hosp_step) <- user()
 p_ICU_hosp_step[] <- user()
-psi_ICU_hosp[] <- user()
+relative_probability_ICU_hosp[] <- user()
 
 ## Parameters of the I_hosp_R classes
 s_hosp_R <- user()
@@ -545,7 +545,7 @@ s_hosp_D <- user()
 gamma_hosp_D <- user(0.1)
 dim(p_death_hosp_D_step) <- user()
 p_death_hosp_D_step[] <- user()
-psi_death_hosp_D[] <- user()
+relative_probability_death_hosp_D[] <- user()
 
 ## Parameters of the I_ICU_R classes
 s_ICU_R <- user()
@@ -556,7 +556,7 @@ s_ICU_D <- user()
 gamma_ICU_D <- user(0.1)
 dim(p_death_ICU_step) <- user()
 p_death_ICU_step[] <- user()
-psi_death_ICU[] <- user()
+relative_probability_death_ICU[] <- user()
 
 ## Parameters of the R_stepdown classes
 s_stepdown <- user()
@@ -580,7 +580,7 @@ gamma_R_pos <- user(0.1)
 gamma_test <- user(0.1)
 dim(p_admit_conf_step) <- user()
 p_admit_conf_step[] <- user()
-psi_admit_conf[] <- user()
+relative_probability_admit_conf[] <- user()
 
 ## Parameters relating to PCR positivity
 s_PCR_pre <- user()
@@ -642,7 +642,7 @@ dim(aux_II_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(new_I_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(n_II_ILI) <- c(N_age, s_ILI, trans_classes)
 dim(prob_hosp_ILI) <- N_age
-dim(psi_hosp_ILI) <- N_age
+dim(relative_probability_hosp_ILI) <- N_age
 
 ## Vectors handling the I_comm_D class
 dim(I_comm_D) <- c(N_age, s_comm_D, trans_classes)
@@ -650,7 +650,7 @@ dim(aux_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(new_I_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(n_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
 dim(prob_death_comm) <- N_age
-dim(psi_death_comm) <- N_age
+dim(relative_probability_death_comm) <- N_age
 
 ## Vectors handling the I_triage_R class
 dim(I_triage_R_unconf) <- c(N_age, s_triage, trans_classes)
@@ -676,7 +676,7 @@ dim(n_I_triage_D_unconf_to_conf) <- c(N_age, s_triage, trans_classes)
 
 ## Vector handling who progress to ICU
 dim(prob_ICU_hosp) <- N_age
-dim(psi_ICU_hosp) <- N_age
+dim(relative_probability_ICU_hosp) <- N_age
 
 ## Vectors handling the I_hosp_R class
 dim(I_hosp_R_unconf) <- c(N_age, s_hosp_R, trans_classes)
@@ -817,13 +817,13 @@ dim(p_sympt_ILI) <- N_age
 
 ## Vectors handling the potential death in hospital (general beds and ICU)
 dim(prob_death_hosp_D) <- N_age
-dim(psi_death_hosp_D) <- N_age
+dim(relative_probability_death_hosp_D) <- N_age
 dim(prob_death_ICU) <- N_age
-dim(psi_death_ICU) <- N_age
+dim(relative_probability_death_ICU) <- N_age
 
 ## Vector handling the probability of being admitted as confirmed
 dim(prob_admit_conf) <- N_age
-dim(psi_admit_conf) <- N_age
+dim(relative_probability_admit_conf) <- N_age
 
 dim(cum_admit_by_age) <- N_age
 
