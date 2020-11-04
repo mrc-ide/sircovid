@@ -1,9 +1,9 @@
 ## E and R stage indexed by i, j, k with
 ## i for the age group
 ## j for the progression (not exponential latent and infectious period)
-## k for the infectivity group
+## k for the infectivity group (for I) or vacc. group (for S)
 
-## Number of age classes & number of transmissibility classes
+## Number of classes (age transmissibility & vaccination)
 
 ## TODO: this should be renamed as it includes the CHW and CHR groups,
 ## so it's N_age plus 2 now! N_group is ok but more vague than ideal.
@@ -16,7 +16,7 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
-update(S[]) <- S[i] - n_SE[i]
+update(S[, ]) <- S[i, j] - n_SE[i, j] # age, vaccination status
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
@@ -37,12 +37,14 @@ update(I_ICU_D_conf[, , ]) <- new_I_ICU_D_conf[i, j, k]
 update(R_stepdown_unconf[, ]) <- new_R_stepdown_unconf[i, j]
 update(R_stepdown_conf[, ]) <- new_R_stepdown_conf[i, j]
 update(R_pre[, ]) <- new_R_pre[i, j]
-update(R_pos[]) <- new_R_pos[i]
+update(R_pos[, ]) <- new_R_pos[i, j]
 update(R_neg[]) <- new_R_neg[i]
 update(R[]) <- R[i] + delta_R[i]
 update(D_hosp[]) <- new_D_hosp[i]
 update(D_comm[]) <- new_D_comm[i]
-update(PCR_pos[, ]) <- PCR_pos[i, j] + delta_PCR_pos[i, j]
+update(PCR_pre[, ]) <- new_PCR_pre[i, j]
+update(PCR_pos[, ]) <- new_PCR_pos[i, j]
+update(PCR_neg[]) <- PCR_neg[i] + n_PCR_pos[i, s_PCR_pos]
 update(cum_admit_conf) <-
   cum_admit_conf +
   sum(n_ILI_to_hosp_D_conf) +
@@ -61,7 +63,8 @@ update(cum_new_conf) <-
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
-p_SE[] <- 1 - exp(-lambda[i] * dt) # S to I - age dependent
+p_SE[, ] <- 1 - exp(-lambda[i] *
+                      rel_susceptibility[j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
 p_II_mild <- 1 - exp(-gamma_mild * dt)
@@ -74,7 +77,9 @@ p_II_ICU_R <- 1 - exp(-gamma_ICU_R * dt)
 p_II_ICU_D <- 1 - exp(-gamma_ICU_D * dt)
 p_R_stepdown <- 1 - exp(-gamma_stepdown * dt)
 p_R_pre[, ] <- 1 - exp(-gamma_R_pre[j] * dt)
+p_R_pos <- 1 - exp(-gamma_R_pos * dt)
 p_test <- 1 - exp(-gamma_test * dt)
+p_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
 p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 
 ## Work out time-varying probabilities
@@ -105,7 +110,7 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
-n_SE[] <- rbinom(S[i], p_SE[i])
+n_SE[, ] <- rbinom(S[i, j], p_SE[i, j])
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
@@ -126,6 +131,8 @@ n_II_ICU_D_conf[, , ] <- rbinom(I_ICU_D_conf[i, j, k], p_II_ICU_D)
 n_R_stepdown_unconf[, ] <- rbinom(R_stepdown_unconf[i, j], p_R_stepdown)
 n_R_stepdown_conf[, ] <- rbinom(R_stepdown_conf[i, j], p_R_stepdown)
 n_R_pre[, ] <- rbinom(R_pre[i, j], p_R_pre[i, j])
+n_R_pos[, ] <- rbinom(R_pos[i, j], p_R_pos)
+n_PCR_pre[, ] <- rbinom(PCR_pre[i, j], p_PCR_pre)
 n_PCR_pos[, ] <- rbinom(PCR_pos[i, j], p_PCR_pos)
 
 ## Cumulative infections, summed over all age groups
@@ -149,11 +156,11 @@ aux_p_bin[, 2:(trans_classes - 1)] <-
   trans_profile[i, j] / sum(trans_profile[i, j:trans_classes])
 
 ## Implementation of multinom via nested binomial
-aux_EE[, 1, 1] <- rbinom(n_SE[i], aux_p_bin[i, 1])
+aux_EE[, 1, 1] <- rbinom(sum(n_SE[i, ]), aux_p_bin[i, 1])
 aux_EE[, 1, 2:(trans_classes - 1)] <-
-  rbinom(n_SE[i] - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
+  rbinom(sum(n_SE[i, ]) - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
 aux_EE[, 1, trans_classes] <-
-  n_SE[i] - sum(aux_EE[i, 1, 1:(trans_classes - 1)])
+  sum(n_SE[i, ]) - sum(aux_EE[i, 1, 1:(trans_classes - 1)])
 
 ## Work out the E->E transitions
 aux_EE[, 2:s_E, ] <- n_EE[i, j - 1, k]
@@ -387,9 +394,15 @@ new_R_pre[, ] <- R_pre[i, j] + n_com_to_R_pre[i, j] - n_R_pre[i, j]
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
-delta_R_pos[] <- rbinom(sum(n_R_pre[i, ]), p_seroconversion[i])
-new_R_pos[] <- R_pos[i] + delta_R_pos[i]
-delta_R_neg[] <- sum(n_R_pre[i, ]) - delta_R_pos[i]
+n_R_pre_to_R_pos[] <- rbinom(sum(n_R_pre[i, ]), p_seroconversion[i])
+
+delta_R_pos[, 1] <- n_R_pre_to_R_pos[i]
+delta_R_pos[, 2:s_R_pos] <- n_R_pos[i, j - 1]
+delta_R_pos[, ] <- delta_R_pos[i, j] - n_R_pos[i, j]
+new_R_pos[, ] <- R_pos[i, j] + delta_R_pos[i, j]
+
+delta_R_neg[] <- sum(n_R_pre[i, ]) - n_R_pre_to_R_pos[i] +
+  sum(n_R_pos[i, s_R_pos])
 new_R_neg[] <- R_neg[i] + delta_R_neg[i]
 
 ## Work out the total number of recovery
@@ -403,9 +416,15 @@ delta_R[] <-
   sum(n_R_stepdown_unconf[i, s_stepdown])
 
 ## Work out the PCR positivity
-delta_PCR_pos[, 1] <- n_SE[i]
+delta_PCR_pre[, 1] <- sum(n_SE[i, ])
+delta_PCR_pre[, 2:s_PCR_pre] <- n_PCR_pre[i, j - 1]
+delta_PCR_pre[, ] <- delta_PCR_pre[i, j] - n_PCR_pre[i, j]
+new_PCR_pre[, ] <- PCR_pre[i, j] + delta_PCR_pre[i, j]
+
+delta_PCR_pos[, 1] <- n_PCR_pre[i, s_PCR_pre]
 delta_PCR_pos[, 2:s_PCR_pos] <- n_PCR_pos[i, j - 1]
 delta_PCR_pos[, ] <- delta_PCR_pos[i, j] - n_PCR_pos[i, j]
+new_PCR_pos[, ] <- PCR_pos[i, j] + delta_PCR_pos[i, j]
 
 ## Compute the force of infection
 I_with_diff_trans[, ] <-
@@ -437,7 +456,7 @@ lambda[] <- sum(s_ij[i, ])
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.
-initial(S[]) <- 0
+initial(S[, ]) <- 0
 initial(E[, , ]) <- 0
 initial(I_asympt[, , ]) <- 0
 initial(I_mild[, , ]) <- 0
@@ -458,17 +477,24 @@ initial(I_ICU_D_conf[, , ]) <- 0
 initial(R_stepdown_unconf[, ]) <- 0
 initial(R_stepdown_conf[, ]) <- 0
 initial(R_pre[, ]) <- 0
-initial(R_pos[]) <- 0
+initial(R_pos[, ]) <- 0
 initial(R_neg[]) <- 0
 initial(R[]) <- 0
 initial(D_hosp[]) <- 0
 initial(D_comm[]) <- 0
+initial(PCR_pre[, ]) <- 0
 initial(PCR_pos[, ]) <- 0
+initial(PCR_neg[]) <- 0
 initial(cum_admit_conf) <- 0
 initial(cum_new_conf) <- 0
 initial(cum_admit_by_age[]) <- 0
 
 ## User defined parameters - default in parentheses:
+
+## Parameters of the S classes
+rel_susceptibility[] <- user()
+dim(rel_susceptibility) <- user() # use length as provided by the user
+N_vacc_classes <- length(rel_susceptibility)
 
 ## Parameters of the E classes
 s_E <- user()
@@ -545,6 +571,11 @@ gamma_R_pre[2] <- gamma_R_pre_2
 p_R_pre_1 <- user(0.5)
 p_seroconversion[] <- user()
 
+
+# Parameters of the R_pos classes
+s_R_pos <- user()
+gamma_R_pos <- user(0.1)
+
 ## Parameters relating to testing
 gamma_test <- user(0.1)
 dim(p_admit_conf_step) <- user()
@@ -552,6 +583,8 @@ p_admit_conf_step[] <- user()
 psi_admit_conf[] <- user()
 
 ## Parameters relating to PCR positivity
+s_PCR_pre <- user()
+gamma_PCR_pre <- user(0.1)
 s_PCR_pos <- user()
 gamma_PCR_pos <- user(0.1)
 
@@ -583,7 +616,7 @@ comm_D_transmission <- user()
 ## multi-dimensional arrays
 
 ## Vectors handling the S class
-dim(S) <- N_age
+dim(S) <- c(N_age, N_vacc_classes)
 
 ## Vectors handling the E class
 dim(E) <- c(N_age, s_E, trans_classes)
@@ -713,9 +746,11 @@ dim(p_R_pre) <- c(N_age, 2)
 dim(p_seroconversion) <- N_age
 
 ## Vectors handling the R_pos class
-dim(R_pos) <- N_age
-dim(new_R_pos) <- N_age
-dim(delta_R_pos) <- N_age
+dim(R_pos) <- c(N_age, s_R_pos)
+dim(n_R_pos) <- c(N_age, s_R_pos)
+dim(new_R_pos) <- c(N_age, s_R_pos)
+dim(delta_R_pos) <- c(N_age, s_R_pos)
+dim(n_R_pre_to_R_pos) <- c(N_age)
 
 ## Vectors handling the R_neg class
 dim(R_neg) <- N_age
@@ -732,15 +767,21 @@ dim(D_comm) <- N_age
 dim(new_D_comm) <- N_age
 dim(delta_D_comm) <- N_age
 
-## Vectors handling the R_pos class
+## Vectors handling the PCR classes
+dim(PCR_pre) <- c(N_age, s_PCR_pre)
+dim(delta_PCR_pre) <- c(N_age, s_PCR_pre)
+dim(n_PCR_pre) <- c(N_age, s_PCR_pre)
+dim(new_PCR_pre) <- c(N_age, s_PCR_pre)
 dim(PCR_pos) <- c(N_age, s_PCR_pos)
 dim(delta_PCR_pos) <- c(N_age, s_PCR_pos)
 dim(n_PCR_pos) <- c(N_age, s_PCR_pos)
+dim(new_PCR_pos) <- c(N_age, s_PCR_pos)
+dim(PCR_neg) <- c(N_age)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
-dim(p_SE) <- N_age
-dim(n_SE) <- N_age
+dim(p_SE) <- c(N_age, N_vacc_classes)
+dim(n_SE) <- c(N_age, N_vacc_classes)
 dim(aux_p_bin) <- c(N_age, trans_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
@@ -797,7 +838,7 @@ dim(I_with_diff_trans) <- c(N_age, trans_classes)
 
 ## Total population
 initial(N_tot[]) <- 0
-update(N_tot[]) <- S[i] + R[i] + D_hosp[i] + sum(E[i, , ]) +
+update(N_tot[]) <- sum(S[i, ]) + R[i] + D_hosp[i] + sum(E[i, , ]) +
   sum(I_asympt[i, , ]) + sum(I_mild[i, , ]) + sum(I_ILI[i, , ]) +
   sum(I_triage_D_conf[i, , ]) + sum(I_triage_D_unconf[i, , ]) +
   sum(I_triage_R_conf[i, , ]) + sum(I_triage_R_unconf[i, , ])  +
@@ -809,11 +850,13 @@ update(N_tot[]) <- S[i] + R[i] + D_hosp[i] + sum(E[i, , ]) +
   sum(I_comm_D[i, , ]) + D_comm[i]
 dim(N_tot) <- N_age
 
-## Total population calculated with seroconversion flow, exclude
-## triage_R, ICU_R, hosp_R and stepdown, to avoid double counting with
-## R's
+## Total population calculated with seroconversion flow
 initial(N_tot2) <- 0
 update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
+
+## Total population calculated with PCR flow
+initial(N_tot3) <- 0
+update(N_tot3) <- sum(S) + sum(PCR_pre) + sum(PCR_pos) + sum(PCR_neg)
 
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
@@ -840,11 +883,6 @@ update(D_comm_tot) <- new_D_comm_tot
 initial(D_tot) <- 0
 update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
 
-p_specificity <- user()
-N_tot_15_64 <- user()
-
-initial(sero_prob_pos) <- 0
-
 ## Our age groups for serology are fixed: we break them down into the
 ##
 ## * 0-14 (1, 2, 3)
@@ -858,12 +896,17 @@ initial(sero_prob_pos) <- 0
 ## consider the middle group, though this could be expanded easily by
 ## more statements like the ones below.
 ##
-## NOTE: the R_pre sum sweeps out the second compartment used to
-## model the mixture of exponentials.
-update(sero_prob_pos) <- sum(new_R_pos[4:13]) / N_tot_15_64 +
-  (1 - p_specificity) *
-  (1 - (sum(new_R_pre[4:13, ]) +
-          sum(new_R_neg[4:13]) + sum(new_R_pos[4:13])) / N_tot_15_64)
+initial(sero_pos) <- 0
+update(sero_pos) <- sum(new_R_pos[4:13, ])
 
 initial(cum_sympt_cases) <- 0
 update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)
+
+## only over 25s (exclude groups 1 to 5)
+initial(cum_sympt_cases_over25) <- 0
+update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
+  sum(n_EI_mild[6:19, ]) + sum(n_EI_ILI[6:19, ])
+
+## For REACT we exclude the 0-4 (1) and CHR (19) groups
+initial(react_pos) <- 0
+update(react_pos) <- sum(new_PCR_pos[2:18, ])

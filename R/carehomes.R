@@ -24,7 +24,9 @@ NULL
 ##' @param p_death_carehome Probability of death within carehomes
 ##'   (conditional on having an "inflenza-like-illness")
 ##'
-##' @param p_specificity Specificity of the serology test
+##' @param sero_specificity Specificity of the serology test
+##'
+##' @param sero_sensitivity Sensitivity of the serology test
 ##'
 ##' @param progression Progression data
 ##'
@@ -39,8 +41,17 @@ NULL
 ##'
 ##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
 ##'
+##' @param react_specificity Specificity of the REACT test
+##'
+##' @param react_sensitivity Sensitivity of the REACT test
+##'
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
+##'
+##' @param rel_susceptibility A vector of values representing the relative
+##'   susceptibility of individuals in different vaccination groups. The first
+##'   value should be 1 (for the non-vaccinated group) and subsequent values be
+##'   between 0 and 1.
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -54,14 +65,18 @@ carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
                                  p_death_carehome = 0.7,
-                                 p_specificity = 0.9,
+                                 sero_specificity = 0.9,
+                                 sero_sensitivity = 0.99,
                                  progression = NULL,
                                  eps = 0.1,
                                  C_1 = 4e-6,
                                  C_2 = 5e-5,
                                  pillar2_specificity = 0.99,
                                  pillar2_sensitivity = 0.99,
+                                 react_specificity = 0.99,
+                                 react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
+                                 rel_susceptibility = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -110,6 +125,8 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
 
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility)
+
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
@@ -122,11 +139,16 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
 
   ## Specificity for serology tests
-  ret$p_specificity <- p_specificity
+  ret$sero_specificity <- sero_specificity
+  ret$sero_sensitivity <- sero_sensitivity
 
   ## Specificity and sensitivity for Pillar 2 testing
   ret$pillar2_specificity <- pillar2_specificity
   ret$pillar2_sensitivity <- pillar2_sensitivity
+
+  ## Specificity and sensitivity for REACT testing
+  ret$react_specificity <- react_specificity
+  ret$react_sensitivity <- react_sensitivity
 
   ## Proportion of population with covid-like symptoms without covid
   ret$prop_noncovid_sympt <- prop_noncovid_sympt
@@ -139,7 +161,7 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  c(ret, severity, progression)
+  c(ret, severity, progression, vaccination)
 }
 
 
@@ -175,19 +197,34 @@ carehomes_index <- function(info) {
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
-                 sero_prob_pos = index[["sero_prob_pos"]],
-                 sympt_cases = index[["cum_sympt_cases"]])
+                 sero_pos = index[["sero_pos"]],
+                 sympt_cases = index[["cum_sympt_cases"]],
+                 sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
+                 react_pos = index[["react_pos"]])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
                   deaths = index[["D_tot"]],
                   infections = index[["cum_infections"]])
   suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
+  ## NOTE: We do use the S category for the Rt calculation in some
+  ## downstream work, so this is going to require some work to get
+  ## right.
+
+  n_vacc_classes <- info$dim$S[[2]]
+
+  ## To name our S categories following age and vaccine classes, we
+  ## use two suffixes. The first vaccination class is special and so
+  ## has an empty suffix so that we retain our model without
+  ## vaccination if needed.
+  ## S_0, S_5, ..., S_CHW, S_CHR, S_0_1, S_5_1, ..., S_CHW_1, S_CHR_1, ...
+  s_type <- rep(c("", sprintf("_%s", seq_len(n_vacc_classes - 1L))),
+                each = length(suffix))
+
   index_S <- set_names(index[["S"]],
-                       paste0("S", suffix))
+                       paste0("S", suffix, s_type))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
-
 
   list(run = index_run,
        state = c(index_run, index_save, index_S, index_cum_admit))
@@ -243,17 +280,44 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_admitted <- state["admitted", ] - prev_state["admitted", ]
   model_new <- state["new", ] - prev_state["new", ]
   model_new_admitted <- model_admitted + model_new
-  model_sero_prob_pos <- state["sero_prob_pos", ]
+  model_sero_pos <- state["sero_pos", ]
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
+  model_sympt_cases_over25 <- state["sympt_cases_over25", ] -
+    prev_state["sympt_cases_over25", ]
+  model_react_pos <- state["react_pos", ]
 
-  ## Add some small exponential noise in case the number of model cases is 0
-  pillar2_pos <- model_sympt_cases +
-    rexp(length(model_sympt_cases), pars$observation$exp_noise)
-  pillar2_neg <- pars$prop_noncovid_sympt *
-    (sum(pars$N_tot) - model_sympt_cases)
-  model_pillar2_prob_pos <- (pars$pillar2_sensitivity * pillar2_pos +
-                               (1 - pars$pillar2_specificity) * pillar2_neg) /
-    (pillar2_pos + pillar2_neg)
+  ## calculate test positive probabilities for the various test data streams
+  ## Pillar 2
+  pillar2_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot)
+                                              - model_sympt_cases)
+  model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
+                                          pillar2_negs,
+                                          pars$pillar2_sensitivity,
+                                          pars$pillar2_specificity,
+                                          pars$observation$exp_noise)
+
+  ## Pillar 2 over 25s
+  pillar2_over25_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot[6:19])
+                                              - model_sympt_cases_over25)
+  model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
+                                                 pillar2_over25_negs,
+                                                 pars$pillar2_sensitivity,
+                                                 pars$pillar2_specificity,
+                                                 pars$observation$exp_noise)
+
+  ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
+  model_react_prob_pos <- test_prob_pos(model_react_pos,
+                                        sum(pars$N_tot[2:18]) - model_react_pos,
+                                        pars$react_sensitivity,
+                                        pars$react_specificity,
+                                        pars$observation$exp_noise)
+
+  ## serology
+  model_sero_prob_pos <- test_prob_pos(model_sero_pos,
+                                       pars$N_tot_15_64 - model_sero_pos,
+                                       pars$sero_sensitivity,
+                                       pars$sero_specificity,
+                                       pars$observation$exp_noise)
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
@@ -286,12 +350,6 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                pars$phi_new_admitted * model_new_admitted,
                                pars$k_new_admitted, exp_noise)
 
-  ## Note we do not use exp_noise here as the only circumstances in
-  ## which a zero probability can be produced are when model_sero_prob_pos
-  ## = 1 and there are some negative tests, or when model_prob_pos = 0
-  ## and there are some positive tests. Such circumstances can only
-  ## arise with extreme (0%/100%) specificity or sensitivity, which is
-  ## wholly unrealistic.
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
                           model_sero_prob_pos)
@@ -305,9 +363,24 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                 pars$phi_pillar2_cases * model_sympt_cases,
                                 pars$k_pillar2_cases, exp_noise)
 
+  ll_pillar2_over25_tests <- ll_betabinom(observed$pillar2_over25_pos,
+                                          observed$pillar2_over25_tot,
+                                          model_pillar2_over25_prob_pos,
+                                          pars$rho_pillar2_tests)
+
+  ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
+                                       pars$phi_pillar2_cases *
+                                         model_sympt_cases_over25,
+                                       pars$k_pillar2_cases, exp_noise)
+
+  ll_react <- ll_binom(observed$react_pos,
+                       observed$react_tot,
+                       model_react_prob_pos)
+
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_new_admitted + ll_serology +
-    ll_pillar2_tests + ll_pillar2_cases
+    ll_admitted + ll_new + ll_new_admitted + ll_serology + ll_pillar2_tests +
+    ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
+    ll_react
 }
 
 
@@ -400,9 +473,12 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_I <- index[["I_asympt"]][[1L]] + seed_age_band - 1L
   index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
   index_PCR_pos <- index[["PCR_pos"]][[1L]] + seed_age_band - 1L
+  index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot2 <- index[["N_tot2"]][[1L]]
+  index_N_tot3 <- index[["N_tot3"]][[1L]]
 
   index_S <- index[["S"]]
+  index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
   index_N_tot <- index[["N_tot"]]
 
   ## S0 is the population totals, minus the seeded infected
@@ -410,15 +486,26 @@ carehomes_initial <- function(info, n_particles, pars) {
   initial_S <- pars$N_tot
   initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
 
-  state[index_S] <- initial_S
+  state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
   state[index_R_pre] <- initial_I
   state[index_PCR_pos] <- initial_I
+  state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
+  state[index_N_tot3] <- sum(pars$N_tot)
 
   list(state = state,
        step = pars$initial_step)
+}
+
+
+carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
+  check_rel_susceptibility(rel_susceptibility)
+  list(
+    # leaving this function as will add more vaccination parameters later
+    rel_susceptibility = rel_susceptibility
+  )
 }
 
 
@@ -450,6 +537,8 @@ carehomes_parameters_progression <- function() {
        s_ICU_R = 2,
        s_triage = 2,
        s_stepdown = 2,
+       s_R_pos = 2,
+       s_PCR_pre = 2,
        s_PCR_pos = 2,
 
        gamma_E = 1 / (4.59 / 2),
@@ -465,7 +554,9 @@ carehomes_parameters_progression <- function() {
        gamma_stepdown = 2 / 5,
        gamma_R_pre_1 = 1 / 5,
        gamma_R_pre_2 = 1 / 10,
+       gamma_R_pos = 1 / 25,
        gamma_test = 3 / 10,
+       gamma_PCR_pre = 2 / 3,
        gamma_PCR_pos = 1 / 5)
 }
 
@@ -596,12 +687,28 @@ carehomes_particle_filter <- function(data, n_particles,
 
 
 carehomes_particle_filter_data <- function(data) {
-  required <- c("icu", "general", "deaths_hosp", "deaths_comm", "deaths",
-                "admitted", "new", "npos_15_64", "ntot_15_64")
+  required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
+                "deaths", "admitted", "new", "new_admitted", "npos_15_64",
+                "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+                "pillar2_over25_pos", "pillar2_over25_tot",
+                "pillar2_over25_cases", "react_pos", "react_tot")
+
   verify_names(data, required, allow_extra = TRUE)
+
   if (any(!is.na(data$deaths) &
            (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
     stop("Deaths are not consistently split into total vs community/hospital")
   }
+
+  pillar2_streams <- sum(c(any(!is.na(data$pillar2_pos)) |
+                             any(!is.na(data$pillar2_tot)),
+                           any(!is.na(data$pillar2_cases)),
+                           any(!is.na(data$pillar2_over25_pos)) |
+                             any(!is.na(data$pillar2_over25_tot)),
+                           any(!is.na(data$pillar2_over25_cases))))
+  if (pillar2_streams > 1) {
+    stop("Cannot fit to more than one pillar 2 data stream")
+  }
+
   data
 }

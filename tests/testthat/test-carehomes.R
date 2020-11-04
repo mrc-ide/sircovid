@@ -12,15 +12,16 @@ test_that("can run the carehomes model", {
   res <- mod$run(end)
 
   expected <- rbind(
-    icu = c(5, 13, 2, 18, 3),
-    general = c(34, 62, 17, 62, 15),
-    deaths_comm = c(15705, 15737, 15760, 15924, 15845),
-    deaths_hosp = c(305535, 305986, 305852, 305822, 306241),
-    admitted = c(150723, 150620, 151180, 151219, 151420),
-    new = c(483551, 483878, 484158, 483882, 484540),
-    sero_prob_pos = c(0.723788813349046, 0.723743335024411, 0.723776912716643,
-                      0.723893111248456, 0.723873355012276),
-    sympt_cases = c(30880522, 30878357, 30866889, 30880022, 30875658))
+    icu = c(6, 4, 25, 8, 3),
+    general = c(15, 21, 86, 19, 9),
+    deaths_comm = c(15899, 15792, 15652, 15646, 15794),
+    deaths_hosp = c(306743, 305375, 305377, 305267, 306436),
+    admitted = c(151004, 150346, 150990, 150638, 151293),
+    new = c(485531, 484147, 483827, 484073, 483995),
+    sero_pos = c(2749042, 2803987, 4084059, 2498915, 2720240),
+    sympt_cases = c(30877047, 30868840, 30878810, 30874292, 30875140),
+    sympt_cases_over25 = c(20921889, 20913052, 20919513, 20915348, 20915030),
+    react_pos = c(387, 445, 1807, 309, 369))
   expect_equal(res, expected)
 })
 
@@ -44,6 +45,11 @@ test_that("can run the particle filter on the model", {
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
+  data$pillar2_over25_pos <- NA
+  data$pillar2_over25_tot <- NA
+  data$pillar2_over25_cases <- NA
+  data$react_pos <- NA
+  data$react_tot <- NA
 
   pf <- carehomes_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")

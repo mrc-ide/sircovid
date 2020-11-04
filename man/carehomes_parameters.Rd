@@ -11,14 +11,18 @@ carehomes_parameters(
   beta_value = NULL,
   severity = NULL,
   p_death_carehome = 0.7,
-  p_specificity = 0.9,
+  sero_specificity = 0.9,
+  sero_sensitivity = 0.99,
   progression = NULL,
   eps = 0.1,
   C_1 = 4e-06,
   C_2 = 5e-05,
   pillar2_specificity = 0.99,
   pillar2_sensitivity = 0.99,
+  react_specificity = 0.99,
+  react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
+  rel_susceptibility = 1,
   exp_noise = 1e+06
 )
 }
@@ -57,7 +61,9 @@ with the progression parameters.}
 \item{p_death_carehome}{Probability of death within carehomes
 (conditional on having an "inflenza-like-illness")}
 
-\item{p_specificity}{Specificity of the serology test}
+\item{sero_specificity}{Specificity of the serology test}
+
+\item{sero_sensitivity}{Sensitivity of the serology test}
 
 \item{progression}{Progression data}
 
@@ -72,8 +78,17 @@ residents or workers}
 
 \item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
 
+\item{react_specificity}{Specificity of the REACT test}
+
+\item{react_sensitivity}{Sensitivity of the REACT test}
+
 \item{prop_noncovid_sympt}{Proportion of population who do not have
 covid but have covid-like symptoms}
+
+\item{rel_susceptibility}{A vector of values representing the relative
+susceptibility of individuals in different vaccination groups. The first
+value should be 1 (for the non-vaccinated group) and subsequent values be
+between 0 and 1.}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
