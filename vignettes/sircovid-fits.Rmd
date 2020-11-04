@@ -313,7 +313,7 @@ samples <- mcstate::pmcmc(mcmc_params,
                           n_chains = n_chains,
                           save_trajectories = TRUE, 
                           progress = TRUE)
-saveRDS(samples, file = "samples.rds")
+saveRDS(samples, file = "samples.rds", version = 2)
 ```
 
 We can easily plot the modelled deaths versus the data for a single parameter sample from the posterior
@@ -400,7 +400,7 @@ samples_tuned <- mcstate::pmcmc(mcmc_params,
                                 n_chains = n_chains,
                                 save_trajectories = TRUE, 
                                 progress = TRUE)
-saveRDS(samples, file = "samples_tuned.rds")
+saveRDS(samples, file = "samples_tuned.rds", version = 2)
 ```
 
 These chains have a decent effective sample size, and though there is some autocorrelation in them, they appear to have converged to the same optimum.
@@ -470,7 +470,7 @@ Rt_estimates <-
     shared_parameters = FALSE
   )
 Rt_estimates$date <- Rt_estimates$step * pars[[1]]$dt
-saveRDS(Rt_estimates, "Rt_estimates.rds")
+saveRDS(Rt_estimates, "Rt_estimates.rds", version = 2)
 ```
 
 We can plot the mean and 95% HPD for any of the sampled parameters. Here is a brief example with Rt
