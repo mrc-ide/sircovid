@@ -313,13 +313,13 @@ samples <- mcstate::pmcmc(mcmc_params,
                           n_chains = n_chains,
                           save_trajectories = TRUE, 
                           progress = TRUE)
-saveRDS(samples, file = "samples.Rds")
+saveRDS(samples, file = "samples.rds")
 ```
 
 We can easily plot the modelled deaths versus the data for a single parameter sample from the posterior
 
 ```{r include=TRUE, fig.height=5, fig.width=7}
-samples <- readRDS("samples.Rds")
+samples <- readRDS("samples.rds")
 
 # extract trajectories that we are fitting
 plot_deaths <- function(samples, step) {
@@ -400,13 +400,13 @@ samples_tuned <- mcstate::pmcmc(mcmc_params,
                                 n_chains = n_chains,
                                 save_trajectories = TRUE, 
                                 progress = TRUE)
-saveRDS(samples, file = "samples_tuned.Rds")
+saveRDS(samples, file = "samples_tuned.rds")
 ```
 
 These chains have a decent effective sample size, and though there is some autocorrelation in them, they appear to have converged to the same optimum.
 
 ```{r fig.height=10, fig.width=14}
-samples_tuned <- readRDS("samples_tuned.Rds")
+samples_tuned <- readRDS("samples_tuned.rds")
 
 mcmc_tuned <- coda::as.mcmc(cbind(samples_tuned$probabilities, samples_tuned$pars))
 summary(mcmc_tuned)
