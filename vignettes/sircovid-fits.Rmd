@@ -492,26 +492,56 @@ Once the model has been fitted, as above, you can continue to run it forwards in
 
 You can run as far forward in time as you would like, though of course we would note that long term predictions are likely to be inaccurate, as parameters are expected to change over time in response to various external factors. Here we will attempt to forecast two weeks into the future, and compare with the observed deaths over that period.
 
-```{r eval=FALSE, include=FALSE}
-message("Running forecasts")
-control <- list(n_sample = 100, burnin = 500, forecast_days = 14)
-samples_predict <-
-  mcstate::pmcmc_sample(samples, control$n_sample, control$burnin)
-steps_predict <- seq(samples_predict$predict$step,
-                     length.out = control$forecast_days + 1L,
-                     by = samples_predict$predict$rate)
-samples_predict$trajectories <- mcstate::pmcmc_predict(samples_predict, steps_predict,
-                                                       prepend_trajectories = TRUE)
-samples_predict$trajectories$date <- samples_predict$trajectories$step / 
-  samples_predict$trajectories$rate
+```{r forecasts}
+# Choose a number of samples from the MCMC chains to use,
+# the amount of burnin to remove, and how long to forecast for
+control <- list(n_sample = 100, burnin = 2500, forecast_days = 14)
+samples_for_prediction <-
+  mcstate::pmcmc_sample(samples_tuned, control$n_sample, control$burnin)
+steps_for_prediction <- seq(samples_for_prediction$predict$step,
+                            length.out = control$forecast_days + 1L,
+                            by = samples_for_prediction$predict$rate)
 
+# Now run predictions, using this sample from the posterior
+predicted_trajectories <- mcstate::pmcmc_predict(samples_for_prediction,
+                                                 steps_for_prediction,
+                                                 prepend_trajectories = TRUE)
+predicted_trajectories$date <- predicted_trajectories$step / predicted_trajectories$rate
+```
 
-## Compute incidence trajectories
-samples_predict$trajectories <-
-  carehomes_ons_incidence(samples_predict$trajectories)
+We can plot the sampled trajectories and their forecasts along with the death data that was fitted to. The break between nowcasting and forecasting is shown here by the vertical dashed line.
 
-message("Computing Rt")
-rt <- calculate_ons_Rt(samples_predict)
+```{r}
+# This has dimension (model partitions, samples, steps) = (49, 20, 73)
+# Extract the deaths as before
+total_steps <- length(predicted_trajectories$step) - 1L
+deaths <- array(dim = c(control$n_sample, total_steps))
+for (i in 1:control$n_sample) {
+  cum_deaths <- predicted_trajectories$state[c("deaths_hosp", "deaths_comm"), i, ]
+  deaths_sample <- rowSums(apply(cum_deaths, 1, diff))
+  deaths[i, ] <- deaths_sample
+}
+
+# Plot - the first value is removed as it is the earliest start date, not
+# the fitted start date
+par(mar = c(4.1, 5.1, 0.5, 0.5), las = 1)
+mycol <- rgb(140, 140, 217, maxColorValue = 255, alpha = 90)
+matplot(predicted_trajectories$date[c(-1, -2)], 
+        t(deaths[, -1]), type = "l",
+        xlab = "Date", ylab = "Deaths",
+        col = mycol, lty = 1, xaxt="n",
+        ylim = range(data$deaths))
+matpoints(sircovid::as_sircovid_date(data$date)[2:total_steps], 
+          data$deaths[2:total_steps], 
+          pch = 17, cex = 0.75, col = "#000000")
+abline(v = sircovid::as_sircovid_date(max(first_wave_data$date)), 
+       lty = 2, col = "#666666")
+
+# Add formatted dates to plot
+tics <- seq(1, total_steps, by = 10)
+date_format <- format(sircovid::sircovid_date_as_date(predicted_trajectories$date[c(-1, -2)]),
+                      "%d-%b")
+axis(1, at = predicted_trajectories$date[c(-1, -2)][tics], labels = date_format[tics])
 ```
 
 If you wish to run difference scenarios, or counterfactuals for periods in the past, you can use the `run` method of the `sircovid::carehomes()` model directly, with your chosen parameters.
