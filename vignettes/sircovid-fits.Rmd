@@ -102,8 +102,6 @@ death_data <- read.table("ons_deaths.csv",
                          row.names = NULL, 
                          stringsAsFactors = FALSE)
 rmarkdown::paged_table(death_data)
-
-# sircovid deaths need to be cumulative
 ```
 
 ### Seroconversion
@@ -142,7 +140,6 @@ first_wave_data <- data[data$date < as.Date("2020-05-11"), ]
 We must give the columns their correct names for `sircovid::carehomes_particle_filter()`, adding columns of missing data for any data streams not being fitted:
 
 ```{r}
-
 colnames(first_wave_data) <- c("date", "deaths", "npos_15_64", "ntot_15_64")
 missing_cols <- c("icu", "hosp", "pillar2_cases", "pillar2_pos", "general", "deaths_comm", "deaths_hosp", "admitted", "new", "new_admitted", 'pillar2_tot', 'pillar2_over25_pos', 'pillar2_over25_tot', 'pillar2_over25_cases', 'react_pos', 'react_tot')
 na_col <- as.data.frame(matrix(NA_integer_, 
@@ -205,7 +202,7 @@ sircovid_pf$run(pars = sircovid::carehomes_parameters(start_date = 30,
                                                       beta_value = 0.05))
 ```
 
-A start date of 15-Jan-2020 and $\beta = 0.1$ appear to be best in this small grid search. We will now use [pMCMC](https://doi.org/10.1016/j.epidem.2019.100363) to iterate this and calculate full posterior likelihoods for model parameters.
+A start date of 15-Jan-2020 and $\beta = 0.05$ appear to be best in this small grid search. We will now use [pMCMC](https://doi.org/10.1016/j.epidem.2019.100363) to iterate this and calculate full posterior likelihoods for model parameters.
 
 _Note:_ as the particle filter picks up from the last run's random number state, to make runs of the same particle filter reproducible you would need to either set up a new particle filter object, or use the `dust::reset()` function. This is automated in `mcstate` and `sircovid`.
 
@@ -221,8 +218,7 @@ For many of the probabilities of taking different routes through hospitalisation
 
 In this example we will first try and estimate the value of Rt before and after national lockdown in March, and the start date of the epidemic (four parameters). All other parameters will remain fixed.
 
-TODO: is there a better way of doing this, for a complex model?
-In deciding how to operate parameters, the first thing to do is to look at the odin model under the section '## User defined parameters - default in parentheses:' or run `grep 'user' inst/odin/carehomes.R` to see the names of the model parameters. All of these will automatically be set up, but any can be sampled. Run the following to see the defaults:
+In deciding how to operate parameters, the first thing to do is to look at the odin model under the section `## User defined parameters - default in parentheses:` or run `grep 'user' inst/odin/carehomes.R` to see the names of the model parameters. All of these will automatically be set up, but any can be sampled. Run the following to see the defaults:
 
 ```{r}
 sircovid::carehomes_parameters(region = "england",
@@ -235,13 +231,13 @@ The parameters in the `$observation` part of the object can also be sampled, but
 
 ### Transforming between model parameters and sampled parameters
 
-If the parameters we are sampling are the same as their name in the odin model nothing special needs to be done. But we are actually free to give sample what parameters we wish, as long as we define a transform function relating them to parameters in the model. We use `start_date` directly, and define three linearly-interpolated $\beta$ values `beta_1`, `beta_2` and `beta_3` covering the period of lockdown. This transform must take these `pars` being sampled, and return a suitable `sircovid::carehomes_parameters()` object. This return function, as shown above, is very flexible so most of the parameters can be modified, but the start date and region are mandatory.
+If the parameters we are sampling are the same as their name in the odin model nothing special needs to be done. But we are actually free to give sample whatever definition of parameters we wish, as long as we define a transform function relating them to parameters in the model. We use `start_date` directly, and define three linearly-interpolated $\beta$ values `beta_1`, `beta_2` and `beta_3` covering the period of lockdown. This transform must take these `pars` being sampled, and return a suitable `sircovid::carehomes_parameters()` object. This return function, as shown above, is very flexible so most of the parameters can be modified, but the start date and region are mandatory.
 
 The transmission constant $\beta$ in the model is multiplied by the age-specific contact matrix to give the transmission intensity $\lambda$, and is equivalent to $\beta$ in the simple SEIR model. This is a special parameter which can change at specified timepoints, which we typically define using key announcements made by the UK government (though you can use whatever you'd like):
 
 These will be linearly interpolated between the `beta_value` values at every integration timestep by `sircovid::sircovid_parameters_beta()`, but we do only need to call this function ourselves if we would like to make another parameter time varying.
 
-The rates of `progression` in hospital are available individually via `sircovid::carehomes_parameters_progression()` (which are used by default), but can be modified. `severity` rates can be obtained from the `markovid` package, and loaded with `sircovid::sircovid_parameters_severity()`.
+The rates of `progression` in hospital are available individually via `sircovid::carehomes_parameters_progression()` (which are used by default), but can be modified. Severity rates can be obtained from the [markovid](https://github.com/mrc-ide/markovid) package, and loaded with `sircovid::sircovid_parameters_severity()`.
 
 We then must give each parameter to be sampled:
 
@@ -268,11 +264,10 @@ beta1_param <- mcstate::pmcmc_parameter("beta1", initial = 0.15, min = beta_min,
 beta2_param <- mcstate::pmcmc_parameter("beta2", initial = 0.04, min = beta_min, max = beta_max)
 beta3_param <- mcstate::pmcmc_parameter("beta3", initial = 0.03, min = beta_min, max = beta_max)
 
-
 mcmc_param_list <- list(start_date_param, beta1_param, beta2_param, beta3_param)
 ```
 
-Care must be taken to ensure the minimum for `start_date` matches that defined in `sircovid::sircovid_data`.
+Care must be taken to ensure the minimum for `start_date` matches that defined in `sircovid::sircovid_data`. The defaults for carehomes contact rates `C_1` and `C_2` should also be modified.
 
 ```{r}
 # Returns a function which takes pars (which are being sampled).
@@ -318,27 +313,34 @@ samples <- mcstate::pmcmc(mcmc_params,
                           save_trajectories = TRUE, 
                           progress = TRUE)
 saveRDS(samples, file = "samples.Rds")
-
-
 ```
+
+We can easily plot the modelled deaths versus the data for a single parameter sample from the posterior
 
 ```{r include=TRUE, fig.height=5, fig.width=7}
 samples <- readRDS("samples.Rds")
 
 # extract trajectories that we are fitting
-cum_deaths <- samples$trajectories$state[c("deaths_hosp", "deaths_comm"), 2000, ]
-deaths <- apply(cum_deaths, 1, diff)
-deaths <- cbind(deaths = rowSums(deaths), deaths)
-dx <- sircovid::sircovid_date_as_date(samples$trajectories$step / samples$trajectories$rate)
-# plot against the data
-par(bty = "n", mar = c(3, 3, 1, 1))
-matplot(dx[-1], deaths, type = "l", lty = 1)
-points(data$date, data$deaths)
+plot_deaths <- function(samples, step) {
+  cum_deaths <- samples$trajectories$state[c("deaths_hosp", "deaths_comm"), step, ]
+  deaths <- apply(cum_deaths, 1, diff)
+  deaths <- cbind(deaths = rowSums(deaths), deaths)
+  dx <- sircovid::sircovid_date_as_date(samples$trajectories$step / samples$trajectories$rate)
+  # plot against the data
+  cols <- c(Total = "#8c8cd9", Hospital = "#cc0044", Community = "#999966")
+  plot(data$date, data$deaths, pch = 17, cex = 0.5, xlab = "Date", ylab = "Number of deaths")
+  lines(dx[c(-1, -2)], deaths[-1 ,'deaths'], lty = 1, col = cols[["Total"]])
+  lines(dx[c(-1, -2)], deaths[-1 ,'deaths_hosp'], lty = 1, col = cols[["Hospital"]])
+  lines(dx[c(-1, -2)], deaths[-1 ,'deaths_comm'], lty = 1, col = cols[["Community"]])
+  legend("topright", lwd = 1, col = cols, legend = names(cols), bty = "n")
+}
+
+plot_deaths(samples, n_steps)
 ```
 
-We should now have a look at these results to determine whether the MCMC converged, and enough samples were taken:
+This is clearly underestimating the epidemic's peak. We should also have a look at these results to determine whether the MCMC converged, and enough samples were taken:
 
-```{r fig.height=5, fig.width=7}
+```{r fig.height=10, fig.width=14}
 mcmc <- coda::as.mcmc(cbind(samples$probabilities, samples$pars))
 summary(mcmc)
 coda::effectiveSize(mcmc)
@@ -346,7 +348,7 @@ coda::effectiveSize(mcmc)
 plot(mcmc)
 ```
 
-This is a poor MCMC run. We can try and improve this by setting the proposal distribution to be the same as the observed covariance between samples in this prototype run by setting `proposal = cov(samples$pars)`.
+This is a poor MCMC run. A simple solution is to run more chains for longer, but this is likely to be slow and inefficient. We can try and improve this by setting the proposal distribution to be the same as the observed covariance between samples in this prototype run by setting $\Sigma_P = \left[\frac{2.38^2}{d}\right]\Sigma$, which is achieved with `proposal = alpha * cov(samples$pars)` where $\alpha = \frac{2.38^2}{d}$ and $d$ is the number of parameters (this is [Roberts and Rosenthal's adaptive MCMC algorithm](https://www.jstor.org/stable/27595854)). We can also start the betas from their median value in the previous chain.
 
 ```{r tuned_mcmc, eval=FALSE}
 beta1_param <- mcstate::pmcmc_parameter("beta1", 
@@ -361,44 +363,80 @@ beta3_param <- mcstate::pmcmc_parameter("beta3",
 mcmc_param_list <- list(start_date_param, beta1_param, beta2_param, beta3_param)
 
 mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list, 
-                                             cov(samples$pars) * 0.2, 
+                                             cov(samples$pars), 
                                              parameter_transform(beta_date))
 
-n_chains <- 2L
 samples_tuned <- mcstate::pmcmc(mcmc_params, 
                                 sircovid_pf, 
                                 n_steps = n_steps,
                                 n_chains = n_chains,
                                 save_trajectories = TRUE, 
                                 progress = TRUE)
-saveRDS(samples_tuned, file = "samples_tuned.Rds")
 ```
 
-TODO this didn't work well either
+Iterating this procedure will produce well-mixed chains which produce samples efficiently, though some manual tweaks to the covariance matrix may be necessary for good mixing. We used a few iterations of this to improve chain mixing, and provide this data pre-calculated. Once a good covariance matrix has been found, you will likely want to run multiple chains for longer, to get a good effective sample size for each parameter, and confirm convergence by calculating the Rhat statistic.
 
-```{r include=TRUE}
+```{r}
+cov_mat <- matrix(
+           c(13.0332898709, 0.0433604270, -0.0404375032,  0.0006694847,
+             0.0433604270,  1.678017e-04, -1.527468e-04,  2.836651e-06,
+            -0.0404375032, -1.527468e-04,  2.496026e-04, -8.368809e-06,
+             0.0006694847,  2.836651e-06, -8.368809e-06,  8.658182e-07),
+            nrow = length(mcmc_param_list), ncol = length(mcmc_param_list))
+
+mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list, 
+                                             cov_mat, 
+                                             parameter_transform(beta_date))
+
+n_steps <- 1e4
+n_chains <- 4L
+```
+
+```{r pre_tuned_mcmc, eval=FALSE}
+samples_tuned <- mcstate::pmcmc(mcmc_params, 
+                                sircovid_pf, 
+                                n_steps = n_steps,
+                                n_chains = n_chains,
+                                save_trajectories = TRUE, 
+                                progress = TRUE)
+saveRDS(samples, file = "samples_tuned.Rds")
+```
+
+These chains have a decent effective sample size, and though there is some autocorrelation in them, they appear to have converged to the same optimum.
+
+```{r fig.height=10, fig.width=14}
 samples_tuned <- readRDS("samples_tuned.Rds")
 
-cum_deaths <- samples_tuned$trajectories$state[c("deaths_hosp", "deaths_comm"),2000, ]
-deaths <- apply(cum_deaths, 1, diff)
-deaths <- cbind(deaths = rowSums(deaths), deaths)
-dx <- sircovid::sircovid_date_as_date(samples_tuned$trajectories$step / samples_tuned$trajectories$rate)
-# plot against the data
-par(bty = "n", mar = c(3, 3, 1, 1))
-matplot(dx[-1], deaths, type = "l", lty = 1, ylim = c(0, max(data$deaths, deaths)))
-points(data$date, data$deaths)
-```
-
-```{r fig.height=5, fig.width=7}
 mcmc_tuned <- coda::as.mcmc(cbind(samples_tuned$probabilities, samples_tuned$pars))
 summary(mcmc_tuned)
 coda::effectiveSize(mcmc_tuned)
+1 - coda::rejectionRate(mcmc_tuned)
+
+# Separate chains for coda
+mcmc_list <- vector(mode = "list", length = n_chains)
+for (i in 1:n_chains) {
+  mcmc_list[[i]] <- coda::as.mcmc(samples_tuned$pars[samples_tuned$chain == i,])
+}
+mcmc_list <- coda::mcmc.list(mcmc_list)
+coda::gelman.diag(mcmc_list)
 plot(mcmc_tuned)
 ```
 
-We can see the posterior estimates for the epidemic start date (in days into 2020, i.e. a sircovid_date) and the transmission intensity at each time point in `beta_date`. We can calculate and plot Rt using the provided helper function:
+We can see the posterior estimates for the epidemic start date (in days into 2020, i.e. a sircovid_date) and the transmission intensity at each time point in `beta_date`. 
 
-```{r}
+Plotting versus the data again:
+
+```{r fig.height=5, fig.width=7}
+plot_deaths(samples_tuned, n_steps)
+```
+
+This is a better fit to the data than the one above, and captures the overall shape of the epidemic, but still underestimates the peak. Adding more flexibility into the severity parameters, adding more of the available datastreams can help rectify this issue.
+
+## $R_t$ calculations
+
+We can also calculate and plot Rt using the provided helper function:
+
+```{r fig.height=5, fig.width=7}
 # Extract the number of susceptibles from the fit
 S_partition_index <- grep("^S_", names(samples_tuned$predict$index))
 # this gives dimension 19, n_trajectories, n_times
@@ -418,28 +456,41 @@ plot(first_wave_data$date,
 
 This is only for the final trajectory of the first chain. The `sircovid::carehomes_Rt_trajectories()` function can be used to conveniently calculate this for all of the chains at once.
 
-TODO: haven't done any testing below here
-
-```{r eval=FALSE, include=FALSE}
-pars <- lapply(seq_len(nrow(samples$pars)),
-               function(i) samples$predict$transform(samples$pars[i, ]))
+```{r Rt_all, eval=FALSE}
+pars <- lapply(seq_len(nrow(samples_tuned$pars)),
+               function(i) samples_tuned$predict$transform(samples_tuned$pars[i, ]))
   
 Rt_estimates <- 
   sircovid::carehomes_Rt_trajectories(
-    step,
+    samples_tuned$trajectories$step,
     S,
     pars,
     initial_step_from_parameters = TRUE,
     shared_parameters = FALSE
   )
 Rt_estimates$date <- Rt_estimates$step * pars[[1]]$dt
+saveRDS(Rt_estimates, "Rt_estimates.rds")
 ```
 
-TODO make some plots
+We can plot the mean and 95% HPD for any of the sampled parameters. Here is a brief example with Rt
+
+```{r fig.height=5, fig.width=7}
+Rt_estimates <- readRDS("Rt_estimates.rds")
+
+dates <- sircovid::sircovid_date_as_date(Rt_estimates$date[, 1])
+Rt_mean <- apply(Rt_estimates$eff_Rt_all, 1, mean)
+Rt_quantiles <- apply(Rt_estimates$eff_Rt_all, 1, quantile, c(0.025, 0.975))
+
+plot(dates[-1], Rt_mean[-1], type = 'l', xlab = "Date", ylab = "Rt")
+lines(dates[-1], Rt_quantiles["2.5%", -1], lty = 2, col = "#999999")
+lines(dates[-1], Rt_quantiles["97.5%", -1], lty = 2, col = "#999999")
+```
 
 # Creating forecasts from a fitted model
 
-TODO
+Once the model has been fitted, as above, you can continue to run it forwards in time. This simulates runs from the model using samples from the posterior distributions for the fitted parameters. There is no further fitting to data, as it is not available, and parameters will remain the same over the whole time period.
+
+You can run as far forward in time as you would like, though of course we would note that long term predictions are likely to be inaccurate, as parameters are expected to change over time in response to various external factors. Here we will attempt to forecast two weeks into the future, and compare with the observed deaths over that period.
 
 ```{r eval=FALSE, include=FALSE}
 message("Running forecasts")
@@ -463,3 +514,4 @@ message("Computing Rt")
 rt <- calculate_ons_Rt(samples_predict)
 ```
 
+If you wish to run difference scenarios, or counterfactuals for periods in the past, you can use the `run` method of the `sircovid::carehomes()` model directly, with your chosen parameters.
