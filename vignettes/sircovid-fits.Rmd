@@ -502,17 +502,22 @@ samples_for_prediction <-
 steps_for_prediction <- seq(samples_for_prediction$predict$step,
                             length.out = control$forecast_days + 1L,
                             by = samples_for_prediction$predict$rate)
+```
 
+```{r run_forecasts, eval=FALSE}
 # Now run predictions, using this sample from the posterior
 predicted_trajectories <- mcstate::pmcmc_predict(samples_for_prediction,
                                                  steps_for_prediction,
                                                  prepend_trajectories = TRUE)
 predicted_trajectories$date <- predicted_trajectories$step / predicted_trajectories$rate
+saveRDS(predicted_trajectories, "forecasts.rds", version = 2)
 ```
 
 We can plot the sampled trajectories and their forecasts along with the death data that was fitted to. The break between nowcasting and forecasting is shown here by the vertical dashed line.
 
-```{r fig.height=7, fig.width=10}
+```{r plot_forecasts, fig.height=7, fig.width=10}
+predicted_trajectories <- readRDS("forecasts.rds")
+
 # This has dimension (model partitions, samples, steps) = (49, 20, 73)
 # Extract the deaths as before
 total_steps <- length(predicted_trajectories$step) - 1L
