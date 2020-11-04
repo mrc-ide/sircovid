@@ -1,5 +1,5 @@
 ---
-title: "sircovid-fits"
+title: "Fitting and forecasting with SIRCOVID"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{sircovid-fits}
@@ -296,6 +296,8 @@ The final element required to build and run the MCMC object is a proposal distri
 mcmc_proposals <- matrix(0, nrow = length(mcmc_param_list), ncol = length(mcmc_param_list))
 diag(mcmc_proposals) <- c(5, 5e-5, 2e-4, 7e-7)
 
+n_steps <- 2e3
+n_chains <- 1L
 mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list, 
                                              mcmc_proposals, 
                                              parameter_transform(beta_date))
@@ -304,8 +306,7 @@ mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list,
 We can now run the inference. This will take a long time (~1hr), so increasing the number of threads above can be helpful. For real inference, running for at least 2000 steps on more than one chain is recommended.
 
 ```{r mcmc_run, eval=FALSE}
-n_steps <- 2e3
-n_chains <- 1L
+
 samples <- mcstate::pmcmc(mcmc_params, 
                           sircovid_pf, 
                           n_steps = n_steps,
@@ -419,7 +420,7 @@ for (i in 1:n_chains) {
 }
 mcmc_list <- coda::mcmc.list(mcmc_list)
 coda::gelman.diag(mcmc_list)
-plot(mcmc_tuned)
+plot(mcmc_list)
 ```
 
 We can see the posterior estimates for the epidemic start date (in days into 2020, i.e. a sircovid_date) and the transmission intensity at each time point in `beta_date`. 
@@ -511,7 +512,7 @@ predicted_trajectories$date <- predicted_trajectories$step / predicted_trajector
 
 We can plot the sampled trajectories and their forecasts along with the death data that was fitted to. The break between nowcasting and forecasting is shown here by the vertical dashed line.
 
-```{r}
+```{r fig.height=7, fig.width=10}
 # This has dimension (model partitions, samples, steps) = (49, 20, 73)
 # Extract the deaths as before
 total_steps <- length(predicted_trajectories$step) - 1L
