@@ -81,6 +81,24 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
 
 })
 
+test_that("R, R_neg and PCR_neg are all non-decreasing and S is non-increasing
+          if waning rate is 0", {
+  p <- carehomes_parameters(0, "england",
+                            waning_rate = 0)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(drop(
+    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+
+  expect_true(all(diff(t(y$R)) >= 0))
+  expect_true(all(diff(t(y$R_neg)) >= 0))
+  expect_true(all(diff(t(y$PCR_neg)) >= 0))
+  expect_true(all(diff(t(y$S[, 1, ])) <= 0))
+
+})
+
 
 test_that("No one is infected if I and E are 0 at t = 0", {
   p <- carehomes_parameters(0, "england")
