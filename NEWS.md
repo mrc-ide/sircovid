@@ -1,6 +1,6 @@
 # sircovid 0.6.5
 
-* Parameter `N_age` was split into `n_age` (both models) and `n_groups` (carehomes)
+* Parameter `N_age` was split into `n_age_groups` (both models) and `n_groups` (carehomes)
 * Implement preliminary support for waning immunity
 
 # sircovid 0.6.4
@@ -14,7 +14,7 @@
 # sircovid 0.6.2
 
 * Support for probability of positive calculation directly in the package
-* Pillar 2 data is now fitted to over 25s only
+* Pillar 2 data can now be fitted to over 25s only, as well as all ages
 * Sensitivity is explicitly considered in the sero probability calculation
 
 # sircovid 0.6.1
