@@ -2,7 +2,10 @@ context("carehomes (vaccination)")
 
 test_that("there are no infections if everyone is vaccinated with a vaccine
           preventing 100% of acquisition", {
-  p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 0))
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 0),
+                            waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
@@ -21,7 +24,8 @@ test_that("there are no infections if everyone is vaccinated with a vaccine
   s <- array(s, c(info$dim$S, 101))
 
   ## Noone moves into unvaccinated
-  expect_true(all(s[, 1, ] == 0))
+  ## except in the group where infections because of waning immunity
+  expect_true(all(s[-4, 1, ] == 0))
 
   ## Noone changes compartment within the vaccinated individuals
   expect_true(all(s[, 2, ] == s[, 2, 1]))
@@ -81,8 +85,11 @@ test_that("Effective Rt reduced by rel_susceptbility if all vaccinated", {
   reduced_susceptibility <- 0.2 # can put anything here
 
   ## run model with unvaccinated & vaccinated (with susceptibility halved)
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            rel_susceptibility = c(1, reduced_susceptibility))
+                            rel_susceptibility = c(1, reduced_susceptibility),
+                            waning_rate = 1 / 20)
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)

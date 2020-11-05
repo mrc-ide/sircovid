@@ -16,7 +16,8 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
-update(S[, ]) <- S[i, j] - n_SE[i, j] # age, vaccination status
+update(S[, 1]) <- S[i, 1] - n_SE[i, 1] + n_RS[i] # age, vaccination status
+update(S[, 2:N_vacc_classes]) <- S[i, j] - n_SE[i, j] # age, vaccination status
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
@@ -38,13 +39,13 @@ update(R_stepdown_unconf[, ]) <- new_R_stepdown_unconf[i, j]
 update(R_stepdown_conf[, ]) <- new_R_stepdown_conf[i, j]
 update(R_pre[, ]) <- new_R_pre[i, j]
 update(R_pos[, ]) <- new_R_pos[i, j]
-update(R_neg[]) <- new_R_neg[i]
-update(R[]) <- R[i] + delta_R[i]
+update(R_neg[]) <- new_R_neg[i] - n_RS[i]
+update(R[]) <- R[i] + delta_R[i] - n_RS[i]
 update(D_hosp[]) <- new_D_hosp[i]
 update(D_comm[]) <- new_D_comm[i]
 update(PCR_pre[, ]) <- new_PCR_pre[i, j]
 update(PCR_pos[, ]) <- new_PCR_pos[i, j]
-update(PCR_neg[]) <- PCR_neg[i] + n_PCR_pos[i, s_PCR_pos]
+update(PCR_neg[]) <- PCR_neg[i] + n_PCR_pos[i, s_PCR_pos] - n_RS[i]
 update(cum_admit_conf) <-
   cum_admit_conf +
   sum(n_ILI_to_hosp_D_conf) +
@@ -81,6 +82,7 @@ p_R_pos <- 1 - exp(-gamma_R_pos * dt)
 p_test <- 1 - exp(-gamma_test * dt)
 p_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
 p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
+p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
 
 ## Work out time-varying probabilities
 p_ICU_hosp <- if (step >= length(p_ICU_hosp_step))
@@ -134,6 +136,8 @@ n_R_pre[, ] <- rbinom(R_pre[i, j], p_R_pre[i, j])
 n_R_pos[, ] <- rbinom(R_pos[i, j], p_R_pos)
 n_PCR_pre[, ] <- rbinom(PCR_pre[i, j], p_PCR_pre)
 n_PCR_pos[, ] <- rbinom(PCR_pos[i, j], p_PCR_pos)
+n_RS_tmp[] <- rbinom(R[i], p_RS[i])
+n_RS[] <- min(n_RS_tmp[i], R_neg[i], PCR_neg[i])
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
@@ -558,6 +562,10 @@ dim(p_death_ICU_step) <- user()
 p_death_ICU_step[] <- user()
 psi_death_ICU[] <- user()
 
+## Waning of immunity
+waning_rate[] <- user()
+dim(waning_rate) <- N_age
+
 ## Parameters of the R_stepdown classes
 s_stepdown <- user()
 gamma_stepdown <- user(0.1)
@@ -570,7 +578,6 @@ gamma_R_pre[2] <- gamma_R_pre_2
 ## Governs the mixing - pretty much only makes sense at 0.5
 p_R_pre_1 <- user(0.5)
 p_seroconversion[] <- user()
-
 
 # Parameters of the R_pos classes
 s_R_pos <- user()
@@ -835,6 +842,10 @@ dim(trans_profile) <- c(N_age, trans_classes)
 dim(trans_increase) <- c(N_age, trans_classes)
 dim(I_with_diff_trans) <- c(N_age, trans_classes)
 
+## Vectors handling the loss of immunity
+dim(n_RS_tmp) <- N_age
+dim(n_RS) <- N_age
+dim(p_RS) <- N_age
 
 ## Total population
 initial(N_tot[]) <- 0
