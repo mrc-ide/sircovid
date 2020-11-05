@@ -144,6 +144,7 @@
   react_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
   prop_noncovid_sympt <span class='op'>=</span> <span class='fl'>0.01</span>,
   rel_susceptibility <span class='op'>=</span> <span class='fl'>1</span>,
+  waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
 <span class='op'>)</span></pre>
 
@@ -248,6 +249,13 @@ covid but have covid-like symptoms</p></td>
 susceptibility of individuals in different vaccination groups. The first
 value should be 1 (for the non-vaccinated group) and subsequent values be
 between 0 and 1.</p></td>
+    </tr>
+    <tr>
+      <th>waning_rate</th>
+      <td><p>A single value or a vector of values representing the
+rates of waning of immunity after infection; if a single value the same
+rate is used for all age groups; if a vector of values if used it should
+have one value per age group.</p></td>
     </tr>
     <tr>
       <th>exp_noise</th>
@@ -658,6 +666,9 @@ just before the model is run.</p>
 #&gt; 
 #&gt; $rel_susceptibility
 #&gt; [1] 1
+#&gt; 
+#&gt; $waning_rate
+#&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
