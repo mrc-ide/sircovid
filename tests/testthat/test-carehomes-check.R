@@ -58,7 +58,7 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
 
   state <- carehomes_initial(info, 1, p)$state
 
-  # move everyone to R and R_neg initially
+  # move everyone to R, R_neg and PCR_neg initially
   index_S <- array(info$index$S, info$dim$S)
   index_R <- array(info$index$R, info$dim$R)
   index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
