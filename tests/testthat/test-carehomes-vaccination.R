@@ -110,9 +110,9 @@ test_that("Effective Rt reduced by rel_susceptbility if all vaccinated", {
 
   ## move all individuals to vaccinated
   y_with_vacc <- y
-  y_with_vacc[seq(p$N_age + 1, 2 * p$N_age), , ] <-
-    y_with_vacc[seq_len(p$N_age), , ]
-  y_with_vacc[seq_len(p$N_age), , ] <- 0
+  y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
+    y_with_vacc[seq_len(p$n_groups), , ]
+  y_with_vacc[seq_len(p$n_groups), , ] <- 0
 
   rt_1_vacc <- carehomes_Rt(steps, y_with_vacc[, 1, ], p)
   rt_all_vacc <- carehomes_Rt_trajectories(steps, y_with_vacc, p)

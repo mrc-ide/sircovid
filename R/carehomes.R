@@ -164,10 +164,7 @@ carehomes_parameters <- function(start_date, region,
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise)
 
-  ## TODO: Adding this here, but better would be to pass N_age as-is,
-  ## then update the leading dimension to something more accurate
-  ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
-  ret$N_age <- ret$N_age + 2L
+  ret$n_groups <- ret$N_age + 2L
 
   c(ret, severity, progression, vaccination, waning)
 }
@@ -397,7 +394,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 ##
 ##   [1..N_age, workers, residents]
 ##
-## so we have length of N_age + 2
+## so we have length of n_groups = N_age + 2
 ##' @importFrom stats weighted.mean
 carehomes_severity <- function(p, population) {
   index_workers <- carehomes_index_workers()

@@ -5,9 +5,9 @@
 
 ## Number of classes (age transmissibility & vaccination)
 
-## TODO: this should be renamed as it includes the CHW and CHR groups,
-## so it's N_age plus 2 now! N_group is ok but more vague than ideal.
-N_age <- user()
+## Number of "groups", being the age classes, Carehome workers and
+## Carehome residents. This will be 19 in all but experimental uses.
+n_groups <- user()
 trans_classes <- user(1)
 
 ## Definition of the time-step and output as "time"
@@ -564,7 +564,7 @@ psi_death_ICU[] <- user()
 
 ## Waning of immunity
 waning_rate[] <- user()
-dim(waning_rate) <- N_age
+dim(waning_rate) <- n_groups
 
 ## Parameters of the R_stepdown classes
 s_stepdown <- user()
@@ -623,229 +623,229 @@ comm_D_transmission <- user()
 ## multi-dimensional arrays
 
 ## Vectors handling the S class
-dim(S) <- c(N_age, N_vacc_classes)
+dim(S) <- c(n_groups, N_vacc_classes)
 
 ## Vectors handling the E class
-dim(E) <- c(N_age, s_E, trans_classes)
-dim(aux_EE) <- c(N_age, s_E, trans_classes)
-dim(new_E) <- c(N_age, s_E, trans_classes)
-dim(n_EE) <- c(N_age, s_E, trans_classes)
+dim(E) <- c(n_groups, s_E, trans_classes)
+dim(aux_EE) <- c(n_groups, s_E, trans_classes)
+dim(new_E) <- c(n_groups, s_E, trans_classes)
+dim(n_EE) <- c(n_groups, s_E, trans_classes)
 
 ## Vectors handling the I_asympt class
-dim(I_asympt) <- c(N_age, s_asympt, trans_classes)
-dim(aux_II_asympt) <- c(N_age, s_asympt, trans_classes)
-dim(new_I_asympt) <- c(N_age, s_asympt, trans_classes)
-dim(n_II_asympt) <- c(N_age, s_asympt, trans_classes)
+dim(I_asympt) <- c(n_groups, s_asympt, trans_classes)
+dim(aux_II_asympt) <- c(n_groups, s_asympt, trans_classes)
+dim(new_I_asympt) <- c(n_groups, s_asympt, trans_classes)
+dim(n_II_asympt) <- c(n_groups, s_asympt, trans_classes)
 
 ## Vectors handling the I_mild class
-dim(I_mild) <- c(N_age, s_mild, trans_classes)
-dim(aux_II_mild) <- c(N_age, s_mild, trans_classes)
-dim(new_I_mild) <- c(N_age, s_mild, trans_classes)
-dim(n_II_mild) <- c(N_age, s_mild, trans_classes)
+dim(I_mild) <- c(n_groups, s_mild, trans_classes)
+dim(aux_II_mild) <- c(n_groups, s_mild, trans_classes)
+dim(new_I_mild) <- c(n_groups, s_mild, trans_classes)
+dim(n_II_mild) <- c(n_groups, s_mild, trans_classes)
 
 ## Vectors handling the I_ILI class
-dim(I_ILI) <- c(N_age, s_ILI, trans_classes)
-dim(aux_II_ILI) <- c(N_age, s_ILI, trans_classes)
-dim(new_I_ILI) <- c(N_age, s_ILI, trans_classes)
-dim(n_II_ILI) <- c(N_age, s_ILI, trans_classes)
-dim(prob_hosp_ILI) <- N_age
-dim(psi_hosp_ILI) <- N_age
+dim(I_ILI) <- c(n_groups, s_ILI, trans_classes)
+dim(aux_II_ILI) <- c(n_groups, s_ILI, trans_classes)
+dim(new_I_ILI) <- c(n_groups, s_ILI, trans_classes)
+dim(n_II_ILI) <- c(n_groups, s_ILI, trans_classes)
+dim(prob_hosp_ILI) <- n_groups
+dim(psi_hosp_ILI) <- n_groups
 
 ## Vectors handling the I_comm_D class
-dim(I_comm_D) <- c(N_age, s_comm_D, trans_classes)
-dim(aux_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
-dim(new_I_comm_D) <- c(N_age, s_comm_D, trans_classes)
-dim(n_II_comm_D) <- c(N_age, s_comm_D, trans_classes)
-dim(prob_death_comm) <- N_age
-dim(psi_death_comm) <- N_age
+dim(I_comm_D) <- c(n_groups, s_comm_D, trans_classes)
+dim(aux_II_comm_D) <- c(n_groups, s_comm_D, trans_classes)
+dim(new_I_comm_D) <- c(n_groups, s_comm_D, trans_classes)
+dim(n_II_comm_D) <- c(n_groups, s_comm_D, trans_classes)
+dim(prob_death_comm) <- n_groups
+dim(psi_death_comm) <- n_groups
 
 ## Vectors handling the I_triage_R class
-dim(I_triage_R_unconf) <- c(N_age, s_triage, trans_classes)
-dim(aux_II_triage_R_unconf) <- c(N_age, s_triage, trans_classes)
-dim(new_I_triage_R_unconf) <- c(N_age, s_triage, trans_classes)
-dim(n_II_triage_R_unconf) <- c(N_age, s_triage, trans_classes)
-dim(I_triage_R_conf) <- c(N_age, s_triage, trans_classes)
-dim(aux_II_triage_R_conf) <- c(N_age, s_triage, trans_classes)
-dim(new_I_triage_R_conf) <- c(N_age, s_triage, trans_classes)
-dim(n_II_triage_R_conf) <- c(N_age, s_triage, trans_classes)
-dim(n_I_triage_R_unconf_to_conf) <- c(N_age, s_triage, trans_classes)
+dim(I_triage_R_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(aux_II_triage_R_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(new_I_triage_R_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(n_II_triage_R_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(I_triage_R_conf) <- c(n_groups, s_triage, trans_classes)
+dim(aux_II_triage_R_conf) <- c(n_groups, s_triage, trans_classes)
+dim(new_I_triage_R_conf) <- c(n_groups, s_triage, trans_classes)
+dim(n_II_triage_R_conf) <- c(n_groups, s_triage, trans_classes)
+dim(n_I_triage_R_unconf_to_conf) <- c(n_groups, s_triage, trans_classes)
 
 ## Vectors handling the I_triage_D class
-dim(I_triage_D_unconf) <- c(N_age, s_triage, trans_classes)
-dim(aux_II_triage_D_unconf) <- c(N_age, s_triage, trans_classes)
-dim(new_I_triage_D_unconf) <- c(N_age, s_triage, trans_classes)
-dim(n_II_triage_D_unconf) <- c(N_age, s_triage, trans_classes)
-dim(I_triage_D_conf) <- c(N_age, s_triage, trans_classes)
-dim(aux_II_triage_D_conf) <- c(N_age, s_triage, trans_classes)
-dim(new_I_triage_D_conf) <- c(N_age, s_triage, trans_classes)
-dim(n_II_triage_D_conf) <- c(N_age, s_triage, trans_classes)
-dim(n_I_triage_D_unconf_to_conf) <- c(N_age, s_triage, trans_classes)
+dim(I_triage_D_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(aux_II_triage_D_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(new_I_triage_D_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(n_II_triage_D_unconf) <- c(n_groups, s_triage, trans_classes)
+dim(I_triage_D_conf) <- c(n_groups, s_triage, trans_classes)
+dim(aux_II_triage_D_conf) <- c(n_groups, s_triage, trans_classes)
+dim(new_I_triage_D_conf) <- c(n_groups, s_triage, trans_classes)
+dim(n_II_triage_D_conf) <- c(n_groups, s_triage, trans_classes)
+dim(n_I_triage_D_unconf_to_conf) <- c(n_groups, s_triage, trans_classes)
 
 ## Vector handling who progress to ICU
-dim(prob_ICU_hosp) <- N_age
-dim(psi_ICU_hosp) <- N_age
+dim(prob_ICU_hosp) <- n_groups
+dim(psi_ICU_hosp) <- n_groups
 
 ## Vectors handling the I_hosp_R class
-dim(I_hosp_R_unconf) <- c(N_age, s_hosp_R, trans_classes)
-dim(aux_II_hosp_R_unconf) <- c(N_age, s_hosp_R, trans_classes)
-dim(new_I_hosp_R_unconf) <- c(N_age, s_hosp_R, trans_classes)
-dim(n_II_hosp_R_unconf) <- c(N_age, s_hosp_R, trans_classes)
-dim(I_hosp_R_conf) <- c(N_age, s_hosp_R, trans_classes)
-dim(aux_II_hosp_R_conf) <- c(N_age, s_hosp_R, trans_classes)
-dim(new_I_hosp_R_conf) <- c(N_age, s_hosp_R, trans_classes)
-dim(n_II_hosp_R_conf) <- c(N_age, s_hosp_R, trans_classes)
-dim(n_I_hosp_R_unconf_to_conf) <- c(N_age, s_hosp_R, trans_classes)
+dim(I_hosp_R_unconf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(aux_II_hosp_R_unconf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(new_I_hosp_R_unconf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(n_II_hosp_R_unconf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(I_hosp_R_conf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(aux_II_hosp_R_conf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(new_I_hosp_R_conf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(n_II_hosp_R_conf) <- c(n_groups, s_hosp_R, trans_classes)
+dim(n_I_hosp_R_unconf_to_conf) <- c(n_groups, s_hosp_R, trans_classes)
 
 ## Vectors handling the I_hosp_D class
-dim(I_hosp_D_unconf) <- c(N_age, s_hosp_D, trans_classes)
-dim(aux_II_hosp_D_unconf) <- c(N_age, s_hosp_D, trans_classes)
-dim(new_I_hosp_D_unconf) <- c(N_age, s_hosp_D, trans_classes)
-dim(n_II_hosp_D_unconf) <- c(N_age, s_hosp_D, trans_classes)
-dim(I_hosp_D_conf) <- c(N_age, s_hosp_D, trans_classes)
-dim(aux_II_hosp_D_conf) <- c(N_age, s_hosp_D, trans_classes)
-dim(new_I_hosp_D_conf) <- c(N_age, s_hosp_D, trans_classes)
-dim(n_II_hosp_D_conf) <- c(N_age, s_hosp_D, trans_classes)
-dim(n_I_hosp_D_unconf_to_conf) <- c(N_age, s_hosp_D, trans_classes)
+dim(I_hosp_D_unconf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(aux_II_hosp_D_unconf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(new_I_hosp_D_unconf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(n_II_hosp_D_unconf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(I_hosp_D_conf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(aux_II_hosp_D_conf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(new_I_hosp_D_conf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(n_II_hosp_D_conf) <- c(n_groups, s_hosp_D, trans_classes)
+dim(n_I_hosp_D_unconf_to_conf) <- c(n_groups, s_hosp_D, trans_classes)
 
 ## Vectors handling the I_ICU_R class
-dim(I_ICU_R_unconf) <- c(N_age, s_ICU_R, trans_classes)
-dim(aux_II_ICU_R_unconf) <- c(N_age, s_ICU_R, trans_classes)
-dim(new_I_ICU_R_unconf) <- c(N_age, s_ICU_R, trans_classes)
-dim(n_II_ICU_R_unconf) <- c(N_age, s_ICU_R, trans_classes)
-dim(I_ICU_R_conf) <- c(N_age, s_ICU_R, trans_classes)
-dim(aux_II_ICU_R_conf) <- c(N_age, s_ICU_R, trans_classes)
-dim(new_I_ICU_R_conf) <- c(N_age, s_ICU_R, trans_classes)
-dim(n_II_ICU_R_conf) <- c(N_age, s_ICU_R, trans_classes)
-dim(n_I_ICU_R_unconf_to_conf) <- c(N_age, s_ICU_R, trans_classes)
+dim(I_ICU_R_unconf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(aux_II_ICU_R_unconf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(new_I_ICU_R_unconf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(n_II_ICU_R_unconf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(I_ICU_R_conf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(aux_II_ICU_R_conf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(new_I_ICU_R_conf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(n_II_ICU_R_conf) <- c(n_groups, s_ICU_R, trans_classes)
+dim(n_I_ICU_R_unconf_to_conf) <- c(n_groups, s_ICU_R, trans_classes)
 
 ## Vectors handling the I_ICU_D class
-dim(I_ICU_D_unconf) <- c(N_age, s_ICU_D, trans_classes)
-dim(aux_II_ICU_D_unconf) <- c(N_age, s_ICU_D, trans_classes)
-dim(new_I_ICU_D_unconf) <- c(N_age, s_ICU_D, trans_classes)
-dim(n_II_ICU_D_unconf) <- c(N_age, s_ICU_D, trans_classes)
-dim(I_ICU_D_conf) <- c(N_age, s_ICU_D, trans_classes)
-dim(aux_II_ICU_D_conf) <- c(N_age, s_ICU_D, trans_classes)
-dim(new_I_ICU_D_conf) <- c(N_age, s_ICU_D, trans_classes)
-dim(n_II_ICU_D_conf) <- c(N_age, s_ICU_D, trans_classes)
-dim(n_I_ICU_D_unconf_to_conf) <- c(N_age, s_ICU_D, trans_classes)
+dim(I_ICU_D_unconf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(aux_II_ICU_D_unconf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(new_I_ICU_D_unconf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(n_II_ICU_D_unconf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(I_ICU_D_conf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(aux_II_ICU_D_conf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(new_I_ICU_D_conf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(n_II_ICU_D_conf) <- c(n_groups, s_ICU_D, trans_classes)
+dim(n_I_ICU_D_unconf_to_conf) <- c(n_groups, s_ICU_D, trans_classes)
 
 ## Vectors handling the R_stepdown class
-dim(R_stepdown_unconf) <- c(N_age, s_stepdown)
-dim(aux_R_stepdown_unconf) <- c(N_age, s_stepdown)
-dim(new_R_stepdown_unconf) <- c(N_age, s_stepdown)
-dim(n_R_stepdown_unconf) <- c(N_age, s_stepdown)
-dim(R_stepdown_conf) <- c(N_age, s_stepdown)
-dim(aux_R_stepdown_conf) <- c(N_age, s_stepdown)
-dim(new_R_stepdown_conf) <- c(N_age, s_stepdown)
-dim(n_R_stepdown_conf) <- c(N_age, s_stepdown)
-dim(n_R_stepdown_unconf_to_conf) <- c(N_age, s_stepdown)
+dim(R_stepdown_unconf) <- c(n_groups, s_stepdown)
+dim(aux_R_stepdown_unconf) <- c(n_groups, s_stepdown)
+dim(new_R_stepdown_unconf) <- c(n_groups, s_stepdown)
+dim(n_R_stepdown_unconf) <- c(n_groups, s_stepdown)
+dim(R_stepdown_conf) <- c(n_groups, s_stepdown)
+dim(aux_R_stepdown_conf) <- c(n_groups, s_stepdown)
+dim(new_R_stepdown_conf) <- c(n_groups, s_stepdown)
+dim(n_R_stepdown_conf) <- c(n_groups, s_stepdown)
+dim(n_R_stepdown_unconf_to_conf) <- c(n_groups, s_stepdown)
 
 ## Vectors handling the R_pos class
-dim(R) <- N_age
-dim(delta_R) <- N_age
+dim(R) <- n_groups
+dim(delta_R) <- n_groups
 
 ## Vectors handling the R_pre class and seroconversion
-dim(R_pre) <- c(N_age, 2)
-dim(new_R_pre) <- c(N_age, 2)
-dim(n_R_pre) <- c(N_age, 2)
+dim(R_pre) <- c(n_groups, 2)
+dim(new_R_pre) <- c(n_groups, 2)
+dim(n_R_pre) <- c(n_groups, 2)
 dim(gamma_R_pre) <- c(2)
-dim(p_R_pre) <- c(N_age, 2)
-dim(p_seroconversion) <- N_age
+dim(p_R_pre) <- c(n_groups, 2)
+dim(p_seroconversion) <- n_groups
 
 ## Vectors handling the R_pos class
-dim(R_pos) <- c(N_age, s_R_pos)
-dim(n_R_pos) <- c(N_age, s_R_pos)
-dim(new_R_pos) <- c(N_age, s_R_pos)
-dim(delta_R_pos) <- c(N_age, s_R_pos)
-dim(n_R_pre_to_R_pos) <- c(N_age)
+dim(R_pos) <- c(n_groups, s_R_pos)
+dim(n_R_pos) <- c(n_groups, s_R_pos)
+dim(new_R_pos) <- c(n_groups, s_R_pos)
+dim(delta_R_pos) <- c(n_groups, s_R_pos)
+dim(n_R_pre_to_R_pos) <- c(n_groups)
 
 ## Vectors handling the R_neg class
-dim(R_neg) <- N_age
-dim(new_R_neg) <- N_age
-dim(delta_R_neg) <- N_age
+dim(R_neg) <- n_groups
+dim(new_R_neg) <- n_groups
+dim(delta_R_neg) <- n_groups
 
 ## Vectors handling the D_hosp class
-dim(D_hosp) <- N_age
-dim(new_D_hosp) <- N_age
-dim(delta_D_hosp) <- N_age
+dim(D_hosp) <- n_groups
+dim(new_D_hosp) <- n_groups
+dim(delta_D_hosp) <- n_groups
 
 ## Vectors handling the D_comm class
-dim(D_comm) <- N_age
-dim(new_D_comm) <- N_age
-dim(delta_D_comm) <- N_age
+dim(D_comm) <- n_groups
+dim(new_D_comm) <- n_groups
+dim(delta_D_comm) <- n_groups
 
 ## Vectors handling the PCR classes
-dim(PCR_pre) <- c(N_age, s_PCR_pre)
-dim(delta_PCR_pre) <- c(N_age, s_PCR_pre)
-dim(n_PCR_pre) <- c(N_age, s_PCR_pre)
-dim(new_PCR_pre) <- c(N_age, s_PCR_pre)
-dim(PCR_pos) <- c(N_age, s_PCR_pos)
-dim(delta_PCR_pos) <- c(N_age, s_PCR_pos)
-dim(n_PCR_pos) <- c(N_age, s_PCR_pos)
-dim(new_PCR_pos) <- c(N_age, s_PCR_pos)
-dim(PCR_neg) <- c(N_age)
+dim(PCR_pre) <- c(n_groups, s_PCR_pre)
+dim(delta_PCR_pre) <- c(n_groups, s_PCR_pre)
+dim(n_PCR_pre) <- c(n_groups, s_PCR_pre)
+dim(new_PCR_pre) <- c(n_groups, s_PCR_pre)
+dim(PCR_pos) <- c(n_groups, s_PCR_pos)
+dim(delta_PCR_pos) <- c(n_groups, s_PCR_pos)
+dim(n_PCR_pos) <- c(n_groups, s_PCR_pos)
+dim(new_PCR_pos) <- c(n_groups, s_PCR_pos)
+dim(PCR_neg) <- c(n_groups)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
-dim(p_SE) <- c(N_age, N_vacc_classes)
-dim(n_SE) <- c(N_age, N_vacc_classes)
-dim(aux_p_bin) <- c(N_age, trans_classes)
+dim(p_SE) <- c(n_groups, N_vacc_classes)
+dim(n_SE) <- c(n_groups, N_vacc_classes)
+dim(aux_p_bin) <- c(n_groups, trans_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
 ## are split between level of severity
-dim(n_EI_asympt) <- c(N_age, trans_classes)
-dim(n_EI_mild) <- c(N_age, trans_classes)
-dim(n_EI_ILI) <- c(N_age, trans_classes)
+dim(n_EI_asympt) <- c(n_groups, trans_classes)
+dim(n_EI_mild) <- c(n_groups, trans_classes)
+dim(n_EI_ILI) <- c(n_groups, trans_classes)
 
 ## Vectors handling I_ILI to R, I_comm_D transition
-dim(n_ILI_to_comm_D) <- c(N_age, trans_classes)
-dim(n_ILI_to_R) <- c(N_age, trans_classes)
+dim(n_ILI_to_comm_D) <- c(n_groups, trans_classes)
+dim(n_ILI_to_R) <- c(n_groups, trans_classes)
 
 ## Vectors handling number of new hospitalisations, ICU admissions and
 ## recoveries in hospital
-dim(n_ILI_to_hosp) <- c(N_age, trans_classes)
-dim(n_ILI_to_triage) <- c(N_age, trans_classes)
-dim(n_hosp_non_ICU) <- c(N_age, trans_classes)
-dim(n_ILI_to_hosp_D) <- c(N_age, trans_classes)
-dim(n_ILI_to_hosp_D_conf) <- c(N_age, trans_classes)
-dim(n_ILI_to_hosp_R) <- c(N_age, trans_classes)
-dim(n_ILI_to_hosp_R_conf) <- c(N_age, trans_classes)
-dim(n_ILI_to_triage_R) <- c(N_age, trans_classes)
-dim(n_ILI_to_triage_R_conf) <- c(N_age, trans_classes)
-dim(n_ILI_to_triage_D) <- c(N_age, trans_classes)
-dim(n_ILI_to_triage_D_conf) <- c(N_age, trans_classes)
+dim(n_ILI_to_hosp) <- c(n_groups, trans_classes)
+dim(n_ILI_to_triage) <- c(n_groups, trans_classes)
+dim(n_hosp_non_ICU) <- c(n_groups, trans_classes)
+dim(n_ILI_to_hosp_D) <- c(n_groups, trans_classes)
+dim(n_ILI_to_hosp_D_conf) <- c(n_groups, trans_classes)
+dim(n_ILI_to_hosp_R) <- c(n_groups, trans_classes)
+dim(n_ILI_to_hosp_R_conf) <- c(n_groups, trans_classes)
+dim(n_ILI_to_triage_R) <- c(n_groups, trans_classes)
+dim(n_ILI_to_triage_R_conf) <- c(n_groups, trans_classes)
+dim(n_ILI_to_triage_D) <- c(n_groups, trans_classes)
+dim(n_ILI_to_triage_D_conf) <- c(n_groups, trans_classes)
 
 ## Vectors handling the serology flow
-dim(n_com_to_R_pre) <- c(N_age, 2)
+dim(n_com_to_R_pre) <- c(n_groups, 2)
 
 ## Vectors handling the severity profile
-dim(p_asympt) <- N_age
-dim(p_sympt_ILI) <- N_age
+dim(p_asympt) <- n_groups
+dim(p_sympt_ILI) <- n_groups
 
 ## Vectors handling the potential death in hospital (general beds and ICU)
-dim(prob_death_hosp_D) <- N_age
-dim(psi_death_hosp_D) <- N_age
-dim(prob_death_ICU) <- N_age
-dim(psi_death_ICU) <- N_age
+dim(prob_death_hosp_D) <- n_groups
+dim(psi_death_hosp_D) <- n_groups
+dim(prob_death_ICU) <- n_groups
+dim(psi_death_ICU) <- n_groups
 
 ## Vector handling the probability of being admitted as confirmed
-dim(prob_admit_conf) <- N_age
-dim(psi_admit_conf) <- N_age
+dim(prob_admit_conf) <- n_groups
+dim(psi_admit_conf) <- n_groups
 
-dim(cum_admit_by_age) <- N_age
+dim(cum_admit_by_age) <- n_groups
 
 ## Vectors handling the age specific heterogeneous transmission process
-dim(lambda) <- N_age
-dim(s_ij) <- c(N_age, N_age)
-dim(m) <- c(N_age, N_age)
-dim(trans_profile) <- c(N_age, trans_classes)
-dim(trans_increase) <- c(N_age, trans_classes)
-dim(I_with_diff_trans) <- c(N_age, trans_classes)
+dim(lambda) <- n_groups
+dim(s_ij) <- c(n_groups, n_groups)
+dim(m) <- c(n_groups, n_groups)
+dim(trans_profile) <- c(n_groups, trans_classes)
+dim(trans_increase) <- c(n_groups, trans_classes)
+dim(I_with_diff_trans) <- c(n_groups, trans_classes)
 
 ## Vectors handling the loss of immunity
-dim(n_RS_tmp) <- N_age
-dim(n_RS) <- N_age
-dim(p_RS) <- N_age
+dim(n_RS_tmp) <- n_groups
+dim(n_RS) <- n_groups
+dim(p_RS) <- n_groups
 
 ## Total population
 initial(N_tot[]) <- 0
@@ -859,7 +859,7 @@ update(N_tot[]) <- sum(S[i, ]) + R[i] + D_hosp[i] + sum(E[i, , ]) +
   sum(I_ICU_D_conf[i, , ]) + sum(I_ICU_D_unconf[i, , ]) +
   sum(R_stepdown_conf[i, ]) + sum(R_stepdown_unconf[i, ]) +
   sum(I_comm_D[i, , ]) + D_comm[i]
-dim(N_tot) <- N_age
+dim(N_tot) <- n_groups
 
 ## Total population calculated with seroconversion flow
 initial(N_tot2) <- 0
