@@ -98,17 +98,14 @@ build_waning_rate <- function(waning_rate) {
   if (length(waning_rate) == 0) {
     stop("At least one value required for 'rel_susceptibility'")
   }
-  N_age <- get_n_groups()
   if (any(waning_rate < 0)) {
     stop("'waning_rate' must have only non-negative values")
   }
-  if (length(waning_rate) > 1) {
-    if (length(waning_rate) != N_age) {
-      stop("'waning_rate' should have as many elements as age groups")
-    }
-    vect_waning_rate <- waning_rate
-  } else { # create vector by repeating waning_rate for each age group
-    vect_waning_rate <- rep(waning_rate, each = N_age)
+  if (length(waning_rate) == 1) {
+    waning_rate <- rep(waning_rate, carehomes_n_groups())
+  } else if (length(waning_rate) != carehomes_n_groups()) {
+    stop(
+      "'waning_rate' should have as many elements as age groups or be a scalar")
   }
-  vect_waning_rate
+  waning_rate
 }

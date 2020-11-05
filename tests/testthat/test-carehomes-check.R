@@ -52,7 +52,7 @@ test_that("everyone is infected when beta is large", {
 
 test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
   p <- carehomes_parameters(0, "england", beta_value = 0,
-                            waning_rate = 1e9)
+                            waning_rate = Inf)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
@@ -74,10 +74,12 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   # other than in the 4th age group (where infections are seeded)
-  # after the first time step, R is empty
+  # after the first day (4 times steps), R is empty
   expect_true(all(y$R[-4, -1] == 0))
   # so is R_neg
   expect_true(all(y$R_neg[-4, -1] == 0))
+  # so is PCR_neg
+  expect_true(all(y$PCR_neg[-4, -1] == 0))
 
 })
 

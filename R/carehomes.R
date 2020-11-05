@@ -511,7 +511,6 @@ carehomes_initial <- function(info, n_particles, pars) {
 carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
   check_rel_susceptibility(rel_susceptibility)
   list(
-    # leaving this function as will add more vaccination parameters later
     rel_susceptibility = rel_susceptibility
   )
 }
@@ -520,7 +519,6 @@ carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
 carehomes_parameters_waning <- function(waning_rate = 0) {
   waning_rate <- build_waning_rate(waning_rate)
   list(
-    # leaving this function as may add more vaccination parameters later
     waning_rate = waning_rate
   )
 }
@@ -730,6 +728,6 @@ carehomes_particle_filter_data <- function(data) {
   data
 }
 
-get_n_groups <- function() {
+carehomes_n_groups <- function() {
   length(sircovid_age_bins()$start) + 2L
 }
