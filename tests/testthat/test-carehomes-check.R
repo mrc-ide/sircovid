@@ -115,7 +115,9 @@ test_that("R, R_neg and PCR_neg are all non-decreasing and S is non-increasing
 
 
 test_that("No one is infected if I and E are 0 at t = 0", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y <- carehomes_initial(info, 1, p)$state
@@ -133,7 +135,9 @@ test_that("No one is infected if I and E are 0 at t = 0", {
 
 
 test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_sympt_ILI[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -166,7 +170,9 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
 
 
 test_that("No one is hospitalised, no-one dies if psi_hosp_ILI is 0", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_hosp_ILI[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -199,7 +205,9 @@ test_that("No one is hospitalised, no-one dies if psi_hosp_ILI is 0", {
 
 
 test_that("No one is hospitalised, no-one recovers in edge case", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$I0_asympt[] <- 0
   p$p_sympt_ILI[] <- 1
   p$p_hosp_ILI_step <- 1
@@ -242,7 +250,9 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
 
 
 test_that("No one is hospitalised, no-one recovers in edge case 2", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_sympt_ILI[] <- 1
   p$p_hosp_ILI_step <- 1
   p$psi_hosp_ILI[] <- 1
@@ -284,7 +294,9 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 
 
 test_that("No one dies in the community if psi_death_comm is 0", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_death_comm[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -307,7 +319,10 @@ test_that("forcing hospital route results in correct path", {
   ## area all zeros.
   helper <- function(prob_ICU_hosp, prob_death_ICU, prob_death_hosp_D,
                      expect_cases, expect_zero) {
-    p <- carehomes_parameters(0, "england")
+    
+    ## waning_rate default is 0, setting to a non-zero value so that this test
+    ## passes with waning immunity
+    p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
     p$p_ICU_hosp_step <- ifelse(is.null(prob_ICU_hosp),
                                     p$p_ICU_hosp_step, 1)
     p$psi_ICU_hosp[] <- prob_ICU_hosp %||% p$psi_ICU_hosp[]
@@ -366,7 +381,9 @@ test_that("forcing hospital route results in correct path", {
 
 
 test_that("No one seroconverts if p_seroconversion is 0", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_seroconversion[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -383,7 +400,10 @@ test_that("No one seroconverts if p_seroconversion is 0", {
 
 test_that("No one does not seroconvert and no one seroreverts
           if p_seroconversion is 1 and gamma_R_pos is 0", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+            
   p$p_seroconversion[] <- 1
   ## set gamma_R_pos to 0 so no-one seroreverts
   p$gamma_R_pos <- 0
@@ -456,7 +476,9 @@ test_that("R_pre parameters work as expected", {
 
 test_that("setting a gamma to Inf results immediate progression", {
   helper <- function(gamma_name, progression_name, compartment_name) {
-    p <- carehomes_parameters(0, "england")
+    ## waning_rate default is 0, setting to a non-zero value so that this test
+    ## passes with waning immunity
+    p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
     p[[gamma_name]] <- Inf
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
@@ -507,7 +529,9 @@ test_that("setting a gamma to Inf results immediate progression", {
 
 test_that("setting a gamma to 0 results in no progression", {
   helper <- function(gamma_name, progression_name, compartment_name) {
-    p <- carehomes_parameters(0, "england")
+    ## waning_rate default is 0, setting to a non-zero value so that this test
+    ## passes with waning immunity
+    p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
     p[[gamma_name]] <- 0
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
@@ -557,7 +581,9 @@ test_that("setting a gamma to 0 results in no progression", {
 
 
 test_that("No one is unconfirmed, if p_admit_conf = 1", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_admit_conf_step <- 1
   p$psi_admit_conf[] <- 1
   p$gamma_triage <- Inf
@@ -599,7 +625,9 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
 
 
 test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_admit_conf[] <- 0
   p$gamma_test <- 0
 
@@ -629,7 +657,9 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
 
 
 test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_admit_conf[] <- 0
   p$gamma_test <- Inf
   p$gamma_triage <- Inf
@@ -702,7 +732,9 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
 })
 
 test_that("tots all summed correctly ", {
-  p <- carehomes_parameters(0, "england")
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
