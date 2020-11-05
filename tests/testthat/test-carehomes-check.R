@@ -51,8 +51,13 @@ test_that("everyone is infected when beta is large", {
 
 
 test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
-  p <- carehomes_parameters(0, "england", beta_value = 0,
-                            waning_rate = Inf)
+  # with a large waning rate and beta = 0, 
+  # people can move from R to S but not outside of S
+  # therefore R should quickly get empty (and R_neg and PCR_neg as well)
+  
+  p <- carehomes_parameters(0, "england", 
+                            beta_value = 0, # to forbid movement out of S
+                            waning_rate = Inf) # to force movement out of R
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
