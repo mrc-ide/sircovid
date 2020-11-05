@@ -678,6 +678,7 @@ public:
     real_t initial_time;
     std::vector<real_t> lambda;
     std::vector<real_t> m;
+    int_t N_age;
     std::vector<real_t> n_com_to_R_pre;
     std::vector<real_t> n_EE;
     std::vector<real_t> n_EI_asympt;
@@ -1592,13 +1593,13 @@ public:
         internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = internal.m[internal.dim_m_1 * (j - 1) + i - 1] * odin_sum2(internal.I_with_diff_trans.data(), j - 1, j, 0, internal.dim_I_with_diff_trans_2, internal.dim_I_with_diff_trans_1);
       }
     }
-    for (int_t i = 1; i <= 17; ++i) {
-      for (int_t j = 1; j <= 19; ++j) {
+    for (int_t i = 1; i <= internal.N_age; ++i) {
+      for (int_t j = 1; j <= internal.n_groups; ++j) {
         internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = beta * internal.s_ij[internal.dim_s_ij_1 * (j - 1) + i - 1];
       }
     }
-    for (int_t i = 18; i <= 19; ++i) {
-      for (int_t j = 1; j <= 17; ++j) {
+    for (int_t i = (internal.N_age + 1); i <= internal.n_groups; ++i) {
+      for (int_t j = 1; j <= internal.N_age; ++j) {
         internal.s_ij[i - 1 + internal.dim_s_ij_1 * (j - 1)] = beta * internal.s_ij[internal.dim_s_ij_1 * (j - 1) + i - 1];
       }
     }
@@ -1800,7 +1801,7 @@ public:
       state_next[internal.offset_variable_cum_admit_by_age + i - 1] = cum_admit_by_age[i - 1] + odin_sum2(internal.n_ILI_to_hosp.data(), i - 1, i, 0, internal.dim_n_ILI_to_hosp_2, internal.dim_n_ILI_to_hosp_1);
     }
     state_next[14] = cum_sympt_cases + odin_sum1(internal.n_EI_mild.data(), 0, internal.dim_n_EI_mild) + odin_sum1(internal.n_EI_ILI.data(), 0, internal.dim_n_EI_ILI);
-    state_next[15] = cum_sympt_cases_over25 + odin_sum2(internal.n_EI_mild.data(), 5, 19, 0, internal.dim_n_EI_mild_2, internal.dim_n_EI_mild_1) + odin_sum2(internal.n_EI_ILI.data(), 5, 19, 0, internal.dim_n_EI_ILI_2, internal.dim_n_EI_ILI_1);
+    state_next[15] = cum_sympt_cases_over25 + odin_sum2(internal.n_EI_mild.data(), 5, internal.n_groups, 0, internal.dim_n_EI_mild_2, internal.dim_n_EI_mild_1) + odin_sum2(internal.n_EI_ILI.data(), 5, internal.n_groups, 0, internal.dim_n_EI_ILI_2, internal.dim_n_EI_ILI_1);
     state_next[11] = new_D_comm_tot;
     state_next[10] = new_D_hosp_tot;
     state_next[12] = new_D_hosp_tot + new_D_comm_tot;
@@ -2466,6 +2467,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dt = NA_REAL;
   internal.hosp_transmission = NA_REAL;
   internal.ICU_transmission = NA_REAL;
+  internal.N_age = NA_INTEGER;
   internal.n_groups = NA_INTEGER;
   internal.s_asympt = NA_INTEGER;
   internal.s_comm_D = NA_INTEGER;
@@ -2524,6 +2526,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_triage = user_get_scalar<real_t>(user, "gamma_triage", internal.gamma_triage, NA_REAL, NA_REAL);
   internal.hosp_transmission = user_get_scalar<real_t>(user, "hosp_transmission", internal.hosp_transmission, NA_REAL, NA_REAL);
   internal.ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", internal.ICU_transmission, NA_REAL, NA_REAL);
+  internal.N_age = user_get_scalar<int_t>(user, "N_age", internal.N_age, NA_REAL, NA_REAL);
   internal.n_groups = user_get_scalar<int_t>(user, "n_groups", internal.n_groups, NA_REAL, NA_REAL);
   std::array <int_t, 1> dim_p_admit_conf_step;
   internal.p_admit_conf_step = user_get_array_variable<real_t, 1>(user, "p_admit_conf_step", internal.p_admit_conf_step, dim_p_admit_conf_step, NA_REAL, NA_REAL);

@@ -7,6 +7,7 @@
 
 ## Number of "groups", being the age classes, Carehome workers and
 ## Carehome residents. This will be 19 in all but experimental uses.
+N_age <- user()
 n_groups <- user()
 trans_classes <- user(1)
 
@@ -454,8 +455,8 @@ I_with_diff_trans[, ] <-
 ## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
 ## beta to all contacts *except* within care home contacts
 s_ij[, ] <- m[i, j] * sum(I_with_diff_trans[j, ])
-s_ij[1:17, 1:19] <- beta * s_ij[i, j]
-s_ij[18:19, 1:17] <- beta * s_ij[i, j]
+s_ij[1:N_age, 1:n_groups] <- beta * s_ij[i, j]
+s_ij[(N_age + 1):n_groups, 1:N_age] <- beta * s_ij[i, j]
 lambda[] <- sum(s_ij[i, ])
 
 ## Initial states are all zerod as we will provide a state vector
@@ -916,7 +917,7 @@ update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)
 ## only over 25s (exclude groups 1 to 5)
 initial(cum_sympt_cases_over25) <- 0
 update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
-  sum(n_EI_mild[6:19, ]) + sum(n_EI_ILI[6:19, ])
+  sum(n_EI_mild[6:n_groups, ]) + sum(n_EI_ILI[6:n_groups, ])
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
