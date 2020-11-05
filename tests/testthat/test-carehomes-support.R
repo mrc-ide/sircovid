@@ -41,9 +41,6 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(waning)], waning)
 
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
-  ## NOTE: This is updated with CHR and CHW but may be renamed later;
-  ## see comment in carehomes_parameters()
-  shared$N_age <- 19L
   expect_identical(p[names(shared)], shared)
 
   severity <- carehomes_parameters_severity(NULL, p$population, 0.7)
@@ -67,7 +64,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
       "psi_hosp_ILI", "p_hosp_ILI_step", "psi_death_comm",
       "p_death_comm_step", "psi_ICU_hosp", "p_ICU_hosp_step",
-      "psi_admit_conf", "p_admit_conf_step"))
+      "psi_admit_conf", "p_admit_conf_step", "n_groups"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))

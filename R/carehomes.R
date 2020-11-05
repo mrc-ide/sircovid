@@ -164,10 +164,7 @@ carehomes_parameters <- function(start_date, region,
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise)
 
-  ## TODO: Adding this here, but better would be to pass N_age as-is,
-  ## then update the leading dimension to something more accurate
-  ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
-  ret$N_age <- ret$N_age + 2L
+  ret$n_groups <- ret$n_age_groups + 2L
 
   c(ret, severity, progression, vaccination, waning)
 }
@@ -395,9 +392,9 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 ## We store within the severity parameters information on severity for
 ## carehome workers and residents. The vector ends up structured as
 ##
-##   [1..N_age, workers, residents]
+##   [1..n_age_groups, workers, residents]
 ##
-## so we have length of N_age + 2
+## so we have length of n_groups = n_age_groups + 2
 ##' @importFrom stats weighted.mean
 carehomes_severity <- function(p, population) {
   index_workers <- carehomes_index_workers()
@@ -425,11 +422,11 @@ carehomes_index_workers <- function() {
 carehomes_transmission_matrix <- function(eps, C_1, C_2, region, population) {
   index_workers <- carehomes_index_workers()
   m <- sircovid_transmission_matrix(region)
-  N_age <- nrow(m)
+  n_age_groups <- nrow(m)
 
-  m_chw <- apply(m[seq_len(N_age), index_workers], 1, weighted.mean,
+  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, weighted.mean,
                  population[index_workers])
-  m_chr <- eps * m[N_age, seq_len(N_age)]
+  m_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
 
   ## Construct a block matrix:
   ##
@@ -437,11 +434,11 @@ carehomes_transmission_matrix <- function(eps, C_1, C_2, region, population) {
   ##   m_chw C_1   C_1
   ##   m_chr C_1   C_2
 
-  i <- seq_len(N_age)
-  i_chw <- N_age + 1L
-  i_chr <- N_age + 2L
+  i <- seq_len(n_age_groups)
+  i_chw <- n_age_groups + 1L
+  i_chr <- n_age_groups + 2L
 
-  ret <- matrix(0.0, N_age + 2, N_age + 2)
+  ret <- matrix(0.0, n_age_groups + 2, n_age_groups + 2)
   ret[i, i] <- m
   ret[i, i_chw] <- ret[i_chw, i] <- m_chw
   ret[i, i_chr] <- ret[i_chr, i] <- m_chr
