@@ -26,14 +26,21 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant", {
 
 
 test_that("there are no infections when beta is 0", {
-  p <- carehomes_parameters(0, "england", beta_value = 0)
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  waning_rate <- rep(1/20, 19)
+  waning_rate[4] <- 0 # no waning in group with seeded infections
+  # otherwise S can go up as these infected individuals loose immunity
+
+  p <- carehomes_parameters(0, "england", beta_value = 0, 
+                            waning_rate = waning_rate)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   mod$set_index(integer(0))
   s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
 
-  ## Susceptible population is never drawn down:
+  ## Susceptible population is never drawn down
   expect_equal(s, array(s[, , 1], c(19, 1, 101)))
 })
 
