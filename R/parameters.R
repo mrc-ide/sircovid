@@ -9,7 +9,7 @@ sircovid_parameters_shared <- function(start_date, region,
        comm_D_transmission = 0.05,
        dt = dt,
        initial_step = start_date / dt,
-       n_age = length(sircovid_age_bins()$start),
+       n_age_groups = length(sircovid_age_bins()$start),
        beta_step = beta_step,
        population = sircovid_population(region))
 }

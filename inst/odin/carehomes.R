@@ -7,7 +7,7 @@
 
 ## Number of "groups", being the age classes, Carehome workers and
 ## Carehome residents. This will be 19 in all but experimental uses.
-n_age <- user()
+n_age_groups <- user()
 n_groups <- user()
 trans_classes <- user(1)
 
@@ -455,8 +455,8 @@ I_with_diff_trans[, ] <-
 ## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
 ## beta to all contacts *except* within care home contacts
 s_ij[, ] <- m[i, j] * sum(I_with_diff_trans[j, ])
-s_ij[1:n_age, 1:n_groups] <- beta * s_ij[i, j]
-s_ij[(n_age + 1):n_groups, 1:n_age] <- beta * s_ij[i, j]
+s_ij[1:n_age_groups, 1:n_groups] <- beta * s_ij[i, j]
+s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups] <- beta * s_ij[i, j]
 lambda[] <- sum(s_ij[i, ])
 
 ## Initial states are all zerod as we will provide a state vector
