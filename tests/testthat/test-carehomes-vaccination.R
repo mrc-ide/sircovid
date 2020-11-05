@@ -23,7 +23,7 @@ test_that("there are no infections if everyone is vaccinated with a vaccine
   expect_equal(length(s), prod(info$dim$S) * 101)
   s <- array(s, c(info$dim$S, 101))
 
-  ## Noone moves into unvaccinated 
+  ## Noone moves into unvaccinated
   ## except in the group where infections because of waning immunity
   expect_true(all(s[-4, 1, ] == 0))
 

@@ -28,11 +28,11 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant", {
 test_that("there are no infections when beta is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  waning_rate <- rep(1/20, 19)
+  waning_rate <- rep(1 / 20, 19)
   waning_rate[4] <- 0 # no waning in group with seeded infections
   # otherwise S can go up as these infected individuals loose immunity
 
-  p <- carehomes_parameters(0, "england", beta_value = 0, 
+  p <- carehomes_parameters(0, "england", beta_value = 0,
                             waning_rate = waning_rate)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -58,11 +58,10 @@ test_that("everyone is infected when beta is large", {
 
 
 test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
-  # with a large waning rate and beta = 0, 
+  # with a large waning rate and beta = 0,
   # people can move from R to S but not outside of S
   # therefore R should quickly get empty (and R_neg and PCR_neg as well)
-  
-  p <- carehomes_parameters(0, "england", 
+  p <- carehomes_parameters(0, "england",
                             beta_value = 0, # to forbid movement out of S
                             waning_rate = Inf) # to force movement out of R
   mod <- carehomes$new(p, 0, 1)
@@ -319,7 +318,6 @@ test_that("forcing hospital route results in correct path", {
   ## area all zeros.
   helper <- function(prob_ICU_hosp, prob_death_ICU, prob_death_hosp_D,
                      expect_cases, expect_zero) {
-    
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
@@ -403,7 +401,7 @@ test_that("No one does not seroconvert and no one seroreverts
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-            
+
   p$p_seroconversion[] <- 1
   ## set gamma_R_pos to 0 so no-one seroreverts
   p$gamma_R_pos <- 0
