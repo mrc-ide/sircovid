@@ -29,7 +29,7 @@ carehomes_Rt <- function(step, S, p) {
   calculate_ev <- function(t, S, drop_carehomes) {
     ## Next-Generation-Matrix
     m <- p$m
-    ages <- seq_len(p$N_age)
+    ages <- seq_len(p$n_age)
     ch <- seq(to = p$n_groups, length.out = 2)
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
