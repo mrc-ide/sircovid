@@ -436,7 +436,7 @@ Rt_estimate <-
 
 plot(first_wave_data$date, 
      Rt_estimate$eff_Rt_all[-1], 
-     type='l', xlab = 'Date', ylab = 'Rt')
+     type = "l", xlab = "Date", ylab = "Rt")
 ```
 
 This is only for the final trajectory of the first chain. The `sircovid::carehomes_Rt_trajectories()` function can be used to conveniently calculate this for all of the chains at once.
