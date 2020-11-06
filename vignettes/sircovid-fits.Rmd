@@ -426,7 +426,7 @@ We can also calculate and plot Rt using the provided helper function:
 S_partition_index <- grep("^S_", names(samples_tuned$predict$index))
 # this gives dimension 19, n_trajectories, n_times
 S <- samples_tuned$trajectories$state[S_partition_index, , , drop = FALSE]
-n_steps <- dim(samples_tuned$pars)[1]
+n_steps <- nrow(samples_tuned$pars)
 # Example for the first trajectory
 # We must apply the transform function to the parameters i.e. pars = transform(pars)
 Rt_estimate <- 
