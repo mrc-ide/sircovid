@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.6.6
+Version: 0.6.7
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -43,7 +43,7 @@ Imports:
     socialmixr
 LinkingTo:
     cpp11 (>= 0.2.1),
-    dust (>= 0.5.1)
+    dust (>= 0.5.2)
 Suggests:
     testthat
 RoxygenNote: 7.1.1
