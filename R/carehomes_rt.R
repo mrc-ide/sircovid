@@ -29,18 +29,18 @@ carehomes_Rt <- function(step, S, p) {
   calculate_ev <- function(t, S, drop_carehomes) {
     ## Next-Generation-Matrix
     m <- p$m
-    ages <- seq_len(p$N_age - 2)
-    ch <- seq(to = p$N_age, length.out = 2)
+    ages <- seq_len(p$n_age_groups)
+    ch <- seq(to = p$n_groups, length.out = 2)
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
     ## when several vaccination groups,
     ## need to take the weighted means of the S
     ## (weights given by rel_susceptibility)
-    S_mat <- matrix(S[, t], nrow = p$N_age, ncol = length(p$rel_susceptibility))
+    S_mat <- matrix(S[, t], p$n_groups, length(p$rel_susceptibility))
     rel_susceptibility_weights <- matrix(
-      rep(p$rel_susceptibility, each = p$N_age),
-      nrow = p$N_age,
+      rep(p$rel_susceptibility, each = p$n_groups),
+      nrow = p$n_groups,
       ncol = length(p$rel_susceptibility))
     S_weighted <- rowSums(S_mat * rel_susceptibility_weights)
 
