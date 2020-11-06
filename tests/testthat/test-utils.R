@@ -143,3 +143,25 @@ test_that("check_rel_susceptibility allows sensible inputs", {
   expect_silent(
     check_rel_susceptibility(c(1, 0, 1)))
 })
+
+test_that("build_waning_rate works as expected", {
+  expect_error(
+    build_waning_rate(NULL),
+    "At least one value required for 'rel_susceptibility'")
+  expect_error(
+    build_waning_rate(-1),
+    "'waning_rate' must have only non-negative values",
+    fixed = TRUE)
+  expect_error(
+    build_waning_rate(rep(0.5, 2)),
+    "'waning_rate' should have as many elements as age groups")
+  expect_equal(
+    build_waning_rate(0),
+  rep(0, 19))
+  expect_equal(
+    build_waning_rate(0.5),
+    rep(0.5, 19))
+  expect_equal(
+    build_waning_rate(rep(0.5, 19)),
+    rep(0.5, 19))
+})

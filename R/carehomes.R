@@ -53,6 +53,11 @@ NULL
 ##'   value should be 1 (for the non-vaccinated group) and subsequent values be
 ##'   between 0 and 1.
 ##'
+##' @param waning_rate A single value or a vector of values representing the
+##'   rates of waning of immunity after infection; if a single value the same
+##'   rate is used for all age groups; if a vector of values if used it should
+##'   have one value per age group.
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -77,6 +82,7 @@ carehomes_parameters <- function(start_date, region,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
                                  rel_susceptibility = 1,
+                                 waning_rate = 0,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -127,6 +133,8 @@ carehomes_parameters <- function(start_date, region,
 
   vaccination <- carehomes_parameters_vaccination(rel_susceptibility)
 
+  waning <- carehomes_parameters_waning(waning_rate)
+
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
@@ -161,7 +169,7 @@ carehomes_parameters <- function(start_date, region,
   ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
   ret$N_age <- ret$N_age + 2L
 
-  c(ret, severity, progression, vaccination)
+  c(ret, severity, progression, vaccination, waning)
 }
 
 
@@ -503,8 +511,15 @@ carehomes_initial <- function(info, n_particles, pars) {
 carehomes_parameters_vaccination <- function(rel_susceptibility = 1) {
   check_rel_susceptibility(rel_susceptibility)
   list(
-    # leaving this function as will add more vaccination parameters later
     rel_susceptibility = rel_susceptibility
+  )
+}
+
+
+carehomes_parameters_waning <- function(waning_rate = 0) {
+  waning_rate <- build_waning_rate(waning_rate)
+  list(
+    waning_rate = waning_rate
   )
 }
 
@@ -711,4 +726,8 @@ carehomes_particle_filter_data <- function(data) {
   }
 
   data
+}
+
+carehomes_n_groups <- function() {
+  length(sircovid_age_bins()$start) + 2L
 }

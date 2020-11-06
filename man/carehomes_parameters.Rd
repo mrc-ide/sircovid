@@ -23,6 +23,7 @@ carehomes_parameters(
   react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
   rel_susceptibility = 1,
+  waning_rate = 0,
   exp_noise = 1e+06
 )
 }
@@ -89,6 +90,11 @@ covid but have covid-like symptoms}
 susceptibility of individuals in different vaccination groups. The first
 value should be 1 (for the non-vaccinated group) and subsequent values be
 between 0 and 1.}
+
+\item{waning_rate}{A single value or a vector of values representing the
+rates of waning of immunity after infection; if a single value the same
+rate is used for all age groups; if a vector of values if used it should
+have one value per age group.}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
