@@ -362,7 +362,7 @@ samples_tuned <- mcstate::pmcmc(mcmc_params,
                                 progress = TRUE)
 ```
 
-Iterating this procedure will produce well-mixed chains which produce samples efficiently, though some manual tweaks to the covariance matrix may be necessary for good mixing. We used a few iterations of this to improve chain mixing, and provide this data pre-calculated. Once a good covariance matrix has been found, you will likely want to run multiple chains for longer, to get a good effective sample size for each parameter, and confirm convergence by calculating the Rhat statistic.
+Iterating this procedure will produce well-mixed chains which produce samples efficiently, though some manual tweaks to the covariance matrix may be necessary for good mixing. We used a few iterations of this to improve chain mixing, and provide this data pre-calculated. Once a good covariance matrix has been found, you will likely want to run multiple chains for longer, to get a good effective sample size for each parameter, and confirm convergence by calculating the $\hat{R}$ (Gelman-Rubin) statistic.
 
 ```{r}
 cov_mat <- as.matrix(read.table("cov_proposals.csv", sep = ",", header = F),
