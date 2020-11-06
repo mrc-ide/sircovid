@@ -122,30 +122,30 @@ NULL
 ##'
 ##' ### same example as above BUT assume a different effect of vaccine in the
 ##' ### first age group
-##' N_age <- 19
+##' n_groups <- 19
 ##'
 ##' # Assumption: vaccine is twice more effective at reducing susceptibility
 ##' # in the first age group
 ##' rel_susceptibility_agegp1 <- c(1, 0.4, 0.25, 1)
 ##' rel_susceptibility_other_agegp <- c(1, 0.8, 0.5, 1)
-##' rel_susceptibility <- matrix(NA, nrow = N_age, ncol = 4)
+##' rel_susceptibility <- matrix(NA, nrow = n_groups, ncol = 4)
 ##' rel_susceptibility[1, ] <- rel_susceptibility_agegp1
-##' for (i in seq(2, N_age)) {
+##' for (i in seq(2, n_groups)) {
 ##' rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
 ##' }
 ##' rel_susceptibility
 ##'
 ##' # Vaccination occurs at a constant rate of 0.03 per day for all age groups
 ##' # expect the first age groups which gets vaccinated at a rate of 0.06 a day
-##' vaccination_rate <- c(0.06, rep(0.03, N_age - 1))
+##' vaccination_rate <- c(0.06, rep(0.03, n_groups - 1))
 ##'
 ##' # the period of build-up of immunity is the same for all age groups,
 ##' # lasting on average 2 weeks,
 ##' # but the first age group loses immunity more quickly
 ##' # (on average after 3 months) than the other age groups
 ##' # (on average after 6 months)
-##' vaccine_progression_rate <- cbind(rep(1/(2*7), N_age),
-##' c(1/(13*7), rep(1/(26*7), N_age - 1)))
+##' vaccine_progression_rate <- cbind(rep(1/(2*7), n_groups),
+##' c(1/(13*7), rep(1/(26*7), n_groups - 1)))
 ##'
 ##' # generate model parameters
 ##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
@@ -607,8 +607,8 @@ carehomes_parameters_vaccination <-
   if (ncol(rel_susceptibility) < 3) {
     N_vacc_classes <- 3
     save_rel_susceptibility <- rel_susceptibility
-    N_age <- carehomes_n_groups()
-    rel_susceptibility <- matrix(1, N_age, N_vacc_classes)
+    n_groups <- carehomes_n_groups()
+    rel_susceptibility <- matrix(1, n_groups, N_vacc_classes)
     i <- seq_len(ncol(save_rel_susceptibility))
     rel_susceptibility[, i] <- save_rel_susceptibility
     rel_susceptibility[, -i] <- 1
