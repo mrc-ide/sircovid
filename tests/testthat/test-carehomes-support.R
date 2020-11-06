@@ -19,16 +19,16 @@ test_that("carehomes progression parameters", {
 
 
 test_that("carehomes vaccination parameters", {
-  N_age <- get_n_groups()
+  n_groups <- carehomes_n_groups()
   # test default values
   p <- carehomes_parameters_vaccination()
   expect_setequal(
     names(p),
     c("rel_susceptibility", "vaccination_rate", "vaccine_progression_rate"))
-  expect_equal(nrow(p$rel_susceptibility), N_age)
+  expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 3)
-  expect_equal(length(p$vaccination_rate), N_age)
-  expect_equal(nrow(p$vaccine_progression_rate), N_age)
+  expect_equal(length(p$vaccination_rate), n_groups)
+  expect_equal(nrow(p$vaccine_progression_rate), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate), 1)
 
   # test when more vaccinated categories than default
@@ -42,10 +42,10 @@ test_that("carehomes vaccination parameters", {
   expect_setequal(
     names(p),
     c("rel_susceptibility", "vaccination_rate", "vaccine_progression_rate"))
-  expect_equal(nrow(p$rel_susceptibility), N_age)
+  expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
-  expect_equal(length(p$vaccination_rate), N_age)
-  expect_equal(nrow(p$vaccine_progression_rate), N_age)
+  expect_equal(length(p$vaccination_rate), n_groups)
+  expect_equal(nrow(p$vaccine_progression_rate), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate),
                length(vaccine_progression_rate))
 })
@@ -460,5 +460,5 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
 })
 
 test_that("sircovid_age_bins has 19 age groups", {
-  expect_equal(get_n_groups(), 19)
+  expect_equal(carehomes_n_groups(), 19)
 })

@@ -171,51 +171,51 @@ test_that("build_vaccination_rate allows sensible inputs & works as expected", {
 test_that("build_vaccine_progression_rate rejects insensible inputs", {
   expect_error(
     build_vaccine_progression_rate(vaccine_progression_rate = c(1, 1),
-                                   N_vacc_classes = 1),
-    "'N_vacc_classes' should be at least 3")
+                                   n_vacc_classes = 1),
+    "'n_vacc_classes' should be at least 3")
   expect_error(
     build_vaccine_progression_rate(vaccine_progression_rate =
                                      cbind(rep(-1, 19), rep(1, 19)),
-                                   N_vacc_classes = 4),
+                                   n_vacc_classes = 4),
   "'vaccine_progression_rate' must have only non-negative values")
   msg1 <- "'vaccine_progression_rate' must be either:"
-  msg2 <- "a vector of length 'N_vacc_classes - 2'"
-  msg3 <- "or a matrix with 'N_age' rows and 'N_vacc_classes - 2' columns"
+  msg2 <- "a vector of length 'n_vacc_classes - 2'"
+  msg3 <- "or a matrix with 'n_groups' rows and 'n_vacc_classes - 2' columns"
   expect_error(
     build_vaccine_progression_rate(vaccine_progression_rate = c(1, 1),
-                                   N_vacc_classes = 3),
+                                   n_vacc_classes = 3),
     paste(msg1, msg2, msg3))
   expect_error(
     build_vaccine_progression_rate(vaccine_progression_rate = c(1, 1, -1),
-                                   N_vacc_classes = 5),
+                                   n_vacc_classes = 5),
     "'vaccine_progression_rate' must have only non-negative values")
   expect_error(
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(1, 19, 5),
-                                   N_vacc_classes = 5),
-    "'vaccine_progression_rate' must have 'N_vacc_classes - 2' columns")
+                                   n_vacc_classes = 5),
+    "'vaccine_progression_rate' must have 'n_vacc_classes - 2' columns")
   expect_error(
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(1, 9, 3),
-                                   N_vacc_classes = 5),
+                                   n_vacc_classes = 5),
     "'vaccine_progression_rate' must have as many rows as age groups")
 })
 
 test_that("build_vaccine_progression_rate allows sensible inputs and works", {
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = 1,
-                                   N_vacc_classes = 3))
+                                   n_vacc_classes = 3))
   expect_equal(
     build_vaccine_progression_rate(vaccine_progression_rate = 1,
-                                   N_vacc_classes = 3),
+                                   n_vacc_classes = 3),
     matrix(rep(1, 19), nrow = 19))
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(1, 19, 3),
-                                   N_vacc_classes = 5))
+                                   n_vacc_classes = 5))
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = NULL,
-                                   N_vacc_classes = 5))
+                                   n_vacc_classes = 5))
   expect_equal(
     build_vaccine_progression_rate(vaccine_progression_rate = NULL,
-                                   N_vacc_classes = 5),
+                                   n_vacc_classes = 5),
     matrix(0, 19, 3))
 })
 
