@@ -607,7 +607,7 @@ carehomes_parameters_vaccination <-
   if (ncol(rel_susceptibility) < 3) {
     N_vacc_classes <- 3
     save_rel_susceptibility <- rel_susceptibility
-    N_age <- get_n_groups()
+    N_age <- carehomes_n_groups()
     rel_susceptibility <- matrix(1, N_age, N_vacc_classes)
     i <- seq_len(ncol(save_rel_susceptibility))
     rel_susceptibility[, i] <- save_rel_susceptibility
