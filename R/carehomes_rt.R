@@ -124,15 +124,15 @@ carehomes_Rt_mean_duration <- function(step, pars) {
 
   p_asympt <- pars$p_asympt
   p_sympt_ILI <- pars$p_sympt_ILI
-  p_hosp_ILI <- outer(pars$psi_hosp_ILI,
+  p_hosp_ILI <- outer(pars$relative_probability_hosp_ILI,
                     sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
-  p_ICU_hosp <- outer(pars$psi_ICU_hosp,
+  p_ICU_hosp <- outer(pars$relative_probability_ICU_hosp,
                     sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
-  p_death_ICU <- outer(pars$psi_death_ICU,
+  p_death_ICU <- outer(pars$relative_probability_death_ICU,
                    sircovid_parameters_beta_expand(step, pars$p_death_ICU_step))
-  p_death_hosp_D <- outer(pars$psi_death_hosp_D,
+  p_death_hosp_D <- outer(pars$relative_probability_death_hosp_D,
                 sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
-  p_death_comm <- outer(pars$psi_death_comm,
+  p_death_comm <- outer(pars$relative_probability_death_comm,
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
   p_mild <- (1 - p_asympt) * (1 - p_sympt_ILI)

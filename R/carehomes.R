@@ -104,23 +104,23 @@ carehomes_parameters <- function(start_date, region,
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
   ## implementation of severity parameters
   ## probability of ILI patient requiring hospital treatment
-  severity$psi_hosp_ILI <- severity$p_hosp_ILI / max(severity$p_hosp_ILI)
+  severity$relative_probability_hosp_ILI <- severity$p_hosp_ILI / max(severity$p_hosp_ILI)
   severity$p_hosp_ILI_step <- max(severity$p_hosp_ILI)
   ## probability of hospitalised patient going to ICU
-  severity$psi_ICU_hosp <- severity$p_ICU_hosp / max(severity$p_ICU_hosp)
+  severity$relative_probability_ICU_hosp <- severity$p_ICU_hosp / max(severity$p_ICU_hosp)
   severity$p_ICU_hosp_step <- max(severity$p_ICU_hosp)
   ## probability of ICU patient dying
-  severity$psi_death_ICU <- severity$p_death_ICU / max(severity$p_death_ICU)
+  severity$relative_probability_death_ICU <- severity$p_death_ICU / max(severity$p_death_ICU)
   severity$p_death_ICU_step <- max(severity$p_death_ICU)
   ## probability of non-ICU hospital patient dying
-  severity$psi_death_hosp_D <- severity$p_death_hosp_D /
+  severity$relative_probability_death_hosp_D <- severity$p_death_hosp_D /
     max(severity$p_death_hosp_D)
   severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
   ## probability of patient requiring hospital treatment dying in community
-  severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
+  severity$relative_probability_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
   severity$p_death_comm_step <- max(severity$p_death_comm)
   ## probability of an admission already being confirmed covid
-  severity$psi_admit_conf <- severity$p_admit_conf / max(severity$p_admit_conf)
+  severity$relative_probability_admit_conf <- severity$p_admit_conf / max(severity$p_admit_conf)
   severity$p_admit_conf_step <- max(severity$p_admit_conf)
 
   progression <- progression %||% carehomes_parameters_progression()
