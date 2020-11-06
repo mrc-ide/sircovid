@@ -14,17 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Overview of the SIRCOVID code
-
-The epidemiological model is implemented in the [`odin`](https://mrc-ide.github.io/odin/) DSL, and compiled using [`odin.dust`](https://mrc-ide.github.io/odin.dust/). The code can be found in `inst/odin/carehomes.R`.
-
-The model can be run using the [`dust`](https://mrc-ide.github.io/dust/) package interface, given all necessary parameters and initial conditions. Typically however, `sircovid` internally uses `dust` and `mcstate` to provide functions to fit parameters, and simulate the model to create forecasts or counterfactuals.
-
 # Overview of the structure of the SIRCOVID model
 
 `sircovid` implements a state-space model (also known as a compartmental model) for the transmission of COVID-19 in the UK, starting from 2020-Jan-01. The model, at its core, is an [SEIR model](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SEIR_model). On top of this we have added age structure, hospitalisation pathways, seroprevalence testing and a parallel epidemic in carehomes.
 
 ![Graphical summary of the sircovid model](../man/figures/sircovid_diagram.png "sircovid partitions"){ width = 10cm}
+
+An overview of this diagram is given below. However, the model is still being actively updated, and those interested in using it are encouraged to review the current version in `inst/odin/carehomes.R` and associated publications.
 
 Individuals are initially susceptible ($S$) in age groups $i$, typically in 17 five year bands up to 80+. Two additional bands are used to separately model care-home workers, and care-home residents. Individuals are infected (into $E$) with rate $\lambda^i(t)$ which is calculated from age-specific mixing of infected $I$ individuals. Individuals may be asymptomatic $I_A$, develop mild symptoms $I_M$ or influenza-like illness (ILI) $I_{\mathrm{ILI}}$. Individuals recover into $R$ - presently we do not model reinfection. Some proportion $p_H$ of those from $I_{\mathrm{ILI}}$ will develop severe symptoms, in which case they may:
 
@@ -39,7 +35,6 @@ Of those in general hospital beds, two parallel pathways for confirmed and uncon
 - Remain on the general ward then recover into $R_i$ with probability $(1 - p_{\mathrm{ICU}})(1 - p_{H_D})$.
 - Die with probability $(1 - p_{\mathrm{ICU}})p_{H_D}$.
 
-
 Those triaged into ICU beds may:
 
 - With probability $1 - p_{\mathrm{ICU}_\mathrm{D}}$, recover first in their ICU bed through $I_{ICU_R}$, then a inpatient care step-down period in $R_{\mathrm{ICU}}$, then leave hospital into $R$;
@@ -49,18 +44,11 @@ Seroconversion in all exposed individuals is modelled by an independent set of s
 
 Transitions between all states use random draws from binomial distributions with set probability $p$ and the number of individuals in the partition $n$.
 
-## The 'basic' model
+# Overview of the SIRCOVID code
 
-The package also includes a model known as the 'basic' model, which is an older version of the model used in development. It is a subset of the above model states, which doesn't model the states for:
+The epidemiological model is implemented in the [`odin`](https://mrc-ide.github.io/odin/) DSL, and compiled using [`odin.dust`](https://mrc-ide.github.io/odin.dust/). The code can be found in `inst/odin/carehomes.R`.
 
-- Seroconversion
-- Care-home residents and workers
-- Confirmed and unconfirmed cases in the hospital
-- Deaths in the community
-
-Only deaths and number of ICU beds occupied can be used to fit the model to data.
-
-This model has its own dust helper objects (`sircovid::basic_compare()`, `sircovid::basic_index()`, `sircovid::basic_initial()`, and `sircovid_parameters()`). This model can be fitted using the same techniques discussed in this vignette, but we do not show the detail here.
+The model can be run using the [`dust`](https://mrc-ide.github.io/dust/) package interface, given all necessary parameters and initial conditions. Typically however, `sircovid` internally uses `dust` and `mcstate` to provide functions to fit parameters, and simulate the model to create forecasts or counterfactuals.
 
 # Fitting the SIRCOVID model with observational data
 
@@ -68,18 +56,17 @@ The 'comparison function' used by `mcstate` calculates the likelihood of the mod
 
 - Number of ICU beds occupied
 - Number of general hospital beds occupied
-- Cumulative number of deaths in hospitals
-- Cumulative number of deaths in the community
+- Number of deaths in hospitals
+- Number of deaths in the community
 - Number of new hospital admissions
 - Number of new cases (pillar 1 data)
-- Number of seropositive cases 15-64 yrs old
-- Number of people tested between 15-64 yrs old
-- Number of pillar 2 testing positive
-- Number of pillar 2 tests
+- PHE serotype tests in 15-64 year olds (number of seropositive and number tested)
+- Pillar 2 testing in over 25s (number of positive tests, number of tests, number of cases)
+- Data from the REACT study (number positive and number tested)
 
-At any time-point, any of this data may be missing `NA`. See `sircovid::carehomes_compare()` for details.
+At any time-point, groups of this data may be missing `NA`. See `sircovid::carehomes_compare()` for details. This function evolves with the model, and as such we would recommend looking at the code and associated publications for up-to-date details.
 
-Here we will demonstrate how death data from the Office of National Statistics (ONS) and a single seroprevalence survey can be used to fit the model.
+Here we will used a simple example with two data-streams to demonstrate how death data from the Office of National Statistics (ONS) and two seroprevalence surveys can be used to fit the model.
 
 ## Getting and preparing the data
 
@@ -378,12 +365,9 @@ samples_tuned <- mcstate::pmcmc(mcmc_params,
 Iterating this procedure will produce well-mixed chains which produce samples efficiently, though some manual tweaks to the covariance matrix may be necessary for good mixing. We used a few iterations of this to improve chain mixing, and provide this data pre-calculated. Once a good covariance matrix has been found, you will likely want to run multiple chains for longer, to get a good effective sample size for each parameter, and confirm convergence by calculating the Rhat statistic.
 
 ```{r}
-cov_mat <- matrix(
-           c(13.0332898709, 0.0433604270, -0.0404375032,  0.0006694847,
-             0.0433604270,  1.678017e-04, -1.527468e-04,  2.836651e-06,
-            -0.0404375032, -1.527468e-04,  2.496026e-04, -8.368809e-06,
-             0.0006694847,  2.836651e-06, -8.368809e-06,  8.658182e-07),
-            nrow = length(mcmc_param_list), ncol = length(mcmc_param_list))
+cov_mat <- as.matrix(read.table("cov_proposals.csv", sep = ",", header = F),
+                     nrow = length(mcmc_param_list), ncol = length(mcmc_param_list))
+print(cov_mat, digits = 2)
 
 mcmc_params <- mcstate::pmcmc_parameters$new(mcmc_param_list, 
                                              cov_mat, 
