@@ -72,8 +72,8 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
       if (!is.vector(vaccine_progression_rate) ||
           length(vaccine_progression_rate) != n_vacc_classes - 2) {
         m1 <- "'vaccine_progression_rate' must be either:"
-        m2 <- "a vector of length 'n_vacc_classes - 2'"
-        m3 <- "or a matrix with 'n_groups' rows and 'n_vacc_classes - 2' columns"
+        m2 <- "a vector of length 'n_vacc_classes - 2' or"
+        m3 <- "a matrix with 'n_groups' rows and 'n_vacc_classes - 2' columns"
         stop(paste(m1, m2, m3))
       }
       if (any(vaccine_progression_rate < 0)) {
