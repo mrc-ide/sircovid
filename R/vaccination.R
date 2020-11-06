@@ -15,6 +15,7 @@ build_rel_susceptibility <- function(rel_susceptibility) {
   mat_rel_susceptibility
 }
 
+
 check_rel_susceptibility <- function(rel_susceptibility) {
   if (length(rel_susceptibility) == 0) {
     stop("At least one value required for 'rel_susceptibility'")
@@ -26,6 +27,7 @@ check_rel_susceptibility <- function(rel_susceptibility) {
     stop("First value of 'rel_susceptibility' must be 1")
   }
 }
+
 
 build_vaccination_rate <- function(vaccination_rate) {
   N_age <- get_n_groups()

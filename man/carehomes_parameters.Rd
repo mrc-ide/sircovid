@@ -23,8 +23,12 @@ carehomes_parameters(
   react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
   rel_susceptibility = 1,
+<<<<<<< HEAD
   vaccination_rate = 0,
   vaccine_progression_rate = NULL,
+=======
+  waning_rate = 0,
+>>>>>>> origin/master
   exp_noise = 1e+06
 )
 }
@@ -109,6 +113,11 @@ vaccination. If a vector, it should have as many values as vaccination
 classes - 1, and the same rates of progression will be used for all age
 groups; if a matrix, the element on row i and column j is the rate of
 progression from the jth vaccination class to the (j+1)th for age group i.}
+
+\item{waning_rate}{A single value or a vector of values representing the
+rates of waning of immunity after infection; if a single value the same
+rate is used for all age groups; if a vector of values if used it should
+have one value per age group.}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

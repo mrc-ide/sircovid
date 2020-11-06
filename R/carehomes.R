@@ -71,6 +71,11 @@ NULL
 ##'   groups; if a matrix, the element on row i and column j is the rate of
 ##'   progression from the jth vaccination class to the (j+1)th for age group i.
 ##'
+##' @param waning_rate A single value or a vector of values representing the
+##'   rates of waning of immunity after infection; if a single value the same
+##'   rate is used for all age groups; if a vector of values if used it should
+##'   have one value per age group.
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -166,6 +171,7 @@ carehomes_parameters <- function(start_date, region,
                                  rel_susceptibility = 1,
                                  vaccination_rate = 0,
                                  vaccine_progression_rate = NULL,
+                                 waning_rate = 0,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -214,6 +220,10 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
 
+  vaccination <- carehomes_parameters_vaccination(rel_susceptibility)
+
+  waning <- carehomes_parameters_waning(waning_rate)
+
   ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
@@ -243,16 +253,14 @@ carehomes_parameters <- function(start_date, region,
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise)
 
-  ## TODO: Adding this here, but better would be to pass N_age as-is,
-  ## then update the leading dimension to something more accurate
-  ## (e.g., N_groups, setting this as N_groups <- N_age + 2)
-  ret$N_age <- ret$N_age + 2L
+  ret$n_groups <- ret$n_age_groups + 2L
 
   vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
                                                   vaccination_rate,
                                                   vaccine_progression_rate)
 
-  c(ret, severity, progression, vaccination)
+  c(ret, severity, progression, vaccination, waning)
+
 }
 
 
@@ -478,9 +486,9 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 ## We store within the severity parameters information on severity for
 ## carehome workers and residents. The vector ends up structured as
 ##
-##   [1..N_age, workers, residents]
+##   [1..n_age_groups, workers, residents]
 ##
-## so we have length of N_age + 2
+## so we have length of n_groups = n_age_groups + 2
 ##' @importFrom stats weighted.mean
 carehomes_severity <- function(p, population) {
   index_workers <- carehomes_index_workers()
@@ -508,11 +516,11 @@ carehomes_index_workers <- function() {
 carehomes_transmission_matrix <- function(eps, C_1, C_2, region, population) {
   index_workers <- carehomes_index_workers()
   m <- sircovid_transmission_matrix(region)
-  N_age <- nrow(m)
+  n_age_groups <- nrow(m)
 
-  m_chw <- apply(m[seq_len(N_age), index_workers], 1, weighted.mean,
+  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, weighted.mean,
                  population[index_workers])
-  m_chr <- eps * m[N_age, seq_len(N_age)]
+  m_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
 
   ## Construct a block matrix:
   ##
@@ -520,11 +528,11 @@ carehomes_transmission_matrix <- function(eps, C_1, C_2, region, population) {
   ##   m_chw C_1   C_1
   ##   m_chr C_1   C_2
 
-  i <- seq_len(N_age)
-  i_chw <- N_age + 1L
-  i_chr <- N_age + 2L
+  i <- seq_len(n_age_groups)
+  i_chw <- n_age_groups + 1L
+  i_chr <- n_age_groups + 2L
 
-  ret <- matrix(0.0, N_age + 2, N_age + 2)
+  ret <- matrix(0.0, n_age_groups + 2, n_age_groups + 2)
   ret[i, i] <- m
   ret[i, i_chw] <- ret[i_chw, i] <- m_chw
   ret[i, i_chr] <- ret[i_chr, i] <- m_chr
@@ -614,6 +622,14 @@ carehomes_parameters_vaccination <-
     rel_susceptibility = rel_susceptibility,
     vaccination_rate = vaccination_rate,
     vaccine_progression_rate = vaccine_progression_rate
+  )
+}
+
+
+carehomes_parameters_waning <- function(waning_rate = 0) {
+  waning_rate <- build_waning_rate(waning_rate)
+  list(
+    waning_rate = waning_rate
   )
 }
 
@@ -822,7 +838,6 @@ carehomes_particle_filter_data <- function(data) {
   data
 }
 
-
-get_n_groups <- function() {
+carehomes_n_groups <- function() {
   length(sircovid_age_bins()$start) + 2L
 }

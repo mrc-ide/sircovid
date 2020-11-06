@@ -218,3 +218,25 @@ test_that("build_vaccine_progression_rate allows sensible inputs and works", {
                                    N_vacc_classes = 5),
     matrix(0, 19, 3))
 })
+
+test_that("build_waning_rate works as expected", {
+  expect_error(
+    build_waning_rate(NULL),
+    "At least one value required for 'rel_susceptibility'")
+  expect_error(
+    build_waning_rate(-1),
+    "'waning_rate' must have only non-negative values",
+    fixed = TRUE)
+  expect_error(
+    build_waning_rate(rep(0.5, 2)),
+    "'waning_rate' should have as many elements as age groups")
+  expect_equal(
+    build_waning_rate(0),
+  rep(0, 19))
+  expect_equal(
+    build_waning_rate(0.5),
+    rep(0.5, 19))
+  expect_equal(
+    build_waning_rate(rep(0.5, 19)),
+    rep(0.5, 19))
+})
