@@ -1,3 +1,7 @@
+# sircovid 0.6.8
+
+* Support for vaccination modelling, with vaccination affecting only levels of susceptibility (age-specific)
+
 # sircovid 0.6.5
 
 * Parameter `N_age` was split into `n_age_groups` (both models) and `n_groups` (carehomes)
