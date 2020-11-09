@@ -43,7 +43,7 @@ Imports:
     socialmixr
 LinkingTo:
     cpp11 (>= 0.2.1),
-    dust (>= 0.5.1)
+    dust (>= 0.5.3)
 Suggests:
     coda,
     testthat,

@@ -205,7 +205,13 @@ For many of the probabilities of taking different routes through hospitalisation
 
 In this example we will first try and estimate the value of Rt before and after national lockdown in March, and the start date of the epidemic (four parameters). All other parameters will remain fixed.
 
-In deciding how to operate parameters, the first thing to do is to look at the odin model under the section `## User defined parameters - default in parentheses:` or run `grep 'user' inst/odin/carehomes.R` to see the names of the model parameters. All of these will automatically be set up, but any can be sampled. Run the following to see the defaults:
+In deciding how to operate parameters, the first thing to do is to look at the odin model under the section `## User defined parameters - default in parentheses:` which also has comments about what these parameters mean. You can also use `coef()` to see the names and odin-set defaults of all of the model parameters:
+
+```{r}
+coef(sircovid::carehomes)
+```
+
+All of these will automatically be set up, but any can be sampled. Run the following to see the defaults sent from R:
 
 ```{r}
 sircovid::carehomes_parameters(region = "england",
