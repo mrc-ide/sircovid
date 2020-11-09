@@ -459,6 +459,6 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
     "Cannot fit to more than one pillar 2 data stream")
 })
 
-test_that("sircovid_age_bins has 19 age groups", {
+test_that("the carehomes sircovid model has 19 groups", {
   expect_equal(carehomes_n_groups(), 19)
 })
