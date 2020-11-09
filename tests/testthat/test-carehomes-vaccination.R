@@ -91,17 +91,17 @@ test_that("there are no vaccinations when vaccination_rate is 0", {
   waning_rate <- rep(1 / 20, 19)
   waning_rate[4] <- 0 # no waning in group with seeded infections
   # otherwise S can go up as these infected individuals loose immunity
-  
-  p <- carehomes_parameters(0, "england", 
+
+  p <- carehomes_parameters(0, "england",
                             waning_rate = waning_rate)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   mod$set_index(integer(0))
   s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
-  
+
   ## No vaccinated susceptibles:
-  expect_equal(s[-seq_len(carehomes_n_groups()), , ], 
+  expect_equal(s[-seq_len(carehomes_n_groups()), , ],
                array(0, c(nrow(s) - carehomes_n_groups(), 101)))
 })
 
