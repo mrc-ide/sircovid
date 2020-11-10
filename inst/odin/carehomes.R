@@ -179,6 +179,8 @@ n_EI_mild[, ] <-
 ## Computes the number of ILI cases
 n_EI_ILI[, ] <- n_EE[i, s_E, j] - n_EI_asympt[i, j] - n_EI_mild[i, j]
 
+##########
+
 ## Work out the S->E and E->E transitions
 aux_EE[, 1, 1] <- n_SE[i, 1]
 aux_EE[, 1, 2:n_vacc_classes_minus_1] <- n_SE[i, k] + n_SE_SS[i, k - 1]
