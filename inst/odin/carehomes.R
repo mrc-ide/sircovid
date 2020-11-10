@@ -18,11 +18,11 @@ update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
 update(S[, 1]) <-
-  S[i, 1] - n_SS[i, 1] - n_SE[i, 1] + n_RS[i] # age, vaccination status
+  S[i, 1] - n_SS[i, 1] - n_infections[i, 1] + n_RS[i] # age, vaccination status
 update(S[, 2:(n_vacc_classes - 1)]) <- S[i, j] -
-  n_SS[i, j] + n_SS[i, j - 1] - n_SE[i, j] # age, vaccination status
+  n_SS[i, j] + n_SS[i, j - 1] - n_infections[i, j] # age, vaccination status
 update(S[, n_vacc_classes]) <- S[i, n_vacc_classes] +
-  n_SS[i, n_vacc_classes - 1] - n_SE[i, n_vacc_classes]
+  n_SS[i, n_vacc_classes - 1] - n_infections[i, n_vacc_classes]
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
@@ -127,12 +127,12 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 n_infections[, ] <- rbinom(S[i, j], p_SE[i, j])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[j] to E[j+1] (j vaccination class)
-n_infections_and_vaccine_progressions[, ] <-
+n_SE_SS[, ] <-
   rbinom(n_infections[i, j], p_SS[i, j])
 ## resulting transitions from S[j] to E[j]
 ## (j vaccination class)
 n_SE[, 1:n_vacc_classes_minus_1] <- n_infections[i, j] -
-  n_infections_and_vaccine_progressions[i, j]
+  n_SE_SS[i, j]
 n_SE[, n_vacc_classes] <- n_infections[i, n_vacc_classes]
 
 ## vaccine progression
@@ -186,11 +186,12 @@ aux_p_bin[, 2:(n_trans_classes - 1)] <-
   trans_profile[i, j] / sum(trans_profile[i, j:n_trans_classes])
 
 ## Implementation of multinom via nested binomial
-aux_EE[, 1, 1] <- rbinom(sum(n_SE[i, ]), aux_p_bin[i, 1])
+aux_EE[, 1, 1] <- rbinom(sum(n_infections[i, ]), aux_p_bin[i, 1])
 aux_EE[, 1, 2:(n_trans_classes - 1)] <-
-  rbinom(sum(n_SE[i, ]) - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
+  rbinom(sum(n_infections[i, ]) -
+           sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
 aux_EE[, 1, n_trans_classes] <-
-  sum(n_SE[i, ]) - sum(aux_EE[i, 1, 1:(n_trans_classes - 1)])
+  sum(n_infections[i, ]) - sum(aux_EE[i, 1, 1:(n_trans_classes - 1)])
 
 ## Work out the E->E transitions
 aux_EE[, 2:s_E, ] <- n_EE[i, j - 1, k]
@@ -826,7 +827,7 @@ dim(n_SS) <- c(n_groups, n_vacc_classes_minus_1)
 dim(p_SE) <- c(n_groups, n_vacc_classes)
 dim(n_SE) <- c(n_groups, n_vacc_classes)
 dim(n_infections) <- c(n_groups, n_vacc_classes)
-dim(n_infections_and_vaccine_progressions) <-
+dim(n_SE_SS) <-
   c(n_groups, n_vacc_classes_minus_1)
 dim(aux_p_bin) <- c(n_groups, n_trans_classes)
 
