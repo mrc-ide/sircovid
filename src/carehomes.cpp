@@ -474,6 +474,12 @@ public:
     int dim_n_ILI_to_triage_R_conf;
     int dim_n_ILI_to_triage_R_conf_1;
     int dim_n_ILI_to_triage_R_conf_2;
+    int dim_n_infections;
+    int dim_n_infections_1;
+    int dim_n_infections_2;
+    int dim_n_infections_and_vaccine_progressions;
+    int dim_n_infections_and_vaccine_progressions_1;
+    int dim_n_infections_and_vaccine_progressions_2;
     int dim_n_PCR_pos;
     int dim_n_PCR_pos_1;
     int dim_n_PCR_pos_2;
@@ -498,9 +504,6 @@ public:
     int dim_n_R_stepdown_unconf_to_conf_2;
     int dim_n_RS;
     int dim_n_RS_tmp;
-    int dim_n_S_out;
-    int dim_n_S_out_1;
-    int dim_n_S_out_2;
     int dim_n_SE;
     int dim_n_SE_1;
     int dim_n_SE_2;
@@ -800,6 +803,8 @@ public:
     std::vector<real_t> n_ILI_to_triage_D_conf;
     std::vector<real_t> n_ILI_to_triage_R;
     std::vector<real_t> n_ILI_to_triage_R_conf;
+    std::vector<real_t> n_infections;
+    std::vector<real_t> n_infections_and_vaccine_progressions;
     std::vector<real_t> n_PCR_pos;
     std::vector<real_t> n_PCR_pre;
     std::vector<real_t> n_R_pos;
@@ -810,7 +815,6 @@ public:
     std::vector<real_t> n_R_stepdown_unconf_to_conf;
     std::vector<real_t> n_RS;
     std::vector<real_t> n_RS_tmp;
-    std::vector<real_t> n_S_out;
     std::vector<real_t> n_SE;
     std::vector<real_t> n_SS;
     int n_trans_classes;
@@ -1946,9 +1950,9 @@ public:
         internal.n_ILI_to_triage_D[i - 1 + internal.dim_n_ILI_to_triage_D_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_ILI_to_triage[internal.dim_n_ILI_to_triage_1 * (j - 1) + i - 1]), internal.prob_death_ICU[i - 1]);
       }
     }
-    for (int i = 1; i <= internal.dim_n_S_out_1; ++i) {
-      for (int j = 1; j <= internal.n_vacc_classes_minus_1; ++j) {
-        internal.n_S_out[i - 1 + internal.dim_n_S_out_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1]), internal.p_SE[internal.dim_p_SE_1 * (j - 1) + i - 1] + internal.p_SS[internal.dim_p_SS_1 * (j - 1) + i - 1]);
+    for (int i = 1; i <= internal.dim_n_infections_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_infections_2; ++j) {
+        internal.n_infections[i - 1 + internal.dim_n_infections_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1]), internal.p_SE[internal.dim_p_SE_1 * (j - 1) + i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_new_I_ILI_1; ++i) {
@@ -1997,9 +2001,14 @@ public:
         internal.n_ILI_to_triage_R[i - 1 + internal.dim_n_ILI_to_triage_R_1 * (j - 1)] = internal.n_ILI_to_triage[internal.dim_n_ILI_to_triage_1 * (j - 1) + i - 1] - internal.n_ILI_to_triage_D[internal.dim_n_ILI_to_triage_D_1 * (j - 1) + i - 1];
       }
     }
+    for (int i = 1; i <= internal.dim_n_infections_and_vaccine_progressions_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_infections_and_vaccine_progressions_2; ++j) {
+        internal.n_infections_and_vaccine_progressions[i - 1 + internal.dim_n_infections_and_vaccine_progressions_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_infections[internal.dim_n_infections_1 * (j - 1) + i - 1]), internal.p_SS[internal.dim_p_SS_1 * (j - 1) + i - 1]);
+      }
+    }
     for (int i = 1; i <= internal.dim_n_SS_1; ++i) {
       for (int j = 1; j <= internal.dim_n_SS_2; ++j) {
-        internal.n_SS[i - 1 + internal.dim_n_SS_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_out[internal.dim_n_S_out_1 * (j - 1) + i - 1]), internal.p_SS[internal.dim_p_SS_1 * (j - 1) + i - 1] / (real_t) (internal.p_SE[internal.dim_p_SE_1 * (j - 1) + i - 1] + internal.p_SS[internal.dim_p_SS_1 * (j - 1) + i - 1]));
+        internal.n_SS[i - 1 + internal.dim_n_SS_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1] - internal.n_infections[internal.dim_n_infections_1 * (j - 1) + i - 1]), internal.p_SS[internal.dim_p_SS_1 * (j - 1) + i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_I_ILI_1; ++i) {
@@ -2026,12 +2035,12 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_SE_1; ++i) {
       for (int j = 1; j <= internal.n_vacc_classes_minus_1; ++j) {
-        internal.n_SE[i - 1 + internal.dim_n_SE_1 * (j - 1)] = internal.n_S_out[internal.dim_n_S_out_1 * (j - 1) + i - 1] - internal.n_SS[internal.dim_n_SS_1 * (j - 1) + i - 1];
+        internal.n_SE[i - 1 + internal.dim_n_SE_1 * (j - 1)] = internal.n_infections[internal.dim_n_infections_1 * (j - 1) + i - 1] - internal.n_infections_and_vaccine_progressions[internal.dim_n_infections_and_vaccine_progressions_1 * (j - 1) + i - 1];
       }
     }
     for (int i = 1; i <= internal.dim_n_SE_1; ++i) {
       int j = internal.n_vacc_classes;
-      internal.n_SE[i - 1 + internal.dim_n_SE_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1]), internal.p_SE[internal.dim_p_SE_1 * (j - 1) + i - 1]);
+      internal.n_SE[i - 1 + internal.dim_n_SE_1 * (j - 1)] = internal.n_infections[internal.dim_n_infections_1 * (internal.n_vacc_classes - 1) + i - 1];
     }
     for (int i = 1; i <= internal.dim_new_I_triage_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_new_I_triage_D_conf_2; ++j) {
@@ -3589,6 +3598,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   for (int i = 1; i <= internal.dim_p_RS; ++i) {
     internal.p_RS[i - 1] = 1 - std::exp(- internal.waning_rate[i - 1] * internal.dt);
   }
+  internal.dim_n_infections_1 = internal.n_groups;
+  internal.dim_n_infections_2 = internal.n_vacc_classes;
   internal.dim_n_SE_1 = internal.n_groups;
   internal.dim_n_SE_2 = internal.n_vacc_classes;
   internal.dim_p_SE_1 = internal.n_groups;
@@ -3620,8 +3631,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
       internal.aux_p_bin[i - 1 + internal.dim_aux_p_bin_1 * (j - 1)] = internal.trans_profile[internal.dim_trans_profile_1 * (j - 1) + i - 1] / (real_t) odin_sum2(internal.trans_profile.data(), i - 1, i, j - 1, internal.n_trans_classes, internal.dim_trans_profile_1);
     }
   }
-  internal.dim_n_S_out_1 = internal.n_groups;
-  internal.dim_n_S_out_2 = internal.n_vacc_classes_minus_1;
+  internal.dim_n_infections = internal.dim_n_infections_1 * internal.dim_n_infections_2;
+  internal.dim_n_infections_and_vaccine_progressions_1 = internal.n_groups;
+  internal.dim_n_infections_and_vaccine_progressions_2 = internal.n_vacc_classes_minus_1;
   internal.dim_n_SE = internal.dim_n_SE_1 * internal.dim_n_SE_2;
   internal.dim_n_SS_1 = internal.n_groups;
   internal.dim_n_SS_2 = internal.n_vacc_classes_minus_1;
@@ -3630,9 +3642,10 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_p_SS_2 = internal.n_vacc_classes_minus_1;
   internal.dim_S = internal.dim_S_1 * internal.dim_S_2;
   internal.initial_S = std::vector<real_t>(internal.dim_S);
+  internal.n_infections = std::vector<real_t>(internal.dim_n_infections);
   internal.n_SE = std::vector<real_t>(internal.dim_n_SE);
   internal.p_SE = std::vector<real_t>(internal.dim_p_SE);
-  internal.dim_n_S_out = internal.dim_n_S_out_1 * internal.dim_n_S_out_2;
+  internal.dim_n_infections_and_vaccine_progressions = internal.dim_n_infections_and_vaccine_progressions_1 * internal.dim_n_infections_and_vaccine_progressions_2;
   internal.dim_n_SS = internal.dim_n_SS_1 * internal.dim_n_SS_2;
   internal.dim_p_SS = internal.dim_p_SS_1 * internal.dim_p_SS_2;
   for (int i = 1; i <= internal.dim_S_1; ++i) {
@@ -3663,7 +3676,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.offset_variable_R_pre = 17 + internal.dim_R_neg + internal.dim_R + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_PCR_neg + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_S + internal.dim_R_stepdown_unconf + internal.dim_R_stepdown_conf;
   internal.offset_variable_R_stepdown_conf = 17 + internal.dim_R_neg + internal.dim_R + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_PCR_neg + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_S + internal.dim_R_stepdown_unconf;
   internal.offset_variable_R_stepdown_unconf = 17 + internal.dim_R_neg + internal.dim_R + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_PCR_neg + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_S;
-  internal.n_S_out = std::vector<real_t>(internal.dim_n_S_out);
+  internal.n_infections_and_vaccine_progressions = std::vector<real_t>(internal.dim_n_infections_and_vaccine_progressions);
   internal.n_SS = std::vector<real_t>(internal.dim_n_SS);
   internal.p_SS = std::vector<real_t>(internal.dim_p_SS);
   for (int i = 1; i <= internal.dim_p_SS_1; ++i) {
