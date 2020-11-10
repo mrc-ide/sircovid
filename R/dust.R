@@ -278,8 +278,6 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_triage = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), n_trans_classes = list(has_default = TRUE,
-        default_value = 1L, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), p_R_pre_1 = list(has_default = TRUE,
         default_value = 0.5, rank = 0, min = -Inf, max = Inf,
         integer = FALSE)),
