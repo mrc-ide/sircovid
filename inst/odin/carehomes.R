@@ -19,6 +19,9 @@ update(time) <- (step + 1) * dt
 initial(n_SE_out[, ]) <- 0
 update(n_SE_out[, ]) <- n_SE[i, j]
 dim(n_SE_out) <- c(n_groups, n_vacc_classes)
+initial(p_SE_out[, ]) <- 0
+update(p_SE_out[, ]) <- p_SE[i, j]
+dim(p_SE_out) <- c(n_groups, n_vacc_classes)
 initial(n_SS_out[, ]) <- 0
 update(n_SS_out[, ]) <- n_SS[i, j]
 dim(n_SS_out) <- c(n_groups, n_vacc_classes_minus_1)
@@ -179,6 +182,7 @@ n_EI_ILI[, ] <- n_EE[i, s_E, j] - n_EI_asympt[i, j] - n_EI_mild[i, j]
 
 ## Work out the S->E and E->E transitions
 aux_EE[, 1, ] <- n_SE[i, k]
+
 aux_EE[, 2:s_E, ] <- n_EE[i, j - 1, k]
 aux_EE[, 1:s_E, ] <- aux_EE[i, j, k] - n_EE[i, j, k]
 new_E[, , ] <- E[i, j, k] + aux_EE[i, j, k]

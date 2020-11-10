@@ -161,7 +161,7 @@ vaccine_progression_rate <- c(1/(2*7), 1/(26*7))
 p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
                           vaccination_rate = vaccination_rate,
-                          vaccine_progression_rate = 
+                          vaccine_progression_rate =
                           vaccine_progression_rate)
 
 # vaccination parameters are automatically copied across all age groups
@@ -194,14 +194,14 @@ vaccination_rate <- c(0.06, rep(0.03, n_groups - 1))
 # (on average after 3 months) than the other age groups
 # (on average after 6 months)
 vaccine_progression_rate <- cbind(rep(1 / (2 * 7), n_groups),
-                                  c(1 / (13 * 7), 
+                                  c(1 / (13 * 7),
                                   rep( 1 / (26 * 7), n_groups - 1)))
 
 # generate model parameters
 p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
                           vaccination_rate = vaccination_rate,
-                          vaccine_progression_rate = 
+                          vaccine_progression_rate =
                           vaccine_progression_rate)
 
 }
