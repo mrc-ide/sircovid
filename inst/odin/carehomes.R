@@ -15,27 +15,13 @@ dt <- user()
 initial(time) <- 0
 update(time) <- (step + 1) * dt
 
-## debugging
-initial(n_SE_out[, ]) <- 0
-update(n_SE_out[, ]) <- n_SE[i, j]
-dim(n_SE_out) <- c(n_groups, n_vacc_classes)
-initial(p_SE_out[, ]) <- 0
-update(p_SE_out[, ]) <- p_SE[i, j]
-dim(p_SE_out) <- c(n_groups, n_vacc_classes)
-initial(n_SS_out[, ]) <- 0
-update(n_SS_out[, ]) <- n_SS[i, j]
-dim(n_SS_out) <- c(n_groups, n_vacc_classes_minus_1)
-initial(n_RS_out[]) <- 0
-update(n_RS_out[]) <- n_RS[i]
-dim(n_RS_out) <- n_groups
-
 ## Core equations for transitions between compartments:
 update(S[, 1]) <-
-  S[i, 1] - n_SS[i, 1] - n_SE[i, 1] + n_RS[i] # age, vaccination status
+  S[i, 1] - n_SS[i, 1] - n_infections[i, 1] + n_RS[i] # age, vaccination status
 update(S[, 2:(n_vacc_classes - 1)]) <- S[i, j] -
-  n_SS[i, j] + n_SS[i, j - 1] - n_SE[i, j] # age, vaccination status
+  n_SS[i, j] + n_SS[i, j - 1] - n_infections[i, j] # age, vaccination status
 update(S[, n_vacc_classes]) <- S[i, n_vacc_classes] +
-  n_SS[i, n_vacc_classes - 1] - n_SE[i, n_vacc_classes]
+  n_SS[i, n_vacc_classes - 1] - n_infections[i, n_vacc_classes]
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
@@ -134,11 +120,24 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
 
-# competing risk of infection and progression through vaccine classes
-n_S_out[, 1:n_vacc_classes_minus_1] <- rbinom(S[i, j], p_SE[i, j] + p_SS[i, j])
-n_SS[, ] <- rbinom(n_S_out[i, j], p_SS[i, j] / (p_SE[i, j] + p_SS[i, j]))
-n_SE[, 1:n_vacc_classes_minus_1] <- n_S_out[i, j] - n_SS[i, j]
-n_SE[, n_vacc_classes] <- rbinom(S[i, j], p_SE[i, j])
+## modelling infections and vaccine progression, which can happen simultaneously
+
+## new infections
+n_infections[, ] <- rbinom(S[i, j], p_SE[i, j])
+## of those some can also be vaccinated or progress through vaccination classes
+## --> number transitioning from S[j] to E[j+1] (j vaccination class)
+n_SE_SS[, ] <-
+  rbinom(n_infections[i, j], p_SS[i, j])
+## resulting transitions from S[j] to E[j]
+## (j vaccination class)
+n_SE[, 1:n_vacc_classes_minus_1] <- n_infections[i, j] -
+  n_SE_SS[i, j]
+n_SE[, n_vacc_classes] <- n_infections[i, n_vacc_classes]
+
+## vaccine progression
+n_SS[, ] <- rbinom(S[i, j] - n_infections[i, j], p_SS[i, j])
+
+## other transitions
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
