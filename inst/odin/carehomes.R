@@ -15,6 +15,17 @@ dt <- user()
 initial(time) <- 0
 update(time) <- (step + 1) * dt
 
+## debugging
+initial(n_SE_out[, ]) <- 0
+update(n_SE_out[, ]) <- n_SE[i, j]
+dim(n_SE_out) <- c(n_groups, n_vacc_classes)
+initial(n_SS_out[, ]) <- 0
+update(n_SS_out[, ]) <- n_SS[i, j]
+dim(n_SS_out) <- c(n_groups, n_vacc_classes_minus_1)
+initial(n_RS_out[]) <- 0
+update(n_RS_out[]) <- n_RS[i]
+dim(n_RS_out) <- n_groups
+
 ## Core equations for transitions between compartments:
 update(S[, 1]) <-
   S[i, 1] - n_SS[i, 1] - n_SE[i, 1] + n_RS[i] # age, vaccination status
