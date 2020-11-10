@@ -121,11 +121,24 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
 
-# competing risk of infection and progression through vaccine classes
-n_S_out[, 1:n_vacc_classes_minus_1] <- rbinom(S[i, j], p_SE[i, j] + p_SS[i, j])
-n_SS[, ] <- rbinom(n_S_out[i, j], p_SS[i, j] / (p_SE[i, j] + p_SS[i, j]))
-n_SE[, 1:n_vacc_classes_minus_1] <- n_S_out[i, j] - n_SS[i, j]
-n_SE[, n_vacc_classes] <- rbinom(S[i, j], p_SE[i, j])
+## modelling infections and vaccine progression, which can happen simultaneously
+
+## new infections
+n_infections[, ] <- rbinom(S[i, j], p_SE[i, j])
+## of those some can also be vaccinated or progress through vaccination classes
+## --> number transitioning from S[j] to E[j+1] (j vaccination class)
+n_infections_and_vaccine_progressions[, ] <-
+  rbinom(n_infections[i, j], p_SS[i, j])
+## resulting transitions from S[j] to E[j]
+## (j vaccination class)
+n_SE[, 1:n_vacc_classes_minus_1] <- n_infections[i, j] -
+  n_infections_and_vaccine_progressions[i, j]
+n_SE[, n_vacc_classes] <- n_infections[i, n_vacc_classes]
+
+## vaccine progression
+n_SS[, ] <- rbinom(S[i, j] - n_infections[i, j], p_SS[i, j])
+
+## other transitions
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
@@ -806,13 +819,15 @@ dim(PCR_neg) <- c(n_groups)
 ## Vectors handling the S->S transitions i.e. moving between vaccination classes
 n_vacc_classes_minus_1 <- n_vacc_classes - 1
 dim(p_SS) <- c(n_groups, n_vacc_classes_minus_1)
-dim(n_S_out) <- c(n_groups, n_vacc_classes_minus_1)
 dim(n_SS) <- c(n_groups, n_vacc_classes_minus_1)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
 dim(p_SE) <- c(n_groups, n_vacc_classes)
 dim(n_SE) <- c(n_groups, n_vacc_classes)
+dim(n_infections) <- c(n_groups, n_vacc_classes)
+dim(n_infections_and_vaccine_progressions) <-
+  c(n_groups, n_vacc_classes_minus_1)
 dim(aux_p_bin) <- c(n_groups, n_trans_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
