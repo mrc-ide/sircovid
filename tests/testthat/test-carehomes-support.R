@@ -215,7 +215,7 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
-  expect_equal(rowSums(initial_y$S) + rowSums(drop(initial_y$I_asympt)), 
+  expect_equal(rowSums(initial_y$S) + rowSums(drop(initial_y$I_asympt)),
                p$N_tot)
   expect_equal(rowSums(drop(initial_y$I_asympt)),
                append(rep(0, 18), 10, after = 3))

@@ -166,7 +166,7 @@ n_RS[] <- min(n_RS_tmp[i], R_neg[i], PCR_neg[i])
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
-update(cum_infections) <- cum_infections + sum(n_SE)
+update(cum_infections) <- cum_infections + sum(n_infections)
 
 ## Computes the number of asymptomatic
 n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], p_asympt[i])
@@ -180,8 +180,8 @@ n_EI_mild[, ] <-
 n_EI_ILI[, ] <- n_EE[i, s_E, j] - n_EI_asympt[i, j] - n_EI_mild[i, j]
 
 ## Work out the S->E and E->E transitions
-aux_EE[, 1, ] <- n_SE[i, k]
-
+aux_EE[, 1, 1] <- n_SE[i, 1]
+aux_EE[, 1, 2:n_vacc_classes_minus_1] <- n_SE[i, k] + n_SE_SS[i, k - 1]
 aux_EE[, 2:s_E, ] <- n_EE[i, j - 1, k]
 aux_EE[, 1:s_E, ] <- aux_EE[i, j, k] - n_EE[i, j, k]
 new_E[, , ] <- E[i, j, k] + aux_EE[i, j, k]
@@ -435,7 +435,7 @@ delta_R[] <-
   sum(n_R_stepdown_unconf[i, s_stepdown])
 
 ## Work out the PCR positivity
-delta_PCR_pre[, 1] <- sum(n_SE[i, ])
+delta_PCR_pre[, 1] <- sum(n_infections[i, ])
 delta_PCR_pre[, 2:s_PCR_pre] <- n_PCR_pre[i, j - 1]
 delta_PCR_pre[, ] <- delta_PCR_pre[i, j] - n_PCR_pre[i, j]
 new_PCR_pre[, ] <- PCR_pre[i, j] + delta_PCR_pre[i, j]
@@ -802,13 +802,14 @@ dim(PCR_neg) <- c(n_groups)
 ## Vectors handling the S->S transitions i.e. moving between vaccination classes
 n_vacc_classes_minus_1 <- n_vacc_classes - 1
 dim(p_SS) <- c(n_groups, n_vacc_classes_minus_1)
-dim(n_S_out) <- c(n_groups, n_vacc_classes_minus_1)
 dim(n_SS) <- c(n_groups, n_vacc_classes_minus_1)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
 dim(p_SE) <- c(n_groups, n_vacc_classes)
 dim(n_SE) <- c(n_groups, n_vacc_classes)
+dim(n_infections) <- c(n_groups, n_vacc_classes)
+dim(n_SE_SS) <- c(n_groups, n_vacc_classes_minus_1)
 
 ## Vectors handling the E->I transition where newly infectious cases
 ## are split between level of severity
