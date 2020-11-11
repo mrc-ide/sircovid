@@ -844,3 +844,21 @@ carehomes_particle_filter_data <- function(data) {
 carehomes_n_groups <- function() {
   length(sircovid_age_bins()$start) + 2L
 }
+
+
+carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
+                               incidence_states,
+                               prepend_trajectories = TRUE) {
+  ret <- mcstate::pmcmc_sample(samples, n_sample, burnin)
+  steps_predict <- seq(ret$predict$step,
+                       length.out = forecast_days + 1L,
+                       by = ret$predict$rate)
+  ret$trajectories <- mcstate::pmcmc_predict(
+    ret, steps_predict,
+    prepend_trajectories = prepend_trajectories)
+
+  ret$trajectories$date <- ret$trajectories$step / ret$trajectories$rate
+  ret$trajectories <- add_trajectory_incidence(
+    ret$trajectories, incidence_states)
+  ret
+}
