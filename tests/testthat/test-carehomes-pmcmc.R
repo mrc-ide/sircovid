@@ -2,7 +2,7 @@ context("pmcmc")
 
 test_that("adding incidence adds appropriate states", {
   dat <- reference_data_mcmc()
-  res <- calculate_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
+  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
   expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in% rownames(res$state)))
 
   tmp <- res$state["deaths_inc", , ]
@@ -16,8 +16,8 @@ test_that("adding incidence adds appropriate states", {
 
 test_that("can compute incidence for a single variable", {
   dat <- reference_data_mcmc()
-  cmp <- calculate_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
-  res <- calculate_incidence(dat$trajectories, "deaths")
+  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
+  res <- add_trajectory_incidence(dat$trajectories, "deaths")
   expect_identical(res$state["deaths_inc", , ],
                    cmp$state["deaths_inc", , ])
 })

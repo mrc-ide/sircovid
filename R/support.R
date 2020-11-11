@@ -156,7 +156,7 @@ severity_default <- function() {
 }
 
 
-calculate_incidence <- function(trajectories, states, suffix = "_inc") {
+add_trajectory_incidence <- function(trajectories, states, suffix = "_inc") {
   assert_is(trajectories, "mcstate_trajectories")
 
   ## In order to compute incidence we have to add two NA values; one
