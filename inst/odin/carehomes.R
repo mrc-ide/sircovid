@@ -454,14 +454,14 @@ new_R_stepdown_R_conf[, ] <-
 ## Work out the R_stepdown_D->R_stepdown_D transitions
 aux_R_stepdown_D_unconf[, ] <- R_stepdown_D_unconf[i, j]
 aux_R_stepdown_D_unconf[, 1] <-
-  aux_R_stepdown_D_unconf[i, j] + sum(n_II_ICU_S_R_unconf[i, s_ICU_S_R, ])
+  aux_R_stepdown_D_unconf[i, j] + sum(n_II_ICU_S_D_unconf[i, s_ICU_S_D, ])
 aux_R_stepdown_D_unconf[, 2:s_stepdown_D] <-
   aux_R_stepdown_D_unconf[i, j] + n_R_stepdown_D_unconf[i, j - 1]
 aux_R_stepdown_D_unconf[, 1:s_stepdown_D] <-
   aux_R_stepdown_D_unconf[i, j] - n_R_stepdown_D_unconf[i, j]
 aux_R_stepdown_D_conf[, ] <- R_stepdown_D_conf[i, j]
 aux_R_stepdown_D_conf[, 1] <-
-  aux_R_stepdown_D_conf[i, j] + sum(n_II_ICU_S_R_conf[i, s_ICU_S_R, ])
+  aux_R_stepdown_D_conf[i, j] + sum(n_II_ICU_S_D_conf[i, s_ICU_S_D, ])
 aux_R_stepdown_D_conf[, 2:s_stepdown_D] <-
   aux_R_stepdown_D_conf[i, j] + n_R_stepdown_D_conf[i, j - 1]
 aux_R_stepdown_D_conf[, 1:s_stepdown_D] <-

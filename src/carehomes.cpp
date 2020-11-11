@@ -1596,7 +1596,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_conf_1; ++i) {
       int j = 1;
-      internal.aux_R_stepdown_D_conf[i - 1 + internal.dim_aux_R_stepdown_D_conf_1 * (j - 1)] = internal.aux_R_stepdown_D_conf[internal.dim_aux_R_stepdown_D_conf_1 * (j - 1) + i - 1] + odin_sum3(internal.n_II_ICU_S_R_conf.data(), i - 1, i, internal.s_ICU_S_R - 1, internal.s_ICU_S_R, 0, internal.dim_n_II_ICU_S_R_conf_3, internal.dim_n_II_ICU_S_R_conf_1, internal.dim_n_II_ICU_S_R_conf_12);
+      internal.aux_R_stepdown_D_conf[i - 1 + internal.dim_aux_R_stepdown_D_conf_1 * (j - 1)] = internal.aux_R_stepdown_D_conf[internal.dim_aux_R_stepdown_D_conf_1 * (j - 1) + i - 1] + odin_sum3(internal.n_II_ICU_S_D_conf.data(), i - 1, i, internal.s_ICU_S_D - 1, internal.s_ICU_S_D, 0, internal.dim_n_II_ICU_S_D_conf_3, internal.dim_n_II_ICU_S_D_conf_1, internal.dim_n_II_ICU_S_D_conf_12);
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_conf_1; ++i) {
       for (int j = 2; j <= internal.s_stepdown_D; ++j) {
@@ -1615,7 +1615,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_unconf_1; ++i) {
       int j = 1;
-      internal.aux_R_stepdown_D_unconf[i - 1 + internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1)] = internal.aux_R_stepdown_D_unconf[internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1) + i - 1] + odin_sum3(internal.n_II_ICU_S_R_unconf.data(), i - 1, i, internal.s_ICU_S_R - 1, internal.s_ICU_S_R, 0, internal.dim_n_II_ICU_S_R_unconf_3, internal.dim_n_II_ICU_S_R_unconf_1, internal.dim_n_II_ICU_S_R_unconf_12);
+      internal.aux_R_stepdown_D_unconf[i - 1 + internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1)] = internal.aux_R_stepdown_D_unconf[internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1) + i - 1] + odin_sum3(internal.n_II_ICU_S_D_unconf.data(), i - 1, i, internal.s_ICU_S_D - 1, internal.s_ICU_S_D, 0, internal.dim_n_II_ICU_S_D_unconf_3, internal.dim_n_II_ICU_S_D_unconf_1, internal.dim_n_II_ICU_S_D_unconf_12);
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_unconf_1; ++i) {
       for (int j = 2; j <= internal.s_stepdown_D; ++j) {
