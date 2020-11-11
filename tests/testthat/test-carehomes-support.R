@@ -18,6 +18,38 @@ test_that("carehomes progression parameters", {
 })
 
 
+test_that("carehomes vaccination parameters", {
+  n_groups <- carehomes_n_groups()
+  # test default values
+  p <- carehomes_parameters_vaccination()
+  expect_setequal(
+    names(p),
+    c("rel_susceptibility", "vaccination_rate", "vaccine_progression_rate"))
+  expect_equal(nrow(p$rel_susceptibility), n_groups)
+  expect_equal(ncol(p$rel_susceptibility), 3)
+  expect_equal(length(p$vaccination_rate), n_groups)
+  expect_equal(nrow(p$vaccine_progression_rate), n_groups)
+  expect_equal(ncol(p$vaccine_progression_rate), 1)
+
+  # test when more vaccinated categories than default
+  rel_susceptibility <- c(1, 0.75, 0.5, 0.75)
+  vaccination_rate <- 1
+  vaccine_progression_rate <- c(1, 1)
+  p <- carehomes_parameters_vaccination(rel_susceptibility = rel_susceptibility,
+                                        vaccination_rate = vaccination_rate,
+                                        vaccine_progression_rate =
+                                          vaccine_progression_rate)
+  expect_setequal(
+    names(p),
+    c("rel_susceptibility", "vaccination_rate", "vaccine_progression_rate"))
+  expect_equal(nrow(p$rel_susceptibility), n_groups)
+  expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
+  expect_equal(length(p$vaccination_rate), n_groups)
+  expect_equal(nrow(p$vaccine_progression_rate), n_groups)
+  expect_equal(ncol(p$vaccine_progression_rate),
+               length(vaccine_progression_rate))
+})
+
 test_that("carehomes_parameters returns a list of parameters", {
   date <- sircovid_date("2020-02-01")
   p <- carehomes_parameters(date, "uk")
@@ -34,7 +66,9 @@ test_that("carehomes_parameters returns a list of parameters", {
   progression <- carehomes_parameters_progression()
   expect_identical(p[names(progression)], progression)
 
-  vaccination <- carehomes_parameters_vaccination()
+  vaccination <- carehomes_parameters_vaccination(p$rel_susceptibility,
+                                                  p$vaccination_rate,
+                                                  p$vaccine_progression_rate)
   expect_identical(p[names(vaccination)], vaccination)
 
   waning <- carehomes_parameters_waning()
@@ -423,4 +457,8 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
   expect_error(
     carehomes_particle_filter(data),
     "Cannot fit to more than one pillar 2 data stream")
+})
+
+test_that("the carehomes sircovid model has 19 groups", {
+  expect_equal(carehomes_n_groups(), 19)
 })

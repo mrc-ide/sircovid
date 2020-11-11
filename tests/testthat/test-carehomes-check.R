@@ -40,8 +40,8 @@ test_that("there are no infections when beta is 0", {
   mod$set_index(integer(0))
   s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
 
-  ## Susceptible population is never drawn down
-  expect_equal(s, array(s[, , 1], c(19, 1, 101)))
+  ## Susceptible population is never drawn down:
+  expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
 })
 
 
@@ -74,9 +74,9 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
   index_R <- array(info$index$R, info$dim$R)
   index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
   index_PCR_neg <- array(info$index$PCR_neg, info$dim$PCR_neg)
-  state[index_R] <- state[index_S]
-  state[index_R_neg] <- state[index_S]
-  state[index_PCR_neg] <- state[index_S]
+  state[index_R] <- rowSums(array(state[index_S], info$dim$S))
+  state[index_R_neg] <- rowSums(array(state[index_S], info$dim$S))
+  state[index_PCR_neg] <- rowSums(array(state[index_S], info$dim$S))
   state[index_S] <- 0
 
   mod$set_state(state)
@@ -129,7 +129,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
 
   ## Susceptible population is never drawn down:
-  expect_equal(s, array(s[, , 1], c(19, 1, 101)))
+  expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
 })
 
 

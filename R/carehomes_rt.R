@@ -13,7 +13,7 @@
 ##'
 ##' @export
 carehomes_Rt <- function(step, S, p) {
-  if (nrow(S) != length(p$rel_susceptibility) * nrow(p$m)) {
+  if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows, following transmission matrix",
       nrow(p$m)))
@@ -37,12 +37,9 @@ carehomes_Rt <- function(step, S, p) {
     ## when several vaccination groups,
     ## need to take the weighted means of the S
     ## (weights given by rel_susceptibility)
-    S_mat <- matrix(S[, t], p$n_groups, length(p$rel_susceptibility))
-    rel_susceptibility_weights <- matrix(
-      rep(p$rel_susceptibility, each = p$n_groups),
-      nrow = p$n_groups,
-      ncol = length(p$rel_susceptibility))
-    S_weighted <- rowSums(S_mat * rel_susceptibility_weights)
+    S_mat <- matrix(S[, t],
+                    nrow = p$n_groups, ncol = ncol(p$rel_susceptibility))
+    S_weighted <- rowSums(S_mat * p$rel_susceptibility)
 
     ngm <- outer(mean_duration[, t], S_weighted) * m
 
@@ -61,9 +58,15 @@ carehomes_Rt <- function(step, S, p) {
   t <- seq_along(step)
   eff_Rt_all <- vnapply(t, calculate_ev, S, drop_carehomes = FALSE)
   eff_Rt_general <- vnapply(t, calculate_ev, S, drop_carehomes = TRUE)
-  Rt_all <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+  N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
+  N_tot_all_vacc_groups <- N_tot_non_vacc
+  for (i in seq(2, ncol(p$rel_susceptibility))) {
+    N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
+                                   0 * N_tot_non_vacc)
+  }
+  Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
                     drop_carehomes = FALSE)
-  Rt_general <- vnapply(t, calculate_ev, array(p$N_tot, dim = dim(S)),
+  Rt_general <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
                         drop_carehomes = TRUE)
 
   list(step = step,
