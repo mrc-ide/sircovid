@@ -7,10 +7,10 @@ test_that("adding incidence adds appropriate states", {
 
   tmp <- res$state["deaths_inc", , ]
   expect_true(all(is.na(tmp[, 1:2])))
-  deaths <- t(apply(tmp[, -(1:2)], 1, cumsum))
+  deaths <- t(apply(tmp[, -c(1, 2)], 1, cumsum))
   expect_equal(
     deaths,
-    res$state["deaths", , -(1:2)] - res$state["deaths", , 2])
+    res$state["deaths", , -c(1, 2)] - res$state["deaths", , 2])
 })
 
 
