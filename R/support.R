@@ -231,3 +231,45 @@ rank_trajectories <- function(state) {
 
   state
 }
+
+
+combine_rt <- function(rt, samples) {
+  ## Ensure all trajectories are the same length
+  ret <- rt[[1L]]
+  what <- setdiff(names(ret), c("date", "step"))
+  ret[what] <- lapply(what, combine_rt1, rt, samples)
+  ret
+}
+
+
+combine_rt1 <- function(what, rt, samples) {
+  dates <- lapply(samples, function(x) x$trajectories$date)
+  dates_keep <- dates[[1]]
+  for (i in seq_along(dates)[-1]) {
+    dates_keep <- intersect(dates_keep, dates[[i]])
+  }
+  idx <- lapply(seq_along(samples), function(i) dates[[i]] %in% dates_keep)
+
+  incidence <- Map(function(s, i)
+    t(s$trajectories$state["infections_inc", , i]), samples, idx)
+
+  rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
+
+  ## Calculate rank of particles by area under Rt curve
+  rank_x <- lapply(rt_what, function(x) order(colSums(x)))
+
+  ## Rank based on the transpose (vs when this is done in the trajectories).
+  reorder_by_rank <- function(x, rank_x) {
+    Map(function(x, rank) x[, rank], x, rank_x)
+  }
+
+  ## Rank Rt and incidence
+  x <- reorder_by_rank(rt_what, rank_x)
+  w <- reorder_by_rank(incidence, rank_x)
+  sum_w <- Reduce(`+`, w)
+
+  ## Weight Rt by incidence to combine regions
+  ret <- Map(function(x, w) x * w / sum_w, x, w)
+
+  Reduce(`+`, ret)
+}

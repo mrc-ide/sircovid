@@ -47,8 +47,8 @@ reference_data_trajectories <- function() {
                     path))
 
     dat <- reference_data_mcmc()
-    res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "deaths_hosp"),
-                              TRUE)
+    incidence <- c("deaths", "deaths_hosp", "infections")
+    res <- carehomes_forecast(dat, 3, 5, 10, incidence, TRUE)
 
     dir.create(dirname(path), FALSE, TRUE)
     ## Ignore a warning about package:sircovid not being available

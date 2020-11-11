@@ -105,3 +105,29 @@ test_that("Can combine trajectories with missing times", {
   tmp <- dat$trajectories$state[, , -n] + err$trajectories$state
   expect_equal(f(res$state), f(tmp))
 })
+
+
+test_that("can combine rt calculations over trajectories", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  res <- combine_rt(list(rt, rt), list(dat, dat))
+  cmp <- rt
+  for (i in setdiff(names(cmp), c("step", "date"))) {
+    cmp[[i]][1:2, ] <- NA
+  }
+  ## This should pass for everything, but the effective Rt
+  ## calculations are different after aggregation for reasons as-yet
+  ## unexplained. Possibly this is reasonable based on how Rt is
+  ## calculated.
+  expect_equal(res$Rt_general, cmp$Rt_general)
+  expect_equal(res$Rt_all, cmp$Rt_all)
+})
