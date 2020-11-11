@@ -28,20 +28,24 @@ update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
 update(I_mild[, , ]) <- new_I_mild[i, j, k]
 update(I_ILI[, , ]) <- new_I_ILI[i, j, k]
 update(I_comm_D[, , ]) <- new_I_comm_D[i, j, k]
-update(I_triage_R_unconf[, , ]) <- new_I_triage_R_unconf[i, j, k]
-update(I_triage_R_conf[, , ]) <- new_I_triage_R_conf[i, j, k]
+update(I_triage_S_unconf[, , ]) <- new_I_triage_S_unconf[i, j, k]
+update(I_triage_S_conf[, , ]) <- new_I_triage_S_conf[i, j, k]
 update(I_triage_D_unconf[, , ]) <- new_I_triage_D_unconf[i, j, k]
 update(I_triage_D_conf[, , ]) <- new_I_triage_D_conf[i, j, k]
 update(I_hosp_R_unconf[, , ]) <- new_I_hosp_R_unconf[i, j, k]
 update(I_hosp_R_conf[, , ]) <- new_I_hosp_R_conf[i, j, k]
 update(I_hosp_D_unconf[, , ]) <- new_I_hosp_D_unconf[i, j, k]
 update(I_hosp_D_conf[, , ]) <- new_I_hosp_D_conf[i, j, k]
-update(I_ICU_R_unconf[, , ]) <- new_I_ICU_R_unconf[i, j, k]
-update(I_ICU_R_conf[, , ]) <- new_I_ICU_R_conf[i, j, k]
+update(I_ICU_S_R_unconf[, , ]) <- new_I_ICU_S_R_unconf[i, j, k]
+update(I_ICU_S_R_conf[, , ]) <- new_I_ICU_S_R_conf[i, j, k]
+update(I_ICU_S_D_unconf[, , ]) <- new_I_ICU_S_D_unconf[i, j, k]
+update(I_ICU_S_D_conf[, , ]) <- new_I_ICU_S_D_conf[i, j, k]
 update(I_ICU_D_unconf[, , ]) <- new_I_ICU_D_unconf[i, j, k]
 update(I_ICU_D_conf[, , ]) <- new_I_ICU_D_conf[i, j, k]
-update(R_stepdown_unconf[, ]) <- new_R_stepdown_unconf[i, j]
-update(R_stepdown_conf[, ]) <- new_R_stepdown_conf[i, j]
+update(R_stepdown_R_unconf[, ]) <- new_R_stepdown_R_unconf[i, j]
+update(R_stepdown_R_conf[, ]) <- new_R_stepdown_R_conf[i, j]
+update(R_stepdown_D_unconf[, ]) <- new_R_stepdown_D_unconf[i, j]
+update(R_stepdown_D_conf[, ]) <- new_R_stepdown_D_conf[i, j]
 update(R_pre[, ]) <- new_R_pre[i, j]
 update(R_pos[, ]) <- new_R_pos[i, j]
 update(R_neg[]) <- new_R_neg[i] - n_RS[i]
@@ -56,16 +60,18 @@ update(cum_admit_conf) <-
   sum(n_ILI_to_hosp_D_conf) +
   sum(n_ILI_to_hosp_R_conf) +
   sum(n_ILI_to_triage_D_conf) +
-  sum(n_ILI_to_triage_R_conf)
+  sum(n_ILI_to_triage_S_conf)
 update(cum_new_conf) <-
   cum_new_conf +
   sum(n_I_hosp_D_unconf_to_conf) +
   sum(n_I_hosp_R_unconf_to_conf) +
   sum(n_I_triage_D_unconf_to_conf) +
-  sum(n_I_triage_R_unconf_to_conf) +
+  sum(n_I_triage_S_unconf_to_conf) +
   sum(n_I_ICU_D_unconf_to_conf) +
-  sum(n_I_ICU_R_unconf_to_conf) +
-  sum(n_R_stepdown_unconf_to_conf)
+  sum(n_I_ICU_S_R_unconf_to_conf) +
+  sum(n_I_ICU_S_D_unconf_to_conf) +
+  sum(n_R_stepdown_R_unconf_to_conf) +
+  sum(n_R_stepdown_D_unconf_to_conf)
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
@@ -82,9 +88,11 @@ p_II_comm_D <- 1 - exp(-gamma_comm_D * dt)
 p_II_triage <- 1 - exp(-gamma_triage * dt)
 p_II_hosp_R <- 1 - exp(-gamma_hosp_R * dt)
 p_II_hosp_D <- 1 - exp(-gamma_hosp_D * dt)
-p_II_ICU_R <- 1 - exp(-gamma_ICU_R * dt)
+p_II_ICU_S_R <- 1 - exp(-gamma_ICU_S_R * dt)
+p_II_ICU_S_D <- 1 - exp(-gamma_ICU_S_D * dt)
 p_II_ICU_D <- 1 - exp(-gamma_ICU_D * dt)
-p_R_stepdown <- 1 - exp(-gamma_stepdown * dt)
+p_R_stepdown_R <- 1 - exp(-gamma_stepdown_R * dt)
+p_R_stepdown_D <- 1 - exp(-gamma_stepdown_D * dt)
 p_R_pre[, ] <- 1 - exp(-gamma_R_pre[j] * dt)
 p_R_pos <- 1 - exp(-gamma_R_pos * dt)
 p_test <- 1 - exp(-gamma_test * dt)
@@ -109,6 +117,11 @@ p_death_hosp_D <- if (step >= length(p_death_hosp_D_step))
   p_death_hosp_D_step[length(p_death_hosp_D_step)] else
     p_death_hosp_D_step[step + 1]
 prob_death_hosp_D[] <- p_death_hosp_D * psi_death_hosp_D[i]
+
+p_death_stepdown <- if (step >= length(p_death_stepdown_step))
+  p_death_stepdown_step[length(p_death_stepdown_step)] else
+    p_death_stepdown_step[step + 1]
+prob_death_stepdown[] <- p_death_stepdown * psi_death_stepdown[i]
 
 p_death_comm <- if (step >= length(p_death_comm_step))
   p_death_comm_step[length(p_death_comm_step)] else p_death_comm_step[step + 1]
@@ -138,20 +151,24 @@ n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
 n_II_ILI[, , ] <- rbinom(I_ILI[i, j, k], p_II_ILI)
 n_II_comm_D[, , ] <- rbinom(I_comm_D[i, j, k], p_II_comm_D)
-n_II_triage_R_unconf[, , ] <- rbinom(I_triage_R_unconf[i, j, k], p_II_triage)
-n_II_triage_R_conf[, , ] <- rbinom(I_triage_R_conf[i, j, k], p_II_triage)
+n_II_triage_S_unconf[, , ] <- rbinom(I_triage_S_unconf[i, j, k], p_II_triage)
+n_II_triage_S_conf[, , ] <- rbinom(I_triage_S_conf[i, j, k], p_II_triage)
 n_II_triage_D_unconf[, , ] <- rbinom(I_triage_D_unconf[i, j, k], p_II_triage)
 n_II_triage_D_conf[, , ] <- rbinom(I_triage_D_conf[i, j, k], p_II_triage)
 n_II_hosp_R_unconf[, , ] <- rbinom(I_hosp_R_unconf[i, j, k], p_II_hosp_R)
 n_II_hosp_R_conf[, , ] <- rbinom(I_hosp_R_conf[i, j, k], p_II_hosp_R)
 n_II_hosp_D_unconf[, , ] <- rbinom(I_hosp_D_unconf[i, j, k], p_II_hosp_D)
 n_II_hosp_D_conf[, , ] <- rbinom(I_hosp_D_conf[i, j, k], p_II_hosp_D)
-n_II_ICU_R_unconf[, , ] <- rbinom(I_ICU_R_unconf[i, j, k], p_II_ICU_R)
-n_II_ICU_R_conf[, , ] <- rbinom(I_ICU_R_conf[i, j, k], p_II_ICU_R)
+n_II_ICU_S_R_unconf[, , ] <- rbinom(I_ICU_S_R_unconf[i, j, k], p_II_ICU_S_R)
+n_II_ICU_S_R_conf[, , ] <- rbinom(I_ICU_S_R_conf[i, j, k], p_II_ICU_S_R)
+n_II_ICU_S_D_unconf[, , ] <- rbinom(I_ICU_S_D_unconf[i, j, k], p_II_ICU_S_D)
+n_II_ICU_S_D_conf[, , ] <- rbinom(I_ICU_S_D_conf[i, j, k], p_II_ICU_S_D)
 n_II_ICU_D_unconf[, , ] <- rbinom(I_ICU_D_unconf[i, j, k], p_II_ICU_D)
 n_II_ICU_D_conf[, , ] <- rbinom(I_ICU_D_conf[i, j, k], p_II_ICU_D)
-n_R_stepdown_unconf[, ] <- rbinom(R_stepdown_unconf[i, j], p_R_stepdown)
-n_R_stepdown_conf[, ] <- rbinom(R_stepdown_conf[i, j], p_R_stepdown)
+n_R_stepdown_R_unconf[, ] <- rbinom(R_stepdown_R_unconf[i, j], p_R_stepdown_R)
+n_R_stepdown_R_conf[, ] <- rbinom(R_stepdown_R_conf[i, j], p_R_stepdown_R)
+n_R_stepdown_D_unconf[, ] <- rbinom(R_stepdown_D_unconf[i, j], p_R_stepdown_D)
+n_R_stepdown_D_conf[, ] <- rbinom(R_stepdown_D_conf[i, j], p_R_stepdown_D)
 n_R_pre[, ] <- rbinom(R_pre[i, j], p_R_pre[i, j])
 n_R_pos[, ] <- rbinom(R_pos[i, j], p_R_pos)
 n_PCR_pre[, ] <- rbinom(PCR_pre[i, j], p_PCR_pre)
@@ -223,7 +240,7 @@ aux_II_comm_D[, 2:s_comm_D, ] <- n_II_comm_D[i, j - 1, k]
 aux_II_comm_D[, 1:s_comm_D, ] <- aux_II_comm_D[i, j, k] - n_II_comm_D[i, j, k]
 new_I_comm_D[, , ] <- I_comm_D[i, j, k] + aux_II_comm_D[i, j, k]
 
-## Work out the split in hospitals between hosp_D, hosp_R, triage_R
+## Work out the split in hospitals between hosp_D, hosp_R, triage_S
 ## and triage_D
 n_ILI_to_triage[, ] <- rbinom(n_ILI_to_hosp[i, j], prob_ICU_hosp[i])
 n_hosp_non_ICU[, ] <- n_ILI_to_hosp[i, j] - n_ILI_to_triage[i, j]
@@ -234,33 +251,33 @@ n_ILI_to_hosp_R_conf[, ] <- rbinom(n_ILI_to_hosp_R[i, j], prob_admit_conf[i])
 n_ILI_to_triage_D[, ] <- rbinom(n_ILI_to_triage[i, j], prob_death_ICU[i])
 n_ILI_to_triage_D_conf[, ] <- rbinom(n_ILI_to_triage_D[i, j],
                                      prob_admit_conf[i])
-n_ILI_to_triage_R[, ] <- n_ILI_to_triage[i, j] - n_ILI_to_triage_D[i, j]
-n_ILI_to_triage_R_conf[, ] <- rbinom(n_ILI_to_triage_R[i, j],
+n_ILI_to_triage_S[, ] <- n_ILI_to_triage[i, j] - n_ILI_to_triage_D[i, j]
+n_ILI_to_triage_S_conf[, ] <- rbinom(n_ILI_to_triage_S[i, j],
                                      prob_admit_conf[i])
 
-## Work out the I_triage_R -> I_triage_R transitions
-aux_II_triage_R_unconf[, , ] <- I_triage_R_unconf[i, j, k]
-aux_II_triage_R_unconf[, 2:s_triage, ] <-
-  aux_II_triage_R_unconf[i, j, k] + n_II_triage_R_unconf[i, j - 1, k]
-aux_II_triage_R_unconf[, 1:s_triage, ] <-
-  aux_II_triage_R_unconf[i, j, k] - n_II_triage_R_unconf[i, j, k]
-aux_II_triage_R_conf[, , ] <-
-  I_triage_R_conf[i, j, k]
-aux_II_triage_R_conf[, 2:s_triage, ] <-
-  aux_II_triage_R_conf[i, j, k] + n_II_triage_R_conf[i, j - 1, k]
-aux_II_triage_R_conf[, 1:s_triage, ] <-
-  aux_II_triage_R_conf[i, j, k] - n_II_triage_R_conf[i, j, k]
-n_I_triage_R_unconf_to_conf[, , ] <-
-  rbinom(aux_II_triage_R_unconf[i, j, k], p_test)
-new_I_triage_R_unconf[, , ] <-
-  aux_II_triage_R_unconf[i, j, k] - n_I_triage_R_unconf_to_conf[i, j, k]
-new_I_triage_R_unconf[, 1, ] <-
-  new_I_triage_R_unconf[i, 1, k] + n_ILI_to_triage_R[i, k] -
-  n_ILI_to_triage_R_conf[i, k]
-new_I_triage_R_conf[, , ] <-
-  aux_II_triage_R_conf[i, j, k] + n_I_triage_R_unconf_to_conf[i, j, k]
-new_I_triage_R_conf[, 1, ] <-
-  new_I_triage_R_conf[i, 1, k] + n_ILI_to_triage_R_conf[i, k]
+## Work out the I_triage_S -> I_triage_S transitions
+aux_II_triage_S_unconf[, , ] <- I_triage_S_unconf[i, j, k]
+aux_II_triage_S_unconf[, 2:s_triage, ] <-
+  aux_II_triage_S_unconf[i, j, k] + n_II_triage_S_unconf[i, j - 1, k]
+aux_II_triage_S_unconf[, 1:s_triage, ] <-
+  aux_II_triage_S_unconf[i, j, k] - n_II_triage_S_unconf[i, j, k]
+aux_II_triage_S_conf[, , ] <-
+  I_triage_S_conf[i, j, k]
+aux_II_triage_S_conf[, 2:s_triage, ] <-
+  aux_II_triage_S_conf[i, j, k] + n_II_triage_S_conf[i, j - 1, k]
+aux_II_triage_S_conf[, 1:s_triage, ] <-
+  aux_II_triage_S_conf[i, j, k] - n_II_triage_S_conf[i, j, k]
+n_I_triage_S_unconf_to_conf[, , ] <-
+  rbinom(aux_II_triage_S_unconf[i, j, k], p_test)
+new_I_triage_S_unconf[, , ] <-
+  aux_II_triage_S_unconf[i, j, k] - n_I_triage_S_unconf_to_conf[i, j, k]
+new_I_triage_S_unconf[, 1, ] <-
+  new_I_triage_S_unconf[i, 1, k] + n_ILI_to_triage_S[i, k] -
+  n_ILI_to_triage_S_conf[i, k]
+new_I_triage_S_conf[, , ] <-
+  aux_II_triage_S_conf[i, j, k] + n_I_triage_S_unconf_to_conf[i, j, k]
+new_I_triage_S_conf[, 1, ] <-
+  new_I_triage_S_conf[i, 1, k] + n_ILI_to_triage_S_conf[i, k]
 
 ## Work out the I_triage_D -> I_triage_D transitions
 aux_II_triage_D_unconf[, , ] <-
@@ -333,27 +350,62 @@ new_I_hosp_D_conf[, , ] <-
 new_I_hosp_D_conf[, 1, ] <-
   new_I_hosp_D_conf[i, 1, k] + n_ILI_to_hosp_D_conf[i, k]
 
-## Work out the I_ICU_R->I_ICU_R transitions
-aux_II_ICU_R_unconf[, , ] <- I_ICU_R_unconf[i, j, k]
-aux_II_ICU_R_unconf[, 1, ] <-
-  aux_II_ICU_R_unconf[i, j, k] + n_II_triage_R_unconf[i, s_triage, k]
-aux_II_ICU_R_unconf[, 2:s_ICU_R, ] <-
-  aux_II_ICU_R_unconf[i, j, k] + n_II_ICU_R_unconf[i, j - 1, k]
-aux_II_ICU_R_unconf[, 1:s_ICU_R, ] <-
-  aux_II_ICU_R_unconf[i, j, k] - n_II_ICU_R_unconf[i, j, k]
-aux_II_ICU_R_conf[, , ] <- I_ICU_R_conf[i, j, k]
-aux_II_ICU_R_conf[, 1, ] <-
-  aux_II_ICU_R_conf[i, j, k] + n_II_triage_R_conf[i, s_triage, k]
-aux_II_ICU_R_conf[, 2:s_ICU_R, ] <-
-  aux_II_ICU_R_conf[i, j, k] + n_II_ICU_R_conf[i, j - 1, k]
-aux_II_ICU_R_conf[, 1:s_ICU_R, ] <-
-  aux_II_ICU_R_conf[i, j, k] - n_II_ICU_R_conf[i, j, k]
-n_I_ICU_R_unconf_to_conf[, , ] <-
-  rbinom(aux_II_ICU_R_unconf[i, j, k], p_test)
-new_I_ICU_R_unconf[, , ] <-
-  aux_II_ICU_R_unconf[i, j, k] - n_I_ICU_R_unconf_to_conf[i, j, k]
-new_I_ICU_R_conf[, , ] <-
-  aux_II_ICU_R_conf[i, j, k] + n_I_ICU_R_unconf_to_conf[i, j, k]
+## Work out the triage_S to ICU_S_R and ICU_S_D splits
+n_triage_S_unconf_to_ICU_S_D_unconf[, ] <-
+  rbinom(n_II_triage_S_unconf[i, s_triage, j], prob_death_stepdown[i])
+n_triage_S_unconf_to_ICU_S_R_unconf[, ] <-
+  n_II_triage_S_unconf[i, s_triage, j] -
+  n_triage_S_unconf_to_ICU_S_D_unconf[i, j]
+n_triage_S_conf_to_ICU_S_D_conf[, ] <-
+  rbinom(n_II_triage_S_conf[i, s_triage, j], prob_death_stepdown[i])
+n_triage_S_conf_to_ICU_S_R_conf[, ] <-
+  n_II_triage_S_conf[i, s_triage, j] -
+  n_triage_S_conf_to_ICU_S_D_conf[i, j]
+
+
+## Work out the I_ICU_S_R->I_ICU_S_R transitions
+aux_II_ICU_S_R_unconf[, , ] <- I_ICU_S_R_unconf[i, j, k]
+aux_II_ICU_S_R_unconf[, 1, ] <-
+  aux_II_ICU_S_R_unconf[i, j, k] + n_triage_S_unconf_to_ICU_S_R_unconf[i, k]
+aux_II_ICU_S_R_unconf[, 2:s_ICU_S_R, ] <-
+  aux_II_ICU_S_R_unconf[i, j, k] + n_II_ICU_S_R_unconf[i, j - 1, k]
+aux_II_ICU_S_R_unconf[, 1:s_ICU_S_R, ] <-
+  aux_II_ICU_S_R_unconf[i, j, k] - n_II_ICU_S_R_unconf[i, j, k]
+aux_II_ICU_S_R_conf[, , ] <- I_ICU_S_R_conf[i, j, k]
+aux_II_ICU_S_R_conf[, 1, ] <-
+  aux_II_ICU_S_R_conf[i, j, k] + n_triage_S_conf_to_ICU_S_R_conf[i, k]
+aux_II_ICU_S_R_conf[, 2:s_ICU_S_R, ] <-
+  aux_II_ICU_S_R_conf[i, j, k] + n_II_ICU_S_R_conf[i, j - 1, k]
+aux_II_ICU_S_R_conf[, 1:s_ICU_S_R, ] <-
+  aux_II_ICU_S_R_conf[i, j, k] - n_II_ICU_S_R_conf[i, j, k]
+n_I_ICU_S_R_unconf_to_conf[, , ] <-
+  rbinom(aux_II_ICU_S_R_unconf[i, j, k], p_test)
+new_I_ICU_S_R_unconf[, , ] <-
+  aux_II_ICU_S_R_unconf[i, j, k] - n_I_ICU_S_R_unconf_to_conf[i, j, k]
+new_I_ICU_S_R_conf[, , ] <-
+  aux_II_ICU_S_R_conf[i, j, k] + n_I_ICU_S_R_unconf_to_conf[i, j, k]
+
+## Work out the I_ICU_S_D->I_ICU_S_D transitions
+aux_II_ICU_S_D_unconf[, , ] <- I_ICU_S_D_unconf[i, j, k]
+aux_II_ICU_S_D_unconf[, 1, ] <-
+  aux_II_ICU_S_D_unconf[i, j, k] + n_triage_S_unconf_to_ICU_S_D_unconf[i, k]
+aux_II_ICU_S_D_unconf[, 2:s_ICU_S_D, ] <-
+  aux_II_ICU_S_D_unconf[i, j, k] + n_II_ICU_S_D_unconf[i, j - 1, k]
+aux_II_ICU_S_D_unconf[, 1:s_ICU_S_D, ] <-
+  aux_II_ICU_S_D_unconf[i, j, k] - n_II_ICU_S_D_unconf[i, j, k]
+aux_II_ICU_S_D_conf[, , ] <- I_ICU_S_D_conf[i, j, k]
+aux_II_ICU_S_D_conf[, 1, ] <-
+  aux_II_ICU_S_D_conf[i, j, k] + n_triage_S_conf_to_ICU_S_D_conf[i, k]
+aux_II_ICU_S_D_conf[, 2:s_ICU_S_D, ] <-
+  aux_II_ICU_S_D_conf[i, j, k] + n_II_ICU_S_D_conf[i, j - 1, k]
+aux_II_ICU_S_D_conf[, 1:s_ICU_S_D, ] <-
+  aux_II_ICU_S_D_conf[i, j, k] - n_II_ICU_S_D_conf[i, j, k]
+n_I_ICU_S_D_unconf_to_conf[, , ] <-
+  rbinom(aux_II_ICU_S_D_unconf[i, j, k], p_test)
+new_I_ICU_S_D_unconf[, , ] <-
+  aux_II_ICU_S_D_unconf[i, j, k] - n_I_ICU_S_D_unconf_to_conf[i, j, k]
+new_I_ICU_S_D_conf[, , ] <-
+  aux_II_ICU_S_D_conf[i, j, k] + n_I_ICU_S_D_unconf_to_conf[i, j, k]
 
 ## Work out the I_ICU_D->I_ICU_D transitions
 aux_II_ICU_D_unconf[, , ] <- I_ICU_D_unconf[i, j, k]
@@ -377,34 +429,58 @@ new_I_ICU_D_unconf[, , ] <-
 new_I_ICU_D_conf[, , ] <-
   aux_II_ICU_D_conf[i, j, k] + n_I_ICU_D_unconf_to_conf[i, j, k]
 
-## Work out the R_stepdown->R_stepdown transitions
-aux_R_stepdown_unconf[, ] <- R_stepdown_unconf[i, j]
-aux_R_stepdown_unconf[, 1] <-
-  aux_R_stepdown_unconf[i, j] + sum(n_II_ICU_R_unconf[i, s_ICU_R, ])
-aux_R_stepdown_unconf[, 2:s_stepdown] <-
-  aux_R_stepdown_unconf[i, j] + n_R_stepdown_unconf[i, j - 1]
-aux_R_stepdown_unconf[, 1:s_stepdown] <-
-  aux_R_stepdown_unconf[i, j] - n_R_stepdown_unconf[i, j]
-aux_R_stepdown_conf[, ] <- R_stepdown_conf[i, j]
-aux_R_stepdown_conf[, 1] <-
-  aux_R_stepdown_conf[i, j] + sum(n_II_ICU_R_conf[i, s_ICU_R, ])
-aux_R_stepdown_conf[, 2:s_stepdown] <-
-  aux_R_stepdown_conf[i, j] + n_R_stepdown_conf[i, j - 1]
-aux_R_stepdown_conf[, 1:s_stepdown] <-
-  aux_R_stepdown_conf[i, j] - n_R_stepdown_conf[i, j]
-n_R_stepdown_unconf_to_conf[, ] <-
-  rbinom(aux_R_stepdown_unconf[i, j], p_test)
-new_R_stepdown_unconf[, ] <-
-  aux_R_stepdown_unconf[i, j] - n_R_stepdown_unconf_to_conf[i, j]
-new_R_stepdown_conf[, ] <-
-  aux_R_stepdown_conf[i, j] + n_R_stepdown_unconf_to_conf[i, j]
+## Work out the R_stepdown_R->R_stepdown_R transitions
+aux_R_stepdown_R_unconf[, ] <- R_stepdown_R_unconf[i, j]
+aux_R_stepdown_R_unconf[, 1] <-
+  aux_R_stepdown_R_unconf[i, j] + sum(n_II_ICU_S_R_unconf[i, s_ICU_S_R, ])
+aux_R_stepdown_R_unconf[, 2:s_stepdown_R] <-
+  aux_R_stepdown_R_unconf[i, j] + n_R_stepdown_R_unconf[i, j - 1]
+aux_R_stepdown_R_unconf[, 1:s_stepdown_R] <-
+  aux_R_stepdown_R_unconf[i, j] - n_R_stepdown_R_unconf[i, j]
+aux_R_stepdown_R_conf[, ] <- R_stepdown_R_conf[i, j]
+aux_R_stepdown_R_conf[, 1] <-
+  aux_R_stepdown_R_conf[i, j] + sum(n_II_ICU_S_R_conf[i, s_ICU_S_R, ])
+aux_R_stepdown_R_conf[, 2:s_stepdown_R] <-
+  aux_R_stepdown_R_conf[i, j] + n_R_stepdown_R_conf[i, j - 1]
+aux_R_stepdown_R_conf[, 1:s_stepdown_R] <-
+  aux_R_stepdown_R_conf[i, j] - n_R_stepdown_R_conf[i, j]
+n_R_stepdown_R_unconf_to_conf[, ] <-
+  rbinom(aux_R_stepdown_R_unconf[i, j], p_test)
+new_R_stepdown_R_unconf[, ] <-
+  aux_R_stepdown_R_unconf[i, j] - n_R_stepdown_R_unconf_to_conf[i, j]
+new_R_stepdown_R_conf[, ] <-
+  aux_R_stepdown_R_conf[i, j] + n_R_stepdown_R_unconf_to_conf[i, j]
+
+## Work out the R_stepdown_D->R_stepdown_D transitions
+aux_R_stepdown_D_unconf[, ] <- R_stepdown_D_unconf[i, j]
+aux_R_stepdown_D_unconf[, 1] <-
+  aux_R_stepdown_D_unconf[i, j] + sum(n_II_ICU_S_R_unconf[i, s_ICU_S_R, ])
+aux_R_stepdown_D_unconf[, 2:s_stepdown_D] <-
+  aux_R_stepdown_D_unconf[i, j] + n_R_stepdown_D_unconf[i, j - 1]
+aux_R_stepdown_D_unconf[, 1:s_stepdown_D] <-
+  aux_R_stepdown_D_unconf[i, j] - n_R_stepdown_D_unconf[i, j]
+aux_R_stepdown_D_conf[, ] <- R_stepdown_D_conf[i, j]
+aux_R_stepdown_D_conf[, 1] <-
+  aux_R_stepdown_D_conf[i, j] + sum(n_II_ICU_S_R_conf[i, s_ICU_S_R, ])
+aux_R_stepdown_D_conf[, 2:s_stepdown_D] <-
+  aux_R_stepdown_D_conf[i, j] + n_R_stepdown_D_conf[i, j - 1]
+aux_R_stepdown_D_conf[, 1:s_stepdown_D] <-
+  aux_R_stepdown_D_conf[i, j] - n_R_stepdown_D_conf[i, j]
+n_R_stepdown_D_unconf_to_conf[, ] <-
+  rbinom(aux_R_stepdown_D_unconf[i, j], p_test)
+new_R_stepdown_D_unconf[, ] <-
+  aux_R_stepdown_D_unconf[i, j] - n_R_stepdown_D_unconf_to_conf[i, j]
+new_R_stepdown_D_conf[, ] <-
+  aux_R_stepdown_D_conf[i, j] + n_R_stepdown_D_unconf_to_conf[i, j]
 
 ## Work out the number of deaths in hospital
 delta_D_hosp[] <-
   sum(n_II_hosp_D_unconf[i, s_hosp_D, ]) +
   sum(n_II_hosp_D_conf[i, s_hosp_D, ]) +
   sum(n_II_ICU_D_unconf[i, s_ICU_D, ]) +
-  sum(n_II_ICU_D_conf[i, s_ICU_D, ])
+  sum(n_II_ICU_D_conf[i, s_ICU_D, ]) +
+  sum(n_R_stepdown_D_unconf[i, s_stepdown_D]) +
+  sum(n_R_stepdown_D_conf[i, s_stepdown_D])
 new_D_hosp[] <- D_hosp[i] + delta_D_hosp[i]
 
 ## Work out the number of deaths in the community
@@ -437,8 +513,8 @@ delta_R[] <-
   sum(n_ILI_to_R[i, ]) +
   sum(n_II_hosp_R_conf[i, s_hosp_R, ]) +
   sum(n_II_hosp_R_unconf[i, s_hosp_R, ]) +
-  sum(n_R_stepdown_conf[i, s_stepdown]) +
-  sum(n_R_stepdown_unconf[i, s_stepdown])
+  sum(n_R_stepdown_R_conf[i, s_stepdown_R]) +
+  sum(n_R_stepdown_R_unconf[i, s_stepdown_R])
 
 ## Work out the PCR positivity
 delta_PCR_pre[, 1] <- sum(n_infections[i, ])
@@ -456,8 +532,8 @@ I_with_diff_trans[, ] <-
   trans_increase[i, j] * (
     sum(I_asympt[i, , j]) + sum(I_mild[i, , j]) + sum(I_ILI[i, , j]) +
     hosp_transmission * (
-      sum(I_triage_R_unconf[i, , j]) +
-      sum(I_triage_R_conf[i, , j]) +
+      sum(I_triage_S_unconf[i, , j]) +
+      sum(I_triage_S_conf[i, , j]) +
       sum(I_triage_D_unconf[i, , j]) +
       sum(I_triage_D_conf[i, , j]) +
       sum(I_hosp_R_unconf[i, , j]) +
@@ -465,8 +541,10 @@ I_with_diff_trans[, ] <-
       sum(I_hosp_D_unconf[i, , j]) +
       sum(I_hosp_D_conf[i, , j])) +
     ICU_transmission * (
-      sum(I_ICU_R_unconf[i, , j]) +
-      sum(I_ICU_R_conf[i, , j]) +
+      sum(I_ICU_S_R_unconf[i, , j]) +
+      sum(I_ICU_S_R_conf[i, , j]) +
+      sum(I_ICU_S_D_unconf[i, , j]) +
+      sum(I_ICU_S_D_conf[i, , j]) +
       sum(I_ICU_D_unconf[i, , j]) +
       sum(I_ICU_D_conf[i, , j])) +
     comm_D_transmission * sum(I_comm_D[i, , j]))
@@ -487,20 +565,24 @@ initial(I_asympt[, , ]) <- 0
 initial(I_mild[, , ]) <- 0
 initial(I_ILI[, , ]) <- 0
 initial(I_comm_D[, , ]) <- 0
-initial(I_triage_R_unconf[, , ]) <- 0
-initial(I_triage_R_conf[, , ]) <- 0
+initial(I_triage_S_unconf[, , ]) <- 0
+initial(I_triage_S_conf[, , ]) <- 0
 initial(I_triage_D_unconf[, , ]) <- 0
 initial(I_triage_D_conf[, , ]) <- 0
 initial(I_hosp_R_unconf[, , ]) <- 0
 initial(I_hosp_R_conf[, , ]) <- 0
 initial(I_hosp_D_unconf[, , ]) <- 0
 initial(I_hosp_D_conf[, , ]) <- 0
-initial(I_ICU_R_unconf[, , ]) <- 0
-initial(I_ICU_R_conf[, , ]) <- 0
+initial(I_ICU_S_R_unconf[, , ]) <- 0
+initial(I_ICU_S_R_conf[, , ]) <- 0
+initial(I_ICU_S_D_unconf[, , ]) <- 0
+initial(I_ICU_S_D_conf[, , ]) <- 0
 initial(I_ICU_D_unconf[, , ]) <- 0
 initial(I_ICU_D_conf[, , ]) <- 0
-initial(R_stepdown_unconf[, ]) <- 0
-initial(R_stepdown_conf[, ]) <- 0
+initial(R_stepdown_R_unconf[, ]) <- 0
+initial(R_stepdown_R_conf[, ]) <- 0
+initial(R_stepdown_D_unconf[, ]) <- 0
+initial(R_stepdown_D_conf[, ]) <- 0
 initial(R_pre[, ]) <- 0
 initial(R_pos[, ]) <- 0
 initial(R_neg[]) <- 0
@@ -566,6 +648,11 @@ dim(p_ICU_hosp_step) <- user()
 p_ICU_hosp_step[] <- user()
 psi_ICU_hosp[] <- user()
 
+## Proportion of stepdown cases dying
+dim(p_death_stepdown_step) <- user()
+p_death_stepdown_step[] <- user()
+psi_death_stepdown[] <- user()
+
 ## Parameters of the I_hosp_R classes
 s_hosp_R <- user()
 gamma_hosp_R <- user(0.1)
@@ -577,9 +664,13 @@ dim(p_death_hosp_D_step) <- user()
 p_death_hosp_D_step[] <- user()
 psi_death_hosp_D[] <- user()
 
-## Parameters of the I_ICU_R classes
-s_ICU_R <- user()
-gamma_ICU_R <- user(0.1)
+## Parameters of the I_ICU_S_R classes
+s_ICU_S_R <- user()
+gamma_ICU_S_R <- user(0.1)
+
+## Parameters of the I_ICU_S_D classes
+s_ICU_S_D <- user()
+gamma_ICU_S_D <- user(0.1)
 
 ## Parameters of the I_ICU classes
 s_ICU_D <- user()
@@ -592,9 +683,13 @@ psi_death_ICU[] <- user()
 waning_rate[] <- user()
 dim(waning_rate) <- n_groups
 
-## Parameters of the R_stepdown classes
-s_stepdown <- user()
-gamma_stepdown <- user(0.1)
+## Parameters of the R_stepdown_R classes
+s_stepdown_R <- user()
+gamma_stepdown_R <- user(0.1)
+
+## Parameters of the R_stepdown_D classes
+s_stepdown_D <- user()
+gamma_stepdown_D <- user(0.1)
 
 ## Parameters of the R_pre classes
 gamma_R_pre_1 <- user(0.1)
@@ -685,16 +780,16 @@ dim(n_II_comm_D) <- c(n_groups, s_comm_D, n_trans_classes)
 dim(prob_death_comm) <- n_groups
 dim(psi_death_comm) <- n_groups
 
-## Vectors handling the I_triage_R class
-dim(I_triage_R_unconf) <- c(n_groups, s_triage, n_trans_classes)
-dim(aux_II_triage_R_unconf) <- c(n_groups, s_triage, n_trans_classes)
-dim(new_I_triage_R_unconf) <- c(n_groups, s_triage, n_trans_classes)
-dim(n_II_triage_R_unconf) <- c(n_groups, s_triage, n_trans_classes)
-dim(I_triage_R_conf) <- c(n_groups, s_triage, n_trans_classes)
-dim(aux_II_triage_R_conf) <- c(n_groups, s_triage, n_trans_classes)
-dim(new_I_triage_R_conf) <- c(n_groups, s_triage, n_trans_classes)
-dim(n_II_triage_R_conf) <- c(n_groups, s_triage, n_trans_classes)
-dim(n_I_triage_R_unconf_to_conf) <- c(n_groups, s_triage, n_trans_classes)
+## Vectors handling the I_triage_S class
+dim(I_triage_S_unconf) <- c(n_groups, s_triage, n_trans_classes)
+dim(aux_II_triage_S_unconf) <- c(n_groups, s_triage, n_trans_classes)
+dim(new_I_triage_S_unconf) <- c(n_groups, s_triage, n_trans_classes)
+dim(n_II_triage_S_unconf) <- c(n_groups, s_triage, n_trans_classes)
+dim(I_triage_S_conf) <- c(n_groups, s_triage, n_trans_classes)
+dim(aux_II_triage_S_conf) <- c(n_groups, s_triage, n_trans_classes)
+dim(new_I_triage_S_conf) <- c(n_groups, s_triage, n_trans_classes)
+dim(n_II_triage_S_conf) <- c(n_groups, s_triage, n_trans_classes)
+dim(n_I_triage_S_unconf_to_conf) <- c(n_groups, s_triage, n_trans_classes)
 
 ## Vectors handling the I_triage_D class
 dim(I_triage_D_unconf) <- c(n_groups, s_triage, n_trans_classes)
@@ -733,16 +828,27 @@ dim(new_I_hosp_D_conf) <- c(n_groups, s_hosp_D, n_trans_classes)
 dim(n_II_hosp_D_conf) <- c(n_groups, s_hosp_D, n_trans_classes)
 dim(n_I_hosp_D_unconf_to_conf) <- c(n_groups, s_hosp_D, n_trans_classes)
 
-## Vectors handling the I_ICU_R class
-dim(I_ICU_R_unconf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(aux_II_ICU_R_unconf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(new_I_ICU_R_unconf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(n_II_ICU_R_unconf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(I_ICU_R_conf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(aux_II_ICU_R_conf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(new_I_ICU_R_conf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(n_II_ICU_R_conf) <- c(n_groups, s_ICU_R, n_trans_classes)
-dim(n_I_ICU_R_unconf_to_conf) <- c(n_groups, s_ICU_R, n_trans_classes)
+## Vectors handling the I_ICU_S_R class
+dim(I_ICU_S_R_unconf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(aux_II_ICU_S_R_unconf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(new_I_ICU_S_R_unconf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(n_II_ICU_S_R_unconf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(I_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(aux_II_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(new_I_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(n_II_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+dim(n_I_ICU_S_R_unconf_to_conf) <- c(n_groups, s_ICU_S_R, n_trans_classes)
+
+## Vectors handling the I_ICU_S_D class
+dim(I_ICU_S_D_unconf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(aux_II_ICU_S_D_unconf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(new_I_ICU_S_D_unconf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(n_II_ICU_S_D_unconf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(I_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(aux_II_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(new_I_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(n_II_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
+dim(n_I_ICU_S_D_unconf_to_conf) <- c(n_groups, s_ICU_S_D, n_trans_classes)
 
 ## Vectors handling the I_ICU_D class
 dim(I_ICU_D_unconf) <- c(n_groups, s_ICU_D, n_trans_classes)
@@ -755,16 +861,27 @@ dim(new_I_ICU_D_conf) <- c(n_groups, s_ICU_D, n_trans_classes)
 dim(n_II_ICU_D_conf) <- c(n_groups, s_ICU_D, n_trans_classes)
 dim(n_I_ICU_D_unconf_to_conf) <- c(n_groups, s_ICU_D, n_trans_classes)
 
-## Vectors handling the R_stepdown class
-dim(R_stepdown_unconf) <- c(n_groups, s_stepdown)
-dim(aux_R_stepdown_unconf) <- c(n_groups, s_stepdown)
-dim(new_R_stepdown_unconf) <- c(n_groups, s_stepdown)
-dim(n_R_stepdown_unconf) <- c(n_groups, s_stepdown)
-dim(R_stepdown_conf) <- c(n_groups, s_stepdown)
-dim(aux_R_stepdown_conf) <- c(n_groups, s_stepdown)
-dim(new_R_stepdown_conf) <- c(n_groups, s_stepdown)
-dim(n_R_stepdown_conf) <- c(n_groups, s_stepdown)
-dim(n_R_stepdown_unconf_to_conf) <- c(n_groups, s_stepdown)
+## Vectors handling the R_stepdown_R class
+dim(R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R)
+dim(aux_R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R)
+dim(new_R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R)
+dim(n_R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R)
+dim(R_stepdown_R_conf) <- c(n_groups, s_stepdown_R)
+dim(aux_R_stepdown_R_conf) <- c(n_groups, s_stepdown_R)
+dim(new_R_stepdown_R_conf) <- c(n_groups, s_stepdown_R)
+dim(n_R_stepdown_R_conf) <- c(n_groups, s_stepdown_R)
+dim(n_R_stepdown_R_unconf_to_conf) <- c(n_groups, s_stepdown_R)
+
+## Vectors handling the R_stepdown_D class
+dim(R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D)
+dim(aux_R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D)
+dim(new_R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D)
+dim(n_R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D)
+dim(R_stepdown_D_conf) <- c(n_groups, s_stepdown_D)
+dim(aux_R_stepdown_D_conf) <- c(n_groups, s_stepdown_D)
+dim(new_R_stepdown_D_conf) <- c(n_groups, s_stepdown_D)
+dim(n_R_stepdown_D_conf) <- c(n_groups, s_stepdown_D)
+dim(n_R_stepdown_D_unconf_to_conf) <- c(n_groups, s_stepdown_D)
 
 ## Vectors handling the R_pos class
 dim(R) <- n_groups
@@ -841,10 +958,14 @@ dim(n_ILI_to_hosp_D) <- c(n_groups, n_trans_classes)
 dim(n_ILI_to_hosp_D_conf) <- c(n_groups, n_trans_classes)
 dim(n_ILI_to_hosp_R) <- c(n_groups, n_trans_classes)
 dim(n_ILI_to_hosp_R_conf) <- c(n_groups, n_trans_classes)
-dim(n_ILI_to_triage_R) <- c(n_groups, n_trans_classes)
-dim(n_ILI_to_triage_R_conf) <- c(n_groups, n_trans_classes)
+dim(n_ILI_to_triage_S) <- c(n_groups, n_trans_classes)
+dim(n_ILI_to_triage_S_conf) <- c(n_groups, n_trans_classes)
 dim(n_ILI_to_triage_D) <- c(n_groups, n_trans_classes)
 dim(n_ILI_to_triage_D_conf) <- c(n_groups, n_trans_classes)
+dim(n_triage_S_unconf_to_ICU_S_R_unconf) <- c(n_groups, n_trans_classes)
+dim(n_triage_S_conf_to_ICU_S_R_conf) <- c(n_groups, n_trans_classes)
+dim(n_triage_S_unconf_to_ICU_S_D_unconf) <- c(n_groups, n_trans_classes)
+dim(n_triage_S_conf_to_ICU_S_D_conf) <- c(n_groups, n_trans_classes)
 
 ## Vectors handling the serology flow
 dim(n_com_to_R_pre) <- c(n_groups, 2)
@@ -858,6 +979,8 @@ dim(prob_death_hosp_D) <- n_groups
 dim(psi_death_hosp_D) <- n_groups
 dim(prob_death_ICU) <- n_groups
 dim(psi_death_ICU) <- n_groups
+dim(prob_death_stepdown) <- n_groups
+dim(psi_death_stepdown) <- n_groups
 
 ## Vector handling the probability of being admitted as confirmed
 dim(prob_admit_conf) <- n_groups
@@ -883,12 +1006,14 @@ initial(N_tot[]) <- 0
 update(N_tot[]) <- sum(S[i, ]) + R[i] + D_hosp[i] + sum(E[i, , ]) +
   sum(I_asympt[i, , ]) + sum(I_mild[i, , ]) + sum(I_ILI[i, , ]) +
   sum(I_triage_D_conf[i, , ]) + sum(I_triage_D_unconf[i, , ]) +
-  sum(I_triage_R_conf[i, , ]) + sum(I_triage_R_unconf[i, , ])  +
+  sum(I_triage_S_conf[i, , ]) + sum(I_triage_S_unconf[i, , ])  +
   sum(I_hosp_R_conf[i, , ]) + sum(I_hosp_R_unconf[i, , ]) +
   sum(I_hosp_D_conf[i, , ]) + sum(I_hosp_D_unconf[i, , ]) +
-  sum(I_ICU_R_conf[i, , ]) + sum(I_ICU_R_unconf[i, , ]) +
+  sum(I_ICU_S_R_conf[i, , ]) + sum(I_ICU_S_R_unconf[i, , ]) +
+  sum(I_ICU_S_D_conf[i, , ]) + sum(I_ICU_S_D_unconf[i, , ]) +
   sum(I_ICU_D_conf[i, , ]) + sum(I_ICU_D_unconf[i, , ]) +
-  sum(R_stepdown_conf[i, ]) + sum(R_stepdown_unconf[i, ]) +
+  sum(R_stepdown_R_conf[i, ]) + sum(R_stepdown_R_unconf[i, ]) +
+  sum(R_stepdown_D_conf[i, ]) + sum(R_stepdown_D_unconf[i, ]) +
   sum(I_comm_D[i, , ]) + D_comm[i]
 dim(N_tot) <- n_groups
 
@@ -903,12 +1028,14 @@ update(N_tot3) <- sum(S) + sum(PCR_pre) + sum(PCR_pos) + sum(PCR_neg)
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
 initial(I_ICU_tot) <- 0
-new_I_ICU_tot <- sum(new_I_ICU_R_conf) + sum(new_I_ICU_D_conf)
+new_I_ICU_tot <- sum(new_I_ICU_S_R_conf) + sum(new_I_ICU_S_D_conf) +
+  sum(new_I_ICU_D_conf)
 update(I_ICU_tot) <- new_I_ICU_tot
 
 initial(general_tot) <- 0
-new_general_tot <- sum(new_I_triage_R_conf) + sum(new_I_triage_D_conf) +
-  sum(new_I_hosp_R_conf) + sum(new_I_hosp_D_conf) + sum(new_R_stepdown_conf)
+new_general_tot <- sum(new_I_triage_S_conf) + sum(new_I_triage_D_conf) +
+  sum(new_I_hosp_R_conf) + sum(new_I_hosp_D_conf) + sum(new_R_stepdown_R_conf) +
+  sum(new_R_stepdown_D_conf)
 update(general_tot) <- new_general_tot
 
 initial(hosp_tot) <- 0
