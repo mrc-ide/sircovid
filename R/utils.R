@@ -87,4 +87,3 @@ abind1 <- function(a, b) {
   rownames(ret) <- c(rownames(a), rownames(b))
   ret
 }
-
