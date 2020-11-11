@@ -178,3 +178,56 @@ add_trajectory_incidence <- function(trajectories, states, suffix = "_inc") {
 
   trajectories
 }
+
+
+combine_trajectories <- function(samples, rank = TRUE) {
+  states <- lapply(samples, function(x) x$trajectories$state)
+
+  ## Ensure all trajectories are the same length
+  dates <- lapply(samples, function(x) x$trajectories$date)
+  dates_keep <- dates[[1]]
+  for (i in seq_along(dates)[-1]) {
+    dates_keep <- intersect(dates_keep, dates[[i]])
+  }
+
+  ## This really only needs doing if length(unique(dates)) > 1 but is
+  ## relatively harmless otherwise.
+  states <- lapply(seq_along(dates), function(i)
+    states[[i]][, , dates[[i]] %in% dates_keep, drop = FALSE])
+
+  if (rank) {
+    states <- lapply(states, rank_trajectories)
+  }
+
+  ## This is a sum over regions, somewhat equivalent to a do.call over
+  ## this list
+  state <- Reduce(`+`, states)
+
+  ## We count a date as "predicted" if any of the entries have a
+  ## prediction on that day.
+  predicted <- vapply(seq_along(dates), function(i)
+    samples[[i]]$trajectories$predicted[dates[[i]] %in% dates_keep],
+    logical(length(dates_keep)))
+  predicted <- apply(predicted, 1, any)
+
+  ## Create a mcstate_trajectories object based on the first element,
+  ## filtered by the the dates. The state is updated but everything
+  ## else is valid.
+  trajectories <- samples[[1]]$trajectories
+  trajectories$predicted <- predicted
+  trajectories$date <- trajectories$date[dates[[1]] %in% dates_keep]
+  trajectories$state <- state
+
+  trajectories
+}
+
+
+rank_trajectories <- function(state) {
+  ## Reorder the trajectories by the area under each curve
+  for (i in seq_len(nrow(state))) {
+    rank_state <- order(rowSums(state[i, , ], na.rm = TRUE))
+    state[i, , ] <- state[i, rank_state, ]
+  }
+
+  state
+}

@@ -51,3 +51,57 @@ test_that("Can compute forecasts from mcmc output without prepending", {
   expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in%
                   rownames(res$trajectories$state)))
 })
+
+test_that("Can combine trajectories of equal size", {
+  dat <- reference_data_trajectories()
+  res <- combine_trajectories(list(dat, dat), rank = FALSE)
+  expect_equal(res$step, dat$trajectories$step)
+  expect_equal(res$rate, dat$trajectories$rate)
+  expect_equal(res$predicted, dat$trajectories$predicted)
+  expect_equal(res$date, dat$trajectories$date)
+  expect_equal(res$state, dat$trajectories$state * 2)
+})
+
+
+test_that("Can combine trajectories of equal size", {
+  dat <- reference_data_trajectories()
+  res <- combine_trajectories(list(dat, dat))
+  expect_equal(res$step, dat$trajectories$step)
+  expect_equal(res$rate, dat$trajectories$rate)
+  expect_equal(res$predicted, dat$trajectories$predicted)
+  expect_equal(res$date, dat$trajectories$date)
+
+  expect_equal(sum(res$state), sum(dat$trajectories$state * 2))
+  expect_equal(apply(res$state, c(1, 3), sum),
+               apply(dat$trajectories$state, c(1, 3), sum) * 2)
+  ## TODO: Lilith to check that the trajectories increase over the
+  ## particle index.
+})
+
+
+test_that("Can combine trajectories with missing times", {
+  dat <- reference_data_trajectories()
+
+  ## Create a set where the first "real" data point is missing,
+  ## shifting predictions back one day but keeping the same total
+  ## number of forecast days.
+  err <- dat
+  n <- length(err$trajectories$date)
+  err$trajectories$predicted <- err$trajectories$predicted[-1]
+  err$trajectories$date <- err$trajectories$date[-n]
+  err$trajectories$state <- err$trajectories$state[, , -n] * 2
+
+  res <- combine_trajectories(list(dat, err))
+
+  ## Predictions have shifted, so this is the same total sum
+  expect_equal(sum(res$predicted), sum(dat$trajectories$predicted))
+  ## But one less real data point
+  expect_equal(sum(!res$predicted), sum(!dat$trajectories$predicted) - 1L)
+  expect_equal(res$predicted, err$trajectories$predicted)
+  expect_equal(res$date, err$trajectories$date)
+  expect_equal(dim(res$state), dim(err$trajectories$state))
+
+  f <- function(x) apply(x, c(1, 3), sum)
+  tmp <- dat$trajectories$state[, , -n] + err$trajectories$state
+  expect_equal(f(res$state), f(tmp))
+})

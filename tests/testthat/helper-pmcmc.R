@@ -32,9 +32,27 @@ reference_data_mcmc <- function() {
                               n_chains = 1,
                               save_trajectories = TRUE, progress = FALSE)
 
-    dir.create(dirname(path))
+    dir.create(dirname(path), FALSE, TRUE)
     ## Ignore a warning about package:sircovid not being available
     suppressWarnings(saveRDS(samples, path))
+  }
+  readRDS(path)
+}
+
+
+reference_data_trajectories <- function() {
+  path <- "data/trajectories.rds"
+  if (!file.exists(path)) {
+    message(sprintf("Reference data '%s' does not exist - generating",
+                    path))
+
+    dat <- reference_data_mcmc()
+    res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "deaths_hosp"),
+                              TRUE)
+
+    dir.create(dirname(path), FALSE, TRUE)
+    ## Ignore a warning about package:sircovid not being available
+    suppressWarnings(saveRDS(res, path))
   }
   readRDS(path)
 }
