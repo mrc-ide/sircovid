@@ -856,6 +856,8 @@ carehomes_n_groups <- function() {
 ##' @inheritParams mcstate::pmcmc_sample
 ##' @inheritParams mcstate::pmcmc_predict
 ##'
+##' @param samples Results of running [mcstate::pmcmc()]
+##'
 ##' @param forecast_days The number of days to create a forecast for
 ##'
 ##' @param incidence_states A character vector of states for which

@@ -14,6 +14,8 @@ carehomes_forecast(
 )
 }
 \arguments{
+\item{samples}{Results of running \code{\link[mcstate:pmcmc]{mcstate::pmcmc()}}}
+
 \item{n_sample}{The number of samples to draw from \code{object} \emph{with
 replacement}. This means that \code{n_sample} can be larger than the
 total number of samples taken (though it probably should not)}
