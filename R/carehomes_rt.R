@@ -135,6 +135,8 @@ carehomes_Rt_mean_duration <- function(step, pars) {
                    sircovid_parameters_beta_expand(step, pars$p_death_ICU_step))
   p_death_hosp_D <- outer(pars$psi_death_hosp_D,
                 sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
+  p_death_stepdown <- outer(pars$psi_death_stepdown,
+                   sircovid_parameters_beta_expand(step, pars$p_death_stepdown))
   p_death_comm <- outer(pars$psi_death_comm,
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
@@ -145,8 +147,10 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
   p_hosp_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * p_death_hosp_D
-  p_ICU_R <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
-    p_ICU_hosp * (1 - p_death_ICU)
+  p_ICU_S_R <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+    p_ICU_hosp * (1 - p_death_ICU) * (1 - p_death_stepdown)
+  p_ICU_S_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+    p_ICU_hosp * (1 - p_death_ICU) * p_death_stepdown
   p_ICU_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
     p_ICU_hosp * p_death_ICU
 
@@ -165,10 +169,11 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     pars$hosp_transmission * (
       p_hosp_R * pars$s_hosp_R / (1 - exp(- dt * pars$gamma_hosp_R)) +
       p_hosp_D * pars$s_hosp_D / (1 - exp(- dt * pars$gamma_hosp_D)) +
-      (p_ICU_R + p_ICU_D) * pars$s_triage /
+      (p_ICU_S_R + p_ICU_S_D + p_ICU_D) * pars$s_triage /
       (1 - exp(- dt * pars$gamma_triage))) +
     pars$ICU_transmission * (
-      p_ICU_R * pars$s_ICU_R / (1 - exp(- dt * pars$gamma_ICU_R)) +
+      p_ICU_S_R * pars$s_ICU_S_R / (1 - exp(- dt * pars$gamma_ICU_S_R)) +
+      p_ICU_S_D * pars$s_ICU_S_D / (1 - exp(- dt * pars$gamma_ICU_S_D)) +
       p_ICU_D * pars$s_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
 
   dt * mean_duration
