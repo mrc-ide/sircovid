@@ -88,8 +88,13 @@ sircovid_parameters_beta <- function(date, value, dt) {
   }
   assert_sircovid_date(date)
   assert_increasing(date)
-  stats::approx(c(0, date), c(value[[1]], value),
-                seq(0, date[[length(date)]], by = dt))$y
+
+  if (date[[1]] != 0) {
+    date <- c(0, date)
+    value <- c(value[[1]], value)
+  }
+
+  stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
 }
 
 
