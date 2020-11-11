@@ -154,3 +154,27 @@ severity_default <- function() {
   }
   cache$severity_default
 }
+
+
+calculate_incidence <- function(trajectories, states, suffix = "_inc") {
+  assert_is(trajectories, "mcstate_trajectories")
+
+  ## In order to compute incidence we have to add two NA values; one
+  ## is the usual one dropped in a rolling difference, the other is
+  ## dropped as the first time interval is potentially much longer
+  ## than a day.
+  incidence <- function(x) {
+    c(NA, NA, diff(x[-1L]))
+  }
+
+  ## This is less complicated than it looks, but takes a diff over the
+  ## time dimension and converts back into the correct array dimension
+  ## order.
+  traj_inc <- aperm(
+    apply(trajectories$state[states, , , drop = FALSE], c(1, 2), incidence),
+    c(2, 3, 1))
+  rownames(traj_inc) <- paste0(states, suffix)
+  trajectories$state <- abind1(trajectories$state, traj_inc)
+
+  trajectories
+}
