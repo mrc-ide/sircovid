@@ -13,3 +13,5 @@ sircovid_*.tar.gz
 *.dll
 .DS_Store
 pkgdown
+tests/testthat/data/rt.rds
+tests/testthat/data/trajectories.rds
