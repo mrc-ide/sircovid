@@ -179,7 +179,18 @@ add_trajectory_incidence <- function(trajectories, states, suffix = "_inc") {
   trajectories
 }
 
-
+##' Combine trajectories across multiple runs
+##'
+##' @title Combine trajectories
+##'
+##' @param samples A list of samples from [carehomes_forecast()]
+##'
+##' @param rank Logical, indicating if trajectories should be ranked
+##'   before combination.
+##'
+##' @return A set of combined trajectories (not a combined samples object).
+##'
+##' @export
 combine_trajectories <- function(samples, rank = TRUE) {
   states <- lapply(samples, function(x) x$trajectories$state)
 
@@ -233,6 +244,20 @@ rank_trajectories <- function(state) {
 }
 
 
+##' Combine Rt across multiple runs.
+##'
+##' @title Combine Rt estimates
+##'
+##' @param rt A list of Rt calculations from
+##'   [carehomes_Rt_trajectories()] (though any Rt calculation that
+##'   confirms to this will work)
+##'
+##' @param samples A list of samples from [carehomes_forecast()]
+##'
+##' @return A list of Rt output in the same structure as the first
+##'   element of `rt`. All Rt estimates will be aggregated across
+##'   regions (or whatever else you are aggregating on) based on the
+##'   parameters in `samples`.
 combine_rt <- function(rt, samples) {
   ## Ensure all trajectories are the same length
   ret <- rt[[1L]]
