@@ -258,6 +258,8 @@ rank_trajectories <- function(state) {
 ##'   element of `rt`. All Rt estimates will be aggregated across
 ##'   regions (or whatever else you are aggregating on) based on the
 ##'   parameters in `samples`.
+##'
+##' @export
 combine_rt <- function(rt, samples) {
   ## Ensure all trajectories are the same length
   ret <- rt[[1L]]
