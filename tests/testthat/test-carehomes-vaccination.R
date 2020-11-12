@@ -86,6 +86,38 @@ test_that("Everyone moves to last of 5 waning immunity stage and stays there if
             expect_true(all(y$S[, , 34] == y$S[, , 2]))
 })
 
+test_that("Everyone moves back to unvaccinated from vacinated if large waning
+          of immunity and no vaccination", {
+            p <- carehomes_parameters(0, "england",
+                                      beta_value = 0,
+                                      rel_susceptibility = c(1, 0),
+                                      vaccination_rate = 0,
+                                      vaccine_progression_rate = Inf)
+          
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+          
+            state <- carehomes_initial(info, 1, p)$state
+          
+            index_S <- array(info$index$S, info$dim$S)
+            state[index_S[, 2]] <- state[index_S[, 1]]
+            state[index_S[, 1]] <- 0
+          
+            mod$set_state(state)
+            mod$set_index(integer(0))
+            s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+          
+            ## Reshape to show the full shape of s
+            expect_equal(length(s), prod(info$dim$S) * 101)
+            s <- array(s, c(info$dim$S, 101))
+          
+            ## noone left in vaccinated at time step 2
+            expect_true(all(s[, 2, 2] == 0))
+          
+            ## everybody back in unvaccinated at time step 2
+            expect_true(all(s[, 1, 2] == s[, 2, 1]))
+})
+
 test_that("there are no vaccinations when vaccination_rate is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
