@@ -852,3 +852,41 @@ carehomes_particle_filter_data <- function(data) {
 carehomes_n_groups <- function() {
   length(sircovid_age_bins()$start) + 2L
 }
+
+
+##' Forecast from the carehomes model; this provides a wrapper around
+##' [mcstate::pmcmc_sample] and [mcstate::pmcmc_predict] that samples
+##' the trajectories then creatres samples, setting the sircovid dates
+##' and adding trajectories of incidence.
+##'
+##' @title Forecast the carehomes model
+##'
+##' @inheritParams mcstate::pmcmc_sample
+##' @inheritParams mcstate::pmcmc_predict
+##'
+##' @param samples Results of running [mcstate::pmcmc()]
+##'
+##' @param forecast_days The number of days to create a forecast for
+##'
+##' @param incidence_states A character vector of states for which
+##'   incidnce should be computed (from cumulative compartments, such
+##'   as deaths). These will end up in the final trajectories object
+##'   with the sufix `_inc` (e.g., `deaths` becomes `deaths_inc`).
+##'
+##' @export
+carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
+                               incidence_states,
+                               prepend_trajectories = TRUE) {
+  ret <- mcstate::pmcmc_sample(samples, n_sample, burnin)
+  steps_predict <- seq(ret$predict$step,
+                       length.out = forecast_days + 1L,
+                       by = ret$predict$rate)
+  ret$trajectories <- mcstate::pmcmc_predict(
+    ret, steps_predict,
+    prepend_trajectories = prepend_trajectories)
+
+  ret$trajectories$date <- ret$trajectories$step / ret$trajectories$rate
+  ret$trajectories <- add_trajectory_incidence(
+    ret$trajectories, incidence_states)
+  ret
+}

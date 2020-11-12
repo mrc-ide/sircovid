@@ -70,6 +70,7 @@ carehomes_Rt <- function(step, S, p) {
                         drop_carehomes = TRUE)
 
   list(step = step,
+       date = step * p$dt,
        beta = beta,
        eff_Rt_all = eff_Rt_all,
        eff_Rt_general = eff_Rt_general,
