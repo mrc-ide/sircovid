@@ -214,9 +214,9 @@ test_that("Can compute initial conditions", {
                p$N_tot)
   expect_equal(drop(initial_y$I_asympt),
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$R_pre[, 1],
+  expect_equal(initial_y$R_pre[, 1, 1],
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$PCR_pos[, 1],
+  expect_equal(initial_y$PCR_pos[, 1, 1],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 

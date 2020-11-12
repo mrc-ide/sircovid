@@ -86,11 +86,11 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
 
   # other than in the 4th age group (where infections are seeded)
   # after the first day (4 times steps), R is empty
-  expect_true(all(y$R[-4, -1] == 0))
+  expect_true(all(y$R[-4, , -1] == 0))
   # so is R_neg
-  expect_true(all(y$R_neg[-4, -1] == 0))
+  expect_true(all(y$R_neg[-4, , -1] == 0))
   # so is PCR_neg
-  expect_true(all(y$PCR_neg[-4, -1] == 0))
+  expect_true(all(y$PCR_neg[-4, , -1] == 0))
 
 })
 
@@ -105,9 +105,9 @@ test_that("R, R_neg and PCR_neg are all non-decreasing and S is non-increasing
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(all(diff(t(y$R)) >= 0))
-  expect_true(all(diff(t(y$R_neg)) >= 0))
-  expect_true(all(diff(t(y$PCR_neg)) >= 0))
+  expect_true(all(diff(t(drop(y$R))) >= 0))
+  expect_true(all(diff(t(drop(y$R_neg))) >= 0))
+  expect_true(all(diff(t(drop(y$PCR_neg))) >= 0))
   expect_true(all(diff(t(y$S[, 1, ])) <= 0))
 
 })
@@ -438,11 +438,11 @@ test_that("R_pre parameters work as expected", {
 
   ## p_R_pre = 1, expect no cases in R_pre_2 stream
   y <- helper(1, 1, 0.5)
-  expect_true(all(y$R_pre[, 2, ] == 0))
+  expect_true(all(y$R_pre[, 2, , ] == 0))
 
   ## p_R_pre = 0, expect no cases in R_pre_1 stream
   y <- helper(0, 1, 0.5)
-  expect_true(all(y$R_pre[, 1, ] == 0))
+  expect_true(all(y$R_pre[, 1, , ] == 0))
 
   ## gamma_R_pre_1 = gamma_R_pre_2 = 0, expect no cases in R_pos
   y <- helper(0.5, 0, 0)
@@ -453,22 +453,22 @@ test_that("R_pre parameters work as expected", {
   ## time-step to R_neg/R_pos just from R_pre_1
   y <- helper(0.5, Inf, 0)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
-               t(y$R_pre[, 1, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
+               t(y$R_pre[, 1, 1, -n]))
 
   ## gamma_R_pre_1 = 0, gamma_R_pre_2 = Inf, expect progression in one
   ## time-step to R_neg/R_pos just from R_pre_2
   y <- helper(0.5, 0, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
-               t(y$R_pre[, 2, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
+               t(y$R_pre[, 2, 1, -n]))
 
   ## gamma_R_pre_1 = Inf, gamma_R_pre_2 = Inf, expect progression in
   ## one time-step to R_neg/R_pos from both R_pre_1 and R_pre_2
   y <- helper(0.5, Inf, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
-               t(apply(y$R_pre[, , -n], c(1, 3), sum)))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
+               t(apply(y$R_pre[, , 1, -n], c(1, 3), sum)))
 })
 
 
@@ -711,11 +711,11 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   expect_true(all(y$I_ICU_D_unconf[, 2, , ] == 0))
 
   ## Check stepdown
-  expect_equal(y$R_stepdown_conf[, 2, 2], y$R_stepdown_unconf[, 1, 1])
+  expect_equal(y$R_stepdown_conf[, 2, , 2], y$R_stepdown_unconf[, 1, , 1])
   I_ICU_R_conf <- drop(y$I_ICU_R_conf)
-  expect_equal(y$R_stepdown_conf[, 1, -1],
+  expect_equal(y$R_stepdown_conf[, 1, 1, -1],
                I_ICU_R_conf[, 2, -n], c(1, 3))
-  expect_true(all(y$R_stepdown_unconf[, 2, ] == 0))
+  expect_true(all(y$R_stepdown_unconf[, 2, , ] == 0))
 
   new_conf <- apply(y$I_hosp_R_conf[, 2, , ] +
                     y$I_hosp_D_conf[, 2, , ] +
@@ -724,7 +724,7 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   new_conf[2] <- new_conf[2] +
     sum(y$I_ICU_R_conf[, 2, , 2] +
         y$I_ICU_D_conf[, 2, , 2] +
-        y$R_stepdown_conf[, 2, 2])
+        y$R_stepdown_conf[, 2, , 2])
   expect_true(all(diff(y$cum_new_conf) == new_conf[-1]))
 
   expect_true(all(y$cum_admit_conf == 0))
