@@ -35,6 +35,9 @@ test_that("Can calculate Rt", {
   for (nm in names(res)) {
     expect_equal(res[[nm]], res_all[[nm]][, 1, drop = TRUE])
   }
+
+  ## Date is returned
+  expect_equal(res$date, res$step * p$dt)
 })
 
 

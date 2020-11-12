@@ -154,3 +154,149 @@ severity_default <- function() {
   }
   cache$severity_default
 }
+
+
+add_trajectory_incidence <- function(trajectories, states, suffix = "_inc") {
+  assert_is(trajectories, "mcstate_trajectories")
+
+  ## In order to compute incidence we have to add two NA values; one
+  ## is the usual one dropped in a rolling difference, the other is
+  ## dropped as the first time interval is potentially much longer
+  ## than a day.
+  incidence <- function(x) {
+    c(NA, NA, diff(x[-1L]))
+  }
+
+  ## This is less complicated than it looks, but takes a diff over the
+  ## time dimension and converts back into the correct array dimension
+  ## order.
+  traj_inc <- aperm(
+    apply(trajectories$state[states, , , drop = FALSE], c(1, 2), incidence),
+    c(2, 3, 1))
+  rownames(traj_inc) <- paste0(states, suffix)
+  trajectories$state <- abind1(trajectories$state, traj_inc)
+
+  trajectories
+}
+
+##' Combine trajectories across multiple runs
+##'
+##' @title Combine trajectories
+##'
+##' @param samples A list of samples from [carehomes_forecast()]
+##'
+##' @param rank Logical, indicating if trajectories should be ranked
+##'   before combination.
+##'
+##' @return A set of combined trajectories (not a combined samples object).
+##'
+##' @export
+combine_trajectories <- function(samples, rank = TRUE) {
+  states <- lapply(samples, function(x) x$trajectories$state)
+
+  ## Ensure all trajectories are the same length
+  dates <- lapply(samples, function(x) x$trajectories$date)
+  dates_keep <- dates[[1]]
+  for (i in seq_along(dates)[-1]) {
+    dates_keep <- intersect(dates_keep, dates[[i]])
+  }
+
+  ## This really only needs doing if length(unique(dates)) > 1 but is
+  ## relatively harmless otherwise.
+  states <- lapply(seq_along(dates), function(i)
+    states[[i]][, , dates[[i]] %in% dates_keep, drop = FALSE])
+
+  if (rank) {
+    states <- lapply(states, rank_trajectories)
+  }
+
+  ## This is a sum over regions, somewhat equivalent to a do.call over
+  ## this list
+  state <- Reduce(`+`, states)
+
+  ## We count a date as "predicted" if any of the entries have a
+  ## prediction on that day.
+  predicted <- vapply(seq_along(dates), function(i)
+    samples[[i]]$trajectories$predicted[dates[[i]] %in% dates_keep],
+    logical(length(dates_keep)))
+  predicted <- apply(predicted, 1, any)
+
+  ## Create a mcstate_trajectories object based on the first element,
+  ## filtered by the the dates. The state is updated but everything
+  ## else is valid.
+  trajectories <- samples[[1]]$trajectories
+  trajectories$predicted <- predicted
+  trajectories$date <- trajectories$date[dates[[1]] %in% dates_keep]
+  trajectories$state <- state
+
+  trajectories
+}
+
+
+rank_trajectories <- function(state) {
+  ## Reorder the trajectories by the area under each curve
+  for (i in seq_len(nrow(state))) {
+    rank_state <- order(rowSums(state[i, , ], na.rm = TRUE))
+    state[i, , ] <- state[i, rank_state, ]
+  }
+
+  state
+}
+
+
+##' Combine Rt across multiple runs.
+##'
+##' @title Combine Rt estimates
+##'
+##' @param rt A list of Rt calculations from
+##'   [carehomes_Rt_trajectories()] (though any Rt calculation that
+##'   confirms to this will work)
+##'
+##' @param samples A list of samples from [carehomes_forecast()]
+##'
+##' @return A list of Rt output in the same structure as the first
+##'   element of `rt`. All Rt estimates will be aggregated across
+##'   regions (or whatever else you are aggregating on) based on the
+##'   parameters in `samples`.
+##'
+##' @export
+combine_rt <- function(rt, samples) {
+  ## Ensure all trajectories are the same length
+  ret <- rt[[1L]]
+  what <- setdiff(names(ret), c("date", "step"))
+  ret[what] <- lapply(what, combine_rt1, rt, samples)
+  ret
+}
+
+
+combine_rt1 <- function(what, rt, samples) {
+  dates <- lapply(samples, function(x) x$trajectories$date)
+  dates_keep <- dates[[1]]
+  for (i in seq_along(dates)[-1]) {
+    dates_keep <- intersect(dates_keep, dates[[i]])
+  }
+  idx <- lapply(seq_along(samples), function(i) dates[[i]] %in% dates_keep)
+
+  incidence <- Map(function(s, i)
+    t(s$trajectories$state["infections_inc", , i]), samples, idx)
+
+  rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
+
+  ## Calculate rank of particles by area under Rt curve
+  rank_x <- lapply(rt_what, function(x) order(colSums(x)))
+
+  ## Rank based on the transpose (vs when this is done in the trajectories).
+  reorder_by_rank <- function(x, rank_x) {
+    Map(function(x, rank) x[, rank], x, rank_x)
+  }
+
+  ## Rank Rt and incidence
+  x <- reorder_by_rank(rt_what, rank_x)
+  w <- reorder_by_rank(incidence, rank_x)
+  sum_w <- Reduce(`+`, w)
+
+  ## Weight Rt by incidence to combine regions
+  ret <- Map(function(x, w) x * w / sum_w, x, w)
+
+  Reduce(`+`, ret)
+}
