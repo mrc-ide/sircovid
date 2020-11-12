@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute Rt for a set of trajectories — carehomes_Rt_trajectories • sircovid</title>
+<title>Combine Rt estimates — combine_rt • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,8 @@
 
 
 
-<meta property="og:title" content="Compute Rt for a set of trajectories — carehomes_Rt_trajectories" />
-<meta property="og:description" content="Compute &quot;Rt&quot; for a set of simulated trajectories (e.g., the result
-of dust::dust_iterate(), mcstate::pmcmc() or
-mcstate::pmcmc_predict(). The trajectories may or may not share
-parameters." />
+<meta property="og:title" content="Combine Rt estimates — combine_rt" />
+<meta property="og:description" content="Combine Rt across multiple runs." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -122,63 +119,38 @@ parameters." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute Rt for a set of trajectories</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes_rt.R'><code>R/carehomes_rt.R</code></a></small>
-    <div class="hidden name"><code>carehomes_Rt_trajectories.Rd</code></div>
+    <h1>Combine Rt estimates</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/support.R'><code>R/support.R</code></a></small>
+    <div class="hidden name"><code>combine_rt.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compute "Rt" for a set of simulated trajectories (e.g., the result
-of <code><a href='https://rdrr.io/pkg/dust/man/dust_iterate.html'>dust::dust_iterate()</a></code>, <code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc.html'>mcstate::pmcmc()</a></code> or
-<code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict()</a></code>. The trajectories may or may not share
-parameters.</p>
+    <p>Combine Rt across multiple runs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_Rt_trajectories</span><span class='op'>(</span>
-  <span class='va'>step</span>,
-  <span class='va'>S</span>,
-  <span class='va'>pars</span>,
-  initial_step_from_parameters <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  shared_parameters <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>combine_rt</span><span class='op'>(</span><span class='va'>rt</span>, <span class='va'>samples</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>step</th>
-      <td><p>A vector of steps</p></td>
+      <th>rt</th>
+      <td><p>A list of Rt calculations from
+<code><a href='carehomes_Rt_trajectories.html'>carehomes_Rt_trajectories()</a></code> (though any Rt calculation that
+confirms to this will work)</p></td>
     </tr>
     <tr>
-      <th>S</th>
-      <td><p>A 3d (19 x n trajectories x n steps) array of "S"
-compartment counts</p></td>
-    </tr>
-    <tr>
-      <th>pars</th>
-      <td><p>Either a single <code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> object
-(shared parameters) or an unnamed list of
-<code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> objects, the same length as <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(S)</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>initial_step_from_parameters</th>
-      <td><p>If <code>TRUE</code>, then <code>step[[1]]</code> is
-replaced by the value of <code>initial_step</code> from the parameters.
-This is usually what you want.</p></td>
-    </tr>
-    <tr>
-      <th>shared_parameters</th>
-      <td><p>Should <code>pars</code> be treated as a single
-shared list? Leave as <code>NULL</code> to detect automatically, set to
-<code>TRUE</code> or <code>FALSE</code> to force it to be interpreted one way or the
-other which may give more easily interpretable error messages.</p></td>
+      <th>samples</th>
+      <td><p>A list of samples from <code><a href='carehomes_forecast.html'>carehomes_forecast()</a></code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>As for <code><a href='carehomes_Rt.html'>carehomes_Rt()</a></code>, except that every element is a
-matrix, not a vector.</p>
+    <p>A list of Rt output in the same structure as the first
+element of <code>rt</code>. All Rt estimates will be aggregated across
+regions (or whatever else you are aggregating on) based on the
+parameters in <code>samples</code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
