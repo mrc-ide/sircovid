@@ -68,8 +68,10 @@ NULL
 ##'   the rate of movement between different vaccination classes following
 ##'   vaccination. If a vector, it should have as many values as vaccination
 ##'   classes - 1, and the same rates of progression will be used for all age
-##'   groups; if a matrix, the element on row i and column j is the rate of
-##'   progression from the jth vaccination class to the (j+1)th for age group i.
+##'   groups (the last of the rates is the rate of returning to the initial
+##'   vacination class); if a matrix, the element on row i and column j is the
+##'   rate of progression from the jth vaccination class to the (j+1)th for age
+##'   group i.
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -86,16 +88,16 @@ NULL
 ##' carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 ##'
 ##' ### example set up of vaccination parameters independent of age
-##' ### 4 groups: 1) unvaccinated, 2) vaccinated with partial immunity
-##' ### 3) fully vaccinated (but with an imperfect vaccine) and
-##' ### 4) vaccinated but immunity has completely waned
+##' ### 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity
+##' ### 3) fully vaccinated (but with an imperfect vaccine). People return
+##' ### to group 1 after a period of time in group 3 to mirror waning immunity
 ##'
 ##' # Assumption: immediately after vaccination susceptibility is reduced by
 ##' # 20%, and then by 50% when you reach full effect of the vaccination,
-##' # then susceptibility returns to 100% with waning of vaccine=induced
+##' # then susceptibility returns to 100% upon waning of vaccine=induced
 ##' # immunity
 ##' # effect of vaccination similar across all age groups
-##' rel_susceptibility <- c(1, 0.8, 0.5, 1)
+##' rel_susceptibility <- c(1, 0.8, 0.5)
 ##'
 ##' # Vaccination occurs at a constant rate of 0.03 per day,
 ##' # (i.e. average time to vaccination is 33 days)
@@ -106,7 +108,7 @@ NULL
 ##' # distributed and lasts on average two weeks;
 ##' # vaccine-induced immunity wanes after a period which is exponentially
 ##' # distributed and lasts on average 26 weeks (half a year);
-##' # there are similar across all age groups
+##' # they are similar across all age groups
 ##' vaccine_progression_rate <- c(1/(2*7), 1/(26*7))
 ##'
 ##' # generate model parameters
@@ -127,9 +129,9 @@ NULL
 ##'
 ##' # Assumption: vaccine is twice more effective at reducing susceptibility
 ##' # in the first age group
-##' rel_susceptibility_agegp1 <- c(1, 0.4, 0.25, 1)
-##' rel_susceptibility_other_agegp <- c(1, 0.8, 0.5, 1)
-##' rel_susceptibility <- matrix(NA, nrow = n_groups, ncol = 4)
+##' rel_susceptibility_agegp1 <- c(1, 0.4, 0.25)
+##' rel_susceptibility_other_agegp <- c(1, 0.8, 0.5)
+##' rel_susceptibility <- matrix(NA, nrow = n_groups, ncol = 3)
 ##' rel_susceptibility[1, ] <- rel_susceptibility_agegp1
 ##'  for (i in seq(2, n_groups)) {
 ##' rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
@@ -607,8 +609,8 @@ carehomes_parameters_vaccination <-
            vaccination_rate = 0,
            vaccine_progression_rate = NULL) {
   rel_susceptibility <- build_rel_susceptibility(rel_susceptibility)
-  if (ncol(rel_susceptibility) < 3) {
-    n_vacc_classes <- 3
+  if (ncol(rel_susceptibility) < 2) {
+    n_vacc_classes <- 2
     save_rel_susceptibility <- rel_susceptibility
     n_groups <- carehomes_n_groups()
     rel_susceptibility <- matrix(1, n_groups, n_vacc_classes)

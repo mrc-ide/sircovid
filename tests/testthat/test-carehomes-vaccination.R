@@ -37,7 +37,7 @@ test_that("Everyone moves to vaccinated and stays there if everyone quickly
             p <- carehomes_parameters(0, "england",
                                       beta_value = c(0, 0, 1),
                                       beta_date = c(0, 4, 5),
-                                      rel_susceptibility = c(1, 0, 0),
+                                      rel_susceptibility = c(1, 0),
                                       vaccination_rate = Inf,
                                       vaccine_progression_rate = 0)
             mod <- carehomes$new(p, 0, 1)
@@ -57,7 +57,7 @@ test_that("Everyone moves to waning immunity stage and stays there if everyone
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0, 0),
                                       vaccination_rate = Inf,
-                                      vaccine_progression_rate = Inf)
+                                      vaccine_progression_rate = c(Inf, 0))
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()
             mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -72,9 +72,10 @@ test_that("Everyone moves to last of 5 waning immunity stage and stays there if
           everyone quickly gets vaccinated and loses immunity", {
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
-                                      rel_susceptibility = c(1, 0, rep(0, 10)),
+                                      rel_susceptibility = c(1, rep(0, 10), 0),
                                       vaccination_rate = Inf,
-                                      vaccine_progression_rate = rep(Inf, 10))
+                                      vaccine_progression_rate =
+                                        c(rep(Inf, 10), 0))
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()
             mod$set_state(carehomes_initial(info, 1, p)$state)
