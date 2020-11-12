@@ -44,7 +44,6 @@ real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, i
 // [[dust::param(s_R_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_stepdown, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_triage, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vaccination_rate, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_progression_rate, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(waning_rate, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_asympt, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -668,7 +667,6 @@ public:
     int dim_s_ij;
     int dim_s_ij_1;
     int dim_s_ij_2;
-    int dim_vaccination_rate;
     int dim_vaccine_progression_rate;
     int dim_vaccine_progression_rate_1;
     int dim_vaccine_progression_rate_2;
@@ -915,7 +913,6 @@ public:
     int s_R_pos;
     int s_stepdown;
     int s_triage;
-    std::vector<real_t> vaccination_rate;
     std::vector<real_t> vaccine_progression_rate;
     std::vector<real_t> waning_rate;
   };
@@ -2644,9 +2641,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_R_pos = user_get_scalar<int>(user, "s_R_pos", internal.s_R_pos, NA_REAL, NA_REAL);
   internal.s_stepdown = user_get_scalar<int>(user, "s_stepdown", internal.s_stepdown, NA_REAL, NA_REAL);
   internal.s_triage = user_get_scalar<int>(user, "s_triage", internal.s_triage, NA_REAL, NA_REAL);
-  std::array <int, 1> dim_vaccination_rate;
-  internal.vaccination_rate = user_get_array_variable<real_t, 1>(user, "vaccination_rate", internal.vaccination_rate, dim_vaccination_rate, NA_REAL, NA_REAL);
-  internal.dim_vaccination_rate = internal.vaccination_rate.size();
   std::array <int, 2> dim_vaccine_progression_rate;
   internal.vaccine_progression_rate = user_get_array_variable<real_t, 2>(user, "vaccine_progression_rate", internal.vaccine_progression_rate, dim_vaccine_progression_rate, NA_REAL, NA_REAL);
   internal.dim_vaccine_progression_rate = internal.vaccine_progression_rate.size();
@@ -3613,12 +3607,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.offset_variable_R_stepdown_conf = 17 + internal.dim_R_neg + internal.dim_R + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_PCR_neg + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_S + internal.dim_R_stepdown_unconf;
   internal.offset_variable_R_stepdown_unconf = 17 + internal.dim_R_neg + internal.dim_R + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_PCR_neg + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_S;
   for (int i = 1; i <= internal.dim_p_S_next_vacc_class_1; ++i) {
-    int j = 1;
-    internal.p_S_next_vacc_class[i - 1 + internal.dim_p_S_next_vacc_class_1 * (j - 1)] = 1 - std::exp(- internal.vaccination_rate[i - 1] * internal.dt);
-  }
-  for (int i = 1; i <= internal.dim_p_S_next_vacc_class_1; ++i) {
-    for (int j = 2; j <= internal.n_vacc_classes; ++j) {
-      internal.p_S_next_vacc_class[i - 1 + internal.dim_p_S_next_vacc_class_1 * (j - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[internal.dim_vaccine_progression_rate_1 * (j - 1 - 1) + i - 1] * internal.dt);
+    for (int j = 1; j <= internal.dim_p_S_next_vacc_class_2; ++j) {
+      internal.p_S_next_vacc_class[i - 1 + internal.dim_p_S_next_vacc_class_1 * (j - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[internal.dim_vaccine_progression_rate_1 * (j - 1) + i - 1] * internal.dt);
     }
   }
   return internal;

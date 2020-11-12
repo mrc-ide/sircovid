@@ -714,7 +714,7 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   expect_equal(y$R_stepdown_conf[, 2, 2], y$R_stepdown_unconf[, 1, 1])
   I_ICU_R_conf <- drop(y$I_ICU_R_conf)
   expect_equal(y$R_stepdown_conf[, 1, -1],
-               apply(I_ICU_R_conf[, 2, , -n], c(1, 3), sum))
+               I_ICU_R_conf[, 2, -n], c(1, 3))
   expect_true(all(y$R_stepdown_unconf[, 2, ] == 0))
 
   new_conf <- apply(y$I_hosp_R_conf[, 2, , ] +

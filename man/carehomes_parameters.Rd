@@ -23,7 +23,6 @@ carehomes_parameters(
   react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
   rel_susceptibility = 1,
-  vaccination_rate = 0,
   vaccine_progression_rate = NULL,
   waning_rate = 0,
   exp_noise = 1e+06
@@ -99,16 +98,12 @@ vaccination group (columns of the matrix); in that case, in each row of
 the matrix, the first value should be 1 (for the non-vaccinated group)
 and subsequent values be between 0 and 1}
 
-\item{vaccination_rate}{A single value or vector of values representing the
-rate of vaccination of susceptibles. If a single value, the same rate is
-used for all age groups; if a vector, its length needs to match the number
-of age groups and it should contain age-specific vaccination rates}
-
 \item{vaccine_progression_rate}{A vector or matrix of values representing
-the rate of movement between different vaccination classes following
-vaccination. If a vector, it should have as many values as vaccination
-classes - 1, and the same rates of progression will be used for all age
-groups (the last of the rates is the rate of returning to the initial
+the rate of movement between different vaccination classes. If a vector,
+it should have as many values as vaccination classes, and the same rates
+of progression will be used for all age
+groups (the first rate is the vaccination rate and the last of the rates
+is the rate of returning to the initial
 vacination class); if a matrix, the element on row i and column j is the
 rate of progression from the jth vaccination class to the (j+1)th for age
 group i.}
@@ -149,26 +144,22 @@ rel_susceptibility <- c(1, 0.8, 0.5)
 
 # Vaccination occurs at a constant rate of 0.03 per day,
 # (i.e. average time to vaccination is 33 days)
-# similar across all age groups
-vaccination_rate <- 0.03
-
+# similar across all age groups.
 # the period of build-up of immunity following vaccination is exponentially
 # distributed and lasts on average two weeks;
 # vaccine-induced immunity wanes after a period which is exponentially
 # distributed and lasts on average 26 weeks (half a year);
 # they are similar across all age groups
-vaccine_progression_rate <- c(1/(2*7), 1/(26*7))
+vaccine_progression_rate <- c(0.03, 1/(2*7), 1/(26*7))
 
 # generate model parameters
 p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
-                          vaccination_rate = vaccination_rate,
                           vaccine_progression_rate =
                           vaccine_progression_rate)
 
 # vaccination parameters are automatically copied across all age groups
 p$rel_susceptibility
-p$vaccination_rate
 p$vaccine_progression_rate
 
 ### same example as above BUT assume a different effect of vaccine in the
@@ -195,14 +186,14 @@ vaccination_rate <- c(0.06, rep(0.03, n_groups - 1))
 # but the first age group loses immunity more quickly
 # (on average after 3 months) than the other age groups
 # (on average after 6 months)
-vaccine_progression_rate <- cbind(rep(1 / (2 * 7), n_groups),
+vaccine_progression_rate <- cbind(vaccination_rate,
+                                  rep(1 / (2 * 7), n_groups),
                                   c(1 / (13 * 7),
                                   rep( 1 / (26 * 7), n_groups - 1)))
 
 # generate model parameters
 p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
-                          vaccination_rate = vaccination_rate,
                           vaccine_progression_rate =
                           vaccine_progression_rate)
 

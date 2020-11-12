@@ -38,8 +38,7 @@ test_that("Everyone moves to vaccinated and stays there if everyone quickly
                                       beta_value = c(0, 0, 1),
                                       beta_date = c(0, 4, 5),
                                       rel_susceptibility = c(1, 0),
-                                      vaccination_rate = Inf,
-                                      vaccine_progression_rate = 0)
+                                      vaccine_progression_rate = c(Inf, 0))
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()
             mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -56,8 +55,7 @@ test_that("Everyone moves to waning immunity stage and stays there if everyone
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0, 0),
-                                      vaccination_rate = Inf,
-                                      vaccine_progression_rate = c(Inf, 0))
+                                      vaccine_progression_rate = c(Inf, Inf, 0))
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()
             mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -73,9 +71,8 @@ test_that("Everyone moves to last of 5 waning immunity stage and stays there if
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, rep(0, 10), 0),
-                                      vaccination_rate = Inf,
                                       vaccine_progression_rate =
-                                        c(rep(Inf, 10), 0))
+                                        c(Inf, rep(Inf, 10), 0))
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()
             mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -91,34 +88,33 @@ test_that("Everyone moves back to unvaccinated from vacinated if large waning
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0),
-                                      vaccination_rate = 0,
-                                      vaccine_progression_rate = Inf)
-          
+                                      vaccine_progression_rate = c(0, Inf))
+
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()
-          
+
             state <- carehomes_initial(info, 1, p)$state
-          
+
             index_S <- array(info$index$S, info$dim$S)
             state[index_S[, 2]] <- state[index_S[, 1]]
             state[index_S[, 1]] <- 0
-          
+
             mod$set_state(state)
             mod$set_index(integer(0))
             s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
-          
+
             ## Reshape to show the full shape of s
             expect_equal(length(s), prod(info$dim$S) * 101)
             s <- array(s, c(info$dim$S, 101))
-          
+
             ## noone left in vaccinated at time step 2
             expect_true(all(s[, 2, 2] == 0))
-          
+
             ## everybody back in unvaccinated at time step 2
             expect_true(all(s[, 1, 2] == s[, 2, 1]))
 })
 
-test_that("there are no vaccinations when vaccination_rate is 0", {
+test_that("there are no vaccinations when vaccination rate is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   waning_rate <- rep(1 / 20, 19)

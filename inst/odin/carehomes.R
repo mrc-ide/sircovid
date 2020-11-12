@@ -66,9 +66,7 @@ update(cum_new_conf) <-
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 
 ## Individual probabilities of transition:
-p_S_next_vacc_class[, 1] <- 1 - exp(-vaccination_rate[i] * dt)
-p_S_next_vacc_class[, 2:n_vacc_classes] <- 1 -
-  exp(-vaccine_progression_rate[i, j - 1] * dt)
+p_S_next_vacc_class[, ] <- 1 - exp(-vaccine_progression_rate[i, j] * dt)
 p_SE[, ] <- 1 - exp(-lambda[i] *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
@@ -513,8 +511,6 @@ rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
 
-vaccination_rate[] <- user()
-dim(vaccination_rate) <- user()
 vaccine_progression_rate[, ] <- user()
 dim(vaccine_progression_rate) <- user()
 
