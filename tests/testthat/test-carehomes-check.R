@@ -745,7 +745,7 @@ test_that("tots all summed correctly ", {
                     apply(y$I_triage_D_conf, 4, sum) +
                     apply(y$I_hosp_R_conf, 4, sum) +
                     apply(y$I_hosp_D_conf, 4, sum) +
-                    apply(y$R_stepdown_conf, 3, sum)))
+                    apply(y$R_stepdown_conf, 4, sum)))
   expect_true(all(y$I_ICU_tot == apply(y$I_ICU_R_conf, 4, sum) +
                     apply(y$I_ICU_D_conf, 4, sum)))
   expect_true(all(y$hosp_tot == y$I_ICU_tot + y$general_tot))
@@ -754,6 +754,6 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
 
   # check the positivity sums
-  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , ], 3, sum)))
-  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , ], 3, sum)))
+  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , 1, ], 3, sum)))
+  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , 1, ], 3, sum)))
 })
