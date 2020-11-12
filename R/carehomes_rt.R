@@ -136,7 +136,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_death_hosp_D <- outer(pars$psi_death_hosp_D,
                 sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
   p_death_stepdown <- outer(pars$psi_death_stepdown,
-                sircovid_parameters_beta_expand(step, pars$p_death_stepdown_step))
+              sircovid_parameters_beta_expand(step, pars$p_death_stepdown_step))
   p_death_comm <- outer(pars$psi_death_comm,
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 

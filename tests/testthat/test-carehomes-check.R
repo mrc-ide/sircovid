@@ -400,7 +400,7 @@ test_that("forcing hospital route results in correct path", {
   helper(1, 0, NULL, 0, c("I_ICU_S_R", "R_stepdown_R"),
          c("I_hosp_R", "I_hosp_D", "I_ICU_S_D", "I_ICU_D", "R_stepdown_D",
            "D_hosp"))
-  
+
   ## p_death_ICU = 0, p_ICU_hosp = 1, p_death_stepdown = 1 no-one goes in
   ## hosp_D / hosp_R, no-one recovers in stepdown
   helper(1, 0, NULL, 1, c("I_ICU_S_D", "R_stepdown_D"),
@@ -759,7 +759,7 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
                y$I_triage_S_conf[, 2, , -n])
   expect_true(all(y$I_ICU_S_R_unconf[, 2, , ] == 0))
   expect_true(all(y$I_ICU_S_D_unconf[, 2, , ] == 0))
-  
+
   ## Check ICU_D
   expect_equal(y$I_ICU_D_conf[, 2, , 2], y$I_ICU_D_unconf[, 1, , 1])
   expect_equal(y$I_ICU_D_conf[, 1, , -1], y$I_triage_D_conf[, 2, , -n])
@@ -770,7 +770,7 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   I_ICU_S_R_conf <- drop(y$I_ICU_S_R_conf)
   expect_equal(y$R_stepdown_R_conf[, 1, -1], I_ICU_S_R_conf[, 2, -n])
   expect_true(all(y$R_stepdown_R_unconf[, 2, ] == 0))
-  
+
   ## Check stepdown_D
   expect_equal(y$R_stepdown_D_conf[, 2, 2], y$R_stepdown_D_unconf[, 1, 1])
   I_ICU_S_D_conf <- drop(y$I_ICU_S_D_conf)
