@@ -624,7 +624,7 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  expect_true(all(y$I_hosp_R_unconf == 0))
+  expect_true(all(y$I_hosp_R_unconf == 0 ))
   expect_true(any(y$I_hosp_R_conf > 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
   expect_true(any(y$I_hosp_D_conf > 0))
