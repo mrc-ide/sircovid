@@ -1,3 +1,12 @@
+# sircovid 0.6.10
+
+* Deaths in stepdown now incorporated in carehomes model
+* Triage compartments merged in carehomes model
+
+# sircovid 0.6.9
+
+* Implement trajectory and Rt aggregation (e.g., across regions)
+
 # sircovid 0.6.8
 
 * Support for vaccination modelling, with vaccination affecting only levels of susceptibility (age-specific)

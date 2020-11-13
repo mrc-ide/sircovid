@@ -207,6 +207,10 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_death_hosp_D <- severity$p_death_hosp_D /
     max(severity$p_death_hosp_D)
   severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
+  ## probability of stepdown hospital patient dying
+  severity$psi_death_stepdown <- severity$p_death_stepdown /
+    max(severity$p_death_stepdown)
+  severity$p_death_stepdown_step <- max(severity$p_death_stepdown)
   ## probability of patient requiring hospital treatment dying in community
   severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
   severity$p_death_comm_step <- max(severity$p_death_comm)
@@ -639,9 +643,11 @@ carehomes_parameters_progression <- function() {
        s_hosp_D = 2,
        s_hosp_R = 2,
        s_ICU_D = 2,
-       s_ICU_R = 2,
+       s_ICU_S_R = 2,
+       s_ICU_S_D = 2,
        s_triage = 2,
-       s_stepdown = 2,
+       s_stepdown_R = 2,
+       s_stepdown_D = 2,
        s_R_pos = 2,
        s_PCR_pre = 2,
        s_PCR_pos = 2,
@@ -654,9 +660,11 @@ carehomes_parameters_progression <- function() {
        gamma_hosp_D = 2 / 5,
        gamma_hosp_R = 2 / 10,
        gamma_ICU_D = 2 / 5,
-       gamma_ICU_R = 2 / 10,
+       gamma_ICU_S_R = 2 / 10,
+       gamma_ICU_S_D = 2 / 10,
        gamma_triage = 2,
-       gamma_stepdown = 2 / 5,
+       gamma_stepdown_R = 2 / 5,
+       gamma_stepdown_D = 2 / 5,
        gamma_R_pre_1 = 1 / 5,
        gamma_R_pre_2 = 1 / 10,
        gamma_R_pos = 1 / 25,
@@ -820,4 +828,42 @@ carehomes_particle_filter_data <- function(data) {
 
 carehomes_n_groups <- function() {
   length(sircovid_age_bins()$start) + 2L
+}
+
+
+##' Forecast from the carehomes model; this provides a wrapper around
+##' [mcstate::pmcmc_sample] and [mcstate::pmcmc_predict] that samples
+##' the trajectories then creatres samples, setting the sircovid dates
+##' and adding trajectories of incidence.
+##'
+##' @title Forecast the carehomes model
+##'
+##' @inheritParams mcstate::pmcmc_sample
+##' @inheritParams mcstate::pmcmc_predict
+##'
+##' @param samples Results of running [mcstate::pmcmc()]
+##'
+##' @param forecast_days The number of days to create a forecast for
+##'
+##' @param incidence_states A character vector of states for which
+##'   incidnce should be computed (from cumulative compartments, such
+##'   as deaths). These will end up in the final trajectories object
+##'   with the sufix `_inc` (e.g., `deaths` becomes `deaths_inc`).
+##'
+##' @export
+carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
+                               incidence_states,
+                               prepend_trajectories = TRUE) {
+  ret <- mcstate::pmcmc_sample(samples, n_sample, burnin)
+  steps_predict <- seq(ret$predict$step,
+                       length.out = forecast_days + 1L,
+                       by = ret$predict$rate)
+  ret$trajectories <- mcstate::pmcmc_predict(
+    ret, steps_predict,
+    prepend_trajectories = prepend_trajectories)
+
+  ret$trajectories$date <- ret$trajectories$step / ret$trajectories$rate
+  ret$trajectories <- add_trajectory_incidence(
+    ret$trajectories, incidence_states)
+  ret
 }
