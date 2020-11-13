@@ -83,6 +83,51 @@ test_that("Everyone moves to last of 5 waning immunity stage and stays there if
             expect_true(all(y$S[, , 34] == y$S[, , 2]))
 })
 
+test_that("Everyone moves to the R compartment corresponding to their
+          vaccination class if there is a high beta and no vaccine
+          progression", {
+            p <- carehomes_parameters(0, "england",
+                                      beta_value = 1e9,
+                                      rel_susceptibility = c(1, 1, 1),
+                                      vaccine_progression_rate =
+                                        c(0, 0, 0))
+
+            # increase progression rates
+            p[grep("gamma", names(p))] <- 1e9
+            # make p_death zero
+            p[intersect(grep("death", names(p)), grep("_step", names(p)))] <- 0
+
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+
+            state <- carehomes_initial(info, 1, p)$state
+
+            index_S <- array(info$index$S, info$dim$S)
+            index_R <- array(info$index$R, info$dim$R)
+            index <- c(index_S, index_R)
+
+            # split S individuals equally between all 3 vaccination groups
+            state[index_S[, 2]] <- round(state[index_S[, 1]] / 3)
+            state[index_S[, 3]] <- round(state[index_S[, 1]] / 3)
+            state[index_S[, 1]] <- state[index_S[, 1]] - state[index_S[, 2]] -
+              state[index_S[, 3]]
+
+            mod$set_state(state)
+            mod$set_index(integer(0))
+            y <- dust::dust_iterate(mod, seq(0, 400, by = 4), index)
+
+            ## Reshape to show the full shape of s
+            expect_equal(length(y),
+                         prod(info$dim$S) * 101 + prod(info$dim$R) * 101)
+            s <- array(y[seq_len(prod(info$dim$S)), , ], c(info$dim$S, 101))
+            r <- array(y[prod(info$dim$S) + seq_len(prod(info$dim$R)), , ],
+                       c(info$dim$R, 101))
+
+            ## all have moved from S to R in relevant vaccination class
+            ## ignoring age group 4 where infections are seeded
+            expect_true(all(s[-4, , 1] == r[-4, , 101]))
+          })
+
 test_that("Everyone moves back to unvaccinated from vacinated if large waning
           of immunity and no vaccination", {
             p <- carehomes_parameters(0, "england",
