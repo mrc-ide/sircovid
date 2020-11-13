@@ -95,7 +95,9 @@ test_that("Everyone moves to the R compartment corresponding to their
             # increase progression rates
             p[grep("gamma", names(p))] <- 1e9
             # make p_death zero
-            p[intersect(grep("p_death", names(p)), grep("_step", names(p)))] <- 0
+            param_death_idx <- 
+              intersect(grep("p_death", names(p)), grep("_step", names(p)))
+            p[param_death_idx] <- 0
 
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()

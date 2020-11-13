@@ -443,7 +443,7 @@ delta_D_hosp[] <-
   sum(n_II_ICU_D_unconf[i, s_ICU_D, ]) +
   sum(n_II_ICU_D_conf[i, s_ICU_D, ]) +
   sum(n_R_stepdown_D_unconf[i, s_stepdown_D, ]) +
-  sum(n_R_stepdown_D_conf[i, s_stepdown_D, ] )
+  sum(n_R_stepdown_D_conf[i, s_stepdown_D, ])
 new_D_hosp[] <- D_hosp[i] + delta_D_hosp[i]
 
 ## Work out the number of deaths in the community
