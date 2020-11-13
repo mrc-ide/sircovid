@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.10</span>
       </span>
     </div>
 
@@ -535,6 +535,10 @@ just before the model is run.</p>
 #&gt;  [8] 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896
 #&gt; [15] 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896
 #&gt; 
+#&gt; $p_death_stepdown
+#&gt;  [1] 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05
+#&gt; [16] 0.05 0.05 0.05 0.05
+#&gt; 
 #&gt; $p_hosp_ILI
 #&gt;  [1] 0.001772051 0.001510059 0.002681536 0.005482996 0.010801921 0.020789645
 #&gt;  [7] 0.030033884 0.043195770 0.050353126 0.067162222 0.084808192 0.106382665
@@ -589,6 +593,12 @@ just before the model is run.</p>
 #&gt; $p_death_hosp_D_step
 #&gt; [1] 0.482
 #&gt; 
+#&gt; $psi_death_stepdown
+#&gt;  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+#&gt; 
+#&gt; $p_death_stepdown_step
+#&gt; [1] 0.05
+#&gt; 
 #&gt; $psi_death_comm
 #&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
 #&gt; 
@@ -625,13 +635,19 @@ just before the model is run.</p>
 #&gt; $s_ICU_D
 #&gt; [1] 2
 #&gt; 
-#&gt; $s_ICU_R
+#&gt; $s_ICU_S_R
+#&gt; [1] 2
+#&gt; 
+#&gt; $s_ICU_S_D
 #&gt; [1] 2
 #&gt; 
 #&gt; $s_triage
 #&gt; [1] 2
 #&gt; 
-#&gt; $s_stepdown
+#&gt; $s_stepdown_R
+#&gt; [1] 2
+#&gt; 
+#&gt; $s_stepdown_D
 #&gt; [1] 2
 #&gt; 
 #&gt; $s_R_pos
@@ -667,13 +683,19 @@ just before the model is run.</p>
 #&gt; $gamma_ICU_D
 #&gt; [1] 0.4
 #&gt; 
-#&gt; $gamma_ICU_R
+#&gt; $gamma_ICU_S_R
+#&gt; [1] 0.2
+#&gt; 
+#&gt; $gamma_ICU_S_D
 #&gt; [1] 0.2
 #&gt; 
 #&gt; $gamma_triage
 #&gt; [1] 2
 #&gt; 
-#&gt; $gamma_stepdown
+#&gt; $gamma_stepdown_R
+#&gt; [1] 0.4
+#&gt; 
+#&gt; $gamma_stepdown_D
 #&gt; [1] 0.4
 #&gt; 
 #&gt; $gamma_R_pre_1
