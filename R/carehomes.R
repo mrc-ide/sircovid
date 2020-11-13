@@ -214,6 +214,10 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_death_hosp_D <- severity$p_death_hosp_D /
     max(severity$p_death_hosp_D)
   severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
+  ## probability of stepdown hospital patient dying
+  severity$psi_death_stepdown <- severity$p_death_stepdown /
+    max(severity$p_death_stepdown)
+  severity$p_death_stepdown_step <- max(severity$p_death_stepdown)
   ## probability of patient requiring hospital treatment dying in community
   severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
   severity$p_death_comm_step <- max(severity$p_death_comm)
@@ -662,9 +666,11 @@ carehomes_parameters_progression <- function() {
        s_hosp_D = 2,
        s_hosp_R = 2,
        s_ICU_D = 2,
-       s_ICU_R = 2,
+       s_ICU_S_R = 2,
+       s_ICU_S_D = 2,
        s_triage = 2,
-       s_stepdown = 2,
+       s_stepdown_R = 2,
+       s_stepdown_D = 2,
        s_R_pos = 2,
        s_PCR_pre = 2,
        s_PCR_pos = 2,
@@ -677,9 +683,11 @@ carehomes_parameters_progression <- function() {
        gamma_hosp_D = 2 / 5,
        gamma_hosp_R = 2 / 10,
        gamma_ICU_D = 2 / 5,
-       gamma_ICU_R = 2 / 10,
+       gamma_ICU_S_R = 2 / 10,
+       gamma_ICU_S_D = 2 / 10,
        gamma_triage = 2,
-       gamma_stepdown = 2 / 5,
+       gamma_stepdown_R = 2 / 5,
+       gamma_stepdown_D = 2 / 5,
        gamma_R_pre_1 = 1 / 5,
        gamma_R_pre_2 = 1 / 10,
        gamma_R_pos = 1 / 25,

@@ -189,6 +189,8 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_death_ICU_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
+        integer = FALSE), p_death_stepdown_step = list(has_default = FALSE,
+        default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_hosp_ILI_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_ICU_hosp_step = list(has_default = FALSE,
@@ -204,6 +206,8 @@ carehomes <- R6::R6Class(
         integer = FALSE), psi_death_hosp_D = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_death_ICU = list(has_default = FALSE,
+        default_value = NULL, rank = 1, min = -Inf, max = Inf,
+        integer = FALSE), psi_death_stepdown = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_hosp_ILI = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
@@ -222,7 +226,9 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_ICU_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_ICU_R = list(
+        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_R = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_ILI = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -234,7 +240,9 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_R_pos = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_stepdown = list(
+        min = -Inf, max = Inf, integer = FALSE), s_stepdown_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_stepdown_R = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_triage = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -256,7 +264,9 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_ICU_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_ICU_R = list(has_default = TRUE,
+        integer = FALSE), gamma_ICU_S_D = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_ICU_S_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_ILI = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
@@ -272,7 +282,9 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_R_pre_2 = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_stepdown = list(has_default = TRUE,
+        integer = FALSE), gamma_stepdown_D = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_stepdown_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_test = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
