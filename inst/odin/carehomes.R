@@ -271,14 +271,22 @@ new_E[, , ] <- E[i, j, k] + aux_EE[i, j, k]
 ## Work out the I_asympt->I_asympt transitions
 aux_II_asympt[, 1, 1] <- n_EI_asympt[i, 1] +
   n_EI_asympt_next_vacc_class[i, n_vacc_classes] -
+  n_II_asympt_next_vacc_class[i, 1, 1] +
+  n_I_asympt_next_vacc_class[i, 1, n_vacc_classes]  -
   n_I_asympt_next_vacc_class[i, 1, 1]
 aux_II_asympt[, 1, 2:n_vacc_classes] <- n_EI_asympt[i, k] +
   n_EI_asympt_next_vacc_class[i, k - 1] -
+  n_II_asympt_next_vacc_class[i, 1, k] +
+  n_I_asympt_next_vacc_class[i, 1, k - 1] -
   n_I_asympt_next_vacc_class[i, 1, k]
 aux_II_asympt[, 2:s_asympt, 1] <- n_II_asympt[i, j - 1, 1] +
+  n_II_asympt_next_vacc_class[i, j - 1, n_vacc_classes] -
+  n_II_asympt_next_vacc_class[i, j, 1] +
   n_I_asympt_next_vacc_class[i, j, n_vacc_classes] -
   n_I_asympt_next_vacc_class[i, j, 1]
 aux_II_asympt[, 2:s_asympt, 2:n_vacc_classes] <- n_II_asympt[i, j - 1, k] +
+  n_II_asympt_next_vacc_class[i, j - 1, k - 1] -
+  n_II_asympt_next_vacc_class[i, j, k] +
   n_I_asympt_next_vacc_class[i, j, k - 1] -
   n_I_asympt_next_vacc_class[i, j, k]
 aux_II_asympt[, 1:s_asympt, ] <- aux_II_asympt[i, j, k] - n_II_asympt[i, j, k]
