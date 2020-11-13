@@ -10,7 +10,7 @@ test_that("can run the carehomes model", {
 
   mod$set_index(carehomes_index(mod$info())$run)
   res <- mod$run(end)
-saveRDS(res,"res.rds")
+
   expected <- rbind(
     icu = c(2, 3, 21, 1, 2),
     general = c(18, 20, 84, 15, 18),
