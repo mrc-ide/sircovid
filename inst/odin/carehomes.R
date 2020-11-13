@@ -566,8 +566,18 @@ delta_R_neg[, ] <- sum(n_R_pre[i, , j]) - n_R_pre_to_R_pos[i, j] +
 new_R_neg[, ] <- R_neg[i, j] + delta_R_neg[i, j]
 
 ## Work out the total number of recovery
-delta_R[, ] <-
+delta_R[, 1] <-
+  n_II_asympt[i, s_asympt, 1] +
+  n_II_asympt_next_vacc_class[i, s_asympt, n_vacc_classes] +
+  n_II_mild[i, s_mild, 1] +
+  n_ILI_to_R[i, 1] +
+  n_II_hosp_R_conf[i, s_hosp_R, 1] +
+  n_II_hosp_R_unconf[i, s_hosp_R, 1] +
+  n_R_stepdown_R_conf[i, s_stepdown_R, 1] +
+  n_R_stepdown_R_unconf[i, s_stepdown_R, 1]
+delta_R[, 2:n_vacc_classes] <-
   n_II_asympt[i, s_asympt, j] +
+  n_II_asympt_next_vacc_class[i, s_asympt, j-1] +
   n_II_mild[i, s_mild, j] +
   n_ILI_to_R[i, j] +
   n_II_hosp_R_conf[i, s_hosp_R, j] +
