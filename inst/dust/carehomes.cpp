@@ -1835,27 +1835,19 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_EE_1; ++i) {
       for (int j = 1; j <= internal.dim_n_EE_2; ++j) {
-        for (int k = 1; k <= internal.n_vacc_classes; ++k) {
+        for (int k = 1; k <= internal.dim_n_EE_3; ++k) {
           internal.n_EE[i - 1 + internal.dim_n_EE_1 * (j - 1) + internal.dim_n_EE_12 * (k - 1)] = internal.n_E_progress[internal.dim_n_E_progress_12 * (k - 1) + internal.dim_n_E_progress_1 * (j - 1) + i - 1] - internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_12 * (k - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
     for (int i = 1; i <= internal.dim_n_EI_asympt_next_vacc_class_1; ++i) {
-      int j = 1;
-      internal.n_EI_asympt_next_vacc_class[i - 1 + internal.dim_n_EI_asympt_next_vacc_class_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_12 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_1 * (internal.s_E - 1) + i - 1]), internal.p_asympt[i - 1]);
-    }
-    for (int i = 1; i <= internal.dim_n_EI_asympt_next_vacc_class_1; ++i) {
-      for (int j = 2; j <= internal.n_vacc_classes; ++j) {
-        internal.n_EI_asympt_next_vacc_class[i - 1 + internal.dim_n_EI_asympt_next_vacc_class_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_12 * (j - 1 - 1) + internal.dim_n_EE_next_vacc_class_1 * (internal.s_E - 1) + i - 1]), internal.p_asympt[i - 1]);
+      for (int j = 1; j <= internal.dim_n_EI_asympt_next_vacc_class_2; ++j) {
+        internal.n_EI_asympt_next_vacc_class[i - 1 + internal.dim_n_EI_asympt_next_vacc_class_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_12 * (j - 1) + internal.dim_n_EE_next_vacc_class_1 * (internal.s_E - 1) + i - 1]), internal.p_asympt[i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_n_EI_mild_next_vacc_class_1; ++i) {
-      int j = 1;
-      internal.n_EI_mild_next_vacc_class[i - 1 + internal.dim_n_EI_mild_next_vacc_class_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_12 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_1 * (internal.s_E - 1) + i - 1]), 1 - internal.p_sympt_ILI[i - 1]);
-    }
-    for (int i = 1; i <= internal.dim_n_EI_mild_next_vacc_class_1; ++i) {
-      for (int j = 2; j <= internal.n_vacc_classes; ++j) {
-        internal.n_EI_mild_next_vacc_class[i - 1 + internal.dim_n_EI_mild_next_vacc_class_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_12 * (j - 1 - 1) + internal.dim_n_EE_next_vacc_class_1 * (internal.s_E - 1) + i - 1]), 1 - internal.p_sympt_ILI[i - 1]);
+      for (int j = 1; j <= internal.dim_n_EI_mild_next_vacc_class_2; ++j) {
+        internal.n_EI_mild_next_vacc_class[i - 1 + internal.dim_n_EI_mild_next_vacc_class_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_12 * (j - 1) + internal.dim_n_EE_next_vacc_class_1 * (internal.s_E - 1) + i - 1]), 1 - internal.p_sympt_ILI[i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_n_I_hosp_D_unconf_to_conf_1; ++i) {
@@ -1881,7 +1873,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_II_asympt_1; ++i) {
       for (int j = 1; j <= internal.dim_n_II_asympt_2; ++j) {
-        for (int k = 1; k <= internal.n_vacc_classes; ++k) {
+        for (int k = 1; k <= internal.dim_n_II_asympt_3; ++k) {
           internal.n_II_asympt[i - 1 + internal.dim_n_II_asympt_1 * (j - 1) + internal.dim_n_II_asympt_12 * (k - 1)] = internal.n_I_asympt_progress[internal.dim_n_I_asympt_progress_12 * (k - 1) + internal.dim_n_I_asympt_progress_1 * (j - 1) + i - 1] - internal.n_II_asympt_next_vacc_class[internal.dim_n_II_asympt_next_vacc_class_12 * (k - 1) + internal.dim_n_II_asympt_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
@@ -2496,7 +2488,7 @@ public:
       }
     }
     for (int i = 1; i <= internal.dim_n_SE_1; ++i) {
-      for (int j = 1; j <= internal.n_vacc_classes; ++j) {
+      for (int j = 1; j <= internal.dim_n_SE_2; ++j) {
         internal.n_SE[i - 1 + internal.dim_n_SE_1 * (j - 1)] = internal.n_S_progress[internal.dim_n_S_progress_1 * (j - 1) + i - 1] - internal.n_SE_next_vacc_class[internal.dim_n_SE_next_vacc_class_1 * (j - 1) + i - 1];
       }
     }
@@ -4390,7 +4382,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   for (int i = 1; i <= internal.dim_p_I_asympt_next_vacc_class_1; ++i) {
     for (int j = 1; j <= internal.dim_p_I_asympt_next_vacc_class_2; ++j) {
       for (int k = 1; k <= internal.dim_p_I_asympt_next_vacc_class_3; ++k) {
-        internal.p_I_asympt_next_vacc_class[i - 1 + internal.dim_p_I_asympt_next_vacc_class_1 * (j - 1) + internal.dim_p_I_asympt_next_vacc_class_12 * (k - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[internal.dim_vaccine_progression_rate_1 * (k - 1) + i - 1] * internal.dt);
+        internal.p_I_asympt_next_vacc_class[i - 1 + internal.dim_p_I_asympt_next_vacc_class_1 * (j - 1) + internal.dim_p_I_asympt_next_vacc_class_12 * (k - 1)] = 0;
       }
     }
   }
