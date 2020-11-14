@@ -249,6 +249,7 @@ test_that("Every susceptible moves to waning immunity stage and stays there if
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0, 0),
                                       vaccine_progression_rate = c(Inf, Inf, 0))
+
             mod <- carehomes$new(p, 0, 1)
             info <- mod$info()
             mod$set_state(carehomes_initial(info, 1, p)$state)
