@@ -480,8 +480,6 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             vaccine_progression_rate = c(1, 0.5, 0.01))
 
-  p$p_asympt <- rep(1, 19)
-
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -490,6 +488,31 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
+  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
+  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+})
+
+
+test_that(
+  "N_tot, N_tot2 and N_tot3 stay constant with high rates of vaccination", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  set.seed(1)
+  p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
+                            rel_susceptibility = c(1, 0.5, 0.1),
+                            vaccine_progression_rate = c(500, 100, 50))
+  
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  
   expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
   expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
