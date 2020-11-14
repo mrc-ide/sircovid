@@ -31,8 +31,8 @@ test_that("there are no infections if everyone is vaccinated with a vaccine
   expect_true(all(s[, 2, ] == s[, 2, 1]))
 })
 
-test_that("Everyone moves to vaccinated and stays there if everyone quickly
-          gets vaccinated with a vaccine preventing 100% of acquisition
+test_that("Every susceptible moves to vaccinated and stays there if everyone
+          quickly gets vaccinated with a vaccine preventing 100% of acquisition
           and no waning immunity", {
             p <- carehomes_parameters(0, "england",
                                       beta_value = c(0, 0, 1),
@@ -50,8 +50,110 @@ test_that("Everyone moves to vaccinated and stays there if everyone quickly
 })
 
 
-test_that("Everyone moves to waning immunity stage and stays there if everyone
-          quickly gets vaccinated and loses immunity", {
+test_that("Every exposed moves to vaccinated and stays there if everyone
+          quickly gets vaccinated with a vaccine with no waning immunity
+          and if disease progression is stopped after E", {
+            p <- carehomes_parameters(0, "england",
+                                      rel_susceptibility = c(1, 0),
+                                      vaccine_progression_rate = c(Inf, 0))
+            
+            # stop disease progression after E
+            p$gamma_E <- 0
+            
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+            
+            state <- carehomes_initial(info, 1, p)$state
+            
+            index_E <- array(info$index$E, info$dim$E)
+            index_S <- array(info$index$S, info$dim$S)
+            state[index_E[, 1, ]] <- state[index_S]
+            state[index_E[, 2, ]] <- state[index_S]
+            state[index_S] <- 0
+            
+            mod$set_state(state)
+            mod$set_index(integer(0))
+            e <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$E)
+            
+            ## Reshape to show the full shape of e
+            expect_equal(length(e), prod(info$dim$E) * 101)
+            e <- array(e, c(info$dim$E, 101))
+            
+            ## every E moves from unvaccinated to vaccinated between
+            ## time steps 1 and 2
+            E_compartment_idx <- 1
+            unvacc_idx <- 1
+            vacc_idx <- 2
+            expect_true(all(e[, E_compartment_idx, unvacc_idx, 1] ==
+                              e[, E_compartment_idx, vacc_idx, 2]))
+            ## then they don't move anymore
+            expect_true(all(e[, E_compartment_idx, vacc_idx, 2] ==
+                              e[, E_compartment_idx, vacc_idx, 101]))
+            ## same for second E compartment
+            E_compartment_idx <- 2
+            expect_true(all(e[, E_compartment_idx, unvacc_idx, 1] ==
+                              e[, E_compartment_idx, vacc_idx, 2]))
+            ## then they don't move anymore
+            expect_true(all(e[, E_compartment_idx, vacc_idx, 2] ==
+                              e[, E_compartment_idx, vacc_idx, 101]))
+})
+
+
+test_that("Every exposed moves back from vaccinated to unvaccinated and stays
+          there if vaccine has fast waning immunity,
+          beta is zero, and if disease progression
+          is stopped after E", {
+            p <- carehomes_parameters(0, "england",
+                                      beta_value = 0,
+                                      rel_susceptibility = c(1, 0),
+                                      vaccine_progression_rate = c(0, Inf))
+            
+            # stop disease progression after E
+            p$gamma_E <- 0
+            
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+            
+            state <- carehomes_initial(info, 1, p)$state
+            
+            index_E <- array(info$index$E, info$dim$E)
+            index_S <- array(info$index$S, info$dim$S)
+            state[index_E[, 1, 2]] <- state[index_S[, 1]]
+            state[index_E[, 1, 1]] <- 0
+            state[index_E[, 2, 2]] <- state[index_S[, 1]]
+            state[index_E[, 2, 1]] <- 0
+            state[index_S] <- 0
+            
+            mod$set_state(state)
+            mod$set_index(integer(0))
+            e <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$E)
+            
+            ## Reshape to show the full shape of e
+            expect_equal(length(e), prod(info$dim$E) * 101)
+            e <- array(e, c(info$dim$E, 101))
+            
+            ## every E moves from vaccinated to unvaccinated between
+            ## time steps 1 and 2
+            E_compartment_idx <- 1
+            unvacc_idx <- 1
+            vacc_idx <- 2
+            expect_true(all(e[, E_compartment_idx, vacc_idx, 1] ==
+                              e[, E_compartment_idx, unvacc_idx, 2]))
+            ## then they don't move anymore
+            expect_true(all(e[, E_compartment_idx, unvacc_idx, 2] ==
+                              e[, E_compartment_idx, unvacc_idx, 101]))
+            ## same for second E compartment
+            E_compartment_idx <- 2
+            expect_true(all(e[, E_compartment_idx, vacc_idx, 1] ==
+                              e[, E_compartment_idx, unvacc_idx, 2]))
+            ## then they don't move anymore
+            expect_true(all(e[, E_compartment_idx, unvacc_idx, 2] ==
+                              e[, E_compartment_idx, unvacc_idx, 101]))
+})
+
+
+test_that("Every susceptible moves to waning immunity stage and stays there if
+          everyone quickly gets vaccinated and loses immunity", {
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0, 0),
@@ -66,8 +168,8 @@ test_that("Everyone moves to waning immunity stage and stays there if everyone
             expect_true(all(y$S[, , 101] == y$S[, , 2]))
 })
 
-test_that("Everyone moves to last of 5 waning immunity stage and stays there if
-          everyone quickly gets vaccinated and loses immunity", {
+test_that("Every susceptible moves to last of 5 waning immunity stage and stays
+          there if everyone quickly gets vaccinated and loses immunity", {
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, rep(0, 10), 0),
@@ -83,7 +185,7 @@ test_that("Everyone moves to last of 5 waning immunity stage and stays there if
             expect_true(all(y$S[, , 34] == y$S[, , 2]))
 })
 
-test_that("Everyone moves to the R compartment corresponding to their
+test_that("Every susceptible moves to the R compartment corresponding to their
           vaccination class if there is a high beta and no vaccine
           progression", {
             p <- carehomes_parameters(0, "england",
@@ -130,8 +232,8 @@ test_that("Everyone moves to the R compartment corresponding to their
             expect_true(all(s[-4, , 1] == r[-4, , 101]))
           })
 
-test_that("Everyone moves back to unvaccinated from vacinated if large waning
-          of immunity and no vaccination", {
+test_that("Every susceptible moves back to unvaccinated from vacinated if large
+          waning of immunity and no vaccination", {
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0),
@@ -161,7 +263,7 @@ test_that("Everyone moves back to unvaccinated from vacinated if large waning
             expect_true(all(s[, 1, 2] == s[, 2, 1]))
 })
 
-test_that("there are no vaccinations when vaccination rate is 0", {
+test_that("there are no vaccinated susceptibles when vaccination rate is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   waning_rate <- rep(1 / 20, 19)
