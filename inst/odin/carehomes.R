@@ -210,7 +210,7 @@ n_R_progress[, ] <- min(n_R_progress_tmp[i, j], R_neg[i, j], PCR_neg[i, j])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from R[j] to S[j+1]
 ## (j vaccination class)
-n_RS_next_vacc_class[, ] <- 
+n_RS_next_vacc_class[, ] <-
   rbinom(n_R_progress[i, j], p_R_next_vacc_class[i, j])
 ## resulting transitions from R[j] to S[j]
 ## (j vaccination class)
@@ -619,7 +619,7 @@ delta_R[, 2:n_vacc_classes] <-
   n_II_hosp_R_conf[i, s_hosp_R, j] +
   n_II_hosp_R_unconf[i, s_hosp_R, j] +
   n_R_stepdown_R_conf[i, s_stepdown_R, j] +
-  n_R_stepdown_R_unconf[i, s_stepdown_R, j]  
+  n_R_stepdown_R_unconf[i, s_stepdown_R, j] 
 
 ## Work out the PCR positivity
 delta_PCR_pre[, 1, ] <- n_S_progress[i, k]
