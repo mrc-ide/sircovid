@@ -2109,7 +2109,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_R_next_vacc_class_1; ++i) {
       for (int j = 1; j <= internal.dim_n_R_next_vacc_class_2; ++j) {
-        internal.n_R_next_vacc_class[i - 1 + internal.dim_n_R_next_vacc_class_1 * (j - 1)] = std::min(internal.n_R_next_vacc_class_tmp[internal.dim_n_R_next_vacc_class_tmp_1 * (j - 1) + i - 1], std::min(R_neg[internal.dim_R_neg_1 * (j - 1) + i - 1], PCR_neg[internal.dim_PCR_neg_1 * (j - 1) + i - 1]));
+        internal.n_R_next_vacc_class[i - 1 + internal.dim_n_R_next_vacc_class_1 * (j - 1)] = std::min(internal.n_R_next_vacc_class_tmp[internal.dim_n_R_next_vacc_class_tmp_1 * (j - 1) + i - 1], std::min(R_neg[internal.dim_R_neg_1 * (j - 1) + i - 1] - internal.n_R_progress[internal.dim_n_R_progress_1 * (j - 1) + i - 1], PCR_neg[internal.dim_PCR_neg_1 * (j - 1) + i - 1] - internal.n_R_progress[internal.dim_n_R_progress_1 * (j - 1) + i - 1]));
       }
     }
     for (int i = 1; i <= internal.dim_n_RS_1; ++i) {

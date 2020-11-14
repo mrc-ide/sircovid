@@ -143,6 +143,47 @@ test_that("Every I_asympt moves to vaccinated and stays there if everyone
 })
 
 
+test_that("Every R moves to vaccinated and stays there if everyone
+          quickly gets vaccinated with a vaccine with no waning immunity
+          and if no natural waning of immunity", {
+            p <- carehomes_parameters(0, "england",
+                                      rel_susceptibility = c(1, 0),
+                                      vaccine_progression_rate = c(Inf, 0))
+            
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+            
+            state <- carehomes_initial(info, 1, p)$state
+            
+            index_I_asympt <- array(info$index$I_asympt, info$dim$I_asympt)
+            index_R <- array(info$index$R, info$dim$R)
+            index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
+            index_PCR_neg <- array(info$index$PCR_neg, info$dim$PCR_neg)
+            index_S <- array(info$index$S, info$dim$S)
+            state[index_R] <- state[index_S]
+            state[index_R_neg] <- state[index_S]
+            state[index_PCR_neg] <- state[index_S]
+            state[index_S] <- 0
+            state[index_I_asympt] <- 0 # remove seeded infections
+            
+            mod$set_state(state)
+            mod$set_index(integer(0))
+            r <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$R)
+            
+            ## Reshape to show the full shape of r
+            expect_equal(length(r), prod(info$dim$R) * 101)
+            r <- array(r, c(info$dim$R, 101))
+            
+            ## every R moves from unvaccinated to vaccinated between
+            ## time steps 1 and 2
+            unvacc_idx <- 1
+            vacc_idx <- 2
+            expect_true(all(r[, unvacc_idx, 1] == r[, vacc_idx, 2]))
+            ## then they don't move anymore
+            expect_true(all(r[, vacc_idx, 2] == r[, vacc_idx, 101]))
+})
+
+
 test_that("Every exposed moves back from vaccinated to unvaccinated and stays
           there if vaccine has fast waning immunity,
           beta is zero, and if disease progression
