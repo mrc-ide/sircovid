@@ -2580,11 +2580,11 @@ public:
     }
     for (int i = 1; i <= internal.dim_S_1; ++i) {
       int j = 1;
-      state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * 0 + i - 1] - internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * 0 + i - 1] - internal.n_S_progress[internal.dim_n_S_progress_1 * 0 + i - 1] + internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * (internal.n_vacc_classes - 1) + i - 1] + internal.n_RS[internal.dim_n_RS_1 * 0 + i - 1];
+      state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * 0 + i - 1] + internal.n_RS[internal.dim_n_RS_1 * 0 + i - 1] - internal.n_S_progress[internal.dim_n_S_progress_1 * 0 + i - 1] + internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * (internal.n_vacc_classes - 1) + i - 1] - internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * 0 + i - 1];
     }
     for (int i = 1; i <= internal.dim_S_1; ++i) {
       for (int j = 2; j <= internal.n_vacc_classes; ++j) {
-        state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * (j - 1) + i - 1] - internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * (j - 1) + i - 1] + internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * (j - 1 - 1) + i - 1] - internal.n_S_progress[internal.dim_n_S_progress_1 * (j - 1) + i - 1];
+        state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = S[internal.dim_S_1 * (j - 1) + i - 1] + internal.n_RS[internal.dim_n_RS_1 * (j - 1) + i - 1] - internal.n_S_progress[internal.dim_n_S_progress_1 * (j - 1) + i - 1] + internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * (j - 1 - 1) + i - 1] - internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * (j - 1) + i - 1];
       }
     }
     for (int i = 1; i <= internal.dim_aux_EE_1; ++i) {
