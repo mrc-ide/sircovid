@@ -16,10 +16,10 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
-update(S[, 1]) <- S[i, 1] + n_RS[i, 1] - n_infections[i, 1] +
+update(S[, 1]) <- S[i, 1] + n_RS[i, 1] - n_S_progress[i, 1] +
   n_S_next_vacc_class[i, n_vacc_classes] -
   n_S_next_vacc_class[i, 1] # age, vaccination status
-update(S[, 2:n_vacc_classes]) <- S[i, j] + n_RS[i, j] - n_infections[i, j] +
+update(S[, 2:n_vacc_classes]) <- S[i, j] + n_RS[i, j] - n_S_progress[i, j] +
   n_S_next_vacc_class[i, j - 1] -
   n_S_next_vacc_class[i, j] # age, vaccination status
 update(E[, , ]) <- new_E[i, j, k]
@@ -130,18 +130,18 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 ## modelling infections and vaccine progression, which can happen simultaneously
 
 ## new infections
-n_infections[, ] <- rbinom(S[i, j], p_SE[i, j])
+n_S_progress[, ] <- rbinom(S[i, j], p_SE[i, j])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[j] to E[j+1] (j vaccination class)
 n_SE_S_next_vacc_class[, ] <-
-  rbinom(n_infections[i, j], p_S_next_vacc_class[i, j])
+  rbinom(n_S_progress[i, j], p_S_next_vacc_class[i, j])
 ## resulting transitions from S[j] to E[j]
 ## (j vaccination class)
-n_SE[, 1:n_vacc_classes] <- n_infections[i, j] -
+n_SE[, 1:n_vacc_classes] <- n_S_progress[i, j] -
   n_SE_S_next_vacc_class[i, j]
 
 ## vaccine progression
-n_S_next_vacc_class[, ] <- rbinom(S[i, j] - n_infections[i, j],
+n_S_next_vacc_class[, ] <- rbinom(S[i, j] - n_S_progress[i, j],
                                   p_S_next_vacc_class[i, j])
 
 ## other transitions
@@ -177,7 +177,7 @@ n_RS[, ] <- min(n_RS_tmp[i, j], R_neg[i, j], PCR_neg[i, j])
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
-update(cum_infections) <- cum_infections + sum(n_infections)
+update(cum_infections) <- cum_infections + sum(n_S_progress)
 
 ## Computes the number of asymptomatic
 n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], p_asympt[i])
@@ -482,7 +482,7 @@ delta_R[, ] <-
   n_R_stepdown_R_unconf[i, s_stepdown_R, j]
 
 ## Work out the PCR positivity
-delta_PCR_pre[, 1, ] <- n_infections[i, k]
+delta_PCR_pre[, 1, ] <- n_S_progress[i, k]
 delta_PCR_pre[, 2:s_PCR_pre, ] <- n_PCR_pre[i, j - 1, k]
 delta_PCR_pre[, , ] <- delta_PCR_pre[i, j, k] - n_PCR_pre[i, j, k]
 new_PCR_pre[, , ] <- PCR_pre[i, j, k] + delta_PCR_pre[i, j, k]
@@ -878,7 +878,7 @@ dim(n_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
 ## between level of infectivity
 dim(p_SE) <- c(n_groups, n_vacc_classes)
 dim(n_SE) <- c(n_groups, n_vacc_classes)
-dim(n_infections) <- c(n_groups, n_vacc_classes)
+dim(n_S_progress) <- c(n_groups, n_vacc_classes)
 dim(n_SE_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
