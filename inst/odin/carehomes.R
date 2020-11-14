@@ -72,6 +72,8 @@ update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
 ## Individual probabilities of transition:
 p_S_next_vacc_class[, ] <- 1 - exp(-vaccine_progression_rate[i, j] * dt)
 p_E_next_vacc_class[, , ] <- 1 - exp(-vaccine_progression_rate[i, k] * dt)
+p_I_asympt_next_vacc_class[, , ] <-
+  1 - exp(-vaccine_progression_rate[i, k] * dt)
 p_SE[, ] <- 1 - exp(-lambda[i] *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
@@ -148,13 +150,14 @@ n_S_next_vacc_class[, ] <- rbinom(S[i, j] - n_S_progress[i, j],
                                   p_S_next_vacc_class[i, j])
 
 #### flow out of E ####
+
 n_E_progress[, , ] <- rbinom(E[i, j, k], p_EE)
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from E[j, k] to E[j+1, k+1] (j vaccination class)
 n_EE_next_vacc_class[, , ] <-
   rbinom(n_E_progress[i, j, k], p_E_next_vacc_class[i, j, k])
 ## resulting transitions from E[j, k] to E[j+1, k]
-## (j vaccination class)
+## (k vaccination class)
 n_EE[, , ] <- n_E_progress[i, j, k] -
   n_EE_next_vacc_class[i, j, k]
 
@@ -162,9 +165,26 @@ n_EE[, , ] <- n_E_progress[i, j, k] -
 n_E_next_vacc_class[, , ] <- rbinom(E[i, j, k] - n_E_progress[i, j, k],
                                   p_E_next_vacc_class[i, j, k])
 
+#### flow out of I_asympt ####
+
+n_I_asympt_progress[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
+## of those some can also be vaccinated or progress through vaccination classes
+## --> number transitioning from I_asympt[j, k] to I_asympt[j+1, k+1]
+## (k vaccination class)
+n_II_asympt_next_vacc_class[, , ] <-
+  rbinom(n_I_asympt_progress[i, j, k], p_I_asympt_next_vacc_class[i, j, k])
+## resulting transitions from I_asympt[j, k] to I_asympt[j+1, k]
+## (j vaccination class)
+n_II_asympt[, , ] <- n_I_asympt_progress[i, j, k] -
+  n_II_asympt_next_vacc_class[i, j, k]
+
+## vaccine progression
+n_I_asympt_next_vacc_class[, , ] <- rbinom(
+  I_asympt[i, j, k] - n_I_asympt_progress[i, j, k],
+  p_I_asympt_next_vacc_class[i, j, k])
+
 ## other transitions
 
-n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
 n_II_ILI[, , ] <- rbinom(I_ILI[i, j, k], p_II_ILI)
 n_II_comm_D[, , ] <- rbinom(I_comm_D[i, j, k], p_II_comm_D)
@@ -241,11 +261,25 @@ new_E[, , ] <- E[i, j, k] + aux_EE[i, j, k]
 
 ## Work out the I_asympt->I_asympt transitions
 aux_II_asympt[, 1, 1] <- n_EI_asympt[i, 1] +
-  n_EI_asympt_next_vacc_class[i, n_vacc_classes]
-aux_II_asympt[, 1, 2:n_vacc_classes] <-
-  n_EI_asympt[i, k] + n_EI_asympt_next_vacc_class[i, k - 1]
-
-aux_II_asympt[, 2:s_asympt, ] <- n_II_asympt[i, j - 1, k]
+  n_EI_asympt_next_vacc_class[i, n_vacc_classes] -
+  n_II_asympt_next_vacc_class[i, 1, 1] +
+  n_I_asympt_next_vacc_class[i, 1, n_vacc_classes] -
+  n_I_asympt_next_vacc_class[i, 1, 1]
+aux_II_asympt[, 1, 2:n_vacc_classes] <- n_EI_asympt[i, k] +
+  n_EI_asympt_next_vacc_class[i, k - 1] -
+  n_II_asympt_next_vacc_class[i, 1, k] +
+  n_I_asympt_next_vacc_class[i, 1, k - 1] -
+  n_I_asympt_next_vacc_class[i, 1, k]
+aux_II_asympt[, 2:s_asympt, 1] <- n_II_asympt[i, j - 1, k] +
+  n_II_asympt_next_vacc_class[i, j - 1, n_vacc_classes] -
+  n_II_asympt_next_vacc_class[i, j, k] +
+  n_I_asympt_next_vacc_class[i, j, n_vacc_classes] -
+  n_I_asympt_next_vacc_class[i, j, k]
+aux_II_asympt[, 2:s_asympt, 2:n_vacc_classes] <- n_II_asympt[i, j - 1, k] +
+  n_II_asympt_next_vacc_class[i, j - 1, k - 1] -
+  n_II_asympt_next_vacc_class[i, j, k] +
+  n_I_asympt_next_vacc_class[i, j, k - 1] -
+  n_I_asympt_next_vacc_class[i, j, k]
 aux_II_asympt[, 1:s_asympt, ] <- aux_II_asympt[i, j, k] - n_II_asympt[i, j, k]
 new_I_asympt[, , ] <- I_asympt[i, j, k] + aux_II_asympt[i, j, k]
 
@@ -937,6 +971,11 @@ dim(p_E_next_vacc_class) <- c(n_groups, s_E, n_vacc_classes)
 dim(n_E_next_vacc_class) <- c(n_groups, s_E, n_vacc_classes)
 dim(n_E_progress) <- c(n_groups, s_E, n_vacc_classes)
 dim(n_EE_next_vacc_class) <- c(n_groups, s_E, n_vacc_classes)
+
+dim(p_I_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes)
+dim(n_I_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes)
+dim(n_I_asympt_progress) <- c(n_groups, s_asympt, n_vacc_classes)
+dim(n_II_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
