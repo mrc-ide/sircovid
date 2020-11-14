@@ -175,16 +175,22 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(1, 9, 3),
                                    n_vacc_classes = 3),
     "'vaccine_progression_rate' must have as many rows as age groups")
+  msg1 <- "When 'n_vacc_classes' is 1,"
+  msg2 <- "'vaccine_progression_rate' should only contain zeros"
+  expect_error(
+    build_vaccine_progression_rate(vaccine_progression_rate = 1,
+                                   n_vacc_classes = 1),
+    paste(msg1, msg2))
 })
 
 test_that("build_vaccine_progression_rate allows sensible inputs and works", {
   expect_silent(
-    build_vaccine_progression_rate(vaccine_progression_rate = 1,
+    build_vaccine_progression_rate(vaccine_progression_rate = 0,
                                    n_vacc_classes = 1))
   expect_equal(
-    build_vaccine_progression_rate(vaccine_progression_rate = 1,
-                                   n_vacc_classes = 1),
-    matrix(rep(1, 19), nrow = 19))
+    build_vaccine_progression_rate(vaccine_progression_rate = c(1, 1),
+                                   n_vacc_classes = 2),
+    matrix(rep(1, 19*2), nrow = 19))
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(1, 19, 3),
                                    n_vacc_classes = 3))
