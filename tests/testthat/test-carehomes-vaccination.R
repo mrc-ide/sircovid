@@ -283,8 +283,8 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
-                            rel_susceptibility = c(1, 0.5),
-                            vaccine_progression_rate = c(1, 0.01))
+                            rel_susceptibility = c(1, 0.5, 0.1),
+                            vaccine_progression_rate = c(1, 0.5, 0.01))
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state

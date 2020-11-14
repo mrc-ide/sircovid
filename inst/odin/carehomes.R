@@ -17,7 +17,7 @@ update(time) <- (step + 1) * dt
 
 ## Core equations for transitions between compartments:
 update(S[, 1]) <- S[i, 1] + n_RS[i, 1] - n_infections[i, 1] +
-   + n_S_next_vacc_class[i, n_vacc_classes] -
+  n_S_next_vacc_class[i, n_vacc_classes] -
   n_S_next_vacc_class[i, 1] # age, vaccination status
 update(S[, 2:n_vacc_classes]) <- S[i, j] + n_RS[i, j] - n_infections[i, j] +
   n_S_next_vacc_class[i, j - 1] -
