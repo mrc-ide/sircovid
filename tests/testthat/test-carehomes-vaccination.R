@@ -265,11 +265,11 @@ test_that("Every I_asympt moves back from vaccinated to unvaccinated and stays
             i_asympt <- dust::dust_iterate(mod, seq(0, 400, by = 4),
                                            info$index$I_asympt)
 
-            ## Reshape to show the full shape of e
+            ## Reshape to show the full shape of i_asympt
             expect_equal(length(i_asympt), prod(info$dim$I_asympt) * 101)
             i_asympt <- array(i_asympt, c(info$dim$I_asympt, 101))
 
-            ## every E moves from vaccinated to unvaccinated between
+            ## every I_asympt moves from vaccinated to unvaccinated between
             ## time steps 1 and 2
             I_asympt_compartment_idx <- 1
             unvacc_idx <- 1
@@ -281,6 +281,52 @@ test_that("Every I_asympt moves back from vaccinated to unvaccinated and stays
             expect_true(all(
               i_asympt[, I_asympt_compartment_idx, unvacc_idx, 2] ==
                 i_asympt[, I_asympt_compartment_idx, unvacc_idx, 101]))
+})
+
+
+test_that("Every R moves back from vaccinated to unvaccinated and stays
+          there if vaccine has fast waning immunity,
+          beta is zero, and there is no natural immunity", {
+            p <- carehomes_parameters(0, "england",
+                                      beta_value = 0,
+                                      rel_susceptibility = c(1, 0),
+                                      vaccine_progression_rate = c(0, Inf))
+            
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+            
+            state <- carehomes_initial(info, 1, p)$state
+            
+            index_I_asympt <- array(info$index$I_asympt, info$dim$I_asympt)
+            index_R <- array(info$index$R, info$dim$R)
+            index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
+            index_PCR_neg <- array(info$index$PCR_neg, info$dim$PCR_neg)
+            index_S <- array(info$index$S, info$dim$S)
+            state[index_R[, 2]] <- state[index_S[, 1]]
+            state[index_R[, 1]] <- 0
+            state[index_R_neg[, 2]] <- state[index_S[, 1]]
+            state[index_R_neg[, 1]] <- 0
+            state[index_PCR_neg[, 2]] <- state[index_S[, 1]]
+            state[index_PCR_neg[, 1]] <- 0
+            state[index_S] <- 0
+            state[index_I_asympt] <- 0 # remove seeded infections
+            
+            mod$set_state(state)
+            mod$set_index(integer(0))
+            r <- dust::dust_iterate(mod, seq(0, 400, by = 4),
+                                           info$index$R)
+            
+            ## Reshape to show the full shape of r
+            expect_equal(length(r), prod(info$dim$R) * 101)
+            r <- array(r, c(info$dim$R, 101))
+            
+            ## every R moves from vaccinated to unvaccinated between
+            ## time steps 1 and 2
+            unvacc_idx <- 1
+            vacc_idx <- 2
+            expect_true(all(r[, vacc_idx, 1] == r[, unvacc_idx, 2]))
+            ## then they don't move anymore
+            expect_true(all(r[, unvacc_idx, 2] == r[, unvacc_idx, 101]))
 })
 
 
