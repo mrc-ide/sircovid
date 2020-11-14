@@ -619,7 +619,7 @@ delta_R[, 2:n_vacc_classes] <-
   n_II_hosp_R_conf[i, s_hosp_R, j] +
   n_II_hosp_R_unconf[i, s_hosp_R, j] +
   n_R_stepdown_R_conf[i, s_stepdown_R, j] +
-  n_R_stepdown_R_unconf[i, s_stepdown_R, j] 
+  n_R_stepdown_R_unconf[i, s_stepdown_R, j]
 
 ## Work out the PCR positivity
 delta_PCR_pre[, 1, ] <- n_S_progress[i, k]
