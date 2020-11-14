@@ -99,6 +99,50 @@ test_that("Every exposed moves to vaccinated and stays there if everyone
 })
 
 
+test_that("Every I_asympt moves to vaccinated and stays there if everyone
+          quickly gets vaccinated with a vaccine with no waning immunity
+          and if disease progression is stopped after I_asympt", {
+            p <- carehomes_parameters(0, "england",
+                                      rel_susceptibility = c(1, 0),
+                                      vaccine_progression_rate = c(Inf, 0))
+            
+            # stop disease progression after I_asympt
+            p$gamma_asympt <- 0
+            
+            mod <- carehomes$new(p, 0, 1)
+            info <- mod$info()
+            
+            state <- carehomes_initial(info, 1, p)$state
+            
+            index_I_asympt <- array(info$index$I_asympt, info$dim$I_asympt)
+            index_S <- array(info$index$S, info$dim$S)
+            state[index_I_asympt[, 1, ]] <- state[index_S]
+            state[index_S] <- 0
+            
+            mod$set_state(state)
+            mod$set_index(integer(0))
+            i_asympt <-
+              dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$I_asympt)
+            
+            ## Reshape to show the full shape of i_asympt
+            expect_equal(length(i_asympt), prod(info$dim$I_asympt) * 101)
+            i_asympt <- array(i_asympt, c(info$dim$I_asympt, 101))
+            
+            ## every I_asympt moves from unvaccinated to vaccinated between
+            ## time steps 1 and 2
+            I_asympt_compartment_idx <- 1
+            unvacc_idx <- 1
+            vacc_idx <- 2
+            expect_true(all(
+              i_asympt[, I_asympt_compartment_idx, unvacc_idx, 1] ==
+                i_asympt[, I_asympt_compartment_idx, vacc_idx, 2]))
+            ## then they don't move anymore
+            expect_true(all(
+              i_asympt[, I_asympt_compartment_idx, vacc_idx, 2] ==
+                i_asympt[, I_asympt_compartment_idx, vacc_idx, 101]))
+})
+
+
 test_that("Every exposed moves back from vaccinated to unvaccinated and stays
           there if vaccine has fast waning immunity,
           beta is zero, and if disease progression
