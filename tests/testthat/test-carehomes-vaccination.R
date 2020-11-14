@@ -277,3 +277,25 @@ test_that("Effective Rt reduced by rel_susceptbility if all vaccinated", {
                rt_all_vacc$eff_Rt_general)
 
 })
+
+
+test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
+                            rel_susceptibility = c(1, 0.5),
+                            vaccine_progression_rate = c(1, 0.01))
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+
+  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
+  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+})
