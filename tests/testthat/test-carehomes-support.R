@@ -56,6 +56,16 @@ test_that("carehomes vaccination parameters", {
   expect_equal(nrow(p$vaccine_progression_rate), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate),
                length(vaccine_progression_rate))
+  msg1 <- "rel_susceptibility, rel_p_sympt and rel_p_hosp_if_sympt"
+  msg2 <- "should have the same dimension"
+  expect_error(carehomes_parameters_vaccination(rel_susceptibility = 1,
+                                                rel_p_sympt = c(1, 0.5),
+                                                rel_p_hosp_if_sympt = c(1, 1)),
+               paste(msg1, msg2))
+  expect_error(carehomes_parameters_vaccination(rel_susceptibility = c(1, 1),
+                                                rel_p_sympt = c(1, 0.5),
+                                                rel_p_hosp_if_sympt = 1),
+               paste(msg1, msg2))
 })
 
 test_that("carehomes_parameters returns a list of parameters", {

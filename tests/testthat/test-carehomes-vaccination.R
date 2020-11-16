@@ -64,7 +64,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
 
   ## Noone moves into I_ILI or I_mild ever
   ## other than in the 4th age group where some infections are seeded
-  ## in the unvaccinated group and because of waning immunity they may 
+  ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in I_ILI or I_mild upon reinfection
   expect_true(all(y$I_ILI[-4, , , ] == 0))
   expect_true(all(y$I_mild[-4, , , ] == 0))
