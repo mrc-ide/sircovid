@@ -1,7 +1,9 @@
 context("carehomes (vaccination)")
 
-test_that("there are no infections if everyone is vaccinated with a vaccine
-          preventing 100% of acquisition", {
+test_that("No infections with perfect vaccine", {
+  ## i.e. if everyone is vaccinated with a vaccine preventing
+  ## 100% of acquisition
+  
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 0),
@@ -31,9 +33,11 @@ test_that("there are no infections if everyone is vaccinated with a vaccine
   expect_true(all(s[, 2, ] == s[, 2, 1]))
 })
 
-test_that("Every susceptible moves to vaccinated and stays there if everyone
-          quickly gets vaccinated with a vaccine preventing 100% of acquisition
-          and no waning immunity", {
+test_that("Vaccination of susceptibles works", {
+  ## Tests that:
+  ## Every susceptible moves to vaccinated and stays there if
+  ## everyone quickly gets vaccinated with a vaccine preventing 100% of
+  ## acquisition and no waning immunity
             p <- carehomes_parameters(0, "england",
                                       beta_value = c(0, 0, 1),
                                       beta_date = c(0, 4, 5),
@@ -50,9 +54,11 @@ test_that("Every susceptible moves to vaccinated and stays there if everyone
 })
 
 
-test_that("Every exposed moves to vaccinated and stays there if everyone
-          quickly gets vaccinated with a vaccine with no waning immunity
-          and if disease progression is stopped after E", {
+test_that("Vaccination of exposed individuals works", {
+  ## Tests that:
+  ## Every exposed moves to vaccinated and stays there if everyone
+  ## quickly gets vaccinated with a vaccine with no waning immunity
+  ## and if disease progression is stopped after E
             p <- carehomes_parameters(0, "england",
                                       rel_susceptibility = c(1, 0),
                                       vaccine_progression_rate = c(Inf, 0))
@@ -99,9 +105,11 @@ test_that("Every exposed moves to vaccinated and stays there if everyone
 })
 
 
-test_that("Every I_asympt moves to vaccinated and stays there if everyone
-          quickly gets vaccinated with a vaccine with no waning immunity
-          and if disease progression is stopped after I_asympt", {
+test_that("Vaccination of asymptomatic infectious individuals works", {
+  ## Tests that:
+  ## Every I_asympt moves to vaccinated and stays there if everyone
+  ## quickly gets vaccinated with a vaccine with no waning immunity
+  ## and if disease progression is stopped after I_asympt
             p <- carehomes_parameters(0, "england",
                                       rel_susceptibility = c(1, 0),
                                       vaccine_progression_rate = c(Inf, 0))
@@ -143,9 +151,11 @@ test_that("Every I_asympt moves to vaccinated and stays there if everyone
 })
 
 
-test_that("Every R moves to vaccinated and stays there if everyone
-          quickly gets vaccinated with a vaccine with no waning immunity
-          and if no natural waning of immunity", {
+test_that("Vaccination of recovered individuals works", {
+  ## Test that:
+  ## Every R moves to vaccinated and stays there if everyone
+  ## quickly gets vaccinated with a vaccine with no waning immunity
+  ## and if no natural waning of immunity
             p <- carehomes_parameters(0, "england",
                                       rel_susceptibility = c(1, 0),
                                       vaccine_progression_rate = c(Inf, 0))
@@ -184,10 +194,12 @@ test_that("Every R moves to vaccinated and stays there if everyone
 })
 
 
-test_that("Every exposed moves back from vaccinated to unvaccinated and stays
-          there if vaccine has fast waning immunity,
-          beta is zero, and if disease progression
-          is stopped after E", {
+test_that("Returning to unvaccinated stage works for exposed individuals", {
+  ## Tests that:
+  ## Every exposed moves back from vaccinated to unvaccinated and stays
+  ## there if vaccine has fast waning immunity,
+  ## beta is zero, and if disease progression
+  ## is stopped after E
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0),
@@ -237,10 +249,12 @@ test_that("Every exposed moves back from vaccinated to unvaccinated and stays
 })
 
 
-test_that("Every I_asympt moves back from vaccinated to unvaccinated and stays
-          there if vaccine has fast waning immunity,
-          beta is zero, and if disease progression
-          is stopped after I_asympt", {
+test_that("Returning to unvaccinated stage works for I_asympt individuals", {
+  ## Tests that:
+  ## Every I_asympt moves back from vaccinated to unvaccinated and stays
+  ## there if vaccine has fast waning immunity,
+  ## beta is zero, and if disease progression
+  ## is stopped after I_asympt
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0),
@@ -284,9 +298,11 @@ test_that("Every I_asympt moves back from vaccinated to unvaccinated and stays
 })
 
 
-test_that("Every R moves back from vaccinated to unvaccinated and stays
-          there if vaccine has fast waning immunity,
-          beta is zero, and there is no natural immunity", {
+test_that("Returning to unvaccinated stage works for recovered individuals", {
+  ## Tests that:
+  ## Every R moves back from vaccinated to unvaccinated and stays
+  ## there if vaccine has fast waning immunity,
+  ## beta is zero, and there is no natural immunity
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0),
@@ -330,8 +346,10 @@ test_that("Every R moves back from vaccinated to unvaccinated and stays
 })
 
 
-test_that("Every susceptible moves to waning immunity stage and stays there if
-          everyone quickly gets vaccinated and loses immunity", {
+test_that("Vaccine progression through 3 classes works for susceptibles", {
+  ## Tests that:
+  ## Every susceptible moves to waning immunity stage and stays there if
+  ## everyone quickly gets vaccinated and loses immunity
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0, 0),
@@ -347,8 +365,10 @@ test_that("Every susceptible moves to waning immunity stage and stays there if
             expect_true(all(y$S[, , 101] == y$S[, , 2]))
 })
 
-test_that("Every susceptible moves to last of 5 waning immunity stage and stays
-          there if everyone quickly gets vaccinated and loses immunity", {
+test_that("Vaccine progression through 12 classes works for susceptibles", {
+  ## Tests that:
+  ## Every susceptible moves to last of 12 waning immunity stage and stays
+  ## there if everyone quickly gets vaccinated and loses immunity
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, rep(0, 10), 0),
@@ -364,9 +384,11 @@ test_that("Every susceptible moves to last of 5 waning immunity stage and stays
             expect_true(all(y$S[, , 34] == y$S[, , 2]))
 })
 
-test_that("Every susceptible moves to the R compartment corresponding to their
-          vaccination class if there is a high beta and no vaccine
-          progression", {
+test_that("Clinical progression within a vaccination class works", {
+  ## Tests that:
+  ## Every susceptible moves to the R compartment corresponding to their
+  ## vaccination class if there is a high beta and no vaccine
+  ## progression
             p <- carehomes_parameters(0, "england",
                                       beta_value = 1e9,
                                       rel_susceptibility = c(1, 1, 1),
@@ -411,8 +433,10 @@ test_that("Every susceptible moves to the R compartment corresponding to their
             expect_true(all(s[-4, , 1] == r[-4, , 101]))
           })
 
-test_that("Every susceptible moves back to unvaccinated from vacinated if large
-          waning of immunity and no vaccination", {
+test_that("Returning to unvaccinated stage works for susceptibles", {
+  ## Tests that:
+  ## Every susceptible moves back to unvaccinated from vacinated if large
+  ## waning of immunity and no vaccination
             p <- carehomes_parameters(0, "england",
                                       beta_value = 0,
                                       rel_susceptibility = c(1, 0),
@@ -589,6 +613,9 @@ test_that(
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   set.seed(1)
+  ## TODO: set up a more specific set of tests to test the combined moves 
+  ## whereby in a single times step an individual progresses to next clinical
+  ## stage and progresses to the next vaccination stage
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5, 0.1),
                             vaccine_progression_rate = c(500, 100, 50))
