@@ -11,6 +11,9 @@ build_rel_param <- function(rel_param, name_param) {
   } else { # create matrix by repeating rel_param for each age group
     mat_rel_param <-
       matrix(rep(rel_param, each = n_groups), nrow = n_groups)
+    for (i in seq_len(nrow(mat_rel_param))) {
+      check_rel_param(mat_rel_param[i, ], name_param)
+    }
   }
   mat_rel_param
 }

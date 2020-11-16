@@ -143,12 +143,36 @@ test_that("check_rel_param allows sensible inputs", {
     check_rel_param(c(1, 0, 1), "rel_param"))
 })
 
-test_that("build_rel_param rejects objects of the wrong dimension", {
+
+test_that("build_rel_param rejects wrong dimension or out of bound inputs", {
   expect_error(
     build_rel_param(
     rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE), "rel_param"),
     "rel_param should have as many rows as age groups")
+  expect_error(
+    build_rel_param(10, "rel_param"),
+    "All values of rel_param must lie in [0, 1]", fixed = TRUE)
 })
+
+
+test_that("build_rel_param works as ecpected", {
+  expect_equal(
+    build_rel_param(1, "rel_param"),
+    matrix(1, nrow = carehomes_n_groups(), ncol = 1))
+  mat <- matrix(rep(c(1, 0.1), carehomes_n_groups()), byrow = TRUE,
+                nrow = carehomes_n_groups(), ncol = 2)
+  expect_equal(
+    build_rel_param(c(1, 0.1), "rel_param"),
+    mat)
+  expect_equal(
+    build_rel_param(mat, "rel_param"),
+    mat)
+  mat_rand <- cbind(rep(1, carehomes_n_groups()), runif(carehomes_n_groups()))
+  expect_equal(
+    build_rel_param(mat_rand, "rel_param"),
+    mat_rand)
+})
+
 
 test_that("build_vaccine_progression_rate rejects insensible inputs", {
   expect_error(
@@ -183,6 +207,7 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
     paste(msg1, msg2))
 })
 
+
 test_that("build_vaccine_progression_rate allows sensible inputs and works", {
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = 0,
@@ -202,6 +227,7 @@ test_that("build_vaccine_progression_rate allows sensible inputs and works", {
                                    n_vacc_classes = 3),
     matrix(0, 19, 3))
 })
+
 
 test_that("build_waning_rate works as expected", {
   expect_error(

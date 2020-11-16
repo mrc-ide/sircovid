@@ -33,11 +33,14 @@ test_that("carehomes vaccination parameters", {
   expect_equal(ncol(p$vaccine_progression_rate), 1)
 
   # test when more vaccinated categories than default
-  rel_susceptibility <- c(1, 0.75, 0.5, 0.75)
-  rel_p_sympt <- c(1, 1.5, 2.0, 1.5)
+  rel_susceptibility <- c(1, 0.2, 0.1, 0.4)
+  rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
+  rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(1, 1, 1, 1)
   p <- carehomes_parameters_vaccination(rel_susceptibility = rel_susceptibility,
                                         rel_p_sympt = rel_p_sympt,
+                                        rel_p_hosp_if_sympt = 
+                                          rel_p_hosp_if_sympt,
                                         vaccine_progression_rate =
                                           vaccine_progression_rate)
   expect_setequal(
@@ -48,6 +51,8 @@ test_that("carehomes vaccination parameters", {
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
   expect_equal(nrow(p$rel_p_sympt), n_groups)
   expect_equal(ncol(p$rel_p_sympt), length(rel_p_sympt))
+  expect_equal(nrow(p$rel_p_hosp_if_sympt), n_groups)
+  expect_equal(ncol(p$rel_p_hosp_if_sympt), length(rel_p_hosp_if_sympt))
   expect_equal(nrow(p$vaccine_progression_rate), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate),
                length(vaccine_progression_rate))
