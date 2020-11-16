@@ -213,6 +213,8 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_ICU_hosp = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
+        integer = FALSE), rel_p_hosp_if_sympt = list(has_default = FALSE,
+        default_value = NULL, rank = 2, min = -Inf, max = Inf,
         integer = FALSE), rel_p_sympt = list(has_default = FALSE,
         default_value = NULL, rank = 2, min = -Inf, max = Inf,
         integer = FALSE), rel_susceptibility = list(has_default = FALSE,

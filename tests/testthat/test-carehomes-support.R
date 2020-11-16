@@ -25,7 +25,8 @@ test_that("carehomes vaccination parameters", {
   p <- carehomes_parameters_vaccination()
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "rel_p_sympt", "vaccine_progression_rate"))
+    c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+      "vaccine_progression_rate"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
   expect_equal(nrow(p$vaccine_progression_rate), n_groups)
@@ -41,7 +42,8 @@ test_that("carehomes vaccination parameters", {
                                           vaccine_progression_rate)
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "rel_p_sympt", "vaccine_progression_rate"))
+    c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+      "vaccine_progression_rate"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
   expect_equal(nrow(p$rel_p_sympt), n_groups)
@@ -69,6 +71,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   vaccination <- carehomes_parameters_vaccination(p$rel_susceptibility,
                                                   p$rel_p_sympt,
+                                                  p$rel_p_hosp_if_sympt,
                                                   p$vaccine_progression_rate)
   expect_identical(p[names(vaccination)], vaccination)
 

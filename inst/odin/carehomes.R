@@ -343,7 +343,8 @@ aux_II_ILI[, 1:s_ILI, ] <- aux_II_ILI[i, j, k] - n_II_ILI[i, j, k]
 new_I_ILI[, , ] <- I_ILI[i, j, k] + aux_II_ILI[i, j, k]
 
 ## Work out the flow from I_ILI -> R, comm_D, hosp
-n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j], 1 - prob_hosp_ILI[i])
+n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j],
+                         1 - prob_hosp_ILI[i] * rel_p_hosp_if_sympt[i, j])
 n_ILI_to_comm_D[, ] <-
   rbinom(n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j], prob_death_comm[i])
 n_ILI_to_hosp[, ] <-
@@ -706,6 +707,8 @@ dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
 rel_p_sympt[, ] <- user()
 dim(rel_p_sympt) <- user() # use length as provided by the user
+rel_p_hosp_if_sympt[, ] <- user()
+dim(rel_p_hosp_if_sympt) <- user() # use length as provided by the user
 
 vaccine_progression_rate[, ] <- user()
 dim(vaccine_progression_rate) <- user()

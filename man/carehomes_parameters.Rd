@@ -24,6 +24,7 @@ carehomes_parameters(
   prop_noncovid_sympt = 0.01,
   rel_susceptibility = 1,
   rel_p_sympt = 1,
+  rel_p_hosp_if_sympt = 1,
   vaccine_progression_rate = NULL,
   waning_rate = 0,
   exp_noise = 1e+06
@@ -111,6 +112,19 @@ reductions in probability of symptomatic infection by age (rows of the
 matrix) and vaccination group (columns of the matrix); in that case,
 in each row of the matrix, the first value should be 1 (for the
 non-vaccinated group) and subsequent values be between 0 and 1}
+
+\item{rel_p_hosp_if_sympt}{A vector or matrix of values representing the
+relative probability of hospitalisation for symptomatic cases in different
+vaccination groups. If a vector, the first value should be 1 (for the
+non-vaccinated group) and subsequent values be between 0 and 1.
+In that case the relative reduction in probability of hospitalisation for
+symptomatic cases will be the same across all age groups within one
+vaccination category.
+Specifying a matrix instead of a vector allows different relative
+reductions in probability of hospitalisation for symptomatic cases by age
+(rows of the matrix) and vaccination group (columns of the matrix);
+in that case, in each row of the matrix, the first value should be 1
+(for the non-vaccinated group) and subsequent values be between 0 and 1}
 
 \item{vaccine_progression_rate}{A vector or matrix of values representing
 the rate of movement between different vaccination classes. If a vector,

@@ -31,6 +31,7 @@ real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, i
 // [[dust::param(psi_death_stepdown, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_hosp_ILI, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_ICU_hosp, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(rel_p_hosp_if_sympt, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_sympt, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_susceptibility, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_asympt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -858,6 +859,9 @@ public:
     int dim_R_stepdown_R_unconf_12;
     int dim_R_stepdown_R_unconf_2;
     int dim_R_stepdown_R_unconf_3;
+    int dim_rel_p_hosp_if_sympt;
+    int dim_rel_p_hosp_if_sympt_1;
+    int dim_rel_p_hosp_if_sympt_2;
     int dim_rel_p_sympt;
     int dim_rel_p_sympt_1;
     int dim_rel_p_sympt_2;
@@ -1135,6 +1139,7 @@ public:
     std::vector<real_t> psi_death_stepdown;
     std::vector<real_t> psi_hosp_ILI;
     std::vector<real_t> psi_ICU_hosp;
+    std::vector<real_t> rel_p_hosp_if_sympt;
     std::vector<real_t> rel_p_sympt;
     std::vector<real_t> rel_susceptibility;
     int s_asympt;
@@ -1761,7 +1766,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_ILI_to_R_1; ++i) {
       for (int j = 1; j <= internal.dim_n_ILI_to_R_2; ++j) {
-        internal.n_ILI_to_R[i - 1 + internal.dim_n_ILI_to_R_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_II_ILI[internal.dim_n_II_ILI_12 * (j - 1) + internal.dim_n_II_ILI_1 * (internal.s_ILI - 1) + i - 1]), 1 - internal.prob_hosp_ILI[i - 1]);
+        internal.n_ILI_to_R[i - 1 + internal.dim_n_ILI_to_R_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_II_ILI[internal.dim_n_II_ILI_12 * (j - 1) + internal.dim_n_II_ILI_1 * (internal.s_ILI - 1) + i - 1]), 1 - internal.prob_hosp_ILI[i - 1] * internal.rel_p_hosp_if_sympt[internal.dim_rel_p_hosp_if_sympt_1 * (j - 1) + i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_n_R_pre_1; ++i) {
@@ -3222,6 +3227,11 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.p_ICU_hosp_step = user_get_array_variable<real_t, 1>(user, "p_ICU_hosp_step", internal.p_ICU_hosp_step, dim_p_ICU_hosp_step, NA_REAL, NA_REAL);
   internal.dim_p_ICU_hosp_step = internal.p_ICU_hosp_step.size();
   internal.p_R_pre_1 = user_get_scalar<real_t>(user, "p_R_pre_1", internal.p_R_pre_1, NA_REAL, NA_REAL);
+  std::array <int, 2> dim_rel_p_hosp_if_sympt;
+  internal.rel_p_hosp_if_sympt = user_get_array_variable<real_t, 2>(user, "rel_p_hosp_if_sympt", internal.rel_p_hosp_if_sympt, dim_rel_p_hosp_if_sympt, NA_REAL, NA_REAL);
+  internal.dim_rel_p_hosp_if_sympt = internal.rel_p_hosp_if_sympt.size();
+  internal.dim_rel_p_hosp_if_sympt_1 = dim_rel_p_hosp_if_sympt[0];
+  internal.dim_rel_p_hosp_if_sympt_2 = dim_rel_p_hosp_if_sympt[1];
   std::array <int, 2> dim_rel_p_sympt;
   internal.rel_p_sympt = user_get_array_variable<real_t, 2>(user, "rel_p_sympt", internal.rel_p_sympt, dim_rel_p_sympt, NA_REAL, NA_REAL);
   internal.dim_rel_p_sympt = internal.rel_p_sympt.size();
