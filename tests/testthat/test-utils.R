@@ -108,45 +108,45 @@ test_that("can convert and check R's dates", {
 
 test_that("check_rel_param rejects out of bounds errors", {
   expect_error(
-    check_rel_param(NULL),
+    check_rel_param(NULL, "rel_param"),
     "At least one value required for rel_param")
   expect_error(
-    check_rel_param(-1),
+    check_rel_param(-1, "rel_param"),
     "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_param(1.1),
+    check_rel_param(1.1, "rel_param"),
     "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_param(c(1, 1.8)),
+    check_rel_param(c(1, 1.8), "rel_param"),
     "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_param(c(0.9, 0.8)),
+    check_rel_param(c(0.9, 0.8), "rel_param"),
     "First value of rel_param must be 1")
 })
 
 
 test_that("check_rel_param allows sensible inputs", {
   expect_silent(
-    check_rel_param(c(1, 0.5, 0.7)))
+    check_rel_param(c(1, 0.5, 0.7), "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 0.7, 0.5)))
+    check_rel_param(c(1, 0.7, 0.5), "rel_param"))
   expect_silent(
-    check_rel_param(1))
+    check_rel_param(1, "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 1)))
+    check_rel_param(c(1, 1), "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 0)))
+    check_rel_param(c(1, 0), "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 0, 1)))
+    check_rel_param(c(1, 0, 1), "rel_param"))
 })
 
 test_that("build_rel_param rejects objects of the wrong dimension", {
   expect_error(
     build_rel_param(
-    rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE)),
+    rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE), "rel_param"),
     "rel_param should have as many rows as age groups")
 })
 

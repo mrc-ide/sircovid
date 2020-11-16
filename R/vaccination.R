@@ -1,11 +1,11 @@
-build_rel_param <- function(rel_param, name_param = "rel_param") {
+build_rel_param <- function(rel_param, name_param) {
   n_groups <- carehomes_n_groups()
   if (is.matrix(rel_param)) {
     if (nrow(rel_param) != n_groups) {
       stop(paste(name_param, "should have as many rows as age groups"))
     }
     for (i in seq_len(nrow(rel_param))) {
-      check_rel_param(rel_param[i, ])
+      check_rel_param(rel_param[i, ], name_param)
     }
     mat_rel_param <- rel_param
   } else { # create matrix by repeating rel_param for each age group
@@ -16,7 +16,7 @@ build_rel_param <- function(rel_param, name_param = "rel_param") {
 }
 
 
-check_rel_param <- function(rel_param, name_param = "rel_param") {
+check_rel_param <- function(rel_param, name_param) {
   if (length(rel_param) == 0) {
     stop(paste("At least one value required for", name_param))
   }
@@ -27,6 +27,7 @@ check_rel_param <- function(rel_param, name_param = "rel_param") {
     stop(paste("First value of", name_param, "must be 1"))
   }
 }
+
 
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            n_vacc_classes) {
