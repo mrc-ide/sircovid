@@ -255,9 +255,11 @@ initial(cum_infections) <- 0
 update(cum_infections) <- cum_infections + sum(n_S_progress)
 
 ## Computes the number of asymptomatic
-n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], p_asympt[i])
+n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], 
+                          1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
 n_EI_asympt_next_vacc_class[, ] <-
-  rbinom(n_EE_next_vacc_class[i, s_E, j], p_asympt[i])
+  rbinom(n_EE_next_vacc_class[i, s_E, j], 
+         1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
 
 ## Computes the number of mild cases - p_sympt_ILI gives the
 ## proportion of febrile/ILI cases among the symptomatics
@@ -698,10 +700,12 @@ initial(cum_admit_by_age[]) <- 0
 
 ## User defined parameters - default in parentheses:
 
-## Parameters of the S classes
+## Vaccination parameters
 rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
+rel_p_sympt[, ] <- user()
+dim(rel_p_sympt) <- user() # use length as provided by the user
 
 vaccine_progression_rate[, ] <- user()
 dim(vaccine_progression_rate) <- user()

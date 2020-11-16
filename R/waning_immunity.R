@@ -1,6 +1,6 @@
 build_waning_rate <- function(waning_rate) {
   if (length(waning_rate) == 0) {
-    stop("At least one value required for 'rel_susceptibility'")
+    stop("At least one value required for 'waning_rate'")
   }
   if (any(waning_rate < 0)) {
     stop("'waning_rate' must have only non-negative values")

@@ -25,7 +25,7 @@ test_that("carehomes vaccination parameters", {
   p <- carehomes_parameters_vaccination()
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "vaccine_progression_rate"))
+    c("rel_susceptibility", "rel_p_sympt", "vaccine_progression_rate"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
   expect_equal(nrow(p$vaccine_progression_rate), n_groups)
@@ -33,15 +33,19 @@ test_that("carehomes vaccination parameters", {
 
   # test when more vaccinated categories than default
   rel_susceptibility <- c(1, 0.75, 0.5, 0.75)
+  rel_p_sympt <- c(1, 1.5, 2.0, 1.5)
   vaccine_progression_rate <- c(1, 1, 1, 1)
   p <- carehomes_parameters_vaccination(rel_susceptibility = rel_susceptibility,
+                                        rel_p_sympt = rel_p_sympt,
                                         vaccine_progression_rate =
                                           vaccine_progression_rate)
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "vaccine_progression_rate"))
+    c("rel_susceptibility", "rel_p_sympt", "vaccine_progression_rate"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
+  expect_equal(nrow(p$rel_p_sympt), n_groups)
+  expect_equal(ncol(p$rel_p_sympt), length(rel_p_sympt))
   expect_equal(nrow(p$vaccine_progression_rate), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate),
                length(vaccine_progression_rate))
@@ -64,6 +68,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(p$rel_susceptibility,
+                                                  p$rel_p_sympt,
                                                   p$vaccine_progression_rate)
   expect_identical(p[names(vaccination)], vaccination)
 

@@ -106,48 +106,48 @@ test_that("can convert and check R's dates", {
 })
 
 
-test_that("check_rel_susceptibility rejects out of bounds errors", {
+test_that("check_rel_param rejects out of bounds errors", {
   expect_error(
-    check_rel_susceptibility(NULL),
-    "At least one value required for 'rel_susceptibility'")
+    check_rel_param(NULL),
+    "At least one value required for rel_param")
   expect_error(
-    check_rel_susceptibility(-1),
-    "All values of 'rel_susceptibility' must lie in [0, 1]",
+    check_rel_param(-1),
+    "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_susceptibility(1.1),
-    "All values of 'rel_susceptibility' must lie in [0, 1]",
+    check_rel_param(1.1),
+    "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_susceptibility(c(1, 1.8)),
-    "All values of 'rel_susceptibility' must lie in [0, 1]",
+    check_rel_param(c(1, 1.8)),
+    "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_susceptibility(c(0.9, 0.8)),
-    "First value of 'rel_susceptibility' must be 1")
+    check_rel_param(c(0.9, 0.8)),
+    "First value of rel_param must be 1")
 })
 
 
-test_that("check_rel_susceptibility allows sensible inputs", {
+test_that("check_rel_param allows sensible inputs", {
   expect_silent(
-    check_rel_susceptibility(c(1, 0.5, 0.7)))
+    check_rel_param(c(1, 0.5, 0.7)))
   expect_silent(
-    check_rel_susceptibility(c(1, 0.7, 0.5)))
+    check_rel_param(c(1, 0.7, 0.5)))
   expect_silent(
-    check_rel_susceptibility(1))
+    check_rel_param(1))
   expect_silent(
-    check_rel_susceptibility(c(1, 1)))
+    check_rel_param(c(1, 1)))
   expect_silent(
-    check_rel_susceptibility(c(1, 0)))
+    check_rel_param(c(1, 0)))
   expect_silent(
-    check_rel_susceptibility(c(1, 0, 1)))
+    check_rel_param(c(1, 0, 1)))
 })
 
-test_that("build_rel_susceptibility rejects objects of the wrong dimension", {
+test_that("build_rel_param rejects objects of the wrong dimension", {
   expect_error(
-    build_rel_susceptibility(
-    rel_susceptibility = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE)),
-    "'rel_susceptibility' should have as many rows as age groups")
+    build_rel_param(
+    rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE)),
+    "rel_param should have as many rows as age groups")
 })
 
 test_that("build_vaccine_progression_rate rejects insensible inputs", {
@@ -206,7 +206,7 @@ test_that("build_vaccine_progression_rate allows sensible inputs and works", {
 test_that("build_waning_rate works as expected", {
   expect_error(
     build_waning_rate(NULL),
-    "At least one value required for 'rel_susceptibility'")
+    "At least one value required for 'waning_rate'")
   expect_error(
     build_waning_rate(-1),
     "'waning_rate' must have only non-negative values",

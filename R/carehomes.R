@@ -59,6 +59,19 @@ NULL
 ##'   the matrix, the first value should be 1 (for the non-vaccinated group)
 ##'   and subsequent values be between 0 and 1
 ##'
+##' @param rel_p_sympt A vector or matrix of values representing the
+##'   relative probability of symptomatic infection in different 
+##'   vaccination groups. If a vector, the first value should be 1 (for the 
+##'   non-vaccinated group) and subsequent values be between 0 and 1. 
+##'   In that case the relative reduction in probability of symptomatic 
+##'   infection will be the same across all age groups within one vaccination 
+##'   category. 
+##'   Specifying a matrix instead of a vector allows different relative 
+##'   reductions in probability of symptomatic infection by age (rows of the 
+##'   matrix) and vaccination group (columns of the matrix); in that case, 
+##'   in each row of the matrix, the first value should be 1 (for the 
+##'   non-vaccinated group) and subsequent values be between 0 and 1
+##'
 ##' @param vaccine_progression_rate A vector or matrix of values representing
 ##'   the rate of movement between different vaccination classes. If a vector,
 ##'   it should have as many values as vaccination classes, and the same rates
@@ -166,6 +179,7 @@ carehomes_parameters <- function(start_date, region,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
                                  rel_susceptibility = 1,
+                                 rel_p_sympt = 1,
                                  vaccine_progression_rate = NULL,
                                  waning_rate = 0,
                                  exp_noise = 1e6) {
@@ -254,6 +268,7 @@ carehomes_parameters <- function(start_date, region,
   ret$n_groups <- ret$n_age_groups + 2L
 
   vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
+                                                  rel_p_sympt,
                                                   vaccine_progression_rate)
 
   c(ret, severity, progression, vaccination, waning)
@@ -598,13 +613,18 @@ carehomes_initial <- function(info, n_particles, pars) {
 
 carehomes_parameters_vaccination <-
   function(rel_susceptibility = 1,
+           rel_p_sympt = 1,
            vaccine_progression_rate = NULL) {
-  rel_susceptibility <- build_rel_susceptibility(rel_susceptibility)
+  rel_susceptibility <- build_rel_param(rel_susceptibility, 
+                                        name_param = "rel_susceptibility")
+  rel_p_sympt <- build_rel_param(rel_p_sympt, 
+                                      name_param = "rel_p_sympt")
   n_vacc_classes <- ncol(rel_susceptibility)
   vaccine_progression_rate <- build_vaccine_progression_rate(
     vaccine_progression_rate, n_vacc_classes)
   list(
     rel_susceptibility = rel_susceptibility,
+    rel_p_sympt = rel_p_sympt,
     vaccine_progression_rate = vaccine_progression_rate
   )
 }

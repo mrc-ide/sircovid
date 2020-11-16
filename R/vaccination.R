@@ -1,30 +1,30 @@
-build_rel_susceptibility <- function(rel_susceptibility) {
+build_rel_param <- function(rel_param, name_param = "rel_param") {
   n_groups <- carehomes_n_groups()
-  if (is.matrix(rel_susceptibility)) {
-    if (nrow(rel_susceptibility) != n_groups) {
-      stop("'rel_susceptibility' should have as many rows as age groups")
+  if (is.matrix(rel_param)) {
+    if (nrow(rel_param) != n_groups) {
+      stop(paste(name_param, "should have as many rows as age groups"))
     }
-    for (i in seq_len(nrow(rel_susceptibility))) {
-      check_rel_susceptibility(rel_susceptibility[i, ])
+    for (i in seq_len(nrow(rel_param))) {
+      check_rel_param(rel_param[i, ])
     }
-    mat_rel_susceptibility <- rel_susceptibility
-  } else { # create matrix by repeating rel_susceptibility for each age group
-    mat_rel_susceptibility <-
-      matrix(rep(rel_susceptibility, each = n_groups), nrow = n_groups)
+    mat_rel_param <- rel_param
+  } else { # create matrix by repeating rel_param for each age group
+    mat_rel_param <-
+      matrix(rep(rel_param, each = n_groups), nrow = n_groups)
   }
-  mat_rel_susceptibility
+  mat_rel_param
 }
 
 
-check_rel_susceptibility <- function(rel_susceptibility) {
-  if (length(rel_susceptibility) == 0) {
-    stop("At least one value required for 'rel_susceptibility'")
+check_rel_param <- function(rel_param, name_param = "rel_param") {
+  if (length(rel_param) == 0) {
+    stop(paste("At least one value required for", name_param))
   }
-  if (any(rel_susceptibility < 0 | rel_susceptibility > 1)) {
-    stop("All values of 'rel_susceptibility' must lie in [0, 1]")
+  if (any(rel_param < 0 | rel_param > 1)) {
+    stop(paste("All values of", name_param, "must lie in [0, 1]"))
   }
-  if (rel_susceptibility[[1]] != 1) {
-    stop("First value of 'rel_susceptibility' must be 1")
+  if (rel_param[[1]] != 1) {
+    stop(paste("First value of", name_param, "must be 1"))
   }
 }
 
