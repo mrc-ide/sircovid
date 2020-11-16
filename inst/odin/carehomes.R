@@ -255,10 +255,10 @@ initial(cum_infections) <- 0
 update(cum_infections) <- cum_infections + sum(n_S_progress)
 
 ## Computes the number of asymptomatic
-n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], 
+n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j],
                           1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
 n_EI_asympt_next_vacc_class[, ] <-
-  rbinom(n_EE_next_vacc_class[i, s_E, j], 
+  rbinom(n_EE_next_vacc_class[i, s_E, j],
          1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
 
 ## Computes the number of mild cases - p_sympt_ILI gives the
