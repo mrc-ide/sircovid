@@ -706,9 +706,9 @@ rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
 rel_p_sympt[, ] <- user()
-dim(rel_p_sympt) <- user() # use length as provided by the user
+dim(rel_p_sympt) <- n_vacc_classes
 rel_p_hosp_if_sympt[, ] <- user()
-dim(rel_p_hosp_if_sympt) <- user() # use length as provided by the user
+dim(rel_p_hosp_if_sympt) <- n_vacc_classes
 
 vaccine_progression_rate[, ] <- user()
 dim(vaccine_progression_rate) <- user()
