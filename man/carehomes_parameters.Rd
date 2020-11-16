@@ -241,6 +241,8 @@ vaccine_progression_rate <- cbind(vaccination_rate,
 # generate model parameters
 p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
+                          rel_p_sympt = rel_p_sympt,
+                          rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
                           vaccine_progression_rate =
                           vaccine_progression_rate)
 
