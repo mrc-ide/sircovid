@@ -1,3 +1,7 @@
+# sircovid 0.7.0
+
+* Extended model structure for vaccination modelling
+
 # sircovid 0.6.10
 
 * Deaths in stepdown now incorporated in carehomes model
