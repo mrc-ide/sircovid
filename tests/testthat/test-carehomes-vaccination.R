@@ -3,7 +3,7 @@ context("carehomes (vaccination)")
 test_that("No infections with perfect vaccine", {
   ## i.e. if everyone is vaccinated with a vaccine preventing
   ## 100% of acquisition
-  
+
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 0),
@@ -613,7 +613,7 @@ test_that(
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   set.seed(1)
-  ## TODO: set up a more specific set of tests to test the combined moves 
+  ## TODO: set up a more specific set of tests to test the combined moves
   ## whereby in a single times step an individual progresses to next clinical
   ## stage and progresses to the next vaccination stage
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
