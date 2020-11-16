@@ -100,7 +100,8 @@ vaccination group (columns of the matrix); in that case, in each row of
 the matrix, the first value should be 1 (for the non-vaccinated group)
 and subsequent values be between 0 and 1}
 
-\item{rel_p_sympt}{A vector or matrix of values representing the
+\item{rel_p_sympt}{A vector or matrix of values of same dimension as
+rel_susceptibility representing the
 relative probability of symptomatic infection in different
 vaccination groups. If a vector, the first value should be 1 (for the
 non-vaccinated group) and subsequent values be between 0 and 1.
@@ -113,7 +114,8 @@ matrix) and vaccination group (columns of the matrix); in that case,
 in each row of the matrix, the first value should be 1 (for the
 non-vaccinated group) and subsequent values be between 0 and 1}
 
-\item{rel_p_hosp_if_sympt}{A vector or matrix of values representing the
+\item{rel_p_hosp_if_sympt}{A vector or matrix of values of same dimension as
+rel_susceptibility representing the
 relative probability of hospitalisation for symptomatic cases in different
 vaccination groups. If a vector, the first value should be 1 (for the
 non-vaccinated group) and subsequent values be between 0 and 1.
@@ -126,7 +128,8 @@ reductions in probability of hospitalisation for symptomatic cases by age
 in that case, in each row of the matrix, the first value should be 1
 (for the non-vaccinated group) and subsequent values be between 0 and 1}
 
-\item{vaccine_progression_rate}{A vector or matrix of values representing
+\item{vaccine_progression_rate}{A vector or matrix of values of same
+dimension as rel_susceptibility representing
 the rate of movement between different vaccination classes. If a vector,
 it should have as many values as vaccination classes, and the same rates
 of progression will be used for all age
@@ -170,6 +173,11 @@ carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 # effect of vaccination similar across all age groups
 rel_susceptibility <- c(1, 0.8, 0.5)
 
+# The vaccine also reduces the risk of symptoms
+rel_p_sympt <- c(1, 0.6, 0.3)
+# and the risk of hospitalisation for those with symptoms
+rel_p_hosp_if_sympt <- c(1, 0.95, 0.95)
+
 # Vaccination occurs at a constant rate of 0.03 per day,
 # (i.e. average time to vaccination is 33 days)
 # similar across all age groups.
@@ -183,11 +191,15 @@ vaccine_progression_rate <- c(0.03, 1/(2*7), 1/(26*7))
 # generate model parameters
 p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
+                          rel_p_sympt = rel_p_sympt,
+                          rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
                           vaccine_progression_rate =
                           vaccine_progression_rate)
 
 # vaccination parameters are automatically copied across all age groups
 p$rel_susceptibility
+p$rel_p_sympt
+p$rel_p_hosp_if_sympt
 p$vaccine_progression_rate
 
 ### same example as above BUT assume a different effect of vaccine in the
@@ -204,6 +216,13 @@ rel_susceptibility[1, ] <- rel_susceptibility_agegp1
 rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
 }
 rel_susceptibility
+
+# But vaccine has the same impact on probability of symptoms and
+# hospitalisation for the symptomatic across all age groups
+rel_p_sympt <- matrix(rep(rel_p_sympt, n_groups), nrow = n_groups,
+  byrow = TRUE)
+rel_p_hosp_if_sympt <-
+  matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
 
 # Vaccination occurs at a constant rate of 0.03 per day for all age groups
 # expect the first age groups which gets vaccinated at a rate of 0.06 a day
