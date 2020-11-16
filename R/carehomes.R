@@ -632,7 +632,7 @@ carehomes_parameters_vaccination <-
            rel_p_hosp_if_sympt = 1,
            vaccine_progression_rate = NULL) {
   if (length(as.vector(rel_susceptibility)) != length(as.vector(rel_p_sympt)) ||
-     length(as.vector(rel_susceptibility)) != 
+     length(as.vector(rel_susceptibility)) !=
      length(as.vector(rel_p_hosp_if_sympt))) {
     msg1 <- "rel_susceptibility, rel_p_sympt and rel_p_hosp_if_sympt"
     msg2 <- "should have the same dimension"

@@ -39,7 +39,7 @@ test_that("carehomes vaccination parameters", {
   vaccine_progression_rate <- c(1, 1, 1, 1)
   p <- carehomes_parameters_vaccination(rel_susceptibility = rel_susceptibility,
                                         rel_p_sympt = rel_p_sympt,
-                                        rel_p_hosp_if_sympt = 
+                                        rel_p_hosp_if_sympt =
                                           rel_p_hosp_if_sympt,
                                         vaccine_progression_rate =
                                           vaccine_progression_rate)

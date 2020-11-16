@@ -40,66 +40,66 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
 test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   ## i.e. if everyone is vaccinated with a vaccine preventing
   ## 100% of symptoms
-  
+
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", 
+  p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 0),
                             rel_p_hosp_if_sympt = c(1, 1),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  
+
   state <- carehomes_initial(info, 1, p)$state
-  
+
   index_S <- array(info$index$S, info$dim$S)
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
-  
+
   mod$set_state(state)
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  
+
   ## Noone moves into I_ILI or I_mild ever
   ## other than in the 4th age group where some infections are seeded
   ## in the unvaccinated group and because of waning immunity they may 
   ## eventually end up in I_ILI or I_mild upon reinfection
   expect_true(all(y$I_ILI[-4, , , ] == 0))
   expect_true(all(y$I_mild[-4, , , ] == 0))
-  
+
 })
 
 
-test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt_if_sympt", {
+test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   ## i.e. if everyone is vaccinated with a vaccine preventing
   ## 100% of hospitalisations
-  
+
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", 
+  p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 0),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  
+
   state <- carehomes_initial(info, 1, p)$state
-  
+
   index_S <- array(info$index$S, info$dim$S)
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
-  
+
   mod$set_state(state)
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  
+
   ## Noone moves into hospitalised compartments ever
   ## other than in the 4th age group where some infections are seeded
-  ## in the unvaccinated group and because of waning immunity they may 
+  ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in hospital upon reinfection
   expect_true(all(y$D_hosp[-4, ] == 0))
   expect_true(all(y$I_hosp_R_unconf[-4, , , ] == 0))
