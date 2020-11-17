@@ -740,3 +740,30 @@ test_that(
     expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
     expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
 })
+
+
+test_that(
+  "building the time varying vaccination progression rate works", {
+    n_1 <- carehomes_n_groups()
+    n_2 <- 3
+    vaccine_progression_rate_value <- array(NA, c(n_1, n_2, 2))
+    vaccine_progression_rate_value[, , 1] <- cbind(rep(1, n_1), 
+                                                   rep(0.6, n_1), rep(0.1, n_1))
+    vaccine_progression_rate_value[, , 2] <- cbind(rep(1, n_1), 
+                                                   rep(0.2, n_1), rep(0.1, n_1))
+    expect_silent(build_time_varying_vaccine_progression_rate(
+      vaccine_progression_rate_date = c(0, 1),
+      vaccine_progression_rate_value, 
+      n_1, n_2))
+    res <- array(NA, c(n_1, n_2, 5))
+    res[, 1, ] <- 1
+    res[, 3, ] <- 0.1
+    for (k in 1:5) {
+      res[, 2, k] <- 0.6 - (k-1) * 0.1
+    }
+    expect_equal(build_time_varying_vaccine_progression_rate(
+      vaccine_progression_rate_date = c(0, 1),
+      vaccine_progression_rate_value, 
+      n_1, n_2),
+      res)
+  })

@@ -29,7 +29,52 @@ check_rel_param <- function(rel_param, name_param) {
 }
 
 
-build_vaccine_progression_rate <- function(vaccine_progression_rate,
+build_time_varying_vaccine_progression_rate <- function(
+  vaccine_progression_rate_date,
+  vaccine_progression_rate_value, n_groups, n_vacc_classes) {
+  
+  ## assumes vaccine_progression_rate_value is an array with dimensions
+  ## n_groups, n_vacc_classes, length(vaccine_progression_rate_date)
+  ## this means we need to have called build_vaccine_progression_rate before
+  
+  if (is.null(vaccine_progression_rate_value))
+  {
+    if (!is.null(vaccine_progression_rate_date) && length(vaccine_progression_rate_date) > 1) {
+      msg1 <- "if 'vaccine_progression_rate_value' is NULL"
+      msg2 <- "vaccine_progression_rate_date should contain at most one date"
+      stop(paste(msg1, msg2))
+    }
+    vaccine_progression_rate_value <- array(0, c(n_groups, n_vacc_classes, 1))
+  }
+  
+  dt <- 0.25
+  i <- 1
+  j <- 1
+  # to get the correct dimension for the output
+  tmp <- sircovid_parameters_time_varying(
+    vaccine_progression_rate_date,
+    vaccine_progression_rate_value[i, j, ] %||% 0, dt)
+  
+  vaccine_progression_rate_step <- 
+    array(NA, c(dim(vaccine_progression_rate_value)[1], 
+                dim(vaccine_progression_rate_value)[2], 
+                length(tmp)))
+  
+  for (i in seq_len(dim(vaccine_progression_rate_value)[1])) {
+    for (j in seq_len(dim(vaccine_progression_rate_value)[2])) {
+      value <- sapply(seq_len(dim(vaccine_progression_rate_value)[3]),
+                      function(k) vaccine_progression_rate_value[i, j, k])
+      vaccine_progression_rate_step[i, j, ] <- 
+        sircovid_parameters_time_varying(vaccine_progression_rate_date, 
+                                         value %||% 0, dt)
+    }
+  }
+  
+  vaccine_progression_rate_step
+}
+  
+
+build_vaccine_progression_rate <- function(vaccine_progression_rate, 
                                            n_vacc_classes) {
   n_groups <- carehomes_n_groups()
   # if NULL, set vaccine_progression_rate to 0

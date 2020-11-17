@@ -215,7 +215,8 @@ carehomes_parameters <- function(start_date, region,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
-                                 vaccine_progression_rate = NULL,
+                                 vaccine_progression_rate_date = NULL,
+                                 vaccine_progression_rate_value = NULL,
                                  waning_rate = 0,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
@@ -302,11 +303,13 @@ carehomes_parameters <- function(start_date, region,
 
   ret$n_groups <- ret$n_age_groups + 2L
 
-  vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
-                                                  rel_p_sympt,
-                                                  rel_p_hosp_if_sympt,
-                                                  vaccine_progression_rate)
-
+  vaccination <- 
+    carehomes_parameters_vaccination(rel_susceptibility,
+                                     rel_p_sympt,
+                                     rel_p_hosp_if_sympt,
+                                     vaccine_progression_rate_date,
+                                     vaccine_progression_rate_value)
+  
   c(ret, severity, progression, vaccination, waning)
 
 }
@@ -647,30 +650,35 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
-                                             rel_p_sympt = 1,
-                                             rel_p_hosp_if_sympt = 1,
-                                             vaccine_progression_rate = NULL) {
+carehomes_parameters_vaccination <- function(
+  rel_susceptibility = 1, rel_p_sympt = 1, rel_p_hosp_if_sympt = 1,
+  vaccine_progression_rate_date = NULL, vaccine_progression_rate_value = NULL) {
+
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
   }
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
                      rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
-
+  
   n <- vnapply(rel_params, calc_n_vacc_classes)
-
+  
   if (any(n > 1) && length(unique(n[n > 1])) != 1) {
     msg1 <- paste(names(rel_params), collapse = ", ")
     msg2 <- "should have the same dimension"
     stop(paste(msg1, msg2))
   }
-
+  
   ret <- Map(function(value, name) build_rel_param(value, max(n), name),
              rel_params, names(rel_params))
 
-  ret$vaccine_progression_rate <- build_vaccine_progression_rate(
-    vaccine_progression_rate, max(n))
+  ## TODO: add something calling build_vaccine_progression_rate to make sure 
+  ## vaccine_progression_rate_value has the correct format
+  
+  ret$vaccine_progression_rate_step <-
+    build_time_varying_vaccine_progression_rate(
+      vaccine_progression_rate_date, vaccine_progression_rate_value,
+      nrow(ret$rel_susceptibility), max(n))
   ret
 }
 

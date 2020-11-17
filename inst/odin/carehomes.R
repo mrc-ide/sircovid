@@ -706,12 +706,26 @@ rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
 rel_p_sympt[, ] <- user()
-dim(rel_p_sympt) <- n_vacc_classes
+dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
 rel_p_hosp_if_sympt[, ] <- user()
-dim(rel_p_hosp_if_sympt) <- n_vacc_classes
+dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
 
-vaccine_progression_rate[, ] <- user()
-dim(vaccine_progression_rate) <- user()
+dim(vaccine_progression_rate) <- c(n_groups, n_vacc_classes)
+
+vaccine_progression_rate_step[, , ] <- user()
+dim(vaccine_progression_rate_step) <- user()
+
+vaccine_progression_rate[, ] <-
+  if (step >= dim(vaccine_progression_rate_step, 3))
+  vaccine_progression_rate_step[i, j,
+                                dim(vaccine_progression_rate_step, 3)] else
+                                  vaccine_progression_rate_step[i, j, step + 1]
+
+## Useful for debugging
+initial(vaccine_progression_rate_out[, ]) <-
+  vaccine_progression_rate_step[i, j, 1]
+update(vaccine_progression_rate_out[, ]) <- vaccine_progression_rate[i, j]
+dim(vaccine_progression_rate_out) <- c(n_groups, n_vacc_classes)
 
 ## Parameters of the E classes
 s_E <- user()

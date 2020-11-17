@@ -74,6 +74,11 @@ sircovid_parameters_shared <- function(start_date, region,
 ##' plot(t, beta, type = "o", cex = 0.25)
 ##' points(date, value, pch = 19, col = "red")
 sircovid_parameters_beta <- function(date, value, dt) {
+  sircovid_parameters_time_varying(date, value, dt, "beta")
+}
+
+
+sircovid_parameters_time_varying <- function(date, value, dt, name) {
   if (is.null(date)) {
     if (length(value) != 1L) {
       stop("As 'date' is NULL, expected single value")
@@ -84,7 +89,9 @@ sircovid_parameters_beta <- function(date, value, dt) {
     stop("'date' and 'value' must have the same length")
   }
   if (length(date) < 2) {
-    stop("Need at least two dates and betas for a varying beta")
+    msg <- 
+      paste0("Need at least two dates and ", name, "s for a varying ", name)
+    stop(msg)
   }
   assert_sircovid_date(date)
   assert_increasing(date)
