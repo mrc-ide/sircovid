@@ -742,8 +742,7 @@ test_that(
 })
 
 
-test_that(
-  "building the time varying vaccination progression rate works", {
+test_that("building the time varying vaccination progression rate works", {
     n_1 <- carehomes_n_groups()
     n_2 <- 3
     vaccine_progression_rate_value <- array(NA, c(n_1, n_2, 2))
@@ -752,7 +751,7 @@ test_that(
     vaccine_progression_rate_value[, , 2] <- cbind(rep(1, n_1), 
                                                    rep(0.2, n_1), rep(0.1, n_1))
     expect_silent(build_time_varying_vaccine_progression_rate(
-      vaccine_progression_rate_date = c(0, 1),
+      vaccine_progression_rate_date = c(0, 1), ## TOD: use c(20, 50 instead)
       vaccine_progression_rate_value, 
       n_1, n_2))
     res <- array(NA, c(n_1, n_2, 5))
@@ -767,3 +766,21 @@ test_that(
       n_1, n_2),
       res)
   })
+
+test_that("building non matrix time varying vaccination progression rate", {
+  dt <- 0.25
+  date <- c(20, 50)
+  value <- list(c(1, 0.6, 0.1), c(1, 0.3, 0.1))
+  
+  ## TODO can each element of the list have 1 value yet n_vacc_classes > 1
+  
+  res <- build_time_varying_vaccine_progression_rate(date, value, dt)
+  n_time_steps <- max(date) / dt + 1 
+  expect_equal(dim(res), n_time_steps, 19, 3)
+  
+  build_vaccine_progression_rate(vaccine_progression_rate_value[[1]])
+  
+  build_time_varying_vaccine_progression_rate
+  
+  }
+

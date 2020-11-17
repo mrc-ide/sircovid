@@ -715,6 +715,8 @@ dim(vaccine_progression_rate) <- c(n_groups, n_vacc_classes)
 vaccine_progression_rate_step[, , ] <- user()
 dim(vaccine_progression_rate_step) <- user()
 
+## TODO: use the 1st not 3rd index for time
+
 vaccine_progression_rate[, ] <-
   if (step >= dim(vaccine_progression_rate_step, 3))
   vaccine_progression_rate_step[i, j,
