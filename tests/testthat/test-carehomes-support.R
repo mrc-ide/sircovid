@@ -101,7 +101,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   extra <- setdiff(names(p),
                    c("m", "observation",
                      names(shared), names(progression), names(severity),
-                     names(vaccination), names(waning)))
+                     names(vaccination), names(waning),
+                     "model_pcr_and_serology_user"))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",

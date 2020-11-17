@@ -1023,7 +1023,7 @@ test_that("get_n_candidates_vaccine_progression works", {
   mod$set_index(integer(0))
 
   carehomes_dust_model_output <- dust::dust_iterate(mod, seq(0, 400, by = 4))
-  res <- get_n_candidates_vaccine_progression(carehomes_dust_model_output)
+  res <- get_n_candidates_vaccine_progression(carehomes_dust_model_output, mod)
 
   expect_equal(dim(res), c(19, 101))
   expect_true(all(
@@ -1048,7 +1048,7 @@ test_that("get_n_candidates_vaccine_progression works", {
   mod$set_index(integer(0))
 
   carehomes_dust_model_output <- dust::dust_iterate(mod, seq(0, 400, by = 4))
-  res <- get_n_candidates_vaccine_progression(carehomes_dust_model_output)
+  res <- get_n_candidates_vaccine_progression(carehomes_dust_model_output, mod)
 
   expect_equal(dim(res), c(19, 101))
   ## only the 10 initial seeded cases are available for vaccination

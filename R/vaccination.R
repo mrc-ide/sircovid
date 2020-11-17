@@ -97,7 +97,8 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
 }
 
 
-get_n_candidates_vaccine_progression <- function(carehomes_dust_model_output) {
+get_n_candidates_vaccine_progression <- function(carehomes_dust_model_output,
+                                                 mod) {
   y <- mod$transform_variables(drop(carehomes_dust_model_output))
   unvacc_stage <- 1
   S_candidates <- y$S[, unvacc_stage, ]
