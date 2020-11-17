@@ -1,20 +1,17 @@
-build_rel_param <- function(rel_param, name_param) {
+build_rel_param <- function(rel_param, n_vacc_classes, name_param) {
   n_groups <- carehomes_n_groups()
-  if (is.matrix(rel_param)) {
+  if (length(rel_param) == 1) {
+    mat_rel_param <- matrix(rel_param, n_groups, n_vacc_classes)
+  } else if (is.matrix(rel_param)) {
     if (nrow(rel_param) != n_groups) {
       stop(paste(name_param, "should have as many rows as age groups"))
-    }
-    for (i in seq_len(nrow(rel_param))) {
-      check_rel_param(rel_param[i, ], name_param)
     }
     mat_rel_param <- rel_param
   } else { # create matrix by repeating rel_param for each age group
     mat_rel_param <-
       matrix(rep(rel_param, each = n_groups), nrow = n_groups)
-    for (i in seq_len(nrow(mat_rel_param))) {
-      check_rel_param(mat_rel_param[i, ], name_param)
-    }
   }
+  check_rel_param(mat_rel_param, name_param)
   mat_rel_param
 }
 
@@ -26,7 +23,7 @@ check_rel_param <- function(rel_param, name_param) {
   if (any(rel_param < 0 | rel_param > 1)) {
     stop(paste("All values of", name_param, "must lie in [0, 1]"))
   }
-  if (rel_param[[1]] != 1) {
+  if (!all(rel_param[, 1] == 1)) {
     stop(paste("First value of", name_param, "must be 1"))
   }
 }

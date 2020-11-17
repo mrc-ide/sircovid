@@ -123,53 +123,54 @@ test_that("check_rel_param rejects out of bounds errors", {
     "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_param(c(0.9, 0.8), "rel_param"),
+    check_rel_param(t(c(0.9, 0.8)), "rel_param"),
     "First value of rel_param must be 1")
 })
 
 
 test_that("check_rel_param allows sensible inputs", {
   expect_silent(
-    check_rel_param(c(1, 0.5, 0.7), "rel_param"))
+    check_rel_param(t(c(1, 0.5, 0.7)), "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 0.7, 0.5), "rel_param"))
+    check_rel_param(t(c(1, 0.7, 0.5)), "rel_param"))
   expect_silent(
-    check_rel_param(1, "rel_param"))
+    check_rel_param(t(1), "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 1), "rel_param"))
+    check_rel_param(t(c(1, 1)), "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 0), "rel_param"))
+    check_rel_param(t(c(1, 0)), "rel_param"))
   expect_silent(
-    check_rel_param(c(1, 0, 1), "rel_param"))
+    check_rel_param(t(c(1, 0, 1)), "rel_param"))
 })
 
 
 test_that("build_rel_param rejects wrong dimension or out of bound inputs", {
   expect_error(
     build_rel_param(
-    rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE), "rel_param"),
+    rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE), 
+    n_vacc_classes = 2, "rel_param"),
     "rel_param should have as many rows as age groups")
   expect_error(
-    build_rel_param(10, "rel_param"),
+    build_rel_param(10, n_vacc_classes = 1, "rel_param"),
     "All values of rel_param must lie in [0, 1]", fixed = TRUE)
 })
 
 
 test_that("build_rel_param works as ecpected", {
   expect_equal(
-    build_rel_param(1, "rel_param"),
+    build_rel_param(1, n_vacc_classes = 1, "rel_param"),
     matrix(1, nrow = carehomes_n_groups(), ncol = 1))
   mat <- matrix(rep(c(1, 0.1), carehomes_n_groups()), byrow = TRUE,
                 nrow = carehomes_n_groups(), ncol = 2)
   expect_equal(
-    build_rel_param(c(1, 0.1), "rel_param"),
+    build_rel_param(c(1, 0.1), n_vacc_classes = 2, "rel_param"),
     mat)
   expect_equal(
-    build_rel_param(mat, "rel_param"),
+    build_rel_param(mat, n_vacc_classes = 2, "rel_param"),
     mat)
   mat_rand <- cbind(rep(1, carehomes_n_groups()), runif(carehomes_n_groups()))
   expect_equal(
-    build_rel_param(mat_rand, "rel_param"),
+    build_rel_param(mat_rand, n_vacc_classes = 2, "rel_param"),
     mat_rand)
 })
 

@@ -647,33 +647,31 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <-
-  function(rel_susceptibility = 1,
-           rel_p_sympt = 1,
-           rel_p_hosp_if_sympt = 1,
-           vaccine_progression_rate = NULL) {
-  if (length(as.vector(rel_susceptibility)) != length(as.vector(rel_p_sympt)) ||
-     length(as.vector(rel_susceptibility)) !=
-     length(as.vector(rel_p_hosp_if_sympt))) {
-    msg1 <- "rel_susceptibility, rel_p_sympt and rel_p_hosp_if_sympt"
+carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
+                                             rel_p_sympt = 1,
+                                             rel_p_hosp_if_sympt = 1,
+                                             vaccine_progression_rate = NULL) {
+  calc_n_vacc_classes <- function(x) {
+    if (is.matrix(x)) ncol(x) else length(x)
+  }
+  rel_params <- list(rel_susceptibility = rel_susceptibility,
+                     rel_p_sympt = rel_p_sympt,
+                     rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
+
+  n <- vnapply(rel_params, calc_n_vacc_classes)
+
+  if (any(n > 1) && length(unique(n[n > 1])) != 1) {
+    msg1 <- paste(names(rel_params), collapse = ", ")
     msg2 <- "should have the same dimension"
     stop(paste(msg1, msg2))
   }
-  rel_susceptibility <- build_rel_param(rel_susceptibility,
-                                        name_param = "rel_susceptibility")
-  rel_p_sympt <- build_rel_param(rel_p_sympt,
-                                      name_param = "rel_p_sympt")
-  rel_p_hosp_if_sympt <- build_rel_param(rel_p_hosp_if_sympt,
-                                         name_param = "rel_p_hosp_if_sympt")
-  n_vacc_classes <- ncol(rel_susceptibility)
-  vaccine_progression_rate <- build_vaccine_progression_rate(
-    vaccine_progression_rate, n_vacc_classes)
-  list(
-    rel_susceptibility = rel_susceptibility,
-    rel_p_sympt = rel_p_sympt,
-    rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-    vaccine_progression_rate = vaccine_progression_rate
-  )
+
+  ret <- Map(function(value, name) build_rel_param(value, max(n), name),
+             rel_params, names(rel_params))
+
+  ret$vaccine_progression_rate <- build_vaccine_progression_rate(
+    vaccine_progression_rate, max(n))
+  ret
 }
 
 
