@@ -87,7 +87,12 @@ NULL
 ##'   in that case, in each row of the matrix, the first value should be 1
 ##'   (for the non-vaccinated group) and subsequent values be between 0 and 1
 ##'
-##' @param vaccine_progression_rate A vector or matrix of values of same
+##' @param vaccine_progression_rate_date A vector of dates for changes in
+##' vaccine progression rate, or NULL if a single value is used for all times.
+##' vaccine progression rate is assumed piecewise constant between these dates.
+##'
+##' @param vaccine_progression_rate_value If vaccine_progression_rate_date is 
+##' NULL, a vector or matrix of values of same
 ##'   dimension as rel_susceptibility representing
 ##'   the rate of movement between different vaccination classes. If a vector,
 ##'   it should have as many values as vaccination classes, and the same rates
@@ -97,6 +102,11 @@ NULL
 ##'   vacination class); if a matrix, the element on row i and column j is the
 ##'   rate of progression from the jth vaccination class to the (j+1)th for age
 ##'   group i.
+##'   If vaccine_progression_rate_date is not NULL, a list of objects as 
+##'   described above (vector or matrices). The length of this list should 
+##'   match the length of vaccine_progression_rate_date, and the k^th element
+##'   in the list will be used as the vaccine progression rate between dates
+##'   vaccine_progression_rate_date[k] and vaccine_progression_rate_date[k + 1].
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -144,14 +154,14 @@ NULL
 ##'                           rel_susceptibility = rel_susceptibility,
 ##'                           rel_p_sympt = rel_p_sympt,
 ##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-##'                           vaccine_progression_rate =
+##'                           vaccine_progression_rate_value =
 ##'                           vaccine_progression_rate)
 ##'
 ##' # vaccination parameters are automatically copied across all age groups
 ##' p$rel_susceptibility
 ##' p$rel_p_sympt
 ##' p$rel_p_hosp_if_sympt
-##' p$vaccine_progression_rate
+##' p$vaccine_progression_rate_step
 ##'
 ##' ### same example as above BUT assume a different effect of vaccine in the
 ##' ### first age group
@@ -194,9 +204,23 @@ NULL
 ##'                           rel_susceptibility = rel_susceptibility,
 ##'                           rel_p_sympt = rel_p_sympt,
 ##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-##'                           vaccine_progression_rate =
+##'                           vaccine_progression_rate_value =
 ##'                           vaccine_progression_rate)
-##'
+##'                           
+##' # double the vaccination rate after 2 weeks
+##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
+##'                           rel_susceptibility = rel_susceptibility,
+##'                           rel_p_sympt = rel_p_sympt,
+##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+##'                           vaccine_progression_rate_date = c(0, 14),
+##'                           vaccine_progression_rate_value =
+##'                           list(vaccine_progression_rate,
+##'                           vaccine_progression_rate * 2))
+##' # initial vaccination rate
+##' p$vaccine_progression_rate_step[1, , ]
+##' # final vaccination rate
+##' p$vaccine_progression_rate_step[57, , ]
+##' 
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
