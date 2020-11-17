@@ -28,6 +28,7 @@ carehomes_parameters(
   vaccine_progression_rate_date = NULL,
   vaccine_progression_rate_value = NULL,
   waning_rate = 0,
+  model_pcr_and_serology_user = 1,
   exp_noise = 1e+06
 )
 }
@@ -154,6 +155,10 @@ k+1^th dates indicated in vaccine_progression_rate_date.}
 rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
 have one value per age group.}
+
+\item{model_pcr_and_serology_user}{A value of 1 or 0 so switch on or off the
+flows out of PCR_neg and R_neg and the corresponding cap on the number of
+individuals leaving the R compartments}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

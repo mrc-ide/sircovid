@@ -112,6 +112,10 @@ NULL
 ##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
+##'   
+##' @param model_pcr_and_serology_user A value of 1 or 0 so switch on or off the
+##'   flows out of PCR_neg and R_neg and the corresponding cap on the number of
+##'   individuals leaving the R compartments
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
