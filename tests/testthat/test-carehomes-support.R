@@ -477,3 +477,34 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
 test_that("the carehomes sircovid model has 19 groups", {
   expect_equal(carehomes_n_groups(), 19)
 })
+
+
+test_that("model_pcr_and_serology_user switch works", {
+  set.seed(1)
+  p <- carehomes_parameters(0, "england",
+                            rel_susceptibility = c(1, 0),
+                            vaccine_progression_rate_value = c(0, 0),
+                            waning_rate = 1 / 20,
+                            model_pcr_and_serology_user = 0)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  y <- mod$transform_variables(drop(
+    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+
+  ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
+  for (i in seq_len(19)) {
+    expect_true(all(diff(y$R_neg[i, 1, ]) >= 0))
+    expect_true(all(diff(y$R_neg[i, 2, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 1, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 2, ]) >= 0))
+  }
+
+  ## TO DO: ideas for other tests?
+
+})

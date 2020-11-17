@@ -1057,5 +1057,3 @@ test_that("get_n_candidates_vaccine_progression works", {
   expect_true(all(res[4, ] == 10))
 
 })
-
-

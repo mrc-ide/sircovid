@@ -3,6 +3,11 @@
 ## j for the progression (not exponential latent and infectious period)
 ## k for the infectivity group (for I) or vacc. group (for S)
 
+## Parameter to turn on or off the serology flows
+
+model_pcr_and_serology_user <- user(1)
+model_pcr_and_serology <- if (model_pcr_and_serology_user == 1) 1 else 0
+
 ## Number of classes (age & vaccination)
 
 ## Number of "groups", being the age classes, Carehome workers and
@@ -47,10 +52,12 @@ update(R_stepdown_D_unconf[, , ]) <- new_R_stepdown_D_unconf[i, j, k]
 update(R_stepdown_D_conf[, , ]) <- new_R_stepdown_D_conf[i, j, k]
 update(R_pre[, , ]) <- new_R_pre[i, j, k]
 update(R_pos[, , ]) <- new_R_pos[i, j, k]
-update(R_neg[, 1]) <- new_R_neg[i, 1] - n_R_progress[i, 1] +
-  n_R_next_vacc_class[i, n_vacc_classes] - n_R_next_vacc_class[i, 1]
-update(R_neg[, 2:n_vacc_classes]) <- new_R_neg[i, j] - n_R_progress[i, j] +
-  n_R_next_vacc_class[i, j - 1] - n_R_next_vacc_class[i, j]
+update(R_neg[, 1]) <- new_R_neg[i, 1] +
+  model_pcr_and_serology * (n_R_next_vacc_class[i, n_vacc_classes] -
+                      n_R_progress[i, 1] - n_R_next_vacc_class[i, 1])
+update(R_neg[, 2:n_vacc_classes]) <- new_R_neg[i, j] +
+  model_pcr_and_serology * (n_R_next_vacc_class[i, j - 1] -
+                      n_R_progress[i, j] - n_R_next_vacc_class[i, j])
 update(R[, 1]) <- R[i, 1] +
   delta_R[i, 1] - n_R_progress[i, 1] +
   n_R_next_vacc_class[i, n_vacc_classes] - n_R_next_vacc_class[i, 1]
@@ -62,11 +69,13 @@ update(D_comm[]) <- new_D_comm[i]
 update(PCR_pre[, , ]) <- new_PCR_pre[i, j, k]
 update(PCR_pos[, , ]) <- new_PCR_pos[i, j, k]
 update(PCR_neg[, 1]) <- PCR_neg[i, 1] +
-  n_PCR_pos[i, s_PCR_pos, 1] - n_R_progress[i, 1] +
-  n_R_next_vacc_class[i, n_vacc_classes] - n_R_next_vacc_class[i, 1]
+  n_PCR_pos[i, s_PCR_pos, 1] +
+  model_pcr_and_serology * (n_R_next_vacc_class[i, n_vacc_classes] -
+                              n_R_progress[i, 1] - n_R_next_vacc_class[i, 1])
 update(PCR_neg[, 2:n_vacc_classes]) <- PCR_neg[i, j] +
-  n_PCR_pos[i, s_PCR_pos, j] - n_R_progress[i, j] +
-  n_R_next_vacc_class[i, j - 1] - n_R_next_vacc_class[i, j]
+  n_PCR_pos[i, s_PCR_pos, j] +
+  model_pcr_and_serology * (n_R_next_vacc_class[i, j - 1] -
+                              n_R_progress[i, j] - n_R_next_vacc_class[i, j])
 update(cum_admit_conf) <-
   cum_admit_conf +
   sum(n_ILI_to_hosp_D_conf) +
@@ -206,7 +215,11 @@ n_I_asympt_next_vacc_class[, , ] <- rbinom(
 
 n_R_progress_tmp[, ] <- rbinom(R[i, j], p_RS[i])
 ## cap on people who can move out of R based on numbers in R_neg and PCR_neg
-n_R_progress[, ] <- min(n_R_progress_tmp[i, j], R_neg[i, j], PCR_neg[i, j])
+n_R_progress_capped[, ] <-
+  min(n_R_progress_tmp[i, j], R_neg[i, j], PCR_neg[i, j])
+## use cap or not depending on model_pcr_and_serology value
+n_R_progress[, ] <- if (model_pcr_and_serology == 1)
+  n_R_progress_capped[i, j] else n_R_progress_tmp[i, j]
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from R[j] to S[j+1]
 ## (j vaccination class)
@@ -219,8 +232,10 @@ n_RS[, ] <- n_R_progress[i, j] - n_RS_next_vacc_class[i, j]
 ## vaccine progression
 n_R_next_vacc_class_tmp[, ] <- rbinom(
   R[i, j] - n_R_progress[i, j], p_R_next_vacc_class[i, j])
-n_R_next_vacc_class[, ] <- min(n_R_next_vacc_class_tmp[i, j],
+n_R_next_vacc_class_capped[, ] <- min(n_R_next_vacc_class_tmp[i, j],
   R_neg[i, j] - n_R_progress[i, j], PCR_neg[i, j] - n_R_progress[i, j])
+n_R_next_vacc_class[, ] <- if (model_pcr_and_serology == 1)
+  n_R_next_vacc_class_capped[i, j] else n_R_next_vacc_class_tmp[i, j]
 
 #### other transitions ####
 
@@ -1047,8 +1062,10 @@ dim(n_II_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes)
 
 dim(p_R_next_vacc_class) <- c(n_groups, n_vacc_classes)
 dim(n_R_next_vacc_class) <- c(n_groups, n_vacc_classes)
+dim(n_R_next_vacc_class_capped) <- c(n_groups, n_vacc_classes)
 dim(n_R_next_vacc_class_tmp) <- c(n_groups, n_vacc_classes)
 dim(n_R_progress) <- c(n_groups, n_vacc_classes)
+dim(n_R_progress_capped) <- c(n_groups, n_vacc_classes)
 dim(n_R_progress_tmp) <- c(n_groups, n_vacc_classes)
 dim(n_RS_next_vacc_class) <- c(n_groups, n_vacc_classes)
 

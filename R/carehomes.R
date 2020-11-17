@@ -242,6 +242,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate_date = NULL,
                                  vaccine_progression_rate_value = NULL,
                                  waning_rate = 0,
+                                 model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -335,7 +336,11 @@ carehomes_parameters <- function(start_date, region,
     vaccine_progression_rate_value,
     ret$dt)
 
-  c(ret, severity, progression, vaccination, waning)
+  model_pcr_and_serology_user <-
+    list(model_pcr_and_serology_user = model_pcr_and_serology_user)
+
+  c(ret, severity, progression, vaccination, waning,
+    model_pcr_and_serology_user)
 }
 
 
