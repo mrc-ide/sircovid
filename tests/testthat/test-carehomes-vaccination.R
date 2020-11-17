@@ -960,3 +960,48 @@ test_that("build_waning_rate works as expected", {
     build_waning_rate(rep(0.5, 19)),
     rep(0.5, 19))
 })
+
+
+test_that("Vaccination stops when vaccine_progression_rate changes to zero", {
+  date <- c(0, 10)
+  value <-  list(c(1, 0.1), c(0, 0))
+  set.seed(1)
+  p <- carehomes_parameters(0, "england", 
+                            beta_value = 0,
+                            rel_susceptibility = c(1, 0.5),
+                            rel_p_sympt = c(1, 0.9),
+                            rel_p_hosp_if_sympt = c(1, 0.9),
+                            vaccine_progression_rate_date = date,
+                            vaccine_progression_rate_value = value)
+                             
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(drop(
+    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  
+  # y$vaccine_progression_rate_out[, , 1] is zero 
+  # y$vaccine_progression_rate_out[, , t] should be value[[1]] until date[2] + 1
+  expect_equal(y$vaccine_progression_rate_out[, , 2],
+  build_vaccine_progression_rate(value[[1]], 2))
+  expect_equal(y$vaccine_progression_rate_out[, , date[2] + 1],
+               build_vaccine_progression_rate(value[[1]], 2))
+  # y$vaccine_progression_rate_out[, , t] should be value[[2]] after date[2] + 1
+  expect_equal(y$vaccine_progression_rate_out[, , date[2] + 2],
+               build_vaccine_progression_rate(value[[2]], 2))
+  expect_equal(y$vaccine_progression_rate_out[, , 101],
+               build_vaccine_progression_rate(value[[2]], 2))
+  
+  # some movement between vaccination classes before date[2] + 1 
+  expect_true(!all(y$S[, , 2] == y$S[, , 1]))
+  expect_true(!all(y$S[, , date[2] + 1] == y$S[, , date[2]]))
+  # and no movement thereafter
+  expect_true(all(y$S[, , date[2] + 3] == y$S[, , date[2] + 2]))
+  expect_true(all(y$S[, , 101] == y$S[, , date[2] + 2]))
+  
+  # noone ever infected because beta is zero
+  expect_true(all(y$E == 0) )
+  
+})
