@@ -506,9 +506,9 @@ test_that("setting a gamma to Inf results immediate progression", {
 
     info <- mod$info()
     state <- carehomes_initial(info, 1, p)$state
-    
+
     # add individuals into the compartment
-    if (hosp_compartment){
+    if (hosp_compartment) {
       name_conf <- paste0(compartment_name, "_conf")
       name_unconf <- paste0(compartment_name, "_unconf")
       index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
@@ -520,15 +520,15 @@ test_that("setting a gamma to Inf results immediate progression", {
                      info$dim[[compartment_name]])
       state[index] <- 50
     }
-    
+
     mod$set_state(state)
     mod$set_index(integer(0))
     y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-    if (hosp_compartment){
-      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]] 
+    if (hosp_compartment) {
+      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
     }
-    
+
     z <- y[[compartment_name]]
 
     expect_true(any(z > 0))
@@ -573,9 +573,9 @@ test_that("setting a gamma to 0 results in no progression", {
 
     info <- mod$info()
     state <- carehomes_initial(info, 1, p)$state
-    
+
     # add individuals into the compartment (only the first progression stage)
-    if (hosp_compartment){
+    if (hosp_compartment) {
       name_conf <- paste0(compartment_name, "_conf")
       name_unconf <- paste0(compartment_name, "_unconf")
       index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
@@ -596,15 +596,15 @@ test_that("setting a gamma to 0 results in no progression", {
         state[index[, 1]] <- 50
       }
     }
-    
+
     mod$set_state(state)
     mod$set_index(integer(0))
     y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
-    
-    if (hosp_compartment){
-      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]] 
+
+    if (hosp_compartment) {
+      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
     }
-    
+
     z <- y[[compartment_name]]
 
     expect_true(any(z > 0))
