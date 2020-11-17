@@ -1490,7 +1490,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_vaccine_progression_rate_1; ++i) {
       for (int j = 1; j <= internal.dim_vaccine_progression_rate_2; ++j) {
-        internal.vaccine_progression_rate[i - 1 + internal.dim_vaccine_progression_rate_1 * (j - 1)] = (step >= internal.dim_vaccine_progression_rate_step_3 ? internal.vaccine_progression_rate_step[internal.dim_vaccine_progression_rate_step_12 * (internal.dim_vaccine_progression_rate_step_3 - 1) + internal.dim_vaccine_progression_rate_step_1 * (j - 1) + i - 1] : internal.vaccine_progression_rate_step[internal.dim_vaccine_progression_rate_step_12 * (step + 1 - 1) + internal.dim_vaccine_progression_rate_step_1 * (j - 1) + i - 1]);
+        internal.vaccine_progression_rate[i - 1 + internal.dim_vaccine_progression_rate_1 * (j - 1)] = ((step >= internal.dim_vaccine_progression_rate_step_1 ? internal.vaccine_progression_rate_step[internal.dim_vaccine_progression_rate_step_12 * (j - 1) + internal.dim_vaccine_progression_rate_step_1 * (i - 1) + internal.dim_vaccine_progression_rate_step_1 - 1] : internal.vaccine_progression_rate_step[internal.dim_vaccine_progression_rate_step_12 * (j - 1) + internal.dim_vaccine_progression_rate_step_1 * (i - 1) + step + 1 - 1]));
       }
     }
     for (int i = 1; i <= internal.dim_aux_II_hosp_D_conf_1; ++i) {
@@ -4500,7 +4500,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   }
   for (int i = 1; i <= internal.dim_vaccine_progression_rate_out_1; ++i) {
     for (int j = 1; j <= internal.dim_vaccine_progression_rate_out_2; ++j) {
-      internal.initial_vaccine_progression_rate_out[i - 1 + internal.dim_vaccine_progression_rate_out_1 * (j - 1)] = internal.vaccine_progression_rate_step[internal.dim_vaccine_progression_rate_step_12 * 0 + internal.dim_vaccine_progression_rate_step_1 * (j - 1) + i - 1];
+      internal.initial_vaccine_progression_rate_out[i - 1 + internal.dim_vaccine_progression_rate_out_1 * (j - 1)] = internal.vaccine_progression_rate_step[internal.dim_vaccine_progression_rate_step_12 * (j - 1) + internal.dim_vaccine_progression_rate_step_1 * (i - 1) + 0];
     }
   }
   internal.offset_variable_E = 17 + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_S + internal.dim_R_neg + internal.dim_R + internal.dim_PCR_neg + internal.dim_vaccine_progression_rate_out;

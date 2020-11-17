@@ -74,34 +74,34 @@ sircovid_parameters_shared <- function(start_date, region,
 ##' plot(t, beta, type = "o", cex = 0.25)
 ##' points(date, value, pch = 19, col = "red")
 sircovid_parameters_beta <- function(date, value, dt) {
-  sircovid_parameters_time_varying(date, value, dt, "beta")
-}
-
-
-sircovid_parameters_time_varying <- function(date, value, dt, name) {
   if (is.null(date)) {
     if (length(value) != 1L) {
       stop("As 'date' is NULL, expected single value")
     }
     return(value)
   }
+  dat <- sircovid_parameters_time_varying(date, value, dt, "beta")
+  stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
+}
+
+
+sircovid_parameters_time_varying <- function(date, value, dt, name) {
   if (length(date) != length(value)) {
     stop("'date' and 'value' must have the same length")
   }
   if (length(date) < 2) {
-    msg <- 
-      paste0("Need at least two dates and ", name, "s for a varying ", name)
-    stop(msg)
+    stop(sprintf("Need at least two dates and values for a varying '%s'",
+                 name))
   }
   assert_sircovid_date(date)
   assert_increasing(date)
 
   if (date[[1]] != 0) {
     date <- c(0, date)
-    value <- c(value[[1]], value)
+    value <- c(value[1], value)
   }
 
-  stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
+  list(date = date, value = value)
 }
 
 

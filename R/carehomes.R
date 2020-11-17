@@ -303,15 +303,15 @@ carehomes_parameters <- function(start_date, region,
 
   ret$n_groups <- ret$n_age_groups + 2L
 
-  vaccination <- 
-    carehomes_parameters_vaccination(rel_susceptibility,
-                                     rel_p_sympt,
-                                     rel_p_hosp_if_sympt,
-                                     vaccine_progression_rate_date,
-                                     vaccine_progression_rate_value)
+  vaccination <- carehomes_parameters_vaccination(
+    rel_susceptibility,
+    rel_p_sympt,
+    rel_p_hosp_if_sympt,
+    vaccine_progression_rate_date,
+    vaccine_progression_rate_value,
+    ret$dt)
   
   c(ret, severity, progression, vaccination, waning)
-
 }
 
 
@@ -650,10 +650,12 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- function(
-  rel_susceptibility = 1, rel_p_sympt = 1, rel_p_hosp_if_sympt = 1,
-  vaccine_progression_rate_date = NULL, vaccine_progression_rate_value = NULL) {
-
+carehomes_parameters_vaccination <- function(rel_susceptibility,
+                                             rel_p_sympt,
+                                             rel_p_hosp_if_sympt,
+                                             vaccine_progression_rate_date,
+                                             vaccine_progression_rate_value,
+                                             dt) {
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
   }
@@ -672,18 +674,16 @@ carehomes_parameters_vaccination <- function(
   ret <- Map(function(value, name) build_rel_param(value, max(n), name),
              rel_params, names(rel_params))
 
-  ## TODO: add something calling build_vaccine_progression_rate to make sure 
-  ## vaccine_progression_rate_value has the correct format
-  
   ret$vaccine_progression_rate_step <-
     build_time_varying_vaccine_progression_rate(
-      vaccine_progression_rate_date, vaccine_progression_rate_value,
-      nrow(ret$rel_susceptibility), max(n))
+      vaccine_progression_rate_date, vaccine_progression_rate_value, dt,
+      max(n))
+
   ret
 }
 
 
-carehomes_parameters_waning <- function(waning_rate = 0) {
+carehomes_parameters_waning <- function(waning_rate) {
   waning_rate <- build_waning_rate(waning_rate)
   list(
     waning_rate = waning_rate

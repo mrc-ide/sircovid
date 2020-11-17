@@ -743,44 +743,73 @@ test_that(
 
 
 test_that("building the time varying vaccination progression rate works", {
-    n_1 <- carehomes_n_groups()
-    n_2 <- 3
-    vaccine_progression_rate_value <- array(NA, c(n_1, n_2, 2))
-    vaccine_progression_rate_value[, , 1] <- cbind(rep(1, n_1), 
-                                                   rep(0.6, n_1), rep(0.1, n_1))
-    vaccine_progression_rate_value[, , 2] <- cbind(rep(1, n_1), 
-                                                   rep(0.2, n_1), rep(0.1, n_1))
-    expect_silent(build_time_varying_vaccine_progression_rate(
-      vaccine_progression_rate_date = c(0, 1), ## TOD: use c(20, 50 instead)
-      vaccine_progression_rate_value, 
-      n_1, n_2))
-    res <- array(NA, c(n_1, n_2, 5))
-    res[, 1, ] <- 1
-    res[, 3, ] <- 0.1
-    for (k in 1:5) {
-      res[, 2, k] <- 0.6 - (k-1) * 0.1
-    }
-    expect_equal(build_time_varying_vaccine_progression_rate(
-      vaccine_progression_rate_date = c(0, 1),
-      vaccine_progression_rate_value, 
-      n_1, n_2),
-      res)
-  })
+  n1 <- carehomes_n_groups()
+  n2 <- 3
+  value <- list(cbind(rep(1, n1), runif(n1), runif(n1)),
+                cbind(rep(1, n1), runif(n1), runif(n1)))
+  date <- c(0, 10)
+  res <- build_time_varying_vaccine_progression_rate(date, value, 0.5, 3)
+  n <- 10 / 0.5 + 1
+  expect_equal(res[1, , ], value[[1]])
+  expect_equal(res[n - 1, , ], value[[1]])
+  expect_equal(res[n, , ], value[[2]])
+})
+
 
 test_that("building non matrix time varying vaccination progression rate", {
   dt <- 0.25
-  date <- c(20, 50)
+  date <- c(0, 50)
   value <- list(c(1, 0.6, 0.1), c(1, 0.3, 0.1))
   
-  ## TODO can each element of the list have 1 value yet n_vacc_classes > 1
-  
-  res <- build_time_varying_vaccine_progression_rate(date, value, dt)
-  n_time_steps <- max(date) / dt + 1 
-  expect_equal(dim(res), n_time_steps, 19, 3)
-  
-  build_vaccine_progression_rate(vaccine_progression_rate_value[[1]])
-  
-  build_time_varying_vaccine_progression_rate
-  
-  }
+  res <- build_time_varying_vaccine_progression_rate(date, value, dt, 3)
+  n_time_steps <- max(date) / dt + 1
+  expect_equal(dim(res), c(n_time_steps, 19, 3))
+  expect_equal(res[1, , ],
+               build_vaccine_progression_rate(value[[1]], 3))
+  expect_equal(res[n_time_steps - 1, , ],
+               build_vaccine_progression_rate(value[[1]], 3))
+  expect_equal(res[n_time_steps, , ],
+               build_vaccine_progression_rate(value[[2]], 3))
+})
 
+
+test_that("building non-time varying vaccine progression rate", {
+  dt <- 0.25
+  date <- NULL
+  value <- c(1, 0.6, 0.1)
+  res <- build_time_varying_vaccine_progression_rate(date, value, dt, 3)
+  expect_equal(
+    drop(res),
+    build_vaccine_progression_rate(value, 3))
+  expect_equal(dim(res), c(1, 19, 3))
+})
+
+
+test_that("building non-time varying matrix vaccine progression rate", {
+  dt <- 0.25
+  date <- NULL
+  n_groups <- carehomes_n_groups()
+  value <- cbind(1, runif(n_groups), runif(n_groups))
+  res <- build_time_varying_vaccine_progression_rate(date, value, dt, 3)
+  expect_equal(drop(res), value)
+  expect_equal(
+    drop(res),
+    build_vaccine_progression_rate(value, 3))
+  expect_equal(dim(res), c(1, 19, 3))
+})
+
+
+## TODO: check that matrices are preserved
+
+test_that("Can build a parmeters object with time-varying vaccination", {
+  date <- c(0, 50)
+  value <- list(c(1, 0.6, 0.1), c(1, 0.3, 0.1))
+  p <- carehomes_parameters(
+    0, "uk",
+    rel_susceptibility = c(1, 0.5, 0.7),
+    vaccine_progression_rate_date = date,
+    vaccine_progression_rate_value = value)
+  expect_equal(
+    p$vaccine_progression_rate_step,
+    build_time_varying_vaccine_progression_rate(date, value, 0.25, 3))
+})
