@@ -1004,3 +1004,71 @@ test_that("Vaccination stops when vaccine_progression_rate changes to zero", {
   expect_true(all(y$E == 0))
 
 })
+
+
+test_that("get_n_candidates_vaccine_progression works", {
+
+  ## when no infections and no vaccinations, everyone can be vaccinated
+  p <- carehomes_parameters(0, "england",
+                            beta_value = 0,
+                            rel_susceptibility = c(1, 0),
+                            vaccine_progression_rate_value = c(0, 0),
+                            waning_rate = 1 / 20)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  carehomes_dust_model_output <- dust::dust_iterate(mod, seq(0, 400, by = 4))
+  res <- get_n_candidates_vaccine_progression(carehomes_dust_model_output)
+
+  expect_equal(dim(res), c(19, 101))
+  expect_true(all(
+    res == mod$transform_variables(drop(carehomes_dust_model_output))$N_tot))
+
+  ## when no infections and everyone is vaccinated, noone can be vaccinated
+  p <- carehomes_parameters(0, "england",
+                            beta_value = 0,
+                            rel_susceptibility = c(1, 0),
+                            vaccine_progression_rate_value = c(0, 0),
+                            waning_rate = 1 / 20)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_S[, 2]] <- state[index_S[, 1]]
+  state[index_S[, 1]] <- 0
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  carehomes_dust_model_output <- dust::dust_iterate(mod, seq(0, 400, by = 4))
+  res <- get_n_candidates_vaccine_progression(carehomes_dust_model_output)
+
+  expect_equal(dim(res), c(19, 101))
+  ## only the 10 initial seeded cases are available for vaccination
+  expect_true(all(res[-4, ] == 0))
+  ## noone else
+  expect_true(all(res[4, ] == 10))
+
+})
+
+
+
+mod <- carehomes$new(p, 0, 1)
+info <- mod$info()
+
+state <- carehomes_initial(info, 1, p)$state
+
+index_S <- array(info$index$S, info$dim$S)
+state[index_S[, 2]] <- state[index_S[, 1]]
+state[index_S[, 1]] <- 0
+
+mod$set_state(state)
+mod$set_index(integer(0))
+s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
