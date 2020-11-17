@@ -1059,16 +1059,3 @@ test_that("get_n_candidates_vaccine_progression works", {
 })
 
 
-
-mod <- carehomes$new(p, 0, 1)
-info <- mod$info()
-
-state <- carehomes_initial(info, 1, p)$state
-
-index_S <- array(info$index$S, info$dim$S)
-state[index_S[, 2]] <- state[index_S[, 1]]
-state[index_S[, 1]] <- 0
-
-mod$set_state(state)
-mod$set_index(integer(0))
-s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
