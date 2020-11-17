@@ -120,7 +120,7 @@ test_that("Vaccination of susceptibles works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate_value = c(Inf, 0))
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -141,7 +141,7 @@ test_that("Vaccination of exposed individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate_value = c(Inf, 0))
 
   # stop disease progression after E
   p$gamma_E <- 0
@@ -194,7 +194,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate_value = c(Inf, 0))
 
   # stop disease progression after I_asympt
   p$gamma_asympt <- 0
@@ -242,7 +242,7 @@ test_that("Vaccination of recovered individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate_value = c(Inf, 0))
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -289,7 +289,7 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, Inf))
+                            vaccine_progression_rate_value = c(0, Inf))
 
   # stop disease progression after E
   p$gamma_E <- 0
@@ -346,7 +346,7 @@ test_that("Returning to unvaccinated stage works for I_asympt individuals", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, Inf))
+                            vaccine_progression_rate_value = c(0, Inf))
 
   # stop disease progression after I_asympt
   p$gamma_asympt <- 0
@@ -396,7 +396,7 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, Inf))
+                            vaccine_progression_rate_value = c(0, Inf))
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -445,7 +445,7 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
                             rel_susceptibility = c(1, 0, 0),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(Inf, Inf, 0))
+                            vaccine_progression_rate_value = c(Inf, Inf, 0))
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -466,7 +466,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
                             rel_susceptibility = c(1, rep(0, 10), 0),
                             rel_p_sympt = rep(1, 12),
                             rel_p_hosp_if_sympt = rep(1, 12),
-                            vaccine_progression_rate =
+                            vaccine_progression_rate_value =
                               c(Inf, rep(Inf, 10), 0))
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -488,7 +488,7 @@ test_that("Clinical progression within a vaccination class works", {
                             rel_susceptibility = c(1, 1, 1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate =
+                            vaccine_progression_rate_value =
                               c(0, 0, 0))
 
   # increase progression rates
@@ -538,7 +538,7 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, Inf))
+                            vaccine_progression_rate_value = c(0, Inf))
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -694,7 +694,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(1, 0.5, 0.01))
+                            vaccine_progression_rate_value = c(1, 0.5, 0.01))
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -724,7 +724,7 @@ test_that(
                               rel_susceptibility = c(1, 0.5, 0.1),
                               rel_p_sympt = c(1, 1, 1),
                               rel_p_hosp_if_sympt = c(1, 1, 1),
-                              vaccine_progression_rate = c(500, 100, 50))
+                              vaccine_progression_rate_value = c(500, 100, 50))
 
     mod <- carehomes$new(p, 0, 1)
     info <- mod$info()
@@ -760,7 +760,7 @@ test_that("building non matrix time varying vaccination progression rate", {
   dt <- 0.25
   date <- c(0, 50)
   value <- list(c(1, 0.6, 0.1), c(1, 0.3, 0.1))
-  
+
   res <- build_time_varying_vaccine_progression_rate(date, value, dt, 3)
   n_time_steps <- max(date) / dt + 1
   expect_equal(dim(res), c(n_time_steps, 19, 3))

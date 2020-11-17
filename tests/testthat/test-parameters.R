@@ -36,7 +36,7 @@ test_that("beta date and value have to be the same length", {
 test_that("can't use a single date/value", {
   expect_error(
     sircovid_parameters_beta(32, 1, 0.5),
-    "Need at least two dates and betas for a varying beta")
+    "Need at least two dates and values for a varying 'beta'")
 })
 
 

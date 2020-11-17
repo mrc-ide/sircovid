@@ -310,7 +310,7 @@ carehomes_parameters <- function(start_date, region,
     vaccine_progression_rate_date,
     vaccine_progression_rate_value,
     ret$dt)
-  
+
   c(ret, severity, progression, vaccination, waning)
 }
 
@@ -662,15 +662,15 @@ carehomes_parameters_vaccination <- function(rel_susceptibility,
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
                      rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
-  
+
   n <- vnapply(rel_params, calc_n_vacc_classes)
-  
+
   if (any(n > 1) && length(unique(n[n > 1])) != 1) {
     msg1 <- paste(names(rel_params), collapse = ", ")
     msg2 <- "should have the same dimension"
     stop(paste(msg1, msg2))
   }
-  
+
   ret <- Map(function(value, name) build_rel_param(value, max(n), name),
              rel_params, names(rel_params))
 

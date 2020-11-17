@@ -25,7 +25,8 @@ carehomes_parameters(
   rel_susceptibility = 1,
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
-  vaccine_progression_rate = NULL,
+  vaccine_progression_rate_date = NULL,
+  vaccine_progression_rate_value = NULL,
   waning_rate = 0,
   exp_noise = 1e+06
 )
@@ -128,6 +129,16 @@ reductions in probability of hospitalisation for symptomatic cases by age
 in that case, in each row of the matrix, the first value should be 1
 (for the non-vaccinated group) and subsequent values be between 0 and 1}
 
+\item{waning_rate}{A single value or a vector of values representing the
+rates of waning of immunity after infection; if a single value the same
+rate is used for all age groups; if a vector of values if used it should
+have one value per age group.}
+
+\item{exp_noise}{Rate of exponential noise used in the compare
+function - typically set to a large value so that noise is small
+but non-zero. If set to \code{Inf} then there is no noise in the
+observation process (not realistic but useful for testing).}
+
 \item{vaccine_progression_rate}{A vector or matrix of values of same
 dimension as rel_susceptibility representing
 the rate of movement between different vaccination classes. If a vector,
@@ -138,16 +149,6 @@ is the rate of returning to the initial
 vacination class); if a matrix, the element on row i and column j is the
 rate of progression from the jth vaccination class to the (j+1)th for age
 group i.}
-
-\item{waning_rate}{A single value or a vector of values representing the
-rates of waning of immunity after infection; if a single value the same
-rate is used for all age groups; if a vector of values if used it should
-have one value per age group.}
-
-\item{exp_noise}{Rate of exponential noise used in the compare
-function - typically set to a large value so that noise is small
-but non-zero. If set to \code{Inf} then there is no noise in the
-observation process (not realistic but useful for testing).}
 }
 \value{
 A list of inputs to the model, many of which are fixed and

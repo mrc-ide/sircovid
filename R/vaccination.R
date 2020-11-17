@@ -54,7 +54,7 @@ build_time_varying_vaccine_progression_rate <- function(date, value, dt,
 }
 
 
-build_vaccine_progression_rate <- function(vaccine_progression_rate, 
+build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            n_vacc_classes) {
   n_groups <- carehomes_n_groups()
   # if NULL, set vaccine_progression_rate to 0

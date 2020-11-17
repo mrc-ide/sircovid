@@ -81,7 +81,7 @@ sircovid_parameters_beta <- function(date, value, dt) {
     return(value)
   }
   dat <- sircovid_parameters_time_varying(date, value, dt, "beta")
-  stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
+  stats::approx(dat$date, dat$value, seq(0, date[[length(date)]], by = dt))$y
 }
 
 
