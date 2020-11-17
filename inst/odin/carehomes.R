@@ -597,24 +597,17 @@ new_R_neg[, 2:n_vacc_classes] <- new_R_neg[i, j] + n_R_next_vacc_class[i, j - 1]
 
 
 ## Work out the total number of recovery
-delta_R[, 1] <-
-  n_II_asympt[i, s_asympt, j] +
-  n_II_asympt_next_vacc_class[i, s_asympt, n_vacc_classes] +
+delta_R[, ] <- n_II_asympt[i, s_asympt, j] +
   n_II_mild[i, s_mild, j] +
   n_ILI_to_R[i, j] +
   n_II_hosp_R_conf[i, s_hosp_R, j] +
   n_II_hosp_R_unconf[i, s_hosp_R, j] +
   n_R_stepdown_R_conf[i, s_stepdown_R, j] +
   n_R_stepdown_R_unconf[i, s_stepdown_R, j]
-delta_R[, 2:n_vacc_classes] <-
-  n_II_asympt[i, s_asympt, j] +
-  n_II_asympt_next_vacc_class[i, s_asympt, j - 1] +
-  n_II_mild[i, s_mild, j] +
-  n_ILI_to_R[i, j] +
-  n_II_hosp_R_conf[i, s_hosp_R, j] +
-  n_II_hosp_R_unconf[i, s_hosp_R, j] +
-  n_R_stepdown_R_conf[i, s_stepdown_R, j] +
-  n_R_stepdown_R_unconf[i, s_stepdown_R, j]
+delta_R[, 1] <- delta_R[i, 1] +
+  n_II_asympt_next_vacc_class[i, s_asympt, n_vacc_classes]
+delta_R[, 2:n_vacc_classes] <- delta_R[i, j] +
+  n_II_asympt_next_vacc_class[i, s_asympt, j - 1]
 new_R[, ] <- R[i, j] + delta_R[i, j] - n_R_progress[i, j] -
   n_R_next_vacc_class[i, j]
 new_R[, 1] <- new_R[i, 1] + n_R_next_vacc_class[i, n_vacc_classes]
