@@ -147,7 +147,7 @@ test_that("check_rel_param allows sensible inputs", {
 test_that("build_rel_param rejects wrong dimension or out of bound inputs", {
   expect_error(
     build_rel_param(
-    rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE), 
+    rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE),
     n_vacc_classes = 2, "rel_param"),
     "rel_param should have as many rows as age groups")
   expect_error(
