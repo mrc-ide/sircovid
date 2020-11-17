@@ -91,7 +91,7 @@ NULL
 ##' vaccine progression rate, or NULL if a single value is used for all times.
 ##' vaccine progression rate is assumed piecewise constant between these dates.
 ##'
-##' @param vaccine_progression_rate_value If vaccine_progression_rate_date is 
+##' @param vaccine_progression_rate_value If vaccine_progression_rate_date is
 ##' NULL, a vector or matrix of values of same
 ##'   dimension as rel_susceptibility representing
 ##'   the rate of movement between different vaccination classes. If a vector,
@@ -101,12 +101,12 @@ NULL
 ##'   is the rate of returning to the initial
 ##'   vacination class); if a matrix, the element on row i and column j is the
 ##'   rate of progression from the jth vaccination class to the (j+1)th for age
-##'   group i.
-##'   If vaccine_progression_rate_date is not NULL, a list of objects as 
-##'   described above (vector or matrices). The length of this list should 
+##'   group i
+##'   If vaccine_progression_rate_date is not NULL, a list of objects as
+##'   described above (vector or matrices). The length of this list should
 ##'   match the length of vaccine_progression_rate_date, and the k^th element
-##'   in the list will be used as the vaccine progression rate between dates
-##'   vaccine_progression_rate_date[k] and vaccine_progression_rate_date[k + 1].
+##'   in the list will be used as the vaccine progression rate between k^th and
+##'   k+1^th dates indicated in vaccine_progression_rate_date.
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -206,7 +206,7 @@ NULL
 ##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
 ##'                           vaccine_progression_rate_value =
 ##'                           vaccine_progression_rate)
-##'                           
+##'
 ##' # double the vaccination rate after 2 weeks
 ##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
 ##'                           rel_susceptibility = rel_susceptibility,
@@ -220,7 +220,7 @@ NULL
 ##' p$vaccine_progression_rate_step[1, , ]
 ##' # final vaccination rate
 ##' p$vaccine_progression_rate_step[57, , ]
-##' 
+##'
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,

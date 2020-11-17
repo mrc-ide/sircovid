@@ -129,6 +129,27 @@ reductions in probability of hospitalisation for symptomatic cases by age
 in that case, in each row of the matrix, the first value should be 1
 (for the non-vaccinated group) and subsequent values be between 0 and 1}
 
+\item{vaccine_progression_rate_date}{A vector of dates for changes in
+vaccine progression rate, or NULL if a single value is used for all times.
+vaccine progression rate is assumed piecewise constant between these dates.}
+
+\item{vaccine_progression_rate_value}{If vaccine_progression_rate_date is
+NULL, a vector or matrix of values of same
+dimension as rel_susceptibility representing
+the rate of movement between different vaccination classes. If a vector,
+it should have as many values as vaccination classes, and the same rates
+of progression will be used for all age
+groups (the first rate is the vaccination rate and the last of the rates
+is the rate of returning to the initial
+vacination class); if a matrix, the element on row i and column j is the
+rate of progression from the jth vaccination class to the (j+1)th for age
+group i
+If vaccine_progression_rate_date is not NULL, a list of objects as
+described above (vector or matrices). The length of this list should
+match the length of vaccine_progression_rate_date, and the k^th element
+in the list will be used as the vaccine progression rate between k^th and
+k+1^th dates indicated in vaccine_progression_rate_date.}
+
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
@@ -138,17 +159,6 @@ have one value per age group.}
 function - typically set to a large value so that noise is small
 but non-zero. If set to \code{Inf} then there is no noise in the
 observation process (not realistic but useful for testing).}
-
-\item{vaccine_progression_rate}{A vector or matrix of values of same
-dimension as rel_susceptibility representing
-the rate of movement between different vaccination classes. If a vector,
-it should have as many values as vaccination classes, and the same rates
-of progression will be used for all age
-groups (the first rate is the vaccination rate and the last of the rates
-is the rate of returning to the initial
-vacination class); if a matrix, the element on row i and column j is the
-rate of progression from the jth vaccination class to the (j+1)th for age
-group i.}
 }
 \value{
 A list of inputs to the model, many of which are fixed and
@@ -194,14 +204,14 @@ p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
                           rel_p_sympt = rel_p_sympt,
                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-                          vaccine_progression_rate =
+                          vaccine_progression_rate_value =
                           vaccine_progression_rate)
 
 # vaccination parameters are automatically copied across all age groups
 p$rel_susceptibility
 p$rel_p_sympt
 p$rel_p_hosp_if_sympt
-p$vaccine_progression_rate
+p$vaccine_progression_rate_step
 
 ### same example as above BUT assume a different effect of vaccine in the
 ### first age group
@@ -244,7 +254,21 @@ p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
                           rel_susceptibility = rel_susceptibility,
                           rel_p_sympt = rel_p_sympt,
                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-                          vaccine_progression_rate =
+                          vaccine_progression_rate_value =
                           vaccine_progression_rate)
+
+# double the vaccination rate after 2 weeks
+p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
+                          rel_susceptibility = rel_susceptibility,
+                          rel_p_sympt = rel_p_sympt,
+                          rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+                          vaccine_progression_rate_date = c(0, 14),
+                          vaccine_progression_rate_value =
+                          list(vaccine_progression_rate,
+                          vaccine_progression_rate * 2))
+# initial vaccination rate
+p$vaccine_progression_rate_step[1, , ]
+# final vaccination rate
+p$vaccine_progression_rate_step[57, , ]
 
 }
