@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -147,8 +147,11 @@
   react_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
   prop_noncovid_sympt <span class='op'>=</span> <span class='fl'>0.01</span>,
   rel_susceptibility <span class='op'>=</span> <span class='fl'>1</span>,
+  rel_p_sympt <span class='op'>=</span> <span class='fl'>1</span>,
+  rel_p_hosp_if_sympt <span class='op'>=</span> <span class='fl'>1</span>,
   vaccine_progression_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
   waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
+  model_pcr_and_serology_user <span class='op'>=</span> <span class='fl'>1</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
 <span class='op'>)</span></pre>
 
@@ -261,8 +264,41 @@ the matrix, the first value should be 1 (for the non-vaccinated group)
 and subsequent values be between 0 and 1</p></td>
     </tr>
     <tr>
+      <th>rel_p_sympt</th>
+      <td><p>A vector or matrix of values of same dimension as
+rel_susceptibility representing the
+relative probability of symptomatic infection in different
+vaccination groups. If a vector, the first value should be 1 (for the
+non-vaccinated group) and subsequent values be between 0 and 1.
+In that case the relative reduction in probability of symptomatic
+infection will be the same across all age groups within one vaccination
+category.
+Specifying a matrix instead of a vector allows different relative
+reductions in probability of symptomatic infection by age (rows of the
+matrix) and vaccination group (columns of the matrix); in that case,
+in each row of the matrix, the first value should be 1 (for the
+non-vaccinated group) and subsequent values be between 0 and 1</p></td>
+    </tr>
+    <tr>
+      <th>rel_p_hosp_if_sympt</th>
+      <td><p>A vector or matrix of values of same dimension as
+rel_susceptibility representing the
+relative probability of hospitalisation for symptomatic cases in different
+vaccination groups. If a vector, the first value should be 1 (for the
+non-vaccinated group) and subsequent values be between 0 and 1.
+In that case the relative reduction in probability of hospitalisation for
+symptomatic cases will be the same across all age groups within one
+vaccination category.
+Specifying a matrix instead of a vector allows different relative
+reductions in probability of hospitalisation for symptomatic cases by age
+(rows of the matrix) and vaccination group (columns of the matrix);
+in that case, in each row of the matrix, the first value should be 1
+(for the non-vaccinated group) and subsequent values be between 0 and 1</p></td>
+    </tr>
+    <tr>
       <th>vaccine_progression_rate</th>
-      <td><p>A vector or matrix of values representing
+      <td><p>A vector or matrix of values of same
+dimension as rel_susceptibility representing
 the rate of movement between different vaccination classes. If a vector,
 it should have as many values as vaccination classes, and the same rates
 of progression will be used for all age
@@ -278,6 +314,12 @@ group i.</p></td>
 rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
 have one value per age group.</p></td>
+    </tr>
+    <tr>
+      <th>model_pcr_and_serology_user</th>
+      <td><p>A value of 1 or 0 so switch on or off the
+flows out of PCR_neg and R_neg and the corresponding cap on the number of
+individuals leaving the R compartments</p></td>
     </tr>
     <tr>
       <th>exp_noise</th>
@@ -733,6 +775,50 @@ just before the model is run.</p>
 #&gt; [18,]    1
 #&gt; [19,]    1
 #&gt; 
+#&gt; $rel_p_sympt
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; $rel_p_hosp_if_sympt
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
 #&gt; $vaccine_progression_rate
 #&gt;       [,1]
 #&gt;  [1,]    0
@@ -757,6 +843,9 @@ just before the model is run.</p>
 #&gt; 
 #&gt; $waning_rate
 #&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+#&gt; 
+#&gt; $model_pcr_and_serology_user
+#&gt; [1] 1
 #&gt; </div><div class='input'>
 <span class='co'>### example set up of vaccination parameters independent of age</span>
 <span class='co'>### 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span>
@@ -769,6 +858,11 @@ just before the model is run.</p>
 <span class='co'># immunity</span>
 <span class='co'># effect of vaccination similar across all age groups</span>
 <span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span><span class='op'>)</span>
+
+<span class='co'># The vaccine also reduces the risk of symptoms</span>
+<span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.6</span>, <span class='fl'>0.3</span><span class='op'>)</span>
+<span class='co'># and the risk of hospitalisation for those with symptoms</span>
+<span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.95</span>, <span class='fl'>0.95</span><span class='op'>)</span>
 
 <span class='co'># Vaccination occurs at a constant rate of 0.03 per day,</span>
 <span class='co'># (i.e. average time to vaccination is 33 days)</span>
@@ -783,6 +877,8 @@ just before the model is run.</p>
 <span class='co'># generate model parameters</span>
 <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
                           rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
+                          rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
+                          rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
                           vaccine_progression_rate <span class='op'>=</span>
                           <span class='va'>vaccine_progression_rate</span><span class='op'>)</span>
 
@@ -807,7 +903,47 @@ just before the model is run.</p>
 #&gt; [16,]    1  0.8  0.5
 #&gt; [17,]    1  0.8  0.5
 #&gt; [18,]    1  0.8  0.5
-#&gt; [19,]    1  0.8  0.5</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
+#&gt; [19,]    1  0.8  0.5</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_sympt</span>
+</div><div class='output co'>#&gt;       [,1] [,2] [,3]
+#&gt;  [1,]    1  0.6  0.3
+#&gt;  [2,]    1  0.6  0.3
+#&gt;  [3,]    1  0.6  0.3
+#&gt;  [4,]    1  0.6  0.3
+#&gt;  [5,]    1  0.6  0.3
+#&gt;  [6,]    1  0.6  0.3
+#&gt;  [7,]    1  0.6  0.3
+#&gt;  [8,]    1  0.6  0.3
+#&gt;  [9,]    1  0.6  0.3
+#&gt; [10,]    1  0.6  0.3
+#&gt; [11,]    1  0.6  0.3
+#&gt; [12,]    1  0.6  0.3
+#&gt; [13,]    1  0.6  0.3
+#&gt; [14,]    1  0.6  0.3
+#&gt; [15,]    1  0.6  0.3
+#&gt; [16,]    1  0.6  0.3
+#&gt; [17,]    1  0.6  0.3
+#&gt; [18,]    1  0.6  0.3
+#&gt; [19,]    1  0.6  0.3</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_hosp_if_sympt</span>
+</div><div class='output co'>#&gt;       [,1] [,2] [,3]
+#&gt;  [1,]    1 0.95 0.95
+#&gt;  [2,]    1 0.95 0.95
+#&gt;  [3,]    1 0.95 0.95
+#&gt;  [4,]    1 0.95 0.95
+#&gt;  [5,]    1 0.95 0.95
+#&gt;  [6,]    1 0.95 0.95
+#&gt;  [7,]    1 0.95 0.95
+#&gt;  [8,]    1 0.95 0.95
+#&gt;  [9,]    1 0.95 0.95
+#&gt; [10,]    1 0.95 0.95
+#&gt; [11,]    1 0.95 0.95
+#&gt; [12,]    1 0.95 0.95
+#&gt; [13,]    1 0.95 0.95
+#&gt; [14,]    1 0.95 0.95
+#&gt; [15,]    1 0.95 0.95
+#&gt; [16,]    1 0.95 0.95
+#&gt; [17,]    1 0.95 0.95
+#&gt; [18,]    1 0.95 0.95
+#&gt; [19,]    1 0.95 0.95</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
 </div><div class='output co'>#&gt;       [,1]       [,2]        [,3]
 #&gt;  [1,] 0.03 0.07142857 0.005494505
 #&gt;  [2,] 0.03 0.07142857 0.005494505
@@ -862,6 +998,13 @@ just before the model is run.</p>
 #&gt; [17,]    1  0.8 0.50
 #&gt; [18,]    1  0.8 0.50
 #&gt; [19,]    1  0.8 0.50</div><div class='input'>
+<span class='co'># But vaccine has the same impact on probability of symptoms and</span>
+<span class='co'># hospitalisation for the symptomatic across all age groups</span>
+<span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_sympt</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>,
+  byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
 <span class='co'># Vaccination occurs at a constant rate of 0.03 per day for all age groups</span>
 <span class='co'># expect the first age groups which gets vaccinated at a rate of 0.06 a day</span>
 <span class='va'>vaccination_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.06</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.03</span>, <span class='va'>n_groups</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
@@ -879,6 +1022,8 @@ just before the model is run.</p>
 <span class='co'># generate model parameters</span>
 <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
                           rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
+                          rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
+                          rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
                           vaccine_progression_rate <span class='op'>=</span>
                           <span class='va'>vaccine_progression_rate</span><span class='op'>)</span>
 
