@@ -102,6 +102,10 @@ NULL
 ##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
+##'  
+##' @param model_pcr_and_serology_user A value of 1 or 0 so switch on or off the
+##'   flows out of PCR_neg and R_neg and the corresponding cap on the number of
+##'   individuals leaving the R compartments
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -217,6 +221,7 @@ carehomes_parameters <- function(start_date, region,
                                  rel_p_hosp_if_sympt = 1,
                                  vaccine_progression_rate = NULL,
                                  waning_rate = 0,
+                                 model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -307,7 +312,11 @@ carehomes_parameters <- function(start_date, region,
                                                   rel_p_hosp_if_sympt,
                                                   vaccine_progression_rate)
 
-  c(ret, severity, progression, vaccination, waning)
+  model_pcr_and_serology_user <-
+    list(model_pcr_and_serology_user = model_pcr_and_serology_user)
+
+  c(ret, severity, progression, vaccination, waning,
+    model_pcr_and_serology_user)
 
 }
 
@@ -675,7 +684,7 @@ carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
 }
 
 
-carehomes_parameters_waning <- function(waning_rate = 0) {
+carehomes_parameters_waning <- function(waning_rate) {
   waning_rate <- build_waning_rate(waning_rate)
   list(
     waning_rate = waning_rate

@@ -72,3 +72,18 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
   }
   mat_vaccine_progression_rate
 }
+
+
+get_n_candidates_vaccine_progression <- function(carehomes_dust_model_output,
+                                                 mod) {
+  y <- mod$transform_variables(drop(carehomes_dust_model_output))
+  unvacc_stage <- 1
+  S_candidates <- y$S[, unvacc_stage, ]
+  ## TODO: write the two next lines in more generic a way which does not assume
+  ## that dim(y$E)[2] > 1 and that dim(y$I_asympt)[2] = 1
+  E_candidates <- apply(y$E[, , unvacc_stage, ], c(1, 3), sum)
+  I_asympt_candidates <- drop(y$I_asympt[, , unvacc_stage, ])
+  R_candidates <- drop(y$R[, unvacc_stage, ])
+
+  S_candidates + E_candidates + I_asympt_candidates + R_candidates
+}

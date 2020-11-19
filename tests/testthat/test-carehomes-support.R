@@ -91,7 +91,7 @@ test_that("carehomes_parameters returns a list of parameters", {
                                                   p$vaccine_progression_rate)
   expect_identical(p[names(vaccination)], vaccination)
 
-  waning <- carehomes_parameters_waning()
+  waning <- carehomes_parameters_waning(0)
   expect_identical(p[names(waning)], waning)
 
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
@@ -108,7 +108,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   extra <- setdiff(names(p),
                    c("m", "observation",
                      names(shared), names(progression), names(severity),
-                     names(vaccination), names(waning)))
+                     names(vaccination), names(waning),
+                     "model_pcr_and_serology_user"))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
@@ -481,6 +482,38 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
     "Cannot fit to more than one pillar 2 data stream")
 })
 
+
 test_that("the carehomes sircovid model has 19 groups", {
   expect_equal(carehomes_n_groups(), 19)
+})
+
+
+test_that("model_pcr_and_serology_user switch works", {
+  set.seed(1)
+  p <- carehomes_parameters(0, "england",
+                            rel_susceptibility = c(1, 0),
+                            vaccine_progression_rate = c(0, 0),
+                            waning_rate = 1 / 20,
+                            model_pcr_and_serology_user = 0)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  y <- mod$transform_variables(drop(
+    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+
+  ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
+  for (i in seq_len(19)) {
+    expect_true(all(diff(y$R_neg[i, 1, ]) >= 0))
+    expect_true(all(diff(y$R_neg[i, 2, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 1, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 2, ]) >= 0))
+  }
+
+  ## TO DO: ideas for other tests?
+
 })
