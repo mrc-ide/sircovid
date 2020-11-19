@@ -82,7 +82,7 @@ jobs:
 
       - name: Extract version
         run: |
-          echo "version=$(grep '^Version' DESCRIPTION  | sed 's/.*: *//')" >> GITHUB_ENV
+          echo "version=$(grep '^Version' DESCRIPTION  | sed 's/.*: *//')" >> $GITHUB_ENV
           echo "name=$(grep '^Package' DESCRIPTION  | sed 's/.*: *//')" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v2
