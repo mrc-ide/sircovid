@@ -81,8 +81,8 @@ jobs:
 
       - name: Extract version
         run: |
-          echo "::set-env name=PACKAGE_VERSION::$(grep '^Version' DESCRIPTION  | sed 's/.*: *//')"
-          echo "::set-env name=PACKAGE_NAME::$(grep '^Package' DESCRIPTION  | sed 's/.*: *//')"
+          echo "PACKAGE_VERSION=$(grep '^Version' DESCRIPTION  | sed 's/.*: *//')" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=$(grep '^Package' DESCRIPTION  | sed 's/.*: *//')" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v2
         with:
