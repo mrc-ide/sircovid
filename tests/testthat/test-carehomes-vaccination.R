@@ -742,34 +742,34 @@ test_that(
 })
 
 test_that("Outputed vaccination numbers make sense", {
-
-    p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
-                              rel_susceptibility = c(1, 0.5, 0.1),
-                              rel_p_sympt = c(1, 1, 1),
-                              rel_p_hosp_if_sympt = c(1, 1, 1),
-                              vaccine_progression_rate = c(1, 0.5, 0.01))
-
-    mod <- carehomes$new(p, 0, 1)
-    info <- mod$info()
-    y0 <- carehomes_initial(info, 1, p)$state
-    mod$set_state(carehomes_initial(info, 1, p)$state)
-    mod$set_index(integer(0))
-    y <- mod$transform_variables(
-      drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-
-    ## check outputed objects have correct dimension
-    expect_equal(dim(y$cum_n_S_vaccinated), c(19, 3, 101))
-    expect_equal(dim(y$cum_n_E_vaccinated), c(19, 3, 101))
-    expect_equal(dim(y$cum_n_I_asympt_vaccinated), c(19, 3, 101))
-    expect_equal(dim(y$cum_n_R_vaccinated), c(19, 3, 101))
-
-    ## check cumulative stuff is increasing objects have correct dimension
-
-    expect_true(all(apply(y$cum_n_S_vaccinated, c(1, 2), diff) >= 0))
-    expect_true(all(apply(y$cum_n_E_vaccinated, c(1, 2), diff) >= 0))
-    expect_true(all(apply(y$cum_n_I_asympt_vaccinated, c(1, 2), diff) >= 0))
-    expect_true(all(apply(y$cum_n_R_vaccinated, c(1, 2), diff) >= 0))
-
+  
+  p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
+                            rel_susceptibility = c(1, 0.5, 0.1),
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(1, 0.5, 0.01))
+  
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  
+  ## check outputed objects have correct dimension
+  expect_equal(dim(y$cum_n_S_vaccinated), c(19, 3, 101))
+  expect_equal(dim(y$cum_n_E_vaccinated), c(19, 3, 101))
+  expect_equal(dim(y$cum_n_I_asympt_vaccinated), c(19, 3, 101))
+  expect_equal(dim(y$cum_n_R_vaccinated), c(19, 3, 101))
+  
+  ## check cumulative stuff is increasing objects have correct dimension
+  
+  expect_true(all(apply(y$cum_n_S_vaccinated, c(1, 2), diff) >= 0))
+  expect_true(all(apply(y$cum_n_E_vaccinated, c(1, 2), diff) >= 0))
+  expect_true(all(apply(y$cum_n_I_asympt_vaccinated, c(1, 2), diff) >= 0))
+  expect_true(all(apply(y$cum_n_R_vaccinated, c(1, 2), diff) >= 0))
+  
 })
 
 test_that("Outputed S vaccination numbers are what we expect", {
@@ -953,7 +953,7 @@ test_that("build_rel_param rejects wrong dimension or out of bound inputs", {
 })
 
 
-test_that("build_rel_param works as ecpected", {
+test_that("build_rel_param works as expected", {
   expect_equal(
     build_rel_param(1, n_vacc_classes = 1, "rel_param"),
     matrix(1, nrow = carehomes_n_groups(), ncol = 1))
