@@ -213,6 +213,10 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_ICU_hosp = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
+        integer = FALSE), rel_p_hosp_if_sympt = list(has_default = FALSE,
+        default_value = NULL, rank = 2, min = -Inf, max = Inf,
+        integer = FALSE), rel_p_sympt = list(has_default = FALSE,
+        default_value = NULL, rank = 2, min = -Inf, max = Inf,
         integer = FALSE), rel_susceptibility = list(has_default = FALSE,
         default_value = NULL, rank = 2, min = -Inf, max = Inf,
         integer = FALSE), s_asympt = list(has_default = FALSE,
@@ -288,7 +292,9 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_triage = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), p_R_pre_1 = list(has_default = TRUE,
+        integer = FALSE), model_pcr_and_serology_user = list(
+        has_default = TRUE, default_value = 1L, rank = 0, min = -Inf,
+        max = Inf, integer = FALSE), p_R_pre_1 = list(has_default = TRUE,
         default_value = 0.5, rank = 0, min = -Inf, max = Inf,
         integer = FALSE)),
 

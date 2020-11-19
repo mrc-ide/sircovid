@@ -3,6 +3,11 @@
 ## j for the progression (not exponential latent and infectious period)
 ## k for the infectivity group (for I) or vacc. group (for S)
 
+## Parameter to turn on or off the serology flows
+
+model_pcr_and_serology_user <- user(1)
+model_pcr_and_serology <- if (model_pcr_and_serology_user == 1) 1 else 0
+
 ## Number of classes (age & vaccination)
 
 ## Number of "groups", being the age classes, Carehome workers and
@@ -14,6 +19,32 @@ n_groups <- user()
 dt <- user()
 initial(time) <- 0
 update(time) <- (step + 1) * dt
+
+## output number of individuals vaccinated by age and vaccine stage
+## For example, for E, we sum over n_E_next_vacc_class (those moving vaccine
+## stage without progressing disease stages) and also n_EE_next_vacc_class
+## (those moving vaccine stage and also progressing disease stages)
+## vaccinated S
+initial(cum_n_S_vaccinated[, ]) <- 0
+update(cum_n_S_vaccinated[, ]) <- cum_n_S_vaccinated[i, j] +
+  n_S_next_vacc_class[i, j] + n_SE_next_vacc_class[i, j]
+dim(cum_n_S_vaccinated) <- c(n_groups, n_vacc_classes)
+## vaccinated E
+initial(cum_n_E_vaccinated[, ]) <- 0
+update(cum_n_E_vaccinated[, ]) <- cum_n_E_vaccinated[i, j] +
+  sum(n_E_next_vacc_class[i, , j]) + sum(n_EE_next_vacc_class[i, , j])
+dim(cum_n_E_vaccinated) <- c(n_groups, n_vacc_classes)
+## vaccinated I_asympt
+initial(cum_n_I_asympt_vaccinated[, ]) <- 0
+update(cum_n_I_asympt_vaccinated[, ]) <- cum_n_I_asympt_vaccinated[i, j] +
+  sum(n_I_asympt_next_vacc_class[i, , j]) +
+  sum(n_II_asympt_next_vacc_class[i, , j])
+dim(cum_n_I_asympt_vaccinated) <- c(n_groups, n_vacc_classes)
+## vaccinated R
+initial(cum_n_R_vaccinated[, ]) <- 0
+update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
+  n_R_next_vacc_class[i, j] + n_RS_next_vacc_class[i, j]
+dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Core equations for transitions between compartments:
 update(S[, ]) <- new_S[i, j]
@@ -186,7 +217,11 @@ n_I_asympt_next_vacc_class[, , ] <- rbinom(
 
 n_R_progress_tmp[, ] <- rbinom(R[i, j], p_RS[i])
 ## cap on people who can move out of R based on numbers in R_neg and PCR_neg
-n_R_progress[, ] <- min(n_R_progress_tmp[i, j], R_neg[i, j], PCR_neg[i, j])
+n_R_progress_capped[, ] <-
+  min(n_R_progress_tmp[i, j], R_neg[i, j], PCR_neg[i, j])
+## use cap or not depending on model_pcr_and_serology value
+n_R_progress[, ] <- if (model_pcr_and_serology == 1)
+  n_R_progress_capped[i, j] else n_R_progress_tmp[i, j]
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from R[j] to S[j+1]
 ## (j vaccination class)
@@ -199,9 +234,11 @@ n_RS[, ] <- n_R_progress[i, j] - n_RS_next_vacc_class[i, j]
 ## vaccine progression
 n_R_next_vacc_class_tmp[, ] <- rbinom(
   R[i, j] - n_R_progress[i, j], p_R_next_vacc_class[i, j])
-n_R_next_vacc_class[, ] <- min(n_R_next_vacc_class_tmp[i, j],
+n_R_next_vacc_class_capped[, ] <- min(n_R_next_vacc_class_tmp[i, j],
   R_neg[i, j] - n_R_progress[i, j], PCR_neg[i, j] - n_R_progress[i, j])
-
+n_R_next_vacc_class[, ] <- if (model_pcr_and_serology == 1)
+  n_R_next_vacc_class_capped[i, j] else n_R_next_vacc_class_tmp[i, j]
+  
 #### other transitions ####
 
 n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
@@ -245,9 +282,11 @@ new_S[, 2:n_vacc_classes] <- new_S[i, j] + n_S_next_vacc_class[i, j - 1] +
 
 
 ## Computes the number of asymptomatic
-n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], p_asympt[i])
+n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j],
+                          1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
 n_EI_asympt_next_vacc_class[, ] <-
-  rbinom(n_EE_next_vacc_class[i, s_E, j], p_asympt[i])
+  rbinom(n_EE_next_vacc_class[i, s_E, j],
+         1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
 
 ## Computes the number of mild cases - p_sympt_ILI gives the
 ## proportion of febrile/ILI cases among the symptomatics
@@ -324,7 +363,8 @@ aux_II_ILI[, 1:s_ILI, ] <- aux_II_ILI[i, j, k] - n_II_ILI[i, j, k]
 new_I_ILI[, , ] <- I_ILI[i, j, k] + aux_II_ILI[i, j, k]
 
 ## Work out the flow from I_ILI -> R, comm_D, hosp
-n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j], 1 - prob_hosp_ILI[i])
+n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j],
+                         1 - prob_hosp_ILI[i] * rel_p_hosp_if_sympt[i, j])
 n_ILI_to_comm_D[, ] <-
   rbinom(n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j], prob_death_comm[i])
 n_ILI_to_hosp[, ] <-
@@ -578,9 +618,12 @@ new_R_pos[, 1, ] <- new_R_pos[i, 1, k] + n_R_pre_to_R_pos[i, k]
 new_R_pos[, 2:s_R_pos, ] <- new_R_pos[i, j, k] + n_R_pos[i, j - 1, k]
 
 new_R_neg[, ] <- R_neg[i, j] + sum(n_R_pre[i, , j]) - n_R_pre_to_R_pos[i, j] +
-  n_R_pos[i, s_R_pos, j] - n_R_progress[i, j] - n_R_next_vacc_class[i, j]
-new_R_neg[, 1] <- new_R_neg[i, 1] + n_R_next_vacc_class[i, n_vacc_classes]
-new_R_neg[, 2:n_vacc_classes] <- new_R_neg[i, j] + n_R_next_vacc_class[i, j - 1]
+  n_R_pos[i, s_R_pos, j] - model_pcr_and_serology * n_R_progress[i, j] -
+  model_pcr_and_serology * n_R_next_vacc_class[i, j]
+new_R_neg[, 1] <- new_R_neg[i, 1] +
+  model_pcr_and_serology * n_R_next_vacc_class[i, n_vacc_classes]
+new_R_neg[, 2:n_vacc_classes] <- new_R_neg[i, j] +
+  model_pcr_and_serology * n_R_next_vacc_class[i, j - 1]
 
 
 ## Work out the total number of recovery
@@ -613,10 +656,12 @@ new_PCR_pos[, 1, ] <- new_PCR_pos[i, 1, k] + n_PCR_pre[i, s_PCR_pre, k]
 new_PCR_pos[, 2:s_PCR_pos, ] <- new_PCR_pos[i, j, k] + n_PCR_pos[i, j - 1, k]
 
 new_PCR_neg[, ] <- PCR_neg[i, j] + n_PCR_pos[i, s_PCR_pos, j] -
-  n_R_progress[i, j] - n_R_next_vacc_class[i, j]
-new_PCR_neg[, 1] <- new_PCR_neg[i, 1] + n_R_next_vacc_class[i, n_vacc_classes]
+  model_pcr_and_serology * n_R_progress[i, j] -
+  model_pcr_and_serology * n_R_next_vacc_class[i, j]
+new_PCR_neg[, 1] <- new_PCR_neg[i, 1] +
+  model_pcr_and_serology * n_R_next_vacc_class[i, n_vacc_classes]
 new_PCR_neg[, 2:n_vacc_classes] <- new_PCR_neg[i, j] +
-  n_R_next_vacc_class[i, j - 1]
+  model_pcr_and_serology * n_R_next_vacc_class[i, j - 1]
 
 
 ## Compute the force of infection
@@ -685,10 +730,14 @@ initial(cum_admit_by_age[]) <- 0
 
 ## User defined parameters - default in parentheses:
 
-## Parameters of the S classes
+## Vaccination parameters
 rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
+rel_p_sympt[, ] <- user()
+dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
+rel_p_hosp_if_sympt[, ] <- user()
+dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
 
 vaccine_progression_rate[, ] <- user()
 dim(vaccine_progression_rate) <- user()
@@ -1009,8 +1058,10 @@ dim(n_II_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes)
 
 dim(p_R_next_vacc_class) <- c(n_groups, n_vacc_classes)
 dim(n_R_next_vacc_class) <- c(n_groups, n_vacc_classes)
+dim(n_R_next_vacc_class_capped) <- c(n_groups, n_vacc_classes)
 dim(n_R_next_vacc_class_tmp) <- c(n_groups, n_vacc_classes)
 dim(n_R_progress) <- c(n_groups, n_vacc_classes)
+dim(n_R_progress_capped) <- c(n_groups, n_vacc_classes)
 dim(n_R_progress_tmp) <- c(n_groups, n_vacc_classes)
 dim(n_RS_next_vacc_class) <- c(n_groups, n_vacc_classes)
 

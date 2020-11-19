@@ -25,26 +25,48 @@ test_that("carehomes vaccination parameters", {
   p <- carehomes_parameters_vaccination()
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "vaccine_progression_rate"))
+    c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+      "vaccine_progression_rate"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
   expect_equal(nrow(p$vaccine_progression_rate), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate), 1)
 
   # test when more vaccinated categories than default
-  rel_susceptibility <- c(1, 0.75, 0.5, 0.75)
+  rel_susceptibility <- c(1, 0.2, 0.1, 0.4)
+  rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
+  rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(1, 1, 1, 1)
   p <- carehomes_parameters_vaccination(rel_susceptibility = rel_susceptibility,
+                                        rel_p_sympt = rel_p_sympt,
+                                        rel_p_hosp_if_sympt =
+                                          rel_p_hosp_if_sympt,
                                         vaccine_progression_rate =
                                           vaccine_progression_rate)
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "vaccine_progression_rate"))
+    c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+      "vaccine_progression_rate"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
+  expect_equal(nrow(p$rel_p_sympt), n_groups)
+  expect_equal(ncol(p$rel_p_sympt), length(rel_p_sympt))
+  expect_equal(nrow(p$rel_p_hosp_if_sympt), n_groups)
+  expect_equal(ncol(p$rel_p_hosp_if_sympt), length(rel_p_hosp_if_sympt))
   expect_equal(nrow(p$vaccine_progression_rate), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate),
                length(vaccine_progression_rate))
+  msg1 <- "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt"
+  msg2 <- "should have the same dimension"
+  expect_error(
+    carehomes_parameters_vaccination(rel_susceptibility = 1,
+                                     rel_p_sympt = c(1, 0.5, 0.25),
+                                     rel_p_hosp_if_sympt = c(1, 0.1)),
+    paste(msg1, msg2))
+  expect_error(carehomes_parameters_vaccination(rel_susceptibility = c(1, 1),
+                                                rel_p_sympt = c(1, 0.5, 0.25),
+                                                rel_p_hosp_if_sympt = 1),
+               paste(msg1, msg2))
 })
 
 test_that("carehomes_parameters returns a list of parameters", {
@@ -64,10 +86,12 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(p$rel_susceptibility,
+                                                  p$rel_p_sympt,
+                                                  p$rel_p_hosp_if_sympt,
                                                   p$vaccine_progression_rate)
   expect_identical(p[names(vaccination)], vaccination)
 
-  waning <- carehomes_parameters_waning()
+  waning <- carehomes_parameters_waning(0)
   expect_identical(p[names(waning)], waning)
 
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
@@ -84,7 +108,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   extra <- setdiff(names(p),
                    c("m", "observation",
                      names(shared), names(progression), names(severity),
-                     names(vaccination), names(waning)))
+                     names(vaccination), names(waning),
+                     "model_pcr_and_serology_user"))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
@@ -457,6 +482,38 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
     "Cannot fit to more than one pillar 2 data stream")
 })
 
+
 test_that("the carehomes sircovid model has 19 groups", {
   expect_equal(carehomes_n_groups(), 19)
+})
+
+
+test_that("model_pcr_and_serology_user switch works", {
+  set.seed(1)
+  p <- carehomes_parameters(0, "england",
+                            rel_susceptibility = c(1, 0),
+                            vaccine_progression_rate = c(0, 0),
+                            waning_rate = 1 / 20,
+                            model_pcr_and_serology_user = 0)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  y <- mod$transform_variables(drop(
+    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+
+  ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
+  for (i in seq_len(19)) {
+    expect_true(all(diff(y$R_neg[i, 1, ]) >= 0))
+    expect_true(all(diff(y$R_neg[i, 2, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 1, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 2, ]) >= 0))
+  }
+
+  ## TO DO: ideas for other tests?
+
 })

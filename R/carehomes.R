@@ -59,7 +59,36 @@ NULL
 ##'   the matrix, the first value should be 1 (for the non-vaccinated group)
 ##'   and subsequent values be between 0 and 1
 ##'
-##' @param vaccine_progression_rate A vector or matrix of values representing
+##' @param rel_p_sympt A vector or matrix of values of same dimension as
+##'   rel_susceptibility representing the
+##'   relative probability of symptomatic infection in different
+##'   vaccination groups. If a vector, the first value should be 1 (for the
+##'   non-vaccinated group) and subsequent values be between 0 and 1.
+##'   In that case the relative reduction in probability of symptomatic
+##'   infection will be the same across all age groups within one vaccination
+##'   category.
+##'   Specifying a matrix instead of a vector allows different relative
+##'   reductions in probability of symptomatic infection by age (rows of the
+##'   matrix) and vaccination group (columns of the matrix); in that case,
+##'   in each row of the matrix, the first value should be 1 (for the
+##'   non-vaccinated group) and subsequent values be between 0 and 1
+##'
+##' @param rel_p_hosp_if_sympt A vector or matrix of values of same dimension as
+##'   rel_susceptibility representing the
+##'   relative probability of hospitalisation for symptomatic cases in different
+##'   vaccination groups. If a vector, the first value should be 1 (for the
+##'   non-vaccinated group) and subsequent values be between 0 and 1.
+##'   In that case the relative reduction in probability of hospitalisation for
+##'   symptomatic cases will be the same across all age groups within one
+##'   vaccination category.
+##'   Specifying a matrix instead of a vector allows different relative
+##'   reductions in probability of hospitalisation for symptomatic cases by age
+##'   (rows of the matrix) and vaccination group (columns of the matrix);
+##'   in that case, in each row of the matrix, the first value should be 1
+##'   (for the non-vaccinated group) and subsequent values be between 0 and 1
+##'
+##' @param vaccine_progression_rate A vector or matrix of values of same
+##'   dimension as rel_susceptibility representing
 ##'   the rate of movement between different vaccination classes. If a vector,
 ##'   it should have as many values as vaccination classes, and the same rates
 ##'   of progression will be used for all age
@@ -73,6 +102,10 @@ NULL
 ##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
+##'
+##' @param model_pcr_and_serology_user A value of 1 or 0 so switch on or off the
+##'   flows out of PCR_neg and R_neg and the corresponding cap on the number of
+##'   individuals leaving the R compartments
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -95,6 +128,11 @@ NULL
 ##' # effect of vaccination similar across all age groups
 ##' rel_susceptibility <- c(1, 0.8, 0.5)
 ##'
+##' # The vaccine also reduces the risk of symptoms
+##' rel_p_sympt <- c(1, 0.6, 0.3)
+##' # and the risk of hospitalisation for those with symptoms
+##' rel_p_hosp_if_sympt <- c(1, 0.95, 0.95)
+##'
 ##' # Vaccination occurs at a constant rate of 0.03 per day,
 ##' # (i.e. average time to vaccination is 33 days)
 ##' # similar across all age groups.
@@ -108,11 +146,15 @@ NULL
 ##' # generate model parameters
 ##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
 ##'                           rel_susceptibility = rel_susceptibility,
+##'                           rel_p_sympt = rel_p_sympt,
+##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
 ##'                           vaccine_progression_rate =
 ##'                           vaccine_progression_rate)
 ##'
 ##' # vaccination parameters are automatically copied across all age groups
 ##' p$rel_susceptibility
+##' p$rel_p_sympt
+##' p$rel_p_hosp_if_sympt
 ##' p$vaccine_progression_rate
 ##'
 ##' ### same example as above BUT assume a different effect of vaccine in the
@@ -129,6 +171,13 @@ NULL
 ##' rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
 ##' }
 ##' rel_susceptibility
+##'
+##' # But vaccine has the same impact on probability of symptoms and
+##' # hospitalisation for the symptomatic across all age groups
+##' rel_p_sympt <- matrix(rep(rel_p_sympt, n_groups), nrow = n_groups,
+##'   byrow = TRUE)
+##' rel_p_hosp_if_sympt <-
+##'   matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
 ##'
 ##' # Vaccination occurs at a constant rate of 0.03 per day for all age groups
 ##' # expect the first age groups which gets vaccinated at a rate of 0.06 a day
@@ -147,6 +196,8 @@ NULL
 ##' # generate model parameters
 ##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
 ##'                           rel_susceptibility = rel_susceptibility,
+##'                           rel_p_sympt = rel_p_sympt,
+##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
 ##'                           vaccine_progression_rate =
 ##'                           vaccine_progression_rate)
 ##'
@@ -166,8 +217,11 @@ carehomes_parameters <- function(start_date, region,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
                                  rel_susceptibility = 1,
+                                 rel_p_sympt = 1,
+                                 rel_p_hosp_if_sympt = 1,
                                  vaccine_progression_rate = NULL,
                                  waning_rate = 0,
+                                 model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -254,9 +308,15 @@ carehomes_parameters <- function(start_date, region,
   ret$n_groups <- ret$n_age_groups + 2L
 
   vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
+                                                  rel_p_sympt,
+                                                  rel_p_hosp_if_sympt,
                                                   vaccine_progression_rate)
 
-  c(ret, severity, progression, vaccination, waning)
+  model_pcr_and_serology_user <-
+    list(model_pcr_and_serology_user = model_pcr_and_serology_user)
+
+  c(ret, severity, progression, vaccination, waning,
+    model_pcr_and_serology_user)
 
 }
 
@@ -596,21 +656,35 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <-
-  function(rel_susceptibility = 1,
-           vaccine_progression_rate = NULL) {
-  rel_susceptibility <- build_rel_susceptibility(rel_susceptibility)
-  n_vacc_classes <- ncol(rel_susceptibility)
-  vaccine_progression_rate <- build_vaccine_progression_rate(
-    vaccine_progression_rate, n_vacc_classes)
-  list(
-    rel_susceptibility = rel_susceptibility,
-    vaccine_progression_rate = vaccine_progression_rate
-  )
+carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
+                                             rel_p_sympt = 1,
+                                             rel_p_hosp_if_sympt = 1,
+                                             vaccine_progression_rate = NULL) {
+  calc_n_vacc_classes <- function(x) {
+    if (is.matrix(x)) ncol(x) else length(x)
+  }
+  rel_params <- list(rel_susceptibility = rel_susceptibility,
+                     rel_p_sympt = rel_p_sympt,
+                     rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
+
+  n <- vnapply(rel_params, calc_n_vacc_classes)
+
+  if (any(n > 1) && length(unique(n[n > 1])) != 1) {
+    msg1 <- paste(names(rel_params), collapse = ", ")
+    msg2 <- "should have the same dimension"
+    stop(paste(msg1, msg2))
+  }
+
+  ret <- Map(function(value, name) build_rel_param(value, max(n), name),
+             rel_params, names(rel_params))
+
+  ret$vaccine_progression_rate <- build_vaccine_progression_rate(
+    vaccine_progression_rate, max(n))
+  ret
 }
 
 
-carehomes_parameters_waning <- function(waning_rate = 0) {
+carehomes_parameters_waning <- function(waning_rate) {
   waning_rate <- build_waning_rate(waning_rate)
   list(
     waning_rate = waning_rate
