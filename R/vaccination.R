@@ -28,52 +28,32 @@ check_rel_susceptibility <- function(rel_susceptibility) {
   }
 }
 
-
-build_vaccination_rate <- function(vaccination_rate) {
-  n_groups <- carehomes_n_groups()
-  if (length(vaccination_rate) > 1) {
-    if (length(vaccination_rate) != n_groups) {
-      stop("'vaccination_rate' should have as many elements as age groups")
-    }
-    if (any(vaccination_rate < 0)) {
-      stop("'vaccination_rate' must have only non-negative values")
-    }
-    vect_vaccination_rate <- vaccination_rate
-  } else { # create vector by repeating vaccination_rate for each age group
-    vect_vaccination_rate <- rep(vaccination_rate, each = n_groups)
-  }
-  vect_vaccination_rate
-}
-
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            n_vacc_classes) {
   n_groups <- carehomes_n_groups()
-  if (n_vacc_classes < 3) {
-    stop("'n_vacc_classes' should be at least 3")
-  }
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
-    mat_vaccine_progression_rate <- matrix(0, n_groups, n_vacc_classes - 2)
+    mat_vaccine_progression_rate <- matrix(0, n_groups, n_vacc_classes)
   } else {
     if (is.matrix(vaccine_progression_rate)) {
       if (nrow(vaccine_progression_rate) != n_groups) {
         stop(
           "'vaccine_progression_rate' must have as many rows as age groups")
       }
-      if (ncol(vaccine_progression_rate) != n_vacc_classes - 2) {
+      if (ncol(vaccine_progression_rate) != n_vacc_classes) {
         stop(
-          "'vaccine_progression_rate' must have 'n_vacc_classes - 2' columns")
+          "'vaccine_progression_rate' must have 'n_vacc_classes' columns")
       }
       if (any(vaccine_progression_rate < 0)) {
         stop("'vaccine_progression_rate' must have only non-negative values")
       }
       mat_vaccine_progression_rate <- vaccine_progression_rate
-    } else { # vaccine_progression_rate vector of length n_vacc_classes - 2
+    } else { # vaccine_progression_rate vector of length n_vacc_classes
       if (!is.vector(vaccine_progression_rate) ||
-          length(vaccine_progression_rate) != n_vacc_classes - 2) {
+          length(vaccine_progression_rate) != n_vacc_classes) {
         m1 <- "'vaccine_progression_rate' must be either:"
-        m2 <- "a vector of length 'n_vacc_classes - 2' or"
-        m3 <- "a matrix with 'n_groups' rows and 'n_vacc_classes - 2' columns"
+        m2 <- "a vector of length 'n_vacc_classes' or"
+        m3 <- "a matrix with 'n_groups' rows and 'n_vacc_classes' columns"
         stop(paste(m1, m2, m3))
       }
       if (any(vaccine_progression_rate < 0)) {
@@ -83,6 +63,11 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
       mat_vaccine_progression_rate <-
         matrix(rep(vaccine_progression_rate, each = n_groups), nrow = n_groups)
     }
+  }
+  if (n_vacc_classes == 1 & !all(mat_vaccine_progression_rate == 0)) {
+    msg1 <- "When 'n_vacc_classes' is 1,"
+    msg2 <- "'vaccine_progression_rate' should only contain zeros"
+    stop(paste(msg1, msg2))
   }
   mat_vaccine_progression_rate
 }

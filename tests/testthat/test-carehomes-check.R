@@ -86,11 +86,11 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
 
   # other than in the 4th age group (where infections are seeded)
   # after the first day (4 times steps), R is empty
-  expect_true(all(y$R[-4, -1] == 0))
+  expect_true(all(y$R[-4, , -1] == 0))
   # so is R_neg
-  expect_true(all(y$R_neg[-4, -1] == 0))
+  expect_true(all(y$R_neg[-4, , -1] == 0))
   # so is PCR_neg
-  expect_true(all(y$PCR_neg[-4, -1] == 0))
+  expect_true(all(y$PCR_neg[-4, , -1] == 0))
 
 })
 
@@ -105,9 +105,9 @@ test_that("R, R_neg and PCR_neg are all non-decreasing and S is non-increasing
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(all(diff(t(y$R)) >= 0))
-  expect_true(all(diff(t(y$R_neg)) >= 0))
-  expect_true(all(diff(t(y$PCR_neg)) >= 0))
+  expect_true(all(diff(t(drop(y$R))) >= 0))
+  expect_true(all(diff(t(drop(y$R_neg))) >= 0))
+  expect_true(all(diff(t(drop(y$PCR_neg))) >= 0))
   expect_true(all(diff(t(y$S[, 1, ])) <= 0))
 
 })
@@ -459,11 +459,11 @@ test_that("R_pre parameters work as expected", {
 
   ## p_R_pre = 1, expect no cases in R_pre_2 stream
   y <- helper(1, 1, 0.5)
-  expect_true(all(y$R_pre[, 2, ] == 0))
+  expect_true(all(y$R_pre[, 2, , ] == 0))
 
   ## p_R_pre = 0, expect no cases in R_pre_1 stream
   y <- helper(0, 1, 0.5)
-  expect_true(all(y$R_pre[, 1, ] == 0))
+  expect_true(all(y$R_pre[, 1, , ] == 0))
 
   ## gamma_R_pre_1 = gamma_R_pre_2 = 0, expect no cases in R_pos
   y <- helper(0.5, 0, 0)
@@ -474,27 +474,28 @@ test_that("R_pre parameters work as expected", {
   ## time-step to R_neg/R_pos just from R_pre_1
   y <- helper(0.5, Inf, 0)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
-               t(y$R_pre[, 1, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
+               t(y$R_pre[, 1, 1, -n]))
 
   ## gamma_R_pre_1 = 0, gamma_R_pre_2 = Inf, expect progression in one
   ## time-step to R_neg/R_pos just from R_pre_2
   y <- helper(0.5, 0, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
-               t(y$R_pre[, 2, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
+               t(y$R_pre[, 2, 1, -n]))
 
   ## gamma_R_pre_1 = Inf, gamma_R_pre_2 = Inf, expect progression in
   ## one time-step to R_neg/R_pos from both R_pre_1 and R_pre_2
   y <- helper(0.5, Inf, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 3), sum) + y$R_neg)),
-               t(apply(y$R_pre[, , -n], c(1, 3), sum)))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
+               t(apply(y$R_pre[, , 1, -n], c(1, 3), sum)))
 })
 
 
 test_that("setting a gamma to Inf results immediate progression", {
-  helper <- function(gamma_name, progression_name, compartment_name) {
+  helper <- function(gamma_name, progression_name, compartment_name,
+                     hosp_compartment) {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
@@ -504,18 +505,29 @@ test_that("setting a gamma to Inf results immediate progression", {
     mod <- carehomes$new(p, 0, 1)
 
     info <- mod$info()
-    mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+    state <- carehomes_initial(info, 1, p)$state
+
+    # add individuals into the compartment
+    if (hosp_compartment) {
+      name_conf <- paste0(compartment_name, "_conf")
+      name_unconf <- paste0(compartment_name, "_unconf")
+      index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
+      index_unconf <- array(info$index[[name_unconf]], info$dim[[name_unconf]])
+      state[index_conf] <- 50
+      state[index_unconf] <- 50
+    } else {
+      index <- array(info$index[[compartment_name]],
+                     info$dim[[compartment_name]])
+      state[index] <- 50
+    }
+
+    mod$set_state(state)
     mod$set_index(integer(0))
     y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-    y$I_hosp_R <- y$I_hosp_R_unconf + y$I_hosp_R_conf
-    y$I_hosp_D <- y$I_hosp_D_unconf + y$I_hosp_D_conf
-    y$I_triage <- y$I_triage_unconf + y$I_triage_conf
-    y$I_ICU_S_R <- y$I_ICU_S_R_unconf + y$I_ICU_S_R_conf
-    y$I_ICU_S_D <- y$I_ICU_S_D_unconf + y$I_ICU_S_D_conf
-    y$I_ICU_D <- y$I_ICU_D_unconf + y$I_ICU_D_conf
-    y$R_stepdown_R <- y$R_stepdown_R_unconf + y$R_stepdown_R_conf
-    y$R_stepdown_D <- y$R_stepdown_D_unconf + y$R_stepdown_D_conf
+    if (hosp_compartment) {
+      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
+    }
 
     z <- y[[compartment_name]]
 
@@ -529,27 +541,28 @@ test_that("setting a gamma to Inf results immediate progression", {
     }
   }
 
-  helper("gamma_E", "s_E", "E")
-  helper("gamma_asympt", "s_asympt", "I_asympt")
-  helper("gamma_mild", "s_mild", "I_mild")
-  helper("gamma_ILI", "s_ILI", "I_ILI")
-  helper("gamma_triage", "s_triage", "I_triage")
-  helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R")
-  helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D")
-  helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R")
-  helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D")
-  helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D")
-  helper("gamma_comm_D", "s_comm_D", "I_comm_D")
-  helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R")
-  helper("gamma_stepdown_D", "s_stepdown_D", "R_stepdown_D")
-  helper("gamma_R_pos", "s_R_pos", "R_pos")
-  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre")
-  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos")
+  helper("gamma_E", "s_E", "E", FALSE)
+  helper("gamma_asympt", "s_asympt", "I_asympt", FALSE)
+  helper("gamma_mild", "s_mild", "I_mild", FALSE)
+  helper("gamma_ILI", "s_ILI", "I_ILI", FALSE)
+  helper("gamma_triage", "s_triage", "I_triage", TRUE)
+  helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
+  helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)
+  helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R", TRUE)
+  helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D", TRUE)
+  helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
+  helper("gamma_comm_D", "s_comm_D", "I_comm_D", FALSE)
+  helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R", TRUE)
+  helper("gamma_stepdown_D", "s_stepdown_D", "R_stepdown_D", TRUE)
+  helper("gamma_R_pos", "s_R_pos", "R_pos", FALSE)
+  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre", FALSE)
+  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos", FALSE)
 })
 
 
 test_that("setting a gamma to 0 results in no progression", {
-  helper <- function(gamma_name, progression_name, compartment_name) {
+  helper <- function(gamma_name, progression_name, compartment_name,
+                     hosp_compartment) {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
@@ -559,18 +572,38 @@ test_that("setting a gamma to 0 results in no progression", {
     mod <- carehomes$new(p, 0, 1)
 
     info <- mod$info()
-    mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+    state <- carehomes_initial(info, 1, p)$state
+
+    # add individuals into the compartment (only the first progression stage)
+    if (hosp_compartment) {
+      name_conf <- paste0(compartment_name, "_conf")
+      name_unconf <- paste0(compartment_name, "_unconf")
+      index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
+      index_unconf <- array(info$index[[name_unconf]], info$dim[[name_unconf]])
+      if (length(dim(index_conf)) == 3) {
+        state[index_conf[, 1, ]] <- 50
+        state[index_unconf[, 1, ]] <- 50
+      } else {
+        state[index_conf[, 1]] <- 50
+        state[index_unconf[, 1]] <- 50
+      }
+    } else {
+      index <- array(info$index[[compartment_name]],
+                     info$dim[[compartment_name]])
+      if (length(dim(index)) == 3) {
+        state[index[, 1, ]] <- 50
+      } else {
+        state[index[, 1]] <- 50
+      }
+    }
+
+    mod$set_state(state)
     mod$set_index(integer(0))
     y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-    y$I_hosp_R <- y$I_hosp_R_unconf + y$I_hosp_R_conf
-    y$I_hosp_D <- y$I_hosp_D_unconf + y$I_hosp_D_conf
-    y$I_triage <- y$I_triage_unconf + y$I_triage_conf
-    y$I_ICU_S_R <- y$I_ICU_S_R_unconf + y$I_ICU_S_R_conf
-    y$I_ICU_S_D <- y$I_ICU_S_D_unconf + y$I_ICU_S_D_conf
-    y$I_ICU_D <- y$I_ICU_D_unconf + y$I_ICU_D_conf
-    y$R_stepdown_R <- y$R_stepdown_R_unconf + y$R_stepdown_R_conf
-    y$R_stepdown_D <- y$R_stepdown_D_unconf + y$R_stepdown_D_conf
+    if (hosp_compartment) {
+      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
+    }
 
     z <- y[[compartment_name]]
 
@@ -584,22 +617,22 @@ test_that("setting a gamma to 0 results in no progression", {
   }
 
   p <- carehomes_parameters(0, "england")
-  helper("gamma_E", "s_E", "E")
-  helper("gamma_asympt", "s_asympt", "I_asympt")
-  helper("gamma_mild", "s_mild", "I_mild")
-  helper("gamma_ILI", "s_ILI", "I_ILI")
-  helper("gamma_triage", "s_triage", "I_triage")
-  helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R")
-  helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D")
-  helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R")
-  helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D")
-  helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D")
-  helper("gamma_comm_D", "s_comm_D", "I_comm_D")
-  helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R")
-  helper("gamma_stepdown_D", "s_stepdown_D", "R_stepdown_D")
-  helper("gamma_R_pos", "s_R_pos", "R_pos")
-  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre")
-  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos")
+  helper("gamma_E", "s_E", "E", FALSE)
+  helper("gamma_asympt", "s_asympt", "I_asympt", FALSE)
+  helper("gamma_mild", "s_mild", "I_mild", FALSE)
+  helper("gamma_ILI", "s_ILI", "I_ILI", FALSE)
+  helper("gamma_triage", "s_triage", "I_triage", TRUE)
+  helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
+  helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)
+  helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R", TRUE)
+  helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D", TRUE)
+  helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
+  helper("gamma_comm_D", "s_comm_D", "I_comm_D", FALSE)
+  helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R", TRUE)
+  helper("gamma_stepdown_D", "s_stepdown_D", "R_stepdown_D", TRUE)
+  helper("gamma_R_pos", "s_R_pos", "R_pos", FALSE)
+  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre", FALSE)
+  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos", FALSE)
 })
 
 
@@ -740,16 +773,14 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
                  y$I_ICU_S_D_conf[, 1, , -1], y$I_triage_conf[, 2, , -n])
 
   ## Check stepdown_R
-  expect_equal(y$R_stepdown_R_conf[, 2, 2], y$R_stepdown_R_unconf[, 1, 1])
-  I_ICU_S_R_conf <- drop(y$I_ICU_S_R_conf)
-  expect_equal(y$R_stepdown_R_conf[, 1, -1], I_ICU_S_R_conf[, 2, -n])
-  expect_true(all(y$R_stepdown_R_unconf[, 2, ] == 0))
+  expect_equal(y$R_stepdown_R_conf[, 2, , 2], y$R_stepdown_R_unconf[, 1, , 1])
+  expect_equal(y$R_stepdown_R_conf[, 1, , -1], y$I_ICU_S_R_conf[, 2, , -n])
+  expect_true(all(y$R_stepdown_R_unconf[, 2, , ] == 0))
 
   ## Check stepdown_D
-  expect_equal(y$R_stepdown_D_conf[, 2, 2], y$R_stepdown_D_unconf[, 1, 1])
-  I_ICU_S_D_conf <- drop(y$I_ICU_S_D_conf)
-  expect_equal(y$R_stepdown_D_conf[, 1, -1], I_ICU_S_D_conf[, 2, -n])
-  expect_true(all(y$R_stepdown_D_unconf[, 2, ] == 0))
+  expect_equal(y$R_stepdown_D_conf[, 2, , 2], y$R_stepdown_D_unconf[, 1, , 1])
+  expect_equal(y$R_stepdown_D_conf[, 1, , -1], y$I_ICU_S_D_conf[, 2, , -n])
+  expect_true(all(y$R_stepdown_D_unconf[, 2, , ] == 0))
 
   new_conf <- apply(y$I_hosp_R_conf[, 2, , ] +
                     y$I_hosp_D_conf[, 2, , ] +
@@ -758,8 +789,8 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
     sum(y$I_ICU_S_R_conf[, 2, , 2] +
         y$I_ICU_S_D_conf[, 2, , 2] +
         y$I_ICU_D_conf[, 2, , 2] +
-        y$R_stepdown_conf[, 2, 2] +
-        y$R_stepdown_R_conf[, 2, 2])
+        y$R_stepdown_conf[, 2, , 2] +
+        y$R_stepdown_R_conf[, 2, , 2])
   expect_true(all(diff(y$cum_new_conf) == new_conf[-1]))
 
   expect_true(all(y$cum_admit_conf == 0))
@@ -779,8 +810,8 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$general_tot == apply(y$I_triage_conf, 4, sum) +
                     apply(y$I_hosp_R_conf, 4, sum) +
                     apply(y$I_hosp_D_conf, 4, sum) +
-                    apply(y$R_stepdown_R_conf, 3, sum) +
-                    apply(y$R_stepdown_D_conf, 3, sum)))
+                    apply(y$R_stepdown_R_conf, 4, sum) +
+                    apply(y$R_stepdown_D_conf, 4, sum)))
   expect_true(all(y$I_ICU_tot == apply(y$I_ICU_S_R_conf, 4, sum) +
                     apply(y$I_ICU_S_D_conf, 4, sum) +
                     apply(y$I_ICU_D_conf, 4, sum)))
@@ -790,6 +821,6 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
 
   # check the positivity sums
-  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , ], 3, sum)))
-  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , ], 3, sum)))
+  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , 1, ], 3, sum)))
+  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , 1, ], 3, sum)))
 })
