@@ -16,25 +16,25 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 ## output number of individuals vaccinated by age and clinical stage
 ## vaccinated S
-initial(n_S_vaccinated[]) <- 0
-update(n_S_vaccinated[]) <- n_S_next_vacc_class[i, 1] +
-  n_SE_next_vacc_class[i, 1]
-dim(n_S_vaccinated) <- n_groups
+initial(cumul_n_S_vaccinated[]) <- 0
+update(cumul_n_S_vaccinated[]) <- cumul_n_S_vaccinated[i] +
+  n_S_next_vacc_class[i, 1] + n_SE_next_vacc_class[i, 1]
+dim(cumul_n_S_vaccinated) <- n_groups
 ## vaccinated E
-initial(n_E_vaccinated[, ]) <- 0
-update(n_E_vaccinated[, ]) <- n_E_next_vacc_class[i, j, 1] +
-  n_EE_next_vacc_class[i, j, 1]
-dim(n_E_vaccinated) <- c(n_groups, s_E)
+initial(cumul_n_E_vaccinated[, ]) <- 0
+update(cumul_n_E_vaccinated[, ]) <- cumul_n_E_vaccinated[i, j] +
+  n_E_next_vacc_class[i, j, 1] + n_EE_next_vacc_class[i, j, 1]
+dim(cumul_n_E_vaccinated) <- c(n_groups, s_E)
 ## vaccinated I_asympt
-initial(n_I_asympt_vaccinated[, ]) <- 0
-update(n_I_asympt_vaccinated[, ]) <- n_I_asympt_next_vacc_class[i, j, 1] +
-  n_II_asympt_next_vacc_class[i, j, 1]
-dim(n_I_asympt_vaccinated) <- c(n_groups, s_asympt)
+initial(cumul_n_I_asympt_vaccinated[, ]) <- 0
+update(cumul_n_I_asympt_vaccinated[, ]) <- cumul_n_I_asympt_vaccinated[i, j] +
+  n_I_asympt_next_vacc_class[i, j, 1] + n_II_asympt_next_vacc_class[i, j, 1]
+dim(cumul_n_I_asympt_vaccinated) <- c(n_groups, s_asympt)
 ## vaccinated R
-initial(n_R_vaccinated[]) <- 0
-update(n_R_vaccinated[]) <- n_R_next_vacc_class[i, 1] +
-  n_RS_next_vacc_class[i, 1]
-dim(n_R_vaccinated) <- n_groups
+initial(cumul_n_R_vaccinated[]) <- 0
+update(cumul_n_R_vaccinated[]) <- cumul_n_R_vaccinated[i] +
+  n_R_next_vacc_class[i, 1] + n_RS_next_vacc_class[i, 1]
+dim(cumul_n_R_vaccinated) <- n_groups
 
 ## Core equations for transitions between compartments:
 update(S[, 1]) <- S[i, 1] + n_RS[i, 1] - n_S_progress[i, 1] +
