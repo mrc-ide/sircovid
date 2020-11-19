@@ -740,3 +740,82 @@ test_that(
     expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
     expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
 })
+
+test_that("Outputed vaccination numbers make sense", {
+    set.seed(1)
+    p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
+                              rel_susceptibility = c(1, 0.5, 0.1),
+                              rel_p_sympt = c(1, 1, 1),
+                              rel_p_hosp_if_sympt = c(1, 1, 1),
+                              vaccine_progression_rate = c(500, 100, 50))
+    
+    mod <- carehomes$new(p, 0, 1)
+    info <- mod$info()
+    y0 <- carehomes_initial(info, 1, p)$state
+    mod$set_state(carehomes_initial(info, 1, p)$state)
+    mod$set_index(integer(0))
+    y <- mod$transform_variables(
+      drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    
+    ## check outputed objects have correct dimension
+    expect_equal(dim(y$n_S_vaccinated), c(19, 101))
+    expect_equal(dim(y$n_E_vaccinated), c(19, 2, 101))
+    expect_equal(dim(y$n_I_asympt_vaccinated), c(19, 1, 101))
+    expect_equal(dim(y$n_R_vaccinated), c(19, 101))
+    
+    ## vaccination rates used are high so we should get some >0 numbers in all
+    ## age and clinical stages
+    for(i in seq_len(19))
+    {
+      expect_true(!all(y$n_S_vaccinated[i, ] == 0))  
+      expect_true(!all(y$n_E_vaccinated[i, 1, ] == 0))  
+      expect_true(!all(y$n_E_vaccinated[i, 2, ] == 0))  
+      expect_true(!all(y$n_I_asympt_vaccinated[i, 1, ] == 0))  
+      expect_true(!all(y$n_R_vaccinated[i, ] == 0))  
+    }
+    
+})
+
+test_that("Outputed vaccination numbers are what we expect", {
+  set.seed(1)
+  p <- carehomes_parameters(0, "uk", beta_value = 0, waning_rate = 0,
+                            rel_susceptibility = c(1, 0.5, 0.5),
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(500, 0.00001, 0))
+  
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 1))))
+  
+  ## every initial susceptible should be counted as vaccinated
+  y$S[, , 1]
+  y$S[, , 2]
+  y$n_S_vaccinated[, 1]
+  y$n_S_vaccinated[, 2]
+  y$n_S_next_vacc_class_out[, , 1]
+  y$n_S_next_vacc_class_out[, , 2]
+  y$p_S_next_vacc_class_out[, , 2]
+  y$n_RS_out[, , 1]
+  y$n_RS_out[, , 2]
+  y$n_S_progress_out[, , 1]
+  y$n_S_progress_out[, , 2]
+  y$n_RS_next_vacc_class_out[, , 1]
+  y$n_RS_next_vacc_class_out[, , 2]
+
+  ## vaccination rates used are high so we should get some >0 numbers in all
+  ## age and clinical stages
+  for(i in seq_len(19))
+  {
+    expect_true(!all(y$n_S_vaccinated[i, ] == 0))  
+    expect_true(!all(y$n_E_vaccinated[i, 1, ] == 0))  
+    expect_true(!all(y$n_E_vaccinated[i, 2, ] == 0))  
+    expect_true(!all(y$n_I_asympt_vaccinated[i, 1, ] == 0))  
+    expect_true(!all(y$n_R_vaccinated[i, ] == 0))  
+  }
+  
+})

@@ -14,6 +14,27 @@ n_groups <- user()
 dt <- user()
 initial(time) <- 0
 update(time) <- (step + 1) * dt
+## output number of individuals vaccinated by age and clinical stage
+## vaccinated S
+initial(n_S_vaccinated[]) <- 0
+update(n_S_vaccinated[]) <- n_S_next_vacc_class[i, 1] +
+  n_SE_next_vacc_class[i, 1]
+dim(n_S_vaccinated) <- n_groups
+## vaccinated E
+initial(n_E_vaccinated[, ]) <- 0
+update(n_E_vaccinated[, ]) <- n_E_next_vacc_class[i, j, 1] +
+  n_EE_next_vacc_class[i, j, 1]
+dim(n_E_vaccinated) <- c(n_groups, s_E)
+## vaccinated I_asympt
+initial(n_I_asympt_vaccinated[, ]) <- 0
+update(n_I_asympt_vaccinated[, ]) <- n_I_asympt_next_vacc_class[i, j, 1] +
+  n_II_asympt_next_vacc_class[i, j, 1]
+dim(n_I_asympt_vaccinated) <- c(n_groups, s_asympt)
+## vaccinated R
+initial(n_R_vaccinated[]) <- 0
+update(n_R_vaccinated[]) <- n_R_next_vacc_class[i, 1] +
+  n_RS_next_vacc_class[i, 1]
+dim(n_R_vaccinated) <- n_groups
 
 ## Core equations for transitions between compartments:
 update(S[, 1]) <- S[i, 1] + n_RS[i, 1] - n_S_progress[i, 1] +
@@ -706,9 +727,9 @@ rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
 rel_p_sympt[, ] <- user()
-dim(rel_p_sympt) <- n_vacc_classes
+dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
 rel_p_hosp_if_sympt[, ] <- user()
-dim(rel_p_hosp_if_sympt) <- n_vacc_classes
+dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
 
 vaccine_progression_rate[, ] <- user()
 dim(vaccine_progression_rate) <- user()
