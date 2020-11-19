@@ -19,7 +19,11 @@ n_groups <- user()
 dt <- user()
 initial(time) <- 0
 update(time) <- (step + 1) * dt
-## output number of individuals vaccinated by age and clinical stage
+
+## output number of individuals vaccinated by age and vaccine stage
+## For example, for E, we sum over n_E_next_vacc_class (those moving vaccine
+## stage without progressing disease stages) and also n_EE_next_vacc_class
+## (those moving vaccine stage and also progressing disease stages) 
 ## vaccinated S
 initial(cum_n_S_vaccinated[, ]) <- 0
 update(cum_n_S_vaccinated[, ]) <- cum_n_S_vaccinated[i, j] +
