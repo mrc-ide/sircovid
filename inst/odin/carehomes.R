@@ -21,25 +21,26 @@ initial(time) <- 0
 update(time) <- (step + 1) * dt
 ## output number of individuals vaccinated by age and clinical stage
 ## vaccinated S
-initial(cumul_n_S_vaccinated[]) <- 0
-update(cumul_n_S_vaccinated[]) <- cumul_n_S_vaccinated[i] +
-  n_S_next_vacc_class[i, 1] + n_SE_next_vacc_class[i, 1]
-dim(cumul_n_S_vaccinated) <- n_groups
+initial(cum_n_S_vaccinated[, ]) <- 0
+update(cum_n_S_vaccinated[, ]) <- cum_n_S_vaccinated[i, j] +
+  n_S_next_vacc_class[i, j] + n_SE_next_vacc_class[i, j]
+dim(cum_n_S_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated E
-initial(cumul_n_E_vaccinated[, ]) <- 0
-update(cumul_n_E_vaccinated[, ]) <- cumul_n_E_vaccinated[i, j] +
-  n_E_next_vacc_class[i, j, 1] + n_EE_next_vacc_class[i, j, 1]
-dim(cumul_n_E_vaccinated) <- c(n_groups, s_E)
+initial(cum_n_E_vaccinated[, ]) <- 0
+update(cum_n_E_vaccinated[, ]) <- cum_n_E_vaccinated[i, j] +
+  sum(n_E_next_vacc_class[i, , j]) + sum(n_EE_next_vacc_class[i, , j])
+dim(cum_n_E_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated I_asympt
-initial(cumul_n_I_asympt_vaccinated[, ]) <- 0
-update(cumul_n_I_asympt_vaccinated[, ]) <- cumul_n_I_asympt_vaccinated[i, j] +
-  n_I_asympt_next_vacc_class[i, j, 1] + n_II_asympt_next_vacc_class[i, j, 1]
-dim(cumul_n_I_asympt_vaccinated) <- c(n_groups, s_asympt)
+initial(cum_n_I_asympt_vaccinated[, ]) <- 0
+update(cum_n_I_asympt_vaccinated[, ]) <- cum_n_I_asympt_vaccinated[i, j] +
+  sum(n_I_asympt_next_vacc_class[i, , j]) +
+  sum(n_II_asympt_next_vacc_class[i, , j])
+dim(cum_n_I_asympt_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated R
-initial(cumul_n_R_vaccinated[]) <- 0
-update(cumul_n_R_vaccinated[]) <- cumul_n_R_vaccinated[i] +
-  n_R_next_vacc_class[i, 1] + n_RS_next_vacc_class[i, 1]
-dim(cumul_n_R_vaccinated) <- n_groups
+initial(cum_n_R_vaccinated[, ]) <- 0
+update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
+  n_R_next_vacc_class[i, j] + n_RS_next_vacc_class[i, j]
+dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Core equations for transitions between compartments:
 update(S[, ]) <- new_S[i, j]

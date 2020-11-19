@@ -758,19 +758,17 @@ test_that("Outputed vaccination numbers make sense", {
       drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
     ## check outputed objects have correct dimension
-    expect_equal(dim(y$cumul_n_S_vaccinated), c(19, 101))
-    expect_equal(dim(y$cumul_n_E_vaccinated), c(19, 2, 101))
-    expect_equal(dim(y$cumul_n_I_asympt_vaccinated), c(19, 1, 101))
-    expect_equal(dim(y$cumul_n_R_vaccinated), c(19, 101))
+    expect_equal(dim(y$cum_n_S_vaccinated), c(19, 3, 101))
+    expect_equal(dim(y$cum_n_E_vaccinated), c(19, 3, 101))
+    expect_equal(dim(y$cum_n_I_asympt_vaccinated), c(19, 3, 101))
+    expect_equal(dim(y$cum_n_R_vaccinated), c(19, 3, 101))
 
     ## check cumulative stuff is increasing objects have correct dimension
-    for (i in seq_len(19)) {
-      expect_true(all(diff(y$cumul_n_S_vaccinated[i, ]) >= 0))
-      expect_true(all(diff(y$cumul_n_E_vaccinated[i, 1, ]) >= 0))
-      expect_true(all(diff(y$cumul_n_E_vaccinated[i, 2, ]) >= 0))
-      expect_true(all(diff(y$cumul_n_I_asympt_vaccinated[i, 1, ]) >= 0))
-      expect_true(all(diff(y$cumul_n_R_vaccinated[i, ]) >= 0))
-    }
+
+    expect_true(all(apply(y$cum_n_S_vaccinated, c(1, 2), diff) >= 0))
+    expect_true(all(apply(y$cum_n_E_vaccinated, c(1, 2), diff) >= 0))
+    expect_true(all(apply(y$cum_n_I_asympt_vaccinated, c(1, 2), diff) >= 0))
+    expect_true(all(apply(y$cum_n_R_vaccinated, c(1, 2), diff) >= 0))
 
 })
 
@@ -792,10 +790,10 @@ test_that("Outputed S vaccination numbers are what we expect", {
   ## there are candidates in S for vaccination
   expect_true(all(y$S[, 1, 1] > 0))
   ## every initial susceptible should be vaccinated within first day
-  expect_true(all(y$cumul_n_S_vaccinated[, 2] == y$S[, 1, 1]))
+  expect_true(all(y$cum_n_S_vaccinated[, 1, 2] == y$S[, 1, 1]))
   ## same for the 10 initially seeded cases
   expect_true(
-    all(y$cumul_n_I_asympt_vaccinated[, 1, 2] == y$I_asympt[, 1, 1, 1]))
+    all(y$cum_n_I_asympt_vaccinated[, 1, 2] == y$I_asympt[, 1, 1, 1]))
 
 })
 
@@ -827,10 +825,10 @@ test_that("Outputed E vaccination numbers are what we expect", {
   ## there are candidates in E for vaccination
   expect_true(all(y$E[, , 1, 1] > 0))
   ## every initial exposed should be vaccinated within first day
-  expect_true(all(y$cumul_n_E_vaccinated[, , 2] == y$E[, , 1, 1]))
+  expect_true(all(y$cum_n_E_vaccinated[, , 2] ==
+                    apply(y$E[, , , 1], c(1, 3), sum)))
   ## same for the 10 initially seeded cases
-  expect_true(
-    all(y$cumul_n_I_asympt_vaccinated[, 1, 2] == y$I_asympt[, 1, 1, 1]))
+  expect_true(all(y$cum_n_I_asympt_vaccinated[, , 2] == y$I_asympt[, , , 1]))
 
 })
 
@@ -861,7 +859,7 @@ test_that("Outputed I_asympt vaccination numbers are what we expect", {
   ## there are candidates in I_asympt for vaccination
   expect_true(all(y$I_asympt[, , 1, 1] > 0))
   ## every initial I_asympt should be vaccinated within first day
-  expect_true(all(y$cumul_n_I_asympt_vaccinated[, , 2] == y$I_asympt[, , 1, 1]))
+  expect_true(all(y$cum_n_I_asympt_vaccinated[, , 2] == y$I_asympt[, , , 1]))
 
 })
 
@@ -896,10 +894,9 @@ test_that("Outputed R vaccination numbers are what we expect", {
   ## there are candidates in R for vaccination
   expect_true(all(y$R[, 1, 1] > 0))
   ## every initial recovered should be vaccinated within first day
-  expect_true(all(y$cumul_n_R_vaccinated[, 2] == y$R[, 1, 1]))
+  expect_true(all(y$cum_n_R_vaccinated[, , 2] == y$R[, , 1]))
   ## same for the 10 initially seeded cases
-  expect_true(
-    all(y$cumul_n_I_asympt_vaccinated[, 1, 2] == y$I_asympt[, 1, 1, 1]))
+  expect_true(all(y$cum_n_I_asympt_vaccinated[, , 2] == y$I_asympt[, , , 1]))
 
 })
 
