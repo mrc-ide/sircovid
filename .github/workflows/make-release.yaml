@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - master
-      - fix-release
 
 name: make-release
 
