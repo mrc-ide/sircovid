@@ -761,7 +761,7 @@ test_that("Outputed vaccination numbers make sense", {
     expect_equal(dim(y$cumul_n_S_vaccinated), c(19, 101))
     expect_equal(dim(y$cumul_n_E_vaccinated), c(19, 2, 101))
     expect_equal(dim(y$cumul_n_I_asympt_vaccinated), c(19, 1, 101))
-    expect_equal
+    expect_equal(dim(y$cumul_n_R_vaccinated), c(19, 101))
 
     ## check cumulative stuff is increasing objects have correct dimension
     for (i in seq_len(19)) {
