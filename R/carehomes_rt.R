@@ -41,7 +41,11 @@ carehomes_Rt <- function(step, S, p) {
                     nrow = p$n_groups, ncol = ncol(p$rel_susceptibility))
     S_weighted <- rowSums(S_mat * p$rel_susceptibility)
 
-    mean_duration_weighted <- apply(mean_duration[, , t], 1, mean)
+    if (dim(mean_duration)[2] > 1) {
+      mean_duration_weighted <- apply(mean_duration[, , t], 1, mean)
+    } else {
+      mean_duration_weighted <- drop(mean_duration[, , t])
+    }
 
     ngm <- outer(mean_duration_weighted, S_weighted) * m
 
