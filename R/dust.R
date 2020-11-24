@@ -27,9 +27,7 @@ basic <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_recov_ICU = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_recov_ILI = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_sympt_ILI = list(
+        min = -Inf, max = Inf, integer = FALSE), p_recov_sympt = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), s_asympt = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -38,11 +36,9 @@ basic <- R6::R6Class(
         integer = FALSE), s_hosp = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), s_ICU = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_ILI = list(
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_rec = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_mild = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_rec = list(
+        min = -Inf, max = Inf, integer = FALSE), s_sympt = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), gamma_asympt = list(
         has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf,
@@ -52,11 +48,9 @@ basic <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_ICU = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_ILI = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_mild = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_rec = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_sympt = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), n_trans_classes = list(has_default = TRUE,
         default_value = 1L, rank = 0, min = -Inf, max = Inf,
