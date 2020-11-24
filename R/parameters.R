@@ -135,8 +135,7 @@ sircovid_parameters_severity <- function(params) {
   } else if (!is.data.frame(params)) {
     expected <- c("p_admit_conf", "p_asympt", "p_death_comm",
                   "p_death_hosp_D", "p_death_ICU", "p_death_stepdown",
-                  "p_hosp_ILI", "p_ICU_hosp", "p_seroconversion", "p_sympt_ILI",
-                  "p_hosp_sympt")
+                  "p_ICU_hosp", "p_seroconversion", "p_hosp_sympt")
     verify_names(params, expected)
     return(params)
   }
@@ -170,9 +169,7 @@ sircovid_parameters_severity <- function(params) {
     p_death_hosp_D = data[["p_death_hosp_D"]],
     p_death_ICU = data[["p_death_ICU"]],
     p_death_stepdown = data[["p_death_stepdown"]],
-    p_hosp_ILI = data[["p_sympt_hosp"]] / data[["p_sympt_seek_hc"]],
     p_ICU_hosp = data[["p_ICU_hosp"]],
     p_seroconversion = data[["p_seroconversion"]],
-    p_sympt_ILI = data[["p_sympt"]] * data[["p_sympt_seek_hc"]],
     p_hosp_sympt = data[["p_sympt_hosp"]])
 }
