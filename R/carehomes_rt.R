@@ -41,7 +41,9 @@ carehomes_Rt <- function(step, S, p) {
                     nrow = p$n_groups, ncol = ncol(p$rel_susceptibility))
     S_weighted <- rowSums(S_mat * p$rel_susceptibility)
 
-    ngm <- outer(mean_duration[, t], S_weighted) * m
+    mean_duration_weighted <- apply(mean_duration[, , t], 1, mean)
+
+    ngm <- outer(mean_duration_weighted, S_weighted) * m
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns
@@ -77,7 +79,6 @@ carehomes_Rt <- function(step, S, p) {
        Rt_all = Rt_all,
        Rt_general = Rt_general)
 }
-
 
 ## Here we expect 'S' in order:
 ##
@@ -126,19 +127,35 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 carehomes_Rt_mean_duration <- function(step, pars) {
   dt <- pars$dt
 
-  p_asympt <- pars$p_asympt
-  p_sympt_ILI <- pars$p_sympt_ILI
-  p_hosp_ILI <- outer(pars$psi_hosp_ILI,
-                    sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
-  p_ICU_hosp <- outer(pars$psi_ICU_hosp,
+  matricise <- function(vect, n_col) {
+    matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
+  }
+
+  n_vacc_classes <- ncol(pars$rel_susceptibility)
+
+  n_time_steps <-
+    length(sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
+
+  p_asympt <- matricise(pars$p_asympt, n_vacc_classes)
+  p_asympt <- 1 - (1 - p_asympt) * (pars$rel_p_sympt)
+  p_asympt <- outer(p_asympt, rep(1, n_time_steps))
+
+  p_sympt_ILI <- matricise(pars$p_sympt_ILI, n_vacc_classes)
+  p_sympt_ILI <- outer(p_sympt_ILI, rep(1, n_time_steps))
+
+  p_hosp_ILI <- outer(
+    matricise(pars$psi_hosp_ILI, n_vacc_classes) * pars$rel_p_hosp_if_sympt,
+    sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
+
+  p_ICU_hosp <- outer(matricise(pars$psi_ICU_hosp, n_vacc_classes),
                     sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
-  p_death_ICU <- outer(pars$psi_death_ICU,
+  p_death_ICU <- outer(matricise(pars$psi_death_ICU, n_vacc_classes),
                    sircovid_parameters_beta_expand(step, pars$p_death_ICU_step))
-  p_death_hosp_D <- outer(pars$psi_death_hosp_D,
+  p_death_hosp_D <- outer(matricise(pars$psi_death_hosp_D, n_vacc_classes),
                 sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
-  p_death_stepdown <- outer(pars$psi_death_stepdown,
+  p_death_stepdown <- outer(matricise(pars$psi_death_stepdown, n_vacc_classes),
               sircovid_parameters_beta_expand(step, pars$p_death_stepdown_step))
-  p_death_comm <- outer(pars$psi_death_comm,
+  p_death_comm <- outer(matricise(pars$psi_death_comm, n_vacc_classes),
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
   p_mild <- (1 - p_asympt) * (1 - p_sympt_ILI)
