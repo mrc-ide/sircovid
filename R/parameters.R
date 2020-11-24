@@ -172,5 +172,6 @@ sircovid_parameters_severity <- function(params) {
     p_hosp_ILI = data[["p_sympt_hosp"]] / data[["p_sympt_seek_hc"]],
     p_ICU_hosp = data[["p_ICU_hosp"]],
     p_seroconversion = data[["p_seroconversion"]],
-    p_sympt_ILI = data[["p_sympt"]] * data[["p_sympt_seek_hc"]])
+    p_sympt_ILI = data[["p_sympt"]] * data[["p_sympt_seek_hc"]],
+    p_hosp_sympt = data[["p_sympt_hosp"]])
 }

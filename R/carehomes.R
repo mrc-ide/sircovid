@@ -248,9 +248,9 @@ carehomes_parameters <- function(start_date, region,
 
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
   ## implementation of severity parameters
-  ## probability of ILI patient requiring hospital treatment
-  severity$psi_hosp_ILI <- severity$p_hosp_ILI / max(severity$p_hosp_ILI)
-  severity$p_hosp_ILI_step <- max(severity$p_hosp_ILI)
+  ## probability of symptomatic individual requiring hospital treatment
+  severity$psi_hosp_sympt <- severity$p_hosp_sympt / max(severity$p_hosp_sympt)
+  severity$p_hosp_sympt_step <- max(severity$p_hosp_sympt)
   ## probability of hospitalised patient going to ICU
   severity$psi_ICU_hosp <- severity$p_ICU_hosp / max(severity$p_ICU_hosp)
   severity$p_ICU_hosp_step <- max(severity$p_ICU_hosp)
@@ -711,8 +711,7 @@ carehomes_parameters_progression <- function() {
   ## parameters of that distribution.
   list(s_E = 2,
        s_asympt = 1,
-       s_mild = 1,
-       s_ILI = 1,
+       s_sympt = 1,
        s_comm_D = 2,
        s_hosp_D = 2,
        s_hosp_R = 2,
@@ -728,8 +727,7 @@ carehomes_parameters_progression <- function() {
 
        gamma_E = 1 / (4.59 / 2),
        gamma_asympt = 1 / 2.09,
-       gamma_mild = 1 / 2.09,
-       gamma_ILI = 1 / 4,
+       gamma_sympt = 1 / 4,
        gamma_comm_D = 2 / 5,
        gamma_hosp_D = 2 / 5,
        gamma_hosp_R = 2 / 10,
