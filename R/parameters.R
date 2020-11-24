@@ -149,17 +149,16 @@ sircovid_parameters_severity <- function(params) {
   rownames(data) <- NULL
 
   required <- c(
-    population = "Size of England population",
     p_sympt_seek_hc = "Proportion of symptomatic cases seeking healthcare",
     p_sympt = "Proportion with symptoms",
     p_sympt_hosp = "Proportion of symptomatic cases hospitalised",
-    p_ICU_hosp = "Proportion of hospitalised cases getting critical care",
-    p_death_ICU = "Proportion of critical cases dying",
-    p_death_hosp_D = "Proportion of non-critical care cases dying",
-    p_death_stepdown = "Proportion of stepdown cases dying",
-    p_seroconversion = "Proportion of cases that seroconvert",
-    p_death_comm = "Proportion of severe cases dying in the community",
-    p_admit_conf = "Proportion of hospitalised cases admitted as confirmed")
+    p_ICU_hosp = "p_ICU_hosp",
+    p_death_ICU = "p_death_ICU",
+    p_death_hosp_D = "p_death_hosp_D",
+    p_death_stepdown = "p_death_stepdown",
+    p_seroconversion = "p_seroconversion",
+    p_death_comm = "p_death_comm",
+    p_admit_conf = "p_admit_conf")
   data <- rename(data, required, names(required))
 
   list(
