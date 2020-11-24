@@ -82,7 +82,7 @@ test_that("can read the default severity file", {
 test_that("can validate a severity input", {
   d <- severity_default()
   expect_error(
-    sircovid_parameters_severity(d[-2, ]),
+    sircovid_parameters_severity(d[-1, ]),
     "Elements missing from 'data': 'Proportion with symptoms'")
 })
 
