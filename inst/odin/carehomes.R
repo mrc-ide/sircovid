@@ -50,8 +50,7 @@ dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 update(S[, ]) <- new_S[i, j]
 update(E[, , ]) <- new_E[i, j, k]
 update(I_asympt[, , ]) <- new_I_asympt[i, j, k]
-update(I_mild[, , ]) <- new_I_mild[i, j, k]
-update(I_ILI[, , ]) <- new_I_ILI[i, j, k]
+update(I_sympt[, , ]) <- new_I_sympt[i, j, k]
 update(I_comm_D[, , ]) <- new_I_comm_D[i, j, k]
 update(I_triage_unconf[, , ]) <- new_I_triage_unconf[i, j, k]
 update(I_triage_conf[, , ]) <- new_I_triage_conf[i, j, k]
@@ -80,9 +79,9 @@ update(PCR_pos[, , ]) <- new_PCR_pos[i, j, k]
 update(PCR_neg[, ]) <- new_PCR_neg[i, j]
 update(cum_admit_conf) <-
   cum_admit_conf +
-  sum(n_ILI_to_hosp_D_conf) +
-  sum(n_ILI_to_hosp_R_conf) +
-  sum(n_ILI_to_triage_conf)
+  sum(n_sympt_to_hosp_D_conf) +
+  sum(n_sympt_to_hosp_R_conf) +
+  sum(n_sympt_to_triage_conf)
 update(cum_new_conf) <-
   cum_new_conf +
   sum(n_I_hosp_D_unconf_to_conf) +
@@ -93,7 +92,7 @@ update(cum_new_conf) <-
   sum(n_I_ICU_S_D_unconf_to_conf) +
   sum(n_R_stepdown_R_unconf_to_conf) +
   sum(n_R_stepdown_D_unconf_to_conf)
-update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_ILI_to_hosp[i, ])
+update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_sympt_to_hosp[i, ])
 
 ## Individual probabilities of transition:
 
@@ -109,8 +108,7 @@ p_SE[, ] <- 1 - exp(-lambda[i] *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
-p_II_mild <- 1 - exp(-gamma_mild * dt)
-p_II_ILI <- 1 - exp(-gamma_ILI * dt)
+p_II_sympt <- 1 - exp(-gamma_sympt * dt)
 p_II_comm_D <- 1 - exp(-gamma_comm_D * dt)
 p_II_triage <- 1 - exp(-gamma_triage * dt)
 p_II_hosp_R <- 1 - exp(-gamma_hosp_R * dt)
@@ -132,9 +130,9 @@ p_ICU_hosp <- if (step >= length(p_ICU_hosp_step))
   p_ICU_hosp_step[length(p_ICU_hosp_step)] else p_ICU_hosp_step[step + 1]
 prob_ICU_hosp[] <- p_ICU_hosp * psi_ICU_hosp[i]
 
-p_hosp_ILI <- if (step >= length(p_hosp_ILI_step))
-  p_hosp_ILI_step[length(p_hosp_ILI_step)] else p_hosp_ILI_step[step + 1]
-prob_hosp_ILI[] <- p_hosp_ILI * psi_hosp_ILI[i]
+p_hosp_sympt <- if (step >= length(p_hosp_sympt_step))
+  p_hosp_sympt_step[length(p_hosp_sympt_step)] else p_hosp_sympt_step[step + 1]
+prob_hosp_sympt[] <- p_hosp_sympt * psi_hosp_sympt[i]
 
 p_death_ICU <- if (step >= length(p_death_ICU_step))
   p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
@@ -241,8 +239,7 @@ n_R_next_vacc_class[, ] <- if (model_pcr_and_serology == 1)
   
 #### other transitions ####
 
-n_II_mild[, , ] <- rbinom(I_mild[i, j, k], p_II_mild)
-n_II_ILI[, , ] <- rbinom(I_ILI[i, j, k], p_II_ILI)
+n_II_sympt[, , ] <- rbinom(I_sympt[i, j, k], p_II_sympt)
 n_II_comm_D[, , ] <- rbinom(I_comm_D[i, j, k], p_II_comm_D)
 n_II_triage_unconf[, , ] <- rbinom(I_triage_unconf[i, j, k], p_II_triage)
 n_II_triage_conf[, , ] <- rbinom(I_triage_conf[i, j, k], p_II_triage)
@@ -288,18 +285,10 @@ n_EI_asympt_next_vacc_class[, ] <-
   rbinom(n_EE_next_vacc_class[i, s_E, j],
          1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
 
-## Computes the number of mild cases - p_sympt_ILI gives the
-## proportion of febrile/ILI cases among the symptomatics
-n_EI_mild[, ] <-
-  rbinom(n_EE[i, s_E, j] - n_EI_asympt[i, j], 1 - p_sympt_ILI[i])
-n_EI_mild_next_vacc_class[, ] <-
-  rbinom(n_EE_next_vacc_class[i, s_E, j] - n_EI_asympt_next_vacc_class[i, j],
-         1 - p_sympt_ILI[i])
-
-## Computes the number of ILI cases
-n_EI_ILI[, ] <- n_EE[i, s_E, j] - n_EI_asympt[i, j] - n_EI_mild[i, j]
-n_EI_ILI_next_vacc_class[, ] <- n_EE_next_vacc_class[i, s_E, j] -
-  n_EI_asympt_next_vacc_class[i, j] - n_EI_mild_next_vacc_class[i, j]
+## Computes the number of symptomatic cases
+n_EI_sympt[, ] <- n_EE[i, s_E, j] - n_EI_asympt[i, j]
+n_EI_sympt_next_vacc_class[, ] <- n_EE_next_vacc_class[i, s_E, j] -
+  n_EI_asympt_next_vacc_class[i, j]
 
   
 ## Work out the S->E and E->E transitions
@@ -342,49 +331,41 @@ aux_II_asympt[, 2:s_asympt, 2:n_vacc_classes] <- aux_II_asympt[i, j, k] +
   n_II_asympt_next_vacc_class[i, j - 1, k - 1]
 new_I_asympt[, , ] <- I_asympt[i, j, k] + aux_II_asympt[i, j, k]
 
-## Work out the I_mild->I_mild transitions
-aux_II_mild[, 1, 1] <- n_EI_mild[i, 1] +
-  n_EI_mild_next_vacc_class[i, n_vacc_classes]
-aux_II_mild[, 1, 2:n_vacc_classes] <-
-  n_EI_mild[i, k] + n_EI_mild_next_vacc_class[i, k - 1]
+## Work out the I_sympt->I_sympt transitions
+aux_II_sympt[, 1, 1] <- n_EI_sympt[i, 1] +
+  n_EI_sympt_next_vacc_class[i, n_vacc_classes]
+aux_II_sympt[, 1, 2:n_vacc_classes] <-
+  n_EI_sympt[i, k] + n_EI_sympt_next_vacc_class[i, k - 1]
 
-aux_II_mild[, 2:s_mild, ] <- n_II_mild[i, j - 1, k]
-aux_II_mild[, 1:s_mild, ] <- aux_II_mild[i, j, k] - n_II_mild[i, j, k]
-new_I_mild[, , ] <- I_mild[i, j, k] + aux_II_mild[i, j, k]
+aux_II_sympt[, 2:s_sympt, ] <- n_II_sympt[i, j - 1, k]
+aux_II_sympt[, 1:s_sympt, ] <- aux_II_sympt[i, j, k] - n_II_sympt[i, j, k]
+new_I_sympt[, , ] <- I_sympt[i, j, k] + aux_II_sympt[i, j, k]
 
-## Work out the I_ILI->I_ILI transitions
-aux_II_ILI[, 1, 1] <- n_EI_ILI[i, 1] +
-  n_EI_ILI_next_vacc_class[i, n_vacc_classes]
-aux_II_ILI[, 1, 2:n_vacc_classes] <-
-  n_EI_ILI[i, k] + n_EI_ILI_next_vacc_class[i, k - 1]
-
-aux_II_ILI[, 2:s_ILI, ] <- n_II_ILI[i, j - 1, k]
-aux_II_ILI[, 1:s_ILI, ] <- aux_II_ILI[i, j, k] - n_II_ILI[i, j, k]
-new_I_ILI[, , ] <- I_ILI[i, j, k] + aux_II_ILI[i, j, k]
-
-## Work out the flow from I_ILI -> R, comm_D, hosp
-n_ILI_to_R[, ] <- rbinom(n_II_ILI[i, s_ILI, j],
-                         1 - prob_hosp_ILI[i] * rel_p_hosp_if_sympt[i, j])
-n_ILI_to_comm_D[, ] <-
-  rbinom(n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j], prob_death_comm[i])
-n_ILI_to_hosp[, ] <-
-  n_II_ILI[i, s_ILI, j] - n_ILI_to_R[i, j] - n_ILI_to_comm_D[i, j]
+## Work out the flow from I_sympt -> R, comm_D, hosp
+n_sympt_to_R[, ] <- rbinom(n_II_sympt[i, s_sympt, j],
+                         1 - prob_hosp_sympt[i] * rel_p_hosp_if_sympt[i, j])
+n_sympt_to_comm_D[, ] <-
+  rbinom(n_II_sympt[i, s_sympt, j] - n_sympt_to_R[i, j], prob_death_comm[i])
+n_sympt_to_hosp[, ] <-
+  n_II_sympt[i, s_sympt, j] - n_sympt_to_R[i, j] - n_sympt_to_comm_D[i, j]
 
 ## Work out the I_comm_D -> I_comm_D transitions
-aux_II_comm_D[, 1, ] <- n_ILI_to_comm_D[i, k]
+aux_II_comm_D[, 1, ] <- n_sympt_to_comm_D[i, k]
 aux_II_comm_D[, 2:s_comm_D, ] <- n_II_comm_D[i, j - 1, k]
 aux_II_comm_D[, 1:s_comm_D, ] <- aux_II_comm_D[i, j, k] - n_II_comm_D[i, j, k]
 new_I_comm_D[, , ] <- I_comm_D[i, j, k] + aux_II_comm_D[i, j, k]
 
 ## Work out the split in hospitals between hosp_D, hosp_R and triage
-n_ILI_to_triage[, ] <- rbinom(n_ILI_to_hosp[i, j], prob_ICU_hosp[i])
-n_ILI_to_triage_conf[, ] <- rbinom(n_ILI_to_triage[i, j],
+n_sympt_to_triage[, ] <- rbinom(n_sympt_to_hosp[i, j], prob_ICU_hosp[i])
+n_sympt_to_triage_conf[, ] <- rbinom(n_sympt_to_triage[i, j],
                                    prob_admit_conf[i])
-n_hosp_non_ICU[, ] <- n_ILI_to_hosp[i, j] - n_ILI_to_triage[i, j]
-n_ILI_to_hosp_D[, ] <- rbinom(n_hosp_non_ICU[i, j], prob_death_hosp_D[i])
-n_ILI_to_hosp_D_conf[, ] <- rbinom(n_ILI_to_hosp_D[i, j], prob_admit_conf[i])
-n_ILI_to_hosp_R[, ] <- n_hosp_non_ICU[i, j] - n_ILI_to_hosp_D[i, j]
-n_ILI_to_hosp_R_conf[, ] <- rbinom(n_ILI_to_hosp_R[i, j], prob_admit_conf[i])
+n_hosp_non_ICU[, ] <- n_sympt_to_hosp[i, j] - n_sympt_to_triage[i, j]
+n_sympt_to_hosp_D[, ] <- rbinom(n_hosp_non_ICU[i, j], prob_death_hosp_D[i])
+n_sympt_to_hosp_D_conf[, ] <- rbinom(n_sympt_to_hosp_D[i, j],
+                                     prob_admit_conf[i])
+n_sympt_to_hosp_R[, ] <- n_hosp_non_ICU[i, j] - n_sympt_to_hosp_D[i, j]
+n_sympt_to_hosp_R_conf[, ] <- rbinom(n_sympt_to_hosp_R[i, j],
+                                     prob_admit_conf[i])
 
 ## Work out the I_triage -> I_triage transitions
 aux_II_triage_unconf[, , ] <- I_triage_unconf[i, j, k]
@@ -403,12 +384,12 @@ n_I_triage_unconf_to_conf[, , ] <-
 new_I_triage_unconf[, , ] <-
   aux_II_triage_unconf[i, j, k] - n_I_triage_unconf_to_conf[i, j, k]
 new_I_triage_unconf[, 1, ] <-
-  new_I_triage_unconf[i, 1, k] + n_ILI_to_triage[i, k] -
-  n_ILI_to_triage_conf[i, k]
+  new_I_triage_unconf[i, 1, k] + n_sympt_to_triage[i, k] -
+  n_sympt_to_triage_conf[i, k]
 new_I_triage_conf[, , ] <-
   aux_II_triage_conf[i, j, k] + n_I_triage_unconf_to_conf[i, j, k]
 new_I_triage_conf[, 1, ] <-
-  new_I_triage_conf[i, 1, k] + n_ILI_to_triage_conf[i, k]
+  new_I_triage_conf[i, 1, k] + n_sympt_to_triage_conf[i, k]
 
 ## Work out the I_hosp_R->I_hosp_R transitions
 aux_II_hosp_R_unconf[, , ] <- I_hosp_R_unconf[i, j, k]
@@ -426,12 +407,12 @@ n_I_hosp_R_unconf_to_conf[, , ] <-
 new_I_hosp_R_unconf[, , ] <-
   aux_II_hosp_R_unconf[i, j, k] - n_I_hosp_R_unconf_to_conf[i, j, k]
 new_I_hosp_R_unconf[, 1, ] <-
-  new_I_hosp_R_unconf[i, 1, k] + n_ILI_to_hosp_R[i, k] -
-  n_ILI_to_hosp_R_conf[i, k]
+  new_I_hosp_R_unconf[i, 1, k] + n_sympt_to_hosp_R[i, k] -
+  n_sympt_to_hosp_R_conf[i, k]
 new_I_hosp_R_conf[, , ] <-
   aux_II_hosp_R_conf[i, j, k] + n_I_hosp_R_unconf_to_conf[i, j, k]
 new_I_hosp_R_conf[, 1, ] <-
-  new_I_hosp_R_conf[i, 1, k] + n_ILI_to_hosp_R_conf[i, k]
+  new_I_hosp_R_conf[i, 1, k] + n_sympt_to_hosp_R_conf[i, k]
 
 ## Work out the I_hosp_D->I_hosp_D transitions
 aux_II_hosp_D_unconf[, , ] <- I_hosp_D_unconf[i, j, k]
@@ -449,12 +430,12 @@ n_I_hosp_D_unconf_to_conf[, , ] <-
 new_I_hosp_D_unconf[, , ] <-
   aux_II_hosp_D_unconf[i, j, k] - n_I_hosp_D_unconf_to_conf[i, j, k]
 new_I_hosp_D_unconf[, 1, ] <-
-  new_I_hosp_D_unconf[i, 1, k] + n_ILI_to_hosp_D[i, k] -
-  n_ILI_to_hosp_D_conf[i, k]
+  new_I_hosp_D_unconf[i, 1, k] + n_sympt_to_hosp_D[i, k] -
+  n_sympt_to_hosp_D_conf[i, k]
 new_I_hosp_D_conf[, , ] <-
   aux_II_hosp_D_conf[i, j, k] + n_I_hosp_D_unconf_to_conf[i, j, k]
 new_I_hosp_D_conf[, 1, ] <-
-  new_I_hosp_D_conf[i, 1, k] + n_ILI_to_hosp_D_conf[i, k]
+  new_I_hosp_D_conf[i, 1, k] + n_sympt_to_hosp_D_conf[i, k]
 
 ## Work out the triage to ICU_D, ICU_S_R and ICU_S_D splits
 n_triage_unconf_to_ICU_D_unconf[, ] <-
@@ -629,8 +610,7 @@ new_R_neg[, 2:n_vacc_classes] <- new_R_neg[i, j] +
 ## Work out the total number of recovery
 new_R[, ] <- R[i, j] +
   n_II_asympt[i, s_asympt, j] +
-  n_II_mild[i, s_mild, j] +
-  n_ILI_to_R[i, j] +
+  n_sympt_to_R[i, j] +
   n_II_hosp_R_conf[i, s_hosp_R, j] +
   n_II_hosp_R_unconf[i, s_hosp_R, j] +
   n_R_stepdown_R_conf[i, s_stepdown_R, j] +
@@ -666,7 +646,7 @@ new_PCR_neg[, 2:n_vacc_classes] <- new_PCR_neg[i, j] +
 
 ## Compute the force of infection
 I_with_diff_trans[, ] <-
-  (sum(I_asympt[i, , j]) + sum(I_mild[i, , j]) + sum(I_ILI[i, , j]) +
+  (sum(I_asympt[i, , j]) + sum(I_sympt[i, , j]) +
     hosp_transmission * (
       sum(I_triage_unconf[i, , j]) +
       sum(I_triage_conf[i, , j]) +
@@ -696,8 +676,7 @@ lambda[] <- sum(s_ij[i, ])
 initial(S[, ]) <- 0
 initial(E[, , ]) <- 0
 initial(I_asympt[, , ]) <- 0
-initial(I_mild[, , ]) <- 0
-initial(I_ILI[, , ]) <- 0
+initial(I_sympt[, , ]) <- 0
 initial(I_comm_D[, , ]) <- 0
 initial(I_triage_unconf[, , ]) <- 0
 initial(I_triage_conf[, , ]) <- 0
@@ -746,25 +725,20 @@ dim(vaccine_progression_rate) <- user()
 s_E <- user()
 gamma_E <- user(0.1)
 
-## Probability of transitioning from the E to the asymptomatic,
-## febrile classes, the rest goes in mild i.e with mild symptoms
+## Probability of transitioning from the E to the asymptomatic class,
+## the rest go into the symptomatic class
 p_asympt[] <- user()
-p_sympt_ILI[] <- user()
 
 ## Parameters of the I_asympt classes
 s_asympt <- user()
 gamma_asympt <- user(0.1)
 
-## Parameters of the I_mild classes
-s_mild <- user()
-gamma_mild <- user(0.1)
-
-## Parameters of the I_ILI classes
-s_ILI <- user()
-gamma_ILI <- user(0.1)
-dim(p_hosp_ILI_step) <- user()
-p_hosp_ILI_step[] <- user()
-psi_hosp_ILI[] <- user()
+## Parameters of the I_sympt classes
+s_sympt <- user()
+gamma_sympt <- user(0.1)
+dim(p_hosp_sympt_step) <- user()
+p_hosp_sympt_step[] <- user()
+psi_hosp_sympt[] <- user()
 
 ## Parameters of the I_comm_D class
 s_comm_D <- user()
@@ -888,19 +862,13 @@ dim(aux_II_asympt) <- c(n_groups, s_asympt, n_vacc_classes)
 dim(new_I_asympt) <- c(n_groups, s_asympt, n_vacc_classes)
 dim(n_II_asympt) <- c(n_groups, s_asympt, n_vacc_classes)
 
-## Vectors handling the I_mild class
-dim(I_mild) <- c(n_groups, s_mild, n_vacc_classes)
-dim(aux_II_mild) <- c(n_groups, s_mild, n_vacc_classes)
-dim(new_I_mild) <- c(n_groups, s_mild, n_vacc_classes)
-dim(n_II_mild) <- c(n_groups, s_mild, n_vacc_classes)
-
-## Vectors handling the I_ILI class
-dim(I_ILI) <- c(n_groups, s_ILI, n_vacc_classes)
-dim(aux_II_ILI) <- c(n_groups, s_ILI, n_vacc_classes)
-dim(new_I_ILI) <- c(n_groups, s_ILI, n_vacc_classes)
-dim(n_II_ILI) <- c(n_groups, s_ILI, n_vacc_classes)
-dim(prob_hosp_ILI) <- n_groups
-dim(psi_hosp_ILI) <- n_groups
+## Vectors handling the I_sympt class
+dim(I_sympt) <- c(n_groups, s_sympt, n_vacc_classes)
+dim(aux_II_sympt) <- c(n_groups, s_sympt, n_vacc_classes)
+dim(new_I_sympt) <- c(n_groups, s_sympt, n_vacc_classes)
+dim(n_II_sympt) <- c(n_groups, s_sympt, n_vacc_classes)
+dim(prob_hosp_sympt) <- n_groups
+dim(psi_hosp_sympt) <- n_groups
 
 ## Vectors handling the I_comm_D class
 dim(I_comm_D) <- c(n_groups, s_comm_D, n_vacc_classes)
@@ -1075,26 +1043,24 @@ dim(n_SE_next_vacc_class) <- c(n_groups, n_vacc_classes)
 ## Vectors handling the E->I transition where newly infectious cases
 ## are split between level of severity
 dim(n_EI_asympt) <- c(n_groups, n_vacc_classes)
-dim(n_EI_mild) <- c(n_groups, n_vacc_classes)
-dim(n_EI_ILI) <- c(n_groups, n_vacc_classes)
+dim(n_EI_sympt) <- c(n_groups, n_vacc_classes)
 dim(n_EI_asympt_next_vacc_class) <- c(n_groups, n_vacc_classes)
-dim(n_EI_mild_next_vacc_class) <- c(n_groups, n_vacc_classes)
-dim(n_EI_ILI_next_vacc_class) <- c(n_groups, n_vacc_classes)
+dim(n_EI_sympt_next_vacc_class) <- c(n_groups, n_vacc_classes)
 
-## Vectors handling I_ILI to R, I_comm_D transition
-dim(n_ILI_to_comm_D) <- c(n_groups, n_vacc_classes)
-dim(n_ILI_to_R) <- c(n_groups, n_vacc_classes)
+## Vectors handling I_sympt to R, I_comm_D transition
+dim(n_sympt_to_comm_D) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_R) <- c(n_groups, n_vacc_classes)
 
 ## Vectors handling number of new hospitalisations, ICU admissions and
 ## recoveries in hospital
-dim(n_ILI_to_hosp) <- c(n_groups, n_vacc_classes)
-dim(n_ILI_to_triage) <- c(n_groups, n_vacc_classes)
-dim(n_ILI_to_triage_conf) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_hosp) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_triage) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_triage_conf) <- c(n_groups, n_vacc_classes)
 dim(n_hosp_non_ICU) <- c(n_groups, n_vacc_classes)
-dim(n_ILI_to_hosp_D) <- c(n_groups, n_vacc_classes)
-dim(n_ILI_to_hosp_D_conf) <- c(n_groups, n_vacc_classes)
-dim(n_ILI_to_hosp_R) <- c(n_groups, n_vacc_classes)
-dim(n_ILI_to_hosp_R_conf) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_hosp_D) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_hosp_D_conf) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_hosp_R) <- c(n_groups, n_vacc_classes)
+dim(n_sympt_to_hosp_R_conf) <- c(n_groups, n_vacc_classes)
 dim(n_triage_unconf_to_ICU_D_unconf) <- c(n_groups, n_vacc_classes)
 dim(n_triage_conf_to_ICU_D_conf) <- c(n_groups, n_vacc_classes)
 dim(n_triage_unconf_to_ICU_S_R_unconf) <- c(n_groups, n_vacc_classes)
@@ -1107,7 +1073,6 @@ dim(n_com_to_R_pre) <- c(n_groups, 2, n_vacc_classes)
 
 ## Vectors handling the severity profile
 dim(p_asympt) <- n_groups
-dim(p_sympt_ILI) <- n_groups
 
 ## Vectors handling the potential death in hospital (general beds and ICU)
 dim(prob_death_hosp_D) <- n_groups
@@ -1136,7 +1101,7 @@ dim(p_RS) <- n_groups
 ## Total population
 initial(N_tot[]) <- 0
 update(N_tot[]) <- sum(S[i, ]) + sum(R[i, ]) + D_hosp[i] + sum(E[i, , ]) +
-  sum(I_asympt[i, , ]) + sum(I_mild[i, , ]) + sum(I_ILI[i, , ]) +
+  sum(I_asympt[i, , ]) + sum(I_sympt[i, , ]) +
   sum(I_triage_conf[i, , ]) + sum(I_triage_unconf[i, , ])  +
   sum(I_hosp_R_conf[i, , ]) + sum(I_hosp_R_unconf[i, , ]) +
   sum(I_hosp_D_conf[i, , ]) + sum(I_hosp_D_unconf[i, , ]) +
@@ -1200,12 +1165,12 @@ initial(sero_pos) <- 0
 update(sero_pos) <- sum(new_R_pos[4:13, , ])
 
 initial(cum_sympt_cases) <- 0
-update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_mild) + sum(n_EI_ILI)
+update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_sympt)
 
 ## only over 25s (exclude groups 1 to 5)
 initial(cum_sympt_cases_over25) <- 0
 update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
-  sum(n_EI_mild[6:n_groups, ]) + sum(n_EI_ILI[6:n_groups, ])
+  sum(n_EI_sympt[6:n_groups, ])
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0

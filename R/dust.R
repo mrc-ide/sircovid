@@ -191,13 +191,11 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_death_stepdown_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_hosp_ILI_step = list(has_default = FALSE,
+        integer = FALSE), p_hosp_sympt_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_ICU_hosp_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_seroconversion = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_sympt_ILI = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_admit_conf = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
@@ -209,7 +207,7 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_death_stepdown = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_hosp_ILI = list(has_default = FALSE,
+        integer = FALSE), psi_hosp_sympt = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_ICU_hosp = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
@@ -234,10 +232,6 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_ICU_S_R = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_ILI = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_mild = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_PCR_pos = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_PCR_pre = list(
@@ -247,6 +241,8 @@ carehomes <- R6::R6Class(
         min = -Inf, max = Inf, integer = FALSE), s_stepdown_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_stepdown_R = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_sympt = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_triage = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -270,10 +266,6 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_ICU_S_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_ILI = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_mild = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_PCR_pos = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_PCR_pre = list(has_default = TRUE,
@@ -287,6 +279,8 @@ carehomes <- R6::R6Class(
         integer = FALSE), gamma_stepdown_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_stepdown_R = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_sympt = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_test = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
