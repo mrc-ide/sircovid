@@ -4,10 +4,10 @@ test_that("carehomes progression parameters", {
   p <- carehomes_parameters_progression()
   expect_setequal(
     names(p),
-    c("s_E", "s_asympt", "s_mild", "s_ILI", "s_comm_D", "s_hosp_D", "s_hosp_R",
+    c("s_E", "s_asympt", "s_sympt", "s_comm_D", "s_hosp_D", "s_hosp_R",
       "s_ICU_D", "s_ICU_S_R", "s_ICU_S_D", "s_triage", "s_stepdown_D",
       "s_stepdown_R", "s_R_pos", "s_PCR_pos", "s_PCR_pre", "gamma_E",
-      "gamma_asympt", "gamma_mild", "gamma_ILI", "gamma_comm_D", "gamma_hosp_D",
+      "gamma_asympt", "gamma_sympt", "gamma_comm_D", "gamma_hosp_D",
       "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_S_R", "gamma_ICU_S_D",
       "gamma_triage", "gamma_stepdown_D", "gamma_stepdown_R", "gamma_R_pos",
       "gamma_R_pre_1", "gamma_R_pre_2", "gamma_test", "gamma_PCR_pos",
@@ -117,8 +117,8 @@ test_that("carehomes_parameters returns a list of parameters", {
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
       "react_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
-      "psi_death_stepdown", "p_death_stepdown_step", "psi_hosp_ILI",
-      "p_hosp_ILI_step", "psi_death_comm", "p_death_comm_step",
+      "psi_death_stepdown", "p_death_stepdown_step", "psi_hosp_sympt",
+      "p_hosp_sympt_step", "psi_death_comm", "p_death_comm_step",
       "psi_ICU_hosp", "p_ICU_hosp_step", "psi_admit_conf", "p_admit_conf_step",
       "n_groups"))
 
