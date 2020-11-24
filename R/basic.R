@@ -94,7 +94,7 @@ basic_parameters <- function(start_date, region,
   severity$p_death_hosp <-
     (1 - severity[["p_ICU_hosp"]]) *
     severity[["p_death_hosp_D"]]
-  severity$p_recov_ILI <- 1 - severity[["p_hosp_ILI"]]
+  severity$p_recov_sympt <- 1 - severity[["p_hosp_sympt"]]
 
   c(ret,
     severity,
@@ -235,16 +235,14 @@ basic_parameters_progression <- function() {
   ## parameters of that distribution.
   list(s_E = 2,
        s_asympt = 1,
-       s_mild = 1,
-       s_ILI = 1,
+       s_sympt = 1,
        s_hosp = 2,
        s_ICU = 2,
        s_rec = 2,
 
        gamma_E = 1 / (4.59 / 2),
        gamma_asympt = 1 / 2.09,
-       gamma_mild = 1 / 2.09,
-       gamma_ILI = 1 / 4,
+       gamma_sympt = 1 / 4,
        gamma_hosp = 2,
        gamma_ICU = 2 / 5,
        gamma_rec = 2 / 5)
