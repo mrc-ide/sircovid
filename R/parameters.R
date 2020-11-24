@@ -148,10 +148,17 @@ sircovid_parameters_severity <- function(params) {
                 stringsAsFactors = FALSE)
   rownames(data) <- NULL
 
-  required <- c("p_sympt", "p_sympt_hosp", "p_ICU_hosp", "p_death_ICU",
-    "p_death_hosp_D", "p_death_stepdown", "p_seroconversion",
-    "p_death_comm", "p_admit_conf")
-  data <- data[, required]
+  required <- c(
+    p_sympt = "p_sympt",
+    p_hosp_sympt = "p_hosp_sympt",
+    p_ICU_hosp = "p_ICU_hosp",
+    p_death_ICU = "p_death_ICU",
+    p_death_hosp_D = "p_death_hosp_D",
+    p_death_stepdown = "p_death_stepdown",
+    p_seroconversion = "p_seroconversion",
+    p_death_comm = "p_death_comm",
+    p_admit_conf = "p_admit_conf")
+  data <- rename(data, required, names(required))
 
   list(
     p_admit_conf = data[["p_admit_conf"]],
@@ -162,5 +169,5 @@ sircovid_parameters_severity <- function(params) {
     p_death_stepdown = data[["p_death_stepdown"]],
     p_ICU_hosp = data[["p_ICU_hosp"]],
     p_seroconversion = data[["p_seroconversion"]],
-    p_hosp_sympt = data[["p_sympt_hosp"]])
+    p_hosp_sympt = data[["p_hosp_sympt"]])
 }
