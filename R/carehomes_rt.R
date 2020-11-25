@@ -134,17 +134,17 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   matricise <- function(vect, n_col) {
     matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
   }
-  
+
   n_vacc_classes <- ncol(pars$rel_susceptibility)
 
   n_groups <- pars$n_groups
-  
+
   n_time_steps <-
     length(sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
 
   vacc_prog_before_infectious <- function(group_i) {
     vacc_prog_rate <- pars$vaccine_progression_rate[group_i, ]
-      
+
     ## Q[i, j] gives probability of progression from vaccine stage i to
     ## vaccine stage j in one time step
     Q <- diag(exp(-vacc_prog_rate * dt))
@@ -152,26 +152,28 @@ carehomes_Rt_mean_duration <- function(step, pars) {
       Q[i, i + 1] <- 1 - Q[i, i]
     }
     Q[n_vacc_classes, 1] <- 1 - Q[n_vacc_classes, n_vacc_classes]
-    
+
     ## probability of E progression in one time step
     p_EE <- 1 - exp(-gamma_E * dt)
-    
+
     out <- Q %*%
-      matrix_exp((solve(diag(n_vacc_classes) - (1- p_EE) * Q) %*% (p_EE * Q)),
+      matrix_exp((solve(diag(n_vacc_classes) - (1 - p_EE) * Q) %*% (p_EE * Q)),
                  pars$s_E)
-    
+
   }
-  
+
   if (n_vacc_classes > 1) {
     V <- array(sapply(seq_len(pars$n_groups), vacc_prog_before_infectious),
              dim = c(n_vacc_classes, n_vacc_classes, pars$n_groups))
   }
-  
+
   mat_multi_by_group <- function(p, V) {
-    out <- sapply(seq_len(pars$n_groups), function(i){V[, , i] %*% p[i, ]})
+    out <- sapply(seq_len(pars$n_groups),
+                  function(i) {
+                    V[, , i] %*% p[i, ]})
     out
   }
-  
+
   p_asympt <- matricise(pars$p_asympt, n_vacc_classes)
   p_asympt <- 1 - (1 - p_asympt) * (pars$rel_p_sympt)
   if (n_vacc_classes > 1) {
