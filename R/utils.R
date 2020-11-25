@@ -87,3 +87,19 @@ abind1 <- function(a, b) {
   rownames(ret) <- c(rownames(a), rownames(b))
   ret
 }
+
+
+## calculates the nth power of a matrix
+matrix_exp <- function(x, n) {
+  if (n < 0) {
+    return(matrix_exp(solve(x), -n))
+  } else if (n == 0) {
+    return(diag(nrow(x))) 
+  } else if (n == 1) {
+    return(x) 
+  } else if (n %% 2 == 0) {
+    return(matrix_exp(x %*% x, n / 2))
+  } else {
+    return(x %*% matrix_exp(x %*% x, (n - 1) / 2))
+  }
+}

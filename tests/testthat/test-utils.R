@@ -104,3 +104,16 @@ test_that("can convert and check R's dates", {
     as_date("02-05-2020"),
     "Expected ISO dates or R dates - please convert")
 })
+
+
+test_that("matrix_exp calculates powers correctly", {
+  
+  set.seed(1)
+  A <- array(runif(4 ^ 2, -2, 2), dim = c(4, 4))
+  
+  expect_equal(A, matrix_exp(A, 1))
+  expect_equal(A %*% A, matrix_exp(A, 2))
+  expect_equal(A %*% A %*% A, matrix_exp(A, 3))
+  expect_equal(A %*% A %*% A %*% A, matrix_exp(A, 4))
+  
+})
