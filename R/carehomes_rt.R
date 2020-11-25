@@ -154,7 +154,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     Q[n_vacc_classes, 1] <- 1 - Q[n_vacc_classes, n_vacc_classes]
 
     ## probability of E progression in one time step
-    p_EE <- 1 - exp(-gamma_E * dt)
+    p_EE <- 1 - exp(-pars$gamma_E * dt)
 
     out <- Q %*%
       matrix_exp((solve(diag(n_vacc_classes) - (1 - p_EE) * Q) %*% (p_EE * Q)),
