@@ -1,3 +1,7 @@
+# sircovid 0.7.2
+
+* Correct Rt calculation accounting for vaccination
+
 # sircovid 0.7.0
 
 * Extended model structure for vaccination modelling
