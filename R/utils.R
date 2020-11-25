@@ -100,7 +100,7 @@ matrix_exp <- function(x, n) {
   if (ncol(x) != nrow(x)) {
     stop("x must be a square matrix")
   }
-  
+
   if (n < 0) {
     return(matrix_exp(solve(x), -n))
   } else if (n == 0) {
