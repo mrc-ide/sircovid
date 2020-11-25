@@ -91,6 +91,16 @@ abind1 <- function(a, b) {
 
 ## calculates the nth power of a matrix
 matrix_exp <- function(x, n) {
+  if (!is_integer(n)) {
+    stop("n must be an integer")
+  }
+  if (!is.matrix(x)) {
+    stop("x must have 2 dimensions")
+  }
+  if (ncol(x) != nrow(x)) {
+    stop("x must be a square matrix")
+  }
+  
   if (n < 0) {
     return(matrix_exp(solve(x), -n))
   } else if (n == 0) {

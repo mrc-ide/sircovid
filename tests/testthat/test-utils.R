@@ -110,7 +110,15 @@ test_that("matrix_exp calculates powers correctly", {
 
   set.seed(1)
   A <- array(runif(4 ^ 2, -2, 2), dim = c(4, 4))
-
+  
+  expect_error(matrix_exp(A, 0.5), "n must be an integer")
+  expect_error(matrix_exp(A[1:2, ], 2), "x must be a square matrix")
+  expect_error(matrix_exp(A[1:2, ], 2), "x must be a square matrix")
+  expect_error(matrix_exp(array(A, c(4, 4, 4)), 2), "x must have 2 dimensions")
+  
+  expect_equal(solve(A), matrix_exp(A, -1))
+  expect_equal(solve(A) %*% solve(A), matrix_exp(A, -2))
+  expect_equal(diag(ncol(A)), matrix_exp(A, 0))
   expect_equal(A, matrix_exp(A, 1))
   expect_equal(A %*% A, matrix_exp(A, 2))
   expect_equal(A %*% A %*% A, matrix_exp(A, 3))
