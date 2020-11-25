@@ -113,7 +113,7 @@ test_that("matrix_exp calculates powers correctly", {
 
   expect_error(matrix_exp(A, 0.5), "n must be an integer")
   expect_error(matrix_exp(A[1:2, ], 2), "x must be a square matrix")
-  expect_error(matrix_exp(A[1:2, ], 2), "x must be a square matrix")
+  expect_error(matrix_exp(A[, 1:3], 2), "x must be a square matrix")
   expect_error(matrix_exp(array(A, c(4, 4, 4)), 2), "x must have 2 dimensions")
 
   expect_equal(solve(A), matrix_exp(A, -1))
