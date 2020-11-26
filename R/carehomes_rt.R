@@ -126,10 +126,9 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 carehomes_Rt_mean_duration <- function(step, pars) {
   dt <- pars$dt
 
-  p_asympt <- pars$p_asympt
-  p_sympt_ILI <- pars$p_sympt_ILI
-  p_hosp_ILI <- outer(pars$psi_hosp_ILI,
-                    sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
+  p_sympt <- pars$p_sympt
+  p_hosp_sympt <- outer(pars$psi_hosp_sympt,
+                  sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
   p_ICU_hosp <- outer(pars$psi_ICU_hosp,
                     sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
   p_death_ICU <- outer(pars$psi_death_ICU,
@@ -141,29 +140,27 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_death_comm <- outer(pars$psi_death_comm,
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
-  p_mild <- (1 - p_asympt) * (1 - p_sympt_ILI)
-  p_ILI <- (1 - p_asympt) * p_sympt_ILI
+  p_asympt <- (1 - p_sympt)
 
-  p_hosp_R <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_hosp_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
-  p_hosp_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_hosp_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * p_death_hosp_D
-  p_ICU_S_R <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_ICU_S_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * (1 - p_death_stepdown)
-  p_ICU_S_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_ICU_S_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * p_death_stepdown
-  p_ICU_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_ICU_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     p_ICU_hosp * p_death_ICU
 
   ## TODO: would be nice if it's possibly to name these subcomponents
   ## to make the calculation clearer.
   mean_duration <- p_asympt * pars$s_asympt /
     (1 - exp(- dt * pars$gamma_asympt)) +
-    p_mild * pars$s_mild / (1 - exp(- dt * pars$gamma_mild)) +
-    p_ILI * pars$s_ILI / (1 - exp(- dt * pars$gamma_ILI))
+    p_sympt * pars$s_sympt / (1 - exp(- dt * pars$gamma_sympt))
 
   mean_duration <- mean_duration +
-    pars$comm_D_transmission * p_ILI * p_hosp_ILI *
+    pars$comm_D_transmission * p_sympt * p_hosp_sympt *
     p_death_comm * pars$s_comm_D / (1 - exp(- dt * pars$gamma_comm_D))
 
   mean_duration <- mean_duration +

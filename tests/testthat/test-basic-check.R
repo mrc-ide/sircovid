@@ -50,9 +50,9 @@ test_that("No one is infected if I and E are 0 at t = 0", {
 })
 
 
-test_that("No one is hospitalised if p_sympt_ILI is 0", {
+test_that("No one is hospitalised if p_sympt is 0", {
   p <- basic_parameters(0, "england")
-  p$p_sympt_ILI[] <- 0
+  p$p_sympt[] <- 0
   mod <- basic$new(p, 0, 1)
 
   info <- mod$info()
@@ -62,7 +62,7 @@ test_that("No one is hospitalised if p_sympt_ILI is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0))
-  expect_true(all(y$I_ILI == 0))
+  expect_true(all(y$I_sympt == 0))
   expect_true(all(y$I_hosp == 0))
   expect_true(all(y$I_ICU == 0))
   expect_true(all(y$R_hosp == 0))
@@ -163,12 +163,12 @@ test_that("if gamma_asympt is Inf, I_asympt must progress in 1 timestep", {
 })
 
 
-test_that("if gamma_mild is Inf, I_mild cases must progress in 1 timestep", {
+test_that("if gamma_sympt is Inf, I_sympt cases must progress in 1 timestep", {
   ## This checks that progression groups work for these parameters,
   ## even though they are no longer the default
   p <- basic_parameters(0, "england")
-  p$gamma_mild <- Inf
-  p$s_mild <- 2
+  p$gamma_sympt <- Inf
+  p$s_sympt <- 2
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
@@ -176,30 +176,10 @@ test_that("if gamma_mild is Inf, I_mild cases must progress in 1 timestep", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  i <- seq_len(dim(y$I_mild)[[4]] - 1)
+  i <- seq_len(dim(y$I_sympt)[[4]] - 1)
   j <- i + 1L
-  expect_true(any(y$I_mild > 0))
-  expect_true(all(y$I_mild[, 2, , j] == y$I_mild[, 1, , i]))
-})
-
-
-test_that("if gamma_ILI is Inf, I_ILI cases must progress in 1 timestep", {
-  ## This checks that progression groups work for these parameters,
-  ## even though they are no longer the default
-  p <- basic_parameters(0, "england")
-  p$gamma_ILI <- Inf
-  p$s_ILI <- 2
-
-  mod <- basic$new(p, 0, 1)
-  info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
-
-  i <- seq_len(dim(y$I_ILI)[[4]] - 1)
-  j <- i + 1L
-  expect_true(any(y$I_ILI > 0))
-  expect_true(all(y$I_ILI[, 2, , j] == y$I_ILI[, 1, , i]))
+  expect_true(any(y$I_sympt > 0))
+  expect_true(all(y$I_sympt[, 2, , j] == y$I_sympt[, 1, , i]))
 })
 
 
@@ -295,10 +275,10 @@ test_that("if gamma_asympt is 0, I_asympt stay in progression stage 1", {
 })
 
 
-test_that("if gamma_mild is 0, I_mild stay in progression stage 1", {
+test_that("if gamma_sympt is 0, I_sympt stay in progression stage 1", {
   p <- basic_parameters(0, "england")
-  p$gamma_mild <- 0
-  p$s_mild <- 2
+  p$gamma_sympt <- 0
+  p$s_sympt <- 2
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
@@ -306,24 +286,8 @@ test_that("if gamma_mild is 0, I_mild stay in progression stage 1", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  expect_true(any(y$I_mild[, 1, , ] > 0))
-  expect_true(all(y$I_mild[, 2, , ] == 0))
-})
-
-
-test_that("if gamma_ILI is 0, I_ILI stay in progression stage 1", {
-  p <- basic_parameters(0, "england")
-  p$gamma_ILI <- 0
-  p$s_ILI <- 2
-
-  mod <- basic$new(p, 0, 1)
-  info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
-
-  expect_true(any(y$I_ILI[, 1, , ] > 0))
-  expect_true(all(y$I_ILI[, 2, , ] == 0))
+  expect_true(any(y$I_sympt[, 1, , ] > 0))
+  expect_true(all(y$I_sympt[, 2, , ] == 0))
 })
 
 

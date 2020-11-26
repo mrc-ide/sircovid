@@ -133,11 +133,11 @@ test_that("No one is infected if I and E are 0 at t = 0", {
 })
 
 
-test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
+test_that("No one is hospitalised, no-one dies if p_sympt is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_sympt_ILI[] <- 0
+  p$p_sympt[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -147,7 +147,7 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
-  expect_true(all(y$I_ILI == 0))
+  expect_true(all(y$I_sympt == 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -170,11 +170,11 @@ test_that("No one is hospitalised, no-one dies if p_sympt_ILI is 0", {
 })
 
 
-test_that("No one is hospitalised, no-one dies if psi_hosp_ILI is 0", {
+test_that("No one is hospitalised, no-one dies if psi_hosp_sympt is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_hosp_ILI[] <- 0
+  p$psi_hosp_sympt[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -184,7 +184,7 @@ test_that("No one is hospitalised, no-one dies if psi_hosp_ILI is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
-  expect_true(any(y$I_ILI > 0))
+  expect_true(any(y$I_sympt > 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -214,19 +214,18 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$I0_asympt[] <- 0
-  p$p_sympt_ILI[] <- 1
-  p$p_hosp_ILI_step <- 1
-  p$psi_hosp_ILI[] <- 1
+  p$p_hosp_sympt_step <- 1
+  p$psi_hosp_sympt[] <- 1
   p$p_death_comm_step <- 1
   p$psi_death_comm[] <- 1
-  p$p_asympt[] <- 0
+  p$p_sympt[] <- 1
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
-  ## Move initial infectives to ILI
+  ## Move initial infectives to sympt
   y0 <- carehomes_initial(info, 1, p)$state
-  y0[info$index$I_ILI] <- y0[info$index$I_asympt]
+  y0[info$index$I_sympt] <- y0[info$index$I_asympt]
   y0[info$index$I_asympt] <- 0
 
   mod$set_state(y0)
@@ -234,7 +233,7 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_ILI > 0))
+  expect_true(any(y$I_sympt > 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -260,19 +259,18 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_sympt_ILI[] <- 1
-  p$p_hosp_ILI_step <- 1
-  p$psi_hosp_ILI[] <- 1
+  p$p_hosp_sympt_step <- 1
+  p$psi_hosp_sympt[] <- 1
   p$p_death_comm_step <- 1
   p$psi_death_comm[] <- 1
-  p$p_asympt[] <- 0
+  p$p_sympt[] <- 1
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
-  ## Move initial infectives to ILI
+  ## Move initial infectives to sympt
   y0 <- carehomes_initial(info, 1, p)$state
-  y0[info$index$I_ILI] <- y0[info$index$I_asympt]
+  y0[info$index$I_sympt] <- y0[info$index$I_asympt]
   y0[info$index$I_asympt] <- 0
 
   mod$set_state(y0)
@@ -280,7 +278,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_ILI > 0))
+  expect_true(any(y$I_sympt > 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -315,7 +313,7 @@ test_that("No one dies in the community if psi_death_comm is 0", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_ILI > 0))
+  expect_true(any(y$I_sympt > 0))
   expect_true(all(y$I_comm_D == 0))
   expect_true(all(y$D_comm == 0))
 })
@@ -543,8 +541,7 @@ test_that("setting a gamma to Inf results immediate progression", {
 
   helper("gamma_E", "s_E", "E", FALSE)
   helper("gamma_asympt", "s_asympt", "I_asympt", FALSE)
-  helper("gamma_mild", "s_mild", "I_mild", FALSE)
-  helper("gamma_ILI", "s_ILI", "I_ILI", FALSE)
+  helper("gamma_sympt", "s_sympt", "I_sympt", FALSE)
   helper("gamma_triage", "s_triage", "I_triage", TRUE)
   helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
   helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)
@@ -619,8 +616,7 @@ test_that("setting a gamma to 0 results in no progression", {
   p <- carehomes_parameters(0, "england")
   helper("gamma_E", "s_E", "E", FALSE)
   helper("gamma_asympt", "s_asympt", "I_asympt", FALSE)
-  helper("gamma_mild", "s_mild", "I_mild", FALSE)
-  helper("gamma_ILI", "s_ILI", "I_ILI", FALSE)
+  helper("gamma_sympt", "s_sympt", "I_sympt", FALSE)
   helper("gamma_triage", "s_triage", "I_triage", TRUE)
   helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
   helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)
