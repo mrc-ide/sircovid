@@ -1,6 +1,10 @@
-# sircovid 0.7.2
+# sircovid 0.7.3
 
 * Correct Rt calculation accounting for vaccination
+
+# sircovid 0.7.2
+
+* I_mild compartment removed from both models and I_ILI renamed to I_sympt
 
 # sircovid 0.7.0
 

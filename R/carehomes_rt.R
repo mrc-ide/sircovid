@@ -140,7 +140,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   n_groups <- pars$n_groups
 
   n_time_steps <-
-    length(sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
+    length(sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
 
   vacc_prog_before_infectious <- function(group_i) {
     vacc_prog_rate <- pars$vaccine_progression_rate[group_i, ]
@@ -183,23 +183,20 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     out
   }
 
-  p_asympt <- matricise(pars$p_asympt, n_vacc_classes)
-  p_asympt <- 1 - (1 - p_asympt) * (pars$rel_p_sympt)
+  p_sympt <- matricise(pars$p_sympt, n_vacc_classes)
+  p_sympt <- p_sympt * pars$rel_p_sympt
   if (n_vacc_classes > 1) {
-    p_asympt <- t(mat_multi_by_group(p_asympt, V))
+    p_sympt <- t(mat_multi_by_group(p_sympt, V))
   }
-  p_asympt <- outer(p_asympt, rep(1, n_time_steps))
+  p_sympt <- outer(p_sympt, rep(1, n_time_steps))
 
-  p_sympt_ILI <- matricise(pars$p_sympt_ILI, n_vacc_classes)
-  p_sympt_ILI <- outer(p_sympt_ILI, rep(1, n_time_steps))
-
-  p_hosp_ILI <- matricise(pars$psi_hosp_ILI, n_vacc_classes) *
+  p_hosp_sympt <- matricise(pars$psi_hosp_sympt, n_vacc_classes) *
     pars$rel_p_hosp_if_sympt
   if (n_vacc_classes > 1) {
-    p_hosp_ILI <- t(mat_multi_by_group(p_hosp_ILI, V))
+    p_hosp_sympt <- t(mat_multi_by_group(p_hosp_sympt, V))
   }
-  p_hosp_ILI <- outer(p_hosp_ILI,
-    sircovid_parameters_beta_expand(step, pars$p_hosp_ILI_step))
+  p_hosp_sympt <- outer(p_hosp_sympt,
+    sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
 
   p_ICU_hosp <- outer(matricise(pars$psi_ICU_hosp, n_vacc_classes),
                     sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
@@ -212,29 +209,25 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_death_comm <- outer(matricise(pars$psi_death_comm, n_vacc_classes),
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
-  p_mild <- (1 - p_asympt) * (1 - p_sympt_ILI)
-  p_ILI <- (1 - p_asympt) * p_sympt_ILI
-
-  p_hosp_R <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_hosp_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
-  p_hosp_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_hosp_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * p_death_hosp_D
-  p_ICU_S_R <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_ICU_S_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * (1 - p_death_stepdown)
-  p_ICU_S_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_ICU_S_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * p_death_stepdown
-  p_ICU_D <- p_ILI * p_hosp_ILI * (1 - p_death_comm) *
+  p_ICU_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     p_ICU_hosp * p_death_ICU
 
   ## TODO: would be nice if it's possibly to name these subcomponents
   ## to make the calculation clearer.
-  mean_duration <- p_asympt * pars$s_asympt /
+  mean_duration <- (1 - p_sympt) * pars$s_asympt /
     (1 - exp(- dt * pars$gamma_asympt)) +
-    p_mild * pars$s_mild / (1 - exp(- dt * pars$gamma_mild)) +
-    p_ILI * pars$s_ILI / (1 - exp(- dt * pars$gamma_ILI))
+    p_sympt * pars$s_sympt / (1 - exp(- dt * pars$gamma_sympt))
 
   mean_duration <- mean_duration +
-    pars$comm_D_transmission * p_ILI * p_hosp_ILI *
+    pars$comm_D_transmission * p_sympt * p_hosp_sympt *
     p_death_comm * pars$s_comm_D / (1 - exp(- dt * pars$gamma_comm_D))
 
   mean_duration <- mean_duration +

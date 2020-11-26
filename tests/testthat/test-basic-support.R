@@ -4,8 +4,8 @@ test_that("basic progression parameters", {
   p <- basic_parameters_progression()
   expect_setequal(
     names(p),
-    c("s_E", "s_asympt", "s_mild", "s_ILI", "s_hosp", "s_ICU", "s_rec",
-      "gamma_E", "gamma_asympt", "gamma_mild", "gamma_ILI", "gamma_hosp",
+    c("s_E", "s_asympt", "s_sympt", "s_hosp", "s_ICU", "s_rec",
+      "gamma_E", "gamma_asympt", "gamma_sympt", "gamma_hosp",
       "gamma_ICU", "gamma_rec"))
 
   ## TODO: Lilith; you had said that there were some constraints
