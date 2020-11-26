@@ -161,7 +161,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     ## (sum_{k = 0}^Inf ((1 - p_EE) * Q) ^ k) * p_EE * Q. Also note that for a
     ## square matrix B, sum_{k = 0}^Inf B^k = (I - B)^-1.
     A <- (solve(diag(n_vacc_classes) - (1 - p_EE) * Q) %*% (p_EE * Q))
-    
+
     ## Note we need to account for there being s_E stages in E, and also that
     ## individuals can have a vaccine progression in the same step that they get
     ## infected (hence Q appearing below).
