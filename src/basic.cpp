@@ -17,11 +17,11 @@ real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, i
 // [[dust::param(ICU_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_asympt, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_death_hosp, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_recov_hosp, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_recov_ICU, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_recov_sympt, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_sympt, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_asympt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_E, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -209,12 +209,12 @@ public:
     int dim_new_I_ICU_12;
     int dim_new_I_ICU_2;
     int dim_new_I_ICU_3;
-    int dim_p_asympt;
     int dim_p_death_hosp;
     int dim_p_recov_hosp;
     int dim_p_recov_ICU;
     int dim_p_recov_sympt;
     int dim_p_SE;
+    int dim_p_sympt;
     int dim_R;
     int dim_R_hosp;
     int dim_R_hosp_1;
@@ -282,7 +282,6 @@ public:
     int offset_variable_I_sympt;
     int offset_variable_R;
     int offset_variable_R_hosp;
-    std::vector<real_t> p_asympt;
     std::vector<real_t> p_death_hosp;
     real_t p_EE;
     real_t p_II_asympt;
@@ -294,6 +293,7 @@ public:
     std::vector<real_t> p_recov_ICU;
     std::vector<real_t> p_recov_sympt;
     std::vector<real_t> p_SE;
+    std::vector<real_t> p_sympt;
     int s_asympt;
     int s_E;
     int s_hosp;
@@ -398,7 +398,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_EI_asympt_1; ++i) {
       for (int j = 1; j <= internal.dim_n_EI_asympt_2; ++j) {
-        internal.n_EI_asympt[i - 1 + internal.dim_n_EI_asympt_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_12 * (j - 1) + internal.dim_n_EE_1 * (internal.s_E - 1) + i - 1]), internal.p_asympt[i - 1]);
+        internal.n_EI_asympt[i - 1 + internal.dim_n_EI_asympt_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_12 * (j - 1) + internal.dim_n_EE_1 * (internal.s_E - 1) + i - 1]), 1 - internal.p_sympt[i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_n_ICU_to_R_hosp_1; ++i) {
@@ -1077,12 +1077,12 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.dim_new_I_ICU_1 = internal.n_age_groups;
   internal.dim_new_I_ICU_2 = internal.s_ICU;
   internal.dim_new_I_ICU_3 = internal.n_trans_classes;
-  internal.dim_p_asympt = internal.n_age_groups;
   internal.dim_p_death_hosp = internal.n_age_groups;
   internal.dim_p_recov_hosp = internal.n_age_groups;
   internal.dim_p_recov_ICU = internal.n_age_groups;
   internal.dim_p_recov_sympt = internal.n_age_groups;
   internal.dim_p_SE = internal.n_age_groups;
+  internal.dim_p_sympt = internal.n_age_groups;
   internal.dim_R = internal.n_age_groups;
   internal.dim_R_hosp_1 = internal.n_age_groups;
   internal.dim_R_hosp_2 = internal.s_rec;
@@ -1184,11 +1184,11 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.offset_variable_D = 5 + internal.dim_S + internal.dim_R;
   internal.offset_variable_E = 5 + internal.dim_S + internal.dim_R + internal.dim_D;
   internal.offset_variable_R = 5 + internal.dim_S;
-  internal.p_asympt = user_get_array_fixed<real_t, 1>(user, "p_asympt", internal.p_asympt, {internal.dim_p_asympt}, NA_REAL, NA_REAL);
   internal.p_death_hosp = user_get_array_fixed<real_t, 1>(user, "p_death_hosp", internal.p_death_hosp, {internal.dim_p_death_hosp}, NA_REAL, NA_REAL);
   internal.p_recov_hosp = user_get_array_fixed<real_t, 1>(user, "p_recov_hosp", internal.p_recov_hosp, {internal.dim_p_recov_hosp}, NA_REAL, NA_REAL);
   internal.p_recov_ICU = user_get_array_fixed<real_t, 1>(user, "p_recov_ICU", internal.p_recov_ICU, {internal.dim_p_recov_ICU}, NA_REAL, NA_REAL);
   internal.p_recov_sympt = user_get_array_fixed<real_t, 1>(user, "p_recov_sympt", internal.p_recov_sympt, {internal.dim_p_recov_sympt}, NA_REAL, NA_REAL);
+  internal.p_sympt = user_get_array_fixed<real_t, 1>(user, "p_sympt", internal.p_sympt, {internal.dim_p_sympt}, NA_REAL, NA_REAL);
   internal.aux_EE = std::vector<real_t>(internal.dim_aux_EE);
   internal.aux_II_asympt = std::vector<real_t>(internal.dim_aux_II_asympt);
   internal.aux_II_hosp = std::vector<real_t>(internal.dim_aux_II_hosp);

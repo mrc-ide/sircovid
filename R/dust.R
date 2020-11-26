@@ -19,8 +19,6 @@ basic <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), n_age_groups = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), p_asympt = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_death_hosp = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_recov_hosp = list(
@@ -28,6 +26,8 @@ basic <- R6::R6Class(
         min = -Inf, max = Inf, integer = FALSE), p_recov_ICU = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_recov_sympt = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_sympt = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), s_asympt = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -175,8 +175,6 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), p_admit_conf_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_asympt = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_death_comm_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_death_hosp_D_step = list(has_default = FALSE,
@@ -190,6 +188,8 @@ carehomes <- R6::R6Class(
         integer = FALSE), p_ICU_hosp_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_seroconversion = list(has_default = FALSE,
+        default_value = NULL, rank = 1, min = -Inf, max = Inf,
+        integer = FALSE), p_sympt = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_admit_conf = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,

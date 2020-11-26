@@ -126,7 +126,7 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 carehomes_Rt_mean_duration <- function(step, pars) {
   dt <- pars$dt
 
-  p_asympt <- pars$p_asympt
+  p_sympt <- pars$p_sympt
   p_hosp_sympt <- outer(pars$psi_hosp_sympt,
                   sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
   p_ICU_hosp <- outer(pars$psi_ICU_hosp,
@@ -140,7 +140,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_death_comm <- outer(pars$psi_death_comm,
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
-  p_sympt <- (1 - p_asympt)
+  p_asympt <- (1 - p_sympt)
 
   p_hosp_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)

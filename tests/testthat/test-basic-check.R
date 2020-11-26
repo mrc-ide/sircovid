@@ -50,9 +50,9 @@ test_that("No one is infected if I and E are 0 at t = 0", {
 })
 
 
-test_that("No one is hospitalised if p_asympt is 1", {
+test_that("No one is hospitalised if p_sympt is 0", {
   p <- basic_parameters(0, "england")
-  p$p_asympt[] <- 1
+  p$p_sympt[] <- 0
   mod <- basic$new(p, 0, 1)
 
   info <- mod$info()

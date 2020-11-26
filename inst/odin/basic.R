@@ -47,7 +47,7 @@ n_II_ICU[, , ] <- rbinom(I_ICU[i, j, k], p_II_ICU)
 n_R_hosp[, , ] <- rbinom(R_hosp[i, j, k], p_R_hosp)
 
 ## Computes the number of asymptomatic
-n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], p_asympt[i])
+n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], 1 - p_sympt[i])
 
 
 ## Computes the number of symptomatic cases
@@ -164,7 +164,7 @@ gamma_E <- user(0.1)
 
 ## Probability of transitioning from the E to the asymptomatic
 ## class, the rest goes in the symptomatic class
-p_asympt[] <- user()
+p_sympt[] <- user()
 
 ## Parameters of the I_asympt classes
 s_asympt <- user()
@@ -287,7 +287,7 @@ dim(n_sympt_to_hosp) <- c(n_age_groups, n_trans_classes)
 dim(n_ICU_to_R_hosp) <- c(n_age_groups, n_trans_classes)
 
 ## Vectors handling the severity profile
-dim(p_asympt) <- c(n_age_groups)
+dim(p_sympt) <- c(n_age_groups)
 
 ## Vectors handling the potential death in hospital before critical care
 dim(p_death_hosp) <- c(n_age_groups)

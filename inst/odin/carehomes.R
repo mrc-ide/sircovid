@@ -280,10 +280,10 @@ new_S[, 2:n_vacc_classes] <- new_S[i, j] + n_S_next_vacc_class[i, j - 1] +
 
 ## Computes the number of asymptomatic
 n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j],
-                          1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
+                          1 - p_sympt[i] * rel_p_sympt[i, j])
 n_EI_asympt_next_vacc_class[, ] <-
   rbinom(n_EE_next_vacc_class[i, s_E, j],
-         1 - (1 - p_asympt[i]) * rel_p_sympt[i, j])
+         1 - p_sympt[i] * rel_p_sympt[i, j])
 
 ## Computes the number of symptomatic cases
 n_EI_sympt[, ] <- n_EE[i, s_E, j] - n_EI_asympt[i, j]
@@ -727,7 +727,7 @@ gamma_E <- user(0.1)
 
 ## Probability of transitioning from the E to the asymptomatic class,
 ## the rest go into the symptomatic class
-p_asympt[] <- user()
+p_sympt[] <- user()
 
 ## Parameters of the I_asympt classes
 s_asympt <- user()
@@ -1072,7 +1072,7 @@ dim(n_triage_conf_to_ICU_S_D_conf) <- c(n_groups, n_vacc_classes)
 dim(n_com_to_R_pre) <- c(n_groups, 2, n_vacc_classes)
 
 ## Vectors handling the severity profile
-dim(p_asympt) <- n_groups
+dim(p_sympt) <- n_groups
 
 ## Vectors handling the potential death in hospital (general beds and ICU)
 dim(prob_death_hosp_D) <- n_groups
