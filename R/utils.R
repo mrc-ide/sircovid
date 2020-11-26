@@ -90,7 +90,7 @@ abind1 <- function(a, b) {
 
 
 ## calculates the nth power of a matrix
-matrix_exp <- function(x, n) {
+matrix_pow <- function(x, n) {
   if (!is_integer(n)) {
     stop("n must be an integer")
   }
@@ -102,14 +102,14 @@ matrix_exp <- function(x, n) {
   }
 
   if (n < 0) {
-    return(matrix_exp(solve(x), -n))
+    return(matrix_pow(solve(x), -n))
   } else if (n == 0) {
     return(diag(nrow(x)))
   } else if (n == 1) {
     return(x)
   } else if (n %% 2 == 0) {
-    return(matrix_exp(x %*% x, n / 2))
+    return(matrix_pow(x %*% x, n / 2))
   } else {
-    return(x %*% matrix_exp(x %*% x, (n - 1) / 2))
+    return(x %*% matrix_pow(x %*% x, (n - 1) / 2))
   }
 }

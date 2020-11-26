@@ -165,7 +165,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     ## Note we need to account for there being s_E stages in E, and also that
     ## individuals can have a vaccine progression in the same step that they get
     ## infected (hence Q appearing below).
-    out <- Q %*% matrix_exp(A, pars$s_E)
+    out <- Q %*% matrix_pow(A, pars$s_E)
     out
   }
 
