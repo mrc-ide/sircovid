@@ -701,6 +701,14 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
                             rel_p_sympt = c(1, reduced_p_sympt),
                             rel_p_hosp_if_sympt = c(1, 1),
                             waning_rate = 1 / 20)
+  
+  ## These are the same as the default values, but setting them again here in
+  ## case defaults change as the below assumes mean duration is shorter for
+  ## asymptomatic infections
+  p$s_asympt <- 1
+  p$gamma_asympt <- 1 / 2.09
+  p$s_sympt
+  p$gamma_sympt <- 1 / 4
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -727,13 +735,16 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   rt_1_no_vacc <- carehomes_Rt(steps, y[, 1, ], p_no_vacc)
   rt_all_no_vacc <- carehomes_Rt_trajectories(steps, y, p_no_vacc)
 
-  # hard to tell the direction of the change because infection could be longer
-  # in the asymptomatic which would weirdly yield a higher Rt with vaccination
-  # than without
-  # but can check that the ratio between the Rt with and witout vaccination
+  # check that the ratio between the Rt with and witout vaccination
   # is constant
   expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
-  # TODO: add a better test?
+  
+  ## Given mean duration is shorter for asymptomatic individuals, we expect
+  ## Rt to be reduced when p_rel_sympt is not 1
+  expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
+  expect_true(all(rt_1_no_vacc$eff_Rt_all > rt_1$eff_Rt_all))
+  expect_true(all(rt_1_no_vacc$Rt_general > rt_1$Rt_general))
+  expect_true(all(rt_1_no_vacc$eff_Rt_general > rt_1$eff_Rt_general))
 
 })
 
@@ -775,13 +786,17 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
   rt_1_no_vacc <- carehomes_Rt(steps, y[, 1, ], p_no_vacc)
   rt_all_no_vacc <- carehomes_Rt_trajectories(steps, y, p_no_vacc)
 
-  # hard to tell the direction of the change because infection could be longer
-  # in the non hospitalised cases which would weirdly yield a higher Rt with
-  # vaccination than without
-  # but can check that the ratio between the Rt with and witout vaccination
+  # Check that the ratio between the Rt with and witout vaccination
   # is constant
   expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
-  # TODO: add a better test?
+  
+  ## In the model, mean duration is inherently shorter for symptomatic 
+  ## individuals who are not hospitalised compared with those who are, so we
+  ## expect Rt to be reduced when p_rel_sympt is not 1
+  expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
+  expect_true(all(rt_1_no_vacc$eff_Rt_all > rt_1$eff_Rt_all))
+  expect_true(all(rt_1_no_vacc$Rt_general > rt_1$Rt_general))
+  expect_true(all(rt_1_no_vacc$eff_Rt_general > rt_1$eff_Rt_general))
 
 })
 
