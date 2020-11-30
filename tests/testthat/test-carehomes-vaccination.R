@@ -639,7 +639,7 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
 })
 
 
-test_that("Effective Rt reduced by rel_susceptbility if all vaccinated", {
+test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
   reduced_susceptibility <- 0.2 # can put anything <1 here
 
   ## run model with unvaccinated & vaccinated (with susceptibility halved)
@@ -740,7 +740,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
 
   ## Given mean duration is shorter for asymptomatic individuals, we expect
-  ## Rt to be reduced when p_rel_sympt is not 1
+  ## Rt to be reduced when rel_p_sympt is not 1
   expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
   expect_true(all(rt_1_no_vacc$eff_Rt_all > rt_1$eff_Rt_all))
   expect_true(all(rt_1_no_vacc$Rt_general > rt_1$Rt_general))
@@ -792,7 +792,7 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
 
   ## In the model, mean duration is inherently shorter for symptomatic
   ## individuals who are not hospitalised compared with those who are, so we
-  ## expect Rt to be reduced when p_rel_sympt is not 1
+  ## expect Rt to be reduced when rel_p_hosp_if_sympt is not 1
   expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
   expect_true(all(rt_1_no_vacc$eff_Rt_all > rt_1$eff_Rt_all))
   expect_true(all(rt_1_no_vacc$Rt_general > rt_1$Rt_general))
