@@ -477,6 +477,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
   expect_true(all(y$S[, , 34] == y$S[, , 2]))
 })
 
+
 test_that("Clinical progression within a vaccination class works", {
   ## Tests that:
   ## Every susceptible moves to the R compartment corresponding to their
@@ -528,6 +529,7 @@ test_that("Clinical progression within a vaccination class works", {
   expect_true(all(s[-4, , 1] == r[-4, , 101]))
 })
 
+
 test_that("Returning to unvaccinated stage works for susceptibles", {
   ## Tests that:
   ## Every susceptible moves back to unvaccinated from vacinated if large
@@ -563,6 +565,7 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
   expect_true(all(s[, 1, 2] == s[, 2, 1]))
 })
 
+
 test_that("there are no vaccinated susceptibles when vaccination rate is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
@@ -582,6 +585,7 @@ test_that("there are no vaccinated susceptibles when vaccination rate is 0", {
   expect_equal(s[-seq_len(carehomes_n_groups()), , ],
                array(0, c(nrow(s) - carehomes_n_groups(), 101)))
 })
+
 
 test_that("Can calculate Rt with an (empty) vaccination class", {
   ## run model with unvaccinated & vaccinated, but both have same susceptibility
@@ -634,7 +638,8 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   expect_equal(rt_all, rt_all_single_class)
 })
 
-test_that("Effective Rt reduced by rel_susceptbility if all vaccinated", {
+
+test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
   reduced_susceptibility <- 0.2 # can put anything <1 here
 
   ## run model with unvaccinated & vaccinated (with susceptibility halved)
@@ -681,6 +686,117 @@ test_that("Effective Rt reduced by rel_susceptbility if all vaccinated", {
                rt_all_vacc$eff_Rt_all)
   expect_equal(rt_all$eff_Rt_general * reduced_susceptibility,
                rt_all_vacc$eff_Rt_general)
+
+})
+
+
+test_that("Effective Rt modified if rel_p_sympt is not 1", {
+  reduced_p_sympt <- 0.2 # can put anything <1 here
+
+  ## run model with unvaccinated & vaccinated (with susceptibility halved)
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, reduced_p_sympt),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            waning_rate = 1 / 20)
+
+  ## These are the same as the default values, but setting them again here in
+  ## case defaults change as the below assumes mean duration is shorter for
+  ## asymptomatic infections
+  p$s_asympt <- 1
+  p$gamma_asympt <- 1 / 2.09
+  p$s_sympt
+  p$gamma_sympt <- 1 / 4
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all <- carehomes_Rt_trajectories(steps, y, p)
+
+  ## same without vaccination
+  p_no_vacc <- p
+  # set this to 1 everywhere
+  p_no_vacc$rel_p_sympt <- 0 *  p_no_vacc$rel_p_sympt + 1
+
+  rt_1_no_vacc <- carehomes_Rt(steps, y[, 1, ], p_no_vacc)
+  rt_all_no_vacc <- carehomes_Rt_trajectories(steps, y, p_no_vacc)
+
+  # check that the ratio between the Rt with and witout vaccination
+  # is constant
+  expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
+
+  ## Given mean duration is shorter for asymptomatic individuals, we expect
+  ## Rt to be reduced when rel_p_sympt is not 1
+  expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
+  expect_true(all(rt_1_no_vacc$eff_Rt_all > rt_1$eff_Rt_all))
+  expect_true(all(rt_1_no_vacc$Rt_general > rt_1$Rt_general))
+  expect_true(all(rt_1_no_vacc$eff_Rt_general > rt_1$eff_Rt_general))
+
+})
+
+
+test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
+  rel_p_hosp_if_sympt <- 0.2 # can put anything <1 here
+
+  ## run model with unvaccinated & vaccinated (with susceptibility halved)
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, rel_p_hosp_if_sympt),
+                            waning_rate = 1 / 20)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all <- carehomes_Rt_trajectories(steps, y, p)
+
+  ## same without vaccination
+  p_no_vacc <- p
+  # set this to 1 everywhere
+  p_no_vacc$rel_p_hosp_if_sympt <- 0 *  p_no_vacc$rel_p_hosp_if_sympt + 1
+
+  rt_1_no_vacc <- carehomes_Rt(steps, y[, 1, ], p_no_vacc)
+  rt_all_no_vacc <- carehomes_Rt_trajectories(steps, y, p_no_vacc)
+
+  # Check that the ratio between the Rt with and witout vaccination
+  # is constant
+  expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
+
+  ## In the model, mean duration is inherently shorter for symptomatic
+  ## individuals who are not hospitalised compared with those who are, so we
+  ## expect Rt to be reduced when rel_p_hosp_if_sympt is not 1
+  expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
+  expect_true(all(rt_1_no_vacc$eff_Rt_all > rt_1$eff_Rt_all))
+  expect_true(all(rt_1_no_vacc$Rt_general > rt_1$Rt_general))
+  expect_true(all(rt_1_no_vacc$eff_Rt_general > rt_1$eff_Rt_general))
 
 })
 

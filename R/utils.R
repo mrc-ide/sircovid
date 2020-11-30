@@ -87,3 +87,29 @@ abind1 <- function(a, b) {
   rownames(ret) <- c(rownames(a), rownames(b))
   ret
 }
+
+
+## calculates the nth power of a matrix
+matrix_pow <- function(x, n) {
+  if (!is_integer(n)) {
+    stop("n must be an integer")
+  }
+  if (!is.matrix(x)) {
+    stop("x must have 2 dimensions")
+  }
+  if (ncol(x) != nrow(x)) {
+    stop("x must be a square matrix")
+  }
+
+  if (n < 0) {
+    return(matrix_pow(solve(x), -n))
+  } else if (n == 0) {
+    return(diag(nrow(x)))
+  } else if (n == 1) {
+    return(x)
+  } else if (n %% 2 == 0) {
+    return(matrix_pow(x %*% x, n / 2))
+  } else {
+    return(x %*% matrix_pow(x %*% x, (n - 1) / 2))
+  }
+}

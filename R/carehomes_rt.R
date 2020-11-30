@@ -41,7 +41,13 @@ carehomes_Rt <- function(step, S, p) {
                     nrow = p$n_groups, ncol = ncol(p$rel_susceptibility))
     S_weighted <- rowSums(S_mat * p$rel_susceptibility)
 
-    ngm <- outer(mean_duration[, t], S_weighted) * m
+    if (dim(mean_duration)[2] > 1) {
+      mean_duration_weighted <- apply(mean_duration[, , t], 1, mean)
+    } else {
+      mean_duration_weighted <- drop(mean_duration[, , t])
+    }
+
+    ngm <- outer(mean_duration_weighted, S_weighted) * m
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns
@@ -77,7 +83,6 @@ carehomes_Rt <- function(step, S, p) {
        Rt_all = Rt_all,
        Rt_general = Rt_general)
 }
-
 
 ## Here we expect 'S' in order:
 ##
@@ -126,21 +131,83 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 carehomes_Rt_mean_duration <- function(step, pars) {
   dt <- pars$dt
 
-  p_sympt <- pars$p_sympt
-  p_hosp_sympt <- outer(pars$psi_hosp_sympt,
-                  sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
-  p_ICU_hosp <- outer(pars$psi_ICU_hosp,
-                    sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
-  p_death_ICU <- outer(pars$psi_death_ICU,
-                   sircovid_parameters_beta_expand(step, pars$p_death_ICU_step))
-  p_death_hosp_D <- outer(pars$psi_death_hosp_D,
-                sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
-  p_death_stepdown <- outer(pars$psi_death_stepdown,
-              sircovid_parameters_beta_expand(step, pars$p_death_stepdown_step))
-  p_death_comm <- outer(pars$psi_death_comm,
-                  sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
+  matricise <- function(vect, n_col) {
+    matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
+  }
 
-  p_asympt <- (1 - p_sympt)
+  n_vacc_classes <- ncol(pars$rel_susceptibility)
+
+  n_groups <- pars$n_groups
+
+  n_time_steps <-
+    length(sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
+
+  vacc_prog_before_infectious <- function(group_i) {
+    vacc_prog_rate <- pars$vaccine_progression_rate[group_i, ]
+
+    ## Q[i, j] gives probability of progression from vaccine stage i to
+    ## vaccine stage j in one time step
+    Q <- diag(exp(-vacc_prog_rate * dt))
+    for (i in seq_len(n_vacc_classes - 1)) {
+      Q[i, i + 1] <- 1 - Q[i, i]
+    }
+    Q[n_vacc_classes, 1] <- 1 - Q[n_vacc_classes, n_vacc_classes]
+
+    ## probability of E progression in one time step
+    p_EE <- 1 - exp(-pars$gamma_E * dt)
+
+    ## A[i, j] gives the probability that an individual who begins an E stage in
+    ## vaccine stage i, exits that E stage in vaccine stage j. Note that A =
+    ## (sum_{k = 0}^Inf ((1 - p_EE) * Q) ^ k) * p_EE * Q. Also note that for a
+    ## square matrix B, sum_{k = 0}^Inf B^k = (I - B)^-1.
+    A <- (solve(diag(n_vacc_classes) - (1 - p_EE) * Q) %*% (p_EE * Q))
+
+    ## Note we need to account for there being s_E stages in E, and also that
+    ## individuals can have a vaccine progression in the same step that they get
+    ## infected (hence Q appearing below).
+    out <- Q %*% matrix_pow(A, pars$s_E)
+    out
+  }
+
+  if (n_vacc_classes > 1) {
+    ## V[i, j, k] gives the probability that an individual in group k who is
+    ## infected when in vaccine stage i exits the E class in vaccine stage j
+    V <- array(sapply(seq_len(pars$n_groups), vacc_prog_before_infectious),
+             dim = c(n_vacc_classes, n_vacc_classes, pars$n_groups))
+  }
+
+  mat_multi_by_group <- function(p, V) {
+    out <- sapply(seq_len(pars$n_groups),
+                  function(i) {
+                    V[, , i] %*% p[i, ]})
+    out
+  }
+
+  p_sympt <- matricise(pars$p_sympt, n_vacc_classes)
+  p_sympt <- p_sympt * pars$rel_p_sympt
+  if (n_vacc_classes > 1) {
+    p_sympt <- t(mat_multi_by_group(p_sympt, V))
+  }
+  p_sympt <- outer(p_sympt, rep(1, n_time_steps))
+
+  p_hosp_sympt <- matricise(pars$psi_hosp_sympt, n_vacc_classes) *
+    pars$rel_p_hosp_if_sympt
+  if (n_vacc_classes > 1) {
+    p_hosp_sympt <- t(mat_multi_by_group(p_hosp_sympt, V))
+  }
+  p_hosp_sympt <- outer(p_hosp_sympt,
+    sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
+
+  p_ICU_hosp <- outer(matricise(pars$psi_ICU_hosp, n_vacc_classes),
+                    sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
+  p_death_ICU <- outer(matricise(pars$psi_death_ICU, n_vacc_classes),
+                   sircovid_parameters_beta_expand(step, pars$p_death_ICU_step))
+  p_death_hosp_D <- outer(matricise(pars$psi_death_hosp_D, n_vacc_classes),
+                sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
+  p_death_stepdown <- outer(matricise(pars$psi_death_stepdown, n_vacc_classes),
+              sircovid_parameters_beta_expand(step, pars$p_death_stepdown_step))
+  p_death_comm <- outer(matricise(pars$psi_death_comm, n_vacc_classes),
+                  sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
   p_hosp_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
@@ -155,7 +222,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
 
   ## TODO: would be nice if it's possibly to name these subcomponents
   ## to make the calculation clearer.
-  mean_duration <- p_asympt * pars$s_asympt /
+  mean_duration <- (1 - p_sympt) * pars$s_asympt /
     (1 - exp(- dt * pars$gamma_asympt)) +
     p_sympt * pars$s_sympt / (1 - exp(- dt * pars$gamma_sympt))
 
