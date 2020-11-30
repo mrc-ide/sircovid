@@ -701,7 +701,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
                             rel_p_sympt = c(1, reduced_p_sympt),
                             rel_p_hosp_if_sympt = c(1, 1),
                             waning_rate = 1 / 20)
-  
+
   ## These are the same as the default values, but setting them again here in
   ## case defaults change as the below assumes mean duration is shorter for
   ## asymptomatic infections
@@ -738,7 +738,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   # check that the ratio between the Rt with and witout vaccination
   # is constant
   expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
-  
+
   ## Given mean duration is shorter for asymptomatic individuals, we expect
   ## Rt to be reduced when p_rel_sympt is not 1
   expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
@@ -789,8 +789,8 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
   # Check that the ratio between the Rt with and witout vaccination
   # is constant
   expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
-  
-  ## In the model, mean duration is inherently shorter for symptomatic 
+
+  ## In the model, mean duration is inherently shorter for symptomatic
   ## individuals who are not hospitalised compared with those who are, so we
   ## expect Rt to be reduced when p_rel_sympt is not 1
   expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
