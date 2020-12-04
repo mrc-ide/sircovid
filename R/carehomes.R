@@ -549,7 +549,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 ##' @importFrom stats weighted.mean
 carehomes_severity <- function(p, population) {
   index_workers <- carehomes_index_workers()
-  p_workers <- weighted.mean(p[index_workers], population[index_workers])
+  p_workers <- mean(p[index_workers])
   p_residents <- p[length(p)]
   c(p, p_workers, p_residents)
 }
@@ -575,8 +575,7 @@ carehomes_transmission_matrix <- function(eps, C_1, C_2, region, population) {
   m <- sircovid_transmission_matrix(region)
   n_age_groups <- nrow(m)
 
-  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, weighted.mean,
-                 population[index_workers])
+  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, mean)
   m_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
 
   ## Construct a block matrix:
@@ -813,11 +812,11 @@ carehomes_population <- function(population, carehome_workers,
   ## remove them from the core population. This extracts carehome
   ## residents from the older groups of the population, weighted
   ## towards the oldest, and extracts carehome workers from most
-  ## working ages, evenly across the population.
+  ## working ages, evenly across those age groups.
   N_tot <- c(population, carehome_workers, carehome_residents)
 
   index_workers <- carehomes_index_workers()
-  weights_workers <- N_tot[index_workers] / sum(N_tot[index_workers])
+  weights_workers <- rep(1 / length(index_workers), length(index_workers))
   index_residents <- which(sircovid_age_bins()$start >= 65)
   weights_residents <- c(0.05, 0.05, 0.15, 0.75)
 
