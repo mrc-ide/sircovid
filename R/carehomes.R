@@ -810,7 +810,7 @@ carehomes_population <- function(population, carehome_workers,
   ## remove them from the core population. This extracts carehome
   ## residents from the older groups of the population, weighted
   ## towards the oldest, and extracts carehome workers from most
-  ## working ages, evenly across those age groups.
+  ## working ages, extracting equal amounts from those age groups.
   N_tot <- c(population, carehome_workers, carehome_residents)
 
   index_workers <- carehomes_index_workers()
