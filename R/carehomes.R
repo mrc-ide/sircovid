@@ -243,8 +243,7 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
-  severity <- carehomes_parameters_severity(
-    severity, ret$population, p_death_carehome)
+  severity <- carehomes_parameters_severity(severity, p_death_carehome)
 
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
   ## implementation of severity parameters
@@ -546,8 +545,8 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 ##   [1..n_age_groups, workers, residents]
 ##
 ## so we have length of n_groups = n_age_groups + 2
-##' @importFrom stats weighted.mean
-carehomes_severity <- function(p, population) {
+##
+carehomes_severity <- function(p) {
   index_workers <- carehomes_index_workers()
   p_workers <- mean(p[index_workers])
   p_residents <- p[length(p)]
@@ -555,10 +554,9 @@ carehomes_severity <- function(p, population) {
 }
 
 
-carehomes_parameters_severity <- function(severity, population,
-                                          p_death_carehome) {
+carehomes_parameters_severity <- function(severity, p_death_carehome) {
   severity <- sircovid_parameters_severity(severity)
-  severity <- lapply(severity, carehomes_severity, population)
+  severity <- lapply(severity, carehomes_severity)
   severity$p_death_comm[length(severity$p_death_comm)] <- p_death_carehome
   severity
 }
