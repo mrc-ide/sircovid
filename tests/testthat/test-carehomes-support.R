@@ -369,9 +369,9 @@ test_that("carehomes_population prevents negative populations", {
 test_that("carehomes_population preserves population", {
   population <- c(949, 989, 1030, 995, 993, 985, 965, 1082, 1042, 960,
                   980, 1004, 934, 1049, 971, 1020, 937)
-  res <- carehomes_population(population, 100, 200)
+  res <- carehomes_population(population, 120, 200)
   expect_equal(sum(res), sum(population))
-  expect_equal(res[18:19], c(100, 200))
+  expect_equal(res[18:19], c(120, 200))
   expect_equal(res[1:5], population[1:5])
   expect_true(all(res[6:17] < population[6:17]))
 })
