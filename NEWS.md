@@ -1,3 +1,7 @@
+# sircovid 0.7.4
+
+* Now drawing equal numbers of care home workers across worker age groups.
+
 # sircovid 0.7.3
 
 * Correct Rt calculation accounting for vaccination
