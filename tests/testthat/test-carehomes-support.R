@@ -97,7 +97,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   expect_identical(p[names(shared)], shared)
 
-  severity <- carehomes_parameters_severity(NULL, p$population, 0.7)
+  severity <- carehomes_parameters_severity(NULL, 0.7)
   expect_identical(p[names(severity)], severity)
 
   expect_equal(
@@ -134,7 +134,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
 test_that("can compute severity for carehomes model", {
   population <- sircovid_population("uk")
-  severity <- carehomes_parameters_severity(NULL, population, 0.7)
+  severity <- carehomes_parameters_severity(NULL, 0.7)
   expect_true(all(lengths(severity) == 19))
   expect_setequal(names(severity), names(sircovid_parameters_severity(NULL)))
 
