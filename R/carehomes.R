@@ -814,14 +814,13 @@ carehomes_population <- function(population, carehome_workers,
   N_tot <- c(population, carehome_workers, carehome_residents)
 
   index_workers <- carehomes_index_workers()
-  weights_workers <- rep(1 / length(index_workers), length(index_workers))
   index_residents <- which(sircovid_age_bins()$start >= 65)
   weights_residents <- c(0.05, 0.05, 0.15, 0.75)
 
   N_tot[index_residents] <-
     round(N_tot[index_residents] - carehome_residents * weights_residents)
   N_tot[index_workers] <-
-    round(N_tot[index_workers] - carehome_workers * weights_workers)
+    round(N_tot[index_workers] - carehome_workers / length(index_workers))
 
   if (any(N_tot[index_residents] < 0)) {
     stop("Not enough population to meet care home occupancy")
