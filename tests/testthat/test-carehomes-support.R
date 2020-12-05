@@ -80,7 +80,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p$m[1:17, 1:17], sircovid_transmission_matrix("uk"))
   expect_identical(
     p$m,
-    carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk", p$population))
+    carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk"))
 
   progression <- carehomes_parameters_progression()
   expect_identical(p[names(progression)], progression)
@@ -97,7 +97,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   expect_identical(p[names(shared)], shared)
 
-  severity <- carehomes_parameters_severity(NULL, p$population, 0.7)
+  severity <- carehomes_parameters_severity(NULL, 0.7)
   expect_identical(p[names(severity)], severity)
 
   expect_equal(
@@ -134,7 +134,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
 test_that("can compute severity for carehomes model", {
   population <- sircovid_population("uk")
-  severity <- carehomes_parameters_severity(NULL, population, 0.7)
+  severity <- carehomes_parameters_severity(NULL, 0.7)
   expect_true(all(lengths(severity) == 19))
   expect_setequal(names(severity), names(sircovid_parameters_severity(NULL)))
 
@@ -148,8 +148,7 @@ test_that("can compute severity for carehomes model", {
 
 
 test_that("Can compute transmission matrix for carehomes model", {
-  population <- sircovid_population("uk")
-  m <- carehomes_transmission_matrix(0.1, 4e-5, 5e-4, "uk", population)
+  m <- carehomes_transmission_matrix(0.1, 4e-5, 5e-4, "uk")
   expect_equal(rownames(m)[18:19], c("CHW", "CHR"))
   expect_equal(colnames(m)[18:19], c("CHW", "CHR"))
   expect_equal(dim(m), c(19, 19))
@@ -369,9 +368,9 @@ test_that("carehomes_population prevents negative populations", {
 test_that("carehomes_population preserves population", {
   population <- c(949, 989, 1030, 995, 993, 985, 965, 1082, 1042, 960,
                   980, 1004, 934, 1049, 971, 1020, 937)
-  res <- carehomes_population(population, 100, 200)
+  res <- carehomes_population(population, 120, 200)
   expect_equal(sum(res), sum(population))
-  expect_equal(res[18:19], c(100, 200))
+  expect_equal(res[18:19], c(120, 200))
   expect_equal(res[1:5], population[1:5])
   expect_true(all(res[6:17] < population[6:17]))
 })

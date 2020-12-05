@@ -243,8 +243,7 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
-  severity <- carehomes_parameters_severity(
-    severity, ret$population, p_death_carehome)
+  severity <- carehomes_parameters_severity(severity, p_death_carehome)
 
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
   ## implementation of severity parameters
@@ -276,7 +275,7 @@ carehomes_parameters <- function(start_date, region,
 
   waning <- carehomes_parameters_waning(waning_rate)
 
-  ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region, ret$population)
+  ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
                                     carehome_residents)
@@ -546,19 +545,18 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 ##   [1..n_age_groups, workers, residents]
 ##
 ## so we have length of n_groups = n_age_groups + 2
-##' @importFrom stats weighted.mean
-carehomes_severity <- function(p, population) {
+##
+carehomes_severity <- function(p) {
   index_workers <- carehomes_index_workers()
-  p_workers <- weighted.mean(p[index_workers], population[index_workers])
+  p_workers <- mean(p[index_workers])
   p_residents <- p[length(p)]
   c(p, p_workers, p_residents)
 }
 
 
-carehomes_parameters_severity <- function(severity, population,
-                                          p_death_carehome) {
+carehomes_parameters_severity <- function(severity, p_death_carehome) {
   severity <- sircovid_parameters_severity(severity)
-  severity <- lapply(severity, carehomes_severity, population)
+  severity <- lapply(severity, carehomes_severity)
   severity$p_death_comm[length(severity$p_death_comm)] <- p_death_carehome
   severity
 }
@@ -570,13 +568,12 @@ carehomes_index_workers <- function() {
 }
 
 
-carehomes_transmission_matrix <- function(eps, C_1, C_2, region, population) {
+carehomes_transmission_matrix <- function(eps, C_1, C_2, region) {
   index_workers <- carehomes_index_workers()
   m <- sircovid_transmission_matrix(region)
   n_age_groups <- nrow(m)
 
-  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, weighted.mean,
-                 population[index_workers])
+  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, mean)
   m_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
 
   ## Construct a block matrix:
@@ -813,18 +810,17 @@ carehomes_population <- function(population, carehome_workers,
   ## remove them from the core population. This extracts carehome
   ## residents from the older groups of the population, weighted
   ## towards the oldest, and extracts carehome workers from most
-  ## working ages, evenly across the population.
+  ## working ages, extracting equal amounts from those age groups.
   N_tot <- c(population, carehome_workers, carehome_residents)
 
   index_workers <- carehomes_index_workers()
-  weights_workers <- N_tot[index_workers] / sum(N_tot[index_workers])
   index_residents <- which(sircovid_age_bins()$start >= 65)
   weights_residents <- c(0.05, 0.05, 0.15, 0.75)
 
   N_tot[index_residents] <-
     round(N_tot[index_residents] - carehome_residents * weights_residents)
   N_tot[index_workers] <-
-    round(N_tot[index_workers] - carehome_workers * weights_workers)
+    round(N_tot[index_workers] - carehome_workers / length(index_workers))
 
   if (any(N_tot[index_residents] < 0)) {
     stop("Not enough population to meet care home occupancy")
