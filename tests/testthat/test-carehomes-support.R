@@ -80,7 +80,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p$m[1:17, 1:17], sircovid_transmission_matrix("uk"))
   expect_identical(
     p$m,
-    carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk", p$population))
+    carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk"))
 
   progression <- carehomes_parameters_progression()
   expect_identical(p[names(progression)], progression)
@@ -148,8 +148,7 @@ test_that("can compute severity for carehomes model", {
 
 
 test_that("Can compute transmission matrix for carehomes model", {
-  population <- sircovid_population("uk")
-  m <- carehomes_transmission_matrix(0.1, 4e-5, 5e-4, "uk", population)
+  m <- carehomes_transmission_matrix(0.1, 4e-5, 5e-4, "uk")
   expect_equal(rownames(m)[18:19], c("CHW", "CHR"))
   expect_equal(colnames(m)[18:19], c("CHW", "CHR"))
   expect_equal(dim(m), c(19, 19))
