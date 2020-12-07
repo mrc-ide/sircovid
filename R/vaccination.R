@@ -70,5 +70,8 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
     msg2 <- "'vaccine_progression_rate' should only contain zeros"
     stop(paste(msg1, msg2))
   }
+  if (!all(mat_vaccine_progression_rate[, 1] == 0)) {
+    stop("The first column of 'vaccine_progression_rate' must be zero")
+  }
   mat_vaccine_progression_rate
 }

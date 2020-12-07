@@ -62,6 +62,13 @@ extern "C" SEXP _sircovid_dust_basic_reorder(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // basic.cpp
+SEXP dust_basic_set_data(SEXP ptr, cpp11::list r_data);
+extern "C" SEXP _sircovid_dust_basic_set_data(SEXP ptr, SEXP r_data) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_basic_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data)));
+  END_CPP11
+}
+// basic.cpp
 SEXP dust_basic_rng_state(SEXP ptr, bool first_only);
 extern "C" SEXP _sircovid_dust_basic_rng_state(SEXP ptr, SEXP first_only) {
   BEGIN_CPP11
@@ -147,6 +154,13 @@ extern "C" SEXP _sircovid_dust_carehomes_reorder(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // carehomes.cpp
+SEXP dust_carehomes_set_data(SEXP ptr, cpp11::list r_data);
+extern "C" SEXP _sircovid_dust_carehomes_set_data(SEXP ptr, SEXP r_data) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_carehomes_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data)));
+  END_CPP11
+}
+// carehomes.cpp
 SEXP dust_carehomes_rng_state(SEXP ptr, bool first_only);
 extern "C" SEXP _sircovid_dust_carehomes_rng_state(SEXP ptr, SEXP first_only) {
   BEGIN_CPP11
@@ -183,6 +197,7 @@ extern SEXP _sircovid_dust_basic_reorder(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_reset(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_run(SEXP, SEXP);
+extern SEXP _sircovid_dust_basic_set_data(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_index(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_state(SEXP, SEXP, SEXP);
@@ -195,6 +210,7 @@ extern SEXP _sircovid_dust_carehomes_reorder(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_reset(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_run(SEXP, SEXP);
+extern SEXP _sircovid_dust_carehomes_set_data(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_index(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_state(SEXP, SEXP, SEXP);
@@ -209,6 +225,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_basic_reset",             (DL_FUNC) &_sircovid_dust_basic_reset,             3},
     {"_sircovid_dust_basic_rng_state",         (DL_FUNC) &_sircovid_dust_basic_rng_state,         2},
     {"_sircovid_dust_basic_run",               (DL_FUNC) &_sircovid_dust_basic_run,               2},
+    {"_sircovid_dust_basic_set_data",          (DL_FUNC) &_sircovid_dust_basic_set_data,          2},
     {"_sircovid_dust_basic_set_index",         (DL_FUNC) &_sircovid_dust_basic_set_index,         2},
     {"_sircovid_dust_basic_set_rng_state",     (DL_FUNC) &_sircovid_dust_basic_set_rng_state,     2},
     {"_sircovid_dust_basic_set_state",         (DL_FUNC) &_sircovid_dust_basic_set_state,         3},
@@ -221,6 +238,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_carehomes_reset",         (DL_FUNC) &_sircovid_dust_carehomes_reset,         3},
     {"_sircovid_dust_carehomes_rng_state",     (DL_FUNC) &_sircovid_dust_carehomes_rng_state,     2},
     {"_sircovid_dust_carehomes_run",           (DL_FUNC) &_sircovid_dust_carehomes_run,           2},
+    {"_sircovid_dust_carehomes_set_data",      (DL_FUNC) &_sircovid_dust_carehomes_set_data,      2},
     {"_sircovid_dust_carehomes_set_index",     (DL_FUNC) &_sircovid_dust_carehomes_set_index,     2},
     {"_sircovid_dust_carehomes_set_rng_state", (DL_FUNC) &_sircovid_dust_carehomes_set_rng_state, 2},
     {"_sircovid_dust_carehomes_set_state",     (DL_FUNC) &_sircovid_dust_carehomes_set_state,     3},

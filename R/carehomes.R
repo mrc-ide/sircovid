@@ -220,6 +220,8 @@ carehomes_parameters <- function(start_date, region,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
                                  vaccine_progression_rate = NULL,
+                                 vaccine_fraction_reluctant = NULL,
+                                 vaccine_daily_doses = 0,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
@@ -307,7 +309,8 @@ carehomes_parameters <- function(start_date, region,
 
   ret$n_groups <- ret$n_age_groups + 2L
 
-  vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
+  vaccination <- carehomes_parameters_vaccination(ret$N_tot,
+                                                  rel_susceptibility,
                                                   rel_p_sympt,
                                                   rel_p_hosp_if_sympt,
                                                   vaccine_progression_rate)
@@ -656,10 +659,13 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
+carehomes_parameters_vaccination <- function(N_tot,
+                                             rel_susceptibility = 1,
                                              rel_p_sympt = 1,
                                              rel_p_hosp_if_sympt = 1,
-                                             vaccine_progression_rate = NULL) {
+                                             vaccine_progression_rate = NULL,
+                                             vaccine_fraction_reluctant = NULL,
+                                             vaccine_daily_doses = 0) {
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
   }
@@ -678,8 +684,16 @@ carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
   ret <- Map(function(value, name) build_rel_param(value, max(n), name),
              rel_params, names(rel_params))
 
-  ret$vaccine_progression_rate <- build_vaccine_progression_rate(
+  ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
     vaccine_progression_rate, max(n))
+
+  if (is.null(vaccine_fraction_reluctant)) {
+    vaccine_fraction_reluctant <- rep(0, sircovid:::carehomes_n_groups())
+  }
+
+  ret$vaccine_population_reluctant <- vaccine_fraction_reluctant * N_tot
+  ret$vaccine_daily_doses <- vaccine_daily_doses
+
   ret
 }
 
