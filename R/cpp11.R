@@ -32,6 +32,10 @@ dust_basic_reorder <- function(ptr, r_index) {
   invisible(.Call("_sircovid_dust_basic_reorder", ptr, r_index, PACKAGE = "sircovid"))
 }
 
+dust_basic_set_data <- function(ptr, r_data) {
+  .Call("_sircovid_dust_basic_set_data", ptr, r_data, PACKAGE = "sircovid")
+}
+
 dust_basic_rng_state <- function(ptr, first_only) {
   .Call("_sircovid_dust_basic_rng_state", ptr, first_only, PACKAGE = "sircovid")
 }
@@ -78,6 +82,10 @@ dust_carehomes_step <- function(ptr) {
 
 dust_carehomes_reorder <- function(ptr, r_index) {
   invisible(.Call("_sircovid_dust_carehomes_reorder", ptr, r_index, PACKAGE = "sircovid"))
+}
+
+dust_carehomes_set_data <- function(ptr, r_data) {
+  .Call("_sircovid_dust_carehomes_set_data", ptr, r_data, PACKAGE = "sircovid")
 }
 
 dust_carehomes_rng_state <- function(ptr, first_only) {
