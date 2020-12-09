@@ -12,10 +12,18 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
     return 0;
   }
 
+  // 'i' comes in as base1 so we do the subtraction here so that
+  // there's only one place to think about it (except for directly
+  // above)
+  i--;
+
   // Fixed priority groups for now, zero-offset indexed
   //
   // The other nice way of modelling this would be an integer matrix,
-  // accepted as user-input. Loop over each row and weight
+  // accepted as user-input, then loop over each row and weight.
+  //
+  // This way is not flexible at all, but we could switch between
+  // priority groups with an enum quite efficiently.
   static const std::vector<std::vector<size_t>> priority = {
     {17, 18}, {16}, {15}, {14}, {13}, {12}, {11}, {10}, {9, 8, 7, 6, 5, 4, 3}};
 
@@ -24,7 +32,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
     bool exit = false;
     for (auto j : p) {
       n += candidates_pos[j];
-      exit = exit || j == i - 1;
+      exit = exit || j == i;
     }
     if (exit) {
       if (n < daily_doses) {
@@ -43,6 +51,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
     }
   }
 
-  // Catch any unhandled early exit:
+  // Catch any unhandled early exit; this should never trigger though,
+  // but the compiler will need it.
   return 0;
 }

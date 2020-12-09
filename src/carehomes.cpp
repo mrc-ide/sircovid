@@ -31,12 +31,16 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
   static const std::vector<std::vector<size_t>> priority = {
     {17, 18}, {16}, {15}, {14}, {13}, {12}, {11}, {10}, {9, 8, 7, 6, 5, 4, 3}};
 
+  // 'i' comes in as base1 so we do the subtraction here so that
+  // there's only one place to think about it.
+  i--;
+
   for (auto &p : priority) {
     double n = 0;
     bool exit = false;
     for (auto j : p) {
       n += candidates_pos[j];
-      exit = exit || j == i - 1;
+      exit = exit || j == i;
     }
     if (exit) {
       if (n < daily_doses) {

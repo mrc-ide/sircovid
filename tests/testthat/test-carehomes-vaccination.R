@@ -119,15 +119,17 @@ test_that("Vaccination of susceptibles works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  expect_true(all(y$S[, 1, 1] == y$S[, 2, 2] + rowSums(y$E[, , , 2])))
-  expect_true(all(y$S[, , 101] == y$S[, , 2]))
+  i <- 4:carehomes_n_groups()
+  expect_equal(y$S[i, 1, 1], y$S[i, 2, 2] + rowSums(y$E[i, , , 2]))
+  expect_equal(y$S[i, , 101], y$S[i, , 2])
 })
 
 
@@ -140,7 +142,8 @@ test_that("Vaccination of exposed individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
 
   # stop disease progression after E
   p$gamma_E <- 0
@@ -169,18 +172,19 @@ test_that("Vaccination of exposed individuals works", {
   E_compartment_idx <- 1
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_true(all(e[, E_compartment_idx, unvacc_idx, 1] ==
-                    e[, E_compartment_idx, vacc_idx, 2]))
+  i <- 4:carehomes_n_groups()
+  expect_equal(e[i, E_compartment_idx, unvacc_idx, 1],
+               e[i, E_compartment_idx, vacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(e[, E_compartment_idx, vacc_idx, 2] ==
-                    e[, E_compartment_idx, vacc_idx, 101]))
+  expect_equal(e[i, E_compartment_idx, vacc_idx, 2],
+               e[i, E_compartment_idx, vacc_idx, 101])
   ## same for second E compartment
   E_compartment_idx <- 2
-  expect_true(all(e[, E_compartment_idx, unvacc_idx, 1] ==
-                    e[, E_compartment_idx, vacc_idx, 2]))
+  expect_equal(e[i, E_compartment_idx, unvacc_idx, 1],
+               e[i, E_compartment_idx, vacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(e[, E_compartment_idx, vacc_idx, 2] ==
-                    e[, E_compartment_idx, vacc_idx, 101]))
+  expect_equal(e[i, E_compartment_idx, vacc_idx, 2],
+               e[i, E_compartment_idx, vacc_idx, 101])
 })
 
 
@@ -193,7 +197,8 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
 
   # stop disease progression after I_asympt
   p$gamma_asympt <- 0
@@ -222,13 +227,14 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
   I_asympt_compartment_idx <- 1
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_true(all(
-    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 1] ==
-      i_asympt[, I_asympt_compartment_idx, vacc_idx, 2]))
+  i <- 4:carehomes_n_groups()
+  expect_equal(
+    i_asympt[i, I_asympt_compartment_idx, unvacc_idx, 1],
+    i_asympt[i, I_asympt_compartment_idx, vacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(
-    i_asympt[, I_asympt_compartment_idx, vacc_idx, 2] ==
-      i_asympt[, I_asympt_compartment_idx, vacc_idx, 101]))
+  expect_equal(
+    i_asympt[i, I_asympt_compartment_idx, vacc_idx, 2],
+    i_asympt[i, I_asympt_compartment_idx, vacc_idx, 101])
 })
 
 
@@ -241,7 +247,8 @@ test_that("Vaccination of recovered individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -271,9 +278,10 @@ test_that("Vaccination of recovered individuals works", {
   ## time steps 1 and 2
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_true(all(r[, unvacc_idx, 1] == r[, vacc_idx, 2]))
+  i <- 4:carehomes_n_groups()
+  expect_equal(r[i, unvacc_idx, 1], r[i, vacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(r[, vacc_idx, 2] == r[, vacc_idx, 101]))
+  expect_equal(r[i, vacc_idx, 2], r[i, vacc_idx, 101])
 })
 
 
@@ -319,18 +327,18 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
   E_compartment_idx <- 1
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_true(all(e[, E_compartment_idx, vacc_idx, 1] ==
-                    e[, E_compartment_idx, unvacc_idx, 2]))
+  expect_equal(e[, E_compartment_idx, vacc_idx, 1],
+               e[, E_compartment_idx, unvacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(e[, E_compartment_idx, unvacc_idx, 2] ==
-                    e[, E_compartment_idx, unvacc_idx, 101]))
+  expect_equal(e[, E_compartment_idx, unvacc_idx, 2],
+               e[, E_compartment_idx, unvacc_idx, 101])
   ## same for second E compartment
   E_compartment_idx <- 2
-  expect_true(all(e[, E_compartment_idx, vacc_idx, 1] ==
-                    e[, E_compartment_idx, unvacc_idx, 2]))
+  expect_equal(e[, E_compartment_idx, vacc_idx, 1],
+               e[, E_compartment_idx, unvacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(e[, E_compartment_idx, unvacc_idx, 2] ==
-                    e[, E_compartment_idx, unvacc_idx, 101]))
+  expect_equal(e[, E_compartment_idx, unvacc_idx, 2],
+               e[, E_compartment_idx, unvacc_idx, 101])
 })
 
 
@@ -375,13 +383,13 @@ test_that("Returning to unvaccinated stage works for I_asympt individuals", {
   I_asympt_compartment_idx <- 1
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_true(all(
-    i_asympt[, I_asympt_compartment_idx, vacc_idx, 1] ==
-      i_asympt[, I_asympt_compartment_idx, unvacc_idx, 2]))
+  expect_equal(
+    i_asympt[, I_asympt_compartment_idx, vacc_idx, 1],
+    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(
-    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 2] ==
-      i_asympt[, I_asympt_compartment_idx, unvacc_idx, 101]))
+  expect_equal(
+    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 2],
+    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 101])
 })
 
 
@@ -429,9 +437,9 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
   ## time steps 1 and 2
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_true(all(r[, vacc_idx, 1] == r[, unvacc_idx, 2]))
+  expect_equal(r[, vacc_idx, 1], r[, unvacc_idx, 2])
   ## then they don't move anymore
-  expect_true(all(r[, unvacc_idx, 2] == r[, unvacc_idx, 101]))
+  expect_equal(r[, unvacc_idx, 2], r[, unvacc_idx, 101])
 })
 
 
@@ -444,16 +452,18 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
                             rel_susceptibility = c(1, 0, 0),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(Inf, Inf, 0))
+                            vaccine_progression_rate = c(0, Inf, 0),
+                            vaccine_daily_doses = Inf)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   mod$set_index(integer(0))
+  i <- 4:carehomes_n_groups()
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  expect_true(all(y$S[, 1, 1] == y$S[, 3, 2]))
-  expect_true(all(y$S[, , 101] == y$S[, , 2]))
+  expect_equal(y$S[i, 1, 1], y$S[i, 3, 2])
+  expect_equal(y$S[i, , 101], y$S[i, , 2])
 })
 
 test_that("Vaccine progression through 12 classes works for susceptibles", {
@@ -466,15 +476,17 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
                             rel_p_sympt = rep(1, 12),
                             rel_p_hosp_if_sympt = rep(1, 12),
                             vaccine_progression_rate =
-                              c(Inf, rep(Inf, 10), 0))
+                              c(0, rep(Inf, 10), 0),
+                            vaccine_daily_doses = Inf)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 12))))
-  expect_true(all(y$S[, 1, 1] == y$S[, 12, 2]))
-  expect_true(all(y$S[, , 34] == y$S[, , 2]))
+  i <- 4:carehomes_n_groups()
+  expect_equal(y$S[i, 1, 1], y$S[i, 12, 2])
+  expect_equal(y$S[i, , 34], y$S[i, , 2])
 })
 
 test_that("Clinical progression within a vaccination class works", {
@@ -525,7 +537,7 @@ test_that("Clinical progression within a vaccination class works", {
 
   ## all have moved from S to R in relevant vaccination class
   ## ignoring age group 4 where infections are seeded
-  expect_true(all(s[-4, , 1] == r[-4, , 101]))
+  expect_equal(s[-4, , 1], r[-4, , 101])
 })
 
 test_that("Returning to unvaccinated stage works for susceptibles", {
@@ -560,7 +572,7 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
   expect_true(all(s[, 2, 2] == 0))
 
   ## everybody back in unvaccinated at time step 2
-  expect_true(all(s[, 1, 2] == s[, 2, 1]))
+  expect_equal(s[, 1, 2], s[, 2, 1])
 })
 
 test_that("there are no vaccinated susceptibles when vaccination rate is 0", {
@@ -693,7 +705,8 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(1, 0.5, 0.01))
+                            vaccine_progression_rate = c(0, 0.5, 0.01),
+                            vaccine_daily_doses = 500000)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -723,7 +736,8 @@ test_that(
                               rel_susceptibility = c(1, 0.5, 0.1),
                               rel_p_sympt = c(1, 1, 1),
                               rel_p_hosp_if_sympt = c(1, 1, 1),
-                              vaccine_progression_rate = c(500, 100, 50))
+                              vaccine_progression_rate = c(0, 100, 50),
+                              vaccine_daily_doses = 1000000)
 
     mod <- carehomes$new(p, 0, 1)
     info <- mod$info()
@@ -746,7 +760,8 @@ test_that("Outputed vaccination numbers make sense", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(1, 0.5, 0.01))
+                            vaccine_progression_rate = c(0, 0.5, 0.01),
+                            vaccine_daily_doses = 1000)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -776,7 +791,8 @@ test_that("Outputed S vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -786,14 +802,18 @@ test_that("Outputed S vaccination numbers are what we expect", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
 
+  i <- 4:carehomes_n_groups()
+
   ## there are candidates in S for vaccination
   expect_true(all(y$S[, 1, 1] > 0))
   ## every initial susceptible should be vaccinated within first day
-  expect_true(all(y$cum_n_S_vaccinated[, 1, 2] == y$S[, 1, 1]))
+  expect_equal(y$cum_n_S_vaccinated[i, 1, 2], y$S[i, 1, 1])
   ## same for the 10 initially seeded cases
   expect_true(
-    all(y$cum_n_I_asympt_vaccinated[, 1, 2] == y$I_asympt[, 1, 1, 1]))
+    all(y$cum_n_I_asympt_vaccinated[i, 1, 2] == y$I_asympt[i, 1, 1, 1]))
 
+  ## Noone in the first 3 groups vaccinated:
+  expect_true(all(y$cum_n_S_vaccinated[1:3, , ] == 0))
 })
 
 
@@ -802,7 +822,8 @@ test_that("Outputed E vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -821,13 +842,14 @@ test_that("Outputed E vaccination numbers are what we expect", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
 
+  i <- 4:carehomes_n_groups()
   ## there are candidates in E for vaccination
-  expect_true(all(y$E[, , 1, 1] > 0))
+  expect_true(all(y$E[i, , 1, 1] > 0))
   ## every initial exposed should be vaccinated within first day
-  expect_true(all(y$cum_n_E_vaccinated[, , 2] ==
-                    apply(y$E[, , , 1], c(1, 3), sum)))
+  expect_equal(y$cum_n_E_vaccinated[i, , 2],
+               apply(y$E[i, , , 1], c(1, 3), sum))
   ## same for the 10 initially seeded cases
-  expect_true(all(y$cum_n_I_asympt_vaccinated[, , 2] == y$I_asympt[, , , 1]))
+  expect_equal(y$cum_n_I_asympt_vaccinated[i, , 2], y$I_asympt[i, , , 1])
 
 })
 
@@ -837,7 +859,8 @@ test_that("Outputed I_asympt vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -855,10 +878,11 @@ test_that("Outputed I_asympt vaccination numbers are what we expect", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
 
+  i <- 4:carehomes_n_groups()
   ## there are candidates in I_asympt for vaccination
-  expect_true(all(y$I_asympt[, , 1, 1] > 0))
+  expect_true(all(y$I_asympt[i, , 1, 1] > 0))
   ## every initial I_asympt should be vaccinated within first day
-  expect_true(all(y$cum_n_I_asympt_vaccinated[, , 2] == y$I_asympt[, , , 1]))
+  expect_equal(y$cum_n_I_asympt_vaccinated[i, , 2], y$I_asympt[i, , , 1])
 
 })
 
@@ -868,7 +892,8 @@ test_that("Outputed R vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(Inf, 0))
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -890,16 +915,14 @@ test_that("Outputed R vaccination numbers are what we expect", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
 
+  i <- 4:carehomes_n_groups()
   ## there are candidates in R for vaccination
-  expect_true(all(y$R[, 1, 1] > 0))
+  expect_true(all(y$R[i, 1, 1] > 0))
   ## every initial recovered should be vaccinated within first day
-  expect_true(all(y$cum_n_R_vaccinated[, , 2] == y$R[, , 1]))
+  expect_equal(y$cum_n_R_vaccinated[i, , 2], y$R[i, , 1])
   ## same for the 10 initially seeded cases
-  expect_true(all(y$cum_n_I_asympt_vaccinated[, , 2] == y$I_asympt[, , , 1]))
-
+  expect_equal(y$cum_n_I_asympt_vaccinated[i, , 2], y$I_asympt[i, , , 1])
 })
-
-
 
 
 test_that("check_rel_param rejects out of bounds errors", {
@@ -1010,11 +1033,11 @@ test_that("build_vaccine_progression_rate allows sensible inputs and works", {
     build_vaccine_progression_rate(vaccine_progression_rate = 0,
                                    n_vacc_classes = 1))
   expect_equal(
-    build_vaccine_progression_rate(vaccine_progression_rate = c(1, 1),
+    build_vaccine_progression_rate(vaccine_progression_rate = c(0, 1),
                                    n_vacc_classes = 2),
-    matrix(rep(1, 19 * 2), nrow = 19))
+    cbind(rep(0, 19), rep(1, 19)))
   expect_silent(
-    build_vaccine_progression_rate(vaccine_progression_rate = matrix(1, 19, 3),
+    build_vaccine_progression_rate(vaccine_progression_rate = matrix(0, 19, 3),
                                    n_vacc_classes = 3))
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = NULL,
