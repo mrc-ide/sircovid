@@ -142,8 +142,10 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   n_time_steps <-
     length(sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
 
+  ## TODO: This is not correct for the initial transition from
+  ## vaccination
   vacc_prog_before_infectious <- function(group_i) {
-    vacc_prog_rate <- pars$vaccine_progression_rate[group_i, ]
+    vacc_prog_rate <- pars$vaccine_progression_rate_base[group_i, ]
 
     ## Q[i, j] gives probability of progression from vaccine stage i to
     ## vaccine stage j in one time step
