@@ -26,6 +26,8 @@ carehomes_parameters(
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
   vaccine_progression_rate = NULL,
+  vaccine_fraction_reluctant = NULL,
+  vaccine_daily_doses = 0,
   waning_rate = 0,
   model_pcr_and_serology_user = 1,
   exp_noise = 1e+06
