@@ -1,3 +1,7 @@
+# sircovid 0.8.0
+
+* Move vaccination process inside odin code
+
 # sircovid 0.7.2
 
 * I_mild compartment removed from both models and I_ILI renamed to I_sympt
