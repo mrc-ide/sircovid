@@ -1,7 +1,7 @@
 #include <vector>
 // [[odin.dust::register]]
 template <typename T, typename real_t>
-real_t vaccination_schedule(size_t i, real_t daily_doses,
+real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
                             const T& candidates, const T& candidates_pos) {
   // Early exit in the case of no vaccination
   if (daily_doses == 0) {
@@ -35,13 +35,15 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
       exit = exit || j == i;
     }
     if (exit) {
+      real_t n_to_vaccinate;
       if (n < daily_doses) {
         // We won't use it all
-        return candidates_pos[i];
+        n_to_vaccinate = candidates_pos[i];
       } else {
         // We will use it all, so share within our group
-        return daily_doses / n * candidates_pos[i];
+        n_to_vaccinate = daily_doses / n * candidates_pos[i];
       }
+      return - log(1 - n_to_vaccinate * dt / candidates[i]) / dt;
     } else if (n >= daily_doses) {
       // All vaccine has been used up by earlier groups
       return 0;

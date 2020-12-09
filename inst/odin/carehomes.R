@@ -1208,8 +1208,8 @@ vaccine_daily_doses <- user(0)
 ## taken through the vaccination rate
 config(include) <- "vaccination.cpp"
 vaccine_progression_rate[, 1] <-
-  vaccination_schedule(i, vaccine_daily_doses, vaccine_n_candidates,
-                       vaccine_population_possible)
+  vaccination_schedule(i, vaccine_daily_doses, dt,
+                       vaccine_n_candidates, vaccine_population_possible)
 vaccine_progression_rate[, 2:n_vacc_classes] <-
   vaccine_progression_rate_base[i, j]
 
