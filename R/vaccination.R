@@ -65,11 +65,6 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
         matrix(rep(vaccine_progression_rate, each = n_groups), nrow = n_groups)
     }
   }
-  if (n_vacc_classes == 1 & !all(mat_vaccine_progression_rate == 0)) {
-    msg1 <- "When 'n_vacc_classes' is 1,"
-    msg2 <- "'vaccine_progression_rate' should only contain zeros"
-    stop(paste(msg1, msg2))
-  }
   if (!all(mat_vaccine_progression_rate[, 1] == 0)) {
     stop("The first column of 'vaccine_progression_rate' must be zero")
   }
