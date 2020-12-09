@@ -13,7 +13,7 @@ real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, i
 #include <vector>
 // [[odin.dust::register]]
 template <typename T, typename real_t>
-real_t vaccination_schedule(size_t i, real_t daily_doses,
+real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
                             const T& candidates, const T& candidates_pos) {
   // Early exit in the case of no vaccination
   if (daily_doses == 0) {
@@ -24,16 +24,20 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
     return 0;
   }
 
+  // 'i' comes in as base1 so we do the subtraction here so that
+  // there's only one place to think about it (except for directly
+  // above)
+  i--;
+
   // Fixed priority groups for now, zero-offset indexed
   //
   // The other nice way of modelling this would be an integer matrix,
-  // accepted as user-input. Loop over each row and weight
+  // accepted as user-input, then loop over each row and weight.
+  //
+  // This way is not flexible at all, but we could switch between
+  // priority groups with an enum quite efficiently.
   static const std::vector<std::vector<size_t>> priority = {
     {17, 18}, {16}, {15}, {14}, {13}, {12}, {11}, {10}, {9, 8, 7, 6, 5, 4, 3}};
-
-  // 'i' comes in as base1 so we do the subtraction here so that
-  // there's only one place to think about it.
-  i--;
 
   for (auto &p : priority) {
     double n = 0;
@@ -43,13 +47,15 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
       exit = exit || j == i;
     }
     if (exit) {
+      real_t n_to_vaccinate;
       if (n < daily_doses) {
         // We won't use it all
-        return candidates_pos[i];
+        n_to_vaccinate = candidates_pos[i];
       } else {
         // We will use it all, so share within our group
-        return daily_doses / n * candidates_pos[i];
+        n_to_vaccinate = daily_doses / n * candidates_pos[i];
       }
+      return - log(1 - n_to_vaccinate * dt / candidates[i]) / dt;
     } else if (n >= daily_doses) {
       // All vaccine has been used up by earlier groups
       return 0;
@@ -59,7 +65,8 @@ real_t vaccination_schedule(size_t i, real_t daily_doses,
     }
   }
 
-  // Catch any unhandled early exit:
+  // Catch any unhandled early exit; this should never trigger though,
+  // but the compiler will need it.
   return 0;
 }
 // [[dust::class(carehomes)]]
@@ -1827,7 +1834,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_vaccine_progression_rate_1; ++i) {
       int j = 1;
-      internal.vaccine_progression_rate[i - 1 + internal.dim_vaccine_progression_rate_1 * (j - 1)] = vaccination_schedule(i, internal.vaccine_daily_doses, internal.vaccine_n_candidates, internal.vaccine_population_possible);
+      internal.vaccine_progression_rate[i - 1 + internal.dim_vaccine_progression_rate_1 * (j - 1)] = vaccination_schedule(i, internal.vaccine_daily_doses, internal.dt, internal.vaccine_n_candidates, internal.vaccine_population_possible);
     }
     for (int i = 1; i <= internal.dim_vaccine_progression_rate_1; ++i) {
       for (int j = 2; j <= internal.n_vacc_classes; ++j) {

@@ -1079,3 +1079,61 @@ test_that("build_waning_rate works as expected", {
     build_waning_rate(rep(0.5, 19)),
     rep(0.5, 19))
 })
+
+
+## Heading towards real-life use, let's vaccinate people at a rate of
+## 5k/day. This does not run an epidemic beforehand though, and we'll
+## use a "null" vaccine for now.
+test_that("run sensible vaccination schedule", {
+  p <- carehomes_parameters(0, "east_of_england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_daily_doses = 50000)
+  ## TODO: Anne to look at tidying this parameter up:
+  p$model_pcr_and_serology_user <- 0
+
+  ## Let's go:
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+  ## Remove seed, so that we have no infection process here:
+  state[state == 10] <- 0
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  keep <- c("cum_n_S_vaccinated",
+            "cum_n_E_vaccinated",
+            "cum_n_I_asympt_vaccinated",
+            "cum_n_R_vaccinated")
+  index <- unlist(lapply(info$index[keep], "[", 1:19), FALSE, FALSE)
+
+  y <- dust::dust_iterate(mod, seq(0, 400, by = 4), index)
+  s <- array(y, c(19, 4, dim(y)[3]))
+
+  ## Never vaccinate any young person:
+  expect_true(all(s[1:3, , ] == 0))
+
+  ## Sum over compartments
+  m <- t(apply(s, c(1, 3), sum))
+  r <- diff(m)
+
+  tot <- rowSums(r)
+  expect_true(all(tot > 49000 & tot < 51000))
+
+  ## Vaccinate all the CHW/CHR first, then down the priority
+  ## groups. This is easy to check visually but harder to describe:
+  priority <- list(18:19, 17, 16, 15, 14, 13, 12, 11, 4:10)
+  i <- lapply(priority, function(p)
+    range(c(apply((r > 5000)[, p, drop = FALSE], 2, which))))
+  for (j in seq_along(i)) {
+    if (j > 2) {
+      expect_true(max(unlist(i[seq_len(j - 2)])) < i[[j]][[1]])
+    }
+    if (j > 1) {
+      expect_true(all(i[[j - 1]][[1]] < i[[j]][[1]]))
+    }
+  }
+})
