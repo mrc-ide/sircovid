@@ -1193,7 +1193,7 @@ dim(vaccine_population_reluctant) <- n_groups
 ## approximation of that for now.
 ##
 ## TODO: this *should* work with
-##   max(0, vaccine_n_candidates[i] - vaccine_population_reluctant[i])
+## > max(0, vaccine_n_candidates[i] - vaccine_population_reluctant[i])
 ## But that is generating invalid code
 vaccine_population_possible[] <-
   (if (vaccine_population_reluctant[i] > vaccine_n_candidates[i]) 0
