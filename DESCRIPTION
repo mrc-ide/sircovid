@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.7.4
+Version: 0.7.5
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -34,9 +34,13 @@ Authors@R:
            family = "Cori",
            role = c("aut"),
            email = "a.cori@imperial.ac.uk"))
-Description: Model for COVID-19, using odin.
+Description: Mechanistic models of transmission of the SARS-Cov-2 (COVID-19)
+    virus implemented as stochastic compartmental models in odin and
+    dust. Uses mcstate to perfom Bayesian evidence synthesis from
+    several surveillance data streams through the estimation of
+    transmission parameters.
 License: MIT + file LICENSE
-URL: https://github.com/mrc-ide/sircovid
+URL: https://github.com/mrc-ide/sircovid, https://mrc-ide.github.io
 BugReports: https://github.com/mrc-ide/sircovid/issues
 Encoding: UTF-8
 LazyData: true
