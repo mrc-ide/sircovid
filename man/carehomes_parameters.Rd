@@ -142,6 +142,15 @@ vacination class); if a matrix, the element on row i and column j is the
 rate of progression from the jth vaccination class to the (j+1)th for age
 group i.}
 
+\item{vaccine_fraction_reluctant}{A vector of length 19 with the
+proportion of the population who are unable to be vaccinated for
+any reason.}
+
+\item{vaccine_daily_doses}{A single value indicating the number of
+(first) vaccine doses per day to distribute. The actual number
+distributed will be stochastically distributed around this,
+provided there are sufficient eligible candidates.}
+
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
