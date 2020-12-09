@@ -687,7 +687,7 @@ carehomes_parameters_vaccination <- function(N_tot,
     vaccine_progression_rate, max(n))
 
   if (is.null(vaccine_fraction_reluctant)) {
-    vaccine_fraction_reluctant <- rep(0, sircovid:::carehomes_n_groups())
+    vaccine_fraction_reluctant <- rep(0, carehomes_n_groups())
   }
 
   ret$vaccine_population_reluctant <- vaccine_fraction_reluctant * N_tot
