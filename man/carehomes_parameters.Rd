@@ -177,10 +177,10 @@ Parameters for the "\link{carehomes}" model.
 \examples{
 carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 
-### example set up of vaccination parameters independent of age
-### 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity
-### 3) fully vaccinated (but with an imperfect vaccine). People return
-### to group 1 after a period of time in group 3 to mirror waning immunity
+# example set up of vaccination parameters independent of age
+# 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity
+# 3) fully vaccinated (but with an imperfect vaccine). People return
+# to group 1 after a period of time in group 3 to mirror waning immunity
 
 # Assumption: immediately after vaccination susceptibility is reduced by
 # 20\%, and then by 50\% when you reach full effect of the vaccination,
@@ -202,20 +202,23 @@ rel_p_hosp_if_sympt <- c(1, 0.95, 0.95)
 # vaccine-induced immunity wanes after a period which is exponentially
 # distributed and lasts on average 26 weeks (half a year);
 # they are similar across all age groups
-vaccine_progression_rate <- c(0.03, 1/(2*7), 1/(26*7))
+vaccine_progression_rate <- c(0, 1/(2*7), 1/(26*7))
 
 # generate model parameters
-p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
-                          rel_susceptibility = rel_susceptibility,
-                          rel_p_sympt = rel_p_sympt,
-                          rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-                          vaccine_progression_rate =
-                          vaccine_progression_rate)
+p <- carehomes_parameters(
+       sircovid_date("2020-02-01"), "uk",
+       rel_susceptibility = rel_susceptibility,
+       rel_p_sympt = rel_p_sympt,
+       rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+       vaccine_progression_rate = vaccine_progression_rate,
+       vaccine_daily_doses = 10000)
 
 # vaccination parameters are automatically copied across all age groups
 p$rel_susceptibility
 p$rel_p_sympt
 p$rel_p_hosp_if_sympt
+# Note that this is only the "base" rate as we fill in the first
+# column dynamically based on vaccine_daily_doses
 p$vaccine_progression_rate
 
 ### same example as above BUT assume a different effect of vaccine in the
@@ -228,8 +231,8 @@ rel_susceptibility_agegp1 <- c(1, 0.4, 0.25)
 rel_susceptibility_other_agegp <- c(1, 0.8, 0.5)
 rel_susceptibility <- matrix(NA, nrow = n_groups, ncol = 3)
 rel_susceptibility[1, ] <- rel_susceptibility_agegp1
- for (i in seq(2, n_groups)) {
-rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
+for (i in seq(2, n_groups)) {
+  rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
 }
 rel_susceptibility
 
@@ -240,26 +243,23 @@ rel_p_sympt <- matrix(rep(rel_p_sympt, n_groups), nrow = n_groups,
 rel_p_hosp_if_sympt <-
   matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
 
-# Vaccination occurs at a constant rate of 0.03 per day for all age groups
-# expect the first age groups which gets vaccinated at a rate of 0.06 a day
-vaccination_rate <- c(0.06, rep(0.03, n_groups - 1))
-
 # the period of build-up of immunity is the same for all age groups,
 # lasting on average 2 weeks,
 # but the first age group loses immunity more quickly
 # (on average after 3 months) than the other age groups
 # (on average after 6 months)
-vaccine_progression_rate <- cbind(vaccination_rate,
+vaccine_progression_rate <- cbind(0,
                                   rep(1 / (2 * 7), n_groups),
                                   c(1 / (13 * 7),
                                   rep( 1 / (26 * 7), n_groups - 1)))
 
 # generate model parameters
-p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
-                          rel_susceptibility = rel_susceptibility,
-                          rel_p_sympt = rel_p_sympt,
-                          rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-                          vaccine_progression_rate =
-                          vaccine_progression_rate)
+p <- carehomes_parameters(
+       sircovid_date("2020-02-01"), "uk",
+       rel_susceptibility = rel_susceptibility,
+       rel_p_sympt = rel_p_sympt,
+       rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+       vaccine_progression_rate = vaccine_progression_rate,
+       vaccine_daily_doses = 10000)
 
 }
