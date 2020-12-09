@@ -1,3 +1,7 @@
+# sircovid 0.8.0
+
+* Move vaccination process inside odin code
+
 # sircovid 0.7.4
 
 * Now drawing equal numbers of care home workers across worker age groups.
