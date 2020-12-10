@@ -46,6 +46,15 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
       if (n < daily_doses) {
         // We won't use it all
         n_to_vaccinate = candidates_pos[i];
+        // Using Inf is slightly too fast, but is in some ways better
+        // than using the same value as below (with the -log) which
+        // results in very soft shoulders as we hit the end of the
+        // group (i.e., this branch). This is due to the way that
+        // n_to_vaccinate cancels out of that equation. However, with
+        // Inf we get a bit of acceleration in the final mop up stage.
+        //
+        // However, this will cause huge problems is we have
+        // non-willing people too as they will get vaccinated!
       } else {
         // We will use it all, so share within our group
         n_to_vaccinate = daily_doses / n * candidates_pos[i];
