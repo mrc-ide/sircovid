@@ -44,8 +44,8 @@ dust_basic_set_rng_state <- function(ptr, rng_state) {
   .Call("_sircovid_dust_basic_set_rng_state", ptr, rng_state, PACKAGE = "sircovid")
 }
 
-dust_basic_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed) {
-  .Call("_sircovid_dust_basic_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, PACKAGE = "sircovid")
+dust_basic_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state) {
+  .Call("_sircovid_dust_basic_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state, PACKAGE = "sircovid")
 }
 
 dust_basic_has_openmp <- function() {
@@ -96,8 +96,8 @@ dust_carehomes_set_rng_state <- function(ptr, rng_state) {
   .Call("_sircovid_dust_carehomes_set_rng_state", ptr, rng_state, PACKAGE = "sircovid")
 }
 
-dust_carehomes_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed) {
-  .Call("_sircovid_dust_carehomes_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, PACKAGE = "sircovid")
+dust_carehomes_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state) {
+  .Call("_sircovid_dust_carehomes_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state, PACKAGE = "sircovid")
 }
 
 dust_carehomes_has_openmp <- function() {
