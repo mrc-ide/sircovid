@@ -98,7 +98,7 @@ NULL
 ##'   rate of progression from the jth vaccination class to the (j+1)th for age
 ##'   group i.
 ##'
-##' @param vaccine_fraction_reluctant A vector of length 19 with the
+##' @param vaccine_uptake A vector of length 19 with the
 ##'   proportion of the population who are unable to be vaccinated for
 ##'   any reason.
 ##'
@@ -229,7 +229,7 @@ carehomes_parameters <- function(start_date, region,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
                                  vaccine_progression_rate = NULL,
-                                 vaccine_fraction_reluctant = NULL,
+                                 vaccine_uptake = NULL,
                                  vaccine_daily_doses = 0,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
@@ -322,7 +322,7 @@ carehomes_parameters <- function(start_date, region,
                                                   rel_p_sympt,
                                                   rel_p_hosp_if_sympt,
                                                   vaccine_progression_rate,
-                                                  vaccine_fraction_reluctant,
+                                                  vaccine_uptake,
                                                   vaccine_daily_doses)
 
   model_pcr_and_serology_user <-
@@ -672,7 +672,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              rel_p_sympt = 1,
                                              rel_p_hosp_if_sympt = 1,
                                              vaccine_progression_rate = NULL,
-                                             vaccine_fraction_reluctant = NULL,
+                                             vaccine_uptake = NULL,
                                              vaccine_daily_doses = 0) {
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
@@ -695,11 +695,13 @@ carehomes_parameters_vaccination <- function(N_tot,
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
     vaccine_progression_rate, max(n))
 
-  if (is.null(vaccine_fraction_reluctant)) {
-    vaccine_fraction_reluctant <- rep(0, carehomes_n_groups())
+  if (is.null(vaccine_uptake)) {
+    vaccine_uptake <- rep(1, carehomes_n_groups())
+  } else if (length(vaccine_uptake) != carehomes_n_groups()) {
+    stop("Invalid length for 'vaccine_uptake'")
   }
 
-  ret$vaccine_population_reluctant <- vaccine_fraction_reluctant * N_tot
+  ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot
   ret$vaccine_daily_doses <- vaccine_daily_doses
 
   ret

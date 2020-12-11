@@ -1270,3 +1270,41 @@ test_that("run sensible vaccination schedule", {
     }
   }
 })
+
+
+test_that("can add vaccination to a set of model state", {
+  p_orig <- carehomes_parameters(0, "east_of_england")
+  p_vacc <- carehomes_parameters(0, "east_of_england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_daily_doses = 5000)
+
+  mod_orig <- carehomes$new(p_orig, 0, 10)
+  mod_vacc <- carehomes$new(p_vacc, 0, 10)
+  state_orig <- mod_orig$state()
+  state_orig[] <- seq_along(state_orig)
+
+  state_vacc <- vaccination_remap_state(state_orig, mod_orig$info(),
+                                        mod_vacc$info())
+  expect_equal(sum(state_vacc), sum(state_orig))
+
+  tmp_orig <- mod_orig$transform_variables(state_orig)
+  tmp_vacc <- mod_vacc$transform_variables(state_vacc)
+  cmp <- function(v_orig, v_vacc) {
+    nd <- length(dim(v_orig))
+    if (identical(dim(v_orig), dim(v_vacc))) {
+      identical(v_orig, v_vacc)
+    } else if (nd == 2) {
+      identical(v_orig, v_vacc[, 1, drop = FALSE]) &&
+        all(v_vacc[, -1] == 0)
+    } else if (nd == 3) {
+      identical(v_orig, v_vacc[, 1, , drop = FALSE]) &&
+        all(v_vacc[, -1, ] == 0)
+    } else if (nd == 4) {
+      identical(v_orig, v_vacc[, , 1, , drop = FALSE]) &&
+        all(v_vacc[, , -1, ] == 0)
+    }
+  }
+  expect_true(all(unlist(Map(cmp, tmp_orig, tmp_vacc))))
+})

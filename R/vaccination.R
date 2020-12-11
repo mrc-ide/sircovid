@@ -70,3 +70,32 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
   }
   mat_vaccine_progression_rate
 }
+
+
+vaccination_remap_state <- function(state_orig, info_orig, info_vacc) {
+  state_vacc <- matrix(0.0, info_vacc$len, ncol(state_orig))
+
+  ## This can probably be relaxed if all we have added are vaccination
+  ## compartments.
+  stopifnot(setequal(names(info_orig$index), names(info_vacc$index)))
+
+  setdiff(names(info_orig$index), names(info_vacc$index))
+  setdiff(names(info_vacc$index), names(info_orig$index))
+
+  for (nm in names(info_orig$index)) {
+    i_orig <- info_orig$index[[nm]]
+    i_vacc <- info_vacc$index[[nm]]
+    if (length(i_orig) == length(i_vacc)) {
+      state_vacc[i_vacc, ] <- state_orig[i_orig, ]
+    } else {
+      d_orig <- info_orig$dim[[nm]]
+      d_vacc <- info_vacc$dim[[nm]]
+      nd <- length(d_orig)
+      stopifnot(identical(d_orig[-nd], d_vacc[-nd]))
+      j <- seq_len(prod(d_orig[-nd]))
+      state_vacc[i_vacc[j], ] <- state_orig[i_orig, ]
+    }
+  }
+
+  state_vacc
+}
