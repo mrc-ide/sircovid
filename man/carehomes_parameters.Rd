@@ -26,7 +26,7 @@ carehomes_parameters(
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
   vaccine_progression_rate = NULL,
-  vaccine_fraction_reluctant = NULL,
+  vaccine_uptake = NULL,
   vaccine_daily_doses = 0,
   waning_rate = 0,
   model_pcr_and_serology_user = 1,
@@ -142,9 +142,8 @@ vacination class); if a matrix, the element on row i and column j is the
 rate of progression from the jth vaccination class to the (j+1)th for age
 group i.}
 
-\item{vaccine_fraction_reluctant}{A vector of length 19 with the
-proportion of the population who are unable to be vaccinated for
-any reason.}
+\item{vaccine_uptake}{A vector of length 19 with the proportion of
+the population who are able to be vaccinated.}
 
 \item{vaccine_daily_doses}{A single value indicating the number of
 (first) vaccine doses per day to distribute. The actual number
