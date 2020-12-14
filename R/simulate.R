@@ -47,21 +47,26 @@ sircovid_simulate_events <- function(date_start, date_end, data) {
   date_end <- sircovid_date(date_end)
   date_vary <- sircovid_date(names(data))
 
-  ## TODO: nicer error messages
-  stopifnot(
-    date_start < date_end,
-    all(diff(date_vary) > 0))
-
-  if (any(date_vary >= date_end)) {
-    data <- data[date_vary < date_end]
-    date_vary <- date_vary[date_vary < date_end]
+  if (date_start >= date_end) {
+    stop("'date_start' must be less than 'date_end'")
   }
 
-  if (date_vary[[1]] <= date_start) {
-    stop("FIXME")
-    date_start <- date_vary[which(date_vary > date_start)[[1]]]
-    data <- data[date_vary >= date_start]
-    date_vary <- date_vary[date_vary >= date_start]
+  if (!all(diff(date_vary) > 0)) {
+    stop("The dates used as 'data' names must be strictly increasing")
+  }
+
+  ## Events we will not hit are relatively easy to fix; filter them off:
+  if (any(date_vary >= date_end)) {
+    i <- date_vary < date_end
+    data <- data[i]
+    date_vary <- date_vary[i]
+  }
+
+  if (any(date_vary <= date_start)) {
+    i <- seq(max(which(date_vary < date_start)), length(data))
+    data <- unname(data[i])
+    date_from <- c(date_start, date_vary[i][-1])
+    date_to <- c(date_vary[i][-1], date_end)
   } else {
     data <- c(list(NULL), unname(data))
     date_from <- c(date_start, date_vary)
