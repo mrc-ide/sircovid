@@ -48,8 +48,11 @@ dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Total number of vaccinations over S, E, I_asypmt, R for convenience
 initial(cum_n_vaccinated[, ]) <- 0
-update(cum_n_vaccinated[, ]) <- cum_n_S_vaccinated[i, j] + cum_n_E_vaccinated[i, j] +
-  cum_n_I_asympt_vaccinated[i, j] + cum_n_R_vaccinated[i, j]
+update(cum_n_vaccinated[, ]) <-
+  cum_n_S_vaccinated[i, j] +
+  cum_n_E_vaccinated[i, j] +
+  cum_n_I_asympt_vaccinated[i, j] +
+  cum_n_R_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Core equations for transitions between compartments:
