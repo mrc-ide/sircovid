@@ -106,10 +106,11 @@ test_that("Basic simulation", {
     beta_date = sircovid_date(c("2020-01-01", "2020-03-31", "2020-04-01")),
     beta_value = c(p$beta_step, p$beta_step, 0))
   p_cmp$beta_step[seq_len(length(p_cmp$beta_step) - 1)] <- p$beta_step
-  cmp <- dust::dust_simulate(basic, res$step, rep(list(p_cmp), np), state,
+  step <- attr(res, "step")
+  cmp <- dust::dust_simulate(basic, step, rep(list(p_cmp), np), state,
                              seed = 1L)
 
-  expect_equal(res$value, cmp)
+  expect_equal(res, cmp, check.attributes = FALSE)
 })
 
 
