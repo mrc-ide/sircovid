@@ -24,7 +24,7 @@ sircovid_simulate <- function(mod, state, p, events,
   steps <- seq(step_from[[1]], step_to[[n_epoch]], by = 1 / dt)
 
   n_state <- if (is.null(index)) nrow(state) else length(index)
-  res <- array(NA_real_, c(n_state, length(p_base), length(steps)))
+  res <- array(NA_real_, c(n_state, length(p), length(steps)))
 
   for (i in seq_len(n_epoch)) {
     p_i <- p
