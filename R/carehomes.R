@@ -98,9 +98,8 @@ NULL
 ##'   rate of progression from the jth vaccination class to the (j+1)th for age
 ##'   group i.
 ##'
-##' @param vaccine_uptake A vector of length 19 with the
-##'   proportion of the population who are unable to be vaccinated for
-##'   any reason.
+##' @param vaccine_uptake A vector of length 19 with the proportion of
+##'   the population who are able to be vaccinated.
 ##'
 ##' @param vaccine_daily_doses A single value indicating the number of
 ##'   (first) vaccine doses per day to distribute. The actual number
@@ -677,6 +676,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_progression_rate = NULL,
                                              vaccine_uptake = NULL,
                                              vaccine_daily_doses = 0) {
+  stopifnot(length(N_tot) == carehomes_n_groups())
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
   }
@@ -700,8 +700,11 @@ carehomes_parameters_vaccination <- function(N_tot,
 
   if (is.null(vaccine_uptake)) {
     vaccine_uptake <- rep(1, carehomes_n_groups())
+  } else if (length(vaccine_uptake) == 1L) {
+    vaccine_uptake <- rep(vaccine_uptake, carehomes_n_groups())
   } else if (length(vaccine_uptake) != carehomes_n_groups()) {
-    stop("Invalid length for 'vaccine_uptake'")
+    stop(sprintf("Invalid length %d for 'vaccine_uptake', must be 1 or %d",
+                 length(vaccine_uptake), carehomes_n_groups()))
   }
 
   ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot

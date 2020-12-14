@@ -1192,3 +1192,18 @@ test_that("can add vaccination to a set of model state", {
   }
   expect_true(all(unlist(Map(cmp, tmp_orig, tmp_vacc))))
 })
+
+
+test_that("vaccine_uptake must be the correct length", {
+  ntot <- rpois(19, 100)
+  p <- carehomes_parameters_vaccination(ntot, vaccine_uptake = 0.8)
+  expect_equal(p$vaccine_population_reluctant, 0.2 * ntot)
+
+  uptake <- runif(19)
+  p <- carehomes_parameters_vaccination(ntot, vaccine_uptake = uptake)
+  expect_equal(p$vaccine_population_reluctant, (1 - uptake) * ntot)
+
+  expect_error(
+    carehomes_parameters_vaccination(ntot, vaccine_uptake = c(0, 0, 0)),
+    "Invalid length 3 for 'vaccine_uptake', must be 1 or 19")
+})
