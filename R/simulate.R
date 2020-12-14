@@ -29,7 +29,7 @@
 ##'
 ##' @param seed Optional seed (see [dust::dust_simulate])
 ##'
-##' @param export
+##' @export
 ##'
 ##' @return A 3-d array with dimensions representing state (along
 ##'   `index`), parameter set (along `p`) and time. The array has

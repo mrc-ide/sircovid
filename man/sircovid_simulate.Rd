@@ -38,8 +38,6 @@ with OpenMP support (possibly not the case on macOS).  Each
 simulation will be run on potentially a different thread.}
 
 \item{seed}{Optional seed (see \link[dust:dust_simulate]{dust::dust_simulate})}
-
-\item{export}{}
 }
 \value{
 A 3-d array with dimensions representing state (along
