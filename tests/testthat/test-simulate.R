@@ -111,3 +111,32 @@ test_that("Basic simulation", {
 
   expect_equal(res$value, cmp)
 })
+
+
+test_that("validate base parameters", {
+  p <- basic_parameters(sircovid_date("2020-02-07"), "london")
+  np <- 10
+  info <- basic$new(p, 0, np)$info()
+  state <- matrix(rep(basic_initial(info, np, p)$state, np), ncol = np)
+  ## This is not how we'd normally model beta, but it will do here:
+  events <- sircovid_simulate_events(
+    "2020-02-07", "2020-06-01",
+    list("2020-04-01" = list(dt = 0.1)))
+  p_base <- rep(list(p), np)
+
+  expect_error(
+    sircovid_simulate(basic, state, NULL, events),
+    "Expected 'p' to be an unnamed list")
+  expect_error(
+    sircovid_simulate(basic, state, p, events),
+    "Expected 'p' to be an unnamed list")
+
+  expect_error(
+    sircovid_simulate(basic, state, p_base, events),
+    "Events must not change 'dt'")
+
+  p_base[[5]]$dt <- 1
+  expect_error(
+    sircovid_simulate(basic, state, p_base, events),
+    "All entries in 'p' must have the same value of 'dt'")
+})
