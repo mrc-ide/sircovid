@@ -22,7 +22,6 @@ sircovid_simulate <- function(mod, state, p_base, events,
   res <- array(NA_real_, c(n_state, length(p_base), length(steps)))
 
   for (i in seq_len(n_epoch)) {
-    message("Epoch ", i)
     p <- p_base
     p_new <- events$data[[i]]
     for (j in seq_along(p)) {
