@@ -22,7 +22,8 @@ test_that("carehomes progression parameters", {
 test_that("carehomes vaccination parameters", {
   n_groups <- carehomes_n_groups()
   # test default values
-  p <- carehomes_parameters_vaccination(0)
+  ntot <- rep(1000, n_groups)
+  p <- carehomes_parameters_vaccination(ntot)
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
@@ -38,7 +39,7 @@ test_that("carehomes vaccination parameters", {
   rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
   rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(0, 1, 1, 1)
-  p <- carehomes_parameters_vaccination(0,
+  p <- carehomes_parameters_vaccination(ntot,
                                         rel_susceptibility = rel_susceptibility,
                                         rel_p_sympt = rel_p_sympt,
                                         rel_p_hosp_if_sympt =
@@ -62,12 +63,12 @@ test_that("carehomes vaccination parameters", {
   msg1 <- "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt"
   msg2 <- "should have the same dimension"
   expect_error(
-    carehomes_parameters_vaccination(0,
+    carehomes_parameters_vaccination(ntot,
                                      rel_susceptibility = 1,
                                      rel_p_sympt = c(1, 0.5, 0.25),
                                      rel_p_hosp_if_sympt = c(1, 0.1)),
     paste(msg1, msg2))
-  expect_error(carehomes_parameters_vaccination(0,
+  expect_error(carehomes_parameters_vaccination(ntot,
                                                 rel_susceptibility = c(1, 1),
                                                 rel_p_sympt = c(1, 0.5, 0.25),
                                                 rel_p_hosp_if_sympt = 1),
