@@ -84,3 +84,30 @@ test_that("can avoid bad events", {
                                   "2020-05-01" = list(b = 2))),
     "The dates used as 'data' names must be strictly increasing")
 })
+
+
+test_that("Basic simulation", {
+  p <- basic_parameters(sircovid_date("2020-02-07"), "london")
+  np <- 10
+  info <- basic$new(p, 0, np)$info()
+  state <- matrix(rep(basic_initial(info, np, p)$state, np), ncol = np)
+
+  ## This is not how we'd normally model beta, but it will do here:
+  events <- sircovid_simulate_events(
+    "2020-02-07", "2020-06-01",
+    list("2020-04-01" = list(beta_step = 0)))
+  p_base <- rep(list(p), np)
+
+  res <- sircovid_simulate(basic, state, p_base, events, seed = 1L)
+
+  ## Change the beta directly in the model and we should see this agree:
+  p_cmp <- basic_parameters(
+    sircovid_date("2020-02-07"), "london",
+    beta_date = sircovid_date(c("2020-01-01", "2020-03-31", "2020-04-01")),
+    beta_value = c(p$beta_step, p$beta_step, 0))
+  p_cmp$beta_step[seq_len(length(p_cmp$beta_step) - 1)] <- p$beta_step
+  cmp <- dust::dust_simulate(basic, res$step, rep(list(p_cmp), np), state,
+                             seed = 1L)
+
+  expect_equal(res$value, cmp)
+})
