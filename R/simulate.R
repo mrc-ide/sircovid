@@ -1,6 +1,43 @@
+##' Simulate from a sircovid model ([basic] or [carehomes]) given a
+##' set of starting positions and parameters. This forms the core of
+##' our projections support, and is typically used after fitting a
+##' model.
+##'
+##' @title Simulate a sircovid model
+##'
+##' @param mod The model object to simulate from
+##'
+##' @param state A matrix of state; rows correspond to state
+##'   variables, columns correspond to different parameter sets or
+##'   realisations.
+##'
+##' @param p An unnamed list of parameter objects; must be the same
+##'   length as `state` has columns.
+##'
+##' @param events A [sircovid_simulate_events()] object with "events"
+##'   data, representing changes in the parameters, and the overall
+##'   timescale of the simulation.
+##'
+##' @param index A (possibly named) integer vector representing an
+##'   index into the model state that should be returned (see
+##'   [dust::dust_simulate])
+##'
+##' @param n_threads The number of threads to use in the
+##'   simulation. This only has an effect if your sircovid was built
+##'   with OpenMP support (possibly not the case on macOS).  Each
+##'   simulation will be run on potentially a different thread.
+##'
+##' @param seed Optional seed (see [dust::dust_simulate])
+##'
+##' @param export
+##'
+##' @return A 3-d array with dimensions representing state (along
+##'   `index`), parameter set (along `p`) and time. The array has
+##'   attributes `step` and `date` corresponding to the step (relative
+##'   to 2020-01-01) and date.
 sircovid_simulate <- function(mod, state, p, events,
                               index = NULL, n_threads = 1L, seed = NULL) {
-  assert_is(events, "sircovid_events")
+  assert_is(events, "sircovid_simulate_events")
 
   if (!is.list(p) || !is.null(names(p))) {
     stop("Expected 'p' to be an unnamed list")
@@ -54,6 +91,32 @@ sircovid_simulate <- function(mod, state, p, events,
 }
 
 
+##' Events for use with [sircovid_simulate()]. This captures the
+##' overall timescape of the simulation and a set of "events" which
+##' correspond to changes in parameters.
+##'
+##' @title Simulation events
+##'
+##' @param date_start The start date for the simulation, as an ISO
+##'   date or [sircovid_date]
+##'
+##' @param date_end The end date for the simulation, as an ISO
+##'   date or [sircovid_date]
+##'
+##' @param data Events data; this must be a named list, with each name
+##'   being in ISO 8601 (YYYY-MM-DD) format, and value being a named
+##'   set of parameters to apply to our base set. So a value of
+##'   `list("2021-03-01" = list(vaccine_daily_doses = 10000))` would
+##'   represent a change to the `vaccine_daily_doses` parameter from
+##'   the 1st of March 2021.  Each entry can change as many parameters
+##'   as wanted. These changes are *not cumulative*, so if you want a
+##'   change to persist across multiple events it must exist in each
+##'   of these events.
+##'
+##' @return A `sircovid_simulate_events` object; consider its contents
+##'   opaque for now as these may change.
+##'
+##' @export
 sircovid_simulate_events <- function(date_start, date_end, data) {
   date_start <- sircovid_date(date_start)
   date_end <- sircovid_date(date_end)
@@ -86,6 +149,6 @@ sircovid_simulate_events <- function(date_start, date_end, data) {
   }
 
   ret <- list(date_from = date_from, date_to = date_to, data = data)
-  class(ret) <- "sircovid_events"
+  class(ret) <- "sircovid_simulate_events"
   ret
 }
