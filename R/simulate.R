@@ -1,17 +1,22 @@
-## what is really varying?
-##
-## Across time we have: daily_doses + efficacy_by_age
-## Constant we have a bunch of other parameters
-##
-## We can probably generalise this a bit by writing functions that gen
-
-sircovid_simulate <- function(mod, state, p_base, events,
+sircovid_simulate <- function(mod, state, p, events,
                               index = NULL, n_threads = 1L, seed = NULL) {
   assert_is(events, "sircovid_events")
 
-  ## TODO: check that dt is the same in all p_base and are not changed
-  ## in p_vary
-  dt <- p_base[[1]]$dt
+  if (!is.list(p) || !is.null(names(p))) {
+    stop("Expected 'p' to be an unnamed list")
+  }
+
+  dt <- vnapply(p, "[[", "dt")
+  if (length(unique(dt)) > 1L) {
+    stop("All entries in 'p' must have the same value of 'dt'")
+  }
+  dt <- dt[[1L]]
+
+  for (e in events$data) {
+    if ("dt" %in% names(e) && e$dt != dt) {
+      stop("Events must not change 'dt'")
+    }
+  }
 
   n_epoch <- length(events$data)
   step_from <- events$date_from / dt
@@ -22,13 +27,13 @@ sircovid_simulate <- function(mod, state, p_base, events,
   res <- array(NA_real_, c(n_state, length(p_base), length(steps)))
 
   for (i in seq_len(n_epoch)) {
-    p <- p_base
+    p_i <- p
     p_new <- events$data[[i]]
-    for (j in seq_along(p)) {
-      p[[j]][names(p_new)] <- p_new
+    for (j in seq_along(p_i)) {
+      p_i[[j]][names(p_new)] <- p_new
     }
     i_step <- steps >= step_from[[i]] & steps <= step_to[[i]]
-    y <- dust::dust_simulate(mod, steps[i_step], p, state,
+    y <- dust::dust_simulate(mod, steps[i_step], p_i, state,
                              index = index, n_threads = n_threads,
                              seed = seed, return_state = TRUE)
     res[, , i_step] <- y
@@ -37,6 +42,13 @@ sircovid_simulate <- function(mod, state, p_base, events,
   }
 
   rownames(res) <- names(index)
+
+  ## We're basically mimicing the interface here of
+  ## dust::dust_simulate which probably should return a list. So to
+  ## make downstream use a bit easier we'll use attributes to return
+  ## time domain information.
+  attr(res, "step") <- steps
+  attr(res, "date") <- sircovid_date_as_date(steps * dt)
 
   res
 }
