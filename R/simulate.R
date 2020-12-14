@@ -33,8 +33,10 @@ sircovid_simulate <- function(mod, state, p_base, events,
                              seed = seed, return_state = TRUE)
     res[, , i_step] <- y
     state <- attr(y, "state")
-    # seed <- attr(y, "rng_state")
+    seed <- attr(y, "rng_state")
   }
+
+  rownames(res) <- names(index)
 
   res
 }
