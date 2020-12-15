@@ -20,12 +20,21 @@
 vaccination_remap_state <- function(state_orig, info_orig, info_vacc) {
   state_vacc <- matrix(0.0, info_vacc$len, ncol(state_orig))
 
-  ## This can probably be relaxed if all we have added are vaccination
-  ## compartments.
-  stopifnot(setequal(names(info_orig$index), names(info_vacc$index)))
-
-  setdiff(names(info_orig$index), names(info_vacc$index))
-  setdiff(names(info_vacc$index), names(info_orig$index))
+  extra <- setdiff(names(info_orig$index), names(info_vacc$index))
+  if (length(extra) > 0) {
+    stop(sprintf("Can't downgrade state (previously had variables %s)",
+                 paste(squote(extra), collapse = ", ")))
+  }
+  msg <- setdiff(names(info_vacc$index), names(info_orig$index))
+  ## We can tolerate any vaccine-related variable that can start
+  ## zero'd. This will be the case through brief windows of upgrading
+  ## sircovid only (e.g., between sircovid 0.7.2 and 0.8.0)
+  allowed <- "cum_n_vaccinated"
+  err <- setdiff(msg, allowed)
+  if (length(err) > 0) {
+    stop(sprintf("Can't remap state (can't add variables %s)",
+                 paste(squote(err), collapse = ", ")))
+  }
 
   for (nm in names(info_orig$index)) {
     i_orig <- info_orig$index[[nm]]

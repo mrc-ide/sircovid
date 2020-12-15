@@ -1211,3 +1211,84 @@ test_that("vaccine_uptake must be the correct length", {
     carehomes_parameters_vaccination(ntot, vaccine_uptake = c(0, 0, 0)),
     "Invalid length 3 for 'vaccine_uptake', must be 1 or 19")
 })
+
+
+test_that("can upgrade model state", {
+  ## This is the situation upgrading sircovid 0.7.2 -> 0.8.0 as we
+  ## lack cum_n_vaccinated; that can obviously be added.
+  p_orig <- carehomes_parameters(0, "east_of_england")
+  mod_orig <- carehomes$new(p_orig, 0, 10)
+  info_orig <- mod_orig$info()
+
+  ## Elimate our index
+  info_orig$index <-
+    info_orig$index[names(info_orig$index) != "cum_n_vaccinated"]
+  info_orig$dim <-
+    info_orig$dim[names(info_orig$dim) != "cum_n_vaccinated"]
+  ## Reset the index
+  k <- 0L
+  for (i in seq_along(info_orig$index)) {
+    n <- length(info_orig$index[[i]])
+    info_orig$index[[i]] <- seq_len(n) + k
+    k <- k + n
+  }
+  info_orig$len <- k
+
+  state_orig <- matrix(0, info_orig$len, 10)
+  state_orig[] <- seq_along(state_orig)
+
+  ## Then a new set with vaccination:
+  p_vacc <- carehomes_parameters(0, "east_of_england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_daily_doses = 5000)
+  mod_vacc <- carehomes$new(p_vacc, 0, 10)
+  info_vacc <- mod_vacc$info()
+  state_vacc <- vaccination_remap_state(state_orig, info_orig, info_vacc)
+
+  expect_equal(sum(state_vacc), sum(state_orig))
+  expect_equal(state_vacc[info_vacc$index$cum_n_vaccinated],
+               rep(0, 2 * carehomes_n_groups()))
+})
+
+
+test_that("Refuse to upgrade impossible model state", {
+  p_orig <- carehomes_parameters(0, "east_of_england")
+  mod_orig <- carehomes$new(p_orig, 0, 10)
+  info_orig <- mod_orig$info()
+
+  ## Elimate our index
+  info_orig$index <-
+    info_orig$index[names(info_orig$index) != "E"]
+  info_orig$dim <-
+    info_orig$dim[names(info_orig$dim) != "E"]
+  ## Reset the index
+  k <- 0L
+  for (i in seq_along(info_orig$index)) {
+    n <- length(info_orig$index[[i]])
+    info_orig$index[[i]] <- seq_len(n) + k
+    k <- k + n
+  }
+  info_orig$len <- k
+
+  state_orig <- matrix(0, info_orig$len, 10)
+  state_orig[] <- seq_along(state_orig)
+
+  ## Then a new set with vaccination:
+  p_vacc <- carehomes_parameters(0, "east_of_england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_daily_doses = 5000)
+  mod_vacc <- carehomes$new(p_vacc, 0, 10)
+  info_vacc <- mod_vacc$info()
+  expect_error(
+    vaccination_remap_state(state_orig, info_orig, info_vacc),
+    "Can't remap state (can't add variables 'E')",
+    fixed = TRUE)
+  expect_error(
+    vaccination_remap_state(matrix(0, info_vacc$len, 10), info_vacc, info_orig),
+    "Can't downgrade state (previously had variables 'E')",
+    fixed = TRUE)
+})
