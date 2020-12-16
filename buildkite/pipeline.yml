@@ -1,0 +1,8 @@
+steps:
+  - label: ":whale::rstats: Build"
+    command: docker/build
+
+  - wait
+
+  - label: ":shipit: Push images"
+    command: docker/push
