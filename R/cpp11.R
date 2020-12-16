@@ -32,6 +32,10 @@ dust_basic_reorder <- function(ptr, r_index) {
   invisible(.Call("_sircovid_dust_basic_reorder", ptr, r_index, PACKAGE = "sircovid"))
 }
 
+dust_basic_set_data <- function(ptr, r_data) {
+  .Call("_sircovid_dust_basic_set_data", ptr, r_data, PACKAGE = "sircovid")
+}
+
 dust_basic_rng_state <- function(ptr, first_only) {
   .Call("_sircovid_dust_basic_rng_state", ptr, first_only, PACKAGE = "sircovid")
 }
@@ -40,8 +44,8 @@ dust_basic_set_rng_state <- function(ptr, rng_state) {
   .Call("_sircovid_dust_basic_set_rng_state", ptr, rng_state, PACKAGE = "sircovid")
 }
 
-dust_basic_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed) {
-  .Call("_sircovid_dust_basic_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, PACKAGE = "sircovid")
+dust_basic_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state) {
+  .Call("_sircovid_dust_basic_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state, PACKAGE = "sircovid")
 }
 
 dust_basic_has_openmp <- function() {
@@ -80,6 +84,10 @@ dust_carehomes_reorder <- function(ptr, r_index) {
   invisible(.Call("_sircovid_dust_carehomes_reorder", ptr, r_index, PACKAGE = "sircovid"))
 }
 
+dust_carehomes_set_data <- function(ptr, r_data) {
+  .Call("_sircovid_dust_carehomes_set_data", ptr, r_data, PACKAGE = "sircovid")
+}
+
 dust_carehomes_rng_state <- function(ptr, first_only) {
   .Call("_sircovid_dust_carehomes_rng_state", ptr, first_only, PACKAGE = "sircovid")
 }
@@ -88,8 +96,8 @@ dust_carehomes_set_rng_state <- function(ptr, rng_state) {
   .Call("_sircovid_dust_carehomes_set_rng_state", ptr, rng_state, PACKAGE = "sircovid")
 }
 
-dust_carehomes_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed) {
-  .Call("_sircovid_dust_carehomes_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, PACKAGE = "sircovid")
+dust_carehomes_simulate <- function(r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state) {
+  .Call("_sircovid_dust_carehomes_simulate", r_steps, r_data, r_state, r_index, n_threads, r_seed, return_state, PACKAGE = "sircovid")
 }
 
 dust_carehomes_has_openmp <- function() {

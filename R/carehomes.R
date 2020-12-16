@@ -901,7 +901,7 @@ carehomes_n_groups <- function() {
 
 ##' Forecast from the carehomes model; this provides a wrapper around
 ##' [mcstate::pmcmc_sample] and [mcstate::pmcmc_predict] that samples
-##' the trajectories then creatres samples, setting the sircovid dates
+##' the trajectories then creates samples, setting the sircovid dates
 ##' and adding trajectories of incidence.
 ##'
 ##' @title Forecast the carehomes model

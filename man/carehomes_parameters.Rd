@@ -38,7 +38,7 @@ the number of days into 2020)}
 \item{region}{The region to run the model for. This will bee used
 to get population data, which is currently fixed within the
 package and is limited to "uk", the four constituent nations
-("england", "wales", "scotland", "northern_ireland") and thee 7
+("england", "wales", "scotland", "northern_ireland") and the 7
 NHS regions (e.g., "midlands"). These names are case
 insensitive.}
 
@@ -48,7 +48,7 @@ all times (see \code{\link[=sircovid_parameters_beta]{sircovid_parameters_beta()
 passed as \code{date}).}
 
 \item{beta_value}{A vector of values for beta (the contact rate
-parameter). If not given, and if \code{beta_date} is null then a
+parameter). If not given, and if \code{beta_date} is \code{NULL} then a
 value of 0.08 will be used through the whole simulation,
 otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 \code{beta_date} is given then \code{beta_date} and \code{beta_value} must have
