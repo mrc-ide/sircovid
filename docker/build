@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -ex
+HERE=$(dirname $0)
+. $HERE/common
+
+docker build --pull \
+       --tag $TAG_SHA \
+       -f docker/Dockerfile \
+       .
+
+# We always push the SHA tagged versions, for debugging if the tests
+# after this step fail
+docker push $TAG_SHA
