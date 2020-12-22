@@ -95,6 +95,8 @@ test_that("carehomes_parameters returns a list of parameters", {
     p$N_tot, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
     p$vaccine_progression_rate_base)
   expect_identical(p[names(vaccination)], vaccination)
+  
+  strain <- carehomes_parameters_strain(p$strain_transmission)
 
   waning <- carehomes_parameters_waning(0)
   expect_identical(p[names(waning)], waning)
@@ -113,7 +115,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   extra <- setdiff(names(p),
                    c("m", "observation",
                      names(shared), names(progression), names(severity),
-                     names(vaccination), names(waning),
+                     names(strain), names(vaccination), names(waning),
                      "model_pcr_and_serology_user"))
   expect_setequal(
     extra,
@@ -245,9 +247,9 @@ test_that("Can compute initial conditions", {
                p$N_tot)
   expect_equal(drop(initial_y$I_asympt),
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$R_pre[, 1, 1],
+  expect_equal(initial_y$R_pre[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$PCR_pos[, 1, 1],
+  expect_equal(initial_y$PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
@@ -511,11 +513,14 @@ test_that("model_pcr_and_serology_user switch works", {
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
-  for (i in seq_len(19)) {
-    expect_true(all(diff(y$R_neg[i, 1, ]) >= 0))
-    expect_true(all(diff(y$R_neg[i, 2, ]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, 1, ]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, 2, ]) >= 0))
+  for (i in seq_len(p$n_groups)) {
+    for(j in seq_len(p$n_strains))
+    {
+    expect_true(all(diff(y$R_neg[i, 1, j, ]) >= 0))
+    expect_true(all(diff(y$R_neg[i, 2, j, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 1, j, ]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, 2, j, ]) >= 0))
+    }
   }
 
   ## TO DO: ideas for other tests?

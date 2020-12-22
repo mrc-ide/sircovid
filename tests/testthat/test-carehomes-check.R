@@ -577,12 +577,12 @@ test_that("setting a gamma to 0 results in no progression", {
       name_unconf <- paste0(compartment_name, "_unconf")
       index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
       index_unconf <- array(info$index[[name_unconf]], info$dim[[name_unconf]])
-      if (length(dim(index_conf)) == 3) {
+      if (length(dim(index_conf)) == 4) {
+        state[index_conf[, 1, , ]] <- 50
+        state[index_unconf[, 1, , ]] <- 50
+      } else {
         state[index_conf[, 1, ]] <- 50
         state[index_unconf[, 1, ]] <- 50
-      } else {
-        state[index_conf[, 1]] <- 50
-        state[index_unconf[, 1]] <- 50
       }
     } else {
       index <- array(info$index[[compartment_name]],
@@ -803,20 +803,20 @@ test_that("tots all summed correctly ", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  expect_true(all(y$general_tot == apply(y$I_triage_conf, 4, sum) +
-                    apply(y$I_hosp_R_conf, 4, sum) +
-                    apply(y$I_hosp_D_conf, 4, sum) +
-                    apply(y$R_stepdown_R_conf, 4, sum) +
-                    apply(y$R_stepdown_D_conf, 4, sum)))
-  expect_true(all(y$I_ICU_tot == apply(y$I_ICU_S_R_conf, 4, sum) +
-                    apply(y$I_ICU_S_D_conf, 4, sum) +
-                    apply(y$I_ICU_D_conf, 4, sum)))
+  expect_true(all(y$general_tot == apply(y$I_triage_conf, 5, sum) +
+                    apply(y$I_hosp_R_conf, 5, sum) +
+                    apply(y$I_hosp_D_conf, 5, sum) +
+                    apply(y$R_stepdown_R_conf, 5, sum) +
+                    apply(y$R_stepdown_D_conf, 5, sum)))
+  expect_true(all(y$I_ICU_tot == apply(y$I_ICU_S_R_conf, 5, sum) +
+                    apply(y$I_ICU_S_D_conf, 5, sum) +
+                    apply(y$I_ICU_D_conf, 5, sum)))
   expect_true(all(y$hosp_tot == y$I_ICU_tot + y$general_tot))
   expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
   expect_true(all(y$D_comm_tot == apply(y$D_comm, 2, sum)))
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
 
   # check the positivity sums
-  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , 1, ], 3, sum)))
-  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , 1, ], 3, sum)))
+  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , 1, , ], 3, sum)))
+  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , 1, , ], 3, sum)))
 })
