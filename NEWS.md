@@ -1,3 +1,7 @@
+# sircovid 0.9.0
+
+* Multistrain
+
 # sircovid 0.8.0
 
 * Move vaccination process inside odin code
