@@ -1,7 +1,7 @@
 ## E and R stage indexed by i, j, k, l with
 ## i for the age group
 ## j for the progression (not exponential latent and infectious period)
-## k for the vacc. group 
+## k for the vacc. group
 ## l for the strain
 
 ## Parameter to turn on or off the serology flows
@@ -245,7 +245,8 @@ n_RS[, , ] <- n_R_progress[i, j, k] - n_RS_next_vacc_class[i, j, k]
 n_R_next_vacc_class_tmp[, , ] <- rbinom(
   R[i, j, k] - n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
 n_R_next_vacc_class_capped[, , ] <- min(n_R_next_vacc_class_tmp[i, j, k],
-  R_neg[i, j, k] - n_R_progress[i, j, k], PCR_neg[i, j, k] - n_R_progress[i, j, k])
+  R_neg[i, j, k] - n_R_progress[i, j, k],
+  PCR_neg[i, j, k] - n_R_progress[i, j, k])
 n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
   
@@ -256,21 +257,25 @@ n_II_comm_D[, , , ] <- rbinom(I_comm_D[i, j, k, l], p_II_comm_D)
 n_II_triage_unconf[, , , ] <- rbinom(I_triage_unconf[i, j, k, l], p_II_triage)
 n_II_triage_conf[, , , ] <- rbinom(I_triage_conf[i, j, k, l], p_II_triage)
 n_II_hosp_R_unconf[, , , ] <- rbinom(I_hosp_R_unconf[i, j, k, l], p_II_hosp_R)
-n_II_hosp_R_conf[, , ,] <- rbinom(I_hosp_R_conf[i, j, k ,l], p_II_hosp_R)
+n_II_hosp_R_conf[, , , ] <- rbinom(I_hosp_R_conf[i, j, k, l], p_II_hosp_R)
 n_II_hosp_D_unconf[, , , ] <- rbinom(I_hosp_D_unconf[i, j, k, l], p_II_hosp_D)
 n_II_hosp_D_conf[, , , ] <- rbinom(I_hosp_D_conf[i, j, k, l], p_II_hosp_D)
-n_II_ICU_S_R_unconf[, , , ] <- rbinom(I_ICU_S_R_unconf[i, j, k, l], p_II_ICU_S_R)
+n_II_ICU_S_R_unconf[, , , ] <-
+  rbinom(I_ICU_S_R_unconf[i, j, k, l], p_II_ICU_S_R)
 n_II_ICU_S_R_conf[, , , ] <- rbinom(I_ICU_S_R_conf[i, j, k, l], p_II_ICU_S_R)
-n_II_ICU_S_D_unconf[, , , ] <- rbinom(I_ICU_S_D_unconf[i, j, k, l], p_II_ICU_S_D)
+n_II_ICU_S_D_unconf[, , , ] <-
+  rbinom(I_ICU_S_D_unconf[i, j, k, l], p_II_ICU_S_D)
 n_II_ICU_S_D_conf[, , , ] <- rbinom(I_ICU_S_D_conf[i, j, k, l], p_II_ICU_S_D)
 n_II_ICU_D_unconf[, , , ] <- rbinom(I_ICU_D_unconf[i, j, k, l], p_II_ICU_D)
 n_II_ICU_D_conf[, , , ] <- rbinom(I_ICU_D_conf[i, j, k, l], p_II_ICU_D)
 n_R_stepdown_R_unconf[, , , ] <-
   rbinom(R_stepdown_R_unconf[i, j, k, l], p_R_stepdown_R)
-n_R_stepdown_R_conf[, , , ] <- rbinom(R_stepdown_R_conf[i, j, k, l], p_R_stepdown_R)
+n_R_stepdown_R_conf[, , , ] <-
+  rbinom(R_stepdown_R_conf[i, j, k, l], p_R_stepdown_R)
 n_R_stepdown_D_unconf[, , , ] <-
   rbinom(R_stepdown_D_unconf[i, j, k, l], p_R_stepdown_D)
-n_R_stepdown_D_conf[, , , ] <- rbinom(R_stepdown_D_conf[i, j, k, l], p_R_stepdown_D)
+n_R_stepdown_D_conf[, , , ] <-
+  rbinom(R_stepdown_D_conf[i, j, k, l], p_R_stepdown_D)
 n_R_pre[, , , ] <- rbinom(R_pre[i, j, k, l], p_R_pre[i, j, k, l])
 n_R_pos[, , , ] <- rbinom(R_pos[i, j, k, l], p_R_pos)
 n_PCR_pre[, , , ] <- rbinom(PCR_pre[i, j, k, l], p_PCR_pre)
@@ -349,21 +354,24 @@ aux_II_sympt[, 1, 2:n_vacc_classes, ] <-
   n_EI_sympt[i, k, l] + n_EI_sympt_next_vacc_class[i, k - 1, l]
 
 aux_II_sympt[, 2:s_sympt, , ] <- n_II_sympt[i, j - 1, k, l]
-aux_II_sympt[, 1:s_sympt, , ] <- aux_II_sympt[i, j, k, l] - n_II_sympt[i, j, k, l]
+aux_II_sympt[, 1:s_sympt, , ] <-
+  aux_II_sympt[i, j, k, l] - n_II_sympt[i, j, k, l]
 new_I_sympt[, , , ] <- I_sympt[i, j, k, l] + aux_II_sympt[i, j, k, l]
 
 ## Work out the flow from I_sympt -> R, comm_D, hosp
 n_sympt_to_R[, , ] <- rbinom(n_II_sympt[i, s_sympt, j, k],
                          1 - prob_hosp_sympt[i] * rel_p_hosp_if_sympt[i, j])
 n_sympt_to_comm_D[, , ] <-
-  rbinom(n_II_sympt[i, s_sympt, j, k] - n_sympt_to_R[i, j, k], prob_death_comm[i])
-n_sympt_to_hosp[, , ] <-
-  n_II_sympt[i, s_sympt, j, k] - n_sympt_to_R[i, j, k] - n_sympt_to_comm_D[i, j, k]
+  rbinom(n_II_sympt[i, s_sympt, j, k] - n_sympt_to_R[i, j, k],
+         prob_death_comm[i])
+n_sympt_to_hosp[, , ] <- n_II_sympt[i, s_sympt, j, k] - n_sympt_to_R[i, j, k] -
+  n_sympt_to_comm_D[i, j, k]
 
 ## Work out the I_comm_D -> I_comm_D transitions
 aux_II_comm_D[, 1, , ] <- n_sympt_to_comm_D[i, k, l]
 aux_II_comm_D[, 2:s_comm_D, , ] <- n_II_comm_D[i, j - 1, k, l]
-aux_II_comm_D[, 1:s_comm_D, , ] <- aux_II_comm_D[i, j, k, l] - n_II_comm_D[i, j, k, l]
+aux_II_comm_D[, 1:s_comm_D, , ] <-
+  aux_II_comm_D[i, j, k, l] - n_II_comm_D[i, j, k, l]
 new_I_comm_D[, , , ] <- I_comm_D[i, j, k, l] + aux_II_comm_D[i, j, k, l]
 
 ## Work out the split in hospitals between hosp_D, hosp_R and triage
@@ -457,12 +465,13 @@ n_triage_unconf_to_ICU_S_D_unconf[, , ] <-
   rbinom(n_II_triage_unconf[i, s_triage, j, k] -
            n_triage_unconf_to_ICU_D_unconf[i, j, k],
          prob_death_stepdown[i])
-n_triage_unconf_to_ICU_S_R_unconf[, , ] <- n_II_triage_unconf[i, s_triage, j, k] -
+n_triage_unconf_to_ICU_S_R_unconf[, , ] <-
+  n_II_triage_unconf[i, s_triage, j, k] -
   n_triage_unconf_to_ICU_D_unconf[i, j, k] -
   n_triage_unconf_to_ICU_S_D_unconf[i, j, k]
 n_triage_conf_to_ICU_S_D_conf[, , ] <-
-  rbinom(n_II_triage_conf[i, s_triage, j, k] - n_triage_conf_to_ICU_D_conf[i, j, k],
-         prob_death_stepdown[i])
+  rbinom(n_II_triage_conf[i, s_triage, j, k] -
+           n_triage_conf_to_ICU_D_conf[i, j, k], prob_death_stepdown[i])
 n_triage_conf_to_ICU_S_R_conf[, , ] <- n_II_triage_conf[i, s_triage, j, k] -
   n_triage_conf_to_ICU_D_conf[i, j, k] - n_triage_conf_to_ICU_S_D_conf[i, j, k]
 
@@ -551,7 +560,8 @@ aux_R_stepdown_R_conf[, 1:s_stepdown_R, , ] <-
 n_R_stepdown_R_unconf_to_conf[, , , ] <-
   rbinom(aux_R_stepdown_R_unconf[i, j, k, l], p_test)
 new_R_stepdown_R_unconf[, , , ] <-
-  aux_R_stepdown_R_unconf[i, j, k, l] - n_R_stepdown_R_unconf_to_conf[i, j, k, l]
+  aux_R_stepdown_R_unconf[i, j, k, l] -
+  n_R_stepdown_R_unconf_to_conf[i, j, k, l]
 new_R_stepdown_R_conf[, , , ] <-
   aux_R_stepdown_R_conf[i, j, k, l] + n_R_stepdown_R_unconf_to_conf[i, j, k, l]
 
@@ -573,7 +583,8 @@ aux_R_stepdown_D_conf[, 1:s_stepdown_D, , ] <-
 n_R_stepdown_D_unconf_to_conf[, , , ] <-
   rbinom(aux_R_stepdown_D_unconf[i, j, k, l], p_test)
 new_R_stepdown_D_unconf[, , , ] <-
-  aux_R_stepdown_D_unconf[i, j, k, l] - n_R_stepdown_D_unconf_to_conf[i, j, k, l]
+  aux_R_stepdown_D_unconf[i, j, k, l] -
+  n_R_stepdown_D_unconf_to_conf[i, j, k, l]
 new_R_stepdown_D_conf[, , , ] <-
   aux_R_stepdown_D_conf[i, j, k, l] + n_R_stepdown_D_unconf_to_conf[i, j, k, l]
 
@@ -591,14 +602,16 @@ new_D_comm[] <- D_comm[i] + sum(n_II_comm_D[i, s_comm_D, , ])
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_R_pre[, 1, 1, ] <- rbinom(
-  n_EE[i, s_E, 1, l] + n_EE_next_vacc_class[i, s_E, n_vacc_classes, l], p_R_pre_1)
+  n_EE[i, s_E, 1, l] + n_EE_next_vacc_class[i, s_E, n_vacc_classes, l],
+  p_R_pre_1)
 n_com_to_R_pre[, 1, 2:n_vacc_classes, ] <- rbinom(
   n_EE[i, s_E, k, l] + n_EE_next_vacc_class[i, s_E, k - 1, l], p_R_pre_1)
 n_com_to_R_pre[, 2, 1, ] <- n_EE[i, s_E, 1, l] +
   n_EE_next_vacc_class[i, s_E, n_vacc_classes, l] - n_com_to_R_pre[i, 1, 1, l]
 n_com_to_R_pre[, 2, 2:n_vacc_classes, ] <- n_EE[i, s_E, k, l] +
   n_EE_next_vacc_class[i, s_E, k - 1, l] - n_com_to_R_pre[i, 1, k, l]
-new_R_pre[, , , ] <- R_pre[i, j, k, l] + n_com_to_R_pre[i, j, k, l] - n_R_pre[i, j, k, l]
+new_R_pre[, , , ] <-
+  R_pre[i, j, k, l] + n_com_to_R_pre[i, j, k, l] - n_R_pre[i, j, k, l]
 
 
 ## Split the seroconversion flow between people who are going to
@@ -609,8 +622,9 @@ new_R_pos[, , , ] <- R_pos[i, j, k, l] - n_R_pos[i, j, k, l]
 new_R_pos[, 1, , ] <- new_R_pos[i, 1, k, l] + n_R_pre_to_R_pos[i, k, l]
 new_R_pos[, 2:s_R_pos, , ] <- new_R_pos[i, j, k, l] + n_R_pos[i, j - 1, k, l]
 
-new_R_neg[, , ] <- R_neg[i, j, k] + sum(n_R_pre[i, , j, k]) - n_R_pre_to_R_pos[i, j, k] +
-  n_R_pos[i, s_R_pos, j, k] - model_pcr_and_serology * n_R_progress[i, j, k] -
+new_R_neg[, , ] <- R_neg[i, j, k] + sum(n_R_pre[i, , j, k]) -
+  n_R_pre_to_R_pos[i, j, k] + n_R_pos[i, s_R_pos, j, k] -
+  model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
 new_R_neg[, 1, ] <- new_R_neg[i, 1, k] +
   model_pcr_and_serology * n_R_next_vacc_class[i, n_vacc_classes, k]
@@ -639,11 +653,13 @@ new_R[, 2:n_vacc_classes, ] <- new_R[i, j, k] +
 ## Work out the PCR positivity
 new_PCR_pre[, , , ] <- PCR_pre[i, j, k, l] - n_PCR_pre[i, j, k, l]
 new_PCR_pre[, 1, , ] <- new_PCR_pre[i, 1, k, l] + n_S_progress[i, k, l]
-new_PCR_pre[, 2:s_PCR_pre, , ] <- new_PCR_pre[i, j, k, l] + n_PCR_pre[i, j - 1, k, l]
+new_PCR_pre[, 2:s_PCR_pre, , ] <-
+  new_PCR_pre[i, j, k, l] + n_PCR_pre[i, j - 1, k, l]
 
 new_PCR_pos[, , , ] <- PCR_pos[i, j, k, l] - n_PCR_pos[i, j, k, l]
 new_PCR_pos[, 1, , ] <- new_PCR_pos[i, 1, k, l] + n_PCR_pre[i, s_PCR_pre, k, l]
-new_PCR_pos[, 2:s_PCR_pos, , ] <- new_PCR_pos[i, j, k, l] + n_PCR_pos[i, j - 1, k, l]
+new_PCR_pos[, 2:s_PCR_pos, , ] <-
+  new_PCR_pos[i, j, k, l] + n_PCR_pos[i, j - 1, k, l]
 
 new_PCR_neg[, , ] <- PCR_neg[i, j, k] + n_PCR_pos[i, s_PCR_pos, j, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
@@ -902,7 +918,8 @@ dim(I_triage_conf) <- c(n_groups, s_triage, n_vacc_classes, n_strains)
 dim(aux_II_triage_conf) <- c(n_groups, s_triage, n_vacc_classes, n_strains)
 dim(new_I_triage_conf) <- c(n_groups, s_triage, n_vacc_classes, n_strains)
 dim(n_II_triage_conf) <- c(n_groups, s_triage, n_vacc_classes, n_strains)
-dim(n_I_triage_unconf_to_conf) <- c(n_groups, s_triage, n_vacc_classes, n_strains)
+dim(n_I_triage_unconf_to_conf) <-
+  c(n_groups, s_triage, n_vacc_classes, n_strains)
 
 ## Vector handling who progress to ICU
 dim(prob_ICU_hosp) <- n_groups
@@ -917,7 +934,8 @@ dim(I_hosp_R_conf) <- c(n_groups, s_hosp_R, n_vacc_classes, n_strains)
 dim(aux_II_hosp_R_conf) <- c(n_groups, s_hosp_R, n_vacc_classes, n_strains)
 dim(new_I_hosp_R_conf) <- c(n_groups, s_hosp_R, n_vacc_classes, n_strains)
 dim(n_II_hosp_R_conf) <- c(n_groups, s_hosp_R, n_vacc_classes, n_strains)
-dim(n_I_hosp_R_unconf_to_conf) <- c(n_groups, s_hosp_R, n_vacc_classes, n_strains)
+dim(n_I_hosp_R_unconf_to_conf) <-
+  c(n_groups, s_hosp_R, n_vacc_classes, n_strains)
 
 ## Vectors handling the I_hosp_D class
 dim(I_hosp_D_unconf) <- c(n_groups, s_hosp_D, n_vacc_classes, n_strains)
@@ -928,7 +946,8 @@ dim(I_hosp_D_conf) <- c(n_groups, s_hosp_D, n_vacc_classes, n_strains)
 dim(aux_II_hosp_D_conf) <- c(n_groups, s_hosp_D, n_vacc_classes, n_strains)
 dim(new_I_hosp_D_conf) <- c(n_groups, s_hosp_D, n_vacc_classes, n_strains)
 dim(n_II_hosp_D_conf) <- c(n_groups, s_hosp_D, n_vacc_classes, n_strains)
-dim(n_I_hosp_D_unconf_to_conf) <- c(n_groups, s_hosp_D, n_vacc_classes, n_strains)
+dim(n_I_hosp_D_unconf_to_conf) <-
+  c(n_groups, s_hosp_D, n_vacc_classes, n_strains)
 
 ## Vectors handling the I_ICU_S_R class
 dim(I_ICU_S_R_unconf) <- c(n_groups, s_ICU_S_R, n_vacc_classes, n_strains)
@@ -939,7 +958,8 @@ dim(I_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_vacc_classes, n_strains)
 dim(aux_II_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_vacc_classes, n_strains)
 dim(new_I_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_vacc_classes, n_strains)
 dim(n_II_ICU_S_R_conf) <- c(n_groups, s_ICU_S_R, n_vacc_classes, n_strains)
-dim(n_I_ICU_S_R_unconf_to_conf) <- c(n_groups, s_ICU_S_R, n_vacc_classes, n_strains)
+dim(n_I_ICU_S_R_unconf_to_conf) <-
+  c(n_groups, s_ICU_S_R, n_vacc_classes, n_strains)
 
 ## Vectors handling the I_ICU_S_D class
 dim(I_ICU_S_D_unconf) <- c(n_groups, s_ICU_S_D, n_vacc_classes, n_strains)
@@ -950,7 +970,8 @@ dim(I_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_vacc_classes, n_strains)
 dim(aux_II_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_vacc_classes, n_strains)
 dim(new_I_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_vacc_classes, n_strains)
 dim(n_II_ICU_S_D_conf) <- c(n_groups, s_ICU_S_D, n_vacc_classes, n_strains)
-dim(n_I_ICU_S_D_unconf_to_conf) <- c(n_groups, s_ICU_S_D, n_vacc_classes, n_strains)
+dim(n_I_ICU_S_D_unconf_to_conf) <-
+  c(n_groups, s_ICU_S_D, n_vacc_classes, n_strains)
 
 ## Vectors handling the I_ICU_D class
 dim(I_ICU_D_unconf) <- c(n_groups, s_ICU_D, n_vacc_classes, n_strains)
@@ -965,25 +986,38 @@ dim(n_I_ICU_D_unconf_to_conf) <- c(n_groups, s_ICU_D, n_vacc_classes, n_strains)
 
 ## Vectors handling the R_stepdown_R class
 dim(R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
-dim(aux_R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
-dim(new_R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
-dim(n_R_stepdown_R_unconf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
+dim(aux_R_stepdown_R_unconf) <-
+  c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
+dim(new_R_stepdown_R_unconf) <-
+  c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
+dim(n_R_stepdown_R_unconf) <-
+  c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
 dim(R_stepdown_R_conf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
-dim(aux_R_stepdown_R_conf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
-dim(new_R_stepdown_R_conf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
+dim(aux_R_stepdown_R_conf) <-
+  c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
+dim(new_R_stepdown_R_conf) <-
+  c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
 dim(n_R_stepdown_R_conf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
-dim(n_R_stepdown_R_unconf_to_conf) <- c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
+dim(n_R_stepdown_R_unconf_to_conf) <-
+  c(n_groups, s_stepdown_R, n_vacc_classes, n_strains)
 
 ## Vectors handling the R_stepdown_D class
 dim(R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
-dim(aux_R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
-dim(new_R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
-dim(n_R_stepdown_D_unconf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
-dim(R_stepdown_D_conf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
-dim(aux_R_stepdown_D_conf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
-dim(new_R_stepdown_D_conf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
+dim(aux_R_stepdown_D_unconf) <-
+  c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
+dim(new_R_stepdown_D_unconf) <-
+  c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
+dim(n_R_stepdown_D_unconf) <-
+  c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
+dim(R_stepdown_D_conf) <-
+  c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
+dim(aux_R_stepdown_D_conf) <-
+  c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
+dim(new_R_stepdown_D_conf) <-
+  c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
 dim(n_R_stepdown_D_conf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
-dim(n_R_stepdown_D_unconf_to_conf) <- c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
+dim(n_R_stepdown_D_unconf_to_conf) <-
+  c(n_groups, s_stepdown_D, n_vacc_classes, n_strains)
 
 ## Vectors handling the R_pos class
 dim(R) <- c(n_groups, n_vacc_classes, n_strains)
@@ -1034,10 +1068,13 @@ dim(n_E_next_vacc_class) <- c(n_groups, s_E, n_vacc_classes, n_strains)
 dim(n_E_progress) <- c(n_groups, s_E, n_vacc_classes, n_strains)
 dim(n_EE_next_vacc_class) <- c(n_groups, s_E, n_vacc_classes, n_strains)
 
-dim(p_I_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes, n_strains)
-dim(n_I_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes, n_strains)
+dim(p_I_asympt_next_vacc_class) <-
+  c(n_groups, s_asympt, n_vacc_classes, n_strains)
+dim(n_I_asympt_next_vacc_class) <-
+  c(n_groups, s_asympt, n_vacc_classes, n_strains)
 dim(n_I_asympt_progress) <- c(n_groups, s_asympt, n_vacc_classes, n_strains)
-dim(n_II_asympt_next_vacc_class) <- c(n_groups, s_asympt, n_vacc_classes, n_strains)
+dim(n_II_asympt_next_vacc_class) <-
+  c(n_groups, s_asympt, n_vacc_classes, n_strains)
 
 dim(p_R_next_vacc_class) <- c(n_groups, n_vacc_classes, n_strains)
 dim(n_R_next_vacc_class) <- c(n_groups, n_vacc_classes, n_strains)
