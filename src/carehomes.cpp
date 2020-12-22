@@ -2884,8 +2884,14 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_S_progress_1; ++i) {
       for (int j = 1; j <= internal.dim_n_S_progress_2; ++j) {
-        for (int k = 1; k <= internal.dim_n_S_progress_3; ++k) {
-          internal.n_S_progress[i - 1 + internal.dim_n_S_progress_1 * (j - 1) + internal.dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1]), internal.p_SE[internal.dim_p_SE_12 * (k - 1) + internal.dim_p_SE_1 * (j - 1) + i - 1]);
+        int k = 1;
+        internal.n_S_progress[i - 1 + internal.dim_n_S_progress_1 * (j - 1) + internal.dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1]), internal.p_SE[internal.dim_p_SE_12 * 0 + internal.dim_p_SE_1 * (j - 1) + i - 1]);
+      }
+    }
+    for (int i = 1; i <= internal.dim_n_S_progress_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_S_progress_2; ++j) {
+        for (int k = 2; k <= internal.n_strains; ++k) {
+          internal.n_S_progress[i - 1 + internal.dim_n_S_progress_1 * (j - 1) + internal.dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(S[internal.dim_S_1 * (j - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, j - 1, j, 0, k - 1, internal.dim_n_S_progress_1, internal.dim_n_S_progress_12)), internal.p_SE[internal.dim_p_SE_12 * (k - 1) + internal.dim_p_SE_1 * (j - 1) + i - 1]);
         }
       }
     }

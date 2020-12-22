@@ -174,8 +174,12 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 #### flow out of S ####
 
 ## new infections
-## TODO: change this to be a proper multinomial
-n_S_progress[, , ] <- rbinom(S[i, j], p_SE[i, j, k])
+
+# Compute the new infections with multiple strains using nested binomials
+n_S_progress[, , 1] <- rbinom(S[i, j], p_SE[i, j, 1])
+n_S_progress[, , 2:n_strains] <-
+  rbinom(S[i, j] - sum(n_S_progress[i, j, 1:(k - 1)]), p_SE[i, j, k])
+
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[j] to E[j+1] (j vaccination class)
 n_SE_next_vacc_class[, , ] <-
