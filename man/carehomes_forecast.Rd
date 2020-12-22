@@ -41,6 +41,6 @@ filter to the predictions created here.}
 \description{
 Forecast from the carehomes model; this provides a wrapper around
 \link[mcstate:pmcmc_thin]{mcstate::pmcmc_sample} and \link[mcstate:pmcmc_predict]{mcstate::pmcmc_predict} that samples
-the trajectories then creatres samples, setting the sircovid dates
+the trajectories then creates samples, setting the sircovid dates
 and adding trajectories of incidence.
 }

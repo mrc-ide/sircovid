@@ -35,7 +35,7 @@ NULL
 ##' @param region The region to run the model for. This will bee used
 ##'   to get population data, which is currently fixed within the
 ##'   package and is limited to "uk", the four constituent nations
-##'   ("england", "wales", "scotland", "northern_ireland") and thee 7
+##'   ("england", "wales", "scotland", "northern_ireland") and the 7
 ##'   NHS regions (e.g., "midlands"). These names are case
 ##'   insensitive.
 ##'
@@ -45,7 +45,7 @@ NULL
 ##'   passed as `date`).
 ##'
 ##' @param beta_value A vector of values for beta (the contact rate
-##'   parameter). If not given, and if `beta_date` is null then a
+##'   parameter). If not given, and if `beta_date` is `NULL` then a
 ##'   value of 0.08 will be used through the whole simulation,
 ##'   otherwise if `beta_date` is `NULL` this must be a scalar. If
 ##'   `beta_date` is given then `beta_date` and `beta_value` must have

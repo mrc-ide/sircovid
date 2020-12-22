@@ -5,7 +5,7 @@
 [![R build status](https://github.com/mrc-ide/sircovid/workflows/R-CMD-check/badge.svg)](https://github.com/mrc-ide/sircovid/actions)
 [![CodeFactor](https://www.codefactor.io/repository/github/mrc-ide/sircovid/badge)](https://www.codefactor.io/repository/github/mrc-ide/sircovid)
 [![Codecov test coverage](https://codecov.io/gh/mrc-ide/sircovid/branch/master/graph/badge.svg)](https://codecov.io/gh/mrc-ide/sircovid?branch=master)
-
+[![Docker build status](https://badge.buildkite.com/8b8c5742874fc1dc137e5c085f107a1e4346e9cdf65d72934b.svg?branch=master)](https://buildkite.com/mrc-ide/sircovid)
 <!-- badges: end -->
 
 `sircovid` implements a series of mechanistic models to help modelling the transmission of the SARS-Cov-2 virus using stochastic compartmental models. `sircovid` also provides some tools to perfom Bayesian evidence synthesis from several surveillance data streams through the estimation of transmission parameters.
