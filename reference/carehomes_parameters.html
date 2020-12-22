@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -150,6 +150,8 @@
   rel_p_sympt <span class='op'>=</span> <span class='fl'>1</span>,
   rel_p_hosp_if_sympt <span class='op'>=</span> <span class='fl'>1</span>,
   vaccine_progression_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vaccine_uptake <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vaccine_daily_doses <span class='op'>=</span> <span class='fl'>0</span>,
   waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
   model_pcr_and_serology_user <span class='op'>=</span> <span class='fl'>1</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
@@ -307,6 +309,18 @@ is the rate of returning to the initial
 vacination class); if a matrix, the element on row i and column j is the
 rate of progression from the jth vaccination class to the (j+1)th for age
 group i.</p></td>
+    </tr>
+    <tr>
+      <th>vaccine_uptake</th>
+      <td><p>A vector of length 19 with the proportion of
+the population who are able to be vaccinated.</p></td>
+    </tr>
+    <tr>
+      <th>vaccine_daily_doses</th>
+      <td><p>A single value indicating the number of
+(first) vaccine doses per day to distribute. The actual number
+distributed will be stochastically distributed around this,
+provided there are sufficient eligible candidates.</p></td>
     </tr>
     <tr>
       <th>waning_rate</th>
@@ -809,7 +823,7 @@ just before the model is run.</p>
 #&gt; [18,]    1
 #&gt; [19,]    1
 #&gt; 
-#&gt; $vaccine_progression_rate
+#&gt; $vaccine_progression_rate_base
 #&gt;       [,1]
 #&gt;  [1,]    0
 #&gt;  [2,]    0
@@ -831,16 +845,22 @@ just before the model is run.</p>
 #&gt; [18,]    0
 #&gt; [19,]    0
 #&gt; 
+#&gt; $vaccine_population_reluctant
+#&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+#&gt; 
+#&gt; $vaccine_daily_doses
+#&gt; [1] 0
+#&gt; 
 #&gt; $waning_rate
 #&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 #&gt; 
 #&gt; $model_pcr_and_serology_user
 #&gt; [1] 1
 #&gt; </div><div class='input'>
-<span class='co'>### example set up of vaccination parameters independent of age</span>
-<span class='co'>### 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span>
-<span class='co'>### 3) fully vaccinated (but with an imperfect vaccine). People return</span>
-<span class='co'>### to group 1 after a period of time in group 3 to mirror waning immunity</span>
+<span class='co'># example set up of vaccination parameters independent of age</span>
+<span class='co'># 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span>
+<span class='co'># 3) fully vaccinated (but with an imperfect vaccine). People return</span>
+<span class='co'># to group 1 after a period of time in group 3 to mirror waning immunity</span>
 
 <span class='co'># Assumption: immediately after vaccination susceptibility is reduced by</span>
 <span class='co'># 20%, and then by 50% when you reach full effect of the vaccination,</span>
@@ -862,15 +882,16 @@ just before the model is run.</p>
 <span class='co'># vaccine-induced immunity wanes after a period which is exponentially</span>
 <span class='co'># distributed and lasts on average 26 weeks (half a year);</span>
 <span class='co'># they are similar across all age groups</span>
-<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.03</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>26</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>26</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># generate model parameters</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
-                          rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
-                          rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
-                          rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
-                          vaccine_progression_rate <span class='op'>=</span>
-                          <span class='va'>vaccine_progression_rate</span><span class='op'>)</span>
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
+       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
+       rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
+       rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
+       rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
+       vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
+       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
 
 <span class='co'># vaccination parameters are automatically copied across all age groups</span>
 <span class='va'>p</span><span class='op'>$</span><span class='va'>rel_susceptibility</span>
@@ -933,27 +954,29 @@ just before the model is run.</p>
 #&gt; [16,]    1 0.95 0.95
 #&gt; [17,]    1 0.95 0.95
 #&gt; [18,]    1 0.95 0.95
-#&gt; [19,]    1 0.95 0.95</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
+#&gt; [19,]    1 0.95 0.95</div><div class='input'><span class='co'># Note that this is only the "base" rate as we fill in the first</span>
+<span class='co'># column dynamically based on vaccine_daily_doses</span>
+<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
 </div><div class='output co'>#&gt;       [,1]       [,2]        [,3]
-#&gt;  [1,] 0.03 0.07142857 0.005494505
-#&gt;  [2,] 0.03 0.07142857 0.005494505
-#&gt;  [3,] 0.03 0.07142857 0.005494505
-#&gt;  [4,] 0.03 0.07142857 0.005494505
-#&gt;  [5,] 0.03 0.07142857 0.005494505
-#&gt;  [6,] 0.03 0.07142857 0.005494505
-#&gt;  [7,] 0.03 0.07142857 0.005494505
-#&gt;  [8,] 0.03 0.07142857 0.005494505
-#&gt;  [9,] 0.03 0.07142857 0.005494505
-#&gt; [10,] 0.03 0.07142857 0.005494505
-#&gt; [11,] 0.03 0.07142857 0.005494505
-#&gt; [12,] 0.03 0.07142857 0.005494505
-#&gt; [13,] 0.03 0.07142857 0.005494505
-#&gt; [14,] 0.03 0.07142857 0.005494505
-#&gt; [15,] 0.03 0.07142857 0.005494505
-#&gt; [16,] 0.03 0.07142857 0.005494505
-#&gt; [17,] 0.03 0.07142857 0.005494505
-#&gt; [18,] 0.03 0.07142857 0.005494505
-#&gt; [19,] 0.03 0.07142857 0.005494505</div><div class='input'>
+#&gt;  [1,]    0 0.07142857 0.005494505
+#&gt;  [2,]    0 0.07142857 0.005494505
+#&gt;  [3,]    0 0.07142857 0.005494505
+#&gt;  [4,]    0 0.07142857 0.005494505
+#&gt;  [5,]    0 0.07142857 0.005494505
+#&gt;  [6,]    0 0.07142857 0.005494505
+#&gt;  [7,]    0 0.07142857 0.005494505
+#&gt;  [8,]    0 0.07142857 0.005494505
+#&gt;  [9,]    0 0.07142857 0.005494505
+#&gt; [10,]    0 0.07142857 0.005494505
+#&gt; [11,]    0 0.07142857 0.005494505
+#&gt; [12,]    0 0.07142857 0.005494505
+#&gt; [13,]    0 0.07142857 0.005494505
+#&gt; [14,]    0 0.07142857 0.005494505
+#&gt; [15,]    0 0.07142857 0.005494505
+#&gt; [16,]    0 0.07142857 0.005494505
+#&gt; [17,]    0 0.07142857 0.005494505
+#&gt; [18,]    0 0.07142857 0.005494505
+#&gt; [19,]    0 0.07142857 0.005494505</div><div class='input'>
 <span class='co'>### same example as above BUT assume a different effect of vaccine in the</span>
 <span class='co'>### first age group</span>
 <span class='va'>n_groups</span> <span class='op'>&lt;-</span> <span class='fl'>19</span>
@@ -964,8 +987,8 @@ just before the model is run.</p>
 <span class='va'>rel_susceptibility_other_agegp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span><span class='op'>)</span>
 <span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='cn'>NA</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>, ncol <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='fl'>1</span>, <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_agegp1</span>
- <span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='va'>n_groups</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='va'>i</span>, <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_other_agegp</span>
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='va'>n_groups</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='va'>i</span>, <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_other_agegp</span>
 <span class='op'>}</span>
 <span class='va'>rel_susceptibility</span>
 </div><div class='output co'>#&gt;       [,1] [,2] [,3]
@@ -995,27 +1018,24 @@ just before the model is run.</p>
 <span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span>
   <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
-<span class='co'># Vaccination occurs at a constant rate of 0.03 per day for all age groups</span>
-<span class='co'># expect the first age groups which gets vaccinated at a rate of 0.06 a day</span>
-<span class='va'>vaccination_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.06</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.03</span>, <span class='va'>n_groups</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
-
 <span class='co'># the period of build-up of immunity is the same for all age groups,</span>
 <span class='co'># lasting on average 2 weeks,</span>
 <span class='co'># but the first age group loses immunity more quickly</span>
 <span class='co'># (on average after 3 months) than the other age groups</span>
 <span class='co'># (on average after 6 months)</span>
-<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>vaccination_rate</span>,
+<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fl'>0</span>,
                                   <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>2</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>, <span class='va'>n_groups</span><span class='op'>)</span>,
                                   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>13</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>,
                                   <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>26</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>, <span class='va'>n_groups</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># generate model parameters</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
-                          rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
-                          rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
-                          rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
-                          vaccine_progression_rate <span class='op'>=</span>
-                          <span class='va'>vaccine_progression_rate</span><span class='op'>)</span>
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
+       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
+       rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
+       rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
+       rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
+       vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
+       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
 
 </div></pre>
   </div>

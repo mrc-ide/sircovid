@@ -6,9 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The basic sircovid model
-
-The "basic" sircovid model. This is a dust model. — basic • sircovid</title>
+<title>Remap state to include vaccination — vaccination_remap_state • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,11 +46,11 @@ The "basic" sircovid model. This is a dust model. — basic • sircovid</title>
 
 
 
-<meta property="og:title" content="The basic sircovid model
-
-The "basic" sircovid model. This is a dust model. — basic" />
-<meta property="og:description" content="The basic sircovid model
-The &quot;basic&quot; sircovid model. This is a dust model." />
+<meta property="og:title" content="Remap state to include vaccination — vaccination_remap_state" />
+<meta property="og:description" content="Remap state that was run with one stratum to support
+vaccination. This is useful where fitting was done pre-vaccination
+and the model state needs to be expanded to support vaccination
+for simulations." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -124,57 +122,45 @@ The &quot;basic&quot; sircovid model. This is a dust model." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The basic sircovid model
-
-The "basic" sircovid model. This is a dust model.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/basic.R'><code>R/basic.R</code></a></small>
-    <div class="hidden name"><code>basic.Rd</code></div>
+    <h1>Remap state to include vaccination</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/vaccination.R'><code>R/vaccination.R</code></a></small>
+    <div class="hidden name"><code>vaccination_remap_state.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>The basic sircovid model</p>
-<p>The "basic" sircovid model. This is a dust model.</p>
+    <p>Remap state that was run with one stratum to support
+vaccination. This is useful where fitting was done pre-vaccination
+and the model state needs to be expanded to support vaccination
+for simulations.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>vaccination_remap_state</span><span class='op'>(</span><span class='va'>state_orig</span>, <span class='va'>info_orig</span>, <span class='va'>info_vacc</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>state_orig</th>
+      <td><p>An original state matrix (rows representing
+state, columns representing particles or samples). This must be
+the complete model state.</p></td>
+    </tr>
+    <tr>
+      <th>info_orig</th>
+      <td><p>The results of <code>info()</code> from the model object
+without vaccination</p></td>
+    </tr>
+    <tr>
+      <th>info_vacc</th>
+      <td><p>The results of <code>info()</code> from the model object
+with vaccination</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Set up the basic model for England with default parameters and</span>
-<span class='co'># an initial seeding of early February:</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_parameters.html'>basic_parameters</a></span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-07"</span><span class='op'>)</span>, <span class='st'>"england"</span><span class='op'>)</span>
-<span class='va'>mod</span> <span class='op'>&lt;-</span> <span class='va'>basic</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>p</span>, <span class='fl'>0</span>, <span class='fl'>10</span><span class='op'>)</span>
+    <p>A 3d array with more rows than <code>state</code>.</p>
 
-<span class='co'># Set the initial state and index as we would us for a run</span>
-<span class='co'># (without setting an initial state there is no seeding)</span>
-<span class='va'>initial</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_initial.html'>basic_initial</a></span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>10</span>, <span class='va'>p</span><span class='op'>)</span>
-<span class='va'>mod</span><span class='op'>$</span><span class='fu'>set_state</span><span class='op'>(</span><span class='va'>initial</span><span class='op'>$</span><span class='va'>state</span>, <span class='va'>initial</span><span class='op'>$</span><span class='va'>step</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; NULL</div><div class='input'><span class='va'>mod</span><span class='op'>$</span><span class='fu'>set_index</span><span class='op'>(</span><span class='fu'><a href='basic_index.html'>basic_index</a></span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>$</span><span class='va'>run</span><span class='op'>)</span>
-
-<span class='co'># Run the model up to the end of march</span>
-<span class='va'>step_end</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-03-31"</span><span class='op'>)</span> <span class='op'>/</span> <span class='va'>p</span><span class='op'>$</span><span class='va'>dt</span>
-
-<span class='co'># The filtered state is returned at the end of the run</span>
-<span class='va'>mod</span><span class='op'>$</span><span class='fu'>run</span><span class='op'>(</span><span class='va'>step_end</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;        [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-#&gt; icu      26   23   15   29   11    9   12   15   13    13
-#&gt; deaths   79   76   61   92   37   27   38   33   74    40</div><div class='input'>
-<span class='co'># More state can be retrieved using the "state" method</span>
-<span class='va'>mod</span><span class='op'>$</span><span class='fu'>state</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
-#&gt; [1,]       91.00       91.00       91.00       91.00       91.00       91.00
-#&gt; [2,] 56286961.00 56286961.00 56286961.00 56286961.00 56286961.00 56286961.00
-#&gt; [3,]       26.00       23.00       15.00       29.00       11.00        9.00
-#&gt; [4,]       79.00       76.00       61.00       92.00       37.00       27.00
-#&gt; [5,]        0.08        0.08        0.08        0.08        0.08        0.08
-#&gt; [6,]  3294955.00  3296484.00  3296498.00  3295047.00  3297978.00  3297869.00
-#&gt;             [,7]        [,8]        [,9]       [,10]
-#&gt; [1,]       91.00       91.00       91.00       91.00
-#&gt; [2,] 56286961.00 56286961.00 56286961.00 56286961.00
-#&gt; [3,]       12.00       15.00       13.00       13.00
-#&gt; [4,]       38.00       33.00       74.00       40.00
-#&gt; [5,]        0.08        0.08        0.08        0.08
-#&gt; [6,]  3297348.00  3298028.00  3296726.00  3297592.00</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

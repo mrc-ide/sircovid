@@ -6,9 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The basic sircovid model
-
-The "basic" sircovid model. This is a dust model. — basic • sircovid</title>
+<title>Simulate a sircovid model — sircovid_simulate • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,11 +46,11 @@ The "basic" sircovid model. This is a dust model. — basic • sircovid</title>
 
 
 
-<meta property="og:title" content="The basic sircovid model
-
-The "basic" sircovid model. This is a dust model. — basic" />
-<meta property="og:description" content="The basic sircovid model
-The &quot;basic&quot; sircovid model. This is a dust model." />
+<meta property="og:title" content="Simulate a sircovid model — sircovid_simulate" />
+<meta property="og:description" content="Simulate from a sircovid model (basic or carehomes) given a
+set of starting positions and parameters. This forms the core of
+our projections support, and is typically used after fitting a
+model." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -124,57 +122,78 @@ The &quot;basic&quot; sircovid model. This is a dust model." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The basic sircovid model
-
-The "basic" sircovid model. This is a dust model.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/basic.R'><code>R/basic.R</code></a></small>
-    <div class="hidden name"><code>basic.Rd</code></div>
+    <h1>Simulate a sircovid model</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/simulate.R'><code>R/simulate.R</code></a></small>
+    <div class="hidden name"><code>sircovid_simulate.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>The basic sircovid model</p>
-<p>The "basic" sircovid model. This is a dust model.</p>
+    <p>Simulate from a sircovid model (<a href='basic.html'>basic</a> or <a href='carehomes.html'>carehomes</a>) given a
+set of starting positions and parameters. This forms the core of
+our projections support, and is typically used after fitting a
+model.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>sircovid_simulate</span><span class='op'>(</span>
+  <span class='va'>mod</span>,
+  <span class='va'>state</span>,
+  <span class='va'>p</span>,
+  <span class='va'>events</span>,
+  index <span class='op'>=</span> <span class='cn'>NULL</span>,
+  n_threads <span class='op'>=</span> <span class='fl'>1L</span>,
+  seed <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>mod</th>
+      <td><p>The model object to simulate from</p></td>
+    </tr>
+    <tr>
+      <th>state</th>
+      <td><p>A matrix of state; rows correspond to state
+variables, columns correspond to different parameter sets or
+realisations.</p></td>
+    </tr>
+    <tr>
+      <th>p</th>
+      <td><p>An unnamed list of parameter objects; must be the same
+length as <code>state</code> has columns.</p></td>
+    </tr>
+    <tr>
+      <th>events</th>
+      <td><p>A <code><a href='sircovid_simulate_events.html'>sircovid_simulate_events()</a></code> object with "events"
+data, representing changes in the parameters, and the overall
+timescale of the simulation.</p></td>
+    </tr>
+    <tr>
+      <th>index</th>
+      <td><p>A (possibly named) integer vector representing an
+index into the model state that should be returned (see
+<a href='https://rdrr.io/pkg/dust/man/dust_simulate.html'>dust::dust_simulate</a>)</p></td>
+    </tr>
+    <tr>
+      <th>n_threads</th>
+      <td><p>The number of threads to use in the
+simulation. This only has an effect if your sircovid was built
+with OpenMP support (possibly not the case on macOS).  Each
+simulation will be run on potentially a different thread.</p></td>
+    </tr>
+    <tr>
+      <th>seed</th>
+      <td><p>Optional seed (see <a href='https://rdrr.io/pkg/dust/man/dust_simulate.html'>dust::dust_simulate</a>)</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Set up the basic model for England with default parameters and</span>
-<span class='co'># an initial seeding of early February:</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_parameters.html'>basic_parameters</a></span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-07"</span><span class='op'>)</span>, <span class='st'>"england"</span><span class='op'>)</span>
-<span class='va'>mod</span> <span class='op'>&lt;-</span> <span class='va'>basic</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>p</span>, <span class='fl'>0</span>, <span class='fl'>10</span><span class='op'>)</span>
+    <p>A 3-d array with dimensions representing state (along
+<code>index</code>), parameter set (along <code>p</code>) and time. The array has
+attributes <code>step</code> and <code>date</code> corresponding to the step (relative
+to 2020-01-01) and date.</p>
 
-<span class='co'># Set the initial state and index as we would us for a run</span>
-<span class='co'># (without setting an initial state there is no seeding)</span>
-<span class='va'>initial</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_initial.html'>basic_initial</a></span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>10</span>, <span class='va'>p</span><span class='op'>)</span>
-<span class='va'>mod</span><span class='op'>$</span><span class='fu'>set_state</span><span class='op'>(</span><span class='va'>initial</span><span class='op'>$</span><span class='va'>state</span>, <span class='va'>initial</span><span class='op'>$</span><span class='va'>step</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; NULL</div><div class='input'><span class='va'>mod</span><span class='op'>$</span><span class='fu'>set_index</span><span class='op'>(</span><span class='fu'><a href='basic_index.html'>basic_index</a></span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>$</span><span class='va'>run</span><span class='op'>)</span>
-
-<span class='co'># Run the model up to the end of march</span>
-<span class='va'>step_end</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-03-31"</span><span class='op'>)</span> <span class='op'>/</span> <span class='va'>p</span><span class='op'>$</span><span class='va'>dt</span>
-
-<span class='co'># The filtered state is returned at the end of the run</span>
-<span class='va'>mod</span><span class='op'>$</span><span class='fu'>run</span><span class='op'>(</span><span class='va'>step_end</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;        [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-#&gt; icu      26   23   15   29   11    9   12   15   13    13
-#&gt; deaths   79   76   61   92   37   27   38   33   74    40</div><div class='input'>
-<span class='co'># More state can be retrieved using the "state" method</span>
-<span class='va'>mod</span><span class='op'>$</span><span class='fu'>state</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
-#&gt; [1,]       91.00       91.00       91.00       91.00       91.00       91.00
-#&gt; [2,] 56286961.00 56286961.00 56286961.00 56286961.00 56286961.00 56286961.00
-#&gt; [3,]       26.00       23.00       15.00       29.00       11.00        9.00
-#&gt; [4,]       79.00       76.00       61.00       92.00       37.00       27.00
-#&gt; [5,]        0.08        0.08        0.08        0.08        0.08        0.08
-#&gt; [6,]  3294955.00  3296484.00  3296498.00  3295047.00  3297978.00  3297869.00
-#&gt;             [,7]        [,8]        [,9]       [,10]
-#&gt; [1,]       91.00       91.00       91.00       91.00
-#&gt; [2,] 56286961.00 56286961.00 56286961.00 56286961.00
-#&gt; [3,]       12.00       15.00       13.00       13.00
-#&gt; [4,]       38.00       33.00       74.00       40.00
-#&gt; [5,]        0.08        0.08        0.08        0.08
-#&gt; [6,]  3297348.00  3298028.00  3296726.00  3297592.00</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
