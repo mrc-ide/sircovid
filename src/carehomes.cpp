@@ -2757,7 +2757,7 @@ public:
     for (int i = 1; i <= internal.dim_p_SE_1; ++i) {
       for (int j = 1; j <= internal.dim_p_SE_2; ++j) {
         for (int k = 1; k <= internal.dim_p_SE_3; ++k) {
-          internal.p_SE[i - 1 + internal.dim_p_SE_1 * (j - 1) + internal.dim_p_SE_12 * (k - 1)] = 1 - std::exp(- internal.lambda[internal.dim_lambda_1 * (j - 1) + i - 1] * internal.rel_susceptibility[internal.dim_rel_susceptibility_1 * (j - 1) + i - 1] * internal.dt);
+          internal.p_SE[i - 1 + internal.dim_p_SE_1 * (j - 1) + internal.dim_p_SE_12 * (k - 1)] = 1 - std::exp(- internal.lambda[internal.dim_lambda_1 * (k - 1) + i - 1] * internal.rel_susceptibility[internal.dim_rel_susceptibility_1 * (j - 1) + i - 1] * internal.dt);
         }
       }
     }

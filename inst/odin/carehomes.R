@@ -114,7 +114,7 @@ p_I_asympt_next_vacc_class[, , , ] <-
 p_R_next_vacc_class[, , ] <-
   1 - exp(-vaccine_progression_rate[i, j] * dt)
 ## clinical progression
-p_SE[, , ] <- 1 - exp(-lambda[i, j] *
+p_SE[, , ] <- 1 - exp(-lambda[i, k] *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
@@ -174,6 +174,7 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 #### flow out of S ####
 
 ## new infections
+## TODO: change this to be a proper multinomial
 n_S_progress[, , ] <- rbinom(S[i, j], p_SE[i, j, k])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[j] to E[j+1] (j vaccination class)
