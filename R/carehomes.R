@@ -98,6 +98,14 @@ NULL
 ##'   rate of progression from the jth vaccination class to the (j+1)th for age
 ##'   group i.
 ##'
+##' @param vaccine_uptake A vector of length 19 with the proportion of
+##'   the population who are able to be vaccinated.
+##'
+##' @param vaccine_daily_doses A single value indicating the number of
+##'   (first) vaccine doses per day to distribute. The actual number
+##'   distributed will be stochastically distributed around this,
+##'   provided there are sufficient eligible candidates.
+##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
@@ -116,10 +124,10 @@ NULL
 ##' @examples
 ##' carehomes_parameters(sircovid_date("2020-02-01"), "uk")
 ##'
-##' ### example set up of vaccination parameters independent of age
-##' ### 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity
-##' ### 3) fully vaccinated (but with an imperfect vaccine). People return
-##' ### to group 1 after a period of time in group 3 to mirror waning immunity
+##' # example set up of vaccination parameters independent of age
+##' # 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity
+##' # 3) fully vaccinated (but with an imperfect vaccine). People return
+##' # to group 1 after a period of time in group 3 to mirror waning immunity
 ##'
 ##' # Assumption: immediately after vaccination susceptibility is reduced by
 ##' # 20%, and then by 50% when you reach full effect of the vaccination,
@@ -141,20 +149,23 @@ NULL
 ##' # vaccine-induced immunity wanes after a period which is exponentially
 ##' # distributed and lasts on average 26 weeks (half a year);
 ##' # they are similar across all age groups
-##' vaccine_progression_rate <- c(0.03, 1/(2*7), 1/(26*7))
+##' vaccine_progression_rate <- c(0, 1/(2*7), 1/(26*7))
 ##'
 ##' # generate model parameters
-##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
-##'                           rel_susceptibility = rel_susceptibility,
-##'                           rel_p_sympt = rel_p_sympt,
-##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-##'                           vaccine_progression_rate =
-##'                           vaccine_progression_rate)
+##' p <- carehomes_parameters(
+##'        sircovid_date("2020-02-01"), "uk",
+##'        rel_susceptibility = rel_susceptibility,
+##'        rel_p_sympt = rel_p_sympt,
+##'        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+##'        vaccine_progression_rate = vaccine_progression_rate,
+##'        vaccine_daily_doses = 10000)
 ##'
 ##' # vaccination parameters are automatically copied across all age groups
 ##' p$rel_susceptibility
 ##' p$rel_p_sympt
 ##' p$rel_p_hosp_if_sympt
+##' # Note that this is only the "base" rate as we fill in the first
+##' # column dynamically based on vaccine_daily_doses
 ##' p$vaccine_progression_rate
 ##'
 ##' ### same example as above BUT assume a different effect of vaccine in the
@@ -167,8 +178,8 @@ NULL
 ##' rel_susceptibility_other_agegp <- c(1, 0.8, 0.5)
 ##' rel_susceptibility <- matrix(NA, nrow = n_groups, ncol = 3)
 ##' rel_susceptibility[1, ] <- rel_susceptibility_agegp1
-##'  for (i in seq(2, n_groups)) {
-##' rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
+##' for (i in seq(2, n_groups)) {
+##'   rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
 ##' }
 ##' rel_susceptibility
 ##'
@@ -179,27 +190,24 @@ NULL
 ##' rel_p_hosp_if_sympt <-
 ##'   matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
 ##'
-##' # Vaccination occurs at a constant rate of 0.03 per day for all age groups
-##' # expect the first age groups which gets vaccinated at a rate of 0.06 a day
-##' vaccination_rate <- c(0.06, rep(0.03, n_groups - 1))
-##'
 ##' # the period of build-up of immunity is the same for all age groups,
 ##' # lasting on average 2 weeks,
 ##' # but the first age group loses immunity more quickly
 ##' # (on average after 3 months) than the other age groups
 ##' # (on average after 6 months)
-##' vaccine_progression_rate <- cbind(vaccination_rate,
+##' vaccine_progression_rate <- cbind(0,
 ##'                                   rep(1 / (2 * 7), n_groups),
 ##'                                   c(1 / (13 * 7),
 ##'                                   rep( 1 / (26 * 7), n_groups - 1)))
 ##'
 ##' # generate model parameters
-##' p <- carehomes_parameters(sircovid_date("2020-02-01"), "uk",
-##'                           rel_susceptibility = rel_susceptibility,
-##'                           rel_p_sympt = rel_p_sympt,
-##'                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
-##'                           vaccine_progression_rate =
-##'                           vaccine_progression_rate)
+##' p <- carehomes_parameters(
+##'        sircovid_date("2020-02-01"), "uk",
+##'        rel_susceptibility = rel_susceptibility,
+##'        rel_p_sympt = rel_p_sympt,
+##'        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+##'        vaccine_progression_rate = vaccine_progression_rate,
+##'        vaccine_daily_doses = 10000)
 ##'
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
@@ -220,6 +228,8 @@ carehomes_parameters <- function(start_date, region,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
                                  vaccine_progression_rate = NULL,
+                                 vaccine_uptake = NULL,
+                                 vaccine_daily_doses = 0,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
@@ -306,10 +316,13 @@ carehomes_parameters <- function(start_date, region,
 
   ret$n_groups <- ret$n_age_groups + 2L
 
-  vaccination <- carehomes_parameters_vaccination(rel_susceptibility,
+  vaccination <- carehomes_parameters_vaccination(ret$N_tot,
+                                                  rel_susceptibility,
                                                   rel_p_sympt,
                                                   rel_p_hosp_if_sympt,
-                                                  vaccine_progression_rate)
+                                                  vaccine_progression_rate,
+                                                  vaccine_uptake,
+                                                  vaccine_daily_doses)
 
   model_pcr_and_serology_user <-
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
@@ -653,10 +666,14 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
+carehomes_parameters_vaccination <- function(N_tot,
+                                             rel_susceptibility = 1,
                                              rel_p_sympt = 1,
                                              rel_p_hosp_if_sympt = 1,
-                                             vaccine_progression_rate = NULL) {
+                                             vaccine_progression_rate = NULL,
+                                             vaccine_uptake = NULL,
+                                             vaccine_daily_doses = 0) {
+  stopifnot(length(N_tot) == carehomes_n_groups())
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
   }
@@ -675,8 +692,21 @@ carehomes_parameters_vaccination <- function(rel_susceptibility = 1,
   ret <- Map(function(value, name) build_rel_param(value, max(n), name),
              rel_params, names(rel_params))
 
-  ret$vaccine_progression_rate <- build_vaccine_progression_rate(
+  ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
     vaccine_progression_rate, max(n))
+
+  if (is.null(vaccine_uptake)) {
+    vaccine_uptake <- rep(1, carehomes_n_groups())
+  } else if (length(vaccine_uptake) == 1L) {
+    vaccine_uptake <- rep(vaccine_uptake, carehomes_n_groups())
+  } else if (length(vaccine_uptake) != carehomes_n_groups()) {
+    stop(sprintf("Invalid length %d for 'vaccine_uptake', must be 1 or %d",
+                 length(vaccine_uptake), carehomes_n_groups()))
+  }
+
+  ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot
+  ret$vaccine_daily_doses <- vaccine_daily_doses
+
   ret
 }
 

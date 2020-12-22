@@ -46,6 +46,15 @@ update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
   n_R_next_vacc_class[i, j] + n_RS_next_vacc_class[i, j]
 dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
+## Total number of vaccinations over S, E, I_asypmt, R for convenience
+initial(cum_n_vaccinated[, ]) <- 0
+update(cum_n_vaccinated[, ]) <-
+  cum_n_S_vaccinated[i, j] +
+  cum_n_E_vaccinated[i, j] +
+  cum_n_I_asympt_vaccinated[i, j] +
+  cum_n_R_vaccinated[i, j]
+dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
+
 ## Core equations for transitions between compartments:
 update(S[, ]) <- new_S[i, j]
 update(E[, , ]) <- new_E[i, j, k]
@@ -718,8 +727,8 @@ dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
 rel_p_hosp_if_sympt[, ] <- user()
 dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
 
-vaccine_progression_rate[, ] <- user()
-dim(vaccine_progression_rate) <- user()
+vaccine_progression_rate_base[, ] <- user()
+dim(vaccine_progression_rate_base) <- c(n_groups, n_vacc_classes)
 
 ## Parameters of the E classes
 s_E <- user()
@@ -1175,3 +1184,42 @@ update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
 update(react_pos) <- sum(new_PCR_pos[2:18, , ])
+
+## Vaccination engine
+
+## First, the number of candidates
+vaccine_n_candidates[] <- S[i, 1] + sum(E[i, , 1]) + sum(I_asympt[i, , 1]) +
+  R[i, 1]
+dim(vaccine_n_candidates) <- n_groups
+
+## The total population reluctant to be vaccinated. Currently modelled
+## as a fixed population, rather than as (say) a stratification of
+## compartments.
+vaccine_population_reluctant[] <- user()
+dim(vaccine_population_reluctant) <- n_groups
+
+## We will refuse to vaccine the reluctant population; this is just an
+## approximation of that for now.
+##
+## TODO: this *should* work with
+## > max(0, vaccine_n_candidates[i] - vaccine_population_reluctant[i])
+## But that is generating invalid code
+vaccine_population_possible[] <-
+  (if (vaccine_population_reluctant[i] > vaccine_n_candidates[i]) 0
+   else vaccine_n_candidates[i] - vaccine_population_reluctant[i])
+dim(vaccine_population_possible) <- n_groups
+
+## The number of doses of vaccine available each day:
+vaccine_daily_doses <- user(0)
+
+## We'll set this up to treat the first column specially, as that is
+## the compartment through which people ge vaccinated, others are
+## taken through the vaccination rate
+config(include) <- "vaccination.cpp"
+vaccine_progression_rate[, 1] <-
+  vaccination_schedule(i, vaccine_daily_doses, dt,
+                       vaccine_n_candidates, vaccine_population_possible)
+vaccine_progression_rate[, 2:n_vacc_classes] <-
+  vaccine_progression_rate_base[i, j]
+
+dim(vaccine_progression_rate) <- c(n_groups, n_vacc_classes)
