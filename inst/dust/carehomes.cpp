@@ -141,7 +141,6 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(gamma_test, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_triage, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(model_pcr_and_serology_user, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(n_strains, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_R_pre_1, has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_daily_doses, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class carehomes {
@@ -4110,7 +4109,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_test = 0.10000000000000001;
   internal.gamma_triage = 0.10000000000000001;
   internal.model_pcr_and_serology_user = 1;
-  internal.n_strains = 1;
   internal.p_R_pre_1 = 0.5;
   internal.vaccine_daily_doses = 0;
   std::array <int, 1> dim_beta_step;
@@ -4141,7 +4139,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", internal.model_pcr_and_serology_user, NA_REAL, NA_REAL);
   internal.n_age_groups = user_get_scalar<int>(user, "n_age_groups", internal.n_age_groups, NA_REAL, NA_REAL);
   internal.n_groups = user_get_scalar<int>(user, "n_groups", internal.n_groups, NA_REAL, NA_REAL);
-  internal.n_strains = user_get_scalar<int>(user, "n_strains", internal.n_strains, NA_REAL, NA_REAL);
   std::array <int, 1> dim_p_admit_conf_step;
   internal.p_admit_conf_step = user_get_array_variable<real_t, 1>(user, "p_admit_conf_step", internal.p_admit_conf_step, dim_p_admit_conf_step, NA_REAL, NA_REAL);
   internal.dim_p_admit_conf_step = internal.p_admit_conf_step.size();
@@ -4184,12 +4181,13 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_stepdown_R = user_get_scalar<int>(user, "s_stepdown_R", internal.s_stepdown_R, NA_REAL, NA_REAL);
   internal.s_sympt = user_get_scalar<int>(user, "s_sympt", internal.s_sympt, NA_REAL, NA_REAL);
   internal.s_triage = user_get_scalar<int>(user, "s_triage", internal.s_triage, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_strain_transmission;
+  internal.strain_transmission = user_get_array_variable<real_t, 1>(user, "strain_transmission", internal.strain_transmission, dim_strain_transmission, NA_REAL, NA_REAL);
+  internal.dim_strain_transmission = internal.strain_transmission.size();
   internal.vaccine_daily_doses = user_get_scalar<real_t>(user, "vaccine_daily_doses", internal.vaccine_daily_doses, NA_REAL, NA_REAL);
   internal.dim_cum_admit_by_age = internal.n_groups;
   internal.dim_D_comm = internal.n_groups;
   internal.dim_D_hosp = internal.n_groups;
-  internal.dim_lambda_1 = internal.n_groups;
-  internal.dim_lambda_2 = internal.n_strains;
   internal.dim_m_1 = internal.n_groups;
   internal.dim_m_2 = internal.n_groups;
   internal.dim_N_tot = internal.n_groups;
@@ -4212,10 +4210,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_psi_death_stepdown = internal.n_groups;
   internal.dim_psi_hosp_sympt = internal.n_groups;
   internal.dim_psi_ICU_hosp = internal.n_groups;
-  internal.dim_s_ij_1 = internal.n_groups;
-  internal.dim_s_ij_2 = internal.n_groups;
-  internal.dim_s_ij_3 = internal.n_strains;
-  internal.dim_strain_transmission = internal.n_strains;
   internal.dim_vaccine_n_candidates = internal.n_groups;
   internal.dim_vaccine_population_possible = internal.n_groups;
   internal.dim_vaccine_population_reluctant = internal.n_groups;
@@ -4254,10 +4248,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.prob_ICU_hosp = std::vector<real_t>(internal.dim_prob_ICU_hosp);
   internal.vaccine_n_candidates = std::vector<real_t>(internal.dim_vaccine_n_candidates);
   internal.vaccine_population_possible = std::vector<real_t>(internal.dim_vaccine_population_possible);
-  internal.dim_lambda = internal.dim_lambda_1 * internal.dim_lambda_2;
   internal.dim_m = internal.dim_m_1 * internal.dim_m_2;
-  internal.dim_s_ij = internal.dim_s_ij_1 * internal.dim_s_ij_2 * internal.dim_s_ij_3;
-  internal.dim_s_ij_12 = internal.dim_s_ij_1 * internal.dim_s_ij_2;
   {
      int i = 1;
      internal.gamma_R_pre[i - 1] = internal.gamma_R_pre_1;
@@ -4278,6 +4269,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   for (int i = 1; i <= internal.dim_N_tot; ++i) {
     internal.initial_N_tot[i - 1] = 0;
   }
+  internal.n_strains = internal.dim_strain_transmission;
   internal.offset_variable_cum_admit_by_age = 17 + internal.dim_D_hosp + internal.dim_D_comm;
   internal.offset_variable_cum_n_S_vaccinated = 17 + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot;
   internal.offset_variable_D_comm = 17 + internal.dim_D_hosp;
@@ -4291,11 +4283,13 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.psi_death_stepdown = user_get_array_fixed<real_t, 1>(user, "psi_death_stepdown", internal.psi_death_stepdown, {internal.dim_psi_death_stepdown}, NA_REAL, NA_REAL);
   internal.psi_hosp_sympt = user_get_array_fixed<real_t, 1>(user, "psi_hosp_sympt", internal.psi_hosp_sympt, {internal.dim_psi_hosp_sympt}, NA_REAL, NA_REAL);
   internal.psi_ICU_hosp = user_get_array_fixed<real_t, 1>(user, "psi_ICU_hosp", internal.psi_ICU_hosp, {internal.dim_psi_ICU_hosp}, NA_REAL, NA_REAL);
-  internal.strain_transmission = user_get_array_fixed<real_t, 1>(user, "strain_transmission", internal.strain_transmission, {internal.dim_strain_transmission}, NA_REAL, NA_REAL);
   internal.vaccine_population_reluctant = user_get_array_fixed<real_t, 1>(user, "vaccine_population_reluctant", internal.vaccine_population_reluctant, {internal.dim_vaccine_population_reluctant}, NA_REAL, NA_REAL);
   internal.waning_rate = user_get_array_fixed<real_t, 1>(user, "waning_rate", internal.waning_rate, {internal.dim_waning_rate}, NA_REAL, NA_REAL);
-  internal.lambda = std::vector<real_t>(internal.dim_lambda);
-  internal.s_ij = std::vector<real_t>(internal.dim_s_ij);
+  internal.dim_lambda_1 = internal.n_groups;
+  internal.dim_lambda_2 = internal.n_strains;
+  internal.dim_s_ij_1 = internal.n_groups;
+  internal.dim_s_ij_2 = internal.n_groups;
+  internal.dim_s_ij_3 = internal.n_strains;
   internal.m = user_get_array_fixed<real_t, 2>(user, "m", internal.m, {internal.dim_m_1, internal.dim_m_2}, NA_REAL, NA_REAL);
   internal.n_vacc_classes = internal.dim_rel_susceptibility_2;
   for (int i = 1; i <= internal.dim_p_RS; ++i) {
@@ -4458,6 +4452,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_I_with_diff_trans_1 = internal.n_groups;
   internal.dim_I_with_diff_trans_2 = internal.n_vacc_classes;
   internal.dim_I_with_diff_trans_3 = internal.n_strains;
+  internal.dim_lambda = internal.dim_lambda_1 * internal.dim_lambda_2;
   internal.dim_n_com_to_R_pre_1 = internal.n_groups;
   internal.dim_n_com_to_R_pre_2 = 2;
   internal.dim_n_com_to_R_pre_3 = internal.n_vacc_classes;
@@ -4886,10 +4881,14 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_rel_p_sympt_2 = internal.n_vacc_classes;
   internal.dim_S_1 = internal.n_groups;
   internal.dim_S_2 = internal.n_vacc_classes;
+  internal.dim_s_ij = internal.dim_s_ij_1 * internal.dim_s_ij_2 * internal.dim_s_ij_3;
+  internal.dim_s_ij_12 = internal.dim_s_ij_1 * internal.dim_s_ij_2;
   internal.dim_vaccine_progression_rate_1 = internal.n_groups;
   internal.dim_vaccine_progression_rate_2 = internal.n_vacc_classes;
   internal.dim_vaccine_progression_rate_base_1 = internal.n_groups;
   internal.dim_vaccine_progression_rate_base_2 = internal.n_vacc_classes;
+  internal.lambda = std::vector<real_t>(internal.dim_lambda);
+  internal.s_ij = std::vector<real_t>(internal.dim_s_ij);
   internal.dim_aux_EE = internal.dim_aux_EE_1 * internal.dim_aux_EE_2 * internal.dim_aux_EE_3 * internal.dim_aux_EE_4;
   internal.dim_aux_EE_12 = internal.dim_aux_EE_1 * internal.dim_aux_EE_2;
   internal.dim_aux_EE_123 = internal.dim_aux_EE_1 * internal.dim_aux_EE_2 * internal.dim_aux_EE_3;

@@ -293,9 +293,7 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), model_pcr_and_serology_user = list(
         has_default = TRUE, default_value = 1L, rank = 0, min = -Inf,
-        max = Inf, integer = FALSE), n_strains = list(has_default = TRUE,
-        default_value = 1L, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), p_R_pre_1 = list(has_default = TRUE,
+        max = Inf, integer = FALSE), p_R_pre_1 = list(has_default = TRUE,
         default_value = 0.5, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), vaccine_daily_doses = list(has_default = TRUE,
         default_value = 0L, rank = 0, min = -Inf, max = Inf,

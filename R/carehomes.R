@@ -47,6 +47,10 @@ NULL
 ##'
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
+##'   
+##' @param strain_transmission Vector of relative transmissibility of each 
+##'   strain modelled. First element should be 1. Length will define the 
+##'   number of strains used in the model
 ##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -224,6 +228,7 @@ carehomes_parameters <- function(start_date, region,
                                  react_specificity = 0.99,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
+                                 strain_transmission = 1, 
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
@@ -315,7 +320,11 @@ carehomes_parameters <- function(start_date, region,
   ret$observation <- carehomes_parameters_observation(exp_noise)
 
   ret$n_groups <- ret$n_age_groups + 2L
+  
+  ## number of strains and relative transmissibility
+  strain <- carehomes_parameters_strain(strain_transmission)
 
+  ## vaccination
   vaccination <- carehomes_parameters_vaccination(ret$N_tot,
                                                   rel_susceptibility,
                                                   rel_p_sympt,
@@ -327,7 +336,7 @@ carehomes_parameters <- function(start_date, region,
   model_pcr_and_serology_user <-
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
 
-  c(ret, severity, progression, vaccination, waning,
+  c(ret, severity, progression, strain, vaccination, waning,
     model_pcr_and_serology_user)
 
 }
@@ -708,6 +717,21 @@ carehomes_parameters_vaccination <- function(N_tot,
   ret$vaccine_daily_doses <- vaccine_daily_doses
 
   ret
+}
+
+carehomes_parameters_strain <- function(strain_transmission = 1)
+{
+  if (length(strain_transmission) == 0) {
+    stop("At least one value required for 'strain_transmission'")
+  }
+  if (any(strain_transmission < 0)) {
+    stop("'strain_transmission' must have only non-negative values")
+  }
+  if (strain_transmission[1] != 1) {
+    stop("'strain_transmission[1]' must be 1")
+  }
+  list(n_strains = length(strain_transmission),
+       strain_transmission = strain_transmission)
 }
 
 

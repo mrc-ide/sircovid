@@ -871,8 +871,8 @@ hosp_transmission <- user()
 ICU_transmission <- user()
 comm_D_transmission <- user()
 strain_transmission[] <- user()
-dim(strain_transmission) <- n_strains
-n_strains <- user(1)
+dim(strain_transmission) <- user() # use length as provided by the user
+n_strains <- length(strain_transmission)
 
 ## Dimensions of the different "vectors" here vectors stand for
 ## multi-dimensional arrays
