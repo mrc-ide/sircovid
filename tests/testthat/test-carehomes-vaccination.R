@@ -1295,7 +1295,7 @@ test_that("can add vaccination to a set of model state", {
 
   tmp_orig <- mod_orig$transform_variables(state_orig)
   tmp_vacc <- mod_vacc$transform_variables(state_vacc)
-  cmp <- function(v_orig, v_vacc) {
+  cmp <- function(v_orig, v_vacc, name) {
     nd <- length(dim(v_orig))
     if (identical(dim(v_orig), dim(v_vacc))) {
       identical(v_orig, v_vacc)
@@ -1306,11 +1306,18 @@ test_that("can add vaccination to a set of model state", {
       identical(v_orig, v_vacc[, 1, , drop = FALSE]) &&
         all(v_vacc[, -1, ] == 0)
     } else if (nd == 4) {
-      identical(v_orig, v_vacc[, , 1, , drop = FALSE]) &&
-        all(v_vacc[, , -1, ] == 0)
+      if (name %in% c("R_neg", "R", "PCR_neg")) {
+        ## In these cases vaccination is second to last not last (plus
+        ## one dimension here for time)
+        identical(v_orig, v_vacc[, 1, , , drop = FALSE]) &&
+          all(v_vacc[, -1, , ] == 0)
+      } else {
+        identical(v_orig, v_vacc[, , 1, , drop = FALSE]) &&
+          all(v_vacc[, , -1, ] == 0)
+      }
     }
   }
-  expect_true(all(unlist(Map(cmp, tmp_orig, tmp_vacc))))
+  expect_true(all(unlist(Map(cmp, tmp_orig, tmp_vacc, names(tmp_orig)))))
 })
 
 
