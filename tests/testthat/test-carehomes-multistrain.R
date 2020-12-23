@@ -170,3 +170,32 @@ test_that("Second less virulent strain does not take over", {
                 mean(y$cum_infections_per_strain[2, , 101])) 
   
 })
+
+
+test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 1 / 20,
+                            strain_transmission = c(1, 1), 
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding)),
+                            strain_seed_value = n_seeded_new_strain_inf)
+  
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  
+  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
+  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+})
