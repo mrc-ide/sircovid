@@ -180,6 +180,24 @@ n_S_progress[, , 1] <- rbinom(S[i, j], p_SE[i, j, 1])
 n_S_progress[, , 2:n_strains] <-
   rbinom(S[i, j] - sum(n_S_progress[i, j, 1:(k - 1)]), p_SE[i, j, k])
 
+## Introduction of new strains. n_S_progress is arranged as:
+##
+## [age, vaccine stage, strain infected with]
+##
+## As in the model initialisation we will use the teenager category,
+## and only infect *unvaccinated* people. For now we will model only
+## movement into the second compartment as that represents our "new"
+## strain.
+strain_seed_step[] <- user()
+dim(strain_seed_step) <- user()
+strain_seed <- (if (step >= length(strain_seed_step))
+                  strain_seed_step[length(strain_seed_step)]
+                else strain_seed_step[step + 1])
+## We must never try to move more individuals from this S category
+## than are available, so need to do this with a min()
+n_S_progress[4, 1, 2] <- min(n_S_progress[4, 1, 2] + strain_seed,
+                             S[i, j] - sum(n_S_progress[i, j, ]))
+
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[j] to E[j+1] (j vaccination class)
 n_SE_next_vacc_class[, , ] <-
