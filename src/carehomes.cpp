@@ -2908,7 +2908,7 @@ public:
        int i = 4;
        int j = 1;
        int k = 2;
-       internal.n_S_progress[i - 1 + internal.dim_n_S_progress_1 * (j - 1) + internal.dim_n_S_progress_12 * (k - 1)] = std::min(internal.n_S_progress[internal.dim_n_S_progress_12 * 1 + internal.dim_n_S_progress_1 * 0 + 3] + strain_seed, S[internal.dim_S_1 * (j - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, j - 1, j, 0, internal.dim_n_S_progress_3, internal.dim_n_S_progress_1, internal.dim_n_S_progress_12));
+       internal.n_S_progress[i - 1 + internal.dim_n_S_progress_1 * (j - 1) + internal.dim_n_S_progress_12 * (k - 1)] = std::min(internal.n_S_progress[internal.dim_n_S_progress_12 * 1 + internal.dim_n_S_progress_1 * 0 + 3] + strain_seed, internal.n_S_progress[internal.dim_n_S_progress_12 * 1 + internal.dim_n_S_progress_1 * 0 + 3] + S[internal.dim_S_1 * (j - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, j - 1, j, 0, internal.dim_n_S_progress_3, internal.dim_n_S_progress_1, internal.dim_n_S_progress_12));
     }
     for (int i = 1; i <= internal.dim_n_sympt_to_triage_1; ++i) {
       for (int j = 1; j <= internal.dim_n_sympt_to_triage_2; ++j) {

@@ -111,14 +111,16 @@ test_that("Seeding of second strain generates an epidemic", {
   # check the epidemic of the second strain starts when we expect
   steps <- seq(0, 400, by = 4)
   date <- sircovid_date_as_date(steps / 4)
+  s_date <- sircovid_date(date)
+  s_date_seeding <- sircovid_date(date_seeding)
   # no cases before seeding
-  expect_true(all(y$E[, , , 2, date < date_seeding] == 0))
+  expect_true(all(y$E[, , , 2, s_date < s_date_seeding] == 0))
   # no cases on seeding day other than in 4th age group
-  expect_true(all(y$E[-4, , , 2, date == date_seeding] == 0))
+  expect_true(all(y$E[-4, , , 2, s_date == s_date_seeding] == 0))
   # some cases on seeding day in 4th age group
-  expect_true(y$E[4, 1, , 2, date == date_seeding] > 0)
+  expect_true(y$E[4, 1, , 2, s_date == s_date_seeding] > 0)
   # some cases on all days after seeding day
-  expect_true(all(colSums(y$E[, 1, , 2, date >= date_seeding]) > 0))
+  expect_true(all(colSums(y$E[, 1, , 2, s_date >= s_date_seeding]) > 0))
 })
 
 
@@ -222,3 +224,32 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf) 
   
 })
+
+
+test_that("Everyone is infected when second strain transmission is large", {
+  n_seeded_new_strain_inf <- 10
+  date_seeding <- "2020-03-07"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1e9), 
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding)),
+                            strain_seed_value = n_seeded_new_strain_inf)
+  
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  steps <- seq(0, 400, by = 4)
+  date <- sircovid_date_as_date(steps / 4)
+  s_date <- sircovid_date(date)
+  s_date_seeding <- sircovid_date(date_seeding)
+  # no cases before seeding
+  expect_true(all(y$E[, , , 2, s_date < s_date_seeding] == 0))
+  # the +2 is because we need seeded individuals to get out of the first and 
+  # second E compartments before they can go on to infect others
+  expect_true(all(y$S[, 1, s_date > (s_date_seeding + 2)] == 0))
+})
+
