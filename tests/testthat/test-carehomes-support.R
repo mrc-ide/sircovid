@@ -96,7 +96,10 @@ test_that("carehomes_parameters returns a list of parameters", {
     p$vaccine_progression_rate_base)
   expect_identical(p[names(vaccination)], vaccination)
   
-  strain <- carehomes_parameters_strain(p$strain_transmission)
+  strain <- carehomes_parameters_strain(p$strain_transmission,
+                                        strain_seed_date = NULL,
+                                        strain_seed_value = NULL, 
+                                        dt = 1/4)
 
   waning <- carehomes_parameters_waning(0)
   expect_identical(p[names(waning)], waning)
