@@ -308,6 +308,10 @@ n_PCR_pos[, , , ] <- rbinom(PCR_pos[i, j, k, l], p_PCR_pos)
 initial(cum_infections) <- 0
 update(cum_infections) <- cum_infections + sum(n_S_progress)
 
+initial(cum_infections_per_strain[]) <- 0
+update(cum_infections_per_strain[]) <-
+  cum_infections_per_strain[i] + sum(n_S_progress[, , i])
+dim(cum_infections_per_strain) <- n_strains
 
 ## Work out the new S (i for age, j for vaccination status)
 new_S[, ] <- S[i, j] + sum(n_RS[i, j, ]) - sum(n_S_progress[i, j, ]) -

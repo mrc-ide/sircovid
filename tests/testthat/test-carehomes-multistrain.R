@@ -120,3 +120,53 @@ test_that("Seeding of second strain generates an epidemic", {
   # some cases on all days after seeding day
   expect_true(all(colSums(y$E[, 1, , 2, date >= date_seeding]) > 0))
 })
+
+
+test_that("Second more virulent strain takes over", {
+  np <- 10
+  n_seeded_new_strain_inf <- 10
+  start_date <- sircovid_date("2020-02-07")
+  date_seeding <- start_date # seed both strains on same day
+  p <- carehomes_parameters(start_date, "england",
+                            strain_transmission = c(1, 10), 
+                            strain_seed_date = c(date_seeding, date_seeding),
+                            strain_seed_value = n_seeded_new_strain_inf)
+  
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  # cumulative infections with 2nd strain larger than with 1st strain
+  # (average over 10 runs)
+  expect_true(mean(y$cum_infections_per_strain[1, , 101]) <
+                mean(y$cum_infections_per_strain[2, , 101])) 
+  
+})
+
+
+test_that("Second less virulent strain does not take over", {
+  np <- 10
+  n_seeded_new_strain_inf <- 10
+  start_date <- sircovid_date("2020-02-07")
+  date_seeding <- start_date # seed both strains on same day
+  p <- carehomes_parameters(start_date, "england",
+                            strain_transmission = c(1, 0.1), 
+                            strain_seed_date = c(date_seeding, date_seeding),
+                            strain_seed_value = n_seeded_new_strain_inf)
+  
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  # cumulative infections with 2nd strain smaller than with 1st strain
+  # (average over 10 runs)
+  expect_true(mean(y$cum_infections_per_strain[1, , 101]) >
+                mean(y$cum_infections_per_strain[2, , 101])) 
+  
+})
