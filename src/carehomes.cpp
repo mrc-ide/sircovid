@@ -123,7 +123,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(s_stepdown_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_sympt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_triage, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_population_reluctant, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1229,7 +1229,7 @@ public:
     int dim_s_ij_12;
     int dim_s_ij_2;
     int dim_s_ij_3;
-    int dim_seed_step;
+    int dim_strain_seed_step;
     int dim_strain_transmission;
     int dim_vaccine_n_candidates;
     int dim_vaccine_population_possible;
@@ -1530,7 +1530,7 @@ public:
     int s_stepdown_R;
     int s_sympt;
     int s_triage;
-    std::vector<real_t> seed_step;
+    std::vector<real_t> strain_seed_step;
     std::vector<real_t> strain_transmission;
     real_t vaccine_daily_doses;
     std::vector<real_t> vaccine_n_candidates;
@@ -1658,7 +1658,7 @@ public:
     real_t p_death_stepdown = (step >= internal.dim_p_death_stepdown_step ? internal.p_death_stepdown_step[internal.dim_p_death_stepdown_step - 1] : internal.p_death_stepdown_step[step + 1 - 1]);
     real_t p_hosp_sympt = (step >= internal.dim_p_hosp_sympt_step ? internal.p_hosp_sympt_step[internal.dim_p_hosp_sympt_step - 1] : internal.p_hosp_sympt_step[step + 1 - 1]);
     real_t p_ICU_hosp = (step >= internal.dim_p_ICU_hosp_step ? internal.p_ICU_hosp_step[internal.dim_p_ICU_hosp_step - 1] : internal.p_ICU_hosp_step[step + 1 - 1]);
-    real_t seed = (step >= internal.dim_seed_step ? internal.seed_step[internal.dim_seed_step - 1] : internal.seed_step[step + 1 - 1]);
+    real_t strain_seed = ((step >= internal.dim_strain_seed_step ? internal.strain_seed_step[internal.dim_strain_seed_step - 1] : internal.strain_seed_step[step + 1 - 1]));
     for (int i = 1; i <= internal.dim_prob_admit_conf; ++i) {
       internal.prob_admit_conf[i - 1] = p_admit_conf * internal.psi_admit_conf[i - 1];
     }
@@ -2903,7 +2903,7 @@ public:
        int i = 4;
        int j = 1;
        int k = 2;
-       internal.n_S_progress[i - 1 + internal.dim_n_S_progress_1 * (j - 1) + internal.dim_n_S_progress_12 * (k - 1)] = std::min(internal.n_S_progress[internal.dim_n_S_progress_12 * 1 + internal.dim_n_S_progress_1 * 0 + 3] + seed, S[internal.dim_S_1 * (j - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, j - 1, j, 0, internal.dim_n_S_progress_3, internal.dim_n_S_progress_1, internal.dim_n_S_progress_12));
+       internal.n_S_progress[i - 1 + internal.dim_n_S_progress_1 * (j - 1) + internal.dim_n_S_progress_12 * (k - 1)] = std::min(internal.n_S_progress[internal.dim_n_S_progress_12 * 1 + internal.dim_n_S_progress_1 * 0 + 3] + strain_seed, S[internal.dim_S_1 * (j - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, j - 1, j, 0, internal.dim_n_S_progress_3, internal.dim_n_S_progress_1, internal.dim_n_S_progress_12));
     }
     for (int i = 1; i <= internal.dim_n_sympt_to_triage_1; ++i) {
       for (int j = 1; j <= internal.dim_n_sympt_to_triage_2; ++j) {
@@ -4202,9 +4202,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_stepdown_R = user_get_scalar<int>(user, "s_stepdown_R", internal.s_stepdown_R, NA_REAL, NA_REAL);
   internal.s_sympt = user_get_scalar<int>(user, "s_sympt", internal.s_sympt, NA_REAL, NA_REAL);
   internal.s_triage = user_get_scalar<int>(user, "s_triage", internal.s_triage, NA_REAL, NA_REAL);
-  std::array <int, 1> dim_seed_step;
-  internal.seed_step = user_get_array_variable<real_t, 1>(user, "seed_step", internal.seed_step, dim_seed_step, NA_REAL, NA_REAL);
-  internal.dim_seed_step = internal.seed_step.size();
+  std::array <int, 1> dim_strain_seed_step;
+  internal.strain_seed_step = user_get_array_variable<real_t, 1>(user, "strain_seed_step", internal.strain_seed_step, dim_strain_seed_step, NA_REAL, NA_REAL);
+  internal.dim_strain_seed_step = internal.strain_seed_step.size();
   std::array <int, 1> dim_strain_transmission;
   internal.strain_transmission = user_get_array_variable<real_t, 1>(user, "strain_transmission", internal.strain_transmission, dim_strain_transmission, NA_REAL, NA_REAL);
   internal.dim_strain_transmission = internal.strain_transmission.size();
