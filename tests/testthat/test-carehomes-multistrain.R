@@ -20,6 +20,10 @@ test_that("carehomes_parameters_strain works as expected", {
     carehomes_parameters_strain(rep(0.5, 1), NULL, NULL, 1),
     "'strain_transmission[1]' must be 1",
     fixed = TRUE)
+  expect_error(
+    carehomes_parameters_strain(rep(0.5, 3), NULL, NULL, 1),
+    "Only 1 or 2 strains valid",
+    fixed = TRUE)
   expect_equal(
     carehomes_parameters_strain(1, NULL, NULL, 1),
     list(n_strains = 1,
@@ -35,6 +39,25 @@ test_that("carehomes_parameters_strain works as expected", {
     list(n_strains = 2,
          strain_transmission = c(1, 2),
          strain_seed_step = 0))
+})
+
+
+test_that("Prevent impossible seedings", {
+  expect_error(
+    carehomes_parameters_strain(c(1, 1), NULL, 1, 0.25),
+    "As 'strain_seed_date' is NULL, expected 'strain_seed_value' to be NULL")
+  expect_error(
+    carehomes_parameters_strain(1, c(10, 20), 1, 0.25),
+    "Can't use 'strain_seed_date' if only using one strain")
+  expect_error(
+    carehomes_parameters_strain(c(1, 1), c(10, 20, 30), 1, 0.25),
+    "'strain_seed_date', if given, must be exactly two elements")
+  expect_error(
+    carehomes_parameters_strain(c(1, 1), c(10, 20), c(1, 1), 0.25),
+    "'strain_seed_value' must be a scalar if 'strain_seed_date' is used")
+  expect_error(
+    carehomes_parameters_strain(c(1, 1), c(10, 20), NULL, 0.25),
+    "'strain_seed_value' must be a scalar if 'strain_seed_date' is used")
 })
 
 

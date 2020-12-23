@@ -761,7 +761,7 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     strain_seed_step <- 0
   } else {
     if (length(strain_transmission) == 1L) {
-      stop("Can't use strain_seed if only using one strain")
+      stop("Can't use 'strain_seed_date' if only using one strain")
     }
     if (length(strain_seed_date) != 2L) {
       stop("'strain_seed_date', if given, must be exactly two elements")

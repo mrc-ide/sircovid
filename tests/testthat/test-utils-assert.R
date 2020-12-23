@@ -21,3 +21,12 @@ test_that("assert_increasing", {
   expect_error(assert_increasing(rev(y), strict = FALSE),
                "must be increasing")
 })
+
+
+test_that("assert_integer", {
+  expect_silent(assert_integer(1L))
+  expect_silent(assert_integer(1.0))
+  value <- c(1.5, 1)
+  expect_error(assert_integer(value),
+               "'value' must be an integer")
+})
