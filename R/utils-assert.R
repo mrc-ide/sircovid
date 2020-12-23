@@ -20,3 +20,11 @@ assert_increasing <- function(x, strict = TRUE, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
+
+
+assert_integer <- function(x, name = deparse(substitute(x))) {
+  if (!all(is_integer(x))) {
+    stop(sprintf("'%s' must be an integer", name), call. = FALSE)
+  }
+  invisible(x)
+}

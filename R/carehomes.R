@@ -52,6 +52,20 @@ NULL
 ##'   strain modelled. First element should be 1. Length will define the 
 ##'   number of strains used in the model
 ##'
+##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
+##'   exactly two [sircovid::sircovid_date] values corresponding to
+##'   the start and stop dates of seeding (inclusive). For example, to
+##'   seed for a single day, these two values should have the same
+##'   date
+##'
+##' @param strain_seed_value Either `NULL` (no seeding) or a single
+##'   integer value represending the *daily* rate of seeding. Because
+##'   each day is dividied into `1 / dt` steps, this value will be
+##'   spread out fairly evenly across the steps that occur within each
+##'   date. Seeding is not stochastic; this many individuals *will*
+##'   become infected with the new strain, unless the pool of
+##'   susceptibles has been exhausted.
+##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
@@ -228,7 +242,9 @@ carehomes_parameters <- function(start_date, region,
                                  react_specificity = 0.99,
                                  react_sensitivity = 0.99,
                                  prop_noncovid_sympt = 0.01,
-                                 strain_transmission = 1, 
+                                 strain_transmission = 1,
+                                 strain_seed_date = NULL,
+                                 strain_seed_value = NULL,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
@@ -322,7 +338,8 @@ carehomes_parameters <- function(start_date, region,
   ret$n_groups <- ret$n_age_groups + 2L
   
   ## number of strains and relative transmissibility
-  strain <- carehomes_parameters_strain(strain_transmission)
+  strain <- carehomes_parameters_strain(
+    strain_transmission, strain_seed_date, strain_seed_value, ret$dt)
 
   ## vaccination
   vaccination <- carehomes_parameters_vaccination(ret$N_tot,
@@ -719,19 +736,54 @@ carehomes_parameters_vaccination <- function(N_tot,
   ret
 }
 
-carehomes_parameters_strain <- function(strain_transmission = 1)
-{
+carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
+                                        strain_seed_value, dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
+  }
+  if (length(strain_transmission) > 2) {
+    stop(paste(
+      "Only 1 or 2 strains valid ('strain_transmission' too long)'.",
+      "See 'n_S_progress' in the odin code to fix this"))
   }
   if (any(strain_transmission < 0)) {
     stop("'strain_transmission' must have only non-negative values")
   }
-  if (strain_transmission[1] != 1) {
+  if (strain_transmission[[1]] != 1) {
     stop("'strain_transmission[1]' must be 1")
   }
+
+  if (is.null(strain_seed_date)) {
+    if (!is.null(strain_seed_value)) {
+      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_value'",
+                 "to be NULL"))
+    }
+    strain_seed_step <- 0
+  } else {
+    if (length(strain_transmission) == 1L) {
+      stop("Can't use strain_seed if only using one strain")
+    }
+    if (length(strain_seed_date) != 2L) {
+      stop("'strain_seed_date', if given, must be exactly two elements")
+    }
+    assert_sircovid_date(strain_seed_date)
+    assert_increasing(strain_seed_date, strict = FALSE)
+
+    if (length(strain_seed_value) != 1L) {
+      stop("'strain_seed_value' must be a scalar if 'strain_seed_date' is used")
+    }
+    assert_integer(strain_seed_value)
+
+    ## The + 1 here prevents the start of the next day having the
+    ## seeding value
+    strain_seed_step <- numeric((strain_seed_date[[2]] + 1) / dt)
+    i <- (strain_seed_date[[1]] / dt):((strain_seed_date[[2]] + 1) / dt - 1)
+    strain_seed_step[i] <- spread_integer(strain_seed_value, 1 / dt)
+  }
+
   list(n_strains = length(strain_transmission),
-       strain_transmission = strain_transmission)
+       strain_transmission = strain_transmission,
+       strain_seed_step = strain_seed_step)
 }
 
 

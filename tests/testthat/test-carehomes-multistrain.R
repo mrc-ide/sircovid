@@ -2,36 +2,61 @@ context("carehomes (multistrain)")
 
 test_that("carehomes_parameters_strain works as expected", {
   expect_error(
-    carehomes_parameters_strain(NULL),
+    carehomes_parameters_strain(NULL, NULL, NULL, 1),
     "At least one value required for 'strain_transmission'")
   expect_error(
-    carehomes_parameters_strain(-1),
+    carehomes_parameters_strain(-1, NULL, NULL, 1),
     "'strain_transmission' must have only non-negative values",
     fixed = TRUE)
   expect_error(
-    carehomes_parameters_strain(c(1, -1)),
+    carehomes_parameters_strain(c(1, -1), NULL, NULL, 1),
     "'strain_transmission' must have only non-negative values",
     fixed = TRUE)
   expect_error(
-    carehomes_parameters_strain(rep(0.5, 2)),
+    carehomes_parameters_strain(rep(0.5, 2), NULL, NULL, 1),
     "'strain_transmission[1]' must be 1",
     fixed = TRUE)
   expect_error(
-    carehomes_parameters_strain(rep(0.5, 1)),
+    carehomes_parameters_strain(rep(0.5, 1), NULL, NULL, 1),
     "'strain_transmission[1]' must be 1",
     fixed = TRUE)
   expect_equal(
-    carehomes_parameters_strain(1),
+    carehomes_parameters_strain(1, NULL, NULL, 1),
     list(n_strains = 1,
-         strain_transmission = 1))
+         strain_transmission = 1,
+         strain_seed_step = 0))
   expect_equal(
-    carehomes_parameters_strain(c(1, 1)),
+    carehomes_parameters_strain(c(1, 1), NULL, NULL, 1),
     list(n_strains = 2,
-         strain_transmission = c(1, 1)))
+         strain_transmission = c(1, 1),
+         strain_seed_step = 0))
   expect_equal(
-    carehomes_parameters_strain(c(1, 2)),
+    carehomes_parameters_strain(c(1, 2), NULL, NULL, 1),
     list(n_strains = 2,
-         strain_transmission = c(1, 2)))
+         strain_transmission = c(1, 2),
+         strain_seed_step = 0))
+})
+
+
+test_that("Can seed with one window", {
+  date <- c("2020-03-01", "2020-03-01")
+  value <- 100
+  p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), value, 1 / 4)
+  expect_equal(sum(p$strain_seed_step), 100)
+  expect_equal(tail(p$strain_seed_step, 6), c(0, 25, 25, 25, 25, 0))
+  expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
+               as.Date("2020-03-02"))
+})
+
+
+test_that("Can seed with one window", {
+  date <- c("2020-03-01", "2020-03-10")
+  value <- 100
+  p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), value, 1 / 4)
+  expect_equal(sum(p$strain_seed_step), 100 * 10)
+  expect_equal(tail(p$strain_seed_step, 6), c(25, 25, 25, 25, 25, 0))
+  expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
+               as.Date("2020-03-11"))
 })
 
 
