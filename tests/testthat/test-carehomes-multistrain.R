@@ -106,7 +106,7 @@ test_that("Seeding of second strain generates an epidemic", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
   # did the seeded cases go on to infect other people?
-  expect_true(sum(y$I_asympt[, , , 2, ]) > n_seeded_new_strain_inf) 
+  expect_true(y$cum_infections_per_strain[2, 101] > n_seeded_new_strain_inf) 
   
   # check the epidemic of the second strain starts when we expect
   steps <- seq(0, 400, by = 4)
@@ -198,4 +198,27 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
   expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
   expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+})
+
+
+test_that("No infection after seeding of second strain with 0 transmission", {
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 0), 
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding)),
+                            strain_seed_value = n_seeded_new_strain_inf)
+  
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  
+  # expect the seeded cases did not infect any other people
+  expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf) 
+  
 })
