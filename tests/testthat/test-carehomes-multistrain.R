@@ -253,3 +253,41 @@ test_that("Everyone is infected when second strain transmission is large", {
   expect_true(all(y$S[, 1, s_date > (s_date_seeding + 2)] == 0))
 })
 
+
+test_that("No infection with either strain with perfect vaccine", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", 
+                            strain_transmission = c(1, 1),
+                            rel_susceptibility = c(1, 0),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            waning_rate = 1 / 20)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  
+  state <- carehomes_initial(info, 1, p)$state
+  
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_S[, 2]] <- state[index_S[, 1]]
+  state[index_S[, 1]] <- 0
+  
+  index_E <- array(info$index$E, info$dim$E)
+  state[index_E[4, 1, 1, 2]] <- 10 # seed infections with second strain
+  
+  mod$set_state(state)
+  mod$set_index(integer(0))
+  y <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  
+  ## Noone moves into unvaccinated
+  ## except in the group where infections because of waning immunity
+  expect_true(all(y$S[-4, 1, ] == 0))
+  
+  ## Noone changes compartment within the vaccinated individuals
+  expect_true(all(y$S[, 2, ] == y$S[, 2, 1]))
+  
+  ## Noone gets infected with either strain
+  expect_true(all(y$cum_infections_per_strain == 0))
+  
+})
