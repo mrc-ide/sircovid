@@ -176,16 +176,9 @@ prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 ## new infections
 
 # Compute the new infections with multiple strains using nested binomials
-#n_S_progress[, , 1] <- rbinom(S[i, j], p_SE[i, j, 1])
-#n_S_progress[, , 2:n_strains] <-
-#  rbinom(S[i, j] - sum(n_S_progress[i, j, 1:(k - 1)]), p_SE[i, j, k])
-
-# the naive code: 
-
-n_S_progress[, , ] <- rbinom(S[i, j], p_SE[i, j, k])
-#n_S_progress[, , 2:n_strains] <-
-#  rbinom(S[i, j] - sum(n_S_progress[i, j, 1:(k - 1)]), p_SE[i, j, k])
-
+n_S_progress[, , 1] <- rbinom(S[i, j], p_SE[i, j, 1])
+n_S_progress[, , 2:n_strains] <-
+ rbinom(S[i, j] - sum(n_S_progress[i, j, 1:(k - 1)]), p_SE[i, j, k])
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
@@ -900,21 +893,6 @@ beta <- if (step >= length(beta_step))
 ## Useful for debugging
 initial(beta_out) <- beta_step[1]
 update(beta_out) <- beta
-
-############################
-############################
-## Useful for debugging
-initial(lambda_out[, ]) <- 0
-update(lambda_out[, ]) <- lambda[i, j]
-dim(lambda_out) <- c(n_groups, n_strains)
-initial(n_S_progress_out[, , ]) <- 0
-update(n_S_progress_out[, , ]) <- n_S_progress[i, j, k]
-dim(n_S_progress_out) <- c(n_groups, n_vacc_classes, n_strains)
-initial(p_SE_out[, , ]) <- 0
-update(p_SE_out[, , ]) <- p_SE[i, j, k]
-dim(p_SE_out) <- c(n_groups, n_vacc_classes, n_strains)
-############################
-############################
 
 m[, ] <- user()
 hosp_transmission <- user()

@@ -93,11 +93,11 @@ test_that("Seeding of second strain generates an epidemic", {
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1), 
+                            strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding)),
                             strain_seed_value = n_seeded_new_strain_inf)
-  
+
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -106,8 +106,8 @@ test_that("Seeding of second strain generates an epidemic", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
   # did the seeded cases go on to infect other people?
-  expect_true(y$cum_infections_per_strain[2, 101] > n_seeded_new_strain_inf) 
-  
+  expect_true(y$cum_infections_per_strain[2, 101] > n_seeded_new_strain_inf)
+
   # check the epidemic of the second strain starts when we expect
   steps <- seq(0, 400, by = 4)
   date <- sircovid_date_as_date(steps / 4)
@@ -130,10 +130,10 @@ test_that("Second more virulent strain takes over", {
   start_date <- sircovid_date("2020-02-07")
   date_seeding <- start_date # seed both strains on same day
   p <- carehomes_parameters(start_date, "england",
-                            strain_transmission = c(1, 10), 
+                            strain_transmission = c(1, 10),
                             strain_seed_date = c(date_seeding, date_seeding),
                             strain_seed_value = n_seeded_new_strain_inf)
-  
+
   mod <- carehomes$new(p, 0, np, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -144,8 +144,8 @@ test_that("Second more virulent strain takes over", {
   # cumulative infections with 2nd strain larger than with 1st strain
   # (average over 10 runs)
   expect_true(mean(y$cum_infections_per_strain[1, , 101]) <
-                mean(y$cum_infections_per_strain[2, , 101])) 
-  
+                mean(y$cum_infections_per_strain[2, , 101]))
+
 })
 
 
@@ -155,10 +155,10 @@ test_that("Second less virulent strain does not take over", {
   start_date <- sircovid_date("2020-02-07")
   date_seeding <- start_date # seed both strains on same day
   p <- carehomes_parameters(start_date, "england",
-                            strain_transmission = c(1, 0.1), 
+                            strain_transmission = c(1, 0.1),
                             strain_seed_date = c(date_seeding, date_seeding),
                             strain_seed_value = n_seeded_new_strain_inf)
-  
+
   mod <- carehomes$new(p, 0, np, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -169,8 +169,8 @@ test_that("Second less virulent strain does not take over", {
   # cumulative infections with 2nd strain smaller than with 1st strain
   # (average over 10 runs)
   expect_true(mean(y$cum_infections_per_strain[1, , 101]) >
-                mean(y$cum_infections_per_strain[2, , 101])) 
-  
+                mean(y$cum_infections_per_strain[2, , 101]))
+
 })
 
 
@@ -182,11 +182,11 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
   date_seeding <- "2020-03-07"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             waning_rate = 1 / 20,
-                            strain_transmission = c(1, 1), 
+                            strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding)),
                             strain_seed_value = n_seeded_new_strain_inf)
-  
+
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -194,7 +194,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  
+
   expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
   expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
@@ -207,11 +207,11 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0), 
+                            strain_transmission = c(1, 0),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding)),
                             strain_seed_value = n_seeded_new_strain_inf)
-  
+
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -219,10 +219,10 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  
+
   # expect the seeded cases did not infect any other people
-  expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf) 
-  
+  expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf)
+
 })
 
 
@@ -230,11 +230,11 @@ test_that("Everyone is infected when second strain transmission is large", {
   n_seeded_new_strain_inf <- 10
   date_seeding <- "2020-03-07"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1e9), 
+                            strain_transmission = c(1, 1e9),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding)),
                             strain_seed_value = n_seeded_new_strain_inf)
-  
+
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -248,7 +248,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   s_date_seeding <- sircovid_date(date_seeding)
   # no cases before seeding
   expect_true(all(y$E[, , , 2, s_date < s_date_seeding] == 0))
-  # the +2 is because we need seeded individuals to get out of the first and 
+  # the +2 is because we need seeded individuals to get out of the first and
   # second E compartments before they can go on to infect others
   expect_true(all(y$S[, 1, s_date > (s_date_seeding + 2)] == 0))
 })
@@ -257,7 +257,7 @@ test_that("Everyone is infected when second strain transmission is large", {
 test_that("No infection with either strain with perfect vaccine", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", 
+  p <- carehomes_parameters(0, "england",
                             strain_transmission = c(1, 1),
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
@@ -265,135 +265,120 @@ test_that("No infection with either strain with perfect vaccine", {
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  
+
   state <- carehomes_initial(info, 1, p)$state
-  
+
   index_S <- array(info$index$S, info$dim$S)
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
-  
+
   index_E <- array(info$index$E, info$dim$E)
   state[index_E[4, 1, 1, 2]] <- 10 # seed infections with second strain
-  
+
   mod$set_state(state)
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  
+
   ## Noone moves into unvaccinated
   ## except in the group where infections because of waning immunity
   expect_true(all(y$S[-4, 1, ] == 0))
-  
+
   ## Noone changes compartment within the vaccinated individuals
   expect_true(all(y$S[, 2, ] == y$S[, 2, 1]))
-  
+
   ## Noone gets infected with either strain
   expect_true(all(y$cum_infections_per_strain == 0))
-  
+
 })
 
 
-test_that("Swapping strains does not affect results", {
+test_that("different strains are equivalent", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1)) 
-  
-  # force all infections to be asymptomatic to narrow down the issue
-  p$p_sympt <- rep(0, 19)
-  
-  # stop progression out of I_asympt and E for debugging
-  p$gamma_asympt <- 0
-  p$gamma_E <- 0
-  
+                            strain_transmission = c(1, 1))
+  np <- 10
+  mod <- carehomes$new(p, 0, np, seed = 1L, n_threads = 10)
+  end <- sircovid_date("2020-07-31") / p$dt
+  end <- sircovid_date("2020-03-31") / p$dt
+
+  initial <- carehomes_initial(mod$info(), 1, p)
+  y <- mod$transform_variables(initial$state)
+  y$I_asympt <- y$I_asympt[, , , 2:1]
+  y$PCR_pos <- y$PCR_pos[, , , 2:1, drop = FALSE]
+  y$R_pre <- y$R_pre[, , , 2:1, drop = FALSE]
+
+  initial2_state <- unlist(y)
+
+  mod$set_state(initial$state, initial$step)
+  index <- mod$info()$index
+  index_run <- c(icu = index[["I_ICU_tot"]],
+                 general = index[["general_tot"]],
+                 deaths_comm = index[["D_comm_tot"]],
+                 deaths_hosp = index[["D_hosp_tot"]],
+                 admitted = index[["cum_admit_conf"]],
+                 new = index[["cum_new_conf"]],
+                 sero_pos = index[["sero_pos"]],
+                 sympt_cases = index[["cum_sympt_cases"]],
+                 sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
+                 react_pos = index[["react_pos"]],
+                 infections = index[["cum_infections"]])
+
+  steps <- seq(initial$step, end, by = 4)
+  mod$set_index(index_run)
+  res1 <- dust::dust_iterate(mod, steps, index_run)
+
+  mod2 <- carehomes$new(p, 0, np, seed = 1L, n_threads = 10)
+  mod2$set_state(initial2_state, initial$step)
+  mod2$set_index(index_run)
+  res2 <- dust::dust_iterate(mod2, steps, index_run)
+
+  expect_equal(res1, res2)
+})
+
+
+test_that("Swapping strains gives identical results with different index", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1))
+
   np <- 1
-  mod <- carehomes$new(p, 0, np, seed = 1L) 
-  end <- sircovid_date("2020-02-12") / p$dt  
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  end <- sircovid_date("2020-05-1") / p$dt
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
   y$I_asympt <- y$I_asympt[, , , 2:1, drop = FALSE]
+  y$PCR_pos <- y$PCR_pos[, , , 2:1, drop = FALSE]
+  y$R_pre <- y$R_pre[, , , 2:1, drop = FALSE]
+
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
   index <- mod$info()$index
-  # index_run <- c(icu = index[["I_ICU_tot"]],
-  #                general = index[["general_tot"]],
-  #                deaths_comm = index[["D_comm_tot"]],
-  #                deaths_hosp = index[["D_hosp_tot"]],
-  #                admitted = index[["cum_admit_conf"]],
-  #                new = index[["cum_new_conf"]],
-  #                sero_pos = index[["sero_pos"]],
-  #                sympt_cases = index[["cum_sympt_cases"]],
-  #                sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
-  #                react_pos = index[["react_pos"]],
-  #                infections = index[["cum_infections"]])
+
   steps <- seq(initial$step, end, by = 1)
-  #mod$set_index(index_run)
-  #res <- dust::dust_iterate(mod, steps, index_run)
-  res <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, steps)))
+
+  res1 <- drop(dust::dust_iterate(mod, steps))
+
   mod2 <- carehomes$new(p, 0, np, seed = 1L)
   mod2$set_state(initial2_state, initial$step)
-  #mod2$set_index(index_run)
-  ### debug:
-  res2 <- mod2$transform_variables(
-    drop(dust::dust_iterate(mod2, steps)))
-  
-  # the force of infection just after initial step should be reversed
-  #expect_true(all(res$lambda_out[, 2:1, 1] == res2$lambda_out[, , 1]))
-  #expect_true(all(res$lambda_out[, 2:1, 2] == res2$lambda_out[, , 2]))
-  #expect_true(all(res$lambda_out[, 2:1, 3] == res2$lambda_out[, , 3]))
-  #expect_true(all(res$lambda_out[, 2:1, 4] == res2$lambda_out[, , 4]))
-  expect_true(all(res$lambda_out[, 2:1, ] == res2$lambda_out[, , ]))
-  
-  expect_true(all(res$n_S_progress_out[, 1, 2:1, 1] == res2$n_S_progress_out[, 1, , 1]))
-  expect_true(all(res$n_S_progress_out[, 1, 2:1, 2] == res2$n_S_progress_out[, 1, , 2]))
-  expect_true(all(res$n_S_progress_out[, 1, 2:1, 3] == res2$n_S_progress_out[, 1, , 3]))
-  #expect_true(all(res$n_S_progress_out[, 1, 2:1, 4] == res2$n_S_progress_out[, 1, , 4]))
-  
-  #expect_true(all(res$p_SE_out[, 1, 2:1, 1] == res2$p_SE_out[, 1, , 1]))
-  #expect_true(all(res$p_SE_out[, 1, 2:1, 2] == res2$p_SE_out[, 1, , 2]))
-  #expect_true(all(res$p_SE_out[, 1, 2:1, 3] == res2$p_SE_out[, 1, , 3]))
-  #expect_true(all(res$p_SE_out[, 1, 2:1, 4] == res2$p_SE_out[, 1, , 4]))
-  expect_true(all(res$p_SE_out[, 1, 2:1, ] == res2$p_SE_out[, 1, , ]))
-  
-  # the number of S individuals is the same
-  expect_true(all(res$S[, 1, 1] == res2$S[, 1, 1]))
-  expect_true(all(res$S[, 1, 2] == res2$S[, 1, 2]))
-  expect_true(all(res$S[, 1, 3] == res2$S[, 1, 3]))
-  #expect_true(all(res$S[, 1, 4] == res2$S[, 1, 4]))
-  
-  # the number of exposed individuals is reversed
-  expect_true(all(res$E[, 1, 1, 2:1, 1] == res2$E[, 1, 1, , 1]))
-  expect_true(all(res$E[, 1, 1, 2:1, 2] == res2$E[, 1, 1, , 2]))
-  expect_true(all(res$E[, 1, 1, 2:1, 3] == res2$E[, 1, 1, , 3]))
-  #expect_true(all(res$E[, 1, 1, 2:1, 4] == res2$E[, 1, 1, , 4]))
-  
-  # the number of asymptomatic infections is reversed
-  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 1] == res2$I_asympt[, 1, 1, , 1]))
-  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 2] == res2$I_asympt[, 1, 1, , 2]))
-  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 3] == res2$I_asympt[, 1, 1, , 3]))
-  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 4] == res2$I_asympt[, 1, 1, , 4]))
-  expect_true(all(res$I_asympt[, 1, 1, 2:1, ] == res2$I_asympt[, 1, 1, , ]))
-  
-  # the number of symptomatic infections is reversed
-  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 1] == res2$I_sympt[, 1, 1, , 1]))
-  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 2] == res2$I_sympt[, 1, 1, , 2]))
-  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 3] == res2$I_sympt[, 1, 1, , 3]))
-  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 4] == res2$I_sympt[, 1, 1, , 4]))
-  
-  # the number of cumulative infections is reversed just after initial step
-  expect_true(all(res$cum_infections_per_strain[2:1, 1] == res2$cum_infections_per_strain[, 1]))
-  expect_true(all(res$cum_infections_per_strain[2:1, 2] == res2$cum_infections_per_strain[, 2]))
-  expect_true(all(res$cum_infections_per_strain[2:1, 3] == res2$cum_infections_per_strain[, 3]))
-  #expect_true(all(res$cum_infections_per_strain[2:1, 4] == res2$cum_infections_per_strain[, 4]))
-  
-  res$cum_infections_per_strain
-  res2$cum_infections_per_strain
-  
-  
-  ###
-  res2 <- dust::dust_iterate(mod2, steps, index_run)
-  inc1 <- diff(t(res["infections", , ]))
-  inc2 <- diff(t(res2["infections", , ]))
-  matplot(inc1, col = "#00000022", lty = 1, lwd = 0.5, type = "l")
-  matlines(inc2, col = "#ff000022", lty = 1, lwd = 0.5, type = "l")  
-  
+  res2 <- drop(dust::dust_iterate(mod2, steps))
+
+  z1 <- mod$transform_variables(res1)
+  z2 <- mod2$transform_variables(res2)
+
+  z2$cum_infections_per_strain <-
+    z2$cum_infections_per_strain[2:1, , drop = FALSE]
+  for (nm in c("R_neg", "R", "PCR_neg")) {
+    z2[[nm]] <- z2[[nm]][, , 2:1, , drop = FALSE]
+  }
+  v5 <- c("E", "I_asympt", "I_sympt", "PCR_pre", "PCR_pos", "R_pre",
+          "R_pos", "I_comm_D", "I_triage_unconf", "I_triage_conf",
+          "I_hosp_R_unconf", "I_hosp_R_conf", "I_hosp_D_unconf",
+          "I_hosp_D_conf", "I_ICU_S_R_unconf", "I_ICU_S_R_conf",
+          "I_ICU_S_D_unconf", "I_ICU_S_D_conf", "I_ICU_D_unconf",
+          "I_ICU_D_conf", "R_stepdown_R_unconf", "R_stepdown_R_conf",
+          "R_stepdown_D_unconf", "R_stepdown_D_conf")
+  for (nm in v5) {
+    z2[[nm]] <- z2[[nm]][, , , 2:1, , drop = FALSE]
+  }
+
+  expect_identical(z1, z2)
 })
