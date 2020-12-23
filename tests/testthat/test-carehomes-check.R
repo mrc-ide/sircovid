@@ -769,12 +769,15 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
                  y$I_ICU_S_D_conf[, 1, , , -1], y$I_triage_conf[, 2, , , -n])
 
   ## Check stepdown_R
-  expect_equal(y$R_stepdown_R_conf[, 2, , , 2], y$R_stepdown_R_unconf[, 1, , , 1])
-  expect_equal(y$R_stepdown_R_conf[, 1, , , -1], y$I_ICU_S_R_conf[, 2, , , -n])
+  expect_equal(y$R_stepdown_R_conf[, 2, , , 2],
+               y$R_stepdown_R_unconf[, 1, , , 1])
+  expect_equal(y$R_stepdown_R_conf[, 1, , , -1],
+               y$I_ICU_S_R_conf[, 2, , , -n])
   expect_true(all(y$R_stepdown_R_unconf[, 2, , , ] == 0))
 
   ## Check stepdown_D
-  expect_equal(y$R_stepdown_D_conf[, 2, , , 2], y$R_stepdown_D_unconf[, 1, , , 1])
+  expect_equal(y$R_stepdown_D_conf[, 2, , , 2],
+               y$R_stepdown_D_unconf[, 1, , , 1])
   expect_equal(y$R_stepdown_D_conf[, 1, , , -1], y$I_ICU_S_D_conf[, 2, , , -n])
   expect_true(all(y$R_stepdown_D_unconf[, 2, , , ] == 0))
 

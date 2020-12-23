@@ -47,9 +47,9 @@ NULL
 ##'
 ##' @param prop_noncovid_sympt Proportion of population who do not have
 ##'   covid but have covid-like symptoms
-##'   
-##' @param strain_transmission Vector of relative transmissibility of each 
-##'   strain modelled. First element should be 1. Length will define the 
+##'
+##' @param strain_transmission Vector of relative transmissibility of each
+##'   strain modelled. First element should be 1. Length will define the
 ##'   number of strains used in the model
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
@@ -336,7 +336,7 @@ carehomes_parameters <- function(start_date, region,
   ret$observation <- carehomes_parameters_observation(exp_noise)
 
   ret$n_groups <- ret$n_age_groups + 2L
-  
+
   ## number of strains and relative transmissibility
   strain <- carehomes_parameters_strain(
     strain_transmission, strain_seed_date, strain_seed_value, ret$dt)

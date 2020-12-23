@@ -195,7 +195,7 @@ strain_seed <- (if (step >= length(strain_seed_step))
                 else strain_seed_step[step + 1])
 ## We must never try to move more individuals from this S category
 ## than are available, so need to do this with a min()
-n_S_progress[4, 1, 2] <- 
+n_S_progress[4, 1, 2] <-
   min(n_S_progress[4, 1, 2] + strain_seed,
   n_S_progress[4, 1, 2] + S[i, j] - sum(n_S_progress[i, j, ]))
 
