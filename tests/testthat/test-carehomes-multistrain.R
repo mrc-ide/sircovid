@@ -291,3 +291,109 @@ test_that("No infection with either strain with perfect vaccine", {
   expect_true(all(y$cum_infections_per_strain == 0))
   
 })
+
+
+test_that("Swapping strains does not affect results", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1)) 
+  
+  # force all infections to be asymptomatic to narrow down the issue
+  p$p_sympt <- rep(0, 19)
+  
+  # stop progression out of I_asympt and E for debugging
+  p$gamma_asympt <- 0
+  p$gamma_E <- 0
+  
+  np <- 1
+  mod <- carehomes$new(p, 0, np, seed = 1L) 
+  end <- sircovid_date("2020-02-12") / p$dt  
+  initial <- carehomes_initial(mod$info(), 1, p)
+  y <- mod$transform_variables(initial$state)
+  y$I_asympt <- y$I_asympt[, , , 2:1, drop = FALSE]
+  initial2_state <- unlist(y)
+  mod$set_state(initial$state, initial$step)
+  index <- mod$info()$index
+  # index_run <- c(icu = index[["I_ICU_tot"]],
+  #                general = index[["general_tot"]],
+  #                deaths_comm = index[["D_comm_tot"]],
+  #                deaths_hosp = index[["D_hosp_tot"]],
+  #                admitted = index[["cum_admit_conf"]],
+  #                new = index[["cum_new_conf"]],
+  #                sero_pos = index[["sero_pos"]],
+  #                sympt_cases = index[["cum_sympt_cases"]],
+  #                sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
+  #                react_pos = index[["react_pos"]],
+  #                infections = index[["cum_infections"]])
+  steps <- seq(initial$step, end, by = 1)
+  #mod$set_index(index_run)
+  #res <- dust::dust_iterate(mod, steps, index_run)
+  res <- mod$transform_variables(
+    drop(dust::dust_iterate(mod, steps)))
+  mod2 <- carehomes$new(p, 0, np, seed = 1L)
+  mod2$set_state(initial2_state, initial$step)
+  #mod2$set_index(index_run)
+  ### debug:
+  res2 <- mod2$transform_variables(
+    drop(dust::dust_iterate(mod2, steps)))
+  
+  # the force of infection just after initial step should be reversed
+  #expect_true(all(res$lambda_out[, 2:1, 1] == res2$lambda_out[, , 1]))
+  #expect_true(all(res$lambda_out[, 2:1, 2] == res2$lambda_out[, , 2]))
+  #expect_true(all(res$lambda_out[, 2:1, 3] == res2$lambda_out[, , 3]))
+  #expect_true(all(res$lambda_out[, 2:1, 4] == res2$lambda_out[, , 4]))
+  expect_true(all(res$lambda_out[, 2:1, ] == res2$lambda_out[, , ]))
+  
+  expect_true(all(res$n_S_progress_out[, 1, 2:1, 1] == res2$n_S_progress_out[, 1, , 1]))
+  expect_true(all(res$n_S_progress_out[, 1, 2:1, 2] == res2$n_S_progress_out[, 1, , 2]))
+  expect_true(all(res$n_S_progress_out[, 1, 2:1, 3] == res2$n_S_progress_out[, 1, , 3]))
+  #expect_true(all(res$n_S_progress_out[, 1, 2:1, 4] == res2$n_S_progress_out[, 1, , 4]))
+  
+  #expect_true(all(res$p_SE_out[, 1, 2:1, 1] == res2$p_SE_out[, 1, , 1]))
+  #expect_true(all(res$p_SE_out[, 1, 2:1, 2] == res2$p_SE_out[, 1, , 2]))
+  #expect_true(all(res$p_SE_out[, 1, 2:1, 3] == res2$p_SE_out[, 1, , 3]))
+  #expect_true(all(res$p_SE_out[, 1, 2:1, 4] == res2$p_SE_out[, 1, , 4]))
+  expect_true(all(res$p_SE_out[, 1, 2:1, ] == res2$p_SE_out[, 1, , ]))
+  
+  # the number of S individuals is the same
+  expect_true(all(res$S[, 1, 1] == res2$S[, 1, 1]))
+  expect_true(all(res$S[, 1, 2] == res2$S[, 1, 2]))
+  expect_true(all(res$S[, 1, 3] == res2$S[, 1, 3]))
+  #expect_true(all(res$S[, 1, 4] == res2$S[, 1, 4]))
+  
+  # the number of exposed individuals is reversed
+  expect_true(all(res$E[, 1, 1, 2:1, 1] == res2$E[, 1, 1, , 1]))
+  expect_true(all(res$E[, 1, 1, 2:1, 2] == res2$E[, 1, 1, , 2]))
+  expect_true(all(res$E[, 1, 1, 2:1, 3] == res2$E[, 1, 1, , 3]))
+  #expect_true(all(res$E[, 1, 1, 2:1, 4] == res2$E[, 1, 1, , 4]))
+  
+  # the number of asymptomatic infections is reversed
+  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 1] == res2$I_asympt[, 1, 1, , 1]))
+  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 2] == res2$I_asympt[, 1, 1, , 2]))
+  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 3] == res2$I_asympt[, 1, 1, , 3]))
+  #expect_true(all(res$I_asympt[, 1, 1, 2:1, 4] == res2$I_asympt[, 1, 1, , 4]))
+  expect_true(all(res$I_asympt[, 1, 1, 2:1, ] == res2$I_asympt[, 1, 1, , ]))
+  
+  # the number of symptomatic infections is reversed
+  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 1] == res2$I_sympt[, 1, 1, , 1]))
+  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 2] == res2$I_sympt[, 1, 1, , 2]))
+  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 3] == res2$I_sympt[, 1, 1, , 3]))
+  #expect_true(all(res$I_sympt[, 1, 1, 2:1, 4] == res2$I_sympt[, 1, 1, , 4]))
+  
+  # the number of cumulative infections is reversed just after initial step
+  expect_true(all(res$cum_infections_per_strain[2:1, 1] == res2$cum_infections_per_strain[, 1]))
+  expect_true(all(res$cum_infections_per_strain[2:1, 2] == res2$cum_infections_per_strain[, 2]))
+  expect_true(all(res$cum_infections_per_strain[2:1, 3] == res2$cum_infections_per_strain[, 3]))
+  #expect_true(all(res$cum_infections_per_strain[2:1, 4] == res2$cum_infections_per_strain[, 4]))
+  
+  res$cum_infections_per_strain
+  res2$cum_infections_per_strain
+  
+  
+  ###
+  res2 <- dust::dust_iterate(mod2, steps, index_run)
+  inc1 <- diff(t(res["infections", , ]))
+  inc2 <- diff(t(res2["infections", , ]))
+  matplot(inc1, col = "#00000022", lty = 1, lwd = 0.5, type = "l")
+  matlines(inc2, col = "#ff000022", lty = 1, lwd = 0.5, type = "l")  
+  
+})
