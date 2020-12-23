@@ -113,3 +113,11 @@ matrix_pow <- function(x, n) {
     return(x %*% matrix_pow(x %*% x, (n - 1) / 2))
   }
 }
+
+
+spread_integer <- function(n, m) {
+  ret <- ceiling(rep(n / m, m))
+  i <- seq(to = m, length.out = sum(ret) - n)
+  ret[i] <- ret[i] - 1L
+  ret
+}
