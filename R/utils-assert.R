@@ -7,9 +7,16 @@ assert_is <- function(x, what, name = deparse(substitute(x))) {
 }
 
 
-assert_increasing <- function(x, name = deparse(substitute(x))) {
-  if (any(diff(x) <= 0)) {
-    stop(sprintf("'%s' must be strictly increasing", name))
+assert_increasing <- function(x, strict = TRUE, name = deparse(substitute(x))) {
+  dx <- diff(x)
+  if (strict) {
+    if (any(dx <= 0)) {
+      stop(sprintf("'%s' must be strictly increasing", name))
+    }
+  } else {
+    if (any(dx < 0)) {
+      stop(sprintf("'%s' must be increasing (or equal)", name))
+    }
   }
   invisible(x)
 }

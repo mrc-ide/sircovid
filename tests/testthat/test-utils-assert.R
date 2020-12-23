@@ -17,4 +17,7 @@ test_that("assert_increasing", {
                "'y' must be strictly increasing")
   expect_error(assert_increasing(rev(x)),
                "must be strictly increasing")
+  expect_silent(assert_increasing(y, strict = FALSE))
+  expect_error(assert_increasing(rev(y), strict = FALSE),
+               "must be increasing")
 })
