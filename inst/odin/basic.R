@@ -197,7 +197,7 @@ dim(beta_step) <- user()
 ## supported by odin (it could be made to support this). This code
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
-beta <- if (step >= length(beta_step))
+beta <- if (as.integer(step) >= length(beta_step))
           beta_step[length(beta_step)] else beta_step[step + 1]
 
 ## Useful for debugging

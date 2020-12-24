@@ -135,33 +135,33 @@ p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
 
 ## Work out time-varying probabilities
-p_ICU_hosp <- if (step >= length(p_ICU_hosp_step))
+p_ICU_hosp <- if (as.integer(step) >= length(p_ICU_hosp_step))
   p_ICU_hosp_step[length(p_ICU_hosp_step)] else p_ICU_hosp_step[step + 1]
 prob_ICU_hosp[] <- p_ICU_hosp * psi_ICU_hosp[i]
 
-p_hosp_sympt <- if (step >= length(p_hosp_sympt_step))
+p_hosp_sympt <- if (as.integer(step) >= length(p_hosp_sympt_step))
   p_hosp_sympt_step[length(p_hosp_sympt_step)] else p_hosp_sympt_step[step + 1]
 prob_hosp_sympt[] <- p_hosp_sympt * psi_hosp_sympt[i]
 
-p_death_ICU <- if (step >= length(p_death_ICU_step))
+p_death_ICU <- if (as.integer(step) >= length(p_death_ICU_step))
   p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
 prob_death_ICU[] <- p_death_ICU * psi_death_ICU[i]
 
-p_death_hosp_D <- if (step >= length(p_death_hosp_D_step))
+p_death_hosp_D <- if (as.integer(step) >= length(p_death_hosp_D_step))
   p_death_hosp_D_step[length(p_death_hosp_D_step)] else
     p_death_hosp_D_step[step + 1]
 prob_death_hosp_D[] <- p_death_hosp_D * psi_death_hosp_D[i]
 
-p_death_stepdown <- if (step >= length(p_death_stepdown_step))
+p_death_stepdown <- if (as.integer(step) >= length(p_death_stepdown_step))
   p_death_stepdown_step[length(p_death_stepdown_step)] else
     p_death_stepdown_step[step + 1]
 prob_death_stepdown[] <- p_death_stepdown * psi_death_stepdown[i]
 
-p_death_comm <- if (step >= length(p_death_comm_step))
+p_death_comm <- if (as.integer(step) >= length(p_death_comm_step))
   p_death_comm_step[length(p_death_comm_step)] else p_death_comm_step[step + 1]
 prob_death_comm[] <- p_death_comm * psi_death_comm[i]
 
-p_admit_conf <- if (step >= length(p_admit_conf_step))
+p_admit_conf <- if (as.integer(step) >= length(p_admit_conf_step))
   p_admit_conf_step[length(p_admit_conf_step)] else p_admit_conf_step[step + 1]
 prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
 
@@ -840,7 +840,7 @@ dim(beta_step) <- user()
 ## supported by odin (it could be made to support this). This code
 ## does currently create a compiler warning with -Wsign-compare on
 ## because we have an unsigned/signed integer comparison
-beta <- if (step >= length(beta_step))
+beta <- if (as.integer(step) >= length(beta_step))
           beta_step[length(beta_step)] else beta_step[step + 1]
 
 ## Useful for debugging
