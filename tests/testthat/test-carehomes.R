@@ -1,7 +1,6 @@
 context("carehomes")
 
 test_that("can run the carehomes model", {
-  skip("reordered") # TODO: fix this after things settle
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   mod <- carehomes$new(p, 0, 5, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
@@ -13,16 +12,16 @@ test_that("can run the carehomes model", {
   res <- mod$run(end)
 
   expected <- rbind(
-    icu = c(7, 2, 4, 25, 1),
-    general = c(45, 7, 31, 94, 4),
-    deaths_comm = c(23709, 23366, 23496, 23473, 23558),
-    deaths_hosp = c(282912, 283192, 283889, 282507, 282734),
-    admitted = c(131816, 131736, 132251, 132228, 132547),
-    new = c(419749, 420226, 421277, 420402, 420445),
-    sero_pos = c(3505005, 2363427, 3403301, 4411116, 2079763),
-    sympt_cases = c(12974263, 12972299, 12977695, 12974676, 12978585),
-    sympt_cases_over25 = c(10081966, 10081915, 10089062, 10083360, 10086817),
-    react_pos = c(840, 172, 739, 2129, 120))
+    icu = c(0, 8, 4, 18, 0),
+    general = c(21, 42, 19, 78, 6),
+    deaths_comm = c(23550, 23649, 23190, 23677, 23700),
+    deaths_hosp = c(283153, 282636, 283277, 283282, 282841),
+    admitted = c(132113, 131443, 132031, 132091, 132228),
+    new = c(421160, 420378, 420748, 420486, 420306),
+    sero_pos = c(2515967, 3623516, 3174151, 4214168, 2079285),
+    sympt_cases = c(12979452, 12977017, 12981531, 12980423, 12981789),
+    sympt_cases_over25 = c(10089990, 10087058, 10089856, 10091340, 10090948),
+    react_pos = c(250, 1017, 616, 1735, 139))
   expect_equal(res, expected)
 })
 

@@ -1,7 +1,6 @@
 context("basic")
 
 test_that("can run the basic model", {
-  skip("reordered") # TODO: fix this after things settle
   p <- basic_parameters(sircovid_date("2020-02-07"), "england")
   mod <- basic$new(p, 0, 10, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
@@ -12,9 +11,9 @@ test_that("can run the basic model", {
   mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
   expected <-
-    rbind(icu = c(69, 37, 76, 58, 73, 52, 56, 51, 31, 103),
-          deaths = c(267957, 268414, 268452, 266980, 268173, 268261,
-                     267652, 267572, 268026, 267159))
+    rbind(icu = c(84, 26, 78, 56, 62, 66, 54, 31, 30, 132),
+          deaths = c(267435, 267355, 267265, 268043, 267578, 268154,
+                     268354, 268504, 267720, 267953))
   expect_equal(res, expected)
 })
 
