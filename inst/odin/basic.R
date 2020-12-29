@@ -194,9 +194,7 @@ gamma_rec <- user(0.1)
 beta_step[] <- user()
 dim(beta_step) <- user()
 ## What we really want is min(step + 1, length(beta_step)) but that's not
-## supported by odin (it could be made to support this). This code
-## does currently create a compiler warning with -Wsign-compare on
-## because we have an unsigned/signed integer comparison
+## supported by odin (it could be made to support this).
 beta <- if (as.integer(step) >= length(beta_step))
           beta_step[length(beta_step)] else beta_step[step + 1]
 
