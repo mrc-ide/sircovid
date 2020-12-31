@@ -35,6 +35,19 @@ test_that("can compute incidence for a single variable", {
 })
 
 
+test_that("Can drop predictions from trajectories", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$date <- dat$trajectories$step / 4
+  res <- carehomes_forecast(dat, 0, 0, 10, NULL)
+  ans <- drop_trajectory_predicted(res)
+
+  expect_equal(drop_trajectory_predicted(res), dat)
+  expect_equal(drop_trajectory_predicted(dat), dat)
+  expect_equal(drop_trajectory_predicted(res$trajectories), dat$trajectories)
+  expect_equal(drop_trajectory_predicted(dat$trajectories), dat$trajectories)
+})
+
+
 test_that("Can compute forecasts from mcmc output", {
   dat <- reference_data_mcmc()
   res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "deaths_hosp"))

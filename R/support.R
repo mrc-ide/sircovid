@@ -178,6 +178,9 @@ add_trajectory_incidence <- function(obj, states, suffix = "_inc") {
     return(obj)
   }
   assert_is(obj, "mcstate_trajectories")
+  if (length(states) == 0) {
+    return(obj)
+  }
 
   ## In order to compute incidence we have to add two NA values; one
   ## is the usual one dropped in a rolling difference, the other is
@@ -211,6 +214,31 @@ drop_trajectory_incidence <- function(obj) {
   assert_is(obj, "mcstate_trajectories")
   k <- grep("_inc", rownames(obj$state))
   obj$state <- obj$state[-k, , ]
+  obj
+}
+
+
+##' Drop predicted elements from a set of trajectories
+##'
+##' @title Drop predictions from trajectories
+##'
+##' @param obj A `mcstate_trajectories` or `mcstate_pmcmc` object to
+##'   update
+##'
+##' @export
+drop_trajectory_predicted <- function(obj) {
+  if (inherits(obj, "mcstate_pmcmc")) {
+    obj$trajectories <- drop_trajectory_predicted(obj$trajectories)
+    return(obj)
+  }
+
+  k <- which(obj$predicted)
+  if (length(k) > 0) {
+    obj$step <- obj$step[-k]
+    obj$predicted <- obj$predicted[-k]
+    obj$date <- obj$date[-k]
+    obj$state <- obj$state[, , -k]
+  }
   obj
 }
 
