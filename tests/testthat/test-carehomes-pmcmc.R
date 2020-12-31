@@ -11,6 +11,18 @@ test_that("adding incidence adds appropriate states", {
   expect_equal(
     deaths,
     res$state["deaths", , -c(1, 2)] - res$state["deaths", , 2])
+
+  expect_equal(drop_trajectory_incidence(res), dat$trajectories)
+})
+
+
+test_that("can add and remove trajectories from mcstate_pmcmc objects", {
+  dat <- reference_data_mcmc()
+  v <- c("deaths", "deaths_hosp")
+  res <- add_trajectory_incidence(dat, v)
+  expect_identical(res$trajectories,
+                   add_trajectory_incidence(dat$trajectories, v))
+  expect_identical(drop_trajectory_incidence(res), dat)
 })
 
 
