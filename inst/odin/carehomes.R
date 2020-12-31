@@ -190,7 +190,7 @@ n_S_progress[, , 2:n_strains] <-
 ## strain.
 strain_seed_step[] <- user()
 dim(strain_seed_step) <- user()
-strain_seed <- (if (step >= length(strain_seed_step))
+strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
                   strain_seed_step[length(strain_seed_step)]
                 else strain_seed_step[step + 1])
 ## We must never try to move more individuals from this S category

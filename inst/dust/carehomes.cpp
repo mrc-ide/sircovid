@@ -1658,7 +1658,7 @@ public:
     real_t p_death_hosp_D = (static_cast<int>(step) >= internal.dim_p_death_hosp_D_step ? internal.p_death_hosp_D_step[internal.dim_p_death_hosp_D_step - 1] : internal.p_death_hosp_D_step[step + 1 - 1]);
     real_t p_death_stepdown = (static_cast<int>(step) >= internal.dim_p_death_stepdown_step ? internal.p_death_stepdown_step[internal.dim_p_death_stepdown_step - 1] : internal.p_death_stepdown_step[step + 1 - 1]);
     real_t p_hosp_sympt = (static_cast<int>(step) >= internal.dim_p_hosp_sympt_step ? internal.p_hosp_sympt_step[internal.dim_p_hosp_sympt_step - 1] : internal.p_hosp_sympt_step[step + 1 - 1]);
-    real_t strain_seed = ((step >= internal.dim_strain_seed_step ? internal.strain_seed_step[internal.dim_strain_seed_step - 1] : internal.strain_seed_step[step + 1 - 1]));
+    real_t strain_seed = ((static_cast<int>(step) >= internal.dim_strain_seed_step ? internal.strain_seed_step[internal.dim_strain_seed_step - 1] : internal.strain_seed_step[step + 1 - 1]));
     for (int i = 1; i <= internal.dim_prob_ICU_hosp; ++i) {
       internal.prob_ICU_hosp[i - 1] = p_ICU_hosp * internal.psi_ICU_hosp[i - 1];
     }
