@@ -378,3 +378,53 @@ test_that("strip projections", {
   expect_equal(add_future_betas(dat2, rt1, future)$pars, cmp$pars)
   expect_equal(add_future_betas(dat2, rt2, future)$pars, cmp$pars)
 })
+
+
+test_that("validate trajectories match rt", {
+  dat <- reference_data_mcmc()
+  rt <- calculate_rt_simple(dat)
+  rt$step <- rt$step * 2
+  future <- list(
+    "2020-04-01" = future_Rt(1.5),
+    "2020-05-01" = future_Rt(0.5, "2020-03-27"))
+  expect_error(add_future_betas(dat, rt, future),
+               "Trajectories are not consistent with rt calculations")
+})
+
+
+test_that("validate future beta values", {
+  dat <- reference_data_mcmc()
+  rt <- calculate_rt_simple(dat)
+
+  f1 <- future_Rt(1.5)
+  f2 <- future_Rt(1.5)
+
+  expect_error(
+    add_future_betas(dat, rt, NULL),
+    "Expected at least one element in 'future'")
+  expect_error(
+    add_future_betas(dat, rt, list()),
+    "Expected at least one element in 'future'")
+  expect_error(
+    add_future_betas(dat, rt, list(f1, f2)),
+    "Expected 'future' to be named")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-04-01" = f1, "2020-05-01" = 2)),
+    "Expected all elements of 'future' to be 'future_Rt' objects")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-05-01" = f1, f2)),
+    "Expected ISO dates or R dates - please convert")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-05-01" = f1, "2020-04-01" = f2)),
+    "Future change dates must be increasing")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-04-01" = f1, "2020-04-02" = f2)),
+    "At least one full date required between all future change dates")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-03-01" = f1, "2020-04-02" = f2)),
+    "The first future date must be at least 2020-04-01 (but was 2020-03-01)",
+    fixed = TRUE)
+  expect_error(
+    add_future_betas(dat, rt, list("2020-05-01" = future_Rt(1, "2020-01-01"))),
+    "Relative date not found in rt set: 2020-01-01")
+})

@@ -72,13 +72,18 @@ set_names <- function(x, nms) {
 }
 
 
-vnapply <- function(x, fun, ...) {
-  vapply(x, fun, numeric(1), ...)
+vlapply <- function(.x, .fun, ...) {
+  vapply(.x, .fun, logical(1), ...)
 }
 
 
-vcapply <- function(x, fun, ...) {
-  vapply(x, fun, character(1), ...)
+vnapply <- function(.x, .fun, ...) {
+  vapply(.x, .fun, numeric(1), ...)
+}
+
+
+vcapply <- function(.x, .fun, ...) {
+  vapply(.x, .fun, character(1), ...)
 }
 
 

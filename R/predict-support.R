@@ -110,6 +110,12 @@ future_Rt <- function(value, relative_to = NULL) {
 ## or similar) and 'calculate'. There's still a *lot* of logic in
 ## here, but the final product is fairly easily understood.
 future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
+  if (length(future) == 0) {
+    stop("Expected at least one element in 'future'")
+  }
+  if (!all(vlapply(future, inherits, "future_Rt"))) {
+    stop("Expected all elements of 'future' to be 'future_Rt' objects")
+  }
   if (is.null(names(future))) {
     stop("Expected 'future' to be named")
   }
