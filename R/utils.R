@@ -77,6 +77,11 @@ vnapply <- function(x, fun, ...) {
 }
 
 
+vcapply <- function(x, fun, ...) {
+  vapply(x, fun, character(1), ...)
+}
+
+
 abind1 <- function(a, b) {
   na <- dim(a)[1]
   nb <- dim(b)[1]
@@ -112,4 +117,9 @@ matrix_pow <- function(x, n) {
   } else {
     return(x %*% matrix_pow(x %*% x, (n - 1) / 2))
   }
+}
+
+
+last <- function(x) {
+  x[[length(x)]]
 }

@@ -268,3 +268,55 @@ test_that("read default severity", {
   d <- severity_default()
   expect_identical(d, cache$severity_default)
 })
+
+
+test_that("Can add new betas", {
+  dat <- reference_data_mcmc()
+
+  ## In order to be able to update future beta values we need to
+  ## compute Rt for this simulation. This should probably be
+  ## automated, as it's still too fiddly.
+  rt <- local({
+    p <- lapply(seq_len(nrow(dat$pars)), function(i)
+      dat$predict$transform(dat$pars[i, ]))
+    i <- grep("S_", rownames(dat$trajectories$state))
+    S <- dat$trajectories$state[i, , ]
+    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+  })
+
+  future <- list(
+    "2020-04-01" = future_Rt(1.5),
+    "2020-05-01" = future_Rt(0.5, "2020-03-27"))
+  res <- add_future_betas(dat, rt, future)
+  expect_is(res, "mcstate_pmcmc")
+
+  p_base <- dat$predict$transform(dat$pars[1, ])
+  p_new <- res$predict$transform(res$pars[1, ])
+
+  ## Nothing except beta_step wil have changed:
+  expect_mapequal(p_base[names(p_base) != "beta_step"],
+                  p_new[names(p_new) != "beta_step"])
+
+  beta_base <- p_base$beta_step
+  beta_new <- p_new$beta_step
+
+  ## Unchanged up to the point where we start changing
+  expect_identical(beta_new[seq_along(beta_base)], beta_base)
+
+  ## We have a few change points to consider here:
+  i <- c(sircovid_date("2020-04-01") - 1, sircovid_date("2020-04-01"),
+         sircovid_date("2020-05-01") - 1, sircovid_date("2020-05-01"))
+  j <- i / p_new$dt
+
+  ## Unchanged until the first change point
+  expect_true(all(beta_new[seq(length(beta_base), j[[1]])] == last(beta_base)))
+
+  ## Our paramaters are expanded as expected:
+  v <- beta_new[j[c(1, 2, 2, 4)] + 1L]
+  cmp <- sircovid_parameters_beta(i, v, p_new$dt)
+  expect_equal(beta_new[seq(j[[1]], length(beta_new))],
+               cmp[seq(j[[1]], length(cmp))])
+
+  tmp <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
+  expect_equal(tmp$value[1, ] * last(beta_base), v)
+})
