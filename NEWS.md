@@ -1,3 +1,7 @@
+# sircovid 0.8.2
+
+* Added functions `add_future_betas` and `future_Rt` for constructing future transmission scenarios
+
 # sircovid 0.8.0
 
 * Move vaccination process inside odin code
