@@ -1,9 +1,6 @@
 ## Create and update rt data set
 reference_data_rt <- function() {
-  path <- "data/rt.rds"
-  if (!file.exists(path)) {
-    message(sprintf("Reference data '%s' does not exist - generating",
-                    path))
+  load_reference("data/rt.rds", {
     p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
     np <- 3L
     mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -21,13 +18,9 @@ reference_data_rt <- function() {
     rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
     rt_all <- carehomes_Rt_trajectories(steps, y, p)
 
-    data <- list(inputs = list(steps = steps, y = y, p = p),
-                 outputs = list(rt_1 = rt_1, rt_all = rt_all))
-
-    dir.create(dirname(path), FALSE, TRUE)
-    saveRDS(data, path, version = 2L)
-  }
-  readRDS(path)
+    list(inputs = list(steps = steps, y = y, p = p),
+         outputs = list(rt_1 = rt_1, rt_all = rt_all))
+  })
 }
 
 
