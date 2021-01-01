@@ -36,5 +36,5 @@ test_that("assert_scalar", {
   expect_error(assert_scalar(object),
                "'object' must be a scalar")
   expect_error(assert_scalar(1:5),
-               "'object' must be a scalar")
+               "must be a scalar")
 })
