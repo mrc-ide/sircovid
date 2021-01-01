@@ -130,12 +130,9 @@ future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
          paste(relative_to[is.na(relative_to_index)], collapse = ", "))
   }
 
-  ## TODO: we can replace this sapply with an outer product
   value <- matrix(NA_real_, length(future), ncol(rt_value))
-  f <- function(j) {
-    rt_value[relative_to_index[j], ] / current_rt * relative_value[j]
-  }
-  value[is_relative, ] <- t(sapply(seq_along(relative_to_index), f))
+  value[is_relative, ] <- relative_value * rt_value[relative_to_index, ] /
+    rep(current_rt, each = length(relative_to_index))
   value[!is_relative, ] <- outer(future_value[!is_relative], current_rt, "/")
   value <- t(value)
 

@@ -320,3 +320,43 @@ test_that("Can add new betas", {
   tmp <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
   expect_equal(tmp$value[1, ] * last(beta_base), v)
 })
+
+
+test_that("Compute relative betas", {
+  dat <- reference_data_mcmc()
+  rt <- local({
+    p <- lapply(seq_len(nrow(dat$pars)), function(i)
+      dat$predict$transform(dat$pars[i, ]))
+    i <- grep("S_", rownames(dat$trajectories$state))
+    S <- dat$trajectories$state[i, , ]
+    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+  })
+
+  ## NOTE: inject a bit of wobble to the numbers here so that it's
+  ## easier to check for exact correctness, otherwise because the toy
+  ## simulated data don't vary across parameter sets we don't trigger
+  ## all corner cases.
+  rt$Rt_general <- rt$Rt_general * rlnorm(length(rt$Rt_general), 0, 0.05)
+  future <- list(
+    "2020-05-01" = future_Rt(1.5, "2020-03-20"),
+    "2020-06-01" = future_Rt(1.2, "2020-03-19"),
+    "2020-07-01" = future_Rt(1.1, "2020-03-18"))
+  res <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
+
+  expect_equal(res$date, c(121, 122, 152, 153, 182, 183))
+
+  np <- ncol(rt$Rt_general)
+
+  expect_equal(res$value[, 1], rep(1, np))
+  expect_equal(dim(res$value), c(np, 6))
+  expect_equal(res$value[, c(2, 4)], res$value[, c(3, 5)])
+
+  ## which leaves us with our actual comparisons to make; do we manage
+  ## to set things to the correct values? We do this by an equivalent,
+  ## though different, calculation to that used in the package.
+  i <- match(sircovid_date(c("2020-03-20", "2020-03-19", "2020-03-18")),
+             rt$date[, 1])
+  r <- t(rt$Rt_general[i, ] * c(1.5, 1.2, 1.1)) /
+    rt$Rt_general[nrow(rt$Rt_general), ]
+  expect_equal(res$value[, c(2, 4, 6)], r)
+})
