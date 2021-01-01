@@ -3,7 +3,7 @@ reference_data_mcmc <- function() {
     start_date <- sircovid_date("2020-02-02")
     pars <- carehomes_parameters(
       start_date, "england",
-      beta_date = sircovid_date(c("2020-03-10" ,"2020-03-20")),
+      beta_date = sircovid_date(c("2020-03-10", "2020-03-20")),
       beta_value = c(0.08, 0.04))
     data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
                           start_date, pars$dt)
