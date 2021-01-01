@@ -5,6 +5,26 @@
 ##' values, however it does this by applying Rt changes in the future
 ##' via `future_Rt`.
 ##'
+##' There are two basic ways that new beta values in the future might
+##' be added. First, as relative to some previous day in the past. For
+##' example to use a value of beta that corresponds to 1.5x the Rt
+##' recorded on the 28th of October, we might write
+##'
+##' ```
+##' sircovid::future_Rt(1.5, "2020-10-28")
+##' ```
+##'
+##' Second, as an absolute Rt value. For example to use a value of
+##' beta corresponding to an Rt of 0.9 we might write
+##'
+##' ```
+##' sircovid::future_Rt(0.9)
+##' ```
+##'
+##' These new levels need to be associated with dates at which they
+##' occur, and will result in a piece-wise constant pattern with 1
+##' day's transition between each level.
+##'
 ##' @title Create future betas
 ##'
 ##' @param sample A `mcstate_pmcmc` object
@@ -22,32 +42,24 @@
 ##' @author Richard Fitzjohn
 add_future_betas <- function(sample, rt, future) {
   assert_is(sample, "mcstate_pmcmc")
+  assert_is(rt, "Rt_trajectories")
+  sample <- drop_trajectory_predicted(sample)
 
-  ## TODO: this should be updated; the object that we're using here is
-  ## way too vague, especially with the two different Rt calculation
-  ## functions.
-
-  ## assert_is(rt, "Rt")
-  ## if (!all(c("Rt_general", "date") %in% names(rt))) {
-  ##   stop("Expected elements 'Rt_general' and 'date' within 'rt'")
-  ## }
-  ## if (!(is.matrix(rt$Rt_general) && is.matrix(rt$date))) {
-  ##   stop("Expected 'rt' ")
-  ## }
-  if (any(sample$trajectories$predicted)) {
-    sample <- drop_trajectory_predicted(sample)
-  }
-  ## Is this always wanted?
-  sample <- drop_trajectory_incidence(sample)
+  ## We never want the future projections here, so exclude them
   n_pars <- nrow(sample$pars)
   n_time <- length(sample$trajectories$step)
 
-  if (!isTRUE(all.equal(rt$step[, 1], sample$trajectories$step))) {
-    stop("FIXME")
+  ## Check that our trajectories are consistent with the sample:
+  i <- match(sample$trajectories$step, rt$step[, 1])
+  if (any(is.na(i))) {
+    stop("Trajectories are not consistent with rt calculations")
   }
+  rt_date <- rt$date[i, 1]
+  ## NOTE: it would be easy here to allow a different Rt calculation
+  ## to be used; we will always have 4.
+  rt_value <- rt$Rt_general[i, , drop = FALSE]
 
-  beta_scaling <- future_relative_beta(future, rt$date[, 1], rt$Rt_general,
-                                       "fbs_")
+  beta_scaling <- future_relative_beta(future, rt_date, rt_value, "fbs_")
   sample$pars <- cbind(sample$pars, beta_scaling$value)
 
   ## Capture the transformation of base parameters here as we will

@@ -360,3 +360,21 @@ test_that("Compute relative betas", {
     rt$Rt_general[nrow(rt$Rt_general), ]
   expect_equal(res$value[, c(2, 4, 6)], r)
 })
+
+
+test_that("strip projections", {
+  dat1 <- reference_data_mcmc()
+  rt1 <- calculate_rt_simple(dat1)
+
+  dat2 <- carehomes_forecast(dat1, 0, 0, 10, NULL)
+  rt2 <- calculate_rt_simple(dat2)
+
+  future <- list(
+    "2020-04-01" = future_Rt(1.5),
+    "2020-05-01" = future_Rt(0.5, "2020-03-27"))
+
+  cmp <- add_future_betas(dat1, rt1, future)
+  expect_equal(add_future_betas(dat2, rt1, future)$pars, cmp$pars)
+  expect_equal(add_future_betas(dat2, rt1, future)$pars, cmp$pars)
+  expect_equal(add_future_betas(dat2, rt2, future)$pars, cmp$pars)
+})

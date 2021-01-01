@@ -29,3 +29,12 @@ reference_data_rt <- function() {
   }
   readRDS(path)
 }
+
+
+calculate_rt_simple <- function(dat) {
+  p <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  i <- grep("S_", rownames(dat$trajectories$state))
+  S <- dat$trajectories$state[i, , ]
+  carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+}
