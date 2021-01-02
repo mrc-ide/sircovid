@@ -563,4 +563,3 @@ test_that("Can calculate Rt with a second more infectious variant", {
   expect_equal(rt_all$Rt_all, rt_all_single_class$Rt_all * 10)
   expect_equal(rt_all$Rt_general, rt_all_single_class$Rt_general * 10)
 })
-
