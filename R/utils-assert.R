@@ -13,3 +13,23 @@ assert_increasing <- function(x, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
+
+
+assert_date_string <- function(x, name = deparse(substitute(x))) {
+  if (inherits(x, "Date")) {
+    x <- as.character(x)
+  }
+  if (!all(grepl("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$", x))) {
+    stop(sprintf("Expected ISO dates or R dates for '%s' - please convert",
+                 name))
+  }
+  invisible(x)
+}
+
+
+assert_scalar <- function(x, name = deparse(substitute(x))) {
+  if (length(x) != 1L) {
+    stop(sprintf("'%s' must be a scalar", name), call. = FALSE)
+  }
+  invisible(x)
+}

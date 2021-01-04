@@ -11,6 +11,18 @@ test_that("adding incidence adds appropriate states", {
   expect_equal(
     deaths,
     res$state["deaths", , -c(1, 2)] - res$state["deaths", , 2])
+
+  expect_equal(drop_trajectory_incidence(res), dat$trajectories)
+})
+
+
+test_that("can add and remove trajectories from mcstate_pmcmc objects", {
+  dat <- reference_data_mcmc()
+  v <- c("deaths", "deaths_hosp")
+  res <- add_trajectory_incidence(dat, v)
+  expect_identical(res$trajectories,
+                   add_trajectory_incidence(dat$trajectories, v))
+  expect_identical(drop_trajectory_incidence(res), dat)
 })
 
 
@@ -20,6 +32,19 @@ test_that("can compute incidence for a single variable", {
   res <- add_trajectory_incidence(dat$trajectories, "deaths")
   expect_identical(res$state["deaths_inc", , ],
                    cmp$state["deaths_inc", , ])
+})
+
+
+test_that("Can drop predictions from trajectories", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$date <- dat$trajectories$step / 4
+  res <- carehomes_forecast(dat, 0, 0, 10, NULL)
+  ans <- drop_trajectory_predicted(res)
+
+  expect_equal(drop_trajectory_predicted(res), dat)
+  expect_equal(drop_trajectory_predicted(dat), dat)
+  expect_equal(drop_trajectory_predicted(res$trajectories), dat$trajectories)
+  expect_equal(drop_trajectory_predicted(dat$trajectories), dat$trajectories)
 })
 
 

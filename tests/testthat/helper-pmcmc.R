@@ -1,11 +1,10 @@
 reference_data_mcmc <- function() {
-  path <- "data/pmcmc.rds"
-  if (!file.exists(path)) {
-    message(sprintf("Reference data '%s' does not exist - generating",
-                    path))
-
+  load_reference("data/pmcmc.rds", {
     start_date <- sircovid_date("2020-02-02")
-    pars <- carehomes_parameters(start_date, "england")
+    pars <- carehomes_parameters(
+      start_date, "england",
+      beta_date = sircovid_date(c("2020-03-10", "2020-03-20")),
+      beta_value = c(0.08, 0.04))
     data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
                           start_date, pars$dt)
     v <- c("deaths_comm", "deaths", "general", "hosp", "admitted",
@@ -28,31 +27,40 @@ reference_data_mcmc <- function() {
       diag(2),
       function(p) pars)
 
-    samples <- mcstate::pmcmc(pars_mcmc, filter, n_steps = 10,
-                              n_chains = 1,
-                              save_trajectories = TRUE, progress = FALSE)
-
-    dir.create(dirname(path), FALSE, TRUE)
-    ## Ignore a warning about package:sircovid not being available
-    suppressWarnings(saveRDS(samples, path))
-  }
-  readRDS(path)
+    mcstate::pmcmc(pars_mcmc, filter, n_steps = 10,
+                   n_chains = 1,
+                   save_trajectories = TRUE, progress = FALSE)
+  })
 }
 
 
 reference_data_trajectories <- function() {
-  path <- "data/trajectories.rds"
-  if (!file.exists(path)) {
-    message(sprintf("Reference data '%s' does not exist - generating",
-                    path))
-
+  load_reference("data/trajectories.rds", {
     dat <- reference_data_mcmc()
     incidence <- c("deaths", "deaths_hosp", "infections")
-    res <- carehomes_forecast(dat, 3, 5, 10, incidence, TRUE)
+    carehomes_forecast(dat, 3, 5, 10, incidence, TRUE)
+  })
+}
 
-    dir.create(dirname(path), FALSE, TRUE)
-    ## Ignore a warning about package:sircovid not being available
-    suppressWarnings(saveRDS(res, path))
+
+load_reference <- function(path, code) {
+  version <- packageVersion("sircovid")
+  if (file.exists(path)) {
+    prev <- readRDS(path)
+    if (identical(prev$version, version)) {
+      return(prev$value)
+    }
+    message(sprintf("Reference data '%s' is out of date - regenerating",
+                    path))
+  } else {
+    message(sprintf("Reference data '%s' does not exist - generating",
+                    path))
   }
-  readRDS(path)
+
+  value <- force(code)
+  dir.create(dirname(path), FALSE, TRUE)
+  ## Ignore a warning about package:sircovid not being available
+  suppressWarnings(
+    saveRDS(list(version = version, value = value), path))
+  value
 }

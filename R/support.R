@@ -156,8 +156,31 @@ severity_default <- function() {
 }
 
 
-add_trajectory_incidence <- function(trajectories, states, suffix = "_inc") {
-  assert_is(trajectories, "mcstate_trajectories")
+##' Augment (or remove) trajectories from a `mcstate_trajectories` or
+##' `mcstate_pmcmc` object.
+##'
+##' @title Add incidence to trajectories
+##'
+##' @param obj A `mcstate_trajectories` or `mcstate_pmcmc` object to
+##'   update
+##'
+##' @param states A vector of cumulative states to compute incidence
+##'   for
+##'
+##' @param suffix A string to append to the input states to create the
+##'   incidence variables
+##'
+##' @export
+add_trajectory_incidence <- function(obj, states, suffix = "_inc") {
+  if (inherits(obj, "mcstate_pmcmc")) {
+    obj$trajectories <- add_trajectory_incidence(obj$trajectories,
+                                                 states, suffix)
+    return(obj)
+  }
+  assert_is(obj, "mcstate_trajectories")
+  if (length(states) == 0) {
+    return(obj)
+  }
 
   ## In order to compute incidence we have to add two NA values; one
   ## is the usual one dropped in a rolling difference, the other is
@@ -171,13 +194,54 @@ add_trajectory_incidence <- function(trajectories, states, suffix = "_inc") {
   ## time dimension and converts back into the correct array dimension
   ## order.
   traj_inc <- aperm(
-    apply(trajectories$state[states, , , drop = FALSE], c(1, 2), incidence),
+    apply(obj$state[states, , , drop = FALSE], c(1, 2), incidence),
     c(2, 3, 1))
   rownames(traj_inc) <- paste0(states, suffix)
-  trajectories$state <- abind1(trajectories$state, traj_inc)
+  obj$state <- abind1(obj$state, traj_inc)
 
-  trajectories
+  obj
 }
+
+
+##' @rdname add_trajectory_incidence
+##' @export
+drop_trajectory_incidence <- function(obj) {
+  if (inherits(obj, "mcstate_pmcmc")) {
+    obj$trajectories <- drop_trajectory_incidence(obj$trajectories)
+    return(obj)
+  }
+
+  assert_is(obj, "mcstate_trajectories")
+  k <- grep("_inc", rownames(obj$state))
+  obj$state <- obj$state[-k, , ]
+  obj
+}
+
+
+##' Drop predicted elements from a set of trajectories
+##'
+##' @title Drop predictions from trajectories
+##'
+##' @param obj A `mcstate_trajectories` or `mcstate_pmcmc` object to
+##'   update
+##'
+##' @export
+drop_trajectory_predicted <- function(obj) {
+  if (inherits(obj, "mcstate_pmcmc")) {
+    obj$trajectories <- drop_trajectory_predicted(obj$trajectories)
+    return(obj)
+  }
+
+  k <- which(obj$predicted)
+  if (length(k) > 0) {
+    obj$step <- obj$step[-k]
+    obj$predicted <- obj$predicted[-k]
+    obj$date <- obj$date[-k]
+    obj$state <- obj$state[, , -k]
+  }
+  obj
+}
+
 
 ##' Combine trajectories across multiple runs
 ##'

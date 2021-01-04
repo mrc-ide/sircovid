@@ -296,5 +296,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars,
     matrix(unlist(lapply(res, "[[", nm)), length(step), length(res))
   }
   nms <- names(res[[1]])
-  set_names(lapply(nms, collect), nms)
+  ret <- set_names(lapply(nms, collect), nms)
+  class(ret) <- "Rt_trajectories"
+  ret
 }
