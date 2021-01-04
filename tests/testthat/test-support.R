@@ -432,9 +432,18 @@ test_that("Can add new betas with incomplete Rt calculation", {
   }
 
   ## Calculations work the same as the non-trimmed version
+  future <- list("2020-05-01" = future_Rt(1, "2020-03-24"))
+  res1 <- add_future_betas(dat, rt1, future)
+  res2 <- add_future_betas(dat, rt2, future)
+
   expect_equal(
-    add_future_betas(dat, rt2, list("2020-05-01" = future_Rt(1, "2020-03-24"))),
-    add_future_betas(dat, rt1, list("2020-05-01" = future_Rt(1, "2020-03-24"))))
+    res1$predict$transform(res1$pars[1, ])$beta_step,
+    res2$predict$transform(res1$pars[1, ])$beta_step)
+
+  ## Need to zero these out or the comparison fails on R-devel
+  res1$predict$transform <- NULL
+  res2$predict$transform <- NULL
+  expect_equal(res1, res2)
 
   ## Error when setting to a date that has been trimmed
   date_error <- sircovid_date_as_date(rt1$date[[2]])
