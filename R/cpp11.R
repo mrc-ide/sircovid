@@ -52,6 +52,10 @@ dust_basic_has_openmp <- function() {
   .Call("_sircovid_dust_basic_has_openmp", PACKAGE = "sircovid")
 }
 
+dust_basic_set_n_threads <- function(ptr, n_threads) {
+  invisible(.Call("_sircovid_dust_basic_set_n_threads", ptr, n_threads, PACKAGE = "sircovid"))
+}
+
 dust_carehomes_alloc <- function(r_data, step, n_particles, n_threads, r_seed) {
   .Call("_sircovid_dust_carehomes_alloc", r_data, step, n_particles, n_threads, r_seed, PACKAGE = "sircovid")
 }
@@ -102,4 +106,8 @@ dust_carehomes_simulate <- function(r_steps, r_data, r_state, r_index, n_threads
 
 dust_carehomes_has_openmp <- function() {
   .Call("_sircovid_dust_carehomes_has_openmp", PACKAGE = "sircovid")
+}
+
+dust_carehomes_set_n_threads <- function(ptr, n_threads) {
+  invisible(.Call("_sircovid_dust_carehomes_set_n_threads", ptr, n_threads, PACKAGE = "sircovid"))
 }
