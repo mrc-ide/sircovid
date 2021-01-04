@@ -518,10 +518,10 @@ test_that("model_pcr_and_serology_user switch works", {
   ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
   for (i in seq_len(p$n_groups)) {
     for (j in seq_len(p$n_strains)) {
-    expect_true(all(diff(y$R_neg[i, 1, j, ]) >= 0))
-    expect_true(all(diff(y$R_neg[i, 2, j, ]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, 1, j, ]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, 2, j, ]) >= 0))
+    expect_true(all(diff(y$R_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$R_neg[i, , 2, j]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$PCR_neg[i, , 2, j]) >= 0))
     }
   }
 

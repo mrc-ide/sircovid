@@ -312,10 +312,10 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
 
   index_E <- array(info$index$E, info$dim$E)
   index_S <- array(info$index$S, info$dim$S)
-  state[index_E[, 1, 2, 1]] <- state[index_S[, 1]]
+  state[index_E[, 1, 1, 2]] <- state[index_S[, 1]]
   state[index_E[, 1, 1, 1]] <- 0
-  state[index_E[, 2, 2, 1]] <- state[index_S[, 1]]
-  state[index_E[, 2, 1, 1]] <- 0
+  state[index_E[, 1, 2, 2]] <- state[index_S[, 1]]
+  state[index_E[, 1, 2, 1]] <- 0
   state[index_S] <- 0
 
   mod$set_state(state)
@@ -331,18 +331,18 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
   E_compartment_idx <- 1
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_equal(e[, E_compartment_idx, vacc_idx, 1, 1],
-               e[, E_compartment_idx, unvacc_idx, 1, 2])
+  expect_equal(e[, 1, E_compartment_idx, vacc_idx, 1],
+               e[, 1, E_compartment_idx, unvacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(e[, E_compartment_idx, unvacc_idx, 1, 2],
-               e[, E_compartment_idx, unvacc_idx, 1, 101])
+  expect_equal(e[, 1, E_compartment_idx, unvacc_idx, 2],
+               e[, 1, E_compartment_idx, unvacc_idx, 101])
   ## same for second E compartment
   E_compartment_idx <- 2
-  expect_equal(e[, E_compartment_idx, vacc_idx, 1, 1],
-               e[, E_compartment_idx, unvacc_idx, 1, 2])
+  expect_equal(e[, 1, E_compartment_idx, vacc_idx, 1],
+               e[, 1, E_compartment_idx, unvacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(e[, E_compartment_idx, unvacc_idx, 1, 2],
-               e[, E_compartment_idx, unvacc_idx, 1, 101])
+  expect_equal(e[, 1, E_compartment_idx, unvacc_idx, 2],
+               e[, 1, E_compartment_idx, unvacc_idx, 101])
 })
 
 
@@ -369,7 +369,7 @@ test_that("Returning to unvaccinated stage works for I_asympt individuals", {
 
   index_I_asympt <- array(info$index$I_asympt, info$dim$I_asympt)
   index_S <- array(info$index$S, info$dim$S)
-  state[index_I_asympt[, 1, 2, 1]] <- state[index_S[, 1]]
+  state[index_I_asympt[, 1, 1, 2]] <- state[index_S[, 1]]
   state[index_I_asympt[, 1, 1, 1]] <- 0
   state[index_S] <- 0
 
@@ -388,12 +388,12 @@ test_that("Returning to unvaccinated stage works for I_asympt individuals", {
   unvacc_idx <- 1
   vacc_idx <- 2
   expect_equal(
-    i_asympt[, I_asympt_compartment_idx, vacc_idx, 1, 1],
-    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 1, 2])
+    i_asympt[, 1, I_asympt_compartment_idx, vacc_idx, 1],
+    i_asympt[, 1, I_asympt_compartment_idx, unvacc_idx, 2])
   ## then they don't move anymore
   expect_equal(
-    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 1, 2],
-    i_asympt[, I_asympt_compartment_idx, unvacc_idx, 1, 101])
+    i_asympt[, 1, I_asympt_compartment_idx, unvacc_idx, 2],
+    i_asympt[, 1, I_asympt_compartment_idx, unvacc_idx, 101])
 })
 
 
@@ -419,11 +419,11 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
   index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
   index_PCR_neg <- array(info$index$PCR_neg, info$dim$PCR_neg)
   index_S <- array(info$index$S, info$dim$S)
-  state[index_R[, 2, 1]] <- state[index_S[, 1]]
+  state[index_R[, 1, 2]] <- state[index_S[, 1]]
   state[index_R[, 1, 1]] <- 0
-  state[index_R_neg[, 2, 1]] <- state[index_S[, 1]]
+  state[index_R_neg[, 1, 2]] <- state[index_S[, 1]]
   state[index_R_neg[, 1, 1]] <- 0
-  state[index_PCR_neg[, 2, 1]] <- state[index_S[, 1]]
+  state[index_PCR_neg[, 1, 2]] <- state[index_S[, 1]]
   state[index_PCR_neg[, 1, 1]] <- 0
   state[index_S] <- 0
   state[index_I_asympt] <- 0 # remove seeded infections
@@ -441,9 +441,9 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
   ## time steps 1 and 2
   unvacc_idx <- 1
   vacc_idx <- 2
-  expect_equal(r[, vacc_idx, 1, 1], r[, unvacc_idx, 1, 2])
+  expect_equal(r[, 1, vacc_idx, 1], r[, 1, unvacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(r[, unvacc_idx, 1, 2], r[, unvacc_idx, 1, 101])
+  expect_equal(r[, 1, unvacc_idx, 2], r[, 1, unvacc_idx, 101])
 })
 
 
@@ -548,7 +548,7 @@ test_that("Clinical progression within a vaccination class works", {
 
   ## all have moved from S to R in relevant vaccination class
   ## ignoring age group 4 where infections are seeded
-  expect_equal(s[-4, , 1], r[-4, , 1, 101])
+  expect_equal(s[-4, , 1], r[-4, 1, , 101])
 })
 
 
@@ -881,7 +881,6 @@ test_that(
 })
 
 test_that("Outputed vaccination numbers make sense", {
-
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
@@ -1306,15 +1305,8 @@ test_that("can add vaccination to a set of model state", {
       identical(v_orig, v_vacc[, 1, , drop = FALSE]) &&
         all(v_vacc[, -1, ] == 0)
     } else if (nd == 4) {
-      if (name %in% c("R_neg", "R", "PCR_neg")) {
-        ## In these cases vaccination is second to last not last (plus
-        ## one dimension here for time)
-        identical(v_orig, v_vacc[, 1, , , drop = FALSE]) &&
-          all(v_vacc[, -1, , ] == 0)
-      } else {
-        identical(v_orig, v_vacc[, , 1, , drop = FALSE]) &&
-          all(v_vacc[, , -1, ] == 0)
-      }
+      identical(v_orig, v_vacc[, , 1, , drop = FALSE]) &&
+        all(v_vacc[, , -1, ] == 0)
     }
   }
   expect_true(all(unlist(Map(cmp, tmp_orig, tmp_vacc, names(tmp_orig)))))

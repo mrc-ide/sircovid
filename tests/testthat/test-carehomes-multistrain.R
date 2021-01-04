@@ -113,6 +113,8 @@ test_that("Adding empty strains makes no difference", {
 
 
 test_that("Seeding of second strain generates an epidemic", {
+  ## No memory error here, but still wildly wrong; my guess is that we
+  ## have some terribly off integer?
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -136,14 +138,17 @@ test_that("Seeding of second strain generates an epidemic", {
   date <- sircovid_date_as_date(steps / 4)
   s_date <- sircovid_date(date)
   s_date_seeding <- sircovid_date(date_seeding)
+
   # no cases before seeding
-  expect_true(all(y$E[, , , 2, s_date < s_date_seeding] == 0))
+  expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
   # no cases on seeding day other than in 4th age group
-  expect_true(all(y$E[-4, , , 2, s_date == s_date_seeding] == 0))
+  expect_true(all(y$E[-4, 2, , , s_date == s_date_seeding] == 0))
   # some cases on seeding day in 4th age group
-  expect_true(y$E[4, 1, , 2, s_date == s_date_seeding] > 0)
+  expect_true(y$E[4, 2, 1, , s_date == s_date_seeding] > 0)
   # some cases on all days after seeding day
-  expect_true(all(colSums(y$E[, 1, , 2, s_date >= s_date_seeding]) > 0))
+
+  # It's not guaranteed that *all* will be greater than zero, but most will be
+  expect_true(mean(colSums(y$E[, 2, 1, , s_date >= s_date_seeding]) > 0) > 0.9)
 })
 
 
@@ -164,11 +169,16 @@ test_that("Second more virulent strain takes over", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+
+  ## These are *identical* until iteration 39, which is actually
+  ## slightly surprising, after which point we diverge quite badly; we
+  ## don't end up with the right number of infections in the second
+  ## strain at all, so something is still wrong.
+
   # cumulative infections with 2nd strain larger than with 1st strain
   # (average over 10 runs)
   expect_true(mean(y$cum_infections_per_strain[1, , 101]) <
                 mean(y$cum_infections_per_strain[2, , 101]))
-
 })
 
 
@@ -243,6 +253,11 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
+  # This might be a good place to start: we see expected values of
+  # [0..., 25, 100] but then see a slow steady increase in
+  # infections. That should not happen and suggests that we have some
+  # leakage somewhere?
+
   # expect the seeded cases did not infect any other people
   expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf)
 
@@ -270,7 +285,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   s_date <- sircovid_date(date)
   s_date_seeding <- sircovid_date(date_seeding)
   # no cases before seeding
-  expect_true(all(y$E[, , , 2, s_date < s_date_seeding] == 0))
+  expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
   # the +2 is because we need seeded individuals to get out of the first and
   # second E compartments before they can go on to infect others
   expect_true(all(y$S[, 1, s_date > (s_date_seeding + 2)] == 0))
@@ -296,7 +311,7 @@ test_that("No infection with either strain with perfect vaccine", {
   state[index_S[, 1]] <- 0
 
   index_E <- array(info$index$E, info$dim$E)
-  state[index_E[4, 1, 1, 2]] <- 10 # seed infections with second strain
+  state[index_E[4, 2, 1, 1]] <- 10 # seed infections with second strain
 
   mod$set_state(state)
   mod$set_index(integer(0))
@@ -312,7 +327,6 @@ test_that("No infection with either strain with perfect vaccine", {
 
   ## Noone gets infected with either strain
   expect_true(all(y$cum_infections_per_strain == 0))
-
 })
 
 
@@ -326,9 +340,9 @@ test_that("different strains are equivalent", {
 
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_asympt <- y$I_asympt[, , , 2:1]
-  y$PCR_pos <- y$PCR_pos[, , , 2:1, drop = FALSE]
-  y$R_pre <- y$R_pre[, , , 2:1, drop = FALSE]
+  y$I_asympt <- y$I_asympt[, 2:1, , , drop = FALSE]
+  y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
+  y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
 
@@ -368,9 +382,9 @@ test_that("Swapping strains gives identical results with different index", {
   end <- sircovid_date("2020-05-1") / p$dt
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_asympt <- y$I_asympt[, , , 2:1, drop = FALSE]
-  y$PCR_pos <- y$PCR_pos[, , , 2:1, drop = FALSE]
-  y$R_pre <- y$R_pre[, , , 2:1, drop = FALSE]
+  y$I_asympt <- y$I_asympt[, 2:1, , , drop = FALSE]
+  y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
+  y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
@@ -391,7 +405,7 @@ test_that("Swapping strains gives identical results with different index", {
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[2:1, , drop = FALSE]
   for (nm in c("R_neg", "R", "PCR_neg")) {
-    z2[[nm]] <- z2[[nm]][, , 2:1, , drop = FALSE]
+    z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
   }
   v5 <- c("E", "I_asympt", "I_sympt", "PCR_pre", "PCR_pos", "R_pre",
           "R_pos", "I_comm_D", "I_triage_unconf", "I_triage_conf",
@@ -401,7 +415,7 @@ test_that("Swapping strains gives identical results with different index", {
           "I_ICU_D_conf", "R_stepdown_R_unconf", "R_stepdown_R_conf",
           "R_stepdown_D_unconf", "R_stepdown_D_conf")
   for (nm in v5) {
-    z2[[nm]] <- z2[[nm]][, , , 2:1, , drop = FALSE]
+    z2[[nm]] <- z2[[nm]][, 2:1, , , , drop = FALSE]
   }
 
   expect_identical(z1, z2)
