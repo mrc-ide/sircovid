@@ -51,12 +51,11 @@ add_future_betas <- function(sample, rt, future) {
 
   ## Check that our trajectories are consistent with the sample:
   i <- match(sample$trajectories$step, rt$step[, 1])
-  if (any(is.na(i))) {
-    stop("Trajectories are not consistent with rt calculations")
-  }
   rt_date <- rt$date[i, 1]
+
   ## NOTE: it would be easy here to allow a different Rt calculation
-  ## to be used; we will always have 4.
+  ## to be used; we will always have 4 to chose from, though not all
+  ## are going to appropriate to translate into beta.
   rt_value <- rt$Rt_general[i, , drop = FALSE]
 
   beta_scaling <- future_relative_beta(future, rt_date, rt_value, "fbs_")

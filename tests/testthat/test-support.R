@@ -380,18 +380,6 @@ test_that("strip projections", {
 })
 
 
-test_that("validate trajectories match rt", {
-  dat <- reference_data_mcmc()
-  rt <- calculate_rt_simple(dat)
-  rt$step <- rt$step * 2
-  future <- list(
-    "2020-04-01" = future_Rt(1.5),
-    "2020-05-01" = future_Rt(0.5, "2020-03-27"))
-  expect_error(add_future_betas(dat, rt, future),
-               "Trajectories are not consistent with rt calculations")
-})
-
-
 test_that("validate future beta values", {
   dat <- reference_data_mcmc()
   rt <- calculate_rt_simple(dat)
@@ -427,4 +415,32 @@ test_that("validate future beta values", {
   expect_error(
     add_future_betas(dat, rt, list("2020-05-01" = future_Rt(1, "2020-01-01"))),
     "Relative date not found in rt set: 2020-01-01")
+})
+
+
+test_that("Can add new betas with incomplete Rt calculation", {
+  ## Due to staggered start dates, we may end up with Rt calculations
+  ## that miss off the first few dates. This test checks that we can
+  ## handle these appropriately.
+  dat <- reference_data_mcmc()
+  rt1 <- calculate_rt_simple(dat)
+  rt2 <- rt1
+
+  ## Then we remove some rt calculations:
+  for (i in names(rt2)) {
+    rt2[[i]] <- rt1[[i]][-(1:5), ]
+  }
+
+  ## Calculations work the same as the non-trimmed version
+  expect_equal(
+    add_future_betas(dat, rt2, list("2020-05-01" = future_Rt(1, "2020-03-24"))),
+    add_future_betas(dat, rt1, list("2020-05-01" = future_Rt(1, "2020-03-24"))))
+
+  ## Error when setting to a date that has been trimmed
+  date_error <- sircovid_date_as_date(rt1$date[[2]])
+  expect_error(
+    add_future_betas(dat, rt2, list("2020-05-01" = future_Rt(1, date_error))),
+    "Relative date not found in rt set: 2020-02-29")
+  expect_silent(
+    add_future_betas(dat, rt1, list("2020-05-01" = future_Rt(1, date_error))))
 })
