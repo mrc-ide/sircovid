@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compare observed and modelled data for the basic model — basic_compare • sircovid</title>
+<title>Drop predictions from trajectories — drop_trajectory_predicted • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,8 @@
 
 
 
-<meta property="og:title" content="Compare observed and modelled data for the basic model — basic_compare" />
-<meta property="og:description" content="Compare observed and modelled data from the basic model. This
-conforms to the mcstate interface." />
+<meta property="og:title" content="Drop predictions from trajectories — drop_trajectory_predicted" />
+<meta property="og:description" content="Drop predicted elements from a set of trajectories" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -120,58 +119,28 @@ conforms to the mcstate interface." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compare observed and modelled data for the basic model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/basic.R'><code>R/basic.R</code></a></small>
-    <div class="hidden name"><code>basic_compare.Rd</code></div>
+    <h1>Drop predictions from trajectories</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/support.R'><code>R/support.R</code></a></small>
+    <div class="hidden name"><code>drop_trajectory_predicted.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compare observed and modelled data from the basic model. This
-conforms to the mcstate interface.</p>
+    <p>Drop predicted elements from a set of trajectories</p>
     </div>
 
-    <pre class="usage"><span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>prev_state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>drop_trajectory_predicted</span><span class='op'>(</span><span class='va'>obj</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>state</th>
-      <td><p>State vector for the end of the current day. This is
-assumed to be filtered following <code><a href='basic_index.html'>basic_index()</a></code> so contains
-rows corresponding to ICU and deaths.</p></td>
-    </tr>
-    <tr>
-      <th>prev_state</th>
-      <td><p>State vector for the end of the previous day, as
-for <code>state</code>.</p></td>
-    </tr>
-    <tr>
-      <th>observed</th>
-      <td><p>Observed data. This will be a list with elements
-<code>icu</code> (number of ICU beds occupied) and <code>deaths</code> (number of
-deaths over this day).</p></td>
-    </tr>
-    <tr>
-      <th>pars</th>
-      <td><p>A list of parameters, as created by
-<code><a href='basic_parameters.html'>basic_parameters()</a></code></p></td>
+      <th>obj</th>
+      <td><p>A <code>mcstate_trajectories</code> or <code>mcstate_pmcmc</code> object to
+update</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector of log likelihoods, the same length as the number
-of particles (the number of columns in the modelled state)</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>state</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span>icu <span class='op'>=</span> <span class='fl'>10</span><span class='op'>:</span><span class='fl'>15</span>, deaths <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span>
-<span class='va'>prev_state</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>6</span>, dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>state</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>observed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>icu <span class='op'>=</span> <span class='fl'>13</span>, deaths <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
-<span class='va'>pars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_parameters.html'>basic_parameters</a></span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-07"</span><span class='op'>)</span>, <span class='st'>"england"</span><span class='op'>)</span>
-<span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>prev_state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] -47.303412  -6.147741  -5.399510  -5.237661  -5.252074  -5.336899</div><div class='input'><span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span> <span class='op'>*</span> <span class='fl'>5</span>, <span class='va'>prev_state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] -6.315318 -6.974462 -7.622200 -8.171863 -8.644335 -9.058637</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

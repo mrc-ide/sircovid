@@ -83,7 +83,7 @@ and adding trajectories of incidence." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -152,9 +152,10 @@ and adding trajectories of incidence.</p>
     </tr>
     <tr>
       <th>n_sample</th>
-      <td><p>The number of samples to draw from <code>object</code> <em>with
-replacement</em>. This means that <code>n_sample</code> can be larger than the
-total number of samples taken (though it probably should not)</p></td>
+      <td><p>Number of samples to take. If you provide a value
+of 0 then sampling is skipped (i.e., the entire set of
+parameters in <code>samples</code> will be forecasted). Otherwise this is
+passed to <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_sample</a></p></td>
     </tr>
     <tr>
       <th>burnin</th>
