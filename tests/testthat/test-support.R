@@ -427,8 +427,9 @@ test_that("Can add new betas with incomplete Rt calculation", {
   rt2 <- rt1
 
   ## Then we remove some rt calculations:
+  j <- 1:5
   for (i in names(rt2)) {
-    rt2[[i]] <- rt1[[i]][-(1:5), ]
+    rt2[[i]] <- rt1[[i]][-j, ]
   }
 
   ## Calculations work the same as the non-trimmed version
