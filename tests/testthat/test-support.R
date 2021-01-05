@@ -268,3 +268,189 @@ test_that("read default severity", {
   d <- severity_default()
   expect_identical(d, cache$severity_default)
 })
+
+
+test_that("Can add new betas", {
+  dat <- reference_data_mcmc()
+
+  ## In order to be able to update future beta values we need to
+  ## compute Rt for this simulation. This should probably be
+  ## automated, as it's still too fiddly.
+  rt <- local({
+    p <- lapply(seq_len(nrow(dat$pars)), function(i)
+      dat$predict$transform(dat$pars[i, ]))
+    i <- grep("S_", rownames(dat$trajectories$state))
+    S <- dat$trajectories$state[i, , ]
+    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+  })
+
+  future <- list(
+    "2020-04-01" = future_Rt(1.5),
+    "2020-05-01" = future_Rt(0.5, "2020-03-27"))
+  res <- add_future_betas(dat, rt, future)
+  expect_is(res, "mcstate_pmcmc")
+
+  p_base <- dat$predict$transform(dat$pars[1, ])
+  p_new <- res$predict$transform(res$pars[1, ])
+
+  ## Nothing except beta_step wil have changed:
+  expect_mapequal(p_base[names(p_base) != "beta_step"],
+                  p_new[names(p_new) != "beta_step"])
+
+  beta_base <- p_base$beta_step
+  beta_new <- p_new$beta_step
+
+  ## Unchanged up to the point where we start changing
+  expect_identical(beta_new[seq_along(beta_base)], beta_base)
+
+  ## We have a few change points to consider here:
+  i <- c(sircovid_date("2020-04-01") - 1, sircovid_date("2020-04-01"),
+         sircovid_date("2020-05-01") - 1, sircovid_date("2020-05-01"))
+  j <- i / p_new$dt
+
+  ## Unchanged until the first change point
+  expect_true(all(beta_new[seq(length(beta_base), j[[1]])] == last(beta_base)))
+
+  ## Our paramaters are expanded as expected:
+  v <- beta_new[j[c(1, 2, 2, 4)] + 1L]
+  cmp <- sircovid_parameters_beta(i, v, p_new$dt)
+  expect_equal(beta_new[seq(j[[1]], length(beta_new))],
+               cmp[seq(j[[1]], length(cmp))])
+
+  tmp <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
+  expect_equal(tmp$value[1, ] * last(beta_base), v)
+})
+
+
+test_that("Compute relative betas", {
+  dat <- reference_data_mcmc()
+  rt <- local({
+    p <- lapply(seq_len(nrow(dat$pars)), function(i)
+      dat$predict$transform(dat$pars[i, ]))
+    i <- grep("S_", rownames(dat$trajectories$state))
+    S <- dat$trajectories$state[i, , ]
+    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+  })
+
+  ## NOTE: inject a bit of wobble to the numbers here so that it's
+  ## easier to check for exact correctness, otherwise because the toy
+  ## simulated data don't vary across parameter sets we don't trigger
+  ## all corner cases.
+  rt$Rt_general <- rt$Rt_general * rlnorm(length(rt$Rt_general), 0, 0.05)
+  future <- list(
+    "2020-05-01" = future_Rt(1.5, "2020-03-20"),
+    "2020-06-01" = future_Rt(1.2, "2020-03-19"),
+    "2020-07-01" = future_Rt(1.1, "2020-03-18"))
+  res <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
+
+  expect_equal(res$date, c(121, 122, 152, 153, 182, 183))
+
+  np <- ncol(rt$Rt_general)
+
+  expect_equal(res$value[, 1], rep(1, np))
+  expect_equal(dim(res$value), c(np, 6))
+  expect_equal(res$value[, c(2, 4)], res$value[, c(3, 5)])
+
+  ## which leaves us with our actual comparisons to make; do we manage
+  ## to set things to the correct values? We do this by an equivalent,
+  ## though different, calculation to that used in the package.
+  i <- match(sircovid_date(c("2020-03-20", "2020-03-19", "2020-03-18")),
+             rt$date[, 1])
+  r <- t(rt$Rt_general[i, ] * c(1.5, 1.2, 1.1)) /
+    rt$Rt_general[nrow(rt$Rt_general), ]
+  expect_equal(res$value[, c(2, 4, 6)], r)
+})
+
+
+test_that("strip projections", {
+  dat1 <- reference_data_mcmc()
+  rt1 <- calculate_rt_simple(dat1)
+
+  dat2 <- carehomes_forecast(dat1, 0, 0, 10, NULL)
+  rt2 <- calculate_rt_simple(dat2)
+
+  future <- list(
+    "2020-04-01" = future_Rt(1.5),
+    "2020-05-01" = future_Rt(0.5, "2020-03-27"))
+
+  cmp <- add_future_betas(dat1, rt1, future)
+  expect_equal(add_future_betas(dat2, rt1, future)$pars, cmp$pars)
+  expect_equal(add_future_betas(dat2, rt1, future)$pars, cmp$pars)
+  expect_equal(add_future_betas(dat2, rt2, future)$pars, cmp$pars)
+})
+
+
+test_that("validate future beta values", {
+  dat <- reference_data_mcmc()
+  rt <- calculate_rt_simple(dat)
+
+  f1 <- future_Rt(1.5)
+  f2 <- future_Rt(1.5)
+
+  expect_error(
+    add_future_betas(dat, rt, NULL),
+    "Expected at least one element in 'future'")
+  expect_error(
+    add_future_betas(dat, rt, list()),
+    "Expected at least one element in 'future'")
+  expect_error(
+    add_future_betas(dat, rt, list(f1, f2)),
+    "Expected 'future' to be named")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-04-01" = f1, "2020-05-01" = 2)),
+    "Expected all elements of 'future' to be 'future_Rt' objects")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-05-01" = f1, f2)),
+    "Expected ISO dates or R dates - please convert")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-05-01" = f1, "2020-04-01" = f2)),
+    "Future change dates must be increasing")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-04-01" = f1, "2020-04-02" = f2)),
+    "At least one full date required between all future change dates")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-03-01" = f1, "2020-04-02" = f2)),
+    "The first future date must be at least 2020-04-01 (but was 2020-03-01)",
+    fixed = TRUE)
+  expect_error(
+    add_future_betas(dat, rt, list("2020-05-01" = future_Rt(1, "2020-01-01"))),
+    "Relative date not found in rt set: 2020-01-01")
+})
+
+
+test_that("Can add new betas with incomplete Rt calculation", {
+  ## Due to staggered start dates, we may end up with Rt calculations
+  ## that miss off the first few dates. This test checks that we can
+  ## handle these appropriately.
+  dat <- reference_data_mcmc()
+  rt1 <- calculate_rt_simple(dat)
+  rt2 <- rt1
+
+  ## Then we remove some rt calculations:
+  j <- 1:5
+  for (i in names(rt2)) {
+    rt2[[i]] <- rt1[[i]][-j, ]
+  }
+
+  ## Calculations work the same as the non-trimmed version
+  future <- list("2020-05-01" = future_Rt(1, "2020-03-24"))
+  res1 <- add_future_betas(dat, rt1, future)
+  res2 <- add_future_betas(dat, rt2, future)
+
+  expect_equal(
+    res1$predict$transform(res1$pars[1, ])$beta_step,
+    res2$predict$transform(res1$pars[1, ])$beta_step)
+
+  ## Need to zero these out or the comparison fails on R-devel
+  res1$predict$transform <- NULL
+  res2$predict$transform <- NULL
+  expect_equal(res1, res2)
+
+  ## Error when setting to a date that has been trimmed
+  date_error <- sircovid_date_as_date(rt1$date[[2]])
+  expect_error(
+    add_future_betas(dat, rt2, list("2020-05-01" = future_Rt(1, date_error))),
+    "Relative date not found in rt set: 2020-02-29")
+  expect_silent(
+    add_future_betas(dat, rt1, list("2020-05-01" = future_Rt(1, date_error))))
+})

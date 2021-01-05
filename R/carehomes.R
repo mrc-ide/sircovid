@@ -1017,6 +1017,11 @@ carehomes_n_groups <- function() {
 ##'
 ##' @param samples Results of running [mcstate::pmcmc()]
 ##'
+##' @param n_sample Number of samples to take. If you provide a value
+##'   of 0 then sampling is skipped (i.e., the entire set of
+##'   parameters in `samples` will be forecasted). Otherwise this is
+##'   passed to [mcstate::pmcmc_sample]
+##'
 ##' @param forecast_days The number of days to create a forecast for
 ##'
 ##' @param incidence_states A character vector of states for which
@@ -1028,7 +1033,11 @@ carehomes_n_groups <- function() {
 carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
                                incidence_states,
                                prepend_trajectories = TRUE) {
-  ret <- mcstate::pmcmc_sample(samples, n_sample, burnin)
+  if (n_sample == 0) {
+    ret <- samples
+  } else {
+    ret <- mcstate::pmcmc_sample(samples, n_sample, burnin)
+  }
   steps_predict <- seq(ret$predict$step,
                        length.out = forecast_days + 1L,
                        by = ret$predict$rate)

@@ -16,9 +16,10 @@ carehomes_forecast(
 \arguments{
 \item{samples}{Results of running \code{\link[mcstate:pmcmc]{mcstate::pmcmc()}}}
 
-\item{n_sample}{The number of samples to draw from \code{object} \emph{with
-replacement}. This means that \code{n_sample} can be larger than the
-total number of samples taken (though it probably should not)}
+\item{n_sample}{Number of samples to take. If you provide a value
+of 0 then sampling is skipped (i.e., the entire set of
+parameters in \code{samples} will be forecasted). Otherwise this is
+passed to \link[mcstate:pmcmc_thin]{mcstate::pmcmc_sample}}
 
 \item{burnin}{Optional integer number of iterations to discard as
 "burn-in". If given then samples \code{1:burnin} will be

@@ -72,8 +72,18 @@ set_names <- function(x, nms) {
 }
 
 
-vnapply <- function(x, fun, ...) {
-  vapply(x, fun, numeric(1), ...)
+vlapply <- function(.x, .fun, ...) {
+  vapply(.x, .fun, logical(1), ...)
+}
+
+
+vnapply <- function(.x, .fun, ...) {
+  vapply(.x, .fun, numeric(1), ...)
+}
+
+
+vcapply <- function(.x, .fun, ...) {
+  vapply(.x, .fun, character(1), ...)
 }
 
 
@@ -112,6 +122,11 @@ matrix_pow <- function(x, n) {
   } else {
     return(x %*% matrix_pow(x %*% x, (n - 1) / 2))
   }
+}
+
+
+last <- function(x) {
+  x[[length(x)]]
 }
 
 

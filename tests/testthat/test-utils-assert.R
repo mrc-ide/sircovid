@@ -30,3 +30,23 @@ test_that("assert_integer", {
   expect_error(assert_integer(value),
                "'value' must be an integer")
 })
+
+
+test_that("assert_date_string", {
+  expect_silent(assert_date_string("2020-01-01"))
+  expect_silent(assert_date_string(rep("2020-01-01", 3)))
+  expect_equal(assert_date_string(as.Date("2020-01-01")),
+               "2020-01-01")
+  expect_error(assert_date_string("June 24, 2020"),
+               "Expected ISO dates or R dates for")
+})
+
+
+test_that("assert_scalar", {
+  expect_silent(assert_scalar(1))
+  object <- NULL
+  expect_error(assert_scalar(object),
+               "'object' must be a scalar")
+  expect_error(assert_scalar(1:5),
+               "must be a scalar")
+})
