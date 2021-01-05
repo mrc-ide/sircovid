@@ -113,8 +113,6 @@ test_that("Adding empty strains makes no difference", {
 
 
 test_that("Seeding of second strain generates an epidemic", {
-  ## No memory error here, but still wildly wrong; my guess is that we
-  ## have some terribly off integer?
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -169,11 +167,6 @@ test_that("Second more virulent strain takes over", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-
-  ## These are *identical* until iteration 39, which is actually
-  ## slightly surprising, after which point we diverge quite badly; we
-  ## don't end up with the right number of infections in the second
-  ## strain at all, so something is still wrong.
 
   # cumulative infections with 2nd strain larger than with 1st strain
   # (average over 10 runs)
@@ -252,11 +245,6 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-
-  # This might be a good place to start: we see expected values of
-  # [0..., 25, 100] but then see a slow steady increase in
-  # infections. That should not happen and suggests that we have some
-  # leakage somewhere?
 
   # expect the seeded cases did not infect any other people
   expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf)
