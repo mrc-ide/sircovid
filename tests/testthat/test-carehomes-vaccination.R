@@ -8,7 +8,7 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
@@ -37,7 +37,7 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
 })
 
 
-test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
+test_that("No symptomatic infections with perfect vaccine wrt rel_p_C", {
   ## i.e. if everyone is vaccinated with a vaccine preventing
   ## 100% of symptoms
 
@@ -45,7 +45,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 0),
+                            rel_p_C = c(1, 0),
                             rel_p_H = c(1, 1),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
@@ -79,7 +79,7 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_H", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 0),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
@@ -118,7 +118,7 @@ test_that("Vaccination of susceptibles works", {
                             beta_value = c(0, 0, 1),
                             beta_date = c(0, 4, 5),
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -142,7 +142,7 @@ test_that("Vaccination of exposed individuals works", {
   ## and if disease progression is stopped after E
   p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -198,7 +198,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
   ## and if disease progression is stopped after I_A
   p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -249,7 +249,7 @@ test_that("Vaccination of recovered individuals works", {
   ## and if no natural waning of immunity
   p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -298,7 +298,7 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
   p <- carehomes_parameters(0, "england",
                             beta_value = 0,
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
@@ -355,7 +355,7 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
   p <- carehomes_parameters(0, "england",
                             beta_value = 0,
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
@@ -405,7 +405,7 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
   p <- carehomes_parameters(0, "england",
                             beta_value = 0,
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
@@ -455,7 +455,7 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
   p <- carehomes_parameters(0, "england",
                             beta_value = 0,
                             rel_susceptibility = c(1, 0, 0),
-                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_C = c(1, 1, 1),
                             rel_p_H = c(1, 1, 1),
                             vaccine_progression_rate = c(0, Inf, 0),
                             vaccine_daily_doses = Inf)
@@ -482,7 +482,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
   p <- carehomes_parameters(0, "england",
                             beta_value = 0,
                             rel_susceptibility = c(1, rep(0, 10), 0),
-                            rel_p_sympt = rep(1, 12),
+                            rel_p_C = rep(1, 12),
                             rel_p_H = rep(1, 12),
                             vaccine_progression_rate =
                               c(0, rep(Inf, 10), 0),
@@ -508,7 +508,7 @@ test_that("Clinical progression within a vaccination class works", {
   p <- carehomes_parameters(0, "england",
                             beta_value = 1e9,
                             rel_susceptibility = c(1, 1, 1),
-                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_C = c(1, 1, 1),
                             rel_p_H = c(1, 1, 1),
                             vaccine_progression_rate =
                               c(0, 0, 0))
@@ -559,7 +559,7 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
   p <- carehomes_parameters(0, "england",
                             beta_value = 0,
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
@@ -613,7 +613,7 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   ## run model with unvaccinated & vaccinated, but both have same susceptibility
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1))
 
   np <- 3L
@@ -636,7 +636,7 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   ## run model with unvaccinated class only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1))
 
   np <- 3L
@@ -669,7 +669,7 @@ test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
   ## passes with waning immunity
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, reduced_susceptibility),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             waning_rate = 1 / 20)
 
@@ -712,15 +712,15 @@ test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
 })
 
 
-test_that("Effective Rt modified if rel_p_sympt is not 1", {
-  reduced_p_sympt <- 0.2 # can put anything <1 here
+test_that("Effective Rt modified if rel_p_C is not 1", {
+  reduced_p_C <- 0.2 # can put anything <1 here
 
   ## run model with unvaccinated & vaccinated (with susceptibility halved)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, reduced_p_sympt),
+                            rel_p_C = c(1, reduced_p_C),
                             rel_p_H = c(1, 1),
                             waning_rate = 1 / 20)
 
@@ -752,7 +752,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   ## same without vaccination
   p_no_vacc <- p
   # set this to 1 everywhere
-  p_no_vacc$rel_p_sympt <- 0 *  p_no_vacc$rel_p_sympt + 1
+  p_no_vacc$rel_p_C <- 0 *  p_no_vacc$rel_p_C + 1
 
   rt_1_no_vacc <- carehomes_Rt(steps, y[, 1, ], p_no_vacc)
   rt_all_no_vacc <- carehomes_Rt_trajectories(steps, y, p_no_vacc)
@@ -762,7 +762,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   expect_true(all(diff(rt_1_no_vacc$Rt_all / rt_1$Rt_all) == 0))
 
   ## Given mean duration is shorter for asymptomatic individuals, we expect
-  ## Rt to be reduced when rel_p_sympt is not 1
+  ## Rt to be reduced when rel_p_C is not 1
   expect_true(all(rt_1_no_vacc$Rt_all > rt_1$Rt_all))
   expect_true(all(rt_1_no_vacc$eff_Rt_all > rt_1$eff_Rt_all))
   expect_true(all(rt_1_no_vacc$Rt_general > rt_1$Rt_general))
@@ -779,7 +779,7 @@ test_that("Effective Rt modified if rel_p_H is not 1", {
   ## passes with waning immunity
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, rel_p_H),
                             waning_rate = 1 / 20)
 
@@ -829,7 +829,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
   set.seed(1)
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5, 0.1),
-                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_C = c(1, 1, 1),
                             rel_p_H = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0.5, 0.01),
                             vaccine_daily_doses = 500000)
@@ -860,7 +860,7 @@ test_that(
     ## stage and progresses to the next vaccination stage
     p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                               rel_susceptibility = c(1, 0.5, 0.1),
-                              rel_p_sympt = c(1, 1, 1),
+                              rel_p_C = c(1, 1, 1),
                               rel_p_H = c(1, 1, 1),
                               vaccine_progression_rate = c(0, 100, 50),
                               vaccine_daily_doses = 1000000)
@@ -883,7 +883,7 @@ test_that(
 test_that("Outputed vaccination numbers make sense", {
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5, 0.1),
-                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_C = c(1, 1, 1),
                             rel_p_H = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0.5, 0.01),
                             vaccine_daily_doses = 1000)
@@ -915,7 +915,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
   skip("TODO: can't vaccinate fast enough")
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -947,7 +947,7 @@ test_that("Outputed E vaccination numbers are what we expect", {
   skip("TODO: can't vaccinate fast enough")
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -985,7 +985,7 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
   skip("TODO: can't vaccinate fast enough")
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -1019,7 +1019,7 @@ test_that("Outputed R vaccination numbers are what we expect", {
   skip("TODO: can't vaccinate fast enough")
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
@@ -1220,7 +1220,7 @@ test_that("build_waning_rate works as expected", {
 test_that("run sensible vaccination schedule", {
   p <- carehomes_parameters(0, "east_of_england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_daily_doses = 50000)
   ## TODO: Anne to look at tidying this parameter up:
@@ -1279,7 +1279,7 @@ test_that("can add vaccination to a set of model state", {
   p_orig <- carehomes_parameters(0, "east_of_england")
   p_vacc <- carehomes_parameters(0, "east_of_england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_daily_doses = 5000)
 
@@ -1355,7 +1355,7 @@ test_that("can upgrade model state", {
   ## Then a new set with vaccination:
   p_vacc <- carehomes_parameters(0, "east_of_england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_daily_doses = 5000)
   mod_vacc <- carehomes$new(p_vacc, 0, 10)
@@ -1393,7 +1393,7 @@ test_that("Refuse to upgrade impossible model state", {
   ## Then a new set with vaccination:
   p_vacc <- carehomes_parameters(0, "east_of_england",
                             rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             vaccine_daily_doses = 5000)
   mod_vacc <- carehomes$new(p_vacc, 0, 10)

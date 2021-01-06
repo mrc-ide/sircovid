@@ -285,7 +285,7 @@ test_that("No infection with either strain with perfect vaccine", {
   p <- carehomes_parameters(0, "england",
                             strain_transmission = c(1, 1),
                             rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
+                            rel_p_C = c(1, 1),
                             rel_p_H = c(1, 1),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)

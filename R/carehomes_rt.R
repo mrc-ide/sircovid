@@ -202,12 +202,12 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     out
   }
 
-  p_sympt <- matricise(pars$p_sympt, n_vacc_classes)
-  p_sympt <- p_sympt * pars$rel_p_sympt
+  p_C <- matricise(pars$p_C, n_vacc_classes)
+  p_C <- p_C * pars$rel_p_C
   if (n_vacc_classes > 1) {
-    p_sympt <- t(mat_multi_by_group(p_sympt, V))
+    p_C <- t(mat_multi_by_group(p_C, V))
   }
-  p_sympt <- outer(p_sympt, rep(1, n_time_steps))
+  p_C <- outer(p_C, rep(1, n_time_steps))
 
   p_H <- matricise(pars$psi_H, n_vacc_classes) *
     pars$rel_p_H
@@ -228,25 +228,25 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_death_comm <- outer(matricise(pars$psi_death_comm, n_vacc_classes),
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
-  p_hosp_R <- p_sympt * p_H * (1 - p_death_comm) *
+  p_hosp_R <- p_C * p_H * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
-  p_hosp_D <- p_sympt * p_H * (1 - p_death_comm) *
+  p_hosp_D <- p_C * p_H * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * p_death_hosp_D
-  p_ICU_S_R <- p_sympt * p_H * (1 - p_death_comm) *
+  p_ICU_S_R <- p_C * p_H * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * (1 - p_death_stepdown)
-  p_ICU_S_D <- p_sympt * p_H * (1 - p_death_comm) *
+  p_ICU_S_D <- p_C * p_H * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * p_death_stepdown
-  p_ICU_D <- p_sympt * p_H * (1 - p_death_comm) *
+  p_ICU_D <- p_C * p_H * (1 - p_death_comm) *
     p_ICU_hosp * p_death_ICU
 
   ## TODO: would be nice if it's possibly to name these subcomponents
   ## to make the calculation clearer.
-  mean_duration <- (1 - p_sympt) * pars$s_A /
+  mean_duration <- (1 - p_C) * pars$s_A /
     (1 - exp(- dt * pars$gamma_A)) +
-    p_sympt * pars$s_C / (1 - exp(- dt * pars$gamma_C))
+    p_C * pars$s_C / (1 - exp(- dt * pars$gamma_C))
 
   mean_duration <- mean_duration +
-    pars$comm_D_transmission * p_sympt * p_H *
+    pars$comm_D_transmission * p_C * p_H *
     p_death_comm * pars$s_comm_D / (1 - exp(- dt * pars$gamma_comm_D))
 
   mean_duration <- mean_duration +
