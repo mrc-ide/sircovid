@@ -238,9 +238,9 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_ICU_pre = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_D = list(
+        min = -Inf, max = Inf, integer = FALSE), s_ICU_W_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_R = list(
+        min = -Inf, max = Inf, integer = FALSE), s_ICU_W_R = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_PCR_pos = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -278,9 +278,9 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_ICU_pre = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_ICU_S_D = list(has_default = TRUE,
+        integer = FALSE), gamma_ICU_W_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_ICU_S_R = list(has_default = TRUE,
+        integer = FALSE), gamma_ICU_W_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_PCR_pos = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,

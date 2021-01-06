@@ -544,8 +544,8 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_ICU_pre", "s_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "s_H_R", "I_hosp_R", TRUE)
   helper("gamma_H_D", "s_H_D", "I_hosp_D", TRUE)
-  helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R", TRUE)
-  helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D", TRUE)
+  helper("gamma_ICU_W_R", "s_ICU_W_R", "I_ICU_S_R", TRUE)
+  helper("gamma_ICU_W_D", "s_ICU_W_D", "I_ICU_S_D", TRUE)
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
   helper("gamma_G_D", "s_G_D", "G_D", FALSE)
   helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R", TRUE)
@@ -619,8 +619,8 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_ICU_pre", "s_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "s_H_R", "I_hosp_R", TRUE)
   helper("gamma_H_D", "s_H_D", "I_hosp_D", TRUE)
-  helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R", TRUE)
-  helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D", TRUE)
+  helper("gamma_ICU_W_R", "s_ICU_W_R", "I_ICU_S_R", TRUE)
+  helper("gamma_ICU_W_D", "s_ICU_W_D", "I_ICU_S_D", TRUE)
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
   helper("gamma_G_D", "s_G_D", "G_D", FALSE)
   helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R", TRUE)
@@ -640,8 +640,8 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
   p$gamma_H_D <- Inf
-  p$gamma_ICU_S_R <- Inf
-  p$gamma_ICU_S_D <- Inf
+  p$gamma_ICU_W_R <- Inf
+  p$gamma_ICU_W_D <- Inf
   p$gamma_ICU_D <- Inf
   p$gamma_stepdown_R <- Inf
   p$gamma_stepdown_D <- Inf
@@ -721,8 +721,8 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
   p$gamma_H_D <- Inf
-  p$gamma_ICU_S_R <- Inf
-  p$gamma_ICU_S_D <- Inf
+  p$gamma_ICU_W_R <- Inf
+  p$gamma_ICU_W_D <- Inf
   p$gamma_ICU_D <- Inf
   p$gamma_stepdown_R <- Inf
   p$gamma_stepdown_D <- Inf
