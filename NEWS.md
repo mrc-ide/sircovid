@@ -1,6 +1,6 @@
 # sircovid 0.9.0
 
-* Multistrain
+* Multistrain model: ability to model 2 strains (and flexibility for more in the future) with strain-specific transmissibility. 2nd strain can be seeded over a number of pre-specified days at a pre-specified seeding level.
 
 # sircovid 0.8.2
 
