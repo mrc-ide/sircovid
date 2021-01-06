@@ -136,3 +136,28 @@ spread_integer <- function(n, m) {
   ret[i] <- ret[i] - 1L
   ret
 }
+
+
+interpolate_grid <- function(x, f, every, min = 5) {
+  if (is.null(min) || length(x) <= min) {
+    xx <- x
+  } else {
+    xx <- seq(x[[1]], last(x), by = min(every, ceiling(length(x) / min)))
+  }
+  if (last(xx) < last(x)) {
+    xx <- c(xx, last(x))
+  }
+  yy <- vnapply(xx, f)
+  spline(xx, yy, xout = x)$y
+}
+
+
+interpolate_grid_critical <- function(x, f, every, critical = NULL, min = 5) {
+  if (length(critical) == 0) {
+    interpolate_grid(x, f, every, min)
+  } else {
+    xx <- split(x, findInterval(x, critical))
+    yy <- lapply(unname(xx), interpolate_grid, f, every, min)
+    unlist(yy, use.names = FALSE)
+  }
+}

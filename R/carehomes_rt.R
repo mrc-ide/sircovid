@@ -12,11 +12,33 @@
 ##'   compute. Can be any or all of `eff_Rt_all`, `eff_Rt_general`,
 ##'   `Rt_all` and `Rt_general`
 ##'
+##' @param interpolate_every Spacing to use between interpolated points
+##'
+##' @param interpolate_critical Optional vector of critical step
+##'   indices to use when interpolating. Interpolation will be done in
+##'   blocks between these points, with each block starting on the
+##'   step given. So if you give a `interpolate_critical` of `c(20,
+##'   50)` then blocks *start* on steps 20 and 50, i.e.: [1, 20), [20,
+##'   50), [50, end]. Note that this is the index into the `step`
+##'   argument and not necessarily the same as the original model
+##'   step (being `dt * date`).
+##'
+##' @param interpolate_min The minimum number of steps to include
+##'   within a block. If there are fewer points than this then all
+##'   points are used (i.e., no interpolation is done) or
+##'   `interpolate_every` is increased until at least this many points
+##'   were used. This can be used to specify a lower bound on the
+##'   error of small regions. If Rt is small it won't matter that
+##'   much. You do need to specify something though or interpolation
+##'   will not happen, and do not use less than 3 as we use spline
+##'   interpolation and that will not work with fewer than 3 points.
+##'
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
 ##' @export
-carehomes_Rt <- function(step, S, p, type = NULL) {
+carehomes_Rt <- function(step, S, p, type = NULL, interpolate_every = NULL,
+                         interpolate_critical = NULL, interpolate_min = NULL) {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -95,14 +117,18 @@ carehomes_Rt <- function(step, S, p, type = NULL) {
   ret <- list(step = step,
               date = step * p$dt,
               beta = beta)
+
   ret[type] <- lapply(opts[type], function(x)
-    vnapply(t, calculate_ev, x$pop,
-            beta = beta,
-            mean_duration = mean_duration,
-            max_strain_multiplier = max_strain_multiplier,
-            drop_carehomes = x$general))
+    interpolate_grid_critical(t, function(t)
+      calculate_ev(t, x$pop, beta = beta,
+                   mean_duration = mean_duration,
+                   max_strain_multiplier = max_strain_multiplier,
+                   drop_carehomes = x$general),
+      interpolate_every, interpolate_critical, interpolate_min))
+
   ret
 }
+
 
 ## Here we expect 'S' in order:
 ##
@@ -145,10 +171,14 @@ carehomes_Rt <- function(step, S, p, type = NULL) {
 carehomes_Rt_trajectories <- function(step, S, pars,
                                       initial_step_from_parameters = TRUE,
                                       shared_parameters = NULL,
-                                      type = NULL) {
+                                      type = NULL,
+                                      interpolate_every = NULL,
+                                      interpolate_critical = NULL,
+                                      interpolate_min = NULL) {
   calculate_Rt_trajectories(carehomes_Rt, step, S, pars,
                             initial_step_from_parameters, shared_parameters,
-                            type)
+                            type, interpolate_every, interpolate_critical,
+                            interpolate_min)
 }
 
 

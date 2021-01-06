@@ -133,3 +133,69 @@ test_that("spread_integer", {
   expect_equal(spread_integer(0, 5), rep(0, 5))
   expect_equal(spread_integer(2, 5), c(1, 1, 0, 0, 0))
 })
+
+
+test_that("can interpolate an interval over a grid", {
+  x <- 1:61
+  f <- function(x) sin(x / 10)
+  expect_equal(interpolate_grid(x, f, 1), f(x))
+
+  y <- interpolate_grid(x, f, 3)
+  expect_false(identical(y, f(x)))
+  i <- rep(c(TRUE, FALSE, FALSE), length.out = length(x))
+  expect_equal(y[i], f(x)[i], tolerance = 1e-15)
+  expect_lt(
+    mean((y[i] - f(x)[i])^2),
+    mean((y[!i] - f(x)[!i])^2))
+
+  x <- 1:61
+  f <- function(x) sin(x / 10)
+  expect_equal(interpolate_grid(x, f, 3, min = 61),
+               interpolate_grid(x, f, 1), tolerance = 1e-15)
+  expect_equal(interpolate_grid(x, f, 3, min = 59),
+               interpolate_grid(x, f, 1), tolerance = 1e-15)
+
+  y <- interpolate_grid(x, f, 3, min = 30)
+  i <- rep(c(TRUE, FALSE), length.out = length(x))
+  expect_lt(
+    mean((y[i] - f(x)[i])^2),
+    mean((y[!i] - f(x)[!i])^2))
+  expect_equal(y[i], f(x)[i], tolerance = 1e-15)
+})
+
+
+test_that("can interpolate over an interval with critical points", {
+  crit <- c(10, 31)
+  f <- function(x) {
+    if (x < crit[[1]]) {
+      x
+    } else if (x < crit[[2]]) {
+      cos(x / 10)
+    } else {
+      sin(x / 10)
+    }
+  }
+
+  x <- 1:40
+  y <- vnapply(x, f)
+
+  z1 <- interpolate_grid_critical(x, f, 2, crit, min = 3)
+  z2 <- interpolate_grid_critical(x, f, 2, crit, min = 10)
+
+  expect_equal(z1[1:10], y[1:10], tolerance = 1e-15)
+  expect_equal(z2[1:10], y[1:10], tolerance = 1e-15)
+  expect_equal(z2[31:40], y[31:40], tolerance = 1e-15)
+
+  i <- c(seq(31, 40, by = 2), 40)
+  j <- setdiff(31:40, i)
+  expect_equal(z1[i], y[i], tolerance = 1e-15)
+  expect_equal(z1[j], y[j], tolerance = 1e-4)
+  expect_gt(sum(abs(y[j] - z1[j])), 1e-9)
+
+  i <- c(seq(10, 30, by = 2), 40)
+  j <- setdiff(10:30, i)
+  expect_equal(z1[11:30], z2[11:30], tolerance = 1e-15)
+  expect_equal(z1[i], y[i], tolerance = 1e-15)
+  expect_equal(z1[j], y[j], tolerance = 1e-4)
+  expect_gt(sum(abs(y[j] - z1[j])), 1e-9)
+})

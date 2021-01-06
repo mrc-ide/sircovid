@@ -184,3 +184,15 @@ test_that("can't compute Rt for unknown types", {
     carehomes_Rt(steps, y[, 1, ], p, c("eff_Rt_general", "rt_general")),
     "Unknown R type 'rt_general', must match '")
 })
+
+
+test_that("can interpolate Rt", {
+  d <- reference_data_rt()
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  res <- carehomes_Rt(steps, y[, 1, ], p,
+                      interpolate_every = 7, interpolate_min = 3)
+})

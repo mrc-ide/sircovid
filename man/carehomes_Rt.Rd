@@ -4,7 +4,15 @@
 \alias{carehomes_Rt}
 \title{Compute "Rt"}
 \usage{
-carehomes_Rt(step, S, p, type = NULL)
+carehomes_Rt(
+  step,
+  S,
+  p,
+  type = NULL,
+  interpolate_every = NULL,
+  interpolate_critical = NULL,
+  interpolate_min = NULL
+)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
@@ -16,6 +24,26 @@ carehomes_Rt(step, S, p, type = NULL)
 \item{type}{A character vector of possible Rt types to
 compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
 \code{Rt_all} and \code{Rt_general}}
+
+\item{interpolate_every}{Spacing to use between interpolated points}
+
+\item{interpolate_critical}{Optional vector of critical step
+indices to use when interpolating. Interpolation will be done in
+blocks between these points, with each block starting on the
+step given. So if you give a \code{interpolate_critical} of \code{c(20, 50)} then blocks \emph{start} on steps 20 and 50, i.e.: [1, 20), [20,
+50), \link{50, end}. Note that this is the index into the \code{step}
+argument and not necessarily the same as the original model
+step (being \code{dt * date}).}
+
+\item{interpolate_min}{The minimum number of steps to include
+within a block. If there are fewer points than this then all
+points are used (i.e., no interpolation is done) or
+\code{interpolate_every} is increased until at least this many points
+were used. This can be used to specify a lower bound on the
+error of small regions. If Rt is small it won't matter that
+much. You do need to specify something though or interpolation
+will not happen, and do not use less than 3 as we use spline
+interpolation and that will not work with fewer than 3 points.}
 }
 \value{
 A list with elements \code{step}, \code{beta}, and any of the \code{type}
