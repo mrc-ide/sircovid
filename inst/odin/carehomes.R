@@ -119,7 +119,7 @@ p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_A <- 1 - exp(-gamma_A * dt) # progression of infectious period
 p_II_C <- 1 - exp(-gamma_C * dt)
-p_II_comm_D <- 1 - exp(-gamma_comm_D * dt)
+p_II_comm_D <- 1 - exp(-gamma_G_D * dt)
 p_II_triage <- 1 - exp(-gamma_triage * dt)
 p_II_hosp_R <- 1 - exp(-gamma_hosp_R * dt)
 p_II_hosp_D <- 1 - exp(-gamma_hosp_D * dt)
@@ -404,8 +404,8 @@ n_sympt_to_hosp[, , ] <- n_II_C[i, j, s_C, k] - n_sympt_to_R[i, j, k] -
 
 ## Work out the I_comm_D -> I_comm_D transitions
 aux_II_comm_D[, , 1, ] <- n_sympt_to_comm_D[i, j, l]
-aux_II_comm_D[, , 2:s_comm_D, ] <- n_II_comm_D[i, j, k - 1, l]
-aux_II_comm_D[, , 1:s_comm_D, ] <-
+aux_II_comm_D[, , 2:s_G_D, ] <- n_II_comm_D[i, j, k - 1, l]
+aux_II_comm_D[, , 1:s_G_D, ] <-
   aux_II_comm_D[i, j, k, l] - n_II_comm_D[i, j, k, l]
 new_I_comm_D[, , , ] <- I_comm_D[i, j, k, l] + aux_II_comm_D[i, j, k, l]
 
@@ -633,7 +633,7 @@ new_D_hosp[] <- D_hosp[i] +
   sum(n_R_stepdown_D_conf[i, , s_stepdown_D, ])
 
 ## Work out the number of deaths in the community
-new_D_comm[] <- D_comm[i] + sum(n_II_comm_D[i, , s_comm_D, ])
+new_D_comm[] <- D_comm[i] + sum(n_II_comm_D[i, , s_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_R_pre[, , 1, 1] <- rbinom(
@@ -804,8 +804,8 @@ p_H_step[] <- user()
 psi_H[] <- user()
 
 ## Parameters of the I_comm_D class
-s_comm_D <- user()
-gamma_comm_D <- user(0.1)
+s_G_D <- user()
+gamma_G_D <- user(0.1)
 dim(p_death_comm_step) <- user()
 p_death_comm_step[] <- user()
 psi_death_comm[] <- user()
@@ -935,10 +935,10 @@ dim(prob_H) <- n_groups
 dim(psi_H) <- n_groups
 
 ## Vectors handling the I_comm_D class
-dim(I_comm_D) <- c(n_groups, n_strains, s_comm_D, n_vacc_classes)
-dim(aux_II_comm_D) <- c(n_groups, n_strains, s_comm_D, n_vacc_classes)
-dim(new_I_comm_D) <- c(n_groups, n_strains, s_comm_D, n_vacc_classes)
-dim(n_II_comm_D) <- c(n_groups, n_strains, s_comm_D, n_vacc_classes)
+dim(I_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+dim(aux_II_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+dim(new_I_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+dim(n_II_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
 dim(prob_death_comm) <- n_groups
 dim(psi_death_comm) <- n_groups
 

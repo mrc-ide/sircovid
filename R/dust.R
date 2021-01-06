@@ -226,37 +226,37 @@ carehomes <- R6::R6Class(
         min = -Inf, max = Inf, integer = FALSE), s_A = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), s_C = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_comm_D = list(
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_E = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_E = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_hosp_D = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_hosp_R = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_ICU_D = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_ICU_S_D = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_ICU_S_R = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_PCR_pos = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_PCR_pre = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_R_pos = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_stepdown_D = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_stepdown_R = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_triage = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), strain_seed_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), strain_transmission = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), vaccine_population_reluctant = list(
+        min = -Inf, max = Inf, integer = FALSE), s_G_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_hosp_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_hosp_R = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_ICU_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_R = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_PCR_pos = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_PCR_pre = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_R_pos = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_stepdown_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_stepdown_R = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), s_triage = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), strain_seed_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), strain_transmission = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), vaccine_population_reluctant = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), vaccine_progression_rate_base = list(
         has_default = FALSE, default_value = NULL, rank = 2,
@@ -266,9 +266,9 @@ carehomes <- R6::R6Class(
         has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf,
         max = Inf, integer = FALSE), gamma_C = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_comm_D = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_E = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_G_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_hosp_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
