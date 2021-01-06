@@ -128,24 +128,24 @@ test_that("Seeding of second strain generates an epidemic", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  # did the seeded cases go on to infect other people?
+  ## Did the seeded cases go on to infect other people?
   expect_true(y$cum_infections_per_strain[2, 101] > n_seeded_new_strain_inf)
 
-  # check the epidemic of the second strain starts when we expect
+  ## Check the epidemic of the second strain starts when we expect
   steps <- seq(0, 400, by = 4)
   date <- sircovid_date_as_date(steps / 4)
   s_date <- sircovid_date(date)
   s_date_seeding <- sircovid_date(date_seeding)
 
-  # no cases before seeding
+  ## No cases before seeding
   expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
-  # no cases on seeding day other than in 4th age group
+  ## No cases on seeding day other than in 4th age group
   expect_true(all(y$E[-4, 2, , , s_date == s_date_seeding] == 0))
-  # some cases on seeding day in 4th age group
+  ## Some cases on seeding day in 4th age group
   expect_true(y$E[4, 2, 1, , s_date == s_date_seeding] > 0)
-  # some cases on all days after seeding day
+  ## Some cases on all days after seeding day
 
-  # It's not guaranteed that *all* will be greater than zero, but most will be
+  ## It's not guaranteed that *all* will be greater than zero, but most will be
   expect_true(mean(colSums(y$E[, 2, 1, , s_date >= s_date_seeding]) > 0) > 0.9)
 })
 
@@ -168,8 +168,8 @@ test_that("Second more virulent strain takes over", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  # cumulative infections with 2nd strain larger than with 1st strain
-  # (average over 10 runs)
+  ## cumulative infections with 2nd strain larger than with 1st strain
+  ## (average over 10 runs)
   expect_true(mean(y$cum_infections_per_strain[1, , 101]) <
                 mean(y$cum_infections_per_strain[2, , 101]))
 })
@@ -192,8 +192,8 @@ test_that("Second less virulent strain does not take over", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  # cumulative infections with 2nd strain smaller than with 1st strain
-  # (average over 10 runs)
+  ## Cumulative infections with 2nd strain smaller than with 1st strain
+  ## (average over 10 runs)
   expect_true(mean(y$cum_infections_per_strain[1, , 101]) >
                 mean(y$cum_infections_per_strain[2, , 101]))
 
@@ -201,8 +201,8 @@ test_that("Second less virulent strain does not take over", {
 
 
 test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
+  ## Default for waning_rate is 0, setting to a non-zero value so that
+  ## this test passes with waning immunity
   set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
@@ -246,9 +246,8 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  # expect the seeded cases did not infect any other people
+  ## Expect the seeded cases did not infect any other people
   expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf)
-
 })
 
 
@@ -272,10 +271,10 @@ test_that("Everyone is infected when second strain transmission is large", {
   date <- sircovid_date_as_date(steps / 4)
   s_date <- sircovid_date(date)
   s_date_seeding <- sircovid_date(date_seeding)
-  # no cases before seeding
+  ## No cases before seeding
   expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
-  # the +2 is because we need seeded individuals to get out of the first and
-  # second E compartments before they can go on to infect others
+  ## The +2 is because we need seeded individuals to get out of the first and
+  ## second E compartments before they can go on to infect others
   expect_true(all(y$S[, 1, s_date > (s_date_seeding + 2)] == 0))
 })
 
@@ -410,7 +409,7 @@ test_that("Swapping strains gives identical results with different index", {
 })
 
 test_that("Can calculate Rt with an empty second variant ", {
-  ## run model with 2 variants, but both have same transmissibility
+  ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1))
@@ -432,7 +431,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
 
-  ## run model with one strain only
+  ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
 
   np <- 3L
@@ -483,7 +482,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
 
-  ## run model with one strain only
+  ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
 
   np <- 3L
@@ -503,8 +502,8 @@ test_that("Can calculate Rt with a second less infectious variant", {
   rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
 
-  # effective Rt will be different because the number of infections will differ
-  # but Rt should be the same
+  ## Effective Rt will be different because the number of infections
+  ## will differ but Rt should be the same
   expect_equal(rt_1$Rt_all, rt_1_single_class$Rt_all)
   expect_equal(rt_1$Rt_general, rt_1_single_class$Rt_general)
   expect_equal(rt_all$Rt_all, rt_all_single_class$Rt_all)
@@ -513,8 +512,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
 
 
 test_that("Can calculate Rt with a second more infectious variant", {
-  ## seed with 10 cases on same day as other variant
-
+  ## Seed with 10 cases on same day as other variant
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 10),
                             strain_seed_date =
@@ -538,7 +536,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
 
-  ## run model with one strain only
+  ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
 
   np <- 3L
@@ -558,8 +556,8 @@ test_that("Can calculate Rt with a second more infectious variant", {
   rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
 
-  # effective Rt will be different because the number of infections will differ
-  # but Rt should be the same with a factor of 10
+  ## Effective Rt will be different because the number of infections
+  ## will differ but Rt should be the same with a factor of 10
   expect_equal(rt_1$Rt_all, rt_1_single_class$Rt_all * 10)
   expect_equal(rt_1$Rt_general, rt_1_single_class$Rt_general * 10)
   expect_equal(rt_all$Rt_all, rt_all_single_class$Rt_all * 10)
