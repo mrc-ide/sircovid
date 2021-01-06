@@ -61,7 +61,7 @@ update(S[, ]) <- new_S[i, j]
 update(E[, , , ]) <- new_E[i, j, k, l]
 update(I_A[, , , ]) <- new_I_A[i, j, k, l]
 update(I_C[, , , ]) <- new_I_C[i, j, k, l]
-update(I_comm_D[, , , ]) <- new_I_comm_D[i, j, k, l]
+update(G_D[, , , ]) <- new_G_D[i, j, k, l]
 update(I_triage_unconf[, , , ]) <- new_I_triage_unconf[i, j, k, l]
 update(I_triage_conf[, , , ]) <- new_I_triage_conf[i, j, k, l]
 update(I_hosp_R_unconf[, , , ]) <- new_I_hosp_R_unconf[i, j, k, l]
@@ -119,7 +119,7 @@ p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_II_A <- 1 - exp(-gamma_A * dt) # progression of infectious period
 p_II_C <- 1 - exp(-gamma_C * dt)
-p_II_comm_D <- 1 - exp(-gamma_G_D * dt)
+p_GG_D <- 1 - exp(-gamma_G_D * dt)
 p_II_triage <- 1 - exp(-gamma_triage * dt)
 p_II_hosp_R <- 1 - exp(-gamma_hosp_R * dt)
 p_II_hosp_D <- 1 - exp(-gamma_hosp_D * dt)
@@ -284,7 +284,7 @@ n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
 #### other transitions ####
 
 n_II_C[, , , ] <- rbinom(I_C[i, j, k, l], p_II_C)
-n_II_comm_D[, , , ] <- rbinom(I_comm_D[i, j, k, l], p_II_comm_D)
+n_GG_D[, , , ] <- rbinom(G_D[i, j, k, l], p_GG_D)
 n_II_triage_unconf[, , , ] <- rbinom(I_triage_unconf[i, j, k, l], p_II_triage)
 n_II_triage_conf[, , , ] <- rbinom(I_triage_conf[i, j, k, l], p_II_triage)
 n_II_hosp_R_unconf[, , , ] <- rbinom(I_hosp_R_unconf[i, j, k, l], p_II_hosp_R)
@@ -393,21 +393,21 @@ aux_II_C[, , 1:s_C, ] <-
   aux_II_C[i, j, k, l] - n_II_C[i, j, k, l]
 new_I_C[, , , ] <- I_C[i, j, k, l] + aux_II_C[i, j, k, l]
 
-## Work out the flow from I_C -> R, comm_D, hosp
+## Work out the flow from I_C -> R, G_D, hosp
 n_sympt_to_R[, , ] <- rbinom(n_II_C[i, j, s_C, k],
                          1 - prob_H[i] * rel_p_H[i, k])
-n_sympt_to_comm_D[, , ] <-
+n_sympt_to_G_D[, , ] <-
   rbinom(n_II_C[i, j, s_C, k] - n_sympt_to_R[i, j, k],
          prob_death_comm[i])
 n_sympt_to_hosp[, , ] <- n_II_C[i, j, s_C, k] - n_sympt_to_R[i, j, k] -
-  n_sympt_to_comm_D[i, j, k]
+  n_sympt_to_G_D[i, j, k]
 
-## Work out the I_comm_D -> I_comm_D transitions
-aux_II_comm_D[, , 1, ] <- n_sympt_to_comm_D[i, j, l]
-aux_II_comm_D[, , 2:s_G_D, ] <- n_II_comm_D[i, j, k - 1, l]
-aux_II_comm_D[, , 1:s_G_D, ] <-
-  aux_II_comm_D[i, j, k, l] - n_II_comm_D[i, j, k, l]
-new_I_comm_D[, , , ] <- I_comm_D[i, j, k, l] + aux_II_comm_D[i, j, k, l]
+## Work out the G_D -> G_D transitions
+aux_GG_D[, , 1, ] <- n_sympt_to_G_D[i, j, l]
+aux_GG_D[, , 2:s_G_D, ] <- n_GG_D[i, j, k - 1, l]
+aux_GG_D[, , 1:s_G_D, ] <-
+  aux_GG_D[i, j, k, l] - n_GG_D[i, j, k, l]
+new_G_D[, , , ] <- G_D[i, j, k, l] + aux_GG_D[i, j, k, l]
 
 ## Work out the split in hospitals between hosp_D, hosp_R and triage
 n_sympt_to_triage[, , ] <- rbinom(n_sympt_to_hosp[i, j, k], prob_ICU_hosp[i])
@@ -633,7 +633,7 @@ new_D_hosp[] <- D_hosp[i] +
   sum(n_R_stepdown_D_conf[i, , s_stepdown_D, ])
 
 ## Work out the number of deaths in the community
-new_D_comm[] <- D_comm[i] + sum(n_II_comm_D[i, , s_G_D, ])
+new_D_comm[] <- D_comm[i] + sum(n_GG_D[i, , s_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_R_pre[, , 1, 1] <- rbinom(
@@ -724,7 +724,7 @@ I_with_diff_trans[, , ] <-
       sum(I_ICU_S_D_conf[i, j, , k]) +
       sum(I_ICU_D_unconf[i, j, , k]) +
       sum(I_ICU_D_conf[i, j, , k])) +
-      comm_D_transmission * sum(I_comm_D[i, j, , k]))
+      comm_D_transmission * sum(G_D[i, j, , k]))
 
 
 ## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
@@ -740,7 +740,7 @@ initial(S[, ]) <- 0
 initial(E[, , , ]) <- 0
 initial(I_A[, , , ]) <- 0
 initial(I_C[, , , ]) <- 0
-initial(I_comm_D[, , , ]) <- 0
+initial(G_D[, , , ]) <- 0
 initial(I_triage_unconf[, , , ]) <- 0
 initial(I_triage_conf[, , , ]) <- 0
 initial(I_hosp_R_unconf[, , , ]) <- 0
@@ -803,7 +803,7 @@ dim(p_H_step) <- user()
 p_H_step[] <- user()
 psi_H[] <- user()
 
-## Parameters of the I_comm_D class
+## Parameters of the G_D class
 s_G_D <- user()
 gamma_G_D <- user(0.1)
 dim(p_death_comm_step) <- user()
@@ -934,11 +934,11 @@ dim(n_II_C) <- c(n_groups, n_strains, s_C, n_vacc_classes)
 dim(prob_H) <- n_groups
 dim(psi_H) <- n_groups
 
-## Vectors handling the I_comm_D class
-dim(I_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
-dim(aux_II_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
-dim(new_I_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
-dim(n_II_comm_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+## Vectors handling the G_D class
+dim(G_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+dim(aux_GG_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+dim(new_G_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+dim(n_GG_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
 dim(prob_death_comm) <- n_groups
 dim(psi_death_comm) <- n_groups
 
@@ -1133,8 +1133,8 @@ dim(n_EI_C) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_EI_A_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_EI_C_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 
-## Vectors handling I_C to R, I_comm_D transition
-dim(n_sympt_to_comm_D) <- c(n_groups, n_strains, n_vacc_classes)
+## Vectors handling I_C to R, G_D transition
+dim(n_sympt_to_G_D) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_sympt_to_R) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling number of new hospitalisations, ICU admissions and
@@ -1196,7 +1196,7 @@ update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + D_hosp[i] + sum(E[i, , , ]) +
   sum(I_ICU_D_conf[i, , , ]) + sum(I_ICU_D_unconf[i, , , ]) +
   sum(R_stepdown_R_conf[i, , , ]) + sum(R_stepdown_R_unconf[i, , , ]) +
   sum(R_stepdown_D_conf[i, , , ]) + sum(R_stepdown_D_unconf[i, , , ]) +
-  sum(I_comm_D[i, , , ]) + D_comm[i]
+  sum(G_D[i, , , ]) + D_comm[i]
 dim(N_tot) <- n_groups
 
 ## Total population calculated with seroconversion flow
