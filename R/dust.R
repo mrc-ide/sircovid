@@ -248,9 +248,9 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_R_pos = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_stepdown_D = list(
+        min = -Inf, max = Inf, integer = FALSE), s_W_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_stepdown_R = list(
+        min = -Inf, max = Inf, integer = FALSE), s_W_R = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), strain_seed_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
@@ -292,11 +292,11 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_R_pre_2 = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_stepdown_D = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_stepdown_R = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_test = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_W_D = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_W_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), model_pcr_and_serology_user = list(
         has_default = TRUE, default_value = 1L, rank = 0, min = -Inf,

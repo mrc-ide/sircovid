@@ -126,8 +126,8 @@ p_II_hosp_D <- 1 - exp(-gamma_H_D * dt)
 p_II_ICU_S_R <- 1 - exp(-gamma_ICU_W_R * dt)
 p_II_ICU_S_D <- 1 - exp(-gamma_ICU_W_D * dt)
 p_II_ICU_D <- 1 - exp(-gamma_ICU_D * dt)
-p_R_stepdown_R <- 1 - exp(-gamma_stepdown_R * dt)
-p_R_stepdown_D <- 1 - exp(-gamma_stepdown_D * dt)
+p_R_stepdown_R <- 1 - exp(-gamma_W_R * dt)
+p_R_stepdown_D <- 1 - exp(-gamma_W_D * dt)
 p_R_pre[, , , ] <- 1 - exp(-gamma_R_pre[k] * dt)
 p_R_pos <- 1 - exp(-gamma_R_pos * dt)
 p_test <- 1 - exp(-gamma_test * dt)
@@ -584,16 +584,16 @@ new_I_ICU_D_conf[, , , ] <-
 aux_R_stepdown_R_unconf[, , , ] <- R_stepdown_R_unconf[i, j, k, l]
 aux_R_stepdown_R_unconf[, , 1, ] <-
   aux_R_stepdown_R_unconf[i, j, k, l] + n_II_ICU_S_R_unconf[i, j, s_ICU_W_R, l]
-aux_R_stepdown_R_unconf[, , 2:s_stepdown_R, ] <-
+aux_R_stepdown_R_unconf[, , 2:s_W_R, ] <-
   aux_R_stepdown_R_unconf[i, j, k, l] + n_R_stepdown_R_unconf[i, j, k - 1, l]
-aux_R_stepdown_R_unconf[, , 1:s_stepdown_R, ] <-
+aux_R_stepdown_R_unconf[, , 1:s_W_R, ] <-
   aux_R_stepdown_R_unconf[i, j, k, l] - n_R_stepdown_R_unconf[i, j, k, l]
 aux_R_stepdown_R_conf[, , , ] <- R_stepdown_R_conf[i, j, k, l]
 aux_R_stepdown_R_conf[, , 1, ] <-
   aux_R_stepdown_R_conf[i, j, k, l] + n_II_ICU_S_R_conf[i, j, s_ICU_W_R, l]
-aux_R_stepdown_R_conf[, , 2:s_stepdown_R, ] <-
+aux_R_stepdown_R_conf[, , 2:s_W_R, ] <-
   aux_R_stepdown_R_conf[i, j, k, l] + n_R_stepdown_R_conf[i, j, k - 1, l]
-aux_R_stepdown_R_conf[, , 1:s_stepdown_R, ] <-
+aux_R_stepdown_R_conf[, , 1:s_W_R, ] <-
   aux_R_stepdown_R_conf[i, j, k, l] - n_R_stepdown_R_conf[i, j, k, l]
 n_R_stepdown_R_unconf_to_conf[, , , ] <-
   rbinom(aux_R_stepdown_R_unconf[i, j, k, l], p_test)
@@ -607,16 +607,16 @@ new_R_stepdown_R_conf[, , , ] <-
 aux_R_stepdown_D_unconf[, , , ] <- R_stepdown_D_unconf[i, j, k, l]
 aux_R_stepdown_D_unconf[, , 1, ] <-
   aux_R_stepdown_D_unconf[i, j, k, l] + n_II_ICU_S_D_unconf[i, j, s_ICU_W_D, l]
-aux_R_stepdown_D_unconf[, , 2:s_stepdown_D, ] <-
+aux_R_stepdown_D_unconf[, , 2:s_W_D, ] <-
   aux_R_stepdown_D_unconf[i, j, k, l] + n_R_stepdown_D_unconf[i, j, k - 1, l]
-aux_R_stepdown_D_unconf[, , 1:s_stepdown_D, ] <-
+aux_R_stepdown_D_unconf[, , 1:s_W_D, ] <-
   aux_R_stepdown_D_unconf[i, j, k, l] - n_R_stepdown_D_unconf[i, j, k, l]
 aux_R_stepdown_D_conf[, , , ] <- R_stepdown_D_conf[i, j, k, l]
 aux_R_stepdown_D_conf[, , 1, ] <-
   aux_R_stepdown_D_conf[i, j, k, l] + n_II_ICU_S_D_conf[i, j, s_ICU_W_D, l]
-aux_R_stepdown_D_conf[, , 2:s_stepdown_D, ] <-
+aux_R_stepdown_D_conf[, , 2:s_W_D, ] <-
   aux_R_stepdown_D_conf[i, j, k, l] + n_R_stepdown_D_conf[i, j, k - 1, l]
-aux_R_stepdown_D_conf[, , 1:s_stepdown_D, ] <-
+aux_R_stepdown_D_conf[, , 1:s_W_D, ] <-
   aux_R_stepdown_D_conf[i, j, k, l] - n_R_stepdown_D_conf[i, j, k, l]
 n_R_stepdown_D_unconf_to_conf[, , , ] <-
   rbinom(aux_R_stepdown_D_unconf[i, j, k, l], p_test)
@@ -632,8 +632,8 @@ new_D_hosp[] <- D_hosp[i] +
   sum(n_II_hosp_D_conf[i, , s_H_D, ]) +
   sum(n_II_ICU_D_unconf[i, , s_ICU_D, ]) +
   sum(n_II_ICU_D_conf[i, , s_ICU_D, ]) +
-  sum(n_R_stepdown_D_unconf[i, , s_stepdown_D, ]) +
-  sum(n_R_stepdown_D_conf[i, , s_stepdown_D, ])
+  sum(n_R_stepdown_D_unconf[i, , s_W_D, ]) +
+  sum(n_R_stepdown_D_conf[i, , s_W_D, ])
 
 ## Work out the number of deaths in the community
 new_D_comm[] <- D_comm[i] + sum(n_GG_D[i, , s_G_D, ])
@@ -676,8 +676,8 @@ new_R[, , ] <- R[i, j, k] +
   n_sympt_to_R[i, j, k] +
   n_II_hosp_R_conf[i, j, s_H_R, k] +
   n_II_hosp_R_unconf[i, j, s_H_R, k] +
-  n_R_stepdown_R_conf[i, j, s_stepdown_R, k] +
-  n_R_stepdown_R_unconf[i, j, s_stepdown_R, k] -
+  n_R_stepdown_R_conf[i, j, s_W_R, k] +
+  n_R_stepdown_R_unconf[i, j, s_W_R, k] -
   n_R_progress[i, j, k] -
   n_R_next_vacc_class[i, j, k]
 new_R[, , 1] <- new_R[i, j, 1] +
@@ -858,12 +858,12 @@ waning_rate[] <- user()
 dim(waning_rate) <- n_groups
 
 ## Parameters of the R_stepdown_R classes
-s_stepdown_R <- user()
-gamma_stepdown_R <- user(0.1)
+s_W_R <- user()
+gamma_W_R <- user(0.1)
 
 ## Parameters of the R_stepdown_D classes
-s_stepdown_D <- user()
-gamma_stepdown_D <- user(0.1)
+s_W_D <- user()
+gamma_W_D <- user(0.1)
 
 ## Parameters of the R_pre classes
 gamma_R_pre_1 <- user(0.1)
@@ -1021,39 +1021,39 @@ dim(n_II_ICU_D_conf) <- c(n_groups, n_strains, s_ICU_D, n_vacc_classes)
 dim(n_I_ICU_D_unconf_to_conf) <- c(n_groups, n_strains, s_ICU_D, n_vacc_classes)
 
 ## Vectors handling the R_stepdown_R class
-dim(R_stepdown_R_unconf) <- c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
+dim(R_stepdown_R_unconf) <- c(n_groups, n_strains, s_W_R, n_vacc_classes)
 dim(aux_R_stepdown_R_unconf) <-
-  c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
+  c(n_groups, n_strains, s_W_R, n_vacc_classes)
 dim(new_R_stepdown_R_unconf) <-
-  c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
+  c(n_groups, n_strains, s_W_R, n_vacc_classes)
 dim(n_R_stepdown_R_unconf) <-
-  c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
-dim(R_stepdown_R_conf) <- c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
+  c(n_groups, n_strains, s_W_R, n_vacc_classes)
+dim(R_stepdown_R_conf) <- c(n_groups, n_strains, s_W_R, n_vacc_classes)
 dim(aux_R_stepdown_R_conf) <-
-  c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
+  c(n_groups, n_strains, s_W_R, n_vacc_classes)
 dim(new_R_stepdown_R_conf) <-
-  c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
-dim(n_R_stepdown_R_conf) <- c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
+  c(n_groups, n_strains, s_W_R, n_vacc_classes)
+dim(n_R_stepdown_R_conf) <- c(n_groups, n_strains, s_W_R, n_vacc_classes)
 dim(n_R_stepdown_R_unconf_to_conf) <-
-  c(n_groups, n_strains, s_stepdown_R, n_vacc_classes)
+  c(n_groups, n_strains, s_W_R, n_vacc_classes)
 
 ## Vectors handling the R_stepdown_D class
-dim(R_stepdown_D_unconf) <- c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+dim(R_stepdown_D_unconf) <- c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(aux_R_stepdown_D_unconf) <-
-  c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+  c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(new_R_stepdown_D_unconf) <-
-  c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+  c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(n_R_stepdown_D_unconf) <-
-  c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+  c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(R_stepdown_D_conf) <-
-  c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+  c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(aux_R_stepdown_D_conf) <-
-  c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+  c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(new_R_stepdown_D_conf) <-
-  c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
-dim(n_R_stepdown_D_conf) <- c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+  c(n_groups, n_strains, s_W_D, n_vacc_classes)
+dim(n_R_stepdown_D_conf) <- c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(n_R_stepdown_D_unconf_to_conf) <-
-  c(n_groups, n_strains, s_stepdown_D, n_vacc_classes)
+  c(n_groups, n_strains, s_W_D, n_vacc_classes)
 
 ## Vectors handling the R_pos class
 dim(R) <- c(n_groups, n_strains, n_vacc_classes)

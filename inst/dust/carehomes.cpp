@@ -116,8 +116,8 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(s_PCR_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_PCR_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_R_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_stepdown_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_stepdown_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(s_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(s_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_population_reluctant, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -138,9 +138,9 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(gamma_R_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_R_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_R_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_stepdown_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_stepdown_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_test, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_W_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(model_pcr_and_serology_user, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_R_pre_1, has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_daily_doses, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1255,9 +1255,9 @@ public:
     std::vector<real_t> gamma_R_pre;
     real_t gamma_R_pre_1;
     real_t gamma_R_pre_2;
-    real_t gamma_stepdown_D;
-    real_t gamma_stepdown_R;
     real_t gamma_test;
+    real_t gamma_W_D;
+    real_t gamma_W_R;
     real_t hosp_transmission;
     std::vector<real_t> I_with_diff_trans;
     real_t ICU_transmission;
@@ -1528,8 +1528,8 @@ public:
     int s_PCR_pos;
     int s_PCR_pre;
     int s_R_pos;
-    int s_stepdown_D;
-    int s_stepdown_R;
+    int s_W_D;
+    int s_W_R;
     std::vector<real_t> strain_seed_step;
     std::vector<real_t> strain_transmission;
     real_t vaccine_daily_doses;
@@ -2099,7 +2099,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_D_conf_2; ++j) {
-        for (int k = 2; k <= internal.s_stepdown_D; ++k) {
+        for (int k = 2; k <= internal.s_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_D_conf_4; ++l) {
             internal.aux_R_stepdown_D_conf[i - 1 + internal.dim_aux_R_stepdown_D_conf_1 * (j - 1) + internal.dim_aux_R_stepdown_D_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_conf_123 * (l - 1)] = internal.aux_R_stepdown_D_conf[internal.dim_aux_R_stepdown_D_conf_123 * (l - 1) + internal.dim_aux_R_stepdown_D_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_conf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_D_conf[internal.dim_n_R_stepdown_D_conf_123 * (l - 1) + internal.dim_n_R_stepdown_D_conf_12 * (k - 1 - 1) + internal.dim_n_R_stepdown_D_conf_1 * (j - 1) + i - 1];
           }
@@ -2108,7 +2108,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_D_conf_2; ++j) {
-        for (int k = 1; k <= internal.s_stepdown_D; ++k) {
+        for (int k = 1; k <= internal.s_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_D_conf_4; ++l) {
             internal.aux_R_stepdown_D_conf[i - 1 + internal.dim_aux_R_stepdown_D_conf_1 * (j - 1) + internal.dim_aux_R_stepdown_D_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_conf_123 * (l - 1)] = internal.aux_R_stepdown_D_conf[internal.dim_aux_R_stepdown_D_conf_123 * (l - 1) + internal.dim_aux_R_stepdown_D_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_conf_1 * (j - 1) + i - 1] - internal.n_R_stepdown_D_conf[internal.dim_n_R_stepdown_D_conf_123 * (l - 1) + internal.dim_n_R_stepdown_D_conf_12 * (k - 1) + internal.dim_n_R_stepdown_D_conf_1 * (j - 1) + i - 1];
           }
@@ -2134,7 +2134,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_D_unconf_2; ++j) {
-        for (int k = 2; k <= internal.s_stepdown_D; ++k) {
+        for (int k = 2; k <= internal.s_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_D_unconf_4; ++l) {
             internal.aux_R_stepdown_D_unconf[i - 1 + internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1) + internal.dim_aux_R_stepdown_D_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_unconf_123 * (l - 1)] = internal.aux_R_stepdown_D_unconf[internal.dim_aux_R_stepdown_D_unconf_123 * (l - 1) + internal.dim_aux_R_stepdown_D_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_D_unconf[internal.dim_n_R_stepdown_D_unconf_123 * (l - 1) + internal.dim_n_R_stepdown_D_unconf_12 * (k - 1 - 1) + internal.dim_n_R_stepdown_D_unconf_1 * (j - 1) + i - 1];
           }
@@ -2143,7 +2143,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_D_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_D_unconf_2; ++j) {
-        for (int k = 1; k <= internal.s_stepdown_D; ++k) {
+        for (int k = 1; k <= internal.s_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_D_unconf_4; ++l) {
             internal.aux_R_stepdown_D_unconf[i - 1 + internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1) + internal.dim_aux_R_stepdown_D_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_unconf_123 * (l - 1)] = internal.aux_R_stepdown_D_unconf[internal.dim_aux_R_stepdown_D_unconf_123 * (l - 1) + internal.dim_aux_R_stepdown_D_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_D_unconf_1 * (j - 1) + i - 1] - internal.n_R_stepdown_D_unconf[internal.dim_n_R_stepdown_D_unconf_123 * (l - 1) + internal.dim_n_R_stepdown_D_unconf_12 * (k - 1) + internal.dim_n_R_stepdown_D_unconf_1 * (j - 1) + i - 1];
           }
@@ -2169,7 +2169,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_R_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_R_conf_2; ++j) {
-        for (int k = 2; k <= internal.s_stepdown_R; ++k) {
+        for (int k = 2; k <= internal.s_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_R_conf_4; ++l) {
             internal.aux_R_stepdown_R_conf[i - 1 + internal.dim_aux_R_stepdown_R_conf_1 * (j - 1) + internal.dim_aux_R_stepdown_R_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_conf_123 * (l - 1)] = internal.aux_R_stepdown_R_conf[internal.dim_aux_R_stepdown_R_conf_123 * (l - 1) + internal.dim_aux_R_stepdown_R_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_conf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_R_conf[internal.dim_n_R_stepdown_R_conf_123 * (l - 1) + internal.dim_n_R_stepdown_R_conf_12 * (k - 1 - 1) + internal.dim_n_R_stepdown_R_conf_1 * (j - 1) + i - 1];
           }
@@ -2178,7 +2178,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_R_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_R_conf_2; ++j) {
-        for (int k = 1; k <= internal.s_stepdown_R; ++k) {
+        for (int k = 1; k <= internal.s_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_R_conf_4; ++l) {
             internal.aux_R_stepdown_R_conf[i - 1 + internal.dim_aux_R_stepdown_R_conf_1 * (j - 1) + internal.dim_aux_R_stepdown_R_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_conf_123 * (l - 1)] = internal.aux_R_stepdown_R_conf[internal.dim_aux_R_stepdown_R_conf_123 * (l - 1) + internal.dim_aux_R_stepdown_R_conf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_conf_1 * (j - 1) + i - 1] - internal.n_R_stepdown_R_conf[internal.dim_n_R_stepdown_R_conf_123 * (l - 1) + internal.dim_n_R_stepdown_R_conf_12 * (k - 1) + internal.dim_n_R_stepdown_R_conf_1 * (j - 1) + i - 1];
           }
@@ -2204,7 +2204,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_R_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_R_unconf_2; ++j) {
-        for (int k = 2; k <= internal.s_stepdown_R; ++k) {
+        for (int k = 2; k <= internal.s_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_R_unconf_4; ++l) {
             internal.aux_R_stepdown_R_unconf[i - 1 + internal.dim_aux_R_stepdown_R_unconf_1 * (j - 1) + internal.dim_aux_R_stepdown_R_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_unconf_123 * (l - 1)] = internal.aux_R_stepdown_R_unconf[internal.dim_aux_R_stepdown_R_unconf_123 * (l - 1) + internal.dim_aux_R_stepdown_R_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_unconf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_R_unconf[internal.dim_n_R_stepdown_R_unconf_123 * (l - 1) + internal.dim_n_R_stepdown_R_unconf_12 * (k - 1 - 1) + internal.dim_n_R_stepdown_R_unconf_1 * (j - 1) + i - 1];
           }
@@ -2213,7 +2213,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_R_stepdown_R_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_R_stepdown_R_unconf_2; ++j) {
-        for (int k = 1; k <= internal.s_stepdown_R; ++k) {
+        for (int k = 1; k <= internal.s_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_R_stepdown_R_unconf_4; ++l) {
             internal.aux_R_stepdown_R_unconf[i - 1 + internal.dim_aux_R_stepdown_R_unconf_1 * (j - 1) + internal.dim_aux_R_stepdown_R_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_unconf_123 * (l - 1)] = internal.aux_R_stepdown_R_unconf[internal.dim_aux_R_stepdown_R_unconf_123 * (l - 1) + internal.dim_aux_R_stepdown_R_unconf_12 * (k - 1) + internal.dim_aux_R_stepdown_R_unconf_1 * (j - 1) + i - 1] - internal.n_R_stepdown_R_unconf[internal.dim_n_R_stepdown_R_unconf_123 * (l - 1) + internal.dim_n_R_stepdown_R_unconf_12 * (k - 1) + internal.dim_n_R_stepdown_R_unconf_1 * (j - 1) + i - 1];
           }
@@ -2261,7 +2261,7 @@ public:
       internal.new_D_comm[i - 1] = D_comm[i - 1] + odin_sum4(internal.n_GG_D.data(), i - 1, i, 0, internal.dim_n_GG_D_2, internal.s_G_D - 1, internal.s_G_D, 0, internal.dim_n_GG_D_4, internal.dim_n_GG_D_1, internal.dim_n_GG_D_12, internal.dim_n_GG_D_123);
     }
     for (int i = 1; i <= internal.dim_new_D_hosp; ++i) {
-      internal.new_D_hosp[i - 1] = D_hosp[i - 1] + odin_sum4(internal.n_II_hosp_D_unconf.data(), i - 1, i, 0, internal.dim_n_II_hosp_D_unconf_2, internal.s_H_D - 1, internal.s_H_D, 0, internal.dim_n_II_hosp_D_unconf_4, internal.dim_n_II_hosp_D_unconf_1, internal.dim_n_II_hosp_D_unconf_12, internal.dim_n_II_hosp_D_unconf_123) + odin_sum4(internal.n_II_hosp_D_conf.data(), i - 1, i, 0, internal.dim_n_II_hosp_D_conf_2, internal.s_H_D - 1, internal.s_H_D, 0, internal.dim_n_II_hosp_D_conf_4, internal.dim_n_II_hosp_D_conf_1, internal.dim_n_II_hosp_D_conf_12, internal.dim_n_II_hosp_D_conf_123) + odin_sum4(internal.n_II_ICU_D_unconf.data(), i - 1, i, 0, internal.dim_n_II_ICU_D_unconf_2, internal.s_ICU_D - 1, internal.s_ICU_D, 0, internal.dim_n_II_ICU_D_unconf_4, internal.dim_n_II_ICU_D_unconf_1, internal.dim_n_II_ICU_D_unconf_12, internal.dim_n_II_ICU_D_unconf_123) + odin_sum4(internal.n_II_ICU_D_conf.data(), i - 1, i, 0, internal.dim_n_II_ICU_D_conf_2, internal.s_ICU_D - 1, internal.s_ICU_D, 0, internal.dim_n_II_ICU_D_conf_4, internal.dim_n_II_ICU_D_conf_1, internal.dim_n_II_ICU_D_conf_12, internal.dim_n_II_ICU_D_conf_123) + odin_sum4(internal.n_R_stepdown_D_unconf.data(), i - 1, i, 0, internal.dim_n_R_stepdown_D_unconf_2, internal.s_stepdown_D - 1, internal.s_stepdown_D, 0, internal.dim_n_R_stepdown_D_unconf_4, internal.dim_n_R_stepdown_D_unconf_1, internal.dim_n_R_stepdown_D_unconf_12, internal.dim_n_R_stepdown_D_unconf_123) + odin_sum4(internal.n_R_stepdown_D_conf.data(), i - 1, i, 0, internal.dim_n_R_stepdown_D_conf_2, internal.s_stepdown_D - 1, internal.s_stepdown_D, 0, internal.dim_n_R_stepdown_D_conf_4, internal.dim_n_R_stepdown_D_conf_1, internal.dim_n_R_stepdown_D_conf_12, internal.dim_n_R_stepdown_D_conf_123);
+      internal.new_D_hosp[i - 1] = D_hosp[i - 1] + odin_sum4(internal.n_II_hosp_D_unconf.data(), i - 1, i, 0, internal.dim_n_II_hosp_D_unconf_2, internal.s_H_D - 1, internal.s_H_D, 0, internal.dim_n_II_hosp_D_unconf_4, internal.dim_n_II_hosp_D_unconf_1, internal.dim_n_II_hosp_D_unconf_12, internal.dim_n_II_hosp_D_unconf_123) + odin_sum4(internal.n_II_hosp_D_conf.data(), i - 1, i, 0, internal.dim_n_II_hosp_D_conf_2, internal.s_H_D - 1, internal.s_H_D, 0, internal.dim_n_II_hosp_D_conf_4, internal.dim_n_II_hosp_D_conf_1, internal.dim_n_II_hosp_D_conf_12, internal.dim_n_II_hosp_D_conf_123) + odin_sum4(internal.n_II_ICU_D_unconf.data(), i - 1, i, 0, internal.dim_n_II_ICU_D_unconf_2, internal.s_ICU_D - 1, internal.s_ICU_D, 0, internal.dim_n_II_ICU_D_unconf_4, internal.dim_n_II_ICU_D_unconf_1, internal.dim_n_II_ICU_D_unconf_12, internal.dim_n_II_ICU_D_unconf_123) + odin_sum4(internal.n_II_ICU_D_conf.data(), i - 1, i, 0, internal.dim_n_II_ICU_D_conf_2, internal.s_ICU_D - 1, internal.s_ICU_D, 0, internal.dim_n_II_ICU_D_conf_4, internal.dim_n_II_ICU_D_conf_1, internal.dim_n_II_ICU_D_conf_12, internal.dim_n_II_ICU_D_conf_123) + odin_sum4(internal.n_R_stepdown_D_unconf.data(), i - 1, i, 0, internal.dim_n_R_stepdown_D_unconf_2, internal.s_W_D - 1, internal.s_W_D, 0, internal.dim_n_R_stepdown_D_unconf_4, internal.dim_n_R_stepdown_D_unconf_1, internal.dim_n_R_stepdown_D_unconf_12, internal.dim_n_R_stepdown_D_unconf_123) + odin_sum4(internal.n_R_stepdown_D_conf.data(), i - 1, i, 0, internal.dim_n_R_stepdown_D_conf_2, internal.s_W_D - 1, internal.s_W_D, 0, internal.dim_n_R_stepdown_D_conf_4, internal.dim_n_R_stepdown_D_conf_1, internal.dim_n_R_stepdown_D_conf_12, internal.dim_n_R_stepdown_D_conf_123);
     }
     for (int i = 1; i <= internal.dim_new_PCR_pos_1; ++i) {
       for (int j = 1; j <= internal.dim_new_PCR_pos_2; ++j) {
@@ -3325,7 +3325,7 @@ public:
     for (int i = 1; i <= internal.dim_new_R_1; ++i) {
       for (int j = 1; j <= internal.dim_new_R_2; ++j) {
         for (int k = 1; k <= internal.dim_new_R_3; ++k) {
-          internal.new_R[i - 1 + internal.dim_new_R_1 * (j - 1) + internal.dim_new_R_12 * (k - 1)] = R[internal.dim_R_12 * (k - 1) + internal.dim_R_1 * (j - 1) + i - 1] + internal.n_II_A[internal.dim_n_II_A_123 * (k - 1) + internal.dim_n_II_A_12 * (internal.s_A - 1) + internal.dim_n_II_A_1 * (j - 1) + i - 1] + internal.n_sympt_to_R[internal.dim_n_sympt_to_R_12 * (k - 1) + internal.dim_n_sympt_to_R_1 * (j - 1) + i - 1] + internal.n_II_hosp_R_conf[internal.dim_n_II_hosp_R_conf_123 * (k - 1) + internal.dim_n_II_hosp_R_conf_12 * (internal.s_H_R - 1) + internal.dim_n_II_hosp_R_conf_1 * (j - 1) + i - 1] + internal.n_II_hosp_R_unconf[internal.dim_n_II_hosp_R_unconf_123 * (k - 1) + internal.dim_n_II_hosp_R_unconf_12 * (internal.s_H_R - 1) + internal.dim_n_II_hosp_R_unconf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_R_conf[internal.dim_n_R_stepdown_R_conf_123 * (k - 1) + internal.dim_n_R_stepdown_R_conf_12 * (internal.s_stepdown_R - 1) + internal.dim_n_R_stepdown_R_conf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_R_unconf[internal.dim_n_R_stepdown_R_unconf_123 * (k - 1) + internal.dim_n_R_stepdown_R_unconf_12 * (internal.s_stepdown_R - 1) + internal.dim_n_R_stepdown_R_unconf_1 * (j - 1) + i - 1] - internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_R[i - 1 + internal.dim_new_R_1 * (j - 1) + internal.dim_new_R_12 * (k - 1)] = R[internal.dim_R_12 * (k - 1) + internal.dim_R_1 * (j - 1) + i - 1] + internal.n_II_A[internal.dim_n_II_A_123 * (k - 1) + internal.dim_n_II_A_12 * (internal.s_A - 1) + internal.dim_n_II_A_1 * (j - 1) + i - 1] + internal.n_sympt_to_R[internal.dim_n_sympt_to_R_12 * (k - 1) + internal.dim_n_sympt_to_R_1 * (j - 1) + i - 1] + internal.n_II_hosp_R_conf[internal.dim_n_II_hosp_R_conf_123 * (k - 1) + internal.dim_n_II_hosp_R_conf_12 * (internal.s_H_R - 1) + internal.dim_n_II_hosp_R_conf_1 * (j - 1) + i - 1] + internal.n_II_hosp_R_unconf[internal.dim_n_II_hosp_R_unconf_123 * (k - 1) + internal.dim_n_II_hosp_R_unconf_12 * (internal.s_H_R - 1) + internal.dim_n_II_hosp_R_unconf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_R_conf[internal.dim_n_R_stepdown_R_conf_123 * (k - 1) + internal.dim_n_R_stepdown_R_conf_12 * (internal.s_W_R - 1) + internal.dim_n_R_stepdown_R_conf_1 * (j - 1) + i - 1] + internal.n_R_stepdown_R_unconf[internal.dim_n_R_stepdown_R_unconf_123 * (k - 1) + internal.dim_n_R_stepdown_R_unconf_12 * (internal.s_W_R - 1) + internal.dim_n_R_stepdown_R_unconf_1 * (j - 1) + i - 1] - internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -4118,8 +4118,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_PCR_pos = NA_INTEGER;
   internal.s_PCR_pre = NA_INTEGER;
   internal.s_R_pos = NA_INTEGER;
-  internal.s_stepdown_D = NA_INTEGER;
-  internal.s_stepdown_R = NA_INTEGER;
+  internal.s_W_D = NA_INTEGER;
+  internal.s_W_R = NA_INTEGER;
   internal.gamma_A = 0.10000000000000001;
   internal.gamma_C = 0.10000000000000001;
   internal.gamma_E = 0.10000000000000001;
@@ -4135,9 +4135,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_R_pos = 0.10000000000000001;
   internal.gamma_R_pre_1 = 0.10000000000000001;
   internal.gamma_R_pre_2 = 0.10000000000000001;
-  internal.gamma_stepdown_D = 0.10000000000000001;
-  internal.gamma_stepdown_R = 0.10000000000000001;
   internal.gamma_test = 0.10000000000000001;
+  internal.gamma_W_D = 0.10000000000000001;
+  internal.gamma_W_R = 0.10000000000000001;
   internal.model_pcr_and_serology_user = 1;
   internal.p_R_pre_1 = 0.5;
   internal.vaccine_daily_doses = 0;
@@ -4161,9 +4161,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_R_pos = user_get_scalar<real_t>(user, "gamma_R_pos", internal.gamma_R_pos, NA_REAL, NA_REAL);
   internal.gamma_R_pre_1 = user_get_scalar<real_t>(user, "gamma_R_pre_1", internal.gamma_R_pre_1, NA_REAL, NA_REAL);
   internal.gamma_R_pre_2 = user_get_scalar<real_t>(user, "gamma_R_pre_2", internal.gamma_R_pre_2, NA_REAL, NA_REAL);
-  internal.gamma_stepdown_D = user_get_scalar<real_t>(user, "gamma_stepdown_D", internal.gamma_stepdown_D, NA_REAL, NA_REAL);
-  internal.gamma_stepdown_R = user_get_scalar<real_t>(user, "gamma_stepdown_R", internal.gamma_stepdown_R, NA_REAL, NA_REAL);
   internal.gamma_test = user_get_scalar<real_t>(user, "gamma_test", internal.gamma_test, NA_REAL, NA_REAL);
+  internal.gamma_W_D = user_get_scalar<real_t>(user, "gamma_W_D", internal.gamma_W_D, NA_REAL, NA_REAL);
+  internal.gamma_W_R = user_get_scalar<real_t>(user, "gamma_W_R", internal.gamma_W_R, NA_REAL, NA_REAL);
   internal.hosp_transmission = user_get_scalar<real_t>(user, "hosp_transmission", internal.hosp_transmission, NA_REAL, NA_REAL);
   internal.ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", internal.ICU_transmission, NA_REAL, NA_REAL);
   internal.model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", internal.model_pcr_and_serology_user, NA_REAL, NA_REAL);
@@ -4209,8 +4209,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_PCR_pos = user_get_scalar<int>(user, "s_PCR_pos", internal.s_PCR_pos, NA_REAL, NA_REAL);
   internal.s_PCR_pre = user_get_scalar<int>(user, "s_PCR_pre", internal.s_PCR_pre, NA_REAL, NA_REAL);
   internal.s_R_pos = user_get_scalar<int>(user, "s_R_pos", internal.s_R_pos, NA_REAL, NA_REAL);
-  internal.s_stepdown_D = user_get_scalar<int>(user, "s_stepdown_D", internal.s_stepdown_D, NA_REAL, NA_REAL);
-  internal.s_stepdown_R = user_get_scalar<int>(user, "s_stepdown_R", internal.s_stepdown_R, NA_REAL, NA_REAL);
+  internal.s_W_D = user_get_scalar<int>(user, "s_W_D", internal.s_W_D, NA_REAL, NA_REAL);
+  internal.s_W_R = user_get_scalar<int>(user, "s_W_R", internal.s_W_R, NA_REAL, NA_REAL);
   std::array <int, 1> dim_strain_seed_step;
   internal.strain_seed_step = user_get_array_variable<real_t, 1>(user, "strain_seed_step", internal.strain_seed_step, dim_strain_seed_step, NA_REAL, NA_REAL);
   internal.dim_strain_seed_step = internal.strain_seed_step.size();
@@ -4262,8 +4262,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.p_PCR_pos = 1 - std::exp(- internal.gamma_PCR_pos * internal.dt);
   internal.p_PCR_pre = 1 - std::exp(- internal.gamma_PCR_pre * internal.dt);
   internal.p_R_pos = 1 - std::exp(- internal.gamma_R_pos * internal.dt);
-  internal.p_R_stepdown_D = 1 - std::exp(- internal.gamma_stepdown_D * internal.dt);
-  internal.p_R_stepdown_R = 1 - std::exp(- internal.gamma_stepdown_R * internal.dt);
+  internal.p_R_stepdown_D = 1 - std::exp(- internal.gamma_W_D * internal.dt);
+  internal.p_R_stepdown_R = 1 - std::exp(- internal.gamma_W_R * internal.dt);
   internal.p_test = 1 - std::exp(- internal.gamma_test * internal.dt);
   internal.initial_cum_admit_by_age = std::vector<real_t>(internal.dim_cum_admit_by_age);
   internal.initial_D_comm = std::vector<real_t>(internal.dim_D_comm);
@@ -4392,19 +4392,19 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_aux_II_ICU_S_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_aux_R_stepdown_D_conf_1 = internal.n_groups;
   internal.dim_aux_R_stepdown_D_conf_2 = internal.n_strains;
-  internal.dim_aux_R_stepdown_D_conf_3 = internal.s_stepdown_D;
+  internal.dim_aux_R_stepdown_D_conf_3 = internal.s_W_D;
   internal.dim_aux_R_stepdown_D_conf_4 = internal.n_vacc_classes;
   internal.dim_aux_R_stepdown_D_unconf_1 = internal.n_groups;
   internal.dim_aux_R_stepdown_D_unconf_2 = internal.n_strains;
-  internal.dim_aux_R_stepdown_D_unconf_3 = internal.s_stepdown_D;
+  internal.dim_aux_R_stepdown_D_unconf_3 = internal.s_W_D;
   internal.dim_aux_R_stepdown_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_aux_R_stepdown_R_conf_1 = internal.n_groups;
   internal.dim_aux_R_stepdown_R_conf_2 = internal.n_strains;
-  internal.dim_aux_R_stepdown_R_conf_3 = internal.s_stepdown_R;
+  internal.dim_aux_R_stepdown_R_conf_3 = internal.s_W_R;
   internal.dim_aux_R_stepdown_R_conf_4 = internal.n_vacc_classes;
   internal.dim_aux_R_stepdown_R_unconf_1 = internal.n_groups;
   internal.dim_aux_R_stepdown_R_unconf_2 = internal.n_strains;
-  internal.dim_aux_R_stepdown_R_unconf_3 = internal.s_stepdown_R;
+  internal.dim_aux_R_stepdown_R_unconf_3 = internal.s_W_R;
   internal.dim_aux_R_stepdown_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_cum_n_E_vaccinated_1 = internal.n_groups;
   internal.dim_cum_n_E_vaccinated_2 = internal.n_vacc_classes;
@@ -4672,27 +4672,27 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_R_progress_tmp_3 = internal.n_vacc_classes;
   internal.dim_n_R_stepdown_D_conf_1 = internal.n_groups;
   internal.dim_n_R_stepdown_D_conf_2 = internal.n_strains;
-  internal.dim_n_R_stepdown_D_conf_3 = internal.s_stepdown_D;
+  internal.dim_n_R_stepdown_D_conf_3 = internal.s_W_D;
   internal.dim_n_R_stepdown_D_conf_4 = internal.n_vacc_classes;
   internal.dim_n_R_stepdown_D_unconf_1 = internal.n_groups;
   internal.dim_n_R_stepdown_D_unconf_2 = internal.n_strains;
-  internal.dim_n_R_stepdown_D_unconf_3 = internal.s_stepdown_D;
+  internal.dim_n_R_stepdown_D_unconf_3 = internal.s_W_D;
   internal.dim_n_R_stepdown_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_n_R_stepdown_D_unconf_to_conf_1 = internal.n_groups;
   internal.dim_n_R_stepdown_D_unconf_to_conf_2 = internal.n_strains;
-  internal.dim_n_R_stepdown_D_unconf_to_conf_3 = internal.s_stepdown_D;
+  internal.dim_n_R_stepdown_D_unconf_to_conf_3 = internal.s_W_D;
   internal.dim_n_R_stepdown_D_unconf_to_conf_4 = internal.n_vacc_classes;
   internal.dim_n_R_stepdown_R_conf_1 = internal.n_groups;
   internal.dim_n_R_stepdown_R_conf_2 = internal.n_strains;
-  internal.dim_n_R_stepdown_R_conf_3 = internal.s_stepdown_R;
+  internal.dim_n_R_stepdown_R_conf_3 = internal.s_W_R;
   internal.dim_n_R_stepdown_R_conf_4 = internal.n_vacc_classes;
   internal.dim_n_R_stepdown_R_unconf_1 = internal.n_groups;
   internal.dim_n_R_stepdown_R_unconf_2 = internal.n_strains;
-  internal.dim_n_R_stepdown_R_unconf_3 = internal.s_stepdown_R;
+  internal.dim_n_R_stepdown_R_unconf_3 = internal.s_W_R;
   internal.dim_n_R_stepdown_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_n_R_stepdown_R_unconf_to_conf_1 = internal.n_groups;
   internal.dim_n_R_stepdown_R_unconf_to_conf_2 = internal.n_strains;
-  internal.dim_n_R_stepdown_R_unconf_to_conf_3 = internal.s_stepdown_R;
+  internal.dim_n_R_stepdown_R_unconf_to_conf_3 = internal.s_W_R;
   internal.dim_n_R_stepdown_R_unconf_to_conf_4 = internal.n_vacc_classes;
   internal.dim_n_RS_1 = internal.n_groups;
   internal.dim_n_RS_2 = internal.n_strains;
@@ -4831,19 +4831,19 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_R_pre_4 = internal.n_vacc_classes;
   internal.dim_new_R_stepdown_D_conf_1 = internal.n_groups;
   internal.dim_new_R_stepdown_D_conf_2 = internal.n_strains;
-  internal.dim_new_R_stepdown_D_conf_3 = internal.s_stepdown_D;
+  internal.dim_new_R_stepdown_D_conf_3 = internal.s_W_D;
   internal.dim_new_R_stepdown_D_conf_4 = internal.n_vacc_classes;
   internal.dim_new_R_stepdown_D_unconf_1 = internal.n_groups;
   internal.dim_new_R_stepdown_D_unconf_2 = internal.n_strains;
-  internal.dim_new_R_stepdown_D_unconf_3 = internal.s_stepdown_D;
+  internal.dim_new_R_stepdown_D_unconf_3 = internal.s_W_D;
   internal.dim_new_R_stepdown_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_new_R_stepdown_R_conf_1 = internal.n_groups;
   internal.dim_new_R_stepdown_R_conf_2 = internal.n_strains;
-  internal.dim_new_R_stepdown_R_conf_3 = internal.s_stepdown_R;
+  internal.dim_new_R_stepdown_R_conf_3 = internal.s_W_R;
   internal.dim_new_R_stepdown_R_conf_4 = internal.n_vacc_classes;
   internal.dim_new_R_stepdown_R_unconf_1 = internal.n_groups;
   internal.dim_new_R_stepdown_R_unconf_2 = internal.n_strains;
-  internal.dim_new_R_stepdown_R_unconf_3 = internal.s_stepdown_R;
+  internal.dim_new_R_stepdown_R_unconf_3 = internal.s_W_R;
   internal.dim_new_R_stepdown_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_new_S_1 = internal.n_groups;
   internal.dim_new_S_2 = internal.n_vacc_classes;
@@ -4893,19 +4893,19 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_R_pre_4 = internal.n_vacc_classes;
   internal.dim_R_stepdown_D_conf_1 = internal.n_groups;
   internal.dim_R_stepdown_D_conf_2 = internal.n_strains;
-  internal.dim_R_stepdown_D_conf_3 = internal.s_stepdown_D;
+  internal.dim_R_stepdown_D_conf_3 = internal.s_W_D;
   internal.dim_R_stepdown_D_conf_4 = internal.n_vacc_classes;
   internal.dim_R_stepdown_D_unconf_1 = internal.n_groups;
   internal.dim_R_stepdown_D_unconf_2 = internal.n_strains;
-  internal.dim_R_stepdown_D_unconf_3 = internal.s_stepdown_D;
+  internal.dim_R_stepdown_D_unconf_3 = internal.s_W_D;
   internal.dim_R_stepdown_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_R_stepdown_R_conf_1 = internal.n_groups;
   internal.dim_R_stepdown_R_conf_2 = internal.n_strains;
-  internal.dim_R_stepdown_R_conf_3 = internal.s_stepdown_R;
+  internal.dim_R_stepdown_R_conf_3 = internal.s_W_R;
   internal.dim_R_stepdown_R_conf_4 = internal.n_vacc_classes;
   internal.dim_R_stepdown_R_unconf_1 = internal.n_groups;
   internal.dim_R_stepdown_R_unconf_2 = internal.n_strains;
-  internal.dim_R_stepdown_R_unconf_3 = internal.s_stepdown_R;
+  internal.dim_R_stepdown_R_unconf_3 = internal.s_W_R;
   internal.dim_R_stepdown_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_rel_p_C_1 = internal.n_groups;
   internal.dim_rel_p_C_2 = internal.n_vacc_classes;
