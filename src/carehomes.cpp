@@ -120,7 +120,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(s_ICU_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_PCR_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_PCR_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_R_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(s_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -140,10 +140,10 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(gamma_ICU_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_R_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_R_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_R_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_test, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_sero_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_U, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(model_pcr_and_serology_user, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1256,11 +1256,11 @@ public:
     real_t gamma_ICU_W_R;
     real_t gamma_PCR_pos;
     real_t gamma_PCR_pre;
-    real_t gamma_R_pos;
     std::vector<real_t> gamma_R_pre;
     real_t gamma_R_pre_1;
     real_t gamma_R_pre_2;
-    real_t gamma_test;
+    real_t gamma_sero_pos;
+    real_t gamma_U;
     real_t gamma_W_D;
     real_t gamma_W_R;
     real_t hosp_transmission;
@@ -1532,7 +1532,7 @@ public:
     std::vector<real_t> s_ij;
     int s_PCR_pos;
     int s_PCR_pre;
-    int s_R_pos;
+    int s_sero_pos;
     int s_W_D;
     int s_W_R;
     std::vector<real_t> strain_seed_step;
@@ -2722,7 +2722,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_new_R_pos_1; ++i) {
       for (int j = 1; j <= internal.dim_new_R_pos_2; ++j) {
-        for (int k = 2; k <= internal.s_R_pos; ++k) {
+        for (int k = 2; k <= internal.s_sero_pos; ++k) {
           for (int l = 1; l <= internal.dim_new_R_pos_4; ++l) {
             internal.new_R_pos[i - 1 + internal.dim_new_R_pos_1 * (j - 1) + internal.dim_new_R_pos_12 * (k - 1) + internal.dim_new_R_pos_123 * (l - 1)] = internal.new_R_pos[internal.dim_new_R_pos_123 * (l - 1) + internal.dim_new_R_pos_12 * (k - 1) + internal.dim_new_R_pos_1 * (j - 1) + i - 1] + internal.n_R_pos[internal.dim_n_R_pos_123 * (l - 1) + internal.dim_n_R_pos_12 * (k - 1 - 1) + internal.dim_n_R_pos_1 * (j - 1) + i - 1];
           }
@@ -3350,7 +3350,7 @@ public:
     for (int i = 1; i <= internal.dim_new_R_neg_1; ++i) {
       for (int j = 1; j <= internal.dim_new_R_neg_2; ++j) {
         for (int k = 1; k <= internal.dim_new_R_neg_3; ++k) {
-          internal.new_R_neg[i - 1 + internal.dim_new_R_neg_1 * (j - 1) + internal.dim_new_R_neg_12 * (k - 1)] = R_neg[internal.dim_R_neg_12 * (k - 1) + internal.dim_R_neg_1 * (j - 1) + i - 1] + odin_sum4(internal.n_R_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_R_pre_3, k - 1, k, internal.dim_n_R_pre_1, internal.dim_n_R_pre_12, internal.dim_n_R_pre_123) - internal.n_R_pre_to_R_pos[internal.dim_n_R_pre_to_R_pos_12 * (k - 1) + internal.dim_n_R_pre_to_R_pos_1 * (j - 1) + i - 1] + internal.n_R_pos[internal.dim_n_R_pos_123 * (k - 1) + internal.dim_n_R_pos_12 * (internal.s_R_pos - 1) + internal.dim_n_R_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_R_neg[i - 1 + internal.dim_new_R_neg_1 * (j - 1) + internal.dim_new_R_neg_12 * (k - 1)] = R_neg[internal.dim_R_neg_12 * (k - 1) + internal.dim_R_neg_1 * (j - 1) + i - 1] + odin_sum4(internal.n_R_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_R_pre_3, k - 1, k, internal.dim_n_R_pre_1, internal.dim_n_R_pre_12, internal.dim_n_R_pre_123) - internal.n_R_pre_to_R_pos[internal.dim_n_R_pre_to_R_pos_12 * (k - 1) + internal.dim_n_R_pre_to_R_pos_1 * (j - 1) + i - 1] + internal.n_R_pos[internal.dim_n_R_pos_123 * (k - 1) + internal.dim_n_R_pos_12 * (internal.s_sero_pos - 1) + internal.dim_n_R_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -4122,7 +4122,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_ICU_W_R = NA_INTEGER;
   internal.s_PCR_pos = NA_INTEGER;
   internal.s_PCR_pre = NA_INTEGER;
-  internal.s_R_pos = NA_INTEGER;
+  internal.s_sero_pos = NA_INTEGER;
   internal.s_W_D = NA_INTEGER;
   internal.s_W_R = NA_INTEGER;
   internal.gamma_A = 0.10000000000000001;
@@ -4137,10 +4137,10 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_ICU_W_R = 0.10000000000000001;
   internal.gamma_PCR_pos = 0.10000000000000001;
   internal.gamma_PCR_pre = 0.10000000000000001;
-  internal.gamma_R_pos = 0.10000000000000001;
   internal.gamma_R_pre_1 = 0.10000000000000001;
   internal.gamma_R_pre_2 = 0.10000000000000001;
-  internal.gamma_test = 0.10000000000000001;
+  internal.gamma_sero_pos = 0.10000000000000001;
+  internal.gamma_U = 0.10000000000000001;
   internal.gamma_W_D = 0.10000000000000001;
   internal.gamma_W_R = 0.10000000000000001;
   internal.model_pcr_and_serology_user = 1;
@@ -4163,10 +4163,10 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_ICU_W_R = user_get_scalar<real_t>(user, "gamma_ICU_W_R", internal.gamma_ICU_W_R, NA_REAL, NA_REAL);
   internal.gamma_PCR_pos = user_get_scalar<real_t>(user, "gamma_PCR_pos", internal.gamma_PCR_pos, NA_REAL, NA_REAL);
   internal.gamma_PCR_pre = user_get_scalar<real_t>(user, "gamma_PCR_pre", internal.gamma_PCR_pre, NA_REAL, NA_REAL);
-  internal.gamma_R_pos = user_get_scalar<real_t>(user, "gamma_R_pos", internal.gamma_R_pos, NA_REAL, NA_REAL);
   internal.gamma_R_pre_1 = user_get_scalar<real_t>(user, "gamma_R_pre_1", internal.gamma_R_pre_1, NA_REAL, NA_REAL);
   internal.gamma_R_pre_2 = user_get_scalar<real_t>(user, "gamma_R_pre_2", internal.gamma_R_pre_2, NA_REAL, NA_REAL);
-  internal.gamma_test = user_get_scalar<real_t>(user, "gamma_test", internal.gamma_test, NA_REAL, NA_REAL);
+  internal.gamma_sero_pos = user_get_scalar<real_t>(user, "gamma_sero_pos", internal.gamma_sero_pos, NA_REAL, NA_REAL);
+  internal.gamma_U = user_get_scalar<real_t>(user, "gamma_U", internal.gamma_U, NA_REAL, NA_REAL);
   internal.gamma_W_D = user_get_scalar<real_t>(user, "gamma_W_D", internal.gamma_W_D, NA_REAL, NA_REAL);
   internal.gamma_W_R = user_get_scalar<real_t>(user, "gamma_W_R", internal.gamma_W_R, NA_REAL, NA_REAL);
   internal.hosp_transmission = user_get_scalar<real_t>(user, "hosp_transmission", internal.hosp_transmission, NA_REAL, NA_REAL);
@@ -4213,7 +4213,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_ICU_W_R = user_get_scalar<int>(user, "s_ICU_W_R", internal.s_ICU_W_R, NA_REAL, NA_REAL);
   internal.s_PCR_pos = user_get_scalar<int>(user, "s_PCR_pos", internal.s_PCR_pos, NA_REAL, NA_REAL);
   internal.s_PCR_pre = user_get_scalar<int>(user, "s_PCR_pre", internal.s_PCR_pre, NA_REAL, NA_REAL);
-  internal.s_R_pos = user_get_scalar<int>(user, "s_R_pos", internal.s_R_pos, NA_REAL, NA_REAL);
+  internal.s_sero_pos = user_get_scalar<int>(user, "s_sero_pos", internal.s_sero_pos, NA_REAL, NA_REAL);
   internal.s_W_D = user_get_scalar<int>(user, "s_W_D", internal.s_W_D, NA_REAL, NA_REAL);
   internal.s_W_R = user_get_scalar<int>(user, "s_W_R", internal.s_W_R, NA_REAL, NA_REAL);
   std::array <int, 1> dim_strain_seed_step;
@@ -4266,10 +4266,10 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.p_IICU_pre = 1 - std::exp(- internal.gamma_ICU_pre * internal.dt);
   internal.p_PCR_pos = 1 - std::exp(- internal.gamma_PCR_pos * internal.dt);
   internal.p_PCR_pre = 1 - std::exp(- internal.gamma_PCR_pre * internal.dt);
-  internal.p_R_pos = 1 - std::exp(- internal.gamma_R_pos * internal.dt);
+  internal.p_R_pos = 1 - std::exp(- internal.gamma_sero_pos * internal.dt);
   internal.p_R_stepdown_D = 1 - std::exp(- internal.gamma_W_D * internal.dt);
   internal.p_R_stepdown_R = 1 - std::exp(- internal.gamma_W_R * internal.dt);
-  internal.p_test = 1 - std::exp(- internal.gamma_test * internal.dt);
+  internal.p_test = 1 - std::exp(- internal.gamma_U * internal.dt);
   internal.initial_cum_admit_by_age = std::vector<real_t>(internal.dim_cum_admit_by_age);
   internal.initial_D_comm = std::vector<real_t>(internal.dim_D_comm);
   internal.initial_D_hosp = std::vector<real_t>(internal.dim_D_hosp);
@@ -4657,7 +4657,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_R_next_vacc_class_tmp_3 = internal.n_vacc_classes;
   internal.dim_n_R_pos_1 = internal.n_groups;
   internal.dim_n_R_pos_2 = internal.n_strains;
-  internal.dim_n_R_pos_3 = internal.s_R_pos;
+  internal.dim_n_R_pos_3 = internal.s_sero_pos;
   internal.dim_n_R_pos_4 = internal.n_vacc_classes;
   internal.dim_n_R_pre_1 = internal.n_groups;
   internal.dim_n_R_pre_2 = internal.n_strains;
@@ -4828,7 +4828,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_R_neg_3 = internal.n_vacc_classes;
   internal.dim_new_R_pos_1 = internal.n_groups;
   internal.dim_new_R_pos_2 = internal.n_strains;
-  internal.dim_new_R_pos_3 = internal.s_R_pos;
+  internal.dim_new_R_pos_3 = internal.s_sero_pos;
   internal.dim_new_R_pos_4 = internal.n_vacc_classes;
   internal.dim_new_R_pre_1 = internal.n_groups;
   internal.dim_new_R_pre_2 = internal.n_strains;
@@ -4890,7 +4890,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_R_neg_3 = internal.n_vacc_classes;
   internal.dim_R_pos_1 = internal.n_groups;
   internal.dim_R_pos_2 = internal.n_strains;
-  internal.dim_R_pos_3 = internal.s_R_pos;
+  internal.dim_R_pos_3 = internal.s_sero_pos;
   internal.dim_R_pos_4 = internal.n_vacc_classes;
   internal.dim_R_pre_1 = internal.n_groups;
   internal.dim_R_pre_2 = internal.n_strains;

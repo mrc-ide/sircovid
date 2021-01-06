@@ -129,8 +129,8 @@ p_II_ICU_D <- 1 - exp(-gamma_ICU_D * dt)
 p_R_stepdown_R <- 1 - exp(-gamma_W_R * dt)
 p_R_stepdown_D <- 1 - exp(-gamma_W_D * dt)
 p_R_pre[, , , ] <- 1 - exp(-gamma_R_pre[k] * dt)
-p_R_pos <- 1 - exp(-gamma_R_pos * dt)
-p_test <- 1 - exp(-gamma_test * dt)
+p_R_pos <- 1 - exp(-gamma_sero_pos * dt)
+p_test <- 1 - exp(-gamma_U * dt)
 p_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
 p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
@@ -658,10 +658,10 @@ n_R_pre_to_R_pos[, , ] <- rbinom(sum(n_R_pre[i, j, , k]), p_seroconversion[i])
 
 new_R_pos[, , , ] <- R_pos[i, j, k, l] - n_R_pos[i, j, k, l]
 new_R_pos[, , 1, ] <- new_R_pos[i, j, 1, l] + n_R_pre_to_R_pos[i, j, l]
-new_R_pos[, , 2:s_R_pos, ] <- new_R_pos[i, j, k, l] + n_R_pos[i, j, k - 1, l]
+new_R_pos[, , 2:s_sero_pos, ] <- new_R_pos[i, j, k, l] + n_R_pos[i, j, k - 1, l]
 
 new_R_neg[, , ] <- R_neg[i, j, k] + sum(n_R_pre[i, j, , k]) -
-  n_R_pre_to_R_pos[i, j, k] + n_R_pos[i, j, s_R_pos, k] -
+  n_R_pre_to_R_pos[i, j, k] + n_R_pos[i, j, s_sero_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
 new_R_neg[, , 1] <- new_R_neg[i, j, 1] +
@@ -875,11 +875,11 @@ p_R_pre_1 <- user(0.5)
 p_seroconversion[] <- user()
 
 ## Parameters of the R_pos classes
-s_R_pos <- user()
-gamma_R_pos <- user(0.1)
+s_sero_pos <- user()
+gamma_sero_pos <- user(0.1)
 
 ## Parameters relating to testing
-gamma_test <- user(0.1)
+gamma_U <- user(0.1)
 dim(p_admit_conf_step) <- user()
 p_admit_conf_step[] <- user()
 psi_admit_conf[] <- user()
@@ -1068,9 +1068,9 @@ dim(p_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(p_seroconversion) <- n_groups
 
 ## Vectors handling the R_pos class
-dim(R_pos) <- c(n_groups, n_strains, s_R_pos, n_vacc_classes)
-dim(n_R_pos) <- c(n_groups, n_strains, s_R_pos, n_vacc_classes)
-dim(new_R_pos) <- c(n_groups, n_strains, s_R_pos, n_vacc_classes)
+dim(R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
+dim(n_R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
+dim(new_R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
 dim(n_R_pre_to_R_pos) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the R_neg class

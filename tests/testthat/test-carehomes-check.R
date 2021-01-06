@@ -415,14 +415,14 @@ test_that("No one seroconverts if p_seroconversion is 0", {
 
 
 test_that("No one does not seroconvert and no one seroreverts
-          if p_seroconversion is 1 and gamma_R_pos is 0", {
+          if p_seroconversion is 1 and gamma_sero_pos is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
 
   p$p_seroconversion[] <- 1
-  ## set gamma_R_pos to 0 so no-one seroreverts
-  p$gamma_R_pos <- 0
+  ## set gamma_sero_pos to 0 so no-one seroreverts
+  p$gamma_sero_pos <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -550,7 +550,7 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_G_D", "s_G_D", "G_D", FALSE)
   helper("gamma_W_R", "s_W_R", "R_stepdown_R", TRUE)
   helper("gamma_W_D", "s_W_D", "R_stepdown_D", TRUE)
-  helper("gamma_R_pos", "s_R_pos", "R_pos", FALSE)
+  helper("gamma_sero_pos", "s_sero_pos", "R_pos", FALSE)
   helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre", FALSE)
   helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos", FALSE)
 })
@@ -625,7 +625,7 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_G_D", "s_G_D", "G_D", FALSE)
   helper("gamma_W_R", "s_W_R", "R_stepdown_R", TRUE)
   helper("gamma_W_D", "s_W_D", "R_stepdown_D", TRUE)
-  helper("gamma_R_pos", "s_R_pos", "R_pos", FALSE)
+  helper("gamma_sero_pos", "s_sero_pos", "R_pos", FALSE)
   helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre", FALSE)
   helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos", FALSE)
 })
@@ -678,12 +678,12 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
 })
 
 
-test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
+test_that("No one is confirmed, if p_admit_conf = 0 and gamma_U = 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_admit_conf[] <- 0
-  p$gamma_test <- 0
+  p$gamma_U <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -712,12 +712,12 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_test = 0", {
 })
 
 
-test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
+test_that("Instant confirmation if p_admit_conf = 0 and gamma_U = Inf", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_admit_conf[] <- 0
-  p$gamma_test <- Inf
+  p$gamma_U <- Inf
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
   p$gamma_H_D <- Inf

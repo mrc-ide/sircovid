@@ -824,7 +824,7 @@ carehomes_parameters_progression <- function() {
        s_ICU_pre = 2,
        s_W_R = 2,
        s_W_D = 2,
-       s_R_pos = 2,
+       s_sero_pos = 2,
        s_PCR_pre = 2,
        s_PCR_pos = 2,
 
@@ -842,8 +842,8 @@ carehomes_parameters_progression <- function() {
        gamma_W_D = 2 / 5,
        gamma_R_pre_1 = 1 / 5,
        gamma_R_pre_2 = 1 / 10,
-       gamma_R_pos = 1 / 25,
-       gamma_test = 3 / 10,
+       gamma_sero_pos = 1 / 25,
+       gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
        gamma_PCR_pos = 1 / 5)
 }
