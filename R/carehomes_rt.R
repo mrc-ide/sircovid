@@ -217,27 +217,27 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_H <- outer(p_H,
     sircovid_parameters_beta_expand(step, pars$p_H_step))
 
-  p_ICU_hosp <- outer(matricise(pars$psi_ICU_hosp, n_vacc_classes),
-                    sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
-  p_death_ICU <- outer(matricise(pars$psi_death_ICU, n_vacc_classes),
-                   sircovid_parameters_beta_expand(step, pars$p_death_ICU_step))
-  p_death_hosp_D <- outer(matricise(pars$psi_death_hosp_D, n_vacc_classes),
-                sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
-  p_death_stepdown <- outer(matricise(pars$psi_death_stepdown, n_vacc_classes),
-              sircovid_parameters_beta_expand(step, pars$p_death_stepdown_step))
+  p_ICU <- outer(matricise(pars$psi_ICU, n_vacc_classes),
+                    sircovid_parameters_beta_expand(step, pars$p_ICU_step))
+  p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
+                   sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
+  p_H_D <- outer(matricise(pars$psi_H_D, n_vacc_classes),
+                sircovid_parameters_beta_expand(step, pars$p_H_D_step))
+  p_W_D <- outer(matricise(pars$psi_W_D, n_vacc_classes),
+              sircovid_parameters_beta_expand(step, pars$p_W_D_step))
   p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
                   sircovid_parameters_beta_expand(step, pars$p_G_D_step))
 
   p_hosp_R <- p_C * p_H * (1 - p_G_D) *
-    (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
+    (1 - p_ICU) * (1 - p_H_D)
   p_hosp_D <- p_C * p_H * (1 - p_G_D) *
-    (1 - p_ICU_hosp) * p_death_hosp_D
+    (1 - p_ICU) * p_H_D
   p_ICU_S_R <- p_C * p_H * (1 - p_G_D) *
-    p_ICU_hosp * (1 - p_death_ICU) * (1 - p_death_stepdown)
+    p_ICU * (1 - p_ICU_D) * (1 - p_W_D)
   p_ICU_S_D <- p_C * p_H * (1 - p_G_D) *
-    p_ICU_hosp * (1 - p_death_ICU) * p_death_stepdown
+    p_ICU * (1 - p_ICU_D) * p_W_D
   p_ICU_D <- p_C * p_H * (1 - p_G_D) *
-    p_ICU_hosp * p_death_ICU
+    p_ICU * p_ICU_D
 
   ## TODO: would be nice if it's possibly to name these subcomponents
   ## to make the calculation clearer.

@@ -189,33 +189,33 @@ carehomes <- R6::R6Class(
         integer = FALSE), p_admit_conf_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_C = list(has_default = FALSE, default_value = NULL,
-        rank = 1, min = -Inf, max = Inf, integer = FALSE), p_death_hosp_D_step = list(
+        rank = 1, min = -Inf, max = Inf, integer = FALSE), p_G_D_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_death_ICU_step = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_death_stepdown_step = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_G_D_step = list(
+        min = -Inf, max = Inf, integer = FALSE), p_H_D_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_H_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_ICU_hosp_step = list(
+        min = -Inf, max = Inf, integer = FALSE), p_ICU_D_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_ICU_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_seroconversion = list(
         has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_W_D_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_admit_conf = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), psi_death_hosp_D = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), psi_death_ICU = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), psi_death_stepdown = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_G_D = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_H = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), psi_ICU_hosp = list(
+        min = -Inf, max = Inf, integer = FALSE), psi_H_D = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_ICU = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_ICU_D = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_W_D = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), rel_p_C = list(
         has_default = FALSE, default_value = NULL, rank = 2,

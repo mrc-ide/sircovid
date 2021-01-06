@@ -136,27 +136,27 @@ p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
 
 ## Work out time-varying probabilities
-p_ICU_hosp <- if (as.integer(step) >= length(p_ICU_hosp_step))
-  p_ICU_hosp_step[length(p_ICU_hosp_step)] else p_ICU_hosp_step[step + 1]
-prob_ICU_hosp[] <- p_ICU_hosp * psi_ICU_hosp[i]
+p_ICU <- if (as.integer(step) >= length(p_ICU_step))
+  p_ICU_step[length(p_ICU_step)] else p_ICU_step[step + 1]
+prob_ICU[] <- p_ICU * psi_ICU[i]
 
 p_H <- if (as.integer(step) >= length(p_H_step))
   p_H_step[length(p_H_step)] else p_H_step[step + 1]
 prob_H[] <- p_H * psi_H[i]
 
-p_death_ICU <- if (as.integer(step) >= length(p_death_ICU_step))
-  p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
-prob_death_ICU[] <- p_death_ICU * psi_death_ICU[i]
+p_ICU_D <- if (as.integer(step) >= length(p_ICU_D_step))
+  p_ICU_D_step[length(p_ICU_D_step)] else p_ICU_D_step[step + 1]
+prob_ICU_D[] <- p_ICU_D * psi_ICU_D[i]
 
-p_death_hosp_D <- if (as.integer(step) >= length(p_death_hosp_D_step))
-  p_death_hosp_D_step[length(p_death_hosp_D_step)] else
-    p_death_hosp_D_step[step + 1]
-prob_death_hosp_D[] <- p_death_hosp_D * psi_death_hosp_D[i]
+p_H_D <- if (as.integer(step) >= length(p_H_D_step))
+  p_H_D_step[length(p_H_D_step)] else
+    p_H_D_step[step + 1]
+prob_H_D[] <- p_H_D * psi_H_D[i]
 
-p_death_stepdown <- if (as.integer(step) >= length(p_death_stepdown_step))
-  p_death_stepdown_step[length(p_death_stepdown_step)] else
-    p_death_stepdown_step[step + 1]
-prob_death_stepdown[] <- p_death_stepdown * psi_death_stepdown[i]
+p_W_D <- if (as.integer(step) >= length(p_W_D_step))
+  p_W_D_step[length(p_W_D_step)] else
+    p_W_D_step[step + 1]
+prob_W_D[] <- p_W_D * psi_W_D[i]
 
 p_G_D <- if (as.integer(step) >= length(p_G_D_step))
   p_G_D_step[length(p_G_D_step)] else p_G_D_step[step + 1]
@@ -410,11 +410,11 @@ aux_GG_D[, , 1:s_G_D, ] <-
 new_G_D[, , , ] <- G_D[i, j, k, l] + aux_GG_D[i, j, k, l]
 
 ## Work out the split in hospitals between hosp_D, hosp_R and ICU_pre
-n_sympt_to_ICU_pre[, , ] <- rbinom(n_sympt_to_hosp[i, j, k], prob_ICU_hosp[i])
+n_sympt_to_ICU_pre[, , ] <- rbinom(n_sympt_to_hosp[i, j, k], prob_ICU[i])
 n_sympt_to_ICU_pre_conf[, , ] <- rbinom(n_sympt_to_ICU_pre[i, j, k],
                                    prob_admit_conf[i])
 n_hosp_non_ICU[, , ] <- n_sympt_to_hosp[i, j, k] - n_sympt_to_ICU_pre[i, j, k]
-n_sympt_to_hosp_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], prob_death_hosp_D[i])
+n_sympt_to_hosp_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], prob_H_D[i])
 n_sympt_to_hosp_D_conf[, , ] <- rbinom(n_sympt_to_hosp_D[i, j, k],
                                      prob_admit_conf[i])
 n_sympt_to_hosp_R[, , ] <- n_hosp_non_ICU[i, j, k] - n_sympt_to_hosp_D[i, j, k]
@@ -493,20 +493,20 @@ new_I_hosp_D_conf[, , 1, ] <-
 
 ## Work out the ICU_pre to ICU_D, ICU_S_R and ICU_S_D splits
 n_ICU_pre_unconf_to_ICU_D_unconf[, , ] <-
-  rbinom(n_ICU_pre_unconf[i, j, s_ICU_pre, k], prob_death_ICU[i])
+  rbinom(n_ICU_pre_unconf[i, j, s_ICU_pre, k], prob_ICU_D[i])
 n_ICU_pre_conf_to_ICU_D_conf[, , ] <-
-  rbinom(n_ICU_pre_conf[i, j, s_ICU_pre, k], prob_death_ICU[i])
+  rbinom(n_ICU_pre_conf[i, j, s_ICU_pre, k], prob_ICU_D[i])
 n_ICU_pre_unconf_to_ICU_S_D_unconf[, , ] <-
   rbinom(n_ICU_pre_unconf[i, j, s_ICU_pre, k] -
            n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k],
-         prob_death_stepdown[i])
+         prob_W_D[i])
 n_ICU_pre_unconf_to_ICU_S_R_unconf[, , ] <-
   n_ICU_pre_unconf[i, j, s_ICU_pre, k] -
   n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k] -
   n_ICU_pre_unconf_to_ICU_S_D_unconf[i, j, k]
 n_ICU_pre_conf_to_ICU_S_D_conf[, , ] <-
   rbinom(n_ICU_pre_conf[i, j, s_ICU_pre, k] -
-           n_ICU_pre_conf_to_ICU_D_conf[i, j, k], prob_death_stepdown[i])
+           n_ICU_pre_conf_to_ICU_D_conf[i, j, k], prob_W_D[i])
 n_ICU_pre_conf_to_ICU_S_R_conf[, , ] <- n_ICU_pre_conf[i, j, s_ICU_pre, k] -
   n_ICU_pre_conf_to_ICU_D_conf[i, j, k] -
   n_ICU_pre_conf_to_ICU_S_D_conf[i, j, k]
@@ -818,14 +818,14 @@ s_ICU_pre <- user()
 gamma_ICU_pre <- user(0.1)
 
 ## Proportion of hospital cases progressing to ICU
-dim(p_ICU_hosp_step) <- user()
-p_ICU_hosp_step[] <- user()
-psi_ICU_hosp[] <- user()
+dim(p_ICU_step) <- user()
+p_ICU_step[] <- user()
+psi_ICU[] <- user()
 
 ## Proportion of stepdown cases dying
-dim(p_death_stepdown_step) <- user()
-p_death_stepdown_step[] <- user()
-psi_death_stepdown[] <- user()
+dim(p_W_D_step) <- user()
+p_W_D_step[] <- user()
+psi_W_D[] <- user()
 
 ## Parameters of the I_hosp_R classes
 s_H_R <- user()
@@ -834,9 +834,9 @@ gamma_H_R <- user(0.1)
 ## Parameters of the I_hosp_D classes
 s_H_D <- user()
 gamma_H_D <- user(0.1)
-dim(p_death_hosp_D_step) <- user()
-p_death_hosp_D_step[] <- user()
-psi_death_hosp_D[] <- user()
+dim(p_H_D_step) <- user()
+p_H_D_step[] <- user()
+psi_H_D[] <- user()
 
 ## Parameters of the I_ICU_S_R classes
 s_ICU_W_R <- user()
@@ -849,9 +849,9 @@ gamma_ICU_W_D <- user(0.1)
 ## Parameters of the I_ICU classes
 s_ICU_D <- user()
 gamma_ICU_D <- user(0.1)
-dim(p_death_ICU_step) <- user()
-p_death_ICU_step[] <- user()
-psi_death_ICU[] <- user()
+dim(p_ICU_D_step) <- user()
+p_ICU_D_step[] <- user()
+psi_ICU_D[] <- user()
 
 ## Waning of immunity
 waning_rate[] <- user()
@@ -958,8 +958,8 @@ dim(n_ICU_pre_unconf_to_conf) <-
   c(n_groups, n_strains, s_ICU_pre, n_vacc_classes)
 
 ## Vector handling who progress to ICU
-dim(prob_ICU_hosp) <- n_groups
-dim(psi_ICU_hosp) <- n_groups
+dim(prob_ICU) <- n_groups
+dim(psi_ICU) <- n_groups
 
 ## Vectors handling the I_hosp_R class
 dim(I_hosp_R_unconf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
@@ -1166,12 +1166,12 @@ dim(n_com_to_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(p_C) <- n_groups
 
 ## Vectors handling the potential death in hospital (general beds and ICU)
-dim(prob_death_hosp_D) <- n_groups
-dim(psi_death_hosp_D) <- n_groups
-dim(prob_death_ICU) <- n_groups
-dim(psi_death_ICU) <- n_groups
-dim(prob_death_stepdown) <- n_groups
-dim(psi_death_stepdown) <- n_groups
+dim(prob_H_D) <- n_groups
+dim(psi_H_D) <- n_groups
+dim(prob_ICU_D) <- n_groups
+dim(psi_ICU_D) <- n_groups
+dim(prob_W_D) <- n_groups
+dim(psi_W_D) <- n_groups
 
 ## Vector handling the probability of being admitted as confirmed
 dim(prob_admit_conf) <- n_groups

@@ -323,23 +323,23 @@ test_that("forcing hospital route results in correct path", {
   ## helper function will help run a model with given probabilities
   ## and verify that some compartments have cases (nonzero) and others
   ## area all zeros.
-  helper <- function(prob_ICU_hosp, prob_death_ICU, prob_death_hosp_D,
-                     prob_death_stepdown, expect_cases, expect_zero) {
+  helper <- function(prob_ICU, prob_ICU_D, prob_H_D,
+                     prob_W_D, expect_cases, expect_zero) {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-    p$p_ICU_hosp_step <- ifelse(is.null(prob_ICU_hosp),
-                                    p$p_ICU_hosp_step, 1)
-    p$psi_ICU_hosp[] <- prob_ICU_hosp %||% p$psi_ICU_hosp[]
-    p$p_death_hosp_D_step <- ifelse(is.null(prob_death_hosp_D),
-                                 p$p_death_hosp_D_step, 1)
-    p$psi_death_hosp_D[] <- prob_death_hosp_D %||% p$psi_death_hosp_D[]
-    p$p_death_ICU_step <- ifelse(is.null(prob_death_ICU),
-                                 p$p_death_ICU_step, 1)
-    p$psi_death_ICU[] <- prob_death_ICU %||% p$psi_death_ICU[]
-    p$p_death_stepdown_step <- ifelse(is.null(prob_death_stepdown),
-                                 p$p_death_stepdown_step, 1)
-    p$psi_death_stepdown[] <- prob_death_stepdown %||% p$psi_death_stepdown[]
+    p$p_ICU_step <- ifelse(is.null(prob_ICU),
+                                    p$p_ICU_step, 1)
+    p$psi_ICU[] <- prob_ICU %||% p$psi_ICU[]
+    p$p_H_D_step <- ifelse(is.null(prob_H_D),
+                                 p$p_H_D_step, 1)
+    p$psi_H_D[] <- prob_H_D %||% p$psi_H_D[]
+    p$p_ICU_D_step <- ifelse(is.null(prob_ICU_D),
+                                 p$p_ICU_D_step, 1)
+    p$psi_ICU_D[] <- prob_ICU_D %||% p$psi_ICU_D[]
+    p$p_W_D_step <- ifelse(is.null(prob_W_D),
+                                 p$p_W_D_step, 1)
+    p$psi_W_D[] <- prob_W_D %||% p$psi_W_D[]
 
     mod <- carehomes$new(p, 0, 1)
     info <- mod$info()
@@ -366,30 +366,30 @@ test_that("forcing hospital route results in correct path", {
     }
   }
 
-  ## p_ICU_hosp = 0, p_death_hosp_D = 0 no-one goes into ICU, no deaths
+  ## p_ICU = 0, p_H_D = 0 no-one goes into ICU, no deaths
   helper(0, NULL, 0, NULL, "I_hosp_R",
          c("I_hosp_D", "I_ICU_S_R", "I_ICU_S_D", "I_ICU_D", "ICU_pre",
            "R_stepdown_R", "R_stepdown_D", "D_hosp"))
 
-  ## p_death_hosp = 1, p_ICU_hosp = 0 no-one goes into ICU, no
+  ## p_death_hosp = 1, p_ICU = 0 no-one goes into ICU, no
   ## recovery in hospital
   helper(0, NULL, 1, NULL, "I_hosp_D",
          c("I_hosp_R", "I_ICU_S_R", "I_ICU_S_D", "I_ICU_D", "ICU_pre",
            "R_stepdown_R", "R_stepdown_D"))
 
-  ## p_death_ICU = 1, p_ICU_hosp = 1 no-one goes in hosp_D / hosp_R,
+  ## p_ICU_D = 1, p_ICU = 1 no-one goes in hosp_D / hosp_R,
   ## no recovery from ICU
   helper(1, 1, NULL, NULL, "I_ICU_D",
          c("I_hosp_R", "I_hosp_D", "I_ICU_S_R", "I_ICU_S_D", "R_stepdown_R",
            "R_stepdown_D"))
 
-  ## p_death_ICU = 0, p_ICU_hosp = 1, p_death_stepdown = 0 no-one goes in
+  ## p_ICU_D = 0, p_ICU = 1, p_W_D = 0 no-one goes in
   ## hosp_D / hosp_R, no deaths
   helper(1, 0, NULL, 0, c("I_ICU_S_R", "R_stepdown_R"),
          c("I_hosp_R", "I_hosp_D", "I_ICU_S_D", "I_ICU_D", "R_stepdown_D",
            "D_hosp"))
 
-  ## p_death_ICU = 0, p_ICU_hosp = 1, p_death_stepdown = 1 no-one goes in
+  ## p_ICU_D = 0, p_ICU = 1, p_W_D = 1 no-one goes in
   ## hosp_D / hosp_R, no-one recovers in stepdown
   helper(1, 0, NULL, 1, c("I_ICU_S_D", "R_stepdown_D"),
          c("I_hosp_R", "I_hosp_D", "I_ICU_S_R", "I_ICU_D", "R_stepdown_R"))

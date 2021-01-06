@@ -87,13 +87,13 @@ basic_parameters <- function(start_date, region,
   ## basic model; we could do these transformations in the odin code
   ## perhaps, which would reduce carrying redundant dependencies
   ## between parameters
-  severity$p_recov_ICU <- 1 - severity[["p_death_ICU"]]
+  severity$p_recov_ICU <- 1 - severity[["p_ICU_D"]]
   severity$p_recov_hosp <-
-    (1 - severity[["p_ICU_hosp"]]) *
-    (1 - severity[["p_death_hosp_D"]])
+    (1 - severity[["p_ICU"]]) *
+    (1 - severity[["p_H_D"]])
   severity$p_death_hosp <-
-    (1 - severity[["p_ICU_hosp"]]) *
-    severity[["p_death_hosp_D"]]
+    (1 - severity[["p_ICU"]]) *
+    severity[["p_H_D"]]
   severity$p_recov_sympt <- 1 - severity[["p_H"]]
 
   c(ret,

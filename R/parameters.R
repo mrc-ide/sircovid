@@ -134,8 +134,8 @@ sircovid_parameters_severity <- function(params) {
     params <- severity_default()
   } else if (!is.data.frame(params)) {
     expected <- c("p_admit_conf", "p_C", "p_G_D",
-                  "p_death_hosp_D", "p_death_ICU", "p_death_stepdown",
-                  "p_ICU_hosp", "p_seroconversion", "p_H")
+                  "p_H_D", "p_ICU_D", "p_W_D",
+                  "p_ICU", "p_seroconversion", "p_H")
     verify_names(params, expected)
     return(params)
   }
@@ -151,10 +151,10 @@ sircovid_parameters_severity <- function(params) {
   required <- c(
     p_C = "p_C",
     p_H = "p_H",
-    p_ICU_hosp = "p_ICU_hosp",
-    p_death_ICU = "p_death_ICU",
-    p_death_hosp_D = "p_death_hosp_D",
-    p_death_stepdown = "p_death_stepdown",
+    p_ICU = "p_ICU",
+    p_ICU_D = "p_ICU_D",
+    p_H_D = "p_H_D",
+    p_W_D = "p_W_D",
     p_seroconversion = "p_seroconversion",
     p_G_D = "p_G_D",
     p_admit_conf = "p_admit_conf")
@@ -164,10 +164,10 @@ sircovid_parameters_severity <- function(params) {
     p_admit_conf = data[["p_admit_conf"]],
     p_C = data[["p_C"]],
     p_G_D = data[["p_G_D"]],
-    p_death_hosp_D = data[["p_death_hosp_D"]],
-    p_death_ICU = data[["p_death_ICU"]],
-    p_death_stepdown = data[["p_death_stepdown"]],
-    p_ICU_hosp = data[["p_ICU_hosp"]],
+    p_H_D = data[["p_H_D"]],
+    p_ICU_D = data[["p_ICU_D"]],
+    p_W_D = data[["p_W_D"]],
+    p_ICU = data[["p_ICU"]],
     p_seroconversion = data[["p_seroconversion"]],
     p_H = data[["p_H"]])
 }

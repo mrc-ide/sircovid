@@ -282,19 +282,17 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_H <- severity$p_H / max(severity$p_H)
   severity$p_H_step <- max(severity$p_H)
   ## probability of hospitalised patient going to ICU
-  severity$psi_ICU_hosp <- severity$p_ICU_hosp / max(severity$p_ICU_hosp)
-  severity$p_ICU_hosp_step <- max(severity$p_ICU_hosp)
+  severity$psi_ICU <- severity$p_ICU / max(severity$p_ICU)
+  severity$p_ICU_step <- max(severity$p_ICU)
   ## probability of ICU patient dying
-  severity$psi_death_ICU <- severity$p_death_ICU / max(severity$p_death_ICU)
-  severity$p_death_ICU_step <- max(severity$p_death_ICU)
+  severity$psi_ICU_D <- severity$p_ICU_D / max(severity$p_ICU_D)
+  severity$p_ICU_D_step <- max(severity$p_ICU_D)
   ## probability of non-ICU hospital patient dying
-  severity$psi_death_hosp_D <- severity$p_death_hosp_D /
-    max(severity$p_death_hosp_D)
-  severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
+  severity$psi_H_D <- severity$p_H_D / max(severity$p_H_D)
+  severity$p_H_D_step <- max(severity$p_H_D)
   ## probability of stepdown hospital patient dying
-  severity$psi_death_stepdown <- severity$p_death_stepdown /
-    max(severity$p_death_stepdown)
-  severity$p_death_stepdown_step <- max(severity$p_death_stepdown)
+  severity$psi_W_D <- severity$p_W_D / max(severity$p_W_D)
+  severity$p_W_D_step <- max(severity$p_W_D)
   ## probability of patient requiring hospital treatment dying in community
   severity$psi_G_D <- severity$p_G_D / max(severity$p_G_D)
   severity$p_G_D_step <- max(severity$p_G_D)
