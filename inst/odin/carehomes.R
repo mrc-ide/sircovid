@@ -508,13 +508,15 @@ n_ICU_pre_conf_to_ICU_S_D_conf[, , ] <-
   rbinom(n_ICU_pre_conf[i, j, s_ICU_pre, k] -
            n_ICU_pre_conf_to_ICU_D_conf[i, j, k], prob_death_stepdown[i])
 n_ICU_pre_conf_to_ICU_S_R_conf[, , ] <- n_ICU_pre_conf[i, j, s_ICU_pre, k] -
-  n_ICU_pre_conf_to_ICU_D_conf[i, j, k] - n_ICU_pre_conf_to_ICU_S_D_conf[i, j, k]
+  n_ICU_pre_conf_to_ICU_D_conf[i, j, k] -
+  n_ICU_pre_conf_to_ICU_S_D_conf[i, j, k]
 
 
 ## Work out the I_ICU_S_R->I_ICU_S_R transitions
 aux_II_ICU_S_R_unconf[, , , ] <- I_ICU_S_R_unconf[i, j, k, l]
 aux_II_ICU_S_R_unconf[, , 1, ] <-
-  aux_II_ICU_S_R_unconf[i, j, k, l] + n_ICU_pre_unconf_to_ICU_S_R_unconf[i, j, l]
+  aux_II_ICU_S_R_unconf[i, j, k, l] +
+  n_ICU_pre_unconf_to_ICU_S_R_unconf[i, j, l]
 aux_II_ICU_S_R_unconf[, , 2:s_ICU_S_R, ] <-
   aux_II_ICU_S_R_unconf[i, j, k, l] + n_II_ICU_S_R_unconf[i, j, k - 1, l]
 aux_II_ICU_S_R_unconf[, , 1:s_ICU_S_R, ] <-
@@ -536,7 +538,8 @@ new_I_ICU_S_R_conf[, , , ] <-
 ## Work out the I_ICU_S_D->I_ICU_S_D transitions
 aux_II_ICU_S_D_unconf[, , , ] <- I_ICU_S_D_unconf[i, j, k, l]
 aux_II_ICU_S_D_unconf[, , 1, ] <-
-  aux_II_ICU_S_D_unconf[i, j, k, l] + n_ICU_pre_unconf_to_ICU_S_D_unconf[i, j, l]
+  aux_II_ICU_S_D_unconf[i, j, k, l] +
+  n_ICU_pre_unconf_to_ICU_S_D_unconf[i, j, l]
 aux_II_ICU_S_D_unconf[, , 2:s_ICU_S_D, ] <-
   aux_II_ICU_S_D_unconf[i, j, k, l] + n_II_ICU_S_D_unconf[i, j, k - 1, l]
 aux_II_ICU_S_D_unconf[, , 1:s_ICU_S_D, ] <-
@@ -1149,9 +1152,11 @@ dim(n_sympt_to_hosp_R) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_sympt_to_hosp_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_ICU_pre_unconf_to_ICU_D_unconf) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_ICU_pre_conf_to_ICU_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_ICU_S_R_unconf) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_ICU_pre_unconf_to_ICU_S_R_unconf) <-
+  c(n_groups, n_strains, n_vacc_classes)
 dim(n_ICU_pre_conf_to_ICU_S_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_ICU_S_D_unconf) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_ICU_pre_unconf_to_ICU_S_D_unconf) <-
+  c(n_groups, n_strains, n_vacc_classes)
 dim(n_ICU_pre_conf_to_ICU_S_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the serology flow
