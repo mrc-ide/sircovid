@@ -173,9 +173,9 @@ carehomes <- R6::R6Class(
     n_threads_ = NULL,
     ptr_ = NULL,
     param_ = list(beta_step = list(has_default = FALSE, default_value = NULL,
-    rank = 1, min = -Inf, max = Inf, integer = FALSE), comm_D_transmission = list(
+    rank = 1, min = -Inf, max = Inf, integer = FALSE), dt = list(
     has_default = FALSE, default_value = NULL, rank = 0, min = -Inf,
-    max = Inf, integer = FALSE), dt = list(has_default = FALSE,
+    max = Inf, integer = FALSE), G_D_transmission = list(has_default = FALSE,
     default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
     hosp_transmission = list(has_default = FALSE, default_value = NULL,
         rank = 0, min = -Inf, max = Inf, integer = FALSE), ICU_transmission = list(
