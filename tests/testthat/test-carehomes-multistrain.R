@@ -328,7 +328,7 @@ test_that("different strains are equivalent", {
 
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_asympt <- y$I_asympt[, 2:1, , , drop = FALSE]
+  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
   y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
   y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
 
@@ -370,7 +370,7 @@ test_that("Swapping strains gives identical results with different index", {
   end <- sircovid_date("2020-05-1") / p$dt
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_asympt <- y$I_asympt[, 2:1, , , drop = FALSE]
+  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
   y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
   y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
 
@@ -395,7 +395,7 @@ test_that("Swapping strains gives identical results with different index", {
   for (nm in c("R_neg", "R", "PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
   }
-  v5 <- c("E", "I_asympt", "I_sympt", "PCR_pre", "PCR_pos", "R_pre",
+  v5 <- c("E", "I_A", "I_C", "PCR_pre", "PCR_pos", "R_pre",
           "R_pos", "I_comm_D", "I_triage_unconf", "I_triage_conf",
           "I_hosp_R_unconf", "I_hosp_R_conf", "I_hosp_D_unconf",
           "I_hosp_D_conf", "I_ICU_S_R_unconf", "I_ICU_S_R_conf",

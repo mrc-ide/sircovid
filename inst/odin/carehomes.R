@@ -35,12 +35,12 @@ initial(cum_n_E_vaccinated[, ]) <- 0
 update(cum_n_E_vaccinated[, ]) <- cum_n_E_vaccinated[i, j] +
   sum(n_E_next_vacc_class[i, , , j]) + sum(n_EE_next_vacc_class[i, , , j])
 dim(cum_n_E_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated I_asympt
-initial(cum_n_I_asympt_vaccinated[, ]) <- 0
-update(cum_n_I_asympt_vaccinated[, ]) <- cum_n_I_asympt_vaccinated[i, j] +
-  sum(n_I_asympt_next_vacc_class[i, , , j]) +
-  sum(n_II_asympt_next_vacc_class[i, , , j])
-dim(cum_n_I_asympt_vaccinated) <- c(n_groups, n_vacc_classes)
+## vaccinated I_A
+initial(cum_n_I_A_vaccinated[, ]) <- 0
+update(cum_n_I_A_vaccinated[, ]) <- cum_n_I_A_vaccinated[i, j] +
+  sum(n_I_A_next_vacc_class[i, , , j]) +
+  sum(n_II_A_next_vacc_class[i, , , j])
+dim(cum_n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated R
 initial(cum_n_R_vaccinated[, ]) <- 0
 update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
@@ -52,15 +52,15 @@ initial(cum_n_vaccinated[, ]) <- 0
 update(cum_n_vaccinated[, ]) <-
   cum_n_S_vaccinated[i, j] +
   cum_n_E_vaccinated[i, j] +
-  cum_n_I_asympt_vaccinated[i, j] +
+  cum_n_I_A_vaccinated[i, j] +
   cum_n_R_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Core equations for transitions between compartments:
 update(S[, ]) <- new_S[i, j]
 update(E[, , , ]) <- new_E[i, j, k, l]
-update(I_asympt[, , , ]) <- new_I_asympt[i, j, k, l]
-update(I_sympt[, , , ]) <- new_I_sympt[i, j, k, l]
+update(I_A[, , , ]) <- new_I_A[i, j, k, l]
+update(I_C[, , , ]) <- new_I_C[i, j, k, l]
 update(I_comm_D[, , , ]) <- new_I_comm_D[i, j, k, l]
 update(I_triage_unconf[, , , ]) <- new_I_triage_unconf[i, j, k, l]
 update(I_triage_conf[, , , ]) <- new_I_triage_conf[i, j, k, l]
@@ -109,7 +109,7 @@ update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_sympt_to_hosp[i, , ])
 ## vaccination
 p_S_next_vacc_class[, ] <- 1 - exp(-vaccine_progression_rate[i, j] * dt)
 p_E_next_vacc_class[, , , ] <- 1 - exp(-vaccine_progression_rate[i, l] * dt)
-p_I_asympt_next_vacc_class[, , , ] <-
+p_I_A_next_vacc_class[, , , ] <-
   1 - exp(-vaccine_progression_rate[i, l] * dt)
 p_R_next_vacc_class[, , ] <-
   1 - exp(-vaccine_progression_rate[i, k] * dt)
@@ -117,8 +117,8 @@ p_R_next_vacc_class[, , ] <-
 p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
-p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
-p_II_sympt <- 1 - exp(-gamma_sympt * dt)
+p_II_A <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
+p_II_C <- 1 - exp(-gamma_sympt * dt)
 p_II_comm_D <- 1 - exp(-gamma_comm_D * dt)
 p_II_triage <- 1 - exp(-gamma_triage * dt)
 p_II_hosp_R <- 1 - exp(-gamma_hosp_R * dt)
@@ -234,24 +234,24 @@ n_EE[, , , ] <- n_E_progress[i, j, k, l] - n_EE_next_vacc_class[i, j, k, l]
 n_E_next_vacc_class[, , , ] <- rbinom(E[i, j, k, l] - n_E_progress[i, j, k, l],
                                   p_E_next_vacc_class[i, j, k, l])
 
-#### flow out of I_asympt ####
+#### flow out of I_A ####
 
-n_I_asympt_progress[, , , ] <- rbinom(I_asympt[i, j, k, l], p_II_asympt)
+n_I_A_progress[, , , ] <- rbinom(I_A[i, j, k, l], p_II_A)
 ## of those some can also be vaccinated or progress through vaccination classes
-## --> number transitioning from I_asympt[j, k] to I_asympt[j+1, k+1]
+## --> number transitioning from I_A[j, k] to I_A[j+1, k+1]
 ## (k vaccination class)
-n_II_asympt_next_vacc_class[, , , ] <-
-  rbinom(n_I_asympt_progress[i, j, k, l],
-         p_I_asympt_next_vacc_class[i, j, k, l])
-## resulting transitions from I_asympt[j, l] to I_asympt[j + 1, l]
+n_II_A_next_vacc_class[, , , ] <-
+  rbinom(n_I_A_progress[i, j, k, l],
+         p_I_A_next_vacc_class[i, j, k, l])
+## resulting transitions from I_A[j, l] to I_A[j + 1, l]
 ## (l vaccination class)
-n_II_asympt[, , , ] <- n_I_asympt_progress[i, j, k, l] -
-  n_II_asympt_next_vacc_class[i, j, k, l]
+n_II_A[, , , ] <- n_I_A_progress[i, j, k, l] -
+  n_II_A_next_vacc_class[i, j, k, l]
 
 ## vaccine progression
-n_I_asympt_next_vacc_class[, , , ] <- rbinom(
-  I_asympt[i, j, k, l] - n_I_asympt_progress[i, j, k, l],
-  p_I_asympt_next_vacc_class[i, j, k, l])
+n_I_A_next_vacc_class[, , , ] <- rbinom(
+  I_A[i, j, k, l] - n_I_A_progress[i, j, k, l],
+  p_I_A_next_vacc_class[i, j, k, l])
 
 
 #### flow out of R ####
@@ -283,7 +283,7 @@ n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   
 #### other transitions ####
 
-n_II_sympt[, , , ] <- rbinom(I_sympt[i, j, k, l], p_II_sympt)
+n_II_C[, , , ] <- rbinom(I_C[i, j, k, l], p_II_C)
 n_II_comm_D[, , , ] <- rbinom(I_comm_D[i, j, k, l], p_II_comm_D)
 n_II_triage_unconf[, , , ] <- rbinom(I_triage_unconf[i, j, k, l], p_II_triage)
 n_II_triage_conf[, , , ] <- rbinom(I_triage_conf[i, j, k, l], p_II_triage)
@@ -331,16 +331,16 @@ new_S[, 2:n_vacc_classes] <- new_S[i, j] + n_S_next_vacc_class[i, j - 1] +
 
 
 ## Computes the number of asymptomatic
-n_EI_asympt[, , ] <- rbinom(n_EE[i, j, s_E, k],
+n_EI_A[, , ] <- rbinom(n_EE[i, j, s_E, k],
                           1 - p_sympt[i] * rel_p_sympt[i, k])
-n_EI_asympt_next_vacc_class[, , ] <-
+n_EI_A_next_vacc_class[, , ] <-
   rbinom(n_EE_next_vacc_class[i, j, s_E, k],
          1 - p_sympt[i] * rel_p_sympt[i, k])
 
 ## Computes the number of symptomatic cases
-n_EI_sympt[, , ] <- n_EE[i, j, s_E, k] - n_EI_asympt[i, j, k]
-n_EI_sympt_next_vacc_class[, , ] <- n_EE_next_vacc_class[i, j, s_E, k] -
-  n_EI_asympt_next_vacc_class[i, j, k]
+n_EI_C[, , ] <- n_EE[i, j, s_E, k] - n_EI_A[i, j, k]
+n_EI_C_next_vacc_class[, , ] <- n_EE_next_vacc_class[i, j, s_E, k] -
+  n_EI_A_next_vacc_class[i, j, k]
 
 ## Work out the S->E and E->E transitions
 aux_EE[, , 1, ] <- n_SE[i, j, l]
@@ -362,44 +362,44 @@ aux_EE[, , 2:s_E, 2:n_vacc_classes] <- aux_EE[i, j, k, l] +
   n_EE_next_vacc_class[i, j, k - 1, l - 1]
 new_E[, , , ] <- E[i, j, k, l] + aux_EE[i, j, k, l]
 
-## Work out the I_asympt->I_asympt transitions
-aux_II_asympt[, , 1, ] <- n_EI_asympt[i, j, l]
-aux_II_asympt[, , 2:s_asympt, ] <- n_II_asympt[i, j, k - 1, l]
-aux_II_asympt[, , , ] <- aux_II_asympt[i, j, k, l] - n_II_asympt[i, j, k, l] -
-  n_II_asympt_next_vacc_class[i, j, k, l] -
-  n_I_asympt_next_vacc_class[i, j, k, l]
-aux_II_asympt[, , , 1] <- aux_II_asympt[i, j, k, l]  +
-  n_I_asympt_next_vacc_class[i, j, 1, n_vacc_classes]
-aux_II_asympt[, , , 2:n_vacc_classes] <- aux_II_asympt[i, j, k, l] +
-  n_I_asympt_next_vacc_class[i, j, k, l - 1]
-aux_II_asympt[, , 1, 1] <- aux_II_asympt[i, j, k, l] +
-  n_EI_asympt_next_vacc_class[i, j, n_vacc_classes]
-aux_II_asympt[, , 1, 2:n_vacc_classes] <- aux_II_asympt[i, j, k, l] +
-  n_EI_asympt_next_vacc_class[i, j, l - 1]
-aux_II_asympt[, , 2:s_asympt, 1] <- aux_II_asympt[i, j, k, l] +
-  n_II_asympt_next_vacc_class[i, j, k - 1, n_vacc_classes]
-aux_II_asympt[, , 2:s_asympt, 2:n_vacc_classes] <- aux_II_asympt[i, j, k, l] +
-  n_II_asympt_next_vacc_class[i, j, k - 1, l - 1]
-new_I_asympt[, , , ] <- I_asympt[i, j, k, l] + aux_II_asympt[i, j, k, l]
+## Work out the I_A->I_A transitions
+aux_II_A[, , 1, ] <- n_EI_A[i, j, l]
+aux_II_A[, , 2:s_asympt, ] <- n_II_A[i, j, k - 1, l]
+aux_II_A[, , , ] <- aux_II_A[i, j, k, l] - n_II_A[i, j, k, l] -
+  n_II_A_next_vacc_class[i, j, k, l] -
+  n_I_A_next_vacc_class[i, j, k, l]
+aux_II_A[, , , 1] <- aux_II_A[i, j, k, l]  +
+  n_I_A_next_vacc_class[i, j, 1, n_vacc_classes]
+aux_II_A[, , , 2:n_vacc_classes] <- aux_II_A[i, j, k, l] +
+  n_I_A_next_vacc_class[i, j, k, l - 1]
+aux_II_A[, , 1, 1] <- aux_II_A[i, j, k, l] +
+  n_EI_A_next_vacc_class[i, j, n_vacc_classes]
+aux_II_A[, , 1, 2:n_vacc_classes] <- aux_II_A[i, j, k, l] +
+  n_EI_A_next_vacc_class[i, j, l - 1]
+aux_II_A[, , 2:s_asympt, 1] <- aux_II_A[i, j, k, l] +
+  n_II_A_next_vacc_class[i, j, k - 1, n_vacc_classes]
+aux_II_A[, , 2:s_asympt, 2:n_vacc_classes] <- aux_II_A[i, j, k, l] +
+  n_II_A_next_vacc_class[i, j, k - 1, l - 1]
+new_I_A[, , , ] <- I_A[i, j, k, l] + aux_II_A[i, j, k, l]
 
-## Work out the I_sympt->I_sympt transitions
-aux_II_sympt[, , 1, 1] <- n_EI_sympt[i, j, 1] +
-  n_EI_sympt_next_vacc_class[i, j, n_vacc_classes]
-aux_II_sympt[, , 1, 2:n_vacc_classes] <-
-  n_EI_sympt[i, j, l] + n_EI_sympt_next_vacc_class[i, j, l - 1]
+## Work out the I_C->I_C transitions
+aux_II_C[, , 1, 1] <- n_EI_C[i, j, 1] +
+  n_EI_C_next_vacc_class[i, j, n_vacc_classes]
+aux_II_C[, , 1, 2:n_vacc_classes] <-
+  n_EI_C[i, j, l] + n_EI_C_next_vacc_class[i, j, l - 1]
 
-aux_II_sympt[, , 2:s_sympt, ] <- n_II_sympt[i, j, k - 1, l]
-aux_II_sympt[, , 1:s_sympt, ] <-
-  aux_II_sympt[i, j, k, l] - n_II_sympt[i, j, k, l]
-new_I_sympt[, , , ] <- I_sympt[i, j, k, l] + aux_II_sympt[i, j, k, l]
+aux_II_C[, , 2:s_sympt, ] <- n_II_C[i, j, k - 1, l]
+aux_II_C[, , 1:s_sympt, ] <-
+  aux_II_C[i, j, k, l] - n_II_C[i, j, k, l]
+new_I_C[, , , ] <- I_C[i, j, k, l] + aux_II_C[i, j, k, l]
 
-## Work out the flow from I_sympt -> R, comm_D, hosp
-n_sympt_to_R[, , ] <- rbinom(n_II_sympt[i, j, s_sympt, k],
+## Work out the flow from I_C -> R, comm_D, hosp
+n_sympt_to_R[, , ] <- rbinom(n_II_C[i, j, s_sympt, k],
                          1 - prob_hosp_sympt[i] * rel_p_hosp_if_sympt[i, k])
 n_sympt_to_comm_D[, , ] <-
-  rbinom(n_II_sympt[i, j, s_sympt, k] - n_sympt_to_R[i, j, k],
+  rbinom(n_II_C[i, j, s_sympt, k] - n_sympt_to_R[i, j, k],
          prob_death_comm[i])
-n_sympt_to_hosp[, , ] <- n_II_sympt[i, j, s_sympt, k] - n_sympt_to_R[i, j, k] -
+n_sympt_to_hosp[, , ] <- n_II_C[i, j, s_sympt, k] - n_sympt_to_R[i, j, k] -
   n_sympt_to_comm_D[i, j, k]
 
 ## Work out the I_comm_D -> I_comm_D transitions
@@ -669,7 +669,7 @@ new_R_neg[, , 2:n_vacc_classes] <- new_R_neg[i, j, k] +
 
 ## Work out the total number of recovery
 new_R[, , ] <- R[i, j, k] +
-  n_II_asympt[i, j, s_asympt, k] +
+  n_II_A[i, j, s_asympt, k] +
   n_sympt_to_R[i, j, k] +
   n_II_hosp_R_conf[i, j, s_hosp_R, k] +
   n_II_hosp_R_unconf[i, j, s_hosp_R, k] +
@@ -678,10 +678,10 @@ new_R[, , ] <- R[i, j, k] +
   n_R_progress[i, j, k] -
   n_R_next_vacc_class[i, j, k]
 new_R[, , 1] <- new_R[i, j, 1] +
-  n_II_asympt_next_vacc_class[i, j, s_asympt, n_vacc_classes] +
+  n_II_A_next_vacc_class[i, j, s_asympt, n_vacc_classes] +
   n_R_next_vacc_class[i, j, n_vacc_classes]
 new_R[, , 2:n_vacc_classes] <- new_R[i, j, k] +
-  n_II_asympt_next_vacc_class[i, j, s_asympt, k - 1] +
+  n_II_A_next_vacc_class[i, j, s_asympt, k - 1] +
   n_R_next_vacc_class[i, j, k - 1]
 
 
@@ -709,7 +709,7 @@ new_PCR_neg[, , 2:n_vacc_classes] <- new_PCR_neg[i, j, k] +
 
 I_with_diff_trans[, , ] <-
     strain_transmission[j] * (
-      sum(I_asympt[i, j, , k]) + sum(I_sympt[i, j, , k]) +
+      sum(I_A[i, j, , k]) + sum(I_C[i, j, , k]) +
     hosp_transmission * (
       sum(I_triage_unconf[i, j, , k]) +
       sum(I_triage_conf[i, j, , k]) +
@@ -738,8 +738,8 @@ lambda[, ] <- sum(s_ij[i, , j])
 ## setting S and I based on the seeding model.
 initial(S[, ]) <- 0
 initial(E[, , , ]) <- 0
-initial(I_asympt[, , , ]) <- 0
-initial(I_sympt[, , , ]) <- 0
+initial(I_A[, , , ]) <- 0
+initial(I_C[, , , ]) <- 0
 initial(I_comm_D[, , , ]) <- 0
 initial(I_triage_unconf[, , , ]) <- 0
 initial(I_triage_conf[, , , ]) <- 0
@@ -792,11 +792,11 @@ gamma_E <- user(0.1)
 ## the rest go into the symptomatic class
 p_sympt[] <- user()
 
-## Parameters of the I_asympt classes
+## Parameters of the I_A classes
 s_asympt <- user()
 gamma_asympt <- user(0.1)
 
-## Parameters of the I_sympt classes
+## Parameters of the I_C classes
 s_sympt <- user()
 gamma_sympt <- user(0.1)
 dim(p_hosp_sympt_step) <- user()
@@ -920,17 +920,17 @@ dim(aux_EE) <- c(n_groups, n_strains, s_E, n_vacc_classes)
 dim(new_E) <- c(n_groups, n_strains, s_E, n_vacc_classes)
 dim(n_EE) <- c(n_groups, n_strains, s_E, n_vacc_classes)
 
-## Vectors handling the I_asympt class
-dim(I_asympt) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
-dim(aux_II_asympt) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
-dim(new_I_asympt) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
-dim(n_II_asympt) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
+## Vectors handling the I_A class
+dim(I_A) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
+dim(aux_II_A) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
+dim(new_I_A) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
+dim(n_II_A) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
 
-## Vectors handling the I_sympt class
-dim(I_sympt) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
-dim(aux_II_sympt) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
-dim(new_I_sympt) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
-dim(n_II_sympt) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
+## Vectors handling the I_C class
+dim(I_C) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
+dim(aux_II_C) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
+dim(new_I_C) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
+dim(n_II_C) <- c(n_groups, n_strains, s_sympt, n_vacc_classes)
 dim(prob_hosp_sympt) <- n_groups
 dim(psi_hosp_sympt) <- n_groups
 
@@ -1101,12 +1101,12 @@ dim(n_E_next_vacc_class) <- c(n_groups, n_strains, s_E, n_vacc_classes)
 dim(n_E_progress) <- c(n_groups, n_strains, s_E, n_vacc_classes)
 dim(n_EE_next_vacc_class) <- c(n_groups, n_strains, s_E, n_vacc_classes)
 
-dim(p_I_asympt_next_vacc_class) <-
+dim(p_I_A_next_vacc_class) <-
   c(n_groups, n_strains, s_asympt, n_vacc_classes)
-dim(n_I_asympt_next_vacc_class) <-
+dim(n_I_A_next_vacc_class) <-
   c(n_groups, n_strains, s_asympt, n_vacc_classes)
-dim(n_I_asympt_progress) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
-dim(n_II_asympt_next_vacc_class) <-
+dim(n_I_A_progress) <- c(n_groups, n_strains, s_asympt, n_vacc_classes)
+dim(n_II_A_next_vacc_class) <-
   c(n_groups, n_strains, s_asympt, n_vacc_classes)
 
 dim(p_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1128,12 +1128,12 @@ dim(n_SE_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
 ## are split between level of severity
-dim(n_EI_asympt) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_EI_sympt) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_EI_asympt_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_EI_sympt_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_EI_A) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_EI_C) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_EI_A_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_EI_C_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 
-## Vectors handling I_sympt to R, I_comm_D transition
+## Vectors handling I_C to R, I_comm_D transition
 dim(n_sympt_to_comm_D) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_sympt_to_R) <- c(n_groups, n_strains, n_vacc_classes)
 
@@ -1187,7 +1187,7 @@ dim(p_RS) <- n_groups
 ## Total population
 initial(N_tot[]) <- 0
 update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + D_hosp[i] + sum(E[i, , , ]) +
-  sum(I_asympt[i, , , ]) + sum(I_sympt[i, , , ]) +
+  sum(I_A[i, , , ]) + sum(I_C[i, , , ]) +
   sum(I_triage_conf[i, , , ]) + sum(I_triage_unconf[i, , , ])  +
   sum(I_hosp_R_conf[i, , , ]) + sum(I_hosp_R_unconf[i, , , ]) +
   sum(I_hosp_D_conf[i, , , ]) + sum(I_hosp_D_unconf[i, , , ]) +
@@ -1251,12 +1251,12 @@ initial(sero_pos) <- 0
 update(sero_pos) <- sum(new_R_pos[4:13, , , ])
 
 initial(cum_sympt_cases) <- 0
-update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_sympt)
+update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_C)
 
 ## only over 25s (exclude groups 1 to 5)
 initial(cum_sympt_cases_over25) <- 0
 update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
-  sum(n_EI_sympt[6:n_groups, , ])
+  sum(n_EI_C[6:n_groups, , ])
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
@@ -1265,7 +1265,7 @@ update(react_pos) <- sum(new_PCR_pos[2:18, , , ])
 ## Vaccination engine
 
 ## First, the number of candidates
-vaccine_n_candidates[] <- S[i, 1] + sum(E[i, , , 1]) + sum(I_asympt[i, , , 1]) +
+vaccine_n_candidates[] <- S[i, 1] + sum(E[i, , , 1]) + sum(I_A[i, , , 1]) +
   sum(R[i, , 1])
 dim(vaccine_n_candidates) <- n_groups
 

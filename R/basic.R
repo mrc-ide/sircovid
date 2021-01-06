@@ -208,7 +208,7 @@ basic_initial <- function(info, n_particles, pars) {
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
   seed_age_band <- 4L
-  index_I <- index[["I_asympt"]][[1]] + seed_age_band - 1L
+  index_I <- index[["I_A"]][[1]] + seed_age_band - 1L
 
   ## ONS populations, subtracting the seed for pedantry.
   index_S <- index[["S"]]

@@ -10,10 +10,11 @@ test_that("can run the basic model", {
 
   mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
+
   expected <-
-    rbind(icu = c(69, 37, 76, 58, 73, 52, 56, 51, 31, 103),
-          deaths = c(267957, 268414, 268452, 266980, 268173, 268261,
-                     267652, 267572, 268026, 267159))
+    rbind(icu = c(92, 37, 97, 61, 65, 76, 65, 32, 20, 114),
+          deaths = c(267238, 268610, 268632, 267405, 268184, 268933, 268905, 
+                     267786, 268348, 267642))
   expect_equal(res, expected)
 })
 

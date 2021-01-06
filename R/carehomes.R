@@ -662,7 +662,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
   seed_age_band <- 4L
-  index_I <- index[["I_asympt"]][[1L]] + seed_age_band - 1L
+  index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
   index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
   index_PCR_pos <- index[["PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]

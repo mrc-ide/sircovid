@@ -110,10 +110,10 @@ test_that("can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
   expect_equal(initial_y$N_tot, sum(p$population))
-  expect_equal(initial_y$S + drop(initial_y$I_asympt), p$population)
-  expect_equal(drop(initial_y$I_asympt), append(rep(0, 16), 10, after = 3))
+  expect_equal(initial_y$S + drop(initial_y$I_A), p$population)
+  expect_equal(drop(initial_y$I_A), append(rep(0, 16), 10, after = 3))
 
   remaining <- initial$state[-c(info$index$N_tot, info$index$S,
-                                info$index$I_asympt)]
+                                info$index$I_A)]
   expect_true(all(remaining == 0))
 })

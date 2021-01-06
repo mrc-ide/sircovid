@@ -40,7 +40,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
   y <- basic_initial(info, 1, p)$state
-  y[info$index$I_asympt] <- 0
+  y[info$index$I_A] <- 0
   mod$set_state(y)
   mod$set_index(integer(0))
   s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
@@ -62,7 +62,7 @@ test_that("No one is hospitalised if p_sympt is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0))
-  expect_true(all(y$I_sympt == 0))
+  expect_true(all(y$I_C == 0))
   expect_true(all(y$I_hosp == 0))
   expect_true(all(y$I_ICU == 0))
   expect_true(all(y$R_hosp == 0))
@@ -143,7 +143,7 @@ test_that("if gamma_E is Inf, E cases must progress in 1 timestep", {
 })
 
 
-test_that("if gamma_asympt is Inf, I_asympt must progress in 1 timestep", {
+test_that("if gamma_asympt is Inf, I_A must progress in 1 timestep", {
   ## This checks that progression groups work for these parameters,
   ## even though they are no longer the default
   p <- basic_parameters(0, "england")
@@ -156,14 +156,14 @@ test_that("if gamma_asympt is Inf, I_asympt must progress in 1 timestep", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  i <- seq_len(dim(y$I_asympt)[[4]] - 1)
+  i <- seq_len(dim(y$I_A)[[4]] - 1)
   j <- i + 1L
-  expect_true(any(y$I_asympt > 0))
-  expect_true(all(y$I_asympt[, 2, , j] == y$I_asympt[, 1, , i]))
+  expect_true(any(y$I_A > 0))
+  expect_true(all(y$I_A[, 2, , j] == y$I_A[, 1, , i]))
 })
 
 
-test_that("if gamma_sympt is Inf, I_sympt cases must progress in 1 timestep", {
+test_that("if gamma_sympt is Inf, I_C cases must progress in 1 timestep", {
   ## This checks that progression groups work for these parameters,
   ## even though they are no longer the default
   p <- basic_parameters(0, "england")
@@ -176,10 +176,10 @@ test_that("if gamma_sympt is Inf, I_sympt cases must progress in 1 timestep", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  i <- seq_len(dim(y$I_sympt)[[4]] - 1)
+  i <- seq_len(dim(y$I_C)[[4]] - 1)
   j <- i + 1L
-  expect_true(any(y$I_sympt > 0))
-  expect_true(all(y$I_sympt[, 2, , j] == y$I_sympt[, 1, , i]))
+  expect_true(any(y$I_C > 0))
+  expect_true(all(y$I_C[, 2, , j] == y$I_C[, 1, , i]))
 })
 
 
@@ -259,7 +259,7 @@ test_that("if gamma_E is 0, E stay in progression stage 1", {
 })
 
 
-test_that("if gamma_asympt is 0, I_asympt stay in progression stage 1", {
+test_that("if gamma_asympt is 0, I_A stay in progression stage 1", {
   p <- basic_parameters(0, "england")
   p$gamma_asympt <- 0
   p$s_asympt <- 2
@@ -270,12 +270,12 @@ test_that("if gamma_asympt is 0, I_asympt stay in progression stage 1", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  expect_true(any(y$I_asympt[, 1, , ] > 0))
-  expect_true(all(y$I_asympt[, 2, , ] == 0))
+  expect_true(any(y$I_A[, 1, , ] > 0))
+  expect_true(all(y$I_A[, 2, , ] == 0))
 })
 
 
-test_that("if gamma_sympt is 0, I_sympt stay in progression stage 1", {
+test_that("if gamma_sympt is 0, I_C stay in progression stage 1", {
   p <- basic_parameters(0, "england")
   p$gamma_sympt <- 0
   p$s_sympt <- 2
@@ -286,8 +286,8 @@ test_that("if gamma_sympt is 0, I_sympt stay in progression stage 1", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  expect_true(any(y$I_sympt[, 1, , ] > 0))
-  expect_true(all(y$I_sympt[, 2, , ] == 0))
+  expect_true(any(y$I_C[, 1, , ] > 0))
+  expect_true(all(y$I_C[, 2, , ] == 0))
 })
 
 

@@ -120,7 +120,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y <- carehomes_initial(info, 1, p)$state
-  y[info$index$I_asympt] <- 0
+  y[info$index$I_A] <- 0
   y[info$index$R_pre] <- 0
   y[info$index$PCR_pos] <- 0
 
@@ -147,7 +147,7 @@ test_that("No one is hospitalised, no-one dies if p_sympt is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
-  expect_true(all(y$I_sympt == 0))
+  expect_true(all(y$I_C == 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -184,7 +184,7 @@ test_that("No one is hospitalised, no-one dies if psi_hosp_sympt is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
-  expect_true(any(y$I_sympt > 0))
+  expect_true(any(y$I_C > 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -225,15 +225,15 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
 
   ## Move initial infectives to sympt
   y0 <- carehomes_initial(info, 1, p)$state
-  y0[info$index$I_sympt] <- y0[info$index$I_asympt]
-  y0[info$index$I_asympt] <- 0
+  y0[info$index$I_C] <- y0[info$index$I_A]
+  y0[info$index$I_A] <- 0
 
   mod$set_state(y0)
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_sympt > 0))
+  expect_true(any(y$I_C > 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -270,15 +270,15 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 
   ## Move initial infectives to sympt
   y0 <- carehomes_initial(info, 1, p)$state
-  y0[info$index$I_sympt] <- y0[info$index$I_asympt]
-  y0[info$index$I_asympt] <- 0
+  y0[info$index$I_C] <- y0[info$index$I_A]
+  y0[info$index$I_A] <- 0
 
   mod$set_state(y0)
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_sympt > 0))
+  expect_true(any(y$I_C > 0))
   expect_true(all(y$I_hosp_R_unconf == 0))
   expect_true(all(y$I_hosp_R_conf == 0))
   expect_true(all(y$I_hosp_D_unconf == 0))
@@ -313,7 +313,7 @@ test_that("No one dies in the community if psi_death_comm is 0", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_sympt > 0))
+  expect_true(any(y$I_C > 0))
   expect_true(all(y$I_comm_D == 0))
   expect_true(all(y$D_comm == 0))
 })
@@ -540,8 +540,8 @@ test_that("setting a gamma to Inf results immediate progression", {
   }
 
   helper("gamma_E", "s_E", "E", FALSE)
-  helper("gamma_asympt", "s_asympt", "I_asympt", FALSE)
-  helper("gamma_sympt", "s_sympt", "I_sympt", FALSE)
+  helper("gamma_asympt", "s_asympt", "I_A", FALSE)
+  helper("gamma_sympt", "s_sympt", "I_C", FALSE)
   helper("gamma_triage", "s_triage", "I_triage", TRUE)
   helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
   helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)
@@ -615,8 +615,8 @@ test_that("setting a gamma to 0 results in no progression", {
 
   p <- carehomes_parameters(0, "england")
   helper("gamma_E", "s_E", "E", FALSE)
-  helper("gamma_asympt", "s_asympt", "I_asympt", FALSE)
-  helper("gamma_sympt", "s_sympt", "I_sympt", FALSE)
+  helper("gamma_asympt", "s_asympt", "I_A", FALSE)
+  helper("gamma_sympt", "s_sympt", "I_C", FALSE)
   helper("gamma_triage", "s_triage", "I_triage", TRUE)
   helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
   helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)

@@ -15,8 +15,8 @@ update(time) <- (step + 1) * dt
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
 update(E[, , ]) <- E[i, j, k] + delta_E[i, j, k]
-update(I_asympt[, , ]) <- I_asympt[i, j, k] + delta_I_asympt[i, j, k]
-update(I_sympt[, , ]) <- I_sympt[i, j, k] + delta_I_sympt[i, j, k]
+update(I_A[, , ]) <- I_A[i, j, k] + delta_I_A[i, j, k]
+update(I_C[, , ]) <- I_C[i, j, k] + delta_I_C[i, j, k]
 update(R[]) <- R[i] + delta_R[i]
 update(I_hosp[, , ]) <- I_hosp[i, j, k] + delta_I_hosp[i, j, k]
 update(I_ICU[, , ]) <- new_I_ICU[i, j, k]
@@ -30,8 +30,8 @@ update(D[]) <- new_D[i]
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i] * dt) # S to I - age dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
-p_II_asympt <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
-p_II_sympt <- 1 - exp(-gamma_sympt * dt)
+p_II_A <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
+p_II_C <- 1 - exp(-gamma_sympt * dt)
 p_II_hosp <- 1 - exp(-gamma_hosp * dt)
 p_II_ICU <- 1 - exp(-gamma_ICU * dt)
 p_R_hosp <- 1 - exp(-gamma_rec * dt)
@@ -40,18 +40,18 @@ p_R_hosp <- 1 - exp(-gamma_rec * dt)
 ## compartments:
 n_SE[] <- rbinom(S[i], p_SE[i])
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
-n_II_asympt[, , ] <- rbinom(I_asympt[i, j, k], p_II_asympt)
-n_II_sympt[, , ] <- rbinom(I_sympt[i, j, k], p_II_sympt)
+n_II_A[, , ] <- rbinom(I_A[i, j, k], p_II_A)
+n_II_C[, , ] <- rbinom(I_C[i, j, k], p_II_C)
 n_II_hosp[, , ] <- rbinom(I_hosp[i, j, k], p_II_hosp)
 n_II_ICU[, , ] <- rbinom(I_ICU[i, j, k], p_II_ICU)
 n_R_hosp[, , ] <- rbinom(R_hosp[i, j, k], p_R_hosp)
 
 ## Computes the number of asymptomatic
-n_EI_asympt[, ] <- rbinom(n_EE[i, s_E, j], 1 - p_sympt[i])
+n_EI_A[, ] <- rbinom(n_EE[i, s_E, j], 1 - p_sympt[i])
 
 
 ## Computes the number of symptomatic cases
-n_EI_sympt[, ] <- n_EE[i, s_E, j] - n_EI_asympt[i, j]
+n_EI_C[, ] <- n_EE[i, s_E, j] - n_EI_A[i, j]
 
 ## Compute the aux_p_bin matrix of binom nested coeff
 aux_p_bin[, 1] <- trans_profile[i, 1]
@@ -70,20 +70,20 @@ aux_EE[, 2:s_E, ] <- n_EE[i, j - 1, k]
 aux_EE[, 1:s_E, ] <- aux_EE[i, j, k] - n_EE[i, j, k]
 delta_E[, , ] <- aux_EE[i, j, k]
 
-## Work out the I_asympt->I_asympt transitions
-aux_II_asympt[, 1, ] <- n_EI_asympt[i, k]
-aux_II_asympt[, 2:s_asympt, ] <- n_II_asympt[i, j - 1, k]
-aux_II_asympt[, 1:s_asympt, ] <- aux_II_asympt[i, j, k] - n_II_asympt[i, j, k]
-delta_I_asympt[, , ] <- aux_II_asympt[i, j, k]
+## Work out the I_A->I_A transitions
+aux_II_A[, 1, ] <- n_EI_A[i, k]
+aux_II_A[, 2:s_asympt, ] <- n_II_A[i, j - 1, k]
+aux_II_A[, 1:s_asympt, ] <- aux_II_A[i, j, k] - n_II_A[i, j, k]
+delta_I_A[, , ] <- aux_II_A[i, j, k]
 
-## Work out the I_sympt->I_sympt transitions
-aux_II_sympt[, 1, ] <- n_EI_sympt[i, k]
-aux_II_sympt[, 2:s_sympt, ] <- n_II_sympt[i, j - 1, k]
-aux_II_sympt[, 1:s_sympt, ] <- aux_II_sympt[i, j, k] - n_II_sympt[i, j, k]
-delta_I_sympt[, , ] <- aux_II_sympt[i, j, k]
+## Work out the I_C->I_C transitions
+aux_II_C[, 1, ] <- n_EI_C[i, k]
+aux_II_C[, 2:s_sympt, ] <- n_II_C[i, j - 1, k]
+aux_II_C[, 1:s_sympt, ] <- aux_II_C[i, j, k] - n_II_C[i, j, k]
+delta_I_C[, , ] <- aux_II_C[i, j, k]
 
 ## Work out the I_hosp->I_hosp transitions
-n_sympt_to_hosp[, ] <- rbinom(n_II_sympt[i, s_sympt, j], 1 - p_recov_sympt[i])
+n_sympt_to_hosp[, ] <- rbinom(n_II_C[i, s_sympt, j], 1 - p_recov_sympt[i])
 aux_II_hosp[, 1, ] <- n_sympt_to_hosp[i, k]
 aux_II_hosp[, 2:s_hosp, ] <- n_II_hosp[i, j - 1, k]
 aux_II_hosp[, 1:s_hosp, ] <- aux_II_hosp[i, j, k] - n_II_hosp[i, j, k]
@@ -118,8 +118,8 @@ new_D[] <- D[i] + delta_D[i]
 
 ## Work out the number of recovery
 delta_R[] <-
-  sum(n_II_asympt[i, s_asympt, ]) +
-  sum(n_II_sympt[i, s_sympt, ]) -
+  sum(n_II_A[i, s_asympt, ]) +
+  sum(n_II_C[i, s_sympt, ]) -
   sum(n_sympt_to_hosp[i, ]) +
   sum(n_II_hosp[i, s_hosp, ]) -
   sum(n_hosp_to_ICU[i, ]) -
@@ -128,8 +128,8 @@ delta_R[] <-
 
 ## Compute the force of infection
 I_with_diff_trans[, ] <- trans_increase[i, j] * (
-  sum(I_asympt[i, , j]) +
-  sum(I_sympt[i, , j]) +
+  sum(I_A[i, , j]) +
+  sum(I_C[i, , j]) +
   hosp_transmission * sum(I_hosp[i, , j]) +
   ICU_transmission * sum(I_ICU[i, , j]))
 
@@ -140,8 +140,8 @@ lambda[] <- beta * sum(s_ij[i, ])
 ## setting S and I based on the seeding model.
 initial(S[]) <- 0
 initial(E[, , ]) <- 0
-initial(I_asympt[, , ]) <- 0
-initial(I_sympt[, , ]) <- 0
+initial(I_A[, , ]) <- 0
+initial(I_C[, , ]) <- 0
 initial(I_hosp[, , ]) <- 0
 initial(I_ICU[, , ]) <- 0
 initial(R_hosp[, , ]) <- 0
@@ -166,11 +166,11 @@ gamma_E <- user(0.1)
 ## class, the rest goes in the symptomatic class
 p_sympt[] <- user()
 
-## Parameters of the I_asympt classes
+## Parameters of the I_A classes
 s_asympt <- user()
 gamma_asympt <- user(0.1)
 
-## Parameters of the I_sympt classes
+## Parameters of the I_C classes
 s_sympt <- user()
 gamma_sympt <- user(0.1)
 p_recov_sympt[] <- user()
@@ -223,17 +223,17 @@ dim(aux_EE) <- c(n_age_groups, s_E, n_trans_classes)
 dim(delta_E) <- c(n_age_groups, s_E, n_trans_classes)
 dim(n_EE) <- c(n_age_groups, s_E, n_trans_classes)
 
-## Vectors handling the I_asympt class
-dim(I_asympt) <- c(n_age_groups, s_asympt, n_trans_classes)
-dim(aux_II_asympt) <- c(n_age_groups, s_asympt, n_trans_classes)
-dim(delta_I_asympt) <- c(n_age_groups, s_asympt, n_trans_classes)
-dim(n_II_asympt) <- c(n_age_groups, s_asympt, n_trans_classes)
+## Vectors handling the I_A class
+dim(I_A) <- c(n_age_groups, s_asympt, n_trans_classes)
+dim(aux_II_A) <- c(n_age_groups, s_asympt, n_trans_classes)
+dim(delta_I_A) <- c(n_age_groups, s_asympt, n_trans_classes)
+dim(n_II_A) <- c(n_age_groups, s_asympt, n_trans_classes)
 
-## Vectors handling the I_sympt class
-dim(I_sympt) <- c(n_age_groups, s_sympt, n_trans_classes)
-dim(aux_II_sympt) <- c(n_age_groups, s_sympt, n_trans_classes)
-dim(delta_I_sympt) <- c(n_age_groups, s_sympt, n_trans_classes)
-dim(n_II_sympt) <- c(n_age_groups, s_sympt, n_trans_classes)
+## Vectors handling the I_C class
+dim(I_C) <- c(n_age_groups, s_sympt, n_trans_classes)
+dim(aux_II_C) <- c(n_age_groups, s_sympt, n_trans_classes)
+dim(delta_I_C) <- c(n_age_groups, s_sympt, n_trans_classes)
+dim(n_II_C) <- c(n_age_groups, s_sympt, n_trans_classes)
 dim(p_recov_sympt) <- c(n_age_groups)
 
 ## Vectors handling the I_hosp class
@@ -275,8 +275,8 @@ dim(aux_p_bin) <- c(n_age_groups, n_trans_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
 ## are split between level of severity
-dim(n_EI_asympt) <- c(n_age_groups, n_trans_classes)
-dim(n_EI_sympt) <- c(n_age_groups, n_trans_classes)
+dim(n_EI_A) <- c(n_age_groups, n_trans_classes)
+dim(n_EI_C) <- c(n_age_groups, n_trans_classes)
 
 ## Vectors handling number of new hospitalisations, ICU admissions and
 ## recoveries in hospital
@@ -299,5 +299,5 @@ dim(trans_increase) <- c(n_age_groups, n_trans_classes)
 dim(I_with_diff_trans) <- c(n_age_groups, n_trans_classes)
 
 ## Used for error checking - population should be constant
-update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_asympt) +
-  sum(I_sympt) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
+update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_A) +
+  sum(I_C) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
