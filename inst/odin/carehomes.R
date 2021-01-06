@@ -158,9 +158,9 @@ p_death_stepdown <- if (as.integer(step) >= length(p_death_stepdown_step))
     p_death_stepdown_step[step + 1]
 prob_death_stepdown[] <- p_death_stepdown * psi_death_stepdown[i]
 
-p_death_comm <- if (as.integer(step) >= length(p_death_comm_step))
-  p_death_comm_step[length(p_death_comm_step)] else p_death_comm_step[step + 1]
-prob_death_comm[] <- p_death_comm * psi_death_comm[i]
+p_G_D <- if (as.integer(step) >= length(p_G_D_step))
+  p_G_D_step[length(p_G_D_step)] else p_G_D_step[step + 1]
+prob_G_D[] <- p_G_D * psi_G_D[i]
 
 p_admit_conf <- if (as.integer(step) >= length(p_admit_conf_step))
   p_admit_conf_step[length(p_admit_conf_step)] else p_admit_conf_step[step + 1]
@@ -398,7 +398,7 @@ n_sympt_to_R[, , ] <- rbinom(n_II_C[i, j, s_C, k],
                          1 - prob_H[i] * rel_p_H[i, k])
 n_sympt_to_G_D[, , ] <-
   rbinom(n_II_C[i, j, s_C, k] - n_sympt_to_R[i, j, k],
-         prob_death_comm[i])
+         prob_G_D[i])
 n_sympt_to_hosp[, , ] <- n_II_C[i, j, s_C, k] - n_sympt_to_R[i, j, k] -
   n_sympt_to_G_D[i, j, k]
 
@@ -806,9 +806,9 @@ psi_H[] <- user()
 ## Parameters of the G_D class
 s_G_D <- user()
 gamma_G_D <- user(0.1)
-dim(p_death_comm_step) <- user()
-p_death_comm_step[] <- user()
-psi_death_comm[] <- user()
+dim(p_G_D_step) <- user()
+p_G_D_step[] <- user()
+psi_G_D[] <- user()
 
 ## Parameters of the I_triage classes
 s_triage <- user()
@@ -939,8 +939,8 @@ dim(G_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
 dim(aux_GG_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
 dim(new_G_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
 dim(n_GG_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
-dim(prob_death_comm) <- n_groups
-dim(psi_death_comm) <- n_groups
+dim(prob_G_D) <- n_groups
+dim(psi_G_D) <- n_groups
 
 ## Vectors handling the I_triage class
 dim(I_triage_unconf) <- c(n_groups, n_strains, s_triage, n_vacc_classes)

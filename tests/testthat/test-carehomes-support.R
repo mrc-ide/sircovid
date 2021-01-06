@@ -128,7 +128,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "react_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
       "psi_death_stepdown", "p_death_stepdown_step", "psi_H",
-      "p_H_step", "psi_death_comm", "p_death_comm_step",
+      "p_H_step", "psi_G_D", "p_G_D_step",
       "psi_ICU_hosp", "p_ICU_hosp_step", "psi_admit_conf", "p_admit_conf_step",
       "n_groups"))
 
@@ -151,7 +151,7 @@ test_that("can compute severity for carehomes model", {
   expect_true(
     all(severity$p_serocoversion == severity$p_serocoversion[[1]]))
   expect_equal(
-    severity$p_death_comm, rep(c(0, 0.7), c(18, 1)))
+    severity$p_G_D, rep(c(0, 0.7), c(18, 1)))
   expect_equal(
     severity$p_admit_conf, rep(0.2, 19))
 })

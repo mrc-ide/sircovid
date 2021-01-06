@@ -296,8 +296,8 @@ carehomes_parameters <- function(start_date, region,
     max(severity$p_death_stepdown)
   severity$p_death_stepdown_step <- max(severity$p_death_stepdown)
   ## probability of patient requiring hospital treatment dying in community
-  severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
-  severity$p_death_comm_step <- max(severity$p_death_comm)
+  severity$psi_G_D <- severity$p_G_D / max(severity$p_G_D)
+  severity$p_G_D_step <- max(severity$p_G_D)
   ## probability of an admission already being confirmed covid
   severity$psi_admit_conf <- severity$p_admit_conf / max(severity$p_admit_conf)
   severity$p_admit_conf_step <- max(severity$p_admit_conf)
@@ -596,7 +596,7 @@ carehomes_severity <- function(p) {
 carehomes_parameters_severity <- function(severity, p_death_carehome) {
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
-  severity$p_death_comm[length(severity$p_death_comm)] <- p_death_carehome
+  severity$p_G_D[length(severity$p_G_D)] <- p_death_carehome
   severity
 }
 

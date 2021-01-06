@@ -225,18 +225,18 @@ carehomes_Rt_mean_duration <- function(step, pars) {
                 sircovid_parameters_beta_expand(step, pars$p_death_hosp_D_step))
   p_death_stepdown <- outer(matricise(pars$psi_death_stepdown, n_vacc_classes),
               sircovid_parameters_beta_expand(step, pars$p_death_stepdown_step))
-  p_death_comm <- outer(matricise(pars$psi_death_comm, n_vacc_classes),
-                  sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
+  p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
+                  sircovid_parameters_beta_expand(step, pars$p_G_D_step))
 
-  p_hosp_R <- p_C * p_H * (1 - p_death_comm) *
+  p_hosp_R <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
-  p_hosp_D <- p_C * p_H * (1 - p_death_comm) *
+  p_hosp_D <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU_hosp) * p_death_hosp_D
-  p_ICU_S_R <- p_C * p_H * (1 - p_death_comm) *
+  p_ICU_S_R <- p_C * p_H * (1 - p_G_D) *
     p_ICU_hosp * (1 - p_death_ICU) * (1 - p_death_stepdown)
-  p_ICU_S_D <- p_C * p_H * (1 - p_death_comm) *
+  p_ICU_S_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU_hosp * (1 - p_death_ICU) * p_death_stepdown
-  p_ICU_D <- p_C * p_H * (1 - p_death_comm) *
+  p_ICU_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU_hosp * p_death_ICU
 
   ## TODO: would be nice if it's possibly to name these subcomponents
@@ -247,7 +247,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
 
   mean_duration <- mean_duration +
     pars$G_D_transmission * p_C * p_H *
-    p_death_comm * pars$s_G_D / (1 - exp(- dt * pars$gamma_G_D))
+    p_G_D * pars$s_G_D / (1 - exp(- dt * pars$gamma_G_D))
 
   mean_duration <- mean_duration +
     pars$hosp_transmission * (

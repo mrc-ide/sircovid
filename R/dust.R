@@ -189,13 +189,13 @@ carehomes <- R6::R6Class(
         integer = FALSE), p_admit_conf_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_C = list(has_default = FALSE, default_value = NULL,
-        rank = 1, min = -Inf, max = Inf, integer = FALSE), p_death_comm_step = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_death_hosp_D_step = list(
+        rank = 1, min = -Inf, max = Inf, integer = FALSE), p_death_hosp_D_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_death_ICU_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_death_stepdown_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_G_D_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_H_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
@@ -205,13 +205,13 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_admit_conf = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), psi_death_comm = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_death_hosp_D = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_death_ICU = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_death_stepdown = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_G_D = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_H = list(
         has_default = FALSE, default_value = NULL, rank = 1,
