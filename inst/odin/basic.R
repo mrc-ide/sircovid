@@ -30,8 +30,8 @@ update(D[]) <- new_D[i]
 ## Individual probabilities of transition:
 p_SE[] <- 1 - exp(-lambda[i] * dt) # S to I - age dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
-p_II_A <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
-p_II_C <- 1 - exp(-gamma_sympt * dt)
+p_II_A <- 1 - exp(-gamma_A * dt) # progression of infectious period
+p_II_C <- 1 - exp(-gamma_C * dt)
 p_II_hosp <- 1 - exp(-gamma_hosp * dt)
 p_II_ICU <- 1 - exp(-gamma_ICU * dt)
 p_R_hosp <- 1 - exp(-gamma_rec * dt)
@@ -168,11 +168,11 @@ p_sympt[] <- user()
 
 ## Parameters of the I_A classes
 s_A <- user()
-gamma_asympt <- user(0.1)
+gamma_A <- user(0.1)
 
 ## Parameters of the I_C classes
 s_C <- user()
-gamma_sympt <- user(0.1)
+gamma_C <- user(0.1)
 p_recov_sympt[] <- user()
 
 ## Parameters of the I_hosp classes

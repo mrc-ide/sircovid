@@ -242,8 +242,8 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   ## TODO: would be nice if it's possibly to name these subcomponents
   ## to make the calculation clearer.
   mean_duration <- (1 - p_sympt) * pars$s_A /
-    (1 - exp(- dt * pars$gamma_asympt)) +
-    p_sympt * pars$s_C / (1 - exp(- dt * pars$gamma_sympt))
+    (1 - exp(- dt * pars$gamma_A)) +
+    p_sympt * pars$s_C / (1 - exp(- dt * pars$gamma_C))
 
   mean_duration <- mean_duration +
     pars$comm_D_transmission * p_sympt * p_hosp_sympt *

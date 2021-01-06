@@ -829,8 +829,8 @@ carehomes_parameters_progression <- function() {
        s_PCR_pos = 2,
 
        gamma_E = 1 / (4.59 / 2),
-       gamma_asympt = 1 / 2.09,
-       gamma_sympt = 1 / 4,
+       gamma_A = 1 / 2.09,
+       gamma_C = 1 / 4,
        gamma_comm_D = 2 / 5,
        gamma_hosp_D = 2 / 5,
        gamma_hosp_R = 2 / 10,

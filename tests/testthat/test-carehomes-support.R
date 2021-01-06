@@ -7,7 +7,7 @@ test_that("carehomes progression parameters", {
     c("s_E", "s_A", "s_C", "s_comm_D", "s_hosp_D", "s_hosp_R",
       "s_ICU_D", "s_ICU_S_R", "s_ICU_S_D", "s_triage", "s_stepdown_D",
       "s_stepdown_R", "s_R_pos", "s_PCR_pos", "s_PCR_pre", "gamma_E",
-      "gamma_asympt", "gamma_sympt", "gamma_comm_D", "gamma_hosp_D",
+      "gamma_A", "gamma_C", "gamma_comm_D", "gamma_hosp_D",
       "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_S_R", "gamma_ICU_S_D",
       "gamma_triage", "gamma_stepdown_D", "gamma_stepdown_R", "gamma_R_pos",
       "gamma_R_pre_1", "gamma_R_pre_2", "gamma_test", "gamma_PCR_pos",

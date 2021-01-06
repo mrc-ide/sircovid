@@ -204,7 +204,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
                             vaccine_daily_doses = Inf)
 
   # stop disease progression after I_A
-  p$gamma_asympt <- 0
+  p$gamma_A <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -360,7 +360,7 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
                             vaccine_progression_rate = c(0, Inf))
 
   # stop disease progression after I_A
-  p$gamma_asympt <- 0
+  p$gamma_A <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -728,9 +728,9 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   ## case defaults change as the below assumes mean duration is shorter for
   ## asymptomatic infections
   p$s_A <- 1
-  p$gamma_asympt <- 1 / 2.09
+  p$gamma_A <- 1 / 2.09
   p$s_C
-  p$gamma_sympt <- 1 / 4
+  p$gamma_C <- 1 / 4
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)

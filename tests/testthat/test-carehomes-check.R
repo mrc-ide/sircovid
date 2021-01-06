@@ -540,8 +540,8 @@ test_that("setting a gamma to Inf results immediate progression", {
   }
 
   helper("gamma_E", "s_E", "E", FALSE)
-  helper("gamma_asympt", "s_A", "I_A", FALSE)
-  helper("gamma_sympt", "s_C", "I_C", FALSE)
+  helper("gamma_A", "s_A", "I_A", FALSE)
+  helper("gamma_C", "s_C", "I_C", FALSE)
   helper("gamma_triage", "s_triage", "I_triage", TRUE)
   helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
   helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)
@@ -615,8 +615,8 @@ test_that("setting a gamma to 0 results in no progression", {
 
   p <- carehomes_parameters(0, "england")
   helper("gamma_E", "s_E", "E", FALSE)
-  helper("gamma_asympt", "s_A", "I_A", FALSE)
-  helper("gamma_sympt", "s_C", "I_C", FALSE)
+  helper("gamma_A", "s_A", "I_A", FALSE)
+  helper("gamma_C", "s_C", "I_C", FALSE)
   helper("gamma_triage", "s_triage", "I_triage", TRUE)
   helper("gamma_hosp_R", "s_hosp_R", "I_hosp_R", TRUE)
   helper("gamma_hosp_D", "s_hosp_D", "I_hosp_D", TRUE)

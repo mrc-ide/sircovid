@@ -143,11 +143,11 @@ test_that("if gamma_E is Inf, E cases must progress in 1 timestep", {
 })
 
 
-test_that("if gamma_asympt is Inf, I_A must progress in 1 timestep", {
+test_that("if gamma_A is Inf, I_A must progress in 1 timestep", {
   ## This checks that progression groups work for these parameters,
   ## even though they are no longer the default
   p <- basic_parameters(0, "england")
-  p$gamma_asympt <- Inf
+  p$gamma_A <- Inf
   p$s_A <- 2
 
   mod <- basic$new(p, 0, 1)
@@ -163,11 +163,11 @@ test_that("if gamma_asympt is Inf, I_A must progress in 1 timestep", {
 })
 
 
-test_that("if gamma_sympt is Inf, I_C cases must progress in 1 timestep", {
+test_that("if gamma_C is Inf, I_C cases must progress in 1 timestep", {
   ## This checks that progression groups work for these parameters,
   ## even though they are no longer the default
   p <- basic_parameters(0, "england")
-  p$gamma_sympt <- Inf
+  p$gamma_C <- Inf
   p$s_C <- 2
 
   mod <- basic$new(p, 0, 1)
@@ -259,9 +259,9 @@ test_that("if gamma_E is 0, E stay in progression stage 1", {
 })
 
 
-test_that("if gamma_asympt is 0, I_A stay in progression stage 1", {
+test_that("if gamma_A is 0, I_A stay in progression stage 1", {
   p <- basic_parameters(0, "england")
-  p$gamma_asympt <- 0
+  p$gamma_A <- 0
   p$s_A <- 2
 
   mod <- basic$new(p, 0, 1)
@@ -275,9 +275,9 @@ test_that("if gamma_asympt is 0, I_A stay in progression stage 1", {
 })
 
 
-test_that("if gamma_sympt is 0, I_C stay in progression stage 1", {
+test_that("if gamma_C is 0, I_C stay in progression stage 1", {
   p <- basic_parameters(0, "england")
-  p$gamma_sympt <- 0
+  p$gamma_C <- 0
   p$s_C <- 2
 
   mod <- basic$new(p, 0, 1)

@@ -28,12 +28,12 @@ real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, i
 // [[dust::param(s_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_rec, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_asympt, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_A, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_C, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_E, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_hosp, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_ICU, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_rec, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_sympt, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_trans_classes, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class basic {
 public:
@@ -232,12 +232,12 @@ public:
     int dim_trans_profile_1;
     int dim_trans_profile_2;
     real_t dt;
-    real_t gamma_asympt;
+    real_t gamma_A;
+    real_t gamma_C;
     real_t gamma_E;
     real_t gamma_hosp;
     real_t gamma_ICU;
     real_t gamma_rec;
-    real_t gamma_sympt;
     real_t hosp_transmission;
     std::vector<real_t> I_with_diff_trans;
     real_t ICU_transmission;
@@ -954,23 +954,23 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.s_hosp = NA_INTEGER;
   internal.s_ICU = NA_INTEGER;
   internal.s_rec = NA_INTEGER;
-  internal.gamma_asympt = 0.10000000000000001;
+  internal.gamma_A = 0.10000000000000001;
+  internal.gamma_C = 0.10000000000000001;
   internal.gamma_E = 0.10000000000000001;
   internal.gamma_hosp = 0.10000000000000001;
   internal.gamma_ICU = 0.10000000000000001;
   internal.gamma_rec = 0.10000000000000001;
-  internal.gamma_sympt = 0.10000000000000001;
   internal.n_trans_classes = 1;
   std::array <int, 1> dim_beta_step;
   internal.beta_step = user_get_array_variable<real_t, 1>(user, "beta_step", internal.beta_step, dim_beta_step, NA_REAL, NA_REAL);
   internal.dim_beta_step = internal.beta_step.size();
   internal.dt = user_get_scalar<real_t>(user, "dt", internal.dt, NA_REAL, NA_REAL);
-  internal.gamma_asympt = user_get_scalar<real_t>(user, "gamma_asympt", internal.gamma_asympt, NA_REAL, NA_REAL);
+  internal.gamma_A = user_get_scalar<real_t>(user, "gamma_A", internal.gamma_A, NA_REAL, NA_REAL);
+  internal.gamma_C = user_get_scalar<real_t>(user, "gamma_C", internal.gamma_C, NA_REAL, NA_REAL);
   internal.gamma_E = user_get_scalar<real_t>(user, "gamma_E", internal.gamma_E, NA_REAL, NA_REAL);
   internal.gamma_hosp = user_get_scalar<real_t>(user, "gamma_hosp", internal.gamma_hosp, NA_REAL, NA_REAL);
   internal.gamma_ICU = user_get_scalar<real_t>(user, "gamma_ICU", internal.gamma_ICU, NA_REAL, NA_REAL);
   internal.gamma_rec = user_get_scalar<real_t>(user, "gamma_rec", internal.gamma_rec, NA_REAL, NA_REAL);
-  internal.gamma_sympt = user_get_scalar<real_t>(user, "gamma_sympt", internal.gamma_sympt, NA_REAL, NA_REAL);
   internal.hosp_transmission = user_get_scalar<real_t>(user, "hosp_transmission", internal.hosp_transmission, NA_REAL, NA_REAL);
   internal.ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", internal.ICU_transmission, NA_REAL, NA_REAL);
   internal.n_age_groups = user_get_scalar<int>(user, "n_age_groups", internal.n_age_groups, NA_REAL, NA_REAL);
@@ -1096,8 +1096,8 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.dim_trans_profile_2 = internal.n_trans_classes;
   internal.initial_beta_out = internal.beta_step[0];
   internal.p_EE = 1 - std::exp(- internal.gamma_E * internal.dt);
-  internal.p_II_A = 1 - std::exp(- internal.gamma_asympt * internal.dt);
-  internal.p_II_C = 1 - std::exp(- internal.gamma_sympt * internal.dt);
+  internal.p_II_A = 1 - std::exp(- internal.gamma_A * internal.dt);
+  internal.p_II_C = 1 - std::exp(- internal.gamma_C * internal.dt);
   internal.p_II_hosp = 1 - std::exp(- internal.gamma_hosp * internal.dt);
   internal.p_II_ICU = 1 - std::exp(- internal.gamma_ICU * internal.dt);
   internal.p_R_hosp = 1 - std::exp(- internal.gamma_rec * internal.dt);

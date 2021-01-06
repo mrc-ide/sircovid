@@ -117,8 +117,8 @@ p_R_next_vacc_class[, , ] <-
 p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_EE <- 1 - exp(-gamma_E * dt) # progression of latent period
-p_II_A <- 1 - exp(-gamma_asympt * dt) # progression of infectious period
-p_II_C <- 1 - exp(-gamma_sympt * dt)
+p_II_A <- 1 - exp(-gamma_A * dt) # progression of infectious period
+p_II_C <- 1 - exp(-gamma_C * dt)
 p_II_comm_D <- 1 - exp(-gamma_comm_D * dt)
 p_II_triage <- 1 - exp(-gamma_triage * dt)
 p_II_hosp_R <- 1 - exp(-gamma_hosp_R * dt)
@@ -794,11 +794,11 @@ p_sympt[] <- user()
 
 ## Parameters of the I_A classes
 s_A <- user()
-gamma_asympt <- user(0.1)
+gamma_A <- user(0.1)
 
 ## Parameters of the I_C classes
 s_C <- user()
-gamma_sympt <- user(0.1)
+gamma_C <- user(0.1)
 dim(p_hosp_sympt_step) <- user()
 p_hosp_sympt_step[] <- user()
 psi_hosp_sympt[] <- user()

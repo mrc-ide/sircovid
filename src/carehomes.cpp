@@ -128,7 +128,8 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(vaccine_population_reluctant, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(waning_rate, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_asympt, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_A, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_C, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_comm_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_E, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_hosp_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -143,7 +144,6 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(gamma_R_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_stepdown_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_stepdown_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_sympt, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_test, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_triage, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(model_pcr_and_serology_user, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1244,7 +1244,8 @@ public:
     int dim_vaccine_progression_rate_base_2;
     int dim_waning_rate;
     real_t dt;
-    real_t gamma_asympt;
+    real_t gamma_A;
+    real_t gamma_C;
     real_t gamma_comm_D;
     real_t gamma_E;
     real_t gamma_hosp_D;
@@ -1260,7 +1261,6 @@ public:
     real_t gamma_R_pre_2;
     real_t gamma_stepdown_D;
     real_t gamma_stepdown_R;
-    real_t gamma_sympt;
     real_t gamma_test;
     real_t gamma_triage;
     real_t hosp_transmission;
@@ -4125,7 +4125,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.s_stepdown_D = NA_INTEGER;
   internal.s_stepdown_R = NA_INTEGER;
   internal.s_triage = NA_INTEGER;
-  internal.gamma_asympt = 0.10000000000000001;
+  internal.gamma_A = 0.10000000000000001;
+  internal.gamma_C = 0.10000000000000001;
   internal.gamma_comm_D = 0.10000000000000001;
   internal.gamma_E = 0.10000000000000001;
   internal.gamma_hosp_D = 0.10000000000000001;
@@ -4140,7 +4141,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_R_pre_2 = 0.10000000000000001;
   internal.gamma_stepdown_D = 0.10000000000000001;
   internal.gamma_stepdown_R = 0.10000000000000001;
-  internal.gamma_sympt = 0.10000000000000001;
   internal.gamma_test = 0.10000000000000001;
   internal.gamma_triage = 0.10000000000000001;
   internal.model_pcr_and_serology_user = 1;
@@ -4151,7 +4151,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_beta_step = internal.beta_step.size();
   internal.comm_D_transmission = user_get_scalar<real_t>(user, "comm_D_transmission", internal.comm_D_transmission, NA_REAL, NA_REAL);
   internal.dt = user_get_scalar<real_t>(user, "dt", internal.dt, NA_REAL, NA_REAL);
-  internal.gamma_asympt = user_get_scalar<real_t>(user, "gamma_asympt", internal.gamma_asympt, NA_REAL, NA_REAL);
+  internal.gamma_A = user_get_scalar<real_t>(user, "gamma_A", internal.gamma_A, NA_REAL, NA_REAL);
+  internal.gamma_C = user_get_scalar<real_t>(user, "gamma_C", internal.gamma_C, NA_REAL, NA_REAL);
   internal.gamma_comm_D = user_get_scalar<real_t>(user, "gamma_comm_D", internal.gamma_comm_D, NA_REAL, NA_REAL);
   internal.gamma_E = user_get_scalar<real_t>(user, "gamma_E", internal.gamma_E, NA_REAL, NA_REAL);
   internal.gamma_hosp_D = user_get_scalar<real_t>(user, "gamma_hosp_D", internal.gamma_hosp_D, NA_REAL, NA_REAL);
@@ -4166,7 +4167,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_R_pre_2 = user_get_scalar<real_t>(user, "gamma_R_pre_2", internal.gamma_R_pre_2, NA_REAL, NA_REAL);
   internal.gamma_stepdown_D = user_get_scalar<real_t>(user, "gamma_stepdown_D", internal.gamma_stepdown_D, NA_REAL, NA_REAL);
   internal.gamma_stepdown_R = user_get_scalar<real_t>(user, "gamma_stepdown_R", internal.gamma_stepdown_R, NA_REAL, NA_REAL);
-  internal.gamma_sympt = user_get_scalar<real_t>(user, "gamma_sympt", internal.gamma_sympt, NA_REAL, NA_REAL);
   internal.gamma_test = user_get_scalar<real_t>(user, "gamma_test", internal.gamma_test, NA_REAL, NA_REAL);
   internal.gamma_triage = user_get_scalar<real_t>(user, "gamma_triage", internal.gamma_triage, NA_REAL, NA_REAL);
   internal.hosp_transmission = user_get_scalar<real_t>(user, "hosp_transmission", internal.hosp_transmission, NA_REAL, NA_REAL);
@@ -4255,8 +4255,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.initial_beta_out = internal.beta_step[0];
   internal.model_pcr_and_serology = (internal.model_pcr_and_serology_user == 1 ? 1 : 0);
   internal.p_EE = 1 - std::exp(- internal.gamma_E * internal.dt);
-  internal.p_II_A = 1 - std::exp(- internal.gamma_asympt * internal.dt);
-  internal.p_II_C = 1 - std::exp(- internal.gamma_sympt * internal.dt);
+  internal.p_II_A = 1 - std::exp(- internal.gamma_A * internal.dt);
+  internal.p_II_C = 1 - std::exp(- internal.gamma_C * internal.dt);
   internal.p_II_comm_D = 1 - std::exp(- internal.gamma_comm_D * internal.dt);
   internal.p_II_hosp_D = 1 - std::exp(- internal.gamma_hosp_D * internal.dt);
   internal.p_II_hosp_R = 1 - std::exp(- internal.gamma_hosp_R * internal.dt);

@@ -241,8 +241,8 @@ basic_parameters_progression <- function() {
        s_rec = 2,
 
        gamma_E = 1 / (4.59 / 2),
-       gamma_asympt = 1 / 2.09,
-       gamma_sympt = 1 / 4,
+       gamma_A = 1 / 2.09,
+       gamma_C = 1 / 4,
        gamma_hosp = 2,
        gamma_ICU = 2 / 5,
        gamma_rec = 2 / 5)

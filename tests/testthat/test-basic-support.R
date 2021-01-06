@@ -5,7 +5,7 @@ test_that("basic progression parameters", {
   expect_setequal(
     names(p),
     c("s_E", "s_A", "s_C", "s_hosp", "s_ICU", "s_rec",
-      "gamma_E", "gamma_asympt", "gamma_sympt", "gamma_hosp",
+      "gamma_E", "gamma_A", "gamma_C", "gamma_hosp",
       "gamma_ICU", "gamma_rec"))
 
   ## TODO: Lilith; you had said that there were some constraints
