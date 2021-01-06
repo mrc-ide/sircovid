@@ -108,6 +108,46 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
 })
 
 
+test_that("No infections with perfect vaccine wrt rel_infectivity", {
+  ## i.e. if everyone is vaccinated with a vaccine preventing
+  ## 100% of onwards transmission
+  
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", rel_infectivity = c(1, 0),
+                            waning_rate = 1 / 20)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  
+  state <- carehomes_initial(info, 1, p)$state
+  
+  # move susceptibles into vaccinated class
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_S[, 2]] <- state[index_S[, 1]]
+  state[index_S[, 1]] <- 0
+  
+  # move initial infections into vaccinated class
+  index_I_asympt <- array(info$index$I_asympt, info$dim$I_asympt)
+  state[index_I_asympt[, 1, 1, 2]] <- state[index_I_asympt[, 1, 1, 1]]
+  state[index_I_asympt[, 1, 1, 1]] <- 0
+  
+  mod$set_state(state)
+  mod$set_index(integer(0))
+  s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+  
+  ## Reshape to show the full shape of s
+  expect_equal(length(s), prod(info$dim$S) * 101)
+  s <- array(s, c(info$dim$S, 101))
+  
+  ## Noone moves into unvaccinated
+  ## except in the group where infections because of waning immunity
+  expect_true(all(s[-4, 1, ] == 0))
+  
+  ## Noone changes compartment within the vaccinated individuals
+  expect_true(all(s[, 2, ] == s[, 2, 1]))
+})
+
+
 test_that("Vaccination of susceptibles works", {
   skip("TODO: can't vaccinate fast enough")
   ## Tests that:

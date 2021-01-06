@@ -708,7 +708,7 @@ new_PCR_neg[, , 2:n_vacc_classes] <- new_PCR_neg[i, j, k] +
 ## Compute the force of infection
 
 I_with_diff_trans[, , ] <-
-    strain_transmission[j] * (
+  rel_infectivity[i, k] * strain_transmission[j] * (
       sum(I_asympt[i, j, , k]) + sum(I_sympt[i, j, , k]) +
     hosp_transmission * (
       sum(I_triage_unconf[i, j, , k]) +
@@ -725,7 +725,6 @@ I_with_diff_trans[, , ] <-
       sum(I_ICU_D_unconf[i, j, , k]) +
       sum(I_ICU_D_conf[i, j, , k])) +
       comm_D_transmission * sum(I_comm_D[i, j, , k]))
-
 
 ## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
 ## beta to all contacts *except* within care home contacts
@@ -780,6 +779,8 @@ rel_p_sympt[, ] <- user()
 dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
 rel_p_hosp_if_sympt[, ] <- user()
 dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
+rel_infectivity[, ] <- user()
+dim(rel_infectivity) <- c(n_groups, n_vacc_classes)
 
 vaccine_progression_rate_base[, ] <- user()
 dim(vaccine_progression_rate_base) <- c(n_groups, n_vacc_classes)
