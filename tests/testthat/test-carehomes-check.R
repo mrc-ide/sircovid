@@ -86,11 +86,11 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
 
   # other than in the 4th age group (where infections are seeded)
   # after the first day (4 times steps), R is empty
-  expect_true(all(y$R[-4, , -1] == 0))
+  expect_true(all(y$R[-4, , -1, ] == 0))
   # so is R_neg
-  expect_true(all(y$R_neg[-4, , -1] == 0))
+  expect_true(all(y$R_neg[-4, , -1, ] == 0))
   # so is PCR_neg
-  expect_true(all(y$PCR_neg[-4, , -1] == 0))
+  expect_true(all(y$PCR_neg[-4, , -1, ] == 0))
 
 })
 
@@ -457,11 +457,11 @@ test_that("R_pre parameters work as expected", {
 
   ## p_R_pre = 1, expect no cases in R_pre_2 stream
   y <- helper(1, 1, 0.5)
-  expect_true(all(y$R_pre[, 2, , ] == 0))
+  expect_true(all(y$R_pre[, , 2, , ] == 0))
 
   ## p_R_pre = 0, expect no cases in R_pre_1 stream
   y <- helper(0, 1, 0.5)
-  expect_true(all(y$R_pre[, 1, , ] == 0))
+  expect_true(all(y$R_pre[, , 1, , ] == 0))
 
   ## gamma_R_pre_1 = gamma_R_pre_2 = 0, expect no cases in R_pos
   y <- helper(0.5, 0, 0)
@@ -472,22 +472,22 @@ test_that("R_pre parameters work as expected", {
   ## time-step to R_neg/R_pos just from R_pre_1
   y <- helper(0.5, Inf, 0)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
-               t(y$R_pre[, 1, 1, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
+               t(y$R_pre[, , 1, 1, -n]))
 
   ## gamma_R_pre_1 = 0, gamma_R_pre_2 = Inf, expect progression in one
   ## time-step to R_neg/R_pos just from R_pre_2
   y <- helper(0.5, 0, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
-               t(y$R_pre[, 2, 1, -n]))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
+               t(y$R_pre[, , 2, 1, -n]))
 
   ## gamma_R_pre_1 = Inf, gamma_R_pre_2 = Inf, expect progression in
   ## one time-step to R_neg/R_pos from both R_pre_1 and R_pre_2
   y <- helper(0.5, Inf, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 4), sum) + drop(y$R_neg))),
-               t(apply(y$R_pre[, , 1, -n], c(1, 3), sum)))
+  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
+               t(apply(y$R_pre[, , , 1, -n], c(1, 3), sum)))
 })
 
 
@@ -532,10 +532,10 @@ test_that("setting a gamma to Inf results immediate progression", {
     expect_true(any(z > 0))
 
     i <- seq_len(length(y$time) - 1L)
-    if (length(dim(z)) == 4) {
-      expect_equal(z[, 2, , i + 1], z[, 1, , i])
+    if (length(dim(z)) == 5) {
+      expect_equal(z[, , 2, , i + 1], z[, , 1, , i])
     } else {
-      expect_equal(z[, 2, i + 1], z[, 1, i])
+      expect_equal(z[, , 2, i + 1], z[, , 1, i])
     }
   }
 
@@ -577,20 +577,20 @@ test_that("setting a gamma to 0 results in no progression", {
       name_unconf <- paste0(compartment_name, "_unconf")
       index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
       index_unconf <- array(info$index[[name_unconf]], info$dim[[name_unconf]])
-      if (length(dim(index_conf)) == 3) {
-        state[index_conf[, 1, ]] <- 50
-        state[index_unconf[, 1, ]] <- 50
+      if (length(dim(index_conf)) == 4) {
+        state[index_conf[, , 1, ]] <- 50
+        state[index_unconf[, , 1, ]] <- 50
       } else {
-        state[index_conf[, 1]] <- 50
-        state[index_unconf[, 1]] <- 50
+        state[index_conf[, , 1]] <- 50
+        state[index_unconf[, , 1]] <- 50
       }
     } else {
       index <- array(info$index[[compartment_name]],
                      info$dim[[compartment_name]])
-      if (length(dim(index)) == 3) {
-        state[index[, 1, ]] <- 50
+      if (length(dim(index)) == 4) {
+        state[index[, , 1, ]] <- 50
       } else {
-        state[index[, 1]] <- 50
+        state[index[, , 1]] <- 50
       }
     }
 
@@ -606,10 +606,10 @@ test_that("setting a gamma to 0 results in no progression", {
 
     expect_true(any(z > 0))
 
-    if (length(dim(z)) == 4) {
-      expect_true(all(z[, 2, , ] == 0))
+    if (length(dim(z)) == 5) {
+      expect_true(all(z[, , 2, , ] == 0))
     } else {
-      expect_true(all(z[, 2, ] == 0))
+      expect_true(all(z[, , 2, ] == 0))
     }
   }
 
@@ -670,9 +670,9 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
   expect_true(all(y$R_stepdown_D_unconf == 0))
   expect_true(any(y$R_stepdown_D_conf > 0))
 
-  admit_conf <- apply(y$I_hosp_R_conf[, 1, , ] +
-                      y$I_hosp_D_conf[, 1, , ] +
-                      y$I_triage_conf[, 1, , ], 1, sum)
+  admit_conf <- apply(y$I_hosp_R_conf[, 1, , , ] +
+                      y$I_hosp_D_conf[, 1, , , ] +
+                      y$I_triage_conf[, 1, , , ], 1, sum)
 
   expect_true(all(diff(y$cum_admit_conf) == admit_conf[-1]))
   expect_true(all(y$cum_new_conf == 0))
@@ -744,49 +744,52 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_test = Inf", {
   n <- length(y$time)
 
   ## Check hosp_R
-  expect_true(all(y$I_hosp_R_conf[, 1, , ] == 0))
-  expect_equal(y$I_hosp_R_conf[, 2, , -1], y$I_hosp_R_unconf[, 1, , -n])
-  expect_true(all(y$I_hosp_R_unconf[, 2, , ] == 0))
+  expect_true(all(y$I_hosp_R_conf[, , 1, , ] == 0))
+  expect_equal(y$I_hosp_R_conf[, , 2, , -1], y$I_hosp_R_unconf[, , 1, , -n])
+  expect_true(all(y$I_hosp_R_unconf[, , 2, , ] == 0))
 
   ## Check hosp_D
-  expect_true(all(y$I_hosp_D_conf[, 1, , ] == 0))
-  expect_equal(y$I_hosp_D_conf[, 2, , -1], y$I_hosp_D_unconf[, 1, , -n])
-  expect_true(all(y$I_hosp_D_unconf[, 2, , ] == 0))
+  expect_true(all(y$I_hosp_D_conf[, , 1, , ] == 0))
+  expect_equal(y$I_hosp_D_conf[, , 2, , -1], y$I_hosp_D_unconf[, , 1, , -n])
+  expect_true(all(y$I_hosp_D_unconf[, , 2, , ] == 0))
 
   ## Check triage
-  expect_true(all(y$I_triage_conf[, 1, , ] == 0))
-  expect_equal(y$I_triage_conf[, 2, , -1], y$I_triage_unconf[, 1, , -n])
-  expect_true(all(y$I_triage_unconf[, 2, , ] == 0))
+  expect_true(all(y$I_triage_conf[, , 1, , ] == 0))
+  expect_equal(y$I_triage_conf[, , 2, , -1], y$I_triage_unconf[, , 1, , -n])
+  expect_true(all(y$I_triage_unconf[, , 2, , ] == 0))
 
   ## Check ICU_D/ICU_S_R/ICU_S_D
-  expect_equal(y$I_ICU_D_conf[, 2, , 2], y$I_ICU_D_unconf[, 1, , 1])
-  expect_true(all(y$I_ICU_D_unconf[, 2, , ] == 0))
-  expect_equal(y$I_ICU_S_R_conf[, 2, , 2], y$I_ICU_S_R_unconf[, 1, , 1])
-  expect_true(all(y$I_ICU_S_R_unconf[, 2, , ] == 0))
-  expect_true(all(y$I_ICU_S_D_unconf[, 2, , ] == 0))
-  expect_equal(y$I_ICU_S_D_conf[, 2, , 2], y$I_ICU_S_D_unconf[, 1, , 1])
-  expect_equal(y$I_ICU_D_conf[, 1, , -1] + y$I_ICU_S_R_conf[, 1, , -1] +
-                 y$I_ICU_S_D_conf[, 1, , -1], y$I_triage_conf[, 2, , -n])
+  expect_equal(y$I_ICU_D_conf[, , 2, , 2], y$I_ICU_D_unconf[, , 1, , 1])
+  expect_true(all(y$I_ICU_D_unconf[, , 2, , ] == 0))
+  expect_equal(y$I_ICU_S_R_conf[, , 2, , 2], y$I_ICU_S_R_unconf[, , 1, , 1])
+  expect_true(all(y$I_ICU_S_R_unconf[, , 2, , ] == 0))
+  expect_true(all(y$I_ICU_S_D_unconf[, , 2, , ] == 0))
+  expect_equal(y$I_ICU_S_D_conf[, , 2, , 2], y$I_ICU_S_D_unconf[, , 1, , 1])
+  expect_equal(y$I_ICU_D_conf[, , 1, , -1] + y$I_ICU_S_R_conf[, , 1, , -1] +
+                 y$I_ICU_S_D_conf[, , 1, , -1], y$I_triage_conf[, , 2, , -n])
 
   ## Check stepdown_R
-  expect_equal(y$R_stepdown_R_conf[, 2, , 2], y$R_stepdown_R_unconf[, 1, , 1])
-  expect_equal(y$R_stepdown_R_conf[, 1, , -1], y$I_ICU_S_R_conf[, 2, , -n])
-  expect_true(all(y$R_stepdown_R_unconf[, 2, , ] == 0))
+  expect_equal(y$R_stepdown_R_conf[, , 2, , 2],
+               y$R_stepdown_R_unconf[, , 1, , 1])
+  expect_equal(y$R_stepdown_R_conf[, , 1, , -1],
+               y$I_ICU_S_R_conf[, , 2, , -n])
+  expect_true(all(y$R_stepdown_R_unconf[, , 2, , ] == 0))
 
   ## Check stepdown_D
-  expect_equal(y$R_stepdown_D_conf[, 2, , 2], y$R_stepdown_D_unconf[, 1, , 1])
-  expect_equal(y$R_stepdown_D_conf[, 1, , -1], y$I_ICU_S_D_conf[, 2, , -n])
-  expect_true(all(y$R_stepdown_D_unconf[, 2, , ] == 0))
+  expect_equal(y$R_stepdown_D_conf[, , 2, , 2],
+               y$R_stepdown_D_unconf[, , 1, , 1])
+  expect_equal(y$R_stepdown_D_conf[, , 1, , -1], y$I_ICU_S_D_conf[, , 2, , -n])
+  expect_true(all(y$R_stepdown_D_unconf[, , 2, , ] == 0))
 
-  new_conf <- apply(y$I_hosp_R_conf[, 2, , ] +
-                    y$I_hosp_D_conf[, 2, , ] +
-                    y$I_triage_conf[, 2, , ], 2, sum)
+  new_conf <- apply(y$I_hosp_R_conf[, , 2, , ] +
+                    y$I_hosp_D_conf[, , 2, , ] +
+                    y$I_triage_conf[, , 2, , ], 2, sum)
   new_conf[2] <- new_conf[2] +
-    sum(y$I_ICU_S_R_conf[, 2, , 2] +
-        y$I_ICU_S_D_conf[, 2, , 2] +
-        y$I_ICU_D_conf[, 2, , 2] +
-        y$R_stepdown_conf[, 2, , 2] +
-        y$R_stepdown_R_conf[, 2, , 2])
+    sum(y$I_ICU_S_R_conf[, , 2, , 2] +
+        y$I_ICU_S_D_conf[, , 2, , 2] +
+        y$I_ICU_D_conf[, , 2, , 2] +
+        y$R_stepdown_conf[, , 2, , 2] +
+        y$R_stepdown_R_conf[, , 2, , 2])
   expect_true(all(diff(y$cum_new_conf) == new_conf[-1]))
 
   expect_true(all(y$cum_admit_conf == 0))
@@ -803,20 +806,20 @@ test_that("tots all summed correctly ", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
-  expect_true(all(y$general_tot == apply(y$I_triage_conf, 4, sum) +
-                    apply(y$I_hosp_R_conf, 4, sum) +
-                    apply(y$I_hosp_D_conf, 4, sum) +
-                    apply(y$R_stepdown_R_conf, 4, sum) +
-                    apply(y$R_stepdown_D_conf, 4, sum)))
-  expect_true(all(y$I_ICU_tot == apply(y$I_ICU_S_R_conf, 4, sum) +
-                    apply(y$I_ICU_S_D_conf, 4, sum) +
-                    apply(y$I_ICU_D_conf, 4, sum)))
+  expect_true(all(y$general_tot == apply(y$I_triage_conf, 5, sum) +
+                    apply(y$I_hosp_R_conf, 5, sum) +
+                    apply(y$I_hosp_D_conf, 5, sum) +
+                    apply(y$R_stepdown_R_conf, 5, sum) +
+                    apply(y$R_stepdown_D_conf, 5, sum)))
+  expect_true(all(y$I_ICU_tot == apply(y$I_ICU_S_R_conf, 5, sum) +
+                    apply(y$I_ICU_S_D_conf, 5, sum) +
+                    apply(y$I_ICU_D_conf, 5, sum)))
   expect_true(all(y$hosp_tot == y$I_ICU_tot + y$general_tot))
   expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
   expect_true(all(y$D_comm_tot == apply(y$D_comm, 2, sum)))
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
 
   # check the positivity sums
-  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , 1, ], 3, sum)))
-  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , 1, ], 3, sum)))
+  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , , 1, ], 3, sum)))
+  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , , 1, ], 3, sum)))
 })

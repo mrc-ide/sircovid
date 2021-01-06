@@ -25,8 +25,10 @@ carehomes_Rt <- function(step, S, p) {
 
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration(step, p)
+  max_strain_multiplier <- max(p$strain_transmission)
 
-  calculate_ev <- function(t, S, drop_carehomes) {
+  calculate_ev <-
+    function(t, S, beta, mean_duration, max_strain_multiplier, drop_carehomes) {
     ## Next-Generation-Matrix
     m <- p$m
     ages <- seq_len(p$n_age_groups)
@@ -47,7 +49,8 @@ carehomes_Rt <- function(step, S, p) {
       mean_duration_weighted <- drop(mean_duration[, , t])
     }
 
-    ngm <- outer(mean_duration_weighted, S_weighted) * m
+    ## In a multistrain model R0 is the max of R0 across strains
+    ngm <- outer(mean_duration_weighted, S_weighted) * m * max_strain_multiplier
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns
@@ -62,8 +65,16 @@ carehomes_Rt <- function(step, S, p) {
   }
 
   t <- seq_along(step)
-  eff_Rt_all <- vnapply(t, calculate_ev, S, drop_carehomes = FALSE)
-  eff_Rt_general <- vnapply(t, calculate_ev, S, drop_carehomes = TRUE)
+  eff_Rt_all <- vnapply(t, calculate_ev, S,
+                        beta = beta,
+                        mean_duration = mean_duration,
+                        max_strain_multiplier = max_strain_multiplier,
+                        drop_carehomes = FALSE)
+  eff_Rt_general <- vnapply(t, calculate_ev, S,
+                            beta = beta,
+                            mean_duration = mean_duration,
+                            max_strain_multiplier = max_strain_multiplier,
+                            drop_carehomes = TRUE)
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
   for (i in seq(2, ncol(p$rel_susceptibility))) {
@@ -71,8 +82,14 @@ carehomes_Rt <- function(step, S, p) {
                                    0 * N_tot_non_vacc)
   }
   Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
+                    beta = beta,
+                    mean_duration = mean_duration,
+                    max_strain_multiplier = max_strain_multiplier,
                     drop_carehomes = FALSE)
   Rt_general <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
+                        beta = beta,
+                        mean_duration = mean_duration,
+                        max_strain_multiplier = max_strain_multiplier,
                         drop_carehomes = TRUE)
 
   list(step = step,

@@ -24,4 +24,5 @@
 ^src/CPPLINT\.cfg$
 ^\.github$
 ^\.dockerignore$
+^\.valgrind_ignore$
 ^buildkite$

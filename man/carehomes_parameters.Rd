@@ -22,6 +22,9 @@ carehomes_parameters(
   react_specificity = 0.99,
   react_sensitivity = 0.99,
   prop_noncovid_sympt = 0.01,
+  strain_transmission = 1,
+  strain_seed_date = NULL,
+  strain_seed_value = NULL,
   rel_susceptibility = 1,
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
@@ -91,6 +94,24 @@ residents or workers}
 
 \item{prop_noncovid_sympt}{Proportion of population who do not have
 covid but have covid-like symptoms}
+
+\item{strain_transmission}{Vector of relative transmissibility of each
+strain modelled. First element should be 1. Length will define the
+number of strains used in the model}
+
+\item{strain_seed_date}{Either \code{NULL} (no seeding) or a vector of
+exactly two \link{sircovid_date} values corresponding to
+the start and stop dates of seeding (inclusive). For example, to
+seed for a single day, these two values should have the same
+date}
+
+\item{strain_seed_value}{Either \code{NULL} (no seeding) or a single
+integer value represending the \emph{daily} rate of seeding. Because
+each day is dividied into \code{1 / dt} steps, this value will be
+spread out fairly evenly across the steps that occur within each
+date. Seeding is not stochastic; this many individuals \emph{will}
+become infected with the new strain, unless the pool of
+susceptibles has been exhausted.}
 
 \item{rel_susceptibility}{A vector or matrix of values representing the
 relative susceptibility of individuals in different vaccination groups.

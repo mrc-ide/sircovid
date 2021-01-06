@@ -125,3 +125,11 @@ test_that("matrix_pow calculates powers correctly", {
   expect_equal(A %*% A %*% A %*% A, matrix_pow(A, 4))
 
 })
+
+
+test_that("spread_integer", {
+  expect_equal(spread_integer(12, 5), c(3, 3, 2, 2, 2))
+  expect_equal(spread_integer(15, 5), rep(3, 5))
+  expect_equal(spread_integer(0, 5), rep(0, 5))
+  expect_equal(spread_integer(2, 5), c(1, 1, 0, 0, 0))
+})

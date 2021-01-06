@@ -128,3 +128,11 @@ matrix_pow <- function(x, n) {
 last <- function(x) {
   x[[length(x)]]
 }
+
+
+spread_integer <- function(n, m) {
+  ret <- ceiling(rep(n / m, m))
+  i <- seq(to = m, length.out = sum(ret) - n)
+  ret[i] <- ret[i] - 1L
+  ret
+}

@@ -9,6 +9,14 @@ test:
 test_all:
 	REMAKE_TEST_INSTALL_PACKAGES=true make test
 
+test_leaks: .valgrind_ignore
+	R -d 'valgrind --leak-check=full --suppressions=.valgrind_ignore' -e 'devtools::test()'
+
+.valgrind_ignore:
+	R -d 'valgrind --leak-check=full --gen-suppressions=all --log-file=$@' -e 'library(testthat)'
+	sed -i.bak '/^=/ d' $@
+	$(RM) $@.bak
+
 roxygen:
 	@mkdir -p man
 	${RSCRIPT} -e "library(methods); devtools::document()"

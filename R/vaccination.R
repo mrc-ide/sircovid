@@ -45,7 +45,6 @@ vaccination_remap_state <- function(state_orig, info_orig, info_vacc) {
       d_orig <- info_orig$dim[[nm]]
       d_vacc <- info_vacc$dim[[nm]]
       nd <- length(d_orig)
-      stopifnot(identical(d_orig[-nd], d_vacc[-nd]))
       j <- seq_len(prod(d_orig[-nd]))
       state_vacc[i_vacc[j], ] <- state_orig[i_orig, ]
     }
