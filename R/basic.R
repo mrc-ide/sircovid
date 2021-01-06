@@ -234,8 +234,8 @@ basic_parameters_progression <- function() {
   ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
   ## parameters of that distribution.
   list(s_E = 2,
-       s_asympt = 1,
-       s_sympt = 1,
+       s_A = 1,
+       s_C = 1,
        s_hosp = 2,
        s_ICU = 2,
        s_rec = 2,

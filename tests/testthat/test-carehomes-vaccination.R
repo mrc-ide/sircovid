@@ -727,9 +727,9 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   ## These are the same as the default values, but setting them again here in
   ## case defaults change as the below assumes mean duration is shorter for
   ## asymptomatic infections
-  p$s_asympt <- 1
+  p$s_A <- 1
   p$gamma_asympt <- 1 / 2.09
-  p$s_sympt
+  p$s_C
   p$gamma_sympt <- 1 / 4
 
   np <- 3L

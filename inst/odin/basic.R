@@ -72,18 +72,18 @@ delta_E[, , ] <- aux_EE[i, j, k]
 
 ## Work out the I_A->I_A transitions
 aux_II_A[, 1, ] <- n_EI_A[i, k]
-aux_II_A[, 2:s_asympt, ] <- n_II_A[i, j - 1, k]
-aux_II_A[, 1:s_asympt, ] <- aux_II_A[i, j, k] - n_II_A[i, j, k]
+aux_II_A[, 2:s_A, ] <- n_II_A[i, j - 1, k]
+aux_II_A[, 1:s_A, ] <- aux_II_A[i, j, k] - n_II_A[i, j, k]
 delta_I_A[, , ] <- aux_II_A[i, j, k]
 
 ## Work out the I_C->I_C transitions
 aux_II_C[, 1, ] <- n_EI_C[i, k]
-aux_II_C[, 2:s_sympt, ] <- n_II_C[i, j - 1, k]
-aux_II_C[, 1:s_sympt, ] <- aux_II_C[i, j, k] - n_II_C[i, j, k]
+aux_II_C[, 2:s_C, ] <- n_II_C[i, j - 1, k]
+aux_II_C[, 1:s_C, ] <- aux_II_C[i, j, k] - n_II_C[i, j, k]
 delta_I_C[, , ] <- aux_II_C[i, j, k]
 
 ## Work out the I_hosp->I_hosp transitions
-n_sympt_to_hosp[, ] <- rbinom(n_II_C[i, s_sympt, j], 1 - p_recov_sympt[i])
+n_sympt_to_hosp[, ] <- rbinom(n_II_C[i, s_C, j], 1 - p_recov_sympt[i])
 aux_II_hosp[, 1, ] <- n_sympt_to_hosp[i, k]
 aux_II_hosp[, 2:s_hosp, ] <- n_II_hosp[i, j - 1, k]
 aux_II_hosp[, 1:s_hosp, ] <- aux_II_hosp[i, j, k] - n_II_hosp[i, j, k]
@@ -118,8 +118,8 @@ new_D[] <- D[i] + delta_D[i]
 
 ## Work out the number of recovery
 delta_R[] <-
-  sum(n_II_A[i, s_asympt, ]) +
-  sum(n_II_C[i, s_sympt, ]) -
+  sum(n_II_A[i, s_A, ]) +
+  sum(n_II_C[i, s_C, ]) -
   sum(n_sympt_to_hosp[i, ]) +
   sum(n_II_hosp[i, s_hosp, ]) -
   sum(n_hosp_to_ICU[i, ]) -
@@ -167,11 +167,11 @@ gamma_E <- user(0.1)
 p_sympt[] <- user()
 
 ## Parameters of the I_A classes
-s_asympt <- user()
+s_A <- user()
 gamma_asympt <- user(0.1)
 
 ## Parameters of the I_C classes
-s_sympt <- user()
+s_C <- user()
 gamma_sympt <- user(0.1)
 p_recov_sympt[] <- user()
 
@@ -224,16 +224,16 @@ dim(delta_E) <- c(n_age_groups, s_E, n_trans_classes)
 dim(n_EE) <- c(n_age_groups, s_E, n_trans_classes)
 
 ## Vectors handling the I_A class
-dim(I_A) <- c(n_age_groups, s_asympt, n_trans_classes)
-dim(aux_II_A) <- c(n_age_groups, s_asympt, n_trans_classes)
-dim(delta_I_A) <- c(n_age_groups, s_asympt, n_trans_classes)
-dim(n_II_A) <- c(n_age_groups, s_asympt, n_trans_classes)
+dim(I_A) <- c(n_age_groups, s_A, n_trans_classes)
+dim(aux_II_A) <- c(n_age_groups, s_A, n_trans_classes)
+dim(delta_I_A) <- c(n_age_groups, s_A, n_trans_classes)
+dim(n_II_A) <- c(n_age_groups, s_A, n_trans_classes)
 
 ## Vectors handling the I_C class
-dim(I_C) <- c(n_age_groups, s_sympt, n_trans_classes)
-dim(aux_II_C) <- c(n_age_groups, s_sympt, n_trans_classes)
-dim(delta_I_C) <- c(n_age_groups, s_sympt, n_trans_classes)
-dim(n_II_C) <- c(n_age_groups, s_sympt, n_trans_classes)
+dim(I_C) <- c(n_age_groups, s_C, n_trans_classes)
+dim(aux_II_C) <- c(n_age_groups, s_C, n_trans_classes)
+dim(delta_I_C) <- c(n_age_groups, s_C, n_trans_classes)
+dim(n_II_C) <- c(n_age_groups, s_C, n_trans_classes)
 dim(p_recov_sympt) <- c(n_age_groups)
 
 ## Vectors handling the I_hosp class

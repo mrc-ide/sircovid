@@ -4,7 +4,7 @@ test_that("basic progression parameters", {
   p <- basic_parameters_progression()
   expect_setequal(
     names(p),
-    c("s_E", "s_asympt", "s_sympt", "s_hosp", "s_ICU", "s_rec",
+    c("s_E", "s_A", "s_C", "s_hosp", "s_ICU", "s_rec",
       "gamma_E", "gamma_asympt", "gamma_sympt", "gamma_hosp",
       "gamma_ICU", "gamma_rec"))
 
