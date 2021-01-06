@@ -246,7 +246,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     p_C * pars$s_C / (1 - exp(- dt * pars$gamma_C))
 
   mean_duration <- mean_duration +
-    pars$comm_D_transmission * p_C * p_H *
+    pars$G_D_transmission * p_C * p_H *
     p_death_comm * pars$s_G_D / (1 - exp(- dt * pars$gamma_G_D))
 
   mean_duration <- mean_duration +
