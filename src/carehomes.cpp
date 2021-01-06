@@ -82,8 +82,8 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 }
 // [[dust::class(carehomes)]]
 // [[dust::param(beta_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(comm_D_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(G_D_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(ICU_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
@@ -174,6 +174,7 @@ public:
     std::vector<real_t> aux_R_stepdown_R_conf;
     std::vector<real_t> aux_R_stepdown_R_unconf;
     std::vector<real_t> beta_step;
+    real_t comm_D_transmission;
     int dim_aux_EE;
     int dim_aux_EE_1;
     int dim_aux_EE_12;
@@ -1243,7 +1244,6 @@ public:
     int dim_vaccine_progression_rate_base_2;
     int dim_waning_rate;
     real_t dt;
-    real_t G_D_transmission;
     real_t gamma_A;
     real_t gamma_C;
     real_t gamma_E;
@@ -1702,7 +1702,7 @@ public:
     for (int i = 1; i <= internal.dim_I_with_diff_trans_1; ++i) {
       for (int j = 1; j <= internal.dim_I_with_diff_trans_2; ++j) {
         for (int k = 1; k <= internal.dim_I_with_diff_trans_3; ++k) {
-          internal.I_with_diff_trans[i - 1 + internal.dim_I_with_diff_trans_1 * (j - 1) + internal.dim_I_with_diff_trans_12 * (k - 1)] = internal.strain_transmission[j - 1] * (odin_sum4(I_A, i - 1, i, j - 1, j, 0, internal.dim_I_A_3, k - 1, k, internal.dim_I_A_1, internal.dim_I_A_12, internal.dim_I_A_123) + odin_sum4(I_C, i - 1, i, j - 1, j, 0, internal.dim_I_C_3, k - 1, k, internal.dim_I_C_1, internal.dim_I_C_12, internal.dim_I_C_123) + internal.hosp_transmission * (odin_sum4(I_triage_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_triage_unconf_3, k - 1, k, internal.dim_I_triage_unconf_1, internal.dim_I_triage_unconf_12, internal.dim_I_triage_unconf_123) + odin_sum4(I_triage_conf, i - 1, i, j - 1, j, 0, internal.dim_I_triage_conf_3, k - 1, k, internal.dim_I_triage_conf_1, internal.dim_I_triage_conf_12, internal.dim_I_triage_conf_123) + odin_sum4(I_hosp_R_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_R_unconf_3, k - 1, k, internal.dim_I_hosp_R_unconf_1, internal.dim_I_hosp_R_unconf_12, internal.dim_I_hosp_R_unconf_123) + odin_sum4(I_hosp_R_conf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_R_conf_3, k - 1, k, internal.dim_I_hosp_R_conf_1, internal.dim_I_hosp_R_conf_12, internal.dim_I_hosp_R_conf_123) + odin_sum4(I_hosp_D_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_D_unconf_3, k - 1, k, internal.dim_I_hosp_D_unconf_1, internal.dim_I_hosp_D_unconf_12, internal.dim_I_hosp_D_unconf_123) + odin_sum4(I_hosp_D_conf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_D_conf_3, k - 1, k, internal.dim_I_hosp_D_conf_1, internal.dim_I_hosp_D_conf_12, internal.dim_I_hosp_D_conf_123)) + internal.ICU_transmission * (odin_sum4(I_ICU_S_R_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_R_unconf_3, k - 1, k, internal.dim_I_ICU_S_R_unconf_1, internal.dim_I_ICU_S_R_unconf_12, internal.dim_I_ICU_S_R_unconf_123) + odin_sum4(I_ICU_S_R_conf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_R_conf_3, k - 1, k, internal.dim_I_ICU_S_R_conf_1, internal.dim_I_ICU_S_R_conf_12, internal.dim_I_ICU_S_R_conf_123) + odin_sum4(I_ICU_S_D_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_D_unconf_3, k - 1, k, internal.dim_I_ICU_S_D_unconf_1, internal.dim_I_ICU_S_D_unconf_12, internal.dim_I_ICU_S_D_unconf_123) + odin_sum4(I_ICU_S_D_conf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_D_conf_3, k - 1, k, internal.dim_I_ICU_S_D_conf_1, internal.dim_I_ICU_S_D_conf_12, internal.dim_I_ICU_S_D_conf_123) + odin_sum4(I_ICU_D_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_D_unconf_3, k - 1, k, internal.dim_I_ICU_D_unconf_1, internal.dim_I_ICU_D_unconf_12, internal.dim_I_ICU_D_unconf_123) + odin_sum4(I_ICU_D_conf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_D_conf_3, k - 1, k, internal.dim_I_ICU_D_conf_1, internal.dim_I_ICU_D_conf_12, internal.dim_I_ICU_D_conf_123)) + internal.G_D_transmission * odin_sum4(G_D, i - 1, i, j - 1, j, 0, internal.dim_G_D_3, k - 1, k, internal.dim_G_D_1, internal.dim_G_D_12, internal.dim_G_D_123));
+          internal.I_with_diff_trans[i - 1 + internal.dim_I_with_diff_trans_1 * (j - 1) + internal.dim_I_with_diff_trans_12 * (k - 1)] = internal.strain_transmission[j - 1] * (odin_sum4(I_A, i - 1, i, j - 1, j, 0, internal.dim_I_A_3, k - 1, k, internal.dim_I_A_1, internal.dim_I_A_12, internal.dim_I_A_123) + odin_sum4(I_C, i - 1, i, j - 1, j, 0, internal.dim_I_C_3, k - 1, k, internal.dim_I_C_1, internal.dim_I_C_12, internal.dim_I_C_123) + internal.hosp_transmission * (odin_sum4(I_triage_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_triage_unconf_3, k - 1, k, internal.dim_I_triage_unconf_1, internal.dim_I_triage_unconf_12, internal.dim_I_triage_unconf_123) + odin_sum4(I_triage_conf, i - 1, i, j - 1, j, 0, internal.dim_I_triage_conf_3, k - 1, k, internal.dim_I_triage_conf_1, internal.dim_I_triage_conf_12, internal.dim_I_triage_conf_123) + odin_sum4(I_hosp_R_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_R_unconf_3, k - 1, k, internal.dim_I_hosp_R_unconf_1, internal.dim_I_hosp_R_unconf_12, internal.dim_I_hosp_R_unconf_123) + odin_sum4(I_hosp_R_conf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_R_conf_3, k - 1, k, internal.dim_I_hosp_R_conf_1, internal.dim_I_hosp_R_conf_12, internal.dim_I_hosp_R_conf_123) + odin_sum4(I_hosp_D_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_D_unconf_3, k - 1, k, internal.dim_I_hosp_D_unconf_1, internal.dim_I_hosp_D_unconf_12, internal.dim_I_hosp_D_unconf_123) + odin_sum4(I_hosp_D_conf, i - 1, i, j - 1, j, 0, internal.dim_I_hosp_D_conf_3, k - 1, k, internal.dim_I_hosp_D_conf_1, internal.dim_I_hosp_D_conf_12, internal.dim_I_hosp_D_conf_123)) + internal.ICU_transmission * (odin_sum4(I_ICU_S_R_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_R_unconf_3, k - 1, k, internal.dim_I_ICU_S_R_unconf_1, internal.dim_I_ICU_S_R_unconf_12, internal.dim_I_ICU_S_R_unconf_123) + odin_sum4(I_ICU_S_R_conf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_R_conf_3, k - 1, k, internal.dim_I_ICU_S_R_conf_1, internal.dim_I_ICU_S_R_conf_12, internal.dim_I_ICU_S_R_conf_123) + odin_sum4(I_ICU_S_D_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_D_unconf_3, k - 1, k, internal.dim_I_ICU_S_D_unconf_1, internal.dim_I_ICU_S_D_unconf_12, internal.dim_I_ICU_S_D_unconf_123) + odin_sum4(I_ICU_S_D_conf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_S_D_conf_3, k - 1, k, internal.dim_I_ICU_S_D_conf_1, internal.dim_I_ICU_S_D_conf_12, internal.dim_I_ICU_S_D_conf_123) + odin_sum4(I_ICU_D_unconf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_D_unconf_3, k - 1, k, internal.dim_I_ICU_D_unconf_1, internal.dim_I_ICU_D_unconf_12, internal.dim_I_ICU_D_unconf_123) + odin_sum4(I_ICU_D_conf, i - 1, i, j - 1, j, 0, internal.dim_I_ICU_D_conf_3, k - 1, k, internal.dim_I_ICU_D_conf_1, internal.dim_I_ICU_D_conf_12, internal.dim_I_ICU_D_conf_123)) + internal.comm_D_transmission * odin_sum4(G_D, i - 1, i, j - 1, j, 0, internal.dim_G_D_3, k - 1, k, internal.dim_G_D_1, internal.dim_G_D_12, internal.dim_G_D_123));
         }
       }
     }
@@ -4104,8 +4104,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.initial_sero_pos = 0;
   internal.initial_time = 0;
   internal.gamma_R_pre = std::vector<real_t>(internal.dim_gamma_R_pre);
+  internal.comm_D_transmission = NA_REAL;
   internal.dt = NA_REAL;
-  internal.G_D_transmission = NA_REAL;
   internal.hosp_transmission = NA_REAL;
   internal.ICU_transmission = NA_REAL;
   internal.n_age_groups = NA_INTEGER;
@@ -4149,8 +4149,8 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   std::array <int, 1> dim_beta_step;
   internal.beta_step = user_get_array_variable<real_t, 1>(user, "beta_step", internal.beta_step, dim_beta_step, NA_REAL, NA_REAL);
   internal.dim_beta_step = internal.beta_step.size();
+  internal.comm_D_transmission = user_get_scalar<real_t>(user, "comm_D_transmission", internal.comm_D_transmission, NA_REAL, NA_REAL);
   internal.dt = user_get_scalar<real_t>(user, "dt", internal.dt, NA_REAL, NA_REAL);
-  internal.G_D_transmission = user_get_scalar<real_t>(user, "G_D_transmission", internal.G_D_transmission, NA_REAL, NA_REAL);
   internal.gamma_A = user_get_scalar<real_t>(user, "gamma_A", internal.gamma_A, NA_REAL, NA_REAL);
   internal.gamma_C = user_get_scalar<real_t>(user, "gamma_C", internal.gamma_C, NA_REAL, NA_REAL);
   internal.gamma_E = user_get_scalar<real_t>(user, "gamma_E", internal.gamma_E, NA_REAL, NA_REAL);

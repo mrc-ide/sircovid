@@ -165,7 +165,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
   expect_true(all(y$R_stepdown_D_unconf == 0))
   expect_true(all(y$R_stepdown_D_conf == 0))
   expect_true(all(y$D_hosp == 0))
-  expect_true(all(y$G_D == 0))
+  expect_true(all(y$I_comm_D == 0))
   expect_true(all(y$D_comm == 0))
 })
 
@@ -204,7 +204,7 @@ test_that("No one is hospitalised, no-one dies if psi_H is 0", {
   expect_true(all(y$R_stepdown_D_unconf == 0))
   expect_true(all(y$R_stepdown_D_conf == 0))
   expect_true(all(y$D_hosp == 0))
-  expect_true(all(y$G_D == 0))
+  expect_true(all(y$I_comm_D == 0))
   expect_true(all(y$D_comm == 0))
 })
 
@@ -313,7 +313,7 @@ test_that("No one dies in the community if psi_death_comm is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C > 0))
-  expect_true(all(y$G_D == 0))
+  expect_true(all(y$I_comm_D == 0))
   expect_true(all(y$D_comm == 0))
 })
 
@@ -547,7 +547,7 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R", TRUE)
   helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D", TRUE)
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
-  helper("gamma_G_D", "s_G_D", "G_D", FALSE)
+  helper("gamma_G_D", "s_G_D", "I_comm_D", FALSE)
   helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R", TRUE)
   helper("gamma_stepdown_D", "s_stepdown_D", "R_stepdown_D", TRUE)
   helper("gamma_R_pos", "s_R_pos", "R_pos", FALSE)
@@ -622,7 +622,7 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_ICU_S_R", "s_ICU_S_R", "I_ICU_S_R", TRUE)
   helper("gamma_ICU_S_D", "s_ICU_S_D", "I_ICU_S_D", TRUE)
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
-  helper("gamma_G_D", "s_G_D", "G_D", FALSE)
+  helper("gamma_G_D", "s_G_D", "I_comm_D", FALSE)
   helper("gamma_stepdown_R", "s_stepdown_R", "R_stepdown_R", TRUE)
   helper("gamma_stepdown_D", "s_stepdown_D", "R_stepdown_D", TRUE)
   helper("gamma_R_pos", "s_R_pos", "R_pos", FALSE)

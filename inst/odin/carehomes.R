@@ -724,7 +724,7 @@ I_with_diff_trans[, , ] <-
       sum(I_ICU_S_D_conf[i, j, , k]) +
       sum(I_ICU_D_unconf[i, j, , k]) +
       sum(I_ICU_D_conf[i, j, , k])) +
-      G_D_transmission * sum(G_D[i, j, , k]))
+      comm_D_transmission * sum(G_D[i, j, , k]))
 
 
 ## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
@@ -902,7 +902,7 @@ update(beta_out) <- beta
 m[, ] <- user()
 hosp_transmission <- user()
 ICU_transmission <- user()
-G_D_transmission <- user()
+comm_D_transmission <- user()
 strain_transmission[] <- user()
 dim(strain_transmission) <- user() # use length as provided by the user
 n_strains <- length(strain_transmission)

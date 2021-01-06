@@ -6,7 +6,7 @@ sircovid_parameters_shared <- function(start_date, region,
   beta_step <- sircovid_parameters_beta(beta_date, beta_value %||% 0.08, dt)
   list(hosp_transmission = 0.1,
        ICU_transmission = 0.05,
-       G_D_transmission = 0.05,
+       comm_D_transmission = 0.05,
        dt = dt,
        initial_step = start_date / dt,
        n_age_groups = length(sircovid_age_bins()$start),
