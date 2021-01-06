@@ -252,14 +252,14 @@ test_that("Can compute initial conditions", {
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$R_pre[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$PCR_pos[, 1, 1, ],
+  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
   ## 42 here, derived from;
   ## * 19 (S)
   ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + R_pre[4] + PCR_pos[4]
+  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + R_pre[4] + T_PCR_pos[4]
   expect_equal(sum(initial$state != 0), 44)
 })
 
@@ -515,13 +515,13 @@ test_that("model_pcr_and_serology_user switch works", {
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
+  ## y$R_neg and y$T_PCR_neg are increasing over time as noone gets out
   for (i in seq_len(p$n_groups)) {
     for (j in seq_len(p$n_strains)) {
     expect_true(all(diff(y$R_neg[i, , 1, j]) >= 0))
     expect_true(all(diff(y$R_neg[i, , 2, j]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, , 2, j]) >= 0))
+    expect_true(all(diff(y$T_PCR_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$T_PCR_neg[i, , 2, j]) >= 0))
     }
   }
 

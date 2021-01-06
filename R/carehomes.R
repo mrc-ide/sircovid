@@ -130,8 +130,8 @@ NULL
 ##'   have one value per age group.
 ##'
 ##' @param model_pcr_and_serology_user A value of 1 or 0 so switch on or off the
-##'   flows out of PCR_neg and R_neg and the corresponding cap on the number of
-##'   individuals leaving the R compartments
+##'   flows out of T_PCR_neg and R_neg and the corresponding cap on the number
+##'   of individuals leaving the R compartments
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -662,7 +662,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   seed_age_band <- 4L
   index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
   index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
-  index_PCR_pos <- index[["PCR_pos"]][[1L]] + seed_age_band - 1L
+  index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot2 <- index[["N_tot2"]][[1L]]
   index_N_tot3 <- index[["N_tot3"]][[1L]]
@@ -679,7 +679,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
   state[index_R_pre] <- initial_I
-  state[index_PCR_pos] <- initial_I
+  state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)

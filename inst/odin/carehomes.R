@@ -84,9 +84,9 @@ update(R_neg[, , ]) <- new_R_neg[i, j, k]
 update(R[, , ]) <- new_R[i, j, k]
 update(D_hosp[]) <- new_D_hosp[i]
 update(D_comm[]) <- new_D_comm[i]
-update(PCR_pre[, , , ]) <- new_PCR_pre[i, j, k, l]
-update(PCR_pos[, , , ]) <- new_PCR_pos[i, j, k, l]
-update(PCR_neg[, , ]) <- new_PCR_neg[i, j, k]
+update(T_PCR_pre[, , , ]) <- new_T_PCR_pre[i, j, k, l]
+update(T_PCR_pos[, , , ]) <- new_T_PCR_pos[i, j, k, l]
+update(T_PCR_neg[, , ]) <- new_T_PCR_neg[i, j, k]
 update(cum_admit_conf) <-
   cum_admit_conf +
   sum(n_sympt_to_hosp_D_conf) +
@@ -131,8 +131,8 @@ p_R_stepdown_D <- 1 - exp(-gamma_W_D * dt)
 p_R_pre[, , , ] <- 1 - exp(-gamma_R_pre[k] * dt)
 p_R_pos <- 1 - exp(-gamma_sero_pos * dt)
 p_test <- 1 - exp(-gamma_U * dt)
-p_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
-p_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
+p_T_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
+p_T_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
 
 ## Work out time-varying probabilities
@@ -257,9 +257,9 @@ n_I_A_next_vacc_class[, , , ] <- rbinom(
 #### flow out of R ####
 
 n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_RS[i])
-## cap on people who can move out of R based on numbers in R_neg and PCR_neg
+## cap on people who can move out of R based on numbers in R_neg and T_PCR_neg
 n_R_progress_capped[, , ] <-
-  min(n_R_progress_tmp[i, j, k], R_neg[i, j, k], PCR_neg[i, j, k])
+  min(n_R_progress_tmp[i, j, k], R_neg[i, j, k], T_PCR_neg[i, j, k])
 ## use cap or not depending on model_pcr_and_serology value
 n_R_progress[, , ] <- if (model_pcr_and_serology == 1)
   n_R_progress_capped[i, j, k] else n_R_progress_tmp[i, j, k]
@@ -277,7 +277,7 @@ n_R_next_vacc_class_tmp[, , ] <- rbinom(
   R[i, j, k] - n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
 n_R_next_vacc_class_capped[, , ] <- min(n_R_next_vacc_class_tmp[i, j, k],
   R_neg[i, j, k] - n_R_progress[i, j, k],
-  PCR_neg[i, j, k] - n_R_progress[i, j, k])
+  T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
 n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
   
@@ -309,8 +309,8 @@ n_R_stepdown_D_conf[, , , ] <-
   rbinom(R_stepdown_D_conf[i, j, k, l], p_R_stepdown_D)
 n_R_pre[, , , ] <- rbinom(R_pre[i, j, k, l], p_R_pre[i, j, k, l])
 n_R_pos[, , , ] <- rbinom(R_pos[i, j, k, l], p_R_pos)
-n_PCR_pre[, , , ] <- rbinom(PCR_pre[i, j, k, l], p_PCR_pre)
-n_PCR_pos[, , , ] <- rbinom(PCR_pos[i, j, k, l], p_PCR_pos)
+n_T_PCR_pre[, , , ] <- rbinom(T_PCR_pre[i, j, k, l], p_T_PCR_pre)
+n_T_PCR_pos[, , , ] <- rbinom(T_PCR_pos[i, j, k, l], p_T_PCR_pos)
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
@@ -689,22 +689,23 @@ new_R[, , 2:n_vacc_classes] <- new_R[i, j, k] +
 
 
 ## Work out the PCR positivity
-new_PCR_pre[, , , ] <- PCR_pre[i, j, k, l] - n_PCR_pre[i, j, k, l]
-new_PCR_pre[, , 1, ] <- new_PCR_pre[i, j, 1, l] + n_S_progress[i, j, l]
-new_PCR_pre[, , 2:s_PCR_pre, ] <-
-  new_PCR_pre[i, j, k, l] + n_PCR_pre[i, j, k - 1, l]
+new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] - n_T_PCR_pre[i, j, k, l]
+new_T_PCR_pre[, , 1, ] <- new_T_PCR_pre[i, j, 1, l] + n_S_progress[i, j, l]
+new_T_PCR_pre[, , 2:s_PCR_pre, ] <-
+  new_T_PCR_pre[i, j, k, l] + n_T_PCR_pre[i, j, k - 1, l]
 
-new_PCR_pos[, , , ] <- PCR_pos[i, j, k, l] - n_PCR_pos[i, j, k, l]
-new_PCR_pos[, , 1, ] <- new_PCR_pos[i, j, 1, l] + n_PCR_pre[i, j, s_PCR_pre, l]
-new_PCR_pos[, , 2:s_PCR_pos, ] <-
-  new_PCR_pos[i, j, k, l] + n_PCR_pos[i, j, k - 1, l]
+new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] - n_T_PCR_pos[i, j, k, l]
+new_T_PCR_pos[, , 1, ] <- new_T_PCR_pos[i, j, 1, l] +
+  n_T_PCR_pre[i, j, s_PCR_pre, l]
+new_T_PCR_pos[, , 2:s_PCR_pos, ] <-
+  new_T_PCR_pos[i, j, k, l] + n_T_PCR_pos[i, j, k - 1, l]
 
-new_PCR_neg[, , ] <- PCR_neg[i, j, k] + n_PCR_pos[i, j, s_PCR_pos, k] -
+new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] + n_T_PCR_pos[i, j, s_PCR_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
-new_PCR_neg[, , 1] <- new_PCR_neg[i, j, 1] +
+new_T_PCR_neg[, , 1] <- new_T_PCR_neg[i, j, 1] +
   model_pcr_and_serology * n_R_next_vacc_class[i, j, n_vacc_classes]
-new_PCR_neg[, , 2:n_vacc_classes] <- new_PCR_neg[i, j, k] +
+new_T_PCR_neg[, , 2:n_vacc_classes] <- new_T_PCR_neg[i, j, k] +
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k - 1]
 
 
@@ -766,9 +767,9 @@ initial(R_neg[, , ]) <- 0
 initial(R[, , ]) <- 0
 initial(D_hosp[]) <- 0
 initial(D_comm[]) <- 0
-initial(PCR_pre[, , , ]) <- 0
-initial(PCR_pos[, , , ]) <- 0
-initial(PCR_neg[, , ]) <- 0
+initial(T_PCR_pre[, , , ]) <- 0
+initial(T_PCR_pos[, , , ]) <- 0
+initial(T_PCR_neg[, , ]) <- 0
 initial(cum_admit_conf) <- 0
 initial(cum_new_conf) <- 0
 initial(cum_admit_by_age[]) <- 0
@@ -1086,14 +1087,14 @@ dim(D_comm) <- n_groups
 dim(new_D_comm) <- n_groups
 
 ## Vectors handling the PCR classes
-dim(PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
-dim(n_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
-dim(new_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
-dim(PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
-dim(n_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
-dim(new_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
-dim(PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
-dim(new_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
+dim(T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
+dim(n_T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
+dim(new_T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
+dim(T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
+dim(n_T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
+dim(new_T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
+dim(T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
+dim(new_T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the S->S transitions i.e. moving between vaccination classes
 dim(p_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
@@ -1210,7 +1211,7 @@ update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
 
 ## Total population calculated with PCR flow
 initial(N_tot3) <- 0
-update(N_tot3) <- sum(S) + sum(PCR_pre) + sum(PCR_pos) + sum(PCR_neg)
+update(N_tot3) <- sum(S) + sum(T_PCR_pre) + sum(T_PCR_pos) + sum(T_PCR_neg)
 
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
@@ -1265,7 +1266,7 @@ update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
-update(react_pos) <- sum(new_PCR_pos[2:18, , , ])
+update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
 ## Vaccination engine
 

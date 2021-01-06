@@ -328,7 +328,7 @@ test_that("different strains are equivalent", {
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
   y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
-  y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
   y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
@@ -370,7 +370,7 @@ test_that("Swapping strains gives identical results with different index", {
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
   y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
-  y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
   y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
@@ -391,10 +391,10 @@ test_that("Swapping strains gives identical results with different index", {
 
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[2:1, , drop = FALSE]
-  for (nm in c("R_neg", "R", "PCR_neg")) {
+  for (nm in c("R_neg", "R", "T_PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
   }
-  v5 <- c("E", "I_A", "I_C", "PCR_pre", "PCR_pos", "R_pre",
+  v5 <- c("E", "I_A", "I_C", "T_PCR_pre", "T_PCR_pos", "R_pre",
           "R_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
           "I_hosp_R_unconf", "I_hosp_R_conf", "I_hosp_D_unconf",
           "I_hosp_D_conf", "I_ICU_S_R_unconf", "I_ICU_S_R_conf",

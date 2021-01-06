@@ -57,10 +57,10 @@ test_that("everyone is infected when beta is large", {
 })
 
 
-test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
+test_that("noone stays in R, R_neg or T_PCR_neg if waning rate is very large", {
   # with a large waning rate and beta = 0,
   # people can move from R to S but not outside of S
-  # therefore R should quickly get empty (and R_neg and PCR_neg as well)
+  # therefore R should quickly get empty (and R_neg and T_PCR_neg as well)
   p <- carehomes_parameters(0, "england",
                             beta_value = 0, # to forbid movement out of S
                             waning_rate = Inf) # to force movement out of R
@@ -69,14 +69,14 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
 
   state <- carehomes_initial(info, 1, p)$state
 
-  # move everyone to R, R_neg and PCR_neg initially
+  # move everyone to R, R_neg and T_PCR_neg initially
   index_S <- array(info$index$S, info$dim$S)
   index_R <- array(info$index$R, info$dim$R)
   index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
-  index_PCR_neg <- array(info$index$PCR_neg, info$dim$PCR_neg)
+  index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
   state[index_R] <- rowSums(array(state[index_S], info$dim$S))
   state[index_R_neg] <- rowSums(array(state[index_S], info$dim$S))
-  state[index_PCR_neg] <- rowSums(array(state[index_S], info$dim$S))
+  state[index_T_PCR_neg] <- rowSums(array(state[index_S], info$dim$S))
   state[index_S] <- 0
 
   mod$set_state(state)
@@ -89,12 +89,12 @@ test_that("noone stays in R, R_neg or PCR_neg if waning rate is very large", {
   expect_true(all(y$R[-4, , -1, ] == 0))
   # so is R_neg
   expect_true(all(y$R_neg[-4, , -1, ] == 0))
-  # so is PCR_neg
-  expect_true(all(y$PCR_neg[-4, , -1, ] == 0))
+  # so is T_PCR_neg
+  expect_true(all(y$T_PCR_neg[-4, , -1, ] == 0))
 
 })
 
-test_that("R, R_neg and PCR_neg are all non-decreasing and S is non-increasing
+test_that("R, R_neg and T_PCR_neg are all non-decreasing and S is non-increasing
           if waning rate is 0", {
   p <- carehomes_parameters(0, "england",
                             waning_rate = 0)
@@ -107,7 +107,7 @@ test_that("R, R_neg and PCR_neg are all non-decreasing and S is non-increasing
 
   expect_true(all(diff(t(drop(y$R))) >= 0))
   expect_true(all(diff(t(drop(y$R_neg))) >= 0))
-  expect_true(all(diff(t(drop(y$PCR_neg))) >= 0))
+  expect_true(all(diff(t(drop(y$T_PCR_neg))) >= 0))
   expect_true(all(diff(t(y$S[, 1, ])) <= 0))
 
 })
@@ -122,7 +122,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   y <- carehomes_initial(info, 1, p)$state
   y[info$index$I_A] <- 0
   y[info$index$R_pre] <- 0
-  y[info$index$PCR_pos] <- 0
+  y[info$index$T_PCR_pos] <- 0
 
   mod$set_state(y)
   mod$set_index(integer(0))
@@ -551,8 +551,8 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_W_R", "s_W_R", "R_stepdown_R", TRUE)
   helper("gamma_W_D", "s_W_D", "R_stepdown_D", TRUE)
   helper("gamma_sero_pos", "s_sero_pos", "R_pos", FALSE)
-  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre", FALSE)
-  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos", FALSE)
+  helper("gamma_PCR_pre", "s_PCR_pre", "T_PCR_pre", FALSE)
+  helper("gamma_PCR_pos", "s_PCR_pos", "T_PCR_pos", FALSE)
 })
 
 
@@ -626,8 +626,8 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_W_R", "s_W_R", "R_stepdown_R", TRUE)
   helper("gamma_W_D", "s_W_D", "R_stepdown_D", TRUE)
   helper("gamma_sero_pos", "s_sero_pos", "R_pos", FALSE)
-  helper("gamma_PCR_pre", "s_PCR_pre", "PCR_pre", FALSE)
-  helper("gamma_PCR_pos", "s_PCR_pos", "PCR_pos", FALSE)
+  helper("gamma_PCR_pre", "s_PCR_pre", "T_PCR_pre", FALSE)
+  helper("gamma_PCR_pos", "s_PCR_pos", "T_PCR_pos", FALSE)
 })
 
 
@@ -820,5 +820,5 @@ test_that("tots all summed correctly ", {
 
   # check the positivity sums
   expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , , 1, ], 3, sum)))
-  expect_true(all(y$react_pos == apply(y$PCR_pos[2:18, , , 1, ], 3, sum)))
+  expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })
