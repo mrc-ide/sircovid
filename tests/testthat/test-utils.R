@@ -150,13 +150,14 @@ test_that("can interpolate an interval over a grid", {
 
   x <- 1:61
   f <- function(x) sin(x / 10)
-  expect_equal(interpolate_grid(x, f, 3, min = 61),
-               interpolate_grid(x, f, 1), tolerance = 1e-15)
-  expect_equal(interpolate_grid(x, f, 3, min = 59),
-               interpolate_grid(x, f, 1), tolerance = 1e-15)
+  y1 <- interpolate_grid(x, f, 3, min = 61)
+  expect_equal(y1, f(x), tolerance = 1e-15)
+  y2 <- interpolate_grid(x, f, 3, min = 59)
+  expect_gt(sum(abs(y2 - f(x))), 1e-5)
+  expect_equal(y2, f(x), tolerance = 1e-5)
 
   y <- interpolate_grid(x, f, 3, min = 30)
-  i <- rep(c(TRUE, FALSE), length.out = length(x))
+  i <- rep(c(TRUE, FALSE, FALSE), length.out = length(x))
   expect_lt(
     mean((y[i] - f(x)[i])^2),
     mean((y[!i] - f(x)[!i])^2))
