@@ -94,7 +94,7 @@ basic_parameters <- function(start_date, region,
   severity$p_death_hosp <-
     (1 - severity[["p_ICU_hosp"]]) *
     severity[["p_death_hosp_D"]]
-  severity$p_recov_sympt <- 1 - severity[["p_hosp_sympt"]]
+  severity$p_recov_sympt <- 1 - severity[["p_H"]]
 
   c(ret,
     severity,

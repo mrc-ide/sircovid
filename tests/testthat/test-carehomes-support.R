@@ -26,7 +26,7 @@ test_that("carehomes vaccination parameters", {
   p <- carehomes_parameters_vaccination(ntot)
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+    c("rel_susceptibility", "rel_p_sympt", "rel_p_H",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
       "vaccine_daily_doses"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
@@ -37,41 +37,41 @@ test_that("carehomes vaccination parameters", {
   # test when more vaccinated categories than default
   rel_susceptibility <- c(1, 0.2, 0.1, 0.4)
   rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
-  rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
+  rel_p_H <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(0, 1, 1, 1)
   p <- carehomes_parameters_vaccination(ntot,
                                         rel_susceptibility = rel_susceptibility,
                                         rel_p_sympt = rel_p_sympt,
-                                        rel_p_hosp_if_sympt =
-                                          rel_p_hosp_if_sympt,
+                                        rel_p_H =
+                                          rel_p_H,
                                         vaccine_progression_rate =
                                           vaccine_progression_rate)
   expect_setequal(
     names(p),
-    c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+    c("rel_susceptibility", "rel_p_sympt", "rel_p_H",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
       "vaccine_daily_doses"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
   expect_equal(nrow(p$rel_p_sympt), n_groups)
   expect_equal(ncol(p$rel_p_sympt), length(rel_p_sympt))
-  expect_equal(nrow(p$rel_p_hosp_if_sympt), n_groups)
-  expect_equal(ncol(p$rel_p_hosp_if_sympt), length(rel_p_hosp_if_sympt))
+  expect_equal(nrow(p$rel_p_H), n_groups)
+  expect_equal(ncol(p$rel_p_H), length(rel_p_H))
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate_base),
                length(vaccine_progression_rate))
-  msg1 <- "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt"
+  msg1 <- "rel_susceptibility, rel_p_sympt, rel_p_H"
   msg2 <- "should have the same dimension"
   expect_error(
     carehomes_parameters_vaccination(ntot,
                                      rel_susceptibility = 1,
                                      rel_p_sympt = c(1, 0.5, 0.25),
-                                     rel_p_hosp_if_sympt = c(1, 0.1)),
+                                     rel_p_H = c(1, 0.1)),
     paste(msg1, msg2))
   expect_error(carehomes_parameters_vaccination(ntot,
                                                 rel_susceptibility = c(1, 1),
                                                 rel_p_sympt = c(1, 0.5, 0.25),
-                                                rel_p_hosp_if_sympt = 1),
+                                                rel_p_H = 1),
                paste(msg1, msg2))
 })
 
@@ -92,7 +92,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(
-    p$N_tot, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
+    p$N_tot, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_H,
     p$vaccine_progression_rate_base)
   expect_identical(p[names(vaccination)], vaccination)
 
@@ -127,8 +127,8 @@ test_that("carehomes_parameters returns a list of parameters", {
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
       "react_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
       "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
-      "psi_death_stepdown", "p_death_stepdown_step", "psi_hosp_sympt",
-      "p_hosp_sympt_step", "psi_death_comm", "p_death_comm_step",
+      "psi_death_stepdown", "p_death_stepdown_step", "psi_H",
+      "p_H_step", "psi_death_comm", "p_death_comm_step",
       "psi_ICU_hosp", "p_ICU_hosp_step", "psi_admit_conf", "p_admit_conf_step",
       "n_groups"))
 

@@ -157,7 +157,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   n_groups <- pars$n_groups
 
   n_time_steps <-
-    length(sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
+    length(sircovid_parameters_beta_expand(step, pars$p_H_step))
 
   ## TODO: This is not correct for the initial transition from
   ## vaccination
@@ -209,13 +209,13 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   }
   p_sympt <- outer(p_sympt, rep(1, n_time_steps))
 
-  p_hosp_sympt <- matricise(pars$psi_hosp_sympt, n_vacc_classes) *
-    pars$rel_p_hosp_if_sympt
+  p_H <- matricise(pars$psi_H, n_vacc_classes) *
+    pars$rel_p_H
   if (n_vacc_classes > 1) {
-    p_hosp_sympt <- t(mat_multi_by_group(p_hosp_sympt, V))
+    p_H <- t(mat_multi_by_group(p_H, V))
   }
-  p_hosp_sympt <- outer(p_hosp_sympt,
-    sircovid_parameters_beta_expand(step, pars$p_hosp_sympt_step))
+  p_H <- outer(p_H,
+    sircovid_parameters_beta_expand(step, pars$p_H_step))
 
   p_ICU_hosp <- outer(matricise(pars$psi_ICU_hosp, n_vacc_classes),
                     sircovid_parameters_beta_expand(step, pars$p_ICU_hosp_step))
@@ -228,15 +228,15 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_death_comm <- outer(matricise(pars$psi_death_comm, n_vacc_classes),
                   sircovid_parameters_beta_expand(step, pars$p_death_comm_step))
 
-  p_hosp_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
+  p_hosp_R <- p_sympt * p_H * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * (1 - p_death_hosp_D)
-  p_hosp_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
+  p_hosp_D <- p_sympt * p_H * (1 - p_death_comm) *
     (1 - p_ICU_hosp) * p_death_hosp_D
-  p_ICU_S_R <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
+  p_ICU_S_R <- p_sympt * p_H * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * (1 - p_death_stepdown)
-  p_ICU_S_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
+  p_ICU_S_D <- p_sympt * p_H * (1 - p_death_comm) *
     p_ICU_hosp * (1 - p_death_ICU) * p_death_stepdown
-  p_ICU_D <- p_sympt * p_hosp_sympt * (1 - p_death_comm) *
+  p_ICU_D <- p_sympt * p_H * (1 - p_death_comm) *
     p_ICU_hosp * p_death_ICU
 
   ## TODO: would be nice if it's possibly to name these subcomponents
@@ -246,7 +246,7 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     p_sympt * pars$s_C / (1 - exp(- dt * pars$gamma_C))
 
   mean_duration <- mean_duration +
-    pars$comm_D_transmission * p_sympt * p_hosp_sympt *
+    pars$comm_D_transmission * p_sympt * p_H *
     p_death_comm * pars$s_comm_D / (1 - exp(- dt * pars$gamma_comm_D))
 
   mean_duration <- mean_duration +

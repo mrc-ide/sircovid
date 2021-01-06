@@ -197,7 +197,7 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_death_stepdown_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_hosp_sympt_step = list(has_default = FALSE,
+        integer = FALSE), p_H_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_ICU_hosp_step = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
@@ -215,20 +215,19 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), psi_death_stepdown = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_hosp_sympt = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_ICU_hosp = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), rel_p_hosp_if_sympt = list(has_default = FALSE,
-        default_value = NULL, rank = 2, min = -Inf, max = Inf,
-        integer = FALSE), rel_p_sympt = list(has_default = FALSE,
-        default_value = NULL, rank = 2, min = -Inf, max = Inf,
-        integer = FALSE), rel_susceptibility = list(has_default = FALSE,
-        default_value = NULL, rank = 2, min = -Inf, max = Inf,
-        integer = FALSE), s_A = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_C = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_comm_D = list(
+        integer = FALSE), psi_H = list(has_default = FALSE, default_value = NULL,
+        rank = 1, min = -Inf, max = Inf, integer = FALSE), psi_ICU_hosp = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), rel_p_H = list(
+        has_default = FALSE, default_value = NULL, rank = 2,
+        min = -Inf, max = Inf, integer = FALSE), rel_p_sympt = list(
+        has_default = FALSE, default_value = NULL, rank = 2,
+        min = -Inf, max = Inf, integer = FALSE), rel_susceptibility = list(
+        has_default = FALSE, default_value = NULL, rank = 2,
+        min = -Inf, max = Inf, integer = FALSE), s_A = list(has_default = FALSE,
+        default_value = NULL, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), s_C = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_comm_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_E = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,

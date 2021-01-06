@@ -170,11 +170,11 @@ test_that("No one is hospitalised, no-one dies if p_sympt is 0", {
 })
 
 
-test_that("No one is hospitalised, no-one dies if psi_hosp_sympt is 0", {
+test_that("No one is hospitalised, no-one dies if psi_H is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_hosp_sympt[] <- 0
+  p$psi_H[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -214,8 +214,8 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$I0_asympt[] <- 0
-  p$p_hosp_sympt_step <- 1
-  p$psi_hosp_sympt[] <- 1
+  p$p_H_step <- 1
+  p$psi_H[] <- 1
   p$p_death_comm_step <- 1
   p$psi_death_comm[] <- 1
   p$p_sympt[] <- 1
@@ -259,8 +259,8 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_hosp_sympt_step <- 1
-  p$psi_hosp_sympt[] <- 1
+  p$p_H_step <- 1
+  p$psi_H[] <- 1
   p$p_death_comm_step <- 1
   p$psi_death_comm[] <- 1
   p$p_sympt[] <- 1

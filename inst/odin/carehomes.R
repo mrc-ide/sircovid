@@ -140,9 +140,9 @@ p_ICU_hosp <- if (as.integer(step) >= length(p_ICU_hosp_step))
   p_ICU_hosp_step[length(p_ICU_hosp_step)] else p_ICU_hosp_step[step + 1]
 prob_ICU_hosp[] <- p_ICU_hosp * psi_ICU_hosp[i]
 
-p_hosp_sympt <- if (as.integer(step) >= length(p_hosp_sympt_step))
-  p_hosp_sympt_step[length(p_hosp_sympt_step)] else p_hosp_sympt_step[step + 1]
-prob_hosp_sympt[] <- p_hosp_sympt * psi_hosp_sympt[i]
+p_H <- if (as.integer(step) >= length(p_H_step))
+  p_H_step[length(p_H_step)] else p_H_step[step + 1]
+prob_H[] <- p_H * psi_H[i]
 
 p_death_ICU <- if (as.integer(step) >= length(p_death_ICU_step))
   p_death_ICU_step[length(p_death_ICU_step)] else p_death_ICU_step[step + 1]
@@ -395,7 +395,7 @@ new_I_C[, , , ] <- I_C[i, j, k, l] + aux_II_C[i, j, k, l]
 
 ## Work out the flow from I_C -> R, comm_D, hosp
 n_sympt_to_R[, , ] <- rbinom(n_II_C[i, j, s_C, k],
-                         1 - prob_hosp_sympt[i] * rel_p_hosp_if_sympt[i, k])
+                         1 - prob_H[i] * rel_p_H[i, k])
 n_sympt_to_comm_D[, , ] <-
   rbinom(n_II_C[i, j, s_C, k] - n_sympt_to_R[i, j, k],
          prob_death_comm[i])
@@ -778,8 +778,8 @@ dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
 rel_p_sympt[, ] <- user()
 dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
-rel_p_hosp_if_sympt[, ] <- user()
-dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
+rel_p_H[, ] <- user()
+dim(rel_p_H) <- c(n_groups, n_vacc_classes)
 
 vaccine_progression_rate_base[, ] <- user()
 dim(vaccine_progression_rate_base) <- c(n_groups, n_vacc_classes)
@@ -799,9 +799,9 @@ gamma_A <- user(0.1)
 ## Parameters of the I_C classes
 s_C <- user()
 gamma_C <- user(0.1)
-dim(p_hosp_sympt_step) <- user()
-p_hosp_sympt_step[] <- user()
-psi_hosp_sympt[] <- user()
+dim(p_H_step) <- user()
+p_H_step[] <- user()
+psi_H[] <- user()
 
 ## Parameters of the I_comm_D class
 s_comm_D <- user()
@@ -931,8 +931,8 @@ dim(I_C) <- c(n_groups, n_strains, s_C, n_vacc_classes)
 dim(aux_II_C) <- c(n_groups, n_strains, s_C, n_vacc_classes)
 dim(new_I_C) <- c(n_groups, n_strains, s_C, n_vacc_classes)
 dim(n_II_C) <- c(n_groups, n_strains, s_C, n_vacc_classes)
-dim(prob_hosp_sympt) <- n_groups
-dim(psi_hosp_sympt) <- n_groups
+dim(prob_H) <- n_groups
+dim(psi_H) <- n_groups
 
 ## Vectors handling the I_comm_D class
 dim(I_comm_D) <- c(n_groups, n_strains, s_comm_D, n_vacc_classes)
