@@ -83,8 +83,8 @@ aux_II_C[, 1:s_C, ] <- aux_II_C[i, j, k] - n_II_C[i, j, k]
 delta_I_C[, , ] <- aux_II_C[i, j, k]
 
 ## Work out the I_hosp->I_hosp transitions
-n_sympt_to_hosp[, ] <- rbinom(n_II_C[i, s_C, j], 1 - p_recov_sympt[i])
-aux_II_hosp[, 1, ] <- n_sympt_to_hosp[i, k]
+n_I_C_to_hosp[, ] <- rbinom(n_II_C[i, s_C, j], p_H[i])
+aux_II_hosp[, 1, ] <- n_I_C_to_hosp[i, k]
 aux_II_hosp[, 2:s_hosp, ] <- n_II_hosp[i, j - 1, k]
 aux_II_hosp[, 1:s_hosp, ] <- aux_II_hosp[i, j, k] - n_II_hosp[i, j, k]
 delta_I_hosp[, , ] <- aux_II_hosp[i, j, k]
@@ -120,7 +120,7 @@ new_D[] <- D[i] + delta_D[i]
 delta_R[] <-
   sum(n_II_A[i, s_A, ]) +
   sum(n_II_C[i, s_C, ]) -
-  sum(n_sympt_to_hosp[i, ]) +
+  sum(n_I_C_to_hosp[i, ]) +
   sum(n_II_hosp[i, s_hosp, ]) -
   sum(n_hosp_to_ICU[i, ]) -
   sum(n_death_hosp[i, ]) +
@@ -173,7 +173,7 @@ gamma_A <- user(0.1)
 ## Parameters of the I_C classes
 s_C <- user()
 gamma_C <- user(0.1)
-p_recov_sympt[] <- user()
+p_H[] <- user()
 
 ## Parameters of the I_hosp classes
 s_hosp <- user()
@@ -234,7 +234,7 @@ dim(I_C) <- c(n_age_groups, s_C, n_trans_classes)
 dim(aux_II_C) <- c(n_age_groups, s_C, n_trans_classes)
 dim(delta_I_C) <- c(n_age_groups, s_C, n_trans_classes)
 dim(n_II_C) <- c(n_age_groups, s_C, n_trans_classes)
-dim(p_recov_sympt) <- c(n_age_groups)
+dim(p_H) <- c(n_age_groups)
 
 ## Vectors handling the I_hosp class
 dim(I_hosp) <- c(n_age_groups, s_hosp, n_trans_classes)
@@ -281,7 +281,7 @@ dim(n_EI_C) <- c(n_age_groups, n_trans_classes)
 ## Vectors handling number of new hospitalisations, ICU admissions and
 ## recoveries in hospital
 dim(n_hosp_to_ICU) <- c(n_age_groups, n_trans_classes)
-dim(n_sympt_to_hosp) <- c(n_age_groups, n_trans_classes)
+dim(n_I_C_to_hosp) <- c(n_age_groups, n_trans_classes)
 dim(n_ICU_to_R_hosp) <- c(n_age_groups, n_trans_classes)
 
 ## Vectors handling the severity profile
