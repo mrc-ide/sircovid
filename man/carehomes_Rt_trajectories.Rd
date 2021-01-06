@@ -9,7 +9,8 @@ carehomes_Rt_trajectories(
   S,
   pars,
   initial_step_from_parameters = TRUE,
-  shared_parameters = NULL
+  shared_parameters = NULL,
+  type = NULL
 )
 }
 \arguments{
@@ -30,6 +31,10 @@ This is usually what you want.}
 shared list? Leave as \code{NULL} to detect automatically, set to
 \code{TRUE} or \code{FALSE} to force it to be interpreted one way or the
 other which may give more easily interpretable error messages.}
+
+\item{type}{A character vector of possible Rt types to
+compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
+\code{Rt_all} and \code{Rt_general}}
 }
 \value{
 As for \code{\link[=carehomes_Rt]{carehomes_Rt()}}, except that every element is a

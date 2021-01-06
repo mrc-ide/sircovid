@@ -142,3 +142,45 @@ test_that("Can vary beta over time", {
   expect_true(all(res$Rt_all >= res$eff_Rt_all))
   expect_true(all(res$Rt_general >= res$eff_Rt_general))
 })
+
+
+test_that("can filter Rt to wanted types", {
+  d <- reference_data_rt()
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  expect_mapequal(
+    carehomes_Rt(steps, y[, 1, ], p, "eff_Rt_general"),
+    d$outputs$rt_1[c("step", "date", "beta", "eff_Rt_general")])
+  expect_mapequal(
+    carehomes_Rt(steps, y[, 1, ], p, c("eff_Rt_general", "Rt_general")),
+    d$outputs$rt_1[c("step", "date", "beta", "eff_Rt_general", "Rt_general")])
+
+  expect_mapequal(
+    carehomes_Rt_trajectories(steps, y, p, type = "eff_Rt_all"),
+    d$outputs$rt_all[c("step", "date", "beta", "eff_Rt_all")])
+  expect_mapequal(
+    carehomes_Rt_trajectories(steps, y, p, type = c("eff_Rt_all", "Rt_all")),
+    d$outputs$rt_all[c("step", "date", "beta", "eff_Rt_all", "Rt_all")])
+})
+
+
+test_that("can't compute Rt for unknown types", {
+  d <- reference_data_rt()
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  expect_error(
+    carehomes_Rt(steps, y[, 1, ], p, "max_Rt_general"),
+    "Unknown R type 'max_Rt_general', must match '")
+  expect_error(
+    carehomes_Rt_trajectories(steps, y, p, type = "max_Rt_general"),
+    "Unknown R type 'max_Rt_general', must match '")
+  expect_error(
+    carehomes_Rt(steps, y[, 1, ], p, c("eff_Rt_general", "rt_general")),
+    "Unknown R type 'rt_general', must match '")
+})
