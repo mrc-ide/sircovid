@@ -44,10 +44,10 @@ compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
 \item{interpolate_critical}{Optional vector of critical step
 indices to use when interpolating. Interpolation will be done in
 blocks between these points, with each block starting on the
-step given. So if you give a \code{interpolate_critical} of \code{c(20, 50)} then blocks \emph{start} on steps 20 and 50, i.e.: [1, 20), [20,
-50), \link{50, end}. Note that this is the index into the \code{step}
-argument and not necessarily the same as the original model
-step (being \code{dt * date}).}
+step given. So if you give a \code{interpolate_critical} of \code{c(20, 50)} then blocks \emph{start} on steps 20 and 50, i.e.: \verb{[1, 20)},
+\verb{[20, 50)}, \verb{[50, end]}. Note that this is the index into the
+\code{step} argument and not necessarily the same as the original
+model step (being \code{dt * date}).}
 
 \item{interpolate_min}{The minimum number of steps to include
 within a block. If there are fewer points than this then all

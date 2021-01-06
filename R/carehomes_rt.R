@@ -18,10 +18,10 @@
 ##'   indices to use when interpolating. Interpolation will be done in
 ##'   blocks between these points, with each block starting on the
 ##'   step given. So if you give a `interpolate_critical` of `c(20,
-##'   50)` then blocks *start* on steps 20 and 50, i.e.: [1, 20), [20,
-##'   50), [50, end]. Note that this is the index into the `step`
-##'   argument and not necessarily the same as the original model
-##'   step (being `dt * date`).
+##'   50)` then blocks *start* on steps 20 and 50, i.e.: `[1, 20)`,
+##'   `[20, 50)`, `[50, end]`. Note that this is the index into the
+##'   `step` argument and not necessarily the same as the original
+##'   model step (being `dt * date`).
 ##'
 ##' @param interpolate_min The minimum number of steps to include
 ##'   within a block. If there are fewer points than this then all
