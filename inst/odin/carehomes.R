@@ -257,7 +257,8 @@ n_I_A_next_vacc_class[, , , ] <- rbinom(
 #### flow out of R ####
 
 n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_RS[i])
-## cap on people who can move out of R based on numbers in T_sero_neg and T_PCR_neg
+## cap on people who can move out of R based on numbers in T_sero_neg and
+## T_PCR_neg
 n_R_progress_capped[, , ] <-
   min(n_R_progress_tmp[i, j, k], T_sero_neg[i, j, k], T_PCR_neg[i, j, k])
 ## use cap or not depending on model_pcr_and_serology value

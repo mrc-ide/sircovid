@@ -57,7 +57,8 @@ test_that("everyone is infected when beta is large", {
 })
 
 
-test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very large", {
+test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very
+          large", {
   # with a large waning rate and beta = 0,
   # people can move from R to S but not outside of S
   # therefore R should quickly get empty (and T_sero_neg and T_PCR_neg as well)
@@ -94,8 +95,8 @@ test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very larg
 
 })
 
-test_that("R, T_sero_neg and T_PCR_neg are all non-decreasing and S is non-increasing
-          if waning rate is 0", {
+test_that("R, T_sero_neg and T_PCR_neg are all non-decreasing and S is
+          non-increasing if waning rate is 0", {
   p <- carehomes_parameters(0, "england",
                             waning_rate = 0)
   mod <- carehomes$new(p, 0, 1)
