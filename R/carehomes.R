@@ -32,10 +32,10 @@ NULL
 ##'
 ##' @param eps Change in contact rate for carehome residents
 ##'
-##' @param C_1 Contact rate between carehome workers and either
+##' @param m_CHW Contact rate between carehome workers and either
 ##'   residents or workers
 ##'
-##' @param C_2 Contact rate between carehome residents
+##' @param m_CHR Contact rate between carehome residents
 ##'
 ##' @param pillar2_specificity Specificity of the Pillar 2 test
 ##'
@@ -45,7 +45,7 @@ NULL
 ##'
 ##' @param react_sensitivity Sensitivity of the REACT test
 ##'
-##' @param prop_noncovid_sympt Proportion of population who do not have
+##' @param p_NC Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
 ##' @param strain_transmission Vector of relative transmissibility of each
@@ -235,13 +235,13 @@ carehomes_parameters <- function(start_date, region,
                                  sero_sensitivity = 0.99,
                                  progression = NULL,
                                  eps = 0.1,
-                                 C_1 = 4e-6,
-                                 C_2 = 5e-5,
+                                 m_CHW = 4e-6,
+                                 m_CHR = 5e-5,
                                  pillar2_specificity = 0.99,
                                  pillar2_sensitivity = 0.99,
                                  react_specificity = 0.99,
                                  react_sensitivity = 0.99,
-                                 prop_noncovid_sympt = 0.01,
+                                 p_NC = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_value = NULL,
@@ -304,7 +304,7 @@ carehomes_parameters <- function(start_date, region,
 
   waning <- carehomes_parameters_waning(waning_rate)
 
-  ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region)
+  ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
                                     carehome_residents)
@@ -328,7 +328,7 @@ carehomes_parameters <- function(start_date, region,
   ret$react_sensitivity <- react_sensitivity
 
   ## Proportion of population with covid-like symptoms without covid
-  ret$prop_noncovid_sympt <- prop_noncovid_sympt
+  ret$p_NC <- p_NC
 
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise)
@@ -480,7 +480,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   ## calculate test positive probabilities for the various test data streams
   ## Pillar 2
-  pillar2_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot)
+  pillar2_negs <- pars$p_NC * (sum(pars$N_tot)
                                               - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
                                           pillar2_negs,
@@ -489,7 +489,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                           pars$observation$exp_noise)
 
   ## Pillar 2 over 25s
-  pillar2_over25_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot[6:19])
+  pillar2_over25_negs <- pars$p_NC * (sum(pars$N_tot[6:19])
                                               - model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
@@ -605,19 +605,19 @@ carehomes_index_workers <- function() {
 }
 
 
-carehomes_transmission_matrix <- function(eps, C_1, C_2, region) {
+carehomes_transmission_matrix <- function(eps, m_CHW, m_CHR, region) {
   index_workers <- carehomes_index_workers()
   m <- sircovid_transmission_matrix(region)
   n_age_groups <- nrow(m)
 
-  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, mean)
-  m_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
+  m_gen_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, mean)
+  m_gen_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
 
   ## Construct a block matrix:
   ##
-  ##   M     m_chw m_chr
-  ##   m_chw C_1   C_1
-  ##   m_chr C_1   C_2
+  ##   M          m_gen_chw  m_gen_chr
+  ##   m_gen_chw  m_CHW      m_CHW
+  ##   m_gen_chr  m_CHW      m_CHR
 
   i <- seq_len(n_age_groups)
   i_chw <- n_age_groups + 1L
@@ -625,9 +625,9 @@ carehomes_transmission_matrix <- function(eps, C_1, C_2, region) {
 
   ret <- matrix(0.0, n_age_groups + 2, n_age_groups + 2)
   ret[i, i] <- m
-  ret[i, i_chw] <- ret[i_chw, i] <- m_chw
-  ret[i, i_chr] <- ret[i_chr, i] <- m_chr
-  ret[i_chw:i_chr, i_chw:i_chr] <- c(C_1, C_1, C_1, C_2)
+  ret[i, i_chw] <- ret[i_chw, i] <- m_gen_chw
+  ret[i, i_chr] <- ret[i_chr, i] <- m_gen_chr
+  ret[i_chw:i_chr, i_chw:i_chr] <- c(m_CHW, m_CHW, m_CHW, m_CHR)
 
   nms <- c(rownames(m), "CHW", "CHR")
   dimnames(ret) <- list(nms, nms)
