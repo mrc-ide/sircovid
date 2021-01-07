@@ -162,9 +162,9 @@ p_G_D <- if (as.integer(step) >= length(p_G_D_step))
   p_G_D_step[length(p_G_D_step)] else p_G_D_step[step + 1]
 prob_G_D[] <- p_G_D * psi_G_D[i]
 
-p_admit_conf <- if (as.integer(step) >= length(p_admit_conf_step))
-  p_admit_conf_step[length(p_admit_conf_step)] else p_admit_conf_step[step + 1]
-prob_admit_conf[] <- p_admit_conf * psi_admit_conf[i]
+p_star <- if (as.integer(step) >= length(p_star_step))
+  p_star_step[length(p_star_step)] else p_star_step[step + 1]
+prob_admit_conf[] <- p_star * psi_star[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -877,9 +877,9 @@ gamma_sero_pos <- user(0.1)
 
 ## Parameters relating to testing
 gamma_U <- user(0.1)
-dim(p_admit_conf_step) <- user()
-p_admit_conf_step[] <- user()
-psi_admit_conf[] <- user()
+dim(p_star_step) <- user()
+p_star_step[] <- user()
+psi_star[] <- user()
 
 ## Parameters relating to PCR positivity
 s_PCR_pre <- user()
@@ -1172,7 +1172,7 @@ dim(psi_W_D) <- n_groups
 
 ## Vector handling the probability of being admitted as confirmed
 dim(prob_admit_conf) <- n_groups
-dim(psi_admit_conf) <- n_groups
+dim(psi_star) <- n_groups
 
 dim(cum_admit_by_age) <- n_groups
 

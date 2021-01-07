@@ -133,7 +133,7 @@ sircovid_parameters_severity <- function(params) {
   if (is.null(params)) {
     params <- severity_default()
   } else if (!is.data.frame(params)) {
-    expected <- c("p_admit_conf", "p_C", "p_G_D",
+    expected <- c("p_star", "p_C", "p_G_D",
                   "p_H_D", "p_ICU_D", "p_W_D",
                   "p_ICU", "p_seroconversion", "p_H")
     verify_names(params, expected)
@@ -157,11 +157,11 @@ sircovid_parameters_severity <- function(params) {
     p_W_D = "p_W_D",
     p_seroconversion = "p_seroconversion",
     p_G_D = "p_G_D",
-    p_admit_conf = "p_admit_conf")
+    p_star = "p_star")
   data <- rename(data, required, names(required))
 
   list(
-    p_admit_conf = data[["p_admit_conf"]],
+    p_star = data[["p_star"]],
     p_C = data[["p_C"]],
     p_G_D = data[["p_G_D"]],
     p_H_D = data[["p_H_D"]],

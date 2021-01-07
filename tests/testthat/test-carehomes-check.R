@@ -631,12 +631,12 @@ test_that("setting a gamma to 0 results in no progression", {
 })
 
 
-test_that("No one is unconfirmed, if p_admit_conf = 1", {
+test_that("No one is unconfirmed, if p_star = 1", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_admit_conf_step <- 1
-  p$psi_admit_conf[] <- 1
+  p$p_star_step <- 1
+  p$psi_star[] <- 1
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
   p$gamma_H_D <- Inf
@@ -678,11 +678,11 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
 })
 
 
-test_that("No one is confirmed, if p_admit_conf = 0 and gamma_U = 0", {
+test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_admit_conf[] <- 0
+  p$psi_star[] <- 0
   p$gamma_U <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -712,11 +712,11 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_U = 0", {
 })
 
 
-test_that("Instant confirmation if p_admit_conf = 0 and gamma_U = Inf", {
+test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_admit_conf[] <- 0
+  p$psi_star[] <- 0
   p$gamma_U <- Inf
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf

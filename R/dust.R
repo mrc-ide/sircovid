@@ -186,8 +186,6 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), n_groups = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), p_admit_conf_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_C = list(has_default = FALSE, default_value = NULL,
         rank = 1, min = -Inf, max = Inf, integer = FALSE), p_G_D_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
@@ -201,9 +199,9 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_seroconversion = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_W_D_step = list(
+        min = -Inf, max = Inf, integer = FALSE), p_star_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), psi_admit_conf = list(
+        min = -Inf, max = Inf, integer = FALSE), p_W_D_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_G_D = list(
         has_default = FALSE, default_value = NULL, rank = 1,
@@ -214,6 +212,8 @@ carehomes <- R6::R6Class(
         min = -Inf, max = Inf, integer = FALSE), psi_ICU = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_ICU_D = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_star = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_W_D = list(
         has_default = FALSE, default_value = NULL, rank = 1,

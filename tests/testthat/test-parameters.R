@@ -67,7 +67,7 @@ test_that("can read the default severity file", {
   expect_true(all(lengths(data) == 17))
   expect_setequal(
     names(data),
-    c("p_admit_conf", "p_C", "p_G_D", "p_H_D",
+    c("p_star", "p_C", "p_G_D", "p_H_D",
       "p_ICU_D", "p_W_D", "p_ICU",
       "p_seroconversion", "p_H"))
   expect_true(
@@ -75,7 +75,7 @@ test_that("can read the default severity file", {
   expect_equal(
     data$p_G_D, rep(0, 17))
   expect_equal(
-    data$p_admit_conf, rep(0.2, 17))
+    data$p_star, rep(0.2, 17))
 })
 
 
@@ -94,7 +94,7 @@ test_that("can reprocess severity", {
     s)
   expect_error(
     sircovid_parameters_severity(s[-1]),
-    "Elements missing from 'params': 'p_admit_conf'")
+    "Elements missing from 'params': 'p_star'")
 })
 
 

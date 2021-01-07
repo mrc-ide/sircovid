@@ -84,7 +84,6 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_admit_conf_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_C, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_G_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_H_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -92,13 +91,14 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(p_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_seroconversion, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_star_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(psi_admit_conf, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_G_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_H, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_H_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_ICU, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_ICU_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(psi_star, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_W_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_C, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_H, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1081,7 +1081,6 @@ public:
     int dim_new_W_R_unconf_2;
     int dim_new_W_R_unconf_3;
     int dim_new_W_R_unconf_4;
-    int dim_p_admit_conf_step;
     int dim_p_C;
     int dim_p_E_next_vacc_class;
     int dim_p_E_next_vacc_class_1;
@@ -1122,6 +1121,7 @@ public:
     int dim_p_SE_1;
     int dim_p_SE_2;
     int dim_p_seroconversion;
+    int dim_p_star_step;
     int dim_p_W_D_step;
     int dim_prob_admit_conf;
     int dim_prob_G_D;
@@ -1130,12 +1130,12 @@ public:
     int dim_prob_ICU;
     int dim_prob_ICU_D;
     int dim_prob_W_D;
-    int dim_psi_admit_conf;
     int dim_psi_G_D;
     int dim_psi_H;
     int dim_psi_H_D;
     int dim_psi_ICU;
     int dim_psi_ICU_D;
+    int dim_psi_star;
     int dim_psi_W_D;
     int dim_R;
     int dim_R_1;
@@ -1464,7 +1464,6 @@ public:
     int offset_variable_W_D_unconf;
     int offset_variable_W_R_conf;
     int offset_variable_W_R_unconf;
-    std::vector<real_t> p_admit_conf_step;
     std::vector<real_t> p_C;
     std::vector<real_t> p_E_next_vacc_class;
     real_t p_EE;
@@ -1491,6 +1490,7 @@ public:
     std::vector<real_t> p_S_next_vacc_class;
     std::vector<real_t> p_SE;
     std::vector<real_t> p_seroconversion;
+    std::vector<real_t> p_star_step;
     real_t p_T_PCR_pos;
     real_t p_T_PCR_pre;
     real_t p_test;
@@ -1504,12 +1504,12 @@ public:
     std::vector<real_t> prob_ICU;
     std::vector<real_t> prob_ICU_D;
     std::vector<real_t> prob_W_D;
-    std::vector<real_t> psi_admit_conf;
     std::vector<real_t> psi_G_D;
     std::vector<real_t> psi_H;
     std::vector<real_t> psi_H_D;
     std::vector<real_t> psi_ICU;
     std::vector<real_t> psi_ICU_D;
+    std::vector<real_t> psi_star;
     std::vector<real_t> psi_W_D;
     std::vector<real_t> rel_p_C;
     std::vector<real_t> rel_p_H;
@@ -1653,16 +1653,16 @@ public:
     state_next[6] = odin_sum1(S, 0, internal.dim_S) + odin_sum1(T_PCR_pre, 0, internal.dim_T_PCR_pre) + odin_sum1(T_PCR_pos, 0, internal.dim_T_PCR_pos) + odin_sum1(T_PCR_neg, 0, internal.dim_T_PCR_neg);
     state_next[0] = (step + 1) * internal.dt;
     real_t beta = (static_cast<int>(step) >= internal.dim_beta_step ? internal.beta_step[internal.dim_beta_step - 1] : internal.beta_step[step + 1 - 1]);
-    real_t p_admit_conf = (static_cast<int>(step) >= internal.dim_p_admit_conf_step ? internal.p_admit_conf_step[internal.dim_p_admit_conf_step - 1] : internal.p_admit_conf_step[step + 1 - 1]);
     real_t p_G_D = (static_cast<int>(step) >= internal.dim_p_G_D_step ? internal.p_G_D_step[internal.dim_p_G_D_step - 1] : internal.p_G_D_step[step + 1 - 1]);
     real_t p_H = (static_cast<int>(step) >= internal.dim_p_H_step ? internal.p_H_step[internal.dim_p_H_step - 1] : internal.p_H_step[step + 1 - 1]);
     real_t p_H_D = (static_cast<int>(step) >= internal.dim_p_H_D_step ? internal.p_H_D_step[internal.dim_p_H_D_step - 1] : internal.p_H_D_step[step + 1 - 1]);
     real_t p_ICU = (static_cast<int>(step) >= internal.dim_p_ICU_step ? internal.p_ICU_step[internal.dim_p_ICU_step - 1] : internal.p_ICU_step[step + 1 - 1]);
     real_t p_ICU_D = (static_cast<int>(step) >= internal.dim_p_ICU_D_step ? internal.p_ICU_D_step[internal.dim_p_ICU_D_step - 1] : internal.p_ICU_D_step[step + 1 - 1]);
+    real_t p_star = (static_cast<int>(step) >= internal.dim_p_star_step ? internal.p_star_step[internal.dim_p_star_step - 1] : internal.p_star_step[step + 1 - 1]);
     real_t p_W_D = (static_cast<int>(step) >= internal.dim_p_W_D_step ? internal.p_W_D_step[internal.dim_p_W_D_step - 1] : internal.p_W_D_step[step + 1 - 1]);
     real_t strain_seed = ((static_cast<int>(step) >= internal.dim_strain_seed_step ? internal.strain_seed_step[internal.dim_strain_seed_step - 1] : internal.strain_seed_step[step + 1 - 1]));
     for (int i = 1; i <= internal.dim_prob_admit_conf; ++i) {
-      internal.prob_admit_conf[i - 1] = p_admit_conf * internal.psi_admit_conf[i - 1];
+      internal.prob_admit_conf[i - 1] = p_star * internal.psi_star[i - 1];
     }
     for (int i = 1; i <= internal.dim_prob_G_D; ++i) {
       internal.prob_G_D[i - 1] = p_G_D * internal.psi_G_D[i - 1];
@@ -4169,9 +4169,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", internal.model_pcr_and_serology_user, NA_REAL, NA_REAL);
   internal.n_age_groups = user_get_scalar<int>(user, "n_age_groups", internal.n_age_groups, NA_REAL, NA_REAL);
   internal.n_groups = user_get_scalar<int>(user, "n_groups", internal.n_groups, NA_REAL, NA_REAL);
-  std::array <int, 1> dim_p_admit_conf_step;
-  internal.p_admit_conf_step = user_get_array_variable<real_t, 1>(user, "p_admit_conf_step", internal.p_admit_conf_step, dim_p_admit_conf_step, NA_REAL, NA_REAL);
-  internal.dim_p_admit_conf_step = internal.p_admit_conf_step.size();
   std::array <int, 1> dim_p_G_D_step;
   internal.p_G_D_step = user_get_array_variable<real_t, 1>(user, "p_G_D_step", internal.p_G_D_step, dim_p_G_D_step, NA_REAL, NA_REAL);
   internal.dim_p_G_D_step = internal.p_G_D_step.size();
@@ -4188,6 +4185,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.p_ICU_step = user_get_array_variable<real_t, 1>(user, "p_ICU_step", internal.p_ICU_step, dim_p_ICU_step, NA_REAL, NA_REAL);
   internal.dim_p_ICU_step = internal.p_ICU_step.size();
   internal.p_R_pre_1 = user_get_scalar<real_t>(user, "p_R_pre_1", internal.p_R_pre_1, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_p_star_step;
+  internal.p_star_step = user_get_array_variable<real_t, 1>(user, "p_star_step", internal.p_star_step, dim_p_star_step, NA_REAL, NA_REAL);
+  internal.dim_p_star_step = internal.p_star_step.size();
   std::array <int, 1> dim_p_W_D_step;
   internal.p_W_D_step = user_get_array_variable<real_t, 1>(user, "p_W_D_step", internal.p_W_D_step, dim_p_W_D_step, NA_REAL, NA_REAL);
   internal.dim_p_W_D_step = internal.p_W_D_step.size();
@@ -4236,12 +4236,12 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_prob_ICU = internal.n_groups;
   internal.dim_prob_ICU_D = internal.n_groups;
   internal.dim_prob_W_D = internal.n_groups;
-  internal.dim_psi_admit_conf = internal.n_groups;
   internal.dim_psi_G_D = internal.n_groups;
   internal.dim_psi_H = internal.n_groups;
   internal.dim_psi_H_D = internal.n_groups;
   internal.dim_psi_ICU = internal.n_groups;
   internal.dim_psi_ICU_D = internal.n_groups;
+  internal.dim_psi_star = internal.n_groups;
   internal.dim_psi_W_D = internal.n_groups;
   internal.dim_vaccine_n_candidates = internal.n_groups;
   internal.dim_vaccine_population_possible = internal.n_groups;
@@ -4305,12 +4305,12 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.n_strains = internal.dim_strain_transmission;
   internal.p_C = user_get_array_fixed<real_t, 1>(user, "p_C", internal.p_C, {internal.dim_p_C}, NA_REAL, NA_REAL);
   internal.p_seroconversion = user_get_array_fixed<real_t, 1>(user, "p_seroconversion", internal.p_seroconversion, {internal.dim_p_seroconversion}, NA_REAL, NA_REAL);
-  internal.psi_admit_conf = user_get_array_fixed<real_t, 1>(user, "psi_admit_conf", internal.psi_admit_conf, {internal.dim_psi_admit_conf}, NA_REAL, NA_REAL);
   internal.psi_G_D = user_get_array_fixed<real_t, 1>(user, "psi_G_D", internal.psi_G_D, {internal.dim_psi_G_D}, NA_REAL, NA_REAL);
   internal.psi_H = user_get_array_fixed<real_t, 1>(user, "psi_H", internal.psi_H, {internal.dim_psi_H}, NA_REAL, NA_REAL);
   internal.psi_H_D = user_get_array_fixed<real_t, 1>(user, "psi_H_D", internal.psi_H_D, {internal.dim_psi_H_D}, NA_REAL, NA_REAL);
   internal.psi_ICU = user_get_array_fixed<real_t, 1>(user, "psi_ICU", internal.psi_ICU, {internal.dim_psi_ICU}, NA_REAL, NA_REAL);
   internal.psi_ICU_D = user_get_array_fixed<real_t, 1>(user, "psi_ICU_D", internal.psi_ICU_D, {internal.dim_psi_ICU_D}, NA_REAL, NA_REAL);
+  internal.psi_star = user_get_array_fixed<real_t, 1>(user, "psi_star", internal.psi_star, {internal.dim_psi_star}, NA_REAL, NA_REAL);
   internal.psi_W_D = user_get_array_fixed<real_t, 1>(user, "psi_W_D", internal.psi_W_D, {internal.dim_psi_W_D}, NA_REAL, NA_REAL);
   internal.vaccine_population_reluctant = user_get_array_fixed<real_t, 1>(user, "vaccine_population_reluctant", internal.vaccine_population_reluctant, {internal.dim_vaccine_population_reluctant}, NA_REAL, NA_REAL);
   internal.waning_rate = user_get_array_fixed<real_t, 1>(user, "waning_rate", internal.waning_rate, {internal.dim_waning_rate}, NA_REAL, NA_REAL);

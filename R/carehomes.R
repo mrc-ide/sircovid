@@ -297,8 +297,8 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_G_D <- severity$p_G_D / max(severity$p_G_D)
   severity$p_G_D_step <- max(severity$p_G_D)
   ## probability of an admission already being confirmed covid
-  severity$psi_admit_conf <- severity$p_admit_conf / max(severity$p_admit_conf)
-  severity$p_admit_conf_step <- max(severity$p_admit_conf)
+  severity$psi_star <- severity$p_star / max(severity$p_star)
+  severity$p_star_step <- max(severity$p_star)
 
   progression <- progression %||% carehomes_parameters_progression()
 
