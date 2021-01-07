@@ -188,7 +188,7 @@ test_that("if gamma_hosp is Inf, I_hosp cases must progress in 1 timestep", {
   ## even though they are no longer the default
   p <- basic_parameters(0, "england")
   p$gamma_hosp <- Inf
-  p$s_hosp <- 2
+  p$k_hosp <- 2
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
@@ -208,7 +208,7 @@ test_that("if gamma_ICU is Inf, I_ICU cases must progress in 1 timestep", {
   ## even though they are no longer the default
   p <- basic_parameters(0, "england")
   p$gamma_ICU <- Inf
-  p$s_ICU <- 2
+  p$k_ICU <- 2
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()

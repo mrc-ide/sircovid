@@ -85,33 +85,33 @@ delta_I_C[, , ] <- aux_II_C[i, j, k]
 ## Work out the I_hosp->I_hosp transitions
 n_sympt_to_hosp[, ] <- rbinom(n_II_C[i, k_C, j], 1 - p_recov_sympt[i])
 aux_II_hosp[, 1, ] <- n_sympt_to_hosp[i, k]
-aux_II_hosp[, 2:s_hosp, ] <- n_II_hosp[i, j - 1, k]
-aux_II_hosp[, 1:s_hosp, ] <- aux_II_hosp[i, j, k] - n_II_hosp[i, j, k]
+aux_II_hosp[, 2:k_hosp, ] <- n_II_hosp[i, j - 1, k]
+aux_II_hosp[, 1:k_hosp, ] <- aux_II_hosp[i, j, k] - n_II_hosp[i, j, k]
 delta_I_hosp[, , ] <- aux_II_hosp[i, j, k]
 
 ## Work out the death in hospital without getting critical care
-n_death_hosp[, ] <- rbinom(n_II_hosp[i, s_hosp, j], p_death_hosp[i])
+n_death_hosp[, ] <- rbinom(n_II_hosp[i, k_hosp, j], p_death_hosp[i])
 
 ## Work out the I_ICU -> I_ICU transitions
 n_hosp_to_ICU[, ] <-
-  rbinom(n_II_hosp[i, s_hosp, j] - n_death_hosp[i, j],
+  rbinom(n_II_hosp[i, k_hosp, j] - n_death_hosp[i, j],
          1 - p_recov_hosp[i] - p_death_hosp[i])
 aux_II_ICU[, 1, ] <- n_hosp_to_ICU[i, k]
-aux_II_ICU[, 2:s_ICU, ] <- n_II_ICU[i, j - 1, k]
-aux_II_ICU[, 1:s_ICU, ] <- aux_II_ICU[i, j, k] - n_II_ICU[i, j, k]
+aux_II_ICU[, 2:k_ICU, ] <- n_II_ICU[i, j - 1, k]
+aux_II_ICU[, 1:k_ICU, ] <- aux_II_ICU[i, j, k] - n_II_ICU[i, j, k]
 delta_I_ICU[, , ] <- aux_II_ICU[i, j, k]
 
 new_I_ICU[, , ] <- I_ICU[i, j, k] + delta_I_ICU[i, j, k]
 
 ## Work out the R_hosp -> R_hosp transitions
-n_ICU_to_R_hosp[, ] <- rbinom(n_II_ICU[i, s_ICU, j], p_recov_ICU[i])
+n_ICU_to_R_hosp[, ] <- rbinom(n_II_ICU[i, k_ICU, j], p_recov_ICU[i])
 aux_R_hosp[, 1, ] <- n_ICU_to_R_hosp[i, k]
-aux_R_hosp[, 2:s_rec, ] <- n_R_hosp[i, j - 1, k]
-aux_R_hosp[, 1:s_rec, ] <- aux_R_hosp[i, j, k] - n_R_hosp[i, j, k]
+aux_R_hosp[, 2:k_rec, ] <- n_R_hosp[i, j - 1, k]
+aux_R_hosp[, 1:k_rec, ] <- aux_R_hosp[i, j, k] - n_R_hosp[i, j, k]
 delta_R_hosp[, , ] <- aux_R_hosp[i, j, k]
 
 ## Work out the number of deaths
-delta_D[] <- sum(n_II_ICU[i, s_ICU, ]) - sum(n_ICU_to_R_hosp[i, ]) +
+delta_D[] <- sum(n_II_ICU[i, k_ICU, ]) - sum(n_ICU_to_R_hosp[i, ]) +
   sum(n_death_hosp[i, ])
 
 new_D[] <- D[i] + delta_D[i]
@@ -121,10 +121,10 @@ delta_R[] <-
   sum(n_II_A[i, k_A, ]) +
   sum(n_II_C[i, k_C, ]) -
   sum(n_sympt_to_hosp[i, ]) +
-  sum(n_II_hosp[i, s_hosp, ]) -
+  sum(n_II_hosp[i, k_hosp, ]) -
   sum(n_hosp_to_ICU[i, ]) -
   sum(n_death_hosp[i, ]) +
-  sum(n_R_hosp[i, s_rec, ])
+  sum(n_R_hosp[i, k_rec, ])
 
 ## Compute the force of infection
 I_with_diff_trans[, ] <- trans_increase[i, j] * (
@@ -176,18 +176,18 @@ gamma_C <- user(0.1)
 p_recov_sympt[] <- user()
 
 ## Parameters of the I_hosp classes
-s_hosp <- user()
+k_hosp <- user()
 gamma_hosp <- user(0.1)
 p_recov_hosp[] <- user()
 p_death_hosp[] <- user()
 
 ## Parameters of the I_ICU classes
-s_ICU <- user()
+k_ICU <- user()
 gamma_ICU <- user(0.1)
 p_recov_ICU[] <- user()
 
 ## Parameters of the R_hosp classes
-s_rec <- user()
+k_rec <- user()
 gamma_rec <- user(0.1)
 
 ## Parameters of the age stratified transmission
@@ -237,26 +237,26 @@ dim(n_II_C) <- c(n_age_groups, k_C, n_trans_classes)
 dim(p_recov_sympt) <- c(n_age_groups)
 
 ## Vectors handling the I_hosp class
-dim(I_hosp) <- c(n_age_groups, s_hosp, n_trans_classes)
-dim(aux_II_hosp) <- c(n_age_groups, s_hosp, n_trans_classes)
-dim(delta_I_hosp) <- c(n_age_groups, s_hosp, n_trans_classes)
-dim(n_II_hosp) <- c(n_age_groups, s_hosp, n_trans_classes)
+dim(I_hosp) <- c(n_age_groups, k_hosp, n_trans_classes)
+dim(aux_II_hosp) <- c(n_age_groups, k_hosp, n_trans_classes)
+dim(delta_I_hosp) <- c(n_age_groups, k_hosp, n_trans_classes)
+dim(n_II_hosp) <- c(n_age_groups, k_hosp, n_trans_classes)
 dim(p_recov_hosp) <- c(n_age_groups)
 dim(n_death_hosp) <- c(n_age_groups, n_trans_classes)
 
 ## Vectors handling the I_ICU class
-dim(I_ICU) <- c(n_age_groups, s_ICU, n_trans_classes)
-dim(aux_II_ICU) <- c(n_age_groups, s_ICU, n_trans_classes)
-dim(delta_I_ICU) <- c(n_age_groups, s_ICU, n_trans_classes)
-dim(n_II_ICU) <- c(n_age_groups, s_ICU, n_trans_classes)
+dim(I_ICU) <- c(n_age_groups, k_ICU, n_trans_classes)
+dim(aux_II_ICU) <- c(n_age_groups, k_ICU, n_trans_classes)
+dim(delta_I_ICU) <- c(n_age_groups, k_ICU, n_trans_classes)
+dim(n_II_ICU) <- c(n_age_groups, k_ICU, n_trans_classes)
 dim(p_recov_ICU) <- c(n_age_groups)
-dim(new_I_ICU) <- c(n_age_groups, s_ICU, n_trans_classes)
+dim(new_I_ICU) <- c(n_age_groups, k_ICU, n_trans_classes)
 
 ## Vectors handling the R_hosp class
-dim(R_hosp) <- c(n_age_groups, s_rec, n_trans_classes)
-dim(aux_R_hosp) <- c(n_age_groups, s_rec, n_trans_classes)
-dim(delta_R_hosp) <- c(n_age_groups, s_rec, n_trans_classes)
-dim(n_R_hosp) <- c(n_age_groups, s_rec, n_trans_classes)
+dim(R_hosp) <- c(n_age_groups, k_rec, n_trans_classes)
+dim(aux_R_hosp) <- c(n_age_groups, k_rec, n_trans_classes)
+dim(delta_R_hosp) <- c(n_age_groups, k_rec, n_trans_classes)
+dim(n_R_hosp) <- c(n_age_groups, k_rec, n_trans_classes)
 
 ## Vectors handling the R class
 dim(R) <- c(n_age_groups)

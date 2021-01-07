@@ -230,15 +230,15 @@ basic_parameters_progression <- function() {
   ## These need to be aligned with Bob's severity outputs, and we will
   ## come up with a better way of correlating the two.
 
-  ## The s_ parameters are the scaling parameters for the Erlang
-  ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
-  ## parameters of that distribution.
+  ## The k_ parameters are the shape parameters for the Erlang
+  ## distibution, while the gamma parameters are the gamma
+  ## rate parameters of that distribution.
   list(k_E = 2,
        k_A = 1,
        k_C = 1,
-       s_hosp = 2,
-       s_ICU = 2,
-       s_rec = 2,
+       k_hosp = 2,
+       k_ICU = 2,
+       k_rec = 2,
 
        gamma_E = 1 / (4.59 / 2),
        gamma_A = 1 / 2.09,
