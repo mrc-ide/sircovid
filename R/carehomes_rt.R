@@ -253,12 +253,12 @@ carehomes_Rt_mean_duration <- function(step, pars) {
     pars$hosp_transmission * (
       p_hosp_R * pars$s_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
       p_hosp_D * pars$s_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
-      (p_ICU_S_R + p_ICU_S_D + p_ICU_D) * pars$s_ICU_pre /
+      (p_ICU_S_R + p_ICU_S_D + p_ICU_D) * pars$k_ICU_pre /
       (1 - exp(- dt * pars$gamma_ICU_pre))) +
     pars$ICU_transmission * (
-      p_ICU_S_R * pars$s_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
-      p_ICU_S_D * pars$s_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
-      p_ICU_D * pars$s_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
+      p_ICU_S_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
+      p_ICU_S_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
+      p_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
 
   dt * mean_duration
 }

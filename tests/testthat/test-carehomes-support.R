@@ -5,7 +5,7 @@ test_that("carehomes progression parameters", {
   expect_setequal(
     names(p),
     c("k_E", "k_A", "k_C", "s_G_D", "s_H_D", "s_H_R",
-      "s_ICU_D", "s_ICU_W_R", "s_ICU_W_D", "s_ICU_pre", "s_W_D",
+      "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "s_W_D",
       "s_W_R", "s_sero_pos", "s_PCR_pos", "s_PCR_pre", "gamma_E",
       "gamma_A", "gamma_C", "gamma_G_D", "gamma_H_D",
       "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
