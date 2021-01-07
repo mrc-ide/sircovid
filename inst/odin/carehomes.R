@@ -89,8 +89,8 @@ update(T_PCR_pos[, , , ]) <- new_T_PCR_pos[i, j, k, l]
 update(T_PCR_neg[, , ]) <- new_T_PCR_neg[i, j, k]
 update(cum_admit_conf) <-
   cum_admit_conf +
-  sum(n_sympt_to_hosp_D_conf) +
-  sum(n_sympt_to_hosp_R_conf) +
+  sum(n_sympt_to_H_D_conf) +
+  sum(n_sympt_to_H_R_conf) +
   sum(n_sympt_to_ICU_pre_conf)
 update(cum_new_conf) <-
   cum_new_conf +
@@ -405,16 +405,16 @@ aux_GG_D[, , 1:s_G_D, ] <-
   aux_GG_D[i, j, k, l] - n_GG_D[i, j, k, l]
 new_G_D[, , , ] <- G_D[i, j, k, l] + aux_GG_D[i, j, k, l]
 
-## Work out the split in hospitals between hosp_D, hosp_R and ICU_pre
+## Work out the split in hospitals between H_D, H_R and ICU_pre
 n_sympt_to_ICU_pre[, , ] <- rbinom(n_sympt_to_hosp[i, j, k], prob_ICU[i])
 n_sympt_to_ICU_pre_conf[, , ] <- rbinom(n_sympt_to_ICU_pre[i, j, k],
                                    prob_admit_conf[i])
 n_hosp_non_ICU[, , ] <- n_sympt_to_hosp[i, j, k] - n_sympt_to_ICU_pre[i, j, k]
-n_sympt_to_hosp_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], prob_H_D[i])
-n_sympt_to_hosp_D_conf[, , ] <- rbinom(n_sympt_to_hosp_D[i, j, k],
+n_sympt_to_H_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], prob_H_D[i])
+n_sympt_to_H_D_conf[, , ] <- rbinom(n_sympt_to_H_D[i, j, k],
                                      prob_admit_conf[i])
-n_sympt_to_hosp_R[, , ] <- n_hosp_non_ICU[i, j, k] - n_sympt_to_hosp_D[i, j, k]
-n_sympt_to_hosp_R_conf[, , ] <- rbinom(n_sympt_to_hosp_R[i, j, k],
+n_sympt_to_H_R[, , ] <- n_hosp_non_ICU[i, j, k] - n_sympt_to_H_D[i, j, k]
+n_sympt_to_H_R_conf[, , ] <- rbinom(n_sympt_to_H_R[i, j, k],
                                      prob_admit_conf[i])
 
 ## Work out the ICU_pre -> ICU_pre transitions
@@ -457,12 +457,12 @@ n_H_R_unconf_to_conf[, , , ] <-
 new_H_R_unconf[, , , ] <-
   aux_H_R_unconf[i, j, k, l] - n_H_R_unconf_to_conf[i, j, k, l]
 new_H_R_unconf[, , 1, ] <-
-  new_H_R_unconf[i, j, 1, l] + n_sympt_to_hosp_R[i, j, l] -
-  n_sympt_to_hosp_R_conf[i, j, l]
+  new_H_R_unconf[i, j, 1, l] + n_sympt_to_H_R[i, j, l] -
+  n_sympt_to_H_R_conf[i, j, l]
 new_H_R_conf[, , , ] <-
   aux_H_R_conf[i, j, k, l] + n_H_R_unconf_to_conf[i, j, k, l]
 new_H_R_conf[, , 1, ] <-
-  new_H_R_conf[i, j, 1, l] + n_sympt_to_hosp_R_conf[i, j, l]
+  new_H_R_conf[i, j, 1, l] + n_sympt_to_H_R_conf[i, j, l]
 
 ## Work out the H_D->H_D transitions
 aux_H_D_unconf[, , , ] <- H_D_unconf[i, j, k, l]
@@ -480,46 +480,46 @@ n_H_D_unconf_to_conf[, , , ] <-
 new_H_D_unconf[, , , ] <-
   aux_H_D_unconf[i, j, k, l] - n_H_D_unconf_to_conf[i, j, k, l]
 new_H_D_unconf[, , 1, ] <-
-  new_H_D_unconf[i, j, 1, l] + n_sympt_to_hosp_D[i, j, l] -
-  n_sympt_to_hosp_D_conf[i, j, l]
+  new_H_D_unconf[i, j, 1, l] + n_sympt_to_H_D[i, j, l] -
+  n_sympt_to_H_D_conf[i, j, l]
 new_H_D_conf[, , , ] <-
   aux_H_D_conf[i, j, k, l] + n_H_D_unconf_to_conf[i, j, k, l]
 new_H_D_conf[, , 1, ] <-
-  new_H_D_conf[i, j, 1, l] + n_sympt_to_hosp_D_conf[i, j, l]
+  new_H_D_conf[i, j, 1, l] + n_sympt_to_H_D_conf[i, j, l]
 
-## Work out the ICU_pre to ICU_D, ICU_S_R and ICU_S_D splits
+## Work out the ICU_pre to ICU_D, ICU_W_R and ICU_W_D splits
 n_ICU_pre_unconf_to_ICU_D_unconf[, , ] <-
   rbinom(n_ICU_pre_unconf[i, j, s_ICU_pre, k], prob_ICU_D[i])
 n_ICU_pre_conf_to_ICU_D_conf[, , ] <-
   rbinom(n_ICU_pre_conf[i, j, s_ICU_pre, k], prob_ICU_D[i])
-n_ICU_pre_unconf_to_ICU_S_D_unconf[, , ] <-
+n_ICU_pre_unconf_to_ICU_W_D_unconf[, , ] <-
   rbinom(n_ICU_pre_unconf[i, j, s_ICU_pre, k] -
            n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k],
          prob_W_D[i])
-n_ICU_pre_unconf_to_ICU_S_R_unconf[, , ] <-
+n_ICU_pre_unconf_to_ICU_W_R_unconf[, , ] <-
   n_ICU_pre_unconf[i, j, s_ICU_pre, k] -
   n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k] -
-  n_ICU_pre_unconf_to_ICU_S_D_unconf[i, j, k]
-n_ICU_pre_conf_to_ICU_S_D_conf[, , ] <-
+  n_ICU_pre_unconf_to_ICU_W_D_unconf[i, j, k]
+n_ICU_pre_conf_to_ICU_W_D_conf[, , ] <-
   rbinom(n_ICU_pre_conf[i, j, s_ICU_pre, k] -
            n_ICU_pre_conf_to_ICU_D_conf[i, j, k], prob_W_D[i])
-n_ICU_pre_conf_to_ICU_S_R_conf[, , ] <- n_ICU_pre_conf[i, j, s_ICU_pre, k] -
+n_ICU_pre_conf_to_ICU_W_R_conf[, , ] <- n_ICU_pre_conf[i, j, s_ICU_pre, k] -
   n_ICU_pre_conf_to_ICU_D_conf[i, j, k] -
-  n_ICU_pre_conf_to_ICU_S_D_conf[i, j, k]
+  n_ICU_pre_conf_to_ICU_W_D_conf[i, j, k]
 
 
 ## Work out the ICU_W_R->ICU_W_R transitions
 aux_ICU_W_R_unconf[, , , ] <- ICU_W_R_unconf[i, j, k, l]
 aux_ICU_W_R_unconf[, , 1, ] <-
   aux_ICU_W_R_unconf[i, j, k, l] +
-  n_ICU_pre_unconf_to_ICU_S_R_unconf[i, j, l]
+  n_ICU_pre_unconf_to_ICU_W_R_unconf[i, j, l]
 aux_ICU_W_R_unconf[, , 2:s_ICU_W_R, ] <-
   aux_ICU_W_R_unconf[i, j, k, l] + n_IICU_W_R_unconf[i, j, k - 1, l]
 aux_ICU_W_R_unconf[, , 1:s_ICU_W_R, ] <-
   aux_ICU_W_R_unconf[i, j, k, l] - n_IICU_W_R_unconf[i, j, k, l]
 aux_ICU_W_R_conf[, , , ] <- ICU_W_R_conf[i, j, k, l]
 aux_ICU_W_R_conf[, , 1, ] <-
-  aux_ICU_W_R_conf[i, j, k, l] + n_ICU_pre_conf_to_ICU_S_R_conf[i, j, l]
+  aux_ICU_W_R_conf[i, j, k, l] + n_ICU_pre_conf_to_ICU_W_R_conf[i, j, l]
 aux_ICU_W_R_conf[, , 2:s_ICU_W_R, ] <-
   aux_ICU_W_R_conf[i, j, k, l] + n_IICU_W_R_conf[i, j, k - 1, l]
 aux_ICU_W_R_conf[, , 1:s_ICU_W_R, ] <-
@@ -535,14 +535,14 @@ new_ICU_W_R_conf[, , , ] <-
 aux_ICU_W_D_unconf[, , , ] <- ICU_W_D_unconf[i, j, k, l]
 aux_ICU_W_D_unconf[, , 1, ] <-
   aux_ICU_W_D_unconf[i, j, k, l] +
-  n_ICU_pre_unconf_to_ICU_S_D_unconf[i, j, l]
+  n_ICU_pre_unconf_to_ICU_W_D_unconf[i, j, l]
 aux_ICU_W_D_unconf[, , 2:s_ICU_W_D, ] <-
   aux_ICU_W_D_unconf[i, j, k, l] + n_IICU_W_D_unconf[i, j, k - 1, l]
 aux_ICU_W_D_unconf[, , 1:s_ICU_W_D, ] <-
   aux_ICU_W_D_unconf[i, j, k, l] - n_IICU_W_D_unconf[i, j, k, l]
 aux_ICU_W_D_conf[, , , ] <- ICU_W_D_conf[i, j, k, l]
 aux_ICU_W_D_conf[, , 1, ] <-
-  aux_ICU_W_D_conf[i, j, k, l] + n_ICU_pre_conf_to_ICU_S_D_conf[i, j, l]
+  aux_ICU_W_D_conf[i, j, k, l] + n_ICU_pre_conf_to_ICU_W_D_conf[i, j, l]
 aux_ICU_W_D_conf[, , 2:s_ICU_W_D, ] <-
   aux_ICU_W_D_conf[i, j, k, l] + n_IICU_W_D_conf[i, j, k - 1, l]
 aux_ICU_W_D_conf[, , 1:s_ICU_W_D, ] <-
@@ -1143,18 +1143,18 @@ dim(n_sympt_to_hosp) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_sympt_to_ICU_pre) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_sympt_to_ICU_pre_conf) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_hosp_non_ICU) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_sympt_to_hosp_D) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_sympt_to_hosp_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_sympt_to_hosp_R) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_sympt_to_hosp_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_sympt_to_H_D) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_sympt_to_H_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_sympt_to_H_R) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_sympt_to_H_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_ICU_pre_unconf_to_ICU_D_unconf) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_ICU_pre_conf_to_ICU_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_ICU_S_R_unconf) <-
+dim(n_ICU_pre_unconf_to_ICU_W_R_unconf) <-
   c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_conf_to_ICU_S_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_ICU_S_D_unconf) <-
+dim(n_ICU_pre_conf_to_ICU_W_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_ICU_pre_unconf_to_ICU_W_D_unconf) <-
   c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_conf_to_ICU_S_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_ICU_pre_conf_to_ICU_W_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the serology flow
 dim(n_com_to_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
