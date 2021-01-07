@@ -95,7 +95,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(p_H_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_seroconversion, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_sero_pos, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_star_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_G_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1125,7 +1125,7 @@ public:
     int dim_p_SE;
     int dim_p_SE_1;
     int dim_p_SE_2;
-    int dim_p_seroconversion;
+    int dim_p_sero_pos;
     int dim_p_star_step;
     int dim_p_W_D_step;
     int dim_prob_admit_conf;
@@ -1494,7 +1494,7 @@ public:
     std::vector<real_t> p_RS;
     std::vector<real_t> p_S_next_vacc_class;
     std::vector<real_t> p_SE;
-    std::vector<real_t> p_seroconversion;
+    std::vector<real_t> p_sero_pos;
     std::vector<real_t> p_star_step;
     real_t p_T_PCR_pos;
     real_t p_T_PCR_pre;
@@ -2450,7 +2450,7 @@ public:
     for (int i = 1; i <= internal.dim_n_R_pre_to_R_pos_1; ++i) {
       for (int j = 1; j <= internal.dim_n_R_pre_to_R_pos_2; ++j) {
         for (int k = 1; k <= internal.dim_n_R_pre_to_R_pos_3; ++k) {
-          internal.n_R_pre_to_R_pos[i - 1 + internal.dim_n_R_pre_to_R_pos_1 * (j - 1) + internal.dim_n_R_pre_to_R_pos_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(odin_sum4(internal.n_R_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_R_pre_3, k - 1, k, internal.dim_n_R_pre_1, internal.dim_n_R_pre_12, internal.dim_n_R_pre_123)), internal.p_seroconversion[i - 1]);
+          internal.n_R_pre_to_R_pos[i - 1 + internal.dim_n_R_pre_to_R_pos_1 * (j - 1) + internal.dim_n_R_pre_to_R_pos_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(odin_sum4(internal.n_R_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_R_pre_3, k - 1, k, internal.dim_n_R_pre_1, internal.dim_n_R_pre_12, internal.dim_n_R_pre_123)), internal.p_sero_pos[i - 1]);
         }
       }
     }
@@ -4233,7 +4233,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_D_hosp = internal.n_groups;
   internal.dim_p_C = internal.n_groups;
   internal.dim_p_RS = internal.n_groups;
-  internal.dim_p_seroconversion = internal.n_groups;
+  internal.dim_p_sero_pos = internal.n_groups;
   internal.dim_prob_admit_conf = internal.n_groups;
   internal.dim_prob_G_D = internal.n_groups;
   internal.dim_prob_H = internal.n_groups;
@@ -4309,7 +4309,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   }
   internal.n_strains = internal.dim_strain_transmission;
   internal.p_C = user_get_array_fixed<real_t, 1>(user, "p_C", internal.p_C, {internal.dim_p_C}, NA_REAL, NA_REAL);
-  internal.p_seroconversion = user_get_array_fixed<real_t, 1>(user, "p_seroconversion", internal.p_seroconversion, {internal.dim_p_seroconversion}, NA_REAL, NA_REAL);
+  internal.p_sero_pos = user_get_array_fixed<real_t, 1>(user, "p_sero_pos", internal.p_sero_pos, {internal.dim_p_sero_pos}, NA_REAL, NA_REAL);
   internal.psi_G_D = user_get_array_fixed<real_t, 1>(user, "psi_G_D", internal.psi_G_D, {internal.dim_psi_G_D}, NA_REAL, NA_REAL);
   internal.psi_H = user_get_array_fixed<real_t, 1>(user, "psi_H", internal.psi_H, {internal.dim_psi_H}, NA_REAL, NA_REAL);
   internal.psi_H_D = user_get_array_fixed<real_t, 1>(user, "psi_H_D", internal.psi_H_D, {internal.dim_psi_H_D}, NA_REAL, NA_REAL);

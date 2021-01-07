@@ -197,7 +197,7 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_ICU_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_seroconversion = list(
+        min = -Inf, max = Inf, integer = FALSE), p_sero_pos = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_star_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,

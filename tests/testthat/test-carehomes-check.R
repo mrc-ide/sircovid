@@ -396,11 +396,11 @@ test_that("forcing hospital route results in correct path", {
 })
 
 
-test_that("No one seroconverts if p_seroconversion is 0", {
+test_that("No one seroconverts if p_sero_pos is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_seroconversion[] <- 0
+  p$p_sero_pos[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -415,12 +415,12 @@ test_that("No one seroconverts if p_seroconversion is 0", {
 
 
 test_that("No one does not seroconvert and no one seroreverts
-          if p_seroconversion is 1 and gamma_sero_pos is 0", {
+          if p_sero_pos is 1 and gamma_sero_pos is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
 
-  p$p_seroconversion[] <- 1
+  p$p_sero_pos[] <- 1
   ## set gamma_sero_pos to 0 so no-one seroreverts
   p$gamma_sero_pos <- 0
 

@@ -650,7 +650,7 @@ new_R_pre[, , , ] <-
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
-n_R_pre_to_R_pos[, , ] <- rbinom(sum(n_R_pre[i, j, , k]), p_seroconversion[i])
+n_R_pre_to_R_pos[, , ] <- rbinom(sum(n_R_pre[i, j, , k]), p_sero_pos[i])
 
 new_R_pos[, , , ] <- R_pos[i, j, k, l] - n_R_pos[i, j, k, l]
 new_R_pos[, , 1, ] <- new_R_pos[i, j, 1, l] + n_R_pre_to_R_pos[i, j, l]
@@ -869,7 +869,7 @@ gamma_R_pre[1] <- gamma_R_pre_1
 gamma_R_pre[2] <- gamma_R_pre_2
 ## Governs the mixing - pretty much only makes sense at 0.5
 p_R_pre_1 <- user(0.5)
-p_seroconversion[] <- user()
+p_sero_pos[] <- user()
 
 ## Parameters of the R_pos classes
 s_sero_pos <- user()
@@ -1062,7 +1062,7 @@ dim(new_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(n_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(gamma_R_pre) <- 2
 dim(p_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
-dim(p_seroconversion) <- n_groups
+dim(p_sero_pos) <- n_groups
 
 ## Vectors handling the R_pos class
 dim(R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)

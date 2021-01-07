@@ -69,7 +69,7 @@ test_that("can read the default severity file", {
     names(data),
     c("p_star", "p_C", "p_G_D", "p_H_D",
       "p_ICU_D", "p_W_D", "p_ICU",
-      "p_seroconversion", "p_H"))
+      "p_sero_pos", "p_H"))
   expect_true(
     all(data$p_serocoversion == data$p_serocoversion[[1]]))
   expect_equal(
