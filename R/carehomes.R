@@ -807,8 +807,8 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##' @export
 carehomes_parameters_progression <- function() {
 
-  ## The s_ parameters are the scaling parameters for the Erlang
-  ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
+  ## The k_ parameters are the shape parameters for the Erlang
+  ## distribution, while the gamma parameters are the rate
   ## parameters of that distribution.
   list(k_E = 2,
        k_A = 1,
