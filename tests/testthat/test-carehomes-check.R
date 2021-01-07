@@ -148,10 +148,10 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
 
   expect_true(any(y$E > 0L))
   expect_true(all(y$I_C == 0))
-  expect_true(all(y$I_hosp_R_unconf == 0))
-  expect_true(all(y$I_hosp_R_conf == 0))
-  expect_true(all(y$I_hosp_D_unconf == 0))
-  expect_true(all(y$I_hosp_D_conf == 0))
+  expect_true(all(y$H_R_unconf == 0))
+  expect_true(all(y$H_R_conf == 0))
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
   expect_true(all(y$I_ICU_S_R_unconf == 0))
   expect_true(all(y$I_ICU_S_R_conf == 0))
   expect_true(all(y$I_ICU_S_D_unconf == 0))
@@ -185,10 +185,10 @@ test_that("No one is hospitalised, no-one dies if psi_H is 0", {
 
   expect_true(any(y$E > 0L))
   expect_true(any(y$I_C > 0))
-  expect_true(all(y$I_hosp_R_unconf == 0))
-  expect_true(all(y$I_hosp_R_conf == 0))
-  expect_true(all(y$I_hosp_D_unconf == 0))
-  expect_true(all(y$I_hosp_D_conf == 0))
+  expect_true(all(y$H_R_unconf == 0))
+  expect_true(all(y$H_R_conf == 0))
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
   expect_true(all(y$I_ICU_R_unconf == 0))
   expect_true(all(y$I_ICU_R_conf == 0))
   expect_true(all(y$I_ICU_S_R_unconf == 0))
@@ -233,10 +233,10 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C > 0))
-  expect_true(all(y$I_hosp_R_unconf == 0))
-  expect_true(all(y$I_hosp_R_conf == 0))
-  expect_true(all(y$I_hosp_D_unconf == 0))
-  expect_true(all(y$I_hosp_D_conf == 0))
+  expect_true(all(y$H_R_unconf == 0))
+  expect_true(all(y$H_R_conf == 0))
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
   expect_true(all(y$I_ICU_S_R_unconf == 0))
   expect_true(all(y$I_ICU_S_R_conf == 0))
   expect_true(all(y$I_ICU_S_D_unconf == 0))
@@ -278,10 +278,10 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C > 0))
-  expect_true(all(y$I_hosp_R_unconf == 0))
-  expect_true(all(y$I_hosp_R_conf == 0))
-  expect_true(all(y$I_hosp_D_unconf == 0))
-  expect_true(all(y$I_hosp_D_conf == 0))
+  expect_true(all(y$H_R_unconf == 0))
+  expect_true(all(y$H_R_conf == 0))
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
   expect_true(all(y$I_ICU_S_R_unconf == 0))
   expect_true(all(y$I_ICU_S_R_conf == 0))
   expect_true(all(y$I_ICU_S_D_unconf == 0))
@@ -349,8 +349,8 @@ test_that("forcing hospital route results in correct path", {
       drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
     ## Save some work by using the total of confirmed and unconfirmed
-    y$I_hosp_R <- y$I_hosp_R_unconf + y$I_hosp_R_conf
-    y$I_hosp_D <- y$I_hosp_D_unconf + y$I_hosp_D_conf
+    y$H_R <- y$H_R_unconf + y$H_R_conf
+    y$H_D <- y$H_D_unconf + y$H_D_conf
     y$ICU_pre <- y$ICU_pre_unconf + y$ICU_pre_conf
     y$I_ICU_S_R <- y$I_ICU_S_R_unconf + y$I_ICU_S_R_conf
     y$I_ICU_S_D <- y$I_ICU_S_D_unconf + y$I_ICU_S_D_conf
@@ -367,32 +367,32 @@ test_that("forcing hospital route results in correct path", {
   }
 
   ## p_ICU = 0, p_H_D = 0 no-one goes into ICU, no deaths
-  helper(0, NULL, 0, NULL, "I_hosp_R",
-         c("I_hosp_D", "I_ICU_S_R", "I_ICU_S_D", "I_ICU_D", "ICU_pre",
+  helper(0, NULL, 0, NULL, "H_R",
+         c("H_D", "I_ICU_S_R", "I_ICU_S_D", "I_ICU_D", "ICU_pre",
            "W_R", "W_D", "D_hosp"))
 
   ## p_death_hosp = 1, p_ICU = 0 no-one goes into ICU, no
   ## recovery in hospital
-  helper(0, NULL, 1, NULL, "I_hosp_D",
-         c("I_hosp_R", "I_ICU_S_R", "I_ICU_S_D", "I_ICU_D", "ICU_pre",
+  helper(0, NULL, 1, NULL, "H_D",
+         c("H_R", "I_ICU_S_R", "I_ICU_S_D", "I_ICU_D", "ICU_pre",
            "W_R", "W_D"))
 
   ## p_ICU_D = 1, p_ICU = 1 no-one goes in hosp_D / hosp_R,
   ## no recovery from ICU
   helper(1, 1, NULL, NULL, "I_ICU_D",
-         c("I_hosp_R", "I_hosp_D", "I_ICU_S_R", "I_ICU_S_D", "W_R",
+         c("H_R", "H_D", "I_ICU_S_R", "I_ICU_S_D", "W_R",
            "W_D"))
 
   ## p_ICU_D = 0, p_ICU = 1, p_W_D = 0 no-one goes in
   ## hosp_D / hosp_R, no deaths
   helper(1, 0, NULL, 0, c("I_ICU_S_R", "W_R"),
-         c("I_hosp_R", "I_hosp_D", "I_ICU_S_D", "I_ICU_D", "W_D",
+         c("H_R", "H_D", "I_ICU_S_D", "I_ICU_D", "W_D",
            "D_hosp"))
 
   ## p_ICU_D = 0, p_ICU = 1, p_W_D = 1 no-one goes in
   ## hosp_D / hosp_R, no-one recovers in stepdown
   helper(1, 0, NULL, 1, c("I_ICU_S_D", "W_D"),
-         c("I_hosp_R", "I_hosp_D", "I_ICU_S_R", "I_ICU_D", "W_R"))
+         c("H_R", "H_D", "I_ICU_S_R", "I_ICU_D", "W_R"))
 })
 
 
@@ -542,8 +542,8 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_A", "s_A", "I_A", FALSE)
   helper("gamma_C", "s_C", "I_C", FALSE)
   helper("gamma_ICU_pre", "s_ICU_pre", "ICU_pre", TRUE)
-  helper("gamma_H_R", "s_H_R", "I_hosp_R", TRUE)
-  helper("gamma_H_D", "s_H_D", "I_hosp_D", TRUE)
+  helper("gamma_H_R", "s_H_R", "H_R", TRUE)
+  helper("gamma_H_D", "s_H_D", "H_D", TRUE)
   helper("gamma_ICU_W_R", "s_ICU_W_R", "I_ICU_S_R", TRUE)
   helper("gamma_ICU_W_D", "s_ICU_W_D", "I_ICU_S_D", TRUE)
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
@@ -617,8 +617,8 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_A", "s_A", "I_A", FALSE)
   helper("gamma_C", "s_C", "I_C", FALSE)
   helper("gamma_ICU_pre", "s_ICU_pre", "ICU_pre", TRUE)
-  helper("gamma_H_R", "s_H_R", "I_hosp_R", TRUE)
-  helper("gamma_H_D", "s_H_D", "I_hosp_D", TRUE)
+  helper("gamma_H_R", "s_H_R", "H_R", TRUE)
+  helper("gamma_H_D", "s_H_D", "H_D", TRUE)
   helper("gamma_ICU_W_R", "s_ICU_W_R", "I_ICU_S_R", TRUE)
   helper("gamma_ICU_W_D", "s_ICU_W_D", "I_ICU_S_D", TRUE)
   helper("gamma_ICU_D", "s_ICU_D", "I_ICU_D", TRUE)
@@ -652,10 +652,10 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  expect_true(all(y$I_hosp_R_unconf == 0))
-  expect_true(any(y$I_hosp_R_conf > 0))
-  expect_true(all(y$I_hosp_D_unconf == 0))
-  expect_true(any(y$I_hosp_D_conf > 0))
+  expect_true(all(y$H_R_unconf == 0))
+  expect_true(any(y$H_R_conf > 0))
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(any(y$H_D_conf > 0))
   expect_true(all(y$ICU_pre_unconf == 0))
   expect_true(any(y$ICU_pre_conf > 0))
   expect_true(all(y$I_ICU_S_R_unconf == 0))
@@ -669,8 +669,8 @@ test_that("No one is unconfirmed, if p_admit_conf = 1", {
   expect_true(all(y$W_D_unconf == 0))
   expect_true(any(y$W_D_conf > 0))
 
-  admit_conf <- apply(y$I_hosp_R_conf[, 1, , , ] +
-                      y$I_hosp_D_conf[, 1, , , ] +
+  admit_conf <- apply(y$H_R_conf[, 1, , , ] +
+                      y$H_D_conf[, 1, , , ] +
                       y$ICU_pre_conf[, 1, , , ], 1, sum)
 
   expect_true(all(diff(y$cum_admit_conf) == admit_conf[-1]))
@@ -691,10 +691,10 @@ test_that("No one is confirmed, if p_admit_conf = 0 and gamma_U = 0", {
   mod$set_index(integer(0))
   y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
 
-  expect_true(any(y$I_hosp_R_unconf > 0))
-  expect_true(all(y$I_hosp_R_conf == 0))
-  expect_true(any(y$I_hosp_D_unconf > 0))
-  expect_true(all(y$I_hosp_D_conf == 0))
+  expect_true(any(y$H_R_unconf > 0))
+  expect_true(all(y$H_R_conf == 0))
+  expect_true(any(y$H_D_unconf > 0))
+  expect_true(all(y$H_D_conf == 0))
   expect_true(any(y$ICU_pre_unconf > 0))
   expect_true(all(y$ICU_pre_conf == 0))
   expect_true(any(y$I_ICU_S_R_unconf > 0))
@@ -743,14 +743,14 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_U = Inf", {
   n <- length(y$time)
 
   ## Check hosp_R
-  expect_true(all(y$I_hosp_R_conf[, , 1, , ] == 0))
-  expect_equal(y$I_hosp_R_conf[, , 2, , -1], y$I_hosp_R_unconf[, , 1, , -n])
-  expect_true(all(y$I_hosp_R_unconf[, , 2, , ] == 0))
+  expect_true(all(y$H_R_conf[, , 1, , ] == 0))
+  expect_equal(y$H_R_conf[, , 2, , -1], y$H_R_unconf[, , 1, , -n])
+  expect_true(all(y$H_R_unconf[, , 2, , ] == 0))
 
   ## Check hosp_D
-  expect_true(all(y$I_hosp_D_conf[, , 1, , ] == 0))
-  expect_equal(y$I_hosp_D_conf[, , 2, , -1], y$I_hosp_D_unconf[, , 1, , -n])
-  expect_true(all(y$I_hosp_D_unconf[, , 2, , ] == 0))
+  expect_true(all(y$H_D_conf[, , 1, , ] == 0))
+  expect_equal(y$H_D_conf[, , 2, , -1], y$H_D_unconf[, , 1, , -n])
+  expect_true(all(y$H_D_unconf[, , 2, , ] == 0))
 
   ## Check ICU_pre
   expect_true(all(y$ICU_pre_conf[, , 1, , ] == 0))
@@ -780,8 +780,8 @@ test_that("Instant confirmation if p_admit_conf = 0 and gamma_U = Inf", {
   expect_equal(y$W_D_conf[, , 1, , -1], y$I_ICU_S_D_conf[, , 2, , -n])
   expect_true(all(y$W_D_unconf[, , 2, , ] == 0))
 
-  new_conf <- apply(y$I_hosp_R_conf[, , 2, , ] +
-                    y$I_hosp_D_conf[, , 2, , ] +
+  new_conf <- apply(y$H_R_conf[, , 2, , ] +
+                    y$H_D_conf[, , 2, , ] +
                     y$ICU_pre_conf[, , 2, , ], 2, sum)
   new_conf[2] <- new_conf[2] +
     sum(y$I_ICU_S_R_conf[, , 2, , 2] +
@@ -806,8 +806,8 @@ test_that("tots all summed correctly ", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
   expect_true(all(y$general_tot == apply(y$ICU_pre_conf, 5, sum) +
-                    apply(y$I_hosp_R_conf, 5, sum) +
-                    apply(y$I_hosp_D_conf, 5, sum) +
+                    apply(y$H_R_conf, 5, sum) +
+                    apply(y$H_D_conf, 5, sum) +
                     apply(y$W_R_conf, 5, sum) +
                     apply(y$W_D_conf, 5, sum)))
   expect_true(all(y$I_ICU_tot == apply(y$I_ICU_S_R_conf, 5, sum) +

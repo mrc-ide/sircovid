@@ -101,10 +101,10 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_H", {
   ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in hospital upon reinfection
   expect_true(all(y$D_hosp[-4, ] == 0))
-  expect_true(all(y$I_hosp_R_unconf[-4, , , , ] == 0))
-  expect_true(all(y$I_hosp_R_conf[-4, , , , ] == 0))
-  expect_true(all(y$I_hosp_D_unconf[-4, , , , ] == 0))
-  expect_true(all(y$I_hosp_D_conf[-4, , , , ] == 0))
+  expect_true(all(y$H_R_unconf[-4, , , , ] == 0))
+  expect_true(all(y$H_R_conf[-4, , , , ] == 0))
+  expect_true(all(y$H_D_unconf[-4, , , , ] == 0))
+  expect_true(all(y$H_D_conf[-4, , , , ] == 0))
 })
 
 
