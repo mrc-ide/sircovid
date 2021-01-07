@@ -518,29 +518,29 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ## non-zero probability when the model value is 0 and the observed
   ## value is non-zero (i.e. there is overreporting)
   ll_icu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
-                      pars$k_ICU, exp_noise)
+                      pars$kappa_ICU, exp_noise)
   ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
-                          pars$k_general, exp_noise)
+                          pars$kappa_general, exp_noise)
   ll_hosp <- ll_nbinom(observed$hosp, pars$phi_hosp * model_hosp,
-                       pars$k_hosp, exp_noise)
+                       pars$kappa_hosp, exp_noise)
   ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
                               pars$phi_death_hosp * model_deaths_hosp,
-                              pars$k_death_hosp, exp_noise)
+                              pars$kappa_death_hosp, exp_noise)
   ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
                               pars$phi_death_comm * model_deaths_comm,
-                              pars$k_death_comm, exp_noise)
+                              pars$kappa_death_comm, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths,
                          pars$phi_death_hosp * model_deaths_hosp +
                          pars$phi_death_comm * model_deaths_comm,
-                         pars$k_death, exp_noise)
+                         pars$kappa_death, exp_noise)
   ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * model_admitted,
-                           pars$k_admitted, exp_noise)
+                           pars$kappa_admitted, exp_noise)
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
-                      pars$k_new, exp_noise)
+                      pars$kappa_new, exp_noise)
   ll_new_admitted <- ll_nbinom(observed$new_admitted,
                                pars$phi_new_admitted * model_new_admitted,
-                               pars$k_new_admitted, exp_noise)
+                               pars$kappa_new_admitted, exp_noise)
 
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
@@ -553,7 +553,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
                                 pars$phi_pillar2_cases * model_sympt_cases,
-                                pars$k_pillar2_cases, exp_noise)
+                                pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_over25_tests <- ll_betabinom(observed$pillar2_over25_pos,
                                           observed$pillar2_over25_tot,
@@ -563,7 +563,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
                                        pars$phi_pillar2_cases *
                                          model_sympt_cases_over25,
-                                       pars$k_pillar2_cases, exp_noise)
+                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_react <- ll_binom(observed$react_pos,
                        observed$react_tot,
@@ -871,33 +871,33 @@ carehomes_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in ICU
     phi_ICU = 1,
-    k_ICU = 2,
+    kappa_ICU = 2,
     ## People currently in general beds
     phi_general = 1,
-    k_general = 2,
+    kappa_general = 2,
     ## People currently in all hospital beds
     phi_hosp = 1,
-    k_hosp = 2,
+    kappa_hosp = 2,
     ## Daily hospital deaths
     phi_death_hosp = 1,
-    k_death_hosp = 2,
+    kappa_death_hosp = 2,
     ## Daily community deaths
     phi_death_comm = 1,
-    k_death_comm = 2,
+    kappa_death_comm = 2,
     ## Daily total deaths (if not split)
-    k_death = 2,
+    kappa_death = 2,
     ## Daily new confirmed admissions
     phi_admitted = 1,
-    k_admitted = 2,
+    kappa_admitted = 2,
     ## Daily new inpatient diagnoses
     phi_new = 1,
-    k_new = 2,
+    kappa_new = 2,
     ## Daily combined new confirmed admissions and new inpatient diagnoses
     phi_new_admitted = 1,
-    k_new_admitted = 2,
+    kappa_new_admitted = 2,
     ## Pillar 2 testing
     phi_pillar2_cases = 1,
-    k_pillar2_cases = 2,
+    kappa_pillar2_cases = 2,
     ##
     rho_pillar2_tests = 0.1,
     ##

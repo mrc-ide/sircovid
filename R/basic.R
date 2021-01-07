@@ -167,9 +167,9 @@ basic_compare <- function(state, prev_state, observed, pars) {
   exp_noise <- pars$exp_noise
 
   ll_icu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
-                      pars$k_ICU, exp_noise)
+                      pars$kappa_ICU, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths, pars$phi_death * model_deaths,
-                         pars$k_death, exp_noise)
+                         pars$kappa_death, exp_noise)
 
   ll_icu + ll_deaths
 }
@@ -253,16 +253,16 @@ basic_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in general beds
     phi_general = 0.95,
-    k_general = 2,
+    kappa_general = 2,
     ## People currently in ICU
     phi_ICU = 0.95,
-    k_ICU = 2,
+    kappa_ICU = 2,
     ## Daily deaths
     ##
     ## current proportion of England deaths over UK deaths (as of
     ## end of March 2020)
     phi_death = 926 / 1019,
-    k_death = 2,
+    kappa_death = 2,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)
