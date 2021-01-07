@@ -391,7 +391,7 @@ test_that("Swapping strains gives identical results with different index", {
 
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[2:1, , drop = FALSE]
-  for (nm in c("R_neg", "R", "T_PCR_neg")) {
+  for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_C", "T_PCR_pre", "T_PCR_pos", "R_pre",

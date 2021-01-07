@@ -80,7 +80,7 @@ update(W_D_unconf[, , , ]) <- new_W_D_unconf[i, j, k, l]
 update(W_D_conf[, , , ]) <- new_W_D_conf[i, j, k, l]
 update(R_pre[, , , ]) <- new_R_pre[i, j, k, l]
 update(R_pos[, , , ]) <- new_R_pos[i, j, k, l]
-update(R_neg[, , ]) <- new_R_neg[i, j, k]
+update(T_sero_neg[, , ]) <- new_T_sero_neg[i, j, k]
 update(R[, , ]) <- new_R[i, j, k]
 update(D_hosp[]) <- new_D_hosp[i]
 update(D_comm[]) <- new_D_comm[i]
@@ -257,9 +257,9 @@ n_I_A_next_vacc_class[, , , ] <- rbinom(
 #### flow out of R ####
 
 n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_RS[i])
-## cap on people who can move out of R based on numbers in R_neg and T_PCR_neg
+## cap on people who can move out of R based on numbers in T_sero_neg and T_PCR_neg
 n_R_progress_capped[, , ] <-
-  min(n_R_progress_tmp[i, j, k], R_neg[i, j, k], T_PCR_neg[i, j, k])
+  min(n_R_progress_tmp[i, j, k], T_sero_neg[i, j, k], T_PCR_neg[i, j, k])
 ## use cap or not depending on model_pcr_and_serology value
 n_R_progress[, , ] <- if (model_pcr_and_serology == 1)
   n_R_progress_capped[i, j, k] else n_R_progress_tmp[i, j, k]
@@ -276,7 +276,7 @@ n_RS[, , ] <- n_R_progress[i, j, k] - n_RS_next_vacc_class[i, j, k]
 n_R_next_vacc_class_tmp[, , ] <- rbinom(
   R[i, j, k] - n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
 n_R_next_vacc_class_capped[, , ] <- min(n_R_next_vacc_class_tmp[i, j, k],
-  R_neg[i, j, k] - n_R_progress[i, j, k],
+  T_sero_neg[i, j, k] - n_R_progress[i, j, k],
   T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
 n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
@@ -656,13 +656,13 @@ new_R_pos[, , , ] <- R_pos[i, j, k, l] - n_R_pos[i, j, k, l]
 new_R_pos[, , 1, ] <- new_R_pos[i, j, 1, l] + n_R_pre_to_R_pos[i, j, l]
 new_R_pos[, , 2:s_sero_pos, ] <- new_R_pos[i, j, k, l] + n_R_pos[i, j, k - 1, l]
 
-new_R_neg[, , ] <- R_neg[i, j, k] + sum(n_R_pre[i, j, , k]) -
+new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] + sum(n_R_pre[i, j, , k]) -
   n_R_pre_to_R_pos[i, j, k] + n_R_pos[i, j, s_sero_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
-new_R_neg[, , 1] <- new_R_neg[i, j, 1] +
+new_T_sero_neg[, , 1] <- new_T_sero_neg[i, j, 1] +
   model_pcr_and_serology * n_R_next_vacc_class[i, j, n_vacc_classes]
-new_R_neg[, , 2:n_vacc_classes] <- new_R_neg[i, j, k] +
+new_T_sero_neg[, , 2:n_vacc_classes] <- new_T_sero_neg[i, j, k] +
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k - 1]
 
 
@@ -759,7 +759,7 @@ initial(W_D_unconf[, , , ]) <- 0
 initial(W_D_conf[, , , ]) <- 0
 initial(R_pre[, , , ]) <- 0
 initial(R_pos[, , , ]) <- 0
-initial(R_neg[, , ]) <- 0
+initial(T_sero_neg[, , ]) <- 0
 initial(R[, , ]) <- 0
 initial(D_hosp[]) <- 0
 initial(D_comm[]) <- 0
@@ -1070,9 +1070,9 @@ dim(n_R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
 dim(new_R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
 dim(n_R_pre_to_R_pos) <- c(n_groups, n_strains, n_vacc_classes)
 
-## Vectors handling the R_neg class
-dim(R_neg) <- c(n_groups, n_strains, n_vacc_classes)
-dim(new_R_neg) <- c(n_groups, n_strains, n_vacc_classes)
+## Vectors handling the T_sero_neg class
+dim(T_sero_neg) <- c(n_groups, n_strains, n_vacc_classes)
+dim(new_T_sero_neg) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the D_hosp class
 dim(D_hosp) <- n_groups
@@ -1203,7 +1203,7 @@ dim(N_tot) <- n_groups
 
 ## Total population calculated with seroconversion flow
 initial(N_tot2) <- 0
-update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(R_neg) + sum(E)
+update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(T_sero_neg) + sum(E)
 
 ## Total population calculated with PCR flow
 initial(N_tot3) <- 0

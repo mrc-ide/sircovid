@@ -515,11 +515,11 @@ test_that("model_pcr_and_serology_user switch works", {
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  ## y$R_neg and y$T_PCR_neg are increasing over time as noone gets out
+  ## y$T_sero_neg and y$T_PCR_neg are increasing over time as noone gets out
   for (i in seq_len(p$n_groups)) {
     for (j in seq_len(p$n_strains)) {
-    expect_true(all(diff(y$R_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$R_neg[i, , 2, j]) >= 0))
+    expect_true(all(diff(y$T_sero_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$T_sero_neg[i, , 2, j]) >= 0))
     expect_true(all(diff(y$T_PCR_neg[i, , 1, j]) >= 0))
     expect_true(all(diff(y$T_PCR_neg[i, , 2, j]) >= 0))
     }

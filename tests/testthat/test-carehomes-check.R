@@ -57,10 +57,10 @@ test_that("everyone is infected when beta is large", {
 })
 
 
-test_that("noone stays in R, R_neg or T_PCR_neg if waning rate is very large", {
+test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very large", {
   # with a large waning rate and beta = 0,
   # people can move from R to S but not outside of S
-  # therefore R should quickly get empty (and R_neg and T_PCR_neg as well)
+  # therefore R should quickly get empty (and T_sero_neg and T_PCR_neg as well)
   p <- carehomes_parameters(0, "england",
                             beta_value = 0, # to forbid movement out of S
                             waning_rate = Inf) # to force movement out of R
@@ -69,13 +69,13 @@ test_that("noone stays in R, R_neg or T_PCR_neg if waning rate is very large", {
 
   state <- carehomes_initial(info, 1, p)$state
 
-  # move everyone to R, R_neg and T_PCR_neg initially
+  # move everyone to R, T_sero_neg and T_PCR_neg initially
   index_S <- array(info$index$S, info$dim$S)
   index_R <- array(info$index$R, info$dim$R)
-  index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
+  index_T_sero_neg <- array(info$index$T_sero_neg, info$dim$T_sero_neg)
   index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
   state[index_R] <- rowSums(array(state[index_S], info$dim$S))
-  state[index_R_neg] <- rowSums(array(state[index_S], info$dim$S))
+  state[index_T_sero_neg] <- rowSums(array(state[index_S], info$dim$S))
   state[index_T_PCR_neg] <- rowSums(array(state[index_S], info$dim$S))
   state[index_S] <- 0
 
@@ -87,14 +87,14 @@ test_that("noone stays in R, R_neg or T_PCR_neg if waning rate is very large", {
   # other than in the 4th age group (where infections are seeded)
   # after the first day (4 times steps), R is empty
   expect_true(all(y$R[-4, , -1, ] == 0))
-  # so is R_neg
-  expect_true(all(y$R_neg[-4, , -1, ] == 0))
+  # so is T_sero_neg
+  expect_true(all(y$T_sero_neg[-4, , -1, ] == 0))
   # so is T_PCR_neg
   expect_true(all(y$T_PCR_neg[-4, , -1, ] == 0))
 
 })
 
-test_that("R, R_neg and T_PCR_neg are all non-decreasing and S is non-increasing
+test_that("R, T_sero_neg and T_PCR_neg are all non-decreasing and S is non-increasing
           if waning rate is 0", {
   p <- carehomes_parameters(0, "england",
                             waning_rate = 0)
@@ -106,7 +106,7 @@ test_that("R, R_neg and T_PCR_neg are all non-decreasing and S is non-increasing
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(all(diff(t(drop(y$R))) >= 0))
-  expect_true(all(diff(t(drop(y$R_neg))) >= 0))
+  expect_true(all(diff(t(drop(y$T_sero_neg))) >= 0))
   expect_true(all(diff(t(drop(y$T_PCR_neg))) >= 0))
   expect_true(all(diff(t(y$S[, 1, ])) <= 0))
 
@@ -409,7 +409,7 @@ test_that("No one seroconverts if p_sero_pos is 0", {
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(any(y$R_neg > 0))
+  expect_true(any(y$T_sero_neg > 0))
   expect_true(all(y$R_pos == 0))
 })
 
@@ -431,7 +431,7 @@ test_that("No one does not seroconvert and no one seroreverts
   y <- mod$transform_variables(
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  expect_true(all(y$R_neg == 0))
+  expect_true(all(y$T_sero_neg == 0))
   expect_true(any(y$R_pos > 0))
 })
 
@@ -465,27 +465,27 @@ test_that("R_pre parameters work as expected", {
   ## gamma_sero_pre_1 = gamma_sero_pre_2 = 0, expect no cases in R_pos
   y <- helper(0.5, 0, 0)
   expect_true(all(y$R_pos == 0))
-  expect_true(all(y$R_neg == 0))
+  expect_true(all(y$T_sero_neg == 0))
 
   ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = 0, expect progression in one
-  ## time-step to R_neg/R_pos just from R_pre_1
+  ## time-step to T_sero_neg/R_pos just from R_pre_1
   y <- helper(0.5, Inf, 0)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
+  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
                t(y$R_pre[, , 1, 1, -n]))
 
   ## gamma_sero_pre_1 = 0, gamma_sero_pre_2 = Inf, expect progression in one
-  ## time-step to R_neg/R_pos just from R_pre_2
+  ## time-step to T_sero_neg/R_pos just from R_pre_2
   y <- helper(0.5, 0, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
+  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
                t(y$R_pre[, , 2, 1, -n]))
 
   ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = Inf, expect progression in
-  ## one time-step to R_neg/R_pos from both R_pre_1 and R_pre_2
+  ## one time-step to T_sero_neg/R_pos from both R_pre_1 and R_pre_2
   y <- helper(0.5, Inf, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
+  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
                t(apply(y$R_pre[, , , 1, -n], c(1, 3), sum)))
 })
 

@@ -261,11 +261,11 @@ test_that("Vaccination of recovered individuals works", {
 
   index_I_A <- array(info$index$I_A, info$dim$I_A)
   index_R <- array(info$index$R, info$dim$R)
-  index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
+  index_T_sero_neg <- array(info$index$T_sero_neg, info$dim$T_sero_neg)
   index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
   index_S <- array(info$index$S, info$dim$S)
   state[index_R] <- state[index_S]
-  state[index_R_neg] <- state[index_S]
+  state[index_T_sero_neg] <- state[index_S]
   state[index_T_PCR_neg] <- state[index_S]
   state[index_S] <- 0
   state[index_I_A] <- 0 # remove seeded infections
@@ -416,13 +416,13 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
 
   index_I_A <- array(info$index$I_A, info$dim$I_A)
   index_R <- array(info$index$R, info$dim$R)
-  index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
+  index_T_sero_neg <- array(info$index$T_sero_neg, info$dim$T_sero_neg)
   index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
   index_S <- array(info$index$S, info$dim$S)
   state[index_R[, 1, 2]] <- state[index_S[, 1]]
   state[index_R[, 1, 1]] <- 0
-  state[index_R_neg[, 1, 2]] <- state[index_S[, 1]]
-  state[index_R_neg[, 1, 1]] <- 0
+  state[index_T_sero_neg[, 1, 2]] <- state[index_S[, 1]]
+  state[index_T_sero_neg[, 1, 1]] <- 0
   state[index_T_PCR_neg[, 1, 2]] <- state[index_S[, 1]]
   state[index_T_PCR_neg[, 1, 1]] <- 0
   state[index_S] <- 0
@@ -1032,11 +1032,11 @@ test_that("Outputed R vaccination numbers are what we expect", {
 
   ## empty S ans fill in R initially
   index_R <- array(info$index$R, info$dim$R)
-  index_R_neg <- array(info$index$R_neg, info$dim$R_neg)
+  index_T_sero_neg <- array(info$index$T_sero_neg, info$dim$T_sero_neg)
   index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
   index_S <- array(info$index$S, info$dim$S)
   state[index_R[, , ]] <- state[index_S]
-  state[index_R_neg[, , ]] <- state[index_S]
+  state[index_T_sero_neg[, , ]] <- state[index_S]
   state[index_T_PCR_neg[, , ]] <- state[index_S]
   state[index_S] <- 0
 
