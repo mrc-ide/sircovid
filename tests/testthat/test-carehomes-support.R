@@ -10,7 +10,7 @@ test_that("carehomes progression parameters", {
       "gamma_A", "gamma_C", "gamma_G_D", "gamma_H_D",
       "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
       "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
-      "gamma_R_pre_1", "gamma_R_pre_2", "gamma_U", "gamma_PCR_pos",
+      "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
       "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints

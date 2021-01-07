@@ -140,14 +140,14 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(gamma_ICU_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_R_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_R_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_sero_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_U, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(model_pcr_and_serology_user, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_R_pre_1, has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_sero_pre_1, has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_daily_doses, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class carehomes {
 public:
@@ -348,7 +348,7 @@ public:
     int dim_G_D_2;
     int dim_G_D_3;
     int dim_G_D_4;
-    int dim_gamma_R_pre;
+    int dim_gamma_sero_pre;
     int dim_H_D_conf;
     int dim_H_D_conf_1;
     int dim_H_D_conf_12;
@@ -1256,10 +1256,10 @@ public:
     real_t gamma_ICU_W_R;
     real_t gamma_PCR_pos;
     real_t gamma_PCR_pre;
-    std::vector<real_t> gamma_R_pre;
-    real_t gamma_R_pre_1;
-    real_t gamma_R_pre_2;
     real_t gamma_sero_pos;
+    std::vector<real_t> gamma_sero_pre;
+    real_t gamma_sero_pre_1;
+    real_t gamma_sero_pre_2;
     real_t gamma_U;
     real_t gamma_W_D;
     real_t gamma_W_R;
@@ -1490,11 +1490,11 @@ public:
     std::vector<real_t> p_R_next_vacc_class;
     real_t p_R_pos;
     std::vector<real_t> p_R_pre;
-    real_t p_R_pre_1;
     std::vector<real_t> p_RS;
     std::vector<real_t> p_S_next_vacc_class;
     std::vector<real_t> p_SE;
     std::vector<real_t> p_sero_pos;
+    real_t p_sero_pre_1;
     std::vector<real_t> p_star_step;
     real_t p_T_PCR_pos;
     real_t p_T_PCR_pre;
@@ -2993,14 +2993,14 @@ public:
       for (int j = 1; j <= internal.dim_n_com_to_R_pre_2; ++j) {
         int k = 1;
         int l = 1;
-        internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * 0 + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_R_pre_1);
+        internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * 0 + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_sero_pre_1);
       }
     }
     for (int i = 1; i <= internal.dim_n_com_to_R_pre_1; ++i) {
       for (int j = 1; j <= internal.dim_n_com_to_R_pre_2; ++j) {
         int k = 1;
         for (int l = 2; l <= internal.n_vacc_classes; ++l) {
-          internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * (l - 1) + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_R_pre_1);
+          internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * (l - 1) + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_sero_pre_1);
         }
       }
     }
@@ -4086,7 +4086,7 @@ template<>
 carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   typedef typename carehomes::real_t real_t;
   carehomes::init_t internal;
-  internal.dim_gamma_R_pre = 2;
+  internal.dim_gamma_sero_pre = 2;
   internal.initial_cum_admit_conf = 0;
   internal.initial_cum_infections = 0;
   internal.initial_cum_new_conf = 0;
@@ -4103,7 +4103,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.initial_react_pos = 0;
   internal.initial_sero_pos = 0;
   internal.initial_time = 0;
-  internal.gamma_R_pre = std::vector<real_t>(internal.dim_gamma_R_pre);
+  internal.gamma_sero_pre = std::vector<real_t>(internal.dim_gamma_sero_pre);
   internal.dt = NA_REAL;
   internal.G_D_transmission = NA_REAL;
   internal.hosp_transmission = NA_REAL;
@@ -4137,14 +4137,14 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_ICU_W_R = 0.10000000000000001;
   internal.gamma_PCR_pos = 0.10000000000000001;
   internal.gamma_PCR_pre = 0.10000000000000001;
-  internal.gamma_R_pre_1 = 0.10000000000000001;
-  internal.gamma_R_pre_2 = 0.10000000000000001;
   internal.gamma_sero_pos = 0.10000000000000001;
+  internal.gamma_sero_pre_1 = 0.10000000000000001;
+  internal.gamma_sero_pre_2 = 0.10000000000000001;
   internal.gamma_U = 0.10000000000000001;
   internal.gamma_W_D = 0.10000000000000001;
   internal.gamma_W_R = 0.10000000000000001;
   internal.model_pcr_and_serology_user = 1;
-  internal.p_R_pre_1 = 0.5;
+  internal.p_sero_pre_1 = 0.5;
   internal.vaccine_daily_doses = 0;
   std::array <int, 1> dim_beta_step;
   internal.beta_step = user_get_array_variable<real_t, 1>(user, "beta_step", internal.beta_step, dim_beta_step, NA_REAL, NA_REAL);
@@ -4163,9 +4163,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.gamma_ICU_W_R = user_get_scalar<real_t>(user, "gamma_ICU_W_R", internal.gamma_ICU_W_R, NA_REAL, NA_REAL);
   internal.gamma_PCR_pos = user_get_scalar<real_t>(user, "gamma_PCR_pos", internal.gamma_PCR_pos, NA_REAL, NA_REAL);
   internal.gamma_PCR_pre = user_get_scalar<real_t>(user, "gamma_PCR_pre", internal.gamma_PCR_pre, NA_REAL, NA_REAL);
-  internal.gamma_R_pre_1 = user_get_scalar<real_t>(user, "gamma_R_pre_1", internal.gamma_R_pre_1, NA_REAL, NA_REAL);
-  internal.gamma_R_pre_2 = user_get_scalar<real_t>(user, "gamma_R_pre_2", internal.gamma_R_pre_2, NA_REAL, NA_REAL);
   internal.gamma_sero_pos = user_get_scalar<real_t>(user, "gamma_sero_pos", internal.gamma_sero_pos, NA_REAL, NA_REAL);
+  internal.gamma_sero_pre_1 = user_get_scalar<real_t>(user, "gamma_sero_pre_1", internal.gamma_sero_pre_1, NA_REAL, NA_REAL);
+  internal.gamma_sero_pre_2 = user_get_scalar<real_t>(user, "gamma_sero_pre_2", internal.gamma_sero_pre_2, NA_REAL, NA_REAL);
   internal.gamma_U = user_get_scalar<real_t>(user, "gamma_U", internal.gamma_U, NA_REAL, NA_REAL);
   internal.gamma_W_D = user_get_scalar<real_t>(user, "gamma_W_D", internal.gamma_W_D, NA_REAL, NA_REAL);
   internal.gamma_W_R = user_get_scalar<real_t>(user, "gamma_W_R", internal.gamma_W_R, NA_REAL, NA_REAL);
@@ -4189,7 +4189,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   std::array <int, 1> dim_p_ICU_step;
   internal.p_ICU_step = user_get_array_variable<real_t, 1>(user, "p_ICU_step", internal.p_ICU_step, dim_p_ICU_step, NA_REAL, NA_REAL);
   internal.dim_p_ICU_step = internal.p_ICU_step.size();
-  internal.p_R_pre_1 = user_get_scalar<real_t>(user, "p_R_pre_1", internal.p_R_pre_1, NA_REAL, NA_REAL);
+  internal.p_sero_pre_1 = user_get_scalar<real_t>(user, "p_sero_pre_1", internal.p_sero_pre_1, NA_REAL, NA_REAL);
   std::array <int, 1> dim_p_star_step;
   internal.p_star_step = user_get_array_variable<real_t, 1>(user, "p_star_step", internal.p_star_step, dim_p_star_step, NA_REAL, NA_REAL);
   internal.dim_p_star_step = internal.p_star_step.size();
@@ -4289,11 +4289,11 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_m = internal.dim_m_1 * internal.dim_m_2;
   {
      int i = 1;
-     internal.gamma_R_pre[i - 1] = internal.gamma_R_pre_1;
+     internal.gamma_sero_pre[i - 1] = internal.gamma_sero_pre_1;
   }
   {
      int i = 2;
-     internal.gamma_R_pre[i - 1] = internal.gamma_R_pre_2;
+     internal.gamma_sero_pre[i - 1] = internal.gamma_sero_pre_2;
   }
   for (int i = 1; i <= internal.dim_cum_admit_by_age; ++i) {
     internal.initial_cum_admit_by_age[i - 1] = 0;
@@ -5827,7 +5827,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
     for (int j = 1; j <= internal.dim_p_R_pre_2; ++j) {
       for (int k = 1; k <= internal.dim_p_R_pre_3; ++k) {
         for (int l = 1; l <= internal.dim_p_R_pre_4; ++l) {
-          internal.p_R_pre[i - 1 + internal.dim_p_R_pre_1 * (j - 1) + internal.dim_p_R_pre_12 * (k - 1) + internal.dim_p_R_pre_123 * (l - 1)] = 1 - std::exp(- internal.gamma_R_pre[k - 1] * internal.dt);
+          internal.p_R_pre[i - 1 + internal.dim_p_R_pre_1 * (j - 1) + internal.dim_p_R_pre_12 * (k - 1) + internal.dim_p_R_pre_123 * (l - 1)] = 1 - std::exp(- internal.gamma_sero_pre[k - 1] * internal.dt);
         }
       }
     }

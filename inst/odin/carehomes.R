@@ -128,7 +128,7 @@ p_IICU_W_D <- 1 - exp(-gamma_ICU_W_D * dt)
 p_IICU_D <- 1 - exp(-gamma_ICU_D * dt)
 p_WW_R <- 1 - exp(-gamma_W_R * dt)
 p_WW_D <- 1 - exp(-gamma_W_D * dt)
-p_R_pre[, , , ] <- 1 - exp(-gamma_R_pre[k] * dt)
+p_R_pre[, , , ] <- 1 - exp(-gamma_sero_pre[k] * dt)
 p_R_pos <- 1 - exp(-gamma_sero_pos * dt)
 p_test <- 1 - exp(-gamma_U * dt)
 p_T_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
@@ -637,9 +637,9 @@ new_D_comm[] <- D_comm[i] + sum(n_GG_D[i, , s_G_D, ])
 ## Work out the number of people entering the seroconversion flow
 n_com_to_R_pre[, , 1, 1] <- rbinom(
   n_EE[i, j, s_E, 1] + n_EE_next_vacc_class[i, j, s_E, n_vacc_classes],
-  p_R_pre_1)
+  p_sero_pre_1)
 n_com_to_R_pre[, , 1, 2:n_vacc_classes] <- rbinom(
-  n_EE[i, j, s_E, l] + n_EE_next_vacc_class[i, j, s_E, l - 1], p_R_pre_1)
+  n_EE[i, j, s_E, l] + n_EE_next_vacc_class[i, j, s_E, l - 1], p_sero_pre_1)
 n_com_to_R_pre[, , 2, 1] <- n_EE[i, j, s_E, 1] +
   n_EE_next_vacc_class[i, j, s_E, n_vacc_classes] - n_com_to_R_pre[i, j, 1, 1]
 n_com_to_R_pre[, , 2, 2:n_vacc_classes] <- n_EE[i, j, s_E, l] +
@@ -863,12 +863,12 @@ s_W_D <- user()
 gamma_W_D <- user(0.1)
 
 ## Parameters of the R_pre classes
-gamma_R_pre_1 <- user(0.1)
-gamma_R_pre_2 <- user(0.1)
-gamma_R_pre[1] <- gamma_R_pre_1
-gamma_R_pre[2] <- gamma_R_pre_2
+gamma_sero_pre_1 <- user(0.1)
+gamma_sero_pre_2 <- user(0.1)
+gamma_sero_pre[1] <- gamma_sero_pre_1
+gamma_sero_pre[2] <- gamma_sero_pre_2
 ## Governs the mixing - pretty much only makes sense at 0.5
-p_R_pre_1 <- user(0.5)
+p_sero_pre_1 <- user(0.5)
 p_sero_pos[] <- user()
 
 ## Parameters of the R_pos classes
@@ -1060,7 +1060,7 @@ dim(new_R) <- c(n_groups, n_strains, n_vacc_classes)
 dim(R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(new_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(n_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
-dim(gamma_R_pre) <- 2
+dim(gamma_sero_pre) <- 2
 dim(p_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(p_sero_pos) <- n_groups
 

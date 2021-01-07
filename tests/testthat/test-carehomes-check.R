@@ -437,11 +437,11 @@ test_that("No one does not seroconvert and no one seroreverts
 
 
 test_that("R_pre parameters work as expected", {
-  helper <- function(p_R_pre_1, gamma_R_pre_1, gamma_R_pre_2) {
+  helper <- function(p_R_pre_1, gamma_sero_pre_1, gamma_sero_pre_2) {
     p <- carehomes_parameters(0, "uk")
     p$p_R_pre_1 <- p_R_pre_1
-    p$gamma_R_pre_1 <- gamma_R_pre_1
-    p$gamma_R_pre_2 <- gamma_R_pre_2
+    p$gamma_sero_pre_1 <- gamma_sero_pre_1
+    p$gamma_sero_pre_2 <- gamma_sero_pre_2
 
     mod <- carehomes$new(p, 0, 1)
     info <- mod$info()
@@ -462,26 +462,26 @@ test_that("R_pre parameters work as expected", {
   y <- helper(0, 1, 0.5)
   expect_true(all(y$R_pre[, , 1, , ] == 0))
 
-  ## gamma_R_pre_1 = gamma_R_pre_2 = 0, expect no cases in R_pos
+  ## gamma_sero_pre_1 = gamma_sero_pre_2 = 0, expect no cases in R_pos
   y <- helper(0.5, 0, 0)
   expect_true(all(y$R_pos == 0))
   expect_true(all(y$R_neg == 0))
 
-  ## gamma_R_pre_1 = Inf, gamma_R_pre_2 = 0, expect progression in one
+  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = 0, expect progression in one
   ## time-step to R_neg/R_pos just from R_pre_1
   y <- helper(0.5, Inf, 0)
   n <- length(y$time)
   expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
                t(y$R_pre[, , 1, 1, -n]))
 
-  ## gamma_R_pre_1 = 0, gamma_R_pre_2 = Inf, expect progression in one
+  ## gamma_sero_pre_1 = 0, gamma_sero_pre_2 = Inf, expect progression in one
   ## time-step to R_neg/R_pos just from R_pre_2
   y <- helper(0.5, 0, Inf)
   n <- length(y$time)
   expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$R_neg))),
                t(y$R_pre[, , 2, 1, -n]))
 
-  ## gamma_R_pre_1 = Inf, gamma_R_pre_2 = Inf, expect progression in
+  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = Inf, expect progression in
   ## one time-step to R_neg/R_pos from both R_pre_1 and R_pre_2
   y <- helper(0.5, Inf, Inf)
   n <- length(y$time)
