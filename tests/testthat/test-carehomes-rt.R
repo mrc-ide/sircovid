@@ -186,18 +186,6 @@ test_that("can't compute Rt for unknown types", {
 })
 
 
-test_that("can interpolate Rt", {
-  d <- reference_data_rt()
-
-  p <- d$inputs$p
-  steps <- d$inputs$steps
-  y <- d$inputs$y
-
-  res <- carehomes_Rt(steps, y[, 1, ], p,
-                      interpolate_every = 7, interpolate_min = 3)
-})
-
-
 test_that("Can interpolate Rt with step changes", {
   dat <- reference_data_mcmc()
   rt <- local({
