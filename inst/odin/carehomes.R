@@ -659,11 +659,11 @@ n_T_sero_pre_to_T_sero_pos[, , ] <-
 new_T_sero_pos[, , , ] <- T_sero_pos[i, j, k, l] - n_TT_sero_pos[i, j, k, l]
 new_T_sero_pos[, , 1, ] <-
   new_T_sero_pos[i, j, 1, l] + n_T_sero_pre_to_T_sero_pos[i, j, l]
-new_T_sero_pos[, , 2:s_sero_pos, ] <-
+new_T_sero_pos[, , 2:k_sero_pos, ] <-
   new_T_sero_pos[i, j, k, l] + n_TT_sero_pos[i, j, k - 1, l]
 
 new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] + sum(n_TT_sero_pre[i, j, , k]) -
-  n_T_sero_pre_to_T_sero_pos[i, j, k] + n_TT_sero_pos[i, j, s_sero_pos, k] -
+  n_T_sero_pre_to_T_sero_pos[i, j, k] + n_TT_sero_pos[i, j, k_sero_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
 new_T_sero_neg[, , 1] <- new_T_sero_neg[i, j, 1] +
@@ -693,16 +693,16 @@ new_R[, , 2:n_vacc_classes] <- new_R[i, j, k] +
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] - n_TT_PCR_pre[i, j, k, l]
 new_T_PCR_pre[, , 1, ] <- new_T_PCR_pre[i, j, 1, l] + n_S_progress[i, j, l]
-new_T_PCR_pre[, , 2:s_PCR_pre, ] <-
+new_T_PCR_pre[, , 2:k_PCR_pre, ] <-
   new_T_PCR_pre[i, j, k, l] + n_TT_PCR_pre[i, j, k - 1, l]
 
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] - n_TT_PCR_pos[i, j, k, l]
 new_T_PCR_pos[, , 1, ] <- new_T_PCR_pos[i, j, 1, l] +
-  n_TT_PCR_pre[i, j, s_PCR_pre, l]
-new_T_PCR_pos[, , 2:s_PCR_pos, ] <-
+  n_TT_PCR_pre[i, j, k_PCR_pre, l]
+new_T_PCR_pos[, , 2:k_PCR_pos, ] <-
   new_T_PCR_pos[i, j, k, l] + n_TT_PCR_pos[i, j, k - 1, l]
 
-new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] + n_TT_PCR_pos[i, j, s_PCR_pos, k] -
+new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] + n_TT_PCR_pos[i, j, k_PCR_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
 new_T_PCR_neg[, , 1] <- new_T_PCR_neg[i, j, 1] +
@@ -878,7 +878,7 @@ p_sero_pre_1 <- user(0.5)
 p_sero_pos[] <- user()
 
 ## Parameters of the T_sero_pos classes
-s_sero_pos <- user()
+k_sero_pos <- user()
 gamma_sero_pos <- user(0.1)
 
 ## Parameters relating to testing
@@ -888,9 +888,9 @@ p_star_step[] <- user()
 psi_star[] <- user()
 
 ## Parameters relating to PCR positivity
-s_PCR_pre <- user()
+k_PCR_pre <- user()
 gamma_PCR_pre <- user(0.1)
-s_PCR_pos <- user()
+k_PCR_pos <- user()
 gamma_PCR_pos <- user(0.1)
 
 ## Parameters of the age stratified transmission
@@ -1071,9 +1071,9 @@ dim(p_TT_sero_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(p_sero_pos) <- n_groups
 
 ## Vectors handling the T_sero_pos class
-dim(T_sero_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
-dim(n_TT_sero_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
-dim(new_T_sero_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
+dim(T_sero_pos) <- c(n_groups, n_strains, k_sero_pos, n_vacc_classes)
+dim(n_TT_sero_pos) <- c(n_groups, n_strains, k_sero_pos, n_vacc_classes)
+dim(new_T_sero_pos) <- c(n_groups, n_strains, k_sero_pos, n_vacc_classes)
 dim(n_T_sero_pre_to_T_sero_pos) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the T_sero_neg class
@@ -1089,12 +1089,12 @@ dim(D_comm) <- n_groups
 dim(new_D_comm) <- n_groups
 
 ## Vectors handling the PCR classes
-dim(T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
-dim(n_TT_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
-dim(new_T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
-dim(T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
-dim(n_TT_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
-dim(new_T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
+dim(T_PCR_pre) <- c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
+dim(n_TT_PCR_pre) <- c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
+dim(new_T_PCR_pre) <- c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
+dim(T_PCR_pos) <- c(n_groups, n_strains, k_PCR_pos, n_vacc_classes)
+dim(n_TT_PCR_pos) <- c(n_groups, n_strains, k_PCR_pos, n_vacc_classes)
+dim(new_T_PCR_pos) <- c(n_groups, n_strains, k_PCR_pos, n_vacc_classes)
 dim(T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
 dim(new_T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
 

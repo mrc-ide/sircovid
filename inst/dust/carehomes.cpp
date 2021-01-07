@@ -91,6 +91,9 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(k_ICU_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_PCR_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_PCR_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
@@ -115,9 +118,6 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(rel_p_C, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_H, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_susceptibility, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_PCR_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_PCR_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_population_reluctant, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1326,6 +1326,9 @@ public:
     int k_ICU_pre;
     int k_ICU_W_D;
     int k_ICU_W_R;
+    int k_PCR_pos;
+    int k_PCR_pre;
+    int k_sero_pos;
     int k_W_D;
     int k_W_R;
     std::vector<real_t> lambda;
@@ -1527,9 +1530,6 @@ public:
     std::vector<real_t> rel_p_H;
     std::vector<real_t> rel_susceptibility;
     std::vector<real_t> s_ij;
-    int s_PCR_pos;
-    int s_PCR_pre;
-    int s_sero_pos;
     std::vector<real_t> strain_seed_step;
     std::vector<real_t> strain_transmission;
     real_t vaccine_daily_doses;
@@ -2276,13 +2276,13 @@ public:
       for (int j = 1; j <= internal.dim_new_T_PCR_pos_2; ++j) {
         int k = 1;
         for (int l = 1; l <= internal.dim_new_T_PCR_pos_4; ++l) {
-          internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[internal.dim_new_T_PCR_pos_123 * (l - 1) + internal.dim_new_T_PCR_pos_12 * 0 + internal.dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pre[internal.dim_n_TT_PCR_pre_123 * (l - 1) + internal.dim_n_TT_PCR_pre_12 * (internal.s_PCR_pre - 1) + internal.dim_n_TT_PCR_pre_1 * (j - 1) + i - 1];
+          internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[internal.dim_new_T_PCR_pos_123 * (l - 1) + internal.dim_new_T_PCR_pos_12 * 0 + internal.dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pre[internal.dim_n_TT_PCR_pre_123 * (l - 1) + internal.dim_n_TT_PCR_pre_12 * (internal.k_PCR_pre - 1) + internal.dim_n_TT_PCR_pre_1 * (j - 1) + i - 1];
         }
       }
     }
     for (int i = 1; i <= internal.dim_new_T_PCR_pos_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_PCR_pos_2; ++j) {
-        for (int k = 2; k <= internal.s_PCR_pos; ++k) {
+        for (int k = 2; k <= internal.k_PCR_pos; ++k) {
           for (int l = 1; l <= internal.dim_new_T_PCR_pos_4; ++l) {
             internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[internal.dim_new_T_PCR_pos_123 * (l - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pos[internal.dim_n_TT_PCR_pos_123 * (l - 1) + internal.dim_n_TT_PCR_pos_12 * (k - 1 - 1) + internal.dim_n_TT_PCR_pos_1 * (j - 1) + i - 1];
           }
@@ -2717,7 +2717,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_new_T_sero_pos_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_sero_pos_2; ++j) {
-        for (int k = 2; k <= internal.s_sero_pos; ++k) {
+        for (int k = 2; k <= internal.k_sero_pos; ++k) {
           for (int l = 1; l <= internal.dim_new_T_sero_pos_4; ++l) {
             internal.new_T_sero_pos[i - 1 + internal.dim_new_T_sero_pos_1 * (j - 1) + internal.dim_new_T_sero_pos_12 * (k - 1) + internal.dim_new_T_sero_pos_123 * (l - 1)] = internal.new_T_sero_pos[internal.dim_new_T_sero_pos_123 * (l - 1) + internal.dim_new_T_sero_pos_12 * (k - 1) + internal.dim_new_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_TT_sero_pos[internal.dim_n_TT_sero_pos_123 * (l - 1) + internal.dim_n_TT_sero_pos_12 * (k - 1 - 1) + internal.dim_n_TT_sero_pos_1 * (j - 1) + i - 1];
           }
@@ -3299,7 +3299,7 @@ public:
     for (int i = 1; i <= internal.dim_new_T_PCR_neg_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_PCR_neg_2; ++j) {
         for (int k = 1; k <= internal.dim_new_T_PCR_neg_3; ++k) {
-          internal.new_T_PCR_neg[i - 1 + internal.dim_new_T_PCR_neg_1 * (j - 1) + internal.dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[internal.dim_T_PCR_neg_12 * (k - 1) + internal.dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pos[internal.dim_n_TT_PCR_pos_123 * (k - 1) + internal.dim_n_TT_PCR_pos_12 * (internal.s_PCR_pos - 1) + internal.dim_n_TT_PCR_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_T_PCR_neg[i - 1 + internal.dim_new_T_PCR_neg_1 * (j - 1) + internal.dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[internal.dim_T_PCR_neg_12 * (k - 1) + internal.dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pos[internal.dim_n_TT_PCR_pos_123 * (k - 1) + internal.dim_n_TT_PCR_pos_12 * (internal.k_PCR_pos - 1) + internal.dim_n_TT_PCR_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3335,7 +3335,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_new_T_PCR_pre_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_PCR_pre_2; ++j) {
-        for (int k = 2; k <= internal.s_PCR_pre; ++k) {
+        for (int k = 2; k <= internal.k_PCR_pre; ++k) {
           for (int l = 1; l <= internal.dim_new_T_PCR_pre_4; ++l) {
             internal.new_T_PCR_pre[i - 1 + internal.dim_new_T_PCR_pre_1 * (j - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_123 * (l - 1)] = internal.new_T_PCR_pre[internal.dim_new_T_PCR_pre_123 * (l - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pre[internal.dim_n_TT_PCR_pre_123 * (l - 1) + internal.dim_n_TT_PCR_pre_12 * (k - 1 - 1) + internal.dim_n_TT_PCR_pre_1 * (j - 1) + i - 1];
           }
@@ -3345,7 +3345,7 @@ public:
     for (int i = 1; i <= internal.dim_new_T_sero_neg_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_sero_neg_2; ++j) {
         for (int k = 1; k <= internal.dim_new_T_sero_neg_3; ++k) {
-          internal.new_T_sero_neg[i - 1 + internal.dim_new_T_sero_neg_1 * (j - 1) + internal.dim_new_T_sero_neg_12 * (k - 1)] = T_sero_neg[internal.dim_T_sero_neg_12 * (k - 1) + internal.dim_T_sero_neg_1 * (j - 1) + i - 1] + odin_sum4(internal.n_TT_sero_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_TT_sero_pre_3, k - 1, k, internal.dim_n_TT_sero_pre_1, internal.dim_n_TT_sero_pre_12, internal.dim_n_TT_sero_pre_123) - internal.n_T_sero_pre_to_T_sero_pos[internal.dim_n_T_sero_pre_to_T_sero_pos_12 * (k - 1) + internal.dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_TT_sero_pos[internal.dim_n_TT_sero_pos_123 * (k - 1) + internal.dim_n_TT_sero_pos_12 * (internal.s_sero_pos - 1) + internal.dim_n_TT_sero_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_T_sero_neg[i - 1 + internal.dim_new_T_sero_neg_1 * (j - 1) + internal.dim_new_T_sero_neg_12 * (k - 1)] = T_sero_neg[internal.dim_T_sero_neg_12 * (k - 1) + internal.dim_T_sero_neg_1 * (j - 1) + i - 1] + odin_sum4(internal.n_TT_sero_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_TT_sero_pre_3, k - 1, k, internal.dim_n_TT_sero_pre_1, internal.dim_n_TT_sero_pre_12, internal.dim_n_TT_sero_pre_123) - internal.n_T_sero_pre_to_T_sero_pos[internal.dim_n_T_sero_pre_to_T_sero_pos_12 * (k - 1) + internal.dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_TT_sero_pos[internal.dim_n_TT_sero_pos_123 * (k - 1) + internal.dim_n_TT_sero_pos_12 * (internal.k_sero_pos - 1) + internal.dim_n_TT_sero_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -4113,13 +4113,13 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.k_ICU_pre = NA_INTEGER;
   internal.k_ICU_W_D = NA_INTEGER;
   internal.k_ICU_W_R = NA_INTEGER;
+  internal.k_PCR_pos = NA_INTEGER;
+  internal.k_PCR_pre = NA_INTEGER;
+  internal.k_sero_pos = NA_INTEGER;
   internal.k_W_D = NA_INTEGER;
   internal.k_W_R = NA_INTEGER;
   internal.n_age_groups = NA_INTEGER;
   internal.n_groups = NA_INTEGER;
-  internal.s_PCR_pos = NA_INTEGER;
-  internal.s_PCR_pre = NA_INTEGER;
-  internal.s_sero_pos = NA_INTEGER;
   internal.gamma_A = 0.10000000000000001;
   internal.gamma_C = 0.10000000000000001;
   internal.gamma_E = 0.10000000000000001;
@@ -4176,6 +4176,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.k_ICU_pre = user_get_scalar<int>(user, "k_ICU_pre", internal.k_ICU_pre, NA_REAL, NA_REAL);
   internal.k_ICU_W_D = user_get_scalar<int>(user, "k_ICU_W_D", internal.k_ICU_W_D, NA_REAL, NA_REAL);
   internal.k_ICU_W_R = user_get_scalar<int>(user, "k_ICU_W_R", internal.k_ICU_W_R, NA_REAL, NA_REAL);
+  internal.k_PCR_pos = user_get_scalar<int>(user, "k_PCR_pos", internal.k_PCR_pos, NA_REAL, NA_REAL);
+  internal.k_PCR_pre = user_get_scalar<int>(user, "k_PCR_pre", internal.k_PCR_pre, NA_REAL, NA_REAL);
+  internal.k_sero_pos = user_get_scalar<int>(user, "k_sero_pos", internal.k_sero_pos, NA_REAL, NA_REAL);
   internal.k_W_D = user_get_scalar<int>(user, "k_W_D", internal.k_W_D, NA_REAL, NA_REAL);
   internal.k_W_R = user_get_scalar<int>(user, "k_W_R", internal.k_W_R, NA_REAL, NA_REAL);
   internal.model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", internal.model_pcr_and_serology_user, NA_REAL, NA_REAL);
@@ -4208,9 +4211,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_rel_susceptibility = internal.rel_susceptibility.size();
   internal.dim_rel_susceptibility_1 = dim_rel_susceptibility[0];
   internal.dim_rel_susceptibility_2 = dim_rel_susceptibility[1];
-  internal.s_PCR_pos = user_get_scalar<int>(user, "s_PCR_pos", internal.s_PCR_pos, NA_REAL, NA_REAL);
-  internal.s_PCR_pre = user_get_scalar<int>(user, "s_PCR_pre", internal.s_PCR_pre, NA_REAL, NA_REAL);
-  internal.s_sero_pos = user_get_scalar<int>(user, "s_sero_pos", internal.s_sero_pos, NA_REAL, NA_REAL);
   std::array <int, 1> dim_strain_seed_step;
   internal.strain_seed_step = user_get_array_variable<real_t, 1>(user, "strain_seed_step", internal.strain_seed_step, dim_strain_seed_step, NA_REAL, NA_REAL);
   internal.dim_strain_seed_step = internal.strain_seed_step.size();
@@ -4702,15 +4702,15 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_T_sero_pre_to_T_sero_pos_3 = internal.n_vacc_classes;
   internal.dim_n_TT_PCR_pos_1 = internal.n_groups;
   internal.dim_n_TT_PCR_pos_2 = internal.n_strains;
-  internal.dim_n_TT_PCR_pos_3 = internal.s_PCR_pos;
+  internal.dim_n_TT_PCR_pos_3 = internal.k_PCR_pos;
   internal.dim_n_TT_PCR_pos_4 = internal.n_vacc_classes;
   internal.dim_n_TT_PCR_pre_1 = internal.n_groups;
   internal.dim_n_TT_PCR_pre_2 = internal.n_strains;
-  internal.dim_n_TT_PCR_pre_3 = internal.s_PCR_pre;
+  internal.dim_n_TT_PCR_pre_3 = internal.k_PCR_pre;
   internal.dim_n_TT_PCR_pre_4 = internal.n_vacc_classes;
   internal.dim_n_TT_sero_pos_1 = internal.n_groups;
   internal.dim_n_TT_sero_pos_2 = internal.n_strains;
-  internal.dim_n_TT_sero_pos_3 = internal.s_sero_pos;
+  internal.dim_n_TT_sero_pos_3 = internal.k_sero_pos;
   internal.dim_n_TT_sero_pos_4 = internal.n_vacc_classes;
   internal.dim_n_TT_sero_pre_1 = internal.n_groups;
   internal.dim_n_TT_sero_pre_2 = internal.n_strains;
@@ -4814,18 +4814,18 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_T_PCR_neg_3 = internal.n_vacc_classes;
   internal.dim_new_T_PCR_pos_1 = internal.n_groups;
   internal.dim_new_T_PCR_pos_2 = internal.n_strains;
-  internal.dim_new_T_PCR_pos_3 = internal.s_PCR_pos;
+  internal.dim_new_T_PCR_pos_3 = internal.k_PCR_pos;
   internal.dim_new_T_PCR_pos_4 = internal.n_vacc_classes;
   internal.dim_new_T_PCR_pre_1 = internal.n_groups;
   internal.dim_new_T_PCR_pre_2 = internal.n_strains;
-  internal.dim_new_T_PCR_pre_3 = internal.s_PCR_pre;
+  internal.dim_new_T_PCR_pre_3 = internal.k_PCR_pre;
   internal.dim_new_T_PCR_pre_4 = internal.n_vacc_classes;
   internal.dim_new_T_sero_neg_1 = internal.n_groups;
   internal.dim_new_T_sero_neg_2 = internal.n_strains;
   internal.dim_new_T_sero_neg_3 = internal.n_vacc_classes;
   internal.dim_new_T_sero_pos_1 = internal.n_groups;
   internal.dim_new_T_sero_pos_2 = internal.n_strains;
-  internal.dim_new_T_sero_pos_3 = internal.s_sero_pos;
+  internal.dim_new_T_sero_pos_3 = internal.k_sero_pos;
   internal.dim_new_T_sero_pos_4 = internal.n_vacc_classes;
   internal.dim_new_T_sero_pre_1 = internal.n_groups;
   internal.dim_new_T_sero_pre_2 = internal.n_strains;
@@ -4882,18 +4882,18 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_T_PCR_neg_3 = internal.n_vacc_classes;
   internal.dim_T_PCR_pos_1 = internal.n_groups;
   internal.dim_T_PCR_pos_2 = internal.n_strains;
-  internal.dim_T_PCR_pos_3 = internal.s_PCR_pos;
+  internal.dim_T_PCR_pos_3 = internal.k_PCR_pos;
   internal.dim_T_PCR_pos_4 = internal.n_vacc_classes;
   internal.dim_T_PCR_pre_1 = internal.n_groups;
   internal.dim_T_PCR_pre_2 = internal.n_strains;
-  internal.dim_T_PCR_pre_3 = internal.s_PCR_pre;
+  internal.dim_T_PCR_pre_3 = internal.k_PCR_pre;
   internal.dim_T_PCR_pre_4 = internal.n_vacc_classes;
   internal.dim_T_sero_neg_1 = internal.n_groups;
   internal.dim_T_sero_neg_2 = internal.n_strains;
   internal.dim_T_sero_neg_3 = internal.n_vacc_classes;
   internal.dim_T_sero_pos_1 = internal.n_groups;
   internal.dim_T_sero_pos_2 = internal.n_strains;
-  internal.dim_T_sero_pos_3 = internal.s_sero_pos;
+  internal.dim_T_sero_pos_3 = internal.k_sero_pos;
   internal.dim_T_sero_pos_4 = internal.n_vacc_classes;
   internal.dim_T_sero_pre_1 = internal.n_groups;
   internal.dim_T_sero_pre_2 = internal.n_strains;
