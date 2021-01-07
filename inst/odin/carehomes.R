@@ -402,8 +402,8 @@ n_I_C_to_hosp[, , ] <- n_II_C[i, j, k_C, k] - n_I_C_to_R[i, j, k] -
 
 ## Work out the G_D -> G_D transitions
 aux_GG_D[, , 1, ] <- n_I_C_to_G_D[i, j, l]
-aux_GG_D[, , 2:s_G_D, ] <- n_GG_D[i, j, k - 1, l]
-aux_GG_D[, , 1:s_G_D, ] <-
+aux_GG_D[, , 2:k_G_D, ] <- n_GG_D[i, j, k - 1, l]
+aux_GG_D[, , 1:k_G_D, ] <-
   aux_GG_D[i, j, k, l] - n_GG_D[i, j, k, l]
 new_G_D[, , , ] <- G_D[i, j, k, l] + aux_GG_D[i, j, k, l]
 
@@ -445,14 +445,14 @@ new_ICU_pre_conf[, , 1, ] <-
 
 ## Work out the H_R->H_R transitions
 aux_H_R_unconf[, , , ] <- H_R_unconf[i, j, k, l]
-aux_H_R_unconf[, , 2:s_H_R, ] <-
+aux_H_R_unconf[, , 2:k_H_R, ] <-
   aux_H_R_unconf[i, j, k, l] + n_HH_R_unconf[i, j, k - 1, l]
-aux_H_R_unconf[, , 1:s_H_R, ] <-
+aux_H_R_unconf[, , 1:k_H_R, ] <-
   aux_H_R_unconf[i, j, k, l] - n_HH_R_unconf[i, j, k, l]
 aux_H_R_conf[, , , ] <- H_R_conf[i, j, k, l]
-aux_H_R_conf[, , 2:s_H_R, ] <-
+aux_H_R_conf[, , 2:k_H_R, ] <-
   aux_H_R_conf[i, j, k, l] + n_HH_R_conf[i, j, k - 1, l]
-aux_H_R_conf[, , 1:s_H_R, ] <-
+aux_H_R_conf[, , 1:k_H_R, ] <-
   aux_H_R_conf[i, j, k, l] - n_HH_R_conf[i, j, k, l]
 n_H_R_unconf_to_conf[, , , ] <-
   rbinom(aux_H_R_unconf[i, j, k, l], p_test)
@@ -468,14 +468,14 @@ new_H_R_conf[, , 1, ] <-
 
 ## Work out the H_D->H_D transitions
 aux_H_D_unconf[, , , ] <- H_D_unconf[i, j, k, l]
-aux_H_D_unconf[, , 2:s_H_D, ] <-
+aux_H_D_unconf[, , 2:k_H_D, ] <-
   aux_H_D_unconf[i, j, k, l] + n_HH_D_unconf[i, j, k - 1, l]
-aux_H_D_unconf[, , 1:s_H_D, ] <-
+aux_H_D_unconf[, , 1:k_H_D, ] <-
   aux_H_D_unconf[i, j, k, l] - n_HH_D_unconf[i, j, k, l]
 aux_H_D_conf[, , , ] <- H_D_conf[i, j, k, l]
-aux_H_D_conf[, , 2:s_H_D, ] <-
+aux_H_D_conf[, , 2:k_H_D, ] <-
   aux_H_D_conf[i, j, k, l] + n_HH_D_conf[i, j, k - 1, l]
-aux_H_D_conf[, , 1:s_H_D, ] <-
+aux_H_D_conf[, , 1:k_H_D, ] <-
   aux_H_D_conf[i, j, k, l] - n_HH_D_conf[i, j, k, l]
 n_H_D_unconf_to_conf[, , , ] <-
   rbinom(aux_H_D_unconf[i, j, k, l], p_test)
@@ -582,16 +582,16 @@ new_ICU_D_conf[, , , ] <-
 aux_W_R_unconf[, , , ] <- W_R_unconf[i, j, k, l]
 aux_W_R_unconf[, , 1, ] <-
   aux_W_R_unconf[i, j, k, l] + n_IICU_W_R_unconf[i, j, k_ICU_W_R, l]
-aux_W_R_unconf[, , 2:s_W_R, ] <-
+aux_W_R_unconf[, , 2:k_W_R, ] <-
   aux_W_R_unconf[i, j, k, l] + n_WW_R_unconf[i, j, k - 1, l]
-aux_W_R_unconf[, , 1:s_W_R, ] <-
+aux_W_R_unconf[, , 1:k_W_R, ] <-
   aux_W_R_unconf[i, j, k, l] - n_WW_R_unconf[i, j, k, l]
 aux_W_R_conf[, , , ] <- W_R_conf[i, j, k, l]
 aux_W_R_conf[, , 1, ] <-
   aux_W_R_conf[i, j, k, l] + n_IICU_W_R_conf[i, j, k_ICU_W_R, l]
-aux_W_R_conf[, , 2:s_W_R, ] <-
+aux_W_R_conf[, , 2:k_W_R, ] <-
   aux_W_R_conf[i, j, k, l] + n_WW_R_conf[i, j, k - 1, l]
-aux_W_R_conf[, , 1:s_W_R, ] <-
+aux_W_R_conf[, , 1:k_W_R, ] <-
   aux_W_R_conf[i, j, k, l] - n_WW_R_conf[i, j, k, l]
 n_W_R_unconf_to_conf[, , , ] <-
   rbinom(aux_W_R_unconf[i, j, k, l], p_test)
@@ -605,16 +605,16 @@ new_W_R_conf[, , , ] <-
 aux_W_D_unconf[, , , ] <- W_D_unconf[i, j, k, l]
 aux_W_D_unconf[, , 1, ] <-
   aux_W_D_unconf[i, j, k, l] + n_IICU_W_D_unconf[i, j, k_ICU_W_D, l]
-aux_W_D_unconf[, , 2:s_W_D, ] <-
+aux_W_D_unconf[, , 2:k_W_D, ] <-
   aux_W_D_unconf[i, j, k, l] + n_WW_D_unconf[i, j, k - 1, l]
-aux_W_D_unconf[, , 1:s_W_D, ] <-
+aux_W_D_unconf[, , 1:k_W_D, ] <-
   aux_W_D_unconf[i, j, k, l] - n_WW_D_unconf[i, j, k, l]
 aux_W_D_conf[, , , ] <- W_D_conf[i, j, k, l]
 aux_W_D_conf[, , 1, ] <-
   aux_W_D_conf[i, j, k, l] + n_IICU_W_D_conf[i, j, k_ICU_W_D, l]
-aux_W_D_conf[, , 2:s_W_D, ] <-
+aux_W_D_conf[, , 2:k_W_D, ] <-
   aux_W_D_conf[i, j, k, l] + n_WW_D_conf[i, j, k - 1, l]
-aux_W_D_conf[, , 1:s_W_D, ] <-
+aux_W_D_conf[, , 1:k_W_D, ] <-
   aux_W_D_conf[i, j, k, l] - n_WW_D_conf[i, j, k, l]
 n_W_D_unconf_to_conf[, , , ] <-
   rbinom(aux_W_D_unconf[i, j, k, l], p_test)
@@ -626,15 +626,15 @@ new_W_D_conf[, , , ] <-
 
 ## Work out the number of deaths in hospital
 new_D_hosp[] <- D_hosp[i] +
-  sum(n_HH_D_unconf[i, , s_H_D, ]) +
-  sum(n_HH_D_conf[i, , s_H_D, ]) +
+  sum(n_HH_D_unconf[i, , k_H_D, ]) +
+  sum(n_HH_D_conf[i, , k_H_D, ]) +
   sum(n_IICU_D_unconf[i, , k_ICU_D, ]) +
   sum(n_IICU_D_conf[i, , k_ICU_D, ]) +
-  sum(n_WW_D_unconf[i, , s_W_D, ]) +
-  sum(n_WW_D_conf[i, , s_W_D, ])
+  sum(n_WW_D_unconf[i, , k_W_D, ]) +
+  sum(n_WW_D_conf[i, , k_W_D, ])
 
 ## Work out the number of deaths in the community
-new_D_comm[] <- D_comm[i] + sum(n_GG_D[i, , s_G_D, ])
+new_D_comm[] <- D_comm[i] + sum(n_GG_D[i, , k_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_T_sero_pre[, , 1, 1] <- rbinom(
@@ -676,10 +676,10 @@ new_T_sero_neg[, , 2:n_vacc_classes] <- new_T_sero_neg[i, j, k] +
 new_R[, , ] <- R[i, j, k] +
   n_II_A[i, j, k_A, k] +
   n_I_C_to_R[i, j, k] +
-  n_HH_R_conf[i, j, s_H_R, k] +
-  n_HH_R_unconf[i, j, s_H_R, k] +
-  n_WW_R_conf[i, j, s_W_R, k] +
-  n_WW_R_unconf[i, j, s_W_R, k] -
+  n_HH_R_conf[i, j, k_H_R, k] +
+  n_HH_R_unconf[i, j, k_H_R, k] +
+  n_WW_R_conf[i, j, k_W_R, k] +
+  n_WW_R_unconf[i, j, k_W_R, k] -
   n_R_progress[i, j, k] -
   n_R_next_vacc_class[i, j, k]
 new_R[, , 1] <- new_R[i, j, 1] +
@@ -810,7 +810,7 @@ p_H_step[] <- user()
 psi_H[] <- user()
 
 ## Parameters of the G_D class
-s_G_D <- user()
+k_G_D <- user()
 gamma_G_D <- user(0.1)
 dim(p_G_D_step) <- user()
 p_G_D_step[] <- user()
@@ -831,11 +831,11 @@ p_W_D_step[] <- user()
 psi_W_D[] <- user()
 
 ## Parameters of the H_R classes
-s_H_R <- user()
+k_H_R <- user()
 gamma_H_R <- user(0.1)
 
 ## Parameters of the H_D classes
-s_H_D <- user()
+k_H_D <- user()
 gamma_H_D <- user(0.1)
 dim(p_H_D_step) <- user()
 p_H_D_step[] <- user()
@@ -861,11 +861,11 @@ waning_rate[] <- user()
 dim(waning_rate) <- n_groups
 
 ## Parameters of the W_R classes
-s_W_R <- user()
+k_W_R <- user()
 gamma_W_R <- user(0.1)
 
 ## Parameters of the W_D classes
-s_W_D <- user()
+k_W_D <- user()
 gamma_W_D <- user(0.1)
 
 ## Parameters of the T_sero_pre classes
@@ -941,10 +941,10 @@ dim(prob_H) <- n_groups
 dim(psi_H) <- n_groups
 
 ## Vectors handling the G_D class
-dim(G_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
-dim(aux_GG_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
-dim(new_G_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
-dim(n_GG_D) <- c(n_groups, n_strains, s_G_D, n_vacc_classes)
+dim(G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
+dim(aux_GG_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
+dim(new_G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
+dim(n_GG_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 dim(prob_G_D) <- n_groups
 dim(psi_G_D) <- n_groups
 
@@ -965,28 +965,28 @@ dim(prob_ICU) <- n_groups
 dim(psi_ICU) <- n_groups
 
 ## Vectors handling the H_R class
-dim(H_R_unconf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
-dim(aux_H_R_unconf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
-dim(new_H_R_unconf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
-dim(n_HH_R_unconf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
-dim(H_R_conf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
-dim(aux_H_R_conf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
-dim(new_H_R_conf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
-dim(n_HH_R_conf) <- c(n_groups, n_strains, s_H_R, n_vacc_classes)
+dim(H_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
+dim(aux_H_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
+dim(new_H_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
+dim(n_HH_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
+dim(H_R_conf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
+dim(aux_H_R_conf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
+dim(new_H_R_conf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
+dim(n_HH_R_conf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
 dim(n_H_R_unconf_to_conf) <-
-  c(n_groups, n_strains, s_H_R, n_vacc_classes)
+  c(n_groups, n_strains, k_H_R, n_vacc_classes)
 
 ## Vectors handling the H_D class
-dim(H_D_unconf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
-dim(aux_H_D_unconf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
-dim(new_H_D_unconf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
-dim(n_HH_D_unconf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
-dim(H_D_conf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
-dim(aux_H_D_conf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
-dim(new_H_D_conf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
-dim(n_HH_D_conf) <- c(n_groups, n_strains, s_H_D, n_vacc_classes)
+dim(H_D_unconf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
+dim(aux_H_D_unconf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
+dim(new_H_D_unconf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
+dim(n_HH_D_unconf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
+dim(H_D_conf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
+dim(aux_H_D_conf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
+dim(new_H_D_conf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
+dim(n_HH_D_conf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
 dim(n_H_D_unconf_to_conf) <-
-  c(n_groups, n_strains, s_H_D, n_vacc_classes)
+  c(n_groups, n_strains, k_H_D, n_vacc_classes)
 
 ## Vectors handling the ICU_W_R class
 dim(ICU_W_R_unconf) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
@@ -1024,39 +1024,39 @@ dim(n_IICU_D_conf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
 dim(n_ICU_D_unconf_to_conf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
 
 ## Vectors handling the W_R class
-dim(W_R_unconf) <- c(n_groups, n_strains, s_W_R, n_vacc_classes)
+dim(W_R_unconf) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(aux_W_R_unconf) <-
-  c(n_groups, n_strains, s_W_R, n_vacc_classes)
+  c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(new_W_R_unconf) <-
-  c(n_groups, n_strains, s_W_R, n_vacc_classes)
+  c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(n_WW_R_unconf) <-
-  c(n_groups, n_strains, s_W_R, n_vacc_classes)
-dim(W_R_conf) <- c(n_groups, n_strains, s_W_R, n_vacc_classes)
+  c(n_groups, n_strains, k_W_R, n_vacc_classes)
+dim(W_R_conf) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(aux_W_R_conf) <-
-  c(n_groups, n_strains, s_W_R, n_vacc_classes)
+  c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(new_W_R_conf) <-
-  c(n_groups, n_strains, s_W_R, n_vacc_classes)
-dim(n_WW_R_conf) <- c(n_groups, n_strains, s_W_R, n_vacc_classes)
+  c(n_groups, n_strains, k_W_R, n_vacc_classes)
+dim(n_WW_R_conf) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(n_W_R_unconf_to_conf) <-
-  c(n_groups, n_strains, s_W_R, n_vacc_classes)
+  c(n_groups, n_strains, k_W_R, n_vacc_classes)
 
 ## Vectors handling the W_D class
-dim(W_D_unconf) <- c(n_groups, n_strains, s_W_D, n_vacc_classes)
+dim(W_D_unconf) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(aux_W_D_unconf) <-
-  c(n_groups, n_strains, s_W_D, n_vacc_classes)
+  c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(new_W_D_unconf) <-
-  c(n_groups, n_strains, s_W_D, n_vacc_classes)
+  c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(n_WW_D_unconf) <-
-  c(n_groups, n_strains, s_W_D, n_vacc_classes)
+  c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(W_D_conf) <-
-  c(n_groups, n_strains, s_W_D, n_vacc_classes)
+  c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(aux_W_D_conf) <-
-  c(n_groups, n_strains, s_W_D, n_vacc_classes)
+  c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(new_W_D_conf) <-
-  c(n_groups, n_strains, s_W_D, n_vacc_classes)
-dim(n_WW_D_conf) <- c(n_groups, n_strains, s_W_D, n_vacc_classes)
+  c(n_groups, n_strains, k_W_D, n_vacc_classes)
+dim(n_WW_D_conf) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(n_W_D_unconf_to_conf) <-
-  c(n_groups, n_strains, s_W_D, n_vacc_classes)
+  c(n_groups, n_strains, k_W_D, n_vacc_classes)
 
 ## Vectors handling the T_sero_pos class
 dim(R) <- c(n_groups, n_strains, n_vacc_classes)

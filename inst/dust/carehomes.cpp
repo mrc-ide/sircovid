@@ -84,10 +84,15 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(k_A, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_C, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_E, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_G_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_H_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_H_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -110,14 +115,9 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(rel_p_C, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_H, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_susceptibility, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_G_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_H_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_H_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_PCR_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_PCR_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_population_reluctant, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1319,10 +1319,15 @@ public:
     int k_A;
     int k_C;
     int k_E;
+    int k_G_D;
+    int k_H_D;
+    int k_H_R;
     int k_ICU_D;
     int k_ICU_pre;
     int k_ICU_W_D;
     int k_ICU_W_R;
+    int k_W_D;
+    int k_W_R;
     std::vector<real_t> lambda;
     std::vector<real_t> m;
     real_t model_pcr_and_serology;
@@ -1521,15 +1526,10 @@ public:
     std::vector<real_t> rel_p_C;
     std::vector<real_t> rel_p_H;
     std::vector<real_t> rel_susceptibility;
-    int s_G_D;
-    int s_H_D;
-    int s_H_R;
     std::vector<real_t> s_ij;
     int s_PCR_pos;
     int s_PCR_pre;
     int s_sero_pos;
-    int s_W_D;
-    int s_W_R;
     std::vector<real_t> strain_seed_step;
     std::vector<real_t> strain_transmission;
     real_t vaccine_daily_doses;
@@ -1929,7 +1929,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_D_conf_2; ++j) {
-        for (int k = 2; k <= internal.s_H_D; ++k) {
+        for (int k = 2; k <= internal.k_H_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_D_conf_4; ++l) {
             internal.aux_H_D_conf[i - 1 + internal.dim_aux_H_D_conf_1 * (j - 1) + internal.dim_aux_H_D_conf_12 * (k - 1) + internal.dim_aux_H_D_conf_123 * (l - 1)] = internal.aux_H_D_conf[internal.dim_aux_H_D_conf_123 * (l - 1) + internal.dim_aux_H_D_conf_12 * (k - 1) + internal.dim_aux_H_D_conf_1 * (j - 1) + i - 1] + internal.n_HH_D_conf[internal.dim_n_HH_D_conf_123 * (l - 1) + internal.dim_n_HH_D_conf_12 * (k - 1 - 1) + internal.dim_n_HH_D_conf_1 * (j - 1) + i - 1];
           }
@@ -1938,7 +1938,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_D_conf_2; ++j) {
-        for (int k = 1; k <= internal.s_H_D; ++k) {
+        for (int k = 1; k <= internal.k_H_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_D_conf_4; ++l) {
             internal.aux_H_D_conf[i - 1 + internal.dim_aux_H_D_conf_1 * (j - 1) + internal.dim_aux_H_D_conf_12 * (k - 1) + internal.dim_aux_H_D_conf_123 * (l - 1)] = internal.aux_H_D_conf[internal.dim_aux_H_D_conf_123 * (l - 1) + internal.dim_aux_H_D_conf_12 * (k - 1) + internal.dim_aux_H_D_conf_1 * (j - 1) + i - 1] - internal.n_HH_D_conf[internal.dim_n_HH_D_conf_123 * (l - 1) + internal.dim_n_HH_D_conf_12 * (k - 1) + internal.dim_n_HH_D_conf_1 * (j - 1) + i - 1];
           }
@@ -1956,7 +1956,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_D_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_D_unconf_2; ++j) {
-        for (int k = 2; k <= internal.s_H_D; ++k) {
+        for (int k = 2; k <= internal.k_H_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_D_unconf_4; ++l) {
             internal.aux_H_D_unconf[i - 1 + internal.dim_aux_H_D_unconf_1 * (j - 1) + internal.dim_aux_H_D_unconf_12 * (k - 1) + internal.dim_aux_H_D_unconf_123 * (l - 1)] = internal.aux_H_D_unconf[internal.dim_aux_H_D_unconf_123 * (l - 1) + internal.dim_aux_H_D_unconf_12 * (k - 1) + internal.dim_aux_H_D_unconf_1 * (j - 1) + i - 1] + internal.n_HH_D_unconf[internal.dim_n_HH_D_unconf_123 * (l - 1) + internal.dim_n_HH_D_unconf_12 * (k - 1 - 1) + internal.dim_n_HH_D_unconf_1 * (j - 1) + i - 1];
           }
@@ -1965,7 +1965,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_D_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_D_unconf_2; ++j) {
-        for (int k = 1; k <= internal.s_H_D; ++k) {
+        for (int k = 1; k <= internal.k_H_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_D_unconf_4; ++l) {
             internal.aux_H_D_unconf[i - 1 + internal.dim_aux_H_D_unconf_1 * (j - 1) + internal.dim_aux_H_D_unconf_12 * (k - 1) + internal.dim_aux_H_D_unconf_123 * (l - 1)] = internal.aux_H_D_unconf[internal.dim_aux_H_D_unconf_123 * (l - 1) + internal.dim_aux_H_D_unconf_12 * (k - 1) + internal.dim_aux_H_D_unconf_1 * (j - 1) + i - 1] - internal.n_HH_D_unconf[internal.dim_n_HH_D_unconf_123 * (l - 1) + internal.dim_n_HH_D_unconf_12 * (k - 1) + internal.dim_n_HH_D_unconf_1 * (j - 1) + i - 1];
           }
@@ -1983,7 +1983,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_R_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_R_conf_2; ++j) {
-        for (int k = 2; k <= internal.s_H_R; ++k) {
+        for (int k = 2; k <= internal.k_H_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_R_conf_4; ++l) {
             internal.aux_H_R_conf[i - 1 + internal.dim_aux_H_R_conf_1 * (j - 1) + internal.dim_aux_H_R_conf_12 * (k - 1) + internal.dim_aux_H_R_conf_123 * (l - 1)] = internal.aux_H_R_conf[internal.dim_aux_H_R_conf_123 * (l - 1) + internal.dim_aux_H_R_conf_12 * (k - 1) + internal.dim_aux_H_R_conf_1 * (j - 1) + i - 1] + internal.n_HH_R_conf[internal.dim_n_HH_R_conf_123 * (l - 1) + internal.dim_n_HH_R_conf_12 * (k - 1 - 1) + internal.dim_n_HH_R_conf_1 * (j - 1) + i - 1];
           }
@@ -1992,7 +1992,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_R_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_R_conf_2; ++j) {
-        for (int k = 1; k <= internal.s_H_R; ++k) {
+        for (int k = 1; k <= internal.k_H_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_R_conf_4; ++l) {
             internal.aux_H_R_conf[i - 1 + internal.dim_aux_H_R_conf_1 * (j - 1) + internal.dim_aux_H_R_conf_12 * (k - 1) + internal.dim_aux_H_R_conf_123 * (l - 1)] = internal.aux_H_R_conf[internal.dim_aux_H_R_conf_123 * (l - 1) + internal.dim_aux_H_R_conf_12 * (k - 1) + internal.dim_aux_H_R_conf_1 * (j - 1) + i - 1] - internal.n_HH_R_conf[internal.dim_n_HH_R_conf_123 * (l - 1) + internal.dim_n_HH_R_conf_12 * (k - 1) + internal.dim_n_HH_R_conf_1 * (j - 1) + i - 1];
           }
@@ -2010,7 +2010,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_R_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_R_unconf_2; ++j) {
-        for (int k = 2; k <= internal.s_H_R; ++k) {
+        for (int k = 2; k <= internal.k_H_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_R_unconf_4; ++l) {
             internal.aux_H_R_unconf[i - 1 + internal.dim_aux_H_R_unconf_1 * (j - 1) + internal.dim_aux_H_R_unconf_12 * (k - 1) + internal.dim_aux_H_R_unconf_123 * (l - 1)] = internal.aux_H_R_unconf[internal.dim_aux_H_R_unconf_123 * (l - 1) + internal.dim_aux_H_R_unconf_12 * (k - 1) + internal.dim_aux_H_R_unconf_1 * (j - 1) + i - 1] + internal.n_HH_R_unconf[internal.dim_n_HH_R_unconf_123 * (l - 1) + internal.dim_n_HH_R_unconf_12 * (k - 1 - 1) + internal.dim_n_HH_R_unconf_1 * (j - 1) + i - 1];
           }
@@ -2019,7 +2019,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_H_R_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_H_R_unconf_2; ++j) {
-        for (int k = 1; k <= internal.s_H_R; ++k) {
+        for (int k = 1; k <= internal.k_H_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_H_R_unconf_4; ++l) {
             internal.aux_H_R_unconf[i - 1 + internal.dim_aux_H_R_unconf_1 * (j - 1) + internal.dim_aux_H_R_unconf_12 * (k - 1) + internal.dim_aux_H_R_unconf_123 * (l - 1)] = internal.aux_H_R_unconf[internal.dim_aux_H_R_unconf_123 * (l - 1) + internal.dim_aux_H_R_unconf_12 * (k - 1) + internal.dim_aux_H_R_unconf_1 * (j - 1) + i - 1] - internal.n_HH_R_unconf[internal.dim_n_HH_R_unconf_123 * (l - 1) + internal.dim_n_HH_R_unconf_12 * (k - 1) + internal.dim_n_HH_R_unconf_1 * (j - 1) + i - 1];
           }
@@ -2099,7 +2099,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_D_conf_2; ++j) {
-        for (int k = 2; k <= internal.s_W_D; ++k) {
+        for (int k = 2; k <= internal.k_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_D_conf_4; ++l) {
             internal.aux_W_D_conf[i - 1 + internal.dim_aux_W_D_conf_1 * (j - 1) + internal.dim_aux_W_D_conf_12 * (k - 1) + internal.dim_aux_W_D_conf_123 * (l - 1)] = internal.aux_W_D_conf[internal.dim_aux_W_D_conf_123 * (l - 1) + internal.dim_aux_W_D_conf_12 * (k - 1) + internal.dim_aux_W_D_conf_1 * (j - 1) + i - 1] + internal.n_WW_D_conf[internal.dim_n_WW_D_conf_123 * (l - 1) + internal.dim_n_WW_D_conf_12 * (k - 1 - 1) + internal.dim_n_WW_D_conf_1 * (j - 1) + i - 1];
           }
@@ -2108,7 +2108,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_D_conf_2; ++j) {
-        for (int k = 1; k <= internal.s_W_D; ++k) {
+        for (int k = 1; k <= internal.k_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_D_conf_4; ++l) {
             internal.aux_W_D_conf[i - 1 + internal.dim_aux_W_D_conf_1 * (j - 1) + internal.dim_aux_W_D_conf_12 * (k - 1) + internal.dim_aux_W_D_conf_123 * (l - 1)] = internal.aux_W_D_conf[internal.dim_aux_W_D_conf_123 * (l - 1) + internal.dim_aux_W_D_conf_12 * (k - 1) + internal.dim_aux_W_D_conf_1 * (j - 1) + i - 1] - internal.n_WW_D_conf[internal.dim_n_WW_D_conf_123 * (l - 1) + internal.dim_n_WW_D_conf_12 * (k - 1) + internal.dim_n_WW_D_conf_1 * (j - 1) + i - 1];
           }
@@ -2134,7 +2134,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_D_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_D_unconf_2; ++j) {
-        for (int k = 2; k <= internal.s_W_D; ++k) {
+        for (int k = 2; k <= internal.k_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_D_unconf_4; ++l) {
             internal.aux_W_D_unconf[i - 1 + internal.dim_aux_W_D_unconf_1 * (j - 1) + internal.dim_aux_W_D_unconf_12 * (k - 1) + internal.dim_aux_W_D_unconf_123 * (l - 1)] = internal.aux_W_D_unconf[internal.dim_aux_W_D_unconf_123 * (l - 1) + internal.dim_aux_W_D_unconf_12 * (k - 1) + internal.dim_aux_W_D_unconf_1 * (j - 1) + i - 1] + internal.n_WW_D_unconf[internal.dim_n_WW_D_unconf_123 * (l - 1) + internal.dim_n_WW_D_unconf_12 * (k - 1 - 1) + internal.dim_n_WW_D_unconf_1 * (j - 1) + i - 1];
           }
@@ -2143,7 +2143,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_D_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_D_unconf_2; ++j) {
-        for (int k = 1; k <= internal.s_W_D; ++k) {
+        for (int k = 1; k <= internal.k_W_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_D_unconf_4; ++l) {
             internal.aux_W_D_unconf[i - 1 + internal.dim_aux_W_D_unconf_1 * (j - 1) + internal.dim_aux_W_D_unconf_12 * (k - 1) + internal.dim_aux_W_D_unconf_123 * (l - 1)] = internal.aux_W_D_unconf[internal.dim_aux_W_D_unconf_123 * (l - 1) + internal.dim_aux_W_D_unconf_12 * (k - 1) + internal.dim_aux_W_D_unconf_1 * (j - 1) + i - 1] - internal.n_WW_D_unconf[internal.dim_n_WW_D_unconf_123 * (l - 1) + internal.dim_n_WW_D_unconf_12 * (k - 1) + internal.dim_n_WW_D_unconf_1 * (j - 1) + i - 1];
           }
@@ -2169,7 +2169,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_R_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_R_conf_2; ++j) {
-        for (int k = 2; k <= internal.s_W_R; ++k) {
+        for (int k = 2; k <= internal.k_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_R_conf_4; ++l) {
             internal.aux_W_R_conf[i - 1 + internal.dim_aux_W_R_conf_1 * (j - 1) + internal.dim_aux_W_R_conf_12 * (k - 1) + internal.dim_aux_W_R_conf_123 * (l - 1)] = internal.aux_W_R_conf[internal.dim_aux_W_R_conf_123 * (l - 1) + internal.dim_aux_W_R_conf_12 * (k - 1) + internal.dim_aux_W_R_conf_1 * (j - 1) + i - 1] + internal.n_WW_R_conf[internal.dim_n_WW_R_conf_123 * (l - 1) + internal.dim_n_WW_R_conf_12 * (k - 1 - 1) + internal.dim_n_WW_R_conf_1 * (j - 1) + i - 1];
           }
@@ -2178,7 +2178,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_R_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_R_conf_2; ++j) {
-        for (int k = 1; k <= internal.s_W_R; ++k) {
+        for (int k = 1; k <= internal.k_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_R_conf_4; ++l) {
             internal.aux_W_R_conf[i - 1 + internal.dim_aux_W_R_conf_1 * (j - 1) + internal.dim_aux_W_R_conf_12 * (k - 1) + internal.dim_aux_W_R_conf_123 * (l - 1)] = internal.aux_W_R_conf[internal.dim_aux_W_R_conf_123 * (l - 1) + internal.dim_aux_W_R_conf_12 * (k - 1) + internal.dim_aux_W_R_conf_1 * (j - 1) + i - 1] - internal.n_WW_R_conf[internal.dim_n_WW_R_conf_123 * (l - 1) + internal.dim_n_WW_R_conf_12 * (k - 1) + internal.dim_n_WW_R_conf_1 * (j - 1) + i - 1];
           }
@@ -2204,7 +2204,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_R_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_R_unconf_2; ++j) {
-        for (int k = 2; k <= internal.s_W_R; ++k) {
+        for (int k = 2; k <= internal.k_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_R_unconf_4; ++l) {
             internal.aux_W_R_unconf[i - 1 + internal.dim_aux_W_R_unconf_1 * (j - 1) + internal.dim_aux_W_R_unconf_12 * (k - 1) + internal.dim_aux_W_R_unconf_123 * (l - 1)] = internal.aux_W_R_unconf[internal.dim_aux_W_R_unconf_123 * (l - 1) + internal.dim_aux_W_R_unconf_12 * (k - 1) + internal.dim_aux_W_R_unconf_1 * (j - 1) + i - 1] + internal.n_WW_R_unconf[internal.dim_n_WW_R_unconf_123 * (l - 1) + internal.dim_n_WW_R_unconf_12 * (k - 1 - 1) + internal.dim_n_WW_R_unconf_1 * (j - 1) + i - 1];
           }
@@ -2213,7 +2213,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_W_R_unconf_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_W_R_unconf_2; ++j) {
-        for (int k = 1; k <= internal.s_W_R; ++k) {
+        for (int k = 1; k <= internal.k_W_R; ++k) {
           for (int l = 1; l <= internal.dim_aux_W_R_unconf_4; ++l) {
             internal.aux_W_R_unconf[i - 1 + internal.dim_aux_W_R_unconf_1 * (j - 1) + internal.dim_aux_W_R_unconf_12 * (k - 1) + internal.dim_aux_W_R_unconf_123 * (l - 1)] = internal.aux_W_R_unconf[internal.dim_aux_W_R_unconf_123 * (l - 1) + internal.dim_aux_W_R_unconf_12 * (k - 1) + internal.dim_aux_W_R_unconf_1 * (j - 1) + i - 1] - internal.n_WW_R_unconf[internal.dim_n_WW_R_unconf_123 * (l - 1) + internal.dim_n_WW_R_unconf_12 * (k - 1) + internal.dim_n_WW_R_unconf_1 * (j - 1) + i - 1];
           }
@@ -2258,10 +2258,10 @@ public:
       }
     }
     for (int i = 1; i <= internal.dim_new_D_comm; ++i) {
-      internal.new_D_comm[i - 1] = D_comm[i - 1] + odin_sum4(internal.n_GG_D.data(), i - 1, i, 0, internal.dim_n_GG_D_2, internal.s_G_D - 1, internal.s_G_D, 0, internal.dim_n_GG_D_4, internal.dim_n_GG_D_1, internal.dim_n_GG_D_12, internal.dim_n_GG_D_123);
+      internal.new_D_comm[i - 1] = D_comm[i - 1] + odin_sum4(internal.n_GG_D.data(), i - 1, i, 0, internal.dim_n_GG_D_2, internal.k_G_D - 1, internal.k_G_D, 0, internal.dim_n_GG_D_4, internal.dim_n_GG_D_1, internal.dim_n_GG_D_12, internal.dim_n_GG_D_123);
     }
     for (int i = 1; i <= internal.dim_new_D_hosp; ++i) {
-      internal.new_D_hosp[i - 1] = D_hosp[i - 1] + odin_sum4(internal.n_HH_D_unconf.data(), i - 1, i, 0, internal.dim_n_HH_D_unconf_2, internal.s_H_D - 1, internal.s_H_D, 0, internal.dim_n_HH_D_unconf_4, internal.dim_n_HH_D_unconf_1, internal.dim_n_HH_D_unconf_12, internal.dim_n_HH_D_unconf_123) + odin_sum4(internal.n_HH_D_conf.data(), i - 1, i, 0, internal.dim_n_HH_D_conf_2, internal.s_H_D - 1, internal.s_H_D, 0, internal.dim_n_HH_D_conf_4, internal.dim_n_HH_D_conf_1, internal.dim_n_HH_D_conf_12, internal.dim_n_HH_D_conf_123) + odin_sum4(internal.n_IICU_D_unconf.data(), i - 1, i, 0, internal.dim_n_IICU_D_unconf_2, internal.k_ICU_D - 1, internal.k_ICU_D, 0, internal.dim_n_IICU_D_unconf_4, internal.dim_n_IICU_D_unconf_1, internal.dim_n_IICU_D_unconf_12, internal.dim_n_IICU_D_unconf_123) + odin_sum4(internal.n_IICU_D_conf.data(), i - 1, i, 0, internal.dim_n_IICU_D_conf_2, internal.k_ICU_D - 1, internal.k_ICU_D, 0, internal.dim_n_IICU_D_conf_4, internal.dim_n_IICU_D_conf_1, internal.dim_n_IICU_D_conf_12, internal.dim_n_IICU_D_conf_123) + odin_sum4(internal.n_WW_D_unconf.data(), i - 1, i, 0, internal.dim_n_WW_D_unconf_2, internal.s_W_D - 1, internal.s_W_D, 0, internal.dim_n_WW_D_unconf_4, internal.dim_n_WW_D_unconf_1, internal.dim_n_WW_D_unconf_12, internal.dim_n_WW_D_unconf_123) + odin_sum4(internal.n_WW_D_conf.data(), i - 1, i, 0, internal.dim_n_WW_D_conf_2, internal.s_W_D - 1, internal.s_W_D, 0, internal.dim_n_WW_D_conf_4, internal.dim_n_WW_D_conf_1, internal.dim_n_WW_D_conf_12, internal.dim_n_WW_D_conf_123);
+      internal.new_D_hosp[i - 1] = D_hosp[i - 1] + odin_sum4(internal.n_HH_D_unconf.data(), i - 1, i, 0, internal.dim_n_HH_D_unconf_2, internal.k_H_D - 1, internal.k_H_D, 0, internal.dim_n_HH_D_unconf_4, internal.dim_n_HH_D_unconf_1, internal.dim_n_HH_D_unconf_12, internal.dim_n_HH_D_unconf_123) + odin_sum4(internal.n_HH_D_conf.data(), i - 1, i, 0, internal.dim_n_HH_D_conf_2, internal.k_H_D - 1, internal.k_H_D, 0, internal.dim_n_HH_D_conf_4, internal.dim_n_HH_D_conf_1, internal.dim_n_HH_D_conf_12, internal.dim_n_HH_D_conf_123) + odin_sum4(internal.n_IICU_D_unconf.data(), i - 1, i, 0, internal.dim_n_IICU_D_unconf_2, internal.k_ICU_D - 1, internal.k_ICU_D, 0, internal.dim_n_IICU_D_unconf_4, internal.dim_n_IICU_D_unconf_1, internal.dim_n_IICU_D_unconf_12, internal.dim_n_IICU_D_unconf_123) + odin_sum4(internal.n_IICU_D_conf.data(), i - 1, i, 0, internal.dim_n_IICU_D_conf_2, internal.k_ICU_D - 1, internal.k_ICU_D, 0, internal.dim_n_IICU_D_conf_4, internal.dim_n_IICU_D_conf_1, internal.dim_n_IICU_D_conf_12, internal.dim_n_IICU_D_conf_123) + odin_sum4(internal.n_WW_D_unconf.data(), i - 1, i, 0, internal.dim_n_WW_D_unconf_2, internal.k_W_D - 1, internal.k_W_D, 0, internal.dim_n_WW_D_unconf_4, internal.dim_n_WW_D_unconf_1, internal.dim_n_WW_D_unconf_12, internal.dim_n_WW_D_unconf_123) + odin_sum4(internal.n_WW_D_conf.data(), i - 1, i, 0, internal.dim_n_WW_D_conf_2, internal.k_W_D - 1, internal.k_W_D, 0, internal.dim_n_WW_D_conf_4, internal.dim_n_WW_D_conf_1, internal.dim_n_WW_D_conf_12, internal.dim_n_WW_D_conf_123);
     }
     for (int i = 1; i <= internal.dim_new_T_PCR_pos_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_PCR_pos_2; ++j) {
@@ -2532,7 +2532,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_GG_D_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_GG_D_2; ++j) {
-        for (int k = 2; k <= internal.s_G_D; ++k) {
+        for (int k = 2; k <= internal.k_G_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_GG_D_4; ++l) {
             internal.aux_GG_D[i - 1 + internal.dim_aux_GG_D_1 * (j - 1) + internal.dim_aux_GG_D_12 * (k - 1) + internal.dim_aux_GG_D_123 * (l - 1)] = internal.n_GG_D[internal.dim_n_GG_D_123 * (l - 1) + internal.dim_n_GG_D_12 * (k - 1 - 1) + internal.dim_n_GG_D_1 * (j - 1) + i - 1];
           }
@@ -2541,7 +2541,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_aux_GG_D_1; ++i) {
       for (int j = 1; j <= internal.dim_aux_GG_D_2; ++j) {
-        for (int k = 1; k <= internal.s_G_D; ++k) {
+        for (int k = 1; k <= internal.k_G_D; ++k) {
           for (int l = 1; l <= internal.dim_aux_GG_D_4; ++l) {
             internal.aux_GG_D[i - 1 + internal.dim_aux_GG_D_1 * (j - 1) + internal.dim_aux_GG_D_12 * (k - 1) + internal.dim_aux_GG_D_123 * (l - 1)] = internal.aux_GG_D[internal.dim_aux_GG_D_123 * (l - 1) + internal.dim_aux_GG_D_12 * (k - 1) + internal.dim_aux_GG_D_1 * (j - 1) + i - 1] - internal.n_GG_D[internal.dim_n_GG_D_123 * (l - 1) + internal.dim_n_GG_D_12 * (k - 1) + internal.dim_n_GG_D_1 * (j - 1) + i - 1];
           }
@@ -3279,7 +3279,7 @@ public:
     for (int i = 1; i <= internal.dim_new_R_1; ++i) {
       for (int j = 1; j <= internal.dim_new_R_2; ++j) {
         for (int k = 1; k <= internal.dim_new_R_3; ++k) {
-          internal.new_R[i - 1 + internal.dim_new_R_1 * (j - 1) + internal.dim_new_R_12 * (k - 1)] = R[internal.dim_R_12 * (k - 1) + internal.dim_R_1 * (j - 1) + i - 1] + internal.n_II_A[internal.dim_n_II_A_123 * (k - 1) + internal.dim_n_II_A_12 * (internal.k_A - 1) + internal.dim_n_II_A_1 * (j - 1) + i - 1] + internal.n_I_C_to_R[internal.dim_n_I_C_to_R_12 * (k - 1) + internal.dim_n_I_C_to_R_1 * (j - 1) + i - 1] + internal.n_HH_R_conf[internal.dim_n_HH_R_conf_123 * (k - 1) + internal.dim_n_HH_R_conf_12 * (internal.s_H_R - 1) + internal.dim_n_HH_R_conf_1 * (j - 1) + i - 1] + internal.n_HH_R_unconf[internal.dim_n_HH_R_unconf_123 * (k - 1) + internal.dim_n_HH_R_unconf_12 * (internal.s_H_R - 1) + internal.dim_n_HH_R_unconf_1 * (j - 1) + i - 1] + internal.n_WW_R_conf[internal.dim_n_WW_R_conf_123 * (k - 1) + internal.dim_n_WW_R_conf_12 * (internal.s_W_R - 1) + internal.dim_n_WW_R_conf_1 * (j - 1) + i - 1] + internal.n_WW_R_unconf[internal.dim_n_WW_R_unconf_123 * (k - 1) + internal.dim_n_WW_R_unconf_12 * (internal.s_W_R - 1) + internal.dim_n_WW_R_unconf_1 * (j - 1) + i - 1] - internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_R[i - 1 + internal.dim_new_R_1 * (j - 1) + internal.dim_new_R_12 * (k - 1)] = R[internal.dim_R_12 * (k - 1) + internal.dim_R_1 * (j - 1) + i - 1] + internal.n_II_A[internal.dim_n_II_A_123 * (k - 1) + internal.dim_n_II_A_12 * (internal.k_A - 1) + internal.dim_n_II_A_1 * (j - 1) + i - 1] + internal.n_I_C_to_R[internal.dim_n_I_C_to_R_12 * (k - 1) + internal.dim_n_I_C_to_R_1 * (j - 1) + i - 1] + internal.n_HH_R_conf[internal.dim_n_HH_R_conf_123 * (k - 1) + internal.dim_n_HH_R_conf_12 * (internal.k_H_R - 1) + internal.dim_n_HH_R_conf_1 * (j - 1) + i - 1] + internal.n_HH_R_unconf[internal.dim_n_HH_R_unconf_123 * (k - 1) + internal.dim_n_HH_R_unconf_12 * (internal.k_H_R - 1) + internal.dim_n_HH_R_unconf_1 * (j - 1) + i - 1] + internal.n_WW_R_conf[internal.dim_n_WW_R_conf_123 * (k - 1) + internal.dim_n_WW_R_conf_12 * (internal.k_W_R - 1) + internal.dim_n_WW_R_conf_1 * (j - 1) + i - 1] + internal.n_WW_R_unconf[internal.dim_n_WW_R_unconf_123 * (k - 1) + internal.dim_n_WW_R_unconf_12 * (internal.k_W_R - 1) + internal.dim_n_WW_R_unconf_1 * (j - 1) + i - 1] - internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -4106,20 +4106,20 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.k_A = NA_INTEGER;
   internal.k_C = NA_INTEGER;
   internal.k_E = NA_INTEGER;
+  internal.k_G_D = NA_INTEGER;
+  internal.k_H_D = NA_INTEGER;
+  internal.k_H_R = NA_INTEGER;
   internal.k_ICU_D = NA_INTEGER;
   internal.k_ICU_pre = NA_INTEGER;
   internal.k_ICU_W_D = NA_INTEGER;
   internal.k_ICU_W_R = NA_INTEGER;
+  internal.k_W_D = NA_INTEGER;
+  internal.k_W_R = NA_INTEGER;
   internal.n_age_groups = NA_INTEGER;
   internal.n_groups = NA_INTEGER;
-  internal.s_G_D = NA_INTEGER;
-  internal.s_H_D = NA_INTEGER;
-  internal.s_H_R = NA_INTEGER;
   internal.s_PCR_pos = NA_INTEGER;
   internal.s_PCR_pre = NA_INTEGER;
   internal.s_sero_pos = NA_INTEGER;
-  internal.s_W_D = NA_INTEGER;
-  internal.s_W_R = NA_INTEGER;
   internal.gamma_A = 0.10000000000000001;
   internal.gamma_C = 0.10000000000000001;
   internal.gamma_E = 0.10000000000000001;
@@ -4169,10 +4169,15 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.k_A = user_get_scalar<int>(user, "k_A", internal.k_A, NA_REAL, NA_REAL);
   internal.k_C = user_get_scalar<int>(user, "k_C", internal.k_C, NA_REAL, NA_REAL);
   internal.k_E = user_get_scalar<int>(user, "k_E", internal.k_E, NA_REAL, NA_REAL);
+  internal.k_G_D = user_get_scalar<int>(user, "k_G_D", internal.k_G_D, NA_REAL, NA_REAL);
+  internal.k_H_D = user_get_scalar<int>(user, "k_H_D", internal.k_H_D, NA_REAL, NA_REAL);
+  internal.k_H_R = user_get_scalar<int>(user, "k_H_R", internal.k_H_R, NA_REAL, NA_REAL);
   internal.k_ICU_D = user_get_scalar<int>(user, "k_ICU_D", internal.k_ICU_D, NA_REAL, NA_REAL);
   internal.k_ICU_pre = user_get_scalar<int>(user, "k_ICU_pre", internal.k_ICU_pre, NA_REAL, NA_REAL);
   internal.k_ICU_W_D = user_get_scalar<int>(user, "k_ICU_W_D", internal.k_ICU_W_D, NA_REAL, NA_REAL);
   internal.k_ICU_W_R = user_get_scalar<int>(user, "k_ICU_W_R", internal.k_ICU_W_R, NA_REAL, NA_REAL);
+  internal.k_W_D = user_get_scalar<int>(user, "k_W_D", internal.k_W_D, NA_REAL, NA_REAL);
+  internal.k_W_R = user_get_scalar<int>(user, "k_W_R", internal.k_W_R, NA_REAL, NA_REAL);
   internal.model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", internal.model_pcr_and_serology_user, NA_REAL, NA_REAL);
   internal.n_age_groups = user_get_scalar<int>(user, "n_age_groups", internal.n_age_groups, NA_REAL, NA_REAL);
   internal.n_groups = user_get_scalar<int>(user, "n_groups", internal.n_groups, NA_REAL, NA_REAL);
@@ -4203,14 +4208,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_rel_susceptibility = internal.rel_susceptibility.size();
   internal.dim_rel_susceptibility_1 = dim_rel_susceptibility[0];
   internal.dim_rel_susceptibility_2 = dim_rel_susceptibility[1];
-  internal.s_G_D = user_get_scalar<int>(user, "s_G_D", internal.s_G_D, NA_REAL, NA_REAL);
-  internal.s_H_D = user_get_scalar<int>(user, "s_H_D", internal.s_H_D, NA_REAL, NA_REAL);
-  internal.s_H_R = user_get_scalar<int>(user, "s_H_R", internal.s_H_R, NA_REAL, NA_REAL);
   internal.s_PCR_pos = user_get_scalar<int>(user, "s_PCR_pos", internal.s_PCR_pos, NA_REAL, NA_REAL);
   internal.s_PCR_pre = user_get_scalar<int>(user, "s_PCR_pre", internal.s_PCR_pre, NA_REAL, NA_REAL);
   internal.s_sero_pos = user_get_scalar<int>(user, "s_sero_pos", internal.s_sero_pos, NA_REAL, NA_REAL);
-  internal.s_W_D = user_get_scalar<int>(user, "s_W_D", internal.s_W_D, NA_REAL, NA_REAL);
-  internal.s_W_R = user_get_scalar<int>(user, "s_W_R", internal.s_W_R, NA_REAL, NA_REAL);
   std::array <int, 1> dim_strain_seed_step;
   internal.strain_seed_step = user_get_array_variable<real_t, 1>(user, "strain_seed_step", internal.strain_seed_step, dim_strain_seed_step, NA_REAL, NA_REAL);
   internal.dim_strain_seed_step = internal.strain_seed_step.size();
@@ -4332,23 +4332,23 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_aux_EE_4 = internal.n_vacc_classes;
   internal.dim_aux_GG_D_1 = internal.n_groups;
   internal.dim_aux_GG_D_2 = internal.n_strains;
-  internal.dim_aux_GG_D_3 = internal.s_G_D;
+  internal.dim_aux_GG_D_3 = internal.k_G_D;
   internal.dim_aux_GG_D_4 = internal.n_vacc_classes;
   internal.dim_aux_H_D_conf_1 = internal.n_groups;
   internal.dim_aux_H_D_conf_2 = internal.n_strains;
-  internal.dim_aux_H_D_conf_3 = internal.s_H_D;
+  internal.dim_aux_H_D_conf_3 = internal.k_H_D;
   internal.dim_aux_H_D_conf_4 = internal.n_vacc_classes;
   internal.dim_aux_H_D_unconf_1 = internal.n_groups;
   internal.dim_aux_H_D_unconf_2 = internal.n_strains;
-  internal.dim_aux_H_D_unconf_3 = internal.s_H_D;
+  internal.dim_aux_H_D_unconf_3 = internal.k_H_D;
   internal.dim_aux_H_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_aux_H_R_conf_1 = internal.n_groups;
   internal.dim_aux_H_R_conf_2 = internal.n_strains;
-  internal.dim_aux_H_R_conf_3 = internal.s_H_R;
+  internal.dim_aux_H_R_conf_3 = internal.k_H_R;
   internal.dim_aux_H_R_conf_4 = internal.n_vacc_classes;
   internal.dim_aux_H_R_unconf_1 = internal.n_groups;
   internal.dim_aux_H_R_unconf_2 = internal.n_strains;
-  internal.dim_aux_H_R_unconf_3 = internal.s_H_R;
+  internal.dim_aux_H_R_unconf_3 = internal.k_H_R;
   internal.dim_aux_H_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_aux_ICU_D_conf_1 = internal.n_groups;
   internal.dim_aux_ICU_D_conf_2 = internal.n_strains;
@@ -4392,19 +4392,19 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_aux_II_C_4 = internal.n_vacc_classes;
   internal.dim_aux_W_D_conf_1 = internal.n_groups;
   internal.dim_aux_W_D_conf_2 = internal.n_strains;
-  internal.dim_aux_W_D_conf_3 = internal.s_W_D;
+  internal.dim_aux_W_D_conf_3 = internal.k_W_D;
   internal.dim_aux_W_D_conf_4 = internal.n_vacc_classes;
   internal.dim_aux_W_D_unconf_1 = internal.n_groups;
   internal.dim_aux_W_D_unconf_2 = internal.n_strains;
-  internal.dim_aux_W_D_unconf_3 = internal.s_W_D;
+  internal.dim_aux_W_D_unconf_3 = internal.k_W_D;
   internal.dim_aux_W_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_aux_W_R_conf_1 = internal.n_groups;
   internal.dim_aux_W_R_conf_2 = internal.n_strains;
-  internal.dim_aux_W_R_conf_3 = internal.s_W_R;
+  internal.dim_aux_W_R_conf_3 = internal.k_W_R;
   internal.dim_aux_W_R_conf_4 = internal.n_vacc_classes;
   internal.dim_aux_W_R_unconf_1 = internal.n_groups;
   internal.dim_aux_W_R_unconf_2 = internal.n_strains;
-  internal.dim_aux_W_R_unconf_3 = internal.s_W_R;
+  internal.dim_aux_W_R_unconf_3 = internal.k_W_R;
   internal.dim_aux_W_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_cum_n_E_vaccinated_1 = internal.n_groups;
   internal.dim_cum_n_E_vaccinated_2 = internal.n_vacc_classes;
@@ -4422,23 +4422,23 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_E_4 = internal.n_vacc_classes;
   internal.dim_G_D_1 = internal.n_groups;
   internal.dim_G_D_2 = internal.n_strains;
-  internal.dim_G_D_3 = internal.s_G_D;
+  internal.dim_G_D_3 = internal.k_G_D;
   internal.dim_G_D_4 = internal.n_vacc_classes;
   internal.dim_H_D_conf_1 = internal.n_groups;
   internal.dim_H_D_conf_2 = internal.n_strains;
-  internal.dim_H_D_conf_3 = internal.s_H_D;
+  internal.dim_H_D_conf_3 = internal.k_H_D;
   internal.dim_H_D_conf_4 = internal.n_vacc_classes;
   internal.dim_H_D_unconf_1 = internal.n_groups;
   internal.dim_H_D_unconf_2 = internal.n_strains;
-  internal.dim_H_D_unconf_3 = internal.s_H_D;
+  internal.dim_H_D_unconf_3 = internal.k_H_D;
   internal.dim_H_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_H_R_conf_1 = internal.n_groups;
   internal.dim_H_R_conf_2 = internal.n_strains;
-  internal.dim_H_R_conf_3 = internal.s_H_R;
+  internal.dim_H_R_conf_3 = internal.k_H_R;
   internal.dim_H_R_conf_4 = internal.n_vacc_classes;
   internal.dim_H_R_unconf_1 = internal.n_groups;
   internal.dim_H_R_unconf_2 = internal.n_strains;
-  internal.dim_H_R_unconf_3 = internal.s_H_R;
+  internal.dim_H_R_unconf_3 = internal.k_H_R;
   internal.dim_H_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_I_A_1 = internal.n_groups;
   internal.dim_I_A_2 = internal.n_strains;
@@ -4518,31 +4518,31 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_EI_C_next_vacc_class_3 = internal.n_vacc_classes;
   internal.dim_n_GG_D_1 = internal.n_groups;
   internal.dim_n_GG_D_2 = internal.n_strains;
-  internal.dim_n_GG_D_3 = internal.s_G_D;
+  internal.dim_n_GG_D_3 = internal.k_G_D;
   internal.dim_n_GG_D_4 = internal.n_vacc_classes;
   internal.dim_n_H_D_unconf_to_conf_1 = internal.n_groups;
   internal.dim_n_H_D_unconf_to_conf_2 = internal.n_strains;
-  internal.dim_n_H_D_unconf_to_conf_3 = internal.s_H_D;
+  internal.dim_n_H_D_unconf_to_conf_3 = internal.k_H_D;
   internal.dim_n_H_D_unconf_to_conf_4 = internal.n_vacc_classes;
   internal.dim_n_H_R_unconf_to_conf_1 = internal.n_groups;
   internal.dim_n_H_R_unconf_to_conf_2 = internal.n_strains;
-  internal.dim_n_H_R_unconf_to_conf_3 = internal.s_H_R;
+  internal.dim_n_H_R_unconf_to_conf_3 = internal.k_H_R;
   internal.dim_n_H_R_unconf_to_conf_4 = internal.n_vacc_classes;
   internal.dim_n_HH_D_conf_1 = internal.n_groups;
   internal.dim_n_HH_D_conf_2 = internal.n_strains;
-  internal.dim_n_HH_D_conf_3 = internal.s_H_D;
+  internal.dim_n_HH_D_conf_3 = internal.k_H_D;
   internal.dim_n_HH_D_conf_4 = internal.n_vacc_classes;
   internal.dim_n_HH_D_unconf_1 = internal.n_groups;
   internal.dim_n_HH_D_unconf_2 = internal.n_strains;
-  internal.dim_n_HH_D_unconf_3 = internal.s_H_D;
+  internal.dim_n_HH_D_unconf_3 = internal.k_H_D;
   internal.dim_n_HH_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_n_HH_R_conf_1 = internal.n_groups;
   internal.dim_n_HH_R_conf_2 = internal.n_strains;
-  internal.dim_n_HH_R_conf_3 = internal.s_H_R;
+  internal.dim_n_HH_R_conf_3 = internal.k_H_R;
   internal.dim_n_HH_R_conf_4 = internal.n_vacc_classes;
   internal.dim_n_HH_R_unconf_1 = internal.n_groups;
   internal.dim_n_HH_R_unconf_2 = internal.n_strains;
-  internal.dim_n_HH_R_unconf_3 = internal.s_H_R;
+  internal.dim_n_HH_R_unconf_3 = internal.k_H_R;
   internal.dim_n_HH_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_n_hosp_non_ICU_1 = internal.n_groups;
   internal.dim_n_hosp_non_ICU_2 = internal.n_strains;
@@ -4718,27 +4718,27 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_TT_sero_pre_4 = internal.n_vacc_classes;
   internal.dim_n_W_D_unconf_to_conf_1 = internal.n_groups;
   internal.dim_n_W_D_unconf_to_conf_2 = internal.n_strains;
-  internal.dim_n_W_D_unconf_to_conf_3 = internal.s_W_D;
+  internal.dim_n_W_D_unconf_to_conf_3 = internal.k_W_D;
   internal.dim_n_W_D_unconf_to_conf_4 = internal.n_vacc_classes;
   internal.dim_n_W_R_unconf_to_conf_1 = internal.n_groups;
   internal.dim_n_W_R_unconf_to_conf_2 = internal.n_strains;
-  internal.dim_n_W_R_unconf_to_conf_3 = internal.s_W_R;
+  internal.dim_n_W_R_unconf_to_conf_3 = internal.k_W_R;
   internal.dim_n_W_R_unconf_to_conf_4 = internal.n_vacc_classes;
   internal.dim_n_WW_D_conf_1 = internal.n_groups;
   internal.dim_n_WW_D_conf_2 = internal.n_strains;
-  internal.dim_n_WW_D_conf_3 = internal.s_W_D;
+  internal.dim_n_WW_D_conf_3 = internal.k_W_D;
   internal.dim_n_WW_D_conf_4 = internal.n_vacc_classes;
   internal.dim_n_WW_D_unconf_1 = internal.n_groups;
   internal.dim_n_WW_D_unconf_2 = internal.n_strains;
-  internal.dim_n_WW_D_unconf_3 = internal.s_W_D;
+  internal.dim_n_WW_D_unconf_3 = internal.k_W_D;
   internal.dim_n_WW_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_n_WW_R_conf_1 = internal.n_groups;
   internal.dim_n_WW_R_conf_2 = internal.n_strains;
-  internal.dim_n_WW_R_conf_3 = internal.s_W_R;
+  internal.dim_n_WW_R_conf_3 = internal.k_W_R;
   internal.dim_n_WW_R_conf_4 = internal.n_vacc_classes;
   internal.dim_n_WW_R_unconf_1 = internal.n_groups;
   internal.dim_n_WW_R_unconf_2 = internal.n_strains;
-  internal.dim_n_WW_R_unconf_3 = internal.s_W_R;
+  internal.dim_n_WW_R_unconf_3 = internal.k_W_R;
   internal.dim_n_WW_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_new_E_1 = internal.n_groups;
   internal.dim_new_E_2 = internal.n_strains;
@@ -4746,23 +4746,23 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_E_4 = internal.n_vacc_classes;
   internal.dim_new_G_D_1 = internal.n_groups;
   internal.dim_new_G_D_2 = internal.n_strains;
-  internal.dim_new_G_D_3 = internal.s_G_D;
+  internal.dim_new_G_D_3 = internal.k_G_D;
   internal.dim_new_G_D_4 = internal.n_vacc_classes;
   internal.dim_new_H_D_conf_1 = internal.n_groups;
   internal.dim_new_H_D_conf_2 = internal.n_strains;
-  internal.dim_new_H_D_conf_3 = internal.s_H_D;
+  internal.dim_new_H_D_conf_3 = internal.k_H_D;
   internal.dim_new_H_D_conf_4 = internal.n_vacc_classes;
   internal.dim_new_H_D_unconf_1 = internal.n_groups;
   internal.dim_new_H_D_unconf_2 = internal.n_strains;
-  internal.dim_new_H_D_unconf_3 = internal.s_H_D;
+  internal.dim_new_H_D_unconf_3 = internal.k_H_D;
   internal.dim_new_H_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_new_H_R_conf_1 = internal.n_groups;
   internal.dim_new_H_R_conf_2 = internal.n_strains;
-  internal.dim_new_H_R_conf_3 = internal.s_H_R;
+  internal.dim_new_H_R_conf_3 = internal.k_H_R;
   internal.dim_new_H_R_conf_4 = internal.n_vacc_classes;
   internal.dim_new_H_R_unconf_1 = internal.n_groups;
   internal.dim_new_H_R_unconf_2 = internal.n_strains;
-  internal.dim_new_H_R_unconf_3 = internal.s_H_R;
+  internal.dim_new_H_R_unconf_3 = internal.k_H_R;
   internal.dim_new_H_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_new_I_A_1 = internal.n_groups;
   internal.dim_new_I_A_2 = internal.n_strains;
@@ -4833,19 +4833,19 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_T_sero_pre_4 = internal.n_vacc_classes;
   internal.dim_new_W_D_conf_1 = internal.n_groups;
   internal.dim_new_W_D_conf_2 = internal.n_strains;
-  internal.dim_new_W_D_conf_3 = internal.s_W_D;
+  internal.dim_new_W_D_conf_3 = internal.k_W_D;
   internal.dim_new_W_D_conf_4 = internal.n_vacc_classes;
   internal.dim_new_W_D_unconf_1 = internal.n_groups;
   internal.dim_new_W_D_unconf_2 = internal.n_strains;
-  internal.dim_new_W_D_unconf_3 = internal.s_W_D;
+  internal.dim_new_W_D_unconf_3 = internal.k_W_D;
   internal.dim_new_W_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_new_W_R_conf_1 = internal.n_groups;
   internal.dim_new_W_R_conf_2 = internal.n_strains;
-  internal.dim_new_W_R_conf_3 = internal.s_W_R;
+  internal.dim_new_W_R_conf_3 = internal.k_W_R;
   internal.dim_new_W_R_conf_4 = internal.n_vacc_classes;
   internal.dim_new_W_R_unconf_1 = internal.n_groups;
   internal.dim_new_W_R_unconf_2 = internal.n_strains;
-  internal.dim_new_W_R_unconf_3 = internal.s_W_R;
+  internal.dim_new_W_R_unconf_3 = internal.k_W_R;
   internal.dim_new_W_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_p_E_next_vacc_class_1 = internal.n_groups;
   internal.dim_p_E_next_vacc_class_2 = internal.n_strains;
@@ -4905,19 +4905,19 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_vaccine_progression_rate_base_2 = internal.n_vacc_classes;
   internal.dim_W_D_conf_1 = internal.n_groups;
   internal.dim_W_D_conf_2 = internal.n_strains;
-  internal.dim_W_D_conf_3 = internal.s_W_D;
+  internal.dim_W_D_conf_3 = internal.k_W_D;
   internal.dim_W_D_conf_4 = internal.n_vacc_classes;
   internal.dim_W_D_unconf_1 = internal.n_groups;
   internal.dim_W_D_unconf_2 = internal.n_strains;
-  internal.dim_W_D_unconf_3 = internal.s_W_D;
+  internal.dim_W_D_unconf_3 = internal.k_W_D;
   internal.dim_W_D_unconf_4 = internal.n_vacc_classes;
   internal.dim_W_R_conf_1 = internal.n_groups;
   internal.dim_W_R_conf_2 = internal.n_strains;
-  internal.dim_W_R_conf_3 = internal.s_W_R;
+  internal.dim_W_R_conf_3 = internal.k_W_R;
   internal.dim_W_R_conf_4 = internal.n_vacc_classes;
   internal.dim_W_R_unconf_1 = internal.n_groups;
   internal.dim_W_R_unconf_2 = internal.n_strains;
-  internal.dim_W_R_unconf_3 = internal.s_W_R;
+  internal.dim_W_R_unconf_3 = internal.k_W_R;
   internal.dim_W_R_unconf_4 = internal.n_vacc_classes;
   for (int i = 1; i <= internal.dim_cum_infections_per_strain; ++i) {
     internal.initial_cum_infections_per_strain[i - 1] = 0;
