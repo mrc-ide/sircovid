@@ -397,9 +397,9 @@ test_that("Swapping strains gives identical results with different index", {
   v5 <- c("E", "I_A", "I_C", "T_PCR_pre", "T_PCR_pos", "R_pre",
           "R_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
           "H_R_unconf", "H_R_conf", "H_D_unconf",
-          "H_D_conf", "I_ICU_S_R_unconf", "I_ICU_S_R_conf",
-          "I_ICU_S_D_unconf", "I_ICU_S_D_conf", "I_ICU_D_unconf",
-          "I_ICU_D_conf", "W_R_unconf", "W_R_conf",
+          "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf",
+          "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf",
+          "ICU_D_conf", "W_R_unconf", "W_R_conf",
           "W_D_unconf", "W_D_conf")
   for (nm in v5) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , , drop = FALSE]
