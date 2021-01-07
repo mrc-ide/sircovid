@@ -516,10 +516,7 @@ test_that("Clinical progression within a vaccination class works", {
   # increase progression rates
   p[grep("gamma", names(p))] <- 1e9
   # make p_death zero
-  param_death_idx <- c(
-    intersect(grep("p_death", names(p)), grep("_step", names(p))),
-    grep("_D_step", names(p)))
-  p[param_death_idx] <- 0
+  p[grep("_D_step", names(p))] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
