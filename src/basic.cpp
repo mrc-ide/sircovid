@@ -15,6 +15,9 @@ real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, i
 // [[dust::param(dt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(ICU_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_A, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_C, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_E, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_C, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -22,9 +25,6 @@ real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, i
 // [[dust::param(p_recov_hosp, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_recov_ICU, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_recov_sympt, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_A, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_C, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(s_E, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(s_rec, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -255,6 +255,9 @@ public:
     std::vector<real_t> initial_R_hosp;
     std::vector<real_t> initial_S;
     real_t initial_time;
+    int k_A;
+    int k_C;
+    int k_E;
     std::vector<real_t> lambda;
     std::vector<real_t> m;
     int n_age_groups;
@@ -294,9 +297,6 @@ public:
     std::vector<real_t> p_recov_ICU;
     std::vector<real_t> p_recov_sympt;
     std::vector<real_t> p_SE;
-    int s_A;
-    int s_C;
-    int s_E;
     int s_hosp;
     int s_ICU;
     std::vector<real_t> s_ij;
@@ -398,7 +398,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_EI_A_1; ++i) {
       for (int j = 1; j <= internal.dim_n_EI_A_2; ++j) {
-        internal.n_EI_A[i - 1 + internal.dim_n_EI_A_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_12 * (j - 1) + internal.dim_n_EE_1 * (internal.s_E - 1) + i - 1]), 1 - internal.p_C[i - 1]);
+        internal.n_EI_A[i - 1 + internal.dim_n_EI_A_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_12 * (j - 1) + internal.dim_n_EE_1 * (internal.k_E - 1) + i - 1]), 1 - internal.p_C[i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_n_ICU_to_R_hosp_1; ++i) {
@@ -408,7 +408,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_sympt_to_hosp_1; ++i) {
       for (int j = 1; j <= internal.dim_n_sympt_to_hosp_2; ++j) {
-        internal.n_sympt_to_hosp[i - 1 + internal.dim_n_sympt_to_hosp_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_II_C[internal.dim_n_II_C_12 * (j - 1) + internal.dim_n_II_C_1 * (internal.s_C - 1) + i - 1]), 1 - internal.p_recov_sympt[i - 1]);
+        internal.n_sympt_to_hosp[i - 1 + internal.dim_n_sympt_to_hosp_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_II_C[internal.dim_n_II_C_12 * (j - 1) + internal.dim_n_II_C_1 * (internal.k_C - 1) + i - 1]), 1 - internal.p_recov_sympt[i - 1]);
       }
     }
     for (int i = 1; i <= internal.dim_aux_II_A_1; ++i) {
@@ -418,14 +418,14 @@ public:
       }
     }
     for (int i = 1; i <= internal.dim_aux_II_A_1; ++i) {
-      for (int j = 2; j <= internal.s_A; ++j) {
+      for (int j = 2; j <= internal.k_A; ++j) {
         for (int k = 1; k <= internal.dim_aux_II_A_3; ++k) {
           internal.aux_II_A[i - 1 + internal.dim_aux_II_A_1 * (j - 1) + internal.dim_aux_II_A_12 * (k - 1)] = internal.n_II_A[internal.dim_n_II_A_12 * (k - 1) + internal.dim_n_II_A_1 * (j - 1 - 1) + i - 1];
         }
       }
     }
     for (int i = 1; i <= internal.dim_aux_II_A_1; ++i) {
-      for (int j = 1; j <= internal.s_A; ++j) {
+      for (int j = 1; j <= internal.k_A; ++j) {
         for (int k = 1; k <= internal.dim_aux_II_A_3; ++k) {
           internal.aux_II_A[i - 1 + internal.dim_aux_II_A_1 * (j - 1) + internal.dim_aux_II_A_12 * (k - 1)] = internal.aux_II_A[internal.dim_aux_II_A_12 * (k - 1) + internal.dim_aux_II_A_1 * (j - 1) + i - 1] - internal.n_II_A[internal.dim_n_II_A_12 * (k - 1) + internal.dim_n_II_A_1 * (j - 1) + i - 1];
         }
@@ -476,7 +476,7 @@ public:
     }
     for (int i = 1; i <= internal.dim_n_EI_C_1; ++i) {
       for (int j = 1; j <= internal.dim_n_EI_C_2; ++j) {
-        internal.n_EI_C[i - 1 + internal.dim_n_EI_C_1 * (j - 1)] = internal.n_EE[internal.dim_n_EE_12 * (j - 1) + internal.dim_n_EE_1 * (internal.s_E - 1) + i - 1] - internal.n_EI_A[internal.dim_n_EI_A_1 * (j - 1) + i - 1];
+        internal.n_EI_C[i - 1 + internal.dim_n_EI_C_1 * (j - 1)] = internal.n_EE[internal.dim_n_EE_12 * (j - 1) + internal.dim_n_EE_1 * (internal.k_E - 1) + i - 1] - internal.n_EI_A[internal.dim_n_EI_A_1 * (j - 1) + i - 1];
       }
     }
     for (int i = 1; i <= internal.dim_n_hosp_to_ICU_1; ++i) {
@@ -496,14 +496,14 @@ public:
       }
     }
     for (int i = 1; i <= internal.dim_aux_II_C_1; ++i) {
-      for (int j = 2; j <= internal.s_C; ++j) {
+      for (int j = 2; j <= internal.k_C; ++j) {
         for (int k = 1; k <= internal.dim_aux_II_C_3; ++k) {
           internal.aux_II_C[i - 1 + internal.dim_aux_II_C_1 * (j - 1) + internal.dim_aux_II_C_12 * (k - 1)] = internal.n_II_C[internal.dim_n_II_C_12 * (k - 1) + internal.dim_n_II_C_1 * (j - 1 - 1) + i - 1];
         }
       }
     }
     for (int i = 1; i <= internal.dim_aux_II_C_1; ++i) {
-      for (int j = 1; j <= internal.s_C; ++j) {
+      for (int j = 1; j <= internal.k_C; ++j) {
         for (int k = 1; k <= internal.dim_aux_II_C_3; ++k) {
           internal.aux_II_C[i - 1 + internal.dim_aux_II_C_1 * (j - 1) + internal.dim_aux_II_C_12 * (k - 1)] = internal.aux_II_C[internal.dim_aux_II_C_12 * (k - 1) + internal.dim_aux_II_C_1 * (j - 1) + i - 1] - internal.n_II_C[internal.dim_n_II_C_12 * (k - 1) + internal.dim_n_II_C_1 * (j - 1) + i - 1];
         }
@@ -544,7 +544,7 @@ public:
       }
     }
     for (int i = 1; i <= internal.dim_delta_R; ++i) {
-      internal.delta_R[i - 1] = odin_sum3(internal.n_II_A.data(), i - 1, i, internal.s_A - 1, internal.s_A, 0, internal.dim_n_II_A_3, internal.dim_n_II_A_1, internal.dim_n_II_A_12) + odin_sum3(internal.n_II_C.data(), i - 1, i, internal.s_C - 1, internal.s_C, 0, internal.dim_n_II_C_3, internal.dim_n_II_C_1, internal.dim_n_II_C_12) - odin_sum2(internal.n_sympt_to_hosp.data(), i - 1, i, 0, internal.dim_n_sympt_to_hosp_2, internal.dim_n_sympt_to_hosp_1) + odin_sum3(internal.n_II_hosp.data(), i - 1, i, internal.s_hosp - 1, internal.s_hosp, 0, internal.dim_n_II_hosp_3, internal.dim_n_II_hosp_1, internal.dim_n_II_hosp_12) - odin_sum2(internal.n_hosp_to_ICU.data(), i - 1, i, 0, internal.dim_n_hosp_to_ICU_2, internal.dim_n_hosp_to_ICU_1) - odin_sum2(internal.n_death_hosp.data(), i - 1, i, 0, internal.dim_n_death_hosp_2, internal.dim_n_death_hosp_1) + odin_sum3(internal.n_R_hosp.data(), i - 1, i, internal.s_rec - 1, internal.s_rec, 0, internal.dim_n_R_hosp_3, internal.dim_n_R_hosp_1, internal.dim_n_R_hosp_12);
+      internal.delta_R[i - 1] = odin_sum3(internal.n_II_A.data(), i - 1, i, internal.k_A - 1, internal.k_A, 0, internal.dim_n_II_A_3, internal.dim_n_II_A_1, internal.dim_n_II_A_12) + odin_sum3(internal.n_II_C.data(), i - 1, i, internal.k_C - 1, internal.k_C, 0, internal.dim_n_II_C_3, internal.dim_n_II_C_1, internal.dim_n_II_C_12) - odin_sum2(internal.n_sympt_to_hosp.data(), i - 1, i, 0, internal.dim_n_sympt_to_hosp_2, internal.dim_n_sympt_to_hosp_1) + odin_sum3(internal.n_II_hosp.data(), i - 1, i, internal.s_hosp - 1, internal.s_hosp, 0, internal.dim_n_II_hosp_3, internal.dim_n_II_hosp_1, internal.dim_n_II_hosp_12) - odin_sum2(internal.n_hosp_to_ICU.data(), i - 1, i, 0, internal.dim_n_hosp_to_ICU_2, internal.dim_n_hosp_to_ICU_1) - odin_sum2(internal.n_death_hosp.data(), i - 1, i, 0, internal.dim_n_death_hosp_2, internal.dim_n_death_hosp_1) + odin_sum3(internal.n_R_hosp.data(), i - 1, i, internal.s_rec - 1, internal.s_rec, 0, internal.dim_n_R_hosp_3, internal.dim_n_R_hosp_1, internal.dim_n_R_hosp_12);
     }
     for (int i = 1; i <= internal.dim_delta_R_hosp_1; ++i) {
       for (int j = 1; j <= internal.dim_delta_R_hosp_2; ++j) {
@@ -638,14 +638,14 @@ public:
       internal.aux_EE[i - 1 + internal.dim_aux_EE_1 * (j - 1) + internal.dim_aux_EE_12 * (k - 1)] = internal.n_SE[i - 1] - odin_sum3(internal.aux_EE.data(), i - 1, i, 0, 1, 0, internal.n_trans_classes - 1, internal.dim_aux_EE_1, internal.dim_aux_EE_12);
     }
     for (int i = 1; i <= internal.dim_aux_EE_1; ++i) {
-      for (int j = 2; j <= internal.s_E; ++j) {
+      for (int j = 2; j <= internal.k_E; ++j) {
         for (int k = 1; k <= internal.dim_aux_EE_3; ++k) {
           internal.aux_EE[i - 1 + internal.dim_aux_EE_1 * (j - 1) + internal.dim_aux_EE_12 * (k - 1)] = internal.n_EE[internal.dim_n_EE_12 * (k - 1) + internal.dim_n_EE_1 * (j - 1 - 1) + i - 1];
         }
       }
     }
     for (int i = 1; i <= internal.dim_aux_EE_1; ++i) {
-      for (int j = 1; j <= internal.s_E; ++j) {
+      for (int j = 1; j <= internal.k_E; ++j) {
         for (int k = 1; k <= internal.dim_aux_EE_3; ++k) {
           internal.aux_EE[i - 1 + internal.dim_aux_EE_1 * (j - 1) + internal.dim_aux_EE_12 * (k - 1)] = internal.aux_EE[internal.dim_aux_EE_12 * (k - 1) + internal.dim_aux_EE_1 * (j - 1) + i - 1] - internal.n_EE[internal.dim_n_EE_12 * (k - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1];
         }
@@ -947,10 +947,10 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.dt = NA_REAL;
   internal.hosp_transmission = NA_REAL;
   internal.ICU_transmission = NA_REAL;
+  internal.k_A = NA_INTEGER;
+  internal.k_C = NA_INTEGER;
+  internal.k_E = NA_INTEGER;
   internal.n_age_groups = NA_INTEGER;
-  internal.s_A = NA_INTEGER;
-  internal.s_C = NA_INTEGER;
-  internal.s_E = NA_INTEGER;
   internal.s_hosp = NA_INTEGER;
   internal.s_ICU = NA_INTEGER;
   internal.s_rec = NA_INTEGER;
@@ -973,22 +973,22 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.gamma_rec = user_get_scalar<real_t>(user, "gamma_rec", internal.gamma_rec, NA_REAL, NA_REAL);
   internal.hosp_transmission = user_get_scalar<real_t>(user, "hosp_transmission", internal.hosp_transmission, NA_REAL, NA_REAL);
   internal.ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", internal.ICU_transmission, NA_REAL, NA_REAL);
+  internal.k_A = user_get_scalar<int>(user, "k_A", internal.k_A, NA_REAL, NA_REAL);
+  internal.k_C = user_get_scalar<int>(user, "k_C", internal.k_C, NA_REAL, NA_REAL);
+  internal.k_E = user_get_scalar<int>(user, "k_E", internal.k_E, NA_REAL, NA_REAL);
   internal.n_age_groups = user_get_scalar<int>(user, "n_age_groups", internal.n_age_groups, NA_REAL, NA_REAL);
   internal.n_trans_classes = user_get_scalar<int>(user, "n_trans_classes", internal.n_trans_classes, NA_REAL, NA_REAL);
-  internal.s_A = user_get_scalar<int>(user, "s_A", internal.s_A, NA_REAL, NA_REAL);
-  internal.s_C = user_get_scalar<int>(user, "s_C", internal.s_C, NA_REAL, NA_REAL);
-  internal.s_E = user_get_scalar<int>(user, "s_E", internal.s_E, NA_REAL, NA_REAL);
   internal.s_hosp = user_get_scalar<int>(user, "s_hosp", internal.s_hosp, NA_REAL, NA_REAL);
   internal.s_ICU = user_get_scalar<int>(user, "s_ICU", internal.s_ICU, NA_REAL, NA_REAL);
   internal.s_rec = user_get_scalar<int>(user, "s_rec", internal.s_rec, NA_REAL, NA_REAL);
   internal.dim_aux_EE_1 = internal.n_age_groups;
-  internal.dim_aux_EE_2 = internal.s_E;
+  internal.dim_aux_EE_2 = internal.k_E;
   internal.dim_aux_EE_3 = internal.n_trans_classes;
   internal.dim_aux_II_A_1 = internal.n_age_groups;
-  internal.dim_aux_II_A_2 = internal.s_A;
+  internal.dim_aux_II_A_2 = internal.k_A;
   internal.dim_aux_II_A_3 = internal.n_trans_classes;
   internal.dim_aux_II_C_1 = internal.n_age_groups;
-  internal.dim_aux_II_C_2 = internal.s_C;
+  internal.dim_aux_II_C_2 = internal.k_C;
   internal.dim_aux_II_C_3 = internal.n_trans_classes;
   internal.dim_aux_II_hosp_1 = internal.n_age_groups;
   internal.dim_aux_II_hosp_2 = internal.s_hosp;
@@ -1004,13 +1004,13 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.dim_D = internal.n_age_groups;
   internal.dim_delta_D = internal.n_age_groups;
   internal.dim_delta_E_1 = internal.n_age_groups;
-  internal.dim_delta_E_2 = internal.s_E;
+  internal.dim_delta_E_2 = internal.k_E;
   internal.dim_delta_E_3 = internal.n_trans_classes;
   internal.dim_delta_I_A_1 = internal.n_age_groups;
-  internal.dim_delta_I_A_2 = internal.s_A;
+  internal.dim_delta_I_A_2 = internal.k_A;
   internal.dim_delta_I_A_3 = internal.n_trans_classes;
   internal.dim_delta_I_C_1 = internal.n_age_groups;
-  internal.dim_delta_I_C_2 = internal.s_C;
+  internal.dim_delta_I_C_2 = internal.k_C;
   internal.dim_delta_I_C_3 = internal.n_trans_classes;
   internal.dim_delta_I_hosp_1 = internal.n_age_groups;
   internal.dim_delta_I_hosp_2 = internal.s_hosp;
@@ -1023,13 +1023,13 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.dim_delta_R_hosp_2 = internal.s_rec;
   internal.dim_delta_R_hosp_3 = internal.n_trans_classes;
   internal.dim_E_1 = internal.n_age_groups;
-  internal.dim_E_2 = internal.s_E;
+  internal.dim_E_2 = internal.k_E;
   internal.dim_E_3 = internal.n_trans_classes;
   internal.dim_I_A_1 = internal.n_age_groups;
-  internal.dim_I_A_2 = internal.s_A;
+  internal.dim_I_A_2 = internal.k_A;
   internal.dim_I_A_3 = internal.n_trans_classes;
   internal.dim_I_C_1 = internal.n_age_groups;
-  internal.dim_I_C_2 = internal.s_C;
+  internal.dim_I_C_2 = internal.k_C;
   internal.dim_I_C_3 = internal.n_trans_classes;
   internal.dim_I_hosp_1 = internal.n_age_groups;
   internal.dim_I_hosp_2 = internal.s_hosp;
@@ -1045,7 +1045,7 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.dim_n_death_hosp_1 = internal.n_age_groups;
   internal.dim_n_death_hosp_2 = internal.n_trans_classes;
   internal.dim_n_EE_1 = internal.n_age_groups;
-  internal.dim_n_EE_2 = internal.s_E;
+  internal.dim_n_EE_2 = internal.k_E;
   internal.dim_n_EE_3 = internal.n_trans_classes;
   internal.dim_n_EI_A_1 = internal.n_age_groups;
   internal.dim_n_EI_A_2 = internal.n_trans_classes;
@@ -1056,10 +1056,10 @@ basic::init_t dust_data<basic>(cpp11::list user) {
   internal.dim_n_ICU_to_R_hosp_1 = internal.n_age_groups;
   internal.dim_n_ICU_to_R_hosp_2 = internal.n_trans_classes;
   internal.dim_n_II_A_1 = internal.n_age_groups;
-  internal.dim_n_II_A_2 = internal.s_A;
+  internal.dim_n_II_A_2 = internal.k_A;
   internal.dim_n_II_A_3 = internal.n_trans_classes;
   internal.dim_n_II_C_1 = internal.n_age_groups;
-  internal.dim_n_II_C_2 = internal.s_C;
+  internal.dim_n_II_C_2 = internal.k_C;
   internal.dim_n_II_C_3 = internal.n_trans_classes;
   internal.dim_n_II_hosp_1 = internal.n_age_groups;
   internal.dim_n_II_hosp_2 = internal.s_hosp;

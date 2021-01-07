@@ -15,6 +15,11 @@ basic <- R6::R6Class(
     max = Inf, integer = FALSE), hosp_transmission = list(has_default = FALSE,
     default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
     ICU_transmission = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_A = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_C = list(has_default = FALSE,
+        default_value = NULL, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), k_E = list(has_default = FALSE, default_value = NULL,
         rank = 0, min = -Inf, max = Inf, integer = FALSE), m = list(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), n_age_groups = list(
@@ -29,11 +34,6 @@ basic <- R6::R6Class(
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
         integer = FALSE), p_recov_sympt = list(has_default = FALSE,
         default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), s_A = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_C = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_E = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), s_hosp = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), s_ICU = list(has_default = FALSE, default_value = NULL,
@@ -180,6 +180,11 @@ carehomes <- R6::R6Class(
     hosp_transmission = list(has_default = FALSE, default_value = NULL,
         rank = 0, min = -Inf, max = Inf, integer = FALSE), ICU_transmission = list(
         has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_A = list(has_default = FALSE,
+        default_value = NULL, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), k_C = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_E = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), m = list(has_default = FALSE,
         default_value = NULL, rank = 2, min = -Inf, max = Inf,
         integer = FALSE), n_age_groups = list(has_default = FALSE,
@@ -223,11 +228,6 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), rel_susceptibility = list(
         has_default = FALSE, default_value = NULL, rank = 2,
-        min = -Inf, max = Inf, integer = FALSE), s_A = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_C = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_E = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_G_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), s_H_D = list(
