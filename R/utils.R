@@ -139,7 +139,7 @@ spread_integer <- function(n, m) {
 
 
 interpolate_grid <- function(x, f, every, min = 5) {
-  if (is.null(min) || length(x) <= min) {
+  if (is.null(every) || is.null(min) || length(x) <= min) {
     xx <- x
   } else {
     xx <- seq(x[[1]], last(x), by = min(every, ceiling(length(x) / min)))

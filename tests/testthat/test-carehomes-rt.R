@@ -196,3 +196,52 @@ test_that("can interpolate Rt", {
   res <- carehomes_Rt(steps, y[, 1, ], p,
                       interpolate_every = 7, interpolate_min = 3)
 })
+
+
+test_that("Can interpolate Rt with step changes", {
+  dat <- reference_data_mcmc()
+  rt <- local({
+    p <- lapply(seq_len(nrow(dat$pars)), function(i)
+      dat$predict$transform(dat$pars[i, ]))
+    i <- grep("S_", rownames(dat$trajectories$state))
+    S <- dat$trajectories$state[i, , ]
+    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+  })
+
+  future <- list(
+    "2020-04-15" = future_Rt(1.5, "2020-03-10"),
+    "2020-05-01" = future_Rt(0.5, "2020-03-10"),
+    "2020-05-15" = future_Rt(2, "2020-03-10"))
+  res <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
+  baseline <- add_future_betas(dat, rt, future)
+
+  events <- sircovid_simulate_events("2020-03-30", "2020-06-01", NULL)
+  p <- lapply(seq_len(nrow(baseline$pars)), function(i)
+    baseline$predict$transform(baseline$pars[i, ]))
+  ans <- sircovid_simulate(carehomes, baseline$state, p, events,
+                           index = dat$predict$index)
+
+  ## Work out our critical dates so that we can start interpolation:
+  step <- attr(ans, "step")
+  S <- ans[grep("S_", rownames(ans)), , ]
+  crit <- sircovid_date(c("2020-04-15", "2020-05-01", "2020-05-15"))
+  crit2 <- c(rbind(crit - 1, crit))
+  crit_step <- match(crit2 / p[[1]]$dt, step)
+
+  rt_cmp <- carehomes_Rt_trajectories(step, S, p,
+                                      initial_step_from_parameters = FALSE)
+
+  ## Only interpolate if "every" is given:
+  expect_identical(
+    carehomes_Rt_trajectories(step, S, p,
+                              initial_step_from_parameters = FALSE,
+                              interpolate_min = 3),
+    rt_cmp)
+
+  ## Then compute the Rt values with interpolation
+  rt_int <- carehomes_Rt_trajectories(step, S, p,
+                                      initial_step_from_parameters = FALSE,
+                                      interpolate_every = 2,
+                                      interpolate_min = 3,
+                                      interpolate_critical = crit_step)
+})
