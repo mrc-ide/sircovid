@@ -437,9 +437,9 @@ test_that("No one does not seroconvert and no one seroreverts
 
 
 test_that("R_pre parameters work as expected", {
-  helper <- function(p_R_pre_1, gamma_sero_pre_1, gamma_sero_pre_2) {
+  helper <- function(p_sero_pre_1, gamma_sero_pre_1, gamma_sero_pre_2) {
     p <- carehomes_parameters(0, "uk")
-    p$p_R_pre_1 <- p_R_pre_1
+    p$p_sero_pre_1 <- p_sero_pre_1
     p$gamma_sero_pre_1 <- gamma_sero_pre_1
     p$gamma_sero_pre_2 <- gamma_sero_pre_2
 
@@ -454,11 +454,11 @@ test_that("R_pre parameters work as expected", {
     mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
   }
 
-  ## p_R_pre = 1, expect no cases in R_pre_2 stream
+  ## p_sero_pre_1 = 1, expect no cases in R_pre_2 stream
   y <- helper(1, 1, 0.5)
   expect_true(all(y$R_pre[, , 2, , ] == 0))
 
-  ## p_R_pre = 0, expect no cases in R_pre_1 stream
+  ## p_sero_pre_1 = 0, expect no cases in R_pre_1 stream
   y <- helper(0, 1, 0.5)
   expect_true(all(y$R_pre[, , 1, , ] == 0))
 
