@@ -138,9 +138,9 @@ test_that("spread_integer", {
 test_that("can interpolate an interval over a grid", {
   x <- 1:61
   f <- function(x) sin(x / 10)
-  expect_equal(interpolate_grid(x, f, 1), f(x))
+  expect_equal(interpolate_grid(x, f, 1, min = 5), f(x))
 
-  y <- interpolate_grid(x, f, 3)
+  y <- interpolate_grid(x, f, 3, min = 5)
   expect_false(identical(y, f(x)))
   i <- rep(c(TRUE, FALSE, FALSE), length.out = length(x))
   expect_equal(y[i], f(x)[i], tolerance = 1e-15)

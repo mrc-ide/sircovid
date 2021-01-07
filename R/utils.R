@@ -138,7 +138,7 @@ spread_integer <- function(n, m) {
 }
 
 
-interpolate_grid <- function(x, f, every, min = 5) {
+interpolate_grid <- function(x, f, every, min) {
   if (is.null(every) || is.null(min) || length(x) <= min) {
     xx <- x
   } else {
@@ -152,7 +152,7 @@ interpolate_grid <- function(x, f, every, min = 5) {
 }
 
 
-interpolate_grid_critical <- function(x, f, every, critical = NULL, min = 5) {
+interpolate_grid_critical <- function(x, f, every, critical, min) {
   if (length(critical) == 0) {
     interpolate_grid(x, f, every, min)
   } else {
