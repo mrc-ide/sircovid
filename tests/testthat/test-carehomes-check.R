@@ -122,7 +122,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   info <- mod$info()
   y <- carehomes_initial(info, 1, p)$state
   y[info$index$I_A] <- 0
-  y[info$index$R_pre] <- 0
+  y[info$index$T_sero_pre] <- 0
   y[info$index$T_PCR_pos] <- 0
 
   mod$set_state(y)
@@ -411,7 +411,7 @@ test_that("No one seroconverts if p_sero_pos is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$T_sero_neg > 0))
-  expect_true(all(y$R_pos == 0))
+  expect_true(all(y$T_sero_pos == 0))
 })
 
 
@@ -433,11 +433,11 @@ test_that("No one does not seroconvert and no one seroreverts
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(all(y$T_sero_neg == 0))
-  expect_true(any(y$R_pos > 0))
+  expect_true(any(y$T_sero_pos > 0))
 })
 
 
-test_that("R_pre parameters work as expected", {
+test_that("T_sero_pre parameters work as expected", {
   helper <- function(p_sero_pre_1, gamma_sero_pre_1, gamma_sero_pre_2) {
     p <- carehomes_parameters(0, "uk")
     p$p_sero_pre_1 <- p_sero_pre_1
@@ -448,46 +448,46 @@ test_that("R_pre parameters work as expected", {
     info <- mod$info()
 
     y0 <- carehomes_initial(info, 1, p)$state
-    y0[info$index$R_pre] <- 0
+    y0[info$index$T_sero_pre] <- 0
 
     mod$set_state(y0)
     mod$set_index(integer(0))
     mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
   }
 
-  ## p_sero_pre_1 = 1, expect no cases in R_pre_2 stream
+  ## p_sero_pre_1 = 1, expect no cases in T_sero_pre_2 stream
   y <- helper(1, 1, 0.5)
-  expect_true(all(y$R_pre[, , 2, , ] == 0))
+  expect_true(all(y$T_sero_pre[, , 2, , ] == 0))
 
-  ## p_sero_pre_1 = 0, expect no cases in R_pre_1 stream
+  ## p_sero_pre_1 = 0, expect no cases in T_sero_pre_1 stream
   y <- helper(0, 1, 0.5)
-  expect_true(all(y$R_pre[, , 1, , ] == 0))
+  expect_true(all(y$T_sero_pre[, , 1, , ] == 0))
 
-  ## gamma_sero_pre_1 = gamma_sero_pre_2 = 0, expect no cases in R_pos
+  ## gamma_sero_pre_1 = gamma_sero_pre_2 = 0, expect no cases in T_sero_pos
   y <- helper(0.5, 0, 0)
-  expect_true(all(y$R_pos == 0))
+  expect_true(all(y$T_sero_pos == 0))
   expect_true(all(y$T_sero_neg == 0))
 
   ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = 0, expect progression in one
-  ## time-step to T_sero_neg/R_pos just from R_pre_1
+  ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_1
   y <- helper(0.5, Inf, 0)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(y$R_pre[, , 1, 1, -n]))
+  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
+               t(y$T_sero_pre[, , 1, 1, -n]))
 
   ## gamma_sero_pre_1 = 0, gamma_sero_pre_2 = Inf, expect progression in one
-  ## time-step to T_sero_neg/R_pos just from R_pre_2
+  ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_2
   y <- helper(0.5, 0, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(y$R_pre[, , 2, 1, -n]))
+  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
+               t(y$T_sero_pre[, , 2, 1, -n]))
 
-  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = Inf, expect progression in
-  ## one time-step to T_sero_neg/R_pos from both R_pre_1 and R_pre_2
+  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = Inf, expect progression in one
+  ## time-step to T_sero_neg/T_sero_pos from both T_sero_pre_1 and T_sero_pre_2
   y <- helper(0.5, Inf, Inf)
   n <- length(y$time)
-  expect_equal(diff(t(apply(y$R_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(apply(y$R_pre[, , , 1, -n], c(1, 3), sum)))
+  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
+               t(apply(y$T_sero_pre[, , , 1, -n], c(1, 3), sum)))
 })
 
 
@@ -551,7 +551,7 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_G_D", "s_G_D", "G_D", FALSE)
   helper("gamma_W_R", "s_W_R", "W_R", TRUE)
   helper("gamma_W_D", "s_W_D", "W_D", TRUE)
-  helper("gamma_sero_pos", "s_sero_pos", "R_pos", FALSE)
+  helper("gamma_sero_pos", "s_sero_pos", "T_sero_pos", FALSE)
   helper("gamma_PCR_pre", "s_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "s_PCR_pos", "T_PCR_pos", FALSE)
 })
@@ -626,7 +626,7 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_G_D", "s_G_D", "G_D", FALSE)
   helper("gamma_W_R", "s_W_R", "W_R", TRUE)
   helper("gamma_W_D", "s_W_D", "W_D", TRUE)
-  helper("gamma_sero_pos", "s_sero_pos", "R_pos", FALSE)
+  helper("gamma_sero_pos", "s_sero_pos", "T_sero_pos", FALSE)
   helper("gamma_PCR_pre", "s_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "s_PCR_pos", "T_PCR_pos", FALSE)
 })
@@ -820,6 +820,6 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
 
   # check the positivity sums
-  expect_true(all(y$sero_pos == apply(y$R_pos[4:13, , , 1, ], 3, sum)))
+  expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })

@@ -250,7 +250,7 @@ test_that("Can compute initial conditions", {
                p$N_tot)
   expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$R_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
@@ -259,7 +259,7 @@ test_that("Can compute initial conditions", {
   ## 42 here, derived from;
   ## * 19 (S)
   ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + R_pre[4] + T_PCR_pos[4]
+  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
   expect_equal(sum(initial$state != 0), 44)
 })
 

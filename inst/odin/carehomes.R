@@ -78,8 +78,8 @@ update(W_R_unconf[, , , ]) <- new_W_R_unconf[i, j, k, l]
 update(W_R_conf[, , , ]) <- new_W_R_conf[i, j, k, l]
 update(W_D_unconf[, , , ]) <- new_W_D_unconf[i, j, k, l]
 update(W_D_conf[, , , ]) <- new_W_D_conf[i, j, k, l]
-update(R_pre[, , , ]) <- new_R_pre[i, j, k, l]
-update(R_pos[, , , ]) <- new_R_pos[i, j, k, l]
+update(T_sero_pre[, , , ]) <- new_T_sero_pre[i, j, k, l]
+update(T_sero_pos[, , , ]) <- new_T_sero_pos[i, j, k, l]
 update(T_sero_neg[, , ]) <- new_T_sero_neg[i, j, k]
 update(R[, , ]) <- new_R[i, j, k]
 update(D_hosp[]) <- new_D_hosp[i]
@@ -128,11 +128,11 @@ p_IICU_W_D <- 1 - exp(-gamma_ICU_W_D * dt)
 p_IICU_D <- 1 - exp(-gamma_ICU_D * dt)
 p_WW_R <- 1 - exp(-gamma_W_R * dt)
 p_WW_D <- 1 - exp(-gamma_W_D * dt)
-p_R_pre[, , , ] <- 1 - exp(-gamma_sero_pre[k] * dt)
-p_R_pos <- 1 - exp(-gamma_sero_pos * dt)
+p_TT_sero_pre[, , , ] <- 1 - exp(-gamma_sero_pre[k] * dt)
+p_TT_sero_pos <- 1 - exp(-gamma_sero_pos * dt)
 p_test <- 1 - exp(-gamma_U * dt)
-p_T_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
-p_T_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
+p_TT_PCR_pre <- 1 - exp(-gamma_PCR_pre * dt)
+p_TT_PCR_pos <- 1 - exp(-gamma_PCR_pos * dt)
 p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
 
 ## Work out time-varying probabilities
@@ -304,10 +304,11 @@ n_WW_R_unconf[, , , ] <- rbinom(W_R_unconf[i, j, k, l], p_WW_R)
 n_WW_R_conf[, , , ] <- rbinom(W_R_conf[i, j, k, l], p_WW_R)
 n_WW_D_unconf[, , , ] <- rbinom(W_D_unconf[i, j, k, l], p_WW_D)
 n_WW_D_conf[, , , ] <- rbinom(W_D_conf[i, j, k, l], p_WW_D)
-n_R_pre[, , , ] <- rbinom(R_pre[i, j, k, l], p_R_pre[i, j, k, l])
-n_R_pos[, , , ] <- rbinom(R_pos[i, j, k, l], p_R_pos)
-n_T_PCR_pre[, , , ] <- rbinom(T_PCR_pre[i, j, k, l], p_T_PCR_pre)
-n_T_PCR_pos[, , , ] <- rbinom(T_PCR_pos[i, j, k, l], p_T_PCR_pos)
+n_TT_sero_pre[, , , ] <-
+  rbinom(T_sero_pre[i, j, k, l], p_TT_sero_pre[i, j, k, l])
+n_TT_sero_pos[, , , ] <- rbinom(T_sero_pos[i, j, k, l], p_TT_sero_pos)
+n_TT_PCR_pre[, , , ] <- rbinom(T_PCR_pre[i, j, k, l], p_TT_PCR_pre)
+n_TT_PCR_pos[, , , ] <- rbinom(T_PCR_pos[i, j, k, l], p_TT_PCR_pos)
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
@@ -636,29 +637,33 @@ new_D_hosp[] <- D_hosp[i] +
 new_D_comm[] <- D_comm[i] + sum(n_GG_D[i, , s_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
-n_com_to_R_pre[, , 1, 1] <- rbinom(
+n_com_to_T_sero_pre[, , 1, 1] <- rbinom(
   n_EE[i, j, s_E, 1] + n_EE_next_vacc_class[i, j, s_E, n_vacc_classes],
   p_sero_pre_1)
-n_com_to_R_pre[, , 1, 2:n_vacc_classes] <- rbinom(
+n_com_to_T_sero_pre[, , 1, 2:n_vacc_classes] <- rbinom(
   n_EE[i, j, s_E, l] + n_EE_next_vacc_class[i, j, s_E, l - 1], p_sero_pre_1)
-n_com_to_R_pre[, , 2, 1] <- n_EE[i, j, s_E, 1] +
-  n_EE_next_vacc_class[i, j, s_E, n_vacc_classes] - n_com_to_R_pre[i, j, 1, 1]
-n_com_to_R_pre[, , 2, 2:n_vacc_classes] <- n_EE[i, j, s_E, l] +
-  n_EE_next_vacc_class[i, j, s_E, l - 1] - n_com_to_R_pre[i, j, 1, l]
-new_R_pre[, , , ] <-
-  R_pre[i, j, k, l] + n_com_to_R_pre[i, j, k, l] - n_R_pre[i, j, k, l]
+n_com_to_T_sero_pre[, , 2, 1] <- n_EE[i, j, s_E, 1] +
+  n_EE_next_vacc_class[i, j, s_E, n_vacc_classes] -
+  n_com_to_T_sero_pre[i, j, 1, 1]
+n_com_to_T_sero_pre[, , 2, 2:n_vacc_classes] <- n_EE[i, j, s_E, l] +
+  n_EE_next_vacc_class[i, j, s_E, l - 1] - n_com_to_T_sero_pre[i, j, 1, l]
+new_T_sero_pre[, , , ] <- T_sero_pre[i, j, k, l] +
+  n_com_to_T_sero_pre[i, j, k, l] - n_TT_sero_pre[i, j, k, l]
 
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
-n_R_pre_to_R_pos[, , ] <- rbinom(sum(n_R_pre[i, j, , k]), p_sero_pos[i])
+n_T_sero_pre_to_T_sero_pos[, , ] <-
+  rbinom(sum(n_TT_sero_pre[i, j, , k]), p_sero_pos[i])
 
-new_R_pos[, , , ] <- R_pos[i, j, k, l] - n_R_pos[i, j, k, l]
-new_R_pos[, , 1, ] <- new_R_pos[i, j, 1, l] + n_R_pre_to_R_pos[i, j, l]
-new_R_pos[, , 2:s_sero_pos, ] <- new_R_pos[i, j, k, l] + n_R_pos[i, j, k - 1, l]
+new_T_sero_pos[, , , ] <- T_sero_pos[i, j, k, l] - n_TT_sero_pos[i, j, k, l]
+new_T_sero_pos[, , 1, ] <-
+  new_T_sero_pos[i, j, 1, l] + n_T_sero_pre_to_T_sero_pos[i, j, l]
+new_T_sero_pos[, , 2:s_sero_pos, ] <-
+  new_T_sero_pos[i, j, k, l] + n_TT_sero_pos[i, j, k - 1, l]
 
-new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] + sum(n_R_pre[i, j, , k]) -
-  n_R_pre_to_R_pos[i, j, k] + n_R_pos[i, j, s_sero_pos, k] -
+new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] + sum(n_TT_sero_pre[i, j, , k]) -
+  n_T_sero_pre_to_T_sero_pos[i, j, k] + n_TT_sero_pos[i, j, s_sero_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
 new_T_sero_neg[, , 1] <- new_T_sero_neg[i, j, 1] +
@@ -686,18 +691,18 @@ new_R[, , 2:n_vacc_classes] <- new_R[i, j, k] +
 
 
 ## Work out the PCR positivity
-new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] - n_T_PCR_pre[i, j, k, l]
+new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] - n_TT_PCR_pre[i, j, k, l]
 new_T_PCR_pre[, , 1, ] <- new_T_PCR_pre[i, j, 1, l] + n_S_progress[i, j, l]
 new_T_PCR_pre[, , 2:s_PCR_pre, ] <-
-  new_T_PCR_pre[i, j, k, l] + n_T_PCR_pre[i, j, k - 1, l]
+  new_T_PCR_pre[i, j, k, l] + n_TT_PCR_pre[i, j, k - 1, l]
 
-new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] - n_T_PCR_pos[i, j, k, l]
+new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] - n_TT_PCR_pos[i, j, k, l]
 new_T_PCR_pos[, , 1, ] <- new_T_PCR_pos[i, j, 1, l] +
-  n_T_PCR_pre[i, j, s_PCR_pre, l]
+  n_TT_PCR_pre[i, j, s_PCR_pre, l]
 new_T_PCR_pos[, , 2:s_PCR_pos, ] <-
-  new_T_PCR_pos[i, j, k, l] + n_T_PCR_pos[i, j, k - 1, l]
+  new_T_PCR_pos[i, j, k, l] + n_TT_PCR_pos[i, j, k - 1, l]
 
-new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] + n_T_PCR_pos[i, j, s_PCR_pos, k] -
+new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] + n_TT_PCR_pos[i, j, s_PCR_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
 new_T_PCR_neg[, , 1] <- new_T_PCR_neg[i, j, 1] +
@@ -758,8 +763,8 @@ initial(W_R_unconf[, , , ]) <- 0
 initial(W_R_conf[, , , ]) <- 0
 initial(W_D_unconf[, , , ]) <- 0
 initial(W_D_conf[, , , ]) <- 0
-initial(R_pre[, , , ]) <- 0
-initial(R_pos[, , , ]) <- 0
+initial(T_sero_pre[, , , ]) <- 0
+initial(T_sero_pos[, , , ]) <- 0
 initial(T_sero_neg[, , ]) <- 0
 initial(R[, , ]) <- 0
 initial(D_hosp[]) <- 0
@@ -863,7 +868,7 @@ gamma_W_R <- user(0.1)
 s_W_D <- user()
 gamma_W_D <- user(0.1)
 
-## Parameters of the R_pre classes
+## Parameters of the T_sero_pre classes
 gamma_sero_pre_1 <- user(0.1)
 gamma_sero_pre_2 <- user(0.1)
 gamma_sero_pre[1] <- gamma_sero_pre_1
@@ -872,7 +877,7 @@ gamma_sero_pre[2] <- gamma_sero_pre_2
 p_sero_pre_1 <- user(0.5)
 p_sero_pos[] <- user()
 
-## Parameters of the R_pos classes
+## Parameters of the T_sero_pos classes
 s_sero_pos <- user()
 gamma_sero_pos <- user(0.1)
 
@@ -1053,23 +1058,23 @@ dim(n_WW_D_conf) <- c(n_groups, n_strains, s_W_D, n_vacc_classes)
 dim(n_W_D_unconf_to_conf) <-
   c(n_groups, n_strains, s_W_D, n_vacc_classes)
 
-## Vectors handling the R_pos class
+## Vectors handling the T_sero_pos class
 dim(R) <- c(n_groups, n_strains, n_vacc_classes)
 dim(new_R) <- c(n_groups, n_strains, n_vacc_classes)
 
-## Vectors handling the R_pre class and seroconversion
-dim(R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
-dim(new_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
-dim(n_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
+## Vectors handling the T_sero_pre class and seroconversion
+dim(T_sero_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
+dim(new_T_sero_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
+dim(n_TT_sero_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(gamma_sero_pre) <- 2
-dim(p_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
+dim(p_TT_sero_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(p_sero_pos) <- n_groups
 
-## Vectors handling the R_pos class
-dim(R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
-dim(n_R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
-dim(new_R_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
-dim(n_R_pre_to_R_pos) <- c(n_groups, n_strains, n_vacc_classes)
+## Vectors handling the T_sero_pos class
+dim(T_sero_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
+dim(n_TT_sero_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
+dim(new_T_sero_pos) <- c(n_groups, n_strains, s_sero_pos, n_vacc_classes)
+dim(n_T_sero_pre_to_T_sero_pos) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the T_sero_neg class
 dim(T_sero_neg) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1085,10 +1090,10 @@ dim(new_D_comm) <- n_groups
 
 ## Vectors handling the PCR classes
 dim(T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
-dim(n_T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
+dim(n_TT_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
 dim(new_T_PCR_pre) <- c(n_groups, n_strains, s_PCR_pre, n_vacc_classes)
 dim(T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
-dim(n_T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
+dim(n_TT_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
 dim(new_T_PCR_pos) <- c(n_groups, n_strains, s_PCR_pos, n_vacc_classes)
 dim(T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
 dim(new_T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1158,7 +1163,7 @@ dim(n_ICU_pre_unconf_to_ICU_W_D_unconf) <-
 dim(n_ICU_pre_conf_to_ICU_W_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the serology flow
-dim(n_com_to_R_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
+dim(n_com_to_T_sero_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 
 ## Vectors handling the severity profile
 dim(p_C) <- n_groups
@@ -1204,7 +1209,8 @@ dim(N_tot) <- n_groups
 
 ## Total population calculated with seroconversion flow
 initial(N_tot2) <- 0
-update(N_tot2) <- sum(S) + sum(R_pre) + sum(R_pos) + sum(T_sero_neg) + sum(E)
+update(N_tot2) <- sum(S) + sum(T_sero_pre) +
+  sum(T_sero_pos) + sum(T_sero_neg) + sum(E)
 
 ## Total population calculated with PCR flow
 initial(N_tot3) <- 0
@@ -1251,7 +1257,7 @@ update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
 ## more statements like the ones below.
 ##
 initial(sero_pos) <- 0
-update(sero_pos) <- sum(new_R_pos[4:13, , , ])
+update(sero_pos) <- sum(new_T_sero_pos[4:13, , , ])
 
 initial(cum_sympt_cases) <- 0
 update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_C)

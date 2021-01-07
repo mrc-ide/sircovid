@@ -329,7 +329,7 @@ test_that("different strains are equivalent", {
   y <- mod$transform_variables(initial$state)
   y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
-  y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
 
@@ -371,7 +371,7 @@ test_that("Swapping strains gives identical results with different index", {
   y <- mod$transform_variables(initial$state)
   y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
-  y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
@@ -394,8 +394,8 @@ test_that("Swapping strains gives identical results with different index", {
   for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
   }
-  v5 <- c("E", "I_A", "I_C", "T_PCR_pre", "T_PCR_pos", "R_pre",
-          "R_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
+  v5 <- c("E", "I_A", "I_C", "T_PCR_pre", "T_PCR_pos", "T_sero_pre",
+          "T_sero_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
           "H_R_unconf", "H_R_conf", "H_D_unconf",
           "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf",
           "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf",

@@ -661,7 +661,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   ## probably has limited impact.
   seed_age_band <- 4L
   index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
-  index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
+  index_T_sero_pre <- index[["T_sero_pre"]][[1L]] + seed_age_band - 1L
   index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot2 <- index[["N_tot2"]][[1L]]
@@ -678,7 +678,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
-  state[index_R_pre] <- initial_I
+  state[index_T_sero_pre] <- initial_I
   state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot

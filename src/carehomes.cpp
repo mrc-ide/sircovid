@@ -458,13 +458,13 @@ public:
     int dim_m;
     int dim_m_1;
     int dim_m_2;
-    int dim_n_com_to_R_pre;
-    int dim_n_com_to_R_pre_1;
-    int dim_n_com_to_R_pre_12;
-    int dim_n_com_to_R_pre_123;
-    int dim_n_com_to_R_pre_2;
-    int dim_n_com_to_R_pre_3;
-    int dim_n_com_to_R_pre_4;
+    int dim_n_com_to_T_sero_pre;
+    int dim_n_com_to_T_sero_pre_1;
+    int dim_n_com_to_T_sero_pre_12;
+    int dim_n_com_to_T_sero_pre_123;
+    int dim_n_com_to_T_sero_pre_2;
+    int dim_n_com_to_T_sero_pre_3;
+    int dim_n_com_to_T_sero_pre_4;
     int dim_n_E_next_vacc_class;
     int dim_n_E_next_vacc_class_1;
     int dim_n_E_next_vacc_class_12;
@@ -776,25 +776,6 @@ public:
     int dim_n_R_next_vacc_class_tmp_12;
     int dim_n_R_next_vacc_class_tmp_2;
     int dim_n_R_next_vacc_class_tmp_3;
-    int dim_n_R_pos;
-    int dim_n_R_pos_1;
-    int dim_n_R_pos_12;
-    int dim_n_R_pos_123;
-    int dim_n_R_pos_2;
-    int dim_n_R_pos_3;
-    int dim_n_R_pos_4;
-    int dim_n_R_pre;
-    int dim_n_R_pre_1;
-    int dim_n_R_pre_12;
-    int dim_n_R_pre_123;
-    int dim_n_R_pre_2;
-    int dim_n_R_pre_3;
-    int dim_n_R_pre_4;
-    int dim_n_R_pre_to_R_pos;
-    int dim_n_R_pre_to_R_pos_1;
-    int dim_n_R_pre_to_R_pos_12;
-    int dim_n_R_pre_to_R_pos_2;
-    int dim_n_R_pre_to_R_pos_3;
     int dim_n_R_progress;
     int dim_n_R_progress_1;
     int dim_n_R_progress_12;
@@ -841,21 +822,40 @@ public:
     int dim_n_SE_next_vacc_class_12;
     int dim_n_SE_next_vacc_class_2;
     int dim_n_SE_next_vacc_class_3;
-    int dim_n_T_PCR_pos;
-    int dim_n_T_PCR_pos_1;
-    int dim_n_T_PCR_pos_12;
-    int dim_n_T_PCR_pos_123;
-    int dim_n_T_PCR_pos_2;
-    int dim_n_T_PCR_pos_3;
-    int dim_n_T_PCR_pos_4;
-    int dim_n_T_PCR_pre;
-    int dim_n_T_PCR_pre_1;
-    int dim_n_T_PCR_pre_12;
-    int dim_n_T_PCR_pre_123;
-    int dim_n_T_PCR_pre_2;
-    int dim_n_T_PCR_pre_3;
-    int dim_n_T_PCR_pre_4;
+    int dim_n_T_sero_pre_to_T_sero_pos;
+    int dim_n_T_sero_pre_to_T_sero_pos_1;
+    int dim_n_T_sero_pre_to_T_sero_pos_12;
+    int dim_n_T_sero_pre_to_T_sero_pos_2;
+    int dim_n_T_sero_pre_to_T_sero_pos_3;
     int dim_N_tot;
+    int dim_n_TT_PCR_pos;
+    int dim_n_TT_PCR_pos_1;
+    int dim_n_TT_PCR_pos_12;
+    int dim_n_TT_PCR_pos_123;
+    int dim_n_TT_PCR_pos_2;
+    int dim_n_TT_PCR_pos_3;
+    int dim_n_TT_PCR_pos_4;
+    int dim_n_TT_PCR_pre;
+    int dim_n_TT_PCR_pre_1;
+    int dim_n_TT_PCR_pre_12;
+    int dim_n_TT_PCR_pre_123;
+    int dim_n_TT_PCR_pre_2;
+    int dim_n_TT_PCR_pre_3;
+    int dim_n_TT_PCR_pre_4;
+    int dim_n_TT_sero_pos;
+    int dim_n_TT_sero_pos_1;
+    int dim_n_TT_sero_pos_12;
+    int dim_n_TT_sero_pos_123;
+    int dim_n_TT_sero_pos_2;
+    int dim_n_TT_sero_pos_3;
+    int dim_n_TT_sero_pos_4;
+    int dim_n_TT_sero_pre;
+    int dim_n_TT_sero_pre_1;
+    int dim_n_TT_sero_pre_12;
+    int dim_n_TT_sero_pre_123;
+    int dim_n_TT_sero_pre_2;
+    int dim_n_TT_sero_pre_3;
+    int dim_n_TT_sero_pre_4;
     int dim_n_W_D_unconf_to_conf;
     int dim_n_W_D_unconf_to_conf_1;
     int dim_n_W_D_unconf_to_conf_12;
@@ -1017,20 +1017,6 @@ public:
     int dim_new_R_12;
     int dim_new_R_2;
     int dim_new_R_3;
-    int dim_new_R_pos;
-    int dim_new_R_pos_1;
-    int dim_new_R_pos_12;
-    int dim_new_R_pos_123;
-    int dim_new_R_pos_2;
-    int dim_new_R_pos_3;
-    int dim_new_R_pos_4;
-    int dim_new_R_pre;
-    int dim_new_R_pre_1;
-    int dim_new_R_pre_12;
-    int dim_new_R_pre_123;
-    int dim_new_R_pre_2;
-    int dim_new_R_pre_3;
-    int dim_new_R_pre_4;
     int dim_new_S;
     int dim_new_S_1;
     int dim_new_S_2;
@@ -1058,6 +1044,20 @@ public:
     int dim_new_T_sero_neg_12;
     int dim_new_T_sero_neg_2;
     int dim_new_T_sero_neg_3;
+    int dim_new_T_sero_pos;
+    int dim_new_T_sero_pos_1;
+    int dim_new_T_sero_pos_12;
+    int dim_new_T_sero_pos_123;
+    int dim_new_T_sero_pos_2;
+    int dim_new_T_sero_pos_3;
+    int dim_new_T_sero_pos_4;
+    int dim_new_T_sero_pre;
+    int dim_new_T_sero_pre_1;
+    int dim_new_T_sero_pre_12;
+    int dim_new_T_sero_pre_123;
+    int dim_new_T_sero_pre_2;
+    int dim_new_T_sero_pre_3;
+    int dim_new_T_sero_pre_4;
     int dim_new_W_D_conf;
     int dim_new_W_D_conf_1;
     int dim_new_W_D_conf_12;
@@ -1111,13 +1111,6 @@ public:
     int dim_p_R_next_vacc_class_12;
     int dim_p_R_next_vacc_class_2;
     int dim_p_R_next_vacc_class_3;
-    int dim_p_R_pre;
-    int dim_p_R_pre_1;
-    int dim_p_R_pre_12;
-    int dim_p_R_pre_123;
-    int dim_p_R_pre_2;
-    int dim_p_R_pre_3;
-    int dim_p_R_pre_4;
     int dim_p_RS;
     int dim_p_S_next_vacc_class;
     int dim_p_S_next_vacc_class_1;
@@ -1127,6 +1120,13 @@ public:
     int dim_p_SE_2;
     int dim_p_sero_pos;
     int dim_p_star_step;
+    int dim_p_TT_sero_pre;
+    int dim_p_TT_sero_pre_1;
+    int dim_p_TT_sero_pre_12;
+    int dim_p_TT_sero_pre_123;
+    int dim_p_TT_sero_pre_2;
+    int dim_p_TT_sero_pre_3;
+    int dim_p_TT_sero_pre_4;
     int dim_p_W_D_step;
     int dim_prob_admit_conf;
     int dim_prob_G_D;
@@ -1147,20 +1147,6 @@ public:
     int dim_R_12;
     int dim_R_2;
     int dim_R_3;
-    int dim_R_pos;
-    int dim_R_pos_1;
-    int dim_R_pos_12;
-    int dim_R_pos_123;
-    int dim_R_pos_2;
-    int dim_R_pos_3;
-    int dim_R_pos_4;
-    int dim_R_pre;
-    int dim_R_pre_1;
-    int dim_R_pre_12;
-    int dim_R_pre_123;
-    int dim_R_pre_2;
-    int dim_R_pre_3;
-    int dim_R_pre_4;
     int dim_rel_p_C;
     int dim_rel_p_C_1;
     int dim_rel_p_C_2;
@@ -1204,6 +1190,20 @@ public:
     int dim_T_sero_neg_12;
     int dim_T_sero_neg_2;
     int dim_T_sero_neg_3;
+    int dim_T_sero_pos;
+    int dim_T_sero_pos_1;
+    int dim_T_sero_pos_12;
+    int dim_T_sero_pos_123;
+    int dim_T_sero_pos_2;
+    int dim_T_sero_pos_3;
+    int dim_T_sero_pos_4;
+    int dim_T_sero_pre;
+    int dim_T_sero_pre_1;
+    int dim_T_sero_pre_12;
+    int dim_T_sero_pre_123;
+    int dim_T_sero_pre_2;
+    int dim_T_sero_pre_3;
+    int dim_T_sero_pre_4;
     int dim_vaccine_n_candidates;
     int dim_vaccine_population_possible;
     int dim_vaccine_population_reluctant;
@@ -1307,8 +1307,6 @@ public:
     real_t initial_N_tot2;
     real_t initial_N_tot3;
     std::vector<real_t> initial_R;
-    std::vector<real_t> initial_R_pos;
-    std::vector<real_t> initial_R_pre;
     real_t initial_react_pos;
     std::vector<real_t> initial_S;
     real_t initial_sero_pos;
@@ -1316,6 +1314,8 @@ public:
     std::vector<real_t> initial_T_PCR_pos;
     std::vector<real_t> initial_T_PCR_pre;
     std::vector<real_t> initial_T_sero_neg;
+    std::vector<real_t> initial_T_sero_pos;
+    std::vector<real_t> initial_T_sero_pre;
     real_t initial_time;
     std::vector<real_t> initial_W_D_conf;
     std::vector<real_t> initial_W_D_unconf;
@@ -1326,7 +1326,7 @@ public:
     real_t model_pcr_and_serology;
     real_t model_pcr_and_serology_user;
     int n_age_groups;
-    std::vector<real_t> n_com_to_R_pre;
+    std::vector<real_t> n_com_to_T_sero_pre;
     std::vector<real_t> n_E_next_vacc_class;
     std::vector<real_t> n_E_progress;
     std::vector<real_t> n_EE;
@@ -1379,9 +1379,6 @@ public:
     std::vector<real_t> n_R_next_vacc_class;
     std::vector<real_t> n_R_next_vacc_class_capped;
     std::vector<real_t> n_R_next_vacc_class_tmp;
-    std::vector<real_t> n_R_pos;
-    std::vector<real_t> n_R_pre;
-    std::vector<real_t> n_R_pre_to_R_pos;
     std::vector<real_t> n_R_progress;
     std::vector<real_t> n_R_progress_capped;
     std::vector<real_t> n_R_progress_tmp;
@@ -1393,8 +1390,11 @@ public:
     std::vector<real_t> n_SE;
     std::vector<real_t> n_SE_next_vacc_class;
     int n_strains;
-    std::vector<real_t> n_T_PCR_pos;
-    std::vector<real_t> n_T_PCR_pre;
+    std::vector<real_t> n_T_sero_pre_to_T_sero_pos;
+    std::vector<real_t> n_TT_PCR_pos;
+    std::vector<real_t> n_TT_PCR_pre;
+    std::vector<real_t> n_TT_sero_pos;
+    std::vector<real_t> n_TT_sero_pre;
     int n_vacc_classes;
     std::vector<real_t> n_W_D_unconf_to_conf;
     std::vector<real_t> n_W_R_unconf_to_conf;
@@ -1421,13 +1421,13 @@ public:
     std::vector<real_t> new_ICU_W_R_conf;
     std::vector<real_t> new_ICU_W_R_unconf;
     std::vector<real_t> new_R;
-    std::vector<real_t> new_R_pos;
-    std::vector<real_t> new_R_pre;
     std::vector<real_t> new_S;
     std::vector<real_t> new_T_PCR_neg;
     std::vector<real_t> new_T_PCR_pos;
     std::vector<real_t> new_T_PCR_pre;
     std::vector<real_t> new_T_sero_neg;
+    std::vector<real_t> new_T_sero_pos;
+    std::vector<real_t> new_T_sero_pre;
     std::vector<real_t> new_W_D_conf;
     std::vector<real_t> new_W_D_unconf;
     std::vector<real_t> new_W_R_conf;
@@ -1458,13 +1458,13 @@ public:
     int offset_variable_ICU_W_R_unconf;
     int offset_variable_N_tot;
     int offset_variable_R;
-    int offset_variable_R_pos;
-    int offset_variable_R_pre;
     int offset_variable_S;
     int offset_variable_T_PCR_neg;
     int offset_variable_T_PCR_pos;
     int offset_variable_T_PCR_pre;
     int offset_variable_T_sero_neg;
+    int offset_variable_T_sero_pos;
+    int offset_variable_T_sero_pre;
     int offset_variable_W_D_conf;
     int offset_variable_W_D_unconf;
     int offset_variable_W_R_conf;
@@ -1488,17 +1488,17 @@ public:
     real_t p_IICU_W_D;
     real_t p_IICU_W_R;
     std::vector<real_t> p_R_next_vacc_class;
-    real_t p_R_pos;
-    std::vector<real_t> p_R_pre;
     std::vector<real_t> p_RS;
     std::vector<real_t> p_S_next_vacc_class;
     std::vector<real_t> p_SE;
     std::vector<real_t> p_sero_pos;
     real_t p_sero_pre_1;
     std::vector<real_t> p_star_step;
-    real_t p_T_PCR_pos;
-    real_t p_T_PCR_pre;
     real_t p_test;
+    real_t p_TT_PCR_pos;
+    real_t p_TT_PCR_pre;
+    real_t p_TT_sero_pos;
+    std::vector<real_t> p_TT_sero_pre;
     std::vector<real_t> p_W_D_step;
     real_t p_WW_D;
     real_t p_WW_R;
@@ -1548,10 +1548,10 @@ public:
   carehomes(const init_t& data): internal(data) {
   }
   size_t size() {
-    return 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_R_pre + internal.dim_R_pos + internal.dim_T_PCR_pre + internal.dim_T_PCR_pos;
+    return 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_T_sero_pre + internal.dim_T_sero_pos + internal.dim_T_PCR_pre + internal.dim_T_PCR_pos;
   }
   std::vector<real_t> initial(size_t step) {
-    std::vector<real_t> state(17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_R_pre + internal.dim_R_pos + internal.dim_T_PCR_pre + internal.dim_T_PCR_pos);
+    std::vector<real_t> state(17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_T_sero_pre + internal.dim_T_sero_pos + internal.dim_T_PCR_pre + internal.dim_T_PCR_pos);
     state[0] = internal.initial_time;
     state[1] = internal.initial_cum_infections;
     state[2] = internal.initial_cum_admit_conf;
@@ -1603,8 +1603,8 @@ public:
     std::copy(internal.initial_W_R_conf.begin(), internal.initial_W_R_conf.end(), state.begin() + internal.offset_variable_W_R_conf);
     std::copy(internal.initial_W_D_unconf.begin(), internal.initial_W_D_unconf.end(), state.begin() + internal.offset_variable_W_D_unconf);
     std::copy(internal.initial_W_D_conf.begin(), internal.initial_W_D_conf.end(), state.begin() + internal.offset_variable_W_D_conf);
-    std::copy(internal.initial_R_pre.begin(), internal.initial_R_pre.end(), state.begin() + internal.offset_variable_R_pre);
-    std::copy(internal.initial_R_pos.begin(), internal.initial_R_pos.end(), state.begin() + internal.offset_variable_R_pos);
+    std::copy(internal.initial_T_sero_pre.begin(), internal.initial_T_sero_pre.end(), state.begin() + internal.offset_variable_T_sero_pre);
+    std::copy(internal.initial_T_sero_pos.begin(), internal.initial_T_sero_pos.end(), state.begin() + internal.offset_variable_T_sero_pos);
     std::copy(internal.initial_T_PCR_pre.begin(), internal.initial_T_PCR_pre.end(), state.begin() + internal.offset_variable_T_PCR_pre);
     std::copy(internal.initial_T_PCR_pos.begin(), internal.initial_T_PCR_pos.end(), state.begin() + internal.offset_variable_T_PCR_pos);
     return state;
@@ -1638,8 +1638,8 @@ public:
     const real_t * W_R_conf = state + internal.offset_variable_W_R_conf;
     const real_t * W_D_unconf = state + internal.offset_variable_W_D_unconf;
     const real_t * W_D_conf = state + internal.offset_variable_W_D_conf;
-    const real_t * R_pre = state + internal.offset_variable_R_pre;
-    const real_t * R_pos = state + internal.offset_variable_R_pos;
+    const real_t * T_sero_pre = state + internal.offset_variable_T_sero_pre;
+    const real_t * T_sero_pos = state + internal.offset_variable_T_sero_pos;
     const real_t * T_sero_neg = state + internal.offset_variable_T_sero_neg;
     const real_t * R = state + internal.offset_variable_R;
     const real_t * D_hosp = state + internal.offset_variable_D_hosp;
@@ -1654,7 +1654,7 @@ public:
     const real_t * cum_infections_per_strain = state + 17;
     const real_t cum_sympt_cases = state[14];
     const real_t cum_sympt_cases_over25 = state[15];
-    state_next[5] = odin_sum1(S, 0, internal.dim_S) + odin_sum1(R_pre, 0, internal.dim_R_pre) + odin_sum1(R_pos, 0, internal.dim_R_pos) + odin_sum1(T_sero_neg, 0, internal.dim_T_sero_neg) + odin_sum1(E, 0, internal.dim_E);
+    state_next[5] = odin_sum1(S, 0, internal.dim_S) + odin_sum1(T_sero_pre, 0, internal.dim_T_sero_pre) + odin_sum1(T_sero_pos, 0, internal.dim_T_sero_pos) + odin_sum1(T_sero_neg, 0, internal.dim_T_sero_neg) + odin_sum1(E, 0, internal.dim_E);
     state_next[6] = odin_sum1(S, 0, internal.dim_S) + odin_sum1(T_PCR_pre, 0, internal.dim_T_PCR_pre) + odin_sum1(T_PCR_pos, 0, internal.dim_T_PCR_pos) + odin_sum1(T_PCR_neg, 0, internal.dim_T_PCR_neg);
     state_next[0] = (step + 1) * internal.dt;
     real_t beta = (static_cast<int>(step) >= internal.dim_beta_step ? internal.beta_step[internal.dim_beta_step - 1] : internal.beta_step[step + 1 - 1]);
@@ -1850,15 +1850,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_n_R_pos_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_R_pos_2; ++j) {
-        for (int k = 1; k <= internal.dim_n_R_pos_3; ++k) {
-          for (int l = 1; l <= internal.dim_n_R_pos_4; ++l) {
-            internal.n_R_pos[i - 1 + internal.dim_n_R_pos_1 * (j - 1) + internal.dim_n_R_pos_12 * (k - 1) + internal.dim_n_R_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(R_pos[internal.dim_R_pos_123 * (l - 1) + internal.dim_R_pos_12 * (k - 1) + internal.dim_R_pos_1 * (j - 1) + i - 1]), internal.p_R_pos);
-          }
-        }
-      }
-    }
     for (int i = 1; i <= internal.dim_n_R_progress_tmp_1; ++i) {
       for (int j = 1; j <= internal.dim_n_R_progress_tmp_2; ++j) {
         for (int k = 1; k <= internal.dim_n_R_progress_tmp_3; ++k) {
@@ -1866,20 +1857,29 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_n_T_PCR_pos_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_T_PCR_pos_2; ++j) {
-        for (int k = 1; k <= internal.dim_n_T_PCR_pos_3; ++k) {
-          for (int l = 1; l <= internal.dim_n_T_PCR_pos_4; ++l) {
-            internal.n_T_PCR_pos[i - 1 + internal.dim_n_T_PCR_pos_1 * (j - 1) + internal.dim_n_T_PCR_pos_12 * (k - 1) + internal.dim_n_T_PCR_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pos[internal.dim_T_PCR_pos_123 * (l - 1) + internal.dim_T_PCR_pos_12 * (k - 1) + internal.dim_T_PCR_pos_1 * (j - 1) + i - 1]), internal.p_T_PCR_pos);
+    for (int i = 1; i <= internal.dim_n_TT_PCR_pos_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_TT_PCR_pos_2; ++j) {
+        for (int k = 1; k <= internal.dim_n_TT_PCR_pos_3; ++k) {
+          for (int l = 1; l <= internal.dim_n_TT_PCR_pos_4; ++l) {
+            internal.n_TT_PCR_pos[i - 1 + internal.dim_n_TT_PCR_pos_1 * (j - 1) + internal.dim_n_TT_PCR_pos_12 * (k - 1) + internal.dim_n_TT_PCR_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pos[internal.dim_T_PCR_pos_123 * (l - 1) + internal.dim_T_PCR_pos_12 * (k - 1) + internal.dim_T_PCR_pos_1 * (j - 1) + i - 1]), internal.p_TT_PCR_pos);
           }
         }
       }
     }
-    for (int i = 1; i <= internal.dim_n_T_PCR_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_T_PCR_pre_2; ++j) {
-        for (int k = 1; k <= internal.dim_n_T_PCR_pre_3; ++k) {
-          for (int l = 1; l <= internal.dim_n_T_PCR_pre_4; ++l) {
-            internal.n_T_PCR_pre[i - 1 + internal.dim_n_T_PCR_pre_1 * (j - 1) + internal.dim_n_T_PCR_pre_12 * (k - 1) + internal.dim_n_T_PCR_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pre[internal.dim_T_PCR_pre_123 * (l - 1) + internal.dim_T_PCR_pre_12 * (k - 1) + internal.dim_T_PCR_pre_1 * (j - 1) + i - 1]), internal.p_T_PCR_pre);
+    for (int i = 1; i <= internal.dim_n_TT_PCR_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_TT_PCR_pre_2; ++j) {
+        for (int k = 1; k <= internal.dim_n_TT_PCR_pre_3; ++k) {
+          for (int l = 1; l <= internal.dim_n_TT_PCR_pre_4; ++l) {
+            internal.n_TT_PCR_pre[i - 1 + internal.dim_n_TT_PCR_pre_1 * (j - 1) + internal.dim_n_TT_PCR_pre_12 * (k - 1) + internal.dim_n_TT_PCR_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pre[internal.dim_T_PCR_pre_123 * (l - 1) + internal.dim_T_PCR_pre_12 * (k - 1) + internal.dim_T_PCR_pre_1 * (j - 1) + i - 1]), internal.p_TT_PCR_pre);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= internal.dim_n_TT_sero_pos_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_TT_sero_pos_2; ++j) {
+        for (int k = 1; k <= internal.dim_n_TT_sero_pos_3; ++k) {
+          for (int l = 1; l <= internal.dim_n_TT_sero_pos_4; ++l) {
+            internal.n_TT_sero_pos[i - 1 + internal.dim_n_TT_sero_pos_1 * (j - 1) + internal.dim_n_TT_sero_pos_12 * (k - 1) + internal.dim_n_TT_sero_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_sero_pos[internal.dim_T_sero_pos_123 * (l - 1) + internal.dim_T_sero_pos_12 * (k - 1) + internal.dim_T_sero_pos_1 * (j - 1) + i - 1]), internal.p_TT_sero_pos);
           }
         }
       }
@@ -2246,19 +2246,19 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_n_R_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_R_pre_2; ++j) {
-        for (int k = 1; k <= internal.dim_n_R_pre_3; ++k) {
-          for (int l = 1; l <= internal.dim_n_R_pre_4; ++l) {
-            internal.n_R_pre[i - 1 + internal.dim_n_R_pre_1 * (j - 1) + internal.dim_n_R_pre_12 * (k - 1) + internal.dim_n_R_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(R_pre[internal.dim_R_pre_123 * (l - 1) + internal.dim_R_pre_12 * (k - 1) + internal.dim_R_pre_1 * (j - 1) + i - 1]), internal.p_R_pre[internal.dim_p_R_pre_123 * (l - 1) + internal.dim_p_R_pre_12 * (k - 1) + internal.dim_p_R_pre_1 * (j - 1) + i - 1]);
-          }
-        }
-      }
-    }
     for (int i = 1; i <= internal.dim_n_R_progress_capped_1; ++i) {
       for (int j = 1; j <= internal.dim_n_R_progress_capped_2; ++j) {
         for (int k = 1; k <= internal.dim_n_R_progress_capped_3; ++k) {
           internal.n_R_progress_capped[i - 1 + internal.dim_n_R_progress_capped_1 * (j - 1) + internal.dim_n_R_progress_capped_12 * (k - 1)] = std::min(internal.n_R_progress_tmp[internal.dim_n_R_progress_tmp_12 * (k - 1) + internal.dim_n_R_progress_tmp_1 * (j - 1) + i - 1], std::min(T_sero_neg[internal.dim_T_sero_neg_12 * (k - 1) + internal.dim_T_sero_neg_1 * (j - 1) + i - 1], T_PCR_neg[internal.dim_T_PCR_neg_12 * (k - 1) + internal.dim_T_PCR_neg_1 * (j - 1) + i - 1]));
+        }
+      }
+    }
+    for (int i = 1; i <= internal.dim_n_TT_sero_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_TT_sero_pre_2; ++j) {
+        for (int k = 1; k <= internal.dim_n_TT_sero_pre_3; ++k) {
+          for (int l = 1; l <= internal.dim_n_TT_sero_pre_4; ++l) {
+            internal.n_TT_sero_pre[i - 1 + internal.dim_n_TT_sero_pre_1 * (j - 1) + internal.dim_n_TT_sero_pre_12 * (k - 1) + internal.dim_n_TT_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_sero_pre[internal.dim_T_sero_pre_123 * (l - 1) + internal.dim_T_sero_pre_12 * (k - 1) + internal.dim_T_sero_pre_1 * (j - 1) + i - 1]), internal.p_TT_sero_pre[internal.dim_p_TT_sero_pre_123 * (l - 1) + internal.dim_p_TT_sero_pre_12 * (k - 1) + internal.dim_p_TT_sero_pre_1 * (j - 1) + i - 1]);
+          }
         }
       }
     }
@@ -2272,7 +2272,7 @@ public:
       for (int j = 1; j <= internal.dim_new_T_PCR_pos_2; ++j) {
         for (int k = 1; k <= internal.dim_new_T_PCR_pos_3; ++k) {
           for (int l = 1; l <= internal.dim_new_T_PCR_pos_4; ++l) {
-            internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[internal.dim_T_PCR_pos_123 * (l - 1) + internal.dim_T_PCR_pos_12 * (k - 1) + internal.dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_T_PCR_pos[internal.dim_n_T_PCR_pos_123 * (l - 1) + internal.dim_n_T_PCR_pos_12 * (k - 1) + internal.dim_n_T_PCR_pos_1 * (j - 1) + i - 1];
+            internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[internal.dim_T_PCR_pos_123 * (l - 1) + internal.dim_T_PCR_pos_12 * (k - 1) + internal.dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_TT_PCR_pos[internal.dim_n_TT_PCR_pos_123 * (l - 1) + internal.dim_n_TT_PCR_pos_12 * (k - 1) + internal.dim_n_TT_PCR_pos_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2281,7 +2281,7 @@ public:
       for (int j = 1; j <= internal.dim_new_T_PCR_pos_2; ++j) {
         int k = 1;
         for (int l = 1; l <= internal.dim_new_T_PCR_pos_4; ++l) {
-          internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[internal.dim_new_T_PCR_pos_123 * (l - 1) + internal.dim_new_T_PCR_pos_12 * 0 + internal.dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_T_PCR_pre[internal.dim_n_T_PCR_pre_123 * (l - 1) + internal.dim_n_T_PCR_pre_12 * (internal.s_PCR_pre - 1) + internal.dim_n_T_PCR_pre_1 * (j - 1) + i - 1];
+          internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[internal.dim_new_T_PCR_pos_123 * (l - 1) + internal.dim_new_T_PCR_pos_12 * 0 + internal.dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pre[internal.dim_n_TT_PCR_pre_123 * (l - 1) + internal.dim_n_TT_PCR_pre_12 * (internal.s_PCR_pre - 1) + internal.dim_n_TT_PCR_pre_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -2289,7 +2289,7 @@ public:
       for (int j = 1; j <= internal.dim_new_T_PCR_pos_2; ++j) {
         for (int k = 2; k <= internal.s_PCR_pos; ++k) {
           for (int l = 1; l <= internal.dim_new_T_PCR_pos_4; ++l) {
-            internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[internal.dim_new_T_PCR_pos_123 * (l - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_T_PCR_pos[internal.dim_n_T_PCR_pos_123 * (l - 1) + internal.dim_n_T_PCR_pos_12 * (k - 1 - 1) + internal.dim_n_T_PCR_pos_1 * (j - 1) + i - 1];
+            internal.new_T_PCR_pos[i - 1 + internal.dim_new_T_PCR_pos_1 * (j - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[internal.dim_new_T_PCR_pos_123 * (l - 1) + internal.dim_new_T_PCR_pos_12 * (k - 1) + internal.dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pos[internal.dim_n_TT_PCR_pos_123 * (l - 1) + internal.dim_n_TT_PCR_pos_12 * (k - 1 - 1) + internal.dim_n_TT_PCR_pos_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2447,17 +2447,17 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_n_R_pre_to_R_pos_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_R_pre_to_R_pos_2; ++j) {
-        for (int k = 1; k <= internal.dim_n_R_pre_to_R_pos_3; ++k) {
-          internal.n_R_pre_to_R_pos[i - 1 + internal.dim_n_R_pre_to_R_pos_1 * (j - 1) + internal.dim_n_R_pre_to_R_pos_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(odin_sum4(internal.n_R_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_R_pre_3, k - 1, k, internal.dim_n_R_pre_1, internal.dim_n_R_pre_12, internal.dim_n_R_pre_123)), internal.p_sero_pos[i - 1]);
-        }
-      }
-    }
     for (int i = 1; i <= internal.dim_n_R_progress_1; ++i) {
       for (int j = 1; j <= internal.dim_n_R_progress_2; ++j) {
         for (int k = 1; k <= internal.dim_n_R_progress_3; ++k) {
           internal.n_R_progress[i - 1 + internal.dim_n_R_progress_1 * (j - 1) + internal.dim_n_R_progress_12 * (k - 1)] = (internal.model_pcr_and_serology == 1 ? internal.n_R_progress_capped[internal.dim_n_R_progress_capped_12 * (k - 1) + internal.dim_n_R_progress_capped_1 * (j - 1) + i - 1] : internal.n_R_progress_tmp[internal.dim_n_R_progress_tmp_12 * (k - 1) + internal.dim_n_R_progress_tmp_1 * (j - 1) + i - 1]);
+        }
+      }
+    }
+    for (int i = 1; i <= internal.dim_n_T_sero_pre_to_T_sero_pos_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_T_sero_pre_to_T_sero_pos_2; ++j) {
+        for (int k = 1; k <= internal.dim_n_T_sero_pre_to_T_sero_pos_3; ++k) {
+          internal.n_T_sero_pre_to_T_sero_pos[i - 1 + internal.dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + internal.dim_n_T_sero_pre_to_T_sero_pos_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(odin_sum4(internal.n_TT_sero_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_TT_sero_pre_3, k - 1, k, internal.dim_n_TT_sero_pre_1, internal.dim_n_TT_sero_pre_12, internal.dim_n_TT_sero_pre_123)), internal.p_sero_pos[i - 1]);
         }
       }
     }
@@ -2703,28 +2703,28 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_new_R_pos_1; ++i) {
-      for (int j = 1; j <= internal.dim_new_R_pos_2; ++j) {
-        for (int k = 1; k <= internal.dim_new_R_pos_3; ++k) {
-          for (int l = 1; l <= internal.dim_new_R_pos_4; ++l) {
-            internal.new_R_pos[i - 1 + internal.dim_new_R_pos_1 * (j - 1) + internal.dim_new_R_pos_12 * (k - 1) + internal.dim_new_R_pos_123 * (l - 1)] = R_pos[internal.dim_R_pos_123 * (l - 1) + internal.dim_R_pos_12 * (k - 1) + internal.dim_R_pos_1 * (j - 1) + i - 1] - internal.n_R_pos[internal.dim_n_R_pos_123 * (l - 1) + internal.dim_n_R_pos_12 * (k - 1) + internal.dim_n_R_pos_1 * (j - 1) + i - 1];
+    for (int i = 1; i <= internal.dim_new_T_sero_pos_1; ++i) {
+      for (int j = 1; j <= internal.dim_new_T_sero_pos_2; ++j) {
+        for (int k = 1; k <= internal.dim_new_T_sero_pos_3; ++k) {
+          for (int l = 1; l <= internal.dim_new_T_sero_pos_4; ++l) {
+            internal.new_T_sero_pos[i - 1 + internal.dim_new_T_sero_pos_1 * (j - 1) + internal.dim_new_T_sero_pos_12 * (k - 1) + internal.dim_new_T_sero_pos_123 * (l - 1)] = T_sero_pos[internal.dim_T_sero_pos_123 * (l - 1) + internal.dim_T_sero_pos_12 * (k - 1) + internal.dim_T_sero_pos_1 * (j - 1) + i - 1] - internal.n_TT_sero_pos[internal.dim_n_TT_sero_pos_123 * (l - 1) + internal.dim_n_TT_sero_pos_12 * (k - 1) + internal.dim_n_TT_sero_pos_1 * (j - 1) + i - 1];
           }
         }
       }
     }
-    for (int i = 1; i <= internal.dim_new_R_pos_1; ++i) {
-      for (int j = 1; j <= internal.dim_new_R_pos_2; ++j) {
+    for (int i = 1; i <= internal.dim_new_T_sero_pos_1; ++i) {
+      for (int j = 1; j <= internal.dim_new_T_sero_pos_2; ++j) {
         int k = 1;
-        for (int l = 1; l <= internal.dim_new_R_pos_4; ++l) {
-          internal.new_R_pos[i - 1 + internal.dim_new_R_pos_1 * (j - 1) + internal.dim_new_R_pos_12 * (k - 1) + internal.dim_new_R_pos_123 * (l - 1)] = internal.new_R_pos[internal.dim_new_R_pos_123 * (l - 1) + internal.dim_new_R_pos_12 * 0 + internal.dim_new_R_pos_1 * (j - 1) + i - 1] + internal.n_R_pre_to_R_pos[internal.dim_n_R_pre_to_R_pos_12 * (l - 1) + internal.dim_n_R_pre_to_R_pos_1 * (j - 1) + i - 1];
+        for (int l = 1; l <= internal.dim_new_T_sero_pos_4; ++l) {
+          internal.new_T_sero_pos[i - 1 + internal.dim_new_T_sero_pos_1 * (j - 1) + internal.dim_new_T_sero_pos_12 * (k - 1) + internal.dim_new_T_sero_pos_123 * (l - 1)] = internal.new_T_sero_pos[internal.dim_new_T_sero_pos_123 * (l - 1) + internal.dim_new_T_sero_pos_12 * 0 + internal.dim_new_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_T_sero_pre_to_T_sero_pos[internal.dim_n_T_sero_pre_to_T_sero_pos_12 * (l - 1) + internal.dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1];
         }
       }
     }
-    for (int i = 1; i <= internal.dim_new_R_pos_1; ++i) {
-      for (int j = 1; j <= internal.dim_new_R_pos_2; ++j) {
+    for (int i = 1; i <= internal.dim_new_T_sero_pos_1; ++i) {
+      for (int j = 1; j <= internal.dim_new_T_sero_pos_2; ++j) {
         for (int k = 2; k <= internal.s_sero_pos; ++k) {
-          for (int l = 1; l <= internal.dim_new_R_pos_4; ++l) {
-            internal.new_R_pos[i - 1 + internal.dim_new_R_pos_1 * (j - 1) + internal.dim_new_R_pos_12 * (k - 1) + internal.dim_new_R_pos_123 * (l - 1)] = internal.new_R_pos[internal.dim_new_R_pos_123 * (l - 1) + internal.dim_new_R_pos_12 * (k - 1) + internal.dim_new_R_pos_1 * (j - 1) + i - 1] + internal.n_R_pos[internal.dim_n_R_pos_123 * (l - 1) + internal.dim_n_R_pos_12 * (k - 1 - 1) + internal.dim_n_R_pos_1 * (j - 1) + i - 1];
+          for (int l = 1; l <= internal.dim_new_T_sero_pos_4; ++l) {
+            internal.new_T_sero_pos[i - 1 + internal.dim_new_T_sero_pos_1 * (j - 1) + internal.dim_new_T_sero_pos_12 * (k - 1) + internal.dim_new_T_sero_pos_123 * (l - 1)] = internal.new_T_sero_pos[internal.dim_new_T_sero_pos_123 * (l - 1) + internal.dim_new_T_sero_pos_12 * (k - 1) + internal.dim_new_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_TT_sero_pos[internal.dim_n_TT_sero_pos_123 * (l - 1) + internal.dim_n_TT_sero_pos_12 * (k - 1 - 1) + internal.dim_n_TT_sero_pos_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2943,16 +2943,16 @@ public:
         state_next[internal.offset_variable_cum_n_I_A_vaccinated + i - 1 + internal.dim_cum_n_I_A_vaccinated_1 * (j - 1)] = cum_n_I_A_vaccinated[internal.dim_cum_n_I_A_vaccinated_1 * (j - 1) + i - 1] + odin_sum4(internal.n_I_A_next_vacc_class.data(), i - 1, i, 0, internal.dim_n_I_A_next_vacc_class_2, 0, internal.dim_n_I_A_next_vacc_class_3, j - 1, j, internal.dim_n_I_A_next_vacc_class_1, internal.dim_n_I_A_next_vacc_class_12, internal.dim_n_I_A_next_vacc_class_123) + odin_sum4(internal.n_II_A_next_vacc_class.data(), i - 1, i, 0, internal.dim_n_II_A_next_vacc_class_2, 0, internal.dim_n_II_A_next_vacc_class_3, j - 1, j, internal.dim_n_II_A_next_vacc_class_1, internal.dim_n_II_A_next_vacc_class_12, internal.dim_n_II_A_next_vacc_class_123);
       }
     }
-    for (int i = 1; i <= internal.dim_R_pos_1; ++i) {
-      for (int j = 1; j <= internal.dim_R_pos_2; ++j) {
-        for (int k = 1; k <= internal.dim_R_pos_3; ++k) {
-          for (int l = 1; l <= internal.dim_R_pos_4; ++l) {
-            state_next[internal.offset_variable_R_pos + i - 1 + internal.dim_R_pos_1 * (j - 1) + internal.dim_R_pos_12 * (k - 1) + internal.dim_R_pos_123 * (l - 1)] = internal.new_R_pos[internal.dim_new_R_pos_123 * (l - 1) + internal.dim_new_R_pos_12 * (k - 1) + internal.dim_new_R_pos_1 * (j - 1) + i - 1];
+    state_next[13] = odin_sum4(internal.new_T_sero_pos.data(), 3, 13, 0, internal.dim_new_T_sero_pos_2, 0, internal.dim_new_T_sero_pos_3, 0, internal.dim_new_T_sero_pos_4, internal.dim_new_T_sero_pos_1, internal.dim_new_T_sero_pos_12, internal.dim_new_T_sero_pos_123);
+    for (int i = 1; i <= internal.dim_T_sero_pos_1; ++i) {
+      for (int j = 1; j <= internal.dim_T_sero_pos_2; ++j) {
+        for (int k = 1; k <= internal.dim_T_sero_pos_3; ++k) {
+          for (int l = 1; l <= internal.dim_T_sero_pos_4; ++l) {
+            state_next[internal.offset_variable_T_sero_pos + i - 1 + internal.dim_T_sero_pos_1 * (j - 1) + internal.dim_T_sero_pos_12 * (k - 1) + internal.dim_T_sero_pos_123 * (l - 1)] = internal.new_T_sero_pos[internal.dim_new_T_sero_pos_123 * (l - 1) + internal.dim_new_T_sero_pos_12 * (k - 1) + internal.dim_new_T_sero_pos_1 * (j - 1) + i - 1];
           }
         }
       }
     }
-    state_next[13] = odin_sum4(internal.new_R_pos.data(), 3, 13, 0, internal.dim_new_R_pos_2, 0, internal.dim_new_R_pos_3, 0, internal.dim_new_R_pos_4, internal.dim_new_R_pos_1, internal.dim_new_R_pos_12, internal.dim_new_R_pos_123);
     for (int i = 1; i <= internal.dim_W_D_conf_1; ++i) {
       for (int j = 1; j <= internal.dim_W_D_conf_2; ++j) {
         for (int k = 1; k <= internal.dim_W_D_conf_3; ++k) {
@@ -2989,33 +2989,33 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_n_com_to_R_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_com_to_R_pre_2; ++j) {
+    for (int i = 1; i <= internal.dim_n_com_to_T_sero_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_com_to_T_sero_pre_2; ++j) {
         int k = 1;
         int l = 1;
-        internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * 0 + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_sero_pre_1);
+        internal.n_com_to_T_sero_pre[i - 1 + internal.dim_n_com_to_T_sero_pre_1 * (j - 1) + internal.dim_n_com_to_T_sero_pre_12 * (k - 1) + internal.dim_n_com_to_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * 0 + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_sero_pre_1);
       }
     }
-    for (int i = 1; i <= internal.dim_n_com_to_R_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_com_to_R_pre_2; ++j) {
+    for (int i = 1; i <= internal.dim_n_com_to_T_sero_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_com_to_T_sero_pre_2; ++j) {
         int k = 1;
         for (int l = 2; l <= internal.n_vacc_classes; ++l) {
-          internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * (l - 1) + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_sero_pre_1);
+          internal.n_com_to_T_sero_pre[i - 1 + internal.dim_n_com_to_T_sero_pre_1 * (j - 1) + internal.dim_n_com_to_T_sero_pre_12 * (k - 1) + internal.dim_n_com_to_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[internal.dim_n_EE_123 * (l - 1) + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), internal.p_sero_pre_1);
         }
       }
     }
-    for (int i = 1; i <= internal.dim_n_com_to_R_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_com_to_R_pre_2; ++j) {
+    for (int i = 1; i <= internal.dim_n_com_to_T_sero_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_com_to_T_sero_pre_2; ++j) {
         int k = 2;
         int l = 1;
-        internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = internal.n_EE[internal.dim_n_EE_123 * 0 + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_com_to_R_pre[internal.dim_n_com_to_R_pre_123 * 0 + internal.dim_n_com_to_R_pre_12 * 0 + internal.dim_n_com_to_R_pre_1 * (j - 1) + i - 1];
+        internal.n_com_to_T_sero_pre[i - 1 + internal.dim_n_com_to_T_sero_pre_1 * (j - 1) + internal.dim_n_com_to_T_sero_pre_12 * (k - 1) + internal.dim_n_com_to_T_sero_pre_123 * (l - 1)] = internal.n_EE[internal.dim_n_EE_123 * 0 + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (internal.n_vacc_classes - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_com_to_T_sero_pre[internal.dim_n_com_to_T_sero_pre_123 * 0 + internal.dim_n_com_to_T_sero_pre_12 * 0 + internal.dim_n_com_to_T_sero_pre_1 * (j - 1) + i - 1];
       }
     }
-    for (int i = 1; i <= internal.dim_n_com_to_R_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_n_com_to_R_pre_2; ++j) {
+    for (int i = 1; i <= internal.dim_n_com_to_T_sero_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_n_com_to_T_sero_pre_2; ++j) {
         int k = 2;
         for (int l = 2; l <= internal.n_vacc_classes; ++l) {
-          internal.n_com_to_R_pre[i - 1 + internal.dim_n_com_to_R_pre_1 * (j - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_123 * (l - 1)] = internal.n_EE[internal.dim_n_EE_123 * (l - 1) + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_com_to_R_pre[internal.dim_n_com_to_R_pre_123 * (l - 1) + internal.dim_n_com_to_R_pre_12 * 0 + internal.dim_n_com_to_R_pre_1 * (j - 1) + i - 1];
+          internal.n_com_to_T_sero_pre[i - 1 + internal.dim_n_com_to_T_sero_pre_1 * (j - 1) + internal.dim_n_com_to_T_sero_pre_12 * (k - 1) + internal.dim_n_com_to_T_sero_pre_123 * (l - 1)] = internal.n_EE[internal.dim_n_EE_123 * (l - 1) + internal.dim_n_EE_12 * (internal.s_E - 1) + internal.dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[internal.dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + internal.dim_n_EE_next_vacc_class_12 * (internal.s_E - 1) + internal.dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_com_to_T_sero_pre[internal.dim_n_com_to_T_sero_pre_123 * (l - 1) + internal.dim_n_com_to_T_sero_pre_12 * 0 + internal.dim_n_com_to_T_sero_pre_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3301,19 +3301,10 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_new_R_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_new_R_pre_2; ++j) {
-        for (int k = 1; k <= internal.dim_new_R_pre_3; ++k) {
-          for (int l = 1; l <= internal.dim_new_R_pre_4; ++l) {
-            internal.new_R_pre[i - 1 + internal.dim_new_R_pre_1 * (j - 1) + internal.dim_new_R_pre_12 * (k - 1) + internal.dim_new_R_pre_123 * (l - 1)] = R_pre[internal.dim_R_pre_123 * (l - 1) + internal.dim_R_pre_12 * (k - 1) + internal.dim_R_pre_1 * (j - 1) + i - 1] + internal.n_com_to_R_pre[internal.dim_n_com_to_R_pre_123 * (l - 1) + internal.dim_n_com_to_R_pre_12 * (k - 1) + internal.dim_n_com_to_R_pre_1 * (j - 1) + i - 1] - internal.n_R_pre[internal.dim_n_R_pre_123 * (l - 1) + internal.dim_n_R_pre_12 * (k - 1) + internal.dim_n_R_pre_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
     for (int i = 1; i <= internal.dim_new_T_PCR_neg_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_PCR_neg_2; ++j) {
         for (int k = 1; k <= internal.dim_new_T_PCR_neg_3; ++k) {
-          internal.new_T_PCR_neg[i - 1 + internal.dim_new_T_PCR_neg_1 * (j - 1) + internal.dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[internal.dim_T_PCR_neg_12 * (k - 1) + internal.dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_T_PCR_pos[internal.dim_n_T_PCR_pos_123 * (k - 1) + internal.dim_n_T_PCR_pos_12 * (internal.s_PCR_pos - 1) + internal.dim_n_T_PCR_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_T_PCR_neg[i - 1 + internal.dim_new_T_PCR_neg_1 * (j - 1) + internal.dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[internal.dim_T_PCR_neg_12 * (k - 1) + internal.dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pos[internal.dim_n_TT_PCR_pos_123 * (k - 1) + internal.dim_n_TT_PCR_pos_12 * (internal.s_PCR_pos - 1) + internal.dim_n_TT_PCR_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3334,7 +3325,7 @@ public:
       for (int j = 1; j <= internal.dim_new_T_PCR_pre_2; ++j) {
         for (int k = 1; k <= internal.dim_new_T_PCR_pre_3; ++k) {
           for (int l = 1; l <= internal.dim_new_T_PCR_pre_4; ++l) {
-            internal.new_T_PCR_pre[i - 1 + internal.dim_new_T_PCR_pre_1 * (j - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[internal.dim_T_PCR_pre_123 * (l - 1) + internal.dim_T_PCR_pre_12 * (k - 1) + internal.dim_T_PCR_pre_1 * (j - 1) + i - 1] - internal.n_T_PCR_pre[internal.dim_n_T_PCR_pre_123 * (l - 1) + internal.dim_n_T_PCR_pre_12 * (k - 1) + internal.dim_n_T_PCR_pre_1 * (j - 1) + i - 1];
+            internal.new_T_PCR_pre[i - 1 + internal.dim_new_T_PCR_pre_1 * (j - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[internal.dim_T_PCR_pre_123 * (l - 1) + internal.dim_T_PCR_pre_12 * (k - 1) + internal.dim_T_PCR_pre_1 * (j - 1) + i - 1] - internal.n_TT_PCR_pre[internal.dim_n_TT_PCR_pre_123 * (l - 1) + internal.dim_n_TT_PCR_pre_12 * (k - 1) + internal.dim_n_TT_PCR_pre_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3351,7 +3342,7 @@ public:
       for (int j = 1; j <= internal.dim_new_T_PCR_pre_2; ++j) {
         for (int k = 2; k <= internal.s_PCR_pre; ++k) {
           for (int l = 1; l <= internal.dim_new_T_PCR_pre_4; ++l) {
-            internal.new_T_PCR_pre[i - 1 + internal.dim_new_T_PCR_pre_1 * (j - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_123 * (l - 1)] = internal.new_T_PCR_pre[internal.dim_new_T_PCR_pre_123 * (l - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_1 * (j - 1) + i - 1] + internal.n_T_PCR_pre[internal.dim_n_T_PCR_pre_123 * (l - 1) + internal.dim_n_T_PCR_pre_12 * (k - 1 - 1) + internal.dim_n_T_PCR_pre_1 * (j - 1) + i - 1];
+            internal.new_T_PCR_pre[i - 1 + internal.dim_new_T_PCR_pre_1 * (j - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_123 * (l - 1)] = internal.new_T_PCR_pre[internal.dim_new_T_PCR_pre_123 * (l - 1) + internal.dim_new_T_PCR_pre_12 * (k - 1) + internal.dim_new_T_PCR_pre_1 * (j - 1) + i - 1] + internal.n_TT_PCR_pre[internal.dim_n_TT_PCR_pre_123 * (l - 1) + internal.dim_n_TT_PCR_pre_12 * (k - 1 - 1) + internal.dim_n_TT_PCR_pre_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3359,7 +3350,7 @@ public:
     for (int i = 1; i <= internal.dim_new_T_sero_neg_1; ++i) {
       for (int j = 1; j <= internal.dim_new_T_sero_neg_2; ++j) {
         for (int k = 1; k <= internal.dim_new_T_sero_neg_3; ++k) {
-          internal.new_T_sero_neg[i - 1 + internal.dim_new_T_sero_neg_1 * (j - 1) + internal.dim_new_T_sero_neg_12 * (k - 1)] = T_sero_neg[internal.dim_T_sero_neg_12 * (k - 1) + internal.dim_T_sero_neg_1 * (j - 1) + i - 1] + odin_sum4(internal.n_R_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_R_pre_3, k - 1, k, internal.dim_n_R_pre_1, internal.dim_n_R_pre_12, internal.dim_n_R_pre_123) - internal.n_R_pre_to_R_pos[internal.dim_n_R_pre_to_R_pos_12 * (k - 1) + internal.dim_n_R_pre_to_R_pos_1 * (j - 1) + i - 1] + internal.n_R_pos[internal.dim_n_R_pos_123 * (k - 1) + internal.dim_n_R_pos_12 * (internal.s_sero_pos - 1) + internal.dim_n_R_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_T_sero_neg[i - 1 + internal.dim_new_T_sero_neg_1 * (j - 1) + internal.dim_new_T_sero_neg_12 * (k - 1)] = T_sero_neg[internal.dim_T_sero_neg_12 * (k - 1) + internal.dim_T_sero_neg_1 * (j - 1) + i - 1] + odin_sum4(internal.n_TT_sero_pre.data(), i - 1, i, j - 1, j, 0, internal.dim_n_TT_sero_pre_3, k - 1, k, internal.dim_n_TT_sero_pre_1, internal.dim_n_TT_sero_pre_12, internal.dim_n_TT_sero_pre_123) - internal.n_T_sero_pre_to_T_sero_pos[internal.dim_n_T_sero_pre_to_T_sero_pos_12 * (k - 1) + internal.dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_TT_sero_pos[internal.dim_n_TT_sero_pos_123 * (k - 1) + internal.dim_n_TT_sero_pos_12 * (internal.s_sero_pos - 1) + internal.dim_n_TT_sero_pos_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_progress[internal.dim_n_R_progress_12 * (k - 1) + internal.dim_n_R_progress_1 * (j - 1) + i - 1] - internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3373,6 +3364,15 @@ public:
       for (int j = 1; j <= internal.dim_new_T_sero_neg_2; ++j) {
         for (int k = 2; k <= internal.n_vacc_classes; ++k) {
           internal.new_T_sero_neg[i - 1 + internal.dim_new_T_sero_neg_1 * (j - 1) + internal.dim_new_T_sero_neg_12 * (k - 1)] = internal.new_T_sero_neg[internal.dim_new_T_sero_neg_12 * (k - 1) + internal.dim_new_T_sero_neg_1 * (j - 1) + i - 1] + internal.model_pcr_and_serology * internal.n_R_next_vacc_class[internal.dim_n_R_next_vacc_class_12 * (k - 1 - 1) + internal.dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= internal.dim_new_T_sero_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_new_T_sero_pre_2; ++j) {
+        for (int k = 1; k <= internal.dim_new_T_sero_pre_3; ++k) {
+          for (int l = 1; l <= internal.dim_new_T_sero_pre_4; ++l) {
+            internal.new_T_sero_pre[i - 1 + internal.dim_new_T_sero_pre_1 * (j - 1) + internal.dim_new_T_sero_pre_12 * (k - 1) + internal.dim_new_T_sero_pre_123 * (l - 1)] = T_sero_pre[internal.dim_T_sero_pre_123 * (l - 1) + internal.dim_T_sero_pre_12 * (k - 1) + internal.dim_T_sero_pre_1 * (j - 1) + i - 1] + internal.n_com_to_T_sero_pre[internal.dim_n_com_to_T_sero_pre_123 * (l - 1) + internal.dim_n_com_to_T_sero_pre_12 * (k - 1) + internal.dim_n_com_to_T_sero_pre_1 * (j - 1) + i - 1] - internal.n_TT_sero_pre[internal.dim_n_TT_sero_pre_123 * (l - 1) + internal.dim_n_TT_sero_pre_12 * (k - 1) + internal.dim_n_TT_sero_pre_1 * (j - 1) + i - 1];
+          }
         }
       }
     }
@@ -3532,15 +3532,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= internal.dim_R_pre_1; ++i) {
-      for (int j = 1; j <= internal.dim_R_pre_2; ++j) {
-        for (int k = 1; k <= internal.dim_R_pre_3; ++k) {
-          for (int l = 1; l <= internal.dim_R_pre_4; ++l) {
-            state_next[internal.offset_variable_R_pre + i - 1 + internal.dim_R_pre_1 * (j - 1) + internal.dim_R_pre_12 * (k - 1) + internal.dim_R_pre_123 * (l - 1)] = internal.new_R_pre[internal.dim_new_R_pre_123 * (l - 1) + internal.dim_new_R_pre_12 * (k - 1) + internal.dim_new_R_pre_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
     for (int i = 1; i <= internal.dim_T_PCR_neg_1; ++i) {
       for (int j = 1; j <= internal.dim_T_PCR_neg_2; ++j) {
         for (int k = 1; k <= internal.dim_T_PCR_neg_3; ++k) {
@@ -3561,6 +3552,15 @@ public:
       for (int j = 1; j <= internal.dim_T_sero_neg_2; ++j) {
         for (int k = 1; k <= internal.dim_T_sero_neg_3; ++k) {
           state_next[internal.offset_variable_T_sero_neg + i - 1 + internal.dim_T_sero_neg_1 * (j - 1) + internal.dim_T_sero_neg_12 * (k - 1)] = internal.new_T_sero_neg[internal.dim_new_T_sero_neg_12 * (k - 1) + internal.dim_new_T_sero_neg_1 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= internal.dim_T_sero_pre_1; ++i) {
+      for (int j = 1; j <= internal.dim_T_sero_pre_2; ++j) {
+        for (int k = 1; k <= internal.dim_T_sero_pre_3; ++k) {
+          for (int l = 1; l <= internal.dim_T_sero_pre_4; ++l) {
+            state_next[internal.offset_variable_T_sero_pre + i - 1 + internal.dim_T_sero_pre_1 * (j - 1) + internal.dim_T_sero_pre_12 * (k - 1) + internal.dim_T_sero_pre_123 * (l - 1)] = internal.new_T_sero_pre[internal.dim_new_T_sero_pre_123 * (l - 1) + internal.dim_new_T_sero_pre_12 * (k - 1) + internal.dim_new_T_sero_pre_1 * (j - 1) + i - 1];
+          }
         }
       }
     }
@@ -4264,10 +4264,10 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.p_IICU_pre = 1 - std::exp(- internal.gamma_ICU_pre * internal.dt);
   internal.p_IICU_W_D = 1 - std::exp(- internal.gamma_ICU_W_D * internal.dt);
   internal.p_IICU_W_R = 1 - std::exp(- internal.gamma_ICU_W_R * internal.dt);
-  internal.p_R_pos = 1 - std::exp(- internal.gamma_sero_pos * internal.dt);
-  internal.p_T_PCR_pos = 1 - std::exp(- internal.gamma_PCR_pos * internal.dt);
-  internal.p_T_PCR_pre = 1 - std::exp(- internal.gamma_PCR_pre * internal.dt);
   internal.p_test = 1 - std::exp(- internal.gamma_U * internal.dt);
+  internal.p_TT_PCR_pos = 1 - std::exp(- internal.gamma_PCR_pos * internal.dt);
+  internal.p_TT_PCR_pre = 1 - std::exp(- internal.gamma_PCR_pre * internal.dt);
+  internal.p_TT_sero_pos = 1 - std::exp(- internal.gamma_sero_pos * internal.dt);
   internal.p_WW_D = 1 - std::exp(- internal.gamma_W_D * internal.dt);
   internal.p_WW_R = 1 - std::exp(- internal.gamma_W_R * internal.dt);
   internal.initial_cum_admit_by_age = std::vector<real_t>(internal.dim_cum_admit_by_age);
@@ -4489,10 +4489,10 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_ICU_W_R_unconf_3 = internal.s_ICU_W_R;
   internal.dim_ICU_W_R_unconf_4 = internal.n_vacc_classes;
   internal.dim_lambda = internal.dim_lambda_1 * internal.dim_lambda_2;
-  internal.dim_n_com_to_R_pre_1 = internal.n_groups;
-  internal.dim_n_com_to_R_pre_2 = internal.n_strains;
-  internal.dim_n_com_to_R_pre_3 = 2;
-  internal.dim_n_com_to_R_pre_4 = internal.n_vacc_classes;
+  internal.dim_n_com_to_T_sero_pre_1 = internal.n_groups;
+  internal.dim_n_com_to_T_sero_pre_2 = internal.n_strains;
+  internal.dim_n_com_to_T_sero_pre_3 = 2;
+  internal.dim_n_com_to_T_sero_pre_4 = internal.n_vacc_classes;
   internal.dim_n_E_next_vacc_class_1 = internal.n_groups;
   internal.dim_n_E_next_vacc_class_2 = internal.n_strains;
   internal.dim_n_E_next_vacc_class_3 = internal.s_E;
@@ -4674,17 +4674,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_R_next_vacc_class_tmp_1 = internal.n_groups;
   internal.dim_n_R_next_vacc_class_tmp_2 = internal.n_strains;
   internal.dim_n_R_next_vacc_class_tmp_3 = internal.n_vacc_classes;
-  internal.dim_n_R_pos_1 = internal.n_groups;
-  internal.dim_n_R_pos_2 = internal.n_strains;
-  internal.dim_n_R_pos_3 = internal.s_sero_pos;
-  internal.dim_n_R_pos_4 = internal.n_vacc_classes;
-  internal.dim_n_R_pre_1 = internal.n_groups;
-  internal.dim_n_R_pre_2 = internal.n_strains;
-  internal.dim_n_R_pre_3 = 2;
-  internal.dim_n_R_pre_4 = internal.n_vacc_classes;
-  internal.dim_n_R_pre_to_R_pos_1 = internal.n_groups;
-  internal.dim_n_R_pre_to_R_pos_2 = internal.n_strains;
-  internal.dim_n_R_pre_to_R_pos_3 = internal.n_vacc_classes;
   internal.dim_n_R_progress_1 = internal.n_groups;
   internal.dim_n_R_progress_2 = internal.n_strains;
   internal.dim_n_R_progress_3 = internal.n_vacc_classes;
@@ -4713,14 +4702,25 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_SE_next_vacc_class_1 = internal.n_groups;
   internal.dim_n_SE_next_vacc_class_2 = internal.n_strains;
   internal.dim_n_SE_next_vacc_class_3 = internal.n_vacc_classes;
-  internal.dim_n_T_PCR_pos_1 = internal.n_groups;
-  internal.dim_n_T_PCR_pos_2 = internal.n_strains;
-  internal.dim_n_T_PCR_pos_3 = internal.s_PCR_pos;
-  internal.dim_n_T_PCR_pos_4 = internal.n_vacc_classes;
-  internal.dim_n_T_PCR_pre_1 = internal.n_groups;
-  internal.dim_n_T_PCR_pre_2 = internal.n_strains;
-  internal.dim_n_T_PCR_pre_3 = internal.s_PCR_pre;
-  internal.dim_n_T_PCR_pre_4 = internal.n_vacc_classes;
+  internal.dim_n_T_sero_pre_to_T_sero_pos_1 = internal.n_groups;
+  internal.dim_n_T_sero_pre_to_T_sero_pos_2 = internal.n_strains;
+  internal.dim_n_T_sero_pre_to_T_sero_pos_3 = internal.n_vacc_classes;
+  internal.dim_n_TT_PCR_pos_1 = internal.n_groups;
+  internal.dim_n_TT_PCR_pos_2 = internal.n_strains;
+  internal.dim_n_TT_PCR_pos_3 = internal.s_PCR_pos;
+  internal.dim_n_TT_PCR_pos_4 = internal.n_vacc_classes;
+  internal.dim_n_TT_PCR_pre_1 = internal.n_groups;
+  internal.dim_n_TT_PCR_pre_2 = internal.n_strains;
+  internal.dim_n_TT_PCR_pre_3 = internal.s_PCR_pre;
+  internal.dim_n_TT_PCR_pre_4 = internal.n_vacc_classes;
+  internal.dim_n_TT_sero_pos_1 = internal.n_groups;
+  internal.dim_n_TT_sero_pos_2 = internal.n_strains;
+  internal.dim_n_TT_sero_pos_3 = internal.s_sero_pos;
+  internal.dim_n_TT_sero_pos_4 = internal.n_vacc_classes;
+  internal.dim_n_TT_sero_pre_1 = internal.n_groups;
+  internal.dim_n_TT_sero_pre_2 = internal.n_strains;
+  internal.dim_n_TT_sero_pre_3 = 2;
+  internal.dim_n_TT_sero_pre_4 = internal.n_vacc_classes;
   internal.dim_n_W_D_unconf_to_conf_1 = internal.n_groups;
   internal.dim_n_W_D_unconf_to_conf_2 = internal.n_strains;
   internal.dim_n_W_D_unconf_to_conf_3 = internal.s_W_D;
@@ -4812,14 +4812,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_R_1 = internal.n_groups;
   internal.dim_new_R_2 = internal.n_strains;
   internal.dim_new_R_3 = internal.n_vacc_classes;
-  internal.dim_new_R_pos_1 = internal.n_groups;
-  internal.dim_new_R_pos_2 = internal.n_strains;
-  internal.dim_new_R_pos_3 = internal.s_sero_pos;
-  internal.dim_new_R_pos_4 = internal.n_vacc_classes;
-  internal.dim_new_R_pre_1 = internal.n_groups;
-  internal.dim_new_R_pre_2 = internal.n_strains;
-  internal.dim_new_R_pre_3 = 2;
-  internal.dim_new_R_pre_4 = internal.n_vacc_classes;
   internal.dim_new_S_1 = internal.n_groups;
   internal.dim_new_S_2 = internal.n_vacc_classes;
   internal.dim_new_T_PCR_neg_1 = internal.n_groups;
@@ -4836,6 +4828,14 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_T_sero_neg_1 = internal.n_groups;
   internal.dim_new_T_sero_neg_2 = internal.n_strains;
   internal.dim_new_T_sero_neg_3 = internal.n_vacc_classes;
+  internal.dim_new_T_sero_pos_1 = internal.n_groups;
+  internal.dim_new_T_sero_pos_2 = internal.n_strains;
+  internal.dim_new_T_sero_pos_3 = internal.s_sero_pos;
+  internal.dim_new_T_sero_pos_4 = internal.n_vacc_classes;
+  internal.dim_new_T_sero_pre_1 = internal.n_groups;
+  internal.dim_new_T_sero_pre_2 = internal.n_strains;
+  internal.dim_new_T_sero_pre_3 = 2;
+  internal.dim_new_T_sero_pre_4 = internal.n_vacc_classes;
   internal.dim_new_W_D_conf_1 = internal.n_groups;
   internal.dim_new_W_D_conf_2 = internal.n_strains;
   internal.dim_new_W_D_conf_3 = internal.s_W_D;
@@ -4863,25 +4863,17 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_p_R_next_vacc_class_1 = internal.n_groups;
   internal.dim_p_R_next_vacc_class_2 = internal.n_strains;
   internal.dim_p_R_next_vacc_class_3 = internal.n_vacc_classes;
-  internal.dim_p_R_pre_1 = internal.n_groups;
-  internal.dim_p_R_pre_2 = internal.n_strains;
-  internal.dim_p_R_pre_3 = 2;
-  internal.dim_p_R_pre_4 = internal.n_vacc_classes;
   internal.dim_p_S_next_vacc_class_1 = internal.n_groups;
   internal.dim_p_S_next_vacc_class_2 = internal.n_vacc_classes;
   internal.dim_p_SE_1 = internal.n_groups;
   internal.dim_p_SE_2 = internal.n_vacc_classes;
+  internal.dim_p_TT_sero_pre_1 = internal.n_groups;
+  internal.dim_p_TT_sero_pre_2 = internal.n_strains;
+  internal.dim_p_TT_sero_pre_3 = 2;
+  internal.dim_p_TT_sero_pre_4 = internal.n_vacc_classes;
   internal.dim_R_1 = internal.n_groups;
   internal.dim_R_2 = internal.n_strains;
   internal.dim_R_3 = internal.n_vacc_classes;
-  internal.dim_R_pos_1 = internal.n_groups;
-  internal.dim_R_pos_2 = internal.n_strains;
-  internal.dim_R_pos_3 = internal.s_sero_pos;
-  internal.dim_R_pos_4 = internal.n_vacc_classes;
-  internal.dim_R_pre_1 = internal.n_groups;
-  internal.dim_R_pre_2 = internal.n_strains;
-  internal.dim_R_pre_3 = 2;
-  internal.dim_R_pre_4 = internal.n_vacc_classes;
   internal.dim_rel_p_C_1 = internal.n_groups;
   internal.dim_rel_p_C_2 = internal.n_vacc_classes;
   internal.dim_rel_p_H_1 = internal.n_groups;
@@ -4904,6 +4896,14 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_T_sero_neg_1 = internal.n_groups;
   internal.dim_T_sero_neg_2 = internal.n_strains;
   internal.dim_T_sero_neg_3 = internal.n_vacc_classes;
+  internal.dim_T_sero_pos_1 = internal.n_groups;
+  internal.dim_T_sero_pos_2 = internal.n_strains;
+  internal.dim_T_sero_pos_3 = internal.s_sero_pos;
+  internal.dim_T_sero_pos_4 = internal.n_vacc_classes;
+  internal.dim_T_sero_pre_1 = internal.n_groups;
+  internal.dim_T_sero_pre_2 = internal.n_strains;
+  internal.dim_T_sero_pre_3 = 2;
+  internal.dim_T_sero_pre_4 = internal.n_vacc_classes;
   internal.dim_vaccine_progression_rate_1 = internal.n_groups;
   internal.dim_vaccine_progression_rate_2 = internal.n_vacc_classes;
   internal.dim_vaccine_progression_rate_base_1 = internal.n_groups;
@@ -5049,9 +5049,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_ICU_W_R_unconf = internal.dim_ICU_W_R_unconf_1 * internal.dim_ICU_W_R_unconf_2 * internal.dim_ICU_W_R_unconf_3 * internal.dim_ICU_W_R_unconf_4;
   internal.dim_ICU_W_R_unconf_12 = internal.dim_ICU_W_R_unconf_1 * internal.dim_ICU_W_R_unconf_2;
   internal.dim_ICU_W_R_unconf_123 = internal.dim_ICU_W_R_unconf_1 * internal.dim_ICU_W_R_unconf_2 * internal.dim_ICU_W_R_unconf_3;
-  internal.dim_n_com_to_R_pre = internal.dim_n_com_to_R_pre_1 * internal.dim_n_com_to_R_pre_2 * internal.dim_n_com_to_R_pre_3 * internal.dim_n_com_to_R_pre_4;
-  internal.dim_n_com_to_R_pre_12 = internal.dim_n_com_to_R_pre_1 * internal.dim_n_com_to_R_pre_2;
-  internal.dim_n_com_to_R_pre_123 = internal.dim_n_com_to_R_pre_1 * internal.dim_n_com_to_R_pre_2 * internal.dim_n_com_to_R_pre_3;
+  internal.dim_n_com_to_T_sero_pre = internal.dim_n_com_to_T_sero_pre_1 * internal.dim_n_com_to_T_sero_pre_2 * internal.dim_n_com_to_T_sero_pre_3 * internal.dim_n_com_to_T_sero_pre_4;
+  internal.dim_n_com_to_T_sero_pre_12 = internal.dim_n_com_to_T_sero_pre_1 * internal.dim_n_com_to_T_sero_pre_2;
+  internal.dim_n_com_to_T_sero_pre_123 = internal.dim_n_com_to_T_sero_pre_1 * internal.dim_n_com_to_T_sero_pre_2 * internal.dim_n_com_to_T_sero_pre_3;
   internal.dim_n_E_next_vacc_class = internal.dim_n_E_next_vacc_class_1 * internal.dim_n_E_next_vacc_class_2 * internal.dim_n_E_next_vacc_class_3 * internal.dim_n_E_next_vacc_class_4;
   internal.dim_n_E_next_vacc_class_12 = internal.dim_n_E_next_vacc_class_1 * internal.dim_n_E_next_vacc_class_2;
   internal.dim_n_E_next_vacc_class_123 = internal.dim_n_E_next_vacc_class_1 * internal.dim_n_E_next_vacc_class_2 * internal.dim_n_E_next_vacc_class_3;
@@ -5182,14 +5182,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_R_next_vacc_class_capped_12 = internal.dim_n_R_next_vacc_class_capped_1 * internal.dim_n_R_next_vacc_class_capped_2;
   internal.dim_n_R_next_vacc_class_tmp = internal.dim_n_R_next_vacc_class_tmp_1 * internal.dim_n_R_next_vacc_class_tmp_2 * internal.dim_n_R_next_vacc_class_tmp_3;
   internal.dim_n_R_next_vacc_class_tmp_12 = internal.dim_n_R_next_vacc_class_tmp_1 * internal.dim_n_R_next_vacc_class_tmp_2;
-  internal.dim_n_R_pos = internal.dim_n_R_pos_1 * internal.dim_n_R_pos_2 * internal.dim_n_R_pos_3 * internal.dim_n_R_pos_4;
-  internal.dim_n_R_pos_12 = internal.dim_n_R_pos_1 * internal.dim_n_R_pos_2;
-  internal.dim_n_R_pos_123 = internal.dim_n_R_pos_1 * internal.dim_n_R_pos_2 * internal.dim_n_R_pos_3;
-  internal.dim_n_R_pre = internal.dim_n_R_pre_1 * internal.dim_n_R_pre_2 * internal.dim_n_R_pre_3 * internal.dim_n_R_pre_4;
-  internal.dim_n_R_pre_12 = internal.dim_n_R_pre_1 * internal.dim_n_R_pre_2;
-  internal.dim_n_R_pre_123 = internal.dim_n_R_pre_1 * internal.dim_n_R_pre_2 * internal.dim_n_R_pre_3;
-  internal.dim_n_R_pre_to_R_pos = internal.dim_n_R_pre_to_R_pos_1 * internal.dim_n_R_pre_to_R_pos_2 * internal.dim_n_R_pre_to_R_pos_3;
-  internal.dim_n_R_pre_to_R_pos_12 = internal.dim_n_R_pre_to_R_pos_1 * internal.dim_n_R_pre_to_R_pos_2;
   internal.dim_n_R_progress = internal.dim_n_R_progress_1 * internal.dim_n_R_progress_2 * internal.dim_n_R_progress_3;
   internal.dim_n_R_progress_12 = internal.dim_n_R_progress_1 * internal.dim_n_R_progress_2;
   internal.dim_n_R_progress_capped = internal.dim_n_R_progress_capped_1 * internal.dim_n_R_progress_capped_2 * internal.dim_n_R_progress_capped_3;
@@ -5208,12 +5200,20 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_n_SE_12 = internal.dim_n_SE_1 * internal.dim_n_SE_2;
   internal.dim_n_SE_next_vacc_class = internal.dim_n_SE_next_vacc_class_1 * internal.dim_n_SE_next_vacc_class_2 * internal.dim_n_SE_next_vacc_class_3;
   internal.dim_n_SE_next_vacc_class_12 = internal.dim_n_SE_next_vacc_class_1 * internal.dim_n_SE_next_vacc_class_2;
-  internal.dim_n_T_PCR_pos = internal.dim_n_T_PCR_pos_1 * internal.dim_n_T_PCR_pos_2 * internal.dim_n_T_PCR_pos_3 * internal.dim_n_T_PCR_pos_4;
-  internal.dim_n_T_PCR_pos_12 = internal.dim_n_T_PCR_pos_1 * internal.dim_n_T_PCR_pos_2;
-  internal.dim_n_T_PCR_pos_123 = internal.dim_n_T_PCR_pos_1 * internal.dim_n_T_PCR_pos_2 * internal.dim_n_T_PCR_pos_3;
-  internal.dim_n_T_PCR_pre = internal.dim_n_T_PCR_pre_1 * internal.dim_n_T_PCR_pre_2 * internal.dim_n_T_PCR_pre_3 * internal.dim_n_T_PCR_pre_4;
-  internal.dim_n_T_PCR_pre_12 = internal.dim_n_T_PCR_pre_1 * internal.dim_n_T_PCR_pre_2;
-  internal.dim_n_T_PCR_pre_123 = internal.dim_n_T_PCR_pre_1 * internal.dim_n_T_PCR_pre_2 * internal.dim_n_T_PCR_pre_3;
+  internal.dim_n_T_sero_pre_to_T_sero_pos = internal.dim_n_T_sero_pre_to_T_sero_pos_1 * internal.dim_n_T_sero_pre_to_T_sero_pos_2 * internal.dim_n_T_sero_pre_to_T_sero_pos_3;
+  internal.dim_n_T_sero_pre_to_T_sero_pos_12 = internal.dim_n_T_sero_pre_to_T_sero_pos_1 * internal.dim_n_T_sero_pre_to_T_sero_pos_2;
+  internal.dim_n_TT_PCR_pos = internal.dim_n_TT_PCR_pos_1 * internal.dim_n_TT_PCR_pos_2 * internal.dim_n_TT_PCR_pos_3 * internal.dim_n_TT_PCR_pos_4;
+  internal.dim_n_TT_PCR_pos_12 = internal.dim_n_TT_PCR_pos_1 * internal.dim_n_TT_PCR_pos_2;
+  internal.dim_n_TT_PCR_pos_123 = internal.dim_n_TT_PCR_pos_1 * internal.dim_n_TT_PCR_pos_2 * internal.dim_n_TT_PCR_pos_3;
+  internal.dim_n_TT_PCR_pre = internal.dim_n_TT_PCR_pre_1 * internal.dim_n_TT_PCR_pre_2 * internal.dim_n_TT_PCR_pre_3 * internal.dim_n_TT_PCR_pre_4;
+  internal.dim_n_TT_PCR_pre_12 = internal.dim_n_TT_PCR_pre_1 * internal.dim_n_TT_PCR_pre_2;
+  internal.dim_n_TT_PCR_pre_123 = internal.dim_n_TT_PCR_pre_1 * internal.dim_n_TT_PCR_pre_2 * internal.dim_n_TT_PCR_pre_3;
+  internal.dim_n_TT_sero_pos = internal.dim_n_TT_sero_pos_1 * internal.dim_n_TT_sero_pos_2 * internal.dim_n_TT_sero_pos_3 * internal.dim_n_TT_sero_pos_4;
+  internal.dim_n_TT_sero_pos_12 = internal.dim_n_TT_sero_pos_1 * internal.dim_n_TT_sero_pos_2;
+  internal.dim_n_TT_sero_pos_123 = internal.dim_n_TT_sero_pos_1 * internal.dim_n_TT_sero_pos_2 * internal.dim_n_TT_sero_pos_3;
+  internal.dim_n_TT_sero_pre = internal.dim_n_TT_sero_pre_1 * internal.dim_n_TT_sero_pre_2 * internal.dim_n_TT_sero_pre_3 * internal.dim_n_TT_sero_pre_4;
+  internal.dim_n_TT_sero_pre_12 = internal.dim_n_TT_sero_pre_1 * internal.dim_n_TT_sero_pre_2;
+  internal.dim_n_TT_sero_pre_123 = internal.dim_n_TT_sero_pre_1 * internal.dim_n_TT_sero_pre_2 * internal.dim_n_TT_sero_pre_3;
   internal.dim_n_W_D_unconf_to_conf = internal.dim_n_W_D_unconf_to_conf_1 * internal.dim_n_W_D_unconf_to_conf_2 * internal.dim_n_W_D_unconf_to_conf_3 * internal.dim_n_W_D_unconf_to_conf_4;
   internal.dim_n_W_D_unconf_to_conf_12 = internal.dim_n_W_D_unconf_to_conf_1 * internal.dim_n_W_D_unconf_to_conf_2;
   internal.dim_n_W_D_unconf_to_conf_123 = internal.dim_n_W_D_unconf_to_conf_1 * internal.dim_n_W_D_unconf_to_conf_2 * internal.dim_n_W_D_unconf_to_conf_3;
@@ -5282,12 +5282,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_ICU_W_R_unconf_123 = internal.dim_new_ICU_W_R_unconf_1 * internal.dim_new_ICU_W_R_unconf_2 * internal.dim_new_ICU_W_R_unconf_3;
   internal.dim_new_R = internal.dim_new_R_1 * internal.dim_new_R_2 * internal.dim_new_R_3;
   internal.dim_new_R_12 = internal.dim_new_R_1 * internal.dim_new_R_2;
-  internal.dim_new_R_pos = internal.dim_new_R_pos_1 * internal.dim_new_R_pos_2 * internal.dim_new_R_pos_3 * internal.dim_new_R_pos_4;
-  internal.dim_new_R_pos_12 = internal.dim_new_R_pos_1 * internal.dim_new_R_pos_2;
-  internal.dim_new_R_pos_123 = internal.dim_new_R_pos_1 * internal.dim_new_R_pos_2 * internal.dim_new_R_pos_3;
-  internal.dim_new_R_pre = internal.dim_new_R_pre_1 * internal.dim_new_R_pre_2 * internal.dim_new_R_pre_3 * internal.dim_new_R_pre_4;
-  internal.dim_new_R_pre_12 = internal.dim_new_R_pre_1 * internal.dim_new_R_pre_2;
-  internal.dim_new_R_pre_123 = internal.dim_new_R_pre_1 * internal.dim_new_R_pre_2 * internal.dim_new_R_pre_3;
   internal.dim_new_S = internal.dim_new_S_1 * internal.dim_new_S_2;
   internal.dim_new_T_PCR_neg = internal.dim_new_T_PCR_neg_1 * internal.dim_new_T_PCR_neg_2 * internal.dim_new_T_PCR_neg_3;
   internal.dim_new_T_PCR_neg_12 = internal.dim_new_T_PCR_neg_1 * internal.dim_new_T_PCR_neg_2;
@@ -5299,6 +5293,12 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_new_T_PCR_pre_123 = internal.dim_new_T_PCR_pre_1 * internal.dim_new_T_PCR_pre_2 * internal.dim_new_T_PCR_pre_3;
   internal.dim_new_T_sero_neg = internal.dim_new_T_sero_neg_1 * internal.dim_new_T_sero_neg_2 * internal.dim_new_T_sero_neg_3;
   internal.dim_new_T_sero_neg_12 = internal.dim_new_T_sero_neg_1 * internal.dim_new_T_sero_neg_2;
+  internal.dim_new_T_sero_pos = internal.dim_new_T_sero_pos_1 * internal.dim_new_T_sero_pos_2 * internal.dim_new_T_sero_pos_3 * internal.dim_new_T_sero_pos_4;
+  internal.dim_new_T_sero_pos_12 = internal.dim_new_T_sero_pos_1 * internal.dim_new_T_sero_pos_2;
+  internal.dim_new_T_sero_pos_123 = internal.dim_new_T_sero_pos_1 * internal.dim_new_T_sero_pos_2 * internal.dim_new_T_sero_pos_3;
+  internal.dim_new_T_sero_pre = internal.dim_new_T_sero_pre_1 * internal.dim_new_T_sero_pre_2 * internal.dim_new_T_sero_pre_3 * internal.dim_new_T_sero_pre_4;
+  internal.dim_new_T_sero_pre_12 = internal.dim_new_T_sero_pre_1 * internal.dim_new_T_sero_pre_2;
+  internal.dim_new_T_sero_pre_123 = internal.dim_new_T_sero_pre_1 * internal.dim_new_T_sero_pre_2 * internal.dim_new_T_sero_pre_3;
   internal.dim_new_W_D_conf = internal.dim_new_W_D_conf_1 * internal.dim_new_W_D_conf_2 * internal.dim_new_W_D_conf_3 * internal.dim_new_W_D_conf_4;
   internal.dim_new_W_D_conf_12 = internal.dim_new_W_D_conf_1 * internal.dim_new_W_D_conf_2;
   internal.dim_new_W_D_conf_123 = internal.dim_new_W_D_conf_1 * internal.dim_new_W_D_conf_2 * internal.dim_new_W_D_conf_3;
@@ -5319,19 +5319,13 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_p_I_A_next_vacc_class_123 = internal.dim_p_I_A_next_vacc_class_1 * internal.dim_p_I_A_next_vacc_class_2 * internal.dim_p_I_A_next_vacc_class_3;
   internal.dim_p_R_next_vacc_class = internal.dim_p_R_next_vacc_class_1 * internal.dim_p_R_next_vacc_class_2 * internal.dim_p_R_next_vacc_class_3;
   internal.dim_p_R_next_vacc_class_12 = internal.dim_p_R_next_vacc_class_1 * internal.dim_p_R_next_vacc_class_2;
-  internal.dim_p_R_pre = internal.dim_p_R_pre_1 * internal.dim_p_R_pre_2 * internal.dim_p_R_pre_3 * internal.dim_p_R_pre_4;
-  internal.dim_p_R_pre_12 = internal.dim_p_R_pre_1 * internal.dim_p_R_pre_2;
-  internal.dim_p_R_pre_123 = internal.dim_p_R_pre_1 * internal.dim_p_R_pre_2 * internal.dim_p_R_pre_3;
   internal.dim_p_S_next_vacc_class = internal.dim_p_S_next_vacc_class_1 * internal.dim_p_S_next_vacc_class_2;
   internal.dim_p_SE = internal.dim_p_SE_1 * internal.dim_p_SE_2;
+  internal.dim_p_TT_sero_pre = internal.dim_p_TT_sero_pre_1 * internal.dim_p_TT_sero_pre_2 * internal.dim_p_TT_sero_pre_3 * internal.dim_p_TT_sero_pre_4;
+  internal.dim_p_TT_sero_pre_12 = internal.dim_p_TT_sero_pre_1 * internal.dim_p_TT_sero_pre_2;
+  internal.dim_p_TT_sero_pre_123 = internal.dim_p_TT_sero_pre_1 * internal.dim_p_TT_sero_pre_2 * internal.dim_p_TT_sero_pre_3;
   internal.dim_R = internal.dim_R_1 * internal.dim_R_2 * internal.dim_R_3;
   internal.dim_R_12 = internal.dim_R_1 * internal.dim_R_2;
-  internal.dim_R_pos = internal.dim_R_pos_1 * internal.dim_R_pos_2 * internal.dim_R_pos_3 * internal.dim_R_pos_4;
-  internal.dim_R_pos_12 = internal.dim_R_pos_1 * internal.dim_R_pos_2;
-  internal.dim_R_pos_123 = internal.dim_R_pos_1 * internal.dim_R_pos_2 * internal.dim_R_pos_3;
-  internal.dim_R_pre = internal.dim_R_pre_1 * internal.dim_R_pre_2 * internal.dim_R_pre_3 * internal.dim_R_pre_4;
-  internal.dim_R_pre_12 = internal.dim_R_pre_1 * internal.dim_R_pre_2;
-  internal.dim_R_pre_123 = internal.dim_R_pre_1 * internal.dim_R_pre_2 * internal.dim_R_pre_3;
   internal.dim_rel_p_C = internal.dim_rel_p_C_1 * internal.dim_rel_p_C_2;
   internal.dim_rel_p_H = internal.dim_rel_p_H_1 * internal.dim_rel_p_H_2;
   internal.dim_S = internal.dim_S_1 * internal.dim_S_2;
@@ -5345,6 +5339,12 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.dim_T_PCR_pre_123 = internal.dim_T_PCR_pre_1 * internal.dim_T_PCR_pre_2 * internal.dim_T_PCR_pre_3;
   internal.dim_T_sero_neg = internal.dim_T_sero_neg_1 * internal.dim_T_sero_neg_2 * internal.dim_T_sero_neg_3;
   internal.dim_T_sero_neg_12 = internal.dim_T_sero_neg_1 * internal.dim_T_sero_neg_2;
+  internal.dim_T_sero_pos = internal.dim_T_sero_pos_1 * internal.dim_T_sero_pos_2 * internal.dim_T_sero_pos_3 * internal.dim_T_sero_pos_4;
+  internal.dim_T_sero_pos_12 = internal.dim_T_sero_pos_1 * internal.dim_T_sero_pos_2;
+  internal.dim_T_sero_pos_123 = internal.dim_T_sero_pos_1 * internal.dim_T_sero_pos_2 * internal.dim_T_sero_pos_3;
+  internal.dim_T_sero_pre = internal.dim_T_sero_pre_1 * internal.dim_T_sero_pre_2 * internal.dim_T_sero_pre_3 * internal.dim_T_sero_pre_4;
+  internal.dim_T_sero_pre_12 = internal.dim_T_sero_pre_1 * internal.dim_T_sero_pre_2;
+  internal.dim_T_sero_pre_123 = internal.dim_T_sero_pre_1 * internal.dim_T_sero_pre_2 * internal.dim_T_sero_pre_3;
   internal.dim_vaccine_progression_rate = internal.dim_vaccine_progression_rate_1 * internal.dim_vaccine_progression_rate_2;
   internal.dim_vaccine_progression_rate_base = internal.dim_vaccine_progression_rate_base_1 * internal.dim_vaccine_progression_rate_base_2;
   internal.dim_W_D_conf = internal.dim_W_D_conf_1 * internal.dim_W_D_conf_2 * internal.dim_W_D_conf_3 * internal.dim_W_D_conf_4;
@@ -5402,18 +5402,18 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.initial_ICU_W_R_conf = std::vector<real_t>(internal.dim_ICU_W_R_conf);
   internal.initial_ICU_W_R_unconf = std::vector<real_t>(internal.dim_ICU_W_R_unconf);
   internal.initial_R = std::vector<real_t>(internal.dim_R);
-  internal.initial_R_pos = std::vector<real_t>(internal.dim_R_pos);
-  internal.initial_R_pre = std::vector<real_t>(internal.dim_R_pre);
   internal.initial_S = std::vector<real_t>(internal.dim_S);
   internal.initial_T_PCR_neg = std::vector<real_t>(internal.dim_T_PCR_neg);
   internal.initial_T_PCR_pos = std::vector<real_t>(internal.dim_T_PCR_pos);
   internal.initial_T_PCR_pre = std::vector<real_t>(internal.dim_T_PCR_pre);
   internal.initial_T_sero_neg = std::vector<real_t>(internal.dim_T_sero_neg);
+  internal.initial_T_sero_pos = std::vector<real_t>(internal.dim_T_sero_pos);
+  internal.initial_T_sero_pre = std::vector<real_t>(internal.dim_T_sero_pre);
   internal.initial_W_D_conf = std::vector<real_t>(internal.dim_W_D_conf);
   internal.initial_W_D_unconf = std::vector<real_t>(internal.dim_W_D_unconf);
   internal.initial_W_R_conf = std::vector<real_t>(internal.dim_W_R_conf);
   internal.initial_W_R_unconf = std::vector<real_t>(internal.dim_W_R_unconf);
-  internal.n_com_to_R_pre = std::vector<real_t>(internal.dim_n_com_to_R_pre);
+  internal.n_com_to_T_sero_pre = std::vector<real_t>(internal.dim_n_com_to_T_sero_pre);
   internal.n_E_next_vacc_class = std::vector<real_t>(internal.dim_n_E_next_vacc_class);
   internal.n_E_progress = std::vector<real_t>(internal.dim_n_E_progress);
   internal.n_EE = std::vector<real_t>(internal.dim_n_EE);
@@ -5465,9 +5465,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.n_R_next_vacc_class = std::vector<real_t>(internal.dim_n_R_next_vacc_class);
   internal.n_R_next_vacc_class_capped = std::vector<real_t>(internal.dim_n_R_next_vacc_class_capped);
   internal.n_R_next_vacc_class_tmp = std::vector<real_t>(internal.dim_n_R_next_vacc_class_tmp);
-  internal.n_R_pos = std::vector<real_t>(internal.dim_n_R_pos);
-  internal.n_R_pre = std::vector<real_t>(internal.dim_n_R_pre);
-  internal.n_R_pre_to_R_pos = std::vector<real_t>(internal.dim_n_R_pre_to_R_pos);
   internal.n_R_progress = std::vector<real_t>(internal.dim_n_R_progress);
   internal.n_R_progress_capped = std::vector<real_t>(internal.dim_n_R_progress_capped);
   internal.n_R_progress_tmp = std::vector<real_t>(internal.dim_n_R_progress_tmp);
@@ -5478,8 +5475,11 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.n_S_progress_tot = std::vector<real_t>(internal.dim_n_S_progress_tot);
   internal.n_SE = std::vector<real_t>(internal.dim_n_SE);
   internal.n_SE_next_vacc_class = std::vector<real_t>(internal.dim_n_SE_next_vacc_class);
-  internal.n_T_PCR_pos = std::vector<real_t>(internal.dim_n_T_PCR_pos);
-  internal.n_T_PCR_pre = std::vector<real_t>(internal.dim_n_T_PCR_pre);
+  internal.n_T_sero_pre_to_T_sero_pos = std::vector<real_t>(internal.dim_n_T_sero_pre_to_T_sero_pos);
+  internal.n_TT_PCR_pos = std::vector<real_t>(internal.dim_n_TT_PCR_pos);
+  internal.n_TT_PCR_pre = std::vector<real_t>(internal.dim_n_TT_PCR_pre);
+  internal.n_TT_sero_pos = std::vector<real_t>(internal.dim_n_TT_sero_pos);
+  internal.n_TT_sero_pre = std::vector<real_t>(internal.dim_n_TT_sero_pre);
   internal.n_W_D_unconf_to_conf = std::vector<real_t>(internal.dim_n_W_D_unconf_to_conf);
   internal.n_W_R_unconf_to_conf = std::vector<real_t>(internal.dim_n_W_R_unconf_to_conf);
   internal.n_WW_D_conf = std::vector<real_t>(internal.dim_n_WW_D_conf);
@@ -5503,13 +5503,13 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.new_ICU_W_R_conf = std::vector<real_t>(internal.dim_new_ICU_W_R_conf);
   internal.new_ICU_W_R_unconf = std::vector<real_t>(internal.dim_new_ICU_W_R_unconf);
   internal.new_R = std::vector<real_t>(internal.dim_new_R);
-  internal.new_R_pos = std::vector<real_t>(internal.dim_new_R_pos);
-  internal.new_R_pre = std::vector<real_t>(internal.dim_new_R_pre);
   internal.new_S = std::vector<real_t>(internal.dim_new_S);
   internal.new_T_PCR_neg = std::vector<real_t>(internal.dim_new_T_PCR_neg);
   internal.new_T_PCR_pos = std::vector<real_t>(internal.dim_new_T_PCR_pos);
   internal.new_T_PCR_pre = std::vector<real_t>(internal.dim_new_T_PCR_pre);
   internal.new_T_sero_neg = std::vector<real_t>(internal.dim_new_T_sero_neg);
+  internal.new_T_sero_pos = std::vector<real_t>(internal.dim_new_T_sero_pos);
+  internal.new_T_sero_pre = std::vector<real_t>(internal.dim_new_T_sero_pre);
   internal.new_W_D_conf = std::vector<real_t>(internal.dim_new_W_D_conf);
   internal.new_W_D_unconf = std::vector<real_t>(internal.dim_new_W_D_unconf);
   internal.new_W_R_conf = std::vector<real_t>(internal.dim_new_W_R_conf);
@@ -5517,9 +5517,9 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.p_E_next_vacc_class = std::vector<real_t>(internal.dim_p_E_next_vacc_class);
   internal.p_I_A_next_vacc_class = std::vector<real_t>(internal.dim_p_I_A_next_vacc_class);
   internal.p_R_next_vacc_class = std::vector<real_t>(internal.dim_p_R_next_vacc_class);
-  internal.p_R_pre = std::vector<real_t>(internal.dim_p_R_pre);
   internal.p_S_next_vacc_class = std::vector<real_t>(internal.dim_p_S_next_vacc_class);
   internal.p_SE = std::vector<real_t>(internal.dim_p_SE);
+  internal.p_TT_sero_pre = std::vector<real_t>(internal.dim_p_TT_sero_pre);
   internal.vaccine_progression_rate = std::vector<real_t>(internal.dim_vaccine_progression_rate);
   for (int i = 1; i <= internal.dim_cum_n_E_vaccinated_1; ++i) {
     for (int j = 1; j <= internal.dim_cum_n_E_vaccinated_2; ++j) {
@@ -5697,24 +5697,6 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
       }
     }
   }
-  for (int i = 1; i <= internal.dim_R_pos_1; ++i) {
-    for (int j = 1; j <= internal.dim_R_pos_2; ++j) {
-      for (int k = 1; k <= internal.dim_R_pos_3; ++k) {
-        for (int l = 1; l <= internal.dim_R_pos_4; ++l) {
-          internal.initial_R_pos[i - 1 + internal.dim_R_pos_1 * (j - 1) + internal.dim_R_pos_12 * (k - 1) + internal.dim_R_pos_123 * (l - 1)] = 0;
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= internal.dim_R_pre_1; ++i) {
-    for (int j = 1; j <= internal.dim_R_pre_2; ++j) {
-      for (int k = 1; k <= internal.dim_R_pre_3; ++k) {
-        for (int l = 1; l <= internal.dim_R_pre_4; ++l) {
-          internal.initial_R_pre[i - 1 + internal.dim_R_pre_1 * (j - 1) + internal.dim_R_pre_12 * (k - 1) + internal.dim_R_pre_123 * (l - 1)] = 0;
-        }
-      }
-    }
-  }
   for (int i = 1; i <= internal.dim_S_1; ++i) {
     for (int j = 1; j <= internal.dim_S_2; ++j) {
       internal.initial_S[i - 1 + internal.dim_S_1 * (j - 1)] = 0;
@@ -5749,6 +5731,24 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
     for (int j = 1; j <= internal.dim_T_sero_neg_2; ++j) {
       for (int k = 1; k <= internal.dim_T_sero_neg_3; ++k) {
         internal.initial_T_sero_neg[i - 1 + internal.dim_T_sero_neg_1 * (j - 1) + internal.dim_T_sero_neg_12 * (k - 1)] = 0;
+      }
+    }
+  }
+  for (int i = 1; i <= internal.dim_T_sero_pos_1; ++i) {
+    for (int j = 1; j <= internal.dim_T_sero_pos_2; ++j) {
+      for (int k = 1; k <= internal.dim_T_sero_pos_3; ++k) {
+        for (int l = 1; l <= internal.dim_T_sero_pos_4; ++l) {
+          internal.initial_T_sero_pos[i - 1 + internal.dim_T_sero_pos_1 * (j - 1) + internal.dim_T_sero_pos_12 * (k - 1) + internal.dim_T_sero_pos_123 * (l - 1)] = 0;
+        }
+      }
+    }
+  }
+  for (int i = 1; i <= internal.dim_T_sero_pre_1; ++i) {
+    for (int j = 1; j <= internal.dim_T_sero_pre_2; ++j) {
+      for (int k = 1; k <= internal.dim_T_sero_pre_3; ++k) {
+        for (int l = 1; l <= internal.dim_T_sero_pre_4; ++l) {
+          internal.initial_T_sero_pre[i - 1 + internal.dim_T_sero_pre_1 * (j - 1) + internal.dim_T_sero_pre_12 * (k - 1) + internal.dim_T_sero_pre_123 * (l - 1)] = 0;
+        }
       }
     }
   }
@@ -5809,13 +5809,13 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.offset_variable_ICU_W_R_conf = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf;
   internal.offset_variable_ICU_W_R_unconf = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf;
   internal.offset_variable_R = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg;
-  internal.offset_variable_R_pos = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_R_pre;
-  internal.offset_variable_R_pre = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf;
   internal.offset_variable_S = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated;
   internal.offset_variable_T_PCR_neg = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R;
-  internal.offset_variable_T_PCR_pos = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_R_pre + internal.dim_R_pos + internal.dim_T_PCR_pre;
-  internal.offset_variable_T_PCR_pre = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_R_pre + internal.dim_R_pos;
+  internal.offset_variable_T_PCR_pos = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_T_sero_pre + internal.dim_T_sero_pos + internal.dim_T_PCR_pre;
+  internal.offset_variable_T_PCR_pre = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_T_sero_pre + internal.dim_T_sero_pos;
   internal.offset_variable_T_sero_neg = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S;
+  internal.offset_variable_T_sero_pos = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf + internal.dim_T_sero_pre;
+  internal.offset_variable_T_sero_pre = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf + internal.dim_W_D_conf;
   internal.offset_variable_W_D_conf = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf + internal.dim_W_D_unconf;
   internal.offset_variable_W_D_unconf = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf + internal.dim_W_R_conf;
   internal.offset_variable_W_R_conf = 17 + internal.dim_cum_infections_per_strain + internal.dim_D_hosp + internal.dim_D_comm + internal.dim_cum_admit_by_age + internal.dim_N_tot + internal.dim_cum_n_S_vaccinated + internal.dim_cum_n_E_vaccinated + internal.dim_cum_n_I_A_vaccinated + internal.dim_cum_n_R_vaccinated + internal.dim_cum_n_vaccinated + internal.dim_S + internal.dim_T_sero_neg + internal.dim_R + internal.dim_T_PCR_neg + internal.dim_E + internal.dim_I_A + internal.dim_I_C + internal.dim_G_D + internal.dim_ICU_pre_unconf + internal.dim_ICU_pre_conf + internal.dim_H_R_unconf + internal.dim_H_R_conf + internal.dim_H_D_unconf + internal.dim_H_D_conf + internal.dim_ICU_W_R_unconf + internal.dim_ICU_W_R_conf + internal.dim_ICU_W_D_unconf + internal.dim_ICU_W_D_conf + internal.dim_ICU_D_unconf + internal.dim_ICU_D_conf + internal.dim_W_R_unconf;
@@ -5823,11 +5823,11 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.rel_p_C = user_get_array_fixed<real_t, 2>(user, "rel_p_C", internal.rel_p_C, {internal.dim_rel_p_C_1, internal.dim_rel_p_C_2}, NA_REAL, NA_REAL);
   internal.rel_p_H = user_get_array_fixed<real_t, 2>(user, "rel_p_H", internal.rel_p_H, {internal.dim_rel_p_H_1, internal.dim_rel_p_H_2}, NA_REAL, NA_REAL);
   internal.vaccine_progression_rate_base = user_get_array_fixed<real_t, 2>(user, "vaccine_progression_rate_base", internal.vaccine_progression_rate_base, {internal.dim_vaccine_progression_rate_base_1, internal.dim_vaccine_progression_rate_base_2}, NA_REAL, NA_REAL);
-  for (int i = 1; i <= internal.dim_p_R_pre_1; ++i) {
-    for (int j = 1; j <= internal.dim_p_R_pre_2; ++j) {
-      for (int k = 1; k <= internal.dim_p_R_pre_3; ++k) {
-        for (int l = 1; l <= internal.dim_p_R_pre_4; ++l) {
-          internal.p_R_pre[i - 1 + internal.dim_p_R_pre_1 * (j - 1) + internal.dim_p_R_pre_12 * (k - 1) + internal.dim_p_R_pre_123 * (l - 1)] = 1 - std::exp(- internal.gamma_sero_pre[k - 1] * internal.dt);
+  for (int i = 1; i <= internal.dim_p_TT_sero_pre_1; ++i) {
+    for (int j = 1; j <= internal.dim_p_TT_sero_pre_2; ++j) {
+      for (int k = 1; k <= internal.dim_p_TT_sero_pre_3; ++k) {
+        for (int l = 1; l <= internal.dim_p_TT_sero_pre_4; ++l) {
+          internal.p_TT_sero_pre[i - 1 + internal.dim_p_TT_sero_pre_1 * (j - 1) + internal.dim_p_TT_sero_pre_12 * (k - 1) + internal.dim_p_TT_sero_pre_123 * (l - 1)] = 1 - std::exp(- internal.gamma_sero_pre[k - 1] * internal.dt);
         }
       }
     }
@@ -5836,7 +5836,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
 }
 template <>
 cpp11::sexp dust_info<carehomes>(const carehomes::init_t& internal) {
-  cpp11::writable::strings nms({"time", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "N_tot3", "I_ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_tot", "sero_pos", "cum_sympt_cases", "cum_sympt_cases_over25", "react_pos", "cum_infections_per_strain", "D_hosp", "D_comm", "cum_admit_by_age", "N_tot", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "S", "T_sero_neg", "R", "T_PCR_neg", "E", "I_A", "I_C", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "R_pre", "R_pos", "T_PCR_pre", "T_PCR_pos"});
+  cpp11::writable::strings nms({"time", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "N_tot3", "I_ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_tot", "sero_pos", "cum_sympt_cases", "cum_sympt_cases_over25", "react_pos", "cum_infections_per_strain", "D_hosp", "D_comm", "cum_admit_by_age", "N_tot", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "S", "T_sero_neg", "R", "T_PCR_neg", "E", "I_A", "I_C", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre", "T_sero_pos", "T_PCR_pre", "T_PCR_pos"});
   cpp11::writable::list dim(55);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});
@@ -5889,8 +5889,8 @@ cpp11::sexp dust_info<carehomes>(const carehomes::init_t& internal) {
   dim[48] = cpp11::writable::integers({internal.dim_W_R_conf_1, internal.dim_W_R_conf_2, internal.dim_W_R_conf_3, internal.dim_W_R_conf_4});
   dim[49] = cpp11::writable::integers({internal.dim_W_D_unconf_1, internal.dim_W_D_unconf_2, internal.dim_W_D_unconf_3, internal.dim_W_D_unconf_4});
   dim[50] = cpp11::writable::integers({internal.dim_W_D_conf_1, internal.dim_W_D_conf_2, internal.dim_W_D_conf_3, internal.dim_W_D_conf_4});
-  dim[51] = cpp11::writable::integers({internal.dim_R_pre_1, internal.dim_R_pre_2, internal.dim_R_pre_3, internal.dim_R_pre_4});
-  dim[52] = cpp11::writable::integers({internal.dim_R_pos_1, internal.dim_R_pos_2, internal.dim_R_pos_3, internal.dim_R_pos_4});
+  dim[51] = cpp11::writable::integers({internal.dim_T_sero_pre_1, internal.dim_T_sero_pre_2, internal.dim_T_sero_pre_3, internal.dim_T_sero_pre_4});
+  dim[52] = cpp11::writable::integers({internal.dim_T_sero_pos_1, internal.dim_T_sero_pos_2, internal.dim_T_sero_pos_3, internal.dim_T_sero_pos_4});
   dim[53] = cpp11::writable::integers({internal.dim_T_PCR_pre_1, internal.dim_T_PCR_pre_2, internal.dim_T_PCR_pre_3, internal.dim_T_PCR_pre_4});
   dim[54] = cpp11::writable::integers({internal.dim_T_PCR_pos_1, internal.dim_T_PCR_pos_2, internal.dim_T_PCR_pos_3, internal.dim_T_PCR_pos_4});
   dim.names() = nms;
@@ -5946,8 +5946,8 @@ cpp11::sexp dust_info<carehomes>(const carehomes::init_t& internal) {
   index[48] = integer_sequence(internal.offset_variable_W_R_conf + 1, internal.dim_W_R_conf);
   index[49] = integer_sequence(internal.offset_variable_W_D_unconf + 1, internal.dim_W_D_unconf);
   index[50] = integer_sequence(internal.offset_variable_W_D_conf + 1, internal.dim_W_D_conf);
-  index[51] = integer_sequence(internal.offset_variable_R_pre + 1, internal.dim_R_pre);
-  index[52] = integer_sequence(internal.offset_variable_R_pos + 1, internal.dim_R_pos);
+  index[51] = integer_sequence(internal.offset_variable_T_sero_pre + 1, internal.dim_T_sero_pre);
+  index[52] = integer_sequence(internal.offset_variable_T_sero_pos + 1, internal.dim_T_sero_pos);
   index[53] = integer_sequence(internal.offset_variable_T_PCR_pre + 1, internal.dim_T_PCR_pre);
   index[54] = integer_sequence(internal.offset_variable_T_PCR_pos + 1, internal.dim_T_PCR_pos);
   index.names() = nms;
