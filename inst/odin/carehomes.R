@@ -138,33 +138,33 @@ p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
 ## Work out time-varying probabilities
 p_ICU <- if (as.integer(step) >= length(p_ICU_step))
   p_ICU_step[length(p_ICU_step)] else p_ICU_step[step + 1]
-prob_ICU[] <- p_ICU * psi_ICU[i]
+p_ICU_by_age[] <- p_ICU * psi_ICU[i]
 
 p_H <- if (as.integer(step) >= length(p_H_step))
   p_H_step[length(p_H_step)] else p_H_step[step + 1]
-prob_H[] <- p_H * psi_H[i]
+p_H_by_age[] <- p_H * psi_H[i]
 
 p_ICU_D <- if (as.integer(step) >= length(p_ICU_D_step))
   p_ICU_D_step[length(p_ICU_D_step)] else p_ICU_D_step[step + 1]
-prob_ICU_D[] <- p_ICU_D * psi_ICU_D[i]
+p_ICU_D_by_age[] <- p_ICU_D * psi_ICU_D[i]
 
 p_H_D <- if (as.integer(step) >= length(p_H_D_step))
   p_H_D_step[length(p_H_D_step)] else
     p_H_D_step[step + 1]
-prob_H_D[] <- p_H_D * psi_H_D[i]
+p_H_D_by_age[] <- p_H_D * psi_H_D[i]
 
 p_W_D <- if (as.integer(step) >= length(p_W_D_step))
   p_W_D_step[length(p_W_D_step)] else
     p_W_D_step[step + 1]
-prob_W_D[] <- p_W_D * psi_W_D[i]
+p_W_D_by_age[] <- p_W_D * psi_W_D[i]
 
 p_G_D <- if (as.integer(step) >= length(p_G_D_step))
   p_G_D_step[length(p_G_D_step)] else p_G_D_step[step + 1]
-prob_G_D[] <- p_G_D * psi_G_D[i]
+p_G_D_by_age[] <- p_G_D * psi_G_D[i]
 
 p_star <- if (as.integer(step) >= length(p_star_step))
   p_star_step[length(p_star_step)] else p_star_step[step + 1]
-prob_admit_conf[] <- p_star * psi_star[i]
+p_star_by_age[] <- p_star * psi_star[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -393,10 +393,10 @@ new_I_C[, , , ] <- I_C[i, j, k, l] + aux_II_C[i, j, k, l]
 
 ## Work out the flow from I_C -> R, G_D, hosp
 n_I_C_to_R[, , ] <- rbinom(n_II_C[i, j, k_C, k],
-                         1 - prob_H[i] * rel_p_H[i, k])
+                         1 - p_H_by_age[i] * rel_p_H[i, k])
 n_I_C_to_G_D[, , ] <-
   rbinom(n_II_C[i, j, k_C, k] - n_I_C_to_R[i, j, k],
-         prob_G_D[i])
+         p_G_D_by_age[i])
 n_I_C_to_hosp[, , ] <- n_II_C[i, j, k_C, k] - n_I_C_to_R[i, j, k] -
   n_I_C_to_G_D[i, j, k]
 
@@ -408,16 +408,16 @@ aux_GG_D[, , 1:k_G_D, ] <-
 new_G_D[, , , ] <- G_D[i, j, k, l] + aux_GG_D[i, j, k, l]
 
 ## Work out the split in hospitals between H_D, H_R and ICU_pre
-n_I_C_to_ICU_pre[, , ] <- rbinom(n_I_C_to_hosp[i, j, k], prob_ICU[i])
+n_I_C_to_ICU_pre[, , ] <- rbinom(n_I_C_to_hosp[i, j, k], p_ICU_by_age[i])
 n_I_C_to_ICU_pre_conf[, , ] <- rbinom(n_I_C_to_ICU_pre[i, j, k],
-                                   prob_admit_conf[i])
+                                   p_star_by_age[i])
 n_hosp_non_ICU[, , ] <- n_I_C_to_hosp[i, j, k] - n_I_C_to_ICU_pre[i, j, k]
-n_I_C_to_H_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], prob_H_D[i])
+n_I_C_to_H_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], p_H_D_by_age[i])
 n_I_C_to_H_D_conf[, , ] <- rbinom(n_I_C_to_H_D[i, j, k],
-                                     prob_admit_conf[i])
+                                     p_star_by_age[i])
 n_I_C_to_H_R[, , ] <- n_hosp_non_ICU[i, j, k] - n_I_C_to_H_D[i, j, k]
 n_I_C_to_H_R_conf[, , ] <- rbinom(n_I_C_to_H_R[i, j, k],
-                                     prob_admit_conf[i])
+                                     p_star_by_age[i])
 
 ## Work out the ICU_pre -> ICU_pre transitions
 aux_ICU_pre_unconf[, , , ] <- ICU_pre_unconf[i, j, k, l]
@@ -491,20 +491,20 @@ new_H_D_conf[, , 1, ] <-
 
 ## Work out the ICU_pre to ICU_D, ICU_W_R and ICU_W_D splits
 n_ICU_pre_unconf_to_ICU_D_unconf[, , ] <-
-  rbinom(n_ICU_pre_unconf[i, j, k_ICU_pre, k], prob_ICU_D[i])
+  rbinom(n_ICU_pre_unconf[i, j, k_ICU_pre, k], p_ICU_D_by_age[i])
 n_ICU_pre_conf_to_ICU_D_conf[, , ] <-
-  rbinom(n_ICU_pre_conf[i, j, k_ICU_pre, k], prob_ICU_D[i])
+  rbinom(n_ICU_pre_conf[i, j, k_ICU_pre, k], p_ICU_D_by_age[i])
 n_ICU_pre_unconf_to_ICU_W_D_unconf[, , ] <-
   rbinom(n_ICU_pre_unconf[i, j, k_ICU_pre, k] -
            n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k],
-         prob_W_D[i])
+         p_W_D_by_age[i])
 n_ICU_pre_unconf_to_ICU_W_R_unconf[, , ] <-
   n_ICU_pre_unconf[i, j, k_ICU_pre, k] -
   n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k] -
   n_ICU_pre_unconf_to_ICU_W_D_unconf[i, j, k]
 n_ICU_pre_conf_to_ICU_W_D_conf[, , ] <-
   rbinom(n_ICU_pre_conf[i, j, k_ICU_pre, k] -
-           n_ICU_pre_conf_to_ICU_D_conf[i, j, k], prob_W_D[i])
+           n_ICU_pre_conf_to_ICU_D_conf[i, j, k], p_W_D_by_age[i])
 n_ICU_pre_conf_to_ICU_W_R_conf[, , ] <- n_ICU_pre_conf[i, j, k_ICU_pre, k] -
   n_ICU_pre_conf_to_ICU_D_conf[i, j, k] -
   n_ICU_pre_conf_to_ICU_W_D_conf[i, j, k]
@@ -937,7 +937,7 @@ dim(I_C) <- c(n_groups, n_strains, k_C, n_vacc_classes)
 dim(aux_II_C) <- c(n_groups, n_strains, k_C, n_vacc_classes)
 dim(new_I_C) <- c(n_groups, n_strains, k_C, n_vacc_classes)
 dim(n_II_C) <- c(n_groups, n_strains, k_C, n_vacc_classes)
-dim(prob_H) <- n_groups
+dim(p_H_by_age) <- n_groups
 dim(psi_H) <- n_groups
 
 ## Vectors handling the G_D class
@@ -945,7 +945,7 @@ dim(G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 dim(aux_GG_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 dim(new_G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 dim(n_GG_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
-dim(prob_G_D) <- n_groups
+dim(p_G_D_by_age) <- n_groups
 dim(psi_G_D) <- n_groups
 
 ## Vectors handling the ICU_pre class
@@ -961,7 +961,7 @@ dim(n_ICU_pre_unconf_to_conf) <-
   c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
 
 ## Vector handling who progress to ICU
-dim(prob_ICU) <- n_groups
+dim(p_ICU_by_age) <- n_groups
 dim(psi_ICU) <- n_groups
 
 ## Vectors handling the H_R class
@@ -1169,15 +1169,15 @@ dim(n_com_to_T_sero_pre) <- c(n_groups, n_strains, 2, n_vacc_classes)
 dim(p_C) <- n_groups
 
 ## Vectors handling the potential death in hospital (general beds and ICU)
-dim(prob_H_D) <- n_groups
+dim(p_H_D_by_age) <- n_groups
 dim(psi_H_D) <- n_groups
-dim(prob_ICU_D) <- n_groups
+dim(p_ICU_D_by_age) <- n_groups
 dim(psi_ICU_D) <- n_groups
-dim(prob_W_D) <- n_groups
+dim(p_W_D_by_age) <- n_groups
 dim(psi_W_D) <- n_groups
 
 ## Vector handling the probability of being admitted as confirmed
-dim(prob_admit_conf) <- n_groups
+dim(p_star_by_age) <- n_groups
 dim(psi_star) <- n_groups
 
 dim(cum_admit_by_age) <- n_groups
