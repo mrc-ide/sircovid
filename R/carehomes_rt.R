@@ -50,10 +50,12 @@ carehomes_Rt <- function(step, S, p) {
       max_strain_multiplier
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
-    ## and columns
+    ## and columns, remove for each vaccine class
     if (drop_carehomes) {
-      i <- seq_len(nrow(ngm) - 2L)
-      ngm <- ngm[i, i]
+      i_CHR <- seq(p$n_groups, nrow(ngm), by = p$n_groups)
+      i_CHW <- i_CHR - 1
+      i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
+      ngm <- ngm[i_gen, i_gen]
     }
     ev <- eigen(ngm)$values
     ev[Im(ev) != 0] <- NA
