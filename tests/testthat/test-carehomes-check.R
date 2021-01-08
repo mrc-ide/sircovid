@@ -823,3 +823,31 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })
+
+
+test_that("Can run the models with larger timestep", {
+  n <- c(1, 4)
+  pars <- lapply(n, function(n)
+    carehomes_parameters(0, "london", steps_per_day = n))
+  np <- 5
+
+  mod <- lapply(pars, function(p) carehomes$new(p, 0, np, seed = 1L))
+  end <- sircovid_date("2020-05-31")
+  for (i in seq_along(n)) {
+    info <- mod[[i]]$info()
+    initial <- carehomes_initial(info, np, pars[[i]])
+    mod[[i]]$set_state(initial$state, initial$step)
+    mod[[i]]$set_index(carehomes_index(info)$run)
+  }
+
+  f <- function(m, p) {
+    steps <- seq(0, length.out = 100, by = 1 / p$dt)
+    ## TODO: probably want to set a sensible index here:
+    m$transform_variables(dust::dust_iterate(m, steps))
+  }
+  y <- Map(f, mod, pars)
+
+  ## TODO: do some comparisons to check that the outputs "agree" in
+  ## the broadest sense as they're stochastic and *should not*
+  ## disagree as we've made the integration much coarser.
+})
