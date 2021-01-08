@@ -6,7 +6,7 @@ sircovid_parameters_shared <- function(start_date, region,
   beta_step <- sircovid_parameters_beta(beta_date, beta_value %||% 0.08, dt)
   list(hosp_transmission = 0.1,
        ICU_transmission = 0.05,
-       comm_D_transmission = 0.05,
+       G_D_transmission = 0.05,
        dt = dt,
        initial_step = start_date / dt,
        n_age_groups = length(sircovid_age_bins()$start),
@@ -133,9 +133,9 @@ sircovid_parameters_severity <- function(params) {
   if (is.null(params)) {
     params <- severity_default()
   } else if (!is.data.frame(params)) {
-    expected <- c("p_admit_conf", "p_sympt", "p_death_comm",
-                  "p_death_hosp_D", "p_death_ICU", "p_death_stepdown",
-                  "p_ICU_hosp", "p_seroconversion", "p_hosp_sympt")
+    expected <- c("p_star", "p_C", "p_G_D",
+                  "p_H_D", "p_ICU_D", "p_W_D",
+                  "p_ICU", "p_sero_pos", "p_H")
     verify_names(params, expected)
     return(params)
   }
@@ -149,25 +149,25 @@ sircovid_parameters_severity <- function(params) {
   rownames(data) <- NULL
 
   required <- c(
-    p_sympt = "p_sympt",
-    p_hosp_sympt = "p_hosp_sympt",
-    p_ICU_hosp = "p_ICU_hosp",
-    p_death_ICU = "p_death_ICU",
-    p_death_hosp_D = "p_death_hosp_D",
-    p_death_stepdown = "p_death_stepdown",
-    p_seroconversion = "p_seroconversion",
-    p_death_comm = "p_death_comm",
-    p_admit_conf = "p_admit_conf")
+    p_C = "p_C",
+    p_H = "p_H",
+    p_ICU = "p_ICU",
+    p_ICU_D = "p_ICU_D",
+    p_H_D = "p_H_D",
+    p_W_D = "p_W_D",
+    p_sero_pos = "p_sero_pos",
+    p_G_D = "p_G_D",
+    p_star = "p_star")
   data <- rename(data, required, names(required))
 
   list(
-    p_admit_conf = data[["p_admit_conf"]],
-    p_sympt = data[["p_sympt"]],
-    p_death_comm = data[["p_death_comm"]],
-    p_death_hosp_D = data[["p_death_hosp_D"]],
-    p_death_ICU = data[["p_death_ICU"]],
-    p_death_stepdown = data[["p_death_stepdown"]],
-    p_ICU_hosp = data[["p_ICU_hosp"]],
-    p_seroconversion = data[["p_seroconversion"]],
-    p_hosp_sympt = data[["p_hosp_sympt"]])
+    p_star = data[["p_star"]],
+    p_C = data[["p_C"]],
+    p_G_D = data[["p_G_D"]],
+    p_H_D = data[["p_H_D"]],
+    p_ICU_D = data[["p_ICU_D"]],
+    p_W_D = data[["p_W_D"]],
+    p_ICU = data[["p_ICU"]],
+    p_sero_pos = data[["p_sero_pos"]],
+    p_H = data[["p_H"]])
 }

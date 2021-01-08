@@ -32,10 +32,10 @@ NULL
 ##'
 ##' @param eps Change in contact rate for carehome residents
 ##'
-##' @param C_1 Contact rate between carehome workers and either
+##' @param m_CHW Contact rate between carehome workers and either
 ##'   residents or workers
 ##'
-##' @param C_2 Contact rate between carehome residents
+##' @param m_CHR Contact rate between carehome residents
 ##'
 ##' @param pillar2_specificity Specificity of the Pillar 2 test
 ##'
@@ -45,7 +45,7 @@ NULL
 ##'
 ##' @param react_sensitivity Sensitivity of the REACT test
 ##'
-##' @param prop_noncovid_sympt Proportion of population who do not have
+##' @param p_NC Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
 ##' @param strain_transmission Vector of relative transmissibility of each
@@ -142,8 +142,8 @@ NULL
 ##'   have one value per age group.
 ##'
 ##' @param model_pcr_and_serology_user A value of 1 or 0 so switch on or off the
-##'   flows out of PCR_neg and R_neg and the corresponding cap on the number of
-##'   individuals leaving the R compartments
+##'   flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
+##'   number of individuals leaving the R compartments
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -257,13 +257,13 @@ carehomes_parameters <- function(start_date, region,
                                  sero_sensitivity = 0.99,
                                  progression = NULL,
                                  eps = 0.1,
-                                 C_1 = 4e-6,
-                                 C_2 = 5e-5,
+                                 m_CHW = 4e-6,
+                                 m_CHR = 5e-5,
                                  pillar2_specificity = 0.99,
                                  pillar2_sensitivity = 0.99,
                                  react_specificity = 0.99,
                                  react_sensitivity = 0.99,
-                                 prop_noncovid_sympt = 0.01,
+                                 p_NC = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_value = NULL,
@@ -302,34 +302,32 @@ carehomes_parameters <- function(start_date, region,
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
   ## implementation of severity parameters
   ## probability of symptomatic individual requiring hospital treatment
-  severity$psi_hosp_sympt <- severity$p_hosp_sympt / max(severity$p_hosp_sympt)
-  severity$p_hosp_sympt_step <- max(severity$p_hosp_sympt)
+  severity$psi_H <- severity$p_H / max(severity$p_H)
+  severity$p_H_step <- max(severity$p_H)
   ## probability of hospitalised patient going to ICU
-  severity$psi_ICU_hosp <- severity$p_ICU_hosp / max(severity$p_ICU_hosp)
-  severity$p_ICU_hosp_step <- max(severity$p_ICU_hosp)
+  severity$psi_ICU <- severity$p_ICU / max(severity$p_ICU)
+  severity$p_ICU_step <- max(severity$p_ICU)
   ## probability of ICU patient dying
-  severity$psi_death_ICU <- severity$p_death_ICU / max(severity$p_death_ICU)
-  severity$p_death_ICU_step <- max(severity$p_death_ICU)
+  severity$psi_ICU_D <- severity$p_ICU_D / max(severity$p_ICU_D)
+  severity$p_ICU_D_step <- max(severity$p_ICU_D)
   ## probability of non-ICU hospital patient dying
-  severity$psi_death_hosp_D <- severity$p_death_hosp_D /
-    max(severity$p_death_hosp_D)
-  severity$p_death_hosp_D_step <- max(severity$p_death_hosp_D)
+  severity$psi_H_D <- severity$p_H_D / max(severity$p_H_D)
+  severity$p_H_D_step <- max(severity$p_H_D)
   ## probability of stepdown hospital patient dying
-  severity$psi_death_stepdown <- severity$p_death_stepdown /
-    max(severity$p_death_stepdown)
-  severity$p_death_stepdown_step <- max(severity$p_death_stepdown)
+  severity$psi_W_D <- severity$p_W_D / max(severity$p_W_D)
+  severity$p_W_D_step <- max(severity$p_W_D)
   ## probability of patient requiring hospital treatment dying in community
-  severity$psi_death_comm <- severity$p_death_comm / max(severity$p_death_comm)
-  severity$p_death_comm_step <- max(severity$p_death_comm)
+  severity$psi_G_D <- severity$p_G_D / max(severity$p_G_D)
+  severity$p_G_D_step <- max(severity$p_G_D)
   ## probability of an admission already being confirmed covid
-  severity$psi_admit_conf <- severity$p_admit_conf / max(severity$p_admit_conf)
-  severity$p_admit_conf_step <- max(severity$p_admit_conf)
+  severity$psi_star <- severity$p_star / max(severity$p_star)
+  severity$p_star_step <- max(severity$p_star)
 
   progression <- progression %||% carehomes_parameters_progression()
 
   waning <- carehomes_parameters_waning(waning_rate)
 
-  ret$m <- carehomes_transmission_matrix(eps, C_1, C_2, region)
+  ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
                                     carehome_residents)
@@ -353,7 +351,7 @@ carehomes_parameters <- function(start_date, region,
   ret$react_sensitivity <- react_sensitivity
 
   ## Proportion of population with covid-like symptoms without covid
-  ret$prop_noncovid_sympt <- prop_noncovid_sympt
+  ret$p_NC <- p_NC
 
   ## All observation parameters:
   ret$observation <- carehomes_parameters_observation(exp_noise)
@@ -409,7 +407,7 @@ carehomes_index <- function(info) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
-  index_run <- c(icu = index[["I_ICU_tot"]],
+  index_run <- c(icu = index[["ICU_tot"]],
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
@@ -506,7 +504,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   ## calculate test positive probabilities for the various test data streams
   ## Pillar 2
-  pillar2_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot)
+  pillar2_negs <- pars$p_NC * (sum(pars$N_tot)
                                               - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
                                           pillar2_negs,
@@ -515,7 +513,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                           pars$observation$exp_noise)
 
   ## Pillar 2 over 25s
-  pillar2_over25_negs <- pars$prop_noncovid_sympt * (sum(pars$N_tot[6:19])
+  pillar2_over25_negs <- pars$p_NC * (sum(pars$N_tot[6:19])
                                               - model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
@@ -544,29 +542,29 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ## non-zero probability when the model value is 0 and the observed
   ## value is non-zero (i.e. there is overreporting)
   ll_icu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
-                      pars$k_ICU, exp_noise)
+                      pars$kappa_ICU, exp_noise)
   ll_general <- ll_nbinom(observed$general, pars$phi_general * model_general,
-                          pars$k_general, exp_noise)
+                          pars$kappa_general, exp_noise)
   ll_hosp <- ll_nbinom(observed$hosp, pars$phi_hosp * model_hosp,
-                       pars$k_hosp, exp_noise)
+                       pars$kappa_hosp, exp_noise)
   ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
                               pars$phi_death_hosp * model_deaths_hosp,
-                              pars$k_death_hosp, exp_noise)
+                              pars$kappa_death_hosp, exp_noise)
   ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
                               pars$phi_death_comm * model_deaths_comm,
-                              pars$k_death_comm, exp_noise)
+                              pars$kappa_death_comm, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths,
                          pars$phi_death_hosp * model_deaths_hosp +
                          pars$phi_death_comm * model_deaths_comm,
-                         pars$k_death, exp_noise)
+                         pars$kappa_death, exp_noise)
   ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * model_admitted,
-                           pars$k_admitted, exp_noise)
+                           pars$kappa_admitted, exp_noise)
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
-                      pars$k_new, exp_noise)
+                      pars$kappa_new, exp_noise)
   ll_new_admitted <- ll_nbinom(observed$new_admitted,
                                pars$phi_new_admitted * model_new_admitted,
-                               pars$k_new_admitted, exp_noise)
+                               pars$kappa_new_admitted, exp_noise)
 
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
@@ -579,7 +577,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
 
   ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
                                 pars$phi_pillar2_cases * model_sympt_cases,
-                                pars$k_pillar2_cases, exp_noise)
+                                pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_over25_tests <- ll_betabinom(observed$pillar2_over25_pos,
                                           observed$pillar2_over25_tot,
@@ -589,7 +587,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
                                        pars$phi_pillar2_cases *
                                          model_sympt_cases_over25,
-                                       pars$k_pillar2_cases, exp_noise)
+                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_react <- ll_binom(observed$react_pos,
                        observed$react_tot,
@@ -620,7 +618,7 @@ carehomes_severity <- function(p) {
 carehomes_parameters_severity <- function(severity, p_death_carehome) {
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
-  severity$p_death_comm[length(severity$p_death_comm)] <- p_death_carehome
+  severity$p_G_D[length(severity$p_G_D)] <- p_death_carehome
   severity
 }
 
@@ -631,19 +629,19 @@ carehomes_index_workers <- function() {
 }
 
 
-carehomes_transmission_matrix <- function(eps, C_1, C_2, region) {
+carehomes_transmission_matrix <- function(eps, m_CHW, m_CHR, region) {
   index_workers <- carehomes_index_workers()
   m <- sircovid_transmission_matrix(region)
   n_age_groups <- nrow(m)
 
-  m_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, mean)
-  m_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
+  m_gen_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, mean)
+  m_gen_chr <- eps * m[n_age_groups, seq_len(n_age_groups)]
 
   ## Construct a block matrix:
   ##
-  ##   M     m_chw m_chr
-  ##   m_chw C_1   C_1
-  ##   m_chr C_1   C_2
+  ##   M          m_gen_chw  m_gen_chr
+  ##   m_gen_chw  m_CHW      m_CHW
+  ##   m_gen_chr  m_CHW      m_CHR
 
   i <- seq_len(n_age_groups)
   i_chw <- n_age_groups + 1L
@@ -651,9 +649,9 @@ carehomes_transmission_matrix <- function(eps, C_1, C_2, region) {
 
   ret <- matrix(0.0, n_age_groups + 2, n_age_groups + 2)
   ret[i, i] <- m
-  ret[i, i_chw] <- ret[i_chw, i] <- m_chw
-  ret[i, i_chr] <- ret[i_chr, i] <- m_chr
-  ret[i_chw:i_chr, i_chw:i_chr] <- c(C_1, C_1, C_1, C_2)
+  ret[i, i_chw] <- ret[i_chw, i] <- m_gen_chw
+  ret[i, i_chr] <- ret[i_chr, i] <- m_gen_chr
+  ret[i_chw:i_chr, i_chw:i_chr] <- c(m_CHW, m_CHW, m_CHW, m_CHR)
 
   nms <- c(rownames(m), "CHW", "CHR")
   dimnames(ret) <- list(nms, nms)
@@ -686,9 +684,9 @@ carehomes_initial <- function(info, n_particles, pars) {
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
   seed_age_band <- 4L
-  index_I <- index[["I_asympt"]][[1L]] + seed_age_band - 1L
-  index_R_pre <- index[["R_pre"]][[1L]] + seed_age_band - 1L
-  index_PCR_pos <- index[["PCR_pos"]][[1L]] + seed_age_band - 1L
+  index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
+  index_T_sero_pre <- index[["T_sero_pre"]][[1L]] + seed_age_band - 1L
+  index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot2 <- index[["N_tot2"]][[1L]]
   index_N_tot3 <- index[["N_tot3"]][[1L]]
@@ -704,8 +702,8 @@ carehomes_initial <- function(info, n_particles, pars) {
 
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
-  state[index_R_pre] <- initial_I
-  state[index_PCR_pos] <- initial_I
+  state[index_T_sero_pre] <- initial_I
+  state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
@@ -835,41 +833,41 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##' @export
 carehomes_parameters_progression <- function() {
 
-  ## The s_ parameters are the scaling parameters for the Erlang
-  ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
+  ## The k_ parameters are the shape parameters for the Erlang
+  ## distribution, while the gamma parameters are the rate
   ## parameters of that distribution.
-  list(s_E = 2,
-       s_asympt = 1,
-       s_sympt = 1,
-       s_comm_D = 2,
-       s_hosp_D = 2,
-       s_hosp_R = 2,
-       s_ICU_D = 2,
-       s_ICU_S_R = 2,
-       s_ICU_S_D = 2,
-       s_triage = 2,
-       s_stepdown_R = 2,
-       s_stepdown_D = 2,
-       s_R_pos = 2,
-       s_PCR_pre = 2,
-       s_PCR_pos = 2,
+  list(k_E = 2,
+       k_A = 1,
+       k_C = 1,
+       k_G_D = 2,
+       k_H_D = 2,
+       k_H_R = 2,
+       k_ICU_D = 2,
+       k_ICU_W_R = 2,
+       k_ICU_W_D = 2,
+       k_ICU_pre = 2,
+       k_W_R = 2,
+       k_W_D = 2,
+       k_sero_pos = 2,
+       k_PCR_pre = 2,
+       k_PCR_pos = 2,
 
        gamma_E = 1 / (4.59 / 2),
-       gamma_asympt = 1 / 2.09,
-       gamma_sympt = 1 / 4,
-       gamma_comm_D = 2 / 5,
-       gamma_hosp_D = 2 / 5,
-       gamma_hosp_R = 2 / 10,
+       gamma_A = 1 / 2.09,
+       gamma_C = 1 / 4,
+       gamma_G_D = 2 / 5,
+       gamma_H_D = 2 / 5,
+       gamma_H_R = 2 / 10,
        gamma_ICU_D = 2 / 5,
-       gamma_ICU_S_R = 2 / 10,
-       gamma_ICU_S_D = 2 / 10,
-       gamma_triage = 2,
-       gamma_stepdown_R = 2 / 5,
-       gamma_stepdown_D = 2 / 5,
-       gamma_R_pre_1 = 1 / 5,
-       gamma_R_pre_2 = 1 / 10,
-       gamma_R_pos = 1 / 25,
-       gamma_test = 3 / 10,
+       gamma_ICU_W_R = 2 / 10,
+       gamma_ICU_W_D = 2 / 10,
+       gamma_ICU_pre = 2,
+       gamma_W_R = 2 / 5,
+       gamma_W_D = 2 / 5,
+       gamma_sero_pre_1 = 1 / 5,
+       gamma_sero_pre_2 = 1 / 10,
+       gamma_sero_pos = 1 / 25,
+       gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
        gamma_PCR_pos = 1 / 5)
 }
@@ -899,33 +897,33 @@ carehomes_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in ICU
     phi_ICU = 1,
-    k_ICU = 2,
+    kappa_ICU = 2,
     ## People currently in general beds
     phi_general = 1,
-    k_general = 2,
+    kappa_general = 2,
     ## People currently in all hospital beds
     phi_hosp = 1,
-    k_hosp = 2,
+    kappa_hosp = 2,
     ## Daily hospital deaths
     phi_death_hosp = 1,
-    k_death_hosp = 2,
+    kappa_death_hosp = 2,
     ## Daily community deaths
     phi_death_comm = 1,
-    k_death_comm = 2,
+    kappa_death_comm = 2,
     ## Daily total deaths (if not split)
-    k_death = 2,
+    kappa_death = 2,
     ## Daily new confirmed admissions
     phi_admitted = 1,
-    k_admitted = 2,
+    kappa_admitted = 2,
     ## Daily new inpatient diagnoses
     phi_new = 1,
-    k_new = 2,
+    kappa_new = 2,
     ## Daily combined new confirmed admissions and new inpatient diagnoses
     phi_new_admitted = 1,
-    k_new_admitted = 2,
+    kappa_new_admitted = 2,
     ## Pillar 2 testing
     phi_pillar2_cases = 1,
-    k_pillar2_cases = 2,
+    kappa_pillar2_cases = 2,
     ##
     rho_pillar2_tests = 0.1,
     ##

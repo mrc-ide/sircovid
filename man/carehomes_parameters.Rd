@@ -15,19 +15,20 @@ carehomes_parameters(
   sero_sensitivity = 0.99,
   progression = NULL,
   eps = 0.1,
-  C_1 = 4e-06,
-  C_2 = 5e-05,
+  m_CHW = 4e-06,
+  m_CHR = 5e-05,
   pillar2_specificity = 0.99,
   pillar2_sensitivity = 0.99,
   react_specificity = 0.99,
   react_sensitivity = 0.99,
-  prop_noncovid_sympt = 0.01,
+  p_NC = 0.01,
   strain_transmission = 1,
   strain_seed_date = NULL,
   strain_seed_value = NULL,
   rel_susceptibility = 1,
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
+  rel_infectivity = 1,
   vaccine_progression_rate = NULL,
   vaccine_uptake = NULL,
   vaccine_daily_doses = 0,
@@ -79,10 +80,10 @@ with the progression parameters.}
 
 \item{eps}{Change in contact rate for carehome residents}
 
-\item{C_1}{Contact rate between carehome workers and either
+\item{m_CHW}{Contact rate between carehome workers and either
 residents or workers}
 
-\item{C_2}{Contact rate between carehome residents}
+\item{m_CHR}{Contact rate between carehome residents}
 
 \item{pillar2_specificity}{Specificity of the Pillar 2 test}
 
@@ -92,7 +93,7 @@ residents or workers}
 
 \item{react_sensitivity}{Sensitivity of the REACT test}
 
-\item{prop_noncovid_sympt}{Proportion of population who do not have
+\item{p_NC}{Proportion of population who do not have
 covid but have covid-like symptoms}
 
 \item{strain_transmission}{Vector of relative transmissibility of each
@@ -152,6 +153,18 @@ reductions in probability of hospitalisation for symptomatic cases by age
 in that case, in each row of the matrix, the first value should be 1
 (for the non-vaccinated group) and subsequent values be between 0 and 1}
 
+\item{rel_infectivity}{A vector or matrix of values representing the
+relative infectivity of individuals in different vaccination groups,
+if they are infected.
+If a vector, the first value should be 1 (for the non-vaccinated group)
+and subsequent values be between 0 and 1. In that case relative
+infectivity will be the same across all age groups within one
+vaccination category. Specifying a matrix instead of a vector allows
+different relative infectivities by age (rows of the matrix) and
+vaccination group (columns of the matrix); in that case, in each row of
+the matrix, the first value should be 1 (for the non-vaccinated group)
+and subsequent values be between 0 and 1}
+
 \item{vaccine_progression_rate}{A vector or matrix of values of same
 dimension as rel_susceptibility representing
 the rate of movement between different vaccination classes. If a vector,
@@ -177,8 +190,8 @@ rate is used for all age groups; if a vector of values if used it should
 have one value per age group.}
 
 \item{model_pcr_and_serology_user}{A value of 1 or 0 so switch on or off the
-flows out of PCR_neg and R_neg and the corresponding cap on the number of
-individuals leaving the R compartments}
+flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
+number of individuals leaving the R compartments}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
@@ -214,6 +227,9 @@ rel_p_sympt <- c(1, 0.6, 0.3)
 # and the risk of hospitalisation for those with symptoms
 rel_p_hosp_if_sympt <- c(1, 0.95, 0.95)
 
+# The vaccine also reduces infectivity of infected individuals by half
+rel_infectivity <- c(1, 0.5, 0.5)
+
 # Vaccination occurs at a constant rate of 0.03 per day,
 # (i.e. average time to vaccination is 33 days)
 # similar across all age groups.
@@ -230,6 +246,7 @@ p <- carehomes_parameters(
        rel_susceptibility = rel_susceptibility,
        rel_p_sympt = rel_p_sympt,
        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+       rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
        vaccine_daily_doses = 10000)
 
@@ -237,6 +254,7 @@ p <- carehomes_parameters(
 p$rel_susceptibility
 p$rel_p_sympt
 p$rel_p_hosp_if_sympt
+p$rel_infectivity
 # Note that this is only the "base" rate as we fill in the first
 # column dynamically based on vaccine_daily_doses
 p$vaccine_progression_rate
@@ -263,6 +281,10 @@ rel_p_sympt <- matrix(rep(rel_p_sympt, n_groups), nrow = n_groups,
 rel_p_hosp_if_sympt <-
   matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
 
+# And vaccine has the same impact on onwards infectivity across age groups
+rel_infectivity <- matrix(rep(rel_infectivity, n_groups), nrow = n_groups,
+  byrow = TRUE)
+
 # the period of build-up of immunity is the same for all age groups,
 # lasting on average 2 weeks,
 # but the first age group loses immunity more quickly
@@ -279,6 +301,7 @@ p <- carehomes_parameters(
        rel_susceptibility = rel_susceptibility,
        rel_p_sympt = rel_p_sympt,
        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+       rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
        vaccine_daily_doses = 10000)
 

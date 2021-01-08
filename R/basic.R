@@ -87,14 +87,14 @@ basic_parameters <- function(start_date, region,
   ## basic model; we could do these transformations in the odin code
   ## perhaps, which would reduce carrying redundant dependencies
   ## between parameters
-  severity$p_recov_ICU <- 1 - severity[["p_death_ICU"]]
+  severity$p_recov_ICU <- 1 - severity[["p_ICU_D"]]
   severity$p_recov_hosp <-
-    (1 - severity[["p_ICU_hosp"]]) *
-    (1 - severity[["p_death_hosp_D"]])
+    (1 - severity[["p_ICU"]]) *
+    (1 - severity[["p_H_D"]])
   severity$p_death_hosp <-
-    (1 - severity[["p_ICU_hosp"]]) *
-    severity[["p_death_hosp_D"]]
-  severity$p_recov_sympt <- 1 - severity[["p_hosp_sympt"]]
+    (1 - severity[["p_ICU"]]) *
+    severity[["p_H_D"]]
+  severity$p_recov_sympt <- 1 - severity[["p_H"]]
 
   c(ret,
     severity,
@@ -167,9 +167,9 @@ basic_compare <- function(state, prev_state, observed, pars) {
   exp_noise <- pars$exp_noise
 
   ll_icu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
-                      pars$k_ICU, exp_noise)
+                      pars$kappa_ICU, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths, pars$phi_death * model_deaths,
-                         pars$k_death, exp_noise)
+                         pars$kappa_death, exp_noise)
 
   ll_icu + ll_deaths
 }
@@ -208,7 +208,7 @@ basic_initial <- function(info, n_particles, pars) {
   ## our first version, will be replaced by better seeding model, but
   ## probably has limited impact.
   seed_age_band <- 4L
-  index_I <- index[["I_asympt"]][[1]] + seed_age_band - 1L
+  index_I <- index[["I_A"]][[1]] + seed_age_band - 1L
 
   ## ONS populations, subtracting the seed for pedantry.
   index_S <- index[["S"]]
@@ -230,19 +230,19 @@ basic_parameters_progression <- function() {
   ## These need to be aligned with Bob's severity outputs, and we will
   ## come up with a better way of correlating the two.
 
-  ## The s_ parameters are the scaling parameters for the Erlang
-  ## distibution (a.k.a 'k'), while the gamma parameters are the gamma
-  ## parameters of that distribution.
-  list(s_E = 2,
-       s_asympt = 1,
-       s_sympt = 1,
-       s_hosp = 2,
-       s_ICU = 2,
-       s_rec = 2,
+  ## The k_ parameters are the shape parameters for the Erlang
+  ## distibution, while the gamma parameters are the gamma
+  ## rate parameters of that distribution.
+  list(k_E = 2,
+       k_A = 1,
+       k_C = 1,
+       k_hosp = 2,
+       k_ICU = 2,
+       k_rec = 2,
 
        gamma_E = 1 / (4.59 / 2),
-       gamma_asympt = 1 / 2.09,
-       gamma_sympt = 1 / 4,
+       gamma_A = 1 / 2.09,
+       gamma_C = 1 / 4,
        gamma_hosp = 2,
        gamma_ICU = 2 / 5,
        gamma_rec = 2 / 5)
@@ -253,16 +253,16 @@ basic_parameters_observation <- function(exp_noise) {
   list(
     ## People currently in general beds
     phi_general = 0.95,
-    k_general = 2,
+    kappa_general = 2,
     ## People currently in ICU
     phi_ICU = 0.95,
-    k_ICU = 2,
+    kappa_ICU = 2,
     ## Daily deaths
     ##
     ## current proportion of England deaths over UK deaths (as of
     ## end of March 2020)
     phi_death = 926 / 1019,
-    k_death = 2,
+    kappa_death = 2,
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)
