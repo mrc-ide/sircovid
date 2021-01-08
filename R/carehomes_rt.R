@@ -26,6 +26,8 @@ carehomes_Rt <- function(step, S, p) {
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration(step, p)
   max_strain_multiplier <- max(p$strain_transmission)
+  
+  n_vacc_classes <- ncol(p$rel_susceptibility)
 
   calculate_ev <-
     function(t, S, beta, mean_duration, max_strain_multiplier, drop_carehomes) {
@@ -36,21 +38,16 @@ carehomes_Rt <- function(step, S, p) {
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
-    ## when several vaccination groups,
-    ## need to take the weighted means of the S
-    ## (weights given by rel_susceptibility)
-    S_mat <- matrix(S[, t],
-                    nrow = p$n_groups, ncol = ncol(p$rel_susceptibility))
-    S_weighted <- rowSums(S_mat * p$rel_susceptibility)
-
-    if (dim(mean_duration)[2] > 1) {
-      mean_duration_weighted <- apply(mean_duration[, , t], 1, mean)
-    } else {
-      mean_duration_weighted <- drop(mean_duration[, , t])
-    }
+    m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
+                         p$n_groups * n_vacc_classes,
+                         p$n_groups * n_vacc_classes, 
+                         byrow = T)
+      
+    S_weighted <- S[, t] * c(p$rel_susceptibility)
 
     ## In a multistrain model R0 is the max of R0 across strains
-    ngm <- outer(mean_duration_weighted, S_weighted) * m * max_strain_multiplier
+    ngm <- outer(c(mean_duration[, , t]), S_weighted) * m_extended *
+      max_strain_multiplier
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns
@@ -77,9 +74,11 @@ carehomes_Rt <- function(step, S, p) {
                             drop_carehomes = TRUE)
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
-  for (i in seq(2, ncol(p$rel_susceptibility))) {
-    N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
-                                   0 * N_tot_non_vacc)
+  if (n_vacc_classes > 1) {
+    for (i in seq(2, n_vacc_classes)) {
+      N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
+                                     0 * N_tot_non_vacc)
+    }
   }
   Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
                     beta = beta,
