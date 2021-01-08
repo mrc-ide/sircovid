@@ -246,21 +246,21 @@ carehomes_Rt_mean_duration <- function(step, pars) {
 
   mean_duration <- dt * mean_duration *
     outer(pars$rel_infectivity, rep(1, n_time_steps))
-  
+
   ## mean_duration[i, j, k] represents mean duration at step k of age group i
   ## leaving the E compartment in vaccine stage j, we need to output for leaving
   ## the S compartment in vaccine stage j, so we calculate this here
   if (n_vacc_classes > 1) {
     out <- array(0, dim(mean_duration))
-    for (i in seq_len(pars$n_groups)){
-      for (j in seq_len(n_time_steps)){
+    for (i in seq_len(pars$n_groups)) {
+      for (j in seq_len(n_time_steps)) {
         out[i, , j] <- V[, , i] %*% mean_duration[i, , j]
       }
     }
   } else {
     out <- mean_duration
   }
-  
+
   out
 }
 
