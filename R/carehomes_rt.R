@@ -228,15 +228,15 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
                   sircovid_parameters_beta_expand(step, pars$p_G_D_step))
 
-  p_hosp_R <- p_C * p_H * (1 - p_G_D) *
+  prob_H_R <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * (1 - p_H_D)
-  p_hosp_D <- p_C * p_H * (1 - p_G_D) *
+  prob_H_D <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * p_H_D
-  p_ICU_S_R <- p_C * p_H * (1 - p_G_D) *
+  prob_ICU_W_R <- p_C * p_H * (1 - p_G_D) *
     p_ICU * (1 - p_ICU_D) * (1 - p_W_D)
-  p_ICU_S_D <- p_C * p_H * (1 - p_G_D) *
+  prob_ICU_W_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * (1 - p_ICU_D) * p_W_D
-  p_ICU_D <- p_C * p_H * (1 - p_G_D) *
+  prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * p_ICU_D
 
   ## TODO: would be nice if it's possibly to name these subcomponents
@@ -251,14 +251,14 @@ carehomes_Rt_mean_duration <- function(step, pars) {
 
   mean_duration <- mean_duration +
     pars$hosp_transmission * (
-      p_hosp_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
-      p_hosp_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
-      (p_ICU_S_R + p_ICU_S_D + p_ICU_D) * pars$k_ICU_pre /
+      prob_H_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
+      prob_H_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
+      (prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D) * pars$k_ICU_pre /
       (1 - exp(- dt * pars$gamma_ICU_pre))) +
     pars$ICU_transmission * (
-      p_ICU_S_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
-      p_ICU_S_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
-      p_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
+      prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
+      prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
+      prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
 
   dt * mean_duration
 }
