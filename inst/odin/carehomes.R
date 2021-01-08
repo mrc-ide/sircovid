@@ -339,10 +339,10 @@ new_S[, 2:n_vacc_classes] <- new_S[i, j] + n_S_next_vacc_class[i, j - 1] +
 
 ## Computes the number of asymptomatic
 n_EI_A[, , ] <- rbinom(n_EE[i, j, k_E, k],
-                          1 - p_C[i] * rel_p_C[i, k])
+                          1 - p_C[i] * rel_p_sympt[i, k])
 n_EI_A_next_vacc_class[, , ] <-
   rbinom(n_EE_next_vacc_class[i, j, k_E, k],
-         1 - p_C[i] * rel_p_C[i, k])
+         1 - p_C[i] * rel_p_sympt[i, k])
 
 ## Computes the number of symptomatic cases
 n_EI_C[, , ] <- n_EE[i, j, k_E, k] - n_EI_A[i, j, k]
@@ -402,7 +402,7 @@ new_I_C[, , , ] <- I_C[i, j, k, l] + aux_I_C[i, j, k, l]
 
 ## Work out the flow from I_C -> R, G_D, hosp
 n_I_C_to_R[, , ] <- rbinom(n_I_C_progress[i, j, k_C, k],
-                         1 - p_H_by_age[i] * rel_p_H[i, k])
+                         1 - p_H_by_age[i] * rel_p_hosp_if_sympt[i, k])
 n_I_C_to_G_D[, , ] <-
   rbinom(n_I_C_progress[i, j, k_C, k] - n_I_C_to_R[i, j, k],
          p_G_D_by_age[i])
@@ -797,10 +797,10 @@ initial(cum_admit_by_age[]) <- 0
 rel_susceptibility[, ] <- user()
 dim(rel_susceptibility) <- user() # use length as provided by the user
 n_vacc_classes <- dim(rel_susceptibility, 2)
-rel_p_C[, ] <- user()
-dim(rel_p_C) <- c(n_groups, n_vacc_classes)
-rel_p_H[, ] <- user()
-dim(rel_p_H) <- c(n_groups, n_vacc_classes)
+rel_p_sympt[, ] <- user()
+dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
+rel_p_hosp_if_sympt[, ] <- user()
+dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
 
 vaccine_progression_rate_base[, ] <- user()
 dim(vaccine_progression_rate_base) <- c(n_groups, n_vacc_classes)
