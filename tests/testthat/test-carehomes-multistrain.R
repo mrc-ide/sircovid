@@ -340,7 +340,7 @@ test_that("different strains are equivalent", {
 
   mod$set_state(initial$state, initial$step)
   index <- mod$info()$index
-  index_run <- c(icu = index[["I_ICU_tot"]],
+  index_run <- c(icu = index[["ICU_tot"]],
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],

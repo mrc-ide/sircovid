@@ -1294,11 +1294,11 @@ public:
     real_t initial_hosp_tot;
     std::vector<real_t> initial_I_A;
     std::vector<real_t> initial_I_C;
-    real_t initial_I_ICU_tot;
     std::vector<real_t> initial_ICU_D_conf;
     std::vector<real_t> initial_ICU_D_unconf;
     std::vector<real_t> initial_ICU_pre_conf;
     std::vector<real_t> initial_ICU_pre_unconf;
+    real_t initial_ICU_tot;
     std::vector<real_t> initial_ICU_W_D_conf;
     std::vector<real_t> initial_ICU_W_D_unconf;
     std::vector<real_t> initial_ICU_W_R_conf;
@@ -1559,7 +1559,7 @@ public:
     state[4] = internal.initial_beta_out;
     state[5] = internal.initial_N_tot2;
     state[6] = internal.initial_N_tot3;
-    state[7] = internal.initial_I_ICU_tot;
+    state[7] = internal.initial_ICU_tot;
     state[8] = internal.initial_general_tot;
     state[9] = internal.initial_hosp_tot;
     state[10] = internal.initial_D_hosp_tot;
@@ -3467,7 +3467,7 @@ public:
         }
       }
     }
-    real_t new_I_ICU_tot = odin_sum1(internal.new_ICU_W_R_conf.data(), 0, internal.dim_new_ICU_W_R_conf) + odin_sum1(internal.new_ICU_W_D_conf.data(), 0, internal.dim_new_ICU_W_D_conf) + odin_sum1(internal.new_ICU_D_conf.data(), 0, internal.dim_new_ICU_D_conf);
+    real_t new_ICU_tot = odin_sum1(internal.new_ICU_W_R_conf.data(), 0, internal.dim_new_ICU_W_R_conf) + odin_sum1(internal.new_ICU_W_D_conf.data(), 0, internal.dim_new_ICU_W_D_conf) + odin_sum1(internal.new_ICU_D_conf.data(), 0, internal.dim_new_ICU_D_conf);
     for (int i = 1; i <= internal.dim_new_S_1; ++i) {
       for (int j = 1; j <= internal.dim_new_S_2; ++j) {
         internal.new_S[i - 1 + internal.dim_new_S_1 * (j - 1)] = S[internal.dim_S_1 * (j - 1) + i - 1] + odin_sum3(internal.n_RS.data(), i - 1, i, 0, internal.dim_n_RS_2, j - 1, j, internal.dim_n_RS_1, internal.dim_n_RS_12) - odin_sum3(internal.n_S_progress.data(), i - 1, i, 0, internal.dim_n_S_progress_2, j - 1, j, internal.dim_n_S_progress_1, internal.dim_n_S_progress_12) - internal.n_S_next_vacc_class[internal.dim_n_S_next_vacc_class_1 * (j - 1) + i - 1];
@@ -3698,7 +3698,7 @@ public:
         }
       }
     }
-    state_next[7] = new_I_ICU_tot;
+    state_next[7] = new_ICU_tot;
     for (int i = 1; i <= internal.dim_S_1; ++i) {
       for (int j = 1; j <= internal.dim_S_2; ++j) {
         state_next[internal.offset_variable_S + i - 1 + internal.dim_S_1 * (j - 1)] = internal.new_S[internal.dim_new_S_1 * (j - 1) + i - 1];
@@ -3804,7 +3804,7 @@ public:
       }
     }
     state_next[8] = new_general_tot;
-    state_next[9] = new_I_ICU_tot + new_general_tot;
+    state_next[9] = new_ICU_tot + new_general_tot;
   }
 private:
   init_t internal;
@@ -4097,7 +4097,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
   internal.initial_D_tot = 0;
   internal.initial_general_tot = 0;
   internal.initial_hosp_tot = 0;
-  internal.initial_I_ICU_tot = 0;
+  internal.initial_ICU_tot = 0;
   internal.initial_N_tot2 = 0;
   internal.initial_N_tot3 = 0;
   internal.initial_react_pos = 0;
@@ -5836,7 +5836,7 @@ carehomes::init_t dust_data<carehomes>(cpp11::list user) {
 }
 template <>
 cpp11::sexp dust_info<carehomes>(const carehomes::init_t& internal) {
-  cpp11::writable::strings nms({"time", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "N_tot3", "I_ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_tot", "sero_pos", "cum_sympt_cases", "cum_sympt_cases_over25", "react_pos", "cum_infections_per_strain", "D_hosp", "D_comm", "cum_admit_by_age", "N_tot", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "S", "T_sero_neg", "R", "T_PCR_neg", "E", "I_A", "I_C", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre", "T_sero_pos", "T_PCR_pre", "T_PCR_pos"});
+  cpp11::writable::strings nms({"time", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "N_tot3", "ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_tot", "sero_pos", "cum_sympt_cases", "cum_sympt_cases_over25", "react_pos", "cum_infections_per_strain", "D_hosp", "D_comm", "cum_admit_by_age", "N_tot", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "S", "T_sero_neg", "R", "T_PCR_neg", "E", "I_A", "I_C", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre", "T_sero_pos", "T_PCR_pre", "T_PCR_pos"});
   cpp11::writable::list dim(55);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});

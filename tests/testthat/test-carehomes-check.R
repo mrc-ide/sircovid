@@ -811,10 +811,10 @@ test_that("tots all summed correctly ", {
                     apply(y$H_D_conf, 5, sum) +
                     apply(y$W_R_conf, 5, sum) +
                     apply(y$W_D_conf, 5, sum)))
-  expect_true(all(y$I_ICU_tot == apply(y$ICU_W_R_conf, 5, sum) +
+  expect_true(all(y$ICU_tot == apply(y$ICU_W_R_conf, 5, sum) +
                     apply(y$ICU_W_D_conf, 5, sum) +
                     apply(y$ICU_D_conf, 5, sum)))
-  expect_true(all(y$hosp_tot == y$I_ICU_tot + y$general_tot))
+  expect_true(all(y$hosp_tot == y$ICU_tot + y$general_tot))
   expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
   expect_true(all(y$D_comm_tot == apply(y$D_comm, 2, sum)))
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))

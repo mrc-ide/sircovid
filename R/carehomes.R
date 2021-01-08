@@ -383,7 +383,7 @@ carehomes_index <- function(info) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
-  index_run <- c(icu = index[["I_ICU_tot"]],
+  index_run <- c(icu = index[["ICU_tot"]],
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],

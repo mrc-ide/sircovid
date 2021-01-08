@@ -195,7 +195,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
       "sero_pos", "sympt_cases", "sympt_cases_over25", "react_pos"))
 
   expect_equal(index$run[["icu"]],
-               which(names(info$index) == "I_ICU_tot"))
+               which(names(info$index) == "ICU_tot"))
   expect_equal(index$run[["general"]],
                which(names(info$index) == "general_tot"))
   expect_equal(index$run[["deaths_comm"]],

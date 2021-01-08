@@ -864,7 +864,7 @@ gamma_ICU_W_R <- user(0.1)
 k_ICU_W_D <- user()
 gamma_ICU_W_D <- user(0.1)
 
-## Parameters of the I_ICU classes
+## Parameters of the ICU_D classes
 k_ICU_D <- user()
 gamma_ICU_D <- user(0.1)
 dim(p_ICU_D_step) <- user()
@@ -1239,10 +1239,10 @@ update(N_tot3) <- sum(S) + sum(T_PCR_pre) + sum(T_PCR_pos) + sum(T_PCR_neg)
 
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
-initial(I_ICU_tot) <- 0
-new_I_ICU_tot <- sum(new_ICU_W_R_conf) + sum(new_ICU_W_D_conf) +
+initial(ICU_tot) <- 0
+new_ICU_tot <- sum(new_ICU_W_R_conf) + sum(new_ICU_W_D_conf) +
   sum(new_ICU_D_conf)
-update(I_ICU_tot) <- new_I_ICU_tot
+update(ICU_tot) <- new_ICU_tot
 
 initial(general_tot) <- 0
 new_general_tot <- sum(new_ICU_pre_conf) + sum(new_H_R_conf) +
@@ -1251,7 +1251,7 @@ new_general_tot <- sum(new_ICU_pre_conf) + sum(new_H_R_conf) +
 update(general_tot) <- new_general_tot
 
 initial(hosp_tot) <- 0
-update(hosp_tot) <- new_I_ICU_tot + new_general_tot
+update(hosp_tot) <- new_ICU_tot + new_general_tot
 
 initial(D_hosp_tot) <- 0
 new_D_hosp_tot <- sum(new_D_hosp)
