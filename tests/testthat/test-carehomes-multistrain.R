@@ -259,7 +259,7 @@ test_that("Everyone is infected when second strain transmission is large", {
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding)),
                             strain_seed_value = n_seeded_new_strain_inf)
-  
+
   ## set gamma_E to Inf so that seeded individuals move through each E stage
   ## in one step
   p$gamma_E <- Inf
