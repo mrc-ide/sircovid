@@ -203,14 +203,14 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   }
 
   p_C <- matricise(pars$p_C, n_vacc_classes)
-  p_C <- p_C * pars$rel_p_sympt
+  p_C <- p_C * pars$rel_p_C
   if (n_vacc_classes > 1) {
     p_C <- t(mat_multi_by_group(p_C, V))
   }
   p_C <- outer(p_C, rep(1, n_time_steps))
 
   p_H <- matricise(pars$psi_H, n_vacc_classes) *
-    pars$rel_p_hosp_if_sympt
+    pars$rel_p_H
   if (n_vacc_classes > 1) {
     p_H <- t(mat_multi_by_group(p_H, V))
   }
