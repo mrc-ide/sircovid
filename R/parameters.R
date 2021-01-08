@@ -1,8 +1,14 @@
 ## These could be moved to be defaults within the models
 sircovid_parameters_shared <- function(start_date, region,
-                                       beta_date, beta_value) {
-  dt <- 0.25
+                                       beta_date, beta_value,
+                                       steps_per_day = 4) {
+  assert_scalar(steps_per_day)
+  assert_integer(steps_per_day)
+  if (steps_per_day < 1) {
+    stop("'steps_per_day' must be at least 1")
+  }
   assert_sircovid_date(start_date)
+  dt <- 1 / steps_per_day
   beta_step <- sircovid_parameters_beta(beta_date, beta_value %||% 0.08, dt)
   list(hosp_transmission = 0.1,
        ICU_transmission = 0.05,

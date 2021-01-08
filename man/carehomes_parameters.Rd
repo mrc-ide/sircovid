@@ -34,6 +34,7 @@ carehomes_parameters(
   vaccine_daily_doses = 0,
   waning_rate = 0,
   model_pcr_and_serology_user = 1,
+  steps_per_day = 4,
   exp_noise = 1e+06
 )
 }
@@ -192,6 +193,8 @@ have one value per age group.}
 \item{model_pcr_and_serology_user}{A value of 1 or 0 so switch on or off the
 flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
 number of individuals leaving the R compartments}
+
+\item{steps_per_day}{Number of steps to use per day (integer, at least 1)}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

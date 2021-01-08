@@ -141,6 +141,8 @@ NULL
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
+##' @param steps_per_day Number of steps to use per day (integer, at least 1)
+##'
 ##' @param model_pcr_and_serology_user A value of 1 or 0 so switch on or off the
 ##'   flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
 ##'   number of individuals leaving the R compartments
@@ -276,9 +278,10 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_daily_doses = 0,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
+                                 steps_per_day = 4,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
-                                    beta_date, beta_value)
+                                    beta_date, beta_value, steps_per_day)
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
