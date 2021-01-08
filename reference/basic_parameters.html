@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
       </span>
     </div>
 
@@ -205,7 +205,7 @@ just before the model is run.</p>
 #&gt; $ICU_transmission
 #&gt; [1] 0.05
 #&gt; 
-#&gt; $comm_D_transmission
+#&gt; $G_D_transmission
 #&gt; [1] 0.05
 #&gt; 
 #&gt; $dt
@@ -302,60 +302,60 @@ just before the model is run.</p>
 #&gt; $observation$phi_general
 #&gt; [1] 0.95
 #&gt; 
-#&gt; $observation$k_general
+#&gt; $observation$kappa_general
 #&gt; [1] 2
 #&gt; 
 #&gt; $observation$phi_ICU
 #&gt; [1] 0.95
 #&gt; 
-#&gt; $observation$k_ICU
+#&gt; $observation$kappa_ICU
 #&gt; [1] 2
 #&gt; 
 #&gt; $observation$phi_death
 #&gt; [1] 0.9087341
 #&gt; 
-#&gt; $observation$k_death
+#&gt; $observation$kappa_death
 #&gt; [1] 2
 #&gt; 
 #&gt; $observation$exp_noise
 #&gt; [1] 1e+06
 #&gt; 
 #&gt; 
-#&gt; $p_admit_conf
+#&gt; $p_star
 #&gt;  [1] 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
 #&gt; 
-#&gt; $p_sympt
+#&gt; $p_C
 #&gt;  [1] 0.1809 0.1809 0.1809 0.1809 0.2241 0.2241 0.2241 0.2241 0.3054 0.3054
 #&gt; [11] 0.3054 0.3054 0.3546 0.3546 0.3546 0.3546 0.6456
 #&gt; 
-#&gt; $p_death_comm
+#&gt; $p_G_D
 #&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 #&gt; 
-#&gt; $p_death_hosp_D
+#&gt; $p_H_D
 #&gt;  [1] 0.1258933 0.1226134 0.1356729 0.1526679 0.1743031 0.1941879 0.2093617
 #&gt;  [8] 0.2244326 0.2370135 0.2578281 0.2908746 0.3207640 0.3625638 0.3909655
 #&gt; [15] 0.4211515 0.4475459 0.4820000
 #&gt; 
-#&gt; $p_death_ICU
+#&gt; $p_ICU_D
 #&gt;  [1] 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896
 #&gt;  [8] 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896
 #&gt; [15] 0.5234896 0.5234896 0.5234896
 #&gt; 
-#&gt; $p_death_stepdown
+#&gt; $p_W_D
 #&gt;  [1] 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05
 #&gt; [16] 0.05 0.05
 #&gt; 
-#&gt; $p_ICU_hosp
+#&gt; $p_ICU
 #&gt;  [1] 0.11845387 0.11845387 0.11845387 0.11845387 0.11845387 0.11845387
 #&gt;  [7] 0.11845387 0.12551064 0.14091042 0.17595537 0.24437611 0.35243489
 #&gt; [13] 0.52779221 0.72404472 0.18197685 0.05439050 0.01673267
 #&gt; 
-#&gt; $p_seroconversion
+#&gt; $p_sero_pos
 #&gt;  [1] 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394
 #&gt;  [8] 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394
 #&gt; [15] 0.8212394 0.8212394 0.8212394
 #&gt; 
-#&gt; $p_hosp_sympt
+#&gt; $p_H
 #&gt;  [1] 0.000632689 0.000539148 0.000995640 0.002035807 0.004545371 0.008748134
 #&gt;  [7] 0.013802147 0.019850725 0.024607803 0.032822485 0.049084367 0.061571007
 #&gt; [13] 0.086379194 0.099452536 0.124208801 0.150169192 0.153030303
@@ -380,31 +380,31 @@ just before the model is run.</p>
 #&gt;  [8] 0.9801493 0.9753922 0.9671775 0.9509156 0.9384290 0.9136208 0.9005475
 #&gt; [15] 0.8757912 0.8498308 0.8469697
 #&gt; 
-#&gt; $s_E
+#&gt; $k_E
 #&gt; [1] 2
 #&gt; 
-#&gt; $s_asympt
+#&gt; $k_A
 #&gt; [1] 1
 #&gt; 
-#&gt; $s_sympt
+#&gt; $k_C
 #&gt; [1] 1
 #&gt; 
-#&gt; $s_hosp
+#&gt; $k_hosp
 #&gt; [1] 2
 #&gt; 
-#&gt; $s_ICU
+#&gt; $k_ICU
 #&gt; [1] 2
 #&gt; 
-#&gt; $s_rec
+#&gt; $k_rec
 #&gt; [1] 2
 #&gt; 
 #&gt; $gamma_E
 #&gt; [1] 0.4357298
 #&gt; 
-#&gt; $gamma_asympt
+#&gt; $gamma_A
 #&gt; [1] 0.4784689
 #&gt; 
-#&gt; $gamma_sympt
+#&gt; $gamma_C
 #&gt; [1] 0.25
 #&gt; 
 #&gt; $gamma_hosp
