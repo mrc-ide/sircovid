@@ -4,13 +4,13 @@ test_that("carehomes progression parameters", {
   p <- carehomes_parameters_progression()
   expect_setequal(
     names(p),
-    c("s_E", "s_asympt", "s_sympt", "s_comm_D", "s_hosp_D", "s_hosp_R",
-      "s_ICU_D", "s_ICU_S_R", "s_ICU_S_D", "s_triage", "s_stepdown_D",
-      "s_stepdown_R", "s_R_pos", "s_PCR_pos", "s_PCR_pre", "gamma_E",
-      "gamma_asympt", "gamma_sympt", "gamma_comm_D", "gamma_hosp_D",
-      "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_S_R", "gamma_ICU_S_D",
-      "gamma_triage", "gamma_stepdown_D", "gamma_stepdown_R", "gamma_R_pos",
-      "gamma_R_pre_1", "gamma_R_pre_2", "gamma_test", "gamma_PCR_pos",
+    c("k_E", "k_A", "k_C", "k_G_D", "k_H_D", "k_H_R",
+      "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
+      "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
+      "gamma_A", "gamma_C", "gamma_G_D", "gamma_H_D",
+      "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
+      "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
+      "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
       "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints
@@ -125,11 +125,11 @@ test_that("carehomes_parameters returns a list of parameters", {
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
       "sero_specificity", "sero_sensitivity", "N_tot_15_64",
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
-      "react_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
-      "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
-      "psi_death_stepdown", "p_death_stepdown_step", "psi_hosp_sympt",
-      "p_hosp_sympt_step", "psi_death_comm", "p_death_comm_step",
-      "psi_ICU_hosp", "p_ICU_hosp_step", "psi_admit_conf", "p_admit_conf_step",
+      "react_sensitivity", "p_NC", "psi_ICU_D",
+      "p_ICU_D_step", "psi_H_D", "p_H_D_step",
+      "psi_W_D", "p_W_D_step", "psi_H",
+      "p_H_step", "psi_G_D", "p_G_D_step",
+      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
       "n_groups"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
@@ -151,9 +151,9 @@ test_that("can compute severity for carehomes model", {
   expect_true(
     all(severity$p_serocoversion == severity$p_serocoversion[[1]]))
   expect_equal(
-    severity$p_death_comm, rep(c(0, 0.7), c(18, 1)))
+    severity$p_G_D, rep(c(0, 0.7), c(18, 1)))
   expect_equal(
-    severity$p_admit_conf, rep(0.2, 19))
+    severity$p_star, rep(0.2, 19))
 })
 
 
@@ -195,7 +195,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
       "sero_pos", "sympt_cases", "sympt_cases_over25", "react_pos"))
 
   expect_equal(index$run[["icu"]],
-               which(names(info$index) == "I_ICU_tot"))
+               which(names(info$index) == "ICU_tot"))
   expect_equal(index$run[["general"]],
                which(names(info$index) == "general_tot"))
   expect_equal(index$run[["deaths_comm"]],
@@ -246,20 +246,20 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
-  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_asympt),
+  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
                p$N_tot)
-  expect_equal(drop(initial_y$I_asympt),
+  expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$R_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$PCR_pos[, 1, 1, ],
+  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
   ## 42 here, derived from;
   ## * 19 (S)
   ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_asympt[4] + R_pre[4] + PCR_pos[4]
+  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
   expect_equal(sum(initial$state != 0), 44)
 })
 
@@ -515,13 +515,13 @@ test_that("model_pcr_and_serology_user switch works", {
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
+  ## y$T_sero_neg and y$T_PCR_neg are increasing over time as noone gets out
   for (i in seq_len(p$n_groups)) {
     for (j in seq_len(p$n_strains)) {
-    expect_true(all(diff(y$R_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$R_neg[i, , 2, j]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, , 2, j]) >= 0))
+    expect_true(all(diff(y$T_sero_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$T_sero_neg[i, , 2, j]) >= 0))
+    expect_true(all(diff(y$T_PCR_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$T_PCR_neg[i, , 2, j]) >= 0))
     }
   }
 

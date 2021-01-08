@@ -15,11 +15,23 @@ basic <- R6::R6Class(
     max = Inf, integer = FALSE), hosp_transmission = list(has_default = FALSE,
     default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
     ICU_transmission = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), m = list(
-        has_default = FALSE, default_value = NULL, rank = 2,
-        min = -Inf, max = Inf, integer = FALSE), n_age_groups = list(
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_A = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), p_death_hosp = list(
+        min = -Inf, max = Inf, integer = FALSE), k_C = list(has_default = FALSE,
+        default_value = NULL, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), k_E = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_hosp = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_ICU = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_rec = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), m = list(has_default = FALSE,
+        default_value = NULL, rank = 2, min = -Inf, max = Inf,
+        integer = FALSE), n_age_groups = list(has_default = FALSE,
+        default_value = NULL, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), p_C = list(has_default = FALSE, default_value = NULL,
+        rank = 1, min = -Inf, max = Inf, integer = FALSE), p_death_hosp = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_recov_hosp = list(
         has_default = FALSE, default_value = NULL, rank = 1,
@@ -27,30 +39,17 @@ basic <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_recov_sympt = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), p_sympt = list(
-        has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), s_asympt = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_E = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_hosp = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_ICU = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_rec = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_sympt = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), gamma_asympt = list(
+        min = -Inf, max = Inf, integer = FALSE), gamma_A = list(
         has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf,
-        max = Inf, integer = FALSE), gamma_E = list(has_default = TRUE,
+        max = Inf, integer = FALSE), gamma_C = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_E = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_hosp = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_ICU = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_rec = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_sympt = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), n_trans_classes = list(has_default = TRUE,
         default_value = 1L, rank = 0, min = -Inf, max = Inf,
@@ -174,12 +173,41 @@ carehomes <- R6::R6Class(
     n_threads_ = NULL,
     ptr_ = NULL,
     param_ = list(beta_step = list(has_default = FALSE, default_value = NULL,
-    rank = 1, min = -Inf, max = Inf, integer = FALSE), comm_D_transmission = list(
+    rank = 1, min = -Inf, max = Inf, integer = FALSE), dt = list(
     has_default = FALSE, default_value = NULL, rank = 0, min = -Inf,
-    max = Inf, integer = FALSE), dt = list(has_default = FALSE,
+    max = Inf, integer = FALSE), G_D_transmission = list(has_default = FALSE,
     default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
     hosp_transmission = list(has_default = FALSE, default_value = NULL,
         rank = 0, min = -Inf, max = Inf, integer = FALSE), ICU_transmission = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_A = list(has_default = FALSE,
+        default_value = NULL, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), k_C = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_E = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_G_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_H_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_H_R = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_ICU_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_ICU_pre = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_ICU_W_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_ICU_W_R = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_PCR_pos = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_PCR_pre = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_sero_pos = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_W_D = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_W_R = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), m = list(has_default = FALSE,
         default_value = NULL, rank = 2, min = -Inf, max = Inf,
@@ -187,73 +215,43 @@ carehomes <- R6::R6Class(
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), n_groups = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), p_admit_conf_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_death_comm_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_death_hosp_D_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_death_ICU_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_death_stepdown_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_hosp_sympt_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_ICU_hosp_step = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_seroconversion = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), p_sympt = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_admit_conf = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_death_comm = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_death_hosp_D = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_death_ICU = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_death_stepdown = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_hosp_sympt = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), psi_ICU_hosp = list(has_default = FALSE,
-        default_value = NULL, rank = 1, min = -Inf, max = Inf,
-        integer = FALSE), rel_p_hosp_if_sympt = list(has_default = FALSE,
-        default_value = NULL, rank = 2, min = -Inf, max = Inf,
-        integer = FALSE), rel_p_sympt = list(has_default = FALSE,
-        default_value = NULL, rank = 2, min = -Inf, max = Inf,
-        integer = FALSE), rel_susceptibility = list(has_default = FALSE,
-        default_value = NULL, rank = 2, min = -Inf, max = Inf,
-        integer = FALSE), s_asympt = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_comm_D = list(has_default = FALSE,
-        default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), s_E = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), s_hosp_D = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_hosp_R = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_ICU_D = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_D = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_ICU_S_R = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_PCR_pos = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_PCR_pre = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_R_pos = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_stepdown_D = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_stepdown_R = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_sympt = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), s_triage = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
+        integer = FALSE), p_C = list(has_default = FALSE, default_value = NULL,
+        rank = 1, min = -Inf, max = Inf, integer = FALSE), p_G_D_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_H_D_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_H_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_ICU_D_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_ICU_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_sero_pos = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_star_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_W_D_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_G_D = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_H = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_H_D = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_ICU = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_ICU_D = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_star = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), psi_W_D = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), rel_p_hosp_if_sympt = list(
+        has_default = FALSE, default_value = NULL, rank = 2,
+        min = -Inf, max = Inf, integer = FALSE), rel_p_sympt = list(
+        has_default = FALSE, default_value = NULL, rank = 2,
+        min = -Inf, max = Inf, integer = FALSE), rel_susceptibility = list(
+        has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), strain_seed_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), strain_transmission = list(
@@ -264,45 +262,45 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), waning_rate = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), gamma_asympt = list(
+        min = -Inf, max = Inf, integer = FALSE), gamma_A = list(
         has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf,
-        max = Inf, integer = FALSE), gamma_comm_D = list(has_default = TRUE,
+        max = Inf, integer = FALSE), gamma_C = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_E = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_hosp_D = list(has_default = TRUE,
+        integer = FALSE), gamma_G_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_hosp_R = list(has_default = TRUE,
+        integer = FALSE), gamma_H_D = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_H_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_ICU_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_ICU_S_D = list(has_default = TRUE,
+        integer = FALSE), gamma_ICU_pre = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_ICU_S_R = list(has_default = TRUE,
+        integer = FALSE), gamma_ICU_W_D = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_ICU_W_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_PCR_pos = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_PCR_pre = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_R_pos = list(has_default = TRUE,
+        integer = FALSE), gamma_sero_pos = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_R_pre_1 = list(has_default = TRUE,
+        integer = FALSE), gamma_sero_pre_1 = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_R_pre_2 = list(has_default = TRUE,
+        integer = FALSE), gamma_sero_pre_2 = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_stepdown_D = list(has_default = TRUE,
+        integer = FALSE), gamma_U = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_stepdown_R = list(has_default = TRUE,
+        integer = FALSE), gamma_W_D = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_sympt = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_test = list(has_default = TRUE,
-        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), gamma_triage = list(has_default = TRUE,
+        integer = FALSE), gamma_W_R = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), model_pcr_and_serology_user = list(
         has_default = TRUE, default_value = 1L, rank = 0, min = -Inf,
-        max = Inf, integer = FALSE), p_R_pre_1 = list(has_default = TRUE,
+        max = Inf, integer = FALSE), p_sero_pre_1 = list(has_default = TRUE,
         default_value = 0.5, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), vaccine_daily_doses = list(has_default = TRUE,
         default_value = 0L, rank = 0, min = -Inf, max = Inf,

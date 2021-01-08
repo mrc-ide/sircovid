@@ -4,8 +4,8 @@ test_that("basic progression parameters", {
   p <- basic_parameters_progression()
   expect_setequal(
     names(p),
-    c("s_E", "s_asympt", "s_sympt", "s_hosp", "s_ICU", "s_rec",
-      "gamma_E", "gamma_asympt", "gamma_sympt", "gamma_hosp",
+    c("k_E", "k_A", "k_C", "k_hosp", "k_ICU", "k_rec",
+      "gamma_E", "gamma_A", "gamma_C", "gamma_hosp",
       "gamma_ICU", "gamma_rec"))
 
   ## TODO: Lilith; you had said that there were some constraints
@@ -89,10 +89,10 @@ test_that("observation function correctly combines likelihoods", {
   expect_length(ll3, 6)
 
   ll_itu <- ll_nbinom(observed3$icu, pars$observation$phi_ICU * state[1, ],
-                      pars$observation$k_ICU, Inf)
+                      pars$observation$kappa_ICU, Inf)
   ll_deaths <- ll_nbinom(observed3$deaths,
                          pars$observation$phi_death * (state[2, ] - 1),
-                         pars$observation$k_death, Inf)
+                         pars$observation$kappa_death, Inf)
   expect_equal(ll1, ll_itu)
   expect_equal(ll2, ll_deaths)
   expect_equal(ll3, ll1 + ll2)
@@ -110,10 +110,10 @@ test_that("can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
   expect_equal(initial_y$N_tot, sum(p$population))
-  expect_equal(initial_y$S + drop(initial_y$I_asympt), p$population)
-  expect_equal(drop(initial_y$I_asympt), append(rep(0, 16), 10, after = 3))
+  expect_equal(initial_y$S + drop(initial_y$I_A), p$population)
+  expect_equal(drop(initial_y$I_A), append(rep(0, 16), 10, after = 3))
 
   remaining <- initial$state[-c(info$index$N_tot, info$index$S,
-                                info$index$I_asympt)]
+                                info$index$I_A)]
   expect_true(all(remaining == 0))
 })

@@ -260,6 +260,10 @@ test_that("Everyone is infected when second strain transmission is large", {
                               sircovid_date(c(date_seeding, date_seeding)),
                             strain_seed_value = n_seeded_new_strain_inf)
 
+  ## set gamma_E to Inf so that seeded individuals move through each E stage
+  ## in one step
+  p$gamma_E <- Inf
+
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -273,6 +277,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   s_date_seeding <- sircovid_date(date_seeding)
   ## No cases before seeding
   expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
+
   ## The +2 is because we need seeded individuals to get out of the first and
   ## second E compartments before they can go on to infect others
   expect_true(all(y$S[, 1, s_date > (s_date_seeding + 2)] == 0))
@@ -327,15 +332,15 @@ test_that("different strains are equivalent", {
 
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_asympt <- y$I_asympt[, 2:1, , , drop = FALSE]
-  y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
-  y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
+  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
 
   mod$set_state(initial$state, initial$step)
   index <- mod$info()$index
-  index_run <- c(icu = index[["I_ICU_tot"]],
+  index_run <- c(icu = index[["ICU_tot"]],
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
@@ -369,9 +374,9 @@ test_that("Swapping strains gives identical results with different index", {
   end <- sircovid_date("2020-05-1") / p$dt
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_asympt <- y$I_asympt[, 2:1, , , drop = FALSE]
-  y$PCR_pos <- y$PCR_pos[, 2:1, , , drop = FALSE]
-  y$R_pre <- y$R_pre[, 2:1, , , drop = FALSE]
+  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
 
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
@@ -391,16 +396,16 @@ test_that("Swapping strains gives identical results with different index", {
 
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[2:1, , drop = FALSE]
-  for (nm in c("R_neg", "R", "PCR_neg")) {
+  for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
   }
-  v5 <- c("E", "I_asympt", "I_sympt", "PCR_pre", "PCR_pos", "R_pre",
-          "R_pos", "I_comm_D", "I_triage_unconf", "I_triage_conf",
-          "I_hosp_R_unconf", "I_hosp_R_conf", "I_hosp_D_unconf",
-          "I_hosp_D_conf", "I_ICU_S_R_unconf", "I_ICU_S_R_conf",
-          "I_ICU_S_D_unconf", "I_ICU_S_D_conf", "I_ICU_D_unconf",
-          "I_ICU_D_conf", "R_stepdown_R_unconf", "R_stepdown_R_conf",
-          "R_stepdown_D_unconf", "R_stepdown_D_conf")
+  v5 <- c("E", "I_A", "I_C", "T_PCR_pre", "T_PCR_pos", "T_sero_pre",
+          "T_sero_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
+          "H_R_unconf", "H_R_conf", "H_D_unconf",
+          "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf",
+          "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf",
+          "ICU_D_conf", "W_R_unconf", "W_R_conf",
+          "W_D_unconf", "W_D_conf")
   for (nm in v5) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , , drop = FALSE]
   }

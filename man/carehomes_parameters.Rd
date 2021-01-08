@@ -15,13 +15,13 @@ carehomes_parameters(
   sero_sensitivity = 0.99,
   progression = NULL,
   eps = 0.1,
-  C_1 = 4e-06,
-  C_2 = 5e-05,
+  m_CHW = 4e-06,
+  m_CHR = 5e-05,
   pillar2_specificity = 0.99,
   pillar2_sensitivity = 0.99,
   react_specificity = 0.99,
   react_sensitivity = 0.99,
-  prop_noncovid_sympt = 0.01,
+  p_NC = 0.01,
   strain_transmission = 1,
   strain_seed_date = NULL,
   strain_seed_value = NULL,
@@ -79,10 +79,10 @@ with the progression parameters.}
 
 \item{eps}{Change in contact rate for carehome residents}
 
-\item{C_1}{Contact rate between carehome workers and either
+\item{m_CHW}{Contact rate between carehome workers and either
 residents or workers}
 
-\item{C_2}{Contact rate between carehome residents}
+\item{m_CHR}{Contact rate between carehome residents}
 
 \item{pillar2_specificity}{Specificity of the Pillar 2 test}
 
@@ -92,7 +92,7 @@ residents or workers}
 
 \item{react_sensitivity}{Sensitivity of the REACT test}
 
-\item{prop_noncovid_sympt}{Proportion of population who do not have
+\item{p_NC}{Proportion of population who do not have
 covid but have covid-like symptoms}
 
 \item{strain_transmission}{Vector of relative transmissibility of each
@@ -177,8 +177,8 @@ rate is used for all age groups; if a vector of values if used it should
 have one value per age group.}
 
 \item{model_pcr_and_serology_user}{A value of 1 or 0 so switch on or off the
-flows out of PCR_neg and R_neg and the corresponding cap on the number of
-individuals leaving the R compartments}
+flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
+number of individuals leaving the R compartments}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

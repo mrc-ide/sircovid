@@ -67,15 +67,15 @@ test_that("can read the default severity file", {
   expect_true(all(lengths(data) == 17))
   expect_setequal(
     names(data),
-    c("p_admit_conf", "p_sympt", "p_death_comm", "p_death_hosp_D",
-      "p_death_ICU", "p_death_stepdown", "p_ICU_hosp",
-      "p_seroconversion", "p_hosp_sympt"))
+    c("p_star", "p_C", "p_G_D", "p_H_D",
+      "p_ICU_D", "p_W_D", "p_ICU",
+      "p_sero_pos", "p_H"))
   expect_true(
     all(data$p_serocoversion == data$p_serocoversion[[1]]))
   expect_equal(
-    data$p_death_comm, rep(0, 17))
+    data$p_G_D, rep(0, 17))
   expect_equal(
-    data$p_admit_conf, rep(0.2, 17))
+    data$p_star, rep(0.2, 17))
 })
 
 
@@ -83,7 +83,7 @@ test_that("can validate a severity input", {
   d <- severity_default()
   expect_error(
     sircovid_parameters_severity(d[-1, ]),
-    "Elements missing from 'data': 'p_sympt'")
+    "Elements missing from 'data': 'p_C'")
 })
 
 
@@ -94,7 +94,7 @@ test_that("can reprocess severity", {
     s)
   expect_error(
     sircovid_parameters_severity(s[-1]),
-    "Elements missing from 'params': 'p_admit_conf'")
+    "Elements missing from 'params': 'p_star'")
 })
 
 
@@ -114,7 +114,7 @@ test_that("shared parameters", {
   pars <- sircovid_parameters_shared(date, "england", NULL, 0.1)
   expect_setequal(
     names(pars),
-    c("hosp_transmission", "ICU_transmission", "comm_D_transmission",
+    c("hosp_transmission", "ICU_transmission", "G_D_transmission",
       "dt", "initial_step", "n_age_groups", "beta_step", "population"))
   expect_equal(pars$beta_step, 0.1)
   expect_equal(pars$initial_step, date * 4)
