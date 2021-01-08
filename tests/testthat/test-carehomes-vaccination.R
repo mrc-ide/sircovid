@@ -127,9 +127,9 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
   state[index_S[, 1]] <- 0
   
   # move initial infections into vaccinated class
-  index_I_asympt <- array(info$index$I_asympt, info$dim$I_asympt)
-  state[index_I_asympt[, 1, 1, 2]] <- state[index_I_asympt[, 1, 1, 1]]
-  state[index_I_asympt[, 1, 1, 1]] <- 0
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  state[index_I_A[, 1, 1, 2]] <- state[index_I_A[, 1, 1, 1]]
+  state[index_I_A[, 1, 1, 1]] <- 0
   
   mod$set_state(state)
   mod$set_index(integer(0))
