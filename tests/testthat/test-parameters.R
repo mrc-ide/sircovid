@@ -141,3 +141,19 @@ test_that("can expand beta", {
   beta3 <- sircovid_parameters_beta_expand(t3, beta)
   expect_equal(beta3, beta[1:65])
 })
+
+
+test_that("can change dt", {
+  expect_equal(sircovid_parameters_shared(0, "uk", NULL, NULL)$dt, 0.25)
+  expect_equal(sircovid_parameters_shared(0, "uk", NULL, NULL, 10)$dt, 0.1)
+  expect_equal(sircovid_parameters_shared(0, "uk", NULL, NULL, 1)$dt, 1)
+  expect_error(
+    sircovid_parameters_shared(0, "uk", NULL, NULL, 0),
+    "'steps_per_day' must be at least 1")
+  expect_error(
+    sircovid_parameters_shared(0, "uk", NULL, NULL, 0:1),
+    "'steps_per_day' must be a scalar")
+  expect_error(
+    sircovid_parameters_shared(0, "uk", NULL, NULL, 1.5),
+    "'steps_per_day' must be an integer")
+})
