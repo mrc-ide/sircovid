@@ -191,42 +191,26 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   if (n_vacc_classes > 1) {
     ## V[i, j, k] gives the probability that an individual in group k who is
     ## infected when in vaccine stage i exits the E class in vaccine stage j
-    V <- array(sapply(seq_len(pars$n_groups), vacc_prog_before_infectious),
-             dim = c(n_vacc_classes, n_vacc_classes, pars$n_groups))
+    V <- vapply(seq_len(pars$n_groups), vacc_prog_before_infectious,
+                array(0, c(n_vacc_classes, n_vacc_classes)))
   }
 
-  mat_multi_by_group <- function(p, V) {
-    out <- sapply(seq_len(pars$n_groups),
-                  function(i) {
-                    V[, , i] %*% p[i, ]})
-    out
-  }
-
-  p_C <- matricise(pars$p_C, n_vacc_classes)
-  p_C <- p_C * pars$rel_p_sympt
-  if (n_vacc_classes > 1) {
-    p_C <- t(mat_multi_by_group(p_C, V))
-  }
+  p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
   p_C <- outer(p_C, rep(1, n_time_steps))
 
-  p_H <- matricise(pars$psi_H, n_vacc_classes) *
-    pars$rel_p_hosp_if_sympt
-  if (n_vacc_classes > 1) {
-    p_H <- t(mat_multi_by_group(p_H, V))
-  }
-  p_H <- outer(p_H,
-    sircovid_parameters_beta_expand(step, pars$p_H_step))
+  p_H <- matricise(pars$psi_H, n_vacc_classes) * pars$rel_p_hosp_if_sympt
+  p_H <- outer(p_H, sircovid_parameters_beta_expand(step, pars$p_H_step))
 
   p_ICU <- outer(matricise(pars$psi_ICU, n_vacc_classes),
-                    sircovid_parameters_beta_expand(step, pars$p_ICU_step))
+                 sircovid_parameters_beta_expand(step, pars$p_ICU_step))
   p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
                    sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
   p_H_D <- outer(matricise(pars$psi_H_D, n_vacc_classes),
                 sircovid_parameters_beta_expand(step, pars$p_H_D_step))
   p_W_D <- outer(matricise(pars$psi_W_D, n_vacc_classes),
-              sircovid_parameters_beta_expand(step, pars$p_W_D_step))
+                 sircovid_parameters_beta_expand(step, pars$p_W_D_step))
   p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
-                  sircovid_parameters_beta_expand(step, pars$p_G_D_step))
+                 sircovid_parameters_beta_expand(step, pars$p_G_D_step))
 
   prob_H_R <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * (1 - p_H_D)
@@ -260,7 +244,24 @@ carehomes_Rt_mean_duration <- function(step, pars) {
       prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
       prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
 
-  dt * mean_duration
+  mean_duration <- dt * mean_duration *
+    outer(pars$rel_infectivity, rep(1, n_time_steps))
+  
+  ## mean_duration[i, j, k] represents mean duration at step k of age group i
+  ## leaving the E compartment in vaccine stage j, we need to output for leaving
+  ## the S compartment in vaccine stage j, so we calculate this here
+  if (n_vacc_classes > 1) {
+    out <- array(0, dim(mean_duration))
+    for (i in seq_len(pars$n_groups)){
+      for (j in seq_len(n_time_steps)){
+        out[i, , j] <- V[, , i] %*% mean_duration[i, , j]
+      }
+    }
+  } else {
+    out <- mean_duration
+  }
+  
+  out
 }
 
 
