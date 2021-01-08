@@ -752,7 +752,7 @@ test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
 
 test_that("Effective Rt reduced by rel_infectivity if all vaccinated", {
   reduced_infectivity <- 0.2 # can put anything <1 here
-  
+
   ## run model with unvaccinated & vaccinated (with infectivity halved)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
@@ -761,43 +761,43 @@ test_that("Effective Rt reduced by rel_infectivity if all vaccinated", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             waning_rate = 1 / 20)
-  
+
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
-  
+
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
-  
+
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
-  
+
   set.seed(1)
   y <- dust::dust_iterate(mod, steps, index)
-  
+
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
-  
+
   ## move all individuals to vaccinated
   y_with_vacc <- y
   y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
     y_with_vacc[seq_len(p$n_groups), , ]
   y_with_vacc[seq_len(p$n_groups), , ] <- 0
-  
+
   rt_1_vacc <- carehomes_Rt(steps, y_with_vacc[, 1, ], p)
   rt_all_vacc <- carehomes_Rt_trajectories(steps, y_with_vacc, p)
-  
+
   expect_equal(rt_1$eff_Rt_all * reduced_infectivity,
                rt_1_vacc$eff_Rt_all)
   expect_equal(rt_1$eff_Rt_general * reduced_infectivity,
                rt_1_vacc$eff_Rt_general)
-  
+
   expect_equal(rt_all$eff_Rt_all * reduced_infectivity,
                rt_all_vacc$eff_Rt_all)
   expect_equal(rt_all$eff_Rt_general * reduced_infectivity,
                rt_all_vacc$eff_Rt_general)
-  
+
 })
 
 
@@ -893,14 +893,14 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
   y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
     y_with_vacc[seq_len(p$n_groups), , ]
   y_with_vacc[seq_len(p$n_groups), , ] <- 0
-  
+
   rt_1_vacc <- carehomes_Rt(steps, y_with_vacc[, 1, ], p)
   rt_all_vacc <- carehomes_Rt_trajectories(steps, y_with_vacc, p)
-  
+
   # check that the ratio between the Rt with and witout vaccination
   # is constant
   expect_true(all(diff(rt_1_vacc$Rt_all / rt_1$Rt_all) == 0))
-  
+
   ## Given mean duration is shorter for asymptomatic individuals, we expect
   ## Rt to be reduced when rel_p_sympt is not 1
   expect_true(all(rt_1_vacc$eff_Rt_all < rt_1$eff_Rt_all))

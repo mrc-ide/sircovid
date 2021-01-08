@@ -26,7 +26,7 @@ carehomes_Rt <- function(step, S, p) {
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration(step, p)
   max_strain_multiplier <- max(p$strain_transmission)
-  
+
   n_vacc_classes <- ncol(p$rel_susceptibility)
 
   calculate_ev <-
@@ -40,9 +40,9 @@ carehomes_Rt <- function(step, S, p) {
 
     m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
                          p$n_groups * n_vacc_classes,
-                         p$n_groups * n_vacc_classes, 
+                         p$n_groups * n_vacc_classes,
                          byrow = T)
-      
+
     S_weighted <- S[, t] * c(p$rel_susceptibility)
 
     ## In a multistrain model R0 is the max of R0 across strains
