@@ -259,6 +259,10 @@ test_that("Everyone is infected when second strain transmission is large", {
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding)),
                             strain_seed_value = n_seeded_new_strain_inf)
+  
+  ## set gamma_E to Inf so that seeded individuals move through each E stage
+  ## in one step
+  p$gamma_E <- Inf
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -273,6 +277,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   s_date_seeding <- sircovid_date(date_seeding)
   ## No cases before seeding
   expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
+
   ## The +2 is because we need seeded individuals to get out of the first and
   ## second E compartments before they can go on to infect others
   expect_true(all(y$S[, 1, s_date > (s_date_seeding + 2)] == 0))
