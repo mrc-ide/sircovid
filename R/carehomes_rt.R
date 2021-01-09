@@ -22,7 +22,7 @@ carehomes_Rt <- function(step, S, p) {
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
   }
-
+  
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration(step, p)
   max_strain_multiplier <- max(p$strain_transmission)
@@ -147,6 +147,7 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 
 
 carehomes_Rt_mean_duration <- function(step, pars) {
+  browser()
   dt <- pars$dt
 
   matricise <- function(vect, n_col) {
@@ -224,27 +225,27 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * p_ICU_D
 
-  ## TODO: would be nice if it's possibly to name these subcomponents
-  ## to make the calculation clearer.
-  mean_duration <- (1 - p_C) * pars$k_A /
-    (1 - exp(- dt * pars$gamma_A)) +
-    p_C * pars$k_C / (1 - exp(- dt * pars$gamma_C))
+  mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A)) 
+  
+  mean_duration_I_C <- p_C * pars$k_C / (1 - exp(- dt * pars$gamma_C))
 
-  mean_duration <- mean_duration +
-    pars$G_D_transmission * p_C * p_H *
+  mean_duration_G_D <- pars$G_D_transmission * p_C * p_H *
     p_G_D * pars$k_G_D / (1 - exp(- dt * pars$gamma_G_D))
-
-  mean_duration <- mean_duration +
-    pars$hosp_transmission * (
-      prob_H_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
+  
+  mean_duration_hosp <- pars$hosp_transmission * (
+    prob_H_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
       prob_H_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
       (prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D) * pars$k_ICU_pre /
-      (1 - exp(- dt * pars$gamma_ICU_pre))) +
-    pars$ICU_transmission * (
-      prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
+      (1 - exp(- dt * pars$gamma_ICU_pre))) 
+  
+  mean_duration_icu <- pars$ICU_transmission * (
+    prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
       prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
       prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
-
+  
+  mean_duration <- mean_duration_I_A + mean_duration_I_C + mean_duration_G_D +
+    mean_duration_hosp + mean_duration_icu
+    
   mean_duration <- dt * mean_duration *
     outer(pars$rel_infectivity, rep(1, n_time_steps))
 
