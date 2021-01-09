@@ -197,6 +197,8 @@ carehomes_Rt_mean_duration <- function(step, pars) {
                 array(0, c(n_vacc_classes, n_vacc_classes)))
   }
 
+  ### compute probabilities of different pathways
+  
   p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
   p_C <- outer(p_C, rep(1, n_time_steps))
 
@@ -225,6 +227,13 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * p_ICU_D
 
+  ### compute mean duration (in time steps) of each stage of infection, 
+  ### weighed by probability of going through that stage
+  ### and by relative infectivity of that stage
+  
+  ### note the mean duration (in time step) of a compartment 
+  ### for an Erlang(k, gamma) is k / (1 - exp(gamma))
+  
   mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A)) 
   
   mean_duration_I_C <- p_C * pars$k_C / (1 - exp(- dt * pars$gamma_C))
@@ -246,8 +255,14 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   mean_duration <- mean_duration_I_A + mean_duration_I_C + mean_duration_G_D +
     mean_duration_hosp + mean_duration_icu
     
-  mean_duration <- dt * mean_duration *
+  # account for different infectivity levels depending on vaccination stage
+  
+  mean_duration <- mean_duration *
     outer(pars$rel_infectivity, rep(1, n_time_steps))
+  
+  ### multiply by dt to convert from time steps to days
+  
+  mean_duration <- dt * mean_duration
 
   ## mean_duration[i, j, k] represents mean duration at step k of age group i
   ## leaving the E compartment in vaccine stage j, we need to output for leaving
