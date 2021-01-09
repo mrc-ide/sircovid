@@ -23,8 +23,10 @@ carehomes_Rt <- function(step, S, p) {
                  length(step)))
   }
   
+  ### here mean_duration accounts for relative infectivity of 
+  ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
-  mean_duration <- carehomes_Rt_mean_duration(step, p)
+  mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
   max_strain_multiplier <- max(p$strain_transmission)
 
   n_vacc_classes <- ncol(p$rel_susceptibility)
@@ -146,7 +148,7 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 }
 
 
-carehomes_Rt_mean_duration <- function(step, pars) {
+carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   browser()
   dt <- pars$dt
 
