@@ -43,7 +43,7 @@ carehomes_Rt <- function(step, S, p) {
     m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
                          p$n_groups * n_vacc_classes,
                          p$n_groups * n_vacc_classes,
-                         byrow = T)
+                         byrow = TRUE)
 
     S_weighted <- S[, t] * c(p$rel_susceptibility)
 
@@ -79,7 +79,7 @@ carehomes_Rt <- function(step, S, p) {
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
   if (n_vacc_classes > 1) {
-    for (i in seq(2, n_vacc_classes)) {
+    for (i in 2:n_vacc_classes) {
       N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
                                      0 * N_tot_non_vacc)
     }
@@ -198,7 +198,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
                 array(0, c(n_vacc_classes, n_vacc_classes)))
   }
 
-  ### compute probabilities of different pathways
+  ## compute probabilities of different pathways
 
   p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
   p_C <- outer(p_C, rep(1, n_time_steps))
@@ -228,12 +228,12 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * p_ICU_D
 
-  ### compute mean duration (in time steps) of each stage of infection,
-  ### weighed by probability of going through that stage
-  ### and by relative infectivity of that stage
+  ## Compute mean duration (in time steps) of each stage of infection,
+  ## weighed by probability of going through that stage
+  ## and by relative infectivity of that stage
 
-  ### note the mean duration (in time steps) of a compartment for
-  ### a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
+  ## Note the mean duration (in time steps) of a compartment for
+  ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
 
   mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A))
 
@@ -256,13 +256,12 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   mean_duration <- mean_duration_I_A + mean_duration_I_C + mean_duration_G_D +
     mean_duration_hosp + mean_duration_icu
 
-  # account for different infectivity levels depending on vaccination stage
+  ## Account for different infectivity levels depending on vaccination stage
 
   mean_duration <- mean_duration *
     outer(pars$rel_infectivity, rep(1, n_time_steps))
 
-  ### multiply by dt to convert from time steps to days
-
+  ## Multiply by dt to convert from time steps to days
   mean_duration <- dt * mean_duration
 
   ## mean_duration[i, j, k] represents mean duration at step k of age group i
