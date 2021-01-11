@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -152,6 +152,7 @@
   rel_susceptibility <span class='op'>=</span> <span class='fl'>1</span>,
   rel_p_sympt <span class='op'>=</span> <span class='fl'>1</span>,
   rel_p_hosp_if_sympt <span class='op'>=</span> <span class='fl'>1</span>,
+  rel_infectivity <span class='op'>=</span> <span class='fl'>1</span>,
   vaccine_progression_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_uptake <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_daily_doses <span class='op'>=</span> <span class='fl'>0</span>,
@@ -323,6 +324,20 @@ reductions in probability of hospitalisation for symptomatic cases by age
 (rows of the matrix) and vaccination group (columns of the matrix);
 in that case, in each row of the matrix, the first value should be 1
 (for the non-vaccinated group) and subsequent values be between 0 and 1</p></td>
+    </tr>
+    <tr>
+      <th>rel_infectivity</th>
+      <td><p>A vector or matrix of values representing the
+relative infectivity of individuals in different vaccination groups,
+if they are infected.
+If a vector, the first value should be 1 (for the non-vaccinated group)
+and subsequent values be between 0 and 1. In that case relative
+infectivity will be the same across all age groups within one
+vaccination category. Specifying a matrix instead of a vector allows
+different relative infectivities by age (rows of the matrix) and
+vaccination group (columns of the matrix); in that case, in each row of
+the matrix, the first value should be 1 (for the non-vaccinated group)
+and subsequent values be between 0 and 1</p></td>
     </tr>
     <tr>
       <th>vaccine_progression_rate</th>
@@ -859,6 +874,28 @@ just before the model is run.</p>
 #&gt; [18,]    1
 #&gt; [19,]    1
 #&gt; 
+#&gt; $rel_infectivity
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
 #&gt; $vaccine_progression_rate_base
 #&gt;       [,1]
 #&gt;  [1,]    0
@@ -910,6 +947,9 @@ just before the model is run.</p>
 <span class='co'># and the risk of hospitalisation for those with symptoms</span>
 <span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.95</span>, <span class='fl'>0.95</span><span class='op'>)</span>
 
+<span class='co'># The vaccine also reduces infectivity of infected individuals by half</span>
+<span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span><span class='op'>)</span>
+
 <span class='co'># Vaccination occurs at a constant rate of 0.03 per day,</span>
 <span class='co'># (i.e. average time to vaccination is 33 days)</span>
 <span class='co'># similar across all age groups.</span>
@@ -926,6 +966,7 @@ just before the model is run.</p>
        rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
        rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
        rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
+       rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,
        vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
        vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
 
@@ -990,7 +1031,27 @@ just before the model is run.</p>
 #&gt; [16,]    1 0.95 0.95
 #&gt; [17,]    1 0.95 0.95
 #&gt; [18,]    1 0.95 0.95
-#&gt; [19,]    1 0.95 0.95</div><div class='input'><span class='co'># Note that this is only the "base" rate as we fill in the first</span>
+#&gt; [19,]    1 0.95 0.95</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_infectivity</span>
+</div><div class='output co'>#&gt;       [,1] [,2] [,3]
+#&gt;  [1,]    1  0.5  0.5
+#&gt;  [2,]    1  0.5  0.5
+#&gt;  [3,]    1  0.5  0.5
+#&gt;  [4,]    1  0.5  0.5
+#&gt;  [5,]    1  0.5  0.5
+#&gt;  [6,]    1  0.5  0.5
+#&gt;  [7,]    1  0.5  0.5
+#&gt;  [8,]    1  0.5  0.5
+#&gt;  [9,]    1  0.5  0.5
+#&gt; [10,]    1  0.5  0.5
+#&gt; [11,]    1  0.5  0.5
+#&gt; [12,]    1  0.5  0.5
+#&gt; [13,]    1  0.5  0.5
+#&gt; [14,]    1  0.5  0.5
+#&gt; [15,]    1  0.5  0.5
+#&gt; [16,]    1  0.5  0.5
+#&gt; [17,]    1  0.5  0.5
+#&gt; [18,]    1  0.5  0.5
+#&gt; [19,]    1  0.5  0.5</div><div class='input'><span class='co'># Note that this is only the "base" rate as we fill in the first</span>
 <span class='co'># column dynamically based on vaccine_daily_doses</span>
 <span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
 </div><div class='output co'>#&gt;       [,1]       [,2]        [,3]
@@ -1054,6 +1115,10 @@ just before the model is run.</p>
 <span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span>
   <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
+<span class='co'># And vaccine has the same impact on onwards infectivity across age groups</span>
+<span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_infectivity</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>,
+  byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
 <span class='co'># the period of build-up of immunity is the same for all age groups,</span>
 <span class='co'># lasting on average 2 weeks,</span>
 <span class='co'># but the first age group loses immunity more quickly</span>
@@ -1070,6 +1135,7 @@ just before the model is run.</p>
        rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
        rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
        rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
+       rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,
        vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
        vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
 
