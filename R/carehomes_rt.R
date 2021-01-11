@@ -232,8 +232,8 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ### weighed by probability of going through that stage
   ### and by relative infectivity of that stage
 
-  ### note the mean duration (in time step) of a compartment
-  ### for an Erlang(k, gamma) is k / (1 - exp(gamma))
+  ### note the mean duration (in time steps) of a compartment for
+  ### a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
 
   mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A))
 
