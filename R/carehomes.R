@@ -105,6 +105,18 @@ NULL
 ##'   in that case, in each row of the matrix, the first value should be 1
 ##'   (for the non-vaccinated group) and subsequent values be between 0 and 1
 ##'
+##' @param rel_infectivity A vector or matrix of values representing the
+##'   relative infectivity of individuals in different vaccination groups,
+##'   if they are infected.
+##'   If a vector, the first value should be 1 (for the non-vaccinated group)
+##'   and subsequent values be between 0 and 1. In that case relative
+##'   infectivity will be the same across all age groups within one
+##'   vaccination category. Specifying a matrix instead of a vector allows
+##'   different relative infectivities by age (rows of the matrix) and
+##'   vaccination group (columns of the matrix); in that case, in each row of
+##'   the matrix, the first value should be 1 (for the non-vaccinated group)
+##'   and subsequent values be between 0 and 1
+##'
 ##' @param vaccine_progression_rate A vector or matrix of values of same
 ##'   dimension as rel_susceptibility representing
 ##'   the rate of movement between different vaccination classes. If a vector,
@@ -159,6 +171,9 @@ NULL
 ##' # and the risk of hospitalisation for those with symptoms
 ##' rel_p_hosp_if_sympt <- c(1, 0.95, 0.95)
 ##'
+##' # The vaccine also reduces infectivity of infected individuals by half
+##' rel_infectivity <- c(1, 0.5, 0.5)
+##'
 ##' # Vaccination occurs at a constant rate of 0.03 per day,
 ##' # (i.e. average time to vaccination is 33 days)
 ##' # similar across all age groups.
@@ -175,6 +190,7 @@ NULL
 ##'        rel_susceptibility = rel_susceptibility,
 ##'        rel_p_sympt = rel_p_sympt,
 ##'        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+##'        rel_infectivity = rel_infectivity,
 ##'        vaccine_progression_rate = vaccine_progression_rate,
 ##'        vaccine_daily_doses = 10000)
 ##'
@@ -182,6 +198,7 @@ NULL
 ##' p$rel_susceptibility
 ##' p$rel_p_sympt
 ##' p$rel_p_hosp_if_sympt
+##' p$rel_infectivity
 ##' # Note that this is only the "base" rate as we fill in the first
 ##' # column dynamically based on vaccine_daily_doses
 ##' p$vaccine_progression_rate
@@ -208,6 +225,10 @@ NULL
 ##' rel_p_hosp_if_sympt <-
 ##'   matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
 ##'
+##' # And vaccine has the same impact on onwards infectivity across age groups
+##' rel_infectivity <- matrix(rep(rel_infectivity, n_groups), nrow = n_groups,
+##'   byrow = TRUE)
+##'
 ##' # the period of build-up of immunity is the same for all age groups,
 ##' # lasting on average 2 weeks,
 ##' # but the first age group loses immunity more quickly
@@ -224,6 +245,7 @@ NULL
 ##'        rel_susceptibility = rel_susceptibility,
 ##'        rel_p_sympt = rel_p_sympt,
 ##'        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+##'        rel_infectivity = rel_infectivity,
 ##'        vaccine_progression_rate = vaccine_progression_rate,
 ##'        vaccine_daily_doses = 10000)
 ##'
@@ -248,6 +270,7 @@ carehomes_parameters <- function(start_date, region,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
+                                 rel_infectivity = 1,
                                  vaccine_progression_rate = NULL,
                                  vaccine_uptake = NULL,
                                  vaccine_daily_doses = 0,
@@ -344,6 +367,7 @@ carehomes_parameters <- function(start_date, region,
                                                   rel_susceptibility,
                                                   rel_p_sympt,
                                                   rel_p_hosp_if_sympt,
+                                                  rel_infectivity,
                                                   vaccine_progression_rate,
                                                   vaccine_uptake,
                                                   vaccine_daily_doses)
@@ -694,6 +718,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              rel_susceptibility = 1,
                                              rel_p_sympt = 1,
                                              rel_p_hosp_if_sympt = 1,
+                                             rel_infectivity = 1,
                                              vaccine_progression_rate = NULL,
                                              vaccine_uptake = NULL,
                                              vaccine_daily_doses = 0) {
@@ -703,7 +728,8 @@ carehomes_parameters_vaccination <- function(N_tot,
   }
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
-                     rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
+                     rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+                     rel_infectivity = rel_infectivity)
 
   n <- vnapply(rel_params, calc_n_vacc_classes)
 

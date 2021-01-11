@@ -23,9 +23,13 @@ carehomes_Rt <- function(step, S, p) {
                  length(step)))
   }
 
+  ### here mean_duration accounts for relative infectivity of
+  ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
-  mean_duration <- carehomes_Rt_mean_duration(step, p)
+  mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
   max_strain_multiplier <- max(p$strain_transmission)
+
+  n_vacc_classes <- ncol(p$rel_susceptibility)
 
   calculate_ev <-
     function(t, S, beta, mean_duration, max_strain_multiplier, drop_carehomes) {
@@ -36,27 +40,24 @@ carehomes_Rt <- function(step, S, p) {
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
-    ## when several vaccination groups,
-    ## need to take the weighted means of the S
-    ## (weights given by rel_susceptibility)
-    S_mat <- matrix(S[, t],
-                    nrow = p$n_groups, ncol = ncol(p$rel_susceptibility))
-    S_weighted <- rowSums(S_mat * p$rel_susceptibility)
+    m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
+                         p$n_groups * n_vacc_classes,
+                         p$n_groups * n_vacc_classes,
+                         byrow = TRUE)
 
-    if (dim(mean_duration)[2] > 1) {
-      mean_duration_weighted <- apply(mean_duration[, , t], 1, mean)
-    } else {
-      mean_duration_weighted <- drop(mean_duration[, , t])
-    }
+    S_weighted <- S[, t] * c(p$rel_susceptibility)
 
     ## In a multistrain model R0 is the max of R0 across strains
-    ngm <- outer(mean_duration_weighted, S_weighted) * m * max_strain_multiplier
+    ngm <- outer(c(mean_duration[, , t]), S_weighted) * m_extended *
+      max_strain_multiplier
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
-    ## and columns
+    ## and columns, remove for each vaccine class
     if (drop_carehomes) {
-      i <- seq_len(nrow(ngm) - 2L)
-      ngm <- ngm[i, i]
+      i_CHR <- seq(p$n_groups, nrow(ngm), by = p$n_groups)
+      i_CHW <- i_CHR - 1
+      i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
+      ngm <- ngm[i_gen, i_gen]
     }
     ev <- eigen(ngm)$values
     ev[Im(ev) != 0] <- NA
@@ -77,9 +78,11 @@ carehomes_Rt <- function(step, S, p) {
                             drop_carehomes = TRUE)
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
-  for (i in seq(2, ncol(p$rel_susceptibility))) {
-    N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
-                                   0 * N_tot_non_vacc)
+  if (n_vacc_classes > 1) {
+    for (i in 2:n_vacc_classes) {
+      N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
+                                     0 * N_tot_non_vacc)
+    }
   }
   Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
                     beta = beta,
@@ -145,7 +148,7 @@ carehomes_Rt_trajectories <- function(step, S, pars,
 }
 
 
-carehomes_Rt_mean_duration <- function(step, pars) {
+carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   dt <- pars$dt
 
   matricise <- function(vect, n_col) {
@@ -191,76 +194,91 @@ carehomes_Rt_mean_duration <- function(step, pars) {
   if (n_vacc_classes > 1) {
     ## V[i, j, k] gives the probability that an individual in group k who is
     ## infected when in vaccine stage i exits the E class in vaccine stage j
-    V <- array(sapply(seq_len(pars$n_groups), vacc_prog_before_infectious),
-             dim = c(n_vacc_classes, n_vacc_classes, pars$n_groups))
+    V <- vapply(seq_len(pars$n_groups), vacc_prog_before_infectious,
+                array(0, c(n_vacc_classes, n_vacc_classes)))
   }
 
-  mat_multi_by_group <- function(p, V) {
-    out <- sapply(seq_len(pars$n_groups),
-                  function(i) {
-                    V[, , i] %*% p[i, ]})
-    out
-  }
+  ## compute probabilities of different pathways
 
-  p_C <- matricise(pars$p_C, n_vacc_classes)
-  p_C <- p_C * pars$rel_p_sympt
-  if (n_vacc_classes > 1) {
-    p_C <- t(mat_multi_by_group(p_C, V))
-  }
+  p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
   p_C <- outer(p_C, rep(1, n_time_steps))
 
-  p_H <- matricise(pars$psi_H, n_vacc_classes) *
-    pars$rel_p_hosp_if_sympt
-  if (n_vacc_classes > 1) {
-    p_H <- t(mat_multi_by_group(p_H, V))
-  }
-  p_H <- outer(p_H,
-    sircovid_parameters_beta_expand(step, pars$p_H_step))
+  p_H <- matricise(pars$psi_H, n_vacc_classes) * pars$rel_p_hosp_if_sympt
+  p_H <- outer(p_H, sircovid_parameters_beta_expand(step, pars$p_H_step))
 
   p_ICU <- outer(matricise(pars$psi_ICU, n_vacc_classes),
-                    sircovid_parameters_beta_expand(step, pars$p_ICU_step))
+                 sircovid_parameters_beta_expand(step, pars$p_ICU_step))
   p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
                    sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
   p_H_D <- outer(matricise(pars$psi_H_D, n_vacc_classes),
                 sircovid_parameters_beta_expand(step, pars$p_H_D_step))
   p_W_D <- outer(matricise(pars$psi_W_D, n_vacc_classes),
-              sircovid_parameters_beta_expand(step, pars$p_W_D_step))
+                 sircovid_parameters_beta_expand(step, pars$p_W_D_step))
   p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
-                  sircovid_parameters_beta_expand(step, pars$p_G_D_step))
+                 sircovid_parameters_beta_expand(step, pars$p_G_D_step))
 
-  p_hosp_R <- p_C * p_H * (1 - p_G_D) *
+  prob_H_R <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * (1 - p_H_D)
-  p_hosp_D <- p_C * p_H * (1 - p_G_D) *
+  prob_H_D <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * p_H_D
-  p_ICU_S_R <- p_C * p_H * (1 - p_G_D) *
+  prob_ICU_W_R <- p_C * p_H * (1 - p_G_D) *
     p_ICU * (1 - p_ICU_D) * (1 - p_W_D)
-  p_ICU_S_D <- p_C * p_H * (1 - p_G_D) *
+  prob_ICU_W_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * (1 - p_ICU_D) * p_W_D
-  p_ICU_D <- p_C * p_H * (1 - p_G_D) *
+  prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * p_ICU_D
 
-  ## TODO: would be nice if it's possibly to name these subcomponents
-  ## to make the calculation clearer.
-  mean_duration <- (1 - p_C) * pars$k_A /
-    (1 - exp(- dt * pars$gamma_A)) +
-    p_C * pars$k_C / (1 - exp(- dt * pars$gamma_C))
+  ## Compute mean duration (in time steps) of each stage of infection,
+  ## weighed by probability of going through that stage
+  ## and by relative infectivity of that stage
 
-  mean_duration <- mean_duration +
-    pars$G_D_transmission * p_C * p_H *
+  ## Note the mean duration (in time steps) of a compartment for
+  ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
+
+  mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A))
+
+  mean_duration_I_C <- p_C * pars$k_C / (1 - exp(- dt * pars$gamma_C))
+
+  mean_duration_G_D <- pars$G_D_transmission * p_C * p_H *
     p_G_D * pars$k_G_D / (1 - exp(- dt * pars$gamma_G_D))
 
-  mean_duration <- mean_duration +
-    pars$hosp_transmission * (
-      p_hosp_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
-      p_hosp_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
-      (p_ICU_S_R + p_ICU_S_D + p_ICU_D) * pars$k_ICU_pre /
-      (1 - exp(- dt * pars$gamma_ICU_pre))) +
-    pars$ICU_transmission * (
-      p_ICU_S_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
-      p_ICU_S_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
-      p_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
+  mean_duration_hosp <- pars$hosp_transmission * (
+    prob_H_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
+      prob_H_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
+      (prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D) * pars$k_ICU_pre /
+      (1 - exp(- dt * pars$gamma_ICU_pre)))
 
-  dt * mean_duration
+  mean_duration_icu <- pars$ICU_transmission * (
+    prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
+      prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
+      prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
+
+  mean_duration <- mean_duration_I_A + mean_duration_I_C + mean_duration_G_D +
+    mean_duration_hosp + mean_duration_icu
+
+  ## Account for different infectivity levels depending on vaccination stage
+
+  mean_duration <- mean_duration *
+    outer(pars$rel_infectivity, rep(1, n_time_steps))
+
+  ## Multiply by dt to convert from time steps to days
+  mean_duration <- dt * mean_duration
+
+  ## mean_duration[i, j, k] represents mean duration at step k of age group i
+  ## leaving the E compartment in vaccine stage j, we need to output for leaving
+  ## the S compartment in vaccine stage j, so we calculate this here
+  if (n_vacc_classes > 1) {
+    out <- array(0, dim(mean_duration))
+    for (i in seq_len(pars$n_groups)) {
+      for (j in seq_len(n_time_steps)) {
+        out[i, , j] <- V[, , i] %*% mean_duration[i, , j]
+      }
+    }
+  } else {
+    out <- mean_duration
+  }
+
+  out
 }
 
 
