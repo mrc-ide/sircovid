@@ -8,6 +8,7 @@ carehomes_Rt_trajectories(
   step,
   S,
   pars,
+  prob_strain = NULL,
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL
 )
@@ -21,6 +22,8 @@ compartment counts}
 \item{pars}{Either a single \code{\link[=carehomes_parameters]{carehomes_parameters()}} object
 (shared parameters) or an unnamed list of
 \code{\link[=carehomes_parameters]{carehomes_parameters()}} objects, the same length as \code{ncol(S)}.}
+
+\item{prob_strain}{prob_strain outputs from model}
 
 \item{initial_step_from_parameters}{If \code{TRUE}, then \code{step[[1]]} is
 replaced by the value of \code{initial_step} from the parameters.

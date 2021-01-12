@@ -4,7 +4,7 @@
 \alias{carehomes_Rt}
 \title{Compute "Rt"}
 \usage{
-carehomes_Rt(step, S, p)
+carehomes_Rt(step, S, p, prob_strain = NULL)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
@@ -12,6 +12,8 @@ carehomes_Rt(step, S, p)
 \item{S}{A 19 x steps matrix of "S" compartment counts}
 
 \item{p}{A \code{\link[=carehomes_parameters]{carehomes_parameters()}} object}
+
+\item{prob_strain}{prob_strain outputs from the model}
 }
 \value{
 A list with elements \code{step}, \code{beta}, \code{eff_Rt_all},
