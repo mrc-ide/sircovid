@@ -51,9 +51,10 @@ carehomes_Rt <- function(step, S, prob_strain, p) {
                               ncol = length(pars$strain_transmission))
     weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
     
-    ## In a multistrain model R0 is the max of R0 across strains
-    ngm <- outer(c(mean_duration[, , t]), S_weighted) * m_extended *
-      array(weighted_strain_multiplier, c(p$n_groups, p$n_groups))
+    ngm <- outer(c(mean_duration[, , t] * 
+                     array(weighted_strain_multiplier,
+                           c(p$n_groups, p$n_vacc_classes))),
+                 S_weighted) * m_extended
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
@@ -322,7 +323,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, prob_strain, pars,
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    calculate_Rt(step, S[, i, ], prob_strain[, i, ] pars[[i]])
+    calculate_Rt(step, S[, i, ], prob_strain[, i, ], pars[[i]])
   }
 
   res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
