@@ -57,7 +57,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
 
     ngm <- outer(c(mean_duration[, , t] *
                      array(weighted_strain_multiplier,
-                           c(p$n_groups, p$n_vacc_classes))),
+                           c(p$n_groups, n_vacc_classes))),
                  S_weighted) * m_extended
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
