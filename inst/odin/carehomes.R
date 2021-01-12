@@ -1293,6 +1293,13 @@ update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
 initial(react_pos) <- 0
 update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
+
+## prob_strain gives probability of an infection in group i being of strain j
+initial(prob_strain[, ]) <- 0
+dim(prob_strain) <- c(n_groups, n_strains)
+update(prob_strain[, ]) <- lambda[i, j] / sum(lambda[i, ])
+
+
 ## Vaccination engine
 
 ## First, the number of candidates
