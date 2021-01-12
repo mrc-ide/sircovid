@@ -7,12 +7,14 @@
 ##' @param S A 19 x steps matrix of "S" compartment counts
 ##'
 ##' @param p A [carehomes_parameters()] object
+##' 
+##' @param prob_strain prob_strain outputs from the model
 ##'
 ##' @return A list with elements `step`, `beta`, `eff_Rt_all`,
 ##'   `eff_Rt_general`, `Rt_all` and `Rt_general`
 ##'
 ##' @export
-carehomes_Rt <- function(step, S, prob_strain, p) {
+carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows, following transmission matrix",
@@ -46,9 +48,11 @@ carehomes_Rt <- function(step, S, prob_strain, p) {
 
     S_weighted <- S[, t] * c(p$rel_susceptibility)
 
-    prob_strain_mat <- matrix(prob_strain[, t],
+    prob_strain_mat <- matrix(ifelse(is.null(prob_strain),
+                                     rep(1, p$n_groups),
+                                     prob_strain[, t]),
                               nrow = p$n_groups,
-                              ncol = length(pars$strain_transmission))
+                              ncol = length(p$strain_transmission))
     weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
     
     ngm <- outer(c(mean_duration[, , t] * 
@@ -88,14 +92,14 @@ carehomes_Rt <- function(step, S, prob_strain, p) {
     }
   }
   Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
+                    prob_strain,
                     beta = beta,
                     mean_duration = mean_duration,
-                    max_strain_multiplier = max_strain_multiplier,
                     drop_carehomes = FALSE)
   Rt_general <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
+                        prob_strain,
                         beta = beta,
                         mean_duration = mean_duration,
-                        max_strain_multiplier = max_strain_multiplier,
                         drop_carehomes = TRUE)
 
   list(step = step,
@@ -130,6 +134,8 @@ carehomes_Rt <- function(step, S, prob_strain, p) {
 ##'   (shared parameters) or an unnamed list of
 ##'   [carehomes_parameters()] objects, the same length as `ncol(S)`.
 ##'
+##' @param prob_strain prob_strain outputs from model
+##'
 ##' @param initial_step_from_parameters If `TRUE`, then `step[[1]]` is
 ##'   replaced by the value of `initial_step` from the parameters.
 ##'   This is usually what you want.
@@ -143,10 +149,10 @@ carehomes_Rt <- function(step, S, prob_strain, p) {
 ##'   matrix, not a vector.
 ##'
 ##' @export
-carehomes_Rt_trajectories <- function(step, S, prob_strain, pars,
+carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       initial_step_from_parameters = TRUE,
                                       shared_parameters = NULL) {
-  calculate_Rt_trajectories(carehomes_Rt, step, S, prob_strain, pars,
+  calculate_Rt_trajectories(carehomes_Rt, step, S, pars, prob_strain,
                             initial_step_from_parameters, shared_parameters)
 }
 
@@ -289,7 +295,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## it out here; when we implement this for the basic model this will
 ## remain unchanged.  However, I am leaving it in this
 ## carehomes-specific file until we do add a new model or port it.
-calculate_Rt_trajectories <- function(calculate_Rt, step, S, prob_strain, pars,
+calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
                                       shared_parameters) {
   if (length(dim(S)) != 3) {
@@ -323,7 +329,9 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, prob_strain, pars,
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    calculate_Rt(step, S[, i, ], prob_strain[, i, ], pars[[i]])
+    ifelse(is.null(prob_strain),
+           calculate_Rt(step, S[, i, ], pars[[i]]),
+           calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ]))
   }
 
   res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
