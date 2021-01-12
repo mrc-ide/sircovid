@@ -441,9 +441,21 @@ carehomes_index <- function(info) {
                        paste0("S", suffix, s_type))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
+  
+  ## prob_strain is named similarly to S, with the second suffix representing
+  ## strain instead of vacc_class
+  
+  n_strains <- info$dim$prob_strain[[2]]
+  strain_type <- rep(c("", sprintf("_%s", seq_len(n_strains - 1L))),
+                     each = length(suffix))
+  index_prob_strain <- set_names(index[["prob_strain"]],
+                                 paste0("prob_strain", suffix, strain_type))
+  
+  
 
   list(run = index_run,
-       state = c(index_run, index_save, index_S, index_cum_admit))
+       state = c(index_run, index_save, index_S, index_cum_admit,
+                 index_prob_strain))
 }
 
 
@@ -694,6 +706,9 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_S <- index[["S"]]
   index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
   index_N_tot <- index[["N_tot"]]
+  
+  index_prob_strain <- index[["prob_strain"]]
+  index_prob_strain_original <- index_prob_strain[seq_len(pars$n_groups)]
 
   ## S0 is the population totals, minus the seeded infected
   ## individuals
@@ -708,6 +723,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
   state[index_N_tot3] <- sum(pars$N_tot)
+  state[index_prob_strain_original] <- 1
 
   list(state = state,
        step = pars$initial_step)
