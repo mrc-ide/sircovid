@@ -1,4 +1,4 @@
-# sircovid 0.9.2
+# sircovid 0.9.3
 
 * Corrected calculation of NGM for multistrain model
 
