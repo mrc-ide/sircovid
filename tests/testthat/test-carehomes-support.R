@@ -272,7 +272,7 @@ test_that("Can compute initial conditions", {
   ## * 19 (S)
   ## * 19 (N_tot)
   ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 44)
+  expect_equal(sum(initial$state != 0), 63)
 })
 
 
@@ -409,7 +409,8 @@ test_that("carehomes_index returns S compartments", {
       mod$info()$index$D_tot,
       mod$info()$index$cum_infections,
       mod$info()$index$S,
-      mod$info()$index$cum_admit_by_age))
+      mod$info()$index$cum_admit_by_age,
+      mod$info()$index$prob_strain))
 })
 
 
