@@ -7,7 +7,7 @@
 ##' @param S A 19 x steps matrix of "S" compartment counts
 ##'
 ##' @param p A [carehomes_parameters()] object
-##' 
+##'
 ##' @param prob_strain prob_strain outputs from the model
 ##'
 ##' @return A list with elements `step`, `beta`, `eff_Rt_all`,
@@ -54,8 +54,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
                               nrow = p$n_groups,
                               ncol = length(p$strain_transmission))
     weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
-    
-    ngm <- outer(c(mean_duration[, , t] * 
+
+    ngm <- outer(c(mean_duration[, , t] *
                      array(weighted_strain_multiplier,
                            c(p$n_groups, p$n_vacc_classes))),
                  S_weighted) * m_extended
@@ -329,7 +329,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    if(is.null(prob_strain)) {
+    if (is.null(prob_strain)) {
       rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]])
     } else {
       rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ])
