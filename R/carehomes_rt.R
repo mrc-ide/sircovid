@@ -319,7 +319,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
-  
+
   shared_parameters <- shared_parameters %||% !is.null(names(pars))
   if (shared_parameters) {
     if (is.null(names(pars))) {
@@ -342,8 +342,8 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
       "Expected 3rd dimension of 'S' to have length %d, following 'step'",
       length(step)))
   }
-  
-  if(!is.null(prob_strain)){
+
+  if (!is.null(prob_strain)) {
     if (length(dim(prob_strain)) != 3) {
       stop("Expected a 3d array of 'prob_strain'")
     }
@@ -358,7 +358,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
         length(step)))
     }
   }
-  
+
   calculate_rt_one_trajectory <- function(i) {
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
