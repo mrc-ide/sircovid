@@ -393,7 +393,7 @@ test_that("Swapping strains gives identical results with different index", {
 
   z1 <- mod$transform_variables(res1)
   z2 <- mod2$transform_variables(res2)
-  
+
   z2[["prob_strain"]][, , -1] <- z2[["prob_strain"]][, 2:1, -1, drop = FALSE]
 
   z2$cum_infections_per_strain <-
@@ -539,15 +539,15 @@ test_that("Can calculate Rt with a second more infectious variant", {
   mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
-  
+
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
-  
+
   set.seed(1)
   y <- dust::dust_iterate(mod, steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
-  
+
   rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
   rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
 

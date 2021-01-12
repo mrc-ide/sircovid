@@ -25,13 +25,13 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
                  length(step)))
   }
   if (is.null(prob_strain)) {
-    if(length(p$strain_transmission) > 1) {
+    if (length(p$strain_transmission) > 1) {
       stop("Expected prob_strain input because there is more than one strain")
     } else {
       prob_strain <- array(1, c(p$n_groups, length(step)))
     }
   }
-  
+
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
