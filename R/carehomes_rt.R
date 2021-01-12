@@ -30,6 +30,19 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
     } else {
       prob_strain <- array(1, c(p$n_groups, length(step)))
     }
+  } else {
+    if (nrow(prob_strain) != length(p$strain_transmission) * p$n_groups) {
+      stop(sprintf(
+        "Expected 'prob_strain' to have %d rows - %d groups times %d strains",
+        p$n_groups * length(p$strain_transmission),
+        p$n_groups,
+        length(p$strain_transmission)))
+    }
+    if (ncol(prob_strain) != length(step)) {
+      stop(sprintf(
+        "Expected 'prob_strain' to have %d columns, following 'step'",
+                   length(step)))
+    }
   }
 
   ### here mean_duration accounts for relative infectivity of
@@ -306,7 +319,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
-
+  
   shared_parameters <- shared_parameters %||% !is.null(names(pars))
   if (shared_parameters) {
     if (is.null(names(pars))) {
@@ -329,7 +342,23 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
       "Expected 3rd dimension of 'S' to have length %d, following 'step'",
       length(step)))
   }
-
+  
+  if(!is.null(prob_strain)){
+    if (length(dim(prob_strain)) != 3) {
+      stop("Expected a 3d array of 'prob_strain'")
+    }
+    if (dim(prob_strain)[[2]] != length(pars)) {
+      stop(sprintf(
+        "Expected 2nd dim of 'prob_strain' to have length %d, following 'pars'",
+        length(pars)))
+    }
+    if (dim(prob_strain)[[3]] != length(step)) {
+      stop(sprintf(
+        "Expected 3rd dim of 'prob_strain' to have length %d, following 'step'",
+        length(step)))
+    }
+  }
+  
   calculate_rt_one_trajectory <- function(i) {
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step

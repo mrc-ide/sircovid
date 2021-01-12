@@ -415,6 +415,61 @@ test_that("Swapping strains gives identical results with different index", {
   expect_identical(z1, z2)
 })
 
+
+test_that("Cannot calculate Rt for multistrain without correct inputs", {
+  ## Run model with 2 variants
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10)
+  
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index_S <- mod$info()$index$S
+  index_prob_strain <- mod$info()$index$prob_strain
+  
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps)
+  S <- y[index_S, , ]
+  prob_strain <- y[index_prob_strain, , ]
+  
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p),
+    "Expected prob_strain input because there is more than one strain")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[-1, 1, ]),
+      "Expected 'prob_strain' to have 38 rows - 19 groups times 2 strains")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1]),
+    "Expected 'prob_strain' to have 85 columns, following 'step'")
+  
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p),
+    "Expected prob_strain input because there is more than one strain")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[1, , ]),
+    "Expected a 3d array of 'prob_strain'")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[-1, , ]),
+    "Expected 'prob_strain' to have 38 rows - 19 groups times 2 strains")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[, -1, ]),
+    "Expected 2nd dim of 'prob_strain' to have length 3, following 'pars'")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[, , -1]),
+    "Expected 3rd dim of 'prob_strain' to have length 85, following 'step'")
+  
+})
+
+
 test_that("Can calculate Rt with an empty second variant ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
