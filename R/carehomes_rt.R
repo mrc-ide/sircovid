@@ -329,9 +329,12 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    ifelse(is.null(prob_strain),
-           calculate_Rt(step, S[, i, ], pars[[i]]),
-           calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ]))
+    if(is.null(prob_strain)) {
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]])
+    } else {
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ])
+    }
+    rt_1
   }
 
   res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
