@@ -24,7 +24,14 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
   }
-
+  if (is.null(prob_strain)) {
+    if(length(p$strain_transmission) > 1) {
+      stop("Expected prob_strain input because there is more than one strain")
+    } else {
+      prob_strain <- array(1, c(p$n_groups, length(step)))
+    }
+  }
+  
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
@@ -48,9 +55,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
 
     S_weighted <- S[, t] * c(p$rel_susceptibility)
 
-    prob_strain_mat <- matrix(ifelse(is.null(prob_strain),
-                                     rep(1, p$n_groups),
-                                     prob_strain[, t]),
+    prob_strain_mat <- matrix(prob_strain[, t],
                               nrow = p$n_groups,
                               ncol = length(p$strain_transmission))
     weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
