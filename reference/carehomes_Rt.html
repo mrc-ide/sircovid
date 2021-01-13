@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
     <p>Compute "Rt" for a single simulated trajectory and parameter set.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_Rt</span><span class='op'>(</span><span class='va'>step</span>, <span class='va'>S</span>, <span class='va'>p</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_Rt</span><span class='op'>(</span><span class='va'>step</span>, <span class='va'>S</span>, <span class='va'>p</span>, prob_strain <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,11 +139,22 @@
     </tr>
     <tr>
       <th>S</th>
-      <td><p>A 19 x steps matrix of "S" compartment counts</p></td>
+      <td><p>A (n groups x n vaccine classes) x steps matrix of "S"
+compartment counts</p></td>
     </tr>
     <tr>
       <th>p</th>
       <td><p>A <code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> object</p></td>
+    </tr>
+    <tr>
+      <th>prob_strain</th>
+      <td><p>A (n groups x n strains) x n steps matrix of
+"prob_strain" outputs from the model. For a 2 strain model for example,
+<code>prob_strain[1, j]</code> and <code>prob_strain[n_groups + 1, j]</code> should give, for
+the j^th time step, the probabilities that new infections
+in group 1 are of strains 1 and 2 respectively.
+The default is <code>NULL</code>, but it must
+be specified if there is more than one strain</p></td>
     </tr>
     </table>
 
