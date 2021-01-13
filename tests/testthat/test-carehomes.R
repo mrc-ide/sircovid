@@ -11,21 +11,27 @@ test_that("can run the carehomes model", {
   mod$set_index(carehomes_index(mod$info())$run)
   res <- mod$run(end)
 
-  ## Regnerate with: dput_named_matrix(res)
+  ## Regenerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu                = c(3, 4, 5, 10, 3),
-          general            = c(35, 34, 35, 41, 7),
-          deaths_comm        = c(23349, 23597, 23357, 23379, 23245),
-          deaths_hosp        = c(283383, 283433, 282859, 282832, 284127),
-          admitted           = c(131981, 132378, 132257, 131758, 132269),
-          new                = c(420336, 421268, 419989, 420711, 421502),
-          sero_pos           = c(3043375, 3303884, 3660340, 3555769,
-                                 2384929),
-          sympt_cases        = c(12977835, 12976953, 12983125, 12974885,
-                                 12981657),
-          sympt_cases_over25 = c(10087409, 10086355, 10092710, 10087814,
-                                 10091423),
-          react_pos          = c(470, 641, 1063, 877, 151))
+    rbind(icu                            = c(8, 27, 7, 9, 1),
+          general                        = c(30, 131, 23, 42, 10),
+          deaths_comm                    = c(23673, 23552, 23356, 23393,
+                                             23559),
+          deaths_hosp                    = c(283863, 283386, 282999,
+                                             283381, 282816),
+          admitted                       = c(132186, 132127, 132194,
+                                             132371, 131876),
+          new                            = c(420641, 420342, 421052,
+                                             420902, 420616),
+          sero_pos                       = c(3479733, 4526778, 3009279,
+                                             3530181, 2305953),
+          sympt_cases                    = c(12981502, 12975660, 12980511,
+                                             12978842, 12976269),
+          sympt_cases_over25             = c(10089657, 10087311, 10087309,
+                                             10089215, 10085237),
+          sympt_cases_non_variant_over25 = c(10089657, 10087311, 10087309,
+                                             10089215, 10085237),
+          react_pos                      = c(819, 2512, 436, 836, 170))
   expect_equal(res, expected)
 })
 
