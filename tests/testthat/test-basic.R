@@ -11,10 +11,11 @@ test_that("can run the basic model", {
   mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
 
+  ## Regnerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu = c(92, 37, 97, 61, 65, 76, 65, 32, 20, 114),
-          deaths = c(267238, 268610, 268632, 267405, 268184, 268933, 268905,
-                     267786, 268348, 267642))
+    rbind(icu    = c(73, 25, 69, 57, 59, 65, 55, 43, 27, 128),
+          deaths = c(268897, 268997, 268429, 267389, 268333, 268418,
+                     268051, 267694, 268211, 267721))
   expect_equal(res, expected)
 })
 
