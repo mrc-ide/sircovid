@@ -41,7 +41,7 @@ test_that("Can calculate Rt", {
 })
 
 
-test_that("validate inputs in rt calculation", {
+test_that("validate inputs in Rt calculation", {
   d <- reference_data_rt()
 
   p <- d$inputs$p
@@ -59,7 +59,7 @@ test_that("validate inputs in rt calculation", {
 })
 
 
-test_that("validate inputs in rt trajectories calculation", {
+test_that("validate inputs in Rt trajectories calculation", {
   d <- reference_data_rt()
 
   p <- d$inputs$p
@@ -227,9 +227,26 @@ test_that("Can interpolate Rt with step changes", {
     rt_cmp)
 
   ## Then compute the Rt values with interpolation
-  rt_int <- carehomes_Rt_trajectories(step, S, p,
+  rt_int_2 <- carehomes_Rt_trajectories(step, S, p,
                                       initial_step_from_parameters = FALSE,
                                       interpolate_every = 2,
                                       interpolate_min = 3,
                                       interpolate_critical = crit_step)
+  rt_int_7 <- carehomes_Rt_trajectories(step, S, p,
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 7,
+                                        interpolate_min = 3,
+                                        interpolate_critical = crit_step)
+  ## check the error is small
+  tol <- 0.05
+  # for interpolation every 2
+  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_2$eff_Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_2$eff_Rt_general) < tol))
+  expect_true(all(abs(rt_cmp$Rt_all - rt_int_2$Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$Rt_general - rt_int_2$Rt_general) < tol))
+  # for interpolation every 7
+  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_7$eff_Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_7$eff_Rt_general) < tol))
+  expect_true(all(abs(rt_cmp$Rt_all - rt_int_7$Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$Rt_general - rt_int_7$Rt_general) < tol))
 })
