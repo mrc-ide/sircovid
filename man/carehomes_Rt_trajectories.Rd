@@ -16,14 +16,16 @@ carehomes_Rt_trajectories(
 \arguments{
 \item{step}{A vector of steps}
 
-\item{S}{A 3d (19 x n trajectories x n steps) array of "S"
-compartment counts}
+\item{S}{A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
+array of "S" compartment counts}
 
 \item{pars}{Either a single \code{\link[=carehomes_parameters]{carehomes_parameters()}} object
 (shared parameters) or an unnamed list of
 \code{\link[=carehomes_parameters]{carehomes_parameters()}} objects, the same length as \code{ncol(S)}.}
 
-\item{prob_strain}{prob_strain outputs from model}
+\item{prob_strain}{A 3d ((n groups x n strains) x n trajectories x n steps)
+array of "prob_strain" model outputs. Default is \code{NULL}, but it must be
+specified if there is more than one strain.}
 
 \item{initial_step_from_parameters}{If \code{TRUE}, then \code{step[[1]]} is
 replaced by the value of \code{initial_step} from the parameters.

@@ -4,11 +4,14 @@
 ##'
 ##' @param step A vector of steps that the model was run over
 ##'
-##' @param S A 19 x steps matrix of "S" compartment counts
+##' @param S A (n groups x n vaccine classes) x steps matrix of "S"
+##'   compartment counts
 ##'
 ##' @param p A [carehomes_parameters()] object
 ##'
-##' @param prob_strain prob_strain outputs from the model
+##' @param prob_strain A (n groups x n strains) x n steps matrix of 
+##'   "prob_strain" outputs from the model. The default is `NULL`, but it must
+##'   be specified if there is more than one strain
 ##'
 ##' @return A list with elements `step`, `beta`, `eff_Rt_all`,
 ##'   `eff_Rt_general`, `Rt_all` and `Rt_general`
@@ -17,8 +20,10 @@
 carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
-      "Expected 'S' to have %d rows, following transmission matrix",
-      nrow(p$m)))
+      "Expected 'S' to have %d rows - %d groups x %d vaccine classes",
+      p$n_groups * ncol(p$rel_susceptibility),
+      p$n_groups,
+      ncol(p$rel_susceptibility)))
   }
   if (ncol(S) != length(step)) {
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
@@ -33,7 +38,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   } else {
     if (nrow(prob_strain) != length(p$strain_transmission) * p$n_groups) {
       stop(sprintf(
-        "Expected 'prob_strain' to have %d rows - %d groups times %d strains",
+        "Expected 'prob_strain' to have %d rows - %d groups x %d strains",
         p$n_groups * length(p$strain_transmission),
         p$n_groups,
         length(p$strain_transmission)))
@@ -145,14 +150,16 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
 ##'
 ##' @param step A vector of steps
 ##'
-##' @param S A 3d (19 x n trajectories x n steps) array of "S"
-##'   compartment counts
+##' @param S A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
+##'   array of "S" compartment counts
 ##'
 ##' @param pars Either a single [carehomes_parameters()] object
 ##'   (shared parameters) or an unnamed list of
 ##'   [carehomes_parameters()] objects, the same length as `ncol(S)`.
 ##'
-##' @param prob_strain prob_strain outputs from model
+##' @param prob_strain A 3d ((n groups x n strains) x n trajectories x n steps)
+##'   array of "prob_strain" model outputs. Default is `NULL`, but it must be
+##'   specified if there is more than one strain.
 ##'
 ##' @param initial_step_from_parameters If `TRUE`, then `step[[1]]` is
 ##'   replaced by the value of `initial_step` from the parameters.

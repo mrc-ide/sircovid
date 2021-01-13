@@ -9,11 +9,14 @@ carehomes_Rt(step, S, p, prob_strain = NULL)
 \arguments{
 \item{step}{A vector of steps that the model was run over}
 
-\item{S}{A 19 x steps matrix of "S" compartment counts}
+\item{S}{A (n groups x n vaccine classes) x steps matrix of "S"
+compartment counts}
 
 \item{p}{A \code{\link[=carehomes_parameters]{carehomes_parameters()}} object}
 
-\item{prob_strain}{prob_strain outputs from the model}
+\item{prob_strain}{A (n groups x n strains) x n steps matrix of
+"prob_strain" outputs from the model. The default is \code{NULL}, but it must
+be specified if there is more than one strain}
 }
 \value{
 A list with elements \code{step}, \code{beta}, \code{eff_Rt_all},
