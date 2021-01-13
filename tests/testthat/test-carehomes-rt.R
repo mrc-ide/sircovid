@@ -50,7 +50,7 @@ test_that("validate inputs in rt calculation", {
 
   expect_error(
     carehomes_Rt(steps, y[-1, 1, ], p),
-    "Expected 'S' to have 19 rows, following transmission matrix",
+    "Expected 'S' to have 19 rows = 19 groups x 1 vaccine classes",
     fixed = TRUE)
   expect_error(
     carehomes_Rt(steps, y[, 1, -1], p),

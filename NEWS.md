@@ -1,3 +1,7 @@
+# sircovid 0.9.3
+
+* Corrected calculation of NGM for multistrain model
+
 # sircovid 0.9.2
 
 * Added different infectivity levels depending on vaccination stage

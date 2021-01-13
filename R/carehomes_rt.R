@@ -4,35 +4,65 @@
 ##'
 ##' @param step A vector of steps that the model was run over
 ##'
-##' @param S A 19 x steps matrix of "S" compartment counts
+##' @param S A (n groups x n vaccine classes) x steps matrix of "S"
+##'   compartment counts
 ##'
 ##' @param p A [carehomes_parameters()] object
+##'
+##' @param prob_strain A (n groups x n strains) x n steps matrix of
+##'   "prob_strain" outputs from the model. For a 2 strain model for example,
+##'   `prob_strain[1, j]` and `prob_strain[n_groups + 1, j]` should give, for
+##'   the j^th time step, the probabilities that new infections
+##'   in group 1 are of strains 1 and 2 respectively.
+##'   The default is `NULL`, but it must
+##'   be specified if there is more than one strain
 ##'
 ##' @return A list with elements `step`, `beta`, `eff_Rt_all`,
 ##'   `eff_Rt_general`, `Rt_all` and `Rt_general`
 ##'
 ##' @export
-carehomes_Rt <- function(step, S, p) {
+carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
-      "Expected 'S' to have %d rows, following transmission matrix",
-      nrow(p$m)))
+      "Expected 'S' to have %d rows = %d groups x %d vaccine classes",
+      p$n_groups * ncol(p$rel_susceptibility),
+      p$n_groups,
+      ncol(p$rel_susceptibility)))
   }
   if (ncol(S) != length(step)) {
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
+  }
+  if (is.null(prob_strain)) {
+    if (length(p$strain_transmission) > 1) {
+      stop("Expected prob_strain input because there is more than one strain")
+    } else {
+      prob_strain <- array(1, c(p$n_groups, length(step)))
+    }
+  } else {
+    if (nrow(prob_strain) != length(p$strain_transmission) * p$n_groups) {
+      stop(sprintf(
+        "Expected 'prob_strain' to have %d rows = %d groups x %d strains",
+        p$n_groups * length(p$strain_transmission),
+        p$n_groups,
+        length(p$strain_transmission)))
+    }
+    if (ncol(prob_strain) != length(step)) {
+      stop(sprintf(
+        "Expected 'prob_strain' to have %d columns, following 'step'",
+                   length(step)))
+    }
   }
 
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
-  max_strain_multiplier <- max(p$strain_transmission)
 
   n_vacc_classes <- ncol(p$rel_susceptibility)
 
   calculate_ev <-
-    function(t, S, beta, mean_duration, max_strain_multiplier, drop_carehomes) {
+    function(t, S, prob_strain, beta, mean_duration, drop_carehomes) {
     ## Next-Generation-Matrix
     m <- p$m
     ages <- seq_len(p$n_age_groups)
@@ -47,9 +77,15 @@ carehomes_Rt <- function(step, S, p) {
 
     S_weighted <- S[, t] * c(p$rel_susceptibility)
 
-    ## In a multistrain model R0 is the max of R0 across strains
-    ngm <- outer(c(mean_duration[, , t]), S_weighted) * m_extended *
-      max_strain_multiplier
+    prob_strain_mat <- matrix(prob_strain[, t],
+                              nrow = p$n_groups,
+                              ncol = length(p$strain_transmission))
+    weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
+
+    ngm <- outer(c(mean_duration[, , t] *
+                     array(weighted_strain_multiplier,
+                           c(p$n_groups, n_vacc_classes))),
+                 S_weighted) * m_extended
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
@@ -67,14 +103,14 @@ carehomes_Rt <- function(step, S, p) {
 
   t <- seq_along(step)
   eff_Rt_all <- vnapply(t, calculate_ev, S,
+                        prob_strain = prob_strain,
                         beta = beta,
                         mean_duration = mean_duration,
-                        max_strain_multiplier = max_strain_multiplier,
                         drop_carehomes = FALSE)
   eff_Rt_general <- vnapply(t, calculate_ev, S,
+                            prob_strain = prob_strain,
                             beta = beta,
                             mean_duration = mean_duration,
-                            max_strain_multiplier = max_strain_multiplier,
                             drop_carehomes = TRUE)
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
@@ -85,14 +121,14 @@ carehomes_Rt <- function(step, S, p) {
     }
   }
   Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
+                    prob_strain = prob_strain,
                     beta = beta,
                     mean_duration = mean_duration,
-                    max_strain_multiplier = max_strain_multiplier,
                     drop_carehomes = FALSE)
   Rt_general <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
+                        prob_strain = prob_strain,
                         beta = beta,
                         mean_duration = mean_duration,
-                        max_strain_multiplier = max_strain_multiplier,
                         drop_carehomes = TRUE)
 
   list(step = step,
@@ -120,12 +156,16 @@ carehomes_Rt <- function(step, S, p) {
 ##'
 ##' @param step A vector of steps
 ##'
-##' @param S A 3d (19 x n trajectories x n steps) array of "S"
-##'   compartment counts
+##' @param S A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
+##'   array of "S" compartment counts
 ##'
 ##' @param pars Either a single [carehomes_parameters()] object
 ##'   (shared parameters) or an unnamed list of
 ##'   [carehomes_parameters()] objects, the same length as `ncol(S)`.
+##'
+##' @param prob_strain A 3d ((n groups x n strains) x n trajectories x n steps)
+##'   array of "prob_strain" model outputs. Default is `NULL`, but it must be
+##'   specified if there is more than one strain.
 ##'
 ##' @param initial_step_from_parameters If `TRUE`, then `step[[1]]` is
 ##'   replaced by the value of `initial_step` from the parameters.
@@ -140,10 +180,10 @@ carehomes_Rt <- function(step, S, p) {
 ##'   matrix, not a vector.
 ##'
 ##' @export
-carehomes_Rt_trajectories <- function(step, S, pars,
+carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       initial_step_from_parameters = TRUE,
                                       shared_parameters = NULL) {
-  calculate_Rt_trajectories(carehomes_Rt, step, S, pars,
+  calculate_Rt_trajectories(carehomes_Rt, step, S, pars, prob_strain,
                             initial_step_from_parameters, shared_parameters)
 }
 
@@ -286,7 +326,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## it out here; when we implement this for the basic model this will
 ## remain unchanged.  However, I am leaving it in this
 ## carehomes-specific file until we do add a new model or port it.
-calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars,
+calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
                                       shared_parameters) {
   if (length(dim(S)) != 3) {
@@ -316,11 +356,32 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars,
       length(step)))
   }
 
+  if (!is.null(prob_strain)) {
+    if (length(dim(prob_strain)) != 3) {
+      stop("Expected a 3d array of 'prob_strain'")
+    }
+    if (dim(prob_strain)[[2]] != length(pars)) {
+      stop(sprintf(
+        "Expected 2nd dim of 'prob_strain' to have length %d, following 'pars'",
+        length(pars)))
+    }
+    if (dim(prob_strain)[[3]] != length(step)) {
+      stop(sprintf(
+        "Expected 3rd dim of 'prob_strain' to have length %d, following 'step'",
+        length(step)))
+    }
+  }
+
   calculate_rt_one_trajectory <- function(i) {
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    calculate_Rt(step, S[, i, ], pars[[i]])
+    if (is.null(prob_strain)) {
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]])
+    } else {
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ])
+    }
+    rt_1
   }
 
   res <- lapply(seq_along(pars), calculate_rt_one_trajectory)

@@ -4,14 +4,23 @@
 \alias{carehomes_Rt}
 \title{Compute "Rt"}
 \usage{
-carehomes_Rt(step, S, p)
+carehomes_Rt(step, S, p, prob_strain = NULL)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
 
-\item{S}{A 19 x steps matrix of "S" compartment counts}
+\item{S}{A (n groups x n vaccine classes) x steps matrix of "S"
+compartment counts}
 
 \item{p}{A \code{\link[=carehomes_parameters]{carehomes_parameters()}} object}
+
+\item{prob_strain}{A (n groups x n strains) x n steps matrix of
+"prob_strain" outputs from the model. For a 2 strain model for example,
+\code{prob_strain[1, j]} and \code{prob_strain[n_groups + 1, j]} should give, for
+the j^th time step, the probabilities that new infections
+in group 1 are of strains 1 and 2 respectively.
+The default is \code{NULL}, but it must
+be specified if there is more than one strain}
 }
 \value{
 A list with elements \code{step}, \code{beta}, \code{eff_Rt_all},
