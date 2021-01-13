@@ -395,7 +395,7 @@ test_that("Swapping strains gives identical results with different index", {
   z2 <- mod2$transform_variables(res2)
 
   z2[["prob_strain"]][, , -1] <- z2[["prob_strain"]][, 2:1, -1, drop = FALSE]
-  z2[["cum_sympt_cases_non_variant_over25"]] <- 
+  z2[["cum_sympt_cases_non_variant_over25"]] <-
     z2[["cum_sympt_cases_over25"]] - z2[["cum_sympt_cases_non_variant_over25"]]
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[2:1, , drop = FALSE]
