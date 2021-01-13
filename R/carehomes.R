@@ -416,6 +416,8 @@ carehomes_index <- function(info) {
                  sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
+                 sympt_cases_non_variant_over25 =
+                   index[["cum_sympt_cases_non_variant_over25"]],
                  react_pos = index[["react_pos"]])
 
   ## Variables that we want to save for post-processing
@@ -512,6 +514,9 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25", ] -
     prev_state["sympt_cases_over25", ]
+  model_sympt_cases_non_variant_over25 <-
+    state["sympt_cases_non_variant_over25", ] -
+    prev_state["sympt_cases_non_variant_over25", ]
   model_react_pos <- state["react_pos", ]
 
   ## calculate test positive probabilities for the various test data streams
@@ -546,6 +551,12 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                        pars$sero_sensitivity,
                                        pars$sero_specificity,
                                        pars$observation$exp_noise)
+  
+  ## Strain
+  model_strain_over25_prob_pos <- test_prob_pos(
+    model_sympt_cases_non_variant_over25,
+    model_sympt_cases_over25 - model_sympt_cases_non_variant_over25,
+    1, 1, pars$observation$exp_noise)
 
   pars <- pars$observation
   exp_noise <- pars$exp_noise
@@ -605,10 +616,14 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                        observed$react_tot,
                        model_react_prob_pos)
 
+  ll_strain_over25 <- ll_binom(observed$strain_non_variant,
+                               observed$strain_tot,
+                               model_strain_over25_prob_pos)
+  
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_new_admitted + ll_serology + ll_pillar2_tests +
     ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
-    ll_react
+    ll_react + ll_strain_over25
 }
 
 
