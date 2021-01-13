@@ -212,9 +212,8 @@ test_that("Can interpolate Rt with step changes", {
   ## Work out our critical dates so that we can start interpolation:
   step <- attr(ans, "step")
   S <- ans[grep("S_", rownames(ans)), , ]
-  crit <- sircovid_date(c("2020-04-15", "2020-05-01", "2020-05-15"))
-  crit2 <- c(rbind(crit - 1, crit))
-  crit_step <- match(crit2 / p[[1]]$dt, step)
+
+  crit_dates <- sircovid_date(names(future))
 
   rt_cmp <- carehomes_Rt_trajectories(step, S, p,
                                       initial_step_from_parameters = FALSE)
@@ -231,22 +230,34 @@ test_that("Can interpolate Rt with step changes", {
                                       initial_step_from_parameters = FALSE,
                                       interpolate_every = 2,
                                       interpolate_min = 3,
-                                      interpolate_critical = crit_step)
+                                      interpolate_critical_dates = crit_dates)
   rt_int_7 <- carehomes_Rt_trajectories(step, S, p,
                                         initial_step_from_parameters = FALSE,
                                         interpolate_every = 7,
                                         interpolate_min = 3,
-                                        interpolate_critical = crit_step)
+                                        interpolate_critical_dates = crit_dates)
+  rt_int_14 <- carehomes_Rt_trajectories(step, S, p,
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 14,
+                                        interpolate_min = 1,
+                                        interpolate_critical_dates = crit_dates)
   ## check the error is small
   tol <- 0.05
-  # for interpolation every 2
+  # for interpolation every 2 days
   expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_2$eff_Rt_all) < tol))
   expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_2$eff_Rt_general) < tol))
   expect_true(all(abs(rt_cmp$Rt_all - rt_int_2$Rt_all) < tol))
   expect_true(all(abs(rt_cmp$Rt_general - rt_int_2$Rt_general) < tol))
-  # for interpolation every 7
+  # for interpolation every 7 days
   expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_7$eff_Rt_all) < tol))
   expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_7$eff_Rt_general) < tol))
   expect_true(all(abs(rt_cmp$Rt_all - rt_int_7$Rt_all) < tol))
   expect_true(all(abs(rt_cmp$Rt_general - rt_int_7$Rt_general) < tol))
+  # have to increase tolerance dramatically for every 14 days
+  tol2 <- 0.5
+  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_14$eff_Rt_all) < tol2))
+  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_14$eff_Rt_general) < tol2))
+  expect_true(all(abs(rt_cmp$Rt_all - rt_int_14$Rt_all) < tol2))
+  expect_true(all(abs(rt_cmp$Rt_general - rt_int_14$Rt_general) < tol2))
+
 })

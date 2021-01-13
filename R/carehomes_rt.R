@@ -12,21 +12,21 @@
 ##'   compute. Can be any or all of `eff_Rt_all`, `eff_Rt_general`,
 ##'   `Rt_all` and `Rt_general`
 ##'
-##' @param interpolate_every Spacing to use between interpolated points
+##' @param interpolate_every Spacing (in days) to use between interpolated
+##'   points
 ##'
-##' @param interpolate_critical Optional vector of critical step
-##'   indices to use when interpolating. Interpolation will be done in
-##'   blocks between these points, with each block starting on the
-##'   step given. So if you give a `interpolate_critical` of `c(20,
-##'   50)` then blocks *start* on steps 20 and 50, i.e.: `[1, 20)`,
-##'   `[20, 50)`, `[50, end]`. Note that this is the index into the
-##'   `step` argument and not necessarily the same as the original
-##'   model step (being `dt * date`).
+##' @param interpolate_critical_dates Optional vector of critical sircovid
+##'   dates to use when interpolating. Interpolation will be done in
+##'   blocks between the first time step of these dates, with each block
+##'   starting on the first time step of the date given.
+##'   So if you give a `interpolate_critical_dates` of `c(20,
+##'   50)` then blocks *start* on first time step of days 20 and 50,
+##'   i.e.: `[1, 20)`, `[20, 50)`, `[50, end]`.
 ##'
 ##' @param interpolate_min The minimum number of steps to include
 ##'   within a block. If there are fewer points than this then all
 ##'   points are used (i.e., no interpolation is done) or
-##'   `interpolate_every` is increased until at least this many points
+##'   `interpolate_every` is reduced until at least this many points
 ##'   were used. This can be used to specify a lower bound on the
 ##'   error of small regions. If Rt is small it won't matter that
 ##'   much. You do need to specify something though or interpolation
@@ -38,7 +38,8 @@
 ##'
 ##' @export
 carehomes_Rt <- function(step, S, p, type = NULL, interpolate_every = NULL,
-                         interpolate_critical = NULL, interpolate_min = NULL) {
+                         interpolate_critical_dates = NULL,
+                         interpolate_min = NULL) {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -118,13 +119,21 @@ carehomes_Rt <- function(step, S, p, type = NULL, interpolate_every = NULL,
               date = step * p$dt,
               beta = beta)
 
+  ## translate days into steps
+  if(!is.null(interpolate_every)) {
+    interpolate_every <- interpolate_every / p$dt
+  }
+  interpolate_critical_dates2 <-
+    c(rbind(interpolate_critical_dates - 1, interpolate_critical_dates))
+  interpolate_critical_step <- match(interpolate_critical_dates2 / p$dt, step)
+
   ret[type] <- lapply(opts[type], function(x)
     interpolate_grid_critical(t, function(t)
       calculate_ev(t, x$pop, beta = beta,
                    mean_duration = mean_duration,
                    max_strain_multiplier = max_strain_multiplier,
                    drop_carehomes = x$general),
-      interpolate_every, interpolate_critical, interpolate_min))
+      interpolate_every, interpolate_critical_step, interpolate_min))
 
   ret
 }
@@ -173,11 +182,11 @@ carehomes_Rt_trajectories <- function(step, S, pars,
                                       shared_parameters = NULL,
                                       type = NULL,
                                       interpolate_every = NULL,
-                                      interpolate_critical = NULL,
+                                      interpolate_critical_dates = NULL,
                                       interpolate_min = NULL) {
   calculate_Rt_trajectories(carehomes_Rt, step, S, pars,
                             initial_step_from_parameters, shared_parameters,
-                            type, interpolate_every, interpolate_critical,
+                            type, interpolate_every, interpolate_critical_dates,
                             interpolate_min)
 }
 
