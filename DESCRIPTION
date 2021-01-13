@@ -47,7 +47,7 @@ LazyData: true
 Language: en-GB
 Depends: R (>= 3.1.0)
 Imports:
-    dust (>= 0.5.9),
+    dust (>= 0.5.10),
     mcstate (>= 0.2.15),
     socialmixr
 LinkingTo:
