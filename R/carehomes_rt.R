@@ -10,7 +10,11 @@
 ##' @param p A [carehomes_parameters()] object
 ##'
 ##' @param prob_strain A (n groups x n strains) x n steps matrix of
-##'   "prob_strain" outputs from the model. The default is `NULL`, but it must
+##'   "prob_strain" outputs from the model. For a 2 strain model for example,
+##'   prob_strain[1, j] and prob_strain[n_groups + 1, j] should give, for the
+##'   j^th time step, the probabilities that new infections
+##'   in group 1 are of strains 1 and 2 respectively.
+##'   The default is `NULL`, but it must
 ##'   be specified if there is more than one strain
 ##'
 ##' @return A list with elements `step`, `beta`, `eff_Rt_all`,
@@ -20,7 +24,7 @@
 carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
-      "Expected 'S' to have %d rows - %d groups x %d vaccine classes",
+      "Expected 'S' to have %d rows = %d groups x %d vaccine classes",
       p$n_groups * ncol(p$rel_susceptibility),
       p$n_groups,
       ncol(p$rel_susceptibility)))
@@ -38,7 +42,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   } else {
     if (nrow(prob_strain) != length(p$strain_transmission) * p$n_groups) {
       stop(sprintf(
-        "Expected 'prob_strain' to have %d rows - %d groups x %d strains",
+        "Expected 'prob_strain' to have %d rows = %d groups x %d strains",
         p$n_groups * length(p$strain_transmission),
         p$n_groups,
         length(p$strain_transmission)))
@@ -98,11 +102,13 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   }
 
   t <- seq_along(step)
-  eff_Rt_all <- vnapply(t, calculate_ev, S, prob_strain,
+  eff_Rt_all <- vnapply(t, calculate_ev, S,
+                        prob_strain = prob_strain,
                         beta = beta,
                         mean_duration = mean_duration,
                         drop_carehomes = FALSE)
-  eff_Rt_general <- vnapply(t, calculate_ev, S, prob_strain,
+  eff_Rt_general <- vnapply(t, calculate_ev, S,
+                            prob_strain = prob_strain,
                             beta = beta,
                             mean_duration = mean_duration,
                             drop_carehomes = TRUE)
@@ -115,12 +121,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
     }
   }
   Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
-                    prob_strain,
+                    prob_strain = prob_strain,
                     beta = beta,
                     mean_duration = mean_duration,
                     drop_carehomes = FALSE)
   Rt_general <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
-                        prob_strain,
+                        prob_strain = prob_strain,
                         beta = beta,
                         mean_duration = mean_duration,
                         drop_carehomes = TRUE)
