@@ -60,6 +60,8 @@ test_that("can run the particle filter on the model", {
   data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
+  data$strain_non_variant <- NA
+  data$strain_tot <- NA
 
   pf <- carehomes_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")
