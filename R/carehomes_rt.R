@@ -9,7 +9,7 @@
 ##'
 ##' @param p A [carehomes_parameters()] object
 ##'
-##' @param prob_strain A (n groups x n strains) x n steps matrix of 
+##' @param prob_strain A (n groups x n strains) x n steps matrix of
 ##'   "prob_strain" outputs from the model. The default is `NULL`, but it must
 ##'   be specified if there is more than one strain
 ##'
