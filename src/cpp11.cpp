@@ -5,10 +5,10 @@
 #include "cpp11/declarations.hpp"
 
 // basic.cpp
-SEXP dust_basic_alloc(cpp11::list r_data, bool data_multi, size_t step, size_t n_particles, size_t n_threads, cpp11::sexp r_seed);
-extern "C" SEXP _sircovid_dust_basic_alloc(SEXP r_data, SEXP data_multi, SEXP step, SEXP n_particles, SEXP n_threads, SEXP r_seed) {
+SEXP dust_basic_alloc(cpp11::list r_pars, bool pars_multi, size_t step, size_t n_particles, size_t n_threads, cpp11::sexp r_seed);
+extern "C" SEXP _sircovid_dust_basic_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP n_particles, SEXP n_threads, SEXP r_seed) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data), cpp11::as_cpp<cpp11::decay_t<bool>>(data_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed)));
+    return cpp11::as_sexp(dust_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed)));
   END_CPP11
 }
 // basic.cpp
@@ -33,10 +33,10 @@ extern "C" SEXP _sircovid_dust_basic_set_state(SEXP ptr, SEXP r_state, SEXP r_st
   END_CPP11
 }
 // basic.cpp
-SEXP dust_basic_reset(SEXP ptr, cpp11::list r_data, size_t step);
-extern "C" SEXP _sircovid_dust_basic_reset(SEXP ptr, SEXP r_data, SEXP step) {
+SEXP dust_basic_reset(SEXP ptr, cpp11::list r_pars, size_t step);
+extern "C" SEXP _sircovid_dust_basic_reset(SEXP ptr, SEXP r_pars, SEXP step) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_basic_reset(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data), cpp11::as_cpp<cpp11::decay_t<size_t>>(step)));
+    return cpp11::as_sexp(dust_basic_reset(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<size_t>>(step)));
   END_CPP11
 }
 // basic.cpp
@@ -62,10 +62,10 @@ extern "C" SEXP _sircovid_dust_basic_reorder(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // basic.cpp
-SEXP dust_basic_set_data(SEXP ptr, cpp11::list r_data);
-extern "C" SEXP _sircovid_dust_basic_set_data(SEXP ptr, SEXP r_data) {
+SEXP dust_basic_set_pars(SEXP ptr, cpp11::list r_pars);
+extern "C" SEXP _sircovid_dust_basic_set_pars(SEXP ptr, SEXP r_pars) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_basic_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data)));
+    return cpp11::as_sexp(dust_basic_set_pars(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars)));
   END_CPP11
 }
 // basic.cpp
@@ -83,10 +83,10 @@ extern "C" SEXP _sircovid_dust_basic_set_rng_state(SEXP ptr, SEXP rng_state) {
   END_CPP11
 }
 // basic.cpp
-SEXP dust_basic_simulate(cpp11::sexp r_steps, cpp11::list r_data, cpp11::doubles_matrix r_state, cpp11::sexp r_index, const size_t n_threads, cpp11::sexp r_seed, bool return_state);
-extern "C" SEXP _sircovid_dust_basic_simulate(SEXP r_steps, SEXP r_data, SEXP r_state, SEXP r_index, SEXP n_threads, SEXP r_seed, SEXP return_state) {
+SEXP dust_basic_simulate(cpp11::sexp r_steps, cpp11::list r_pars, cpp11::doubles_matrix r_state, cpp11::sexp r_index, const size_t n_threads, cpp11::sexp r_seed, bool return_state);
+extern "C" SEXP _sircovid_dust_basic_simulate(SEXP r_steps, SEXP r_pars, SEXP r_state, SEXP r_index, SEXP n_threads, SEXP r_seed, SEXP return_state) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_basic_simulate(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_steps), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix>>(r_state), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index), cpp11::as_cpp<cpp11::decay_t<const size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(return_state)));
+    return cpp11::as_sexp(dust_basic_simulate(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_steps), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix>>(r_state), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index), cpp11::as_cpp<cpp11::decay_t<const size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(return_state)));
   END_CPP11
 }
 // basic.cpp
@@ -105,10 +105,10 @@ extern "C" SEXP _sircovid_dust_basic_set_n_threads(SEXP ptr, SEXP n_threads) {
   END_CPP11
 }
 // carehomes.cpp
-SEXP dust_carehomes_alloc(cpp11::list r_data, bool data_multi, size_t step, size_t n_particles, size_t n_threads, cpp11::sexp r_seed);
-extern "C" SEXP _sircovid_dust_carehomes_alloc(SEXP r_data, SEXP data_multi, SEXP step, SEXP n_particles, SEXP n_threads, SEXP r_seed) {
+SEXP dust_carehomes_alloc(cpp11::list r_pars, bool pars_multi, size_t step, size_t n_particles, size_t n_threads, cpp11::sexp r_seed);
+extern "C" SEXP _sircovid_dust_carehomes_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP n_particles, SEXP n_threads, SEXP r_seed) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_carehomes_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data), cpp11::as_cpp<cpp11::decay_t<bool>>(data_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed)));
+    return cpp11::as_sexp(dust_carehomes_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed)));
   END_CPP11
 }
 // carehomes.cpp
@@ -133,10 +133,10 @@ extern "C" SEXP _sircovid_dust_carehomes_set_state(SEXP ptr, SEXP r_state, SEXP 
   END_CPP11
 }
 // carehomes.cpp
-SEXP dust_carehomes_reset(SEXP ptr, cpp11::list r_data, size_t step);
-extern "C" SEXP _sircovid_dust_carehomes_reset(SEXP ptr, SEXP r_data, SEXP step) {
+SEXP dust_carehomes_reset(SEXP ptr, cpp11::list r_pars, size_t step);
+extern "C" SEXP _sircovid_dust_carehomes_reset(SEXP ptr, SEXP r_pars, SEXP step) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_carehomes_reset(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data), cpp11::as_cpp<cpp11::decay_t<size_t>>(step)));
+    return cpp11::as_sexp(dust_carehomes_reset(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<size_t>>(step)));
   END_CPP11
 }
 // carehomes.cpp
@@ -162,10 +162,10 @@ extern "C" SEXP _sircovid_dust_carehomes_reorder(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // carehomes.cpp
-SEXP dust_carehomes_set_data(SEXP ptr, cpp11::list r_data);
-extern "C" SEXP _sircovid_dust_carehomes_set_data(SEXP ptr, SEXP r_data) {
+SEXP dust_carehomes_set_pars(SEXP ptr, cpp11::list r_pars);
+extern "C" SEXP _sircovid_dust_carehomes_set_pars(SEXP ptr, SEXP r_pars) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_carehomes_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data)));
+    return cpp11::as_sexp(dust_carehomes_set_pars(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars)));
   END_CPP11
 }
 // carehomes.cpp
@@ -183,10 +183,10 @@ extern "C" SEXP _sircovid_dust_carehomes_set_rng_state(SEXP ptr, SEXP rng_state)
   END_CPP11
 }
 // carehomes.cpp
-SEXP dust_carehomes_simulate(cpp11::sexp r_steps, cpp11::list r_data, cpp11::doubles_matrix r_state, cpp11::sexp r_index, const size_t n_threads, cpp11::sexp r_seed, bool return_state);
-extern "C" SEXP _sircovid_dust_carehomes_simulate(SEXP r_steps, SEXP r_data, SEXP r_state, SEXP r_index, SEXP n_threads, SEXP r_seed, SEXP return_state) {
+SEXP dust_carehomes_simulate(cpp11::sexp r_steps, cpp11::list r_pars, cpp11::doubles_matrix r_state, cpp11::sexp r_index, const size_t n_threads, cpp11::sexp r_seed, bool return_state);
+extern "C" SEXP _sircovid_dust_carehomes_simulate(SEXP r_steps, SEXP r_pars, SEXP r_state, SEXP r_index, SEXP n_threads, SEXP r_seed, SEXP return_state) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_carehomes_simulate(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_steps), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_data), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix>>(r_state), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index), cpp11::as_cpp<cpp11::decay_t<const size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(return_state)));
+    return cpp11::as_sexp(dust_carehomes_simulate(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_steps), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles_matrix>>(r_state), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index), cpp11::as_cpp<cpp11::decay_t<const size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(return_state)));
   END_CPP11
 }
 // carehomes.cpp
@@ -213,9 +213,9 @@ extern SEXP _sircovid_dust_basic_reorder(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_reset(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_run(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_set_data(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_index(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_n_threads(SEXP, SEXP);
+extern SEXP _sircovid_dust_basic_set_pars(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_set_state(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_simulate(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -227,9 +227,9 @@ extern SEXP _sircovid_dust_carehomes_reorder(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_reset(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_run(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_set_data(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_index(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_n_threads(SEXP, SEXP);
+extern SEXP _sircovid_dust_carehomes_set_pars(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_rng_state(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_set_state(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_simulate(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -243,9 +243,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_basic_reset",             (DL_FUNC) &_sircovid_dust_basic_reset,             3},
     {"_sircovid_dust_basic_rng_state",         (DL_FUNC) &_sircovid_dust_basic_rng_state,         2},
     {"_sircovid_dust_basic_run",               (DL_FUNC) &_sircovid_dust_basic_run,               2},
-    {"_sircovid_dust_basic_set_data",          (DL_FUNC) &_sircovid_dust_basic_set_data,          2},
     {"_sircovid_dust_basic_set_index",         (DL_FUNC) &_sircovid_dust_basic_set_index,         2},
     {"_sircovid_dust_basic_set_n_threads",     (DL_FUNC) &_sircovid_dust_basic_set_n_threads,     2},
+    {"_sircovid_dust_basic_set_pars",          (DL_FUNC) &_sircovid_dust_basic_set_pars,          2},
     {"_sircovid_dust_basic_set_rng_state",     (DL_FUNC) &_sircovid_dust_basic_set_rng_state,     2},
     {"_sircovid_dust_basic_set_state",         (DL_FUNC) &_sircovid_dust_basic_set_state,         3},
     {"_sircovid_dust_basic_simulate",          (DL_FUNC) &_sircovid_dust_basic_simulate,          7},
@@ -257,9 +257,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_carehomes_reset",         (DL_FUNC) &_sircovid_dust_carehomes_reset,         3},
     {"_sircovid_dust_carehomes_rng_state",     (DL_FUNC) &_sircovid_dust_carehomes_rng_state,     2},
     {"_sircovid_dust_carehomes_run",           (DL_FUNC) &_sircovid_dust_carehomes_run,           2},
-    {"_sircovid_dust_carehomes_set_data",      (DL_FUNC) &_sircovid_dust_carehomes_set_data,      2},
     {"_sircovid_dust_carehomes_set_index",     (DL_FUNC) &_sircovid_dust_carehomes_set_index,     2},
     {"_sircovid_dust_carehomes_set_n_threads", (DL_FUNC) &_sircovid_dust_carehomes_set_n_threads, 2},
+    {"_sircovid_dust_carehomes_set_pars",      (DL_FUNC) &_sircovid_dust_carehomes_set_pars,      2},
     {"_sircovid_dust_carehomes_set_rng_state", (DL_FUNC) &_sircovid_dust_carehomes_set_rng_state, 2},
     {"_sircovid_dust_carehomes_set_state",     (DL_FUNC) &_sircovid_dust_carehomes_set_state,     3},
     {"_sircovid_dust_carehomes_simulate",      (DL_FUNC) &_sircovid_dust_carehomes_simulate,      7},
