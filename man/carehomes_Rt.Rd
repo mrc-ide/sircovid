@@ -16,8 +16,8 @@ compartment counts}
 
 \item{prob_strain}{A (n groups x n strains) x n steps matrix of
 "prob_strain" outputs from the model. For a 2 strain model for example,
-\code{prob_strain[1, j]} and \code{prob_strain[n_groups + 1, j]} should give, for the
-j^th time step, the probabilities that new infections
+\code{prob_strain[1, j]} and \code{prob_strain[n_groups + 1, j]} should give, for
+the j^th time step, the probabilities that new infections
 in group 1 are of strains 1 and 2 respectively.
 The default is \code{NULL}, but it must
 be specified if there is more than one strain}
