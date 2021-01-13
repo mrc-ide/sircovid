@@ -551,7 +551,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
                                        pars$sero_sensitivity,
                                        pars$sero_specificity,
                                        pars$observation$exp_noise)
-  
+
   ## Strain
   model_strain_over25_prob_pos <- test_prob_pos(
     model_sympt_cases_non_variant_over25,
@@ -619,7 +619,7 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   ll_strain_over25 <- ll_binom(observed$strain_non_variant,
                                observed$strain_tot,
                                model_strain_over25_prob_pos)
-  
+
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
     ll_admitted + ll_new + ll_new_admitted + ll_serology + ll_pillar2_tests +
     ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
