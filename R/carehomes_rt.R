@@ -120,7 +120,7 @@ carehomes_Rt <- function(step, S, p, type = NULL, interpolate_every = NULL,
               beta = beta)
 
   ## translate days into steps
-  if(!is.null(interpolate_every)) {
+  if (!is.null(interpolate_every)) {
     interpolate_every <- interpolate_every / p$dt
   }
   interpolate_critical_dates2 <-
