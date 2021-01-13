@@ -1289,6 +1289,10 @@ initial(cum_sympt_cases_over25) <- 0
 update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
   sum(n_EI_C[6:n_groups, , ])
 
+initial(cum_sympt_cases_non_variant_over25) <- 0
+update(cum_sympt_cases_non_variant_over25) <-
+  cum_sympt_cases_non_variant_over25 + sum(n_EI_C[6:n_groups, 1, ])
+
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
 update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])

@@ -1,3 +1,7 @@
+# sircovid 0.9.4
+
+* Add over 25 strain data stream to likelihood
+
 # sircovid 0.9.3
 
 * Corrected calculation of NGM for multistrain model

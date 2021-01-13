@@ -204,7 +204,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("icu", "general", "deaths_comm", "deaths_hosp", "admitted", "new",
-      "sero_pos", "sympt_cases", "sympt_cases_over25", "react_pos"))
+      "sero_pos", "sympt_cases", "sympt_cases_over25",
+      "sympt_cases_non_variant_over25", "react_pos"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "ICU_tot"))
@@ -313,6 +314,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     sero_pos = 4:9,
     sympt_cases = 100:105,
     sympt_cases_over25 = 80:85,
+    sympt_cases_non_variant_over25 = 60:65,
     react_pos = 2:7)
   prev_state <- array(1, dim(state), dimnames = dimnames(state))
   observed <- list(
@@ -334,7 +336,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     pillar2_over25_tot = 500,
     pillar2_over25_cases = 25,
     react_pos = 3,
-    react_tot = 500)
+    react_tot = 500,
+    strain_non_variant = 20,
+    strain_tot = 25)
   date <- sircovid_date("2020-01-01")
   pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
 
@@ -353,11 +357,12 @@ test_that("carehomes_compare combines likelihood correctly", {
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
   nms_react <- c("react_pos", "react_tot")
+  nms_strain <- c("strain_non_variant", "strain_tot")
   parts <- c(as.list(setdiff(names(observed),
                              c(nms_sero, nms_pillar2,
-                               nms_pillar2_over25, nms_react))),
+                               nms_pillar2_over25, nms_react, nms_strain))),
              list(nms_sero), list(nms_pillar2), list(nms_pillar2_over25),
-             list(nms_react))
+             list(nms_react), list(nms_strain))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, prev_state, observed_keep(x), pars))
