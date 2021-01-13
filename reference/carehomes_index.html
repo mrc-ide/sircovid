@@ -81,7 +81,7 @@ conforms to the mcstate interface." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -159,50 +159,92 @@ carehome workers and carehome residents respectively) and 17
 <span class='va'>mod</span> <span class='op'>&lt;-</span> <span class='va'><a href='carehomes.html'>carehomes</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>p</span>, <span class='fl'>0</span>, <span class='fl'>10</span><span class='op'>)</span>
 <span class='fu'>carehomes_index</span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $run
-#&gt;                icu            general        deaths_comm        deaths_hosp 
-#&gt;                  8                  9                 12                 11 
-#&gt;           admitted                new           sero_pos        sympt_cases 
-#&gt;                  3                  4                 14                 15 
-#&gt; sympt_cases_over25          react_pos 
-#&gt;                 16                 17 
+#&gt;                            icu                        general 
+#&gt;                              8                              9 
+#&gt;                    deaths_comm                    deaths_hosp 
+#&gt;                             12                             11 
+#&gt;                       admitted                            new 
+#&gt;                              3                              4 
+#&gt;                       sero_pos                    sympt_cases 
+#&gt;                             14                             15 
+#&gt;             sympt_cases_over25 sympt_cases_non_variant_over25 
+#&gt;                             16                             17 
+#&gt;                      react_pos 
+#&gt;                             18 
 #&gt; 
 #&gt; $state
-#&gt;                icu            general        deaths_comm        deaths_hosp 
-#&gt;                  8                  9                 12                 11 
-#&gt;           admitted                new           sero_pos        sympt_cases 
-#&gt;                  3                  4                 14                 15 
-#&gt; sympt_cases_over25          react_pos               hosp             deaths 
-#&gt;                 16                 17                 10                 13 
-#&gt;         infections                S_0                S_5               S_10 
-#&gt;                  2                190                191                192 
-#&gt;               S_15               S_20               S_25               S_30 
-#&gt;                193                194                195                196 
-#&gt;               S_35               S_40               S_45               S_50 
-#&gt;                197                198                199                200 
-#&gt;               S_55               S_60               S_65               S_70 
-#&gt;                201                202                203                204 
-#&gt;               S_75               S_80              S_CHW              S_CHR 
-#&gt;                205                206                207                208 
-#&gt;        cum_admit_0        cum_admit_5       cum_admit_10       cum_admit_15 
-#&gt;                 57                 58                 59                 60 
-#&gt;       cum_admit_20       cum_admit_25       cum_admit_30       cum_admit_35 
-#&gt;                 61                 62                 63                 64 
-#&gt;       cum_admit_40       cum_admit_45       cum_admit_50       cum_admit_55 
-#&gt;                 65                 66                 67                 68 
-#&gt;       cum_admit_60       cum_admit_65       cum_admit_70       cum_admit_75 
-#&gt;                 69                 70                 71                 72 
-#&gt;       cum_admit_80      cum_admit_CHW      cum_admit_CHR      prob_strain_0 
-#&gt;                 73                 74                 75                209 
-#&gt;      prob_strain_5     prob_strain_10     prob_strain_15     prob_strain_20 
-#&gt;                210                211                212                213 
-#&gt;     prob_strain_25     prob_strain_30     prob_strain_35     prob_strain_40 
-#&gt;                214                215                216                217 
-#&gt;     prob_strain_45     prob_strain_50     prob_strain_55     prob_strain_60 
-#&gt;                218                219                220                221 
-#&gt;     prob_strain_65     prob_strain_70     prob_strain_75     prob_strain_80 
-#&gt;                222                223                224                225 
-#&gt;    prob_strain_CHW    prob_strain_CHR 
-#&gt;                226                227 
+#&gt;                            icu                        general 
+#&gt;                              8                              9 
+#&gt;                    deaths_comm                    deaths_hosp 
+#&gt;                             12                             11 
+#&gt;                       admitted                            new 
+#&gt;                              3                              4 
+#&gt;                       sero_pos                    sympt_cases 
+#&gt;                             14                             15 
+#&gt;             sympt_cases_over25 sympt_cases_non_variant_over25 
+#&gt;                             16                             17 
+#&gt;                      react_pos                           hosp 
+#&gt;                             18                             10 
+#&gt;                         deaths                     infections 
+#&gt;                             13                              2 
+#&gt;                            S_0                            S_5 
+#&gt;                            191                            192 
+#&gt;                           S_10                           S_15 
+#&gt;                            193                            194 
+#&gt;                           S_20                           S_25 
+#&gt;                            195                            196 
+#&gt;                           S_30                           S_35 
+#&gt;                            197                            198 
+#&gt;                           S_40                           S_45 
+#&gt;                            199                            200 
+#&gt;                           S_50                           S_55 
+#&gt;                            201                            202 
+#&gt;                           S_60                           S_65 
+#&gt;                            203                            204 
+#&gt;                           S_70                           S_75 
+#&gt;                            205                            206 
+#&gt;                           S_80                          S_CHW 
+#&gt;                            207                            208 
+#&gt;                          S_CHR                    cum_admit_0 
+#&gt;                            209                             58 
+#&gt;                    cum_admit_5                   cum_admit_10 
+#&gt;                             59                             60 
+#&gt;                   cum_admit_15                   cum_admit_20 
+#&gt;                             61                             62 
+#&gt;                   cum_admit_25                   cum_admit_30 
+#&gt;                             63                             64 
+#&gt;                   cum_admit_35                   cum_admit_40 
+#&gt;                             65                             66 
+#&gt;                   cum_admit_45                   cum_admit_50 
+#&gt;                             67                             68 
+#&gt;                   cum_admit_55                   cum_admit_60 
+#&gt;                             69                             70 
+#&gt;                   cum_admit_65                   cum_admit_70 
+#&gt;                             71                             72 
+#&gt;                   cum_admit_75                   cum_admit_80 
+#&gt;                             73                             74 
+#&gt;                  cum_admit_CHW                  cum_admit_CHR 
+#&gt;                             75                             76 
+#&gt;                  prob_strain_0                  prob_strain_5 
+#&gt;                            210                            211 
+#&gt;                 prob_strain_10                 prob_strain_15 
+#&gt;                            212                            213 
+#&gt;                 prob_strain_20                 prob_strain_25 
+#&gt;                            214                            215 
+#&gt;                 prob_strain_30                 prob_strain_35 
+#&gt;                            216                            217 
+#&gt;                 prob_strain_40                 prob_strain_45 
+#&gt;                            218                            219 
+#&gt;                 prob_strain_50                 prob_strain_55 
+#&gt;                            220                            221 
+#&gt;                 prob_strain_60                 prob_strain_65 
+#&gt;                            222                            223 
+#&gt;                 prob_strain_70                 prob_strain_75 
+#&gt;                            224                            225 
+#&gt;                 prob_strain_80                prob_strain_CHW 
+#&gt;                            226                            227 
+#&gt;                prob_strain_CHR 
+#&gt;                            228 
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
