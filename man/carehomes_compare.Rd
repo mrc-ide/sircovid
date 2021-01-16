@@ -15,17 +15,9 @@ seroconversion compartments.}
 \item{prev_state}{State vector for the end of the previous day, as
 for \code{state}.}
 
-\item{observed}{Observed data. This will be a list with elements
-\code{icu} (number of ICU beds occupied), \code{general} (number of
-general beds occupied), \code{deaths_hosp} (cumulative deaths in
-hospital settings), \code{deaths_comm} (cumulative deaths in
-community settings), \code{deaths} (combined deaths - used by some
-nations - if given then \code{deaths_hosp} and \code{deaths_comm} must be
-\code{NA}), \code{admitted} (hospital admissions), \code{new} (new cases),
-\code{npos_15_64} (number of people seropositive in ages 15-64) and
-\code{ntot_15_64} (number of people tested in ages 15-64), \code{pillar2_pos}
-(number of pillar 2 positives), \code{pillar2_tot} (number of pillar 2
-tests)}
+\item{observed}{Observed data. At the moment please see the tests
+for a full list as this changes frequently (and this function
+may be removed in future).}
 
 \item{pars}{A list of parameters, as created by
 \code{\link[=carehomes_parameters]{carehomes_parameters()}}}

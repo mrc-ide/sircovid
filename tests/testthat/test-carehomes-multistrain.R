@@ -399,6 +399,12 @@ test_that("Swapping strains gives identical results with different index", {
     z2[["cum_sympt_cases_over25"]] - z2[["cum_sympt_cases_non_variant_over25"]]
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[2:1, , drop = FALSE]
+  ## This one can't easily be computed as it's not quite running
+  ## incidence but over a sawtooth; the calculation relative to
+  ## cum_infections_per_strain is confirmed elsewhere so here just
+  ## move it out the way:
+  z2[["sympt_cases_non_variant_over25_inc"]] <-
+    z1[["sympt_cases_non_variant_over25_inc"]]
   for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
   }

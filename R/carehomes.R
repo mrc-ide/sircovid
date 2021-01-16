@@ -407,18 +407,37 @@ carehomes_index <- function(info) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
-  index_run <- c(icu = index[["ICU_tot"]],
+  index_core <- c(icu = index[["ICU_tot"]],
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
+                 deaths_comm_inc = index[["D_comm_inc"]],
+                 deaths_hosp_inc = index[["D_hosp_inc"]],
+                 admitted_inc = index[["admit_conf_inc"]],
+                 new_inc = index[["new_conf_inc"]],
                  sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                  sympt_cases_non_variant_over25 =
-                   index[["cum_sympt_cases_non_variant_over25"]],
+                 index[["cum_sympt_cases_non_variant_over25"]],
+                 sympt_cases_inc = index[["sympt_cases_inc"]],
+                 sympt_cases_over25_inc = index[["sympt_cases_over25_inc"]],
+                 sympt_cases_non_variant_over25_inc =
+                   index[["sympt_cases_non_variant_over25_inc"]],
                  react_pos = index[["react_pos"]])
+
+  ## Only incidence versions for the likelihood now:
+  index_run <- index_core[c("icu", "general",
+                            "deaths_comm_inc", "deaths_hosp_inc",
+                            "admitted_inc", "new_inc",
+                            "sero_pos", "sympt_cases_inc",
+                            "sympt_cases_over25_inc",
+                            "sympt_cases_non_variant_over25_inc",
+                            "react_pos")]
+  ## But cumulative versions for everything else:
+  index_state_core <- index_core[sub("_inc$", "", names(index_run))]
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -453,10 +472,8 @@ carehomes_index <- function(info) {
   index_prob_strain <- set_names(index[["prob_strain"]],
                                  paste0("prob_strain", suffix, strain_type))
 
-
-
   list(run = index_run,
-       state = c(index_run, index_save, index_S, index_cum_admit,
+       state = c(index_state_core, index_save, index_S, index_cum_admit,
                  index_prob_strain))
 }
 
@@ -474,18 +491,9 @@ carehomes_index <- function(info) {
 ##' @param prev_state State vector for the end of the previous day, as
 ##'   for `state`.
 ##'
-##' @param observed Observed data. This will be a list with elements
-##'   `icu` (number of ICU beds occupied), `general` (number of
-##'   general beds occupied), `deaths_hosp` (cumulative deaths in
-##'   hospital settings), `deaths_comm` (cumulative deaths in
-##'   community settings), `deaths` (combined deaths - used by some
-##'   nations - if given then `deaths_hosp` and `deaths_comm` must be
-##'   `NA`), `admitted` (hospital admissions), `new` (new cases),
-##'   `npos_15_64` (number of people seropositive in ages 15-64) and
-##'   `ntot_15_64` (number of people tested in ages 15-64), `pillar2_pos`
-##'   (number of pillar 2 positives), `pillar2_tot` (number of pillar 2
-##'   tests)
-##'
+##' @param observed Observed data. At the moment please see the tests
+##'   for a full list as this changes frequently (and this function
+##'   may be removed in future).
 ##'
 ##' @param pars A list of parameters, as created by
 ##'   [carehomes_parameters()]
@@ -505,18 +513,16 @@ carehomes_compare <- function(state, prev_state, observed, pars) {
   model_icu <- state["icu", ]
   model_general <- state["general", ]
   model_hosp <- model_icu + model_general
-  model_deaths_comm <- state["deaths_comm", ] - prev_state["deaths_comm", ]
-  model_deaths_hosp <- state["deaths_hosp", ] - prev_state["deaths_hosp", ]
-  model_admitted <- state["admitted", ] - prev_state["admitted", ]
-  model_new <- state["new", ] - prev_state["new", ]
+  model_deaths_comm <- state["deaths_comm_inc", ]
+  model_deaths_hosp <- state["deaths_hosp_inc", ]
+  model_admitted <- state["admitted_inc", ]
+  model_new <- state["new_inc", ]
   model_new_admitted <- model_admitted + model_new
   model_sero_pos <- state["sero_pos", ]
-  model_sympt_cases <- state["sympt_cases", ] - prev_state["sympt_cases", ]
-  model_sympt_cases_over25 <- state["sympt_cases_over25", ] -
-    prev_state["sympt_cases_over25", ]
+  model_sympt_cases <- state["sympt_cases_inc", ]
+  model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
   model_sympt_cases_non_variant_over25 <-
-    state["sympt_cases_non_variant_over25", ] -
-    prev_state["sympt_cases_non_variant_over25", ]
+    state["sympt_cases_non_variant_over25_inc", ]
   model_react_pos <- state["react_pos", ]
 
   ## calculate test positive probabilities for the various test data streams

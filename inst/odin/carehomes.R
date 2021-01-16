@@ -17,7 +17,8 @@ n_age_groups <- user()
 n_groups <- user()
 
 ## Definition of the time-step and output as "time"
-dt <- user()
+steps_per_day <- user(integer = TRUE)
+dt <- 1 / steps_per_day
 initial(time) <- 0
 update(time) <- (step + 1) * dt
 
@@ -82,18 +83,19 @@ update(T_sero_pre[, , , ]) <- new_T_sero_pre[i, j, k, l]
 update(T_sero_pos[, , , ]) <- new_T_sero_pos[i, j, k, l]
 update(T_sero_neg[, , ]) <- new_T_sero_neg[i, j, k]
 update(R[, , ]) <- new_R[i, j, k]
-update(D_hosp[]) <- new_D_hosp[i]
-update(D_comm[]) <- new_D_comm[i]
+update(D_hosp[]) <- D_hosp[i] + new_D_hosp[i]
+update(D_comm[]) <- D_comm[i] + new_D_comm[i]
 update(T_PCR_pre[, , , ]) <- new_T_PCR_pre[i, j, k, l]
 update(T_PCR_pos[, , , ]) <- new_T_PCR_pos[i, j, k, l]
 update(T_PCR_neg[, , ]) <- new_T_PCR_neg[i, j, k]
-update(cum_admit_conf) <-
-  cum_admit_conf +
+
+new_admit_conf <-
   sum(n_I_C_to_H_D_conf) +
   sum(n_I_C_to_H_R_conf) +
   sum(n_I_C_to_ICU_pre_conf)
-update(cum_new_conf) <-
-  cum_new_conf +
+update(cum_admit_conf) <- cum_admit_conf + new_admit_conf
+
+new_new_conf <-
   sum(n_H_D_unconf_to_conf) +
   sum(n_H_R_unconf_to_conf) +
   sum(n_ICU_pre_unconf_to_conf) +
@@ -102,6 +104,16 @@ update(cum_new_conf) <-
   sum(n_ICU_W_D_unconf_to_conf) +
   sum(n_W_R_unconf_to_conf) +
   sum(n_W_D_unconf_to_conf)
+update(cum_new_conf) <- cum_new_conf + new_new_conf
+
+initial(admit_conf_inc) <- 0
+update(admit_conf_inc) <- if (step %% steps_per_day == 0)
+                            new_admit_conf else admit_conf_inc + new_admit_conf
+
+initial(new_conf_inc) <- 0
+update(new_conf_inc) <- if (step %% steps_per_day == 0)
+                            new_new_conf else new_conf_inc + new_new_conf
+
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_to_hosp[i, , ])
 
 ## Individual probabilities of transition:
@@ -635,7 +647,7 @@ new_W_D_conf[, , , ] <-
   aux_W_D_conf[i, j, k, l] + n_W_D_unconf_to_conf[i, j, k, l]
 
 ## Work out the number of deaths in hospital
-new_D_hosp[] <- D_hosp[i] +
+new_D_hosp[] <-
   sum(n_H_D_unconf_progress[i, , k_H_D, ]) +
   sum(n_H_D_conf_progress[i, , k_H_D, ]) +
   sum(n_ICU_D_unconf_progress[i, , k_ICU_D, ]) +
@@ -644,7 +656,7 @@ new_D_hosp[] <- D_hosp[i] +
   sum(n_W_D_conf_progress[i, , k_W_D, ])
 
 ## Work out the number of deaths in the community
-new_D_comm[] <- D_comm[i] + sum(n_G_D_progress[i, , k_G_D, ])
+new_D_comm[] <- sum(n_G_D_progress[i, , k_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_T_sero_pre[, , 1, 1] <- rbinom(
@@ -1256,14 +1268,22 @@ update(hosp_tot) <- new_ICU_tot + new_general_tot
 
 initial(D_hosp_tot) <- 0
 new_D_hosp_tot <- sum(new_D_hosp)
-update(D_hosp_tot) <- new_D_hosp_tot
+update(D_hosp_tot) <- D_hosp_tot + new_D_hosp_tot
 
 initial(D_comm_tot) <- 0
 new_D_comm_tot <- sum(new_D_comm)
-update(D_comm_tot) <- new_D_comm_tot
+update(D_comm_tot) <- D_comm_tot + new_D_comm_tot
+
+initial(D_comm_inc) <- 0
+update(D_comm_inc) <- if (step %% steps_per_day == 0)
+                        new_D_comm_tot else D_comm_inc + new_D_comm_tot
+
+initial(D_hosp_inc) <- 0
+update(D_hosp_inc) <- if (step %% steps_per_day == 0)
+                        new_D_hosp_tot else D_hosp_inc + new_D_hosp_tot
 
 initial(D_tot) <- 0
-update(D_tot) <- new_D_hosp_tot + new_D_comm_tot
+update(D_tot) <- D_tot + new_D_hosp_tot + new_D_comm_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
@@ -1282,16 +1302,35 @@ initial(sero_pos) <- 0
 update(sero_pos) <- sum(new_T_sero_pos[4:13, , , ])
 
 initial(cum_sympt_cases) <- 0
-update(cum_sympt_cases) <- cum_sympt_cases + sum(n_EI_C)
+new_sympt_cases <- sum(n_EI_C)
+update(cum_sympt_cases) <- cum_sympt_cases + new_sympt_cases
 
 ## only over 25s (exclude groups 1 to 5)
 initial(cum_sympt_cases_over25) <- 0
+new_sympt_cases_over25 <- sum(n_EI_C[6:n_groups, , ])
 update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
-  sum(n_EI_C[6:n_groups, , ])
+  new_sympt_cases_over25
 
 initial(cum_sympt_cases_non_variant_over25) <- 0
+new_sympt_cases_non_variant_over25 <- sum(n_EI_C[6:n_groups, 1, ])
 update(cum_sympt_cases_non_variant_over25) <-
-  cum_sympt_cases_non_variant_over25 + sum(n_EI_C[6:n_groups, 1, ])
+  cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25
+
+## And incidence:
+initial(sympt_cases_inc) <- 0
+update(sympt_cases_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases
+  else sympt_cases_inc + new_sympt_cases)
+
+initial(sympt_cases_over25_inc) <- 0
+update(sympt_cases_over25_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_over25
+  else sympt_cases_over25_inc + new_sympt_cases_over25)
+
+initial(sympt_cases_non_variant_over25_inc) <- 0
+update(sympt_cases_non_variant_over25_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_non_variant_over25
+  else sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25)
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0

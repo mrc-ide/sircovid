@@ -115,7 +115,8 @@ test_that("shared parameters", {
   expect_setequal(
     names(pars),
     c("hosp_transmission", "ICU_transmission", "G_D_transmission",
-      "dt", "initial_step", "n_age_groups", "beta_step", "population"))
+      "dt", "steps_per_day", "initial_step", "n_age_groups",
+      "beta_step", "population"))
   expect_equal(pars$beta_step, 0.1)
   expect_equal(pars$initial_step, date * 4)
 })

@@ -120,7 +120,8 @@ basic_parameters <- function(start_date, region,
 basic_index <- function(info) {
   index <- info$index
   list(run = c(icu = index[["I_ICU_tot"]],
-               deaths = index[["D_tot"]]))
+               deaths = index[["D_tot"]],
+               deaths_inc = index[["D_inc"]]))
 }
 
 
@@ -160,7 +161,7 @@ basic_compare <- function(state, prev_state, observed, pars) {
   }
 
   model_icu <- state["icu", ]
-  model_deaths <- state["deaths", ] - prev_state["deaths", ]
+  model_deaths <- state["deaths_inc", ]
 
   ## Noise parameter shared across both deaths and icu
   pars <- pars$observation
