@@ -203,36 +203,36 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_comm", "deaths_hosp", "admitted", "new",
-      "sero_pos", "sympt_cases", "sympt_cases_over25",
-      "sympt_cases_non_variant_over25", "react_pos"))
+    c("icu", "general", "deaths_comm_inc", "deaths_hosp_inc",
+      "admitted_inc", "new_inc",
+      "sero_pos", "sympt_cases_inc", "sympt_cases_over25_inc",
+      "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "ICU_tot"))
   expect_equal(index$run[["general"]],
                which(names(info$index) == "general_tot"))
-  expect_equal(index$run[["deaths_comm"]],
-               which(names(info$index) == "D_comm_tot"))
-  expect_equal(index$run[["deaths_hosp"]],
-               which(names(info$index) == "D_hosp_tot"))
-  expect_equal(index$run[["admitted"]],
-               which(names(info$index) == "cum_admit_conf"))
-  expect_equal(index$run[["new"]],
-               which(names(info$index) == "cum_new_conf"))
+  expect_equal(index$run[["deaths_comm_inc"]],
+               which(names(info$index) == "D_comm_inc"))
+  expect_equal(index$run[["deaths_hosp_inc"]],
+               which(names(info$index) == "D_hosp_inc"))
+  expect_equal(index$run[["admitted_inc"]],
+               which(names(info$index) == "admit_conf_inc"))
+  expect_equal(index$run[["new_inc"]],
+               which(names(info$index) == "new_conf_inc"))
   expect_equal(index$run[["sero_pos"]],
                which(names(info$index) == "sero_pos"))
-  expect_equal(index$run[["sympt_cases"]],
-               which(names(info$index) == "cum_sympt_cases"))
-  expect_equal(index$run[["sympt_cases_over25"]],
-               which(names(info$index) == "cum_sympt_cases_over25"))
+  expect_equal(index$run[["sympt_cases_inc"]],
+               which(names(info$index) == "sympt_cases_inc"))
+  expect_equal(index$run[["sympt_cases_over25_inc"]],
+               which(names(info$index) == "sympt_cases_over25_inc"))
   expect_equal(index$run[["react_pos"]],
                which(names(info$index) == "react_pos"))
 })
 
 
 test_that("carehome worker index is sensible", {
-  expect_equal(carehomes_index_workers(), 6:13)
-})
+  expect_equal(carehomes_index_workers(), 6:13) })
 
 
 test_that("carehomes_index is properly named", {
@@ -307,16 +307,16 @@ test_that("carehomes_compare combines likelihood correctly", {
   state <- rbind(
     icu = 10:15,
     general = 20:25,
-    deaths_comm = 1:6,
-    deaths_hosp = 3:8,
-    admitted = 50:55,
-    new = 60:65,
+    deaths_comm_inc = 1:6,
+    deaths_hosp_inc = 3:8,
+    admitted_inc = 50:55,
+    new_inc = 60:65,
     sero_pos = 4:9,
-    sympt_cases = 100:105,
-    sympt_cases_over25 = 80:85,
-    sympt_cases_non_variant_over25 = 60:65,
+    sympt_cases_inc = 100:105,
+    sympt_cases_over25_inc = 80:85,
+    sympt_cases_non_variant_over25_inc = 60:65,
     react_pos = 2:7)
-  prev_state <- array(1, dim(state), dimnames = dimnames(state))
+  prev_state <- NULL
   observed <- list(
     icu = 13,
     general = 23,
@@ -377,7 +377,6 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## Test that there are non-zero values for each log-likelihood part.
   ## This helps make sure all parts contribute to the log-likelihood.
   expect_true(all(sapply(ll_parts, function(x) any(x != 0))))
-
 })
 
 
@@ -407,15 +406,17 @@ test_that("carehomes_index returns S compartments", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   mod <- carehomes$new(p, 0, 5, seed = 1L)
   index <- carehomes_index(mod$info())
+  info <- mod$info()
+  i <- seq_along(index$run)
   expect_equal(
-    unname(index$state),
-    c(unname(index$run),
-      mod$info()$index$hosp_tot,
-      mod$info()$index$D_tot,
-      mod$info()$index$cum_infections,
-      mod$info()$index$S,
-      mod$info()$index$cum_admit_by_age,
-      mod$info()$index$prob_strain))
+    unname(index$state[-i]),
+    c(unname(index$run[-i]),
+      info$index$hosp_tot,
+      info$index$D_tot,
+      info$index$cum_infections,
+      info$index$S,
+      info$index$cum_admit_by_age,
+      info$index$prob_strain))
 })
 
 

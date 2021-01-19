@@ -61,13 +61,13 @@ test_that("basic_index identifies ICU and D_tot in real model", {
   mod$set_index(index$run)
   expect_equal(
     mod$run(date),
-    matrix(0, 2, 10, dimnames = list(c("icu", "deaths"), NULL)))
+    matrix(0, 3, 10, dimnames = list(c("icu", "deaths", "deaths_inc"), NULL)))
 })
 
 
 test_that("basic compare function returns NULL if no data present", {
   state <- c(icu = 0, deaths = 0)
-  prev_state <- c(icu = 0, deaths = 0)
+  prev_state <- NULL
   observed <- list(icu = NA, deaths = NA)
   pars <- basic_parameters(sircovid_date("2020-01-01"), "uk", exp_noise = Inf)
   expect_null(basic_compare(state, prev_state, observed, pars))
@@ -75,8 +75,8 @@ test_that("basic compare function returns NULL if no data present", {
 
 
 test_that("observation function correctly combines likelihoods", {
-  state <- rbind(icu = 10:15, deaths = 1:6)
-  prev_state <- matrix(1, 2, 6, dimnames = dimnames(state))
+  state <- rbind(icu = 10:15, deaths_inc = 0:5)
+  prev_state <- NULL
   observed1 <- list(icu = 13, deaths = NA)
   observed2 <- list(icu = NA, deaths = 3)
   observed3 <- list(icu = 13, deaths = 3)
@@ -91,7 +91,7 @@ test_that("observation function correctly combines likelihoods", {
   ll_itu <- ll_nbinom(observed3$icu, pars$observation$phi_ICU * state[1, ],
                       pars$observation$kappa_ICU, Inf)
   ll_deaths <- ll_nbinom(observed3$deaths,
-                         pars$observation$phi_death * (state[2, ] - 1),
+                         pars$observation$phi_death * state[2, ],
                          pars$observation$kappa_death, Inf)
   expect_equal(ll1, ll_itu)
   expect_equal(ll2, ll_deaths)

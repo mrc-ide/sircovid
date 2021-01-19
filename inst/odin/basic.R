@@ -8,7 +8,8 @@ n_age_groups <- user()
 n_trans_classes <- user(1)
 
 ## Definition of the time-step and output as "time"
-dt <- user()
+steps_per_day <- user(integer = TRUE)
+dt <- 1 / steps_per_day
 initial(time) <- 0
 update(time) <- (step + 1) * dt
 
@@ -22,7 +23,7 @@ update(I_hosp[, , ]) <- I_hosp[i, j, k] + delta_I_hosp[i, j, k]
 update(I_ICU[, , ]) <- new_I_ICU[i, j, k]
 update(R_hosp[, , ]) <- R_hosp[i, j, k] + delta_R_hosp[i, j, k]
 
-update(D[]) <- new_D[i]
+update(D[]) <- D[i] + new_D[i]
 
 ## Stuff we want to track in addition to number of individuals
 ## in each compartment.
@@ -114,7 +115,7 @@ delta_R_hosp[, , ] <- aux_R_hosp[i, j, k]
 delta_D[] <- sum(n_II_ICU[i, k_ICU, ]) - sum(n_ICU_to_R_hosp[i, ]) +
   sum(n_death_hosp[i, ])
 
-new_D[] <- D[i] + delta_D[i]
+new_D[] <- delta_D[i]
 
 ## Work out the number of recovery
 delta_R[] <-
@@ -153,8 +154,12 @@ initial(N_tot) <- 0
 initial(I_ICU_tot) <- 0
 update(I_ICU_tot) <- sum(new_I_ICU)
 
+tot_new_D <- sum(new_D)
 initial(D_tot) <- 0
-update(D_tot) <- sum(new_D)
+update(D_tot) <- D_tot + tot_new_D
+initial(D_inc) <- 0
+update(D_inc) <-
+  if (step %% steps_per_day == 0) tot_new_D else D_inc + tot_new_D
 
 ## User defined parameters - default in parentheses:
 

@@ -28,9 +28,10 @@ reference_data_mcmc <- function() {
       diag(2),
       function(p) pars)
 
-    mcstate::pmcmc(pars_mcmc, filter, n_steps = 10,
-                   n_chains = 1,
-                   save_trajectories = TRUE, progress = FALSE)
+    control <- mcstate::pmcmc_control(10, n_chains = 1,
+                                      save_trajectories = TRUE,
+                                      progress = FALSE)
+    mcstate::pmcmc(pars_mcmc, filter, control = control)
   })
 }
 

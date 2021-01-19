@@ -120,7 +120,8 @@ basic_parameters <- function(start_date, region,
 basic_index <- function(info) {
   index <- info$index
   list(run = c(icu = index[["I_ICU_tot"]],
-               deaths = index[["D_tot"]]))
+               deaths = index[["D_tot"]],
+               deaths_inc = index[["D_inc"]]))
 }
 
 
@@ -134,7 +135,7 @@ basic_index <- function(info) {
 ##'   rows corresponding to ICU and deaths.
 ##'
 ##' @param prev_state State vector for the end of the previous day, as
-##'   for `state`.
+##'   for `state` (but ignored)
 ##'
 ##' @param observed Observed data. This will be a list with elements
 ##'   `icu` (number of ICU beds occupied) and `deaths` (number of
@@ -148,8 +149,8 @@ basic_index <- function(info) {
 ##'
 ##' @export
 ##' @examples
-##' state <- rbind(icu = 10:15, deaths = 1:6)
-##' prev_state <- matrix(1, 2, 6, dimnames = dimnames(state))
+##' state <- rbind(icu = 10:15, deaths_inc = 1:6)
+##' prev_state <- NULL
 ##' observed <- list(icu = 13, deaths = 3)
 ##' pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
 ##' basic_compare(state, prev_state, observed, pars)
@@ -160,7 +161,7 @@ basic_compare <- function(state, prev_state, observed, pars) {
   }
 
   model_icu <- state["icu", ]
-  model_deaths <- state["deaths", ] - prev_state["deaths", ]
+  model_deaths <- state["deaths_inc", ]
 
   ## Noise parameter shared across both deaths and icu
   pars <- pars$observation

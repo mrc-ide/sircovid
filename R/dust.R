@@ -13,11 +13,9 @@ basic <- R6::R6Class(
     param_ = list(ICU_transmission = list(has_default = FALSE, default_value = NULL,
     rank = 0, min = -Inf, max = Inf, integer = FALSE), beta_step = list(
     has_default = FALSE, default_value = NULL, rank = 1, min = -Inf,
-    max = Inf, integer = FALSE), dt = list(has_default = FALSE,
+    max = Inf, integer = FALSE), hosp_transmission = list(has_default = FALSE,
     default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-    hosp_transmission = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_A = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
+    k_A = list(has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_C = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), k_E = list(has_default = FALSE, default_value = NULL,
@@ -40,6 +38,8 @@ basic <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_recov_sympt = list(
         has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), steps_per_day = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), gamma_A = list(
         has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf,
         max = Inf, integer = FALSE), gamma_C = list(has_default = TRUE,
@@ -218,15 +218,13 @@ carehomes <- R6::R6Class(
     has_default = FALSE, default_value = NULL, rank = 0, min = -Inf,
     max = Inf, integer = FALSE), beta_step = list(has_default = FALSE,
     default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
-    dt = list(has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), hosp_transmission = list(
+    hosp_transmission = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_A = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), k_A = list(has_default = FALSE,
+        min = -Inf, max = Inf, integer = FALSE), k_C = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), k_C = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_E = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), k_G_D = list(
+        integer = FALSE), k_E = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_G_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_H_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -295,6 +293,8 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), rel_susceptibility = list(
         has_default = FALSE, default_value = NULL, rank = 2,
+        min = -Inf, max = Inf, integer = FALSE), steps_per_day = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), strain_seed_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), strain_transmission = list(

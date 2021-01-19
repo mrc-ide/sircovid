@@ -15,7 +15,8 @@ test_that("can run the basic model", {
   expected <-
     rbind(icu    = c(73, 25, 69, 57, 59, 65, 55, 43, 27, 128),
           deaths = c(268897, 268997, 268429, 267389, 268333, 268418,
-                     268051, 267694, 268211, 267721))
+                     268051, 267694, 268211, 267721),
+          deaths_inc = c(34, 6, 23, 18, 19, 29, 12, 16, 16, 35))
   expect_equal(res, expected)
 })
 
@@ -32,8 +33,31 @@ test_that("can run the particle filter on the model", {
     compare = basic_compare,
     initial = basic_initial,
     index = basic_index)
+  pf$run(pars)
 
   ## TODO: this is not yet reliable, nor probably correct
   ## TODO: mcstate should spread out parameters like this for us by default
   expect_type(pf$run(pars), "double")
+})
+
+
+test_that("incidence calculation is correct", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- basic_parameters(start_date, "england")
+  mod <- basic$new(pars, 0, 10, n_threads = 10)
+  info <- mod$info()
+  initial <- basic_initial(info, 10, pars)
+  mod$set_state(initial$state, initial$step)
+
+  index <- c(D = info$index$D_tot,
+             D_inc = info$index$D_inc)
+  expect_length(index, 2) # guard against name changes
+
+  steps <- seq(initial$step, length.out = 60 * 4 + 1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  i <- which(steps %% pars$steps_per_day == 0)
+  y0 <- y[, , i[-length(i)]]
+  y1 <- y[, , i[-1]]
+  expect_equal(y1[1, , ] - y0[1, , ], y1[2, , ])
 })
