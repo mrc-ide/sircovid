@@ -152,10 +152,10 @@ carehomes_ifr_t <- function(step, infections_inc, p) {
 ##'   matrix, not a vector.
 ##'
 ##' @export
-carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
+carehomes_ifr_t_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       initial_step_from_parameters = TRUE,
                                       shared_parameters = NULL) {
-  calculate_Rt_trajectories(carehomes_Rt, step, S, pars, prob_strain,
+  calculate_ifr_t_trajectories(carehomes_Rt, step, S, pars, prob_strain,
                             initial_step_from_parameters, shared_parameters)
 }
 
@@ -298,7 +298,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## it out here; when we implement this for the basic model this will
 ## remain unchanged.  However, I am leaving it in this
 ## carehomes-specific file until we do add a new model or port it.
-calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
+calculate_ifr_t_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
                                       shared_parameters) {
   if (length(dim(S)) != 3) {
