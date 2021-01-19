@@ -81,7 +81,7 @@ Rt scenarios in the future." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.7</span>
       </span>
     </div>
 
@@ -130,7 +130,7 @@ Rt scenarios in the future." />
 Rt scenarios in the future.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>add_future_betas</span><span class='op'>(</span><span class='va'>sample</span>, <span class='va'>rt</span>, <span class='va'>future</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>add_future_betas</span><span class='op'>(</span><span class='va'>sample</span>, <span class='va'>rt</span>, <span class='va'>future</span>, rt_type <span class='op'>=</span> <span class='st'>"Rt_general"</span><span class='op'>)</span>
 
 <span class='fu'>future_Rt</span><span class='op'>(</span><span class='va'>value</span>, relative_to <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
@@ -153,6 +153,11 @@ calculate relative Rt values.</p></td>
 element name corresponds to the date that the change takes
 effect (in ISO-8601 "YYYY-MM-DD" format) and must be strictly
 increasing with at least two days separating changes.</p></td>
+    </tr>
+    <tr>
+      <th>rt_type</th>
+      <td><p>A string giving the entry of <code>rt</code> to modify,
+defaults to <code>Rt_general</code></p></td>
     </tr>
     <tr>
       <th>value</th>
