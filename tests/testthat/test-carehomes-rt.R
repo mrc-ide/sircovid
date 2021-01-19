@@ -142,3 +142,84 @@ test_that("Can vary beta over time", {
   expect_true(all(res$Rt_all >= res$eff_Rt_all))
   expect_true(all(res$Rt_general >= res$eff_Rt_general))
 })
+
+
+test_that("Can compute Rt with larger timestep", {
+  n <- c(1, 4)
+  pars <- lapply(n, function(n)
+    carehomes_parameters(0, "london", steps_per_day = n))
+  np <- 50 # use number large enough to get stable mean behaviour 
+  
+  mod <- lapply(pars, function(p) carehomes$new(p, 0, np, seed = 1L))
+  end <- sircovid_date("2020-05-31")
+  for (i in seq_along(n)) {
+    info <- mod[[i]]$info()
+    initial <- carehomes_initial(info, np, pars[[i]])
+    mod[[i]]$set_state(initial$state, initial$step)
+    mod[[i]]$set_index(carehomes_index(info)$run)
+  }
+  
+  index <- mod[[1]]$info()$index$S # should be the same for both models
+  f <- function(m, p) {
+    steps <- seq(0, length.out = 100, by = 1 / p$dt)
+    ## TODO: probably want to set a sensible index here:
+    dust::dust_iterate(m, steps, index)
+  }
+  y <- Map(f, mod, pars)
+  
+  steps <-
+    lapply(1:2, function(i) seq(0, length.out = 100, by = 1 / pars[[i]]$dt))
+  
+  rt_all_1 <- carehomes_Rt_trajectories(steps[[1]], y[[1]], pars[[1]])
+  rt_all_2 <- carehomes_Rt_trajectories(steps[[2]], y[[2]], pars[[2]])
+  
+  ## Below is some comparison to check that the outputs "agree" in
+  ## the broadest sense as they're stochastic and *should not*
+  ## disagree as we've made the integration much coarser.
+  
+  ## compare AR or rather n still susceptible
+  mean_S_final_1 <- mean(apply(y[[1]][, , 100], 2, sum))
+  mean_S_final_2 <- mean(apply(y[[2]][, , 100], 2, sum))
+  # compute relative error using dt = 1/4 as reference as more precise 
+  rel_error <- (mean_S_final_1 - mean_S_final_2) / mean_S_final_2 
+  expect_true(rel_error < 1e-2)
+  
+  ### TODO: FIX THE BELOW
+  
+  ## compare mean reproduction numbers 
+  mean_Rt_general_1 <- apply(rt_all_1$Rt_general, 1, mean) # with dt = 1
+  mean_Rt_general_2 <- apply(rt_all_2$Rt_general, 1, mean) # with dt = 1/4
+  # compute relative error using dt = 1/4 as reference as more precise 
+  rel_error <- (mean_Rt_general_1 - mean_Rt_general_2) / mean_Rt_general_2 
+  expect_true(rel_error < 1e-2)
+  
+  ## compare mean reproduction numbers 
+  mean_Rt_all_1 <- apply(rt_all_1$Rt_all, 1, mean) # with dt = 1
+  mean_Rt_all_2 <- apply(rt_all_2$Rt_all, 1, mean) # with dt = 1/4
+  # compute relative error using dt = 1/4 as reference as more precise 
+  rel_error <- (mean_Rt_all_1 - mean_Rt_all_2) / mean_Rt_all_2 
+  expect_true(rel_error < 1e-2)
+  
+  ## compare mean reproduction numbers
+  mean_eff_Rt_general_1 <- apply(rt_all_1$eff_Rt_general, 1, mean) # with dt = 1
+  mean_eff_Rt_general_2 <- apply(rt_all_2$eff_Rt_general, 1, mean) # with dt = 1/4
+  # compute relative error using dt = 1/4 as reference as more precise 
+  rel_error <- (mean_eff_Rt_general_1 - mean_eff_Rt_general_2) / mean_eff_Rt_general_2 
+  expect_true(rel_error < 1e-2)
+  
+  ## compare mean reproduction numbers
+  mean_eff_Rt_all_1 <- apply(rt_all_1$eff_Rt_all, 1, mean) # with dt = 1
+  mean_eff_Rt_all_2 <- apply(rt_all_2$eff_Rt_all, 1, mean) # with dt = 1/4
+  # compute relative error using dt = 1/4 as reference as more precise 
+  rel_error <- (mean_eff_Rt_all_1 - mean_eff_Rt_all_2) / mean_eff_Rt_all_2 
+  expect_true(rel_error < 1e-2)
+  
+  # ## visual check
+  # matplot(t(apply(rt_all_1$eff_Rt_all, 1, quantile, probs = c(0.025, 0.5, 0.975))),
+  #         type = "l", lty = c(2, 1, 2), col = "black",
+  #         xlab = "Time",
+  #         ylab = "Effective Rt")
+  # matplot(t(apply(rt_all_2$eff_Rt_all, 1, quantile, probs = c(0.025, 0.5, 0.975))),
+  #         type = "l", lty = c(2, 1, 2), col = "blue", add = TRUE)
+
+})
