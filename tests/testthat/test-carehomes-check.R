@@ -823,3 +823,58 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })
+
+
+test_that("Can run the models with larger timestep", {
+  n <- c(1, 4)
+  pars <- lapply(n, function(n)
+    carehomes_parameters(0, "london", steps_per_day = n))
+  np <- 50 # use number large enough to get stable mean behaviour 
+
+  mod <- lapply(pars, function(p) carehomes$new(p, 0, np, seed = 1L))
+  end <- sircovid_date("2020-05-31")
+  for (i in seq_along(n)) {
+    info <- mod[[i]]$info()
+    initial <- carehomes_initial(info, np, pars[[i]])
+    mod[[i]]$set_state(initial$state, initial$step)
+    mod[[i]]$set_index(carehomes_index(info)$run)
+  }
+
+  f <- function(m, p) {
+    steps <- seq(0, length.out = 100, by = 1 / p$dt)
+    ## TODO: probably want to set a sensible index here:
+    m$transform_variables(dust::dust_iterate(m, steps))
+  }
+  y <- Map(f, mod, pars)
+
+  ## Below is some comparison to check that the outputs "agree" in
+  ## the broadest sense as they're stochastic and *should not*
+  ## disagree as we've made the integration much coarser.
+  
+  ## compare mean attack rates
+  mean_AR_1 <- mean(y[[1]]$cum_infections[1, , 100]) # with dt = 1
+  mean_AR_2 <- mean(y[[2]]$cum_infections[1, , 100]) # with dt = 1/4
+  # compute relative error using dt = 1/4 as reference as more precise 
+  rel_error <- (mean_AR_1 - mean_AR_2) / mean_AR_2 
+  expect_true(rel_error < 1e-2)
+  
+  ## compare mean peak size
+  y[[1]]$infections <-
+    sapply(1:np, function(i) diff(y[[1]]$cum_infections[1, i, ]))
+  y[[2]]$infections <-
+    sapply(1:np, function(i) diff(y[[2]]$cum_infections[1, i, ]))
+  mean_peak_1 <- mean(apply(y[[1]]$infections, 2, max)) # with dt = 1
+  mean_peak_2 <- mean(apply(y[[2]]$infections, 2, max)) # with dt = 1/4
+  rel_error <- (mean_peak_1 - mean_peak_2) / mean_peak_2 
+  # peak size is more variable than AR so using higher tolerance
+  expect_true(rel_error < 1e-1) 
+  
+  # ## visual check
+  # matplot(t(apply(y[[1]]$infections, 1, quantile, probs = c(0.025, 0.5, 0.975))),
+  #         type = "l", lty = c(2, 1, 2), col = "black",
+  #         xlab = "Time",
+  #         ylab = "Incidence")
+  # matplot(t(apply(y[[2]]$infections, 1, quantile, probs = c(0.025, 0.5, 0.975))),
+  #         type = "l", lty = c(2, 1, 2), col = "blue", add = TRUE)
+  
+})
