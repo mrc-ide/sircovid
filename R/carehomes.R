@@ -460,6 +460,8 @@ carehomes_index <- function(info) {
 
   index_S <- set_names(index[["S"]],
                        paste0("S", suffix, s_type))
+  index_infections_inc <- set_names(index[["infections_inc"]],
+                                    paste0("infections_inc", suffix, s_type))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
 
@@ -474,7 +476,7 @@ carehomes_index <- function(info) {
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_cum_admit,
-                 index_prob_strain))
+                 index_infections_inc, index_prob_strain))
 }
 
 
