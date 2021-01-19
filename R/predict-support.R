@@ -40,7 +40,7 @@
 ##'
 ##'@param rt_type A string giving the entry of `rt` to modify,
 ##' defaults to `Rt_general`
-##' 
+##'
 ##' @export
 ##' @author Richard Fitzjohn
 add_future_betas <- function(sample, rt, future, rt_type = "Rt_general") {
