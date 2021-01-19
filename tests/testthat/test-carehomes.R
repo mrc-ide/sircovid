@@ -5,10 +5,20 @@ test_that("can run the carehomes model", {
   mod <- carehomes$new(p, 0, 5, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  info <- mod$info()
+  initial <- carehomes_initial(info, 10, p)
   mod$set_state(initial$state, initial$step)
-
-  mod$set_index(carehomes_index(mod$info())$run)
+  
+  index <- c(carehomes_index(info)$run,
+             deaths_comm = info$index[["D_comm_tot"]],
+             deaths_hosp = info$index[["D_hosp_tot"]],
+             admitted = info$index[["cum_admit_conf"]],
+             new = info$index[["cum_new_conf"]],
+             sympt_cases = info$index[["cum_sympt_cases"]],
+             sympt_cases_over25 = info$index[["cum_sympt_cases_over25"]]
+  )
+  
+  mod$set_index(index)
   res <- mod$run(end)
 
   ## Regenerate with: dput_named_matrix(res)
@@ -25,7 +35,19 @@ test_that("can run the carehomes model", {
           sympt_cases_over25_inc             = c(5, 3, 4, 6, 5),
           sympt_cases_non_variant_over25_inc = c(5, 3, 4, 6, 5),
           react_pos                          = c(470, 641, 1063, 877,
-                                                 151))
+                                                 151),
+          deaths_comm                        = c(23349, 23597, 23357,
+                                                 23379, 23245),
+          deaths_hosp                        = c(283383, 283433, 282859,
+                                                 282832, 284127),
+          admitted                           = c(131981, 132378, 132257,
+                                                 131758, 132269),
+          new                                = c(420336, 421268, 419989,
+                                                 420711, 421502),
+          sympt_cases                        = c(12977835, 12976953,
+                                                 12983125, 12974885, 12981657),
+          sympt_cases_over25                 = c(10087409, 10086355,
+                                                 10092710, 10087814, 10091423))
   expect_equal(res, expected)
 })
 
