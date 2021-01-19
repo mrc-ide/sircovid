@@ -145,7 +145,7 @@ test_that("Can vary beta over time", {
 
 
 test_that("Can compute Rt with larger timestep", {
-  n <- c(1, 4)
+  n <- c(1, 4, 100)
   pars <- lapply(n, function(n)
     carehomes_parameters(0, "london", steps_per_day = n))
   np <- 50 # use number large enough to get stable mean behaviour 
@@ -168,10 +168,11 @@ test_that("Can compute Rt with larger timestep", {
   y <- Map(f, mod, pars)
   
   steps <-
-    lapply(1:2, function(i) seq(0, length.out = 100, by = 1 / pars[[i]]$dt))
+    lapply(1:3, function(i) seq(0, length.out = 100, by = 1 / pars[[i]]$dt))
   
   rt_all_1 <- carehomes_Rt_trajectories(steps[[1]], y[[1]], pars[[1]])
   rt_all_2 <- carehomes_Rt_trajectories(steps[[2]], y[[2]], pars[[2]])
+  rt_all_3 <- carehomes_Rt_trajectories(steps[[3]], y[[3]], pars[[3]])
   
   ## Below is some comparison to check that the outputs "agree" in
   ## the broadest sense as they're stochastic and *should not*
@@ -180,18 +181,24 @@ test_that("Can compute Rt with larger timestep", {
   ## compare AR or rather n still susceptible
   mean_S_final_1 <- mean(apply(y[[1]][, , 100], 2, sum))
   mean_S_final_2 <- mean(apply(y[[2]][, , 100], 2, sum))
-  # compute relative error using dt = 1/4 as reference as more precise 
-  rel_error <- (mean_S_final_1 - mean_S_final_2) / mean_S_final_2 
-  expect_true(rel_error < 1e-2)
+  mean_S_final_3 <- mean(apply(y[[3]][, , 100], 2, sum))
+  # compute relative error using dt = 1/4 as reference
+  rel_error_1 <- (mean_S_final_1 - mean_S_final_2) / mean_S_final_2 
+  expect_true(rel_error_1 < 5e-2)
+  rel_error_3 <- (mean_S_final_3 - mean_S_final_2) / mean_S_final_2 
+  expect_true(rel_error_3 < 5e-2)
   
   ### TODO: FIX THE BELOW
   
   ## compare mean reproduction numbers 
   mean_Rt_general_1 <- apply(rt_all_1$Rt_general, 1, mean) # with dt = 1
   mean_Rt_general_2 <- apply(rt_all_2$Rt_general, 1, mean) # with dt = 1/4
+  mean_Rt_general_3 <- apply(rt_all_3$Rt_general, 1, mean) # with dt = 1/100
   # compute relative error using dt = 1/4 as reference as more precise 
-  rel_error <- (mean_Rt_general_1 - mean_Rt_general_2) / mean_Rt_general_2 
-  expect_true(rel_error < 1e-2)
+  rel_error_1 <- (mean_Rt_general_1 - mean_Rt_general_2) / mean_Rt_general_2 
+  expect_true(rel_error_1 < 1e-2)
+  rel_error_3 <- (mean_Rt_general_3 - mean_Rt_general_2) / mean_Rt_general_2 
+  expect_true(rel_error_3 < 1e-2)
   
   ## compare mean reproduction numbers 
   mean_Rt_all_1 <- apply(rt_all_1$Rt_all, 1, mean) # with dt = 1
