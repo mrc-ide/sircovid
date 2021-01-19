@@ -5,7 +5,7 @@
 \alias{future_Rt}
 \title{Create future betas}
 \usage{
-add_future_betas(sample, rt, future)
+add_future_betas(sample, rt, future, rt_type = "Rt_general")
 
 future_Rt(value, relative_to = NULL)
 }
@@ -20,6 +20,9 @@ calculate relative Rt values.}
 element name corresponds to the date that the change takes
 effect (in ISO-8601 "YYYY-MM-DD" format) and must be strictly
 increasing with at least two days separating changes.}
+
+\item{rt_type}{A string giving the entry of \code{rt} to modify,
+defaults to \code{Rt_general}}
 
 \item{value}{A value to add in the future. If \code{relative_to} is
 \code{NULL}, then this is an \emph{absolute} Rt value, otherwise it is a
