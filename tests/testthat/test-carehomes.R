@@ -8,7 +8,7 @@ test_that("can run the carehomes model", {
   info <- mod$info()
   initial <- carehomes_initial(info, 10, p)
   mod$set_state(initial$state, initial$step)
-  
+
   index <- c(carehomes_index(info)$run,
              deaths_comm = info$index[["D_comm_tot"]],
              deaths_hosp = info$index[["D_hosp_tot"]],
@@ -17,7 +17,7 @@ test_that("can run the carehomes model", {
              sympt_cases = info$index[["cum_sympt_cases"]],
              sympt_cases_over25 = info$index[["cum_sympt_cases_over25"]]
   )
-  
+
   mod$set_index(index)
   res <- mod$run(end)
 
