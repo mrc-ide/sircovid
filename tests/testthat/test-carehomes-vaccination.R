@@ -909,6 +909,156 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
 })
 
 
+test_that("Can calculate IFR_t with an (empty) vaccination class", {
+  ## run model with unvaccinated & vaccinated, but both have same susceptibility
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1))
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$infections_inc
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  ifr_t_1 <- carehomes_ifr_t(steps, y[, 1, ], p)
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, y, p)
+
+  ## run model with unvaccinated class only
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1))
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$infections_inc
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  ifr_t_1_single_class <- carehomes_ifr_t(steps, y[, 1, ], p)
+  ifr_t_all_single_class <- carehomes_ifr_t_trajectories(steps, y, p)
+
+  expect_equal(ifr_t_1, ifr_t_1_single_class)
+  expect_equal(ifr_t_all, ifr_t_all_single_class)
+})
+
+
+test_that("IFR_t modified if rel_p_sympt is not 1", {
+  reduced_p_C <- 0.2 # can put anything <1 here
+
+  ## run model with unvaccinated & vaccinated (with susceptibility halved)
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, reduced_p_C),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            waning_rate = 1 / 20)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$infections_inc
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  ifr_t_1 <- carehomes_ifr_t(steps, y[, 1, ], p)
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, y, p)
+
+  ## move all individuals to vaccinated
+  y_with_vacc <- y
+  y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
+    y_with_vacc[seq_len(p$n_groups), , ]
+  y_with_vacc[seq_len(p$n_groups), , ] <- 0
+
+  ifr_t_1_vacc <- carehomes_ifr_t(steps, y_with_vacc[, 1, ], p)
+  ifr_t_all_vacc <- carehomes_ifr_t_trajectories(steps, y_with_vacc, p)
+
+  ## Given asymptomatic individuals do not die, we expect
+  ## IFR_t and IHR_t to be reduced when rel_p_sympt is not 1.
+  ## Remove first value (which will be NaN)
+  expect_true(all(ifr_t_1_vacc$IFR_t_all[-1L] < ifr_t_1$IFR_t_all[-1L]))
+  expect_true(all(ifr_t_1_vacc$IFR_t_general[-1L] < ifr_t_1$IFR_t_general[-1L]))
+  expect_true(all(ifr_t_1_vacc$IHR_t_all[-1L] < ifr_t_1$IHR_t_all[-1L]))
+  expect_true(all(ifr_t_1_vacc$IHR_t_general[-1L] < ifr_t_1$IHR_t_general[-1L]))
+
+})
+
+
+test_that("Effective IFR_t modified if rel_p_hosp_if_sympt is not 1", {
+  rel_p_hosp_if_sympt <- 0.2 # can put anything <1 here
+
+  ## run model with unvaccinated & vaccinated
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, rel_p_hosp_if_sympt),
+                            waning_rate = 1 / 20)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$infections_inc
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  ifr_t_1 <- carehomes_ifr_t(steps, y[, 1, ], p)
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, y, p)
+
+  ## move all individuals to vaccinated
+  y_with_vacc <- y
+  y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
+    y_with_vacc[seq_len(p$n_groups), , ]
+  y_with_vacc[seq_len(p$n_groups), , ] <- 0
+
+  ifr_t_1_vacc <- carehomes_ifr_t(steps, y_with_vacc[, 1, ], p)
+  ifr_t_all_vacc <- carehomes_ifr_t_trajectories(steps, y_with_vacc, p)
+
+  ## Given individuals not requiring hospitalisation do not die, we expect
+  ## IFR_t and IHR_t to be reduced when rel_p_hosp_if_sympt is not 1.
+  ## Remove first value (which will be NaN)
+  expect_true(all(ifr_t_1_vacc$IFR_t_all[-1L] < ifr_t_1$IFR_t_all[-1L]))
+  expect_true(all(ifr_t_1_vacc$IFR_t_general[-1L] < ifr_t_1$IFR_t_general[-1L]))
+  expect_true(all(ifr_t_1_vacc$IHR_t_all[-1L] < ifr_t_1$IHR_t_all[-1L]))
+  expect_true(all(ifr_t_1_vacc$IHR_t_general[-1L] < ifr_t_1$IHR_t_general[-1L]))
+
+})
+
+
 test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity

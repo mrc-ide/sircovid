@@ -25,7 +25,7 @@ carehomes_ifr_t <- function(step, infections_inc, p) {
     stop(sprintf("Expected 'infections_inc' to have %d cols, following 'step'",
                  length(step)))
   }
-  
+
   y <- carehomes_IFR_t_by_group_and_vacc_class(step, p)
   n_vacc_classes <- ncol(p$rel_susceptibility)
 
@@ -33,7 +33,7 @@ carehomes_ifr_t <- function(step, infections_inc, p) {
     function(t, infections_inc, y, drop_carehomes, type = "IFR") {
     y[[type]][, , t]
     infections_inc[, t]
-    
+
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
     if (drop_carehomes) {
@@ -43,9 +43,9 @@ carehomes_ifr_t <- function(step, infections_inc, p) {
     } else {
       i_keep <- seq_len(dim(infections_inc)[1])
     }
-    
-    y_vec <- c(y[[type]][ , , t])
-    
+
+    y_vec <- c(y[[type]][, , t])
+
     weighted.mean(y_vec[i_keep], infections_inc[i_keep, t])
   }
 
