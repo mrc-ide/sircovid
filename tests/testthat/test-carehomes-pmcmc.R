@@ -4,7 +4,7 @@ test_that("adding incidence adds appropriate states", {
   dat <- reference_data_mcmc()
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
   expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in% rownames(res$state)))
-
+saveRDS(res,"red.rds")
   tmp <- res$state["deaths_inc", , ]
   expect_true(all(is.na(tmp[, 1:2])))
   deaths <- t(apply(tmp[, -c(1, 2)], 1, cumsum))

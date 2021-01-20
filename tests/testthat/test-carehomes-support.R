@@ -416,8 +416,8 @@ test_that("carehomes_index returns S compartments", {
       info$index$cum_infections,
       info$index$S,
       info$index$cum_admit_by_age,
-      info$index$prob_strain
-      info$index$infections_inc))
+      info$index$infections_inc,
+      info$index$prob_strain))
 })
 
 
