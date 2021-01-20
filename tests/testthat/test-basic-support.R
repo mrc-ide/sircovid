@@ -67,24 +67,22 @@ test_that("basic_index identifies ICU and D_tot in real model", {
 
 test_that("basic compare function returns NULL if no data present", {
   state <- c(icu = 0, deaths = 0)
-  prev_state <- NULL
   observed <- list(icu = NA, deaths = NA)
   pars <- basic_parameters(sircovid_date("2020-01-01"), "uk", exp_noise = Inf)
-  expect_null(basic_compare(state, prev_state, observed, pars))
+  expect_null(basic_compare(state, observed, pars))
 })
 
 
 test_that("observation function correctly combines likelihoods", {
   state <- rbind(icu = 10:15, deaths_inc = 0:5)
-  prev_state <- NULL
   observed1 <- list(icu = 13, deaths = NA)
   observed2 <- list(icu = NA, deaths = 3)
   observed3 <- list(icu = 13, deaths = 3)
 
   pars <- basic_parameters(sircovid_date("2020-01-01"), "uk", exp_noise = Inf)
-  ll1 <- basic_compare(state, prev_state, observed1, pars)
-  ll2 <- basic_compare(state, prev_state, observed2, pars)
-  ll3 <- basic_compare(state, prev_state, observed3, pars)
+  ll1 <- basic_compare(state, observed1, pars)
+  ll2 <- basic_compare(state, observed2, pars)
+  ll3 <- basic_compare(state, observed3, pars)
 
   expect_length(ll3, 6)
 

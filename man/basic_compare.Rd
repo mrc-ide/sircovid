@@ -4,15 +4,12 @@
 \alias{basic_compare}
 \title{Compare observed and modelled data for the basic model}
 \usage{
-basic_compare(state, prev_state, observed, pars)
+basic_compare(state, observed, pars)
 }
 \arguments{
 \item{state}{State vector for the end of the current day. This is
 assumed to be filtered following \code{\link[=basic_index]{basic_index()}} so contains
 rows corresponding to ICU and deaths.}
-
-\item{prev_state}{State vector for the end of the previous day, as
-for \code{state} (but ignored)}
 
 \item{observed}{Observed data. This will be a list with elements
 \code{icu} (number of ICU beds occupied) and \code{deaths} (number of
@@ -31,9 +28,8 @@ conforms to the mcstate interface.
 }
 \examples{
 state <- rbind(icu = 10:15, deaths_inc = 1:6)
-prev_state <- NULL
 observed <- list(icu = 13, deaths = 3)
 pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
-basic_compare(state, prev_state, observed, pars)
-basic_compare(state * 5, prev_state, observed, pars)
+basic_compare(state, observed, pars)
+basic_compare(state * 5, observed, pars)
 }
