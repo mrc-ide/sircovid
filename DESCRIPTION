@@ -60,4 +60,4 @@ Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,
-    mrc-ide/mcstate@i94-no-state-prev
+    mrc-ide/mcstate
