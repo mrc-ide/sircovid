@@ -81,7 +81,7 @@ conforms to the mcstate interface." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.10</span>
       </span>
     </div>
 
@@ -130,7 +130,7 @@ conforms to the mcstate interface." />
 conforms to the mcstate interface.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>prev_state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,11 +140,6 @@ conforms to the mcstate interface.</p>
       <td><p>State vector for the end of the current day. This is
 assumed to be filtered following <code><a href='basic_index.html'>basic_index()</a></code> so contains
 rows corresponding to ICU and deaths.</p></td>
-    </tr>
-    <tr>
-      <th>prev_state</th>
-      <td><p>State vector for the end of the previous day, as
-for <code>state</code> (but ignored)</p></td>
     </tr>
     <tr>
       <th>observed</th>
@@ -166,11 +161,10 @@ of particles (the number of columns in the modelled state)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>state</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span>icu <span class='op'>=</span> <span class='fl'>10</span><span class='op'>:</span><span class='fl'>15</span>, deaths_inc <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span>
-<span class='va'>prev_state</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 <span class='va'>observed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>icu <span class='op'>=</span> <span class='fl'>13</span>, deaths <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>pars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_parameters.html'>basic_parameters</a></span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-07"</span><span class='op'>)</span>, <span class='st'>"england"</span><span class='op'>)</span>
-<span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>prev_state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] -6.196169 -5.427647 -5.250788 -5.253934 -5.330205 -5.440127</div><div class='input'><span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span> <span class='op'>*</span> <span class='fl'>5</span>, <span class='va'>prev_state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span>
+<span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] -6.196169 -5.427647 -5.250788 -5.253934 -5.330205 -5.440127</div><div class='input'><span class='fu'>basic_compare</span><span class='op'>(</span><span class='va'>state</span> <span class='op'>*</span> <span class='fl'>5</span>, <span class='va'>observed</span>, <span class='va'>pars</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] -6.393449 -7.085959 -7.714697 -8.248429 -8.709151 -9.114669</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
