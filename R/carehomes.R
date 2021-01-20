@@ -490,9 +490,6 @@ carehomes_index <- function(info) {
 ##'   10 rows corresponding to ICU, general beds, admissions, deaths and
 ##'   seroconversion compartments.
 ##'
-##' @param prev_state State vector for the end of the previous day, as
-##'   for `state`.
-##'
 ##' @param observed Observed data. At the moment please see the tests
 ##'   for a full list as this changes frequently (and this function
 ##'   may be removed in future).
@@ -505,7 +502,7 @@ carehomes_index <- function(info) {
 ##'
 ##' @export
 ##' @importFrom stats dbinom
-carehomes_compare <- function(state, prev_state, observed, pars) {
+carehomes_compare <- function(state, observed, pars) {
   ## TODO: we might refactor this to produce a subset of comparisons
   ## (and indices above) to suit either the SPI-M or paper fits as
   ## we're using different streams; that will make the comparisons a

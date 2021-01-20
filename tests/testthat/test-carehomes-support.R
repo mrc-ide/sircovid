@@ -316,7 +316,6 @@ test_that("carehomes_compare combines likelihood correctly", {
     sympt_cases_over25_inc = 80:85,
     sympt_cases_non_variant_over25_inc = 60:65,
     react_pos = 2:7)
-  prev_state <- NULL
   observed <- list(
     icu = 13,
     general = 23,
@@ -365,13 +364,13 @@ test_that("carehomes_compare combines likelihood correctly", {
              list(nms_react), list(nms_strain))
 
   ll_parts <- lapply(parts, function(x)
-    carehomes_compare(state, prev_state, observed_keep(x), pars))
+    carehomes_compare(state, observed_keep(x), pars))
 
   ## Extremely light testing, though this has already flushed out some
   ## issues
   expect_true(all(lengths(ll_parts) == 6))
   expect_equal(
-    carehomes_compare(state, prev_state, observed, pars),
+    carehomes_compare(state, observed, pars),
     rowSums(do.call(cbind, ll_parts)))
 
   ## Test that there are non-zero values for each log-likelihood part.

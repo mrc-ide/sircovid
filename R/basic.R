@@ -134,9 +134,6 @@ basic_index <- function(info) {
 ##'   assumed to be filtered following [basic_index()] so contains
 ##'   rows corresponding to ICU and deaths.
 ##'
-##' @param prev_state State vector for the end of the previous day, as
-##'   for `state` (but ignored)
-##'
 ##' @param observed Observed data. This will be a list with elements
 ##'   `icu` (number of ICU beds occupied) and `deaths` (number of
 ##'   deaths over this day).
@@ -150,12 +147,11 @@ basic_index <- function(info) {
 ##' @export
 ##' @examples
 ##' state <- rbind(icu = 10:15, deaths_inc = 1:6)
-##' prev_state <- NULL
 ##' observed <- list(icu = 13, deaths = 3)
 ##' pars <- basic_parameters(sircovid_date("2020-02-07"), "england")
-##' basic_compare(state, prev_state, observed, pars)
-##' basic_compare(state * 5, prev_state, observed, pars)
-basic_compare <- function(state, prev_state, observed, pars) {
+##' basic_compare(state, observed, pars)
+##' basic_compare(state * 5, observed, pars)
+basic_compare <- function(state, observed, pars) {
   if (is.na(observed$icu) && is.na(observed$deaths)) {
     return(NULL)
   }

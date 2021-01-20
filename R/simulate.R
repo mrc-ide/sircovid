@@ -86,6 +86,8 @@ sircovid_simulate <- function(mod, state, p, events,
   ## time domain information.
   attr(res, "step") <- steps
   attr(res, "date") <- sircovid_date_as_date(steps * dt)
+  attr(res, "rng_state") <- seed
+  attr(res, "state") <- state
 
   res
 }
