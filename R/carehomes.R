@@ -274,6 +274,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate = NULL,
                                  vaccine_uptake = NULL,
                                  vaccine_daily_doses = 0,
+                                 vaccine_daily_doses_date = NULL,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
@@ -755,7 +756,8 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              rel_infectivity = 1,
                                              vaccine_progression_rate = NULL,
                                              vaccine_uptake = NULL,
-                                             vaccine_daily_doses = 0) {
+                                             vaccine_daily_doses = 0,
+                                             vaccine_daily_doses_date = NULL) {
   stopifnot(length(N_tot) == carehomes_n_groups())
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
@@ -789,7 +791,8 @@ carehomes_parameters_vaccination <- function(N_tot,
   }
 
   ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot
-  ret$vaccine_daily_doses <- vaccine_daily_doses
+  ret$vaccine_daily_doses_step <-
+    sircovid_parameters_beta(vaccine_daily_doses_date, vaccine_daily_doses, dt)
 
   ret
 }
