@@ -80,25 +80,30 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
     prob_strain_mat <- matrix(prob_strain[, t],
                               nrow = p$n_groups,
                               ncol = length(p$strain_transmission))
-    weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
+    
+    if (any(is.na(prob_strain_mat))) {
+      out <- NA
+    } else {
+      weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
 
-    ngm <- outer(c(mean_duration[, , t] *
+      ngm <- outer(c(mean_duration[, , t] *
                      array(weighted_strain_multiplier,
                            c(p$n_groups, n_vacc_classes))),
-                 S_weighted) * m_extended
+                   S_weighted) * m_extended
 
-    ## Care home workers (CHW) and residents (CHR) in last two rows
-    ## and columns, remove for each vaccine class
-    if (drop_carehomes) {
-      i_CHR <- seq(p$n_groups, nrow(ngm), by = p$n_groups)
-      i_CHW <- i_CHR - 1
-      i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
-      ngm <- ngm[i_gen, i_gen]
+      ## Care home workers (CHW) and residents (CHR) in last two rows
+      ## and columns, remove for each vaccine class
+      if (drop_carehomes) {
+        i_CHR <- seq(p$n_groups, nrow(ngm), by = p$n_groups)
+        i_CHW <- i_CHR - 1
+        i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
+        ngm <- ngm[i_gen, i_gen]
+      }
+      ev <- eigen(ngm)$values
+      ev[Im(ev) != 0] <- NA
+      ev <- as.numeric(ev)
+      out <- max(ev, na.rm = TRUE)
     }
-    ev <- eigen(ngm)$values
-    ev[Im(ev) != 0] <- NA
-    ev <- as.numeric(ev)
-    max(ev, na.rm = TRUE)
   }
 
   t <- seq_along(step)
