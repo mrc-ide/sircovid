@@ -104,6 +104,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
       ev <- as.numeric(ev)
       out <- max(ev, na.rm = TRUE)
     }
+    out
   }
 
   t <- seq_along(step)
