@@ -133,3 +133,47 @@ test_that("spread_integer", {
   expect_equal(spread_integer(0, 5), rep(0, 5))
   expect_equal(spread_integer(2, 5), c(1, 1, 0, 0, 0))
 })
+
+
+test_that("Gamma correction works", {
+  ## tests that adjusted_gamma improves match to mean of continuous distribution
+  
+  ## compute the mean of a discretized Gamma/Erlang distribution
+  discretized_mean <- function(gamma, k, dt) {
+    max_t <- qgamma(0.999, shape = k, rate = gamma)
+    tt <- seq(0, max_t + 1, dt)
+    cdf <- pgamma(tt, shape = k, rate = gamma)
+    sum(tt[-length(tt)] * diff(cdf))
+  }
+  
+  test_gamma_correction <- function(gamma, k, dt)
+  {
+    error_no_correction <- abs(discretized_mean(gamma, k, dt) - k / gamma)
+    error_with_correction <- abs(discretized_mean(adjusted_gamma(gamma, k, dt), k, dt) - k / gamma)
+    expect_true(error_no_correction > error_with_correction)
+  }
+  
+  test_gamma_correction(gamma = 1 / 2.5, k = 1, dt = 1)
+  test_gamma_correction(gamma = 1 / 2.5, k = 1, dt = 1/4)
+  test_gamma_correction(gamma = 1 / 2.5, k = 1, dt = 1/100)
+  
+  test_gamma_correction(gamma = 1 / 2.5, k = 2, dt = 1)
+  test_gamma_correction(gamma = 1 / 2.5, k = 2, dt = 1/4)
+  test_gamma_correction(gamma = 1 / 2.5, k = 2, dt = 1/100)
+  
+  test_gamma_correction(gamma = 1 / 1, k = 1, dt = 1)
+  test_gamma_correction(gamma = 1 / 1, k = 1, dt = 1/4)
+  test_gamma_correction(gamma = 1 / 1, k = 1, dt = 1/100)
+  
+  test_gamma_correction(gamma = 1 / 1, k = 2, dt = 1)
+  test_gamma_correction(gamma = 1 / 1, k = 2, dt = 1/4)
+  test_gamma_correction(gamma = 1 / 1, k = 2, dt = 1/100)
+  
+  test_gamma_correction(gamma = 1 / 10, k = 1, dt = 1)
+  test_gamma_correction(gamma = 1 / 10, k = 1, dt = 1/4)
+  test_gamma_correction(gamma = 1 / 10, k = 1, dt = 1/100)
+  
+  test_gamma_correction(gamma = 1 / 10, k = 2, dt = 1)
+  test_gamma_correction(gamma = 1 / 10, k = 2, dt = 1/4)
+  test_gamma_correction(gamma = 1 / 10, k = 2, dt = 1/100)
+})

@@ -364,3 +364,32 @@ combine_rt1 <- function(what, rt, samples) {
 
   Reduce(`+`, ret)
 }
+
+
+## adjust the rate of a Gamma/Erlang distribution, for a given time step, 
+## so that the mean of the discretized Gamma/Erlang  matches the mean
+## of the continuous distribution
+## this comes from the fact that the mean of the discretised Erlang distribution
+## is k * dt / (1 - exp(-gamma * dt))
+adjusted_gamma <- function(gamma, k, dt) {
+  if (is.null(k)) k <- 1 # exponential by default
+  true_mean <- k / gamma
+  tmp <- 1 - k*dt / true_mean
+  if(tmp < 0 ) {# mean is < dt so we can't achieve this
+   adj_gamma <- Inf # so setting the rate as high as possible 
+  } else {
+    adj_gamma <- -log(tmp) / dt
+  }
+  adj_gamma
+}
+
+
+adjust_all_gammas <- function(par) {
+  gamma_pars <- names(par)[grep("gamma", names(par))]
+  idx_gamma_pars <- lapply(gamma_pars, function(e) gsub("gamma_", "", e))
+  k_pars <- paste0("k_", idx_gamma_pars)
+  for (i in seq_along(gamma_pars)) {
+    par[[gamma_pars[i]]] <- adjusted_gamma(par[[gamma_pars[i]]], par[[k_pars[i]]], par$dt)
+  }
+  return(par)
+}

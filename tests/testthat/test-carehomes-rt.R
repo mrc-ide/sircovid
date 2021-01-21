@@ -143,13 +143,22 @@ test_that("Can vary beta over time", {
   expect_true(all(res$Rt_general >= res$eff_Rt_general))
 })
 
-
 test_that("Can compute Rt with larger timestep", {
+  ### Currently this test is failing: 
+  ### if we do not do the adjustment of parameters (using adjust_all_gammas)
+  ### then the epidemic trajectories are similar but R values don't match
+  ### if we do the adjustment of parameters (using adjust_all_gammas)
+  ### the the R match but not the epidemic trajectories
+  
   n <- c(1, 4, 100)
   pars <- lapply(n, function(n)
     carehomes_parameters(0, "london", steps_per_day = n))
   np <- 50 # use number large enough to get stable mean behaviour 
   
+  ## adjust the gamma parameters to account for the discretisation
+  pars <- lapply(pars, adjust_all_gammas)
+  
+  ## run model with different time steps
   mod <- lapply(pars, function(p) carehomes$new(p, 0, np, seed = 1L))
   end <- sircovid_date("2020-05-31")
   for (i in seq_along(n)) {
@@ -188,38 +197,36 @@ test_that("Can compute Rt with larger timestep", {
   rel_error_3 <- (mean_S_final_3 - mean_S_final_2) / mean_S_final_2 
   expect_true(rel_error_3 < 5e-2)
   
-  ### TODO: FIX THE BELOW
-  
   ## compare mean reproduction numbers 
   mean_Rt_general_1 <- apply(rt_all_1$Rt_general, 1, mean) # with dt = 1
   mean_Rt_general_2 <- apply(rt_all_2$Rt_general, 1, mean) # with dt = 1/4
   mean_Rt_general_3 <- apply(rt_all_3$Rt_general, 1, mean) # with dt = 1/100
   # compute relative error using dt = 1/4 as reference as more precise 
   rel_error_1 <- (mean_Rt_general_1 - mean_Rt_general_2) / mean_Rt_general_2 
-  expect_true(rel_error_1 < 1e-2)
+  expect_true(all(rel_error_1 < 1e-2))
   rel_error_3 <- (mean_Rt_general_3 - mean_Rt_general_2) / mean_Rt_general_2 
-  expect_true(rel_error_3 < 1e-2)
+  expect_true(all(rel_error_3 < 1e-2))
   
   ## compare mean reproduction numbers 
   mean_Rt_all_1 <- apply(rt_all_1$Rt_all, 1, mean) # with dt = 1
   mean_Rt_all_2 <- apply(rt_all_2$Rt_all, 1, mean) # with dt = 1/4
   # compute relative error using dt = 1/4 as reference as more precise 
   rel_error <- (mean_Rt_all_1 - mean_Rt_all_2) / mean_Rt_all_2 
-  expect_true(rel_error < 1e-2)
+  expect_true(all(rel_error < 1e-2))
   
   ## compare mean reproduction numbers
   mean_eff_Rt_general_1 <- apply(rt_all_1$eff_Rt_general, 1, mean) # with dt = 1
   mean_eff_Rt_general_2 <- apply(rt_all_2$eff_Rt_general, 1, mean) # with dt = 1/4
   # compute relative error using dt = 1/4 as reference as more precise 
   rel_error <- (mean_eff_Rt_general_1 - mean_eff_Rt_general_2) / mean_eff_Rt_general_2 
-  expect_true(rel_error < 1e-2)
+  expect_true(all(rel_error < 1e-2))
   
   ## compare mean reproduction numbers
   mean_eff_Rt_all_1 <- apply(rt_all_1$eff_Rt_all, 1, mean) # with dt = 1
   mean_eff_Rt_all_2 <- apply(rt_all_2$eff_Rt_all, 1, mean) # with dt = 1/4
   # compute relative error using dt = 1/4 as reference as more precise 
   rel_error <- (mean_eff_Rt_all_1 - mean_eff_Rt_all_2) / mean_eff_Rt_all_2 
-  expect_true(rel_error < 1e-2)
+  expect_true(all(rel_error < 1e-2))
   
   # ## visual check
   # matplot(t(apply(rt_all_1$eff_Rt_all, 1, quantile, probs = c(0.025, 0.5, 0.975))),
