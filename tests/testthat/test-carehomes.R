@@ -134,7 +134,7 @@ test_that("Test compiled carehomes components", {
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
-  np <- 1
+  np <- 10
   mod <- carehomes$new(pars, 0, np, seed = 1L)
   initial <- carehomes_initial(mod$info(), np, pars)
   mod$set_state(initial$state, initial$step)
@@ -143,7 +143,7 @@ test_that("Test compiled carehomes components", {
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
   step <- data$step_end[[i]]
   y <- mod$run(step)
-1
+
   ## quickly bodge together some data:
   d <- data[i, ]
   d[setdiff(names(d), "step_end")] <- NA_real_

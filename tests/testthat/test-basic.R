@@ -69,7 +69,7 @@ test_that("compiled compare function is correct", {
   data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
                      start_date, pars$dt)
 
-  np <- 1
+  np <- 10
   mod <- basic$new(pars, 0, np, seed = 1L)
   initial <- basic_initial(mod$info(), np, pars)
   mod$set_state(initial$state, initial$step)
