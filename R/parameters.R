@@ -97,6 +97,7 @@ sircovid_parameters_beta <- function(date, value, dt) {
   } 
 
   stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
+
 }
 
 
@@ -178,6 +179,7 @@ sircovid_parameters_piecewise_constant <- function(date, value, dt) {
 
   f <- stats::stepfun(date, c(NA, value))
   f(seq(0, date[[length(date)]], by = dt))
+
 }
 
 
