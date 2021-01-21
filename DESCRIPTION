@@ -52,12 +52,12 @@ Imports:
     socialmixr
 LinkingTo:
     cpp11 (>= 0.2.1),
-    dust (>= 0.6.0)
+    dust (>= 0.7.0)
 Suggests:
     testthat
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
-    mrc-ide/dust,
+    mrc-ide/dust@i61,
     mrc-ide/mcstate

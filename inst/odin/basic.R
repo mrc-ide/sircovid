@@ -306,3 +306,10 @@ dim(I_with_diff_trans) <- c(n_age_groups, n_trans_classes)
 ## Used for error checking - population should be constant
 update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_A) +
   sum(I_C) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
+
+config(compare) <- "compare_basic.cpp"
+exp_noise <- user() # ignore.unused
+phi_ICU <- user() # ignore.unused
+kappa_ICU <- user() # ignore.unused
+phi_death <- user() # ignore.unused
+kappa_death <- user() # ignore.unused

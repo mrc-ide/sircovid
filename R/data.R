@@ -15,6 +15,10 @@
 ##' @param dt The time step (fraction of a day that each step
 ##'   represents) as used to create the model object
 ##'
+##' @param expected Optional list of expected column names and types
+##'   that are expected (use `NA_real_`). These will be filled in with
+##'   the value where missing.
+##'
 ##' @return A data.frame suitable for use with `mcstate` functions
 ##'   such as [mcstate::particle_filter()] and [mcstate::pmcmc()]
 ##'
@@ -31,7 +35,7 @@
 ##' # Get this ready for sircovid/mcstate assuming the seeding starts on
 ##' # the 15th of January and we take 4 steps per day.
 ##' sircovid_data(d, start_date = "2020-01-15", 1 / 4)
-sircovid_data <- function(data, start_date, dt) {
+sircovid_data <- function(data, start_date, dt, expected = NULL) {
   start_date <- as_sircovid_date(start_date)
   ## Some horrid off-by-one unpleasantness lurking here. See this commit:
   ##   https://github.com/mrc-ide/mcstate/commit/97e68ad
@@ -41,6 +45,17 @@ sircovid_data <- function(data, start_date, dt) {
   ## period at the first row of the file so that our compare works
   ## correctly; this should be something that mcstate can do for us.
   data$date <- sircovid_date(data$date)
+
+  msg <- setdiff(names(expected), names(data))
+  if (length(msg) > 0) {
+    message(sprintf("Adding empty %s to data: %s",
+                    ngettext(length(msg), "column", "columns"),
+                    paste(squote(msg), collapse = ", ")))
+    for (nm in msg) {
+      data[[nm]] <- expected[[nm]]
+    }
+  }
+
   rate <- 1 / dt
   data <- mcstate::particle_filter_data(data, "date", rate, start_date)
   data

@@ -14,9 +14,11 @@ basic <- R6::R6Class(
     param_ = list(ICU_transmission = list(has_default = FALSE, default_value = NULL,
     rank = 0, min = -Inf, max = Inf, integer = FALSE), beta_step = list(
     has_default = FALSE, default_value = NULL, rank = 1, min = -Inf,
-    max = Inf, integer = FALSE), hosp_transmission = list(has_default = FALSE,
+    max = Inf, integer = FALSE), exp_noise = list(has_default = FALSE,
     default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-    k_A = list(has_default = FALSE, default_value = NULL, rank = 0,
+    hosp_transmission = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_A = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_C = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), k_E = list(has_default = FALSE, default_value = NULL,
@@ -25,6 +27,10 @@ basic <- R6::R6Class(
         min = -Inf, max = Inf, integer = FALSE), k_hosp = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_rec = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_ICU = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_death = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), m = list(has_default = FALSE,
         default_value = NULL, rank = 2, min = -Inf, max = Inf,
@@ -39,6 +45,10 @@ basic <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_recov_sympt = list(
         has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), phi_ICU = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_death = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), steps_per_day = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), gamma_A = list(
