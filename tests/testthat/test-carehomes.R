@@ -176,3 +176,30 @@ test_that("Test compiled carehomes components", {
                  unname(carehomes_compare(y, d_test, pars)))
   }
 })
+
+
+test_that("can run the particle filter on the model", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- carehomes_parameters(start_date, "england")
+  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+                         start_date, pars$dt)
+
+  np <- 100
+  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE)
+  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE)
+  system.time(pf1$run(pars))
+  system.time(pf2$run(pars))
+
+  np <- 100
+  nt <- 10
+  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE,
+                                   n_threads = nt)
+  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE,
+                                   n_threads = nt)
+  bench::mark(
+    pf1$run(pars),
+    pf2$run(pars),
+    check = FALSE,
+    min_iterations = 10,
+    memory = FALSE)
+})

@@ -1085,15 +1085,20 @@ carehomes_population <- function(population, carehome_workers,
 ##'
 ##' @param seed Random seed to use
 ##'
+##' @param compiled_compare Logical, indicating if we should use the
+##'   new compiled compare function (this will shortly become the
+##'   default).
+##'
 ##' @return A [`mcstate::particle_filter`] object
 ##' @export
 carehomes_particle_filter <- function(data, n_particles,
-                                      n_threads = 1L, seed = NULL) {
+                                      n_threads = 1L, seed = NULL,
+                                      compiled_compare = FALSE) {
   mcstate::particle_filter$new(
     carehomes_particle_filter_data(data),
     carehomes,
     n_particles,
-    carehomes_compare,
+    if (compiled_compare) NULL else carehomes_compare,
     carehomes_index,
     carehomes_initial,
     n_threads,
