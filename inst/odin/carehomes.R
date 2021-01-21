@@ -1414,40 +1414,42 @@ vaccine_progression_rate[, 2:n_vacc_classes] <-
 
 dim(vaccine_progression_rate) <- c(n_groups, n_vacc_classes)
 
+config(compare) <- "compare_carehomes.cpp"
 ## Parameters and code to support the compare function. Because these
 ## do not appear in any odin equation we mark them as "ignore.unused"
 ## so that odin doesn't complain that they appear redundant. This
 ## means that unwanted things can accumulate here so keep on top of
 ## it.
-## N_tot_all <- user() # ignore.unused
-## N_tot_over25 <- user() # ignore.unused
-## N_tot_react <- user() # ignore.unused
-## N_tot_15_64 <- user() # ignore.unused
+N_tot_all <- user() # ignore.unused
+N_tot_over25 <- user() # ignore.unused
+N_tot_react <- user() # ignore.unused
+N_tot_15_64 <- user() # ignore.unused
 
-## p_NC <- user() # ignore.unused
-## pillar2_sensitivity <- user() # ignore.unused
-## pillar2_specificity <- user() # ignore.unused
-## react_sensitivity <- user() # ignore.unused
-## react_specificity <- user() # ignore.unused
-## sero_sensitivity <- user() # ignore.unused
-## sero_specificity <- user() # ignore.unused
-## exp_noise <- user() # ignore.unused
-## phi_ICU <- user() # ignore.unused
-## kappa_ICU <- user() # ignore.unused
-## phi_general <- user() # ignore.unused
-## kappa_general <- user() # ignore.unused
-## phi_hosp <- user() # ignore.unused
-## kappa_hosp <- user() # ignore.unused
-## phi_death_hosp <- user() # ignore.unused
-## kappa_death_hosp <- user() # ignore.unused
-## phi_death_comm <- user() # ignore.unused
-## kappa_death_comm <- user() # ignore.unused
-## phi_admitted <- user() # ignore.unused
-## kappa_admitted <- user() # ignore.unused
-## phi_new <- user() # ignore.unused
-## kappa_new <- user() # ignore.unused
-## phi_new_admitted <- user() # ignore.unused
-## kappa_new_admitted <- user() # ignore.unused
-## rho_pillar2_tests <- user() # ignore.unused
-## phi_pillar2_cases <- user() # ignore.unused
-## kappa_pillar2_cases <- user() # ignore.unused
+p_NC <- user() # ignore.unused
+pillar2_sensitivity <- user() # ignore.unused
+pillar2_specificity <- user() # ignore.unused
+react_sensitivity <- user() # ignore.unused
+react_specificity <- user() # ignore.unused
+sero_sensitivity <- user() # ignore.unused
+sero_specificity <- user() # ignore.unused
+exp_noise <- user() # ignore.unused
+phi_ICU <- user() # ignore.unused
+kappa_ICU <- user() # ignore.unused
+phi_general <- user() # ignore.unused
+kappa_general <- user() # ignore.unused
+phi_hosp <- user() # ignore.unused
+kappa_hosp <- user() # ignore.unused
+phi_death_hosp <- user() # ignore.unused
+kappa_death_hosp <- user() # ignore.unused
+phi_death_comm <- user() # ignore.unused
+kappa_death_comm <- user() # ignore.unused
+kappa_death <- user() # ignore.unused
+phi_admitted <- user() # ignore.unused
+kappa_admitted <- user() # ignore.unused
+phi_new <- user() # ignore.unused
+kappa_new <- user() # ignore.unused
+phi_new_admitted <- user() # ignore.unused
+kappa_new_admitted <- user() # ignore.unused
+rho_pillar2_tests <- user() # ignore.unused
+phi_pillar2_cases <- user() # ignore.unused
+kappa_pillar2_cases <- user() # ignore.unused

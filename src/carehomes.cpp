@@ -80,10 +80,224 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
   // but the compiler will need it.
   return 0;
 }
+#include <dust/densities.hpp>
+
+template <typename real_t>
+real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
+                 dust::rng_state_t<real_t>& rng_state) {
+  if (std::isnan(data)) {
+    return 0;
+  }
+  real_t mu = model + dust::distr::rexp(rng_state, exp_noise);
+  return dust::dnbinom(data, kappa, mu, true);
+}
+
+template <typename real_t>
+real_t ll_binom(real_t data_x, real_t data_size, real_t model_prob) {
+  if (std::isnan(data_x) || std::isnan(data_size)) {
+    return 0;
+  }
+  return dust::dbinom(data_x, data_size, model_prob, true);
+}
+
+template <typename real_t>
+real_t ll_betabinom(real_t data_x, real_t data_size, real_t model_prob,
+                    real_t rho) {
+  if (std::isnan(data_x) || std::isnan(data_size)) {
+    return 0;
+  }
+  return dust::dbetabinom(data_x, data_size, model_prob, rho, true);
+}
+
+template <typename real_t>
+real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
+                     real_t specificity, real_t exp_noise,
+                     dust::rng_state_t<real_t>& rng_state) {
+  // We add some exponential noise to the number of positives and negatives
+  // to help ensure prob_pos is not 0 or 1. If e.g. prob_pos were 0 and there
+  // were individuals who tested positive, this would result in a weight of 0
+  // for a particle. If all particles have weights of 0, the particle filter
+  // breaks. The exponential noise produces small non-zero weights in these
+  // circumstances to prevent the particle filter from breaking.
+  pos += dust::distr::rexp(rng_state, exp_noise);
+  neg += dust::distr::rexp(rng_state, exp_noise);
+  return (sensitivity * pos + (1 - specificity) * neg) / (pos + neg);
+}
+
+// [[odin.dust::compare_data(icu = double)]]
+// [[odin.dust::compare_data(general = double)]]
+// [[odin.dust::compare_data(hosp = double)]]
+// [[odin.dust::compare_data(deaths_hosp = double)]]
+// [[odin.dust::compare_data(deaths_comm = double)]]
+// [[odin.dust::compare_data(deaths = double)]]
+// [[odin.dust::compare_data(admitted = double)]]
+// [[odin.dust::compare_data(new_conf = double)]]
+// [[odin.dust::compare_data(new_admitted = double)]]
+// [[odin.dust::compare_data(npos_15_64 = double)]]
+// [[odin.dust::compare_data(ntot_15_64 = double)]]
+// [[odin.dust::compare_data(pillar2_pos = double)]]
+// [[odin.dust::compare_data(pillar2_tot = double)]]
+// [[odin.dust::compare_data(pillar2_cases = double)]]
+// [[odin.dust::compare_data(pillar2_over25_pos = double)]]
+// [[odin.dust::compare_data(pillar2_over25_tot = double)]]
+// [[odin.dust::compare_data(pillar2_over25_cases = double)]]
+// [[odin.dust::compare_data(react_pos = double)]]
+// [[odin.dust::compare_data(react_tot = double)]]
+// [[odin.dust::compare_data(strain_non_variant = double)]]
+// [[odin.dust::compare_data(strain_tot = double)]]
+// [[odin.dust::compare_function]]
+template <typename T>
+typename T::real_t compare(const typename T::real_t * state,
+                           const typename T::data_t& data,
+                           const typename T::internal_t internal,
+                           std::shared_ptr<const typename T::shared_t> shared,
+                           dust::rng_state_t<typename T::real_t>& rng_state) {
+  typedef typename T::real_t real_t;
+
+  // State variables; these largely correspond to the quantities in data
+  const real_t model_icu = state[9];
+  const real_t model_general = state[10];
+  const real_t model_hosp = model_icu + model_general;
+  const real_t model_deaths_comm = state[14];
+  const real_t model_deaths_hosp = state[15];
+  const real_t model_admitted = state[1];
+  const real_t model_new = state[2];
+  const real_t model_new_admitted = model_admitted + model_new;
+  const real_t model_sero_pos = state[17];
+  const real_t model_sympt_cases = state[21];
+  const real_t model_sympt_cases_over25 = state[22];
+  const real_t model_sympt_cases_non_variant_over25 =
+    state[23];
+  const real_t model_react_pos = state[24];
+
+  // This is used over and over
+  const real_t exp_noise = shared->exp_noise;
+
+  // TODO: need sum(N_tot) here
+  const real_t N_tot_all = shared->N_tot_all; // sum(pars$N_tot)
+  const real_t pillar2_negs =
+    shared->p_NC * (shared->N_tot_all - model_sympt_cases);
+  const real_t model_pillar2_prob_pos =
+    test_prob_pos(model_sympt_cases,
+                  pillar2_negs,
+                  shared->pillar2_sensitivity,
+                  shared->pillar2_specificity,
+                  exp_noise,
+                  rng_state);
+
+  const real_t pillar2_over25_negs =
+    shared->p_NC * (shared->N_tot_over25 - model_sympt_cases_over25);
+  const real_t model_pillar2_over25_prob_pos =
+    test_prob_pos(model_sympt_cases_over25,
+                  pillar2_over25_negs,
+                  shared->pillar2_sensitivity,
+                  shared->pillar2_specificity,
+                  exp_noise,
+                  rng_state);
+
+  const real_t N_tot_react = shared->N_tot_react; // sum(pars$N_tot[2:18])
+  const real_t model_react_prob_pos =
+    test_prob_pos(model_react_pos,
+                  N_tot_react - model_react_pos,
+                  shared->react_sensitivity,
+                  shared->react_specificity,
+                  exp_noise,
+                  rng_state);
+
+  // serology
+  const real_t model_sero_prob_pos =
+    test_prob_pos(model_sero_pos,
+                  shared->N_tot_15_64 - model_sero_pos,
+                  shared->sero_sensitivity,
+                  shared->sero_specificity,
+                  exp_noise,
+                  rng_state);
+
+  // Strain
+  const real_t model_strain_over25_prob_pos =
+    test_prob_pos<real_t>(model_sympt_cases_non_variant_over25,
+                          model_sympt_cases_over25 -
+                          model_sympt_cases_non_variant_over25,
+                          1, 1, exp_noise,
+                          rng_state);
+
+  // Note that in ll_nbinom, the purpose of exp_noise is to allow a
+  // non-zero probability when the model value is 0 and the observed
+  // value is non-zero (i.e. there is overreporting)
+  const real_t ll_icu =
+    ll_nbinom(data.icu, shared->phi_ICU * model_icu,
+              shared->kappa_ICU, exp_noise, rng_state);
+  const real_t ll_general =
+    ll_nbinom(data.general, shared->phi_general * model_general,
+              shared->kappa_general, exp_noise, rng_state);
+  const real_t ll_hosp =
+    ll_nbinom(data.hosp, shared->phi_hosp * model_hosp,
+              shared->kappa_hosp, exp_noise, rng_state);
+
+  // We will either compute ll_deaths_hosp and ll_deaths_comm *or* we
+  // will compute the combined version.
+  const real_t ll_deaths_hosp =
+    ll_nbinom(data.deaths_hosp, shared->phi_death_hosp * model_deaths_hosp,
+              shared->kappa_death_hosp, exp_noise, rng_state);
+  const real_t ll_deaths_comm =
+    ll_nbinom(data.deaths_comm, shared->phi_death_comm * model_deaths_comm,
+              shared->kappa_death_comm, exp_noise, rng_state);
+  const real_t ll_deaths =
+    ll_nbinom(data.deaths,
+              shared->phi_death_hosp * model_deaths_hosp +
+              shared->phi_death_comm * model_deaths_comm,
+              shared->kappa_death, exp_noise, rng_state);
+
+  const real_t ll_admitted =
+    ll_nbinom(data.admitted, shared->phi_admitted * model_admitted,
+              shared->kappa_admitted, exp_noise, rng_state);
+  const real_t ll_new =
+    ll_nbinom(data.new_conf, shared->phi_new * model_new,
+              shared->kappa_new, exp_noise, rng_state);
+  const real_t ll_new_admitted =
+    ll_nbinom(data.new_admitted, shared->phi_new_admitted * model_new_admitted,
+              shared->kappa_new_admitted, exp_noise, rng_state);
+
+  const real_t ll_serology =
+    ll_binom(data.npos_15_64, data.ntot_15_64, model_sero_prob_pos);
+
+  const real_t ll_pillar2_tests =
+    ll_betabinom(data.pillar2_pos, data.pillar2_tot,
+                 model_pillar2_prob_pos, shared->rho_pillar2_tests);
+  const real_t ll_pillar2_cases =
+    ll_nbinom(data.pillar2_cases,
+              shared->phi_pillar2_cases * model_sympt_cases,
+              shared->kappa_pillar2_cases, exp_noise, rng_state);
+
+  const real_t ll_pillar2_over25_tests =
+    ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
+                 model_pillar2_over25_prob_pos, shared->rho_pillar2_tests);
+  const real_t ll_pillar2_over25_cases =
+    ll_nbinom(data.pillar2_over25_cases,
+              shared->phi_pillar2_cases * model_sympt_cases_over25,
+              shared->kappa_pillar2_cases, exp_noise, rng_state);
+
+  const real_t ll_react =
+    ll_binom(data.react_pos, data.react_tot,
+             model_react_prob_pos);
+  const real_t ll_strain_over25 =
+    ll_binom(data.strain_non_variant, data.strain_tot,
+             model_strain_over25_prob_pos);
+
+  return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm +
+    ll_deaths + ll_admitted + ll_new + ll_new_admitted + ll_serology +
+    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
+    ll_pillar2_over25_cases + ll_react + ll_strain_over25;
+}
 // [[dust::class(carehomes)]]
 // [[dust::param(G_D_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(ICU_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_15_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_all, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_over25, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(beta_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(exp_noise, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_A, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_C, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -100,6 +314,16 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(k_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_death, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_death_comm, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_death_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_new, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_new_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -109,9 +333,21 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(p_H_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_NC, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pos, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_star_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_death_comm, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_death_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_new, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_new_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(pillar2_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(pillar2_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_G_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_H, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_H_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -119,10 +355,15 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(psi_ICU_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_W_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_star, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(react_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(react_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_infectivity, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_hosp_if_sympt, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_sympt, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_susceptibility, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(rho_pillar2_tests, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(sero_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(sero_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(steps_per_day, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -153,10 +394,36 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 class carehomes {
 public:
   typedef double real_t;
-  typedef dust::no_data data_t;
+  struct data_t {
+    double icu;
+    double general;
+    double hosp;
+    double deaths_hosp;
+    double deaths_comm;
+    double deaths;
+    double admitted;
+    double new_conf;
+    double new_admitted;
+    double npos_15_64;
+    double ntot_15_64;
+    double pillar2_pos;
+    double pillar2_tot;
+    double pillar2_cases;
+    double pillar2_over25_pos;
+    double pillar2_over25_tot;
+    double pillar2_over25_cases;
+    double react_pos;
+    double react_tot;
+    double strain_non_variant;
+    double strain_tot;
+  };
   struct shared_t {
     real_t G_D_transmission;
     real_t ICU_transmission;
+    real_t N_tot_15_64;
+    real_t N_tot_all;
+    real_t N_tot_over25;
+    real_t N_tot_react;
     std::vector<real_t> beta_step;
     int dim_D_comm;
     int dim_D_hosp;
@@ -1242,6 +1509,7 @@ public:
     int dim_vaccine_progression_rate_base_2;
     int dim_waning_rate;
     real_t dt;
+    real_t exp_noise;
     real_t gamma_A;
     real_t gamma_C;
     real_t gamma_E;
@@ -1342,6 +1610,16 @@ public:
     int k_W_D;
     int k_W_R;
     int k_sero_pos;
+    real_t kappa_ICU;
+    real_t kappa_admitted;
+    real_t kappa_death;
+    real_t kappa_death_comm;
+    real_t kappa_death_hosp;
+    real_t kappa_general;
+    real_t kappa_hosp;
+    real_t kappa_new;
+    real_t kappa_new_admitted;
+    real_t kappa_pillar2_cases;
     std::vector<real_t> m;
     real_t model_pcr_and_serology;
     real_t model_pcr_and_serology_user;
@@ -1404,6 +1682,7 @@ public:
     std::vector<real_t> p_ICU_step;
     real_t p_I_A_progress;
     real_t p_I_C_progress;
+    real_t p_NC;
     std::vector<real_t> p_RS;
     real_t p_T_PCR_pos_progress;
     real_t p_T_PCR_pre_progress;
@@ -1416,6 +1695,17 @@ public:
     real_t p_sero_pre_1;
     std::vector<real_t> p_star_step;
     real_t p_test;
+    real_t phi_ICU;
+    real_t phi_admitted;
+    real_t phi_death_comm;
+    real_t phi_death_hosp;
+    real_t phi_general;
+    real_t phi_hosp;
+    real_t phi_new;
+    real_t phi_new_admitted;
+    real_t phi_pillar2_cases;
+    real_t pillar2_sensitivity;
+    real_t pillar2_specificity;
     std::vector<real_t> psi_G_D;
     std::vector<real_t> psi_H;
     std::vector<real_t> psi_H_D;
@@ -1423,10 +1713,15 @@ public:
     std::vector<real_t> psi_ICU_D;
     std::vector<real_t> psi_W_D;
     std::vector<real_t> psi_star;
+    real_t react_sensitivity;
+    real_t react_specificity;
     std::vector<real_t> rel_infectivity;
     std::vector<real_t> rel_p_hosp_if_sympt;
     std::vector<real_t> rel_p_sympt;
     std::vector<real_t> rel_susceptibility;
+    real_t rho_pillar2_tests;
+    real_t sero_sensitivity;
+    real_t sero_specificity;
     int steps_per_day;
     std::vector<real_t> strain_seed_step;
     std::vector<real_t> strain_transmission;
@@ -3893,6 +4188,9 @@ public:
     state_next[10] = new_general_tot;
     state_next[11] = new_ICU_tot + new_general_tot;
   }
+  real_t compare_data(const real_t * state, const data_t& data, dust::rng_state_t<real_t>& rng_state) {
+    return compare<carehomes>(state, data, internal, shared, rng_state);
+  }
 private:
   std::shared_ptr<const shared_t> shared;
   internal_t internal;
@@ -4189,6 +4487,11 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_sero_pre = std::vector<real_t>(shared->dim_gamma_sero_pre);
   shared->G_D_transmission = NA_REAL;
   shared->ICU_transmission = NA_REAL;
+  shared->N_tot_15_64 = NA_REAL;
+  shared->N_tot_all = NA_REAL;
+  shared->N_tot_over25 = NA_REAL;
+  shared->N_tot_react = NA_REAL;
+  shared->exp_noise = NA_REAL;
   shared->hosp_transmission = NA_REAL;
   shared->k_A = NA_INTEGER;
   shared->k_C = NA_INTEGER;
@@ -4205,8 +4508,35 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->k_W_D = NA_INTEGER;
   shared->k_W_R = NA_INTEGER;
   shared->k_sero_pos = NA_INTEGER;
+  shared->kappa_ICU = NA_REAL;
+  shared->kappa_admitted = NA_REAL;
+  shared->kappa_death = NA_REAL;
+  shared->kappa_death_comm = NA_REAL;
+  shared->kappa_death_hosp = NA_REAL;
+  shared->kappa_general = NA_REAL;
+  shared->kappa_hosp = NA_REAL;
+  shared->kappa_new = NA_REAL;
+  shared->kappa_new_admitted = NA_REAL;
+  shared->kappa_pillar2_cases = NA_REAL;
   shared->n_age_groups = NA_INTEGER;
   shared->n_groups = NA_INTEGER;
+  shared->p_NC = NA_REAL;
+  shared->phi_ICU = NA_REAL;
+  shared->phi_admitted = NA_REAL;
+  shared->phi_death_comm = NA_REAL;
+  shared->phi_death_hosp = NA_REAL;
+  shared->phi_general = NA_REAL;
+  shared->phi_hosp = NA_REAL;
+  shared->phi_new = NA_REAL;
+  shared->phi_new_admitted = NA_REAL;
+  shared->phi_pillar2_cases = NA_REAL;
+  shared->pillar2_sensitivity = NA_REAL;
+  shared->pillar2_specificity = NA_REAL;
+  shared->react_sensitivity = NA_REAL;
+  shared->react_specificity = NA_REAL;
+  shared->rho_pillar2_tests = NA_REAL;
+  shared->sero_sensitivity = NA_REAL;
+  shared->sero_specificity = NA_REAL;
   shared->steps_per_day = NA_INTEGER;
   shared->gamma_A = 0.10000000000000001;
   shared->gamma_C = 0.10000000000000001;
@@ -4230,9 +4560,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->p_sero_pre_1 = 0.5;
   shared->G_D_transmission = user_get_scalar<real_t>(user, "G_D_transmission", shared->G_D_transmission, NA_REAL, NA_REAL);
   shared->ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", shared->ICU_transmission, NA_REAL, NA_REAL);
+  shared->N_tot_15_64 = user_get_scalar<real_t>(user, "N_tot_15_64", shared->N_tot_15_64, NA_REAL, NA_REAL);
+  shared->N_tot_all = user_get_scalar<real_t>(user, "N_tot_all", shared->N_tot_all, NA_REAL, NA_REAL);
+  shared->N_tot_over25 = user_get_scalar<real_t>(user, "N_tot_over25", shared->N_tot_over25, NA_REAL, NA_REAL);
+  shared->N_tot_react = user_get_scalar<real_t>(user, "N_tot_react", shared->N_tot_react, NA_REAL, NA_REAL);
   std::array <int, 1> dim_beta_step;
   shared->beta_step = user_get_array_variable<real_t, 1>(user, "beta_step", shared->beta_step, dim_beta_step, NA_REAL, NA_REAL);
   shared->dim_beta_step = shared->beta_step.size();
+  shared->exp_noise = user_get_scalar<real_t>(user, "exp_noise", shared->exp_noise, NA_REAL, NA_REAL);
   shared->gamma_A = user_get_scalar<real_t>(user, "gamma_A", shared->gamma_A, NA_REAL, NA_REAL);
   shared->gamma_C = user_get_scalar<real_t>(user, "gamma_C", shared->gamma_C, NA_REAL, NA_REAL);
   shared->gamma_E = user_get_scalar<real_t>(user, "gamma_E", shared->gamma_E, NA_REAL, NA_REAL);
@@ -4267,6 +4602,16 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->k_W_D = user_get_scalar<int>(user, "k_W_D", shared->k_W_D, NA_REAL, NA_REAL);
   shared->k_W_R = user_get_scalar<int>(user, "k_W_R", shared->k_W_R, NA_REAL, NA_REAL);
   shared->k_sero_pos = user_get_scalar<int>(user, "k_sero_pos", shared->k_sero_pos, NA_REAL, NA_REAL);
+  shared->kappa_ICU = user_get_scalar<real_t>(user, "kappa_ICU", shared->kappa_ICU, NA_REAL, NA_REAL);
+  shared->kappa_admitted = user_get_scalar<real_t>(user, "kappa_admitted", shared->kappa_admitted, NA_REAL, NA_REAL);
+  shared->kappa_death = user_get_scalar<real_t>(user, "kappa_death", shared->kappa_death, NA_REAL, NA_REAL);
+  shared->kappa_death_comm = user_get_scalar<real_t>(user, "kappa_death_comm", shared->kappa_death_comm, NA_REAL, NA_REAL);
+  shared->kappa_death_hosp = user_get_scalar<real_t>(user, "kappa_death_hosp", shared->kappa_death_hosp, NA_REAL, NA_REAL);
+  shared->kappa_general = user_get_scalar<real_t>(user, "kappa_general", shared->kappa_general, NA_REAL, NA_REAL);
+  shared->kappa_hosp = user_get_scalar<real_t>(user, "kappa_hosp", shared->kappa_hosp, NA_REAL, NA_REAL);
+  shared->kappa_new = user_get_scalar<real_t>(user, "kappa_new", shared->kappa_new, NA_REAL, NA_REAL);
+  shared->kappa_new_admitted = user_get_scalar<real_t>(user, "kappa_new_admitted", shared->kappa_new_admitted, NA_REAL, NA_REAL);
+  shared->kappa_pillar2_cases = user_get_scalar<real_t>(user, "kappa_pillar2_cases", shared->kappa_pillar2_cases, NA_REAL, NA_REAL);
   shared->model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", shared->model_pcr_and_serology_user, NA_REAL, NA_REAL);
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_REAL, NA_REAL);
   shared->n_groups = user_get_scalar<int>(user, "n_groups", shared->n_groups, NA_REAL, NA_REAL);
@@ -4285,6 +4630,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   std::array <int, 1> dim_p_ICU_step;
   shared->p_ICU_step = user_get_array_variable<real_t, 1>(user, "p_ICU_step", shared->p_ICU_step, dim_p_ICU_step, NA_REAL, NA_REAL);
   shared->dim_p_ICU_step = shared->p_ICU_step.size();
+  shared->p_NC = user_get_scalar<real_t>(user, "p_NC", shared->p_NC, NA_REAL, NA_REAL);
   std::array <int, 1> dim_p_W_D_step;
   shared->p_W_D_step = user_get_array_variable<real_t, 1>(user, "p_W_D_step", shared->p_W_D_step, dim_p_W_D_step, NA_REAL, NA_REAL);
   shared->dim_p_W_D_step = shared->p_W_D_step.size();
@@ -4292,11 +4638,27 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   std::array <int, 1> dim_p_star_step;
   shared->p_star_step = user_get_array_variable<real_t, 1>(user, "p_star_step", shared->p_star_step, dim_p_star_step, NA_REAL, NA_REAL);
   shared->dim_p_star_step = shared->p_star_step.size();
+  shared->phi_ICU = user_get_scalar<real_t>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
+  shared->phi_admitted = user_get_scalar<real_t>(user, "phi_admitted", shared->phi_admitted, NA_REAL, NA_REAL);
+  shared->phi_death_comm = user_get_scalar<real_t>(user, "phi_death_comm", shared->phi_death_comm, NA_REAL, NA_REAL);
+  shared->phi_death_hosp = user_get_scalar<real_t>(user, "phi_death_hosp", shared->phi_death_hosp, NA_REAL, NA_REAL);
+  shared->phi_general = user_get_scalar<real_t>(user, "phi_general", shared->phi_general, NA_REAL, NA_REAL);
+  shared->phi_hosp = user_get_scalar<real_t>(user, "phi_hosp", shared->phi_hosp, NA_REAL, NA_REAL);
+  shared->phi_new = user_get_scalar<real_t>(user, "phi_new", shared->phi_new, NA_REAL, NA_REAL);
+  shared->phi_new_admitted = user_get_scalar<real_t>(user, "phi_new_admitted", shared->phi_new_admitted, NA_REAL, NA_REAL);
+  shared->phi_pillar2_cases = user_get_scalar<real_t>(user, "phi_pillar2_cases", shared->phi_pillar2_cases, NA_REAL, NA_REAL);
+  shared->pillar2_sensitivity = user_get_scalar<real_t>(user, "pillar2_sensitivity", shared->pillar2_sensitivity, NA_REAL, NA_REAL);
+  shared->pillar2_specificity = user_get_scalar<real_t>(user, "pillar2_specificity", shared->pillar2_specificity, NA_REAL, NA_REAL);
+  shared->react_sensitivity = user_get_scalar<real_t>(user, "react_sensitivity", shared->react_sensitivity, NA_REAL, NA_REAL);
+  shared->react_specificity = user_get_scalar<real_t>(user, "react_specificity", shared->react_specificity, NA_REAL, NA_REAL);
   std::array <int, 2> dim_rel_susceptibility;
   shared->rel_susceptibility = user_get_array_variable<real_t, 2>(user, "rel_susceptibility", shared->rel_susceptibility, dim_rel_susceptibility, NA_REAL, NA_REAL);
   shared->dim_rel_susceptibility = shared->rel_susceptibility.size();
   shared->dim_rel_susceptibility_1 = dim_rel_susceptibility[0];
   shared->dim_rel_susceptibility_2 = dim_rel_susceptibility[1];
+  shared->rho_pillar2_tests = user_get_scalar<real_t>(user, "rho_pillar2_tests", shared->rho_pillar2_tests, NA_REAL, NA_REAL);
+  shared->sero_sensitivity = user_get_scalar<real_t>(user, "sero_sensitivity", shared->sero_sensitivity, NA_REAL, NA_REAL);
+  shared->sero_specificity = user_get_scalar<real_t>(user, "sero_specificity", shared->sero_specificity, NA_REAL, NA_REAL);
   shared->steps_per_day = user_get_scalar<int>(user, "steps_per_day", shared->steps_per_day, NA_REAL, NA_REAL);
   std::array <int, 1> dim_strain_seed_step;
   shared->strain_seed_step = user_get_array_variable<real_t, 1>(user, "strain_seed_step", shared->strain_seed_step, dim_strain_seed_step, NA_REAL, NA_REAL);
@@ -6094,6 +6456,32 @@ cpp11::sexp dust_info<carehomes>(const dust::pars_t<carehomes>& pars) {
            "dim"_nm = dim,
            "len"_nm = len,
            "index"_nm = index});
+}
+template <>
+carehomes::data_t dust_data<carehomes>(cpp11::list data) {
+  return carehomes::data_t{
+      cpp11::as_cpp<double>(data["icu"]),
+      cpp11::as_cpp<double>(data["general"]),
+      cpp11::as_cpp<double>(data["hosp"]),
+      cpp11::as_cpp<double>(data["deaths_hosp"]),
+      cpp11::as_cpp<double>(data["deaths_comm"]),
+      cpp11::as_cpp<double>(data["deaths"]),
+      cpp11::as_cpp<double>(data["admitted"]),
+      cpp11::as_cpp<double>(data["new_conf"]),
+      cpp11::as_cpp<double>(data["new_admitted"]),
+      cpp11::as_cpp<double>(data["npos_15_64"]),
+      cpp11::as_cpp<double>(data["ntot_15_64"]),
+      cpp11::as_cpp<double>(data["pillar2_pos"]),
+      cpp11::as_cpp<double>(data["pillar2_tot"]),
+      cpp11::as_cpp<double>(data["pillar2_cases"]),
+      cpp11::as_cpp<double>(data["pillar2_over25_pos"]),
+      cpp11::as_cpp<double>(data["pillar2_over25_tot"]),
+      cpp11::as_cpp<double>(data["pillar2_over25_cases"]),
+      cpp11::as_cpp<double>(data["react_pos"]),
+      cpp11::as_cpp<double>(data["react_tot"]),
+      cpp11::as_cpp<double>(data["strain_non_variant"]),
+      cpp11::as_cpp<double>(data["strain_tot"])
+    };
 }
 
 [[cpp11::register]]

@@ -381,8 +381,13 @@ carehomes_parameters <- function(start_date, region,
   ## This is used to normalise the serology counts (converting them
   ## from number of positive/negative tests into a fraction). This is
   ## constant over the simulation, being the total population size of
-  ## 15 to 64 year olds.
+  ## 15 to 64 year olds. Similarly, we need the total population over
+  ## all ranges, the population corresponding to REACT (all but CHR
+  ## and <5) and the over 25
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
+  ret$N_tot_all <- sum(ret$N_tot)
+  ret$N_tot_over25 <- sum(ret$N_tot[6:19])
+  ret$N_tot_react <- sum(ret$N_tot[2:18])
 
   ## Specificity for serology tests
   ret$sero_specificity <- sero_specificity
@@ -400,7 +405,7 @@ carehomes_parameters <- function(start_date, region,
   ret$p_NC <- p_NC
 
   ## All observation parameters:
-  ret$observation <- carehomes_parameters_observation(exp_noise)
+  observation <- carehomes_parameters_observation(exp_noise)
 
   ret$n_groups <- ret$n_age_groups + 2L
 
@@ -424,8 +429,7 @@ carehomes_parameters <- function(start_date, region,
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
 
   c(ret, severity, progression, strain, vaccination, waning,
-    model_pcr_and_serology_user)
-
+    model_pcr_and_serology_user, observation)
 }
 
 
@@ -574,44 +578,42 @@ carehomes_compare <- function(state, observed, pars) {
 
   ## calculate test positive probabilities for the various test data streams
   ## Pillar 2
-  pillar2_negs <- pars$p_NC * (sum(pars$N_tot)
-                                              - model_sympt_cases)
+  pillar2_negs <- pars$p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
                                           pillar2_negs,
                                           pars$pillar2_sensitivity,
                                           pars$pillar2_specificity,
-                                          pars$observation$exp_noise)
+                                          pars$exp_noise)
 
   ## Pillar 2 over 25s
-  pillar2_over25_negs <- pars$p_NC * (sum(pars$N_tot[6:19])
-                                              - model_sympt_cases_over25)
+  pillar2_over25_negs <- pars$p_NC * (pars$N_tot_over25 -
+                                      model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
                                                  pars$pillar2_sensitivity,
                                                  pars$pillar2_specificity,
-                                                 pars$observation$exp_noise)
+                                                 pars$exp_noise)
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
   model_react_prob_pos <- test_prob_pos(model_react_pos,
-                                        sum(pars$N_tot[2:18]) - model_react_pos,
+                                        pars$N_tot_react - model_react_pos,
                                         pars$react_sensitivity,
                                         pars$react_specificity,
-                                        pars$observation$exp_noise)
+                                        pars$exp_noise)
 
   ## serology
   model_sero_prob_pos <- test_prob_pos(model_sero_pos,
                                        pars$N_tot_15_64 - model_sero_pos,
                                        pars$sero_sensitivity,
                                        pars$sero_specificity,
-                                       pars$observation$exp_noise)
+                                       pars$exp_noise)
 
   ## Strain
   model_strain_over25_prob_pos <- test_prob_pos(
     model_sympt_cases_non_variant_over25,
     model_sympt_cases_over25 - model_sympt_cases_non_variant_over25,
-    1, 1, pars$observation$exp_noise)
+    1, 1, pars$exp_noise)
 
-  pars <- pars$observation
   exp_noise <- pars$exp_noise
 
   ## Note that in ll_nbinom, the purpose of exp_noise is to allow a
@@ -1101,9 +1103,15 @@ carehomes_particle_filter <- function(data, n_particles,
 
 carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
+<<<<<<< HEAD
                 "deaths", "admitted", "diagnoses", "all_admission",
                 "npos_15_64", "ntot_15_64", "pillar2_pos", "pillar2_tot",
                 "pillar2_cases", "pillar2_over25_pos", "pillar2_over25_tot",
+=======
+                "deaths", "admitted", "new_conf", "new_admitted", "npos_15_64",
+                "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+                "pillar2_over25_pos", "pillar2_over25_tot",
+>>>>>>> Implementation of compiled compare for carehomes
                 "pillar2_over25_cases", "react_pos", "react_tot")
 
   verify_names(data, required, allow_extra = TRUE)
@@ -1175,4 +1183,38 @@ carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
   ret$trajectories <- add_trajectory_incidence(
     ret$trajectories, incidence_states)
   ret
+}
+
+
+carehomes_data <- function(data, start_date, dt) {
+  expected <- c(icu = NA_real_, general = NA_real_, hosp = NA_real_,
+                deaths_hosp = NA_real_, deaths_comm = NA_real_,
+                deaths = NA_real_, admitted = NA_real_, new_conf = NA_real_,
+                new_admitted = NA_real_, npos_15_64 = NA_real_,
+                ntot_15_64 = NA_real_, pillar2_pos = NA_real_,
+                pillar2_tot = NA_real_, pillar2_cases = NA_real_,
+                pillar2_over25_pos = NA_real_, pillar2_over25_tot = NA_real_,
+                pillar2_over25_cases = NA_real_,  react_pos = NA_real_,
+                react_tot = NA_real_, strain_non_variant = NA_real_,
+                strain_tot = NA_real_)
+  data <- sircovid_data(data, start_date, dt, expected)
+
+  err <- !is.na(data$deaths) &
+    (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp))
+  if (any(err)) {
+    stop("Deaths are not consistently split into total vs community/hospital")
+  }
+
+  ## I think that this can be simplified
+  pillar2_streams <- sum(
+    c(any(!is.na(data$pillar2_pos)) | any(!is.na(data$pillar2_tot)),
+      any(!is.na(data$pillar2_cases)),
+      any(!is.na(data$pillar2_over25_pos)) |
+      any(!is.na(data$pillar2_over25_tot)),
+      any(!is.na(data$pillar2_over25_cases))))
+  if (pillar2_streams > 1) {
+    stop("Cannot fit to more than one pillar 2 data stream")
+  }
+
+  data
 }

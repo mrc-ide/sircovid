@@ -55,29 +55,8 @@ test_that("can run the carehomes model", {
 test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- carehomes_parameters(start_date, "england")
-  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                        start_date, pars$dt)
-  ## Add additional columns
-  data$deaths_hosp <- data$deaths
-  data$deaths_comm <- NA
-  data$deaths <- NA
-  data$general <- NA
-  data$hosp <- NA
-  data$admitted <- NA
-  data$diagnoses <- NA
-  data$all_admission <- NA
-  data$npos_15_64 <- NA
-  data$ntot_15_64 <- NA
-  data$pillar2_pos <- NA
-  data$pillar2_tot <- NA
-  data$pillar2_cases <- NA
-  data$pillar2_over25_pos <- NA
-  data$pillar2_over25_tot <- NA
-  data$pillar2_over25_cases <- NA
-  data$react_pos <- NA
-  data$react_tot <- NA
-  data$strain_non_variant <- NA
-  data$strain_tot <- NA
+  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+                         start_date, pars$dt)
 
   pf <- carehomes_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")
@@ -125,4 +104,75 @@ test_that("incidence calculation is correct", {
   yi <- y1[-j, , ]
   rownames(yd) <- rownames(yi) <- NULL
   expect_equal(yd, yi)
+})
+
+
+test_that("compiled compare function is correct", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
+  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+                         start_date, pars$dt)
+
+  np <- 1
+  mod <- carehomes$new(pars, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, pars)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(carehomes_index(mod$info())$run)
+
+  mod$set_data(dust::dust_data(data, "step_end"))
+
+  i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
+  y <- mod$run(data$step_end[[i]])
+  expect_equal(mod$compare_data(),
+               carehomes_compare(y, data[i, ], pars))
+})
+
+
+test_that("Test compiled carehomes components", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
+  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+                         start_date, pars$dt)
+
+  np <- 1
+  mod <- carehomes$new(pars, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, pars)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(carehomes_index(mod$info())$run)
+
+  i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
+  step <- data$step_end[[i]]
+  y <- mod$run(step)
+1
+  ## quickly bodge together some data:
+  d <- data[i, ]
+  d[setdiff(names(d), "step_end")] <- NA_real_
+  update_data <- function(values) {
+    d[names(values)] <- values
+    d
+  }
+
+  partial <- list(
+    c(icu = 50),
+    c(general = 50),
+    c(hosp = 50),
+    c(deaths_hosp = 40, deaths_comm = 10),
+    c(deaths = 50),
+    c(admitted = 50),
+    c(new_conf = 50),
+    c(new_admitted = 50),
+    c(npos_15_64 = 10, ntot_15_64 = 50),
+    c(pillar2_pos = 10, pillar2_tot = 50),
+    c(pillar2_cases = 50),
+    c(pillar2_over25_pos = 10, pillar2_over25_tot = 50),
+    c(pillar2_over25_cases = 50),
+    c(react_pos = 10, react_tot = 50),
+    c(strain_non_variant = 10, strain_tot = 50))
+
+  for (p in partial) {
+    d_test <- update_data(p)
+    mod$set_data(dust::dust_data(d_test, "step_end"))
+    expect_equal(mod$compare_data(),
+                 unname(carehomes_compare(y, d_test, pars)))
+  }
 })

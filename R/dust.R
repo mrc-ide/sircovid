@@ -241,15 +241,25 @@ carehomes <- R6::R6Class(
     param_ = list(G_D_transmission = list(has_default = FALSE, default_value = NULL,
     rank = 0, min = -Inf, max = Inf, integer = FALSE), ICU_transmission = list(
     has_default = FALSE, default_value = NULL, rank = 0, min = -Inf,
-    max = Inf, integer = FALSE), beta_step = list(has_default = FALSE,
-    default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
-    hosp_transmission = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_A = list(
+    max = Inf, integer = FALSE), N_tot_15_64 = list(has_default = FALSE,
+    default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+    N_tot_all = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), N_tot_over25 = list(
         has_default = FALSE, default_value = NULL, rank = 0,
-        min = -Inf, max = Inf, integer = FALSE), k_C = list(has_default = FALSE,
+        min = -Inf, max = Inf, integer = FALSE), N_tot_react = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), beta_step = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), exp_noise = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), hosp_transmission = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_A = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), k_E = list(has_default = FALSE, default_value = NULL,
-        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_G_D = list(
+        integer = FALSE), k_C = list(has_default = FALSE, default_value = NULL,
+        rank = 0, min = -Inf, max = Inf, integer = FALSE), k_E = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_G_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_H_D = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -273,6 +283,26 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_sero_pos = list(
         has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_ICU = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_admitted = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_death = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_death_comm = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_death_hosp = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_general = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_hosp = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_new = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_new_admitted = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_pillar2_cases = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), m = list(has_default = FALSE,
         default_value = NULL, rank = 2, min = -Inf, max = Inf,
         integer = FALSE), n_age_groups = list(has_default = FALSE,
@@ -290,12 +320,36 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_ICU_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), p_NC = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), p_W_D_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_sero_pos = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), p_star_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), phi_ICU = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_admitted = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_death_comm = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_death_hosp = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_general = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_hosp = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_new = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_new_admitted = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_pillar2_cases = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), pillar2_sensitivity = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), pillar2_specificity = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), psi_G_D = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_H = list(
@@ -310,6 +364,10 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), psi_star = list(
         has_default = FALSE, default_value = NULL, rank = 1,
+        min = -Inf, max = Inf, integer = FALSE), react_sensitivity = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), react_specificity = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), rel_infectivity = list(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), rel_p_hosp_if_sympt = list(
@@ -318,6 +376,12 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), rel_susceptibility = list(
         has_default = FALSE, default_value = NULL, rank = 2,
+        min = -Inf, max = Inf, integer = FALSE), rho_pillar2_tests = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), sero_sensitivity = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), sero_specificity = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), steps_per_day = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), strain_seed_step = list(
