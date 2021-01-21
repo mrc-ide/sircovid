@@ -792,7 +792,8 @@ carehomes_parameters_vaccination <- function(N_tot,
 
   ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot
   ret$vaccine_daily_doses_step <-
-    sircovid_parameters_beta(vaccine_daily_doses_date, vaccine_daily_doses, dt)
+    sircovid_parameters_piecewise_constant(vaccine_daily_doses_date,
+                                           vaccine_daily_doses, dt)
 
   ret
 }

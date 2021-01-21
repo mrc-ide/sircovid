@@ -32,6 +32,7 @@ carehomes_parameters(
   vaccine_progression_rate = NULL,
   vaccine_uptake = NULL,
   vaccine_daily_doses = 0,
+  vaccine_daily_doses_date = NULL,
   waning_rate = 0,
   model_pcr_and_serology_user = 1,
   exp_noise = 1e+06
