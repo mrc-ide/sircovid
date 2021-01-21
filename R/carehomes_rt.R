@@ -80,7 +80,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
     prob_strain_mat <- matrix(prob_strain[, t],
                               nrow = p$n_groups,
                               ncol = length(p$strain_transmission))
-    
+
     if (any(is.na(prob_strain_mat))) {
       out <- NA
     } else {

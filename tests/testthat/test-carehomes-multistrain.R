@@ -646,34 +646,34 @@ test_that("If prob_strain is NA then Rt is NA ", {
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1))
-  
+
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
-  
+
   ## Remove the initial infectives so that no-one becomes infected
   info <- mod$info()
   initial <- carehomes_initial(info, 1, p)
   initial$state[info$index$I_A] <- 0
-  
+
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
-  
+
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
-  
+
   set.seed(1)
   y <- dust::dust_iterate(mod, steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
-  
+
   ## all values of prob_strain after the first step should be NA
   expect_true(all(is.na(prob_strain[, , -1L])))
-  
+
   rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
   rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
-  
+
   ## all values of Rt after the first step should be NA
   expect_true(all(is.na(rt_1$Rt_all[-1L])))
   expect_true(all(is.na(rt_1$Rt_general[-1L])))
@@ -683,5 +683,5 @@ test_that("If prob_strain is NA then Rt is NA ", {
   expect_true(all(is.na(rt_all$Rt_general[-1L, ])))
   expect_true(all(is.na(rt_all$eff_Rt_all[-1L, ])))
   expect_true(all(is.na(rt_all$eff_Rt_general[-1L, ])))
-  
+
 })
