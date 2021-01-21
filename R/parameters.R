@@ -94,7 +94,7 @@ sircovid_parameters_beta <- function(date, value, dt) {
   if (date[[1]] != 0) {
     date <- c(0, date)
     value <- c(value[[1]], value)
-  } 
+  }
 
   stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
 
