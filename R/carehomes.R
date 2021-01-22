@@ -365,6 +365,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## vaccination
   vaccination <- carehomes_parameters_vaccination(ret$N_tot,
+                                                  ret$dt,
                                                   rel_susceptibility,
                                                   rel_p_sympt,
                                                   rel_p_hosp_if_sympt,
@@ -750,6 +751,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 
 
 carehomes_parameters_vaccination <- function(N_tot,
+                                             dt,
                                              rel_susceptibility = 1,
                                              rel_p_sympt = 1,
                                              rel_p_hosp_if_sympt = 1,
