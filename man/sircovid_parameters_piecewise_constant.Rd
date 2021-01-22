@@ -38,11 +38,11 @@ sircovid::sircovid_parameters_beta(NULL, 0.1, 0.25)
 date <- sircovid::sircovid_date(
    c("2019-12-31", "2020-02-01", "2020-02-14", "2020-03-15"))
 value <- c(0, 3, 1, 2)
-x <- sircovid::sircovid_parameters_piecewise_constant(date, value, 1)
+y <- sircovid::sircovid_parameters_piecewise_constant(date, value, 1)
 
 # The implied time series looks like this:
 t <- seq(0, date[[3]])
-plot(t, x, type = "o")
+plot(t, y, type = "o")
 points(date, value, pch = 19, col = "red")
 
 # After 2020-03-15, the quantity value will be fixed at 2, the value
@@ -52,14 +52,14 @@ points(date, value, pch = 19, col = "red")
 # If a vector of dates is provided then, it's more complex. We'll
 # use dt of 1 here as it's easier to visualise
 t <- seq(0, 100, by = 1)
-sircovid::sircovid_parameters_beta_expand(t, beta)
-plot(t, sircovid::sircovid_parameters_beta_expand(t, beta), type = "o")
+sircovid::sircovid_parameters_beta_expand(t, y)
+plot(t, sircovid::sircovid_parameters_beta_expand(t, y), type = "o")
 points(date, value, pch = 19, col = "red")
 
-# If dt is less than 1, this is scaled, but the pattern of beta
+# If dt is less than 1, this is scaled, but the pattern of
 # change is the same
-beta <- sircovid::sircovid_parameters_beta(date, value, 0.5)
+y <- sircovid::sircovid_parameters_piecewise_constant(date, value, 0.5)
 t <- seq(0, date[[3]], by = 0.5)
-plot(t, beta, type = "o", cex = 0.25)
+plot(t, y, type = "o", cex = 0.25)
 points(date, value, pch = 19, col = "red")
 }
