@@ -136,7 +136,7 @@ sircovid_parameters_beta <- function(date, value, dt) {
 ##' y <- sircovid::sircovid_parameters_piecewise_constant(date, value, 1)
 ##'
 ##' # The implied time series looks like this:
-##' t <- seq(0, date[[3]])
+##' t <- seq(0, date[[4]])
 ##' plot(t, y, type = "o")
 ##' points(date, value, pch = 19, col = "red")
 ##'
@@ -154,7 +154,7 @@ sircovid_parameters_beta <- function(date, value, dt) {
 ##' # If dt is less than 1, this is scaled, but the pattern of
 ##' # change is the same
 ##' y <- sircovid::sircovid_parameters_piecewise_constant(date, value, 0.5)
-##' t <- seq(0, date[[3]], by = 0.5)
+##' t <- seq(0, date[[4]], by = 0.5)
 ##' plot(t, y, type = "o", cex = 0.25)
 ##' points(date, value, pch = 19, col = "red")
 sircovid_parameters_piecewise_constant <- function(date, value, dt) {
