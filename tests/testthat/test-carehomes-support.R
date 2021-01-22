@@ -29,7 +29,7 @@ test_that("carehomes vaccination parameters", {
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
       "rel_infectivity",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
-      "vaccine_daily_doses"))
+      "vaccine_daily_doses_step"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
@@ -52,7 +52,7 @@ test_that("carehomes vaccination parameters", {
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
       "rel_infectivity",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
-      "vaccine_daily_doses"))
+      "vaccine_daily_doses_step"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
   expect_equal(nrow(p$rel_p_sympt), n_groups)
