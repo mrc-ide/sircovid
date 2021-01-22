@@ -163,19 +163,17 @@ sircovid_parameters_piecewise_constant <- function(date, value, dt) {
       stop("As 'date' is NULL, expected single value")
     }
     return(value)
-  } else {
-    if (date[1L] != 0) {
-      stop("As 'date' is not NULL, first date should be 0")
-    }
   }
   if (length(date) != length(value)) {
     stop("'date' and 'value' must have the same length")
   }
-  if (length(date) < 2) {
-    stop("Need at least two dates and betas for a varying beta")
-  }
   assert_sircovid_date(date)
   assert_increasing(date)
+  if (!is.null(date)) {
+    if (date[1L] != 0) {
+      stop("As 'date' is not NULL, first date should be 0")
+    }
+  }
 
   f <- stats::stepfun(date, c(NA, value))
   f(seq(0, date[[length(date)]], by = dt))
