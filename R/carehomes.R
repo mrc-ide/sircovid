@@ -131,10 +131,20 @@ NULL
 ##' @param vaccine_uptake A vector of length 19 with the proportion of
 ##'   the population who are able to be vaccinated.
 ##'
-##' @param vaccine_daily_doses A single value indicating the number of
+##' @param vaccine_daily_doses A vector of values indicating the number of
 ##'   (first) vaccine doses per day to distribute. The actual number
 ##'   distributed will be stochastically distributed around this,
-##'   provided there are sufficient eligible candidates.
+##'   provided there are sufficient eligible candidates. If
+##'   `vaccine_daily_doses_date` is `NULL` this must be a scalar. If
+##'   `vaccine_daily_doses_date` is given then `vaccine_daily_does_date` and
+##'   `vaccine_daily_doses` must have the same length (see
+##'   [sircovid_parameters_piecewise_constant()], where this is passed as
+##'   `value`).
+##'
+##' @param vaccine_daily_doses_date A vector of dates for changes in the
+##'   daily number of vaccine doses, or `NULL` if a single value is used for
+##'   all times (see [sircovid_parameters_piecewise_constant()], where this is
+##'   passed as `date`). If not `NULL`, then the first date must be 0.
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same

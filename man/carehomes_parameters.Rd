@@ -180,10 +180,20 @@ group i.}
 \item{vaccine_uptake}{A vector of length 19 with the proportion of
 the population who are able to be vaccinated.}
 
-\item{vaccine_daily_doses}{A single value indicating the number of
+\item{vaccine_daily_doses}{A vector of values indicating the number of
 (first) vaccine doses per day to distribute. The actual number
 distributed will be stochastically distributed around this,
-provided there are sufficient eligible candidates.}
+provided there are sufficient eligible candidates. If
+\code{vaccine_daily_doses_date} is \code{NULL} this must be a scalar. If
+\code{vaccine_daily_doses_date} is given then \code{vaccine_daily_does_date} and
+\code{vaccine_daily_doses} must have the same length (see
+\code{\link[=sircovid_parameters_piecewise_constant]{sircovid_parameters_piecewise_constant()}}, where this is passed as
+\code{value}).}
+
+\item{vaccine_daily_doses_date}{A vector of dates for changes in the
+daily number of vaccine doses, or \code{NULL} if a single value is used for
+all times (see \code{\link[=sircovid_parameters_piecewise_constant]{sircovid_parameters_piecewise_constant()}}, where this is
+passed as \code{date}). If not \code{NULL}, then the first date must be 0.}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
