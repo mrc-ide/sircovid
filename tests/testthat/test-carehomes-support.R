@@ -41,6 +41,7 @@ test_that("carehomes vaccination parameters", {
   rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(0, 1, 1, 1)
   p <- carehomes_parameters_vaccination(ntot,
+                                        dt = 0.25,
                                         rel_susceptibility = rel_susceptibility,
                                         rel_p_sympt = rel_p_sympt,
                                         rel_p_hosp_if_sympt =
@@ -103,7 +104,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(
-    p$N_tot, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
+    p$N_tot, p$dt, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
     p$rel_infectivity,
     p$vaccine_progression_rate_base)
   expect_identical(p[names(vaccination)], vaccination)
