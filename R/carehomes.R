@@ -382,7 +382,8 @@ carehomes_parameters <- function(start_date, region,
                                                   rel_infectivity,
                                                   vaccine_progression_rate,
                                                   vaccine_uptake,
-                                                  vaccine_daily_doses)
+                                                  vaccine_daily_doses,
+                                                  vaccine_daily_doses_date)
 
   model_pcr_and_serology_user <-
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
