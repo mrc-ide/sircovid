@@ -128,7 +128,7 @@ sircovid_parameters_beta <- function(date, value, dt) {
 ##' @examples
 ##' # If "date" is NULL, then the quantity is constant and this function is
 ##' # trivial:
-##' sircovid::sircovid_parameters_beta(NULL, 0.1, 0.25)
+##' sircovid::sircovid_parameters_piecewise_constant(NULL, 0.1, 0.25)
 ##'
 ##' date <- sircovid::sircovid_date(
 ##'    c("2019-12-31", "2020-02-01", "2020-02-14", "2020-03-15"))
