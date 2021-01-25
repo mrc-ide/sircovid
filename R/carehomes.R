@@ -139,12 +139,14 @@ NULL
 ##'   `vaccine_daily_doses_date` is given then `vaccine_daily_does_date` and
 ##'   `vaccine_daily_doses` must have the same length (see
 ##'   [sircovid_parameters_piecewise_constant()], where this is passed as
-##'   `value`).
+##'   `value`), and it is assumed there are 0 daily doses before the first
+##'   specified date.
 ##'
-##' @param vaccine_daily_doses_date A vector of dates for changes in the
-##'   daily number of vaccine doses, or `NULL` if a single value is used for
-##'   all times (see [sircovid_parameters_piecewise_constant()], where this is
-##'   passed as `date`). If not `NULL`, then the first date must be 0.
+##' @param vaccine_daily_doses_date A vector of [sircovid::sircovid_date] values
+##'   for changes in the daily number of vaccine doses, or `NULL` if a single
+##'   value is used for all times (see
+##'   [sircovid_parameters_piecewise_constant()], where this is passed as
+##'   `date`).
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -804,6 +806,14 @@ carehomes_parameters_vaccination <- function(N_tot,
   }
 
   ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot
+
+  if (!is.null(vaccine_daily_doses_date)) {
+    if (vaccine_daily_doses_date[[1L]] != 0) {
+      ## Set vaccine doses to 0 before first specified date
+      vaccine_daily_doses_date <- c(0, vaccine_daily_doses_date)
+      vaccine_daily_doses <- c(0, vaccine_daily_doses)
+    }
+  }
   ret$vaccine_daily_doses_step <-
     sircovid_parameters_piecewise_constant(vaccine_daily_doses_date,
                                            vaccine_daily_doses, dt)
