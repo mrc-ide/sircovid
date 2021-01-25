@@ -1197,23 +1197,5 @@ carehomes_data <- function(data, start_date, dt) {
                 react_tot = NA_real_, strain_non_variant = NA_real_,
                 strain_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
-
-  err <- !is.na(data$deaths) &
-    (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp))
-  if (any(err)) {
-    stop("Deaths are not consistently split into total vs community/hospital")
-  }
-
-  ## I think that this can be simplified
-  pillar2_streams <- sum(
-    c(any(!is.na(data$pillar2_pos)) | any(!is.na(data$pillar2_tot)),
-      any(!is.na(data$pillar2_cases)),
-      any(!is.na(data$pillar2_over25_pos)) |
-      any(!is.na(data$pillar2_over25_tot)),
-      any(!is.na(data$pillar2_over25_cases))))
-  if (pillar2_streams > 1) {
-    stop("Cannot fit to more than one pillar 2 data stream")
-  }
-
-  data
+  carehomes_particle_filter_data(data)
 }
