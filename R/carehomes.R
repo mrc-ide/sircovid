@@ -1108,15 +1108,9 @@ carehomes_particle_filter <- function(data, n_particles,
 
 carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
-<<<<<<< HEAD
                 "deaths", "admitted", "diagnoses", "all_admission",
                 "npos_15_64", "ntot_15_64", "pillar2_pos", "pillar2_tot",
                 "pillar2_cases", "pillar2_over25_pos", "pillar2_over25_tot",
-=======
-                "deaths", "admitted", "new_conf", "new_admitted", "npos_15_64",
-                "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
-                "pillar2_over25_pos", "pillar2_over25_tot",
->>>>>>> Implementation of compiled compare for carehomes
                 "pillar2_over25_cases", "react_pos", "react_tot")
 
   verify_names(data, required, allow_extra = TRUE)

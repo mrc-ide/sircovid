@@ -134,13 +134,13 @@ test_that("carehomes_parameters returns a list of parameters", {
   severity <- carehomes_parameters_severity(NULL, 0.7)
   expect_identical(p[names(severity)], severity)
 
-  expect_equal(
-    p$observation,
-    carehomes_parameters_observation(1e6))
+  observation <- carehomes_parameters_observation(1e6)
+  expect_identical(p[names(observation)], observation)
+
   expect_equal(p$N_tot_15_64, sum(p$N_tot[4:13]))
 
   extra <- setdiff(names(p),
-                   c("m", "observation",
+                   c("m", names(observation),
                      names(shared), names(progression), names(severity),
                      names(strain), names(vaccination), names(waning),
                      "model_pcr_and_serology_user"))
@@ -148,6 +148,7 @@ test_that("carehomes_parameters returns a list of parameters", {
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
       "sero_specificity", "sero_sensitivity", "N_tot_15_64",
+      "N_tot_all", "N_tot_over25", "N_tot_react",
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
       "react_sensitivity", "p_NC", "psi_ICU_D",
       "p_ICU_D_step", "psi_H_D", "p_H_D_step",
