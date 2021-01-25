@@ -184,22 +184,11 @@ test_that("can run the particle filter on the model", {
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
-  np <- 100
+  np <- 50
+  set.seed(1)
   pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE)
   pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE)
-  system.time(pf1$run(pars))
-  system.time(pf2$run(pars))
-
-  np <- 100
-  nt <- 10
-  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE,
-                                   n_threads = nt)
-  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE,
-                                   n_threads = nt)
-  bench::mark(
-    pf1$run(pars),
-    pf2$run(pars),
-    check = FALSE,
-    min_iterations = 10,
-    memory = FALSE)
+  ll1 <- pf1$run(pars)
+  ll2 <- pf2$run(pars)
+  expect_lt(abs(ll1 - ll2), 3)
 })
