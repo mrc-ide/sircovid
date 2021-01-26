@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.12</span>
       </span>
     </div>
 
@@ -156,6 +156,7 @@
   vaccine_progression_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_uptake <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_daily_doses <span class='op'>=</span> <span class='fl'>0</span>,
+  vaccine_daily_doses_date <span class='op'>=</span> <span class='cn'>NULL</span>,
   waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
   model_pcr_and_serology_user <span class='op'>=</span> <span class='fl'>1</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
@@ -359,10 +360,24 @@ the population who are able to be vaccinated.</p></td>
     </tr>
     <tr>
       <th>vaccine_daily_doses</th>
-      <td><p>A single value indicating the number of
+      <td><p>A vector of values indicating the number of
 (first) vaccine doses per day to distribute. The actual number
 distributed will be stochastically distributed around this,
-provided there are sufficient eligible candidates.</p></td>
+provided there are sufficient eligible candidates. If
+<code>vaccine_daily_doses_date</code> is <code>NULL</code> this must be a scalar. If
+<code>vaccine_daily_doses_date</code> is given then <code>vaccine_daily_does_date</code> and
+<code>vaccine_daily_doses</code> must have the same length (see
+<code><a href='sircovid_parameters_piecewise_constant.html'>sircovid_parameters_piecewise_constant()</a></code>, where this is passed as
+<code>value</code>), and it is assumed there are 0 daily doses before the first
+specified date.</p></td>
+    </tr>
+    <tr>
+      <th>vaccine_daily_doses_date</th>
+      <td><p>A vector of <a href='sircovid_date.html'>sircovid_date</a> values
+for changes in the daily number of vaccine doses, or <code>NULL</code> if a single
+value is used for all times (see
+<code><a href='sircovid_parameters_piecewise_constant.html'>sircovid_parameters_piecewise_constant()</a></code>, where this is passed as
+<code>date</code>).</p></td>
     </tr>
     <tr>
       <th>waning_rate</th>
@@ -924,7 +939,7 @@ just before the model is run.</p>
 #&gt; $vaccine_population_reluctant
 #&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 #&gt; 
-#&gt; $vaccine_daily_doses
+#&gt; $vaccine_daily_doses_step
 #&gt; [1] 0
 #&gt; 
 #&gt; $waning_rate
@@ -1141,6 +1156,130 @@ just before the model is run.</p>
        rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,
        vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
        vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
+
+<span class='co'># vaccine_daily_doses_date can be unspecified when vaccine_daily_doses is a</span>
+<span class='co'># scalar, and will result in a scalar for vaccine_daily_doses_step, and this</span>
+<span class='co'># value will be used for the whole simulation</span>
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
+       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
+       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
+<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_daily_doses_step</span>
+</div><div class='output co'>#&gt; [1] 10000</div><div class='input'>
+<span class='co'># Alternatively, vaccine_daily_doses_date can be specified (as a single</span>
+<span class='co'># sircovid_date) when vaccine_daily_doses is a scalar. vaccine_daily_doses</span>
+<span class='co'># is then the number of daily doses from that date onwards in the</span>
+<span class='co'># simulation, with the number before that date being 0.</span>
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
+       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
+       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span>,
+       vaccine_daily_doses_date <span class='op'>=</span> <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-05-01"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_daily_doses_step</span>
+</div><div class='output co'>#&gt;   [1]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [13]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [25]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [37]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [49]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [61]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [73]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [85]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [97]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [109]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [121]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [133]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [145]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [157]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [169]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [181]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [193]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [205]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [217]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [229]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [241]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [253]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [265]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [277]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [289]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [301]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [313]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [325]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [337]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [349]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [361]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [373]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [385]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [397]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [409]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [421]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [433]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [445]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [457]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [469]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [481]     0     0     0     0     0     0     0     0 10000</div><div class='input'>
+<span class='co'># vaccine_daily_doses_date must be specified when vaccine_daily_doses is a</span>
+<span class='co'># vector of values, as a vector of sircovid_dates of the same length. In</span>
+<span class='co'># this case, before the first specified date, the number of daily doses in</span>
+<span class='co'># the simulation will be 0. vaccine_daily_doses gives the number of daily</span>
+<span class='co'># doses from the corresponding date in vaccine_daily_doses_date until the</span>
+<span class='co'># subsequent one. After the last date in vaccine_daily_doses_date, the</span>
+<span class='co'># daily doses are fixed at the last value in vaccine_daily_doses.</span>
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
+       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
+       vaccine_daily_doses <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10000</span>, <span class='fl'>20000</span><span class='op'>)</span>,
+       vaccine_daily_doses_date <span class='op'>=</span>
+          <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2020-05-01"</span>, <span class='st'>"2020-06-01"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_daily_doses_step</span>
+</div><div class='output co'>#&gt;   [1]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [13]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [25]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [37]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [49]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [61]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [73]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [85]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [97]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [109]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [121]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [133]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [145]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [157]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [169]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [181]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [193]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [205]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [217]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [229]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [241]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [253]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [265]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [277]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [289]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [301]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [313]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [325]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [337]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [349]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [361]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [373]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [385]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [397]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [409]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [421]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [433]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [445]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [457]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [469]     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [481]     0     0     0     0     0     0     0     0 10000 10000 10000 10000
+#&gt; [493] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [505] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [517] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [529] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [541] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [553] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [565] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [577] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [589] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [601] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
+#&gt; [613] 20000</div><div class='input'>
 
 </div></pre>
   </div>
