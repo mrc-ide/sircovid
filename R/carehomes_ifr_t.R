@@ -29,8 +29,8 @@ carehomes_ifr_t <- function(step, infections_inc, p) {
   y <- carehomes_IFR_t_by_group_and_vacc_class(step, p)
   n_vacc_classes <- ncol(p$rel_susceptibility)
 
-  calculate_weighted_ratio <-
-    function(t, infections_inc, y, drop_carehomes, type = "IFR") {
+  calculate_weighted_ratio <- function(t, infections_inc, y,
+                                       drop_carehomes, type) {
     y[[type]][, , t]
     infections_inc[, t]
 
