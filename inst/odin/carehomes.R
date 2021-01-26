@@ -1369,7 +1369,11 @@ vaccine_population_possible[] <-
 dim(vaccine_population_possible) <- n_groups
 
 ## The number of doses of vaccine available each day:
-vaccine_daily_doses <- user(0)
+vaccine_daily_doses <- if (as.integer(step) >= length(vaccine_daily_doses_step))
+  vaccine_daily_doses_step[length(vaccine_daily_doses_step)] else
+    vaccine_daily_doses_step[step + 1]
+dim(vaccine_daily_doses_step) <- user()
+vaccine_daily_doses_step[] <- user()
 
 ## We'll set this up to treat the first column specially, as that is
 ## the compartment through which people ge vaccinated, others are

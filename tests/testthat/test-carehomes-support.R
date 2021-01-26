@@ -29,7 +29,7 @@ test_that("carehomes vaccination parameters", {
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
       "rel_infectivity",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
-      "vaccine_daily_doses"))
+      "vaccine_daily_doses_step"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
@@ -40,19 +40,26 @@ test_that("carehomes vaccination parameters", {
   rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
   rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(0, 1, 1, 1)
+  vaccine_daily_doses <- c(5000, 10000)
+  vaccine_daily_doses_date <- sircovid_date(c("2020-12-01", "2021-02-01"))
   p <- carehomes_parameters_vaccination(ntot,
+                                        dt = 0.25,
                                         rel_susceptibility = rel_susceptibility,
                                         rel_p_sympt = rel_p_sympt,
                                         rel_p_hosp_if_sympt =
                                           rel_p_hosp_if_sympt,
                                         vaccine_progression_rate =
-                                          vaccine_progression_rate)
+                                          vaccine_progression_rate,
+                                        vaccine_daily_doses =
+                                          vaccine_daily_doses,
+                                        vaccine_daily_doses_date =
+                                          vaccine_daily_doses_date)
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
       "rel_infectivity",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
-      "vaccine_daily_doses"))
+      "vaccine_daily_doses_step"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
   expect_equal(nrow(p$rel_p_sympt), n_groups)
@@ -62,6 +69,11 @@ test_that("carehomes vaccination parameters", {
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate_base),
                length(vaccine_progression_rate))
+  expect_equal(p$vaccine_daily_doses_step,
+               sircovid_parameters_piecewise_constant(
+                 c(0, vaccine_daily_doses_date),
+                 c(0, vaccine_daily_doses),
+                 0.25))
   msg1 <-
     "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt, rel_infectivity"
   msg2 <- "should have the same dimension"
@@ -103,7 +115,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(
-    p$N_tot, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
+    p$N_tot, p$dt, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
     p$rel_infectivity,
     p$vaccine_progression_rate_base)
   expect_identical(p[names(vaccination)], vaccination)

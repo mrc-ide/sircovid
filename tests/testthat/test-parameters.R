@@ -57,6 +57,62 @@ test_that("dates must be sircovid_dates", {
 })
 
 
+test_that("single piecewise constant value", {
+  expect_identical(sircovid_parameters_piecewise_constant(NULL, pi, 0.1), pi)
+  expect_error(sircovid_parameters_piecewise_constant(NULL, numeric(0), 0.1),
+               "As 'date' is NULL, expected single value")
+  expect_error(sircovid_parameters_piecewise_constant(NULL, 1:5, 0.1),
+               "As 'date' is NULL, expected single value")
+})
+
+
+test_that("varying piecewise constant value", {
+  date <- as_sircovid_date(c("2019-12-31", "2020-02-10", "2020-02-29"))
+  y <- sircovid_parameters_piecewise_constant(date, 1:3, 0.5)
+  expect_equal(
+    y,
+    c(rep(1, 82),
+      rep(2, 38),
+      3))
+})
+
+
+test_that("piecewise constant date and value have to be the same length", {
+  date <- c(0, 41, 60)
+  expect_error(
+    sircovid_parameters_piecewise_constant(date, 1:2, 0.5),
+    "'date' and 'value' must have the same length")
+  expect_error(
+    sircovid_parameters_piecewise_constant(date, 1:4, 0.5),
+    "'date' and 'value' must have the same length")
+})
+
+
+test_that("piecewise constant first date must be 0", {
+  expect_error(
+    sircovid_parameters_piecewise_constant(c(20, 31, 41, 64), 1:4, 0.5),
+    "As 'date' is not NULL, first date should be 0")
+})
+
+
+test_that("piecewise constant dates must be increasing", {
+  expect_error(
+    sircovid_parameters_piecewise_constant(c(0, 41, 41, 64), 1:4, 0.5),
+    "'date' must be strictly increasing")
+})
+
+
+test_that("piecewise constant dates must be sircovid_dates", {
+  expect_error(
+    sircovid_parameters_piecewise_constant(
+      as_date(c("2020-02-01", "2020-02-10")), 1:2, 0.5),
+    "'date' must be numeric - did you forget sircovid_date()?")
+  expect_error(
+    sircovid_parameters_piecewise_constant(c(-10, 41, 60), 1:3, 0.5),
+    "Negative dates, sircovid_date likely applied twice")
+})
+
+
 test_that("can read the default severity file", {
   data <- sircovid_parameters_severity(NULL)
 

@@ -32,6 +32,7 @@ carehomes_parameters(
   vaccine_progression_rate = NULL,
   vaccine_uptake = NULL,
   vaccine_daily_doses = 0,
+  vaccine_daily_doses_date = NULL,
   waning_rate = 0,
   model_pcr_and_serology_user = 1,
   exp_noise = 1e+06
@@ -179,10 +180,22 @@ group i.}
 \item{vaccine_uptake}{A vector of length 19 with the proportion of
 the population who are able to be vaccinated.}
 
-\item{vaccine_daily_doses}{A single value indicating the number of
+\item{vaccine_daily_doses}{A vector of values indicating the number of
 (first) vaccine doses per day to distribute. The actual number
 distributed will be stochastically distributed around this,
-provided there are sufficient eligible candidates.}
+provided there are sufficient eligible candidates. If
+\code{vaccine_daily_doses_date} is \code{NULL} this must be a scalar. If
+\code{vaccine_daily_doses_date} is given then \code{vaccine_daily_does_date} and
+\code{vaccine_daily_doses} must have the same length (see
+\code{\link[=sircovid_parameters_piecewise_constant]{sircovid_parameters_piecewise_constant()}}, where this is passed as
+\code{value}), and it is assumed there are 0 daily doses before the first
+specified date.}
+
+\item{vaccine_daily_doses_date}{A vector of \link{sircovid_date} values
+for changes in the daily number of vaccine doses, or \code{NULL} if a single
+value is used for all times (see
+\code{\link[=sircovid_parameters_piecewise_constant]{sircovid_parameters_piecewise_constant()}}, where this is passed as
+\code{date}).}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
@@ -304,5 +317,38 @@ p <- carehomes_parameters(
        rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
        vaccine_daily_doses = 10000)
+
+# vaccine_daily_doses_date can be unspecified when vaccine_daily_doses is a
+# scalar, and will result in a scalar for vaccine_daily_doses_step, and this
+# value will be used for the whole simulation
+p <- carehomes_parameters(
+       sircovid_date("2020-02-01"), "uk",
+       vaccine_daily_doses = 10000)
+p$vaccine_daily_doses_step
+
+# Alternatively, vaccine_daily_doses_date can be specified (as a single
+# sircovid_date) when vaccine_daily_doses is a scalar. vaccine_daily_doses
+# is then the number of daily doses from that date onwards in the
+# simulation, with the number before that date being 0.
+p <- carehomes_parameters(
+       sircovid_date("2020-02-01"), "uk",
+       vaccine_daily_doses = 10000,
+       vaccine_daily_doses_date = sircovid_date("2020-05-01"))
+p$vaccine_daily_doses_step
+
+# vaccine_daily_doses_date must be specified when vaccine_daily_doses is a
+# vector of values, as a vector of sircovid_dates of the same length. In
+# this case, before the first specified date, the number of daily doses in
+# the simulation will be 0. vaccine_daily_doses gives the number of daily
+# doses from the corresponding date in vaccine_daily_doses_date until the
+# subsequent one. After the last date in vaccine_daily_doses_date, the
+# daily doses are fixed at the last value in vaccine_daily_doses.
+p <- carehomes_parameters(
+       sircovid_date("2020-02-01"), "uk",
+       vaccine_daily_doses = c(10000, 20000),
+       vaccine_daily_doses_date =
+          sircovid_date(c("2020-05-01", "2020-06-01")))
+p$vaccine_daily_doses_step
+
 
 }

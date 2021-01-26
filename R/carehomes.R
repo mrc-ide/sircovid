@@ -131,10 +131,22 @@ NULL
 ##' @param vaccine_uptake A vector of length 19 with the proportion of
 ##'   the population who are able to be vaccinated.
 ##'
-##' @param vaccine_daily_doses A single value indicating the number of
+##' @param vaccine_daily_doses A vector of values indicating the number of
 ##'   (first) vaccine doses per day to distribute. The actual number
 ##'   distributed will be stochastically distributed around this,
-##'   provided there are sufficient eligible candidates.
+##'   provided there are sufficient eligible candidates. If
+##'   `vaccine_daily_doses_date` is `NULL` this must be a scalar. If
+##'   `vaccine_daily_doses_date` is given then `vaccine_daily_does_date` and
+##'   `vaccine_daily_doses` must have the same length (see
+##'   [sircovid_parameters_piecewise_constant()], where this is passed as
+##'   `value`), and it is assumed there are 0 daily doses before the first
+##'   specified date.
+##'
+##' @param vaccine_daily_doses_date A vector of [sircovid::sircovid_date] values
+##'   for changes in the daily number of vaccine doses, or `NULL` if a single
+##'   value is used for all times (see
+##'   [sircovid_parameters_piecewise_constant()], where this is passed as
+##'   `date`).
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -249,6 +261,39 @@ NULL
 ##'        vaccine_progression_rate = vaccine_progression_rate,
 ##'        vaccine_daily_doses = 10000)
 ##'
+##' # vaccine_daily_doses_date can be unspecified when vaccine_daily_doses is a
+##' # scalar, and will result in a scalar for vaccine_daily_doses_step, and this
+##' # value will be used for the whole simulation
+##' p <- carehomes_parameters(
+##'        sircovid_date("2020-02-01"), "uk",
+##'        vaccine_daily_doses = 10000)
+##' p$vaccine_daily_doses_step
+##'
+##' # Alternatively, vaccine_daily_doses_date can be specified (as a single
+##' # sircovid_date) when vaccine_daily_doses is a scalar. vaccine_daily_doses
+##' # is then the number of daily doses from that date onwards in the
+##' # simulation, with the number before that date being 0.
+##' p <- carehomes_parameters(
+##'        sircovid_date("2020-02-01"), "uk",
+##'        vaccine_daily_doses = 10000,
+##'        vaccine_daily_doses_date = sircovid_date("2020-05-01"))
+##' p$vaccine_daily_doses_step
+##'
+##' # vaccine_daily_doses_date must be specified when vaccine_daily_doses is a
+##' # vector of values, as a vector of sircovid_dates of the same length. In
+##' # this case, before the first specified date, the number of daily doses in
+##' # the simulation will be 0. vaccine_daily_doses gives the number of daily
+##' # doses from the corresponding date in vaccine_daily_doses_date until the
+##' # subsequent one. After the last date in vaccine_daily_doses_date, the
+##' # daily doses are fixed at the last value in vaccine_daily_doses.
+##' p <- carehomes_parameters(
+##'        sircovid_date("2020-02-01"), "uk",
+##'        vaccine_daily_doses = c(10000, 20000),
+##'        vaccine_daily_doses_date =
+##'           sircovid_date(c("2020-05-01", "2020-06-01")))
+##' p$vaccine_daily_doses_step
+##'
+##'
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
@@ -274,6 +319,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate = NULL,
                                  vaccine_uptake = NULL,
                                  vaccine_daily_doses = 0,
+                                 vaccine_daily_doses_date = NULL,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
@@ -364,13 +410,15 @@ carehomes_parameters <- function(start_date, region,
 
   ## vaccination
   vaccination <- carehomes_parameters_vaccination(ret$N_tot,
+                                                  ret$dt,
                                                   rel_susceptibility,
                                                   rel_p_sympt,
                                                   rel_p_hosp_if_sympt,
                                                   rel_infectivity,
                                                   vaccine_progression_rate,
                                                   vaccine_uptake,
-                                                  vaccine_daily_doses)
+                                                  vaccine_daily_doses,
+                                                  vaccine_daily_doses_date)
 
   model_pcr_and_serology_user <-
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
@@ -749,13 +797,15 @@ carehomes_initial <- function(info, n_particles, pars) {
 
 
 carehomes_parameters_vaccination <- function(N_tot,
+                                             dt,
                                              rel_susceptibility = 1,
                                              rel_p_sympt = 1,
                                              rel_p_hosp_if_sympt = 1,
                                              rel_infectivity = 1,
                                              vaccine_progression_rate = NULL,
                                              vaccine_uptake = NULL,
-                                             vaccine_daily_doses = 0) {
+                                             vaccine_daily_doses = 0,
+                                             vaccine_daily_doses_date = NULL) {
   stopifnot(length(N_tot) == carehomes_n_groups())
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
@@ -789,7 +839,17 @@ carehomes_parameters_vaccination <- function(N_tot,
   }
 
   ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot
-  ret$vaccine_daily_doses <- vaccine_daily_doses
+
+  if (!is.null(vaccine_daily_doses_date)) {
+    if (vaccine_daily_doses_date[[1L]] != 0) {
+      ## Set vaccine doses to 0 before first specified date
+      vaccine_daily_doses_date <- c(0, vaccine_daily_doses_date)
+      vaccine_daily_doses <- c(0, vaccine_daily_doses)
+    }
+  }
+  ret$vaccine_daily_doses_step <-
+    sircovid_parameters_piecewise_constant(vaccine_daily_doses_date,
+                                           vaccine_daily_doses, dt)
 
   ret
 }
