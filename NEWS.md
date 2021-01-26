@@ -1,3 +1,7 @@
+# sircovid 0.9.13
+
+* IFR calculation added for carehomes model
+
 # sircovid 0.9.12
 
 * Enables daily vaccine doses to be time-varying
