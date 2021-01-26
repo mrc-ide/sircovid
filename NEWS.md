@@ -1,3 +1,11 @@
+# sircovid 0.9.12
+
+* Enables daily vaccine doses to be time-varying
+
+# sircovid 0.9.11
+
+* Fixed Rt calculation for multistrain so that Rt is NA when prob_strain is NA
+
 # sircovid 0.9.7
 
 * Allow specification of Rt calculation in `add_future_betas()`

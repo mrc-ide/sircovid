@@ -126,6 +126,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(steps_per_day, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vaccine_daily_doses_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_population_reluctant, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(waning_rate, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -149,7 +150,6 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
 // [[dust::param(gamma_sero_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(model_pcr_and_serology_user, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pre_1, has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vaccine_daily_doses, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class carehomes {
 public:
   typedef double real_t;
@@ -1225,6 +1225,7 @@ public:
     int dim_s_ij_3;
     int dim_strain_seed_step;
     int dim_strain_transmission;
+    int dim_vaccine_daily_doses_step;
     int dim_vaccine_n_candidates;
     int dim_vaccine_population_possible;
     int dim_vaccine_population_reluctant;
@@ -1424,7 +1425,7 @@ public:
     int steps_per_day;
     std::vector<real_t> strain_seed_step;
     std::vector<real_t> strain_transmission;
-    real_t vaccine_daily_doses;
+    std::vector<real_t> vaccine_daily_doses_step;
     std::vector<real_t> vaccine_population_reluctant;
     std::vector<real_t> vaccine_progression_rate_base;
     std::vector<real_t> waning_rate;
@@ -1719,6 +1720,7 @@ public:
     real_t p_star = (static_cast<int>(step) >= shared->dim_p_star_step ? shared->p_star_step[shared->dim_p_star_step - 1] : shared->p_star_step[step + 1 - 1]);
     real_t strain_seed = ((static_cast<int>(step) >= shared->dim_strain_seed_step ? shared->strain_seed_step[shared->dim_strain_seed_step - 1] : shared->strain_seed_step[step + 1 - 1]));
     state_next[0] = (step + 1) * shared->dt;
+    real_t vaccine_daily_doses = (static_cast<int>(step) >= shared->dim_vaccine_daily_doses_step ? shared->vaccine_daily_doses_step[shared->dim_vaccine_daily_doses_step - 1] : shared->vaccine_daily_doses_step[step + 1 - 1]);
     for (int i = 1; i <= shared->dim_p_G_D_by_age; ++i) {
       internal.p_G_D_by_age[i - 1] = p_G_D * shared->psi_G_D[i - 1];
     }
@@ -2370,7 +2372,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_vaccine_progression_rate_1; ++i) {
       int j = 1;
-      internal.vaccine_progression_rate[i - 1 + shared->dim_vaccine_progression_rate_1 * (j - 1)] = vaccination_schedule(i, shared->vaccine_daily_doses, shared->dt, internal.vaccine_n_candidates, internal.vaccine_population_possible);
+      internal.vaccine_progression_rate[i - 1 + shared->dim_vaccine_progression_rate_1 * (j - 1)] = vaccination_schedule(i, vaccine_daily_doses, shared->dt, internal.vaccine_n_candidates, internal.vaccine_population_possible);
     }
     for (int i = 1; i <= shared->dim_vaccine_progression_rate_1; ++i) {
       for (int j = 2; j <= shared->n_vacc_classes; ++j) {
@@ -4217,7 +4219,6 @@ carehomes::init_t dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_sero_pre_2 = 0.10000000000000001;
   shared->model_pcr_and_serology_user = 1;
   shared->p_sero_pre_1 = 0.5;
-  shared->vaccine_daily_doses = 0;
   shared->G_D_transmission = user_get_scalar<real_t>(user, "G_D_transmission", shared->G_D_transmission, NA_REAL, NA_REAL);
   shared->ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", shared->ICU_transmission, NA_REAL, NA_REAL);
   std::array <int, 1> dim_beta_step;
@@ -4294,7 +4295,9 @@ carehomes::init_t dust_pars<carehomes>(cpp11::list user) {
   std::array <int, 1> dim_strain_transmission;
   shared->strain_transmission = user_get_array_variable<real_t, 1>(user, "strain_transmission", shared->strain_transmission, dim_strain_transmission, NA_REAL, NA_REAL);
   shared->dim_strain_transmission = shared->strain_transmission.size();
-  shared->vaccine_daily_doses = user_get_scalar<real_t>(user, "vaccine_daily_doses", shared->vaccine_daily_doses, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_vaccine_daily_doses_step;
+  shared->vaccine_daily_doses_step = user_get_array_variable<real_t, 1>(user, "vaccine_daily_doses_step", shared->vaccine_daily_doses_step, dim_vaccine_daily_doses_step, NA_REAL, NA_REAL);
+  shared->dim_vaccine_daily_doses_step = shared->vaccine_daily_doses_step.size();
   shared->dim_D_comm = shared->n_groups;
   shared->dim_D_hosp = shared->n_groups;
   shared->dim_N_tot = shared->n_groups;
