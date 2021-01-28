@@ -19,7 +19,7 @@ RUN install2.r --error \
         remotes \
         socialmixr
 
-RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust@@i143-shared", "mrc-ide/mcstate"))'
+RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust@i143-shared", "mrc-ide/mcstate"))'
 
 COPY . /src
 RUN R CMD INSTALL --install-tests /src && rm -rf /src
