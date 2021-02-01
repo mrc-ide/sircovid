@@ -1,4 +1,4 @@
-# sircovid 0.9.13
+# sircovid 0.9.14
 
 * IFR calculation added for carehomes model
 
