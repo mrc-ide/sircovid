@@ -17,3 +17,6 @@ tests/testthat/data/pmcmc.rds
 tests/testthat/data/rt.rds
 tests/testthat/data/trajectories.rds
 .valgrind_ignore
+*.gcov
+*.gcda
+*.gcno

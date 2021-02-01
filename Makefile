@@ -51,6 +51,6 @@ vignettes: vignettes/traduire.Rmd
 	cp vignettes/*.html vignettes/*.Rmd inst/doc
 
 clean:
-	$(RM) src/*.o src/*.so src/*.dll
+	$(RM) src/*.o src/*.so src/*.dll src/*.gcov src/*.gcda src/*.gcno
 
 .PHONY: all test document install vignettes
