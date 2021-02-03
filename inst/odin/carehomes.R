@@ -1344,12 +1344,29 @@ dim(prob_strain) <- c(n_groups, n_strains)
 update(prob_strain[, ]) <- lambda[i, j] / sum(lambda[i, ])
 
 
-## infections_inc used in IFR calculation
-initial(infections_inc[, ]) <- 0
-dim(infections_inc) <- c(n_groups, n_vacc_classes)
-update(infections_inc[, ]) <- (
-  if (step %% steps_per_day == 0) n_S_progress_tot[i, j]
-  else infections_inc[i, j] + n_S_progress_tot[i, j])
+## I_weighted used in IFR calculation
+initial(I_weighted[, ]) <- 0
+dim(I_weighted) <- c(n_groups, n_vacc_classes)
+dim(I_weighted_strain) <- c(n_groups, n_strains, n_vacc_classes)
+I_weighted_strain[, , ] <-
+  strain_transmission[j] * (
+    sum(new_I_A[i, j, , k]) + sum(new_I_C[i, j, , k]) +
+      hosp_transmission * (
+        sum(new_ICU_pre_unconf[i, j, , k]) +
+          sum(new_ICU_pre_conf[i, j, , k]) +
+          sum(new_H_R_unconf[i, j, , k]) +
+          sum(new_H_R_conf[i, j, , k]) +
+          sum(new_H_D_unconf[i, j, , k]) +
+          sum(new_H_D_conf[i, j, , k])) +
+      ICU_transmission * (
+        sum(new_ICU_W_R_unconf[i, j, , k]) +
+          sum(new_ICU_W_R_conf[i, j, , k]) +
+          sum(new_ICU_W_D_unconf[i, j, , k]) +
+          sum(new_ICU_W_D_conf[i, j, , k]) +
+          sum(new_ICU_D_unconf[i, j, , k]) +
+          sum(new_ICU_D_conf[i, j, , k])) +
+      G_D_transmission * sum(new_G_D[i, j, , k]))
+update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 
 ## Vaccination engine

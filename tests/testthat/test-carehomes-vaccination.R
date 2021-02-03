@@ -922,16 +922,20 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
-  index <- mod$info()$index$infections_inc
+  index_S <- mod$info()$index$S
+  index_I_weighted <- mod$info()$index$I_weighted
+  index <- c(index_S, index_I_weighted)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- dust::dust_iterate(mod, steps, index)
+  S <- y[seq_len(length(index_S)), , ]
+  I_weighted <- y[-seq_len(length(index_S)), , ]
 
-  ifr_t_1 <- carehomes_ifr_t(steps, y[, 1, ], p)
-  ifr_t_all <- carehomes_ifr_t_trajectories(steps, y, p)
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p)
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I_weighted, p)
 
   ## run model with unvaccinated class only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -945,16 +949,21 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
-  index <- mod$info()$index$infections_inc
+  index_S <- mod$info()$index$S
+  index_I_weighted <- mod$info()$index$I_weighted
+  index <- c(index_S, index_I_weighted)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- dust::dust_iterate(mod, steps, index)
+  S <- y[seq_len(length(index_S)), , ]
+  I_weighted <- y[-seq_len(length(index_S)), , ]
 
-  ifr_t_1_single_class <- carehomes_ifr_t(steps, y[, 1, ], p)
-  ifr_t_all_single_class <- carehomes_ifr_t_trajectories(steps, y, p)
+  ifr_t_1_single_class <- carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p)
+  ifr_t_all_single_class <- carehomes_ifr_t_trajectories(steps, S,
+                                                         I_weighted, p)
 
   expect_equal(ifr_t_1, ifr_t_1_single_class)
   expect_equal(ifr_t_all, ifr_t_all_single_class)
@@ -979,34 +988,50 @@ test_that("IFR_t modified if rel_p_sympt is not 1", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
-  index <- mod$info()$index$infections_inc
+  index_S <- mod$info()$index$S
+  index_I_weighted <- mod$info()$index$I_weighted
+  index <- c(index_S, index_I_weighted)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- dust::dust_iterate(mod, steps, index)
+  S <- y[seq_len(length(index_S)), , ]
+  I_weighted <- y[-seq_len(length(index_S)), , ]
 
-  ifr_t_1 <- carehomes_ifr_t(steps, y[, 1, ], p)
-  ifr_t_all <- carehomes_ifr_t_trajectories(steps, y, p)
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p)
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I_weighted, p)
 
   ## move all individuals to vaccinated
-  y_with_vacc <- y
-  y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
-    y_with_vacc[seq_len(p$n_groups), , ]
-  y_with_vacc[seq_len(p$n_groups), , ] <- 0
+  S_with_vacc <- S
+  S_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
+    S_with_vacc[seq_len(p$n_groups), , ]
+  S_with_vacc[seq_len(p$n_groups), , ] <- 0
+  I_weighted_with_vacc <- I_weighted
+  I_weighted_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
+    I_weighted_with_vacc[seq_len(p$n_groups), , ]
+  I_weighted_with_vacc[seq_len(p$n_groups), , ] <- 0
 
-  ifr_t_1_vacc <- carehomes_ifr_t(steps, y_with_vacc[, 1, ], p)
-  ifr_t_all_vacc <- carehomes_ifr_t_trajectories(steps, y_with_vacc, p)
+  ifr_t_1_vacc <- carehomes_ifr_t(steps, S_with_vacc[, 1, ],
+                                  I_weighted_with_vacc[, 1, ], p)
+  ifr_t_all_vacc <- carehomes_ifr_t_trajectories(steps, S_with_vacc,
+                                                 I_weighted_with_vacc, p)
 
   ## Given asymptomatic individuals do not die, we expect
   ## IFR_t and IHR_t to be reduced when rel_p_sympt is not 1.
-  ## Remove first value (which will be NaN)
-  expect_true(all(ifr_t_1_vacc$IFR_t_all[-1L] < ifr_t_1$IFR_t_all[-1L]))
-  expect_true(all(ifr_t_1_vacc$IFR_t_general[-1L] < ifr_t_1$IFR_t_general[-1L]))
-  expect_true(all(ifr_t_1_vacc$IHR_t_all[-1L] < ifr_t_1$IHR_t_all[-1L]))
-  expect_true(all(ifr_t_1_vacc$IHR_t_general[-1L] < ifr_t_1$IHR_t_general[-1L]))
-
+  expect_true(all(ifr_t_1_vacc$IFR_t_all < ifr_t_1$IFR_t_all))
+  expect_true(all(ifr_t_1_vacc$IFR_t_general < ifr_t_1$IFR_t_general))
+  expect_true(all(ifr_t_1_vacc$IHR_t_all < ifr_t_1$IHR_t_all))
+  expect_true(all(ifr_t_1_vacc$IHR_t_general < ifr_t_1$IHR_t_general))
+  
+  ## The "no vaccination" version for the model with vaccination should
+  ## be the same as the normal version for the model without
+  expect_equal(ifr_t_1_vacc$IFR_t_all_no_vacc, ifr_t_1$IFR_t_all)
+  expect_equal(ifr_t_1_vacc$IFR_t_general_no_vacc, ifr_t_1$IFR_t_general)
+  expect_equal(ifr_t_1_vacc$IHR_t_all_no_vacc, ifr_t_1$IHR_t_all)
+  expect_equal(ifr_t_1_vacc$IHR_t_general_no_vacc, ifr_t_1$IHR_t_general)
+  
 })
 
 
@@ -1028,33 +1053,49 @@ test_that("Effective IFR_t modified if rel_p_hosp_if_sympt is not 1", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
-  index <- mod$info()$index$infections_inc
+  index_S <- mod$info()$index$S
+  index_I_weighted <- mod$info()$index$I_weighted
+  index <- c(index_S, index_I_weighted)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- dust::dust_iterate(mod, steps, index)
+  S <- y[seq_len(length(index_S)), , ]
+  I_weighted <- y[-seq_len(length(index_S)), , ]
 
-  ifr_t_1 <- carehomes_ifr_t(steps, y[, 1, ], p)
-  ifr_t_all <- carehomes_ifr_t_trajectories(steps, y, p)
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p)
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I_weighted, p)
 
   ## move all individuals to vaccinated
-  y_with_vacc <- y
-  y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
-    y_with_vacc[seq_len(p$n_groups), , ]
-  y_with_vacc[seq_len(p$n_groups), , ] <- 0
+  S_with_vacc <- S
+  S_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
+    S_with_vacc[seq_len(p$n_groups), , ]
+  S_with_vacc[seq_len(p$n_groups), , ] <- 0
+  I_weighted_with_vacc <- I_weighted
+  I_weighted_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
+    I_weighted_with_vacc[seq_len(p$n_groups), , ]
+  I_weighted_with_vacc[seq_len(p$n_groups), , ] <- 0
 
-  ifr_t_1_vacc <- carehomes_ifr_t(steps, y_with_vacc[, 1, ], p)
-  ifr_t_all_vacc <- carehomes_ifr_t_trajectories(steps, y_with_vacc, p)
+  ifr_t_1_vacc <- carehomes_ifr_t(steps, S_with_vacc[, 1, ],
+                                  I_weighted_with_vacc[, 1, ], p)
+  ifr_t_all_vacc <- carehomes_ifr_t_trajectories(steps, S_with_vacc,
+                                                 I_weighted_with_vacc, p)
 
-  ## Given individuals not requiring hospitalisation do not die, we expect
-  ## IFR_t and IHR_t to be reduced when rel_p_hosp_if_sympt is not 1.
-  ## Remove first value (which will be NaN)
-  expect_true(all(ifr_t_1_vacc$IFR_t_all[-1L] < ifr_t_1$IFR_t_all[-1L]))
-  expect_true(all(ifr_t_1_vacc$IFR_t_general[-1L] < ifr_t_1$IFR_t_general[-1L]))
-  expect_true(all(ifr_t_1_vacc$IHR_t_all[-1L] < ifr_t_1$IHR_t_all[-1L]))
-  expect_true(all(ifr_t_1_vacc$IHR_t_general[-1L] < ifr_t_1$IHR_t_general[-1L]))
+  ## Given asymptomatic individuals do not die, we expect
+  ## IFR_t and IHR_t to be reduced when rel_p_sympt is not 1.
+  expect_true(all(ifr_t_1_vacc$IFR_t_all < ifr_t_1$IFR_t_all))
+  expect_true(all(ifr_t_1_vacc$IFR_t_general < ifr_t_1$IFR_t_general))
+  expect_true(all(ifr_t_1_vacc$IHR_t_all < ifr_t_1$IHR_t_all))
+  expect_true(all(ifr_t_1_vacc$IHR_t_general < ifr_t_1$IHR_t_general))
+  
+  ## The "no vaccination" version for the model with vaccination should
+  ## be the same as the normal version for the model without
+  expect_equal(ifr_t_1_vacc$IFR_t_all_no_vacc, ifr_t_1$IFR_t_all)
+  expect_equal(ifr_t_1_vacc$IFR_t_general_no_vacc, ifr_t_1$IFR_t_general)
+  expect_equal(ifr_t_1_vacc$IHR_t_all_no_vacc, ifr_t_1$IHR_t_all)
+  expect_equal(ifr_t_1_vacc$IHR_t_general_no_vacc, ifr_t_1$IHR_t_general)
 
 })
 

@@ -4,70 +4,128 @@
 ##'
 ##' @param step A vector of steps that the model was run over
 ##'
-##' @param infections_inc A (n groups x n vaccine classes) x steps matrix of
-##'   "infections_inc" compartment counts
+##' @param S A (n groups x n vaccine classes) x steps matrix of
+##'   "S" compartment counts
+##'
+##' @param I_weighted A (n groups x n vaccine classes) x steps matrix of
+##'   "I_weighted" compartment counts
 ##'
 ##' @param p A [carehomes_parameters()] object
 ##'
-##' @return A list with elements `step`, `IFR_t_gen`,
+##' @return A list with elements `step`, `date`, `IFR_t_general`,
 ##'   and `IFR_t_all``
 ##'
 ##' @export
-carehomes_ifr_t <- function(step, infections_inc, p) {
-  if (nrow(infections_inc) != ncol(p$rel_susceptibility) * p$n_groups) {
+carehomes_ifr_t <- function(step, S, I_weighted, p) {
+  if (nrow(S) != ncol(p$rel_susceptibility) * p$n_groups) {
     stop(sprintf(
-      "Expected 'infections_inc' to have %d rows = %d groups x %d vacc classes",
+      "Expected 'S' to have %d rows = %d groups x %d vacc classes",
       p$n_groups * ncol(p$rel_susceptibility),
       p$n_groups,
       ncol(p$rel_susceptibility)))
   }
-  if (ncol(infections_inc) != length(step)) {
-    stop(sprintf("Expected 'infections_inc' to have %d cols, following 'step'",
+  if (ncol(S) != length(step)) {
+    stop(sprintf("Expected 'S' to have %d columns, following 'step'",
+                 length(step)))
+  }
+  if (nrow(I_weighted) != ncol(p$rel_susceptibility) * p$n_groups) {
+    stop(sprintf(
+      "Expected 'I_weighted' to have %d rows = %d groups x %d vacc classes",
+      p$n_groups * ncol(p$rel_susceptibility),
+      p$n_groups,
+      ncol(p$rel_susceptibility)))
+  }
+  if (ncol(I_weighted) != length(step)) {
+    stop(sprintf("Expected 'I_weighted' to have %d columns, following 'step'",
                  length(step)))
   }
 
   y <- carehomes_IFR_t_by_group_and_vacc_class(step, p)
+  beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   n_vacc_classes <- ncol(p$rel_susceptibility)
 
-  calculate_weighted_ratio <- function(t, infections_inc, y,
-                                       drop_carehomes, type) {
-    y[[type]][, , t]
-    infections_inc[, t]
+  calculate_weighted_ratio <- function(t, S, I_weighted, y,
+                                       drop_carehomes, no_vacc, type) {
+
+    m <- p$m
+    ages <- seq_len(p$n_age_groups)
+    ch <- seq(to = p$n_groups, length.out = 2)
+    m[ages, ] <- beta[t] * m[ages, ]
+    m[ch, ages] <- beta[t] * m[ch, ages]
+  
+    m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
+                         p$n_groups * n_vacc_classes,
+                         p$n_groups * n_vacc_classes,
+                         byrow = TRUE)
+
+    if (no_vacc) {
+      expected_infections <-  S[, t] *
+        (1 - exp(-p$dt * (m_extended %*% I_weighted[, t])))
+    } else {
+      expected_infections <-  S[, t] *
+        (1 - exp(-p$dt * c(p$rel_susceptibility) *
+                   (m_extended %*% (I_weighted[, t] * c(p$rel_infectivity)))))
+    }
+
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
     if (drop_carehomes) {
-      i_CHR <- seq(p$n_groups, dim(infections_inc)[1], by = p$n_groups)
+      i_CHR <- seq(p$n_groups, dim(S)[1], by = p$n_groups)
       i_CHW <- i_CHR - 1
-      i_keep <- seq_len(dim(infections_inc)[1])[-c(i_CHW, i_CHR)]
+      i_keep <- seq_len(dim(S)[1])[-c(i_CHW, i_CHR)]
     } else {
-      i_keep <- seq_len(dim(infections_inc)[1])
+      i_keep <- seq_len(dim(S)[1])
     }
 
-    y_vec <- c(y[[type]][, , t])
+    if (no_vacc) {
+      y_vec <- rep(c(y[[type]][, 1, t]), n_vacc_classes)
+    } else {
+      y_vec <- c(y[[type]][, , t])
+    }
 
-    weighted.mean(y_vec[i_keep], infections_inc[i_keep, t])
+    weighted.mean(y_vec[i_keep], expected_infections[i_keep])
   }
 
   t <- seq_along(step)
-  IFR_t_general <- vnapply(t, calculate_weighted_ratio, infections_inc,
-                           y, drop_carehomes = TRUE, type = "IFR")
-  IFR_t_all <- vnapply(t, calculate_weighted_ratio, infections_inc,
-                       y, drop_carehomes = FALSE, type = "IFR")
-  IHR_t_general <- vnapply(t, calculate_weighted_ratio, infections_inc,
-                           y, drop_carehomes = TRUE, type = "IHR")
-  IHR_t_all <- vnapply(t, calculate_weighted_ratio, infections_inc,
-                       y, drop_carehomes = FALSE, type = "IHR")
+  IFR_t_general <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                           y, drop_carehomes = TRUE, no_vacc = FALSE,
+                           type = "IFR")
+  IFR_t_all <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                       y, drop_carehomes = FALSE, no_vacc = FALSE,
+                       type = "IFR")
+  IHR_t_general <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                           y, drop_carehomes = TRUE, no_vacc = FALSE,
+                           type = "IHR")
+  IHR_t_all <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                       y, drop_carehomes = FALSE, no_vacc = FALSE,
+                       type = "IHR")
+  IFR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                                   y, drop_carehomes = TRUE,  no_vacc = TRUE,
+                                   type = "IFR")
+  IFR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                               y, drop_carehomes = FALSE, no_vacc = TRUE,
+                               type = "IFR")
+  IHR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                                   y, drop_carehomes = TRUE, no_vacc = TRUE,
+                                   type = "IHR")
+  IHR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
+                               y, drop_carehomes = FALSE,   no_vacc = TRUE,
+                               type = "IHR")
 
   list(step = step,
        date = step * p$dt,
        IFR_t_general = IFR_t_general,
        IFR_t_all = IFR_t_all,
        IHR_t_general = IHR_t_general,
-       IHR_t_all = IHR_t_all)
+       IHR_t_all = IHR_t_all,
+       IFR_t_general_no_vacc = IFR_t_general_no_vacc,
+       IFR_t_all_no_vacc = IFR_t_all_no_vacc,
+       IHR_t_general_no_vacc = IHR_t_general_no_vacc,
+       IHR_t_all_no_vacc = IHR_t_all_no_vacc)
 }
 
-## Here we expect 'infections_inc' in order:
+## Here we expect 'S' and 'I_weighted' in order:
 ##
 ##   state x sample x step
 ##
@@ -83,8 +141,11 @@ carehomes_ifr_t <- function(step, infections_inc, p) {
 ##'
 ##' @param step A vector of steps
 ##'
-##' @param infections_inc A 3d ((n groups x n vaccine classes) x n trajectories
-##'   x n steps) array of "infections_inc" compartment counts
+##' @param S A 3d ((n groups x n vaccine classes) x n trajectories
+##'   x n steps) array of "S" compartment counts
+##'
+##' @param I_weighted A 3d ((n groups x n vaccine classes) x n trajectories
+##'   x n steps) array of "I_weighted" compartment counts
 ##'
 ##' @param pars Either a single [carehomes_parameters()] object
 ##'   (shared parameters) or an unnamed list of
@@ -103,10 +164,10 @@ carehomes_ifr_t <- function(step, infections_inc, p) {
 ##'   matrix, not a vector.
 ##'
 ##' @export
-carehomes_ifr_t_trajectories <- function(step, infections_inc, pars,
+carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
                                       initial_step_from_parameters = TRUE,
                                       shared_parameters = NULL) {
-  calculate_ifr_t_trajectories(carehomes_ifr_t, step, infections_inc, pars,
+  calculate_ifr_t_trajectories(carehomes_ifr_t, step, S, I_weighted, pars,
                             initial_step_from_parameters, shared_parameters)
 }
 
@@ -210,11 +271,14 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 ## it out here; when we implement this for the basic model this will
 ## remain unchanged.  However, I am leaving it in this
 ## carehomes-specific file until we do add a new model or port it.
-calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, infections_inc,
+calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
                                          pars, initial_step_from_parameters,
                                          shared_parameters) {
-  if (length(dim(infections_inc)) != 3) {
-    stop("Expected a 3d array of 'infections_inc'")
+  if (length(dim(S)) != 3) {
+    stop("Expected a 3d array of 'S'")
+  }
+  if (length(dim(I_weighted)) != 3) {
+    stop("Expected a 3d array of 'I_weighted'")
   }
 
   shared_parameters <- shared_parameters %||% !is.null(names(pars))
@@ -222,21 +286,34 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, infections_inc,
     if (is.null(names(pars))) {
       stop("If using shared parameters, expected a named list for 'pars'")
     }
-    pars <- rep(list(pars), ncol(infections_inc))
+    if (dim(I_weighted)[[2]] != dim(S)[[2]]) {
+      stop("Expected 'S' and 'I_weighted' to have same length of 2nd dim")
+    }
+    pars <- rep(list(pars), ncol(S))
   } else {
     if (!is.null(names(pars))) {
       stop("If not using shared parameters, expected a unnamed list for 'pars'")
     }
-    if (length(pars) != ncol(infections_inc)) {
+    if (length(pars) != ncol(S)) {
       stop(sprintf(
-        "Expected 2nd dim of 'infections_inc' to have length %d, given 'pars'",
+        "Expected 2nd dim of 'S' to have length %d, given 'pars'",
+        length(pars)))
+    }
+    if (length(pars) != ncol(I_weighted)) {
+      stop(sprintf(
+        "Expected 2nd dim of 'I_weighted' to have length %d, given 'pars'",
         length(pars)))
     }
   }
 
-  if (dim(infections_inc)[[3]] != length(step)) {
+  if (dim(S)[[3]] != length(step)) {
     stop(sprintf(
-      "Expected 3rd dim of 'infections_inc' to have length %d, given 'step'",
+      "Expected 3rd dim of 'S' to have length %d, given 'step'",
+      length(step)))
+  }
+  if (dim(I_weighted)[[3]] != length(step)) {
+    stop(sprintf(
+      "Expected 3rd dim of 'I_weighted' to have length %d, given 'step'",
       length(step)))
   }
 
@@ -244,7 +321,7 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, infections_inc,
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    ifr_t_1 <- calculate_ifr_t(step, infections_inc[, i, ], pars[[i]])
+    ifr_t_1 <- calculate_ifr_t(step, S[, i, ], I_weighted[, i, ], pars[[i]])
   }
 
   res <- lapply(seq_along(pars), calculate_ifr_t_one_trajectory)

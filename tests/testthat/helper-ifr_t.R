@@ -8,17 +8,22 @@ reference_data_ifr_t <- function() {
     initial <- carehomes_initial(mod$info(), 10, p)
     mod$set_state(initial$state, initial$step)
     mod$set_index(integer(0))
-    index <- mod$info()$index$infections_inc
+    index_S <- mod$info()$index$S
+    index_I_weighted <- mod$info()$index$I_weighted
+    index <- c(index_S, index_I_weighted)
 
     end <- sircovid_date("2020-05-01") / p$dt
     steps <- seq(initial$step, end, by = 1 / p$dt)
 
     set.seed(1)
     y <- dust::dust_iterate(mod, steps, index)
-    ifr_t_1 <- carehomes_ifr_t(steps, y[, 1, ], p)
-    ifr_t_all <- carehomes_ifr_t_trajectories(steps, y, p)
+    S <- y[seq_len(length(index_S)), , ]
+    I_weighted <- y[-seq_len(length(index_S)), , ]
+    
+    ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p)
+    ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I_weighted, p)
 
-    list(inputs = list(steps = steps, y = y, p = p),
+    list(inputs = list(steps = steps, S = S, I_weighted = I_weighted, p = p),
          outputs = list(ifr_t_1 = ifr_t_1, ifr_t_all = ifr_t_all))
   })
 }
@@ -27,7 +32,9 @@ reference_data_ifr_t <- function() {
 calculate_ifr_t_simple <- function(dat) {
   p <- lapply(seq_len(nrow(dat$pars)), function(i)
     dat$predict$transform(dat$pars[i, ]))
-  i <- grep("infections_inc_", rownames(dat$trajectories$state))
-  infections_inc <- dat$trajectories$state[i, , ]
-  carehomes_ifr_t_trajectories(dat$trajectories$step, infections_inc, p)
+  i_S <- grep("S_", rownames(dat$trajectories$state))
+  S <- dat$trajectories$state[i_S, , ]
+  i_I_weighted <- grep("I_weighted_", rownames(dat$trajectories$state))
+  I_weighted <- dat$trajectories$state[i_I_weighted, , ]
+  carehomes_ifr_t_trajectories(dat$trajectories$step, S, I_weighted, p)
 }

@@ -508,8 +508,8 @@ carehomes_index <- function(info) {
 
   index_S <- set_names(index[["S"]],
                        paste0("S", suffix, s_type))
-  index_infections_inc <- set_names(index[["infections_inc"]],
-                                    paste0("infections_inc", suffix, s_type))
+  index_I_weighted <- set_names(index[["I_weighted"]],
+                                paste0("I_weighted", suffix, s_type))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
                                paste0("cum_admit", suffix))
 
@@ -524,7 +524,7 @@ carehomes_index <- function(info) {
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_cum_admit,
-                 index_infections_inc, index_prob_strain))
+                 index_I_weighted, index_prob_strain))
 }
 
 
@@ -765,6 +765,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   ## probably has limited impact.
   seed_age_band <- 4L
   index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
+  index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
   index_T_sero_pre <- index[["T_sero_pre"]][[1L]] + seed_age_band - 1L
   index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
@@ -785,6 +786,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
+  state[index_I_weighted] <- initial_I
   state[index_T_sero_pre] <- initial_I
   state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I

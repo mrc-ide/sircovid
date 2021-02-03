@@ -4,18 +4,21 @@
 \alias{carehomes_ifr_t}
 \title{Compute "IFR_t"}
 \usage{
-carehomes_ifr_t(step, infections_inc, p)
+carehomes_ifr_t(step, S, I_weighted, p)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
 
-\item{infections_inc}{A (n groups x n vaccine classes) x steps matrix of
-"infections_inc" compartment counts}
+\item{S}{A (n groups x n vaccine classes) x steps matrix of
+"S" compartment counts}
+
+\item{I_weighted}{A (n groups x n vaccine classes) x steps matrix of
+"I_weighted" compartment counts}
 
 \item{p}{A \code{\link[=carehomes_parameters]{carehomes_parameters()}} object}
 }
 \value{
-A list with elements \code{step}, \code{IFR_t_gen},
+A list with elements \code{step}, \code{date}, \code{IFR_t_general},
 and `IFR_t_all``
 }
 \description{

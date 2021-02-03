@@ -6,7 +6,8 @@
 \usage{
 carehomes_ifr_t_trajectories(
   step,
-  infections_inc,
+  S,
+  I_weighted,
   pars,
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL
@@ -15,8 +16,11 @@ carehomes_ifr_t_trajectories(
 \arguments{
 \item{step}{A vector of steps}
 
-\item{infections_inc}{A 3d ((n groups x n vaccine classes) x n trajectories
-x n steps) array of "infections_inc" compartment counts}
+\item{S}{A 3d ((n groups x n vaccine classes) x n trajectories
+x n steps) array of "S" compartment counts}
+
+\item{I_weighted}{A 3d ((n groups x n vaccine classes) x n trajectories
+x n steps) array of "I_weighted" compartment counts}
 
 \item{pars}{Either a single \code{\link[=carehomes_parameters]{carehomes_parameters()}} object
 (shared parameters) or an unnamed list of
