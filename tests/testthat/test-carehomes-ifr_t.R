@@ -24,7 +24,7 @@ test_that("Can calculate IFR_t", {
   for (nm in names(res)) {
     expect_equal(res[[nm]], res_all[[nm]][, 1, drop = TRUE])
   }
-  
+
   ## no vaccination in the model so we expect with and without
   ## vaccination versions of IFR to be equal
   expect_equal(res$IFR_t_general, res$IFR_t_general_no_vacc)
@@ -35,7 +35,7 @@ test_that("Can calculate IFR_t", {
   expect_equal(res_all$IHR_t_general, res_all$IHR_t_general_no_vacc)
   expect_equal(res_all$IFR_t_all, res_all$IFR_t_all_no_vacc)
   expect_equal(res_all$IHR_t_all, res_all$IHR_t_all_no_vacc)
-  
+
   ## Date is returned
   expect_equal(res$date, res$step * p$dt)
 })
@@ -75,7 +75,7 @@ test_that("validate inputs in rt trajectories calculation", {
   steps <- d$inputs$steps
   S <- d$inputs$S
   I_weighted <- d$inputs$I_weighted
-  
+
   expect_error(
     carehomes_ifr_t_trajectories(steps, S[, 1, ], I_weighted, p),
     "Expected a 3d array of 'S'",

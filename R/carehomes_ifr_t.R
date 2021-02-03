@@ -52,7 +52,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
     ch <- seq(to = p$n_groups, length.out = 2)
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
-  
+
     m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
                          p$n_groups * n_vacc_classes,
                          p$n_groups * n_vacc_classes,

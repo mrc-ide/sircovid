@@ -19,7 +19,7 @@ reference_data_ifr_t <- function() {
     y <- dust::dust_iterate(mod, steps, index)
     S <- y[seq_len(length(index_S)), , ]
     I_weighted <- y[-seq_len(length(index_S)), , ]
-    
+
     ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p)
     ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I_weighted, p)
 

@@ -1024,14 +1024,14 @@ test_that("IFR_t modified if rel_p_sympt is not 1", {
   expect_true(all(ifr_t_1_vacc$IFR_t_general < ifr_t_1$IFR_t_general))
   expect_true(all(ifr_t_1_vacc$IHR_t_all < ifr_t_1$IHR_t_all))
   expect_true(all(ifr_t_1_vacc$IHR_t_general < ifr_t_1$IHR_t_general))
-  
+
   ## The "no vaccination" version for the model with vaccination should
   ## be the same as the normal version for the model without
   expect_equal(ifr_t_1_vacc$IFR_t_all_no_vacc, ifr_t_1$IFR_t_all)
   expect_equal(ifr_t_1_vacc$IFR_t_general_no_vacc, ifr_t_1$IFR_t_general)
   expect_equal(ifr_t_1_vacc$IHR_t_all_no_vacc, ifr_t_1$IHR_t_all)
   expect_equal(ifr_t_1_vacc$IHR_t_general_no_vacc, ifr_t_1$IHR_t_general)
-  
+
 })
 
 
@@ -1089,7 +1089,7 @@ test_that("Effective IFR_t modified if rel_p_hosp_if_sympt is not 1", {
   expect_true(all(ifr_t_1_vacc$IFR_t_general < ifr_t_1$IFR_t_general))
   expect_true(all(ifr_t_1_vacc$IHR_t_all < ifr_t_1$IHR_t_all))
   expect_true(all(ifr_t_1_vacc$IHR_t_general < ifr_t_1$IHR_t_general))
-  
+
   ## The "no vaccination" version for the model with vaccination should
   ## be the same as the normal version for the model without
   expect_equal(ifr_t_1_vacc$IFR_t_all_no_vacc, ifr_t_1$IFR_t_all)
