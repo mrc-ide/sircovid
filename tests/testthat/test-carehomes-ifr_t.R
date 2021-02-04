@@ -108,6 +108,10 @@ test_that("validate inputs in rt trajectories calculation", {
     carehomes_ifr_t_trajectories(steps, S[, , ], I_weighted, list(p),
                               shared_parameters = TRUE),
     "If using shared parameters, expected a named list for 'pars'")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S[, 1, , drop = FALSE], I_weighted, p,
+                                 shared_parameters = TRUE),
+    "Expected 'S' and 'I_weighted' to have same length of 2nd dim")
 })
 
 
