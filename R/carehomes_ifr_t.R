@@ -40,7 +40,8 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
                  length(step)))
   }
 
-  y <- carehomes_IFR_t_by_group_and_vacc_class(step, p)
+  IFR_by_group_and_vacc_class <-
+    carehomes_IFR_t_by_group_and_vacc_class(step, p)
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   n_vacc_classes <- ncol(p$rel_susceptibility)
 
@@ -58,15 +59,18 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
                          p$n_groups * n_vacc_classes,
                          byrow = TRUE)
 
+    ## probability of infection in next time step by group and vaccine class
     if (no_vacc) {
-      expected_infections <-  S[, t] *
-        (1 - exp(-p$dt * (m_extended %*% I_weighted[, t])))
+      ## exclude vaccine effects
+      prob_infection <- (1 - exp(-p$dt * (m_extended %*% I_weighted[, t])))
     } else {
-      expected_infections <-  S[, t] *
-        (1 - exp(-p$dt * c(p$rel_susceptibility) *
-                   (m_extended %*% (I_weighted[, t] * c(p$rel_infectivity)))))
+      ## include vaccine effects
+      prob_infection <- (1 - exp(-p$dt * c(p$rel_susceptibility) *
+                     (m_extended %*% (I_weighted[, t] * c(p$rel_infectivity)))))
     }
 
+    ## expected infections in next time step by group and vaccine class
+    expected_infections <-  S[, t] * prob_infection
 
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
@@ -79,12 +83,14 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
     }
 
     if (no_vacc) {
-      y_vec <- rep(c(y[[type]][, 1, t]), n_vacc_classes)
+      ## same IFR by group across all vaccine classes
+      IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, t]),
+                     n_vacc_classes)
     } else {
-      y_vec <- c(y[[type]][, , t])
+      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, , t])
     }
 
-    weighted.mean(y_vec[i_keep], expected_infections[i_keep])
+    weighted.mean(IFR_vec[i_keep], expected_infections[i_keep])
   }
 
   t <- seq_along(step)

@@ -1035,7 +1035,7 @@ test_that("IFR_t modified if rel_p_sympt is not 1", {
 })
 
 
-test_that("Effective IFR_t modified if rel_p_hosp_if_sympt is not 1", {
+test_that("IFR_t modified if rel_p_hosp_if_sympt is not 1", {
   rel_p_hosp_if_sympt <- 0.2 # can put anything <1 here
 
   ## run model with unvaccinated & vaccinated
