@@ -212,7 +212,7 @@ drop_trajectory_incidence <- function(obj) {
   }
 
   assert_is(obj, "mcstate_trajectories")
-  k <- grep("_inc", rownames(obj$state))
+  k <- grep("_inc$", rownames(obj$state))
   obj$state <- obj$state[-k, , ]
   obj
 }
