@@ -1,3 +1,7 @@
+# sircovid 0.9.14
+
+* Allow a subset of Rt types to be calculated, perhaps in parallel
+
 # sircovid 0.9.12
 
 * Enables daily vaccine doses to be time-varying
