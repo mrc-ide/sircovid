@@ -115,7 +115,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
         i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
         ngm <- ngm[i_gen, i_gen]
       }
-      ev <- eigen(ngm)$values
+      ev <- eigen(ngm, FALSE, TRUE)$values
       ev[Im(ev) != 0] <- NA
       ev <- as.numeric(ev)
       out <- max(ev, na.rm = TRUE)
