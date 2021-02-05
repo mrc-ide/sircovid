@@ -12,11 +12,32 @@
 ##'
 ##' @param p A [carehomes_parameters()] object
 ##'
-##' @return A list with elements `step`, `date`, `IFR_t_general`,
-##'   and `IFR_t_all``
+##' @param type A character vector of possible Rt types to
+##'   compute. Can be any or all of `IFR_t_all`, `IFR_t_general`,
+##'   `IHR_t_all`, `IHR_t_general`, `IFR_t_all_no_vacc`,
+##'   `IFR_t_general_no_vacc`, `IHR_t_all_no_vacc` and `IHR_t_general_no_vacc`,
+##'
+##' @return A list with elements `step`, `date`, and any of the `type`
+##'   values specified above.
 ##'
 ##' @export
-carehomes_ifr_t <- function(step, S, I_weighted, p) {
+carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
+
+  all_types <- c("IFR_t_all", "IFR_t_general", "IHR_t_all", "IHR_t_general",
+                 "IFR_t_all_no_vacc", "IFR_t_general_no_vacc",
+                 "IHR_t_all_no_vacc", "IHR_t_general_no_vacc")
+  if (is.null(type)) {
+    type <- all_types
+  } else {
+    err <- setdiff(type, all_types)
+    if (length(err) > 0) {
+      stop(sprintf("Unknown IFR/IHR type %s, must match %s",
+                   paste(squote(err), collapse = ", "),
+                   paste(squote(all_types), collapse = ", ")))
+    }
+  }
+
+
   if (nrow(S) != ncol(p$rel_susceptibility) * p$n_groups) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vacc classes",
@@ -106,49 +127,39 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
   expected_infections_no_vacc <- vapply(t, calculate_expected_infections,
                                         numeric(dim(S)[1]), no_vacc = TRUE)
 
-  IFR_t_general <- vnapply(t, calculate_weighted_ratio,
-                           expected_infections_vacc,
-                           drop_carehomes = TRUE,
-                           no_vacc = FALSE, type = "IFR")
-  IFR_t_all <- vnapply(t, calculate_weighted_ratio,
-                       expected_infections_vacc,
-                       drop_carehomes = FALSE,
-                       no_vacc = FALSE, type = "IFR")
-  IHR_t_general <- vnapply(t, calculate_weighted_ratio,
-                           expected_infections_vacc,
-                           drop_carehomes = TRUE,
-                           no_vacc = FALSE, type = "IHR")
-  IHR_t_all <- vnapply(t, calculate_weighted_ratio,
-                       expected_infections_vacc,
-                       drop_carehomes = FALSE,
-                       no_vacc = FALSE, type = "IHR")
-  IFR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio,
-                                  expected_infections_no_vacc,
-                                  drop_carehomes = TRUE,
-                                  no_vacc = TRUE, type = "IFR")
-  IFR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio,
-                               expected_infections_no_vacc,
-                               drop_carehomes = FALSE,
-                               no_vacc = TRUE, type = "IFR")
-  IHR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio,
-                                   expected_infections_no_vacc,
-                                   drop_carehomes = TRUE,
-                                   no_vacc = TRUE, type = "IHR")
-  IHR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio,
-                               expected_infections_no_vacc,
-                               drop_carehomes = FALSE,
-                               no_vacc = TRUE, type = "IHR")
+  opts <- list(IFR_t_all = list(e_inf = expected_infections_vacc,
+                                general = FALSE, no_vacc = FALSE,
+                                type = "IFR"),
+               IFR_t_general = list(e_inf = expected_infections_vacc,
+                                    general = TRUE, no_vacc = FALSE,
+                                    type = "IFR"),
+               IHR_t_all = list(e_inf = expected_infections_vacc,
+                                general = FALSE, no_vacc = FALSE,
+                                type = "IHR"),
+               IHR_t_general = list(e_inf = expected_infections_vacc,
+                                    general = TRUE, no_vacc = FALSE,
+                                    type = "IHR"),
+               IFR_t_all_no_vacc = list(e_inf = expected_infections_no_vacc,
+                                        general = FALSE, no_vacc = TRUE,
+                                        type = "IFR"),
+               IFR_t_general_no_vacc = list(e_inf = expected_infections_no_vacc,
+                                            general = TRUE, no_vacc = TRUE,
+                                            type = "IFR"),
+               IHR_t_all_no_vacc = list(e_inf = expected_infections_no_vacc,
+                                        general = FALSE, no_vacc = TRUE,
+                                        type = "IHR"),
+               IHR_t_general_no_vacc = list(e_inf = expected_infections_no_vacc,
+                                            general = TRUE, no_vacc = TRUE,
+                                            type = "IHR"))
 
-  list(step = step,
-       date = step * p$dt,
-       IFR_t_general = IFR_t_general,
-       IFR_t_all = IFR_t_all,
-       IHR_t_general = IHR_t_general,
-       IHR_t_all = IHR_t_all,
-       IFR_t_general_no_vacc = IFR_t_general_no_vacc,
-       IFR_t_all_no_vacc = IFR_t_all_no_vacc,
-       IHR_t_general_no_vacc = IHR_t_general_no_vacc,
-       IHR_t_all_no_vacc = IHR_t_all_no_vacc)
+  ret <- list(step = step,
+              date = step * p$dt)
+  ret[type] <- lapply(opts[type], function(x)
+    vnapply(t, calculate_weighted_ratio, x$e_inf,
+            drop_carehomes = x$general,
+            no_vacc = x$no_vacc, type = x$type))
+  ret
+
 }
 
 ## Here we expect 'S' and 'I_weighted' in order:
@@ -186,15 +197,25 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
+##' @param loop Optionally a function to replace `lapply` with; you
+##'   might pass in `parallel::mclapply` or a `furrr` function here to
+##'   parallelise the loop. It must return a list (i.e., conform to
+##'   the same interface as `lapply`). This interface is subject to
+##'   change!
+##'
+##' @inheritParams carehomes_ifr_t
+##'
 ##' @return As for [carehomes_ifr_t()], except that every element is a
 ##'   matrix, not a vector.
 ##'
 ##' @export
 carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
                                       initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL) {
+                                      shared_parameters = NULL, type = NULL,
+                                      loop = NULL) {
   calculate_ifr_t_trajectories(carehomes_ifr_t, step, S, I_weighted, pars,
-                            initial_step_from_parameters, shared_parameters)
+                            initial_step_from_parameters, shared_parameters,
+                            type, loop)
 }
 
 
@@ -299,7 +320,7 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
                                          pars, initial_step_from_parameters,
-                                         shared_parameters) {
+                                         shared_parameters, type, loop) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
@@ -347,10 +368,12 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    ifr_t_1 <- calculate_ifr_t(step, S[, i, ], I_weighted[, i, ], pars[[i]])
+    ifr_t_1 <- calculate_ifr_t(step, S[, i, ], I_weighted[, i, ], pars[[i]],
+                               type = type)
   }
 
-  res <- lapply(seq_along(pars), calculate_ifr_t_one_trajectory)
+  loop <- loop %||% lapply
+  res <- loop(seq_along(pars), calculate_ifr_t_one_trajectory)
 
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here

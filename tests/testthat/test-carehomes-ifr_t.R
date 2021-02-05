@@ -139,3 +139,82 @@ test_that("Can set initial time", {
   expect_equal(res2$step[1, ], step0)
   expect_equal(res2$step[-1, ], res1$step[-1, ])
 })
+
+
+test_that("can filter IFR_t to wanted types", {
+  d <- reference_data_ifr_t()
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  S <- d$inputs$S
+  I_weighted <- d$inputs$I_weighted
+
+  expect_mapequal(
+    carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
+                    type = "IFR_t_general"),
+    d$outputs$ifr_t_1[c("step", "date", "IFR_t_general")])
+  expect_mapequal(
+    carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
+                    type = c("IFR_t_all", "IHR_t_all",
+                             "IFR_t_general", "IHR_t_general")),
+    d$outputs$ifr_t_1[c("step", "date", "IFR_t_all", "IHR_t_all",
+                     "IFR_t_general", "IHR_t_general")])
+
+  expect_mapequal(
+    carehomes_ifr_t_trajectories(steps, S, I_weighted, p,
+                                 type = "IFR_t_general_no_vacc"),
+    d$outputs$ifr_t_all[c("step", "date", "IFR_t_general_no_vacc")])
+  expect_mapequal(
+    carehomes_ifr_t_trajectories(steps, S, I_weighted, p,
+                                 type = c("IFR_t_all_no_vacc",
+                                          "IHR_t_all_no_vacc",
+                                          "IFR_t_general_no_vacc",
+                                          "IHR_t_general_no_vacc")),
+    d$outputs$ifr_t_all[c("step", "date", "IFR_t_all_no_vacc",
+                          "IHR_t_all_no_vacc", "IFR_t_general_no_vacc",
+                          "IHR_t_general_no_vacc")])
+})
+
+
+test_that("can't compute IFR_t for unknown types", {
+  d <- reference_data_ifr_t()
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  S <- d$inputs$S
+  I_weighted <- d$inputs$I_weighted
+
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
+                    type = "max_IFR_t_general"),
+    "Unknown IFR/IHR type 'max_IFR_t_general', must match '")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I_weighted, p,
+                              type = "max_IFR_t_general"),
+    "Unknown IFR/IHR type 'max_IFR_t_general', must match '")
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
+                    type = c("IFR_t_all", "ifr_t_general")),
+    "Unknown IFR/IHR type 'ifr_t_general', must match '")
+})
+
+
+test_that("Can use alternative loop function", {
+  d <- reference_data_ifr_t()
+  used <- FALSE
+  f <- function(...) {
+    used <<- TRUE
+    lapply(...)
+  }
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  S <- d$inputs$S
+  I_weighted <- d$inputs$I_weighted
+
+  expect_mapequal(
+    carehomes_ifr_t_trajectories(steps, S, I_weighted, p,
+                                 type = "IFR_t_all", loop = f),
+    d$outputs$ifr_t_all[c("step", "date", "IFR_t_all")])
+  expect_true(used)
+})

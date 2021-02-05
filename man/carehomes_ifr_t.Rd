@@ -4,7 +4,7 @@
 \alias{carehomes_ifr_t}
 \title{Compute "IFR_t"}
 \usage{
-carehomes_ifr_t(step, S, I_weighted, p)
+carehomes_ifr_t(step, S, I_weighted, p, type = NULL)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
@@ -16,10 +16,15 @@ carehomes_ifr_t(step, S, I_weighted, p)
 "I_weighted" compartment counts}
 
 \item{p}{A \code{\link[=carehomes_parameters]{carehomes_parameters()}} object}
+
+\item{type}{A character vector of possible Rt types to
+compute. Can be any or all of \code{IFR_t_all}, \code{IFR_t_general},
+\code{IHR_t_all}, \code{IHR_t_general}, \code{IFR_t_all_no_vacc},
+\code{IFR_t_general_no_vacc}, \code{IHR_t_all_no_vacc} and \code{IHR_t_general_no_vacc},}
 }
 \value{
-A list with elements \code{step}, \code{date}, \code{IFR_t_general},
-and `IFR_t_all``
+A list with elements \code{step}, \code{date}, and any of the \code{type}
+values specified above.
 }
 \description{
 Compute "IFR_t" for a single simulated trajectory and parameter set.
