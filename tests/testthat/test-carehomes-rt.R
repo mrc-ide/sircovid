@@ -181,6 +181,25 @@ test_that("can't compute Rt for unknown types", {
     carehomes_Rt_trajectories(steps, y, p, type = "max_Rt_general"),
     "Unknown R type 'max_Rt_general', must match '")
   expect_error(
-    carehomes_Rt(steps, y[, 1, ], p, c("eff_Rt_general", "rt_general")),
+    carehomes_Rt(steps, y[, 1, ], p, type = c("eff_Rt_general", "rt_general")),
     "Unknown R type 'rt_general', must match '")
+})
+
+
+test_that("Can use alternative loop function", {
+  d <- reference_data_rt()
+  used <- FALSE
+  f <- function(...) {
+    used <<- TRUE
+    lapply(...)
+  }
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  expect_mapequal(
+    carehomes_Rt_trajectories(steps, y, p, type = "eff_Rt_all", loop = f),
+    d$outputs$rt_all[c("step", "date", "beta", "eff_Rt_all")])
+  expect_true(used)
 })

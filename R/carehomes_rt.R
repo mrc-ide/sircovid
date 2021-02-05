@@ -25,8 +25,7 @@
 ##'   values specified above.
 ##'
 ##' @export
-carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL,
-                         loop = NULL) {
+carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -186,6 +185,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL,
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
+##' @param loop Optionally a function to replace `lapply` with; you
+##'   might pass in `parallel::mclapply` or a `furrr` function here to
+##'   parallelise the loop. It must return a list (i.e., conform to
+##'   the same interface as `lapply`). This interface is subject to
+##'   change!
+##'
 ##' @inheritParams carehomes_Rt
 ##'
 ##' @return As for [carehomes_Rt()], except that every element is a
@@ -194,9 +199,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL,
 ##' @export
 carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL, type = NULL) {
+                                      shared_parameters = NULL, type = NULL,
+                                      loop = NULL) {
   calculate_Rt_trajectories(carehomes_Rt, step, S, pars, prob_strain,
-                            initial_step_from_parameters, shared_parameters, type)
+                            initial_step_from_parameters, shared_parameters,
+                            type, loop)
 }
 
 
@@ -340,7 +347,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
-                                      shared_parameters, type) {
+                                      shared_parameters, type, loop) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
@@ -397,7 +404,8 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     rt_1
   }
 
-  res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
+  loop <- loop %||% lapply
+  res <- loop(seq_along(pars), calculate_rt_one_trajectory)
 
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here

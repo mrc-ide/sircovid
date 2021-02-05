@@ -4,7 +4,7 @@
 \alias{carehomes_Rt}
 \title{Compute "Rt"}
 \usage{
-carehomes_Rt(step, S, p, prob_strain = NULL, type = NULL, loop = NULL)
+carehomes_Rt(step, S, p, prob_strain = NULL, type = NULL)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}

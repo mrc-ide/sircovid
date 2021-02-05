@@ -11,7 +11,8 @@ carehomes_Rt_trajectories(
   prob_strain = NULL,
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL,
-  type = NULL
+  type = NULL,
+  loop = NULL
 )
 }
 \arguments{
@@ -40,6 +41,12 @@ other which may give more easily interpretable error messages.}
 \item{type}{A character vector of possible Rt types to
 compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
 \code{Rt_all} and \code{Rt_general}}
+
+\item{loop}{Optionally a function to replace \code{lapply} with; you
+might pass in \code{parallel::mclapply} or a \code{furrr} function here to
+parallelise the loop. It must return a list (i.e., conform to
+the same interface as \code{lapply}). This interface is subject to
+change!}
 }
 \value{
 As for \code{\link[=carehomes_Rt]{carehomes_Rt()}}, except that every element is a
