@@ -83,7 +83,7 @@ parameters." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.14</span>
       </span>
     </div>
 
@@ -140,7 +140,9 @@ parameters.</p>
   <span class='va'>pars</span>,
   prob_strain <span class='op'>=</span> <span class='cn'>NULL</span>,
   initial_step_from_parameters <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  shared_parameters <span class='op'>=</span> <span class='cn'>NULL</span>
+  shared_parameters <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
+  loop <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -179,6 +181,20 @@ This is usually what you want.</p></td>
 shared list? Leave as <code>NULL</code> to detect automatically, set to
 <code>TRUE</code> or <code>FALSE</code> to force it to be interpreted one way or the
 other which may give more easily interpretable error messages.</p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>A character vector of possible Rt types to
+compute. Can be any or all of <code>eff_Rt_all</code>, <code>eff_Rt_general</code>,
+<code>Rt_all</code> and <code>Rt_general</code></p></td>
+    </tr>
+    <tr>
+      <th>loop</th>
+      <td><p>Optionally a function to replace <code>lapply</code> with; you
+might pass in <code><a href='https://rdrr.io/r/parallel/mclapply.html'>parallel::mclapply</a></code> or a <code>furrr</code> function here to
+parallelise the loop. It must return a list (i.e., conform to
+the same interface as <code>lapply</code>). This interface is subject to
+change!</p></td>
     </tr>
     </table>
 
