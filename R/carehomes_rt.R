@@ -17,11 +17,27 @@
 ##'   The default is `NULL`, but it must
 ##'   be specified if there is more than one strain
 ##'
-##' @return A list with elements `step`, `beta`, `eff_Rt_all`,
-##'   `eff_Rt_general`, `Rt_all` and `Rt_general`
+##' @param type A character vector of possible Rt types to
+##'   compute. Can be any or all of `eff_Rt_all`, `eff_Rt_general`,
+##'   `Rt_all` and `Rt_general`
+##'
+##' @return A list with elements `step`, `beta`, and any of the `type`
+##'   values specified above.
 ##'
 ##' @export
-carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
+carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
+  all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
+  if (is.null(type)) {
+    type <- all_types
+  } else {
+    err <- setdiff(type, all_types)
+    if (length(err) > 0) {
+      stop(sprintf("Unknown R type %s, must match %s",
+                   paste(squote(err), collapse = ", "),
+                   paste(squote(all_types), collapse = ", ")))
+    }
+  }
+
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vaccine classes",
@@ -108,16 +124,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
   }
 
   t <- seq_along(step)
-  eff_Rt_all <- vnapply(t, calculate_ev, S,
-                        prob_strain = prob_strain,
-                        beta = beta,
-                        mean_duration = mean_duration,
-                        drop_carehomes = FALSE)
-  eff_Rt_general <- vnapply(t, calculate_ev, S,
-                            prob_strain = prob_strain,
-                            beta = beta,
-                            mean_duration = mean_duration,
-                            drop_carehomes = TRUE)
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
   if (n_vacc_classes > 1) {
@@ -126,24 +132,21 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
                                      0 * N_tot_non_vacc)
     }
   }
-  Rt_all <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
-                    prob_strain = prob_strain,
-                    beta = beta,
-                    mean_duration = mean_duration,
-                    drop_carehomes = FALSE)
-  Rt_general <- vnapply(t, calculate_ev, N_tot_all_vacc_groups,
-                        prob_strain = prob_strain,
-                        beta = beta,
-                        mean_duration = mean_duration,
-                        drop_carehomes = TRUE)
+  opts <- list(eff_Rt_all = list(pop = S, general = FALSE),
+               eff_Rt_general = list(pop = S, general = TRUE),
+               Rt_all = list(pop = N_tot_all_vacc_groups, general = FALSE),
+               Rt_general = list(pop = N_tot_all_vacc_groups, general = TRUE))
 
-  list(step = step,
-       date = step * p$dt,
-       beta = beta,
-       eff_Rt_all = eff_Rt_all,
-       eff_Rt_general = eff_Rt_general,
-       Rt_all = Rt_all,
-       Rt_general = Rt_general)
+  ret <- list(step = step,
+              date = step * p$dt,
+              beta = beta)
+  ret[type] <- lapply(opts[type], function(x)
+    vnapply(t, calculate_ev, x$pop,
+            prob_strain = prob_strain,
+            beta = beta,
+            mean_duration = mean_duration,
+            drop_carehomes = x$general))
+  ret
 }
 
 ## Here we expect 'S' in order:
@@ -182,15 +185,25 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL) {
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
+##' @param loop Optionally a function to replace `lapply` with; you
+##'   might pass in `parallel::mclapply` or a `furrr` function here to
+##'   parallelise the loop. It must return a list (i.e., conform to
+##'   the same interface as `lapply`). This interface is subject to
+##'   change!
+##'
+##' @inheritParams carehomes_Rt
+##'
 ##' @return As for [carehomes_Rt()], except that every element is a
 ##'   matrix, not a vector.
 ##'
 ##' @export
 carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL) {
+                                      shared_parameters = NULL, type = NULL,
+                                      loop = NULL) {
   calculate_Rt_trajectories(carehomes_Rt, step, S, pars, prob_strain,
-                            initial_step_from_parameters, shared_parameters)
+                            initial_step_from_parameters, shared_parameters,
+                            type, loop)
 }
 
 
@@ -334,7 +347,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
-                                      shared_parameters) {
+                                      shared_parameters, type, loop) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
@@ -383,14 +396,16 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
       step[[1L]] <- pars[[i]]$initial_step
     }
     if (is.null(prob_strain)) {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]])
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], type = type)
     } else {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ])
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ],
+                           type = type)
     }
     rt_1
   }
 
-  res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
+  loop <- loop %||% lapply
+  res <- loop(seq_along(pars), calculate_rt_one_trajectory)
 
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here

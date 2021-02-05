@@ -4,7 +4,7 @@
 \alias{carehomes_Rt}
 \title{Compute "Rt"}
 \usage{
-carehomes_Rt(step, S, p, prob_strain = NULL)
+carehomes_Rt(step, S, p, prob_strain = NULL, type = NULL)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
@@ -21,10 +21,14 @@ the j^th time step, the probabilities that new infections
 in group 1 are of strains 1 and 2 respectively.
 The default is \code{NULL}, but it must
 be specified if there is more than one strain}
+
+\item{type}{A character vector of possible Rt types to
+compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
+\code{Rt_all} and \code{Rt_general}}
 }
 \value{
-A list with elements \code{step}, \code{beta}, \code{eff_Rt_all},
-\code{eff_Rt_general}, \code{Rt_all} and \code{Rt_general}
+A list with elements \code{step}, \code{beta}, and any of the \code{type}
+values specified above.
 }
 \description{
 Compute "Rt" for a single simulated trajectory and parameter set.

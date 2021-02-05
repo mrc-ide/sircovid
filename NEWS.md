@@ -1,6 +1,10 @@
-# sircovid 0.9.14
+# sircovid 0.9.15
 
 * IFR calculation added for carehomes model
+
+# sircovid 0.9.14
+
+* Allow a subset of Rt types to be calculated, perhaps in parallel
 
 # sircovid 0.9.12
 
