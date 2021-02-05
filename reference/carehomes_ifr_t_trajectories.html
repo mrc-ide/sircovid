@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulation events — sircovid_simulate_events • sircovid</title>
+<title>Compute IFR_t for a set of trajectories — carehomes_ifr_t_trajectories • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,11 @@
 
 
 
-<meta property="og:title" content="Simulation events — sircovid_simulate_events" />
-<meta property="og:description" content="Events for use with sircovid_simulate(). This captures the
-overall timescape of the simulation and a set of &quot;events&quot; which
-correspond to changes in parameters." />
+<meta property="og:title" content="Compute IFR_t for a set of trajectories — carehomes_ifr_t_trajectories" />
+<meta property="og:description" content="Compute &quot;IFR_t&quot; for a set of simulated trajectories (e.g., the result
+of dust::dust_iterate(), mcstate::pmcmc() or
+mcstate::pmcmc_predict(). The trajectories may or may not share
+parameters." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -121,50 +122,86 @@ correspond to changes in parameters." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simulation events</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/simulate.R'><code>R/simulate.R</code></a></small>
-    <div class="hidden name"><code>sircovid_simulate_events.Rd</code></div>
+    <h1>Compute IFR_t for a set of trajectories</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes_ifr_t.R'><code>R/carehomes_ifr_t.R</code></a></small>
+    <div class="hidden name"><code>carehomes_ifr_t_trajectories.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Events for use with <code><a href='sircovid_simulate.html'>sircovid_simulate()</a></code>. This captures the
-overall timescape of the simulation and a set of "events" which
-correspond to changes in parameters.</p>
+    <p>Compute "IFR_t" for a set of simulated trajectories (e.g., the result
+of <code><a href='https://rdrr.io/pkg/dust/man/dust_iterate.html'>dust::dust_iterate()</a></code>, <code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc.html'>mcstate::pmcmc()</a></code> or
+<code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict()</a></code>. The trajectories may or may not share
+parameters.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sircovid_simulate_events</span><span class='op'>(</span><span class='va'>date_start</span>, <span class='va'>date_end</span>, <span class='va'>data</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_ifr_t_trajectories</span><span class='op'>(</span>
+  <span class='va'>step</span>,
+  <span class='va'>S</span>,
+  <span class='va'>I_weighted</span>,
+  <span class='va'>pars</span>,
+  initial_step_from_parameters <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  shared_parameters <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
+  loop <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>date_start</th>
-      <td><p>The start date for the simulation, as an ISO
-date or <a href='sircovid_date.html'>sircovid_date</a></p></td>
+      <th>step</th>
+      <td><p>A vector of steps</p></td>
     </tr>
     <tr>
-      <th>date_end</th>
-      <td><p>The end date for the simulation, as an ISO
-date or <a href='sircovid_date.html'>sircovid_date</a></p></td>
+      <th>S</th>
+      <td><p>A 3d ((n groups x n vaccine classes) x n trajectories
+x n steps) array of "S" compartment counts</p></td>
     </tr>
     <tr>
-      <th>data</th>
-      <td><p>Events data; this must be a named list, with each name
-being in ISO 8601 (YYYY-MM-DD) format, and value being a named
-set of parameters to apply to our base set. So a value of
-<code><a href='https://rdrr.io/r/base/list.html'>list("2021-03-01" = list(vaccine_daily_doses = 10000))</a></code> would
-represent a change to the <code>vaccine_daily_doses</code> parameter from
-the 1st of March 2021.  Each entry can change as many parameters
-as wanted. These changes are <em>not cumulative</em>, so if you want a
-change to persist across multiple events it must exist in each
-of these events.</p></td>
+      <th>I_weighted</th>
+      <td><p>A 3d ((n groups x n vaccine classes) x n trajectories
+x n steps) array of "I_weighted" compartment counts</p></td>
+    </tr>
+    <tr>
+      <th>pars</th>
+      <td><p>Either a single <code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> object
+(shared parameters) or an unnamed list of
+<code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> objects, the same length as <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(S)</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>initial_step_from_parameters</th>
+      <td><p>If <code>TRUE</code>, then <code>step[[1]]</code> is
+replaced by the value of <code>initial_step</code> from the parameters.
+This is usually what you want.</p></td>
+    </tr>
+    <tr>
+      <th>shared_parameters</th>
+      <td><p>Should <code>pars</code> be treated as a single
+shared list? Leave as <code>NULL</code> to detect automatically, set to
+<code>TRUE</code> or <code>FALSE</code> to force it to be interpreted one way or the
+other which may give more easily interpretable error messages.</p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>A character vector of possible Rt types to
+compute. Can be any or all of <code>IFR_t_all</code>, <code>IFR_t_general</code>,
+<code>IHR_t_all</code>, <code>IHR_t_general</code>, <code>IFR_t_all_no_vacc</code>,
+<code>IFR_t_general_no_vacc</code>, <code>IHR_t_all_no_vacc</code> and <code>IHR_t_general_no_vacc</code>,</p></td>
+    </tr>
+    <tr>
+      <th>loop</th>
+      <td><p>Optionally a function to replace <code>lapply</code> with; you
+might pass in <code><a href='https://rdrr.io/r/parallel/mclapply.html'>parallel::mclapply</a></code> or a <code>furrr</code> function here to
+parallelise the loop. It must return a list (i.e., conform to
+the same interface as <code>lapply</code>). This interface is subject to
+change!</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>sircovid_simulate_events</code> object; consider its contents
-opaque for now as these may change.</p>
+    <p>As for <code><a href='carehomes_ifr_t.html'>carehomes_ifr_t()</a></code>, except that every element is a
+matrix, not a vector.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
