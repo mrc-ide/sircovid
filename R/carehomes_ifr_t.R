@@ -45,9 +45,8 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   n_vacc_classes <- ncol(p$rel_susceptibility)
 
-  calculate_weighted_ratio <- function(t, S, I_weighted, y,
-                                       drop_carehomes, no_vacc, type) {
 
+  calculate_expected_infections <- function(t, no_vacc) {
     m <- p$m
     ages <- seq_len(p$n_age_groups)
     ch <- seq(to = p$n_groups, length.out = 2)
@@ -72,6 +71,13 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
     ## expected infections in next time step by group and vaccine class
     expected_infections <-  S[, t] * prob_infection
 
+    expected_infections
+  }
+
+
+  calculate_weighted_ratio <- function(t, expected_infections,
+                                       drop_carehomes, no_vacc, type) {
+
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
     if (drop_carehomes) {
@@ -90,34 +96,48 @@ carehomes_ifr_t <- function(step, S, I_weighted, p) {
       IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, , t])
     }
 
-    weighted.mean(IFR_vec[i_keep], expected_infections[i_keep])
+    weighted.mean(IFR_vec[i_keep], expected_infections[i_keep, t])
   }
 
+
   t <- seq_along(step)
-  IFR_t_general <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                           y, drop_carehomes = TRUE, no_vacc = FALSE,
-                           type = "IFR")
-  IFR_t_all <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                       y, drop_carehomes = FALSE, no_vacc = FALSE,
-                       type = "IFR")
-  IHR_t_general <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                           y, drop_carehomes = TRUE, no_vacc = FALSE,
-                           type = "IHR")
-  IHR_t_all <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                       y, drop_carehomes = FALSE, no_vacc = FALSE,
-                       type = "IHR")
-  IFR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                                   y, drop_carehomes = TRUE,  no_vacc = TRUE,
-                                   type = "IFR")
-  IFR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                               y, drop_carehomes = FALSE, no_vacc = TRUE,
-                               type = "IFR")
-  IHR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                                   y, drop_carehomes = TRUE, no_vacc = TRUE,
-                                   type = "IHR")
-  IHR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio, S, I_weighted,
-                               y, drop_carehomes = FALSE,   no_vacc = TRUE,
-                               type = "IHR")
+  expected_infections_vacc <- vapply(t, calculate_expected_infections,
+                                     numeric(dim(S)[1]), no_vacc = FALSE)
+  expected_infections_no_vacc <- vapply(t, calculate_expected_infections,
+                                        numeric(dim(S)[1]), no_vacc = TRUE)
+
+  IFR_t_general <- vnapply(t, calculate_weighted_ratio,
+                           expected_infections_vacc,
+                           drop_carehomes = TRUE,
+                           no_vacc = FALSE, type = "IFR")
+  IFR_t_all <- vnapply(t, calculate_weighted_ratio,
+                       expected_infections_vacc,
+                       drop_carehomes = FALSE,
+                       no_vacc = FALSE, type = "IFR")
+  IHR_t_general <- vnapply(t, calculate_weighted_ratio,
+                           expected_infections_vacc,
+                           drop_carehomes = TRUE,
+                           no_vacc = FALSE, type = "IHR")
+  IHR_t_all <- vnapply(t, calculate_weighted_ratio,
+                       expected_infections_vacc,
+                       drop_carehomes = FALSE,
+                       no_vacc = FALSE, type = "IHR")
+  IFR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio,
+                                  expected_infections_no_vacc,
+                                  drop_carehomes = TRUE,
+                                  no_vacc = TRUE, type = "IFR")
+  IFR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio,
+                               expected_infections_no_vacc,
+                               drop_carehomes = FALSE,
+                               no_vacc = TRUE, type = "IFR")
+  IHR_t_general_no_vacc <- vnapply(t, calculate_weighted_ratio,
+                                   expected_infections_no_vacc,
+                                   drop_carehomes = TRUE,
+                                   no_vacc = TRUE, type = "IHR")
+  IHR_t_all_no_vacc <- vnapply(t, calculate_weighted_ratio,
+                               expected_infections_no_vacc,
+                               drop_carehomes = FALSE,
+                               no_vacc = TRUE, type = "IHR")
 
   list(step = step,
        date = step * p$dt,
