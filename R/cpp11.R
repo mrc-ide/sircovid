@@ -64,6 +64,10 @@ dust_basic_set_n_threads <- function(ptr, n_threads) {
   invisible(.Call(`_sircovid_dust_basic_set_n_threads`, ptr, n_threads))
 }
 
+dust_basic_n_state <- function(ptr) {
+  .Call(`_sircovid_dust_basic_n_state`, ptr)
+}
+
 dust_carehomes_alloc <- function(r_pars, pars_multi, step, n_particles, n_threads, r_seed) {
   .Call(`_sircovid_dust_carehomes_alloc`, r_pars, pars_multi, step, n_particles, n_threads, r_seed)
 }
@@ -126,4 +130,8 @@ dust_carehomes_capabilities <- function() {
 
 dust_carehomes_set_n_threads <- function(ptr, n_threads) {
   invisible(.Call(`_sircovid_dust_carehomes_set_n_threads`, ptr, n_threads))
+}
+
+dust_carehomes_n_state <- function(ptr) {
+  .Call(`_sircovid_dust_carehomes_n_state`, ptr)
 }
