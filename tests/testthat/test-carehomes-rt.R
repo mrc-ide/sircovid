@@ -175,7 +175,7 @@ test_that("can't compute Rt for unknown types", {
   y <- d$inputs$y
 
   expect_error(
-    carehomes_Rt(steps, y[, 1, ], p, type= "max_Rt_general"),
+    carehomes_Rt(steps, y[, 1, ], p, type = "max_Rt_general"),
     "Unknown R type 'max_Rt_general', must match '")
   expect_error(
     carehomes_Rt_trajectories(steps, y, p, type = "max_Rt_general"),
