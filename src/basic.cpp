@@ -10,9 +10,6 @@ template <typename real_t>
 real_t odin_sum2(const real_t * x, int from_i, int to_i, int from_j, int to_j, int dim_x_1);
 template <typename real_t>
 real_t odin_sum3(const real_t * x, int from_i, int to_i, int from_j, int to_j, int from_k, int to_k, int dim_x_1, int dim_x_12);
-#include <dust/densities.hpp>
-#include <iostream>
-
 template <typename real_t>
 real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
                  dust::rng_state_t<real_t>& rng_state) {

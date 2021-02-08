@@ -80,8 +80,6 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
   // but the compiler will need it.
   return 0;
 }
-#include <dust/densities.hpp>
-
 template <typename real_t>
 real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
                  dust::rng_state_t<real_t>& rng_state) {
@@ -124,6 +122,12 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
   return (sensitivity * pos + (1 - specificity) * neg) / (pos + neg);
 }
 
+// Lots of data items here. Even though some of these are counts (in
+// fact, most of them are counts) we'll pull them in as doubles
+// because that will help with the NA handling. Once this is working
+// reliably we could cast these explicitly as ints, but there is not
+// likely to be any major gain here.
+//
 // [[odin.dust::compare_data(icu = double)]]
 // [[odin.dust::compare_data(general = double)]]
 // [[odin.dust::compare_data(hosp = double)]]
