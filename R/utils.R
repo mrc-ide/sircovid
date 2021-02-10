@@ -137,7 +137,7 @@ spread_integer <- function(n, m) {
   ret
 }
 
-
+##' @importFrom stats spline
 interpolate_grid <- function(x, f, every, min) {
   if (is.null(every) || is.null(min) || length(x) <= min) {
     xx <- x

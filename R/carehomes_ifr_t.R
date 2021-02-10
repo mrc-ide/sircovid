@@ -20,6 +20,8 @@
 ##' @return A list with elements `step`, `date`, and any of the `type`
 ##'   values specified above.
 ##'
+##' @importFrom stats weighted.mean
+##'
 ##' @export
 carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 

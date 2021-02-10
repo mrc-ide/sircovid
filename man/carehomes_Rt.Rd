@@ -4,19 +4,16 @@
 \alias{carehomes_Rt}
 \title{Compute "Rt"}
 \usage{
-<<<<<<< HEAD
 carehomes_Rt(
   step,
   S,
   p,
+  prob_strain = NULL,
   type = NULL,
   interpolate_every = NULL,
   interpolate_critical_dates = NULL,
   interpolate_min = NULL
 )
-=======
-carehomes_Rt(step, S, p, prob_strain = NULL, type = NULL)
->>>>>>> origin/master
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
@@ -26,7 +23,14 @@ compartment counts}
 
 \item{p}{A \code{\link[=carehomes_parameters]{carehomes_parameters()}} object}
 
-<<<<<<< HEAD
+\item{prob_strain}{A (n groups x n strains) x n steps matrix of
+"prob_strain" outputs from the model. For a 2 strain model for example,
+\code{prob_strain[1, j]} and \code{prob_strain[n_groups + 1, j]} should give, for
+the j^th time step, the probabilities that new infections
+in group 1 are of strains 1 and 2 respectively.
+The default is \code{NULL}, but it must
+be specified if there is more than one strain}
+
 \item{type}{A character vector of possible Rt types to
 compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
 \code{Rt_all} and \code{Rt_general}}
@@ -50,19 +54,6 @@ error of small regions. If Rt is small it won't matter that
 much. You do need to specify something though or interpolation
 will not happen, and do not use less than 3 as we use spline
 interpolation and that will not work with fewer than 3 points.}
-=======
-\item{prob_strain}{A (n groups x n strains) x n steps matrix of
-"prob_strain" outputs from the model. For a 2 strain model for example,
-\code{prob_strain[1, j]} and \code{prob_strain[n_groups + 1, j]} should give, for
-the j^th time step, the probabilities that new infections
-in group 1 are of strains 1 and 2 respectively.
-The default is \code{NULL}, but it must
-be specified if there is more than one strain}
-
-\item{type}{A character vector of possible Rt types to
-compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
-\code{Rt_all} and \code{Rt_general}}
->>>>>>> origin/master
 }
 \value{
 A list with elements \code{step}, \code{beta}, and any of the \code{type}
