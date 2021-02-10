@@ -259,21 +259,3 @@ test_that("Can interpolate Rt with step changes", {
   expect_true(all(abs(rt_cmp$Rt_all - rt_int_14$Rt_all) < tol2))
   expect_true(all(abs(rt_cmp$Rt_general - rt_int_14$Rt_general) < tol2))
 })
-
-test_that("Can use alternative loop function", {
-  d <- reference_data_rt()
-  used <- FALSE
-  f <- function(...) {
-    used <<- TRUE
-    lapply(...)
-  }
-
-  p <- d$inputs$p
-  steps <- d$inputs$steps
-  y <- d$inputs$y
-
-  expect_mapequal(
-    carehomes_Rt_trajectories(steps, y, p, type = "eff_Rt_all", loop = f),
-    d$outputs$rt_all[c("step", "date", "beta", "eff_Rt_all")])
-  expect_true(used)
-})

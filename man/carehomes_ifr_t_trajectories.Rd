@@ -11,8 +11,7 @@ carehomes_ifr_t_trajectories(
   pars,
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL,
-  type = NULL,
-  loop = NULL
+  type = NULL
 )
 }
 \arguments{
@@ -41,12 +40,6 @@ other which may give more easily interpretable error messages.}
 compute. Can be any or all of \code{IFR_t_all}, \code{IFR_t_general},
 \code{IHR_t_all}, \code{IHR_t_general}, \code{IFR_t_all_no_vacc},
 \code{IFR_t_general_no_vacc}, \code{IHR_t_all_no_vacc} and \code{IHR_t_general_no_vacc},}
-
-\item{loop}{Optionally a function to replace \code{lapply} with; you
-might pass in \code{parallel::mclapply} or a \code{furrr} function here to
-parallelise the loop. It must return a list (i.e., conform to
-the same interface as \code{lapply}). This interface is subject to
-change!}
 }
 \value{
 As for \code{\link[=carehomes_ifr_t]{carehomes_ifr_t()}}, except that every element is a

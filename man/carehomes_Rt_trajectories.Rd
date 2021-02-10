@@ -12,7 +12,6 @@ carehomes_Rt_trajectories(
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL,
   type = NULL,
-  loop = NULL,
   interpolate_every = NULL,
   interpolate_critical_dates = NULL,
   interpolate_min = NULL
@@ -44,12 +43,6 @@ other which may give more easily interpretable error messages.}
 \item{type}{A character vector of possible Rt types to
 compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
 \code{Rt_all} and \code{Rt_general}}
-
-\item{loop}{Optionally a function to replace \code{lapply} with; you
-might pass in \code{parallel::mclapply} or a \code{furrr} function here to
-parallelise the loop. It must return a list (i.e., conform to
-the same interface as \code{lapply}). This interface is subject to
-change!}
 
 \item{interpolate_every}{Spacing (in days) to use between interpolated
 points}

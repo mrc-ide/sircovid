@@ -197,24 +197,3 @@ test_that("can't compute IFR_t for unknown types", {
                     type = c("IFR_t_all", "ifr_t_general")),
     "Unknown IFR/IHR type 'ifr_t_general', must match '")
 })
-
-
-test_that("Can use alternative loop function", {
-  d <- reference_data_ifr_t()
-  used <- FALSE
-  f <- function(...) {
-    used <<- TRUE
-    lapply(...)
-  }
-
-  p <- d$inputs$p
-  steps <- d$inputs$steps
-  S <- d$inputs$S
-  I_weighted <- d$inputs$I_weighted
-
-  expect_mapequal(
-    carehomes_ifr_t_trajectories(steps, S, I_weighted, p,
-                                 type = "IFR_t_all", loop = f),
-    d$outputs$ifr_t_all[c("step", "date", "IFR_t_all")])
-  expect_true(used)
-})

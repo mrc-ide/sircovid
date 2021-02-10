@@ -199,12 +199,6 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
-##' @param loop Optionally a function to replace `lapply` with; you
-##'   might pass in `parallel::mclapply` or a `furrr` function here to
-##'   parallelise the loop. It must return a list (i.e., conform to
-##'   the same interface as `lapply`). This interface is subject to
-##'   change!
-##'
 ##' @inheritParams carehomes_ifr_t
 ##'
 ##' @return As for [carehomes_ifr_t()], except that every element is a
@@ -213,11 +207,10 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 ##' @export
 carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
                                       initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL, type = NULL,
-                                      loop = NULL) {
+                                      shared_parameters = NULL, type = NULL) {
   calculate_ifr_t_trajectories(carehomes_ifr_t, step, S, I_weighted, pars,
                             initial_step_from_parameters, shared_parameters,
-                            type, loop)
+                            type)
 }
 
 
@@ -322,7 +315,7 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
                                          pars, initial_step_from_parameters,
-                                         shared_parameters, type, loop) {
+                                         shared_parameters, type) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
@@ -374,8 +367,7 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
                                type = type)
   }
 
-  loop <- loop %||% lapply
-  res <- loop(seq_along(pars), calculate_ifr_t_one_trajectory)
+  res <- lapply(seq_along(pars), calculate_ifr_t_one_trajectory)
 
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here
