@@ -41,7 +41,7 @@ test_that("Can calculate Rt", {
 })
 
 
-test_that("validate inputs in rt calculation", {
+test_that("validate inputs in Rt calculation", {
   d <- reference_data_rt()
 
   p <- d$inputs$p
@@ -59,7 +59,7 @@ test_that("validate inputs in rt calculation", {
 })
 
 
-test_that("validate inputs in rt trajectories calculation", {
+test_that("validate inputs in Rt trajectories calculation", {
   d <- reference_data_rt()
 
   p <- d$inputs$p
@@ -175,7 +175,7 @@ test_that("can't compute Rt for unknown types", {
   y <- d$inputs$y
 
   expect_error(
-    carehomes_Rt(steps, y[, 1, ], p, type = "max_Rt_general"),
+   carehomes_Rt(steps, y[, 1, ], p, type = "max_Rt_general"),
     "Unknown R type 'max_Rt_general', must match '")
   expect_error(
     carehomes_Rt_trajectories(steps, y, p, type = "max_Rt_general"),
@@ -185,21 +185,77 @@ test_that("can't compute Rt for unknown types", {
     "Unknown R type 'rt_general', must match '")
 })
 
+test_that("Can interpolate Rt with step changes", {
+  dat <- reference_data_mcmc()
+  rt <- local({
+    p <- lapply(seq_len(nrow(dat$pars)), function(i)
+      dat$predict$transform(dat$pars[i, ]))
+    i <- grep("S_", rownames(dat$trajectories$state))
+    S <- dat$trajectories$state[i, , ]
+    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+  })
 
-test_that("Can use alternative loop function", {
-  d <- reference_data_rt()
-  used <- FALSE
-  f <- function(...) {
-    used <<- TRUE
-    lapply(...)
-  }
+  future <- list(
+    "2020-04-15" = future_Rt(1.5, "2020-03-10"),
+    "2020-05-01" = future_Rt(0.5, "2020-03-10"),
+    "2020-05-15" = future_Rt(2, "2020-03-10"))
+  res <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
+  baseline <- add_future_betas(dat, rt, future)
 
-  p <- d$inputs$p
-  steps <- d$inputs$steps
-  y <- d$inputs$y
+  events <- sircovid_simulate_events("2020-03-30", "2020-06-01", NULL)
+  p <- lapply(seq_len(nrow(baseline$pars)), function(i)
+    baseline$predict$transform(baseline$pars[i, ]))
+  ans <- sircovid_simulate(carehomes, baseline$state, p, events,
+                           index = dat$predict$index)
 
-  expect_mapequal(
-    carehomes_Rt_trajectories(steps, y, p, type = "eff_Rt_all", loop = f),
-    d$outputs$rt_all[c("step", "date", "beta", "eff_Rt_all")])
-  expect_true(used)
+  ## Work out our critical dates so that we can start interpolation:
+  step <- attr(ans, "step")
+  S <- ans[grep("S_", rownames(ans)), , ]
+
+  crit_dates <- sircovid_date(names(future))
+
+  rt_cmp <- carehomes_Rt_trajectories(step, S, p,
+                                      initial_step_from_parameters = FALSE)
+
+  ## Only interpolate if "every" is given:
+  expect_identical(
+    carehomes_Rt_trajectories(step, S, p,
+                              initial_step_from_parameters = FALSE,
+                              interpolate_min = 3),
+    rt_cmp)
+
+  ## Then compute the Rt values with interpolation
+  rt_int_2 <- carehomes_Rt_trajectories(step, S, p,
+                                      initial_step_from_parameters = FALSE,
+                                      interpolate_every = 2,
+                                      interpolate_min = 3,
+                                      interpolate_critical_dates = crit_dates)
+  rt_int_7 <- carehomes_Rt_trajectories(step, S, p,
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 7,
+                                        interpolate_min = 3,
+                                        interpolate_critical_dates = crit_dates)
+  rt_int_14 <- carehomes_Rt_trajectories(step, S, p,
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 14,
+                                        interpolate_min = 1,
+                                        interpolate_critical_dates = crit_dates)
+  ## check the error is small
+  tol <- 0.05
+  # for interpolation every 2 days
+  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_2$eff_Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_2$eff_Rt_general) < tol))
+  expect_true(all(abs(rt_cmp$Rt_all - rt_int_2$Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$Rt_general - rt_int_2$Rt_general) < tol))
+  # for interpolation every 7 days
+  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_7$eff_Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_7$eff_Rt_general) < tol))
+  expect_true(all(abs(rt_cmp$Rt_all - rt_int_7$Rt_all) < tol))
+  expect_true(all(abs(rt_cmp$Rt_general - rt_int_7$Rt_general) < tol))
+  # have to increase tolerance dramatically for every 14 days
+  tol2 <- 0.5
+  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_14$eff_Rt_all) < tol2))
+  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_14$eff_Rt_general) < tol2))
+  expect_true(all(abs(rt_cmp$Rt_all - rt_int_14$Rt_all) < tol2))
+  expect_true(all(abs(rt_cmp$Rt_general - rt_int_14$Rt_general) < tol2))
 })

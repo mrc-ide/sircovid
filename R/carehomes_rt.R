@@ -21,11 +21,35 @@
 ##'   compute. Can be any or all of `eff_Rt_all`, `eff_Rt_general`,
 ##'   `Rt_all` and `Rt_general`
 ##'
+##' @param interpolate_every Spacing (in days) to use between interpolated
+##'   points
+##'
+##' @param interpolate_critical_dates Optional vector of critical sircovid
+##'   dates to use when interpolating. Interpolation will be done in
+##'   blocks between the first time step of these dates, with each block
+##'   starting on the first time step of the date given.
+##'   So if you give a `interpolate_critical_dates` of `c(20,
+##'   50)` then blocks *start* on first time step of days 20 and 50,
+##'   i.e.: `[1, 20)`, `[20, 50)`, `[50, end]`.
+##'
+##' @param interpolate_min The minimum number of steps to include
+##'   within a block. If there are fewer points than this then all
+##'   points are used (i.e., no interpolation is done) or
+##'   `interpolate_every` is reduced until at least this many points
+##'   were used. This can be used to specify a lower bound on the
+##'   error of small regions. If Rt is small it won't matter that
+##'   much. You do need to specify something though or interpolation
+##'   will not happen, and do not use less than 3 as we use spline
+##'   interpolation and that will not work with fewer than 3 points.
+##'
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
 ##' @export
-carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
+carehomes_Rt <- function(step, S, p, prob_strain = NULL,
+                         type = NULL, interpolate_every = NULL,
+                         interpolate_critical_dates = NULL,
+                         interpolate_min = NULL) {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -115,7 +139,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
         i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
         ngm <- ngm[i_gen, i_gen]
       }
-      ev <- eigen(ngm, FALSE, TRUE)$values
+      ev <- eigen(ngm, symmetric = FALSE, only.values = TRUE)$values
       ev[Im(ev) != 0] <- NA
       ev <- as.numeric(ev)
       out <- max(ev, na.rm = TRUE)
@@ -132,6 +156,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
                                      0 * N_tot_non_vacc)
     }
   }
+
   opts <- list(eff_Rt_all = list(pop = S, general = FALSE),
                eff_Rt_general = list(pop = S, general = TRUE),
                Rt_all = list(pop = N_tot_all_vacc_groups, general = FALSE),
@@ -140,14 +165,26 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
   ret <- list(step = step,
               date = step * p$dt,
               beta = beta)
+
+  ## translate days into steps
+  if (!is.null(interpolate_every)) {
+    interpolate_every <- interpolate_every / p$dt
+  }
+  interpolate_critical_dates2 <-
+    c(rbind(interpolate_critical_dates - 1, interpolate_critical_dates))
+  interpolate_critical_step <- match(interpolate_critical_dates2 / p$dt, step)
+
   ret[type] <- lapply(opts[type], function(x)
-    vnapply(t, calculate_ev, x$pop,
-            prob_strain = prob_strain,
-            beta = beta,
-            mean_duration = mean_duration,
-            drop_carehomes = x$general))
+    interpolate_grid_critical(t, function(t)
+      calculate_ev(t, x$pop, prob_strain = prob_strain,
+                   beta = beta,
+                   mean_duration = mean_duration,
+                   drop_carehomes = x$general),
+      interpolate_every, interpolate_critical_step, interpolate_min))
+
   ret
 }
+
 
 ## Here we expect 'S' in order:
 ##
@@ -185,12 +222,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
-##' @param loop Optionally a function to replace `lapply` with; you
-##'   might pass in `parallel::mclapply` or a `furrr` function here to
-##'   parallelise the loop. It must return a list (i.e., conform to
-##'   the same interface as `lapply`). This interface is subject to
-##'   change!
-##'
 ##' @inheritParams carehomes_Rt
 ##'
 ##' @return As for [carehomes_Rt()], except that every element is a
@@ -199,11 +230,21 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
 ##' @export
 carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL, type = NULL,
-                                      loop = NULL) {
-  calculate_Rt_trajectories(carehomes_Rt, step, S, pars, prob_strain,
-                            initial_step_from_parameters, shared_parameters,
-                            type, loop)
+                                      shared_parameters = NULL,
+                                      type = NULL,
+                                      interpolate_every = NULL,
+                                      interpolate_critical_dates = NULL,
+                                      interpolate_min = NULL) {
+  calculate_Rt_trajectories(
+    calculate_Rt = carehomes_Rt, step = step,
+    S = S, pars = pars,
+    prob_strain = prob_strain,
+    initial_step_from_parameters = initial_step_from_parameters,
+    shared_parameters = shared_parameters,
+    type = type,
+    interpolate_every = interpolate_every,
+    interpolate_critical_dates = interpolate_critical_dates,
+    interpolate_min = interpolate_min)
 }
 
 
@@ -347,7 +388,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
-                                      shared_parameters, type, loop) {
+                                      shared_parameters, type, ...) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
@@ -396,16 +437,15 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
       step[[1L]] <- pars[[i]]$initial_step
     }
     if (is.null(prob_strain)) {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], type = type)
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], type = type, ...)
     } else {
       rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ],
-                           type = type)
+                           type = type, ...)
     }
     rt_1
   }
 
-  loop <- loop %||% lapply
-  res <- loop(seq_along(pars), calculate_rt_one_trajectory)
+  res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
 
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here

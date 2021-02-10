@@ -12,7 +12,9 @@ carehomes_Rt_trajectories(
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL,
   type = NULL,
-  loop = NULL
+  interpolate_every = NULL,
+  interpolate_critical_dates = NULL,
+  interpolate_min = NULL
 )
 }
 \arguments{
@@ -42,11 +44,25 @@ other which may give more easily interpretable error messages.}
 compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
 \code{Rt_all} and \code{Rt_general}}
 
-\item{loop}{Optionally a function to replace \code{lapply} with; you
-might pass in \code{parallel::mclapply} or a \code{furrr} function here to
-parallelise the loop. It must return a list (i.e., conform to
-the same interface as \code{lapply}). This interface is subject to
-change!}
+\item{interpolate_every}{Spacing (in days) to use between interpolated
+points}
+
+\item{interpolate_critical_dates}{Optional vector of critical sircovid
+dates to use when interpolating. Interpolation will be done in
+blocks between the first time step of these dates, with each block
+starting on the first time step of the date given.
+So if you give a \code{interpolate_critical_dates} of \code{c(20, 50)} then blocks \emph{start} on first time step of days 20 and 50,
+i.e.: \verb{[1, 20)}, \verb{[20, 50)}, \verb{[50, end]}.}
+
+\item{interpolate_min}{The minimum number of steps to include
+within a block. If there are fewer points than this then all
+points are used (i.e., no interpolation is done) or
+\code{interpolate_every} is reduced until at least this many points
+were used. This can be used to specify a lower bound on the
+error of small regions. If Rt is small it won't matter that
+much. You do need to specify something though or interpolation
+will not happen, and do not use less than 3 as we use spline
+interpolation and that will not work with fewer than 3 points.}
 }
 \value{
 As for \code{\link[=carehomes_Rt]{carehomes_Rt()}}, except that every element is a
