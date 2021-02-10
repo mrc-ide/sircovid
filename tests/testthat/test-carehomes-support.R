@@ -337,7 +337,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths = 8,
     admitted = 53,
     new = 63,
-    new_admitted = 116,
+    all_admission = 116,
     npos_15_64 = 43,
     ntot_15_64 = 83,
     pillar2_pos = 35,
@@ -442,7 +442,7 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$hosp <- NA
   data$admitted <- NA
   data$new <- NA
-  data$new_admitted <- NA
+  data$all_admission <- NA
   data$npos_15_64 <- NA
   data$ntot_15_64 <- NA
   data$pillar2_pos <- NA
@@ -470,7 +470,7 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
   data$hosp <- NA
   data$admitted <- NA
   data$new <- NA
-  data$new_admitted <- NA
+  data$all_admission <- NA
   data$npos_15_64 <- NA
   data$ntot_15_64 <- NA
   data$pillar2_pos <- NA

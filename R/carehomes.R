@@ -564,7 +564,7 @@ carehomes_compare <- function(state, observed, pars) {
   model_deaths_hosp <- state["deaths_hosp_inc", ]
   model_admitted <- state["admitted_inc", ]
   model_new <- state["new_inc", ]
-  model_new_admitted <- model_admitted + model_new
+  model_all_admission <- model_admitted + model_new
   model_sero_pos <- state["sero_pos", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
@@ -638,9 +638,9 @@ carehomes_compare <- function(state, observed, pars) {
                            pars$kappa_admitted, exp_noise)
   ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
                       pars$kappa_new, exp_noise)
-  ll_new_admitted <- ll_nbinom(observed$new_admitted,
-                               pars$phi_new_admitted * model_new_admitted,
-                               pars$kappa_new_admitted, exp_noise)
+  ll_all_admission <- ll_nbinom(observed$all_admission,
+                               pars$phi_all_admission * model_all_admission,
+                               pars$kappa_all_admission, exp_noise)
 
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
@@ -674,7 +674,7 @@ carehomes_compare <- function(state, observed, pars) {
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_new_admitted + ll_serology + ll_pillar2_tests +
+    ll_admitted + ll_new + ll_all_admission + ll_serology + ll_pillar2_tests +
     ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
     ll_react + ll_strain_over25
 }
@@ -1017,8 +1017,8 @@ carehomes_parameters_observation <- function(exp_noise) {
     phi_new = 1,
     kappa_new = 2,
     ## Daily combined new confirmed admissions and new inpatient diagnoses
-    phi_new_admitted = 1,
-    kappa_new_admitted = 2,
+    phi_all_admission = 1,
+    kappa_all_admission = 2,
     ## Pillar 2 testing
     phi_pillar2_cases = 1,
     kappa_pillar2_cases = 2,
@@ -1097,7 +1097,7 @@ carehomes_particle_filter <- function(data, n_particles,
 
 carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
-                "deaths", "admitted", "new", "new_admitted", "npos_15_64",
+                "deaths", "admitted", "new", "all_admission", "npos_15_64",
                 "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot")
