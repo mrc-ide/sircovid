@@ -9,8 +9,6 @@
 ##'
 ##' @param p A [carehomes_parameters()] object
 ##'
-<<<<<<< HEAD
-=======
 ##' @param prob_strain A (n groups x n strains) x n steps matrix of
 ##'   "prob_strain" outputs from the model. For a 2 strain model for example,
 ##'   `prob_strain[1, j]` and `prob_strain[n_groups + 1, j]` should give, for
@@ -19,12 +17,10 @@
 ##'   The default is `NULL`, but it must
 ##'   be specified if there is more than one strain
 ##'
->>>>>>> origin/master
 ##' @param type A character vector of possible Rt types to
 ##'   compute. Can be any or all of `eff_Rt_all`, `eff_Rt_general`,
 ##'   `Rt_all` and `Rt_general`
 ##'
-<<<<<<< HEAD
 ##' @param interpolate_every Spacing (in days) to use between interpolated
 ##'   points
 ##'
@@ -46,19 +42,14 @@
 ##'   will not happen, and do not use less than 3 as we use spline
 ##'   interpolation and that will not work with fewer than 3 points.
 ##'
-=======
->>>>>>> origin/master
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
 ##' @export
-<<<<<<< HEAD
-carehomes_Rt <- function(step, S, p, type = NULL, interpolate_every = NULL,
+carehomes_Rt <- function(step, S, p, prob_strain = NULL,
+                         type = NULL, interpolate_every = NULL,
                          interpolate_critical_dates = NULL,
                          interpolate_min = NULL) {
-=======
-carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
->>>>>>> origin/master
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -70,10 +61,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
                    paste(squote(all_types), collapse = ", ")))
     }
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/master
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vaccine classes",
@@ -151,19 +139,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
         i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
         ngm <- ngm[i_gen, i_gen]
       }
-      ev <- eigen(ngm, FALSE, TRUE)$values
+      ev <- ev <- eigen(ngm, symmetric = FALSE, only.values = TRUE)$values
       ev[Im(ev) != 0] <- NA
       ev <- as.numeric(ev)
       out <- max(ev, na.rm = TRUE)
     }
-<<<<<<< HEAD
-    ev <- eigen(ngm, symmetric = FALSE, only.values = TRUE)$values
-    ev[Im(ev) != 0] <- NA
-    ev <- as.numeric(ev)
-    max(ev, na.rm = TRUE)
-=======
     out
->>>>>>> origin/master
   }
 
   t <- seq_along(step)
@@ -175,10 +156,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
                                      0 * N_tot_non_vacc)
     }
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
   opts <- list(eff_Rt_all = list(pop = S, general = FALSE),
                eff_Rt_general = list(pop = S, general = TRUE),
                Rt_all = list(pop = N_tot_all_vacc_groups, general = FALSE),
@@ -187,7 +165,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
   ret <- list(step = step,
               date = step * p$dt,
               beta = beta)
-<<<<<<< HEAD
 
   ## translate days into steps
   if (!is.null(interpolate_every)) {
@@ -199,21 +176,13 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
 
   ret[type] <- lapply(opts[type], function(x)
     interpolate_grid_critical(t, function(t)
-      calculate_ev(t, x$pop, beta = beta,
+      calculate_ev(t, x$pop, prob_strain = prob_strain,
+                   beta = beta,
                    mean_duration = mean_duration,
                    max_strain_multiplier = max_strain_multiplier,
                    drop_carehomes = x$general),
       interpolate_every, interpolate_critical_step, interpolate_min))
 
-=======
-  ret[type] <- lapply(opts[type], function(x)
-    vnapply(t, calculate_ev, x$pop,
-            prob_strain = prob_strain,
-            beta = beta,
-            mean_duration = mean_duration,
-            drop_carehomes = x$general))
->>>>>>> origin/master
-  ret
 }
 
 
@@ -253,15 +222,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL, type = NULL) {
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
-<<<<<<< HEAD
-=======
 ##' @param loop Optionally a function to replace `lapply` with; you
 ##'   might pass in `parallel::mclapply` or a `furrr` function here to
 ##'   parallelise the loop. It must return a list (i.e., conform to
 ##'   the same interface as `lapply`). This interface is subject to
 ##'   change!
 ##'
->>>>>>> origin/master
 ##' @inheritParams carehomes_Rt
 ##'
 ##' @return As for [carehomes_Rt()], except that every element is a
@@ -277,8 +243,10 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       interpolate_critical_dates = NULL,
                                       interpolate_min = NULL) {
   calculate_Rt_trajectories(carehomes_Rt, step, S, pars,
+                            prob_strain,
                             initial_step_from_parameters, shared_parameters,
-                            type, loop, interpolate_every, interpolate_critical_dates,
+                            type, loop, interpolate_every,
+                            interpolate_critical_dates,
                             interpolate_min)
 }
 
@@ -493,4 +461,3 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
   class(ret) <- "Rt_trajectories"
   ret
 }
-
