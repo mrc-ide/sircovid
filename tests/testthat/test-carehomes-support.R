@@ -216,7 +216,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("icu", "general", "deaths_comm_inc", "deaths_hosp_inc",
-      "admitted_inc", "new_inc",
+      "admitted_inc", "diagnoses_inc",
       "sero_pos", "sympt_cases_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
@@ -230,7 +230,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "D_hosp_inc"))
   expect_equal(index$run[["admitted_inc"]],
                which(names(info$index) == "admit_conf_inc"))
-  expect_equal(index$run[["new_inc"]],
+  expect_equal(index$run[["diagnoses_inc"]],
                which(names(info$index) == "new_conf_inc"))
   expect_equal(index$run[["sero_pos"]],
                which(names(info$index) == "sero_pos"))
@@ -322,7 +322,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_comm_inc = 1:6,
     deaths_hosp_inc = 3:8,
     admitted_inc = 50:55,
-    new_inc = 60:65,
+    diagnoses_inc = 60:65,
     sero_pos = 4:9,
     sympt_cases_inc = 100:105,
     sympt_cases_over25_inc = 80:85,
@@ -336,8 +336,8 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_comm = 3,
     deaths = 8,
     admitted = 53,
-    new = 63,
-    new_admitted = 116,
+    diagnoses = 63,
+    all_admission = 116,
     npos_15_64 = 43,
     ntot_15_64 = 83,
     pillar2_pos = 35,
@@ -441,8 +441,8 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$general <- NA
   data$hosp <- NA
   data$admitted <- NA
-  data$new <- NA
-  data$new_admitted <- NA
+  data$diagnoses <- NA
+  data$all_admission <- NA
   data$npos_15_64 <- NA
   data$ntot_15_64 <- NA
   data$pillar2_pos <- NA
@@ -469,8 +469,8 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
   data$general <- NA
   data$hosp <- NA
   data$admitted <- NA
-  data$new <- NA
-  data$new_admitted <- NA
+  data$diagnoses <- NA
+  data$all_admission <- NA
   data$npos_15_64 <- NA
   data$ntot_15_64 <- NA
   data$pillar2_pos <- NA

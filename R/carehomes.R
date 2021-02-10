@@ -460,11 +460,11 @@ carehomes_index <- function(info) {
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
-                 new = index[["cum_new_conf"]],
+                 diagnoses = index[["cum_new_conf"]],
                  deaths_comm_inc = index[["D_comm_inc"]],
                  deaths_hosp_inc = index[["D_hosp_inc"]],
                  admitted_inc = index[["admit_conf_inc"]],
-                 new_inc = index[["new_conf_inc"]],
+                 diagnoses_inc = index[["new_conf_inc"]],
                  sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
@@ -479,7 +479,7 @@ carehomes_index <- function(info) {
   ## Only incidence versions for the likelihood now:
   index_run <- index_core[c("icu", "general",
                             "deaths_comm_inc", "deaths_hosp_inc",
-                            "admitted_inc", "new_inc",
+                            "admitted_inc", "diagnoses_inc",
                             "sero_pos", "sympt_cases_inc",
                             "sympt_cases_over25_inc",
                             "sympt_cases_non_variant_over25_inc",
@@ -563,8 +563,8 @@ carehomes_compare <- function(state, observed, pars) {
   model_deaths_comm <- state["deaths_comm_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
   model_admitted <- state["admitted_inc", ]
-  model_new <- state["new_inc", ]
-  model_new_admitted <- model_admitted + model_new
+  model_diagnoses <- state["diagnoses_inc", ]
+  model_all_admission <- model_admitted + model_diagnoses
   model_sero_pos <- state["sero_pos", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
@@ -636,11 +636,12 @@ carehomes_compare <- function(state, observed, pars) {
   ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * model_admitted,
                            pars$kappa_admitted, exp_noise)
-  ll_new <- ll_nbinom(observed$new, pars$phi_new * model_new,
-                      pars$kappa_new, exp_noise)
-  ll_new_admitted <- ll_nbinom(observed$new_admitted,
-                               pars$phi_new_admitted * model_new_admitted,
-                               pars$kappa_new_admitted, exp_noise)
+  ll_diagnoses <- ll_nbinom(observed$diagnoses,
+                            pars$phi_diagnoses * model_diagnoses,
+                            pars$kappa_diagnoses, exp_noise)
+  ll_all_admission <- ll_nbinom(observed$all_admission,
+                               pars$phi_all_admission * model_all_admission,
+                               pars$kappa_all_admission, exp_noise)
 
   ll_serology <- ll_binom(observed$npos_15_64,
                           observed$ntot_15_64,
@@ -674,9 +675,9 @@ carehomes_compare <- function(state, observed, pars) {
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_new + ll_new_admitted + ll_serology + ll_pillar2_tests +
-    ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
-    ll_react + ll_strain_over25
+    ll_admitted + ll_diagnoses + ll_all_admission + ll_serology +
+    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
+    ll_pillar2_over25_cases + ll_react + ll_strain_over25
 }
 
 
@@ -1014,11 +1015,11 @@ carehomes_parameters_observation <- function(exp_noise) {
     phi_admitted = 1,
     kappa_admitted = 2,
     ## Daily new inpatient diagnoses
-    phi_new = 1,
-    kappa_new = 2,
+    phi_diagnoses = 1,
+    kappa_diagnoses = 2,
     ## Daily combined new confirmed admissions and new inpatient diagnoses
-    phi_new_admitted = 1,
-    kappa_new_admitted = 2,
+    phi_all_admission = 1,
+    kappa_all_admission = 2,
     ## Pillar 2 testing
     phi_pillar2_cases = 1,
     kappa_pillar2_cases = 2,
@@ -1069,9 +1070,12 @@ carehomes_population <- function(population, carehome_workers,
 ##' @param data Data suitable for use with with the
 ##'   [`mcstate::particle_filter`], created by created by
 ##'   [mcstate::particle_filter_data()]. We require columns "icu",
-##'   "general", "deaths_hosp", "deaths_comm", "deaths", "admitted",
-##'   "new", "npos_15_64", "ntot_15_64", though thse may be entirely
-##'   `NA` if no data are present.
+##'   "general", "hosp", "deaths_hosp", "deaths_comm", "deaths",
+##'   "admitted", "diagnoses", "all_admission", "npos_15_64",
+##'   "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+##'   "pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
+##'   "react_pos", "react_tot", though thse may be entirely `NA`
+##'   if no data are present.
 ##'
 ##' @param n_particles Number of particles to use
 ##'
@@ -1097,9 +1101,9 @@ carehomes_particle_filter <- function(data, n_particles,
 
 carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
-                "deaths", "admitted", "new", "new_admitted", "npos_15_64",
-                "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
-                "pillar2_over25_pos", "pillar2_over25_tot",
+                "deaths", "admitted", "diagnoses", "all_admission",
+                "npos_15_64", "ntot_15_64", "pillar2_pos", "pillar2_tot",
+                "pillar2_cases", "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot")
 
   verify_names(data, required, allow_extra = TRUE)
