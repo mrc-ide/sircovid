@@ -179,10 +179,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       calculate_ev(t, x$pop, prob_strain = prob_strain,
                    beta = beta,
                    mean_duration = mean_duration,
-                   max_strain_multiplier = max_strain_multiplier,
                    drop_carehomes = x$general),
       interpolate_every, interpolate_critical_step, interpolate_min))
 
+  ret
 }
 
 
@@ -242,12 +242,17 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       interpolate_every = NULL,
                                       interpolate_critical_dates = NULL,
                                       interpolate_min = NULL) {
-  calculate_Rt_trajectories(carehomes_Rt, step, S, pars,
-                            prob_strain,
-                            initial_step_from_parameters, shared_parameters,
-                            type, loop, interpolate_every,
-                            interpolate_critical_dates,
-                            interpolate_min)
+  calculate_Rt_trajectories(
+    calculate_Rt = carehomes_Rt, step = step,
+    S = S, pars = pars,
+    prob_strain = prob_strain,
+    initial_step_from_parameters = initial_step_from_parameters,
+    shared_parameters = shared_parameters,
+    type = type,
+    loop = loop,
+    interpolate_every = interpolate_every,
+    interpolate_critical_dates = interpolate_critical_dates,
+    interpolate_min = interpolate_min)
 }
 
 

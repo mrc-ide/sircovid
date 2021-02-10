@@ -148,7 +148,12 @@ interpolate_grid <- function(x, f, every, min) {
     xx <- c(xx, last(x))
   }
   yy <- vnapply(xx, f)
-  spline(xx, yy, xout = x)$y
+  if (is.null(every) || is.null(min) || length(x) <= min) {
+    ret <- yy
+  } else {
+    ret <- spline(xx, yy, xout = x)$y
+  }
+  ret
 }
 
 
