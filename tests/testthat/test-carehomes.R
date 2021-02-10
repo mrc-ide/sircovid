@@ -64,7 +64,7 @@ test_that("can run the particle filter on the model", {
   data$general <- NA
   data$hosp <- NA
   data$admitted <- NA
-  data$new <- NA
+  data$diagnoses <- NA
   data$all_admission <- NA
   data$npos_15_64 <- NA
   data$ntot_15_64 <- NA
