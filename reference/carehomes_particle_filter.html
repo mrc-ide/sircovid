@@ -82,7 +82,7 @@ used together." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.18</span>
       </span>
     </div>
 
@@ -142,9 +142,12 @@ used together.</p>
       <td><p>Data suitable for use with with the
 <code><a href='https://rdrr.io/pkg/mcstate/man/particle_filter.html'>mcstate::particle_filter</a></code>, created by created by
 <code><a href='https://rdrr.io/pkg/mcstate/man/particle_filter_data.html'>mcstate::particle_filter_data()</a></code>. We require columns "icu",
-"general", "deaths_hosp", "deaths_comm", "deaths", "admitted",
-"new", "npos_15_64", "ntot_15_64", though thse may be entirely
-<code>NA</code> if no data are present.</p></td>
+"general", "hosp", "deaths_hosp", "deaths_comm", "deaths",
+"admitted", "diagnoses", "all_admission", "npos_15_64",
+"ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+"pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
+"react_pos", "react_tot", though thse may be entirely <code>NA</code>
+if no data are present.</p></td>
     </tr>
     <tr>
       <th>n_particles</th>
