@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
-if (packageVersion("odin.dust") < "0.1.5") {
-  stop("Please upgrade odin.dust to at least 0.1.5")
+if (packageVersion("odin.dust") < "0.1.13") {
+  stop("Please upgrade odin.dust to at least 0.1.13")
 }
 withr::with_options(
   list(odin.no_check_naked_index = TRUE),

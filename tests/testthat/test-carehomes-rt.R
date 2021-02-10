@@ -50,7 +50,7 @@ test_that("validate inputs in Rt calculation", {
 
   expect_error(
     carehomes_Rt(steps, y[-1, 1, ], p),
-    "Expected 'S' to have 19 rows, following transmission matrix",
+    "Expected 'S' to have 19 rows = 19 groups x 1 vaccine classes",
     fixed = TRUE)
   expect_error(
     carehomes_Rt(steps, y[, 1, -1], p),
@@ -152,10 +152,10 @@ test_that("can filter Rt to wanted types", {
   y <- d$inputs$y
 
   expect_mapequal(
-    carehomes_Rt(steps, y[, 1, ], p, "eff_Rt_general"),
+    carehomes_Rt(steps, y[, 1, ], p, type = "eff_Rt_general"),
     d$outputs$rt_1[c("step", "date", "beta", "eff_Rt_general")])
   expect_mapequal(
-    carehomes_Rt(steps, y[, 1, ], p, c("eff_Rt_general", "Rt_general")),
+    carehomes_Rt(steps, y[, 1, ], p, type = c("eff_Rt_general", "Rt_general")),
     d$outputs$rt_1[c("step", "date", "beta", "eff_Rt_general", "Rt_general")])
 
   expect_mapequal(
@@ -175,16 +175,15 @@ test_that("can't compute Rt for unknown types", {
   y <- d$inputs$y
 
   expect_error(
-    carehomes_Rt(steps, y[, 1, ], p, "max_Rt_general"),
+   carehomes_Rt(steps, y[, 1, ], p, type = "max_Rt_general"),
     "Unknown R type 'max_Rt_general', must match '")
   expect_error(
     carehomes_Rt_trajectories(steps, y, p, type = "max_Rt_general"),
     "Unknown R type 'max_Rt_general', must match '")
   expect_error(
-    carehomes_Rt(steps, y[, 1, ], p, c("eff_Rt_general", "rt_general")),
+    carehomes_Rt(steps, y[, 1, ], p, type = c("eff_Rt_general", "rt_general")),
     "Unknown R type 'rt_general', must match '")
 })
-
 
 test_that("Can interpolate Rt with step changes", {
   dat <- reference_data_mcmc()
@@ -259,5 +258,22 @@ test_that("Can interpolate Rt with step changes", {
   expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_14$eff_Rt_general) < tol2))
   expect_true(all(abs(rt_cmp$Rt_all - rt_int_14$Rt_all) < tol2))
   expect_true(all(abs(rt_cmp$Rt_general - rt_int_14$Rt_general) < tol2))
+})
 
+test_that("Can use alternative loop function", {
+  d <- reference_data_rt()
+  used <- FALSE
+  f <- function(...) {
+    used <<- TRUE
+    lapply(...)
+  }
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  expect_mapequal(
+    carehomes_Rt_trajectories(steps, y, p, type = "eff_Rt_all", loop = f),
+    d$outputs$rt_all[c("step", "date", "beta", "eff_Rt_all")])
+  expect_true(used)
 })

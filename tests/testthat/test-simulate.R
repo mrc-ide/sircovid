@@ -99,6 +99,8 @@ test_that("Basic simulation", {
   p_base <- rep(list(p), np)
 
   res <- sircovid_simulate(basic, state, p_base, events, seed = 1L)
+  expect_equal(dim(attr(res, "state")), dim(state))
+  expect_length(attr(res, "rng_state"), np * 32)
 
   ## Change the beta directly in the model and we should see this agree:
   p_cmp <- basic_parameters(
@@ -108,9 +110,11 @@ test_that("Basic simulation", {
   p_cmp$beta_step[seq_len(length(p_cmp$beta_step) - 1)] <- p$beta_step
   step <- attr(res, "step")
   cmp <- dust::dust_simulate(basic, step, rep(list(p_cmp), np), state,
-                             seed = 1L)
+                             seed = 1L, return_state = TRUE)
 
   expect_equal(res, cmp, check.attributes = FALSE)
+  expect_equal(attr(res, "state"), attr(cmp, "state"))
+  expect_equal(attr(res, "rng_state"), attr(cmp, "rng_state"))
 })
 
 

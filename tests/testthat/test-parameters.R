@@ -57,6 +57,62 @@ test_that("dates must be sircovid_dates", {
 })
 
 
+test_that("single piecewise constant value", {
+  expect_identical(sircovid_parameters_piecewise_constant(NULL, pi, 0.1), pi)
+  expect_error(sircovid_parameters_piecewise_constant(NULL, numeric(0), 0.1),
+               "As 'date' is NULL, expected single value")
+  expect_error(sircovid_parameters_piecewise_constant(NULL, 1:5, 0.1),
+               "As 'date' is NULL, expected single value")
+})
+
+
+test_that("varying piecewise constant value", {
+  date <- as_sircovid_date(c("2019-12-31", "2020-02-10", "2020-02-29"))
+  y <- sircovid_parameters_piecewise_constant(date, 1:3, 0.5)
+  expect_equal(
+    y,
+    c(rep(1, 82),
+      rep(2, 38),
+      3))
+})
+
+
+test_that("piecewise constant date and value have to be the same length", {
+  date <- c(0, 41, 60)
+  expect_error(
+    sircovid_parameters_piecewise_constant(date, 1:2, 0.5),
+    "'date' and 'value' must have the same length")
+  expect_error(
+    sircovid_parameters_piecewise_constant(date, 1:4, 0.5),
+    "'date' and 'value' must have the same length")
+})
+
+
+test_that("piecewise constant first date must be 0", {
+  expect_error(
+    sircovid_parameters_piecewise_constant(c(20, 31, 41, 64), 1:4, 0.5),
+    "As 'date' is not NULL, first date should be 0")
+})
+
+
+test_that("piecewise constant dates must be increasing", {
+  expect_error(
+    sircovid_parameters_piecewise_constant(c(0, 41, 41, 64), 1:4, 0.5),
+    "'date' must be strictly increasing")
+})
+
+
+test_that("piecewise constant dates must be sircovid_dates", {
+  expect_error(
+    sircovid_parameters_piecewise_constant(
+      as_date(c("2020-02-01", "2020-02-10")), 1:2, 0.5),
+    "'date' must be numeric - did you forget sircovid_date()?")
+  expect_error(
+    sircovid_parameters_piecewise_constant(c(-10, 41, 60), 1:3, 0.5),
+    "Negative dates, sircovid_date likely applied twice")
+})
+
+
 test_that("can read the default severity file", {
   data <- sircovid_parameters_severity(NULL)
 
@@ -67,15 +123,15 @@ test_that("can read the default severity file", {
   expect_true(all(lengths(data) == 17))
   expect_setequal(
     names(data),
-    c("p_admit_conf", "p_sympt", "p_death_comm", "p_death_hosp_D",
-      "p_death_ICU", "p_death_stepdown", "p_ICU_hosp",
-      "p_seroconversion", "p_hosp_sympt"))
+    c("p_star", "p_C", "p_G_D", "p_H_D",
+      "p_ICU_D", "p_W_D", "p_ICU",
+      "p_sero_pos", "p_H"))
   expect_true(
     all(data$p_serocoversion == data$p_serocoversion[[1]]))
   expect_equal(
-    data$p_death_comm, rep(0, 17))
+    data$p_G_D, rep(0, 17))
   expect_equal(
-    data$p_admit_conf, rep(0.2, 17))
+    data$p_star, rep(0.2, 17))
 })
 
 
@@ -83,7 +139,7 @@ test_that("can validate a severity input", {
   d <- severity_default()
   expect_error(
     sircovid_parameters_severity(d[-1, ]),
-    "Elements missing from 'data': 'p_sympt'")
+    "Elements missing from 'data': 'p_C'")
 })
 
 
@@ -94,7 +150,7 @@ test_that("can reprocess severity", {
     s)
   expect_error(
     sircovid_parameters_severity(s[-1]),
-    "Elements missing from 'params': 'p_admit_conf'")
+    "Elements missing from 'params': 'p_star'")
 })
 
 
@@ -114,8 +170,9 @@ test_that("shared parameters", {
   pars <- sircovid_parameters_shared(date, "england", NULL, 0.1)
   expect_setequal(
     names(pars),
-    c("hosp_transmission", "ICU_transmission", "comm_D_transmission",
-      "dt", "initial_step", "n_age_groups", "beta_step", "population"))
+    c("hosp_transmission", "ICU_transmission", "G_D_transmission",
+      "dt", "steps_per_day", "initial_step", "n_age_groups",
+      "beta_step", "population"))
   expect_equal(pars$beta_step, 0.1)
   expect_equal(pars$initial_step, date * 4)
 })

@@ -4,13 +4,13 @@ test_that("carehomes progression parameters", {
   p <- carehomes_parameters_progression()
   expect_setequal(
     names(p),
-    c("s_E", "s_asympt", "s_sympt", "s_comm_D", "s_hosp_D", "s_hosp_R",
-      "s_ICU_D", "s_ICU_S_R", "s_ICU_S_D", "s_triage", "s_stepdown_D",
-      "s_stepdown_R", "s_R_pos", "s_PCR_pos", "s_PCR_pre", "gamma_E",
-      "gamma_asympt", "gamma_sympt", "gamma_comm_D", "gamma_hosp_D",
-      "gamma_hosp_R", "gamma_ICU_D", "gamma_ICU_S_R", "gamma_ICU_S_D",
-      "gamma_triage", "gamma_stepdown_D", "gamma_stepdown_R", "gamma_R_pos",
-      "gamma_R_pre_1", "gamma_R_pre_2", "gamma_test", "gamma_PCR_pos",
+    c("k_E", "k_A", "k_C", "k_G_D", "k_H_D", "k_H_R",
+      "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
+      "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
+      "gamma_A", "gamma_C", "gamma_G_D", "gamma_H_D",
+      "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
+      "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
+      "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
       "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints
@@ -27,8 +27,9 @@ test_that("carehomes vaccination parameters", {
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+      "rel_infectivity",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
-      "vaccine_daily_doses"))
+      "vaccine_daily_doses_step"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
@@ -39,18 +40,26 @@ test_that("carehomes vaccination parameters", {
   rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
   rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(0, 1, 1, 1)
+  vaccine_daily_doses <- c(5000, 10000)
+  vaccine_daily_doses_date <- sircovid_date(c("2020-12-01", "2021-02-01"))
   p <- carehomes_parameters_vaccination(ntot,
+                                        dt = 0.25,
                                         rel_susceptibility = rel_susceptibility,
                                         rel_p_sympt = rel_p_sympt,
                                         rel_p_hosp_if_sympt =
                                           rel_p_hosp_if_sympt,
                                         vaccine_progression_rate =
-                                          vaccine_progression_rate)
+                                          vaccine_progression_rate,
+                                        vaccine_daily_doses =
+                                          vaccine_daily_doses,
+                                        vaccine_daily_doses_date =
+                                          vaccine_daily_doses_date)
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+      "rel_infectivity",
       "vaccine_progression_rate_base", "vaccine_population_reluctant",
-      "vaccine_daily_doses"))
+      "vaccine_daily_doses_step"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
   expect_equal(nrow(p$rel_p_sympt), n_groups)
@@ -60,18 +69,32 @@ test_that("carehomes vaccination parameters", {
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate_base),
                length(vaccine_progression_rate))
-  msg1 <- "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt"
+  expect_equal(p$vaccine_daily_doses_step,
+               sircovid_parameters_piecewise_constant(
+                 c(0, vaccine_daily_doses_date),
+                 c(0, vaccine_daily_doses),
+                 0.25))
+  msg1 <-
+    "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt, rel_infectivity"
   msg2 <- "should have the same dimension"
   expect_error(
     carehomes_parameters_vaccination(ntot,
                                      rel_susceptibility = 1,
                                      rel_p_sympt = c(1, 0.5, 0.25),
-                                     rel_p_hosp_if_sympt = c(1, 0.1)),
+                                     rel_p_hosp_if_sympt = c(1, 0.1),
+                                     rel_infectivity = 1),
     paste(msg1, msg2))
   expect_error(carehomes_parameters_vaccination(ntot,
                                                 rel_susceptibility = c(1, 1),
                                                 rel_p_sympt = c(1, 0.5, 0.25),
-                                                rel_p_hosp_if_sympt = 1),
+                                                rel_p_hosp_if_sympt = 1,
+                                                rel_infectivity = 1),
+               paste(msg1, msg2))
+  expect_error(carehomes_parameters_vaccination(ntot,
+                                                rel_susceptibility = c(1, 1),
+                                                rel_p_sympt = c(1, 0.5),
+                                                rel_p_hosp_if_sympt = c(1, 1),
+                                                rel_infectivity = c(1, 1, 0.5)),
                paste(msg1, msg2))
 })
 
@@ -92,7 +115,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(
-    p$N_tot, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
+    p$N_tot, p$dt, p$rel_susceptibility, p$rel_p_sympt, p$rel_p_hosp_if_sympt,
+    p$rel_infectivity,
     p$vaccine_progression_rate_base)
   expect_identical(p[names(vaccination)], vaccination)
 
@@ -125,11 +149,11 @@ test_that("carehomes_parameters returns a list of parameters", {
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
       "sero_specificity", "sero_sensitivity", "N_tot_15_64",
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
-      "react_sensitivity", "prop_noncovid_sympt", "psi_death_ICU",
-      "p_death_ICU_step", "psi_death_hosp_D", "p_death_hosp_D_step",
-      "psi_death_stepdown", "p_death_stepdown_step", "psi_hosp_sympt",
-      "p_hosp_sympt_step", "psi_death_comm", "p_death_comm_step",
-      "psi_ICU_hosp", "p_ICU_hosp_step", "psi_admit_conf", "p_admit_conf_step",
+      "react_sensitivity", "p_NC", "psi_ICU_D",
+      "p_ICU_D_step", "psi_H_D", "p_H_D_step",
+      "psi_W_D", "p_W_D_step", "psi_H",
+      "p_H_step", "psi_G_D", "p_G_D_step",
+      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
       "n_groups"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
@@ -151,9 +175,9 @@ test_that("can compute severity for carehomes model", {
   expect_true(
     all(severity$p_serocoversion == severity$p_serocoversion[[1]]))
   expect_equal(
-    severity$p_death_comm, rep(c(0, 0.7), c(18, 1)))
+    severity$p_G_D, rep(c(0, 0.7), c(18, 1)))
   expect_equal(
-    severity$p_admit_conf, rep(0.2, 19))
+    severity$p_star, rep(0.2, 19))
 })
 
 
@@ -191,35 +215,36 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_comm", "deaths_hosp", "admitted", "new",
-      "sero_pos", "sympt_cases", "sympt_cases_over25", "react_pos"))
+    c("icu", "general", "deaths_comm_inc", "deaths_hosp_inc",
+      "admitted_inc", "new_inc",
+      "sero_pos", "sympt_cases_inc", "sympt_cases_over25_inc",
+      "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["icu"]],
-               which(names(info$index) == "I_ICU_tot"))
+               which(names(info$index) == "ICU_tot"))
   expect_equal(index$run[["general"]],
                which(names(info$index) == "general_tot"))
-  expect_equal(index$run[["deaths_comm"]],
-               which(names(info$index) == "D_comm_tot"))
-  expect_equal(index$run[["deaths_hosp"]],
-               which(names(info$index) == "D_hosp_tot"))
-  expect_equal(index$run[["admitted"]],
-               which(names(info$index) == "cum_admit_conf"))
-  expect_equal(index$run[["new"]],
-               which(names(info$index) == "cum_new_conf"))
+  expect_equal(index$run[["deaths_comm_inc"]],
+               which(names(info$index) == "D_comm_inc"))
+  expect_equal(index$run[["deaths_hosp_inc"]],
+               which(names(info$index) == "D_hosp_inc"))
+  expect_equal(index$run[["admitted_inc"]],
+               which(names(info$index) == "admit_conf_inc"))
+  expect_equal(index$run[["new_inc"]],
+               which(names(info$index) == "new_conf_inc"))
   expect_equal(index$run[["sero_pos"]],
                which(names(info$index) == "sero_pos"))
-  expect_equal(index$run[["sympt_cases"]],
-               which(names(info$index) == "cum_sympt_cases"))
-  expect_equal(index$run[["sympt_cases_over25"]],
-               which(names(info$index) == "cum_sympt_cases_over25"))
+  expect_equal(index$run[["sympt_cases_inc"]],
+               which(names(info$index) == "sympt_cases_inc"))
+  expect_equal(index$run[["sympt_cases_over25_inc"]],
+               which(names(info$index) == "sympt_cases_over25_inc"))
   expect_equal(index$run[["react_pos"]],
                which(names(info$index) == "react_pos"))
 })
 
 
 test_that("carehome worker index is sensible", {
-  expect_equal(carehomes_index_workers(), 6:13)
-})
+  expect_equal(carehomes_index_workers(), 6:13) })
 
 
 test_that("carehomes_index is properly named", {
@@ -246,21 +271,21 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
-  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_asympt),
+  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
                p$N_tot)
-  expect_equal(drop(initial_y$I_asympt),
+  expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$R_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$PCR_pos[, 1, 1, ],
+  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
   ## 42 here, derived from;
   ## * 19 (S)
   ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_asympt[4] + R_pre[4] + PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 44)
+  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
+  expect_equal(sum(initial$state != 0), 64)
 })
 
 
@@ -294,15 +319,15 @@ test_that("carehomes_compare combines likelihood correctly", {
   state <- rbind(
     icu = 10:15,
     general = 20:25,
-    deaths_comm = 1:6,
-    deaths_hosp = 3:8,
-    admitted = 50:55,
-    new = 60:65,
+    deaths_comm_inc = 1:6,
+    deaths_hosp_inc = 3:8,
+    admitted_inc = 50:55,
+    new_inc = 60:65,
     sero_pos = 4:9,
-    sympt_cases = 100:105,
-    sympt_cases_over25 = 80:85,
+    sympt_cases_inc = 100:105,
+    sympt_cases_over25_inc = 80:85,
+    sympt_cases_non_variant_over25_inc = 60:65,
     react_pos = 2:7)
-  prev_state <- array(1, dim(state), dimnames = dimnames(state))
   observed <- list(
     icu = 13,
     general = 23,
@@ -322,7 +347,9 @@ test_that("carehomes_compare combines likelihood correctly", {
     pillar2_over25_tot = 500,
     pillar2_over25_cases = 25,
     react_pos = 3,
-    react_tot = 500)
+    react_tot = 500,
+    strain_non_variant = 20,
+    strain_tot = 25)
   date <- sircovid_date("2020-01-01")
   pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
 
@@ -341,26 +368,26 @@ test_that("carehomes_compare combines likelihood correctly", {
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
   nms_react <- c("react_pos", "react_tot")
+  nms_strain <- c("strain_non_variant", "strain_tot")
   parts <- c(as.list(setdiff(names(observed),
                              c(nms_sero, nms_pillar2,
-                               nms_pillar2_over25, nms_react))),
+                               nms_pillar2_over25, nms_react, nms_strain))),
              list(nms_sero), list(nms_pillar2), list(nms_pillar2_over25),
-             list(nms_react))
+             list(nms_react), list(nms_strain))
 
   ll_parts <- lapply(parts, function(x)
-    carehomes_compare(state, prev_state, observed_keep(x), pars))
+    carehomes_compare(state, observed_keep(x), pars))
 
   ## Extremely light testing, though this has already flushed out some
   ## issues
   expect_true(all(lengths(ll_parts) == 6))
   expect_equal(
-    carehomes_compare(state, prev_state, observed, pars),
+    carehomes_compare(state, observed, pars),
     rowSums(do.call(cbind, ll_parts)))
 
   ## Test that there are non-zero values for each log-likelihood part.
   ## This helps make sure all parts contribute to the log-likelihood.
   expect_true(all(sapply(ll_parts, function(x) any(x != 0))))
-
 })
 
 
@@ -390,14 +417,18 @@ test_that("carehomes_index returns S compartments", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   mod <- carehomes$new(p, 0, 5, seed = 1L)
   index <- carehomes_index(mod$info())
+  info <- mod$info()
+  i <- seq_along(index$run)
   expect_equal(
-    unname(index$state),
-    c(unname(index$run),
-      mod$info()$index$hosp_tot,
-      mod$info()$index$D_tot,
-      mod$info()$index$cum_infections,
-      mod$info()$index$S,
-      mod$info()$index$cum_admit_by_age))
+    unname(index$state[-i]),
+    c(unname(index$run[-i]),
+      info$index$hosp_tot,
+      info$index$D_tot,
+      info$index$cum_infections,
+      info$index$S,
+      info$index$cum_admit_by_age,
+      info$index$I_weighted,
+      info$index$prob_strain))
 })
 
 
@@ -515,13 +546,13 @@ test_that("model_pcr_and_serology_user switch works", {
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  ## y$R_neg and y$PCR_neg are increasing over time as noone gets out
+  ## y$T_sero_neg and y$T_PCR_neg are increasing over time as noone gets out
   for (i in seq_len(p$n_groups)) {
     for (j in seq_len(p$n_strains)) {
-    expect_true(all(diff(y$R_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$R_neg[i, , 2, j]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$PCR_neg[i, , 2, j]) >= 0))
+    expect_true(all(diff(y$T_sero_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$T_sero_neg[i, , 2, j]) >= 0))
+    expect_true(all(diff(y$T_PCR_neg[i, , 1, j]) >= 0))
+    expect_true(all(diff(y$T_PCR_neg[i, , 2, j]) >= 0))
     }
   }
 

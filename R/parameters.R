@@ -1,13 +1,15 @@
 ## These could be moved to be defaults within the models
 sircovid_parameters_shared <- function(start_date, region,
                                        beta_date, beta_value) {
-  dt <- 0.25
+  steps_per_day <- 4
+  dt <- 1 / steps_per_day
   assert_sircovid_date(start_date)
   beta_step <- sircovid_parameters_beta(beta_date, beta_value %||% 0.08, dt)
   list(hosp_transmission = 0.1,
        ICU_transmission = 0.05,
-       comm_D_transmission = 0.05,
+       G_D_transmission = 0.05,
        dt = dt,
+       steps_per_day = steps_per_day,
        initial_step = start_date / dt,
        n_age_groups = length(sircovid_age_bins()$start),
        beta_step = beta_step,
@@ -95,6 +97,87 @@ sircovid_parameters_beta <- function(date, value, dt) {
   }
 
   stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
+
+}
+
+
+##' Construct a piecewise constant quantity over time array for use within
+##' sircovid models.
+##'
+##' @title Construct piecewise constant array
+##'
+##' @param date Either `NULL`, if one value of the quantity will be used for
+##'   all time steps, or a vector of times that will be used as change
+##'   points. Must be provided as a [sircovid_date()], i.e., days into
+##'   2020. The first date must be 0.
+##'
+##' @param value A vector of values to use for the quantity - either a scalar
+##'   (if `date` is `NULL`) or a vector the same length as `date`.
+##'
+##' @param dt The timestep that will be used in the simulation. This
+##'   must be of the form `1 / n` where `n` is an integer representing
+##'   the number of steps per day. Ordinarily this is set by sircovid
+##'   internally to be `0.25` but this will become tuneable in a
+##'   future version.
+##'
+##' @return Returns a vector of piecewise constant values, one per timestep,
+##'   until the values stabilise.  After this point the quantity is assumed to
+##'   be constant.
+##'
+##' @export
+##' @examples
+##' # If "date" is NULL, then the quantity is constant and this function is
+##' # trivial:
+##' sircovid::sircovid_parameters_piecewise_constant(NULL, 0.1, 0.25)
+##'
+##' date <- sircovid::sircovid_date(
+##'    c("2019-12-31", "2020-02-01", "2020-02-14", "2020-03-15"))
+##' value <- c(0, 3, 1, 2)
+##' y <- sircovid::sircovid_parameters_piecewise_constant(date, value, 1)
+##'
+##' # The implied time series looks like this:
+##' t <- seq(0, date[[4]])
+##' plot(t, y, type = "o")
+##' points(date, value, pch = 19, col = "red")
+##'
+##' # After 2020-03-15, the quantity value will be fixed at 2, the value
+##' # that it reached at that date.
+##'
+##' # You can see this using sircovid_parameters_beta_expand
+##' # If a vector of dates is provided then, it's more complex. We'll
+##' # use dt of 1 here as it's easier to visualise
+##' t <- seq(0, 100, by = 1)
+##' sircovid::sircovid_parameters_beta_expand(t, y)
+##' plot(t, sircovid::sircovid_parameters_beta_expand(t, y), type = "o")
+##' points(date, value, pch = 19, col = "red")
+##'
+##' # If dt is less than 1, this is scaled, but the pattern of
+##' # change is the same
+##' y <- sircovid::sircovid_parameters_piecewise_constant(date, value, 0.5)
+##' t <- seq(0, date[[4]], by = 0.5)
+##' plot(t, y, type = "o", cex = 0.25)
+##' points(date, value, pch = 19, col = "red")
+sircovid_parameters_piecewise_constant <- function(date, value, dt) {
+  if (is.null(date)) {
+    if (length(value) != 1L) {
+      stop("As 'date' is NULL, expected single value")
+    }
+    return(value)
+  }
+  if (length(date) != length(value)) {
+    stop("'date' and 'value' must have the same length")
+  }
+  assert_sircovid_date(date)
+  assert_increasing(date)
+  if (!is.null(date)) {
+    if (date[1L] != 0) {
+      stop("As 'date' is not NULL, first date should be 0")
+    }
+  }
+
+  stats::approx(date, value, method = "constant",
+                xout = seq(0, date[[length(date)]], by = dt))$y
+
 }
 
 
@@ -133,9 +216,9 @@ sircovid_parameters_severity <- function(params) {
   if (is.null(params)) {
     params <- severity_default()
   } else if (!is.data.frame(params)) {
-    expected <- c("p_admit_conf", "p_sympt", "p_death_comm",
-                  "p_death_hosp_D", "p_death_ICU", "p_death_stepdown",
-                  "p_ICU_hosp", "p_seroconversion", "p_hosp_sympt")
+    expected <- c("p_star", "p_C", "p_G_D",
+                  "p_H_D", "p_ICU_D", "p_W_D",
+                  "p_ICU", "p_sero_pos", "p_H")
     verify_names(params, expected)
     return(params)
   }
@@ -149,25 +232,25 @@ sircovid_parameters_severity <- function(params) {
   rownames(data) <- NULL
 
   required <- c(
-    p_sympt = "p_sympt",
-    p_hosp_sympt = "p_hosp_sympt",
-    p_ICU_hosp = "p_ICU_hosp",
-    p_death_ICU = "p_death_ICU",
-    p_death_hosp_D = "p_death_hosp_D",
-    p_death_stepdown = "p_death_stepdown",
-    p_seroconversion = "p_seroconversion",
-    p_death_comm = "p_death_comm",
-    p_admit_conf = "p_admit_conf")
+    p_C = "p_C",
+    p_H = "p_H",
+    p_ICU = "p_ICU",
+    p_ICU_D = "p_ICU_D",
+    p_H_D = "p_H_D",
+    p_W_D = "p_W_D",
+    p_sero_pos = "p_sero_pos",
+    p_G_D = "p_G_D",
+    p_star = "p_star")
   data <- rename(data, required, names(required))
 
   list(
-    p_admit_conf = data[["p_admit_conf"]],
-    p_sympt = data[["p_sympt"]],
-    p_death_comm = data[["p_death_comm"]],
-    p_death_hosp_D = data[["p_death_hosp_D"]],
-    p_death_ICU = data[["p_death_ICU"]],
-    p_death_stepdown = data[["p_death_stepdown"]],
-    p_ICU_hosp = data[["p_ICU_hosp"]],
-    p_seroconversion = data[["p_seroconversion"]],
-    p_hosp_sympt = data[["p_hosp_sympt"]])
+    p_star = data[["p_star"]],
+    p_C = data[["p_C"]],
+    p_G_D = data[["p_G_D"]],
+    p_H_D = data[["p_H_D"]],
+    p_ICU_D = data[["p_ICU_D"]],
+    p_W_D = data[["p_W_D"]],
+    p_ICU = data[["p_ICU"]],
+    p_sero_pos = data[["p_sero_pos"]],
+    p_H = data[["p_H"]])
 }

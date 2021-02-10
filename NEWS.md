@@ -1,3 +1,40 @@
+# sircovid 0.9.17
+
+* IFR calculation added for carehomes model
+
+# sircovid 0.9.14
+
+* Allow a subset of Rt types to be calculated, perhaps in parallel
+
+# sircovid 0.9.12
+
+* Enables daily vaccine doses to be time-varying
+
+# sircovid 0.9.11
+
+* Fixed Rt calculation for multistrain so that Rt is NA when prob_strain is NA
+
+# sircovid 0.9.7
+
+* Allow specification of Rt calculation in `add_future_betas()`
+
+# sircovid 0.9.4
+
+* Add over 25 strain data stream to likelihood
+
+# sircovid 0.9.3
+
+* Corrected calculation of NGM for multistrain model
+
+# sircovid 0.9.2
+
+* Added different infectivity levels depending on vaccination stage
+* Corrected calculation of NGM with vaccination (but not for multistrain model)
+
+# sircovid 0.9.1
+
+* Rename compartments and parameters to match paper notation
+
 # sircovid 0.9.0
 
 * Multistrain model: ability to model 2 strains (and flexibility for more in the future) with strain-specific transmissibility. 2nd strain can be seeded over a number of pre-specified days at a pre-specified seeding level.

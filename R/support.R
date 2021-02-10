@@ -42,12 +42,12 @@ sircovid_population <- function(region) {
 
 
 ##' @importFrom stats dnbinom rexp
-ll_nbinom <- function(data, model, k, exp_noise) {
+ll_nbinom <- function(data, model, kappa, exp_noise) {
   if (is.na(data)) {
     return(numeric(length(model)))
   }
   mu <- model + rexp(length(model), rate = exp_noise)
-  dnbinom(data, k, mu = mu, log = TRUE)
+  dnbinom(data, kappa, mu = mu, log = TRUE)
 }
 
 
@@ -212,7 +212,7 @@ drop_trajectory_incidence <- function(obj) {
   }
 
   assert_is(obj, "mcstate_trajectories")
-  k <- grep("_inc", rownames(obj$state))
+  k <- grep("_inc$", rownames(obj$state))
   obj$state <- obj$state[-k, , ]
   obj
 }

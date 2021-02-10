@@ -38,9 +38,12 @@
 ##'   effect (in ISO-8601 "YYYY-MM-DD" format) and must be strictly
 ##'   increasing with at least two days separating changes.
 ##'
+##'@param rt_type A string giving the entry of `rt` to modify,
+##' defaults to `Rt_general`
+##'
 ##' @export
 ##' @author Richard Fitzjohn
-add_future_betas <- function(sample, rt, future) {
+add_future_betas <- function(sample, rt, future, rt_type = "Rt_general") {
   assert_is(sample, "mcstate_pmcmc")
   assert_is(rt, "Rt_trajectories")
   sample <- drop_trajectory_predicted(sample)
@@ -53,10 +56,7 @@ add_future_betas <- function(sample, rt, future) {
   i <- match(sample$trajectories$step, rt$step[, 1])
   rt_date <- rt$date[i, 1]
 
-  ## NOTE: it would be easy here to allow a different Rt calculation
-  ## to be used; we will always have 4 to chose from, though not all
-  ## are going to appropriate to translate into beta.
-  rt_value <- rt$Rt_general[i, , drop = FALSE]
+  rt_value <- rt[[rt_type]][i, , drop = FALSE]
 
   beta_scaling <- future_relative_beta(future, rt_date, rt_value, "fbs_")
   sample$pars <- cbind(sample$pars, beta_scaling$value)

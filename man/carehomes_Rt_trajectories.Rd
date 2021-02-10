@@ -8,23 +8,32 @@ carehomes_Rt_trajectories(
   step,
   S,
   pars,
+  prob_strain = NULL,
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL,
   type = NULL,
+<<<<<<< HEAD
   interpolate_every = NULL,
   interpolate_critical_dates = NULL,
   interpolate_min = NULL
+=======
+  loop = NULL
+>>>>>>> origin/master
 )
 }
 \arguments{
 \item{step}{A vector of steps}
 
-\item{S}{A 3d (19 x n trajectories x n steps) array of "S"
-compartment counts}
+\item{S}{A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
+array of "S" compartment counts}
 
 \item{pars}{Either a single \code{\link[=carehomes_parameters]{carehomes_parameters()}} object
 (shared parameters) or an unnamed list of
 \code{\link[=carehomes_parameters]{carehomes_parameters()}} objects, the same length as \code{ncol(S)}.}
+
+\item{prob_strain}{A 3d ((n groups x n strains) x n trajectories x n steps)
+array of "prob_strain" model outputs. Default is \code{NULL}, but it must be
+specified if there is more than one strain.}
 
 \item{initial_step_from_parameters}{If \code{TRUE}, then \code{step[[1]]} is
 replaced by the value of \code{initial_step} from the parameters.
@@ -39,6 +48,7 @@ other which may give more easily interpretable error messages.}
 compute. Can be any or all of \code{eff_Rt_all}, \code{eff_Rt_general},
 \code{Rt_all} and \code{Rt_general}}
 
+<<<<<<< HEAD
 \item{interpolate_every}{Spacing (in days) to use between interpolated
 points}
 
@@ -58,6 +68,13 @@ error of small regions. If Rt is small it won't matter that
 much. You do need to specify something though or interpolation
 will not happen, and do not use less than 3 as we use spline
 interpolation and that will not work with fewer than 3 points.}
+=======
+\item{loop}{Optionally a function to replace \code{lapply} with; you
+might pass in \code{parallel::mclapply} or a \code{furrr} function here to
+parallelise the loop. It must return a list (i.e., conform to
+the same interface as \code{lapply}). This interface is subject to
+change!}
+>>>>>>> origin/master
 }
 \value{
 As for \code{\link[=carehomes_Rt]{carehomes_Rt()}}, except that every element is a

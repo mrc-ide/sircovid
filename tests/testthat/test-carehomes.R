@@ -5,23 +5,49 @@ test_that("can run the carehomes model", {
   mod <- carehomes$new(p, 0, 5, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  info <- mod$info()
+  initial <- carehomes_initial(info, 10, p)
   mod$set_state(initial$state, initial$step)
 
-  mod$set_index(carehomes_index(mod$info())$run)
+  index <- c(carehomes_index(info)$run,
+             deaths_comm = info$index[["D_comm_tot"]],
+             deaths_hosp = info$index[["D_hosp_tot"]],
+             admitted = info$index[["cum_admit_conf"]],
+             new = info$index[["cum_new_conf"]],
+             sympt_cases = info$index[["cum_sympt_cases"]],
+             sympt_cases_over25 = info$index[["cum_sympt_cases_over25"]]
+  )
+
+  mod$set_index(index)
   res <- mod$run(end)
 
-  expected <- rbind(
-    icu = c(5, 3, 7, 3, 1),
-    general = c(30, 9, 36, 28, 5),
-    deaths_comm = c(23519, 23695, 23618, 23507, 23382),
-    deaths_hosp = c(282986, 283650, 282762, 282492, 283300),
-    admitted = c(132159, 131898, 132171, 132141, 132265),
-    new = c(420560, 420675, 419776, 420315, 420790),
-    sero_pos = c(3274594, 2727065, 3288196, 3234381, 2321346),
-    sympt_cases = c(12973798, 12978588, 12975921, 12975608, 12978116),
-    sympt_cases_over25 = c(10085634, 10089781, 10085294, 10083958, 10087035),
-    react_pos = c(673, 299, 691, 595, 171))
+  ## Regenerate with: dput_named_matrix(res)
+  expected <-
+    rbind(icu                                = c(3, 4, 5, 10, 3),
+          general                            = c(35, 34, 35, 41, 7),
+          deaths_comm_inc                    = c(0, 0, 0, 0, 0),
+          deaths_hosp_inc                    = c(2, 1, 3, 2, 0),
+          admitted_inc                       = c(0, 0, 2, 0, 0),
+          new_inc                            = c(1, 1, 1, 2, 0),
+          sero_pos                           = c(3043375, 3303884, 3660340,
+                                                 3555769, 2384929),
+          sympt_cases_inc                    = c(6, 3, 5, 8, 5),
+          sympt_cases_over25_inc             = c(5, 3, 4, 6, 5),
+          sympt_cases_non_variant_over25_inc = c(5, 3, 4, 6, 5),
+          react_pos                          = c(470, 641, 1063, 877,
+                                                 151),
+          deaths_comm                        = c(23349, 23597, 23357,
+                                                 23379, 23245),
+          deaths_hosp                        = c(283383, 283433, 282859,
+                                                 282832, 284127),
+          admitted                           = c(131981, 132378, 132257,
+                                                 131758, 132269),
+          new                                = c(420336, 421268, 419989,
+                                                 420711, 421502),
+          sympt_cases                        = c(12977835, 12976953,
+                                                 12983125, 12974885, 12981657),
+          sympt_cases_over25                 = c(10087409, 10086355,
+                                                 10092710, 10087814, 10091423))
   expect_equal(res, expected)
 })
 
@@ -50,9 +76,53 @@ test_that("can run the particle filter on the model", {
   data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
+  data$strain_non_variant <- NA
+  data$strain_tot <- NA
 
   pf <- carehomes_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")
 
   pf$run(pars)
+})
+
+
+test_that("incidence calculation is correct", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- carehomes_parameters(start_date, "england")
+  mod <- carehomes$new(pars, 0, 10, n_threads = 10)
+  info <- mod$info()
+  initial <- carehomes_initial(info, 10, pars)
+  mod$set_state(initial$state, initial$step)
+
+  ## We have interesting values by time 60, step 240
+  ## There are 7 incidence variables, so we want to pull 14 variables
+  index <- c(deaths_comm = info$index$D_comm_tot,
+             deaths_comm_inc = info$index$D_comm_inc,
+             deaths_hosp = info$index$D_hosp_tot,
+             deaths_hosp_inc = info$index$D_hosp_inc,
+             admitted = info$index$cum_admit_conf,
+             admitted_inc = info$index$admit_conf_inc,
+             new = info$index$cum_new_conf,
+             new_inc = info$index$new_conf_inc,
+             sympt_cases = info$index$cum_sympt_cases,
+             sympt_cases_inc = info$index$sympt_cases_inc,
+             sympt_cases_over25 = info$index$cum_sympt_cases_over25,
+             sympt_cases_over25_inc = info$index$sympt_cases_over25_inc,
+             sympt_cases_non_variant_over25 =
+               info$index$cum_sympt_cases_non_variant_over25,
+             sympt_cases_non_variant_over25_inc =
+               info$index$sympt_cases_non_variant_over25_inc)
+  expect_length(index, 14) # guard against name changes
+
+  steps <- seq(initial$step, length.out = 60 * 4 + 1)
+  y <- dust::dust_iterate(mod, steps, index)
+
+  i <- which(steps %% pars$steps_per_day == 0)
+  j <- seq(1, 14, by = 2)
+  y0 <- y[, , i[-length(i)]]
+  y1 <- y[, , i[-1]]
+  yd <- y1[j, , ] - y0[j, , ]
+  yi <- y1[-j, , ]
+  rownames(yd) <- rownames(yi) <- NULL
+  expect_equal(yd, yi)
 })

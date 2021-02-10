@@ -11,7 +11,8 @@ reference_data_mcmc <- function() {
            "new", "new_admitted", "npos_15_64", "ntot_15_64",
            "pillar2_pos", "pillar2_tot", "pillar2_cases",
            "pillar2_over25_pos", "pillar2_over25_tot",
-           "pillar2_over25_cases", "react_pos", "react_tot")
+           "pillar2_over25_cases", "react_pos", "react_tot",
+           "strain_non_variant", "strain_tot")
     for (i in v) {
       data[[i]] <- NA
     }
@@ -27,8 +28,7 @@ reference_data_mcmc <- function() {
       diag(2),
       function(p) pars)
 
-    control <- mcstate::pmcmc_control(10,
-                                      n_chains = 1,
+    control <- mcstate::pmcmc_control(10, n_chains = 1,
                                       save_trajectories = TRUE,
                                       progress = FALSE)
     mcstate::pmcmc(pars_mcmc, filter, control = control)
