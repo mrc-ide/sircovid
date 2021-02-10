@@ -53,8 +53,8 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
 // [[odin.dust::compare_data(deaths_comm = double)]]
 // [[odin.dust::compare_data(deaths = double)]]
 // [[odin.dust::compare_data(admitted = double)]]
-// [[odin.dust::compare_data(new_conf = double)]]
-// [[odin.dust::compare_data(new_admitted = double)]]
+// [[odin.dust::compare_data(diagnoses = double)]]
+// [[odin.dust::compare_data(all_admission = double)]]
 // [[odin.dust::compare_data(npos_15_64 = double)]]
 // [[odin.dust::compare_data(ntot_15_64 = double)]]
 // [[odin.dust::compare_data(pillar2_pos = double)]]
@@ -83,8 +83,8 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_deaths_comm = odin(D_comm_inc);
   const real_t model_deaths_hosp = odin(D_hosp_inc);
   const real_t model_admitted = odin(admit_conf_inc);
-  const real_t model_new = odin(new_conf_inc);
-  const real_t model_new_admitted = model_admitted + model_new;
+  const real_t model_diagnoses = odin(new_conf_inc);
+  const real_t model_all_admission = model_admitted + model_diagnoses;
   const real_t model_sero_pos = odin(sero_pos);
   const real_t model_sympt_cases = odin(sympt_cases_inc);
   const real_t model_sympt_cases_over25 = odin(sympt_cases_over25_inc);
@@ -173,12 +173,12 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_admitted =
     ll_nbinom(data.admitted, odin(phi_admitted) * model_admitted,
               odin(kappa_admitted), exp_noise, rng_state);
-  const real_t ll_new =
-    ll_nbinom(data.new_conf, odin(phi_new) * model_new,
-              odin(kappa_new), exp_noise, rng_state);
-  const real_t ll_new_admitted =
-    ll_nbinom(data.new_admitted, odin(phi_new_admitted) * model_new_admitted,
-              odin(kappa_new_admitted), exp_noise, rng_state);
+  const real_t ll_diagnoses =
+    ll_nbinom(data.diagnoses, odin(phi_diagnoses) * model_diagnoses,
+              odin(kappa_diagnoses), exp_noise, rng_state);
+  const real_t ll_all_admission =
+    ll_nbinom(data.all_admission, odin(phi_all_admission) * model_all_admission,
+              odin(kappa_all_admission), exp_noise, rng_state);
 
   const real_t ll_serology =
     ll_binom(data.npos_15_64, data.ntot_15_64, model_sero_prob_pos);
@@ -207,7 +207,7 @@ typename T::real_t compare(const typename T::real_t * state,
              model_strain_over25_prob_pos);
 
   return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm +
-    ll_deaths + ll_admitted + ll_new + ll_new_admitted + ll_serology +
+    ll_deaths + ll_admitted + ll_diagnoses + ll_all_admission + ll_serology +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
     ll_pillar2_over25_cases + ll_react + ll_strain_over25;
 }

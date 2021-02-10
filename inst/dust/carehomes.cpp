@@ -130,8 +130,8 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
 // [[odin.dust::compare_data(deaths_comm = double)]]
 // [[odin.dust::compare_data(deaths = double)]]
 // [[odin.dust::compare_data(admitted = double)]]
-// [[odin.dust::compare_data(new_conf = double)]]
-// [[odin.dust::compare_data(new_admitted = double)]]
+// [[odin.dust::compare_data(diagnoses = double)]]
+// [[odin.dust::compare_data(all_admission = double)]]
 // [[odin.dust::compare_data(npos_15_64 = double)]]
 // [[odin.dust::compare_data(ntot_15_64 = double)]]
 // [[odin.dust::compare_data(pillar2_pos = double)]]
@@ -160,8 +160,8 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_deaths_comm = state[14];
   const real_t model_deaths_hosp = state[15];
   const real_t model_admitted = state[1];
-  const real_t model_new = state[2];
-  const real_t model_new_admitted = model_admitted + model_new;
+  const real_t model_diagnoses = state[2];
+  const real_t model_all_admission = model_admitted + model_diagnoses;
   const real_t model_sero_pos = state[17];
   const real_t model_sympt_cases = state[21];
   const real_t model_sympt_cases_over25 = state[22];
@@ -250,12 +250,12 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_admitted =
     ll_nbinom(data.admitted, shared->phi_admitted * model_admitted,
               shared->kappa_admitted, exp_noise, rng_state);
-  const real_t ll_new =
-    ll_nbinom(data.new_conf, shared->phi_new * model_new,
-              shared->kappa_new, exp_noise, rng_state);
-  const real_t ll_new_admitted =
-    ll_nbinom(data.new_admitted, shared->phi_new_admitted * model_new_admitted,
-              shared->kappa_new_admitted, exp_noise, rng_state);
+  const real_t ll_diagnoses =
+    ll_nbinom(data.diagnoses, shared->phi_diagnoses * model_diagnoses,
+              shared->kappa_diagnoses, exp_noise, rng_state);
+  const real_t ll_all_admission =
+    ll_nbinom(data.all_admission, shared->phi_all_admission * model_all_admission,
+              shared->kappa_all_admission, exp_noise, rng_state);
 
   const real_t ll_serology =
     ll_binom(data.npos_15_64, data.ntot_15_64, model_sero_prob_pos);
@@ -284,7 +284,7 @@ typename T::real_t compare(const typename T::real_t * state,
              model_strain_over25_prob_pos);
 
   return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm +
-    ll_deaths + ll_admitted + ll_new + ll_new_admitted + ll_serology +
+    ll_deaths + ll_admitted + ll_diagnoses + ll_all_admission + ll_serology +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
     ll_pillar2_over25_cases + ll_react + ll_strain_over25;
 }
@@ -315,13 +315,13 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(k_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_death, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_death_comm, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_death_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_new, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_new_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -338,12 +338,12 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(p_star_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_death_comm, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_death_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_new, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_new_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(pillar2_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(pillar2_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -401,8 +401,8 @@ public:
     double deaths_comm;
     double deaths;
     double admitted;
-    double new_conf;
-    double new_admitted;
+    double diagnoses;
+    double all_admission;
     double npos_15_64;
     double ntot_15_64;
     double pillar2_pos;
@@ -1611,13 +1611,13 @@ public:
     int k_sero_pos;
     real_t kappa_ICU;
     real_t kappa_admitted;
+    real_t kappa_all_admission;
     real_t kappa_death;
     real_t kappa_death_comm;
     real_t kappa_death_hosp;
+    real_t kappa_diagnoses;
     real_t kappa_general;
     real_t kappa_hosp;
-    real_t kappa_new;
-    real_t kappa_new_admitted;
     real_t kappa_pillar2_cases;
     std::vector<real_t> m;
     real_t model_pcr_and_serology;
@@ -1696,12 +1696,12 @@ public:
     real_t p_test;
     real_t phi_ICU;
     real_t phi_admitted;
+    real_t phi_all_admission;
     real_t phi_death_comm;
     real_t phi_death_hosp;
+    real_t phi_diagnoses;
     real_t phi_general;
     real_t phi_hosp;
-    real_t phi_new;
-    real_t phi_new_admitted;
     real_t phi_pillar2_cases;
     real_t pillar2_sensitivity;
     real_t pillar2_specificity;
@@ -4509,25 +4509,25 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->k_sero_pos = NA_INTEGER;
   shared->kappa_ICU = NA_REAL;
   shared->kappa_admitted = NA_REAL;
+  shared->kappa_all_admission = NA_REAL;
   shared->kappa_death = NA_REAL;
   shared->kappa_death_comm = NA_REAL;
   shared->kappa_death_hosp = NA_REAL;
+  shared->kappa_diagnoses = NA_REAL;
   shared->kappa_general = NA_REAL;
   shared->kappa_hosp = NA_REAL;
-  shared->kappa_new = NA_REAL;
-  shared->kappa_new_admitted = NA_REAL;
   shared->kappa_pillar2_cases = NA_REAL;
   shared->n_age_groups = NA_INTEGER;
   shared->n_groups = NA_INTEGER;
   shared->p_NC = NA_REAL;
   shared->phi_ICU = NA_REAL;
   shared->phi_admitted = NA_REAL;
+  shared->phi_all_admission = NA_REAL;
   shared->phi_death_comm = NA_REAL;
   shared->phi_death_hosp = NA_REAL;
+  shared->phi_diagnoses = NA_REAL;
   shared->phi_general = NA_REAL;
   shared->phi_hosp = NA_REAL;
-  shared->phi_new = NA_REAL;
-  shared->phi_new_admitted = NA_REAL;
   shared->phi_pillar2_cases = NA_REAL;
   shared->pillar2_sensitivity = NA_REAL;
   shared->pillar2_specificity = NA_REAL;
@@ -4603,13 +4603,13 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->k_sero_pos = user_get_scalar<int>(user, "k_sero_pos", shared->k_sero_pos, NA_REAL, NA_REAL);
   shared->kappa_ICU = user_get_scalar<real_t>(user, "kappa_ICU", shared->kappa_ICU, NA_REAL, NA_REAL);
   shared->kappa_admitted = user_get_scalar<real_t>(user, "kappa_admitted", shared->kappa_admitted, NA_REAL, NA_REAL);
+  shared->kappa_all_admission = user_get_scalar<real_t>(user, "kappa_all_admission", shared->kappa_all_admission, NA_REAL, NA_REAL);
   shared->kappa_death = user_get_scalar<real_t>(user, "kappa_death", shared->kappa_death, NA_REAL, NA_REAL);
   shared->kappa_death_comm = user_get_scalar<real_t>(user, "kappa_death_comm", shared->kappa_death_comm, NA_REAL, NA_REAL);
   shared->kappa_death_hosp = user_get_scalar<real_t>(user, "kappa_death_hosp", shared->kappa_death_hosp, NA_REAL, NA_REAL);
+  shared->kappa_diagnoses = user_get_scalar<real_t>(user, "kappa_diagnoses", shared->kappa_diagnoses, NA_REAL, NA_REAL);
   shared->kappa_general = user_get_scalar<real_t>(user, "kappa_general", shared->kappa_general, NA_REAL, NA_REAL);
   shared->kappa_hosp = user_get_scalar<real_t>(user, "kappa_hosp", shared->kappa_hosp, NA_REAL, NA_REAL);
-  shared->kappa_new = user_get_scalar<real_t>(user, "kappa_new", shared->kappa_new, NA_REAL, NA_REAL);
-  shared->kappa_new_admitted = user_get_scalar<real_t>(user, "kappa_new_admitted", shared->kappa_new_admitted, NA_REAL, NA_REAL);
   shared->kappa_pillar2_cases = user_get_scalar<real_t>(user, "kappa_pillar2_cases", shared->kappa_pillar2_cases, NA_REAL, NA_REAL);
   shared->model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", shared->model_pcr_and_serology_user, NA_REAL, NA_REAL);
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_REAL, NA_REAL);
@@ -4639,12 +4639,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_p_star_step = shared->p_star_step.size();
   shared->phi_ICU = user_get_scalar<real_t>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
   shared->phi_admitted = user_get_scalar<real_t>(user, "phi_admitted", shared->phi_admitted, NA_REAL, NA_REAL);
+  shared->phi_all_admission = user_get_scalar<real_t>(user, "phi_all_admission", shared->phi_all_admission, NA_REAL, NA_REAL);
   shared->phi_death_comm = user_get_scalar<real_t>(user, "phi_death_comm", shared->phi_death_comm, NA_REAL, NA_REAL);
   shared->phi_death_hosp = user_get_scalar<real_t>(user, "phi_death_hosp", shared->phi_death_hosp, NA_REAL, NA_REAL);
+  shared->phi_diagnoses = user_get_scalar<real_t>(user, "phi_diagnoses", shared->phi_diagnoses, NA_REAL, NA_REAL);
   shared->phi_general = user_get_scalar<real_t>(user, "phi_general", shared->phi_general, NA_REAL, NA_REAL);
   shared->phi_hosp = user_get_scalar<real_t>(user, "phi_hosp", shared->phi_hosp, NA_REAL, NA_REAL);
-  shared->phi_new = user_get_scalar<real_t>(user, "phi_new", shared->phi_new, NA_REAL, NA_REAL);
-  shared->phi_new_admitted = user_get_scalar<real_t>(user, "phi_new_admitted", shared->phi_new_admitted, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases = user_get_scalar<real_t>(user, "phi_pillar2_cases", shared->phi_pillar2_cases, NA_REAL, NA_REAL);
   shared->pillar2_sensitivity = user_get_scalar<real_t>(user, "pillar2_sensitivity", shared->pillar2_sensitivity, NA_REAL, NA_REAL);
   shared->pillar2_specificity = user_get_scalar<real_t>(user, "pillar2_specificity", shared->pillar2_specificity, NA_REAL, NA_REAL);
@@ -6466,8 +6466,8 @@ carehomes::data_t dust_data<carehomes>(cpp11::list data) {
       cpp11::as_cpp<double>(data["deaths_comm"]),
       cpp11::as_cpp<double>(data["deaths"]),
       cpp11::as_cpp<double>(data["admitted"]),
-      cpp11::as_cpp<double>(data["new_conf"]),
-      cpp11::as_cpp<double>(data["new_admitted"]),
+      cpp11::as_cpp<double>(data["diagnoses"]),
+      cpp11::as_cpp<double>(data["all_admission"]),
       cpp11::as_cpp<double>(data["npos_15_64"]),
       cpp11::as_cpp<double>(data["ntot_15_64"]),
       cpp11::as_cpp<double>(data["pillar2_pos"]),

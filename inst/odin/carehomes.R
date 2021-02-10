@@ -1446,10 +1446,10 @@ kappa_death_comm <- user() # ignore.unused
 kappa_death <- user() # ignore.unused
 phi_admitted <- user() # ignore.unused
 kappa_admitted <- user() # ignore.unused
-phi_new <- user() # ignore.unused
-kappa_new <- user() # ignore.unused
-phi_new_admitted <- user() # ignore.unused
-kappa_new_admitted <- user() # ignore.unused
+phi_diagnoses <- user() # ignore.unused
+kappa_diagnoses <- user() # ignore.unused
+phi_all_admission <- user() # ignore.unused
+kappa_all_admission <- user() # ignore.unused
 rho_pillar2_tests <- user() # ignore.unused
 phi_pillar2_cases <- user() # ignore.unused
 kappa_pillar2_cases <- user() # ignore.unused
