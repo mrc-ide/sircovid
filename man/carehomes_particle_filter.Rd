@@ -10,9 +10,12 @@ carehomes_particle_filter(data, n_particles, n_threads = 1L, seed = NULL)
 \item{data}{Data suitable for use with with the
 \code{\link[mcstate:particle_filter]{mcstate::particle_filter}}, created by created by
 \code{\link[mcstate:particle_filter_data]{mcstate::particle_filter_data()}}. We require columns "icu",
-"general", "deaths_hosp", "deaths_comm", "deaths", "admitted",
-"new", "npos_15_64", "ntot_15_64", though thse may be entirely
-\code{NA} if no data are present.}
+"general", "hosp", "deaths_hosp", "deaths_comm", "deaths",
+"admitted", "diagnoses", "all_admission", "npos_15_64",
+"ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+"pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
+"react_pos", "react_tot", though thse may be entirely \code{NA}
+if no data are present.}
 
 \item{n_particles}{Number of particles to use}
 
