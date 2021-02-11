@@ -90,10 +90,8 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
 
     ## TODO: in the presence of strains there is some work to do to get
     ## mean duration correct.
-    ##
-    ## TODO: outer here is slow, with 88% of the total time
     ngm <- mt * vapply(seq_along(steps), function(t)
-      outer(mean_duration[, , t], S_weighted[, t]),
+      tcrossprod(mean_duration[, , t], S_weighted[, t]),
       matrix(0, 19, 19))
 
     if (drop_carehomes) {
@@ -103,6 +101,9 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
       ngm <- ngm[i, i, ]
     }
 
+    ## NOTE the signs on the exponents here is different! This gives
+    ## good performance and reasonable accuracy to the point where
+    ## this calculation appears to vanish from the profile!
     eigen1::eigen1(ngm, max_iterations = 1e5, tolerance = 1e-5)
   }
 
