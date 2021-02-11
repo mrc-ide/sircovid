@@ -3860,9 +3860,9 @@ public:
         internal.new_S[i - 1 + shared->dim_new_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1] + internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1 - 1) + i - 1] + odin_sum3(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, j - 1 - 1, j - 1, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12);
       }
     }
-    real_t new_sympt_cases = odin_sum1(internal.n_EI_P.data(), 0, shared->dim_n_EI_P);
-    real_t new_sympt_cases_non_variant_over25 = odin_sum3(internal.n_EI_P.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12);
-    real_t new_sympt_cases_over25 = odin_sum3(internal.n_EI_P.data(), 5, shared->n_groups, 0, shared->dim_n_EI_P_2, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12);
+    real_t new_sympt_cases = odin_sum1(internal.n_EI_P.data(), 0, shared->dim_n_EI_P) + odin_sum1(internal.n_EI_P_next_vacc_class.data(), 0, shared->dim_n_EI_P_next_vacc_class);
+    real_t new_sympt_cases_non_variant_over25 = odin_sum3(internal.n_EI_P.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + odin_sum3(internal.n_EI_P_next_vacc_class.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_P_next_vacc_class_3, shared->dim_n_EI_P_next_vacc_class_1, shared->dim_n_EI_P_next_vacc_class_12);
+    real_t new_sympt_cases_over25 = odin_sum3(internal.n_EI_P.data(), 5, shared->n_groups, 0, shared->dim_n_EI_P_2, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + odin_sum3(internal.n_EI_P_next_vacc_class.data(), 5, shared->n_groups, 0, shared->dim_n_EI_P_next_vacc_class_2, 0, shared->dim_n_EI_P_next_vacc_class_3, shared->dim_n_EI_P_next_vacc_class_1, shared->dim_n_EI_P_next_vacc_class_12);
     for (int i = 1; i <= shared->dim_ICU_W_R_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_ICU_W_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_ICU_W_R_conf_3; ++k) {
