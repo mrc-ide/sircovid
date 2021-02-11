@@ -31,9 +31,9 @@ test_that("can run the carehomes model", {
           diagnoses_inc                      = c(0, 0, 2, 0, 1),
           sero_pos                           = c(2937069, 2460857, 3566148,
                                                  3026485, 2144640),
-          sympt_cases_inc                    = c(1, 0, 2, 1, 0),
-          sympt_cases_over25_inc             = c(1, 0, 2, 1, 0),
-          sympt_cases_non_variant_over25_inc = c(1, 0, 2, 1, 0),
+          sympt_cases_inc                    = c(1, 0, 4, 2, 1),
+          sympt_cases_over25_inc             = c(1, 0, 2, 2, 1),
+          sympt_cases_non_variant_over25_inc = c(1, 0, 2, 2, 1),
           react_pos                          = c(150, 60, 339, 153, 39),
           deaths_comm                        = c(23730, 23687, 23470,
                                                  23261, 23272),
@@ -43,10 +43,10 @@ test_that("can run the carehomes model", {
                                                  135066, 134617),
           diagnoses                          = c(427430, 427927, 427977,
                                                  426994, 428244),
-          sympt_cases                        = c(13133808, 13135757,
-                                                 13125786, 13131798, 13134611),
-          sympt_cases_over25                 = c(10224267, 10225507,
-                                                 10218427, 10226610, 10225876))
+          sympt_cases                        = c(13133805, 13135757,
+                                                 13125780, 13131796, 13134609),
+          sympt_cases_over25                 = c(10224264, 10225507,
+                                                 10218421, 10226608, 10225874))
   expect_equal(res, expected)
 })
 
