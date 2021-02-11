@@ -833,3 +833,125 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })
+
+
+test_that("Individuals cannot infect in compartment with zero transmission", {
+  helper <- function(transmission_name, compartment_name, gamma_name) {
+    ## Use a large beta so that infections would be immediate
+    p <- carehomes_parameters(0, "england", beta_value = 1e9)
+    
+    ## set all transmission parameters to 1
+    p$I_A_transmission <- 1
+    p$I_P_transmission <- 1
+    p$I_C_1_transmission <- 1
+    p$I_C_2_transmission <- 1
+    p$hosp_transmission <- 1
+    p$ICU_transmission <- 1
+    p$G_D_transmission <- 1
+    
+    ## set transmission parameters being tested to 0
+    p[[transmission_name]] <- 0
+    
+    ## set relevant gamma to 0 so no progression
+    p[[gamma_name]] <- 0
+    
+    mod <- carehomes$new(p, 0, 1)
+    
+    info <- mod$info()
+    state <- carehomes_initial(info, 1, p)$state
+    
+    ## remove initial asymptomatic individuals
+    index_I_A <- info$index$I_A
+    state[index_I_A] <- 0
+    
+    ## put individuals in compartment being tested
+    index <- info$index[[compartment_name]]
+    state[index] <- 50
+    
+    mod$set_state(state)
+    mod$set_index(integer(0))
+    s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+    
+    ## Susceptible population is never drawn down:
+    expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
+  }
+  
+  helper("I_A_transmission", "I_A", "gamma_A")
+  helper("I_P_transmission", "I_P", "gamma_P")
+  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
+  helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
+  helper("G_D_transmission", "G_D", "gamma_G_D")
+  helper("hosp_transmission", "H_D_unconf", "gamma_H_D")
+  helper("hosp_transmission", "H_D_conf", "gamma_H_D")
+  helper("hosp_transmission", "H_R_unconf", "gamma_H_R")
+  helper("hosp_transmission", "H_R_conf", "gamma_H_R")
+  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre")
+  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre")
+  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R")
+  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R")
+})
+
+
+test_that("Individuals can infect in compartment with non-zero transmission", {
+  helper <- function(transmission_name, compartment_name, gamma_name) {
+    ## Use a large beta so that infections would be immediate
+    p <- carehomes_parameters(0, "england", beta_value = 1e9)
+    
+    ## set all transmission parameters to 0
+    p$I_A_transmission <- 0
+    p$I_P_transmission <- 0
+    p$I_C_1_transmission <- 0
+    p$I_C_2_transmission <- 0
+    p$hosp_transmission <- 0
+    p$ICU_transmission <- 0
+    p$G_D_transmission <- 0
+    
+    ## set transmission parameters being tested to 1
+    p[[transmission_name]] <- 1
+    
+    ## set relevant gamma to 0 so no progression
+    p[[gamma_name]] <- 0
+    
+    mod <- carehomes$new(p, 0, 1)
+    
+    info <- mod$info()
+    state <- carehomes_initial(info, 1, p)$state
+    
+    ## remove initial asymptomatic individuals
+    index_I_A <- info$index$I_A
+    state[index_I_A] <- 0
+    
+    ## put individuals in compartment being tested
+    index <- info$index[[compartment_name]]
+    state[index] <- 50
+    
+    mod$set_state(state)
+    mod$set_index(integer(0))
+    s <- dust::dust_iterate(mod, seq(0, 1), info$index$S)
+    
+    ## Susceptible population is immediately infected:
+    expect_true(all(s[, , 2] == 0))
+  }
+  
+  helper("I_A_transmission", "I_A", "gamma_A")
+  helper("I_P_transmission", "I_P", "gamma_P")
+  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
+  helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
+  helper("G_D_transmission", "G_D", "gamma_G_D")
+  helper("hosp_transmission", "H_D_unconf", "gamma_H_D")
+  helper("hosp_transmission", "H_D_conf", "gamma_H_D")
+  helper("hosp_transmission", "H_R_unconf", "gamma_H_R")
+  helper("hosp_transmission", "H_R_conf", "gamma_H_R")
+  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre")
+  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre")
+  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R")
+  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R")
+})
