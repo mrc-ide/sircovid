@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.19</span>
       </span>
     </div>
 
@@ -128,7 +128,16 @@
     <p>Compute "Rt" for a single simulated trajectory and parameter set.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_Rt</span><span class='op'>(</span><span class='va'>step</span>, <span class='va'>S</span>, <span class='va'>p</span>, prob_strain <span class='op'>=</span> <span class='cn'>NULL</span>, type <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_Rt</span><span class='op'>(</span>
+  <span class='va'>step</span>,
+  <span class='va'>S</span>,
+  <span class='va'>p</span>,
+  prob_strain <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
+  interpolate_every <span class='op'>=</span> <span class='cn'>NULL</span>,
+  interpolate_critical_dates <span class='op'>=</span> <span class='cn'>NULL</span>,
+  interpolate_min <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,6 +170,32 @@ be specified if there is more than one strain</p></td>
       <td><p>A character vector of possible Rt types to
 compute. Can be any or all of <code>eff_Rt_all</code>, <code>eff_Rt_general</code>,
 <code>Rt_all</code> and <code>Rt_general</code></p></td>
+    </tr>
+    <tr>
+      <th>interpolate_every</th>
+      <td><p>Spacing (in days) to use between interpolated
+points</p></td>
+    </tr>
+    <tr>
+      <th>interpolate_critical_dates</th>
+      <td><p>Optional vector of critical sircovid
+dates to use when interpolating. Interpolation will be done in
+blocks between the first time step of these dates, with each block
+starting on the first time step of the date given.
+So if you give a <code>interpolate_critical_dates</code> of <code><a href='https://rdrr.io/r/base/c.html'>c(20, 50)</a></code> then blocks <em>start</em> on first time step of days 20 and 50,
+i.e.: <code>[1, 20)</code>, <code>[20, 50)</code>, <code>[50, end]</code>.</p></td>
+    </tr>
+    <tr>
+      <th>interpolate_min</th>
+      <td><p>The minimum number of steps to include
+within a block. If there are fewer points than this then all
+points are used (i.e., no interpolation is done) or
+<code>interpolate_every</code> is reduced until at least this many points
+were used. This can be used to specify a lower bound on the
+error of small regions. If Rt is small it won't matter that
+much. You do need to specify something though or interpolation
+will not happen, and do not use less than 3 as we use spline
+interpolation and that will not work with fewer than 3 points.</p></td>
     </tr>
     </table>
 
