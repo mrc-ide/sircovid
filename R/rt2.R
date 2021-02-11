@@ -47,9 +47,6 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   }
 
   n_vacc_classes <- ncol(p$rel_susceptibility)
-  if (n_vacc_classes != 1) {
-    stop("vaccination not supported")
-  }
   if (length(p$strain_transmission) != 1) {
     stop("variants not supported")
   }
@@ -60,7 +57,10 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
 
   ages <- seq_len(p$n_age_groups)
-  ch <- seq(p$n_age_groups + 1L, p$n_groups) # 18:19
+  ch <- seq(p$n_age_groups + 1L, p$n_groups)
+  if (n_vacc_classes > 1L) {
+    ch <- c(outer(ch, (seq_len(n_vacc_classes) - 1L) * p$n_groups, "+"))
+  }
 
   ## We only need to do this section for each different beta value,
   ## and then it's still a pretty straightfoward scaling; we've
@@ -69,10 +69,20 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   ##   A B
   ##   C D
   ##
-  ## Everything but D is scaled by beta; in the case of an expanded
-  ## matrix this requires a bit more work
-  mt <- unname(p$m) %o% beta
-  mt[ch, ch, ] <- p$m[ch, ch]
+  ## Everything but D is scaled by beta
+  ##
+  ## When we have more than one vaccination group we replicate this to
+  ## get block structure
+  ##
+  ##   A B A B
+  ##   C D C D
+  ##   A B A B
+  ##   C D C D
+  ##
+  ## And scale all of A, B, C (not D) by beta
+  m <- block_expand(unname(p$m), n_vacc_classes)
+  mt <- m %o% beta
+  mt[ch, ch, ] <- m[ch, ch]
 
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
@@ -83,22 +93,26 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
     }
   }
 
+  len <- p$n_groups * n_vacc_classes
+
+  if (!all(prob_strain == 1)) {
+    stop("Handle prob_strain")
+  }
+
   f <- function(S, drop_carehomes) {
     ## We weight S by relative susceptibility (only has an effect with
-    ## variants); this is the only S used below.
-    S_weighted <- S * c(p$rel_susceptibility)
+    ## vaccination); this is the only S used below. Because of the
+    ## 'c()', these align nicely.
+    Sw <- S * c(p$rel_susceptibility)
 
     ## TODO: in the presence of strains there is some work to do to get
     ## mean duration correct.
     ngm <- mt * vapply(seq_along(steps), function(t)
-      tcrossprod(mean_duration[, , t], S_weighted[, t]),
-      matrix(0, 19, 19))
+      tcrossprod(c(mean_duration[, , t]), Sw[, t]),
+      matrix(0, len, len))
 
     if (drop_carehomes) {
-      ## Lots of ways of generating this
-      i <- rep(rep(c(TRUE, FALSE), c(length(ages), length(ch))),
-               length.out = nrow(ngm))
-      ngm <- ngm[i, i, ]
+      ngm <- ngm[-ch, -ch, ]
     }
 
     ## NOTE the signs on the exponents here is different! This gives

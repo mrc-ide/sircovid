@@ -166,3 +166,12 @@ interpolate_grid_critical <- function(x, f, every, critical, min) {
     unlist(yy, use.names = FALSE)
   }
 }
+
+
+block_expand <- function(m, n) {
+  if (n == 1L) {
+    return(m)
+  }
+  len <- nrow(m) * n
+  matrix(t(matrix(m, nrow(m), len)), len, len, byrow = TRUE)
+}
