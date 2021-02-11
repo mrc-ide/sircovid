@@ -32,6 +32,10 @@ dust_basic_reorder <- function(ptr, r_index) {
   invisible(.Call(`_sircovid_dust_basic_reorder`, ptr, r_index))
 }
 
+dust_basic_resample <- function(ptr, r_weights) {
+  .Call(`_sircovid_dust_basic_resample`, ptr, r_weights)
+}
+
 dust_basic_set_pars <- function(ptr, r_pars) {
   .Call(`_sircovid_dust_basic_set_pars`, ptr, r_pars)
 }
@@ -98,6 +102,10 @@ dust_carehomes_step <- function(ptr) {
 
 dust_carehomes_reorder <- function(ptr, r_index) {
   invisible(.Call(`_sircovid_dust_carehomes_reorder`, ptr, r_index))
+}
+
+dust_carehomes_resample <- function(ptr, r_weights) {
+  .Call(`_sircovid_dust_carehomes_resample`, ptr, r_weights)
 }
 
 dust_carehomes_set_pars <- function(ptr, r_pars) {
