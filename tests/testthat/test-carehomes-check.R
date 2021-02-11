@@ -149,6 +149,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
 
   expect_true(any(y$E > 0L))
   expect_true(all(y$I_P == 0))
+  expect_true(all(y$I_C_1 == 0))
   expect_true(all(y$I_C_2 == 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
@@ -187,6 +188,7 @@ test_that("No one is hospitalised, no-one dies if psi_H is 0", {
 
   expect_true(any(y$E > 0L))
   expect_true(any(y$I_P > 0))
+  expect_true(any(y$I_C_1 > 0))
   expect_true(any(y$I_C_2 > 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
@@ -225,7 +227,7 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
-  ## Move initial infectives to sympt
+  ## Move initial infectives to 2nd stage sympt
   y0 <- carehomes_initial(info, 1, p)$state
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
@@ -270,7 +272,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
-  ## Move initial infectives to sympt
+  ## Move initial infectives to 2nd stage sympt
   y0 <- carehomes_initial(info, 1, p)$state
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
@@ -316,6 +318,7 @@ test_that("No one dies in the community if psi_G_D is 0", {
     drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
   expect_true(any(y$I_P > 0))
+  expect_true(any(y$I_C_1 > 0))
   expect_true(any(y$I_C_2 > 0))
   expect_true(all(y$G_D == 0))
   expect_true(all(y$D_comm == 0))
@@ -545,6 +548,7 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_E", "k_E", "E", FALSE)
   helper("gamma_A", "k_A", "I_A", FALSE)
   helper("gamma_P", "k_P", "I_P", FALSE)
+  helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
   helper("gamma_C_2", "k_C_2", "I_C_2", FALSE)
   helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "k_H_R", "H_R", TRUE)
@@ -621,6 +625,7 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_E", "k_E", "E", FALSE)
   helper("gamma_A", "k_A", "I_A", FALSE)
   helper("gamma_P", "k_P", "I_P", FALSE)
+  helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
   helper("gamma_C_2", "k_C_2", "I_C_2", FALSE)
   helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "k_H_R", "H_R", TRUE)

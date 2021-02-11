@@ -236,6 +236,8 @@ carehomes <- R6::R6Class(
     hosp_transmission = list(has_default = FALSE, default_value = NULL,
         rank = 0, min = -Inf, max = Inf, integer = FALSE), k_A = list(
         has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), k_C_1 = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_C_2 = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_E = list(has_default = FALSE,
@@ -325,7 +327,9 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), gamma_A = list(
         has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf,
-        max = Inf, integer = FALSE), gamma_C_2 = list(has_default = TRUE,
+        max = Inf, integer = FALSE), gamma_C_1 = list(has_default = TRUE,
+        default_value = 0.1, rank = 0, min = -Inf, max = Inf,
+        integer = FALSE), gamma_C_2 = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_E = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,

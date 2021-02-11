@@ -4,10 +4,10 @@ test_that("carehomes progression parameters", {
   p <- carehomes_parameters_progression()
   expect_setequal(
     names(p),
-    c("k_E", "k_A", "k_P", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
+    c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
       "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
-      "gamma_A", "gamma_P", "gamma_C_2", "gamma_G_D", "gamma_H_D",
+      "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D", "gamma_H_D",
       "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
       "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
       "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
