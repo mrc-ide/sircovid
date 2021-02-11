@@ -83,7 +83,7 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   mt[ch, ch, ] <- m[ch, ch]
 
   ## TODO: do this rehape above?
-  n_time <- length(steps)
+  n_time <- length(step)
   prob_strain_mat <- array(prob_strain, c(p$n_groups, n_strains, n_time))
   if (any(is.na(prob_strain))) {
     stop("NA value in prob_strain - implement this")
