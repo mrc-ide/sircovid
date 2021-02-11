@@ -47,9 +47,7 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   }
 
   n_vacc_classes <- ncol(p$rel_susceptibility)
-  if (length(p$strain_transmission) != 1) {
-    stop("variants not supported")
-  }
+  n_strains <- length(p$strain_transmission)
 
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
@@ -84,6 +82,25 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   mt <- m %o% beta
   mt[ch, ch, ] <- m[ch, ch]
 
+  ## TODO: do this rehape above?
+  n_time <- length(steps)
+  prob_strain_mat <- array(prob_strain, c(p$n_groups, n_strains, n_time))
+  if (any(is.na(prob_strain))) {
+    stop("NA value in prob_strain - implement this")
+  }
+
+  ## TODO: if this is a timesink we can certainly do this with some
+  ## bookkeeping trick especially as this works out to be a weighted
+  ## sum.
+  if (n_strains > 1 && n_vacc_classes > 1) {
+    stop("check weighted strain multiplier here")
+  }
+  weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
+    prob_strain_mat[, , t] %*% p$strain_transmission,
+    numeric(nrow(prob_strain_mat)))
+
+  mean_duration <- mean_duration * c(weighted_strain_multiplier)
+
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
   if (n_vacc_classes > 1) {
@@ -95,19 +112,13 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
 
   len <- p$n_groups * n_vacc_classes
 
-  if (!all(prob_strain == 1)) {
-    stop("Handle prob_strain")
-  }
-
   f <- function(S, drop_carehomes) {
     ## We weight S by relative susceptibility (only has an effect with
     ## vaccination); this is the only S used below. Because of the
     ## 'c()', these align nicely.
     Sw <- S * c(p$rel_susceptibility)
 
-    ## TODO: in the presence of strains there is some work to do to get
-    ## mean duration correct.
-    ngm <- mt * vapply(seq_along(steps), function(t)
+    ngm <- mt * vapply(seq_len(n_time), function(t)
       tcrossprod(c(mean_duration[, , t]), Sw[, t]),
       matrix(0, len, len))
 
