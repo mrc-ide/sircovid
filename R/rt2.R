@@ -92,14 +92,13 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   ## TODO: if this is a timesink we can certainly do this with some
   ## bookkeeping trick especially as this works out to be a weighted
   ## sum.
-  if (n_strains > 1 && n_vacc_classes > 1) {
-    stop("check weighted strain multiplier here")
+  if (n_strains > 1L) {
+    weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
+      matrix(prob_strain_mat[, , t] %*% p$strain_transmission,
+             p$n_groups, n_vacc_classes),
+      matrix(0, p$n_groups, n_vacc_classes))
+    mean_duration <- mean_duration * weighted_strain_multiplier
   }
-  weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
-    prob_strain_mat[, , t] %*% p$strain_transmission,
-    numeric(nrow(prob_strain_mat)))
-
-  mean_duration <- mean_duration * c(weighted_strain_multiplier)
 
   N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
   N_tot_all_vacc_groups <- N_tot_non_vacc
@@ -129,7 +128,7 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
     ## NOTE the signs on the exponents here is different! This gives
     ## good performance and reasonable accuracy to the point where
     ## this calculation appears to vanish from the profile!
-    eigen1::eigen1(ngm, max_iterations = 1e5, tolerance = 1e-5)
+    eigen1::eigen1(ngm, max_iterations = 1e5, tolerance = 1e-4)
   }
 
   opts <- list(eff_Rt_all = list(pop = S, general = FALSE),
