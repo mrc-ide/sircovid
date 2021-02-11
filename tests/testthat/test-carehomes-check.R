@@ -839,7 +839,7 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
     p <- carehomes_parameters(0, "england", beta_value = 1e9)
-    
+
     ## set all transmission parameters to 1
     p$I_A_transmission <- 1
     p$I_P_transmission <- 1
@@ -848,34 +848,37 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     p$hosp_transmission <- 1
     p$ICU_transmission <- 1
     p$G_D_transmission <- 1
-    
+
     ## set transmission parameters being tested to 0
     p[[transmission_name]] <- 0
-    
+
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
-    
+
     mod <- carehomes$new(p, 0, 1)
-    
+
     info <- mod$info()
     state <- carehomes_initial(info, 1, p)$state
-    
+
     ## remove initial asymptomatic individuals
     index_I_A <- info$index$I_A
     state[index_I_A] <- 0
-    
+    index_I_weighted <- info$index$I_weighted
+    state[index_I_weighted] <- 0
+
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
     state[index] <- 50
-    
+
     mod$set_state(state)
     mod$set_index(integer(0))
-    s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
-    
+    y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+
     ## Susceptible population is never drawn down:
-    expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
+    expect_equal(y$S, array(y$S[, , 1], c(nrow(y$S), 1, 401)))
+    expect_true(all(y$I_weighted == 0))
   }
-  
+
   helper("I_A_transmission", "I_A", "gamma_A")
   helper("I_P_transmission", "I_P", "gamma_P")
   helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
@@ -900,7 +903,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
     p <- carehomes_parameters(0, "england", beta_value = 1e9)
-    
+
     ## set all transmission parameters to 0
     p$I_A_transmission <- 0
     p$I_P_transmission <- 0
@@ -909,34 +912,39 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     p$hosp_transmission <- 0
     p$ICU_transmission <- 0
     p$G_D_transmission <- 0
-    
-    ## set transmission parameters being tested to 1
-    p[[transmission_name]] <- 1
-    
+
+    ## set transmission parameter being tested to a non-zero value
+    p[[transmission_name]] <- 0.9
+
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
-    
+
     mod <- carehomes$new(p, 0, 1)
-    
+
     info <- mod$info()
     state <- carehomes_initial(info, 1, p)$state
-    
+
     ## remove initial asymptomatic individuals
     index_I_A <- info$index$I_A
     state[index_I_A] <- 0
-    
+
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
     state[index] <- 50
-    
+    index_I_weighted <- info$index$I_weighted
+    state[index_I_weighted] <- p[[transmission_name]] * 50 *
+      info$dim[[compartment_name]][[3]]
+
     mod$set_state(state)
     mod$set_index(integer(0))
-    s <- dust::dust_iterate(mod, seq(0, 1), info$index$S)
-    
+    y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:1)))
+
     ## Susceptible population is immediately infected:
-    expect_true(all(s[, , 2] == 0))
+    expect_true(all(y$S[, , 2] == 0))
+    ## I_weighted calculated as expected
+    expect_true(all(y$I_weighted[, , 2] == y$I_weighted[, , 1]))
   }
-  
+
   helper("I_A_transmission", "I_A", "gamma_A")
   helper("I_P_transmission", "I_P", "gamma_P")
   helper("I_C_1_transmission", "I_C_1", "gamma_C_1")

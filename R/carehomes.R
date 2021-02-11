@@ -793,7 +793,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
-  state[index_I_weighted] <- initial_I
+  state[index_I_weighted] <- pars$I_A_transmission * initial_I
   state[index_T_sero_pre] <- initial_I
   state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
