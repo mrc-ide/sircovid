@@ -801,22 +801,24 @@ new_T_PCR_neg[, , 2:n_vacc_classes] <- new_T_PCR_neg[i, j, k] +
 
 I_with_diff_trans[, , ] <-
   rel_infectivity[i, k] * strain_transmission[j] * (
-      sum(I_A[i, j, , k]) + sum(I_P[i, j, , k]) +
-        sum(I_C_1[i, j, , k]) + sum(I_C_2[i, j, , k]) +
-    hosp_transmission * (
-      sum(ICU_pre_unconf[i, j, , k]) +
-      sum(ICU_pre_conf[i, j, , k]) +
-      sum(H_R_unconf[i, j, , k]) +
-      sum(H_R_conf[i, j, , k]) +
-      sum(H_D_unconf[i, j, , k]) +
-      sum(H_D_conf[i, j, , k])) +
-    ICU_transmission * (
-      sum(ICU_W_R_unconf[i, j, , k]) +
-      sum(ICU_W_R_conf[i, j, , k]) +
-      sum(ICU_W_D_unconf[i, j, , k]) +
-      sum(ICU_W_D_conf[i, j, , k]) +
-      sum(ICU_D_unconf[i, j, , k]) +
-      sum(ICU_D_conf[i, j, , k])) +
+    I_A_transmission * sum(I_A[i, j, , k]) +
+      I_P_transmission * sum(I_P[i, j, , k]) +
+      I_C_1_transmission * sum(I_C_1[i, j, , k]) +
+      I_C_2_transmission * sum(I_C_2[i, j, , k]) +
+      hosp_transmission * (
+        sum(ICU_pre_unconf[i, j, , k]) +
+        sum(ICU_pre_conf[i, j, , k]) +
+        sum(H_R_unconf[i, j, , k]) +
+        sum(H_R_conf[i, j, , k]) +
+        sum(H_D_unconf[i, j, , k]) +
+        sum(H_D_conf[i, j, , k])) +
+      ICU_transmission * (
+        sum(ICU_W_R_unconf[i, j, , k]) +
+        sum(ICU_W_R_conf[i, j, , k]) +
+        sum(ICU_W_D_unconf[i, j, , k]) +
+        sum(ICU_W_D_conf[i, j, , k]) +
+        sum(ICU_D_unconf[i, j, , k]) +
+        sum(ICU_D_conf[i, j, , k])) +
       G_D_transmission * sum(G_D[i, j, , k]))
 
 ## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
@@ -1004,6 +1006,10 @@ initial(beta_out) <- beta_step[1]
 update(beta_out) <- beta
 
 m[, ] <- user()
+I_A_transmission <- user()
+I_P_transmission <- user()
+I_C_1_transmission <- user()
+I_C_2_transmission <- user()
 hosp_transmission <- user()
 ICU_transmission <- user()
 G_D_transmission <- user()
@@ -1440,8 +1446,10 @@ dim(I_weighted) <- c(n_groups, n_vacc_classes)
 dim(I_weighted_strain) <- c(n_groups, n_strains, n_vacc_classes)
 I_weighted_strain[, , ] <-
   strain_transmission[j] * (
-    sum(new_I_A[i, j, , k]) + sum(new_I_P[i, j, , k]) +
-      sum(new_I_C_1[i, j, , k]) + sum(new_I_C_2[i, j, , k]) +
+    I_A_transmission * sum(new_I_A[i, j, , k]) +
+      I_P_transmission * sum(new_I_P[i, j, , k]) +
+      I_C_1_transmission * sum(new_I_C_1[i, j, , k]) +
+      I_C_2_transmission * sum(new_I_C_2[i, j, , k]) +
       hosp_transmission * (
         sum(new_ICU_pre_unconf[i, j, , k]) +
           sum(new_ICU_pre_conf[i, j, , k]) +
