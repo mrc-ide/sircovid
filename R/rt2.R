@@ -100,47 +100,52 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
     mean_duration <- mean_duration * weighted_strain_multiplier
   }
 
-  N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
-  N_tot_all_vacc_groups <- N_tot_non_vacc
-  if (n_vacc_classes > 1) {
-    for (i in 2:n_vacc_classes) {
-      N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
-                                     0 * N_tot_non_vacc)
-    }
-  }
-
-  len <- p$n_groups * n_vacc_classes
-
-  f <- function(S, drop_carehomes) {
-    ## We weight S by relative susceptibility (only has an effect with
-    ## vaccination); this is the only S used below. Because of the
-    ## 'c()', these align nicely.
+  compute_ngm <- function(S) {
+    len <- p$n_groups * n_vacc_classes
     Sw <- S * c(p$rel_susceptibility)
-
-    ngm <- mt * vapply(seq_len(n_time), function(t)
+    mt * vapply(seq_len(n_time), function(t)
       tcrossprod(c(mean_duration[, , t]), Sw[, t]),
       matrix(0, len, len))
-
-    if (drop_carehomes) {
-      ngm <- ngm[-ch, -ch, ]
-    }
-
-    ## NOTE the signs on the exponents here is different! This gives
-    ## good performance and reasonable accuracy to the point where
-    ## this calculation appears to vanish from the profile!
-    eigen1::eigen1(ngm, max_iterations = 1e5, tolerance = 1e-4)
   }
 
-  opts <- list(eff_Rt_all = list(pop = S, general = FALSE),
-               eff_Rt_general = list(pop = S, general = TRUE),
-               Rt_all = list(pop = N_tot_all_vacc_groups, general = FALSE),
-               Rt_general = list(pop = N_tot_all_vacc_groups, general = TRUE))
+  ## NOTE the signs on the exponents here is different! This gives
+  ## good performance and reasonable accuracy to the point where
+  ## this calculation is small in the profile.
+  eigen <- function(m) {
+    eigen1::eigen1(m, max_iterations = 1e5, tolerance = 1e-4)
+  }
 
   ret <- list(step = step,
               date = step * p$dt,
               beta = beta)
 
-  ret[type] <- lapply(opts[type], function(x) f(x$pop, x$general))
+  if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
+    ngm <- compute_ngm(S)
+    if ("eff_Rt_all" %in% type) {
+      ret$eff_Rt_all <- eigen(ngm)
+    }
+    if ("eff_Rt_general" %in% type) {
+      ret$eff_Rt_general <- eigen(ngm[-ch, -ch, ])
+    }
+  }
+
+  if (any(c("Rt_all", "Rt_general") %in% type)) {
+    N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
+    N_tot_all_vacc_groups <- N_tot_non_vacc
+    if (n_vacc_classes > 1) {
+      for (i in 2:n_vacc_classes) {
+        N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
+                                       0 * N_tot_non_vacc)
+      }
+    }
+    ngm <- compute_ngm(N_tot_all_vacc_groups)
+    if ("Rt_all" %in% type) {
+      ret$Rt_all <- eigen(ngm)
+    }
+    if ("Rt_general" %in% type) {
+      ret$Rt_general <- eigen(ngm[-ch, -ch, ])
+    }
+  }
 
   ret
 }
