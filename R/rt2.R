@@ -52,7 +52,7 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
-  mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
+  mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity2(step, p)
 
   ages <- seq_len(p$n_age_groups)
   ch <- seq(p$n_age_groups + 1L, p$n_groups)
@@ -148,4 +148,135 @@ carehomes_Rt2 <- function(step, S, p, prob_strain = NULL,
   }
 
   ret
+}
+
+
+carehomes_Rt_mean_duration_weighted_by_infectivity2 <- function(step, pars) {
+  dt <- pars$dt
+
+  matricise <- function(vect, n_col) {
+    matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
+  }
+
+  n_vacc_classes <- ncol(pars$rel_susceptibility)
+
+  n_groups <- pars$n_groups
+
+  n_time_steps <-
+    length(sircovid_parameters_beta_expand(step, pars$p_H_step))
+
+  ## TODO: This is not correct for the initial transition from
+  ## vaccination
+  vacc_prog_before_infectious <- function(vacc_prog_rate) {
+    ## Q[i, j] gives probability of progression from vaccine stage i to
+    ## vaccine stage j in one time step
+    Q <- diag(exp(-vacc_prog_rate * dt))
+    for (i in seq_len(n_vacc_classes - 1)) {
+      Q[i, i + 1] <- 1 - Q[i, i]
+    }
+    Q[n_vacc_classes, 1] <- 1 - Q[n_vacc_classes, n_vacc_classes]
+
+    ## probability of E progression in one time step
+    p_EE <- 1 - exp(-pars$gamma_E * dt)
+
+    ## A[i, j] gives the probability that an individual who begins an E stage in
+    ## vaccine stage i, exits that E stage in vaccine stage j. Note that A =
+    ## (sum_{k = 0}^Inf ((1 - p_EE) * Q) ^ k) * p_EE * Q. Also note that for a
+    ## square matrix B, sum_{k = 0}^Inf B^k = (I - B)^-1.
+    A <- (solve(diag(n_vacc_classes) - (1 - p_EE) * Q) %*% (p_EE * Q))
+
+    ## Note we need to account for there being k_E stages in E, and also that
+    ## individuals can have a vaccine progression in the same step that they get
+    ## infected (hence Q appearing below).
+    out <- Q %*% matrix_pow(A, pars$k_E)
+    out
+  }
+
+  ## compute probabilities of different pathways
+
+  p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
+  p_C <- outer(p_C, rep(1, n_time_steps))
+
+  p_H <- matricise(pars$psi_H, n_vacc_classes) * pars$rel_p_hosp_if_sympt
+  p_H <- outer(p_H, sircovid_parameters_beta_expand(step, pars$p_H_step))
+
+  p_ICU <- outer(matricise(pars$psi_ICU, n_vacc_classes),
+                 sircovid_parameters_beta_expand(step, pars$p_ICU_step))
+  p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
+                   sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
+  p_H_D <- outer(matricise(pars$psi_H_D, n_vacc_classes),
+                sircovid_parameters_beta_expand(step, pars$p_H_D_step))
+  p_W_D <- outer(matricise(pars$psi_W_D, n_vacc_classes),
+                 sircovid_parameters_beta_expand(step, pars$p_W_D_step))
+  p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
+                 sircovid_parameters_beta_expand(step, pars$p_G_D_step))
+
+  prob_H_R <- p_C * p_H * (1 - p_G_D) *
+    (1 - p_ICU) * (1 - p_H_D)
+  prob_H_D <- p_C * p_H * (1 - p_G_D) *
+    (1 - p_ICU) * p_H_D
+  prob_ICU_W_R <- p_C * p_H * (1 - p_G_D) *
+    p_ICU * (1 - p_ICU_D) * (1 - p_W_D)
+  prob_ICU_W_D <- p_C * p_H * (1 - p_G_D) *
+    p_ICU * (1 - p_ICU_D) * p_W_D
+  prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
+    p_ICU * p_ICU_D
+
+  ## Compute mean duration (in time steps) of each stage of infection,
+  ## weighed by probability of going through that stage
+  ## and by relative infectivity of that stage
+
+  ## Note the mean duration (in time steps) of a compartment for
+  ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
+
+  mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A))
+
+  mean_duration_I_C <- p_C * pars$k_C / (1 - exp(- dt * pars$gamma_C))
+
+  mean_duration_G_D <- pars$G_D_transmission * p_C * p_H *
+    p_G_D * pars$k_G_D / (1 - exp(- dt * pars$gamma_G_D))
+
+  mean_duration_hosp <- pars$hosp_transmission * (
+    prob_H_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
+      prob_H_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
+      (prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D) * pars$k_ICU_pre /
+      (1 - exp(- dt * pars$gamma_ICU_pre)))
+
+  mean_duration_icu <- pars$ICU_transmission * (
+    prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
+      prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
+      prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
+
+  mean_duration <- mean_duration_I_A + mean_duration_I_C + mean_duration_G_D +
+    mean_duration_hosp + mean_duration_icu
+
+  ## Account for different infectivity levels depending on vaccination stage
+
+  mean_duration <- mean_duration *
+    outer(pars$rel_infectivity, rep(1, n_time_steps))
+
+  ## Multiply by dt to convert from time steps to days
+  mean_duration <- dt * mean_duration
+
+  ## mean_duration[i, j, k] represents mean duration at step k of age
+  ## group i leaving the E compartment in vaccine stage j, we need to
+  ## output for leaving the S compartment in vaccine stage j, so we
+  ## calculate this here. If vaccine_progression_rate_base does not
+  ## vary between age groups we lump them together here which saves a
+  ## matrix inversion.
+  if (n_vacc_classes > 1) {
+    pr <- matrix_index(pars$vaccine_progression_rate_base)
+    V <- vapply(pr$unique, function(i)
+      vacc_prog_before_infectious(pr$value[i, ]),
+      array(0, c(n_vacc_classes, n_vacc_classes)))[, , pr$index]
+
+    out <- array(0, dim(mean_duration))
+    for (i in seq_len(pars$n_groups)) {
+      out[i, , ] <- V[, , i] %*% mean_duration[i, , ]
+    }
+  } else {
+    out <- mean_duration
+  }
+
+  out
 }
