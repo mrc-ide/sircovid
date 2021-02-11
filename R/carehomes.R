@@ -937,6 +937,7 @@ carehomes_parameters_progression <- function() {
   ## parameters of that distribution.
   list(k_E = 2,
        k_A = 1,
+       k_P = 1,
        k_C = 1,
        k_G_D = 2,
        k_H_D = 2,
@@ -953,7 +954,8 @@ carehomes_parameters_progression <- function() {
 
        gamma_E = 1 / (4.59 / 2),
        gamma_A = 1 / 2.09,
-       gamma_C = 1 / 4,
+       gamma_P = 1 / 1,
+       gamma_C = 1 / 3,
        gamma_G_D = 2 / 5,
        gamma_H_D = 2 / 5,
        gamma_H_R = 2 / 10,

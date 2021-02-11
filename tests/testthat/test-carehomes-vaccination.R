@@ -62,10 +62,11 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  ## Noone moves into I_C ever
+  ## Noone moves into I_P or I_C ever
   ## other than in the 4th age group where some infections are seeded
   ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in I_C upon reinfection
+  expect_true(all(y$I_P[-4, , , , ] == 0))
   expect_true(all(y$I_C[-4, , , , ] == 0))
 
 })
