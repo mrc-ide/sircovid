@@ -62,12 +62,12 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   y <- mod$transform_variables(drop(
     dust::dust_iterate(mod, seq(0, 400, by = 4))))
 
-  ## Noone moves into I_P or I_C ever
+  ## Noone moves into I_P or I_C_2 ever
   ## other than in the 4th age group where some infections are seeded
   ## in the unvaccinated group and because of waning immunity they may
-  ## eventually end up in I_C upon reinfection
+  ## eventually end up in I_P and I_C_2 upon reinfection
   expect_true(all(y$I_P[-4, , , , ] == 0))
-  expect_true(all(y$I_C[-4, , , , ] == 0))
+  expect_true(all(y$I_C_2[-4, , , , ] == 0))
 
 })
 
@@ -819,8 +819,10 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   ## asymptomatic infections
   p$k_A <- 1
   p$gamma_A <- 1 / 2.09
-  p$k_C
-  p$gamma_C <- 1 / 4
+  p$k_P <- 1
+  p$gamma_P <- 1
+  p$k_C_2 <- 1
+  p$gamma_C_2 <- 1 / 3
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)

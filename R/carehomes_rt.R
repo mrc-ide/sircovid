@@ -337,7 +337,9 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A))
 
-  mean_duration_I_C <- p_C * pars$k_C / (1 - exp(- dt * pars$gamma_C))
+  mean_duration_I_P <- p_C * pars$k_P / (1 - exp(- dt * pars$gamma_P))
+
+  mean_duration_I_C_2 <- p_C * pars$k_C_2 / (1 - exp(- dt * pars$gamma_C_2))
 
   mean_duration_G_D <- pars$G_D_transmission * p_C * p_H *
     p_G_D * pars$k_G_D / (1 - exp(- dt * pars$gamma_G_D))
@@ -353,8 +355,8 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
       prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
       prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
 
-  mean_duration <- mean_duration_I_A + mean_duration_I_C + mean_duration_G_D +
-    mean_duration_hosp + mean_duration_icu
+  mean_duration <- mean_duration_I_A + mean_duration_I_P + mean_duration_I_C_2 +
+    mean_duration_G_D + mean_duration_hosp + mean_duration_icu
 
   ## Account for different infectivity levels depending on vaccination stage
 
