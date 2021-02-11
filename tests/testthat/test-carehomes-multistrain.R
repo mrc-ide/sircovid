@@ -685,3 +685,41 @@ test_that("If prob_strain is NA then Rt is NA ", {
   expect_true(all(is.na(rt_all$eff_Rt_general[-1L, ])))
 
 })
+
+
+test_that("calculate Rt with both second variant and vaccination", {
+  ## Seed with 10 cases on same day as other variant
+  ##
+  ## run model with unvaccinated & vaccinated (with susceptibility halved)
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  set.seed(1)
+  reduced_susceptibility <- 0.2 # can put anything <1 here
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 0.1),
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10,
+                            rel_susceptibility = c(1, reduced_susceptibility),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            waning_rate = 1 / 20)
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index_S <- mod$info()$index$S
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- dust::dust_iterate(mod, steps)
+  S <- y[index_S, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
+})
