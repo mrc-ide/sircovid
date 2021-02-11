@@ -42,6 +42,12 @@ update(cum_n_I_A_vaccinated[, ]) <- cum_n_I_A_vaccinated[i, j] +
   sum(n_I_A_next_vacc_class[i, , , j]) +
   sum(n_II_A_next_vacc_class[i, , , j])
 dim(cum_n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
+## vaccinated I_P
+initial(cum_n_I_P_vaccinated[, ]) <- 0
+update(cum_n_I_P_vaccinated[, ]) <- cum_n_I_P_vaccinated[i, j] +
+  sum(n_I_P_next_vacc_class[i, , , j]) +
+  sum(n_II_P_next_vacc_class[i, , , j])
+dim(cum_n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated R
 initial(cum_n_R_vaccinated[, ]) <- 0
 update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
@@ -54,6 +60,7 @@ update(cum_n_vaccinated[, ]) <-
   cum_n_S_vaccinated[i, j] +
   cum_n_E_vaccinated[i, j] +
   cum_n_I_A_vaccinated[i, j] +
+  cum_n_I_P_vaccinated[i, j] +
   cum_n_R_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
@@ -124,10 +131,9 @@ update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_2_to_hosp[i, , ])
 ## vaccination
 p_S_next_vacc_class[, ] <- 1 - exp(-vaccine_progression_rate[i, j] * dt)
 p_E_next_vacc_class[, , , ] <- 1 - exp(-vaccine_progression_rate[i, l] * dt)
-p_I_A_next_vacc_class[, , , ] <-
-  1 - exp(-vaccine_progression_rate[i, l] * dt)
-p_R_next_vacc_class[, , ] <-
-  1 - exp(-vaccine_progression_rate[i, k] * dt)
+p_I_A_next_vacc_class[, , , ] <- 1 - exp(-vaccine_progression_rate[i, l] * dt)
+p_I_P_next_vacc_class[, , , ] <- 1 - exp(-vaccine_progression_rate[i, l] * dt)
+p_R_next_vacc_class[, , ] <- 1 - exp(-vaccine_progression_rate[i, k] * dt)
 ## clinical progression
 p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
@@ -271,6 +277,26 @@ n_I_A_next_vacc_class[, , , ] <- rbinom(
   p_I_A_next_vacc_class[i, j, k, l])
 
 
+#### flow out of I_P ####
+
+n_I_P_progress[, , , ] <- rbinom(I_P[i, j, k, l], p_I_P_progress)
+## of those some can also be vaccinated or progress through vaccination classes
+## --> number transitioning from I_P[j, k] to I_P[j+1, k+1]
+## (k vaccination class)
+n_II_P_next_vacc_class[, , , ] <-
+  rbinom(n_I_P_progress[i, j, k, l],
+         p_I_P_next_vacc_class[i, j, k, l])
+## resulting transitions from I_P[j, l] to I_P[j + 1, l]
+## (l vaccination class)
+n_II_P[, , , ] <- n_I_P_progress[i, j, k, l] -
+  n_II_P_next_vacc_class[i, j, k, l]
+
+## vaccine progression
+n_I_P_next_vacc_class[, , , ] <- rbinom(
+  I_P[i, j, k, l] - n_I_P_progress[i, j, k, l],
+  p_I_P_next_vacc_class[i, j, k, l])
+
+
 #### flow out of R ####
 
 n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_RS[i])
@@ -301,7 +327,6 @@ n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   
 #### other transitions ####
 
-n_I_P_progress[, , , ] <- rbinom(I_P[i, j, k, l], p_I_P_progress)
 n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress)
 n_I_C_2_progress[, , , ] <- rbinom(I_C_2[i, j, k, l], p_I_C_2_progress)
 n_G_D_progress[, , , ] <- rbinom(G_D[i, j, k, l], p_G_D_progress)
@@ -409,18 +434,31 @@ aux_I_A[, , 2:k_A, 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
 new_I_A[, , , ] <- I_A[i, j, k, l] + aux_I_A[i, j, k, l]
 
 ## Work out the I_P->I_P transitions
-aux_I_P[, , 1, 1] <- n_EI_P[i, j, 1] +
+aux_I_P[, , 1, ] <- n_EI_P[i, j, l]
+aux_I_P[, , 2:k_P, ] <- n_II_P[i, j, k - 1, l]
+aux_I_P[, , , ] <- aux_I_P[i, j, k, l] - n_II_P[i, j, k, l] -
+  n_II_P_next_vacc_class[i, j, k, l] -
+  n_I_P_next_vacc_class[i, j, k, l]
+aux_I_P[, , , 1] <- aux_I_P[i, j, k, l]  +
+  n_I_P_next_vacc_class[i, j, 1, n_vacc_classes]
+aux_I_P[, , , 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
+  n_I_P_next_vacc_class[i, j, k, l - 1]
+aux_I_P[, , 1, 1] <- aux_I_P[i, j, k, l] +
   n_EI_P_next_vacc_class[i, j, n_vacc_classes]
-aux_I_P[, , 1, 2:n_vacc_classes] <-
-  n_EI_P[i, j, l] + n_EI_P_next_vacc_class[i, j, l - 1]
-
-aux_I_P[, , 2:k_P, ] <- n_I_P_progress[i, j, k - 1, l]
-aux_I_P[, , 1:k_P, ] <-
-  aux_I_P[i, j, k, l] - n_I_P_progress[i, j, k, l]
+aux_I_P[, , 1, 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
+  n_EI_P_next_vacc_class[i, j, l - 1]
+aux_I_P[, , 2:k_P, 1] <- aux_I_P[i, j, k, l] +
+  n_II_P_next_vacc_class[i, j, k - 1, n_vacc_classes]
+aux_I_P[, , 2:k_P, 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
+  n_II_P_next_vacc_class[i, j, k - 1, l - 1]
 new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
 
 ## Work out the I_C_1->I_C_1 transitions
-aux_I_C_1[, , 1, ] <- n_I_P_progress[i, j, k_P, l]
+aux_I_C_1[, , 1, 1] <- n_II_P[i, j, k_P, 1] +
+  n_II_P_next_vacc_class[i, j, k_P, n_vacc_classes]
+aux_I_C_1[, , 1, 2:n_vacc_classes] <-
+  n_II_P[i, j, k_P, l] + n_II_P_next_vacc_class[i, j, k_P, l - 1]
+
 aux_I_C_1[, , 2:k_C_1, ] <- n_I_C_1_progress[i, j, k - 1, l]
 aux_I_C_1[, , 1:k_C_1, ] <-
   aux_I_C_1[i, j, k, l] - n_I_C_1_progress[i, j, k, l]
@@ -996,7 +1034,7 @@ dim(n_II_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 dim(I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 dim(aux_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 dim(new_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(n_I_P_progress) <- c(n_groups, n_strains, k_P, n_vacc_classes)
+dim(n_II_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 
 ## Vectors handling the I_C_2 class
 dim(I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
@@ -1192,6 +1230,14 @@ dim(n_I_A_next_vacc_class) <-
 dim(n_I_A_progress) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 dim(n_II_A_next_vacc_class) <-
   c(n_groups, n_strains, k_A, n_vacc_classes)
+
+dim(p_I_P_next_vacc_class) <-
+  c(n_groups, n_strains, k_P, n_vacc_classes)
+dim(n_I_P_next_vacc_class) <-
+  c(n_groups, n_strains, k_P, n_vacc_classes)
+dim(n_I_P_progress) <- c(n_groups, n_strains, k_P, n_vacc_classes)
+dim(n_II_P_next_vacc_class) <-
+  c(n_groups, n_strains, k_P, n_vacc_classes)
 
 dim(p_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1418,7 +1464,7 @@ update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 ## First, the number of candidates
 vaccine_n_candidates[] <- S[i, 1] + sum(E[i, , , 1]) + sum(I_A[i, , , 1]) +
-  sum(R[i, , 1])
+  sum(I_P[i, , , 1]) + sum(R[i, , 1])
 dim(vaccine_n_candidates) <- n_groups
 
 ## The total population reluctant to be vaccinated. Currently modelled
