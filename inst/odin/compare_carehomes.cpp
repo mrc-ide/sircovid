@@ -95,8 +95,6 @@ typename T::real_t compare(const typename T::real_t * state,
   // This is used over and over
   const real_t exp_noise = odin(exp_noise);
 
-  // TODO: need sum(N_tot) here
-  const real_t N_tot_all = odin(N_tot_all); // sum(pars$N_tot)
   const real_t pillar2_negs =
     odin(p_NC) * (odin(N_tot_all) - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
