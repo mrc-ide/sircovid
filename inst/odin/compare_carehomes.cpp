@@ -134,12 +134,16 @@ typename T::real_t compare(const typename T::real_t * state,
                   rng_state);
 
   // Strain
+  real_t strain_sensitivity = 1.0;
+  real_t strain_specificity = 1.0;
   const real_t model_strain_over25_prob_pos =
-    test_prob_pos<real_t>(model_sympt_cases_non_variant_over25,
-                          model_sympt_cases_over25 -
-                          model_sympt_cases_non_variant_over25,
-                          1, 1, exp_noise,
-                          rng_state);
+    test_prob_pos(model_sympt_cases_non_variant_over25,
+                  model_sympt_cases_over25 -
+                  model_sympt_cases_non_variant_over25,
+                  strain_sensitivity,
+                  strain_specificity,
+                  exp_noise,
+                  rng_state);
 
   // Note that in ll_nbinom, the purpose of exp_noise is to allow a
   // non-zero probability when the model value is 0 and the observed
