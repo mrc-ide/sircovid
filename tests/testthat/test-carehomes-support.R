@@ -466,7 +466,7 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
     carehomes_particle_filter(data),
     "Deaths are not consistently split into total vs hospital/non-hospital
           or hospital/care homes/community")
-  
+
   data$deaths_non_hosp <- data$deaths
   data$deaths_carehomes <- data$deaths
   data$deaths <- NA
