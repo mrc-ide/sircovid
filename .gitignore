@@ -11,6 +11,9 @@ sircovid_*.tar.gz
 *.o
 *.so
 *.dll
+*.gcov
+*.gcda
+*.gcno
 .DS_Store
 pkgdown
 tests/testthat/data/pmcmc.rds

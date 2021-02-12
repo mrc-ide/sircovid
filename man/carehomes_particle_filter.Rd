@@ -4,7 +4,13 @@
 \alias{carehomes_particle_filter}
 \title{Carehomes particle filter}
 \usage{
-carehomes_particle_filter(data, n_particles, n_threads = 1L, seed = NULL)
+carehomes_particle_filter(
+  data,
+  n_particles,
+  n_threads = 1L,
+  seed = NULL,
+  compiled_compare = FALSE
+)
 }
 \arguments{
 \item{data}{Data suitable for use with with the
@@ -22,6 +28,10 @@ if no data are present.}
 \item{n_threads}{Number of threads to use}
 
 \item{seed}{Random seed to use}
+
+\item{compiled_compare}{Logical, indicating if we should use the
+new compiled compare function (this will shortly become the
+default).}
 }
 \value{
 A \code{\link[mcstate:particle_filter]{mcstate::particle_filter}} object

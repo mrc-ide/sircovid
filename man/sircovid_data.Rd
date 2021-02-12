@@ -4,7 +4,7 @@
 \alias{sircovid_data}
 \title{Prepare data for mcstate}
 \usage{
-sircovid_data(data, start_date, dt)
+sircovid_data(data, start_date, dt, expected = NULL)
 }
 \arguments{
 \item{data}{A \code{data.frame} object suitable for
@@ -15,6 +15,10 @@ object or a string in ISO 8601 format (YYYY-MM-DD)}
 
 \item{dt}{The time step (fraction of a day that each step
 represents) as used to create the model object}
+
+\item{expected}{Optional list of expected column names and types
+that are expected (use \code{NA_real_}). These will be filled in with
+the value where missing.}
 }
 \value{
 A data.frame suitable for use with \code{mcstate} functions
