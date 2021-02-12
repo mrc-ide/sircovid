@@ -25,3 +25,10 @@ dput_named_matrix <- function(m, width = 55) {
   writeLines(res)
   invisible(res)
 }
+
+
+skip_on_windows_gha <- function() {
+  if (on_ci() && on_windows()) {
+    testthat::skip("On Windows Github Actions")
+  }
+}

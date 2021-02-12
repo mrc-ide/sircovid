@@ -179,6 +179,7 @@ test_that("Test compiled carehomes components", {
 
 
 test_that("can run the particle filter on the model", {
+  skip_on_windows_gha()
   start_date <- sircovid_date("2020-02-02")
   pars <- carehomes_parameters(start_date, "england")
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
