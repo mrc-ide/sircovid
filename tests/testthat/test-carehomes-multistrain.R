@@ -578,10 +578,11 @@ test_that("Can calculate Rt with a second less infectious variant", {
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
 
   ## Rt should be lower (or equal) for the two variant version
-  expect_true(all(rt_1$Rt_all <= rt_1_single_class$Rt_all))
-  expect_true(all(rt_1$Rt_general <= rt_1_single_class$Rt_general))
-  expect_true(all(rt_all$Rt_all <= rt_all_single_class$Rt_all))
-  expect_true(all(rt_all$Rt_general <= rt_all_single_class$Rt_general))
+  eps <- 1e-7
+  expect_true(all(rt_1$Rt_all - rt_1_single_class$Rt_all <= eps))
+  expect_true(all(rt_1$Rt_general - rt_1_single_class$Rt_general <= eps))
+  expect_true(all(rt_all$Rt_all - rt_all_single_class$Rt_all <= eps))
+  expect_true(all(rt_all$Rt_general - rt_all_single_class$Rt_general <= eps))
 })
 
 

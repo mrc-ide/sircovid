@@ -849,7 +849,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
 
   # check that the ratio between the Rt with and witout vaccination
   # is constant
-  expect_true(all(diff(rt_1_vacc$Rt_all / rt_1$Rt_all) == 0))
+  expect_true(all(abs(diff(rt_1_vacc$Rt_all / rt_1$Rt_all)) < 1e-7))
 
   ## Given mean duration is shorter for asymptomatic individuals, we expect
   ## Rt to be reduced when rel_p_sympt is not 1
@@ -899,7 +899,7 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
 
   # check that the ratio between the Rt with and witout vaccination
   # is constant
-  expect_true(all(diff(rt_1_vacc$Rt_all / rt_1$Rt_all) == 0))
+  expect_true(all(abs(diff(rt_1_vacc$Rt_all / rt_1$Rt_all)) < 1e-7))
 
   ## Given mean duration is shorter for asymptomatic individuals, we expect
   ## Rt to be reduced when rel_p_sympt is not 1

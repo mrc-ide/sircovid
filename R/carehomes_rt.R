@@ -42,6 +42,9 @@
 ##'   will not happen, and do not use less than 3 as we use spline
 ##'   interpolation and that will not work with fewer than 3 points.
 ##'
+##' @param eigen_method The eigenvalue method to use (passed to
+##'   [eigen1::eigen1] as `method`)
+##'
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
@@ -49,7 +52,8 @@
 carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          type = NULL, interpolate_every = NULL,
                          interpolate_critical_dates = NULL,
-                         interpolate_min = NULL) {
+                         interpolate_min = NULL,
+                         eigen_method = "power_iteration") {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -180,7 +184,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   ## good performance and reasonable accuracy to the point where
   ## this calculation is small in the profile.
   eigen <- function(m) {
-    eigen1::eigen1(m, max_iterations = 1e5, tolerance = 1e-6)
+    eigen1::eigen1(m, max_iterations = 1e5, tolerance = 1e-6,
+                   method = eigen_method)
   }
 
   ret <- list(step = step,
@@ -267,7 +272,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       type = NULL,
                                       interpolate_every = NULL,
                                       interpolate_critical_dates = NULL,
-                                      interpolate_min = NULL) {
+                                      interpolate_min = NULL,
+                                      eigen_method = "power_iteration") {
   calculate_Rt_trajectories(
     calculate_Rt = carehomes_Rt, step = step,
     S = S, pars = pars,
@@ -277,7 +283,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
     type = type,
     interpolate_every = interpolate_every,
     interpolate_critical_dates = interpolate_critical_dates,
-    interpolate_min = interpolate_min)
+    interpolate_min = interpolate_min,
+    eigen_method = eigen_method)
 }
 
 
