@@ -1,4 +1,4 @@
-# sircovid 0.9.21
+# sircovid 0.9.22
 
 * Faster Rt calculation (#209)
 
