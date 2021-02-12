@@ -32,6 +32,11 @@ on_ci <- function() {
 }
 
 
+on_windows <- function() {
+  tolower(Sys.info()[["sysname"]]) == "windows"
+}
+
+
 skip_on_windows_gha <- function() {
   if (on_ci() && on_windows()) {
     testthat::skip("On Windows Github Actions")
