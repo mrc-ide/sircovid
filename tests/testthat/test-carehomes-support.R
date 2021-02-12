@@ -217,8 +217,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_comm_inc", "deaths_hosp_inc",
-      "admitted_inc", "diagnoses_inc",
+    c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
+      "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
       "sero_pos", "sympt_cases_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
@@ -226,6 +226,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "ICU_tot"))
   expect_equal(index$run[["general"]],
                which(names(info$index) == "general_tot"))
+  expect_equal(index$run[["deaths_carehomes_inc"]],
+               which(names(info$index) == "D_carehomes_inc"))
   expect_equal(index$run[["deaths_comm_inc"]],
                which(names(info$index) == "D_comm_inc"))
   expect_equal(index$run[["deaths_hosp_inc"]],
@@ -321,6 +323,7 @@ test_that("carehomes_compare combines likelihood correctly", {
   state <- rbind(
     icu = 10:15,
     general = 20:25,
+    deaths_carehomes_inc = 2:7,
     deaths_comm_inc = 1:6,
     deaths_hosp_inc = 3:8,
     admitted_inc = 50:55,
@@ -334,9 +337,11 @@ test_that("carehomes_compare combines likelihood correctly", {
     icu = 13,
     general = 23,
     hosp = 36,
+    deaths_carehomes = 4,
     deaths_hosp = 5,
     deaths_comm = 3,
     deaths = 8,
+    deaths_non_hosp = 6,
     admitted = 53,
     diagnoses = 63,
     all_admission = 116,
@@ -439,7 +444,9 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
                         1, 0.25)
   ## Add additional columns
   data$deaths_hosp <- data$deaths
+  data$deaths_carehomes <- NA
   data$deaths_comm <- NA
+  data$deaths_non_hosp <- NA
   data$general <- NA
   data$hosp <- NA
   data$admitted <- NA
@@ -457,7 +464,16 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$react_tot <- NA
   expect_error(
     carehomes_particle_filter(data),
-    "Deaths are not consistently split into total vs community/hospital")
+    "Deaths are not consistently split into total vs hospital/non-hospital
+          or hospital/care homes/community")
+  
+  data$deaths_non_hosp <- data$deaths
+  data$deaths_carehomes <- data$deaths
+  data$deaths <- NA
+  expect_error(
+    carehomes_particle_filter(data),
+    "Non-hospital deaths are not consistently split into total vs care
+         homes/community")
 })
 
 
@@ -468,6 +484,8 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
   ## Add additional columns
   data$deaths_hosp <- NA
   data$deaths_comm <- NA
+  data$deaths_carehomes <- NA
+  data$deaths_non_hosp <- NA
   data$general <- NA
   data$hosp <- NA
   data$admitted <- NA
