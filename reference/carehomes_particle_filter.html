@@ -82,7 +82,7 @@ used together." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.21</span>
       </span>
     </div>
 
@@ -132,7 +132,13 @@ a convenience function, ensuring that compatible functions are
 used together.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_particle_filter</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>n_particles</span>, n_threads <span class='op'>=</span> <span class='fl'>1L</span>, seed <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_particle_filter</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  <span class='va'>n_particles</span>,
+  n_threads <span class='op'>=</span> <span class='fl'>1L</span>,
+  seed <span class='op'>=</span> <span class='cn'>NULL</span>,
+  compiled_compare <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,6 +166,12 @@ if no data are present.</p></td>
     <tr>
       <th>seed</th>
       <td><p>Random seed to use</p></td>
+    </tr>
+    <tr>
+      <th>compiled_compare</th>
+      <td><p>Logical, indicating if we should use the
+new compiled compare function (this will shortly become the
+default).</p></td>
     </tr>
     </table>
 

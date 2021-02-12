@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.21</span>
       </span>
     </div>
 
@@ -537,6 +537,15 @@ just before the model is run.</p>
 #&gt; $N_tot_15_64
 #&gt; [1] 42062025
 #&gt; 
+#&gt; $N_tot_all
+#&gt; [1] 66796808
+#&gt; 
+#&gt; $N_tot_over25
+#&gt; [1] 47025779
+#&gt; 
+#&gt; $N_tot_react
+#&gt; [1] 62540704
+#&gt; 
 #&gt; $sero_specificity
 #&gt; [1] 0.9
 #&gt; 
@@ -557,71 +566,6 @@ just before the model is run.</p>
 #&gt; 
 #&gt; $p_NC
 #&gt; [1] 0.01
-#&gt; 
-#&gt; $observation
-#&gt; $observation$phi_ICU
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_ICU
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_general
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_general
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_hosp
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_hosp
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_death_hosp
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_death_hosp
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_death_comm
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_death_comm
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$kappa_death
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_admitted
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_admitted
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_diagnoses
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_diagnoses
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_all_admission
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_all_admission
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$phi_pillar2_cases
-#&gt; [1] 1
-#&gt; 
-#&gt; $observation$kappa_pillar2_cases
-#&gt; [1] 2
-#&gt; 
-#&gt; $observation$rho_pillar2_tests
-#&gt; [1] 0.1
-#&gt; 
-#&gt; $observation$exp_noise
-#&gt; [1] 1e+06
-#&gt; 
 #&gt; 
 #&gt; $n_groups
 #&gt; [1] 19
@@ -947,6 +891,69 @@ just before the model is run.</p>
 #&gt; 
 #&gt; $model_pcr_and_serology_user
 #&gt; [1] 1
+#&gt; 
+#&gt; $phi_ICU
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_ICU
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_general
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_general
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_hosp
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_hosp
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_death_hosp
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_death_hosp
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_death_comm
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_death_comm
+#&gt; [1] 2
+#&gt; 
+#&gt; $kappa_death
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_admitted
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_admitted
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_diagnoses
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_diagnoses
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_all_admission
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_all_admission
+#&gt; [1] 2
+#&gt; 
+#&gt; $phi_pillar2_cases
+#&gt; [1] 1
+#&gt; 
+#&gt; $kappa_pillar2_cases
+#&gt; [1] 2
+#&gt; 
+#&gt; $rho_pillar2_tests
+#&gt; [1] 0.1
+#&gt; 
+#&gt; $exp_noise
+#&gt; [1] 1e+06
 #&gt; </div><div class='input'>
 <span class='co'># example set up of vaccination parameters independent of age</span>
 <span class='co'># 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span>

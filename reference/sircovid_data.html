@@ -84,7 +84,7 @@ changes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.21</span>
       </span>
     </div>
 
@@ -136,7 +136,7 @@ the current states to convert cumulative measures into net daily
 changes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sircovid_data</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>start_date</span>, <span class='va'>dt</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>sircovid_data</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>start_date</span>, <span class='va'>dt</span>, expected <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,6 +155,12 @@ object or a string in ISO 8601 format (YYYY-MM-DD)</p></td>
       <th>dt</th>
       <td><p>The time step (fraction of a day that each step
 represents) as used to create the model object</p></td>
+    </tr>
+    <tr>
+      <th>expected</th>
+      <td><p>Optional list of expected column names and types
+that are expected (use <code>NA_real_</code>). These will be filled in with
+the value where missing.</p></td>
     </tr>
     </table>
 
