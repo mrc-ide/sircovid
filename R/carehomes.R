@@ -695,7 +695,7 @@ carehomes_compare <- function(state, observed, pars) {
                                observed$strain_tot,
                                model_strain_over25_prob_pos)
 
-  ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes + 
+  ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology + ll_pillar2_tests +
     ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
@@ -1101,7 +1101,7 @@ carehomes_population <- function(population, carehome_workers,
 ##' @param data Data suitable for use with with the
 ##'   [`mcstate::particle_filter`], created by created by
 ##'   [mcstate::particle_filter_data()]. We require columns "icu",
-##'   "general", "hosp", "deaths_hosp", "deaths_carehomes", 
+##'   "general", "hosp", "deaths_hosp", "deaths_carehomes",
 ##'   "deaths_non_hosp", "deaths_comm", "deaths",
 ##'   "admitted", "diagnoses", "all_admission", "npos_15_64",
 ##'   "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
