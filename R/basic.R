@@ -80,7 +80,7 @@ basic_parameters <- function(start_date, region,
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
   ret$m <- sircovid_transmission_matrix(region)
-  ret$observation <- basic_parameters_observation(exp_noise)
+  observation <- basic_parameters_observation(exp_noise)
   severity <- sircovid_parameters_severity(severity)
 
   ## Some additional processing of derived quantities used in the
@@ -98,7 +98,8 @@ basic_parameters <- function(start_date, region,
 
   c(ret,
     severity,
-    basic_parameters_progression())
+    basic_parameters_progression(),
+    observation)
 }
 
 
@@ -160,7 +161,6 @@ basic_compare <- function(state, observed, pars) {
   model_deaths <- state["deaths_inc", ]
 
   ## Noise parameter shared across both deaths and icu
-  pars <- pars$observation
   exp_noise <- pars$exp_noise
 
   ll_icu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
@@ -223,6 +223,12 @@ basic_initial <- function(info, n_particles, pars) {
 }
 
 
+basic_data <- function(data, start_date, dt) {
+  expected <- list("icu" = NA_real_, "deaths" = NA_real_)
+  sircovid_data(data, start_date, dt, expected)
+}
+
+
 basic_parameters_progression <- function() {
   ## These need to be aligned with Bob's severity outputs, and we will
   ## come up with a better way of correlating the two.
@@ -248,9 +254,6 @@ basic_parameters_progression <- function() {
 
 basic_parameters_observation <- function(exp_noise) {
   list(
-    ## People currently in general beds
-    phi_general = 0.95,
-    kappa_general = 2,
     ## People currently in ICU
     phi_ICU = 0.95,
     kappa_ICU = 2,

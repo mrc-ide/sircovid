@@ -25,3 +25,20 @@ dput_named_matrix <- function(m, width = 55) {
   writeLines(res)
   invisible(res)
 }
+
+
+on_ci <- function() {
+  isTRUE(as.logical(Sys.getenv("CI")))
+}
+
+
+on_windows <- function() {
+  tolower(Sys.info()[["sysname"]]) == "windows"
+}
+
+
+skip_on_windows_gha <- function() {
+  if (on_ci() && on_windows()) {
+    testthat::skip("On Windows Github Actions")
+  }
+}

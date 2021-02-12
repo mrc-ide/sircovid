@@ -24,8 +24,8 @@ test_that("can run the basic model", {
 test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england")
-  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                        start_date, pars$dt)
+  data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
+                     start_date, pars$dt)
 
   n_particles <- 100
   pf <- mcstate::particle_filter$new(
@@ -60,4 +60,25 @@ test_that("incidence calculation is correct", {
   y0 <- y[, , i[-length(i)]]
   y1 <- y[, , i[-1]]
   expect_equal(y1[1, , ] - y0[1, , ], y1[2, , ])
+})
+
+
+test_that("compiled compare function is correct", {
+  start_date <- sircovid_date("2020-02-02")
+  pars <- basic_parameters(start_date, "england", exp_noise = Inf)
+  data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
+                     start_date, pars$dt)
+
+  np <- 10
+  mod <- basic$new(pars, 0, np, seed = 1L)
+  initial <- basic_initial(mod$info(), np, pars)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(basic_index(mod$info())$run)
+
+  mod$set_data(dust::dust_data(data, "step_end"))
+
+  i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
+  y <- mod$run(data$step_end[[i]])
+  expect_equal(mod$compare_data(),
+               basic_compare(y, data[i, ], pars))
 })

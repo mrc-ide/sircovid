@@ -86,11 +86,11 @@ test_that("observation function correctly combines likelihoods", {
 
   expect_length(ll3, 6)
 
-  ll_itu <- ll_nbinom(observed3$icu, pars$observation$phi_ICU * state[1, ],
-                      pars$observation$kappa_ICU, Inf)
+  ll_itu <- ll_nbinom(observed3$icu, pars$phi_ICU * state[1, ],
+                      pars$kappa_ICU, Inf)
   ll_deaths <- ll_nbinom(observed3$deaths,
-                         pars$observation$phi_death * state[2, ],
-                         pars$observation$kappa_death, Inf)
+                         pars$phi_death * state[2, ],
+                         pars$kappa_death, Inf)
   expect_equal(ll1, ll_itu)
   expect_equal(ll2, ll_deaths)
   expect_equal(ll3, ll1 + ll2)
