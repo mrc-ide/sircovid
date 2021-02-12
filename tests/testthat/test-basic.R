@@ -70,7 +70,7 @@ test_that("compiled compare function is correct", {
                      start_date, pars$dt)
 
   np <- 10
-  mod <- basic$new(pars, 0, np, seed = 1L)
+  mod <- basic$new(pars, 0, np, seed = 3L)
   initial <- basic_initial(mod$info(), np, pars)
   mod$set_state(initial$state, initial$step)
   mod$set_index(basic_index(mod$info())$run)
