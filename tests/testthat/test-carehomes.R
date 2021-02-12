@@ -135,6 +135,8 @@ test_that("compiled compare function is correct", {
 test_that("Test compiled carehomes components", {
   start_date <- sircovid_date("2020-02-02")
   pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
+  ## allow some deaths in the community
+  pars$psi_G_D[15:17] <- 1
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
@@ -160,7 +162,7 @@ test_that("Test compiled carehomes components", {
     c(icu = 50),
     c(general = 50),
     c(hosp = 50),
-    c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 0),
+    c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 10),
     c(deaths_hosp = 30, deaths_non_hosp = 20),
     c(deaths = 50),
     c(admitted = 50),

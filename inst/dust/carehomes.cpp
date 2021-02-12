@@ -159,7 +159,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_icu = state[9];
   const real_t model_general = state[10];
   const real_t model_hosp = model_icu + model_general;
-  const real_t model_deaths_carehomes = state[14];
+  const real_t model_deaths_carehomes = state[16];
   const real_t model_deaths_comm = state[14];
   const real_t model_deaths_hosp = state[17];
   const real_t model_admitted = state[1];

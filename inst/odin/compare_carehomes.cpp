@@ -82,7 +82,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_icu = odin(ICU_tot);
   const real_t model_general = odin(general_tot);
   const real_t model_hosp = model_icu + model_general;
-  const real_t model_deaths_carehomes = odin(D_comm_inc);
+  const real_t model_deaths_carehomes = odin(D_carehomes_inc);
   const real_t model_deaths_comm = odin(D_comm_inc);
   const real_t model_deaths_hosp = odin(D_hosp_inc);
   const real_t model_admitted = odin(admit_conf_inc);
