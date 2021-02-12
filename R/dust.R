@@ -305,9 +305,13 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), kappa_death = list(
         has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_death_carehomes = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), kappa_death_comm = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), kappa_death_hosp = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), kappa_death_non_hosp = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), kappa_diagnoses = list(
         has_default = FALSE, default_value = NULL, rank = 0,
@@ -347,6 +351,8 @@ carehomes <- R6::R6Class(
         min = -Inf, max = Inf, integer = FALSE), phi_admitted = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), phi_all_admission = list(
+        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), phi_death_carehomes = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), phi_death_comm = list(
         has_default = FALSE, default_value = NULL, rank = 0,
