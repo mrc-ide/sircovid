@@ -214,15 +214,18 @@ test_that("Can interpolate Rt with step changes", {
 
   crit_dates <- sircovid_date(names(future))
 
+  set.seed(1)
   rt_cmp <- carehomes_Rt_trajectories(step, S, p,
                                       initial_step_from_parameters = FALSE)
 
   ## Only interpolate if "every" is given:
+  set.seed(1)
   expect_identical(
     carehomes_Rt_trajectories(step, S, p,
                               initial_step_from_parameters = FALSE,
                               interpolate_min = 3),
     rt_cmp)
+
 
   ## Then compute the Rt values with interpolation
   rt_int_2 <- carehomes_Rt_trajectories(step, S, p,
