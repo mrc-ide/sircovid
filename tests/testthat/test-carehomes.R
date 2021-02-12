@@ -160,7 +160,7 @@ test_that("Test compiled carehomes components", {
     c(icu = 50),
     c(general = 50),
     c(hosp = 50),
-    c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 10),
+    c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 0),
     c(deaths_hosp = 30, deaths_non_hosp = 20),
     c(deaths = 50),
     c(admitted = 50),

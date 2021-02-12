@@ -572,7 +572,7 @@ carehomes_compare <- function(state, observed, pars) {
   model_icu <- state["icu", ]
   model_general <- state["general", ]
   model_hosp <- model_icu + model_general
-  model_deaths_carehomes <- state["deaths_carehomes_inc"]
+  model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
   model_admitted <- state["admitted_inc", ]

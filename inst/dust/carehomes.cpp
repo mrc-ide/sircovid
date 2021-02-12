@@ -128,7 +128,9 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
 // [[odin.dust::compare_data(hosp = double)]]
 // [[odin.dust::compare_data(deaths_hosp = double)]]
 // [[odin.dust::compare_data(deaths_comm = double)]]
+// [[odin.dust::compare_data(deaths_carehomes = double)]]
 // [[odin.dust::compare_data(deaths = double)]]
+// [[odin.dust::compare_data(deaths_non_hosp = double)]]
 // [[odin.dust::compare_data(admitted = double)]]
 // [[odin.dust::compare_data(diagnoses = double)]]
 // [[odin.dust::compare_data(all_admission = double)]]
@@ -157,6 +159,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_icu = state[9];
   const real_t model_general = state[10];
   const real_t model_hosp = model_icu + model_general;
+  const real_t model_deaths_carehomes = state[14];
   const real_t model_deaths_comm = state[14];
   const real_t model_deaths_hosp = state[17];
   const real_t model_admitted = state[1];
@@ -235,18 +238,30 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_nbinom(data.hosp, shared->phi_hosp * model_hosp,
               shared->kappa_hosp, exp_noise, rng_state);
 
-  // We will either compute ll_deaths_hosp and ll_deaths_comm *or* we
-  // will compute the combined version.
+  // We will compute one of the following:
+  // 1. ll_deaths_hosp, ll_deaths_carehomes and ll_deaths_comm
+  // 2. ll_deaths_hosp and ll_deaths_non_hosp
+  // 3. ll_deaths
   const real_t ll_deaths_hosp =
     ll_nbinom(data.deaths_hosp, shared->phi_death_hosp * model_deaths_hosp,
               shared->kappa_death_hosp, exp_noise, rng_state);
+  const real_t ll_deaths_carehomes =
+    ll_nbinom(data.deaths_carehomes,
+              shared->phi_death_carehomes * model_deaths_carehomes,
+              shared->kappa_death_carehomes, exp_noise, rng_state);
   const real_t ll_deaths_comm =
     ll_nbinom(data.deaths_comm, shared->phi_death_comm * model_deaths_comm,
               shared->kappa_death_comm, exp_noise, rng_state);
+  const real_t ll_deaths_non_hosp =
+    ll_nbinom(data.deaths_non_hosp,
+              shared->phi_death_carehomes * model_deaths_carehomes +
+                shared->phi_death_comm * model_deaths_comm,
+              shared->kappa_death_non_hosp, exp_noise, rng_state);
   const real_t ll_deaths =
     ll_nbinom(data.deaths,
               shared->phi_death_hosp * model_deaths_hosp +
-              shared->phi_death_comm * model_deaths_comm,
+                shared->phi_death_carehomes * model_deaths_carehomes +
+                shared->phi_death_comm * model_deaths_comm,
               shared->kappa_death, exp_noise, rng_state);
 
   const real_t ll_admitted =
@@ -285,8 +300,9 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_binom(data.strain_non_variant, data.strain_tot,
              model_strain_over25_prob_pos);
 
-  return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm +
-    ll_deaths + ll_admitted + ll_diagnoses + ll_all_admission + ll_serology +
+  return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
+    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
+    ll_diagnoses + ll_all_admission + ll_serology +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
     ll_pillar2_over25_cases + ll_react + ll_strain_over25;
 }
@@ -412,7 +428,9 @@ public:
     double hosp;
     double deaths_hosp;
     double deaths_comm;
+    double deaths_carehomes;
     double deaths;
+    double deaths_non_hosp;
     double admitted;
     double diagnoses;
     double all_admission;
@@ -6966,7 +6984,9 @@ carehomes::data_t dust_data<carehomes>(cpp11::list data) {
       cpp11::as_cpp<double>(data["hosp"]),
       cpp11::as_cpp<double>(data["deaths_hosp"]),
       cpp11::as_cpp<double>(data["deaths_comm"]),
+      cpp11::as_cpp<double>(data["deaths_carehomes"]),
       cpp11::as_cpp<double>(data["deaths"]),
+      cpp11::as_cpp<double>(data["deaths_non_hosp"]),
       cpp11::as_cpp<double>(data["admitted"]),
       cpp11::as_cpp<double>(data["diagnoses"]),
       cpp11::as_cpp<double>(data["all_admission"]),
