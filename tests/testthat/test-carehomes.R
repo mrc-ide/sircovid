@@ -137,6 +137,8 @@ test_that("Test compiled carehomes components", {
   pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
   ## allow some deaths in the community
   pars$psi_G_D[15:17] <- 1
+  ## use a non-integer kappa for pillar 2 cases
+  pars$kappa_pillar2_cases <- 2.5
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
