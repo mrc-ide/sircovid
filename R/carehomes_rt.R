@@ -42,6 +42,9 @@
 ##'   will not happen, and do not use less than 3 as we use spline
 ##'   interpolation and that will not work with fewer than 3 points.
 ##'
+##' @param eigen_method The eigenvalue method to use (passed to
+##'   [eigen1::eigen1] as `method`)
+##'
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
@@ -49,7 +52,8 @@
 carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          type = NULL, interpolate_every = NULL,
                          interpolate_critical_dates = NULL,
-                         interpolate_min = NULL) {
+                         interpolate_min = NULL,
+                         eigen_method = "power_iteration") {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -60,6 +64,26 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                    paste(squote(err), collapse = ", "),
                    paste(squote(all_types), collapse = ", ")))
     }
+  }
+
+  if (!is.null(interpolate_every)) {
+    interpolate_critical_index <- match(interpolate_critical_dates / p$dt, step)
+    step_index_split <- interpolate_grid_critical_x(seq_along(step),
+                                                    interpolate_every,
+                                                    interpolate_critical_index,
+                                                    interpolate_min)
+    step_index <- unlist(step_index_split)
+    ret <- carehomes_Rt(step[step_index], S[, step_index, drop = FALSE], p,
+                        prob_strain, type)
+    if (!is.null(interpolate_every)) {
+      ret[type] <- lapply(ret[type], interpolate_grid_expand_y,
+                          step_index_split)
+    }
+    ## Also need to update these
+    ret$step <- step
+    ret$date <- step * p$dt
+    ret$beta <- sircovid_parameters_beta_expand(step, p$beta_step)
+    return(ret)
   }
 
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
@@ -94,93 +118,107 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     }
   }
 
+  n_vacc_classes <- ncol(p$rel_susceptibility)
+  n_strains <- length(p$strain_transmission)
+
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
 
-  n_vacc_classes <- ncol(p$rel_susceptibility)
-
-  calculate_ev <-
-    function(t, S, prob_strain, beta, mean_duration, drop_carehomes) {
-    ## Next-Generation-Matrix
-    m <- p$m
-    ages <- seq_len(p$n_age_groups)
-    ch <- seq(to = p$n_groups, length.out = 2)
-    m[ages, ] <- beta[t] * m[ages, ]
-    m[ch, ages] <- beta[t] * m[ch, ages]
-
-    m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
-                         p$n_groups * n_vacc_classes,
-                         p$n_groups * n_vacc_classes,
-                         byrow = TRUE)
-
-    S_weighted <- S[, t] * c(p$rel_susceptibility)
-
-    prob_strain_mat <- matrix(prob_strain[, t],
-                              nrow = p$n_groups,
-                              ncol = length(p$strain_transmission))
-
-    if (any(is.na(prob_strain_mat))) {
-      out <- NA
-    } else {
-      weighted_strain_multiplier <- prob_strain_mat %*% p$strain_transmission
-
-      ngm <- outer(c(mean_duration[, , t] *
-                     array(weighted_strain_multiplier,
-                           c(p$n_groups, n_vacc_classes))),
-                   S_weighted) * m_extended
-
-      ## Care home workers (CHW) and residents (CHR) in last two rows
-      ## and columns, remove for each vaccine class
-      if (drop_carehomes) {
-        i_CHR <- seq(p$n_groups, nrow(ngm), by = p$n_groups)
-        i_CHW <- i_CHR - 1
-        i_gen <- seq_len(nrow(ngm))[-c(i_CHW, i_CHR)]
-        ngm <- ngm[i_gen, i_gen]
-      }
-      ev <- eigen(ngm, symmetric = FALSE, only.values = TRUE)$values
-      ev[Im(ev) != 0] <- NA
-      ev <- as.numeric(ev)
-      out <- max(ev, na.rm = TRUE)
-    }
-    out
+  ages <- seq_len(p$n_age_groups)
+  ch <- seq(p$n_age_groups + 1L, p$n_groups)
+  if (n_vacc_classes > 1L) {
+    ch <- c(outer(ch, (seq_len(n_vacc_classes) - 1L) * p$n_groups, "+"))
   }
 
-  t <- seq_along(step)
-  N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
-  N_tot_all_vacc_groups <- N_tot_non_vacc
-  if (n_vacc_classes > 1) {
-    for (i in 2:n_vacc_classes) {
-      N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
-                                     0 * N_tot_non_vacc)
-    }
+  ## We only need to do this section for each different beta value,
+  ## and then it's still a pretty straightfoward scaling; we've
+  ## applied beta to all *but* a fraction of the matrix (i.e., in the matrix
+  ##
+  ##   A B
+  ##   C D
+  ##
+  ## Everything but D is scaled by beta
+  ##
+  ## When we have more than one vaccination group we replicate this to
+  ## get block structure
+  ##
+  ##   A B A B
+  ##   C D C D
+  ##   A B A B
+  ##   C D C D
+  ##
+  ## And scale all of A, B, C (not D) by beta
+  m <- block_expand(unname(p$m), n_vacc_classes)
+  mt <- m %o% beta
+  mt[ch, ch, ] <- m[ch, ch]
+
+  n_time <- length(step)
+  prob_strain_mat <- array(prob_strain, c(p$n_groups, n_strains, n_time))
+  if (any(is.na(prob_strain))) {
+    ret <- list(step = step,
+                date = step * p$dt,
+                beta = beta)
+    ret[type] <- list(rep(NA_real_, length(step)))
+    return(ret)
   }
 
-  opts <- list(eff_Rt_all = list(pop = S, general = FALSE),
-               eff_Rt_general = list(pop = S, general = TRUE),
-               Rt_all = list(pop = N_tot_all_vacc_groups, general = FALSE),
-               Rt_general = list(pop = N_tot_all_vacc_groups, general = TRUE))
+  if (n_strains > 1L) {
+    weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
+      matrix(prob_strain_mat[, , t] %*% p$strain_transmission,
+             p$n_groups, n_vacc_classes),
+      matrix(0, p$n_groups, n_vacc_classes))
+    mean_duration <- mean_duration * weighted_strain_multiplier
+  }
+
+  compute_ngm <- function(S) {
+    len <- p$n_groups * n_vacc_classes
+    Sw <- S * c(p$rel_susceptibility)
+    mt * vapply(seq_len(n_time), function(t)
+      tcrossprod(c(mean_duration[, , t]), Sw[, t]),
+      matrix(0, len, len))
+  }
+
+  ## NOTE the signs on the exponents here is different! This gives
+  ## good performance and reasonable accuracy to the point where
+  ## this calculation is small in the profile.
+  eigen <- function(m) {
+    eigen1::eigen1(m, max_iterations = 1e5, tolerance = 1e-6,
+                   method = eigen_method)
+  }
 
   ret <- list(step = step,
               date = step * p$dt,
               beta = beta)
 
-  ## translate days into steps
-  if (!is.null(interpolate_every)) {
-    interpolate_every <- interpolate_every / p$dt
+  if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
+    ngm <- compute_ngm(S)
+    if ("eff_Rt_all" %in% type) {
+      ret$eff_Rt_all <- eigen(ngm)
+    }
+    if ("eff_Rt_general" %in% type) {
+      ret$eff_Rt_general <- eigen(ngm[-ch, -ch, ])
+    }
   }
-  interpolate_critical_dates2 <-
-    c(rbind(interpolate_critical_dates - 1, interpolate_critical_dates))
-  interpolate_critical_step <- match(interpolate_critical_dates2 / p$dt, step)
 
-  ret[type] <- lapply(opts[type], function(x)
-    interpolate_grid_critical(t, function(t)
-      calculate_ev(t, x$pop, prob_strain = prob_strain,
-                   beta = beta,
-                   mean_duration = mean_duration,
-                   drop_carehomes = x$general),
-      interpolate_every, interpolate_critical_step, interpolate_min))
+  if (any(c("Rt_all", "Rt_general") %in% type)) {
+    N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
+    N_tot_all_vacc_groups <- N_tot_non_vacc
+    if (n_vacc_classes > 1) {
+      for (i in 2:n_vacc_classes) {
+        N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
+                                       0 * N_tot_non_vacc)
+      }
+    }
+    ngm <- compute_ngm(N_tot_all_vacc_groups)
+    if ("Rt_all" %in% type) {
+      ret$Rt_all <- eigen(ngm)
+    }
+    if ("Rt_general" %in% type) {
+      ret$Rt_general <- eigen(ngm[-ch, -ch, ])
+    }
+  }
 
   ret
 }
@@ -234,7 +272,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       type = NULL,
                                       interpolate_every = NULL,
                                       interpolate_critical_dates = NULL,
-                                      interpolate_min = NULL) {
+                                      interpolate_min = NULL,
+                                      eigen_method = "power_iteration") {
   calculate_Rt_trajectories(
     calculate_Rt = carehomes_Rt, step = step,
     S = S, pars = pars,
@@ -244,7 +283,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
     type = type,
     interpolate_every = interpolate_every,
     interpolate_critical_dates = interpolate_critical_dates,
-    interpolate_min = interpolate_min)
+    interpolate_min = interpolate_min,
+    eigen_method = eigen_method)
 }
 
 
@@ -264,9 +304,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   ## TODO: This is not correct for the initial transition from
   ## vaccination
-  vacc_prog_before_infectious <- function(group_i) {
-    vacc_prog_rate <- pars$vaccine_progression_rate_base[group_i, ]
-
+  vacc_prog_before_infectious <- function(vacc_prog_rate) {
     ## Q[i, j] gives probability of progression from vaccine stage i to
     ## vaccine stage j in one time step
     Q <- diag(exp(-vacc_prog_rate * dt))
@@ -289,13 +327,6 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
     ## infected (hence Q appearing below).
     out <- Q %*% matrix_pow(A, pars$k_E)
     out
-  }
-
-  if (n_vacc_classes > 1) {
-    ## V[i, j, k] gives the probability that an individual in group k who is
-    ## infected when in vaccine stage i exits the E class in vaccine stage j
-    V <- vapply(seq_len(pars$n_groups), vacc_prog_before_infectious,
-                array(0, c(n_vacc_classes, n_vacc_classes)))
   }
 
   ## compute probabilities of different pathways
@@ -369,15 +400,21 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## Multiply by dt to convert from time steps to days
   mean_duration <- dt * mean_duration
 
-  ## mean_duration[i, j, k] represents mean duration at step k of age group i
-  ## leaving the E compartment in vaccine stage j, we need to output for leaving
-  ## the S compartment in vaccine stage j, so we calculate this here
+  ## mean_duration[i, j, k] represents mean duration at step k of age
+  ## group i leaving the E compartment in vaccine stage j, we need to
+  ## output for leaving the S compartment in vaccine stage j, so we
+  ## calculate this here. If vaccine_progression_rate_base does not
+  ## vary between age groups we lump them together here which saves a
+  ## matrix inversion.
   if (n_vacc_classes > 1) {
+    pr <- matrix_index(pars$vaccine_progression_rate_base)
+    V <- vapply(pr$unique, function(i)
+      vacc_prog_before_infectious(pr$value[i, ]),
+      array(0, c(n_vacc_classes, n_vacc_classes)))[, , pr$index]
+
     out <- array(0, dim(mean_duration))
     for (i in seq_len(pars$n_groups)) {
-      for (j in seq_len(n_time_steps)) {
-        out[i, , j] <- V[, , i] %*% mean_duration[i, , j]
-      }
+      out[i, , ] <- V[, , i] %*% mean_duration[i, , ]
     }
   } else {
     out <- mean_duration

@@ -19,11 +19,7 @@ RUN install2.r --error \
         remotes \
         socialmixr
 
-RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust", "mrc-ide/mcstate"))'
-
-# In order to invalidate the docker build cache you may need to change
-# the whitespace in this command.
-RUN Rscript -e 'remotes::install_github("mrc-ide/dust" )'
+RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust", "mrc-ide/mcstate", "mrc-ide/eigen1"))'
 
 COPY . /src
 RUN R CMD INSTALL --install-tests /src && rm -rf /src

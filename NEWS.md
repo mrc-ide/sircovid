@@ -1,3 +1,7 @@
+# sircovid 0.9.22
+
+* Faster Rt calculation (#209)
+
 # sircovid 0.9.17
 
 * IFR calculation added for carehomes model
