@@ -200,3 +200,20 @@ test_that("can interpolate over an interval with critical points", {
   expect_equal(z1[j], y[j], tolerance = 1e-4)
   expect_gt(sum(abs(y[j] - z1[j])), 1e-9)
 })
+
+
+test_that("block expand", {
+  m <- matrix(1:4, 2, 2)
+  expect_identical(block_expand(m, 1), m)
+
+  matrix(m %o% matrix(1, 2, 2), 4, 4)
+  expect_identical(
+    block_expand(m, 2),
+    matrix(c(1:2, 1:2, 3:4, 3:4, 1:2, 1:2, 3:4, 3:4), 4, 4))
+  expect_identical(
+    block_expand(m, 3),
+    matrix(rep(c(rep(1:2, 3), rep(3:4, 3)), 3), 6, 6))
+  expect_identical(
+    block_expand(m, 10),
+    matrix(rep(c(rep(1:2, 10), rep(3:4, 10)), 10), 20, 20))
+})

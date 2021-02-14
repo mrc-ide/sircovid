@@ -12,7 +12,8 @@ carehomes_Rt(
   type = NULL,
   interpolate_every = NULL,
   interpolate_critical_dates = NULL,
-  interpolate_min = NULL
+  interpolate_min = NULL,
+  eigen_method = "power_iteration"
 )
 }
 \arguments{
@@ -54,6 +55,9 @@ error of small regions. If Rt is small it won't matter that
 much. You do need to specify something though or interpolation
 will not happen, and do not use less than 3 as we use spline
 interpolation and that will not work with fewer than 3 points.}
+
+\item{eigen_method}{The eigenvalue method to use (passed to
+\link[eigen1:eigen1]{eigen1::eigen1} as \code{method})}
 }
 \value{
 A list with elements \code{step}, \code{beta}, and any of the \code{type}

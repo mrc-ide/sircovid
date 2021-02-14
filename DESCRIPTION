@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.9.21
+Version: 0.9.22
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -48,6 +48,7 @@ Language: en-GB
 Depends: R (>= 3.1.0)
 Imports:
     dust (>= 0.7.5),
+    eigen1,
     mcstate (>= 0.4.0),
     socialmixr
 LinkingTo:
@@ -60,4 +61,5 @@ Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,
+    mrc-ide/eigen1,
     mrc-ide/mcstate
