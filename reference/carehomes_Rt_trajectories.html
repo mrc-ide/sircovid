@@ -83,7 +83,7 @@ parameters." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.22</span>
       </span>
     </div>
 
@@ -144,7 +144,8 @@ parameters.</p>
   type <span class='op'>=</span> <span class='cn'>NULL</span>,
   interpolate_every <span class='op'>=</span> <span class='cn'>NULL</span>,
   interpolate_critical_dates <span class='op'>=</span> <span class='cn'>NULL</span>,
-  interpolate_min <span class='op'>=</span> <span class='cn'>NULL</span>
+  interpolate_min <span class='op'>=</span> <span class='cn'>NULL</span>,
+  eigen_method <span class='op'>=</span> <span class='st'>"power_iteration"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -215,6 +216,11 @@ error of small regions. If Rt is small it won't matter that
 much. You do need to specify something though or interpolation
 will not happen, and do not use less than 3 as we use spline
 interpolation and that will not work with fewer than 3 points.</p></td>
+    </tr>
+    <tr>
+      <th>eigen_method</th>
+      <td><p>The eigenvalue method to use (passed to
+<a href='https://rdrr.io/pkg/eigen1/man/eigen1.html'>eigen1::eigen1</a> as <code>method</code>)</p></td>
     </tr>
     </table>
 
