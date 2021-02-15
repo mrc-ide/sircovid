@@ -1,3 +1,7 @@
+# sircovid 0.9.23
+
+* Allow vector of absolute values in future_Rt()
+
 # sircovid 0.9.22
 
 * Faster Rt calculation (#209)
