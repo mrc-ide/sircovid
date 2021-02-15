@@ -85,7 +85,7 @@ sircovid_simulate <- function(mod, state, p, events,
 
   rownames(res) <- names(index)
 
-  ## TODO: mcstate::array_drop(state, 2)
+  ## TODO: use mcstate::array_drop(state, 2)
   state <- obj$state()
   dim(state) <- dim(state)[c(1, 3)]
 
