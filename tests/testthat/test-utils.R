@@ -138,7 +138,15 @@ test_that("spread_integer", {
 test_that("can interpolate an interval over a grid", {
   x <- 1:61
   f <- function(x) sin(x / 10)
+  interpolate_grid <- function(x, f, every, min) {
+    xx <- interpolate_grid_x(x, every, min)
+    interpolate_grid_expand_y(f(xx), list(xx))
+  }
+
   expect_equal(interpolate_grid(x, f, 1, min = 5), f(x))
+
+  expect_equal(interpolate_grid_x(x, 5, 2),
+               interpolate_grid_critical_x(x, NULL, 5, 2))
 
   y <- interpolate_grid(x, f, 3, min = 5)
   expect_false(identical(y, f(x)))
@@ -176,12 +184,18 @@ test_that("can interpolate over an interval with critical points", {
       sin(x / 10)
     }
   }
+  g <- Vectorize(f)
+
+  ## interpolate_grid_critical_x
+  ## interpolate_grid_expand_y
 
   x <- 1:40
-  y <- vnapply(x, f)
+  y <- g(x)
 
-  z1 <- interpolate_grid_critical(x, f, 2, crit, min = 3)
-  z2 <- interpolate_grid_critical(x, f, 2, crit, min = 10)
+  zx_1 <- interpolate_grid_critical_x(x, 2, crit, min = 3)
+  zx_2 <- interpolate_grid_critical_x(x, 2, crit, min = 10)
+  z1 <- interpolate_grid_expand_y(g(unlist(zx_1)), zx_1)
+  z2 <- interpolate_grid_expand_y(g(unlist(zx_2)), zx_2)
 
   expect_equal(z1[1:10], y[1:10], tolerance = 1e-15)
   expect_equal(z2[1:10], y[1:10], tolerance = 1e-15)

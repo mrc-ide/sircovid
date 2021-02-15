@@ -144,37 +144,6 @@ seq_range <- function(x) {
 }
 
 
-##' @importFrom stats spline
-interpolate_grid <- function(x, f, every, min) {
-  if (is.null(every) || is.null(min) || length(x) <= min) {
-    xx <- x
-  } else {
-    xx <- seq(x[[1]], last(x), by = min(every, ceiling(length(x) / min)))
-  }
-  if (last(xx) < last(x)) {
-    xx <- c(xx, last(x))
-  }
-  yy <- vnapply(xx, f)
-  if (is.null(every) || is.null(min) || length(x) <= min) {
-    ret <- yy
-  } else {
-    ret <- spline(xx, yy, xout = x)$y
-  }
-  ret
-}
-
-
-interpolate_grid_critical <- function(x, f, every, critical, min) {
-  if (length(critical) == 0) {
-    interpolate_grid(x, f, every, min)
-  } else {
-    xx <- split(x, findInterval(x, critical))
-    yy <- lapply(unname(xx), interpolate_grid, f, every, min)
-    unlist(yy, use.names = FALSE)
-  }
-}
-
-
 interpolate_grid_x <- function(x, every, min) {
   if (is.null(every) || is.null(min) || length(x) <= min) {
     xx <- x
@@ -201,7 +170,7 @@ interpolate_grid_critical_x <- function(x, every, critical, min) {
 interpolate_grid_expand_y <- function(y, step_split) {
   f <- function(i) {
     x <- step_split[[i]]
-    spline(x, y_split[[i]], xout = seq_range(x))$y
+    stats::spline(x, y_split[[i]], xout = seq_range(x))$y
   }
   n <- lengths(step_split)
   y_split <- Map(function(len, to) y[seq(length.out = len, to = to)],
