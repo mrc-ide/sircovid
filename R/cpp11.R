@@ -8,6 +8,10 @@ dust_basic_run <- function(ptr, step_end) {
   .Call(`_sircovid_dust_basic_run`, ptr, step_end)
 }
 
+dust_basic_simulate <- function(ptr, step_end) {
+  .Call(`_sircovid_dust_basic_simulate`, ptr, step_end)
+}
+
 dust_basic_set_index <- function(ptr, r_index) {
   .Call(`_sircovid_dust_basic_set_index`, ptr, r_index)
 }
@@ -60,10 +64,6 @@ dust_basic_filter <- function(ptr, save_history) {
   .Call(`_sircovid_dust_basic_filter`, ptr, save_history)
 }
 
-dust_basic_simulate <- function(r_steps, r_pars, r_state, r_index, n_threads, r_seed, return_state) {
-  .Call(`_sircovid_dust_basic_simulate`, r_steps, r_pars, r_state, r_index, n_threads, r_seed, return_state)
-}
-
 dust_basic_capabilities <- function() {
   .Call(`_sircovid_dust_basic_capabilities`)
 }
@@ -82,6 +82,10 @@ dust_carehomes_alloc <- function(r_pars, pars_multi, step, n_particles, n_thread
 
 dust_carehomes_run <- function(ptr, step_end) {
   .Call(`_sircovid_dust_carehomes_run`, ptr, step_end)
+}
+
+dust_carehomes_simulate <- function(ptr, step_end) {
+  .Call(`_sircovid_dust_carehomes_simulate`, ptr, step_end)
 }
 
 dust_carehomes_set_index <- function(ptr, r_index) {
@@ -134,10 +138,6 @@ dust_carehomes_compare_data <- function(ptr) {
 
 dust_carehomes_filter <- function(ptr, save_history) {
   .Call(`_sircovid_dust_carehomes_filter`, ptr, save_history)
-}
-
-dust_carehomes_simulate <- function(r_steps, r_pars, r_state, r_index, n_threads, r_seed, return_state) {
-  .Call(`_sircovid_dust_carehomes_simulate`, r_steps, r_pars, r_state, r_index, n_threads, r_seed, return_state)
 }
 
 dust_carehomes_capabilities <- function() {
