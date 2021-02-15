@@ -19,15 +19,15 @@
 ##'   timescale of the simulation.
 ##'
 ##' @param index A (possibly named) integer vector representing an
-##'   index into the model state that should be returned (see
-##'   [dust::dust_simulate])
+##'   index into the model state that should be returned; will be set
+##'   into the model with `$set_index`
 ##'
 ##' @param n_threads The number of threads to use in the
 ##'   simulation. This only has an effect if your sircovid was built
 ##'   with OpenMP support (possibly not the case on macOS).  Each
 ##'   simulation will be run on potentially a different thread.
 ##'
-##' @param seed Optional seed (see [dust::dust_simulate])
+##' @param seed Optional seed to create the model with
 ##'
 ##' @export
 ##'
