@@ -16,7 +16,8 @@ reference_data_ifr_t <- function() {
     steps <- seq(initial$step, end, by = 1 / p$dt)
 
     set.seed(1)
-    y <- dust::dust_iterate(mod, steps, index)
+    mod$set_index(index)
+    y <- mod$simulate(steps)
     S <- y[seq_len(length(index_S)), , ]
     I_weighted <- y[-seq_len(length(index_S)), , ]
 
