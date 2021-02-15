@@ -109,13 +109,16 @@ test_that("Basic simulation", {
     beta_value = c(p$beta_step, p$beta_step, 0))
   p_cmp$beta_step[seq_len(length(p_cmp$beta_step) - 1)] <- p$beta_step
   step <- attr(res, "step")
-  cmp <- suppressWarnings(
-    dust::dust_simulate(basic, step, rep(list(p_cmp), np), state,
-                        seed = 1L, return_state = TRUE))
 
+  obj <- basic$new(rep(list(p_cmp), np), step[[1]], 1L,
+                   seed = 1L, pars_multi = TRUE)
+  obj$set_state(array(state, c(nrow(state), 1, ncol(state))))
+  cmp <- obj$simulate(step)
+  dim(cmp) <- dim(cmp)[-2]
   expect_equal(res, cmp, check.attributes = FALSE)
-  expect_equal(attr(res, "state"), attr(cmp, "state"))
-  expect_equal(attr(res, "rng_state"), attr(cmp, "rng_state"))
+
+  expect_equal(attr(res, "state"), array(obj$state(), dim(state)))
+  expect_equal(attr(res, "rng_state"), obj$rng_state())
 })
 
 
