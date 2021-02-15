@@ -99,6 +99,7 @@ future_Rt <- function(value, relative_to = NULL) {
     ret <- list(value = value,
                 relative_value = NA_real_, relative_to = NA_character_)
   } else {
+    assert_scalar(value)
     ret <- list(value = NA_real_,
                 relative_value = value,
                 relative_to = assert_date_string(relative_to))
