@@ -145,8 +145,8 @@ test_that("can interpolate an interval over a grid", {
 
   expect_equal(interpolate_grid(x, f, 1, min = 5), f(x))
 
-  expect_equal(interpolate_grid_x(x, 5, 2),
-               interpolate_grid_critical_x(x, NULL, 5, 2))
+  expect_equal(list(interpolate_grid_x(x, 5, 2)),
+               interpolate_grid_critical_x(x, 5, NULL, 2))
 
   y <- interpolate_grid(x, f, 3, min = 5)
   expect_false(identical(y, f(x)))
