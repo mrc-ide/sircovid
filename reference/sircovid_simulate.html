@@ -83,7 +83,7 @@ model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.25</span>
       </span>
     </div>
 
@@ -171,8 +171,8 @@ timescale of the simulation.</p></td>
     <tr>
       <th>index</th>
       <td><p>A (possibly named) integer vector representing an
-index into the model state that should be returned (see
-<a href='https://rdrr.io/pkg/dust/man/dust_simulate.html'>dust::dust_simulate</a>)</p></td>
+index into the model state that should be returned; will be set
+into the model with <code>$set_index</code></p></td>
     </tr>
     <tr>
       <th>n_threads</th>
@@ -183,7 +183,7 @@ simulation will be run on potentially a different thread.</p></td>
     </tr>
     <tr>
       <th>seed</th>
-      <td><p>Optional seed (see <a href='https://rdrr.io/pkg/dust/man/dust_simulate.html'>dust::dust_simulate</a>)</p></td>
+      <td><p>Optional seed to create the model with</p></td>
     </tr>
     </table>
 
