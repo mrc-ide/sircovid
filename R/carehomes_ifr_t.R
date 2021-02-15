@@ -172,7 +172,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 ## We expect 'step' to be a vector along step
 
 ##' Compute "IFR_t" for a set of simulated trajectories (e.g., the result
-##' of [dust::dust_iterate()], [mcstate::pmcmc()] or
+##' of the `$iterate()` method of [carehomes], [mcstate::pmcmc()] or
 ##' [mcstate::pmcmc_predict()]. The trajectories may or may not share
 ##' parameters.
 ##'
