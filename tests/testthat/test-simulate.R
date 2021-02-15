@@ -109,8 +109,9 @@ test_that("Basic simulation", {
     beta_value = c(p$beta_step, p$beta_step, 0))
   p_cmp$beta_step[seq_len(length(p_cmp$beta_step) - 1)] <- p$beta_step
   step <- attr(res, "step")
-  cmp <- dust::dust_simulate(basic, step, rep(list(p_cmp), np), state,
-                             seed = 1L, return_state = TRUE)
+  cmp <- suppressWarnings(
+    dust::dust_simulate(basic, step, rep(list(p_cmp), np), state,
+                        seed = 1L, return_state = TRUE))
 
   expect_equal(res, cmp, check.attributes = FALSE)
   expect_equal(attr(res, "state"), attr(cmp, "state"))

@@ -63,30 +63,38 @@ sircovid_simulate <- function(mod, state, p, events,
   n_state <- if (is.null(index)) nrow(state) else length(index)
   res <- array(NA_real_, c(n_state, length(p), length(steps)))
 
+  ## NOTE: this is basically the same as mcstate::pmcmc_predict, which
+  ## suggests that's where this belongs (see mcstate issue #83)
+  obj <- mod$new(p, steps[[1]], 1L, n_threads = n_threads,
+                 seed = seed, pars_multi = TRUE)
+  ## TODO: update to mcstate::array_reshape(state, 2, c(1, length(p)))
+  dim(state) <- c(nrow(state), 1, length(p))
+  obj$set_state(state)
+  obj$set_index(index)
+
   for (i in seq_len(n_epoch)) {
     p_i <- p
     p_new <- events$data[[i]]
     for (j in seq_along(p_i)) {
       p_i[[j]][names(p_new)] <- p_new
     }
+    obj$set_pars(p_i)
     i_step <- steps >= step_from[[i]] & steps <= step_to[[i]]
-    y <- dust::dust_simulate(mod, steps[i_step], p_i, state,
-                             index = index, n_threads = n_threads,
-                             seed = seed, return_state = TRUE)
-    res[, , i_step] <- y
-    state <- attr(y, "state")
-    seed <- attr(y, "rng_state")
+    res[, , i_step] <- obj$simulate(steps[i_step])
   }
 
   rownames(res) <- names(index)
 
-  ## We're basically mimicing the interface here of
-  ## dust::dust_simulate which probably should return a list. So to
-  ## make downstream use a bit easier we'll use attributes to return
-  ## time domain information.
+  ## TODO: mcstate::array_drop(state, 2)
+  state <- obj$state()
+  dim(state) <- dim(state)[c(1, 3)]
+
+  ## TODO: This mimicked the interface of dust::dust_simulate, but
+  ## that function is deprecated. If we retain this function in the
+  ## package we should check what is really wanted here.
   attr(res, "step") <- steps
   attr(res, "date") <- sircovid_date_as_date(steps * dt)
-  attr(res, "rng_state") <- seed
+  attr(res, "rng_state") <- obj$rng_state()
   attr(res, "state") <- state
 
   res
