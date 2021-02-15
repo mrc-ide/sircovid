@@ -125,9 +125,8 @@ test_that("Seeding of second strain generates an epidemic", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
   expect_true(y$cum_infections_per_strain[2, 101] > n_seeded_new_strain_inf)
 
@@ -164,9 +163,8 @@ test_that("Second more virulent strain takes over", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## cumulative infections with 2nd strain larger than with 1st strain
   ## (average over 10 runs)
@@ -189,9 +187,8 @@ test_that("Second less virulent strain does not take over", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
   ## Cumulative infections with 2nd strain smaller than with 1st strain
   ## (average over 10 runs)
   expect_true(mean(y$cum_infections_per_strain[1, , 101]) >
@@ -217,9 +214,8 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
   expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
@@ -242,9 +238,8 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## Expect the seeded cases did not infect any other people
   expect_true(y$cum_infections_per_strain[2, 101] == n_seeded_new_strain_inf)
@@ -268,9 +263,8 @@ test_that("Everyone is infected when second strain transmission is large", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
   steps <- seq(0, 400, by = 4)
   date <- sircovid_date_as_date(steps / 4)
   s_date <- sircovid_date(date)
@@ -306,9 +300,8 @@ test_that("No infection with either strain with perfect vaccine", {
   state[index_E[4, 2, 1, 1]] <- 10 # seed infections with second strain
 
   mod$set_state(state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## Noone moves into unvaccinated
   ## except in the group where infections because of waning immunity
@@ -354,12 +347,12 @@ test_that("different strains are equivalent", {
 
   steps <- seq(initial$step, end, by = 4)
   mod$set_index(index_run)
-  res1 <- dust::dust_iterate(mod, steps, index_run)
+  res1 <- mod$simulate(steps)
 
   mod2 <- carehomes$new(p, 0, np, seed = 1L, n_threads = 10)
   mod2$set_state(initial2_state, initial$step)
   mod2$set_index(index_run)
-  res2 <- dust::dust_iterate(mod2, steps, index_run)
+  res2 <- mod2$simulate(steps)
 
   expect_equal(res1, res2)
 })
@@ -384,12 +377,12 @@ test_that("Swapping strains gives identical results with different index", {
 
   steps <- seq(initial$step, end, by = 1)
 
-  res1 <- drop(dust::dust_iterate(mod, steps))
+  res1 <- drop(mod$simulate(steps))
 
   mod2 <- carehomes$new(p, 0, np, seed = 1L)
 
   mod2$set_state(initial2_state, initial$step)
-  res2 <- drop(dust::dust_iterate(mod2, steps))
+  res2 <- drop(mod2$simulate(steps))
 
   z1 <- mod$transform_variables(res1)
   z2 <- mod2$transform_variables(res2)
@@ -436,7 +429,6 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
 
@@ -444,7 +436,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps)
+  y <- mod$simulate(steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
@@ -488,7 +480,6 @@ test_that("Can calculate Rt with an empty second variant ", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
 
@@ -496,7 +487,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps)
+  y <- mod$simulate(steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
@@ -511,14 +502,14 @@ test_that("Can calculate Rt with an empty second variant ", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
   index <- mod$info()$index$S
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
@@ -542,7 +533,6 @@ test_that("Can calculate Rt with a second less infectious variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
 
@@ -550,7 +540,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps)
+  y <- mod$simulate(steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
@@ -572,7 +562,8 @@ test_that("Can calculate Rt with a second less infectious variant", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
@@ -599,7 +590,6 @@ test_that("Can calculate Rt with a second more infectious variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
 
@@ -607,7 +597,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps)
+  y <- mod$simulate(steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
@@ -629,7 +619,8 @@ test_that("Can calculate Rt with a second more infectious variant", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
@@ -657,7 +648,6 @@ test_that("If prob_strain is NA then Rt is NA ", {
   initial$state[info$index$I_A] <- 0
 
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
 
@@ -665,7 +655,7 @@ test_that("If prob_strain is NA then Rt is NA ", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps)
+  y <- mod$simulate(steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
@@ -710,7 +700,6 @@ test_that("calculate Rt with both second variant and vaccination", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_prob_strain <- mod$info()$index$prob_strain
 
@@ -718,7 +707,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps)
+  y <- mod$simulate(steps)
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 

@@ -8,9 +8,8 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## This is not quite correct, and I don't really know why. I think
   ## that this is the rounding that we're doing to shuffle the
@@ -37,8 +36,8 @@ test_that("there are no infections when beta is 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
 
   ## Susceptible population is never drawn down:
   expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
@@ -50,9 +49,8 @@ test_that("everyone is infected when beta is large", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    mod$simulate(seq(0, 400, by = 4))))
   expect_true(all(y$S[, 1, -1] == 0))
 })
 
@@ -81,9 +79,8 @@ test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    mod$simulate(seq(0, 400, by = 4))))
 
   # other than in the 4th age group (where infections are seeded)
   # after the first day (4 times steps), R is empty
@@ -102,9 +99,8 @@ test_that("R, T_sero_neg and T_PCR_neg are all non-decreasing and S is
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(diff(t(drop(y$R))) >= 0))
   expect_true(all(diff(t(drop(y$T_sero_neg))) >= 0))
@@ -126,8 +122,8 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   y[info$index$T_PCR_pos] <- 0
 
   mod$set_state(y)
-  mod$set_index(integer(0))
-  s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
 
   ## Susceptible population is never drawn down:
   expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
@@ -143,9 +139,8 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
   expect_true(all(y$I_C == 0))
@@ -180,9 +175,8 @@ test_that("No one is hospitalised, no-one dies if psi_H is 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
   expect_true(any(y$I_C > 0))
@@ -229,9 +223,8 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   y0[info$index$I_A] <- 0
 
   mod$set_state(y0)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C > 0))
   expect_true(all(y$H_R_unconf == 0))
@@ -274,9 +267,8 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   y0[info$index$I_A] <- 0
 
   mod$set_state(y0)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C > 0))
   expect_true(all(y$H_R_unconf == 0))
@@ -309,9 +301,8 @@ test_that("No one dies in the community if psi_G_D is 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C > 0))
   expect_true(all(y$G_D == 0))
@@ -345,9 +336,8 @@ test_that("forcing hospital route results in correct path", {
     mod <- carehomes$new(p, 0, 1)
     info <- mod$info()
     mod$set_state(carehomes_initial(info, 1, p)$state)
-    mod$set_index(integer(0))
     y <- mod$transform_variables(
-      drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+      drop(mod$simulate(seq(0, 400, by = 4))))
 
     ## Save some work by using the total of confirmed and unconfirmed
     y$H_R <- y$H_R_unconf + y$H_R_conf
@@ -406,9 +396,8 @@ test_that("No one seroconverts if p_sero_pos is 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$T_sero_neg > 0))
   expect_true(all(y$T_sero_pos == 0))
@@ -428,9 +417,8 @@ test_that("No one does not seroconvert and no one seroreverts
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$T_sero_neg == 0))
   expect_true(any(y$T_sero_pos > 0))
@@ -451,8 +439,7 @@ test_that("T_sero_pre parameters work as expected", {
     y0[info$index$T_sero_pre] <- 0
 
     mod$set_state(y0)
-    mod$set_index(integer(0))
-    mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+    mod$transform_variables(drop(mod$simulate(0:400)))
   }
 
   ## p_sero_pre_1 = 1, expect no cases in T_sero_pre_2 stream
@@ -520,8 +507,7 @@ test_that("setting a gamma to Inf results immediate progression", {
     }
 
     mod$set_state(state)
-    mod$set_index(integer(0))
-    y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+    y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
     if (hosp_compartment) {
       y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
@@ -595,8 +581,7 @@ test_that("setting a gamma to 0 results in no progression", {
     }
 
     mod$set_state(state)
-    mod$set_index(integer(0))
-    y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+    y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
     if (hosp_compartment) {
       y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
@@ -650,8 +635,7 @@ test_that("No one is unconfirmed, if p_star = 1", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state, 0)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+  y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(all(y$H_R_unconf == 0))
   expect_true(any(y$H_R_conf > 0))
@@ -689,8 +673,7 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state, 0)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+  y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$H_R_unconf > 0))
   expect_true(all(y$H_R_conf == 0))
@@ -739,8 +722,7 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   y0[info$index$ICU_D_unconf[1:19]] <- 50
 
   mod$set_state(y0, 0)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+  y <- mod$transform_variables(drop(mod$simulate(0:400)))
   n <- length(y$time)
 
   ## Check hosp_R
@@ -803,9 +785,8 @@ test_that("tots all summed correctly ", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    drop(mod$simulate(seq(0, 400, by = 4))))
   expect_true(all(y$general_tot == apply(y$ICU_pre_conf, 5, sum) +
                     apply(y$H_R_conf, 5, sum) +
                     apply(y$H_D_conf, 5, sum) +
