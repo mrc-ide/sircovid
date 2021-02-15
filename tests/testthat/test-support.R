@@ -283,7 +283,7 @@ test_that("Can add new betas", {
     S <- dat$trajectories$state[i, , ]
     carehomes_Rt_trajectories(dat$trajectories$step, S, p)
   })
-  
+
   n_par <- ncol(rt$eff_Rt_all)
   set.seed(1)
 

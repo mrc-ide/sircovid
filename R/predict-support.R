@@ -47,7 +47,7 @@
 add_future_betas <- function(sample, rt, future, rt_type = "Rt_general") {
   assert_is(sample, "mcstate_pmcmc")
   assert_is(rt, "Rt_trajectories")
-  
+
   ## We never want the future projections here, so exclude them
   sample <- drop_trajectory_predicted(sample)
 
@@ -122,7 +122,7 @@ future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
   if (is.null(names(future))) {
     stop("Expected 'future' to be named")
   }
-  
+
   future_date <- as_date(names(future))
 
   if (!all(diff(future_date) > 0)) {
@@ -148,7 +148,7 @@ future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
   if (!all(lengths(future_value_list) %in% c(1, n_pars))) {
     stop(sprintf("Future value must be of length 1 or match rt_value"))
   }
-  
+
   future_value <- matrix(NA, nrow = length(future_value_list), ncol = n_pars)
   for (i in seq_along(future_value_list)) {
     future_value[i, ] <- future_value_list[[i]]
