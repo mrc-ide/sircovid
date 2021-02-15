@@ -284,9 +284,13 @@ test_that("Can add new betas", {
     carehomes_Rt_trajectories(dat$trajectories$step, S, p)
   })
 
+  n_par <- ncol(rt$eff_Rt_all)
+  set.seed(1)
+
   future <- list(
     "2020-04-01" = future_Rt(1.5),
-    "2020-05-01" = future_Rt(0.5, "2020-03-27"))
+    "2020-05-01" = future_Rt(0.5, "2020-03-27"),
+    "2020-06-01" = future_Rt(runif(n_par, 1.4, 1.6)))
   res <- add_future_betas(dat, rt, future)
   expect_is(res, "mcstate_pmcmc")
 
@@ -305,14 +309,15 @@ test_that("Can add new betas", {
 
   ## We have a few change points to consider here:
   i <- c(sircovid_date("2020-04-01") - 1, sircovid_date("2020-04-01"),
-         sircovid_date("2020-05-01") - 1, sircovid_date("2020-05-01"))
+         sircovid_date("2020-05-01") - 1, sircovid_date("2020-05-01"),
+         sircovid_date("2020-06-01") - 1, sircovid_date("2020-06-01"))
   j <- i / p_new$dt
 
   ## Unchanged until the first change point
   expect_true(all(beta_new[seq(length(beta_base), j[[1]])] == last(beta_base)))
 
-  ## Our paramaters are expanded as expected:
-  v <- beta_new[j[c(1, 2, 2, 4)] + 1L]
+  ## Our parameters are expanded as expected:
+  v <- beta_new[j[c(1, 2, 2, 4, 4, 6)] + 1L]
   cmp <- sircovid_parameters_beta(i, v, p_new$dt)
   expect_equal(beta_new[seq(j[[1]], length(beta_new))],
                cmp[seq(j[[1]], length(cmp))])
@@ -320,7 +325,6 @@ test_that("Can add new betas", {
   tmp <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
   expect_equal(tmp$value[1, ] * last(beta_base), v)
 })
-
 
 test_that("Compute relative betas", {
   dat <- reference_data_mcmc()
@@ -415,6 +419,9 @@ test_that("validate future beta values", {
   expect_error(
     add_future_betas(dat, rt, list("2020-05-01" = future_Rt(1, "2020-01-01"))),
     "Relative date not found in rt set: 2020-01-01")
+  expect_error(
+    add_future_betas(dat, rt, list("2020-05-01" = future_Rt(1:2))),
+    "Future value must be of length 1 or match rt_value")
 })
 
 

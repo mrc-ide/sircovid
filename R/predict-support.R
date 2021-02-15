@@ -36,7 +36,8 @@
 ##' @param future A named list of [sircovid::future_Rt] values. Each
 ##'   element name corresponds to the date that the change takes
 ##'   effect (in ISO-8601 "YYYY-MM-DD" format) and must be strictly
-##'   increasing with at least two days separating changes.
+##'   increasing with at least two days separating changes. Note that future
+##'   values must be of length 1 or match the number of parameters in `rt`
 ##'
 ##'@param rt_type A string giving the entry of `rt` to modify,
 ##' defaults to `Rt_general`
@@ -46,9 +47,10 @@
 add_future_betas <- function(sample, rt, future, rt_type = "Rt_general") {
   assert_is(sample, "mcstate_pmcmc")
   assert_is(rt, "Rt_trajectories")
-  sample <- drop_trajectory_predicted(sample)
 
   ## We never want the future projections here, so exclude them
+  sample <- drop_trajectory_predicted(sample)
+
   n_pars <- nrow(sample$pars)
   n_time <- length(sample$trajectories$step)
 
@@ -83,7 +85,8 @@ add_future_betas <- function(sample, rt, future, rt_type = "Rt_general") {
 ##' @rdname add_future_betas
 ##' @export
 ##'
-##' @param value A value to add in the future. If `relative_to` is
+##' @param value A value or vector of values (one for each parameter set)
+##'   to add in the future. If `relative_to` is
 ##'   `NULL`, then this is an *absolute* Rt value, otherwise it is a
 ##'   relative value.
 ##'
@@ -91,11 +94,12 @@ add_future_betas <- function(sample, rt, future, rt_type = "Rt_general") {
 ##'   string or [Date] object indicating the date that the value
 ##'   should be taken relative to.
 future_Rt <- function(value, relative_to = NULL) {
-  assert_scalar(value)
+
   if (is.null(relative_to)) {
     ret <- list(value = value,
                 relative_value = NA_real_, relative_to = NA_character_)
   } else {
+    assert_scalar(value)
     ret <- list(value = NA_real_,
                 relative_value = value,
                 relative_to = assert_date_string(relative_to))
@@ -109,6 +113,7 @@ future_Rt <- function(value, relative_to = NULL) {
 ## or similar) and 'calculate'. There's still a *lot* of logic in
 ## here, but the final product is fairly easily understood.
 future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
+
   if (length(future) == 0) {
     stop("Expected at least one element in 'future'")
   }
@@ -118,6 +123,7 @@ future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
   if (is.null(names(future))) {
     stop("Expected 'future' to be named")
   }
+
   future_date <- as_date(names(future))
 
   if (!all(diff(future_date) > 0)) {
@@ -134,8 +140,20 @@ future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
   }
 
   current_rt <- rt_value[nrow(rt_value), ]
-  future_value <- vnapply(future, "[[", "value", USE.NAMES = FALSE)
-  is_relative <- is.na(future_value)
+  relative_value <- vnapply(future, "[[", "relative_value",
+                            USE.NAMES = FALSE)
+  is_relative <- !is.na(relative_value)
+
+  n_pars <- ncol(rt_value)
+  future_value_list <- lapply(future[!is_relative], "[[", "value")
+  if (!all(lengths(future_value_list) %in% c(1, n_pars))) {
+    stop(sprintf("Future value must be of length 1 or match rt_value"))
+  }
+
+  future_value <- matrix(NA, nrow = length(future_value_list), ncol = n_pars)
+  for (i in seq_along(future_value_list)) {
+    future_value[i, ] <- future_value_list[[i]]
+  }
 
   relative_to <- vcapply(future[is_relative], "[[", "relative_to",
                          USE.NAMES = FALSE)
@@ -147,10 +165,10 @@ future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
          paste(relative_to[is.na(relative_to_index)], collapse = ", "))
   }
 
-  value <- matrix(NA_real_, length(future), ncol(rt_value))
+  value <- matrix(NA_real_, length(future), n_pars)
   value[is_relative, ] <- relative_value * rt_value[relative_to_index, ] /
     rep(current_rt, each = length(relative_to_index))
-  value[!is_relative, ] <- outer(future_value[!is_relative], current_rt, "/")
+  value[!is_relative, ] <- future_value %*% diag(1 / current_rt)
   value <- t(value)
 
   date <- sircovid_date(future_date)
@@ -170,6 +188,7 @@ future_relative_beta <- function(future, rt_date, rt_value, prefix = NULL) {
 
 
 add_future_beta <- function(p, beta_date, beta_scaling) {
+
   dt <- p$dt
   beta_step <- p$beta_step
   beta_last <- last(beta_step)
