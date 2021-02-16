@@ -14,7 +14,8 @@ reference_data_rt <- function() {
     steps <- seq(initial$step, end, by = 1 / p$dt)
 
     set.seed(1)
-    y <- dust::dust_iterate(mod, steps, index)
+    mod$set_index(index)
+    y <- mod$simulate(steps)
     rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
     rt_all <- carehomes_Rt_trajectories(steps, y, p)
 

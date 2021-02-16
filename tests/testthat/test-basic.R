@@ -54,7 +54,8 @@ test_that("incidence calculation is correct", {
   expect_length(index, 2) # guard against name changes
 
   steps <- seq(initial$step, length.out = 60 * 4 + 1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   i <- which(steps %% pars$steps_per_day == 0)
   y0 <- y[, , i[-length(i)]]

@@ -232,7 +232,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 ## We expect 'step' to be a vector along step
 
 ##' Compute "Rt" for a set of simulated trajectories (e.g., the result
-##' of [dust::dust_iterate()], [mcstate::pmcmc()] or
+##' of the `$iterate()` method of [carehomes], [mcstate::pmcmc()] or
 ##' [mcstate::pmcmc_predict()]. The trajectories may or may not share
 ##' parameters.
 ##'

@@ -21,8 +21,8 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
   state[index_S[, 1]] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of s
   expect_equal(length(s), prod(info$dim$S) * 101)
@@ -58,9 +58,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   state[index_S[, 1]] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## Noone moves into I_P, I_C_1 or I_C_2 ever
   ## other than in the 4th age group where some infections are seeded
@@ -94,9 +92,7 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   state[index_S[, 1]] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## Noone moves into hospitalised compartments ever
   ## other than in the 4th age group where some infections are seeded
@@ -134,8 +130,8 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
   state[index_I_A[, 1, 1, 1]] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of s
   expect_equal(length(s), prod(info$dim$S) * 101)
@@ -167,9 +163,7 @@ test_that("Vaccination of susceptibles works", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
   i <- 4:carehomes_n_groups()
   expect_equal(y$S[i, 1, 1], y$S[i, 2, 2] + rowSums(y$E[i, , , 1, 2]))
   expect_equal(y$S[i, , 101], y$S[i, , 2])
@@ -204,8 +198,8 @@ test_that("Vaccination of exposed individuals works", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  e <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$E)
+  mod$set_index(info$index$E)
+  e <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of e
   expect_equal(length(e), prod(info$dim$E) * 101)
@@ -259,9 +253,8 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  i_A <-
-    dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$I_A)
+  mod$set_index(info$index$I_A)
+  i_A <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of i_A
   expect_equal(length(i_A), prod(info$dim$I_A) * 101)
@@ -364,8 +357,8 @@ test_that("Vaccination of recovered individuals works", {
   state[index_I_A] <- 0 # remove seeded infections
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  r <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$R)
+  mod$set_index(info$index$R)
+  r <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of r
   expect_equal(length(r), prod(info$dim$R) * 101)
@@ -412,8 +405,8 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  e <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$E)
+  mod$set_index(info$index$E)
+  e <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of e
   expect_equal(length(e), prod(info$dim$E) * 101)
@@ -467,9 +460,8 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  i_A <- dust::dust_iterate(mod, seq(0, 400, by = 4),
-                                 info$index$I_A)
+  mod$set_index(info$index$I_A)
+  i_A <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of i_A
   expect_equal(length(i_A), prod(info$dim$I_A) * 101)
@@ -573,9 +565,8 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
   state[index_I_A] <- 0 # remove seeded infections
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  r <- dust::dust_iterate(mod, seq(0, 400, by = 4),
-                          info$index$R)
+  mod$set_index(info$index$R)
+  r <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of r
   expect_equal(length(r), prod(info$dim$R) * 101)
@@ -609,10 +600,8 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
   i <- 4:carehomes_n_groups()
-  y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
   expect_equal(y$S[i, 1, 1], y$S[i, 3, 2])
   expect_equal(y$S[i, , 101], y$S[i, , 2])
 })
@@ -635,9 +624,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 12))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 12))))
   i <- 4:carehomes_n_groups()
   expect_equal(y$S[i, 1, 1], y$S[i, 12, 2])
   expect_equal(y$S[i, , 34], y$S[i, , 2])
@@ -678,8 +665,8 @@ test_that("Clinical progression within a vaccination class works", {
     state[index_S[, 3]]
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  y <- dust::dust_iterate(mod, seq(0, 400, by = 4), index)
+  mod$set_index(index)
+  y <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of s
   expect_equal(length(y),
@@ -715,8 +702,8 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
   state[index_S[, 1]] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of s
   expect_equal(length(s), prod(info$dim$S) * 101)
@@ -742,8 +729,8 @@ test_that("there are no vaccinated susceptibles when vaccination rate is 0", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  s <- dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$S)
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
 
   ## No vaccinated susceptibles:
   expect_equal(s[-seq_len(carehomes_n_groups()), , ],
@@ -770,7 +757,8 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
@@ -793,7 +781,8 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
@@ -827,7 +816,8 @@ test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
@@ -878,7 +868,8 @@ test_that("Effective Rt reduced by rel_infectivity if all vaccinated", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
@@ -941,7 +932,8 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
@@ -991,7 +983,8 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
 
   rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
   rt_all <- carehomes_Rt_trajectories(steps, y, p)
@@ -1038,7 +1031,8 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
   S <- y[seq_len(length(index_S)), , ]
   I_weighted <- y[-seq_len(length(index_S)), , ]
 
@@ -1065,7 +1059,8 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
   S <- y[seq_len(length(index_S)), , ]
   I_weighted <- y[-seq_len(length(index_S)), , ]
 
@@ -1104,7 +1099,8 @@ test_that("IFR_t modified if rel_p_sympt is not 1", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
   S <- y[seq_len(length(index_S)), , ]
   I_weighted <- y[-seq_len(length(index_S)), , ]
 
@@ -1169,7 +1165,8 @@ test_that("IFR_t modified if rel_p_hosp_if_sympt is not 1", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  y <- dust::dust_iterate(mod, steps, index)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
   S <- y[seq_len(length(index_S)), , ]
   I_weighted <- y[-seq_len(length(index_S)), , ]
 
@@ -1223,9 +1220,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
   expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
@@ -1254,9 +1249,7 @@ test_that(
     info <- mod$info()
     y0 <- carehomes_initial(info, 1, p)$state
     mod$set_state(carehomes_initial(info, 1, p)$state)
-    mod$set_index(integer(0))
-    y <- mod$transform_variables(
-      drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
     expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
     expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
@@ -1277,9 +1270,7 @@ test_that("Outputed vaccination numbers make sense", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 4))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## check outputed objects have correct dimension
   expect_equal(dim(y$cum_n_S_vaccinated), c(19, 3, 101))
@@ -1311,9 +1302,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
 
   i <- 4:carehomes_n_groups()
 
@@ -1352,9 +1341,7 @@ test_that("Outputed E vaccination numbers are what we expect", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
 
   i <- 4:carehomes_n_groups()
   ## there are candidates in E for vaccination
@@ -1389,9 +1376,7 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
 
   i <- 4:carehomes_n_groups()
   ## there are candidates in I_A for vaccination
@@ -1462,9 +1447,7 @@ test_that("Outputed R vaccination numbers are what we expect", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
 
   i <- 4:carehomes_n_groups()
   ## there are candidates in R for vaccination
@@ -1666,7 +1649,8 @@ test_that("run sensible vaccination schedule", {
             "cum_n_R_vaccinated")
   index <- unlist(lapply(info$index[keep], "[", 1:19), FALSE, FALSE)
 
-  y <- dust::dust_iterate(mod, seq(0, 380, by = 4), index)
+  mod$set_index(index)
+  y <- mod$simulate(seq(0, 380, by = 4))
   s <- array(y, c(19, 5, dim(y)[3]))
 
   ## Never vaccinate any young person:

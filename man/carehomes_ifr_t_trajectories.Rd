@@ -47,7 +47,7 @@ matrix, not a vector.
 }
 \description{
 Compute "IFR_t" for a set of simulated trajectories (e.g., the result
-of \code{\link[dust:dust_iterate]{dust::dust_iterate()}}, \code{\link[mcstate:pmcmc]{mcstate::pmcmc()}} or
+of the \verb{$iterate()} method of \link{carehomes}, \code{\link[mcstate:pmcmc]{mcstate::pmcmc()}} or
 \code{\link[mcstate:pmcmc_predict]{mcstate::pmcmc_predict()}}. The trajectories may or may not share
 parameters.
 }

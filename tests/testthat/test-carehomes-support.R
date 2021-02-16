@@ -561,10 +561,9 @@ test_that("model_pcr_and_serology_user switch works", {
   state <- carehomes_initial(info, 1, p)$state
 
   mod$set_state(state)
-  mod$set_index(integer(0))
 
   y <- mod$transform_variables(drop(
-    dust::dust_iterate(mod, seq(0, 400, by = 4))))
+    mod$simulate(seq(0, 400, by = 4))))
 
   ## y$T_sero_neg and y$T_PCR_neg are increasing over time as noone gets out
   for (i in seq_len(p$n_groups)) {
