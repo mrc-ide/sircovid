@@ -302,9 +302,9 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   n_time_steps <-
     length(sircovid_parameters_beta_expand(step, pars$p_H_step))
 
-  ## Calculates vaccine progression through a compartment X
-  compartment_vacc_prog <- function(vacc_prog_rate, gamma_X, k_X,
-                                    incl_vacc_prog_into_compartment = TRUE) {
+  ## TODO: This is not correct for the initial transition from
+  ## vaccination
+  vacc_prog_before_infectious <- function(vacc_prog_rate) {
     ## Q[i, j] gives probability of progression from vaccine stage i to
     ## vaccine stage j in one time step
     Q <- diag(exp(-vacc_prog_rate * dt))
@@ -313,26 +313,19 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
     }
     Q[n_vacc_classes, 1] <- 1 - Q[n_vacc_classes, n_vacc_classes]
 
-    ## probability of progression of a stage of compartment X in one time step
-    p_XX <- 1 - exp(-gamma_X * dt)
+    ## probability of E progression in one time step
+    p_EE <- 1 - exp(-pars$gamma_E * dt)
 
-    ## A[i, j] gives the probability that an individual who begins a stage of
-    ## compartment X in vaccine stage i, exits that X stage in vaccine stage j.
-    ## Note that A = (sum_{k = 0}^Inf ((1 - p_XX) * Q) ^ k) * p_XX * Q. Also
-    ## note that for a square matrix B, sum_{k = 0}^Inf B^k = (I - B)^-1.
-    A <- (solve(diag(n_vacc_classes) - (1 - p_XX) * Q) %*% (p_XX * Q))
+    ## A[i, j] gives the probability that an individual who begins an E stage in
+    ## vaccine stage i, exits that E stage in vaccine stage j. Note that A =
+    ## (sum_{k = 0}^Inf ((1 - p_EE) * Q) ^ k) * p_EE * Q. Also note that for a
+    ## square matrix B, sum_{k = 0}^Inf B^k = (I - B)^-1.
+    A <- (solve(diag(n_vacc_classes) - (1 - p_EE) * Q) %*% (p_EE * Q))
 
-    ## Note we need to account for there being k_X stages in compartment X, and
-    ## also if we include the vaccine progression in the same step that they
-    ## move into the compartment.
-    if (incl_vacc_prog_into_compartment) {
-      ## The extra Q here accounts for the vaccine progression in the same step
-      ## an individual moves into the compartment
-      out <- Q %*% matrix_pow(A, k_X)
-    } else {
-      out <- matrix_pow(A, k_X)
-    }
-    
+    ## Note we need to account for there being k_E stages in E, and also that
+    ## individuals can have a vaccine progression in the same step that they get
+    ## infected (hence Q appearing below).
+    out <- Q %*% matrix_pow(A, pars$k_E)
     out
   }
 
@@ -416,8 +409,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   if (n_vacc_classes > 1) {
     pr <- matrix_index(pars$vaccine_progression_rate_base)
     V <- vapply(pr$unique, function(i)
-      compartment_vacc_prog(pr$value[i, ], pars$gamma_E, pars$k_E,
-                            incl_vacc_prog_into_compartment = TRUE),
+      vacc_prog_before_infectious(pr$value[i, ]),
       array(0, c(n_vacc_classes, n_vacc_classes)))[, , pr$index]
 
     out <- array(0, dim(mean_duration))
