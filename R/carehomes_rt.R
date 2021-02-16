@@ -332,7 +332,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
     } else {
       out <- matrix_pow(A, k_X)
     }
-
+    
     out
   }
 
