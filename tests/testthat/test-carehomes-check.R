@@ -840,24 +840,24 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     mod <- carehomes$new(p, 0, 1)
 
     info <- mod$info()
-    state <- carehomes_initial(info, 1, p)$state
+    y0 <- carehomes_initial(info, 1, p)$state
 
     ## remove initial asymptomatic individuals
     index_I_A <- info$index$I_A
-    state[index_I_A] <- 0
+    y0[index_I_A] <- 0
     index_I_weighted <- info$index$I_weighted
-    state[index_I_weighted] <- 0
+    y0[index_I_weighted] <- 0
 
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
-    state[index] <- 50
+    y0[index] <- 50
 
-    mod$set_state(state)
-    mod$set_index(integer(0))
-    y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:400)))
+    mod$set_state(y0)
+    y <- mod$transform_variables(
+      drop(mod$simulate(seq(0, 400, by = 4))))
 
     ## Susceptible population is never drawn down:
-    expect_equal(y$S, array(y$S[, , 1], c(nrow(y$S), 1, 401)))
+    expect_equal(y$S, array(y$S[, , 1], c(nrow(y$S), 1, 101)))
     expect_true(all(y$I_weighted == 0))
   }
 
@@ -904,22 +904,22 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     mod <- carehomes$new(p, 0, 1)
 
     info <- mod$info()
-    state <- carehomes_initial(info, 1, p)$state
+    y0 <- carehomes_initial(info, 1, p)$state
 
     ## remove initial asymptomatic individuals
     index_I_A <- info$index$I_A
-    state[index_I_A] <- 0
+    y0[index_I_A] <- 0
 
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
-    state[index] <- 50
+    y0[index] <- 50
     index_I_weighted <- info$index$I_weighted
-    state[index_I_weighted] <- p[[transmission_name]] * 50 *
+    y0[index_I_weighted] <- p[[transmission_name]] * 50 *
       info$dim[[compartment_name]][[3]]
 
-    mod$set_state(state)
-    mod$set_index(integer(0))
-    y <- mod$transform_variables(drop(dust::dust_iterate(mod, 0:1)))
+    mod$set_state(y0)
+    y <- mod$transform_variables(
+      drop(mod$simulate(c(0, 1))))
 
     ## Susceptible population is immediately infected:
     expect_true(all(y$S[, , 2] == 0))

@@ -303,9 +303,8 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  i_P <-
-    dust::dust_iterate(mod, seq(0, 400, by = 4), info$index$I_P)
+  mod$set_index(info$index$I_P)
+  i_A <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of i_P
   expect_equal(length(i_P), prod(info$dim$I_P) * 101)
@@ -510,9 +509,8 @@ test_that("Returning to unvaccinated stage works for I_P individuals", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  i_P <- dust::dust_iterate(mod, seq(0, 400, by = 4),
-                            info$index$I_P)
+  mod$set_index(info$index$I_P)
+  i_P <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of i_P
   expect_equal(length(i_P), prod(info$dim$I_P) * 101)
@@ -1408,9 +1406,7 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  mod$set_index(integer(0))
-  y <- mod$transform_variables(
-    drop(dust::dust_iterate(mod, seq(0, 400, by = 41))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
 
   i <- 4:carehomes_n_groups()
   ## there are candidates in I_P for vaccination
