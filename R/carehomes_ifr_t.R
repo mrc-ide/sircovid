@@ -254,7 +254,7 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 
   out <- list(IFR = IFR,
               IHR = IHR)
-  
+
   out
 }
 
