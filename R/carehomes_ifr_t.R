@@ -228,42 +228,6 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
   n_time_steps <-
     length(sircovid_parameters_beta_expand(step, pars$p_H_step))
 
-  ## TODO: This is not correct for the initial transition from
-  ## vaccination
-  vacc_prog_before_infectious <- function(group_i) {
-    vacc_prog_rate <- pars$vaccine_progression_rate_base[group_i, ]
-
-    ## Q[i, j] gives probability of progression from vaccine stage i to
-    ## vaccine stage j in one time step
-    Q <- diag(exp(-vacc_prog_rate * dt))
-    for (i in seq_len(n_vacc_classes - 1)) {
-      Q[i, i + 1] <- 1 - Q[i, i]
-    }
-    Q[n_vacc_classes, 1] <- 1 - Q[n_vacc_classes, n_vacc_classes]
-
-    ## probability of E progression in one time step
-    p_EE <- 1 - exp(-pars$gamma_E * dt)
-
-    ## A[i, j] gives the probability that an individual who begins an E stage in
-    ## vaccine stage i, exits that E stage in vaccine stage j. Note that A =
-    ## (sum_{k = 0}^Inf ((1 - p_EE) * Q) ^ k) * p_EE * Q. Also note that for a
-    ## square matrix B, sum_{k = 0}^Inf B^k = (I - B)^-1.
-    A <- (solve(diag(n_vacc_classes) - (1 - p_EE) * Q) %*% (p_EE * Q))
-
-    ## Note we need to account for there being k_E stages in E, and also that
-    ## individuals can have a vaccine progression in the same step that they get
-    ## infected (hence Q appearing below).
-    out <- Q %*% matrix_pow(A, pars$k_E)
-    out
-  }
-
-  if (n_vacc_classes > 1) {
-    ## V[i, j, k] gives the probability that an individual in group k who is
-    ## infected when in vaccine stage i exits the E class in vaccine stage j
-    V <- vapply(seq_len(pars$n_groups), vacc_prog_before_infectious,
-                array(0, c(n_vacc_classes, n_vacc_classes)))
-  }
-
   ## compute probabilities of different pathways
 
   p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
@@ -288,23 +252,9 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
     IHR * (p_ICU * (p_ICU_D + (1 - p_ICU_D) * p_W_D) +
              (1 - p_ICU) * p_H_D)
 
-  ## mean_duration[i, j, k] represents mean duration at step k of age group i
-  ## leaving the E compartment in vaccine stage j, we need to output for leaving
-  ## the S compartment in vaccine stage j, so we calculate this here
-  if (n_vacc_classes > 1) {
-    out <- list(IFR = array(0, dim(IFR)),
-                IHR = array(0, dim(IHR)))
-    for (i in seq_len(pars$n_groups)) {
-      for (j in seq_len(n_time_steps)) {
-        out$IFR[i, , j] <- V[, , i] %*% IFR[i, , j]
-        out$IHR[i, , j] <- V[, , i] %*% IHR[i, , j]
-      }
-    }
-  } else {
-    out <- list(IFR = IFR,
-                IHR = IHR)
-  }
-
+  out <- list(IFR = IFR,
+              IHR = IHR)
+  
   out
 }
 
