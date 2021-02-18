@@ -10,6 +10,7 @@ test_that("can run the carehomes model", {
   mod$set_state(initial$state, initial$step)
 
   index <- c(carehomes_index(info)$run,
+             deaths_carehomes = info$index[["D_carehomes_tot"]],
              deaths_comm = info$index[["D_comm_tot"]],
              deaths_hosp = info$index[["D_hosp_tot"]],
              admitted = info$index[["cum_admit_conf"]],
@@ -25,6 +26,7 @@ test_that("can run the carehomes model", {
   expected <-
     rbind(icu                                = c(3, 4, 5, 10, 3),
           general                            = c(35, 34, 35, 41, 7),
+          deaths_carehomes_inc               = c(0, 0, 0, 0, 0),
           deaths_comm_inc                    = c(0, 0, 0, 0, 0),
           deaths_hosp_inc                    = c(2, 1, 3, 2, 0),
           admitted_inc                       = c(0, 0, 2, 0, 0),
@@ -36,8 +38,9 @@ test_that("can run the carehomes model", {
           sympt_cases_non_variant_over25_inc = c(5, 3, 4, 6, 5),
           react_pos                          = c(470, 641, 1063, 877,
                                                  151),
-          deaths_comm                        = c(23349, 23597, 23357,
+          deaths_carehomes                   = c(23349, 23597, 23357,
                                                  23379, 23245),
+          deaths_comm                        = c(0, 0, 0, 0, 0),
           deaths_hosp                        = c(283383, 283433, 282859,
                                                  282832, 284127),
           admitted                           = c(131981, 132378, 132257,
@@ -74,9 +77,11 @@ test_that("incidence calculation is correct", {
   mod$set_state(initial$state, initial$step)
 
   ## We have interesting values by time 60, step 240
-  ## There are 7 incidence variables, so we want to pull 14 variables
+  ## There are 8 incidence variables, so we want to pull 16 variables
   index <- c(deaths_comm = info$index$D_comm_tot,
              deaths_comm_inc = info$index$D_comm_inc,
+             deaths_carehomes = info$index$D_carehomes_tot,
+             deaths_carehomes_inc = info$index$D_carehomes_inc,
              deaths_hosp = info$index$D_hosp_tot,
              deaths_hosp_inc = info$index$D_hosp_inc,
              admitted = info$index$cum_admit_conf,
@@ -91,14 +96,14 @@ test_that("incidence calculation is correct", {
                info$index$cum_sympt_cases_non_variant_over25,
              sympt_cases_non_variant_over25_inc =
                info$index$sympt_cases_non_variant_over25_inc)
-  expect_length(index, 14) # guard against name changes
+  expect_length(index, 16) # guard against name changes
 
   steps <- seq(initial$step, length.out = 60 * 4 + 1)
   mod$set_index(index)
   y <- mod$simulate(steps)
 
   i <- which(steps %% pars$steps_per_day == 0)
-  j <- seq(1, 14, by = 2)
+  j <- seq(1, 16, by = 2)
   y0 <- y[, , i[-length(i)]]
   y1 <- y[, , i[-1]]
   yd <- y1[j, , ] - y0[j, , ]
@@ -132,6 +137,10 @@ test_that("compiled compare function is correct", {
 test_that("Test compiled carehomes components", {
   start_date <- sircovid_date("2020-02-02")
   pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
+  ## allow some deaths in the community
+  pars$psi_G_D[15:17] <- 1
+  ## use a non-integer kappa for pillar 2 cases
+  pars$kappa_pillar2_cases <- 2.5
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
@@ -157,7 +166,8 @@ test_that("Test compiled carehomes components", {
     c(icu = 50),
     c(general = 50),
     c(hosp = 50),
-    c(deaths_hosp = 40, deaths_comm = 10),
+    c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 10),
+    c(deaths_hosp = 30, deaths_non_hosp = 20),
     c(deaths = 50),
     c(admitted = 50),
     c(new_diagnoses = 50),
