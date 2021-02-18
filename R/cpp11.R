@@ -4,8 +4,8 @@ dust_basic_alloc <- function(r_pars, pars_multi, step, n_particles, n_threads, r
   .Call(`_sircovid_dust_basic_alloc`, r_pars, pars_multi, step, n_particles, n_threads, r_seed)
 }
 
-dust_basic_run <- function(ptr, step_end) {
-  .Call(`_sircovid_dust_basic_run`, ptr, step_end)
+dust_basic_run <- function(ptr, step_end, device) {
+  .Call(`_sircovid_dust_basic_run`, ptr, step_end, device)
 }
 
 dust_basic_simulate <- function(ptr, step_end) {
@@ -80,8 +80,8 @@ dust_carehomes_alloc <- function(r_pars, pars_multi, step, n_particles, n_thread
   .Call(`_sircovid_dust_carehomes_alloc`, r_pars, pars_multi, step, n_particles, n_threads, r_seed)
 }
 
-dust_carehomes_run <- function(ptr, step_end) {
-  .Call(`_sircovid_dust_carehomes_run`, ptr, step_end)
+dust_carehomes_run <- function(ptr, step_end, device) {
+  .Call(`_sircovid_dust_carehomes_run`, ptr, step_end, device)
 }
 
 dust_carehomes_simulate <- function(ptr, step_end) {
