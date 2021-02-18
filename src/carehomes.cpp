@@ -296,11 +296,15 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_pillar2_over25_cases + ll_react + ll_strain_over25;
 }
 // [[dust::class(carehomes)]]
+// [[dust::param(G_D_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(ICU_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_15_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_all, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_over25, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_tot_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(beta_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(exp_noise, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(G_D_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(ICU_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_A, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_C, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_E, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -308,14 +312,15 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(k_H_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_H_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(k_ICU_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_ICU_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_ICU_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_PCR_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_PCR_pre, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(k_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_W_D, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_W_R, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(k_sero_pos, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(kappa_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_death, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -324,15 +329,10 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(kappa_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(N_tot_15_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(N_tot_all, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(N_tot_over25, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(N_tot_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_C, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_G_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_H_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -340,9 +340,10 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(p_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pos, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_star_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_death_comm, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -350,7 +351,6 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(phi_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(pillar2_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(pillar2_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -359,8 +359,8 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(psi_H_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_ICU, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_ICU_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(psi_star, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_W_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(psi_star, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(react_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(react_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_infectivity, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
@@ -384,17 +384,17 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(gamma_H_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_H_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_ICU_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_ICU_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_ICU_W_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_ICU_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_ICU_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_sero_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_sero_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_U, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_sero_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_sero_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(model_pcr_and_serology_user, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pre_1, has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class carehomes {
@@ -424,7 +424,215 @@ public:
     double strain_tot;
   };
   struct shared_t {
+    real_t G_D_transmission;
+    real_t ICU_transmission;
+    real_t N_tot_15_64;
+    real_t N_tot_all;
+    real_t N_tot_over25;
+    real_t N_tot_react;
     std::vector<real_t> beta_step;
+    int dim_D_comm;
+    int dim_D_hosp;
+    int dim_E;
+    int dim_E_1;
+    int dim_E_12;
+    int dim_E_123;
+    int dim_E_2;
+    int dim_E_3;
+    int dim_E_4;
+    int dim_G_D;
+    int dim_G_D_1;
+    int dim_G_D_12;
+    int dim_G_D_123;
+    int dim_G_D_2;
+    int dim_G_D_3;
+    int dim_G_D_4;
+    int dim_H_D_conf;
+    int dim_H_D_conf_1;
+    int dim_H_D_conf_12;
+    int dim_H_D_conf_123;
+    int dim_H_D_conf_2;
+    int dim_H_D_conf_3;
+    int dim_H_D_conf_4;
+    int dim_H_D_unconf;
+    int dim_H_D_unconf_1;
+    int dim_H_D_unconf_12;
+    int dim_H_D_unconf_123;
+    int dim_H_D_unconf_2;
+    int dim_H_D_unconf_3;
+    int dim_H_D_unconf_4;
+    int dim_H_R_conf;
+    int dim_H_R_conf_1;
+    int dim_H_R_conf_12;
+    int dim_H_R_conf_123;
+    int dim_H_R_conf_2;
+    int dim_H_R_conf_3;
+    int dim_H_R_conf_4;
+    int dim_H_R_unconf;
+    int dim_H_R_unconf_1;
+    int dim_H_R_unconf_12;
+    int dim_H_R_unconf_123;
+    int dim_H_R_unconf_2;
+    int dim_H_R_unconf_3;
+    int dim_H_R_unconf_4;
+    int dim_ICU_D_conf;
+    int dim_ICU_D_conf_1;
+    int dim_ICU_D_conf_12;
+    int dim_ICU_D_conf_123;
+    int dim_ICU_D_conf_2;
+    int dim_ICU_D_conf_3;
+    int dim_ICU_D_conf_4;
+    int dim_ICU_D_unconf;
+    int dim_ICU_D_unconf_1;
+    int dim_ICU_D_unconf_12;
+    int dim_ICU_D_unconf_123;
+    int dim_ICU_D_unconf_2;
+    int dim_ICU_D_unconf_3;
+    int dim_ICU_D_unconf_4;
+    int dim_ICU_W_D_conf;
+    int dim_ICU_W_D_conf_1;
+    int dim_ICU_W_D_conf_12;
+    int dim_ICU_W_D_conf_123;
+    int dim_ICU_W_D_conf_2;
+    int dim_ICU_W_D_conf_3;
+    int dim_ICU_W_D_conf_4;
+    int dim_ICU_W_D_unconf;
+    int dim_ICU_W_D_unconf_1;
+    int dim_ICU_W_D_unconf_12;
+    int dim_ICU_W_D_unconf_123;
+    int dim_ICU_W_D_unconf_2;
+    int dim_ICU_W_D_unconf_3;
+    int dim_ICU_W_D_unconf_4;
+    int dim_ICU_W_R_conf;
+    int dim_ICU_W_R_conf_1;
+    int dim_ICU_W_R_conf_12;
+    int dim_ICU_W_R_conf_123;
+    int dim_ICU_W_R_conf_2;
+    int dim_ICU_W_R_conf_3;
+    int dim_ICU_W_R_conf_4;
+    int dim_ICU_W_R_unconf;
+    int dim_ICU_W_R_unconf_1;
+    int dim_ICU_W_R_unconf_12;
+    int dim_ICU_W_R_unconf_123;
+    int dim_ICU_W_R_unconf_2;
+    int dim_ICU_W_R_unconf_3;
+    int dim_ICU_W_R_unconf_4;
+    int dim_ICU_pre_conf;
+    int dim_ICU_pre_conf_1;
+    int dim_ICU_pre_conf_12;
+    int dim_ICU_pre_conf_123;
+    int dim_ICU_pre_conf_2;
+    int dim_ICU_pre_conf_3;
+    int dim_ICU_pre_conf_4;
+    int dim_ICU_pre_unconf;
+    int dim_ICU_pre_unconf_1;
+    int dim_ICU_pre_unconf_12;
+    int dim_ICU_pre_unconf_123;
+    int dim_ICU_pre_unconf_2;
+    int dim_ICU_pre_unconf_3;
+    int dim_ICU_pre_unconf_4;
+    int dim_I_A;
+    int dim_I_A_1;
+    int dim_I_A_12;
+    int dim_I_A_123;
+    int dim_I_A_2;
+    int dim_I_A_3;
+    int dim_I_A_4;
+    int dim_I_C;
+    int dim_I_C_1;
+    int dim_I_C_12;
+    int dim_I_C_123;
+    int dim_I_C_2;
+    int dim_I_C_3;
+    int dim_I_C_4;
+    int dim_I_weighted;
+    int dim_I_weighted_1;
+    int dim_I_weighted_2;
+    int dim_I_weighted_strain;
+    int dim_I_weighted_strain_1;
+    int dim_I_weighted_strain_12;
+    int dim_I_weighted_strain_2;
+    int dim_I_weighted_strain_3;
+    int dim_I_with_diff_trans;
+    int dim_I_with_diff_trans_1;
+    int dim_I_with_diff_trans_12;
+    int dim_I_with_diff_trans_2;
+    int dim_I_with_diff_trans_3;
+    int dim_N_tot;
+    int dim_R;
+    int dim_R_1;
+    int dim_R_12;
+    int dim_R_2;
+    int dim_R_3;
+    int dim_S;
+    int dim_S_1;
+    int dim_S_2;
+    int dim_T_PCR_neg;
+    int dim_T_PCR_neg_1;
+    int dim_T_PCR_neg_12;
+    int dim_T_PCR_neg_2;
+    int dim_T_PCR_neg_3;
+    int dim_T_PCR_pos;
+    int dim_T_PCR_pos_1;
+    int dim_T_PCR_pos_12;
+    int dim_T_PCR_pos_123;
+    int dim_T_PCR_pos_2;
+    int dim_T_PCR_pos_3;
+    int dim_T_PCR_pos_4;
+    int dim_T_PCR_pre;
+    int dim_T_PCR_pre_1;
+    int dim_T_PCR_pre_12;
+    int dim_T_PCR_pre_123;
+    int dim_T_PCR_pre_2;
+    int dim_T_PCR_pre_3;
+    int dim_T_PCR_pre_4;
+    int dim_T_sero_neg;
+    int dim_T_sero_neg_1;
+    int dim_T_sero_neg_12;
+    int dim_T_sero_neg_2;
+    int dim_T_sero_neg_3;
+    int dim_T_sero_pos;
+    int dim_T_sero_pos_1;
+    int dim_T_sero_pos_12;
+    int dim_T_sero_pos_123;
+    int dim_T_sero_pos_2;
+    int dim_T_sero_pos_3;
+    int dim_T_sero_pos_4;
+    int dim_T_sero_pre;
+    int dim_T_sero_pre_1;
+    int dim_T_sero_pre_12;
+    int dim_T_sero_pre_123;
+    int dim_T_sero_pre_2;
+    int dim_T_sero_pre_3;
+    int dim_T_sero_pre_4;
+    int dim_W_D_conf;
+    int dim_W_D_conf_1;
+    int dim_W_D_conf_12;
+    int dim_W_D_conf_123;
+    int dim_W_D_conf_2;
+    int dim_W_D_conf_3;
+    int dim_W_D_conf_4;
+    int dim_W_D_unconf;
+    int dim_W_D_unconf_1;
+    int dim_W_D_unconf_12;
+    int dim_W_D_unconf_123;
+    int dim_W_D_unconf_2;
+    int dim_W_D_unconf_3;
+    int dim_W_D_unconf_4;
+    int dim_W_R_conf;
+    int dim_W_R_conf_1;
+    int dim_W_R_conf_12;
+    int dim_W_R_conf_123;
+    int dim_W_R_conf_2;
+    int dim_W_R_conf_3;
+    int dim_W_R_conf_4;
+    int dim_W_R_unconf;
+    int dim_W_R_unconf_1;
+    int dim_W_R_unconf_12;
+    int dim_W_R_unconf_123;
+    int dim_W_R_unconf_2;
+    int dim_W_R_unconf_3;
+    int dim_W_R_unconf_4;
     int dim_aux_E;
     int dim_aux_E_1;
     int dim_aux_E_12;
@@ -467,20 +675,6 @@ public:
     int dim_aux_H_R_unconf_2;
     int dim_aux_H_R_unconf_3;
     int dim_aux_H_R_unconf_4;
-    int dim_aux_I_A;
-    int dim_aux_I_A_1;
-    int dim_aux_I_A_12;
-    int dim_aux_I_A_123;
-    int dim_aux_I_A_2;
-    int dim_aux_I_A_3;
-    int dim_aux_I_A_4;
-    int dim_aux_I_C;
-    int dim_aux_I_C_1;
-    int dim_aux_I_C_12;
-    int dim_aux_I_C_123;
-    int dim_aux_I_C_2;
-    int dim_aux_I_C_3;
-    int dim_aux_I_C_4;
     int dim_aux_ICU_D_conf;
     int dim_aux_ICU_D_conf_1;
     int dim_aux_ICU_D_conf_12;
@@ -495,20 +689,6 @@ public:
     int dim_aux_ICU_D_unconf_2;
     int dim_aux_ICU_D_unconf_3;
     int dim_aux_ICU_D_unconf_4;
-    int dim_aux_ICU_pre_conf;
-    int dim_aux_ICU_pre_conf_1;
-    int dim_aux_ICU_pre_conf_12;
-    int dim_aux_ICU_pre_conf_123;
-    int dim_aux_ICU_pre_conf_2;
-    int dim_aux_ICU_pre_conf_3;
-    int dim_aux_ICU_pre_conf_4;
-    int dim_aux_ICU_pre_unconf;
-    int dim_aux_ICU_pre_unconf_1;
-    int dim_aux_ICU_pre_unconf_12;
-    int dim_aux_ICU_pre_unconf_123;
-    int dim_aux_ICU_pre_unconf_2;
-    int dim_aux_ICU_pre_unconf_3;
-    int dim_aux_ICU_pre_unconf_4;
     int dim_aux_ICU_W_D_conf;
     int dim_aux_ICU_W_D_conf_1;
     int dim_aux_ICU_W_D_conf_12;
@@ -537,6 +717,34 @@ public:
     int dim_aux_ICU_W_R_unconf_2;
     int dim_aux_ICU_W_R_unconf_3;
     int dim_aux_ICU_W_R_unconf_4;
+    int dim_aux_ICU_pre_conf;
+    int dim_aux_ICU_pre_conf_1;
+    int dim_aux_ICU_pre_conf_12;
+    int dim_aux_ICU_pre_conf_123;
+    int dim_aux_ICU_pre_conf_2;
+    int dim_aux_ICU_pre_conf_3;
+    int dim_aux_ICU_pre_conf_4;
+    int dim_aux_ICU_pre_unconf;
+    int dim_aux_ICU_pre_unconf_1;
+    int dim_aux_ICU_pre_unconf_12;
+    int dim_aux_ICU_pre_unconf_123;
+    int dim_aux_ICU_pre_unconf_2;
+    int dim_aux_ICU_pre_unconf_3;
+    int dim_aux_ICU_pre_unconf_4;
+    int dim_aux_I_A;
+    int dim_aux_I_A_1;
+    int dim_aux_I_A_12;
+    int dim_aux_I_A_123;
+    int dim_aux_I_A_2;
+    int dim_aux_I_A_3;
+    int dim_aux_I_A_4;
+    int dim_aux_I_C;
+    int dim_aux_I_C_1;
+    int dim_aux_I_C_12;
+    int dim_aux_I_C_123;
+    int dim_aux_I_C_2;
+    int dim_aux_I_C_3;
+    int dim_aux_I_C_4;
     int dim_aux_W_D_conf;
     int dim_aux_W_D_conf_1;
     int dim_aux_W_D_conf_12;
@@ -583,163 +791,15 @@ public:
     int dim_cum_n_vaccinated;
     int dim_cum_n_vaccinated_1;
     int dim_cum_n_vaccinated_2;
-    int dim_D_comm;
-    int dim_D_hosp;
     int dim_delta_D_comm;
     int dim_delta_D_hosp;
-    int dim_E;
-    int dim_E_1;
-    int dim_E_12;
-    int dim_E_123;
-    int dim_E_2;
-    int dim_E_3;
-    int dim_E_4;
-    int dim_G_D;
-    int dim_G_D_1;
-    int dim_G_D_12;
-    int dim_G_D_123;
-    int dim_G_D_2;
-    int dim_G_D_3;
-    int dim_G_D_4;
     int dim_gamma_sero_pre;
-    int dim_H_D_conf;
-    int dim_H_D_conf_1;
-    int dim_H_D_conf_12;
-    int dim_H_D_conf_123;
-    int dim_H_D_conf_2;
-    int dim_H_D_conf_3;
-    int dim_H_D_conf_4;
-    int dim_H_D_unconf;
-    int dim_H_D_unconf_1;
-    int dim_H_D_unconf_12;
-    int dim_H_D_unconf_123;
-    int dim_H_D_unconf_2;
-    int dim_H_D_unconf_3;
-    int dim_H_D_unconf_4;
-    int dim_H_R_conf;
-    int dim_H_R_conf_1;
-    int dim_H_R_conf_12;
-    int dim_H_R_conf_123;
-    int dim_H_R_conf_2;
-    int dim_H_R_conf_3;
-    int dim_H_R_conf_4;
-    int dim_H_R_unconf;
-    int dim_H_R_unconf_1;
-    int dim_H_R_unconf_12;
-    int dim_H_R_unconf_123;
-    int dim_H_R_unconf_2;
-    int dim_H_R_unconf_3;
-    int dim_H_R_unconf_4;
-    int dim_I_A;
-    int dim_I_A_1;
-    int dim_I_A_12;
-    int dim_I_A_123;
-    int dim_I_A_2;
-    int dim_I_A_3;
-    int dim_I_A_4;
-    int dim_I_C;
-    int dim_I_C_1;
-    int dim_I_C_12;
-    int dim_I_C_123;
-    int dim_I_C_2;
-    int dim_I_C_3;
-    int dim_I_C_4;
-    int dim_I_weighted;
-    int dim_I_weighted_1;
-    int dim_I_weighted_2;
-    int dim_I_weighted_strain;
-    int dim_I_weighted_strain_1;
-    int dim_I_weighted_strain_12;
-    int dim_I_weighted_strain_2;
-    int dim_I_weighted_strain_3;
-    int dim_I_with_diff_trans;
-    int dim_I_with_diff_trans_1;
-    int dim_I_with_diff_trans_12;
-    int dim_I_with_diff_trans_2;
-    int dim_I_with_diff_trans_3;
-    int dim_ICU_D_conf;
-    int dim_ICU_D_conf_1;
-    int dim_ICU_D_conf_12;
-    int dim_ICU_D_conf_123;
-    int dim_ICU_D_conf_2;
-    int dim_ICU_D_conf_3;
-    int dim_ICU_D_conf_4;
-    int dim_ICU_D_unconf;
-    int dim_ICU_D_unconf_1;
-    int dim_ICU_D_unconf_12;
-    int dim_ICU_D_unconf_123;
-    int dim_ICU_D_unconf_2;
-    int dim_ICU_D_unconf_3;
-    int dim_ICU_D_unconf_4;
-    int dim_ICU_pre_conf;
-    int dim_ICU_pre_conf_1;
-    int dim_ICU_pre_conf_12;
-    int dim_ICU_pre_conf_123;
-    int dim_ICU_pre_conf_2;
-    int dim_ICU_pre_conf_3;
-    int dim_ICU_pre_conf_4;
-    int dim_ICU_pre_unconf;
-    int dim_ICU_pre_unconf_1;
-    int dim_ICU_pre_unconf_12;
-    int dim_ICU_pre_unconf_123;
-    int dim_ICU_pre_unconf_2;
-    int dim_ICU_pre_unconf_3;
-    int dim_ICU_pre_unconf_4;
-    int dim_ICU_W_D_conf;
-    int dim_ICU_W_D_conf_1;
-    int dim_ICU_W_D_conf_12;
-    int dim_ICU_W_D_conf_123;
-    int dim_ICU_W_D_conf_2;
-    int dim_ICU_W_D_conf_3;
-    int dim_ICU_W_D_conf_4;
-    int dim_ICU_W_D_unconf;
-    int dim_ICU_W_D_unconf_1;
-    int dim_ICU_W_D_unconf_12;
-    int dim_ICU_W_D_unconf_123;
-    int dim_ICU_W_D_unconf_2;
-    int dim_ICU_W_D_unconf_3;
-    int dim_ICU_W_D_unconf_4;
-    int dim_ICU_W_R_conf;
-    int dim_ICU_W_R_conf_1;
-    int dim_ICU_W_R_conf_12;
-    int dim_ICU_W_R_conf_123;
-    int dim_ICU_W_R_conf_2;
-    int dim_ICU_W_R_conf_3;
-    int dim_ICU_W_R_conf_4;
-    int dim_ICU_W_R_unconf;
-    int dim_ICU_W_R_unconf_1;
-    int dim_ICU_W_R_unconf_12;
-    int dim_ICU_W_R_unconf_123;
-    int dim_ICU_W_R_unconf_2;
-    int dim_ICU_W_R_unconf_3;
-    int dim_ICU_W_R_unconf_4;
     int dim_lambda;
     int dim_lambda_1;
     int dim_lambda_2;
     int dim_m;
     int dim_m_1;
     int dim_m_2;
-    int dim_n_com_to_T_sero_pre;
-    int dim_n_com_to_T_sero_pre_1;
-    int dim_n_com_to_T_sero_pre_12;
-    int dim_n_com_to_T_sero_pre_123;
-    int dim_n_com_to_T_sero_pre_2;
-    int dim_n_com_to_T_sero_pre_3;
-    int dim_n_com_to_T_sero_pre_4;
-    int dim_n_E_next_vacc_class;
-    int dim_n_E_next_vacc_class_1;
-    int dim_n_E_next_vacc_class_12;
-    int dim_n_E_next_vacc_class_123;
-    int dim_n_E_next_vacc_class_2;
-    int dim_n_E_next_vacc_class_3;
-    int dim_n_E_next_vacc_class_4;
-    int dim_n_E_progress;
-    int dim_n_E_progress_1;
-    int dim_n_E_progress_12;
-    int dim_n_E_progress_123;
-    int dim_n_E_progress_2;
-    int dim_n_E_progress_3;
-    int dim_n_E_progress_4;
     int dim_n_EE;
     int dim_n_EE_1;
     int dim_n_EE_12;
@@ -774,6 +834,20 @@ public:
     int dim_n_EI_C_next_vacc_class_12;
     int dim_n_EI_C_next_vacc_class_2;
     int dim_n_EI_C_next_vacc_class_3;
+    int dim_n_E_next_vacc_class;
+    int dim_n_E_next_vacc_class_1;
+    int dim_n_E_next_vacc_class_12;
+    int dim_n_E_next_vacc_class_123;
+    int dim_n_E_next_vacc_class_2;
+    int dim_n_E_next_vacc_class_3;
+    int dim_n_E_next_vacc_class_4;
+    int dim_n_E_progress;
+    int dim_n_E_progress_1;
+    int dim_n_E_progress_12;
+    int dim_n_E_progress_123;
+    int dim_n_E_progress_2;
+    int dim_n_E_progress_3;
+    int dim_n_E_progress_4;
     int dim_n_G_D_progress;
     int dim_n_G_D_progress_1;
     int dim_n_G_D_progress_12;
@@ -823,11 +897,134 @@ public:
     int dim_n_H_R_unconf_to_conf_2;
     int dim_n_H_R_unconf_to_conf_3;
     int dim_n_H_R_unconf_to_conf_4;
-    int dim_n_hosp_non_ICU;
-    int dim_n_hosp_non_ICU_1;
-    int dim_n_hosp_non_ICU_12;
-    int dim_n_hosp_non_ICU_2;
-    int dim_n_hosp_non_ICU_3;
+    int dim_n_ICU_D_conf_progress;
+    int dim_n_ICU_D_conf_progress_1;
+    int dim_n_ICU_D_conf_progress_12;
+    int dim_n_ICU_D_conf_progress_123;
+    int dim_n_ICU_D_conf_progress_2;
+    int dim_n_ICU_D_conf_progress_3;
+    int dim_n_ICU_D_conf_progress_4;
+    int dim_n_ICU_D_unconf_progress;
+    int dim_n_ICU_D_unconf_progress_1;
+    int dim_n_ICU_D_unconf_progress_12;
+    int dim_n_ICU_D_unconf_progress_123;
+    int dim_n_ICU_D_unconf_progress_2;
+    int dim_n_ICU_D_unconf_progress_3;
+    int dim_n_ICU_D_unconf_progress_4;
+    int dim_n_ICU_D_unconf_to_conf;
+    int dim_n_ICU_D_unconf_to_conf_1;
+    int dim_n_ICU_D_unconf_to_conf_12;
+    int dim_n_ICU_D_unconf_to_conf_123;
+    int dim_n_ICU_D_unconf_to_conf_2;
+    int dim_n_ICU_D_unconf_to_conf_3;
+    int dim_n_ICU_D_unconf_to_conf_4;
+    int dim_n_ICU_W_D_conf_progress;
+    int dim_n_ICU_W_D_conf_progress_1;
+    int dim_n_ICU_W_D_conf_progress_12;
+    int dim_n_ICU_W_D_conf_progress_123;
+    int dim_n_ICU_W_D_conf_progress_2;
+    int dim_n_ICU_W_D_conf_progress_3;
+    int dim_n_ICU_W_D_conf_progress_4;
+    int dim_n_ICU_W_D_unconf_progress;
+    int dim_n_ICU_W_D_unconf_progress_1;
+    int dim_n_ICU_W_D_unconf_progress_12;
+    int dim_n_ICU_W_D_unconf_progress_123;
+    int dim_n_ICU_W_D_unconf_progress_2;
+    int dim_n_ICU_W_D_unconf_progress_3;
+    int dim_n_ICU_W_D_unconf_progress_4;
+    int dim_n_ICU_W_D_unconf_to_conf;
+    int dim_n_ICU_W_D_unconf_to_conf_1;
+    int dim_n_ICU_W_D_unconf_to_conf_12;
+    int dim_n_ICU_W_D_unconf_to_conf_123;
+    int dim_n_ICU_W_D_unconf_to_conf_2;
+    int dim_n_ICU_W_D_unconf_to_conf_3;
+    int dim_n_ICU_W_D_unconf_to_conf_4;
+    int dim_n_ICU_W_R_conf_progress;
+    int dim_n_ICU_W_R_conf_progress_1;
+    int dim_n_ICU_W_R_conf_progress_12;
+    int dim_n_ICU_W_R_conf_progress_123;
+    int dim_n_ICU_W_R_conf_progress_2;
+    int dim_n_ICU_W_R_conf_progress_3;
+    int dim_n_ICU_W_R_conf_progress_4;
+    int dim_n_ICU_W_R_unconf_progress;
+    int dim_n_ICU_W_R_unconf_progress_1;
+    int dim_n_ICU_W_R_unconf_progress_12;
+    int dim_n_ICU_W_R_unconf_progress_123;
+    int dim_n_ICU_W_R_unconf_progress_2;
+    int dim_n_ICU_W_R_unconf_progress_3;
+    int dim_n_ICU_W_R_unconf_progress_4;
+    int dim_n_ICU_W_R_unconf_to_conf;
+    int dim_n_ICU_W_R_unconf_to_conf_1;
+    int dim_n_ICU_W_R_unconf_to_conf_12;
+    int dim_n_ICU_W_R_unconf_to_conf_123;
+    int dim_n_ICU_W_R_unconf_to_conf_2;
+    int dim_n_ICU_W_R_unconf_to_conf_3;
+    int dim_n_ICU_W_R_unconf_to_conf_4;
+    int dim_n_ICU_pre_conf_progress;
+    int dim_n_ICU_pre_conf_progress_1;
+    int dim_n_ICU_pre_conf_progress_12;
+    int dim_n_ICU_pre_conf_progress_123;
+    int dim_n_ICU_pre_conf_progress_2;
+    int dim_n_ICU_pre_conf_progress_3;
+    int dim_n_ICU_pre_conf_progress_4;
+    int dim_n_ICU_pre_conf_to_ICU_D_conf;
+    int dim_n_ICU_pre_conf_to_ICU_D_conf_1;
+    int dim_n_ICU_pre_conf_to_ICU_D_conf_12;
+    int dim_n_ICU_pre_conf_to_ICU_D_conf_2;
+    int dim_n_ICU_pre_conf_to_ICU_D_conf_3;
+    int dim_n_ICU_pre_conf_to_ICU_W_D_conf;
+    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_1;
+    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_12;
+    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_2;
+    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_3;
+    int dim_n_ICU_pre_conf_to_ICU_W_R_conf;
+    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_1;
+    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_12;
+    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_2;
+    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_3;
+    int dim_n_ICU_pre_unconf_progress;
+    int dim_n_ICU_pre_unconf_progress_1;
+    int dim_n_ICU_pre_unconf_progress_12;
+    int dim_n_ICU_pre_unconf_progress_123;
+    int dim_n_ICU_pre_unconf_progress_2;
+    int dim_n_ICU_pre_unconf_progress_3;
+    int dim_n_ICU_pre_unconf_progress_4;
+    int dim_n_ICU_pre_unconf_to_ICU_D_unconf;
+    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_1;
+    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_12;
+    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_2;
+    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_3;
+    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf;
+    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1;
+    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12;
+    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2;
+    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3;
+    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf;
+    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1;
+    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_12;
+    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2;
+    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_3;
+    int dim_n_ICU_pre_unconf_to_conf;
+    int dim_n_ICU_pre_unconf_to_conf_1;
+    int dim_n_ICU_pre_unconf_to_conf_12;
+    int dim_n_ICU_pre_unconf_to_conf_123;
+    int dim_n_ICU_pre_unconf_to_conf_2;
+    int dim_n_ICU_pre_unconf_to_conf_3;
+    int dim_n_ICU_pre_unconf_to_conf_4;
+    int dim_n_II_A;
+    int dim_n_II_A_1;
+    int dim_n_II_A_12;
+    int dim_n_II_A_123;
+    int dim_n_II_A_2;
+    int dim_n_II_A_3;
+    int dim_n_II_A_4;
+    int dim_n_II_A_next_vacc_class;
+    int dim_n_II_A_next_vacc_class_1;
+    int dim_n_II_A_next_vacc_class_12;
+    int dim_n_II_A_next_vacc_class_123;
+    int dim_n_II_A_next_vacc_class_2;
+    int dim_n_II_A_next_vacc_class_3;
+    int dim_n_II_A_next_vacc_class_4;
     int dim_n_I_A_next_vacc_class;
     int dim_n_I_A_next_vacc_class_1;
     int dim_n_I_A_next_vacc_class_12;
@@ -874,11 +1071,6 @@ public:
     int dim_n_I_C_to_H_R_conf_12;
     int dim_n_I_C_to_H_R_conf_2;
     int dim_n_I_C_to_H_R_conf_3;
-    int dim_n_I_C_to_hosp;
-    int dim_n_I_C_to_hosp_1;
-    int dim_n_I_C_to_hosp_12;
-    int dim_n_I_C_to_hosp_2;
-    int dim_n_I_C_to_hosp_3;
     int dim_n_I_C_to_ICU_pre;
     int dim_n_I_C_to_ICU_pre_1;
     int dim_n_I_C_to_ICU_pre_12;
@@ -894,134 +1086,21 @@ public:
     int dim_n_I_C_to_R_12;
     int dim_n_I_C_to_R_2;
     int dim_n_I_C_to_R_3;
-    int dim_n_ICU_D_conf_progress;
-    int dim_n_ICU_D_conf_progress_1;
-    int dim_n_ICU_D_conf_progress_12;
-    int dim_n_ICU_D_conf_progress_123;
-    int dim_n_ICU_D_conf_progress_2;
-    int dim_n_ICU_D_conf_progress_3;
-    int dim_n_ICU_D_conf_progress_4;
-    int dim_n_ICU_D_unconf_progress;
-    int dim_n_ICU_D_unconf_progress_1;
-    int dim_n_ICU_D_unconf_progress_12;
-    int dim_n_ICU_D_unconf_progress_123;
-    int dim_n_ICU_D_unconf_progress_2;
-    int dim_n_ICU_D_unconf_progress_3;
-    int dim_n_ICU_D_unconf_progress_4;
-    int dim_n_ICU_D_unconf_to_conf;
-    int dim_n_ICU_D_unconf_to_conf_1;
-    int dim_n_ICU_D_unconf_to_conf_12;
-    int dim_n_ICU_D_unconf_to_conf_123;
-    int dim_n_ICU_D_unconf_to_conf_2;
-    int dim_n_ICU_D_unconf_to_conf_3;
-    int dim_n_ICU_D_unconf_to_conf_4;
-    int dim_n_ICU_pre_conf_progress;
-    int dim_n_ICU_pre_conf_progress_1;
-    int dim_n_ICU_pre_conf_progress_12;
-    int dim_n_ICU_pre_conf_progress_123;
-    int dim_n_ICU_pre_conf_progress_2;
-    int dim_n_ICU_pre_conf_progress_3;
-    int dim_n_ICU_pre_conf_progress_4;
-    int dim_n_ICU_pre_conf_to_ICU_D_conf;
-    int dim_n_ICU_pre_conf_to_ICU_D_conf_1;
-    int dim_n_ICU_pre_conf_to_ICU_D_conf_12;
-    int dim_n_ICU_pre_conf_to_ICU_D_conf_2;
-    int dim_n_ICU_pre_conf_to_ICU_D_conf_3;
-    int dim_n_ICU_pre_conf_to_ICU_W_D_conf;
-    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_1;
-    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_12;
-    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_2;
-    int dim_n_ICU_pre_conf_to_ICU_W_D_conf_3;
-    int dim_n_ICU_pre_conf_to_ICU_W_R_conf;
-    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_1;
-    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_12;
-    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_2;
-    int dim_n_ICU_pre_conf_to_ICU_W_R_conf_3;
-    int dim_n_ICU_pre_unconf_progress;
-    int dim_n_ICU_pre_unconf_progress_1;
-    int dim_n_ICU_pre_unconf_progress_12;
-    int dim_n_ICU_pre_unconf_progress_123;
-    int dim_n_ICU_pre_unconf_progress_2;
-    int dim_n_ICU_pre_unconf_progress_3;
-    int dim_n_ICU_pre_unconf_progress_4;
-    int dim_n_ICU_pre_unconf_to_conf;
-    int dim_n_ICU_pre_unconf_to_conf_1;
-    int dim_n_ICU_pre_unconf_to_conf_12;
-    int dim_n_ICU_pre_unconf_to_conf_123;
-    int dim_n_ICU_pre_unconf_to_conf_2;
-    int dim_n_ICU_pre_unconf_to_conf_3;
-    int dim_n_ICU_pre_unconf_to_conf_4;
-    int dim_n_ICU_pre_unconf_to_ICU_D_unconf;
-    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_1;
-    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_12;
-    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_2;
-    int dim_n_ICU_pre_unconf_to_ICU_D_unconf_3;
-    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf;
-    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1;
-    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12;
-    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2;
-    int dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3;
-    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf;
-    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1;
-    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_12;
-    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2;
-    int dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_3;
-    int dim_n_ICU_W_D_conf_progress;
-    int dim_n_ICU_W_D_conf_progress_1;
-    int dim_n_ICU_W_D_conf_progress_12;
-    int dim_n_ICU_W_D_conf_progress_123;
-    int dim_n_ICU_W_D_conf_progress_2;
-    int dim_n_ICU_W_D_conf_progress_3;
-    int dim_n_ICU_W_D_conf_progress_4;
-    int dim_n_ICU_W_D_unconf_progress;
-    int dim_n_ICU_W_D_unconf_progress_1;
-    int dim_n_ICU_W_D_unconf_progress_12;
-    int dim_n_ICU_W_D_unconf_progress_123;
-    int dim_n_ICU_W_D_unconf_progress_2;
-    int dim_n_ICU_W_D_unconf_progress_3;
-    int dim_n_ICU_W_D_unconf_progress_4;
-    int dim_n_ICU_W_D_unconf_to_conf;
-    int dim_n_ICU_W_D_unconf_to_conf_1;
-    int dim_n_ICU_W_D_unconf_to_conf_12;
-    int dim_n_ICU_W_D_unconf_to_conf_123;
-    int dim_n_ICU_W_D_unconf_to_conf_2;
-    int dim_n_ICU_W_D_unconf_to_conf_3;
-    int dim_n_ICU_W_D_unconf_to_conf_4;
-    int dim_n_ICU_W_R_conf_progress;
-    int dim_n_ICU_W_R_conf_progress_1;
-    int dim_n_ICU_W_R_conf_progress_12;
-    int dim_n_ICU_W_R_conf_progress_123;
-    int dim_n_ICU_W_R_conf_progress_2;
-    int dim_n_ICU_W_R_conf_progress_3;
-    int dim_n_ICU_W_R_conf_progress_4;
-    int dim_n_ICU_W_R_unconf_progress;
-    int dim_n_ICU_W_R_unconf_progress_1;
-    int dim_n_ICU_W_R_unconf_progress_12;
-    int dim_n_ICU_W_R_unconf_progress_123;
-    int dim_n_ICU_W_R_unconf_progress_2;
-    int dim_n_ICU_W_R_unconf_progress_3;
-    int dim_n_ICU_W_R_unconf_progress_4;
-    int dim_n_ICU_W_R_unconf_to_conf;
-    int dim_n_ICU_W_R_unconf_to_conf_1;
-    int dim_n_ICU_W_R_unconf_to_conf_12;
-    int dim_n_ICU_W_R_unconf_to_conf_123;
-    int dim_n_ICU_W_R_unconf_to_conf_2;
-    int dim_n_ICU_W_R_unconf_to_conf_3;
-    int dim_n_ICU_W_R_unconf_to_conf_4;
-    int dim_n_II_A;
-    int dim_n_II_A_1;
-    int dim_n_II_A_12;
-    int dim_n_II_A_123;
-    int dim_n_II_A_2;
-    int dim_n_II_A_3;
-    int dim_n_II_A_4;
-    int dim_n_II_A_next_vacc_class;
-    int dim_n_II_A_next_vacc_class_1;
-    int dim_n_II_A_next_vacc_class_12;
-    int dim_n_II_A_next_vacc_class_123;
-    int dim_n_II_A_next_vacc_class_2;
-    int dim_n_II_A_next_vacc_class_3;
-    int dim_n_II_A_next_vacc_class_4;
+    int dim_n_I_C_to_hosp;
+    int dim_n_I_C_to_hosp_1;
+    int dim_n_I_C_to_hosp_12;
+    int dim_n_I_C_to_hosp_2;
+    int dim_n_I_C_to_hosp_3;
+    int dim_n_RS;
+    int dim_n_RS_1;
+    int dim_n_RS_12;
+    int dim_n_RS_2;
+    int dim_n_RS_3;
+    int dim_n_RS_next_vacc_class;
+    int dim_n_RS_next_vacc_class_1;
+    int dim_n_RS_next_vacc_class_12;
+    int dim_n_RS_next_vacc_class_2;
+    int dim_n_RS_next_vacc_class_3;
     int dim_n_R_next_vacc_class;
     int dim_n_R_next_vacc_class_1;
     int dim_n_R_next_vacc_class_12;
@@ -1052,16 +1131,16 @@ public:
     int dim_n_R_progress_tmp_12;
     int dim_n_R_progress_tmp_2;
     int dim_n_R_progress_tmp_3;
-    int dim_n_RS;
-    int dim_n_RS_1;
-    int dim_n_RS_12;
-    int dim_n_RS_2;
-    int dim_n_RS_3;
-    int dim_n_RS_next_vacc_class;
-    int dim_n_RS_next_vacc_class_1;
-    int dim_n_RS_next_vacc_class_12;
-    int dim_n_RS_next_vacc_class_2;
-    int dim_n_RS_next_vacc_class_3;
+    int dim_n_SE;
+    int dim_n_SE_1;
+    int dim_n_SE_12;
+    int dim_n_SE_2;
+    int dim_n_SE_3;
+    int dim_n_SE_next_vacc_class;
+    int dim_n_SE_next_vacc_class_1;
+    int dim_n_SE_next_vacc_class_12;
+    int dim_n_SE_next_vacc_class_2;
+    int dim_n_SE_next_vacc_class_3;
     int dim_n_S_next_vacc_class;
     int dim_n_S_next_vacc_class_1;
     int dim_n_S_next_vacc_class_2;
@@ -1073,16 +1152,6 @@ public:
     int dim_n_S_progress_tot;
     int dim_n_S_progress_tot_1;
     int dim_n_S_progress_tot_2;
-    int dim_n_SE;
-    int dim_n_SE_1;
-    int dim_n_SE_12;
-    int dim_n_SE_2;
-    int dim_n_SE_3;
-    int dim_n_SE_next_vacc_class;
-    int dim_n_SE_next_vacc_class_1;
-    int dim_n_SE_next_vacc_class_12;
-    int dim_n_SE_next_vacc_class_2;
-    int dim_n_SE_next_vacc_class_3;
     int dim_n_T_PCR_pos_progress;
     int dim_n_T_PCR_pos_progress_1;
     int dim_n_T_PCR_pos_progress_12;
@@ -1116,7 +1185,6 @@ public:
     int dim_n_T_sero_pre_to_T_sero_pos_12;
     int dim_n_T_sero_pre_to_T_sero_pos_2;
     int dim_n_T_sero_pre_to_T_sero_pos_3;
-    int dim_N_tot;
     int dim_n_W_D_conf_progress;
     int dim_n_W_D_conf_progress_1;
     int dim_n_W_D_conf_progress_12;
@@ -1159,6 +1227,18 @@ public:
     int dim_n_W_R_unconf_to_conf_2;
     int dim_n_W_R_unconf_to_conf_3;
     int dim_n_W_R_unconf_to_conf_4;
+    int dim_n_com_to_T_sero_pre;
+    int dim_n_com_to_T_sero_pre_1;
+    int dim_n_com_to_T_sero_pre_12;
+    int dim_n_com_to_T_sero_pre_123;
+    int dim_n_com_to_T_sero_pre_2;
+    int dim_n_com_to_T_sero_pre_3;
+    int dim_n_com_to_T_sero_pre_4;
+    int dim_n_hosp_non_ICU;
+    int dim_n_hosp_non_ICU_1;
+    int dim_n_hosp_non_ICU_12;
+    int dim_n_hosp_non_ICU_2;
+    int dim_n_hosp_non_ICU_3;
     int dim_new_E;
     int dim_new_E_1;
     int dim_new_E_12;
@@ -1201,20 +1281,6 @@ public:
     int dim_new_H_R_unconf_2;
     int dim_new_H_R_unconf_3;
     int dim_new_H_R_unconf_4;
-    int dim_new_I_A;
-    int dim_new_I_A_1;
-    int dim_new_I_A_12;
-    int dim_new_I_A_123;
-    int dim_new_I_A_2;
-    int dim_new_I_A_3;
-    int dim_new_I_A_4;
-    int dim_new_I_C;
-    int dim_new_I_C_1;
-    int dim_new_I_C_12;
-    int dim_new_I_C_123;
-    int dim_new_I_C_2;
-    int dim_new_I_C_3;
-    int dim_new_I_C_4;
     int dim_new_ICU_D_conf;
     int dim_new_ICU_D_conf_1;
     int dim_new_ICU_D_conf_12;
@@ -1229,20 +1295,6 @@ public:
     int dim_new_ICU_D_unconf_2;
     int dim_new_ICU_D_unconf_3;
     int dim_new_ICU_D_unconf_4;
-    int dim_new_ICU_pre_conf;
-    int dim_new_ICU_pre_conf_1;
-    int dim_new_ICU_pre_conf_12;
-    int dim_new_ICU_pre_conf_123;
-    int dim_new_ICU_pre_conf_2;
-    int dim_new_ICU_pre_conf_3;
-    int dim_new_ICU_pre_conf_4;
-    int dim_new_ICU_pre_unconf;
-    int dim_new_ICU_pre_unconf_1;
-    int dim_new_ICU_pre_unconf_12;
-    int dim_new_ICU_pre_unconf_123;
-    int dim_new_ICU_pre_unconf_2;
-    int dim_new_ICU_pre_unconf_3;
-    int dim_new_ICU_pre_unconf_4;
     int dim_new_ICU_W_D_conf;
     int dim_new_ICU_W_D_conf_1;
     int dim_new_ICU_W_D_conf_12;
@@ -1271,6 +1323,34 @@ public:
     int dim_new_ICU_W_R_unconf_2;
     int dim_new_ICU_W_R_unconf_3;
     int dim_new_ICU_W_R_unconf_4;
+    int dim_new_ICU_pre_conf;
+    int dim_new_ICU_pre_conf_1;
+    int dim_new_ICU_pre_conf_12;
+    int dim_new_ICU_pre_conf_123;
+    int dim_new_ICU_pre_conf_2;
+    int dim_new_ICU_pre_conf_3;
+    int dim_new_ICU_pre_conf_4;
+    int dim_new_ICU_pre_unconf;
+    int dim_new_ICU_pre_unconf_1;
+    int dim_new_ICU_pre_unconf_12;
+    int dim_new_ICU_pre_unconf_123;
+    int dim_new_ICU_pre_unconf_2;
+    int dim_new_ICU_pre_unconf_3;
+    int dim_new_ICU_pre_unconf_4;
+    int dim_new_I_A;
+    int dim_new_I_A_1;
+    int dim_new_I_A_12;
+    int dim_new_I_A_123;
+    int dim_new_I_A_2;
+    int dim_new_I_A_3;
+    int dim_new_I_A_4;
+    int dim_new_I_C;
+    int dim_new_I_C_1;
+    int dim_new_I_C_12;
+    int dim_new_I_C_123;
+    int dim_new_I_C_2;
+    int dim_new_I_C_3;
+    int dim_new_I_C_4;
     int dim_new_R;
     int dim_new_R_1;
     int dim_new_R_12;
@@ -1355,10 +1435,14 @@ public:
     int dim_p_E_next_vacc_class_4;
     int dim_p_G_D_by_age;
     int dim_p_G_D_step;
-    int dim_p_H_by_age;
     int dim_p_H_D_by_age;
     int dim_p_H_D_step;
+    int dim_p_H_by_age;
     int dim_p_H_step;
+    int dim_p_ICU_D_by_age;
+    int dim_p_ICU_D_step;
+    int dim_p_ICU_by_age;
+    int dim_p_ICU_step;
     int dim_p_I_A_next_vacc_class;
     int dim_p_I_A_next_vacc_class_1;
     int dim_p_I_A_next_vacc_class_12;
@@ -1366,25 +1450,18 @@ public:
     int dim_p_I_A_next_vacc_class_2;
     int dim_p_I_A_next_vacc_class_3;
     int dim_p_I_A_next_vacc_class_4;
-    int dim_p_ICU_by_age;
-    int dim_p_ICU_D_by_age;
-    int dim_p_ICU_D_step;
-    int dim_p_ICU_step;
+    int dim_p_RS;
     int dim_p_R_next_vacc_class;
     int dim_p_R_next_vacc_class_1;
     int dim_p_R_next_vacc_class_12;
     int dim_p_R_next_vacc_class_2;
     int dim_p_R_next_vacc_class_3;
-    int dim_p_RS;
-    int dim_p_S_next_vacc_class;
-    int dim_p_S_next_vacc_class_1;
-    int dim_p_S_next_vacc_class_2;
     int dim_p_SE;
     int dim_p_SE_1;
     int dim_p_SE_2;
-    int dim_p_sero_pos;
-    int dim_p_star_by_age;
-    int dim_p_star_step;
+    int dim_p_S_next_vacc_class;
+    int dim_p_S_next_vacc_class_1;
+    int dim_p_S_next_vacc_class_2;
     int dim_p_T_sero_pre_progress;
     int dim_p_T_sero_pre_progress_1;
     int dim_p_T_sero_pre_progress_12;
@@ -1394,6 +1471,9 @@ public:
     int dim_p_T_sero_pre_progress_4;
     int dim_p_W_D_by_age;
     int dim_p_W_D_step;
+    int dim_p_sero_pos;
+    int dim_p_star_by_age;
+    int dim_p_star_step;
     int dim_prob_strain;
     int dim_prob_strain_1;
     int dim_prob_strain_2;
@@ -1402,13 +1482,8 @@ public:
     int dim_psi_H_D;
     int dim_psi_ICU;
     int dim_psi_ICU_D;
-    int dim_psi_star;
     int dim_psi_W_D;
-    int dim_R;
-    int dim_R_1;
-    int dim_R_12;
-    int dim_R_2;
-    int dim_R_3;
+    int dim_psi_star;
     int dim_rel_infectivity;
     int dim_rel_infectivity_1;
     int dim_rel_infectivity_2;
@@ -1421,9 +1496,6 @@ public:
     int dim_rel_susceptibility;
     int dim_rel_susceptibility_1;
     int dim_rel_susceptibility_2;
-    int dim_S;
-    int dim_S_1;
-    int dim_S_2;
     int dim_s_ij;
     int dim_s_ij_1;
     int dim_s_ij_12;
@@ -1431,44 +1503,6 @@ public:
     int dim_s_ij_3;
     int dim_strain_seed_step;
     int dim_strain_transmission;
-    int dim_T_PCR_neg;
-    int dim_T_PCR_neg_1;
-    int dim_T_PCR_neg_12;
-    int dim_T_PCR_neg_2;
-    int dim_T_PCR_neg_3;
-    int dim_T_PCR_pos;
-    int dim_T_PCR_pos_1;
-    int dim_T_PCR_pos_12;
-    int dim_T_PCR_pos_123;
-    int dim_T_PCR_pos_2;
-    int dim_T_PCR_pos_3;
-    int dim_T_PCR_pos_4;
-    int dim_T_PCR_pre;
-    int dim_T_PCR_pre_1;
-    int dim_T_PCR_pre_12;
-    int dim_T_PCR_pre_123;
-    int dim_T_PCR_pre_2;
-    int dim_T_PCR_pre_3;
-    int dim_T_PCR_pre_4;
-    int dim_T_sero_neg;
-    int dim_T_sero_neg_1;
-    int dim_T_sero_neg_12;
-    int dim_T_sero_neg_2;
-    int dim_T_sero_neg_3;
-    int dim_T_sero_pos;
-    int dim_T_sero_pos_1;
-    int dim_T_sero_pos_12;
-    int dim_T_sero_pos_123;
-    int dim_T_sero_pos_2;
-    int dim_T_sero_pos_3;
-    int dim_T_sero_pos_4;
-    int dim_T_sero_pre;
-    int dim_T_sero_pre_1;
-    int dim_T_sero_pre_12;
-    int dim_T_sero_pre_123;
-    int dim_T_sero_pre_2;
-    int dim_T_sero_pre_3;
-    int dim_T_sero_pre_4;
     int dim_vaccine_daily_doses_step;
     int dim_vaccine_n_candidates;
     int dim_vaccine_population_possible;
@@ -1479,38 +1513,9 @@ public:
     int dim_vaccine_progression_rate_base;
     int dim_vaccine_progression_rate_base_1;
     int dim_vaccine_progression_rate_base_2;
-    int dim_W_D_conf;
-    int dim_W_D_conf_1;
-    int dim_W_D_conf_12;
-    int dim_W_D_conf_123;
-    int dim_W_D_conf_2;
-    int dim_W_D_conf_3;
-    int dim_W_D_conf_4;
-    int dim_W_D_unconf;
-    int dim_W_D_unconf_1;
-    int dim_W_D_unconf_12;
-    int dim_W_D_unconf_123;
-    int dim_W_D_unconf_2;
-    int dim_W_D_unconf_3;
-    int dim_W_D_unconf_4;
-    int dim_W_R_conf;
-    int dim_W_R_conf_1;
-    int dim_W_R_conf_12;
-    int dim_W_R_conf_123;
-    int dim_W_R_conf_2;
-    int dim_W_R_conf_3;
-    int dim_W_R_conf_4;
-    int dim_W_R_unconf;
-    int dim_W_R_unconf_1;
-    int dim_W_R_unconf_12;
-    int dim_W_R_unconf_123;
-    int dim_W_R_unconf_2;
-    int dim_W_R_unconf_3;
-    int dim_W_R_unconf_4;
     int dim_waning_rate;
     real_t dt;
     real_t exp_noise;
-    real_t G_D_transmission;
     real_t gamma_A;
     real_t gamma_C;
     real_t gamma_E;
@@ -1518,20 +1523,59 @@ public:
     real_t gamma_H_D;
     real_t gamma_H_R;
     real_t gamma_ICU_D;
-    real_t gamma_ICU_pre;
     real_t gamma_ICU_W_D;
     real_t gamma_ICU_W_R;
+    real_t gamma_ICU_pre;
     real_t gamma_PCR_pos;
     real_t gamma_PCR_pre;
+    real_t gamma_U;
+    real_t gamma_W_D;
+    real_t gamma_W_R;
     real_t gamma_sero_pos;
     std::vector<real_t> gamma_sero_pre;
     real_t gamma_sero_pre_1;
     real_t gamma_sero_pre_2;
-    real_t gamma_U;
-    real_t gamma_W_D;
-    real_t gamma_W_R;
     real_t hosp_transmission;
-    real_t ICU_transmission;
+    std::vector<real_t> initial_D_comm;
+    real_t initial_D_comm_inc;
+    real_t initial_D_comm_tot;
+    std::vector<real_t> initial_D_hosp;
+    real_t initial_D_hosp_inc;
+    real_t initial_D_hosp_tot;
+    real_t initial_D_tot;
+    std::vector<real_t> initial_E;
+    std::vector<real_t> initial_G_D;
+    std::vector<real_t> initial_H_D_conf;
+    std::vector<real_t> initial_H_D_unconf;
+    std::vector<real_t> initial_H_R_conf;
+    std::vector<real_t> initial_H_R_unconf;
+    std::vector<real_t> initial_ICU_D_conf;
+    std::vector<real_t> initial_ICU_D_unconf;
+    std::vector<real_t> initial_ICU_W_D_conf;
+    std::vector<real_t> initial_ICU_W_D_unconf;
+    std::vector<real_t> initial_ICU_W_R_conf;
+    std::vector<real_t> initial_ICU_W_R_unconf;
+    std::vector<real_t> initial_ICU_pre_conf;
+    std::vector<real_t> initial_ICU_pre_unconf;
+    real_t initial_ICU_tot;
+    std::vector<real_t> initial_I_A;
+    std::vector<real_t> initial_I_C;
+    std::vector<real_t> initial_I_weighted;
+    std::vector<real_t> initial_N_tot;
+    real_t initial_N_tot2;
+    real_t initial_N_tot3;
+    std::vector<real_t> initial_R;
+    std::vector<real_t> initial_S;
+    std::vector<real_t> initial_T_PCR_neg;
+    std::vector<real_t> initial_T_PCR_pos;
+    std::vector<real_t> initial_T_PCR_pre;
+    std::vector<real_t> initial_T_sero_neg;
+    std::vector<real_t> initial_T_sero_pos;
+    std::vector<real_t> initial_T_sero_pre;
+    std::vector<real_t> initial_W_D_conf;
+    std::vector<real_t> initial_W_D_unconf;
+    std::vector<real_t> initial_W_R_conf;
+    std::vector<real_t> initial_W_R_unconf;
     real_t initial_admit_conf_inc;
     real_t initial_beta_out;
     std::vector<real_t> initial_cum_admit_by_age;
@@ -1547,56 +1591,16 @@ public:
     real_t initial_cum_sympt_cases;
     real_t initial_cum_sympt_cases_non_variant_over25;
     real_t initial_cum_sympt_cases_over25;
-    std::vector<real_t> initial_D_comm;
-    real_t initial_D_comm_inc;
-    real_t initial_D_comm_tot;
-    std::vector<real_t> initial_D_hosp;
-    real_t initial_D_hosp_inc;
-    real_t initial_D_hosp_tot;
-    real_t initial_D_tot;
-    std::vector<real_t> initial_E;
-    std::vector<real_t> initial_G_D;
     real_t initial_general_tot;
-    std::vector<real_t> initial_H_D_conf;
-    std::vector<real_t> initial_H_D_unconf;
-    std::vector<real_t> initial_H_R_conf;
-    std::vector<real_t> initial_H_R_unconf;
     real_t initial_hosp_tot;
-    std::vector<real_t> initial_I_A;
-    std::vector<real_t> initial_I_C;
-    std::vector<real_t> initial_I_weighted;
-    std::vector<real_t> initial_ICU_D_conf;
-    std::vector<real_t> initial_ICU_D_unconf;
-    std::vector<real_t> initial_ICU_pre_conf;
-    std::vector<real_t> initial_ICU_pre_unconf;
-    real_t initial_ICU_tot;
-    std::vector<real_t> initial_ICU_W_D_conf;
-    std::vector<real_t> initial_ICU_W_D_unconf;
-    std::vector<real_t> initial_ICU_W_R_conf;
-    std::vector<real_t> initial_ICU_W_R_unconf;
-    std::vector<real_t> initial_N_tot;
-    real_t initial_N_tot2;
-    real_t initial_N_tot3;
     real_t initial_new_conf_inc;
     std::vector<real_t> initial_prob_strain;
-    std::vector<real_t> initial_R;
     real_t initial_react_pos;
-    std::vector<real_t> initial_S;
     real_t initial_sero_pos;
     real_t initial_sympt_cases_inc;
     real_t initial_sympt_cases_non_variant_over25_inc;
     real_t initial_sympt_cases_over25_inc;
-    std::vector<real_t> initial_T_PCR_neg;
-    std::vector<real_t> initial_T_PCR_pos;
-    std::vector<real_t> initial_T_PCR_pre;
-    std::vector<real_t> initial_T_sero_neg;
-    std::vector<real_t> initial_T_sero_pos;
-    std::vector<real_t> initial_T_sero_pre;
     real_t initial_time;
-    std::vector<real_t> initial_W_D_conf;
-    std::vector<real_t> initial_W_D_unconf;
-    std::vector<real_t> initial_W_R_conf;
-    std::vector<real_t> initial_W_R_unconf;
     int k_A;
     int k_C;
     int k_E;
@@ -1604,14 +1608,15 @@ public:
     int k_H_D;
     int k_H_R;
     int k_ICU_D;
-    int k_ICU_pre;
     int k_ICU_W_D;
     int k_ICU_W_R;
+    int k_ICU_pre;
     int k_PCR_pos;
     int k_PCR_pre;
-    int k_sero_pos;
     int k_W_D;
     int k_W_R;
+    int k_sero_pos;
+    real_t kappa_ICU;
     real_t kappa_admitted;
     real_t kappa_all_admission;
     real_t kappa_death;
@@ -1620,7 +1625,6 @@ public:
     real_t kappa_diagnoses;
     real_t kappa_general;
     real_t kappa_hosp;
-    real_t kappa_ICU;
     real_t kappa_pillar2_cases;
     std::vector<real_t> m;
     real_t model_pcr_and_serology;
@@ -1628,17 +1632,7 @@ public:
     int n_age_groups;
     int n_groups;
     int n_strains;
-    real_t N_tot_15_64;
-    real_t N_tot_all;
-    real_t N_tot_over25;
-    real_t N_tot_react;
     int n_vacc_classes;
-    int offset_variable_cum_admit_by_age;
-    int offset_variable_cum_n_E_vaccinated;
-    int offset_variable_cum_n_I_A_vaccinated;
-    int offset_variable_cum_n_R_vaccinated;
-    int offset_variable_cum_n_S_vaccinated;
-    int offset_variable_cum_n_vaccinated;
     int offset_variable_D_comm;
     int offset_variable_D_hosp;
     int offset_variable_E;
@@ -1647,19 +1641,18 @@ public:
     int offset_variable_H_D_unconf;
     int offset_variable_H_R_conf;
     int offset_variable_H_R_unconf;
-    int offset_variable_I_A;
-    int offset_variable_I_C;
-    int offset_variable_I_weighted;
     int offset_variable_ICU_D_conf;
     int offset_variable_ICU_D_unconf;
-    int offset_variable_ICU_pre_conf;
-    int offset_variable_ICU_pre_unconf;
     int offset_variable_ICU_W_D_conf;
     int offset_variable_ICU_W_D_unconf;
     int offset_variable_ICU_W_R_conf;
     int offset_variable_ICU_W_R_unconf;
+    int offset_variable_ICU_pre_conf;
+    int offset_variable_ICU_pre_unconf;
+    int offset_variable_I_A;
+    int offset_variable_I_C;
+    int offset_variable_I_weighted;
     int offset_variable_N_tot;
-    int offset_variable_prob_strain;
     int offset_variable_R;
     int offset_variable_S;
     int offset_variable_T_PCR_neg;
@@ -1672,6 +1665,13 @@ public:
     int offset_variable_W_D_unconf;
     int offset_variable_W_R_conf;
     int offset_variable_W_R_unconf;
+    int offset_variable_cum_admit_by_age;
+    int offset_variable_cum_n_E_vaccinated;
+    int offset_variable_cum_n_I_A_vaccinated;
+    int offset_variable_cum_n_R_vaccinated;
+    int offset_variable_cum_n_S_vaccinated;
+    int offset_variable_cum_n_vaccinated;
+    int offset_variable_prob_strain;
     std::vector<real_t> p_C;
     real_t p_E_progress;
     real_t p_G_D_progress;
@@ -1680,27 +1680,28 @@ public:
     std::vector<real_t> p_H_D_step;
     real_t p_H_R_progress;
     std::vector<real_t> p_H_step;
-    real_t p_I_A_progress;
-    real_t p_I_C_progress;
     real_t p_ICU_D_progress;
     std::vector<real_t> p_ICU_D_step;
-    real_t p_ICU_pre_progress;
-    std::vector<real_t> p_ICU_step;
     real_t p_ICU_W_D_progress;
     real_t p_ICU_W_R_progress;
+    real_t p_ICU_pre_progress;
+    std::vector<real_t> p_ICU_step;
+    real_t p_I_A_progress;
+    real_t p_I_C_progress;
     real_t p_NC;
     std::vector<real_t> p_RS;
-    std::vector<real_t> p_sero_pos;
-    real_t p_sero_pre_1;
-    std::vector<real_t> p_star_step;
     real_t p_T_PCR_pos_progress;
     real_t p_T_PCR_pre_progress;
     real_t p_T_sero_pos_progress;
     std::vector<real_t> p_T_sero_pre_progress;
-    real_t p_test;
     real_t p_W_D_progress;
     std::vector<real_t> p_W_D_step;
     real_t p_W_R_progress;
+    std::vector<real_t> p_sero_pos;
+    real_t p_sero_pre_1;
+    std::vector<real_t> p_star_step;
+    real_t p_test;
+    real_t phi_ICU;
     real_t phi_admitted;
     real_t phi_all_admission;
     real_t phi_death_comm;
@@ -1708,7 +1709,6 @@ public:
     real_t phi_diagnoses;
     real_t phi_general;
     real_t phi_hosp;
-    real_t phi_ICU;
     real_t phi_pillar2_cases;
     real_t pillar2_sensitivity;
     real_t pillar2_specificity;
@@ -1717,8 +1717,8 @@ public:
     std::vector<real_t> psi_H_D;
     std::vector<real_t> psi_ICU;
     std::vector<real_t> psi_ICU_D;
-    std::vector<real_t> psi_star;
     std::vector<real_t> psi_W_D;
+    std::vector<real_t> psi_star;
     real_t react_sensitivity;
     real_t react_specificity;
     std::vector<real_t> rel_infectivity;
@@ -1737,40 +1737,39 @@ public:
     std::vector<real_t> waning_rate;
   };
   struct internal_t {
+    std::vector<real_t> I_weighted_strain;
+    std::vector<real_t> I_with_diff_trans;
     std::vector<real_t> aux_E;
     std::vector<real_t> aux_G_D;
     std::vector<real_t> aux_H_D_conf;
     std::vector<real_t> aux_H_D_unconf;
     std::vector<real_t> aux_H_R_conf;
     std::vector<real_t> aux_H_R_unconf;
-    std::vector<real_t> aux_I_A;
-    std::vector<real_t> aux_I_C;
     std::vector<real_t> aux_ICU_D_conf;
     std::vector<real_t> aux_ICU_D_unconf;
-    std::vector<real_t> aux_ICU_pre_conf;
-    std::vector<real_t> aux_ICU_pre_unconf;
     std::vector<real_t> aux_ICU_W_D_conf;
     std::vector<real_t> aux_ICU_W_D_unconf;
     std::vector<real_t> aux_ICU_W_R_conf;
     std::vector<real_t> aux_ICU_W_R_unconf;
+    std::vector<real_t> aux_ICU_pre_conf;
+    std::vector<real_t> aux_ICU_pre_unconf;
+    std::vector<real_t> aux_I_A;
+    std::vector<real_t> aux_I_C;
     std::vector<real_t> aux_W_D_conf;
     std::vector<real_t> aux_W_D_unconf;
     std::vector<real_t> aux_W_R_conf;
     std::vector<real_t> aux_W_R_unconf;
     std::vector<real_t> delta_D_comm;
     std::vector<real_t> delta_D_hosp;
-    std::vector<real_t> I_weighted_strain;
-    std::vector<real_t> I_with_diff_trans;
     std::vector<real_t> lambda;
-    std::vector<real_t> n_com_to_T_sero_pre;
-    std::vector<real_t> n_E_next_vacc_class;
-    std::vector<real_t> n_E_progress;
     std::vector<real_t> n_EE;
     std::vector<real_t> n_EE_next_vacc_class;
     std::vector<real_t> n_EI_A;
     std::vector<real_t> n_EI_A_next_vacc_class;
     std::vector<real_t> n_EI_C;
     std::vector<real_t> n_EI_C_next_vacc_class;
+    std::vector<real_t> n_E_next_vacc_class;
+    std::vector<real_t> n_E_progress;
     std::vector<real_t> n_G_D_progress;
     std::vector<real_t> n_H_D_conf_progress;
     std::vector<real_t> n_H_D_unconf_progress;
@@ -1778,7 +1777,26 @@ public:
     std::vector<real_t> n_H_R_conf_progress;
     std::vector<real_t> n_H_R_unconf_progress;
     std::vector<real_t> n_H_R_unconf_to_conf;
-    std::vector<real_t> n_hosp_non_ICU;
+    std::vector<real_t> n_ICU_D_conf_progress;
+    std::vector<real_t> n_ICU_D_unconf_progress;
+    std::vector<real_t> n_ICU_D_unconf_to_conf;
+    std::vector<real_t> n_ICU_W_D_conf_progress;
+    std::vector<real_t> n_ICU_W_D_unconf_progress;
+    std::vector<real_t> n_ICU_W_D_unconf_to_conf;
+    std::vector<real_t> n_ICU_W_R_conf_progress;
+    std::vector<real_t> n_ICU_W_R_unconf_progress;
+    std::vector<real_t> n_ICU_W_R_unconf_to_conf;
+    std::vector<real_t> n_ICU_pre_conf_progress;
+    std::vector<real_t> n_ICU_pre_conf_to_ICU_D_conf;
+    std::vector<real_t> n_ICU_pre_conf_to_ICU_W_D_conf;
+    std::vector<real_t> n_ICU_pre_conf_to_ICU_W_R_conf;
+    std::vector<real_t> n_ICU_pre_unconf_progress;
+    std::vector<real_t> n_ICU_pre_unconf_to_ICU_D_unconf;
+    std::vector<real_t> n_ICU_pre_unconf_to_ICU_W_D_unconf;
+    std::vector<real_t> n_ICU_pre_unconf_to_ICU_W_R_unconf;
+    std::vector<real_t> n_ICU_pre_unconf_to_conf;
+    std::vector<real_t> n_II_A;
+    std::vector<real_t> n_II_A_next_vacc_class;
     std::vector<real_t> n_I_A_next_vacc_class;
     std::vector<real_t> n_I_A_progress;
     std::vector<real_t> n_I_C_progress;
@@ -1787,43 +1805,23 @@ public:
     std::vector<real_t> n_I_C_to_H_D_conf;
     std::vector<real_t> n_I_C_to_H_R;
     std::vector<real_t> n_I_C_to_H_R_conf;
-    std::vector<real_t> n_I_C_to_hosp;
     std::vector<real_t> n_I_C_to_ICU_pre;
     std::vector<real_t> n_I_C_to_ICU_pre_conf;
     std::vector<real_t> n_I_C_to_R;
-    std::vector<real_t> n_ICU_D_conf_progress;
-    std::vector<real_t> n_ICU_D_unconf_progress;
-    std::vector<real_t> n_ICU_D_unconf_to_conf;
-    std::vector<real_t> n_ICU_pre_conf_progress;
-    std::vector<real_t> n_ICU_pre_conf_to_ICU_D_conf;
-    std::vector<real_t> n_ICU_pre_conf_to_ICU_W_D_conf;
-    std::vector<real_t> n_ICU_pre_conf_to_ICU_W_R_conf;
-    std::vector<real_t> n_ICU_pre_unconf_progress;
-    std::vector<real_t> n_ICU_pre_unconf_to_conf;
-    std::vector<real_t> n_ICU_pre_unconf_to_ICU_D_unconf;
-    std::vector<real_t> n_ICU_pre_unconf_to_ICU_W_D_unconf;
-    std::vector<real_t> n_ICU_pre_unconf_to_ICU_W_R_unconf;
-    std::vector<real_t> n_ICU_W_D_conf_progress;
-    std::vector<real_t> n_ICU_W_D_unconf_progress;
-    std::vector<real_t> n_ICU_W_D_unconf_to_conf;
-    std::vector<real_t> n_ICU_W_R_conf_progress;
-    std::vector<real_t> n_ICU_W_R_unconf_progress;
-    std::vector<real_t> n_ICU_W_R_unconf_to_conf;
-    std::vector<real_t> n_II_A;
-    std::vector<real_t> n_II_A_next_vacc_class;
+    std::vector<real_t> n_I_C_to_hosp;
+    std::vector<real_t> n_RS;
+    std::vector<real_t> n_RS_next_vacc_class;
     std::vector<real_t> n_R_next_vacc_class;
     std::vector<real_t> n_R_next_vacc_class_capped;
     std::vector<real_t> n_R_next_vacc_class_tmp;
     std::vector<real_t> n_R_progress;
     std::vector<real_t> n_R_progress_capped;
     std::vector<real_t> n_R_progress_tmp;
-    std::vector<real_t> n_RS;
-    std::vector<real_t> n_RS_next_vacc_class;
+    std::vector<real_t> n_SE;
+    std::vector<real_t> n_SE_next_vacc_class;
     std::vector<real_t> n_S_next_vacc_class;
     std::vector<real_t> n_S_progress;
     std::vector<real_t> n_S_progress_tot;
-    std::vector<real_t> n_SE;
-    std::vector<real_t> n_SE_next_vacc_class;
     std::vector<real_t> n_T_PCR_pos_progress;
     std::vector<real_t> n_T_PCR_pre_progress;
     std::vector<real_t> n_T_sero_pos_progress;
@@ -1835,22 +1833,24 @@ public:
     std::vector<real_t> n_W_R_conf_progress;
     std::vector<real_t> n_W_R_unconf_progress;
     std::vector<real_t> n_W_R_unconf_to_conf;
+    std::vector<real_t> n_com_to_T_sero_pre;
+    std::vector<real_t> n_hosp_non_ICU;
     std::vector<real_t> new_E;
     std::vector<real_t> new_G_D;
     std::vector<real_t> new_H_D_conf;
     std::vector<real_t> new_H_D_unconf;
     std::vector<real_t> new_H_R_conf;
     std::vector<real_t> new_H_R_unconf;
-    std::vector<real_t> new_I_A;
-    std::vector<real_t> new_I_C;
     std::vector<real_t> new_ICU_D_conf;
     std::vector<real_t> new_ICU_D_unconf;
-    std::vector<real_t> new_ICU_pre_conf;
-    std::vector<real_t> new_ICU_pre_unconf;
     std::vector<real_t> new_ICU_W_D_conf;
     std::vector<real_t> new_ICU_W_D_unconf;
     std::vector<real_t> new_ICU_W_R_conf;
     std::vector<real_t> new_ICU_W_R_unconf;
+    std::vector<real_t> new_ICU_pre_conf;
+    std::vector<real_t> new_ICU_pre_unconf;
+    std::vector<real_t> new_I_A;
+    std::vector<real_t> new_I_C;
     std::vector<real_t> new_R;
     std::vector<real_t> new_S;
     std::vector<real_t> new_T_PCR_neg;
@@ -1865,16 +1865,16 @@ public:
     std::vector<real_t> new_W_R_unconf;
     std::vector<real_t> p_E_next_vacc_class;
     std::vector<real_t> p_G_D_by_age;
-    std::vector<real_t> p_H_by_age;
     std::vector<real_t> p_H_D_by_age;
-    std::vector<real_t> p_I_A_next_vacc_class;
-    std::vector<real_t> p_ICU_by_age;
+    std::vector<real_t> p_H_by_age;
     std::vector<real_t> p_ICU_D_by_age;
+    std::vector<real_t> p_ICU_by_age;
+    std::vector<real_t> p_I_A_next_vacc_class;
     std::vector<real_t> p_R_next_vacc_class;
-    std::vector<real_t> p_S_next_vacc_class;
     std::vector<real_t> p_SE;
-    std::vector<real_t> p_star_by_age;
+    std::vector<real_t> p_S_next_vacc_class;
     std::vector<real_t> p_W_D_by_age;
+    std::vector<real_t> p_star_by_age;
     std::vector<real_t> s_ij;
     std::vector<real_t> vaccine_n_candidates;
     std::vector<real_t> vaccine_population_possible;
@@ -2019,40 +2019,40 @@ public:
     real_t p_H_D = (static_cast<int>(step) >= shared->dim_p_H_D_step ? shared->p_H_D_step[shared->dim_p_H_D_step - 1] : shared->p_H_D_step[step + 1 - 1]);
     real_t p_ICU = (static_cast<int>(step) >= shared->dim_p_ICU_step ? shared->p_ICU_step[shared->dim_p_ICU_step - 1] : shared->p_ICU_step[step + 1 - 1]);
     real_t p_ICU_D = (static_cast<int>(step) >= shared->dim_p_ICU_D_step ? shared->p_ICU_D_step[shared->dim_p_ICU_D_step - 1] : shared->p_ICU_D_step[step + 1 - 1]);
-    real_t p_star = (static_cast<int>(step) >= shared->dim_p_star_step ? shared->p_star_step[shared->dim_p_star_step - 1] : shared->p_star_step[step + 1 - 1]);
     real_t p_W_D = (static_cast<int>(step) >= shared->dim_p_W_D_step ? shared->p_W_D_step[shared->dim_p_W_D_step - 1] : shared->p_W_D_step[step + 1 - 1]);
+    real_t p_star = (static_cast<int>(step) >= shared->dim_p_star_step ? shared->p_star_step[shared->dim_p_star_step - 1] : shared->p_star_step[step + 1 - 1]);
     real_t strain_seed = ((static_cast<int>(step) >= shared->dim_strain_seed_step ? shared->strain_seed_step[shared->dim_strain_seed_step - 1] : shared->strain_seed_step[step + 1 - 1]));
     state_next[0] = (step + 1) * shared->dt;
     real_t vaccine_daily_doses = (static_cast<int>(step) >= shared->dim_vaccine_daily_doses_step ? shared->vaccine_daily_doses_step[shared->dim_vaccine_daily_doses_step - 1] : shared->vaccine_daily_doses_step[step + 1 - 1]);
     for (int i = 1; i <= shared->dim_p_G_D_by_age; ++i) {
       internal.p_G_D_by_age[i - 1] = p_G_D * shared->psi_G_D[i - 1];
     }
-    for (int i = 1; i <= shared->dim_p_H_by_age; ++i) {
-      internal.p_H_by_age[i - 1] = p_H * shared->psi_H[i - 1];
-    }
     for (int i = 1; i <= shared->dim_p_H_D_by_age; ++i) {
       internal.p_H_D_by_age[i - 1] = p_H_D * shared->psi_H_D[i - 1];
     }
-    for (int i = 1; i <= shared->dim_p_ICU_by_age; ++i) {
-      internal.p_ICU_by_age[i - 1] = p_ICU * shared->psi_ICU[i - 1];
+    for (int i = 1; i <= shared->dim_p_H_by_age; ++i) {
+      internal.p_H_by_age[i - 1] = p_H * shared->psi_H[i - 1];
     }
     for (int i = 1; i <= shared->dim_p_ICU_D_by_age; ++i) {
       internal.p_ICU_D_by_age[i - 1] = p_ICU_D * shared->psi_ICU_D[i - 1];
     }
-    for (int i = 1; i <= shared->dim_p_star_by_age; ++i) {
-      internal.p_star_by_age[i - 1] = p_star * shared->psi_star[i - 1];
+    for (int i = 1; i <= shared->dim_p_ICU_by_age; ++i) {
+      internal.p_ICU_by_age[i - 1] = p_ICU * shared->psi_ICU[i - 1];
     }
     for (int i = 1; i <= shared->dim_p_W_D_by_age; ++i) {
       internal.p_W_D_by_age[i - 1] = p_W_D * shared->psi_W_D[i - 1];
     }
+    for (int i = 1; i <= shared->dim_p_star_by_age; ++i) {
+      internal.p_star_by_age[i - 1] = p_star * shared->psi_star[i - 1];
+    }
     state_next[6] = beta;
+    for (int i = 1; i <= shared->dim_N_tot; ++i) {
+      state_next[shared->offset_variable_N_tot + i - 1] = odin_sum2(S, i - 1, i, 0, shared->dim_S_2, shared->dim_S_1) + odin_sum3(R, i - 1, i, 0, shared->dim_R_2, 0, shared->dim_R_3, shared->dim_R_1, shared->dim_R_12) + D_hosp[i - 1] + odin_sum4(E, i - 1, i, 0, shared->dim_E_2, 0, shared->dim_E_3, 0, shared->dim_E_4, shared->dim_E_1, shared->dim_E_12, shared->dim_E_123) + odin_sum4(I_A, i - 1, i, 0, shared->dim_I_A_2, 0, shared->dim_I_A_3, 0, shared->dim_I_A_4, shared->dim_I_A_1, shared->dim_I_A_12, shared->dim_I_A_123) + odin_sum4(I_C, i - 1, i, 0, shared->dim_I_C_2, 0, shared->dim_I_C_3, 0, shared->dim_I_C_4, shared->dim_I_C_1, shared->dim_I_C_12, shared->dim_I_C_123) + odin_sum4(ICU_pre_conf, i - 1, i, 0, shared->dim_ICU_pre_conf_2, 0, shared->dim_ICU_pre_conf_3, 0, shared->dim_ICU_pre_conf_4, shared->dim_ICU_pre_conf_1, shared->dim_ICU_pre_conf_12, shared->dim_ICU_pre_conf_123) + odin_sum4(ICU_pre_unconf, i - 1, i, 0, shared->dim_ICU_pre_unconf_2, 0, shared->dim_ICU_pre_unconf_3, 0, shared->dim_ICU_pre_unconf_4, shared->dim_ICU_pre_unconf_1, shared->dim_ICU_pre_unconf_12, shared->dim_ICU_pre_unconf_123) + odin_sum4(H_R_conf, i - 1, i, 0, shared->dim_H_R_conf_2, 0, shared->dim_H_R_conf_3, 0, shared->dim_H_R_conf_4, shared->dim_H_R_conf_1, shared->dim_H_R_conf_12, shared->dim_H_R_conf_123) + odin_sum4(H_R_unconf, i - 1, i, 0, shared->dim_H_R_unconf_2, 0, shared->dim_H_R_unconf_3, 0, shared->dim_H_R_unconf_4, shared->dim_H_R_unconf_1, shared->dim_H_R_unconf_12, shared->dim_H_R_unconf_123) + odin_sum4(H_D_conf, i - 1, i, 0, shared->dim_H_D_conf_2, 0, shared->dim_H_D_conf_3, 0, shared->dim_H_D_conf_4, shared->dim_H_D_conf_1, shared->dim_H_D_conf_12, shared->dim_H_D_conf_123) + odin_sum4(H_D_unconf, i - 1, i, 0, shared->dim_H_D_unconf_2, 0, shared->dim_H_D_unconf_3, 0, shared->dim_H_D_unconf_4, shared->dim_H_D_unconf_1, shared->dim_H_D_unconf_12, shared->dim_H_D_unconf_123) + odin_sum4(ICU_W_R_conf, i - 1, i, 0, shared->dim_ICU_W_R_conf_2, 0, shared->dim_ICU_W_R_conf_3, 0, shared->dim_ICU_W_R_conf_4, shared->dim_ICU_W_R_conf_1, shared->dim_ICU_W_R_conf_12, shared->dim_ICU_W_R_conf_123) + odin_sum4(ICU_W_R_unconf, i - 1, i, 0, shared->dim_ICU_W_R_unconf_2, 0, shared->dim_ICU_W_R_unconf_3, 0, shared->dim_ICU_W_R_unconf_4, shared->dim_ICU_W_R_unconf_1, shared->dim_ICU_W_R_unconf_12, shared->dim_ICU_W_R_unconf_123) + odin_sum4(ICU_W_D_conf, i - 1, i, 0, shared->dim_ICU_W_D_conf_2, 0, shared->dim_ICU_W_D_conf_3, 0, shared->dim_ICU_W_D_conf_4, shared->dim_ICU_W_D_conf_1, shared->dim_ICU_W_D_conf_12, shared->dim_ICU_W_D_conf_123) + odin_sum4(ICU_W_D_unconf, i - 1, i, 0, shared->dim_ICU_W_D_unconf_2, 0, shared->dim_ICU_W_D_unconf_3, 0, shared->dim_ICU_W_D_unconf_4, shared->dim_ICU_W_D_unconf_1, shared->dim_ICU_W_D_unconf_12, shared->dim_ICU_W_D_unconf_123) + odin_sum4(ICU_D_conf, i - 1, i, 0, shared->dim_ICU_D_conf_2, 0, shared->dim_ICU_D_conf_3, 0, shared->dim_ICU_D_conf_4, shared->dim_ICU_D_conf_1, shared->dim_ICU_D_conf_12, shared->dim_ICU_D_conf_123) + odin_sum4(ICU_D_unconf, i - 1, i, 0, shared->dim_ICU_D_unconf_2, 0, shared->dim_ICU_D_unconf_3, 0, shared->dim_ICU_D_unconf_4, shared->dim_ICU_D_unconf_1, shared->dim_ICU_D_unconf_12, shared->dim_ICU_D_unconf_123) + odin_sum4(W_R_conf, i - 1, i, 0, shared->dim_W_R_conf_2, 0, shared->dim_W_R_conf_3, 0, shared->dim_W_R_conf_4, shared->dim_W_R_conf_1, shared->dim_W_R_conf_12, shared->dim_W_R_conf_123) + odin_sum4(W_R_unconf, i - 1, i, 0, shared->dim_W_R_unconf_2, 0, shared->dim_W_R_unconf_3, 0, shared->dim_W_R_unconf_4, shared->dim_W_R_unconf_1, shared->dim_W_R_unconf_12, shared->dim_W_R_unconf_123) + odin_sum4(W_D_conf, i - 1, i, 0, shared->dim_W_D_conf_2, 0, shared->dim_W_D_conf_3, 0, shared->dim_W_D_conf_4, shared->dim_W_D_conf_1, shared->dim_W_D_conf_12, shared->dim_W_D_conf_123) + odin_sum4(W_D_unconf, i - 1, i, 0, shared->dim_W_D_unconf_2, 0, shared->dim_W_D_unconf_3, 0, shared->dim_W_D_unconf_4, shared->dim_W_D_unconf_1, shared->dim_W_D_unconf_12, shared->dim_W_D_unconf_123) + odin_sum4(G_D, i - 1, i, 0, shared->dim_G_D_2, 0, shared->dim_G_D_3, 0, shared->dim_G_D_4, shared->dim_G_D_1, shared->dim_G_D_12, shared->dim_G_D_123) + D_comm[i - 1];
+    }
     for (int i = 1; i <= shared->dim_cum_n_vaccinated_1; ++i) {
       for (int j = 1; j <= shared->dim_cum_n_vaccinated_2; ++j) {
         state_next[shared->offset_variable_cum_n_vaccinated + i - 1 + shared->dim_cum_n_vaccinated_1 * (j - 1)] = cum_n_S_vaccinated[shared->dim_cum_n_S_vaccinated_1 * (j - 1) + i - 1] + cum_n_E_vaccinated[shared->dim_cum_n_E_vaccinated_1 * (j - 1) + i - 1] + cum_n_I_A_vaccinated[shared->dim_cum_n_I_A_vaccinated_1 * (j - 1) + i - 1] + cum_n_R_vaccinated[shared->dim_cum_n_R_vaccinated_1 * (j - 1) + i - 1];
       }
-    }
-    for (int i = 1; i <= shared->dim_N_tot; ++i) {
-      state_next[shared->offset_variable_N_tot + i - 1] = odin_sum2(S, i - 1, i, 0, shared->dim_S_2, shared->dim_S_1) + odin_sum3(R, i - 1, i, 0, shared->dim_R_2, 0, shared->dim_R_3, shared->dim_R_1, shared->dim_R_12) + D_hosp[i - 1] + odin_sum4(E, i - 1, i, 0, shared->dim_E_2, 0, shared->dim_E_3, 0, shared->dim_E_4, shared->dim_E_1, shared->dim_E_12, shared->dim_E_123) + odin_sum4(I_A, i - 1, i, 0, shared->dim_I_A_2, 0, shared->dim_I_A_3, 0, shared->dim_I_A_4, shared->dim_I_A_1, shared->dim_I_A_12, shared->dim_I_A_123) + odin_sum4(I_C, i - 1, i, 0, shared->dim_I_C_2, 0, shared->dim_I_C_3, 0, shared->dim_I_C_4, shared->dim_I_C_1, shared->dim_I_C_12, shared->dim_I_C_123) + odin_sum4(ICU_pre_conf, i - 1, i, 0, shared->dim_ICU_pre_conf_2, 0, shared->dim_ICU_pre_conf_3, 0, shared->dim_ICU_pre_conf_4, shared->dim_ICU_pre_conf_1, shared->dim_ICU_pre_conf_12, shared->dim_ICU_pre_conf_123) + odin_sum4(ICU_pre_unconf, i - 1, i, 0, shared->dim_ICU_pre_unconf_2, 0, shared->dim_ICU_pre_unconf_3, 0, shared->dim_ICU_pre_unconf_4, shared->dim_ICU_pre_unconf_1, shared->dim_ICU_pre_unconf_12, shared->dim_ICU_pre_unconf_123) + odin_sum4(H_R_conf, i - 1, i, 0, shared->dim_H_R_conf_2, 0, shared->dim_H_R_conf_3, 0, shared->dim_H_R_conf_4, shared->dim_H_R_conf_1, shared->dim_H_R_conf_12, shared->dim_H_R_conf_123) + odin_sum4(H_R_unconf, i - 1, i, 0, shared->dim_H_R_unconf_2, 0, shared->dim_H_R_unconf_3, 0, shared->dim_H_R_unconf_4, shared->dim_H_R_unconf_1, shared->dim_H_R_unconf_12, shared->dim_H_R_unconf_123) + odin_sum4(H_D_conf, i - 1, i, 0, shared->dim_H_D_conf_2, 0, shared->dim_H_D_conf_3, 0, shared->dim_H_D_conf_4, shared->dim_H_D_conf_1, shared->dim_H_D_conf_12, shared->dim_H_D_conf_123) + odin_sum4(H_D_unconf, i - 1, i, 0, shared->dim_H_D_unconf_2, 0, shared->dim_H_D_unconf_3, 0, shared->dim_H_D_unconf_4, shared->dim_H_D_unconf_1, shared->dim_H_D_unconf_12, shared->dim_H_D_unconf_123) + odin_sum4(ICU_W_R_conf, i - 1, i, 0, shared->dim_ICU_W_R_conf_2, 0, shared->dim_ICU_W_R_conf_3, 0, shared->dim_ICU_W_R_conf_4, shared->dim_ICU_W_R_conf_1, shared->dim_ICU_W_R_conf_12, shared->dim_ICU_W_R_conf_123) + odin_sum4(ICU_W_R_unconf, i - 1, i, 0, shared->dim_ICU_W_R_unconf_2, 0, shared->dim_ICU_W_R_unconf_3, 0, shared->dim_ICU_W_R_unconf_4, shared->dim_ICU_W_R_unconf_1, shared->dim_ICU_W_R_unconf_12, shared->dim_ICU_W_R_unconf_123) + odin_sum4(ICU_W_D_conf, i - 1, i, 0, shared->dim_ICU_W_D_conf_2, 0, shared->dim_ICU_W_D_conf_3, 0, shared->dim_ICU_W_D_conf_4, shared->dim_ICU_W_D_conf_1, shared->dim_ICU_W_D_conf_12, shared->dim_ICU_W_D_conf_123) + odin_sum4(ICU_W_D_unconf, i - 1, i, 0, shared->dim_ICU_W_D_unconf_2, 0, shared->dim_ICU_W_D_unconf_3, 0, shared->dim_ICU_W_D_unconf_4, shared->dim_ICU_W_D_unconf_1, shared->dim_ICU_W_D_unconf_12, shared->dim_ICU_W_D_unconf_123) + odin_sum4(ICU_D_conf, i - 1, i, 0, shared->dim_ICU_D_conf_2, 0, shared->dim_ICU_D_conf_3, 0, shared->dim_ICU_D_conf_4, shared->dim_ICU_D_conf_1, shared->dim_ICU_D_conf_12, shared->dim_ICU_D_conf_123) + odin_sum4(ICU_D_unconf, i - 1, i, 0, shared->dim_ICU_D_unconf_2, 0, shared->dim_ICU_D_unconf_3, 0, shared->dim_ICU_D_unconf_4, shared->dim_ICU_D_unconf_1, shared->dim_ICU_D_unconf_12, shared->dim_ICU_D_unconf_123) + odin_sum4(W_R_conf, i - 1, i, 0, shared->dim_W_R_conf_2, 0, shared->dim_W_R_conf_3, 0, shared->dim_W_R_conf_4, shared->dim_W_R_conf_1, shared->dim_W_R_conf_12, shared->dim_W_R_conf_123) + odin_sum4(W_R_unconf, i - 1, i, 0, shared->dim_W_R_unconf_2, 0, shared->dim_W_R_unconf_3, 0, shared->dim_W_R_unconf_4, shared->dim_W_R_unconf_1, shared->dim_W_R_unconf_12, shared->dim_W_R_unconf_123) + odin_sum4(W_D_conf, i - 1, i, 0, shared->dim_W_D_conf_2, 0, shared->dim_W_D_conf_3, 0, shared->dim_W_D_conf_4, shared->dim_W_D_conf_1, shared->dim_W_D_conf_12, shared->dim_W_D_conf_123) + odin_sum4(W_D_unconf, i - 1, i, 0, shared->dim_W_D_unconf_2, 0, shared->dim_W_D_unconf_3, 0, shared->dim_W_D_unconf_4, shared->dim_W_D_unconf_1, shared->dim_W_D_unconf_12, shared->dim_W_D_unconf_123) + odin_sum4(G_D, i - 1, i, 0, shared->dim_G_D_2, 0, shared->dim_G_D_3, 0, shared->dim_G_D_4, shared->dim_G_D_1, shared->dim_G_D_12, shared->dim_G_D_123) + D_comm[i - 1];
     }
     for (int i = 1; i <= shared->dim_vaccine_n_candidates; ++i) {
       internal.vaccine_n_candidates[i - 1] = S[shared->dim_S_1 * 0 + i - 1] + odin_sum4(E, i - 1, i, 0, shared->dim_E_2, 0, shared->dim_E_3, 0, 1, shared->dim_E_1, shared->dim_E_12, shared->dim_E_123) + odin_sum4(I_A, i - 1, i, 0, shared->dim_I_A_2, 0, shared->dim_I_A_3, 0, 1, shared->dim_I_A_1, shared->dim_I_A_12, shared->dim_I_A_123) + odin_sum3(R, i - 1, i, 0, shared->dim_R_2, 0, 1, shared->dim_R_1, shared->dim_R_12);
@@ -2118,24 +2118,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_I_A_progress_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_A_progress_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_A_progress_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_I_A_progress_4; ++l) {
-            internal.n_I_A_progress[i - 1 + shared->dim_n_I_A_progress_1 * (j - 1) + shared->dim_n_I_A_progress_12 * (k - 1) + shared->dim_n_I_A_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[shared->dim_I_A_123 * (l - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_1 * (j - 1) + i - 1]), shared->p_I_A_progress);
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_I_C_progress_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_C_progress_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_C_progress_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_I_C_progress_4; ++l) {
-            internal.n_I_C_progress[i - 1 + shared->dim_n_I_C_progress_1 * (j - 1) + shared->dim_n_I_C_progress_12 * (k - 1) + shared->dim_n_I_C_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_C[shared->dim_I_C_123 * (l - 1) + shared->dim_I_C_12 * (k - 1) + shared->dim_I_C_1 * (j - 1) + i - 1]), shared->p_I_C_progress);
-          }
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_ICU_D_conf_progress_1; ++i) {
       for (int j = 1; j <= shared->dim_n_ICU_D_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_D_conf_progress_3; ++k) {
@@ -2150,24 +2132,6 @@ public:
         for (int k = 1; k <= shared->dim_n_ICU_D_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_D_unconf_progress_4; ++l) {
             internal.n_ICU_D_unconf_progress[i - 1 + shared->dim_n_ICU_D_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_unconf[shared->dim_ICU_D_unconf_123 * (l - 1) + shared->dim_ICU_D_unconf_12 * (k - 1) + shared->dim_ICU_D_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_D_progress);
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_ICU_pre_conf_progress_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_ICU_pre_conf_progress_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_ICU_pre_conf_progress_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_ICU_pre_conf_progress_4; ++l) {
-            internal.n_ICU_pre_conf_progress[i - 1 + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_conf[shared->dim_ICU_pre_conf_123 * (l - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_1 * (j - 1) + i - 1]), shared->p_ICU_pre_progress);
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_ICU_pre_unconf_progress_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_ICU_pre_unconf_progress_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_ICU_pre_unconf_progress_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_ICU_pre_unconf_progress_4; ++l) {
-            internal.n_ICU_pre_unconf_progress[i - 1 + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_unconf[shared->dim_ICU_pre_unconf_123 * (l - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_pre_progress);
           }
         }
       }
@@ -2204,6 +2168,42 @@ public:
         for (int k = 1; k <= shared->dim_n_ICU_W_R_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_W_R_unconf_progress_4; ++l) {
             internal.n_ICU_W_R_unconf_progress[i - 1 + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_unconf[shared->dim_ICU_W_R_unconf_123 * (l - 1) + shared->dim_ICU_W_R_unconf_12 * (k - 1) + shared->dim_ICU_W_R_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_W_R_progress);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_ICU_pre_conf_progress_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_ICU_pre_conf_progress_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_ICU_pre_conf_progress_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_ICU_pre_conf_progress_4; ++l) {
+            internal.n_ICU_pre_conf_progress[i - 1 + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_conf[shared->dim_ICU_pre_conf_123 * (l - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_1 * (j - 1) + i - 1]), shared->p_ICU_pre_progress);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_ICU_pre_unconf_progress_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_ICU_pre_unconf_progress_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_ICU_pre_unconf_progress_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_ICU_pre_unconf_progress_4; ++l) {
+            internal.n_ICU_pre_unconf_progress[i - 1 + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_unconf[shared->dim_ICU_pre_unconf_123 * (l - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_pre_progress);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_I_A_progress_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_A_progress_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_A_progress_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_I_A_progress_4; ++l) {
+            internal.n_I_A_progress[i - 1 + shared->dim_n_I_A_progress_1 * (j - 1) + shared->dim_n_I_A_progress_12 * (k - 1) + shared->dim_n_I_A_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[shared->dim_I_A_123 * (l - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_1 * (j - 1) + i - 1]), shared->p_I_A_progress);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_I_C_progress_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_C_progress_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_C_progress_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_I_C_progress_4; ++l) {
+            internal.n_I_C_progress[i - 1 + shared->dim_n_I_C_progress_1 * (j - 1) + shared->dim_n_I_C_progress_12 * (k - 1) + shared->dim_n_I_C_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_C[shared->dim_I_C_123 * (l - 1) + shared->dim_I_C_12 * (k - 1) + shared->dim_I_C_1 * (j - 1) + i - 1]), shared->p_I_C_progress);
           }
         }
       }
@@ -2589,13 +2589,6 @@ public:
     for (int i = 1; i <= shared->dim_delta_D_hosp; ++i) {
       internal.delta_D_hosp[i - 1] = odin_sum4(internal.n_H_D_unconf_progress.data(), i - 1, i, 0, shared->dim_n_H_D_unconf_progress_2, shared->k_H_D - 1, shared->k_H_D, 0, shared->dim_n_H_D_unconf_progress_4, shared->dim_n_H_D_unconf_progress_1, shared->dim_n_H_D_unconf_progress_12, shared->dim_n_H_D_unconf_progress_123) + odin_sum4(internal.n_H_D_conf_progress.data(), i - 1, i, 0, shared->dim_n_H_D_conf_progress_2, shared->k_H_D - 1, shared->k_H_D, 0, shared->dim_n_H_D_conf_progress_4, shared->dim_n_H_D_conf_progress_1, shared->dim_n_H_D_conf_progress_12, shared->dim_n_H_D_conf_progress_123) + odin_sum4(internal.n_ICU_D_unconf_progress.data(), i - 1, i, 0, shared->dim_n_ICU_D_unconf_progress_2, shared->k_ICU_D - 1, shared->k_ICU_D, 0, shared->dim_n_ICU_D_unconf_progress_4, shared->dim_n_ICU_D_unconf_progress_1, shared->dim_n_ICU_D_unconf_progress_12, shared->dim_n_ICU_D_unconf_progress_123) + odin_sum4(internal.n_ICU_D_conf_progress.data(), i - 1, i, 0, shared->dim_n_ICU_D_conf_progress_2, shared->k_ICU_D - 1, shared->k_ICU_D, 0, shared->dim_n_ICU_D_conf_progress_4, shared->dim_n_ICU_D_conf_progress_1, shared->dim_n_ICU_D_conf_progress_12, shared->dim_n_ICU_D_conf_progress_123) + odin_sum4(internal.n_W_D_unconf_progress.data(), i - 1, i, 0, shared->dim_n_W_D_unconf_progress_2, shared->k_W_D - 1, shared->k_W_D, 0, shared->dim_n_W_D_unconf_progress_4, shared->dim_n_W_D_unconf_progress_1, shared->dim_n_W_D_unconf_progress_12, shared->dim_n_W_D_unconf_progress_123) + odin_sum4(internal.n_W_D_conf_progress.data(), i - 1, i, 0, shared->dim_n_W_D_conf_progress_2, shared->k_W_D - 1, shared->k_W_D, 0, shared->dim_n_W_D_conf_progress_4, shared->dim_n_W_D_conf_progress_1, shared->dim_n_W_D_conf_progress_12, shared->dim_n_W_D_conf_progress_123);
     }
-    for (int i = 1; i <= shared->dim_n_I_C_to_R_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_C_to_R_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_C_to_R_3; ++k) {
-          internal.n_I_C_to_R[i - 1 + shared->dim_n_I_C_to_R_1 * (j - 1) + shared->dim_n_I_C_to_R_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_progress[shared->dim_n_I_C_progress_123 * (k - 1) + shared->dim_n_I_C_progress_12 * (shared->k_C - 1) + shared->dim_n_I_C_progress_1 * (j - 1) + i - 1]), 1 - internal.p_H_by_age[i - 1] * shared->rel_p_hosp_if_sympt[shared->dim_rel_p_hosp_if_sympt_1 * (k - 1) + i - 1]);
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_n_ICU_pre_conf_to_ICU_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_pre_conf_to_ICU_D_conf_3; ++k) {
@@ -2607,6 +2600,13 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_3; ++k) {
           internal.n_ICU_pre_unconf_to_ICU_D_unconf[i - 1 + shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_ICU_pre_unconf_progress[shared->dim_n_ICU_pre_unconf_progress_123 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (shared->k_ICU_pre - 1) + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + i - 1]), internal.p_ICU_D_by_age[i - 1]);
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_I_C_to_R_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_C_to_R_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_C_to_R_3; ++k) {
+          internal.n_I_C_to_R[i - 1 + shared->dim_n_I_C_to_R_1 * (j - 1) + shared->dim_n_I_C_to_R_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_progress[shared->dim_n_I_C_progress_123 * (k - 1) + shared->dim_n_I_C_progress_12 * (shared->k_C - 1) + shared->dim_n_I_C_progress_1 * (j - 1) + i - 1]), 1 - internal.p_H_by_age[i - 1] * shared->rel_p_hosp_if_sympt[shared->dim_rel_p_hosp_if_sympt_1 * (k - 1) + i - 1]);
         }
       }
     }
@@ -2777,17 +2777,17 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_I_C_to_G_D_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_C_to_G_D_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_C_to_G_D_3; ++k) {
-          internal.n_I_C_to_G_D[i - 1 + shared->dim_n_I_C_to_G_D_1 * (j - 1) + shared->dim_n_I_C_to_G_D_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_progress[shared->dim_n_I_C_progress_123 * (k - 1) + shared->dim_n_I_C_progress_12 * (shared->k_C - 1) + shared->dim_n_I_C_progress_1 * (j - 1) + i - 1] - internal.n_I_C_to_R[shared->dim_n_I_C_to_R_12 * (k - 1) + shared->dim_n_I_C_to_R_1 * (j - 1) + i - 1]), internal.p_G_D_by_age[i - 1]);
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_3; ++k) {
           internal.n_ICU_pre_conf_to_ICU_W_D_conf[i - 1 + shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 * (j - 1) + shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_ICU_pre_conf_progress[shared->dim_n_ICU_pre_conf_progress_123 * (k - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (shared->k_ICU_pre - 1) + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + i - 1] - internal.n_ICU_pre_conf_to_ICU_D_conf[shared->dim_n_ICU_pre_conf_to_ICU_D_conf_12 * (k - 1) + shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 * (j - 1) + i - 1]), internal.p_W_D_by_age[i - 1]);
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3; ++k) {
+          internal.n_ICU_pre_unconf_to_ICU_W_D_unconf[i - 1 + shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_ICU_pre_unconf_progress[shared->dim_n_ICU_pre_unconf_progress_123 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (shared->k_ICU_pre - 1) + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + i - 1] - internal.n_ICU_pre_unconf_to_ICU_D_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * (j - 1) + i - 1]), internal.p_W_D_by_age[i - 1]);
         }
       }
     }
@@ -2800,10 +2800,10 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3; ++k) {
-          internal.n_ICU_pre_unconf_to_ICU_W_D_unconf[i - 1 + shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_ICU_pre_unconf_progress[shared->dim_n_ICU_pre_unconf_progress_123 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (shared->k_ICU_pre - 1) + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + i - 1] - internal.n_ICU_pre_unconf_to_ICU_D_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * (j - 1) + i - 1]), internal.p_W_D_by_age[i - 1]);
+    for (int i = 1; i <= shared->dim_n_I_C_to_G_D_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_C_to_G_D_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_C_to_G_D_3; ++k) {
+          internal.n_I_C_to_G_D[i - 1 + shared->dim_n_I_C_to_G_D_1 * (j - 1) + shared->dim_n_I_C_to_G_D_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_progress[shared->dim_n_I_C_progress_123 * (k - 1) + shared->dim_n_I_C_progress_12 * (shared->k_C - 1) + shared->dim_n_I_C_progress_1 * (j - 1) + i - 1] - internal.n_I_C_to_R[shared->dim_n_I_C_to_R_12 * (k - 1) + shared->dim_n_I_C_to_R_1 * (j - 1) + i - 1]), internal.p_G_D_by_age[i - 1]);
         }
       }
     }
@@ -2875,7 +2875,6 @@ public:
     for (int i = 1; i <= shared->dim_D_hosp; ++i) {
       state_next[shared->offset_variable_D_hosp + i - 1] = D_hosp[i - 1] + internal.delta_D_hosp[i - 1];
     }
-    state_next[24] = odin_sum4(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
     for (int i = 1; i <= shared->dim_T_PCR_pos_1; ++i) {
       for (int j = 1; j <= shared->dim_T_PCR_pos_2; ++j) {
         for (int k = 1; k <= shared->dim_T_PCR_pos_3; ++k) {
@@ -2885,6 +2884,7 @@ public:
         }
       }
     }
+    state_next[24] = odin_sum4(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
     for (int i = 1; i <= shared->dim_aux_G_D_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_G_D_2; ++j) {
         int k = 1;
@@ -2981,15 +2981,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_E_next_vacc_class_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_E_next_vacc_class_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_E_next_vacc_class_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_E_next_vacc_class_4; ++l) {
-            internal.n_E_next_vacc_class[i - 1 + shared->dim_n_E_next_vacc_class_1 * (j - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(E[shared->dim_E_123 * (l - 1) + shared->dim_E_12 * (k - 1) + shared->dim_E_1 * (j - 1) + i - 1] - internal.n_E_progress[shared->dim_n_E_progress_123 * (l - 1) + shared->dim_n_E_progress_12 * (k - 1) + shared->dim_n_E_progress_1 * (j - 1) + i - 1]), internal.p_E_next_vacc_class[shared->dim_p_E_next_vacc_class_123 * (l - 1) + shared->dim_p_E_next_vacc_class_12 * (k - 1) + shared->dim_p_E_next_vacc_class_1 * (j - 1) + i - 1]);
-          }
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_EE_next_vacc_class_1; ++i) {
       for (int j = 1; j <= shared->dim_n_EE_next_vacc_class_2; ++j) {
         for (int k = 1; k <= shared->dim_n_EE_next_vacc_class_3; ++k) {
@@ -2999,19 +2990,12 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_I_A_next_vacc_class_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_A_next_vacc_class_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_A_next_vacc_class_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_I_A_next_vacc_class_4; ++l) {
-            internal.n_I_A_next_vacc_class[i - 1 + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[shared->dim_I_A_123 * (l - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_1 * (j - 1) + i - 1] - internal.n_I_A_progress[shared->dim_n_I_A_progress_123 * (l - 1) + shared->dim_n_I_A_progress_12 * (k - 1) + shared->dim_n_I_A_progress_1 * (j - 1) + i - 1]), internal.p_I_A_next_vacc_class[shared->dim_p_I_A_next_vacc_class_123 * (l - 1) + shared->dim_p_I_A_next_vacc_class_12 * (k - 1) + shared->dim_p_I_A_next_vacc_class_1 * (j - 1) + i - 1]);
+    for (int i = 1; i <= shared->dim_n_E_next_vacc_class_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_E_next_vacc_class_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_E_next_vacc_class_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_E_next_vacc_class_4; ++l) {
+            internal.n_E_next_vacc_class[i - 1 + shared->dim_n_E_next_vacc_class_1 * (j - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(E[shared->dim_E_123 * (l - 1) + shared->dim_E_12 * (k - 1) + shared->dim_E_1 * (j - 1) + i - 1] - internal.n_E_progress[shared->dim_n_E_progress_123 * (l - 1) + shared->dim_n_E_progress_12 * (k - 1) + shared->dim_n_E_progress_1 * (j - 1) + i - 1]), internal.p_E_next_vacc_class[shared->dim_p_E_next_vacc_class_123 * (l - 1) + shared->dim_p_E_next_vacc_class_12 * (k - 1) + shared->dim_p_E_next_vacc_class_1 * (j - 1) + i - 1]);
           }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_I_C_to_hosp_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_C_to_hosp_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_C_to_hosp_3; ++k) {
-          internal.n_I_C_to_hosp[i - 1 + shared->dim_n_I_C_to_hosp_1 * (j - 1) + shared->dim_n_I_C_to_hosp_12 * (k - 1)] = internal.n_I_C_progress[shared->dim_n_I_C_progress_123 * (k - 1) + shared->dim_n_I_C_progress_12 * (shared->k_C - 1) + shared->dim_n_I_C_progress_1 * (j - 1) + i - 1] - internal.n_I_C_to_R[shared->dim_n_I_C_to_R_12 * (k - 1) + shared->dim_n_I_C_to_R_1 * (j - 1) + i - 1] - internal.n_I_C_to_G_D[shared->dim_n_I_C_to_G_D_12 * (k - 1) + shared->dim_n_I_C_to_G_D_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3047,10 +3031,19 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_R_next_vacc_class_tmp_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_R_next_vacc_class_tmp_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_R_next_vacc_class_tmp_3; ++k) {
-          internal.n_R_next_vacc_class_tmp[i - 1 + shared->dim_n_R_next_vacc_class_tmp_1 * (j - 1) + shared->dim_n_R_next_vacc_class_tmp_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(R[shared->dim_R_12 * (k - 1) + shared->dim_R_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1]), internal.p_R_next_vacc_class[shared->dim_p_R_next_vacc_class_12 * (k - 1) + shared->dim_p_R_next_vacc_class_1 * (j - 1) + i - 1]);
+    for (int i = 1; i <= shared->dim_n_I_A_next_vacc_class_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_A_next_vacc_class_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_A_next_vacc_class_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_I_A_next_vacc_class_4; ++l) {
+            internal.n_I_A_next_vacc_class[i - 1 + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[shared->dim_I_A_123 * (l - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_1 * (j - 1) + i - 1] - internal.n_I_A_progress[shared->dim_n_I_A_progress_123 * (l - 1) + shared->dim_n_I_A_progress_12 * (k - 1) + shared->dim_n_I_A_progress_1 * (j - 1) + i - 1]), internal.p_I_A_next_vacc_class[shared->dim_p_I_A_next_vacc_class_123 * (l - 1) + shared->dim_p_I_A_next_vacc_class_12 * (k - 1) + shared->dim_p_I_A_next_vacc_class_1 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_I_C_to_hosp_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_C_to_hosp_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_C_to_hosp_3; ++k) {
+          internal.n_I_C_to_hosp[i - 1 + shared->dim_n_I_C_to_hosp_1 * (j - 1) + shared->dim_n_I_C_to_hosp_12 * (k - 1)] = internal.n_I_C_progress[shared->dim_n_I_C_progress_123 * (k - 1) + shared->dim_n_I_C_progress_12 * (shared->k_C - 1) + shared->dim_n_I_C_progress_1 * (j - 1) + i - 1] - internal.n_I_C_to_R[shared->dim_n_I_C_to_R_12 * (k - 1) + shared->dim_n_I_C_to_R_1 * (j - 1) + i - 1] - internal.n_I_C_to_G_D[shared->dim_n_I_C_to_G_D_12 * (k - 1) + shared->dim_n_I_C_to_G_D_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3058,6 +3051,13 @@ public:
       for (int j = 1; j <= shared->dim_n_RS_next_vacc_class_2; ++j) {
         for (int k = 1; k <= shared->dim_n_RS_next_vacc_class_3; ++k) {
           internal.n_RS_next_vacc_class[i - 1 + shared->dim_n_RS_next_vacc_class_1 * (j - 1) + shared->dim_n_RS_next_vacc_class_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1]), internal.p_R_next_vacc_class[shared->dim_p_R_next_vacc_class_12 * (k - 1) + shared->dim_p_R_next_vacc_class_1 * (j - 1) + i - 1]);
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_R_next_vacc_class_tmp_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_R_next_vacc_class_tmp_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_R_next_vacc_class_tmp_3; ++k) {
+          internal.n_R_next_vacc_class_tmp[i - 1 + shared->dim_n_R_next_vacc_class_tmp_1 * (j - 1) + shared->dim_n_R_next_vacc_class_tmp_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(R[shared->dim_R_12 * (k - 1) + shared->dim_R_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1]), internal.p_R_next_vacc_class[shared->dim_p_R_next_vacc_class_12 * (k - 1) + shared->dim_p_R_next_vacc_class_1 * (j - 1) + i - 1]);
         }
       }
     }
@@ -3224,13 +3224,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_I_C_to_ICU_pre_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_C_to_ICU_pre_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_C_to_ICU_pre_3; ++k) {
-          internal.n_I_C_to_ICU_pre[i - 1 + shared->dim_n_I_C_to_ICU_pre_1 * (j - 1) + shared->dim_n_I_C_to_ICU_pre_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_to_hosp[shared->dim_n_I_C_to_hosp_12 * (k - 1) + shared->dim_n_I_C_to_hosp_1 * (j - 1) + i - 1]), internal.p_ICU_by_age[i - 1]);
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_ICU_W_D_unconf_to_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_n_ICU_W_D_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_W_D_unconf_to_conf_3; ++k) {
@@ -3249,10 +3242,10 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_R_next_vacc_class_capped_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_R_next_vacc_class_capped_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_R_next_vacc_class_capped_3; ++k) {
-          internal.n_R_next_vacc_class_capped[i - 1 + shared->dim_n_R_next_vacc_class_capped_1 * (j - 1) + shared->dim_n_R_next_vacc_class_capped_12 * (k - 1)] = std::min(internal.n_R_next_vacc_class_tmp[shared->dim_n_R_next_vacc_class_tmp_12 * (k - 1) + shared->dim_n_R_next_vacc_class_tmp_1 * (j - 1) + i - 1], std::min(T_sero_neg[shared->dim_T_sero_neg_12 * (k - 1) + shared->dim_T_sero_neg_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1], T_PCR_neg[shared->dim_T_PCR_neg_12 * (k - 1) + shared->dim_T_PCR_neg_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1]));
+    for (int i = 1; i <= shared->dim_n_I_C_to_ICU_pre_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_C_to_ICU_pre_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_C_to_ICU_pre_3; ++k) {
+          internal.n_I_C_to_ICU_pre[i - 1 + shared->dim_n_I_C_to_ICU_pre_1 * (j - 1) + shared->dim_n_I_C_to_ICU_pre_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_to_hosp[shared->dim_n_I_C_to_hosp_12 * (k - 1) + shared->dim_n_I_C_to_hosp_1 * (j - 1) + i - 1]), internal.p_ICU_by_age[i - 1]);
         }
       }
     }
@@ -3260,6 +3253,13 @@ public:
       for (int j = 1; j <= shared->dim_n_RS_2; ++j) {
         for (int k = 1; k <= shared->dim_n_RS_3; ++k) {
           internal.n_RS[i - 1 + shared->dim_n_RS_1 * (j - 1) + shared->dim_n_RS_12 * (k - 1)] = internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1] - internal.n_RS_next_vacc_class[shared->dim_n_RS_next_vacc_class_12 * (k - 1) + shared->dim_n_RS_next_vacc_class_1 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_R_next_vacc_class_capped_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_R_next_vacc_class_capped_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_R_next_vacc_class_capped_3; ++k) {
+          internal.n_R_next_vacc_class_capped[i - 1 + shared->dim_n_R_next_vacc_class_capped_1 * (j - 1) + shared->dim_n_R_next_vacc_class_capped_12 * (k - 1)] = std::min(internal.n_R_next_vacc_class_tmp[shared->dim_n_R_next_vacc_class_tmp_12 * (k - 1) + shared->dim_n_R_next_vacc_class_tmp_1 * (j - 1) + i - 1], std::min(T_sero_neg[shared->dim_T_sero_neg_12 * (k - 1) + shared->dim_T_sero_neg_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1], T_PCR_neg[shared->dim_T_PCR_neg_12 * (k - 1) + shared->dim_T_PCR_neg_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1]));
         }
       }
     }
@@ -3295,20 +3295,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_cum_admit_by_age; ++i) {
-      state_next[shared->offset_variable_cum_admit_by_age + i - 1] = cum_admit_by_age[i - 1] + odin_sum3(internal.n_I_C_to_hosp.data(), i - 1, i, 0, shared->dim_n_I_C_to_hosp_2, 0, shared->dim_n_I_C_to_hosp_3, shared->dim_n_I_C_to_hosp_1, shared->dim_n_I_C_to_hosp_12);
-    }
-    for (int i = 1; i <= shared->dim_cum_n_E_vaccinated_1; ++i) {
-      for (int j = 1; j <= shared->dim_cum_n_E_vaccinated_2; ++j) {
-        state_next[shared->offset_variable_cum_n_E_vaccinated + i - 1 + shared->dim_cum_n_E_vaccinated_1 * (j - 1)] = cum_n_E_vaccinated[shared->dim_cum_n_E_vaccinated_1 * (j - 1) + i - 1] + odin_sum4(internal.n_E_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_E_next_vacc_class_2, 0, shared->dim_n_E_next_vacc_class_3, j - 1, j, shared->dim_n_E_next_vacc_class_1, shared->dim_n_E_next_vacc_class_12, shared->dim_n_E_next_vacc_class_123) + odin_sum4(internal.n_EE_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_EE_next_vacc_class_2, 0, shared->dim_n_EE_next_vacc_class_3, j - 1, j, shared->dim_n_EE_next_vacc_class_1, shared->dim_n_EE_next_vacc_class_12, shared->dim_n_EE_next_vacc_class_123);
-      }
-    }
-    for (int i = 1; i <= shared->dim_cum_n_I_A_vaccinated_1; ++i) {
-      for (int j = 1; j <= shared->dim_cum_n_I_A_vaccinated_2; ++j) {
-        state_next[shared->offset_variable_cum_n_I_A_vaccinated + i - 1 + shared->dim_cum_n_I_A_vaccinated_1 * (j - 1)] = cum_n_I_A_vaccinated[shared->dim_cum_n_I_A_vaccinated_1 * (j - 1) + i - 1] + odin_sum4(internal.n_I_A_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_I_A_next_vacc_class_2, 0, shared->dim_n_I_A_next_vacc_class_3, j - 1, j, shared->dim_n_I_A_next_vacc_class_1, shared->dim_n_I_A_next_vacc_class_12, shared->dim_n_I_A_next_vacc_class_123) + odin_sum4(internal.n_II_A_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_II_A_next_vacc_class_2, 0, shared->dim_n_II_A_next_vacc_class_3, j - 1, j, shared->dim_n_II_A_next_vacc_class_1, shared->dim_n_II_A_next_vacc_class_12, shared->dim_n_II_A_next_vacc_class_123);
-      }
-    }
-    state_next[17] = odin_sum4(internal.new_T_sero_pos.data(), 3, 13, 0, shared->dim_new_T_sero_pos_2, 0, shared->dim_new_T_sero_pos_3, 0, shared->dim_new_T_sero_pos_4, shared->dim_new_T_sero_pos_1, shared->dim_new_T_sero_pos_12, shared->dim_new_T_sero_pos_123);
     for (int i = 1; i <= shared->dim_T_sero_pos_1; ++i) {
       for (int j = 1; j <= shared->dim_T_sero_pos_2; ++j) {
         for (int k = 1; k <= shared->dim_T_sero_pos_3; ++k) {
@@ -3354,6 +3340,77 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_cum_admit_by_age; ++i) {
+      state_next[shared->offset_variable_cum_admit_by_age + i - 1] = cum_admit_by_age[i - 1] + odin_sum3(internal.n_I_C_to_hosp.data(), i - 1, i, 0, shared->dim_n_I_C_to_hosp_2, 0, shared->dim_n_I_C_to_hosp_3, shared->dim_n_I_C_to_hosp_1, shared->dim_n_I_C_to_hosp_12);
+    }
+    for (int i = 1; i <= shared->dim_cum_n_E_vaccinated_1; ++i) {
+      for (int j = 1; j <= shared->dim_cum_n_E_vaccinated_2; ++j) {
+        state_next[shared->offset_variable_cum_n_E_vaccinated + i - 1 + shared->dim_cum_n_E_vaccinated_1 * (j - 1)] = cum_n_E_vaccinated[shared->dim_cum_n_E_vaccinated_1 * (j - 1) + i - 1] + odin_sum4(internal.n_E_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_E_next_vacc_class_2, 0, shared->dim_n_E_next_vacc_class_3, j - 1, j, shared->dim_n_E_next_vacc_class_1, shared->dim_n_E_next_vacc_class_12, shared->dim_n_E_next_vacc_class_123) + odin_sum4(internal.n_EE_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_EE_next_vacc_class_2, 0, shared->dim_n_EE_next_vacc_class_3, j - 1, j, shared->dim_n_EE_next_vacc_class_1, shared->dim_n_EE_next_vacc_class_12, shared->dim_n_EE_next_vacc_class_123);
+      }
+    }
+    for (int i = 1; i <= shared->dim_cum_n_I_A_vaccinated_1; ++i) {
+      for (int j = 1; j <= shared->dim_cum_n_I_A_vaccinated_2; ++j) {
+        state_next[shared->offset_variable_cum_n_I_A_vaccinated + i - 1 + shared->dim_cum_n_I_A_vaccinated_1 * (j - 1)] = cum_n_I_A_vaccinated[shared->dim_cum_n_I_A_vaccinated_1 * (j - 1) + i - 1] + odin_sum4(internal.n_I_A_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_I_A_next_vacc_class_2, 0, shared->dim_n_I_A_next_vacc_class_3, j - 1, j, shared->dim_n_I_A_next_vacc_class_1, shared->dim_n_I_A_next_vacc_class_12, shared->dim_n_I_A_next_vacc_class_123) + odin_sum4(internal.n_II_A_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_II_A_next_vacc_class_2, 0, shared->dim_n_II_A_next_vacc_class_3, j - 1, j, shared->dim_n_II_A_next_vacc_class_1, shared->dim_n_II_A_next_vacc_class_12, shared->dim_n_II_A_next_vacc_class_123);
+      }
+    }
+    state_next[17] = odin_sum4(internal.new_T_sero_pos.data(), 3, 13, 0, shared->dim_new_T_sero_pos_2, 0, shared->dim_new_T_sero_pos_3, 0, shared->dim_new_T_sero_pos_4, shared->dim_new_T_sero_pos_1, shared->dim_new_T_sero_pos_12, shared->dim_new_T_sero_pos_123);
+    for (int i = 1; i <= shared->dim_n_EI_A_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_EI_A_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_EI_A_3; ++k) {
+          internal.n_EI_A[i - 1 + shared->dim_n_EI_A_1 * (j - 1) + shared->dim_n_EI_A_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[shared->dim_n_EE_123 * (k - 1) + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1]), 1 - shared->p_C[i - 1] * shared->rel_p_sympt[shared->dim_rel_p_sympt_1 * (k - 1) + i - 1]);
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_EI_C_next_vacc_class_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_EI_C_next_vacc_class_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_EI_C_next_vacc_class_3; ++k) {
+          internal.n_EI_C_next_vacc_class[i - 1 + shared->dim_n_EI_C_next_vacc_class_1 * (j - 1) + shared->dim_n_EI_C_next_vacc_class_12 * (k - 1)] = internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (k - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_EI_A_next_vacc_class[shared->dim_n_EI_A_next_vacc_class_12 * (k - 1) + shared->dim_n_EI_A_next_vacc_class_1 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_ICU_W_R_unconf_to_conf_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_ICU_W_R_unconf_to_conf_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_ICU_W_R_unconf_to_conf_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_ICU_W_R_unconf_to_conf_4; ++l) {
+            internal.n_ICU_W_R_unconf_to_conf[i - 1 + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1]), shared->p_test);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_I_C_to_ICU_pre_conf_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_I_C_to_ICU_pre_conf_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_I_C_to_ICU_pre_conf_3; ++k) {
+          internal.n_I_C_to_ICU_pre_conf[i - 1 + shared->dim_n_I_C_to_ICU_pre_conf_1 * (j - 1) + shared->dim_n_I_C_to_ICU_pre_conf_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_to_ICU_pre[shared->dim_n_I_C_to_ICU_pre_12 * (k - 1) + shared->dim_n_I_C_to_ICU_pre_1 * (j - 1) + i - 1]), internal.p_star_by_age[i - 1]);
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_R_next_vacc_class_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_R_next_vacc_class_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_R_next_vacc_class_3; ++k) {
+          internal.n_R_next_vacc_class[i - 1 + shared->dim_n_R_next_vacc_class_1 * (j - 1) + shared->dim_n_R_next_vacc_class_12 * (k - 1)] = (shared->model_pcr_and_serology == 1 ? internal.n_R_next_vacc_class_capped[shared->dim_n_R_next_vacc_class_capped_12 * (k - 1) + shared->dim_n_R_next_vacc_class_capped_1 * (j - 1) + i - 1] : internal.n_R_next_vacc_class_tmp[shared->dim_n_R_next_vacc_class_tmp_12 * (k - 1) + shared->dim_n_R_next_vacc_class_tmp_1 * (j - 1) + i - 1]);
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_S_progress_1; ++i) {
+      int j = 1;
+      for (int k = 1; k <= shared->dim_n_S_progress_3; ++k) {
+        internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1]), internal.lambda[shared->dim_lambda_1 * 0 + i - 1] / (real_t) odin_sum2(internal.lambda.data(), i - 1, i, 0, shared->dim_lambda_2, shared->dim_lambda_1));
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_S_progress_1; ++i) {
+      for (int j = 2; j <= shared->n_strains; ++j) {
+        for (int k = 1; k <= shared->dim_n_S_progress_3; ++k) {
+          internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, 0, j - 1, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12)), internal.lambda[shared->dim_lambda_1 * (j - 1) + i - 1] / (real_t) odin_sum2(internal.lambda.data(), i - 1, i, j - 1, shared->n_strains, shared->dim_lambda_1));
+        }
+      }
+    }
+    {
+       int i = 4;
+       for (int j = 2; j <= shared->n_strains; ++j) {
+         int k = 1;
+         internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = std::min(internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + strain_seed, internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + S[shared->dim_S_1 * (k - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, 0, shared->dim_n_S_progress_2, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12));
+       }
+    }
     for (int i = 1; i <= shared->dim_n_com_to_T_sero_pre_1; ++i) {
       for (int j = 1; j <= shared->dim_n_com_to_T_sero_pre_2; ++j) {
         int k = 1;
@@ -3384,69 +3441,12 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_n_EI_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_EI_A_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_EI_A_3; ++k) {
-          internal.n_EI_A[i - 1 + shared->dim_n_EI_A_1 * (j - 1) + shared->dim_n_EI_A_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[shared->dim_n_EE_123 * (k - 1) + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1]), 1 - shared->p_C[i - 1] * shared->rel_p_sympt[shared->dim_rel_p_sympt_1 * (k - 1) + i - 1]);
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_EI_C_next_vacc_class_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_EI_C_next_vacc_class_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_EI_C_next_vacc_class_3; ++k) {
-          internal.n_EI_C_next_vacc_class[i - 1 + shared->dim_n_EI_C_next_vacc_class_1 * (j - 1) + shared->dim_n_EI_C_next_vacc_class_12 * (k - 1)] = internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (k - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_EI_A_next_vacc_class[shared->dim_n_EI_A_next_vacc_class_12 * (k - 1) + shared->dim_n_EI_A_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_hosp_non_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_n_hosp_non_ICU_2; ++j) {
         for (int k = 1; k <= shared->dim_n_hosp_non_ICU_3; ++k) {
           internal.n_hosp_non_ICU[i - 1 + shared->dim_n_hosp_non_ICU_1 * (j - 1) + shared->dim_n_hosp_non_ICU_12 * (k - 1)] = internal.n_I_C_to_hosp[shared->dim_n_I_C_to_hosp_12 * (k - 1) + shared->dim_n_I_C_to_hosp_1 * (j - 1) + i - 1] - internal.n_I_C_to_ICU_pre[shared->dim_n_I_C_to_ICU_pre_12 * (k - 1) + shared->dim_n_I_C_to_ICU_pre_1 * (j - 1) + i - 1];
         }
       }
-    }
-    for (int i = 1; i <= shared->dim_n_I_C_to_ICU_pre_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_I_C_to_ICU_pre_conf_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_I_C_to_ICU_pre_conf_3; ++k) {
-          internal.n_I_C_to_ICU_pre_conf[i - 1 + shared->dim_n_I_C_to_ICU_pre_conf_1 * (j - 1) + shared->dim_n_I_C_to_ICU_pre_conf_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_to_ICU_pre[shared->dim_n_I_C_to_ICU_pre_12 * (k - 1) + shared->dim_n_I_C_to_ICU_pre_1 * (j - 1) + i - 1]), internal.p_star_by_age[i - 1]);
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_ICU_W_R_unconf_to_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_ICU_W_R_unconf_to_conf_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_ICU_W_R_unconf_to_conf_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_ICU_W_R_unconf_to_conf_4; ++l) {
-            internal.n_ICU_W_R_unconf_to_conf[i - 1 + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1]), shared->p_test);
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_R_next_vacc_class_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_R_next_vacc_class_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_R_next_vacc_class_3; ++k) {
-          internal.n_R_next_vacc_class[i - 1 + shared->dim_n_R_next_vacc_class_1 * (j - 1) + shared->dim_n_R_next_vacc_class_12 * (k - 1)] = (shared->model_pcr_and_serology == 1 ? internal.n_R_next_vacc_class_capped[shared->dim_n_R_next_vacc_class_capped_12 * (k - 1) + shared->dim_n_R_next_vacc_class_capped_1 * (j - 1) + i - 1] : internal.n_R_next_vacc_class_tmp[shared->dim_n_R_next_vacc_class_tmp_12 * (k - 1) + shared->dim_n_R_next_vacc_class_tmp_1 * (j - 1) + i - 1]);
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_S_progress_1; ++i) {
-      int j = 1;
-      for (int k = 1; k <= shared->dim_n_S_progress_3; ++k) {
-        internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1]), internal.lambda[shared->dim_lambda_1 * 0 + i - 1] / (real_t) odin_sum2(internal.lambda.data(), i - 1, i, 0, shared->dim_lambda_2, shared->dim_lambda_1));
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_S_progress_1; ++i) {
-      for (int j = 2; j <= shared->n_strains; ++j) {
-        for (int k = 1; k <= shared->dim_n_S_progress_3; ++k) {
-          internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, 0, j - 1, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12)), internal.lambda[shared->dim_lambda_1 * (j - 1) + i - 1] / (real_t) odin_sum2(internal.lambda.data(), i - 1, i, j - 1, shared->n_strains, shared->dim_lambda_1));
-        }
-      }
-    }
-    {
-       int i = 4;
-       for (int j = 2; j <= shared->n_strains; ++j) {
-         int k = 1;
-         internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = std::min(internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + strain_seed, internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + S[shared->dim_S_1 * (k - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, 0, shared->dim_n_S_progress_2, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12));
-       }
     }
     for (int i = 1; i <= shared->dim_new_ICU_W_D_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_new_ICU_W_D_conf_2; ++j) {
@@ -3583,15 +3583,33 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_n_SE_next_vacc_class_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_SE_next_vacc_class_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_SE_next_vacc_class_3; ++k) {
+          internal.n_SE_next_vacc_class[i - 1 + shared->dim_n_SE_next_vacc_class_1 * (j - 1) + shared->dim_n_SE_next_vacc_class_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1]), internal.p_S_next_vacc_class[shared->dim_p_S_next_vacc_class_1 * (k - 1) + i - 1]);
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_n_S_next_vacc_class_1; ++i) {
       for (int j = 1; j <= shared->dim_n_S_next_vacc_class_2; ++j) {
         internal.n_S_next_vacc_class[i - 1 + shared->dim_n_S_next_vacc_class_1 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[shared->dim_S_1 * (j - 1) + i - 1] - odin_sum3(internal.n_S_progress.data(), i - 1, i, 0, shared->dim_n_S_progress_2, j - 1, j, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12)), internal.p_S_next_vacc_class[shared->dim_p_S_next_vacc_class_1 * (j - 1) + i - 1]);
       }
     }
-    for (int i = 1; i <= shared->dim_n_SE_next_vacc_class_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_SE_next_vacc_class_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_SE_next_vacc_class_3; ++k) {
-          internal.n_SE_next_vacc_class[i - 1 + shared->dim_n_SE_next_vacc_class_1 * (j - 1) + shared->dim_n_SE_next_vacc_class_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1]), internal.p_S_next_vacc_class[shared->dim_p_S_next_vacc_class_1 * (k - 1) + i - 1]);
+    for (int i = 1; i <= shared->dim_new_ICU_W_R_conf_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_ICU_W_R_conf_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_ICU_W_R_conf_3; ++k) {
+          for (int l = 1; l <= shared->dim_new_ICU_W_R_conf_4; ++l) {
+            internal.new_ICU_W_R_conf[i - 1 + shared->dim_new_ICU_W_R_conf_1 * (j - 1) + shared->dim_new_ICU_W_R_conf_12 * (k - 1) + shared->dim_new_ICU_W_R_conf_123 * (l - 1)] = internal.aux_ICU_W_R_conf[shared->dim_aux_ICU_W_R_conf_123 * (l - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + i - 1] + internal.n_ICU_W_R_unconf_to_conf[shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_new_ICU_W_R_unconf_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_ICU_W_R_unconf_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_ICU_W_R_unconf_3; ++k) {
+          for (int l = 1; l <= shared->dim_new_ICU_W_R_unconf_4; ++l) {
+            internal.new_ICU_W_R_unconf[i - 1 + shared->dim_new_ICU_W_R_unconf_1 * (j - 1) + shared->dim_new_ICU_W_R_unconf_12 * (k - 1) + shared->dim_new_ICU_W_R_unconf_123 * (l - 1)] = internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_W_R_unconf_to_conf[shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + i - 1];
+          }
         }
       }
     }
@@ -3626,24 +3644,6 @@ public:
         int k = 1;
         for (int l = 1; l <= shared->dim_new_ICU_pre_unconf_4; ++l) {
           internal.new_ICU_pre_unconf[i - 1 + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_123 * (l - 1)] = internal.new_ICU_pre_unconf[shared->dim_new_ICU_pre_unconf_123 * (l - 1) + shared->dim_new_ICU_pre_unconf_12 * 0 + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + i - 1] + internal.n_I_C_to_ICU_pre[shared->dim_n_I_C_to_ICU_pre_12 * (l - 1) + shared->dim_n_I_C_to_ICU_pre_1 * (j - 1) + i - 1] - internal.n_I_C_to_ICU_pre_conf[shared->dim_n_I_C_to_ICU_pre_conf_12 * (l - 1) + shared->dim_n_I_C_to_ICU_pre_conf_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_ICU_W_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_ICU_W_R_conf_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_ICU_W_R_conf_3; ++k) {
-          for (int l = 1; l <= shared->dim_new_ICU_W_R_conf_4; ++l) {
-            internal.new_ICU_W_R_conf[i - 1 + shared->dim_new_ICU_W_R_conf_1 * (j - 1) + shared->dim_new_ICU_W_R_conf_12 * (k - 1) + shared->dim_new_ICU_W_R_conf_123 * (l - 1)] = internal.aux_ICU_W_R_conf[shared->dim_aux_ICU_W_R_conf_123 * (l - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + i - 1] + internal.n_ICU_W_R_unconf_to_conf[shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_ICU_W_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_ICU_W_R_unconf_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_ICU_W_R_unconf_3; ++k) {
-          for (int l = 1; l <= shared->dim_new_ICU_W_R_unconf_4; ++l) {
-            internal.new_ICU_W_R_unconf[i - 1 + shared->dim_new_ICU_W_R_unconf_1 * (j - 1) + shared->dim_new_ICU_W_R_unconf_12 * (k - 1) + shared->dim_new_ICU_W_R_unconf_123 * (l - 1)] = internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_W_R_unconf_to_conf[shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + i - 1];
-          }
         }
       }
     }
@@ -3742,15 +3742,6 @@ public:
         }
       }
     }
-    state_next[3] = cum_infections + odin_sum1(internal.n_S_progress.data(), 0, shared->dim_n_S_progress);
-    for (int i = 1; i <= shared->dim_cum_infections_per_strain; ++i) {
-      state_next[25 + i - 1] = cum_infections_per_strain[i - 1] + odin_sum3(internal.n_S_progress.data(), 0, shared->dim_n_S_progress_1, i - 1, i, 0, shared->dim_n_S_progress_3, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12);
-    }
-    for (int i = 1; i <= shared->dim_cum_n_R_vaccinated_1; ++i) {
-      for (int j = 1; j <= shared->dim_cum_n_R_vaccinated_2; ++j) {
-        state_next[shared->offset_variable_cum_n_R_vaccinated + i - 1 + shared->dim_cum_n_R_vaccinated_1 * (j - 1)] = cum_n_R_vaccinated[shared->dim_cum_n_R_vaccinated_1 * (j - 1) + i - 1] + odin_sum3(internal.n_R_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_R_next_vacc_class_2, j - 1, j, shared->dim_n_R_next_vacc_class_1, shared->dim_n_R_next_vacc_class_12) + odin_sum3(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, j - 1, j, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12);
-      }
-    }
     for (int i = 1; i <= shared->dim_ICU_W_D_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_ICU_W_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_ICU_W_D_conf_3; ++k) {
@@ -3767,6 +3758,15 @@ public:
             state_next[shared->offset_variable_ICU_W_D_unconf + i - 1 + shared->dim_ICU_W_D_unconf_1 * (j - 1) + shared->dim_ICU_W_D_unconf_12 * (k - 1) + shared->dim_ICU_W_D_unconf_123 * (l - 1)] = internal.new_ICU_W_D_unconf[shared->dim_new_ICU_W_D_unconf_123 * (l - 1) + shared->dim_new_ICU_W_D_unconf_12 * (k - 1) + shared->dim_new_ICU_W_D_unconf_1 * (j - 1) + i - 1];
           }
         }
+      }
+    }
+    state_next[3] = cum_infections + odin_sum1(internal.n_S_progress.data(), 0, shared->dim_n_S_progress);
+    for (int i = 1; i <= shared->dim_cum_infections_per_strain; ++i) {
+      state_next[25 + i - 1] = cum_infections_per_strain[i - 1] + odin_sum3(internal.n_S_progress.data(), 0, shared->dim_n_S_progress_1, i - 1, i, 0, shared->dim_n_S_progress_3, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12);
+    }
+    for (int i = 1; i <= shared->dim_cum_n_R_vaccinated_1; ++i) {
+      for (int j = 1; j <= shared->dim_cum_n_R_vaccinated_2; ++j) {
+        state_next[shared->offset_variable_cum_n_R_vaccinated + i - 1 + shared->dim_cum_n_R_vaccinated_1 * (j - 1)] = cum_n_R_vaccinated[shared->dim_cum_n_R_vaccinated_1 * (j - 1) + i - 1] + odin_sum3(internal.n_R_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_R_next_vacc_class_2, j - 1, j, shared->dim_n_R_next_vacc_class_1, shared->dim_n_R_next_vacc_class_12) + odin_sum3(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, j - 1, j, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12);
       }
     }
     for (int i = 1; i <= shared->dim_aux_I_C_1; ++i) {
@@ -3823,6 +3823,7 @@ public:
         }
       }
     }
+    real_t new_ICU_tot = odin_sum1(internal.new_ICU_W_R_conf.data(), 0, shared->dim_new_ICU_W_R_conf) + odin_sum1(internal.new_ICU_W_D_conf.data(), 0, shared->dim_new_ICU_W_D_conf) + odin_sum1(internal.new_ICU_D_conf.data(), 0, shared->dim_new_ICU_D_conf);
     for (int i = 1; i <= shared->dim_new_I_A_1; ++i) {
       for (int j = 1; j <= shared->dim_new_I_A_2; ++j) {
         for (int k = 1; k <= shared->dim_new_I_A_3; ++k) {
@@ -3832,7 +3833,6 @@ public:
         }
       }
     }
-    real_t new_ICU_tot = odin_sum1(internal.new_ICU_W_R_conf.data(), 0, shared->dim_new_ICU_W_R_conf) + odin_sum1(internal.new_ICU_W_D_conf.data(), 0, shared->dim_new_ICU_W_D_conf) + odin_sum1(internal.new_ICU_D_conf.data(), 0, shared->dim_new_ICU_D_conf);
     for (int i = 1; i <= shared->dim_new_S_1; ++i) {
       for (int j = 1; j <= shared->dim_new_S_2; ++j) {
         internal.new_S[i - 1 + shared->dim_new_S_1 * (j - 1)] = S[shared->dim_S_1 * (j - 1) + i - 1] + odin_sum3(internal.n_RS.data(), i - 1, i, 0, shared->dim_n_RS_2, j - 1, j, shared->dim_n_RS_1, shared->dim_n_RS_12) - odin_sum3(internal.n_S_progress.data(), i - 1, i, 0, shared->dim_n_S_progress_2, j - 1, j, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12) - internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1) + i - 1];
@@ -3850,30 +3850,6 @@ public:
     real_t new_sympt_cases = odin_sum1(internal.n_EI_C.data(), 0, shared->dim_n_EI_C) + odin_sum1(internal.n_EI_C_next_vacc_class.data(), 0, shared->dim_n_EI_C_next_vacc_class);
     real_t new_sympt_cases_non_variant_over25 = odin_sum3(internal.n_EI_C.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_C_3, shared->dim_n_EI_C_1, shared->dim_n_EI_C_12) + odin_sum3(internal.n_EI_C_next_vacc_class.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_C_next_vacc_class_3, shared->dim_n_EI_C_next_vacc_class_1, shared->dim_n_EI_C_next_vacc_class_12);
     real_t new_sympt_cases_over25 = odin_sum3(internal.n_EI_C.data(), 5, shared->n_groups, 0, shared->dim_n_EI_C_2, 0, shared->dim_n_EI_C_3, shared->dim_n_EI_C_1, shared->dim_n_EI_C_12) + odin_sum3(internal.n_EI_C_next_vacc_class.data(), 5, shared->n_groups, 0, shared->dim_n_EI_C_next_vacc_class_2, 0, shared->dim_n_EI_C_next_vacc_class_3, shared->dim_n_EI_C_next_vacc_class_1, shared->dim_n_EI_C_next_vacc_class_12);
-    for (int i = 1; i <= shared->dim_cum_n_S_vaccinated_1; ++i) {
-      for (int j = 1; j <= shared->dim_cum_n_S_vaccinated_2; ++j) {
-        state_next[shared->offset_variable_cum_n_S_vaccinated + i - 1 + shared->dim_cum_n_S_vaccinated_1 * (j - 1)] = cum_n_S_vaccinated[shared->dim_cum_n_S_vaccinated_1 * (j - 1) + i - 1] + internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1) + i - 1] + odin_sum3(internal.n_SE_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_SE_next_vacc_class_2, j - 1, j, shared->dim_n_SE_next_vacc_class_1, shared->dim_n_SE_next_vacc_class_12);
-      }
-    }
-    state_next[5] = cum_new_conf + delta_new_conf;
-    for (int i = 1; i <= shared->dim_ICU_pre_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_ICU_pre_conf_2; ++j) {
-        for (int k = 1; k <= shared->dim_ICU_pre_conf_3; ++k) {
-          for (int l = 1; l <= shared->dim_ICU_pre_conf_4; ++l) {
-            state_next[shared->offset_variable_ICU_pre_conf + i - 1 + shared->dim_ICU_pre_conf_1 * (j - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_123 * (l - 1)] = internal.new_ICU_pre_conf[shared->dim_new_ICU_pre_conf_123 * (l - 1) + shared->dim_new_ICU_pre_conf_12 * (k - 1) + shared->dim_new_ICU_pre_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_ICU_pre_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_ICU_pre_unconf_2; ++j) {
-        for (int k = 1; k <= shared->dim_ICU_pre_unconf_3; ++k) {
-          for (int l = 1; l <= shared->dim_ICU_pre_unconf_4; ++l) {
-            state_next[shared->offset_variable_ICU_pre_unconf + i - 1 + shared->dim_ICU_pre_unconf_1 * (j - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_123 * (l - 1)] = internal.new_ICU_pre_unconf[shared->dim_new_ICU_pre_unconf_123 * (l - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_ICU_W_R_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_ICU_W_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_ICU_W_R_conf_3; ++k) {
@@ -3892,7 +3868,24 @@ public:
         }
       }
     }
-    state_next[2] = (std::fmod(step, shared->steps_per_day) == 0 ? delta_new_conf : new_conf_inc + delta_new_conf);
+    for (int i = 1; i <= shared->dim_ICU_pre_conf_1; ++i) {
+      for (int j = 1; j <= shared->dim_ICU_pre_conf_2; ++j) {
+        for (int k = 1; k <= shared->dim_ICU_pre_conf_3; ++k) {
+          for (int l = 1; l <= shared->dim_ICU_pre_conf_4; ++l) {
+            state_next[shared->offset_variable_ICU_pre_conf + i - 1 + shared->dim_ICU_pre_conf_1 * (j - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_123 * (l - 1)] = internal.new_ICU_pre_conf[shared->dim_new_ICU_pre_conf_123 * (l - 1) + shared->dim_new_ICU_pre_conf_12 * (k - 1) + shared->dim_new_ICU_pre_conf_1 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_ICU_pre_unconf_1; ++i) {
+      for (int j = 1; j <= shared->dim_ICU_pre_unconf_2; ++j) {
+        for (int k = 1; k <= shared->dim_ICU_pre_unconf_3; ++k) {
+          for (int l = 1; l <= shared->dim_ICU_pre_unconf_4; ++l) {
+            state_next[shared->offset_variable_ICU_pre_unconf + i - 1 + shared->dim_ICU_pre_unconf_1 * (j - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_123 * (l - 1)] = internal.new_ICU_pre_unconf[shared->dim_new_ICU_pre_unconf_123 * (l - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_R_1; ++i) {
       for (int j = 1; j <= shared->dim_R_2; ++j) {
         for (int k = 1; k <= shared->dim_R_3; ++k) {
@@ -3932,6 +3925,13 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_cum_n_S_vaccinated_1; ++i) {
+      for (int j = 1; j <= shared->dim_cum_n_S_vaccinated_2; ++j) {
+        state_next[shared->offset_variable_cum_n_S_vaccinated + i - 1 + shared->dim_cum_n_S_vaccinated_1 * (j - 1)] = cum_n_S_vaccinated[shared->dim_cum_n_S_vaccinated_1 * (j - 1) + i - 1] + internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1) + i - 1] + odin_sum3(internal.n_SE_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_SE_next_vacc_class_2, j - 1, j, shared->dim_n_SE_next_vacc_class_1, shared->dim_n_SE_next_vacc_class_12);
+      }
+    }
+    state_next[5] = cum_new_conf + delta_new_conf;
+    state_next[2] = (std::fmod(step, shared->steps_per_day) == 0 ? delta_new_conf : new_conf_inc + delta_new_conf);
     for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
         int k = 1;
@@ -4057,9 +4057,7 @@ public:
         }
       }
     }
-    state_next[18] = cum_sympt_cases + new_sympt_cases;
-    state_next[20] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
-    state_next[19] = cum_sympt_cases_over25 + new_sympt_cases_over25;
+    state_next[9] = new_ICU_tot;
     for (int i = 1; i <= shared->dim_I_A_1; ++i) {
       for (int j = 1; j <= shared->dim_I_A_2; ++j) {
         for (int k = 1; k <= shared->dim_I_A_3; ++k) {
@@ -4069,12 +4067,14 @@ public:
         }
       }
     }
-    state_next[9] = new_ICU_tot;
     for (int i = 1; i <= shared->dim_S_1; ++i) {
       for (int j = 1; j <= shared->dim_S_2; ++j) {
         state_next[shared->offset_variable_S + i - 1 + shared->dim_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1];
       }
     }
+    state_next[18] = cum_sympt_cases + new_sympt_cases;
+    state_next[20] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
+    state_next[19] = cum_sympt_cases_over25 + new_sympt_cases_over25;
     state_next[21] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases : sympt_cases_inc + new_sympt_cases));
     state_next[23] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases_non_variant_over25 : sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25));
     state_next[22] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases_over25 : sympt_cases_over25_inc + new_sympt_cases_over25));
@@ -4157,8 +4157,6 @@ public:
       }
     }
     real_t new_general_tot = odin_sum1(internal.new_ICU_pre_conf.data(), 0, shared->dim_new_ICU_pre_conf) + odin_sum1(internal.new_H_R_conf.data(), 0, shared->dim_new_H_R_conf) + odin_sum1(internal.new_H_D_conf.data(), 0, shared->dim_new_H_D_conf) + odin_sum1(internal.new_W_R_conf.data(), 0, shared->dim_new_W_R_conf) + odin_sum1(internal.new_W_D_conf.data(), 0, shared->dim_new_W_D_conf);
-    state_next[1] = (std::fmod(step, shared->steps_per_day) == 0 ? delta_admit_conf : admit_conf_inc + delta_admit_conf);
-    state_next[4] = cum_admit_conf + delta_admit_conf;
     for (int i = 1; i <= shared->dim_E_1; ++i) {
       for (int j = 1; j <= shared->dim_E_2; ++j) {
         for (int k = 1; k <= shared->dim_E_3; ++k) {
@@ -4186,13 +4184,15 @@ public:
         }
       }
     }
-    state_next[10] = new_general_tot;
-    state_next[11] = new_ICU_tot + new_general_tot;
+    state_next[1] = (std::fmod(step, shared->steps_per_day) == 0 ? delta_admit_conf : admit_conf_inc + delta_admit_conf);
+    state_next[4] = cum_admit_conf + delta_admit_conf;
     for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
       for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
         state_next[shared->offset_variable_I_weighted + i - 1 + shared->dim_I_weighted_1 * (j - 1)] = odin_sum3(internal.I_weighted_strain.data(), i - 1, i, 0, shared->dim_I_weighted_strain_2, j - 1, j, shared->dim_I_weighted_strain_1, shared->dim_I_weighted_strain_12);
       }
     }
+    state_next[10] = new_general_tot;
+    state_next[11] = new_ICU_tot + new_general_tot;
   }
   real_t compare_data(const real_t * state, const data_t& data, dust::rng_state_t<real_t>& rng_state) {
     return compare<carehomes>(state, data, internal, shared, rng_state);
@@ -4466,6 +4466,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   auto shared = std::make_shared<carehomes::shared_t>();
   carehomes::internal_t internal;
   shared->dim_gamma_sero_pre = 2;
+  shared->initial_D_comm_inc = 0;
+  shared->initial_D_comm_tot = 0;
+  shared->initial_D_hosp_inc = 0;
+  shared->initial_D_hosp_tot = 0;
+  shared->initial_D_tot = 0;
+  shared->initial_ICU_tot = 0;
+  shared->initial_N_tot2 = 0;
+  shared->initial_N_tot3 = 0;
   shared->initial_admit_conf_inc = 0;
   shared->initial_cum_admit_conf = 0;
   shared->initial_cum_infections = 0;
@@ -4473,16 +4481,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_cum_sympt_cases = 0;
   shared->initial_cum_sympt_cases_non_variant_over25 = 0;
   shared->initial_cum_sympt_cases_over25 = 0;
-  shared->initial_D_comm_inc = 0;
-  shared->initial_D_comm_tot = 0;
-  shared->initial_D_hosp_inc = 0;
-  shared->initial_D_hosp_tot = 0;
-  shared->initial_D_tot = 0;
   shared->initial_general_tot = 0;
   shared->initial_hosp_tot = 0;
-  shared->initial_ICU_tot = 0;
-  shared->initial_N_tot2 = 0;
-  shared->initial_N_tot3 = 0;
   shared->initial_new_conf_inc = 0;
   shared->initial_react_pos = 0;
   shared->initial_sero_pos = 0;
@@ -4491,10 +4491,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_sympt_cases_over25_inc = 0;
   shared->initial_time = 0;
   shared->gamma_sero_pre = std::vector<real_t>(shared->dim_gamma_sero_pre);
-  shared->exp_noise = NA_REAL;
   shared->G_D_transmission = NA_REAL;
-  shared->hosp_transmission = NA_REAL;
   shared->ICU_transmission = NA_REAL;
+  shared->N_tot_15_64 = NA_REAL;
+  shared->N_tot_all = NA_REAL;
+  shared->N_tot_over25 = NA_REAL;
+  shared->N_tot_react = NA_REAL;
+  shared->exp_noise = NA_REAL;
+  shared->hosp_transmission = NA_REAL;
   shared->k_A = NA_INTEGER;
   shared->k_C = NA_INTEGER;
   shared->k_E = NA_INTEGER;
@@ -4502,14 +4506,15 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->k_H_D = NA_INTEGER;
   shared->k_H_R = NA_INTEGER;
   shared->k_ICU_D = NA_INTEGER;
-  shared->k_ICU_pre = NA_INTEGER;
   shared->k_ICU_W_D = NA_INTEGER;
   shared->k_ICU_W_R = NA_INTEGER;
+  shared->k_ICU_pre = NA_INTEGER;
   shared->k_PCR_pos = NA_INTEGER;
   shared->k_PCR_pre = NA_INTEGER;
-  shared->k_sero_pos = NA_INTEGER;
   shared->k_W_D = NA_INTEGER;
   shared->k_W_R = NA_INTEGER;
+  shared->k_sero_pos = NA_INTEGER;
+  shared->kappa_ICU = NA_REAL;
   shared->kappa_admitted = NA_REAL;
   shared->kappa_all_admission = NA_REAL;
   shared->kappa_death = NA_REAL;
@@ -4518,15 +4523,11 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->kappa_diagnoses = NA_REAL;
   shared->kappa_general = NA_REAL;
   shared->kappa_hosp = NA_REAL;
-  shared->kappa_ICU = NA_REAL;
   shared->kappa_pillar2_cases = NA_REAL;
   shared->n_age_groups = NA_INTEGER;
   shared->n_groups = NA_INTEGER;
-  shared->N_tot_15_64 = NA_REAL;
-  shared->N_tot_all = NA_REAL;
-  shared->N_tot_over25 = NA_REAL;
-  shared->N_tot_react = NA_REAL;
   shared->p_NC = NA_REAL;
+  shared->phi_ICU = NA_REAL;
   shared->phi_admitted = NA_REAL;
   shared->phi_all_admission = NA_REAL;
   shared->phi_death_comm = NA_REAL;
@@ -4534,7 +4535,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->phi_diagnoses = NA_REAL;
   shared->phi_general = NA_REAL;
   shared->phi_hosp = NA_REAL;
-  shared->phi_ICU = NA_REAL;
   shared->phi_pillar2_cases = NA_REAL;
   shared->pillar2_sensitivity = NA_REAL;
   shared->pillar2_specificity = NA_REAL;
@@ -4551,24 +4551,29 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_H_D = 0.10000000000000001;
   shared->gamma_H_R = 0.10000000000000001;
   shared->gamma_ICU_D = 0.10000000000000001;
-  shared->gamma_ICU_pre = 0.10000000000000001;
   shared->gamma_ICU_W_D = 0.10000000000000001;
   shared->gamma_ICU_W_R = 0.10000000000000001;
+  shared->gamma_ICU_pre = 0.10000000000000001;
   shared->gamma_PCR_pos = 0.10000000000000001;
   shared->gamma_PCR_pre = 0.10000000000000001;
-  shared->gamma_sero_pos = 0.10000000000000001;
-  shared->gamma_sero_pre_1 = 0.10000000000000001;
-  shared->gamma_sero_pre_2 = 0.10000000000000001;
   shared->gamma_U = 0.10000000000000001;
   shared->gamma_W_D = 0.10000000000000001;
   shared->gamma_W_R = 0.10000000000000001;
+  shared->gamma_sero_pos = 0.10000000000000001;
+  shared->gamma_sero_pre_1 = 0.10000000000000001;
+  shared->gamma_sero_pre_2 = 0.10000000000000001;
   shared->model_pcr_and_serology_user = 1;
   shared->p_sero_pre_1 = 0.5;
+  shared->G_D_transmission = user_get_scalar<real_t>(user, "G_D_transmission", shared->G_D_transmission, NA_REAL, NA_REAL);
+  shared->ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", shared->ICU_transmission, NA_REAL, NA_REAL);
+  shared->N_tot_15_64 = user_get_scalar<real_t>(user, "N_tot_15_64", shared->N_tot_15_64, NA_REAL, NA_REAL);
+  shared->N_tot_all = user_get_scalar<real_t>(user, "N_tot_all", shared->N_tot_all, NA_REAL, NA_REAL);
+  shared->N_tot_over25 = user_get_scalar<real_t>(user, "N_tot_over25", shared->N_tot_over25, NA_REAL, NA_REAL);
+  shared->N_tot_react = user_get_scalar<real_t>(user, "N_tot_react", shared->N_tot_react, NA_REAL, NA_REAL);
   std::array <int, 1> dim_beta_step;
   shared->beta_step = user_get_array_variable<real_t, 1>(user, "beta_step", shared->beta_step, dim_beta_step, NA_REAL, NA_REAL);
   shared->dim_beta_step = shared->beta_step.size();
   shared->exp_noise = user_get_scalar<real_t>(user, "exp_noise", shared->exp_noise, NA_REAL, NA_REAL);
-  shared->G_D_transmission = user_get_scalar<real_t>(user, "G_D_transmission", shared->G_D_transmission, NA_REAL, NA_REAL);
   shared->gamma_A = user_get_scalar<real_t>(user, "gamma_A", shared->gamma_A, NA_REAL, NA_REAL);
   shared->gamma_C = user_get_scalar<real_t>(user, "gamma_C", shared->gamma_C, NA_REAL, NA_REAL);
   shared->gamma_E = user_get_scalar<real_t>(user, "gamma_E", shared->gamma_E, NA_REAL, NA_REAL);
@@ -4576,19 +4581,18 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_H_D = user_get_scalar<real_t>(user, "gamma_H_D", shared->gamma_H_D, NA_REAL, NA_REAL);
   shared->gamma_H_R = user_get_scalar<real_t>(user, "gamma_H_R", shared->gamma_H_R, NA_REAL, NA_REAL);
   shared->gamma_ICU_D = user_get_scalar<real_t>(user, "gamma_ICU_D", shared->gamma_ICU_D, NA_REAL, NA_REAL);
-  shared->gamma_ICU_pre = user_get_scalar<real_t>(user, "gamma_ICU_pre", shared->gamma_ICU_pre, NA_REAL, NA_REAL);
   shared->gamma_ICU_W_D = user_get_scalar<real_t>(user, "gamma_ICU_W_D", shared->gamma_ICU_W_D, NA_REAL, NA_REAL);
   shared->gamma_ICU_W_R = user_get_scalar<real_t>(user, "gamma_ICU_W_R", shared->gamma_ICU_W_R, NA_REAL, NA_REAL);
+  shared->gamma_ICU_pre = user_get_scalar<real_t>(user, "gamma_ICU_pre", shared->gamma_ICU_pre, NA_REAL, NA_REAL);
   shared->gamma_PCR_pos = user_get_scalar<real_t>(user, "gamma_PCR_pos", shared->gamma_PCR_pos, NA_REAL, NA_REAL);
   shared->gamma_PCR_pre = user_get_scalar<real_t>(user, "gamma_PCR_pre", shared->gamma_PCR_pre, NA_REAL, NA_REAL);
-  shared->gamma_sero_pos = user_get_scalar<real_t>(user, "gamma_sero_pos", shared->gamma_sero_pos, NA_REAL, NA_REAL);
-  shared->gamma_sero_pre_1 = user_get_scalar<real_t>(user, "gamma_sero_pre_1", shared->gamma_sero_pre_1, NA_REAL, NA_REAL);
-  shared->gamma_sero_pre_2 = user_get_scalar<real_t>(user, "gamma_sero_pre_2", shared->gamma_sero_pre_2, NA_REAL, NA_REAL);
   shared->gamma_U = user_get_scalar<real_t>(user, "gamma_U", shared->gamma_U, NA_REAL, NA_REAL);
   shared->gamma_W_D = user_get_scalar<real_t>(user, "gamma_W_D", shared->gamma_W_D, NA_REAL, NA_REAL);
   shared->gamma_W_R = user_get_scalar<real_t>(user, "gamma_W_R", shared->gamma_W_R, NA_REAL, NA_REAL);
+  shared->gamma_sero_pos = user_get_scalar<real_t>(user, "gamma_sero_pos", shared->gamma_sero_pos, NA_REAL, NA_REAL);
+  shared->gamma_sero_pre_1 = user_get_scalar<real_t>(user, "gamma_sero_pre_1", shared->gamma_sero_pre_1, NA_REAL, NA_REAL);
+  shared->gamma_sero_pre_2 = user_get_scalar<real_t>(user, "gamma_sero_pre_2", shared->gamma_sero_pre_2, NA_REAL, NA_REAL);
   shared->hosp_transmission = user_get_scalar<real_t>(user, "hosp_transmission", shared->hosp_transmission, NA_REAL, NA_REAL);
-  shared->ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", shared->ICU_transmission, NA_REAL, NA_REAL);
   shared->k_A = user_get_scalar<int>(user, "k_A", shared->k_A, NA_REAL, NA_REAL);
   shared->k_C = user_get_scalar<int>(user, "k_C", shared->k_C, NA_REAL, NA_REAL);
   shared->k_E = user_get_scalar<int>(user, "k_E", shared->k_E, NA_REAL, NA_REAL);
@@ -4596,14 +4600,15 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->k_H_D = user_get_scalar<int>(user, "k_H_D", shared->k_H_D, NA_REAL, NA_REAL);
   shared->k_H_R = user_get_scalar<int>(user, "k_H_R", shared->k_H_R, NA_REAL, NA_REAL);
   shared->k_ICU_D = user_get_scalar<int>(user, "k_ICU_D", shared->k_ICU_D, NA_REAL, NA_REAL);
-  shared->k_ICU_pre = user_get_scalar<int>(user, "k_ICU_pre", shared->k_ICU_pre, NA_REAL, NA_REAL);
   shared->k_ICU_W_D = user_get_scalar<int>(user, "k_ICU_W_D", shared->k_ICU_W_D, NA_REAL, NA_REAL);
   shared->k_ICU_W_R = user_get_scalar<int>(user, "k_ICU_W_R", shared->k_ICU_W_R, NA_REAL, NA_REAL);
+  shared->k_ICU_pre = user_get_scalar<int>(user, "k_ICU_pre", shared->k_ICU_pre, NA_REAL, NA_REAL);
   shared->k_PCR_pos = user_get_scalar<int>(user, "k_PCR_pos", shared->k_PCR_pos, NA_REAL, NA_REAL);
   shared->k_PCR_pre = user_get_scalar<int>(user, "k_PCR_pre", shared->k_PCR_pre, NA_REAL, NA_REAL);
-  shared->k_sero_pos = user_get_scalar<int>(user, "k_sero_pos", shared->k_sero_pos, NA_REAL, NA_REAL);
   shared->k_W_D = user_get_scalar<int>(user, "k_W_D", shared->k_W_D, NA_REAL, NA_REAL);
   shared->k_W_R = user_get_scalar<int>(user, "k_W_R", shared->k_W_R, NA_REAL, NA_REAL);
+  shared->k_sero_pos = user_get_scalar<int>(user, "k_sero_pos", shared->k_sero_pos, NA_REAL, NA_REAL);
+  shared->kappa_ICU = user_get_scalar<real_t>(user, "kappa_ICU", shared->kappa_ICU, NA_REAL, NA_REAL);
   shared->kappa_admitted = user_get_scalar<real_t>(user, "kappa_admitted", shared->kappa_admitted, NA_REAL, NA_REAL);
   shared->kappa_all_admission = user_get_scalar<real_t>(user, "kappa_all_admission", shared->kappa_all_admission, NA_REAL, NA_REAL);
   shared->kappa_death = user_get_scalar<real_t>(user, "kappa_death", shared->kappa_death, NA_REAL, NA_REAL);
@@ -4612,15 +4617,10 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->kappa_diagnoses = user_get_scalar<real_t>(user, "kappa_diagnoses", shared->kappa_diagnoses, NA_REAL, NA_REAL);
   shared->kappa_general = user_get_scalar<real_t>(user, "kappa_general", shared->kappa_general, NA_REAL, NA_REAL);
   shared->kappa_hosp = user_get_scalar<real_t>(user, "kappa_hosp", shared->kappa_hosp, NA_REAL, NA_REAL);
-  shared->kappa_ICU = user_get_scalar<real_t>(user, "kappa_ICU", shared->kappa_ICU, NA_REAL, NA_REAL);
   shared->kappa_pillar2_cases = user_get_scalar<real_t>(user, "kappa_pillar2_cases", shared->kappa_pillar2_cases, NA_REAL, NA_REAL);
   shared->model_pcr_and_serology_user = user_get_scalar<real_t>(user, "model_pcr_and_serology_user", shared->model_pcr_and_serology_user, NA_REAL, NA_REAL);
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_REAL, NA_REAL);
   shared->n_groups = user_get_scalar<int>(user, "n_groups", shared->n_groups, NA_REAL, NA_REAL);
-  shared->N_tot_15_64 = user_get_scalar<real_t>(user, "N_tot_15_64", shared->N_tot_15_64, NA_REAL, NA_REAL);
-  shared->N_tot_all = user_get_scalar<real_t>(user, "N_tot_all", shared->N_tot_all, NA_REAL, NA_REAL);
-  shared->N_tot_over25 = user_get_scalar<real_t>(user, "N_tot_over25", shared->N_tot_over25, NA_REAL, NA_REAL);
-  shared->N_tot_react = user_get_scalar<real_t>(user, "N_tot_react", shared->N_tot_react, NA_REAL, NA_REAL);
   std::array <int, 1> dim_p_G_D_step;
   shared->p_G_D_step = user_get_array_variable<real_t, 1>(user, "p_G_D_step", shared->p_G_D_step, dim_p_G_D_step, NA_REAL, NA_REAL);
   shared->dim_p_G_D_step = shared->p_G_D_step.size();
@@ -4637,13 +4637,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->p_ICU_step = user_get_array_variable<real_t, 1>(user, "p_ICU_step", shared->p_ICU_step, dim_p_ICU_step, NA_REAL, NA_REAL);
   shared->dim_p_ICU_step = shared->p_ICU_step.size();
   shared->p_NC = user_get_scalar<real_t>(user, "p_NC", shared->p_NC, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_p_W_D_step;
+  shared->p_W_D_step = user_get_array_variable<real_t, 1>(user, "p_W_D_step", shared->p_W_D_step, dim_p_W_D_step, NA_REAL, NA_REAL);
+  shared->dim_p_W_D_step = shared->p_W_D_step.size();
   shared->p_sero_pre_1 = user_get_scalar<real_t>(user, "p_sero_pre_1", shared->p_sero_pre_1, NA_REAL, NA_REAL);
   std::array <int, 1> dim_p_star_step;
   shared->p_star_step = user_get_array_variable<real_t, 1>(user, "p_star_step", shared->p_star_step, dim_p_star_step, NA_REAL, NA_REAL);
   shared->dim_p_star_step = shared->p_star_step.size();
-  std::array <int, 1> dim_p_W_D_step;
-  shared->p_W_D_step = user_get_array_variable<real_t, 1>(user, "p_W_D_step", shared->p_W_D_step, dim_p_W_D_step, NA_REAL, NA_REAL);
-  shared->dim_p_W_D_step = shared->p_W_D_step.size();
+  shared->phi_ICU = user_get_scalar<real_t>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
   shared->phi_admitted = user_get_scalar<real_t>(user, "phi_admitted", shared->phi_admitted, NA_REAL, NA_REAL);
   shared->phi_all_admission = user_get_scalar<real_t>(user, "phi_all_admission", shared->phi_all_admission, NA_REAL, NA_REAL);
   shared->phi_death_comm = user_get_scalar<real_t>(user, "phi_death_comm", shared->phi_death_comm, NA_REAL, NA_REAL);
@@ -4651,7 +4652,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->phi_diagnoses = user_get_scalar<real_t>(user, "phi_diagnoses", shared->phi_diagnoses, NA_REAL, NA_REAL);
   shared->phi_general = user_get_scalar<real_t>(user, "phi_general", shared->phi_general, NA_REAL, NA_REAL);
   shared->phi_hosp = user_get_scalar<real_t>(user, "phi_hosp", shared->phi_hosp, NA_REAL, NA_REAL);
-  shared->phi_ICU = user_get_scalar<real_t>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases = user_get_scalar<real_t>(user, "phi_pillar2_cases", shared->phi_pillar2_cases, NA_REAL, NA_REAL);
   shared->pillar2_sensitivity = user_get_scalar<real_t>(user, "pillar2_sensitivity", shared->pillar2_sensitivity, NA_REAL, NA_REAL);
   shared->pillar2_specificity = user_get_scalar<real_t>(user, "pillar2_specificity", shared->pillar2_specificity, NA_REAL, NA_REAL);
@@ -4675,31 +4675,31 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   std::array <int, 1> dim_vaccine_daily_doses_step;
   shared->vaccine_daily_doses_step = user_get_array_variable<real_t, 1>(user, "vaccine_daily_doses_step", shared->vaccine_daily_doses_step, dim_vaccine_daily_doses_step, NA_REAL, NA_REAL);
   shared->dim_vaccine_daily_doses_step = shared->vaccine_daily_doses_step.size();
-  shared->dim_cum_admit_by_age = shared->n_groups;
   shared->dim_D_comm = shared->n_groups;
   shared->dim_D_hosp = shared->n_groups;
+  shared->dim_N_tot = shared->n_groups;
+  shared->dim_cum_admit_by_age = shared->n_groups;
   shared->dim_delta_D_comm = shared->n_groups;
   shared->dim_delta_D_hosp = shared->n_groups;
   shared->dim_m_1 = shared->n_groups;
   shared->dim_m_2 = shared->n_groups;
-  shared->dim_N_tot = shared->n_groups;
   shared->dim_p_C = shared->n_groups;
   shared->dim_p_G_D_by_age = shared->n_groups;
-  shared->dim_p_H_by_age = shared->n_groups;
   shared->dim_p_H_D_by_age = shared->n_groups;
-  shared->dim_p_ICU_by_age = shared->n_groups;
+  shared->dim_p_H_by_age = shared->n_groups;
   shared->dim_p_ICU_D_by_age = shared->n_groups;
+  shared->dim_p_ICU_by_age = shared->n_groups;
   shared->dim_p_RS = shared->n_groups;
+  shared->dim_p_W_D_by_age = shared->n_groups;
   shared->dim_p_sero_pos = shared->n_groups;
   shared->dim_p_star_by_age = shared->n_groups;
-  shared->dim_p_W_D_by_age = shared->n_groups;
   shared->dim_psi_G_D = shared->n_groups;
   shared->dim_psi_H = shared->n_groups;
   shared->dim_psi_H_D = shared->n_groups;
   shared->dim_psi_ICU = shared->n_groups;
   shared->dim_psi_ICU_D = shared->n_groups;
-  shared->dim_psi_star = shared->n_groups;
   shared->dim_psi_W_D = shared->n_groups;
+  shared->dim_psi_star = shared->n_groups;
   shared->dim_vaccine_n_candidates = shared->n_groups;
   shared->dim_vaccine_population_possible = shared->n_groups;
   shared->dim_vaccine_population_reluctant = shared->n_groups;
@@ -4709,18 +4709,18 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->model_pcr_and_serology = (shared->model_pcr_and_serology_user == 1 ? 1 : 0);
   internal.delta_D_comm = std::vector<real_t>(shared->dim_delta_D_comm);
   internal.delta_D_hosp = std::vector<real_t>(shared->dim_delta_D_hosp);
-  shared->initial_cum_admit_by_age = std::vector<real_t>(shared->dim_cum_admit_by_age);
   shared->initial_D_comm = std::vector<real_t>(shared->dim_D_comm);
   shared->initial_D_hosp = std::vector<real_t>(shared->dim_D_hosp);
   shared->initial_N_tot = std::vector<real_t>(shared->dim_N_tot);
+  shared->initial_cum_admit_by_age = std::vector<real_t>(shared->dim_cum_admit_by_age);
   internal.p_G_D_by_age = std::vector<real_t>(shared->dim_p_G_D_by_age);
-  internal.p_H_by_age = std::vector<real_t>(shared->dim_p_H_by_age);
   internal.p_H_D_by_age = std::vector<real_t>(shared->dim_p_H_D_by_age);
-  internal.p_ICU_by_age = std::vector<real_t>(shared->dim_p_ICU_by_age);
+  internal.p_H_by_age = std::vector<real_t>(shared->dim_p_H_by_age);
   internal.p_ICU_D_by_age = std::vector<real_t>(shared->dim_p_ICU_D_by_age);
+  internal.p_ICU_by_age = std::vector<real_t>(shared->dim_p_ICU_by_age);
   shared->p_RS = std::vector<real_t>(shared->dim_p_RS);
-  internal.p_star_by_age = std::vector<real_t>(shared->dim_p_star_by_age);
   internal.p_W_D_by_age = std::vector<real_t>(shared->dim_p_W_D_by_age);
+  internal.p_star_by_age = std::vector<real_t>(shared->dim_p_star_by_age);
   internal.vaccine_n_candidates = std::vector<real_t>(shared->dim_vaccine_n_candidates);
   internal.vaccine_population_possible = std::vector<real_t>(shared->dim_vaccine_population_possible);
   shared->dim_m = shared->dim_m_1 * shared->dim_m_2;
@@ -4732,9 +4732,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
      int i = 2;
      shared->gamma_sero_pre[i - 1] = shared->gamma_sero_pre_2;
   }
-  for (int i = 1; i <= shared->dim_cum_admit_by_age; ++i) {
-    shared->initial_cum_admit_by_age[i - 1] = 0;
-  }
   for (int i = 1; i <= shared->dim_D_comm; ++i) {
     shared->initial_D_comm[i - 1] = 0;
   }
@@ -4744,32 +4741,35 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   for (int i = 1; i <= shared->dim_N_tot; ++i) {
     shared->initial_N_tot[i - 1] = 0;
   }
+  for (int i = 1; i <= shared->dim_cum_admit_by_age; ++i) {
+    shared->initial_cum_admit_by_age[i - 1] = 0;
+  }
   shared->n_strains = shared->dim_strain_transmission;
   shared->p_C = user_get_array_fixed<real_t, 1>(user, "p_C", shared->p_C, {shared->dim_p_C}, NA_REAL, NA_REAL);
   shared->p_E_progress = 1 - std::exp(- shared->gamma_E * shared->dt);
   shared->p_G_D_progress = 1 - std::exp(- shared->gamma_G_D * shared->dt);
   shared->p_H_D_progress = 1 - std::exp(- shared->gamma_H_D * shared->dt);
   shared->p_H_R_progress = 1 - std::exp(- shared->gamma_H_R * shared->dt);
-  shared->p_I_A_progress = 1 - std::exp(- shared->gamma_A * shared->dt);
-  shared->p_I_C_progress = 1 - std::exp(- shared->gamma_C * shared->dt);
   shared->p_ICU_D_progress = 1 - std::exp(- shared->gamma_ICU_D * shared->dt);
-  shared->p_ICU_pre_progress = 1 - std::exp(- shared->gamma_ICU_pre * shared->dt);
   shared->p_ICU_W_D_progress = 1 - std::exp(- shared->gamma_ICU_W_D * shared->dt);
   shared->p_ICU_W_R_progress = 1 - std::exp(- shared->gamma_ICU_W_R * shared->dt);
-  shared->p_sero_pos = user_get_array_fixed<real_t, 1>(user, "p_sero_pos", shared->p_sero_pos, {shared->dim_p_sero_pos}, NA_REAL, NA_REAL);
+  shared->p_ICU_pre_progress = 1 - std::exp(- shared->gamma_ICU_pre * shared->dt);
+  shared->p_I_A_progress = 1 - std::exp(- shared->gamma_A * shared->dt);
+  shared->p_I_C_progress = 1 - std::exp(- shared->gamma_C * shared->dt);
   shared->p_T_PCR_pos_progress = 1 - std::exp(- shared->gamma_PCR_pos * shared->dt);
   shared->p_T_PCR_pre_progress = 1 - std::exp(- shared->gamma_PCR_pre * shared->dt);
   shared->p_T_sero_pos_progress = 1 - std::exp(- shared->gamma_sero_pos * shared->dt);
-  shared->p_test = 1 - std::exp(- shared->gamma_U * shared->dt);
   shared->p_W_D_progress = 1 - std::exp(- shared->gamma_W_D * shared->dt);
   shared->p_W_R_progress = 1 - std::exp(- shared->gamma_W_R * shared->dt);
+  shared->p_sero_pos = user_get_array_fixed<real_t, 1>(user, "p_sero_pos", shared->p_sero_pos, {shared->dim_p_sero_pos}, NA_REAL, NA_REAL);
+  shared->p_test = 1 - std::exp(- shared->gamma_U * shared->dt);
   shared->psi_G_D = user_get_array_fixed<real_t, 1>(user, "psi_G_D", shared->psi_G_D, {shared->dim_psi_G_D}, NA_REAL, NA_REAL);
   shared->psi_H = user_get_array_fixed<real_t, 1>(user, "psi_H", shared->psi_H, {shared->dim_psi_H}, NA_REAL, NA_REAL);
   shared->psi_H_D = user_get_array_fixed<real_t, 1>(user, "psi_H_D", shared->psi_H_D, {shared->dim_psi_H_D}, NA_REAL, NA_REAL);
   shared->psi_ICU = user_get_array_fixed<real_t, 1>(user, "psi_ICU", shared->psi_ICU, {shared->dim_psi_ICU}, NA_REAL, NA_REAL);
   shared->psi_ICU_D = user_get_array_fixed<real_t, 1>(user, "psi_ICU_D", shared->psi_ICU_D, {shared->dim_psi_ICU_D}, NA_REAL, NA_REAL);
-  shared->psi_star = user_get_array_fixed<real_t, 1>(user, "psi_star", shared->psi_star, {shared->dim_psi_star}, NA_REAL, NA_REAL);
   shared->psi_W_D = user_get_array_fixed<real_t, 1>(user, "psi_W_D", shared->psi_W_D, {shared->dim_psi_W_D}, NA_REAL, NA_REAL);
+  shared->psi_star = user_get_array_fixed<real_t, 1>(user, "psi_star", shared->psi_star, {shared->dim_psi_star}, NA_REAL, NA_REAL);
   shared->vaccine_population_reluctant = user_get_array_fixed<real_t, 1>(user, "vaccine_population_reluctant", shared->vaccine_population_reluctant, {shared->dim_vaccine_population_reluctant}, NA_REAL, NA_REAL);
   shared->waning_rate = user_get_array_fixed<real_t, 1>(user, "waning_rate", shared->waning_rate, {shared->dim_waning_rate}, NA_REAL, NA_REAL);
   shared->dim_cum_infections_per_strain = shared->n_strains;
@@ -4786,6 +4786,121 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
     shared->p_RS[i - 1] = 1 - std::exp(- shared->waning_rate[i - 1] * shared->dt);
   }
   shared->initial_cum_infections_per_strain = std::vector<real_t>(shared->dim_cum_infections_per_strain);
+  shared->dim_E_1 = shared->n_groups;
+  shared->dim_E_2 = shared->n_strains;
+  shared->dim_E_3 = shared->k_E;
+  shared->dim_E_4 = shared->n_vacc_classes;
+  shared->dim_G_D_1 = shared->n_groups;
+  shared->dim_G_D_2 = shared->n_strains;
+  shared->dim_G_D_3 = shared->k_G_D;
+  shared->dim_G_D_4 = shared->n_vacc_classes;
+  shared->dim_H_D_conf_1 = shared->n_groups;
+  shared->dim_H_D_conf_2 = shared->n_strains;
+  shared->dim_H_D_conf_3 = shared->k_H_D;
+  shared->dim_H_D_conf_4 = shared->n_vacc_classes;
+  shared->dim_H_D_unconf_1 = shared->n_groups;
+  shared->dim_H_D_unconf_2 = shared->n_strains;
+  shared->dim_H_D_unconf_3 = shared->k_H_D;
+  shared->dim_H_D_unconf_4 = shared->n_vacc_classes;
+  shared->dim_H_R_conf_1 = shared->n_groups;
+  shared->dim_H_R_conf_2 = shared->n_strains;
+  shared->dim_H_R_conf_3 = shared->k_H_R;
+  shared->dim_H_R_conf_4 = shared->n_vacc_classes;
+  shared->dim_H_R_unconf_1 = shared->n_groups;
+  shared->dim_H_R_unconf_2 = shared->n_strains;
+  shared->dim_H_R_unconf_3 = shared->k_H_R;
+  shared->dim_H_R_unconf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_D_conf_1 = shared->n_groups;
+  shared->dim_ICU_D_conf_2 = shared->n_strains;
+  shared->dim_ICU_D_conf_3 = shared->k_ICU_D;
+  shared->dim_ICU_D_conf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_D_unconf_1 = shared->n_groups;
+  shared->dim_ICU_D_unconf_2 = shared->n_strains;
+  shared->dim_ICU_D_unconf_3 = shared->k_ICU_D;
+  shared->dim_ICU_D_unconf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_W_D_conf_1 = shared->n_groups;
+  shared->dim_ICU_W_D_conf_2 = shared->n_strains;
+  shared->dim_ICU_W_D_conf_3 = shared->k_ICU_W_D;
+  shared->dim_ICU_W_D_conf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_W_D_unconf_1 = shared->n_groups;
+  shared->dim_ICU_W_D_unconf_2 = shared->n_strains;
+  shared->dim_ICU_W_D_unconf_3 = shared->k_ICU_W_D;
+  shared->dim_ICU_W_D_unconf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_W_R_conf_1 = shared->n_groups;
+  shared->dim_ICU_W_R_conf_2 = shared->n_strains;
+  shared->dim_ICU_W_R_conf_3 = shared->k_ICU_W_R;
+  shared->dim_ICU_W_R_conf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_W_R_unconf_1 = shared->n_groups;
+  shared->dim_ICU_W_R_unconf_2 = shared->n_strains;
+  shared->dim_ICU_W_R_unconf_3 = shared->k_ICU_W_R;
+  shared->dim_ICU_W_R_unconf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_pre_conf_1 = shared->n_groups;
+  shared->dim_ICU_pre_conf_2 = shared->n_strains;
+  shared->dim_ICU_pre_conf_3 = shared->k_ICU_pre;
+  shared->dim_ICU_pre_conf_4 = shared->n_vacc_classes;
+  shared->dim_ICU_pre_unconf_1 = shared->n_groups;
+  shared->dim_ICU_pre_unconf_2 = shared->n_strains;
+  shared->dim_ICU_pre_unconf_3 = shared->k_ICU_pre;
+  shared->dim_ICU_pre_unconf_4 = shared->n_vacc_classes;
+  shared->dim_I_A_1 = shared->n_groups;
+  shared->dim_I_A_2 = shared->n_strains;
+  shared->dim_I_A_3 = shared->k_A;
+  shared->dim_I_A_4 = shared->n_vacc_classes;
+  shared->dim_I_C_1 = shared->n_groups;
+  shared->dim_I_C_2 = shared->n_strains;
+  shared->dim_I_C_3 = shared->k_C;
+  shared->dim_I_C_4 = shared->n_vacc_classes;
+  shared->dim_I_weighted_1 = shared->n_groups;
+  shared->dim_I_weighted_2 = shared->n_vacc_classes;
+  shared->dim_I_weighted_strain_1 = shared->n_groups;
+  shared->dim_I_weighted_strain_2 = shared->n_strains;
+  shared->dim_I_weighted_strain_3 = shared->n_vacc_classes;
+  shared->dim_I_with_diff_trans_1 = shared->n_groups;
+  shared->dim_I_with_diff_trans_2 = shared->n_strains;
+  shared->dim_I_with_diff_trans_3 = shared->n_vacc_classes;
+  shared->dim_R_1 = shared->n_groups;
+  shared->dim_R_2 = shared->n_strains;
+  shared->dim_R_3 = shared->n_vacc_classes;
+  shared->dim_S_1 = shared->n_groups;
+  shared->dim_S_2 = shared->n_vacc_classes;
+  shared->dim_T_PCR_neg_1 = shared->n_groups;
+  shared->dim_T_PCR_neg_2 = shared->n_strains;
+  shared->dim_T_PCR_neg_3 = shared->n_vacc_classes;
+  shared->dim_T_PCR_pos_1 = shared->n_groups;
+  shared->dim_T_PCR_pos_2 = shared->n_strains;
+  shared->dim_T_PCR_pos_3 = shared->k_PCR_pos;
+  shared->dim_T_PCR_pos_4 = shared->n_vacc_classes;
+  shared->dim_T_PCR_pre_1 = shared->n_groups;
+  shared->dim_T_PCR_pre_2 = shared->n_strains;
+  shared->dim_T_PCR_pre_3 = shared->k_PCR_pre;
+  shared->dim_T_PCR_pre_4 = shared->n_vacc_classes;
+  shared->dim_T_sero_neg_1 = shared->n_groups;
+  shared->dim_T_sero_neg_2 = shared->n_strains;
+  shared->dim_T_sero_neg_3 = shared->n_vacc_classes;
+  shared->dim_T_sero_pos_1 = shared->n_groups;
+  shared->dim_T_sero_pos_2 = shared->n_strains;
+  shared->dim_T_sero_pos_3 = shared->k_sero_pos;
+  shared->dim_T_sero_pos_4 = shared->n_vacc_classes;
+  shared->dim_T_sero_pre_1 = shared->n_groups;
+  shared->dim_T_sero_pre_2 = shared->n_strains;
+  shared->dim_T_sero_pre_3 = 2;
+  shared->dim_T_sero_pre_4 = shared->n_vacc_classes;
+  shared->dim_W_D_conf_1 = shared->n_groups;
+  shared->dim_W_D_conf_2 = shared->n_strains;
+  shared->dim_W_D_conf_3 = shared->k_W_D;
+  shared->dim_W_D_conf_4 = shared->n_vacc_classes;
+  shared->dim_W_D_unconf_1 = shared->n_groups;
+  shared->dim_W_D_unconf_2 = shared->n_strains;
+  shared->dim_W_D_unconf_3 = shared->k_W_D;
+  shared->dim_W_D_unconf_4 = shared->n_vacc_classes;
+  shared->dim_W_R_conf_1 = shared->n_groups;
+  shared->dim_W_R_conf_2 = shared->n_strains;
+  shared->dim_W_R_conf_3 = shared->k_W_R;
+  shared->dim_W_R_conf_4 = shared->n_vacc_classes;
+  shared->dim_W_R_unconf_1 = shared->n_groups;
+  shared->dim_W_R_unconf_2 = shared->n_strains;
+  shared->dim_W_R_unconf_3 = shared->k_W_R;
+  shared->dim_W_R_unconf_4 = shared->n_vacc_classes;
   shared->dim_aux_E_1 = shared->n_groups;
   shared->dim_aux_E_2 = shared->n_strains;
   shared->dim_aux_E_3 = shared->k_E;
@@ -4810,14 +4925,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_aux_H_R_unconf_2 = shared->n_strains;
   shared->dim_aux_H_R_unconf_3 = shared->k_H_R;
   shared->dim_aux_H_R_unconf_4 = shared->n_vacc_classes;
-  shared->dim_aux_I_A_1 = shared->n_groups;
-  shared->dim_aux_I_A_2 = shared->n_strains;
-  shared->dim_aux_I_A_3 = shared->k_A;
-  shared->dim_aux_I_A_4 = shared->n_vacc_classes;
-  shared->dim_aux_I_C_1 = shared->n_groups;
-  shared->dim_aux_I_C_2 = shared->n_strains;
-  shared->dim_aux_I_C_3 = shared->k_C;
-  shared->dim_aux_I_C_4 = shared->n_vacc_classes;
   shared->dim_aux_ICU_D_conf_1 = shared->n_groups;
   shared->dim_aux_ICU_D_conf_2 = shared->n_strains;
   shared->dim_aux_ICU_D_conf_3 = shared->k_ICU_D;
@@ -4826,14 +4933,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_aux_ICU_D_unconf_2 = shared->n_strains;
   shared->dim_aux_ICU_D_unconf_3 = shared->k_ICU_D;
   shared->dim_aux_ICU_D_unconf_4 = shared->n_vacc_classes;
-  shared->dim_aux_ICU_pre_conf_1 = shared->n_groups;
-  shared->dim_aux_ICU_pre_conf_2 = shared->n_strains;
-  shared->dim_aux_ICU_pre_conf_3 = shared->k_ICU_pre;
-  shared->dim_aux_ICU_pre_conf_4 = shared->n_vacc_classes;
-  shared->dim_aux_ICU_pre_unconf_1 = shared->n_groups;
-  shared->dim_aux_ICU_pre_unconf_2 = shared->n_strains;
-  shared->dim_aux_ICU_pre_unconf_3 = shared->k_ICU_pre;
-  shared->dim_aux_ICU_pre_unconf_4 = shared->n_vacc_classes;
   shared->dim_aux_ICU_W_D_conf_1 = shared->n_groups;
   shared->dim_aux_ICU_W_D_conf_2 = shared->n_strains;
   shared->dim_aux_ICU_W_D_conf_3 = shared->k_ICU_W_D;
@@ -4850,6 +4949,22 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_aux_ICU_W_R_unconf_2 = shared->n_strains;
   shared->dim_aux_ICU_W_R_unconf_3 = shared->k_ICU_W_R;
   shared->dim_aux_ICU_W_R_unconf_4 = shared->n_vacc_classes;
+  shared->dim_aux_ICU_pre_conf_1 = shared->n_groups;
+  shared->dim_aux_ICU_pre_conf_2 = shared->n_strains;
+  shared->dim_aux_ICU_pre_conf_3 = shared->k_ICU_pre;
+  shared->dim_aux_ICU_pre_conf_4 = shared->n_vacc_classes;
+  shared->dim_aux_ICU_pre_unconf_1 = shared->n_groups;
+  shared->dim_aux_ICU_pre_unconf_2 = shared->n_strains;
+  shared->dim_aux_ICU_pre_unconf_3 = shared->k_ICU_pre;
+  shared->dim_aux_ICU_pre_unconf_4 = shared->n_vacc_classes;
+  shared->dim_aux_I_A_1 = shared->n_groups;
+  shared->dim_aux_I_A_2 = shared->n_strains;
+  shared->dim_aux_I_A_3 = shared->k_A;
+  shared->dim_aux_I_A_4 = shared->n_vacc_classes;
+  shared->dim_aux_I_C_1 = shared->n_groups;
+  shared->dim_aux_I_C_2 = shared->n_strains;
+  shared->dim_aux_I_C_3 = shared->k_C;
+  shared->dim_aux_I_C_4 = shared->n_vacc_classes;
   shared->dim_aux_W_D_conf_1 = shared->n_groups;
   shared->dim_aux_W_D_conf_2 = shared->n_strains;
   shared->dim_aux_W_D_conf_3 = shared->k_W_D;
@@ -4876,91 +4991,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_cum_n_S_vaccinated_2 = shared->n_vacc_classes;
   shared->dim_cum_n_vaccinated_1 = shared->n_groups;
   shared->dim_cum_n_vaccinated_2 = shared->n_vacc_classes;
-  shared->dim_E_1 = shared->n_groups;
-  shared->dim_E_2 = shared->n_strains;
-  shared->dim_E_3 = shared->k_E;
-  shared->dim_E_4 = shared->n_vacc_classes;
-  shared->dim_G_D_1 = shared->n_groups;
-  shared->dim_G_D_2 = shared->n_strains;
-  shared->dim_G_D_3 = shared->k_G_D;
-  shared->dim_G_D_4 = shared->n_vacc_classes;
-  shared->dim_H_D_conf_1 = shared->n_groups;
-  shared->dim_H_D_conf_2 = shared->n_strains;
-  shared->dim_H_D_conf_3 = shared->k_H_D;
-  shared->dim_H_D_conf_4 = shared->n_vacc_classes;
-  shared->dim_H_D_unconf_1 = shared->n_groups;
-  shared->dim_H_D_unconf_2 = shared->n_strains;
-  shared->dim_H_D_unconf_3 = shared->k_H_D;
-  shared->dim_H_D_unconf_4 = shared->n_vacc_classes;
-  shared->dim_H_R_conf_1 = shared->n_groups;
-  shared->dim_H_R_conf_2 = shared->n_strains;
-  shared->dim_H_R_conf_3 = shared->k_H_R;
-  shared->dim_H_R_conf_4 = shared->n_vacc_classes;
-  shared->dim_H_R_unconf_1 = shared->n_groups;
-  shared->dim_H_R_unconf_2 = shared->n_strains;
-  shared->dim_H_R_unconf_3 = shared->k_H_R;
-  shared->dim_H_R_unconf_4 = shared->n_vacc_classes;
-  shared->dim_I_A_1 = shared->n_groups;
-  shared->dim_I_A_2 = shared->n_strains;
-  shared->dim_I_A_3 = shared->k_A;
-  shared->dim_I_A_4 = shared->n_vacc_classes;
-  shared->dim_I_C_1 = shared->n_groups;
-  shared->dim_I_C_2 = shared->n_strains;
-  shared->dim_I_C_3 = shared->k_C;
-  shared->dim_I_C_4 = shared->n_vacc_classes;
-  shared->dim_I_weighted_1 = shared->n_groups;
-  shared->dim_I_weighted_2 = shared->n_vacc_classes;
-  shared->dim_I_weighted_strain_1 = shared->n_groups;
-  shared->dim_I_weighted_strain_2 = shared->n_strains;
-  shared->dim_I_weighted_strain_3 = shared->n_vacc_classes;
-  shared->dim_I_with_diff_trans_1 = shared->n_groups;
-  shared->dim_I_with_diff_trans_2 = shared->n_strains;
-  shared->dim_I_with_diff_trans_3 = shared->n_vacc_classes;
-  shared->dim_ICU_D_conf_1 = shared->n_groups;
-  shared->dim_ICU_D_conf_2 = shared->n_strains;
-  shared->dim_ICU_D_conf_3 = shared->k_ICU_D;
-  shared->dim_ICU_D_conf_4 = shared->n_vacc_classes;
-  shared->dim_ICU_D_unconf_1 = shared->n_groups;
-  shared->dim_ICU_D_unconf_2 = shared->n_strains;
-  shared->dim_ICU_D_unconf_3 = shared->k_ICU_D;
-  shared->dim_ICU_D_unconf_4 = shared->n_vacc_classes;
-  shared->dim_ICU_pre_conf_1 = shared->n_groups;
-  shared->dim_ICU_pre_conf_2 = shared->n_strains;
-  shared->dim_ICU_pre_conf_3 = shared->k_ICU_pre;
-  shared->dim_ICU_pre_conf_4 = shared->n_vacc_classes;
-  shared->dim_ICU_pre_unconf_1 = shared->n_groups;
-  shared->dim_ICU_pre_unconf_2 = shared->n_strains;
-  shared->dim_ICU_pre_unconf_3 = shared->k_ICU_pre;
-  shared->dim_ICU_pre_unconf_4 = shared->n_vacc_classes;
-  shared->dim_ICU_W_D_conf_1 = shared->n_groups;
-  shared->dim_ICU_W_D_conf_2 = shared->n_strains;
-  shared->dim_ICU_W_D_conf_3 = shared->k_ICU_W_D;
-  shared->dim_ICU_W_D_conf_4 = shared->n_vacc_classes;
-  shared->dim_ICU_W_D_unconf_1 = shared->n_groups;
-  shared->dim_ICU_W_D_unconf_2 = shared->n_strains;
-  shared->dim_ICU_W_D_unconf_3 = shared->k_ICU_W_D;
-  shared->dim_ICU_W_D_unconf_4 = shared->n_vacc_classes;
-  shared->dim_ICU_W_R_conf_1 = shared->n_groups;
-  shared->dim_ICU_W_R_conf_2 = shared->n_strains;
-  shared->dim_ICU_W_R_conf_3 = shared->k_ICU_W_R;
-  shared->dim_ICU_W_R_conf_4 = shared->n_vacc_classes;
-  shared->dim_ICU_W_R_unconf_1 = shared->n_groups;
-  shared->dim_ICU_W_R_unconf_2 = shared->n_strains;
-  shared->dim_ICU_W_R_unconf_3 = shared->k_ICU_W_R;
-  shared->dim_ICU_W_R_unconf_4 = shared->n_vacc_classes;
   shared->dim_lambda = shared->dim_lambda_1 * shared->dim_lambda_2;
-  shared->dim_n_com_to_T_sero_pre_1 = shared->n_groups;
-  shared->dim_n_com_to_T_sero_pre_2 = shared->n_strains;
-  shared->dim_n_com_to_T_sero_pre_3 = 2;
-  shared->dim_n_com_to_T_sero_pre_4 = shared->n_vacc_classes;
-  shared->dim_n_E_next_vacc_class_1 = shared->n_groups;
-  shared->dim_n_E_next_vacc_class_2 = shared->n_strains;
-  shared->dim_n_E_next_vacc_class_3 = shared->k_E;
-  shared->dim_n_E_next_vacc_class_4 = shared->n_vacc_classes;
-  shared->dim_n_E_progress_1 = shared->n_groups;
-  shared->dim_n_E_progress_2 = shared->n_strains;
-  shared->dim_n_E_progress_3 = shared->k_E;
-  shared->dim_n_E_progress_4 = shared->n_vacc_classes;
   shared->dim_n_EE_1 = shared->n_groups;
   shared->dim_n_EE_2 = shared->n_strains;
   shared->dim_n_EE_3 = shared->k_E;
@@ -4981,6 +5012,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_EI_C_next_vacc_class_1 = shared->n_groups;
   shared->dim_n_EI_C_next_vacc_class_2 = shared->n_strains;
   shared->dim_n_EI_C_next_vacc_class_3 = shared->n_vacc_classes;
+  shared->dim_n_E_next_vacc_class_1 = shared->n_groups;
+  shared->dim_n_E_next_vacc_class_2 = shared->n_strains;
+  shared->dim_n_E_next_vacc_class_3 = shared->k_E;
+  shared->dim_n_E_next_vacc_class_4 = shared->n_vacc_classes;
+  shared->dim_n_E_progress_1 = shared->n_groups;
+  shared->dim_n_E_progress_2 = shared->n_strains;
+  shared->dim_n_E_progress_3 = shared->k_E;
+  shared->dim_n_E_progress_4 = shared->n_vacc_classes;
   shared->dim_n_G_D_progress_1 = shared->n_groups;
   shared->dim_n_G_D_progress_2 = shared->n_strains;
   shared->dim_n_G_D_progress_3 = shared->k_G_D;
@@ -5009,9 +5048,80 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_H_R_unconf_to_conf_2 = shared->n_strains;
   shared->dim_n_H_R_unconf_to_conf_3 = shared->k_H_R;
   shared->dim_n_H_R_unconf_to_conf_4 = shared->n_vacc_classes;
-  shared->dim_n_hosp_non_ICU_1 = shared->n_groups;
-  shared->dim_n_hosp_non_ICU_2 = shared->n_strains;
-  shared->dim_n_hosp_non_ICU_3 = shared->n_vacc_classes;
+  shared->dim_n_ICU_D_conf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_D_conf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_D_conf_progress_3 = shared->k_ICU_D;
+  shared->dim_n_ICU_D_conf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_D_unconf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_D_unconf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_D_unconf_progress_3 = shared->k_ICU_D;
+  shared->dim_n_ICU_D_unconf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_D_unconf_to_conf_1 = shared->n_groups;
+  shared->dim_n_ICU_D_unconf_to_conf_2 = shared->n_strains;
+  shared->dim_n_ICU_D_unconf_to_conf_3 = shared->k_ICU_D;
+  shared->dim_n_ICU_D_unconf_to_conf_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_W_D_conf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_W_D_conf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_W_D_conf_progress_3 = shared->k_ICU_W_D;
+  shared->dim_n_ICU_W_D_conf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_W_D_unconf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_W_D_unconf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_W_D_unconf_progress_3 = shared->k_ICU_W_D;
+  shared->dim_n_ICU_W_D_unconf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_W_D_unconf_to_conf_1 = shared->n_groups;
+  shared->dim_n_ICU_W_D_unconf_to_conf_2 = shared->n_strains;
+  shared->dim_n_ICU_W_D_unconf_to_conf_3 = shared->k_ICU_W_D;
+  shared->dim_n_ICU_W_D_unconf_to_conf_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_W_R_conf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_W_R_conf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_W_R_conf_progress_3 = shared->k_ICU_W_R;
+  shared->dim_n_ICU_W_R_conf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_W_R_unconf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_W_R_unconf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_W_R_unconf_progress_3 = shared->k_ICU_W_R;
+  shared->dim_n_ICU_W_R_unconf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_W_R_unconf_to_conf_1 = shared->n_groups;
+  shared->dim_n_ICU_W_R_unconf_to_conf_2 = shared->n_strains;
+  shared->dim_n_ICU_W_R_unconf_to_conf_3 = shared->k_ICU_W_R;
+  shared->dim_n_ICU_W_R_unconf_to_conf_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_conf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_conf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_conf_progress_3 = shared->k_ICU_pre;
+  shared->dim_n_ICU_pre_conf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_3 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_3 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_3 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_unconf_progress_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_unconf_progress_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_unconf_progress_3 = shared->k_ICU_pre;
+  shared->dim_n_ICU_pre_unconf_progress_4 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_3 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_3 = shared->n_vacc_classes;
+  shared->dim_n_ICU_pre_unconf_to_conf_1 = shared->n_groups;
+  shared->dim_n_ICU_pre_unconf_to_conf_2 = shared->n_strains;
+  shared->dim_n_ICU_pre_unconf_to_conf_3 = shared->k_ICU_pre;
+  shared->dim_n_ICU_pre_unconf_to_conf_4 = shared->n_vacc_classes;
+  shared->dim_n_II_A_1 = shared->n_groups;
+  shared->dim_n_II_A_2 = shared->n_strains;
+  shared->dim_n_II_A_3 = shared->k_A;
+  shared->dim_n_II_A_4 = shared->n_vacc_classes;
+  shared->dim_n_II_A_next_vacc_class_1 = shared->n_groups;
+  shared->dim_n_II_A_next_vacc_class_2 = shared->n_strains;
+  shared->dim_n_II_A_next_vacc_class_3 = shared->k_A;
+  shared->dim_n_II_A_next_vacc_class_4 = shared->n_vacc_classes;
   shared->dim_n_I_A_next_vacc_class_1 = shared->n_groups;
   shared->dim_n_I_A_next_vacc_class_2 = shared->n_strains;
   shared->dim_n_I_A_next_vacc_class_3 = shared->k_A;
@@ -5039,9 +5149,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_I_C_to_H_R_conf_1 = shared->n_groups;
   shared->dim_n_I_C_to_H_R_conf_2 = shared->n_strains;
   shared->dim_n_I_C_to_H_R_conf_3 = shared->n_vacc_classes;
-  shared->dim_n_I_C_to_hosp_1 = shared->n_groups;
-  shared->dim_n_I_C_to_hosp_2 = shared->n_strains;
-  shared->dim_n_I_C_to_hosp_3 = shared->n_vacc_classes;
   shared->dim_n_I_C_to_ICU_pre_1 = shared->n_groups;
   shared->dim_n_I_C_to_ICU_pre_2 = shared->n_strains;
   shared->dim_n_I_C_to_ICU_pre_3 = shared->n_vacc_classes;
@@ -5051,80 +5158,15 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_I_C_to_R_1 = shared->n_groups;
   shared->dim_n_I_C_to_R_2 = shared->n_strains;
   shared->dim_n_I_C_to_R_3 = shared->n_vacc_classes;
-  shared->dim_n_ICU_D_conf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_D_conf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_D_conf_progress_3 = shared->k_ICU_D;
-  shared->dim_n_ICU_D_conf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_D_unconf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_D_unconf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_D_unconf_progress_3 = shared->k_ICU_D;
-  shared->dim_n_ICU_D_unconf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_D_unconf_to_conf_1 = shared->n_groups;
-  shared->dim_n_ICU_D_unconf_to_conf_2 = shared->n_strains;
-  shared->dim_n_ICU_D_unconf_to_conf_3 = shared->k_ICU_D;
-  shared->dim_n_ICU_D_unconf_to_conf_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_conf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_conf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_conf_progress_3 = shared->k_ICU_pre;
-  shared->dim_n_ICU_pre_conf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_3 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_3 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_3 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_unconf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_unconf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_unconf_progress_3 = shared->k_ICU_pre;
-  shared->dim_n_ICU_pre_unconf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_unconf_to_conf_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_unconf_to_conf_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_unconf_to_conf_3 = shared->k_ICU_pre;
-  shared->dim_n_ICU_pre_unconf_to_conf_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_3 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3 = shared->n_vacc_classes;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 = shared->n_groups;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2 = shared->n_strains;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_3 = shared->n_vacc_classes;
-  shared->dim_n_ICU_W_D_conf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_W_D_conf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_W_D_conf_progress_3 = shared->k_ICU_W_D;
-  shared->dim_n_ICU_W_D_conf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_W_D_unconf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_W_D_unconf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_W_D_unconf_progress_3 = shared->k_ICU_W_D;
-  shared->dim_n_ICU_W_D_unconf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_W_D_unconf_to_conf_1 = shared->n_groups;
-  shared->dim_n_ICU_W_D_unconf_to_conf_2 = shared->n_strains;
-  shared->dim_n_ICU_W_D_unconf_to_conf_3 = shared->k_ICU_W_D;
-  shared->dim_n_ICU_W_D_unconf_to_conf_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_W_R_conf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_W_R_conf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_W_R_conf_progress_3 = shared->k_ICU_W_R;
-  shared->dim_n_ICU_W_R_conf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_W_R_unconf_progress_1 = shared->n_groups;
-  shared->dim_n_ICU_W_R_unconf_progress_2 = shared->n_strains;
-  shared->dim_n_ICU_W_R_unconf_progress_3 = shared->k_ICU_W_R;
-  shared->dim_n_ICU_W_R_unconf_progress_4 = shared->n_vacc_classes;
-  shared->dim_n_ICU_W_R_unconf_to_conf_1 = shared->n_groups;
-  shared->dim_n_ICU_W_R_unconf_to_conf_2 = shared->n_strains;
-  shared->dim_n_ICU_W_R_unconf_to_conf_3 = shared->k_ICU_W_R;
-  shared->dim_n_ICU_W_R_unconf_to_conf_4 = shared->n_vacc_classes;
-  shared->dim_n_II_A_1 = shared->n_groups;
-  shared->dim_n_II_A_2 = shared->n_strains;
-  shared->dim_n_II_A_3 = shared->k_A;
-  shared->dim_n_II_A_4 = shared->n_vacc_classes;
-  shared->dim_n_II_A_next_vacc_class_1 = shared->n_groups;
-  shared->dim_n_II_A_next_vacc_class_2 = shared->n_strains;
-  shared->dim_n_II_A_next_vacc_class_3 = shared->k_A;
-  shared->dim_n_II_A_next_vacc_class_4 = shared->n_vacc_classes;
+  shared->dim_n_I_C_to_hosp_1 = shared->n_groups;
+  shared->dim_n_I_C_to_hosp_2 = shared->n_strains;
+  shared->dim_n_I_C_to_hosp_3 = shared->n_vacc_classes;
+  shared->dim_n_RS_1 = shared->n_groups;
+  shared->dim_n_RS_2 = shared->n_strains;
+  shared->dim_n_RS_3 = shared->n_vacc_classes;
+  shared->dim_n_RS_next_vacc_class_1 = shared->n_groups;
+  shared->dim_n_RS_next_vacc_class_2 = shared->n_strains;
+  shared->dim_n_RS_next_vacc_class_3 = shared->n_vacc_classes;
   shared->dim_n_R_next_vacc_class_1 = shared->n_groups;
   shared->dim_n_R_next_vacc_class_2 = shared->n_strains;
   shared->dim_n_R_next_vacc_class_3 = shared->n_vacc_classes;
@@ -5143,12 +5185,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_R_progress_tmp_1 = shared->n_groups;
   shared->dim_n_R_progress_tmp_2 = shared->n_strains;
   shared->dim_n_R_progress_tmp_3 = shared->n_vacc_classes;
-  shared->dim_n_RS_1 = shared->n_groups;
-  shared->dim_n_RS_2 = shared->n_strains;
-  shared->dim_n_RS_3 = shared->n_vacc_classes;
-  shared->dim_n_RS_next_vacc_class_1 = shared->n_groups;
-  shared->dim_n_RS_next_vacc_class_2 = shared->n_strains;
-  shared->dim_n_RS_next_vacc_class_3 = shared->n_vacc_classes;
+  shared->dim_n_SE_1 = shared->n_groups;
+  shared->dim_n_SE_2 = shared->n_strains;
+  shared->dim_n_SE_3 = shared->n_vacc_classes;
+  shared->dim_n_SE_next_vacc_class_1 = shared->n_groups;
+  shared->dim_n_SE_next_vacc_class_2 = shared->n_strains;
+  shared->dim_n_SE_next_vacc_class_3 = shared->n_vacc_classes;
   shared->dim_n_S_next_vacc_class_1 = shared->n_groups;
   shared->dim_n_S_next_vacc_class_2 = shared->n_vacc_classes;
   shared->dim_n_S_progress_1 = shared->n_groups;
@@ -5156,12 +5198,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_S_progress_3 = shared->n_vacc_classes;
   shared->dim_n_S_progress_tot_1 = shared->n_groups;
   shared->dim_n_S_progress_tot_2 = shared->n_vacc_classes;
-  shared->dim_n_SE_1 = shared->n_groups;
-  shared->dim_n_SE_2 = shared->n_strains;
-  shared->dim_n_SE_3 = shared->n_vacc_classes;
-  shared->dim_n_SE_next_vacc_class_1 = shared->n_groups;
-  shared->dim_n_SE_next_vacc_class_2 = shared->n_strains;
-  shared->dim_n_SE_next_vacc_class_3 = shared->n_vacc_classes;
   shared->dim_n_T_PCR_pos_progress_1 = shared->n_groups;
   shared->dim_n_T_PCR_pos_progress_2 = shared->n_strains;
   shared->dim_n_T_PCR_pos_progress_3 = shared->k_PCR_pos;
@@ -5205,6 +5241,13 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_W_R_unconf_to_conf_2 = shared->n_strains;
   shared->dim_n_W_R_unconf_to_conf_3 = shared->k_W_R;
   shared->dim_n_W_R_unconf_to_conf_4 = shared->n_vacc_classes;
+  shared->dim_n_com_to_T_sero_pre_1 = shared->n_groups;
+  shared->dim_n_com_to_T_sero_pre_2 = shared->n_strains;
+  shared->dim_n_com_to_T_sero_pre_3 = 2;
+  shared->dim_n_com_to_T_sero_pre_4 = shared->n_vacc_classes;
+  shared->dim_n_hosp_non_ICU_1 = shared->n_groups;
+  shared->dim_n_hosp_non_ICU_2 = shared->n_strains;
+  shared->dim_n_hosp_non_ICU_3 = shared->n_vacc_classes;
   shared->dim_new_E_1 = shared->n_groups;
   shared->dim_new_E_2 = shared->n_strains;
   shared->dim_new_E_3 = shared->k_E;
@@ -5229,14 +5272,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_new_H_R_unconf_2 = shared->n_strains;
   shared->dim_new_H_R_unconf_3 = shared->k_H_R;
   shared->dim_new_H_R_unconf_4 = shared->n_vacc_classes;
-  shared->dim_new_I_A_1 = shared->n_groups;
-  shared->dim_new_I_A_2 = shared->n_strains;
-  shared->dim_new_I_A_3 = shared->k_A;
-  shared->dim_new_I_A_4 = shared->n_vacc_classes;
-  shared->dim_new_I_C_1 = shared->n_groups;
-  shared->dim_new_I_C_2 = shared->n_strains;
-  shared->dim_new_I_C_3 = shared->k_C;
-  shared->dim_new_I_C_4 = shared->n_vacc_classes;
   shared->dim_new_ICU_D_conf_1 = shared->n_groups;
   shared->dim_new_ICU_D_conf_2 = shared->n_strains;
   shared->dim_new_ICU_D_conf_3 = shared->k_ICU_D;
@@ -5245,14 +5280,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_new_ICU_D_unconf_2 = shared->n_strains;
   shared->dim_new_ICU_D_unconf_3 = shared->k_ICU_D;
   shared->dim_new_ICU_D_unconf_4 = shared->n_vacc_classes;
-  shared->dim_new_ICU_pre_conf_1 = shared->n_groups;
-  shared->dim_new_ICU_pre_conf_2 = shared->n_strains;
-  shared->dim_new_ICU_pre_conf_3 = shared->k_ICU_pre;
-  shared->dim_new_ICU_pre_conf_4 = shared->n_vacc_classes;
-  shared->dim_new_ICU_pre_unconf_1 = shared->n_groups;
-  shared->dim_new_ICU_pre_unconf_2 = shared->n_strains;
-  shared->dim_new_ICU_pre_unconf_3 = shared->k_ICU_pre;
-  shared->dim_new_ICU_pre_unconf_4 = shared->n_vacc_classes;
   shared->dim_new_ICU_W_D_conf_1 = shared->n_groups;
   shared->dim_new_ICU_W_D_conf_2 = shared->n_strains;
   shared->dim_new_ICU_W_D_conf_3 = shared->k_ICU_W_D;
@@ -5269,6 +5296,22 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_new_ICU_W_R_unconf_2 = shared->n_strains;
   shared->dim_new_ICU_W_R_unconf_3 = shared->k_ICU_W_R;
   shared->dim_new_ICU_W_R_unconf_4 = shared->n_vacc_classes;
+  shared->dim_new_ICU_pre_conf_1 = shared->n_groups;
+  shared->dim_new_ICU_pre_conf_2 = shared->n_strains;
+  shared->dim_new_ICU_pre_conf_3 = shared->k_ICU_pre;
+  shared->dim_new_ICU_pre_conf_4 = shared->n_vacc_classes;
+  shared->dim_new_ICU_pre_unconf_1 = shared->n_groups;
+  shared->dim_new_ICU_pre_unconf_2 = shared->n_strains;
+  shared->dim_new_ICU_pre_unconf_3 = shared->k_ICU_pre;
+  shared->dim_new_ICU_pre_unconf_4 = shared->n_vacc_classes;
+  shared->dim_new_I_A_1 = shared->n_groups;
+  shared->dim_new_I_A_2 = shared->n_strains;
+  shared->dim_new_I_A_3 = shared->k_A;
+  shared->dim_new_I_A_4 = shared->n_vacc_classes;
+  shared->dim_new_I_C_1 = shared->n_groups;
+  shared->dim_new_I_C_2 = shared->n_strains;
+  shared->dim_new_I_C_3 = shared->k_C;
+  shared->dim_new_I_C_4 = shared->n_vacc_classes;
   shared->dim_new_R_1 = shared->n_groups;
   shared->dim_new_R_2 = shared->n_strains;
   shared->dim_new_R_3 = shared->n_vacc_classes;
@@ -5323,146 +5366,38 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_p_R_next_vacc_class_1 = shared->n_groups;
   shared->dim_p_R_next_vacc_class_2 = shared->n_strains;
   shared->dim_p_R_next_vacc_class_3 = shared->n_vacc_classes;
-  shared->dim_p_S_next_vacc_class_1 = shared->n_groups;
-  shared->dim_p_S_next_vacc_class_2 = shared->n_vacc_classes;
   shared->dim_p_SE_1 = shared->n_groups;
   shared->dim_p_SE_2 = shared->n_vacc_classes;
+  shared->dim_p_S_next_vacc_class_1 = shared->n_groups;
+  shared->dim_p_S_next_vacc_class_2 = shared->n_vacc_classes;
   shared->dim_p_T_sero_pre_progress_1 = shared->n_groups;
   shared->dim_p_T_sero_pre_progress_2 = shared->n_strains;
   shared->dim_p_T_sero_pre_progress_3 = 2;
   shared->dim_p_T_sero_pre_progress_4 = shared->n_vacc_classes;
   shared->dim_prob_strain = shared->dim_prob_strain_1 * shared->dim_prob_strain_2;
-  shared->dim_R_1 = shared->n_groups;
-  shared->dim_R_2 = shared->n_strains;
-  shared->dim_R_3 = shared->n_vacc_classes;
   shared->dim_rel_infectivity_1 = shared->n_groups;
   shared->dim_rel_infectivity_2 = shared->n_vacc_classes;
   shared->dim_rel_p_hosp_if_sympt_1 = shared->n_groups;
   shared->dim_rel_p_hosp_if_sympt_2 = shared->n_vacc_classes;
   shared->dim_rel_p_sympt_1 = shared->n_groups;
   shared->dim_rel_p_sympt_2 = shared->n_vacc_classes;
-  shared->dim_S_1 = shared->n_groups;
-  shared->dim_S_2 = shared->n_vacc_classes;
   shared->dim_s_ij = shared->dim_s_ij_1 * shared->dim_s_ij_2 * shared->dim_s_ij_3;
   shared->dim_s_ij_12 = shared->dim_s_ij_1 * shared->dim_s_ij_2;
-  shared->dim_T_PCR_neg_1 = shared->n_groups;
-  shared->dim_T_PCR_neg_2 = shared->n_strains;
-  shared->dim_T_PCR_neg_3 = shared->n_vacc_classes;
-  shared->dim_T_PCR_pos_1 = shared->n_groups;
-  shared->dim_T_PCR_pos_2 = shared->n_strains;
-  shared->dim_T_PCR_pos_3 = shared->k_PCR_pos;
-  shared->dim_T_PCR_pos_4 = shared->n_vacc_classes;
-  shared->dim_T_PCR_pre_1 = shared->n_groups;
-  shared->dim_T_PCR_pre_2 = shared->n_strains;
-  shared->dim_T_PCR_pre_3 = shared->k_PCR_pre;
-  shared->dim_T_PCR_pre_4 = shared->n_vacc_classes;
-  shared->dim_T_sero_neg_1 = shared->n_groups;
-  shared->dim_T_sero_neg_2 = shared->n_strains;
-  shared->dim_T_sero_neg_3 = shared->n_vacc_classes;
-  shared->dim_T_sero_pos_1 = shared->n_groups;
-  shared->dim_T_sero_pos_2 = shared->n_strains;
-  shared->dim_T_sero_pos_3 = shared->k_sero_pos;
-  shared->dim_T_sero_pos_4 = shared->n_vacc_classes;
-  shared->dim_T_sero_pre_1 = shared->n_groups;
-  shared->dim_T_sero_pre_2 = shared->n_strains;
-  shared->dim_T_sero_pre_3 = 2;
-  shared->dim_T_sero_pre_4 = shared->n_vacc_classes;
   shared->dim_vaccine_probability_1 = shared->n_groups;
   shared->dim_vaccine_probability_2 = shared->n_vacc_classes;
   shared->dim_vaccine_progression_rate_base_1 = shared->n_groups;
   shared->dim_vaccine_progression_rate_base_2 = shared->n_vacc_classes;
-  shared->dim_W_D_conf_1 = shared->n_groups;
-  shared->dim_W_D_conf_2 = shared->n_strains;
-  shared->dim_W_D_conf_3 = shared->k_W_D;
-  shared->dim_W_D_conf_4 = shared->n_vacc_classes;
-  shared->dim_W_D_unconf_1 = shared->n_groups;
-  shared->dim_W_D_unconf_2 = shared->n_strains;
-  shared->dim_W_D_unconf_3 = shared->k_W_D;
-  shared->dim_W_D_unconf_4 = shared->n_vacc_classes;
-  shared->dim_W_R_conf_1 = shared->n_groups;
-  shared->dim_W_R_conf_2 = shared->n_strains;
-  shared->dim_W_R_conf_3 = shared->k_W_R;
-  shared->dim_W_R_conf_4 = shared->n_vacc_classes;
-  shared->dim_W_R_unconf_1 = shared->n_groups;
-  shared->dim_W_R_unconf_2 = shared->n_strains;
-  shared->dim_W_R_unconf_3 = shared->k_W_R;
-  shared->dim_W_R_unconf_4 = shared->n_vacc_classes;
   for (int i = 1; i <= shared->dim_cum_infections_per_strain; ++i) {
     shared->initial_cum_infections_per_strain[i - 1] = 0;
   }
-  shared->offset_variable_cum_admit_by_age = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm;
-  shared->offset_variable_cum_n_S_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot;
   shared->offset_variable_D_comm = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp;
   shared->offset_variable_D_hosp = 25 + shared->dim_cum_infections_per_strain;
   shared->offset_variable_N_tot = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age;
+  shared->offset_variable_cum_admit_by_age = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm;
+  shared->offset_variable_cum_n_S_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot;
   shared->initial_prob_strain = std::vector<real_t>(shared->dim_prob_strain);
   internal.lambda = std::vector<real_t>(shared->dim_lambda);
   internal.s_ij = std::vector<real_t>(shared->dim_s_ij);
-  shared->dim_aux_E = shared->dim_aux_E_1 * shared->dim_aux_E_2 * shared->dim_aux_E_3 * shared->dim_aux_E_4;
-  shared->dim_aux_E_12 = shared->dim_aux_E_1 * shared->dim_aux_E_2;
-  shared->dim_aux_E_123 = shared->dim_aux_E_1 * shared->dim_aux_E_2 * shared->dim_aux_E_3;
-  shared->dim_aux_G_D = shared->dim_aux_G_D_1 * shared->dim_aux_G_D_2 * shared->dim_aux_G_D_3 * shared->dim_aux_G_D_4;
-  shared->dim_aux_G_D_12 = shared->dim_aux_G_D_1 * shared->dim_aux_G_D_2;
-  shared->dim_aux_G_D_123 = shared->dim_aux_G_D_1 * shared->dim_aux_G_D_2 * shared->dim_aux_G_D_3;
-  shared->dim_aux_H_D_conf = shared->dim_aux_H_D_conf_1 * shared->dim_aux_H_D_conf_2 * shared->dim_aux_H_D_conf_3 * shared->dim_aux_H_D_conf_4;
-  shared->dim_aux_H_D_conf_12 = shared->dim_aux_H_D_conf_1 * shared->dim_aux_H_D_conf_2;
-  shared->dim_aux_H_D_conf_123 = shared->dim_aux_H_D_conf_1 * shared->dim_aux_H_D_conf_2 * shared->dim_aux_H_D_conf_3;
-  shared->dim_aux_H_D_unconf = shared->dim_aux_H_D_unconf_1 * shared->dim_aux_H_D_unconf_2 * shared->dim_aux_H_D_unconf_3 * shared->dim_aux_H_D_unconf_4;
-  shared->dim_aux_H_D_unconf_12 = shared->dim_aux_H_D_unconf_1 * shared->dim_aux_H_D_unconf_2;
-  shared->dim_aux_H_D_unconf_123 = shared->dim_aux_H_D_unconf_1 * shared->dim_aux_H_D_unconf_2 * shared->dim_aux_H_D_unconf_3;
-  shared->dim_aux_H_R_conf = shared->dim_aux_H_R_conf_1 * shared->dim_aux_H_R_conf_2 * shared->dim_aux_H_R_conf_3 * shared->dim_aux_H_R_conf_4;
-  shared->dim_aux_H_R_conf_12 = shared->dim_aux_H_R_conf_1 * shared->dim_aux_H_R_conf_2;
-  shared->dim_aux_H_R_conf_123 = shared->dim_aux_H_R_conf_1 * shared->dim_aux_H_R_conf_2 * shared->dim_aux_H_R_conf_3;
-  shared->dim_aux_H_R_unconf = shared->dim_aux_H_R_unconf_1 * shared->dim_aux_H_R_unconf_2 * shared->dim_aux_H_R_unconf_3 * shared->dim_aux_H_R_unconf_4;
-  shared->dim_aux_H_R_unconf_12 = shared->dim_aux_H_R_unconf_1 * shared->dim_aux_H_R_unconf_2;
-  shared->dim_aux_H_R_unconf_123 = shared->dim_aux_H_R_unconf_1 * shared->dim_aux_H_R_unconf_2 * shared->dim_aux_H_R_unconf_3;
-  shared->dim_aux_I_A = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2 * shared->dim_aux_I_A_3 * shared->dim_aux_I_A_4;
-  shared->dim_aux_I_A_12 = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2;
-  shared->dim_aux_I_A_123 = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2 * shared->dim_aux_I_A_3;
-  shared->dim_aux_I_C = shared->dim_aux_I_C_1 * shared->dim_aux_I_C_2 * shared->dim_aux_I_C_3 * shared->dim_aux_I_C_4;
-  shared->dim_aux_I_C_12 = shared->dim_aux_I_C_1 * shared->dim_aux_I_C_2;
-  shared->dim_aux_I_C_123 = shared->dim_aux_I_C_1 * shared->dim_aux_I_C_2 * shared->dim_aux_I_C_3;
-  shared->dim_aux_ICU_D_conf = shared->dim_aux_ICU_D_conf_1 * shared->dim_aux_ICU_D_conf_2 * shared->dim_aux_ICU_D_conf_3 * shared->dim_aux_ICU_D_conf_4;
-  shared->dim_aux_ICU_D_conf_12 = shared->dim_aux_ICU_D_conf_1 * shared->dim_aux_ICU_D_conf_2;
-  shared->dim_aux_ICU_D_conf_123 = shared->dim_aux_ICU_D_conf_1 * shared->dim_aux_ICU_D_conf_2 * shared->dim_aux_ICU_D_conf_3;
-  shared->dim_aux_ICU_D_unconf = shared->dim_aux_ICU_D_unconf_1 * shared->dim_aux_ICU_D_unconf_2 * shared->dim_aux_ICU_D_unconf_3 * shared->dim_aux_ICU_D_unconf_4;
-  shared->dim_aux_ICU_D_unconf_12 = shared->dim_aux_ICU_D_unconf_1 * shared->dim_aux_ICU_D_unconf_2;
-  shared->dim_aux_ICU_D_unconf_123 = shared->dim_aux_ICU_D_unconf_1 * shared->dim_aux_ICU_D_unconf_2 * shared->dim_aux_ICU_D_unconf_3;
-  shared->dim_aux_ICU_pre_conf = shared->dim_aux_ICU_pre_conf_1 * shared->dim_aux_ICU_pre_conf_2 * shared->dim_aux_ICU_pre_conf_3 * shared->dim_aux_ICU_pre_conf_4;
-  shared->dim_aux_ICU_pre_conf_12 = shared->dim_aux_ICU_pre_conf_1 * shared->dim_aux_ICU_pre_conf_2;
-  shared->dim_aux_ICU_pre_conf_123 = shared->dim_aux_ICU_pre_conf_1 * shared->dim_aux_ICU_pre_conf_2 * shared->dim_aux_ICU_pre_conf_3;
-  shared->dim_aux_ICU_pre_unconf = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2 * shared->dim_aux_ICU_pre_unconf_3 * shared->dim_aux_ICU_pre_unconf_4;
-  shared->dim_aux_ICU_pre_unconf_12 = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2;
-  shared->dim_aux_ICU_pre_unconf_123 = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2 * shared->dim_aux_ICU_pre_unconf_3;
-  shared->dim_aux_ICU_W_D_conf = shared->dim_aux_ICU_W_D_conf_1 * shared->dim_aux_ICU_W_D_conf_2 * shared->dim_aux_ICU_W_D_conf_3 * shared->dim_aux_ICU_W_D_conf_4;
-  shared->dim_aux_ICU_W_D_conf_12 = shared->dim_aux_ICU_W_D_conf_1 * shared->dim_aux_ICU_W_D_conf_2;
-  shared->dim_aux_ICU_W_D_conf_123 = shared->dim_aux_ICU_W_D_conf_1 * shared->dim_aux_ICU_W_D_conf_2 * shared->dim_aux_ICU_W_D_conf_3;
-  shared->dim_aux_ICU_W_D_unconf = shared->dim_aux_ICU_W_D_unconf_1 * shared->dim_aux_ICU_W_D_unconf_2 * shared->dim_aux_ICU_W_D_unconf_3 * shared->dim_aux_ICU_W_D_unconf_4;
-  shared->dim_aux_ICU_W_D_unconf_12 = shared->dim_aux_ICU_W_D_unconf_1 * shared->dim_aux_ICU_W_D_unconf_2;
-  shared->dim_aux_ICU_W_D_unconf_123 = shared->dim_aux_ICU_W_D_unconf_1 * shared->dim_aux_ICU_W_D_unconf_2 * shared->dim_aux_ICU_W_D_unconf_3;
-  shared->dim_aux_ICU_W_R_conf = shared->dim_aux_ICU_W_R_conf_1 * shared->dim_aux_ICU_W_R_conf_2 * shared->dim_aux_ICU_W_R_conf_3 * shared->dim_aux_ICU_W_R_conf_4;
-  shared->dim_aux_ICU_W_R_conf_12 = shared->dim_aux_ICU_W_R_conf_1 * shared->dim_aux_ICU_W_R_conf_2;
-  shared->dim_aux_ICU_W_R_conf_123 = shared->dim_aux_ICU_W_R_conf_1 * shared->dim_aux_ICU_W_R_conf_2 * shared->dim_aux_ICU_W_R_conf_3;
-  shared->dim_aux_ICU_W_R_unconf = shared->dim_aux_ICU_W_R_unconf_1 * shared->dim_aux_ICU_W_R_unconf_2 * shared->dim_aux_ICU_W_R_unconf_3 * shared->dim_aux_ICU_W_R_unconf_4;
-  shared->dim_aux_ICU_W_R_unconf_12 = shared->dim_aux_ICU_W_R_unconf_1 * shared->dim_aux_ICU_W_R_unconf_2;
-  shared->dim_aux_ICU_W_R_unconf_123 = shared->dim_aux_ICU_W_R_unconf_1 * shared->dim_aux_ICU_W_R_unconf_2 * shared->dim_aux_ICU_W_R_unconf_3;
-  shared->dim_aux_W_D_conf = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2 * shared->dim_aux_W_D_conf_3 * shared->dim_aux_W_D_conf_4;
-  shared->dim_aux_W_D_conf_12 = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2;
-  shared->dim_aux_W_D_conf_123 = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2 * shared->dim_aux_W_D_conf_3;
-  shared->dim_aux_W_D_unconf = shared->dim_aux_W_D_unconf_1 * shared->dim_aux_W_D_unconf_2 * shared->dim_aux_W_D_unconf_3 * shared->dim_aux_W_D_unconf_4;
-  shared->dim_aux_W_D_unconf_12 = shared->dim_aux_W_D_unconf_1 * shared->dim_aux_W_D_unconf_2;
-  shared->dim_aux_W_D_unconf_123 = shared->dim_aux_W_D_unconf_1 * shared->dim_aux_W_D_unconf_2 * shared->dim_aux_W_D_unconf_3;
-  shared->dim_aux_W_R_conf = shared->dim_aux_W_R_conf_1 * shared->dim_aux_W_R_conf_2 * shared->dim_aux_W_R_conf_3 * shared->dim_aux_W_R_conf_4;
-  shared->dim_aux_W_R_conf_12 = shared->dim_aux_W_R_conf_1 * shared->dim_aux_W_R_conf_2;
-  shared->dim_aux_W_R_conf_123 = shared->dim_aux_W_R_conf_1 * shared->dim_aux_W_R_conf_2 * shared->dim_aux_W_R_conf_3;
-  shared->dim_aux_W_R_unconf = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2 * shared->dim_aux_W_R_unconf_3 * shared->dim_aux_W_R_unconf_4;
-  shared->dim_aux_W_R_unconf_12 = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2;
-  shared->dim_aux_W_R_unconf_123 = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2 * shared->dim_aux_W_R_unconf_3;
-  shared->dim_cum_n_E_vaccinated = shared->dim_cum_n_E_vaccinated_1 * shared->dim_cum_n_E_vaccinated_2;
-  shared->dim_cum_n_I_A_vaccinated = shared->dim_cum_n_I_A_vaccinated_1 * shared->dim_cum_n_I_A_vaccinated_2;
-  shared->dim_cum_n_R_vaccinated = shared->dim_cum_n_R_vaccinated_1 * shared->dim_cum_n_R_vaccinated_2;
-  shared->dim_cum_n_S_vaccinated = shared->dim_cum_n_S_vaccinated_1 * shared->dim_cum_n_S_vaccinated_2;
-  shared->dim_cum_n_vaccinated = shared->dim_cum_n_vaccinated_1 * shared->dim_cum_n_vaccinated_2;
   shared->dim_E = shared->dim_E_1 * shared->dim_E_2 * shared->dim_E_3 * shared->dim_E_4;
   shared->dim_E_12 = shared->dim_E_1 * shared->dim_E_2;
   shared->dim_E_123 = shared->dim_E_1 * shared->dim_E_2 * shared->dim_E_3;
@@ -5481,29 +5416,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_H_R_unconf = shared->dim_H_R_unconf_1 * shared->dim_H_R_unconf_2 * shared->dim_H_R_unconf_3 * shared->dim_H_R_unconf_4;
   shared->dim_H_R_unconf_12 = shared->dim_H_R_unconf_1 * shared->dim_H_R_unconf_2;
   shared->dim_H_R_unconf_123 = shared->dim_H_R_unconf_1 * shared->dim_H_R_unconf_2 * shared->dim_H_R_unconf_3;
-  shared->dim_I_A = shared->dim_I_A_1 * shared->dim_I_A_2 * shared->dim_I_A_3 * shared->dim_I_A_4;
-  shared->dim_I_A_12 = shared->dim_I_A_1 * shared->dim_I_A_2;
-  shared->dim_I_A_123 = shared->dim_I_A_1 * shared->dim_I_A_2 * shared->dim_I_A_3;
-  shared->dim_I_C = shared->dim_I_C_1 * shared->dim_I_C_2 * shared->dim_I_C_3 * shared->dim_I_C_4;
-  shared->dim_I_C_12 = shared->dim_I_C_1 * shared->dim_I_C_2;
-  shared->dim_I_C_123 = shared->dim_I_C_1 * shared->dim_I_C_2 * shared->dim_I_C_3;
-  shared->dim_I_weighted = shared->dim_I_weighted_1 * shared->dim_I_weighted_2;
-  shared->dim_I_weighted_strain = shared->dim_I_weighted_strain_1 * shared->dim_I_weighted_strain_2 * shared->dim_I_weighted_strain_3;
-  shared->dim_I_weighted_strain_12 = shared->dim_I_weighted_strain_1 * shared->dim_I_weighted_strain_2;
-  shared->dim_I_with_diff_trans = shared->dim_I_with_diff_trans_1 * shared->dim_I_with_diff_trans_2 * shared->dim_I_with_diff_trans_3;
-  shared->dim_I_with_diff_trans_12 = shared->dim_I_with_diff_trans_1 * shared->dim_I_with_diff_trans_2;
   shared->dim_ICU_D_conf = shared->dim_ICU_D_conf_1 * shared->dim_ICU_D_conf_2 * shared->dim_ICU_D_conf_3 * shared->dim_ICU_D_conf_4;
   shared->dim_ICU_D_conf_12 = shared->dim_ICU_D_conf_1 * shared->dim_ICU_D_conf_2;
   shared->dim_ICU_D_conf_123 = shared->dim_ICU_D_conf_1 * shared->dim_ICU_D_conf_2 * shared->dim_ICU_D_conf_3;
   shared->dim_ICU_D_unconf = shared->dim_ICU_D_unconf_1 * shared->dim_ICU_D_unconf_2 * shared->dim_ICU_D_unconf_3 * shared->dim_ICU_D_unconf_4;
   shared->dim_ICU_D_unconf_12 = shared->dim_ICU_D_unconf_1 * shared->dim_ICU_D_unconf_2;
   shared->dim_ICU_D_unconf_123 = shared->dim_ICU_D_unconf_1 * shared->dim_ICU_D_unconf_2 * shared->dim_ICU_D_unconf_3;
-  shared->dim_ICU_pre_conf = shared->dim_ICU_pre_conf_1 * shared->dim_ICU_pre_conf_2 * shared->dim_ICU_pre_conf_3 * shared->dim_ICU_pre_conf_4;
-  shared->dim_ICU_pre_conf_12 = shared->dim_ICU_pre_conf_1 * shared->dim_ICU_pre_conf_2;
-  shared->dim_ICU_pre_conf_123 = shared->dim_ICU_pre_conf_1 * shared->dim_ICU_pre_conf_2 * shared->dim_ICU_pre_conf_3;
-  shared->dim_ICU_pre_unconf = shared->dim_ICU_pre_unconf_1 * shared->dim_ICU_pre_unconf_2 * shared->dim_ICU_pre_unconf_3 * shared->dim_ICU_pre_unconf_4;
-  shared->dim_ICU_pre_unconf_12 = shared->dim_ICU_pre_unconf_1 * shared->dim_ICU_pre_unconf_2;
-  shared->dim_ICU_pre_unconf_123 = shared->dim_ICU_pre_unconf_1 * shared->dim_ICU_pre_unconf_2 * shared->dim_ICU_pre_unconf_3;
   shared->dim_ICU_W_D_conf = shared->dim_ICU_W_D_conf_1 * shared->dim_ICU_W_D_conf_2 * shared->dim_ICU_W_D_conf_3 * shared->dim_ICU_W_D_conf_4;
   shared->dim_ICU_W_D_conf_12 = shared->dim_ICU_W_D_conf_1 * shared->dim_ICU_W_D_conf_2;
   shared->dim_ICU_W_D_conf_123 = shared->dim_ICU_W_D_conf_1 * shared->dim_ICU_W_D_conf_2 * shared->dim_ICU_W_D_conf_3;
@@ -5516,15 +5434,119 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_ICU_W_R_unconf = shared->dim_ICU_W_R_unconf_1 * shared->dim_ICU_W_R_unconf_2 * shared->dim_ICU_W_R_unconf_3 * shared->dim_ICU_W_R_unconf_4;
   shared->dim_ICU_W_R_unconf_12 = shared->dim_ICU_W_R_unconf_1 * shared->dim_ICU_W_R_unconf_2;
   shared->dim_ICU_W_R_unconf_123 = shared->dim_ICU_W_R_unconf_1 * shared->dim_ICU_W_R_unconf_2 * shared->dim_ICU_W_R_unconf_3;
-  shared->dim_n_com_to_T_sero_pre = shared->dim_n_com_to_T_sero_pre_1 * shared->dim_n_com_to_T_sero_pre_2 * shared->dim_n_com_to_T_sero_pre_3 * shared->dim_n_com_to_T_sero_pre_4;
-  shared->dim_n_com_to_T_sero_pre_12 = shared->dim_n_com_to_T_sero_pre_1 * shared->dim_n_com_to_T_sero_pre_2;
-  shared->dim_n_com_to_T_sero_pre_123 = shared->dim_n_com_to_T_sero_pre_1 * shared->dim_n_com_to_T_sero_pre_2 * shared->dim_n_com_to_T_sero_pre_3;
-  shared->dim_n_E_next_vacc_class = shared->dim_n_E_next_vacc_class_1 * shared->dim_n_E_next_vacc_class_2 * shared->dim_n_E_next_vacc_class_3 * shared->dim_n_E_next_vacc_class_4;
-  shared->dim_n_E_next_vacc_class_12 = shared->dim_n_E_next_vacc_class_1 * shared->dim_n_E_next_vacc_class_2;
-  shared->dim_n_E_next_vacc_class_123 = shared->dim_n_E_next_vacc_class_1 * shared->dim_n_E_next_vacc_class_2 * shared->dim_n_E_next_vacc_class_3;
-  shared->dim_n_E_progress = shared->dim_n_E_progress_1 * shared->dim_n_E_progress_2 * shared->dim_n_E_progress_3 * shared->dim_n_E_progress_4;
-  shared->dim_n_E_progress_12 = shared->dim_n_E_progress_1 * shared->dim_n_E_progress_2;
-  shared->dim_n_E_progress_123 = shared->dim_n_E_progress_1 * shared->dim_n_E_progress_2 * shared->dim_n_E_progress_3;
+  shared->dim_ICU_pre_conf = shared->dim_ICU_pre_conf_1 * shared->dim_ICU_pre_conf_2 * shared->dim_ICU_pre_conf_3 * shared->dim_ICU_pre_conf_4;
+  shared->dim_ICU_pre_conf_12 = shared->dim_ICU_pre_conf_1 * shared->dim_ICU_pre_conf_2;
+  shared->dim_ICU_pre_conf_123 = shared->dim_ICU_pre_conf_1 * shared->dim_ICU_pre_conf_2 * shared->dim_ICU_pre_conf_3;
+  shared->dim_ICU_pre_unconf = shared->dim_ICU_pre_unconf_1 * shared->dim_ICU_pre_unconf_2 * shared->dim_ICU_pre_unconf_3 * shared->dim_ICU_pre_unconf_4;
+  shared->dim_ICU_pre_unconf_12 = shared->dim_ICU_pre_unconf_1 * shared->dim_ICU_pre_unconf_2;
+  shared->dim_ICU_pre_unconf_123 = shared->dim_ICU_pre_unconf_1 * shared->dim_ICU_pre_unconf_2 * shared->dim_ICU_pre_unconf_3;
+  shared->dim_I_A = shared->dim_I_A_1 * shared->dim_I_A_2 * shared->dim_I_A_3 * shared->dim_I_A_4;
+  shared->dim_I_A_12 = shared->dim_I_A_1 * shared->dim_I_A_2;
+  shared->dim_I_A_123 = shared->dim_I_A_1 * shared->dim_I_A_2 * shared->dim_I_A_3;
+  shared->dim_I_C = shared->dim_I_C_1 * shared->dim_I_C_2 * shared->dim_I_C_3 * shared->dim_I_C_4;
+  shared->dim_I_C_12 = shared->dim_I_C_1 * shared->dim_I_C_2;
+  shared->dim_I_C_123 = shared->dim_I_C_1 * shared->dim_I_C_2 * shared->dim_I_C_3;
+  shared->dim_I_weighted = shared->dim_I_weighted_1 * shared->dim_I_weighted_2;
+  shared->dim_I_weighted_strain = shared->dim_I_weighted_strain_1 * shared->dim_I_weighted_strain_2 * shared->dim_I_weighted_strain_3;
+  shared->dim_I_weighted_strain_12 = shared->dim_I_weighted_strain_1 * shared->dim_I_weighted_strain_2;
+  shared->dim_I_with_diff_trans = shared->dim_I_with_diff_trans_1 * shared->dim_I_with_diff_trans_2 * shared->dim_I_with_diff_trans_3;
+  shared->dim_I_with_diff_trans_12 = shared->dim_I_with_diff_trans_1 * shared->dim_I_with_diff_trans_2;
+  shared->dim_R = shared->dim_R_1 * shared->dim_R_2 * shared->dim_R_3;
+  shared->dim_R_12 = shared->dim_R_1 * shared->dim_R_2;
+  shared->dim_S = shared->dim_S_1 * shared->dim_S_2;
+  shared->dim_T_PCR_neg = shared->dim_T_PCR_neg_1 * shared->dim_T_PCR_neg_2 * shared->dim_T_PCR_neg_3;
+  shared->dim_T_PCR_neg_12 = shared->dim_T_PCR_neg_1 * shared->dim_T_PCR_neg_2;
+  shared->dim_T_PCR_pos = shared->dim_T_PCR_pos_1 * shared->dim_T_PCR_pos_2 * shared->dim_T_PCR_pos_3 * shared->dim_T_PCR_pos_4;
+  shared->dim_T_PCR_pos_12 = shared->dim_T_PCR_pos_1 * shared->dim_T_PCR_pos_2;
+  shared->dim_T_PCR_pos_123 = shared->dim_T_PCR_pos_1 * shared->dim_T_PCR_pos_2 * shared->dim_T_PCR_pos_3;
+  shared->dim_T_PCR_pre = shared->dim_T_PCR_pre_1 * shared->dim_T_PCR_pre_2 * shared->dim_T_PCR_pre_3 * shared->dim_T_PCR_pre_4;
+  shared->dim_T_PCR_pre_12 = shared->dim_T_PCR_pre_1 * shared->dim_T_PCR_pre_2;
+  shared->dim_T_PCR_pre_123 = shared->dim_T_PCR_pre_1 * shared->dim_T_PCR_pre_2 * shared->dim_T_PCR_pre_3;
+  shared->dim_T_sero_neg = shared->dim_T_sero_neg_1 * shared->dim_T_sero_neg_2 * shared->dim_T_sero_neg_3;
+  shared->dim_T_sero_neg_12 = shared->dim_T_sero_neg_1 * shared->dim_T_sero_neg_2;
+  shared->dim_T_sero_pos = shared->dim_T_sero_pos_1 * shared->dim_T_sero_pos_2 * shared->dim_T_sero_pos_3 * shared->dim_T_sero_pos_4;
+  shared->dim_T_sero_pos_12 = shared->dim_T_sero_pos_1 * shared->dim_T_sero_pos_2;
+  shared->dim_T_sero_pos_123 = shared->dim_T_sero_pos_1 * shared->dim_T_sero_pos_2 * shared->dim_T_sero_pos_3;
+  shared->dim_T_sero_pre = shared->dim_T_sero_pre_1 * shared->dim_T_sero_pre_2 * shared->dim_T_sero_pre_3 * shared->dim_T_sero_pre_4;
+  shared->dim_T_sero_pre_12 = shared->dim_T_sero_pre_1 * shared->dim_T_sero_pre_2;
+  shared->dim_T_sero_pre_123 = shared->dim_T_sero_pre_1 * shared->dim_T_sero_pre_2 * shared->dim_T_sero_pre_3;
+  shared->dim_W_D_conf = shared->dim_W_D_conf_1 * shared->dim_W_D_conf_2 * shared->dim_W_D_conf_3 * shared->dim_W_D_conf_4;
+  shared->dim_W_D_conf_12 = shared->dim_W_D_conf_1 * shared->dim_W_D_conf_2;
+  shared->dim_W_D_conf_123 = shared->dim_W_D_conf_1 * shared->dim_W_D_conf_2 * shared->dim_W_D_conf_3;
+  shared->dim_W_D_unconf = shared->dim_W_D_unconf_1 * shared->dim_W_D_unconf_2 * shared->dim_W_D_unconf_3 * shared->dim_W_D_unconf_4;
+  shared->dim_W_D_unconf_12 = shared->dim_W_D_unconf_1 * shared->dim_W_D_unconf_2;
+  shared->dim_W_D_unconf_123 = shared->dim_W_D_unconf_1 * shared->dim_W_D_unconf_2 * shared->dim_W_D_unconf_3;
+  shared->dim_W_R_conf = shared->dim_W_R_conf_1 * shared->dim_W_R_conf_2 * shared->dim_W_R_conf_3 * shared->dim_W_R_conf_4;
+  shared->dim_W_R_conf_12 = shared->dim_W_R_conf_1 * shared->dim_W_R_conf_2;
+  shared->dim_W_R_conf_123 = shared->dim_W_R_conf_1 * shared->dim_W_R_conf_2 * shared->dim_W_R_conf_3;
+  shared->dim_W_R_unconf = shared->dim_W_R_unconf_1 * shared->dim_W_R_unconf_2 * shared->dim_W_R_unconf_3 * shared->dim_W_R_unconf_4;
+  shared->dim_W_R_unconf_12 = shared->dim_W_R_unconf_1 * shared->dim_W_R_unconf_2;
+  shared->dim_W_R_unconf_123 = shared->dim_W_R_unconf_1 * shared->dim_W_R_unconf_2 * shared->dim_W_R_unconf_3;
+  shared->dim_aux_E = shared->dim_aux_E_1 * shared->dim_aux_E_2 * shared->dim_aux_E_3 * shared->dim_aux_E_4;
+  shared->dim_aux_E_12 = shared->dim_aux_E_1 * shared->dim_aux_E_2;
+  shared->dim_aux_E_123 = shared->dim_aux_E_1 * shared->dim_aux_E_2 * shared->dim_aux_E_3;
+  shared->dim_aux_G_D = shared->dim_aux_G_D_1 * shared->dim_aux_G_D_2 * shared->dim_aux_G_D_3 * shared->dim_aux_G_D_4;
+  shared->dim_aux_G_D_12 = shared->dim_aux_G_D_1 * shared->dim_aux_G_D_2;
+  shared->dim_aux_G_D_123 = shared->dim_aux_G_D_1 * shared->dim_aux_G_D_2 * shared->dim_aux_G_D_3;
+  shared->dim_aux_H_D_conf = shared->dim_aux_H_D_conf_1 * shared->dim_aux_H_D_conf_2 * shared->dim_aux_H_D_conf_3 * shared->dim_aux_H_D_conf_4;
+  shared->dim_aux_H_D_conf_12 = shared->dim_aux_H_D_conf_1 * shared->dim_aux_H_D_conf_2;
+  shared->dim_aux_H_D_conf_123 = shared->dim_aux_H_D_conf_1 * shared->dim_aux_H_D_conf_2 * shared->dim_aux_H_D_conf_3;
+  shared->dim_aux_H_D_unconf = shared->dim_aux_H_D_unconf_1 * shared->dim_aux_H_D_unconf_2 * shared->dim_aux_H_D_unconf_3 * shared->dim_aux_H_D_unconf_4;
+  shared->dim_aux_H_D_unconf_12 = shared->dim_aux_H_D_unconf_1 * shared->dim_aux_H_D_unconf_2;
+  shared->dim_aux_H_D_unconf_123 = shared->dim_aux_H_D_unconf_1 * shared->dim_aux_H_D_unconf_2 * shared->dim_aux_H_D_unconf_3;
+  shared->dim_aux_H_R_conf = shared->dim_aux_H_R_conf_1 * shared->dim_aux_H_R_conf_2 * shared->dim_aux_H_R_conf_3 * shared->dim_aux_H_R_conf_4;
+  shared->dim_aux_H_R_conf_12 = shared->dim_aux_H_R_conf_1 * shared->dim_aux_H_R_conf_2;
+  shared->dim_aux_H_R_conf_123 = shared->dim_aux_H_R_conf_1 * shared->dim_aux_H_R_conf_2 * shared->dim_aux_H_R_conf_3;
+  shared->dim_aux_H_R_unconf = shared->dim_aux_H_R_unconf_1 * shared->dim_aux_H_R_unconf_2 * shared->dim_aux_H_R_unconf_3 * shared->dim_aux_H_R_unconf_4;
+  shared->dim_aux_H_R_unconf_12 = shared->dim_aux_H_R_unconf_1 * shared->dim_aux_H_R_unconf_2;
+  shared->dim_aux_H_R_unconf_123 = shared->dim_aux_H_R_unconf_1 * shared->dim_aux_H_R_unconf_2 * shared->dim_aux_H_R_unconf_3;
+  shared->dim_aux_ICU_D_conf = shared->dim_aux_ICU_D_conf_1 * shared->dim_aux_ICU_D_conf_2 * shared->dim_aux_ICU_D_conf_3 * shared->dim_aux_ICU_D_conf_4;
+  shared->dim_aux_ICU_D_conf_12 = shared->dim_aux_ICU_D_conf_1 * shared->dim_aux_ICU_D_conf_2;
+  shared->dim_aux_ICU_D_conf_123 = shared->dim_aux_ICU_D_conf_1 * shared->dim_aux_ICU_D_conf_2 * shared->dim_aux_ICU_D_conf_3;
+  shared->dim_aux_ICU_D_unconf = shared->dim_aux_ICU_D_unconf_1 * shared->dim_aux_ICU_D_unconf_2 * shared->dim_aux_ICU_D_unconf_3 * shared->dim_aux_ICU_D_unconf_4;
+  shared->dim_aux_ICU_D_unconf_12 = shared->dim_aux_ICU_D_unconf_1 * shared->dim_aux_ICU_D_unconf_2;
+  shared->dim_aux_ICU_D_unconf_123 = shared->dim_aux_ICU_D_unconf_1 * shared->dim_aux_ICU_D_unconf_2 * shared->dim_aux_ICU_D_unconf_3;
+  shared->dim_aux_ICU_W_D_conf = shared->dim_aux_ICU_W_D_conf_1 * shared->dim_aux_ICU_W_D_conf_2 * shared->dim_aux_ICU_W_D_conf_3 * shared->dim_aux_ICU_W_D_conf_4;
+  shared->dim_aux_ICU_W_D_conf_12 = shared->dim_aux_ICU_W_D_conf_1 * shared->dim_aux_ICU_W_D_conf_2;
+  shared->dim_aux_ICU_W_D_conf_123 = shared->dim_aux_ICU_W_D_conf_1 * shared->dim_aux_ICU_W_D_conf_2 * shared->dim_aux_ICU_W_D_conf_3;
+  shared->dim_aux_ICU_W_D_unconf = shared->dim_aux_ICU_W_D_unconf_1 * shared->dim_aux_ICU_W_D_unconf_2 * shared->dim_aux_ICU_W_D_unconf_3 * shared->dim_aux_ICU_W_D_unconf_4;
+  shared->dim_aux_ICU_W_D_unconf_12 = shared->dim_aux_ICU_W_D_unconf_1 * shared->dim_aux_ICU_W_D_unconf_2;
+  shared->dim_aux_ICU_W_D_unconf_123 = shared->dim_aux_ICU_W_D_unconf_1 * shared->dim_aux_ICU_W_D_unconf_2 * shared->dim_aux_ICU_W_D_unconf_3;
+  shared->dim_aux_ICU_W_R_conf = shared->dim_aux_ICU_W_R_conf_1 * shared->dim_aux_ICU_W_R_conf_2 * shared->dim_aux_ICU_W_R_conf_3 * shared->dim_aux_ICU_W_R_conf_4;
+  shared->dim_aux_ICU_W_R_conf_12 = shared->dim_aux_ICU_W_R_conf_1 * shared->dim_aux_ICU_W_R_conf_2;
+  shared->dim_aux_ICU_W_R_conf_123 = shared->dim_aux_ICU_W_R_conf_1 * shared->dim_aux_ICU_W_R_conf_2 * shared->dim_aux_ICU_W_R_conf_3;
+  shared->dim_aux_ICU_W_R_unconf = shared->dim_aux_ICU_W_R_unconf_1 * shared->dim_aux_ICU_W_R_unconf_2 * shared->dim_aux_ICU_W_R_unconf_3 * shared->dim_aux_ICU_W_R_unconf_4;
+  shared->dim_aux_ICU_W_R_unconf_12 = shared->dim_aux_ICU_W_R_unconf_1 * shared->dim_aux_ICU_W_R_unconf_2;
+  shared->dim_aux_ICU_W_R_unconf_123 = shared->dim_aux_ICU_W_R_unconf_1 * shared->dim_aux_ICU_W_R_unconf_2 * shared->dim_aux_ICU_W_R_unconf_3;
+  shared->dim_aux_ICU_pre_conf = shared->dim_aux_ICU_pre_conf_1 * shared->dim_aux_ICU_pre_conf_2 * shared->dim_aux_ICU_pre_conf_3 * shared->dim_aux_ICU_pre_conf_4;
+  shared->dim_aux_ICU_pre_conf_12 = shared->dim_aux_ICU_pre_conf_1 * shared->dim_aux_ICU_pre_conf_2;
+  shared->dim_aux_ICU_pre_conf_123 = shared->dim_aux_ICU_pre_conf_1 * shared->dim_aux_ICU_pre_conf_2 * shared->dim_aux_ICU_pre_conf_3;
+  shared->dim_aux_ICU_pre_unconf = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2 * shared->dim_aux_ICU_pre_unconf_3 * shared->dim_aux_ICU_pre_unconf_4;
+  shared->dim_aux_ICU_pre_unconf_12 = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2;
+  shared->dim_aux_ICU_pre_unconf_123 = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2 * shared->dim_aux_ICU_pre_unconf_3;
+  shared->dim_aux_I_A = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2 * shared->dim_aux_I_A_3 * shared->dim_aux_I_A_4;
+  shared->dim_aux_I_A_12 = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2;
+  shared->dim_aux_I_A_123 = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2 * shared->dim_aux_I_A_3;
+  shared->dim_aux_I_C = shared->dim_aux_I_C_1 * shared->dim_aux_I_C_2 * shared->dim_aux_I_C_3 * shared->dim_aux_I_C_4;
+  shared->dim_aux_I_C_12 = shared->dim_aux_I_C_1 * shared->dim_aux_I_C_2;
+  shared->dim_aux_I_C_123 = shared->dim_aux_I_C_1 * shared->dim_aux_I_C_2 * shared->dim_aux_I_C_3;
+  shared->dim_aux_W_D_conf = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2 * shared->dim_aux_W_D_conf_3 * shared->dim_aux_W_D_conf_4;
+  shared->dim_aux_W_D_conf_12 = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2;
+  shared->dim_aux_W_D_conf_123 = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2 * shared->dim_aux_W_D_conf_3;
+  shared->dim_aux_W_D_unconf = shared->dim_aux_W_D_unconf_1 * shared->dim_aux_W_D_unconf_2 * shared->dim_aux_W_D_unconf_3 * shared->dim_aux_W_D_unconf_4;
+  shared->dim_aux_W_D_unconf_12 = shared->dim_aux_W_D_unconf_1 * shared->dim_aux_W_D_unconf_2;
+  shared->dim_aux_W_D_unconf_123 = shared->dim_aux_W_D_unconf_1 * shared->dim_aux_W_D_unconf_2 * shared->dim_aux_W_D_unconf_3;
+  shared->dim_aux_W_R_conf = shared->dim_aux_W_R_conf_1 * shared->dim_aux_W_R_conf_2 * shared->dim_aux_W_R_conf_3 * shared->dim_aux_W_R_conf_4;
+  shared->dim_aux_W_R_conf_12 = shared->dim_aux_W_R_conf_1 * shared->dim_aux_W_R_conf_2;
+  shared->dim_aux_W_R_conf_123 = shared->dim_aux_W_R_conf_1 * shared->dim_aux_W_R_conf_2 * shared->dim_aux_W_R_conf_3;
+  shared->dim_aux_W_R_unconf = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2 * shared->dim_aux_W_R_unconf_3 * shared->dim_aux_W_R_unconf_4;
+  shared->dim_aux_W_R_unconf_12 = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2;
+  shared->dim_aux_W_R_unconf_123 = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2 * shared->dim_aux_W_R_unconf_3;
+  shared->dim_cum_n_E_vaccinated = shared->dim_cum_n_E_vaccinated_1 * shared->dim_cum_n_E_vaccinated_2;
+  shared->dim_cum_n_I_A_vaccinated = shared->dim_cum_n_I_A_vaccinated_1 * shared->dim_cum_n_I_A_vaccinated_2;
+  shared->dim_cum_n_R_vaccinated = shared->dim_cum_n_R_vaccinated_1 * shared->dim_cum_n_R_vaccinated_2;
+  shared->dim_cum_n_S_vaccinated = shared->dim_cum_n_S_vaccinated_1 * shared->dim_cum_n_S_vaccinated_2;
+  shared->dim_cum_n_vaccinated = shared->dim_cum_n_vaccinated_1 * shared->dim_cum_n_vaccinated_2;
   shared->dim_n_EE = shared->dim_n_EE_1 * shared->dim_n_EE_2 * shared->dim_n_EE_3 * shared->dim_n_EE_4;
   shared->dim_n_EE_12 = shared->dim_n_EE_1 * shared->dim_n_EE_2;
   shared->dim_n_EE_123 = shared->dim_n_EE_1 * shared->dim_n_EE_2 * shared->dim_n_EE_3;
@@ -5539,6 +5561,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_EI_C_12 = shared->dim_n_EI_C_1 * shared->dim_n_EI_C_2;
   shared->dim_n_EI_C_next_vacc_class = shared->dim_n_EI_C_next_vacc_class_1 * shared->dim_n_EI_C_next_vacc_class_2 * shared->dim_n_EI_C_next_vacc_class_3;
   shared->dim_n_EI_C_next_vacc_class_12 = shared->dim_n_EI_C_next_vacc_class_1 * shared->dim_n_EI_C_next_vacc_class_2;
+  shared->dim_n_E_next_vacc_class = shared->dim_n_E_next_vacc_class_1 * shared->dim_n_E_next_vacc_class_2 * shared->dim_n_E_next_vacc_class_3 * shared->dim_n_E_next_vacc_class_4;
+  shared->dim_n_E_next_vacc_class_12 = shared->dim_n_E_next_vacc_class_1 * shared->dim_n_E_next_vacc_class_2;
+  shared->dim_n_E_next_vacc_class_123 = shared->dim_n_E_next_vacc_class_1 * shared->dim_n_E_next_vacc_class_2 * shared->dim_n_E_next_vacc_class_3;
+  shared->dim_n_E_progress = shared->dim_n_E_progress_1 * shared->dim_n_E_progress_2 * shared->dim_n_E_progress_3 * shared->dim_n_E_progress_4;
+  shared->dim_n_E_progress_12 = shared->dim_n_E_progress_1 * shared->dim_n_E_progress_2;
+  shared->dim_n_E_progress_123 = shared->dim_n_E_progress_1 * shared->dim_n_E_progress_2 * shared->dim_n_E_progress_3;
   shared->dim_n_G_D_progress = shared->dim_n_G_D_progress_1 * shared->dim_n_G_D_progress_2 * shared->dim_n_G_D_progress_3 * shared->dim_n_G_D_progress_4;
   shared->dim_n_G_D_progress_12 = shared->dim_n_G_D_progress_1 * shared->dim_n_G_D_progress_2;
   shared->dim_n_G_D_progress_123 = shared->dim_n_G_D_progress_1 * shared->dim_n_G_D_progress_2 * shared->dim_n_G_D_progress_3;
@@ -5560,8 +5588,60 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_H_R_unconf_to_conf = shared->dim_n_H_R_unconf_to_conf_1 * shared->dim_n_H_R_unconf_to_conf_2 * shared->dim_n_H_R_unconf_to_conf_3 * shared->dim_n_H_R_unconf_to_conf_4;
   shared->dim_n_H_R_unconf_to_conf_12 = shared->dim_n_H_R_unconf_to_conf_1 * shared->dim_n_H_R_unconf_to_conf_2;
   shared->dim_n_H_R_unconf_to_conf_123 = shared->dim_n_H_R_unconf_to_conf_1 * shared->dim_n_H_R_unconf_to_conf_2 * shared->dim_n_H_R_unconf_to_conf_3;
-  shared->dim_n_hosp_non_ICU = shared->dim_n_hosp_non_ICU_1 * shared->dim_n_hosp_non_ICU_2 * shared->dim_n_hosp_non_ICU_3;
-  shared->dim_n_hosp_non_ICU_12 = shared->dim_n_hosp_non_ICU_1 * shared->dim_n_hosp_non_ICU_2;
+  shared->dim_n_ICU_D_conf_progress = shared->dim_n_ICU_D_conf_progress_1 * shared->dim_n_ICU_D_conf_progress_2 * shared->dim_n_ICU_D_conf_progress_3 * shared->dim_n_ICU_D_conf_progress_4;
+  shared->dim_n_ICU_D_conf_progress_12 = shared->dim_n_ICU_D_conf_progress_1 * shared->dim_n_ICU_D_conf_progress_2;
+  shared->dim_n_ICU_D_conf_progress_123 = shared->dim_n_ICU_D_conf_progress_1 * shared->dim_n_ICU_D_conf_progress_2 * shared->dim_n_ICU_D_conf_progress_3;
+  shared->dim_n_ICU_D_unconf_progress = shared->dim_n_ICU_D_unconf_progress_1 * shared->dim_n_ICU_D_unconf_progress_2 * shared->dim_n_ICU_D_unconf_progress_3 * shared->dim_n_ICU_D_unconf_progress_4;
+  shared->dim_n_ICU_D_unconf_progress_12 = shared->dim_n_ICU_D_unconf_progress_1 * shared->dim_n_ICU_D_unconf_progress_2;
+  shared->dim_n_ICU_D_unconf_progress_123 = shared->dim_n_ICU_D_unconf_progress_1 * shared->dim_n_ICU_D_unconf_progress_2 * shared->dim_n_ICU_D_unconf_progress_3;
+  shared->dim_n_ICU_D_unconf_to_conf = shared->dim_n_ICU_D_unconf_to_conf_1 * shared->dim_n_ICU_D_unconf_to_conf_2 * shared->dim_n_ICU_D_unconf_to_conf_3 * shared->dim_n_ICU_D_unconf_to_conf_4;
+  shared->dim_n_ICU_D_unconf_to_conf_12 = shared->dim_n_ICU_D_unconf_to_conf_1 * shared->dim_n_ICU_D_unconf_to_conf_2;
+  shared->dim_n_ICU_D_unconf_to_conf_123 = shared->dim_n_ICU_D_unconf_to_conf_1 * shared->dim_n_ICU_D_unconf_to_conf_2 * shared->dim_n_ICU_D_unconf_to_conf_3;
+  shared->dim_n_ICU_W_D_conf_progress = shared->dim_n_ICU_W_D_conf_progress_1 * shared->dim_n_ICU_W_D_conf_progress_2 * shared->dim_n_ICU_W_D_conf_progress_3 * shared->dim_n_ICU_W_D_conf_progress_4;
+  shared->dim_n_ICU_W_D_conf_progress_12 = shared->dim_n_ICU_W_D_conf_progress_1 * shared->dim_n_ICU_W_D_conf_progress_2;
+  shared->dim_n_ICU_W_D_conf_progress_123 = shared->dim_n_ICU_W_D_conf_progress_1 * shared->dim_n_ICU_W_D_conf_progress_2 * shared->dim_n_ICU_W_D_conf_progress_3;
+  shared->dim_n_ICU_W_D_unconf_progress = shared->dim_n_ICU_W_D_unconf_progress_1 * shared->dim_n_ICU_W_D_unconf_progress_2 * shared->dim_n_ICU_W_D_unconf_progress_3 * shared->dim_n_ICU_W_D_unconf_progress_4;
+  shared->dim_n_ICU_W_D_unconf_progress_12 = shared->dim_n_ICU_W_D_unconf_progress_1 * shared->dim_n_ICU_W_D_unconf_progress_2;
+  shared->dim_n_ICU_W_D_unconf_progress_123 = shared->dim_n_ICU_W_D_unconf_progress_1 * shared->dim_n_ICU_W_D_unconf_progress_2 * shared->dim_n_ICU_W_D_unconf_progress_3;
+  shared->dim_n_ICU_W_D_unconf_to_conf = shared->dim_n_ICU_W_D_unconf_to_conf_1 * shared->dim_n_ICU_W_D_unconf_to_conf_2 * shared->dim_n_ICU_W_D_unconf_to_conf_3 * shared->dim_n_ICU_W_D_unconf_to_conf_4;
+  shared->dim_n_ICU_W_D_unconf_to_conf_12 = shared->dim_n_ICU_W_D_unconf_to_conf_1 * shared->dim_n_ICU_W_D_unconf_to_conf_2;
+  shared->dim_n_ICU_W_D_unconf_to_conf_123 = shared->dim_n_ICU_W_D_unconf_to_conf_1 * shared->dim_n_ICU_W_D_unconf_to_conf_2 * shared->dim_n_ICU_W_D_unconf_to_conf_3;
+  shared->dim_n_ICU_W_R_conf_progress = shared->dim_n_ICU_W_R_conf_progress_1 * shared->dim_n_ICU_W_R_conf_progress_2 * shared->dim_n_ICU_W_R_conf_progress_3 * shared->dim_n_ICU_W_R_conf_progress_4;
+  shared->dim_n_ICU_W_R_conf_progress_12 = shared->dim_n_ICU_W_R_conf_progress_1 * shared->dim_n_ICU_W_R_conf_progress_2;
+  shared->dim_n_ICU_W_R_conf_progress_123 = shared->dim_n_ICU_W_R_conf_progress_1 * shared->dim_n_ICU_W_R_conf_progress_2 * shared->dim_n_ICU_W_R_conf_progress_3;
+  shared->dim_n_ICU_W_R_unconf_progress = shared->dim_n_ICU_W_R_unconf_progress_1 * shared->dim_n_ICU_W_R_unconf_progress_2 * shared->dim_n_ICU_W_R_unconf_progress_3 * shared->dim_n_ICU_W_R_unconf_progress_4;
+  shared->dim_n_ICU_W_R_unconf_progress_12 = shared->dim_n_ICU_W_R_unconf_progress_1 * shared->dim_n_ICU_W_R_unconf_progress_2;
+  shared->dim_n_ICU_W_R_unconf_progress_123 = shared->dim_n_ICU_W_R_unconf_progress_1 * shared->dim_n_ICU_W_R_unconf_progress_2 * shared->dim_n_ICU_W_R_unconf_progress_3;
+  shared->dim_n_ICU_W_R_unconf_to_conf = shared->dim_n_ICU_W_R_unconf_to_conf_1 * shared->dim_n_ICU_W_R_unconf_to_conf_2 * shared->dim_n_ICU_W_R_unconf_to_conf_3 * shared->dim_n_ICU_W_R_unconf_to_conf_4;
+  shared->dim_n_ICU_W_R_unconf_to_conf_12 = shared->dim_n_ICU_W_R_unconf_to_conf_1 * shared->dim_n_ICU_W_R_unconf_to_conf_2;
+  shared->dim_n_ICU_W_R_unconf_to_conf_123 = shared->dim_n_ICU_W_R_unconf_to_conf_1 * shared->dim_n_ICU_W_R_unconf_to_conf_2 * shared->dim_n_ICU_W_R_unconf_to_conf_3;
+  shared->dim_n_ICU_pre_conf_progress = shared->dim_n_ICU_pre_conf_progress_1 * shared->dim_n_ICU_pre_conf_progress_2 * shared->dim_n_ICU_pre_conf_progress_3 * shared->dim_n_ICU_pre_conf_progress_4;
+  shared->dim_n_ICU_pre_conf_progress_12 = shared->dim_n_ICU_pre_conf_progress_1 * shared->dim_n_ICU_pre_conf_progress_2;
+  shared->dim_n_ICU_pre_conf_progress_123 = shared->dim_n_ICU_pre_conf_progress_1 * shared->dim_n_ICU_pre_conf_progress_2 * shared->dim_n_ICU_pre_conf_progress_3;
+  shared->dim_n_ICU_pre_conf_to_ICU_D_conf = shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_D_conf_2 * shared->dim_n_ICU_pre_conf_to_ICU_D_conf_3;
+  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_12 = shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_D_conf_2;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf = shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_2 * shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_3;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_12 = shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_2;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf = shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_2 * shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_3;
+  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_12 = shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_2;
+  shared->dim_n_ICU_pre_unconf_progress = shared->dim_n_ICU_pre_unconf_progress_1 * shared->dim_n_ICU_pre_unconf_progress_2 * shared->dim_n_ICU_pre_unconf_progress_3 * shared->dim_n_ICU_pre_unconf_progress_4;
+  shared->dim_n_ICU_pre_unconf_progress_12 = shared->dim_n_ICU_pre_unconf_progress_1 * shared->dim_n_ICU_pre_unconf_progress_2;
+  shared->dim_n_ICU_pre_unconf_progress_123 = shared->dim_n_ICU_pre_unconf_progress_1 * shared->dim_n_ICU_pre_unconf_progress_2 * shared->dim_n_ICU_pre_unconf_progress_3;
+  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf = shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_2 * shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_3;
+  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_12 = shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_2;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf = shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2 * shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12 = shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf = shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2 * shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_3;
+  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_12 = shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2;
+  shared->dim_n_ICU_pre_unconf_to_conf = shared->dim_n_ICU_pre_unconf_to_conf_1 * shared->dim_n_ICU_pre_unconf_to_conf_2 * shared->dim_n_ICU_pre_unconf_to_conf_3 * shared->dim_n_ICU_pre_unconf_to_conf_4;
+  shared->dim_n_ICU_pre_unconf_to_conf_12 = shared->dim_n_ICU_pre_unconf_to_conf_1 * shared->dim_n_ICU_pre_unconf_to_conf_2;
+  shared->dim_n_ICU_pre_unconf_to_conf_123 = shared->dim_n_ICU_pre_unconf_to_conf_1 * shared->dim_n_ICU_pre_unconf_to_conf_2 * shared->dim_n_ICU_pre_unconf_to_conf_3;
+  shared->dim_n_II_A = shared->dim_n_II_A_1 * shared->dim_n_II_A_2 * shared->dim_n_II_A_3 * shared->dim_n_II_A_4;
+  shared->dim_n_II_A_12 = shared->dim_n_II_A_1 * shared->dim_n_II_A_2;
+  shared->dim_n_II_A_123 = shared->dim_n_II_A_1 * shared->dim_n_II_A_2 * shared->dim_n_II_A_3;
+  shared->dim_n_II_A_next_vacc_class = shared->dim_n_II_A_next_vacc_class_1 * shared->dim_n_II_A_next_vacc_class_2 * shared->dim_n_II_A_next_vacc_class_3 * shared->dim_n_II_A_next_vacc_class_4;
+  shared->dim_n_II_A_next_vacc_class_12 = shared->dim_n_II_A_next_vacc_class_1 * shared->dim_n_II_A_next_vacc_class_2;
+  shared->dim_n_II_A_next_vacc_class_123 = shared->dim_n_II_A_next_vacc_class_1 * shared->dim_n_II_A_next_vacc_class_2 * shared->dim_n_II_A_next_vacc_class_3;
   shared->dim_n_I_A_next_vacc_class = shared->dim_n_I_A_next_vacc_class_1 * shared->dim_n_I_A_next_vacc_class_2 * shared->dim_n_I_A_next_vacc_class_3 * shared->dim_n_I_A_next_vacc_class_4;
   shared->dim_n_I_A_next_vacc_class_12 = shared->dim_n_I_A_next_vacc_class_1 * shared->dim_n_I_A_next_vacc_class_2;
   shared->dim_n_I_A_next_vacc_class_123 = shared->dim_n_I_A_next_vacc_class_1 * shared->dim_n_I_A_next_vacc_class_2 * shared->dim_n_I_A_next_vacc_class_3;
@@ -5581,68 +5661,18 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_I_C_to_H_R_12 = shared->dim_n_I_C_to_H_R_1 * shared->dim_n_I_C_to_H_R_2;
   shared->dim_n_I_C_to_H_R_conf = shared->dim_n_I_C_to_H_R_conf_1 * shared->dim_n_I_C_to_H_R_conf_2 * shared->dim_n_I_C_to_H_R_conf_3;
   shared->dim_n_I_C_to_H_R_conf_12 = shared->dim_n_I_C_to_H_R_conf_1 * shared->dim_n_I_C_to_H_R_conf_2;
-  shared->dim_n_I_C_to_hosp = shared->dim_n_I_C_to_hosp_1 * shared->dim_n_I_C_to_hosp_2 * shared->dim_n_I_C_to_hosp_3;
-  shared->dim_n_I_C_to_hosp_12 = shared->dim_n_I_C_to_hosp_1 * shared->dim_n_I_C_to_hosp_2;
   shared->dim_n_I_C_to_ICU_pre = shared->dim_n_I_C_to_ICU_pre_1 * shared->dim_n_I_C_to_ICU_pre_2 * shared->dim_n_I_C_to_ICU_pre_3;
   shared->dim_n_I_C_to_ICU_pre_12 = shared->dim_n_I_C_to_ICU_pre_1 * shared->dim_n_I_C_to_ICU_pre_2;
   shared->dim_n_I_C_to_ICU_pre_conf = shared->dim_n_I_C_to_ICU_pre_conf_1 * shared->dim_n_I_C_to_ICU_pre_conf_2 * shared->dim_n_I_C_to_ICU_pre_conf_3;
   shared->dim_n_I_C_to_ICU_pre_conf_12 = shared->dim_n_I_C_to_ICU_pre_conf_1 * shared->dim_n_I_C_to_ICU_pre_conf_2;
   shared->dim_n_I_C_to_R = shared->dim_n_I_C_to_R_1 * shared->dim_n_I_C_to_R_2 * shared->dim_n_I_C_to_R_3;
   shared->dim_n_I_C_to_R_12 = shared->dim_n_I_C_to_R_1 * shared->dim_n_I_C_to_R_2;
-  shared->dim_n_ICU_D_conf_progress = shared->dim_n_ICU_D_conf_progress_1 * shared->dim_n_ICU_D_conf_progress_2 * shared->dim_n_ICU_D_conf_progress_3 * shared->dim_n_ICU_D_conf_progress_4;
-  shared->dim_n_ICU_D_conf_progress_12 = shared->dim_n_ICU_D_conf_progress_1 * shared->dim_n_ICU_D_conf_progress_2;
-  shared->dim_n_ICU_D_conf_progress_123 = shared->dim_n_ICU_D_conf_progress_1 * shared->dim_n_ICU_D_conf_progress_2 * shared->dim_n_ICU_D_conf_progress_3;
-  shared->dim_n_ICU_D_unconf_progress = shared->dim_n_ICU_D_unconf_progress_1 * shared->dim_n_ICU_D_unconf_progress_2 * shared->dim_n_ICU_D_unconf_progress_3 * shared->dim_n_ICU_D_unconf_progress_4;
-  shared->dim_n_ICU_D_unconf_progress_12 = shared->dim_n_ICU_D_unconf_progress_1 * shared->dim_n_ICU_D_unconf_progress_2;
-  shared->dim_n_ICU_D_unconf_progress_123 = shared->dim_n_ICU_D_unconf_progress_1 * shared->dim_n_ICU_D_unconf_progress_2 * shared->dim_n_ICU_D_unconf_progress_3;
-  shared->dim_n_ICU_D_unconf_to_conf = shared->dim_n_ICU_D_unconf_to_conf_1 * shared->dim_n_ICU_D_unconf_to_conf_2 * shared->dim_n_ICU_D_unconf_to_conf_3 * shared->dim_n_ICU_D_unconf_to_conf_4;
-  shared->dim_n_ICU_D_unconf_to_conf_12 = shared->dim_n_ICU_D_unconf_to_conf_1 * shared->dim_n_ICU_D_unconf_to_conf_2;
-  shared->dim_n_ICU_D_unconf_to_conf_123 = shared->dim_n_ICU_D_unconf_to_conf_1 * shared->dim_n_ICU_D_unconf_to_conf_2 * shared->dim_n_ICU_D_unconf_to_conf_3;
-  shared->dim_n_ICU_pre_conf_progress = shared->dim_n_ICU_pre_conf_progress_1 * shared->dim_n_ICU_pre_conf_progress_2 * shared->dim_n_ICU_pre_conf_progress_3 * shared->dim_n_ICU_pre_conf_progress_4;
-  shared->dim_n_ICU_pre_conf_progress_12 = shared->dim_n_ICU_pre_conf_progress_1 * shared->dim_n_ICU_pre_conf_progress_2;
-  shared->dim_n_ICU_pre_conf_progress_123 = shared->dim_n_ICU_pre_conf_progress_1 * shared->dim_n_ICU_pre_conf_progress_2 * shared->dim_n_ICU_pre_conf_progress_3;
-  shared->dim_n_ICU_pre_conf_to_ICU_D_conf = shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_D_conf_2 * shared->dim_n_ICU_pre_conf_to_ICU_D_conf_3;
-  shared->dim_n_ICU_pre_conf_to_ICU_D_conf_12 = shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_D_conf_2;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf = shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_2 * shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_3;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_12 = shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_2;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf = shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_2 * shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_3;
-  shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_12 = shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 * shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_2;
-  shared->dim_n_ICU_pre_unconf_progress = shared->dim_n_ICU_pre_unconf_progress_1 * shared->dim_n_ICU_pre_unconf_progress_2 * shared->dim_n_ICU_pre_unconf_progress_3 * shared->dim_n_ICU_pre_unconf_progress_4;
-  shared->dim_n_ICU_pre_unconf_progress_12 = shared->dim_n_ICU_pre_unconf_progress_1 * shared->dim_n_ICU_pre_unconf_progress_2;
-  shared->dim_n_ICU_pre_unconf_progress_123 = shared->dim_n_ICU_pre_unconf_progress_1 * shared->dim_n_ICU_pre_unconf_progress_2 * shared->dim_n_ICU_pre_unconf_progress_3;
-  shared->dim_n_ICU_pre_unconf_to_conf = shared->dim_n_ICU_pre_unconf_to_conf_1 * shared->dim_n_ICU_pre_unconf_to_conf_2 * shared->dim_n_ICU_pre_unconf_to_conf_3 * shared->dim_n_ICU_pre_unconf_to_conf_4;
-  shared->dim_n_ICU_pre_unconf_to_conf_12 = shared->dim_n_ICU_pre_unconf_to_conf_1 * shared->dim_n_ICU_pre_unconf_to_conf_2;
-  shared->dim_n_ICU_pre_unconf_to_conf_123 = shared->dim_n_ICU_pre_unconf_to_conf_1 * shared->dim_n_ICU_pre_unconf_to_conf_2 * shared->dim_n_ICU_pre_unconf_to_conf_3;
-  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf = shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_2 * shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_3;
-  shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_12 = shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_2;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf = shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2 * shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_3;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12 = shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_2;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf = shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2 * shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_3;
-  shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_12 = shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 * shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_2;
-  shared->dim_n_ICU_W_D_conf_progress = shared->dim_n_ICU_W_D_conf_progress_1 * shared->dim_n_ICU_W_D_conf_progress_2 * shared->dim_n_ICU_W_D_conf_progress_3 * shared->dim_n_ICU_W_D_conf_progress_4;
-  shared->dim_n_ICU_W_D_conf_progress_12 = shared->dim_n_ICU_W_D_conf_progress_1 * shared->dim_n_ICU_W_D_conf_progress_2;
-  shared->dim_n_ICU_W_D_conf_progress_123 = shared->dim_n_ICU_W_D_conf_progress_1 * shared->dim_n_ICU_W_D_conf_progress_2 * shared->dim_n_ICU_W_D_conf_progress_3;
-  shared->dim_n_ICU_W_D_unconf_progress = shared->dim_n_ICU_W_D_unconf_progress_1 * shared->dim_n_ICU_W_D_unconf_progress_2 * shared->dim_n_ICU_W_D_unconf_progress_3 * shared->dim_n_ICU_W_D_unconf_progress_4;
-  shared->dim_n_ICU_W_D_unconf_progress_12 = shared->dim_n_ICU_W_D_unconf_progress_1 * shared->dim_n_ICU_W_D_unconf_progress_2;
-  shared->dim_n_ICU_W_D_unconf_progress_123 = shared->dim_n_ICU_W_D_unconf_progress_1 * shared->dim_n_ICU_W_D_unconf_progress_2 * shared->dim_n_ICU_W_D_unconf_progress_3;
-  shared->dim_n_ICU_W_D_unconf_to_conf = shared->dim_n_ICU_W_D_unconf_to_conf_1 * shared->dim_n_ICU_W_D_unconf_to_conf_2 * shared->dim_n_ICU_W_D_unconf_to_conf_3 * shared->dim_n_ICU_W_D_unconf_to_conf_4;
-  shared->dim_n_ICU_W_D_unconf_to_conf_12 = shared->dim_n_ICU_W_D_unconf_to_conf_1 * shared->dim_n_ICU_W_D_unconf_to_conf_2;
-  shared->dim_n_ICU_W_D_unconf_to_conf_123 = shared->dim_n_ICU_W_D_unconf_to_conf_1 * shared->dim_n_ICU_W_D_unconf_to_conf_2 * shared->dim_n_ICU_W_D_unconf_to_conf_3;
-  shared->dim_n_ICU_W_R_conf_progress = shared->dim_n_ICU_W_R_conf_progress_1 * shared->dim_n_ICU_W_R_conf_progress_2 * shared->dim_n_ICU_W_R_conf_progress_3 * shared->dim_n_ICU_W_R_conf_progress_4;
-  shared->dim_n_ICU_W_R_conf_progress_12 = shared->dim_n_ICU_W_R_conf_progress_1 * shared->dim_n_ICU_W_R_conf_progress_2;
-  shared->dim_n_ICU_W_R_conf_progress_123 = shared->dim_n_ICU_W_R_conf_progress_1 * shared->dim_n_ICU_W_R_conf_progress_2 * shared->dim_n_ICU_W_R_conf_progress_3;
-  shared->dim_n_ICU_W_R_unconf_progress = shared->dim_n_ICU_W_R_unconf_progress_1 * shared->dim_n_ICU_W_R_unconf_progress_2 * shared->dim_n_ICU_W_R_unconf_progress_3 * shared->dim_n_ICU_W_R_unconf_progress_4;
-  shared->dim_n_ICU_W_R_unconf_progress_12 = shared->dim_n_ICU_W_R_unconf_progress_1 * shared->dim_n_ICU_W_R_unconf_progress_2;
-  shared->dim_n_ICU_W_R_unconf_progress_123 = shared->dim_n_ICU_W_R_unconf_progress_1 * shared->dim_n_ICU_W_R_unconf_progress_2 * shared->dim_n_ICU_W_R_unconf_progress_3;
-  shared->dim_n_ICU_W_R_unconf_to_conf = shared->dim_n_ICU_W_R_unconf_to_conf_1 * shared->dim_n_ICU_W_R_unconf_to_conf_2 * shared->dim_n_ICU_W_R_unconf_to_conf_3 * shared->dim_n_ICU_W_R_unconf_to_conf_4;
-  shared->dim_n_ICU_W_R_unconf_to_conf_12 = shared->dim_n_ICU_W_R_unconf_to_conf_1 * shared->dim_n_ICU_W_R_unconf_to_conf_2;
-  shared->dim_n_ICU_W_R_unconf_to_conf_123 = shared->dim_n_ICU_W_R_unconf_to_conf_1 * shared->dim_n_ICU_W_R_unconf_to_conf_2 * shared->dim_n_ICU_W_R_unconf_to_conf_3;
-  shared->dim_n_II_A = shared->dim_n_II_A_1 * shared->dim_n_II_A_2 * shared->dim_n_II_A_3 * shared->dim_n_II_A_4;
-  shared->dim_n_II_A_12 = shared->dim_n_II_A_1 * shared->dim_n_II_A_2;
-  shared->dim_n_II_A_123 = shared->dim_n_II_A_1 * shared->dim_n_II_A_2 * shared->dim_n_II_A_3;
-  shared->dim_n_II_A_next_vacc_class = shared->dim_n_II_A_next_vacc_class_1 * shared->dim_n_II_A_next_vacc_class_2 * shared->dim_n_II_A_next_vacc_class_3 * shared->dim_n_II_A_next_vacc_class_4;
-  shared->dim_n_II_A_next_vacc_class_12 = shared->dim_n_II_A_next_vacc_class_1 * shared->dim_n_II_A_next_vacc_class_2;
-  shared->dim_n_II_A_next_vacc_class_123 = shared->dim_n_II_A_next_vacc_class_1 * shared->dim_n_II_A_next_vacc_class_2 * shared->dim_n_II_A_next_vacc_class_3;
+  shared->dim_n_I_C_to_hosp = shared->dim_n_I_C_to_hosp_1 * shared->dim_n_I_C_to_hosp_2 * shared->dim_n_I_C_to_hosp_3;
+  shared->dim_n_I_C_to_hosp_12 = shared->dim_n_I_C_to_hosp_1 * shared->dim_n_I_C_to_hosp_2;
+  shared->dim_n_RS = shared->dim_n_RS_1 * shared->dim_n_RS_2 * shared->dim_n_RS_3;
+  shared->dim_n_RS_12 = shared->dim_n_RS_1 * shared->dim_n_RS_2;
+  shared->dim_n_RS_next_vacc_class = shared->dim_n_RS_next_vacc_class_1 * shared->dim_n_RS_next_vacc_class_2 * shared->dim_n_RS_next_vacc_class_3;
+  shared->dim_n_RS_next_vacc_class_12 = shared->dim_n_RS_next_vacc_class_1 * shared->dim_n_RS_next_vacc_class_2;
   shared->dim_n_R_next_vacc_class = shared->dim_n_R_next_vacc_class_1 * shared->dim_n_R_next_vacc_class_2 * shared->dim_n_R_next_vacc_class_3;
   shared->dim_n_R_next_vacc_class_12 = shared->dim_n_R_next_vacc_class_1 * shared->dim_n_R_next_vacc_class_2;
   shared->dim_n_R_next_vacc_class_capped = shared->dim_n_R_next_vacc_class_capped_1 * shared->dim_n_R_next_vacc_class_capped_2 * shared->dim_n_R_next_vacc_class_capped_3;
@@ -5655,18 +5685,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_R_progress_capped_12 = shared->dim_n_R_progress_capped_1 * shared->dim_n_R_progress_capped_2;
   shared->dim_n_R_progress_tmp = shared->dim_n_R_progress_tmp_1 * shared->dim_n_R_progress_tmp_2 * shared->dim_n_R_progress_tmp_3;
   shared->dim_n_R_progress_tmp_12 = shared->dim_n_R_progress_tmp_1 * shared->dim_n_R_progress_tmp_2;
-  shared->dim_n_RS = shared->dim_n_RS_1 * shared->dim_n_RS_2 * shared->dim_n_RS_3;
-  shared->dim_n_RS_12 = shared->dim_n_RS_1 * shared->dim_n_RS_2;
-  shared->dim_n_RS_next_vacc_class = shared->dim_n_RS_next_vacc_class_1 * shared->dim_n_RS_next_vacc_class_2 * shared->dim_n_RS_next_vacc_class_3;
-  shared->dim_n_RS_next_vacc_class_12 = shared->dim_n_RS_next_vacc_class_1 * shared->dim_n_RS_next_vacc_class_2;
-  shared->dim_n_S_next_vacc_class = shared->dim_n_S_next_vacc_class_1 * shared->dim_n_S_next_vacc_class_2;
-  shared->dim_n_S_progress = shared->dim_n_S_progress_1 * shared->dim_n_S_progress_2 * shared->dim_n_S_progress_3;
-  shared->dim_n_S_progress_12 = shared->dim_n_S_progress_1 * shared->dim_n_S_progress_2;
-  shared->dim_n_S_progress_tot = shared->dim_n_S_progress_tot_1 * shared->dim_n_S_progress_tot_2;
   shared->dim_n_SE = shared->dim_n_SE_1 * shared->dim_n_SE_2 * shared->dim_n_SE_3;
   shared->dim_n_SE_12 = shared->dim_n_SE_1 * shared->dim_n_SE_2;
   shared->dim_n_SE_next_vacc_class = shared->dim_n_SE_next_vacc_class_1 * shared->dim_n_SE_next_vacc_class_2 * shared->dim_n_SE_next_vacc_class_3;
   shared->dim_n_SE_next_vacc_class_12 = shared->dim_n_SE_next_vacc_class_1 * shared->dim_n_SE_next_vacc_class_2;
+  shared->dim_n_S_next_vacc_class = shared->dim_n_S_next_vacc_class_1 * shared->dim_n_S_next_vacc_class_2;
+  shared->dim_n_S_progress = shared->dim_n_S_progress_1 * shared->dim_n_S_progress_2 * shared->dim_n_S_progress_3;
+  shared->dim_n_S_progress_12 = shared->dim_n_S_progress_1 * shared->dim_n_S_progress_2;
+  shared->dim_n_S_progress_tot = shared->dim_n_S_progress_tot_1 * shared->dim_n_S_progress_tot_2;
   shared->dim_n_T_PCR_pos_progress = shared->dim_n_T_PCR_pos_progress_1 * shared->dim_n_T_PCR_pos_progress_2 * shared->dim_n_T_PCR_pos_progress_3 * shared->dim_n_T_PCR_pos_progress_4;
   shared->dim_n_T_PCR_pos_progress_12 = shared->dim_n_T_PCR_pos_progress_1 * shared->dim_n_T_PCR_pos_progress_2;
   shared->dim_n_T_PCR_pos_progress_123 = shared->dim_n_T_PCR_pos_progress_1 * shared->dim_n_T_PCR_pos_progress_2 * shared->dim_n_T_PCR_pos_progress_3;
@@ -5699,6 +5725,11 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_W_R_unconf_to_conf = shared->dim_n_W_R_unconf_to_conf_1 * shared->dim_n_W_R_unconf_to_conf_2 * shared->dim_n_W_R_unconf_to_conf_3 * shared->dim_n_W_R_unconf_to_conf_4;
   shared->dim_n_W_R_unconf_to_conf_12 = shared->dim_n_W_R_unconf_to_conf_1 * shared->dim_n_W_R_unconf_to_conf_2;
   shared->dim_n_W_R_unconf_to_conf_123 = shared->dim_n_W_R_unconf_to_conf_1 * shared->dim_n_W_R_unconf_to_conf_2 * shared->dim_n_W_R_unconf_to_conf_3;
+  shared->dim_n_com_to_T_sero_pre = shared->dim_n_com_to_T_sero_pre_1 * shared->dim_n_com_to_T_sero_pre_2 * shared->dim_n_com_to_T_sero_pre_3 * shared->dim_n_com_to_T_sero_pre_4;
+  shared->dim_n_com_to_T_sero_pre_12 = shared->dim_n_com_to_T_sero_pre_1 * shared->dim_n_com_to_T_sero_pre_2;
+  shared->dim_n_com_to_T_sero_pre_123 = shared->dim_n_com_to_T_sero_pre_1 * shared->dim_n_com_to_T_sero_pre_2 * shared->dim_n_com_to_T_sero_pre_3;
+  shared->dim_n_hosp_non_ICU = shared->dim_n_hosp_non_ICU_1 * shared->dim_n_hosp_non_ICU_2 * shared->dim_n_hosp_non_ICU_3;
+  shared->dim_n_hosp_non_ICU_12 = shared->dim_n_hosp_non_ICU_1 * shared->dim_n_hosp_non_ICU_2;
   shared->dim_new_E = shared->dim_new_E_1 * shared->dim_new_E_2 * shared->dim_new_E_3 * shared->dim_new_E_4;
   shared->dim_new_E_12 = shared->dim_new_E_1 * shared->dim_new_E_2;
   shared->dim_new_E_123 = shared->dim_new_E_1 * shared->dim_new_E_2 * shared->dim_new_E_3;
@@ -5717,24 +5748,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_new_H_R_unconf = shared->dim_new_H_R_unconf_1 * shared->dim_new_H_R_unconf_2 * shared->dim_new_H_R_unconf_3 * shared->dim_new_H_R_unconf_4;
   shared->dim_new_H_R_unconf_12 = shared->dim_new_H_R_unconf_1 * shared->dim_new_H_R_unconf_2;
   shared->dim_new_H_R_unconf_123 = shared->dim_new_H_R_unconf_1 * shared->dim_new_H_R_unconf_2 * shared->dim_new_H_R_unconf_3;
-  shared->dim_new_I_A = shared->dim_new_I_A_1 * shared->dim_new_I_A_2 * shared->dim_new_I_A_3 * shared->dim_new_I_A_4;
-  shared->dim_new_I_A_12 = shared->dim_new_I_A_1 * shared->dim_new_I_A_2;
-  shared->dim_new_I_A_123 = shared->dim_new_I_A_1 * shared->dim_new_I_A_2 * shared->dim_new_I_A_3;
-  shared->dim_new_I_C = shared->dim_new_I_C_1 * shared->dim_new_I_C_2 * shared->dim_new_I_C_3 * shared->dim_new_I_C_4;
-  shared->dim_new_I_C_12 = shared->dim_new_I_C_1 * shared->dim_new_I_C_2;
-  shared->dim_new_I_C_123 = shared->dim_new_I_C_1 * shared->dim_new_I_C_2 * shared->dim_new_I_C_3;
   shared->dim_new_ICU_D_conf = shared->dim_new_ICU_D_conf_1 * shared->dim_new_ICU_D_conf_2 * shared->dim_new_ICU_D_conf_3 * shared->dim_new_ICU_D_conf_4;
   shared->dim_new_ICU_D_conf_12 = shared->dim_new_ICU_D_conf_1 * shared->dim_new_ICU_D_conf_2;
   shared->dim_new_ICU_D_conf_123 = shared->dim_new_ICU_D_conf_1 * shared->dim_new_ICU_D_conf_2 * shared->dim_new_ICU_D_conf_3;
   shared->dim_new_ICU_D_unconf = shared->dim_new_ICU_D_unconf_1 * shared->dim_new_ICU_D_unconf_2 * shared->dim_new_ICU_D_unconf_3 * shared->dim_new_ICU_D_unconf_4;
   shared->dim_new_ICU_D_unconf_12 = shared->dim_new_ICU_D_unconf_1 * shared->dim_new_ICU_D_unconf_2;
   shared->dim_new_ICU_D_unconf_123 = shared->dim_new_ICU_D_unconf_1 * shared->dim_new_ICU_D_unconf_2 * shared->dim_new_ICU_D_unconf_3;
-  shared->dim_new_ICU_pre_conf = shared->dim_new_ICU_pre_conf_1 * shared->dim_new_ICU_pre_conf_2 * shared->dim_new_ICU_pre_conf_3 * shared->dim_new_ICU_pre_conf_4;
-  shared->dim_new_ICU_pre_conf_12 = shared->dim_new_ICU_pre_conf_1 * shared->dim_new_ICU_pre_conf_2;
-  shared->dim_new_ICU_pre_conf_123 = shared->dim_new_ICU_pre_conf_1 * shared->dim_new_ICU_pre_conf_2 * shared->dim_new_ICU_pre_conf_3;
-  shared->dim_new_ICU_pre_unconf = shared->dim_new_ICU_pre_unconf_1 * shared->dim_new_ICU_pre_unconf_2 * shared->dim_new_ICU_pre_unconf_3 * shared->dim_new_ICU_pre_unconf_4;
-  shared->dim_new_ICU_pre_unconf_12 = shared->dim_new_ICU_pre_unconf_1 * shared->dim_new_ICU_pre_unconf_2;
-  shared->dim_new_ICU_pre_unconf_123 = shared->dim_new_ICU_pre_unconf_1 * shared->dim_new_ICU_pre_unconf_2 * shared->dim_new_ICU_pre_unconf_3;
   shared->dim_new_ICU_W_D_conf = shared->dim_new_ICU_W_D_conf_1 * shared->dim_new_ICU_W_D_conf_2 * shared->dim_new_ICU_W_D_conf_3 * shared->dim_new_ICU_W_D_conf_4;
   shared->dim_new_ICU_W_D_conf_12 = shared->dim_new_ICU_W_D_conf_1 * shared->dim_new_ICU_W_D_conf_2;
   shared->dim_new_ICU_W_D_conf_123 = shared->dim_new_ICU_W_D_conf_1 * shared->dim_new_ICU_W_D_conf_2 * shared->dim_new_ICU_W_D_conf_3;
@@ -5747,6 +5766,18 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_new_ICU_W_R_unconf = shared->dim_new_ICU_W_R_unconf_1 * shared->dim_new_ICU_W_R_unconf_2 * shared->dim_new_ICU_W_R_unconf_3 * shared->dim_new_ICU_W_R_unconf_4;
   shared->dim_new_ICU_W_R_unconf_12 = shared->dim_new_ICU_W_R_unconf_1 * shared->dim_new_ICU_W_R_unconf_2;
   shared->dim_new_ICU_W_R_unconf_123 = shared->dim_new_ICU_W_R_unconf_1 * shared->dim_new_ICU_W_R_unconf_2 * shared->dim_new_ICU_W_R_unconf_3;
+  shared->dim_new_ICU_pre_conf = shared->dim_new_ICU_pre_conf_1 * shared->dim_new_ICU_pre_conf_2 * shared->dim_new_ICU_pre_conf_3 * shared->dim_new_ICU_pre_conf_4;
+  shared->dim_new_ICU_pre_conf_12 = shared->dim_new_ICU_pre_conf_1 * shared->dim_new_ICU_pre_conf_2;
+  shared->dim_new_ICU_pre_conf_123 = shared->dim_new_ICU_pre_conf_1 * shared->dim_new_ICU_pre_conf_2 * shared->dim_new_ICU_pre_conf_3;
+  shared->dim_new_ICU_pre_unconf = shared->dim_new_ICU_pre_unconf_1 * shared->dim_new_ICU_pre_unconf_2 * shared->dim_new_ICU_pre_unconf_3 * shared->dim_new_ICU_pre_unconf_4;
+  shared->dim_new_ICU_pre_unconf_12 = shared->dim_new_ICU_pre_unconf_1 * shared->dim_new_ICU_pre_unconf_2;
+  shared->dim_new_ICU_pre_unconf_123 = shared->dim_new_ICU_pre_unconf_1 * shared->dim_new_ICU_pre_unconf_2 * shared->dim_new_ICU_pre_unconf_3;
+  shared->dim_new_I_A = shared->dim_new_I_A_1 * shared->dim_new_I_A_2 * shared->dim_new_I_A_3 * shared->dim_new_I_A_4;
+  shared->dim_new_I_A_12 = shared->dim_new_I_A_1 * shared->dim_new_I_A_2;
+  shared->dim_new_I_A_123 = shared->dim_new_I_A_1 * shared->dim_new_I_A_2 * shared->dim_new_I_A_3;
+  shared->dim_new_I_C = shared->dim_new_I_C_1 * shared->dim_new_I_C_2 * shared->dim_new_I_C_3 * shared->dim_new_I_C_4;
+  shared->dim_new_I_C_12 = shared->dim_new_I_C_1 * shared->dim_new_I_C_2;
+  shared->dim_new_I_C_123 = shared->dim_new_I_C_1 * shared->dim_new_I_C_2 * shared->dim_new_I_C_3;
   shared->dim_new_R = shared->dim_new_R_1 * shared->dim_new_R_2 * shared->dim_new_R_3;
   shared->dim_new_R_12 = shared->dim_new_R_1 * shared->dim_new_R_2;
   shared->dim_new_S = shared->dim_new_S_1 * shared->dim_new_S_2;
@@ -5786,96 +5817,60 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_p_I_A_next_vacc_class_123 = shared->dim_p_I_A_next_vacc_class_1 * shared->dim_p_I_A_next_vacc_class_2 * shared->dim_p_I_A_next_vacc_class_3;
   shared->dim_p_R_next_vacc_class = shared->dim_p_R_next_vacc_class_1 * shared->dim_p_R_next_vacc_class_2 * shared->dim_p_R_next_vacc_class_3;
   shared->dim_p_R_next_vacc_class_12 = shared->dim_p_R_next_vacc_class_1 * shared->dim_p_R_next_vacc_class_2;
-  shared->dim_p_S_next_vacc_class = shared->dim_p_S_next_vacc_class_1 * shared->dim_p_S_next_vacc_class_2;
   shared->dim_p_SE = shared->dim_p_SE_1 * shared->dim_p_SE_2;
+  shared->dim_p_S_next_vacc_class = shared->dim_p_S_next_vacc_class_1 * shared->dim_p_S_next_vacc_class_2;
   shared->dim_p_T_sero_pre_progress = shared->dim_p_T_sero_pre_progress_1 * shared->dim_p_T_sero_pre_progress_2 * shared->dim_p_T_sero_pre_progress_3 * shared->dim_p_T_sero_pre_progress_4;
   shared->dim_p_T_sero_pre_progress_12 = shared->dim_p_T_sero_pre_progress_1 * shared->dim_p_T_sero_pre_progress_2;
   shared->dim_p_T_sero_pre_progress_123 = shared->dim_p_T_sero_pre_progress_1 * shared->dim_p_T_sero_pre_progress_2 * shared->dim_p_T_sero_pre_progress_3;
-  shared->dim_R = shared->dim_R_1 * shared->dim_R_2 * shared->dim_R_3;
-  shared->dim_R_12 = shared->dim_R_1 * shared->dim_R_2;
   shared->dim_rel_infectivity = shared->dim_rel_infectivity_1 * shared->dim_rel_infectivity_2;
   shared->dim_rel_p_hosp_if_sympt = shared->dim_rel_p_hosp_if_sympt_1 * shared->dim_rel_p_hosp_if_sympt_2;
   shared->dim_rel_p_sympt = shared->dim_rel_p_sympt_1 * shared->dim_rel_p_sympt_2;
-  shared->dim_S = shared->dim_S_1 * shared->dim_S_2;
-  shared->dim_T_PCR_neg = shared->dim_T_PCR_neg_1 * shared->dim_T_PCR_neg_2 * shared->dim_T_PCR_neg_3;
-  shared->dim_T_PCR_neg_12 = shared->dim_T_PCR_neg_1 * shared->dim_T_PCR_neg_2;
-  shared->dim_T_PCR_pos = shared->dim_T_PCR_pos_1 * shared->dim_T_PCR_pos_2 * shared->dim_T_PCR_pos_3 * shared->dim_T_PCR_pos_4;
-  shared->dim_T_PCR_pos_12 = shared->dim_T_PCR_pos_1 * shared->dim_T_PCR_pos_2;
-  shared->dim_T_PCR_pos_123 = shared->dim_T_PCR_pos_1 * shared->dim_T_PCR_pos_2 * shared->dim_T_PCR_pos_3;
-  shared->dim_T_PCR_pre = shared->dim_T_PCR_pre_1 * shared->dim_T_PCR_pre_2 * shared->dim_T_PCR_pre_3 * shared->dim_T_PCR_pre_4;
-  shared->dim_T_PCR_pre_12 = shared->dim_T_PCR_pre_1 * shared->dim_T_PCR_pre_2;
-  shared->dim_T_PCR_pre_123 = shared->dim_T_PCR_pre_1 * shared->dim_T_PCR_pre_2 * shared->dim_T_PCR_pre_3;
-  shared->dim_T_sero_neg = shared->dim_T_sero_neg_1 * shared->dim_T_sero_neg_2 * shared->dim_T_sero_neg_3;
-  shared->dim_T_sero_neg_12 = shared->dim_T_sero_neg_1 * shared->dim_T_sero_neg_2;
-  shared->dim_T_sero_pos = shared->dim_T_sero_pos_1 * shared->dim_T_sero_pos_2 * shared->dim_T_sero_pos_3 * shared->dim_T_sero_pos_4;
-  shared->dim_T_sero_pos_12 = shared->dim_T_sero_pos_1 * shared->dim_T_sero_pos_2;
-  shared->dim_T_sero_pos_123 = shared->dim_T_sero_pos_1 * shared->dim_T_sero_pos_2 * shared->dim_T_sero_pos_3;
-  shared->dim_T_sero_pre = shared->dim_T_sero_pre_1 * shared->dim_T_sero_pre_2 * shared->dim_T_sero_pre_3 * shared->dim_T_sero_pre_4;
-  shared->dim_T_sero_pre_12 = shared->dim_T_sero_pre_1 * shared->dim_T_sero_pre_2;
-  shared->dim_T_sero_pre_123 = shared->dim_T_sero_pre_1 * shared->dim_T_sero_pre_2 * shared->dim_T_sero_pre_3;
   shared->dim_vaccine_probability = shared->dim_vaccine_probability_1 * shared->dim_vaccine_probability_2;
   shared->dim_vaccine_progression_rate_base = shared->dim_vaccine_progression_rate_base_1 * shared->dim_vaccine_progression_rate_base_2;
-  shared->dim_W_D_conf = shared->dim_W_D_conf_1 * shared->dim_W_D_conf_2 * shared->dim_W_D_conf_3 * shared->dim_W_D_conf_4;
-  shared->dim_W_D_conf_12 = shared->dim_W_D_conf_1 * shared->dim_W_D_conf_2;
-  shared->dim_W_D_conf_123 = shared->dim_W_D_conf_1 * shared->dim_W_D_conf_2 * shared->dim_W_D_conf_3;
-  shared->dim_W_D_unconf = shared->dim_W_D_unconf_1 * shared->dim_W_D_unconf_2 * shared->dim_W_D_unconf_3 * shared->dim_W_D_unconf_4;
-  shared->dim_W_D_unconf_12 = shared->dim_W_D_unconf_1 * shared->dim_W_D_unconf_2;
-  shared->dim_W_D_unconf_123 = shared->dim_W_D_unconf_1 * shared->dim_W_D_unconf_2 * shared->dim_W_D_unconf_3;
-  shared->dim_W_R_conf = shared->dim_W_R_conf_1 * shared->dim_W_R_conf_2 * shared->dim_W_R_conf_3 * shared->dim_W_R_conf_4;
-  shared->dim_W_R_conf_12 = shared->dim_W_R_conf_1 * shared->dim_W_R_conf_2;
-  shared->dim_W_R_conf_123 = shared->dim_W_R_conf_1 * shared->dim_W_R_conf_2 * shared->dim_W_R_conf_3;
-  shared->dim_W_R_unconf = shared->dim_W_R_unconf_1 * shared->dim_W_R_unconf_2 * shared->dim_W_R_unconf_3 * shared->dim_W_R_unconf_4;
-  shared->dim_W_R_unconf_12 = shared->dim_W_R_unconf_1 * shared->dim_W_R_unconf_2;
-  shared->dim_W_R_unconf_123 = shared->dim_W_R_unconf_1 * shared->dim_W_R_unconf_2 * shared->dim_W_R_unconf_3;
   for (int i = 1; i <= shared->dim_prob_strain_1; ++i) {
     for (int j = 1; j <= shared->dim_prob_strain_2; ++j) {
       shared->initial_prob_strain[i - 1 + shared->dim_prob_strain_1 * (j - 1)] = 0;
     }
   }
+  internal.I_weighted_strain = std::vector<real_t>(shared->dim_I_weighted_strain);
+  internal.I_with_diff_trans = std::vector<real_t>(shared->dim_I_with_diff_trans);
   internal.aux_E = std::vector<real_t>(shared->dim_aux_E);
   internal.aux_G_D = std::vector<real_t>(shared->dim_aux_G_D);
   internal.aux_H_D_conf = std::vector<real_t>(shared->dim_aux_H_D_conf);
   internal.aux_H_D_unconf = std::vector<real_t>(shared->dim_aux_H_D_unconf);
   internal.aux_H_R_conf = std::vector<real_t>(shared->dim_aux_H_R_conf);
   internal.aux_H_R_unconf = std::vector<real_t>(shared->dim_aux_H_R_unconf);
-  internal.aux_I_A = std::vector<real_t>(shared->dim_aux_I_A);
-  internal.aux_I_C = std::vector<real_t>(shared->dim_aux_I_C);
   internal.aux_ICU_D_conf = std::vector<real_t>(shared->dim_aux_ICU_D_conf);
   internal.aux_ICU_D_unconf = std::vector<real_t>(shared->dim_aux_ICU_D_unconf);
-  internal.aux_ICU_pre_conf = std::vector<real_t>(shared->dim_aux_ICU_pre_conf);
-  internal.aux_ICU_pre_unconf = std::vector<real_t>(shared->dim_aux_ICU_pre_unconf);
   internal.aux_ICU_W_D_conf = std::vector<real_t>(shared->dim_aux_ICU_W_D_conf);
   internal.aux_ICU_W_D_unconf = std::vector<real_t>(shared->dim_aux_ICU_W_D_unconf);
   internal.aux_ICU_W_R_conf = std::vector<real_t>(shared->dim_aux_ICU_W_R_conf);
   internal.aux_ICU_W_R_unconf = std::vector<real_t>(shared->dim_aux_ICU_W_R_unconf);
+  internal.aux_ICU_pre_conf = std::vector<real_t>(shared->dim_aux_ICU_pre_conf);
+  internal.aux_ICU_pre_unconf = std::vector<real_t>(shared->dim_aux_ICU_pre_unconf);
+  internal.aux_I_A = std::vector<real_t>(shared->dim_aux_I_A);
+  internal.aux_I_C = std::vector<real_t>(shared->dim_aux_I_C);
   internal.aux_W_D_conf = std::vector<real_t>(shared->dim_aux_W_D_conf);
   internal.aux_W_D_unconf = std::vector<real_t>(shared->dim_aux_W_D_unconf);
   internal.aux_W_R_conf = std::vector<real_t>(shared->dim_aux_W_R_conf);
   internal.aux_W_R_unconf = std::vector<real_t>(shared->dim_aux_W_R_unconf);
-  internal.I_weighted_strain = std::vector<real_t>(shared->dim_I_weighted_strain);
-  internal.I_with_diff_trans = std::vector<real_t>(shared->dim_I_with_diff_trans);
-  shared->initial_cum_n_E_vaccinated = std::vector<real_t>(shared->dim_cum_n_E_vaccinated);
-  shared->initial_cum_n_I_A_vaccinated = std::vector<real_t>(shared->dim_cum_n_I_A_vaccinated);
-  shared->initial_cum_n_R_vaccinated = std::vector<real_t>(shared->dim_cum_n_R_vaccinated);
-  shared->initial_cum_n_S_vaccinated = std::vector<real_t>(shared->dim_cum_n_S_vaccinated);
-  shared->initial_cum_n_vaccinated = std::vector<real_t>(shared->dim_cum_n_vaccinated);
   shared->initial_E = std::vector<real_t>(shared->dim_E);
   shared->initial_G_D = std::vector<real_t>(shared->dim_G_D);
   shared->initial_H_D_conf = std::vector<real_t>(shared->dim_H_D_conf);
   shared->initial_H_D_unconf = std::vector<real_t>(shared->dim_H_D_unconf);
   shared->initial_H_R_conf = std::vector<real_t>(shared->dim_H_R_conf);
   shared->initial_H_R_unconf = std::vector<real_t>(shared->dim_H_R_unconf);
-  shared->initial_I_A = std::vector<real_t>(shared->dim_I_A);
-  shared->initial_I_C = std::vector<real_t>(shared->dim_I_C);
-  shared->initial_I_weighted = std::vector<real_t>(shared->dim_I_weighted);
   shared->initial_ICU_D_conf = std::vector<real_t>(shared->dim_ICU_D_conf);
   shared->initial_ICU_D_unconf = std::vector<real_t>(shared->dim_ICU_D_unconf);
-  shared->initial_ICU_pre_conf = std::vector<real_t>(shared->dim_ICU_pre_conf);
-  shared->initial_ICU_pre_unconf = std::vector<real_t>(shared->dim_ICU_pre_unconf);
   shared->initial_ICU_W_D_conf = std::vector<real_t>(shared->dim_ICU_W_D_conf);
   shared->initial_ICU_W_D_unconf = std::vector<real_t>(shared->dim_ICU_W_D_unconf);
   shared->initial_ICU_W_R_conf = std::vector<real_t>(shared->dim_ICU_W_R_conf);
   shared->initial_ICU_W_R_unconf = std::vector<real_t>(shared->dim_ICU_W_R_unconf);
+  shared->initial_ICU_pre_conf = std::vector<real_t>(shared->dim_ICU_pre_conf);
+  shared->initial_ICU_pre_unconf = std::vector<real_t>(shared->dim_ICU_pre_unconf);
+  shared->initial_I_A = std::vector<real_t>(shared->dim_I_A);
+  shared->initial_I_C = std::vector<real_t>(shared->dim_I_C);
+  shared->initial_I_weighted = std::vector<real_t>(shared->dim_I_weighted);
   shared->initial_R = std::vector<real_t>(shared->dim_R);
   shared->initial_S = std::vector<real_t>(shared->dim_S);
   shared->initial_T_PCR_neg = std::vector<real_t>(shared->dim_T_PCR_neg);
@@ -5888,15 +5883,19 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_W_D_unconf = std::vector<real_t>(shared->dim_W_D_unconf);
   shared->initial_W_R_conf = std::vector<real_t>(shared->dim_W_R_conf);
   shared->initial_W_R_unconf = std::vector<real_t>(shared->dim_W_R_unconf);
-  internal.n_com_to_T_sero_pre = std::vector<real_t>(shared->dim_n_com_to_T_sero_pre);
-  internal.n_E_next_vacc_class = std::vector<real_t>(shared->dim_n_E_next_vacc_class);
-  internal.n_E_progress = std::vector<real_t>(shared->dim_n_E_progress);
+  shared->initial_cum_n_E_vaccinated = std::vector<real_t>(shared->dim_cum_n_E_vaccinated);
+  shared->initial_cum_n_I_A_vaccinated = std::vector<real_t>(shared->dim_cum_n_I_A_vaccinated);
+  shared->initial_cum_n_R_vaccinated = std::vector<real_t>(shared->dim_cum_n_R_vaccinated);
+  shared->initial_cum_n_S_vaccinated = std::vector<real_t>(shared->dim_cum_n_S_vaccinated);
+  shared->initial_cum_n_vaccinated = std::vector<real_t>(shared->dim_cum_n_vaccinated);
   internal.n_EE = std::vector<real_t>(shared->dim_n_EE);
   internal.n_EE_next_vacc_class = std::vector<real_t>(shared->dim_n_EE_next_vacc_class);
   internal.n_EI_A = std::vector<real_t>(shared->dim_n_EI_A);
   internal.n_EI_A_next_vacc_class = std::vector<real_t>(shared->dim_n_EI_A_next_vacc_class);
   internal.n_EI_C = std::vector<real_t>(shared->dim_n_EI_C);
   internal.n_EI_C_next_vacc_class = std::vector<real_t>(shared->dim_n_EI_C_next_vacc_class);
+  internal.n_E_next_vacc_class = std::vector<real_t>(shared->dim_n_E_next_vacc_class);
+  internal.n_E_progress = std::vector<real_t>(shared->dim_n_E_progress);
   internal.n_G_D_progress = std::vector<real_t>(shared->dim_n_G_D_progress);
   internal.n_H_D_conf_progress = std::vector<real_t>(shared->dim_n_H_D_conf_progress);
   internal.n_H_D_unconf_progress = std::vector<real_t>(shared->dim_n_H_D_unconf_progress);
@@ -5904,7 +5903,26 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.n_H_R_conf_progress = std::vector<real_t>(shared->dim_n_H_R_conf_progress);
   internal.n_H_R_unconf_progress = std::vector<real_t>(shared->dim_n_H_R_unconf_progress);
   internal.n_H_R_unconf_to_conf = std::vector<real_t>(shared->dim_n_H_R_unconf_to_conf);
-  internal.n_hosp_non_ICU = std::vector<real_t>(shared->dim_n_hosp_non_ICU);
+  internal.n_ICU_D_conf_progress = std::vector<real_t>(shared->dim_n_ICU_D_conf_progress);
+  internal.n_ICU_D_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_D_unconf_progress);
+  internal.n_ICU_D_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_D_unconf_to_conf);
+  internal.n_ICU_W_D_conf_progress = std::vector<real_t>(shared->dim_n_ICU_W_D_conf_progress);
+  internal.n_ICU_W_D_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_W_D_unconf_progress);
+  internal.n_ICU_W_D_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_W_D_unconf_to_conf);
+  internal.n_ICU_W_R_conf_progress = std::vector<real_t>(shared->dim_n_ICU_W_R_conf_progress);
+  internal.n_ICU_W_R_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_W_R_unconf_progress);
+  internal.n_ICU_W_R_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_W_R_unconf_to_conf);
+  internal.n_ICU_pre_conf_progress = std::vector<real_t>(shared->dim_n_ICU_pre_conf_progress);
+  internal.n_ICU_pre_conf_to_ICU_D_conf = std::vector<real_t>(shared->dim_n_ICU_pre_conf_to_ICU_D_conf);
+  internal.n_ICU_pre_conf_to_ICU_W_D_conf = std::vector<real_t>(shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf);
+  internal.n_ICU_pre_conf_to_ICU_W_R_conf = std::vector<real_t>(shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf);
+  internal.n_ICU_pre_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_progress);
+  internal.n_ICU_pre_unconf_to_ICU_D_unconf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf);
+  internal.n_ICU_pre_unconf_to_ICU_W_D_unconf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf);
+  internal.n_ICU_pre_unconf_to_ICU_W_R_unconf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf);
+  internal.n_ICU_pre_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_conf);
+  internal.n_II_A = std::vector<real_t>(shared->dim_n_II_A);
+  internal.n_II_A_next_vacc_class = std::vector<real_t>(shared->dim_n_II_A_next_vacc_class);
   internal.n_I_A_next_vacc_class = std::vector<real_t>(shared->dim_n_I_A_next_vacc_class);
   internal.n_I_A_progress = std::vector<real_t>(shared->dim_n_I_A_progress);
   internal.n_I_C_progress = std::vector<real_t>(shared->dim_n_I_C_progress);
@@ -5913,43 +5931,23 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.n_I_C_to_H_D_conf = std::vector<real_t>(shared->dim_n_I_C_to_H_D_conf);
   internal.n_I_C_to_H_R = std::vector<real_t>(shared->dim_n_I_C_to_H_R);
   internal.n_I_C_to_H_R_conf = std::vector<real_t>(shared->dim_n_I_C_to_H_R_conf);
-  internal.n_I_C_to_hosp = std::vector<real_t>(shared->dim_n_I_C_to_hosp);
   internal.n_I_C_to_ICU_pre = std::vector<real_t>(shared->dim_n_I_C_to_ICU_pre);
   internal.n_I_C_to_ICU_pre_conf = std::vector<real_t>(shared->dim_n_I_C_to_ICU_pre_conf);
   internal.n_I_C_to_R = std::vector<real_t>(shared->dim_n_I_C_to_R);
-  internal.n_ICU_D_conf_progress = std::vector<real_t>(shared->dim_n_ICU_D_conf_progress);
-  internal.n_ICU_D_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_D_unconf_progress);
-  internal.n_ICU_D_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_D_unconf_to_conf);
-  internal.n_ICU_pre_conf_progress = std::vector<real_t>(shared->dim_n_ICU_pre_conf_progress);
-  internal.n_ICU_pre_conf_to_ICU_D_conf = std::vector<real_t>(shared->dim_n_ICU_pre_conf_to_ICU_D_conf);
-  internal.n_ICU_pre_conf_to_ICU_W_D_conf = std::vector<real_t>(shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf);
-  internal.n_ICU_pre_conf_to_ICU_W_R_conf = std::vector<real_t>(shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf);
-  internal.n_ICU_pre_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_progress);
-  internal.n_ICU_pre_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_conf);
-  internal.n_ICU_pre_unconf_to_ICU_D_unconf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf);
-  internal.n_ICU_pre_unconf_to_ICU_W_D_unconf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf);
-  internal.n_ICU_pre_unconf_to_ICU_W_R_unconf = std::vector<real_t>(shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf);
-  internal.n_ICU_W_D_conf_progress = std::vector<real_t>(shared->dim_n_ICU_W_D_conf_progress);
-  internal.n_ICU_W_D_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_W_D_unconf_progress);
-  internal.n_ICU_W_D_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_W_D_unconf_to_conf);
-  internal.n_ICU_W_R_conf_progress = std::vector<real_t>(shared->dim_n_ICU_W_R_conf_progress);
-  internal.n_ICU_W_R_unconf_progress = std::vector<real_t>(shared->dim_n_ICU_W_R_unconf_progress);
-  internal.n_ICU_W_R_unconf_to_conf = std::vector<real_t>(shared->dim_n_ICU_W_R_unconf_to_conf);
-  internal.n_II_A = std::vector<real_t>(shared->dim_n_II_A);
-  internal.n_II_A_next_vacc_class = std::vector<real_t>(shared->dim_n_II_A_next_vacc_class);
+  internal.n_I_C_to_hosp = std::vector<real_t>(shared->dim_n_I_C_to_hosp);
+  internal.n_RS = std::vector<real_t>(shared->dim_n_RS);
+  internal.n_RS_next_vacc_class = std::vector<real_t>(shared->dim_n_RS_next_vacc_class);
   internal.n_R_next_vacc_class = std::vector<real_t>(shared->dim_n_R_next_vacc_class);
   internal.n_R_next_vacc_class_capped = std::vector<real_t>(shared->dim_n_R_next_vacc_class_capped);
   internal.n_R_next_vacc_class_tmp = std::vector<real_t>(shared->dim_n_R_next_vacc_class_tmp);
   internal.n_R_progress = std::vector<real_t>(shared->dim_n_R_progress);
   internal.n_R_progress_capped = std::vector<real_t>(shared->dim_n_R_progress_capped);
   internal.n_R_progress_tmp = std::vector<real_t>(shared->dim_n_R_progress_tmp);
-  internal.n_RS = std::vector<real_t>(shared->dim_n_RS);
-  internal.n_RS_next_vacc_class = std::vector<real_t>(shared->dim_n_RS_next_vacc_class);
+  internal.n_SE = std::vector<real_t>(shared->dim_n_SE);
+  internal.n_SE_next_vacc_class = std::vector<real_t>(shared->dim_n_SE_next_vacc_class);
   internal.n_S_next_vacc_class = std::vector<real_t>(shared->dim_n_S_next_vacc_class);
   internal.n_S_progress = std::vector<real_t>(shared->dim_n_S_progress);
   internal.n_S_progress_tot = std::vector<real_t>(shared->dim_n_S_progress_tot);
-  internal.n_SE = std::vector<real_t>(shared->dim_n_SE);
-  internal.n_SE_next_vacc_class = std::vector<real_t>(shared->dim_n_SE_next_vacc_class);
   internal.n_T_PCR_pos_progress = std::vector<real_t>(shared->dim_n_T_PCR_pos_progress);
   internal.n_T_PCR_pre_progress = std::vector<real_t>(shared->dim_n_T_PCR_pre_progress);
   internal.n_T_sero_pos_progress = std::vector<real_t>(shared->dim_n_T_sero_pos_progress);
@@ -5961,22 +5959,24 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.n_W_R_conf_progress = std::vector<real_t>(shared->dim_n_W_R_conf_progress);
   internal.n_W_R_unconf_progress = std::vector<real_t>(shared->dim_n_W_R_unconf_progress);
   internal.n_W_R_unconf_to_conf = std::vector<real_t>(shared->dim_n_W_R_unconf_to_conf);
+  internal.n_com_to_T_sero_pre = std::vector<real_t>(shared->dim_n_com_to_T_sero_pre);
+  internal.n_hosp_non_ICU = std::vector<real_t>(shared->dim_n_hosp_non_ICU);
   internal.new_E = std::vector<real_t>(shared->dim_new_E);
   internal.new_G_D = std::vector<real_t>(shared->dim_new_G_D);
   internal.new_H_D_conf = std::vector<real_t>(shared->dim_new_H_D_conf);
   internal.new_H_D_unconf = std::vector<real_t>(shared->dim_new_H_D_unconf);
   internal.new_H_R_conf = std::vector<real_t>(shared->dim_new_H_R_conf);
   internal.new_H_R_unconf = std::vector<real_t>(shared->dim_new_H_R_unconf);
-  internal.new_I_A = std::vector<real_t>(shared->dim_new_I_A);
-  internal.new_I_C = std::vector<real_t>(shared->dim_new_I_C);
   internal.new_ICU_D_conf = std::vector<real_t>(shared->dim_new_ICU_D_conf);
   internal.new_ICU_D_unconf = std::vector<real_t>(shared->dim_new_ICU_D_unconf);
-  internal.new_ICU_pre_conf = std::vector<real_t>(shared->dim_new_ICU_pre_conf);
-  internal.new_ICU_pre_unconf = std::vector<real_t>(shared->dim_new_ICU_pre_unconf);
   internal.new_ICU_W_D_conf = std::vector<real_t>(shared->dim_new_ICU_W_D_conf);
   internal.new_ICU_W_D_unconf = std::vector<real_t>(shared->dim_new_ICU_W_D_unconf);
   internal.new_ICU_W_R_conf = std::vector<real_t>(shared->dim_new_ICU_W_R_conf);
   internal.new_ICU_W_R_unconf = std::vector<real_t>(shared->dim_new_ICU_W_R_unconf);
+  internal.new_ICU_pre_conf = std::vector<real_t>(shared->dim_new_ICU_pre_conf);
+  internal.new_ICU_pre_unconf = std::vector<real_t>(shared->dim_new_ICU_pre_unconf);
+  internal.new_I_A = std::vector<real_t>(shared->dim_new_I_A);
+  internal.new_I_C = std::vector<real_t>(shared->dim_new_I_C);
   internal.new_R = std::vector<real_t>(shared->dim_new_R);
   internal.new_S = std::vector<real_t>(shared->dim_new_S);
   internal.new_T_PCR_neg = std::vector<real_t>(shared->dim_new_T_PCR_neg);
@@ -5992,35 +5992,10 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.p_E_next_vacc_class = std::vector<real_t>(shared->dim_p_E_next_vacc_class);
   internal.p_I_A_next_vacc_class = std::vector<real_t>(shared->dim_p_I_A_next_vacc_class);
   internal.p_R_next_vacc_class = std::vector<real_t>(shared->dim_p_R_next_vacc_class);
-  internal.p_S_next_vacc_class = std::vector<real_t>(shared->dim_p_S_next_vacc_class);
   internal.p_SE = std::vector<real_t>(shared->dim_p_SE);
+  internal.p_S_next_vacc_class = std::vector<real_t>(shared->dim_p_S_next_vacc_class);
   shared->p_T_sero_pre_progress = std::vector<real_t>(shared->dim_p_T_sero_pre_progress);
   internal.vaccine_probability = std::vector<real_t>(shared->dim_vaccine_probability);
-  for (int i = 1; i <= shared->dim_cum_n_E_vaccinated_1; ++i) {
-    for (int j = 1; j <= shared->dim_cum_n_E_vaccinated_2; ++j) {
-      shared->initial_cum_n_E_vaccinated[i - 1 + shared->dim_cum_n_E_vaccinated_1 * (j - 1)] = 0;
-    }
-  }
-  for (int i = 1; i <= shared->dim_cum_n_I_A_vaccinated_1; ++i) {
-    for (int j = 1; j <= shared->dim_cum_n_I_A_vaccinated_2; ++j) {
-      shared->initial_cum_n_I_A_vaccinated[i - 1 + shared->dim_cum_n_I_A_vaccinated_1 * (j - 1)] = 0;
-    }
-  }
-  for (int i = 1; i <= shared->dim_cum_n_R_vaccinated_1; ++i) {
-    for (int j = 1; j <= shared->dim_cum_n_R_vaccinated_2; ++j) {
-      shared->initial_cum_n_R_vaccinated[i - 1 + shared->dim_cum_n_R_vaccinated_1 * (j - 1)] = 0;
-    }
-  }
-  for (int i = 1; i <= shared->dim_cum_n_S_vaccinated_1; ++i) {
-    for (int j = 1; j <= shared->dim_cum_n_S_vaccinated_2; ++j) {
-      shared->initial_cum_n_S_vaccinated[i - 1 + shared->dim_cum_n_S_vaccinated_1 * (j - 1)] = 0;
-    }
-  }
-  for (int i = 1; i <= shared->dim_cum_n_vaccinated_1; ++i) {
-    for (int j = 1; j <= shared->dim_cum_n_vaccinated_2; ++j) {
-      shared->initial_cum_n_vaccinated[i - 1 + shared->dim_cum_n_vaccinated_1 * (j - 1)] = 0;
-    }
-  }
   for (int i = 1; i <= shared->dim_E_1; ++i) {
     for (int j = 1; j <= shared->dim_E_2; ++j) {
       for (int k = 1; k <= shared->dim_E_3; ++k) {
@@ -6075,29 +6050,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
       }
     }
   }
-  for (int i = 1; i <= shared->dim_I_A_1; ++i) {
-    for (int j = 1; j <= shared->dim_I_A_2; ++j) {
-      for (int k = 1; k <= shared->dim_I_A_3; ++k) {
-        for (int l = 1; l <= shared->dim_I_A_4; ++l) {
-          shared->initial_I_A[i - 1 + shared->dim_I_A_1 * (j - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_123 * (l - 1)] = 0;
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_I_C_1; ++i) {
-    for (int j = 1; j <= shared->dim_I_C_2; ++j) {
-      for (int k = 1; k <= shared->dim_I_C_3; ++k) {
-        for (int l = 1; l <= shared->dim_I_C_4; ++l) {
-          shared->initial_I_C[i - 1 + shared->dim_I_C_1 * (j - 1) + shared->dim_I_C_12 * (k - 1) + shared->dim_I_C_123 * (l - 1)] = 0;
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
-    for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
-      shared->initial_I_weighted[i - 1 + shared->dim_I_weighted_1 * (j - 1)] = 0;
-    }
-  }
   for (int i = 1; i <= shared->dim_ICU_D_conf_1; ++i) {
     for (int j = 1; j <= shared->dim_ICU_D_conf_2; ++j) {
       for (int k = 1; k <= shared->dim_ICU_D_conf_3; ++k) {
@@ -6112,24 +6064,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
       for (int k = 1; k <= shared->dim_ICU_D_unconf_3; ++k) {
         for (int l = 1; l <= shared->dim_ICU_D_unconf_4; ++l) {
           shared->initial_ICU_D_unconf[i - 1 + shared->dim_ICU_D_unconf_1 * (j - 1) + shared->dim_ICU_D_unconf_12 * (k - 1) + shared->dim_ICU_D_unconf_123 * (l - 1)] = 0;
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_ICU_pre_conf_1; ++i) {
-    for (int j = 1; j <= shared->dim_ICU_pre_conf_2; ++j) {
-      for (int k = 1; k <= shared->dim_ICU_pre_conf_3; ++k) {
-        for (int l = 1; l <= shared->dim_ICU_pre_conf_4; ++l) {
-          shared->initial_ICU_pre_conf[i - 1 + shared->dim_ICU_pre_conf_1 * (j - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_123 * (l - 1)] = 0;
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_ICU_pre_unconf_1; ++i) {
-    for (int j = 1; j <= shared->dim_ICU_pre_unconf_2; ++j) {
-      for (int k = 1; k <= shared->dim_ICU_pre_unconf_3; ++k) {
-        for (int l = 1; l <= shared->dim_ICU_pre_unconf_4; ++l) {
-          shared->initial_ICU_pre_unconf[i - 1 + shared->dim_ICU_pre_unconf_1 * (j - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_123 * (l - 1)] = 0;
         }
       }
     }
@@ -6168,6 +6102,47 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
           shared->initial_ICU_W_R_unconf[i - 1 + shared->dim_ICU_W_R_unconf_1 * (j - 1) + shared->dim_ICU_W_R_unconf_12 * (k - 1) + shared->dim_ICU_W_R_unconf_123 * (l - 1)] = 0;
         }
       }
+    }
+  }
+  for (int i = 1; i <= shared->dim_ICU_pre_conf_1; ++i) {
+    for (int j = 1; j <= shared->dim_ICU_pre_conf_2; ++j) {
+      for (int k = 1; k <= shared->dim_ICU_pre_conf_3; ++k) {
+        for (int l = 1; l <= shared->dim_ICU_pre_conf_4; ++l) {
+          shared->initial_ICU_pre_conf[i - 1 + shared->dim_ICU_pre_conf_1 * (j - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_123 * (l - 1)] = 0;
+        }
+      }
+    }
+  }
+  for (int i = 1; i <= shared->dim_ICU_pre_unconf_1; ++i) {
+    for (int j = 1; j <= shared->dim_ICU_pre_unconf_2; ++j) {
+      for (int k = 1; k <= shared->dim_ICU_pre_unconf_3; ++k) {
+        for (int l = 1; l <= shared->dim_ICU_pre_unconf_4; ++l) {
+          shared->initial_ICU_pre_unconf[i - 1 + shared->dim_ICU_pre_unconf_1 * (j - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_123 * (l - 1)] = 0;
+        }
+      }
+    }
+  }
+  for (int i = 1; i <= shared->dim_I_A_1; ++i) {
+    for (int j = 1; j <= shared->dim_I_A_2; ++j) {
+      for (int k = 1; k <= shared->dim_I_A_3; ++k) {
+        for (int l = 1; l <= shared->dim_I_A_4; ++l) {
+          shared->initial_I_A[i - 1 + shared->dim_I_A_1 * (j - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_123 * (l - 1)] = 0;
+        }
+      }
+    }
+  }
+  for (int i = 1; i <= shared->dim_I_C_1; ++i) {
+    for (int j = 1; j <= shared->dim_I_C_2; ++j) {
+      for (int k = 1; k <= shared->dim_I_C_3; ++k) {
+        for (int l = 1; l <= shared->dim_I_C_4; ++l) {
+          shared->initial_I_C[i - 1 + shared->dim_I_C_1 * (j - 1) + shared->dim_I_C_12 * (k - 1) + shared->dim_I_C_123 * (l - 1)] = 0;
+        }
+      }
+    }
+  }
+  for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
+    for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
+      shared->initial_I_weighted[i - 1 + shared->dim_I_weighted_1 * (j - 1)] = 0;
     }
   }
   for (int i = 1; i <= shared->dim_R_1; ++i) {
@@ -6268,28 +6243,48 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
       }
     }
   }
-  shared->offset_variable_cum_n_E_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated;
-  shared->offset_variable_cum_n_I_A_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated;
-  shared->offset_variable_cum_n_R_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated;
-  shared->offset_variable_cum_n_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated;
+  for (int i = 1; i <= shared->dim_cum_n_E_vaccinated_1; ++i) {
+    for (int j = 1; j <= shared->dim_cum_n_E_vaccinated_2; ++j) {
+      shared->initial_cum_n_E_vaccinated[i - 1 + shared->dim_cum_n_E_vaccinated_1 * (j - 1)] = 0;
+    }
+  }
+  for (int i = 1; i <= shared->dim_cum_n_I_A_vaccinated_1; ++i) {
+    for (int j = 1; j <= shared->dim_cum_n_I_A_vaccinated_2; ++j) {
+      shared->initial_cum_n_I_A_vaccinated[i - 1 + shared->dim_cum_n_I_A_vaccinated_1 * (j - 1)] = 0;
+    }
+  }
+  for (int i = 1; i <= shared->dim_cum_n_R_vaccinated_1; ++i) {
+    for (int j = 1; j <= shared->dim_cum_n_R_vaccinated_2; ++j) {
+      shared->initial_cum_n_R_vaccinated[i - 1 + shared->dim_cum_n_R_vaccinated_1 * (j - 1)] = 0;
+    }
+  }
+  for (int i = 1; i <= shared->dim_cum_n_S_vaccinated_1; ++i) {
+    for (int j = 1; j <= shared->dim_cum_n_S_vaccinated_2; ++j) {
+      shared->initial_cum_n_S_vaccinated[i - 1 + shared->dim_cum_n_S_vaccinated_1 * (j - 1)] = 0;
+    }
+  }
+  for (int i = 1; i <= shared->dim_cum_n_vaccinated_1; ++i) {
+    for (int j = 1; j <= shared->dim_cum_n_vaccinated_2; ++j) {
+      shared->initial_cum_n_vaccinated[i - 1 + shared->dim_cum_n_vaccinated_1 * (j - 1)] = 0;
+    }
+  }
   shared->offset_variable_E = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg;
   shared->offset_variable_G_D = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C;
   shared->offset_variable_H_D_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf;
   shared->offset_variable_H_D_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf;
   shared->offset_variable_H_R_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf;
   shared->offset_variable_H_R_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf;
-  shared->offset_variable_I_A = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E;
-  shared->offset_variable_I_C = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A;
-  shared->offset_variable_I_weighted = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain;
   shared->offset_variable_ICU_D_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_D_unconf;
   shared->offset_variable_ICU_D_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_conf;
-  shared->offset_variable_ICU_pre_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf;
-  shared->offset_variable_ICU_pre_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D;
   shared->offset_variable_ICU_W_D_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_D_unconf;
   shared->offset_variable_ICU_W_D_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_conf;
   shared->offset_variable_ICU_W_R_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf;
   shared->offset_variable_ICU_W_R_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf;
-  shared->offset_variable_prob_strain = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S;
+  shared->offset_variable_ICU_pre_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf;
+  shared->offset_variable_ICU_pre_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D;
+  shared->offset_variable_I_A = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E;
+  shared->offset_variable_I_C = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A;
+  shared->offset_variable_I_weighted = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain;
   shared->offset_variable_R = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg;
   shared->offset_variable_S = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated;
   shared->offset_variable_T_PCR_neg = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R;
@@ -6302,6 +6297,11 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->offset_variable_W_D_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_conf + shared->dim_W_R_unconf + shared->dim_W_R_conf;
   shared->offset_variable_W_R_conf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_conf + shared->dim_W_R_unconf;
   shared->offset_variable_W_R_unconf = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S + shared->dim_prob_strain + shared->dim_I_weighted + shared->dim_T_sero_neg + shared->dim_R + shared->dim_T_PCR_neg + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_conf + shared->dim_H_R_unconf + shared->dim_H_R_conf + shared->dim_H_D_unconf + shared->dim_H_D_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_conf;
+  shared->offset_variable_cum_n_E_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated;
+  shared->offset_variable_cum_n_I_A_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated;
+  shared->offset_variable_cum_n_R_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated;
+  shared->offset_variable_cum_n_vaccinated = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated;
+  shared->offset_variable_prob_strain = 25 + shared->dim_cum_infections_per_strain + shared->dim_D_hosp + shared->dim_D_comm + shared->dim_cum_admit_by_age + shared->dim_N_tot + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_S;
   shared->rel_infectivity = user_get_array_fixed<real_t, 2>(user, "rel_infectivity", shared->rel_infectivity, {shared->dim_rel_infectivity_1, shared->dim_rel_infectivity_2}, NA_REAL, NA_REAL);
   shared->rel_p_hosp_if_sympt = user_get_array_fixed<real_t, 2>(user, "rel_p_hosp_if_sympt", shared->rel_p_hosp_if_sympt, {shared->dim_rel_p_hosp_if_sympt_1, shared->dim_rel_p_hosp_if_sympt_2}, NA_REAL, NA_REAL);
   shared->rel_p_sympt = user_get_array_fixed<real_t, 2>(user, "rel_p_sympt", shared->rel_p_sympt, {shared->dim_rel_p_sympt_1, shared->dim_rel_p_sympt_2}, NA_REAL, NA_REAL);
