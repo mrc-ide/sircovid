@@ -162,7 +162,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
   expect_true(all(y$W_D_conf == 0))
   expect_true(all(y$D_hosp == 0))
   expect_true(all(y$G_D == 0))
-  expect_true(all(y$D_comm == 0))
+  expect_true(all(y$D_non_hosp == 0))
 })
 
 
@@ -200,7 +200,7 @@ test_that("No one is hospitalised, no-one dies if psi_H is 0", {
   expect_true(all(y$W_D_conf == 0))
   expect_true(all(y$D_hosp == 0))
   expect_true(all(y$G_D == 0))
-  expect_true(all(y$D_comm == 0))
+  expect_true(all(y$D_non_hosp == 0))
 })
 
 
@@ -306,7 +306,7 @@ test_that("No one dies in the community if psi_G_D is 0", {
 
   expect_true(any(y$I_C > 0))
   expect_true(all(y$G_D == 0))
-  expect_true(all(y$D_comm == 0))
+  expect_true(all(y$D_non_hosp == 0))
 })
 
 
@@ -797,8 +797,9 @@ test_that("tots all summed correctly ", {
                     apply(y$ICU_D_conf, 5, sum)))
   expect_true(all(y$hosp_tot == y$ICU_tot + y$general_tot))
   expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
-  expect_true(all(y$D_comm_tot == apply(y$D_comm, 2, sum)))
-  expect_true(all(y$D_tot == y$D_hosp_tot + y$D_comm_tot))
+  expect_true(all(y$D_comm_tot == apply(y$D_non_hosp[1:18, ], 2, sum)))
+  expect_true(all(y$D_carehomes_tot == y$D_non_hosp[19, ]))
+  expect_true(all(y$D_tot == y$D_hosp_tot + y$D_carehomes_tot + y$D_comm_tot))
 
   # check the positivity sums
   expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
