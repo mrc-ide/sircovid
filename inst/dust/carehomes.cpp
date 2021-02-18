@@ -154,7 +154,7 @@ typename T::real_t compare(const typename T::real_t * state,
                            std::shared_ptr<const typename T::shared_t> shared,
                            dust::rng_state_t<typename T::real_t>& rng_state) {
   typedef typename T::real_t real_t;
-  
+
   // State variables; these largely correspond to the quantities in data
   const real_t model_icu = state[9];
   const real_t model_general = state[10];
@@ -171,10 +171,10 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_sympt_cases_non_variant_over25 =
     state[25];
   const real_t model_react_pos = state[26];
-  
+
   // This is used over and over
   const real_t exp_noise = shared->exp_noise;
-  
+
   const real_t pillar2_negs =
     shared->p_NC * (shared->N_tot_all - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
@@ -184,7 +184,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   shared->pillar2_specificity,
                   exp_noise,
                   rng_state);
-  
+
   const real_t pillar2_over25_negs =
     shared->p_NC * (shared->N_tot_over25 - model_sympt_cases_over25);
   const real_t model_pillar2_over25_prob_pos =
@@ -194,7 +194,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   shared->pillar2_specificity,
                   exp_noise,
                   rng_state);
-  
+
   const real_t N_tot_react = shared->N_tot_react; // sum(pars$N_tot[2:18])
   const real_t model_react_prob_pos =
     test_prob_pos(model_react_pos,
@@ -203,7 +203,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   shared->react_specificity,
                   exp_noise,
                   rng_state);
-  
+
   // serology
   const real_t model_sero_prob_pos =
     test_prob_pos(model_sero_pos,
@@ -212,19 +212,19 @@ typename T::real_t compare(const typename T::real_t * state,
                   shared->sero_specificity,
                   exp_noise,
                   rng_state);
-  
+
   // Strain
   real_t strain_sensitivity = 1.0;
   real_t strain_specificity = 1.0;
   const real_t model_strain_over25_prob_pos =
     test_prob_pos(model_sympt_cases_non_variant_over25,
                   model_sympt_cases_over25 -
-                    model_sympt_cases_non_variant_over25,
-                    strain_sensitivity,
-                    strain_specificity,
-                    exp_noise,
-                    rng_state);
-  
+                  model_sympt_cases_non_variant_over25,
+                  strain_sensitivity,
+                  strain_specificity,
+                  exp_noise,
+                  rng_state);
+
   // Note that in ll_nbinom, the purpose of exp_noise is to allow a
   // non-zero probability when the model value is 0 and the observed
   // value is non-zero (i.e. there is overreporting)
@@ -237,7 +237,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_hosp =
     ll_nbinom(data.hosp, shared->phi_hosp * model_hosp,
               shared->kappa_hosp, exp_noise, rng_state);
-  
+
   // We will compute one of the following:
   // 1. ll_deaths_hosp, ll_deaths_carehomes and ll_deaths_comm
   // 2. ll_deaths_hosp and ll_deaths_non_hosp
@@ -256,14 +256,14 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_nbinom(data.deaths_non_hosp,
               shared->phi_death_carehomes * model_deaths_carehomes +
                 shared->phi_death_comm * model_deaths_comm,
-                shared->kappa_death_non_hosp, exp_noise, rng_state);
+              shared->kappa_death_non_hosp, exp_noise, rng_state);
   const real_t ll_deaths =
     ll_nbinom(data.deaths,
               shared->phi_death_hosp * model_deaths_hosp +
                 shared->phi_death_carehomes * model_deaths_carehomes +
                 shared->phi_death_comm * model_deaths_comm,
-                shared->kappa_death, exp_noise, rng_state);
-  
+              shared->kappa_death, exp_noise, rng_state);
+
   const real_t ll_admitted =
     ll_nbinom(data.admitted, shared->phi_admitted * model_admitted,
               shared->kappa_admitted, exp_noise, rng_state);
@@ -273,10 +273,10 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_all_admission =
     ll_nbinom(data.all_admission, shared->phi_all_admission * model_all_admission,
               shared->kappa_all_admission, exp_noise, rng_state);
-  
+
   const real_t ll_serology =
     ll_binom(data.npos_15_64, data.ntot_15_64, model_sero_prob_pos);
-  
+
   const real_t ll_pillar2_tests =
     ll_betabinom(data.pillar2_pos, data.pillar2_tot,
                  model_pillar2_prob_pos, shared->rho_pillar2_tests);
@@ -284,7 +284,7 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_nbinom(data.pillar2_cases,
               shared->phi_pillar2_cases * model_sympt_cases,
               shared->kappa_pillar2_cases, exp_noise, rng_state);
-  
+
   const real_t ll_pillar2_over25_tests =
     ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
                  model_pillar2_over25_prob_pos, shared->rho_pillar2_tests);
@@ -292,14 +292,14 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_nbinom(data.pillar2_over25_cases,
               shared->phi_pillar2_cases * model_sympt_cases_over25,
               shared->kappa_pillar2_cases, exp_noise, rng_state);
-  
+
   const real_t ll_react =
     ll_binom(data.react_pos, data.react_tot,
              model_react_prob_pos);
   const real_t ll_strain_over25 =
     ll_binom(data.strain_non_variant, data.strain_tot,
              model_strain_over25_prob_pos);
-  
+
   return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology +

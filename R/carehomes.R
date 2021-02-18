@@ -462,9 +462,11 @@ carehomes_index <- function(info) {
   index_core <- c(icu = index[["ICU_tot"]],
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
+                 deaths_carehomes = index[["D_carehomes_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  diagnoses = index[["cum_new_conf"]],
+                 deaths_carehomes_inc = index[["D_carehomes_inc"]],
                  deaths_comm_inc = index[["D_comm_inc"]],
                  deaths_hosp_inc = index[["D_hosp_inc"]],
                  admitted_inc = index[["admit_conf_inc"]],
@@ -481,7 +483,7 @@ carehomes_index <- function(info) {
                  react_pos = index[["react_pos"]])
 
   ## Only incidence versions for the likelihood now:
-  index_run <- index_core[c("icu", "general",
+  index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
                             "deaths_comm_inc", "deaths_hosp_inc",
                             "admitted_inc", "diagnoses_inc",
                             "sero_pos", "sympt_cases_inc",
@@ -564,6 +566,7 @@ carehomes_compare <- function(state, observed, pars) {
   model_icu <- state["icu", ]
   model_general <- state["general", ]
   model_hosp <- model_icu + model_general
+  model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
   model_admitted <- state["admitted_inc", ]
@@ -628,12 +631,22 @@ carehomes_compare <- function(state, observed, pars) {
   ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
                               pars$phi_death_hosp * model_deaths_hosp,
                               pars$kappa_death_hosp, exp_noise)
+  ll_deaths_carehomes <- ll_nbinom(observed$deaths_carehomes,
+                                   pars$phi_death_carehomes *
+                                     model_deaths_carehomes,
+                                   pars$kappa_death_carehomes, exp_noise)
   ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
                               pars$phi_death_comm * model_deaths_comm,
                               pars$kappa_death_comm, exp_noise)
+  ll_deaths_non_hosp <- ll_nbinom(observed$deaths_non_hosp,
+                                  pars$phi_death_comm * model_deaths_comm +
+                                    pars$phi_death_carehomes *
+                                    model_deaths_carehomes,
+                                  pars$kappa_death_non_hosp, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths,
                          pars$phi_death_hosp * model_deaths_hosp +
-                         pars$phi_death_comm * model_deaths_comm,
+                           pars$phi_death_carehomes * model_deaths_carehomes +
+                           pars$phi_death_comm * model_deaths_comm,
                          pars$kappa_death, exp_noise)
   ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * model_admitted,
@@ -676,10 +689,11 @@ carehomes_compare <- function(state, observed, pars) {
                                observed$strain_tot,
                                model_strain_over25_prob_pos)
 
-  ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_comm + ll_deaths +
-    ll_admitted + ll_diagnoses + ll_all_admission + ll_serology +
-    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
-    ll_pillar2_over25_cases + ll_react + ll_strain_over25
+  ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
+    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
+    ll_diagnoses + ll_all_admission + ll_serology + ll_pillar2_tests +
+    ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
+    ll_react + ll_strain_over25
 }
 
 
@@ -1008,9 +1022,14 @@ carehomes_parameters_observation <- function(exp_noise) {
     ## Daily hospital deaths
     phi_death_hosp = 1,
     kappa_death_hosp = 2,
+    ## Daily care home deaths
+    phi_death_carehomes = 1,
+    kappa_death_carehomes = 2,
     ## Daily community deaths
     phi_death_comm = 1,
     kappa_death_comm = 2,
+    ## Daily total non-hospital deaths (if not split)
+    kappa_death_non_hosp = 2,
     ## Daily total deaths (if not split)
     kappa_death = 2,
     ## Daily new confirmed admissions
@@ -1072,7 +1091,8 @@ carehomes_population <- function(population, carehome_workers,
 ##' @param data Data suitable for use with with the
 ##'   [`mcstate::particle_filter`], created by created by
 ##'   [mcstate::particle_filter_data()]. We require columns "icu",
-##'   "general", "hosp", "deaths_hosp", "deaths_comm", "deaths",
+##'   "general", "hosp", "deaths_hosp", "deaths_carehomes",
+##'   "deaths_non_hosp", "deaths_comm", "deaths",
 ##'   "admitted", "diagnoses", "all_admission", "npos_15_64",
 ##'   "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
 ##'   "pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
@@ -1107,17 +1127,25 @@ carehomes_particle_filter <- function(data, n_particles,
 
 
 carehomes_particle_filter_data <- function(data) {
-  required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_comm",
-                "deaths", "admitted", "diagnoses", "all_admission",
-                "npos_15_64", "ntot_15_64", "pillar2_pos", "pillar2_tot",
-                "pillar2_cases", "pillar2_over25_pos", "pillar2_over25_tot",
+  required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
+                "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
+                "diagnoses", "all_admission", "npos_15_64", "ntot_15_64",
+                "pillar2_pos", "pillar2_tot", "pillar2_cases",
+                "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot")
 
   verify_names(data, required, allow_extra = TRUE)
 
   if (any(!is.na(data$deaths) &
-           (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp)))) {
-    stop("Deaths are not consistently split into total vs community/hospital")
+           (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp) |
+            !is.na(data$deaths_carehomes) | !is.na(data$deaths_non_hosp)))) {
+    stop("Deaths are not consistently split into total vs hospital/non-hospital
+          or hospital/care homes/community")
+  }
+  if (any(!is.na(data$deaths_non_hosp) &
+          (!is.na(data$deaths_comm) | !is.na(data$deaths_carehomes)))) {
+    stop("Non-hospital deaths are not consistently split into total vs care
+         homes/community")
   }
 
   pillar2_streams <- sum(c(any(!is.na(data$pillar2_pos)) |
@@ -1187,7 +1215,8 @@ carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
 
 carehomes_data <- function(data, start_date, dt) {
   expected <- c(icu = NA_real_, general = NA_real_, hosp = NA_real_,
-                deaths_hosp = NA_real_, deaths_comm = NA_real_,
+                deaths_hosp = NA_real_, deaths_non_hosp = NA_real_,
+                deaths_comm = NA_real_, deaths_carehomes = NA_real_,
                 deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
                 all_admission = NA_real_, npos_15_64 = NA_real_,
                 ntot_15_64 = NA_real_, pillar2_pos = NA_real_,
