@@ -52,7 +52,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
         // We will use it all, so share within our group
         n_to_vaccinate = daily_doses / n * candidates_pos[i];
       }
-      return - log(1 - n_to_vaccinate * dt / candidates[i]) / dt;
+      return n_to_vaccinate * dt / candidates[i];
     } else if (n >= daily_doses) {
       // All vaccine has been used up by earlier groups
       return 0;

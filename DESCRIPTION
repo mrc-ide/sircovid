@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.9.26
+Version: 0.9.27
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -47,13 +47,13 @@ LazyData: true
 Language: en-GB
 Depends: R (>= 3.1.0)
 Imports:
-    dust (>= 0.7.10),
+    dust (>= 0.7.11),
     eigen1,
     mcstate (>= 0.4.0),
     socialmixr
 LinkingTo:
     cpp11 (>= 0.2.1),
-    dust (>= 0.7.10)
+    dust (>= 0.7.11)
 Suggests:
     testthat
 RoxygenNote: 7.1.1

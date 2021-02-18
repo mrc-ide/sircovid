@@ -61,7 +61,7 @@ real_t vaccination_schedule(size_t i, real_t daily_doses, real_t dt,
         // We will use it all, so share within our group
         n_to_vaccinate = daily_doses / n * candidates_pos[i];
       }
-      return - log(1 - n_to_vaccinate * dt / candidates[i]) / dt;
+      return n_to_vaccinate * dt / candidates[i];
     } else if (n >= daily_doses) {
       // All vaccine has been used up by earlier groups
       return 0;
@@ -1622,9 +1622,9 @@ public:
     int dim_vaccine_n_candidates;
     int dim_vaccine_population_possible;
     int dim_vaccine_population_reluctant;
-    int dim_vaccine_progression_rate;
-    int dim_vaccine_progression_rate_1;
-    int dim_vaccine_progression_rate_2;
+    int dim_vaccine_probability;
+    int dim_vaccine_probability_1;
+    int dim_vaccine_probability_2;
     int dim_vaccine_progression_rate_base;
     int dim_vaccine_progression_rate_base_1;
     int dim_vaccine_progression_rate_base_2;
@@ -2020,7 +2020,7 @@ public:
     std::vector<real_t> s_ij;
     std::vector<real_t> vaccine_n_candidates;
     std::vector<real_t> vaccine_population_possible;
-    std::vector<real_t> vaccine_progression_rate;
+    std::vector<real_t> vaccine_probability;
   };
   carehomes(const dust::pars_t<carehomes>& pars) :
     shared(pars.shared), internal(pars.internal) {
@@ -2872,13 +2872,13 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_vaccine_progression_rate_1; ++i) {
+    for (int i = 1; i <= shared->dim_vaccine_probability_1; ++i) {
       int j = 1;
-      internal.vaccine_progression_rate[i - 1 + shared->dim_vaccine_progression_rate_1 * (j - 1)] = vaccination_schedule(i, vaccine_daily_doses, shared->dt, internal.vaccine_n_candidates, internal.vaccine_population_possible);
+      internal.vaccine_probability[i - 1 + shared->dim_vaccine_probability_1 * (j - 1)] = vaccination_schedule(i, vaccine_daily_doses, shared->dt, internal.vaccine_n_candidates, internal.vaccine_population_possible);
     }
-    for (int i = 1; i <= shared->dim_vaccine_progression_rate_1; ++i) {
+    for (int i = 1; i <= shared->dim_vaccine_probability_1; ++i) {
       for (int j = 2; j <= shared->n_vacc_classes; ++j) {
-        internal.vaccine_progression_rate[i - 1 + shared->dim_vaccine_progression_rate_1 * (j - 1)] = shared->vaccine_progression_rate_base[shared->dim_vaccine_progression_rate_base_1 * (j - 1) + i - 1];
+        internal.vaccine_probability[i - 1 + shared->dim_vaccine_probability_1 * (j - 1)] = 1 - std::exp(- shared->vaccine_progression_rate_base[shared->dim_vaccine_progression_rate_base_1 * (j - 1) + i - 1] * shared->dt);
       }
     }
     for (int i = 1; i <= shared->dim_aux_ICU_D_conf_1; ++i) {
@@ -3052,7 +3052,7 @@ public:
       for (int j = 1; j <= shared->dim_p_E_next_vacc_class_2; ++j) {
         for (int k = 1; k <= shared->dim_p_E_next_vacc_class_3; ++k) {
           for (int l = 1; l <= shared->dim_p_E_next_vacc_class_4; ++l) {
-            internal.p_E_next_vacc_class[i - 1 + shared->dim_p_E_next_vacc_class_1 * (j - 1) + shared->dim_p_E_next_vacc_class_12 * (k - 1) + shared->dim_p_E_next_vacc_class_123 * (l - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[shared->dim_vaccine_progression_rate_1 * (l - 1) + i - 1] * shared->dt);
+            internal.p_E_next_vacc_class[i - 1 + shared->dim_p_E_next_vacc_class_1 * (j - 1) + shared->dim_p_E_next_vacc_class_12 * (k - 1) + shared->dim_p_E_next_vacc_class_123 * (l - 1)] = internal.vaccine_probability[shared->dim_vaccine_probability_1 * (l - 1) + i - 1];
           }
         }
       }
@@ -3061,7 +3061,7 @@ public:
       for (int j = 1; j <= shared->dim_p_I_A_next_vacc_class_2; ++j) {
         for (int k = 1; k <= shared->dim_p_I_A_next_vacc_class_3; ++k) {
           for (int l = 1; l <= shared->dim_p_I_A_next_vacc_class_4; ++l) {
-            internal.p_I_A_next_vacc_class[i - 1 + shared->dim_p_I_A_next_vacc_class_1 * (j - 1) + shared->dim_p_I_A_next_vacc_class_12 * (k - 1) + shared->dim_p_I_A_next_vacc_class_123 * (l - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[shared->dim_vaccine_progression_rate_1 * (l - 1) + i - 1] * shared->dt);
+            internal.p_I_A_next_vacc_class[i - 1 + shared->dim_p_I_A_next_vacc_class_1 * (j - 1) + shared->dim_p_I_A_next_vacc_class_12 * (k - 1) + shared->dim_p_I_A_next_vacc_class_123 * (l - 1)] = internal.vaccine_probability[shared->dim_vaccine_probability_1 * (l - 1) + i - 1];
           }
         }
       }
@@ -3070,7 +3070,7 @@ public:
       for (int j = 1; j <= shared->dim_p_I_P_next_vacc_class_2; ++j) {
         for (int k = 1; k <= shared->dim_p_I_P_next_vacc_class_3; ++k) {
           for (int l = 1; l <= shared->dim_p_I_P_next_vacc_class_4; ++l) {
-            internal.p_I_P_next_vacc_class[i - 1 + shared->dim_p_I_P_next_vacc_class_1 * (j - 1) + shared->dim_p_I_P_next_vacc_class_12 * (k - 1) + shared->dim_p_I_P_next_vacc_class_123 * (l - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[shared->dim_vaccine_progression_rate_1 * (l - 1) + i - 1] * shared->dt);
+            internal.p_I_P_next_vacc_class[i - 1 + shared->dim_p_I_P_next_vacc_class_1 * (j - 1) + shared->dim_p_I_P_next_vacc_class_12 * (k - 1) + shared->dim_p_I_P_next_vacc_class_123 * (l - 1)] = internal.vaccine_probability[shared->dim_vaccine_probability_1 * (l - 1) + i - 1];
           }
         }
       }
@@ -3078,13 +3078,13 @@ public:
     for (int i = 1; i <= shared->dim_p_R_next_vacc_class_1; ++i) {
       for (int j = 1; j <= shared->dim_p_R_next_vacc_class_2; ++j) {
         for (int k = 1; k <= shared->dim_p_R_next_vacc_class_3; ++k) {
-          internal.p_R_next_vacc_class[i - 1 + shared->dim_p_R_next_vacc_class_1 * (j - 1) + shared->dim_p_R_next_vacc_class_12 * (k - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[shared->dim_vaccine_progression_rate_1 * (k - 1) + i - 1] * shared->dt);
+          internal.p_R_next_vacc_class[i - 1 + shared->dim_p_R_next_vacc_class_1 * (j - 1) + shared->dim_p_R_next_vacc_class_12 * (k - 1)] = internal.vaccine_probability[shared->dim_vaccine_probability_1 * (k - 1) + i - 1];
         }
       }
     }
     for (int i = 1; i <= shared->dim_p_S_next_vacc_class_1; ++i) {
       for (int j = 1; j <= shared->dim_p_S_next_vacc_class_2; ++j) {
-        internal.p_S_next_vacc_class[i - 1 + shared->dim_p_S_next_vacc_class_1 * (j - 1)] = 1 - std::exp(- internal.vaccine_progression_rate[shared->dim_vaccine_progression_rate_1 * (j - 1) + i - 1] * shared->dt);
+        internal.p_S_next_vacc_class[i - 1 + shared->dim_p_S_next_vacc_class_1 * (j - 1)] = internal.vaccine_probability[shared->dim_vaccine_probability_1 * (j - 1) + i - 1];
       }
     }
     for (int i = 1; i <= shared->dim_D_hosp; ++i) {
@@ -5810,8 +5810,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_rel_p_sympt_2 = shared->n_vacc_classes;
   shared->dim_s_ij = shared->dim_s_ij_1 * shared->dim_s_ij_2 * shared->dim_s_ij_3;
   shared->dim_s_ij_12 = shared->dim_s_ij_1 * shared->dim_s_ij_2;
-  shared->dim_vaccine_progression_rate_1 = shared->n_groups;
-  shared->dim_vaccine_progression_rate_2 = shared->n_vacc_classes;
+  shared->dim_vaccine_probability_1 = shared->n_groups;
+  shared->dim_vaccine_probability_2 = shared->n_vacc_classes;
   shared->dim_vaccine_progression_rate_base_1 = shared->n_groups;
   shared->dim_vaccine_progression_rate_base_2 = shared->n_vacc_classes;
   for (int i = 1; i <= shared->dim_cum_infections_per_strain; ++i) {
@@ -6289,7 +6289,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_rel_infectivity = shared->dim_rel_infectivity_1 * shared->dim_rel_infectivity_2;
   shared->dim_rel_p_hosp_if_sympt = shared->dim_rel_p_hosp_if_sympt_1 * shared->dim_rel_p_hosp_if_sympt_2;
   shared->dim_rel_p_sympt = shared->dim_rel_p_sympt_1 * shared->dim_rel_p_sympt_2;
-  shared->dim_vaccine_progression_rate = shared->dim_vaccine_progression_rate_1 * shared->dim_vaccine_progression_rate_2;
+  shared->dim_vaccine_probability = shared->dim_vaccine_probability_1 * shared->dim_vaccine_probability_2;
   shared->dim_vaccine_progression_rate_base = shared->dim_vaccine_progression_rate_base_1 * shared->dim_vaccine_progression_rate_base_2;
   for (int i = 1; i <= shared->dim_prob_strain_1; ++i) {
     for (int j = 1; j <= shared->dim_prob_strain_2; ++j) {
@@ -6472,7 +6472,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.p_SE = std::vector<real_t>(shared->dim_p_SE);
   internal.p_S_next_vacc_class = std::vector<real_t>(shared->dim_p_S_next_vacc_class);
   shared->p_T_sero_pre_progress = std::vector<real_t>(shared->dim_p_T_sero_pre_progress);
-  internal.vaccine_progression_rate = std::vector<real_t>(shared->dim_vaccine_progression_rate);
+  internal.vaccine_probability = std::vector<real_t>(shared->dim_vaccine_probability);
   for (int i = 1; i <= shared->dim_E_1; ++i) {
     for (int j = 1; j <= shared->dim_E_2; ++j) {
       for (int k = 1; k <= shared->dim_E_3; ++k) {

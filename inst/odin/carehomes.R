@@ -129,11 +129,12 @@ update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_2_to_hosp[i, , ])
 ## Individual probabilities of transition:
 
 ## vaccination
-p_S_next_vacc_class[, ] <- 1 - exp(-vaccine_progression_rate[i, j] * dt)
-p_E_next_vacc_class[, , , ] <- 1 - exp(-vaccine_progression_rate[i, l] * dt)
-p_I_A_next_vacc_class[, , , ] <- 1 - exp(-vaccine_progression_rate[i, l] * dt)
-p_I_P_next_vacc_class[, , , ] <- 1 - exp(-vaccine_progression_rate[i, l] * dt)
-p_R_next_vacc_class[, , ] <- 1 - exp(-vaccine_progression_rate[i, k] * dt)
+p_S_next_vacc_class[, ] <- vaccine_probability[i, j]
+p_E_next_vacc_class[, , , ] <- vaccine_probability[i, l]
+p_I_A_next_vacc_class[, , , ] <- vaccine_probability[i, l]
+p_I_P_next_vacc_class[, , , ] <- vaccine_probability[i, l]
+p_R_next_vacc_class[, , ] <- vaccine_probability[i, k]
+
 ## clinical progression
 p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
@@ -1515,13 +1516,15 @@ vaccine_daily_doses_step[] <- user()
 ## the compartment through which people ge vaccinated, others are
 ## taken through the vaccination rate
 config(include) <- "vaccination.cpp"
-vaccine_progression_rate[, 1] <-
+vaccine_probability[, 1] <-
   vaccination_schedule(i, vaccine_daily_doses, dt,
                        vaccine_n_candidates, vaccine_population_possible)
-vaccine_progression_rate[, 2:n_vacc_classes] <-
-  vaccine_progression_rate_base[i, j]
+## for the first vaccination class we use directly the probability above
+## for the other vaccination classes this is indeed the rate
+vaccine_probability[, 2:n_vacc_classes] <-
+  1 - exp(-vaccine_progression_rate_base[i, j] * dt)
 
-dim(vaccine_progression_rate) <- c(n_groups, n_vacc_classes)
+dim(vaccine_probability) <- c(n_groups, n_vacc_classes)
 
 config(compare) <- "compare_carehomes.cpp"
 ## Parameters and code to support the compare function. Because these
