@@ -84,7 +84,7 @@ update(T_sero_pos[, , , ]) <- new_T_sero_pos[i, j, k, l]
 update(T_sero_neg[, , ]) <- new_T_sero_neg[i, j, k]
 update(R[, , ]) <- new_R[i, j, k]
 update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
-update(D_comm[]) <- D_comm[i] + delta_D_comm[i]
+update(D_non_hosp[]) <- D_non_hosp[i] + delta_D_non_hosp[i]
 update(T_PCR_pre[, , , ]) <- new_T_PCR_pre[i, j, k, l]
 update(T_PCR_pos[, , , ]) <- new_T_PCR_pos[i, j, k, l]
 update(T_PCR_neg[, , ]) <- new_T_PCR_neg[i, j, k]
@@ -657,7 +657,7 @@ delta_D_hosp[] <-
   sum(n_W_D_conf_progress[i, , k_W_D, ])
 
 ## Work out the number of deaths in the community
-delta_D_comm[] <- sum(n_G_D_progress[i, , k_G_D, ])
+delta_D_non_hosp[] <- sum(n_G_D_progress[i, , k_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_T_sero_pre[, , 1, 1] <- rbinom(
@@ -795,7 +795,7 @@ initial(T_sero_pos[, , , ]) <- 0
 initial(T_sero_neg[, , ]) <- 0
 initial(R[, , ]) <- 0
 initial(D_hosp[]) <- 0
-initial(D_comm[]) <- 0
+initial(D_non_hosp[]) <- 0
 initial(T_PCR_pre[, , , ]) <- 0
 initial(T_PCR_pos[, , , ]) <- 0
 initial(T_PCR_neg[, , ]) <- 0
@@ -1119,9 +1119,9 @@ dim(new_T_sero_neg) <- c(n_groups, n_strains, n_vacc_classes)
 dim(D_hosp) <- n_groups
 dim(delta_D_hosp) <- n_groups
 
-## Vectors handling the D_comm class
-dim(D_comm) <- n_groups
-dim(delta_D_comm) <- n_groups
+## Vectors handling the D_non_hosp class
+dim(D_non_hosp) <- n_groups
+dim(delta_D_non_hosp) <- n_groups
 
 ## Vectors handling the PCR classes
 dim(T_PCR_pre) <- c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
@@ -1239,7 +1239,7 @@ update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + D_hosp[i] + sum(E[i, , , ]) +
   sum(ICU_D_conf[i, , , ]) + sum(ICU_D_unconf[i, , , ]) +
   sum(W_R_conf[i, , , ]) + sum(W_R_unconf[i, , , ]) +
   sum(W_D_conf[i, , , ]) + sum(W_D_unconf[i, , , ]) +
-  sum(G_D[i, , , ]) + D_comm[i]
+  sum(G_D[i, , , ]) + D_non_hosp[i]
 dim(N_tot) <- n_groups
 
 ## Total population calculated with seroconversion flow
@@ -1271,20 +1271,31 @@ initial(D_hosp_tot) <- 0
 delta_D_hosp_tot <- sum(delta_D_hosp)
 update(D_hosp_tot) <- D_hosp_tot + delta_D_hosp_tot
 
+## community deaths are non-hospital deaths in groups 1 to 18
 initial(D_comm_tot) <- 0
-delta_D_comm_tot <- sum(delta_D_comm)
+delta_D_comm_tot <- sum(delta_D_non_hosp[1:18])
 update(D_comm_tot) <- D_comm_tot + delta_D_comm_tot
 
 initial(D_comm_inc) <- 0
 update(D_comm_inc) <- if (step %% steps_per_day == 0)
                         delta_D_comm_tot else D_comm_inc + delta_D_comm_tot
 
+## carehome deaths are non-hospital deaths in group 19
+initial(D_carehomes_tot) <- 0
+delta_D_carehomes_tot <- delta_D_non_hosp[19]
+update(D_carehomes_tot) <- D_carehomes_tot + delta_D_carehomes_tot
+
+initial(D_carehomes_inc) <- 0
+update(D_carehomes_inc) <- if (step %% steps_per_day == 0)
+  delta_D_carehomes_tot else D_carehomes_inc + delta_D_carehomes_tot
+
 initial(D_hosp_inc) <- 0
 update(D_hosp_inc) <- if (step %% steps_per_day == 0)
                         delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
 
 initial(D_tot) <- 0
-update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot
+update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
+  delta_D_carehomes_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
@@ -1443,7 +1454,10 @@ phi_death_hosp <- user() # ignore.unused
 kappa_death_hosp <- user() # ignore.unused
 phi_death_comm <- user() # ignore.unused
 kappa_death_comm <- user() # ignore.unused
+phi_death_carehomes <- user() # ignore.unused
+kappa_death_carehomes <- user() # ignore.unused
 kappa_death <- user() # ignore.unused
+kappa_death_non_hosp <- user() # ignore.unused
 phi_admitted <- user() # ignore.unused
 kappa_admitted <- user() # ignore.unused
 phi_diagnoses <- user() # ignore.unused

@@ -1,3 +1,7 @@
+# sircovid 0.9.27
+
+* Can now fit non-hospital deaths as two separate streams: community deaths and care home deaths
+
 # sircovid 0.9.23
 
 * Allow vector of absolute values in `future_Rt()`
