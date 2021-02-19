@@ -1,3 +1,7 @@
+# sircovid 0.9.28
+
+* Output deaths by age
+
 # sircovid 0.9.27
 
 * Can now fit non-hospital deaths as two separate streams: community deaths and care home deaths
