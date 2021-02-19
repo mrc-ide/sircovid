@@ -115,13 +115,7 @@ initial(new_conf_inc) <- 0
 update(new_conf_inc) <- if (step %% steps_per_day == 0)
                             delta_new_conf else new_conf_inc + delta_new_conf
 
-## Counters of age disaggregated outputs for post-processing
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_to_hosp[i, , ])
-update(cum_D_by_age[]) <- cum_D_by_age[i] + sum(n_I_C_to_H_D[i, , ]) +
-  sum(n_I_C_to_H_D_conf[i, , ]) + sum(n_ICU_pre_unconf_to_ICU_D_unconf[i, , ]) +
-  sum(n_ICU_pre_conf_to_ICU_D_conf[i, , ]) +
-  sum(n_ICU_pre_unconf_to_ICU_W_D_unconf[i, , ]) +
-  sum(n_ICU_pre_conf_to_ICU_W_D_conf[i, , ])
 
 ## Individual probabilities of transition:
 
@@ -808,7 +802,6 @@ initial(T_PCR_neg[, , ]) <- 0
 initial(cum_admit_conf) <- 0
 initial(cum_new_conf) <- 0
 initial(cum_admit_by_age[]) <- 0
-initial(cum_D_by_age[]) <- 0
 
 ## User defined parameters - default in parentheses:
 
@@ -1223,7 +1216,6 @@ dim(p_star_by_age) <- n_groups
 dim(psi_star) <- n_groups
 
 dim(cum_admit_by_age) <- n_groups
-dim(cum_D_by_age) <- n_groups
 
 ## Vectors handling the age specific heterogeneous transmission process
 dim(lambda) <- c(n_groups, n_strains)
