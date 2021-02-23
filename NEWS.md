@@ -1,3 +1,9 @@
+# sircovid 0.10.0
+
+* Carehomes model restructured
+* Symptomatic pathway now includes presymptomatic compartment and two symptomatic compartments
+* Cases for pillar 2 testing arise in the movement from presymptomatic to the first symptomatic compartment
+
 # sircovid 0.9.28
 
 * Output deaths by age
