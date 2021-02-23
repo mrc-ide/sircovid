@@ -2848,9 +2848,6 @@ public:
         }
       }
     }
-    real_t new_sympt_cases = odin_sum4(internal.n_I_C_1_progress.data(), 0, shared->dim_n_I_C_1_progress_1, 0, shared->dim_n_I_C_1_progress_2, shared->k_C_1 - 1, shared->k_C_1, 0, shared->dim_n_I_C_1_progress_4, shared->dim_n_I_C_1_progress_1, shared->dim_n_I_C_1_progress_12, shared->dim_n_I_C_1_progress_123);
-    real_t new_sympt_cases_non_variant_over25 = odin_sum4(internal.n_I_C_1_progress.data(), 5, shared->n_groups, 0, 1, shared->k_C_1 - 1, shared->k_C_1, 0, shared->dim_n_I_C_1_progress_4, shared->dim_n_I_C_1_progress_1, shared->dim_n_I_C_1_progress_12, shared->dim_n_I_C_1_progress_123);
-    real_t new_sympt_cases_over25 = odin_sum4(internal.n_I_C_1_progress.data(), 5, shared->n_groups, 0, shared->dim_n_I_C_1_progress_2, shared->k_C_1 - 1, shared->k_C_1, 0, shared->dim_n_I_C_1_progress_4, shared->dim_n_I_C_1_progress_1, shared->dim_n_I_C_1_progress_12, shared->dim_n_I_C_1_progress_123);
     for (int i = 1; i <= shared->dim_s_ij_1; ++i) {
       for (int j = 1; j <= shared->dim_s_ij_2; ++j) {
         for (int k = 1; k <= shared->dim_s_ij_3; ++k) {
@@ -3102,13 +3099,7 @@ public:
         }
       }
     }
-    state_next[20] = cum_sympt_cases + new_sympt_cases;
-    state_next[22] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
-    state_next[21] = cum_sympt_cases_over25 + new_sympt_cases_over25;
     state_next[26] = odin_sum4(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
-    state_next[23] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases : sympt_cases_inc + new_sympt_cases));
-    state_next[25] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases_non_variant_over25 : sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25));
-    state_next[24] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases_over25 : sympt_cases_over25_inc + new_sympt_cases_over25));
     for (int i = 1; i <= shared->dim_aux_G_D_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_G_D_2; ++j) {
         int k = 1;
@@ -4198,6 +4189,9 @@ public:
         internal.new_S[i - 1 + shared->dim_new_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1] + internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1 - 1) + i - 1] + odin_sum3(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, j - 1 - 1, j - 1, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12);
       }
     }
+    real_t new_sympt_cases = odin_sum1(internal.n_EI_P.data(), 0, shared->dim_n_EI_P) + odin_sum1(internal.n_EI_P_next_vacc_class.data(), 0, shared->dim_n_EI_P_next_vacc_class);
+    real_t new_sympt_cases_non_variant_over25 = odin_sum3(internal.n_EI_P.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + odin_sum3(internal.n_EI_P_next_vacc_class.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_P_next_vacc_class_3, shared->dim_n_EI_P_next_vacc_class_1, shared->dim_n_EI_P_next_vacc_class_12);
+    real_t new_sympt_cases_over25 = odin_sum3(internal.n_EI_P.data(), 5, shared->n_groups, 0, shared->dim_n_EI_P_2, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + odin_sum3(internal.n_EI_P_next_vacc_class.data(), 5, shared->n_groups, 0, shared->dim_n_EI_P_next_vacc_class_2, 0, shared->dim_n_EI_P_next_vacc_class_3, shared->dim_n_EI_P_next_vacc_class_1, shared->dim_n_EI_P_next_vacc_class_12);
     for (int i = 1; i <= shared->dim_ICU_W_R_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_ICU_W_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_ICU_W_R_conf_3; ++k) {
@@ -4429,6 +4423,12 @@ public:
         state_next[shared->offset_variable_S + i - 1 + shared->dim_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1];
       }
     }
+    state_next[20] = cum_sympt_cases + new_sympt_cases;
+    state_next[22] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
+    state_next[21] = cum_sympt_cases_over25 + new_sympt_cases_over25;
+    state_next[23] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases : sympt_cases_inc + new_sympt_cases));
+    state_next[25] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases_non_variant_over25 : sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25));
+    state_next[24] = ((std::fmod(step, shared->steps_per_day) == 0 ? new_sympt_cases_over25 : sympt_cases_over25_inc + new_sympt_cases_over25));
     real_t delta_admit_conf = odin_sum1(internal.n_I_C_2_to_H_D_conf.data(), 0, shared->dim_n_I_C_2_to_H_D_conf) + odin_sum1(internal.n_I_C_2_to_H_R_conf.data(), 0, shared->dim_n_I_C_2_to_H_R_conf) + odin_sum1(internal.n_I_C_2_to_ICU_pre_conf.data(), 0, shared->dim_n_I_C_2_to_ICU_pre_conf);
     for (int i = 1; i <= shared->dim_new_E_1; ++i) {
       for (int j = 1; j <= shared->dim_new_E_2; ++j) {

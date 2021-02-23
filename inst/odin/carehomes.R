@@ -1411,18 +1411,19 @@ initial(sero_pos) <- 0
 update(sero_pos) <- sum(new_T_sero_pos[4:13, , , ])
 
 initial(cum_sympt_cases) <- 0
-new_sympt_cases <- sum(n_I_C_1_progress[, , k_C_1, ])
+new_sympt_cases <- sum(n_EI_P) + sum(n_EI_P_next_vacc_class)
 update(cum_sympt_cases) <- cum_sympt_cases + new_sympt_cases
 
 ## only over 25s (exclude groups 1 to 5)
 initial(cum_sympt_cases_over25) <- 0
-new_sympt_cases_over25 <- sum(n_I_C_1_progress[6:n_groups, , k_C_1, ])
+new_sympt_cases_over25 <- sum(n_EI_P[6:n_groups, , ]) +
+  sum(n_EI_P_next_vacc_class[6:n_groups, , ])
 update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
   new_sympt_cases_over25
 
 initial(cum_sympt_cases_non_variant_over25) <- 0
-new_sympt_cases_non_variant_over25 <-
-  sum(n_I_C_1_progress[6:n_groups, 1, k_C_1, ])
+new_sympt_cases_non_variant_over25 <- sum(n_EI_P[6:n_groups, 1, ]) +
+  sum(n_EI_P_next_vacc_class[6:n_groups, 1, ])
 update(cum_sympt_cases_non_variant_over25) <-
   cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25
 
