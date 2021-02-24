@@ -580,7 +580,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
 test_that("Can calculate Rt with a second more infectious variant", {
   ## Seed with 10 cases on same day as other variant
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 10),
+                            strain_transmission = c(1, 5),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_value = 10)

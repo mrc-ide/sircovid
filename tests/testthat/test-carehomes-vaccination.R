@@ -910,13 +910,13 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   ## case defaults change as the below assumes mean duration is shorter for
   ## asymptomatic infections
   p$k_A <- 1
-  p$gamma_A <- 1 / 2.09
+  p$gamma_A <- 1 / 2.88
   p$k_P <- 1
-  p$gamma_P <- 1
+  p$gamma_P <- 1 / 1.68
   p$k_C_1 <- 1
-  p$gamma_C_1 <- 1
+  p$gamma_C_1 <- 1 / 2.14
   p$k_C_2 <- 1
-  p$gamma_C_2 <- 1 / 2
+  p$gamma_C_2 <- 1 / 1.86
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -968,6 +968,11 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, rel_p_hosp_if_sympt),
                             waning_rate = 1 / 20)
+
+  ## set these to non-zero values so that hospitalisation affects R
+  p$hosp_transmission <- 0.1
+  p$ICU_transmission <- 0.05
+  p$G_D_transmission <- 0.05
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)

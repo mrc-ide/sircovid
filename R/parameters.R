@@ -5,9 +5,9 @@ sircovid_parameters_shared <- function(start_date, region,
   dt <- 1 / steps_per_day
   assert_sircovid_date(start_date)
   beta_step <- sircovid_parameters_beta(beta_date, beta_value %||% 0.08, dt)
-  list(hosp_transmission = 0.1,
-       ICU_transmission = 0.05,
-       G_D_transmission = 0.05,
+  list(hosp_transmission = 0,
+       ICU_transmission = 0,
+       G_D_transmission = 0,
        dt = dt,
        steps_per_day = steps_per_day,
        initial_step = start_date / dt,
