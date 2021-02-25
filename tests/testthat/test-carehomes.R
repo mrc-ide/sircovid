@@ -207,5 +207,5 @@ test_that("can run the particle filter on the model", {
   pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
-  expect_lt(abs(ll1 - ll2), 3)
+  expect_lt(abs(ll1 - ll2), 8)
 })
