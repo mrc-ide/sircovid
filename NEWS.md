@@ -3,6 +3,7 @@
 * Carehomes model restructured
 * Symptomatic pathway now includes presymptomatic compartment and two symptomatic compartments
 * Cases for pillar 2 testing arise in the movement from presymptomatic to the first symptomatic compartment
+* NHS regions populations updated to ONS mid-2019 estimates
 
 # sircovid 0.9.28
 
