@@ -217,3 +217,64 @@ jcvi_n_to_vaccinate <- function(uptake_by_age,
                               prop_very_vulnerable_by_age)
   n_to_vaccinate(p, region)
 }
+
+
+get_dose_schedule <- function(daily_doses, n, mean_days_between_doses) {
+  ## n matrix with dimensions n_age_groups, n_priority_groups
+  ## as obtained from jcvi_n_to_vaccinate function
+  n_age_groups <- nrow(n)
+  n_priority_groups <- ncol(n)
+  
+  # first doses
+  first_daily_doses <- 0 * daily_doses
+  n_to_vaccinate_mat <- array(0, dim = c(n_age_groups, n_priority_groups, length(daily_doses)))
+  n_to_vaccinate <- array(0, dim = c(n_age_groups, length(daily_doses)))
+  n_left <- n
+  # second doses
+  second_daily_doses <- 0 * daily_doses
+  n_to_vaccinate_second_dose <- array(0, dim = c(n_age_groups, length(daily_doses)))
+  
+  for (t in seq_along(daily_doses)) {
+    
+    ## split doses between first and second doses
+    if (t <= mean_days_between_doses) { # only distribute first doses
+      second_daily_doses[t] <- 0  
+      first_daily_doses[t] <- daily_doses[t]
+    } else { # prioritise second doses
+      second_daily_doses[t] <- min(daily_doses[t], first_daily_doses[t - mean_days_between_doses])
+      first_daily_doses[t] <- daily_doses[t]  - second_daily_doses[t] 
+    }
+    
+    ## allocate first doses
+    eligible <- colSums(n_left)
+    ## vaccinate fully the top priority groups
+    n_full_vacc <- findInterval(first_daily_doses[t], cumsum(eligible)) # vaccinate everyone in these groups
+    if (n_full_vacc > 0) {
+      n_to_vaccinate_mat[, 1:n_full_vacc, t] <- n_left[,1:n_full_vacc] 
+    }
+    ## then go down to next priority group
+    if (n_full_vacc < n_priority_groups) {
+      if(n_full_vacc == 0) {
+        remaining_eligible <- first_daily_doses[t]
+      } else {
+        remaining_eligible <- first_daily_doses[t] - cumsum(eligible)[n_full_vacc]
+      }
+      ## split remaining doses according to age
+      n_to_vaccinate_mat[, n_full_vacc + 1, t] <- round(remaining_eligible * n_left[,n_full_vacc + 1] / sum(n_left[,n_full_vacc + 1] ))
+    }
+    
+    n_left <- n_left - n_to_vaccinate_mat[, , t]
+    
+    n_to_vaccinate[, t] <- rowSums(n_to_vaccinate_mat[, , t])
+    
+    ## allocate second doses 12 weeks later
+    if (t > mean_days_between_doses) { # also do second doses
+      n_to_vaccinate_second_dose[, t] <- n_to_vaccinate[, t - mean_days_between_doses]
+    }
+    
+  } # end loop over time
+  
+  list(n_to_vaccinate = n_to_vaccinate,
+       n_to_vaccinate_second_dose = n_to_vaccinate_second_dose)
+  
+}
