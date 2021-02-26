@@ -186,15 +186,3 @@ block_expand <- function(m, n) {
   len <- nrow(m) * n
   matrix(t(matrix(m, nrow(m), len)), len, len, byrow = TRUE)
 }
-
-
-## This is not beautiful, but it works...
-matrix_index <- function(m) {
-  hash <- apply(m, 1, paste, collapse = "\r")
-  uhash <- unique(hash)
-  index <- match(hash, uhash)
-  unique <- match(uhash, hash)
-  list(index = index,
-       unique = unique,
-       value = m[unique, , drop = FALSE])
-}
