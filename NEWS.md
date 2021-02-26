@@ -1,3 +1,8 @@
+# sircovid 0.10.5
+
+* Return Rt values in same time order as everything else (#223)
+* Allow calculation of a single Rt time in trajectories
+
 # sircovid 0.10.3
 * Predefined vaccination schedule implemented
 
