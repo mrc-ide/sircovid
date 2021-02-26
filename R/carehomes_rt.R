@@ -444,11 +444,12 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
+    Si <- mcstate::array_drop(S[, i, , drop = FALSE], 2L)
     if (is.null(prob_strain)) {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], type = type, ...)
+      rt_1 <- calculate_Rt(step, Si, pars[[i]], type = type, ...)
     } else {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ],
-                           type = type, ...)
+      psi <- mcstate::array_drop(prob_strain[, i, , drop = FALSE], 2L)
+      rt_1 <- calculate_Rt(step, Si, pars[[i]], psi, type = type, ...)
     }
     rt_1
   }

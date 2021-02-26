@@ -362,3 +362,34 @@ test_that("Can return rt with new direction", {
     expect_equal(res[[v]], t(cmp[[v]]))
   }
 })
+
+
+test_that("allow trajectories calculation with single timestep", {
+  d <- reference_data_rt()
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  cmp <- carehomes_Rt_trajectories(steps, y, p)
+
+  i <- 6L
+  res1 <- carehomes_Rt_trajectories(steps[i], y[, , i, drop = FALSE], p,
+                                    initial_step_from_parameters = FALSE)
+  expect_equal(
+    res1,
+    structure(lapply(cmp, function(x) x[i, , drop = FALSE]),
+              class = "Rt_trajectories"))
+
+  res2 <- carehomes_Rt_trajectories(steps[i], y[, , i, drop = FALSE], p,
+                                    initial_step_from_parameters = FALSE,
+                                    new_style = TRUE)
+
+  expect_setequal(names(res1), names(res2))
+  expect_equal(res2$step, res1$step[, 1])
+  expect_equal(res2$date, res1$date[, 1])
+
+  for (v in setdiff(names(res1), c("step", "date"))) {
+    expect_equal(res2[[v]], t(res1[[v]]))
+  }
+})
