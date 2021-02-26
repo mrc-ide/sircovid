@@ -339,7 +339,7 @@ test_that("forcing hospital route results in correct path", {
                                  p$p_W_D_step, 1)
     p$psi_W_D[] <- prob_W_D %||% p$psi_W_D[]
 
-    mod <- carehomes$new(p, 0, 1)
+    mod <- carehomes$new(p, 0, 1, seed = 1L)
     info <- mod$info()
     mod$set_state(carehomes_initial(info, 1, p)$state)
     y <- mod$transform_variables(
