@@ -1815,3 +1815,42 @@ test_that("Refuse to upgrade impossible model state", {
     "Can't downgrade state (previously had variables 'E')",
     fixed = TRUE)
 })
+
+test_that("Can vaccinate given a schedule", {
+  p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            waning_rate = 1 / 20)
+  p$index_dose1 <- 1L
+  p$index_dose2 <- 2L
+  p$vaccine_daily_dose_offset <- sircovid_date("2020-03-01")
+
+  end_date <- sircovid_date("2020-06-01")
+
+  i <- seq(sircovid_date("2020-03-01") * 4, length.out = 31 * 4)
+  m1 <- matrix(0, 19, end_date * 4 + 4)
+  m1[, i] <- 10000
+  m2 <- matrix(0, 19, end_date * 4 + 4)
+  m2[, i + 28 * 4] <- 2000
+
+  p$vaccine_daily_dose1_time <- m1
+  p$vaccine_daily_dose2_time <- m2
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  s <- mod$simulate(steps)
+
+  y <- mod$transform_variables(s)
+
+  matplot(steps,
+          t(y$cum_n_vaccinated[, 1, 1, ]), type = "l", lty = 1, col = "black")
+  matlines(steps,
+           t(y$cum_n_vaccinated[, 2, 1, ]), type = "l", lty = 2, col = "red")
+})
