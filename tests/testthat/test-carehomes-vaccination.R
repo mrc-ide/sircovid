@@ -1823,20 +1823,14 @@ test_that("Can vaccinate given a schedule", {
                             rel_p_hosp_if_sympt = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
                             waning_rate = 1 / 20)
-  p$index_dose1 <- 1L
-  p$index_dose2 <- 2L
-  p$vaccine_daily_dose_offset <- sircovid_date("2020-03-01")
-
+  p$index_dose <- c(1L, 2L)
   end_date <- sircovid_date("2020-06-01")
 
   i <- seq(sircovid_date("2020-03-01") * 4, length.out = 31 * 4)
-  m1 <- matrix(0, 19, end_date * 4 + 4)
-  m1[, i] <- 10000
-  m2 <- matrix(0, 19, end_date * 4 + 4)
-  m2[, i + 28 * 4] <- 2000
-
-  p$vaccine_daily_dose1_time <- m1
-  p$vaccine_daily_dose2_time <- m2
+  m <- array(0, c(19, 2, (end_date + 1) * 4))
+  m[, 1, i         ] <- 10000
+  m[, 2, i + 28 * 4] <- 2000
+  p$vaccine_daily_dose_time <- m
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()

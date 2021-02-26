@@ -1483,32 +1483,21 @@ update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 
 ## Vaccination engine
-index_dose1 <- user(1, integer = TRUE)
-index_dose2 <- user(1, integer = TRUE)
+n_doses <- 2
+index_dose[] <- user(integer = TRUE)
+dim(index_dose) <- n_doses
 
 ## First, the number of candidates
-vaccine_n_candidates1[] <-
-  S[i, index_dose1] +
-  sum(E[i, , , index_dose1]) +
-  sum(I_A[i, , , index_dose1]) +
-  sum(I_P[i, , , index_dose1]) +
-  sum(R[i, , index_dose1])
-dim(vaccine_n_candidates1) <- n_groups
+vaccine_n_candidates[, ] <-
+  S[i, index_dose[j]] +
+  sum(E[i, , , index_dose[j]]) +
+  sum(I_A[i, , , index_dose[j]]) +
+  sum(I_P[i, , , index_dose[j]]) +
+  sum(R[i, , index_dose[j]])
+dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 
-vaccine_n_candidates2[] <-
-  S[i, index_dose2] +
-  sum(E[i, , , index_dose2]) +
-  sum(I_A[i, , , index_dose2]) +
-  sum(I_P[i, , , index_dose2]) +
-  sum(R[i, , index_dose2])
-dim(vaccine_n_candidates2) <- n_groups
-
-## The number of doses of vaccine available each day:
-vaccine_daily_dose_offset <- user(integer = TRUE)
-vaccine_daily_dose1_time[, ] <- user()
-vaccine_daily_dose2_time[, ] <- user()
-dim(vaccine_daily_dose1_time) <- user()
-dim(vaccine_daily_dose2_time) <- user()
+vaccine_daily_dose_time[, , ] <- user()
+dim(vaccine_daily_dose_time) <- user()
 
 ## vaccine_dose_index <- as.integer(floor(time - vaccine_daily_dose_offset))
 ## vaccine_daily_dose1_today[] <- (
@@ -1516,53 +1505,30 @@ dim(vaccine_daily_dose2_time) <- user()
 ##       vaccine_dose_index > dim(vaccine_daily_dose1_time, 2)) 0
 ##   else
 ##     vaccine_daily_dose1_time[i, vaccine_dose_index] / vaccine_n_candidates1[i])
-## vaccine_daily_dose2_today[] <- (
-##   if (vaccine_dose_index < 0 ||
-##       vaccine_dose_index > dim(vaccine_daily_dose2_time, 2)) 0
-##   else
-##     vaccine_daily_dose2_time[i, vaccine_dose_index] / vaccine_n_candidates2[i])
 
-vaccine_probability1[] <- (
-  if (vaccine_n_candidates1[i] == 0) 0
-  else vaccine_daily_dose1_time[i, step] /
-  vaccine_n_candidates1[i])
-vaccine_probability2[] <- (
-  if (vaccine_n_candidates2[i] == 0) 0
-  else vaccine_daily_dose2_time[i, step] /
-  vaccine_n_candidates2[i])
-
-dim(vaccine_probability1) <- n_groups
-dim(vaccine_probability2) <- n_groups
+vaccine_probability_doses[, ] <- (
+  if (vaccine_n_candidates[i, j] == 0) 0
+  else vaccine_daily_dose_time[i, j, step] /
+  vaccine_n_candidates[i, j])
+dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
 vaccine_probability[, ] <-
   1 - exp(-vaccine_progression_rate_base[i, j] * dt)
 dim(vaccine_probability) <- c(n_groups, n_vacc_classes)
 
-## Dose 1:
-vaccine_probability[, index_dose1] <- vaccine_probability1[i]
+## This can't be automatically driven from the number of doses, so we
+## have to unroll it here and write both out manually. This is the
+## reason why n_doses is fixed as 2 rather than being user-supplied.
+vaccine_probability[, index_dose[1]] <- vaccine_probability_doses[i, 1]
+vaccine_probability[, index_dose[2]] <- vaccine_probability_doses[i, 2]
 
-## Dose 2:
-vaccine_probability[, index_dose2] <- vaccine_probability2[i]
+initial(tmp_vaccine_n_candidates[, ]) <- 0
+update(tmp_vaccine_n_candidates[, ]) <- vaccine_n_candidates[i, j]
+dim(tmp_vaccine_n_candidates) <- c(n_groups, n_doses)
 
-## for the first vaccination class we use directly the probability above
-## for the other vaccination classes this is indeed the rate
-
-## Debug:
 initial(tmp_vaccine_probability[, ]) <- 0
 update(tmp_vaccine_probability[, ]) <- vaccine_probability[i, j]
 dim(tmp_vaccine_probability) <- c(n_groups, n_vacc_classes)
-
-initial(tmp_vaccine_n_candidates1[]) <- 0
-update(tmp_vaccine_n_candidates1[]) <- vaccine_n_candidates1[i]
-dim(tmp_vaccine_n_candidates1) <- n_groups
-
-initial(tmp_vaccine_probability1[]) <- 0
-update(tmp_vaccine_probability1[]) <- vaccine_probability1[i]
-dim(tmp_vaccine_probability1) <- n_groups
-
-initial(tmp_vaccine_probability2[]) <- 0
-update(tmp_vaccine_probability2[]) <- vaccine_probability2[i]
-dim(tmp_vaccine_probability2) <- n_groups
 
 config(compare) <- "compare_carehomes.cpp"
 ## Parameters and code to support the compare function. Because these

@@ -262,6 +262,8 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), hosp_transmission = list(
         has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), index_dose = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), k_A = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), k_C_1 = list(has_default = FALSE, default_value = NULL,
@@ -404,12 +406,8 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), strain_transmission = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), vaccine_daily_dose1_time = list(
-        has_default = FALSE, default_value = NULL, rank = 2,
-        min = -Inf, max = Inf, integer = FALSE), vaccine_daily_dose2_time = list(
-        has_default = FALSE, default_value = NULL, rank = 2,
-        min = -Inf, max = Inf, integer = FALSE), vaccine_daily_dose_offset = list(
-        has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), vaccine_daily_dose_time = list(
+        has_default = FALSE, default_value = NULL, rank = 3,
         min = -Inf, max = Inf, integer = FALSE), vaccine_progression_rate_base = list(
         has_default = FALSE, default_value = NULL, rank = 2,
         min = -Inf, max = Inf, integer = FALSE), waning_rate = list(
@@ -454,10 +452,6 @@ carehomes <- R6::R6Class(
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_sero_pre_2 = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), index_dose1 = list(has_default = TRUE,
-        default_value = 1L, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), index_dose2 = list(has_default = TRUE,
-        default_value = 1L, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), model_pcr_and_serology_user = list(
         has_default = TRUE, default_value = 1L, rank = 0, min = -Inf,
         max = Inf, integer = FALSE), p_sero_pre_1 = list(has_default = TRUE,
