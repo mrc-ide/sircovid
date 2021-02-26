@@ -1849,3 +1849,61 @@ test_that("Can vaccinate given a schedule", {
   matlines(steps,
            t(y$cum_n_vaccinated[, 2, 1, ]), type = "l", lty = 2, col = "red")
 })
+
+
+test_that("jcvi_prop_to_vaccinate adds up to uptake", {
+
+  uptake_by_age <- c(rep(0, 3), # no vaccination in <15
+                     (2/5) * 0.75, # no vaccination in 15-17yo
+                     rep(0.75, 6),
+                     rep(0.85, 6),
+                     0.95,
+                     0.85,
+                     0.95)
+  prop_hcw_by_age <- c(rep(0, 4),
+                       rep(0.1, 10),
+                       rep(0, 5)) # numbers made up for now
+  prop_very_vulnerable_by_age <- c(rep(0, 4),
+                                   rep(0.05, 5),
+                                   rep(0.1, 5),
+                                   rep(0.15, 5)) # numbers made up for now
+
+  p <- jcvi_prop_to_vaccinate(uptake_by_age,
+                              prop_hcw_by_age,
+                              prop_very_vulnerable_by_age)
+
+  ## check that proportion to vaccinate adds up to uptake
+  expect_true(all(signif(rowSums(p), 5) == signif(uptake_by_age, 5)))
+
+})
+
+
+test_that("jcvi_n_to_vaccinate adds up to population size * uptake", {
+
+  region <- "london"
+  uptake_by_age <- c(rep(0, 3), # no vaccination in <15
+                     (2/5) * 0.75, # no vaccination in 15-17yo
+                     rep(0.75, 6),
+                     rep(0.85, 6),
+                     0.95,
+                     0.85,
+                     0.95)
+  prop_hcw_by_age <- c(rep(0, 4),
+                       rep(0.1, 10),
+                       rep(0, 5)) # numbers made up for now
+  prop_very_vulnerable_by_age <- c(rep(0, 4),
+                                   rep(0.05, 5),
+                                   rep(0.1, 5),
+                                   rep(0.15, 5)) # numbers made up for now
+
+  n <- jcvi_n_to_vaccinate(uptake_by_age,
+                           prop_hcw_by_age,
+                           prop_very_vulnerable_by_age,
+                           region)
+
+  ## check that n to vaccinate adds up to uptake * population
+  pop_by_age <- sircovid:::carehomes_parameters(1, region)$N_tot
+  expect_true(
+    all(signif(rowSums(n), 5) == signif(uptake_by_age * pop_by_age, 5)))
+
+})
