@@ -21,8 +21,8 @@ test_that("Can calculate Rt", {
   expect_true(all(lengths(res) == length(steps)))
 
   ## Check the Rt calculation (from eff_Rt)
-  expect_equal(diff(range(res$Rt_all)), 0)
-  expect_equal(diff(range(res$Rt_all)), 0)
+  expect_true(diff(range(res$Rt_all)) < 1e-7)
+  expect_true(diff(range(res$Rt_general)) < 1e-7)
 
   ## Effective Rt lower than Rt
   expect_true(all(res$Rt_all - res$eff_Rt_all > -1e-7))

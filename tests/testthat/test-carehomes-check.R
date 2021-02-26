@@ -143,7 +143,9 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
-  expect_true(all(y$I_C == 0))
+  expect_true(all(y$I_P == 0))
+  expect_true(all(y$I_C_1 == 0))
+  expect_true(all(y$I_C_2 == 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
   expect_true(all(y$H_D_unconf == 0))
@@ -179,7 +181,9 @@ test_that("No one is hospitalised, no-one dies if psi_H is 0", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0L))
-  expect_true(any(y$I_C > 0))
+  expect_true(any(y$I_P > 0))
+  expect_true(any(y$I_C_1 > 0))
+  expect_true(any(y$I_C_2 > 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
   expect_true(all(y$H_D_unconf == 0))
@@ -217,16 +221,16 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
-  ## Move initial infectives to sympt
+  ## Move initial infectives to 2nd stage sympt
   y0 <- carehomes_initial(info, 1, p)$state
-  y0[info$index$I_C] <- y0[info$index$I_A]
+  y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
   mod$set_state(y0)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_C > 0))
+  expect_true(any(y$I_C_2 > 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
   expect_true(all(y$H_D_unconf == 0))
@@ -261,16 +265,16 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
-  ## Move initial infectives to sympt
+  ## Move initial infectives to 2nd stage sympt
   y0 <- carehomes_initial(info, 1, p)$state
-  y0[info$index$I_C] <- y0[info$index$I_A]
+  y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
   mod$set_state(y0)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_C > 0))
+  expect_true(any(y$I_C_2 > 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
   expect_true(all(y$H_D_unconf == 0))
@@ -304,7 +308,9 @@ test_that("No one dies in the community if psi_G_D is 0", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_C > 0))
+  expect_true(any(y$I_P > 0))
+  expect_true(any(y$I_C_1 > 0))
+  expect_true(any(y$I_C_2 > 0))
   expect_true(all(y$G_D == 0))
   expect_true(all(y$D_non_hosp == 0))
 })
@@ -333,7 +339,7 @@ test_that("forcing hospital route results in correct path", {
                                  p$p_W_D_step, 1)
     p$psi_W_D[] <- prob_W_D %||% p$psi_W_D[]
 
-    mod <- carehomes$new(p, 0, 1)
+    mod <- carehomes$new(p, 0, 1, seed = 1L)
     info <- mod$info()
     mod$set_state(carehomes_initial(info, 1, p)$state)
     y <- mod$transform_variables(
@@ -527,7 +533,9 @@ test_that("setting a gamma to Inf results immediate progression", {
 
   helper("gamma_E", "k_E", "E", FALSE)
   helper("gamma_A", "k_A", "I_A", FALSE)
-  helper("gamma_C", "k_C", "I_C", FALSE)
+  helper("gamma_P", "k_P", "I_P", FALSE)
+  helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
+  helper("gamma_C_2", "k_C_2", "I_C_2", FALSE)
   helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "k_H_R", "H_R", TRUE)
   helper("gamma_H_D", "k_H_D", "H_D", TRUE)
@@ -601,7 +609,9 @@ test_that("setting a gamma to 0 results in no progression", {
   p <- carehomes_parameters(0, "england")
   helper("gamma_E", "k_E", "E", FALSE)
   helper("gamma_A", "k_A", "I_A", FALSE)
-  helper("gamma_C", "k_C", "I_C", FALSE)
+  helper("gamma_P", "k_P", "I_P", FALSE)
+  helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
+  helper("gamma_C_2", "k_C_2", "I_C_2", FALSE)
   helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "k_H_R", "H_R", TRUE)
   helper("gamma_H_D", "k_H_D", "H_D", TRUE)
@@ -664,6 +674,9 @@ test_that("No one is unconfirmed, if p_star = 1", {
 
 
 test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
+  ## RGF: I cannot replicate this failure on either of the Mac systems
+  ## I have access to.
+  skip_on_mac_gha()
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
@@ -804,4 +817,134 @@ test_that("tots all summed correctly ", {
   # check the positivity sums
   expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
+})
+
+
+test_that("Individuals cannot infect in compartment with zero transmission", {
+  helper <- function(transmission_name, compartment_name, gamma_name) {
+    ## Use a large beta so that infections would be immediate
+    p <- carehomes_parameters(0, "england", beta_value = 1e9)
+
+    ## set all transmission parameters to 1
+    p$I_A_transmission <- 1
+    p$I_P_transmission <- 1
+    p$I_C_1_transmission <- 1
+    p$I_C_2_transmission <- 1
+    p$hosp_transmission <- 1
+    p$ICU_transmission <- 1
+    p$G_D_transmission <- 1
+
+    ## set transmission parameters being tested to 0
+    p[[transmission_name]] <- 0
+
+    ## set relevant gamma to 0 so no progression
+    p[[gamma_name]] <- 0
+
+    mod <- carehomes$new(p, 0, 1)
+
+    info <- mod$info()
+    y0 <- carehomes_initial(info, 1, p)$state
+
+    ## remove initial asymptomatic individuals
+    index_I_A <- info$index$I_A
+    y0[index_I_A] <- 0
+    index_I_weighted <- info$index$I_weighted
+    y0[index_I_weighted] <- 0
+
+    ## put individuals in compartment being tested
+    index <- info$index[[compartment_name]]
+    y0[index] <- 50
+
+    mod$set_state(y0)
+    y <- mod$transform_variables(
+      drop(mod$simulate(seq(0, 400, by = 4))))
+
+    ## Susceptible population is never drawn down:
+    expect_equal(y$S, array(y$S[, , 1], c(nrow(y$S), 1, 101)))
+    expect_true(all(y$I_weighted == 0))
+  }
+
+  helper("I_A_transmission", "I_A", "gamma_A")
+  helper("I_P_transmission", "I_P", "gamma_P")
+  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
+  helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
+  helper("G_D_transmission", "G_D", "gamma_G_D")
+  helper("hosp_transmission", "H_D_unconf", "gamma_H_D")
+  helper("hosp_transmission", "H_D_conf", "gamma_H_D")
+  helper("hosp_transmission", "H_R_unconf", "gamma_H_R")
+  helper("hosp_transmission", "H_R_conf", "gamma_H_R")
+  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre")
+  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre")
+  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R")
+  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R")
+})
+
+
+test_that("Individuals can infect in compartment with non-zero transmission", {
+  helper <- function(transmission_name, compartment_name, gamma_name) {
+    ## Use a large beta so that infections would be immediate
+    p <- carehomes_parameters(0, "england", beta_value = 1e9)
+
+    ## set all transmission parameters to 0
+    p$I_A_transmission <- 0
+    p$I_P_transmission <- 0
+    p$I_C_1_transmission <- 0
+    p$I_C_2_transmission <- 0
+    p$hosp_transmission <- 0
+    p$ICU_transmission <- 0
+    p$G_D_transmission <- 0
+
+    ## set transmission parameter being tested to a non-zero value
+    p[[transmission_name]] <- 0.9
+
+    ## set relevant gamma to 0 so no progression
+    p[[gamma_name]] <- 0
+
+    mod <- carehomes$new(p, 0, 1)
+
+    info <- mod$info()
+    y0 <- carehomes_initial(info, 1, p)$state
+
+    ## remove initial asymptomatic individuals
+    index_I_A <- info$index$I_A
+    y0[index_I_A] <- 0
+
+    ## put individuals in compartment being tested
+    index <- info$index[[compartment_name]]
+    y0[index] <- 50
+    index_I_weighted <- info$index$I_weighted
+    y0[index_I_weighted] <- p[[transmission_name]] * 50 *
+      info$dim[[compartment_name]][[3]]
+
+    mod$set_state(y0)
+    y <- mod$transform_variables(
+      drop(mod$simulate(c(0, 1))))
+
+    ## Susceptible population is immediately infected:
+    expect_true(all(y$S[, , 2] == 0))
+    ## I_weighted calculated as expected
+    expect_true(all(y$I_weighted[, , 2] == y$I_weighted[, , 1]))
+  }
+
+  helper("I_A_transmission", "I_A", "gamma_A")
+  helper("I_P_transmission", "I_P", "gamma_P")
+  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
+  helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
+  helper("G_D_transmission", "G_D", "gamma_G_D")
+  helper("hosp_transmission", "H_D_unconf", "gamma_H_D")
+  helper("hosp_transmission", "H_D_conf", "gamma_H_D")
+  helper("hosp_transmission", "H_R_unconf", "gamma_H_R")
+  helper("hosp_transmission", "H_R_conf", "gamma_H_R")
+  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre")
+  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre")
+  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D")
+  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D")
+  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R")
+  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R")
 })

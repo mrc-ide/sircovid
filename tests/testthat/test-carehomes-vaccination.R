@@ -60,11 +60,13 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   mod$set_state(state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  ## Noone moves into I_C ever
+  ## Noone moves into I_P, I_C_1 or I_C_2 ever
   ## other than in the 4th age group where some infections are seeded
   ## in the unvaccinated group and because of waning immunity they may
-  ## eventually end up in I_C upon reinfection
-  expect_true(all(y$I_C[-4, , , , ] == 0))
+  ## eventually end up in I_P and I_C_2 upon reinfection
+  expect_true(all(y$I_P[-4, , , , ] == 0))
+  expect_true(all(y$I_C_1[-4, , , , ] == 0))
+  expect_true(all(y$I_C_2[-4, , , , ] == 0))
 
 })
 
@@ -274,6 +276,56 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
 })
 
 
+test_that("Vaccination of presymptomatic infectious individuals works", {
+  skip("TODO: can't vaccinate fast enough")
+  ## Tests that:
+  ## Every I_P moves to vaccinated and stays there if everyone
+  ## quickly gets vaccinated with a vaccine with no waning immunity
+  ## and if disease progression is stopped after I_P
+  p <- carehomes_parameters(0, "england",
+                            rel_susceptibility = c(1, 0),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
+
+  # stop disease progression after I_P
+  p$gamma_P <- 0
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  index_I_P <- array(info$index$I_P, info$dim$I_P)
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_I_P[, 1, , ]] <- state[index_S]
+  state[index_S] <- 0
+
+  mod$set_state(state)
+  mod$set_index(info$index$I_P)
+  i_A <- mod$simulate(seq(0, 400, by = 4))
+
+  ## Reshape to show the full shape of i_P
+  expect_equal(length(i_P), prod(info$dim$I_P) * 101)
+  i_P <- array(i_P, c(info$dim$I_P, 101))
+
+  ## every I_P moves from unvaccinated to vaccinated between
+  ## time steps 1 and 2
+  I_P_compartment_idx <- 1
+  unvacc_idx <- 1
+  vacc_idx <- 2
+  i <- 4:carehomes_n_groups()
+  expect_equal(
+    i_P[i, I_P_compartment_idx, unvacc_idx, , 1],
+    i_P[i, I_P_compartment_idx, vacc_idx, , 2])
+  ## then they don't move anymore
+  expect_equal(
+    i_P[i, I_P_compartment_idx, vacc_idx, , 2],
+    i_P[i, I_P_compartment_idx, vacc_idx, , 101])
+})
+
+
 test_that("Vaccination of recovered individuals works", {
   skip("TODO: can't vaccinate fast enough")
   ## Test that:
@@ -426,6 +478,56 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
   expect_equal(
     i_A[, 1, I_A_compartment_idx, unvacc_idx, 2],
     i_A[, 1, I_A_compartment_idx, unvacc_idx, 101])
+})
+
+
+test_that("Returning to unvaccinated stage works for I_P individuals", {
+  ## Tests that:
+  ## Every I_P moves back from vaccinated to unvaccinated and stays
+  ## there if vaccine has fast waning immunity,
+  ## beta is zero, and if disease progression
+  ## is stopped after I_P
+  p <- carehomes_parameters(0, "england",
+                            beta_value = 0,
+                            rel_susceptibility = c(1, 0),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_progression_rate = c(0, Inf))
+
+  # stop disease progression after I_P
+  p$gamma_P <- 0
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  index_I_P <- array(info$index$I_P, info$dim$I_P)
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_I_P[, 1, 1, 2]] <- state[index_S[, 1]]
+  state[index_I_P[, 1, 1, 1]] <- 0
+  state[index_S] <- 0
+
+  mod$set_state(state)
+  mod$set_index(info$index$I_P)
+  i_P <- mod$simulate(seq(0, 400, by = 4))
+
+  ## Reshape to show the full shape of i_P
+  expect_equal(length(i_P), prod(info$dim$I_P) * 101)
+  i_P <- array(i_P, c(info$dim$I_P, 101))
+
+  ## every I_P moves from vaccinated to unvaccinated between
+  ## time steps 1 and 2
+  I_P_compartment_idx <- 1
+  unvacc_idx <- 1
+  vacc_idx <- 2
+  expect_equal(
+    i_P[, 1, I_P_compartment_idx, vacc_idx, 1],
+    i_P[, 1, I_P_compartment_idx, unvacc_idx, 2])
+  ## then they don't move anymore
+  expect_equal(
+    i_P[, 1, I_P_compartment_idx, unvacc_idx, 2],
+    i_P[, 1, I_P_compartment_idx, unvacc_idx, 101])
 })
 
 
@@ -808,9 +910,13 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   ## case defaults change as the below assumes mean duration is shorter for
   ## asymptomatic infections
   p$k_A <- 1
-  p$gamma_A <- 1 / 2.09
-  p$k_C
-  p$gamma_C <- 1 / 4
+  p$gamma_A <- 1 / 2.88
+  p$k_P <- 1
+  p$gamma_P <- 1 / 1.68
+  p$k_C_1 <- 1
+  p$gamma_C_1 <- 1 / 2.14
+  p$k_C_2 <- 1
+  p$gamma_C_2 <- 1 / 1.86
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -862,6 +968,11 @@ test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, rel_p_hosp_if_sympt),
                             waning_rate = 1 / 20)
+
+  ## set these to non-zero values so that hospitalisation affects R
+  p$hosp_transmission <- 0.1
+  p$ICU_transmission <- 0.05
+  p$G_D_transmission <- 0.05
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -1168,6 +1279,7 @@ test_that("Outputed vaccination numbers make sense", {
   expect_equal(dim(y$cum_n_S_vaccinated), c(19, 3, 101))
   expect_equal(dim(y$cum_n_E_vaccinated), c(19, 3, 101))
   expect_equal(dim(y$cum_n_I_A_vaccinated), c(19, 3, 101))
+  expect_equal(dim(y$cum_n_I_P_vaccinated), c(19, 3, 101))
   expect_equal(dim(y$cum_n_R_vaccinated), c(19, 3, 101))
 
   ## check cumulative stuff is increasing objects have correct dimension
@@ -1175,6 +1287,7 @@ test_that("Outputed vaccination numbers make sense", {
   expect_true(all(apply(y$cum_n_S_vaccinated, c(1, 2), diff) >= 0))
   expect_true(all(apply(y$cum_n_E_vaccinated, c(1, 2), diff) >= 0))
   expect_true(all(apply(y$cum_n_I_A_vaccinated, c(1, 2), diff) >= 0))
+  expect_true(all(apply(y$cum_n_I_P_vaccinated, c(1, 2), diff) >= 0))
   expect_true(all(apply(y$cum_n_R_vaccinated, c(1, 2), diff) >= 0))
 
 })
@@ -1274,6 +1387,39 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
   ## every initial I_A should be vaccinated within first day
   expect_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , 1, 1])
 
+})
+
+
+test_that("Outputed I_P vaccination numbers are what we expect", {
+  skip("TODO: can't vaccinate fast enough")
+  p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
+                            rel_susceptibility = c(1, 0.5),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_daily_doses = Inf)
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  ## move people from S to I_P initially
+  index_I_P <- array(info$index$I_P, info$dim$I_P)
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_I_P[, 1, , ]] <- state[index_S]
+  state[index_S] <- 0
+
+  mod$set_state(state)
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
+
+  i <- 4:carehomes_n_groups()
+  ## there are candidates in I_P for vaccination
+  expect_true(all(y$I_P[i, , 1, 1, 1] > 0))
+  ## every initial I_P should be vaccinated within first day
+  expect_equal(y$cum_n_I_P_vaccinated[i, , 2], y$I_P[i, , , 1, 1])
+  ## same for the 10 initially seeded cases
+  expect_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , , 1])
 })
 
 
@@ -1500,12 +1646,13 @@ test_that("run sensible vaccination schedule", {
   keep <- c("cum_n_S_vaccinated",
             "cum_n_E_vaccinated",
             "cum_n_I_A_vaccinated",
+            "cum_n_I_P_vaccinated",
             "cum_n_R_vaccinated")
   index <- unlist(lapply(info$index[keep], "[", 1:19), FALSE, FALSE)
 
   mod$set_index(index)
   y <- mod$simulate(seq(0, 380, by = 4))
-  s <- array(y, c(19, 4, dim(y)[3]))
+  s <- array(y, c(19, 5, dim(y)[3]))
 
   ## Never vaccinate any young person:
   expect_true(all(s[1:3, , ] == 0))

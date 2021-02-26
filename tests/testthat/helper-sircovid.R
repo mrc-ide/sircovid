@@ -37,8 +37,20 @@ on_windows <- function() {
 }
 
 
+on_mac <- function() {
+  tolower(Sys.info()[["sysname"]]) == "darwin"
+}
+
+
 skip_on_windows_gha <- function() {
   if (on_ci() && on_windows()) {
     testthat::skip("On Windows Github Actions")
+  }
+}
+
+
+skip_on_mac_gha <- function() {
+  if (on_ci() && on_mac()) {
+    testthat::skip("On macOS Github Actions")
   }
 }

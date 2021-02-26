@@ -404,6 +404,12 @@ carehomes_parameters <- function(start_date, region,
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
 
+  ## relative transmissibility of various I compartments
+  ret$I_A_transmission <- 0.363
+  ret$I_P_transmission <- 1
+  ret$I_C_1_transmission <- 1
+  ret$I_C_2_transmission <- 0
+
   ## All observation parameters:
   observation <- carehomes_parameters_observation(exp_noise)
 
@@ -805,7 +811,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
-  state[index_I_weighted] <- initial_I
+  state[index_I_weighted] <- pars$I_A_transmission * initial_I
   state[index_T_sero_pre] <- initial_I
   state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
@@ -955,7 +961,9 @@ carehomes_parameters_progression <- function() {
   ## parameters of that distribution.
   list(k_E = 2,
        k_A = 1,
-       k_C = 1,
+       k_P = 1,
+       k_C_1 = 1,
+       k_C_2 = 1,
        k_G_D = 2,
        k_H_D = 2,
        k_H_R = 2,
@@ -969,10 +977,12 @@ carehomes_parameters_progression <- function() {
        k_PCR_pre = 2,
        k_PCR_pos = 2,
 
-       gamma_E = 1 / (4.59 / 2),
-       gamma_A = 1 / 2.09,
-       gamma_C = 1 / 4,
-       gamma_G_D = 2 / 5,
+       gamma_E = 1 / (3.42 / 2),
+       gamma_A = 1 / 2.88,
+       gamma_P = 1 / 1.68,
+       gamma_C_1 = 1 / 2.14,
+       gamma_C_2 = 1 / 1.86,
+       gamma_G_D = 1 / (3 / 2),
        gamma_H_D = 2 / 5,
        gamma_H_R = 2 / 10,
        gamma_ICU_D = 2 / 5,
