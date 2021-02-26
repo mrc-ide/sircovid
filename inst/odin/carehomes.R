@@ -1487,8 +1487,8 @@ n_doses <- 2
 index_dose[] <- user(integer = TRUE)
 dim(index_dose) <- n_doses
 
-vaccine_daily_dose_step[, , ] <- user()
-dim(vaccine_daily_dose_step) <- user()
+vaccine_dose_step[, , ] <- user()
+dim(vaccine_dose_step) <- user()
 
 ## First, the number of candidates
 vaccine_n_candidates[, ] <-
@@ -1502,9 +1502,9 @@ dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 ## Work out the vaccination probability via doses, driven by the
 ## schedule
 vaccine_probability_doses[, ] <- (
-  if (as.integer(step) > dim(vaccine_daily_dose_step, 3) ||
+  if (as.integer(step) > dim(vaccine_dose_step, 3) ||
       vaccine_n_candidates[i, j] == 0) 0
-  else vaccine_daily_dose_step[i, j, step] /
+  else vaccine_dose_step[i, j, step] /
   vaccine_n_candidates[i, j])
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 

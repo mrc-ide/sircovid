@@ -406,7 +406,7 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), strain_transmission = list(
         has_default = FALSE, default_value = NULL, rank = 1,
-        min = -Inf, max = Inf, integer = FALSE), vaccine_daily_dose_step = list(
+        min = -Inf, max = Inf, integer = FALSE), vaccine_dose_step = list(
         has_default = FALSE, default_value = NULL, rank = 3,
         min = -Inf, max = Inf, integer = FALSE), vaccine_progression_rate_base = list(
         has_default = FALSE, default_value = NULL, rank = 2,

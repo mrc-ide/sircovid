@@ -131,22 +131,17 @@ NULL
 ##' @param vaccine_uptake A vector of length 19 with the proportion of
 ##'   the population who are able to be vaccinated.
 ##'
-##' @param vaccine_daily_doses A vector of values indicating the number of
-##'   (first) vaccine doses per day to distribute. The actual number
-##'   distributed will be stochastically distributed around this,
-##'   provided there are sufficient eligible candidates. If
-##'   `vaccine_daily_doses_date` is `NULL` this must be a scalar. If
-##'   `vaccine_daily_doses_date` is given then `vaccine_daily_does_date` and
-##'   `vaccine_daily_doses` must have the same length (see
-##'   [sircovid_parameters_piecewise_constant()], where this is passed as
-##'   `value`), and it is assumed there are 0 daily doses before the first
-##'   specified date.
+##' @param vaccine_daily_doses_date A single date representing the
+##'   start date of the doses given in `vaccine_daily_doses`.
 ##'
-##' @param vaccine_daily_doses_date A vector of [sircovid::sircovid_date] values
-##'   for changes in the daily number of vaccine doses, or `NULL` if a single
-##'   value is used for all times (see
-##'   [sircovid_parameters_piecewise_constant()], where this is passed as
-##'   `date`).
+##' @param vaccine_daily_doses A 3d array of daily doses of
+##'   vaccinations given. This must have dimensions 19 x 2 x n_days
+##'   corresponding to the number of groups, number of doses, and the
+##'   days for the simulation. The vaccination rate will be zero both
+##'   before and after the dates here (so before
+##'   `vaccine_daily_doses_date` and from `vaccine_daily_doses_date +
+##'   dim(vaccine_daily_doses)[[3]]`. If `NULL` then no vaccination is
+##'   done.
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -318,7 +313,7 @@ carehomes_parameters <- function(start_date, region,
                                  rel_infectivity = 1,
                                  vaccine_progression_rate = NULL,
                                  vaccine_uptake = NULL,
-                                 vaccine_daily_doses = 0,
+                                 vaccine_daily_doses = NULL,
                                  vaccine_daily_doses_date = NULL,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
@@ -833,9 +828,10 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              rel_infectivity = 1,
                                              vaccine_progression_rate = NULL,
                                              vaccine_uptake = NULL,
-                                             vaccine_daily_doses = 0,
+                                             vaccine_daily_doses = NULL,
                                              vaccine_daily_doses_date = NULL) {
-  stopifnot(length(N_tot) == carehomes_n_groups())
+  n_groups <- carehomes_n_groups()
+  stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
     if (is.matrix(x)) ncol(x) else length(x)
   }
@@ -859,26 +855,37 @@ carehomes_parameters_vaccination <- function(N_tot,
     vaccine_progression_rate, max(n))
 
   if (is.null(vaccine_uptake)) {
-    vaccine_uptake <- rep(1, carehomes_n_groups())
+    vaccine_uptake <- rep(1, n_groups)
   } else if (length(vaccine_uptake) == 1L) {
-    vaccine_uptake <- rep(vaccine_uptake, carehomes_n_groups())
-  } else if (length(vaccine_uptake) != carehomes_n_groups()) {
+    vaccine_uptake <- rep(vaccine_uptake, n_groups)
+  } else if (length(vaccine_uptake) != n_groups) {
     stop(sprintf("Invalid length %d for 'vaccine_uptake', must be 1 or %d",
-                 length(vaccine_uptake), carehomes_n_groups()))
+                 length(vaccine_uptake), n_groups))
   }
 
   ret$vaccine_population_reluctant <- (1 - vaccine_uptake) * N_tot
 
-  if (!is.null(vaccine_daily_doses_date)) {
-    if (vaccine_daily_doses_date[[1L]] != 0) {
-      ## Set vaccine doses to 0 before first specified date
-      vaccine_daily_doses_date <- c(0, vaccine_daily_doses_date)
-      vaccine_daily_doses <- c(0, vaccine_daily_doses)
+  n_doses <- 2L # fixed; see the odin code
+  if (is.null(vaccine_daily_doses)) {
+    ret$vaccine_dose_step <- array(0, c(n_groups, n_doses, 1))
+  } else {
+    if (is.null(vaccine_daily_doses_date)) {
+      stop("As vaccine_daily_doses is given, vaccine_daily_doses_date required")
     }
+    if (nrow(vaccine_daily_doses) != n_groups) {
+      stop(sprintf("'vaccine_daily_doses' must have %d rows", n_groups))
+    }
+    if (ncol(vaccine_daily_doses) != n_doses) {
+      stop(sprintf("'vaccine_daily_doses' must have %d columns", n_doses))
+    }
+    steps_per_day <- 1 / dt
+    n_days <- dim(vaccine_daily_doses)[[3]]
+    i <- rep(seq_len(n_days), each = steps_per_day)
+    len <- sircovid_date(vaccine_daily_doses_date) / dt + 1
+    ret$vaccine_dose_step <- mcstate::array_bind(
+      array(0, c(n_groups, n_doses, len)),
+      (vaccine_daily_doses * dt)[, , i])
   }
-  ret$vaccine_daily_doses_step <-
-    sircovid_parameters_piecewise_constant(vaccine_daily_doses_date,
-                                           vaccine_daily_doses, dt)
 
   ret
 }
