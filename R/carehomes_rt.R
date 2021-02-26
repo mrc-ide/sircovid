@@ -260,6 +260,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
+##' @param new_style Logical, indicating if we should return the "new
+##'   style" Rt values. These match the rest of the package with time
+##'   being in the last dimension (so columns rather than rows) and do
+##'   not create matricies from date and step. This will become the
+##'   default eventually.
+##'
 ##' @inheritParams carehomes_Rt
 ##'
 ##' @return As for [carehomes_Rt()], except that every element is a
@@ -273,7 +279,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       interpolate_every = NULL,
                                       interpolate_critical_dates = NULL,
                                       interpolate_min = NULL,
-                                      eigen_method = "power_iteration") {
+                                      eigen_method = "power_iteration",
+                                      new_style = FALSE) {
   calculate_Rt_trajectories(
     calculate_Rt = carehomes_Rt, step = step,
     S = S, pars = pars,
@@ -284,7 +291,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
     interpolate_every = interpolate_every,
     interpolate_critical_dates = interpolate_critical_dates,
     interpolate_min = interpolate_min,
-    eigen_method = eigen_method)
+    eigen_method = eigen_method,
+    new_style = new_style)
 }
 
 
@@ -387,7 +395,8 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
-                                      shared_parameters, type, ...) {
+                                      shared_parameters, type, ...,
+                                      new_style = FALSE) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
@@ -446,13 +455,24 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
 
   res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
 
-  ## These are stored in a list-of-lists and we convert to a
-  ## list-of-matrices here
-  collect <- function(nm) {
-    matrix(unlist(lapply(res, "[[", nm)), length(step), length(res))
+  if (new_style) {
+    collect <- function(nm) {
+      matrix(unlist(lapply(res, "[[", nm)), length(res), length(step),
+             byrow = TRUE)
+    }
+    base <- list(step = res[[1]]$step,
+                 date = res[[1]]$date)
+    type <- setdiff(names(res[[1]]), names(base))
+    ret <- c(base, set_names(lapply(type, collect), type))
+  } else {
+    ## These are stored in a list-of-lists and we convert to a
+    ## list-of-matrices here
+    collect <- function(nm) {
+      matrix(unlist(lapply(res, "[[", nm)), length(step), length(res))
+    }
+    nms <- names(res[[1]])
+    ret <- set_names(lapply(nms, collect), nms)
   }
-  nms <- names(res[[1]])
-  ret <- set_names(lapply(nms, collect), nms)
   class(ret) <- "Rt_trajectories"
   ret
 }

@@ -341,5 +341,24 @@ test_that("Parameters affect Rt as expected", {
   helper("k_ICU_W_D", 1, 2)
   helper("k_ICU_W_R", 1, 2)
   helper("k_G_D", 1, 2)
+})
 
+
+test_that("Can return rt with new direction", {
+  d <- reference_data_rt()
+
+  p <- d$inputs$p
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  cmp <- carehomes_Rt_trajectories(steps, y, p, new_style = FALSE)
+  res <- carehomes_Rt_trajectories(steps, y, p, new_style = TRUE)
+
+  expect_setequal(names(cmp), names(res))
+  expect_equal(res$step, cmp$step[, 1])
+  expect_equal(res$date, cmp$date[, 1])
+
+  for (v in setdiff(names(cmp), c("step", "date"))) {
+    expect_equal(res[[v]], t(cmp[[v]]))
+  }
 })

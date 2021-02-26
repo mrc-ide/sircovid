@@ -15,7 +15,8 @@ carehomes_Rt_trajectories(
   interpolate_every = NULL,
   interpolate_critical_dates = NULL,
   interpolate_min = NULL,
-  eigen_method = "power_iteration"
+  eigen_method = "power_iteration",
+  new_style = FALSE
 )
 }
 \arguments{
@@ -67,6 +68,12 @@ interpolation and that will not work with fewer than 3 points.}
 
 \item{eigen_method}{The eigenvalue method to use (passed to
 \link[eigen1:eigen1]{eigen1::eigen1} as \code{method})}
+
+\item{new_style}{Logical, indicating if we should return the "new
+style" Rt values. These match the rest of the package with time
+being in the last dimension (so columns rather than rows) and do
+not create matricies from date and step. This will become the
+default eventually.}
 }
 \value{
 As for \code{\link[=carehomes_Rt]{carehomes_Rt()}}, except that every element is a
