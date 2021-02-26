@@ -331,7 +331,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(steps_per_day, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vaccine_daily_dose_time, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vaccine_daily_dose_step, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(waning_rate, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_A, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1562,11 +1562,11 @@ public:
     int dim_tmp_vaccine_probability;
     int dim_tmp_vaccine_probability_1;
     int dim_tmp_vaccine_probability_2;
-    int dim_vaccine_daily_dose_time;
-    int dim_vaccine_daily_dose_time_1;
-    int dim_vaccine_daily_dose_time_12;
-    int dim_vaccine_daily_dose_time_2;
-    int dim_vaccine_daily_dose_time_3;
+    int dim_vaccine_daily_dose_step;
+    int dim_vaccine_daily_dose_step_1;
+    int dim_vaccine_daily_dose_step_12;
+    int dim_vaccine_daily_dose_step_2;
+    int dim_vaccine_daily_dose_step_3;
     int dim_vaccine_n_candidates;
     int dim_vaccine_n_candidates_1;
     int dim_vaccine_n_candidates_2;
@@ -1820,7 +1820,7 @@ public:
     int steps_per_day;
     std::vector<real_t> strain_seed_step;
     std::vector<real_t> strain_transmission;
-    std::vector<real_t> vaccine_daily_dose_time;
+    std::vector<real_t> vaccine_daily_dose_step;
     std::vector<real_t> vaccine_progression_rate_base;
     std::vector<real_t> waning_rate;
   };
@@ -2411,7 +2411,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_vaccine_probability_doses_1; ++i) {
       for (int j = 1; j <= shared->dim_vaccine_probability_doses_2; ++j) {
-        internal.vaccine_probability_doses[i - 1 + shared->dim_vaccine_probability_doses_1 * (j - 1)] = ((internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] == 0 ? 0 : shared->vaccine_daily_dose_time[shared->dim_vaccine_daily_dose_time_12 * (step - 1) + shared->dim_vaccine_daily_dose_time_1 * (j - 1) + i - 1] / (real_t) internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1]));
+        internal.vaccine_probability_doses[i - 1 + shared->dim_vaccine_probability_doses_1 * (j - 1)] = ((static_cast<int>(step) > shared->dim_vaccine_daily_dose_step_3 || internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] == 0 ? 0 : shared->vaccine_daily_dose_step[shared->dim_vaccine_daily_dose_step_12 * (step - 1) + shared->dim_vaccine_daily_dose_step_1 * (j - 1) + i - 1] / (real_t) internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1]));
       }
     }
     for (int i = 1; i <= shared->dim_aux_H_D_conf_1; ++i) {
@@ -5017,12 +5017,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   std::array <int, 1> dim_strain_transmission;
   shared->strain_transmission = user_get_array_variable<real_t, 1>(user, "strain_transmission", shared->strain_transmission, dim_strain_transmission, NA_REAL, NA_REAL);
   shared->dim_strain_transmission = shared->strain_transmission.size();
-  std::array <int, 3> dim_vaccine_daily_dose_time;
-  shared->vaccine_daily_dose_time = user_get_array_variable<real_t, 3>(user, "vaccine_daily_dose_time", shared->vaccine_daily_dose_time, dim_vaccine_daily_dose_time, NA_REAL, NA_REAL);
-  shared->dim_vaccine_daily_dose_time = shared->vaccine_daily_dose_time.size();
-  shared->dim_vaccine_daily_dose_time_1 = dim_vaccine_daily_dose_time[0];
-  shared->dim_vaccine_daily_dose_time_2 = dim_vaccine_daily_dose_time[1];
-  shared->dim_vaccine_daily_dose_time_3 = dim_vaccine_daily_dose_time[2];
+  std::array <int, 3> dim_vaccine_daily_dose_step;
+  shared->vaccine_daily_dose_step = user_get_array_variable<real_t, 3>(user, "vaccine_daily_dose_step", shared->vaccine_daily_dose_step, dim_vaccine_daily_dose_step, NA_REAL, NA_REAL);
+  shared->dim_vaccine_daily_dose_step = shared->vaccine_daily_dose_step.size();
+  shared->dim_vaccine_daily_dose_step_1 = dim_vaccine_daily_dose_step[0];
+  shared->dim_vaccine_daily_dose_step_2 = dim_vaccine_daily_dose_step[1];
+  shared->dim_vaccine_daily_dose_step_3 = dim_vaccine_daily_dose_step[2];
   shared->dim_D_hosp = shared->n_groups;
   shared->dim_D_non_hosp = shared->n_groups;
   shared->dim_N_tot = shared->n_groups;
@@ -5074,7 +5074,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.p_star_by_age = std::vector<real_t>(shared->dim_p_star_by_age);
   shared->dim_m = shared->dim_m_1 * shared->dim_m_2;
   shared->dim_tmp_vaccine_n_candidates = shared->dim_tmp_vaccine_n_candidates_1 * shared->dim_tmp_vaccine_n_candidates_2;
-  shared->dim_vaccine_daily_dose_time_12 = shared->dim_vaccine_daily_dose_time_1 * shared->dim_vaccine_daily_dose_time_2;
+  shared->dim_vaccine_daily_dose_step_12 = shared->dim_vaccine_daily_dose_step_1 * shared->dim_vaccine_daily_dose_step_2;
   shared->dim_vaccine_n_candidates = shared->dim_vaccine_n_candidates_1 * shared->dim_vaccine_n_candidates_2;
   shared->dim_vaccine_probability_doses = shared->dim_vaccine_probability_doses_1 * shared->dim_vaccine_probability_doses_2;
   {

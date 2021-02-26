@@ -1487,6 +1487,9 @@ n_doses <- 2
 index_dose[] <- user(integer = TRUE)
 dim(index_dose) <- n_doses
 
+vaccine_daily_dose_step[, , ] <- user()
+dim(vaccine_daily_dose_step) <- user()
+
 ## First, the number of candidates
 vaccine_n_candidates[, ] <-
   S[i, index_dose[j]] +
@@ -1496,22 +1499,17 @@ vaccine_n_candidates[, ] <-
   sum(R[i, , index_dose[j]])
 dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 
-vaccine_daily_dose_time[, , ] <- user()
-dim(vaccine_daily_dose_time) <- user()
-
-## vaccine_dose_index <- as.integer(floor(time - vaccine_daily_dose_offset))
-## vaccine_daily_dose1_today[] <- (
-##   if (vaccine_dose_index < 0 ||
-##       vaccine_dose_index > dim(vaccine_daily_dose1_time, 2)) 0
-##   else
-##     vaccine_daily_dose1_time[i, vaccine_dose_index] / vaccine_n_candidates1[i])
-
+## Work out the vaccination probability via doses, driven by the
+## schedule
 vaccine_probability_doses[, ] <- (
-  if (vaccine_n_candidates[i, j] == 0) 0
-  else vaccine_daily_dose_time[i, j, step] /
+  if (as.integer(step) > dim(vaccine_daily_dose_step, 3) ||
+      vaccine_n_candidates[i, j] == 0) 0
+  else vaccine_daily_dose_step[i, j, step] /
   vaccine_n_candidates[i, j])
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
+## Then fix everything based on progression at a constant rate (will
+## be zero for the cases that have probabilities above)
 vaccine_probability[, ] <-
   1 - exp(-vaccine_progression_rate_base[i, j] * dt)
 dim(vaccine_probability) <- c(n_groups, n_vacc_classes)

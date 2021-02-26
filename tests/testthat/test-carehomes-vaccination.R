@@ -1816,6 +1816,7 @@ test_that("Refuse to upgrade impossible model state", {
     fixed = TRUE)
 })
 
+
 test_that("Can vaccinate given a schedule", {
   p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 1, 0),
                             beta_value = 0,
