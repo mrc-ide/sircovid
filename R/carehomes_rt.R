@@ -339,13 +339,17 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## Note the mean duration (in time steps) of a compartment for
   ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
 
-  mean_duration_I_A <- (1 - p_C) * pars$k_A / (1 - exp(- dt * pars$gamma_A))
+  mean_duration_I_A <- pars$I_A_transmission * (1 - p_C) *
+    pars$k_A / (1 - exp(- dt * pars$gamma_A))
 
-  mean_duration_I_P <- p_C * pars$k_P / (1 - exp(- dt * pars$gamma_P))
+  mean_duration_I_P <- pars$I_P_transmission * p_C *
+    pars$k_P / (1 - exp(- dt * pars$gamma_P))
 
-  mean_duration_I_C_1 <- p_C * pars$k_C_1 / (1 - exp(- dt * pars$gamma_C_1))
+  mean_duration_I_C_1 <- pars$I_C_1_transmission * p_C *
+    pars$k_C_1 / (1 - exp(- dt * pars$gamma_C_1))
 
-  mean_duration_I_C_2 <- p_C * pars$k_C_2 / (1 - exp(- dt * pars$gamma_C_2))
+  mean_duration_I_C_2 <- pars$I_C_2_transmission * p_C *
+    pars$k_C_2 / (1 - exp(- dt * pars$gamma_C_2))
 
   mean_duration_G_D <- pars$G_D_transmission * p_C * p_H *
     p_G_D * pars$k_G_D / (1 - exp(- dt * pars$gamma_G_D))
