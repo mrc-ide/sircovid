@@ -1,3 +1,6 @@
+# sircovid 0.10.1
+* Rt corrected for restructured model
+
 # sircovid 0.10.0
 
 * Carehomes model restructured
