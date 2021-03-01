@@ -127,10 +127,10 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
   mat_vaccine_progression_rate
 }
 
-
-jcvi_prop_to_vaccinate <- function(uptake_by_age, 
+jcvi_prop_to_vaccinate_old <- function(uptake_by_age, 
                                    prop_hcw_by_age,
-                                   prop_very_vulnerable_by_age) {
+                                   prop_very_vulnerable_by_age,
+                                   prop_underlying_condition_by_age) {
   ## https://www.gov.uk/government/publications/priority-groups-for-coronavirus-covid-19-vaccination-advice-from-the-jcvi-30-december-2020/joint-committee-on-vaccination-and-immunisation-advice-on-priority-groups-for-covid-19-vaccination-30-december-2020#fnref:3
   ## Assuming independance between job (e.g. HCW) and clinical condition
   ## But assuming one is either counted as "clinically extremely vulnerable" or "with underlying health conditions" but not both
@@ -142,61 +142,132 @@ jcvi_prop_to_vaccinate <- function(uptake_by_age,
   ## JCVI group 1: residents in a care home for older adults and their carers
   j <- 1
   i <- 18:19
-  p[i, j] <- uptake_by_age[i]
+  p[i, j] <- 1
   ## JCVI group 2: all those 80 years of age and over and frontline health and social care workers
   j <- 2
   i <- 17
-  p[i, j] <- uptake_by_age[i]
-  p[1:(i-1), j] <- uptake_by_age[1:(i-1)] * prop_hcw_by_age[1:(i-1)]
+  p[i, j] <- 1
+  p[1:(i-1), j] <- prop_hcw_by_age[1:(i-1)]
   ## JCVI group 3: all those 75 years of age and over
   j <- 3
   i <- 16
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i])
   ## JCVI group 4: all those 70 years of age and over and clinically extremely vulnerable individuals
   j <- 4
   i <- 15
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i])
-  p[1:(i-1), j] <- uptake_by_age[1:(i-1)] * (1 - prop_hcw_by_age[1:(i-1)]) * prop_very_vulnerable_by_age[1:(i-1)]
+  p[i, j] <- (1 - prop_hcw_by_age[i])
+  p[1:(i-1), j] <- (1 - prop_hcw_by_age[1:(i-1)]) * prop_very_vulnerable_by_age[1:(i-1)]
   ## JCVI group 5: all those 65 years of age and over
   j <- 5
   i <- 14
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i])
   ## JCVI group 6: all individuals aged 16 years to 64 years with underlying health conditions which put them at higher risk of serious disease and mortality
   j <- 6
   i <- 4:13 # starting at 15 not 16 so will need adjusting proportion for this
-  prop_underlying_condition_by_age <- c(rep(0, 4), 
-                                        rep(0.05, 5),
-                                        rep(0.1, 5),
-                                        rep(0.15, 5)) # numbers made up for now
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * prop_underlying_condition_by_age[i]
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * prop_underlying_condition_by_age[i]
   ## JCVI group 7: all those 60 years of age and over
   j <- 7
   i <- 13
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
   ## JCVI group 8: all those 55 years of age and over
   j <- 8
   i <- 12
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
   ## JCVI group 9: all those 50 years of age and over
   j <- 9
   i <- 11
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
   
   ## JCVI second phase
   ## JCVI group 10: all those 40-49 years of age and over
   j <- 10
   i <- 9:10
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
   ## JCVI group 11: all those 30-39 years of age and over
   j <- 11
   i <- 7:8
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
   ## JCVI group 11: all those 18-29 years of age and over
   j <- 12
   i <- 1:6
-  p[i, j] <- uptake_by_age[i] * (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
+  p[i, j] <- (1 - prop_hcw_by_age[i]) * (1 - prop_very_vulnerable_by_age[i] - prop_underlying_condition_by_age[i])
   
-  p
+  uptake_by_age_mat <- matrix(rep(uptake_by_age, n_priority_groups), nrow = n_age_groups)
+  
+  p * uptake_by_age_mat
+}
+
+jcvi_prop_to_vaccinate <- function(uptake_by_age, 
+                                   prop_hcw_by_age,
+                                   prop_very_vulnerable_by_age,
+                                   prop_underlying_condition_by_age) {
+  
+  ## https://www.gov.uk/government/publications/priority-groups-for-coronavirus-covid-19-vaccination-advice-from-the-jcvi-30-december-2020/joint-committee-on-vaccination-and-immunisation-advice-on-priority-groups-for-covid-19-vaccination-30-december-2020#fnref:3
+  ## Assuming independance between job (e.g. HCW) and clinical condition
+  ## But assuming one is either counted as "clinically extremely vulnerable" or "with underlying health conditions" but not both
+  
+  ## JCVI group 1: residents in a care home for older adults and their carers
+  ## JCVI group 2: all those 80 years of age and over and frontline health and social care workers
+  ## JCVI group 3: all those 75 years of age and over
+  ## JCVI group 4: all those 70 years of age and over and clinically extremely vulnerable individuals
+  ## JCVI group 5: all those 65 years of age and over
+  ## JCVI group 6: all individuals aged 16 years to 64 years with underlying health conditions which put them at higher risk of serious disease and mortality
+  ## JCVI group 7: all those 60 years of age and over
+  ## JCVI group 8: all those 55 years of age and over
+  ## JCVI group 9: all those 50 years of age and over
+  ## JCVI group 10: all those 40-49 years of age and over
+  ## JCVI group 11: all those 30-39 years of age and over
+  ## JCVI group 11: all those 18-29 years of age and over
+  
+  n_age_groups <- length(uptake_by_age)
+  n_priority_groups <- 12
+  p <- matrix(0, n_age_groups, n_priority_groups)
+  
+  ## Aged base priority list
+  jcvi_priority <- list(
+    ## the age groups targeted in each priority group (see comments above)
+    18:19, 17, 16, 15, 14, NULL, 13, 12, 11, 9:10, 7:8, 1:6 
+  )
+  
+  ## 1. Start with non aged based priority: 
+  ## helper function
+  add_prop_to_vacc <- function(j, idx, prop_to_vaccinate, p) {
+    p[idx, j] <- prop_to_vaccinate[idx]
+    p
+  }
+  
+  ## Group 2 includes frontline health and social care workers
+  p <- add_prop_to_vacc(j = 2, 
+                        idx = 1:(jcvi_priority[[2]]-1), 
+                        prop_to_vaccinate = prop_hcw_by_age, 
+                        p)
+  
+  ## Group 4 includes clinically extremely vulnerable individuals
+  p <- add_prop_to_vacc(j = 4, 
+                        idx = 1:(jcvi_priority[[4]]-1), 
+                        prop_to_vaccinate = (1 - prop_hcw_by_age) *
+                          prop_very_vulnerable_by_age, 
+                        p)
+  
+  ## Group 6 includes all individuals aged 16 years to 64 years with underlying 
+  ## health conditions which put them at higher risk of serious disease and mortality
+  p <- add_prop_to_vacc(j = 6, 
+                        idx = 4:13, 
+                        prop_to_vaccinate = (1 - prop_hcw_by_age) *
+                          prop_underlying_condition_by_age, 
+                        p)
+  
+  ## 2. Add aged base priority 
+  for(j in seq_along(jcvi_priority)) {
+    if (!is.null(jcvi_priority[[j]])) {
+      p[jcvi_priority[[j]], j] <- 1 - rowSums(p)[jcvi_priority[[j]]]
+    }
+  }
+  
+  ## 3. Account for uptake
+  uptake_by_age_mat <- matrix(rep(uptake_by_age, n_priority_groups), nrow = n_age_groups)
+  
+  p * uptake_by_age_mat
 }
 
 
@@ -211,10 +282,12 @@ n_to_vaccinate <- function(prop_to_vaccinate, region) {
 jcvi_n_to_vaccinate <- function(uptake_by_age, 
                                 prop_hcw_by_age,
                                 prop_very_vulnerable_by_age,
+                                prop_underlying_condition_by_age,
                                 region) {
   p <- jcvi_prop_to_vaccinate(uptake_by_age, 
                               prop_hcw_by_age,
-                              prop_very_vulnerable_by_age)
+                              prop_very_vulnerable_by_age,
+                              prop_underlying_condition_by_age)
   n_to_vaccinate(p, region)
 }
 

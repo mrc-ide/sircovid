@@ -1686,10 +1686,15 @@ test_that("jcvi_prop_to_vaccinate adds up to uptake", {
                                    rep(0.05, 5),
                                    rep(0.1, 5),
                                    rep(0.15, 5)) # numbers made up for now
+  prop_underlying_condition_by_age <- c(rep(0, 4), 
+                                        rep(0.05, 5),
+                                        rep(0.1, 5),
+                                        rep(0.15, 5)) # numbers made up for now
   
   p <- jcvi_prop_to_vaccinate(uptake_by_age, 
                               prop_hcw_by_age,
-                              prop_very_vulnerable_by_age) 
+                              prop_very_vulnerable_by_age,
+                              prop_underlying_condition_by_age) 
   
   ## check that proportion to vaccinate adds up to uptake
   expect_true(all(signif(rowSums(p), 5) == signif(uptake_by_age, 5)))
@@ -1714,10 +1719,15 @@ test_that("jcvi_n_to_vaccinate adds up to population size * uptake", {
                                    rep(0.05, 5),
                                    rep(0.1, 5),
                                    rep(0.15, 5)) # numbers made up for now
+  prop_underlying_condition_by_age <- c(rep(0, 4), 
+                                        rep(0.05, 5),
+                                        rep(0.1, 5),
+                                        rep(0.15, 5)) # numbers made up for now
   
   n <- jcvi_n_to_vaccinate(uptake_by_age, 
                            prop_hcw_by_age,
                            prop_very_vulnerable_by_age,
+                           prop_underlying_condition_by_age,
                            region)
   
   ## check that n to vaccinate adds up to uptake * population
@@ -1745,12 +1755,17 @@ test_that("get_dose_schedule works as expected", {
                                    rep(0.05, 5),
                                    rep(0.1, 5),
                                    rep(0.15, 5)) # numbers made up for now
+  prop_underlying_condition_by_age <- c(rep(0, 4), 
+                                        rep(0.05, 5),
+                                        rep(0.1, 5),
+                                        rep(0.15, 5)) # numbers made up for now
   daily_doses <- rep(20000, 365) # a vector of number of doses to give each day
   mean_days_between_doses <- 12 * 7
   
   n <- jcvi_n_to_vaccinate(uptake_by_age, 
                            prop_hcw_by_age,
                            prop_very_vulnerable_by_age,
+                           prop_underlying_condition_by_age,
                            region)
   
   dose_schedule <- get_dose_schedule(daily_doses, n, mean_days_between_doses) 
