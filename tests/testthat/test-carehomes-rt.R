@@ -262,3 +262,66 @@ test_that("Can interpolate Rt with step changes", {
   expect_true(all(abs(rt_cmp$Rt_all - rt_int_14$Rt_all) < tol2))
   expect_true(all(abs(rt_cmp$Rt_general - rt_int_14$Rt_general) < tol2))
 })
+
+
+test_that("Parameters affect Rt as expected", {
+  
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            m_CHW = 3e-6, m_CHR = 3e-6)
+  p$hosp_transmission <- 0.05
+  p$ICU_transmission <- 0.05
+  p$G_D_transmission <- 0.05
+  p$I_C_2_transmission <- 0.5
+  np <- 1L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+  
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  
+  set.seed(1)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+  
+  helper <- function(par_name, par_value_lower_Rt, par_value_higher_Rt,
+                     test_general) {
+    
+    p[[par_name]] <- par_value_lower_Rt
+    rt_lower <- carehomes_Rt(steps, y[, 1, ], p)
+    
+    p[[par_name]] <- par_value_higher_Rt
+    rt_higher <- carehomes_Rt(steps, y[, 1, ], p)
+    
+    expect_true(all(rt_lower$Rt_all < rt_higher$Rt_all))
+    expect_true(all(rt_lower$eff_Rt_all < rt_higher$eff_Rt_all))
+    if (test_general) {
+      expect_true(all(rt_lower$Rt_general < rt_higher$Rt_general))
+      expect_true(all(rt_lower$eff_Rt_general < rt_higher$eff_Rt_general))
+    }
+  }
+  
+  helper("I_A_transmission", 0, 1, TRUE)
+  helper("I_P_transmission", 0, 1, TRUE)
+  helper("I_C_1_transmission", 0, 1, TRUE)
+  helper("I_C_2_transmission", 0, 1, TRUE)
+  helper("hosp_transmission", 0, 1, TRUE)
+  helper("ICU_transmission", 0, 1, TRUE)
+  helper("G_D_transmission", 0, 1, FALSE)
+  
+  helper("gamma_A", Inf, 1, TRUE)
+  helper("gamma_P", Inf, 1, TRUE)
+  helper("gamma_C_1", Inf, 1, TRUE)
+  helper("gamma_C_2", Inf, 1, TRUE)
+  helper("gamma_H_D", Inf, 1, TRUE)
+  helper("gamma_H_R", Inf, 1, TRUE)
+  helper("gamma_ICU_pre", Inf, 1, TRUE)
+  helper("gamma_ICU_D", Inf, 1, TRUE)
+  helper("gamma_ICU_W_D", Inf, 1, TRUE)
+  helper("gamma_ICU_W_R", Inf, 1, TRUE)
+  helper("gamma_G_D", Inf, 1, FALSE)
+  
+})
