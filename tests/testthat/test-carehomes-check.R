@@ -431,57 +431,57 @@ test_that("No one does not seroconvert and no one seroreverts
 })
 
 
-test_that("T_sero_pre parameters work as expected", {
-  helper <- function(p_sero_pre_1, gamma_sero_pre_1, gamma_sero_pre_2) {
-    p <- carehomes_parameters(0, "uk")
-    p$p_sero_pre_1 <- p_sero_pre_1
-    p$gamma_sero_pre_1 <- gamma_sero_pre_1
-    p$gamma_sero_pre_2 <- gamma_sero_pre_2
-
-    mod <- carehomes$new(p, 0, 1)
-    info <- mod$info()
-
-    y0 <- carehomes_initial(info, 1, p)$state
-    y0[info$index$T_sero_pre] <- 0
-
-    mod$set_state(y0)
-    mod$transform_variables(drop(mod$simulate(0:400)))
-  }
-
-  ## p_sero_pre_1 = 1, expect no cases in T_sero_pre_2 stream
-  y <- helper(1, 1, 0.5)
-  expect_true(all(y$T_sero_pre[, , 2, , ] == 0))
-
-  ## p_sero_pre_1 = 0, expect no cases in T_sero_pre_1 stream
-  y <- helper(0, 1, 0.5)
-  expect_true(all(y$T_sero_pre[, , 1, , ] == 0))
-
-  ## gamma_sero_pre_1 = gamma_sero_pre_2 = 0, expect no cases in T_sero_pos
-  y <- helper(0.5, 0, 0)
-  expect_true(all(y$T_sero_pos == 0))
-  expect_true(all(y$T_sero_neg == 0))
-
-  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = 0, expect progression in one
-  ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_1
-  y <- helper(0.5, Inf, 0)
-  n <- length(y$time)
-  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(y$T_sero_pre[, , 1, 1, -n]))
-
-  ## gamma_sero_pre_1 = 0, gamma_sero_pre_2 = Inf, expect progression in one
-  ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_2
-  y <- helper(0.5, 0, Inf)
-  n <- length(y$time)
-  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(y$T_sero_pre[, , 2, 1, -n]))
-
-  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = Inf, expect progression in one
-  ## time-step to T_sero_neg/T_sero_pos from both T_sero_pre_1 and T_sero_pre_2
-  y <- helper(0.5, Inf, Inf)
-  n <- length(y$time)
-  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(apply(y$T_sero_pre[, , , 1, -n], c(1, 3), sum)))
-})
+# test_that("T_sero_pre parameters work as expected", {
+#   helper <- function(p_sero_pre_1, gamma_sero_pre_1, gamma_sero_pre_2) {
+#     p <- carehomes_parameters(0, "uk")
+#     p$p_sero_pre_1 <- p_sero_pre_1
+#     p$gamma_sero_pre_1 <- gamma_sero_pre_1
+#     p$gamma_sero_pre_2 <- gamma_sero_pre_2
+# 
+#     mod <- carehomes$new(p, 0, 1)
+#     info <- mod$info()
+# 
+#     y0 <- carehomes_initial(info, 1, p)$state
+#     y0[info$index$T_sero_pre] <- 0
+# 
+#     mod$set_state(y0)
+#     mod$transform_variables(drop(mod$simulate(0:400)))
+#   }
+# 
+#   ## p_sero_pre_1 = 1, expect no cases in T_sero_pre_2 stream
+#   y <- helper(1, 1, 0.5)
+#   expect_true(all(y$T_sero_pre[, , 2, , ] == 0))
+# 
+#   ## p_sero_pre_1 = 0, expect no cases in T_sero_pre_1 stream
+#   y <- helper(0, 1, 0.5)
+#   expect_true(all(y$T_sero_pre[, , 1, , ] == 0))
+# 
+#   ## gamma_sero_pre_1 = gamma_sero_pre_2 = 0, expect no cases in T_sero_pos
+#   y <- helper(0.5, 0, 0)
+#   expect_true(all(y$T_sero_pos == 0))
+#   expect_true(all(y$T_sero_neg == 0))
+# 
+#   ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = 0, expect progression in one
+#   ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_1
+#   y <- helper(0.5, Inf, 0)
+#   n <- length(y$time)
+#   expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
+#                t(y$T_sero_pre[, , 1, 1, -n]))
+# 
+#   ## gamma_sero_pre_1 = 0, gamma_sero_pre_2 = Inf, expect progression in one
+#   ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_2
+#   y <- helper(0.5, 0, Inf)
+#   n <- length(y$time)
+#   expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
+#                t(y$T_sero_pre[, , 2, 1, -n]))
+# 
+#   ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = Inf, expect progression in one
+#   ## time-step to T_sero_neg/T_sero_pos from both T_sero_pre_1 and T_sero_pre_2
+#   y <- helper(0.5, Inf, Inf)
+#   n <- length(y$time)
+#   expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
+#                t(apply(y$T_sero_pre[, , , 1, -n], c(1, 3), sum)))
+# })
 
 
 test_that("setting a gamma to Inf results immediate progression", {
