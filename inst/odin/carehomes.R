@@ -721,7 +721,7 @@ delta_D_non_hosp[] <- sum(n_G_D_progress[i, , k_G_D, ])
 ## Work out the number of people entering the seroconversion flow
 n_com_to_T_sero_pre[, , 1] <-
   n_EE[i, j, k_E, 1] + n_EE_next_vacc_class[i, j, k_E, n_vacc_classes]
-n_com_to_T_sero_pre[, , 2:n_vacc_classes] <- 
+n_com_to_T_sero_pre[, , 2:n_vacc_classes] <-
   n_EE[i, j, k_E, k] + n_EE_next_vacc_class[i, j, k_E, k - 1]
 new_T_sero_pre[, , , ] <- T_sero_pre[i, j, k, l] -
   n_T_sero_pre_progress[i, j, k, l]
