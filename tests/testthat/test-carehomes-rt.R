@@ -324,4 +324,16 @@ test_that("Parameters affect Rt as expected", {
   helper("gamma_ICU_W_R", Inf, 1, TRUE)
   helper("gamma_G_D", Inf, 1, FALSE)
   
+  helper("k_A", 1, 2, TRUE)
+  helper("k_P", 1, 2, TRUE)
+  helper("k_C_1", 1, 2, TRUE)
+  helper("k_C_2", 1, 2, TRUE)
+  helper("k_H_D", 1, 2, TRUE)
+  helper("k_H_R", 1, 2, TRUE)
+  helper("k_ICU_pre", 1, 2, TRUE)
+  helper("k_ICU_D", 1, 2, TRUE)
+  helper("k_ICU_W_D", 1, 2, TRUE)
+  helper("k_ICU_W_R", 1, 2, TRUE)
+  helper("k_G_D", 1, 2, FALSE)
+  
 })
