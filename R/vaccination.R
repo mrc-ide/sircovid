@@ -260,6 +260,7 @@ jcvi_prop_to_vaccinate <- function(uptake_by_age,
   ## 2. Add aged base priority 
   for(j in seq_along(jcvi_priority)) {
     if (!is.null(jcvi_priority[[j]])) {
+      ## discount those already vaccinated as part of non age based priority
       p[jcvi_priority[[j]], j] <- 1 - rowSums(p)[jcvi_priority[[j]]]
     }
   }
