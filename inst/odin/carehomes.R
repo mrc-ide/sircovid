@@ -723,14 +723,18 @@ n_com_to_T_sero_pre[, , 1] <-
   n_EE[i, j, k_E, 1] + n_EE_next_vacc_class[i, j, k_E, n_vacc_classes]
 n_com_to_T_sero_pre[, , 2:n_vacc_classes] <- 
   n_EE[i, j, k_E, k] + n_EE_next_vacc_class[i, j, k_E, k - 1]
-new_T_sero_pre[, , 1, ] <- T_sero_pre[i, j, k, l] +
-  n_com_to_T_sero_pre[i, j, l] - n_T_sero_pre_progress[i, j, k, l]
+new_T_sero_pre[, , , ] <- T_sero_pre[i, j, k, l] -
+  n_T_sero_pre_progress[i, j, k, l]
+new_T_sero_pre[, , 1, ] <- new_T_sero_pre[i, j, 1, l] +
+  n_com_to_T_sero_pre[i, j, l]
+new_T_sero_pre[, , 2:k_sero_pre, ] <-
+  new_T_sero_pre[i, j, k, l] + n_T_sero_pre_progress[i, j, k - 1, l]
 
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
 n_T_sero_pre_to_T_sero_pos[, , ] <-
-  rbinom(sum(n_T_sero_pre_progress[i, j, , k]), p_sero_pos[i])
+  rbinom(n_T_sero_pre_progress[i, j, k_sero_pre, k], p_sero_pos[i])
 
 new_T_sero_pos[, , , ] <- T_sero_pos[i, j, k, l] -
   n_T_sero_pos_progress[i, j, k, l]
@@ -740,7 +744,8 @@ new_T_sero_pos[, , 2:k_sero_pos, ] <-
   new_T_sero_pos[i, j, k, l] + n_T_sero_pos_progress[i, j, k - 1, l]
 
 new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] +
-  sum(n_T_sero_pre_progress[i, j, , k]) - n_T_sero_pre_to_T_sero_pos[i, j, k] +
+  n_T_sero_pre_progress[i, j, k_sero_pre, k] -
+  n_T_sero_pre_to_T_sero_pos[i, j, k] +
   n_T_sero_pos_progress[i, j, k_sero_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
   model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
@@ -964,8 +969,8 @@ k_W_D <- user()
 gamma_W_D <- user(0.1)
 
 ## Parameters of the T_sero_pre classes
+k_sero_pre <- user()
 gamma_sero_pre <- user(0.1)
-## Governs the mixing - pretty much only makes sense at 0.5
 p_sero_pos[] <- user()
 
 ## Parameters of the T_sero_pos classes
@@ -1176,9 +1181,9 @@ dim(R) <- c(n_groups, n_strains, n_vacc_classes)
 dim(new_R) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the T_sero_pre class and seroconversion
-dim(T_sero_pre) <- c(n_groups, n_strains, 1, n_vacc_classes)
-dim(new_T_sero_pre) <- c(n_groups, n_strains, 1, n_vacc_classes)
-dim(n_T_sero_pre_progress) <- c(n_groups, n_strains, 1, n_vacc_classes)
+dim(T_sero_pre) <- c(n_groups, n_strains, k_sero_pre, n_vacc_classes)
+dim(new_T_sero_pre) <- c(n_groups, n_strains, k_sero_pre, n_vacc_classes)
+dim(n_T_sero_pre_progress) <- c(n_groups, n_strains, k_sero_pre, n_vacc_classes)
 dim(p_sero_pos) <- n_groups
 
 ## Vectors handling the T_sero_pos class
