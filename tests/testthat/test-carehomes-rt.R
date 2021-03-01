@@ -265,75 +265,81 @@ test_that("Can interpolate Rt with step changes", {
 
 
 test_that("Parameters affect Rt as expected", {
-  
+
+  ## Note that m_CHW and m_CHR have been changed from defaults to avoid
+  ## having all care home residents infected
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             m_CHW = 3e-6, m_CHR = 3e-6)
+
+  ## set the following parameters to non-zero values to allow related parameters
+  ## to have an effect on Rt
   p$hosp_transmission <- 0.05
   p$ICU_transmission <- 0.05
   p$G_D_transmission <- 0.05
   p$I_C_2_transmission <- 0.5
+
+  ## allow some deaths in the community so that G_D parameters affect Rt_general
+  p$psi_G_D[15:17] <- 0.5
+
   np <- 1L
   mod <- carehomes$new(p, 0, np, seed = 1L)
-  
+
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
-  
+
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
-  
+
   set.seed(1)
   mod$set_index(index)
   y <- mod$simulate(steps)
-  
-  helper <- function(par_name, par_value_lower_Rt, par_value_higher_Rt,
-                     test_general) {
-    
+
+  helper <- function(par_name, par_value_lower_Rt, par_value_higher_Rt) {
+
     p[[par_name]] <- par_value_lower_Rt
     rt_lower <- carehomes_Rt(steps, y[, 1, ], p)
-    
+
     p[[par_name]] <- par_value_higher_Rt
     rt_higher <- carehomes_Rt(steps, y[, 1, ], p)
-    
+
     expect_true(all(rt_lower$Rt_all < rt_higher$Rt_all))
     expect_true(all(rt_lower$eff_Rt_all < rt_higher$eff_Rt_all))
-    if (test_general) {
-      expect_true(all(rt_lower$Rt_general < rt_higher$Rt_general))
-      expect_true(all(rt_lower$eff_Rt_general < rt_higher$eff_Rt_general))
-    }
+    expect_true(all(rt_lower$Rt_general < rt_higher$Rt_general))
+    expect_true(all(rt_lower$eff_Rt_general < rt_higher$eff_Rt_general))
   }
-  
-  helper("I_A_transmission", 0, 1, TRUE)
-  helper("I_P_transmission", 0, 1, TRUE)
-  helper("I_C_1_transmission", 0, 1, TRUE)
-  helper("I_C_2_transmission", 0, 1, TRUE)
-  helper("hosp_transmission", 0, 1, TRUE)
-  helper("ICU_transmission", 0, 1, TRUE)
-  helper("G_D_transmission", 0, 1, FALSE)
-  
-  helper("gamma_A", Inf, 1, TRUE)
-  helper("gamma_P", Inf, 1, TRUE)
-  helper("gamma_C_1", Inf, 1, TRUE)
-  helper("gamma_C_2", Inf, 1, TRUE)
-  helper("gamma_H_D", Inf, 1, TRUE)
-  helper("gamma_H_R", Inf, 1, TRUE)
-  helper("gamma_ICU_pre", Inf, 1, TRUE)
-  helper("gamma_ICU_D", Inf, 1, TRUE)
-  helper("gamma_ICU_W_D", Inf, 1, TRUE)
-  helper("gamma_ICU_W_R", Inf, 1, TRUE)
-  helper("gamma_G_D", Inf, 1, FALSE)
-  
-  helper("k_A", 1, 2, TRUE)
-  helper("k_P", 1, 2, TRUE)
-  helper("k_C_1", 1, 2, TRUE)
-  helper("k_C_2", 1, 2, TRUE)
-  helper("k_H_D", 1, 2, TRUE)
-  helper("k_H_R", 1, 2, TRUE)
-  helper("k_ICU_pre", 1, 2, TRUE)
-  helper("k_ICU_D", 1, 2, TRUE)
-  helper("k_ICU_W_D", 1, 2, TRUE)
-  helper("k_ICU_W_R", 1, 2, TRUE)
-  helper("k_G_D", 1, 2, FALSE)
-  
+
+  helper("I_A_transmission", 0, 1)
+  helper("I_P_transmission", 0, 1)
+  helper("I_C_1_transmission", 0, 1)
+  helper("I_C_2_transmission", 0, 1)
+  helper("hosp_transmission", 0, 1)
+  helper("ICU_transmission", 0, 1)
+  helper("G_D_transmission", 0, 1)
+
+  helper("gamma_A", Inf, 1)
+  helper("gamma_P", Inf, 1)
+  helper("gamma_C_1", Inf, 1)
+  helper("gamma_C_2", Inf, 1)
+  helper("gamma_H_D", Inf, 1)
+  helper("gamma_H_R", Inf, 1)
+  helper("gamma_ICU_pre", Inf, 1)
+  helper("gamma_ICU_D", Inf, 1)
+  helper("gamma_ICU_W_D", Inf, 1)
+  helper("gamma_ICU_W_R", Inf, 1)
+  helper("gamma_G_D", Inf, 1)
+
+  helper("k_A", 1, 2)
+  helper("k_P", 1, 2)
+  helper("k_C_1", 1, 2)
+  helper("k_C_2", 1, 2)
+  helper("k_H_D", 1, 2)
+  helper("k_H_R", 1, 2)
+  helper("k_ICU_pre", 1, 2)
+  helper("k_ICU_D", 1, 2)
+  helper("k_ICU_W_D", 1, 2)
+  helper("k_ICU_W_R", 1, 2)
+  helper("k_G_D", 1, 2)
+
 })
