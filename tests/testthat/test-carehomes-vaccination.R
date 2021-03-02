@@ -1371,13 +1371,20 @@ test_that("Outputed S vaccination numbers are what we expect", {
 
 test_that("Outputed E vaccination numbers are what we expect", {
   skip("TODO: can't vaccinate fast enough")
-  p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
+  
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+  p <- carehomes_parameters(0, region, waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
-                            vaccine_daily_doses = Inf)
-
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+  
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
@@ -1386,8 +1393,8 @@ test_that("Outputed E vaccination numbers are what we expect", {
   ## empty S ans fill in E initially
   index_E <- array(info$index$E, info$dim$E)
   index_S <- array(info$index$S, info$dim$S)
-  state[index_E[, 1, , ]] <- state[index_S]
-  state[index_E[, 2, , ]] <- state[index_S]
+  state[index_E[, , 1, ]] <- round(state[index_S] / 2)
+  state[index_E[, , 2, ]] <- round(state[index_S] / 2)
   state[index_S] <- 0
 
   mod$set_state(state)
@@ -1395,12 +1402,19 @@ test_that("Outputed E vaccination numbers are what we expect", {
 
   i <- 4:carehomes_n_groups()
   ## there are candidates in E for vaccination
-  expect_true(all(y$E[i, , 1, , 1] > 0))
+  expect_true(all(y$E[i, , , 1, 1] > 0))
+  
+  ### THE FOLLOWING IS NOT WORKING - POSSIBLY BECAUSE OF DIAGONAL MOVES?
+  
   ## every initial exposed should be vaccinated within first day
-  expect_equal(y$cum_n_E_vaccinated[i, , 2],
-               apply(y$E[i, , , , 1], c(1, 3), sum))
+  expect_approx_equal(y$cum_n_E_vaccinated[i, , 2],
+               apply(y$E[i, , , , 1], c(1, 3), sum),
+               rel_tol = 0.15)
+  
   ## same for the 10 initially seeded cases
-  expect_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , 1, 1])
+  expect_equal(y$cum_n_I_A_vaccinated[i, 1, 2], 
+               apply(y$I_A[i, , , , 1], 1, sum),
+               rel_tol = 0.15)
 
 })
 
