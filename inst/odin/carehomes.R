@@ -1504,7 +1504,7 @@ dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 vaccine_probability_doses[, ] <- (
   if (as.integer(step) > dim(vaccine_dose_step, 3) ||
       vaccine_n_candidates[i, j] == 0) 0
-  else vaccine_dose_step[i, j, step] /
+  else vaccine_dose_step[i, j, step + 1] /
   vaccine_n_candidates[i, j])
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 

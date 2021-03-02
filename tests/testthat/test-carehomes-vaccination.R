@@ -169,13 +169,11 @@ test_that("Vaccination of susceptibles works", {
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
   i <- 4:carehomes_n_groups()
-  
-  ## Schedule given in daily doses means it shoud take 4 time steps 
-  ## to vaccinate everybody
-  ## + Predefined schedule means we may end up not vaccinating exactly everyone
+ 
+  ## Predefined schedule means we may end up not vaccinating exactly everyone
   ## hence the approximate comparison
-  expect_true(all(abs(y$S[i, 1, 1] - y$S[i, 2, 5] ) / y$S[i, 1, 1] < 0.01))
-  expect_equal(y$S[i, , 101], y$S[i, , 5])
+  expect_true(all(abs(y$S[i, 1, 1] - y$S[i, 2, 2] ) / y$S[i, 1, 1] < 0.01))
+  expect_equal(y$S[i, , 101], y$S[i, , 2])
 })
 
 
@@ -224,35 +222,38 @@ test_that("Vaccination of exposed individuals works", {
   unvacc_idx <- 1
   vacc_idx <- 2
   i <- 4:carehomes_n_groups()
-  expect_true(all(abs(e[i, , E_compartment_idx, unvacc_idx, 1] -
-               e[i, , E_compartment_idx, vacc_idx, 5]) /
-                 e[i, , E_compartment_idx, unvacc_idx, 1] < 0.05))
+  
+  expect_approx_equal(e[i, , E_compartment_idx, unvacc_idx, 1],
+                      e[i, , E_compartment_idx, vacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(e[i, , E_compartment_idx, vacc_idx, 5],
+  expect_equal(e[i, , E_compartment_idx, vacc_idx, 2],
                e[i, , E_compartment_idx, vacc_idx, 101])
   ## same for second E compartment
   E_compartment_idx <- 2
-  expect_true(all(abs(e[i, , E_compartment_idx, unvacc_idx, 1] -
-                        e[i, , E_compartment_idx, vacc_idx, 5]) /
-                    e[i, , E_compartment_idx, unvacc_idx, 1] < 0.05))
+  expect_approx_equal(e[i, , E_compartment_idx, unvacc_idx, 1],
+                      e[i, , E_compartment_idx, vacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(e[i, , E_compartment_idx, vacc_idx, 5],
+  expect_equal(e[i, , E_compartment_idx, vacc_idx, 2],
                e[i, , E_compartment_idx, vacc_idx, 101])
 })
 
 
 test_that("Vaccination of asymptomatic infectious individuals works", {
-  skip("TODO: can't vaccinate fast enough")
   ## Tests that:
   ## Every I_A moves to vaccinated and stays there if everyone
   ## quickly gets vaccinated with a vaccine with no waning immunity
   ## and if disease progression is stopped after I_A
-  p <- carehomes_parameters(0, "england",
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+  p <- carehomes_parameters(0, region,
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, 0),
-                            vaccine_daily_doses = Inf)
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
 
   # stop disease progression after I_A
   p$gamma_A <- 0
@@ -264,7 +265,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
 
   index_I_A <- array(info$index$I_A, info$dim$I_A)
   index_S <- array(info$index$S, info$dim$S)
-  state[index_I_A[, 1, , ]] <- state[index_S]
+  state[index_I_A[, 1, 1, ]] <- state[index_S]
   state[index_S] <- 0
 
   mod$set_state(state)
@@ -281,28 +282,32 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
   unvacc_idx <- 1
   vacc_idx <- 2
   i <- 4:carehomes_n_groups()
-  expect_equal(
-    i_A[i, I_A_compartment_idx, unvacc_idx, , 1],
-    i_A[i, I_A_compartment_idx, vacc_idx, , 2])
+  expect_approx_equal(i_A[i, , I_A_compartment_idx, unvacc_idx, 1],
+                      i_A[i, , I_A_compartment_idx, vacc_idx, 2])
+  
   ## then they don't move anymore
   expect_equal(
-    i_A[i, I_A_compartment_idx, vacc_idx, , 2],
-    i_A[i, I_A_compartment_idx, vacc_idx, , 101])
+    i_A[i, , I_A_compartment_idx, vacc_idx, 2],
+    i_A[i, , I_A_compartment_idx, vacc_idx, 101])
 })
 
 
 test_that("Vaccination of presymptomatic infectious individuals works", {
-  skip("TODO: can't vaccinate fast enough")
   ## Tests that:
   ## Every I_P moves to vaccinated and stays there if everyone
   ## quickly gets vaccinated with a vaccine with no waning immunity
   ## and if disease progression is stopped after I_P
-  p <- carehomes_parameters(0, "england",
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+  p <- carehomes_parameters(0, region,
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, 0),
-                            vaccine_daily_doses = Inf)
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
 
   # stop disease progression after I_P
   p$gamma_P <- 0
@@ -314,12 +319,12 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
 
   index_I_P <- array(info$index$I_P, info$dim$I_P)
   index_S <- array(info$index$S, info$dim$S)
-  state[index_I_P[, 1, , ]] <- state[index_S]
+  state[index_I_P[, 1, 1, ]] <- state[index_S]
   state[index_S] <- 0
 
   mod$set_state(state)
   mod$set_index(info$index$I_P)
-  i_A <- mod$simulate(seq(0, 400, by = 4))
+  i_P <- mod$simulate(seq(0, 400, by = 4))
 
   ## Reshape to show the full shape of i_P
   expect_equal(length(i_P), prod(info$dim$I_P) * 101)
@@ -331,29 +336,34 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
   unvacc_idx <- 1
   vacc_idx <- 2
   i <- 4:carehomes_n_groups()
-  expect_equal(
-    i_P[i, I_P_compartment_idx, unvacc_idx, , 1],
-    i_P[i, I_P_compartment_idx, vacc_idx, , 2])
+  
+  expect_approx_equal(i_P[i, , I_P_compartment_idx, unvacc_idx, 1],
+                        i_P[i, , I_P_compartment_idx, vacc_idx, 2])
+  
   ## then they don't move anymore
   expect_equal(
-    i_P[i, I_P_compartment_idx, vacc_idx, , 2],
-    i_P[i, I_P_compartment_idx, vacc_idx, , 101])
+    i_P[i, , I_P_compartment_idx, vacc_idx, 2],
+    i_P[i, , I_P_compartment_idx, vacc_idx, 101])
 })
 
 
 test_that("Vaccination of recovered individuals works", {
-  skip("TODO: can't vaccinate fast enough")
   ## Test that:
   ## Every R moves to vaccinated and stays there if everyone
   ## quickly gets vaccinated with a vaccine with no waning immunity
   ## and if no natural waning of immunity
-  p <- carehomes_parameters(0, "england",
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+  p <- carehomes_parameters(0, region,
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, 0),
-                            vaccine_daily_doses = Inf)
-
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+  
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
@@ -383,9 +393,9 @@ test_that("Vaccination of recovered individuals works", {
   unvacc_idx <- 1
   vacc_idx <- 2
   i <- 4:carehomes_n_groups()
-  expect_equal(r[i, unvacc_idx, , 1], r[i, vacc_idx, , 2])
+  expect_approx_equal(r[i, , unvacc_idx, 1], r[i, , vacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(r[i, vacc_idx, , 2], r[i, vacc_idx, , 101])
+  expect_equal(r[i, , vacc_idx, 2], r[i, , vacc_idx, 101])
 })
 
 
@@ -596,17 +606,23 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
 
 
 test_that("Vaccine progression through 3 classes works for susceptibles", {
-  skip("TODO: can't vaccinate fast enough")
   ## Tests that:
   ## Every susceptible moves to waning immunity stage and stays there if
   ## everyone quickly gets vaccinated and loses immunity
-  p <- carehomes_parameters(0, "england",
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+  p <- carehomes_parameters(0, region, 
                             beta_value = 0,
                             rel_susceptibility = c(1, 0, 0),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
                             vaccine_progression_rate = c(0, Inf, 0),
-                            vaccine_daily_doses = Inf)
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 3L)
+  
   ## TODO: Anne to look at tidying this parameter up:
   p$model_pcr_and_serology_user <- 0
 
@@ -615,8 +631,8 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
   mod$set_state(carehomes_initial(info, 1, p)$state)
   i <- 4:carehomes_n_groups()
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
-  expect_equal(y$S[i, 1, 1], y$S[i, 3, 2])
-  expect_equal(y$S[i, , 101], y$S[i, , 2])
+  expect_approx_equal(y$S[i, 1, 1], y$S[i, 3, 3])
+  expect_equal(y$S[i, , 101], y$S[i, , 3])
 })
 
 

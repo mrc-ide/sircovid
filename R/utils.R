@@ -186,3 +186,8 @@ block_expand <- function(m, n) {
   len <- nrow(m) * n
   matrix(t(matrix(m, nrow(m), len)), len, len, byrow = TRUE)
 }
+
+
+expect_approx_equal <- function(x1, x2, rel_tol = 0.05) {
+  expect_true(all(abs(x1 - x2) / x1 < rel_tol))
+}
