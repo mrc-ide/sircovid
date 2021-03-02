@@ -848,24 +848,22 @@ carehomes_parameters_vaccination <- function(N_tot,
     ret$index_dose <- c(1L, 1L)
   } else {
     assert_is(vaccine_schedule, "vaccine_schedule")
-    n_days <- dim(vaccine_schedule$doses)[[3]]
-    i <- rep(seq_len(n_days), each = 1 / dt)
-    ## TODO: Possibly off-by-one here on the start date
-    len <- vaccine_schedule$date / dt + 1
-    ret$index_dose <- c(1L, vaccine_index_dose2 %||% 1L)
-
-    if (ret$index_dose[[2]] > n_vacc_classes) {
+    vaccine_index_dose2 <- vaccine_index_dose2 %||% 1L
+    if (vaccine_index_dose2 > n_vacc_classes) {
       stop(sprintf(
         "Invalid value for vaccine_index_dose2, must be in [1, %d]",
         n_vacc_classes))
     }
 
+    n_days <- dim(vaccine_schedule$doses)[[3]]
+    i <- rep(seq_len(n_days), each = 1 / dt)
+    len <- vaccine_schedule$date / dt
+    ret$index_dose <- c(1L, vaccine_index_dose2)
+
     ret$vaccine_dose_step <- mcstate::array_bind(
       array(0, c(n_groups, n_doses, len)),
       (vaccine_schedule$doses * dt)[, , i])
   }
-
-
 
   ret
 }
