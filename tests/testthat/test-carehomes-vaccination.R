@@ -11,7 +11,7 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -48,7 +48,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
                             rel_p_sympt = c(1, 0),
                             rel_p_hosp_if_sympt = c(1, 1),
                             waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -82,7 +82,7 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 0),
                             waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -114,7 +114,7 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", rel_infectivity = c(1, 0),
                             waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -164,7 +164,7 @@ test_that("Vaccination of susceptibles works", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
   
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
@@ -197,7 +197,7 @@ test_that("Vaccination of exposed individuals works", {
   # stop disease progression after E
   p$gamma_E <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -258,7 +258,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
   # stop disease progression after I_A
   p$gamma_A <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -312,7 +312,7 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
   # stop disease progression after I_P
   p$gamma_P <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -364,7 +364,7 @@ test_that("Vaccination of recovered individuals works", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
   
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -415,7 +415,7 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
   # stop disease progression after E
   p$gamma_E <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -472,7 +472,7 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
   # stop disease progression after I_A
   p$gamma_A <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -522,7 +522,7 @@ test_that("Returning to unvaccinated stage works for I_P individuals", {
   # stop disease progression after I_P
   p$gamma_P <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -568,7 +568,7 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -626,7 +626,7 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
   ## TODO: Anne to look at tidying this parameter up:
   p$model_pcr_and_serology_user <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   i <- 4:carehomes_n_groups()
@@ -655,7 +655,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 12L)
   
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 12))))
@@ -683,7 +683,7 @@ test_that("Clinical progression within a vaccination class works", {
   # make p_death zero
   p[grep("_D_step", names(p))] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -711,7 +711,7 @@ test_that("Clinical progression within a vaccination class works", {
 
   ## all have moved from S to R in relevant vaccination class
   ## ignoring age group 4 where infections are seeded
-  expect_equal(s[-4, , 1], r[-4, 1, , 101])
+  expect_approx_equal(s[-4, , 1], r[-4, 1, , 101])
 })
 
 
@@ -726,7 +726,7 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -760,7 +760,7 @@ test_that("there are no vaccinated susceptibles when vaccination rate is 0", {
 
   p <- carehomes_parameters(0, "england",
                             waning_rate = waning_rate)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   mod$set_index(info$index$S)
@@ -1257,7 +1257,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -1288,7 +1288,7 @@ test_that(
                               vaccine_schedule = vaccine_schedule,
                               vaccine_index_dose2 = 2L)
 
-    mod <- carehomes$new(p, 0, 1)
+    mod <- carehomes$new(p, 0, 1, seed = 1L)
     info <- mod$info()
     y0 <- carehomes_initial(info, 1, p)$state
     mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -1311,7 +1311,7 @@ test_that("Outputed vaccination numbers make sense", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -1348,7 +1348,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -1370,8 +1370,6 @@ test_that("Outputed S vaccination numbers are what we expect", {
 
 
 test_that("Outputed E vaccination numbers are what we expect", {
-  skip("TODO: can't vaccinate fast enough")
-  
   region <- "london"
   vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
                                             region = region,
@@ -1385,7 +1383,10 @@ test_that("Outputed E vaccination numbers are what we expect", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
   
-  mod <- carehomes$new(p, 0, 1)
+  ## stop progression after E to avoid diagonal moves from E to I_A
+  p$gamma_E <- 0
+  
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -1398,13 +1399,11 @@ test_that("Outputed E vaccination numbers are what we expect", {
   state[index_S] <- 0
 
   mod$set_state(state)
-  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   i <- 4:carehomes_n_groups()
   ## there are candidates in E for vaccination
   expect_true(all(y$E[i, , , 1, 1] > 0))
-  
-  ### THE FOLLOWING IS NOT WORKING - POSSIBLY BECAUSE OF DIAGONAL MOVES?
   
   ## every initial exposed should be vaccinated within first day
   expect_approx_equal(y$cum_n_E_vaccinated[i, , 2],
@@ -1412,9 +1411,8 @@ test_that("Outputed E vaccination numbers are what we expect", {
                rel_tol = 0.15)
   
   ## same for the 10 initially seeded cases
-  expect_equal(y$cum_n_I_A_vaccinated[i, 1, 2], 
-               apply(y$I_A[i, , , , 1], 1, sum),
-               rel_tol = 0.15)
+  expect_true(abs(y$cum_n_I_A_vaccinated[4, 1, 2] -  
+               y$I_A[4, , , 1, 1]) <= 3)
 
 })
 
@@ -1428,7 +1426,7 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -1460,7 +1458,7 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -1493,7 +1491,7 @@ test_that("Outputed R vaccination numbers are what we expect", {
                             vaccine_progression_rate = c(0, 0),
                             vaccine_daily_doses = Inf)
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -1773,8 +1771,8 @@ test_that("can add vaccination to a set of model state", {
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_daily_doses = 5000)
 
-  mod_orig <- carehomes$new(p_orig, 0, 10)
-  mod_vacc <- carehomes$new(p_vacc, 0, 10)
+  mod_orig <- carehomes$new(p_orig, 0, 10, seed = 1L)
+  mod_vacc <- carehomes$new(p_vacc, 0, 10, seed = 1L)
   state_orig <- mod_orig$state()
   state_orig[] <- seq_along(state_orig)
 
@@ -1822,7 +1820,7 @@ test_that("can upgrade model state", {
   ## This is the situation upgrading sircovid 0.7.2 -> 0.8.0 as we
   ## lack cum_n_vaccinated; that can obviously be added.
   p_orig <- carehomes_parameters(0, "east_of_england")
-  mod_orig <- carehomes$new(p_orig, 0, 10)
+  mod_orig <- carehomes$new(p_orig, 0, 10, seed = 1L)
   info_orig <- mod_orig$info()
 
   ## Elimate our index
@@ -1848,7 +1846,7 @@ test_that("can upgrade model state", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_daily_doses = 5000)
-  mod_vacc <- carehomes$new(p_vacc, 0, 10)
+  mod_vacc <- carehomes$new(p_vacc, 0, 10, seed = 1L)
   info_vacc <- mod_vacc$info()
   state_vacc <- vaccination_remap_state(state_orig, info_orig, info_vacc)
 
@@ -1860,7 +1858,7 @@ test_that("can upgrade model state", {
 
 test_that("Refuse to upgrade impossible model state", {
   p_orig <- carehomes_parameters(0, "east_of_england")
-  mod_orig <- carehomes$new(p_orig, 0, 10)
+  mod_orig <- carehomes$new(p_orig, 0, 10, seed = 1L)
   info_orig <- mod_orig$info()
 
   ## Elimate our index
@@ -1886,7 +1884,7 @@ test_that("Refuse to upgrade impossible model state", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_daily_doses = 5000)
-  mod_vacc <- carehomes$new(p_vacc, 0, 10)
+  mod_vacc <- carehomes$new(p_vacc, 0, 10, seed = 1L)
   info_vacc <- mod_vacc$info()
   expect_error(
     vaccination_remap_state(state_orig, info_orig, info_vacc),
@@ -1915,7 +1913,7 @@ test_that("Can vaccinate given a schedule", {
   m[, 2, i + 28 * 4] <- 2000
   p$vaccine_daily_dose_time <- m
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
