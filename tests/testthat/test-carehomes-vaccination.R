@@ -637,26 +637,31 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
 
 
 test_that("Vaccine progression through 12 classes works for susceptibles", {
-  skip("TODO: can't vaccinate fast enough")
   ## Tests that:
   ## Every susceptible moves to last of 12 waning immunity stage and stays
   ## there if everyone quickly gets vaccinated and loses immunity
-  p <- carehomes_parameters(0, "england",
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+  p <- carehomes_parameters(0, region, 
                             beta_value = 0,
                             rel_susceptibility = c(1, rep(0, 10), 0),
                             rel_p_sympt = rep(1, 12),
                             rel_p_hosp_if_sympt = rep(1, 12),
                             vaccine_progression_rate =
                               c(0, rep(Inf, 10), 0),
-                            vaccine_daily_doses = Inf)
-
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 12L)
+  
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 12))))
   i <- 4:carehomes_n_groups()
-  expect_equal(y$S[i, 1, 1], y$S[i, 12, 2])
-  expect_equal(y$S[i, , 34], y$S[i, , 2])
+  expect_approx_equal(y$S[i, 1, 1], y$S[i, 12, 12])
+  expect_equal(y$S[i, , 34], y$S[i, , 12])
 })
 
 
