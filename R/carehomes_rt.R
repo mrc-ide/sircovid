@@ -274,11 +274,11 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
       }
       sample_E <- draw_from(n, p$k_E, p$gamma_E)
       sample_I_A <- draw_from(n, p$k_A, p$gamma_A)
-      sample_SI_A <- (sample_E + sample_I_A) * multiplier_I_A[idx]
+      sample_SI_A <- (sample_E + sample_I_A)
       sample_I_P <- draw_from(n, p$k_P, p$gamma_P)
       sample_I_C_1 <- draw_from(n, p$k_C_1, p$gamma_C_1)
-      sample_SI_C <- (sample_E + sample_I_P + sample_I_C_1) * multiplier_I_C[idx]
-      path_C <- runif(n) <= p$p_C[idx]
+      sample_SI_C <- (sample_E + sample_I_P + sample_I_C_1)  
+      path_C <- runif(n) <= multiplier_I_C[idx] / (multiplier_I_C[idx] + multiplier_I_A[idx])
       
       sample_SI <- rep(NA, n)
       sample_SI[!path_C] <- sample_SI_A[!path_C]
@@ -292,7 +292,7 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
            multiplier_I_C = multiplier_I_C,
            n = 1000)
     
-    # mean_SI <- lapply(si_distr, mean)
+    # mean_SI <- unlist(lapply(si_distr, mean))
     ## Note: the above does not account for the impact of vaccination on the serial interval. 
     
   }
