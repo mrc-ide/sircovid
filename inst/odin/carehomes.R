@@ -1487,7 +1487,7 @@ n_doses <- 2
 index_dose[] <- user(integer = TRUE)
 dim(index_dose) <- n_doses
 
-vaccine_dose_step[, , ] <- user()
+vaccine_dose_step[, , ] <- user() # n_groups, n_doses, n_time
 dim(vaccine_dose_step) <- user()
 
 ## First, the number of candidates

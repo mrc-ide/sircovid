@@ -1851,113 +1851,59 @@ test_that("Can vaccinate given a schedule", {
 })
 
 
-test_that("jcvi_prop_to_vaccinate adds up to uptake", {
-
-  uptake_by_age <- c(rep(0, 3), # no vaccination in <15
-                     (2/5) * 0.75, # no vaccination in 15-17yo
-                     rep(0.75, 6),
-                     rep(0.85, 6),
-                     0.95,
-                     0.85,
-                     0.95)
-  prop_hcw_by_age <- c(rep(0, 4),
-                       rep(0.1, 10),
-                       rep(0, 5)) # numbers made up for now
-  prop_very_vulnerable_by_age <- c(rep(0, 4),
-                                   rep(0.05, 5),
-                                   rep(0.1, 5),
-                                   rep(0.15, 5)) # numbers made up for now
-
-  p <- jcvi_prop_to_vaccinate(uptake_by_age,
-                              prop_hcw_by_age,
-                              prop_very_vulnerable_by_age)
-
-  ## check that proportion to vaccinate adds up to uptake
+test_that("vaccination_priority_proportion adds up to uptake", {
+  uptake_by_age <- test_example_uptake()
+  p <- jcvi_prop_to_vaccinate(uptake_by_age)
   expect_true(all(signif(rowSums(p), 5) == signif(uptake_by_age, 5)))
-
 })
 
 
-test_that("jcvi_n_to_vaccinate adds up to population size * uptake", {
-
+test_that("vaccination_priority_population adds to correct population", {
+  ## Expecting rows to equal population size * uptake
   region <- "london"
-  uptake_by_age <- c(rep(0, 3), # no vaccination in <15
-                     (2/5) * 0.75, # no vaccination in 15-17yo
-                     rep(0.75, 6),
-                     rep(0.85, 6),
-                     0.95,
-                     0.85,
-                     0.95)
-  prop_hcw_by_age <- c(rep(0, 4),
-                       rep(0.1, 10),
-                       rep(0, 5)) # numbers made up for now
-  prop_very_vulnerable_by_age <- c(rep(0, 4),
-                                   rep(0.05, 5),
-                                   rep(0.1, 5),
-                                   rep(0.15, 5)) # numbers made up for now
-
-  n <- jcvi_n_to_vaccinate(uptake_by_age,
-                           prop_hcw_by_age,
-                           prop_very_vulnerable_by_age,
-                           region)
+  uptake_by_age <- test_example_uptake()
+  n <- vaccination_priority_population(region, uptake_by_age)
 
   ## check that n to vaccinate adds up to uptake * population
-  pop_by_age <- sircovid:::carehomes_parameters(1, region)$N_tot
-  expect_true(
-    all(signif(rowSums(n), 5) == signif(uptake_by_age * pop_by_age, 5)))
+  pop_by_age <- carehomes_parameters(1, region)$N_tot
+
+  expect_true(all(rowSums(n) - uptake_by_age * pop_by_age <= 2))
 })
 
 
-test_that("get_dose_schedule works as expected", {
-
+test_that("vaccination_schedule_future produces consistent schedule", {
   region <- "london"
-  uptake_by_age <- c(rep(0, 3), # no vaccination in <15
-                     (2/5) * 0.75, # no vaccination in 15-17yo
-                     rep(0.75, 6),
-                     rep(0.85, 6),
-                     0.95,
-                     0.85,
-                     0.95)
-  prop_hcw_by_age <- c(rep(0, 4),
-                       rep(0.1, 10),
-                       rep(0, 5)) # numbers made up for now
-  prop_very_vulnerable_by_age <- c(rep(0, 4),
-                                   rep(0.05, 5),
-                                   rep(0.1, 5),
-                                   rep(0.15, 5)) # numbers made up for now
+  uptake_by_age <- test_example_uptake()
   daily_doses <- rep(20000, 365) # a vector of number of doses to give each day
   mean_days_between_doses <- 12 * 7
 
-  n <- jcvi_n_to_vaccinate(uptake_by_age,
-                           prop_hcw_by_age,
-                           prop_very_vulnerable_by_age,
-                           region)
+  n <- vaccination_priority_population(region, uptake_by_age)
+  dose_schedule <- vaccination_schedule_future(
+    daily_doses, 0, mean_days_between_doses, n)
 
-  dose_schedule <- get_dose_schedule(daily_doses, n, mean_days_between_doses)
-
-  n_to_vaccinate <- dose_schedule$n_to_vaccinate
-  n_to_vaccinate_second_dose <- dose_schedule$n_to_vaccinate_second_dose
+  doses <- dose_schedule$doses
+  n_to_vaccinate1 <- dose_schedule$doses[, 1, ]
+  n_to_vaccinate2 <- dose_schedule$doses[, 2, ]
 
   ## initially only first doses are delivered
   ## and they add up to the target daily_doses
   ## not exactly equal because of some rounding
-  phase1 <- 1:mean_days_between_doses
+  phase1 <- seq_len(mean_days_between_doses)
   expect_true(all(abs(
-    colSums(n_to_vaccinate[,phase1]) - daily_doses[phase1]) < 5))
-  expect_true(all(colSums(n_to_vaccinate_second_dose[,phase1]) == 0))
+    colSums(n_to_vaccinate1[,phase1]) - daily_doses[phase1]) < 5))
+  expect_true(all(colSums(n_to_vaccinate2[, phase1]) == 0))
 
   ## during phase 2 only second doses are delivered
   ## as doses are constant over time
   ## and they add up to the target daily_doses
   ## not exactly equal because of some rounding
-  phase2 <- mean_days_between_doses + (1:mean_days_between_doses)
+  phase2 <- mean_days_between_doses + seq_len(mean_days_between_doses)
   expect_true(all(abs(
-    colSums(n_to_vaccinate_second_dose[,phase2]) - daily_doses[phase2]) < 5))
-  expect_true(all(colSums(n_to_vaccinate[,phase2]) == 0))
+    colSums(n_to_vaccinate2[, phase2]) - daily_doses[phase2]) < 5))
+  expect_true(all(colSums(n_to_vaccinate1[, phase2]) == 0))
 
-  ## check that n_to_vaccinate + n_to_vaccinate_second_dose = daily_doses
+  ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
   ## not exactly equal because of some rounding
   expect_true(all(abs(
-      colSums(n_to_vaccinate + n_to_vaccinate_second_dose) - daily_doses) < 5))
-
+      colSums(n_to_vaccinate1 + n_to_vaccinate2) - daily_doses) < 5))
 })

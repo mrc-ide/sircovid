@@ -128,37 +128,72 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
 }
 
 
-jcvi_prop_to_vaccinate <- function(uptake_by_age,
-                                   prop_hcw_by_age,
-                                   prop_very_vulnerable_by_age,
-                                   prop_underlying_condition_by_age) {
-  ## https://tinyurl.com/8uwtatvm
+##' Compute vaccination priority following JCVI ordering.
+##'
+##' https://tinyurl.com/8uwtatvm
+##'
+##' Assuming independance between job (e.g. HCW) and clinical condition
+##'
+##' But assuming one is either counted as "clinically extremely
+##' vulnerable" or "with underlying health conditions" but not both
+##'
+##' The JCVI priority groups, in decending order are:
+##'
+##'  1. residents in a care home for older adults and their carers
+##'  2. all those 80 years of age and over and frontline health and social
+##'     care workers
+##'  3. all those 75 years of age and over
+##'  4. all those 70 years of age and over and clinically extremely
+##'     vulnerable individuals
+##'  5. all those 65 years of age and over
+##'  6. all individuals aged 16 years to 64 years with underlying health
+##'     conditions which put them at higher risk of serious disease and
+##'     mortality
+##'  7. all those 60 years of age and over
+##'  8. all those 55 years of age and over
+##'  9. all those 50 years of age and over
+##' 10. all those 40-49 years of age and over
+##' 11. all those 30-39 years of age and over
+##' 12. all those 18-29 years of age and over
+##' @title Compute vaccination order
+##'
+##' @param uptake A vector of length 19 with fractional uptake per group
+##'
+##' @param prop_hcw Assumed fraction of healthcare workers in each
+##'   group (length 19) - if `NULL` we use a default that is a guess
+##'   with hopefully the right general shape.
+##'
+##' @param prop_very_vulnerable Assumed fraction "very vulnerable" in
+##'   each group (length 19) - if `NULL` we use a default that is a
+##'   guess with hopefully the right general shape.
+##'
+##' @param prop_underlying_condition Assumed fraction "underlying
+##'   condition" in each group (length 19) - if `NULL` we use a
+##'   default that is a guess with hopefully the right general shape.
+##'
+##' @return A matrix with n_groups rows (19) and columns representing
+##'   priority groups, and element (i, j) is the proportion in group i
+##'   who should be vaccinated as part of priority group j, accounting
+##'   for uptake so that the sum over the rows corresponds to the
+##'   total fractional uptake in that group. For
+##'   `vaccination_priority_population`, the total number of
+##'   individuals replaces the proportion (based on the demography
+##'   used by sircovid).
+##'
+##' @rdname vaccination_priority
+##' @export
+vaccination_priority_proportion <- function(uptake,
+                                            prop_hcw = NULL,
+                                            prop_very_vulnerable = NULL,
+                                            prop_underlying_condition = NULL) {
+  prop_hcw <- prop_hcw %||%
+    c(rep(0, 4), rep(0.1, 10), rep(0, 5))
+  prop_very_vulnerable <- prop_very_vulnerable %||%
+    c(rep(0, 4), rep(0.05, 5), rep(0.1, 5), rep(0.15, 5))
+  prop_underlying_condition <- prop_underlying_condition %||%
+    c(rep(0, 4), rep(0.05, 5), rep(0.1, 5), rep(0.15, 5))
 
-  ## Assuming independance between job (e.g. HCW) and clinical condition
-  ##
-  ## But assuming one is either counted as "clinically extremely
-  ## vulnerable" or "with underlying health conditions" but not both
-
-  ## JCVI group:
-  ##
-  ##  1: residents in a care home for older adults and their carers
-  ##  2: all those 80 years of age and over and frontline health and social
-  ##     care workers
-  ##  3: all those 75 years of age and over
-  ##  4: all those 70 years of age and over and clinically extremely
-  ##     vulnerable individuals
-  ##  5: all those 65 years of age and over
-  ##  6: all individuals aged 16 years to 64 years with underlying health
-  ##     conditions which put them at higher risk of serious disease and
-  ##     mortality
-  ##  7: all those 60 years of age and over
-  ##  8: all those 55 years of age and over
-  ##  9: all those 50 years of age and over
-  ## 10: all those 40-49 years of age and over
-  ## 11: all those 30-39 years of age and over
-  ## 12: all those 18-29 years of age and over
-
-  n_age_groups <- length(uptake_by_age)
+  n_age_groups <- length(uptake)
   n_priority_groups <- 12
   p <- matrix(0, n_age_groups, n_priority_groups)
 
@@ -177,14 +212,14 @@ jcvi_prop_to_vaccinate <- function(uptake_by_age,
   ## Group 2 includes frontline health and social care workers
   p <- add_prop_to_vacc(j = 2,
                         idx = seq_len(jcvi_priority[[2]] - 1),
-                        prop_to_vaccinate = prop_hcw_by_age,
+                        prop_to_vaccinate = prop_hcw,
                         p)
 
   ## Group 4 includes clinically extremely vulnerable individuals
   p <- add_prop_to_vacc(j = 4,
                         idx = seq_len(jcvi_priority[[4]] - 1),
-                        prop_to_vaccinate = (1 - prop_hcw_by_age) *
-                          prop_very_vulnerable_by_age,
+                        prop_to_vaccinate = (1 - prop_hcw) *
+                          prop_very_vulnerable,
                         p)
 
   ## Group 6 includes all individuals aged 16 years to 64 years with
@@ -192,8 +227,8 @@ jcvi_prop_to_vaccinate <- function(uptake_by_age,
   ## serious disease and mortality
   p <- add_prop_to_vacc(j = 6,
                         idx = 4:13,
-                        prop_to_vaccinate = (1 - prop_hcw_by_age) *
-                          prop_underlying_condition_by_age,
+                        prop_to_vaccinate = (1 - prop_hcw) *
+                          prop_underlying_condition,
                         p)
 
   ## 2. Add aged base priority
@@ -205,88 +240,113 @@ jcvi_prop_to_vaccinate <- function(uptake_by_age,
   }
 
   ## 3. Account for uptake
-  uptake_by_age_mat <- matrix(rep(uptake_by_age, n_priority_groups),
+  uptake_mat <- matrix(rep(uptake, n_priority_groups),
                               nrow = n_age_groups)
 
-  p * uptake_by_age_mat
+  p * uptake_mat
 }
 
 
-n_to_vaccinate <- function(prop_to_vaccinate, region) {
-  pop_by_age <- sircovid:::carehomes_parameters(1, region)$N_tot
-  pop_by_age_mat <- matrix(rep(pop_by_age, ncol(prop_to_vaccinate)),
-                           nrow = nrow(prop_to_vaccinate))
-  prop_to_vaccinate * pop_by_age_mat
+##' @param region Region to use to get total population numbers
+##'
+##' @rdname vaccination_priority
+vaccination_priority_population <- function(region,
+                                            uptake,
+                                            prop_hcw = NULL,
+                                            prop_very_vulnerable = NULL,
+                                            prop_underlying_condition = NULL) {
+  p <- vaccination_priority_proportion(uptake,
+                                       prop_hcw,
+                                       prop_very_vulnerable,
+                                       prop_underlying_condition)
+  ## TODO: it would be nice to make this easier
+  pop <- carehomes_parameters(1, region)$N_tot
+  pop_mat <- matrix(rep(pop, ncol(p)), nrow = nrow(p))
+  round(p * pop_mat)
 }
 
 
-jcvi_n_to_vaccinate <- function(uptake_by_age,
-                                prop_hcw_by_age,
-                                prop_very_vulnerable_by_age,
-                                region) {
-  p <- jcvi_prop_to_vaccinate(uptake_by_age,
-                              prop_hcw_by_age,
-                              prop_very_vulnerable_by_age)
-  n_to_vaccinate(p, region)
-}
+##' Create future vaccination schedule from a projected number of
+##' daily doses.
+##'
+##' @title Create vaccination schedule
+##' @param daily_doses_value A vector of doses per day
+##'
+##' @param daily_doses_date A [sircovid_date] object corresponding to
+##'   the first date in daily_doses_value
+##'
+##' @param mean_days_between_doses Assumed mean days between doses one
+##'   and two
+##'
+##' @param priority_population Output from
+##'   [vaccination_priority_population], giving the number of people
+##'   to vaccinate in each age (row) and priority group (column)
+##'
+##' @export
+vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
+                                        mean_days_between_doses,
+                                        priority_population) {
+  assert_sircovid_date(daily_doses_date)
+  assert_scalar(daily_doses_date)
 
+  n_groups <- nrow(priority_population)
+  n_priority_groups <- ncol(priority_population)
+  n_doses <- 2L
+  n_days <- length(daily_doses)
 
-get_dose_schedule <- function(daily_doses, n, mean_days_between_doses) {
-  ## n matrix with dimensions n_age_groups, n_priority_groups
-  ## as obtained from jcvi_n_to_vaccinate function
-  n_age_groups <- nrow(n)
-  n_priority_groups <- ncol(n)
+  population_to_vaccinate_mat <-
+    array(0, c(n_groups, n_priority_groups, n_days))
+  population_left <- priority_population
 
-  # first doses
-  first_daily_doses <- 0 * daily_doses
-  n_to_vaccinate_mat <- array(0, dim = c(n_age_groups, n_priority_groups, length(daily_doses)))
-  n_to_vaccinate <- array(0, dim = c(n_age_groups, length(daily_doses)))
-  n_left <- n
-  # second doses
-  second_daily_doses <- 0 * daily_doses
-  n_to_vaccinate_second_dose <- array(0, dim = c(n_age_groups, length(daily_doses)))
+  daily_dose_1 <- numeric(n_days)
+  population_to_vaccinate <- array(0, c(n_groups, n_doses, n_days))
 
   for (t in seq_along(daily_doses)) {
-
-    ## split doses between first and second doses
+    ## Split doses between first and second doses
     if (t <= mean_days_between_doses) { # only distribute first doses
-      second_daily_doses[t] <- 0
-      first_daily_doses[t] <- daily_doses[t]
-    } else { # prioritise second doses
-      second_daily_doses[t] <- min(daily_doses[t], first_daily_doses[t - mean_days_between_doses])
-      first_daily_doses[t] <- daily_doses[t]  - second_daily_doses[t]
+      daily_dose_2_t <- 0
+      daily_dose_1[t] <- daily_doses[t]
+    } else {
+      ## prioritise second doses
+      daily_dose_2_t <- min(daily_doses[t],
+                            daily_dose_1[t - mean_days_between_doses])
+      daily_dose_1[t] <- daily_doses[t] - daily_dose_2_t
     }
 
-    ## allocate first doses
-    eligible <- colSums(n_left)
-    ## vaccinate fully the top priority groups
-    n_full_vacc <- findInterval(first_daily_doses[t], cumsum(eligible)) # vaccinate everyone in these groups
+    ## Allocate first doses
+    eligible <- colSums(population_left)
+    ## Vaccinate fully the top priority groups
+    n_full_vacc <- findInterval(daily_dose_1[t], cumsum(eligible))
     if (n_full_vacc > 0) {
-      n_to_vaccinate_mat[, 1:n_full_vacc, t] <- n_left[,1:n_full_vacc]
+      i_full_vacc <- seq_len(n_full_vacc)
+      population_to_vaccinate_mat[, i_full_vacc, t] <-
+        population_left[, i_full_vacc]
     }
-    ## then go down to next priority group
+
+    ## Then partially vaccinate the next priority group, if possible
     if (n_full_vacc < n_priority_groups) {
-      if(n_full_vacc == 0) {
-        remaining_eligible <- first_daily_doses[t]
+      if (n_full_vacc == 0) {
+        remaining_eligible <- daily_dose_1[t]
       } else {
-        remaining_eligible <- first_daily_doses[t] - cumsum(eligible)[n_full_vacc]
+        remaining_eligible <- daily_dose_1[t] - cumsum(eligible)[n_full_vacc]
       }
-      ## split remaining doses according to age
-      n_to_vaccinate_mat[, n_full_vacc + 1, t] <- round(remaining_eligible * n_left[,n_full_vacc + 1] / sum(n_left[,n_full_vacc + 1] ))
+      i_vacc <- n_full_vacc + 1L
+
+      ## Split remaining doses according to age
+      population_to_vaccinate_mat[, i_vacc, t] <-
+        round(remaining_eligible * population_left[, i_vacc] /
+              sum(population_left[, i_vacc]))
     }
 
-    n_left <- n_left - n_to_vaccinate_mat[, , t]
+    population_left <- population_left - population_to_vaccinate_mat[, , t]
+  }
 
-    n_to_vaccinate[, t] <- rowSums(n_to_vaccinate_mat[, , t])
+  doses <- array(0, c(n_groups, n_doses, n_days))
+  doses[, 1, ] <- apply(population_to_vaccinate_mat, c(1, 3), sum)
+  if (n_days > mean_days_between_doses) {
+    i <- seq(mean_days_between_doses + 1L, n_days)
+    doses[, 2, i] <- doses[, 1, seq_along(i)]
+  }
 
-    ## allocate second doses 12 weeks later
-    if (t > mean_days_between_doses) { # also do second doses
-      n_to_vaccinate_second_dose[, t] <- n_to_vaccinate[, t - mean_days_between_doses]
-    }
-
-  } # end loop over time
-
-  list(n_to_vaccinate = n_to_vaccinate,
-       n_to_vaccinate_second_dose = n_to_vaccinate_second_dose)
-
+  list(date = daily_doses_date, doses = doses)
 }
