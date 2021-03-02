@@ -58,7 +58,7 @@ skip_on_mac_gha <- function() {
 
 test_example_uptake <- function() {
   c(rep(0, 3), # no vaccination in <15
-  (2/5) * 0.75, # no vaccination in 15-17yo
+  (2 / 5) * 0.75, # no vaccination in 15-17yo
   rep(0.75, 6),
   rep(0.85, 6),
   0.95,

@@ -40,18 +40,18 @@ test_that("carehomes vaccination parameters", {
   rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
   rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
   vaccine_progression_rate <- c(0, 1, 1, 1)
-  
+
   region <- "london"
   vaccine_daily_doses <- c(5000, 10000)
   vaccine_daily_doses_date <- sircovid_date(c("2020-12-01", "2021-02-01"))
-  daily_doses <- c(rep(vaccine_daily_doses[1], diff(vaccine_daily_doses_date)), 
+  daily_doses <- c(rep(vaccine_daily_doses[1], diff(vaccine_daily_doses_date)),
                    rep(vaccine_daily_doses[2], 200))
   uptake <- test_example_uptake()
   n <- vaccination_priority_population(region, uptake)
-  
+
   vaccine_schedule <- vaccination_schedule_future(
     daily_doses, vaccine_daily_doses_date[1], 1e6, n)
-  
+
   p <- carehomes_parameters_vaccination(ntot,
                                         dt = 0.25,
                                         rel_susceptibility = rel_susceptibility,
@@ -77,11 +77,11 @@ test_that("carehomes vaccination parameters", {
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate_base),
                length(vaccine_progression_rate))
-  expect_equal(dim(p$vaccine_dose_step), 
-               c(19, 2, 
+  expect_equal(dim(p$vaccine_dose_step),
+               c(19, 2,
                  (length(daily_doses) + vaccine_daily_doses_date[1]) * 4))
   ## daily doses are as expected
-  expect_true(all(abs(round(colSums(p$vaccine_dose_step[, 1, ])) - 
+  expect_true(all(abs(round(colSums(p$vaccine_dose_step[, 1, ])) -
                c(rep(0, vaccine_daily_doses_date[1] * 4),
                  round(rep(daily_doses / 4, each = 4)))) < 2))
   msg1 <-
