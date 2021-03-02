@@ -1418,14 +1418,22 @@ test_that("Outputed E vaccination numbers are what we expect", {
 
 
 test_that("Outputed I_A vaccination numbers are what we expect", {
-  skip("TODO: can't vaccinate fast enough")
-  p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20,
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf, 
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+  p <- carehomes_parameters(0, region, waning_rate = 1 / 20,
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
-                            vaccine_daily_doses = Inf)
-
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+  
+  ## stop progression after I_A to avoid diagonal moves from I_A to R
+  p$gamma_A <- 0
+  
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -1434,17 +1442,17 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
   ## move people from S to I_A initially
   index_I_A <- array(info$index$I_A, info$dim$I_A)
   index_S <- array(info$index$S, info$dim$S)
-  state[index_I_A[, 1, , ]] <- state[index_S]
+  state[index_I_A[, 1, 1, ]] <- state[index_S]
   state[index_S] <- 0
 
   mod$set_state(state)
-  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 41))))
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   i <- 4:carehomes_n_groups()
   ## there are candidates in I_A for vaccination
   expect_true(all(y$I_A[i, , 1, 1, 1] > 0))
   ## every initial I_A should be vaccinated within first day
-  expect_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , 1, 1])
+  expect_approx_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , , 1])
 
 })
 
