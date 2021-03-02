@@ -224,6 +224,92 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 }
 
 
+carehomes_EpiEstim_Rt <- function(step, incidence, p, 
+                                  sliding_window_ndays = 7,
+                                  mean_prior = 1,
+                                  sd_prior = 1) {
+  if (p$I_C_2_transmission > 0 ) {
+    stop("carehomes_EpiEstim_Rt does not allow transmission from I_C_2")
+  }
+  if (p$k_A > 1 || p$k_P  > 1 || p$k_C_1 > 1) {
+    stop("carehomes_EpiEstim_Rt does not allow k_A > 1, k_P > 1 or k_C_1 > 1")
+  }
+  if (p$I_P_transmission != 1 || p$I_C_1_transmission  != 1) {
+    stop("carehomes_EpiEstim_Rt does not allow 
+    I_P_transmission !=1 or I_C_1_transmission != 1")
+  }
+  
+  browser()
+  
+  compute_si_distr <- function(p) {
+    
+    ## Mean SI
+    mean_duration <- function(k, gamma, dt) {
+      k / 1 - exp(- dt * gamma)
+    }
+    
+    mean_E <- mean_duration(p$k_E, p$gamma_E, p$dt)
+    mean_I_A <- mean_duration(p$k_A, p$gamma_A, p$dt)
+    mean_I_P <- mean_duration(p$k_P, p$gamma_P, p$dt)
+    mean_I_C_1 <- mean_duration(p$k_C_1, p$gamma_C_1, p$dt)
+    multiplier_I_A <- (1 - p$p_C) * p$I_A_transmission
+    multiplier_I_C <- p$p_C # assumes I_P_transmission = I_C_1_transmission = 1
+    
+    # From Svensson 2006
+    mean_SI_A <- mean_E + mean_I_A
+    mean_SI_C <- mean_E +
+      (mean_I_P ^ 2 + mean_I_P * mean_I_C_1 + mean_I_C_1 ^ 2) /
+      (mean_I_P + mean_I_C_1)
+    
+    mean_SI <- multiplier_I_A * mean_SI_A + multiplier_I_C * mean_SI_C
+    
+    #### Issue: How do we compute the std of SI?
+    
+    ## Brute force draws SI
+    draw_one_SI_distr <- function(idx, p, 
+                                  multiplier_I_A, multiplier_I_C, 
+                                  n = 1000) {
+      draw_from <- function(n, k, gamma) {
+        rgamma(n, shape = k, rate = gamma) ## this does not correct for step size
+      }
+      sample_E <- draw_from(n, p$k_E, p$gamma_E)
+      sample_I_A <- draw_from(n, p$k_A, p$gamma_A)
+      sample_SI_A <- (sample_E + sample_I_A) * multiplier_I_A[idx]
+      sample_I_P <- draw_from(n, p$k_P, p$gamma_P)
+      sample_I_C_1 <- draw_from(n, p$k_C_1, p$gamma_C_1)
+      sample_SI_C <- (sample_E + sample_I_P + sample_I_C_1) * multiplier_I_C[idx]
+      path_C <- runif(n) <= p$p_C[idx]
+      
+      sample_SI <- rep(NA, n)
+      sample_SI[!path_C] <- sample_SI_A[!path_C]
+      sample_SI[path_C] <- sample_SI_C[path_C]
+      sample_SI
+    }
+    
+    si_distr <- lapply(seq_along(p$p_C), draw_one_SI_distr, 
+           p = p, 
+           multiplier_I_A = multiplier_I_A, 
+           multiplier_I_C = multiplier_I_C,
+           n = 1000)
+    
+    # mean_SI <- lapply(si_distr, mean)
+    ## Note: the above does not account for the impact of vaccination on the serial interval. 
+    
+  }
+  
+  # si_distr <- compute_si_distr(p) # issue as this is going to vary with vaccination?
+  
+  # sliding_window_ndays / p$dt 
+  
+  R <- NULL # replace with some sort of calculation with EpiEstim
+  # integrating over all incidence trajectories
+  
+  list(step = step,
+              EpiEstim_Rt = R)
+  
+}
+
+
 ## Here we expect 'S' in order:
 ##
 ##   state x sample x step
