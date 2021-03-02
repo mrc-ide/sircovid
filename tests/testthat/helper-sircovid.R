@@ -65,3 +65,14 @@ test_example_uptake <- function() {
   0.85,
   0.95)
 }
+
+
+test_vaccine_schedule <- function(daily_doses = 20000, region = "london",
+                                  n_days = 365) {
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- rep(daily_doses, n_days)
+  mean_days_between_doses <- 12 * 7
+  n <- vaccination_priority_population(region, uptake_by_age)
+  vaccination_schedule_future(
+    daily_doses, 0, mean_days_between_doses, n)
+}

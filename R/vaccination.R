@@ -301,7 +301,7 @@ vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
   n_groups <- nrow(priority_population)
   n_priority_groups <- ncol(priority_population)
   n_doses <- 2L
-  n_days <- length(daily_doses)
+  n_days <- length(daily_doses_value)
 
   population_to_vaccinate_mat <-
     array(0, c(n_groups, n_priority_groups, n_days))
@@ -310,16 +310,16 @@ vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
   daily_dose_1 <- numeric(n_days)
   population_to_vaccinate <- array(0, c(n_groups, n_doses, n_days))
 
-  for (t in seq_along(daily_doses)) {
+  for (t in seq_along(daily_doses_value)) {
     ## Split doses between first and second doses
     if (t <= mean_days_between_doses) { # only distribute first doses
       daily_dose_2_t <- 0
-      daily_dose_1[t] <- daily_doses[t]
+      daily_dose_1[t] <- daily_doses_value[t]
     } else {
       ## prioritise second doses
-      daily_dose_2_t <- min(daily_doses[t],
+      daily_dose_2_t <- min(daily_doses_value[t],
                             daily_dose_1[t - mean_days_between_doses])
-      daily_dose_1[t] <- daily_doses[t] - daily_dose_2_t
+      daily_dose_1[t] <- daily_doses_value[t] - daily_dose_2_t
     }
 
     ## Allocate first doses
