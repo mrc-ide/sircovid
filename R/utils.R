@@ -189,5 +189,9 @@ block_expand <- function(m, n) {
 
 
 expect_approx_equal <- function(x1, x2, rel_tol = 0.05) {
-  expect_true(all(abs(x1 - x2) / x1 < rel_tol))
+  x1_zeros <- x1 == 0
+  x2_zeros <- x2 == 0
+  expect_true(all(abs(x1[!x1_zeros] - x2[!x1_zeros]) / x1[!x1_zeros] < rel_tol))
+  expect_true(all(abs(x1[x1_zeros & !x2_zeros] - x2[x1_zeros & !x2_zeros]) /
+                    x2[x1_zeros & !x2_zeros] < rel_tol))
 }
