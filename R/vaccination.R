@@ -157,7 +157,9 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
 ##' 12. all those 18-29 years of age and over
 ##' @title Compute vaccination order
 ##'
-##' @param uptake A vector of length 19 with fractional uptake per group
+##' @param uptake A vector of length 19 with fractional uptake per
+##'   group. If a single number is given it is shared across all
+##'   groups (note that this includes under-18s)
 ##'
 ##' @param prop_hcw Assumed fraction of healthcare workers in each
 ##'   group (length 19) - if `NULL` we use a default that is a guess
@@ -186,6 +188,17 @@ vaccination_priority_proportion <- function(uptake,
                                             prop_hcw = NULL,
                                             prop_very_vulnerable = NULL,
                                             prop_underlying_condition = NULL) {
+  n_groups <- carehomes_n_groups()
+
+  if (is.null(uptake)) {
+    uptake <- rep(1, n_groups)
+  } else if (length(uptake) == 1L) {
+    uptake <- rep(uptake, n_groups)
+  } else if (length(uptake) != n_groups) {
+    stop(sprintf("Invalid length %d for 'uptake', must be 1 or %d",
+                 length(uptake), n_groups))
+  }
+
   prop_hcw <- prop_hcw %||%
     c(rep(0, 4), rep(0.1, 10), rep(0, 5))
   prop_very_vulnerable <- prop_very_vulnerable %||%
@@ -193,9 +206,8 @@ vaccination_priority_proportion <- function(uptake,
   prop_underlying_condition <- prop_underlying_condition %||%
     c(rep(0, 4), rep(0.05, 5), rep(0.1, 5), rep(0.15, 5))
 
-  n_age_groups <- length(uptake)
   n_priority_groups <- 12
-  p <- matrix(0, n_age_groups, n_priority_groups)
+  p <- matrix(0, n_groups, n_priority_groups)
 
   ## Aged base priority list
   jcvi_priority <- list(
@@ -241,7 +253,7 @@ vaccination_priority_proportion <- function(uptake,
 
   ## 3. Account for uptake
   uptake_mat <- matrix(rep(uptake, n_priority_groups),
-                              nrow = n_age_groups)
+                              nrow = n_groups)
 
   p * uptake_mat
 }
@@ -286,9 +298,6 @@ vaccination_priority_population <- function(region,
 vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
                                         mean_days_between_doses,
                                         priority_population) {
-  assert_sircovid_date(daily_doses_date)
-  assert_scalar(daily_doses_date)
-
   n_groups <- nrow(priority_population)
   n_priority_groups <- ncol(priority_population)
   n_doses <- 2L
@@ -348,5 +357,25 @@ vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
     doses[, 2, i] <- doses[, 1, seq_along(i)]
   }
 
-  list(date = daily_doses_date, doses = doses)
+  vaccine_schedule(daily_doses_date, doses)
+}
+
+
+vaccine_schedule <- function(date, doses) {
+  assert_sircovid_date(date)
+  assert_scalar(date)
+
+  n_groups <- carehomes_n_groups()
+  n_doses <- 2L
+
+  if (nrow(doses) != n_groups) {
+    stop(sprintf("'vaccine_schedule$doses' must have %d rows", n_groups))
+  }
+  if (ncol(doses) != n_doses) {
+    stop(sprintf("'vaccine_schedule$doses' must have %d columns", n_doses))
+  }
+
+  ret <- list(date = date, doses = doses, n_doses = n_doses)
+  class(ret) <- "vaccine_schedule"
+  ret
 }

@@ -1907,3 +1907,23 @@ test_that("vaccination_schedule_future produces consistent schedule", {
   expect_true(all(abs(
       colSums(n_to_vaccinate1 + n_to_vaccinate2) - daily_doses) < 5))
 })
+
+
+test_that("can create parameters with vaccination data", {
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- rep(20000, 365)
+  mean_days_between_doses <- 12 * 7
+  n <- vaccination_priority_population(region, uptake_by_age)
+  schedule <- vaccination_schedule_future(
+    daily_doses, sircovid_date("2020-02-01"), mean_days_between_doses, n)
+
+  p <- carehomes_parameters(0, region,
+                            rel_susceptibility = c(1, 1, 0),
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            waning_rate = 1 / 20,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_schedule = schedule)
+  expect_equal(dim(p$vaccine_dose_step), c(19, 2, 1589))
+})
