@@ -1943,12 +1943,17 @@ test_that("Can vaccinate given a schedule", {
   p$index_dose <- c(1L, 2L)
   end_date <- sircovid_date("2020-06-01")
 
-  i <- seq(sircovid_date("2020-03-01") * 4, length.out = 31 * 4)
+  start_vacc_date_1 <- sircovid_date("2020-03-01")
+  delay_vacc_date_2 <- 28
+  ndays_vacc <- 31
+  i <- seq(start_vacc_date * 4, length.out = ndays_vacc * 4)
   m <- array(0, c(19, 2, (end_date + 1) * 4))
-  m[, 1, i] <- 10000
-  m[, 2, i + 28 * 4] <- 2000
-  p$vaccine_daily_dose_time <- m
-
+  step_doses_1 <- 10000
+  step_doses_2 <- 2000
+  m[, 1, i] <- step_doses_1 # first dose schedule
+  m[, 2, i + delay_vacc_date_2 * 4] <- step_doses_2 # second dose schedule
+  p$vaccine_dose_step <- m
+  
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -1964,6 +1969,22 @@ test_that("Can vaccinate given a schedule", {
           t(y$cum_n_vaccinated[, 1, 1, ]), type = "l", lty = 1, col = "black")
   matlines(steps,
            t(y$cum_n_vaccinated[, 2, 1, ]), type = "l", lty = 2, col = "red")
+  
+  n_vacc_fisrt_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
+  matplot(steps[-1], n_vacc_fisrt_dose, type = "l", lty = 1, col = "black")
+  
+  ## check no vaccination before wanted date
+  stop("FIXME. Why do we need the +1? I think it's ok but check")
+  
+  days_vacc_1 <- seq(start_vacc_date_1 + 1, start_vacc_date_1 + ndays_vacc)
+  expect_true(
+    all(n_vacc_fisrt_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
+  
+  ## check that in all groups but 18:19 (which are small)
+  ## we get the right number of vaccinations per day in the wanted interval
+  x <- n_vacc_fisrt_dose[days_vacc_1, -(18:19)]
+  expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)))
+  
 })
 
 
