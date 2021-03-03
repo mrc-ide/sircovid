@@ -182,7 +182,7 @@ NULL
 ##'
 ##' daily_doses <- rep(10000, 365) 
 ##' mean_days_between_doses <- 12 * 7
-##' n <- vaccination_priority_population(region, uptake = 1)
+##' n <- sircovid:::vaccination_priority_population(region, uptake = 1)
 ##' vaccine_schedule <- vaccination_schedule_future(
 ##'   daily_doses, 0, mean_days_between_doses, n)
 ##'
