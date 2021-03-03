@@ -813,12 +813,12 @@ carehomes_parameters_vaccination <- function(N_tot,
   ret <- Map(function(value, name) build_rel_param(value, n_vacc_classes, name),
              rel_params, names(rel_params))
 
-  ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
-    vaccine_progression_rate, n_vacc_classes)
-
   n_doses <- 2L # fixed; see the odin code
 
   if (is.null(vaccine_schedule)) {
+    if (!is.null(vaccine_index_dose2) && vaccine_index_dose2 != 1L) {
+      stop("'vaccine_index_dose2' set without schedule")
+    }
     ret$vaccine_dose_step <- array(0, c(n_groups, n_doses, 1))
     ret$index_dose <- c(1L, 1L)
   } else {
@@ -826,7 +826,7 @@ carehomes_parameters_vaccination <- function(N_tot,
     vaccine_index_dose2 <- vaccine_index_dose2 %||% 1L
     if (vaccine_index_dose2 > n_vacc_classes) {
       stop(sprintf(
-        "Invalid value for vaccine_index_dose2, must be in [1, %d]",
+        "Invalid value for 'vaccine_index_dose2', must be in [1, %d]",
         n_vacc_classes))
     }
 
@@ -839,6 +839,9 @@ carehomes_parameters_vaccination <- function(N_tot,
       array(0, c(n_groups, n_doses, len)),
       (vaccine_schedule$doses * dt)[, , i])
   }
+
+  ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
+    vaccine_progression_rate, n_vacc_classes, ret$index_dose)
 
   ret
 }

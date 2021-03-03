@@ -86,7 +86,8 @@ check_rel_param <- function(rel_param, name_param) {
 
 
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
-                                           n_vacc_classes) {
+                                           n_vacc_classes,
+                                           index_dose) {
   n_groups <- carehomes_n_groups()
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
@@ -121,8 +122,13 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
         matrix(rep(vaccine_progression_rate, each = n_groups), nrow = n_groups)
     }
   }
-  if (!all(mat_vaccine_progression_rate[, 1] == 0)) {
-    stop("The first column of 'vaccine_progression_rate' must be zero")
+  for (i in seq_along(index_dose)) {
+    j <- index_dose[[i]]
+    if (!all(mat_vaccine_progression_rate[, j] == 0)) {
+      stop(sprintf(
+        "Column %d of 'vaccine_progression_rate' must be zero (dose %d)",
+        j, i))
+    }
   }
   mat_vaccine_progression_rate
 }

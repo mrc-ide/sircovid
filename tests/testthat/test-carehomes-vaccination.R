@@ -666,6 +666,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
 
 
 test_that("Clinical progression within a vaccination class works", {
+  for (i in 1:50) {
   ## Tests that:
   ## Every susceptible moves to the R compartment corresponding to their
   ## vaccination class if there is a high beta and no vaccine
@@ -711,7 +712,8 @@ test_that("Clinical progression within a vaccination class works", {
 
   ## all have moved from S to R in relevant vaccination class
   ## ignoring age group 4 where infections are seeded
-  expect_approx_equal(s[-4, , 1], r[-4, 1, , 101])
+    expect_approx_equal(s[-4, , 1], r[-4, 1, , 101])
+  }
 })
 
 
@@ -1641,20 +1643,47 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       ntot,
       rel_susceptibility = c(1, 1, 1),
       vaccine_progression_rate = c(1, 1, 1)),
-    "The first column of 'vaccine_progression_rate' must be zero")
+    "Column 1 of 'vaccine_progression_rate' must be zero (dose 1)",
+    fixed = TRUE)
   expect_error(
     carehomes_parameters_vaccination(
       ntot,
       rel_susceptibility = c(1, 1, 1),
       vaccine_progression_rate = matrix(c(1, 1, 1), 19, 3)),
-    "The first column of 'vaccine_progression_rate' must be zero")
+    "Column 1 of 'vaccine_progression_rate' must be zero (dose 1)",
+    fixed = TRUE)
   expect_error(
     carehomes_parameters_vaccination(
       ntot,
       rel_susceptibility = 1,
       vaccine_progression_rate = 1),
-    "The first column of 'vaccine_progression_rate' must be zero")
-})
+    "Column 1 of 'vaccine_progression_rate' must be zero (dose 1)",
+    fixed = TRUE)
+
+  schedule <- vaccine_schedule(date = 1L,
+                               doses = array(0, c(19, 2, 5)))
+  dt <- 1 / 4
+  expect_error(
+    carehomes_parameters_vaccination(
+      ntot,
+      dt,
+      rel_susceptibility = c(1, 1, 1),
+      vaccine_progression_rate = c(0, 1, 1),
+      vaccine_index_dose2 = 2,
+      vaccine_schedule = schedule),
+    "Column 2 of 'vaccine_progression_rate' must be zero (dose 2)",
+    fixed = TRUE)
+  expect_error(
+    carehomes_parameters_vaccination(
+      ntot,
+      dt,
+      rel_susceptibility = c(1, 1, 1, 1),
+      vaccine_progression_rate = c(0, 1, 1, 1),
+      vaccine_index_dose2 = 3,
+      vaccine_schedule = schedule),
+    "Column 3 of 'vaccine_progression_rate' must be zero (dose 2)",
+    fixed = TRUE)
+}})
 
 
 test_that("build_vaccine_progression_rate allows sensible inputs and works", {
@@ -1830,6 +1859,44 @@ test_that("vaccine_uptake must be the correct length", {
   expect_error(
     vaccination_priority_proportion(uptake = c(0, 0, 0)),
     "Invalid length 3 for 'uptake', must be 1 or 19")
+})
+
+
+test_that("If vaccine dose 2 index provided, we need a schedule", {
+  schedule <- vaccine_schedule(date = 1L,
+                               doses = array(0, c(19, 2, 5)))
+  dt <- 1 / 4
+  ntot <- rep(1000, 19)
+  expect_error(
+    carehomes_parameters_vaccination(ntot, vaccine_index_dose2 = 2L),
+    "'vaccine_index_dose2' set without schedule")
+})
+
+
+test_that("vaccine_index_dose2 must have valid value", {
+  schedule <- vaccine_schedule(date = 1L,
+                               doses = array(0, c(19, 2, 5)))
+  dt <- 1 / 4
+  ntot <- rep(1000, 19)
+  expect_error(
+    carehomes_parameters_vaccination(
+      ntot,
+      dt,
+      vaccine_index_dose2 = 2L,
+      vaccine_schedule = schedule),
+    "Invalid value for 'vaccine_index_dose2', must be in [1, 1]",
+    fixed = TRUE)
+
+  expect_error(
+    carehomes_parameters_vaccination(
+      ntot,
+      dt,
+      rel_susceptibility = c(1, 1, 1, 1),
+      vaccine_progression_rate = c(0, 1, 1, 1),
+      vaccine_index_dose2 = 6L,
+      vaccine_schedule = schedule),
+    "Invalid value for 'vaccine_index_dose2', must be in [1, 4]",
+    fixed = TRUE)
 })
 
 
