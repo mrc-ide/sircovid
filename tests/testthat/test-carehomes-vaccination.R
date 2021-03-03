@@ -1751,35 +1751,29 @@ test_that("run sensible vaccination schedule", {
   expect_true(all(s[1:3, , ] == 0))
 
   ## Sum over compartments
-  m <- t(apply(s, c(1, 3), sum))
-  r <- diff(m)
+  cum_n_vaccinated <- t(apply(s, c(1, 3), sum))
+  n_vaccinated <- diff(cum_n_vaccinated)
 
   ## You can visualise the vaccination process here:
   ## > matplot(m, type = "l", lty = 1)
 
-  tot <- rowSums(r)
-  expect_true(all(tot >= 48000 & tot < 52000))
-
-  ## TODO: previously we checked that groups were vaccinated strictly
-  ## in order but this is now hard to do because we also vaccinate
-  ## some additional fraction. See code prior to 5e6b94b for details.
-  ##
-  ## This visually looks fine, but there is more noise in this new
-  ## version it seems.
-  skip("FIXME")
+  tot <- rowSums(n_vaccinated)
+  expect_true(all(tot >= 49000 & tot < 51000))
 
   ## Vaccinate all the CHW/CHR first, then down the priority
   ## groups. This is easy to check visually but harder to describe:
   priority <- list(18:19, 17, 16, 15, 14, 13, 12, 11,
                    9:10, 7:8, 1:6)
   i <- lapply(priority, function(p)
-    range(c(apply((r > 5000)[, p, drop = FALSE], 2, which))))
+    range(c(apply((n_vaccinated > 5000)[, p, drop = FALSE], 2, which))))
   for (j in seq_along(i)) {
     if (j > 2) {
-      expect_true(max(unlist(i[seq_len(j - 2)])) < i[[j]][[1]])
+      ## using <= as if many doses available each day you may vaccinate 
+      ## several priority groups in the same day
+      expect_true(max(unlist(i[seq_len(j - 2)])) <= i[[j]][[1]])
     }
     if (j > 1) {
-      expect_true(all(i[[j - 1]][[1]] < i[[j]][[1]]))
+      expect_true(all(i[[j - 1]][[1]] <= i[[j]][[1]]))
     }
   }
 })
