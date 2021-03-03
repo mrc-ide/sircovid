@@ -2082,3 +2082,33 @@ test_that("can create parameters with vaccination data", {
   expect_equal(dim(p$vaccine_dose_step),
                c(19, 2, (date_start_vaccination + length(daily_doses)) * 4))
 })
+
+
+test_that("validate a vaccine schedule", {
+  doses <- array(1, c(19, 2, 10))
+  expect_error(
+    vaccine_schedule(1:10, doses),
+    "'date' must be a scalar")
+  expect_error(
+    vaccine_schedule("2020-01-01", doses),
+    "'date' must be numeric - did you forget sircovid_date")
+  expect_error(
+    vaccine_schedule(10, doses[-1, , ]),
+    "'doses' must have 19 rows")
+  expect_error(
+    vaccine_schedule(10, doses[, rep(1, 3), ]),
+    "'doses' must have 2 columns")
+  expect_error(
+    vaccine_schedule(10, doses[, , integer(0)]),
+    "'doses' must have at least one element in the 3rd dimension")
+  expect_error(
+    vaccine_schedule(10, doses[, 1, , drop = TRUE]),
+    "Expected a 3d array for 'doses'")
+  expect_error(
+    vaccine_schedule(10, -doses),
+    "'doses' must all be non-negative")
+  doses[30] <- NA_real_
+  expect_error(
+    vaccine_schedule(10, doses),
+    "'doses' must all be non-NA")
+})

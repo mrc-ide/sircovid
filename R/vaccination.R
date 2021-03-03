@@ -362,6 +362,22 @@ vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
 }
 
 
+##' Create a vaccine schedule for use with [carehomes_parameters]
+##'
+##' @title Create vaccine schedule
+##'
+##' @param date A single date, representing the first day that
+##'   vaccines will be given
+##'
+##' @param doses A 3d array of doses representing (1) the model group
+##'   (19 rows for the carehomes model), (2) the dose (must be length
+##'   2 at present) and (3) time (can be anything nonzero). The values
+##'   represent the number of vaccine doses in that group for that
+##'   dose for that day. So for `doses[i, j, k]` then it is for the
+##'   ith group, the number of jth doses on day `(k - 1) + date`
+##'
+##' @return A `vaccine_schedule` object
+##' @export
 vaccine_schedule <- function(date, doses) {
   assert_sircovid_date(date)
   assert_scalar(date)
@@ -369,11 +385,23 @@ vaccine_schedule <- function(date, doses) {
   n_groups <- carehomes_n_groups()
   n_doses <- 2L
 
+  if (length(dim(doses)) != 3L) {
+    stop("Expected a 3d array for 'doses'")
+  }
   if (nrow(doses) != n_groups) {
-    stop(sprintf("'vaccine_schedule$doses' must have %d rows", n_groups))
+    stop(sprintf("'doses' must have %d rows", n_groups))
   }
   if (ncol(doses) != n_doses) {
-    stop(sprintf("'vaccine_schedule$doses' must have %d columns", n_doses))
+    stop(sprintf("'doses' must have %d columns", n_doses))
+  }
+  if (dim(doses)[[3]] == 0) {
+    stop("'doses' must have at least one element in the 3rd dimension")
+  }
+  if (any(is.na(doses))) {
+    stop("'doses' must all be non-NA")
+  }
+  if (any(doses < 0)) {
+    stop("'doses' must all be non-negative")
   }
 
   ret <- list(date = date, doses = doses, n_doses = n_doses)
