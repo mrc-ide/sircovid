@@ -1768,7 +1768,7 @@ test_that("run sensible vaccination schedule", {
     range(c(apply((n_vaccinated > 5000)[, p, drop = FALSE], 2, which))))
   for (j in seq_along(i)) {
     if (j > 2) {
-      ## using <= as if many doses available each day you may vaccinate 
+      ## using <= as if many doses available each day you may vaccinate
       ## several priority groups in the same day
       expect_true(max(unlist(i[seq_len(j - 2)])) <= i[[j]][[1]])
     }
@@ -1953,7 +1953,7 @@ test_that("Can vaccinate given a schedule", {
   m[, 1, i] <- step_doses_1 # first dose schedule
   m[, 2, i + delay_vacc_date_2 * 4] <- step_doses_2 # second dose schedule
   p$vaccine_dose_step <- m
-  
+
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -1965,42 +1965,42 @@ test_that("Can vaccinate given a schedule", {
 
   #### check first dose schedule
   n_vacc_fisrt_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
-  
+
   ## check no vaccination before wanted date
   days_vacc_1 <- seq(start_vacc_date_1 + 1, start_vacc_date_1 + ndays_vacc)
   expect_true(
     all(n_vacc_fisrt_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
-  
-  ## check that in all groups but 18:19 
+
+  ## check that in all groups but 18:19
   ## (which are small and therefore get vaccinated faster)
   ## we get the right number of vaccinations per day in the wanted interval
-  x <- n_vacc_fisrt_dose[days_vacc_1, -(18:19)]
+  x <- n_vacc_fisrt_dose[days_vacc_1, - (18:19)]
   expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)))
-  
+
   ## check that no vaccination after wanted date
   ## we get the right number of vaccinations per day in the wanted interval
   expect_true(
     all(n_vacc_fisrt_dose[seq(last(days_vacc_1) + 1, end_date, 1), ] == 0))
-  
+
   #### check second dose schedule
   n_vacc_second_dose <- apply(y$cum_n_vaccinated[, 2, 1, ], 1, diff)
-  
+
   ## check no vaccination before wanted date
-  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2 + 1, 
+  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2 + 1,
                      start_vacc_date_1 + delay_vacc_date_2 + ndays_vacc)
   expect_true(
     all(n_vacc_second_dose[seq_len(days_vacc_2[1] - 1), ] == 0))
-  
-  ## check that 
+
+  ## check that
   ## we get the right number of vaccinations per day in the wanted interval
   x <- n_vacc_second_dose[days_vacc_2, ]
   expect_approx_equal(x, matrix(step_doses_2 * 4, nrow(x), ncol(x)))
-  
+
   ## check that no vaccination after wanted date
   ## we get the right number of vaccinations per day in the wanted interval
   expect_true(
     all(n_vacc_second_dose[seq(last(days_vacc_2) + 1, end_date, 1), ] == 0))
-  
+
 })
 
 
