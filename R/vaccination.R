@@ -262,6 +262,7 @@ vaccination_priority_proportion <- function(uptake,
 ##' @param region Region to use to get total population numbers
 ##'
 ##' @rdname vaccination_priority
+##' @export
 vaccination_priority_population <- function(region,
                                             uptake,
                                             prop_hcw = NULL,

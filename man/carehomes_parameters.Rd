@@ -238,8 +238,8 @@ vaccine_progression_rate <- c(0, 0, 1/(26*7))
 
 daily_doses <- rep(10000, 365) 
 mean_days_between_doses <- 12 * 7
-n <- sircovid:::vaccination_priority_population(region, uptake = 1)
-vaccine_schedule <- vaccination_schedule_future(
+n <- vaccination_priority_population(region, uptake = 1)
+schedule <- vaccination_schedule_future(
   daily_doses, 0, mean_days_between_doses, n)
 
 # generate model parameters
@@ -250,7 +250,7 @@ p <- carehomes_parameters(
        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
        rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
-       vaccine_schedule = vaccine_schedule,
+       vaccine_schedule = schedule,
        vaccine_index_dose2 = 2)
 
 # vaccination parameters are automatically copied across all age groups
@@ -305,7 +305,7 @@ p <- carehomes_parameters(
        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
        rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
-       vaccine_schedule = vaccine_schedule,
+       vaccine_schedule = schedule,
        vaccine_index_dose2 = 2)
 
 # TODO: add an example of manually set up vaccine schedule
