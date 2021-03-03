@@ -205,7 +205,9 @@ just before the model is run.
 Parameters for the "\link{carehomes}" model.
 }
 \examples{
-carehomes_parameters(sircovid_date("2020-02-01"), "uk")
+
+region <- "london"
+carehomes_parameters(sircovid_date("2020-02-01"), region)
 
 # example set up of vaccination parameters independent of age
 # 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity
@@ -227,25 +229,29 @@ rel_p_hosp_if_sympt <- c(1, 0.95, 0.95)
 # The vaccine also reduces infectivity of infected individuals by half
 rel_infectivity <- c(1, 0.5, 0.5)
 
-# Vaccination occurs at a constant rate of 0.03 per day,
-# (i.e. average time to vaccination is 33 days)
-# similar across all age groups.
-# the period of build-up of immunity following vaccination is exponentially
-# distributed and lasts on average two weeks;
+# On average 10000 first doses of vaccine are given every day
+# Second doses are given on average 12 weeks after the first dose
 # vaccine-induced immunity wanes after a period which is exponentially
 # distributed and lasts on average 26 weeks (half a year);
 # they are similar across all age groups
-vaccine_progression_rate <- c(0, 1/(2*7), 1/(26*7))
+vaccine_progression_rate <- c(0, 0, 1/(26*7))
+
+daily_doses <- rep(10000, 365) 
+mean_days_between_doses <- 12 * 7
+n <- vaccination_priority_population(region, uptake = 1)
+vaccine_schedule <- vaccination_schedule_future(
+  daily_doses, 0, mean_days_between_doses, n)
 
 # generate model parameters
 p <- carehomes_parameters(
-       sircovid_date("2020-02-01"), "uk",
+       sircovid_date("2020-02-01"), region,
        rel_susceptibility = rel_susceptibility,
        rel_p_sympt = rel_p_sympt,
        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
        rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
-       vaccine_daily_doses = 10000)
+       vaccine_schedule = vaccine_schedule,
+       vaccine_index_dose2 = 2)
 
 # vaccination parameters are automatically copied across all age groups
 p$rel_susceptibility
@@ -287,52 +293,21 @@ rel_infectivity <- matrix(rep(rel_infectivity, n_groups), nrow = n_groups,
 # but the first age group loses immunity more quickly
 # (on average after 3 months) than the other age groups
 # (on average after 6 months)
-vaccine_progression_rate <- cbind(0,
-                                  rep(1 / (2 * 7), n_groups),
+vaccine_progression_rate <- cbind(0, 0,
                                   c(1 / (13 * 7),
                                   rep( 1 / (26 * 7), n_groups - 1)))
 
 # generate model parameters
 p <- carehomes_parameters(
-       sircovid_date("2020-02-01"), "uk",
+       sircovid_date("2020-02-01"), region,
        rel_susceptibility = rel_susceptibility,
        rel_p_sympt = rel_p_sympt,
        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
        rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
-       vaccine_daily_doses = 10000)
+       vaccine_schedule = vaccine_schedule,
+       vaccine_index_dose2 = 2)
 
-# vaccine_daily_doses_date can be unspecified when vaccine_daily_doses is a
-# scalar, and will result in a scalar for vaccine_daily_doses_step, and this
-# value will be used for the whole simulation
-p <- carehomes_parameters(
-       sircovid_date("2020-02-01"), "uk",
-       vaccine_daily_doses = 10000)
-p$vaccine_daily_doses_step
-
-# Alternatively, vaccine_daily_doses_date can be specified (as a single
-# sircovid_date) when vaccine_daily_doses is a scalar. vaccine_daily_doses
-# is then the number of daily doses from that date onwards in the
-# simulation, with the number before that date being 0.
-p <- carehomes_parameters(
-       sircovid_date("2020-02-01"), "uk",
-       vaccine_daily_doses = 10000,
-       vaccine_daily_doses_date = sircovid_date("2020-05-01"))
-p$vaccine_daily_doses_step
-
-# vaccine_daily_doses_date must be specified when vaccine_daily_doses is a
-# vector of values, as a vector of sircovid_dates of the same length. In
-# this case, before the first specified date, the number of daily doses in
-# the simulation will be 0. vaccine_daily_doses gives the number of daily
-# doses from the corresponding date in vaccine_daily_doses_date until the
-# subsequent one. After the last date in vaccine_daily_doses_date, the
-# daily doses are fixed at the last value in vaccine_daily_doses.
-p <- carehomes_parameters(
-       sircovid_date("2020-02-01"), "uk",
-       vaccine_daily_doses = c(10000, 20000),
-       vaccine_daily_doses_date =
-          sircovid_date(c("2020-05-01", "2020-06-01")))
-p$vaccine_daily_doses_step
-
+# TODO: add an example of manually set up vaccine schedule
 
 }
