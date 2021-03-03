@@ -1411,7 +1411,7 @@ test_that("Outputed E vaccination numbers are what we expect", {
                rel_tol = 0.15)
 
   ## same for the 10 initially seeded cases
-  expect_true(abs(y$cum_n_I_A_vaccinated[4, 1, 2] - 
+  expect_true(abs(y$cum_n_I_A_vaccinated[4, 1, 2] -
                y$I_A[4, , , 1, 1]) <= 3)
 
 })
