@@ -270,7 +270,7 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
                                   multiplier_I_A, multiplier_I_C, 
                                   n = 1000) {
       draw_from <- function(n, k, gamma) {
-        rgamma(n, shape = k, rate = gamma) ## this does not correct for step size
+        rgamma(n, shape = k, rate = gamma) ## TODO: this does not correct for step size
       }
       sample_E <- draw_from(n, p$k_E, p$gamma_E)
       sample_I_A <- draw_from(n, p$k_A, p$gamma_A)
@@ -279,6 +279,11 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
       sample_I_C_1 <- draw_from(n, p$k_C_1, p$gamma_C_1)
       sample_SI_C <- (sample_E + sample_I_P + sample_I_C_1)  
       path_C <- runif(n) <= multiplier_I_C[idx] / (multiplier_I_C[idx] + multiplier_I_A[idx])
+      
+      ## Pb: also need to weigh more individuals with longer I_A or I_P + I_C1
+      ## because they have more time to make secondary cases
+      
+      ## TODO: Poisson with mean the duration? i.e. neutral assumption of R = 1 to generate the GT distr
       
       sample_SI <- rep(NA, n)
       sample_SI[!path_C] <- sample_SI_A[!path_C]
