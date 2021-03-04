@@ -1746,7 +1746,7 @@ test_that("run sensible vaccination schedule", {
                                        prop_hcw = rep(0, 19),
                                        prop_very_vulnerable = rep(0, 19),
                                        prop_underlying_condition = rep(0, 19))
-  vaccine_schedule <- vaccination_schedule_future(daily_doses, 0, 200, n)
+  vaccine_schedule <- vaccination_schedule_future(0, daily_doses, 200, n)
   expect_equal(sum(vaccine_schedule$doses[, 2, ]), 0)
   expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
 
@@ -2076,64 +2076,6 @@ test_that("Can vaccinate given a schedule", {
 })
 
 
-test_that("vaccination_priority_proportion adds up to uptake", {
-  uptake_by_age <- test_example_uptake()
-  p <- vaccination_priority_proportion(uptake_by_age)
-  expect_true(all(signif(rowSums(p), 5) == signif(uptake_by_age, 5)))
-})
-
-
-test_that("vaccination_priority_population adds to correct population", {
-  ## Expecting rows to equal population size * uptake
-  region <- "london"
-  uptake_by_age <- test_example_uptake()
-  n <- vaccination_priority_population(region, uptake_by_age)
-
-  ## check that n to vaccinate adds up to uptake * population
-  pop_by_age <- carehomes_parameters(1, region)$N_tot
-
-  expect_true(all(rowSums(n) - uptake_by_age * pop_by_age <= 2))
-})
-
-
-test_that("vaccination_schedule_future produces consistent schedule", {
-  region <- "london"
-  uptake_by_age <- test_example_uptake()
-  daily_doses <- rep(20000, 365) # a vector of number of doses to give each day
-  mean_days_between_doses <- 12 * 7
-
-  n <- vaccination_priority_population(region, uptake_by_age)
-  dose_schedule <- vaccination_schedule_future(
-    daily_doses, 0, mean_days_between_doses, n)
-
-  doses <- dose_schedule$doses
-  n_to_vaccinate1 <- dose_schedule$doses[, 1, ]
-  n_to_vaccinate2 <- dose_schedule$doses[, 2, ]
-
-  ## initially only first doses are delivered
-  ## and they add up to the target daily_doses
-  ## not exactly equal because of some rounding
-  phase1 <- seq_len(mean_days_between_doses)
-  expect_true(all(abs(
-    colSums(n_to_vaccinate1[, phase1]) - daily_doses[phase1]) < 5))
-  expect_true(all(colSums(n_to_vaccinate2[, phase1]) == 0))
-
-  ## during phase 2 only second doses are delivered
-  ## as doses are constant over time
-  ## and they add up to the target daily_doses
-  ## not exactly equal because of some rounding
-  phase2 <- mean_days_between_doses + seq_len(mean_days_between_doses)
-  expect_true(all(abs(
-    colSums(n_to_vaccinate2[, phase2]) - daily_doses[phase2]) < 5))
-  expect_true(all(colSums(n_to_vaccinate1[, phase2]) == 0))
-
-  ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
-  ## not exactly equal because of some rounding
-  expect_true(all(abs(
-      colSums(n_to_vaccinate1 + n_to_vaccinate2) - daily_doses) < 5))
-})
-
-
 test_that("can create parameters with vaccination data", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
@@ -2142,7 +2084,7 @@ test_that("can create parameters with vaccination data", {
   n <- vaccination_priority_population(region, uptake_by_age)
   date_start_vaccination <- sircovid_date("2020-02-01")
   schedule <- vaccination_schedule_future(
-    daily_doses, date_start_vaccination, mean_days_between_doses, n)
+    date_start_vaccination, daily_doses, mean_days_between_doses, n)
 
   p <- carehomes_parameters(0, region,
                             rel_susceptibility = c(1, 1, 0),
@@ -2153,34 +2095,4 @@ test_that("can create parameters with vaccination data", {
                             vaccine_schedule = schedule)
   expect_equal(dim(p$vaccine_dose_step),
                c(19, 2, (date_start_vaccination + length(daily_doses)) * 4))
-})
-
-
-test_that("validate a vaccine schedule", {
-  doses <- array(1, c(19, 2, 10))
-  expect_error(
-    vaccine_schedule(1:10, doses),
-    "'date' must be a scalar")
-  expect_error(
-    vaccine_schedule("2020-01-01", doses),
-    "'date' must be numeric - did you forget sircovid_date")
-  expect_error(
-    vaccine_schedule(10, doses[-1, , ]),
-    "'doses' must have 19 rows")
-  expect_error(
-    vaccine_schedule(10, doses[, rep(1, 3), ]),
-    "'doses' must have 2 columns")
-  expect_error(
-    vaccine_schedule(10, doses[, , integer(0)]),
-    "'doses' must have at least one element in the 3rd dimension")
-  expect_error(
-    vaccine_schedule(10, doses[, 1, , drop = TRUE]),
-    "Expected a 3d array for 'doses'")
-  expect_error(
-    vaccine_schedule(10, -doses),
-    "'doses' must all be non-negative")
-  doses[30] <- NA_real_
-  expect_error(
-    vaccine_schedule(10, doses),
-    "'doses' must all be non-NA")
 })

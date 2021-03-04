@@ -55,7 +55,7 @@ Compute vaccination priority following JCVI ordering.
 \details{
 https://tinyurl.com/8uwtatvm
 
-Assuming independance between job (e.g. HCW) and clinical condition
+Assmuing independance between job (e.g. HCW) and clinical condition
 
 But assuming one is either counted as "clinically extremely
 vulnerable" or "with underlying health conditions" but not both

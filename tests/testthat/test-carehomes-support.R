@@ -50,7 +50,7 @@ test_that("carehomes vaccination parameters", {
   n <- vaccination_priority_population(region, uptake)
 
   vaccine_schedule <- vaccination_schedule_future(
-    daily_doses, vaccine_daily_doses_date[1], 1e6, n)
+    vaccine_daily_doses_date[1], daily_doses, 1e6, n)
 
   p <- carehomes_parameters_vaccination(ntot,
                                         dt = 0.25,

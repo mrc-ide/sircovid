@@ -690,7 +690,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   daily_doses <- c(rep(0, vacc_time - 1), rep(Inf, vacc_time))
   n <- vaccination_priority_population(region, uptake = 1)
   vaccine_schedule <- vaccination_schedule_future(
-    daily_doses, 0, mean_days_between_doses = 1000, n)
+    0, daily_doses, mean_days_between_doses = 1000, n)
 
   reduced_susceptibility <- 0.1 # can put anything <1 here
   transm_new_variant <- 5

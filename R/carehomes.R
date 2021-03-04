@@ -149,7 +149,7 @@ NULL
 ##'
 ##' @export
 ##' @examples
-##' 
+##'
 ##' region <- "london"
 ##' carehomes_parameters(sircovid_date("2020-02-01"), region)
 ##'
@@ -180,11 +180,11 @@ NULL
 ##' # they are similar across all age groups
 ##' vaccine_progression_rate <- c(0, 0, 1/(26*7))
 ##'
-##' daily_doses <- rep(10000, 365) 
+##' daily_doses <- rep(10000, 365)
 ##' mean_days_between_doses <- 12 * 7
 ##' n <- vaccination_priority_population(region, uptake = 1)
 ##' schedule <- vaccination_schedule_future(
-##'   daily_doses, 0, mean_days_between_doses, n)
+##'   0, daily_doses, mean_days_between_doses, n)
 ##'
 ##' # generate model parameters
 ##' p <- carehomes_parameters(
@@ -253,7 +253,7 @@ NULL
 ##'        vaccine_index_dose2 = 2)
 ##'
 ##' # TODO: add an example of manually set up vaccine schedule
-##' 
+##'
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,

@@ -138,7 +138,7 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
 ##'
 ##' https://tinyurl.com/8uwtatvm
 ##'
-##' Assuming independance between job (e.g. HCW) and clinical condition
+##' Assmuing independance between job (e.g. HCW) and clinical condition
 ##'
 ##' But assuming one is either counted as "clinically extremely
 ##' vulnerable" or "with underlying health conditions" but not both
@@ -289,10 +289,13 @@ vaccination_priority_population <- function(region,
 ##' daily doses.
 ##'
 ##' @title Create vaccination schedule
+##'
+##' @param start Either a [sircovid_date] object corresponding to the
+##'   first date in daily_doses_value, or a `vaccination_schedule`
+##'   object corresponding to previously carried out vaccination.
+##'
 ##' @param daily_doses_value A vector of doses per day
 ##'
-##' @param daily_doses_date A [sircovid_date] object corresponding to
-##'   the first date in daily_doses_value
 ##'
 ##' @param mean_days_between_doses Assumed mean days between doses one
 ##'   and two
@@ -302,7 +305,8 @@ vaccination_priority_population <- function(region,
 ##'   to vaccinate in each age (row) and priority group (column)
 ##'
 ##' @export
-vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
+vaccination_schedule_future <- function(start,
+                                        daily_doses_value,
                                         mean_days_between_doses,
                                         priority_population) {
   n_groups <- nrow(priority_population)
@@ -311,57 +315,90 @@ vaccination_schedule_future <- function(daily_doses_value, daily_doses_date,
   n_days <- length(daily_doses_value)
 
   population_to_vaccinate_mat <-
-    array(0, c(n_groups, n_priority_groups, n_days))
-  population_left <- priority_population
+    array(0, c(n_groups, n_priority_groups, n_doses, n_days))
 
-  daily_dose_1 <- numeric(n_days)
+  population_left <- array(rep(c(priority_population), n_doses),
+                           c(n_groups, n_priority_groups, n_doses))
+
+  if (inherits(start, "vaccine_schedule")) {
+    for (dose in seq_len(n_doses)) {
+      n <- rowSums(start$doses[, dose, ])
+      for (i in seq_len(n_priority_groups)) {
+        m <- pmin(n, population_left[, i, dose])
+        n <- n - m
+        population_left[, i, dose] <- population_left[, i, dose] - m
+      }
+    }
+
+    daily_doses_prev <- apply(start$doses, c(2, 3), sum)
+    n_prev <- ncol(daily_doses_prev)
+    daily_doses_date <- start$date
+  } else {
+    daily_doses_prev <- matrix(0, n_doses, 0)
+    n_prev <- 0L
+    daily_doses_date <- start
+  }
+
+  daily_doses_tt <- cbind(daily_doses_prev, matrix(0, n_doses, n_days))
   population_to_vaccinate <- array(0, c(n_groups, n_doses, n_days))
 
   for (t in seq_along(daily_doses_value)) {
-    ## Split doses between first and second doses
-    if (t <= mean_days_between_doses) { # only distribute first doses
-      daily_dose_2_t <- 0
-      daily_dose_1[t] <- daily_doses_value[t]
-    } else {
-      ## prioritise second doses
-      daily_dose_2_t <- min(daily_doses_value[t],
-                            daily_dose_1[t - mean_days_between_doses])
-      daily_dose_1[t] <- daily_doses_value[t] - daily_dose_2_t
-    }
-
-    ## Allocate first doses
-    eligible <- colSums(population_left)
-    ## Vaccinate fully the top priority groups
-    n_full_vacc <- findInterval(daily_dose_1[t], cumsum(eligible))
-    if (n_full_vacc > 0) {
-      i_full_vacc <- seq_len(n_full_vacc)
-      population_to_vaccinate_mat[, i_full_vacc, t] <-
-        population_left[, i_full_vacc]
-    }
-
-    ## Then partially vaccinate the next priority group, if possible
-    if (n_full_vacc < n_priority_groups) {
-      if (n_full_vacc == 0) {
-        remaining_eligible <- daily_dose_1[t]
-      } else {
-        remaining_eligible <- daily_dose_1[t] - cumsum(eligible)[n_full_vacc]
+    tt <- t + n_prev
+    tt_dose_1 <- tt - mean_days_between_doses
+    if (tt_dose_1 >= 1) {
+      ## If we have promised more 2nd doses than we can deliver, we
+      ## move our debt forward in time by one day. If doses fluctuate
+      ## this will eventually be paid off.
+      if (daily_doses_tt[1, tt_dose_1] > daily_doses_value[t]) {
+        daily_doses_tt[1, tt_dose_1 + 1] <-
+          daily_doses_tt[1, tt_dose_1 + 1] +
+          (daily_doses_tt[1, tt_dose_1] - daily_doses_value[t])
       }
-      i_vacc <- n_full_vacc + 1L
-
-      ## Split remaining doses according to age
-      population_to_vaccinate_mat[, i_vacc, t] <-
-        round(remaining_eligible * population_left[, i_vacc] /
-              sum(population_left[, i_vacc]))
+      daily_doses_tt[2, tt] <- min(daily_doses_value[t],
+                                   daily_doses_tt[1, tt_dose_1])
+      daily_doses_tt[1, tt] <- daily_doses_value[t] - daily_doses_tt[2, tt]
+    } else {
+      ## Only distribute first doses
+      daily_doses_tt[2, tt] <- 0
+      daily_doses_tt[1, tt] <- daily_doses_value[t]
     }
+    daily_doses_today <- daily_doses_tt[, tt]
 
-    population_left <- population_left - population_to_vaccinate_mat[, , t]
+    for (dose in seq_len(n_doses)) {
+      eligible <- colSums(population_left[, , dose])
+      ## Vaccinate the entire of the top priority groups
+      n_full_vacc <- findInterval(daily_doses_today[dose], cumsum(eligible))
+      if (n_full_vacc > 0) {
+        i_full_vacc <- seq_len(n_full_vacc)
+        population_to_vaccinate_mat[, i_full_vacc, dose, t] <-
+          population_left[, i_full_vacc, dose]
+      }
+
+      ## Then partially vaccinate the next priority group, if possible
+      if (n_full_vacc < n_priority_groups) {
+        if (n_full_vacc == 0) {
+          remaining_eligible <- daily_doses_today[dose]
+        } else {
+          remaining_eligible <- daily_doses_today[dose] -
+            cumsum(eligible)[n_full_vacc]
+        }
+        i_vacc <- n_full_vacc + 1L
+
+        ## Split remaining doses according to age
+        population_to_vaccinate_mat[, i_vacc, dose, t] <-
+          round(remaining_eligible * population_left[, i_vacc, dose] /
+                sum(population_left[, i_vacc, dose]))
+      }
+
+      population_left[, , dose] <- population_left[, , dose] -
+        population_to_vaccinate_mat[, , dose, t]
+    }
   }
 
-  doses <- array(0, c(n_groups, n_doses, n_days))
-  doses[, 1, ] <- apply(population_to_vaccinate_mat, c(1, 3), sum)
-  if (n_days > mean_days_between_doses) {
-    i <- seq(mean_days_between_doses + 1L, n_days)
-    doses[, 2, i] <- doses[, 1, seq_along(i)]
+  doses <- apply(population_to_vaccinate_mat, c(1, 3, 4), sum)
+
+  if (inherits(start, "vaccine_schedule")) {
+    doses <- mcstate::array_bind(start$doses, doses)
   }
 
   vaccine_schedule(daily_doses_date, doses)
@@ -413,4 +450,11 @@ vaccine_schedule <- function(date, doses) {
   ret <- list(date = date, doses = doses, n_doses = n_doses)
   class(ret) <- "vaccine_schedule"
   ret
+}
+
+
+## Convert a data.frame with date / age / dose1 / dose2 to a schedule
+## Also deal with CHW/CHR
+vaccine_schedule_from_data <- function(data) {
+
 }

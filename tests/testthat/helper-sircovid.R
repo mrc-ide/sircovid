@@ -74,7 +74,7 @@ test_vaccine_schedule <- function(daily_doses = 20000, region = "london",
   daily_doses <- rep(daily_doses, n_days)
   n <- vaccination_priority_population(region, uptake)
   vaccination_schedule_future(
-    daily_doses, 0, mean_days_between_doses, n)
+    0, daily_doses, mean_days_between_doses, n)
 }
 
 

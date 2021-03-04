@@ -5,17 +5,18 @@
 \title{Create vaccination schedule}
 \usage{
 vaccination_schedule_future(
+  start,
   daily_doses_value,
-  daily_doses_date,
   mean_days_between_doses,
   priority_population
 )
 }
 \arguments{
-\item{daily_doses_value}{A vector of doses per day}
+\item{start}{Either a \link{sircovid_date} object corresponding to the
+first date in daily_doses_value, or a \code{vaccination_schedule}
+object corresponding to previously carried out vaccination.}
 
-\item{daily_doses_date}{A \link{sircovid_date} object corresponding to
-the first date in daily_doses_value}
+\item{daily_doses_value}{A vector of doses per day}
 
 \item{mean_days_between_doses}{Assumed mean days between doses one
 and two}

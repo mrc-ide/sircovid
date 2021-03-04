@@ -186,4 +186,3 @@ block_expand <- function(m, n) {
   len <- nrow(m) * n
   matrix(t(matrix(m, nrow(m), len)), len, len, byrow = TRUE)
 }
-
