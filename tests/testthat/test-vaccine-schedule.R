@@ -75,6 +75,13 @@ test_that("vaccination_priority_proportion adds up to uptake", {
 })
 
 
+test_that("vaccination_priority_proportion with null uptake is 100%", {
+  p <- vaccination_priority_proportion(NULL)
+  expect_equal(p, vaccination_priority_proportion(rep(1, 19)))
+  expect_equal(rowSums(p), rep(1, 19))
+})
+
+
 test_that("vaccination_priority_population adds to correct population", {
   ## Expecting rows to equal population size * uptake
   region <- "london"
