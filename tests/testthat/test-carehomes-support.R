@@ -39,7 +39,7 @@ test_that("carehomes vaccination parameters", {
   rel_susceptibility <- c(1, 0.2, 0.1, 0.4)
   rel_p_sympt <- c(1, 0.75, 0.5, 0.75)
   rel_p_hosp_if_sympt <- c(1, 0.8, 0.6, 0.9)
-  vaccine_progression_rate <- c(0, 1, 1, 1)
+  vaccine_progression_rate <- c(0, 1, 0, 1)
 
   region <- "london"
   vaccine_daily_doses <- c(5000, 10000)

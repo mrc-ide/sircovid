@@ -1683,7 +1683,7 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       vaccine_schedule = schedule),
     "Column 3 of 'vaccine_progression_rate' must be zero (dose 2)",
     fixed = TRUE)
-}})
+})
 
 
 test_that("build_vaccine_progression_rate allows sensible inputs and works", {
