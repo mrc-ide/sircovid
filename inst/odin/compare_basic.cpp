@@ -8,7 +8,7 @@ real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
   return dust::dnbinom(data, kappa, mu, true);
 }
 
-// [[odin.dust::compare_data(icu = double, deaths = double)]]
+// [[odin.dust::compare_data(icu = real_t, deaths = real_t)]]
 // [[odin.dust::compare_function]]
 template <typename T>
 typename T::real_t compare(const typename T::real_t * state,
