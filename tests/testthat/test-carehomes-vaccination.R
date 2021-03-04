@@ -1699,11 +1699,11 @@ test_that("build_vaccine_progression_rate allows sensible inputs and works", {
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(0, 19, 3),
                                    n_vacc_classes = 3,
-                                   index_dose = c(1, 1)),
+                                   index_dose = c(1, 1)))
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = NULL,
                                    n_vacc_classes = 3,
-                                   index_dose = c(1, 1)),
+                                   index_dose = c(1, 1)))
   expect_equal(
     build_vaccine_progression_rate(vaccine_progression_rate = NULL,
                                    n_vacc_classes = 3,
