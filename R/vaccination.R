@@ -455,6 +455,72 @@ vaccine_schedule <- function(date, doses) {
 
 ## Convert a data.frame with date / age / dose1 / dose2 to a schedule
 ## Also deal with CHW/CHR
-vaccine_schedule_from_data <- function(data) {
+vaccine_schedule_from_data <- function(data, n_carehomes) {
+  ## First aggregate all the 80+ into one group
+  data$date <- as_sircovid_date(data$date)
+  data$age_band_min <- pmin(data$age_band_min, 80)
+  data <- aggregate(data[c("dose1", "dose2")],
+                     data[c("age_band_min", "date")],
+                     sum)
 
+  dates <- seq(min(data$date), max(data$date), by = 1)
+  age_start <- sircovid_age_bins()$start
+
+  doses <- lapply(c("dose1", "dose2"), function(i)
+    reshape(data[c("date", "age_band_min", i)],
+            direction = "wide", timevar = "date",
+            idvar = "age_band_min"))
+  stopifnot(identical(dim(doses[[1]]), dim(doses[[2]])))
+
+  i <- match(age_start, doses[[1]]$age_band_min)
+  j <- match(dates, sub("^dose[12]\\.", "", names(doses[[1]])))
+  doses <- array(
+    unlist(lapply(doses, function(d) unname(as.matrix(d[i, j])))),
+    c(length(age_start), length(dates), 2))
+  doses <- aperm(doses, c(1, 3, 2))
+  doses[is.na(doses)] <- 0
+
+  vaccine_schedule_add_carehomes(doses, n_carehomes)
+}
+
+
+vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
+  doses <- doses[c(seq_len(nrow(doses)), NA, NA), , ]
+  doses[is.na(doses)] <- 0
+
+  if (all(n_carehomes == 0)) {
+    return(doses)
+  }
+
+  ## Impute CHW / CHR - these will be the first vaccinated people
+  ## below and above 65 respectively.
+  f <- function(target, i_from, i_to) {
+    for (i_dose in 1:2) {
+      n_t <- colSums(doses[i_from, i_dose, ])
+      n <- cumsum(n_t)
+      i <- n >= target
+      if (!any(i)) {
+        k <- length(i)
+      } else {
+        j <- which(i)[[1]] # the interval that switches
+        k <- j - 1
+        n_general <- n[[j]] - target
+        doses[i_to, i_dose, j] <- target - sum(n_t[seq_len(k)])
+        doses[i_from, i_dose, j] <-
+          drop(rmultinom(1, n_general, doses[i_from, i_dose, j]))
+      }
+      doses[i_to, i_dose, seq_len(k)] <- n_t[seq_len(k)]
+      doses[i_from, i_dose, seq_len(k)] <- 0
+    }
+    doses
+  }
+
+  age_start <- sircovid_age_bins()$start
+  i_chw_from <- which(age_start < 65)
+  i_chr_from <- which(age_start >= 65)
+  i_chw_to <- 18
+  i_chr_to <- 19
+  doses <- f(n_carehomes[[1]], i_chw_from, i_chw_to)
+  doses <- f(n_carehomes[[2]], i_chr_from, i_chr_to)
+  doses
 }
