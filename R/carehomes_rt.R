@@ -258,7 +258,7 @@ draw_one_GT_sample <- function(p, n = 1000) {
     ## Draw exposed period
     sample_E <- draw_from(1, p$k_E, p$gamma_E)
     ## Draw symptomatic vs asymptomatic path
-    path_C <- runif(1) <= p$p_C
+    path_C <- runif(1) <= p$p_C[[1]]
     if (!path_C) {
       sample_I <- draw_from(1, p$k_A, p$gamma_A)
       infectivity <- p$I_A_transmission
@@ -300,9 +300,27 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
                                   n_GT = 10000) {
   
   
+  browser()
+  
   gt_distr <- draw_one_GT_distr(p = p, n = n_GT, set_first_to_zero = TRUE)
   
   # sliding_window_ndays / p$dt 
+  ## TODO: NEED TO CONVERT BETWEEN DAYS AND STEPS
+  i <- 1
+  T <- nrow(incidence)
+  t_start <- seq(2, T - sliding_window_ndays + 1)
+  t_end <- seq(sliding_window_ndays + 1, T)
+  
+  R <- EpiEstim::make_config(incid = incidence[, i],
+                        t_start = t_start,
+                        t_end = t_end,
+                        method = "non_parametric_SI",
+                        si_distr = gt_distr,
+                        mean_prior = mean_prior,
+                        std_prior = sd_prior)
+  
+  
+  
   
   R <- NULL # replace with some sort of calculation with EpiEstim
   # integrating over all incidence trajectories

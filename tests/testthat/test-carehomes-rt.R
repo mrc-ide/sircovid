@@ -347,6 +347,8 @@ test_that("Parameters affect Rt as expected", {
 
 test_that("Can calculate EpiEstim Rt", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
   
@@ -373,7 +375,7 @@ test_that("draw_one_GT_sample yields expected mean GT", {
   set.seed(1)
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   ## Fix p_C across age groups for the rest of the test
-  p$p_C <- 0.6
+  p$p_C <- rep(0.6, 19)
   gt <- draw_one_GT_sample(p, n = 10000)
   expect_true(abs(mean(gt) - 6.3) < 0.1) # value from Bi et al.
 })
@@ -388,7 +390,7 @@ test_that("draw_one_GT_sample yields expected invalid input errors", {
     fixed = TRUE)
   
   ## Fix p_C across age groups for the rest of the test
-  p_base$p_C <- 0.6
+  p_base$p_C <- rep(0.6, 19)
   
   p <- p_base
   p$I_C_2_transmission <- 0.1
