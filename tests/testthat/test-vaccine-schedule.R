@@ -38,7 +38,7 @@ test_that("vaccination_schedule_future produces consistent schedule", {
 
   n <- vaccination_priority_population(region, uptake_by_age)
   dose_schedule <- vaccination_schedule_future(
-    0,daily_doses, mean_days_between_doses, n)
+    0, daily_doses, mean_days_between_doses, n)
 
   doses <- dose_schedule$doses
   n_to_vaccinate1 <- dose_schedule$doses[, 1, ]
