@@ -367,3 +367,67 @@ test_that("Can calculate EpiEstim Rt", {
   rt_EpiEstim <- carehomes_EpiEstim_Rt(steps, inc, p)
   
 })
+
+
+test_that("draw_one_GT_sample yields expected mean GT", {
+  set.seed(1)
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- 0.6
+  gt <- draw_one_GT_sample(p, n = 10000)
+  expect_true(abs(mean(gt) - 6.3) < 0.1) # value from Bi et al.
+})
+
+
+test_that("draw_one_GT_sample yields expected invalid input errors", {
+  p_base <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  
+  expect_error(
+    draw_one_GT_sample(p_base, n = 1000),
+    "draw_one_GT_sample does not allow p_C to vary by age",
+    fixed = TRUE)
+  
+  ## Fix p_C across age groups for the rest of the test
+  p_base$p_C <- 0.6
+  
+  p <- p_base
+  p$I_C_2_transmission <- 0.1
+  expect_error(
+    draw_one_GT_sample(p, n = 1000),
+    "draw_one_GT_sample does not allow transmission from I_C_2",
+    fixed = TRUE)
+  p <- p_base
+  p$I_P_transmission <- 0.1
+  expect_error(
+    draw_one_GT_sample(p, n = 1000),
+    "draw_one_GT_sample does not allow 
+    I_P_transmission !=1 or I_C_1_transmission != 1",
+    fixed = TRUE)
+  p <- p_base
+  p$I_C_1_transmission <- 0.1
+  expect_error(
+    draw_one_GT_sample(p, n = 1000),
+    "draw_one_GT_sample does not allow 
+    I_P_transmission !=1 or I_C_1_transmission != 1",
+    fixed = TRUE)
+  p <- p_base
+  p$k_A <- 2
+  expect_error(
+    draw_one_GT_sample(p, n = 1000),
+    "draw_one_GT_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1",
+    fixed = TRUE)
+  p <- p_base
+  p$k_P <- 2
+  expect_error(
+    draw_one_GT_sample(p, n = 1000),
+    "draw_one_GT_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1",
+    fixed = TRUE)
+  p <- p_base
+  p$k_C_1 <- 2
+  expect_error(
+    draw_one_GT_sample(p, n = 1000),
+    "draw_one_GT_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1",
+    fixed = TRUE)
+
+})
+
