@@ -1255,7 +1255,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(0, 0.5, 0.01),
+                            vaccine_progression_rate = c(0, 0, 0.01),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
@@ -1286,7 +1286,7 @@ test_that(
                               rel_susceptibility = c(1, 0.5, 0.1),
                               rel_p_sympt = c(1, 1, 1),
                               rel_p_hosp_if_sympt = c(1, 1, 1),
-                              vaccine_progression_rate = c(0, 100, 50),
+                              vaccine_progression_rate = c(0, 0, 50),
                               vaccine_schedule = vaccine_schedule,
                               vaccine_index_dose2 = 2L)
 
@@ -1309,7 +1309,7 @@ test_that("Outputed vaccination numbers make sense", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(0, 0.5, 0.01),
+                            vaccine_progression_rate = c(0, 0, 0.01),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
@@ -1689,20 +1689,25 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
 test_that("build_vaccine_progression_rate allows sensible inputs and works", {
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = 0,
-                                   n_vacc_classes = 1))
+                                   n_vacc_classes = 1,
+                                   index_dose = c(1, 1)))
   expect_equal(
     build_vaccine_progression_rate(vaccine_progression_rate = c(0, 1),
-                                   n_vacc_classes = 2),
+                                   n_vacc_classes = 2,
+                                   index_dose = c(1, 1)),
     cbind(rep(0, 19), rep(1, 19)))
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = matrix(0, 19, 3),
-                                   n_vacc_classes = 3))
+                                   n_vacc_classes = 3,
+                                   index_dose = c(1, 1)),
   expect_silent(
     build_vaccine_progression_rate(vaccine_progression_rate = NULL,
-                                   n_vacc_classes = 3))
+                                   n_vacc_classes = 3,
+                                   index_dose = c(1, 1)),
   expect_equal(
     build_vaccine_progression_rate(vaccine_progression_rate = NULL,
-                                   n_vacc_classes = 3),
+                                   n_vacc_classes = 3,
+                                   index_dose = c(1, 1)),
     matrix(0, 19, 3))
 })
 
