@@ -16,7 +16,7 @@ vaccine_schedule_future(
 first date in daily_doses_value, or a \link{vaccine_schedule} object
 corresponding to previously carried out vaccination.}
 
-\item{daily_doses_value}{A vector of doses per day}
+\item{daily_doses_value}{A vector of doses per day.}
 
 \item{mean_days_between_doses}{Assumed mean days between doses one
 and two}

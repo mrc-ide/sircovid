@@ -294,7 +294,7 @@ vaccine_priority_population <- function(region,
 ##'   first date in daily_doses_value, or a [vaccine_schedule] object
 ##'   corresponding to previously carried out vaccination.
 ##'
-##' @param daily_doses_value A vector of doses per day
+##' @param daily_doses_value A vector of doses per day.
 ##'
 ##' @param mean_days_between_doses Assumed mean days between doses one
 ##'   and two
@@ -596,4 +596,47 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
   doses <- f(n_carehomes[[1]], i_chw_from, i_chw_to)
   doses <- f(n_carehomes[[2]], i_chr_from, i_chr_to)
   doses
+}
+
+
+##' Create a vaccination scenario
+##'
+##' @title High-level vaccine scenario creation
+##'
+##' @param schedule_past A [vaccine_schedule] object corresponding to
+##'   previously carried out vaccination.
+##'
+##' @param doses_future A named vector of vaccine doses to give in the
+##'   future. Names must be in ISO date format.
+##'
+##' @inheritParams vaccine_schedule_future
+##'
+##' @return A [vaccine_schedule] object
+##' @export
+vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
+                                      mean_days_between_doses,
+                                      priority_population) {
+  assert_is(schedule_past, "vaccine_schedule")
+  ## TODO:
+  ## - doses future is named (or empty)
+  ## - dates increase
+  ## - no negative doses?
+  ## - end date after end of doses future
+
+  ## TODO: cope with doses_future containing dates in the past
+
+  date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]]
+  i <- utils::tail(seq_len(dim(schedule_past$doses)[[3]]), 7)
+  mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
+
+  end_date <- as_sircovid_date(end_date)
+  date_future <- c(sircovid_date(names(doses_future)), end_date)
+
+  daily_doses <- c(rep(mean_doses_last, date_future[[1]] - date_end_past),
+                   rep(unname(doses_future), diff(date_future)))
+
+  vaccine_schedule_future(schedule_past,
+                          daily_doses_future,
+                          mean_days_between_doses,
+                          priority_population)
 }
