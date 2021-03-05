@@ -547,7 +547,7 @@ vaccine_schedule_data_future <- function(data, region, uptake, end_date,
   mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
   end_date <- as_sircovid_date(end_date)
   n_days_future <- end_date -
-    (schedule_past$date + dim(schedule_past$doses)[[3]])
+    (schedule_past$date + dim(schedule_past$doses)[[3]]) + 1L
   daily_doses_future <- rep(round(mean_doses_last), n_days_future)
   vaccine_schedule_future(schedule_past,
                           daily_doses_future,
@@ -639,15 +639,15 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
     if (last(doses_future_date) > end_date) {
       stop(sprintf(
         "'end_date' must be at least %s (last doses_future date) but was %s",
-        sircovid_date_as_date(end_date),
-        last(names(doses_future))))
+        last(names(doses_future)),
+        sircovid_date_as_date(end_date)))
     }
 
     date_future <- c(doses_future_date, end_date)
   } else {
-    if (end_date <  date_end_past) {
+    if (end_date < date_end_past) {
       stop(sprintf(
-        "'end_date' must be at %s (previous schedule end date) but was %s",
+        "'end_date' must be at least %s (previous end date) but was %s",
         sircovid_date_as_date(date_end_past),
         sircovid_date_as_date(end_date)))
     }

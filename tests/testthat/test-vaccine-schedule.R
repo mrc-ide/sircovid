@@ -186,7 +186,7 @@ test_that("can create a schedule that covers past and future", {
   set.seed(1)
   cmp <- vaccine_schedule_from_data(data, n_carehomes)
   set.seed(1) # we use rmultinom so be exactly the same
-  end_date <- cmp$date + 25 + 14
+  end_date <- cmp$date + 24 + 14
   schedule <- vaccine_schedule_data_future(data, "london", uptake, end_date, 90)
 
   i <- seq_len(dim(cmp$doses)[[3]])
@@ -196,6 +196,9 @@ test_that("can create a schedule that covers past and future", {
 
   mean_doses <- round(sum(cmp$doses[, , 19:25]) / 7)
   expect_equal(apply(doses_future, 3, sum), rep(mean_doses, 14))
+
+  d <- seq(schedule$date, length.out = dim(schedule$doses)[[3]])
+  expect_equal(last(d), end_date)
 })
 
 
@@ -250,4 +253,76 @@ test_that("create schedule scenario", {
     signif(n, 1),
     rep(c(5000, 6000, 7000, 9000), c(12, 10, 10, 93)))
   expect_lt(max(abs(n - signif(n, 1))[-seq_len(12)]), 5)
+})
+
+
+test_that("create schedule scenario with no extra dose info", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  set.seed(1)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  mean_days_between_doses <- 30
+  end_date <- "2021-06-01"
+
+  res <- vaccine_schedule_scenario(past, NULL, end_date,
+                                   mean_days_between_doses, n)
+  set.seed(1)
+  cmp <- vaccine_schedule_data_future(data, region, uptake_by_age,
+                                      end_date, mean_days_between_doses)
+  expect_equal(res, cmp)
+
+  d <- seq(res$date, length.out = dim(res$doses)[[3]])
+  expect_equal(last(d), sircovid_date(end_date))
+})
+
+
+test_that("prevent impossible scenarios", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  mean_days_between_doses <- 30
+  doses_future <- c(
+    "2021-04-10" = 6000,
+    "2021-04-20" = 7000,
+    "2021-04-30" = 9000)
+  end_date <- "2021-08-01"
+
+  expect_error(
+    vaccine_schedule_scenario(past, unname(doses_future), end_date,
+                              mean_days_between_doses, n),
+    "'doses_future' must be named")
+  expect_error(
+    vaccine_schedule_scenario(past, set_names(doses_future, c("a", "b", "c")),
+                              end_date, mean_days_between_doses, n),
+    "Expected ISO dates or R dates for 'names(doses_future)'")
+  expect_error(
+    vaccine_schedule_scenario(past, rev(doses_future), end_date,
+                              mean_days_between_doses, n),
+    "'names(doses_future)' must be strictly increasing",
+    fixed = TRUE)
+  expect_error(
+    vaccine_schedule_scenario(past, doses_future[c(1, 2, 2, 3)], end_date,
+                              mean_days_between_doses, n),
+    "'names(doses_future)' must be strictly increasing",
+    fixed = TRUE)
+  expect_error(
+    vaccine_schedule_scenario(past, doses_future, "2021-04-29",
+                              mean_days_between_doses, n),
+    paste("'end_date' must be at least 2021-04-30 (last doses_future date)",
+          "but was 2021-04-29"),
+    fixed = TRUE)
+  expect_error(
+    vaccine_schedule_scenario(past, NULL, "2021-03-01",
+                              mean_days_between_doses, n),
+    paste("'end_date' must be at least 2021-03-29 (previous end date)",
+          "but was 2021-03-01"),
+    fixed = TRUE)
 })
