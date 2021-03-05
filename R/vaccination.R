@@ -616,17 +616,47 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                                       mean_days_between_doses,
                                       priority_population) {
   assert_is(schedule_past, "vaccine_schedule")
-  ## TODO:
-  ## - doses future is named (or empty)
-  ## - dates increase
-  ## - no negative doses?
-  ## - end date after end of doses future
-
-  ## TODO: cope with doses_future containing dates in the past
 
   date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]] - 1L
   i <- utils::tail(seq_len(dim(schedule_past$doses)[[3]]), 7)
   mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
+
+  end_date <- as_sircovid_date(end_date)
+
+  if (length(doses_future) > 0) {
+    if (is.null(names(doses_future))) {
+      stop("'doses_future' must be named")
+    }
+    assert_date_string(names(doses_future))
+    doses_future_date <- sircovid_date(names(doses_future))
+    assert_increasing(doses_future_date, name = "names(doses_future)")
+    if (doses_future_date[[1]] < date_end_past) {
+      ## TODO: cope with doses_future containing dates in the past
+      message("Trimming vaccination schedule as overlaps with past")
+      stop("FIXME")
+    }
+
+    if (last(doses_future_date) > end_date) {
+      stop(sprintf(
+        "'end_date' must be at least %s (last doses_future date) but was %s",
+        sircovid_date_as_date(end_date),
+        last(names(doses_future))))
+    }
+
+    date_future <- c(doses_future_date, end_date)
+  } else {
+    if (end_date <  date_end_past) {
+      stop(sprintf(
+        "'end_date' must be at %s (previous schedule end date) but was %s",
+        sircovid_date_as_date(date_end_past),
+        sircovid_date_as_date(end_date)))
+    }
+    date_future <- end_date
+  }
+
+  stopifnot(
+    all(!is.na(doses_future)),
+    all(doses_future > 0))
 
   end_date <- as_sircovid_date(end_date)
   date_future <- c(sircovid_date(names(doses_future)), end_date)
