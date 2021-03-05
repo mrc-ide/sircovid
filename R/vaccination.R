@@ -504,10 +504,11 @@ vaccine_schedule_from_data <- function(data, n_carehomes) {
             idvar = "age_band_min"))
   stopifnot(identical(dim(doses[[1]]), dim(doses[[2]])))
 
+  ## TODO: add a test for missing days
   i <- match(age_start, doses[[1]]$age_band_min)
   j <- match(dates, sub("^dose[12]\\.", "", names(doses[[1]])))
   doses <- array(
-    unlist(lapply(doses, function(d) unname(as.matrix(d[i, j])))),
+    unlist(lapply(doses, function(d) unname(as.matrix(d)[i, j]))),
     c(length(age_start), length(dates), 2))
   doses <- aperm(doses, c(1, 3, 2))
   doses[is.na(doses)] <- 0
