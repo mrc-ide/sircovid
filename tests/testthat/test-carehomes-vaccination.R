@@ -338,7 +338,7 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
   i <- 4:carehomes_n_groups()
 
   expect_approx_equal(i_P[i, , I_P_compartment_idx, unvacc_idx, 1],
-                        i_P[i, , I_P_compartment_idx, vacc_idx, 2])
+                      i_P[i, , I_P_compartment_idx, vacc_idx, 2])
 
   ## then they don't move anymore
   expect_equal(
@@ -667,51 +667,51 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
 
 test_that("Clinical progression within a vaccination class works", {
   for (i in 1:50) {
-  ## Tests that:
-  ## Every susceptible moves to the R compartment corresponding to their
-  ## vaccination class if there is a high beta and no vaccine
-  ## progression
-  p <- carehomes_parameters(0, "england",
-                            beta_value = 1e9,
-                            rel_susceptibility = c(1, 1, 1),
-                            rel_p_sympt = c(1, 1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate =
-                              c(0, 0, 0))
+    ## Tests that:
+    ## Every susceptible moves to the R compartment corresponding to their
+    ## vaccination class if there is a high beta and no vaccine
+    ## progression
+    p <- carehomes_parameters(0, "england",
+                              beta_value = 1e9,
+                              rel_susceptibility = c(1, 1, 1),
+                              rel_p_sympt = c(1, 1, 1),
+                              rel_p_hosp_if_sympt = c(1, 1, 1),
+                              vaccine_progression_rate =
+                                c(0, 0, 0))
 
-  # increase progression rates
-  p[grep("gamma", names(p))] <- 1e9
-  # make p_death zero
-  p[grep("_D_step", names(p))] <- 0
+    # increase progression rates
+    p[grep("gamma", names(p))] <- 1e9
+    # make p_death zero
+    p[grep("_D_step", names(p))] <- 0
 
-  mod <- carehomes$new(p, 0, 1, seed = 1L)
-  info <- mod$info()
+    mod <- carehomes$new(p, 0, 1, seed = 1L)
+    info <- mod$info()
 
-  state <- carehomes_initial(info, 1, p)$state
+    state <- carehomes_initial(info, 1, p)$state
 
-  index_S <- array(info$index$S, info$dim$S)
-  index_R <- array(info$index$R, info$dim$R)
-  index <- c(index_S, index_R)
+    index_S <- array(info$index$S, info$dim$S)
+    index_R <- array(info$index$R, info$dim$R)
+    index <- c(index_S, index_R)
 
-  # split S individuals equally between all 3 vaccination groups
-  state[index_S[, 2]] <- round(state[index_S[, 1]] / 3)
-  state[index_S[, 3]] <- round(state[index_S[, 1]] / 3)
-  state[index_S[, 1]] <- state[index_S[, 1]] - state[index_S[, 2]] -
-    state[index_S[, 3]]
+    # split S individuals equally between all 3 vaccination groups
+    state[index_S[, 2]] <- round(state[index_S[, 1]] / 3)
+    state[index_S[, 3]] <- round(state[index_S[, 1]] / 3)
+    state[index_S[, 1]] <- state[index_S[, 1]] - state[index_S[, 2]] -
+      state[index_S[, 3]]
 
-  mod$set_state(state)
-  mod$set_index(index)
-  y <- mod$simulate(seq(0, 400, by = 4))
+    mod$set_state(state)
+    mod$set_index(index)
+    y <- mod$simulate(seq(0, 400, by = 4))
 
-  ## Reshape to show the full shape of s
-  expect_equal(length(y),
-               prod(info$dim$S) * 101 + prod(info$dim$R) * 101)
-  s <- array(y[seq_len(prod(info$dim$S)), , ], c(info$dim$S, 101))
-  r <- array(y[prod(info$dim$S) + seq_len(prod(info$dim$R)), , ],
-             c(info$dim$R, 101))
+    ## Reshape to show the full shape of s
+    expect_equal(length(y),
+                 prod(info$dim$S) * 101 + prod(info$dim$R) * 101)
+    s <- array(y[seq_len(prod(info$dim$S)), , ], c(info$dim$S, 101))
+    r <- array(y[prod(info$dim$S) + seq_len(prod(info$dim$R)), , ],
+               c(info$dim$R, 101))
 
-  ## all have moved from S to R in relevant vaccination class
-  ## ignoring age group 4 where infections are seeded
+    ## all have moved from S to R in relevant vaccination class
+    ## ignoring age group 4 where infections are seeded
     expect_approx_equal(s[-4, , 1], r[-4, 1, , 101])
   }
 })
@@ -1301,7 +1301,7 @@ test_that(
     expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
     expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
     expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
-})
+  })
 
 test_that("Outputed vaccination numbers make sense", {
   vaccine_schedule <- test_vaccine_schedule(1000, "london")
@@ -1409,12 +1409,12 @@ test_that("Outputed E vaccination numbers are what we expect", {
 
   ## every initial exposed should be vaccinated within first day
   expect_approx_equal(y$cum_n_E_vaccinated[i, , 2],
-               apply(y$E[i, , , , 1], c(1, 3), sum),
-               rel_tol = 0.15)
+                      apply(y$E[i, , , , 1], c(1, 3), sum),
+                      rel_tol = 0.15)
 
   ## same for the 10 initially seeded cases
   expect_true(abs(y$cum_n_I_A_vaccinated[4, 1, 2] -
-               y$I_A[4, , , 1, 1]) <= 3)
+                  y$I_A[4, , , 1, 1]) <= 3)
 
 })
 
@@ -1742,11 +1742,11 @@ test_that("run sensible vaccination schedule", {
   region <- "east_of_england"
   uptake <- c(rep(0, 3), rep(1, 16))
   daily_doses <- rep(50000, 120)
-  n <- vaccination_priority_population(region, uptake,
-                                       prop_hcw = rep(0, 19),
-                                       prop_very_vulnerable = rep(0, 19),
-                                       prop_underlying_condition = rep(0, 19))
-  vaccine_schedule <- vaccination_schedule_future(0, daily_doses, 200, n)
+  n <- vaccine_priority_population(region, uptake,
+                                   prop_hcw = rep(0, 19),
+                                   prop_very_vulnerable = rep(0, 19),
+                                   prop_underlying_condition = rep(0, 19))
+  vaccine_schedule <- vaccine_schedule_future(0, daily_doses, 200, n)
   expect_equal(sum(vaccine_schedule$doses[, 2, ]), 0)
   expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
 
@@ -1824,18 +1824,18 @@ test_that("can add vaccination to a set of model state", {
                                             uptake = 1)
 
   p_vacc <- carehomes_parameters(0, region,
-                            rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_schedule = vaccine_schedule,
-                            vaccine_index_dose2 = 2L)
+                                 rel_susceptibility = c(1, 1),
+                                 rel_p_sympt = c(1, 1),
+                                 rel_p_hosp_if_sympt = c(1, 1),
+                                 vaccine_schedule = vaccine_schedule,
+                                 vaccine_index_dose2 = 2L)
 
   mod_orig <- carehomes$new(p_orig, 0, 10, seed = 1L)
   mod_vacc <- carehomes$new(p_vacc, 0, 10, seed = 1L)
   state_orig <- mod_orig$state()
   state_orig[] <- seq_along(state_orig)
 
-  state_vacc <- vaccination_remap_state(state_orig, mod_orig$info(),
+  state_vacc <- vaccine_remap_state(state_orig, mod_orig$info(),
                                         mod_vacc$info())
   expect_equal(sum(state_vacc), sum(state_orig))
 
@@ -1862,7 +1862,7 @@ test_that("can add vaccination to a set of model state", {
 
 test_that("vaccine_uptake must be the correct length", {
   expect_error(
-    vaccination_priority_proportion(uptake = c(0, 0, 0)),
+    vaccine_priority_proportion(uptake = c(0, 0, 0)),
     "Invalid length 3 for 'uptake', must be 1 or 19")
 })
 
@@ -1947,7 +1947,7 @@ test_that("can upgrade model state", {
 
   mod_vacc <- carehomes$new(p_vacc, 0, 10, seed = 1L)
   info_vacc <- mod_vacc$info()
-  state_vacc <- vaccination_remap_state(state_orig, info_orig, info_vacc)
+  state_vacc <- vaccine_remap_state(state_orig, info_orig, info_vacc)
 
   expect_equal(sum(state_vacc), sum(state_orig))
   expect_equal(state_vacc[info_vacc$index$cum_n_vaccinated],
@@ -1995,11 +1995,11 @@ test_that("Refuse to upgrade impossible model state", {
   mod_vacc <- carehomes$new(p_vacc, 0, 10, seed = 1L)
   info_vacc <- mod_vacc$info()
   expect_error(
-    vaccination_remap_state(state_orig, info_orig, info_vacc),
+    vaccine_remap_state(state_orig, info_orig, info_vacc),
     "Can't remap state (can't add variables 'E')",
     fixed = TRUE)
   expect_error(
-    vaccination_remap_state(matrix(0, info_vacc$len, 10), info_vacc, info_orig),
+    vaccine_remap_state(matrix(0, info_vacc$len, 10), info_vacc, info_orig),
     "Can't downgrade state (previously had variables 'E')",
     fixed = TRUE)
 })
@@ -2081,9 +2081,9 @@ test_that("can create parameters with vaccination data", {
   uptake_by_age <- test_example_uptake()
   daily_doses <- rep(20000, 365)
   mean_days_between_doses <- 12 * 7
-  n <- vaccination_priority_population(region, uptake_by_age)
+  n <- vaccine_priority_population(region, uptake_by_age)
   date_start_vaccination <- sircovid_date("2020-02-01")
-  schedule <- vaccination_schedule_future(
+  schedule <- vaccine_schedule_future(
     date_start_vaccination, daily_doses, mean_days_between_doses, n)
 
   p <- carehomes_parameters(0, region,

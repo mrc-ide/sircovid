@@ -30,14 +30,14 @@ test_that("validate a vaccine schedule", {
 })
 
 
-test_that("vaccination_schedule_future produces consistent schedule", {
+test_that("vaccine_schedule_future produces consistent schedule", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   daily_doses <- rep(20000, 365) # a vector of number of doses to give each day
   mean_days_between_doses <- 12 * 7
 
-  n <- vaccination_priority_population(region, uptake_by_age)
-  dose_schedule <- vaccination_schedule_future(
+  n <- vaccine_priority_population(region, uptake_by_age)
+  dose_schedule <- vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses, n)
 
   doses <- dose_schedule$doses
@@ -68,25 +68,25 @@ test_that("vaccination_schedule_future produces consistent schedule", {
 })
 
 
-test_that("vaccination_priority_proportion adds up to uptake", {
+test_that("vaccine_priority_proportion adds up to uptake", {
   uptake_by_age <- test_example_uptake()
-  p <- vaccination_priority_proportion(uptake_by_age)
+  p <- vaccine_priority_proportion(uptake_by_age)
   expect_true(all(signif(rowSums(p), 5) == signif(uptake_by_age, 5)))
 })
 
 
-test_that("vaccination_priority_proportion with null uptake is 100%", {
-  p <- vaccination_priority_proportion(NULL)
-  expect_equal(p, vaccination_priority_proportion(rep(1, 19)))
+test_that("vaccine_priority_proportion with null uptake is 100%", {
+  p <- vaccine_priority_proportion(NULL)
+  expect_equal(p, vaccine_priority_proportion(rep(1, 19)))
   expect_equal(rowSums(p), rep(1, 19))
 })
 
 
-test_that("vaccination_priority_population adds to correct population", {
+test_that("vaccine_priority_population adds to correct population", {
   ## Expecting rows to equal population size * uptake
   region <- "london"
   uptake_by_age <- test_example_uptake()
-  n <- vaccination_priority_population(region, uptake_by_age)
+  n <- vaccine_priority_population(region, uptake_by_age)
 
   ## check that n to vaccinate adds up to uptake * population
   pop_by_age <- carehomes_parameters(1, region)$N_tot
@@ -101,8 +101,8 @@ test_that("Can append a schedule", {
   daily_doses <- rep(20000, 365) # a vector of number of doses to give each day
   mean_days_between_doses <- 12 * 7
 
-  n <- vaccination_priority_population(region, uptake_by_age)
-  expected <- vaccination_schedule_future(
+  n <- vaccine_priority_population(region, uptake_by_age)
+  expected <- vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses, n)
 
   ## We'll break this schedule in a few places and put it back
@@ -113,7 +113,7 @@ test_that("Can append a schedule", {
   pre <- expected
   pre$doses <- pre$doses[, , j, drop = FALSE]
 
-  check <- vaccination_schedule_future(
+  check <- vaccine_schedule_future(
     pre, daily_doses[-j], mean_days_between_doses, n)
 
   ## This is subject to lots of rounding error. So we need to do some
@@ -133,8 +133,8 @@ test_that("Cope with decreasing vaccination schedule", {
   daily_doses <- seq(20000, length.out = 365, by = -50)
   mean_days_between_doses <- 12 * 7
 
-  n <- vaccination_priority_population(region, uptake_by_age)
-  res <- vaccination_schedule_future(
+  n <- vaccine_priority_population(region, uptake_by_age)
+  res <- vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses, n)
 
   d <- t(apply(res$doses, 2:3, sum))
@@ -153,29 +153,69 @@ test_that("Cope with decreasing vaccination schedule", {
 
 
 test_that("Can add carehome residents to vaccine data", {
-  age_start <- seq(15, 95, by = 5)
-  data <- data_frame(
-    date = rep(seq(Sys.Date(), length.out = 25, by = 1),
-               each = length(age_start)),
-    age_band_min = age_start)
-  data$dose1 <- rpois(nrow(data), 200)
-  data$dose2 <- rpois(nrow(data), 100)
+  data <- test_vaccine_data()
 
   uptake_by_age <- test_example_uptake()
   region <- "london"
   n_carehomes <-
-    vaccination_priority_population(region, uptake_by_age)[18:19, 1]
+    vaccine_priority_population(region, uptake_by_age)[18:19, 1]
 
-  doses1 <- vaccine_schedule_from_data(data, c(0, 0))
-  doses2 <- vaccine_schedule_from_data(data, c(1, 1))
-  doses3 <- vaccine_schedule_from_data(data, n_carehomes)
+  sched1 <- vaccine_schedule_from_data(data, c(0, 0))
+  sched2 <- vaccine_schedule_from_data(data, c(1, 1))
+  sched3 <- vaccine_schedule_from_data(data, n_carehomes)
 
-  expect_equal(dim(doses1), c(19, 2, 25))
-  expect_equal(apply(doses1, 2, sum),
+  expect_equal(dim(sched1$doses), c(19, 2, 25))
+  expect_equal(apply(sched1$doses, 2, sum),
                unname(colSums(data[c("dose1", "dose2")])))
 
-  expect_equal(apply(doses1, 3, sum),
-               apply(doses2, 3, sum))
-  expect_equal(apply(doses1, 3, sum),
-               apply(doses3, 3, sum))
+  expect_equal(apply(sched1$doses, 3, sum),
+               apply(sched2$doses, 3, sum))
+  expect_equal(apply(sched1$doses, 3, sum),
+               apply(sched3$doses, 3, sum))
+  expect_equal(sched1$date, sched2$date)
+  expect_equal(sched1$date, sched3$date)
+})
+
+
+test_that("can create a schedule that covers past and future", {
+  set.seed(1)
+  data <- test_vaccine_data()
+  uptake <- test_example_uptake()
+  n_carehomes <-
+    vaccine_priority_population("london", uptake)[18:19, 1]
+  set.seed(1)
+  cmp <- vaccine_schedule_from_data(data, n_carehomes)
+  set.seed(1) # we use rmultinom so be exactly the same
+  schedule <- vaccine_schedule_data_future(data, "london", uptake, 14, 90)
+
+  i <- seq_len(dim(cmp$doses)[[3]])
+  expect_equal(schedule$doses[, , i], cmp$doses)
+  doses_future <- schedule$doses[, , -i]
+  expect_equal(dim(doses_future), c(19, 2, 14))
+
+  mean_doses <- round(sum(cmp$doses[, , 19:25]) / 7)
+  expect_equal(apply(doses_future, 3, sum), rep(mean_doses, 14))
+})
+
+
+test_that("Validate inputs in vaccine_schedule_from_data", {
+  data <- test_vaccine_data()
+  expect_error(
+    vaccine_schedule_from_data(data[-1], c(0, 0)),
+    "Required columns missing from 'data': 'date'")
+  expect_error(
+    vaccine_schedule_from_data(data[-(1:2)], c(0, 0)),
+    "Required columns missing from 'data': 'age_band_min', 'date'")
+  expect_error(
+    vaccine_schedule_from_data(data, NULL),
+    "Expected a vector of length 2 for n_carehomes")
+  expect_error(
+    vaccine_schedule_from_data(data, 1),
+    "Expected a vector of length 2 for n_carehomes")
+
+  data$age_band_min <- data$age_band_min + 1
+  expect_error(
+    vaccine_schedule_from_data(data, c(0, 0)),
+    "Invalid values for data$age_band_min: 16, 21, 26, 31, 36, 41,",
+    fixed = TRUE)
 })

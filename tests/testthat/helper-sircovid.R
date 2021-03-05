@@ -72,9 +72,21 @@ test_vaccine_schedule <- function(daily_doses = 20000, region = "london",
                                   uptake = test_example_uptake(),
                                   mean_days_between_doses = 12 * 7) {
   daily_doses <- rep(daily_doses, n_days)
-  n <- vaccination_priority_population(region, uptake)
-  vaccination_schedule_future(
+  n <- vaccine_priority_population(region, uptake)
+  vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses, n)
+}
+
+
+test_vaccine_data <- function() {
+  age_start <- seq(15, 95, by = 5)
+  data <- data_frame(
+    date = rep(seq(Sys.Date(), length.out = 25, by = 1),
+               each = length(age_start)),
+    age_band_min = age_start)
+  data$dose1 <- rpois(nrow(data), 200)
+  data$dose2 <- rpois(nrow(data), 100)
+  data
 }
 
 

@@ -236,10 +236,10 @@ rel_infectivity <- c(1, 0.5, 0.5)
 # they are similar across all age groups
 vaccine_progression_rate <- c(0, 0, 1/(26*7))
 
-daily_doses <- rep(10000, 365) 
+daily_doses <- rep(10000, 365)
 mean_days_between_doses <- 12 * 7
-n <- vaccination_priority_population(region, uptake = 1)
-schedule <- vaccination_schedule_future(
+n <- vaccine_priority_population(region, uptake = 1)
+schedule <- vaccine_schedule_future(
   0, daily_doses, mean_days_between_doses, n)
 
 # generate model parameters
