@@ -279,23 +279,15 @@ draw_one_GT_sample <- function(p, n = 1000) {
 }
 
 ## Brute force draws from the GT
-draw_one_GT_distr <- function(p, n = 1000,
-                              set_first_to_zero = TRUE) {
+draw_one_GT_distr <- function(p, n = 1000) {
   sample_GT <- draw_one_GT_sample(p, n)
   ## the discretisation below allows having a zero on the first day
   ## which is required by EpiEstim
   ## this is because the GT is computed from the sum of E and I 
   ## and each of those is at least 0.25 days
   ## hence the GT is at least 0.5 day
-  res <-
-    hist(sample_GT, breaks = seq(0, ceiling(max(sample_GT) + 1), 1) - 0.51,
+  hist(sample_GT, breaks = seq(0, ceiling(max(sample_GT) + 1), 1) - 0.51,
          plot = FALSE)$density
-  if (set_first_to_zero) {
-    res[1] <- 0
-    res <- res / sum(res)
-  }
-  
-  res
 }
 
 
@@ -306,7 +298,7 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
                                   n_GT = 10000,
                                   n_R = 1000) {
   
-  gt_distr <- draw_one_GT_distr(p = p, n = n_GT, set_first_to_zero = TRUE)
+  gt_distr <- draw_one_GT_distr(p = p, n = n_GT)
   
   T <- nrow(incidence)
   np <- ncol(incidence)
