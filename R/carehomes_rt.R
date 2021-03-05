@@ -65,7 +65,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                    paste(squote(all_types), collapse = ", ")))
     }
   }
-  
+
   if (!is.null(interpolate_every)) {
     interpolate_critical_index <- match(interpolate_critical_dates / p$dt, step)
     step_index_split <- interpolate_grid_critical_x(seq_along(step),
@@ -85,7 +85,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ret$beta <- sircovid_parameters_beta_expand(step, p$beta_step)
     return(ret)
   }
-  
+
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vaccine classes",
@@ -117,21 +117,21 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
         length(step)))
     }
   }
-  
+
   n_vacc_classes <- ncol(p$rel_susceptibility)
   n_strains <- length(p$strain_transmission)
-  
+
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
-  
+
   ages <- seq_len(p$n_age_groups)
   ch <- seq(p$n_age_groups + 1L, p$n_groups)
   if (n_vacc_classes > 1L) {
     ch <- c(outer(ch, (seq_len(n_vacc_classes) - 1L) * p$n_groups, "+"))
   }
-  
+
   ## We only need to do this section for each different beta value,
   ## and then it's still a pretty straightfoward scaling; we've
   ## applied beta to all *but* a fraction of the matrix (i.e., in the matrix
@@ -153,7 +153,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   m <- block_expand(unname(p$m), n_vacc_classes)
   mt <- m %o% beta
   mt[ch, ch, ] <- m[ch, ch]
-  
+
   n_time <- length(step)
   prob_strain_mat <- array(prob_strain, c(p$n_groups, n_strains, n_time))
   if (any(is.na(prob_strain))) {
@@ -163,7 +163,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ret[type] <- list(rep(NA_real_, length(step)))
     return(ret)
   }
-  
+
   if (n_strains > 1L) {
     weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
       matrix(prob_strain_mat[, , t] %*% p$strain_transmission,
@@ -171,7 +171,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       matrix(0, p$n_groups, n_vacc_classes))
     mean_duration <- mean_duration * weighted_strain_multiplier
   }
-  
+
   compute_ngm <- function(S) {
     len <- p$n_groups * n_vacc_classes
     Sw <- S * c(p$rel_susceptibility)
@@ -179,7 +179,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       tcrossprod(c(mean_duration[, , t]), Sw[, t]),
       matrix(0, len, len))
   }
-  
+
   ## NOTE the signs on the exponents here is different! This gives
   ## good performance and reasonable accuracy to the point where
   ## this calculation is small in the profile.
@@ -187,11 +187,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     eigen1::eigen1(m, max_iterations = 1e5, tolerance = 1e-6,
                    method = eigen_method)
   }
-  
+
   ret <- list(step = step,
               date = step * p$dt,
               beta = beta)
-  
+
   if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
     ngm <- compute_ngm(S)
     if ("eff_Rt_all" %in% type) {
@@ -201,7 +201,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       ret$eff_Rt_general <- eigen(ngm[-ch, -ch, ])
     }
   }
-  
+
   if (any(c("Rt_all", "Rt_general") %in% type)) {
     N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
     N_tot_all_vacc_groups <- N_tot_non_vacc
@@ -219,41 +219,41 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       ret$Rt_general <- eigen(ngm[-ch, -ch, ])
     }
   }
-  
+
   ret
 }
 
 
 ## Brute force draws from the GT
 draw_one_GT_sample <- function(p, n = 1000) {
-  
-  ## Note: the above does not account for the impact of 
-  ## vaccination on the generation time. 
-  
+
+  ## Note: the above does not account for the impact of
+  ## vaccination on the generation time.
+
   if (length(unique(p$p_C)) > 1)  {
     stop("draw_one_GT_sample does not allow p_C to vary by age")
   }
-  
-  if (p$I_C_2_transmission > 0 ) {
+
+  if (p$I_C_2_transmission > 0) {
     stop("draw_one_GT_sample does not allow transmission from I_C_2")
   }
   if (p$k_A > 1 || p$k_P  > 1 || p$k_C_1 > 1) {
     stop("draw_one_GT_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1")
   }
   if (p$I_P_transmission != 1 || p$I_C_1_transmission  != 1) {
-    stop("draw_one_GT_sample does not allow 
+    stop("draw_one_GT_sample does not allow
     I_P_transmission !=1 or I_C_1_transmission != 1")
   }
-  
+
   draw_from <- function(n, k, gamma) {
     discrete_gamma <-
       distcrete::distcrete("gamma", p$dt, shape = k, rate = gamma, w = 1)
     discrete_gamma$r(n)
   }
-  
+
   sample_GT <- numeric(0)
   i <- 0
-  
+
   while (i < n) {
     ## Draw exposed period
     sample_E <- draw_from(1, p$k_E, p$gamma_E)
@@ -268,13 +268,13 @@ draw_one_GT_sample <- function(p, n = 1000) {
       infectivity <- 1
     }
     n_secondary_cases <- rpois(1, lambda = infectivity * sample_I)
-    sample_GT <- c(sample_GT, runif(n_secondary_cases, 
+    sample_GT <- c(sample_GT, runif(n_secondary_cases,
                                     min = sample_E, max = sample_E + sample_I))
     i <- length(sample_GT)
   }
-  
+
   sample_GT
-  
+
 }
 
 ## Brute force draws from the GT
@@ -282,18 +282,18 @@ draw_one_GT_distr <- function(p, n = 1000,
                               set_first_to_zero = TRUE) {
   sample_GT <- draw_one_GT_sample(p, n)
   res <-
-    hist(sample_GT, breaks = 0:ceiling(max(sample_GT)), 
+    hist(sample_GT, breaks = 0:ceiling(max(sample_GT)),
          plot = FALSE)$density
   if (set_first_to_zero) {
     res[1] <- 0
     res <- res / sum(res)
   }
-  
+
   res
 }
 
 
-carehomes_EpiEstim_Rt <- function(step, incidence, p, 
+carehomes_EpiEstim_Rt <- function(step, incidence, p,
                                   sliding_window_ndays = 7,
                                   mean_prior = 1,
                                   sd_prior = 1,
@@ -301,12 +301,12 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
                                   n_R = 1000) {
 
   gt_distr <- draw_one_GT_distr(p = p, n = n_GT, set_first_to_zero = TRUE)
-  
+
   T <- nrow(incidence)
   np <- ncol(incidence)
   t_start <- seq(2, T - sliding_window_ndays + 1)
   t_end <- seq(sliding_window_ndays + 1, T)
-  
+
   config <- EpiEstim::make_config(incid = incidence[, 1],
                                   t_start = t_start,
                                   t_end = t_end,
@@ -314,17 +314,20 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
                                   si_distr = gt_distr,
                                   mean_prior = mean_prior,
                                   std_prior = sd_prior)
-  
+
   R_sample <- matrix(NA, length(t_start), n_R * np)
-  
+
   for (i in seq_len(np)) {
-    R_i <- EpiEstim::estimate_R(incid = incidence[, i],
-                                config = config)$R
-    
-    R_i_shape_scale <- epitrix::gamma_mucv2shapescale(mu = R_i$`Mean(R)`, 
-                                                      cv = R_i$`Std(R)` / R_i$`Mean(R)`)
-    
-    R_sample[, n_R * (i-1) + seq_len(n_R)] <- 
+    ## this function gives warning when precision in estimates is not good
+    ## but we don't care
+    R_i <- suppressWarnings(EpiEstim::estimate_R(incid = incidence[, i],
+                                config = config)$R)
+  
+    R_i_shape_scale <-
+      epitrix::gamma_mucv2shapescale(mu = R_i$`Mean(R)`,
+                                     cv = R_i$`Std(R)` / R_i$`Mean(R)`)
+
+    R_sample[, n_R * (i-1) + seq_len(n_R)] <-
       t(sapply(seq_len(length(t_start)), function(e) {
         if (!is.na(R_i_shape_scale$shape[e])) {
           ret <- rgamma(n_R, shape = R_i_shape_scale$shape[e], 
@@ -335,15 +338,18 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
         ret
         }))
   }
-  
+
   summary_R <- apply(R_sample, 1, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
+  mean_R <- apply(R_sample, 1, mean, na.rm = TRUE)
+  summary_R <- rbind(summary_R, mean_R)
+
   time_start <- step[t_start] * p$dt
   time_end <- step[t_end] * p$dt
-  
+
   list(t_start = time_start,
        t_end = time_end,
        Rt = summary_R)
-  
+
 }
 
 

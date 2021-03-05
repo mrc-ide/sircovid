@@ -376,35 +376,78 @@ test_that("Can calculate EpiEstim Rt", {
   
   rt <- carehomes_Rt_trajectories(steps, S[, idx_p, ], p)
   
-  ## plot to check 
-  par(mfrow = c(2, 1))
+  # ## plot to check 
+  # par(mfrow = c(2, 1), mar = c(5, 5, .5, .5))
+  # 
+  # # matplot(sircovid_date_as_date(steps / 4), inc[, idx_p, drop = FALSE], 
+  # #         type = "l", col = scales::alpha("blue", 0.1), lty = 1,
+  # #         xlab = "Date", ylab = "Incidence")
+  # 
+  # matplot(sircovid_date_as_date(steps / 4), 
+  #         log(1 + inc[, idx_p, drop = FALSE]), 
+  #         type = "l", col = scales::alpha("blue", 0.1), lty = 1,
+  #         xlab = "Date", ylab = "log(1 + Incidence)")
+  # 
+  # ymax <- max(max(rt_EpiEstim$Rt, na.rm = TRUE), 
+  #             max(rt$eff_Rt_general),
+  #             max(rt$eff_Rt_all))
+  # ymax <- 10
+  # plot(sircovid_date_as_date(rt_EpiEstim$t_end), rt_EpiEstim$Rt["50%", ], 
+  #      ylim = c(0, ymax),
+  #      type = "l",
+  #      lty = 2,
+  #      xlab = "Date",
+  #      ylab = "Rt (EpiEstim)")
+  # lines(sircovid_date_as_date(rt_EpiEstim$t_end), 
+  #        rt_EpiEstim$Rt["mean_R", ], 
+  #        col = "black")
+  # x <- sircovid_date_as_date(rt_EpiEstim$t_end)
+  # ylow <- rt_EpiEstim$Rt["2.5%", ]
+  # yup <- rt_EpiEstim$Rt["97.5%", ]
+  # rmv <- which(is.na(ylow))
+  # polygon(c(x[-rmv], rev(x[-rmv])), c(ylow[-rmv], rev(yup[-rmv])), 
+  #         border = "NA", col = scales::alpha("black", 0.25))
+  # abline(h = 1, col = "red", lty = 2)
+  # 
+  # matlines(sircovid_date_as_date(steps / 4), rt$eff_Rt_general, 
+  #          col = scales::alpha("blue", 0.1), lty = 1)
+  # 
+  # matlines(sircovid_date_as_date(steps / 4), rt$eff_Rt_all, 
+  #          col = scales::alpha("purple", 0.1), lty = 1)
+  # 
+  # legend("topright", c("Mean EpiEstim Rt", 
+  #                      "Median EpiEstim Rt",
+  #                      "95%CrI EpiEstim Rt",
+  #                      "eff_Rt_general",
+  #                      "eff_Rt_all"),
+  #        col = c("black", "black", "grey", "blue", "purple"),
+  #        lty = c(1, 2, -1, 1, 1),
+  #        pch = c(-1, -1, 15, -1, -1))
   
-  matplot(sircovid_date_as_date(steps / 4), inc[, idx_p, drop = FALSE], 
-          type = "l", col = scales::alpha("blue", 0.1), lty = 1,
-          xlab = "Date", ylab = "Incidence")
-  
-  ymax <- max(max(rt_EpiEstim$Rt, na.rm = TRUE), max(rt$eff_Rt_general))
-  plot(sircovid_date_as_date(rt_EpiEstim$t_end), rt_EpiEstim$Rt["50%",], 
-       ylim = c(0, ymax),
-       type = "l",
-       xlab = "Date",
-       ylab = "Rt (EpiEstim)")
-  x <- sircovid_date_as_date(rt_EpiEstim$t_end)
-  ylow <- rt_EpiEstim$Rt["2.5%",]
-  yup <- rt_EpiEstim$Rt["97.5%",]
-  rmv <- which(is.na(ylow))
-  polygon(c(x[-rmv], rev(x[-rmv])), c(ylow[-rmv], rev(yup[-rmv])), 
-          border = "NA", col = scales::alpha("black", 0.25))
-  abline(h = 1, col = "red", lty = 2)
-  
-  matlines(sircovid_date_as_date(steps / 4), rt$eff_Rt_general, 
-           col = scales::alpha("blue", 0.1), lty = 1)
-  
+  #### General patterns
+  ## dimension of Rt should be 3 rows and length(steps) - 1 cols
+  ## -1 because EpiEstim only start estimation at 2nd time step
+  expect_equal(dim(rt_EpiEstim$Rt), c(4, length(steps) - 1))
   ## Rt at the end should be < 1
-  ## Rt at the start should be > 1
-  ## dimension of Rt sould be 3 rows and X cols
+  expect_true(all(rt_EpiEstim$Rt[, ncol(rt_EpiEstim$Rt)] < 1))
+  ## because of the priors with mean 1 we would expect EpiEstim Rt
+  ## at the end to be higher than eff_Rt_all
+  expect_true(
+    last(rt$eff_Rt_all) < rt_EpiEstim$Rt["mean_R", ncol(rt_EpiEstim$Rt)])
+  ## Rt at the start should be > 1 
+  ## (but there will be uncertainty so looking at the mean)
+  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt["mean_R", ])))
+  expect_true(rt_EpiEstim$Rt["mean_R", first_non_NA_idx] > 1)
   
-  
+  #### Check a few values
+  expect_equal(rt_EpiEstim$Rt[["mean_R", first_non_NA_idx]], 3.896752,
+               tolerance = 1e-6)
+  expect_equal(rt_EpiEstim$Rt[["2.5%", first_non_NA_idx]], 0.9915375,
+               tolerance = 1e-6)
+  expect_equal(rt_EpiEstim$Rt[["mean_R", ncol(rt_EpiEstim$Rt)]], 0.1149022,
+               tolerance = 1e-6)
+  expect_equal(rt_EpiEstim$Rt[["97.5%", ncol(rt_EpiEstim$Rt)]], 0.1451942,
+               tolerance = 1e-6)
 })
 
 
