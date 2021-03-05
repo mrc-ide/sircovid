@@ -339,7 +339,6 @@ vaccine_schedule_future <- function(start,
   }
 
   daily_doses_tt <- cbind(daily_doses_prev, matrix(0, n_doses, n_days))
-  population_to_vaccinate <- array(0, c(n_groups, n_doses, n_days))
 
   for (t in seq_along(daily_doses_value)) {
     tt <- t + n_prev
@@ -625,18 +624,19 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
 
   ## TODO: cope with doses_future containing dates in the past
 
-  date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]]
+  date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]] - 1L
   i <- utils::tail(seq_len(dim(schedule_past$doses)[[3]]), 7)
   mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
 
   end_date <- as_sircovid_date(end_date)
   date_future <- c(sircovid_date(names(doses_future)), end_date)
 
-  daily_doses <- c(rep(mean_doses_last, date_future[[1]] - date_end_past),
-                   rep(unname(doses_future), diff(date_future)))
+  daily_doses_value <- c(
+    rep(mean_doses_last, date_future[[1]] - date_end_past),
+    rep(unname(doses_future), diff(date_future)))
 
   vaccine_schedule_future(schedule_past,
-                          daily_doses_future,
+                          daily_doses_value,
                           mean_days_between_doses,
                           priority_population)
 }
