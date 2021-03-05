@@ -528,15 +528,15 @@ vaccine_schedule_from_data <- function(data, n_carehomes) {
 ##' @inheritParams vaccine_schedule_future
 ##' @inheritParams vaccine_priority_population
 ##'
-##' @param n_days_future The number of days into the future to create
-##'   a schedule for. After this many days the model will assume 0
-##'   vaccine doses given so an overestimate is probably better than
-##'   an underestimate.
+##' @param end_date The final day in the future to create a schedule
+##'   for. After this date the model will assume 0 vaccine doses given
+##'   so an overestimate is probably better than an underestimate.
 ##'
 ##' @return A [vaccine_schedule] object
 ##' @export
-vaccine_schedule_data_future <- function(data, region, uptake, n_days_future,
+vaccine_schedule_data_future <- function(data, region, uptake, end_date,
                                          mean_days_between_doses) {
+  ## TODO: change n_days_future to end_date
   priority_population <- vaccine_priority_population(region, uptake)
   n_carehomes <- priority_population[18:19, 1]
   schedule_past <- vaccine_schedule_from_data(data, n_carehomes)
@@ -544,7 +544,10 @@ vaccine_schedule_data_future <- function(data, region, uptake, n_days_future,
   ## future; we will probably change this to avoid backfill by taking
   ## the days -14..-8
   i <- utils::tail(seq_len(dim(schedule_past$doses)[[3]]), 7)
-  mean_doses_last <- sum(schedule_past$doses[, , i, drop = FALSE]) / length(i)
+  mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
+  end_date <- as_sircovid_date(end_date)
+  n_days_future <- end_date -
+    (schedule_past$date + dim(schedule_past$doses)[[3]])
   daily_doses_future <- rep(round(mean_doses_last), n_days_future)
   vaccine_schedule_future(schedule_past,
                           daily_doses_future,

@@ -186,7 +186,8 @@ test_that("can create a schedule that covers past and future", {
   set.seed(1)
   cmp <- vaccine_schedule_from_data(data, n_carehomes)
   set.seed(1) # we use rmultinom so be exactly the same
-  schedule <- vaccine_schedule_data_future(data, "london", uptake, 14, 90)
+  end_date <- cmp$date + 25 + 14
+  schedule <- vaccine_schedule_data_future(data, "london", uptake, end_date, 90)
 
   i <- seq_len(dim(cmp$doses)[[3]])
   expect_equal(schedule$doses[, , i], cmp$doses)

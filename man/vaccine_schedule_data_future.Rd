@@ -8,7 +8,7 @@ vaccine_schedule_data_future(
   data,
   region,
   uptake,
-  n_days_future,
+  end_date,
   mean_days_between_doses
 )
 }
@@ -22,10 +22,9 @@ vaccine_schedule_data_future(
 group. If a single number is given it is shared across all
 groups (note that this includes under-18s)}
 
-\item{n_days_future}{The number of days into the future to create
-a schedule for. After this many days the model will assume 0
-vaccine doses given so an overestimate is probably better than
-an underestimate.}
+\item{end_date}{The final day in the future to create a schedule
+for. After this date the model will assume 0 vaccine doses given
+so an overestimate is probably better than an underestimate.}
 
 \item{mean_days_between_doses}{Assumed mean days between doses one
 and two}
