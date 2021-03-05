@@ -205,7 +205,7 @@ test_that("Validate inputs in vaccine_schedule_from_data", {
     vaccine_schedule_from_data(data[-1], c(0, 0)),
     "Required columns missing from 'data': 'date'")
   expect_error(
-    vaccine_schedule_from_data(data[-(1:2)], c(0, 0)),
+    vaccine_schedule_from_data(data[-seq_len(2)], c(0, 0)),
     "Required columns missing from 'data': 'age_band_min', 'date'")
   expect_error(
     vaccine_schedule_from_data(data, NULL),
