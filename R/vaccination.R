@@ -490,17 +490,17 @@ vaccine_schedule_from_data <- function(data, n_carehomes) {
   ## First aggregate all the 80+ into one group
   data$date <- as_sircovid_date(data$date)
   data$age_band_min <- pmin(data$age_band_min, 80)
-  data <- aggregate(data[c("dose1", "dose2")],
-                    data[c("age_band_min", "date")],
-                    sum)
+  data <- stats::aggregate(data[c("dose1", "dose2")],
+                           data[c("age_band_min", "date")],
+                           sum)
 
   dates <- seq(min(data$date), max(data$date), by = 1)
   age_start <- sircovid_age_bins()$start
 
   doses <- lapply(c("dose1", "dose2"), function(i)
-    reshape(data[c("date", "age_band_min", i)],
-            direction = "wide", timevar = "date",
-            idvar = "age_band_min"))
+    stats::reshape(data[c("date", "age_band_min", i)],
+                   direction = "wide", timevar = "date",
+                   idvar = "age_band_min"))
   stopifnot(identical(dim(doses[[1]]), dim(doses[[2]])))
 
   ## TODO: add a test for missing days
@@ -556,6 +556,7 @@ vaccine_schedule_data_future <- function(data, region, uptake, end_date,
 }
 
 
+##' @importFrom stats rmultinom
 vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
   doses <- doses[c(seq_len(nrow(doses)), NA, NA), , ]
   doses[is.na(doses)] <- 0
@@ -609,6 +610,7 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##'   future. Names must be in ISO date format.
 ##'
 ##' @inheritParams vaccine_schedule_future
+##' @inheritParams vaccine_schedule_data_future
 ##'
 ##' @return A [vaccine_schedule] object
 ##' @export

@@ -19,6 +19,10 @@ previously carried out vaccination.}
 \item{doses_future}{A named vector of vaccine doses to give in the
 future. Names must be in ISO date format.}
 
+\item{end_date}{The final day in the future to create a schedule
+for. After this date the model will assume 0 vaccine doses given
+so an overestimate is probably better than an underestimate.}
+
 \item{mean_days_between_doses}{Assumed mean days between doses one
 and two}
 
