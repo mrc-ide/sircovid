@@ -346,16 +346,19 @@ test_that("Parameters affect Rt as expected", {
 
 
 test_that("Can calculate EpiEstim Rt", {
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            beta_value = 0.15)
   ## Fix p_C across age groups for the rest of the test
   p$p_C <- rep(0.6, 19)
-  np <- 3L
+  np <- 20L
   mod <- carehomes$new(p, 0, np, seed = 1L)
   
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   mod$set_index(integer(0))
-  index <- mod$info()$index$cum_infections
+  index_cum_inf <- mod$info()$index$cum_infections
+  index_S <- mod$info()$index$S
+  index <- c(index_cum_inf, index_S)
   
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -365,8 +368,42 @@ test_that("Can calculate EpiEstim Rt", {
   y <- mod$simulate(steps)
   inc <- apply(y[1, , ], 1, diff)
   inc <- rbind(rep(0, np), inc)
+  S <- y[-1, , ]
   
-  rt_EpiEstim <- carehomes_EpiEstim_Rt(steps, inc, p)
+  idx_p <- 1:np
+  rt_EpiEstim <- carehomes_EpiEstim_Rt(steps, inc[, idx_p, drop = FALSE], p,
+                                       sliding_window_ndays = 1)
+  
+  rt <- carehomes_Rt_trajectories(steps, S[, idx_p, ], p)
+  
+  ## plot to check 
+  par(mfrow = c(2, 1))
+  
+  matplot(sircovid_date_as_date(steps / 4), inc[, idx_p, drop = FALSE], 
+          type = "l", col = scales::alpha("blue", 0.1), lty = 1,
+          xlab = "Date", ylab = "Incidence")
+  
+  ymax <- max(max(rt_EpiEstim$Rt, na.rm = TRUE), max(rt$eff_Rt_general))
+  plot(sircovid_date_as_date(rt_EpiEstim$t_end), rt_EpiEstim$Rt["50%",], 
+       ylim = c(0, ymax),
+       type = "l",
+       xlab = "Date",
+       ylab = "Rt (EpiEstim)")
+  x <- sircovid_date_as_date(rt_EpiEstim$t_end)
+  ylow <- rt_EpiEstim$Rt["2.5%",]
+  yup <- rt_EpiEstim$Rt["97.5%",]
+  rmv <- which(is.na(ylow))
+  polygon(c(x[-rmv], rev(x[-rmv])), c(ylow[-rmv], rev(yup[-rmv])), 
+          border = "NA", col = scales::alpha("black", 0.25))
+  abline(h = 1, col = "red", lty = 2)
+  
+  matlines(sircovid_date_as_date(steps / 4), rt$eff_Rt_general, 
+           col = scales::alpha("blue", 0.1), lty = 1)
+  
+  ## Rt at the end should be < 1
+  ## Rt at the start should be > 1
+  ## dimension of Rt sould be 3 rows and X cols
+  
   
 })
 

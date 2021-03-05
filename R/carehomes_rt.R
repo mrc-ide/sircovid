@@ -297,36 +297,52 @@ carehomes_EpiEstim_Rt <- function(step, incidence, p,
                                   sliding_window_ndays = 7,
                                   mean_prior = 1,
                                   sd_prior = 1,
-                                  n_GT = 10000) {
-  
-  
-  browser()
-  
+                                  n_GT = 10000,
+                                  n_R = 1000) {
+
   gt_distr <- draw_one_GT_distr(p = p, n = n_GT, set_first_to_zero = TRUE)
   
-  # sliding_window_ndays / p$dt 
-  ## TODO: NEED TO CONVERT BETWEEN DAYS AND STEPS
-  i <- 1
   T <- nrow(incidence)
+  np <- ncol(incidence)
   t_start <- seq(2, T - sliding_window_ndays + 1)
   t_end <- seq(sliding_window_ndays + 1, T)
   
-  R <- EpiEstim::make_config(incid = incidence[, i],
-                        t_start = t_start,
-                        t_end = t_end,
-                        method = "non_parametric_SI",
-                        si_distr = gt_distr,
-                        mean_prior = mean_prior,
-                        std_prior = sd_prior)
+  config <- EpiEstim::make_config(incid = incidence[, 1],
+                                  t_start = t_start,
+                                  t_end = t_end,
+                                  method = "non_parametric_SI",
+                                  si_distr = gt_distr,
+                                  mean_prior = mean_prior,
+                                  std_prior = sd_prior)
   
+  R_sample <- matrix(NA, length(t_start), n_R * np)
   
+  for (i in seq_len(np)) {
+    R_i <- EpiEstim::estimate_R(incid = incidence[, i],
+                                config = config)$R
+    
+    R_i_shape_scale <- epitrix::gamma_mucv2shapescale(mu = R_i$`Mean(R)`, 
+                                                      cv = R_i$`Std(R)` / R_i$`Mean(R)`)
+    
+    R_sample[, n_R * (i-1) + seq_len(n_R)] <- 
+      t(sapply(seq_len(length(t_start)), function(e) {
+        if (!is.na(R_i_shape_scale$shape[e])) {
+          ret <- rgamma(n_R, shape = R_i_shape_scale$shape[e], 
+               scale = R_i_shape_scale$scale[e])
+        } else {
+          ret <- rep(NA, n_R)
+        }
+        ret
+        }))
+  }
   
+  summary_R <- apply(R_sample, 1, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
+  time_start <- step[t_start] * p$dt
+  time_end <- step[t_end] * p$dt
   
-  R <- NULL # replace with some sort of calculation with EpiEstim
-  # integrating over all incidence trajectories
-  
-  list(step = step,
-       EpiEstim_Rt = R)
+  list(t_start = time_start,
+       t_end = time_end,
+       Rt = summary_R)
   
 }
 
