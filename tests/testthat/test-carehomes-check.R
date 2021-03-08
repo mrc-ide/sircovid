@@ -297,6 +297,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 
 
 test_that("No one dies in the community if psi_G_D is 0", {
+  set.seed(1)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
