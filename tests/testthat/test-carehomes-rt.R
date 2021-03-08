@@ -367,43 +367,38 @@ test_that("Can calculate EpiEstim Rt", {
   mod$set_index(index)
   y <- mod$simulate(steps)
   inc <- apply(y[1, , ], 1, diff)
-  inc <- rbind(rep(0, np), inc)
+  inc <- t(rbind(rep(0, np), inc))
   S <- y[-1, , ]
   
-  idx_p <- 1:np
-  rt_EpiEstim <- carehomes_EpiEstim_Rt(steps, inc[, idx_p, drop = FALSE], p,
+  rt_EpiEstim <- carehomes_EpiEstim_Rt_trajectories(steps, inc, p,
                                        sliding_window_ndays = 1)
   
-  rt <- carehomes_Rt_trajectories(steps, S[, idx_p, ], p)
+  rt <- carehomes_Rt_trajectories(steps, S, p)
   
   # ## plot to check
   # par(mfrow = c(2, 1), mar = c(5, 5, .5, .5))
   # 
-  # # matplot(sircovid_date_as_date(steps / 4), inc[, idx_p, drop = FALSE],
-  # #         type = "l", col = scales::alpha("blue", 0.1), lty = 1,
-  # #         xlab = "Date", ylab = "Incidence")
-  # 
   # matplot(sircovid_date_as_date(steps / 4),
-  #         log(1 + inc[, idx_p, drop = FALSE]),
+  #         t(log(1 + inc)),
   #         type = "l", col = scales::alpha("blue", 0.1), lty = 1,
   #         xlab = "Date", ylab = "log(1 + Incidence)")
   # 
-  # ymax <- max(max(rt_EpiEstim$Rt, na.rm = TRUE),
+  # ymax <- max(max(rt_EpiEstim$Rt_summary, na.rm = TRUE),
   #             max(rt$eff_Rt_general),
   #             max(rt$eff_Rt_all))
   # ymax <- 10
-  # plot(sircovid_date_as_date(rt_EpiEstim$t_end), rt_EpiEstim$Rt["50%", ],
+  # plot(sircovid_date_as_date(rt_EpiEstim$t_end), rt_EpiEstim$Rt_summary["50%", ],
   #      ylim = c(0, ymax),
   #      type = "l",
   #      lty = 2,
   #      xlab = "Date",
   #      ylab = "Rt (EpiEstim)")
   # lines(sircovid_date_as_date(rt_EpiEstim$t_end),
-  #        rt_EpiEstim$Rt["mean_R", ],
+  #        rt_EpiEstim$Rt_summary["mean_R", ],
   #        col = "black")
   # x <- sircovid_date_as_date(rt_EpiEstim$t_end)
-  # ylow <- rt_EpiEstim$Rt["2.5%", ]
-  # yup <- rt_EpiEstim$Rt["97.5%", ]
+  # ylow <- rt_EpiEstim$Rt_summary["2.5%", ]
+  # yup <- rt_EpiEstim$Rt_summary["97.5%", ]
   # rmv <- which(is.na(ylow))
   # polygon(c(x[-rmv], rev(x[-rmv])), c(ylow[-rmv], rev(yup[-rmv])),
   #         border = "NA", col = scales::alpha("black", 0.25))
@@ -423,30 +418,30 @@ test_that("Can calculate EpiEstim Rt", {
   #        col = c("black", "black", "grey", "blue", "purple"),
   #        lty = c(1, 2, -1, 1, 1),
   #        pch = c(-1, -1, 15, -1, -1))
-  # 
+
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
   ## -1 because EpiEstim only start estimation at 2nd time step
-  expect_equal(dim(rt_EpiEstim$Rt), c(4, length(steps) - 1))
+  expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
   ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt[, ncol(rt_EpiEstim$Rt)] < 1))
+  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
   ## because of the priors with mean 1 we would expect EpiEstim Rt
   ## at the end to be higher than eff_Rt_all
   expect_true(
-    last(rt$eff_Rt_all) < rt_EpiEstim$Rt["mean_R", ncol(rt_EpiEstim$Rt)])
+    last(rt$eff_Rt_all) < rt_EpiEstim$Rt_summary["mean_R", ncol(rt_EpiEstim$Rt_summary)])
   ## Rt at the start should be > 1 
   ## (but there will be uncertainty so looking at the mean)
-  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt["mean_R", ])))
-  expect_true(rt_EpiEstim$Rt["mean_R", first_non_NA_idx] > 1)
+  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
+  expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
   
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt[["mean_R", first_non_NA_idx]], 5.763756,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 5.763756,
                tolerance = 1e-6)
-  expect_equal(rt_EpiEstim$Rt[["2.5%", first_non_NA_idx]], 2.589537,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 2.589537,
                tolerance = 1e-6)
-  expect_equal(rt_EpiEstim$Rt[["mean_R", ncol(rt_EpiEstim$Rt)]], 0.0857173,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.0857173,
                tolerance = 1e-6)
-  expect_equal(rt_EpiEstim$Rt[["97.5%", ncol(rt_EpiEstim$Rt)]], 0.1084134,
+  expect_equal(rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.1084134,
                tolerance = 1e-6)
   
 })
@@ -485,45 +480,40 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   mod$set_index(index)
   y <- mod$simulate(steps)
   inc <- apply(y[1, , ], 1, diff)
-  inc <- rbind(rep(0, np), inc)
+  inc <- t(rbind(rep(0, np), inc))
   S <- y[-1, , ]
   
-  idx_p <- 1:np
-  rt_EpiEstim <- carehomes_EpiEstim_Rt(steps, inc[, idx_p, drop = FALSE], p,
+  rt_EpiEstim <- carehomes_EpiEstim_Rt_trajectories(steps, inc, p,
                                        sliding_window_ndays = 1)
   
-  rt <- carehomes_Rt_trajectories(steps, S[, idx_p, ], p)
+  rt <- carehomes_Rt_trajectories(steps, S, p)
   
   # ## plot to check
   # par(mfrow = c(2, 1), mar = c(5, 5, .5, .5))
   # 
-  # # matplot(sircovid_date_as_date(steps / 4), inc[, idx_p, drop = FALSE],
-  # #         type = "l", col = scales::alpha("blue", 0.1), lty = 1,
-  # #         xlab = "Date", ylab = "Incidence")
-  # 
   # matplot(sircovid_date_as_date(steps / 4),
-  #         log(1 + inc[, idx_p, drop = FALSE]),
+  #         t(log(1 + inc)),
   #         type = "l", col = scales::alpha("blue", 0.1), lty = 1,
   #         xlab = "Date", ylab = "log(1 + Incidence)")
   # 
   # abline(v = sircovid_date_as_date(steps / 4)[c(20, 30)], col = "grey", lty = 2)
   # 
-  # ymax <- max(max(rt_EpiEstim$Rt, na.rm = TRUE),
+  # ymax <- max(max(rt_EpiEstim$Rt_summary, na.rm = TRUE),
   #             max(rt$eff_Rt_general),
   #             max(rt$eff_Rt_all))
   # ymax <- 10
-  # plot(sircovid_date_as_date(rt_EpiEstim$t_end), rt_EpiEstim$Rt["50%", ],
+  # plot(sircovid_date_as_date(rt_EpiEstim$t_end), rt_EpiEstim$Rt_summary["50%", ],
   #      ylim = c(0, ymax),
   #      type = "l",
   #      lty = 2,
   #      xlab = "Date",
   #      ylab = "Rt (EpiEstim)")
   # lines(sircovid_date_as_date(rt_EpiEstim$t_end),
-  #       rt_EpiEstim$Rt["mean_R", ],
+  #       rt_EpiEstim$Rt_summary["mean_R", ],
   #       col = "black")
   # x <- sircovid_date_as_date(rt_EpiEstim$t_end)
-  # ylow <- rt_EpiEstim$Rt["2.5%", ]
-  # yup <- rt_EpiEstim$Rt["97.5%", ]
+  # ylow <- rt_EpiEstim$Rt_summary["2.5%", ]
+  # yup <- rt_EpiEstim$Rt_summary["97.5%", ]
   # rmv <- which(is.na(ylow))
   # polygon(c(x[-rmv], rev(x[-rmv])), c(ylow[-rmv], rev(yup[-rmv])),
   #         border = "NA", col = scales::alpha("black", 0.25))
@@ -547,37 +537,37 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
   ## -1 because EpiEstim only start estimation at 2nd time step
-  expect_equal(dim(rt_EpiEstim$Rt), c(4, length(steps) - 1))
+  expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
   ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt[, ncol(rt_EpiEstim$Rt)] < 1))
+  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
   ## because of the priors with mean 1 we would expect EpiEstim Rt
   ## at the end to be higher than eff_Rt_all
   expect_true(
-    last(rt$eff_Rt_all) < rt_EpiEstim$Rt["mean_R", ncol(rt_EpiEstim$Rt)])
+    last(rt$eff_Rt_all) < rt_EpiEstim$Rt_summary["mean_R", ncol(rt_EpiEstim$Rt_summary)])
   ## Rt at the start should be > 1 
   ## (but there will be uncertainty so looking at the mean)
-  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt["mean_R", ])))
-  expect_true(rt_EpiEstim$Rt["mean_R", first_non_NA_idx] > 1)
+  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
+  expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
   ## Rt at the start should be similar between methods:
-  expect_true(rt$eff_Rt_all[1] > rt_EpiEstim$Rt["2.5%", first_non_NA_idx])
-  expect_true(rt$eff_Rt_all[1] < rt_EpiEstim$Rt["97.5%", first_non_NA_idx])
+  expect_true(rt$eff_Rt_all[1] > rt_EpiEstim$Rt_summary["2.5%", first_non_NA_idx])
+  expect_true(rt$eff_Rt_all[1] < rt_EpiEstim$Rt_summary["97.5%", first_non_NA_idx])
   
   ## Rt stays constant for a while but precision improves for EpiEstim
-  expect_true(rt$eff_Rt_all[1] > rt_EpiEstim$Rt["2.5%", 20])
-  expect_true(rt$eff_Rt_all[1] < rt_EpiEstim$Rt["97.5%", 20])
-  expect_true(abs(rt$eff_Rt_all[1] - rt_EpiEstim$Rt["50%", 20]) < 0.1)
+  expect_true(rt$eff_Rt_all[1] > rt_EpiEstim$Rt_summary["2.5%", 20])
+  expect_true(rt$eff_Rt_all[1] < rt_EpiEstim$Rt_summary["97.5%", 20])
+  expect_true(abs(rt$eff_Rt_all[1] - rt_EpiEstim$Rt_summary["50%", 20]) < 0.1)
   
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt[["mean_R", 35]], 6.482874,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 35]], 6.482874,
                tolerance = 1e-6)
-  expect_equal(rt_EpiEstim$Rt[["2.5%", 35]], 5.760153,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 35]], 5.760153,
                tolerance = 1e-6)
   expect_equal(rt$eff_Rt_all[35], 6.459533,
                tolerance = 1e-6)
   
-  expect_equal(rt_EpiEstim$Rt[["mean_R", 45]], 0.3652192,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 45]], 0.3652192,
                tolerance = 1e-6)
-  expect_equal(rt_EpiEstim$Rt[["2.5%", 45]], 0.1088537,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 45]], 0.1088537,
                tolerance = 1e-6)
   expect_equal(rt$eff_Rt_all[45], 0.3013559,
                tolerance = 1e-6)
@@ -591,7 +581,8 @@ test_that("draw_one_GT_sample yields expected mean GT", {
   ## Fix p_C across age groups for the rest of the test
   p$p_C <- rep(0.6, 19)
   gt <- draw_one_GT_sample(p, n = 10000)
-  expect_true(abs(mean(gt) - 6.3) < 0.1) # value from Bi et al.
+  ## large tolerance because of discretisation
+  expect_true(abs(mean(gt) - 6.3) < 0.5) # value from Bi et al.
 })
 
 
@@ -616,14 +607,14 @@ test_that("draw_one_GT_sample yields expected invalid input errors", {
   p$I_P_transmission <- 0.1
   expect_error(
     draw_one_GT_sample(p, n = 1000),
-    "draw_one_GT_sample does not allow 
+    "draw_one_GT_sample does not allow
     I_P_transmission !=1 or I_C_1_transmission != 1",
     fixed = TRUE)
   p <- p_base
   p$I_C_1_transmission <- 0.1
   expect_error(
     draw_one_GT_sample(p, n = 1000),
-    "draw_one_GT_sample does not allow 
+    "draw_one_GT_sample does not allow
     I_P_transmission !=1 or I_C_1_transmission != 1",
     fixed = TRUE)
   p <- p_base
