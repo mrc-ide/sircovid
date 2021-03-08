@@ -298,7 +298,6 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                   n_GT = 10000,
                                   n_R = 1000,
                                   save_all = TRUE) {
-  
   gt_distr <- draw_one_GT_distr(p = p, n = n_GT)
   
   T <- ncol(incidence)
@@ -315,7 +314,7 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                   mean_prior = mean_prior,
                                   std_prior = sd_prior)
   
-  R_sample <- matrix(NA, n_R * np, length(t_start))
+  R_sample <- matrix(NA, length(t_start), n_R * np)
   
   for (i in seq_len(np)) {
     ## this function gives warning when precision in estimates is not good
@@ -327,8 +326,8 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
       epitrix::gamma_mucv2shapescale(mu = R_i$`Mean(R)`,
                                      cv = R_i$`Std(R)` / R_i$`Mean(R)`)
     
-    R_sample[n_R * (i-1) + seq_len(n_R), ] <-
-      sapply(seq_len(length(t_start)), function(e) {
+    R_sample[, n_R * (i-1) + seq_len(n_R)] <-
+      t(sapply(seq_len(length(t_start)), function(e) {
         if (!is.na(R_i_shape_scale$shape[e])) {
           ret <- rgamma(n_R, shape = R_i_shape_scale$shape[e], 
                         scale = R_i_shape_scale$scale[e])
@@ -336,11 +335,11 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
           ret <- rep(NA, n_R)
         }
         ret
-      })
+      }))
   }
   
-  summary_R <- apply(R_sample, 2, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
-  mean_R <- apply(R_sample, 2, mean, na.rm = TRUE)
+  summary_R <- apply(R_sample, 1, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
+  mean_R <- apply(R_sample, 1, mean, na.rm = TRUE)
   summary_R <- rbind(summary_R, mean_R)
   
   time_start <- step[t_start] * p$dt
