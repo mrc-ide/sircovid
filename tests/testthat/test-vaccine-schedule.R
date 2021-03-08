@@ -252,7 +252,39 @@ test_that("create schedule scenario", {
   expect_equal(
     signif(n, 1),
     rep(c(5000, 6000, 7000, 9000), c(12, 10, 10, 93)))
-  expect_lt(max(abs(n - signif(n, 1))[-seq_len(12)]), 5)
+  expect_lt(max(abs(n - signif(n, 1))[-seq_len(12)]), 10)
+})
+
+
+test_that("create schedule scenario where future doses drift into past", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  ## Our schedule runs from 2021-03-05..2021-03-29
+  mean_days_between_doses <- 30
+  doses_future <- c(
+    "2021-03-20" = 6000,
+    "2021-04-20" = 7000,
+    "2021-04-30" = 9000)
+  end_date <- "2021-08-01"
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n)
+
+  i <- seq_len(dim(past$doses)[[3]])
+  expect_equal(res$doses[, , i], past$doses)
+  doses_future <- res$doses[, , -i]
+  expect_equal(dim(doses_future), c(19, 2, 125))
+
+  n <- apply(doses_future, 3, sum)
+  expect_equal(
+    signif(n, 1),
+    rep(c(6000, 7000, 9000), c(22, 10, 93)))
+  expect_lt(max(abs(n - signif(n, 1))), 10)
 })
 
 

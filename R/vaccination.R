@@ -632,11 +632,6 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
     assert_date_string(names(doses_future))
     doses_future_date <- sircovid_date(names(doses_future))
     assert_increasing(doses_future_date, name = "names(doses_future)")
-    if (doses_future_date[[1]] < date_end_past) {
-      ## TODO: cope with doses_future containing dates in the past
-      message("Trimming vaccination schedule as overlaps with past")
-      stop("FIXME")
-    }
 
     if (last(doses_future_date) > end_date) {
       stop(sprintf(
@@ -645,7 +640,21 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
         sircovid_date_as_date(end_date)))
     }
 
+    if (doses_future_date[[1]] < date_end_past) {
+      message("Trimming vaccination schedule as overlaps with past")
+      i <- max(which(doses_future_date < date_end_past))
+      j <- seq(i, length(doses_future_date))
+      doses_future_date <- doses_future_date[j]
+      doses_future <- doses_future[j]
+      doses_future_date[[1]] <- date_end_past
+    }
+
+    stopifnot(
+      all(!is.na(doses_future)),
+      all(doses_future > 0))
+
     date_future <- c(doses_future_date, end_date)
+    names(doses_future) <- NULL
   } else {
     if (end_date < date_end_past) {
       stop(sprintf(
@@ -655,13 +664,6 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
     }
     date_future <- end_date
   }
-
-  stopifnot(
-    all(!is.na(doses_future)),
-    all(doses_future > 0))
-
-  end_date <- as_sircovid_date(end_date)
-  date_future <- c(sircovid_date(names(doses_future)), end_date)
 
   daily_doses_value <- c(
     rep(mean_doses_last, date_future[[1]] - date_end_past),
