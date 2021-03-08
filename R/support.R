@@ -1,5 +1,34 @@
 ## General things that we need but that aren't that interesting.
 
+##' Generate lists of regions that we use for various tasks.
+##'
+##' @title Regions
+##'
+##' @param type The name of a region type; must be one of "all",
+##'   "england", or "nations"
+##'
+##' @return A character vector
+##' @export
+##' @examples
+##' sircovid::regions("england")
+regions <- function(type) {
+  regions_england <- c("east_of_england",
+                       "midlands",
+                       "london",
+                       "north_east_and_yorkshire",
+                       "north_west",
+                       "south_east",
+                       "south_west")
+  celtic_nations <- c("scotland", "wales", "northern_ireland")
+
+  switch(type,
+         "all" = c(regions_england, celtic_nations),
+         "england" = regions_england,
+         "nations" = c("england", celtic_nations),
+         stop(sprintf("Unknown region type '%s'", type)))
+}
+
+
 ## We always use these age bands, so rather than detect them, we will
 ## check that things conform to them.
 sircovid_age_bins <- function() {
