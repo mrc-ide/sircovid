@@ -81,7 +81,7 @@ test_vaccine_schedule <- function(daily_doses = 20000, region = "london",
 test_vaccine_data <- function() {
   age_start <- seq(15, 95, by = 5)
   data <- data_frame(
-    date = rep(seq(Sys.Date(), length.out = 25, by = 1),
+    date = rep(seq(as.Date("2021-03-05"), length.out = 25, by = 1),
                each = length(age_start)),
     age_band_min = age_start)
   data$dose1 <- rpois(nrow(data), 200)
