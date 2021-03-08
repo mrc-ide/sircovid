@@ -464,9 +464,9 @@ test_that("Can add new betas with incomplete Rt calculation", {
 
 
 test_that("can generate regions", {
-  expect_length(sircovid::regions("england"), 7)
-  expect_length(sircovid::regions("nations"), 4)
-  expect_length(sircovid::regions("all"), 10)
-  expect_error(sircovid::regions("europe"),
+  expect_length(regions("england"), 7)
+  expect_length(regions("nations"), 4)
+  expect_length(regions("all"), 10)
+  expect_error(regions("europe"),
                "Unknown region type 'europe'")
 })
