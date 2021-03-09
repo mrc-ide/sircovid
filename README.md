@@ -12,6 +12,12 @@
 
 <img src="man/figures/sircovid_diagram.png" align="center" style = "border: none; float: center;" width = "800px">
 
+## Important information for users
+
+Please note that whilst this code is free to use and adapt, Imperial College London does not endorse the outputs, results, or conclusions drawn from the implementation of this model to other settings. While we encourage the use and modification of our model for research and scientific purposes please do not refer to such results as the "Imperial model" or similar unless referring to specific use in publications by Imperial College researchers.
+
+The model is constantly in flux and we make no effort to keep things backward compatible, nor do we have the capacity to provide support (including installation support). This package is being closely developed with [dust](https://mrc-ide.github.io/dust/) and [mcstate](https://mrc-ide.github.io/mcstate/) often requiring simultaneous upgrades. The minimum version number noted in the `DESCRIPTION` is a good starting place - be sure that versions match or sircovid will likely not compile.
+
 ## Installation
 
 Install from the ncov drat:
