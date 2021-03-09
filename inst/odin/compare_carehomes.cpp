@@ -41,34 +41,35 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
 }
 
 // Lots of data items here. Even though some of these are counts (in
-// fact, most of them are counts) we'll pull them in as doubles
-// because that will help with the NA handling. Once this is working
-// reliably we could cast these explicitly as ints, but there is not
-// likely to be any major gain here.
+// fact, most of them are counts) we'll pull them in as floating point
+// numbers (double or float) because that will help with the NA
+// handling. Once this is working reliably we could cast these
+// explicitly as ints, but there is not likely to be any major gain
+// here.
 //
-// [[odin.dust::compare_data(icu = double)]]
-// [[odin.dust::compare_data(general = double)]]
-// [[odin.dust::compare_data(hosp = double)]]
-// [[odin.dust::compare_data(deaths_hosp = double)]]
-// [[odin.dust::compare_data(deaths_comm = double)]]
-// [[odin.dust::compare_data(deaths_carehomes = double)]]
-// [[odin.dust::compare_data(deaths = double)]]
-// [[odin.dust::compare_data(deaths_non_hosp = double)]]
-// [[odin.dust::compare_data(admitted = double)]]
-// [[odin.dust::compare_data(diagnoses = double)]]
-// [[odin.dust::compare_data(all_admission = double)]]
-// [[odin.dust::compare_data(npos_15_64 = double)]]
-// [[odin.dust::compare_data(ntot_15_64 = double)]]
-// [[odin.dust::compare_data(pillar2_pos = double)]]
-// [[odin.dust::compare_data(pillar2_tot = double)]]
-// [[odin.dust::compare_data(pillar2_cases = double)]]
-// [[odin.dust::compare_data(pillar2_over25_pos = double)]]
-// [[odin.dust::compare_data(pillar2_over25_tot = double)]]
-// [[odin.dust::compare_data(pillar2_over25_cases = double)]]
-// [[odin.dust::compare_data(react_pos = double)]]
-// [[odin.dust::compare_data(react_tot = double)]]
-// [[odin.dust::compare_data(strain_non_variant = double)]]
-// [[odin.dust::compare_data(strain_tot = double)]]
+// [[odin.dust::compare_data(icu = real_t)]]
+// [[odin.dust::compare_data(general = real_t)]]
+// [[odin.dust::compare_data(hosp = real_t)]]
+// [[odin.dust::compare_data(deaths_hosp = real_t)]]
+// [[odin.dust::compare_data(deaths_comm = real_t)]]
+// [[odin.dust::compare_data(deaths_carehomes = real_t)]]
+// [[odin.dust::compare_data(deaths = real_t)]]
+// [[odin.dust::compare_data(deaths_non_hosp = real_t)]]
+// [[odin.dust::compare_data(admitted = real_t)]]
+// [[odin.dust::compare_data(diagnoses = real_t)]]
+// [[odin.dust::compare_data(all_admission = real_t)]]
+// [[odin.dust::compare_data(npos_15_64 = real_t)]]
+// [[odin.dust::compare_data(ntot_15_64 = real_t)]]
+// [[odin.dust::compare_data(pillar2_pos = real_t)]]
+// [[odin.dust::compare_data(pillar2_tot = real_t)]]
+// [[odin.dust::compare_data(pillar2_cases = real_t)]]
+// [[odin.dust::compare_data(pillar2_over25_pos = real_t)]]
+// [[odin.dust::compare_data(pillar2_over25_tot = real_t)]]
+// [[odin.dust::compare_data(pillar2_over25_cases = real_t)]]
+// [[odin.dust::compare_data(react_pos = real_t)]]
+// [[odin.dust::compare_data(react_tot = real_t)]]
+// [[odin.dust::compare_data(strain_non_variant = real_t)]]
+// [[odin.dust::compare_data(strain_tot = real_t)]]
 // [[odin.dust::compare_function]]
 template <typename T>
 typename T::real_t compare(const typename T::real_t * state,

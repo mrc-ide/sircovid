@@ -461,3 +461,12 @@ test_that("Can add new betas with incomplete Rt calculation", {
   expect_silent(
     add_future_betas(dat, rt1, list("2020-05-01" = future_Rt(1, date_error))))
 })
+
+
+test_that("can generate regions", {
+  expect_length(regions("england"), 7)
+  expect_length(regions("nations"), 4)
+  expect_length(regions("all"), 10)
+  expect_error(regions("europe"),
+               "Unknown region type 'europe'")
+})

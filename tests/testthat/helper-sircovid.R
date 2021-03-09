@@ -54,3 +54,46 @@ skip_on_mac_gha <- function() {
     testthat::skip("On macOS Github Actions")
   }
 }
+
+
+test_example_uptake <- function() {
+  c(rep(0, 3), # no vaccination in <15
+  (2 / 5) * 0.75, # no vaccination in 15-17yo
+  rep(0.75, 6),
+  rep(0.85, 6),
+  0.95,
+  0.85,
+  0.95)
+}
+
+
+test_vaccine_schedule <- function(daily_doses = 20000, region = "london",
+                                  n_days = 365,
+                                  uptake = test_example_uptake(),
+                                  mean_days_between_doses = 12 * 7) {
+  daily_doses <- rep(daily_doses, n_days)
+  n <- vaccine_priority_population(region, uptake)
+  vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n)
+}
+
+
+test_vaccine_data <- function() {
+  age_start <- seq(15, 95, by = 5)
+  data <- data_frame(
+    date = rep(seq(as.Date("2021-03-05"), length.out = 25, by = 1),
+               each = length(age_start)),
+    age_band_min = age_start)
+  data$dose1 <- rpois(nrow(data), 200)
+  data$dose2 <- rpois(nrow(data), 100)
+  data
+}
+
+
+expect_approx_equal <- function(x1, x2, rel_tol = 0.05) {
+  x1_zeros <- x1 == 0
+  x2_zeros <- x2 == 0
+  expect_true(all(abs(x1[!x1_zeros] - x2[!x1_zeros]) / x1[!x1_zeros] < rel_tol))
+  expect_true(all(abs(x1[x1_zeros & !x2_zeros] - x2[x1_zeros & !x2_zeros]) /
+                    x2[x1_zeros & !x2_zeros] < rel_tol))
+}
