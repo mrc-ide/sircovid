@@ -12,6 +12,10 @@
 
 <img src="man/figures/sircovid_diagram.png" align="center" style = "border: none; float: center;" width = "800px">
 
+## Important information for users
+
+Please note that whilst this code is free to use and adapt, Imperial College London does not endorse the outputs, results, or conclusions drawn from the implementation of this model to other settings. While we encourage the use and modification of our model for research and scientific purposes please do not refer to such results as the "Imperial model" or similar unless referring to specific use in publications by Imperial College researchers.
+
 ## Installation
 
 Install from the ncov drat:
