@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Initial conditions for the basic model — basic_initial • sircovid</title>
+<title>Compute vaccination order — vaccine_priority_proportion • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,8 @@
 
 
 
-<meta property="og:title" content="Initial conditions for the basic model — basic_initial" />
-<meta property="og:description" content="Create initial conditions for the basic model. This matches the
-interface required for mcstate" />
+<meta property="og:title" content="Compute vaccination order — vaccine_priority_proportion" />
+<meta property="og:description" content="Compute vaccination priority following JCVI ordering." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -120,82 +119,99 @@ interface required for mcstate" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Initial conditions for the basic model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/basic.R'><code>R/basic.R</code></a></small>
-    <div class="hidden name"><code>basic_initial.Rd</code></div>
+    <h1>Compute vaccination order</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/vaccination.R'><code>R/vaccination.R</code></a></small>
+    <div class="hidden name"><code>vaccine_priority.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create initial conditions for the basic model. This matches the
-interface required for mcstate</p>
+    <p>Compute vaccination priority following JCVI ordering.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>basic_initial</span><span class='op'>(</span><span class='va'>info</span>, <span class='va'>n_particles</span>, <span class='va'>pars</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>vaccine_priority_proportion</span><span class='op'>(</span>
+  <span class='va'>uptake</span>,
+  prop_hcw <span class='op'>=</span> <span class='cn'>NULL</span>,
+  prop_very_vulnerable <span class='op'>=</span> <span class='cn'>NULL</span>,
+  prop_underlying_condition <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span>
+
+<span class='fu'>vaccine_priority_population</span><span class='op'>(</span>
+  <span class='va'>region</span>,
+  <span class='va'>uptake</span>,
+  prop_hcw <span class='op'>=</span> <span class='cn'>NULL</span>,
+  prop_very_vulnerable <span class='op'>=</span> <span class='cn'>NULL</span>,
+  prop_underlying_condition <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>info</th>
-      <td><p>The result of running the <code>$info()</code> method on an
-initialised <a href='basic.html'>basic</a> model</p></td>
+      <th>uptake</th>
+      <td><p>A vector of length 19 with fractional uptake per
+group. If a single number is given it is shared across all
+groups (note that this includes under-18s)</p></td>
     </tr>
     <tr>
-      <th>n_particles</th>
-      <td><p>The number of particles required. Currently
-only uniform initial seeding is implemented so this has no
-effect</p></td>
+      <th>prop_hcw</th>
+      <td><p>Assumed fraction of healthcare workers in each
+group (length 19) - if <code>NULL</code> we use a default that is a guess
+with hopefully the right general shape.</p></td>
     </tr>
     <tr>
-      <th>pars</th>
-      <td><p>A parameter list created by <code><a href='basic_parameters.html'>basic_parameters()</a></code>; from
-this list we will use the <code>population</code> and <code>initial_step</code>
-elements.</p></td>
+      <th>prop_very_vulnerable</th>
+      <td><p>Assumed fraction "very vulnerable" in
+each group (length 19) - if <code>NULL</code> we use a default that is a
+guess with hopefully the right general shape.</p></td>
+    </tr>
+    <tr>
+      <th>prop_underlying_condition</th>
+      <td><p>Assumed fraction "underlying
+condition" in each group (length 19) - if <code>NULL</code> we use a
+default that is a guess with hopefully the right general shape.</p></td>
+    </tr>
+    <tr>
+      <th>region</th>
+      <td><p>Region to use to get total population numbers</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A numeric vector of initial conditions</p>
+    <p>A matrix with n_groups rows (19) and columns representing
+priority groups, and element (i, j) is the proportion in group i
+who should be vaccinated as part of priority group j, accounting
+for uptake so that the sum over the rows corresponds to the
+total fractional uptake in that group. For
+<code>vaccine_priority_population</code>, the total number of
+individuals replaces the proportion (based on the demography
+used by sircovid).</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_parameters.html'>basic_parameters</a></span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-07"</span><span class='op'>)</span>, <span class='st'>"england"</span><span class='op'>)</span>
-<span class='va'>mod</span> <span class='op'>&lt;-</span> <span class='va'><a href='basic.html'>basic</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>p</span>, <span class='fl'>0</span>, <span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'>basic_initial</span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>10</span>, <span class='va'>p</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $state
-#&gt;   [1]        0 56286961        0        0        0        0  3299637  3538206
-#&gt;   [9]  3354246  3090222  3487863  3801409  3807954  3733642  3414297  3715812
-#&gt;  [17]  3907461  3670651  3111835  2796740  2779326  1940686  2836964        0
-#&gt;  [25]        0        0        0        0        0        0        0        0
-#&gt;  [33]        0        0        0        0        0        0        0        0
-#&gt;  [41]        0        0        0        0        0        0        0        0
-#&gt;  [49]        0        0        0        0        0        0        0        0
-#&gt;  [57]        0        0        0        0        0        0        0        0
-#&gt;  [65]        0        0        0        0        0        0        0        0
-#&gt;  [73]        0        0        0        0        0        0        0        0
-#&gt;  [81]        0        0        0        0        0        0        0        0
-#&gt;  [89]        0        0        0        0        0        0       10        0
-#&gt;  [97]        0        0        0        0        0        0        0        0
-#&gt; [105]        0        0        0        0        0        0        0        0
-#&gt; [113]        0        0        0        0        0        0        0        0
-#&gt; [121]        0        0        0        0        0        0        0        0
-#&gt; [129]        0        0        0        0        0        0        0        0
-#&gt; [137]        0        0        0        0        0        0        0        0
-#&gt; [145]        0        0        0        0        0        0        0        0
-#&gt; [153]        0        0        0        0        0        0        0        0
-#&gt; [161]        0        0        0        0        0        0        0        0
-#&gt; [169]        0        0        0        0        0        0        0        0
-#&gt; [177]        0        0        0        0        0        0        0        0
-#&gt; [185]        0        0        0        0        0        0        0        0
-#&gt; [193]        0        0        0        0        0        0        0        0
-#&gt; [201]        0        0        0        0        0        0        0        0
-#&gt; [209]        0        0        0        0        0        0        0        0
-#&gt; [217]        0        0        0        0        0        0        0        0
-#&gt; [225]        0        0        0
-#&gt; 
-#&gt; $step
-#&gt; [1] 152
-#&gt; </div></pre>
+    <p>https://tinyurl.com/8uwtatvm</p>
+<p>Assmuing independance between job (e.g. HCW) and clinical condition</p>
+<p>But assuming one is either counted as "clinically extremely
+vulnerable" or "with underlying health conditions" but not both</p>
+<p>The JCVI priority groups, in decending order are:</p><ol>
+<li><p>residents in a care home for older adults and their carers</p></li>
+<li><p>all those 80 years of age and over and frontline health and social
+care workers</p></li>
+<li><p>all those 75 years of age and over</p></li>
+<li><p>all those 70 years of age and over and clinically extremely
+vulnerable individuals</p></li>
+<li><p>all those 65 years of age and over</p></li>
+<li><p>all individuals aged 16 years to 64 years with underlying health
+conditions which put them at higher risk of serious disease and
+mortality</p></li>
+<li><p>all those 60 years of age and over</p></li>
+<li><p>all those 55 years of age and over</p></li>
+<li><p>all those 50 years of age and over</p></li>
+<li><p>all those 40-49 years of age and over</p></li>
+<li><p>all those 30-39 years of age and over</p></li>
+<li><p>all those 18-29 years of age and over</p></li>
+</ol>
+
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

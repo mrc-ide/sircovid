@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Initial conditions for the basic model — basic_initial • sircovid</title>
+<title>Remap state to include vaccination — vaccine_remap_state • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,11 @@
 
 
 
-<meta property="og:title" content="Initial conditions for the basic model — basic_initial" />
-<meta property="og:description" content="Create initial conditions for the basic model. This matches the
-interface required for mcstate" />
+<meta property="og:title" content="Remap state to include vaccination — vaccine_remap_state" />
+<meta property="og:description" content="Remap state that was run with one stratum to support
+vaccination. This is useful where fitting was done pre-vaccination
+and the model state needs to be expanded to support vaccination
+for simulations." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -120,82 +122,45 @@ interface required for mcstate" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Initial conditions for the basic model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/basic.R'><code>R/basic.R</code></a></small>
-    <div class="hidden name"><code>basic_initial.Rd</code></div>
+    <h1>Remap state to include vaccination</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/vaccination.R'><code>R/vaccination.R</code></a></small>
+    <div class="hidden name"><code>vaccine_remap_state.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create initial conditions for the basic model. This matches the
-interface required for mcstate</p>
+    <p>Remap state that was run with one stratum to support
+vaccination. This is useful where fitting was done pre-vaccination
+and the model state needs to be expanded to support vaccination
+for simulations.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>basic_initial</span><span class='op'>(</span><span class='va'>info</span>, <span class='va'>n_particles</span>, <span class='va'>pars</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>vaccine_remap_state</span><span class='op'>(</span><span class='va'>state_orig</span>, <span class='va'>info_orig</span>, <span class='va'>info_vacc</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>info</th>
-      <td><p>The result of running the <code>$info()</code> method on an
-initialised <a href='basic.html'>basic</a> model</p></td>
+      <th>state_orig</th>
+      <td><p>An original state matrix (rows representing
+state, columns representing particles or samples). This must be
+the complete model state.</p></td>
     </tr>
     <tr>
-      <th>n_particles</th>
-      <td><p>The number of particles required. Currently
-only uniform initial seeding is implemented so this has no
-effect</p></td>
+      <th>info_orig</th>
+      <td><p>The results of <code>info()</code> from the model object
+without vaccination</p></td>
     </tr>
     <tr>
-      <th>pars</th>
-      <td><p>A parameter list created by <code><a href='basic_parameters.html'>basic_parameters()</a></code>; from
-this list we will use the <code>population</code> and <code>initial_step</code>
-elements.</p></td>
+      <th>info_vacc</th>
+      <td><p>The results of <code>info()</code> from the model object
+with vaccination</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A numeric vector of initial conditions</p>
+    <p>A 3d array with more rows than <code>state</code>.</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_parameters.html'>basic_parameters</a></span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-07"</span><span class='op'>)</span>, <span class='st'>"england"</span><span class='op'>)</span>
-<span class='va'>mod</span> <span class='op'>&lt;-</span> <span class='va'><a href='basic.html'>basic</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>p</span>, <span class='fl'>0</span>, <span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'>basic_initial</span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>10</span>, <span class='va'>p</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $state
-#&gt;   [1]        0 56286961        0        0        0        0  3299637  3538206
-#&gt;   [9]  3354246  3090222  3487863  3801409  3807954  3733642  3414297  3715812
-#&gt;  [17]  3907461  3670651  3111835  2796740  2779326  1940686  2836964        0
-#&gt;  [25]        0        0        0        0        0        0        0        0
-#&gt;  [33]        0        0        0        0        0        0        0        0
-#&gt;  [41]        0        0        0        0        0        0        0        0
-#&gt;  [49]        0        0        0        0        0        0        0        0
-#&gt;  [57]        0        0        0        0        0        0        0        0
-#&gt;  [65]        0        0        0        0        0        0        0        0
-#&gt;  [73]        0        0        0        0        0        0        0        0
-#&gt;  [81]        0        0        0        0        0        0        0        0
-#&gt;  [89]        0        0        0        0        0        0       10        0
-#&gt;  [97]        0        0        0        0        0        0        0        0
-#&gt; [105]        0        0        0        0        0        0        0        0
-#&gt; [113]        0        0        0        0        0        0        0        0
-#&gt; [121]        0        0        0        0        0        0        0        0
-#&gt; [129]        0        0        0        0        0        0        0        0
-#&gt; [137]        0        0        0        0        0        0        0        0
-#&gt; [145]        0        0        0        0        0        0        0        0
-#&gt; [153]        0        0        0        0        0        0        0        0
-#&gt; [161]        0        0        0        0        0        0        0        0
-#&gt; [169]        0        0        0        0        0        0        0        0
-#&gt; [177]        0        0        0        0        0        0        0        0
-#&gt; [185]        0        0        0        0        0        0        0        0
-#&gt; [193]        0        0        0        0        0        0        0        0
-#&gt; [201]        0        0        0        0        0        0        0        0
-#&gt; [209]        0        0        0        0        0        0        0        0
-#&gt; [217]        0        0        0        0        0        0        0        0
-#&gt; [225]        0        0        0
-#&gt; 
-#&gt; $step
-#&gt; [1] 152
-#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

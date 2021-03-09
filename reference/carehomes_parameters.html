@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -154,9 +154,8 @@
   rel_p_hosp_if_sympt <span class='op'>=</span> <span class='fl'>1</span>,
   rel_infectivity <span class='op'>=</span> <span class='fl'>1</span>,
   vaccine_progression_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
-  vaccine_uptake <span class='op'>=</span> <span class='cn'>NULL</span>,
-  vaccine_daily_doses <span class='op'>=</span> <span class='fl'>0</span>,
-  vaccine_daily_doses_date <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vaccine_schedule <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vaccine_index_dose2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
   model_pcr_and_serology_user <span class='op'>=</span> <span class='fl'>1</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
@@ -354,30 +353,13 @@ rate of progression from the jth vaccination class to the (j+1)th for age
 group i.</p></td>
     </tr>
     <tr>
-      <th>vaccine_uptake</th>
-      <td><p>A vector of length 19 with the proportion of
-the population who are able to be vaccinated.</p></td>
+      <th>vaccine_schedule</th>
+      <td><p>A <a href='vaccine_schedule.html'>vaccine_schedule</a> object indicating the
+people to be vaccinated by group over time</p></td>
     </tr>
     <tr>
-      <th>vaccine_daily_doses</th>
-      <td><p>A vector of values indicating the number of
-(first) vaccine doses per day to distribute. The actual number
-distributed will be stochastically distributed around this,
-provided there are sufficient eligible candidates. If
-<code>vaccine_daily_doses_date</code> is <code>NULL</code> this must be a scalar. If
-<code>vaccine_daily_doses_date</code> is given then <code>vaccine_daily_does_date</code> and
-<code>vaccine_daily_doses</code> must have the same length (see
-<code><a href='sircovid_parameters_piecewise_constant.html'>sircovid_parameters_piecewise_constant()</a></code>, where this is passed as
-<code>value</code>), and it is assumed there are 0 daily doses before the first
-specified date.</p></td>
-    </tr>
-    <tr>
-      <th>vaccine_daily_doses_date</th>
-      <td><p>A vector of <a href='sircovid_date.html'>sircovid_date</a> values
-for changes in the daily number of vaccine doses, or <code>NULL</code> if a single
-value is used for all times (see
-<code><a href='sircovid_parameters_piecewise_constant.html'>sircovid_parameters_piecewise_constant()</a></code>, where this is passed as
-<code>date</code>).</p></td>
+      <th>vaccine_index_dose2</th>
+      <td><p>The index to use for the second dose</p></td>
     </tr>
     <tr>
       <th>waning_rate</th>
@@ -409,7 +391,9 @@ within the odin code, though some are also used in processing
 just before the model is run.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'>
+<span class='va'>region</span> <span class='op'>&lt;-</span> <span class='st'>"london"</span>
+<span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $hosp_transmission
 #&gt; [1] 0
 #&gt; 
@@ -435,116 +419,115 @@ just before the model is run.</p>
 #&gt; [1] 0.08
 #&gt; 
 #&gt; $population
-#&gt;  [1] 3857263 4149852 3953866 3656968 4153080 4514249 4497132 4395667 4019539
-#&gt; [10] 4402122 4661015 4405908 3755185 3368199 3318867 2325296 3362599
+#&gt;  [1] 606004 602992 537605 467602 565427 770010 838109 781520 661032 596614
+#&gt; [11] 567017 495468 391074 312926 273546 193310 301733
 #&gt; 
 #&gt; $carehome_beds
-#&gt; [1] 537521
+#&gt; [1] 35564
 #&gt; 
 #&gt; $carehome_residents
-#&gt; [1] 398841
+#&gt; [1] 26388
 #&gt; 
 #&gt; $carehome_workers
-#&gt; [1] 398841
+#&gt; [1] 26388
 #&gt; 
 #&gt; $m
 #&gt;                 [0,4)        [5,9)      [10,14)      [15,19)      [20,24)
-#&gt; [0,4)    4.966707e-07 1.980202e-07 1.146078e-07 7.547886e-08 1.138137e-07
-#&gt; [5,9)    1.980202e-07 1.599396e-06 2.972491e-07 1.352721e-07 1.101069e-07
-#&gt; [10,14)  1.146078e-07 2.972491e-07 1.733225e-06 3.334453e-07 6.026086e-08
-#&gt; [15,19)  7.547886e-08 1.352721e-07 3.334453e-07 1.836025e-06 3.278825e-07
-#&gt; [20,24)  1.138137e-07 1.101069e-07 6.026086e-08 3.278825e-07 6.244090e-07
-#&gt; [25,29)  1.819153e-07 1.626085e-07 8.744544e-08 1.819264e-07 3.222430e-07
-#&gt; [30,34)  1.940880e-07 2.332740e-07 1.297928e-07 1.120304e-07 1.882853e-07
-#&gt; [35,39)  2.235471e-07 2.784775e-07 2.396054e-07 1.996738e-07 1.624326e-07
-#&gt; [40,44)  9.944949e-08 2.332186e-07 2.679243e-07 2.341623e-07 1.838660e-07
-#&gt; [45,49)  6.175863e-08 8.096090e-08 1.519569e-07 2.467186e-07 2.148012e-07
-#&gt; [50,54)  8.214138e-08 7.752704e-08 8.335625e-08 1.392241e-07 1.530723e-07
-#&gt; [55,59)  6.104769e-08 5.013907e-08 8.513107e-08 7.833919e-08 1.178128e-07
-#&gt; [60,64)  6.057159e-08 9.418311e-08 5.929099e-08 5.863294e-08 8.866898e-08
-#&gt; [65,69)  4.767006e-08 7.402091e-08 6.898452e-08 9.552015e-08 7.226646e-08
-#&gt; [70,74)  2.100618e-08 2.893729e-08 5.503570e-08 9.539437e-08 5.468746e-08
-#&gt; [75,79)  2.100618e-08 2.893729e-08 5.503570e-08 9.539437e-08 5.468746e-08
-#&gt; [80,100) 2.100618e-08 2.893729e-08 5.503570e-08 9.539437e-08 5.468746e-08
-#&gt; CHW      1.205649e-07 1.512986e-07 1.380629e-07 1.563385e-07 1.788978e-07
-#&gt; CHR      2.100618e-09 2.893729e-09 5.503570e-09 9.539437e-09 5.468746e-09
+#&gt; [0,4)    3.161348e-06 1.319430e-06 7.900780e-07 5.453716e-07 7.778341e-07
+#&gt; [5,9)    1.319430e-06 1.100720e-05 2.124195e-06 9.749905e-07 7.747056e-07
+#&gt; [10,14)  7.900780e-07 2.124195e-06 1.274717e-05 2.517955e-06 4.429459e-07
+#&gt; [15,19)  5.453716e-07 9.749905e-07 2.517955e-06 1.435898e-05 2.510819e-06
+#&gt; [20,24)  7.778341e-07 7.747056e-07 4.429459e-07 2.510819e-06 4.586304e-06
+#&gt; [25,29)  1.113966e-06 1.044914e-06 5.702188e-07 1.261678e-06 2.155378e-06
+#&gt; [30,34)  1.127793e-06 1.425261e-06 8.180012e-07 7.409853e-07 1.189016e-06
+#&gt; [35,39)  1.336883e-06 1.776266e-06 1.513314e-06 1.290362e-06 1.043805e-06
+#&gt; [40,44)  6.136411e-07 1.505346e-06 1.790263e-06 1.627237e-06 1.235879e-06
+#&gt; [45,49)  4.270248e-07 5.875836e-07 1.119126e-06 1.890765e-06 1.581396e-06
+#&gt; [50,54)  5.877758e-07 5.884340e-07 6.503774e-07 1.106381e-06 1.165694e-06
+#&gt; [55,59)  4.761266e-07 3.920319e-07 6.705895e-07 6.532076e-07 9.337941e-07
+#&gt; [60,64)  4.989705e-07 7.404991e-07 4.918079e-07 5.150288e-07 7.073104e-07
+#&gt; [65,69)  3.652815e-07 5.715578e-07 5.668887e-07 8.344055e-07 6.254129e-07
+#&gt; [70,74)  1.743744e-07 2.386333e-07 4.546425e-07 7.687184e-07 4.592928e-07
+#&gt; [75,79)  1.743744e-07 2.386333e-07 4.546425e-07 7.687184e-07 4.592928e-07
+#&gt; [80,100) 1.743744e-07 2.386333e-07 4.546425e-07 7.687184e-07 4.592928e-07
+#&gt; CHW      7.727726e-07 1.007542e-06 9.529621e-07 1.135706e-06 1.251534e-06
+#&gt; CHR      1.743744e-08 2.386333e-08 4.546425e-08 7.687184e-08 4.592928e-08
 #&gt;               [25,29)      [30,34)      [35,39)      [40,44)      [45,49)
-#&gt; [0,4)    1.819153e-07 1.940880e-07 2.235471e-07 9.944949e-08 6.175863e-08
-#&gt; [5,9)    1.626085e-07 2.332740e-07 2.784775e-07 2.332186e-07 8.096090e-08
-#&gt; [10,14)  8.744544e-08 1.297928e-07 2.396054e-07 2.679243e-07 1.519569e-07
-#&gt; [15,19)  1.819264e-07 1.120304e-07 1.996738e-07 2.341623e-07 2.467186e-07
-#&gt; [20,24)  3.222430e-07 1.882853e-07 1.624326e-07 1.838660e-07 2.148012e-07
-#&gt; [25,29)  4.054957e-07 2.389792e-07 1.870791e-07 1.918110e-07 2.005309e-07
-#&gt; [30,34)  2.389792e-07 3.706066e-07 2.728896e-07 2.145623e-07 1.654374e-07
-#&gt; [35,39)  1.870791e-07 2.728896e-07 3.412451e-07 3.032663e-07 2.149544e-07
-#&gt; [40,44)  1.918110e-07 2.145623e-07 3.032663e-07 3.370632e-07 3.085384e-07
-#&gt; [45,49)  2.005309e-07 1.654374e-07 2.149544e-07 3.085384e-07 4.254147e-07
-#&gt; [50,54)  1.882440e-07 1.671228e-07 1.606864e-07 1.873283e-07 1.702589e-07
-#&gt; [55,59)  1.560297e-07 1.454919e-07 1.379231e-07 1.451614e-07 1.482183e-07
-#&gt; [60,64)  1.189756e-07 1.374885e-07 1.668294e-07 1.791329e-07 1.414642e-07
-#&gt; [65,69)  1.147535e-07 8.979643e-08 1.540697e-07 1.348771e-07 8.620090e-08
-#&gt; [70,74)  4.760237e-08 3.516410e-08 4.653274e-08 1.307023e-07 1.059467e-07
-#&gt; [75,79)  4.760237e-08 3.516410e-08 4.653274e-08 1.307023e-07 1.059467e-07
-#&gt; [80,100) 4.760237e-08 3.516410e-08 4.653274e-08 1.307023e-07 1.059467e-07
-#&gt; CHW      2.108932e-07 2.140723e-07 2.231092e-07 2.333580e-07 2.218521e-07
-#&gt; CHR      4.760237e-09 3.516410e-09 4.653274e-09 1.307023e-08 1.059467e-08
+#&gt; [0,4)    1.113966e-06 1.127793e-06 1.336883e-06 6.136411e-07 4.270248e-07
+#&gt; [5,9)    1.044914e-06 1.425261e-06 1.776266e-06 1.505346e-06 5.875836e-07
+#&gt; [10,14)  5.702188e-07 8.180012e-07 1.513314e-06 1.790263e-06 1.119126e-06
+#&gt; [15,19)  1.261678e-06 7.409853e-07 1.290362e-06 1.627237e-06 1.890765e-06
+#&gt; [20,24)  2.155378e-06 1.189016e-06 1.043805e-06 1.235879e-06 1.581396e-06
+#&gt; [25,29)  2.377253e-06 1.335506e-06 1.071064e-06 1.148422e-06 1.336137e-06
+#&gt; [30,34)  1.335506e-06 1.988604e-06 1.509395e-06 1.223924e-06 1.017249e-06
+#&gt; [35,39)  1.071064e-06 1.509395e-06 1.919337e-06 1.775442e-06 1.368391e-06
+#&gt; [40,44)  1.148422e-06 1.223924e-06 1.775442e-06 2.049581e-06 2.071088e-06
+#&gt; [45,49)  1.336137e-06 1.017249e-06 1.368391e-06 2.071088e-06 3.138926e-06
+#&gt; [50,54)  1.317929e-06 1.080470e-06 1.074831e-06 1.301969e-06 1.341626e-06
+#&gt; [55,59)  1.095398e-06 1.054161e-06 9.717732e-07 1.057665e-06 1.181094e-06
+#&gt; [60,64)  8.662949e-07 9.633676e-07 1.142620e-06 1.308573e-06 1.205297e-06
+#&gt; [65,69)  8.330567e-07 5.886681e-07 1.095430e-06 9.771187e-07 6.999890e-07
+#&gt; [70,74)  3.341726e-07 2.415837e-07 4.018786e-07 9.512518e-07 9.525721e-07
+#&gt; [75,79)  3.341726e-07 2.415837e-07 4.018786e-07 9.512518e-07 9.525721e-07
+#&gt; [80,100) 3.341726e-07 2.415837e-07 4.018786e-07 9.512518e-07 9.525721e-07
+#&gt; CHW      1.318500e-06 1.271584e-06 1.354107e-06 1.492083e-06 1.582476e-06
+#&gt; CHR      3.341726e-08 2.415837e-08 4.018786e-08 9.512518e-08 9.525721e-08
 #&gt;               [50,54)      [55,59)      [60,64)      [65,69)      [70,74)
-#&gt; [0,4)    8.214138e-08 6.104769e-08 6.057159e-08 4.767006e-08 2.100618e-08
-#&gt; [5,9)    7.752704e-08 5.013907e-08 9.418311e-08 7.402091e-08 2.893729e-08
-#&gt; [10,14)  8.335625e-08 8.513107e-08 5.929099e-08 6.898452e-08 5.503570e-08
-#&gt; [15,19)  1.392241e-07 7.833919e-08 5.863294e-08 9.552015e-08 9.539437e-08
-#&gt; [20,24)  1.530723e-07 1.178128e-07 8.866898e-08 7.226646e-08 5.468746e-08
-#&gt; [25,29)  1.882440e-07 1.560297e-07 1.189756e-07 1.147535e-07 4.760237e-08
-#&gt; [30,34)  1.671228e-07 1.454919e-07 1.374885e-07 8.979643e-08 3.516410e-08
-#&gt; [35,39)  1.606864e-07 1.379231e-07 1.668294e-07 1.540697e-07 4.653274e-08
-#&gt; [40,44)  1.873283e-07 1.451614e-07 1.791329e-07 1.348771e-07 1.307023e-07
-#&gt; [45,49)  1.702589e-07 1.482183e-07 1.414642e-07 8.620090e-08 1.059467e-07
-#&gt; [50,54)  1.592838e-07 2.060829e-07 1.178586e-07 9.108480e-08 9.232320e-08
-#&gt; [55,59)  2.060829e-07 2.647960e-07 1.998500e-07 1.379069e-07 8.128181e-08
-#&gt; [60,64)  1.178586e-07 1.998500e-07 1.734975e-07 1.674043e-07 1.041277e-07
-#&gt; [65,69)  9.108480e-08 1.379069e-07 1.674043e-07 2.089258e-07 1.332611e-07
-#&gt; [70,74)  9.232320e-08 8.128181e-08 1.041277e-07 1.332611e-07 1.493131e-07
-#&gt; [75,79)  9.232320e-08 8.128181e-08 1.041277e-07 1.332611e-07 1.493131e-07
-#&gt; [80,100) 9.232320e-08 8.128181e-08 1.041277e-07 1.332611e-07 1.493131e-07
-#&gt; CHW      1.696082e-07 1.754442e-07 1.543871e-07 1.220117e-07 8.046011e-08
-#&gt; CHR      9.232320e-09 8.128181e-09 1.041277e-08 1.332611e-08 1.493131e-08
+#&gt; [0,4)    5.877758e-07 4.761266e-07 4.989705e-07 3.652815e-07 1.743744e-07
+#&gt; [5,9)    5.884340e-07 3.920319e-07 7.404991e-07 5.715578e-07 2.386333e-07
+#&gt; [10,14)  6.503774e-07 6.705895e-07 4.918079e-07 5.668887e-07 4.546425e-07
+#&gt; [15,19)  1.106381e-06 6.532076e-07 5.150288e-07 8.344055e-07 7.687184e-07
+#&gt; [20,24)  1.165694e-06 9.337941e-07 7.073104e-07 6.254129e-07 4.592928e-07
+#&gt; [25,29)  1.317929e-06 1.095398e-06 8.662949e-07 8.330567e-07 3.341726e-07
+#&gt; [30,34)  1.080470e-06 1.054161e-06 9.633676e-07 5.886681e-07 2.415837e-07
+#&gt; [35,39)  1.074831e-06 9.717732e-07 1.142620e-06 1.095430e-06 4.018786e-07
+#&gt; [40,44)  1.301969e-06 1.057665e-06 1.308573e-06 9.771187e-07 9.512518e-07
+#&gt; [45,49)  1.341626e-06 1.181094e-06 1.205297e-06 6.999890e-07 9.525721e-07
+#&gt; [50,54)  1.309351e-06 1.756463e-06 1.044103e-06 8.288251e-07 8.619066e-07
+#&gt; [55,59)  1.756463e-06 2.354676e-06 1.850658e-06 1.303483e-06 8.419123e-07
+#&gt; [60,64)  1.044103e-06 1.850658e-06 1.665964e-06 1.670145e-06 1.055041e-06
+#&gt; [65,69)  8.288251e-07 1.303483e-06 1.670145e-06 2.248786e-06 1.473635e-06
+#&gt; [70,74)  8.619066e-07 8.419123e-07 1.055041e-06 1.473635e-06 1.749736e-06
+#&gt; [75,79)  8.619066e-07 8.419123e-07 1.055041e-06 1.473635e-06 1.749736e-06
+#&gt; [80,100) 8.619066e-07 8.419123e-07 1.055041e-06 1.473635e-06 1.749736e-06
+#&gt; CHW      1.278343e-06 1.415236e-06 1.255860e-06 9.995894e-07 7.050399e-07
+#&gt; CHR      8.619066e-08 8.419123e-08 1.055041e-07 1.473635e-07 1.749736e-07
 #&gt;               [75,79)     [80,100)          CHW          CHR
-#&gt; [0,4)    2.100618e-08 2.100618e-08 1.205649e-07 2.100618e-09
-#&gt; [5,9)    2.893729e-08 2.893729e-08 1.512986e-07 2.893729e-09
-#&gt; [10,14)  5.503570e-08 5.503570e-08 1.380629e-07 5.503570e-09
-#&gt; [15,19)  9.539437e-08 9.539437e-08 1.563385e-07 9.539437e-09
-#&gt; [20,24)  5.468746e-08 5.468746e-08 1.788978e-07 5.468746e-09
-#&gt; [25,29)  4.760237e-08 4.760237e-08 2.108932e-07 4.760237e-09
-#&gt; [30,34)  3.516410e-08 3.516410e-08 2.140723e-07 3.516410e-09
-#&gt; [35,39)  4.653274e-08 4.653274e-08 2.231092e-07 4.653274e-09
-#&gt; [40,44)  1.307023e-07 1.307023e-07 2.333580e-07 1.307023e-08
-#&gt; [45,49)  1.059467e-07 1.059467e-07 2.218521e-07 1.059467e-08
-#&gt; [50,54)  9.232320e-08 9.232320e-08 1.696082e-07 9.232320e-09
-#&gt; [55,59)  8.128181e-08 8.128181e-08 1.754442e-07 8.128181e-09
-#&gt; [60,64)  1.041277e-07 1.041277e-07 1.543871e-07 1.041277e-08
-#&gt; [65,69)  1.332611e-07 1.332611e-07 1.220117e-07 1.332611e-08
-#&gt; [70,74)  1.493131e-07 1.493131e-07 8.046011e-08 1.493131e-08
-#&gt; [75,79)  1.493131e-07 1.493131e-07 8.046011e-08 1.493131e-08
-#&gt; [80,100) 1.493131e-07 1.493131e-07 8.046011e-08 1.493131e-08
-#&gt; CHW      8.046011e-08 8.046011e-08 4.000000e-06 4.000000e-06
-#&gt; CHR      1.493131e-08 1.493131e-08 4.000000e-06 5.000000e-05
+#&gt; [0,4)    1.743744e-07 1.743744e-07 7.727726e-07 1.743744e-08
+#&gt; [5,9)    2.386333e-07 2.386333e-07 1.007542e-06 2.386333e-08
+#&gt; [10,14)  4.546425e-07 4.546425e-07 9.529621e-07 4.546425e-08
+#&gt; [15,19)  7.687184e-07 7.687184e-07 1.135706e-06 7.687184e-08
+#&gt; [20,24)  4.592928e-07 4.592928e-07 1.251534e-06 4.592928e-08
+#&gt; [25,29)  3.341726e-07 3.341726e-07 1.318500e-06 3.341726e-08
+#&gt; [30,34)  2.415837e-07 2.415837e-07 1.271584e-06 2.415837e-08
+#&gt; [35,39)  4.018786e-07 4.018786e-07 1.354107e-06 4.018786e-08
+#&gt; [40,44)  9.512518e-07 9.512518e-07 1.492083e-06 9.512518e-08
+#&gt; [45,49)  9.525721e-07 9.525721e-07 1.582476e-06 9.525721e-08
+#&gt; [50,54)  8.619066e-07 8.619066e-07 1.278343e-06 8.619066e-08
+#&gt; [55,59)  8.419123e-07 8.419123e-07 1.415236e-06 8.419123e-08
+#&gt; [60,64)  1.055041e-06 1.055041e-06 1.255860e-06 1.055041e-07
+#&gt; [65,69)  1.473635e-06 1.473635e-06 9.995894e-07 1.473635e-07
+#&gt; [70,74)  1.749736e-06 1.749736e-06 7.050399e-07 1.749736e-07
+#&gt; [75,79)  1.749736e-06 1.749736e-06 7.050399e-07 1.749736e-07
+#&gt; [80,100) 1.749736e-06 1.749736e-06 7.050399e-07 1.749736e-07
+#&gt; CHW      7.050399e-07 7.050399e-07 4.000000e-06 4.000000e-06
+#&gt; CHR      1.749736e-07 1.749736e-07 4.000000e-06 5.000000e-05
 #&gt; 
 #&gt; $N_tot
-#&gt;  [1] 3857263 4149852 3953866 3656968 4153080 4464394 4447277 4345812 3969684
-#&gt; [10] 4352267 4611160 4356053 3705330 3348257 3298925 2265470 3063468  398841
-#&gt; [19]  398841
+#&gt;  [1] 606004 602992 537605 467602 565427 766712 834810 778222 657734 593316
+#&gt; [11] 563718 492170 387776 311607 272227 189352 281942  26388  26388
 #&gt; 
 #&gt; $N_tot_15_64
-#&gt; [1] 42062025
+#&gt; [1] 6107487
 #&gt; 
 #&gt; $N_tot_all
-#&gt; [1] 66796808
+#&gt; [1] 8961992
 #&gt; 
 #&gt; $N_tot_over25
-#&gt; [1] 47025779
+#&gt; [1] 6182362
 #&gt; 
 #&gt; $N_tot_react
-#&gt; [1] 62540704
+#&gt; [1] 8329600
 #&gt; 
 #&gt; $sero_specificity
 #&gt; [1] 0.9
@@ -882,6 +865,34 @@ just before the model is run.</p>
 #&gt; [18,]    1
 #&gt; [19,]    1
 #&gt; 
+#&gt; $vaccine_dose_step
+#&gt; , , 1
+#&gt; 
+#&gt;       [,1] [,2]
+#&gt;  [1,]    0    0
+#&gt;  [2,]    0    0
+#&gt;  [3,]    0    0
+#&gt;  [4,]    0    0
+#&gt;  [5,]    0    0
+#&gt;  [6,]    0    0
+#&gt;  [7,]    0    0
+#&gt;  [8,]    0    0
+#&gt;  [9,]    0    0
+#&gt; [10,]    0    0
+#&gt; [11,]    0    0
+#&gt; [12,]    0    0
+#&gt; [13,]    0    0
+#&gt; [14,]    0    0
+#&gt; [15,]    0    0
+#&gt; [16,]    0    0
+#&gt; [17,]    0    0
+#&gt; [18,]    0    0
+#&gt; [19,]    0    0
+#&gt; 
+#&gt; 
+#&gt; $index_dose
+#&gt; [1] 1 1
+#&gt; 
 #&gt; $vaccine_progression_rate_base
 #&gt;       [,1]
 #&gt;  [1,]    0
@@ -903,12 +914,6 @@ just before the model is run.</p>
 #&gt; [17,]    0
 #&gt; [18,]    0
 #&gt; [19,]    0
-#&gt; 
-#&gt; $vaccine_population_reluctant
-#&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-#&gt; 
-#&gt; $vaccine_daily_doses_step
-#&gt; [1] 0
 #&gt; 
 #&gt; $waning_rate
 #&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1008,25 +1013,29 @@ just before the model is run.</p>
 <span class='co'># The vaccine also reduces infectivity of infected individuals by half</span>
 <span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span><span class='op'>)</span>
 
-<span class='co'># Vaccination occurs at a constant rate of 0.03 per day,</span>
-<span class='co'># (i.e. average time to vaccination is 33 days)</span>
-<span class='co'># similar across all age groups.</span>
-<span class='co'># the period of build-up of immunity following vaccination is exponentially</span>
-<span class='co'># distributed and lasts on average two weeks;</span>
+<span class='co'># On average 10000 first doses of vaccine are given every day</span>
+<span class='co'># Second doses are given on average 12 weeks after the first dose</span>
 <span class='co'># vaccine-induced immunity wanes after a period which is exponentially</span>
 <span class='co'># distributed and lasts on average 26 weeks (half a year);</span>
 <span class='co'># they are similar across all age groups</span>
-<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>26</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>26</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='va'>daily_doses</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>10000</span>, <span class='fl'>365</span><span class='op'>)</span>
+<span class='va'>mean_days_between_doses</span> <span class='op'>&lt;-</span> <span class='fl'>12</span> <span class='op'>*</span> <span class='fl'>7</span>
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vaccine_priority_proportion.html'>vaccine_priority_population</a></span><span class='op'>(</span><span class='va'>region</span>, uptake <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>schedule</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vaccine_schedule_future.html'>vaccine_schedule_future</a></span><span class='op'>(</span>
+  <span class='fl'>0</span>, <span class='va'>daily_doses</span>, <span class='va'>mean_days_between_doses</span>, <span class='va'>n</span><span class='op'>)</span>
 
 <span class='co'># generate model parameters</span>
 <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
-       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
+       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span>,
        rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
        rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
        rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
        rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,
        vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
-       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
+       vaccine_schedule <span class='op'>=</span> <span class='va'>schedule</span>,
+       vaccine_index_dose2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 
 <span class='co'># vaccination parameters are automatically copied across all age groups</span>
 <span class='va'>p</span><span class='op'>$</span><span class='va'>rel_susceptibility</span>
@@ -1112,26 +1121,26 @@ just before the model is run.</p>
 #&gt; [19,]    1  0.5  0.5</div><div class='input'><span class='co'># Note that this is only the "base" rate as we fill in the first</span>
 <span class='co'># column dynamically based on vaccine_daily_doses</span>
 <span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
-</div><div class='output co'>#&gt;       [,1]       [,2]        [,3]
-#&gt;  [1,]    0 0.07142857 0.005494505
-#&gt;  [2,]    0 0.07142857 0.005494505
-#&gt;  [3,]    0 0.07142857 0.005494505
-#&gt;  [4,]    0 0.07142857 0.005494505
-#&gt;  [5,]    0 0.07142857 0.005494505
-#&gt;  [6,]    0 0.07142857 0.005494505
-#&gt;  [7,]    0 0.07142857 0.005494505
-#&gt;  [8,]    0 0.07142857 0.005494505
-#&gt;  [9,]    0 0.07142857 0.005494505
-#&gt; [10,]    0 0.07142857 0.005494505
-#&gt; [11,]    0 0.07142857 0.005494505
-#&gt; [12,]    0 0.07142857 0.005494505
-#&gt; [13,]    0 0.07142857 0.005494505
-#&gt; [14,]    0 0.07142857 0.005494505
-#&gt; [15,]    0 0.07142857 0.005494505
-#&gt; [16,]    0 0.07142857 0.005494505
-#&gt; [17,]    0 0.07142857 0.005494505
-#&gt; [18,]    0 0.07142857 0.005494505
-#&gt; [19,]    0 0.07142857 0.005494505</div><div class='input'>
+</div><div class='output co'>#&gt;       [,1] [,2]        [,3]
+#&gt;  [1,]    0    0 0.005494505
+#&gt;  [2,]    0    0 0.005494505
+#&gt;  [3,]    0    0 0.005494505
+#&gt;  [4,]    0    0 0.005494505
+#&gt;  [5,]    0    0 0.005494505
+#&gt;  [6,]    0    0 0.005494505
+#&gt;  [7,]    0    0 0.005494505
+#&gt;  [8,]    0    0 0.005494505
+#&gt;  [9,]    0    0 0.005494505
+#&gt; [10,]    0    0 0.005494505
+#&gt; [11,]    0    0 0.005494505
+#&gt; [12,]    0    0 0.005494505
+#&gt; [13,]    0    0 0.005494505
+#&gt; [14,]    0    0 0.005494505
+#&gt; [15,]    0    0 0.005494505
+#&gt; [16,]    0    0 0.005494505
+#&gt; [17,]    0    0 0.005494505
+#&gt; [18,]    0    0 0.005494505
+#&gt; [19,]    0    0 0.005494505</div><div class='input'>
 <span class='co'>### same example as above BUT assume a different effect of vaccine in the</span>
 <span class='co'>### first age group</span>
 <span class='va'>n_groups</span> <span class='op'>&lt;-</span> <span class='fl'>19</span>
@@ -1182,144 +1191,22 @@ just before the model is run.</p>
 <span class='co'># but the first age group loses immunity more quickly</span>
 <span class='co'># (on average after 3 months) than the other age groups</span>
 <span class='co'># (on average after 6 months)</span>
-<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fl'>0</span>,
-                                  <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>2</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>, <span class='va'>n_groups</span><span class='op'>)</span>,
+<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span>,
                                   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>13</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>,
                                   <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>26</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>, <span class='va'>n_groups</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># generate model parameters</span>
 <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
-       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
+       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span>,
        rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
        rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
        rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
        rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,
        vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
-       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
+       vaccine_schedule <span class='op'>=</span> <span class='va'>schedule</span>,
+       vaccine_index_dose2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 
-<span class='co'># vaccine_daily_doses_date can be unspecified when vaccine_daily_doses is a</span>
-<span class='co'># scalar, and will result in a scalar for vaccine_daily_doses_step, and this</span>
-<span class='co'># value will be used for the whole simulation</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
-       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
-       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span><span class='op'>)</span>
-<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_daily_doses_step</span>
-</div><div class='output co'>#&gt; [1] 10000</div><div class='input'>
-<span class='co'># Alternatively, vaccine_daily_doses_date can be specified (as a single</span>
-<span class='co'># sircovid_date) when vaccine_daily_doses is a scalar. vaccine_daily_doses</span>
-<span class='co'># is then the number of daily doses from that date onwards in the</span>
-<span class='co'># simulation, with the number before that date being 0.</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
-       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
-       vaccine_daily_doses <span class='op'>=</span> <span class='fl'>10000</span>,
-       vaccine_daily_doses_date <span class='op'>=</span> <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-05-01"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_daily_doses_step</span>
-</div><div class='output co'>#&gt;   [1]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [13]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [25]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [37]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [49]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [61]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [73]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [85]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [97]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [109]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [121]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [133]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [145]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [157]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [169]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [181]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [193]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [205]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [217]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [229]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [241]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [253]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [265]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [277]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [289]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [301]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [313]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [325]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [337]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [349]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [361]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [373]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [385]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [397]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [409]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [421]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [433]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [445]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [457]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [469]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [481]     0     0     0     0     0     0     0     0 10000</div><div class='input'>
-<span class='co'># vaccine_daily_doses_date must be specified when vaccine_daily_doses is a</span>
-<span class='co'># vector of values, as a vector of sircovid_dates of the same length. In</span>
-<span class='co'># this case, before the first specified date, the number of daily doses in</span>
-<span class='co'># the simulation will be 0. vaccine_daily_doses gives the number of daily</span>
-<span class='co'># doses from the corresponding date in vaccine_daily_doses_date until the</span>
-<span class='co'># subsequent one. After the last date in vaccine_daily_doses_date, the</span>
-<span class='co'># daily doses are fixed at the last value in vaccine_daily_doses.</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
-       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='st'>"uk"</span>,
-       vaccine_daily_doses <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10000</span>, <span class='fl'>20000</span><span class='op'>)</span>,
-       vaccine_daily_doses_date <span class='op'>=</span>
-          <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2020-05-01"</span>, <span class='st'>"2020-06-01"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_daily_doses_step</span>
-</div><div class='output co'>#&gt;   [1]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [13]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [25]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [37]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [49]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [61]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [73]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [85]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt;  [97]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [109]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [121]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [133]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [145]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [157]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [169]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [181]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [193]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [205]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [217]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [229]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [241]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [253]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [265]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [277]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [289]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [301]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [313]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [325]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [337]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [349]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [361]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [373]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [385]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [397]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [409]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [421]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [433]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [445]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [457]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [469]     0     0     0     0     0     0     0     0     0     0     0     0
-#&gt; [481]     0     0     0     0     0     0     0     0 10000 10000 10000 10000
-#&gt; [493] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [505] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [517] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [529] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [541] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [553] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [565] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [577] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [589] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [601] 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000
-#&gt; [613] 20000</div><div class='input'>
+<span class='co'># TODO: add an example of manually set up vaccine schedule</span>
 
 </div></pre>
   </div>
