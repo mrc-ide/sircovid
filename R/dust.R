@@ -275,6 +275,8 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), exp_noise = list(
         has_default = FALSE, default_value = NULL, rank = 0,
+        min = -Inf, max = Inf, integer = FALSE), gamma_H_R = list(
+        has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), gamma_H_R_step = list(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), hosp_transmission = list(

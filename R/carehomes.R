@@ -329,7 +329,8 @@ carehomes_parameters <- function(start_date, region,
   severity$p_star_step <- max(severity$p_star)
 
   progression <- progression %||% carehomes_parameters_progression()
-  ## time varying gammas
+  
+  ## implementation of time-varying progression gammas
   progression$gamma_H_R_step <- max(progression$gamma_H_R)
 
   waning <- carehomes_parameters_waning(waning_rate)
@@ -949,7 +950,6 @@ carehomes_parameters_progression <- function() {
        gamma_C_2 = 1 / 1.86,
        gamma_G_D = 1 / (3 / 2),
        gamma_H_D = 2 / 5,
-       gamma_H_R = user(),#2 / 10,
        gamma_ICU_D = 2 / 5,
        gamma_ICU_W_R = 2 / 10,
        gamma_ICU_W_D = 2 / 10,
@@ -964,7 +964,8 @@ carehomes_parameters_progression <- function() {
        gamma_PCR_pos = 1 / 5,
        
        # time varying gammas
-       gamma_H_R_step = user(1)
+       n_gamma_H = user(),
+       gamma_H_R = 1 / 10
        )
 }
 
