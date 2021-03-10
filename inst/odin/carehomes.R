@@ -190,6 +190,11 @@ p_star <- if (as.integer(step) >= length(p_star_step))
   p_star_step[length(p_star_step)] else p_star_step[step + 1]
 p_star_by_age[] <- p_star * psi_star[i]
 
+## Work out time-varying gammas
+gamma_H_R <- if (as.integer(step) >= length(gamma_H_R_step))
+  gamma_H_R_step[length(gamma_H_R_step)] else gamma_H_R_step[step + 1]
+# gamma_H_R_by_age[] <- gamma_H_R / psi_gamma_H_R[i]
+
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
 
@@ -933,7 +938,10 @@ psi_W_D[] <- user()
 
 ## Parameters of the H_R classes
 k_H_R <- user()
-gamma_H_R <- user(0.1)
+# gamma_H_R <- user(0.1)
+dim(gamma_H_R_step) <- user()
+gamma_H_R_step[] <- user()
+# psi_gamma_H_R[] <- user()
 
 ## Parameters of the H_D classes
 k_H_D <- user()
@@ -1306,6 +1314,10 @@ dim(p_ICU_D_by_age) <- n_groups
 dim(psi_ICU_D) <- n_groups
 dim(p_W_D_by_age) <- n_groups
 dim(psi_W_D) <- n_groups
+
+## Vectors handling the time to hospital discharge
+# dim(gamma_H_R_by_age) <- n_groups
+# dim(psi_gamma_H_R) <- n_groups
 
 ## Vector handling the probability of being admitted as confirmed
 dim(p_star_by_age) <- n_groups
