@@ -1,0 +1,11 @@
+#!/usr/bin/env Rscript
+if (packageVersion("odin.dust") < "0.2.3") {
+  stop("Please upgrade odin.dust to at least 0.2.3")
+}
+
+root <- here::here()
+withr::with_collate(
+  "C",
+  odin.dust::odin_dust_(file.path(root, "inst/odin/carehomes.R"),
+                        workdir = file.path(root, "inst/cuda"),
+                        real_t = "float", gpu = TRUE, rewrite_dims = TRUE))

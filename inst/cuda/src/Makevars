@@ -1,0 +1,11 @@
+# -*-makefile-*-
+CXX_STD = CXX14
+OBJECTS = cpp11.o dust.o
+PKG_LIBS =  -lcudart $(SHLIB_OPENMP_CXXFLAGS)
+PKG_CXXFLAGS=-I/home/rfitzjoh/lib/R/library/dust/include -DHAVE_INLINE $(SHLIB_OPENMP_CXXFLAGS)
+
+NVCC = nvcc
+NVCC_FLAGS = -std=c++14 -O2 -I. -I$(R_INCLUDE_DIR) -I/home/rfitzjoh/lib/R/library/dust/include -I/home/rfitzjoh/.local/share/R/dust/cub $(CLINK_CPPFLAGS) -gencode=arch=compute_75,code=sm_75 -Xcompiler -fPIC -x cu
+
+%.o: %.cu
+	$(NVCC) $(NVCC_FLAGS) -c $< -o $@

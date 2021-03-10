@@ -13,8 +13,8 @@ model_pcr_and_serology <- if (model_pcr_and_serology_user == 1) 1 else 0
 
 ## Number of "groups", being the age classes, Carehome workers and
 ## Carehome residents. This will be 19 in all but experimental uses.
-n_age_groups <- user()
-n_groups <- user()
+n_age_groups <- 17
+n_groups <- 19
 
 ## Definition of the time-step and output as "time"
 steps_per_day <- user(integer = TRUE)
