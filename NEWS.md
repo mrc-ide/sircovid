@@ -1,7 +1,13 @@
+# sircovid 0.10.5
+
+* Can control the number of initial infected individuals used in seeding
+
 # sircovid 0.10.3
+
 * Predefined vaccination schedule implemented
 
 # sircovid 0.10.1
+
 * Rt corrected for restructured model
 
 # sircovid 0.10.0
