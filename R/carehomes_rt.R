@@ -224,7 +224,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 }
 
 
-## Brute force draws from the GT
+##' Brute force draws from the GT
+##' @importFrom distcrete dbinom
 draw_one_GT_sample <- function(p, n = 1000) {
 
   ## Note: the above does not account for the impact of
@@ -291,6 +292,9 @@ draw_one_GT_distr <- function(p, n = 1000) {
 }
 
 
+##' Brute force draws from the GT
+##' @importFrom EpiEstim make_config estimate_R
+##' @importFrom epitrix gamma_mucv2shapescale
 carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                   sliding_window_ndays = 7,
                                   mean_prior = 1,
