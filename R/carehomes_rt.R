@@ -65,7 +65,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                    paste(squote(all_types), collapse = ", ")))
     }
   }
-  
+
   if (!is.null(interpolate_every)) {
     interpolate_critical_index <- match(interpolate_critical_dates / p$dt, step)
     step_index_split <- interpolate_grid_critical_x(seq_along(step),
@@ -85,7 +85,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ret$beta <- sircovid_parameters_beta_expand(step, p$beta_step)
     return(ret)
   }
-  
+
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vaccine classes",
@@ -117,21 +117,21 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
         length(step)))
     }
   }
-  
+
   n_vacc_classes <- ncol(p$rel_susceptibility)
   n_strains <- length(p$strain_transmission)
-  
+
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
   mean_duration <- carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
-  
+
   ages <- seq_len(p$n_age_groups)
   ch <- seq(p$n_age_groups + 1L, p$n_groups)
   if (n_vacc_classes > 1L) {
     ch <- c(outer(ch, (seq_len(n_vacc_classes) - 1L) * p$n_groups, "+"))
   }
-  
+
   ## We only need to do this section for each different beta value,
   ## and then it's still a pretty straightfoward scaling; we've
   ## applied beta to all *but* a fraction of the matrix (i.e., in the matrix
@@ -153,7 +153,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   m <- block_expand(unname(p$m), n_vacc_classes)
   mt <- m %o% beta
   mt[ch, ch, ] <- m[ch, ch]
-  
+
   n_time <- length(step)
   prob_strain_mat <- array(prob_strain, c(p$n_groups, n_strains, n_time))
   if (any(is.na(prob_strain))) {
@@ -163,7 +163,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ret[type] <- list(rep(NA_real_, length(step)))
     return(ret)
   }
-  
+
   if (n_strains > 1L) {
     weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
       matrix(prob_strain_mat[, , t] %*% p$strain_transmission,
@@ -171,7 +171,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       matrix(0, p$n_groups, n_vacc_classes))
     mean_duration <- mean_duration * weighted_strain_multiplier
   }
-  
+
   compute_ngm <- function(S) {
     len <- p$n_groups * n_vacc_classes
     Sw <- S * c(p$rel_susceptibility)
@@ -179,7 +179,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       tcrossprod(c(mean_duration[, , t]), Sw[, t]),
       matrix(0, len, len))
   }
-  
+
   ## NOTE the signs on the exponents here is different! This gives
   ## good performance and reasonable accuracy to the point where
   ## this calculation is small in the profile.
@@ -187,11 +187,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     eigen1::eigen1(m, max_iterations = 1e5, tolerance = 1e-6,
                    method = eigen_method)
   }
-  
+
   ret <- list(step = step,
               date = step * p$dt,
               beta = beta)
-  
+
   if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
     ngm <- compute_ngm(S)
     if ("eff_Rt_all" %in% type) {
@@ -201,7 +201,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       ret$eff_Rt_general <- eigen(ngm[-ch, -ch, ])
     }
   }
-  
+
   if (any(c("Rt_all", "Rt_general") %in% type)) {
     N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
     N_tot_all_vacc_groups <- N_tot_non_vacc
@@ -219,21 +219,21 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       ret$Rt_general <- eigen(ngm[-ch, -ch, ])
     }
   }
-  
+
   ret
 }
 
 
 ## Brute force draws from the GT
 draw_one_GT_sample <- function(p, n = 1000) {
-  
+
   ## Note: the above does not account for the impact of
   ## vaccination on the generation time.
-  
+
   if (length(unique(p$p_C)) > 1)  {
     stop("draw_one_GT_sample does not allow p_C to vary by age")
   }
-  
+
   if (p$I_C_2_transmission > 0) {
     stop("draw_one_GT_sample does not allow transmission from I_C_2")
   }
@@ -244,16 +244,16 @@ draw_one_GT_sample <- function(p, n = 1000) {
     stop("draw_one_GT_sample does not allow
     I_P_transmission !=1 or I_C_1_transmission != 1")
   }
-  
+
   draw_from <- function(n, k, gamma) {
     discrete_gamma <-
       distcrete::distcrete("gamma", p$dt, shape = k, rate = gamma, w = 1)
     discrete_gamma$r(n)
   }
-  
+
   sample_GT <- numeric(0)
   i <- 0
-  
+
   while (i < n) {
     ## Draw exposed period
     sample_E <- draw_from(1, p$k_E, p$gamma_E)
@@ -273,9 +273,9 @@ draw_one_GT_sample <- function(p, n = 1000) {
                    sample(tmp_GT, n_secondary_cases, replace = TRUE))
     i <- length(sample_GT)
   }
-  
-  sample_GT # requires + ~0.8 to match the data. WHY???
-  
+
+  sample_GT
+
 }
 
 ## Brute force draws from the GT
@@ -283,7 +283,7 @@ draw_one_GT_distr <- function(p, n = 1000) {
   sample_GT <- draw_one_GT_sample(p, n)
   ## the discretisation below allows having a zero on the first day
   ## which is required by EpiEstim
-  ## this is because the GT is computed from the sum of E and I 
+  ## this is because the GT is computed from the sum of E and I
   ## and each of those is at least 0.25 days
   ## hence the GT is at least 0.5 day
   hist(sample_GT, breaks = seq(0, ceiling(max(sample_GT) + 1), 1) - 0.51,
@@ -299,12 +299,12 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                   n_R = 1000,
                                   save_all = TRUE) {
   gt_distr <- draw_one_GT_distr(p = p, n = n_GT)
-  
+
   T <- ncol(incidence)
   np <- nrow(incidence)
   t_start <- seq(2, T - sliding_window_ndays + 1)
   t_end <- seq(sliding_window_ndays + 1, T)
-  
+
   # generate the config based on incidence for first parameter set
   config <- EpiEstim::make_config(incid = incidence[1, ],
                                   t_start = t_start,
@@ -313,23 +313,23 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                   si_distr = gt_distr,
                                   mean_prior = mean_prior,
                                   std_prior = sd_prior)
-  
+
   R_sample <- matrix(NA, length(t_start), n_R * np)
-  
+
   for (i in seq_len(np)) {
     ## this function gives warning when precision in estimates is not good
     ## but we don't care
     R_i <- suppressWarnings(EpiEstim::estimate_R(incid = incidence[i, ],
                                                  config = config)$R)
-    
+
     R_i_shape_scale <-
       epitrix::gamma_mucv2shapescale(mu = R_i$`Mean(R)`,
                                      cv = R_i$`Std(R)` / R_i$`Mean(R)`)
-    
-    R_sample[, n_R * (i-1) + seq_len(n_R)] <-
+
+    R_sample[, n_R * (i - 1) + seq_len(n_R)] <-
       t(sapply(seq_len(length(t_start)), function(e) {
         if (!is.na(R_i_shape_scale$shape[e])) {
-          ret <- rgamma(n_R, shape = R_i_shape_scale$shape[e], 
+          ret <- rgamma(n_R, shape = R_i_shape_scale$shape[e],
                         scale = R_i_shape_scale$scale[e])
         } else {
           ret <- rep(NA, n_R)
@@ -337,26 +337,25 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
         ret
       }))
   }
-  
+
   summary_R <- apply(R_sample, 1, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
   mean_R <- apply(R_sample, 1, mean, na.rm = TRUE)
   summary_R <- rbind(summary_R, mean_R)
-  
+
   time_start <- step[t_start] * p$dt
   time_end <- step[t_end] * p$dt
-  
-  if(save_all) {
+
+  if (save_all) {
     ret <- list(t_start = time_start,
                 t_end = time_end,
                 Rt = R_sample,
                 Rt_summary = summary_R)
-  } else
-  {
+  } else {
     ret <- list(t_start = time_start,
                 t_end = time_end,
                 Rt_summary = summary_R)
   }
-  
+
 }
 
 
@@ -426,26 +425,26 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   dt <- pars$dt
-  
+
   matricise <- function(vect, n_col) {
     matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
   }
-  
+
   n_vacc_classes <- ncol(pars$rel_susceptibility)
-  
+
   n_groups <- pars$n_groups
-  
+
   n_time_steps <-
     length(sircovid_parameters_beta_expand(step, pars$p_H_step))
-  
+
   ## compute probabilities of different pathways
-  
+
   p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
   p_C <- outer(p_C, rep(1, n_time_steps))
-  
+
   p_H <- matricise(pars$psi_H, n_vacc_classes) * pars$rel_p_hosp_if_sympt
   p_H <- outer(p_H, sircovid_parameters_beta_expand(step, pars$p_H_step))
-  
+
   p_ICU <- outer(matricise(pars$psi_ICU, n_vacc_classes),
                  sircovid_parameters_beta_expand(step, pars$p_ICU_step))
   p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
@@ -456,7 +455,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
                  sircovid_parameters_beta_expand(step, pars$p_W_D_step))
   p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
                  sircovid_parameters_beta_expand(step, pars$p_G_D_step))
-  
+
   prob_H_R <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * (1 - p_H_D)
   prob_H_D <- p_C * p_H * (1 - p_G_D) *
@@ -467,52 +466,52 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
     p_ICU * (1 - p_ICU_D) * p_W_D
   prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
     p_ICU * p_ICU_D
-  
+
   ## Compute mean duration (in time steps) of each stage of infection,
   ## weighed by probability of going through that stage
   ## and by relative infectivity of that stage
-  
+
   ## Note the mean duration (in time steps) of a compartment for
   ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
-  
+
   mean_duration_I_A <- pars$I_A_transmission * (1 - p_C) *
     pars$k_A / (1 - exp(- dt * pars$gamma_A))
-  
+
   mean_duration_I_P <- pars$I_P_transmission * p_C *
     pars$k_P / (1 - exp(- dt * pars$gamma_P))
-  
+
   mean_duration_I_C_1 <- pars$I_C_1_transmission * p_C *
     pars$k_C_1 / (1 - exp(- dt * pars$gamma_C_1))
-  
+
   mean_duration_I_C_2 <- pars$I_C_2_transmission * p_C *
     pars$k_C_2 / (1 - exp(- dt * pars$gamma_C_2))
-  
+
   mean_duration_G_D <- pars$G_D_transmission * p_C * p_H *
     p_G_D * pars$k_G_D / (1 - exp(- dt * pars$gamma_G_D))
-  
+
   mean_duration_hosp <- pars$hosp_transmission * (
     prob_H_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
       prob_H_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
       (prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D) * pars$k_ICU_pre /
       (1 - exp(- dt * pars$gamma_ICU_pre)))
-  
+
   mean_duration_icu <- pars$ICU_transmission * (
     prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
       prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
       prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
-  
+
   mean_duration <- mean_duration_I_A + mean_duration_I_P + mean_duration_I_C_1 +
     mean_duration_I_C_2 + mean_duration_G_D + mean_duration_hosp +
     mean_duration_icu
-  
+
   ## Account for different infectivity levels depending on vaccination stage
-  
+
   mean_duration <- mean_duration *
     outer(pars$rel_infectivity, rep(1, n_time_steps))
-  
+
   ## Multiply by dt to convert from time steps to days
   mean_duration <- dt * mean_duration
-  
+
   mean_duration
 }
 
@@ -527,7 +526,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
-  
+
   shared_parameters <- shared_parameters %||% !is.null(names(pars))
   if (shared_parameters) {
     if (is.null(names(pars))) {
@@ -544,13 +543,13 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
         length(pars)))
     }
   }
-  
+
   if (dim(S)[[3]] != length(step)) {
     stop(sprintf(
       "Expected 3rd dimension of 'S' to have length %d, following 'step'",
       length(step)))
   }
-  
+
   if (!is.null(prob_strain)) {
     if (length(dim(prob_strain)) != 3) {
       stop("Expected a 3d array of 'prob_strain'")
@@ -566,7 +565,7 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
         length(step)))
     }
   }
-  
+
   calculate_rt_one_trajectory <- function(i) {
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
@@ -579,9 +578,9 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     }
     rt_1
   }
-  
+
   res <- lapply(seq_along(pars), calculate_rt_one_trajectory)
-  
+
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here
   collect <- function(nm) {

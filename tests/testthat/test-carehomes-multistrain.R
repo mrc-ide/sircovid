@@ -684,17 +684,30 @@ test_that("calculate Rt with both second variant and vaccination", {
   ## run model with unvaccinated & vaccinated (with susceptibility halved)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  set.seed(1)
-  reduced_susceptibility <- 0.2 # can put anything <1 here
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0.1),
+  region <- "london"
+
+  vacc_time <- 50
+  daily_doses <- c(rep(0, vacc_time - 1), rep(Inf, vacc_time))
+  n <- vaccine_priority_population(region, uptake = 1)
+  vaccine_schedule <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses = 1000, n)
+
+  reduced_susceptibility <- 0.1 # can put anything <1 here
+  transm_new_variant <- 5
+
+  p <- carehomes_parameters(0, region,
+                            waning_rate = 0,
+                            strain_transmission = c(1, transm_new_variant),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_value = 10,
                             rel_susceptibility = c(1, reduced_susceptibility),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            waning_rate = 1 / 20)
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -711,5 +724,23 @@ test_that("calculate Rt with both second variant and vaccination", {
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
+  for (k in seq_len(np)) { # for each particle
+    rt <- carehomes_Rt(steps, S[, k, ], p, prob_strain[, k, ])
+
+    ## Impact of variant on Rt is as expected:
+    ## Rt_general should increase over time because of invasion of new
+    ## more transmissible variant
+    ## the final value should be the initial value * the transmission advantage
+    expect_approx_equal(last(rt$Rt_general),
+                        rt$Rt_general[1] * transm_new_variant)
+
+    ## Impact of vaccination on Rt is as expected:
+    ## eff_Rt_general should suddenly decrease at the time at which we vaccinate
+    ## everyone
+    ## the reduction should be approximately by a factor reduced_susceptibility
+    expect_approx_equal(rt$eff_Rt_general[vacc_time] * reduced_susceptibility,
+                        rt$eff_Rt_general[vacc_time + 1],
+                        rel_tol = 0.1)
+  }
+
 })

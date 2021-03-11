@@ -17,7 +17,7 @@
 ##'
 ##' @return A 3d array with more rows than `state`.
 ##' @export
-vaccination_remap_state <- function(state_orig, info_orig, info_vacc) {
+vaccine_remap_state <- function(state_orig, info_orig, info_vacc) {
   state_vacc <- matrix(0.0, info_vacc$len, ncol(state_orig))
 
   extra <- setdiff(names(info_orig$index), names(info_vacc$index))
@@ -86,7 +86,8 @@ check_rel_param <- function(rel_param, name_param) {
 
 
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
-                                           n_vacc_classes) {
+                                           n_vacc_classes,
+                                           index_dose) {
   n_groups <- carehomes_n_groups()
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
@@ -107,7 +108,7 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
       mat_vaccine_progression_rate <- vaccine_progression_rate
     } else { # vaccine_progression_rate vector of length n_vacc_classes
       if (!is.vector(vaccine_progression_rate) ||
-          length(vaccine_progression_rate) != n_vacc_classes) {
+           length(vaccine_progression_rate) != n_vacc_classes) {
         m1 <- "'vaccine_progression_rate' must be either:"
         m2 <- "a vector of length 'n_vacc_classes' or"
         m3 <- "a matrix with 'n_groups' rows and 'n_vacc_classes' columns"
@@ -121,8 +122,555 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
         matrix(rep(vaccine_progression_rate, each = n_groups), nrow = n_groups)
     }
   }
-  if (!all(mat_vaccine_progression_rate[, 1] == 0)) {
-    stop("The first column of 'vaccine_progression_rate' must be zero")
+  for (i in seq_along(index_dose)) {
+    j <- index_dose[[i]]
+    if (!all(mat_vaccine_progression_rate[, j] == 0)) {
+      stop(sprintf(
+        "Column %d of 'vaccine_progression_rate' must be zero (dose %d)",
+        j, i))
+    }
   }
   mat_vaccine_progression_rate
+}
+
+
+##' Compute vaccination priority following JCVI ordering.
+##'
+##' https://tinyurl.com/8uwtatvm
+##'
+##' Assmuing independance between job (e.g. HCW) and clinical condition
+##'
+##' But assuming one is either counted as "clinically extremely
+##' vulnerable" or "with underlying health conditions" but not both
+##'
+##' The JCVI priority groups, in decending order are:
+##'
+##'  1. residents in a care home for older adults and their carers
+##'  2. all those 80 years of age and over and frontline health and social
+##'     care workers
+##'  3. all those 75 years of age and over
+##'  4. all those 70 years of age and over and clinically extremely
+##'     vulnerable individuals
+##'  5. all those 65 years of age and over
+##'  6. all individuals aged 16 years to 64 years with underlying health
+##'     conditions which put them at higher risk of serious disease and
+##'     mortality
+##'  7. all those 60 years of age and over
+##'  8. all those 55 years of age and over
+##'  9. all those 50 years of age and over
+##' 10. all those 40-49 years of age and over
+##' 11. all those 30-39 years of age and over
+##' 12. all those 18-29 years of age and over
+##' @title Compute vaccination order
+##'
+##' @param uptake A vector of length 19 with fractional uptake per
+##'   group. If a single number is given it is shared across all
+##'   groups (note that this includes under-18s)
+##'
+##' @param prop_hcw Assumed fraction of healthcare workers in each
+##'   group (length 19) - if `NULL` we use a default that is a guess
+##'   with hopefully the right general shape.
+##'
+##' @param prop_very_vulnerable Assumed fraction "very vulnerable" in
+##'   each group (length 19) - if `NULL` we use a default that is a
+##'   guess with hopefully the right general shape.
+##'
+##' @param prop_underlying_condition Assumed fraction "underlying
+##'   condition" in each group (length 19) - if `NULL` we use a
+##'   default that is a guess with hopefully the right general shape.
+##'
+##' @return A matrix with n_groups rows (19) and columns representing
+##'   priority groups, and element (i, j) is the proportion in group i
+##'   who should be vaccinated as part of priority group j, accounting
+##'   for uptake so that the sum over the rows corresponds to the
+##'   total fractional uptake in that group. For
+##'   `vaccine_priority_population`, the total number of
+##'   individuals replaces the proportion (based on the demography
+##'   used by sircovid).
+##'
+##' @rdname vaccine_priority
+##' @export
+vaccine_priority_proportion <- function(uptake,
+                                        prop_hcw = NULL,
+                                        prop_very_vulnerable = NULL,
+                                        prop_underlying_condition = NULL) {
+  n_groups <- carehomes_n_groups()
+
+  if (is.null(uptake)) {
+    uptake <- rep(1, n_groups)
+  } else if (length(uptake) == 1L) {
+    uptake <- rep(uptake, n_groups)
+  } else if (length(uptake) != n_groups) {
+    stop(sprintf("Invalid length %d for 'uptake', must be 1 or %d",
+                 length(uptake), n_groups))
+  }
+
+  prop_hcw <- prop_hcw %||%
+    c(rep(0, 4), rep(0.1, 10), rep(0, 5))
+  prop_very_vulnerable <- prop_very_vulnerable %||%
+    c(rep(0, 4), rep(0.05, 5), rep(0.1, 5), rep(0.15, 5))
+  prop_underlying_condition <- prop_underlying_condition %||%
+    c(rep(0, 4), rep(0.05, 5), rep(0.1, 5), rep(0.15, 5))
+
+  n_priority_groups <- 12
+  p <- matrix(0, n_groups, n_priority_groups)
+
+  ## Aged base priority list
+  jcvi_priority <- list(
+    ## the age groups targeted in each priority group (see comments above)
+    18:19, 17, 16, 15, 14, NULL, 13, 12, 11, 9:10, 7:8, 1:6)
+
+  ## 1. Start with non aged based priority:
+  ## helper function
+  add_prop_to_vacc <- function(j, idx, prop_to_vaccinate, p) {
+    p[idx, j] <- prop_to_vaccinate[idx]
+    p
+  }
+
+  ## Group 2 includes frontline health and social care workers
+  p <- add_prop_to_vacc(j = 2,
+                        idx = seq_len(jcvi_priority[[2]] - 1),
+                        prop_to_vaccinate = prop_hcw,
+                        p)
+
+  ## Group 4 includes clinically extremely vulnerable individuals
+  p <- add_prop_to_vacc(j = 4,
+                        idx = seq_len(jcvi_priority[[4]] - 1),
+                        prop_to_vaccinate = (1 - prop_hcw) *
+                          prop_very_vulnerable,
+                        p)
+
+  ## Group 6 includes all individuals aged 16 years to 64 years with
+  ## underlying health conditions which put them at higher risk of
+  ## serious disease and mortality
+  p <- add_prop_to_vacc(j = 6,
+                        idx = 4:13,
+                        prop_to_vaccinate = (1 - prop_hcw) *
+                          prop_underlying_condition,
+                        p)
+
+  ## 2. Add aged base priority
+  for (j in seq_along(jcvi_priority)) {
+    if (!is.null(jcvi_priority[[j]])) {
+      ## discount those already vaccinated as part of non age based priority
+      p[jcvi_priority[[j]], j] <- 1 - rowSums(p)[jcvi_priority[[j]]]
+    }
+  }
+
+  ## 3. Account for uptake
+  uptake_mat <- matrix(rep(uptake, n_priority_groups),
+                       nrow = n_groups)
+
+  p * uptake_mat
+}
+
+
+##' @param region Region to use to get total population numbers
+##'
+##' @rdname vaccine_priority
+##' @export
+vaccine_priority_population <- function(region,
+                                        uptake,
+                                        prop_hcw = NULL,
+                                        prop_very_vulnerable = NULL,
+                                        prop_underlying_condition = NULL) {
+  p <- vaccine_priority_proportion(uptake,
+                                   prop_hcw,
+                                   prop_very_vulnerable,
+                                   prop_underlying_condition)
+  ## TODO: it would be nice to make this easier
+  pop <- carehomes_parameters(1, region)$N_tot
+  pop_mat <- matrix(rep(pop, ncol(p)), nrow = nrow(p))
+  round(p * pop_mat)
+}
+
+
+##' Create future vaccination schedule from a projected number of
+##' daily doses.
+##'
+##' @title Create vaccination schedule
+##'
+##' @param start Either a [sircovid_date] object corresponding to the
+##'   first date in daily_doses_value, or a [vaccine_schedule] object
+##'   corresponding to previously carried out vaccination.
+##'
+##' @param daily_doses_value A vector of doses per day.
+##'
+##' @param mean_days_between_doses Assumed mean days between doses one
+##'   and two
+##'
+##' @param priority_population Output from
+##'   [vaccine_priority_population], giving the number of people
+##'   to vaccinate in each age (row) and priority group (column)
+##'
+##' @export
+vaccine_schedule_future <- function(start,
+                                    daily_doses_value,
+                                    mean_days_between_doses,
+                                    priority_population) {
+  n_groups <- nrow(priority_population)
+  n_priority_groups <- ncol(priority_population)
+  n_doses <- 2L
+  n_days <- length(daily_doses_value)
+
+  population_to_vaccinate_mat <-
+    array(0, c(n_groups, n_priority_groups, n_doses, n_days))
+
+  population_left <- array(rep(c(priority_population), n_doses),
+                           c(n_groups, n_priority_groups, n_doses))
+
+  if (inherits(start, "vaccine_schedule")) {
+    for (dose in seq_len(n_doses)) {
+      n <- rowSums(start$doses[, dose, ])
+      for (i in seq_len(n_priority_groups)) {
+        m <- pmin(n, population_left[, i, dose])
+        n <- n - m
+        population_left[, i, dose] <- population_left[, i, dose] - m
+      }
+    }
+
+    daily_doses_prev <- apply(start$doses, c(2, 3), sum)
+    n_prev <- ncol(daily_doses_prev)
+    daily_doses_date <- start$date
+  } else {
+    daily_doses_prev <- matrix(0, n_doses, 0)
+    n_prev <- 0L
+    daily_doses_date <- start
+  }
+
+  daily_doses_tt <- cbind(daily_doses_prev, matrix(0, n_doses, n_days))
+
+  for (t in seq_along(daily_doses_value)) {
+    tt <- t + n_prev
+    tt_dose_1 <- tt - mean_days_between_doses
+    if (tt_dose_1 >= 1) {
+      ## If we have promised more 2nd doses than we can deliver, we
+      ## move our debt forward in time by one day. If doses fluctuate
+      ## this will eventually be paid off.
+      if (daily_doses_tt[1, tt_dose_1] > daily_doses_value[t]) {
+        daily_doses_tt[1, tt_dose_1 + 1] <-
+          daily_doses_tt[1, tt_dose_1 + 1] +
+          (daily_doses_tt[1, tt_dose_1] - daily_doses_value[t])
+      }
+      daily_doses_tt[2, tt] <- min(daily_doses_value[t],
+                                   daily_doses_tt[1, tt_dose_1])
+      daily_doses_tt[1, tt] <- daily_doses_value[t] - daily_doses_tt[2, tt]
+    } else {
+      ## Only distribute first doses
+      daily_doses_tt[2, tt] <- 0
+      daily_doses_tt[1, tt] <- daily_doses_value[t]
+    }
+    daily_doses_today <- daily_doses_tt[, tt]
+
+    for (dose in seq_len(n_doses)) {
+      eligible <- colSums(population_left[, , dose])
+      ## Vaccinate the entire of the top priority groups
+      n_full_vacc <- findInterval(daily_doses_today[dose], cumsum(eligible))
+      if (n_full_vacc > 0) {
+        i_full_vacc <- seq_len(n_full_vacc)
+        population_to_vaccinate_mat[, i_full_vacc, dose, t] <-
+          population_left[, i_full_vacc, dose]
+      }
+
+      ## Then partially vaccinate the next priority group, if possible
+      if (n_full_vacc < n_priority_groups) {
+        if (n_full_vacc == 0) {
+          remaining_eligible <- daily_doses_today[dose]
+        } else {
+          remaining_eligible <- daily_doses_today[dose] -
+            cumsum(eligible)[n_full_vacc]
+        }
+        i_vacc <- n_full_vacc + 1L
+
+        ## Split remaining doses according to age
+        population_to_vaccinate_mat[, i_vacc, dose, t] <-
+          round(remaining_eligible * population_left[, i_vacc, dose] /
+                sum(population_left[, i_vacc, dose]))
+      }
+
+      population_left[, , dose] <- population_left[, , dose] -
+        population_to_vaccinate_mat[, , dose, t]
+    }
+  }
+
+  doses <- apply(population_to_vaccinate_mat, c(1, 3, 4), sum)
+
+  if (inherits(start, "vaccine_schedule")) {
+    doses <- mcstate::array_bind(start$doses, doses)
+  }
+
+  vaccine_schedule(daily_doses_date, doses)
+}
+
+
+##' Create a vaccine schedule for use with [carehomes_parameters]
+##'
+##' @title Create vaccine schedule
+##'
+##' @param date A single date, representing the first day that
+##'   vaccines will be given
+##'
+##' @param doses A 3d array of doses representing (1) the model group
+##'   (19 rows for the carehomes model), (2) the dose (must be length
+##'   2 at present) and (3) time (can be anything nonzero). The values
+##'   represent the number of vaccine doses in that group for that
+##'   dose for that day. So for `doses[i, j, k]` then it is for the
+##'   ith group, the number of jth doses on day `(k - 1) + date`
+##'
+##' @return A `vaccine_schedule` object
+##' @export
+vaccine_schedule <- function(date, doses) {
+  assert_sircovid_date(date)
+  assert_scalar(date)
+
+  n_groups <- carehomes_n_groups()
+  n_doses <- 2L
+
+  if (length(dim(doses)) != 3L) {
+    stop("Expected a 3d array for 'doses'")
+  }
+  if (nrow(doses) != n_groups) {
+    stop(sprintf("'doses' must have %d rows", n_groups))
+  }
+  if (ncol(doses) != n_doses) {
+    stop(sprintf("'doses' must have %d columns", n_doses))
+  }
+  if (dim(doses)[[3]] == 0) {
+    stop("'doses' must have at least one element in the 3rd dimension")
+  }
+  if (any(is.na(doses))) {
+    stop("'doses' must all be non-NA")
+  }
+  if (any(doses < 0)) {
+    stop("'doses' must all be non-negative")
+  }
+
+  ret <- list(date = date, doses = doses, n_doses = n_doses)
+  class(ret) <- "vaccine_schedule"
+  ret
+}
+
+
+##' Create a historical vaccine schedule from data
+##'
+##' @title Create historical vaccine schedule
+##'
+##' @param data A data.frame with columns `date`, `age_band_min`,
+##'   `dose1` and `dose2`.
+##'
+##' @param n_carehomes A vector of length 2 with the number of
+##'   carehome workers and residents.
+##'
+##' @return A [vaccine_schedule] object
+##' @export
+vaccine_schedule_from_data <- function(data, n_carehomes) {
+  assert_is(data, "data.frame")
+  required <- c("age_band_min", "date", "dose1", "dose2")
+  msg <- setdiff(required, names(data))
+  if (length(msg) > 0) {
+    stop("Required columns missing from 'data': ",
+         paste(squote(msg), collapse = ", "))
+  }
+  if (length(n_carehomes) != 2) {
+    stop("Expected a vector of length 2 for n_carehomes")
+  }
+  err <- is.na(data$age_band_min) | data$age_band_min %% 5 != 0
+  if (any(err)) {
+    stop("Invalid values for data$age_band_min: ",
+         paste(unique(data$age_band_min[err]), collapse = ", "))
+  }
+  ## TODO: tidy up later:
+  stopifnot(
+    all(!is.na(n_carehomes)),
+    all(n_carehomes >= 0),
+    !is.na(data$date),
+    all(data$dose1 >= 0 | is.na(data$dose1)),
+    all(data$dose2 >= 0 | is.na(data$dose2)))
+
+  ## First aggregate all the 80+ into one group
+  data$date <- as_sircovid_date(data$date)
+  data$age_band_min <- pmin(data$age_band_min, 80)
+  data <- stats::aggregate(data[c("dose1", "dose2")],
+                           data[c("age_band_min", "date")],
+                           sum)
+
+  dates <- seq(min(data$date), max(data$date), by = 1)
+  age_start <- sircovid_age_bins()$start
+
+  doses <- lapply(c("dose1", "dose2"), function(i)
+    stats::reshape(data[c("date", "age_band_min", i)],
+                   direction = "wide", timevar = "date",
+                   idvar = "age_band_min"))
+  stopifnot(identical(dim(doses[[1]]), dim(doses[[2]])))
+
+  ## TODO: add a test for missing days
+  i <- match(age_start, doses[[1]]$age_band_min)
+  j <- match(dates, sub("^dose[12]\\.", "", names(doses[[1]])))
+  doses <- array(
+    unlist(lapply(doses, function(d) unname(as.matrix(d)[i, j]))),
+    c(length(age_start), length(dates), 2))
+  doses <- aperm(doses, c(1, 3, 2))
+  doses[is.na(doses)] <- 0
+
+  doses <- vaccine_schedule_add_carehomes(doses, n_carehomes)
+  vaccine_schedule(dates[[1]], doses)
+}
+
+
+##' Helper function to create a vaccination schedule that covers data
+##' from the past and projects doses into the future based on the last
+##' week of vaccination (based on JCVI order using
+##' [vaccine_schedule_future]). This function is subject to change.
+##'
+##' @title Vaccination schedule using data and future
+##'
+##' @inheritParams vaccine_schedule_from_data
+##' @inheritParams vaccine_schedule_future
+##' @inheritParams vaccine_priority_population
+##'
+##' @param end_date The final day in the future to create a schedule
+##'   for. After this date the model will assume 0 vaccine doses given
+##'   so an overestimate is probably better than an underestimate.
+##'
+##' @return A [vaccine_schedule] object
+##' @export
+vaccine_schedule_data_future <- function(data, region, uptake, end_date,
+                                         mean_days_between_doses) {
+  ## TODO: change n_days_future to end_date
+  priority_population <- vaccine_priority_population(region, uptake)
+  n_carehomes <- priority_population[18:19, 1]
+  schedule_past <- vaccine_schedule_from_data(data, n_carehomes)
+  ## then average out last 7 days and project forward by n days
+  ## future; we will probably change this to avoid backfill by taking
+  ## the days -14..-8
+  i <- utils::tail(seq_len(dim(schedule_past$doses)[[3]]), 7)
+  mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
+  end_date <- as_sircovid_date(end_date)
+  n_days_future <- end_date -
+    (schedule_past$date + dim(schedule_past$doses)[[3]]) + 1L
+  daily_doses_future <- rep(round(mean_doses_last), n_days_future)
+  vaccine_schedule_future(schedule_past,
+                          daily_doses_future,
+                          mean_days_between_doses,
+                          priority_population)
+}
+
+
+##' @importFrom stats rmultinom
+vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
+  doses <- doses[c(seq_len(nrow(doses)), NA, NA), , ]
+  doses[is.na(doses)] <- 0
+
+  if (all(n_carehomes == 0)) {
+    return(doses)
+  }
+
+  ## Impute CHW / CHR - these will be the first vaccinated people
+  ## below and above 65 respectively.
+  f <- function(target, i_from, i_to) {
+    for (i_dose in 1:2) {
+      n_t <- colSums(doses[i_from, i_dose, ])
+      n <- cumsum(n_t)
+      i <- n >= target
+      if (!any(i)) {
+        k <- length(i)
+      } else {
+        j <- which(i)[[1]] # the interval that switches
+        k <- j - 1
+        n_general <- n[[j]] - target
+        doses[i_to, i_dose, j] <- target - sum(n_t[seq_len(k)])
+        doses[i_from, i_dose, j] <-
+          drop(rmultinom(1, n_general, doses[i_from, i_dose, j]))
+      }
+      doses[i_to, i_dose, seq_len(k)] <- n_t[seq_len(k)]
+      doses[i_from, i_dose, seq_len(k)] <- 0
+    }
+    doses
+  }
+
+  age_start <- sircovid_age_bins()$start
+  i_chw_from <- which(age_start < 65)
+  i_chr_from <- which(age_start >= 65)
+  i_chw_to <- 18
+  i_chr_to <- 19
+  doses <- f(n_carehomes[[1]], i_chw_from, i_chw_to)
+  doses <- f(n_carehomes[[2]], i_chr_from, i_chr_to)
+  doses
+}
+
+
+##' Create a vaccination scenario
+##'
+##' @title High-level vaccine scenario creation
+##'
+##' @param schedule_past A [vaccine_schedule] object corresponding to
+##'   previously carried out vaccination.
+##'
+##' @param doses_future A named vector of vaccine doses to give in the
+##'   future. Names must be in ISO date format.
+##'
+##' @inheritParams vaccine_schedule_future
+##' @inheritParams vaccine_schedule_data_future
+##'
+##' @return A [vaccine_schedule] object
+##' @export
+vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
+                                      mean_days_between_doses,
+                                      priority_population) {
+  assert_is(schedule_past, "vaccine_schedule")
+
+  date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]] - 1L
+  i <- utils::tail(seq_len(dim(schedule_past$doses)[[3]]), 7)
+  mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
+
+  end_date <- as_sircovid_date(end_date)
+
+  if (length(doses_future) > 0) {
+    if (is.null(names(doses_future))) {
+      stop("'doses_future' must be named")
+    }
+    assert_date_string(names(doses_future))
+    doses_future_date <- sircovid_date(names(doses_future))
+    assert_increasing(doses_future_date, name = "names(doses_future)")
+
+    if (last(doses_future_date) > end_date) {
+      stop(sprintf(
+        "'end_date' must be at least %s (last doses_future date) but was %s",
+        last(names(doses_future)),
+        sircovid_date_as_date(end_date)))
+    }
+
+    if (doses_future_date[[1]] < date_end_past) {
+      message("Trimming vaccination schedule as overlaps with past")
+      i <- max(which(doses_future_date < date_end_past))
+      j <- seq(i, length(doses_future_date))
+      doses_future_date <- doses_future_date[j]
+      doses_future <- doses_future[j]
+      doses_future_date[[1]] <- date_end_past
+    }
+
+    stopifnot(
+      all(!is.na(doses_future)),
+      all(doses_future > 0))
+
+    date_future <- c(doses_future_date, end_date)
+    names(doses_future) <- NULL
+  } else {
+    if (end_date < date_end_past) {
+      stop(sprintf(
+        "'end_date' must be at least %s (previous end date) but was %s",
+        sircovid_date_as_date(date_end_past),
+        sircovid_date_as_date(end_date)))
+    }
+    date_future <- end_date
+  }
+
+  daily_doses_value <- c(
+    rep(mean_doses_last, date_future[[1]] - date_end_past),
+    rep(unname(doses_future), diff(date_future)))
+
+  vaccine_schedule_future(schedule_past,
+                          daily_doses_value,
+                          mean_days_between_doses,
+                          priority_population)
 }

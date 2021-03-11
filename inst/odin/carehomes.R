@@ -1483,49 +1483,50 @@ update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 
 ## Vaccination engine
+n_doses <- 2
+index_dose[] <- user(integer = TRUE)
+dim(index_dose) <- n_doses
+
+vaccine_dose_step[, , ] <- user() # n_groups, n_doses, n_time
+dim(vaccine_dose_step) <- user()
 
 ## First, the number of candidates
-vaccine_n_candidates[] <- S[i, 1] + sum(E[i, , , 1]) + sum(I_A[i, , , 1]) +
-  sum(I_P[i, , , 1]) + sum(R[i, , 1])
-dim(vaccine_n_candidates) <- n_groups
+vaccine_n_candidates[, ] <-
+  S[i, index_dose[j]] +
+  sum(E[i, , , index_dose[j]]) +
+  sum(I_A[i, , , index_dose[j]]) +
+  sum(I_P[i, , , index_dose[j]]) +
+  sum(R[i, , index_dose[j]])
+dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 
-## The total population reluctant to be vaccinated. Currently modelled
-## as a fixed population, rather than as (say) a stratification of
-## compartments.
-vaccine_population_reluctant[] <- user()
-dim(vaccine_population_reluctant) <- n_groups
+## Work out the vaccination probability via doses, driven by the
+## schedule
+vaccine_probability_doses[, ] <- (
+  if (as.integer(step) >= dim(vaccine_dose_step, 3) ||
+      vaccine_n_candidates[i, j] == 0) 0
+  else vaccine_dose_step[i, j, step + 1] /
+  vaccine_n_candidates[i, j])
+dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
-## We will refuse to vaccine the reluctant population; this is just an
-## approximation of that for now.
-##
-## TODO: this *should* work with
-## > max(0, vaccine_n_candidates[i] - vaccine_population_reluctant[i])
-## But that is generating invalid code
-vaccine_population_possible[] <-
-  (if (vaccine_population_reluctant[i] > vaccine_n_candidates[i]) 0
-   else vaccine_n_candidates[i] - vaccine_population_reluctant[i])
-dim(vaccine_population_possible) <- n_groups
-
-## The number of doses of vaccine available each day:
-vaccine_daily_doses <- if (as.integer(step) >= length(vaccine_daily_doses_step))
-  vaccine_daily_doses_step[length(vaccine_daily_doses_step)] else
-    vaccine_daily_doses_step[step + 1]
-dim(vaccine_daily_doses_step) <- user()
-vaccine_daily_doses_step[] <- user()
-
-## We'll set this up to treat the first column specially, as that is
-## the compartment through which people ge vaccinated, others are
-## taken through the vaccination rate
-config(include) <- "vaccination.cpp"
-vaccine_probability[, 1] <-
-  vaccination_schedule(i, vaccine_daily_doses, dt,
-                       vaccine_n_candidates, vaccine_population_possible)
-## for the first vaccination class we use directly the probability above
-## for the other vaccination classes this is indeed the rate
-vaccine_probability[, 2:n_vacc_classes] <-
+## Then fix everything based on progression at a constant rate (will
+## be zero for the cases that have probabilities above)
+vaccine_probability[, ] <-
   1 - exp(-vaccine_progression_rate_base[i, j] * dt)
-
 dim(vaccine_probability) <- c(n_groups, n_vacc_classes)
+
+## This can't be automatically driven from the number of doses, so we
+## have to unroll it here and write both out manually. This is the
+## reason why n_doses is fixed as 2 rather than being user-supplied.
+vaccine_probability[, index_dose[1]] <- vaccine_probability_doses[i, 1]
+vaccine_probability[, index_dose[2]] <- vaccine_probability_doses[i, 2]
+
+initial(tmp_vaccine_n_candidates[, ]) <- 0
+update(tmp_vaccine_n_candidates[, ]) <- vaccine_n_candidates[i, j]
+dim(tmp_vaccine_n_candidates) <- c(n_groups, n_doses)
+
+initial(tmp_vaccine_probability[, ]) <- 0
+update(tmp_vaccine_probability[, ]) <- vaccine_probability[i, j]
+dim(tmp_vaccine_probability) <- c(n_groups, n_vacc_classes)
 
 config(compare) <- "compare_carehomes.cpp"
 ## Parameters and code to support the compare function. Because these

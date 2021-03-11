@@ -1,3 +1,6 @@
+# sircovid 0.10.3
+* Predefined vaccination schedule implemented
+
 # sircovid 0.10.1
 * Rt corrected for restructured model
 
