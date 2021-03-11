@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.5</span>
       </span>
     </div>
 
@@ -138,6 +138,7 @@
   sero_specificity <span class='op'>=</span> <span class='fl'>0.9</span>,
   sero_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
   progression <span class='op'>=</span> <span class='cn'>NULL</span>,
+  initial_I <span class='op'>=</span> <span class='fl'>10</span>,
   eps <span class='op'>=</span> <span class='fl'>0.1</span>,
   m_CHW <span class='op'>=</span> <span class='fl'>4e-06</span>,
   m_CHR <span class='op'>=</span> <span class='fl'>5e-05</span>,
@@ -221,6 +222,12 @@ with the progression parameters.</p></td>
     <tr>
       <th>progression</th>
       <td><p>Progression data</p></td>
+    </tr>
+    <tr>
+      <th>initial_I</th>
+      <td><p>Initial number of infected indidviduals; these
+will enter the model as asymptomatic 15-19 year olds at
+<code>start_date</code>. The default is 10 individuals.</p></td>
     </tr>
     <tr>
       <th>eps</th>
@@ -516,6 +523,9 @@ just before the model is run.</p>
 #&gt; $N_tot
 #&gt;  [1] 606004 602992 537605 467602 565427 766712 834810 778222 657734 593316
 #&gt; [11] 563718 492170 387776 311607 272227 189352 281942  26388  26388
+#&gt; 
+#&gt; $initial_I
+#&gt; [1] 10
 #&gt; 
 #&gt; $N_tot_15_64
 #&gt; [1] 6107487
