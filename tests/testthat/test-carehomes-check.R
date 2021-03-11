@@ -634,6 +634,7 @@ test_that("No one is unconfirmed, if p_star = 1", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step <- 1
+  p$gamma_H_R_step <- 1
   p$psi_star[] <- 1
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
@@ -716,6 +717,7 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_star[] <- 0
+  p$gamma_H_R_step <- 1
   p$gamma_U <- Inf
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
