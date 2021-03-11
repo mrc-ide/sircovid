@@ -166,7 +166,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "psi_W_D", "p_W_D_step", "psi_H",
       "p_H_step", "psi_G_D", "p_G_D_step",
       "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
-      "n_groups"))
+      "n_groups", "gamma_H_R_step"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))

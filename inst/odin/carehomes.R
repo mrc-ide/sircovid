@@ -193,7 +193,7 @@ p_star_by_age[] <- p_star * psi_star[i]
 ## Work out time-varying gammas
 gamma_H_R <- if (as.integer(step) >= length(gamma_H_R_step))
   gamma_H_R_step[length(gamma_H_R_step)] else gamma_H_R_step[step + 1]
-# gamma_H_R_by_age[] <- gamma_H_R / psi_gamma_H_R[i]
+# fogamma_H_R_by_age[] <- gamma_H_R / psi_gamma_H_R[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
