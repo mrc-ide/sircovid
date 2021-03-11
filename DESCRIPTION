@@ -50,14 +50,14 @@ Imports:
     dust (>= 0.8.1),
     eigen1,
     mcstate (>= 0.4.0),
-    socialmixr,
-    distcrete,
-    EpiEstim
+    socialmixr
 LinkingTo:
     cpp11 (>= 0.2.1),
     dust (>= 0.8.1)
 Suggests:
-    testthat
+    testthat,
+    distcrete,
+    EpiEstim
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
