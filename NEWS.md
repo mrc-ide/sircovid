@@ -1,3 +1,7 @@
+# sircovid 0.10.6
+
+* Added utils for nested pmcmc
+
 # sircovid 0.10.5
 
 * Can control the number of initial infected individuals used in seeding
