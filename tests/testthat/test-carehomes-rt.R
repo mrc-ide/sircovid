@@ -379,29 +379,29 @@ test_that("Can calculate EpiEstim Rt", {
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
   ## the -1 because EpiEstim only start estimation at 2nd time step
-  expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
+  expect_equal(dim(rt_EpiEstim$Rt_summary), c(length(steps) - 1, 4))
   ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
+  expect_true(all(rt_EpiEstim$Rt_summary[nrow(rt_EpiEstim$Rt_summary)] < 1))
   ## because of the priors with mean 1 we would expect EpiEstim Rt
   ## at the end to be higher than eff_Rt_all
   expect_true(
     last(rt$eff_Rt_all) <
-      rt_EpiEstim$Rt_summary["mean_R", ncol(rt_EpiEstim$Rt_summary)])
+      rt_EpiEstim$Rt_summary[nrow(rt_EpiEstim$Rt_summary), "mean_R"])
   ## Rt at the start should be > 1
   ## (but there will be uncertainty so looking at the mean)
-  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
-  expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
+  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary[, "mean_R"])))
+  expect_true(rt_EpiEstim$Rt_summary[first_non_NA_idx, "mean_R"] > 1)
 
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 4.8,
+  expect_equal(rt_EpiEstim$Rt_summary[[first_non_NA_idx, "mean_R"]], 4.8,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 1.5,
-               tolerance = .1)
-  expect_equal(
-    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.1,
+  expect_equal(rt_EpiEstim$Rt_summary[[first_non_NA_idx, "2.5%"]], 1.5,
                tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.1,
+    rt_EpiEstim$Rt_summary[[nrow(rt_EpiEstim$Rt_summary), "mean_R"]], 0.1,
+               tolerance = .1)
+  expect_equal(
+    rt_EpiEstim$Rt_summary[[nrow(rt_EpiEstim$Rt_summary), "97.5%"]], 0.1,
                tolerance = .1)
 
 })
@@ -451,40 +451,40 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
   ## the -1 because EpiEstim only start estimation at 2nd time step
-  expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
+  expect_equal(dim(rt_EpiEstim$Rt_summary), c(length(steps) - 1, 4))
   ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
+  expect_true(all(rt_EpiEstim$Rt_summary[nrow(rt_EpiEstim$Rt_summary), ] < 1))
   ## because of the priors with mean 1 we would expect EpiEstim Rt
   ## at the end to be higher than eff_Rt_all
   expect_true(
     last(rt$eff_Rt_all) <
-      rt_EpiEstim$Rt_summary["mean_R", ncol(rt_EpiEstim$Rt_summary)])
+      rt_EpiEstim$Rt_summary[nrow(rt_EpiEstim$Rt_summary), "mean_R"])
   ## Rt at the start should be > 1
   ## (but there will be uncertainty so looking at the mean)
-  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
-  expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
+  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary[, "mean_R"])))
+  expect_true(rt_EpiEstim$Rt_summary[first_non_NA_idx, "mean_R"] > 1)
   ## Rt at the start should be similar between methods:
   expect_true(
-    rt$eff_Rt_all[1] > rt_EpiEstim$Rt_summary["2.5%", first_non_NA_idx])
+    rt$eff_Rt_all[1] > rt_EpiEstim$Rt_summary[first_non_NA_idx, "2.5%"])
   expect_true(
-    rt$eff_Rt_all[1] < rt_EpiEstim$Rt_summary["97.5%", first_non_NA_idx])
+    rt$eff_Rt_all[1] < rt_EpiEstim$Rt_summary[first_non_NA_idx, "97.5%"])
 
   ## Rt stays constant for a while but precision improves for EpiEstim
-  expect_true(rt$eff_Rt_all[1] > rt_EpiEstim$Rt_summary["2.5%", 20])
-  expect_true(rt$eff_Rt_all[1] < rt_EpiEstim$Rt_summary["97.5%", 20])
-  expect_true(abs(rt$eff_Rt_all[1] - rt_EpiEstim$Rt_summary["50%", 20]) < 0.1)
+  expect_true(rt$eff_Rt_all[1] > rt_EpiEstim$Rt_summary[20, "2.5%"])
+  expect_true(rt$eff_Rt_all[1] < rt_EpiEstim$Rt_summary[20, "97.5%"])
+  expect_true(abs(rt$eff_Rt_all[1] - rt_EpiEstim$Rt_summary[20, "50%"]) < 0.1)
 
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 35]], 6.5,
+  expect_equal(rt_EpiEstim$Rt_summary[[35, "mean_R"]], 6.5,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 35]], 5.8,
+  expect_equal(rt_EpiEstim$Rt_summary[[35, "2.5%"]], 5.8,
                tolerance = .1)
   expect_equal(rt$eff_Rt_all[35], 6.5,
                tolerance = .1)
 
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 45]], 0.4,
+  expect_equal(rt_EpiEstim$Rt_summary[[45, "mean_R"]], 0.4,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 45]], 0.1,
+  expect_equal(rt_EpiEstim$Rt_summary[[45, "2.5%"]], 0.1,
                tolerance = .1)
   expect_equal(rt$eff_Rt_all[45], 0.6,
                tolerance = .1)

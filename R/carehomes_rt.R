@@ -225,7 +225,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
 
 ##' Brute force draws from the GT
-##' @importFrom distcrete dbinom
+##' @importFrom distcrete distcrete
+##' @importFrom stats runif rpois
 draw_one_GT_sample <- function(p, n = 1000) {
 
   ## Note: the above does not account for the impact of
@@ -279,7 +280,7 @@ draw_one_GT_sample <- function(p, n = 1000) {
 
 }
 
-## Brute force draws from the GT
+##' @importFrom graphics hist
 draw_one_GT_distr <- function(p, n = 1000) {
   sample_GT <- draw_one_GT_sample(p, n)
   ## the discretisation below allows having a zero on the first day
@@ -292,9 +293,52 @@ draw_one_GT_distr <- function(p, n = 1000) {
 }
 
 
-##' Brute force draws from the GT
+## We expect 'pars' to be a list along sample
+## We expect 'step' to be a vector along step
+
+##' Compute "Rt" using EpiEtim for a set of simulated trajectories (e.g., the
+##' result of the `$iterate()` method of [carehomes], [mcstate::pmcmc()] or
+##' [mcstate::pmcmc_predict()]. The trajectories should share
+##' parameters.
+##'
+##' @title Compute Rt using EpiEstim for a set of trajectories
+##'
+##' @param step A vector of steps
+##'
+##' @param incidence A matrix (n trajectories x n steps) of incidence counts
+##'
+##' @param pars A single [carehomes_parameters()] object.
+##'
+##' @param sliding_window_ndays An integer giving the length of the sliding
+##' window on which Rt will be estimated
+##'
+##' @param mean_prior The mean prior for Rt
+##'
+##' @param sd_prior The standard deviation of the prior for Rt
+##'
+##' @param n_GT An integer giving the number of generation times to be drawn to
+##' construct the discrete distribution of the generation time
+##'
+##' @param n_R An integer giving the number of Rt values to sample from for each
+##' incidence trajectory. These will then be aggregated across all incidence
+##' trajectories.
+##'
+##' @return A list with elements
+##' `t_start` (vector of first days of the sliding windows over which Rt is
+##' estimated),
+##' `t_end` (vector of last days of the sliding windows over which Rt is
+##' estimated),
+##' `Rt` a matrix (only present if `save_all = TRUE`) containing for each
+##' sliding window (each row in the matrix) a sample of n_R * nrow(inc) values
+##' of Rt for that sliding window (columns of the matrix)
+##' `Rt_summary` a matrix containing for each sliding window (each row in the
+##' matrix) the 2.5%, 50%, 97.5% quantiles and the mean of Rt for that sliding
+##' window (columns of the matrix)
+##'
+##' @export
 ##' @importFrom EpiEstim make_config estimate_R
 ##' @importFrom epitrix gamma_mucv2shapescale
+##' @importFrom stats quantile rgamma
 carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                   sliding_window_ndays = 7,
                                   mean_prior = 1,
@@ -344,7 +388,7 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
 
   summary_R <- apply(R_sample, 1, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
   mean_R <- apply(R_sample, 1, mean, na.rm = TRUE)
-  summary_R <- rbind(summary_R, mean_R)
+  summary_R <- t(rbind(summary_R, mean_R))
 
   time_start <- step[t_start] * p$dt
   time_end <- step[t_end] * p$dt
