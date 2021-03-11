@@ -252,7 +252,6 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(N_tot_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(beta_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(exp_noise, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_H_R, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_H_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(index_dose, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -786,7 +785,6 @@ public:
     int dim_cum_n_vaccinated_2;
     int dim_delta_D_hosp;
     int dim_delta_D_non_hosp;
-    int dim_gamma_H_R;
     int dim_gamma_H_R_step;
     int dim_gamma_sero_pre;
     int dim_index_dose;
@@ -1587,7 +1585,6 @@ public:
     real_t gamma_E;
     real_t gamma_G_D;
     real_t gamma_H_D;
-    std::vector<real_t> gamma_H_R;
     std::vector<real_t> gamma_H_R_step;
     real_t gamma_ICU_D;
     real_t gamma_ICU_W_D;
@@ -2123,7 +2120,7 @@ public:
     state_next[7] = odin_sum1(S, 0, shared->dim_S) + odin_sum1(T_sero_pre, 0, shared->dim_T_sero_pre) + odin_sum1(T_sero_pos, 0, shared->dim_T_sero_pos) + odin_sum1(T_sero_neg, 0, shared->dim_T_sero_neg) + odin_sum1(E, 0, shared->dim_E);
     state_next[8] = odin_sum1(S, 0, shared->dim_S) + odin_sum1(T_PCR_pre, 0, shared->dim_T_PCR_pre) + odin_sum1(T_PCR_pos, 0, shared->dim_T_PCR_pos) + odin_sum1(T_PCR_neg, 0, shared->dim_T_PCR_neg);
     real_t beta = (static_cast<int>(step) >= shared->dim_beta_step ? shared->beta_step[shared->dim_beta_step - 1] : shared->beta_step[step + 1 - 1]);
-    real_t n_gamma_H = (static_cast<int>(step) >= shared->dim_gamma_H_R_step ? shared->gamma_H_R_step[shared->dim_gamma_H_R_step - 1] : shared->gamma_H_R_step[step + 1 - 1]);
+    real_t gamma_H_R = (static_cast<int>(step) >= shared->dim_gamma_H_R_step ? shared->gamma_H_R_step[shared->dim_gamma_H_R_step - 1] : shared->gamma_H_R_step[step + 1 - 1]);
     real_t p_G_D = (static_cast<int>(step) >= shared->dim_p_G_D_step ? shared->p_G_D_step[shared->dim_p_G_D_step - 1] : shared->p_G_D_step[step + 1 - 1]);
     real_t p_H = (static_cast<int>(step) >= shared->dim_p_H_step ? shared->p_H_step[shared->dim_p_H_step - 1] : shared->p_H_step[step + 1 - 1]);
     real_t p_H_D = (static_cast<int>(step) >= shared->dim_p_H_D_step ? shared->p_H_D_step[shared->dim_p_H_D_step - 1] : shared->p_H_D_step[step + 1 - 1]);
@@ -2139,7 +2136,7 @@ public:
     for (int i = 1; i <= shared->dim_p_H_D_by_age; ++i) {
       internal.p_H_D_by_age[i - 1] = p_H_D * shared->psi_H_D[i - 1];
     }
-    real_t p_H_R_progress = 1 - std::exp(- shared->gamma_H_R[n_gamma_H - 1] * shared->dt);
+    real_t p_H_R_progress = 1 - std::exp(- gamma_H_R * shared->dt);
     for (int i = 1; i <= shared->dim_p_H_by_age; ++i) {
       internal.p_H_by_age[i - 1] = p_H * shared->psi_H[i - 1];
     }
@@ -4925,9 +4922,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_E = user_get_scalar<real_t>(user, "gamma_E", shared->gamma_E, NA_REAL, NA_REAL);
   shared->gamma_G_D = user_get_scalar<real_t>(user, "gamma_G_D", shared->gamma_G_D, NA_REAL, NA_REAL);
   shared->gamma_H_D = user_get_scalar<real_t>(user, "gamma_H_D", shared->gamma_H_D, NA_REAL, NA_REAL);
-  std::array <int, 1> dim_gamma_H_R;
-  shared->gamma_H_R = user_get_array_variable<real_t, 1>(user, "gamma_H_R", shared->gamma_H_R, dim_gamma_H_R, NA_REAL, NA_REAL);
-  shared->dim_gamma_H_R = shared->gamma_H_R.size();
   std::array <int, 1> dim_gamma_H_R_step;
   shared->gamma_H_R_step = user_get_array_variable<real_t, 1>(user, "gamma_H_R_step", shared->gamma_H_R_step, dim_gamma_H_R_step, NA_REAL, NA_REAL);
   shared->dim_gamma_H_R_step = shared->gamma_H_R_step.size();

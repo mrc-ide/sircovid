@@ -145,7 +145,7 @@ p_I_C_1_progress <- 1 - exp(-gamma_C_1 * dt)
 p_I_C_2_progress <- 1 - exp(-gamma_C_2 * dt)
 p_G_D_progress <- 1 - exp(-gamma_G_D * dt)
 p_ICU_pre_progress <- 1 - exp(-gamma_ICU_pre * dt)
-p_H_R_progress <- 1 - exp(-gamma_H_R[n_gamma_H] * dt)
+p_H_R_progress <- 1 - exp(-gamma_H_R * dt)
 p_H_D_progress <- 1 - exp(-gamma_H_D * dt)
 p_ICU_W_R_progress <- 1 - exp(-gamma_ICU_W_R * dt)
 p_ICU_W_D_progress <- 1 - exp(-gamma_ICU_W_D * dt)
@@ -191,7 +191,7 @@ p_star <- if (as.integer(step) >= length(p_star_step))
 p_star_by_age[] <- p_star * psi_star[i]
 
 ## Work out time-varying gammas
-n_gamma_H <- if (as.integer(step) >= length(gamma_H_R_step))
+gamma_H_R <- if (as.integer(step) >= length(gamma_H_R_step))
   gamma_H_R_step[length(gamma_H_R_step)] else gamma_H_R_step[step + 1]
 # gamma_H_R_by_age[] <- gamma_H_R / psi_gamma_H_R[i]
 
@@ -938,8 +938,6 @@ psi_W_D[] <- user()
 
 ## Parameters of the H_R classes
 k_H_R <- user()
-dim(gamma_H_R) <- user()
-gamma_H_R[] <- user()
 dim(gamma_H_R_step) <- user()
 gamma_H_R_step[] <- user()
 # psi_gamma_H_R[] <- user()

@@ -329,7 +329,7 @@ carehomes_parameters <- function(start_date, region,
   severity$p_star_step <- max(severity$p_star)
 
   progression <- progression %||% carehomes_parameters_progression()
-  
+
   ## implementation of time-varying progression gammas
   progression$gamma_H_R_step <- max(progression$gamma_H_R)
 
@@ -961,11 +961,7 @@ carehomes_parameters_progression <- function() {
        gamma_sero_pos = 1 / 25,
        gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
-       gamma_PCR_pos = 1 / 5,
-       
-       # time varying gammas
-       n_gamma_H = user(),
-       gamma_H_R = 1 / 10
+       gamma_PCR_pos = 1 / 5
        )
 }
 
