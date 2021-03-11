@@ -106,15 +106,13 @@ gt_distr <- function(p, n = 1000) {
 ##' `t_end` (vector of last days of the sliding windows over which Rt is
 ##' estimated),
 ##' `Rt` a matrix (only present if `save_all = TRUE`) containing for each
-##' sliding window (each row in the matrix) a sample of n_R * nrow(inc) values
-##' of Rt for that sliding window (columns of the matrix)
-##' `Rt_summary` a matrix containing for each sliding window (each row in the
+##' sliding window (each col in the matrix) a sample of n_R * nrow(inc) values
+##' of Rt for that sliding window (rows of the matrix)
+##' `Rt_summary` a matrix containing for each sliding window (each col in the
 ##' matrix) the quantiles (`q`) and the mean of Rt for that sliding
-##' window (columns of the matrix)
+##' window (rows of the matrix)
 ##'
 ##' @export
-##' @importFrom EpiEstim make_config estimate_R
-##' @importFrom stats quantile rgamma
 carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
                                                sliding_window_ndays = 7,
                                                mean_prior = 1,
@@ -141,7 +139,7 @@ carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
                                   mean_prior = mean_prior,
                                   std_prior = sd_prior)
 
-  R_sample <- matrix(NA_real_, length(t_start), n_R * np)
+  R_sample <- matrix(NA_real_, n_R * np, length(t_start))
 
   for (i in seq_len(np)) {
     ## This function gives warning when precision in estimates is not good
@@ -151,24 +149,25 @@ carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
     R_i <- suppressWarnings(EpiEstim::estimate_R(incid = incidence[i, ],
                                                  config = config)$R)
 
-    R_i_shape_scale <- gamma_mucv2shapescale(mu = R_i[["Mean(R)"]],
-                                             cv = R_i[["Std(R)"]] / R_i[["Mean(R)"]])
+    R_i_shape_scale <-
+      gamma_mucv2shapescale(mu = R_i[["Mean(R)"]],
+                            cv = R_i[["Std(R)"]] / R_i[["Mean(R)"]])
     f_sample_R <- function(e) {
       if (!is.na(R_i_shape_scale$shape[e])) {
-        ret <- rgamma(n_R, shape = R_i_shape_scale$shape[e],
+        ret <- stats::rgamma(n_R, shape = R_i_shape_scale$shape[e],
                       scale = R_i_shape_scale$scale[e])
       } else {
         ret <- rep(NA_real_, n_R)
       }
     }
 
-    R_sample[, n_R * (i - 1) + seq_len(n_R)] <-
-      t(vapply(seq_len(length(t_start)), f_sample_R, numeric(n_R)))
+    R_sample[n_R * (i - 1) + seq_len(n_R), ] <-
+      vapply(seq_len(length(t_start)), f_sample_R, numeric(n_R))
   }
 
-  summary_R <- apply(R_sample, 1, quantile, q, na.rm = TRUE)
-  mean_R <- apply(R_sample, 1, mean, na.rm = TRUE)
-  summary_R <- t(rbind(summary_R, mean_R))
+  summary_R <- apply(R_sample, 2, stats::quantile, q, na.rm = TRUE)
+  mean_R <- apply(R_sample, 2, mean, na.rm = TRUE)
+  summary_R <- rbind(summary_R, mean_R)
 
   time_start <- step[t_start] * p$dt
   time_end <- step[t_end] * p$dt

@@ -495,9 +495,11 @@ test_that("Can combine EpiEstim Rt estimates", {
     S <- y[-1, , ]
 
     rt_EpiEstim[[i]] <-
-      carehomes_EpiEstim_Rt_trajectories(steps, inc[[i]], p,
+      carehomes_rt_trajectories_epiestim(steps, inc[[i]], p,
                                          sliding_window_ndays = 1)
   }
+
+
 
 })
 
