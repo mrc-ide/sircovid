@@ -18,7 +18,6 @@ RUN install2.r --error \
         EpiEstim \
         cpp11 \
         distcrete \
-        epitrix \
         remotes \
         socialmixr
 
