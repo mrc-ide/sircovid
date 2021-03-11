@@ -156,3 +156,30 @@ test_that("can combine rt calculations over trajectories", {
   expect_equal(res$Rt_general, cmp$Rt_general)
   expect_equal(res$Rt_all, cmp$Rt_all)
 })
+
+
+test_that("can combine EpiEstim rt calculations over trajectories", {
+  dat <- reference_data_trajectories()
+
+  index_cum_inc <- grep("infections", names(dat$predict$index))
+  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
+  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+
+  p <- dat$predict$transform(dat$pars[1, ])
+
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
+
+  rt <- carehomes_rt_trajectories_epiestim(
+    dat$trajectories$step, inc, p)
+
+  res <- combine_rt_epiestim(list(rt, rt), list(dat, dat))
+  cmp <- rt
+  cmp$Rt[, 1:2] <- NA
+  cmp$Rt_summary[, 1:2] <- NA
+
+  ## Rts are ordered differently
+  expect_equal(sort(as.vector(res$Rt)), sort(as.vector(cmp$Rt)))
+  expect_equal(res$Rt_summary, cmp$Rt_summary)
+})

@@ -462,46 +462,6 @@ test_that("Can add new betas with incomplete Rt calculation", {
     add_future_betas(dat, rt1, list("2020-05-01" = future_Rt(1, date_error))))
 })
 
-test_that("Can combine EpiEstim Rt estimates", {
-
-  region <- c("london", "midlands")
-
-  rt_EpiEstim <- vector("list", length(region))
-  inc <- vector("list", length(region))
-
-  for (i in seq_along(region)) {
-    p <- carehomes_parameters(sircovid_date("2020-02-07"), region[i],
-                              beta_value = 0.15)
-    ## Fix p_C across age groups for the rest of the test
-    p$p_C <- rep(0.6, 19)
-    np <- 20L
-    mod <- carehomes$new(p, 0, np, seed = 1L)
-
-    initial <- carehomes_initial(mod$info(), 10, p)
-    mod$set_state(initial$state, initial$step)
-    mod$set_index(integer(0))
-    index_cum_inf <- mod$info()$index$cum_infections
-    index_S <- mod$info()$index$S
-    index <- c(index_cum_inf, index_S)
-
-    end <- sircovid_date("2020-05-01") / p$dt
-    steps <- seq(initial$step, end, by = 1 / p$dt)
-
-    set.seed(1)
-    mod$set_index(index)
-    y <- mod$simulate(steps)
-    inc_tmp <- apply(y[1, , ], 1, diff)
-    inc[[i]] <- t(rbind(rep(0, np), inc_tmp))
-    S <- y[-1, , ]
-
-    rt_EpiEstim[[i]] <-
-      carehomes_rt_trajectories_epiestim(steps, inc[[i]], p,
-                                         sliding_window_ndays = 1)
-  }
-
-
-
-})
 
 test_that("can generate regions", {
   expect_length(regions("england"), 7)
