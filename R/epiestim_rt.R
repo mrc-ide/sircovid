@@ -42,8 +42,9 @@ gt_sample <- function(p, n = 1000) {
     }
     n_secondary_cases <- stats::rpois(1, lambda = infectivity * sample_I)
     tmp_gt <- seq(sample_E + p$dt, sample_E + sample_I, p$dt)
-    sampled_gt <- c(sampled_gt,
-                    sample(tmp_gt, n_secondary_cases, replace = TRUE))
+    sampled_gt <-
+      c(sampled_gt,
+        tmp_gt[sample.int(length(tmp_gt), n_secondary_cases, replace = TRUE)])
     i <- length(sampled_gt)
   }
 
@@ -155,7 +156,7 @@ carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
     f_sample_R <- function(e) {
       if (!is.na(R_i_shape_scale$shape[e])) {
         ret <- stats::rgamma(n_R, shape = R_i_shape_scale$shape[e],
-                      scale = R_i_shape_scale$scale[e])
+                             scale = R_i_shape_scale$scale[e])
       } else {
         ret <- rep(NA_real_, n_R)
       }
