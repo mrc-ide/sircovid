@@ -55,6 +55,8 @@ LinkingTo:
     cpp11 (>= 0.2.1),
     dust (>= 0.8.1)
 Suggests:
+    EpiEstim,
+    distcrete,
     testthat
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
