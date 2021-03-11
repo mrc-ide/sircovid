@@ -365,12 +365,11 @@ combine_rt <- function(rt, samples) {
 combine_rt_EpiEstim <- function(rt, samples) {
   ## Ensure all trajectories are the same length
   ret <- rt[[1L]]
-  what <- "Rt"
   if (!("Rt" %in% names(ret))) {
-    stop("rt$Rt missing. Did you forget 'save_all = TRUE'
-         in 'carehomes_EpiEstim_Rt_trajectories'?")
+    stop(paste("rt$Rt missing. Did you forget 'save_all = TRUE'",
+         "in 'carehomes_EpiEstim_Rt_trajectories'?"))
   }
-  ret$Rt <- combine_rt1_EpiEstim(what, rt, samples)
+  ret$Rt <- combine_rt1_EpiEstim("Rt", rt, samples)
   summary_R <- apply(ret$Rt, 1, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
   mean_R <- apply(ret$Rt, 1, mean, na.rm = TRUE)
   summary_R <- rbind(summary_R, mean_R)
