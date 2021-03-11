@@ -191,5 +191,5 @@ block_expand <- function(m, n) {
 gamma_mucv2shapescale <- function(mu, cv) {
   shape <- 1 / (cv^2)
   scale <- mu * cv^2
-  return(list(shape = shape, scale = scale))
+  list(shape = shape, scale = scale)
 }

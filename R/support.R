@@ -361,17 +361,35 @@ combine_rt <- function(rt, samples) {
   ret
 }
 
-
-combine_rt_EpiEstim <- function(rt, samples) {
+##' Combine Rt estimates from EpiEstim across multiple runs.
+##'
+##' @title Combine Rt estimates from EpiEstim
+##'
+##' @param rt A list of Rt calculations from
+##'   [carehomes_rt_trajectories_epiestim()] (though any Rt calculation that
+##'   confirms to this will work)
+##'
+##' @param samples A list of samples from [carehomes_forecast()]
+##'
+##' @param q A vector of quantiles to return values for
+##'
+##' @return A list of Rt output in the same structure as the first
+##'   element of `rt`. Rt estimates will be aggregated across
+##'   regions (or whatever else you are aggregating on) based on the
+##'   parameters in `samples`.
+##'
+##' @export
+combine_rt_epiestim <- function(rt, samples, q = NULL) {
+  q <- q %||% c(0.025, 0.5, 0.975)
   ## Ensure all trajectories are the same length
   ret <- rt[[1L]]
   if (!("Rt" %in% names(ret))) {
     stop(paste("rt$Rt missing. Did you forget 'save_all = TRUE'",
          "in 'carehomes_EpiEstim_Rt_trajectories'?"))
   }
-  ret$Rt <- combine_rt1_EpiEstim("Rt", rt, samples)
+  ret$Rt <- combine_rt1_epiestim("Rt", rt, samples)
   summary_R <- apply(ret$Rt, 1,
-                     stats::quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
+                     stats::quantile, q, na.rm = TRUE)
   mean_R <- apply(ret$Rt, 1, mean, na.rm = TRUE)
   summary_R <- rbind(summary_R, mean_R)
   ret$Rt_summary <- summary_R
@@ -412,7 +430,7 @@ combine_rt1 <- function(what, rt, samples) {
 }
 
 
-combine_rt1_EpiEstim <- function(what, rt, samples) {
+combine_rt1_combine_rt_epiestim <- function(what, rt, samples) {
 
   dates <- lapply(samples, function(x) x$trajectories$date)
   dates_keep <- dates[[1]]
