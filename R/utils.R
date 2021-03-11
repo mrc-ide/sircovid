@@ -193,3 +193,5 @@ gamma_mucv2shapescale <- function(mu, cv) {
   scale <- mu * cv^2
   return(list(shape = shape, scale = scale))
 }
+
+

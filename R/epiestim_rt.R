@@ -1,13 +1,3 @@
-##' @title Performs draws from the generation time distribution
-##'
-##' @param p A single [carehomes_parameters()] object.
-##'
-##' @param n The number of draws to perform
-##'
-##' @return a vector of `n` values of the generation time
-##'
-##' @importFrom distcrete distcrete
-##' @importFrom stats runif rpois
 gt_sample <- function(p, n = 1000) {
 
   ## Note: the above does not account for the impact of
@@ -41,7 +31,7 @@ gt_sample <- function(p, n = 1000) {
     ## Draw exposed period
     sample_E <- draw_from(1, p$k_E, p$gamma_E)
     ## Draw symptomatic vs asymptomatic path
-    path_C <- runif(1) <= p$p_C[[1]]
+    path_C <- stats::runif(1) <= p$p_C[[1]]
     if (!path_C) {
       sample_I <- draw_from(1, p$k_A, p$gamma_A)
       infectivity <- p$I_A_transmission
@@ -50,7 +40,7 @@ gt_sample <- function(p, n = 1000) {
         draw_from(1, p$k_C_1, p$gamma_C_1)
       infectivity <- 1
     }
-    n_secondary_cases <- rpois(1, lambda = infectivity * sample_I)
+    n_secondary_cases <- stats::rpois(1, lambda = infectivity * sample_I)
     tmp_gt <- seq(sample_E + p$dt, sample_E + sample_I, p$dt)
     sampled_gt <- c(sampled_gt,
                     sample(tmp_gt, n_secondary_cases, replace = TRUE))
@@ -61,7 +51,7 @@ gt_sample <- function(p, n = 1000) {
 
 }
 
-##' @importFrom graphics hist
+
 gt_distr <- function(p, n = 1000) {
   sampled_gt <- gt_sample(p, n)
   ## the discretisation below allows having a zero on the first day
@@ -69,8 +59,9 @@ gt_distr <- function(p, n = 1000) {
   ## this is because the GT is computed from the sum of E and I
   ## and each of those is at least 0.25 days
   ## hence the GT is at least 0.5 day
-  hist(sampled_gt, breaks = seq(0, ceiling(max(sampled_gt) + 1), 1) - 0.51,
-       plot = FALSE)$density
+  graphics::hist(sampled_gt,
+                 breaks = seq(0, ceiling(max(sampled_gt) + 1), 1) - 0.51,
+                 plot = FALSE)$density
 }
 
 
@@ -104,8 +95,10 @@ gt_distr <- function(p, n = 1000) {
 ##' incidence trajectory. These will then be aggregated across all incidence
 ##' trajectories.
 ##'
-##' @param save_all A boolean determining whether to save all samples of Rt
-##' estimated or only a summary
+##' @param save_all_Rt_sample A boolean determining whether to save all samples
+##' of Rt estimated or only a summary
+##'
+##' @param q A vector of quantiles to return values for
 ##'
 ##' @return A list with elements
 ##' `t_start` (vector of first days of the sliding windows over which Rt is
@@ -116,25 +109,28 @@ gt_distr <- function(p, n = 1000) {
 ##' sliding window (each row in the matrix) a sample of n_R * nrow(inc) values
 ##' of Rt for that sliding window (columns of the matrix)
 ##' `Rt_summary` a matrix containing for each sliding window (each row in the
-##' matrix) the 2.5%, 50%, 97.5% quantiles and the mean of Rt for that sliding
+##' matrix) the quantiles (`q`) and the mean of Rt for that sliding
 ##' window (columns of the matrix)
 ##'
 ##' @export
 ##' @importFrom EpiEstim make_config estimate_R
 ##' @importFrom stats quantile rgamma
-carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
+carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
                                                sliding_window_ndays = 7,
                                                mean_prior = 1,
                                                sd_prior = 1,
                                                n_GT = 10000,
                                                n_R = 1000,
-                                               save_all = TRUE) {
+                                               save_all_Rt_sample = TRUE,
+                                               q = NULL) {
+  q <- q %||% c(0.025, 0.5, 0.975)
+
   gt_distr <- gt_distr(p = p, n = n_GT)
 
-  T <- ncol(incidence)
+  max_t <- ncol(incidence)
   np <- nrow(incidence)
-  t_start <- seq(2, T - sliding_window_ndays + 1)
-  t_end <- seq(sliding_window_ndays + 1, T)
+  t_start <- seq(2, max_t - sliding_window_ndays + 1)
+  t_end <- seq(sliding_window_ndays + 1, max_t)
 
   # generate the config based on incidence for first parameter set
   config <- EpiEstim::make_config(incid = incidence[1, ],
@@ -145,7 +141,7 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                   mean_prior = mean_prior,
                                   std_prior = sd_prior)
 
-  R_sample <- matrix(NA, length(t_start), n_R * np)
+  R_sample <- matrix(NA_real_, length(t_start), n_R * np)
 
   for (i in seq_len(np)) {
     ## This function gives warning when precision in estimates is not good
@@ -156,13 +152,13 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
                                                  config = config)$R)
 
     R_i_shape_scale <- gamma_mucv2shapescale(mu = R_i[["Mean(R)"]],
-                                     cv = R_i[["Std(R)"]] / R_i[["Mean(R)"]])
+                                             cv = R_i[["Std(R)"]] / R_i[["Mean(R)"]])
     f_sample_R <- function(e) {
       if (!is.na(R_i_shape_scale$shape[e])) {
         ret <- rgamma(n_R, shape = R_i_shape_scale$shape[e],
                       scale = R_i_shape_scale$scale[e])
       } else {
-        ret <- rep(NA, n_R)
+        ret <- rep(NA_real_, n_R)
       }
     }
 
@@ -170,22 +166,21 @@ carehomes_EpiEstim_Rt_trajectories <- function(step, incidence, p,
       t(vapply(seq_len(length(t_start)), f_sample_R, numeric(n_R)))
   }
 
-  summary_R <- apply(R_sample, 1, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
+  summary_R <- apply(R_sample, 1, quantile, q, na.rm = TRUE)
   mean_R <- apply(R_sample, 1, mean, na.rm = TRUE)
   summary_R <- t(rbind(summary_R, mean_R))
 
   time_start <- step[t_start] * p$dt
   time_end <- step[t_end] * p$dt
 
-  if (save_all) {
-    ret <- list(t_start = time_start,
-                t_end = time_end,
-                Rt = R_sample,
-                Rt_summary = summary_R)
-  } else {
-    ret <- list(t_start = time_start,
-                t_end = time_end,
-                Rt_summary = summary_R)
+  ret <- list(t_start = time_start,
+              t_end = time_end,
+              Rt_summary = summary_R)
+
+  if (save_all_Rt_sample) {
+    ret$Rt <- R_sample
   }
+
+  ret
 
 }
