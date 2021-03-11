@@ -24,7 +24,7 @@ test_that("Can calculate EpiEstim Rt", {
   inc <- t(rbind(rep(0, np), inc))
   S <- y[-1, , ]
 
-  rt_EpiEstim <- carehomes_EpiEstim_Rt_trajectories(steps, inc, p,
+  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p,
                                                     sliding_window_ndays = 1)
 
   rt <- carehomes_Rt_trajectories(steps, S, p)
@@ -97,7 +97,7 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   inc <- t(rbind(rep(0, np), inc))
   S <- y[-1, , ]
 
-  rt_EpiEstim <- carehomes_EpiEstim_Rt_trajectories(steps, inc, p,
+  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p,
                                                     sliding_window_ndays = 1)
 
   rt <- carehomes_Rt_trajectories(steps, S, p)
