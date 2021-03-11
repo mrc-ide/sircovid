@@ -224,7 +224,14 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 }
 
 
-##' Brute force draws from the GT
+##' @title Performs draws from the generation time distribution
+##'
+##' @param p A single [carehomes_parameters()] object.
+##'
+##' @param n The number of draws to perform
+##'
+##' @return a vector of `n` values of the generation time
+##'
 ##' @importFrom distcrete distcrete
 ##' @importFrom stats runif rpois
 draw_one_GT_sample <- function(p, n = 1000) {
@@ -307,7 +314,7 @@ draw_one_GT_distr <- function(p, n = 1000) {
 ##'
 ##' @param incidence A matrix (n trajectories x n steps) of incidence counts
 ##'
-##' @param pars A single [carehomes_parameters()] object.
+##' @param p A single [carehomes_parameters()] object.
 ##'
 ##' @param sliding_window_ndays An integer giving the length of the sliding
 ##' window on which Rt will be estimated
@@ -322,6 +329,9 @@ draw_one_GT_distr <- function(p, n = 1000) {
 ##' @param n_R An integer giving the number of Rt values to sample from for each
 ##' incidence trajectory. These will then be aggregated across all incidence
 ##' trajectories.
+##'
+##' @param save_all A boolean determining whether to save all samples of Rt
+##' estimated or only a summary
 ##'
 ##' @return A list with elements
 ##' `t_start` (vector of first days of the sliding windows over which Rt is
