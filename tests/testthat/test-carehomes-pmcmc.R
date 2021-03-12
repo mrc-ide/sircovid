@@ -157,6 +157,59 @@ test_that("can combine rt calculations over trajectories", {
   expect_equal(res$Rt_all, cmp$Rt_all)
 })
 
+test_that("adding incidence adds appropriate states - nested", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$state <- array(
+    dat$trajectories$state, c(110, 11, 2, 32),
+    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
+                 letters[1:2], NULL)))
+  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
+  expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in% rownames(res$state)))
+
+  tmp <- res$state["deaths_inc", , , ]
+  expect_true(all(is.na(tmp[, 1, 1:2])))
+  deaths <- t(apply(tmp[, 1, -c(1, 2)], 1, cumsum))
+  expect_equal(
+    deaths,
+    res$state["deaths", , 1,  -c(1, 2)] - res$state["deaths", , 1,  2])
+
+  tmp <- res$state["deaths_hosp_inc", , , ]
+  expect_true(all(is.na(tmp[, 2, 1:2])))
+  deaths <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
+  expect_equal(
+    deaths,
+    res$state["deaths_hosp", , 2,  -c(1, 2)] -
+      res$state["deaths_hosp", , 2,  2])
+
+  expect_equal(drop_trajectory_incidence(res), dat$trajectories)
+})
+
+
+test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$state <- array(
+    dat$trajectories$state, c(110, 11, 2, 32),
+    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
+                 letters[1:2], NULL)))
+  v <- c("deaths", "deaths_hosp")
+  res <- add_trajectory_incidence(dat, v)
+  expect_identical(res$trajectories,
+                   add_trajectory_incidence(dat$trajectories, v))
+  expect_identical(drop_trajectory_incidence(res), dat)
+})
+
+
+test_that("can compute incidence for a single variable - nested", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$state <- array(
+    dat$trajectories$state, c(110, 11, 2, 32),
+    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
+                 letters[1:2], NULL)))
+  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
+  res <- add_trajectory_incidence(dat$trajectories, "deaths")
+  expect_identical(res$state["deaths_inc", , , ],
+                   cmp$state["deaths_inc", , , ])
+})
 
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_trajectories()
