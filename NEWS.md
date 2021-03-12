@@ -1,3 +1,7 @@
+
+# sircovid 0.10.6
+* New functions to estimate effective Rt using EpiEstim
+
 # sircovid 0.10.3
 * Predefined vaccination schedule implemented
 
