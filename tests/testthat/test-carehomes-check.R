@@ -169,6 +169,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
 
 
 test_that("No one is hospitalised, no-one dies if psi_H is 0", {
+  set.seed(1)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
