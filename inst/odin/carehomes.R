@@ -190,9 +190,33 @@ p_star <- if (as.integer(step) >= length(p_star_step))
   p_star_step[length(p_star_step)] else p_star_step[step + 1]
 p_star_by_age[] <- p_star * psi_star[i]
 
-## Work out time-varying gammas
+## Work out time-varying gammas for hospital durations
 gamma_H_R <- if (as.integer(step) >= length(gamma_H_R_step))
   gamma_H_R_step[length(gamma_H_R_step)] else gamma_H_R_step[step + 1]
+
+gamma_W_R <- if (as.integer(step) >= length(gamma_W_R_step))
+  gamma_W_R_step[length(gamma_W_R_step)] else gamma_W_R_step[step + 1]
+
+gamma_ICU_W_R <- if (as.integer(step) >= length(gamma_ICU_W_R_step))
+  gamma_ICU_W_R_step[length(gamma_ICU_W_R_step)] else
+    gamma_ICU_W_R_step[step + 1]
+
+gamma_H_D <- if (as.integer(step) >= length(gamma_H_D_step))
+  gamma_H_D_step[length(gamma_H_D_step)] else gamma_H_D_step[step + 1]
+
+gamma_W_D <- if (as.integer(step) >= length(gamma_W_D_step))
+  gamma_W_D_step[length(gamma_W_D_step)] else gamma_W_D_step[step + 1]
+
+gamma_ICU_W_D <- if (as.integer(step) >= length(gamma_ICU_W_D_step))
+  gamma_ICU_W_D_step[length(gamma_ICU_W_D_step)] else
+    gamma_ICU_W_D_step[step + 1]
+
+gamma_ICU_D <- if (as.integer(step) >= length(gamma_ICU_D_step))
+  gamma_ICU_D_step[length(gamma_ICU_D_step)] else gamma_ICU_D_step[step + 1]
+
+gamma_ICU_pre <- if (as.integer(step) >= length(gamma_ICU_pre_step))
+  gamma_ICU_pre_step[length(gamma_ICU_pre_step)] else
+    gamma_ICU_pre_step[step + 1]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -923,7 +947,8 @@ psi_G_D[] <- user()
 
 ## Parameters of the ICU_pre classes
 k_ICU_pre <- user()
-gamma_ICU_pre <- user(0.1)
+dim(gamma_ICU_pre_step) <- user()
+gamma_ICU_pre_step[] <- user()
 
 ## Proportion of hospital cases progressing to ICU
 dim(p_ICU_step) <- user()
@@ -942,22 +967,26 @@ gamma_H_R_step[] <- user()
 
 ## Parameters of the H_D classes
 k_H_D <- user()
-gamma_H_D <- user(0.1)
+dim(gamma_H_D_step) <- user()
+gamma_H_D_step[] <- user()
 dim(p_H_D_step) <- user()
 p_H_D_step[] <- user()
 psi_H_D[] <- user()
 
 ## Parameters of the ICU_W_R classes
 k_ICU_W_R <- user()
-gamma_ICU_W_R <- user(0.1)
+dim(gamma_ICU_W_R_step) <- user()
+gamma_ICU_W_R_step[] <- user()
 
 ## Parameters of the ICU_W_D classes
 k_ICU_W_D <- user()
-gamma_ICU_W_D <- user(0.1)
+dim(gamma_ICU_W_D_step) <- user()
+gamma_ICU_W_D_step[] <- user()
 
 ## Parameters of the ICU_D classes
 k_ICU_D <- user()
-gamma_ICU_D <- user(0.1)
+dim(gamma_ICU_D_step) <- user()
+gamma_ICU_D_step[] <- user()
 dim(p_ICU_D_step) <- user()
 p_ICU_D_step[] <- user()
 psi_ICU_D[] <- user()
@@ -968,11 +997,13 @@ dim(waning_rate) <- n_groups
 
 ## Parameters of the W_R classes
 k_W_R <- user()
-gamma_W_R <- user(0.1)
+dim(gamma_W_R_step) <- user()
+gamma_W_R_step[] <- user()
 
 ## Parameters of the W_D classes
 k_W_D <- user()
-gamma_W_D <- user(0.1)
+dim(gamma_W_D_step) <- user()
+gamma_W_D_step[] <- user()
 
 ## Parameters of the T_sero_pre classes
 gamma_sero_pre_1 <- user(0.1)

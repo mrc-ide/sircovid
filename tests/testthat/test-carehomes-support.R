@@ -166,7 +166,9 @@ test_that("carehomes_parameters returns a list of parameters", {
       "psi_W_D", "p_W_D_step", "psi_H",
       "p_H_step", "psi_G_D", "p_G_D_step",
       "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
-      "n_groups", "initial_I", "gamma_H_R_step"))
+      "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
+      "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
+      "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))

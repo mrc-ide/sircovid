@@ -337,6 +337,13 @@ carehomes_parameters <- function(start_date, region,
 
   ## implementation of time-varying progression gammas
   progression$gamma_H_R_step <- max(progression$gamma_H_R)
+  progression$gamma_W_R_step <- max(progression$gamma_W_R)
+  progression$gamma_ICU_W_R_step <- max(progression$gamma_ICU_W_R)
+  progression$gamma_H_D_step <- max(progression$gamma_H_D)
+  progression$gamma_W_D_step <- max(progression$gamma_W_D)
+  progression$gamma_ICU_W_D_step <- max(progression$gamma_ICU_W_D)
+  progression$gamma_ICU_D_step <- max(progression$gamma_ICU_D)
+  progression$gamma_ICU_pre_step <- max(progression$gamma_ICU_pre)
 
   waning <- carehomes_parameters_waning(waning_rate)
 

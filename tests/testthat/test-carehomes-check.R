@@ -493,6 +493,13 @@ test_that("setting a gamma to Inf results immediate progression", {
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
     p$gamma_H_R_step <- Inf
+    p$gamma_W_R_step <- Inf
+    p$gamma_ICU_W_R_step <- Inf
+    p$gamma_H_D_step <- Inf
+    p$gamma_W_D_step <- Inf
+    p$gamma_ICU_W_D_step <- Inf
+    p$gamma_ICU_D_step <- Inf
+    p$gamma_ICU_pre_step <- Inf
     p[[gamma_name]] <- Inf
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
@@ -561,6 +568,13 @@ test_that("setting a gamma to 0 results in no progression", {
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
     p$gamma_H_R_step <- 0
+    p$gamma_W_R_step <- 0
+    p$gamma_ICU_W_R_step <- 0
+    p$gamma_H_D_step <- 0
+    p$gamma_W_D_step <- 0
+    p$gamma_ICU_W_D_step <- 0
+    p$gamma_ICU_D_step <- 0
+    p$gamma_ICU_pre_step <- 0
     p[[gamma_name]] <- 0
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
@@ -638,6 +652,15 @@ test_that("No one is unconfirmed, if p_star = 1", {
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step <- 1
   p$gamma_H_R_step <- Inf
+  p$gamma_H_R_step <- Inf
+  p$gamma_W_R_step <- Inf
+  p$gamma_ICU_W_R_step <- Inf
+  p$gamma_H_D_step <- Inf
+  p$gamma_W_D_step <- Inf
+  p$gamma_ICU_W_D_step <- Inf
+  p$gamma_ICU_D_step <- Inf
+  p$gamma_ICU_pre_step <- Inf
+
   p$psi_star[] <- 1
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
@@ -721,6 +744,14 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_star[] <- 0
   p$gamma_H_R_step <- Inf
+  p$gamma_W_R_step <- Inf
+  p$gamma_ICU_W_R_step <- Inf
+  p$gamma_H_D_step <- Inf
+  p$gamma_W_D_step <- Inf
+  p$gamma_ICU_W_D_step <- Inf
+  p$gamma_ICU_D_step <- Inf
+  p$gamma_ICU_pre_step <- Inf
+
   p$gamma_U <- Inf
   p$gamma_ICU_pre <- Inf
   p$gamma_H_R <- Inf
@@ -911,6 +942,13 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
     p$gamma_H_R_step <- 0
+    p$gamma_W_R_step <- 0
+    p$gamma_ICU_W_R_step <- 0
+    p$gamma_H_D_step <- 0
+    p$gamma_W_D_step <- 0
+    p$gamma_ICU_W_D_step <- 0
+    p$gamma_ICU_D_step <- 0
+    p$gamma_ICU_pre_step <- 0
 
     mod <- carehomes$new(p, 0, 1)
 
