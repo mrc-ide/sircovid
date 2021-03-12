@@ -211,19 +211,27 @@ add_trajectory_incidence <- function(obj, states, suffix = "_inc") {
     return(obj)
   }
 
-  ## In order to compute incidence we have to add two NA values; one
-  ## is the usual one dropped in a rolling difference, the other is
-  ## dropped as the first time interval is potentially much longer
-  ## than a day.
-  incidence <- function(x) {
-    c(NA, NA, diff(x[-1L]))
+  if (length(dim(obj$state)) == 3) {
+    add_trajectory_incidence_single(obj, states, suffix)
+  } else {
+    add_trajectory_incidence_nested(obj, states, suffix)
   }
+}
 
+## In order to compute incidence we have to add two NA values; one
+## is the usual one dropped in a rolling difference, the other is
+## dropped as the first time interval is potentially much longer
+## than a day.
+trajectory_incidence <- function(x) {
+  c(NA, NA, diff(x[-1L]))
+}
+
+add_trajectory_incidence_single <- function(obj, states, suffix) {
   ## This is less complicated than it looks, but takes a diff over the
   ## time dimension and converts back into the correct array dimension
   ## order.
   traj_inc <- aperm(
-    apply(obj$state[states, , , drop = FALSE], c(1, 2), incidence),
+    apply(obj$state[states, , , drop = FALSE], c(1, 2), trajectory_incidence),
     c(2, 3, 1))
   rownames(traj_inc) <- paste0(states, suffix)
   obj$state <- abind1(obj$state, traj_inc)
@@ -231,6 +239,29 @@ add_trajectory_incidence <- function(obj, states, suffix = "_inc") {
   obj
 }
 
+
+add_trajectory_incidence_nested <- function(obj, states, suffix) {
+  add_incidence <- function(a, b) {
+
+    traj_inc <- aperm(apply(a[b, , , drop = FALSE],
+                            c(1, 2), trajectory_incidence), c(2, 3, 1))
+    rownames(traj_inc) <- paste0(b, suffix)
+    abind1(a, traj_inc)
+  }
+
+  new_state <- array(NA,
+                     c(length(states) + nrow(obj$state), dim(obj$state)[2:4]),
+                     c(list(c(rownames(obj$state), paste0(states, suffix))),
+                       dimnames(obj$state)[2:4]))
+
+  for (i in seq_len(dim(obj$state)[[3L]])) {
+    new_state[, , i, ] <- add_incidence(obj$state[, , i, ], states)
+  }
+
+  obj$state <- new_state
+
+  obj
+}
 
 ##' @rdname add_trajectory_incidence
 ##' @export
@@ -242,7 +273,13 @@ drop_trajectory_incidence <- function(obj) {
 
   assert_is(obj, "mcstate_trajectories")
   k <- grep("_inc$", rownames(obj$state))
-  obj$state <- obj$state[-k, , ]
+
+  if (length(dim(obj$state)) == 3) {
+    obj$state <- obj$state[-k, , ]
+  } else {
+    obj$state <- obj$state[-k, , , ]
+  }
+
   obj
 }
 
