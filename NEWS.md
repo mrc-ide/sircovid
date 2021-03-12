@@ -1,3 +1,8 @@
+
+# sircovid 0.10.8
+
+* New functions to estimate effective Rt using EpiEstim
+
 # sircovid 0.10.7
 
 * Added utils for nested pmcmc
