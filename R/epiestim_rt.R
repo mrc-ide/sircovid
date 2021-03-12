@@ -112,6 +112,8 @@ gt_distr <- function(p, n = 1000) {
 ##' `Rt_summary` a matrix containing for each sliding window (each col in the
 ##' matrix) the quantiles (`q`) and the mean of Rt for that sliding
 ##' window (rows of the matrix)
+##' ` gt_distr` a vector giving the discrete (daily) distribution of the
+##' generation time
 ##'
 ##' @export
 carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
@@ -175,6 +177,7 @@ carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
 
   ret <- list(t_start = time_start,
               t_end = time_end,
+              gt_distr = gt_distr,
               Rt_summary = summary_R)
 
   if (save_all_Rt_sample) {
