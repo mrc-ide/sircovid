@@ -175,7 +175,7 @@ test_that("can't compute Rt for unknown types", {
   y <- d$inputs$y
 
   expect_error(
-   carehomes_Rt(steps, y[, 1, ], p, type = "max_Rt_general"),
+    carehomes_Rt(steps, y[, 1, ], p, type = "max_Rt_general"),
     "Unknown R type 'max_Rt_general', must match '")
   expect_error(
     carehomes_Rt_trajectories(steps, y, p, type = "max_Rt_general"),
@@ -229,20 +229,21 @@ test_that("Can interpolate Rt with step changes", {
 
   ## Then compute the Rt values with interpolation
   rt_int_2 <- carehomes_Rt_trajectories(step, S, p,
-                                      initial_step_from_parameters = FALSE,
-                                      interpolate_every = 2,
-                                      interpolate_min = 3,
-                                      interpolate_critical_dates = crit_dates)
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 2,
+                                        interpolate_min = 3,
+                                        interpolate_critical_dates = crit_dates)
   rt_int_7 <- carehomes_Rt_trajectories(step, S, p,
                                         initial_step_from_parameters = FALSE,
                                         interpolate_every = 7,
                                         interpolate_min = 3,
                                         interpolate_critical_dates = crit_dates)
   rt_int_14 <- carehomes_Rt_trajectories(step, S, p,
-                                        initial_step_from_parameters = FALSE,
-                                        interpolate_every = 14,
-                                        interpolate_min = 1,
-                                        interpolate_critical_dates = crit_dates)
+                                         initial_step_from_parameters = FALSE,
+                                         interpolate_every = 14,
+                                         interpolate_min = 1,
+                                         interpolate_critical_dates =
+                                           crit_dates)
   ## check the error is small
   tol <- 0.05
   # for interpolation every 2 days

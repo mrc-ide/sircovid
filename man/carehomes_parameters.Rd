@@ -14,6 +14,7 @@ carehomes_parameters(
   sero_specificity = 0.9,
   sero_sensitivity = 0.99,
   progression = NULL,
+  initial_I = 10,
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
@@ -77,6 +78,10 @@ with the progression parameters.}
 \item{sero_sensitivity}{Sensitivity of the serology test}
 
 \item{progression}{Progression data}
+
+\item{initial_I}{Initial number of infected indidviduals; these
+will enter the model as asymptomatic 15-19 year olds at
+\code{start_date}. The default is 10 individuals.}
 
 \item{eps}{Change in contact rate for carehome residents}
 

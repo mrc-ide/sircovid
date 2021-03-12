@@ -193,7 +193,6 @@ p_star_by_age[] <- p_star * psi_star[i]
 ## Work out time-varying gammas
 gamma_H_R <- if (as.integer(step) >= length(gamma_H_R_step))
   gamma_H_R_step[length(gamma_H_R_step)] else gamma_H_R_step[step + 1]
-# fogamma_H_R_by_age[] <- gamma_H_R / psi_gamma_H_R[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -330,7 +329,7 @@ n_R_next_vacc_class_capped[, , ] <- min(n_R_next_vacc_class_tmp[i, j, k],
   T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
 n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
-  
+
 #### other transitions ####
 
 n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress)
@@ -940,7 +939,6 @@ psi_W_D[] <- user()
 k_H_R <- user()
 dim(gamma_H_R_step) <- user()
 gamma_H_R_step[] <- user()
-# psi_gamma_H_R[] <- user()
 
 ## Parameters of the H_D classes
 k_H_D <- user()
@@ -1313,10 +1311,6 @@ dim(p_ICU_D_by_age) <- n_groups
 dim(psi_ICU_D) <- n_groups
 dim(p_W_D_by_age) <- n_groups
 dim(psi_W_D) <- n_groups
-
-## Vectors handling the time to hospital discharge
-# dim(gamma_H_R_by_age) <- n_groups
-# dim(psi_gamma_H_R) <- n_groups
 
 ## Vector handling the probability of being admitted as confirmed
 dim(p_star_by_age) <- n_groups

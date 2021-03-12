@@ -111,10 +111,10 @@ extern "C" SEXP _sircovid_dust_basic_compare_data(SEXP ptr) {
   END_CPP11
 }
 // basic.cpp
-SEXP dust_basic_filter(SEXP ptr, bool save_history);
-extern "C" SEXP _sircovid_dust_basic_filter(SEXP ptr, SEXP save_history) {
+SEXP dust_basic_filter(SEXP ptr, bool save_trajectories, cpp11::sexp step_snapshot);
+extern "C" SEXP _sircovid_dust_basic_filter(SEXP ptr, SEXP save_trajectories, SEXP step_snapshot) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_basic_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<bool>>(save_history)));
+    return cpp11::as_sexp(dust_basic_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<bool>>(save_trajectories), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(step_snapshot)));
   END_CPP11
 }
 // basic.cpp
@@ -253,10 +253,10 @@ extern "C" SEXP _sircovid_dust_carehomes_compare_data(SEXP ptr) {
   END_CPP11
 }
 // carehomes.cpp
-SEXP dust_carehomes_filter(SEXP ptr, bool save_history);
-extern "C" SEXP _sircovid_dust_carehomes_filter(SEXP ptr, SEXP save_history) {
+SEXP dust_carehomes_filter(SEXP ptr, bool save_trajectories, cpp11::sexp step_snapshot);
+extern "C" SEXP _sircovid_dust_carehomes_filter(SEXP ptr, SEXP save_trajectories, SEXP step_snapshot) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_carehomes_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<bool>>(save_history)));
+    return cpp11::as_sexp(dust_carehomes_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<bool>>(save_trajectories), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(step_snapshot)));
   END_CPP11
 }
 // carehomes.cpp
@@ -295,7 +295,7 @@ extern SEXP _sircovid_dust_basic_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP)
 extern SEXP _sircovid_dust_basic_capabilities();
 extern SEXP _sircovid_dust_basic_compare_data(SEXP);
 extern SEXP _sircovid_dust_basic_device_info();
-extern SEXP _sircovid_dust_basic_filter(SEXP, SEXP);
+extern SEXP _sircovid_dust_basic_filter(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_n_state(SEXP);
 extern SEXP _sircovid_dust_basic_reorder(SEXP, SEXP);
 extern SEXP _sircovid_dust_basic_resample(SEXP, SEXP);
@@ -315,7 +315,7 @@ extern SEXP _sircovid_dust_carehomes_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, S
 extern SEXP _sircovid_dust_carehomes_capabilities();
 extern SEXP _sircovid_dust_carehomes_compare_data(SEXP);
 extern SEXP _sircovid_dust_carehomes_device_info();
-extern SEXP _sircovid_dust_carehomes_filter(SEXP, SEXP);
+extern SEXP _sircovid_dust_carehomes_filter(SEXP, SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_n_state(SEXP);
 extern SEXP _sircovid_dust_carehomes_reorder(SEXP, SEXP);
 extern SEXP _sircovid_dust_carehomes_resample(SEXP, SEXP);
@@ -337,7 +337,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_basic_capabilities",      (DL_FUNC) &_sircovid_dust_basic_capabilities,      0},
     {"_sircovid_dust_basic_compare_data",      (DL_FUNC) &_sircovid_dust_basic_compare_data,      1},
     {"_sircovid_dust_basic_device_info",       (DL_FUNC) &_sircovid_dust_basic_device_info,       0},
-    {"_sircovid_dust_basic_filter",            (DL_FUNC) &_sircovid_dust_basic_filter,            2},
+    {"_sircovid_dust_basic_filter",            (DL_FUNC) &_sircovid_dust_basic_filter,            3},
     {"_sircovid_dust_basic_n_state",           (DL_FUNC) &_sircovid_dust_basic_n_state,           1},
     {"_sircovid_dust_basic_reorder",           (DL_FUNC) &_sircovid_dust_basic_reorder,           2},
     {"_sircovid_dust_basic_resample",          (DL_FUNC) &_sircovid_dust_basic_resample,          2},
@@ -357,7 +357,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_carehomes_capabilities",  (DL_FUNC) &_sircovid_dust_carehomes_capabilities,  0},
     {"_sircovid_dust_carehomes_compare_data",  (DL_FUNC) &_sircovid_dust_carehomes_compare_data,  1},
     {"_sircovid_dust_carehomes_device_info",   (DL_FUNC) &_sircovid_dust_carehomes_device_info,   0},
-    {"_sircovid_dust_carehomes_filter",        (DL_FUNC) &_sircovid_dust_carehomes_filter,        2},
+    {"_sircovid_dust_carehomes_filter",        (DL_FUNC) &_sircovid_dust_carehomes_filter,        3},
     {"_sircovid_dust_carehomes_n_state",       (DL_FUNC) &_sircovid_dust_carehomes_n_state,       1},
     {"_sircovid_dust_carehomes_reorder",       (DL_FUNC) &_sircovid_dust_carehomes_reorder,       2},
     {"_sircovid_dust_carehomes_resample",      (DL_FUNC) &_sircovid_dust_carehomes_resample,      2},

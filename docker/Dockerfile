@@ -15,11 +15,13 @@ RUN apt-get update &&  apt-get install -y --no-install-recommends \
 COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
 
 RUN install2.r --error \
+        EpiEstim \
         cpp11 \
+        distcrete \
         remotes \
         socialmixr
 
-RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust", "mrc-ide/mcstate",  "mrc-ide/eigen1"))'
+RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust",  "mrc-ide/mcstate",  "mrc-ide/eigen1"))'
 
 COPY . /src
 RUN R CMD INSTALL --install-tests /src && rm -rf /src

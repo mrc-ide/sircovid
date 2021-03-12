@@ -59,7 +59,7 @@ test_that("Can compute forecasts from mcmc output", {
                dim(dat$trajectories$state) + c(2, -8, 10))
 
   expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in%
-                  rownames(res$trajectories$state)))
+                    rownames(res$trajectories$state)))
 })
 
 
@@ -74,7 +74,7 @@ test_that("Can compute forecasts from mcmc output without prepending", {
   expect_equal(dim(res$trajectories$state),
                c(nrow(dat$trajectories$state) + 2, 3, 11))
   expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in%
-                  rownames(res$trajectories$state)))
+                    rownames(res$trajectories$state)))
 })
 
 test_that("Can combine trajectories of equal size", {
@@ -155,4 +155,109 @@ test_that("can combine rt calculations over trajectories", {
   ## calculated.
   expect_equal(res$Rt_general, cmp$Rt_general)
   expect_equal(res$Rt_all, cmp$Rt_all)
+})
+
+test_that("adding incidence adds appropriate states - nested", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$state <- array(
+    dat$trajectories$state, c(110, 11, 2, 32),
+    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
+                 letters[1:2], NULL)))
+  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
+  expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in% rownames(res$state)))
+
+  tmp <- res$state["deaths_inc", , , ]
+  expect_true(all(is.na(tmp[, 1, 1:2])))
+  deaths <- t(apply(tmp[, 1, -c(1, 2)], 1, cumsum))
+  expect_equal(
+    deaths,
+    res$state["deaths", , 1,  -c(1, 2)] - res$state["deaths", , 1,  2])
+
+  tmp <- res$state["deaths_hosp_inc", , , ]
+  expect_true(all(is.na(tmp[, 2, 1:2])))
+  deaths <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
+  expect_equal(
+    deaths,
+    res$state["deaths_hosp", , 2,  -c(1, 2)] -
+      res$state["deaths_hosp", , 2,  2])
+
+  expect_equal(drop_trajectory_incidence(res), dat$trajectories)
+})
+
+
+test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$state <- array(
+    dat$trajectories$state, c(110, 11, 2, 32),
+    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
+                 letters[1:2], NULL)))
+  v <- c("deaths", "deaths_hosp")
+  res <- add_trajectory_incidence(dat, v)
+  expect_identical(res$trajectories,
+                   add_trajectory_incidence(dat$trajectories, v))
+  expect_identical(drop_trajectory_incidence(res), dat)
+})
+
+
+test_that("can compute incidence for a single variable - nested", {
+  dat <- reference_data_mcmc()
+  dat$trajectories$state <- array(
+    dat$trajectories$state, c(110, 11, 2, 32),
+    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
+                 letters[1:2], NULL)))
+  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
+  res <- add_trajectory_incidence(dat$trajectories, "deaths")
+  expect_identical(res$state["deaths_inc", , , ],
+                   cmp$state["deaths_inc", , , ])
+})
+
+test_that("can combine EpiEstim rt calculations over trajectories", {
+  dat <- reference_data_trajectories()
+
+  index_cum_inc <- grep("infections", names(dat$predict$index))
+  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
+  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+
+  p <- dat$predict$transform(dat$pars[1, ])
+
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
+
+  rt <- carehomes_rt_trajectories_epiestim(
+    dat$trajectories$step, inc, p)
+
+  res <- combine_rt_epiestim(list(rt, rt), list(dat, dat))
+  cmp <- rt
+  cmp$Rt[, 1:2] <- NA
+  cmp$Rt_summary[, 1:2] <- NA
+
+  ## Rts are ordered differently
+  expect_equal(sort(as.vector(res$Rt)), sort(as.vector(cmp$Rt)))
+  expect_equal(res$Rt_summary, cmp$Rt_summary)
+})
+
+
+test_that("Combining EpiEstim rt reject invalid inputs", {
+  dat <- reference_data_trajectories()
+
+  index_cum_inc <- grep("infections", names(dat$predict$index))
+  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
+  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+
+  p <- dat$predict$transform(dat$pars[1, ])
+
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
+
+  rt <- carehomes_rt_trajectories_epiestim(
+    dat$trajectories$step, inc, p, save_all_Rt_sample = FALSE)
+
+  error_msg <-
+    paste("rt$Rt missing. Did you forget 'save_all_Rt_sample = TRUE'",
+          "in 'carehomes_EpiEstim_Rt_trajectories'?")
+  expect_error(combine_rt_epiestim(list(rt, rt), list(dat, dat)),
+               error_msg, fixed = TRUE)
+
 })
