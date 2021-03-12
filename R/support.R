@@ -398,6 +398,41 @@ combine_rt <- function(rt, samples) {
   ret
 }
 
+##' Combine Rt estimates from EpiEstim across multiple runs.
+##'
+##' @title Combine Rt estimates from EpiEstim
+##'
+##' @param rt A list of Rt calculations from
+##'   [carehomes_rt_trajectories_epiestim()] (though any Rt calculation that
+##'   confirms to this will work)
+##'
+##' @param samples A list of samples from [carehomes_forecast()]
+##'
+##' @param q A vector of quantiles to return values for
+##'
+##' @return A list of Rt output in the same structure as the first
+##'   element of `rt`. Rt estimates will be aggregated across
+##'   regions (or whatever else you are aggregating on) based on the
+##'   parameters in `samples`.
+##'
+##' @export
+combine_rt_epiestim <- function(rt, samples, q = NULL) {
+  q <- q %||% c(0.025, 0.5, 0.975)
+  ## Ensure all trajectories are the same length
+  ret <- rt[[1L]]
+  if (!("Rt" %in% names(ret))) {
+    stop(paste("rt$Rt missing. Did you forget 'save_all_Rt_sample = TRUE'",
+         "in 'carehomes_EpiEstim_Rt_trajectories'?"))
+  }
+  ret$Rt <- combine_rt1_epiestim("Rt", rt, samples)
+  summary_R <- apply(ret$Rt, 2,
+                     stats::quantile, q, na.rm = TRUE)
+  mean_R <- apply(ret$Rt, 2, mean, na.rm = TRUE)
+  summary_R <- rbind(summary_R, mean_R)
+  ret$Rt_summary <- summary_R
+  ret
+}
+
 
 combine_rt1 <- function(what, rt, samples) {
   dates <- lapply(samples, function(x) x$trajectories$date)
@@ -405,11 +440,11 @@ combine_rt1 <- function(what, rt, samples) {
   for (i in seq_along(dates)[-1]) {
     dates_keep <- intersect(dates_keep, dates[[i]])
   }
+
   idx <- lapply(seq_along(samples), function(i) dates[[i]] %in% dates_keep)
 
   incidence <- Map(function(s, i)
     t(s$trajectories$state["infections_inc", , i]), samples, idx)
-
   rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
 
   ## Calculate rank of particles by area under Rt curve
@@ -423,6 +458,46 @@ combine_rt1 <- function(what, rt, samples) {
   ## Rank Rt and incidence
   x <- reorder_by_rank(rt_what, rank_x)
   w <- reorder_by_rank(incidence, rank_x)
+  sum_w <- Reduce(`+`, w)
+
+  ## Weight Rt by incidence to combine regions
+  ret <- Map(function(x, w) x * w / sum_w, x, w)
+
+  Reduce(`+`, ret)
+}
+
+
+combine_rt1_epiestim <- function(what, rt, samples) {
+
+  dates <- lapply(samples, function(x) x$trajectories$date)
+  dates_keep <- dates[[1]]
+  for (i in seq_along(dates)[-1]) {
+    dates_keep <- intersect(dates_keep, dates[[i]])
+    dates_keep <- intersect(dates_keep, rt[[i]]$t_end)
+  }
+  idx <- lapply(seq_along(rt), function(i) which(rt[[i]]$t_end %in% dates_keep))
+
+  incidence <- Map(function(s, i)
+    s$trajectories$state["infections_inc", , i], samples, idx)
+
+  rt_what <- Map(function(r, i) r[[what]][, i], rt, idx)
+
+  ## Calculate rank of particles by area under Rt curve
+  ## average across sets of n_R_per_traj Rs
+  n_R_per_traj <- round(nrow(rt_what[[1]]) / nrow(incidence[[1]]))
+  incidence_rep <- lapply(incidence, function(m)
+    m[rep(seq_len(nrow(m)), each = n_R_per_traj), ])
+  idx_incidence <- rep(seq_len(nrow(incidence[[1]])), each = n_R_per_traj)
+  rank_x <- lapply(rt_what, function(x) order(rowSums(x, na.rm = TRUE)))
+
+  ## Rank based on the transpose (vs when this is done in the trajectories).
+  reorder_by_rank <- function(x, rank_x) {
+    Map(function(x, rank) x[rank, ], x, rank_x)
+  }
+
+  ## Rank Rt and incidence
+  x <- reorder_by_rank(rt_what, rank_x)
+  w <- reorder_by_rank(incidence_rep, rank_x)
   sum_w <- Reduce(`+`, w)
 
   ## Weight Rt by incidence to combine regions

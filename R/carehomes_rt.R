@@ -114,7 +114,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     if (ncol(prob_strain) != length(step)) {
       stop(sprintf(
         "Expected 'prob_strain' to have %d columns, following 'step'",
-                   length(step)))
+        length(step)))
     }
   }
 
@@ -315,7 +315,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
                    sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
   p_H_D <- outer(matricise(pars$psi_H_D, n_vacc_classes),
-                sircovid_parameters_beta_expand(step, pars$p_H_D_step))
+                 sircovid_parameters_beta_expand(step, pars$p_H_D_step))
   p_W_D <- outer(matricise(pars$psi_W_D, n_vacc_classes),
                  sircovid_parameters_beta_expand(step, pars$p_W_D_step))
   p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),

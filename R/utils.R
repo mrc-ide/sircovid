@@ -186,3 +186,10 @@ block_expand <- function(m, n) {
   len <- nrow(m) * n
   matrix(t(matrix(m, nrow(m), len)), len, len, byrow = TRUE)
 }
+
+
+gamma_mucv2shapescale <- function(mu, cv) {
+  shape <- 1 / (cv^2)
+  scale <- mu * cv^2
+  list(shape = shape, scale = scale)
+}

@@ -1,4 +1,4 @@
-# sircovid 0.10.6
+# sircovid 0.10.7
 
 * Added utils for nested pmcmc
 
