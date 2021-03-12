@@ -211,23 +211,27 @@ add_trajectory_incidence <- function(obj, states, suffix = "_inc") {
     return(obj)
   }
 
-  if (length(dim(obj$state)) == 4) {
-    return(add_trajectory_incidence_nested(obj, states, suffix))
+  if (length(dim(obj$state)) == 3) {
+    add_trajectory_incidence_single(obj, states, suffix)
+  } else {
+    add_trajectory_incidence_nested(obj, states, suffix)
   }
+}
 
-  ## In order to compute incidence we have to add two NA values; one
-  ## is the usual one dropped in a rolling difference, the other is
-  ## dropped as the first time interval is potentially much longer
-  ## than a day.
-  incidence <- function(x) {
-    c(NA, NA, diff(x[-1L]))
-  }
+## In order to compute incidence we have to add two NA values; one
+## is the usual one dropped in a rolling difference, the other is
+## dropped as the first time interval is potentially much longer
+## than a day.
+trajectory_incidence <- function(x) {
+  c(NA, NA, diff(x[-1L]))
+}
 
+add_trajectory_incidence_single <- function(obj, states, suffix) {
   ## This is less complicated than it looks, but takes a diff over the
   ## time dimension and converts back into the correct array dimension
   ## order.
   traj_inc <- aperm(
-    apply(obj$state[states, , , drop = FALSE], c(1, 2), incidence),
+    apply(obj$state[states, , , drop = FALSE], c(1, 2), trajectory_incidence),
     c(2, 3, 1))
   rownames(traj_inc) <- paste0(states, suffix)
   obj$state <- abind1(obj$state, traj_inc)
@@ -235,13 +239,12 @@ add_trajectory_incidence <- function(obj, states, suffix = "_inc") {
   obj
 }
 
+
 add_trajectory_incidence_nested <- function(obj, states, suffix) {
   add_incidence <- function(a, b) {
-    incidence <- function(x)
-      c(NA, NA, diff(x[-1L]))
 
     traj_inc <- aperm(apply(a[b, , , drop = FALSE],
-                            c(1, 2), incidence), c(2, 3, 1))
+                            c(1, 2), trajectory_incidence), c(2, 3, 1))
     rownames(traj_inc) <- paste0(b, suffix)
     abind1(a, traj_inc)
   }
