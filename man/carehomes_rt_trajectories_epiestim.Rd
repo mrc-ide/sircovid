@@ -55,6 +55,8 @@ of Rt for that sliding window (rows of the matrix)
 \code{Rt_summary} a matrix containing for each sliding window (each col in the
 matrix) the quantiles (\code{q}) and the mean of Rt for that sliding
 window (rows of the matrix)
+\code{ gt_distr} a vector giving the discrete (daily) distribution of the
+generation time
 }
 \description{
 Compute "Rt" using EpiEtim for a set of simulated trajectories (e.g., the
