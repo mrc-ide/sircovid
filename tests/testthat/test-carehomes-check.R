@@ -878,6 +878,16 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
 
+    ## set all hospital gamma steps to 0
+    p$gamma_H_R_step <- 0
+    p$gamma_W_R_step <- 0
+    p$gamma_ICU_W_R_step <- 0
+    p$gamma_H_D_step <- 0
+    p$gamma_W_D_step <- 0
+    p$gamma_ICU_W_D_step <- 0
+    p$gamma_ICU_D_step <- 0
+    p$gamma_ICU_pre_step <- 0
+
     mod <- carehomes$new(p, 0, 1)
 
     info <- mod$info()
