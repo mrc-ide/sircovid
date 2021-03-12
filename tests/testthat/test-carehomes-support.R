@@ -166,7 +166,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "psi_W_D", "p_W_D_step", "psi_H",
       "p_H_step", "psi_G_D", "p_G_D_step",
       "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
-      "n_groups"))
+      "n_groups", "initial_I"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -294,6 +294,42 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
+
+  ## 42 here, derived from;
+  ## * 19 (S)
+  ## * 19 (N_tot)
+  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
+  expect_equal(sum(initial$state != 0), 64)
+})
+
+
+test_that("Can control the seeding", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "london",
+                            initial_I = 50)
+  expect_equal(p$initial_I, 50)
+
+  mod <- carehomes$new(p, 0, 10)
+  info <- mod$info()
+
+  initial <- carehomes_initial(info, 10, p)
+  expect_setequal(names(initial), c("state", "step"))
+  expect_equal(initial$step, p$initial_step)
+
+  initial_y <- mod$transform_variables(initial$state)
+
+  expect_equal(initial_y$N_tot3, sum(p$N_tot))
+  expect_equal(initial_y$N_tot2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot, p$N_tot)
+
+  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
+               p$N_tot)
+  expect_equal(drop(initial_y$I_A),
+               append(rep(0, 18), 50, after = 3))
+  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
+               append(rep(0, 18), 50, after = 3))
+  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
+               append(rep(0, 18), 50, after = 3))
+  expect_equal(initial_y$react_pos, 50)
 
   ## 42 here, derived from;
   ## * 19 (S)

@@ -30,6 +30,10 @@ NULL
 ##'
 ##' @param progression Progression data
 ##'
+##' @param initial_I Initial number of infected indidviduals; these
+##'   will enter the model as asymptomatic 15-19 year olds at
+##'   `start_date`. The default is 10 individuals.
+##'
 ##' @param eps Change in contact rate for carehome residents
 ##'
 ##' @param m_CHW Contact rate between carehome workers and either
@@ -261,6 +265,7 @@ carehomes_parameters <- function(start_date, region,
                                  sero_specificity = 0.9,
                                  sero_sensitivity = 0.99,
                                  progression = NULL,
+                                 initial_I = 10,
                                  eps = 0.1,
                                  m_CHW = 4e-6,
                                  m_CHR = 5e-5,
@@ -336,6 +341,8 @@ carehomes_parameters <- function(start_date, region,
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
                                     carehome_residents)
+
+  ret$initial_I <- initial_I
 
   ## This is used to normalise the serology counts (converting them
   ## from number of positive/negative tests into a fraction). This is
@@ -739,8 +746,8 @@ carehomes_initial <- function(info, n_particles, pars) {
   index <- info$index
   state <- numeric(info$len)
 
-  ## Always start with 10, again for compatibility
-  initial_I <- 10
+  ## Default will be to start with 10 individuals, but this is tuneable
+  initial_I <- pars$initial_I
 
   ## This corresponds to the 15-19y age bracket for compatibility with
   ## our first version, will be replaced by better seeding model, but
