@@ -60,8 +60,8 @@ dust_basic_compare_data <- function(ptr) {
   .Call(`_sircovid_dust_basic_compare_data`, ptr)
 }
 
-dust_basic_filter <- function(ptr, save_history) {
-  .Call(`_sircovid_dust_basic_filter`, ptr, save_history)
+dust_basic_filter <- function(ptr, save_trajectories, step_snapshot) {
+  .Call(`_sircovid_dust_basic_filter`, ptr, save_trajectories, step_snapshot)
 }
 
 dust_basic_capabilities <- function() {
@@ -140,8 +140,8 @@ dust_carehomes_compare_data <- function(ptr) {
   .Call(`_sircovid_dust_carehomes_compare_data`, ptr)
 }
 
-dust_carehomes_filter <- function(ptr, save_history) {
-  .Call(`_sircovid_dust_carehomes_filter`, ptr, save_history)
+dust_carehomes_filter <- function(ptr, save_trajectories, step_snapshot) {
+  .Call(`_sircovid_dust_carehomes_filter`, ptr, save_trajectories, step_snapshot)
 }
 
 dust_carehomes_capabilities <- function() {
