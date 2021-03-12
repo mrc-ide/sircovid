@@ -1130,14 +1130,24 @@ carehomes_particle_filter_data <- function(data) {
          homes/community")
   }
 
-  pillar2_streams <- sum(c(any(!is.na(data$pillar2_pos)) |
-                             any(!is.na(data$pillar2_tot)),
-                           any(!is.na(data$pillar2_cases)),
-                           any(!is.na(data$pillar2_over25_pos)) |
-                             any(!is.na(data$pillar2_over25_tot)),
-                           any(!is.na(data$pillar2_over25_cases))))
-  if (pillar2_streams > 1) {
-    stop("Cannot fit to more than one pillar 2 data stream")
+  check_pillar2_streams <- function(df) sum(c(any(!is.na(df$pillar2_pos)) |
+                             any(!is.na(df$pillar2_tot)),
+                           any(!is.na(df$pillar2_cases)),
+                           any(!is.na(df$pillar2_over25_pos)) |
+                             any(!is.na(df$pillar2_over25_tot)),
+                           any(!is.na(df$pillar2_over25_cases))))
+
+  if (is.null(data$population)) {
+    if (check_pillar2_streams(data) > 1) {
+      stop("Cannot fit to more than one pillar 2 data stream")
+    }
+  } else {
+    lapply(split(data, data$population), function(x) {
+      if (check_pillar2_streams(x) > 1) {
+        stop(sprintf("Cannot fit to more than one pillar 2 data stream for
+                      region %s", x$population[[1]]))
+      }
+    })
   }
 
   data
