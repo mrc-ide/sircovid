@@ -504,8 +504,7 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
   ## Rank Rt and incidence
   x <- reorder_by_rank(rt_what, rank_x)
   w <- reorder_by_rank(incidence_rep, rank_x)
-  } else
-  {
+  } else {
     x <- rt_what
     w <- incidence_rep
   }
