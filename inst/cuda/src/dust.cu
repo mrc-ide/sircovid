@@ -867,10 +867,10 @@ public:
     shared(pars.shared), internal(pars.internal) {
   }
   size_t size() {
-    return shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_T_sero_pre + shared->dim_T_sero_pos + shared->dim_T_PCR_pre + shared->dim_T_PCR_pos + 141;
+    return shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_D_unconf * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
   }
   std::vector<real_t> initial(size_t step) {
-    std::vector<real_t> state(shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_T_sero_pre + shared->dim_T_sero_pos + shared->dim_T_PCR_pre + shared->dim_T_PCR_pos + 141);
+    std::vector<real_t> state(shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_D_unconf * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141);
     state[0] = shared->initial_time;
     state[1] = shared->initial_admit_conf_inc;
     state[2] = shared->initial_new_conf_inc;
@@ -3415,102 +3415,97 @@ struct has_gpu_support<carehomes> : std::true_type {};
 }
 template <>
 size_t dust::device_shared_size_int<carehomes>(dust::shared_ptr<carehomes> shared) {
-  return 119 + 2;
+  return 121;
 }
 template <>
 size_t dust::device_shared_size_real<carehomes>(dust::shared_ptr<carehomes> shared) {
-  return 28 + shared->dim_beta_step + shared->dim_p_G_D_step + shared->dim_p_H_step + shared->dim_p_H_D_step + shared->dim_p_ICU_step + shared->dim_p_ICU_D_step + shared->dim_p_W_D_step + shared->dim_p_star_step + shared->dim_strain_seed_step + 19 + 19 + 19 + 19 + 19 + 19 + 19 + shared->dim_strain_transmission + 19 + 19 + 19 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 361 + shared->dim_cum_n_S_vaccinated + shared->dim_rel_susceptibility + shared->dim_cum_n_S_vaccinated + shared->dim_vaccine_dose_step + shared->dim_T_sero_pre;
-}
-template <>
-size_t dust::device_internal_size_int<carehomes>(dust::shared_ptr<carehomes> shared) {
-  return 0;
+  return shared->dim_cum_n_S_vaccinated * 4 + shared->dim_T_sero_pre + shared->dim_beta_step + shared->dim_p_G_D_step + shared->dim_p_H_D_step + shared->dim_p_H_step + shared->dim_p_ICU_D_step + shared->dim_p_ICU_step + shared->dim_p_W_D_step + shared->dim_p_star_step + shared->dim_rel_susceptibility + shared->dim_strain_seed_step + shared->dim_strain_transmission + shared->dim_vaccine_dose_step + 579;
 }
 template <>
 size_t dust::device_internal_size_real<carehomes>(dust::shared_ptr<carehomes> shared) {
-  return 0 + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_G_D + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + 19 + 19 + shared->dim_E_12 + shared->dim_E + shared->dim_E + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_E + shared->dim_G_D + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_unconf + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_ICU_pre_unconf + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_A + shared->dim_I_P + shared->dim_I_P + shared->dim_I_A + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_I_P + shared->dim_I_P + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_R + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_T_sero_pre + shared->dim_R + shared->dim_E + shared->dim_G_D + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_R + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_E + 19 + 19 + 19 + 19 + 19 + shared->dim_I_A + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 19 + 19 + shared->dim_s_ij + 38 + shared->dim_cum_n_S_vaccinated + 38;
+  return shared->dim_E * 2 + shared->dim_E * 4 + shared->dim_G_D * 2 + shared->dim_H_D_unconf * 2 + shared->dim_H_D_unconf * 4 + shared->dim_H_R_unconf * 2 + shared->dim_H_R_unconf * 4 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_D_unconf * 4 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 4 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_W_R_unconf * 4 + shared->dim_ICU_pre_unconf * 2 + shared->dim_ICU_pre_unconf * 4 + shared->dim_I_A * 2 + shared->dim_I_A * 4 + shared->dim_I_C_1 * 2 + shared->dim_I_C_2 * 2 + shared->dim_I_P * 2 + shared->dim_I_P * 4 + shared->dim_R * 2 + shared->dim_R * 32 + shared->dim_R * 4 + shared->dim_T_PCR_pos * 2 + shared->dim_T_PCR_pre * 2 + shared->dim_T_sero_pos * 2 + shared->dim_T_sero_pre * 2 + shared->dim_W_D_unconf * 2 + shared->dim_W_D_unconf * 4 + shared->dim_W_R_unconf * 2 + shared->dim_W_R_unconf * 4 + shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated * 4 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_H_D_unconf + shared->dim_H_R_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_T_sero_pre + shared->dim_W_D_unconf + shared->dim_W_R_unconf + shared->dim_s_ij + 266;
 }
 template <>
 void dust::device_shared_copy<carehomes>(dust::shared_ptr<carehomes> shared, int * shared_int, carehomes::real_t * shared_real) {
+  shared_int = dust::shared_copy(shared_int, shared->dim_E);
+  shared_int = dust::shared_copy(shared_int, shared->dim_E_12);
+  shared_int = dust::shared_copy(shared_int, shared->dim_E_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_G_D);
+  shared_int = dust::shared_copy(shared_int, shared->dim_G_D_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_H_D_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_H_D_unconf_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_H_R_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_H_R_unconf_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_D_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_D_unconf_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_D_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_D_unconf_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_R_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_R_unconf_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_pre_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_pre_unconf_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_A);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_A_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_1);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_1_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_2);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_2_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_P);
+  shared_int = dust::shared_copy(shared_int, shared->dim_I_P_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_R);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pos);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pos_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pre);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pre_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pos);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pos_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pre);
+  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pre_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_W_D_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_W_D_unconf_123);
+  shared_int = dust::shared_copy(shared_int, shared->dim_W_R_unconf);
+  shared_int = dust::shared_copy(shared_int, shared->dim_W_R_unconf_123);
   shared_int = dust::shared_copy(shared_int, shared->dim_beta_step);
+  shared_int = dust::shared_copy(shared_int, shared->dim_cum_n_S_vaccinated);
   shared_int = dust::shared_copy(shared_int, shared->dim_p_G_D_step);
-  shared_int = dust::shared_copy(shared_int, shared->dim_p_H_step);
   shared_int = dust::shared_copy(shared_int, shared->dim_p_H_D_step);
-  shared_int = dust::shared_copy(shared_int, shared->dim_p_ICU_step);
+  shared_int = dust::shared_copy(shared_int, shared->dim_p_H_step);
   shared_int = dust::shared_copy(shared_int, shared->dim_p_ICU_D_step);
+  shared_int = dust::shared_copy(shared_int, shared->dim_p_ICU_step);
   shared_int = dust::shared_copy(shared_int, shared->dim_p_W_D_step);
   shared_int = dust::shared_copy(shared_int, shared->dim_p_star_step);
-  shared_int = dust::shared_copy(shared_int, shared->dim_strain_seed_step);
-  shared_int = dust::shared_copy(shared_int, shared->dim_cum_n_S_vaccinated);
-  shared_int = dust::shared_copy(shared_int, shared->dim_R);
-  shared_int = dust::shared_copy(shared_int, shared->dim_E);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_A);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_P);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_1);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_2);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_pre_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_H_R_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_H_D_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_R_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_D_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_D_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_W_R_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_W_D_unconf);
-  shared_int = dust::shared_copy(shared_int, shared->dim_G_D);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pos);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pre);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pos);
-  shared_int = dust::shared_copy(shared_int, shared->dim_vaccine_dose_step);
-  shared_int = dust::shared_copy(shared_int, shared->k_H_D);
-  shared_int = dust::shared_copy(shared_int, shared->k_H_R);
-  shared_int = dust::shared_copy(shared_int, shared->k_ICU_pre);
-  shared_int = dust::shared_copy(shared_int, shared->k_C_1);
-  shared_int = dust::shared_copy(shared_int, shared->k_C_2);
-  shared_int = dust::shared_copy(shared_int, shared->k_ICU_W_D);
-  shared_int = dust::shared_copy(shared_int, shared->k_W_D);
-  shared_int = dust::shared_copy(shared_int, shared->k_ICU_W_R);
-  shared_int = dust::shared_copy(shared_int, shared->k_W_R);
-  shared_int = dust::shared_copy(shared_int, shared->k_ICU_D);
-  shared_int = dust::shared_copy(shared_int, shared->k_G_D);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pre);
-  shared_int = dust::shared_copy(shared_int, shared->k_PCR_pre);
-  shared_int = dust::shared_copy(shared_int, shared->k_PCR_pos);
-  shared_int = dust::shared_copy(shared_int, shared->dim_s_ij);
-  shared_int = dust::shared_copy(shared_int, shared->n_age_groups);
-  shared_int = dust::shared_copy(shared_int, shared->n_groups);
-  shared_int = dust::shared_copy(shared_int, shared->dim_E_12);
-  shared_int = dust::shared_copy(shared_int, shared->k_sero_pos);
-  shared_int = dust::shared_copy(shared_int, shared->steps_per_day);
-  shared_int = dust::shared_copy(shared_int, shared->k_E);
-  shared_int = dust::shared_copy(shared_int, shared->k_P);
-  shared_int = dust::shared_copy(shared_int, shared->n_vacc_classes);
-  shared_int = dust::shared_copy(shared_int, shared->n_strains);
-  shared_int = dust::shared_copy(shared_int, shared->k_A);
-  shared_int = dust::shared_copy(shared_int, shared->dim_strain_transmission);
-  shared_int = dust::shared_copy(shared_int, shared->dim_E_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_G_D_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_H_D_unconf_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_H_R_unconf_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_D_unconf_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_D_unconf_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_W_R_unconf_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_ICU_pre_unconf_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_A_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_1_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_C_2_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_I_P_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pos_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_PCR_pre_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pos_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_T_sero_pre_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_W_D_unconf_123);
-  shared_int = dust::shared_copy(shared_int, shared->dim_W_R_unconf_123);
   shared_int = dust::shared_copy(shared_int, shared->dim_rel_susceptibility);
   shared_int = dust::shared_copy(shared_int, shared->dim_rel_susceptibility_1);
   shared_int = dust::shared_copy(shared_int, shared->dim_rel_susceptibility_2);
+  shared_int = dust::shared_copy(shared_int, shared->dim_s_ij);
+  shared_int = dust::shared_copy(shared_int, shared->dim_strain_seed_step);
+  shared_int = dust::shared_copy(shared_int, shared->dim_strain_transmission);
+  shared_int = dust::shared_copy(shared_int, shared->dim_vaccine_dose_step);
   shared_int = dust::shared_copy(shared_int, shared->dim_vaccine_dose_step_1);
   shared_int = dust::shared_copy(shared_int, shared->dim_vaccine_dose_step_12);
   shared_int = dust::shared_copy(shared_int, shared->dim_vaccine_dose_step_2);
   shared_int = dust::shared_copy(shared_int, shared->dim_vaccine_dose_step_3);
+  shared_int = dust::shared_copy(shared_int, shared->k_A);
+  shared_int = dust::shared_copy(shared_int, shared->k_C_1);
+  shared_int = dust::shared_copy(shared_int, shared->k_C_2);
+  shared_int = dust::shared_copy(shared_int, shared->k_E);
+  shared_int = dust::shared_copy(shared_int, shared->k_G_D);
+  shared_int = dust::shared_copy(shared_int, shared->k_H_D);
+  shared_int = dust::shared_copy(shared_int, shared->k_H_R);
+  shared_int = dust::shared_copy(shared_int, shared->k_ICU_D);
+  shared_int = dust::shared_copy(shared_int, shared->k_ICU_W_D);
+  shared_int = dust::shared_copy(shared_int, shared->k_ICU_W_R);
+  shared_int = dust::shared_copy(shared_int, shared->k_ICU_pre);
+  shared_int = dust::shared_copy(shared_int, shared->k_P);
+  shared_int = dust::shared_copy(shared_int, shared->k_PCR_pos);
+  shared_int = dust::shared_copy(shared_int, shared->k_PCR_pre);
+  shared_int = dust::shared_copy(shared_int, shared->k_W_D);
+  shared_int = dust::shared_copy(shared_int, shared->k_W_R);
+  shared_int = dust::shared_copy(shared_int, shared->k_sero_pos);
+  shared_int = dust::shared_copy(shared_int, shared->n_age_groups);
+  shared_int = dust::shared_copy(shared_int, shared->n_groups);
+  shared_int = dust::shared_copy(shared_int, shared->n_strains);
+  shared_int = dust::shared_copy(shared_int, shared->n_vacc_classes);
   shared_int = dust::shared_copy(shared_int, shared->offset_variable_E);
   shared_int = dust::shared_copy(shared_int, shared->offset_variable_G_D);
   shared_int = dust::shared_copy(shared_int, shared->offset_variable_H_D_conf);
@@ -3550,15 +3545,17 @@ void dust::device_shared_copy<carehomes>(dust::shared_ptr<carehomes> shared, int
   shared_int = dust::shared_copy(shared_int, shared->offset_variable_cum_n_vaccinated);
   shared_int = dust::shared_copy(shared_int, shared->offset_variable_prob_strain);
   shared_int = dust::shared_copy(shared_int, shared->offset_variable_tmp_vaccine_probability);
+  shared_int = dust::shared_copy(shared_int, shared->steps_per_day);
   shared_int = dust::shared_copy(shared_int, shared->index_dose);
-  shared_real = dust::shared_copy(shared_real, shared->dt);
+  shared_real = dust::shared_copy(shared_real, shared->G_D_transmission);
+  shared_real = dust::shared_copy(shared_real, shared->ICU_transmission);
   shared_real = dust::shared_copy(shared_real, shared->I_A_transmission);
-  shared_real = dust::shared_copy(shared_real, shared->I_P_transmission);
   shared_real = dust::shared_copy(shared_real, shared->I_C_1_transmission);
   shared_real = dust::shared_copy(shared_real, shared->I_C_2_transmission);
+  shared_real = dust::shared_copy(shared_real, shared->I_P_transmission);
+  shared_real = dust::shared_copy(shared_real, shared->dt);
   shared_real = dust::shared_copy(shared_real, shared->hosp_transmission);
-  shared_real = dust::shared_copy(shared_real, shared->ICU_transmission);
-  shared_real = dust::shared_copy(shared_real, shared->G_D_transmission);
+  shared_real = dust::shared_copy(shared_real, shared->model_pcr_and_serology);
   shared_real = dust::shared_copy(shared_real, shared->p_E_progress);
   shared_real = dust::shared_copy(shared_real, shared->p_G_D_progress);
   shared_real = dust::shared_copy(shared_real, shared->p_H_D_progress);
@@ -3576,2824 +3573,4732 @@ void dust::device_shared_copy<carehomes>(dust::shared_ptr<carehomes> shared, int
   shared_real = dust::shared_copy(shared_real, shared->p_T_sero_pos_progress);
   shared_real = dust::shared_copy(shared_real, shared->p_W_D_progress);
   shared_real = dust::shared_copy(shared_real, shared->p_W_R_progress);
-  shared_real = dust::shared_copy(shared_real, shared->p_test);
-  shared_real = dust::shared_copy(shared_real, shared->model_pcr_and_serology);
   shared_real = dust::shared_copy(shared_real, shared->p_sero_pre_1);
+  shared_real = dust::shared_copy(shared_real, shared->p_test);
+  shared_real = dust::shared_copy(shared_real, shared->p_C);
+  shared_real = dust::shared_copy(shared_real, shared->p_RS);
+  shared_real = dust::shared_copy(shared_real, shared->p_sero_pos);
+  shared_real = dust::shared_copy(shared_real, shared->psi_G_D);
+  shared_real = dust::shared_copy(shared_real, shared->psi_H);
+  shared_real = dust::shared_copy(shared_real, shared->psi_H_D);
+  shared_real = dust::shared_copy(shared_real, shared->psi_ICU);
+  shared_real = dust::shared_copy(shared_real, shared->psi_ICU_D);
+  shared_real = dust::shared_copy(shared_real, shared->psi_W_D);
+  shared_real = dust::shared_copy(shared_real, shared->psi_star);
+  shared_real = dust::shared_copy(shared_real, shared->m);
   shared_real = dust::shared_copy(shared_real, shared->beta_step);
   shared_real = dust::shared_copy(shared_real, shared->p_G_D_step);
-  shared_real = dust::shared_copy(shared_real, shared->p_H_step);
   shared_real = dust::shared_copy(shared_real, shared->p_H_D_step);
-  shared_real = dust::shared_copy(shared_real, shared->p_ICU_step);
+  shared_real = dust::shared_copy(shared_real, shared->p_H_step);
   shared_real = dust::shared_copy(shared_real, shared->p_ICU_D_step);
+  shared_real = dust::shared_copy(shared_real, shared->p_ICU_step);
   shared_real = dust::shared_copy(shared_real, shared->p_W_D_step);
   shared_real = dust::shared_copy(shared_real, shared->p_star_step);
   shared_real = dust::shared_copy(shared_real, shared->strain_seed_step);
-  shared_real = dust::shared_copy(shared_real, shared->psi_G_D);
-  shared_real = dust::shared_copy(shared_real, shared->psi_H_D);
-  shared_real = dust::shared_copy(shared_real, shared->psi_H);
-  shared_real = dust::shared_copy(shared_real, shared->psi_ICU_D);
-  shared_real = dust::shared_copy(shared_real, shared->psi_ICU);
-  shared_real = dust::shared_copy(shared_real, shared->psi_W_D);
-  shared_real = dust::shared_copy(shared_real, shared->psi_star);
   shared_real = dust::shared_copy(shared_real, shared->strain_transmission);
-  shared_real = dust::shared_copy(shared_real, shared->p_RS);
-  shared_real = dust::shared_copy(shared_real, shared->p_sero_pos);
-  shared_real = dust::shared_copy(shared_real, shared->p_C);
   shared_real = dust::shared_copy(shared_real, shared->rel_infectivity);
   shared_real = dust::shared_copy(shared_real, shared->rel_p_hosp_if_sympt);
-  shared_real = dust::shared_copy(shared_real, shared->m);
-  shared_real = dust::shared_copy(shared_real, shared->vaccine_progression_rate_base);
-  shared_real = dust::shared_copy(shared_real, shared->rel_susceptibility);
   shared_real = dust::shared_copy(shared_real, shared->rel_p_sympt);
+  shared_real = dust::shared_copy(shared_real, shared->rel_susceptibility);
+  shared_real = dust::shared_copy(shared_real, shared->vaccine_progression_rate_base);
   shared_real = dust::shared_copy(shared_real, shared->vaccine_dose_step);
   shared_real = dust::shared_copy(shared_real, shared->p_T_sero_pre_progress);
 }
 template<>
 DEVICE void update_device<carehomes>(size_t step, const dust::interleaved<carehomes::real_t> state, dust::interleaved<int> internal_int, dust::interleaved<carehomes::real_t> internal_real, const int * shared_int, const carehomes::real_t * shared_real, dust::rng_state_t<carehomes::real_t>& rng_state, dust::interleaved<carehomes::real_t> state_next) {
   typedef carehomes::real_t real_t;
-  int dim_beta_step = shared_int[0];
-  int dim_p_G_D_step = shared_int[1];
-  int dim_p_H_step = shared_int[2];
-  int dim_p_H_D_step = shared_int[3];
-  int dim_p_ICU_step = shared_int[4];
-  int dim_p_ICU_D_step = shared_int[5];
-  int dim_p_W_D_step = shared_int[6];
-  int dim_p_star_step = shared_int[7];
-  int dim_strain_seed_step = shared_int[8];
-  int dim_cum_n_S_vaccinated = shared_int[9];
-  int dim_R = shared_int[10];
-  int dim_E = shared_int[11];
-  int dim_I_A = shared_int[12];
-  int dim_I_P = shared_int[13];
-  int dim_I_C_1 = shared_int[14];
-  int dim_I_C_2 = shared_int[15];
-  int dim_ICU_pre_unconf = shared_int[16];
-  int dim_H_R_unconf = shared_int[17];
-  int dim_H_D_unconf = shared_int[18];
-  int dim_ICU_W_R_unconf = shared_int[19];
-  int dim_ICU_W_D_unconf = shared_int[20];
-  int dim_ICU_D_unconf = shared_int[21];
-  int dim_W_R_unconf = shared_int[22];
-  int dim_W_D_unconf = shared_int[23];
-  int dim_G_D = shared_int[24];
-  int dim_T_PCR_pos = shared_int[25];
-  int dim_T_PCR_pre = shared_int[26];
-  int dim_T_sero_pos = shared_int[27];
-  int dim_vaccine_dose_step = shared_int[28];
-  int k_H_D = shared_int[29];
-  int k_H_R = shared_int[30];
-  int k_ICU_pre = shared_int[31];
-  int k_C_1 = shared_int[32];
-  int k_C_2 = shared_int[33];
-  int k_ICU_W_D = shared_int[34];
-  int k_W_D = shared_int[35];
-  int k_ICU_W_R = shared_int[36];
-  int k_W_R = shared_int[37];
-  int k_ICU_D = shared_int[38];
-  int k_G_D = shared_int[39];
-  int dim_T_sero_pre = shared_int[40];
-  int k_PCR_pre = shared_int[41];
-  int k_PCR_pos = shared_int[42];
-  int dim_s_ij = shared_int[43];
-  int n_age_groups = shared_int[44];
-  int n_groups = shared_int[45];
-  int dim_E_12 = shared_int[46];
-  int k_sero_pos = shared_int[47];
-  int steps_per_day = shared_int[48];
-  int k_E = shared_int[49];
-  int k_P = shared_int[50];
-  int n_vacc_classes = shared_int[51];
-  int n_strains = shared_int[52];
-  int k_A = shared_int[53];
-  int dim_strain_transmission = shared_int[54];
-  int dim_E_123 = shared_int[55];
-  int dim_G_D_123 = shared_int[56];
-  int dim_H_D_unconf_123 = shared_int[57];
-  int dim_H_R_unconf_123 = shared_int[58];
-  int dim_ICU_D_unconf_123 = shared_int[59];
-  int dim_ICU_W_D_unconf_123 = shared_int[60];
-  int dim_ICU_W_R_unconf_123 = shared_int[61];
-  int dim_ICU_pre_unconf_123 = shared_int[62];
-  int dim_I_A_123 = shared_int[63];
-  int dim_I_C_1_123 = shared_int[64];
-  int dim_I_C_2_123 = shared_int[65];
-  int dim_I_P_123 = shared_int[66];
-  int dim_T_PCR_pos_123 = shared_int[67];
-  int dim_T_PCR_pre_123 = shared_int[68];
-  int dim_T_sero_pos_123 = shared_int[69];
-  int dim_T_sero_pre_123 = shared_int[70];
-  int dim_W_D_unconf_123 = shared_int[71];
-  int dim_W_R_unconf_123 = shared_int[72];
-  int dim_rel_susceptibility = shared_int[73];
-  int dim_rel_susceptibility_1 = shared_int[74];
-  int dim_rel_susceptibility_2 = shared_int[75];
-  int dim_vaccine_dose_step_1 = shared_int[76];
-  int dim_vaccine_dose_step_12 = shared_int[77];
-  int dim_vaccine_dose_step_2 = shared_int[78];
-  int dim_vaccine_dose_step_3 = shared_int[79];
-  int offset_variable_E = shared_int[80];
-  int offset_variable_G_D = shared_int[81];
-  int offset_variable_H_D_conf = shared_int[82];
-  int offset_variable_H_D_unconf = shared_int[83];
-  int offset_variable_H_R_conf = shared_int[84];
-  int offset_variable_H_R_unconf = shared_int[85];
-  int offset_variable_ICU_D_conf = shared_int[86];
-  int offset_variable_ICU_D_unconf = shared_int[87];
-  int offset_variable_ICU_W_D_conf = shared_int[88];
-  int offset_variable_ICU_W_D_unconf = shared_int[89];
-  int offset_variable_ICU_W_R_conf = shared_int[90];
-  int offset_variable_ICU_W_R_unconf = shared_int[91];
-  int offset_variable_ICU_pre_conf = shared_int[92];
-  int offset_variable_ICU_pre_unconf = shared_int[93];
-  int offset_variable_I_A = shared_int[94];
-  int offset_variable_I_C_1 = shared_int[95];
-  int offset_variable_I_C_2 = shared_int[96];
-  int offset_variable_I_P = shared_int[97];
-  int offset_variable_I_weighted = shared_int[98];
-  int offset_variable_R = shared_int[99];
-  int offset_variable_S = shared_int[100];
-  int offset_variable_T_PCR_neg = shared_int[101];
-  int offset_variable_T_PCR_pos = shared_int[102];
-  int offset_variable_T_PCR_pre = shared_int[103];
-  int offset_variable_T_sero_neg = shared_int[104];
-  int offset_variable_T_sero_pos = shared_int[105];
-  int offset_variable_T_sero_pre = shared_int[106];
-  int offset_variable_W_D_conf = shared_int[107];
-  int offset_variable_W_D_unconf = shared_int[108];
-  int offset_variable_W_R_conf = shared_int[109];
-  int offset_variable_W_R_unconf = shared_int[110];
-  int offset_variable_cum_n_E_vaccinated = shared_int[111];
-  int offset_variable_cum_n_I_A_vaccinated = shared_int[112];
-  int offset_variable_cum_n_I_P_vaccinated = shared_int[113];
-  int offset_variable_cum_n_R_vaccinated = shared_int[114];
-  int offset_variable_cum_n_S_vaccinated = shared_int[115];
-  int offset_variable_cum_n_vaccinated = shared_int[116];
-  int offset_variable_prob_strain = shared_int[117];
-  int offset_variable_tmp_vaccine_probability = shared_int[118];
-  const int * index_dose = shared_int + 119;
-  real_t dt = shared_real[0];
-  real_t I_A_transmission = shared_real[1];
-  real_t I_P_transmission = shared_real[2];
-  real_t I_C_1_transmission = shared_real[3];
-  real_t I_C_2_transmission = shared_real[4];
-  real_t hosp_transmission = shared_real[5];
-  real_t ICU_transmission = shared_real[6];
-  real_t G_D_transmission = shared_real[7];
-  real_t p_E_progress = shared_real[8];
-  real_t p_G_D_progress = shared_real[9];
-  real_t p_H_D_progress = shared_real[10];
-  real_t p_H_R_progress = shared_real[11];
-  real_t p_ICU_D_progress = shared_real[12];
-  real_t p_ICU_W_D_progress = shared_real[13];
-  real_t p_ICU_W_R_progress = shared_real[14];
-  real_t p_ICU_pre_progress = shared_real[15];
-  real_t p_I_A_progress = shared_real[16];
-  real_t p_I_C_1_progress = shared_real[17];
-  real_t p_I_C_2_progress = shared_real[18];
-  real_t p_I_P_progress = shared_real[19];
-  real_t p_T_PCR_pos_progress = shared_real[20];
-  real_t p_T_PCR_pre_progress = shared_real[21];
-  real_t p_T_sero_pos_progress = shared_real[22];
-  real_t p_W_D_progress = shared_real[23];
-  real_t p_W_R_progress = shared_real[24];
-  real_t p_test = shared_real[25];
-  real_t model_pcr_and_serology = shared_real[26];
-  real_t p_sero_pre_1 = shared_real[27];
-  const real_t * beta_step = shared_real + 28;
-  const real_t * p_G_D_step = beta_step + dim_beta_step;
-  const real_t * p_H_step = p_G_D_step + dim_p_G_D_step;
-  const real_t * p_H_D_step = p_H_step + dim_p_H_step;
-  const real_t * p_ICU_step = p_H_D_step + dim_p_H_D_step;
-  const real_t * p_ICU_D_step = p_ICU_step + dim_p_ICU_step;
-  const real_t * p_W_D_step = p_ICU_D_step + dim_p_ICU_D_step;
-  const real_t * p_star_step = p_W_D_step + dim_p_W_D_step;
-  const real_t * strain_seed_step = p_star_step + dim_p_star_step;
-  const real_t * psi_G_D = strain_seed_step + dim_strain_seed_step;
-  const real_t * psi_H_D = psi_G_D + 19;
-  const real_t * psi_H = psi_H_D + 19;
-  const real_t * psi_ICU_D = psi_H + 19;
-  const real_t * psi_ICU = psi_ICU_D + 19;
-  const real_t * psi_W_D = psi_ICU + 19;
-  const real_t * psi_star = psi_W_D + 19;
-  const real_t * strain_transmission = psi_star + 19;
-  const real_t * p_RS = strain_transmission + dim_strain_transmission;
-  const real_t * p_sero_pos = p_RS + 19;
-  const real_t * p_C = p_sero_pos + 19;
-  const real_t * rel_infectivity = p_C + 19;
-  const real_t * rel_p_hosp_if_sympt = rel_infectivity + dim_cum_n_S_vaccinated;
-  const real_t * m = rel_p_hosp_if_sympt + dim_cum_n_S_vaccinated;
-  const real_t * vaccine_progression_rate_base = m + 361;
-  const real_t * rel_susceptibility = vaccine_progression_rate_base + dim_cum_n_S_vaccinated;
-  const real_t * rel_p_sympt = rel_susceptibility + dim_rel_susceptibility;
-  const real_t * vaccine_dose_step = rel_p_sympt + dim_cum_n_S_vaccinated;
-  const real_t * p_T_sero_pre_progress = vaccine_dose_step + dim_vaccine_dose_step;
-  dust::interleaved<carehomes::real_t> I_weighted_strain = internal_real + 0;
-  dust::interleaved<carehomes::real_t> I_with_diff_trans = I_weighted_strain + dim_R;
-  dust::interleaved<carehomes::real_t> aux_E = I_with_diff_trans + dim_R;
-  dust::interleaved<carehomes::real_t> aux_G_D = aux_E + dim_E;
-  dust::interleaved<carehomes::real_t> aux_H_D_conf = aux_G_D + dim_G_D;
-  dust::interleaved<carehomes::real_t> aux_H_D_unconf = aux_H_D_conf + dim_H_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_H_R_conf = aux_H_D_unconf + dim_H_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_H_R_unconf = aux_H_R_conf + dim_H_R_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_D_conf = aux_H_R_unconf + dim_H_R_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_D_unconf = aux_ICU_D_conf + dim_ICU_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_W_D_conf = aux_ICU_D_unconf + dim_ICU_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_W_D_unconf = aux_ICU_W_D_conf + dim_ICU_W_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_W_R_conf = aux_ICU_W_D_unconf + dim_ICU_W_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_W_R_unconf = aux_ICU_W_R_conf + dim_ICU_W_R_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_pre_conf = aux_ICU_W_R_unconf + dim_ICU_W_R_unconf;
-  dust::interleaved<carehomes::real_t> aux_ICU_pre_unconf = aux_ICU_pre_conf + dim_ICU_pre_unconf;
-  dust::interleaved<carehomes::real_t> aux_I_A = aux_ICU_pre_unconf + dim_ICU_pre_unconf;
-  dust::interleaved<carehomes::real_t> aux_I_C_1 = aux_I_A + dim_I_A;
-  dust::interleaved<carehomes::real_t> aux_I_C_2 = aux_I_C_1 + dim_I_C_1;
-  dust::interleaved<carehomes::real_t> aux_I_P = aux_I_C_2 + dim_I_C_2;
-  dust::interleaved<carehomes::real_t> aux_W_D_conf = aux_I_P + dim_I_P;
-  dust::interleaved<carehomes::real_t> aux_W_D_unconf = aux_W_D_conf + dim_W_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_W_R_conf = aux_W_D_unconf + dim_W_D_unconf;
-  dust::interleaved<carehomes::real_t> aux_W_R_unconf = aux_W_R_conf + dim_W_R_unconf;
-  dust::interleaved<carehomes::real_t> delta_D_hosp = aux_W_R_unconf + dim_W_R_unconf;
-  dust::interleaved<carehomes::real_t> delta_D_non_hosp = delta_D_hosp + 19;
-  dust::interleaved<carehomes::real_t> lambda = delta_D_non_hosp + 19;
-  dust::interleaved<carehomes::real_t> n_EE = lambda + dim_E_12;
-  dust::interleaved<carehomes::real_t> n_EE_next_vacc_class = n_EE + dim_E;
-  dust::interleaved<carehomes::real_t> n_EI_A = n_EE_next_vacc_class + dim_E;
-  dust::interleaved<carehomes::real_t> n_EI_A_next_vacc_class = n_EI_A + dim_R;
-  dust::interleaved<carehomes::real_t> n_EI_P = n_EI_A_next_vacc_class + dim_R;
-  dust::interleaved<carehomes::real_t> n_EI_P_next_vacc_class = n_EI_P + dim_R;
-  dust::interleaved<carehomes::real_t> n_E_next_vacc_class = n_EI_P_next_vacc_class + dim_R;
-  dust::interleaved<carehomes::real_t> n_E_progress = n_E_next_vacc_class + dim_E;
-  dust::interleaved<carehomes::real_t> n_G_D_progress = n_E_progress + dim_E;
-  dust::interleaved<carehomes::real_t> n_H_D_conf_progress = n_G_D_progress + dim_G_D;
-  dust::interleaved<carehomes::real_t> n_H_D_unconf_progress = n_H_D_conf_progress + dim_H_D_unconf;
-  dust::interleaved<carehomes::real_t> n_H_D_unconf_to_conf = n_H_D_unconf_progress + dim_H_D_unconf;
-  dust::interleaved<carehomes::real_t> n_H_R_conf_progress = n_H_D_unconf_to_conf + dim_H_D_unconf;
-  dust::interleaved<carehomes::real_t> n_H_R_unconf_progress = n_H_R_conf_progress + dim_H_R_unconf;
-  dust::interleaved<carehomes::real_t> n_H_R_unconf_to_conf = n_H_R_unconf_progress + dim_H_R_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_D_conf_progress = n_H_R_unconf_to_conf + dim_H_R_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_D_unconf_progress = n_ICU_D_conf_progress + dim_ICU_D_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_D_unconf_to_conf = n_ICU_D_unconf_progress + dim_ICU_D_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_W_D_conf_progress = n_ICU_D_unconf_to_conf + dim_ICU_D_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_W_D_unconf_progress = n_ICU_W_D_conf_progress + dim_ICU_W_D_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_W_D_unconf_to_conf = n_ICU_W_D_unconf_progress + dim_ICU_W_D_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_W_R_conf_progress = n_ICU_W_D_unconf_to_conf + dim_ICU_W_D_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_W_R_unconf_progress = n_ICU_W_R_conf_progress + dim_ICU_W_R_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_W_R_unconf_to_conf = n_ICU_W_R_unconf_progress + dim_ICU_W_R_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_conf_progress = n_ICU_W_R_unconf_to_conf + dim_ICU_W_R_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_conf_to_ICU_D_conf = n_ICU_pre_conf_progress + dim_ICU_pre_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_conf_to_ICU_W_D_conf = n_ICU_pre_conf_to_ICU_D_conf + dim_R;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_conf_to_ICU_W_R_conf = n_ICU_pre_conf_to_ICU_W_D_conf + dim_R;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_unconf_progress = n_ICU_pre_conf_to_ICU_W_R_conf + dim_R;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_unconf_to_ICU_D_unconf = n_ICU_pre_unconf_progress + dim_ICU_pre_unconf;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_unconf_to_ICU_W_D_unconf = n_ICU_pre_unconf_to_ICU_D_unconf + dim_R;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_unconf_to_ICU_W_R_unconf = n_ICU_pre_unconf_to_ICU_W_D_unconf + dim_R;
-  dust::interleaved<carehomes::real_t> n_ICU_pre_unconf_to_conf = n_ICU_pre_unconf_to_ICU_W_R_unconf + dim_R;
-  dust::interleaved<carehomes::real_t> n_II_A = n_ICU_pre_unconf_to_conf + dim_ICU_pre_unconf;
-  dust::interleaved<carehomes::real_t> n_II_A_next_vacc_class = n_II_A + dim_I_A;
-  dust::interleaved<carehomes::real_t> n_II_P = n_II_A_next_vacc_class + dim_I_A;
-  dust::interleaved<carehomes::real_t> n_II_P_next_vacc_class = n_II_P + dim_I_P;
-  dust::interleaved<carehomes::real_t> n_I_A_next_vacc_class = n_II_P_next_vacc_class + dim_I_P;
-  dust::interleaved<carehomes::real_t> n_I_A_progress = n_I_A_next_vacc_class + dim_I_A;
-  dust::interleaved<carehomes::real_t> n_I_C_1_progress = n_I_A_progress + dim_I_A;
-  dust::interleaved<carehomes::real_t> n_I_C_2_progress = n_I_C_1_progress + dim_I_C_1;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_G_D = n_I_C_2_progress + dim_I_C_2;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_H_D = n_I_C_2_to_G_D + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_H_D_conf = n_I_C_2_to_H_D + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_H_R = n_I_C_2_to_H_D_conf + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_H_R_conf = n_I_C_2_to_H_R + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_ICU_pre = n_I_C_2_to_H_R_conf + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_ICU_pre_conf = n_I_C_2_to_ICU_pre + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_R = n_I_C_2_to_ICU_pre_conf + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_C_2_to_hosp = n_I_C_2_to_R + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_P_next_vacc_class = n_I_C_2_to_hosp + dim_R;
-  dust::interleaved<carehomes::real_t> n_I_P_progress = n_I_P_next_vacc_class + dim_I_P;
-  dust::interleaved<carehomes::real_t> n_RS = n_I_P_progress + dim_I_P;
-  dust::interleaved<carehomes::real_t> n_RS_next_vacc_class = n_RS + dim_R;
-  dust::interleaved<carehomes::real_t> n_R_next_vacc_class = n_RS_next_vacc_class + dim_R;
-  dust::interleaved<carehomes::real_t> n_R_next_vacc_class_capped = n_R_next_vacc_class + dim_R;
-  dust::interleaved<carehomes::real_t> n_R_next_vacc_class_tmp = n_R_next_vacc_class_capped + dim_R;
-  dust::interleaved<carehomes::real_t> n_R_progress = n_R_next_vacc_class_tmp + dim_R;
-  dust::interleaved<carehomes::real_t> n_R_progress_capped = n_R_progress + dim_R;
-  dust::interleaved<carehomes::real_t> n_R_progress_tmp = n_R_progress_capped + dim_R;
-  dust::interleaved<carehomes::real_t> n_SE = n_R_progress_tmp + dim_R;
-  dust::interleaved<carehomes::real_t> n_SE_next_vacc_class = n_SE + dim_R;
-  dust::interleaved<carehomes::real_t> n_S_next_vacc_class = n_SE_next_vacc_class + dim_R;
-  dust::interleaved<carehomes::real_t> n_S_progress = n_S_next_vacc_class + dim_cum_n_S_vaccinated;
-  dust::interleaved<carehomes::real_t> n_S_progress_tot = n_S_progress + dim_R;
-  dust::interleaved<carehomes::real_t> n_T_PCR_pos_progress = n_S_progress_tot + dim_cum_n_S_vaccinated;
-  dust::interleaved<carehomes::real_t> n_T_PCR_pre_progress = n_T_PCR_pos_progress + dim_T_PCR_pos;
-  dust::interleaved<carehomes::real_t> n_T_sero_pos_progress = n_T_PCR_pre_progress + dim_T_PCR_pre;
-  dust::interleaved<carehomes::real_t> n_T_sero_pre_progress = n_T_sero_pos_progress + dim_T_sero_pos;
-  dust::interleaved<carehomes::real_t> n_T_sero_pre_to_T_sero_pos = n_T_sero_pre_progress + dim_T_sero_pre;
-  dust::interleaved<carehomes::real_t> n_W_D_conf_progress = n_T_sero_pre_to_T_sero_pos + dim_R;
-  dust::interleaved<carehomes::real_t> n_W_D_unconf_progress = n_W_D_conf_progress + dim_W_D_unconf;
-  dust::interleaved<carehomes::real_t> n_W_D_unconf_to_conf = n_W_D_unconf_progress + dim_W_D_unconf;
-  dust::interleaved<carehomes::real_t> n_W_R_conf_progress = n_W_D_unconf_to_conf + dim_W_D_unconf;
-  dust::interleaved<carehomes::real_t> n_W_R_unconf_progress = n_W_R_conf_progress + dim_W_R_unconf;
-  dust::interleaved<carehomes::real_t> n_W_R_unconf_to_conf = n_W_R_unconf_progress + dim_W_R_unconf;
-  dust::interleaved<carehomes::real_t> n_com_to_T_sero_pre = n_W_R_unconf_to_conf + dim_W_R_unconf;
-  dust::interleaved<carehomes::real_t> n_hosp_non_ICU = n_com_to_T_sero_pre + dim_T_sero_pre;
-  dust::interleaved<carehomes::real_t> new_E = n_hosp_non_ICU + dim_R;
-  dust::interleaved<carehomes::real_t> new_G_D = new_E + dim_E;
-  dust::interleaved<carehomes::real_t> new_H_D_conf = new_G_D + dim_G_D;
-  dust::interleaved<carehomes::real_t> new_H_D_unconf = new_H_D_conf + dim_H_D_unconf;
-  dust::interleaved<carehomes::real_t> new_H_R_conf = new_H_D_unconf + dim_H_D_unconf;
-  dust::interleaved<carehomes::real_t> new_H_R_unconf = new_H_R_conf + dim_H_R_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_D_conf = new_H_R_unconf + dim_H_R_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_D_unconf = new_ICU_D_conf + dim_ICU_D_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_W_D_conf = new_ICU_D_unconf + dim_ICU_D_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_W_D_unconf = new_ICU_W_D_conf + dim_ICU_W_D_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_W_R_conf = new_ICU_W_D_unconf + dim_ICU_W_D_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_W_R_unconf = new_ICU_W_R_conf + dim_ICU_W_R_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_pre_conf = new_ICU_W_R_unconf + dim_ICU_W_R_unconf;
-  dust::interleaved<carehomes::real_t> new_ICU_pre_unconf = new_ICU_pre_conf + dim_ICU_pre_unconf;
-  dust::interleaved<carehomes::real_t> new_I_A = new_ICU_pre_unconf + dim_ICU_pre_unconf;
-  dust::interleaved<carehomes::real_t> new_I_C_1 = new_I_A + dim_I_A;
-  dust::interleaved<carehomes::real_t> new_I_C_2 = new_I_C_1 + dim_I_C_1;
-  dust::interleaved<carehomes::real_t> new_I_P = new_I_C_2 + dim_I_C_2;
-  dust::interleaved<carehomes::real_t> new_R = new_I_P + dim_I_P;
-  dust::interleaved<carehomes::real_t> new_S = new_R + dim_R;
-  dust::interleaved<carehomes::real_t> new_T_PCR_neg = new_S + dim_cum_n_S_vaccinated;
-  dust::interleaved<carehomes::real_t> new_T_PCR_pos = new_T_PCR_neg + dim_R;
-  dust::interleaved<carehomes::real_t> new_T_PCR_pre = new_T_PCR_pos + dim_T_PCR_pos;
-  dust::interleaved<carehomes::real_t> new_T_sero_neg = new_T_PCR_pre + dim_T_PCR_pre;
-  dust::interleaved<carehomes::real_t> new_T_sero_pos = new_T_sero_neg + dim_R;
-  dust::interleaved<carehomes::real_t> new_T_sero_pre = new_T_sero_pos + dim_T_sero_pos;
-  dust::interleaved<carehomes::real_t> new_W_D_conf = new_T_sero_pre + dim_T_sero_pre;
-  dust::interleaved<carehomes::real_t> new_W_D_unconf = new_W_D_conf + dim_W_D_unconf;
-  dust::interleaved<carehomes::real_t> new_W_R_conf = new_W_D_unconf + dim_W_D_unconf;
-  dust::interleaved<carehomes::real_t> new_W_R_unconf = new_W_R_conf + dim_W_R_unconf;
-  dust::interleaved<carehomes::real_t> p_E_next_vacc_class = new_W_R_unconf + dim_W_R_unconf;
-  dust::interleaved<carehomes::real_t> p_G_D_by_age = p_E_next_vacc_class + dim_E;
-  dust::interleaved<carehomes::real_t> p_H_D_by_age = p_G_D_by_age + 19;
-  dust::interleaved<carehomes::real_t> p_H_by_age = p_H_D_by_age + 19;
-  dust::interleaved<carehomes::real_t> p_ICU_D_by_age = p_H_by_age + 19;
-  dust::interleaved<carehomes::real_t> p_ICU_by_age = p_ICU_D_by_age + 19;
-  dust::interleaved<carehomes::real_t> p_I_A_next_vacc_class = p_ICU_by_age + 19;
-  dust::interleaved<carehomes::real_t> p_I_P_next_vacc_class = p_I_A_next_vacc_class + dim_I_A;
-  dust::interleaved<carehomes::real_t> p_R_next_vacc_class = p_I_P_next_vacc_class + dim_I_P;
-  dust::interleaved<carehomes::real_t> p_SE = p_R_next_vacc_class + dim_R;
-  dust::interleaved<carehomes::real_t> p_S_next_vacc_class = p_SE + dim_cum_n_S_vaccinated;
-  dust::interleaved<carehomes::real_t> p_W_D_by_age = p_S_next_vacc_class + dim_cum_n_S_vaccinated;
-  dust::interleaved<carehomes::real_t> p_star_by_age = p_W_D_by_age + 19;
-  dust::interleaved<carehomes::real_t> s_ij = p_star_by_age + 19;
-  dust::interleaved<carehomes::real_t> vaccine_n_candidates = s_ij + dim_s_ij;
-  dust::interleaved<carehomes::real_t> vaccine_probability = vaccine_n_candidates + 38;
-  dust::interleaved<carehomes::real_t> vaccine_probability_doses = vaccine_probability + dim_cum_n_S_vaccinated;
-  const dust::interleaved<real_t> cum_n_S_vaccinated = state + offset_variable_cum_n_S_vaccinated;
-  const dust::interleaved<real_t> cum_n_E_vaccinated = state + offset_variable_cum_n_E_vaccinated;
-  const dust::interleaved<real_t> cum_n_I_A_vaccinated = state + offset_variable_cum_n_I_A_vaccinated;
-  const dust::interleaved<real_t> cum_n_I_P_vaccinated = state + offset_variable_cum_n_I_P_vaccinated;
-  const dust::interleaved<real_t> cum_n_R_vaccinated = state + offset_variable_cum_n_R_vaccinated;
-  const dust::interleaved<real_t> S = state + offset_variable_S;
-  const dust::interleaved<real_t> E = state + offset_variable_E;
-  const dust::interleaved<real_t> I_A = state + offset_variable_I_A;
-  const dust::interleaved<real_t> I_P = state + offset_variable_I_P;
-  const dust::interleaved<real_t> I_C_1 = state + offset_variable_I_C_1;
-  const dust::interleaved<real_t> I_C_2 = state + offset_variable_I_C_2;
-  const dust::interleaved<real_t> G_D = state + offset_variable_G_D;
-  const dust::interleaved<real_t> ICU_pre_unconf = state + offset_variable_ICU_pre_unconf;
-  const dust::interleaved<real_t> ICU_pre_conf = state + offset_variable_ICU_pre_conf;
-  const dust::interleaved<real_t> H_R_unconf = state + offset_variable_H_R_unconf;
-  const dust::interleaved<real_t> H_R_conf = state + offset_variable_H_R_conf;
-  const dust::interleaved<real_t> H_D_unconf = state + offset_variable_H_D_unconf;
-  const dust::interleaved<real_t> H_D_conf = state + offset_variable_H_D_conf;
-  const dust::interleaved<real_t> ICU_W_R_unconf = state + offset_variable_ICU_W_R_unconf;
-  const dust::interleaved<real_t> ICU_W_R_conf = state + offset_variable_ICU_W_R_conf;
-  const dust::interleaved<real_t> ICU_W_D_unconf = state + offset_variable_ICU_W_D_unconf;
-  const dust::interleaved<real_t> ICU_W_D_conf = state + offset_variable_ICU_W_D_conf;
-  const dust::interleaved<real_t> ICU_D_unconf = state + offset_variable_ICU_D_unconf;
-  const dust::interleaved<real_t> ICU_D_conf = state + offset_variable_ICU_D_conf;
-  const dust::interleaved<real_t> W_R_unconf = state + offset_variable_W_R_unconf;
-  const dust::interleaved<real_t> W_R_conf = state + offset_variable_W_R_conf;
-  const dust::interleaved<real_t> W_D_unconf = state + offset_variable_W_D_unconf;
-  const dust::interleaved<real_t> W_D_conf = state + offset_variable_W_D_conf;
-  const dust::interleaved<real_t> T_sero_pre = state + offset_variable_T_sero_pre;
-  const dust::interleaved<real_t> T_sero_pos = state + offset_variable_T_sero_pos;
-  const dust::interleaved<real_t> T_sero_neg = state + offset_variable_T_sero_neg;
-  const dust::interleaved<real_t> R = state + offset_variable_R;
-  const dust::interleaved<real_t> D_hosp = state + 27;
-  const dust::interleaved<real_t> D_non_hosp = state + 46;
-  const dust::interleaved<real_t> T_PCR_pre = state + offset_variable_T_PCR_pre;
-  const dust::interleaved<real_t> T_PCR_pos = state + offset_variable_T_PCR_pos;
-  const dust::interleaved<real_t> T_PCR_neg = state + offset_variable_T_PCR_neg;
-  const real_t cum_admit_conf = state[4];
-  const real_t cum_new_conf = state[5];
-  const real_t admit_conf_inc = state[1];
-  const real_t new_conf_inc = state[2];
-  const dust::interleaved<real_t> cum_admit_by_age = state + 65;
-  const real_t cum_infections = state[3];
-  const dust::interleaved<real_t> cum_infections_per_strain = state + 141;
-  const real_t D_hosp_tot = state[12];
-  const real_t D_comm_tot = state[13];
-  const real_t D_comm_inc = state[14];
-  const real_t D_carehomes_tot = state[15];
-  const real_t D_carehomes_inc = state[16];
-  const real_t D_hosp_inc = state[17];
-  const real_t D_tot = state[18];
-  const real_t cum_sympt_cases = state[20];
-  const real_t cum_sympt_cases_over25 = state[21];
-  const real_t cum_sympt_cases_non_variant_over25 = state[22];
-  const real_t sympt_cases_inc = state[23];
-  const real_t sympt_cases_over25_inc = state[24];
-  const real_t sympt_cases_non_variant_over25_inc = state[25];
-  state_next[7] = odin_sum1<real_t>(S, 0, dim_cum_n_S_vaccinated) + odin_sum1<real_t>(T_sero_pre, 0, dim_T_sero_pre) + odin_sum1<real_t>(T_sero_pos, 0, dim_T_sero_pos) + odin_sum1<real_t>(T_sero_neg, 0, dim_R) + odin_sum1<real_t>(E, 0, dim_E);
-  state_next[8] = odin_sum1<real_t>(S, 0, dim_cum_n_S_vaccinated) + odin_sum1<real_t>(T_PCR_pre, 0, dim_T_PCR_pre) + odin_sum1<real_t>(T_PCR_pos, 0, dim_T_PCR_pos) + odin_sum1<real_t>(T_PCR_neg, 0, dim_R);
-  real_t beta = (static_cast<int>(step) >= dim_beta_step ? beta_step[dim_beta_step - 1] : beta_step[step + 1 - 1]);
-  real_t p_G_D = (static_cast<int>(step) >= dim_p_G_D_step ? p_G_D_step[dim_p_G_D_step - 1] : p_G_D_step[step + 1 - 1]);
-  real_t p_H = (static_cast<int>(step) >= dim_p_H_step ? p_H_step[dim_p_H_step - 1] : p_H_step[step + 1 - 1]);
-  real_t p_H_D = (static_cast<int>(step) >= dim_p_H_D_step ? p_H_D_step[dim_p_H_D_step - 1] : p_H_D_step[step + 1 - 1]);
-  real_t p_ICU = (static_cast<int>(step) >= dim_p_ICU_step ? p_ICU_step[dim_p_ICU_step - 1] : p_ICU_step[step + 1 - 1]);
-  real_t p_ICU_D = (static_cast<int>(step) >= dim_p_ICU_D_step ? p_ICU_D_step[dim_p_ICU_D_step - 1] : p_ICU_D_step[step + 1 - 1]);
-  real_t p_W_D = (static_cast<int>(step) >= dim_p_W_D_step ? p_W_D_step[dim_p_W_D_step - 1] : p_W_D_step[step + 1 - 1]);
-  real_t p_star = (static_cast<int>(step) >= dim_p_star_step ? p_star_step[dim_p_star_step - 1] : p_star_step[step + 1 - 1]);
-  real_t strain_seed = ((static_cast<int>(step) >= dim_strain_seed_step ? strain_seed_step[dim_strain_seed_step - 1] : strain_seed_step[step + 1 - 1]));
-  state_next[0] = (step + 1) * dt;
-  for (int i = 1; i <= 19; ++i) {
-    p_G_D_by_age[i - 1] = p_G_D * psi_G_D[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    p_H_D_by_age[i - 1] = p_H_D * psi_H_D[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    p_H_by_age[i - 1] = p_H * psi_H[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    p_ICU_D_by_age[i - 1] = p_ICU_D * psi_ICU_D[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    p_ICU_by_age[i - 1] = p_ICU * psi_ICU[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    p_W_D_by_age[i - 1] = p_W_D * psi_W_D[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    p_star_by_age[i - 1] = p_star * psi_star[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    state_next[84 + i - 1] = odin_sum2<real_t>(S, i - 1, i, 0, dim_rel_susceptibility_2, 19) + odin_sum3<real_t>(R, i - 1, i, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12) + D_hosp[i - 1] + odin_sum4<real_t>(E, i - 1, i, 0, dim_strain_transmission, 0, k_E, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_E_123) + odin_sum4<real_t>(I_A, i - 1, i, 0, dim_strain_transmission, 0, k_A, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_A_123) + odin_sum4<real_t>(I_P, i - 1, i, 0, dim_strain_transmission, 0, k_P, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_P_123) + odin_sum4<real_t>(I_C_1, i - 1, i, 0, dim_strain_transmission, 0, k_C_1, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_C_1_123) + odin_sum4<real_t>(I_C_2, i - 1, i, 0, dim_strain_transmission, 0, k_C_2, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_C_2_123) + odin_sum4<real_t>(ICU_pre_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_pre, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(ICU_pre_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_pre, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(H_R_conf, i - 1, i, 0, dim_strain_transmission, 0, k_H_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_R_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_H_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(H_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(ICU_W_R_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_R_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_W_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(ICU_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(W_R_conf, i - 1, i, 0, dim_strain_transmission, 0, k_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_R_unconf_123) + odin_sum4<real_t>(W_R_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_R_unconf_123) + odin_sum4<real_t>(W_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123) + odin_sum4<real_t>(W_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123) + odin_sum4<real_t>(G_D, i - 1, i, 0, dim_strain_transmission, 0, k_G_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_G_D_123) + D_non_hosp[i - 1];
-  }
-  state_next[6] = beta;
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_cum_n_vaccinated + i - 1 + 19 * (j - 1)] = cum_n_S_vaccinated[19 * (j - 1) + i - 1] + cum_n_E_vaccinated[19 * (j - 1) + i - 1] + cum_n_I_A_vaccinated[19 * (j - 1) + i - 1] + cum_n_I_P_vaccinated[19 * (j - 1) + i - 1] + cum_n_R_vaccinated[19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= 2; ++j) {
-      vaccine_n_candidates[i - 1 + 19 * (j - 1)] = S[19 * (index_dose[j - 1] - 1) + i - 1] + odin_sum4<real_t>(E, i - 1, i, 0, dim_strain_transmission, 0, k_E, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12, dim_E_123) + odin_sum4<real_t>(I_A, i - 1, i, 0, dim_strain_transmission, 0, k_A, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12, dim_I_A_123) + odin_sum4<real_t>(I_P, i - 1, i, 0, dim_strain_transmission, 0, k_P, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12, dim_I_P_123) + odin_sum3<real_t>(R, i - 1, i, 0, dim_strain_transmission, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        I_with_diff_trans[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = rel_infectivity[19 * (k - 1) + i - 1] * strain_transmission[j - 1] * (I_A_transmission * odin_sum4<real_t>(I_A, i - 1, i, j - 1, j, 0, k_A, k - 1, k, 19, dim_E_12, dim_I_A_123) + I_P_transmission * odin_sum4<real_t>(I_P, i - 1, i, j - 1, j, 0, k_P, k - 1, k, 19, dim_E_12, dim_I_P_123) + I_C_1_transmission * odin_sum4<real_t>(I_C_1, i - 1, i, j - 1, j, 0, k_C_1, k - 1, k, 19, dim_E_12, dim_I_C_1_123) + I_C_2_transmission * odin_sum4<real_t>(I_C_2, i - 1, i, j - 1, j, 0, k_C_2, k - 1, k, 19, dim_E_12, dim_I_C_2_123) + hosp_transmission * (odin_sum4<real_t>(ICU_pre_unconf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(ICU_pre_conf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(H_R_unconf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_R_conf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_D_unconf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(H_D_conf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123)) + ICU_transmission * (odin_sum4<real_t>(ICU_W_R_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_R_conf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_W_D_conf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(ICU_D_conf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123)) + G_D_transmission * odin_sum4<real_t>(G_D, i - 1, i, j - 1, j, 0, k_G_D, k - 1, k, 19, dim_E_12, dim_G_D_123));
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_E_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_E_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_G_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_G_D_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_G_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_H_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_H_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_H_R_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_R_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_H_R_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_R_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_W_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_W_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_W_R_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_R_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_W_R_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_R_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_pre_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_pre_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_pre_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_pre_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_I_A_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_A_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_1; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_I_C_1_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_C_1_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_I_C_2_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_C_2_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_I_P_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_P_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_R_progress_tmp[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_RS[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_PCR_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_T_PCR_pos_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_PCR_pos_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_PCR_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_T_PCR_pre_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_PCR_pre_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_sero_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_T_sero_pos_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_sero_pos_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_W_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_W_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_W_R_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_R_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_W_R_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_R_progress);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= 2; ++j) {
-      state_next[103 + i - 1 + 19 * (j - 1)] = vaccine_n_candidates[19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= 2; ++j) {
-      vaccine_probability_doses[i - 1 + 19 * (j - 1)] = ((static_cast<int>(step) >= dim_vaccine_dose_step_3 || vaccine_n_candidates[19 * (j - 1) + i - 1] == 0 ? 0 : vaccine_dose_step[dim_vaccine_dose_step_12 * (step + 1 - 1) + dim_vaccine_dose_step_1 * (j - 1) + i - 1] / (real_t) vaccine_n_candidates[19 * (j - 1) + i - 1]));
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_D_conf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_D_conf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_D_unconf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_D_unconf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_conf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_R_conf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_unconf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_R_unconf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = n_I_C_1_progress[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k_C_1 - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_C_2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = n_I_C_2_progress[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = aux_I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_progress[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_conf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_D - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_D_conf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_D_conf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_unconf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_D - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_D_unconf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_D_unconf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_conf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_R - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_R_conf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_R_conf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_unconf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_R - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_R_unconf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_R_unconf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    delta_D_hosp[i - 1] = odin_sum4<real_t>(n_H_D_unconf_progress, i - 1, i, 0, dim_strain_transmission, k_H_D - 1, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(n_H_D_conf_progress, i - 1, i, 0, dim_strain_transmission, k_H_D - 1, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(n_ICU_D_unconf_progress, i - 1, i, 0, dim_strain_transmission, k_ICU_D - 1, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(n_ICU_D_conf_progress, i - 1, i, 0, dim_strain_transmission, k_ICU_D - 1, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(n_W_D_unconf_progress, i - 1, i, 0, dim_strain_transmission, k_W_D - 1, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123) + odin_sum4<real_t>(n_W_D_conf_progress, i - 1, i, 0, dim_strain_transmission, k_W_D - 1, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123);
-  }
-  for (int i = 1; i <= 19; ++i) {
-    delta_D_non_hosp[i - 1] = odin_sum4<real_t>(n_G_D_progress, i - 1, i, 0, dim_strain_transmission, k_G_D - 1, k_G_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_G_D_123);
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_ICU_pre_conf_to_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_ICU_pre_unconf_to_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_progress[dim_I_C_2_123 * (k - 1) + dim_E_12 * (k_C_2 - 1) + 19 * (j - 1) + i - 1]), 1 - p_H_by_age[i - 1] * rel_p_hosp_if_sympt[19 * (k - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_R_progress_capped[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = odin_min(n_R_progress_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], odin_min(T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]));
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= 2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_T_sero_pre_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_sero_pre_progress[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_PCR_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_T_PCR_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_PCR_pos_progress[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_T_PCR_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = new_T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_T_PCR_pre_progress[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k_PCR_pre - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_PCR_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_T_PCR_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = new_T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_PCR_pos_progress[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= 19; ++j) {
-      for (int k = 1; k <= dim_strain_transmission; ++k) {
-        s_ij[i - 1 + 19 * (j - 1) + 361 * (k - 1)] = m[19 * (j - 1) + i - 1] * odin_sum3<real_t>(I_with_diff_trans, j - 1, j, k - 1, k, 0, dim_rel_susceptibility_2, 19, dim_E_12);
-      }
-    }
-  }
-  for (int i = 1; i <= n_age_groups; ++i) {
-    for (int j = 1; j <= n_groups; ++j) {
-      for (int k = 1; k <= dim_strain_transmission; ++k) {
-        s_ij[i - 1 + 19 * (j - 1) + 361 * (k - 1)] = beta * s_ij[361 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = (n_age_groups + 1); i <= n_groups; ++i) {
-    for (int j = 1; j <= n_age_groups; ++j) {
-      for (int k = 1; k <= dim_strain_transmission; ++k) {
-        s_ij[i - 1 + 19 * (j - 1) + 361 * (k - 1)] = beta * s_ij[361 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      vaccine_probability[i - 1 + 19 * (j - 1)] = 1 - std::exp(- vaccine_progression_rate_base[19 * (j - 1) + i - 1] * dt);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    int j = index_dose[0];
-    vaccine_probability[i - 1 + 19 * (j - 1)] = vaccine_probability_doses[19 * 0 + i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    int j = index_dose[1];
-    vaccine_probability[i - 1 + 19 * (j - 1)] = vaccine_probability_doses[19 * 1 + i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_to_ICU_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_D_conf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_D_conf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_ICU_D_unconf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_D_unconf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_D_unconf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  real_t delta_D_carehomes_tot = delta_D_non_hosp[18];
-  real_t delta_D_comm_tot = odin_sum1<real_t>(delta_D_non_hosp, 0, 18);
-  real_t delta_D_hosp_tot = odin_sum1<real_t>(delta_D_hosp, 0, 19);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      lambda[i - 1 + 19 * (j - 1)] = odin_sum3<real_t>(s_ij, i - 1, i, 0, 19, j - 1, j, 19, 361);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_H_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_H_R_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_ICU_pre_conf_to_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_to_ICU_D_conf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_ICU_pre_unconf_to_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_ICU_D_unconf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_pre_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_progress[dim_I_C_2_123 * (k - 1) + dim_E_12 * (k_C_2 - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_G_D_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_R_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = (model_pcr_and_serology == 1 ? n_R_progress_capped[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] : n_R_progress_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_T_sero_pre_to_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(odin_sum4<real_t>(n_T_sero_pre_progress, i - 1, i, j - 1, j, 0, 2, k - 1, k, 19, dim_E_12, dim_T_sero_pre_123)), p_sero_pos[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_W_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_W_R_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          p_E_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = vaccine_probability[19 * (l - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          p_I_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = vaccine_probability[19 * (l - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          p_I_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = vaccine_probability[19 * (l - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        p_R_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = vaccine_probability[19 * (k - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      p_S_next_vacc_class[i - 1 + 19 * (j - 1)] = vaccine_probability[19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    state_next[27 + i - 1] = D_hosp[i - 1] + delta_D_hosp[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    state_next[46 + i - 1] = D_non_hosp[i - 1] + delta_D_non_hosp[i - 1];
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_PCR_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_T_PCR_pos + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = new_T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  state_next[26] = odin_sum4<real_t>(new_T_PCR_pos, 1, 18, 0, dim_strain_transmission, 0, k_PCR_pos, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_T_PCR_pos_123);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_tmp_vaccine_probability + i - 1 + 19 * (j - 1)] = vaccine_probability[19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = n_I_C_2_to_G_D[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_G_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = n_G_D_progress[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_G_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = aux_G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_G_D_progress[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_to_ICU_W_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_conf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_D_conf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_ICU_W_D_unconf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_unconf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_D_unconf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_EE_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_E_progress[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_E_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_E_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_E_progress[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_E_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_ICU_pre_conf_to_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_to_ICU_D_conf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_to_ICU_W_D_conf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_ICU_pre_unconf_to_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_ICU_D_unconf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_ICU_W_D_unconf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_II_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_A_progress[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_II_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_P_progress[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_I_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_A_progress[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_hosp[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_I_C_2_progress[dim_I_C_2_123 * (k - 1) + dim_E_12 * (k_C_2 - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_G_D[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_I_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_P_progress[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_RS_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_R_next_vacc_class_tmp[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_sero_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_sero_pos_progress[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = new_T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_T_sero_pre_to_T_sero_pos[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_sero_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = new_T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_sero_pos_progress[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_D_unconf_to_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_D_unconf_to_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_R_unconf_to_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_R_unconf_to_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      p_SE[i - 1 + 19 * (j - 1)] = 1 - std::exp(- odin_sum2<real_t>(lambda, i - 1, i, 0, dim_strain_transmission, 19) * rel_susceptibility[dim_rel_susceptibility_1 * (j - 1) + i - 1] * dt);
-    }
-  }
-  state_next[16] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_D_carehomes_tot : D_carehomes_inc + delta_D_carehomes_tot);
-  state_next[15] = D_carehomes_tot + delta_D_carehomes_tot;
-  state_next[14] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_D_comm_tot : D_comm_inc + delta_D_comm_tot);
-  state_next[13] = D_comm_tot + delta_D_comm_tot;
-  state_next[17] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_D_hosp_tot : D_hosp_inc + delta_D_hosp_tot);
-  state_next[12] = D_hosp_tot + delta_D_hosp_tot;
-  state_next[18] = D_tot + delta_D_hosp_tot + delta_D_comm_tot + delta_D_carehomes_tot;
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_I_C_2 + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = new_I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      state_next[offset_variable_prob_strain + i - 1 + 19 * (j - 1)] = lambda[19 * (j - 1) + i - 1] / (real_t) odin_sum2<real_t>(lambda, i - 1, i, 0, dim_strain_transmission, 19);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_to_ICU_W_R_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_conf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_R_conf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_ICU_W_R_unconf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_unconf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_R_unconf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_EE[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = n_E_progress[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_EE_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_EI_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE_next_vacc_class[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), 1 - p_C[i - 1] * rel_p_sympt[19 * (k - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_W_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_II_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = n_I_A_progress[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_II_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = n_I_P_progress[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_ICU_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_hosp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_RS[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_RS_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_R_next_vacc_class_capped[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = odin_min(n_R_next_vacc_class_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], odin_min(T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]));
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      n_S_progress_tot[i - 1 + 19 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[19 * (j - 1) + i - 1]), p_SE[19 * (j - 1) + i - 1]);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_G_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_D_unconf_to_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_D_unconf_to_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_sero_pos; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_T_sero_pos + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = new_T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_W_D_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = new_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_W_D_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = new_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_W_R_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = new_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_W_R_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = new_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    state_next[65 + i - 1] = cum_admit_by_age[i - 1] + odin_sum3<real_t>(n_I_C_2_to_hosp, i - 1, i, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12);
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_cum_n_E_vaccinated + i - 1 + 19 * (j - 1)] = cum_n_E_vaccinated[19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_E_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_E, j - 1, j, 19, dim_E_12, dim_E_123) + odin_sum4<real_t>(n_EE_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_E, j - 1, j, 19, dim_E_12, dim_E_123);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_cum_n_I_A_vaccinated + i - 1 + 19 * (j - 1)] = cum_n_I_A_vaccinated[19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_I_A_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_A, j - 1, j, 19, dim_E_12, dim_I_A_123) + odin_sum4<real_t>(n_II_A_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_A, j - 1, j, 19, dim_E_12, dim_I_A_123);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_cum_n_I_P_vaccinated + i - 1 + 19 * (j - 1)] = cum_n_I_P_vaccinated[19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_I_P_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_P, j - 1, j, 19, dim_E_12, dim_I_P_123) + odin_sum4<real_t>(n_II_P_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_P, j - 1, j, 19, dim_E_12, dim_I_P_123);
-    }
-  }
-  state_next[19] = odin_sum4<real_t>(new_T_sero_pos, 3, 13, 0, dim_strain_transmission, 0, k_sero_pos, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_T_sero_pos_123);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      int l = 1;
-      aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = n_II_P[dim_I_P_123 * 0 + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (n_vacc_classes - 1) + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 2; l <= n_vacc_classes; ++l) {
-        aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = n_II_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (l - 1 - 1) + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_C_1; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = n_I_C_1_progress[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_1; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = aux_I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_1_progress[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_EI_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), 1 - p_C[i - 1] * rel_p_sympt[19 * (k - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_EI_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_EE_next_vacc_class[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_EI_A_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          n_ICU_W_R_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_ICU_pre[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_star_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_R_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = (model_pcr_and_serology == 1 ? n_R_next_vacc_class_capped[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] : n_R_next_vacc_class_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    int j = 1;
-    for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-      n_S_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_S_progress_tot[19 * (k - 1) + i - 1]), lambda[19 * 0 + i - 1] / (real_t) odin_sum2<real_t>(lambda, i - 1, i, 0, dim_strain_transmission, 19));
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 2; j <= n_strains; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_S_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_S_progress_tot[19 * (k - 1) + i - 1] - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, j - 1, k - 1, k, 19, dim_E_12)), lambda[19 * (j - 1) + i - 1] / (real_t) odin_sum2<real_t>(lambda, i - 1, i, j - 1, n_strains, 19));
+  {
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    const int dim_cum_n_S_vaccinated = shared_int[39];
+    const dust::interleaved<real_t> T_sero_pre = state + shared_int[105];
+    const int dim_T_sero_pre = shared_int[32];
+    const dust::interleaved<real_t> T_sero_pos = state + shared_int[104];
+    const int dim_T_sero_pos = shared_int[30];
+    const dust::interleaved<real_t> T_sero_neg = state + shared_int[103];
+    const int dim_R = shared_int[25];
+    const dust::interleaved<real_t> E = state + shared_int[79];
+    const int dim_E = shared_int[0];
+    state_next[7] = odin_sum1<real_t>(S, 0, dim_cum_n_S_vaccinated) + odin_sum1<real_t>(T_sero_pre, 0, dim_T_sero_pre) + odin_sum1<real_t>(T_sero_pos, 0, dim_T_sero_pos) + odin_sum1<real_t>(T_sero_neg, 0, dim_R) + odin_sum1<real_t>(E, 0, dim_E);
+  }
+  {
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    const int dim_cum_n_S_vaccinated = shared_int[39];
+    const dust::interleaved<real_t> T_PCR_pre = state + shared_int[102];
+    const int dim_T_PCR_pre = shared_int[28];
+    const dust::interleaved<real_t> T_PCR_pos = state + shared_int[101];
+    const int dim_T_PCR_pos = shared_int[26];
+    const dust::interleaved<real_t> T_PCR_neg = state + shared_int[100];
+    const int dim_R = shared_int[25];
+    state_next[8] = odin_sum1<real_t>(S, 0, dim_cum_n_S_vaccinated) + odin_sum1<real_t>(T_PCR_pre, 0, dim_T_PCR_pre) + odin_sum1<real_t>(T_PCR_pos, 0, dim_T_PCR_pos) + odin_sum1<real_t>(T_PCR_neg, 0, dim_R);
+  }
+  {
+    const real_t * beta_step = shared_real + 579;
+    const int dim_beta_step = shared_int[38];
+    internal_real[0] = (static_cast<int>(step) >= dim_beta_step ? beta_step[dim_beta_step - 1] : beta_step[step + 1 - 1]);
+  }
+  {
+    const real_t * p_G_D_step = shared_real + shared_int[38] + 579;
+    const int dim_p_G_D_step = shared_int[40];
+    internal_real[11] = (static_cast<int>(step) >= dim_p_G_D_step ? p_G_D_step[dim_p_G_D_step - 1] : p_G_D_step[step + 1 - 1]);
+  }
+  {
+    const real_t * p_H_step = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + 579;
+    const int dim_p_H_step = shared_int[42];
+    internal_real[12] = (static_cast<int>(step) >= dim_p_H_step ? p_H_step[dim_p_H_step - 1] : p_H_step[step + 1 - 1]);
+  }
+  {
+    const real_t * p_H_D_step = shared_real + shared_int[38] + shared_int[40] + 579;
+    const int dim_p_H_D_step = shared_int[41];
+    internal_real[13] = (static_cast<int>(step) >= dim_p_H_D_step ? p_H_D_step[dim_p_H_D_step - 1] : p_H_D_step[step + 1 - 1]);
+  }
+  {
+    const real_t * p_ICU_step = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + 579;
+    const int dim_p_ICU_step = shared_int[44];
+    internal_real[14] = (static_cast<int>(step) >= dim_p_ICU_step ? p_ICU_step[dim_p_ICU_step - 1] : p_ICU_step[step + 1 - 1]);
+  }
+  {
+    const real_t * p_ICU_D_step = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + 579;
+    const int dim_p_ICU_D_step = shared_int[43];
+    internal_real[15] = (static_cast<int>(step) >= dim_p_ICU_D_step ? p_ICU_D_step[dim_p_ICU_D_step - 1] : p_ICU_D_step[step + 1 - 1]);
+  }
+  {
+    const real_t * p_W_D_step = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + 579;
+    const int dim_p_W_D_step = shared_int[45];
+    internal_real[16] = (static_cast<int>(step) >= dim_p_W_D_step ? p_W_D_step[dim_p_W_D_step - 1] : p_W_D_step[step + 1 - 1]);
+  }
+  {
+    const real_t * p_star_step = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + 579;
+    const int dim_p_star_step = shared_int[46];
+    internal_real[17] = (static_cast<int>(step) >= dim_p_star_step ? p_star_step[dim_p_star_step - 1] : p_star_step[step + 1 - 1]);
+  }
+  {
+    const real_t * strain_seed_step = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + 579;
+    const int dim_strain_seed_step = shared_int[51];
+    internal_real[18] = ((static_cast<int>(step) >= dim_strain_seed_step ? strain_seed_step[dim_strain_seed_step - 1] : strain_seed_step[step + 1 - 1]));
+  }
+  {
+    const real_t dt = shared_real[6];
+    state_next[0] = (step + 1) * dt;
+  }
+  {
+    const real_t p_G_D = internal_real[11];
+    const real_t * psi_G_D = shared_real + 85;
+    dust::interleaved<real_t> p_G_D_by_age = internal_real + 57;
+    for (int i = 1; i <= 19; ++i) {
+      p_G_D_by_age[i - 1] = p_G_D * psi_G_D[i - 1];
+    }
+  }
+  {
+    const real_t p_H_D = internal_real[13];
+    const real_t * psi_H_D = shared_real + 123;
+    dust::interleaved<real_t> p_H_D_by_age = internal_real + 76;
+    for (int i = 1; i <= 19; ++i) {
+      p_H_D_by_age[i - 1] = p_H_D * psi_H_D[i - 1];
+    }
+  }
+  {
+    const real_t p_H = internal_real[12];
+    const real_t * psi_H = shared_real + 104;
+    dust::interleaved<real_t> p_H_by_age = internal_real + 95;
+    for (int i = 1; i <= 19; ++i) {
+      p_H_by_age[i - 1] = p_H * psi_H[i - 1];
+    }
+  }
+  {
+    const real_t p_ICU_D = internal_real[15];
+    const real_t * psi_ICU_D = shared_real + 161;
+    dust::interleaved<real_t> p_ICU_D_by_age = internal_real + 114;
+    for (int i = 1; i <= 19; ++i) {
+      p_ICU_D_by_age[i - 1] = p_ICU_D * psi_ICU_D[i - 1];
+    }
+  }
+  {
+    const real_t p_ICU = internal_real[14];
+    const real_t * psi_ICU = shared_real + 142;
+    dust::interleaved<real_t> p_ICU_by_age = internal_real + 133;
+    for (int i = 1; i <= 19; ++i) {
+      p_ICU_by_age[i - 1] = p_ICU * psi_ICU[i - 1];
+    }
+  }
+  {
+    const real_t p_W_D = internal_real[16];
+    const real_t * psi_W_D = shared_real + 180;
+    dust::interleaved<real_t> p_W_D_by_age = internal_real + 152;
+    for (int i = 1; i <= 19; ++i) {
+      p_W_D_by_age[i - 1] = p_W_D * psi_W_D[i - 1];
+    }
+  }
+  {
+    const real_t p_star = internal_real[17];
+    const real_t * psi_star = shared_real + 199;
+    dust::interleaved<real_t> p_star_by_age = internal_real + 171;
+    for (int i = 1; i <= 19; ++i) {
+      p_star_by_age[i - 1] = p_star * psi_star[i - 1];
+    }
+  }
+  {
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const dust::interleaved<real_t> R = state + shared_int[98];
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> D_hosp = state + 27;
+    const dust::interleaved<real_t> E = state + shared_int[79];
+    const int k_E = shared_int[61];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> I_A = state + shared_int[93];
+    const int k_A = shared_int[58];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> I_P = state + shared_int[96];
+    const int k_P = shared_int[69];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> I_C_1 = state + shared_int[94];
+    const int k_C_1 = shared_int[59];
+    const int dim_I_C_1_123 = shared_int[20];
+    const dust::interleaved<real_t> I_C_2 = state + shared_int[95];
+    const int k_C_2 = shared_int[60];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> ICU_pre_conf = state + shared_int[91];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> ICU_pre_unconf = state + shared_int[92];
+    const dust::interleaved<real_t> H_R_conf = state + shared_int[83];
+    const int k_H_R = shared_int[64];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> H_R_unconf = state + shared_int[84];
+    const dust::interleaved<real_t> H_D_conf = state + shared_int[81];
+    const int k_H_D = shared_int[63];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> H_D_unconf = state + shared_int[82];
+    const dust::interleaved<real_t> ICU_W_R_conf = state + shared_int[89];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> ICU_W_R_unconf = state + shared_int[90];
+    const dust::interleaved<real_t> ICU_W_D_conf = state + shared_int[87];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> ICU_W_D_unconf = state + shared_int[88];
+    const dust::interleaved<real_t> ICU_D_conf = state + shared_int[85];
+    const int k_ICU_D = shared_int[65];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> ICU_D_unconf = state + shared_int[86];
+    const dust::interleaved<real_t> W_R_conf = state + shared_int[108];
+    const int k_W_R = shared_int[73];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> W_R_unconf = state + shared_int[109];
+    const dust::interleaved<real_t> W_D_conf = state + shared_int[106];
+    const int k_W_D = shared_int[72];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> W_D_unconf = state + shared_int[107];
+    const dust::interleaved<real_t> G_D = state + shared_int[80];
+    const int k_G_D = shared_int[62];
+    const int dim_G_D_123 = shared_int[4];
+    const dust::interleaved<real_t> D_non_hosp = state + 46;
+    dust::interleaved<real_t> update_N_tot = state_next + 84;
+    for (int i = 1; i <= 19; ++i) {
+      update_N_tot[i - 1] = odin_sum2<real_t>(S, i - 1, i, 0, dim_rel_susceptibility_2, 19) + odin_sum3<real_t>(R, i - 1, i, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12) + D_hosp[i - 1] + odin_sum4<real_t>(E, i - 1, i, 0, dim_strain_transmission, 0, k_E, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_E_123) + odin_sum4<real_t>(I_A, i - 1, i, 0, dim_strain_transmission, 0, k_A, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_A_123) + odin_sum4<real_t>(I_P, i - 1, i, 0, dim_strain_transmission, 0, k_P, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_P_123) + odin_sum4<real_t>(I_C_1, i - 1, i, 0, dim_strain_transmission, 0, k_C_1, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_C_1_123) + odin_sum4<real_t>(I_C_2, i - 1, i, 0, dim_strain_transmission, 0, k_C_2, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_I_C_2_123) + odin_sum4<real_t>(ICU_pre_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_pre, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(ICU_pre_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_pre, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(H_R_conf, i - 1, i, 0, dim_strain_transmission, 0, k_H_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_R_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_H_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(H_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(ICU_W_R_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_R_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_W_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(ICU_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(W_R_conf, i - 1, i, 0, dim_strain_transmission, 0, k_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_R_unconf_123) + odin_sum4<real_t>(W_R_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_W_R, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_R_unconf_123) + odin_sum4<real_t>(W_D_conf, i - 1, i, 0, dim_strain_transmission, 0, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123) + odin_sum4<real_t>(W_D_unconf, i - 1, i, 0, dim_strain_transmission, 0, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123) + odin_sum4<real_t>(G_D, i - 1, i, 0, dim_strain_transmission, 0, k_G_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_G_D_123) + D_non_hosp[i - 1];
+    }
+  }
+  {
+    const real_t beta = internal_real[0];
+    state_next[6] = beta;
+  }
+  {
+    const dust::interleaved<real_t> cum_n_S_vaccinated = state + shared_int[114];
+    const dust::interleaved<real_t> cum_n_E_vaccinated = state + shared_int[110];
+    const dust::interleaved<real_t> cum_n_I_A_vaccinated = state + shared_int[111];
+    const dust::interleaved<real_t> cum_n_I_P_vaccinated = state + shared_int[112];
+    const dust::interleaved<real_t> cum_n_R_vaccinated = state + shared_int[113];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_cum_n_vaccinated = state_next + shared_int[115];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_cum_n_vaccinated[i - 1 + 19 * (j - 1)] = cum_n_S_vaccinated[19 * (j - 1) + i - 1] + cum_n_E_vaccinated[19 * (j - 1) + i - 1] + cum_n_I_A_vaccinated[19 * (j - 1) + i - 1] + cum_n_I_P_vaccinated[19 * (j - 1) + i - 1] + cum_n_R_vaccinated[19 * (j - 1) + i - 1];
       }
     }
   }
   {
-     int i = 4;
-     for (int j = 2; j <= n_strains; ++j) {
-       int k = 1;
-       n_S_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = odin_min(n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + strain_seed, n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + S[19 * (k - 1) + i - 1] - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, dim_strain_transmission, k - 1, k, 19, dim_E_12));
-     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      int l = 1;
-      n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE[dim_E_123 * 0 + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), p_sero_pre_1);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 2; l <= n_vacc_classes; ++l) {
-        n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), p_sero_pre_1);
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    const int * index_dose = shared_int + 119;
+    const dust::interleaved<real_t> E = state + shared_int[79];
+    const int dim_strain_transmission = shared_int[52];
+    const int k_E = shared_int[61];
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> I_A = state + shared_int[93];
+    const int k_A = shared_int[58];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> I_P = state + shared_int[96];
+    const int k_P = shared_int[69];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> R = state + shared_int[98];
+    dust::interleaved<real_t> vaccine_n_candidates = internal_real + 190;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= 2; ++j) {
+        vaccine_n_candidates[i - 1 + 19 * (j - 1)] = S[19 * (index_dose[j - 1] - 1) + i - 1] + odin_sum4<real_t>(E, i - 1, i, 0, dim_strain_transmission, 0, k_E, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12, dim_E_123) + odin_sum4<real_t>(I_A, i - 1, i, 0, dim_strain_transmission, 0, k_A, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12, dim_I_A_123) + odin_sum4<real_t>(I_P, i - 1, i, 0, dim_strain_transmission, 0, k_P, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12, dim_I_P_123) + odin_sum3<real_t>(R, i - 1, i, 0, dim_strain_transmission, index_dose[j - 1] - 1, index_dose[j - 1], 19, dim_E_12);
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 2;
-      int l = 1;
-      n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = n_EE[dim_E_123 * 0 + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_com_to_T_sero_pre[dim_T_sero_pre_123 * 0 + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 2;
-      for (int l = 2; l <= n_vacc_classes; ++l) {
-        n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_com_to_T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_hosp_non_ICU[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_I_C_2_to_hosp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_ICU_pre[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_unconf_to_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const real_t * rel_infectivity = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[51] + shared_int[52] + 579;
+    const real_t * strain_transmission = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[51] + 579;
+    const real_t I_A_transmission = shared_real[2];
+    const dust::interleaved<real_t> I_A = state + shared_int[93];
+    const int k_A = shared_int[58];
+    const int dim_I_A_123 = shared_int[18];
+    const real_t I_P_transmission = shared_real[5];
+    const dust::interleaved<real_t> I_P = state + shared_int[96];
+    const int k_P = shared_int[69];
+    const int dim_I_P_123 = shared_int[24];
+    const real_t I_C_1_transmission = shared_real[3];
+    const dust::interleaved<real_t> I_C_1 = state + shared_int[94];
+    const int k_C_1 = shared_int[59];
+    const int dim_I_C_1_123 = shared_int[20];
+    const real_t I_C_2_transmission = shared_real[4];
+    const dust::interleaved<real_t> I_C_2 = state + shared_int[95];
+    const int k_C_2 = shared_int[60];
+    const int dim_I_C_2_123 = shared_int[22];
+    const real_t hosp_transmission = shared_real[7];
+    const dust::interleaved<real_t> ICU_pre_unconf = state + shared_int[92];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> ICU_pre_conf = state + shared_int[91];
+    const dust::interleaved<real_t> H_R_unconf = state + shared_int[84];
+    const int k_H_R = shared_int[64];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> H_R_conf = state + shared_int[83];
+    const dust::interleaved<real_t> H_D_unconf = state + shared_int[82];
+    const int k_H_D = shared_int[63];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> H_D_conf = state + shared_int[81];
+    const real_t ICU_transmission = shared_real[1];
+    const dust::interleaved<real_t> ICU_W_R_unconf = state + shared_int[90];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> ICU_W_R_conf = state + shared_int[89];
+    const dust::interleaved<real_t> ICU_W_D_unconf = state + shared_int[88];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> ICU_W_D_conf = state + shared_int[87];
+    const dust::interleaved<real_t> ICU_D_unconf = state + shared_int[86];
+    const int k_ICU_D = shared_int[65];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> ICU_D_conf = state + shared_int[85];
+    const real_t G_D_transmission = shared_real[0];
+    const dust::interleaved<real_t> G_D = state + shared_int[80];
+    const int k_G_D = shared_int[62];
+    const int dim_G_D_123 = shared_int[4];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> I_with_diff_trans = internal_real + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          I_with_diff_trans[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = rel_infectivity[19 * (k - 1) + i - 1] * strain_transmission[j - 1] * (I_A_transmission * odin_sum4<real_t>(I_A, i - 1, i, j - 1, j, 0, k_A, k - 1, k, 19, dim_E_12, dim_I_A_123) + I_P_transmission * odin_sum4<real_t>(I_P, i - 1, i, j - 1, j, 0, k_P, k - 1, k, 19, dim_E_12, dim_I_P_123) + I_C_1_transmission * odin_sum4<real_t>(I_C_1, i - 1, i, j - 1, j, 0, k_C_1, k - 1, k, 19, dim_E_12, dim_I_C_1_123) + I_C_2_transmission * odin_sum4<real_t>(I_C_2, i - 1, i, j - 1, j, 0, k_C_2, k - 1, k, 19, dim_E_12, dim_I_C_2_123) + hosp_transmission * (odin_sum4<real_t>(ICU_pre_unconf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(ICU_pre_conf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(H_R_unconf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_R_conf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(H_D_unconf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(H_D_conf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123)) + ICU_transmission * (odin_sum4<real_t>(ICU_W_R_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_R_conf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_W_D_conf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(ICU_D_conf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123)) + G_D_transmission * odin_sum4<real_t>(G_D, i - 1, i, j - 1, j, 0, k_G_D, k - 1, k, 19, dim_E_12, dim_G_D_123));
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_D_unconf_to_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> E = state + shared_int[79];
+    const real_t p_E_progress = shared_real[9];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_E = shared_int[61];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_E_progress = internal_real + shared_int[0] + 2 + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_E_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_E_progress);
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_G_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_G_D + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = new_G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_G_D_123 = shared_int[4];
+    const dust::interleaved<real_t> G_D = state + shared_int[80];
+    const real_t p_G_D_progress = shared_real[10];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_G_D = shared_int[62];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_G_D_progress = internal_real + shared_int[0] + 2 + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_G_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_G_D_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_G_D_progress);
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_D_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = new_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> H_D_conf = state + shared_int[81];
+    const real_t p_H_D_progress = shared_real[11];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_H_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_H_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_D_progress);
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_D_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = new_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> H_D_unconf = state + shared_int[82];
+    const real_t p_H_D_progress = shared_real[11];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_H_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_H_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_D_progress);
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = n_EI_A[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_A; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = n_II_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> H_R_conf = state + shared_int[83];
+    const real_t p_H_R_progress = shared_real[12];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_H_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_H_R_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_R_progress);
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> H_R_unconf = state + shared_int[84];
+    const real_t p_H_R_progress = shared_real[12];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_H_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_H_R_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_R_progress);
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> ICU_D_conf = state + shared_int[85];
+    const real_t p_ICU_D_progress = shared_real[13];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> ICU_D_unconf = state + shared_int[86];
+    const real_t p_ICU_D_progress = shared_real[13];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> ICU_W_D_conf = state + shared_int[87];
+    const real_t p_ICU_W_D_progress = shared_real[14];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_W_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_W_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_D_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> ICU_W_D_unconf = state + shared_int[88];
+    const real_t p_ICU_W_D_progress = shared_real[14];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_W_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_W_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_D_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> ICU_W_R_conf = state + shared_int[89];
+    const real_t p_ICU_W_R_progress = shared_real[15];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_W_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_W_R_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_R_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> ICU_W_R_unconf = state + shared_int[90];
+    const real_t p_ICU_W_R_progress = shared_real[15];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_W_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_W_R_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_W_R_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> ICU_pre_conf = state + shared_int[91];
+    const real_t p_ICU_pre_progress = shared_real[16];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_pre_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_pre_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> ICU_pre_unconf = state + shared_int[92];
+    const real_t p_ICU_pre_progress = shared_real[16];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_pre_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_pre_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> I_A = state + shared_int[93];
+    const real_t p_I_A_progress = shared_real[17];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_A = shared_int[58];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_A_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_I_A_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_A_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_1_123 = shared_int[20];
+    const dust::interleaved<real_t> I_C_1 = state + shared_int[94];
+    const real_t p_I_C_1_progress = shared_real[18];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_C_1 = shared_int[59];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_1_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_1; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_I_C_1_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_C_1_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> I_C_2 = state + shared_int[95];
+    const real_t p_I_C_2_progress = shared_real[19];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_C_2 = shared_int[60];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_I_C_2_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_C_2_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> I_P = state + shared_int[96];
+    const real_t p_I_P_progress = shared_real[20];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_P = shared_int[69];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_P_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_I_P_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_P_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> R = state + shared_int[98];
+    const real_t * p_RS = shared_real + 47;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_R_progress_tmp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_R_progress_tmp[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_RS[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_PCR_pos_123 = shared_int[27];
+    const dust::interleaved<real_t> T_PCR_pos = state + shared_int[101];
+    const real_t p_T_PCR_pos_progress = shared_real[21];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_PCR_pos = shared_int[70];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_T_PCR_pos_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_PCR_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_T_PCR_pos_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_PCR_pos_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_PCR_pre_123 = shared_int[29];
+    const dust::interleaved<real_t> T_PCR_pre = state + shared_int[102];
+    const real_t p_T_PCR_pre_progress = shared_real[22];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_PCR_pre = shared_int[71];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_T_PCR_pre_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_PCR_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_T_PCR_pre_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_PCR_pre_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pos_123 = shared_int[31];
+    const dust::interleaved<real_t> T_sero_pos = state + shared_int[104];
+    const real_t p_T_sero_pos_progress = shared_real[23];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_sero_pos = shared_int[74];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_T_sero_pos_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_sero_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_T_sero_pos_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_sero_pos_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> W_D_conf = state + shared_int[106];
+    const real_t p_W_D_progress = shared_real[24];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_W_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_W_D_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> W_D_unconf = state + shared_int[107];
+    const real_t p_W_D_progress = shared_real[24];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_W_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_W_D_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> W_R_conf = state + shared_int[108];
+    const real_t p_W_R_progress = shared_real[25];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_W_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_W_R_conf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_R_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> W_R_unconf = state + shared_int[109];
+    const real_t p_W_R_progress = shared_real[25];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_W_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_W_R_unconf_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_R_progress);
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> vaccine_n_candidates = internal_real + 190;
+    dust::interleaved<real_t> update_tmp_vaccine_n_candidates = state_next + 103;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= 2; ++j) {
+        update_tmp_vaccine_n_candidates[i - 1 + 19 * (j - 1)] = vaccine_n_candidates[19 * (j - 1) + i - 1];
+      }
+    }
+  }
+  {
+    const real_t * vaccine_dose_step = shared_real + shared_int[39] + 2 + shared_int[39] + 2 + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[47] + shared_int[51] + shared_int[52] + 579;
+    const int dim_vaccine_dose_step_3 = shared_int[57];
+    const dust::interleaved<real_t> vaccine_n_candidates = internal_real + 190;
+    const int dim_vaccine_dose_step_12 = shared_int[55];
+    const int dim_vaccine_dose_step_1 = shared_int[54];
+    dust::interleaved<real_t> vaccine_probability_doses = internal_real + 228;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= 2; ++j) {
+        vaccine_probability_doses[i - 1 + 19 * (j - 1)] = ((static_cast<int>(step) >= dim_vaccine_dose_step_3 || vaccine_n_candidates[19 * (j - 1) + i - 1] == 0 ? 0 : vaccine_dose_step[dim_vaccine_dose_step_12 * (step + 1 - 1) + dim_vaccine_dose_step_1 * (j - 1) + i - 1] / (real_t) vaccine_n_candidates[19 * (j - 1) + i - 1]));
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> H_D_conf = state + shared_int[81];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_H_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_H_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_D_conf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_D_conf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> H_D_unconf = state + shared_int[82];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_H_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_H_D_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_D_unconf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_D_unconf_progress[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> H_R_conf = state + shared_int[83];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_H_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_H_R_conf = internal_real + shared_int[5] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_conf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_R_conf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> H_R_unconf = state + shared_int[84];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_H_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_H_R_unconf = internal_real + shared_int[5] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[7] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_unconf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_R_unconf_progress[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> ICU_pre_conf = state + shared_int[91];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_pre_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> ICU_pre_unconf = state + shared_int[92];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_pre_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[15] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> n_I_C_1_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_C_1 = shared_int[59];
+    const int dim_I_C_1_123 = shared_int[20];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_2_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_C_2 = shared_int[60];
+    dust::interleaved<real_t> aux_I_C_2 = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = n_I_C_1_progress[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k_C_1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_C_2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = n_I_C_2_progress[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = aux_I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_progress[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> W_D_conf = state + shared_int[106];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_W_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> n_W_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_W_D_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_conf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_D - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_D_conf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_D_conf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> W_D_unconf = state + shared_int[107];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_W_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> n_W_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_W_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[34] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_unconf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_D - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_D_unconf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_D_unconf_progress[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> W_R_conf = state + shared_int[108];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_W_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> n_W_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_W_R_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_conf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_R - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_R_conf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_R_conf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> W_R_unconf = state + shared_int[109];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_W_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> n_W_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_W_R_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_unconf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k_ICU_W_R - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_R_unconf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_R_unconf_progress[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> n_H_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int k_H_D = shared_int[63];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> n_H_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_D = shared_int[65];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> n_ICU_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_W_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    const int k_W_D = shared_int[72];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> n_W_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[50] + 266;
+    dust::interleaved<real_t> delta_D_hosp = internal_real + 19;
+    for (int i = 1; i <= 19; ++i) {
+      delta_D_hosp[i - 1] = odin_sum4<real_t>(n_H_D_unconf_progress, i - 1, i, 0, dim_strain_transmission, k_H_D - 1, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(n_H_D_conf_progress, i - 1, i, 0, dim_strain_transmission, k_H_D - 1, k_H_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(n_ICU_D_unconf_progress, i - 1, i, 0, dim_strain_transmission, k_ICU_D - 1, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(n_ICU_D_conf_progress, i - 1, i, 0, dim_strain_transmission, k_ICU_D - 1, k_ICU_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(n_W_D_unconf_progress, i - 1, i, 0, dim_strain_transmission, k_W_D - 1, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123) + odin_sum4<real_t>(n_W_D_conf_progress, i - 1, i, 0, dim_strain_transmission, k_W_D - 1, k_W_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_W_D_unconf_123);
+    }
+  }
+  {
+    const dust::interleaved<real_t> n_G_D_progress = internal_real + shared_int[0] + 2 + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int k_G_D = shared_int[62];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const int dim_G_D_123 = shared_int[4];
+    dust::interleaved<real_t> delta_D_non_hosp = internal_real + 38;
+    for (int i = 1; i <= 19; ++i) {
+      delta_D_non_hosp[i - 1] = odin_sum4<real_t>(n_G_D_progress, i - 1, i, 0, dim_strain_transmission, k_G_D - 1, k_G_D, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_G_D_123);
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_ICU_pre_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> p_ICU_D_by_age = internal_real + 114;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_ICU_pre_conf_to_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_by_age[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> p_ICU_D_by_age = internal_real + 114;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_D_unconf = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_ICU_pre_unconf_to_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1]), p_ICU_D_by_age[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_C_2 = shared_int[60];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> p_H_by_age = internal_real + 95;
+    const real_t * rel_p_hosp_if_sympt = shared_real + shared_int[38] + shared_int[39] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[51] + shared_int[52] + 579;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_R = internal_real + shared_int[25] + 2 + shared_int[25] + 8 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_progress[dim_I_C_2_123 * (k - 1) + dim_E_12 * (k_C_2 - 1) + 19 * (j - 1) + i - 1]), 1 - p_H_by_age[i - 1] * rel_p_hosp_if_sympt[19 * (k - 1) + i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_R_progress_tmp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> T_sero_neg = state + shared_int[103];
+    const dust::interleaved<real_t> T_PCR_neg = state + shared_int[100];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_R_progress_capped = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_R_progress_capped[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = odin_min(n_R_progress_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], odin_min(T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]));
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pre_123 = shared_int[33];
+    const dust::interleaved<real_t> T_sero_pre = state + shared_int[105];
+    const real_t * p_T_sero_pre_progress = shared_real + shared_int[39] + 2 + 2 + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[47] + shared_int[51] + shared_int[52] + shared_int[53] + 579;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_T_sero_pre_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= 2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_T_sero_pre_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_T_sero_pre_progress[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_PCR_pos_123 = shared_int[27];
+    const dust::interleaved<real_t> T_PCR_pos = state + shared_int[101];
+    const dust::interleaved<real_t> n_T_PCR_pos_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_PCR_pos = shared_int[70];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_T_PCR_pre_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[50] + 266;
+    const int k_PCR_pre = shared_int[71];
+    const int dim_T_PCR_pre_123 = shared_int[29];
+    dust::interleaved<real_t> new_T_PCR_pos = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_PCR_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_T_PCR_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_PCR_pos_progress[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          new_T_PCR_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = new_T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_T_PCR_pre_progress[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k_PCR_pre - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_PCR_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_T_PCR_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = new_T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_PCR_pos_progress[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const real_t * m = shared_real + 218;
+    const dust::interleaved<real_t> I_with_diff_trans = internal_real + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const int dim_strain_transmission = shared_int[52];
+    const real_t beta = internal_real[0];
+    const int n_groups = shared_int[76];
+    const int n_age_groups = shared_int[75];
+    dust::interleaved<real_t> s_ij = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= 19; ++j) {
+        for (int k = 1; k <= dim_strain_transmission; ++k) {
+          s_ij[i - 1 + 19 * (j - 1) + 361 * (k - 1)] = m[19 * (j - 1) + i - 1] * odin_sum3<real_t>(I_with_diff_trans, j - 1, j, k - 1, k, 0, dim_rel_susceptibility_2, 19, dim_E_12);
+        }
+      }
+    }
+    for (int i = 1; i <= n_age_groups; ++i) {
+      for (int j = 1; j <= n_groups; ++j) {
+        for (int k = 1; k <= dim_strain_transmission; ++k) {
+          s_ij[i - 1 + 19 * (j - 1) + 361 * (k - 1)] = beta * s_ij[361 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = (n_age_groups + 1); i <= n_groups; ++i) {
+      for (int j = 1; j <= n_age_groups; ++j) {
+        for (int k = 1; k <= dim_strain_transmission; ++k) {
+          s_ij[i - 1 + 19 * (j - 1) + 361 * (k - 1)] = beta * s_ij[361 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const real_t * vaccine_progression_rate_base = shared_real + shared_int[39] + 2 + shared_int[38] + shared_int[39] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[47] + shared_int[51] + shared_int[52] + 579;
+    const real_t dt = shared_real[6];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const dust::interleaved<real_t> vaccine_probability_doses = internal_real + 228;
+    const int * index_dose = shared_int + 119;
+    dust::interleaved<real_t> vaccine_probability = internal_real + shared_int[39] + 2 + 2 + shared_int[1] + shared_int[39] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        vaccine_probability[i - 1 + 19 * (j - 1)] = 1 - std::exp(- vaccine_progression_rate_base[19 * (j - 1) + i - 1] * dt);
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      int j = index_dose[0];
+      vaccine_probability[i - 1 + 19 * (j - 1)] = vaccine_probability_doses[19 * 0 + i - 1];
+    }
+    for (int i = 1; i <= 19; ++i) {
+      int j = index_dose[1];
+      vaccine_probability[i - 1 + 19 * (j - 1)] = vaccine_probability_doses[19 * 1 + i - 1];
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> ICU_D_conf = state + shared_int[85];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_ICU_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_D_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_to_ICU_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_D_conf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_D_conf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> ICU_D_unconf = state + shared_int[86];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_D_unconf = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_ICU_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[9] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_ICU_D_unconf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_D_unconf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_D_unconf_progress[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> delta_D_non_hosp = internal_real + 38;
+    internal_real[1] = delta_D_non_hosp[18];
+  }
+  {
+    const dust::interleaved<real_t> delta_D_non_hosp = internal_real + 38;
+    internal_real[2] = odin_sum1<real_t>(delta_D_non_hosp, 0, 18);
+  }
+  {
+    const dust::interleaved<real_t> delta_D_hosp = internal_real + 19;
+    internal_real[3] = odin_sum1<real_t>(delta_D_hosp, 0, 19);
+  }
+  {
+    const dust::interleaved<real_t> s_ij = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> lambda = internal_real + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        lambda[i - 1 + 19 * (j - 1)] = odin_sum3<real_t>(s_ij, i - 1, i, 0, 19, j - 1, j, 19, 361);
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> aux_H_D_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_H_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_H_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> aux_H_R_unconf = internal_real + shared_int[5] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[7] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_H_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_H_R_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_ICU_pre_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> p_W_D_by_age = internal_real + 152;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_W_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_ICU_pre_conf_to_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_to_ICU_D_conf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_by_age[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_D_unconf = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> p_W_D_by_age = internal_real + 152;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_W_D_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_ICU_pre_unconf_to_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_ICU_D_unconf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_W_D_by_age[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> aux_ICU_pre_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[15] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_pre_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_C_2 = shared_int[60];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> n_I_C_2_to_R = internal_real + shared_int[25] + 2 + shared_int[25] + 8 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> p_G_D_by_age = internal_real + 57;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_G_D = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_progress[dim_I_C_2_123 * (k - 1) + dim_E_12 * (k_C_2 - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_G_D_by_age[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const real_t model_pcr_and_serology = shared_real[8];
+    const dust::interleaved<real_t> n_R_progress_capped = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_R_progress_tmp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_R_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = (model_pcr_and_serology == 1 ? n_R_progress_capped[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] : n_R_progress_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_T_sero_pre_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[50] + 266;
+    const int dim_T_sero_pre_123 = shared_int[33];
+    const real_t * p_sero_pos = shared_real + 66;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_T_sero_pre_to_T_sero_pos = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_T_sero_pre_to_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(odin_sum4<real_t>(n_T_sero_pre_progress, i - 1, i, j - 1, j, 0, 2, k - 1, k, 19, dim_E_12, dim_T_sero_pre_123)), p_sero_pos[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> aux_W_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[34] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_W_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> aux_W_R_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[36] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_W_R_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> I_C_2 = state + shared_int[95];
+    const dust::interleaved<real_t> aux_I_C_2 = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_C_2 = shared_int[60];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_I_C_2 = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> vaccine_probability = internal_real + shared_int[39] + 2 + 2 + shared_int[1] + shared_int[39] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_E = shared_int[61];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> p_E_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            p_E_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = vaccine_probability[19 * (l - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> vaccine_probability = internal_real + shared_int[39] + 2 + 2 + shared_int[1] + shared_int[39] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_A = shared_int[58];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> p_I_A_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            p_I_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = vaccine_probability[19 * (l - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> vaccine_probability = internal_real + shared_int[39] + 2 + 2 + shared_int[1] + shared_int[39] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_P = shared_int[69];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> p_I_P_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            p_I_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = vaccine_probability[19 * (l - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> vaccine_probability = internal_real + shared_int[39] + 2 + 2 + shared_int[1] + shared_int[39] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> p_R_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 32 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          p_R_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = vaccine_probability[19 * (k - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> vaccine_probability = internal_real + shared_int[39] + 2 + 2 + shared_int[1] + shared_int[39] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> p_S_next_vacc_class = internal_real + shared_int[39] + 2 + shared_int[39] + 2 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        p_S_next_vacc_class[i - 1 + 19 * (j - 1)] = vaccine_probability[19 * (j - 1) + i - 1];
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> D_hosp = state + 27;
+    const dust::interleaved<real_t> delta_D_hosp = internal_real + 19;
+    dust::interleaved<real_t> update_D_hosp = state_next + 27;
+    for (int i = 1; i <= 19; ++i) {
+      update_D_hosp[i - 1] = D_hosp[i - 1] + delta_D_hosp[i - 1];
+    }
+  }
+  {
+    const dust::interleaved<real_t> D_non_hosp = state + 46;
+    const dust::interleaved<real_t> delta_D_non_hosp = internal_real + 38;
+    dust::interleaved<real_t> update_D_non_hosp = state_next + 46;
+    for (int i = 1; i <= 19; ++i) {
+      update_D_non_hosp[i - 1] = D_non_hosp[i - 1] + delta_D_non_hosp[i - 1];
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_PCR_pos_123 = shared_int[27];
+    const dust::interleaved<real_t> new_T_PCR_pos = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_PCR_pos = shared_int[70];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_T_PCR_pos = state_next + shared_int[101];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_PCR_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_T_PCR_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pos_123 * (l - 1)] = new_T_PCR_pos[dim_T_PCR_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> new_T_PCR_pos = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int k_PCR_pos = shared_int[70];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_PCR_pos_123 = shared_int[27];
+    state_next[26] = odin_sum4<real_t>(new_T_PCR_pos, 1, 18, 0, dim_strain_transmission, 0, k_PCR_pos, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_T_PCR_pos_123);
+  }
+  {
+    const dust::interleaved<real_t> vaccine_probability = internal_real + shared_int[39] + 2 + 2 + shared_int[1] + shared_int[39] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_tmp_vaccine_probability = state_next + shared_int[117];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_tmp_vaccine_probability[i - 1 + 19 * (j - 1)] = vaccine_probability[19 * (j - 1) + i - 1];
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_G_D_123 = shared_int[4];
+    const dust::interleaved<real_t> n_I_C_2_to_G_D = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_G_D_progress = internal_real + shared_int[0] + 2 + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_G_D = shared_int[62];
+    dust::interleaved<real_t> aux_G_D = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = n_I_C_2_to_G_D[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_G_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = n_G_D_progress[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_G_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = aux_G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_G_D_progress[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> ICU_W_D_conf = state + shared_int[87];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_W_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_ICU_W_D_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_W_D_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_to_ICU_W_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_conf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_D_conf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> ICU_W_D_unconf = state + shared_int[88];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_W_D_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_ICU_W_D_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_W_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[11] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_ICU_W_D_unconf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_unconf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_D_unconf_progress[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> n_E_progress = internal_real + shared_int[0] + 2 + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> p_E_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_E = shared_int[61];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_EE_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_EE_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_E_progress[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_E_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> E = state + shared_int[79];
+    const dust::interleaved<real_t> n_E_progress = internal_real + shared_int[0] + 2 + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> p_E_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_E = shared_int[61];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_E_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_E_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_E_progress[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_E_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> aux_ICU_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[9] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_ICU_pre_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_W_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_W_R_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_ICU_pre_conf_to_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_ICU_pre_conf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_to_ICU_D_conf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_conf_to_ICU_W_D_conf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_D_unconf = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_W_D_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_W_R_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_ICU_pre_unconf_to_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_ICU_pre_unconf_progress[dim_ICU_pre_unconf_123 * (k - 1) + dim_E_12 * (k_ICU_pre - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_ICU_D_unconf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_ICU_W_D_unconf[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> n_I_A_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> p_I_A_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_A = shared_int[58];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_II_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_II_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_A_progress[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> n_I_P_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[50] + 266;
+    const dust::interleaved<real_t> p_I_P_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_P = shared_int[69];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_II_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_II_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_P_progress[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> I_A = state + shared_int[93];
+    const dust::interleaved<real_t> n_I_A_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> p_I_A_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_A = shared_int[58];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_I_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_A_progress[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_C_2 = shared_int[60];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> n_I_C_2_to_R = internal_real + shared_int[25] + 2 + shared_int[25] + 8 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_I_C_2_to_G_D = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_hosp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_hosp[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_I_C_2_progress[dim_I_C_2_123 * (k - 1) + dim_E_12 * (k_C_2 - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_G_D[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> I_P = state + shared_int[96];
+    const dust::interleaved<real_t> n_I_P_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[50] + 266;
+    const dust::interleaved<real_t> p_I_P_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_P = shared_int[69];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_I_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_P_progress[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_I_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> p_R_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 32 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_RS_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_RS_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> R = state + shared_int[98];
+    const dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> p_R_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 32 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_R_next_vacc_class_tmp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_R_next_vacc_class_tmp[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pos_123 = shared_int[31];
+    const dust::interleaved<real_t> T_sero_pos = state + shared_int[104];
+    const dust::interleaved<real_t> n_T_sero_pos_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_sero_pos = shared_int[74];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_T_sero_pre_to_T_sero_pos = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_T_sero_pos = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_sero_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_sero_pos_progress[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          new_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = new_T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_T_sero_pre_to_T_sero_pos[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_sero_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = new_T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_sero_pos_progress[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> aux_W_D_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_W_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_D_unconf_to_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> aux_W_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[34] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_W_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = aux_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_D_unconf_to_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> aux_W_R_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_W_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_W_R_unconf_to_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> aux_W_R_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[36] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_W_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = aux_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_W_R_unconf_to_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> lambda = internal_real + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const real_t * rel_susceptibility = shared_real + shared_int[39] + 2 + shared_int[38] + shared_int[39] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[51] + shared_int[52] + 579;
+    const int dim_rel_susceptibility_1 = shared_int[48];
+    const real_t dt = shared_real[6];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> p_SE = internal_real + shared_int[39] + 2 + shared_int[1] + shared_int[39] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        p_SE[i - 1 + 19 * (j - 1)] = 1 - std::exp(- odin_sum2<real_t>(lambda, i - 1, i, 0, dim_strain_transmission, 19) * rel_susceptibility[dim_rel_susceptibility_1 * (j - 1) + i - 1] * dt);
+      }
+    }
+  }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t delta_D_carehomes_tot = internal_real[1];
+    const real_t D_carehomes_inc = state[16];
+    state_next[16] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_D_carehomes_tot : D_carehomes_inc + delta_D_carehomes_tot);
+  }
+  {
+    const real_t D_carehomes_tot = state[15];
+    const real_t delta_D_carehomes_tot = internal_real[1];
+    state_next[15] = D_carehomes_tot + delta_D_carehomes_tot;
+  }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t delta_D_comm_tot = internal_real[2];
+    const real_t D_comm_inc = state[14];
+    state_next[14] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_D_comm_tot : D_comm_inc + delta_D_comm_tot);
+  }
+  {
+    const real_t D_comm_tot = state[13];
+    const real_t delta_D_comm_tot = internal_real[2];
+    state_next[13] = D_comm_tot + delta_D_comm_tot;
+  }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t delta_D_hosp_tot = internal_real[3];
+    const real_t D_hosp_inc = state[17];
+    state_next[17] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_D_hosp_tot : D_hosp_inc + delta_D_hosp_tot);
+  }
+  {
+    const real_t D_hosp_tot = state[12];
+    const real_t delta_D_hosp_tot = internal_real[3];
+    state_next[12] = D_hosp_tot + delta_D_hosp_tot;
+  }
+  {
+    const real_t D_tot = state[18];
+    const real_t delta_D_hosp_tot = internal_real[3];
+    const real_t delta_D_comm_tot = internal_real[2];
+    const real_t delta_D_carehomes_tot = internal_real[1];
+    state_next[18] = D_tot + delta_D_hosp_tot + delta_D_comm_tot + delta_D_carehomes_tot;
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_2_123 = shared_int[22];
+    const dust::interleaved<real_t> new_I_C_2 = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_C_2 = shared_int[60];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_I_C_2 = state_next + shared_int[95];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_I_C_2[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_2_123 * (l - 1)] = new_I_C_2[dim_I_C_2_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> lambda = internal_real + 266;
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_prob_strain = state_next + shared_int[116];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        update_prob_strain[i - 1 + 19 * (j - 1)] = lambda[19 * (j - 1) + i - 1] / (real_t) odin_sum2<real_t>(lambda, i - 1, i, 0, dim_strain_transmission, 19);
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> ICU_W_R_conf = state + shared_int[89];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_conf_to_ICU_W_R_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_ICU_W_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_W_R_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_conf_to_ICU_W_R_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_conf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_R_conf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> ICU_W_R_unconf = state + shared_int[90];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_ICU_W_R_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_ICU_W_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    dust::interleaved<real_t> aux_ICU_W_R_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[13] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_ICU_W_R_unconf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_unconf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_R_unconf_progress[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> n_E_progress = internal_real + shared_int[0] + 2 + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_EE_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_E = shared_int[61];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_EE = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_EE[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = n_E_progress[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_EE_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_EE_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_E = shared_int[61];
+    const int dim_E_123 = shared_int[2];
+    const real_t * p_C = shared_real + 28;
+    const real_t * rel_p_sympt = shared_real + shared_int[39] + 2 + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[51] + shared_int[52] + 579;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_EI_A_next_vacc_class = internal_real + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_EI_A_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE_next_vacc_class[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), 1 - p_C[i - 1] * rel_p_sympt[19 * (k - 1) + i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> aux_ICU_W_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[11] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_W_D_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> n_I_A_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_II_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_A = shared_int[58];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_II_A = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_II_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = n_I_A_progress[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> n_I_P_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_II_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_P = shared_int[69];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_II_P = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_II_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = n_I_P_progress[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_to_hosp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> p_ICU_by_age = internal_real + 133;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_ICU_pre = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_ICU_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_hosp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_ICU_by_age[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_RS_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_RS = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_RS[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_RS_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_R_next_vacc_class_tmp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> T_sero_neg = state + shared_int[103];
+    const dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> T_PCR_neg = state + shared_int[100];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_R_next_vacc_class_capped = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_R_next_vacc_class_capped[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = odin_min(n_R_next_vacc_class_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], odin_min(T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1], T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]));
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    const dust::interleaved<real_t> p_SE = internal_real + shared_int[39] + 2 + shared_int[1] + shared_int[39] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> n_S_progress_tot = internal_real + shared_int[1] + shared_int[39] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        n_S_progress_tot[i - 1 + 19 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[19 * (j - 1) + i - 1]), p_SE[19 * (j - 1) + i - 1]);
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_G_D_123 = shared_int[4];
+    const dust::interleaved<real_t> G_D = state + shared_int[80];
+    const dust::interleaved<real_t> aux_G_D = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_G_D = shared_int[62];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_G_D = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_G_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> aux_ICU_D_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_ICU_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_D_unconf_to_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> aux_ICU_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[9] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_ICU_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = aux_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_D_unconf_to_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pos_123 = shared_int[31];
+    const dust::interleaved<real_t> new_T_sero_pos = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_sero_pos = shared_int[74];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_T_sero_pos = state_next + shared_int[104];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_sero_pos; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_T_sero_pos[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pos_123 * (l - 1)] = new_T_sero_pos[dim_T_sero_pos_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> new_W_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_W_D_conf = state_next + shared_int[106];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = new_W_D_conf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_D_unconf_123 = shared_int[35];
+    const dust::interleaved<real_t> new_W_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_D = shared_int[72];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_W_D_unconf = state_next + shared_int[107];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_D_unconf_123 * (l - 1)] = new_W_D_unconf[dim_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> new_W_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_W_R_conf = state_next + shared_int[108];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = new_W_R_conf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> new_W_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_W_R = shared_int[73];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_W_R_unconf = state_next + shared_int[109];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_W_R_unconf_123 * (l - 1)] = new_W_R_unconf[dim_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> cum_admit_by_age = state + 65;
+    const dust::interleaved<real_t> n_I_C_2_to_hosp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    dust::interleaved<real_t> update_cum_admit_by_age = state_next + 65;
+    for (int i = 1; i <= 19; ++i) {
+      update_cum_admit_by_age[i - 1] = cum_admit_by_age[i - 1] + odin_sum3<real_t>(n_I_C_2_to_hosp, i - 1, i, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12);
+    }
+  }
+  {
+    const dust::interleaved<real_t> cum_n_E_vaccinated = state + shared_int[110];
+    const dust::interleaved<real_t> n_E_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int k_E = shared_int[61];
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> n_EE_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_cum_n_E_vaccinated = state_next + shared_int[110];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_cum_n_E_vaccinated[i - 1 + 19 * (j - 1)] = cum_n_E_vaccinated[19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_E_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_E, j - 1, j, 19, dim_E_12, dim_E_123) + odin_sum4<real_t>(n_EE_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_E, j - 1, j, 19, dim_E_12, dim_E_123);
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> cum_n_I_A_vaccinated = state + shared_int[111];
+    const dust::interleaved<real_t> n_I_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int k_A = shared_int[58];
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> n_II_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_cum_n_I_A_vaccinated = state_next + shared_int[111];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_cum_n_I_A_vaccinated[i - 1 + 19 * (j - 1)] = cum_n_I_A_vaccinated[19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_I_A_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_A, j - 1, j, 19, dim_E_12, dim_I_A_123) + odin_sum4<real_t>(n_II_A_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_A, j - 1, j, 19, dim_E_12, dim_I_A_123);
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> cum_n_I_P_vaccinated = state + shared_int[112];
+    const dust::interleaved<real_t> n_I_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[50] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int k_P = shared_int[69];
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> n_II_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_cum_n_I_P_vaccinated = state_next + shared_int[112];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_cum_n_I_P_vaccinated[i - 1 + 19 * (j - 1)] = cum_n_I_P_vaccinated[19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_I_P_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_P, j - 1, j, 19, dim_E_12, dim_I_P_123) + odin_sum4<real_t>(n_II_P_next_vacc_class, i - 1, i, 0, dim_strain_transmission, 0, k_P, j - 1, j, 19, dim_E_12, dim_I_P_123);
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> new_T_sero_pos = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int k_sero_pos = shared_int[74];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pos_123 = shared_int[31];
+    state_next[19] = odin_sum4<real_t>(new_T_sero_pos, 3, 13, 0, dim_strain_transmission, 0, k_sero_pos, 0, dim_rel_susceptibility_2, 19, dim_E_12, dim_T_sero_pos_123);
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_1_123 = shared_int[20];
+    const dust::interleaved<real_t> n_II_P = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_P = shared_int[69];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> n_II_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[50] + 266;
+    const int n_vacc_classes = shared_int[78];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_1_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_C_1 = shared_int[59];
+    dust::interleaved<real_t> aux_I_C_1 = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         int l = 1;
-        aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_A_next_vacc_class[dim_I_A_123 * (n_vacc_classes - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
+        aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = n_II_P[dim_I_P_123 * 0 + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (n_vacc_classes - 1) + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 2; l <= n_vacc_classes; ++l) {
-          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_A_next_vacc_class[dim_I_A_123 * (l - 1 - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = n_II_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (l - 1 - 1) + dim_E_12 * (k_P - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_C_1; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = n_I_C_1_progress[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_1; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = aux_I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_1_progress[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      int l = 1;
-      aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_A_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 2; l <= n_vacc_classes; ++l) {
-        aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_A_next_vacc_class[dim_E_12 * (l - 1 - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_EE = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_E = shared_int[61];
+    const int dim_E_123 = shared_int[2];
+    const real_t * p_C = shared_real + 28;
+    const real_t * rel_p_sympt = shared_real + shared_int[39] + 2 + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[51] + shared_int[52] + 579;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_EI_A = internal_real + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_EI_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), 1 - p_C[i - 1] * rel_p_sympt[19 * (k - 1) + i - 1]);
+        }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_A; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_EE_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_E = shared_int[61];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> n_EI_A_next_vacc_class = internal_real + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_EI_P_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_EI_P_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_EE_next_vacc_class[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_EI_A_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> aux_ICU_W_R_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[13] + shared_int[50] + 266;
+    const real_t p_test = shared_real[27];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_ICU_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            n_ICU_W_R_unconf_to_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_test);
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_to_ICU_pre = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> p_star_by_age = internal_real + 171;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_ICU_pre_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_ICU_pre[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_star_by_age[i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const real_t model_pcr_and_serology = shared_real[8];
+    const dust::interleaved<real_t> n_R_next_vacc_class_capped = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_R_next_vacc_class_tmp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_R_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_R_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = (model_pcr_and_serology == 1 ? n_R_next_vacc_class_capped[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] : n_R_next_vacc_class_tmp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]);
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_S_progress_tot = internal_real + shared_int[1] + shared_int[39] + 266;
+    const dust::interleaved<real_t> lambda = internal_real + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int n_strains = shared_int[77];
+    const real_t strain_seed = internal_real[18];
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      int j = 1;
+      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+        n_S_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_S_progress_tot[19 * (k - 1) + i - 1]), lambda[19 * 0 + i - 1] / (real_t) odin_sum2<real_t>(lambda, i - 1, i, 0, dim_strain_transmission, 19));
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 2; j <= n_strains; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_S_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_S_progress_tot[19 * (k - 1) + i - 1] - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, j - 1, k - 1, k, 19, dim_E_12)), lambda[19 * (j - 1) + i - 1] / (real_t) odin_sum2<real_t>(lambda, i - 1, i, j - 1, n_strains, 19));
+        }
+      }
+    }
+    {
+       int i = 4;
+       for (int j = 2; j <= n_strains; ++j) {
+         int k = 1;
+         n_S_progress[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = odin_min(n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + strain_seed, n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + S[19 * (k - 1) + i - 1] - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, dim_strain_transmission, k - 1, k, 19, dim_E_12));
+       }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pre_123 = shared_int[33];
+    const dust::interleaved<real_t> n_EE = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_E = shared_int[61];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> n_EE_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int n_vacc_classes = shared_int[78];
+    const real_t p_sero_pre_1 = shared_real[26];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_com_to_T_sero_pre = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         int l = 1;
-        aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE[dim_E_123 * 0 + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), p_sero_pre_1);
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_A; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 2; l <= n_vacc_classes; ++l) {
-          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (l - 1 - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1]), p_sero_pre_1);
         }
       }
     }
-  }
-  real_t delta_new_conf = odin_sum1<real_t>(n_H_D_unconf_to_conf, 0, dim_H_D_unconf) + odin_sum1<real_t>(n_H_R_unconf_to_conf, 0, dim_H_R_unconf) + odin_sum1<real_t>(n_ICU_pre_unconf_to_conf, 0, dim_ICU_pre_unconf) + odin_sum1<real_t>(n_ICU_D_unconf_to_conf, 0, dim_ICU_D_unconf) + odin_sum1<real_t>(n_ICU_W_R_unconf_to_conf, 0, dim_ICU_W_R_unconf) + odin_sum1<real_t>(n_ICU_W_D_unconf_to_conf, 0, dim_ICU_W_D_unconf) + odin_sum1<real_t>(n_W_R_unconf_to_conf, 0, dim_W_R_unconf) + odin_sum1<real_t>(n_W_D_unconf_to_conf, 0, dim_W_D_unconf);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_EI_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_EE[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_EI_A[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_H_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_hosp_non_ICU[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_D_by_age[i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_SE_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_S_next_vacc_class[19 * (k - 1) + i - 1]);
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      n_S_next_vacc_class[i - 1 + 19 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[19 * (j - 1) + i - 1] - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12)), p_S_next_vacc_class[19 * (j - 1) + i - 1]);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_unconf_to_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_R_unconf_to_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_ICU_pre_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_ICU_pre[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_ICU_pre_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_1; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        new_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A[dim_I_A_123 * (k - 1) + dim_E_12 * (k_A - 1) + 19 * (j - 1) + i - 1] + n_I_C_2_to_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_conf_progress[dim_H_R_unconf_123 * (k - 1) + dim_E_12 * (k_H_R - 1) + 19 * (j - 1) + i - 1] + n_H_R_unconf_progress[dim_H_R_unconf_123 * (k - 1) + dim_E_12 * (k_H_R - 1) + 19 * (j - 1) + i - 1] + n_W_R_conf_progress[dim_W_R_unconf_123 * (k - 1) + dim_E_12 * (k_W_R - 1) + 19 * (j - 1) + i - 1] + n_W_R_unconf_progress[dim_W_R_unconf_123 * (k - 1) + dim_E_12 * (k_W_R - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      new_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_R[dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (n_vacc_classes - 1) + dim_E_12 * (k_A - 1) + 19 * (j - 1) + i - 1] + n_R_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= n_vacc_classes; ++k) {
-        new_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (k - 1 - 1) + dim_E_12 * (k_A - 1) + 19 * (j - 1) + i - 1] + n_R_next_vacc_class[dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        new_T_PCR_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_PCR_pos_progress[dim_T_PCR_pos_123 * (k - 1) + dim_E_12 * (k_PCR_pos - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      new_T_PCR_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_PCR_neg[dim_E_12 * 0 + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= n_vacc_classes; ++k) {
-        new_T_PCR_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_PCR_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_T_PCR_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_PCR_pre_progress[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_T_PCR_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = new_T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_S_progress[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_PCR_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_T_PCR_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = new_T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_PCR_pre_progress[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        new_T_sero_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_T_sero_pre_progress, i - 1, i, j - 1, j, 0, 2, k - 1, k, 19, dim_E_12, dim_T_sero_pre_123) - n_T_sero_pre_to_T_sero_pos[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_sero_pos_progress[dim_T_sero_pos_123 * (k - 1) + dim_E_12 * (k_sero_pos - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      new_T_sero_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_sero_neg[dim_E_12 * 0 + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= n_vacc_classes; ++k) {
-        new_T_sero_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= 2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_com_to_T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_sero_pre_progress[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_W_D_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = new_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_W_D_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = new_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  state_next[3] = cum_infections + odin_sum1<real_t>(n_S_progress, 0, dim_R);
-  for (int i = 1; i <= dim_strain_transmission; ++i) {
-    state_next[141 + i - 1] = cum_infections_per_strain[i - 1] + odin_sum3<real_t>(n_S_progress, 0, 19, i - 1, i, 0, dim_rel_susceptibility_2, 19, dim_E_12);
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_cum_n_R_vaccinated + i - 1 + 19 * (j - 1)] = cum_n_R_vaccinated[19 * (j - 1) + i - 1] + odin_sum3<real_t>(n_R_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12) + odin_sum3<real_t>(n_RS_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12);
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = n_EI_P[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = n_II_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 2;
         int l = 1;
-        aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_P_next_vacc_class[dim_I_P_123 * (n_vacc_classes - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
+        n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = n_EE[dim_E_123 * 0 + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_com_to_T_sero_pre[dim_T_sero_pre_123 * 0 + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 2;
         for (int l = 2; l <= n_vacc_classes; ++l) {
-          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_P_next_vacc_class[dim_I_P_123 * (l - 1 - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          n_com_to_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_com_to_T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      int l = 1;
-      aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_P_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 2; l <= n_vacc_classes; ++l) {
-        aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_P_next_vacc_class[dim_E_12 * (l - 1 - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_to_hosp = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_I_C_2_to_ICU_pre = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_hosp_non_ICU = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_hosp_non_ICU[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_I_C_2_to_hosp[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_ICU_pre[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_P; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> aux_ICU_W_D_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_ICU_W_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_D_unconf_to_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> aux_ICU_W_D_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[11] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_ICU_W_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = aux_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_D_unconf_to_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_G_D_123 = shared_int[4];
+    const dust::interleaved<real_t> new_G_D = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_G_D = shared_int[62];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_G_D = state_next + shared_int[80];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_G_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_G_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_G_D_123 * (l - 1)] = new_G_D[dim_G_D_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> new_ICU_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_D_conf = state_next + shared_int[85];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = new_ICU_D_conf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> new_ICU_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_D = shared_int[65];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_D_unconf = state_next + shared_int[86];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_D_unconf_123 * (l - 1)] = new_ICU_D_unconf[dim_ICU_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> n_EI_A = internal_real + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_II_A = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_A = shared_int[58];
+    const dust::interleaved<real_t> n_II_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_I_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int n_vacc_classes = shared_int[78];
+    const dust::interleaved<real_t> n_EI_A_next_vacc_class = internal_real + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    dust::interleaved<real_t> aux_I_A = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = n_EI_A[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = n_II_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_A_next_vacc_class[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          int l = 1;
+          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_A_next_vacc_class[dim_I_A_123 * (n_vacc_classes - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 2; l <= n_vacc_classes; ++l) {
+            aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_A_next_vacc_class[dim_I_A_123 * (l - 1 - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         int l = 1;
-        aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_A_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_P; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 2; l <= n_vacc_classes; ++l) {
-          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (l - 1 - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_A_next_vacc_class[dim_E_12 * (l - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_A; ++k) {
+          int l = 1;
+          aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_A; ++k) {
+          for (int l = 2; l <= n_vacc_classes; ++l) {
+            aux_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (l - 1 - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_H_D[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_star_by_age[i - 1]);
+  {
+    const dust::interleaved<real_t> n_H_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_H_D_unconf = shared_int[5];
+    const dust::interleaved<real_t> n_H_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_H_R_unconf = shared_int[7];
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_ICU_pre_unconf = shared_int[15];
+    const dust::interleaved<real_t> n_ICU_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_ICU_D_unconf = shared_int[9];
+    const dust::interleaved<real_t> n_ICU_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_ICU_W_R_unconf = shared_int[13];
+    const dust::interleaved<real_t> n_ICU_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_ICU_W_D_unconf = shared_int[11];
+    const dust::interleaved<real_t> n_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    const int dim_W_R_unconf = shared_int[36];
+    const dust::interleaved<real_t> n_W_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[50] + 266;
+    const int dim_W_D_unconf = shared_int[34];
+    internal_real[5] = odin_sum1<real_t>(n_H_D_unconf_to_conf, 0, dim_H_D_unconf) + odin_sum1<real_t>(n_H_R_unconf_to_conf, 0, dim_H_R_unconf) + odin_sum1<real_t>(n_ICU_pre_unconf_to_conf, 0, dim_ICU_pre_unconf) + odin_sum1<real_t>(n_ICU_D_unconf_to_conf, 0, dim_ICU_D_unconf) + odin_sum1<real_t>(n_ICU_W_R_unconf_to_conf, 0, dim_ICU_W_R_unconf) + odin_sum1<real_t>(n_ICU_W_D_unconf_to_conf, 0, dim_ICU_W_D_unconf) + odin_sum1<real_t>(n_W_R_unconf_to_conf, 0, dim_W_R_unconf) + odin_sum1<real_t>(n_W_D_unconf_to_conf, 0, dim_W_D_unconf);
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_EE = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_E = shared_int[61];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> n_EI_A = internal_real + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_EI_P = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_EI_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_EE[dim_E_123 * (k - 1) + dim_E_12 * (k_E - 1) + 19 * (j - 1) + i - 1] - n_EI_A[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_H_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_hosp_non_ICU[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_H_D[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_hosp_non_ICU = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> p_H_D_by_age = internal_real + 76;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_H_D = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_H_D[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_hosp_non_ICU[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_H_D_by_age[i - 1]);
+        }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= n_vacc_classes; ++k) {
-        n_SE[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_SE_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> p_S_next_vacc_class = internal_real + shared_int[39] + 2 + shared_int[39] + 2 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_SE_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_SE_next_vacc_class[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_S_next_vacc_class[19 * (k - 1) + i - 1]);
+        }
       }
     }
   }
-  real_t new_ICU_tot = odin_sum1<real_t>(new_ICU_W_R_conf, 0, dim_ICU_W_R_unconf) + odin_sum1<real_t>(new_ICU_W_D_conf, 0, dim_ICU_W_D_unconf) + odin_sum1<real_t>(new_ICU_D_conf, 0, dim_ICU_D_unconf);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
+  {
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    const dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> p_S_next_vacc_class = internal_real + shared_int[39] + 2 + shared_int[39] + 2 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> n_S_next_vacc_class = internal_real + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        n_S_next_vacc_class[i - 1 + 19 * (j - 1)] = dust::distr::rbinom(rng_state, std::round(S[19 * (j - 1) + i - 1] - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12)), p_S_next_vacc_class[19 * (j - 1) + i - 1]);
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> aux_ICU_W_R_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_ICU_W_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_W_R_unconf_to_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> aux_ICU_W_R_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[13] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_W_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_ICU_W_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = aux_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_W_R_unconf_to_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> aux_ICU_pre_conf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_2_to_ICU_pre_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_ICU_pre_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_ICU_pre_unconf_to_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          new_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_ICU_pre_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      new_S[i - 1 + 19 * (j - 1)] = S[19 * (j - 1) + i - 1] + odin_sum3<real_t>(n_RS, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12) - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12) - n_S_next_vacc_class[19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> aux_ICU_pre_unconf = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[15] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_ICU_pre_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_2_to_ICU_pre = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_I_C_2_to_ICU_pre_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_ICU_pre_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = aux_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_ICU_pre_unconf_to_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    int j = 1;
-    new_S[i - 1 + 19 * (j - 1)] = new_S[19 * 0 + i - 1] + n_S_next_vacc_class[19 * (n_vacc_classes - 1) + i - 1] + odin_sum3<real_t>(n_RS_next_vacc_class, i - 1, i, 0, dim_strain_transmission, n_vacc_classes - 1, n_vacc_classes, 19, dim_E_12);
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 2; j <= n_vacc_classes; ++j) {
-      new_S[i - 1 + 19 * (j - 1)] = new_S[19 * (j - 1) + i - 1] + n_S_next_vacc_class[19 * (j - 1 - 1) + i - 1] + odin_sum3<real_t>(n_RS_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1 - 1, j - 1, 19, dim_E_12);
-    }
-  }
-  real_t new_sympt_cases = odin_sum1<real_t>(n_EI_P, 0, dim_R) + odin_sum1<real_t>(n_EI_P_next_vacc_class, 0, dim_R);
-  real_t new_sympt_cases_non_variant_over25 = odin_sum3<real_t>(n_EI_P, 5, n_groups, 0, 1, 0, dim_rel_susceptibility_2, 19, dim_E_12) + odin_sum3<real_t>(n_EI_P_next_vacc_class, 5, n_groups, 0, 1, 0, dim_rel_susceptibility_2, 19, dim_E_12);
-  real_t new_sympt_cases_over25 = odin_sum3<real_t>(n_EI_P, 5, n_groups, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12) + odin_sum3<real_t>(n_EI_P_next_vacc_class, 5, n_groups, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_W_R_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = new_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          new_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_ICU_pre[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_ICU_pre_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_W_R; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_1_123 = shared_int[20];
+    const dust::interleaved<real_t> I_C_1 = state + shared_int[94];
+    const dust::interleaved<real_t> aux_I_C_1 = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_C_1 = shared_int[59];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_I_C_1 = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_1; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> R = state + shared_int[98];
+    const dust::interleaved<real_t> n_II_A = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 2 + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_A = shared_int[58];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> n_I_C_2_to_R = internal_real + shared_int[25] + 2 + shared_int[25] + 8 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_H_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_H_R = shared_int[64];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> n_H_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_W_R_conf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[50] + 266;
+    const int k_W_R = shared_int[73];
+    const int dim_W_R_unconf_123 = shared_int[37];
+    const dust::interleaved<real_t> n_W_R_unconf_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_R_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_II_A_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int n_vacc_classes = shared_int[78];
+    dust::interleaved<real_t> new_R = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          new_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A[dim_I_A_123 * (k - 1) + dim_E_12 * (k_A - 1) + 19 * (j - 1) + i - 1] + n_I_C_2_to_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_conf_progress[dim_H_R_unconf_123 * (k - 1) + dim_E_12 * (k_H_R - 1) + 19 * (j - 1) + i - 1] + n_H_R_unconf_progress[dim_H_R_unconf_123 * (k - 1) + dim_E_12 * (k_H_R - 1) + 19 * (j - 1) + i - 1] + n_W_R_conf_progress[dim_W_R_unconf_123 * (k - 1) + dim_E_12 * (k_W_R - 1) + 19 * (j - 1) + i - 1] + n_W_R_unconf_progress[dim_W_R_unconf_123 * (k - 1) + dim_E_12 * (k_W_R - 1) + 19 * (j - 1) + i - 1] - n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        new_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_R[dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (n_vacc_classes - 1) + dim_E_12 * (k_A - 1) + 19 * (j - 1) + i - 1] + n_R_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= n_vacc_classes; ++k) {
+          new_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_A_next_vacc_class[dim_I_A_123 * (k - 1 - 1) + dim_E_12 * (k_A - 1) + 19 * (j - 1) + i - 1] + n_R_next_vacc_class[dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> T_PCR_neg = state + shared_int[100];
+    const dust::interleaved<real_t> n_T_PCR_pos_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[50] + 266;
+    const int k_PCR_pos = shared_int[70];
+    const int dim_T_PCR_pos_123 = shared_int[27];
+    const real_t model_pcr_and_serology = shared_real[8];
+    const dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_R_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const int n_vacc_classes = shared_int[78];
+    dust::interleaved<real_t> new_T_PCR_neg = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 8 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          new_T_PCR_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_PCR_pos_progress[dim_T_PCR_pos_123 * (k - 1) + dim_E_12 * (k_PCR_pos - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        new_T_PCR_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_PCR_neg[dim_E_12 * 0 + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= n_vacc_classes; ++k) {
+          new_T_PCR_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_PCR_pre_123 = shared_int[29];
+    const dust::interleaved<real_t> T_PCR_pre = state + shared_int[102];
+    const dust::interleaved<real_t> n_T_PCR_pre_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_PCR_pre = shared_int[71];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    dust::interleaved<real_t> new_T_PCR_pre = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_PCR_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_T_PCR_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_PCR_pre_progress[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_W_R_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = new_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          new_T_PCR_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = new_T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_S_progress[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_PCR_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_T_PCR_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = new_T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_PCR_pre_progress[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> T_sero_neg = state + shared_int[103];
+    const dust::interleaved<real_t> n_T_sero_pre_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[50] + 266;
+    const int dim_T_sero_pre_123 = shared_int[33];
+    const dust::interleaved<real_t> n_T_sero_pre_to_T_sero_pos = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_T_sero_pos_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[50] + 266;
+    const int k_sero_pos = shared_int[74];
+    const int dim_T_sero_pos_123 = shared_int[31];
+    const real_t model_pcr_and_serology = shared_real[8];
+    const dust::interleaved<real_t> n_R_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_R_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const int n_vacc_classes = shared_int[78];
+    dust::interleaved<real_t> new_T_sero_neg = internal_real + shared_int[25] + 16 + 2 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          new_T_sero_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + odin_sum4<real_t>(n_T_sero_pre_progress, i - 1, i, j - 1, j, 0, 2, k - 1, k, 19, dim_E_12, dim_T_sero_pre_123) - n_T_sero_pre_to_T_sero_pos[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_T_sero_pos_progress[dim_T_sero_pos_123 * (k - 1) + dim_E_12 * (k_sero_pos - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        new_T_sero_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_sero_neg[dim_E_12 * 0 + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= n_vacc_classes; ++k) {
+          new_T_sero_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + model_pcr_and_serology * n_R_next_vacc_class[dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pre_123 = shared_int[33];
+    const dust::interleaved<real_t> T_sero_pre = state + shared_int[105];
+    const dust::interleaved<real_t> n_com_to_T_sero_pre = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 4 + shared_int[36] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_T_sero_pre_progress = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_T_sero_pre = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= 2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_com_to_T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_T_sero_pre_progress[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> new_ICU_W_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_W_D_conf = state_next + shared_int[87];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_W_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = new_ICU_W_D_conf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> new_ICU_W_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_W_D_unconf = state_next + shared_int[88];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_W_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_D_unconf_123 * (l - 1)] = new_ICU_W_D_unconf[dim_ICU_W_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const real_t cum_infections = state[3];
+    const dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_R = shared_int[25];
+    state_next[3] = cum_infections + odin_sum1<real_t>(n_S_progress, 0, dim_R);
+  }
+  {
+    const dust::interleaved<real_t> cum_infections_per_strain = state + 141;
+    const dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_cum_infections_per_strain = state_next + 141;
+    for (int i = 1; i <= dim_strain_transmission; ++i) {
+      update_cum_infections_per_strain[i - 1] = cum_infections_per_strain[i - 1] + odin_sum3<real_t>(n_S_progress, 0, 19, i - 1, i, 0, dim_rel_susceptibility_2, 19, dim_E_12);
+    }
+  }
+  {
+    const dust::interleaved<real_t> cum_n_R_vaccinated = state + shared_int[113];
+    const dust::interleaved<real_t> n_R_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_RS_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_cum_n_R_vaccinated = state_next + shared_int[113];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_cum_n_R_vaccinated[i - 1 + 19 * (j - 1)] = cum_n_R_vaccinated[19 * (j - 1) + i - 1] + odin_sum3<real_t>(n_R_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12) + odin_sum3<real_t>(n_RS_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12);
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> n_EI_P = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_II_P = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_P = shared_int[69];
+    const dust::interleaved<real_t> n_II_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_I_P_next_vacc_class = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[50] + 266;
+    const int n_vacc_classes = shared_int[78];
+    const dust::interleaved<real_t> n_EI_P_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    dust::interleaved<real_t> aux_I_P = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_pre_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = n_EI_P[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
         }
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_ICU_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_ICU_pre_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = n_II_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_C_1; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_I_C_1 + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = new_I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_II_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_P_next_vacc_class[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        state_next[offset_variable_R + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        state_next[offset_variable_T_PCR_neg + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_PCR_pre; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_T_PCR_pre + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = new_T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          int l = 1;
+          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_P_next_vacc_class[dim_I_P_123 * (n_vacc_classes - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1];
         }
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        state_next[offset_variable_T_sero_neg + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= 2; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_T_sero_pre + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = new_T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 2; l <= n_vacc_classes; ++l) {
+            aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_I_P_next_vacc_class[dim_I_P_123 * (l - 1 - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_cum_n_S_vaccinated + i - 1 + 19 * (j - 1)] = cum_n_S_vaccinated[19 * (j - 1) + i - 1] + n_S_next_vacc_class[19 * (j - 1) + i - 1] + odin_sum3<real_t>(n_SE_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12);
-    }
-  }
-  state_next[5] = cum_new_conf + delta_new_conf;
-  state_next[2] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_new_conf : new_conf_inc + delta_new_conf);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = n_SE[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_EE_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_E_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         int l = 1;
-        aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * 0 + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_E_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_P_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 2; l <= n_vacc_classes; ++l) {
-          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_E_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EI_P_next_vacc_class[dim_E_12 * (l - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_P; ++k) {
+          int l = 1;
+          aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_P; ++k) {
+          for (int l = 2; l <= n_vacc_classes; ++l) {
+            aux_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_II_P_next_vacc_class[dim_I_P_123 * (l - 1 - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      int l = 1;
-      aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * 0 + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_SE_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 2; l <= n_vacc_classes; ++l) {
-        aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_SE_next_vacc_class[dim_E_12 * (l - 1 - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_to_H_D = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> p_star_by_age = internal_real + 171;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_H_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_H_D[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_star_by_age[i - 1]);
+        }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_E; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_hosp_non_ICU = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_I_C_2_to_H_D = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_H_R = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_H_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_hosp_non_ICU[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_H_D[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_SE_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int n_vacc_classes = shared_int[78];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_SE = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= n_vacc_classes; ++k) {
+          n_SE[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = n_S_progress[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_SE_next_vacc_class[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> new_ICU_W_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_ICU_W_R_unconf = shared_int[13];
+    const dust::interleaved<real_t> new_ICU_W_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_ICU_W_D_unconf = shared_int[11];
+    const dust::interleaved<real_t> new_ICU_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_ICU_D_unconf = shared_int[9];
+    internal_real[6] = odin_sum1<real_t>(new_ICU_W_R_conf, 0, dim_ICU_W_R_unconf) + odin_sum1<real_t>(new_ICU_W_D_conf, 0, dim_ICU_W_D_unconf) + odin_sum1<real_t>(new_ICU_D_conf, 0, dim_ICU_D_unconf);
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> I_A = state + shared_int[93];
+    const dust::interleaved<real_t> aux_I_A = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_A = shared_int[58];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_I_A = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> S = state + shared_int[99];
+    const dust::interleaved<real_t> n_RS = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_S_progress = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_S_next_vacc_class = internal_real + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int n_vacc_classes = shared_int[78];
+    const dust::interleaved<real_t> n_RS_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_S = internal_real + shared_int[39] + 2 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        new_S[i - 1 + 19 * (j - 1)] = S[19 * (j - 1) + i - 1] + odin_sum3<real_t>(n_RS, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12) - odin_sum3<real_t>(n_S_progress, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12) - n_S_next_vacc_class[19 * (j - 1) + i - 1];
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      int j = 1;
+      new_S[i - 1 + 19 * (j - 1)] = new_S[19 * 0 + i - 1] + n_S_next_vacc_class[19 * (n_vacc_classes - 1) + i - 1] + odin_sum3<real_t>(n_RS_next_vacc_class, i - 1, i, 0, dim_strain_transmission, n_vacc_classes - 1, n_vacc_classes, 19, dim_E_12);
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 2; j <= n_vacc_classes; ++j) {
+        new_S[i - 1 + 19 * (j - 1)] = new_S[19 * (j - 1) + i - 1] + n_S_next_vacc_class[19 * (j - 1 - 1) + i - 1] + odin_sum3<real_t>(n_RS_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1 - 1, j - 1, 19, dim_E_12);
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> n_EI_P = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_R = shared_int[25];
+    const dust::interleaved<real_t> n_EI_P_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    internal_real[8] = odin_sum1<real_t>(n_EI_P, 0, dim_R) + odin_sum1<real_t>(n_EI_P_next_vacc_class, 0, dim_R);
+  }
+  {
+    const dust::interleaved<real_t> n_EI_P = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int n_groups = shared_int[76];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_EI_P_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    internal_real[9] = odin_sum3<real_t>(n_EI_P, 5, n_groups, 0, 1, 0, dim_rel_susceptibility_2, 19, dim_E_12) + odin_sum3<real_t>(n_EI_P_next_vacc_class, 5, n_groups, 0, 1, 0, dim_rel_susceptibility_2, 19, dim_E_12);
+  }
+  {
+    const dust::interleaved<real_t> n_EI_P = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int n_groups = shared_int[76];
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_EI_P_next_vacc_class = internal_real + shared_int[25] + 2 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    internal_real[10] = odin_sum3<real_t>(n_EI_P, 5, n_groups, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12) + odin_sum3<real_t>(n_EI_P_next_vacc_class, 5, n_groups, 0, dim_strain_transmission, 0, dim_rel_susceptibility_2, 19, dim_E_12);
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> new_ICU_W_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_W_R_conf = state_next + shared_int[89];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_W_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = new_ICU_W_R_conf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> new_ICU_W_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_W_R_unconf = state_next + shared_int[90];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_W_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_W_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_W_R_unconf_123 * (l - 1)] = new_ICU_W_R_unconf[dim_ICU_W_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> new_ICU_pre_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_pre_conf = state_next + shared_int[91];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_pre_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_conf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> new_ICU_pre_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_ICU_pre = shared_int[68];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_ICU_pre_unconf = state_next + shared_int[92];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_ICU_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_ICU_pre_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_ICU_pre_unconf_123 * (l - 1)] = new_ICU_pre_unconf[dim_ICU_pre_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_C_1_123 = shared_int[20];
+    const dust::interleaved<real_t> new_I_C_1 = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_C_1 = shared_int[59];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_I_C_1 = state_next + shared_int[94];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_C_1; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_I_C_1[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_C_1_123 * (l - 1)] = new_I_C_1[dim_I_C_1_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> new_R = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_R = state_next + shared_int[98];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          update_R[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> new_T_PCR_neg = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 8 + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_T_PCR_neg = state_next + shared_int[100];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          update_T_PCR_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_PCR_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_PCR_pre_123 = shared_int[29];
+    const dust::interleaved<real_t> new_T_PCR_pre = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_PCR_pre = shared_int[71];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_T_PCR_pre = state_next + shared_int[102];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_PCR_pre; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_T_PCR_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_PCR_pre_123 * (l - 1)] = new_T_PCR_pre[dim_T_PCR_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> new_T_sero_neg = internal_real + shared_int[25] + 16 + 2 + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_T_sero_neg = state_next + shared_int[103];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          update_T_sero_neg[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = new_T_sero_neg[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_T_sero_pre_123 = shared_int[33];
+    const dust::interleaved<real_t> new_T_sero_pre = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_T_sero_pre = state_next + shared_int[105];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= 2; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_T_sero_pre[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_T_sero_pre_123 * (l - 1)] = new_T_sero_pre[dim_T_sero_pre_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> cum_n_S_vaccinated = state + shared_int[114];
+    const dust::interleaved<real_t> n_S_next_vacc_class = internal_real + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_SE_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_E_12 = shared_int[1];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_cum_n_S_vaccinated = state_next + shared_int[114];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_cum_n_S_vaccinated[i - 1 + 19 * (j - 1)] = cum_n_S_vaccinated[19 * (j - 1) + i - 1] + n_S_next_vacc_class[19 * (j - 1) + i - 1] + odin_sum3<real_t>(n_SE_next_vacc_class, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12);
+      }
+    }
+  }
+  {
+    const real_t cum_new_conf = state[5];
+    const real_t delta_new_conf = internal_real[5];
+    state_next[5] = cum_new_conf + delta_new_conf;
+  }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t delta_new_conf = internal_real[5];
+    const real_t new_conf_inc = state[2];
+    state_next[2] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_new_conf : new_conf_inc + delta_new_conf);
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> n_SE = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_EE = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int k_E = shared_int[61];
+    const dust::interleaved<real_t> n_EE_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_E_next_vacc_class = internal_real + shared_int[0] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int n_vacc_classes = shared_int[78];
+    const dust::interleaved<real_t> n_SE_next_vacc_class = internal_real + shared_int[25] + 16 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> aux_E = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
+        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = n_SE[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_EE[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_EE_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_E_next_vacc_class[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          int l = 1;
+          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * 0 + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_E_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 2; l <= n_vacc_classes; ++l) {
+            aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_E_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         int l = 1;
-        aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * 0 + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_SE_next_vacc_class[dim_E_12 * (n_vacc_classes - 1) + 19 * (j - 1) + i - 1];
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 2; k <= k_E; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 2; l <= n_vacc_classes; ++l) {
-          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_SE_next_vacc_class[dim_E_12 * (l - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_E; ++k) {
+          int l = 1;
+          aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (n_vacc_classes - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 2; k <= k_E; ++k) {
+          for (int l = 2; l <= n_vacc_classes; ++l) {
+            aux_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_EE_next_vacc_class[dim_E_123 * (l - 1 - 1) + dim_E_12 * (k - 1 - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        n_I_C_2_to_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_H_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_star_by_age[i - 1]);
+  {
+    const int dim_E_12 = shared_int[1];
+    const dust::interleaved<real_t> n_I_C_2_to_H_R = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> p_star_by_age = internal_real + 171;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> n_I_C_2_to_H_R_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          n_I_C_2_to_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(n_I_C_2_to_H_R[dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1]), p_star_by_age[i - 1]);
+        }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> aux_H_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_H_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_2_to_H_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_H_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_D_unconf_to_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_D_unconf_to_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          new_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> aux_H_D_unconf = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_H_D_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_2_to_H_D = internal_real + shared_int[25] + 2 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_I_C_2_to_H_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_H_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_D_unconf_to_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
       }
     }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = aux_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_D_unconf_to_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          new_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_D[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_H_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_D[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_H_D_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> I_P = state + shared_int[96];
+    const dust::interleaved<real_t> aux_I_P = internal_real + shared_int[5] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_P = shared_int[69];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_I_P = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
+  {
+    const real_t new_ICU_tot = internal_real[6];
+    state_next[9] = new_ICU_tot;
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_A_123 = shared_int[18];
+    const dust::interleaved<real_t> new_I_A = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_A = shared_int[58];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_I_A = state_next + shared_int[93];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_A; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_I_A[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = new_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const dust::interleaved<real_t> new_S = internal_real + shared_int[39] + 2 + shared_int[1] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_S = state_next + shared_int[99];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_S[i - 1 + 19 * (j - 1)] = new_S[19 * (j - 1) + i - 1];
+      }
+    }
+  }
+  {
+    const real_t cum_sympt_cases = state[20];
+    const real_t new_sympt_cases = internal_real[8];
+    state_next[20] = cum_sympt_cases + new_sympt_cases;
+  }
+  {
+    const real_t cum_sympt_cases_non_variant_over25 = state[22];
+    const real_t new_sympt_cases_non_variant_over25 = internal_real[9];
+    state_next[22] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
+  }
+  {
+    const real_t cum_sympt_cases_over25 = state[21];
+    const real_t new_sympt_cases_over25 = internal_real[10];
+    state_next[21] = cum_sympt_cases_over25 + new_sympt_cases_over25;
+  }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t new_sympt_cases = internal_real[8];
+    const real_t sympt_cases_inc = state[23];
+    state_next[23] = ((fmodr<real_t>(step, steps_per_day) == 0 ? new_sympt_cases : sympt_cases_inc + new_sympt_cases));
+  }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t new_sympt_cases_non_variant_over25 = internal_real[9];
+    const real_t sympt_cases_non_variant_over25_inc = state[25];
+    state_next[25] = ((fmodr<real_t>(step, steps_per_day) == 0 ? new_sympt_cases_non_variant_over25 : sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25));
+  }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t new_sympt_cases_over25 = internal_real[10];
+    const real_t sympt_cases_over25_inc = state[24];
+    state_next[24] = ((fmodr<real_t>(step, steps_per_day) == 0 ? new_sympt_cases_over25 : sympt_cases_over25_inc + new_sympt_cases_over25));
+  }
+  {
+    const dust::interleaved<real_t> n_I_C_2_to_H_D_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_R = shared_int[25];
+    const dust::interleaved<real_t> n_I_C_2_to_H_R_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const dust::interleaved<real_t> n_I_C_2_to_ICU_pre_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + 2 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    internal_real[4] = odin_sum1<real_t>(n_I_C_2_to_H_D_conf, 0, dim_R) + odin_sum1<real_t>(n_I_C_2_to_H_R_conf, 0, dim_R) + odin_sum1<real_t>(n_I_C_2_to_ICU_pre_conf, 0, dim_R);
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> E = state + shared_int[79];
+    const dust::interleaved<real_t> aux_E = internal_real + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_E = shared_int[61];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> new_E = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> aux_H_R_conf = internal_real + shared_int[5] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_H_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_2_to_H_R_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_H_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_unconf_to_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          new_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_R_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
         }
       }
     }
   }
-  state_next[9] = new_ICU_tot;
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_A; ++k) {
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> aux_H_R_unconf = internal_real + shared_int[5] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[3] + shared_int[7] + shared_int[50] + 266;
+    const dust::interleaved<real_t> n_H_R_unconf_to_conf = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 2 + shared_int[9] + 2 + shared_int[11] + 2 + shared_int[13] + 2 + shared_int[15] + 2 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[34] + 2 + shared_int[36] + 2 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[17] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    const dust::interleaved<real_t> n_I_C_2_to_H_R = internal_real + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[25] + 266;
+    const dust::interleaved<real_t> n_I_C_2_to_H_R_conf = internal_real + shared_int[25] + 2 + shared_int[25] + 2 + shared_int[25] + 4 + shared_int[25] + 8 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    dust::interleaved<real_t> new_H_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            new_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_R_unconf_to_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        int k = 1;
         for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_I_A + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_A_123 * (l - 1)] = new_I_A[dim_I_A_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          new_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_R[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_H_R_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_S + i - 1 + 19 * (j - 1)] = new_S[19 * (j - 1) + i - 1];
-    }
-  }
-  state_next[20] = cum_sympt_cases + new_sympt_cases;
-  state_next[22] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
-  state_next[21] = cum_sympt_cases_over25 + new_sympt_cases_over25;
-  state_next[23] = ((fmodr<real_t>(step, steps_per_day) == 0 ? new_sympt_cases : sympt_cases_inc + new_sympt_cases));
-  state_next[25] = ((fmodr<real_t>(step, steps_per_day) == 0 ? new_sympt_cases_non_variant_over25 : sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25));
-  state_next[24] = ((fmodr<real_t>(step, steps_per_day) == 0 ? new_sympt_cases_over25 : sympt_cases_over25_inc + new_sympt_cases_over25));
-  real_t delta_admit_conf = odin_sum1<real_t>(n_I_C_2_to_H_D_conf, 0, dim_R) + odin_sum1<real_t>(n_I_C_2_to_H_R_conf, 0, dim_R) + odin_sum1<real_t>(n_I_C_2_to_ICU_pre_conf, 0, dim_R);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + aux_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> new_H_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_H_D_conf = state_next + shared_int[81];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_H_D_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] + n_H_R_unconf_to_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> new_H_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_D = shared_int[63];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_H_D_unconf = state_next + shared_int[82];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_D; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_H_D_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_R_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          new_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = aux_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1] - n_H_R_unconf_to_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_I_P_123 = shared_int[24];
+    const dust::interleaved<real_t> new_I_P = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_P = shared_int[69];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_I_P = state_next + shared_int[96];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_P; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_I_P[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = new_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      int k = 1;
-      for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-        new_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * 0 + 19 * (j - 1) + i - 1] + n_I_C_2_to_H_R[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1] - n_I_C_2_to_H_R_conf[dim_E_12 * (l - 1) + 19 * (j - 1) + i - 1];
-      }
-    }
-  }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_H_D_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_conf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const real_t * strain_transmission = shared_real + shared_int[38] + shared_int[40] + shared_int[41] + shared_int[42] + shared_int[43] + shared_int[44] + shared_int[45] + shared_int[46] + shared_int[51] + 579;
+    const real_t I_A_transmission = shared_real[2];
+    const dust::interleaved<real_t> new_I_A = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_A = shared_int[58];
+    const int dim_I_A_123 = shared_int[18];
+    const real_t I_P_transmission = shared_real[5];
+    const dust::interleaved<real_t> new_I_P = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_P = shared_int[69];
+    const int dim_I_P_123 = shared_int[24];
+    const real_t I_C_1_transmission = shared_real[3];
+    const dust::interleaved<real_t> new_I_C_1 = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_C_1 = shared_int[59];
+    const int dim_I_C_1_123 = shared_int[20];
+    const real_t I_C_2_transmission = shared_real[4];
+    const dust::interleaved<real_t> new_I_C_2 = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_C_2 = shared_int[60];
+    const int dim_I_C_2_123 = shared_int[22];
+    const real_t hosp_transmission = shared_real[7];
+    const dust::interleaved<real_t> new_ICU_pre_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_ICU_pre = shared_int[68];
+    const int dim_ICU_pre_unconf_123 = shared_int[16];
+    const dust::interleaved<real_t> new_ICU_pre_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const dust::interleaved<real_t> new_H_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_H_R = shared_int[64];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> new_H_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const dust::interleaved<real_t> new_H_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_H_D = shared_int[63];
+    const int dim_H_D_unconf_123 = shared_int[6];
+    const dust::interleaved<real_t> new_H_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const real_t ICU_transmission = shared_real[1];
+    const dust::interleaved<real_t> new_ICU_W_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_ICU_W_R = shared_int[67];
+    const int dim_ICU_W_R_unconf_123 = shared_int[14];
+    const dust::interleaved<real_t> new_ICU_W_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const dust::interleaved<real_t> new_ICU_W_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_ICU_W_D = shared_int[66];
+    const int dim_ICU_W_D_unconf_123 = shared_int[12];
+    const dust::interleaved<real_t> new_ICU_W_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const dust::interleaved<real_t> new_ICU_D_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_ICU_D = shared_int[65];
+    const int dim_ICU_D_unconf_123 = shared_int[10];
+    const dust::interleaved<real_t> new_ICU_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const real_t G_D_transmission = shared_real[0];
+    const dust::interleaved<real_t> new_G_D = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int k_G_D = shared_int[62];
+    const int dim_G_D_123 = shared_int[4];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> I_weighted_strain = internal_real + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
+          I_weighted_strain[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = strain_transmission[j - 1] * (I_A_transmission * odin_sum4<real_t>(new_I_A, i - 1, i, j - 1, j, 0, k_A, k - 1, k, 19, dim_E_12, dim_I_A_123) + I_P_transmission * odin_sum4<real_t>(new_I_P, i - 1, i, j - 1, j, 0, k_P, k - 1, k, 19, dim_E_12, dim_I_P_123) + I_C_1_transmission * odin_sum4<real_t>(new_I_C_1, i - 1, i, j - 1, j, 0, k_C_1, k - 1, k, 19, dim_E_12, dim_I_C_1_123) + I_C_2_transmission * odin_sum4<real_t>(new_I_C_2, i - 1, i, j - 1, j, 0, k_C_2, k - 1, k, 19, dim_E_12, dim_I_C_2_123) + hosp_transmission * (odin_sum4<real_t>(new_ICU_pre_unconf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(new_ICU_pre_conf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(new_H_R_unconf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(new_H_R_conf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(new_H_D_unconf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(new_H_D_conf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123)) + ICU_transmission * (odin_sum4<real_t>(new_ICU_W_R_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(new_ICU_W_R_conf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(new_ICU_W_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(new_ICU_W_D_conf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(new_ICU_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(new_ICU_D_conf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123)) + G_D_transmission * odin_sum4<real_t>(new_G_D, i - 1, i, j - 1, j, 0, k_G_D, k - 1, k, 19, dim_E_12, dim_G_D_123));
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_D; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_H_D_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_D_unconf_123 * (l - 1)] = new_H_D_unconf[dim_H_D_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const dust::interleaved<real_t> new_ICU_pre_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_ICU_pre_unconf = shared_int[15];
+    const dust::interleaved<real_t> new_H_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_H_R_unconf = shared_int[7];
+    const dust::interleaved<real_t> new_H_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_H_D_unconf = shared_int[5];
+    const dust::interleaved<real_t> new_W_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_W_R_unconf = shared_int[36];
+    const dust::interleaved<real_t> new_W_D_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 2 + shared_int[9] + 4 + shared_int[11] + 2 + shared_int[11] + 4 + shared_int[13] + 2 + shared_int[13] + 4 + shared_int[15] + 2 + shared_int[15] + 4 + shared_int[17] + 2 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[26] + 2 + shared_int[28] + 2 + shared_int[30] + 2 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[19] + shared_int[21] + shared_int[32] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_W_D_unconf = shared_int[34];
+    internal_real[7] = odin_sum1<real_t>(new_ICU_pre_conf, 0, dim_ICU_pre_unconf) + odin_sum1<real_t>(new_H_R_conf, 0, dim_H_R_unconf) + odin_sum1<real_t>(new_H_D_conf, 0, dim_H_D_unconf) + odin_sum1<real_t>(new_W_R_conf, 0, dim_W_R_unconf) + odin_sum1<real_t>(new_W_D_conf, 0, dim_W_D_unconf);
+  }
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_E_123 = shared_int[2];
+    const dust::interleaved<real_t> new_E = internal_real + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[0] + shared_int[1] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_E = shared_int[61];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_E = state_next + shared_int[79];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_E; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_E[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = new_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_P; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_I_P + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_I_P_123 * (l - 1)] = new_I_P[dim_I_P_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> new_H_R_conf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[7] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_H_R_conf = state_next + shared_int[83];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_H_R_conf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= dim_rel_susceptibility_2; ++k) {
-        I_weighted_strain[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1)] = strain_transmission[j - 1] * (I_A_transmission * odin_sum4<real_t>(new_I_A, i - 1, i, j - 1, j, 0, k_A, k - 1, k, 19, dim_E_12, dim_I_A_123) + I_P_transmission * odin_sum4<real_t>(new_I_P, i - 1, i, j - 1, j, 0, k_P, k - 1, k, 19, dim_E_12, dim_I_P_123) + I_C_1_transmission * odin_sum4<real_t>(new_I_C_1, i - 1, i, j - 1, j, 0, k_C_1, k - 1, k, 19, dim_E_12, dim_I_C_1_123) + I_C_2_transmission * odin_sum4<real_t>(new_I_C_2, i - 1, i, j - 1, j, 0, k_C_2, k - 1, k, 19, dim_E_12, dim_I_C_2_123) + hosp_transmission * (odin_sum4<real_t>(new_ICU_pre_unconf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(new_ICU_pre_conf, i - 1, i, j - 1, j, 0, k_ICU_pre, k - 1, k, 19, dim_E_12, dim_ICU_pre_unconf_123) + odin_sum4<real_t>(new_H_R_unconf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(new_H_R_conf, i - 1, i, j - 1, j, 0, k_H_R, k - 1, k, 19, dim_E_12, dim_H_R_unconf_123) + odin_sum4<real_t>(new_H_D_unconf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123) + odin_sum4<real_t>(new_H_D_conf, i - 1, i, j - 1, j, 0, k_H_D, k - 1, k, 19, dim_E_12, dim_H_D_unconf_123)) + ICU_transmission * (odin_sum4<real_t>(new_ICU_W_R_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(new_ICU_W_R_conf, i - 1, i, j - 1, j, 0, k_ICU_W_R, k - 1, k, 19, dim_E_12, dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(new_ICU_W_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(new_ICU_W_D_conf, i - 1, i, j - 1, j, 0, k_ICU_W_D, k - 1, k, 19, dim_E_12, dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(new_ICU_D_unconf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123) + odin_sum4<real_t>(new_ICU_D_conf, i - 1, i, j - 1, j, 0, k_ICU_D, k - 1, k, 19, dim_E_12, dim_ICU_D_unconf_123)) + G_D_transmission * odin_sum4<real_t>(new_G_D, i - 1, i, j - 1, j, 0, k_G_D, k - 1, k, 19, dim_E_12, dim_G_D_123));
-      }
-    }
-  }
-  real_t new_general_tot = odin_sum1<real_t>(new_ICU_pre_conf, 0, dim_ICU_pre_unconf) + odin_sum1<real_t>(new_H_R_conf, 0, dim_H_R_unconf) + odin_sum1<real_t>(new_H_D_conf, 0, dim_H_D_unconf) + odin_sum1<real_t>(new_W_R_conf, 0, dim_W_R_unconf) + odin_sum1<real_t>(new_W_D_conf, 0, dim_W_D_unconf);
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_E; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_E + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_E_123 * (l - 1)] = new_E[dim_E_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+  {
+    const int dim_E_12 = shared_int[1];
+    const int dim_H_R_unconf_123 = shared_int[8];
+    const dust::interleaved<real_t> new_H_R_unconf = internal_real + shared_int[0] + 2 + shared_int[0] + 4 + shared_int[3] + 2 + shared_int[5] + 2 + shared_int[5] + 4 + shared_int[7] + 2 + shared_int[7] + 4 + shared_int[9] + 4 + shared_int[11] + 4 + shared_int[13] + 4 + shared_int[15] + 4 + shared_int[17] + 4 + shared_int[19] + 2 + shared_int[21] + 2 + shared_int[23] + 4 + shared_int[25] + 2 + shared_int[25] + 32 + shared_int[25] + 4 + shared_int[32] + 2 + shared_int[34] + 4 + shared_int[36] + 4 + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + shared_int[3] + shared_int[5] + shared_int[9] + shared_int[11] + shared_int[13] + shared_int[15] + shared_int[17] + shared_int[23] + shared_int[26] + shared_int[28] + shared_int[30] + shared_int[34] + shared_int[36] + shared_int[50] + 266;
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    const int k_H_R = shared_int[64];
+    const int dim_strain_transmission = shared_int[52];
+    dust::interleaved<real_t> update_H_R_unconf = state_next + shared_int[84];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_strain_transmission; ++j) {
+        for (int k = 1; k <= k_H_R; ++k) {
+          for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
+            update_H_R_unconf[i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
+          }
         }
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_H_R_conf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_conf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
+  {
+    const int steps_per_day = shared_int[118];
+    const real_t delta_admit_conf = internal_real[4];
+    const real_t admit_conf_inc = state[1];
+    state_next[1] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_admit_conf : admit_conf_inc + delta_admit_conf);
+  }
+  {
+    const real_t cum_admit_conf = state[4];
+    const real_t delta_admit_conf = internal_real[4];
+    state_next[4] = cum_admit_conf + delta_admit_conf;
+  }
+  {
+    const dust::interleaved<real_t> I_weighted_strain = internal_real + shared_int[39] + 2 + shared_int[39] + 4 + shared_int[1] + 266;
+    const int dim_strain_transmission = shared_int[52];
+    const int dim_E_12 = shared_int[1];
+    const int dim_rel_susceptibility_2 = shared_int[49];
+    dust::interleaved<real_t> update_I_weighted = state_next + shared_int[97];
+    for (int i = 1; i <= 19; ++i) {
+      for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
+        update_I_weighted[i - 1 + 19 * (j - 1)] = odin_sum3<real_t>(I_weighted_strain, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12);
       }
     }
   }
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_strain_transmission; ++j) {
-      for (int k = 1; k <= k_H_R; ++k) {
-        for (int l = 1; l <= dim_rel_susceptibility_2; ++l) {
-          state_next[offset_variable_H_R_unconf + i - 1 + 19 * (j - 1) + dim_E_12 * (k - 1) + dim_H_R_unconf_123 * (l - 1)] = new_H_R_unconf[dim_H_R_unconf_123 * (l - 1) + dim_E_12 * (k - 1) + 19 * (j - 1) + i - 1];
-        }
-      }
-    }
+  {
+    const real_t new_general_tot = internal_real[7];
+    state_next[10] = new_general_tot;
   }
-  state_next[1] = (fmodr<real_t>(step, steps_per_day) == 0 ? delta_admit_conf : admit_conf_inc + delta_admit_conf);
-  state_next[4] = cum_admit_conf + delta_admit_conf;
-  for (int i = 1; i <= 19; ++i) {
-    for (int j = 1; j <= dim_rel_susceptibility_2; ++j) {
-      state_next[offset_variable_I_weighted + i - 1 + 19 * (j - 1)] = odin_sum3<real_t>(I_weighted_strain, i - 1, i, 0, dim_strain_transmission, j - 1, j, 19, dim_E_12);
-    }
+  {
+    const real_t new_ICU_tot = internal_real[6];
+    const real_t new_general_tot = internal_real[7];
+    state_next[11] = new_ICU_tot + new_general_tot;
   }
-  state_next[10] = new_general_tot;
-  state_next[11] = new_ICU_tot + new_general_tot;
 }
 template <typename real_t, typename container>
 HOSTDEVICE real_t odin_sum2(const container x, int from_i, int to_i, int from_j, int to_j, int dim_x_1) {
@@ -7502,44 +9407,44 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
     }
   }
   shared->n_vacc_classes = shared->dim_rel_susceptibility_2;
-  shared->offset_variable_E = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + 141;
-  shared->offset_variable_G_D = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + 141;
-  shared->offset_variable_H_D_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + 141;
-  shared->offset_variable_H_D_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + 141;
-  shared->offset_variable_H_R_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + 141;
-  shared->offset_variable_H_R_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + 141;
-  shared->offset_variable_ICU_D_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + 141;
-  shared->offset_variable_ICU_D_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + 141;
-  shared->offset_variable_ICU_W_D_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + 141;
-  shared->offset_variable_ICU_W_D_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + 141;
-  shared->offset_variable_ICU_W_R_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + 141;
-  shared->offset_variable_ICU_W_R_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + 141;
-  shared->offset_variable_ICU_pre_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + 141;
-  shared->offset_variable_ICU_pre_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + 141;
-  shared->offset_variable_I_A = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + 141;
-  shared->offset_variable_I_C_1 = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + 141;
-  shared->offset_variable_I_C_2 = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + 141;
-  shared->offset_variable_I_P = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + 141;
-  shared->offset_variable_I_weighted = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + 141;
-  shared->offset_variable_R = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + 141;
-  shared->offset_variable_S = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_T_PCR_neg = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + 141;
-  shared->offset_variable_T_PCR_pos = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_T_sero_pre + shared->dim_T_sero_pos + shared->dim_T_PCR_pre + 141;
-  shared->offset_variable_T_PCR_pre = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_T_sero_pre + shared->dim_T_sero_pos + 141;
-  shared->offset_variable_T_sero_neg = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_T_sero_pos = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_D_unconf + shared->dim_W_D_unconf + shared->dim_T_sero_pre + 141;
-  shared->offset_variable_T_sero_pre = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_D_unconf + shared->dim_W_D_unconf + 141;
-  shared->offset_variable_W_D_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + shared->dim_W_D_unconf + 141;
-  shared->offset_variable_W_D_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + shared->dim_W_R_unconf + 141;
-  shared->offset_variable_W_R_conf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + shared->dim_W_R_unconf + 141;
-  shared->offset_variable_W_R_unconf = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_R + shared->dim_R + shared->dim_R + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_ICU_pre_unconf + shared->dim_H_R_unconf + shared->dim_H_R_unconf + shared->dim_H_D_unconf + shared->dim_H_D_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_D_unconf + 141;
-  shared->offset_variable_cum_n_E_vaccinated = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_cum_n_I_A_vaccinated = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_cum_n_I_P_vaccinated = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_cum_n_R_vaccinated = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_cum_n_vaccinated = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_prob_strain = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + 141;
-  shared->offset_variable_tmp_vaccine_probability = shared->dim_strain_transmission + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + 141;
+  shared->offset_variable_E = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E_12 + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_G_D = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_H_D_conf = shared->dim_H_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_H_D_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_H_D_unconf = shared->dim_H_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_H_R_conf = shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_H_R_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_H_R_unconf = shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_D_conf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_ICU_D_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_D_unconf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_W_D_conf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_ICU_W_D_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_W_D_unconf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_W_R_conf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_ICU_W_R_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_W_R_unconf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_pre_conf = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_ICU_pre_unconf = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_I_A = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_I_C_1 = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_I_A + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_I_C_2 = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_I_P = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_I_A + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_I_weighted = shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated * 4 + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_R = shared->dim_cum_n_S_vaccinated * 4 * 2 + shared->dim_E_12 + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_S = shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated * 4 + shared->dim_strain_transmission + 141;
+  shared->offset_variable_T_PCR_neg = shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_T_PCR_pos = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_D_unconf * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_T_PCR_pre + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_T_PCR_pre = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_D_unconf * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_T_sero_neg = shared->dim_cum_n_S_vaccinated * 2 * 2 + shared->dim_cum_n_S_vaccinated * 4 + shared->dim_E_12 + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_T_sero_pos = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_D_unconf * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_T_sero_pre + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_T_sero_pre = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_D_unconf * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_W_D_conf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_W_D_unconf + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_W_D_unconf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_W_R_unconf * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_W_R_conf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_W_R_unconf + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_W_R_unconf = shared->dim_H_D_unconf * 2 + shared->dim_H_R_unconf * 2 + shared->dim_ICU_D_unconf * 2 + shared->dim_ICU_W_D_unconf * 2 + shared->dim_ICU_W_R_unconf * 2 + shared->dim_ICU_pre_unconf * 2 + shared->dim_R * 2 + shared->dim_cum_n_S_vaccinated * 8 + shared->dim_E + shared->dim_E_12 + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_R + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_cum_n_E_vaccinated = shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_cum_n_I_A_vaccinated = shared->dim_cum_n_S_vaccinated * 2 + shared->dim_strain_transmission + 141;
+  shared->offset_variable_cum_n_I_P_vaccinated = shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_cum_n_R_vaccinated = shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated * 2 + shared->dim_strain_transmission + 141;
+  shared->offset_variable_cum_n_vaccinated = shared->dim_cum_n_S_vaccinated * 2 * 2 + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_prob_strain = shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated * 4 + shared->dim_cum_n_S_vaccinated + shared->dim_strain_transmission + 141;
+  shared->offset_variable_tmp_vaccine_probability = shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated * 2 + shared->dim_cum_n_S_vaccinated * 4 + shared->dim_E_12 + shared->dim_strain_transmission + 141;
   shared->rel_infectivity = user_get_array_fixed<real_t, 2>(user, "rel_infectivity", shared->rel_infectivity, {19, shared->dim_rel_susceptibility_2}, NA_REAL, NA_REAL);
   shared->rel_p_hosp_if_sympt = user_get_array_fixed<real_t, 2>(user, "rel_p_hosp_if_sympt", shared->rel_p_hosp_if_sympt, {19, shared->dim_rel_susceptibility_2}, NA_REAL, NA_REAL);
   shared->rel_p_sympt = user_get_array_fixed<real_t, 2>(user, "rel_p_sympt", shared->rel_p_sympt, {19, shared->dim_rel_susceptibility_2}, NA_REAL, NA_REAL);
@@ -7812,8 +9717,9 @@ SEXP dust_carehomes_compare_data(SEXP ptr) {
   return dust_compare_data<carehomes>(ptr);
 }
 
-SEXP dust_carehomes_filter(SEXP ptr, bool save_history) {
-  return dust_filter<carehomes>(ptr, save_history);
+SEXP dust_carehomes_filter(SEXP ptr, bool save_trajectories,
+                          cpp11::sexp step_snapshot) {
+  return dust_filter<carehomes>(ptr, save_trajectories, step_snapshot);
 }
 
 cpp11::sexp dust_carehomes_capabilities() {

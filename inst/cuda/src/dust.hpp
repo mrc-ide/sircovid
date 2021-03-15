@@ -47,7 +47,8 @@ SEXP dust_carehomes_set_data(SEXP ptr, cpp11::list data);
 SEXP dust_carehomes_compare_data(SEXP ptr);
 
 [[cpp11::register]]
-SEXP dust_carehomes_filter(SEXP ptr, bool save_history);
+SEXP dust_carehomes_filter(SEXP ptr, bool save_trajectories,
+                          cpp11::sexp step_snapshot);
 
 [[cpp11::register]]
 cpp11::sexp dust_carehomes_capabilities();
