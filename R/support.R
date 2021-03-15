@@ -384,6 +384,9 @@ rank_trajectories <- function(state) {
 ##'
 ##' @param samples A list of samples from [carehomes_forecast()]
 ##'
+##' @param rank A boolean deciding whether to rank trajectories by increasing
+##' incidence or not before combining Rt estimates
+##'
 ##' @return A list of Rt output in the same structure as the first
 ##'   element of `rt`. All Rt estimates will be aggregated across
 ##'   regions (or whatever else you are aggregating on) based on the
@@ -409,6 +412,9 @@ combine_rt <- function(rt, samples, rank = TRUE) {
 ##' @param samples A list of samples from [carehomes_forecast()]
 ##'
 ##' @param q A vector of quantiles to return values for
+##'
+##' @param rank A boolean deciding whether to rank trajectories by increasing
+##' incidence or not before combining Rt estimates
 ##'
 ##' @return A list of Rt output in the same structure as the first
 ##'   element of `rt`. Rt estimates will be aggregated across
