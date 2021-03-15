@@ -82,6 +82,10 @@ gt_distr <- function(p, n = 1000) {
 ##'
 ##' @param p A single [carehomes_parameters()] object.
 ##'
+##' @param gt_distr A vector giving the discrete (daily) distribution of the
+##' generation time. The first value must be zero. If NULL, the generation time
+##' distribution will be determined automatically from `p`.
+##'
 ##' @param sliding_window_ndays An integer giving the length of the sliding
 ##' window on which Rt will be estimated
 ##'
@@ -117,6 +121,7 @@ gt_distr <- function(p, n = 1000) {
 ##'
 ##' @export
 carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
+                                               gt_distr = NULL,
                                                sliding_window_ndays = 7,
                                                mean_prior = 1,
                                                sd_prior = 1,
@@ -126,7 +131,20 @@ carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
                                                q = NULL) {
   q <- q %||% c(0.025, 0.5, 0.975)
 
-  gt_distr <- gt_distr(p = p, n = n_GT)
+  if (is.null(gt_distr)) {
+    gt_distr <- gt_distr(p = p, n = n_GT)
+  } else {
+    if (!is.vector(gt_distr)) {
+      stop("Expecting a vector for 'gt_distr'.")
+    }
+    if (gt_distr[1] != 0) {
+      stop("The first value of 'gt_distr' should be zero.")
+    }
+    if (sum(gt_distr) != 1) {
+      stop("'gt_distr' should sum to 1.")
+    }
+
+  }
 
   max_t <- ncol(incidence)
   np <- nrow(incidence)

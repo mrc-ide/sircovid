@@ -8,6 +8,7 @@ carehomes_rt_trajectories_epiestim(
   step,
   incidence,
   p,
+  gt_distr = NULL,
   sliding_window_ndays = 7,
   mean_prior = 1,
   sd_prior = 1,
@@ -23,6 +24,10 @@ carehomes_rt_trajectories_epiestim(
 \item{incidence}{A matrix (n trajectories x n steps) of incidence counts}
 
 \item{p}{A single \code{\link[=carehomes_parameters]{carehomes_parameters()}} object.}
+
+\item{gt_distr}{A vector giving the discrete (daily) distribution of the
+generation time. The first value must be zero. If NULL, the generation time
+distribution will be determined automatically from \code{p}.}
 
 \item{sliding_window_ndays}{An integer giving the length of the sliding
 window on which Rt will be estimated}
