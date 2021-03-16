@@ -514,27 +514,22 @@ new_H_R_conf[, , , ] <-
   (if (k == 1) n_I_C_2_to_H_R_conf[i, j, l] else 0)
 
 ## Work out the H_D->H_D transitions
-aux_H_D_unconf[, , , ] <- H_D_unconf[i, j, k, l]
-aux_H_D_unconf[, , 2:k_H_D, ] <-
-  aux_H_D_unconf[i, j, k, l] + n_H_D_unconf_progress[i, j, k - 1, l]
-aux_H_D_unconf[, , 1:k_H_D, ] <-
-  aux_H_D_unconf[i, j, k, l] - n_H_D_unconf_progress[i, j, k, l]
-aux_H_D_conf[, , , ] <- H_D_conf[i, j, k, l]
-aux_H_D_conf[, , 2:k_H_D, ] <-
-  aux_H_D_conf[i, j, k, l] + n_H_D_conf_progress[i, j, k - 1, l]
-aux_H_D_conf[, , 1:k_H_D, ] <-
-  aux_H_D_conf[i, j, k, l] - n_H_D_conf_progress[i, j, k, l]
+aux_H_D_unconf[, , , ] <- H_D_unconf[i, j, k, l] +
+  (if (k > 1) n_H_D_unconf_progress[i, j, k - 1, l] else 0) -
+  n_H_D_unconf_progress[i, j, k, l]
+aux_H_D_conf[, , , ] <- H_D_conf[i, j, k, l]+
+  (if (k > 1) n_H_D_conf_progress[i, j, k - 1, l] else 0) -
+  n_H_D_conf_progress[i, j, k, l]
+
 n_H_D_unconf_to_conf[, , , ] <-
   rbinom(aux_H_D_unconf[i, j, k, l], p_test)
+
 new_H_D_unconf[, , , ] <-
-  aux_H_D_unconf[i, j, k, l] - n_H_D_unconf_to_conf[i, j, k, l]
-new_H_D_unconf[, , 1, ] <-
-  new_H_D_unconf[i, j, 1, l] + n_I_C_2_to_H_D[i, j, l] -
-  n_I_C_2_to_H_D_conf[i, j, l]
+  aux_H_D_unconf[i, j, k, l] - n_H_D_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_H_D[i, j, l] - n_I_C_2_to_H_D_conf[i, j, l] else 0)
 new_H_D_conf[, , , ] <-
-  aux_H_D_conf[i, j, k, l] + n_H_D_unconf_to_conf[i, j, k, l]
-new_H_D_conf[, , 1, ] <-
-  new_H_D_conf[i, j, 1, l] + n_I_C_2_to_H_D_conf[i, j, l]
+  aux_H_D_conf[i, j, k, l] + n_H_D_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_H_D_conf[i, j, l] else 0)
 
 ## Work out the ICU_pre to ICU_D, ICU_W_R and ICU_W_D splits
 n_ICU_pre_unconf_to_ICU_D_unconf[, , ] <-
