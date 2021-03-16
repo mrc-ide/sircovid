@@ -158,6 +158,33 @@ test_that("can combine rt calculations over trajectories", {
 })
 
 
+test_that("when combining rt calculations the output has the expected order", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  res <- combine_rt(list(rt, rt), list(dat, dat))
+  cmp <- rt
+  for (i in setdiff(names(cmp), c("step", "date"))) {
+    cmp[[i]][1:2, ] <- NA
+  }
+
+  for (what in c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")) {
+    cum_rt <- colSums(rt[[what]])
+    expected_order <- order(cum_rt, decreasing = FALSE)
+    expect_equal(res[[what]], cmp[[what]][, expected_order])
+  }
+
+})
+
+
 test_that("can combine rt calculations over trajectories without reordering", {
   dat <- reference_data_trajectories()
 
