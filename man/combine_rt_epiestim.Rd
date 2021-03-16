@@ -4,7 +4,7 @@
 \alias{combine_rt_epiestim}
 \title{Combine Rt estimates from EpiEstim}
 \usage{
-combine_rt_epiestim(rt, samples, q = NULL)
+combine_rt_epiestim(rt, samples, q = NULL, rank = TRUE)
 }
 \arguments{
 \item{rt}{A list of Rt calculations from
@@ -14,6 +14,9 @@ confirms to this will work)}
 \item{samples}{A list of samples from \code{\link[=carehomes_forecast]{carehomes_forecast()}}}
 
 \item{q}{A vector of quantiles to return values for}
+
+\item{rank}{A boolean deciding whether to rank trajectories by increasing
+incidence or not before combining Rt estimates}
 }
 \value{
 A list of Rt output in the same structure as the first
