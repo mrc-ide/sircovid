@@ -653,19 +653,18 @@ delta_D_hosp[] <-
 delta_D_non_hosp[] <- sum(n_G_D_progress[i, , k_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
-n_com_to_T_sero_pre[, , 1, 1] <- rbinom(
-  n_EE[i, j, k_E, 1] + n_EE_next_vacc_class[i, j, k_E, n_vacc_classes],
+n_com_to_T_sero_pre[, , 1, ] <- rbinom(
+  n_EE[i, j, k_E, l] +
+    (if (l == 1) n_EE_next_vacc_class[i, j, k_E, n_vacc_classes] else
+      n_EE_next_vacc_class[i, j, k_E, l - 1]),
   p_sero_pre_1)
-n_com_to_T_sero_pre[, , 1, 2:n_vacc_classes] <- rbinom(
-  n_EE[i, j, k_E, l] + n_EE_next_vacc_class[i, j, k_E, l - 1], p_sero_pre_1)
-n_com_to_T_sero_pre[, , 2, 1] <- n_EE[i, j, k_E, 1] +
-  n_EE_next_vacc_class[i, j, k_E, n_vacc_classes] -
-  n_com_to_T_sero_pre[i, j, 1, 1]
-n_com_to_T_sero_pre[, , 2, 2:n_vacc_classes] <- n_EE[i, j, k_E, l] +
-  n_EE_next_vacc_class[i, j, k_E, l - 1] - n_com_to_T_sero_pre[i, j, 1, l]
+n_com_to_T_sero_pre[, , 2, ] <- n_EE[i, j, k_E, l] +
+  (if (l == 1) n_EE_next_vacc_class[i, j, k_E, n_vacc_classes] else
+    n_EE_next_vacc_class[i, j, k_E, l - 1]) -
+  n_com_to_T_sero_pre[i, j, 1, l]
+
 new_T_sero_pre[, , , ] <- T_sero_pre[i, j, k, l] +
   n_com_to_T_sero_pre[i, j, k, l] - n_T_sero_pre_progress[i, j, k, l]
-
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
