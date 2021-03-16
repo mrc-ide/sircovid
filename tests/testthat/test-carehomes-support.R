@@ -625,3 +625,56 @@ test_that("model_pcr_and_serology_user switch works", {
   ## TO DO: ideas for other tests?
 
 })
+
+
+test_that("carehomes_particle_filter_data does not allow more than one pillar 2
+          data stream", {
+  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                        1, 0.25)
+  class(data)[1] <- "particle_filter_data_nested"
+  ## Add additional columns
+  data$deaths_hosp <- NA
+  data$deaths_comm <- NA
+  data$deaths_carehomes <- NA
+  data$deaths_non_hosp <- NA
+  data$general <- NA
+  data$hosp <- NA
+  data$admitted <- NA
+  data$diagnoses <- NA
+  data$all_admission <- NA
+  data$npos_15_64 <- NA
+  data$ntot_15_64 <- NA
+  data$pillar2_pos <- NA
+  data$pillar2_tot <- NA
+  data$pillar2_cases <- NA
+  data$pillar2_over25_pos <- NA
+  data$pillar2_over25_tot <- NA
+  data$pillar2_over25_cases <- NA
+  data$react_pos <- NA
+  data$react_tot <- NA
+
+  ## Example that should not cause error
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+
+  ## Add populations
+  data <- rbind(data, data)
+  data$population <- rep(factor(letters[1:2]), each = 31)
+  pf <- carehomes_particle_filter(data, 10)
+  expect_s3_class(pf, "particle_filter")
+
+  ## Error if one region has multiple streams
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_cases <- 5
+  expect_error(
+    carehomes_particle_filter(data),
+    "Cannot fit to more than one pillar 2 data stream")
+
+  ## Don't error if two regions have different streams
+  data[1:31, "pillar2_cases"] <- NA
+  data[32:62, "pillar2_pos"] <- NA
+  data[32:62, "pillar2_tot"] <- NA
+  pf <- carehomes_particle_filter(data, 10)
+  expect_s3_class(pf, "particle_filter")
+})
