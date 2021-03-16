@@ -558,7 +558,6 @@ aux_ICU_W_R_unconf[, , , ] <- ICU_W_R_unconf[i, j, k, l] +
   (if (k == 1) n_ICU_pre_unconf_to_ICU_W_R_unconf[i, j, l] else
     n_ICU_W_R_unconf_progress[i, j, k - 1, l]) -
   n_ICU_W_R_unconf_progress[i, j, k, l]
-
 aux_ICU_W_R_conf[, , , ] <- ICU_W_R_conf[i, j, k, l] +
   (if (k == 1) n_ICU_pre_conf_to_ICU_W_R_conf[i, j, l] else
     n_ICU_W_R_conf_progress[i, j, k - 1, l]) -
@@ -576,7 +575,6 @@ aux_ICU_W_D_unconf[, , , ] <- ICU_W_D_unconf[i, j, k, l] +
   (if (k == 1) n_ICU_pre_unconf_to_ICU_W_D_unconf[i, j, l] else
     n_ICU_W_D_unconf_progress[i, j, k - 1, l]) -
   n_ICU_W_D_unconf_progress[i, j, k, l]
-
 aux_ICU_W_D_conf[, , , ] <- ICU_W_D_conf[i, j, k, l] +
   (if (k == 1) n_ICU_pre_conf_to_ICU_W_D_conf[i, j, l] else
     n_ICU_W_D_conf_progress[i, j, k - 1, l]) -
@@ -594,7 +592,6 @@ aux_ICU_D_unconf[, , , ] <- ICU_D_unconf[i, j, k, l] +
   (if (k == 1) n_ICU_pre_unconf_to_ICU_D_unconf[i, j, l] else
     n_ICU_D_unconf_progress[i, j, k - 1, l]) -
   n_ICU_D_unconf_progress[i, j, k, l]
-
 aux_ICU_D_conf[, , , ] <- ICU_D_conf[i, j, k, l] +
   (if (k == 1) n_ICU_pre_conf_to_ICU_D_conf[i, j, l] else
     n_ICU_D_conf_progress[i, j, k - 1, l]) -
@@ -608,20 +605,15 @@ new_ICU_D_conf[, , , ] <-
   aux_ICU_D_conf[i, j, k, l] + n_ICU_D_unconf_to_conf[i, j, k, l]
 
 ## Work out the W_R->W_R transitions
-aux_W_R_unconf[, , , ] <- W_R_unconf[i, j, k, l]
-aux_W_R_unconf[, , 1, ] <-
-  aux_W_R_unconf[i, j, k, l] + n_ICU_W_R_unconf_progress[i, j, k_ICU_W_R, l]
-aux_W_R_unconf[, , 2:k_W_R, ] <-
-  aux_W_R_unconf[i, j, k, l] + n_W_R_unconf_progress[i, j, k - 1, l]
-aux_W_R_unconf[, , 1:k_W_R, ] <-
-  aux_W_R_unconf[i, j, k, l] - n_W_R_unconf_progress[i, j, k, l]
-aux_W_R_conf[, , , ] <- W_R_conf[i, j, k, l]
-aux_W_R_conf[, , 1, ] <-
-  aux_W_R_conf[i, j, k, l] + n_ICU_W_R_conf_progress[i, j, k_ICU_W_R, l]
-aux_W_R_conf[, , 2:k_W_R, ] <-
-  aux_W_R_conf[i, j, k, l] + n_W_R_conf_progress[i, j, k - 1, l]
-aux_W_R_conf[, , 1:k_W_R, ] <-
-  aux_W_R_conf[i, j, k, l] - n_W_R_conf_progress[i, j, k, l]
+aux_W_R_unconf[, , , ] <- W_R_unconf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_R_unconf_progress[i, j, k_ICU_W_R, l] else
+    n_W_R_unconf_progress[i, j, k - 1, l]) -
+  n_W_R_unconf_progress[i, j, k, l]
+aux_W_R_conf[, , , ] <- W_R_conf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_R_conf_progress[i, j, k_ICU_W_R, l] else
+    n_W_R_conf_progress[i, j, k - 1, l]) -
+  n_W_R_conf_progress[i, j, k, l]
+
 n_W_R_unconf_to_conf[, , , ] <-
   rbinom(aux_W_R_unconf[i, j, k, l], p_test)
 new_W_R_unconf[, , , ] <-
@@ -631,20 +623,15 @@ new_W_R_conf[, , , ] <-
   aux_W_R_conf[i, j, k, l] + n_W_R_unconf_to_conf[i, j, k, l]
 
 ## Work out the W_D->W_D transitions
-aux_W_D_unconf[, , , ] <- W_D_unconf[i, j, k, l]
-aux_W_D_unconf[, , 1, ] <-
-  aux_W_D_unconf[i, j, k, l] + n_ICU_W_D_unconf_progress[i, j, k_ICU_W_D, l]
-aux_W_D_unconf[, , 2:k_W_D, ] <-
-  aux_W_D_unconf[i, j, k, l] + n_W_D_unconf_progress[i, j, k - 1, l]
-aux_W_D_unconf[, , 1:k_W_D, ] <-
-  aux_W_D_unconf[i, j, k, l] - n_W_D_unconf_progress[i, j, k, l]
-aux_W_D_conf[, , , ] <- W_D_conf[i, j, k, l]
-aux_W_D_conf[, , 1, ] <-
-  aux_W_D_conf[i, j, k, l] + n_ICU_W_D_conf_progress[i, j, k_ICU_W_D, l]
-aux_W_D_conf[, , 2:k_W_D, ] <-
-  aux_W_D_conf[i, j, k, l] + n_W_D_conf_progress[i, j, k - 1, l]
-aux_W_D_conf[, , 1:k_W_D, ] <-
-  aux_W_D_conf[i, j, k, l] - n_W_D_conf_progress[i, j, k, l]
+aux_W_D_unconf[, , , ] <- W_D_unconf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_D_unconf_progress[i, j, k_ICU_W_D, l] else
+    n_W_D_unconf_progress[i, j, k - 1, l]) -
+  n_W_D_unconf_progress[i, j, k, l]
+aux_W_D_conf[, , , ] <- W_D_conf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_D_conf_progress[i, j, k_ICU_W_D, l] else
+    n_W_D_conf_progress[i, j, k - 1, l]) -
+  n_W_D_conf_progress[i, j, k, l]
+
 n_W_D_unconf_to_conf[, , , ] <-
   rbinom(aux_W_D_unconf[i, j, k, l], p_test)
 new_W_D_unconf[, , , ] <-
