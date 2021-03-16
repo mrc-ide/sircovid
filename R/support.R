@@ -428,7 +428,7 @@ combine_rt_epiestim <- function(rt, samples, q = NULL, rank = TRUE) {
   ret <- rt[[1L]]
   if (!("Rt" %in% names(ret))) {
     stop(paste("rt$Rt missing. Did you forget 'save_all_Rt_sample = TRUE'",
-         "in 'carehomes_EpiEstim_Rt_trajectories'?"))
+               "in 'carehomes_EpiEstim_Rt_trajectories'?"))
   }
   ret$Rt <- combine_rt1_epiestim("Rt", rt, samples, rank)
   summary_R <- apply(ret$Rt, 2,
@@ -454,17 +454,17 @@ combine_rt1 <- function(what, rt, samples, rank) {
   rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
 
   if (rank) {
-  ## Calculate rank of particles by area under Rt curve
-  rank_x <- lapply(rt_what, function(x) order(colSums(x)))
+    ## Calculate rank of particles by area under Rt curve
+    rank_x <- lapply(rt_what, function(x) order(colSums(x)))
 
-  ## Rank based on the transpose (vs when this is done in the trajectories).
-  reorder_by_rank <- function(x, rank_x) {
-    Map(function(x, rank) x[, rank], x, rank_x)
-  }
+    ## Rank based on the transpose (vs when this is done in the trajectories).
+    reorder_by_rank <- function(x, rank_x) {
+      Map(function(x, rank) x[, rank], x, rank_x)
+    }
 
-  ## Rank Rt and incidence
-  x <- reorder_by_rank(rt_what, rank_x)
-  w <- reorder_by_rank(incidence, rank_x)
+    ## Rank Rt and incidence
+    x <- reorder_by_rank(rt_what, rank_x)
+    w <- reorder_by_rank(incidence, rank_x)
   } else {
     x <- rt_what
     w <- incidence
@@ -498,18 +498,18 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
     m[rep(seq_len(nrow(m)), each = n_R_per_traj), ])
 
   if (rank) {
-  ## Calculate rank of particles by area under Rt curve
-  ## average across sets of n_R_per_traj Rs
-  rank_x <- lapply(rt_what, function(x) order(rowSums(x, na.rm = TRUE)))
+    ## Calculate rank of particles by area under Rt curve
+    ## average across sets of n_R_per_traj Rs
+    rank_x <- lapply(rt_what, function(x) order(rowSums(x, na.rm = TRUE)))
 
-  ## Rank based on the transpose (vs when this is done in the trajectories).
-  reorder_by_rank <- function(x, rank_x) {
-    Map(function(x, rank) x[rank, ], x, rank_x)
-  }
+    ## Rank based on the transpose (vs when this is done in the trajectories).
+    reorder_by_rank <- function(x, rank_x) {
+      Map(function(x, rank) x[rank, ], x, rank_x)
+    }
 
-  ## Rank Rt and incidence
-  x <- reorder_by_rank(rt_what, rank_x)
-  w <- reorder_by_rank(incidence_rep, rank_x)
+    ## Rank Rt and incidence
+    x <- reorder_by_rank(rt_what, rank_x)
+    w <- reorder_by_rank(incidence_rep, rank_x)
   } else {
     x <- rt_what
     w <- incidence_rep
