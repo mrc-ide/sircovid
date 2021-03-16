@@ -407,43 +407,31 @@ aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] else n_EE[i, j, k - 1, l]) -
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
 ## Work out the I_A->I_A transitions
-aux_I_A[, , 1, ] <- n_EI_A[i, j, l]
-aux_I_A[, , 2:k_A, ] <- n_II_A[i, j, k - 1, l]
-aux_I_A[, , , ] <- aux_I_A[i, j, k, l] - n_II_A[i, j, k, l] -
+aux_I_A[, , , ] <- (if (k == 1) n_EI_A[i, j, l] else n_II_A[i, j, k - 1, l]) -
+  n_II_A[i, j, k, l] -
   n_II_A_next_vacc_class[i, j, k, l] -
-  n_I_A_next_vacc_class[i, j, k, l]
-aux_I_A[, , , 1] <- aux_I_A[i, j, k, l]  +
-  n_I_A_next_vacc_class[i, j, 1, n_vacc_classes]
-aux_I_A[, , , 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
-  n_I_A_next_vacc_class[i, j, k, l - 1]
-aux_I_A[, , 1, 1] <- aux_I_A[i, j, k, l] +
-  n_EI_A_next_vacc_class[i, j, n_vacc_classes]
-aux_I_A[, , 1, 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
-  n_EI_A_next_vacc_class[i, j, l - 1]
-aux_I_A[, , 2:k_A, 1] <- aux_I_A[i, j, k, l] +
-  n_II_A_next_vacc_class[i, j, k - 1, n_vacc_classes]
-aux_I_A[, , 2:k_A, 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
-  n_II_A_next_vacc_class[i, j, k - 1, l - 1]
+  n_I_A_next_vacc_class[i, j, k, l] +
+  (if (l == 1) n_I_A_next_vacc_class[i, j, k, n_vacc_classes] else
+    n_I_A_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1) (if(l == 1) n_EI_A_next_vacc_class[i, j, n_vacc_classes] else
+    n_EI_A_next_vacc_class[i, j, l - 1]) else
+      (if(l == 1) n_II_A_next_vacc_class[i, j, k - 1, n_vacc_classes] else
+        n_II_A_next_vacc_class[i, j, k - 1, l - 1]))
+
 new_I_A[, , , ] <- I_A[i, j, k, l] + aux_I_A[i, j, k, l]
 
 ## Work out the I_P->I_P transitions
-aux_I_P[, , 1, ] <- n_EI_P[i, j, l]
-aux_I_P[, , 2:k_P, ] <- n_II_P[i, j, k - 1, l]
-aux_I_P[, , , ] <- aux_I_P[i, j, k, l] - n_II_P[i, j, k, l] -
+aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else n_II_P[i, j, k - 1, l]) -
+  n_II_P[i, j, k, l] -
   n_II_P_next_vacc_class[i, j, k, l] -
-  n_I_P_next_vacc_class[i, j, k, l]
-aux_I_P[, , , 1] <- aux_I_P[i, j, k, l]  +
-  n_I_P_next_vacc_class[i, j, 1, n_vacc_classes]
-aux_I_P[, , , 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
-  n_I_P_next_vacc_class[i, j, k, l - 1]
-aux_I_P[, , 1, 1] <- aux_I_P[i, j, k, l] +
-  n_EI_P_next_vacc_class[i, j, n_vacc_classes]
-aux_I_P[, , 1, 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
-  n_EI_P_next_vacc_class[i, j, l - 1]
-aux_I_P[, , 2:k_P, 1] <- aux_I_P[i, j, k, l] +
-  n_II_P_next_vacc_class[i, j, k - 1, n_vacc_classes]
-aux_I_P[, , 2:k_P, 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
-  n_II_P_next_vacc_class[i, j, k - 1, l - 1]
+  n_I_P_next_vacc_class[i, j, k, l] +
+  (if (l == 1) n_I_P_next_vacc_class[i, j, 1, n_vacc_classes] else
+    n_I_P_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1) (if(l == 1) n_EI_P_next_vacc_class[i, j, n_vacc_classes] else
+    n_EI_P_next_vacc_class[i, j, l - 1]) else
+      (if(l == 1) n_II_P_next_vacc_class[i, j, k - 1, n_vacc_classes] else
+        n_II_P_next_vacc_class[i, j, k - 1, l - 1]))
+
 new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
 
 ## Work out the I_C_1->I_C_1 transitions
