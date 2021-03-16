@@ -201,11 +201,10 @@ p_star_by_age[] <- p_star * psi_star[i]
 
 ## Compute the new infections with multiple strains using nested binomials
 n_S_progress_tot[, ] <- rbinom(S[i, j], p_SE[i, j])
-n_S_progress[, 1, ] <-
-  rbinom(n_S_progress_tot[i, k], lambda[i, 1] / sum(lambda[i, ]))
-n_S_progress[, 2:n_strains, ] <-
- rbinom(n_S_progress_tot[i, k] - sum(n_S_progress[i, 1:(j - 1), k]),
-        lambda[i, j] / sum(lambda[i, j:n_strains]))
+n_S_progress[, , ] <- if(j == 1)
+  rbinom(n_S_progress_tot[i, k], lambda[i, 1] / sum(lambda[i, ])) else
+    rbinom(n_S_progress_tot[i, k] - sum(n_S_progress[i, 1:(j - 1), k]),
+           lambda[i, j] / sum(lambda[i, j:n_strains]))
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
@@ -325,7 +324,7 @@ n_R_next_vacc_class_capped[, , ] <- min(n_R_next_vacc_class_tmp[i, j, k],
   T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
 n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
-  
+
 #### other transitions ####
 
 n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress)
@@ -376,11 +375,10 @@ dim(cum_infections_per_strain) <- n_strains
 ## Work out the new S (i for age, j for vaccination status)
 new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) - sum(n_S_progress[i, , j]) -
   n_S_next_vacc_class[i, j]
-new_S[, 1] <- new_S[i, 1] + n_S_next_vacc_class[i, n_vacc_classes] +
-  sum(n_RS_next_vacc_class[i, , n_vacc_classes])
-new_S[, 2:n_vacc_classes] <- new_S[i, j] + n_S_next_vacc_class[i, j - 1] +
-  sum(n_RS_next_vacc_class[i, , j - 1])
-
+new_S[, ] <- new_S[i, j] +
+  (if (j == 1) n_S_next_vacc_class[i, n_vacc_classes] +
+     sum(n_RS_next_vacc_class[i, , n_vacc_classes]) else
+    n_S_next_vacc_class[i, j - 1] + sum(n_RS_next_vacc_class[i, , j - 1]))
 
 ## Computes the number of asymptomatic
 n_EI_A[, , ] <- rbinom(n_EE[i, j, k_E, k],
@@ -395,23 +393,17 @@ n_EI_P_next_vacc_class[, , ] <- n_EE_next_vacc_class[i, j, k_E, k] -
   n_EI_A_next_vacc_class[i, j, k]
 
 ## Work out the S->E and E->E transitions
-aux_E[, , 1, ] <- n_SE[i, j, l]
-aux_E[, , 2:k_E, ] <- n_EE[i, j, k - 1, l]
-aux_E[, , , ] <- aux_E[i, j, k, l] - n_EE[i, j, k, l] -
+aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] else n_EE[i, j, k - 1, l]) -
+  n_EE[i, j, k, l] -
   n_EE_next_vacc_class[i, j, k, l] -
-  n_E_next_vacc_class[i, j, k, l]
-aux_E[, , , 1] <- aux_E[i, j, k, 1] +
-  n_E_next_vacc_class[i, j, k, n_vacc_classes]
-aux_E[, , , 2:n_vacc_classes] <- aux_E[i, j, k, l] +
-  n_E_next_vacc_class[i, j, k, l - 1]
-aux_E[, , 1, 1] <- aux_E[i, j, 1, 1] +
-  n_SE_next_vacc_class[i, j, n_vacc_classes]
-aux_E[, , 1, 2:n_vacc_classes] <- aux_E[i, j, k, l] +
-  n_SE_next_vacc_class[i, j, l - 1]
-aux_E[, , 2:k_E, 1] <- aux_E[i, j, k, l] +
-  n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes]
-aux_E[, , 2:k_E, 2:n_vacc_classes] <- aux_E[i, j, k, l] +
-  n_EE_next_vacc_class[i, j, k - 1, l - 1]
+  n_E_next_vacc_class[i, j, k, l] +
+  (if (l == 1) n_E_next_vacc_class[i, j, k, n_vacc_classes] else
+    n_E_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1) (if(l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] else
+    n_SE_next_vacc_class[i, j, l - 1]) else
+      (if(l == 1) n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes] else
+        n_EE_next_vacc_class[i, j, k - 1, l - 1]))
+
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
 ## Work out the I_A->I_A transitions

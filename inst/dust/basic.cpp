@@ -368,10 +368,10 @@ public:
     shared(pars.shared), internal(pars.internal) {
   }
   size_t size() {
-    return shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_I_ICU + shared->dim_R_hosp + 6;
+    return 6 + shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_I_ICU + shared->dim_R_hosp;
   }
   std::vector<real_t> initial(size_t step) {
-    std::vector<real_t> state(shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_I_ICU + shared->dim_R_hosp + 6);
+    std::vector<real_t> state(6 + shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_I_ICU + shared->dim_R_hosp);
     state[0] = shared->initial_time;
     state[1] = shared->initial_N_tot;
     state[2] = shared->initial_I_ICU_tot;
@@ -1237,9 +1237,9 @@ dust::pars_t<basic> dust_pars<basic>(cpp11::list user) {
   for (int i = 1; i <= shared->dim_S; ++i) {
     shared->initial_S[i - 1] = 0;
   }
-  shared->offset_variable_D = shared->dim_S + shared->dim_R + 6;
-  shared->offset_variable_E = shared->dim_S + shared->dim_R + shared->dim_D + 6;
-  shared->offset_variable_R = shared->dim_S + 6;
+  shared->offset_variable_D = 6 + shared->dim_S + shared->dim_R;
+  shared->offset_variable_E = 6 + shared->dim_S + shared->dim_R + shared->dim_D;
+  shared->offset_variable_R = 6 + shared->dim_S;
   shared->p_C = user_get_array_fixed<real_t, 1>(user, "p_C", shared->p_C, {shared->dim_p_C}, NA_REAL, NA_REAL);
   shared->p_EE = 1 - std::exp(- shared->gamma_E * shared->dt);
   shared->p_II_A = 1 - std::exp(- shared->gamma_A * shared->dt);
@@ -1330,11 +1330,11 @@ dust::pars_t<basic> dust_pars<basic>(cpp11::list user) {
     }
   }
   shared->m = user_get_array_fixed<real_t, 2>(user, "m", shared->m, {shared->dim_m_1, shared->dim_m_2}, NA_REAL, NA_REAL);
-  shared->offset_variable_I_A = shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + 6;
-  shared->offset_variable_I_C = shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + 6;
-  shared->offset_variable_I_ICU = shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + 6;
-  shared->offset_variable_I_hosp = shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + 6;
-  shared->offset_variable_R_hosp = shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_I_ICU + 6;
+  shared->offset_variable_I_A = 6 + shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E;
+  shared->offset_variable_I_C = 6 + shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A;
+  shared->offset_variable_I_ICU = 6 + shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp;
+  shared->offset_variable_I_hosp = 6 + shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C;
+  shared->offset_variable_R_hosp = 6 + shared->dim_S + shared->dim_R + shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_I_ICU;
   for (int i = 1; i <= shared->dim_trans_increase_1; ++i) {
     for (int j = 1; j <= shared->dim_trans_increase_2; ++j) {
       shared->trans_increase[i - 1 + shared->dim_trans_increase_1 * (j - 1)] = 1;
