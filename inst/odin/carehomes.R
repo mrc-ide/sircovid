@@ -672,22 +672,18 @@ n_T_sero_pre_to_T_sero_pos[, , ] <-
   rbinom(sum(n_T_sero_pre_progress[i, j, , k]), p_sero_pos[i])
 
 new_T_sero_pos[, , , ] <- T_sero_pos[i, j, k, l] -
-  n_T_sero_pos_progress[i, j, k, l]
-new_T_sero_pos[, , 1, ] <-
-  new_T_sero_pos[i, j, 1, l] + n_T_sero_pre_to_T_sero_pos[i, j, l]
-new_T_sero_pos[, , 2:k_sero_pos, ] <-
-  new_T_sero_pos[i, j, k, l] + n_T_sero_pos_progress[i, j, k - 1, l]
+  n_T_sero_pos_progress[i, j, k, l] +
+  (if (k == 1)  n_T_sero_pre_to_T_sero_pos[i, j, l] else
+    n_T_sero_pos_progress[i, j, k - 1, l])
 
 new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] +
   sum(n_T_sero_pre_progress[i, j, , k]) - n_T_sero_pre_to_T_sero_pos[i, j, k] +
   n_T_sero_pos_progress[i, j, k_sero_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
-new_T_sero_neg[, , 1] <- new_T_sero_neg[i, j, 1] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, n_vacc_classes]
-new_T_sero_neg[, , 2:n_vacc_classes] <- new_T_sero_neg[i, j, k] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k - 1]
-
+  model_pcr_and_serology * n_R_next_vacc_class[i, j, k] +
+  model_pcr_and_serology *
+  (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
+    n_R_next_vacc_class[i, j, k - 1])
 
 ## Work out the total number of recovery
 new_R[, , ] <- R[i, j, k] +
@@ -698,38 +694,29 @@ new_R[, , ] <- R[i, j, k] +
   n_W_R_conf_progress[i, j, k_W_R, k] +
   n_W_R_unconf_progress[i, j, k_W_R, k] -
   n_R_progress[i, j, k] -
-  n_R_next_vacc_class[i, j, k]
-new_R[, , 1] <- new_R[i, j, 1] +
-  n_II_A_next_vacc_class[i, j, k_A, n_vacc_classes] +
-  n_R_next_vacc_class[i, j, n_vacc_classes]
-new_R[, , 2:n_vacc_classes] <- new_R[i, j, k] +
-  n_II_A_next_vacc_class[i, j, k_A, k - 1] +
-  n_R_next_vacc_class[i, j, k - 1]
-
+  n_R_next_vacc_class[i, j, k] +
+  (if (k == 1) n_II_A_next_vacc_class[i, j, k_A, n_vacc_classes] +
+     n_R_next_vacc_class[i, j, n_vacc_classes] else
+       n_II_A_next_vacc_class[i, j, k_A, k - 1] +
+     n_R_next_vacc_class[i, j, k - 1])
 
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
-  n_T_PCR_pre_progress[i, j, k, l]
-new_T_PCR_pre[, , 1, ] <- new_T_PCR_pre[i, j, 1, l] + n_S_progress[i, j, l]
-new_T_PCR_pre[, , 2:k_PCR_pre, ] <-
-  new_T_PCR_pre[i, j, k, l] + n_T_PCR_pre_progress[i, j, k - 1, l]
+  n_T_PCR_pre_progress[i, j, k, l] +
+  (if (k == 1) n_S_progress[i, j, l] else n_T_PCR_pre_progress[i, j, k - 1, l])
 
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
-  n_T_PCR_pos_progress[i, j, k, l]
-new_T_PCR_pos[, , 1, ] <- new_T_PCR_pos[i, j, 1, l] +
-  n_T_PCR_pre_progress[i, j, k_PCR_pre, l]
-new_T_PCR_pos[, , 2:k_PCR_pos, ] <-
-  new_T_PCR_pos[i, j, k, l] + n_T_PCR_pos_progress[i, j, k - 1, l]
+  n_T_PCR_pos_progress[i, j, k, l] +
+  (if (k == 1) n_T_PCR_pre_progress[i, j, k_PCR_pre, l] else
+    n_T_PCR_pos_progress[i, j, k - 1, l])
 
 new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] +
   n_T_PCR_pos_progress[i, j, k_PCR_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
-new_T_PCR_neg[, , 1] <- new_T_PCR_neg[i, j, 1] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, n_vacc_classes]
-new_T_PCR_neg[, , 2:n_vacc_classes] <- new_T_PCR_neg[i, j, k] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k - 1]
-
+  model_pcr_and_serology * n_R_next_vacc_class[i, j, k] +
+  model_pcr_and_serology *
+  (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
+    n_R_next_vacc_class[i, j, k - 1])
 
 ## Compute the force of infection
 
