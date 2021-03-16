@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.11</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
     <p>Combine Rt across multiple runs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>combine_rt</span><span class='op'>(</span><span class='va'>rt</span>, <span class='va'>samples</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>combine_rt</span><span class='op'>(</span><span class='va'>rt</span>, <span class='va'>samples</span>, rank <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,6 +142,11 @@ confirms to this will work)</p></td>
     <tr>
       <th>samples</th>
       <td><p>A list of samples from <code><a href='carehomes_forecast.html'>carehomes_forecast()</a></code></p></td>
+    </tr>
+    <tr>
+      <th>rank</th>
+      <td><p>A boolean deciding whether to rank trajectories by increasing
+incidence or not before combining Rt estimates</p></td>
     </tr>
     </table>
 

@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.11</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
     <p>Combine Rt estimates from EpiEstim across multiple runs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>combine_rt_epiestim</span><span class='op'>(</span><span class='va'>rt</span>, <span class='va'>samples</span>, q <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>combine_rt_epiestim</span><span class='op'>(</span><span class='va'>rt</span>, <span class='va'>samples</span>, q <span class='op'>=</span> <span class='cn'>NULL</span>, rank <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,6 +146,11 @@ confirms to this will work)</p></td>
     <tr>
       <th>q</th>
       <td><p>A vector of quantiles to return values for</p></td>
+    </tr>
+    <tr>
+      <th>rank</th>
+      <td><p>A boolean deciding whether to rank trajectories by increasing
+incidence or not before combining Rt estimates</p></td>
     </tr>
     </table>
 
