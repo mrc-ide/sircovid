@@ -459,10 +459,9 @@ n_I_C_2_to_hosp[, , ] <- n_I_C_2_progress[i, j, k_C_2, k] -
   n_I_C_2_to_R[i, j, k] - n_I_C_2_to_G_D[i, j, k]
 
 ## Work out the G_D -> G_D transitions
-aux_G_D[, , 1, ] <- n_I_C_2_to_G_D[i, j, l]
-aux_G_D[, , 2:k_G_D, ] <- n_G_D_progress[i, j, k - 1, l]
-aux_G_D[, , 1:k_G_D, ] <-
-  aux_G_D[i, j, k, l] - n_G_D_progress[i, j, k, l]
+aux_G_D[, , , ] <- (if (k == 1) n_I_C_2_to_G_D[i, j, l] else
+  n_G_D_progress[i, j, k - 1, l]) - n_G_D_progress[i, j, k, l]
+
 new_G_D[, , , ] <- G_D[i, j, k, l] + aux_G_D[i, j, k, l]
 
 ## Work out the split in hospitals between H_D, H_R and ICU_pre
@@ -478,28 +477,23 @@ n_I_C_2_to_H_R_conf[, , ] <- rbinom(n_I_C_2_to_H_R[i, j, k],
                                     p_star_by_age[i])
 
 ## Work out the ICU_pre -> ICU_pre transitions
-aux_ICU_pre_unconf[, , , ] <- ICU_pre_unconf[i, j, k, l]
-aux_ICU_pre_unconf[, , 2:k_ICU_pre, ] <-
-  aux_ICU_pre_unconf[i, j, k, l] + n_ICU_pre_unconf_progress[i, j, k - 1, l]
-aux_ICU_pre_unconf[, , 1:k_ICU_pre, ] <-
-  aux_ICU_pre_unconf[i, j, k, l] - n_ICU_pre_unconf_progress[i, j, k, l]
-aux_ICU_pre_conf[, , , ] <-
-  ICU_pre_conf[i, j, k, l]
-aux_ICU_pre_conf[, , 2:k_ICU_pre, ] <-
-  aux_ICU_pre_conf[i, j, k, l] + n_ICU_pre_conf_progress[i, j, k - 1, l]
-aux_ICU_pre_conf[, , 1:k_ICU_pre, ] <-
-  aux_ICU_pre_conf[i, j, k, l] - n_ICU_pre_conf_progress[i, j, k, l]
+aux_ICU_pre_unconf[, , , ] <- ICU_pre_unconf[i, j, k, l] +
+  (if (k > 1) n_ICU_pre_unconf_progress[i, j, k - 1, l] else 0) -
+  n_ICU_pre_unconf_progress[i, j, k, l]
+aux_ICU_pre_conf[, , , ] <- ICU_pre_conf[i, j, k, l] +
+  (if (k > 1) n_ICU_pre_conf_progress[i, j, k - 1, l] else 0) -
+  n_ICU_pre_conf_progress[i, j, k, l]
+
 n_ICU_pre_unconf_to_conf[, , , ] <-
   rbinom(aux_ICU_pre_unconf[i, j, k, l], p_test)
+
 new_ICU_pre_unconf[, , , ] <-
-  aux_ICU_pre_unconf[i, j, k, l] - n_ICU_pre_unconf_to_conf[i, j, k, l]
-new_ICU_pre_unconf[, , 1, ] <-
-  new_ICU_pre_unconf[i, j, 1, l] + n_I_C_2_to_ICU_pre[i, j, l] -
-  n_I_C_2_to_ICU_pre_conf[i, j, l]
+  aux_ICU_pre_unconf[i, j, k, l] - n_ICU_pre_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_ICU_pre[i, j, l] - n_I_C_2_to_ICU_pre_conf[i, j, l]
+   else 0)
 new_ICU_pre_conf[, , , ] <-
-  aux_ICU_pre_conf[i, j, k, l] + n_ICU_pre_unconf_to_conf[i, j, k, l]
-new_ICU_pre_conf[, , 1, ] <-
-  new_ICU_pre_conf[i, j, 1, l] + n_I_C_2_to_ICU_pre_conf[i, j, l]
+  aux_ICU_pre_conf[i, j, k, l] + n_ICU_pre_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_ICU_pre_conf[i, j, l] else 0)
 
 ## Work out the H_R->H_R transitions
 aux_H_R_unconf[, , , ] <- H_R_unconf[i, j, k, l]
