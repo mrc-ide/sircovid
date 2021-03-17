@@ -1504,8 +1504,9 @@ dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 vaccine_probability_doses[, ] <- (
   if (as.integer(step) >= dim(vaccine_dose_step, 3) ||
       vaccine_n_candidates[i, j] == 0) 0
-  else vaccine_dose_step[i, j, step + 1] /
-  vaccine_n_candidates[i, j])
+  else min(vaccine_dose_step[i, j, step + 1] /
+           vaccine_n_candidates[i, j],
+           as.numeric(1)))
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
 ## Then fix everything based on progression at a constant rate (will

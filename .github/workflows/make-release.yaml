@@ -55,6 +55,12 @@ jobs:
           remotes::install_cran("covr")
         shell: Rscript {0}
 
+      - name: Force install XML
+        if: runner.os == 'Windows'
+        run: |
+          install.packages("XML", type = "binary")
+        shell: Rscript {0}
+
       # Properly, should build source first!
       - name: Build binary
         shell: Rscript {0}
