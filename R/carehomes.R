@@ -808,7 +808,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
                                              vaccine_index_dose2 = NULL,
-                                             n_strains) {
+                                             n_strains = 1) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
