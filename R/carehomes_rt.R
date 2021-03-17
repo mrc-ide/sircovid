@@ -133,7 +133,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   }
 
   ## We only need to do this section for each different beta value,
-  ## and then it's still a pretty straightfoward scaling; we've
+  ## and then it's still a pretty straightforward scaling; we've
   ## applied beta to all *but* a fraction of the matrix (i.e., in the matrix
   ##
   ##   A B
