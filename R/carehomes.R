@@ -70,56 +70,61 @@ NULL
 ##'   become infected with the new strain, unless the pool of
 ##'   susceptibles has been exhausted.
 ##'
-##' @param rel_susceptibility A vector or matrix of values representing the
+##' @param rel_susceptibility A vector or array of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
 ##'   and subsequent values be between 0 and 1. In that case relative
 ##'   susceptibility will be the same across all age groups within one
-##'   vaccination category. Specifying a matrix instead of a vector allows
-##'   different relative susceptibilities by age (rows of the matrix) and
-##'   vaccination group (columns of the matrix); in that case, in each row of
-##'   the matrix, the first value should be 1 (for the non-vaccinated group)
-##'   and subsequent values be between 0 and 1
+##'   vaccination category, and will be the same for all pathogen strains.
+##'   Specifying an array instead of a vector allows
+##'   different relative susceptibilities by age (first dimension of the array),
+##'   pathogen strain (second dimension) and vaccination group
+##'   (third dimension); in that case, rel_susceptibility[, , 1] should be 1
+##'   (for the non-vaccinated group) and other values be between 0 and 1
 ##'
-##' @param rel_p_sympt A vector or matrix of values of same dimension as
+##' @param rel_p_sympt A vector or array of values of same dimension as
 ##'   rel_susceptibility representing the
 ##'   relative probability of symptomatic infection in different
 ##'   vaccination groups. If a vector, the first value should be 1 (for the
 ##'   non-vaccinated group) and subsequent values be between 0 and 1.
 ##'   In that case the relative reduction in probability of symptomatic
-##'   infection will be the same across all age groups within one vaccination
-##'   category.
-##'   Specifying a matrix instead of a vector allows different relative
-##'   reductions in probability of symptomatic infection by age (rows of the
-##'   matrix) and vaccination group (columns of the matrix); in that case,
-##'   in each row of the matrix, the first value should be 1 (for the
-##'   non-vaccinated group) and subsequent values be between 0 and 1
+##'   infection will be the same across all age groups and all strains
+##'   within one vaccination category.
+##'   Specifying an array instead of a vector allows different relative
+##'   reductions in probability of symptomatic infection by age (first
+##'   dimension of the array), pathogen strain (second dimension) and
+##'   vaccination group (third dimension); in that case,
+##'   rel_p_sympt[, , 1] should be 1 (for the non-vaccinated group)
+##'   and other values be between 0 and 1
 ##'
-##' @param rel_p_hosp_if_sympt A vector or matrix of values of same dimension as
+##' @param rel_p_hosp_if_sympt A vector or array of values of same dimension as
 ##'   rel_susceptibility representing the
 ##'   relative probability of hospitalisation for symptomatic cases in different
 ##'   vaccination groups. If a vector, the first value should be 1 (for the
 ##'   non-vaccinated group) and subsequent values be between 0 and 1.
 ##'   In that case the relative reduction in probability of hospitalisation for
-##'   symptomatic cases will be the same across all age groups within one
-##'   vaccination category.
-##'   Specifying a matrix instead of a vector allows different relative
+##'   symptomatic cases will be the same across all age groups and all strains
+##'   within one vaccination category.
+##'   Specifying an array instead of a vector allows different relative
 ##'   reductions in probability of hospitalisation for symptomatic cases by age
-##'   (rows of the matrix) and vaccination group (columns of the matrix);
-##'   in that case, in each row of the matrix, the first value should be 1
-##'   (for the non-vaccinated group) and subsequent values be between 0 and 1
+##'   (first dimension of the array), pathogen strain (second dimension) and
+##'   vaccination group (third dimension); in that case,
+##'   rel_p_hosp_if_sympt[, , 1] should be 1 (for the non-vaccinated group)
+##'   and other values be between 0 and 1
 ##'
-##' @param rel_infectivity A vector or matrix of values representing the
+##' @param rel_infectivity A vector or array of values representing the
 ##'   relative infectivity of individuals in different vaccination groups,
 ##'   if they are infected.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
 ##'   and subsequent values be between 0 and 1. In that case relative
-##'   infectivity will be the same across all age groups within one
-##'   vaccination category. Specifying a matrix instead of a vector allows
-##'   different relative infectivities by age (rows of the matrix) and
-##'   vaccination group (columns of the matrix); in that case, in each row of
-##'   the matrix, the first value should be 1 (for the non-vaccinated group)
-##'   and subsequent values be between 0 and 1
+##'   infectivity will be the same across all age groups and all strains
+##'   within one vaccination category.
+##'   Specifying an array instead of a vector allows
+##'   different relative infectivities by age
+##'   (first dimension of the array), pathogen strain (second dimension) and
+##'   vaccination group (third dimension); in that case,
+##'   rel_infectivity[, , 1] should be 1 (for the non-vaccinated group)
+##'   and other values be between 0 and 1
 ##'
 ##' @param vaccine_progression_rate A vector or matrix of values of same
 ##'   dimension as rel_susceptibility representing
@@ -394,7 +399,8 @@ carehomes_parameters <- function(start_date, region,
                                                   rel_infectivity,
                                                   vaccine_progression_rate,
                                                   vaccine_schedule,
-                                                  vaccine_index_dose2)
+                                                  vaccine_index_dose2,
+                                                  strain$n_strains)
   model_pcr_and_serology_user <-
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
 
@@ -797,12 +803,14 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              rel_infectivity = 1,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
-                                             vaccine_index_dose2 = NULL) {
+                                             vaccine_index_dose2 = NULL,
+                                             n_strains) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
-    if (is.matrix(x)) ncol(x) else length(x)
+    if (is.array(x)) dim(x)[3] else length(x)
   }
+
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
                      rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
@@ -817,7 +825,8 @@ carehomes_parameters_vaccination <- function(N_tot,
   }
   n_vacc_classes <- max(n)
 
-  ret <- Map(function(value, name) build_rel_param(value, n_vacc_classes, name),
+  ret <- Map(function(value, name)
+    build_rel_param(value, n_strains, n_vacc_classes, name),
              rel_params, names(rel_params))
 
   n_doses <- 2L # fixed; see the odin code
