@@ -72,6 +72,12 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
+      - name: Force install XML
+        if: runner.os == 'Windows'
+        run: |
+          install.packages("XML", type = "binary")
+        shell: Rscript {0}
+
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
