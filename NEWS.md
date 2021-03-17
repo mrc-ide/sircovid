@@ -1,3 +1,6 @@
+# sircovid 0.10.12
+
+* Fix corner case in vaccination exposed by recent dust updates
 
 # sircovid 0.10.8
 
