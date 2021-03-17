@@ -1273,7 +1273,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination", {
 })
 
 
-test_that("N_tot, N_tot2, N_tot3 are constant with vaccination and some k > 1", {
+test_that("N_tot, N_tot2, N_tot3 are constant with vaccination and k > 1", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   set.seed(1)

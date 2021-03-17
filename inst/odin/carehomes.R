@@ -325,7 +325,7 @@ n_R_next_vacc_class_capped[, , ] <- min(n_R_next_vacc_class_tmp[i, j, k],
   T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
 n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
-  
+
 #### other transitions ####
 
 n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress)
@@ -421,7 +421,7 @@ aux_I_A[, , , ] <- aux_I_A[i, j, k, l] - n_II_A[i, j, k, l] -
   n_II_A_next_vacc_class[i, j, k, l] -
   n_I_A_next_vacc_class[i, j, k, l]
 aux_I_A[, , , 1] <- aux_I_A[i, j, k, l]  +
-  n_I_A_next_vacc_class[i, j, 1, n_vacc_classes]
+  n_I_A_next_vacc_class[i, j, k, n_vacc_classes]
 aux_I_A[, , , 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
   n_I_A_next_vacc_class[i, j, k, l - 1]
 aux_I_A[, , 1, 1] <- aux_I_A[i, j, k, l] +
@@ -441,7 +441,7 @@ aux_I_P[, , , ] <- aux_I_P[i, j, k, l] - n_II_P[i, j, k, l] -
   n_II_P_next_vacc_class[i, j, k, l] -
   n_I_P_next_vacc_class[i, j, k, l]
 aux_I_P[, , , 1] <- aux_I_P[i, j, k, l]  +
-  n_I_P_next_vacc_class[i, j, 1, n_vacc_classes]
+  n_I_P_next_vacc_class[i, j, k, n_vacc_classes]
 aux_I_P[, , , 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
   n_I_P_next_vacc_class[i, j, k, l - 1]
 aux_I_P[, , 1, 1] <- aux_I_P[i, j, k, l] +
