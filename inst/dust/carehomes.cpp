@@ -2434,25 +2434,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_H_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_H_D_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_H_D_conf_4; ++l) {
-            internal.aux_H_D_conf[i - 1 + shared->dim_aux_H_D_conf_1 * (j - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_123 * (l - 1)] = H_D_conf[shared->dim_H_D_conf_123 * (l - 1) + shared->dim_H_D_conf_12 * (k - 1) + shared->dim_H_D_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_D_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_H_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_D_conf_4; ++l) {
-            internal.aux_H_D_conf[i - 1 + shared->dim_aux_H_D_conf_1 * (j - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_123 * (l - 1)] = internal.aux_H_D_conf[shared->dim_aux_H_D_conf_123 * (l - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_1 * (j - 1) + i - 1] + internal.n_H_D_conf_progress[shared->dim_n_H_D_conf_progress_123 * (l - 1) + shared->dim_n_H_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_H_D_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_D_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_H_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_D_conf_4; ++l) {
-            internal.aux_H_D_conf[i - 1 + shared->dim_aux_H_D_conf_1 * (j - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_123 * (l - 1)] = internal.aux_H_D_conf[shared->dim_aux_H_D_conf_123 * (l - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_1 * (j - 1) + i - 1] - internal.n_H_D_conf_progress[shared->dim_n_H_D_conf_progress_123 * (l - 1) + shared->dim_n_H_D_conf_progress_12 * (k - 1) + shared->dim_n_H_D_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_H_D_conf[i - 1 + shared->dim_aux_H_D_conf_1 * (j - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_123 * (l - 1)] = H_D_conf[shared->dim_H_D_conf_123 * (l - 1) + shared->dim_H_D_conf_12 * (k - 1) + shared->dim_H_D_conf_1 * (j - 1) + i - 1] + ((k > 1 ? internal.n_H_D_conf_progress[shared->dim_n_H_D_conf_progress_123 * (l - 1) + shared->dim_n_H_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_H_D_conf_progress_1 * (j - 1) + i - 1] : 0)) - internal.n_H_D_conf_progress[shared->dim_n_H_D_conf_progress_123 * (l - 1) + shared->dim_n_H_D_conf_progress_12 * (k - 1) + shared->dim_n_H_D_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2461,25 +2443,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_H_D_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_H_D_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_H_D_unconf_4; ++l) {
-            internal.aux_H_D_unconf[i - 1 + shared->dim_aux_H_D_unconf_1 * (j - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_123 * (l - 1)] = H_D_unconf[shared->dim_H_D_unconf_123 * (l - 1) + shared->dim_H_D_unconf_12 * (k - 1) + shared->dim_H_D_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_D_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_H_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_D_unconf_4; ++l) {
-            internal.aux_H_D_unconf[i - 1 + shared->dim_aux_H_D_unconf_1 * (j - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_123 * (l - 1)] = internal.aux_H_D_unconf[shared->dim_aux_H_D_unconf_123 * (l - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_1 * (j - 1) + i - 1] + internal.n_H_D_unconf_progress[shared->dim_n_H_D_unconf_progress_123 * (l - 1) + shared->dim_n_H_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_H_D_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_D_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_H_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_D_unconf_4; ++l) {
-            internal.aux_H_D_unconf[i - 1 + shared->dim_aux_H_D_unconf_1 * (j - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_123 * (l - 1)] = internal.aux_H_D_unconf[shared->dim_aux_H_D_unconf_123 * (l - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_1 * (j - 1) + i - 1] - internal.n_H_D_unconf_progress[shared->dim_n_H_D_unconf_progress_123 * (l - 1) + shared->dim_n_H_D_unconf_progress_12 * (k - 1) + shared->dim_n_H_D_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_H_D_unconf[i - 1 + shared->dim_aux_H_D_unconf_1 * (j - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_123 * (l - 1)] = H_D_unconf[shared->dim_H_D_unconf_123 * (l - 1) + shared->dim_H_D_unconf_12 * (k - 1) + shared->dim_H_D_unconf_1 * (j - 1) + i - 1] + ((k > 1 ? internal.n_H_D_unconf_progress[shared->dim_n_H_D_unconf_progress_123 * (l - 1) + shared->dim_n_H_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_H_D_unconf_progress_1 * (j - 1) + i - 1] : 0)) - internal.n_H_D_unconf_progress[shared->dim_n_H_D_unconf_progress_123 * (l - 1) + shared->dim_n_H_D_unconf_progress_12 * (k - 1) + shared->dim_n_H_D_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2488,25 +2452,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_H_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_H_R_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_H_R_conf_4; ++l) {
-            internal.aux_H_R_conf[i - 1 + shared->dim_aux_H_R_conf_1 * (j - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_123 * (l - 1)] = H_R_conf[shared->dim_H_R_conf_123 * (l - 1) + shared->dim_H_R_conf_12 * (k - 1) + shared->dim_H_R_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_R_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_H_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_R_conf_4; ++l) {
-            internal.aux_H_R_conf[i - 1 + shared->dim_aux_H_R_conf_1 * (j - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_123 * (l - 1)] = internal.aux_H_R_conf[shared->dim_aux_H_R_conf_123 * (l - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_1 * (j - 1) + i - 1] + internal.n_H_R_conf_progress[shared->dim_n_H_R_conf_progress_123 * (l - 1) + shared->dim_n_H_R_conf_progress_12 * (k - 1 - 1) + shared->dim_n_H_R_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_R_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_H_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_R_conf_4; ++l) {
-            internal.aux_H_R_conf[i - 1 + shared->dim_aux_H_R_conf_1 * (j - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_123 * (l - 1)] = internal.aux_H_R_conf[shared->dim_aux_H_R_conf_123 * (l - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_1 * (j - 1) + i - 1] - internal.n_H_R_conf_progress[shared->dim_n_H_R_conf_progress_123 * (l - 1) + shared->dim_n_H_R_conf_progress_12 * (k - 1) + shared->dim_n_H_R_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_H_R_conf[i - 1 + shared->dim_aux_H_R_conf_1 * (j - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_123 * (l - 1)] = H_R_conf[shared->dim_H_R_conf_123 * (l - 1) + shared->dim_H_R_conf_12 * (k - 1) + shared->dim_H_R_conf_1 * (j - 1) + i - 1] + ((k > 1 ? internal.n_H_R_conf_progress[shared->dim_n_H_R_conf_progress_123 * (l - 1) + shared->dim_n_H_R_conf_progress_12 * (k - 1 - 1) + shared->dim_n_H_R_conf_progress_1 * (j - 1) + i - 1] : 0)) - internal.n_H_R_conf_progress[shared->dim_n_H_R_conf_progress_123 * (l - 1) + shared->dim_n_H_R_conf_progress_12 * (k - 1) + shared->dim_n_H_R_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2515,25 +2461,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_H_R_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_H_R_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_H_R_unconf_4; ++l) {
-            internal.aux_H_R_unconf[i - 1 + shared->dim_aux_H_R_unconf_1 * (j - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_123 * (l - 1)] = H_R_unconf[shared->dim_H_R_unconf_123 * (l - 1) + shared->dim_H_R_unconf_12 * (k - 1) + shared->dim_H_R_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_R_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_H_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_R_unconf_4; ++l) {
-            internal.aux_H_R_unconf[i - 1 + shared->dim_aux_H_R_unconf_1 * (j - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_123 * (l - 1)] = internal.aux_H_R_unconf[shared->dim_aux_H_R_unconf_123 * (l - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_1 * (j - 1) + i - 1] + internal.n_H_R_unconf_progress[shared->dim_n_H_R_unconf_progress_123 * (l - 1) + shared->dim_n_H_R_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_H_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_H_R_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_H_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_H_R_unconf_4; ++l) {
-            internal.aux_H_R_unconf[i - 1 + shared->dim_aux_H_R_unconf_1 * (j - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_123 * (l - 1)] = internal.aux_H_R_unconf[shared->dim_aux_H_R_unconf_123 * (l - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_1 * (j - 1) + i - 1] - internal.n_H_R_unconf_progress[shared->dim_n_H_R_unconf_progress_123 * (l - 1) + shared->dim_n_H_R_unconf_progress_12 * (k - 1) + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_H_R_unconf[i - 1 + shared->dim_aux_H_R_unconf_1 * (j - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_123 * (l - 1)] = H_R_unconf[shared->dim_H_R_unconf_123 * (l - 1) + shared->dim_H_R_unconf_12 * (k - 1) + shared->dim_H_R_unconf_1 * (j - 1) + i - 1] + ((k > 1 ? internal.n_H_R_unconf_progress[shared->dim_n_H_R_unconf_progress_123 * (l - 1) + shared->dim_n_H_R_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + i - 1] : 0)) - internal.n_H_R_unconf_progress[shared->dim_n_H_R_unconf_progress_123 * (l - 1) + shared->dim_n_H_R_unconf_progress_12 * (k - 1) + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2542,25 +2470,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_pre_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_pre_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_pre_conf_4; ++l) {
-            internal.aux_ICU_pre_conf[i - 1 + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_123 * (l - 1)] = ICU_pre_conf[shared->dim_ICU_pre_conf_123 * (l - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_pre_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_pre_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_pre; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_pre_conf_4; ++l) {
-            internal.aux_ICU_pre_conf[i - 1 + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_123 * (l - 1)] = internal.aux_ICU_pre_conf[shared->dim_aux_ICU_pre_conf_123 * (l - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_conf_progress[shared->dim_n_ICU_pre_conf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_pre_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_pre_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_pre; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_pre_conf_4; ++l) {
-            internal.aux_ICU_pre_conf[i - 1 + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_123 * (l - 1)] = internal.aux_ICU_pre_conf[shared->dim_aux_ICU_pre_conf_123 * (l - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + i - 1] - internal.n_ICU_pre_conf_progress[shared->dim_n_ICU_pre_conf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_pre_conf[i - 1 + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_123 * (l - 1)] = ICU_pre_conf[shared->dim_ICU_pre_conf_123 * (l - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_1 * (j - 1) + i - 1] + ((k > 1 ? internal.n_ICU_pre_conf_progress[shared->dim_n_ICU_pre_conf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + i - 1] : 0)) - internal.n_ICU_pre_conf_progress[shared->dim_n_ICU_pre_conf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2569,51 +2479,16 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_pre_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_pre_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_pre_unconf_4; ++l) {
-            internal.aux_ICU_pre_unconf[i - 1 + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_123 * (l - 1)] = ICU_pre_unconf[shared->dim_ICU_pre_unconf_123 * (l - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_pre_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_pre_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_pre; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_pre_unconf_4; ++l) {
-            internal.aux_ICU_pre_unconf[i - 1 + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_123 * (l - 1)] = internal.aux_ICU_pre_unconf[shared->dim_aux_ICU_pre_unconf_123 * (l - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_unconf_progress[shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_pre_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_pre_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_pre; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_pre_unconf_4; ++l) {
-            internal.aux_ICU_pre_unconf[i - 1 + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_123 * (l - 1)] = internal.aux_ICU_pre_unconf[shared->dim_aux_ICU_pre_unconf_123 * (l - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_pre_unconf_progress[shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_pre_unconf[i - 1 + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_123 * (l - 1)] = ICU_pre_unconf[shared->dim_ICU_pre_unconf_123 * (l - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_1 * (j - 1) + i - 1] + ((k > 1 ? internal.n_ICU_pre_unconf_progress[shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + i - 1] : 0)) - internal.n_ICU_pre_unconf_progress[shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
     }
     for (int i = 1; i <= shared->dim_aux_I_C_2_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_I_C_2_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_I_C_2_4; ++l) {
-          internal.aux_I_C_2[i - 1 + shared->dim_aux_I_C_2_1 * (j - 1) + shared->dim_aux_I_C_2_12 * (k - 1) + shared->dim_aux_I_C_2_123 * (l - 1)] = internal.n_I_C_1_progress[shared->dim_n_I_C_1_progress_123 * (l - 1) + shared->dim_n_I_C_1_progress_12 * (shared->k_C_1 - 1) + shared->dim_n_I_C_1_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_C_2_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_C_2_2; ++j) {
-        for (int k = 2; k <= shared->k_C_2; ++k) {
+        for (int k = 1; k <= shared->dim_aux_I_C_2_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_I_C_2_4; ++l) {
-            internal.aux_I_C_2[i - 1 + shared->dim_aux_I_C_2_1 * (j - 1) + shared->dim_aux_I_C_2_12 * (k - 1) + shared->dim_aux_I_C_2_123 * (l - 1)] = internal.n_I_C_2_progress[shared->dim_n_I_C_2_progress_123 * (l - 1) + shared->dim_n_I_C_2_progress_12 * (k - 1 - 1) + shared->dim_n_I_C_2_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_C_2_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_C_2_2; ++j) {
-        for (int k = 1; k <= shared->k_C_2; ++k) {
-          for (int l = 1; l <= shared->dim_aux_I_C_2_4; ++l) {
-            internal.aux_I_C_2[i - 1 + shared->dim_aux_I_C_2_1 * (j - 1) + shared->dim_aux_I_C_2_12 * (k - 1) + shared->dim_aux_I_C_2_123 * (l - 1)] = internal.aux_I_C_2[shared->dim_aux_I_C_2_123 * (l - 1) + shared->dim_aux_I_C_2_12 * (k - 1) + shared->dim_aux_I_C_2_1 * (j - 1) + i - 1] - internal.n_I_C_2_progress[shared->dim_n_I_C_2_progress_123 * (l - 1) + shared->dim_n_I_C_2_progress_12 * (k - 1) + shared->dim_n_I_C_2_progress_1 * (j - 1) + i - 1];
+            internal.aux_I_C_2[i - 1 + shared->dim_aux_I_C_2_1 * (j - 1) + shared->dim_aux_I_C_2_12 * (k - 1) + shared->dim_aux_I_C_2_123 * (l - 1)] = ((k == 1 ? internal.n_I_C_1_progress[shared->dim_n_I_C_1_progress_123 * (l - 1) + shared->dim_n_I_C_1_progress_12 * (shared->k_C_1 - 1) + shared->dim_n_I_C_1_progress_1 * (j - 1) + i - 1] : internal.n_I_C_2_progress[shared->dim_n_I_C_2_progress_123 * (l - 1) + shared->dim_n_I_C_2_progress_12 * (k - 1 - 1) + shared->dim_n_I_C_2_progress_1 * (j - 1) + i - 1])) - internal.n_I_C_2_progress[shared->dim_n_I_C_2_progress_123 * (l - 1) + shared->dim_n_I_C_2_progress_12 * (k - 1) + shared->dim_n_I_C_2_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2622,33 +2497,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_W_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_W_D_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_W_D_conf_4; ++l) {
-            internal.aux_W_D_conf[i - 1 + shared->dim_aux_W_D_conf_1 * (j - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_123 * (l - 1)] = W_D_conf[shared->dim_W_D_conf_123 * (l - 1) + shared->dim_W_D_conf_12 * (k - 1) + shared->dim_W_D_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_D_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_W_D_conf_4; ++l) {
-          internal.aux_W_D_conf[i - 1 + shared->dim_aux_W_D_conf_1 * (j - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_123 * (l - 1)] = internal.aux_W_D_conf[shared->dim_aux_W_D_conf_123 * (l - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_1 * (j - 1) + i - 1] + internal.n_ICU_W_D_conf_progress[shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (shared->k_ICU_W_D - 1) + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_D_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_D_conf_4; ++l) {
-            internal.aux_W_D_conf[i - 1 + shared->dim_aux_W_D_conf_1 * (j - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_123 * (l - 1)] = internal.aux_W_D_conf[shared->dim_aux_W_D_conf_123 * (l - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_1 * (j - 1) + i - 1] + internal.n_W_D_conf_progress[shared->dim_n_W_D_conf_progress_123 * (l - 1) + shared->dim_n_W_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_W_D_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_D_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_D_conf_4; ++l) {
-            internal.aux_W_D_conf[i - 1 + shared->dim_aux_W_D_conf_1 * (j - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_123 * (l - 1)] = internal.aux_W_D_conf[shared->dim_aux_W_D_conf_123 * (l - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_1 * (j - 1) + i - 1] - internal.n_W_D_conf_progress[shared->dim_n_W_D_conf_progress_123 * (l - 1) + shared->dim_n_W_D_conf_progress_12 * (k - 1) + shared->dim_n_W_D_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_W_D_conf[i - 1 + shared->dim_aux_W_D_conf_1 * (j - 1) + shared->dim_aux_W_D_conf_12 * (k - 1) + shared->dim_aux_W_D_conf_123 * (l - 1)] = W_D_conf[shared->dim_W_D_conf_123 * (l - 1) + shared->dim_W_D_conf_12 * (k - 1) + shared->dim_W_D_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_W_D_conf_progress[shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (shared->k_ICU_W_D - 1) + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + i - 1] : internal.n_W_D_conf_progress[shared->dim_n_W_D_conf_progress_123 * (l - 1) + shared->dim_n_W_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_W_D_conf_progress_1 * (j - 1) + i - 1])) - internal.n_W_D_conf_progress[shared->dim_n_W_D_conf_progress_123 * (l - 1) + shared->dim_n_W_D_conf_progress_12 * (k - 1) + shared->dim_n_W_D_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2657,33 +2506,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_W_D_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_W_D_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_W_D_unconf_4; ++l) {
-            internal.aux_W_D_unconf[i - 1 + shared->dim_aux_W_D_unconf_1 * (j - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_123 * (l - 1)] = W_D_unconf[shared->dim_W_D_unconf_123 * (l - 1) + shared->dim_W_D_unconf_12 * (k - 1) + shared->dim_W_D_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_D_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_W_D_unconf_4; ++l) {
-          internal.aux_W_D_unconf[i - 1 + shared->dim_aux_W_D_unconf_1 * (j - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_123 * (l - 1)] = internal.aux_W_D_unconf[shared->dim_aux_W_D_unconf_123 * (l - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_W_D_unconf_progress[shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (shared->k_ICU_W_D - 1) + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_D_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_D_unconf_4; ++l) {
-            internal.aux_W_D_unconf[i - 1 + shared->dim_aux_W_D_unconf_1 * (j - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_123 * (l - 1)] = internal.aux_W_D_unconf[shared->dim_aux_W_D_unconf_123 * (l - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_1 * (j - 1) + i - 1] + internal.n_W_D_unconf_progress[shared->dim_n_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_W_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_W_D_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_D_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_D_unconf_4; ++l) {
-            internal.aux_W_D_unconf[i - 1 + shared->dim_aux_W_D_unconf_1 * (j - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_123 * (l - 1)] = internal.aux_W_D_unconf[shared->dim_aux_W_D_unconf_123 * (l - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_1 * (j - 1) + i - 1] - internal.n_W_D_unconf_progress[shared->dim_n_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_W_D_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_W_D_unconf[i - 1 + shared->dim_aux_W_D_unconf_1 * (j - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_123 * (l - 1)] = W_D_unconf[shared->dim_W_D_unconf_123 * (l - 1) + shared->dim_W_D_unconf_12 * (k - 1) + shared->dim_W_D_unconf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_W_D_unconf_progress[shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (shared->k_ICU_W_D - 1) + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + i - 1] : internal.n_W_D_unconf_progress[shared->dim_n_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_W_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_W_D_unconf_progress_1 * (j - 1) + i - 1])) - internal.n_W_D_unconf_progress[shared->dim_n_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_W_D_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2692,33 +2515,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_W_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_W_R_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_W_R_conf_4; ++l) {
-            internal.aux_W_R_conf[i - 1 + shared->dim_aux_W_R_conf_1 * (j - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_123 * (l - 1)] = W_R_conf[shared->dim_W_R_conf_123 * (l - 1) + shared->dim_W_R_conf_12 * (k - 1) + shared->dim_W_R_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_R_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_W_R_conf_4; ++l) {
-          internal.aux_W_R_conf[i - 1 + shared->dim_aux_W_R_conf_1 * (j - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_123 * (l - 1)] = internal.aux_W_R_conf[shared->dim_aux_W_R_conf_123 * (l - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_1 * (j - 1) + i - 1] + internal.n_ICU_W_R_conf_progress[shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (shared->k_ICU_W_R - 1) + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_R_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_R_conf_4; ++l) {
-            internal.aux_W_R_conf[i - 1 + shared->dim_aux_W_R_conf_1 * (j - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_123 * (l - 1)] = internal.aux_W_R_conf[shared->dim_aux_W_R_conf_123 * (l - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_1 * (j - 1) + i - 1] + internal.n_W_R_conf_progress[shared->dim_n_W_R_conf_progress_123 * (l - 1) + shared->dim_n_W_R_conf_progress_12 * (k - 1 - 1) + shared->dim_n_W_R_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_R_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_R_conf_4; ++l) {
-            internal.aux_W_R_conf[i - 1 + shared->dim_aux_W_R_conf_1 * (j - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_123 * (l - 1)] = internal.aux_W_R_conf[shared->dim_aux_W_R_conf_123 * (l - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_1 * (j - 1) + i - 1] - internal.n_W_R_conf_progress[shared->dim_n_W_R_conf_progress_123 * (l - 1) + shared->dim_n_W_R_conf_progress_12 * (k - 1) + shared->dim_n_W_R_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_W_R_conf[i - 1 + shared->dim_aux_W_R_conf_1 * (j - 1) + shared->dim_aux_W_R_conf_12 * (k - 1) + shared->dim_aux_W_R_conf_123 * (l - 1)] = W_R_conf[shared->dim_W_R_conf_123 * (l - 1) + shared->dim_W_R_conf_12 * (k - 1) + shared->dim_W_R_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_W_R_conf_progress[shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (shared->k_ICU_W_R - 1) + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + i - 1] : internal.n_W_R_conf_progress[shared->dim_n_W_R_conf_progress_123 * (l - 1) + shared->dim_n_W_R_conf_progress_12 * (k - 1 - 1) + shared->dim_n_W_R_conf_progress_1 * (j - 1) + i - 1])) - internal.n_W_R_conf_progress[shared->dim_n_W_R_conf_progress_123 * (l - 1) + shared->dim_n_W_R_conf_progress_12 * (k - 1) + shared->dim_n_W_R_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2727,33 +2524,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_W_R_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_W_R_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_W_R_unconf_4; ++l) {
-            internal.aux_W_R_unconf[i - 1 + shared->dim_aux_W_R_unconf_1 * (j - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_123 * (l - 1)] = W_R_unconf[shared->dim_W_R_unconf_123 * (l - 1) + shared->dim_W_R_unconf_12 * (k - 1) + shared->dim_W_R_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_R_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_W_R_unconf_4; ++l) {
-          internal.aux_W_R_unconf[i - 1 + shared->dim_aux_W_R_unconf_1 * (j - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_123 * (l - 1)] = internal.aux_W_R_unconf[shared->dim_aux_W_R_unconf_123 * (l - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_W_R_unconf_progress[shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (shared->k_ICU_W_R - 1) + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_R_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_R_unconf_4; ++l) {
-            internal.aux_W_R_unconf[i - 1 + shared->dim_aux_W_R_unconf_1 * (j - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_123 * (l - 1)] = internal.aux_W_R_unconf[shared->dim_aux_W_R_unconf_123 * (l - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_1 * (j - 1) + i - 1] + internal.n_W_R_unconf_progress[shared->dim_n_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_W_R_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_W_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_W_R_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_W_R_unconf_4; ++l) {
-            internal.aux_W_R_unconf[i - 1 + shared->dim_aux_W_R_unconf_1 * (j - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_123 * (l - 1)] = internal.aux_W_R_unconf[shared->dim_aux_W_R_unconf_123 * (l - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_1 * (j - 1) + i - 1] - internal.n_W_R_unconf_progress[shared->dim_n_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_W_R_unconf[i - 1 + shared->dim_aux_W_R_unconf_1 * (j - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_123 * (l - 1)] = W_R_unconf[shared->dim_W_R_unconf_123 * (l - 1) + shared->dim_W_R_unconf_12 * (k - 1) + shared->dim_W_R_unconf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_W_R_unconf_progress[shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (shared->k_ICU_W_R - 1) + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + i - 1] : internal.n_W_R_unconf_progress[shared->dim_n_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_W_R_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + i - 1])) - internal.n_W_R_unconf_progress[shared->dim_n_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2805,24 +2576,7 @@ public:
       for (int j = 1; j <= shared->dim_new_T_PCR_pos_2; ++j) {
         for (int k = 1; k <= shared->dim_new_T_PCR_pos_3; ++k) {
           for (int l = 1; l <= shared->dim_new_T_PCR_pos_4; ++l) {
-            internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_pos_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_T_PCR_pos_4; ++l) {
-          internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[shared->dim_new_T_PCR_pos_123 * (l - 1) + shared->dim_new_T_PCR_pos_12 * 0 + shared->dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (shared->k_PCR_pre - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_pos_2; ++j) {
-        for (int k = 2; k <= shared->k_PCR_pos; ++k) {
-          for (int l = 1; l <= shared->dim_new_T_PCR_pos_4; ++l) {
-            internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[shared->dim_new_T_PCR_pos_123 * (l - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_1 * (j - 1) + i - 1] + internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1];
+            internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (shared->k_PCR_pre - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] : internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1]));
           }
         }
       }
@@ -2865,33 +2619,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_D_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_D_conf_4; ++l) {
-            internal.aux_ICU_D_conf[i - 1 + shared->dim_aux_ICU_D_conf_1 * (j - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_123 * (l - 1)] = ICU_D_conf[shared->dim_ICU_D_conf_123 * (l - 1) + shared->dim_ICU_D_conf_12 * (k - 1) + shared->dim_ICU_D_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_D_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_ICU_D_conf_4; ++l) {
-          internal.aux_ICU_D_conf[i - 1 + shared->dim_aux_ICU_D_conf_1 * (j - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_123 * (l - 1)] = internal.aux_ICU_D_conf[shared->dim_aux_ICU_D_conf_123 * (l - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_conf_to_ICU_D_conf[shared->dim_n_ICU_pre_conf_to_ICU_D_conf_12 * (l - 1) + shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_D_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_D_conf_4; ++l) {
-            internal.aux_ICU_D_conf[i - 1 + shared->dim_aux_ICU_D_conf_1 * (j - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_123 * (l - 1)] = internal.aux_ICU_D_conf[shared->dim_aux_ICU_D_conf_123 * (l - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_1 * (j - 1) + i - 1] + internal.n_ICU_D_conf_progress[shared->dim_n_ICU_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_D_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_D_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_D_conf_4; ++l) {
-            internal.aux_ICU_D_conf[i - 1 + shared->dim_aux_ICU_D_conf_1 * (j - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_123 * (l - 1)] = internal.aux_ICU_D_conf[shared->dim_aux_ICU_D_conf_123 * (l - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_1 * (j - 1) + i - 1] - internal.n_ICU_D_conf_progress[shared->dim_n_ICU_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_D_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_D_conf[i - 1 + shared->dim_aux_ICU_D_conf_1 * (j - 1) + shared->dim_aux_ICU_D_conf_12 * (k - 1) + shared->dim_aux_ICU_D_conf_123 * (l - 1)] = ICU_D_conf[shared->dim_ICU_D_conf_123 * (l - 1) + shared->dim_ICU_D_conf_12 * (k - 1) + shared->dim_ICU_D_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_pre_conf_to_ICU_D_conf[shared->dim_n_ICU_pre_conf_to_ICU_D_conf_12 * (l - 1) + shared->dim_n_ICU_pre_conf_to_ICU_D_conf_1 * (j - 1) + i - 1] : internal.n_ICU_D_conf_progress[shared->dim_n_ICU_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_D_conf_progress_1 * (j - 1) + i - 1])) - internal.n_ICU_D_conf_progress[shared->dim_n_ICU_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_D_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -2900,33 +2628,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_D_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_D_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_D_unconf_4; ++l) {
-            internal.aux_ICU_D_unconf[i - 1 + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_123 * (l - 1)] = ICU_D_unconf[shared->dim_ICU_D_unconf_123 * (l - 1) + shared->dim_ICU_D_unconf_12 * (k - 1) + shared->dim_ICU_D_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_D_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_ICU_D_unconf_4; ++l) {
-          internal.aux_ICU_D_unconf[i - 1 + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_123 * (l - 1)] = internal.aux_ICU_D_unconf[shared->dim_aux_ICU_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_unconf_to_ICU_D_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_12 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_D_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_D_unconf_4; ++l) {
-            internal.aux_ICU_D_unconf[i - 1 + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_123 * (l - 1)] = internal.aux_ICU_D_unconf[shared->dim_aux_ICU_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_D_unconf_progress[shared->dim_n_ICU_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_D_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_D_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_D_unconf_4; ++l) {
-            internal.aux_ICU_D_unconf[i - 1 + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_123 * (l - 1)] = internal.aux_ICU_D_unconf[shared->dim_aux_ICU_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_D_unconf_progress[shared->dim_n_ICU_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_D_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_D_unconf[i - 1 + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_123 * (l - 1)] = ICU_D_unconf[shared->dim_ICU_D_unconf_123 * (l - 1) + shared->dim_ICU_D_unconf_12 * (k - 1) + shared->dim_ICU_D_unconf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_pre_unconf_to_ICU_D_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_12 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_D_unconf_1 * (j - 1) + i - 1] : internal.n_ICU_D_unconf_progress[shared->dim_n_ICU_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_D_unconf_progress_1 * (j - 1) + i - 1])) - internal.n_ICU_D_unconf_progress[shared->dim_n_ICU_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_D_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3090,26 +2792,9 @@ public:
     }
     for (int i = 1; i <= shared->dim_aux_G_D_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_G_D_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_G_D_4; ++l) {
-          internal.aux_G_D[i - 1 + shared->dim_aux_G_D_1 * (j - 1) + shared->dim_aux_G_D_12 * (k - 1) + shared->dim_aux_G_D_123 * (l - 1)] = internal.n_I_C_2_to_G_D[shared->dim_n_I_C_2_to_G_D_12 * (l - 1) + shared->dim_n_I_C_2_to_G_D_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_G_D_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_G_D_2; ++j) {
-        for (int k = 2; k <= shared->k_G_D; ++k) {
+        for (int k = 1; k <= shared->dim_aux_G_D_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_G_D_4; ++l) {
-            internal.aux_G_D[i - 1 + shared->dim_aux_G_D_1 * (j - 1) + shared->dim_aux_G_D_12 * (k - 1) + shared->dim_aux_G_D_123 * (l - 1)] = internal.n_G_D_progress[shared->dim_n_G_D_progress_123 * (l - 1) + shared->dim_n_G_D_progress_12 * (k - 1 - 1) + shared->dim_n_G_D_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_G_D_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_G_D_2; ++j) {
-        for (int k = 1; k <= shared->k_G_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_G_D_4; ++l) {
-            internal.aux_G_D[i - 1 + shared->dim_aux_G_D_1 * (j - 1) + shared->dim_aux_G_D_12 * (k - 1) + shared->dim_aux_G_D_123 * (l - 1)] = internal.aux_G_D[shared->dim_aux_G_D_123 * (l - 1) + shared->dim_aux_G_D_12 * (k - 1) + shared->dim_aux_G_D_1 * (j - 1) + i - 1] - internal.n_G_D_progress[shared->dim_n_G_D_progress_123 * (l - 1) + shared->dim_n_G_D_progress_12 * (k - 1) + shared->dim_n_G_D_progress_1 * (j - 1) + i - 1];
+            internal.aux_G_D[i - 1 + shared->dim_aux_G_D_1 * (j - 1) + shared->dim_aux_G_D_12 * (k - 1) + shared->dim_aux_G_D_123 * (l - 1)] = ((k == 1 ? internal.n_I_C_2_to_G_D[shared->dim_n_I_C_2_to_G_D_12 * (l - 1) + shared->dim_n_I_C_2_to_G_D_1 * (j - 1) + i - 1] : internal.n_G_D_progress[shared->dim_n_G_D_progress_123 * (l - 1) + shared->dim_n_G_D_progress_12 * (k - 1 - 1) + shared->dim_n_G_D_progress_1 * (j - 1) + i - 1])) - internal.n_G_D_progress[shared->dim_n_G_D_progress_123 * (l - 1) + shared->dim_n_G_D_progress_12 * (k - 1) + shared->dim_n_G_D_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3118,33 +2803,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_W_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_W_D_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_W_D_conf_4; ++l) {
-            internal.aux_ICU_W_D_conf[i - 1 + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_123 * (l - 1)] = ICU_W_D_conf[shared->dim_ICU_W_D_conf_123 * (l - 1) + shared->dim_ICU_W_D_conf_12 * (k - 1) + shared->dim_ICU_W_D_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_D_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_ICU_W_D_conf_4; ++l) {
-          internal.aux_ICU_W_D_conf[i - 1 + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_123 * (l - 1)] = internal.aux_ICU_W_D_conf[shared->dim_aux_ICU_W_D_conf_123 * (l - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_conf_to_ICU_W_D_conf[shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_12 * (l - 1) + shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_D_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_D_conf_4; ++l) {
-            internal.aux_ICU_W_D_conf[i - 1 + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_123 * (l - 1)] = internal.aux_ICU_W_D_conf[shared->dim_aux_ICU_W_D_conf_123 * (l - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + i - 1] + internal.n_ICU_W_D_conf_progress[shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_D_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_D_conf_4; ++l) {
-            internal.aux_ICU_W_D_conf[i - 1 + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_123 * (l - 1)] = internal.aux_ICU_W_D_conf[shared->dim_aux_ICU_W_D_conf_123 * (l - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + i - 1] - internal.n_ICU_W_D_conf_progress[shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_W_D_conf[i - 1 + shared->dim_aux_ICU_W_D_conf_1 * (j - 1) + shared->dim_aux_ICU_W_D_conf_12 * (k - 1) + shared->dim_aux_ICU_W_D_conf_123 * (l - 1)] = ICU_W_D_conf[shared->dim_ICU_W_D_conf_123 * (l - 1) + shared->dim_ICU_W_D_conf_12 * (k - 1) + shared->dim_ICU_W_D_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_pre_conf_to_ICU_W_D_conf[shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_12 * (l - 1) + shared->dim_n_ICU_pre_conf_to_ICU_W_D_conf_1 * (j - 1) + i - 1] : internal.n_ICU_W_D_conf_progress[shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + i - 1])) - internal.n_ICU_W_D_conf_progress[shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3153,33 +2812,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_W_D_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_W_D_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_W_D_unconf_4; ++l) {
-            internal.aux_ICU_W_D_unconf[i - 1 + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_123 * (l - 1)] = ICU_W_D_unconf[shared->dim_ICU_W_D_unconf_123 * (l - 1) + shared->dim_ICU_W_D_unconf_12 * (k - 1) + shared->dim_ICU_W_D_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_D_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_ICU_W_D_unconf_4; ++l) {
-          internal.aux_ICU_W_D_unconf[i - 1 + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_123 * (l - 1)] = internal.aux_ICU_W_D_unconf[shared->dim_aux_ICU_W_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_unconf_to_ICU_W_D_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_D_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_D_unconf_4; ++l) {
-            internal.aux_ICU_W_D_unconf[i - 1 + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_123 * (l - 1)] = internal.aux_ICU_W_D_unconf[shared->dim_aux_ICU_W_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_W_D_unconf_progress[shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_D_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_W_D; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_D_unconf_4; ++l) {
-            internal.aux_ICU_W_D_unconf[i - 1 + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_123 * (l - 1)] = internal.aux_ICU_W_D_unconf[shared->dim_aux_ICU_W_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_W_D_unconf_progress[shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_W_D_unconf[i - 1 + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_123 * (l - 1)] = ICU_W_D_unconf[shared->dim_ICU_W_D_unconf_123 * (l - 1) + shared->dim_ICU_W_D_unconf_12 * (k - 1) + shared->dim_ICU_W_D_unconf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_pre_unconf_to_ICU_W_D_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_12 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_W_D_unconf_1 * (j - 1) + i - 1] : internal.n_ICU_W_D_unconf_progress[shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + i - 1])) - internal.n_ICU_W_D_unconf_progress[shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3286,24 +2919,7 @@ public:
       for (int j = 1; j <= shared->dim_new_T_sero_pos_2; ++j) {
         for (int k = 1; k <= shared->dim_new_T_sero_pos_3; ++k) {
           for (int l = 1; l <= shared->dim_new_T_sero_pos_4; ++l) {
-            internal.new_T_sero_pos[i - 1 + shared->dim_new_T_sero_pos_1 * (j - 1) + shared->dim_new_T_sero_pos_12 * (k - 1) + shared->dim_new_T_sero_pos_123 * (l - 1)] = T_sero_pos[shared->dim_T_sero_pos_123 * (l - 1) + shared->dim_T_sero_pos_12 * (k - 1) + shared->dim_T_sero_pos_1 * (j - 1) + i - 1] - internal.n_T_sero_pos_progress[shared->dim_n_T_sero_pos_progress_123 * (l - 1) + shared->dim_n_T_sero_pos_progress_12 * (k - 1) + shared->dim_n_T_sero_pos_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_sero_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_sero_pos_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_T_sero_pos_4; ++l) {
-          internal.new_T_sero_pos[i - 1 + shared->dim_new_T_sero_pos_1 * (j - 1) + shared->dim_new_T_sero_pos_12 * (k - 1) + shared->dim_new_T_sero_pos_123 * (l - 1)] = internal.new_T_sero_pos[shared->dim_new_T_sero_pos_123 * (l - 1) + shared->dim_new_T_sero_pos_12 * 0 + shared->dim_new_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_T_sero_pre_to_T_sero_pos[shared->dim_n_T_sero_pre_to_T_sero_pos_12 * (l - 1) + shared->dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_sero_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_sero_pos_2; ++j) {
-        for (int k = 2; k <= shared->k_sero_pos; ++k) {
-          for (int l = 1; l <= shared->dim_new_T_sero_pos_4; ++l) {
-            internal.new_T_sero_pos[i - 1 + shared->dim_new_T_sero_pos_1 * (j - 1) + shared->dim_new_T_sero_pos_12 * (k - 1) + shared->dim_new_T_sero_pos_123 * (l - 1)] = internal.new_T_sero_pos[shared->dim_new_T_sero_pos_123 * (l - 1) + shared->dim_new_T_sero_pos_12 * (k - 1) + shared->dim_new_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_T_sero_pos_progress[shared->dim_n_T_sero_pos_progress_123 * (l - 1) + shared->dim_n_T_sero_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_sero_pos_progress_1 * (j - 1) + i - 1];
+            internal.new_T_sero_pos[i - 1 + shared->dim_new_T_sero_pos_1 * (j - 1) + shared->dim_new_T_sero_pos_12 * (k - 1) + shared->dim_new_T_sero_pos_123 * (l - 1)] = T_sero_pos[shared->dim_T_sero_pos_123 * (l - 1) + shared->dim_T_sero_pos_12 * (k - 1) + shared->dim_T_sero_pos_1 * (j - 1) + i - 1] - internal.n_T_sero_pos_progress[shared->dim_n_T_sero_pos_progress_123 * (l - 1) + shared->dim_n_T_sero_pos_progress_12 * (k - 1) + shared->dim_n_T_sero_pos_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_T_sero_pre_to_T_sero_pos[shared->dim_n_T_sero_pre_to_T_sero_pos_12 * (l - 1) + shared->dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1] : internal.n_T_sero_pos_progress[shared->dim_n_T_sero_pos_progress_123 * (l - 1) + shared->dim_n_T_sero_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_sero_pos_progress_1 * (j - 1) + i - 1]));
           }
         }
       }
@@ -3374,33 +2990,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_W_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_W_R_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_W_R_conf_4; ++l) {
-            internal.aux_ICU_W_R_conf[i - 1 + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_123 * (l - 1)] = ICU_W_R_conf[shared->dim_ICU_W_R_conf_123 * (l - 1) + shared->dim_ICU_W_R_conf_12 * (k - 1) + shared->dim_ICU_W_R_conf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_R_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_ICU_W_R_conf_4; ++l) {
-          internal.aux_ICU_W_R_conf[i - 1 + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_123 * (l - 1)] = internal.aux_ICU_W_R_conf[shared->dim_aux_ICU_W_R_conf_123 * (l - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_conf_to_ICU_W_R_conf[shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_12 * (l - 1) + shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_R_conf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_R_conf_4; ++l) {
-            internal.aux_ICU_W_R_conf[i - 1 + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_123 * (l - 1)] = internal.aux_ICU_W_R_conf[shared->dim_aux_ICU_W_R_conf_123 * (l - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + i - 1] + internal.n_ICU_W_R_conf_progress[shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_R_conf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_R_conf_4; ++l) {
-            internal.aux_ICU_W_R_conf[i - 1 + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_123 * (l - 1)] = internal.aux_ICU_W_R_conf[shared->dim_aux_ICU_W_R_conf_123 * (l - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + i - 1] - internal.n_ICU_W_R_conf_progress[shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_W_R_conf[i - 1 + shared->dim_aux_ICU_W_R_conf_1 * (j - 1) + shared->dim_aux_ICU_W_R_conf_12 * (k - 1) + shared->dim_aux_ICU_W_R_conf_123 * (l - 1)] = ICU_W_R_conf[shared->dim_ICU_W_R_conf_123 * (l - 1) + shared->dim_ICU_W_R_conf_12 * (k - 1) + shared->dim_ICU_W_R_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_pre_conf_to_ICU_W_R_conf[shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_12 * (l - 1) + shared->dim_n_ICU_pre_conf_to_ICU_W_R_conf_1 * (j - 1) + i - 1] : internal.n_ICU_W_R_conf_progress[shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + i - 1])) - internal.n_ICU_W_R_conf_progress[shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3409,33 +2999,7 @@ public:
       for (int j = 1; j <= shared->dim_aux_ICU_W_R_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_ICU_W_R_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_ICU_W_R_unconf_4; ++l) {
-            internal.aux_ICU_W_R_unconf[i - 1 + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_123 * (l - 1)] = ICU_W_R_unconf[shared->dim_ICU_W_R_unconf_123 * (l - 1) + shared->dim_ICU_W_R_unconf_12 * (k - 1) + shared->dim_ICU_W_R_unconf_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_R_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_ICU_W_R_unconf_4; ++l) {
-          internal.aux_ICU_W_R_unconf[i - 1 + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_123 * (l - 1)] = internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_unconf_to_ICU_W_R_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_12 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_R_unconf_2; ++j) {
-        for (int k = 2; k <= shared->k_ICU_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_R_unconf_4; ++l) {
-            internal.aux_ICU_W_R_unconf[i - 1 + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_123 * (l - 1)] = internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1] + internal.n_ICU_W_R_unconf_progress[shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_ICU_W_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_ICU_W_R_unconf_2; ++j) {
-        for (int k = 1; k <= shared->k_ICU_W_R; ++k) {
-          for (int l = 1; l <= shared->dim_aux_ICU_W_R_unconf_4; ++l) {
-            internal.aux_ICU_W_R_unconf[i - 1 + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_123 * (l - 1)] = internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_W_R_unconf_progress[shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + i - 1];
+            internal.aux_ICU_W_R_unconf[i - 1 + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_123 * (l - 1)] = ICU_W_R_unconf[shared->dim_ICU_W_R_unconf_123 * (l - 1) + shared->dim_ICU_W_R_unconf_12 * (k - 1) + shared->dim_ICU_W_R_unconf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_ICU_pre_unconf_to_ICU_W_R_unconf[shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_12 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_ICU_W_R_unconf_1 * (j - 1) + i - 1] : internal.n_ICU_W_R_unconf_progress[shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (k - 1 - 1) + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + i - 1])) - internal.n_ICU_W_R_unconf_progress[shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3602,33 +3166,9 @@ public:
     state_next[19] = odin_sum4<real_t>(internal.new_T_sero_pos.data(), 3, 13, 0, shared->dim_new_T_sero_pos_2, 0, shared->dim_new_T_sero_pos_3, 0, shared->dim_new_T_sero_pos_4, shared->dim_new_T_sero_pos_1, shared->dim_new_T_sero_pos_12, shared->dim_new_T_sero_pos_123);
     for (int i = 1; i <= shared->dim_aux_I_C_1_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_I_C_1_2; ++j) {
-        int k = 1;
-        int l = 1;
-        internal.aux_I_C_1[i - 1 + shared->dim_aux_I_C_1_1 * (j - 1) + shared->dim_aux_I_C_1_12 * (k - 1) + shared->dim_aux_I_C_1_123 * (l - 1)] = internal.n_II_P[shared->dim_n_II_P_123 * 0 + shared->dim_n_II_P_12 * (shared->k_P - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1] + internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_P_next_vacc_class_12 * (shared->k_P - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_C_1_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_C_1_2; ++j) {
-        int k = 1;
-        for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-          internal.aux_I_C_1[i - 1 + shared->dim_aux_I_C_1_1 * (j - 1) + shared->dim_aux_I_C_1_12 * (k - 1) + shared->dim_aux_I_C_1_123 * (l - 1)] = internal.n_II_P[shared->dim_n_II_P_123 * (l - 1) + shared->dim_n_II_P_12 * (shared->k_P - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1] + internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_II_P_next_vacc_class_12 * (shared->k_P - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_C_1_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_C_1_2; ++j) {
-        for (int k = 2; k <= shared->k_C_1; ++k) {
+        for (int k = 1; k <= shared->dim_aux_I_C_1_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_I_C_1_4; ++l) {
-            internal.aux_I_C_1[i - 1 + shared->dim_aux_I_C_1_1 * (j - 1) + shared->dim_aux_I_C_1_12 * (k - 1) + shared->dim_aux_I_C_1_123 * (l - 1)] = internal.n_I_C_1_progress[shared->dim_n_I_C_1_progress_123 * (l - 1) + shared->dim_n_I_C_1_progress_12 * (k - 1 - 1) + shared->dim_n_I_C_1_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_C_1_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_C_1_2; ++j) {
-        for (int k = 1; k <= shared->k_C_1; ++k) {
-          for (int l = 1; l <= shared->dim_aux_I_C_1_4; ++l) {
-            internal.aux_I_C_1[i - 1 + shared->dim_aux_I_C_1_1 * (j - 1) + shared->dim_aux_I_C_1_12 * (k - 1) + shared->dim_aux_I_C_1_123 * (l - 1)] = internal.aux_I_C_1[shared->dim_aux_I_C_1_123 * (l - 1) + shared->dim_aux_I_C_1_12 * (k - 1) + shared->dim_aux_I_C_1_1 * (j - 1) + i - 1] - internal.n_I_C_1_progress[shared->dim_n_I_C_1_progress_123 * (l - 1) + shared->dim_n_I_C_1_progress_12 * (k - 1) + shared->dim_n_I_C_1_progress_1 * (j - 1) + i - 1];
+            internal.aux_I_C_1[i - 1 + shared->dim_aux_I_C_1_1 * (j - 1) + shared->dim_aux_I_C_1_12 * (k - 1) + shared->dim_aux_I_C_1_123 * (l - 1)] = ((k == 1 ? ((l == 1 ? internal.n_II_P[shared->dim_n_II_P_123 * 0 + shared->dim_n_II_P_12 * (shared->k_P - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1] + internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_P_next_vacc_class_12 * (shared->k_P - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_II_P[shared->dim_n_II_P_123 * (l - 1) + shared->dim_n_II_P_12 * (shared->k_P - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1] + internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_II_P_next_vacc_class_12 * (shared->k_P - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1])) : internal.n_I_C_1_progress[shared->dim_n_I_C_1_progress_123 * (l - 1) + shared->dim_n_I_C_1_progress_12 * (k - 1 - 1) + shared->dim_n_I_C_1_progress_1 * (j - 1) + i - 1])) - internal.n_I_C_1_progress[shared->dim_n_I_C_1_progress_123 * (l - 1) + shared->dim_n_I_C_1_progress_12 * (k - 1) + shared->dim_n_I_C_1_progress_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -3671,15 +3211,9 @@ public:
       }
     }
     for (int i = 1; i <= shared->dim_n_S_progress_1; ++i) {
-      int j = 1;
-      for (int k = 1; k <= shared->dim_n_S_progress_3; ++k) {
-        internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1]), internal.lambda[shared->dim_lambda_1 * 0 + i - 1] / (real_t) odin_sum2<real_t>(internal.lambda.data(), i - 1, i, 0, shared->dim_lambda_2, shared->dim_lambda_1));
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_S_progress_1; ++i) {
-      for (int j = 2; j <= shared->n_strains; ++j) {
+      for (int j = 1; j <= shared->dim_n_S_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_S_progress_3; ++k) {
-          internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1] - odin_sum3<real_t>(internal.n_S_progress.data(), i - 1, i, 0, j - 1, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12)), internal.lambda[shared->dim_lambda_1 * (j - 1) + i - 1] / (real_t) odin_sum2<real_t>(internal.lambda.data(), i - 1, i, j - 1, shared->n_strains, shared->dim_lambda_1));
+          internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = (j == 1 ? dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1]), internal.lambda[shared->dim_lambda_1 * 0 + i - 1] / (real_t) odin_sum2<real_t>(internal.lambda.data(), i - 1, i, 0, shared->dim_lambda_2, shared->dim_lambda_1)) : dust::distr::rbinom(rng_state, std::round(internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * (k - 1) + i - 1] - odin_sum3<real_t>(internal.n_S_progress.data(), i - 1, i, 0, j - 1, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12)), internal.lambda[shared->dim_lambda_1 * (j - 1) + i - 1] / (real_t) odin_sum2<real_t>(internal.lambda.data(), i - 1, i, j - 1, shared->n_strains, shared->dim_lambda_1)));
         }
       }
     }
@@ -3693,30 +3227,16 @@ public:
     for (int i = 1; i <= shared->dim_n_com_to_T_sero_pre_1; ++i) {
       for (int j = 1; j <= shared->dim_n_com_to_T_sero_pre_2; ++j) {
         int k = 1;
-        int l = 1;
-        internal.n_com_to_T_sero_pre[i - 1 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + shared->dim_n_com_to_T_sero_pre_12 * (k - 1) + shared->dim_n_com_to_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[shared->dim_n_EE_123 * 0 + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), shared->p_sero_pre_1);
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_com_to_T_sero_pre_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_com_to_T_sero_pre_2; ++j) {
-        int k = 1;
-        for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-          internal.n_com_to_T_sero_pre[i - 1 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + shared->dim_n_com_to_T_sero_pre_12 * (k - 1) + shared->dim_n_com_to_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]), shared->p_sero_pre_1);
+        for (int l = 1; l <= shared->dim_n_com_to_T_sero_pre_4; ++l) {
+          internal.n_com_to_T_sero_pre[i - 1 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + shared->dim_n_com_to_T_sero_pre_12 * (k - 1) + shared->dim_n_com_to_T_sero_pre_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]))), shared->p_sero_pre_1);
         }
       }
     }
     for (int i = 1; i <= shared->dim_n_com_to_T_sero_pre_1; ++i) {
       for (int j = 1; j <= shared->dim_n_com_to_T_sero_pre_2; ++j) {
         int k = 2;
-        int l = 1;
-        internal.n_com_to_T_sero_pre[i - 1 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + shared->dim_n_com_to_T_sero_pre_12 * (k - 1) + shared->dim_n_com_to_T_sero_pre_123 * (l - 1)] = internal.n_EE[shared->dim_n_EE_123 * 0 + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_com_to_T_sero_pre[shared->dim_n_com_to_T_sero_pre_123 * 0 + shared->dim_n_com_to_T_sero_pre_12 * 0 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_com_to_T_sero_pre_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_com_to_T_sero_pre_2; ++j) {
-        int k = 2;
-        for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-          internal.n_com_to_T_sero_pre[i - 1 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + shared->dim_n_com_to_T_sero_pre_12 * (k - 1) + shared->dim_n_com_to_T_sero_pre_123 * (l - 1)] = internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_com_to_T_sero_pre[shared->dim_n_com_to_T_sero_pre_123 * (l - 1) + shared->dim_n_com_to_T_sero_pre_12 * 0 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + i - 1];
+        for (int l = 1; l <= shared->dim_n_com_to_T_sero_pre_4; ++l) {
+          internal.n_com_to_T_sero_pre[i - 1 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + shared->dim_n_com_to_T_sero_pre_12 * (k - 1) + shared->dim_n_com_to_T_sero_pre_123 * (l - 1)] = internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (shared->k_E - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_EE_next_vacc_class_12 * (shared->k_E - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1])) - internal.n_com_to_T_sero_pre[shared->dim_n_com_to_T_sero_pre_123 * (l - 1) + shared->dim_n_com_to_T_sero_pre_12 * 0 + shared->dim_n_com_to_T_sero_pre_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3774,75 +3294,9 @@ public:
     }
     for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_I_A_4; ++l) {
-          internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.n_EI_A[shared->dim_n_EI_A_12 * (l - 1) + shared->dim_n_EI_A_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        for (int k = 2; k <= shared->k_A; ++k) {
-          for (int l = 1; l <= shared->dim_aux_I_A_4; ++l) {
-            internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.n_II_A[shared->dim_n_II_A_123 * (l - 1) + shared->dim_n_II_A_12 * (k - 1 - 1) + shared->dim_n_II_A_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_I_A_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_I_A_4; ++l) {
-            internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1] - internal.n_II_A[shared->dim_n_II_A_123 * (l - 1) + shared->dim_n_II_A_12 * (k - 1) + shared->dim_n_II_A_1 * (j - 1) + i - 1] - internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (l - 1) + shared->dim_n_II_A_next_vacc_class_12 * (k - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_I_A_3; ++k) {
-          int l = 1;
-          internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1] + internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_A_next_vacc_class_12 * 0 + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_I_A_3; ++k) {
-          for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-            internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1] + internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        int k = 1;
-        int l = 1;
-        internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1] + internal.n_EI_A_next_vacc_class[shared->dim_n_EI_A_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_EI_A_next_vacc_class_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        int k = 1;
-        for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-          internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1] + internal.n_EI_A_next_vacc_class[shared->dim_n_EI_A_next_vacc_class_12 * (l - 1 - 1) + shared->dim_n_EI_A_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        for (int k = 2; k <= shared->k_A; ++k) {
-          int l = 1;
-          internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1] + internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_A_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        for (int k = 2; k <= shared->k_A; ++k) {
-          for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-            internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1] + internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_II_A_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1];
+            internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = ((k == 1 ? internal.n_EI_A[shared->dim_n_EI_A_12 * (l - 1) + shared->dim_n_EI_A_1 * (j - 1) + i - 1] : internal.n_II_A[shared->dim_n_II_A_123 * (l - 1) + shared->dim_n_II_A_12 * (k - 1 - 1) + shared->dim_n_II_A_1 * (j - 1) + i - 1])) - internal.n_II_A[shared->dim_n_II_A_123 * (l - 1) + shared->dim_n_II_A_12 * (k - 1) + shared->dim_n_II_A_1 * (j - 1) + i - 1] - internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (l - 1) + shared->dim_n_II_A_next_vacc_class_12 * (k - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1])) + ((k == 1 ? ((l == 1 ? internal.n_EI_A_next_vacc_class[shared->dim_n_EI_A_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_EI_A_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_EI_A_next_vacc_class[shared->dim_n_EI_A_next_vacc_class_12 * (l - 1 - 1) + shared->dim_n_EI_A_next_vacc_class_1 * (j - 1) + i - 1])) : ((l == 1 ? internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_A_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_II_A_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1]))));
           }
         }
       }
@@ -3896,16 +3350,8 @@ public:
       for (int j = 1; j <= shared->dim_new_ICU_pre_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_new_ICU_pre_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_new_ICU_pre_conf_4; ++l) {
-            internal.new_ICU_pre_conf[i - 1 + shared->dim_new_ICU_pre_conf_1 * (j - 1) + shared->dim_new_ICU_pre_conf_12 * (k - 1) + shared->dim_new_ICU_pre_conf_123 * (l - 1)] = internal.aux_ICU_pre_conf[shared->dim_aux_ICU_pre_conf_123 * (l - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_unconf_to_conf[shared->dim_n_ICU_pre_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_conf_1 * (j - 1) + i - 1];
+            internal.new_ICU_pre_conf[i - 1 + shared->dim_new_ICU_pre_conf_1 * (j - 1) + shared->dim_new_ICU_pre_conf_12 * (k - 1) + shared->dim_new_ICU_pre_conf_123 * (l - 1)] = internal.aux_ICU_pre_conf[shared->dim_aux_ICU_pre_conf_123 * (l - 1) + shared->dim_aux_ICU_pre_conf_12 * (k - 1) + shared->dim_aux_ICU_pre_conf_1 * (j - 1) + i - 1] + internal.n_ICU_pre_unconf_to_conf[shared->dim_n_ICU_pre_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_I_C_2_to_ICU_pre_conf[shared->dim_n_I_C_2_to_ICU_pre_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_conf_1 * (j - 1) + i - 1] : 0));
           }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_ICU_pre_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_ICU_pre_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_ICU_pre_conf_4; ++l) {
-          internal.new_ICU_pre_conf[i - 1 + shared->dim_new_ICU_pre_conf_1 * (j - 1) + shared->dim_new_ICU_pre_conf_12 * (k - 1) + shared->dim_new_ICU_pre_conf_123 * (l - 1)] = internal.new_ICU_pre_conf[shared->dim_new_ICU_pre_conf_123 * (l - 1) + shared->dim_new_ICU_pre_conf_12 * 0 + shared->dim_new_ICU_pre_conf_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_ICU_pre_conf[shared->dim_n_I_C_2_to_ICU_pre_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_conf_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3913,16 +3359,8 @@ public:
       for (int j = 1; j <= shared->dim_new_ICU_pre_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_new_ICU_pre_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_new_ICU_pre_unconf_4; ++l) {
-            internal.new_ICU_pre_unconf[i - 1 + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_123 * (l - 1)] = internal.aux_ICU_pre_unconf[shared->dim_aux_ICU_pre_unconf_123 * (l - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_pre_unconf_to_conf[shared->dim_n_ICU_pre_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_conf_1 * (j - 1) + i - 1];
+            internal.new_ICU_pre_unconf[i - 1 + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_123 * (l - 1)] = internal.aux_ICU_pre_unconf[shared->dim_aux_ICU_pre_unconf_123 * (l - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_pre_unconf_to_conf[shared->dim_n_ICU_pre_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_I_C_2_to_ICU_pre[shared->dim_n_I_C_2_to_ICU_pre_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_1 * (j - 1) + i - 1] - internal.n_I_C_2_to_ICU_pre_conf[shared->dim_n_I_C_2_to_ICU_pre_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_conf_1 * (j - 1) + i - 1] : 0));
           }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_ICU_pre_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_ICU_pre_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_ICU_pre_unconf_4; ++l) {
-          internal.new_ICU_pre_unconf[i - 1 + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_123 * (l - 1)] = internal.new_ICU_pre_unconf[shared->dim_new_ICU_pre_unconf_123 * (l - 1) + shared->dim_new_ICU_pre_unconf_12 * 0 + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_ICU_pre[shared->dim_n_I_C_2_to_ICU_pre_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_1 * (j - 1) + i - 1] - internal.n_I_C_2_to_ICU_pre_conf[shared->dim_n_I_C_2_to_ICU_pre_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_conf_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -3938,40 +3376,14 @@ public:
     for (int i = 1; i <= shared->dim_new_R_1; ++i) {
       for (int j = 1; j <= shared->dim_new_R_2; ++j) {
         for (int k = 1; k <= shared->dim_new_R_3; ++k) {
-          internal.new_R[i - 1 + shared->dim_new_R_1 * (j - 1) + shared->dim_new_R_12 * (k - 1)] = R[shared->dim_R_12 * (k - 1) + shared->dim_R_1 * (j - 1) + i - 1] + internal.n_II_A[shared->dim_n_II_A_123 * (k - 1) + shared->dim_n_II_A_12 * (shared->k_A - 1) + shared->dim_n_II_A_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_R[shared->dim_n_I_C_2_to_R_12 * (k - 1) + shared->dim_n_I_C_2_to_R_1 * (j - 1) + i - 1] + internal.n_H_R_conf_progress[shared->dim_n_H_R_conf_progress_123 * (k - 1) + shared->dim_n_H_R_conf_progress_12 * (shared->k_H_R - 1) + shared->dim_n_H_R_conf_progress_1 * (j - 1) + i - 1] + internal.n_H_R_unconf_progress[shared->dim_n_H_R_unconf_progress_123 * (k - 1) + shared->dim_n_H_R_unconf_progress_12 * (shared->k_H_R - 1) + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + i - 1] + internal.n_W_R_conf_progress[shared->dim_n_W_R_conf_progress_123 * (k - 1) + shared->dim_n_W_R_conf_progress_12 * (shared->k_W_R - 1) + shared->dim_n_W_R_conf_progress_1 * (j - 1) + i - 1] + internal.n_W_R_unconf_progress[shared->dim_n_W_R_unconf_progress_123 * (k - 1) + shared->dim_n_W_R_unconf_progress_12 * (shared->k_W_R - 1) + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1] - internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_R_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_R_2; ++j) {
-        int k = 1;
-        internal.new_R[i - 1 + shared->dim_new_R_1 * (j - 1) + shared->dim_new_R_12 * (k - 1)] = internal.new_R[shared->dim_new_R_12 * 0 + shared->dim_new_R_1 * (j - 1) + i - 1] + internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_A_next_vacc_class_12 * (shared->k_A - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1] + internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_R_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_R_2; ++j) {
-        for (int k = 2; k <= shared->n_vacc_classes; ++k) {
-          internal.new_R[i - 1 + shared->dim_new_R_1 * (j - 1) + shared->dim_new_R_12 * (k - 1)] = internal.new_R[shared->dim_new_R_12 * (k - 1) + shared->dim_new_R_1 * (j - 1) + i - 1] + internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (k - 1 - 1) + shared->dim_n_II_A_next_vacc_class_12 * (shared->k_A - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1] + internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_R[i - 1 + shared->dim_new_R_1 * (j - 1) + shared->dim_new_R_12 * (k - 1)] = R[shared->dim_R_12 * (k - 1) + shared->dim_R_1 * (j - 1) + i - 1] + internal.n_II_A[shared->dim_n_II_A_123 * (k - 1) + shared->dim_n_II_A_12 * (shared->k_A - 1) + shared->dim_n_II_A_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_R[shared->dim_n_I_C_2_to_R_12 * (k - 1) + shared->dim_n_I_C_2_to_R_1 * (j - 1) + i - 1] + internal.n_H_R_conf_progress[shared->dim_n_H_R_conf_progress_123 * (k - 1) + shared->dim_n_H_R_conf_progress_12 * (shared->k_H_R - 1) + shared->dim_n_H_R_conf_progress_1 * (j - 1) + i - 1] + internal.n_H_R_unconf_progress[shared->dim_n_H_R_unconf_progress_123 * (k - 1) + shared->dim_n_H_R_unconf_progress_12 * (shared->k_H_R - 1) + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + i - 1] + internal.n_W_R_conf_progress[shared->dim_n_W_R_conf_progress_123 * (k - 1) + shared->dim_n_W_R_conf_progress_12 * (shared->k_W_R - 1) + shared->dim_n_W_R_conf_progress_1 * (j - 1) + i - 1] + internal.n_W_R_unconf_progress[shared->dim_n_W_R_unconf_progress_123 * (k - 1) + shared->dim_n_W_R_unconf_progress_12 * (shared->k_W_R - 1) + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + i - 1] - internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1] - internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_A_next_vacc_class_12 * (shared->k_A - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1] + internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_II_A_next_vacc_class[shared->dim_n_II_A_next_vacc_class_123 * (k - 1 - 1) + shared->dim_n_II_A_next_vacc_class_12 * (shared->k_A - 1) + shared->dim_n_II_A_next_vacc_class_1 * (j - 1) + i - 1] + internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1]));
         }
       }
     }
     for (int i = 1; i <= shared->dim_new_T_PCR_neg_1; ++i) {
       for (int j = 1; j <= shared->dim_new_T_PCR_neg_2; ++j) {
         for (int k = 1; k <= shared->dim_new_T_PCR_neg_3; ++k) {
-          internal.new_T_PCR_neg[i - 1 + shared->dim_new_T_PCR_neg_1 * (j - 1) + shared->dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[shared->dim_T_PCR_neg_12 * (k - 1) + shared->dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (k - 1) + shared->dim_n_T_PCR_pos_progress_12 * (shared->k_PCR_pos - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_neg_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_neg_2; ++j) {
-        int k = 1;
-        internal.new_T_PCR_neg[i - 1 + shared->dim_new_T_PCR_neg_1 * (j - 1) + shared->dim_new_T_PCR_neg_12 * (k - 1)] = internal.new_T_PCR_neg[shared->dim_new_T_PCR_neg_12 * 0 + shared->dim_new_T_PCR_neg_1 * (j - 1) + i - 1] + shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_neg_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_neg_2; ++j) {
-        for (int k = 2; k <= shared->n_vacc_classes; ++k) {
-          internal.new_T_PCR_neg[i - 1 + shared->dim_new_T_PCR_neg_1 * (j - 1) + shared->dim_new_T_PCR_neg_12 * (k - 1)] = internal.new_T_PCR_neg[shared->dim_new_T_PCR_neg_12 * (k - 1) + shared->dim_new_T_PCR_neg_1 * (j - 1) + i - 1] + shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_T_PCR_neg[i - 1 + shared->dim_new_T_PCR_neg_1 * (j - 1) + shared->dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[shared->dim_T_PCR_neg_12 * (k - 1) + shared->dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (k - 1) + shared->dim_n_T_PCR_pos_progress_12 * (shared->k_PCR_pos - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1] + shared->model_pcr_and_serology * ((k == 1 ? internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1]));
         }
       }
     }
@@ -3979,24 +3391,7 @@ public:
       for (int j = 1; j <= shared->dim_new_T_PCR_pre_2; ++j) {
         for (int k = 1; k <= shared->dim_new_T_PCR_pre_3; ++k) {
           for (int l = 1; l <= shared->dim_new_T_PCR_pre_4; ++l) {
-            internal.new_T_PCR_pre[i - 1 + shared->dim_new_T_PCR_pre_1 * (j - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[shared->dim_T_PCR_pre_123 * (l - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_1 * (j - 1) + i - 1] - internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_pre_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_pre_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_T_PCR_pre_4; ++l) {
-          internal.new_T_PCR_pre[i - 1 + shared->dim_new_T_PCR_pre_1 * (j - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_123 * (l - 1)] = internal.new_T_PCR_pre[shared->dim_new_T_PCR_pre_123 * (l - 1) + shared->dim_new_T_PCR_pre_12 * 0 + shared->dim_new_T_PCR_pre_1 * (j - 1) + i - 1] + internal.n_S_progress[shared->dim_n_S_progress_12 * (l - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_pre_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_pre_2; ++j) {
-        for (int k = 2; k <= shared->k_PCR_pre; ++k) {
-          for (int l = 1; l <= shared->dim_new_T_PCR_pre_4; ++l) {
-            internal.new_T_PCR_pre[i - 1 + shared->dim_new_T_PCR_pre_1 * (j - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_123 * (l - 1)] = internal.new_T_PCR_pre[shared->dim_new_T_PCR_pre_123 * (l - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_1 * (j - 1) + i - 1] + internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1];
+            internal.new_T_PCR_pre[i - 1 + shared->dim_new_T_PCR_pre_1 * (j - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[shared->dim_T_PCR_pre_123 * (l - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_1 * (j - 1) + i - 1] - internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_S_progress[shared->dim_n_S_progress_12 * (l - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] : internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1]));
           }
         }
       }
@@ -4004,20 +3399,7 @@ public:
     for (int i = 1; i <= shared->dim_new_T_sero_neg_1; ++i) {
       for (int j = 1; j <= shared->dim_new_T_sero_neg_2; ++j) {
         for (int k = 1; k <= shared->dim_new_T_sero_neg_3; ++k) {
-          internal.new_T_sero_neg[i - 1 + shared->dim_new_T_sero_neg_1 * (j - 1) + shared->dim_new_T_sero_neg_12 * (k - 1)] = T_sero_neg[shared->dim_T_sero_neg_12 * (k - 1) + shared->dim_T_sero_neg_1 * (j - 1) + i - 1] + odin_sum4<real_t>(internal.n_T_sero_pre_progress.data(), i - 1, i, j - 1, j, 0, shared->dim_n_T_sero_pre_progress_3, k - 1, k, shared->dim_n_T_sero_pre_progress_1, shared->dim_n_T_sero_pre_progress_12, shared->dim_n_T_sero_pre_progress_123) - internal.n_T_sero_pre_to_T_sero_pos[shared->dim_n_T_sero_pre_to_T_sero_pos_12 * (k - 1) + shared->dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_T_sero_pos_progress[shared->dim_n_T_sero_pos_progress_123 * (k - 1) + shared->dim_n_T_sero_pos_progress_12 * (shared->k_sero_pos - 1) + shared->dim_n_T_sero_pos_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_sero_neg_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_sero_neg_2; ++j) {
-        int k = 1;
-        internal.new_T_sero_neg[i - 1 + shared->dim_new_T_sero_neg_1 * (j - 1) + shared->dim_new_T_sero_neg_12 * (k - 1)] = internal.new_T_sero_neg[shared->dim_new_T_sero_neg_12 * 0 + shared->dim_new_T_sero_neg_1 * (j - 1) + i - 1] + shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_sero_neg_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_sero_neg_2; ++j) {
-        for (int k = 2; k <= shared->n_vacc_classes; ++k) {
-          internal.new_T_sero_neg[i - 1 + shared->dim_new_T_sero_neg_1 * (j - 1) + shared->dim_new_T_sero_neg_12 * (k - 1)] = internal.new_T_sero_neg[shared->dim_new_T_sero_neg_12 * (k - 1) + shared->dim_new_T_sero_neg_1 * (j - 1) + i - 1] + shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1];
+          internal.new_T_sero_neg[i - 1 + shared->dim_new_T_sero_neg_1 * (j - 1) + shared->dim_new_T_sero_neg_12 * (k - 1)] = T_sero_neg[shared->dim_T_sero_neg_12 * (k - 1) + shared->dim_T_sero_neg_1 * (j - 1) + i - 1] + odin_sum4<real_t>(internal.n_T_sero_pre_progress.data(), i - 1, i, j - 1, j, 0, shared->dim_n_T_sero_pre_progress_3, k - 1, k, shared->dim_n_T_sero_pre_progress_1, shared->dim_n_T_sero_pre_progress_12, shared->dim_n_T_sero_pre_progress_123) - internal.n_T_sero_pre_to_T_sero_pos[shared->dim_n_T_sero_pre_to_T_sero_pos_12 * (k - 1) + shared->dim_n_T_sero_pre_to_T_sero_pos_1 * (j - 1) + i - 1] + internal.n_T_sero_pos_progress[shared->dim_n_T_sero_pos_progress_123 * (k - 1) + shared->dim_n_T_sero_pos_progress_12 * (shared->k_sero_pos - 1) + shared->dim_n_T_sero_pos_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1] - shared->model_pcr_and_serology * internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1] + shared->model_pcr_and_serology * ((k == 1 ? internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_R_next_vacc_class[shared->dim_n_R_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_R_next_vacc_class_1 * (j - 1) + i - 1]));
         }
       }
     }
@@ -4059,75 +3441,9 @@ public:
     }
     for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_I_P_4; ++l) {
-          internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.n_EI_P[shared->dim_n_EI_P_12 * (l - 1) + shared->dim_n_EI_P_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        for (int k = 2; k <= shared->k_P; ++k) {
-          for (int l = 1; l <= shared->dim_aux_I_P_4; ++l) {
-            internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.n_II_P[shared->dim_n_II_P_123 * (l - 1) + shared->dim_n_II_P_12 * (k - 1 - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_I_P_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_I_P_4; ++l) {
-            internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1] - internal.n_II_P[shared->dim_n_II_P_123 * (l - 1) + shared->dim_n_II_P_12 * (k - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1] - internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (l - 1) + shared->dim_n_II_P_next_vacc_class_12 * (k - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_I_P_3; ++k) {
-          int l = 1;
-          internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1] + internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_P_next_vacc_class_12 * 0 + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_I_P_3; ++k) {
-          for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-            internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1] + internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        int k = 1;
-        int l = 1;
-        internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1] + internal.n_EI_P_next_vacc_class[shared->dim_n_EI_P_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_EI_P_next_vacc_class_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        int k = 1;
-        for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-          internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1] + internal.n_EI_P_next_vacc_class[shared->dim_n_EI_P_next_vacc_class_12 * (l - 1 - 1) + shared->dim_n_EI_P_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        for (int k = 2; k <= shared->k_P; ++k) {
-          int l = 1;
-          internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1] + internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_P_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        for (int k = 2; k <= shared->k_P; ++k) {
-          for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-            internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1] + internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_II_P_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1];
+            internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = ((k == 1 ? internal.n_EI_P[shared->dim_n_EI_P_12 * (l - 1) + shared->dim_n_EI_P_1 * (j - 1) + i - 1] : internal.n_II_P[shared->dim_n_II_P_123 * (l - 1) + shared->dim_n_II_P_12 * (k - 1 - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1])) - internal.n_II_P[shared->dim_n_II_P_123 * (l - 1) + shared->dim_n_II_P_12 * (k - 1) + shared->dim_n_II_P_1 * (j - 1) + i - 1] - internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (l - 1) + shared->dim_n_II_P_next_vacc_class_12 * (k - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1])) + ((k == 1 ? ((l == 1 ? internal.n_EI_P_next_vacc_class[shared->dim_n_EI_P_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_EI_P_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_EI_P_next_vacc_class[shared->dim_n_EI_P_next_vacc_class_12 * (l - 1 - 1) + shared->dim_n_EI_P_next_vacc_class_1 * (j - 1) + i - 1])) : ((l == 1 ? internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_II_P_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_II_P_next_vacc_class[shared->dim_n_II_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_II_P_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_II_P_next_vacc_class_1 * (j - 1) + i - 1]))));
           }
         }
       }
@@ -4169,12 +3485,8 @@ public:
       }
     }
     for (int i = 1; i <= shared->dim_new_S_1; ++i) {
-      int j = 1;
-      internal.new_S[i - 1 + shared->dim_new_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * 0 + i - 1] + internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (shared->n_vacc_classes - 1) + i - 1] + odin_sum3<real_t>(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, shared->n_vacc_classes - 1, shared->n_vacc_classes, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12);
-    }
-    for (int i = 1; i <= shared->dim_new_S_1; ++i) {
-      for (int j = 2; j <= shared->n_vacc_classes; ++j) {
-        internal.new_S[i - 1 + shared->dim_new_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1] + internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1 - 1) + i - 1] + odin_sum3<real_t>(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, j - 1 - 1, j - 1, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12);
+      for (int j = 1; j <= shared->dim_new_S_2; ++j) {
+        internal.new_S[i - 1 + shared->dim_new_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1] + ((j == 1 ? internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (shared->n_vacc_classes - 1) + i - 1] + odin_sum3<real_t>(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, shared->n_vacc_classes - 1, shared->n_vacc_classes, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12) : internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1 - 1) + i - 1] + odin_sum3<real_t>(internal.n_RS_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_RS_next_vacc_class_2, j - 1 - 1, j - 1, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12)));
       }
     }
     real_t new_sympt_cases = odin_sum1<real_t>(internal.n_EI_P.data(), 0, shared->dim_n_EI_P) + odin_sum1<real_t>(internal.n_EI_P_next_vacc_class.data(), 0, shared->dim_n_EI_P_next_vacc_class);
@@ -4273,75 +3585,9 @@ public:
     state_next[2] = (fmodr<real_t>(step, shared->steps_per_day) == 0 ? delta_new_conf : new_conf_inc + delta_new_conf);
     for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_aux_E_4; ++l) {
-          internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.n_SE[shared->dim_n_SE_12 * (l - 1) + shared->dim_n_SE_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        for (int k = 2; k <= shared->k_E; ++k) {
-          for (int l = 1; l <= shared->dim_aux_E_4; ++l) {
-            internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (k - 1 - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_E_3; ++k) {
           for (int l = 1; l <= shared->dim_aux_E_4; ++l) {
-            internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.aux_E[shared->dim_aux_E_123 * (l - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_1 * (j - 1) + i - 1] - internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (k - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] - internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1) + shared->dim_n_EE_next_vacc_class_12 * (k - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_E_next_vacc_class[shared->dim_n_E_next_vacc_class_123 * (l - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_E_3; ++k) {
-          int l = 1;
-          internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.aux_E[shared->dim_aux_E_123 * 0 + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_1 * (j - 1) + i - 1] + internal.n_E_next_vacc_class[shared->dim_n_E_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_E_3; ++k) {
-          for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-            internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.aux_E[shared->dim_aux_E_123 * (l - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_1 * (j - 1) + i - 1] + internal.n_E_next_vacc_class[shared->dim_n_E_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        int k = 1;
-        int l = 1;
-        internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.aux_E[shared->dim_aux_E_123 * 0 + shared->dim_aux_E_12 * 0 + shared->dim_aux_E_1 * (j - 1) + i - 1] + internal.n_SE_next_vacc_class[shared->dim_n_SE_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_SE_next_vacc_class_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        int k = 1;
-        for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-          internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.aux_E[shared->dim_aux_E_123 * (l - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_1 * (j - 1) + i - 1] + internal.n_SE_next_vacc_class[shared->dim_n_SE_next_vacc_class_12 * (l - 1 - 1) + shared->dim_n_SE_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        for (int k = 2; k <= shared->k_E; ++k) {
-          int l = 1;
-          internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.aux_E[shared->dim_aux_E_123 * (l - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_EE_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
-        for (int k = 2; k <= shared->k_E; ++k) {
-          for (int l = 2; l <= shared->n_vacc_classes; ++l) {
-            internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = internal.aux_E[shared->dim_aux_E_123 * (l - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_1 * (j - 1) + i - 1] + internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_EE_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1];
+            internal.aux_E[i - 1 + shared->dim_aux_E_1 * (j - 1) + shared->dim_aux_E_12 * (k - 1) + shared->dim_aux_E_123 * (l - 1)] = ((k == 1 ? internal.n_SE[shared->dim_n_SE_12 * (l - 1) + shared->dim_n_SE_1 * (j - 1) + i - 1] : internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (k - 1 - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1])) - internal.n_EE[shared->dim_n_EE_123 * (l - 1) + shared->dim_n_EE_12 * (k - 1) + shared->dim_n_EE_1 * (j - 1) + i - 1] - internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1) + shared->dim_n_EE_next_vacc_class_12 * (k - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] - internal.n_E_next_vacc_class[shared->dim_n_E_next_vacc_class_123 * (l - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_E_next_vacc_class[shared->dim_n_E_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_E_next_vacc_class[shared->dim_n_E_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_E_next_vacc_class_12 * (k - 1) + shared->dim_n_E_next_vacc_class_1 * (j - 1) + i - 1])) + ((k == 1 ? ((l == 1 ? internal.n_SE_next_vacc_class[shared->dim_n_SE_next_vacc_class_12 * (shared->n_vacc_classes - 1) + shared->dim_n_SE_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_SE_next_vacc_class[shared->dim_n_SE_next_vacc_class_12 * (l - 1 - 1) + shared->dim_n_SE_next_vacc_class_1 * (j - 1) + i - 1])) : ((l == 1 ? internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_EE_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_EE_next_vacc_class[shared->dim_n_EE_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_EE_next_vacc_class_12 * (k - 1 - 1) + shared->dim_n_EE_next_vacc_class_1 * (j - 1) + i - 1]))));
           }
         }
       }
@@ -4357,16 +3603,8 @@ public:
       for (int j = 1; j <= shared->dim_new_H_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_new_H_D_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_new_H_D_conf_4; ++l) {
-            internal.new_H_D_conf[i - 1 + shared->dim_new_H_D_conf_1 * (j - 1) + shared->dim_new_H_D_conf_12 * (k - 1) + shared->dim_new_H_D_conf_123 * (l - 1)] = internal.aux_H_D_conf[shared->dim_aux_H_D_conf_123 * (l - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_1 * (j - 1) + i - 1] + internal.n_H_D_unconf_to_conf[shared->dim_n_H_D_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_D_unconf_to_conf_1 * (j - 1) + i - 1];
+            internal.new_H_D_conf[i - 1 + shared->dim_new_H_D_conf_1 * (j - 1) + shared->dim_new_H_D_conf_12 * (k - 1) + shared->dim_new_H_D_conf_123 * (l - 1)] = internal.aux_H_D_conf[shared->dim_aux_H_D_conf_123 * (l - 1) + shared->dim_aux_H_D_conf_12 * (k - 1) + shared->dim_aux_H_D_conf_1 * (j - 1) + i - 1] + internal.n_H_D_unconf_to_conf[shared->dim_n_H_D_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_D_unconf_to_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_I_C_2_to_H_D_conf[shared->dim_n_I_C_2_to_H_D_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_D_conf_1 * (j - 1) + i - 1] : 0));
           }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_H_D_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_H_D_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_H_D_conf_4; ++l) {
-          internal.new_H_D_conf[i - 1 + shared->dim_new_H_D_conf_1 * (j - 1) + shared->dim_new_H_D_conf_12 * (k - 1) + shared->dim_new_H_D_conf_123 * (l - 1)] = internal.new_H_D_conf[shared->dim_new_H_D_conf_123 * (l - 1) + shared->dim_new_H_D_conf_12 * 0 + shared->dim_new_H_D_conf_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_H_D_conf[shared->dim_n_I_C_2_to_H_D_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_D_conf_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -4374,16 +3612,8 @@ public:
       for (int j = 1; j <= shared->dim_new_H_D_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_new_H_D_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_new_H_D_unconf_4; ++l) {
-            internal.new_H_D_unconf[i - 1 + shared->dim_new_H_D_unconf_1 * (j - 1) + shared->dim_new_H_D_unconf_12 * (k - 1) + shared->dim_new_H_D_unconf_123 * (l - 1)] = internal.aux_H_D_unconf[shared->dim_aux_H_D_unconf_123 * (l - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_1 * (j - 1) + i - 1] - internal.n_H_D_unconf_to_conf[shared->dim_n_H_D_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_D_unconf_to_conf_1 * (j - 1) + i - 1];
+            internal.new_H_D_unconf[i - 1 + shared->dim_new_H_D_unconf_1 * (j - 1) + shared->dim_new_H_D_unconf_12 * (k - 1) + shared->dim_new_H_D_unconf_123 * (l - 1)] = internal.aux_H_D_unconf[shared->dim_aux_H_D_unconf_123 * (l - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_1 * (j - 1) + i - 1] - internal.n_H_D_unconf_to_conf[shared->dim_n_H_D_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_D_unconf_to_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_I_C_2_to_H_D[shared->dim_n_I_C_2_to_H_D_12 * (l - 1) + shared->dim_n_I_C_2_to_H_D_1 * (j - 1) + i - 1] - internal.n_I_C_2_to_H_D_conf[shared->dim_n_I_C_2_to_H_D_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_D_conf_1 * (j - 1) + i - 1] : 0));
           }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_H_D_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_H_D_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_H_D_unconf_4; ++l) {
-          internal.new_H_D_unconf[i - 1 + shared->dim_new_H_D_unconf_1 * (j - 1) + shared->dim_new_H_D_unconf_12 * (k - 1) + shared->dim_new_H_D_unconf_123 * (l - 1)] = internal.new_H_D_unconf[shared->dim_new_H_D_unconf_123 * (l - 1) + shared->dim_new_H_D_unconf_12 * 0 + shared->dim_new_H_D_unconf_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_H_D[shared->dim_n_I_C_2_to_H_D_12 * (l - 1) + shared->dim_n_I_C_2_to_H_D_1 * (j - 1) + i - 1] - internal.n_I_C_2_to_H_D_conf[shared->dim_n_I_C_2_to_H_D_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_D_conf_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -4431,16 +3661,8 @@ public:
       for (int j = 1; j <= shared->dim_new_H_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_new_H_R_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_new_H_R_conf_4; ++l) {
-            internal.new_H_R_conf[i - 1 + shared->dim_new_H_R_conf_1 * (j - 1) + shared->dim_new_H_R_conf_12 * (k - 1) + shared->dim_new_H_R_conf_123 * (l - 1)] = internal.aux_H_R_conf[shared->dim_aux_H_R_conf_123 * (l - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_1 * (j - 1) + i - 1] + internal.n_H_R_unconf_to_conf[shared->dim_n_H_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_R_unconf_to_conf_1 * (j - 1) + i - 1];
+            internal.new_H_R_conf[i - 1 + shared->dim_new_H_R_conf_1 * (j - 1) + shared->dim_new_H_R_conf_12 * (k - 1) + shared->dim_new_H_R_conf_123 * (l - 1)] = internal.aux_H_R_conf[shared->dim_aux_H_R_conf_123 * (l - 1) + shared->dim_aux_H_R_conf_12 * (k - 1) + shared->dim_aux_H_R_conf_1 * (j - 1) + i - 1] + internal.n_H_R_unconf_to_conf[shared->dim_n_H_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_R_unconf_to_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_I_C_2_to_H_R_conf[shared->dim_n_I_C_2_to_H_R_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_R_conf_1 * (j - 1) + i - 1] : 0));
           }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_H_R_conf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_H_R_conf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_H_R_conf_4; ++l) {
-          internal.new_H_R_conf[i - 1 + shared->dim_new_H_R_conf_1 * (j - 1) + shared->dim_new_H_R_conf_12 * (k - 1) + shared->dim_new_H_R_conf_123 * (l - 1)] = internal.new_H_R_conf[shared->dim_new_H_R_conf_123 * (l - 1) + shared->dim_new_H_R_conf_12 * 0 + shared->dim_new_H_R_conf_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_H_R_conf[shared->dim_n_I_C_2_to_H_R_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_R_conf_1 * (j - 1) + i - 1];
         }
       }
     }
@@ -4448,16 +3670,8 @@ public:
       for (int j = 1; j <= shared->dim_new_H_R_unconf_2; ++j) {
         for (int k = 1; k <= shared->dim_new_H_R_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_new_H_R_unconf_4; ++l) {
-            internal.new_H_R_unconf[i - 1 + shared->dim_new_H_R_unconf_1 * (j - 1) + shared->dim_new_H_R_unconf_12 * (k - 1) + shared->dim_new_H_R_unconf_123 * (l - 1)] = internal.aux_H_R_unconf[shared->dim_aux_H_R_unconf_123 * (l - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_1 * (j - 1) + i - 1] - internal.n_H_R_unconf_to_conf[shared->dim_n_H_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_R_unconf_to_conf_1 * (j - 1) + i - 1];
+            internal.new_H_R_unconf[i - 1 + shared->dim_new_H_R_unconf_1 * (j - 1) + shared->dim_new_H_R_unconf_12 * (k - 1) + shared->dim_new_H_R_unconf_123 * (l - 1)] = internal.aux_H_R_unconf[shared->dim_aux_H_R_unconf_123 * (l - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_1 * (j - 1) + i - 1] - internal.n_H_R_unconf_to_conf[shared->dim_n_H_R_unconf_to_conf_123 * (l - 1) + shared->dim_n_H_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_R_unconf_to_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_I_C_2_to_H_R[shared->dim_n_I_C_2_to_H_R_12 * (l - 1) + shared->dim_n_I_C_2_to_H_R_1 * (j - 1) + i - 1] - internal.n_I_C_2_to_H_R_conf[shared->dim_n_I_C_2_to_H_R_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_R_conf_1 * (j - 1) + i - 1] : 0));
           }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_H_R_unconf_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_H_R_unconf_2; ++j) {
-        int k = 1;
-        for (int l = 1; l <= shared->dim_new_H_R_unconf_4; ++l) {
-          internal.new_H_R_unconf[i - 1 + shared->dim_new_H_R_unconf_1 * (j - 1) + shared->dim_new_H_R_unconf_12 * (k - 1) + shared->dim_new_H_R_unconf_123 * (l - 1)] = internal.new_H_R_unconf[shared->dim_new_H_R_unconf_123 * (l - 1) + shared->dim_new_H_R_unconf_12 * 0 + shared->dim_new_H_R_unconf_1 * (j - 1) + i - 1] + internal.n_I_C_2_to_H_R[shared->dim_n_I_C_2_to_H_R_12 * (l - 1) + shared->dim_n_I_C_2_to_H_R_1 * (j - 1) + i - 1] - internal.n_I_C_2_to_H_R_conf[shared->dim_n_I_C_2_to_H_R_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_H_R_conf_1 * (j - 1) + i - 1];
         }
       }
     }
