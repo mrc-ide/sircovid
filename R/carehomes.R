@@ -207,6 +207,8 @@ NULL
 ##'        vaccine_index_dose2 = 2)
 ##'
 ##' # vaccination parameters are automatically copied across all age groups
+##' # (and across strains but here we only have 1 strain which is the 2nd
+##' # dimension here)
 ##' p$rel_susceptibility
 ##' p$rel_p_sympt
 ##' p$rel_p_hosp_if_sympt
@@ -218,28 +220,30 @@ NULL
 ##' ### same example as above BUT assume a different effect of vaccine in the
 ##' ### first age group
 ##' n_groups <- 19
+##' n_strains <- 1
 ##'
 ##' # Assumption: vaccine is twice more effective at reducing susceptibility
 ##' # in the first age group
 ##' rel_susceptibility_agegp1 <- c(1, 0.4, 0.25)
 ##' rel_susceptibility_other_agegp <- c(1, 0.8, 0.5)
-##' rel_susceptibility <- matrix(NA, nrow = n_groups, ncol = 3)
-##' rel_susceptibility[1, ] <- rel_susceptibility_agegp1
+##' rel_susceptibility <- array(NA, dim = c(n_groups, n_strains, 3))
+##' rel_susceptibility[1, , ] <- rel_susceptibility_agegp1
 ##' for (i in seq(2, n_groups)) {
-##'   rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
+##'   rel_susceptibility[i, , ] <- rel_susceptibility_other_agegp
 ##' }
 ##' rel_susceptibility
 ##'
 ##' # But vaccine has the same impact on probability of symptoms and
 ##' # hospitalisation for the symptomatic across all age groups
-##' rel_p_sympt <- matrix(rep(rel_p_sympt, n_groups), nrow = n_groups,
-##'   byrow = TRUE)
+##' rel_p_sympt <- array(rep(rel_p_sympt, each = n_groups),
+##'   dim = c(n_groups, n_strains, 3))
 ##' rel_p_hosp_if_sympt <-
-##'   matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
+##'   array(rep(rel_p_hosp_if_sympt, each = n_groups),
+##'   dim = c(n_groups, n_strains, 3))
 ##'
 ##' # And vaccine has the same impact on onwards infectivity across age groups
-##' rel_infectivity <- matrix(rep(rel_infectivity, n_groups), nrow = n_groups,
-##'   byrow = TRUE)
+##' rel_infectivity <- array(rep(rel_infectivity, each = n_groups),
+##'   dim = c(n_groups, n_strains, 3))
 ##'
 ##' # the period of build-up of immunity is the same for all age groups,
 ##' # lasting on average 2 weeks,
