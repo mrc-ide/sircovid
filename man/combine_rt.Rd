@@ -4,7 +4,7 @@
 \alias{combine_rt}
 \title{Combine Rt estimates}
 \usage{
-combine_rt(rt, samples)
+combine_rt(rt, samples, rank = TRUE)
 }
 \arguments{
 \item{rt}{A list of Rt calculations from
@@ -12,6 +12,9 @@ combine_rt(rt, samples)
 confirms to this will work)}
 
 \item{samples}{A list of samples from \code{\link[=carehomes_forecast]{carehomes_forecast()}}}
+
+\item{rank}{A boolean deciding whether to rank trajectories by increasing
+incidence or not before combining Rt estimates}
 }
 \value{
 A list of Rt output in the same structure as the first

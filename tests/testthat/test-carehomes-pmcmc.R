@@ -157,6 +157,59 @@ test_that("can combine rt calculations over trajectories", {
   expect_equal(res$Rt_all, cmp$Rt_all)
 })
 
+
+test_that("when combining rt calculations the output has the expected order", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  res <- combine_rt(list(rt, rt), list(dat, dat))
+  cmp <- rt
+  for (i in setdiff(names(cmp), c("step", "date"))) {
+    cmp[[i]][1:2, ] <- NA
+  }
+
+  for (what in c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")) {
+    cum_rt <- colSums(rt[[what]])
+    expected_order <- order(cum_rt, decreasing = FALSE)
+    expect_equal(res[[what]], cmp[[what]][, expected_order])
+  }
+
+})
+
+
+test_that("can combine rt calculations over trajectories without reordering", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  res <- combine_rt(list(rt, rt), list(dat, dat), rank = FALSE)
+  cmp <- rt
+  for (i in setdiff(names(cmp), c("step", "date"))) {
+    cmp[[i]][1:2, ] <- NA
+  }
+
+  expect_equal(res$Rt_general, cmp$Rt_general)
+  expect_equal(res$Rt_all, cmp$Rt_all)
+  expect_equal(res$eff_Rt_general, cmp$eff_Rt_general)
+  expect_equal(res$eff_Rt_all, cmp$eff_Rt_all)
+})
+
+
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
@@ -234,6 +287,33 @@ test_that("can combine EpiEstim rt calculations over trajectories", {
 
   ## Rts are ordered differently
   expect_equal(sort(as.vector(res$Rt)), sort(as.vector(cmp$Rt)))
+  expect_equal(res$Rt_summary, cmp$Rt_summary)
+})
+
+
+test_that("can combine EpiEstim rt over trajectories without reordering", {
+  dat <- reference_data_trajectories()
+
+  index_cum_inc <- grep("infections", names(dat$predict$index))
+  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
+  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+
+  p <- dat$predict$transform(dat$pars[1, ])
+
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
+
+  rt <- carehomes_rt_trajectories_epiestim(
+    dat$trajectories$step, inc, p)
+
+  res <- combine_rt_epiestim(list(rt, rt), list(dat, dat), rank = FALSE)
+  cmp <- rt
+  cmp$Rt[, 1:2] <- NA
+  cmp$Rt_summary[, 1:2] <- NA
+
+  ## Rts are ordered differently
+  expect_equal(res$Rt, cmp$Rt)
   expect_equal(res$Rt_summary, cmp$Rt_summary)
 })
 

@@ -117,12 +117,12 @@ update(cum_new_conf) <- cum_new_conf + delta_new_conf
 
 initial(admit_conf_inc) <- 0
 update(admit_conf_inc) <- if (step %% steps_per_day == 0)
-                            delta_admit_conf else
-                              admit_conf_inc + delta_admit_conf
+  delta_admit_conf else
+    admit_conf_inc + delta_admit_conf
 
 initial(new_conf_inc) <- 0
 update(new_conf_inc) <- if (step %% steps_per_day == 0)
-                            delta_new_conf else new_conf_inc + delta_new_conf
+  delta_new_conf else new_conf_inc + delta_new_conf
 
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_2_to_hosp[i, , ])
 
@@ -229,11 +229,10 @@ gamma_ICU_pre <- if (as.integer(step) >= length(gamma_ICU_pre_step))
 
 ## Compute the new infections with multiple strains using nested binomials
 n_S_progress_tot[, ] <- rbinom(S[i, j], p_SE[i, j])
-n_S_progress[, 1, ] <-
-  rbinom(n_S_progress_tot[i, k], lambda[i, 1] / sum(lambda[i, ]))
-n_S_progress[, 2:n_strains, ] <-
- rbinom(n_S_progress_tot[i, k] - sum(n_S_progress[i, 1:(j - 1), k]),
-        lambda[i, j] / sum(lambda[i, j:n_strains]))
+n_S_progress[, , ] <- if (j == 1)
+  rbinom(n_S_progress_tot[i, k], lambda[i, 1] / sum(lambda[i, ])) else
+    rbinom(n_S_progress_tot[i, k] - sum(n_S_progress[i, 1:(j - 1), k]),
+           lambda[i, j] / sum(lambda[i, j:n_strains]))
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
@@ -246,8 +245,8 @@ n_S_progress[, 2:n_strains, ] <-
 strain_seed_step[] <- user()
 dim(strain_seed_step) <- user()
 strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
-                  strain_seed_step[length(strain_seed_step)]
-                else strain_seed_step[step + 1])
+  strain_seed_step[length(strain_seed_step)]
+  else strain_seed_step[step + 1])
 ## We must never try to move more individuals from this S category
 ## than are available, so need to do this with a min()
 ##
@@ -256,7 +255,7 @@ strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
 ## us to write out-of-bounds when running with a single strain.
 n_S_progress[4, 2:n_strains, 1] <-
   min(n_S_progress[i, j, k] + strain_seed,
-  n_S_progress[i, j, k] + S[i, k] - sum(n_S_progress[i, , k]))
+      n_S_progress[i, j, k] + S[i, k] - sum(n_S_progress[i, , k]))
 
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[k] to E[k+1] (k vaccination class)
@@ -284,7 +283,7 @@ n_EE[, , , ] <- n_E_progress[i, j, k, l] - n_EE_next_vacc_class[i, j, k, l]
 
 ## vaccine progression
 n_E_next_vacc_class[, , , ] <- rbinom(E[i, j, k, l] - n_E_progress[i, j, k, l],
-                                  p_E_next_vacc_class[i, j, k, l])
+                                      p_E_next_vacc_class[i, j, k, l])
 
 #### flow out of I_A ####
 
@@ -348,9 +347,10 @@ n_RS[, , ] <- n_R_progress[i, j, k] - n_RS_next_vacc_class[i, j, k]
 ## vaccine progression
 n_R_next_vacc_class_tmp[, , ] <- rbinom(
   R[i, j, k] - n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
-n_R_next_vacc_class_capped[, , ] <- min(n_R_next_vacc_class_tmp[i, j, k],
-  T_sero_neg[i, j, k] - n_R_progress[i, j, k],
-  T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
+n_R_next_vacc_class_capped[, , ] <-
+  min(n_R_next_vacc_class_tmp[i, j, k],
+      T_sero_neg[i, j, k] - n_R_progress[i, j, k],
+      T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
 n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
 
@@ -404,15 +404,14 @@ dim(cum_infections_per_strain) <- n_strains
 ## Work out the new S (i for age, j for vaccination status)
 new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) - sum(n_S_progress[i, , j]) -
   n_S_next_vacc_class[i, j]
-new_S[, 1] <- new_S[i, 1] + n_S_next_vacc_class[i, n_vacc_classes] +
-  sum(n_RS_next_vacc_class[i, , n_vacc_classes])
-new_S[, 2:n_vacc_classes] <- new_S[i, j] + n_S_next_vacc_class[i, j - 1] +
-  sum(n_RS_next_vacc_class[i, , j - 1])
-
+new_S[, ] <- new_S[i, j] +
+  (if (j == 1) n_S_next_vacc_class[i, n_vacc_classes] +
+     sum(n_RS_next_vacc_class[i, , n_vacc_classes]) else
+       n_S_next_vacc_class[i, j - 1] + sum(n_RS_next_vacc_class[i, , j - 1]))
 
 ## Computes the number of asymptomatic
 n_EI_A[, , ] <- rbinom(n_EE[i, j, k_E, k],
-                          1 - p_C[i] * rel_p_sympt[i, k])
+                       1 - p_C[i] * rel_p_sympt[i, k])
 n_EI_A_next_vacc_class[, , ] <-
   rbinom(n_EE_next_vacc_class[i, j, k_E, k],
          1 - p_C[i] * rel_p_sympt[i, k])
@@ -423,86 +422,65 @@ n_EI_P_next_vacc_class[, , ] <- n_EE_next_vacc_class[i, j, k_E, k] -
   n_EI_A_next_vacc_class[i, j, k]
 
 ## Work out the S->E and E->E transitions
-aux_E[, , 1, ] <- n_SE[i, j, l]
-aux_E[, , 2:k_E, ] <- n_EE[i, j, k - 1, l]
-aux_E[, , , ] <- aux_E[i, j, k, l] - n_EE[i, j, k, l] -
+aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] else n_EE[i, j, k - 1, l]) -
+  n_EE[i, j, k, l] -
   n_EE_next_vacc_class[i, j, k, l] -
-  n_E_next_vacc_class[i, j, k, l]
-aux_E[, , , 1] <- aux_E[i, j, k, 1] +
-  n_E_next_vacc_class[i, j, k, n_vacc_classes]
-aux_E[, , , 2:n_vacc_classes] <- aux_E[i, j, k, l] +
-  n_E_next_vacc_class[i, j, k, l - 1]
-aux_E[, , 1, 1] <- aux_E[i, j, 1, 1] +
-  n_SE_next_vacc_class[i, j, n_vacc_classes]
-aux_E[, , 1, 2:n_vacc_classes] <- aux_E[i, j, k, l] +
-  n_SE_next_vacc_class[i, j, l - 1]
-aux_E[, , 2:k_E, 1] <- aux_E[i, j, k, l] +
-  n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes]
-aux_E[, , 2:k_E, 2:n_vacc_classes] <- aux_E[i, j, k, l] +
-  n_EE_next_vacc_class[i, j, k - 1, l - 1]
+  n_E_next_vacc_class[i, j, k, l] +
+  (if (l == 1) n_E_next_vacc_class[i, j, k, n_vacc_classes] else
+    n_E_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1) (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] else
+    n_SE_next_vacc_class[i, j, l - 1]) else
+      (if (l == 1) n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes] else
+        n_EE_next_vacc_class[i, j, k - 1, l - 1]))
+
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
 ## Work out the I_A->I_A transitions
-aux_I_A[, , 1, ] <- n_EI_A[i, j, l]
-aux_I_A[, , 2:k_A, ] <- n_II_A[i, j, k - 1, l]
-aux_I_A[, , , ] <- aux_I_A[i, j, k, l] - n_II_A[i, j, k, l] -
+aux_I_A[, , , ] <- (if (k == 1) n_EI_A[i, j, l] else n_II_A[i, j, k - 1, l]) -
+  n_II_A[i, j, k, l] -
   n_II_A_next_vacc_class[i, j, k, l] -
-  n_I_A_next_vacc_class[i, j, k, l]
-aux_I_A[, , , 1] <- aux_I_A[i, j, k, l]  +
-  n_I_A_next_vacc_class[i, j, 1, n_vacc_classes]
-aux_I_A[, , , 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
-  n_I_A_next_vacc_class[i, j, k, l - 1]
-aux_I_A[, , 1, 1] <- aux_I_A[i, j, k, l] +
-  n_EI_A_next_vacc_class[i, j, n_vacc_classes]
-aux_I_A[, , 1, 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
-  n_EI_A_next_vacc_class[i, j, l - 1]
-aux_I_A[, , 2:k_A, 1] <- aux_I_A[i, j, k, l] +
-  n_II_A_next_vacc_class[i, j, k - 1, n_vacc_classes]
-aux_I_A[, , 2:k_A, 2:n_vacc_classes] <- aux_I_A[i, j, k, l] +
-  n_II_A_next_vacc_class[i, j, k - 1, l - 1]
+  n_I_A_next_vacc_class[i, j, k, l] +
+  (if (l == 1) n_I_A_next_vacc_class[i, j, k, n_vacc_classes] else
+    n_I_A_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1) (if (l == 1) n_EI_A_next_vacc_class[i, j, n_vacc_classes] else
+    n_EI_A_next_vacc_class[i, j, l - 1]) else
+      (if (l == 1) n_II_A_next_vacc_class[i, j, k - 1, n_vacc_classes] else
+        n_II_A_next_vacc_class[i, j, k - 1, l - 1]))
+
 new_I_A[, , , ] <- I_A[i, j, k, l] + aux_I_A[i, j, k, l]
 
 ## Work out the I_P->I_P transitions
-aux_I_P[, , 1, ] <- n_EI_P[i, j, l]
-aux_I_P[, , 2:k_P, ] <- n_II_P[i, j, k - 1, l]
-aux_I_P[, , , ] <- aux_I_P[i, j, k, l] - n_II_P[i, j, k, l] -
+aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else n_II_P[i, j, k - 1, l]) -
+  n_II_P[i, j, k, l] -
   n_II_P_next_vacc_class[i, j, k, l] -
-  n_I_P_next_vacc_class[i, j, k, l]
-aux_I_P[, , , 1] <- aux_I_P[i, j, k, l]  +
-  n_I_P_next_vacc_class[i, j, 1, n_vacc_classes]
-aux_I_P[, , , 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
-  n_I_P_next_vacc_class[i, j, k, l - 1]
-aux_I_P[, , 1, 1] <- aux_I_P[i, j, k, l] +
-  n_EI_P_next_vacc_class[i, j, n_vacc_classes]
-aux_I_P[, , 1, 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
-  n_EI_P_next_vacc_class[i, j, l - 1]
-aux_I_P[, , 2:k_P, 1] <- aux_I_P[i, j, k, l] +
-  n_II_P_next_vacc_class[i, j, k - 1, n_vacc_classes]
-aux_I_P[, , 2:k_P, 2:n_vacc_classes] <- aux_I_P[i, j, k, l] +
-  n_II_P_next_vacc_class[i, j, k - 1, l - 1]
+  n_I_P_next_vacc_class[i, j, k, l] +
+  (if (l == 1) n_I_P_next_vacc_class[i, j, k, n_vacc_classes] else
+    n_I_P_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1) (if (l == 1) n_EI_P_next_vacc_class[i, j, n_vacc_classes] else
+    n_EI_P_next_vacc_class[i, j, l - 1]) else
+      (if (l == 1) n_II_P_next_vacc_class[i, j, k - 1, n_vacc_classes] else
+        n_II_P_next_vacc_class[i, j, k - 1, l - 1]))
+
 new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
 
 ## Work out the I_C_1->I_C_1 transitions
-aux_I_C_1[, , 1, 1] <- n_II_P[i, j, k_P, 1] +
-  n_II_P_next_vacc_class[i, j, k_P, n_vacc_classes]
-aux_I_C_1[, , 1, 2:n_vacc_classes] <-
-  n_II_P[i, j, k_P, l] + n_II_P_next_vacc_class[i, j, k_P, l - 1]
+aux_I_C_1[, , , ] <- (if (k == 1)
+  (if (l == 1) n_II_P[i, j, k_P, 1] +
+     n_II_P_next_vacc_class[i, j, k_P, n_vacc_classes] else
+       n_II_P[i, j, k_P, l] + n_II_P_next_vacc_class[i, j, k_P, l - 1]) else
+         n_I_C_1_progress[i, j, k - 1, l]) - n_I_C_1_progress[i, j, k, l]
 
-aux_I_C_1[, , 2:k_C_1, ] <- n_I_C_1_progress[i, j, k - 1, l]
-aux_I_C_1[, , 1:k_C_1, ] <-
-  aux_I_C_1[i, j, k, l] - n_I_C_1_progress[i, j, k, l]
 new_I_C_1[, , , ] <- I_C_1[i, j, k, l] + aux_I_C_1[i, j, k, l]
 
 ## Work out the I_C_2->I_C_2 transitions
-aux_I_C_2[, , 1, ] <- n_I_C_1_progress[i, j, k_C_1, l]
-aux_I_C_2[, , 2:k_C_2, ] <- n_I_C_2_progress[i, j, k - 1, l]
-aux_I_C_2[, , 1:k_C_2, ] <-
-  aux_I_C_2[i, j, k, l] - n_I_C_2_progress[i, j, k, l]
+aux_I_C_2[, , , ] <- (if (k == 1) n_I_C_1_progress[i, j, k_C_1, l] else
+  n_I_C_2_progress[i, j, k - 1, l]) - n_I_C_2_progress[i, j, k, l]
+
 new_I_C_2[, , , ] <- I_C_2[i, j, k, l] + aux_I_C_2[i, j, k, l]
 
 ## Work out the flow from I_C_2 -> R, G_D, hosp
 n_I_C_2_to_R[, , ] <- rbinom(n_I_C_2_progress[i, j, k_C_2, k],
-                         1 - p_H_by_age[i] * rel_p_hosp_if_sympt[i, k])
+                             1 - p_H_by_age[i] * rel_p_hosp_if_sympt[i, k])
 n_I_C_2_to_G_D[, , ] <-
   rbinom(n_I_C_2_progress[i, j, k_C_2, k] - n_I_C_2_to_R[i, j, k],
          p_G_D_by_age[i])
@@ -510,93 +488,77 @@ n_I_C_2_to_hosp[, , ] <- n_I_C_2_progress[i, j, k_C_2, k] -
   n_I_C_2_to_R[i, j, k] - n_I_C_2_to_G_D[i, j, k]
 
 ## Work out the G_D -> G_D transitions
-aux_G_D[, , 1, ] <- n_I_C_2_to_G_D[i, j, l]
-aux_G_D[, , 2:k_G_D, ] <- n_G_D_progress[i, j, k - 1, l]
-aux_G_D[, , 1:k_G_D, ] <-
-  aux_G_D[i, j, k, l] - n_G_D_progress[i, j, k, l]
+aux_G_D[, , , ] <- (if (k == 1) n_I_C_2_to_G_D[i, j, l] else
+  n_G_D_progress[i, j, k - 1, l]) - n_G_D_progress[i, j, k, l]
+
 new_G_D[, , , ] <- G_D[i, j, k, l] + aux_G_D[i, j, k, l]
 
 ## Work out the split in hospitals between H_D, H_R and ICU_pre
 n_I_C_2_to_ICU_pre[, , ] <- rbinom(n_I_C_2_to_hosp[i, j, k], p_ICU_by_age[i])
 n_I_C_2_to_ICU_pre_conf[, , ] <- rbinom(n_I_C_2_to_ICU_pre[i, j, k],
-                                   p_star_by_age[i])
+                                        p_star_by_age[i])
 n_hosp_non_ICU[, , ] <- n_I_C_2_to_hosp[i, j, k] - n_I_C_2_to_ICU_pre[i, j, k]
 n_I_C_2_to_H_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], p_H_D_by_age[i])
 n_I_C_2_to_H_D_conf[, , ] <- rbinom(n_I_C_2_to_H_D[i, j, k],
-                                     p_star_by_age[i])
+                                    p_star_by_age[i])
 n_I_C_2_to_H_R[, , ] <- n_hosp_non_ICU[i, j, k] - n_I_C_2_to_H_D[i, j, k]
 n_I_C_2_to_H_R_conf[, , ] <- rbinom(n_I_C_2_to_H_R[i, j, k],
-                                     p_star_by_age[i])
+                                    p_star_by_age[i])
 
 ## Work out the ICU_pre -> ICU_pre transitions
-aux_ICU_pre_unconf[, , , ] <- ICU_pre_unconf[i, j, k, l]
-aux_ICU_pre_unconf[, , 2:k_ICU_pre, ] <-
-  aux_ICU_pre_unconf[i, j, k, l] + n_ICU_pre_unconf_progress[i, j, k - 1, l]
-aux_ICU_pre_unconf[, , 1:k_ICU_pre, ] <-
-  aux_ICU_pre_unconf[i, j, k, l] - n_ICU_pre_unconf_progress[i, j, k, l]
-aux_ICU_pre_conf[, , , ] <-
-  ICU_pre_conf[i, j, k, l]
-aux_ICU_pre_conf[, , 2:k_ICU_pre, ] <-
-  aux_ICU_pre_conf[i, j, k, l] + n_ICU_pre_conf_progress[i, j, k - 1, l]
-aux_ICU_pre_conf[, , 1:k_ICU_pre, ] <-
-  aux_ICU_pre_conf[i, j, k, l] - n_ICU_pre_conf_progress[i, j, k, l]
+aux_ICU_pre_unconf[, , , ] <- ICU_pre_unconf[i, j, k, l] +
+  (if (k > 1) n_ICU_pre_unconf_progress[i, j, k - 1, l] else 0) -
+  n_ICU_pre_unconf_progress[i, j, k, l]
+aux_ICU_pre_conf[, , , ] <- ICU_pre_conf[i, j, k, l] +
+  (if (k > 1) n_ICU_pre_conf_progress[i, j, k - 1, l] else 0) -
+  n_ICU_pre_conf_progress[i, j, k, l]
+
 n_ICU_pre_unconf_to_conf[, , , ] <-
   rbinom(aux_ICU_pre_unconf[i, j, k, l], p_test)
+
 new_ICU_pre_unconf[, , , ] <-
-  aux_ICU_pre_unconf[i, j, k, l] - n_ICU_pre_unconf_to_conf[i, j, k, l]
-new_ICU_pre_unconf[, , 1, ] <-
-  new_ICU_pre_unconf[i, j, 1, l] + n_I_C_2_to_ICU_pre[i, j, l] -
-  n_I_C_2_to_ICU_pre_conf[i, j, l]
+  aux_ICU_pre_unconf[i, j, k, l] - n_ICU_pre_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_ICU_pre[i, j, l] - n_I_C_2_to_ICU_pre_conf[i, j, l]
+   else 0)
 new_ICU_pre_conf[, , , ] <-
-  aux_ICU_pre_conf[i, j, k, l] + n_ICU_pre_unconf_to_conf[i, j, k, l]
-new_ICU_pre_conf[, , 1, ] <-
-  new_ICU_pre_conf[i, j, 1, l] + n_I_C_2_to_ICU_pre_conf[i, j, l]
+  aux_ICU_pre_conf[i, j, k, l] + n_ICU_pre_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_ICU_pre_conf[i, j, l] else 0)
 
 ## Work out the H_R->H_R transitions
-aux_H_R_unconf[, , , ] <- H_R_unconf[i, j, k, l]
-aux_H_R_unconf[, , 2:k_H_R, ] <-
-  aux_H_R_unconf[i, j, k, l] + n_H_R_unconf_progress[i, j, k - 1, l]
-aux_H_R_unconf[, , 1:k_H_R, ] <-
-  aux_H_R_unconf[i, j, k, l] - n_H_R_unconf_progress[i, j, k, l]
-aux_H_R_conf[, , , ] <- H_R_conf[i, j, k, l]
-aux_H_R_conf[, , 2:k_H_R, ] <-
-  aux_H_R_conf[i, j, k, l] + n_H_R_conf_progress[i, j, k - 1, l]
-aux_H_R_conf[, , 1:k_H_R, ] <-
-  aux_H_R_conf[i, j, k, l] - n_H_R_conf_progress[i, j, k, l]
+aux_H_R_unconf[, , , ] <- H_R_unconf[i, j, k, l] +
+  (if (k > 1) n_H_R_unconf_progress[i, j, k - 1, l] else 0) -
+  n_H_R_unconf_progress[i, j, k, l]
+aux_H_R_conf[, , , ] <- H_R_conf[i, j, k, l] +
+  (if (k > 1) n_H_R_conf_progress[i, j, k - 1, l] else 0) -
+  n_H_R_conf_progress[i, j, k, l]
+
 n_H_R_unconf_to_conf[, , , ] <-
   rbinom(aux_H_R_unconf[i, j, k, l], p_test)
+
 new_H_R_unconf[, , , ] <-
-  aux_H_R_unconf[i, j, k, l] - n_H_R_unconf_to_conf[i, j, k, l]
-new_H_R_unconf[, , 1, ] <-
-  new_H_R_unconf[i, j, 1, l] + n_I_C_2_to_H_R[i, j, l] -
-  n_I_C_2_to_H_R_conf[i, j, l]
+  aux_H_R_unconf[i, j, k, l] - n_H_R_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_H_R[i, j, l] - n_I_C_2_to_H_R_conf[i, j, l] else 0)
 new_H_R_conf[, , , ] <-
-  aux_H_R_conf[i, j, k, l] + n_H_R_unconf_to_conf[i, j, k, l]
-new_H_R_conf[, , 1, ] <-
-  new_H_R_conf[i, j, 1, l] + n_I_C_2_to_H_R_conf[i, j, l]
+  aux_H_R_conf[i, j, k, l] + n_H_R_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_H_R_conf[i, j, l] else 0)
 
 ## Work out the H_D->H_D transitions
-aux_H_D_unconf[, , , ] <- H_D_unconf[i, j, k, l]
-aux_H_D_unconf[, , 2:k_H_D, ] <-
-  aux_H_D_unconf[i, j, k, l] + n_H_D_unconf_progress[i, j, k - 1, l]
-aux_H_D_unconf[, , 1:k_H_D, ] <-
-  aux_H_D_unconf[i, j, k, l] - n_H_D_unconf_progress[i, j, k, l]
-aux_H_D_conf[, , , ] <- H_D_conf[i, j, k, l]
-aux_H_D_conf[, , 2:k_H_D, ] <-
-  aux_H_D_conf[i, j, k, l] + n_H_D_conf_progress[i, j, k - 1, l]
-aux_H_D_conf[, , 1:k_H_D, ] <-
-  aux_H_D_conf[i, j, k, l] - n_H_D_conf_progress[i, j, k, l]
+aux_H_D_unconf[, , , ] <- H_D_unconf[i, j, k, l] +
+  (if (k > 1) n_H_D_unconf_progress[i, j, k - 1, l] else 0) -
+  n_H_D_unconf_progress[i, j, k, l]
+aux_H_D_conf[, , , ] <- H_D_conf[i, j, k, l] +
+  (if (k > 1) n_H_D_conf_progress[i, j, k - 1, l] else 0) -
+  n_H_D_conf_progress[i, j, k, l]
+
 n_H_D_unconf_to_conf[, , , ] <-
   rbinom(aux_H_D_unconf[i, j, k, l], p_test)
+
 new_H_D_unconf[, , , ] <-
-  aux_H_D_unconf[i, j, k, l] - n_H_D_unconf_to_conf[i, j, k, l]
-new_H_D_unconf[, , 1, ] <-
-  new_H_D_unconf[i, j, 1, l] + n_I_C_2_to_H_D[i, j, l] -
-  n_I_C_2_to_H_D_conf[i, j, l]
+  aux_H_D_unconf[i, j, k, l] - n_H_D_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_H_D[i, j, l] - n_I_C_2_to_H_D_conf[i, j, l] else 0)
 new_H_D_conf[, , , ] <-
-  aux_H_D_conf[i, j, k, l] + n_H_D_unconf_to_conf[i, j, k, l]
-new_H_D_conf[, , 1, ] <-
-  new_H_D_conf[i, j, 1, l] + n_I_C_2_to_H_D_conf[i, j, l]
+  aux_H_D_conf[i, j, k, l] + n_H_D_unconf_to_conf[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_H_D_conf[i, j, l] else 0)
 
 ## Work out the ICU_pre to ICU_D, ICU_W_R and ICU_W_D splits
 n_ICU_pre_unconf_to_ICU_D_unconf[, , ] <-
@@ -621,21 +583,15 @@ n_ICU_pre_conf_to_ICU_W_R_conf[, , ] <-
 
 
 ## Work out the ICU_W_R->ICU_W_R transitions
-aux_ICU_W_R_unconf[, , , ] <- ICU_W_R_unconf[i, j, k, l]
-aux_ICU_W_R_unconf[, , 1, ] <-
-  aux_ICU_W_R_unconf[i, j, k, l] +
-  n_ICU_pre_unconf_to_ICU_W_R_unconf[i, j, l]
-aux_ICU_W_R_unconf[, , 2:k_ICU_W_R, ] <-
-  aux_ICU_W_R_unconf[i, j, k, l] + n_ICU_W_R_unconf_progress[i, j, k - 1, l]
-aux_ICU_W_R_unconf[, , 1:k_ICU_W_R, ] <-
-  aux_ICU_W_R_unconf[i, j, k, l] - n_ICU_W_R_unconf_progress[i, j, k, l]
-aux_ICU_W_R_conf[, , , ] <- ICU_W_R_conf[i, j, k, l]
-aux_ICU_W_R_conf[, , 1, ] <-
-  aux_ICU_W_R_conf[i, j, k, l] + n_ICU_pre_conf_to_ICU_W_R_conf[i, j, l]
-aux_ICU_W_R_conf[, , 2:k_ICU_W_R, ] <-
-  aux_ICU_W_R_conf[i, j, k, l] + n_ICU_W_R_conf_progress[i, j, k - 1, l]
-aux_ICU_W_R_conf[, , 1:k_ICU_W_R, ] <-
-  aux_ICU_W_R_conf[i, j, k, l] - n_ICU_W_R_conf_progress[i, j, k, l]
+aux_ICU_W_R_unconf[, , , ] <- ICU_W_R_unconf[i, j, k, l] +
+  (if (k == 1) n_ICU_pre_unconf_to_ICU_W_R_unconf[i, j, l] else
+    n_ICU_W_R_unconf_progress[i, j, k - 1, l]) -
+  n_ICU_W_R_unconf_progress[i, j, k, l]
+aux_ICU_W_R_conf[, , , ] <- ICU_W_R_conf[i, j, k, l] +
+  (if (k == 1) n_ICU_pre_conf_to_ICU_W_R_conf[i, j, l] else
+    n_ICU_W_R_conf_progress[i, j, k - 1, l]) -
+  n_ICU_W_R_conf_progress[i, j, k, l]
+
 n_ICU_W_R_unconf_to_conf[, , , ] <-
   rbinom(aux_ICU_W_R_unconf[i, j, k, l], p_test)
 new_ICU_W_R_unconf[, , , ] <-
@@ -644,21 +600,15 @@ new_ICU_W_R_conf[, , , ] <-
   aux_ICU_W_R_conf[i, j, k, l] + n_ICU_W_R_unconf_to_conf[i, j, k, l]
 
 ## Work out the ICU_W_D->ICU_W_D transitions
-aux_ICU_W_D_unconf[, , , ] <- ICU_W_D_unconf[i, j, k, l]
-aux_ICU_W_D_unconf[, , 1, ] <-
-  aux_ICU_W_D_unconf[i, j, k, l] +
-  n_ICU_pre_unconf_to_ICU_W_D_unconf[i, j, l]
-aux_ICU_W_D_unconf[, , 2:k_ICU_W_D, ] <-
-  aux_ICU_W_D_unconf[i, j, k, l] + n_ICU_W_D_unconf_progress[i, j, k - 1, l]
-aux_ICU_W_D_unconf[, , 1:k_ICU_W_D, ] <-
-  aux_ICU_W_D_unconf[i, j, k, l] - n_ICU_W_D_unconf_progress[i, j, k, l]
-aux_ICU_W_D_conf[, , , ] <- ICU_W_D_conf[i, j, k, l]
-aux_ICU_W_D_conf[, , 1, ] <-
-  aux_ICU_W_D_conf[i, j, k, l] + n_ICU_pre_conf_to_ICU_W_D_conf[i, j, l]
-aux_ICU_W_D_conf[, , 2:k_ICU_W_D, ] <-
-  aux_ICU_W_D_conf[i, j, k, l] + n_ICU_W_D_conf_progress[i, j, k - 1, l]
-aux_ICU_W_D_conf[, , 1:k_ICU_W_D, ] <-
-  aux_ICU_W_D_conf[i, j, k, l] - n_ICU_W_D_conf_progress[i, j, k, l]
+aux_ICU_W_D_unconf[, , , ] <- ICU_W_D_unconf[i, j, k, l] +
+  (if (k == 1) n_ICU_pre_unconf_to_ICU_W_D_unconf[i, j, l] else
+    n_ICU_W_D_unconf_progress[i, j, k - 1, l]) -
+  n_ICU_W_D_unconf_progress[i, j, k, l]
+aux_ICU_W_D_conf[, , , ] <- ICU_W_D_conf[i, j, k, l] +
+  (if (k == 1) n_ICU_pre_conf_to_ICU_W_D_conf[i, j, l] else
+    n_ICU_W_D_conf_progress[i, j, k - 1, l]) -
+  n_ICU_W_D_conf_progress[i, j, k, l]
+
 n_ICU_W_D_unconf_to_conf[, , , ] <-
   rbinom(aux_ICU_W_D_unconf[i, j, k, l], p_test)
 new_ICU_W_D_unconf[, , , ] <-
@@ -667,20 +617,15 @@ new_ICU_W_D_conf[, , , ] <-
   aux_ICU_W_D_conf[i, j, k, l] + n_ICU_W_D_unconf_to_conf[i, j, k, l]
 
 ## Work out the ICU_D->ICU_D transitions
-aux_ICU_D_unconf[, , , ] <- ICU_D_unconf[i, j, k, l]
-aux_ICU_D_unconf[, , 1, ] <-
-  aux_ICU_D_unconf[i, j, k, l] + n_ICU_pre_unconf_to_ICU_D_unconf[i, j, l]
-aux_ICU_D_unconf[, , 2:k_ICU_D, ] <-
-  aux_ICU_D_unconf[i, j, k, l] + n_ICU_D_unconf_progress[i, j, k - 1, l]
-aux_ICU_D_unconf[, , 1:k_ICU_D, ] <-
-  aux_ICU_D_unconf[i, j, k, l] - n_ICU_D_unconf_progress[i, j, k, l]
-aux_ICU_D_conf[, , , ] <- ICU_D_conf[i, j, k, l]
-aux_ICU_D_conf[, , 1, ] <-
-  aux_ICU_D_conf[i, j, k, l] + n_ICU_pre_conf_to_ICU_D_conf[i, j, l]
-aux_ICU_D_conf[, , 2:k_ICU_D, ] <-
-  aux_ICU_D_conf[i, j, k, l] + n_ICU_D_conf_progress[i, j, k - 1, l]
-aux_ICU_D_conf[, , 1:k_ICU_D, ] <-
-  aux_ICU_D_conf[i, j, k, l] - n_ICU_D_conf_progress[i, j, k, l]
+aux_ICU_D_unconf[, , , ] <- ICU_D_unconf[i, j, k, l] +
+  (if (k == 1) n_ICU_pre_unconf_to_ICU_D_unconf[i, j, l] else
+    n_ICU_D_unconf_progress[i, j, k - 1, l]) -
+  n_ICU_D_unconf_progress[i, j, k, l]
+aux_ICU_D_conf[, , , ] <- ICU_D_conf[i, j, k, l] +
+  (if (k == 1) n_ICU_pre_conf_to_ICU_D_conf[i, j, l] else
+    n_ICU_D_conf_progress[i, j, k - 1, l]) -
+  n_ICU_D_conf_progress[i, j, k, l]
+
 n_ICU_D_unconf_to_conf[, , , ] <-
   rbinom(aux_ICU_D_unconf[i, j, k, l], p_test)
 new_ICU_D_unconf[, , , ] <-
@@ -689,20 +634,15 @@ new_ICU_D_conf[, , , ] <-
   aux_ICU_D_conf[i, j, k, l] + n_ICU_D_unconf_to_conf[i, j, k, l]
 
 ## Work out the W_R->W_R transitions
-aux_W_R_unconf[, , , ] <- W_R_unconf[i, j, k, l]
-aux_W_R_unconf[, , 1, ] <-
-  aux_W_R_unconf[i, j, k, l] + n_ICU_W_R_unconf_progress[i, j, k_ICU_W_R, l]
-aux_W_R_unconf[, , 2:k_W_R, ] <-
-  aux_W_R_unconf[i, j, k, l] + n_W_R_unconf_progress[i, j, k - 1, l]
-aux_W_R_unconf[, , 1:k_W_R, ] <-
-  aux_W_R_unconf[i, j, k, l] - n_W_R_unconf_progress[i, j, k, l]
-aux_W_R_conf[, , , ] <- W_R_conf[i, j, k, l]
-aux_W_R_conf[, , 1, ] <-
-  aux_W_R_conf[i, j, k, l] + n_ICU_W_R_conf_progress[i, j, k_ICU_W_R, l]
-aux_W_R_conf[, , 2:k_W_R, ] <-
-  aux_W_R_conf[i, j, k, l] + n_W_R_conf_progress[i, j, k - 1, l]
-aux_W_R_conf[, , 1:k_W_R, ] <-
-  aux_W_R_conf[i, j, k, l] - n_W_R_conf_progress[i, j, k, l]
+aux_W_R_unconf[, , , ] <- W_R_unconf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_R_unconf_progress[i, j, k_ICU_W_R, l] else
+    n_W_R_unconf_progress[i, j, k - 1, l]) -
+  n_W_R_unconf_progress[i, j, k, l]
+aux_W_R_conf[, , , ] <- W_R_conf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_R_conf_progress[i, j, k_ICU_W_R, l] else
+    n_W_R_conf_progress[i, j, k - 1, l]) -
+  n_W_R_conf_progress[i, j, k, l]
+
 n_W_R_unconf_to_conf[, , , ] <-
   rbinom(aux_W_R_unconf[i, j, k, l], p_test)
 new_W_R_unconf[, , , ] <-
@@ -712,20 +652,15 @@ new_W_R_conf[, , , ] <-
   aux_W_R_conf[i, j, k, l] + n_W_R_unconf_to_conf[i, j, k, l]
 
 ## Work out the W_D->W_D transitions
-aux_W_D_unconf[, , , ] <- W_D_unconf[i, j, k, l]
-aux_W_D_unconf[, , 1, ] <-
-  aux_W_D_unconf[i, j, k, l] + n_ICU_W_D_unconf_progress[i, j, k_ICU_W_D, l]
-aux_W_D_unconf[, , 2:k_W_D, ] <-
-  aux_W_D_unconf[i, j, k, l] + n_W_D_unconf_progress[i, j, k - 1, l]
-aux_W_D_unconf[, , 1:k_W_D, ] <-
-  aux_W_D_unconf[i, j, k, l] - n_W_D_unconf_progress[i, j, k, l]
-aux_W_D_conf[, , , ] <- W_D_conf[i, j, k, l]
-aux_W_D_conf[, , 1, ] <-
-  aux_W_D_conf[i, j, k, l] + n_ICU_W_D_conf_progress[i, j, k_ICU_W_D, l]
-aux_W_D_conf[, , 2:k_W_D, ] <-
-  aux_W_D_conf[i, j, k, l] + n_W_D_conf_progress[i, j, k - 1, l]
-aux_W_D_conf[, , 1:k_W_D, ] <-
-  aux_W_D_conf[i, j, k, l] - n_W_D_conf_progress[i, j, k, l]
+aux_W_D_unconf[, , , ] <- W_D_unconf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_D_unconf_progress[i, j, k_ICU_W_D, l] else
+    n_W_D_unconf_progress[i, j, k - 1, l]) -
+  n_W_D_unconf_progress[i, j, k, l]
+aux_W_D_conf[, , , ] <- W_D_conf[i, j, k, l] +
+  (if (k == 1) n_ICU_W_D_conf_progress[i, j, k_ICU_W_D, l] else
+    n_W_D_conf_progress[i, j, k - 1, l]) -
+  n_W_D_conf_progress[i, j, k, l]
+
 n_W_D_unconf_to_conf[, , , ] <-
   rbinom(aux_W_D_unconf[i, j, k, l], p_test)
 new_W_D_unconf[, , , ] <-
@@ -747,19 +682,18 @@ delta_D_hosp[] <-
 delta_D_non_hosp[] <- sum(n_G_D_progress[i, , k_G_D, ])
 
 ## Work out the number of people entering the seroconversion flow
-n_com_to_T_sero_pre[, , 1, 1] <- rbinom(
-  n_EE[i, j, k_E, 1] + n_EE_next_vacc_class[i, j, k_E, n_vacc_classes],
+n_com_to_T_sero_pre[, , 1, ] <- rbinom(
+  n_EE[i, j, k_E, l] +
+    (if (l == 1) n_EE_next_vacc_class[i, j, k_E, n_vacc_classes] else
+      n_EE_next_vacc_class[i, j, k_E, l - 1]),
   p_sero_pre_1)
-n_com_to_T_sero_pre[, , 1, 2:n_vacc_classes] <- rbinom(
-  n_EE[i, j, k_E, l] + n_EE_next_vacc_class[i, j, k_E, l - 1], p_sero_pre_1)
-n_com_to_T_sero_pre[, , 2, 1] <- n_EE[i, j, k_E, 1] +
-  n_EE_next_vacc_class[i, j, k_E, n_vacc_classes] -
-  n_com_to_T_sero_pre[i, j, 1, 1]
-n_com_to_T_sero_pre[, , 2, 2:n_vacc_classes] <- n_EE[i, j, k_E, l] +
-  n_EE_next_vacc_class[i, j, k_E, l - 1] - n_com_to_T_sero_pre[i, j, 1, l]
+n_com_to_T_sero_pre[, , 2, ] <- n_EE[i, j, k_E, l] +
+  (if (l == 1) n_EE_next_vacc_class[i, j, k_E, n_vacc_classes] else
+    n_EE_next_vacc_class[i, j, k_E, l - 1]) -
+  n_com_to_T_sero_pre[i, j, 1, l]
+
 new_T_sero_pre[, , , ] <- T_sero_pre[i, j, k, l] +
   n_com_to_T_sero_pre[i, j, k, l] - n_T_sero_pre_progress[i, j, k, l]
-
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
@@ -767,22 +701,18 @@ n_T_sero_pre_to_T_sero_pos[, , ] <-
   rbinom(sum(n_T_sero_pre_progress[i, j, , k]), p_sero_pos[i])
 
 new_T_sero_pos[, , , ] <- T_sero_pos[i, j, k, l] -
-  n_T_sero_pos_progress[i, j, k, l]
-new_T_sero_pos[, , 1, ] <-
-  new_T_sero_pos[i, j, 1, l] + n_T_sero_pre_to_T_sero_pos[i, j, l]
-new_T_sero_pos[, , 2:k_sero_pos, ] <-
-  new_T_sero_pos[i, j, k, l] + n_T_sero_pos_progress[i, j, k - 1, l]
+  n_T_sero_pos_progress[i, j, k, l] +
+  (if (k == 1)  n_T_sero_pre_to_T_sero_pos[i, j, l] else
+    n_T_sero_pos_progress[i, j, k - 1, l])
 
 new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] +
   sum(n_T_sero_pre_progress[i, j, , k]) - n_T_sero_pre_to_T_sero_pos[i, j, k] +
   n_T_sero_pos_progress[i, j, k_sero_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
-new_T_sero_neg[, , 1] <- new_T_sero_neg[i, j, 1] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, n_vacc_classes]
-new_T_sero_neg[, , 2:n_vacc_classes] <- new_T_sero_neg[i, j, k] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k - 1]
-
+  model_pcr_and_serology * n_R_next_vacc_class[i, j, k] +
+  model_pcr_and_serology *
+  (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
+    n_R_next_vacc_class[i, j, k - 1])
 
 ## Work out the total number of recovery
 new_R[, , ] <- R[i, j, k] +
@@ -793,38 +723,29 @@ new_R[, , ] <- R[i, j, k] +
   n_W_R_conf_progress[i, j, k_W_R, k] +
   n_W_R_unconf_progress[i, j, k_W_R, k] -
   n_R_progress[i, j, k] -
-  n_R_next_vacc_class[i, j, k]
-new_R[, , 1] <- new_R[i, j, 1] +
-  n_II_A_next_vacc_class[i, j, k_A, n_vacc_classes] +
-  n_R_next_vacc_class[i, j, n_vacc_classes]
-new_R[, , 2:n_vacc_classes] <- new_R[i, j, k] +
-  n_II_A_next_vacc_class[i, j, k_A, k - 1] +
-  n_R_next_vacc_class[i, j, k - 1]
-
+  n_R_next_vacc_class[i, j, k] +
+  (if (k == 1) n_II_A_next_vacc_class[i, j, k_A, n_vacc_classes] +
+     n_R_next_vacc_class[i, j, n_vacc_classes] else
+       n_II_A_next_vacc_class[i, j, k_A, k - 1] +
+     n_R_next_vacc_class[i, j, k - 1])
 
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
-  n_T_PCR_pre_progress[i, j, k, l]
-new_T_PCR_pre[, , 1, ] <- new_T_PCR_pre[i, j, 1, l] + n_S_progress[i, j, l]
-new_T_PCR_pre[, , 2:k_PCR_pre, ] <-
-  new_T_PCR_pre[i, j, k, l] + n_T_PCR_pre_progress[i, j, k - 1, l]
+  n_T_PCR_pre_progress[i, j, k, l] +
+  (if (k == 1) n_S_progress[i, j, l] else n_T_PCR_pre_progress[i, j, k - 1, l])
 
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
-  n_T_PCR_pos_progress[i, j, k, l]
-new_T_PCR_pos[, , 1, ] <- new_T_PCR_pos[i, j, 1, l] +
-  n_T_PCR_pre_progress[i, j, k_PCR_pre, l]
-new_T_PCR_pos[, , 2:k_PCR_pos, ] <-
-  new_T_PCR_pos[i, j, k, l] + n_T_PCR_pos_progress[i, j, k - 1, l]
+  n_T_PCR_pos_progress[i, j, k, l] +
+  (if (k == 1) n_T_PCR_pre_progress[i, j, k_PCR_pre, l] else
+    n_T_PCR_pos_progress[i, j, k - 1, l])
 
 new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] +
   n_T_PCR_pos_progress[i, j, k_PCR_pos, k] -
   model_pcr_and_serology * n_R_progress[i, j, k] -
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k]
-new_T_PCR_neg[, , 1] <- new_T_PCR_neg[i, j, 1] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, n_vacc_classes]
-new_T_PCR_neg[, , 2:n_vacc_classes] <- new_T_PCR_neg[i, j, k] +
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k - 1]
-
+  model_pcr_and_serology * n_R_next_vacc_class[i, j, k] +
+  model_pcr_and_serology *
+  (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
+    n_R_next_vacc_class[i, j, k - 1])
 
 ## Compute the force of infection
 
@@ -836,18 +757,18 @@ I_with_diff_trans[, , ] <-
       I_C_2_transmission * sum(I_C_2[i, j, , k]) +
       hosp_transmission * (
         sum(ICU_pre_unconf[i, j, , k]) +
-        sum(ICU_pre_conf[i, j, , k]) +
-        sum(H_R_unconf[i, j, , k]) +
-        sum(H_R_conf[i, j, , k]) +
-        sum(H_D_unconf[i, j, , k]) +
-        sum(H_D_conf[i, j, , k])) +
+          sum(ICU_pre_conf[i, j, , k]) +
+          sum(H_R_unconf[i, j, , k]) +
+          sum(H_R_conf[i, j, , k]) +
+          sum(H_D_unconf[i, j, , k]) +
+          sum(H_D_conf[i, j, , k])) +
       ICU_transmission * (
         sum(ICU_W_R_unconf[i, j, , k]) +
-        sum(ICU_W_R_conf[i, j, , k]) +
-        sum(ICU_W_D_unconf[i, j, , k]) +
-        sum(ICU_W_D_conf[i, j, , k]) +
-        sum(ICU_D_unconf[i, j, , k]) +
-        sum(ICU_D_conf[i, j, , k])) +
+          sum(ICU_W_R_conf[i, j, , k]) +
+          sum(ICU_W_D_unconf[i, j, , k]) +
+          sum(ICU_W_D_conf[i, j, , k]) +
+          sum(ICU_D_unconf[i, j, , k]) +
+          sum(ICU_D_conf[i, j, , k])) +
       G_D_transmission * sum(G_D[i, j, , k]))
 
 ## NOTE: "age groups" 1-17 are age groups, 18 are CHW and 19 CHR. Here we apply
@@ -1036,7 +957,7 @@ dim(beta_step) <- user()
 ## What we really want is min(step + 1, length(beta_step)) but that's not
 ## supported by odin (it could be made to support this).
 beta <- if (as.integer(step) >= length(beta_step))
-          beta_step[length(beta_step)] else beta_step[step + 1]
+  beta_step[length(beta_step)] else beta_step[step + 1]
 
 ## Useful for debugging
 initial(beta_out) <- beta_step[1]
@@ -1411,7 +1332,7 @@ update(D_comm_tot) <- D_comm_tot + delta_D_comm_tot
 
 initial(D_comm_inc) <- 0
 update(D_comm_inc) <- if (step %% steps_per_day == 0)
-                        delta_D_comm_tot else D_comm_inc + delta_D_comm_tot
+  delta_D_comm_tot else D_comm_inc + delta_D_comm_tot
 
 ## carehome deaths are non-hospital deaths in group 19
 initial(D_carehomes_tot) <- 0
@@ -1424,7 +1345,7 @@ update(D_carehomes_inc) <- if (step %% steps_per_day == 0)
 
 initial(D_hosp_inc) <- 0
 update(D_hosp_inc) <- if (step %% steps_per_day == 0)
-                        delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
+  delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
 
 initial(D_tot) <- 0
 update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
@@ -1540,8 +1461,9 @@ dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 vaccine_probability_doses[, ] <- (
   if (as.integer(step) >= dim(vaccine_dose_step, 3) ||
       vaccine_n_candidates[i, j] == 0) 0
-  else vaccine_dose_step[i, j, step + 1] /
-  vaccine_n_candidates[i, j])
+  else min(vaccine_dose_step[i, j, step + 1] /
+           vaccine_n_candidates[i, j],
+           as.numeric(1)))
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
 ## Then fix everything based on progression at a constant rate (will
