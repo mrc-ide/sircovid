@@ -744,7 +744,7 @@ test_that("calculate Rt with both second variant and vaccination", {
     ## the reduction should be approximately by a factor reduced_susceptibility
     expect_approx_equal(rt$eff_Rt_general[vacc_time] * reduced_susceptibility,
                         rt$eff_Rt_general[vacc_time + 1],
-                        rel_tol = 0.1)
+                        rel_tol = 0.2)
   }
 
 })
