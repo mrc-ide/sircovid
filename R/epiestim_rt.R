@@ -10,12 +10,12 @@ gt_sample <- function(p, n = 1000) {
   if (p$I_L_transmission > 0) {
     stop("gt_sample does not allow transmission from I_L")
   }
-  if (p$k_A > 1 || p$k_P  > 1 || p$k_C_1 > 1) {
-    stop("gt_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1")
+  if (p$k_A > 1 || p$k_P  > 1 || p$k_C > 1) {
+    stop("gt_sample does not allow k_A > 1, k_P > 1 or k_C > 1")
   }
-  if (p$I_P_transmission != 1 || p$I_C_1_transmission  != 1) {
+  if (p$I_P_transmission != 1 || p$I_C_transmission  != 1) {
     stop("gt_sample does not allow
-    I_P_transmission !=1 or I_C_1_transmission != 1")
+    I_P_transmission !=1 or I_C_transmission != 1")
   }
 
   draw_from <- function(n, k, gamma) {
@@ -37,7 +37,7 @@ gt_sample <- function(p, n = 1000) {
       infectivity <- p$I_A_transmission
     } else {
       sample_I <- draw_from(1, p$k_P, p$gamma_P) +
-        draw_from(1, p$k_C_1, p$gamma_C_1)
+        draw_from(1, p$k_C, p$gamma_C)
       infectivity <- 1
     }
     n_secondary_cases <- stats::rpois(1, lambda = infectivity * sample_I)

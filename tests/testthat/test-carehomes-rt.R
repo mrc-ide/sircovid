@@ -313,7 +313,7 @@ test_that("Parameters affect Rt as expected", {
 
   helper("I_A_transmission", 0, 1)
   helper("I_P_transmission", 0, 1)
-  helper("I_C_1_transmission", 0, 1)
+  helper("I_C_transmission", 0, 1)
   helper("I_L_transmission", 0, 1)
   helper("hosp_transmission", 0, 1)
   helper("ICU_transmission", 0, 1)
@@ -321,7 +321,7 @@ test_that("Parameters affect Rt as expected", {
 
   helper("gamma_A", Inf, 1)
   helper("gamma_P", Inf, 1)
-  helper("gamma_C_1", Inf, 1)
+  helper("gamma_C", Inf, 1)
   helper("gamma_L", Inf, 1)
   helper("gamma_H_D", Inf, 1)
   helper("gamma_H_R", Inf, 1)
@@ -333,7 +333,7 @@ test_that("Parameters affect Rt as expected", {
 
   helper("k_A", 1, 2)
   helper("k_P", 1, 2)
-  helper("k_C_1", 1, 2)
+  helper("k_C", 1, 2)
   helper("k_L", 1, 2)
   helper("k_H_D", 1, 2)
   helper("k_H_R", 1, 2)

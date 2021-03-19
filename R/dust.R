@@ -258,7 +258,7 @@ carehomes <- R6::R6Class(
     has_default = FALSE, default_value = NULL, rank = 0, min = -Inf,
     max = Inf, integer = FALSE), I_A_transmission = list(has_default = FALSE,
     default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-    I_C_1_transmission = list(has_default = FALSE, default_value = NULL,
+    I_C_transmission = list(has_default = FALSE, default_value = NULL,
         rank = 0, min = -Inf, max = Inf, integer = FALSE), I_L_transmission = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), I_P_transmission = list(
@@ -281,7 +281,7 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), k_A = list(has_default = FALSE,
         default_value = NULL, rank = 0, min = -Inf, max = Inf,
-        integer = FALSE), k_C_1 = list(has_default = FALSE, default_value = NULL,
+        integer = FALSE), k_C = list(has_default = FALSE, default_value = NULL,
         rank = 0, min = -Inf, max = Inf, integer = FALSE), k_E = list(
         has_default = FALSE, default_value = NULL, rank = 0,
         min = -Inf, max = Inf, integer = FALSE), k_G_D = list(
@@ -430,7 +430,7 @@ carehomes <- R6::R6Class(
         has_default = FALSE, default_value = NULL, rank = 1,
         min = -Inf, max = Inf, integer = FALSE), gamma_A = list(
         has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf,
-        max = Inf, integer = FALSE), gamma_C_1 = list(has_default = TRUE,
+        max = Inf, integer = FALSE), gamma_C = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,
         integer = FALSE), gamma_E = list(has_default = TRUE,
         default_value = 0.1, rank = 0, min = -Inf, max = Inf,

@@ -144,7 +144,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
 
   expect_true(any(y$E > 0L))
   expect_true(all(y$I_P == 0))
-  expect_true(all(y$I_C_1 == 0))
+  expect_true(all(y$I_C == 0))
   expect_true(all(y$I_L == 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
@@ -183,7 +183,7 @@ test_that("No one is hospitalised, no-one dies if psi_H is 0", {
 
   expect_true(any(y$E > 0L))
   expect_true(any(y$I_P > 0))
-  expect_true(any(y$I_C_1 > 0))
+  expect_true(any(y$I_C > 0))
   expect_true(any(y$I_L > 0))
   expect_true(all(y$H_R_unconf == 0))
   expect_true(all(y$H_R_conf == 0))
@@ -311,7 +311,7 @@ test_that("No one dies in the community if psi_G_D is 0", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_P > 0))
-  expect_true(any(y$I_C_1 > 0))
+  expect_true(any(y$I_C > 0))
   expect_true(any(y$I_L > 0))
   expect_true(all(y$G_D == 0))
   expect_true(all(y$D_non_hosp == 0))
@@ -536,7 +536,7 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_E", "k_E", "E", FALSE)
   helper("gamma_A", "k_A", "I_A", FALSE)
   helper("gamma_P", "k_P", "I_P", FALSE)
-  helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
+  helper("gamma_C", "k_C", "I_C", FALSE)
   helper("gamma_L", "k_L", "I_L", FALSE)
   helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "k_H_R", "H_R", TRUE)
@@ -612,7 +612,7 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_E", "k_E", "E", FALSE)
   helper("gamma_A", "k_A", "I_A", FALSE)
   helper("gamma_P", "k_P", "I_P", FALSE)
-  helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
+  helper("gamma_C", "k_C", "I_C", FALSE)
   helper("gamma_L", "k_L", "I_L", FALSE)
   helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
   helper("gamma_H_R", "k_H_R", "H_R", TRUE)
@@ -831,7 +831,7 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     ## set all transmission parameters to 1
     p$I_A_transmission <- 1
     p$I_P_transmission <- 1
-    p$I_C_1_transmission <- 1
+    p$I_C_transmission <- 1
     p$I_L_transmission <- 1
     p$hosp_transmission <- 1
     p$ICU_transmission <- 1
@@ -869,7 +869,7 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
 
   helper("I_A_transmission", "I_A", "gamma_A")
   helper("I_P_transmission", "I_P", "gamma_P")
-  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
+  helper("I_C_transmission", "I_C", "gamma_C")
   helper("I_L_transmission", "I_L", "gamma_L")
   helper("G_D_transmission", "G_D", "gamma_G_D")
   helper("hosp_transmission", "H_D_unconf", "gamma_H_D")
@@ -895,7 +895,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     ## set all transmission parameters to 0
     p$I_A_transmission <- 0
     p$I_P_transmission <- 0
-    p$I_C_1_transmission <- 0
+    p$I_C_transmission <- 0
     p$I_L_transmission <- 0
     p$hosp_transmission <- 0
     p$ICU_transmission <- 0
@@ -935,7 +935,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
 
   helper("I_A_transmission", "I_A", "gamma_A")
   helper("I_P_transmission", "I_P", "gamma_P")
-  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
+  helper("I_C_transmission", "I_C", "gamma_C")
   helper("I_L_transmission", "I_L", "gamma_L")
   helper("G_D_transmission", "G_D", "gamma_G_D")
   helper("hosp_transmission", "H_D_unconf", "gamma_H_D")

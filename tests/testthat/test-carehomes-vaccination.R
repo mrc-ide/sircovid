@@ -60,12 +60,12 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   mod$set_state(state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  ## Noone moves into I_P, I_C_1 or I_L ever
+  ## Noone moves into I_P, I_C or I_L ever
   ## other than in the 4th age group where some infections are seeded
   ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in I_P and I_L upon reinfection
   expect_true(all(y$I_P[-4, , , , ] == 0))
-  expect_true(all(y$I_C_1[-4, , , , ] == 0))
+  expect_true(all(y$I_C[-4, , , , ] == 0))
   expect_true(all(y$I_L[-4, , , , ] == 0))
 
 })
@@ -951,8 +951,8 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   p$gamma_A <- 1 / 2.88
   p$k_P <- 1
   p$gamma_P <- 1 / 1.68
-  p$k_C_1 <- 1
-  p$gamma_C_1 <- 1 / 2.14
+  p$k_C <- 1
+  p$gamma_C <- 1 / 2.14
   p$k_L <- 1
   p$gamma_L <- 1 / 1.86
 

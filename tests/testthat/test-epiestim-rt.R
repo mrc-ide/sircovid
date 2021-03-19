@@ -294,32 +294,32 @@ test_that("gt_sample yields expected invalid input errors", {
   expect_error(
     gt_sample(p, n = 1000),
     "gt_sample does not allow
-    I_P_transmission !=1 or I_C_1_transmission != 1",
+    I_P_transmission !=1 or I_C_transmission != 1",
     fixed = TRUE)
   p <- p_base
-  p$I_C_1_transmission <- 0.1
+  p$I_C_transmission <- 0.1
   expect_error(
     gt_sample(p, n = 1000),
     "gt_sample does not allow
-    I_P_transmission !=1 or I_C_1_transmission != 1",
+    I_P_transmission !=1 or I_C_transmission != 1",
     fixed = TRUE)
   p <- p_base
   p$k_A <- 2
   expect_error(
     gt_sample(p, n = 1000),
-    "gt_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1",
+    "gt_sample does not allow k_A > 1, k_P > 1 or k_C > 1",
     fixed = TRUE)
   p <- p_base
   p$k_P <- 2
   expect_error(
     gt_sample(p, n = 1000),
-    "gt_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1",
+    "gt_sample does not allow k_A > 1, k_P > 1 or k_C > 1",
     fixed = TRUE)
   p <- p_base
-  p$k_C_1 <- 2
+  p$k_C <- 2
   expect_error(
     gt_sample(p, n = 1000),
-    "gt_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1",
+    "gt_sample does not allow k_A > 1, k_P > 1 or k_C > 1",
     fixed = TRUE)
 
 })

@@ -373,7 +373,7 @@ carehomes_parameters <- function(start_date, region,
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.363
   ret$I_P_transmission <- 1
-  ret$I_C_1_transmission <- 1
+  ret$I_C_transmission <- 1
   ret$I_L_transmission <- 0
 
   ## All observation parameters:
@@ -932,7 +932,7 @@ carehomes_parameters_progression <- function() {
   list(k_E = 2,
        k_A = 1,
        k_P = 1,
-       k_C_1 = 1,
+       k_C = 1,
        k_L = 1,
        k_G_D = 2,
        k_H_D = 2,
@@ -950,7 +950,7 @@ carehomes_parameters_progression <- function() {
        gamma_E = 1 / (3.42 / 2),
        gamma_A = 1 / 2.88,
        gamma_P = 1 / 1.68,
-       gamma_C_1 = 1 / 2.14,
+       gamma_C = 1 / 2.14,
        gamma_L = 1 / 1.86,
        gamma_G_D = 1 / (3 / 2),
        gamma_H_D = 2 / 5,

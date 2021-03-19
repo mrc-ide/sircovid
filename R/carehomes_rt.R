@@ -345,8 +345,8 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   mean_duration_I_P <- pars$I_P_transmission * p_C *
     pars$k_P / (1 - exp(- dt * pars$gamma_P))
 
-  mean_duration_I_C_1 <- pars$I_C_1_transmission * p_C *
-    pars$k_C_1 / (1 - exp(- dt * pars$gamma_C_1))
+  mean_duration_I_C <- pars$I_C_transmission * p_C *
+    pars$k_C / (1 - exp(- dt * pars$gamma_C))
 
   mean_duration_I_L <- pars$I_L_transmission * p_C *
     pars$k_L / (1 - exp(- dt * pars$gamma_L))
@@ -365,7 +365,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
       prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
       prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
 
-  mean_duration <- mean_duration_I_A + mean_duration_I_P + mean_duration_I_C_1 +
+  mean_duration <- mean_duration_I_A + mean_duration_I_P + mean_duration_I_C +
     mean_duration_I_L + mean_duration_G_D + mean_duration_hosp +
     mean_duration_icu
 

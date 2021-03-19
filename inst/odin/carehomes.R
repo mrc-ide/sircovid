@@ -69,7 +69,7 @@ update(S[, ]) <- new_S[i, j]
 update(E[, , , ]) <- new_E[i, j, k, l]
 update(I_A[, , , ]) <- new_I_A[i, j, k, l]
 update(I_P[, , , ]) <- new_I_P[i, j, k, l]
-update(I_C_1[, , , ]) <- new_I_C_1[i, j, k, l]
+update(I_C[, , , ]) <- new_I_C[i, j, k, l]
 update(I_L[, , , ]) <- new_I_L[i, j, k, l]
 update(G_D[, , , ]) <- new_G_D[i, j, k, l]
 update(ICU_pre_unconf[, , , ]) <- new_ICU_pre_unconf[i, j, k, l]
@@ -141,7 +141,7 @@ p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
 p_E_progress <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_I_A_progress <- 1 - exp(-gamma_A * dt) # progression of infectious period
 p_I_P_progress <- 1 - exp(-gamma_P * dt)
-p_I_C_1_progress <- 1 - exp(-gamma_C_1 * dt)
+p_I_C_progress <- 1 - exp(-gamma_C * dt)
 p_I_L_progress <- 1 - exp(-gamma_L * dt)
 p_G_D_progress <- 1 - exp(-gamma_G_D * dt)
 p_ICU_pre_progress <- 1 - exp(-gamma_ICU_pre * dt)
@@ -328,7 +328,7 @@ n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
 
 #### other transitions ####
 
-n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress)
+n_I_C_progress[, , , ] <- rbinom(I_C[i, j, k, l], p_I_C_progress)
 n_I_L_progress[, , , ] <- rbinom(I_L[i, j, k, l], p_I_L_progress)
 n_G_D_progress[, , , ] <- rbinom(G_D[i, j, k, l], p_G_D_progress)
 n_ICU_pre_unconf_progress[, , , ] <-
@@ -435,17 +435,17 @@ aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else n_II_P[i, j, k - 1, l]) -
 
 new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
 
-## Work out the I_C_1->I_C_1 transitions
-aux_I_C_1[, , , ] <- (if (k == 1)
+## Work out the I_C->I_C transitions
+aux_I_C[, , , ] <- (if (k == 1)
   (if (l == 1) n_II_P[i, j, k_P, 1] +
      n_II_P_next_vacc_class[i, j, k_P, n_vacc_classes] else
        n_II_P[i, j, k_P, l] + n_II_P_next_vacc_class[i, j, k_P, l - 1]) else
-         n_I_C_1_progress[i, j, k - 1, l]) - n_I_C_1_progress[i, j, k, l]
+         n_I_C_progress[i, j, k - 1, l]) - n_I_C_progress[i, j, k, l]
 
-new_I_C_1[, , , ] <- I_C_1[i, j, k, l] + aux_I_C_1[i, j, k, l]
+new_I_C[, , , ] <- I_C[i, j, k, l] + aux_I_C[i, j, k, l]
 
 ## Work out the I_L->I_L transitions
-aux_I_L[, , , ] <- (if (k == 1) n_I_C_1_progress[i, j, k_C_1, l] else
+aux_I_L[, , , ] <- (if (k == 1) n_I_C_progress[i, j, k_C, l] else
   n_I_L_progress[i, j, k - 1, l]) - n_I_L_progress[i, j, k, l]
 
 new_I_L[, , , ] <- I_L[i, j, k, l] + aux_I_L[i, j, k, l]
@@ -725,7 +725,7 @@ I_with_diff_trans[, , ] <-
   rel_infectivity[i, k] * strain_transmission[j] * (
     I_A_transmission * sum(I_A[i, j, , k]) +
       I_P_transmission * sum(I_P[i, j, , k]) +
-      I_C_1_transmission * sum(I_C_1[i, j, , k]) +
+      I_C_transmission * sum(I_C[i, j, , k]) +
       I_L_transmission * sum(I_L[i, j, , k]) +
       hosp_transmission * (
         sum(ICU_pre_unconf[i, j, , k]) +
@@ -756,7 +756,7 @@ initial(S[, ]) <- 0
 initial(E[, , , ]) <- 0
 initial(I_A[, , , ]) <- 0
 initial(I_P[, , , ]) <- 0
-initial(I_C_1[, , , ]) <- 0
+initial(I_C[, , , ]) <- 0
 initial(I_L[, , , ]) <- 0
 initial(G_D[, , , ]) <- 0
 initial(ICU_pre_unconf[, , , ]) <- 0
@@ -820,9 +820,9 @@ gamma_A <- user(0.1)
 k_P <- user()
 gamma_P <- user(0.1)
 
-## Parameters of the I_C_1 classes
-k_C_1 <- user()
-gamma_C_1 <- user(0.1)
+## Parameters of the I_C classes
+k_C <- user()
+gamma_C <- user(0.1)
 
 ## Parameters of the I_L classes
 k_L <- user()
@@ -930,7 +930,7 @@ update(beta_out) <- beta
 m[, ] <- user()
 I_A_transmission <- user()
 I_P_transmission <- user()
-I_C_1_transmission <- user()
+I_C_transmission <- user()
 I_L_transmission <- user()
 hosp_transmission <- user()
 ICU_transmission <- user()
@@ -965,10 +965,10 @@ dim(new_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 dim(n_II_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 
 ## Vectors handling the I_L class
-dim(I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
-dim(aux_I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
-dim(new_I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
-dim(n_I_C_1_progress) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
+dim(I_C) <- c(n_groups, n_strains, k_C, n_vacc_classes)
+dim(aux_I_C) <- c(n_groups, n_strains, k_C, n_vacc_classes)
+dim(new_I_C) <- c(n_groups, n_strains, k_C, n_vacc_classes)
+dim(n_I_C_progress) <- c(n_groups, n_strains, k_C, n_vacc_classes)
 
 ## Vectors handling the I_L class
 dim(I_L) <- c(n_groups, n_strains, k_L, n_vacc_classes)
@@ -1248,7 +1248,7 @@ dim(p_RS) <- n_groups
 initial(N_tot[]) <- 0
 update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + D_hosp[i] + sum(E[i, , , ]) +
   sum(I_A[i, , , ]) + sum(I_P[i, , , ]) +
-  sum(I_C_1[i, , , ]) + sum(I_L[i, , , ]) +
+  sum(I_C[i, , , ]) + sum(I_L[i, , , ]) +
   sum(ICU_pre_conf[i, , , ]) + sum(ICU_pre_unconf[i, , , ])  +
   sum(H_R_conf[i, , , ]) + sum(H_R_unconf[i, , , ]) +
   sum(H_D_conf[i, , , ]) + sum(H_D_unconf[i, , , ]) +
@@ -1383,7 +1383,7 @@ I_weighted_strain[, , ] <-
   strain_transmission[j] * (
     I_A_transmission * sum(new_I_A[i, j, , k]) +
       I_P_transmission * sum(new_I_P[i, j, , k]) +
-      I_C_1_transmission * sum(new_I_C_1[i, j, , k]) +
+      I_C_transmission * sum(new_I_C[i, j, , k]) +
       I_L_transmission * sum(new_I_L[i, j, , k]) +
       hosp_transmission * (
         sum(new_ICU_pre_unconf[i, j, , k]) +
