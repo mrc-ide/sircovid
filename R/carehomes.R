@@ -66,8 +66,7 @@ NULL
 ##'   value representing the *daily* rate of seeding. Seeding is drawn from
 ##'   Poisson(strain_seed_rate) at each **day**. Because
 ##'   each day is divided into `1 / dt` steps, this rate will be
-##'   spread out fairly evenly across the steps that occur within each
-##'   date.
+##'   spread out evenly across the steps that occur within each date.
 ##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -893,7 +892,7 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     ## seeding value
     strain_seed_step <- numeric((strain_seed_date[[2]] + 1) / dt)
     i <- (strain_seed_date[[1]] / dt):((strain_seed_date[[2]] + 1) / dt - 1)
-    strain_seed_step[i] <- rep(strain_seed_rate * dt, length(i))
+    strain_seed_step[i] <- strain_seed_rate * dt
   }
 
   list(n_strains = length(strain_transmission),
