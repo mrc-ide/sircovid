@@ -1,3 +1,7 @@
+# sircovid 0.10.14
+
+* Change fixed `strain_seed_value` to stochastic `strain_seed_rate`
+
 # sircovid 0.10.12
 
 * Fix corner case in vaccination exposed by recent dust updates
