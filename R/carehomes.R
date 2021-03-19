@@ -62,13 +62,12 @@ NULL
 ##'   seed for a single day, these two values should have the same
 ##'   date
 ##'
-##' @param strain_seed_value Either `NULL` (no seeding) or a single
-##'   integer value represending the *daily* rate of seeding. Because
-##'   each day is dividied into `1 / dt` steps, this value will be
+##' @param strain_seed_rate Either `NULL` (no seeding) or a single
+##'   value representing the *daily* rate of seeding. Seeding is drawn from
+##'   Poisson(strain_seed_rate) at each **day**. Because
+##'   each day is divided into `1 / dt` steps, this rate will be
 ##'   spread out fairly evenly across the steps that occur within each
-##'   date. Seeding is not stochastic; this many individuals *will*
-##'   become infected with the new strain, unless the pool of
-##'   susceptibles has been exhausted.
+##'   date.
 ##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -276,7 +275,7 @@ carehomes_parameters <- function(start_date, region,
                                  p_NC = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
-                                 strain_seed_value = NULL,
+                                 strain_seed_rate = NULL,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
@@ -383,7 +382,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## number of strains and relative transmissibility
   strain <- carehomes_parameters_strain(
-    strain_transmission, strain_seed_date, strain_seed_value, ret$dt)
+    strain_transmission, strain_seed_date, strain_seed_rate, ret$dt)
 
   ## vaccination
   vaccination <- carehomes_parameters_vaccination(ret$N_tot,
@@ -854,7 +853,7 @@ carehomes_parameters_vaccination <- function(N_tot,
 }
 
 carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
-                                        strain_seed_value, dt) {
+                                        strain_seed_rate, dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
   }
@@ -871,8 +870,8 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
   }
 
   if (is.null(strain_seed_date)) {
-    if (!is.null(strain_seed_value)) {
-      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_value'",
+    if (!is.null(strain_seed_rate)) {
+      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_rate'",
                  "to be NULL"))
     }
     strain_seed_step <- 0
@@ -886,16 +885,15 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     assert_sircovid_date(strain_seed_date)
     assert_increasing(strain_seed_date, strict = FALSE)
 
-    if (length(strain_seed_value) != 1L) {
-      stop("'strain_seed_value' must be a scalar if 'strain_seed_date' is used")
+    if (length(strain_seed_rate) != 1L) {
+      stop("'strain_seed_rate' must be a scalar if 'strain_seed_date' is used")
     }
-    assert_integer(strain_seed_value)
 
     ## The + 1 here prevents the start of the next day having the
     ## seeding value
     strain_seed_step <- numeric((strain_seed_date[[2]] + 1) / dt)
     i <- (strain_seed_date[[1]] / dt):((strain_seed_date[[2]] + 1) / dt - 1)
-    strain_seed_step[i] <- spread_integer(strain_seed_value, 1 / dt)
+    strain_seed_step[i] <- rep(strain_seed_rate * dt, length(i))
   }
 
   list(n_strains = length(strain_transmission),
