@@ -7,8 +7,8 @@ gt_sample <- function(p, n = 1000) {
     stop("gt_sample does not allow p_C to vary by age")
   }
 
-  if (p$I_C_2_transmission > 0) {
-    stop("gt_sample does not allow transmission from I_C_2")
+  if (p$I_L_transmission > 0) {
+    stop("gt_sample does not allow transmission from I_L")
   }
   if (p$k_A > 1 || p$k_P  > 1 || p$k_C_1 > 1) {
     stop("gt_sample does not allow k_A > 1, k_P > 1 or k_C_1 > 1")

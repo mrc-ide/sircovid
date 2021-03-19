@@ -4,10 +4,10 @@ test_that("carehomes progression parameters", {
   p <- carehomes_parameters_progression()
   expect_setequal(
     names(p),
-    c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
+    c("k_E", "k_A", "k_P", "k_C_1", "k_L", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
       "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
-      "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D", "gamma_H_D",
+      "gamma_A", "gamma_P", "gamma_C_1", "gamma_L", "gamma_G_D", "gamma_H_D",
       "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
       "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
       "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
@@ -161,7 +161,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "N_tot_all", "N_tot_over25", "N_tot_react",
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
       "react_sensitivity", "p_NC", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "psi_ICU_D",
+      "I_C_1_transmission", "I_L_transmission", "psi_ICU_D",
       "p_ICU_D_step", "psi_H_D", "p_H_D_step",
       "psi_W_D", "p_W_D_step", "psi_H",
       "p_H_step", "psi_G_D", "p_G_D_step",

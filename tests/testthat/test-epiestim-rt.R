@@ -284,10 +284,10 @@ test_that("gt_sample yields expected invalid input errors", {
   p_base$p_C <- rep(0.6, 19)
 
   p <- p_base
-  p$I_C_2_transmission <- 0.1
+  p$I_L_transmission <- 0.1
   expect_error(
     gt_sample(p, n = 1000),
-    "gt_sample does not allow transmission from I_C_2",
+    "gt_sample does not allow transmission from I_L",
     fixed = TRUE)
   p <- p_base
   p$I_P_transmission <- 0.1

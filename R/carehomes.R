@@ -374,7 +374,7 @@ carehomes_parameters <- function(start_date, region,
   ret$I_A_transmission <- 0.363
   ret$I_P_transmission <- 1
   ret$I_C_1_transmission <- 1
-  ret$I_C_2_transmission <- 0
+  ret$I_L_transmission <- 0
 
   ## All observation parameters:
   observation <- carehomes_parameters_observation(exp_noise)
@@ -933,7 +933,7 @@ carehomes_parameters_progression <- function() {
        k_A = 1,
        k_P = 1,
        k_C_1 = 1,
-       k_C_2 = 1,
+       k_L = 1,
        k_G_D = 2,
        k_H_D = 2,
        k_H_R = 2,
@@ -951,7 +951,7 @@ carehomes_parameters_progression <- function() {
        gamma_A = 1 / 2.88,
        gamma_P = 1 / 1.68,
        gamma_C_1 = 1 / 2.14,
-       gamma_C_2 = 1 / 1.86,
+       gamma_L = 1 / 1.86,
        gamma_G_D = 1 / (3 / 2),
        gamma_H_D = 2 / 5,
        gamma_H_R = 2 / 10,
