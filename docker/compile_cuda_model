@@ -1,0 +1,13 @@
+#!/usr/bin/env Rscript
+message("Checking CUDA configuration")
+dust::dust_cuda_configuration(quiet = FALSE)
+message("Compiling...")
+gen <- sircovid::compile_gpu(gpu = TRUE, verbose = TRUE)
+message("Initialising...")
+p <- sircovid::carehomes_parameters(
+  sircovid::sircovid_date("2020-02-07"), "england")
+mod <- gen$new(p, 0, 10, seed = 1L)
+message("Running...") # just on the CPU of course
+y <- mod$run(10)
+message("Success!")
+invisible(TRUE)
