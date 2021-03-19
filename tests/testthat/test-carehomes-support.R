@@ -28,6 +28,7 @@ test_that("carehomes vaccination parameters", {
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
       "rel_infectivity",
+      "n_vacc_classes",
       "vaccine_progression_rate_base", "vaccine_dose_step",
       "index_dose"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
@@ -65,7 +66,7 @@ test_that("carehomes vaccination parameters", {
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
-      "rel_infectivity",
+      "rel_infectivity", "n_vacc_classes",
       "vaccine_progression_rate_base", "vaccine_dose_step",
       "index_dose"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)

@@ -845,6 +845,7 @@ carehomes_parameters_vaccination <- function(N_tot,
       (vaccine_schedule$doses * dt)[, , i])
   }
 
+  ret$n_vacc_classes <- n_vacc_classes
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
     vaccine_progression_rate, n_vacc_classes, ret$index_dose)
 
