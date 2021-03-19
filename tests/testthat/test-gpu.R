@@ -25,6 +25,8 @@ test_that("can generate GPU interface and pass arguments", {
 
 test_that("can run the gpu model on the cpu", {
   skip_unless_ci()
+  skip_if_not_installed("odin")
+  skip_if_not_installed("odin.dust")
 
   gen <- compile_gpu(gpu = FALSE, gpu_generate = TRUE, verbose = FALSE)
   expect_equal(gen$public_methods$name(), "carehomes")
