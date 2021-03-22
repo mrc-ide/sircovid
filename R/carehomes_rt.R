@@ -338,6 +338,11 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
   ## just a helper function to calculate denominator after converting gammas
   ## to array
   dims <- c(dim(p_C), length(pars$gamma_A))
+  n_groups <- dims[1L]
+  n_vax <- dims[2L]
+  n_time_steps <- dims[3L]
+  n_strains <- dims[4L]
+
   denom <- function(x) array(rep(1 - exp(-dt * x), each = prod(dims[1:3])),
                              dims)
 
@@ -368,33 +373,33 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
       prob_ICU_D * pars$k_ICU_D / (1 - exp(-dt * pars$gamma_ICU_D))), dims)
   ## safety check
   stopifnot(identical(mean_duration_icu[, , , 1],
-                      mean_duration_icu[, , , dim(mean_duration_icu)[4L]]))
+                      mean_duration_icu[, , , n_strains]))
 
-  mean_duration <- mean_duration_I_A + mean_duration_I_P + mean_duration_I_C_1 +
-    mean_duration_I_C_2 + mean_duration_G_D + mean_duration_hosp +
-    mean_duration_icu
+  mean_duration <- mean_duration_I_A + mean_duration_I_P +
+    mean_duration_I_C_1 + mean_duration_I_C_2 + mean_duration_G_D +
+    mean_duration_hosp + mean_duration_icu
 
   ## Account for different infectivity levels depending on vaccination stage
 
   mean_duration <- mean_duration *
-    outer(outer(pars$rel_infectivity, rep(1, n_time_steps)), rep(1, dims[4L]))
+    outer(outer(pars$rel_infectivity, rep(1, n_time_steps)), rep(1, n_strains))
 
   ## Multiply by dt to convert from time steps to days
   mean_duration <- dt * mean_duration
 
-  if (dims[4L] > 1L) {
-    weighted_strain_multiplier <- vapply(seq_len(dims[3L]), function(t)
+  if (n_strains > 1L) {
+    weighted_strain_multiplier <- vapply(seq_len(n_time_steps), function(t)
       matrix(strain_mat[,, t] %*% pars$strain_transmission,
-             pars$n_groups, dims[2L]),
-      matrix(0, pars$n_groups, dims[2L]))
+             pars$n_groups, n_vax),
+      matrix(0, pars$n_groups, n_vax))
     mean_duration <- mean_duration * outer(weighted_strain_multiplier,
-                                           rep(1, dims[4L]))
+                                           rep(1, n_strains))
 
-    mean_duration <- vapply(seq_len(dims[3L]), function(t)
-      vapply(seq_len(dims[2L]), function(j)
+    mean_duration <- vapply(seq_len(n_time_steps), function(t)
+      vapply(seq_len(n_vax), function(j)
         rowSums(strain_mat[, , t] * mean_duration[, j, t, ]),
       numeric(dims[1L])),
-      matrix(0, pars$n_groups, dims[2L]))
+      matrix(0, pars$n_groups, n_vax))
   } else {
     dim(mean_duration) <- dim(mean_duration)[1:3]
   }
