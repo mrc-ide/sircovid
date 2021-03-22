@@ -64,9 +64,8 @@ NULL
 ##'
 ##' @param strain_seed_rate Either `NULL` (no seeding) or a single
 ##'   value representing the *daily* rate of seeding. Seeding is drawn from
-##'   Poisson(strain_seed_rate) at each **day**. Because
-##'   each day is divided into `1 / dt` steps, this rate will be
-##'   spread out evenly across the steps that occur within each date.
+##'   Poisson(strain_seed_rate * dt) at each **day** and so the rate is spread
+##'   evenly across the steps that occur within each date.
 ##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.

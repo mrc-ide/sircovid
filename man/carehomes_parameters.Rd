@@ -113,9 +113,8 @@ date}
 
 \item{strain_seed_rate}{Either \code{NULL} (no seeding) or a single
 value representing the \emph{daily} rate of seeding. Seeding is drawn from
-Poisson(strain_seed_rate) at each \strong{day}. Because
-each day is divided into \code{1 / dt} steps, this rate will be
-spread out evenly across the steps that occur within each date.}
+Poisson(strain_seed_rate * dt) at each \strong{day} and so the rate is spread
+evenly across the steps that occur within each date.}
 
 \item{rel_susceptibility}{A vector or matrix of values representing the
 relative susceptibility of individuals in different vaccination groups.
