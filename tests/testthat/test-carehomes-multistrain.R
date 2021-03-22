@@ -814,7 +814,7 @@ test_that("Relative gamma = 1 makes no difference", {
 
 
 test_that("Higher rate variant has lower Rt", {
-  ## Gamma = 1.5x ref
+  ## rate is 1.5 times ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_rel_gamma = c(1.5, 1.5),
@@ -841,7 +841,7 @@ test_that("Higher rate variant has lower Rt", {
   rt_15 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
   rt_15_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
 
-  ## Gamma = ref
+  ## rate equal to ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_rel_gamma = c(1, 1),

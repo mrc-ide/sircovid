@@ -389,7 +389,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
 
   if (n_strains > 1L) {
     weighted_strain_multiplier <- vapply(seq_len(n_time_steps), function(t)
-      matrix(strain_mat[,, t] %*% pars$strain_transmission,
+      matrix(strain_mat[, , t] %*% pars$strain_transmission,
              pars$n_groups, n_vax),
       matrix(0, pars$n_groups, n_vax))
     mean_duration <- mean_duration * outer(weighted_strain_multiplier,
