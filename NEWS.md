@@ -1,3 +1,7 @@
+# sircovid 0.10.15
+
+* New parameter `strain_rel_gamma` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+
 # sircovid 0.10.12
 
 * Fix corner case in vaccination exposed by recent dust updates

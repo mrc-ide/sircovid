@@ -70,6 +70,12 @@ NULL
 ##'   become infected with the new strain, unless the pool of
 ##'   susceptibles has been exhausted.
 ##'
+##' @param strain_rel_gamma Vector of relative rates of gamma_A, gamma_P,
+##'   gamma_C_1, gamma_C_2 for each strain modelled. If `1` all strains have
+##'   same rates. Otherwise vector of same length as `strain_transmission`,
+##'   with entries that determines the relative scaling of the defaults for
+##'   each strain.
+##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
@@ -277,6 +283,7 @@ carehomes_parameters <- function(start_date, region,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_value = NULL,
+                                 strain_rel_gamma = 1,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
@@ -333,7 +340,10 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- severity$p_star / max(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  progression <- progression %||% carehomes_parameters_progression()
+  strain_rel_gamma <- recycle(strain_rel_gamma, length(strain_transmission))
+
+  progression <- progression %||%
+                  carehomes_parameters_progression(strain_rel_gamma)
 
   waning <- carehomes_parameters_waning(waning_rate)
 
@@ -925,7 +935,7 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##' @return A list of parameter values
 ##'
 ##' @export
-carehomes_parameters_progression <- function() {
+carehomes_parameters_progression <- function(rel_gamma) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -949,10 +959,10 @@ carehomes_parameters_progression <- function() {
        k_PCR_pos = 2,
 
        gamma_E = 1 / (3.42 / 2),
-       gamma_A = 1 / 2.88,
-       gamma_P = 1 / 1.68,
-       gamma_C_1 = 1 / 2.14,
-       gamma_C_2 = 1 / 1.86,
+       gamma_A = 1 / 2.88 * rel_gamma,
+       gamma_P = 1 / 1.68 * rel_gamma,
+       gamma_C_1 = 1 / 2.14 * rel_gamma,
+       gamma_C_2 = 1 / 1.86 * rel_gamma,
        gamma_G_D = 1 / (3 / 2),
        gamma_H_D = 2 / 5,
        gamma_H_R = 2 / 10,

@@ -139,10 +139,10 @@ p_R_next_vacc_class[, , ] <- vaccine_probability[i, k]
 p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
                       rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
 p_E_progress <- 1 - exp(-gamma_E * dt) # progression of latent period
-p_I_A_progress <- 1 - exp(-gamma_A * dt) # progression of infectious period
-p_I_P_progress <- 1 - exp(-gamma_P * dt)
-p_I_C_1_progress <- 1 - exp(-gamma_C_1 * dt)
-p_I_C_2_progress <- 1 - exp(-gamma_C_2 * dt)
+p_I_A_progress[] <- 1 - exp(-gamma_A[i] * dt) # progression of infectious period
+p_I_P_progress[] <- 1 - exp(-gamma_P[i] * dt)
+p_I_C_1_progress[] <- 1 - exp(-gamma_C_1[i] * dt)
+p_I_C_2_progress[] <- 1 - exp(-gamma_C_2[i] * dt)
 p_G_D_progress <- 1 - exp(-gamma_G_D * dt)
 p_ICU_pre_progress <- 1 - exp(-gamma_ICU_pre * dt)
 p_H_R_progress <- 1 - exp(-gamma_H_R * dt)
@@ -158,6 +158,11 @@ p_test <- 1 - exp(-gamma_U * dt)
 p_T_PCR_pre_progress <- 1 - exp(-gamma_PCR_pre * dt)
 p_T_PCR_pos_progress <- 1 - exp(-gamma_PCR_pos * dt)
 p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
+
+dim(p_I_A_progress) <- n_strains
+dim(p_I_P_progress) <- n_strains
+dim(p_I_C_1_progress) <- n_strains
+dim(p_I_C_2_progress) <- n_strains
 
 ## Work out time-varying probabilities
 p_ICU <- if (as.integer(step) >= length(p_ICU_step))
@@ -259,7 +264,7 @@ n_E_next_vacc_class[, , , ] <- rbinom(E[i, j, k, l] - n_E_progress[i, j, k, l],
 
 #### flow out of I_A ####
 
-n_I_A_progress[, , , ] <- rbinom(I_A[i, j, k, l], p_I_A_progress)
+n_I_A_progress[, , , ] <- rbinom(I_A[i, j, k, l], p_I_A_progress[j])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from I_A[j, k] to I_A[j+1, k+1]
 ## (k vaccination class)
@@ -279,7 +284,7 @@ n_I_A_next_vacc_class[, , , ] <- rbinom(
 
 #### flow out of I_P ####
 
-n_I_P_progress[, , , ] <- rbinom(I_P[i, j, k, l], p_I_P_progress)
+n_I_P_progress[, , , ] <- rbinom(I_P[i, j, k, l], p_I_P_progress[j])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from I_P[j, k] to I_P[j+1, k+1]
 ## (k vaccination class)
@@ -328,8 +333,8 @@ n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
 
 #### other transitions ####
 
-n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress)
-n_I_C_2_progress[, , , ] <- rbinom(I_C_2[i, j, k, l], p_I_C_2_progress)
+n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress[j])
+n_I_C_2_progress[, , , ] <- rbinom(I_C_2[i, j, k, l], p_I_C_2_progress[j])
 n_G_D_progress[, , , ] <- rbinom(G_D[i, j, k, l], p_G_D_progress)
 n_ICU_pre_unconf_progress[, , , ] <-
   rbinom(ICU_pre_unconf[i, j, k, l], p_ICU_pre_progress)
@@ -814,19 +819,24 @@ p_C[] <- user()
 
 ## Parameters of the I_A classes
 k_A <- user()
-gamma_A <- user(0.1)
+gamma_A[] <- user()
+dim(gamma_A) <- n_strains
 
 ## Parameters of the I_P classes
 k_P <- user()
-gamma_P <- user(0.1)
+gamma_P[] <- user()
+dim(gamma_P) <- n_strains
 
 ## Parameters of the I_C_1 classes
 k_C_1 <- user()
-gamma_C_1 <- user(0.1)
+gamma_C_1[] <- user()
+dim(gamma_C_1) <- n_strains
 
 ## Parameters of the I_C_2 classes
 k_C_2 <- user()
-gamma_C_2 <- user(0.1)
+gamma_C_2[] <- user()
+dim(gamma_C_2) <- n_strains
+
 dim(p_H_step) <- user()
 p_H_step[] <- user()
 psi_H[] <- user()
