@@ -812,11 +812,39 @@ test_that("Relative gamma = 1 makes no difference", {
   expect_equal(res3, res1)
 })
 
-test_that("Can calculate Rt with a second faster variant", {
-  ## Seed with 10 cases on same day as other variant
+
+test_that("Higher rate variant has lower Rt", {
+  ## Gamma = 1.5x ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_rel_gamma = c(1, 5),
+                            strain_rel_gamma = c(1.5, 1.5),
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_15 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
+  rt_15_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+
+  ## Gamma = ref
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma = c(1, 1),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_value = 10)
@@ -838,32 +866,11 @@ test_that("Can calculate Rt with a second faster variant", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
-
-  ## Run model with one strain only
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-
-  np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
-
-  initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
-
-  end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
-
-  set.seed(1)
-  mod$set_index(index)
-  y <- mod$simulate(steps)
-
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general))
+  expect_true(all(rt_1$Rt_all > rt_15$Rt_all))
+  expect_true(all(rt_1$Rt_general > rt_15$Rt_general))
+  expect_true(all(rt_1_all$Rt_all > rt_15$Rt_all))
+  expect_true(all(rt_1_all$Rt_general > rt_15$Rt_general))
 })
