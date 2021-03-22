@@ -195,7 +195,7 @@ gamma_mucv2shapescale <- function(mu, cv) {
 }
 
 ## copied from mcstate
-recycle <- function (x, n, name = deparse(substitute(x))) {
+recycle <- function(x, n, name = deparse(substitute(x))) {
   if (length(x) == n) {
     x
   } else if (length(x) == 1L) {

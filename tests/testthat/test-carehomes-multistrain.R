@@ -811,3 +811,27 @@ test_that("Relative gamma = 1 makes no difference", {
   expect_equal(res2, res1)
   expect_equal(res3, res1)
 })
+
+test_that("Second faster strain takes over", {
+  np <- 10
+  n_seeded_new_strain_inf <- 10
+  start_date <- sircovid_date("2020-02-07")
+  date_seeding <- start_date # seed both strains on same day
+  p <- carehomes_parameters(start_date, "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma = c(1, 2),
+                            strain_seed_date = c(date_seeding, date_seeding),
+                            strain_seed_value = n_seeded_new_strain_inf)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  ## cumulative infections with 2nd strain larger than with 1st strain
+  ## (average over 10 runs)
+  expect_true(mean(y$cum_infections_per_strain[1, , 101]) <
+                mean(y$cum_infections_per_strain[2, , 101]))
+})
