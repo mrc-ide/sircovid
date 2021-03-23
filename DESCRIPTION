@@ -58,7 +58,7 @@ Suggests:
     EpiEstim,
     distcrete,
     mockery,
-    odin (>= 1.1.12),
+    odin (>= 1.1.11),
     odin.dust (>= 0.2.5),
     testthat
 RoxygenNote: 7.1.1
