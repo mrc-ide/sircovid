@@ -1,6 +1,10 @@
-# sircovid 0.10.14
+# sircovid 0.10.17
 
 * Change fixed `strain_seed_value` to stochastic `strain_seed_rate`
+
+# sircovid 0.10.16
+
+* New functions to support reordering samples in mcstate_pmcmc objects
 
 # sircovid 0.10.12
 
