@@ -373,6 +373,94 @@ rank_trajectories <- function(state) {
   state
 }
 
+##' Get the ranking of sample
+##'
+##' @title Get the ranking of sample by a given variable, e.g. infections
+##'
+##' @param sample An `mcstate_pmcmc` object
+##'
+##' @param by The name of the variable used for ranking. The ranking is
+##' computed based on the value of this variable at the last time step.
+##' Default is set to "infections", which will give the rank based on the
+##' cumulative number of infections.
+##'
+##' @return A vector of integers giving the ranks
+##'
+##' @export
+get_sample_rank <- function(sample, by = "infections") {
+  if (!inherits(sample, "mcstate_pmcmc")) {
+    stop("'sample' should be an 'mcstate_pmcmc' object")
+  }
+  if (!(by %in% rownames(sample$trajectories$state))) {
+    stop(paste("Unkwnown 'by' argument. Should be one of: \n  -",
+               paste(rownames(sample$trajectories$state), collapse = "\n  - ")))
+  }
+  last_time <- dim(sample$trajectories$state)[3]
+  cum_inc <- sample$trajectories$state[by, , last_time]
+  order(cum_inc, decreasing = FALSE)
+}
+
+
+##' Reorder samples according to a predefined ranking
+##'
+##' @title Reorder samples
+##'
+##' @param sample An `mcstate_pmcmc` object
+##'
+##' @param rank A vector of ranks to reorder by
+##'
+##' @return An `mcstate_pmcmc` object with appropriately reordered elements
+##'
+##' @export
+reorder_sample <- function(sample, rank) {
+  if (!inherits(sample, "mcstate_pmcmc")) {
+    stop("'sample' should be an 'mcstate_pmcmc' object")
+  }
+  if (length(sample$iteration) != length(rank)) {
+    stop(paste("Unexpected length for 'rank':", length(rank),
+               "; should have length", length(sample$iteration)))
+  }
+  if (!is.null(sample$chain)) {
+    sample$chain <- sample$chain[rank]
+  }
+  sample$iteration <- sample$iteration[rank]
+  sample$pars <- sample$pars[rank, ]
+  sample$probabilities <- sample$probabilities[rank, ]
+  sample$state <- sample$state[, rank]
+  sample$trajectories$state <- sample$trajectories$state[, rank, ]
+  sample
+}
+
+
+##' Reorder Rt or IFR trajectories
+##'
+##' @title Reorder Rt or IFR trajectories
+##'
+##' @param x An `Rt_trajectories` or `IFR_t_trajectories` object, as returned
+##'   by [carehomes_Rt_trajectories()] or [carehomes_ifr_t_trajectories]
+##'   respectively.
+##'
+##' @param rank A vector of ranks to reorder by
+##'
+##' @return An `Rt_trajectories` or `IFR_t_trajectories` object with
+##'   appropriately reordered elements
+##'
+##' @export
+reorder_rt_ifr <- function(x, rank) {
+  if (!(inherits(x, "Rt_trajectories") || inherits(x, "IFR_t_trajectories"))) {
+    stop("'x' should be an 'Rt_trajectories' or 'IFR_t_trajectories' object")
+  }
+  what <- setdiff(names(x), c("step", "date"))
+  if (ncol(x[[what[[1]]]]) != length(rank)) {
+    stop(paste("Unexpected length for 'rank':", length(rank),
+               "; should have length", ncol(x[[what[[1]]]])))
+  }
+  for (i in what) {
+    x[[i]] <- x[[i]][, rank]
+  }
+  x
+}
+
 
 ##' Combine Rt across multiple runs.
 ##'
