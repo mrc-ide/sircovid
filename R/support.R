@@ -432,6 +432,36 @@ reorder_sample <- function(sample, rank) {
 }
 
 
+##' Reorder Rt or IFR trajectories
+##'
+##' @title Reorder Rt or IFR trajectories
+##'
+##' @param x An `Rt_trajectories` or `IFR_t_trajectories` object, as returned
+##'   by [carehomes_Rt_trajectories()] or [carehomes_ifr_t_trajectories]
+##'   respectively.
+##'
+##' @param rank A vector of ranks to reorder by
+##'
+##' @return An `Rt_trajectories` or `IFR_t_trajectories` object with
+##'   appropriately reordered elements
+##'
+##' @export
+reorder_rt_ifr <- function(x, rank) {
+  if (!(inherits(x, "Rt_trajectories") || inherits(x, "IFR_t_trajectories"))) {
+    stop("'x' should be an 'Rt_trajectories' or 'IFR_t_trajectories' object")
+  }
+  what <- setdiff(names(x), c("step", "date"))
+  if (ncol(x[[what[[1]]]]) != length(rank)) {
+    stop(paste("Unexpected length for 'rank':", length(rank),
+               "; should have length", ncol(x[[what[[1]]]])))
+  }
+  for (i in what) {
+    x[[i]] <- x[[i]][, rank]
+  }
+  x
+}
+
+
 ##' Combine Rt across multiple runs.
 ##'
 ##' @title Combine Rt estimates

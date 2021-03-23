@@ -384,19 +384,68 @@ test_that("reorder_sample returns expected output", {
   dat <- reference_data_trajectories()
 
   ## maintaining the initial order returns the same as input
-  dat2 <- reorder_sample(dat, 1:3)
   expect_equal(reorder_sample(dat, 1:3), dat)
 
   ## ordering and then ordering back returns the same as input
   # order by increasing cumulative incidence
   rnk1 <- get_sample_rank(dat, by = "infections")
-  dat3 <- reorder_sample(dat, rnk1)
-  rnk2 <- get_sample_rank(dat3, by = "infections")
+  dat2 <- reorder_sample(dat, rnk1)
+  rnk2 <- get_sample_rank(dat2, by = "infections")
   # check this is now ordered by increasing incidence
   expect_equal(rnk2, 1:3)
   # apply revert ordering
-  dat4 <- reorder_sample(dat3, match(1:3, rnk1))
+  dat3 <- reorder_sample(dat2, match(1:3, rnk1))
   # check we are back to initial object
-  expect_equal(dat4, dat)
+  expect_equal(dat3, dat)
+
+})
+
+
+test_that("reorder_rt_ifr rejects invalid inputs", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  expect_error(reorder_rt_ifr(rt$beta, 1:10),
+               "'x' should be an 'Rt_trajectories' or 'IFR_t_trajectories'",
+               fixed = TRUE)
+
+  expect_error(reorder_rt_ifr(rt, 1:10),
+               "Unexpected length for 'rank': 10 ; should have length 3",
+               fixed = TRUE)
+
+})
+
+
+test_that("reorder_rt_ifr returns expected output", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  ## maintaining the initial order returns the same as input
+  expect_equal(reorder_rt_ifr(rt, 1:3), rt)
+
+  ## ordering and then ordering back returns the same as input
+  # order by increasing cumulative incidence
+  rnk1 <- get_sample_rank(dat, by = "infections")
+  rt2 <- reorder_rt_ifr(rt, rnk1)
+  # apply revert ordering
+  rt3 <- reorder_rt_ifr(rt2, match(1:3, rnk1))
+  # check we are back to initial object
+  expect_equal(rt3, rt)
 
 })
