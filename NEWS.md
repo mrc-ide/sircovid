@@ -1,3 +1,7 @@
+# sircovid 0.10.16
+
+* New functions to support reordering samples in mcstate_pmcmc objects
+
 # sircovid 0.10.12
 
 * Fix corner case in vaccination exposed by recent dust updates
