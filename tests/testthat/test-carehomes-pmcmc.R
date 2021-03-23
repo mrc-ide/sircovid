@@ -341,3 +341,62 @@ test_that("Combining EpiEstim rt reject invalid inputs", {
                error_msg, fixed = TRUE)
 
 })
+
+
+test_that("get_sample_rank rejects invalid inputs", {
+  dat <- reference_data_trajectories()
+
+  expect_error(get_sample_rank(dat$state, by = "not_the_right_thing"),
+               "'sample' should be an 'mcstate_pmcmc' object",
+               fixed = TRUE)
+
+  expect_error(get_sample_rank(dat, by = "not_the_right_thing"),
+               "Unkwnown 'by' argument. Should be one of: ",
+               fixed = TRUE)
+})
+
+
+test_that("get_sample_rank returns expected output", {
+  dat <- reference_data_trajectories()
+
+  dim3 <- dim(dat$trajectories$state)[3]
+  expected <- order(dat$trajectories$state["infections", , dim3])
+  res1 <- get_sample_rank(dat, by = "infections")
+
+  expect_equal(expected, res1)
+})
+
+
+test_that("reorder_sample rejects invalid inputs", {
+  dat <- reference_data_trajectories()
+
+  expect_error(reorder_sample(dat$state, 1:3),
+               "'sample' should be an 'mcstate_pmcmc' object",
+               fixed = TRUE)
+
+  expect_error(reorder_sample(dat, 1:10),
+               "Unexpected length for 'rank': 10 ; should have length 3",
+               fixed = TRUE)
+})
+
+
+test_that("reorder_sample returns expected output", {
+  dat <- reference_data_trajectories()
+
+  ## maintaining the initial order returns the same as input
+  dat2 <- reorder_sample(dat, 1:3)
+  expect_equal(reorder_sample(dat, 1:3), dat)
+
+  ## ordering and then ordering back returns the same as input
+  # order by increasing cumulative incidence
+  rnk1 <- get_sample_rank(dat, by = "infections")
+  dat3 <- reorder_sample(dat, rnk1)
+  rnk2 <- get_sample_rank(dat3, by = "infections")
+  # check this is now ordered by increasing incidence
+  expect_equal(rnk2, 1:3)
+  # apply revert ordering
+  dat4 <- reorder_sample(dat3, match(1:3, rnk1))
+  # check we are back to initial object
+  expect_equal(dat4, dat)
+
+})
