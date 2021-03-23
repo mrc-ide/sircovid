@@ -70,7 +70,9 @@ sircovid_simulate <- function(mod, state, p, events,
   ## TODO: update to mcstate::array_reshape(state, 2, c(1, length(p)))
   dim(state) <- c(nrow(state), 1, length(p))
   obj$set_state(state)
-  obj$set_index(index)
+  if (!is.null(index)) {
+    obj$set_index(index)
+  }
 
   for (i in seq_len(n_epoch)) {
     p_i <- p
