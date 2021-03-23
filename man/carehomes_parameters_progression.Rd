@@ -4,7 +4,7 @@
 \alias{carehomes_parameters_progression}
 \title{Carehomes progression parameters}
 \usage{
-carehomes_parameters_progression()
+carehomes_parameters_progression(rel_gamma)
 }
 \value{
 A list of parameter values
