@@ -1,4 +1,4 @@
-# sircovid 0.10.15
+# sircovid 0.10.16
 
 * New functions to support reordering samples in mcstate_pmcmc objects
 
