@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Process severity data — sircovid_parameters_severity • sircovid</title>
+<title>Get the ranking of sample by a given variable, e.g. infections — get_sample_rank • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Process severity data — sircovid_parameters_severity" />
-<meta property="og:description" content="Process severity data" />
+<meta property="og:title" content="Get the ranking of sample by a given variable, e.g. infections — get_sample_rank" />
+<meta property="og:description" content="Get the ranking of sample" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,35 +119,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Process severity data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/parameters.R'><code>R/parameters.R</code></a></small>
-    <div class="hidden name"><code>sircovid_parameters_severity.Rd</code></div>
+    <h1>Get the ranking of sample by a given variable, e.g. infections</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/support.R'><code>R/support.R</code></a></small>
+    <div class="hidden name"><code>get_sample_rank.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Process severity data</p>
+    <p>Get the ranking of sample</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sircovid_parameters_severity</span><span class='op'>(</span><span class='va'>params</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_sample_rank</span><span class='op'>(</span><span class='va'>sample</span>, by <span class='op'>=</span> <span class='st'>"infections"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>params</th>
-      <td><p>Severity data, via Bob Verity's <code>markovid</code>
-package. This needs to be <code>NULL</code> (use the default bundled data
-version in the package), a <a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a> object (for raw severity
-data) or a list (for data that has already been processed by
-<code>sircovid</code> for use).  New severity data comes from Bob Verity
-via the markovid package, and needs to be carefully calibrated
-with the progression parameters.</p></td>
+      <th>sample</th>
+      <td><p>An <code>mcstate_pmcmc</code> object</p></td>
+    </tr>
+    <tr>
+      <th>by</th>
+      <td><p>The name of the variable used for ranking. The ranking is
+computed based on the value of this variable at the last time step.
+Default is set to "infections", which will give the rank based on the
+cumulative number of infections.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of age-structured probabilities</p>
+    <p>A vector of integers giving the ranks</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
