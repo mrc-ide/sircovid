@@ -68,5 +68,5 @@ Remotes:
     mrc-ide/dust,
     mrc-ide/eigen1,
     mrc-ide/mcstate,
-    mrc-ide/odin@mrc-2252,
-    mrc-ide/odin.dust@i75-scope-2
+    mrc-ide/odin,
+    mrc-ide/odin.dust
