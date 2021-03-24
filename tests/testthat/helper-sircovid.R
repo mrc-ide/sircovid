@@ -97,3 +97,12 @@ expect_approx_equal <- function(x1, x2, rel_tol = 0.05) {
   expect_true(all(abs(x1[x1_zeros & !x2_zeros] - x2[x1_zeros & !x2_zeros]) /
                     x2[x1_zeros & !x2_zeros] < rel_tol))
 }
+
+
+skip_unless_ci <- function() {
+  testthat::skip_on_cran()
+  if (isTRUE(as.logical(Sys.getenv("CI")))) {
+    return(invisible(TRUE))
+  }
+  testthat::skip("Not on CI")
+}

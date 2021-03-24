@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -ex
+HERE=$(dirname $0)
+. $HERE/common
+
+# In case we switch agents between steps
+[ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
+
+SIRCOVID_BASE="$TAG_SHA"
+SIRCOVID_CUDA="${PACKAGE_ORG}/${PACKAGE_NAME}-cuda:${GIT_SHA}"
+
+docker build \
+       --build-arg SIRCOVID_BASE=$SIRCOVID_BASE \
+       --tag $SIRCOVID_CUDA \
+       -f $PACKAGE_ROOT/docker/Dockerfile.cuda \
+       $PACKAGE_ROOT
+
+docker run -it --rm -v $PWD:/src:ro $SIRCOVID_CUDA /compile_cuda_model
