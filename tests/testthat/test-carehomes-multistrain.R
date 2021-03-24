@@ -747,20 +747,32 @@ test_that("calculate Rt with both second variant and vaccination", {
 
 test_that("strain_rel_gamma works as expected in carehomes_parameters", {
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma = 1))
+                                     strain_rel_gamma_A = 1,
+                                     strain_rel_gamma_P = 1,
+                                     strain_rel_gamma_C_1 = 1,
+                                     strain_rel_gamma_C_2 = 1))
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma = 2))
+                                     strain_rel_gamma_A = 1,
+                                     strain_rel_gamma_P = 2,
+                                     strain_rel_gamma_C_1 = 3,
+                                     strain_rel_gamma_C_2 = 4))
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma = 2,
+                                     strain_rel_gamma_A = 1,
+                                     strain_rel_gamma_P = 2,
+                                     strain_rel_gamma_C_1 = 3,
+                                     strain_rel_gamma_C_2 = 4,
                                      strain_transmission = c(1, 1)))
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma = c(1, 5),
+                                     strain_rel_gamma_A = 1:2,
+                                     strain_rel_gamma_P = 2:3,
+                                     strain_rel_gamma_C_1 = 3:4,
+                                     strain_rel_gamma_C_2 = 4:5,
                                      strain_transmission = c(1, 1)))
   expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                    strain_rel_gamma = c(1, 5)),
+                                    strain_rel_gamma_A = c(1, 5)),
                "1 or 1")
   expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                    strain_rel_gamma = c(1, 5),
+                                    strain_rel_gamma_A = c(1, 5),
                                     strain_transmission = c(1, 2, 3)),
                "1 or 3")
 })
@@ -769,15 +781,16 @@ test_that("carehomes_parameters_progression works as expected", {
   gammas <- c("gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2")
   defaults <- c(1 / 2.88, 1 / 1.68, 1 / 2.14, 1 / 1.86)
   expect_equal(
-    as.numeric(carehomes_parameters_progression(1)[gammas]),
+    as.numeric(carehomes_parameters_progression(1, 1, 1, 1)[gammas]),
     defaults
   )
   expect_equal(
-    as.numeric(carehomes_parameters_progression(2)[gammas]),
+    as.numeric(carehomes_parameters_progression(2, 2, 2, 2)[gammas]),
     defaults * 2
   )
   expect_equal(
-    matrix(unlist(carehomes_parameters_progression(1:4)[gammas]), ncol = 4),
+    matrix(unlist(carehomes_parameters_progression(1:4, 1:4, 1:4, 1:4)[gammas]),
+           ncol = 4),
     vapply(defaults, function(x) x * 1:4, numeric(4))
   )
 })
@@ -785,10 +798,8 @@ test_that("carehomes_parameters_progression works as expected", {
 test_that("Relative gamma = 1 makes no difference", {
   p1 <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   p2 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_rel_gamma = c(1, 1),
                              strain_transmission = c(1, 1))
   p3 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_rel_gamma = 1,
                              strain_transmission = c(1, 1))
   np <- 10
   mod1 <- carehomes$new(p1, 0, np, seed = 1L)
@@ -817,7 +828,10 @@ test_that("Higher rate variant has lower Rt", {
   ## rate is 1.5 times ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_rel_gamma = c(1.5, 1.5),
+                            strain_rel_gamma_A = c(1.5, 1.5),
+                            strain_rel_gamma_P = c(1.5, 1.5),
+                            strain_rel_gamma_C_1 = c(1.5, 1.5),
+                            strain_rel_gamma_C_2 = c(1.5, 1.5),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_value = 10)
@@ -844,7 +858,6 @@ test_that("Higher rate variant has lower Rt", {
   ## rate equal to ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_rel_gamma = c(1, 1),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_value = 10)
@@ -874,3 +887,99 @@ test_that("Higher rate variant has lower Rt", {
   expect_true(all(rt_1_all$Rt_all > rt_15$Rt_all))
   expect_true(all(rt_1_all$Rt_general > rt_15$Rt_general))
 })
+
+
+
+test_that("Stuck when gamma =  0", {
+  np <- 3L
+
+  ## gamma_P = 0 -> I_C_1 = 0
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_A = 1,
+                            strain_rel_gamma_P = 0,
+                            strain_rel_gamma_C_1 = 1,
+                            strain_rel_gamma_C_2 = 1,
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_I_A <- mod$info()$index$I_A
+  index_I_P <- mod$info()$index$I_P
+  index_I_C_1 <- mod$info()$index$I_C_1
+  index_I_C_2 <- mod$info()$index$I_C_2
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_I_C_1, , ]) == 0))
+  expect_false(all(unlist(y[index_I_P, , ]) == 0))
+
+  ## gamma_C_1 = 0 -> I_C_2 = 0
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_A = 1,
+                            strain_rel_gamma_P = 1,
+                            strain_rel_gamma_C_1 = 0,
+                            strain_rel_gamma_C_2 = 1,
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_I_A <- mod$info()$index$I_A
+  index_I_P <- mod$info()$index$I_P
+  index_I_C_1 <- mod$info()$index$I_C_1
+  index_I_C_2 <- mod$info()$index$I_C_2
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_I_C_2, , ]) == 0))
+  expect_false(all(unlist(y[index_I_C_1, , ]) == 0))
+
+  ## gamma_A = 0 & gamma_C_2 = 0 -> R = 0
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_A = 0,
+                            strain_rel_gamma_P = 1,
+                            strain_rel_gamma_C_1 = 1,
+                            strain_rel_gamma_C_2 = 0,
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_I_A <- mod$info()$index$I_A
+  index_I_P <- mod$info()$index$I_P
+  index_I_C_1 <- mod$info()$index$I_C_1
+  index_I_C_2 <- mod$info()$index$I_C_2
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_R, , ]) == 0))
+  expect_false(all(unlist(y[index_I_C_2, , ]) == 0))
+  expect_false(all(unlist(y[index_I_A, , ]) == 0))
+})
+

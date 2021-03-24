@@ -26,7 +26,10 @@ carehomes_parameters(
   strain_transmission = 1,
   strain_seed_date = NULL,
   strain_seed_value = NULL,
-  strain_rel_gamma = 1,
+  strain_rel_gamma_A = 1,
+  strain_rel_gamma_P = 1,
+  strain_rel_gamma_C_1 = 1,
+  strain_rel_gamma_C_2 = 1,
   rel_susceptibility = 1,
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
@@ -120,11 +123,25 @@ date. Seeding is not stochastic; this many individuals \emph{will}
 become infected with the new strain, unless the pool of
 susceptibles has been exhausted.}
 
-\item{strain_rel_gamma}{Vector of relative rates of gamma_A, gamma_P,
-gamma_C_1, gamma_C_2 for each strain modelled. If \code{1} all strains have
-same rates. Otherwise vector of same length as \code{strain_transmission},
-with entries that determines the relative scaling of the defaults for
-each strain.}
+\item{strain_rel_gamma_A}{Vector of relative rates of gamma_A for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
+
+\item{strain_rel_gamma_P}{Vector of relative rates of gamma_P for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
+
+\item{strain_rel_gamma_C_1}{Vector of relative rates of gamma_C_1 for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
+
+\item{strain_rel_gamma_C_2}{Vector of relative rates of gamma_C_2 for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
 
 \item{rel_susceptibility}{A vector or matrix of values representing the
 relative susceptibility of individuals in different vaccination groups.
