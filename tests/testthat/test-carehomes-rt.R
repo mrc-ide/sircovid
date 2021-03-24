@@ -185,6 +185,7 @@ test_that("can't compute Rt for unknown types", {
     "Unknown R type 'rt_general', must match '")
 })
 
+
 test_that("Can interpolate Rt with step changes", {
   dat <- reference_data_mcmc()
   rt <- local({
