@@ -1,6 +1,10 @@
-# sircovid 0.10.17
+# sircovid 0.10.18
 
 * New parameter `strain_rel_gamma` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+
+# sircovid 0.10.17
+
+* New function `sircovid::compile_gpu` which compiles sircovid to run on a GPU (#237)
 
 # sircovid 0.10.16
 
