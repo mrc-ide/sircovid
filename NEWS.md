@@ -1,3 +1,7 @@
+# sircovid 0.10.17
+
+* New function `sircovid::compile_gpu` which compiles sircovid to run on a GPU (#237)
+
 # sircovid 0.10.16
 
 * New functions to support reordering samples in mcstate_pmcmc objects

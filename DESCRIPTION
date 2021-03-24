@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.10.16
+Version: 0.10.17
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -57,6 +57,9 @@ LinkingTo:
 Suggests:
     EpiEstim,
     distcrete,
+    mockery,
+    odin (>= 1.1.12),
+    odin.dust (>= 0.2.5),
     testthat
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
@@ -64,4 +67,6 @@ SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,
     mrc-ide/eigen1,
-    mrc-ide/mcstate
+    mrc-ide/mcstate,
+    mrc-ide/odin,
+    mrc-ide/odin.dust
