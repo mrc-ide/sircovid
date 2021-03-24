@@ -106,15 +106,20 @@ strain modelled. First element should be 1. Length will define the
 number of strains used in the model}
 
 \item{strain_seed_date}{Either \code{NULL} (no seeding) or a vector of
-exactly two \link{sircovid_date} values corresponding to
-the start and stop dates of seeding (inclusive). For example, to
-seed for a single day, these two values should have the same
-date}
+\link{sircovid_date} values corresponding to
+the dates that \code{strain_seed_rate} should change. For example, to
+seed the same rate, provide a scalar for \code{strain_seed_date} and
+\code{strain_seed_rate}; or to seed for a set period provide two dates and two
+rates with the second rate equal to 0.}
 
-\item{strain_seed_rate}{Either \code{NULL} (no seeding) or a single
-value representing the \emph{daily} rate of seeding. Seeding is drawn from
-Poisson(strain_seed_rate * dt) at each \strong{day} and so the rate is spread
-evenly across the steps that occur within each date.}
+\item{strain_seed_rate}{Either \code{NULL} (no seeding) or a vector of
+values representing the \emph{daily} rate of seeding between the dates set in
+\code{strain_seed_date}. Seeding is drawn from Poisson(strain_seed_rate * dt)
+at each \strong{day} and so the rate is spread evenly across the steps that
+occur within each date. For example, to
+seed the same rate, provide a scalar for \code{strain_seed_date} and
+\code{strain_seed_rate}; or to seed for a set period provide two dates and two
+rates with the second rate equal to 0.}
 
 \item{rel_susceptibility}{A vector or matrix of values representing the
 relative susceptibility of individuals in different vaccination groups.

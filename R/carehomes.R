@@ -57,15 +57,20 @@ NULL
 ##'   number of strains used in the model
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
-##'   exactly two [sircovid::sircovid_date] values corresponding to
-##'   the start and stop dates of seeding (inclusive). For example, to
-##'   seed for a single day, these two values should have the same
-##'   date
+##'   [sircovid::sircovid_date] values corresponding to
+##'   the dates that `strain_seed_rate` should change. For example, to
+##'   seed the same rate, provide a scalar for `strain_seed_date` and
+##'   `strain_seed_rate`; or to seed for a set period provide two dates and two
+##'   rates with the second rate equal to 0.
 ##'
-##' @param strain_seed_rate Either `NULL` (no seeding) or a single
-##'   value representing the *daily* rate of seeding. Seeding is drawn from
-##'   Poisson(strain_seed_rate * dt) at each **day** and so the rate is spread
-##'   evenly across the steps that occur within each date.
+##' @param strain_seed_rate Either `NULL` (no seeding) or a vector of
+##'   values representing the *daily* rate of seeding between the dates set in
+##'   `strain_seed_date`. Seeding is drawn from Poisson(strain_seed_rate * dt)
+##'   at each **day** and so the rate is spread evenly across the steps that
+##'   occur within each date. For example, to
+##'   seed the same rate, provide a scalar for `strain_seed_date` and
+##'   `strain_seed_rate`; or to seed for a set period provide two dates and two
+##'   rates with the second rate equal to 0.
 ##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -878,21 +883,28 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     if (length(strain_transmission) == 1L) {
       stop("Can't use 'strain_seed_date' if only using one strain")
     }
-    if (length(strain_seed_date) != 2L) {
-      stop("'strain_seed_date', if given, must be exactly two elements")
+    if (length(strain_seed_date) != length(strain_seed_rate)) {
+      stop("'strain_seed_date' and 'strain_seed_rate' must be the same length")
     }
     assert_sircovid_date(strain_seed_date)
     assert_increasing(strain_seed_date, strict = FALSE)
 
-    if (length(strain_seed_rate) != 1L) {
-      stop("'strain_seed_rate' must be a scalar if 'strain_seed_date' is used")
+    ## The + 1 here prevents the start of the next day having the
+    ## same seeding value
+    strain_seed_step <-
+      numeric(strain_seed_date[[length(strain_seed_date)]] / dt)
+    for (j in seq_along(strain_seed_date)) {
+      if (j == length(strain_seed_date)) {
+        i <- length(strain_seed_step)
+      } else {
+        i <- seq.int(
+          strain_seed_date[[j]] / dt,
+          strain_seed_date[[j + 1]] / dt - 1
+        )
+      }
+      strain_seed_step[i] <- strain_seed_rate[[j]] * dt
     }
 
-    ## The + 1 here prevents the start of the next day having the
-    ## seeding value
-    strain_seed_step <- numeric((strain_seed_date[[2]] + 1) / dt)
-    i <- (strain_seed_date[[1]] / dt):((strain_seed_date[[2]] + 1) / dt - 1)
-    strain_seed_step[i] <- strain_seed_rate * dt
   }
 
   list(n_strains = length(strain_transmission),

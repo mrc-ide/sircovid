@@ -51,20 +51,14 @@ test_that("Prevent impossible seedings", {
     "Can't use 'strain_seed_date' if only using one strain")
   expect_error(
     carehomes_parameters_strain(c(1, 1), c(10, 20, 30), 1, 0.25),
-    "'strain_seed_date', if given, must be exactly two elements")
-  expect_error(
-    carehomes_parameters_strain(c(1, 1), c(10, 20), c(1, 1), 0.25),
-    "'strain_seed_rate' must be a scalar if 'strain_seed_date' is used")
-  expect_error(
-    carehomes_parameters_strain(c(1, 1), c(10, 20), NULL, 0.25),
-    "'strain_seed_rate' must be a scalar if 'strain_seed_date' is used")
+    "'strain_seed_date' and 'strain_seed_rate' must be the same length")
 })
 
 
 test_that("Can seed with one-day window", {
-  date <- c("2020-03-01", "2020-03-01")
-  value <- 100
-  p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), value, 1 / 4)
+  date <- c("2020-03-01", "2020-03-02")
+  rate <- c(100, 0)
+  p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
   expect_equal(sum(p$strain_seed_step), 100)
   expect_equal(tail(p$strain_seed_step, 6), c(0, 25, 25, 25, 25, 0))
   expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
@@ -72,14 +66,26 @@ test_that("Can seed with one-day window", {
 })
 
 
-test_that("Can seed with multiple-day window", {
-  date <- c("2020-03-01", "2020-03-10")
-  value <- 100
-  p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), value, 1 / 4)
+test_that("Can seed with two-day window", {
+  date <- c("2020-03-01", "2020-03-11")
+  rate <- c(100, 0)
+  p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
   expect_equal(sum(p$strain_seed_step), 100 * 10)
   expect_equal(tail(p$strain_seed_step, 6), c(25, 25, 25, 25, 25, 0))
   expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
                as.Date("2020-03-11"))
+})
+
+
+test_that("Can seed with > two-day window", {
+  date <- c("2020-03-01", "2020-03-10", "2020-03-20", "2020-03-21")
+  rate <- c(100, 5, 20, 1)
+  p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
+  expect_equal(as.numeric(table(p$strain_seed_step)),
+               c(sircovid_date("2020-03-01") * 4 - 1, 1,  40, 4, 36))
+  expect_equal(tail(p$strain_seed_step, 6), c(1.25, 5, 5, 5, 5, 0.25))
+  expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
+               as.Date("2020-03-21"))
 })
 
 
@@ -118,8 +124,9 @@ test_that("Seeding of second strain generates an epidemic", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding)),
-                            strain_seed_rate = n_seeded_new_strain_inf)
+                              sircovid_date(c(date_seeding, date_seeding)) +
+                              c(0, 1),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -156,8 +163,9 @@ test_that("Second more virulent strain takes over", {
   date_seeding <- start_date # seed both strains on same day
   p <- carehomes_parameters(start_date, "england",
                             strain_transmission = c(1, 10),
-                            strain_seed_date = c(date_seeding, date_seeding),
-                            strain_seed_rate = n_seeded_new_strain_inf)
+                            strain_seed_date = c(date_seeding,
+                                                 date_seeding + 1),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -180,8 +188,9 @@ test_that("Second less virulent strain does not take over", {
   date_seeding <- start_date # seed both strains on same day
   p <- carehomes_parameters(start_date, "england",
                             strain_transmission = c(1, 0.1),
-                            strain_seed_date = c(date_seeding, date_seeding),
-                            strain_seed_rate = n_seeded_new_strain_inf)
+                            strain_seed_date = c(date_seeding,
+                                                 date_seeding + 1),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -207,8 +216,9 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
                             waning_rate = 1 / 20,
                             strain_transmission = c(1, 1),
                             strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding)),
-                            strain_seed_rate = n_seeded_new_strain_inf)
+                              sircovid_date(c(date_seeding, date_seeding)) +
+                              c(0, 1),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -231,8 +241,9 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0),
                             strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding)),
-                            strain_seed_rate = n_seeded_new_strain_inf)
+                              sircovid_date(c(date_seeding, date_seeding)) +
+                              c(0, 1),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -252,12 +263,12 @@ test_that("No infection after seeding of second strain with 0 transmission", {
 
 test_that("Everyone is infected when second strain transmission is large", {
   n_seeded_new_strain_inf <- 10
-  date_seeding <- "2020-03-07"
+  date_seeding <- c("2020-03-07", "2020-03-08")
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1e9),
                             strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding)),
-                            strain_seed_rate = n_seeded_new_strain_inf)
+                              sircovid_date(date_seeding),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   ## set gamma_E to Inf so that seeded individuals move through each E stage
   ## in one step
@@ -272,7 +283,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   steps <- seq(0, 400, by = 4)
   date <- sircovid_date_as_date(steps / 4)
   s_date <- sircovid_date(date)
-  s_date_seeding <- sircovid_date(date_seeding)
+  s_date_seeding <- sircovid_date(date_seeding[[1]])
   ## No cases before seeding
   expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
 
@@ -425,8 +436,8 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_rate = 10)
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -529,8 +540,8 @@ test_that("Can calculate Rt with a second less infectious variant", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0.1),
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_rate = 10)
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -586,8 +597,9 @@ test_that("Can calculate Rt with a second more infectious variant", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 5),
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_rate = 10)
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0))
+
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -703,8 +715,8 @@ test_that("calculate Rt with both second variant and vaccination", {
                             waning_rate = 0,
                             strain_transmission = c(1, transm_new_variant),
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_rate = 10,
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0),
                             rel_susceptibility = c(1, reduced_susceptibility),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
