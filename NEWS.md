@@ -1,3 +1,7 @@
+# sircovid 0.10.18
+
+* EpiEstim now allows age-varying p_C
+
 # sircovid 0.10.17
 
 * New function `sircovid::compile_gpu` which compiles sircovid to run on a GPU (#237)
