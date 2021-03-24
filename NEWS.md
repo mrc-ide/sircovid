@@ -1,6 +1,11 @@
+# sircovid 0.10.18
+
+* Changed fixed `strain_seed_value` to stochastic `strain_seed_rate` vector
+* Changed `strain_seed_date` from vector of start and end seeding dates to a vector of dates corresponding to rates set by `strain_seed_rate`
+
 # sircovid 0.10.17
 
-* Change fixed `strain_seed_value` to stochastic `strain_seed_rate`
+* New function `sircovid::compile_gpu` which compiles sircovid to run on a GPU (#237)
 
 # sircovid 0.10.16
 

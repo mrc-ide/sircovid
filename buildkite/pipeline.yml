@@ -4,5 +4,10 @@ steps:
 
   - wait
 
+  - label: ":allthethings: Build cuda image"
+    command: docker/build_cuda
+
+  - wait
+
   - label: ":shipit: Push images"
     command: docker/push
