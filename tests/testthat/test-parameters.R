@@ -2,6 +2,8 @@ context("parameters")
 
 test_that("single beta value", {
   expect_identical(sircovid_parameters_beta(NULL, pi, 0.1), pi)
+  expect_identical(sircovid_parameters_beta(NULL, matrix(c(1, pi), nrow = 1),
+                                            0.1), matrix(c(1, pi), nrow = 1))
   expect_error(sircovid_parameters_beta(NULL, numeric(0), 0.1),
                "As 'date' is NULL, expected single value")
   expect_error(sircovid_parameters_beta(NULL, 1:5, 0.1),
@@ -19,6 +21,14 @@ test_that("varying beta value", {
     c(rep(1, 64),
       seq(1, 2, length.out = 19),
       seq(2, 3, length.out = 39)[-1]))
+
+  date <- as_sircovid_date(c("2020-02-01", "2020-02-10", "2020-02-29"))
+  beta <- sircovid_parameters_beta(date, matrix(1:3, 3, 2), 0.5)
+  expect_equal(
+    beta,
+    matrix(c(rep(1, 64),
+      seq(1, 2, length.out = 19),
+      seq(2, 3, length.out = 39)[-1]), 121, 2))
 })
 
 
