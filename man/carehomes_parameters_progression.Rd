@@ -6,6 +6,13 @@
 \usage{
 carehomes_parameters_progression(rel_gamma)
 }
+\arguments{
+\item{rel_gamma}{Vector of relative rates of gamma_A, gamma_P,
+gamma_C_1, gamma_C_2 for each strain modelled. If \code{1} all strains have
+same rates. Otherwise vector of same length as \code{strain_transmission},
+with entries that determines the relative scaling of the defaults for
+each strain.}
+}
 \value{
 A list of parameter values
 }

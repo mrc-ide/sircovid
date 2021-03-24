@@ -934,6 +934,12 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @return A list of parameter values
 ##'
+##' @param rel_gamma Vector of relative rates of gamma_A, gamma_P,
+##'   gamma_C_1, gamma_C_2 for each strain modelled. If `1` all strains have
+##'   same rates. Otherwise vector of same length as `strain_transmission`,
+##'   with entries that determines the relative scaling of the defaults for
+##'   each strain.
+##'
 ##' @export
 carehomes_parameters_progression <- function(rel_gamma) {
 
