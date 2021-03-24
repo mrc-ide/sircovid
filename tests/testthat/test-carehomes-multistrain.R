@@ -893,7 +893,7 @@ test_that("Higher rate variant has lower Rt", {
 test_that("Stuck when gamma =  0", {
   np <- 3L
 
-  ## gamma_P = 0 -> I_C_1 = 0
+  ## gammaP is 0 so IC1 is 0
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_rel_gamma_A = 1,
@@ -922,7 +922,7 @@ test_that("Stuck when gamma =  0", {
   expect_true(all(unlist(y[index_I_C_1, , ]) == 0))
   expect_false(all(unlist(y[index_I_P, , ]) == 0))
 
-  ## gamma_C_1 = 0 -> I_C_2 = 0
+  ## gammaC1 is 0 so IC2 is 0
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_rel_gamma_A = 1,
@@ -951,7 +951,7 @@ test_that("Stuck when gamma =  0", {
   expect_true(all(unlist(y[index_I_C_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_C_1, , ]) == 0))
 
-  ## gamma_A = 0 & gamma_C_2 = 0 -> R = 0
+  ## gammaA is 0 & gammaC2 is 0 so R is 0
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_rel_gamma_A = 0,
@@ -982,4 +982,3 @@ test_that("Stuck when gamma =  0", {
   expect_false(all(unlist(y[index_I_C_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_A, , ]) == 0))
 })
-

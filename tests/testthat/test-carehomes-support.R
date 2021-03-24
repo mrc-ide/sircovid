@@ -1,7 +1,7 @@
 context("carehomes (support)")
 
 test_that("carehomes progression parameters", {
-  p <- carehomes_parameters_progression(1)
+  p <- carehomes_parameters_progression(1, 1, 1, 1)
   expect_setequal(
     names(p),
     c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
@@ -122,7 +122,7 @@ test_that("carehomes_parameters returns a list of parameters", {
     p$m,
     carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk"))
 
-  progression <- carehomes_parameters_progression(1)
+  progression <- carehomes_parameters_progression(1, 1, 1, 1)
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(
