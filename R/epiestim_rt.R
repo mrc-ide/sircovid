@@ -1,11 +1,11 @@
 gt_sample <- function(p, n = 1000) {
 
+  ## Compute mean of p_C across all age groups
+  ## weighted by population size of each age group
+  p_C <- weighted.mean(p$p_C, p$N_tot)
+
   ## Note: the above does not account for the impact of
   ## vaccination on the generation time.
-
-  if (length(unique(p$p_C)) > 1)  {
-    stop("gt_sample does not allow p_C to vary by age")
-  }
 
   if (p$I_C_2_transmission > 0) {
     stop("gt_sample does not allow transmission from I_C_2")
@@ -31,7 +31,7 @@ gt_sample <- function(p, n = 1000) {
     ## Draw exposed period
     sample_E <- draw_from(1, p$k_E, p$gamma_E)
     ## Draw symptomatic vs asymptomatic path
-    path_C <- stats::runif(1) <= p$p_C[[1]]
+    path_C <- stats::runif(1) <= p_C
     if (!path_C) {
       sample_I <- draw_from(1, p$k_A, p$gamma_A)
       infectivity <- p$I_A_transmission
