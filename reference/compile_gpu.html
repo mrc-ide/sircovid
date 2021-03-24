@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute Rt using EpiEstim for a set of trajectories — carehomes_rt_trajectories_epiestim • sircovid</title>
+<title>Create GPU model — compile_gpu • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,14 @@
 
 
 
-<meta property="og:title" content="Compute Rt using EpiEstim for a set of trajectories — carehomes_rt_trajectories_epiestim" />
-<meta property="og:description" content="Compute &quot;Rt&quot; using EpiEtim for a set of simulated trajectories (e.g., the
-result of the $iterate() method of carehomes, mcstate::pmcmc() or
-mcstate::pmcmc_predict(). The trajectories should share
-parameters." />
+<meta property="og:title" content="Create GPU model — compile_gpu" />
+<meta property="og:description" content="Create a model for the GPU. This requires a working nvcc toolchain
+and GPU device to work properly. Note that this will cache the
+compilation within a session, so if you want to change GPU options
+you will need to restart R. However, if you change the model
+(e.g., by changing the result of options like rewrite_dims) the
+model will recompile. Compilation speed is slow enough that the
+cachine will be obvious." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -122,103 +125,55 @@ parameters." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute Rt using EpiEstim for a set of trajectories</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/epiestim_rt.R'><code>R/epiestim_rt.R</code></a></small>
-    <div class="hidden name"><code>carehomes_rt_trajectories_epiestim.Rd</code></div>
+    <h1>Create GPU model</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/gpu.R'><code>R/gpu.R</code></a></small>
+    <div class="hidden name"><code>compile_gpu.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compute "Rt" using EpiEtim for a set of simulated trajectories (e.g., the
-result of the <code>$iterate()</code> method of <a href='carehomes.html'>carehomes</a>, <code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc.html'>mcstate::pmcmc()</a></code> or
-<code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict()</a></code>. The trajectories should share
-parameters.</p>
+    <p>Create a model for the GPU. This requires a working nvcc toolchain
+and GPU device to work properly. Note that this will cache the
+compilation within a session, so if you want to change GPU options
+you will need to restart R. However, if you change the <em>model</em>
+(e.g., by changing the result of options like <code>rewrite_dims</code>) the
+model will recompile. Compilation speed is slow enough that the
+cachine will be obvious.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_rt_trajectories_epiestim</span><span class='op'>(</span>
-  <span class='va'>step</span>,
-  <span class='va'>incidence</span>,
-  <span class='va'>p</span>,
-  gt_distr <span class='op'>=</span> <span class='cn'>NULL</span>,
-  sliding_window_ndays <span class='op'>=</span> <span class='fl'>7</span>,
-  mean_prior <span class='op'>=</span> <span class='fl'>1</span>,
-  sd_prior <span class='op'>=</span> <span class='fl'>1</span>,
-  n_GT <span class='op'>=</span> <span class='fl'>10000</span>,
-  n_R <span class='op'>=</span> <span class='fl'>1000</span>,
-  save_all_Rt_sample <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  q <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>compile_gpu</span><span class='op'>(</span>model <span class='op'>=</span> <span class='st'>"carehomes"</span>, <span class='va'>...</span>, real_t <span class='op'>=</span> <span class='st'>"float"</span>, gpu <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>step</th>
-      <td><p>A vector of steps</p></td>
+      <th>model</th>
+      <td><p>The name of a sircovid model, either <code>carehomes</code> or
+<code>basic</code></p></td>
     </tr>
     <tr>
-      <th>incidence</th>
-      <td><p>A matrix (n trajectories x n steps) of incidence counts</p></td>
+      <th>...</th>
+      <td><p>Additional arguments passed to <a href='https://rdrr.io/pkg/odin.dust/man/odin_dust.html'>odin.dust::odin_dust_</a>
+and from there into either odin's options or the gpu options.</p></td>
     </tr>
     <tr>
-      <th>p</th>
-      <td><p>A single <code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> object.</p></td>
+      <th>real_t</th>
+      <td><p>The type to use for floating point numbers. The
+default is "float" which differs from the CPU model but is
+typically what you want on the GPU.</p></td>
     </tr>
     <tr>
-      <th>gt_distr</th>
-      <td><p>A vector giving the discrete (daily) distribution of the
-generation time. The first value must be zero. If NULL, the generation time
-distribution will be determined automatically from <code>p</code>.</p></td>
-    </tr>
-    <tr>
-      <th>sliding_window_ndays</th>
-      <td><p>An integer giving the length of the sliding
-window on which Rt will be estimated</p></td>
-    </tr>
-    <tr>
-      <th>mean_prior</th>
-      <td><p>The mean prior for Rt</p></td>
-    </tr>
-    <tr>
-      <th>sd_prior</th>
-      <td><p>The standard deviation of the prior for Rt</p></td>
-    </tr>
-    <tr>
-      <th>n_GT</th>
-      <td><p>An integer giving the number of generation times to be drawn to
-construct the discrete distribution of the generation time</p></td>
-    </tr>
-    <tr>
-      <th>n_R</th>
-      <td><p>An integer giving the number of Rt values to sample from for each
-incidence trajectory. These will then be aggregated across all incidence
-trajectories.</p></td>
-    </tr>
-    <tr>
-      <th>save_all_Rt_sample</th>
-      <td><p>A boolean determining whether to save all samples
-of Rt estimated or only a summary</p></td>
-    </tr>
-    <tr>
-      <th>q</th>
-      <td><p>A vector of quantiles to return values for</p></td>
+      <th>gpu</th>
+      <td><p>The argument passed to <a href='https://rdrr.io/pkg/odin.dust/man/odin_dust.html'>odin.dust::odin_dust_</a> as
+<code>gpu</code>. The default here is <code>TRUE</code>, but you may want to pass the
+results of <a href='https://rdrr.io/pkg/dust/man/dust_cuda_options.html'>dust::dust_cuda_options</a> in order to control
+compilation.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with elements
-<code>t_start</code> (vector of first days of the sliding windows over which Rt is
-estimated),
-<code>t_end</code> (vector of last days of the sliding windows over which Rt is
-estimated),
-<code>Rt</code> a matrix (only present if <code>save_all = TRUE</code>) containing for each
-sliding window (each col in the matrix) a sample of n_R * nrow(inc) values
-of Rt for that sliding window (rows of the matrix)
-<code>Rt_summary</code> a matrix containing for each sliding window (each col in the
-matrix) the quantiles (<code>q</code>) and the mean of Rt for that sliding
-window (rows of the matrix)
-<code> gt_distr</code> a vector giving the discrete (daily) distribution of the
-generation time</p>
+    <p>A model generator, like <a href='carehomes.html'>carehomes</a> that can run
+on the GPU available to this computer.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
