@@ -1081,6 +1081,9 @@ test_that("Everyone dies when strain_rel_severity = 1e3", {
   p$p_C[] <- 1
   p$p_H[] <- 1
 
+  ## set respective gammas = Inf to see if all move as expected
+  ## check compartments individually
+
   expect_true(all(p$psi_W_D == 1))
   expect_true(all(p$p_W_D == 1))
   expect_true(all(p$p_W_D_step == 1))
@@ -1107,8 +1110,7 @@ test_that("Everyone dies when strain_rel_severity = 1e3", {
   set.seed(1)
   y <- mod$simulate(steps)
   expect_true(all(unlist(y[index_R, , ]) == 0))
-  expect_true(all(unlist(y[index_D, , ]) == 0))
-  expect_true(all(unlist(y[mod$info()$index$I_A, , ]) == 0))
+  expect_false(any(unlist(y[index_D, , ]) == 0))
 
   ## gammaC1 is 0 so IC2 is 0
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
