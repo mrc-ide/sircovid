@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.19</span>
       </span>
     </div>
 
@@ -149,7 +149,7 @@
   p_NC <span class='op'>=</span> <span class='fl'>0.01</span>,
   strain_transmission <span class='op'>=</span> <span class='fl'>1</span>,
   strain_seed_date <span class='op'>=</span> <span class='cn'>NULL</span>,
-  strain_seed_value <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strain_seed_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
   rel_susceptibility <span class='op'>=</span> <span class='fl'>1</span>,
   rel_p_sympt <span class='op'>=</span> <span class='fl'>1</span>,
   rel_p_hosp_if_sympt <span class='op'>=</span> <span class='fl'>1</span>,
@@ -272,20 +272,25 @@ number of strains used in the model</p></td>
     <tr>
       <th>strain_seed_date</th>
       <td><p>Either <code>NULL</code> (no seeding) or a vector of
-exactly two <a href='sircovid_date.html'>sircovid_date</a> values corresponding to
-the start and stop dates of seeding (inclusive). For example, to
-seed for a single day, these two values should have the same
-date</p></td>
+<a href='sircovid_date.html'>sircovid_date</a> values corresponding to
+the dates that <code>strain_seed_rate</code> should change. For example, to
+seed a constant rate from a given date, provide one value for each of
+<code>strain_seed_date</code> and <code>strain_seed_rate</code>; or to seed with a constant rate
+for a set period, provide two dates and two
+rates with the second rate equal to 0.</p></td>
     </tr>
     <tr>
-      <th>strain_seed_value</th>
-      <td><p>Either <code>NULL</code> (no seeding) or a single
-integer value represending the <em>daily</em> rate of seeding. Because
-each day is dividied into <code>1 / dt</code> steps, this value will be
-spread out fairly evenly across the steps that occur within each
-date. Seeding is not stochastic; this many individuals <em>will</em>
-become infected with the new strain, unless the pool of
-susceptibles has been exhausted.</p></td>
+      <th>strain_seed_rate</th>
+      <td><p>Either <code>NULL</code> (no seeding) or a vector of
+values representing the <em>daily</em> rate of seeding, starting on the dates set
+in <code>strain_seed_date</code>.
+Seeding is drawn from Poisson(strain_seed_rate * dt)
+at each <strong>day</strong> and so the rate is spread evenly across the steps that
+occur within each date. For example, to
+seed a constant rate from a given date, provide one value for each of
+<code>strain_seed_date</code> and <code>strain_seed_rate</code>; or to seed with a constant rate
+for a set period, provide two dates and two
+rates with the second rate equal to 0.</p></td>
     </tr>
     <tr>
       <th>rel_susceptibility</th>
