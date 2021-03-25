@@ -869,9 +869,8 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
       "Only 1 or 2 strains valid ('strain_transmission' too long)'.",
       "See 'n_S_progress' in the odin code to fix this"))
   }
-  if (any(strain_transmission < 0)) {
-    stop("'strain_transmission' must have only non-negative values")
-  }
+  assert_non_negative(strain_transmission)
+
   if (strain_transmission[[1]] != 1) {
     stop("'strain_transmission[1]' must be 1")
   }
@@ -891,6 +890,7 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     }
     assert_sircovid_date(strain_seed_date)
     assert_increasing(strain_seed_date, strict = FALSE)
+    assert_non_negative(strain_seed_rate)
 
     ## The + 1 here prevents the start of the next day having the
     ## same seeding value

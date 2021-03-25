@@ -48,3 +48,11 @@ assert_scalar <- function(x, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
+
+
+assert_non_negative <- function(x, name = deparse(substitute(x))) {
+  if (any(x < 0)) {
+    stop(sprintf("'%s' must have only non-negative values", name), call. = FALSE)
+  }
+  invisible(x)
+}

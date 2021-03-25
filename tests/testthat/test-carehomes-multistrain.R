@@ -50,6 +50,10 @@ test_that("Prevent impossible seedings", {
     carehomes_parameters_strain(1, c(10, 20), 1, 0.25),
     "Can't use 'strain_seed_date' if only using one strain")
   expect_error(
+    carehomes_parameters_strain(c(1, 1), c(10, 20), c(-1, 0), 1),
+    "'strain_seed_rate' must have only non-negative values",
+    fixed = TRUE)
+  expect_error(
     carehomes_parameters_strain(c(1, 1), c(10, 20, 30), 1, 0.25),
     "'strain_seed_date' and 'strain_seed_rate' must be the same length")
 })
@@ -66,7 +70,7 @@ test_that("Can seed with one-day window", {
 })
 
 
-test_that("Can seed with two-day window", {
+test_that("Can seed with ten-day window", {
   date <- c("2020-03-01", "2020-03-11")
   rate <- c(100, 0)
   p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
@@ -77,7 +81,7 @@ test_that("Can seed with two-day window", {
 })
 
 
-test_that("Can seed with > two-day window", {
+test_that("Can seed with > 2 dates", {
   date <- c("2020-03-01", "2020-03-10", "2020-03-20", "2020-03-21")
   rate <- c(100, 5, 20, 1)
   p <- carehomes_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
@@ -121,11 +125,11 @@ test_that("Adding empty strains makes no difference", {
 test_that("Seeding of second strain generates an epidemic", {
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding)) +
-                              c(0, 1),
+                              sircovid_date(c(date_seeding, date_seeding_end)),
                             strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
@@ -212,12 +216,12 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
   set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             waning_rate = 1 / 20,
                             strain_transmission = c(1, 1),
                             strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding)) +
-                              c(0, 1),
+                              sircovid_date(c(date_seeding, date_seeding_end)),
                             strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, 1)
@@ -238,11 +242,11 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
 test_that("No infection after seeding of second strain with 0 transmission", {
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0),
                             strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding)) +
-                              c(0, 1),
+                              sircovid_date(c(date_seeding, date_seeding_end)),
                             strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
