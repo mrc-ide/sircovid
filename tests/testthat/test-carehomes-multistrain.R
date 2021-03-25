@@ -900,8 +900,6 @@ test_that("Lower rate variant has higher Rt", {
   ## Rt should be higher (or equal) for the two variant version
   expect_true(all(rt_1_all$Rt_all <= rt_15_all$Rt_all))
   expect_true(all(rt_1_all$Rt_general <= rt_15_all$Rt_general))
-  expect_true(all(rt_1_all$Rt_all <= rt_15_all$Rt_all))
-  expect_true(all(rt_1_all$Rt_general <= rt_15$Rt_general))
 })
 
 
