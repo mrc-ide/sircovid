@@ -1071,7 +1071,7 @@ test_that("G_D empty when p_G_D = 0", {
   np <- 3L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_seed_value = 1,
+                            strain_seed_rate = c(1, 0),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")))
   p$p_G_D[] <- 0
@@ -1096,7 +1096,13 @@ test_that("G_D empty when p_G_D = 0", {
 test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+#  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            waning_rate = 1 / 20,
+                            strain_seed_rate = c(1, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
   p$p_H_step <- 1
   p$psi_H[] <- 1
   p$p_G_D_step <- matrix(1)
