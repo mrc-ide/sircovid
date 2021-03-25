@@ -854,7 +854,7 @@ test_that("Higher rate variant has lower Rt", {
                             strain_rel_gamma_C_2 = c(1.5, 1.5),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_value = 10)
+                            strain_seed_rate = c(10, 0))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -880,7 +880,7 @@ test_that("Higher rate variant has lower Rt", {
                             strain_transmission = c(1, 1),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_value = 10)
+                            strain_seed_rate = c(10, 0))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -922,7 +922,7 @@ test_that("Stuck when gamma =  0", {
                             strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_value = 10)
+                            strain_seed_rate = c(10, 0))
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -951,7 +951,7 @@ test_that("Stuck when gamma =  0", {
                             strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_value = 10)
+                            strain_seed_rate = c(10, 0))
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -980,7 +980,7 @@ test_that("Stuck when gamma =  0", {
                             strain_rel_gamma_C_2 = 0,
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
-                            strain_seed_value = 10)
+                            strain_seed_rate = c(10, 0))
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
