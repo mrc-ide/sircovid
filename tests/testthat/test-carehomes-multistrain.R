@@ -1026,7 +1026,7 @@ test_that("Stuck when gamma =  0 for second strain", {
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_rate = c(10, 0))
-  p$gamma_P = c(0, 1)
+  p$gamma_P <- c(0, 1)
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
