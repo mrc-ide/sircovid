@@ -211,6 +211,9 @@ n_S_progress[, , ] <- if (j == 1)
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
+## FIXME (Raphael): Is the below correct? Should it actually say
+##   [age, strain, stage]?
+##
 ## [age, vaccine stage, strain infected with]
 ##
 ## As in the model initialisation we will use the teenager category,
@@ -231,6 +234,11 @@ strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
 n_S_progress[4, 2:n_strains, 1] <-
   min(n_S_progress[i, j, k] + strain_seed,
       n_S_progress[i, j, k] + S[i, k] - sum(n_S_progress[i, , k]))
+
+## Now remove all transitions from S to strain 3 (1.2) and 4 (2.1)
+## Could incorporate into above but the separation will help abstraction/model
+## separation
+n_S_progress[4, 3:4, 1] <- 0
 
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[k] to E[k+1] (k vaccination class)
@@ -301,7 +309,8 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
 
 
 #### flow out of R ####
-
+## TODO (RS) - Change p_RS to rank 2 and zero out transitions to incompatible
+## strain/psuedo-strain and make mutually exclusive with RS
 n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_RS[i])
 ## cap on people who can move out of R based on numbers in T_sero_neg and
 ## T_PCR_neg
@@ -948,7 +957,9 @@ ICU_transmission <- user()
 G_D_transmission <- user()
 strain_transmission[] <- user()
 dim(strain_transmission) <- n_strains
-n_strains <- user()
+## manually add the pseudo-strains for cross infection
+n_strains_user <- user()
+n_strains <- if (n_strains_user == 2) 4 else 1
 
 ## Dimensions of the different "vectors" here vectors stand for
 ## multi-dimensional arrays

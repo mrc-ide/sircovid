@@ -52,9 +52,10 @@ NULL
 ##' @param p_NC Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
-##' @param strain_transmission Vector of relative transmissibility of each
-##'   strain modelled. First element should be 1. Length will define the
-##'   number of strains used in the model
+##' @param strain_transmission Vector of length two for relative
+##'   transmissibility of each strain modelled. First element should be 1.
+##'   Length will define the number of strains used in the model, either 1 or
+##'   2.
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
 ##'   exactly two [sircovid::sircovid_date] values corresponding to
@@ -338,6 +339,10 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_beds <- carehome_beds
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
+
+  if (length(strain_transmission) > 2) {
+    stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
+  }
 
   severity <- carehomes_parameters_severity(severity, p_death_carehome)
   strain_rel_severity <- recycle(strain_rel_severity,
@@ -905,11 +910,7 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
   }
-  if (length(strain_transmission) > 2) {
-    stop(paste(
-      "Only 1 or 2 strains valid ('strain_transmission' too long)'.",
-      "See 'n_S_progress' in the odin code to fix this"))
-  }
+
   if (any(strain_transmission < 0)) {
     stop("'strain_transmission' must have only non-negative values")
   }
