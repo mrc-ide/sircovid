@@ -221,9 +221,10 @@ n_S_progress[, , ] <- if (j == 1)
 ## strain.
 strain_seed_step[] <- user()
 dim(strain_seed_step) <- user()
-strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
+strain_rate <- (if (as.integer(step) >= length(strain_seed_step))
   strain_seed_step[length(strain_seed_step)]
   else strain_seed_step[step + 1])
+strain_seed <- rpois(strain_rate)
 ## We must never try to move more individuals from this S category
 ## than are available, so need to do this with a min()
 ##
