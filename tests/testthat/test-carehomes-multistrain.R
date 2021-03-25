@@ -849,7 +849,8 @@ test_that("Higher rate variant has lower Rt", {
                             strain_rel_gamma_C_1 = c(1, 1.5),
                             strain_rel_gamma_C_2 = c(1, 1.5),
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
+                              c(sircovid_date("2020-02-07"),
+                                sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0))
   p$gamma_A[1] <- p$gamma_A[1] * 1.5
   p$gamma_P[1] <- p$gamma_P[1] * 1.5
@@ -879,7 +880,8 @@ test_that("Higher rate variant has lower Rt", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
+                              c(sircovid_date("2020-02-07"),
+                                sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0))
 
   np <- 3L
@@ -920,7 +922,8 @@ test_that("Stuck when gamma =  0", {
                             strain_rel_gamma_C_1 = 1,
                             strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
+                              c(sircovid_date("2020-02-07"),
+                                sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0))
   p$gamma_P[] <- 0
 
@@ -950,7 +953,8 @@ test_that("Stuck when gamma =  0", {
                             strain_rel_gamma_C_1 = 1,
                             strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
+                              c(sircovid_date("2020-02-07"),
+                                sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0))
   p$gamma_C_1[] <- 0
 
@@ -980,7 +984,8 @@ test_that("Stuck when gamma =  0", {
                             strain_rel_gamma_C_1 = 1,
                             strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
-                              rep(sircovid_date("2020-02-07"), 2),
+                              c(sircovid_date("2020-02-07"),
+                                sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0))
   p$gamma_A[] <- 0
   p$gamma_C_2[] <- 0
@@ -1005,3 +1010,47 @@ test_that("Stuck when gamma =  0", {
   expect_false(all(unlist(y[index_I_C_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_A, , ]) == 0))
 })
+
+
+test_that("Stuck when gamma =  0 for second strain", {
+  np <- 3L
+
+  ## gammaP is 0 so IC1 is 0 for second strain
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_A = c(1, 1),
+                            strain_rel_gamma_P = c(1, 0),
+                            strain_rel_gamma_C_1 = c(1, 1),
+                            strain_rel_gamma_C_2 = c(1, 1),
+                            strain_seed_date =
+                              c(sircovid_date("2020-02-07"),
+                                sircovid_date("2020-02-08")),
+                            strain_seed_rate = c(10, 0))
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_I_A <- mod$info()$index$I_A
+  index_I_A_strain_2 <- index_I_A[20:38]
+  index_I_P <- mod$info()$index$I_P
+  index_I_P_strain_2 <- index_I_P[20:38]
+  index_I_C_1 <- mod$info()$index$I_C_1
+  index_I_C_1_strain_2 <- index_I_C_1[20:38]
+  index_I_C_2 <- mod$info()$index$I_C_2
+  index_I_C_2_strain_2 <- index_I_C_2[20:38]
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_equal(p$gamma_P[2], 0)
+  expect_true(all(unlist(y[index_I_C_1_strain_2, , ]) == 0))
+  expect_false(all(unlist(y[index_I_P_strain_2, , ]) == 0))
+
+  ## TODO: complete the test
+
+})
+
