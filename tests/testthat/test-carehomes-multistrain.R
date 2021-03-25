@@ -1045,3 +1045,128 @@ test_that("carehomes_parameters with rel_severity works as expected", {
   )
 
 })
+
+
+test_that("G_D empty when p_G_D = 0", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1))
+  p$p_G_D[] <- 0
+  p$psi_G_D[] <- 0
+  p$p_G_D_step[] <- 0
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+
+  expect_true(all(mod$info()$index$G_D == 0))
+
+})
+
+test_that("Everyone dies when strain_rel_severity = 1e3", {
+  np <- 3L
+
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = 1e3,
+                            p_death_carehome = 1,
+                            p_NC = 0)
+  p$p_C[] <- 1
+  p$p_H[] <- 1
+
+  expect_true(all(p$psi_W_D == 1))
+  expect_true(all(p$p_W_D == 1))
+  expect_true(all(p$p_W_D_step == 1))
+  expect_true(all(p$psi_H_D == 1))
+  expect_true(all(p$p_H_D == 1))
+  expect_true(all(p$p_H_D_step == 1))
+  expect_true(all(p$psi_ICU_D == 1))
+  expect_true(all(p$p_ICU_D == 1))
+  expect_true(all(p$p_ICU_D_step == 1))
+  expect_true(all(p$psi_G_D[19, ] == 1))
+  expect_true(all(p$p_G_D[19, ] == 1))
+  expect_true(all(p$p_G_D_step == 1))
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_D <- grep("_D", names(mod$info()$index))
+  index_R <- mod$info()$index$R
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_R, , ]) == 0))
+  expect_true(all(unlist(y[index_D, , ]) == 0))
+  expect_true(all(unlist(y[mod$info()$index$I_A, , ]) == 0))
+
+  ## gammaC1 is 0 so IC2 is 0
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_A = 1,
+                            strain_rel_gamma_P = 1,
+                            strain_rel_gamma_C_1 = 0,
+                            strain_rel_gamma_C_2 = 1,
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_I_A <- mod$info()$index$I_A
+  index_I_P <- mod$info()$index$I_P
+  index_I_C_1 <- mod$info()$index$I_C_1
+  index_I_C_2 <- mod$info()$index$I_C_2
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_I_C_2, , ]) == 0))
+  expect_false(all(unlist(y[index_I_C_1, , ]) == 0))
+
+  ## gammaA is 0 & gammaC2 is 0 so R is 0
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_A = 0,
+                            strain_rel_gamma_P = 1,
+                            strain_rel_gamma_C_1 = 1,
+                            strain_rel_gamma_C_2 = 0,
+                            strain_seed_date =
+                              rep(sircovid_date("2020-02-07"), 2),
+                            strain_seed_value = 10)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_I_A <- mod$info()$index$I_A
+  index_I_P <- mod$info()$index$I_P
+  index_I_C_1 <- mod$info()$index$I_C_1
+  index_I_C_2 <- mod$info()$index$I_C_2
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_R, , ]) == 0))
+  expect_false(all(unlist(y[index_I_C_2, , ]) == 0))
+  expect_false(all(unlist(y[index_I_A, , ]) == 0))
+})
