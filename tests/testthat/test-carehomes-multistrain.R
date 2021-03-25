@@ -5,20 +5,16 @@ test_that("carehomes_parameters_strain works as expected", {
     carehomes_parameters_strain(NULL, NULL, NULL, 1),
     "At least one value required for 'strain_transmission'")
   expect_error(
-    carehomes_parameters_strain(-1, NULL, NULL, 1),
-    "'strain_transmission' must have only non-negative values",
-    fixed = TRUE)
-  expect_error(
     carehomes_parameters_strain(c(1, -1), NULL, NULL, 1),
     "'strain_transmission' must have only non-negative values",
     fixed = TRUE)
   expect_error(
     carehomes_parameters_strain(rep(0.5, 2), NULL, NULL, 1),
-    "'strain_transmission[1]' must be 1",
+    "'strain_transmission[[1]]' must be 1",
     fixed = TRUE)
   expect_error(
     carehomes_parameters_strain(rep(0.5, 1), NULL, NULL, 1),
-    "'strain_transmission[1]' must be 1",
+    "'strain_transmission[[1]]' must be 1",
     fixed = TRUE)
   expect_error(
     carehomes_parameters_strain(rep(0.5, 3), NULL, NULL, 1),
@@ -795,6 +791,14 @@ test_that("strain_rel_gamma works as expected in carehomes_parameters", {
                                     strain_rel_gamma_A = c(1, 5),
                                     strain_transmission = c(1, 2, 3)),
                "1 or 3")
+  expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                                    strain_transmission = c(1, 1),
+                                    strain_rel_gamma_A = c(2, 5)),
+               "must be 1")
+  expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                                    strain_transmission = c(1, 1),
+                                    strain_rel_gamma_A = c(1, -1)),
+               "non-negative")
 })
 
 test_that("carehomes_parameters_progression works as expected", {

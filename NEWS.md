@@ -1,6 +1,6 @@
-# sircovid 0.10.20
+# sircovid 0.10.21
 
-* New parameter `strain_rel_gamma` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+* New set of parameter `strain_rel_gamma_` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
 
 # sircovid 0.10.19
 

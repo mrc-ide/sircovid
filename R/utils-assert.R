@@ -57,3 +57,12 @@ assert_non_negative <- function(x, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
+
+
+assert_relatives <- function(x, name = deparse(substitute(x))) {
+  if (x[[1]] != 1) {
+    stop(sprintf("'%s[[1]]' must be 1", name), call. = FALSE)
+  }
+  assert_non_negative(x, name)
+  invisible(x)
+}

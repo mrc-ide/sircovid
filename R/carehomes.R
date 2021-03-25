@@ -366,12 +366,16 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- severity$p_star / max(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  strain_rel_gamma_A <- recycle(strain_rel_gamma_A, length(strain_transmission))
-  strain_rel_gamma_P <- recycle(strain_rel_gamma_P, length(strain_transmission))
-  strain_rel_gamma_C_1 <- recycle(strain_rel_gamma_C_1,
-                                  length(strain_transmission))
-  strain_rel_gamma_C_2 <- recycle(strain_rel_gamma_C_2,
-                                  length(strain_transmission))
+  strain_rel_gamma_A <- mcstate:::recycle(assert_relatives(strain_rel_gamma_A),
+                                          length(strain_transmission))
+  strain_rel_gamma_P <- mcstate:::recycle(assert_relatives(strain_rel_gamma_P),
+                                          length(strain_transmission))
+  strain_rel_gamma_C_1 <-
+    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_1),
+                                       length(strain_transmission))
+  strain_rel_gamma_C_2 <-
+    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_2),
+                                       length(strain_transmission))
 
   progression <- progression %||%
                   carehomes_parameters_progression(strain_rel_gamma_A,
@@ -908,11 +912,8 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
       "Only 1 or 2 strains valid ('strain_transmission' too long)'.",
       "See 'n_S_progress' in the odin code to fix this"))
   }
-  assert_non_negative(strain_transmission)
 
-  if (strain_transmission[[1]] != 1) {
-    stop("'strain_transmission[1]' must be 1")
-  }
+  assert_relatives(strain_transmission)
 
   if (is.null(strain_seed_date)) {
     if (!is.null(strain_seed_rate)) {
