@@ -1034,11 +1034,15 @@ test_that("Stuck when gamma =  0 for second strain", {
 
   index_I_A <- mod$info()$index$I_A
   index_I_A_strain_2 <- index_I_A[20:38]
+  index_I_A_strain_1 <- index_I_A[1:19]
   index_I_P <- mod$info()$index$I_P
+  index_I_P_strain_1 <- index_I_P[1:19]
   index_I_P_strain_2 <- index_I_P[20:38]
   index_I_C_1 <- mod$info()$index$I_C_1
+  index_I_C_1_strain_1 <- index_I_C_1[1:19]
   index_I_C_1_strain_2 <- index_I_C_1[20:38]
   index_I_C_2 <- mod$info()$index$I_C_2
+  index_I_C_2_strain_1 <- index_I_C_2[1:19]
   index_I_C_2_strain_2 <- index_I_C_2[20:38]
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1047,6 +1051,7 @@ test_that("Stuck when gamma =  0 for second strain", {
   set.seed(1)
   y <- mod$simulate(steps)
   expect_equal(p$gamma_P[2], 0)
+  expect_false(all(unlist(y[index_I_C_1_strain_1, , ]) == 0))
   expect_true(all(unlist(y[index_I_C_1_strain_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_P_strain_2, , ]) == 0))
 
