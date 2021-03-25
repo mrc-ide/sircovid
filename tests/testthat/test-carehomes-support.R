@@ -28,6 +28,7 @@ test_that("carehomes vaccination parameters", {
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
       "rel_infectivity",
+      "n_vacc_classes",
       "vaccine_progression_rate_base", "vaccine_dose_step",
       "index_dose"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
@@ -65,7 +66,7 @@ test_that("carehomes vaccination parameters", {
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
-      "rel_infectivity",
+      "rel_infectivity", "n_vacc_classes",
       "vaccine_progression_rate_base", "vaccine_dose_step",
       "index_dose"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
@@ -132,7 +133,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   strain <- carehomes_parameters_strain(p$strain_transmission,
                                         strain_seed_date = NULL,
-                                        strain_seed_value = NULL,
+                                        strain_seed_rate = NULL,
                                         dt = 1 / 4)
 
   waning <- carehomes_parameters_waning(0)
@@ -484,7 +485,8 @@ test_that("carehomes_index returns S compartments", {
       info$index$cum_admit_by_age,
       info$index$D_hosp,
       info$index$I_weighted,
-      info$index$prob_strain))
+      info$index$prob_strain,
+      info$index$cum_n_vaccinated))
 })
 
 

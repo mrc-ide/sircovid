@@ -1,3 +1,24 @@
+# sircovid 0.10.20
+
+* Output cumulative numbers vaccinated
+
+# sircovid 0.10.19
+
+* Changed fixed `strain_seed_value` to stochastic `strain_seed_rate` vector
+* Changed `strain_seed_date` from vector of start and end seeding dates to a vector of dates corresponding to rates set by `strain_seed_rate`
+
+# sircovid 0.10.18
+
+* EpiEstim now allows age-varying p_C
+
+# sircovid 0.10.17
+
+* New function `sircovid::compile_gpu` which compiles sircovid to run on a GPU (#237)
+
+# sircovid 0.10.16
+
+* New functions to support reordering samples in mcstate_pmcmc objects
+
 # sircovid 0.10.12
 
 * Fix corner case in vaccination exposed by recent dust updates

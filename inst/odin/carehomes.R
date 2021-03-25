@@ -244,9 +244,10 @@ n_S_progress[, , ] <- if (j == 1)
 ## strain.
 strain_seed_step[] <- user()
 dim(strain_seed_step) <- user()
-strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
+strain_rate <- (if (as.integer(step) >= length(strain_seed_step))
   strain_seed_step[length(strain_seed_step)]
   else strain_seed_step[step + 1])
+strain_seed <- rpois(strain_rate)
 ## We must never try to move more individuals from this S category
 ## than are available, so need to do this with a min()
 ##
@@ -820,8 +821,8 @@ initial(cum_admit_by_age[]) <- 0
 
 ## Vaccination parameters
 rel_susceptibility[, ] <- user()
-dim(rel_susceptibility) <- user() # use length as provided by the user
-n_vacc_classes <- dim(rel_susceptibility, 2)
+dim(rel_susceptibility) <- c(n_groups, n_vacc_classes)
+n_vacc_classes <- user()
 rel_p_sympt[, ] <- user()
 dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
 rel_p_hosp_if_sympt[, ] <- user()
@@ -972,8 +973,8 @@ hosp_transmission <- user()
 ICU_transmission <- user()
 G_D_transmission <- user()
 strain_transmission[] <- user()
-dim(strain_transmission) <- user() # use length as provided by the user
-n_strains <- length(strain_transmission)
+dim(strain_transmission) <- n_strains
+n_strains <- user()
 
 ## Dimensions of the different "vectors" here vectors stand for
 ## multi-dimensional arrays
