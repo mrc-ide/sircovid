@@ -1,6 +1,10 @@
-# sircovid 0.10.18
+# sircovid 0.10.19
 
 * New parameter `strain_rel_gamma` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+
+# sircovid 0.10.18
+
+* EpiEstim now allows age-varying p_C
 
 # sircovid 0.10.17
 
