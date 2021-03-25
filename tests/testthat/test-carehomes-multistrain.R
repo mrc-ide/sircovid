@@ -761,6 +761,7 @@ test_that("calculate Rt with both second variant and vaccination", {
 
 })
 
+
 test_that("strain_rel_gamma works as expected in carehomes_parameters", {
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                      strain_rel_gamma_A = 1,
@@ -768,21 +769,10 @@ test_that("strain_rel_gamma works as expected in carehomes_parameters", {
                                      strain_rel_gamma_C_1 = 1,
                                      strain_rel_gamma_C_2 = 1))
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma_A = 1,
-                                     strain_rel_gamma_P = 2,
-                                     strain_rel_gamma_C_1 = 3,
-                                     strain_rel_gamma_C_2 = 4))
-  expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma_A = 1,
-                                     strain_rel_gamma_P = 2,
-                                     strain_rel_gamma_C_1 = 3,
-                                     strain_rel_gamma_C_2 = 4,
-                                     strain_transmission = c(1, 1)))
-  expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                      strain_rel_gamma_A = 1:2,
-                                     strain_rel_gamma_P = 2:3,
-                                     strain_rel_gamma_C_1 = 3:4,
-                                     strain_rel_gamma_C_2 = 4:5,
+                                     strain_rel_gamma_P = 1:2,
+                                     strain_rel_gamma_C_1 = 1:2,
+                                     strain_rel_gamma_C_2 = 1:2,
                                      strain_transmission = c(1, 1)))
   expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                     strain_rel_gamma_A = c(1, 5)),
@@ -801,6 +791,7 @@ test_that("strain_rel_gamma works as expected in carehomes_parameters", {
                "non-negative")
 })
 
+
 test_that("carehomes_parameters_progression works as expected", {
   gammas <- c("gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2")
   defaults <- c(1 / 2.88, 1 / 1.68, 1 / 2.14, 1 / 1.86)
@@ -818,6 +809,7 @@ test_that("carehomes_parameters_progression works as expected", {
     vapply(defaults, function(x) x * 1:4, numeric(4))
   )
 })
+
 
 test_that("Relative gamma = 1 makes no difference", {
   p1 <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -852,13 +844,17 @@ test_that("Higher rate variant has lower Rt", {
   ## rate is 1.5 times ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = c(1.5, 1.5),
-                            strain_rel_gamma_P = c(1.5, 1.5),
-                            strain_rel_gamma_C_1 = c(1.5, 1.5),
-                            strain_rel_gamma_C_2 = c(1.5, 1.5),
+                            strain_rel_gamma_A = c(1, 1.5),
+                            strain_rel_gamma_P = c(1, 1.5),
+                            strain_rel_gamma_C_1 = c(1, 1.5),
+                            strain_rel_gamma_C_2 = c(1, 1.5),
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_rate = c(10, 0))
+  p$gamma_A[1] <- p$gamma_A[1] * 1.5
+  p$gamma_P[1] <- p$gamma_P[1] * 1.5
+  p$gamma_C_1[1] <- p$gamma_C_1[1] * 1.5
+  p$gamma_C_2[1] <- p$gamma_C_2[1] * 1.5
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -913,7 +909,6 @@ test_that("Higher rate variant has lower Rt", {
 })
 
 
-
 test_that("Stuck when gamma =  0", {
   np <- 3L
 
@@ -921,12 +916,13 @@ test_that("Stuck when gamma =  0", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_rel_gamma_A = 1,
-                            strain_rel_gamma_P = 0,
+                            strain_rel_gamma_P = 1,
                             strain_rel_gamma_C_1 = 1,
                             strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_rate = c(10, 0))
+  p$gamma_P[] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -951,11 +947,12 @@ test_that("Stuck when gamma =  0", {
                             strain_transmission = c(1, 1),
                             strain_rel_gamma_A = 1,
                             strain_rel_gamma_P = 1,
-                            strain_rel_gamma_C_1 = 0,
+                            strain_rel_gamma_C_1 = 1,
                             strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_rate = c(10, 0))
+  p$gamma_C_1[] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -978,13 +975,15 @@ test_that("Stuck when gamma =  0", {
   ## gammaA is 0 & gammaC2 is 0 so R is 0
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = 0,
+                            strain_rel_gamma_A = 1,
                             strain_rel_gamma_P = 1,
                             strain_rel_gamma_C_1 = 1,
-                            strain_rel_gamma_C_2 = 0,
+                            strain_rel_gamma_C_2 = 1,
                             strain_seed_date =
                               rep(sircovid_date("2020-02-07"), 2),
                             strain_seed_rate = c(10, 0))
+  p$gamma_A[] <- 0
+  p$gamma_C_2[] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
