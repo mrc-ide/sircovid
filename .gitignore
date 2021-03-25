@@ -26,3 +26,5 @@ tests/testthat/data/trajectories.rds
 data/pmcmc.rds
 data/rt.rds
 data/trajectories.rds
+
+tests/testthat/data/ifr_t.rds

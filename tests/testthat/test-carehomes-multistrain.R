@@ -1033,7 +1033,8 @@ test_that("carehomes_parameters with rel_severity works as expected", {
   ps <- pars[c("p_G_D", "p_H_D", "p_ICU_D", "p_W_D")]
 
   expect_equal(
-    unname(lapply(ps, function(x) matrix(c(max(x[, 1]), max(x[, 2])), nrow = 1))),
+    unname(lapply(ps, function(x) matrix(c(max(x[, 1]), max(x[, 2])),
+                                         nrow = 1))),
     unname(step)
   )
 

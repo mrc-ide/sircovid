@@ -293,9 +293,9 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
   matricise_combine_pD <- function(p_step, psi) {
     apply(
       vapply(seq(ncol(p_step)), function(i) {
-        y = outer(psi[, i], sircovid_parameters_beta_expand(step, p_step[,i]))
-        y = y * strain_mat[, i, ]
-        y = aperm(outer(y, rep(1, n_vacc_classes)), c(1, 3, 2))
+        y <- outer(psi[, i], sircovid_parameters_beta_expand(step, p_step[, i]))
+        y <- y * strain_mat[, i, ]
+        y <- aperm(outer(y, rep(1, n_vacc_classes)), c(1, 3, 2))
         y
       }, array(0, c(nrow(strain_mat), n_vacc_classes, length(step)))),
       c(1, 2, 3), sum)
