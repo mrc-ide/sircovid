@@ -840,22 +840,18 @@ test_that("Relative gamma = 1 makes no difference", {
 })
 
 
-test_that("Higher rate variant has lower Rt", {
-  ## rate is 1.5 times ref
+test_that("Lower rate variant has higher Rt", {
+  ## rate is .1 times ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = c(1, 1.5),
-                            strain_rel_gamma_P = c(1, 1.5),
-                            strain_rel_gamma_C_1 = c(1, 1.5),
-                            strain_rel_gamma_C_2 = c(1, 1.5),
+                            strain_rel_gamma_A = c(1, .1),
+                            strain_rel_gamma_P = c(1, .1),
+                            strain_rel_gamma_C_1 = c(1, .1),
+                            strain_rel_gamma_C_2 = c(1, .1),
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0))
-  p$gamma_A[1] <- p$gamma_A[1] * 1.5
-  p$gamma_P[1] <- p$gamma_P[1] * 1.5
-  p$gamma_C_1[1] <- p$gamma_C_1[1] * 1.5
-  p$gamma_C_2[1] <- p$gamma_C_2[1] * 1.5
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -873,7 +869,6 @@ test_that("Higher rate variant has lower Rt", {
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_15 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
   rt_15_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
 
   ## rate equal to ref
@@ -900,14 +895,13 @@ test_that("Higher rate variant has lower Rt", {
   S <- y[index_S, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
   rt_1_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_true(all(rt_1$Rt_all > rt_15$Rt_all))
-  expect_true(all(rt_1$Rt_general > rt_15$Rt_general))
-  expect_true(all(rt_1_all$Rt_all > rt_15$Rt_all))
-  expect_true(all(rt_1_all$Rt_general > rt_15$Rt_general))
+  expect_true(all(rt_1_all$Rt_all <= rt_15_all$Rt_all))
+  expect_true(all(rt_1_all$Rt_general <= rt_15_all$Rt_general))
+  expect_true(all(rt_1_all$Rt_all <= rt_15_all$Rt_all))
+  expect_true(all(rt_1_all$Rt_general <= rt_15$Rt_general))
 })
 
 
