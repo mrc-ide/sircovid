@@ -133,7 +133,7 @@ test_that("carehomes_parameters returns a list of parameters", {
 
   strain <- carehomes_parameters_strain(p$strain_transmission,
                                         strain_seed_date = NULL,
-                                        strain_seed_value = NULL,
+                                        strain_seed_rate = NULL,
                                         dt = 1 / 4)
 
   waning <- carehomes_parameters_waning(0)
@@ -483,7 +483,8 @@ test_that("carehomes_index returns S compartments", {
       info$index$cum_admit_by_age,
       info$index$D_hosp,
       info$index$I_weighted,
-      info$index$prob_strain))
+      info$index$prob_strain,
+      info$index$cum_n_vaccinated))
 })
 
 
