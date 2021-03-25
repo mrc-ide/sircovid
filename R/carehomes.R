@@ -495,6 +495,8 @@ carehomes_index <- function(info) {
                                paste0("cum_admit", suffix))
   index_D_hosp <- set_names(index[["D_hosp"]],
                             paste0("D_hosp", suffix))
+  index_cum_n_vaccinated <- set_names(index[["cum_n_vaccinated"]],
+                                    paste0("cum_n_vaccinated", suffix, s_type))
 
   ## prob_strain is named similarly to S, with the second suffix representing
   ## strain instead of vacc_class
@@ -507,7 +509,8 @@ carehomes_index <- function(info) {
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_cum_admit,
-                 index_D_hosp, index_I_weighted, index_prob_strain))
+                 index_D_hosp, index_I_weighted, index_prob_strain,
+                 index_cum_n_vaccinated))
 }
 
 
