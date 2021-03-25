@@ -57,18 +57,23 @@ NULL
 ##'   number of strains used in the model
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
-##'   exactly two [sircovid::sircovid_date] values corresponding to
-##'   the start and stop dates of seeding (inclusive). For example, to
-##'   seed for a single day, these two values should have the same
-##'   date
+##'   [sircovid::sircovid_date] values corresponding to
+##'   the dates that `strain_seed_rate` should change. For example, to
+##'   seed a constant rate from a given date, provide one value for each of
+##'   `strain_seed_date` and `strain_seed_rate`; or to seed with a constant rate
+##'   for a set period, provide two dates and two
+##'   rates with the second rate equal to 0.
 ##'
-##' @param strain_seed_value Either `NULL` (no seeding) or a single
-##'   integer value represending the *daily* rate of seeding. Because
-##'   each day is dividied into `1 / dt` steps, this value will be
-##'   spread out fairly evenly across the steps that occur within each
-##'   date. Seeding is not stochastic; this many individuals *will*
-##'   become infected with the new strain, unless the pool of
-##'   susceptibles has been exhausted.
+##' @param strain_seed_rate Either `NULL` (no seeding) or a vector of
+##'   values representing the *daily* rate of seeding, starting on the dates set
+##'   in `strain_seed_date`.
+##'   Seeding is drawn from Poisson(strain_seed_rate * dt)
+##'   at each **day** and so the rate is spread evenly across the steps that
+##'   occur within each date. For example, to
+##'   seed a constant rate from a given date, provide one value for each of
+##'   `strain_seed_date` and `strain_seed_rate`; or to seed with a constant rate
+##'   for a set period, provide two dates and two
+##'   rates with the second rate equal to 0.
 ##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -276,7 +281,7 @@ carehomes_parameters <- function(start_date, region,
                                  p_NC = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
-                                 strain_seed_value = NULL,
+                                 strain_seed_rate = NULL,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
@@ -383,7 +388,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## number of strains and relative transmissibility
   strain <- carehomes_parameters_strain(
-    strain_transmission, strain_seed_date, strain_seed_value, ret$dt)
+    strain_transmission, strain_seed_date, strain_seed_rate, ret$dt)
 
   ## vaccination
   vaccination <- carehomes_parameters_vaccination(ret$N_tot,
@@ -855,7 +860,7 @@ carehomes_parameters_vaccination <- function(N_tot,
 }
 
 carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
-                                        strain_seed_value, dt) {
+                                        strain_seed_rate, dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
   }
@@ -864,16 +869,15 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
       "Only 1 or 2 strains valid ('strain_transmission' too long)'.",
       "See 'n_S_progress' in the odin code to fix this"))
   }
-  if (any(strain_transmission < 0)) {
-    stop("'strain_transmission' must have only non-negative values")
-  }
+  assert_non_negative(strain_transmission)
+
   if (strain_transmission[[1]] != 1) {
     stop("'strain_transmission[1]' must be 1")
   }
 
   if (is.null(strain_seed_date)) {
-    if (!is.null(strain_seed_value)) {
-      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_value'",
+    if (!is.null(strain_seed_rate)) {
+      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_rate'",
                  "to be NULL"))
     }
     strain_seed_step <- 0
@@ -881,22 +885,29 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     if (length(strain_transmission) == 1L) {
       stop("Can't use 'strain_seed_date' if only using one strain")
     }
-    if (length(strain_seed_date) != 2L) {
-      stop("'strain_seed_date', if given, must be exactly two elements")
+    if (length(strain_seed_date) != length(strain_seed_rate)) {
+      stop("'strain_seed_date' and 'strain_seed_rate' must be the same length")
     }
     assert_sircovid_date(strain_seed_date)
     assert_increasing(strain_seed_date, strict = FALSE)
-
-    if (length(strain_seed_value) != 1L) {
-      stop("'strain_seed_value' must be a scalar if 'strain_seed_date' is used")
-    }
-    assert_integer(strain_seed_value)
+    assert_non_negative(strain_seed_rate)
 
     ## The + 1 here prevents the start of the next day having the
-    ## seeding value
-    strain_seed_step <- numeric((strain_seed_date[[2]] + 1) / dt)
-    i <- (strain_seed_date[[1]] / dt):((strain_seed_date[[2]] + 1) / dt - 1)
-    strain_seed_step[i] <- spread_integer(strain_seed_value, 1 / dt)
+    ## same seeding value
+    strain_seed_step <-
+      numeric(strain_seed_date[[length(strain_seed_date)]] / dt)
+    for (j in seq_along(strain_seed_date)) {
+      if (j == length(strain_seed_date)) {
+        i <- length(strain_seed_step)
+      } else {
+        i <- seq.int(
+          strain_seed_date[[j]] / dt,
+          strain_seed_date[[j + 1]] / dt - 1
+        )
+      }
+      strain_seed_step[i] <- strain_seed_rate[[j]] * dt
+    }
+
   }
 
   list(n_strains = length(strain_transmission),
