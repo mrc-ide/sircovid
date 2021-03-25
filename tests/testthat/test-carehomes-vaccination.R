@@ -2170,6 +2170,15 @@ test_that("Can catch up on uptake given previous vaccination", {
   data <- test_vaccine_data()
 
   region <- "london"
+
+  p <- carehomes_parameters(sircovid_date("2021-04-10"),
+                            region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            waning_rate = 1 / 20)
+
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
   past <- vaccine_schedule_from_data(data, n[18:19, 1])
@@ -2193,13 +2202,6 @@ test_that("Can catch up on uptake given previous vaccination", {
   vacc_schedule <- vaccine_schedule_scenario(past, doses_future, end_date,
                                    mean_days_between_doses, n)
 
-  p <- carehomes_parameters(sircovid_date("2021-04-10"),
-                            region, rel_susceptibility = c(1, 1, 0),
-                            beta_value = 0,
-                            rel_p_sympt = c(1, 1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1, 1),
-                            vaccine_progression_rate = c(0, 0, 0),
-                            waning_rate = 1 / 20)
   p$index_dose <- c(1L, 2L)
   end_date <- sircovid_date(end_date)
 
