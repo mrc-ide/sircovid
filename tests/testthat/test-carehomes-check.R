@@ -955,7 +955,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
 
 test_that("No one is hospitalised, no-one recovers in edge case", {
   p <- carehomes_parameters(0, "england")
-  p$p_G_D_step <- c(0, 0)
+  p$p_G_D_step[] <- 0
   p$psi_G_D[] <- 0
   p$p_G_D[] <- 0
 
