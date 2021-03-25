@@ -2125,3 +2125,45 @@ test_that("can create parameters with vaccination data", {
   expect_equal(dim(p$vaccine_dose_step),
                c(19, 2, (date_start_vaccination + length(daily_doses)) * 4))
 })
+
+
+test_that("Can vaccinate given a schedule with given uptake", {
+  region <- "london"
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            waning_rate = 1 / 20)
+  p$index_dose <- c(1L, 2L)
+  end_date <- sircovid_date("2020-06-01")
+
+  start_vacc_date_1 <- sircovid_date("2020-03-01")
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- seq(40000, length.out = 365, by = -50)
+  mean_days_between_doses <- 12 * 7
+
+  n <- vaccine_priority_population(region, uptake_by_age)
+
+  vacc_schedule <- vaccine_schedule_future(
+    start_vacc_date_1, daily_doses, mean_days_between_doses, n)
+
+  p$vaccine_dose_step <- vacc_schedule$doses
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+
+  #### check first dose schedule
+  n_vacc_fisrt_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
+
+  #### check we reach the desired uptake in each group
+  expect_equal(y$cum_n_vaccinated[, 1, 1, 154] / p$N_tot,
+                uptake_by_age, 0.01)
+
+})
