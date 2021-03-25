@@ -1,5 +1,9 @@
 # sircovid 0.10.18
 
+* Output cumulative numbers vaccinated
+
+# sircovid 0.10.18
+
 * EpiEstim now allows age-varying p_C
 
 # sircovid 0.10.17
