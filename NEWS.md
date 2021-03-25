@@ -2,6 +2,10 @@
 
 * New set of parameter `strain_rel_gamma_` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
 
+# sircovid 0.10.20
+
+* Output cumulative numbers vaccinated
+
 # sircovid 0.10.19
 
 * Changed fixed `strain_seed_value` to stochastic `strain_seed_rate` vector
