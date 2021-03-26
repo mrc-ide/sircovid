@@ -870,12 +870,8 @@ carehomes_parameters_vaccination <- function(N_tot,
     vaccine_progression_rate, n_vacc_classes, ret$index_dose)
 
 
-  if (length(vaccine_catchup_fraction) > 1) {
-    stop("'vaccine_catchup_fraction' should be a scalar")
-  }
-  if (vaccine_catchup_fraction < 0 || vaccine_catchup_fraction > 1) {
-    stop("'vaccine_catchup_fraction' should be between 0 and 1")
-  }
+  assert_scalar(vaccine_catchup_fraction)
+  assert_proportion(vaccine_catchup_fraction)
   ret$vaccine_catchup_fraction <- vaccine_catchup_fraction
 
   ret

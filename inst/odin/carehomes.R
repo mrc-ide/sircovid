@@ -27,54 +27,66 @@ update(time) <- (step + 1) * dt
 ## stage without progressing disease stages) and also n_EE_next_vacc_class
 ## (those moving vaccine stage and also progressing disease stages)
 ## vaccinated S
-initial(cum_n_S_vaccinated[, ]) <- 0
-update(cum_n_S_vaccinated[, ]) <- cum_n_S_vaccinated[i, j] +
+initial(n_S_vaccinated[, ]) <- 0
+update(n_S_vaccinated[, ]) <-
   n_S_next_vacc_class[i, j] + sum(n_SE_next_vacc_class[i, , j])
-dim(cum_n_S_vaccinated) <- c(n_groups, n_vacc_classes)
+dim(n_S_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated E
-initial(cum_n_E_vaccinated[, ]) <- 0
-update(cum_n_E_vaccinated[, ]) <- cum_n_E_vaccinated[i, j] +
+initial(n_E_vaccinated[, ]) <- 0
+update(n_E_vaccinated[, ]) <-
   sum(n_E_next_vacc_class[i, , , j]) + sum(n_EE_next_vacc_class[i, , , j])
-dim(cum_n_E_vaccinated) <- c(n_groups, n_vacc_classes)
+dim(n_E_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated I_A
-initial(cum_n_I_A_vaccinated[, ]) <- 0
-update(cum_n_I_A_vaccinated[, ]) <- cum_n_I_A_vaccinated[i, j] +
+initial(n_I_A_vaccinated[, ]) <- 0
+update(n_I_A_vaccinated[, ]) <-
   sum(n_I_A_next_vacc_class[i, , , j]) +
   sum(n_II_A_next_vacc_class[i, , , j])
-dim(cum_n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
+dim(n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated I_P
-initial(cum_n_I_P_vaccinated[, ]) <- 0
-update(cum_n_I_P_vaccinated[, ]) <- cum_n_I_P_vaccinated[i, j] +
+initial(n_I_P_vaccinated[, ]) <- 0
+update(n_I_P_vaccinated[, ]) <-
   sum(n_I_P_next_vacc_class[i, , , j]) +
   sum(n_II_P_next_vacc_class[i, , , j])
-dim(cum_n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
+dim(n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
 ## vaccinated R
-initial(cum_n_R_vaccinated[, ]) <- 0
-update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
+initial(n_R_vaccinated[, ]) <- 0
+update(n_R_vaccinated[, ]) <-
   sum(n_R_next_vacc_class[i, , j]) + sum(n_RS_next_vacc_class[i, , j])
+dim(n_R_vaccinated) <- c(n_groups, n_vacc_classes)
+
+initial(cum_n_S_vaccinated[, ]) <- 0
+update(cum_n_S_vaccinated[, ]) <-
+  cum_n_S_vaccinated[i, j] + n_S_vaccinated[i, j]
+dim(cum_n_S_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_E_vaccinated[, ]) <- 0
+update(cum_n_E_vaccinated[, ]) <-
+  cum_n_E_vaccinated[i, j] + n_E_vaccinated[i, j]
+dim(cum_n_E_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_I_A_vaccinated[, ]) <- 0
+update(cum_n_I_A_vaccinated[, ]) <-
+  cum_n_I_A_vaccinated[i, j] + n_I_A_vaccinated[i, j]
+dim(cum_n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_I_P_vaccinated[, ]) <- 0
+update(cum_n_I_P_vaccinated[, ]) <-
+  cum_n_I_P_vaccinated[i, j] + n_I_P_vaccinated[i, j]
+dim(cum_n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_R_vaccinated[, ]) <- 0
+update(cum_n_R_vaccinated[, ]) <-
+  cum_n_R_vaccinated[i, j] + n_R_vaccinated[i, j]
 dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
 initial(n_vaccinated[, ]) <- 0
-update(n_vaccinated[, ]) <- n_S_next_vacc_class[i, j] +
-  sum(n_SE_next_vacc_class[i, , j]) +
-  sum(n_E_next_vacc_class[i, , , j]) +
-  sum(n_EE_next_vacc_class[i, , , j]) +
-  sum(n_I_A_next_vacc_class[i, , , j]) +
-  sum(n_II_A_next_vacc_class[i, , , j]) +
-  sum(n_I_P_next_vacc_class[i, , , j]) +
-  sum(n_II_P_next_vacc_class[i, , , j]) +
-  sum(n_R_next_vacc_class[i, , j]) +
-  sum(n_RS_next_vacc_class[i, , j])
+update(n_vaccinated[, ]) <-
+  n_S_vaccinated[i, j] +
+  n_E_vaccinated[i, j] +
+  n_I_A_vaccinated[i, j] +
+  n_I_P_vaccinated[i, j] +
+  n_R_vaccinated[i, j]
 dim(n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Total number of vaccinations over S, E, I_asypmt, R for convenience
 initial(cum_n_vaccinated[, ]) <- 0
-update(cum_n_vaccinated[, ]) <-
-  cum_n_S_vaccinated[i, j] +
-  cum_n_E_vaccinated[i, j] +
-  cum_n_I_A_vaccinated[i, j] +
-  cum_n_I_P_vaccinated[i, j] +
-  cum_n_R_vaccinated[i, j]
+update(cum_n_vaccinated[, ]) <- cum_n_vaccinated[i, j] + n_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Core equations for transitions between compartments:
@@ -1415,7 +1427,6 @@ I_weighted_strain[, , ] <-
           sum(new_ICU_D_conf[i, j, , k])) +
       G_D_transmission * sum(new_G_D[i, j, , k]))
 update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
-
 
 ## Vaccination engine
 n_doses <- 2

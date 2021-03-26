@@ -2225,111 +2225,50 @@ test_that("Can catch up on uptake given previous vaccination", {
 })
 
 
-# test_that("Can catch up on doses not distributed", {
-#   region <- "london"
-#
-#   ## set uptake to 100% in all groups
-#   uptake_by_age <- rep(1, 19)
-#   n <- vaccine_priority_population(region, uptake_by_age)
-#
-#   start_date <- 0
-#
-#   ## set beta to high value to produce big epidemic
-#   beta <- .1
-#
-#   p <- carehomes_parameters(start_date,
-#                             region, rel_susceptibility = c(1, 1, 0),
-#                             beta_value = beta,
-#                             rel_p_sympt = c(1, 1, 1),
-#                             rel_p_hosp_if_sympt = c(1, 1, 1),
-#                             vaccine_progression_rate = c(0, 0, 0),
-#                             vaccine_catchup_fraction = 0,
-#                             waning_rate = 1 / 20)
-#
-#   mean_days_between_doses <- 12 * 7
-#   end_date <- "2023-01-01"
-#   doses_future <- rep(25000, sircovid_date(end_date))
-#
-#   ## so we have vaccinated part of groups 18 and 19
-#   vacc_schedule <-
-#     vaccine_schedule_future(start_date, doses_future, mean_days_between_doses, n)
-#
-#   ## image(t(vacc_schedule$doses[, 1, ]))
-#
-#   ## check we are going far enough in time that we should vaccinate everyone:
-#   expect_true(all(rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot > 0.99))
-#
-#   p$index_dose <- c(1L, 2L)
-#   end_date <- sircovid_date(end_date)
-#
-#   p$vaccine_dose_step <- vacc_schedule$doses
-#
-#   mod <- carehomes$new(p, 0, 1, seed = 1L)
-#   info <- mod$info()
-#
-#   state <- carehomes_initial(info, 1, p)$state
-#
-#   mod$set_state(state)
-#   steps <- seq(0, end_date * 4, by = 4)
-#   y <- mod$transform_variables(mod$simulate(steps))
-#
-#   uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
-#
-#   #### check we could not reach reach the desired uptake
-#   expect_true(!all(uptake > 0.99))
-#
-#   plot(sircovid::sircovid_date_as_date(y$time[1, 1, -1]),
-#        diff(y$cum_infections[1, 1, ]), type = "l")
-#
-#   ## plot vaccination over time to check we are not vaccinating anymore:
-#   plot(colSums(y$cum_n_vaccinated[, 1, 1, ]))
-#
-#   ### now do exactly the same with vaccine catch up fully on:
-#
-#   p <- carehomes_parameters(sircovid_date("2021-04-10"),
-#                             region, rel_susceptibility = c(1, 1, 0),
-#                             beta_value = beta,
-#                             rel_p_sympt = c(1, 1, 1),
-#                             rel_p_hosp_if_sympt = c(1, 1, 1),
-#                             vaccine_progression_rate = c(0, 0, 0),
-#                             vaccine_catchup_fraction = 1.0,
-#                             waning_rate = 1 / 20)
-#
-#   p$index_dose <- c(1L, 2L)
-#
-#   p$vaccine_dose_step <- vacc_schedule$doses
-#
-#   mod <- carehomes$new(p, 0, 1, seed = 1L)
-#   info <- mod$info()
-#
-#   state <- carehomes_initial(info, 1, p)$state
-#
-#   mod$set_state(state)
-#   steps <- seq(0, end_date * 4, by = 4)
-#   y2 <- mod$transform_variables(mod$simulate(steps))
-#
-#   new_uptake_with_catch_up <-
-#     y2$cum_n_vaccinated[, 1, 1, dim(y2$cum_n_vaccinated)[4]] / p$N_tot
-#
-#   y2$vaccine_missed_doses
-#
-#   i_age <- 6
-#   new_uptake_with_catch_up[6]
-#   p$N_tot[i_age]
-#   y2$tmp_vaccine_n_candidates[i_age, 1, 1, ]
-#   y2$cum_n_vaccinated[i_age, 1, 1, ]
-#
-#   plot(y2$tmp_vaccine_n_candidates[i_age, 1, 1, ], type = "l")
-#   lines(y2$cum_n_vaccinated[i_age, 1, 1, ])
-#   lines(y2$tmp_vaccine_n_candidates[i_age, 1, 1, ] + y2$cum_n_vaccinated[i_age, 1, 1, ], col = "red")
-#
-#   sum(p$vaccine_dose_step[i_age, 1, ])
-#
-#   plot(colSums(y$cum_n_vaccinated[, 1, 1, ]), type = "l",
-#        ylim = c(0, sum(p$N_tot)))
-#   lines(colSums(y2$cum_n_vaccinated[, 1, 1, ]), col = "red")
-#
-#   #### check we could not reach reach the desired uptake
-#   expect_true(!all(new_uptake > 0.99))
-#
-# })
+test_that("Can catch up on doses not distributed", {
+  region <- "london"
+  end_date <- sircovid_date("2023-01-01")
+
+  mean_days_between_doses <- 12 * 7
+  doses_future <- rep(25000, end_date)
+
+  uptake_by_age <- rep(1, 19) # complete in all groups
+  n <- vaccine_priority_population(region, uptake_by_age)
+  vacc_schedule <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n)
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0.1,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            vaccine_catchup_fraction = 0,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_schedule = vacc_schedule,
+                            waning_rate = 1 / 20)
+
+  ## check we are going far enough in time that we should vaccinate everyone:
+  expect_true(all(rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot > 0.99))
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+  uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we could not reach reach the desired uptake
+  expect_lt(min(uptake), 0.8)
+
+  ### now do exactly the same with vaccine catch up fully on:
+  p$vaccine_catchup_fraction <- 1.0
+  mod2 <- carehomes$new(p, 0, 1, seed = 1L)
+  state <- carehomes_initial(info, 1, p)$state
+  mod2$set_state(state)
+  y2 <- mod2$transform_variables(mod2$simulate(steps))
+  uptake2 <- y2$cum_n_vaccinated[, 1, 1, dim(y2$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we did reach the desired uptake (100%)
+  expect_gt(min(uptake2), 0.98)
+})

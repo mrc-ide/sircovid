@@ -111,14 +111,16 @@ test_that("carehomes vaccination parameters", {
                paste(msg1, msg2))
   expect_error(carehomes_parameters_vaccination(ntot,
                                                 vaccine_catchup_fraction = -1),
-               "'vaccine_catchup_fraction' should be between 0 and 1")
+               "'vaccine_catchup_fraction' must lie in [0, 1]",
+               fixed = TRUE)
   expect_error(carehomes_parameters_vaccination(ntot,
                                                 vaccine_catchup_fraction = 1.5),
-               "'vaccine_catchup_fraction' should be between 0 and 1")
+               "'vaccine_catchup_fraction' must lie in [0, 1]",
+               fixed = TRUE)
   expect_error(
     carehomes_parameters_vaccination(ntot,
                                      vaccine_catchup_fraction = c(1, 1)),
-    "'vaccine_catchup_fraction' should be a scalar")
+    "'vaccine_catchup_fraction' must be a scalar")
 })
 
 test_that("carehomes_parameters returns a list of parameters", {
