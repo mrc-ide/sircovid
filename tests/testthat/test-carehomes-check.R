@@ -492,14 +492,6 @@ test_that("setting a gamma to Inf results immediate progression", {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-    p$gamma_H_R_step <- Inf
-    p$gamma_W_R_step <- Inf
-    p$gamma_ICU_W_R_step <- Inf
-    p$gamma_H_D_step <- Inf
-    p$gamma_W_D_step <- Inf
-    p$gamma_ICU_W_D_step <- Inf
-    p$gamma_ICU_D_step <- Inf
-    p$gamma_ICU_pre_step <- Inf
     p[[gamma_name]] <- Inf
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
@@ -546,15 +538,15 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_P", "k_P", "I_P", FALSE)
   helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
   helper("gamma_C_2", "k_C_2", "I_C_2", FALSE)
-  helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
-  helper("gamma_H_R", "k_H_R", "H_R", TRUE)
-  helper("gamma_H_D", "k_H_D", "H_D", TRUE)
-  helper("gamma_ICU_W_R", "k_ICU_W_R", "ICU_W_R", TRUE)
-  helper("gamma_ICU_W_D", "k_ICU_W_D", "ICU_W_D", TRUE)
-  helper("gamma_ICU_D", "k_ICU_D", "ICU_D", TRUE)
+  helper("gamma_ICU_pre_step", "k_ICU_pre", "ICU_pre", TRUE)
+  helper("gamma_H_R_step", "k_H_R", "H_R", TRUE)
+  helper("gamma_H_D_step", "k_H_D", "H_D", TRUE)
+  helper("gamma_ICU_W_R_step", "k_ICU_W_R", "ICU_W_R", TRUE)
+  helper("gamma_ICU_W_D_step", "k_ICU_W_D", "ICU_W_D", TRUE)
+  helper("gamma_ICU_D_step", "k_ICU_D", "ICU_D", TRUE)
   helper("gamma_G_D", "k_G_D", "G_D", FALSE)
-  helper("gamma_W_R", "k_W_R", "W_R", TRUE)
-  helper("gamma_W_D", "k_W_D", "W_D", TRUE)
+  helper("gamma_W_R_step", "k_W_R", "W_R", TRUE)
+  helper("gamma_W_D_step", "k_W_D", "W_D", TRUE)
   helper("gamma_sero_pos", "k_sero_pos", "T_sero_pos", FALSE)
   helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "k_PCR_pos", "T_PCR_pos", FALSE)
@@ -567,14 +559,6 @@ test_that("setting a gamma to 0 results in no progression", {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-    p$gamma_H_R_step <- 0
-    p$gamma_W_R_step <- 0
-    p$gamma_ICU_W_R_step <- 0
-    p$gamma_H_D_step <- 0
-    p$gamma_W_D_step <- 0
-    p$gamma_ICU_W_D_step <- 0
-    p$gamma_ICU_D_step <- 0
-    p$gamma_ICU_pre_step <- 0
     p[[gamma_name]] <- 0
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
@@ -630,15 +614,15 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_P", "k_P", "I_P", FALSE)
   helper("gamma_C_1", "k_C_1", "I_C_1", FALSE)
   helper("gamma_C_2", "k_C_2", "I_C_2", FALSE)
-  helper("gamma_ICU_pre", "k_ICU_pre", "ICU_pre", TRUE)
-  helper("gamma_H_R", "k_H_R", "H_R", TRUE)
-  helper("gamma_H_D", "k_H_D", "H_D", TRUE)
-  helper("gamma_ICU_W_R", "k_ICU_W_R", "ICU_W_R", TRUE)
-  helper("gamma_ICU_W_D", "k_ICU_W_D", "ICU_W_D", TRUE)
-  helper("gamma_ICU_D", "k_ICU_D", "ICU_D", TRUE)
+  helper("gamma_ICU_pre_step", "k_ICU_pre", "ICU_pre", TRUE)
+  helper("gamma_H_R_step", "k_H_R", "H_R", TRUE)
+  helper("gamma_H_D_step", "k_H_D", "H_D", TRUE)
+  helper("gamma_ICU_W_R_step", "k_ICU_W_R", "ICU_W_R", TRUE)
+  helper("gamma_ICU_W_D_step", "k_ICU_W_D", "ICU_W_D", TRUE)
+  helper("gamma_ICU_D_step", "k_ICU_D", "ICU_D", TRUE)
   helper("gamma_G_D", "k_G_D", "G_D", FALSE)
-  helper("gamma_W_R", "k_W_R", "W_R", TRUE)
-  helper("gamma_W_D", "k_W_D", "W_D", TRUE)
+  helper("gamma_W_R_step", "k_W_R", "W_R", TRUE)
+  helper("gamma_W_D_step", "k_W_D", "W_D", TRUE)
   helper("gamma_sero_pos", "k_sero_pos", "T_sero_pos", FALSE)
   helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "k_PCR_pos", "T_PCR_pos", FALSE)
@@ -651,25 +635,16 @@ test_that("No one is unconfirmed, if p_star = 1", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step <- 1
-  p$gamma_H_R_step <- Inf
-  p$gamma_H_R_step <- Inf
-  p$gamma_W_R_step <- Inf
-  p$gamma_ICU_W_R_step <- Inf
-  p$gamma_H_D_step <- Inf
-  p$gamma_W_D_step <- Inf
-  p$gamma_ICU_W_D_step <- Inf
-  p$gamma_ICU_D_step <- Inf
-  p$gamma_ICU_pre_step <- Inf
 
   p$psi_star[] <- 1
-  p$gamma_ICU_pre <- Inf
-  p$gamma_H_R <- Inf
-  p$gamma_H_D <- Inf
-  p$gamma_ICU_W_R <- Inf
-  p$gamma_ICU_W_D <- Inf
-  p$gamma_ICU_D <- Inf
-  p$gamma_W_R <- Inf
-  p$gamma_W_D <- Inf
+  p$gamma_ICU_pre_step <- Inf
+  p$gamma_H_R_step <- Inf
+  p$gamma_H_D_step <- Inf
+  p$gamma_ICU_W_R_step <- Inf
+  p$gamma_ICU_W_D_step <- Inf
+  p$gamma_ICU_D_step <- Inf
+  p$gamma_W_R_step <- Inf
+  p$gamma_W_D_step <- Inf
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -743,24 +718,16 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$psi_star[] <- 0
-  p$gamma_H_R_step <- Inf
-  p$gamma_W_R_step <- Inf
-  p$gamma_ICU_W_R_step <- Inf
-  p$gamma_H_D_step <- Inf
-  p$gamma_W_D_step <- Inf
-  p$gamma_ICU_W_D_step <- Inf
-  p$gamma_ICU_D_step <- Inf
-  p$gamma_ICU_pre_step <- Inf
 
   p$gamma_U <- Inf
-  p$gamma_ICU_pre <- Inf
-  p$gamma_H_R <- Inf
-  p$gamma_H_D <- Inf
-  p$gamma_ICU_W_R <- Inf
-  p$gamma_ICU_W_D <- Inf
-  p$gamma_ICU_D <- Inf
-  p$gamma_W_R <- Inf
-  p$gamma_W_D <- Inf
+  p$gamma_ICU_pre_step <- Inf
+  p$gamma_H_R_step <- Inf
+  p$gamma_H_D_step <- Inf
+  p$gamma_ICU_W_R_step <- Inf
+  p$gamma_ICU_W_D_step <- Inf
+  p$gamma_ICU_D_step <- Inf
+  p$gamma_W_R_step <- Inf
+  p$gamma_W_D_step <- Inf
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -878,16 +845,6 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
 
-    ## set all hospital gamma steps to 0
-    p$gamma_H_R_step <- 0
-    p$gamma_W_R_step <- 0
-    p$gamma_ICU_W_R_step <- 0
-    p$gamma_H_D_step <- 0
-    p$gamma_W_D_step <- 0
-    p$gamma_ICU_W_D_step <- 0
-    p$gamma_ICU_D_step <- 0
-    p$gamma_ICU_pre_step <- 0
-
     mod <- carehomes$new(p, 0, 1)
 
     info <- mod$info()
@@ -917,18 +874,18 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
   helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
   helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
   helper("G_D_transmission", "G_D", "gamma_G_D")
-  helper("hosp_transmission", "H_D_unconf", "gamma_H_D")
-  helper("hosp_transmission", "H_D_conf", "gamma_H_D")
-  helper("hosp_transmission", "H_R_unconf", "gamma_H_R")
-  helper("hosp_transmission", "H_R_conf", "gamma_H_R")
-  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre")
-  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre")
-  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D")
-  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D")
-  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D")
-  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D")
-  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R")
-  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R")
+  helper("hosp_transmission", "H_D_unconf", "gamma_H_D_step")
+  helper("hosp_transmission", "H_D_conf", "gamma_H_D_step")
+  helper("hosp_transmission", "H_R_unconf", "gamma_H_R_step")
+  helper("hosp_transmission", "H_R_conf", "gamma_H_R_step")
+  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre_step")
+  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre_step")
+  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D_step")
+  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D_step")
+  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D_step")
+  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D_step")
+  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
+  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
 })
 
 
@@ -951,14 +908,6 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
 
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
-    p$gamma_H_R_step <- 0
-    p$gamma_W_R_step <- 0
-    p$gamma_ICU_W_R_step <- 0
-    p$gamma_H_D_step <- 0
-    p$gamma_W_D_step <- 0
-    p$gamma_ICU_W_D_step <- 0
-    p$gamma_ICU_D_step <- 0
-    p$gamma_ICU_pre_step <- 0
 
     mod <- carehomes$new(p, 0, 1)
 
@@ -991,16 +940,16 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
   helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
   helper("G_D_transmission", "G_D", "gamma_G_D")
-  helper("hosp_transmission", "H_D_unconf", "gamma_H_D")
-  helper("hosp_transmission", "H_D_conf", "gamma_H_D")
-  helper("hosp_transmission", "H_R_unconf", "gamma_H_R")
-  helper("hosp_transmission", "H_R_conf", "gamma_H_R")
-  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre")
-  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre")
-  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D")
-  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D")
-  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D")
-  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D")
-  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R")
-  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R")
+  helper("hosp_transmission", "H_D_unconf", "gamma_H_D_step")
+  helper("hosp_transmission", "H_D_conf", "gamma_H_D_step")
+  helper("hosp_transmission", "H_R_unconf", "gamma_H_R_step")
+  helper("hosp_transmission", "H_R_conf", "gamma_H_R_step")
+  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre_step")
+  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre_step")
+  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D_step")
+  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D_step")
+  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D_step")
+  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D_step")
+  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
+  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
 })
