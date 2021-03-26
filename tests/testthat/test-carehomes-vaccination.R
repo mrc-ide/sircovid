@@ -2223,3 +2223,60 @@ test_that("Can catch up on uptake given previous vaccination", {
                uptake_by_age, 0.01)
 
 })
+
+
+# test_that("Can catch up on doses not distributed", {
+#   data <- test_vaccine_data()
+#   ## distribute fewer doses in the past
+#   data$dose1 <- round(data$dose1 / 3)
+#   data$dose2 <- round(data$dose2 / 3)
+#
+#   region <- "london"
+#
+#   p <- carehomes_parameters(sircovid_date("2021-04-10"),
+#                             region, rel_susceptibility = c(1, 1, 0),
+#                             beta_value = 0,
+#                             rel_p_sympt = c(1, 1, 1),
+#                             rel_p_hosp_if_sympt = c(1, 1, 1),
+#                             vaccine_progression_rate = c(0, 0, 0),
+#                             vaccine_catchup_fraction = 0,
+#                             waning_rate = 1 / 20)
+#
+#   ## set uptake to 100% in all groups
+#   uptake_by_age <- rep(1, 19)
+#   n <- vaccine_priority_population(region, uptake_by_age)
+#   past <- vaccine_schedule_from_data(data, n[18:19, 1])
+#
+#   mean_days_between_doses <- 12 * 7
+#   doses_future <- c(
+#     "2021-04-10" = 60000)
+#   end_date <- "2021-08-01"
+#
+#   first_doses_already_given <- rowSums(past$doses[, 1, ])
+#   past_uptake <- first_doses_already_given / p$N_tot
+#   ## so we have vaccinated part of groups 18 and 19
+#
+#   vacc_schedule <- vaccine_schedule_scenario(past, doses_future, end_date,
+#                                              mean_days_between_doses, n)
+#
+#   p$index_dose <- c(1L, 2L)
+#   end_date <- sircovid_date(end_date)
+#
+#   p$vaccine_dose_step <- vacc_schedule$doses
+#
+#   mod <- carehomes$new(p, 0, 1, seed = 1L)
+#   info <- mod$info()
+#
+#   state <- carehomes_initial(info, 1, p)$state
+#
+#   mod$set_state(state)
+#   steps <- seq(0, end_date * 4, by = 4)
+#   y <- mod$transform_variables(mod$simulate(steps))
+#
+#   new_uptake <- y$cum_n_vaccinated[, 1, 1, 580] / p$N_tot
+#
+#   #### check we reach the desired uptake in each group including group 90
+#   expect_equal(new_uptake,
+#                uptake_by_age, 0.01)
+#
+# })
