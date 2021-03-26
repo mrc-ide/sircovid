@@ -1,3 +1,7 @@
+# sircovid 0.10.22
+
+* Added support for time-varying hospital durations
+
 # sircovid 0.10.20
 
 * Output cumulative numbers vaccinated
