@@ -1785,7 +1785,8 @@ test_that("run sensible vaccination schedule", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
-                            vaccine_index_dose2 = 2L)
+                            vaccine_index_dose2 = 2L,
+                            vaccine_catchup_fraction = 0)
   ## TODO: Anne to look at tidying this parameter up:
   p$model_pcr_and_serology_user <- 0
 
@@ -1823,6 +1824,85 @@ test_that("run sensible vaccination schedule", {
 
   tot <- rowSums(n_vaccinated)
   expect_true(all(tot >= 49000 & tot < 51000))
+
+  ## Vaccinate all the CHW/CHR first, then down the priority
+  ## groups. This is easy to check visually but harder to describe:
+  priority <- list(18:19, 17, 16, 15, 14, 13, 12, 11,
+                   9:10, 7:8, 1:6)
+  i <- lapply(priority, function(p)
+    range(c(apply((n_vaccinated > 5000)[, p, drop = FALSE], 2, which))))
+  for (j in seq_along(i)) {
+    if (j > 2) {
+      ## using <= as if many doses available each day you may vaccinate
+      ## several priority groups in the same day
+      expect_true(max(unlist(i[seq_len(j - 2)])) <= i[[j]][[1]])
+    }
+    if (j > 1) {
+      expect_true(all(i[[j - 1]][[1]] <= i[[j]][[1]]))
+    }
+  }
+})
+
+
+## Heading towards real-life use, let's vaccinate people at a rate of
+## 5k/day. This does not run an epidemic beforehand though, and we'll
+## use a "null" vaccine for now.
+test_that("run sensible vaccination schedule with catch up", {
+  region <- "east_of_england"
+  uptake <- c(rep(0, 3), rep(1, 16))
+  daily_doses <- rep(50000, 120)
+  n <- vaccine_priority_population(region, uptake,
+                                   prop_hcw = rep(0, 19),
+                                   prop_very_vulnerable = rep(0, 19),
+                                   prop_underlying_condition = rep(0, 19))
+  vaccine_schedule <- vaccine_schedule_future(0, daily_doses, 200, n)
+  expect_equal(sum(vaccine_schedule$doses[, 2, ]), 0)
+  expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
+
+  p <- carehomes_parameters(0, "east_of_england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_catchup_fraction = 1)
+  ## TODO: Anne to look at tidying this parameter up:
+  p$model_pcr_and_serology_user <- 0
+
+  ## Let's go:
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+  ## Remove seed, so that we have no infection process here:
+  state[state == 10] <- 0
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  keep <- c("cum_n_S_vaccinated",
+            "cum_n_E_vaccinated",
+            "cum_n_I_A_vaccinated",
+            "cum_n_I_P_vaccinated",
+            "cum_n_R_vaccinated")
+  index <- unlist(lapply(info$index[keep], "[", 1:19), FALSE, FALSE)
+
+  mod$set_index(index)
+  y <- mod$simulate(seq(0, 380, by = 4)[-1])
+  s <- array(y, c(19, 5, dim(y)[3]))
+
+  ## Never vaccinate any young person:
+  expect_true(all(s[1:3, , ] == 0))
+
+  ## Sum over compartments
+  cum_n_vaccinated <- t(apply(s, c(1, 3), sum))
+  n_vaccinated <- diff(cum_n_vaccinated)
+
+  ## You can visualise the vaccination process here:
+  ## > matplot(m, type = "l", lty = 1)
+
+  tot <- rowSums(n_vaccinated)
+  expect_true(all(tot >= 45000 & tot < 51000))
 
   ## Vaccinate all the CHW/CHR first, then down the priority
   ## groups. This is easy to check visually but harder to describe:
@@ -2041,7 +2121,8 @@ test_that("Can vaccinate given a schedule", {
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
-                            waning_rate = 1 / 20)
+                            waning_rate = 1 / 20,
+                            vaccine_catchup_fraction = 0)
   p$index_dose <- c(1L, 2L)
   end_date <- sircovid_date("2020-06-01")
 

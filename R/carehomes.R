@@ -147,7 +147,8 @@ NULL
 ##'   too many people were in the I or H compartments and could not be
 ##'   vaccinated at the scheduled time) that we postpone to a later date.
 ##'   A value of 0 means we do not catch up at all on any missed doses; a
-##'   value of 1 means we try to catch up for all missed doses.
+##'   value of 1 means we try to catch up for all missed doses. This is set
+##'   to 1 by default
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -296,7 +297,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate = NULL,
                                  vaccine_schedule = NULL,
                                  vaccine_index_dose2 = NULL,
-                                 vaccine_catchup_fraction = 0,
+                                 vaccine_catchup_fraction = 1,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
@@ -815,7 +816,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
                                              vaccine_index_dose2 = NULL,
-                                             vaccine_catchup_fraction = 0) {
+                                             vaccine_catchup_fraction = 1) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
