@@ -1097,9 +1097,6 @@ test_that("Stuck when gamma =  0 for second strain", {
 })
 
 test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
-#  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             waning_rate = 1 / 20,
@@ -1170,8 +1167,6 @@ test_that("carehomes_parameters_severity works as expected", {
   )
   expect_true(all(unique(unlist(
     scale_severity(severity, 1e10)[which])) %in% c(1, 0)))
-  expect_true(all(unique(unlist(
-    scale_severity(severity, -1e10)[which])) %in% c(1, 0)))
 })
 
 
@@ -1185,6 +1180,14 @@ test_that("carehomes_parameters with rel_severity works as expected", {
   expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                      strain_transmission = c(1, 1),
                                      strain_rel_severity = 1:3), "1 or 2")
+  expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                                     strain_transmission = c(1, 1),
+                                     strain_rel_severity = c(0, 1)),
+              "must be 1")
+  expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                                     strain_transmission = c(1, 1),
+                                     strain_rel_severity = c(1, -1)),
+              "non-negative")
 
   pars <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                strain_transmission = c(1, 1),
@@ -1224,5 +1227,34 @@ test_that("G_D empty when p_G_D = 0", {
 
   initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
+
+  y <- mod$simulate(steps)
+
   expect_true(all(y[mod$info()$index$G_D, , ] == 0))
+})
+
+test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = c(1, 0),
+                            strain_seed_rate = c(1, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
+  p$psi_G_D[, 2] <- 0
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index_I_A <- mod$info()$index$G_D
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+
+  expect_true(all(y[mod$info()$index$G_D[1:18], , ] == 0))
+  expect_true(all(y[mod$info()$index$G_D[19:36], , ] == 0))
 })

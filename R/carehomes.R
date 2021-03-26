@@ -99,12 +99,12 @@ NULL
 ##'   same length as `strain_transmission`, with entries that determines the
 ##'   relative scaling of the defaults for each strain.
 ##'
-##' @param strain_rel_severity Vector of relative severity for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain. To ensure valid
-##'   probabilities, severity is lower-truncated at 0 and upper-truncated at 1
-##'   after scaling.
+##' @param strain_rel_severity Vector of relative probabilities of death for
+##'   each strain modelled. If `1` all strains have same
+##'   probabilities of death. Otherwise vector of same length as
+##'   `strain_transmission`, where the first value should be 1 (for the first
+##'   strain) and subsequent values between 0 and 1. To ensure valid
+##'   probabilities, severity is upper-truncated at 1 after scaling.
 ##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -349,7 +349,8 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_workers <- carehome_workers
 
   severity <- carehomes_parameters_severity(severity, p_death_carehome)
-  strain_rel_severity <- recycle(strain_rel_severity,
+  strain_rel_severity <- mcstate:::recycle(
+                                 assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
   severity <- scale_severity(severity, strain_rel_severity)
 
@@ -1319,7 +1320,6 @@ scale_severity <- function(severity, strain_rel_severity,
                   ncol = length(strain_rel_severity), byrow = TRUE)
     x <- x * prob
     x[x > 1] <- 1
-    x[x < 0] <- 0
     x
   })
   severity
