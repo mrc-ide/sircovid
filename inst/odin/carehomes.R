@@ -1426,10 +1426,22 @@ dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 vaccine_probability_doses[, ] <- (
   if (as.integer(step) >= dim(vaccine_dose_step, 3) ||
       vaccine_n_candidates[i, j] == 0) 0
-  else min(vaccine_dose_step[i, j, step + 1] /
-           vaccine_n_candidates[i, j],
+  else min(vaccine_attempted_doses[i, j] / vaccine_n_candidates[i, j],
            as.numeric(1)))
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
+
+vaccine_attempted_doses[, ] <-
+  vaccine_dose_step[i, j, step + 1] + vaccine_missed_doses[i, j]
+dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
+
+initial(vaccine_missed_doses[, ]) <- 0
+update(vaccine_missed_doses[, ]) <-
+  vaccine_catchup_fraction *
+  max(vaccine_attempted_doses[i, j] - vaccine_n_candidates[i, j],
+      as.numeric(0))
+dim(vaccine_missed_doses) <- c(n_groups, n_doses)
+
+vaccine_catchup_fraction <- user(0)
 
 ## Then fix everything based on progression at a constant rate (will
 ## be zero for the cases that have probabilities above)
