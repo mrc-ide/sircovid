@@ -1451,7 +1451,7 @@ dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
 initial(vaccine_missed_doses[, ]) <- 0
 update(vaccine_missed_doses[, ]) <-
   vaccine_catchup_fraction *
-  max(vaccine_attempted_doses[i, j] - n_vaccinated[i, j],
+  max(vaccine_attempted_doses[i, j] - n_vaccinated[i, index_dose[j]],
       as.numeric(0))
 dim(vaccine_missed_doses) <- c(n_groups, n_doses)
 
