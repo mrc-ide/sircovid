@@ -1258,7 +1258,7 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
 
   # FIXME - These results seem backwards, need to check how G_D is flattened
   expect_true(all(y[mod$info()$index$G_D[1:18], , ] == 0))
-  expect_true(all(y[mod$info()$index$G_D[37:54],,] == 0))
+  expect_true(all(y[mod$info()$index$G_D[37:54], ,] == 0))
   expect_false(all(y[mod$info()$index$G_D[19:36], , ] == 0))
   expect_false(all(y[mod$info()$index$G_D[55:72], , ] == 0))
 })
