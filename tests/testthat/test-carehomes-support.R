@@ -544,7 +544,7 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
           data stream", {
-            data <-sircovid_data(
+            data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             ## Add additional columns
             data$deaths_hosp <- NA
