@@ -542,8 +542,8 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
           data stream", {
-            data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                                  1, 0.25)
+            data <-sircovid_data(
+              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             ## Add additional columns
             data$deaths_hosp <- NA
             data$deaths_comm <- NA
@@ -645,8 +645,8 @@ test_that("model_pcr_and_serology_user switch works", {
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
           data stream", {
-            data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                                  1, 0.25)
+            data <- sircovid_data(
+              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             class(data)[1] <- "particle_filter_data_nested"
             ## Add additional columns
             data$deaths_hosp <- NA
