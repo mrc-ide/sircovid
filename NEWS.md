@@ -1,3 +1,8 @@
+# sircovid 0.10.22
+
+* Support to allow catch up of vaccine doses that could not be delivered 
+(e.g. when people were infected at the time they should have been vaccinated)
+
 # sircovid 0.10.20
 
 * Output cumulative numbers vaccinated
