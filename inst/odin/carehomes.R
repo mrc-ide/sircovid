@@ -54,6 +54,19 @@ update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
   sum(n_R_next_vacc_class[i, , j]) + sum(n_RS_next_vacc_class[i, , j])
 dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
+initial(n_vaccinated[, ]) <- 0
+update(n_vaccinated[, ]) <- n_S_next_vacc_class[i, j] +
+  sum(n_SE_next_vacc_class[i, , j]) +
+  sum(n_E_next_vacc_class[i, , , j]) +
+  sum(n_EE_next_vacc_class[i, , , j]) +
+  sum(n_I_A_next_vacc_class[i, , , j]) +
+  sum(n_II_A_next_vacc_class[i, , , j]) +
+  sum(n_I_P_next_vacc_class[i, , , j]) +
+  sum(n_II_P_next_vacc_class[i, , , j]) +
+  sum(n_R_next_vacc_class[i, , j]) +
+  sum(n_RS_next_vacc_class[i, , j])
+dim(n_vaccinated) <- c(n_groups, n_vacc_classes)
+
 ## Total number of vaccinations over S, E, I_asypmt, R for convenience
 initial(cum_n_vaccinated[, ]) <- 0
 update(cum_n_vaccinated[, ]) <-
@@ -1437,7 +1450,7 @@ dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
 initial(vaccine_missed_doses[, ]) <- 0
 update(vaccine_missed_doses[, ]) <-
   vaccine_catchup_fraction *
-  max(vaccine_attempted_doses[i, j] - vaccine_n_candidates[i, j],
+  max(vaccine_attempted_doses[i, j] - n_vaccinated[i, j],
       as.numeric(0))
 dim(vaccine_missed_doses) <- c(n_groups, n_doses)
 
