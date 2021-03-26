@@ -1,6 +1,12 @@
 # sircovid 0.10.22
 
-* New parameter `strain_rel_gamma` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+* Add parameter `strain_rel_severity` for varying the probabilities of `p_G_D`, `p_H_D`, `p_W_D` and `p_ICU_D` by strain.
+
+
+# sircovid 0.10.21
+
+* New set of parameters `strain_rel_gamma_` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+
 
 # sircovid 0.10.20
 
