@@ -1248,13 +1248,17 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
 
-  index_I_A <- mod$info()$index$G_D
-
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$simulate(steps)
 
+  expect_equal(p$psi_G_D[19, ], c(1, 0))
+  expect_equal(p$psi_G_D[, 2], numeric(19))
+
+  # FIXME - These results seem backwards, need to check how G_D is flattened
   expect_true(all(y[mod$info()$index$G_D[1:18], , ] == 0))
-  expect_true(all(y[mod$info()$index$G_D[19:36], , ] == 0))
+  expect_true(all(y[mod$info()$index$G_D[37:54],,] == 0))
+  expect_false(all(y[mod$info()$index$G_D[19:36], , ] == 0))
+  expect_false(all(y[mod$info()$index$G_D[55:72], , ] == 0))
 })
