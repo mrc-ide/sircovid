@@ -27,30 +27,21 @@ update(time) <- (step + 1) * dt
 ## stage without progressing disease stages) and also n_EE_next_vacc_class
 ## (those moving vaccine stage and also progressing disease stages)
 ## vaccinated S
-initial(n_S_vaccinated[, ]) <- 0
-update(n_S_vaccinated[, ]) <-
+n_S_vaccinated[, ] <-
   n_S_next_vacc_class[i, j] + sum(n_SE_next_vacc_class[i, , j])
 dim(n_S_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated E
-initial(n_E_vaccinated[, ]) <- 0
-update(n_E_vaccinated[, ]) <-
+n_E_vaccinated[, ] <-
   sum(n_E_next_vacc_class[i, , , j]) + sum(n_EE_next_vacc_class[i, , , j])
 dim(n_E_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated I_A
-initial(n_I_A_vaccinated[, ]) <- 0
-update(n_I_A_vaccinated[, ]) <-
+n_I_A_vaccinated[, ] <-
   sum(n_I_A_next_vacc_class[i, , , j]) +
   sum(n_II_A_next_vacc_class[i, , , j])
 dim(n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated I_P
-initial(n_I_P_vaccinated[, ]) <- 0
-update(n_I_P_vaccinated[, ]) <-
+n_I_P_vaccinated[, ] <-
   sum(n_I_P_next_vacc_class[i, , , j]) +
   sum(n_II_P_next_vacc_class[i, , , j])
 dim(n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated R
-initial(n_R_vaccinated[, ]) <- 0
-update(n_R_vaccinated[, ]) <-
+n_R_vaccinated[, ] <-
   sum(n_R_next_vacc_class[i, , j]) + sum(n_RS_next_vacc_class[i, , j])
 dim(n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
@@ -75,8 +66,7 @@ update(cum_n_R_vaccinated[, ]) <-
   cum_n_R_vaccinated[i, j] + n_R_vaccinated[i, j]
 dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
-initial(n_vaccinated[, ]) <- 0
-update(n_vaccinated[, ]) <-
+n_vaccinated[, ] <-
   n_S_vaccinated[i, j] +
   n_E_vaccinated[i, j] +
   n_I_A_vaccinated[i, j] +
