@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.10.21
+Version: 0.10.22
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -34,6 +34,10 @@ Authors@R:
            family = "Cori",
            role = c("aut"),
            email = "a.cori@imperial.ac.uk"))
+      person(given = "Pablo",
+           family = "Perez-Guzman",
+           role = c("aut"),
+           email = "p.perez-guzman@imperial.ac.uk"))
 Description: Mechanistic models of transmission of the SARS-Cov-2 (COVID-19)
     virus implemented as stochastic compartmental models in odin and
     dust. Uses mcstate to perfom Bayesian evidence synthesis from
