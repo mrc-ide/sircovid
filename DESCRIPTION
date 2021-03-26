@@ -33,7 +33,7 @@ Authors@R:
       person(given = "Anne",
            family = "Cori",
            role = c("aut"),
-           email = "a.cori@imperial.ac.uk"))
+           email = "a.cori@imperial.ac.uk"),
       person(given = "Pablo",
            family = "Perez-Guzman",
            role = c("aut"),
