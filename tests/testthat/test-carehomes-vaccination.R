@@ -2392,4 +2392,3 @@ test_that("Can catch up on doses not distributed with imperfect uptake", {
   ## check we could not reach reach the desired uptake
   expect_true(all(abs(uptake - uptake_by_age) < 0.05))
 })
-
