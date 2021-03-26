@@ -349,6 +349,16 @@ carehomes_parameters <- function(start_date, region,
 
   progression <- progression %||% carehomes_parameters_progression()
 
+  ## implementation of time-varying progression gammas
+  progression$gamma_H_R_step <- progression$gamma_H_R
+  progression$gamma_W_R_step <- progression$gamma_W_R
+  progression$gamma_ICU_W_R_step <- progression$gamma_ICU_W_R
+  progression$gamma_H_D_step <- progression$gamma_H_D
+  progression$gamma_W_D_step <- progression$gamma_W_D
+  progression$gamma_ICU_W_D_step <- progression$gamma_ICU_W_D
+  progression$gamma_ICU_D_step <- progression$gamma_ICU_D
+  progression$gamma_ICU_pre_step <- progression$gamma_ICU_pre
+
   waning <- carehomes_parameters_waning(waning_rate)
 
   ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region)
@@ -997,7 +1007,8 @@ carehomes_parameters_progression <- function() {
        gamma_sero_pos = 1 / 25,
        gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
-       gamma_PCR_pos = 1 / 5)
+       gamma_PCR_pos = 1 / 5
+       )
 }
 
 

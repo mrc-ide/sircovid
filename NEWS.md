@@ -1,7 +1,11 @@
-# sircovid 0.10.22
+# sircovid 0.10.23
 
 * Support to allow catch up of vaccine doses that could not be delivered 
 (e.g. when people were infected at the time they should have been vaccinated)
+
+# sircovid 0.10.22
+
+* Added support for time-varying hospital durations
 
 # sircovid 0.10.20
 

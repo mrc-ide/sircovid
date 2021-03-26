@@ -272,6 +272,14 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(N_tot_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(beta_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(exp_noise, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_H_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_H_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_ICU_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_ICU_W_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_ICU_pre_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_W_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(index_dose, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_A, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -357,18 +365,10 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(gamma_C_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_E, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_G_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_H_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_H_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_ICU_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_ICU_W_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_ICU_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_ICU_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_P, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_U, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_W_D, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_W_R, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -808,6 +808,14 @@ public:
     int dim_cum_n_vaccinated_2;
     int dim_delta_D_hosp;
     int dim_delta_D_non_hosp;
+    int dim_gamma_H_D_step;
+    int dim_gamma_H_R_step;
+    int dim_gamma_ICU_D_step;
+    int dim_gamma_ICU_W_D_step;
+    int dim_gamma_ICU_W_R_step;
+    int dim_gamma_ICU_pre_step;
+    int dim_gamma_W_D_step;
+    int dim_gamma_W_R_step;
     int dim_gamma_sero_pre;
     int dim_index_dose;
     int dim_lambda;
@@ -1630,18 +1638,18 @@ public:
     real_t gamma_C_2;
     real_t gamma_E;
     real_t gamma_G_D;
-    real_t gamma_H_D;
-    real_t gamma_H_R;
-    real_t gamma_ICU_D;
-    real_t gamma_ICU_W_D;
-    real_t gamma_ICU_W_R;
-    real_t gamma_ICU_pre;
+    std::vector<real_t> gamma_H_D_step;
+    std::vector<real_t> gamma_H_R_step;
+    std::vector<real_t> gamma_ICU_D_step;
+    std::vector<real_t> gamma_ICU_W_D_step;
+    std::vector<real_t> gamma_ICU_W_R_step;
+    std::vector<real_t> gamma_ICU_pre_step;
     real_t gamma_P;
     real_t gamma_PCR_pos;
     real_t gamma_PCR_pre;
     real_t gamma_U;
-    real_t gamma_W_D;
-    real_t gamma_W_R;
+    std::vector<real_t> gamma_W_D_step;
+    std::vector<real_t> gamma_W_R_step;
     real_t gamma_sero_pos;
     std::vector<real_t> gamma_sero_pre;
     real_t gamma_sero_pre_1;
@@ -1807,15 +1815,9 @@ public:
     real_t p_E_progress;
     real_t p_G_D_progress;
     std::vector<real_t> p_G_D_step;
-    real_t p_H_D_progress;
     std::vector<real_t> p_H_D_step;
-    real_t p_H_R_progress;
     std::vector<real_t> p_H_step;
-    real_t p_ICU_D_progress;
     std::vector<real_t> p_ICU_D_step;
-    real_t p_ICU_W_D_progress;
-    real_t p_ICU_W_R_progress;
-    real_t p_ICU_pre_progress;
     std::vector<real_t> p_ICU_step;
     real_t p_I_A_progress;
     real_t p_I_C_1_progress;
@@ -1827,9 +1829,7 @@ public:
     real_t p_T_PCR_pre_progress;
     real_t p_T_sero_pos_progress;
     std::vector<real_t> p_T_sero_pre_progress;
-    real_t p_W_D_progress;
     std::vector<real_t> p_W_D_step;
-    real_t p_W_R_progress;
     std::vector<real_t> p_sero_pos;
     real_t p_sero_pre_1;
     std::vector<real_t> p_star_step;
@@ -2177,6 +2177,14 @@ public:
     state_next[7] = odin_sum1<real_t>(S, 0, shared->dim_S) + odin_sum1<real_t>(T_sero_pre, 0, shared->dim_T_sero_pre) + odin_sum1<real_t>(T_sero_pos, 0, shared->dim_T_sero_pos) + odin_sum1<real_t>(T_sero_neg, 0, shared->dim_T_sero_neg) + odin_sum1<real_t>(E, 0, shared->dim_E);
     state_next[8] = odin_sum1<real_t>(S, 0, shared->dim_S) + odin_sum1<real_t>(T_PCR_pre, 0, shared->dim_T_PCR_pre) + odin_sum1<real_t>(T_PCR_pos, 0, shared->dim_T_PCR_pos) + odin_sum1<real_t>(T_PCR_neg, 0, shared->dim_T_PCR_neg);
     real_t beta = (static_cast<int>(step) >= shared->dim_beta_step ? shared->beta_step[shared->dim_beta_step - 1] : shared->beta_step[step + 1 - 1]);
+    real_t gamma_H_D = (static_cast<int>(step) >= shared->dim_gamma_H_D_step ? shared->gamma_H_D_step[shared->dim_gamma_H_D_step - 1] : shared->gamma_H_D_step[step + 1 - 1]);
+    real_t gamma_H_R = (static_cast<int>(step) >= shared->dim_gamma_H_R_step ? shared->gamma_H_R_step[shared->dim_gamma_H_R_step - 1] : shared->gamma_H_R_step[step + 1 - 1]);
+    real_t gamma_ICU_D = (static_cast<int>(step) >= shared->dim_gamma_ICU_D_step ? shared->gamma_ICU_D_step[shared->dim_gamma_ICU_D_step - 1] : shared->gamma_ICU_D_step[step + 1 - 1]);
+    real_t gamma_ICU_W_D = (static_cast<int>(step) >= shared->dim_gamma_ICU_W_D_step ? shared->gamma_ICU_W_D_step[shared->dim_gamma_ICU_W_D_step - 1] : shared->gamma_ICU_W_D_step[step + 1 - 1]);
+    real_t gamma_ICU_W_R = (static_cast<int>(step) >= shared->dim_gamma_ICU_W_R_step ? shared->gamma_ICU_W_R_step[shared->dim_gamma_ICU_W_R_step - 1] : shared->gamma_ICU_W_R_step[step + 1 - 1]);
+    real_t gamma_ICU_pre = (static_cast<int>(step) >= shared->dim_gamma_ICU_pre_step ? shared->gamma_ICU_pre_step[shared->dim_gamma_ICU_pre_step - 1] : shared->gamma_ICU_pre_step[step + 1 - 1]);
+    real_t gamma_W_D = (static_cast<int>(step) >= shared->dim_gamma_W_D_step ? shared->gamma_W_D_step[shared->dim_gamma_W_D_step - 1] : shared->gamma_W_D_step[step + 1 - 1]);
+    real_t gamma_W_R = (static_cast<int>(step) >= shared->dim_gamma_W_R_step ? shared->gamma_W_R_step[shared->dim_gamma_W_R_step - 1] : shared->gamma_W_R_step[step + 1 - 1]);
     real_t p_G_D = (static_cast<int>(step) >= shared->dim_p_G_D_step ? shared->p_G_D_step[shared->dim_p_G_D_step - 1] : shared->p_G_D_step[step + 1 - 1]);
     real_t p_H = (static_cast<int>(step) >= shared->dim_p_H_step ? shared->p_H_step[shared->dim_p_H_step - 1] : shared->p_H_step[step + 1 - 1]);
     real_t p_H_D = (static_cast<int>(step) >= shared->dim_p_H_D_step ? shared->p_H_D_step[shared->dim_p_H_D_step - 1] : shared->p_H_D_step[step + 1 - 1]);
@@ -2192,18 +2200,26 @@ public:
     for (int i = 1; i <= shared->dim_p_H_D_by_age; ++i) {
       internal.p_H_D_by_age[i - 1] = p_H_D * shared->psi_H_D[i - 1];
     }
+    real_t p_H_D_progress = 1 - std::exp(- gamma_H_D * shared->dt);
+    real_t p_H_R_progress = 1 - std::exp(- gamma_H_R * shared->dt);
     for (int i = 1; i <= shared->dim_p_H_by_age; ++i) {
       internal.p_H_by_age[i - 1] = p_H * shared->psi_H[i - 1];
     }
     for (int i = 1; i <= shared->dim_p_ICU_D_by_age; ++i) {
       internal.p_ICU_D_by_age[i - 1] = p_ICU_D * shared->psi_ICU_D[i - 1];
     }
+    real_t p_ICU_D_progress = 1 - std::exp(- gamma_ICU_D * shared->dt);
+    real_t p_ICU_W_D_progress = 1 - std::exp(- gamma_ICU_W_D * shared->dt);
+    real_t p_ICU_W_R_progress = 1 - std::exp(- gamma_ICU_W_R * shared->dt);
     for (int i = 1; i <= shared->dim_p_ICU_by_age; ++i) {
       internal.p_ICU_by_age[i - 1] = p_ICU * shared->psi_ICU[i - 1];
     }
+    real_t p_ICU_pre_progress = 1 - std::exp(- gamma_ICU_pre * shared->dt);
     for (int i = 1; i <= shared->dim_p_W_D_by_age; ++i) {
       internal.p_W_D_by_age[i - 1] = p_W_D * shared->psi_W_D[i - 1];
     }
+    real_t p_W_D_progress = 1 - std::exp(- gamma_W_D * shared->dt);
+    real_t p_W_R_progress = 1 - std::exp(- gamma_W_R * shared->dt);
     for (int i = 1; i <= shared->dim_p_star_by_age; ++i) {
       internal.p_star_by_age[i - 1] = p_star * shared->psi_star[i - 1];
     }
@@ -2241,7 +2257,7 @@ public:
       for (int j = 1; j <= shared->dim_n_H_D_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_H_D_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_H_D_conf_progress_4; ++l) {
-            internal.n_H_D_conf_progress[i - 1 + shared->dim_n_H_D_conf_progress_1 * (j - 1) + shared->dim_n_H_D_conf_progress_12 * (k - 1) + shared->dim_n_H_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_conf[shared->dim_H_D_conf_123 * (l - 1) + shared->dim_H_D_conf_12 * (k - 1) + shared->dim_H_D_conf_1 * (j - 1) + i - 1]), shared->p_H_D_progress);
+            internal.n_H_D_conf_progress[i - 1 + shared->dim_n_H_D_conf_progress_1 * (j - 1) + shared->dim_n_H_D_conf_progress_12 * (k - 1) + shared->dim_n_H_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_conf[shared->dim_H_D_conf_123 * (l - 1) + shared->dim_H_D_conf_12 * (k - 1) + shared->dim_H_D_conf_1 * (j - 1) + i - 1]), p_H_D_progress);
           }
         }
       }
@@ -2250,7 +2266,7 @@ public:
       for (int j = 1; j <= shared->dim_n_H_D_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_H_D_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_H_D_unconf_progress_4; ++l) {
-            internal.n_H_D_unconf_progress[i - 1 + shared->dim_n_H_D_unconf_progress_1 * (j - 1) + shared->dim_n_H_D_unconf_progress_12 * (k - 1) + shared->dim_n_H_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_unconf[shared->dim_H_D_unconf_123 * (l - 1) + shared->dim_H_D_unconf_12 * (k - 1) + shared->dim_H_D_unconf_1 * (j - 1) + i - 1]), shared->p_H_D_progress);
+            internal.n_H_D_unconf_progress[i - 1 + shared->dim_n_H_D_unconf_progress_1 * (j - 1) + shared->dim_n_H_D_unconf_progress_12 * (k - 1) + shared->dim_n_H_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_D_unconf[shared->dim_H_D_unconf_123 * (l - 1) + shared->dim_H_D_unconf_12 * (k - 1) + shared->dim_H_D_unconf_1 * (j - 1) + i - 1]), p_H_D_progress);
           }
         }
       }
@@ -2259,7 +2275,7 @@ public:
       for (int j = 1; j <= shared->dim_n_H_R_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_H_R_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_H_R_conf_progress_4; ++l) {
-            internal.n_H_R_conf_progress[i - 1 + shared->dim_n_H_R_conf_progress_1 * (j - 1) + shared->dim_n_H_R_conf_progress_12 * (k - 1) + shared->dim_n_H_R_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_conf[shared->dim_H_R_conf_123 * (l - 1) + shared->dim_H_R_conf_12 * (k - 1) + shared->dim_H_R_conf_1 * (j - 1) + i - 1]), shared->p_H_R_progress);
+            internal.n_H_R_conf_progress[i - 1 + shared->dim_n_H_R_conf_progress_1 * (j - 1) + shared->dim_n_H_R_conf_progress_12 * (k - 1) + shared->dim_n_H_R_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_conf[shared->dim_H_R_conf_123 * (l - 1) + shared->dim_H_R_conf_12 * (k - 1) + shared->dim_H_R_conf_1 * (j - 1) + i - 1]), p_H_R_progress);
           }
         }
       }
@@ -2268,7 +2284,7 @@ public:
       for (int j = 1; j <= shared->dim_n_H_R_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_H_R_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_H_R_unconf_progress_4; ++l) {
-            internal.n_H_R_unconf_progress[i - 1 + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + shared->dim_n_H_R_unconf_progress_12 * (k - 1) + shared->dim_n_H_R_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_unconf[shared->dim_H_R_unconf_123 * (l - 1) + shared->dim_H_R_unconf_12 * (k - 1) + shared->dim_H_R_unconf_1 * (j - 1) + i - 1]), shared->p_H_R_progress);
+            internal.n_H_R_unconf_progress[i - 1 + shared->dim_n_H_R_unconf_progress_1 * (j - 1) + shared->dim_n_H_R_unconf_progress_12 * (k - 1) + shared->dim_n_H_R_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(H_R_unconf[shared->dim_H_R_unconf_123 * (l - 1) + shared->dim_H_R_unconf_12 * (k - 1) + shared->dim_H_R_unconf_1 * (j - 1) + i - 1]), p_H_R_progress);
           }
         }
       }
@@ -2277,7 +2293,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_D_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_D_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_D_conf_progress_4; ++l) {
-            internal.n_ICU_D_conf_progress[i - 1 + shared->dim_n_ICU_D_conf_progress_1 * (j - 1) + shared->dim_n_ICU_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_conf[shared->dim_ICU_D_conf_123 * (l - 1) + shared->dim_ICU_D_conf_12 * (k - 1) + shared->dim_ICU_D_conf_1 * (j - 1) + i - 1]), shared->p_ICU_D_progress);
+            internal.n_ICU_D_conf_progress[i - 1 + shared->dim_n_ICU_D_conf_progress_1 * (j - 1) + shared->dim_n_ICU_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_conf[shared->dim_ICU_D_conf_123 * (l - 1) + shared->dim_ICU_D_conf_12 * (k - 1) + shared->dim_ICU_D_conf_1 * (j - 1) + i - 1]), p_ICU_D_progress);
           }
         }
       }
@@ -2286,7 +2302,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_D_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_D_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_D_unconf_progress_4; ++l) {
-            internal.n_ICU_D_unconf_progress[i - 1 + shared->dim_n_ICU_D_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_unconf[shared->dim_ICU_D_unconf_123 * (l - 1) + shared->dim_ICU_D_unconf_12 * (k - 1) + shared->dim_ICU_D_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_D_progress);
+            internal.n_ICU_D_unconf_progress[i - 1 + shared->dim_n_ICU_D_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_D_unconf[shared->dim_ICU_D_unconf_123 * (l - 1) + shared->dim_ICU_D_unconf_12 * (k - 1) + shared->dim_ICU_D_unconf_1 * (j - 1) + i - 1]), p_ICU_D_progress);
           }
         }
       }
@@ -2295,7 +2311,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_W_D_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_W_D_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_W_D_conf_progress_4; ++l) {
-            internal.n_ICU_W_D_conf_progress[i - 1 + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_conf[shared->dim_ICU_W_D_conf_123 * (l - 1) + shared->dim_ICU_W_D_conf_12 * (k - 1) + shared->dim_ICU_W_D_conf_1 * (j - 1) + i - 1]), shared->p_ICU_W_D_progress);
+            internal.n_ICU_W_D_conf_progress[i - 1 + shared->dim_n_ICU_W_D_conf_progress_1 * (j - 1) + shared->dim_n_ICU_W_D_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_conf[shared->dim_ICU_W_D_conf_123 * (l - 1) + shared->dim_ICU_W_D_conf_12 * (k - 1) + shared->dim_ICU_W_D_conf_1 * (j - 1) + i - 1]), p_ICU_W_D_progress);
           }
         }
       }
@@ -2304,7 +2320,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_W_D_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_W_D_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_W_D_unconf_progress_4; ++l) {
-            internal.n_ICU_W_D_unconf_progress[i - 1 + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_unconf[shared->dim_ICU_W_D_unconf_123 * (l - 1) + shared->dim_ICU_W_D_unconf_12 * (k - 1) + shared->dim_ICU_W_D_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_W_D_progress);
+            internal.n_ICU_W_D_unconf_progress[i - 1 + shared->dim_n_ICU_W_D_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_D_unconf[shared->dim_ICU_W_D_unconf_123 * (l - 1) + shared->dim_ICU_W_D_unconf_12 * (k - 1) + shared->dim_ICU_W_D_unconf_1 * (j - 1) + i - 1]), p_ICU_W_D_progress);
           }
         }
       }
@@ -2313,7 +2329,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_W_R_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_W_R_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_W_R_conf_progress_4; ++l) {
-            internal.n_ICU_W_R_conf_progress[i - 1 + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_conf[shared->dim_ICU_W_R_conf_123 * (l - 1) + shared->dim_ICU_W_R_conf_12 * (k - 1) + shared->dim_ICU_W_R_conf_1 * (j - 1) + i - 1]), shared->p_ICU_W_R_progress);
+            internal.n_ICU_W_R_conf_progress[i - 1 + shared->dim_n_ICU_W_R_conf_progress_1 * (j - 1) + shared->dim_n_ICU_W_R_conf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_conf[shared->dim_ICU_W_R_conf_123 * (l - 1) + shared->dim_ICU_W_R_conf_12 * (k - 1) + shared->dim_ICU_W_R_conf_1 * (j - 1) + i - 1]), p_ICU_W_R_progress);
           }
         }
       }
@@ -2322,7 +2338,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_W_R_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_W_R_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_W_R_unconf_progress_4; ++l) {
-            internal.n_ICU_W_R_unconf_progress[i - 1 + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_unconf[shared->dim_ICU_W_R_unconf_123 * (l - 1) + shared->dim_ICU_W_R_unconf_12 * (k - 1) + shared->dim_ICU_W_R_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_W_R_progress);
+            internal.n_ICU_W_R_unconf_progress[i - 1 + shared->dim_n_ICU_W_R_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_W_R_unconf[shared->dim_ICU_W_R_unconf_123 * (l - 1) + shared->dim_ICU_W_R_unconf_12 * (k - 1) + shared->dim_ICU_W_R_unconf_1 * (j - 1) + i - 1]), p_ICU_W_R_progress);
           }
         }
       }
@@ -2331,7 +2347,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_pre_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_pre_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_pre_conf_progress_4; ++l) {
-            internal.n_ICU_pre_conf_progress[i - 1 + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_conf[shared->dim_ICU_pre_conf_123 * (l - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_1 * (j - 1) + i - 1]), shared->p_ICU_pre_progress);
+            internal.n_ICU_pre_conf_progress[i - 1 + shared->dim_n_ICU_pre_conf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_conf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_conf[shared->dim_ICU_pre_conf_123 * (l - 1) + shared->dim_ICU_pre_conf_12 * (k - 1) + shared->dim_ICU_pre_conf_1 * (j - 1) + i - 1]), p_ICU_pre_progress);
           }
         }
       }
@@ -2340,7 +2356,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_pre_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_pre_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_pre_unconf_progress_4; ++l) {
-            internal.n_ICU_pre_unconf_progress[i - 1 + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_unconf[shared->dim_ICU_pre_unconf_123 * (l - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_1 * (j - 1) + i - 1]), shared->p_ICU_pre_progress);
+            internal.n_ICU_pre_unconf_progress[i - 1 + shared->dim_n_ICU_pre_unconf_progress_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_progress_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(ICU_pre_unconf[shared->dim_ICU_pre_unconf_123 * (l - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_1 * (j - 1) + i - 1]), p_ICU_pre_progress);
           }
         }
       }
@@ -2419,7 +2435,7 @@ public:
       for (int j = 1; j <= shared->dim_n_W_D_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_W_D_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_W_D_conf_progress_4; ++l) {
-            internal.n_W_D_conf_progress[i - 1 + shared->dim_n_W_D_conf_progress_1 * (j - 1) + shared->dim_n_W_D_conf_progress_12 * (k - 1) + shared->dim_n_W_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_conf[shared->dim_W_D_conf_123 * (l - 1) + shared->dim_W_D_conf_12 * (k - 1) + shared->dim_W_D_conf_1 * (j - 1) + i - 1]), shared->p_W_D_progress);
+            internal.n_W_D_conf_progress[i - 1 + shared->dim_n_W_D_conf_progress_1 * (j - 1) + shared->dim_n_W_D_conf_progress_12 * (k - 1) + shared->dim_n_W_D_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_conf[shared->dim_W_D_conf_123 * (l - 1) + shared->dim_W_D_conf_12 * (k - 1) + shared->dim_W_D_conf_1 * (j - 1) + i - 1]), p_W_D_progress);
           }
         }
       }
@@ -2428,7 +2444,7 @@ public:
       for (int j = 1; j <= shared->dim_n_W_D_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_W_D_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_W_D_unconf_progress_4; ++l) {
-            internal.n_W_D_unconf_progress[i - 1 + shared->dim_n_W_D_unconf_progress_1 * (j - 1) + shared->dim_n_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_W_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_unconf[shared->dim_W_D_unconf_123 * (l - 1) + shared->dim_W_D_unconf_12 * (k - 1) + shared->dim_W_D_unconf_1 * (j - 1) + i - 1]), shared->p_W_D_progress);
+            internal.n_W_D_unconf_progress[i - 1 + shared->dim_n_W_D_unconf_progress_1 * (j - 1) + shared->dim_n_W_D_unconf_progress_12 * (k - 1) + shared->dim_n_W_D_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_D_unconf[shared->dim_W_D_unconf_123 * (l - 1) + shared->dim_W_D_unconf_12 * (k - 1) + shared->dim_W_D_unconf_1 * (j - 1) + i - 1]), p_W_D_progress);
           }
         }
       }
@@ -2437,7 +2453,7 @@ public:
       for (int j = 1; j <= shared->dim_n_W_R_conf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_W_R_conf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_W_R_conf_progress_4; ++l) {
-            internal.n_W_R_conf_progress[i - 1 + shared->dim_n_W_R_conf_progress_1 * (j - 1) + shared->dim_n_W_R_conf_progress_12 * (k - 1) + shared->dim_n_W_R_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_conf[shared->dim_W_R_conf_123 * (l - 1) + shared->dim_W_R_conf_12 * (k - 1) + shared->dim_W_R_conf_1 * (j - 1) + i - 1]), shared->p_W_R_progress);
+            internal.n_W_R_conf_progress[i - 1 + shared->dim_n_W_R_conf_progress_1 * (j - 1) + shared->dim_n_W_R_conf_progress_12 * (k - 1) + shared->dim_n_W_R_conf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_conf[shared->dim_W_R_conf_123 * (l - 1) + shared->dim_W_R_conf_12 * (k - 1) + shared->dim_W_R_conf_1 * (j - 1) + i - 1]), p_W_R_progress);
           }
         }
       }
@@ -2446,7 +2462,7 @@ public:
       for (int j = 1; j <= shared->dim_n_W_R_unconf_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_n_W_R_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_W_R_unconf_progress_4; ++l) {
-            internal.n_W_R_unconf_progress[i - 1 + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + shared->dim_n_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_W_R_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_unconf[shared->dim_W_R_unconf_123 * (l - 1) + shared->dim_W_R_unconf_12 * (k - 1) + shared->dim_W_R_unconf_1 * (j - 1) + i - 1]), shared->p_W_R_progress);
+            internal.n_W_R_unconf_progress[i - 1 + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + shared->dim_n_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_W_R_unconf_progress_123 * (l - 1)] = dust::distr::rbinom(rng_state, std::round(W_R_unconf[shared->dim_W_R_unconf_123 * (l - 1) + shared->dim_W_R_unconf_12 * (k - 1) + shared->dim_W_R_unconf_1 * (j - 1) + i - 1]), p_W_R_progress);
           }
         }
       }
@@ -4195,18 +4211,10 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_C_2 = 0.10000000000000001;
   shared->gamma_E = 0.10000000000000001;
   shared->gamma_G_D = 0.10000000000000001;
-  shared->gamma_H_D = 0.10000000000000001;
-  shared->gamma_H_R = 0.10000000000000001;
-  shared->gamma_ICU_D = 0.10000000000000001;
-  shared->gamma_ICU_W_D = 0.10000000000000001;
-  shared->gamma_ICU_W_R = 0.10000000000000001;
-  shared->gamma_ICU_pre = 0.10000000000000001;
   shared->gamma_P = 0.10000000000000001;
   shared->gamma_PCR_pos = 0.10000000000000001;
   shared->gamma_PCR_pre = 0.10000000000000001;
   shared->gamma_U = 0.10000000000000001;
-  shared->gamma_W_D = 0.10000000000000001;
-  shared->gamma_W_R = 0.10000000000000001;
   shared->gamma_sero_pos = 0.10000000000000001;
   shared->gamma_sero_pre_1 = 0.10000000000000001;
   shared->gamma_sero_pre_2 = 0.10000000000000001;
@@ -4232,18 +4240,34 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_C_2 = user_get_scalar<real_t>(user, "gamma_C_2", shared->gamma_C_2, NA_REAL, NA_REAL);
   shared->gamma_E = user_get_scalar<real_t>(user, "gamma_E", shared->gamma_E, NA_REAL, NA_REAL);
   shared->gamma_G_D = user_get_scalar<real_t>(user, "gamma_G_D", shared->gamma_G_D, NA_REAL, NA_REAL);
-  shared->gamma_H_D = user_get_scalar<real_t>(user, "gamma_H_D", shared->gamma_H_D, NA_REAL, NA_REAL);
-  shared->gamma_H_R = user_get_scalar<real_t>(user, "gamma_H_R", shared->gamma_H_R, NA_REAL, NA_REAL);
-  shared->gamma_ICU_D = user_get_scalar<real_t>(user, "gamma_ICU_D", shared->gamma_ICU_D, NA_REAL, NA_REAL);
-  shared->gamma_ICU_W_D = user_get_scalar<real_t>(user, "gamma_ICU_W_D", shared->gamma_ICU_W_D, NA_REAL, NA_REAL);
-  shared->gamma_ICU_W_R = user_get_scalar<real_t>(user, "gamma_ICU_W_R", shared->gamma_ICU_W_R, NA_REAL, NA_REAL);
-  shared->gamma_ICU_pre = user_get_scalar<real_t>(user, "gamma_ICU_pre", shared->gamma_ICU_pre, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_gamma_H_D_step;
+  shared->gamma_H_D_step = user_get_array_variable<real_t, 1>(user, "gamma_H_D_step", shared->gamma_H_D_step, dim_gamma_H_D_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_H_D_step = shared->gamma_H_D_step.size();
+  std::array <int, 1> dim_gamma_H_R_step;
+  shared->gamma_H_R_step = user_get_array_variable<real_t, 1>(user, "gamma_H_R_step", shared->gamma_H_R_step, dim_gamma_H_R_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_H_R_step = shared->gamma_H_R_step.size();
+  std::array <int, 1> dim_gamma_ICU_D_step;
+  shared->gamma_ICU_D_step = user_get_array_variable<real_t, 1>(user, "gamma_ICU_D_step", shared->gamma_ICU_D_step, dim_gamma_ICU_D_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_ICU_D_step = shared->gamma_ICU_D_step.size();
+  std::array <int, 1> dim_gamma_ICU_W_D_step;
+  shared->gamma_ICU_W_D_step = user_get_array_variable<real_t, 1>(user, "gamma_ICU_W_D_step", shared->gamma_ICU_W_D_step, dim_gamma_ICU_W_D_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_ICU_W_D_step = shared->gamma_ICU_W_D_step.size();
+  std::array <int, 1> dim_gamma_ICU_W_R_step;
+  shared->gamma_ICU_W_R_step = user_get_array_variable<real_t, 1>(user, "gamma_ICU_W_R_step", shared->gamma_ICU_W_R_step, dim_gamma_ICU_W_R_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_ICU_W_R_step = shared->gamma_ICU_W_R_step.size();
+  std::array <int, 1> dim_gamma_ICU_pre_step;
+  shared->gamma_ICU_pre_step = user_get_array_variable<real_t, 1>(user, "gamma_ICU_pre_step", shared->gamma_ICU_pre_step, dim_gamma_ICU_pre_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_ICU_pre_step = shared->gamma_ICU_pre_step.size();
   shared->gamma_P = user_get_scalar<real_t>(user, "gamma_P", shared->gamma_P, NA_REAL, NA_REAL);
   shared->gamma_PCR_pos = user_get_scalar<real_t>(user, "gamma_PCR_pos", shared->gamma_PCR_pos, NA_REAL, NA_REAL);
   shared->gamma_PCR_pre = user_get_scalar<real_t>(user, "gamma_PCR_pre", shared->gamma_PCR_pre, NA_REAL, NA_REAL);
   shared->gamma_U = user_get_scalar<real_t>(user, "gamma_U", shared->gamma_U, NA_REAL, NA_REAL);
-  shared->gamma_W_D = user_get_scalar<real_t>(user, "gamma_W_D", shared->gamma_W_D, NA_REAL, NA_REAL);
-  shared->gamma_W_R = user_get_scalar<real_t>(user, "gamma_W_R", shared->gamma_W_R, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_gamma_W_D_step;
+  shared->gamma_W_D_step = user_get_array_variable<real_t, 1>(user, "gamma_W_D_step", shared->gamma_W_D_step, dim_gamma_W_D_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_W_D_step = shared->gamma_W_D_step.size();
+  std::array <int, 1> dim_gamma_W_R_step;
+  shared->gamma_W_R_step = user_get_array_variable<real_t, 1>(user, "gamma_W_R_step", shared->gamma_W_R_step, dim_gamma_W_R_step, NA_REAL, NA_REAL);
+  shared->dim_gamma_W_R_step = shared->gamma_W_R_step.size();
   shared->gamma_sero_pos = user_get_scalar<real_t>(user, "gamma_sero_pos", shared->gamma_sero_pos, NA_REAL, NA_REAL);
   shared->gamma_sero_pre_1 = user_get_scalar<real_t>(user, "gamma_sero_pre_1", shared->gamma_sero_pre_1, NA_REAL, NA_REAL);
   shared->gamma_sero_pre_2 = user_get_scalar<real_t>(user, "gamma_sero_pre_2", shared->gamma_sero_pre_2, NA_REAL, NA_REAL);
@@ -5576,12 +5600,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->p_C = user_get_array_fixed<real_t, 1>(user, "p_C", shared->p_C, {shared->dim_p_C}, NA_REAL, NA_REAL);
   shared->p_E_progress = 1 - std::exp(- shared->gamma_E * shared->dt);
   shared->p_G_D_progress = 1 - std::exp(- shared->gamma_G_D * shared->dt);
-  shared->p_H_D_progress = 1 - std::exp(- shared->gamma_H_D * shared->dt);
-  shared->p_H_R_progress = 1 - std::exp(- shared->gamma_H_R * shared->dt);
-  shared->p_ICU_D_progress = 1 - std::exp(- shared->gamma_ICU_D * shared->dt);
-  shared->p_ICU_W_D_progress = 1 - std::exp(- shared->gamma_ICU_W_D * shared->dt);
-  shared->p_ICU_W_R_progress = 1 - std::exp(- shared->gamma_ICU_W_R * shared->dt);
-  shared->p_ICU_pre_progress = 1 - std::exp(- shared->gamma_ICU_pre * shared->dt);
   shared->p_I_A_progress = 1 - std::exp(- shared->gamma_A * shared->dt);
   shared->p_I_C_1_progress = 1 - std::exp(- shared->gamma_C_1 * shared->dt);
   shared->p_I_C_2_progress = 1 - std::exp(- shared->gamma_C_2 * shared->dt);
@@ -5589,8 +5607,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->p_T_PCR_pos_progress = 1 - std::exp(- shared->gamma_PCR_pos * shared->dt);
   shared->p_T_PCR_pre_progress = 1 - std::exp(- shared->gamma_PCR_pre * shared->dt);
   shared->p_T_sero_pos_progress = 1 - std::exp(- shared->gamma_sero_pos * shared->dt);
-  shared->p_W_D_progress = 1 - std::exp(- shared->gamma_W_D * shared->dt);
-  shared->p_W_R_progress = 1 - std::exp(- shared->gamma_W_R * shared->dt);
   shared->p_sero_pos = user_get_array_fixed<real_t, 1>(user, "p_sero_pos", shared->p_sero_pos, {shared->dim_p_sero_pos}, NA_REAL, NA_REAL);
   shared->p_test = 1 - std::exp(- shared->gamma_U * shared->dt);
   shared->psi_G_D = user_get_array_fixed<real_t, 1>(user, "psi_G_D", shared->psi_G_D, {shared->dim_psi_G_D}, NA_REAL, NA_REAL);
