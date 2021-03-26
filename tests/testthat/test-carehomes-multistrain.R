@@ -1227,7 +1227,9 @@ test_that("G_D empty when p_G_D = 0", {
 
   initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
-
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
   y <- mod$simulate(steps)
 
   expect_true(all(y[mod$info()$index$G_D, , ] == 0))
