@@ -2048,7 +2048,7 @@ test_that("Can vaccinate given a schedule", {
   start_vacc_date_1 <- sircovid_date("2020-03-01")
   delay_vacc_date_2 <- 28
   ndays_vacc <- 31
-  i <- seq(start_vacc_date_1 * 4, length.out = ndays_vacc * 4)
+  i <- seq(start_vacc_date_1 * 4 + 1, length.out = ndays_vacc * 4)
   m <- array(0, c(19, 2, (end_date + 1) * 4))
   step_doses_1 <- 10000
   step_doses_2 <- 2000
@@ -2102,7 +2102,6 @@ test_that("Can vaccinate given a schedule", {
   ## we get the right number of vaccinations per day in the wanted interval
   expect_true(
     all(n_vacc_second_dose[seq(last(days_vacc_2) + 1, end_date, 1), ] == 0))
-
 })
 
 
