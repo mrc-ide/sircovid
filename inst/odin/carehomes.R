@@ -159,11 +159,11 @@ p_T_PCR_pre_progress <- 1 - exp(-gamma_PCR_pre * dt)
 p_T_PCR_pos_progress <- 1 - exp(-gamma_PCR_pos * dt)
 ## R to S age dependent
 ##
-## TODO (Raphael):
+## TODO (RS):
 ##  For now assume single reinfection_rate from R1 to R3 or R2 or R4,
 ##  could probably simply extend by multiplying by rel_susceptibility or
 ##  similar
-p_R_progress[] <- 1 - exp(-(waning_rate[i] + reinfection_rate[i]) * dt)
+## FIXME (RS): Move p_R_progress here
 
 dim(p_I_A_progress) <- n_strains
 dim(p_I_P_progress) <- n_strains
@@ -217,7 +217,7 @@ n_S_progress[, , ] <- if (j == 1)
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
-## FIXME (Raphael): Is the below correct? Should it actually say
+## FIXME (RS): Is the below correct? Should it actually say
 ##   [age, strain, stage]?
 ##
 ## [age, vaccine stage, strain infected with]
@@ -311,7 +311,8 @@ n_II_P[, , , ] <- n_I_P_progress[i, j, k, l] -
 ## vaccine progression
 n_I_P_next_vacc_class[, , , ] <- rbinom(
   I_P[i, j, k, l] - n_I_P_progress[i, j, k, l],
-  p_I_P_next_vacc_class[i, j, k, l])
+  p_I_P_next_vacc_class[i, j, k, l]
+)
 
 
 #### flow out of R ####
@@ -320,7 +321,18 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
 ## 3. Number who flow R -> S
 ## 4. Number who *can* flow R -> E
 ## 5. R -> E3 and R -> E4
-n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_R_progress[j])
+
+## prob of progress to S or E (for strains 1 and 2)
+p_RSE[,] <- 1 - exp(-(waning_rate[i] + lambda[i, j]) * dt)
+## prob of progress to S (for strains 3 and 4)
+p_RS[] <- 1 - exp(-waning_rate[i] * dt)
+
+## R1 and R2 can go to either S or R3 and R4
+## TODO (RS): Confirm with Rich that j in (1,2)
+n_R_progress_tmp[, 1:2, ] <- rbinom(R[i, j, k], p_RSE[i, j])
+## R3 and R4 can only go to S
+n_R_progress_tmp[, 3:4, ] <- rbinom(R[i, j, k], p_RS[i])
+
 ## cap on people who can move out of R based on numbers in T_sero_neg and
 ## T_PCR_neg
 n_R_progress_capped[, , ] <-
@@ -331,33 +343,40 @@ n_R_progress[, , ] <- if (model_pcr_and_serology == 1)
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from R[j] to S[j+1]
 ## (j vaccination class)
+## FIXME (RS): Currently assumes vax status changes only from R to S
 n_RS_next_vacc_class[, , ] <-
   rbinom(n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
 ## resulting transitions from R[j] to S[j] or E3[j] or E4[j]
 ## (j vaccination class)
 n_R_progress_tot[, , ] <- n_R_progress[i, j, k] - n_RS_next_vacc_class[i, j, k]
-## number going from R to S
-n_RS_tmp[, , ] <- if (j == 1)
+
+## R3 and R4 can only go to S
+n_RS[, 3:4, ] <- n_R_progress_tot[, c(3, 4), ]
+## Number of R1 and R2 to S is Binom(n_progress, waning/waning + lambda)
+## Note
+## FIXME (RS): waning_rate should be variant varying (see gammas)
+n_RS[, 1:2, ] <- rbinom(n_R_progress_tot[, j, ],
+                        waning_rate[i] / waning_rate[i] + lambda[i, j])
+
+## Number of R1 and R2 going to E3 and E4 respectively
+## TODO (RS): Rich can this be simplified to:
+##   n_RE_tmp[, 3:4, ] <- n_R_progress_tot[, c(1, 2), ] - n_RS[, c(1, 2), ]
+n_RE_tmp[, 3, ] <- n_R_progress_tot[, 1, ] - n_RS[, 1, ]
+n_RE_tmp[, 4, ] <- n_R_progress_tot[, 2, ] - n_RS[, 2, ]
+
+
+n_RE[, 1:2, ] <- if (j == 1)
+  rbinom(n_R_progress_tot[i, 1, k], lambda[i, 1] / sum(lambda[i, ])) else
+    rbinom(n_R_progress_tot[i, 2, k] - sum(n_RE[i, 1, k]),
+           lambda[i, 2] / sum(lambda[i, 2]))
+## Number to the 'other' exposed class is total - number to S
+## FIXME: Add vax group l?
+n_RE_tmp[, , ] <- if (j == 1)
   rbinom(n_R_progress_tot[i, k],
          waning_rate[i] / (waning_rate[i] + reinfection_rate[i])) else
     rbinom(n_R_progress_tot[i, k] - sum(n_R_progress[i, 1:(j - 1), k]),
            waning_rate[i] / (waning_rate[i] + reinfection_rate[i]))
-## number going from R to E = total - RS
-n_RE[, , ] <- n_R_progress_tot[i, j, k] - n_RS_tmp[i, j, k]
-## add back to RS impossible transitions to RE
-n_RS[, ,] <- n_RS_tmp[, , ]
-n_RS[, 1:2, ] <- n_RS[, 1:2, ] + n_RE[, 1:2, ]
-## can only go from S to E1 or E2, R can go to E3 or E4 only
-n_RE[, 1:2, ] <- 0
-## treat n_RE is identical to S
-## p_RE identical to p_SE
-p_RE[, ] <- p_SE[, ]
 
-n_S_progress_tot[, ] <- rbinom(S[i, j], p_SE[i, j])
-n_S_progress[, , ] <- if (j == 1)
-  rbinom(n_S_progress_tot[i, k], lambda[i, 1] / sum(lambda[i, ])) else
-    rbinom(n_S_progress_tot[i, k] - sum(n_S_progress[i, 1:(j - 1), k]),
-           lambda[i, j] / sum(lambda[i, j:n_strains]))
 
 
 ## vaccine progression
@@ -447,7 +466,8 @@ aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] else n_EE[i, j, k - 1, l]) -
   (if (k == 1) (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] else
     n_SE_next_vacc_class[i, j, l - 1]) else
       (if (l == 1) n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes] else
-        n_EE_next_vacc_class[i, j, k - 1, l - 1]))
+        n_EE_next_vacc_class[i, j, k - 1, l - 1])) +
+  n_RE[i, j, k]
 
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
@@ -1301,6 +1321,13 @@ dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the loss of immunity
 dim(n_RS) <- c(n_groups, n_strains, n_vacc_classes)
+
+## Vectors handling reinfection
+dim(n_RE) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_RS_tmp) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_R_progress_tot) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_RS) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_RSE) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling re-infection
 dim(p_R_progress) <- n_groups
