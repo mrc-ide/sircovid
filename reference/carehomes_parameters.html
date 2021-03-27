@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.23</span>
       </span>
     </div>
 
@@ -157,6 +157,7 @@
   vaccine_progression_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_schedule <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_index_dose2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vaccine_catchup_fraction <span class='op'>=</span> <span class='fl'>1</span>,
   waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
   model_pcr_and_serology_user <span class='op'>=</span> <span class='fl'>1</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>
@@ -372,6 +373,16 @@ people to be vaccinated by group over time</p></td>
     <tr>
       <th>vaccine_index_dose2</th>
       <td><p>The index to use for the second dose</p></td>
+    </tr>
+    <tr>
+      <th>vaccine_catchup_fraction</th>
+      <td><p>A value between 0 and 1 indicating the
+proportion of doses not distributed according to schedule (e.g. because
+too many people were in the I or H compartments and could not be
+vaccinated at the scheduled time) that we postpone to a later date.
+A value of 0 means we do not catch up at all on any missed doses; a
+value of 1 means we try to catch up for all missed doses. This is set
+to 1 by default</p></td>
     </tr>
     <tr>
       <th>waning_rate</th>
@@ -956,6 +967,9 @@ just before the model is run.</p>
 #&gt; [17,]    0
 #&gt; [18,]    0
 #&gt; [19,]    0
+#&gt; 
+#&gt; $vaccine_catchup_fraction
+#&gt; [1] 1
 #&gt; 
 #&gt; $waning_rate
 #&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
