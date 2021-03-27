@@ -536,7 +536,6 @@ vaccine_schedule_from_data <- function(data, n_carehomes) {
 ##' @export
 vaccine_schedule_data_future <- function(data, region, uptake, end_date,
                                          mean_days_between_doses) {
-  ## TODO: change n_days_future to end_date
   priority_population <- vaccine_priority_population(region, uptake)
   n_carehomes <- priority_population[18:19, 1]
   schedule_past <- vaccine_schedule_from_data(data, n_carehomes)

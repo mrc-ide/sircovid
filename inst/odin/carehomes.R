@@ -27,41 +27,56 @@ update(time) <- (step + 1) * dt
 ## stage without progressing disease stages) and also n_EE_next_vacc_class
 ## (those moving vaccine stage and also progressing disease stages)
 ## vaccinated S
-initial(cum_n_S_vaccinated[, ]) <- 0
-update(cum_n_S_vaccinated[, ]) <- cum_n_S_vaccinated[i, j] +
+n_S_vaccinated[, ] <-
   n_S_next_vacc_class[i, j] + sum(n_SE_next_vacc_class[i, , j])
-dim(cum_n_S_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated E
-initial(cum_n_E_vaccinated[, ]) <- 0
-update(cum_n_E_vaccinated[, ]) <- cum_n_E_vaccinated[i, j] +
+dim(n_S_vaccinated) <- c(n_groups, n_vacc_classes)
+n_E_vaccinated[, ] <-
   sum(n_E_next_vacc_class[i, , , j]) + sum(n_EE_next_vacc_class[i, , , j])
-dim(cum_n_E_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated I_A
-initial(cum_n_I_A_vaccinated[, ]) <- 0
-update(cum_n_I_A_vaccinated[, ]) <- cum_n_I_A_vaccinated[i, j] +
+dim(n_E_vaccinated) <- c(n_groups, n_vacc_classes)
+n_I_A_vaccinated[, ] <-
   sum(n_I_A_next_vacc_class[i, , , j]) +
   sum(n_II_A_next_vacc_class[i, , , j])
-dim(cum_n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated I_P
-initial(cum_n_I_P_vaccinated[, ]) <- 0
-update(cum_n_I_P_vaccinated[, ]) <- cum_n_I_P_vaccinated[i, j] +
+dim(n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
+n_I_P_vaccinated[, ] <-
   sum(n_I_P_next_vacc_class[i, , , j]) +
   sum(n_II_P_next_vacc_class[i, , , j])
-dim(cum_n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
-## vaccinated R
-initial(cum_n_R_vaccinated[, ]) <- 0
-update(cum_n_R_vaccinated[, ]) <- cum_n_R_vaccinated[i, j] +
+dim(n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
+n_R_vaccinated[, ] <-
   sum(n_R_next_vacc_class[i, , j]) + sum(n_RS_next_vacc_class[i, , j])
+dim(n_R_vaccinated) <- c(n_groups, n_vacc_classes)
+
+initial(cum_n_S_vaccinated[, ]) <- 0
+update(cum_n_S_vaccinated[, ]) <-
+  cum_n_S_vaccinated[i, j] + n_S_vaccinated[i, j]
+dim(cum_n_S_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_E_vaccinated[, ]) <- 0
+update(cum_n_E_vaccinated[, ]) <-
+  cum_n_E_vaccinated[i, j] + n_E_vaccinated[i, j]
+dim(cum_n_E_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_I_A_vaccinated[, ]) <- 0
+update(cum_n_I_A_vaccinated[, ]) <-
+  cum_n_I_A_vaccinated[i, j] + n_I_A_vaccinated[i, j]
+dim(cum_n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_I_P_vaccinated[, ]) <- 0
+update(cum_n_I_P_vaccinated[, ]) <-
+  cum_n_I_P_vaccinated[i, j] + n_I_P_vaccinated[i, j]
+dim(cum_n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
+initial(cum_n_R_vaccinated[, ]) <- 0
+update(cum_n_R_vaccinated[, ]) <-
+  cum_n_R_vaccinated[i, j] + n_R_vaccinated[i, j]
 dim(cum_n_R_vaccinated) <- c(n_groups, n_vacc_classes)
+
+n_vaccinated[, ] <-
+  n_S_vaccinated[i, j] +
+  n_E_vaccinated[i, j] +
+  n_I_A_vaccinated[i, j] +
+  n_I_P_vaccinated[i, j] +
+  n_R_vaccinated[i, j]
+dim(n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Total number of vaccinations over S, E, I_asypmt, R for convenience
 initial(cum_n_vaccinated[, ]) <- 0
-update(cum_n_vaccinated[, ]) <-
-  cum_n_S_vaccinated[i, j] +
-  cum_n_E_vaccinated[i, j] +
-  cum_n_I_A_vaccinated[i, j] +
-  cum_n_I_P_vaccinated[i, j] +
-  cum_n_R_vaccinated[i, j]
+update(cum_n_vaccinated[, ]) <- cum_n_vaccinated[i, j] + n_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 ## Core equations for transitions between compartments:
@@ -194,6 +209,34 @@ p_G_D_by_age[] <- p_G_D * psi_G_D[i]
 p_star <- if (as.integer(step) >= length(p_star_step))
   p_star_step[length(p_star_step)] else p_star_step[step + 1]
 p_star_by_age[] <- p_star * psi_star[i]
+
+## Work out time-varying gammas for hospital durations
+gamma_H_R <- if (as.integer(step) >= length(gamma_H_R_step))
+  gamma_H_R_step[length(gamma_H_R_step)] else gamma_H_R_step[step + 1]
+
+gamma_W_R <- if (as.integer(step) >= length(gamma_W_R_step))
+  gamma_W_R_step[length(gamma_W_R_step)] else gamma_W_R_step[step + 1]
+
+gamma_ICU_W_R <- if (as.integer(step) >= length(gamma_ICU_W_R_step))
+  gamma_ICU_W_R_step[length(gamma_ICU_W_R_step)] else
+    gamma_ICU_W_R_step[step + 1]
+
+gamma_H_D <- if (as.integer(step) >= length(gamma_H_D_step))
+  gamma_H_D_step[length(gamma_H_D_step)] else gamma_H_D_step[step + 1]
+
+gamma_W_D <- if (as.integer(step) >= length(gamma_W_D_step))
+  gamma_W_D_step[length(gamma_W_D_step)] else gamma_W_D_step[step + 1]
+
+gamma_ICU_W_D <- if (as.integer(step) >= length(gamma_ICU_W_D_step))
+  gamma_ICU_W_D_step[length(gamma_ICU_W_D_step)] else
+    gamma_ICU_W_D_step[step + 1]
+
+gamma_ICU_D <- if (as.integer(step) >= length(gamma_ICU_D_step))
+  gamma_ICU_D_step[length(gamma_ICU_D_step)] else gamma_ICU_D_step[step + 1]
+
+gamma_ICU_pre <- if (as.integer(step) >= length(gamma_ICU_pre_step))
+  gamma_ICU_pre_step[length(gamma_ICU_pre_step)] else
+    gamma_ICU_pre_step[step + 1]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -851,7 +894,8 @@ psi_G_D[] <- user()
 
 ## Parameters of the ICU_pre classes
 k_ICU_pre <- user()
-gamma_ICU_pre <- user(0.1)
+dim(gamma_ICU_pre_step) <- user()
+gamma_ICU_pre_step[] <- user()
 
 ## Proportion of hospital cases progressing to ICU
 dim(p_ICU_step) <- user()
@@ -865,26 +909,31 @@ psi_W_D[] <- user()
 
 ## Parameters of the H_R classes
 k_H_R <- user()
-gamma_H_R <- user(0.1)
+dim(gamma_H_R_step) <- user()
+gamma_H_R_step[] <- user()
 
 ## Parameters of the H_D classes
 k_H_D <- user()
-gamma_H_D <- user(0.1)
+dim(gamma_H_D_step) <- user()
+gamma_H_D_step[] <- user()
 dim(p_H_D_step) <- user()
 p_H_D_step[] <- user()
 psi_H_D[] <- user()
 
 ## Parameters of the ICU_W_R classes
 k_ICU_W_R <- user()
-gamma_ICU_W_R <- user(0.1)
+dim(gamma_ICU_W_R_step) <- user()
+gamma_ICU_W_R_step[] <- user()
 
 ## Parameters of the ICU_W_D classes
 k_ICU_W_D <- user()
-gamma_ICU_W_D <- user(0.1)
+dim(gamma_ICU_W_D_step) <- user()
+gamma_ICU_W_D_step[] <- user()
 
 ## Parameters of the ICU_D classes
 k_ICU_D <- user()
-gamma_ICU_D <- user(0.1)
+dim(gamma_ICU_D_step) <- user()
+gamma_ICU_D_step[] <- user()
 dim(p_ICU_D_step) <- user()
 p_ICU_D_step[] <- user()
 psi_ICU_D[] <- user()
@@ -895,11 +944,13 @@ dim(waning_rate) <- n_groups
 
 ## Parameters of the W_R classes
 k_W_R <- user()
-gamma_W_R <- user(0.1)
+dim(gamma_W_R_step) <- user()
+gamma_W_R_step[] <- user()
 
 ## Parameters of the W_D classes
 k_W_D <- user()
-gamma_W_D <- user(0.1)
+dim(gamma_W_D_step) <- user()
+gamma_W_D_step[] <- user()
 
 ## Parameters of the T_sero_pre classes
 gamma_sero_pre_1 <- user(0.1)
@@ -1413,7 +1464,6 @@ I_weighted_strain[, , ] <-
       G_D_transmission * sum(new_G_D[i, j, , k]))
 update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
-
 ## Vaccination engine
 n_doses <- 2
 index_dose[] <- user(integer = TRUE)
@@ -1433,13 +1483,25 @@ dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 
 ## Work out the vaccination probability via doses, driven by the
 ## schedule
-vaccine_probability_doses[, ] <- (
+vaccine_probability_doses[, ] <- min(
+  vaccine_attempted_doses[i, j] / vaccine_n_candidates[i, j],
+  as.numeric(1))
+dim(vaccine_probability_doses) <- c(n_groups, n_doses)
+
+vaccine_attempted_doses[, ] <- vaccine_missed_doses[i, j] + (
   if (as.integer(step) >= dim(vaccine_dose_step, 3) ||
       vaccine_n_candidates[i, j] == 0) 0
-  else min(vaccine_dose_step[i, j, step + 1] /
-           vaccine_n_candidates[i, j],
-           as.numeric(1)))
-dim(vaccine_probability_doses) <- c(n_groups, n_doses)
+  else vaccine_dose_step[i, j, step + 1])
+dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
+
+initial(vaccine_missed_doses[, ]) <- 0
+update(vaccine_missed_doses[, ]) <-
+  vaccine_catchup_fraction *
+  max(vaccine_attempted_doses[i, j] - n_vaccinated[i, index_dose[j]],
+      as.numeric(0))
+dim(vaccine_missed_doses) <- c(n_groups, n_doses)
+
+vaccine_catchup_fraction <- user(0)
 
 ## Then fix everything based on progression at a constant rate (will
 ## be zero for the cases that have probabilities above)

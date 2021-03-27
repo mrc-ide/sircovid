@@ -166,6 +166,14 @@ NULL
 ##'
 ##' @param vaccine_index_dose2 The index to use for the second dose
 ##'
+##' @param vaccine_catchup_fraction A value between 0 and 1 indicating the
+##'   proportion of doses not distributed according to schedule (e.g. because
+##'   too many people were in the I or H compartments and could not be
+##'   vaccinated at the scheduled time) that we postpone to a later date.
+##'   A value of 0 means we do not catch up at all on any missed doses; a
+##'   value of 1 means we try to catch up for all missed doses. This is set
+##'   to 1 by default
+##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
@@ -317,6 +325,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate = NULL,
                                  vaccine_schedule = NULL,
                                  vaccine_index_dose2 = NULL,
+                                 vaccine_catchup_fraction = 1,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
@@ -383,6 +392,16 @@ carehomes_parameters <- function(start_date, region,
                                                    strain_rel_gamma_C_1,
                                                    strain_rel_gamma_C_2)
 
+  ## implementation of time-varying progression gammas
+  progression$gamma_H_R_step <- progression$gamma_H_R
+  progression$gamma_W_R_step <- progression$gamma_W_R
+  progression$gamma_ICU_W_R_step <- progression$gamma_ICU_W_R
+  progression$gamma_H_D_step <- progression$gamma_H_D
+  progression$gamma_W_D_step <- progression$gamma_W_D
+  progression$gamma_ICU_W_D_step <- progression$gamma_ICU_W_D
+  progression$gamma_ICU_D_step <- progression$gamma_ICU_D
+  progression$gamma_ICU_pre_step <- progression$gamma_ICU_pre
+
   waning <- carehomes_parameters_waning(waning_rate)
 
   ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region)
@@ -442,7 +461,8 @@ carehomes_parameters <- function(start_date, region,
                                                   rel_infectivity,
                                                   vaccine_progression_rate,
                                                   vaccine_schedule,
-                                                  vaccine_index_dose2)
+                                                  vaccine_index_dose2,
+                                                  vaccine_catchup_fraction)
   model_pcr_and_serology_user <-
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
 
@@ -848,7 +868,8 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              rel_infectivity = 1,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
-                                             vaccine_index_dose2 = NULL) {
+                                             vaccine_index_dose2 = NULL,
+                                             vaccine_catchup_fraction = 1) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
@@ -901,6 +922,11 @@ carehomes_parameters_vaccination <- function(N_tot,
   ret$n_vacc_classes <- n_vacc_classes
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
     vaccine_progression_rate, n_vacc_classes, ret$index_dose)
+
+
+  assert_scalar(vaccine_catchup_fraction)
+  assert_proportion(vaccine_catchup_fraction)
+  ret$vaccine_catchup_fraction <- vaccine_catchup_fraction
 
   ret
 }
@@ -1044,7 +1070,8 @@ carehomes_parameters_progression <- function(rel_gamma_A,
        gamma_sero_pos = 1 / 25,
        gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
-       gamma_PCR_pos = 1 / 5)
+       gamma_PCR_pos = 1 / 5
+       )
 }
 
 
