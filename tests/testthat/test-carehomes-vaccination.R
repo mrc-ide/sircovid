@@ -1390,6 +1390,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
   ## there are candidates in S for vaccination
   expect_true(all(y$S[, 1, 1] > 0))
   ## every initial susceptible should be vaccinated within first day
+  ## ERROR HERE
   expect_approx_equal(y$cum_n_S_vaccinated[i, 1, 2], y$S[i, 1, 1])
   ## same for the 10 initially seeded cases
   expect_true(
@@ -1784,7 +1785,8 @@ test_that("run sensible vaccination schedule", {
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
-                            vaccine_index_dose2 = 2L)
+                            vaccine_index_dose2 = 2L,
+                            vaccine_catchup_fraction = 0)
   ## TODO: Anne to look at tidying this parameter up:
   p$model_pcr_and_serology_user <- 0
 
@@ -1822,6 +1824,85 @@ test_that("run sensible vaccination schedule", {
 
   tot <- rowSums(n_vaccinated)
   expect_true(all(tot >= 49000 & tot < 51000))
+
+  ## Vaccinate all the CHW/CHR first, then down the priority
+  ## groups. This is easy to check visually but harder to describe:
+  priority <- list(18:19, 17, 16, 15, 14, 13, 12, 11,
+                   9:10, 7:8, 1:6)
+  i <- lapply(priority, function(p)
+    range(c(apply((n_vaccinated > 5000)[, p, drop = FALSE], 2, which))))
+  for (j in seq_along(i)) {
+    if (j > 2) {
+      ## using <= as if many doses available each day you may vaccinate
+      ## several priority groups in the same day
+      expect_true(max(unlist(i[seq_len(j - 2)])) <= i[[j]][[1]])
+    }
+    if (j > 1) {
+      expect_true(all(i[[j - 1]][[1]] <= i[[j]][[1]]))
+    }
+  }
+})
+
+
+## Heading towards real-life use, let's vaccinate people at a rate of
+## 5k/day. This does not run an epidemic beforehand though, and we'll
+## use a "null" vaccine for now.
+test_that("run sensible vaccination schedule with catch up", {
+  region <- "east_of_england"
+  uptake <- c(rep(0, 3), rep(1, 16))
+  daily_doses <- rep(50000, 120)
+  n <- vaccine_priority_population(region, uptake,
+                                   prop_hcw = rep(0, 19),
+                                   prop_very_vulnerable = rep(0, 19),
+                                   prop_underlying_condition = rep(0, 19))
+  vaccine_schedule <- vaccine_schedule_future(0, daily_doses, 200, n)
+  expect_equal(sum(vaccine_schedule$doses[, 2, ]), 0)
+  expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
+
+  p <- carehomes_parameters(0, "east_of_england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_catchup_fraction = 1)
+  ## TODO: Anne to look at tidying this parameter up:
+  p$model_pcr_and_serology_user <- 0
+
+  ## Let's go:
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+  ## Remove seed, so that we have no infection process here:
+  state[state == 10] <- 0
+
+  mod$set_state(state)
+  mod$set_index(integer(0))
+
+  keep <- c("cum_n_S_vaccinated",
+            "cum_n_E_vaccinated",
+            "cum_n_I_A_vaccinated",
+            "cum_n_I_P_vaccinated",
+            "cum_n_R_vaccinated")
+  index <- unlist(lapply(info$index[keep], "[", 1:19), FALSE, FALSE)
+
+  mod$set_index(index)
+  y <- mod$simulate(seq(0, 380, by = 4)[-1])
+  s <- array(y, c(19, 5, dim(y)[3]))
+
+  ## Never vaccinate any young person:
+  expect_true(all(s[1:3, , ] == 0))
+
+  ## Sum over compartments
+  cum_n_vaccinated <- t(apply(s, c(1, 3), sum))
+  n_vaccinated <- diff(cum_n_vaccinated)
+
+  ## You can visualise the vaccination process here:
+  ## > matplot(m, type = "l", lty = 1)
+
+  tot <- rowSums(n_vaccinated)
+  expect_true(all(tot >= 45000 & tot < 51000))
 
   ## Vaccinate all the CHW/CHR first, then down the priority
   ## groups. This is easy to check visually but harder to describe:
@@ -2040,14 +2121,15 @@ test_that("Can vaccinate given a schedule", {
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
-                            waning_rate = 1 / 20)
+                            waning_rate = 1 / 20,
+                            vaccine_catchup_fraction = 0)
   p$index_dose <- c(1L, 2L)
   end_date <- sircovid_date("2020-06-01")
 
   start_vacc_date_1 <- sircovid_date("2020-03-01")
   delay_vacc_date_2 <- 28
   ndays_vacc <- 31
-  i <- seq(start_vacc_date_1 * 4, length.out = ndays_vacc * 4)
+  i <- seq(start_vacc_date_1 * 4 + 1, length.out = ndays_vacc * 4)
   m <- array(0, c(19, 2, (end_date + 1) * 4))
   step_doses_1 <- 10000
   step_doses_2 <- 2000
@@ -2065,23 +2147,23 @@ test_that("Can vaccinate given a schedule", {
   y <- mod$transform_variables(mod$simulate(steps))
 
   #### check first dose schedule
-  n_vacc_fisrt_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
+  n_vacc_first_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
 
   ## check no vaccination before wanted date
   days_vacc_1 <- seq(start_vacc_date_1 + 1, start_vacc_date_1 + ndays_vacc)
   expect_true(
-    all(n_vacc_fisrt_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
+    all(n_vacc_first_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
 
   ## check that in all groups but 18:19
   ## (which are small and therefore get vaccinated faster)
   ## we get the right number of vaccinations per day in the wanted interval
-  x <- n_vacc_fisrt_dose[days_vacc_1, - (18:19)]
+  x <- n_vacc_first_dose[days_vacc_1, - (18:19)]
   expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)))
 
   ## check that no vaccination after wanted date
   ## we get the right number of vaccinations per day in the wanted interval
   expect_true(
-    all(n_vacc_fisrt_dose[seq(last(days_vacc_1) + 1, end_date, 1), ] == 0))
+    all(n_vacc_first_dose[seq(last(days_vacc_1) + 1, end_date, 1), ] == 0))
 
   #### check second dose schedule
   n_vacc_second_dose <- apply(y$cum_n_vaccinated[, 2, 1, ], 1, diff)
@@ -2101,7 +2183,6 @@ test_that("Can vaccinate given a schedule", {
   ## we get the right number of vaccinations per day in the wanted interval
   expect_true(
     all(n_vacc_second_dose[seq(last(days_vacc_2) + 1, end_date, 1), ] == 0))
-
 })
 
 
@@ -2222,4 +2303,92 @@ test_that("Can catch up on uptake given previous vaccination", {
   expect_equal(new_uptake,
                uptake_by_age, 0.01)
 
+})
+
+
+test_that("Can catch up on doses not distributed", {
+  region <- "london"
+  end_date <- sircovid_date("2023-01-01")
+
+  mean_days_between_doses <- 12 * 7
+  doses_future <- rep(25000, end_date)
+
+  uptake_by_age <- rep(1, 19) # complete in all groups
+  n <- vaccine_priority_population(region, uptake_by_age)
+  vacc_schedule <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n)
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0.1,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            vaccine_catchup_fraction = 0,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_schedule = vacc_schedule,
+                            waning_rate = 1 / 20)
+
+  ## check we are going far enough in time that we should vaccinate everyone:
+  expect_true(all(rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot > 0.99))
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+  uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we could not reach reach the desired uptake
+  expect_lt(min(uptake), 0.8)
+
+  ### now do exactly the same with vaccine catch up fully on:
+  p$vaccine_catchup_fraction <- 1.0
+  mod2 <- carehomes$new(p, 0, 1, seed = 1L)
+  state <- carehomes_initial(info, 1, p)$state
+  mod2$set_state(state)
+  y2 <- mod2$transform_variables(mod2$simulate(steps))
+  uptake2 <- y2$cum_n_vaccinated[, 1, 1, dim(y2$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we did reach the desired uptake (100%)
+  expect_gt(min(uptake2), 0.98)
+})
+
+
+test_that("Can catch up on doses not distributed with imperfect uptake", {
+  region <- "london"
+  end_date <- sircovid_date("2023-01-01")
+
+  mean_days_between_doses <- 12 * 7
+  doses_future <- rep(25000, end_date)
+
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  vacc_schedule <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n)
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0.1,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            vaccine_catchup_fraction = 1,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_schedule = vacc_schedule,
+                            waning_rate = 1 / 20)
+
+  ## check we are going far enough in time that we should vaccinate everyone:
+  expect_true(all(abs(
+    rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot - uptake_by_age) < 0.1))
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+  uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we could not reach reach the desired uptake
+  expect_true(all(abs(uptake - uptake_by_age) < 0.05))
 })

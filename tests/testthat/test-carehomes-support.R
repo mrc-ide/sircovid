@@ -30,6 +30,7 @@ test_that("carehomes vaccination parameters", {
       "rel_infectivity",
       "n_vacc_classes",
       "vaccine_progression_rate_base", "vaccine_dose_step",
+      "vaccine_catchup_fraction",
       "index_dose"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
@@ -68,6 +69,7 @@ test_that("carehomes vaccination parameters", {
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
       "rel_infectivity", "n_vacc_classes",
       "vaccine_progression_rate_base", "vaccine_dose_step",
+      "vaccine_catchup_fraction",
       "index_dose"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
@@ -83,8 +85,8 @@ test_that("carehomes vaccination parameters", {
                  (length(daily_doses) + vaccine_daily_doses_date[1]) * 4))
   ## daily doses are as expected
   expect_true(all(abs(round(colSums(p$vaccine_dose_step[, 1, ])) -
-               c(rep(0, vaccine_daily_doses_date[1] * 4),
-                 round(rep(daily_doses / 4, each = 4)))) < 2))
+                        c(rep(0, vaccine_daily_doses_date[1] * 4),
+                          round(rep(daily_doses / 4, each = 4)))) < 2))
   msg1 <-
     "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt, rel_infectivity"
   msg2 <- "should have the same dimension"
@@ -107,6 +109,18 @@ test_that("carehomes vaccination parameters", {
                                                 rel_p_hosp_if_sympt = c(1, 1),
                                                 rel_infectivity = c(1, 1, 0.5)),
                paste(msg1, msg2))
+  expect_error(carehomes_parameters_vaccination(ntot,
+                                                vaccine_catchup_fraction = -1),
+               "'vaccine_catchup_fraction' must lie in [0, 1]",
+               fixed = TRUE)
+  expect_error(carehomes_parameters_vaccination(ntot,
+                                                vaccine_catchup_fraction = 1.5),
+               "'vaccine_catchup_fraction' must lie in [0, 1]",
+               fixed = TRUE)
+  expect_error(
+    carehomes_parameters_vaccination(ntot,
+                                     vaccine_catchup_fraction = c(1, 1)),
+    "'vaccine_catchup_fraction' must be a scalar")
 })
 
 test_that("carehomes_parameters returns a list of parameters", {
@@ -530,68 +544,68 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
           data stream", {
-  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                        1, 0.25)
-  ## Add additional columns
-  data$deaths_hosp <- NA
-  data$deaths_comm <- NA
-  data$deaths_carehomes <- NA
-  data$deaths_non_hosp <- NA
-  data$general <- NA
-  data$hosp <- NA
-  data$admitted <- NA
-  data$diagnoses <- NA
-  data$all_admission <- NA
-  data$npos_15_64 <- NA
-  data$ntot_15_64 <- NA
-  data$pillar2_pos <- NA
-  data$pillar2_tot <- NA
-  data$pillar2_cases <- NA
-  data$pillar2_over25_pos <- NA
-  data$pillar2_over25_tot <- NA
-  data$pillar2_over25_cases <- NA
-  data$react_pos <- NA
-  data$react_tot <- NA
+            data <- sircovid_data(
+              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
+            ## Add additional columns
+            data$deaths_hosp <- NA
+            data$deaths_comm <- NA
+            data$deaths_carehomes <- NA
+            data$deaths_non_hosp <- NA
+            data$general <- NA
+            data$hosp <- NA
+            data$admitted <- NA
+            data$diagnoses <- NA
+            data$all_admission <- NA
+            data$npos_15_64 <- NA
+            data$ntot_15_64 <- NA
+            data$pillar2_pos <- NA
+            data$pillar2_tot <- NA
+            data$pillar2_cases <- NA
+            data$pillar2_over25_pos <- NA
+            data$pillar2_over25_tot <- NA
+            data$pillar2_over25_cases <- NA
+            data$react_pos <- NA
+            data$react_tot <- NA
 
-  ## Example that should not cause error
-  data$pillar2_pos <- 3
-  data$pillar2_tot <- 6
-  pf <- carehomes_particle_filter(data, 10)
-  expect_s3_class(pf, "particle_filter")
+            ## Example that should not cause error
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
+            pf <- carehomes_particle_filter(data, 10)
+            expect_s3_class(pf, "particle_filter")
 
-  data$pillar2_pos <- 3
-  data$pillar2_tot <- 6
-  data$pillar2_cases <- 5
-  expect_error(
-    carehomes_particle_filter(data),
-    "Cannot fit to more than one pillar 2 data stream")
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
+            data$pillar2_cases <- 5
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one pillar 2 data stream")
 
-  data$pillar2_pos <- 3
-  data$pillar2_tot <- 6
-  data$pillar2_cases <- NA
-  data$pillar2_over25_cases <- 5
-  expect_error(
-    carehomes_particle_filter(data),
-    "Cannot fit to more than one pillar 2 data stream")
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
+            data$pillar2_cases <- NA
+            data$pillar2_over25_cases <- 5
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one pillar 2 data stream")
 
-  data$pillar2_pos <- 3
-  data$pillar2_tot <- 6
-  data$pillar2_over25_cases <- 5
-  data$pillar2_over25_pos <- 3
-  data$pillar2_over25_tot <- 6
-  expect_error(
-    carehomes_particle_filter(data),
-    "Cannot fit to more than one pillar 2 data stream")
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
+            data$pillar2_over25_cases <- 5
+            data$pillar2_over25_pos <- 3
+            data$pillar2_over25_tot <- 6
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one pillar 2 data stream")
 
-  data$pillar2_pos <- NA
-  data$pillar2_tot <- NA
-  data$pillar2_over25_cases <- 5
-  data$pillar2_over25_pos <- 3
-  data$pillar2_over25_tot <- 6
-  expect_error(
-    carehomes_particle_filter(data),
-    "Cannot fit to more than one pillar 2 data stream")
-})
+            data$pillar2_pos <- NA
+            data$pillar2_tot <- NA
+            data$pillar2_over25_cases <- 5
+            data$pillar2_over25_pos <- 3
+            data$pillar2_over25_tot <- 6
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one pillar 2 data stream")
+          })
 
 
 test_that("the carehomes sircovid model has 19 groups", {
@@ -619,10 +633,10 @@ test_that("model_pcr_and_serology_user switch works", {
   ## y$T_sero_neg and y$T_PCR_neg are increasing over time as noone gets out
   for (i in seq_len(p$n_groups)) {
     for (j in seq_len(p$n_strains)) {
-    expect_true(all(diff(y$T_sero_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$T_sero_neg[i, , 2, j]) >= 0))
-    expect_true(all(diff(y$T_PCR_neg[i, , 1, j]) >= 0))
-    expect_true(all(diff(y$T_PCR_neg[i, , 2, j]) >= 0))
+      expect_true(all(diff(y$T_sero_neg[i, , 1, j]) >= 0))
+      expect_true(all(diff(y$T_sero_neg[i, , 2, j]) >= 0))
+      expect_true(all(diff(y$T_PCR_neg[i, , 1, j]) >= 0))
+      expect_true(all(diff(y$T_PCR_neg[i, , 2, j]) >= 0))
     }
   }
 
@@ -633,52 +647,52 @@ test_that("model_pcr_and_serology_user switch works", {
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
           data stream", {
-  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                        1, 0.25)
-  class(data)[1] <- "particle_filter_data_nested"
-  ## Add additional columns
-  data$deaths_hosp <- NA
-  data$deaths_comm <- NA
-  data$deaths_carehomes <- NA
-  data$deaths_non_hosp <- NA
-  data$general <- NA
-  data$hosp <- NA
-  data$admitted <- NA
-  data$diagnoses <- NA
-  data$all_admission <- NA
-  data$npos_15_64 <- NA
-  data$ntot_15_64 <- NA
-  data$pillar2_pos <- NA
-  data$pillar2_tot <- NA
-  data$pillar2_cases <- NA
-  data$pillar2_over25_pos <- NA
-  data$pillar2_over25_tot <- NA
-  data$pillar2_over25_cases <- NA
-  data$react_pos <- NA
-  data$react_tot <- NA
+            data <- sircovid_data(
+              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
+            class(data)[1] <- "particle_filter_data_nested"
+            ## Add additional columns
+            data$deaths_hosp <- NA
+            data$deaths_comm <- NA
+            data$deaths_carehomes <- NA
+            data$deaths_non_hosp <- NA
+            data$general <- NA
+            data$hosp <- NA
+            data$admitted <- NA
+            data$diagnoses <- NA
+            data$all_admission <- NA
+            data$npos_15_64 <- NA
+            data$ntot_15_64 <- NA
+            data$pillar2_pos <- NA
+            data$pillar2_tot <- NA
+            data$pillar2_cases <- NA
+            data$pillar2_over25_pos <- NA
+            data$pillar2_over25_tot <- NA
+            data$pillar2_over25_cases <- NA
+            data$react_pos <- NA
+            data$react_tot <- NA
 
-  ## Example that should not cause error
-  data$pillar2_pos <- 3
-  data$pillar2_tot <- 6
+            ## Example that should not cause error
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
 
-  ## Add populations
-  data <- rbind(data, data)
-  data$population <- rep(factor(letters[1:2]), each = 31)
-  pf <- carehomes_particle_filter(data, 10)
-  expect_s3_class(pf, "particle_filter")
+            ## Add populations
+            data <- rbind(data, data)
+            data$population <- rep(factor(letters[1:2]), each = 31)
+            pf <- carehomes_particle_filter(data, 10)
+            expect_s3_class(pf, "particle_filter")
 
-  ## Error if one region has multiple streams
-  data$pillar2_pos <- 3
-  data$pillar2_tot <- 6
-  data$pillar2_cases <- 5
-  expect_error(
-    carehomes_particle_filter(data),
-    "Cannot fit to more than one pillar 2 data stream")
+            ## Error if one region has multiple streams
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
+            data$pillar2_cases <- 5
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one pillar 2 data stream")
 
-  ## Don't error if two regions have different streams
-  data[1:31, "pillar2_cases"] <- NA
-  data[32:62, "pillar2_pos"] <- NA
-  data[32:62, "pillar2_tot"] <- NA
-  pf <- carehomes_particle_filter(data, 10)
-  expect_s3_class(pf, "particle_filter")
-})
+            ## Don't error if two regions have different streams
+            data[1:31, "pillar2_cases"] <- NA
+            data[32:62, "pillar2_pos"] <- NA
+            data[32:62, "pillar2_tot"] <- NA
+            pf <- carehomes_particle_filter(data, 10)
+            expect_s3_class(pf, "particle_filter")
+          })
