@@ -3279,16 +3279,16 @@ public:
     }
     {
        int i = 4;
-       for (int j = 2; j <= shared->n_strains; ++j) {
+       for (int j = 3; j <= 4; ++j) {
          int k = 1;
-         internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = std::min(internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + strain_seed, internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + S[shared->dim_S_1 * (k - 1) + i - 1] - odin_sum3<real_t>(internal.n_S_progress.data(), i - 1, i, 0, shared->dim_n_S_progress_2, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12));
+         internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = 0;
        }
     }
     {
        int i = 4;
-       for (int j = 3; j <= 4; ++j) {
+       for (int j = 2; j <= shared->n_strains; ++j) {
          int k = 1;
-         internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = 0;
+         internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = (j < 3 ? std::min(internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + strain_seed, internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + S[shared->dim_S_1 * (k - 1) + i - 1] - odin_sum3<real_t>(internal.n_S_progress.data(), i - 1, i, 0, shared->dim_n_S_progress_2, k - 1, k, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12)) : 0);
        }
     }
     for (int i = 1; i <= shared->dim_n_com_to_T_sero_pre_1; ++i) {

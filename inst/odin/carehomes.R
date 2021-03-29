@@ -238,8 +238,8 @@ strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
 n_S_progress[4, 3:4, 1] <- 0
 n_S_progress[4, 2:n_strains, 1] <-
   if (j < 3) min(n_S_progress[i, j, k] + strain_seed,
-                 n_S_progress[i, j, k] + S[i, k] - sum(n_S_progress[i,, k]))
-  else 0
+                 n_S_progress[i, j, k] + S[i, k] -
+                   sum(n_S_progress[i,, k])) else 0
 
 
 
