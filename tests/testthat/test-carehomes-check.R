@@ -4,10 +4,11 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
+    set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 

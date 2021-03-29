@@ -231,14 +231,17 @@ strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
 ## NOTE: We *must* use the range 2:n_strains here even though only one
 ## strain variant is allowed exist, otherwise the generated code leads
 ## us to write out-of-bounds when running with a single strain.
-n_S_progress[4, 2:n_strains, 1] <-
-  min(n_S_progress[i, j, k] + strain_seed,
-      n_S_progress[i, j, k] + S[i, k] - sum(n_S_progress[i, , k]))
-
+##
 ## Now remove all transitions from S to strain 3 (1.2) and 4 (2.1)
 ## Could incorporate into above but the separation will help abstraction/model
 ## separation
 n_S_progress[4, 3:4, 1] <- 0
+n_S_progress[4, 2:n_strains, 1] <-
+  if (j < 3) min(n_S_progress[i, j, k] + strain_seed,
+                 n_S_progress[i, j, k] + S[i, k] - sum(n_S_progress[i,, k]))
+  else 0
+
+
 
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[k] to E[k+1] (k vaccination class)
