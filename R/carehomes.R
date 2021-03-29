@@ -946,7 +946,7 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     strain_seed_step[i] <- spread_integer(strain_seed_value, 1 / dt)
   }
 
-  list(n_strains = length(strain_transmission),
+  list(n_strains_user = length(strain_transmission),
        strain_transmission = strain_transmission,
        strain_seed_step = strain_seed_step)
 }
