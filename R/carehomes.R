@@ -345,8 +345,11 @@ carehomes_parameters <- function(start_date, region,
   }
 
   severity <- carehomes_parameters_severity(severity, p_death_carehome)
-  strain_rel_severity <- recycle(strain_rel_severity,
+  strain_rel_severity <- mcstate:::recycle(strain_rel_severity,
                                  length(strain_transmission))
+  if (length(strain_transmission) > 1) {
+    strain_rel_severity <- mirror(strain_rel_severity)
+  }
   severity <- scale_severity(severity, strain_rel_severity)
 
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
@@ -373,12 +376,14 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- severity$p_star / max(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  strain_rel_gamma_A <- recycle(strain_rel_gamma_A, length(strain_transmission))
-  strain_rel_gamma_P <- recycle(strain_rel_gamma_P, length(strain_transmission))
-  strain_rel_gamma_C_1 <- recycle(strain_rel_gamma_C_1,
-                                  length(strain_transmission))
-  strain_rel_gamma_C_2 <- recycle(strain_rel_gamma_C_2,
-                                  length(strain_transmission))
+  strain_rel_gamma_A <- mcstate:::recycle(strain_rel_gamma_A,
+                                          length(strain_transmission))
+  strain_rel_gamma_P <- mcstate:::recycle(strain_rel_gamma_P,
+                                          length(strain_transmission))
+  strain_rel_gamma_C_1 <- mcstate:::recycle(strain_rel_gamma_C_1,
+                                            length(strain_transmission))
+  strain_rel_gamma_C_2 <- mcstate:::recycle(strain_rel_gamma_C_2,
+                                            length(strain_transmission))
 
   progression <- progression %||%
                   carehomes_parameters_progression(strain_rel_gamma_A,
@@ -946,7 +951,11 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     strain_seed_step[i] <- spread_integer(strain_seed_value, 1 / dt)
   }
 
-  list(n_strains_user = length(strain_transmission),
+  if (length(strain_transmission) == 2) {
+    strain_transmission <- mirror(strain_transmission)
+  }
+
+  list(n_strains = length(strain_transmission),
        strain_transmission = strain_transmission,
        strain_seed_step = strain_seed_step)
 }
@@ -996,6 +1005,17 @@ carehomes_parameters_progression <- function(rel_gamma_A,
                                              rel_gamma_P,
                                              rel_gamma_C_1,
                                              rel_gamma_C_2) {
+
+  stopifnot(length(unique(lengths(list(rel_gamma_A, rel_gamma_P,
+                                       rel_gamma_C_1, rel_gamma_C_2)))) == 1)
+  if (length(rel_gamma_A) == 2) {
+    ## if two strains then mirror the same gammas for the pseudo-strains
+    ## Note: pseudo-strain = 3/4 has same progression/rates as strain 2/1
+    rel_gamma_A <- mirror(rel_gamma_A)
+    rel_gamma_P <- mirror(rel_gamma_P)
+    rel_gamma_C_1 <- mirror(rel_gamma_C_1)
+    rel_gamma_C_2 <- mirror(rel_gamma_C_2)
+  }
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate

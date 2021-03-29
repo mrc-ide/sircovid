@@ -194,14 +194,5 @@ gamma_mucv2shapescale <- function(mu, cv) {
   list(shape = shape, scale = scale)
 }
 
-## copied from mcstate
-recycle <- function(x, n, name = deparse(substitute(x))) {
-  if (length(x) == n) {
-    x
-  } else if (length(x) == 1L) {
-    rep_len(x, n)
-  } else {
-    stop(sprintf("Invalid length (%d) for '%s', expected 1 or %d",
-                 length(x), name, n))
-  }
-}
+
+mirror <- function(x) c(x, rev(x))

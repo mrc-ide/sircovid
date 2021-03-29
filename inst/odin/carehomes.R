@@ -232,16 +232,12 @@ strain_seed <- (if (as.integer(step) >= length(strain_seed_step))
 ## strain variant is allowed exist, otherwise the generated code leads
 ## us to write out-of-bounds when running with a single strain.
 ##
-## Now remove all transitions from S to strain 3 (1.2) and 4 (2.1)
-## Could incorporate into above but the separation will help abstraction/model
-## separation
-n_S_progress[4, 3:4, 1] <- 0
+## After setting up progress remove all transitions from S to
+## strain 3 (1.2) and 4 (2.1).
 n_S_progress[4, 2:n_strains, 1] <-
   if (j < 3) min(n_S_progress[i, j, k] + strain_seed,
                  n_S_progress[i, j, k] + S[i, k] -
                    sum(n_S_progress[i,, k])) else 0
-
-
 
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[k] to E[k+1] (k vaccination class)
@@ -464,7 +460,7 @@ aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] else n_EE[i, j, k - 1, l]) -
   n_EE[i, j, k, l] -
   n_EE_next_vacc_class[i, j, k, l] -
   n_E_next_vacc_class[i, j, k, l] +
-  n_RE_same_vacc_class[i, j, k] +
+  n_RE_same_vacc_class[i, j, l] +
   (if (l == 1) n_E_next_vacc_class[i, j, k, n_vacc_classes] else
     n_E_next_vacc_class[i, j, k, l - 1]) +
   (if (k == 1) (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] else
@@ -1014,8 +1010,7 @@ G_D_transmission <- user()
 strain_transmission[] <- user()
 dim(strain_transmission) <- n_strains
 ## manually add the pseudo-strains for cross infection
-n_strains_user <- user()
-n_strains <- if (n_strains_user == 2) 4 else 1
+n_strains <- user()
 
 ## Dimensions of the different "vectors" here vectors stand for
 ## multi-dimensional arrays

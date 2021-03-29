@@ -1,5 +1,6 @@
 context("carehomes (multistrain)")
 
+
 test_that("carehomes_parameters_strain works as expected", {
   expect_error(
     carehomes_parameters_strain(NULL, NULL, NULL, 1),
@@ -20,10 +21,6 @@ test_that("carehomes_parameters_strain works as expected", {
     carehomes_parameters_strain(rep(0.5, 1), NULL, NULL, 1),
     "'strain_transmission[1]' must be 1",
     fixed = TRUE)
-  expect_error(
-    carehomes_parameters_strain(rep(0.5, 3), NULL, NULL, 1),
-    "Only 1 or 2 strains valid",
-    fixed = TRUE)
   expect_equal(
     carehomes_parameters_strain(1, NULL, NULL, 1),
     list(n_strains = 1,
@@ -31,13 +28,13 @@ test_that("carehomes_parameters_strain works as expected", {
          strain_seed_step = 0))
   expect_equal(
     carehomes_parameters_strain(c(1, 1), NULL, NULL, 1),
-    list(n_strains = 2,
-         strain_transmission = c(1, 1),
+    list(n_strains = 4,
+         strain_transmission = c(1, 1, 1, 1),
          strain_seed_step = 0))
   expect_equal(
     carehomes_parameters_strain(c(1, 2), NULL, NULL, 1),
-    list(n_strains = 2,
-         strain_transmission = c(1, 2),
+    list(n_strains = 4,
+         strain_transmission = c(1, 2, 2, 1),
          strain_seed_step = 0))
 })
 
@@ -198,8 +195,6 @@ test_that("Second less virulent strain does not take over", {
 
 
 test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
-  ## Default for waning_rate is 0, setting to a non-zero value so that
-  ## this test passes with waning immunity
   set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
@@ -745,6 +740,7 @@ test_that("calculate Rt with both second variant and vaccination", {
 
 })
 
+
 test_that("strain_rel_gamma works as expected in carehomes_parameters", {
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                      strain_rel_gamma_A = 1,
@@ -774,8 +770,9 @@ test_that("strain_rel_gamma works as expected in carehomes_parameters", {
   expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                     strain_rel_gamma_A = c(1, 5),
                                     strain_transmission = c(1, 2, 3)),
-               "1 or 3")
+               "1 or 2")
 })
+
 
 test_that("carehomes_parameters_progression works as expected", {
   gammas <- c("gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2")
@@ -793,7 +790,12 @@ test_that("carehomes_parameters_progression works as expected", {
            ncol = 4),
     vapply(defaults, function(x) x * 1:4, numeric(4))
   )
+  expect_true(all(lengths(
+    carehomes_parameters_progression(1, 1, 1, 1)[gammas]) == 1))
+  expect_true(all(lengths(
+    carehomes_parameters_progression(1:2, 1:2, 1:2, 1:2)[gammas]) == 4))
 })
+
 
 test_that("Relative gamma = 1 makes no difference", {
   p1 <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -889,7 +891,6 @@ test_that("Higher rate variant has lower Rt", {
 })
 
 
-
 test_that("Stuck when gamma =  0", {
   np <- 3L
 
@@ -983,6 +984,7 @@ test_that("Stuck when gamma =  0", {
   expect_false(all(unlist(y[index_I_A, , ]) == 0))
 })
 
+
 test_that("carehomes_parameters_severity works as expected", {
   severity <- carehomes_parameters_severity(NULL, 0.7)
   names <- c("p_G_D", "p_H_D", "p_ICU_D", "p_W_D")
@@ -1069,6 +1071,7 @@ test_that("G_D empty when p_G_D = 0", {
   expect_true(all(mod$info()$index$G_D == 0))
 
 })
+
 
 test_that("Everyone dies when strain_rel_severity = 1e3", {
   np <- 3L

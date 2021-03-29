@@ -4,11 +4,10 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1, seed = 1)
+  mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
-    set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -92,6 +91,7 @@ test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very
   expect_true(all(y$T_PCR_neg[-4, , -1, ] == 0))
 
 })
+
 
 test_that("R, T_sero_neg and T_PCR_neg are all non-decreasing and S is
           non-increasing if waning rate is 0", {
@@ -299,7 +299,6 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 
 
 test_that("No one dies in the community if psi_G_D is 0", {
-  set.seed(1)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
@@ -311,9 +310,7 @@ test_that("No one dies in the community if psi_G_D is 0", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(any(y$I_P > 0))
-  expect_true(any(y$I_C_1 > 0))
-  expect_true(any(y$I_C_2 > 0))
+  expect_true(any(y$I_P + y$I_A > 0))
   expect_true(all(y$G_D == 0))
   expect_true(all(y$D_non_hosp == 0))
 })
