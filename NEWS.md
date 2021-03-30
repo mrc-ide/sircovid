@@ -1,3 +1,7 @@
+# sircovid 0.10.25
+
+* Add additional disaggregated outputs for deaths and diagnosed admissions
+
 # sircovid 0.10.24
 
 * New set of parameter `strain_rel_gamma_` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.

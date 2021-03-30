@@ -2392,3 +2392,98 @@ test_that("Can catch up on doses not distributed with imperfect uptake", {
   ## check we could not reach reach the desired uptake
   expect_true(all(abs(uptake - uptake_by_age) < 0.05))
 })
+
+
+test_that("Collect disaggregated deaths data", {
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = 30000,
+                                            region = region,
+                                            mean_days_between_doses = 21,
+                                            uptake = 0.9)
+  p <- carehomes_parameters(0, region,
+                            waning_rate = 0, # to avoid diagonal moves out of R
+                            rel_susceptibility = c(1, 0.5),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  t <- seq(0, 400, by = 4)
+  y <- mod$transform_variables(drop(mod$simulate(t)))
+
+  n <- length(t)
+  ## Check that our cululative variables are monotonic
+  expect_true(all(y$D[, , -1] - y$D[, , -n] >= 0))
+  expect_true(all(y$diagnoses_admitted[, , -1] -
+                  y$diagnoses_admitted[, , -n] >= 0))
+
+  ## Reaggregating deaths gives the right number
+  expect_equal(apply(y$D, 3, sum), drop(y$D_tot))
+
+  expect_equal(apply(y$diagnoses_admitted, 3, sum),
+               drop(y$cum_admit_conf + y$cum_new_conf))
+})
+
+
+test_that("Can add missing state variables", {
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = 30000,
+                                            region = region,
+                                            mean_days_between_doses = 21,
+                                            uptake = 0.9)
+  p <- carehomes_parameters(0, region,
+                            waning_rate = 0, # to avoid diagonal moves out of R
+                            rel_susceptibility = c(1, 0.5),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+
+  mod <- carehomes$new(p, 0, 10, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 10, p)$state
+
+  mod$set_state(state)
+  y <- mod$run(400)
+
+  drop <- c("D", "diagnoses_admitted")
+
+  info_old <- create_old_info(info, drop)
+  i <- unlist(info$index[names(info_old$index)], FALSE, FALSE)
+  y_old <- y[i, , drop = FALSE]
+
+  y_new <- upgrade_state(y_old, info_old, info)
+
+  y_cmp <- y
+  y_cmp[unlist(info$index[c("D", "diagnoses_admitted")], FALSE, FALSE), ] <- 0
+  expect_equal(y_new, y_cmp)
+
+  expect_error(upgrade_state(y_old[, 1], info_old, info),
+               "Expected a matrix for 'state_orig'")
+  expect_error(
+    upgrade_state(y_new, info, info_old),
+    "Can't downgrade state (previously had variables 'diagnoses_admitted'",
+    fixed = TRUE)
+  expect_error(
+    upgrade_state(y_old, info_old, info, "diagnoses_admitted"),
+    "Can't remap state (can't add variables 'D')",
+    fixed = TRUE)
+
+  expect_error(
+    upgrade_state(y_old[-5, , drop = FALSE], info_old, info),
+    "Expected a matrix with [0-9]+ rows for 'state_orig'")
+
+  info$index$N_tot <- info$index$N_tot[-6]
+  expect_error(
+    upgrade_state(y_old, info_old, info),
+    "States are incompatible lengths for 'N_tot'")
+})

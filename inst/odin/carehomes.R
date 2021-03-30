@@ -130,6 +130,21 @@ delta_new_conf <-
   sum(n_W_D_unconf_to_conf)
 update(cum_new_conf) <- cum_new_conf + delta_new_conf
 
+initial(diagnoses_admitted[, ]) <- 0
+update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
+  sum(n_I_C_2_to_H_D_conf[i, , j]) +
+  sum(n_I_C_2_to_H_R_conf[i, , j]) +
+  sum(n_I_C_2_to_ICU_pre_conf[i, , j]) +
+  sum(n_H_D_unconf_to_conf[i, , , j]) +
+  sum(n_H_R_unconf_to_conf[i, , , j]) +
+  sum(n_ICU_pre_unconf_to_conf[i, , , j]) +
+  sum(n_ICU_D_unconf_to_conf[i, , , j]) +
+  sum(n_ICU_W_R_unconf_to_conf[i, , , j]) +
+  sum(n_ICU_W_D_unconf_to_conf[i, , , j]) +
+  sum(n_W_R_unconf_to_conf[i, , , j]) +
+  sum(n_W_D_unconf_to_conf[i, , , j])
+dim(diagnoses_admitted) <- c(n_groups, n_vacc_classes)
+
 initial(admit_conf_inc) <- 0
 update(admit_conf_inc) <- if (step %% steps_per_day == 0)
   delta_admit_conf else
@@ -691,16 +706,27 @@ new_W_D_conf[, , , ] <-
   aux_W_D_conf[i, j, k, l] + n_W_D_unconf_to_conf[i, j, k, l]
 
 ## Work out the number of deaths in hospital
-delta_D_hosp[] <-
-  sum(n_H_D_unconf_progress[i, , k_H_D, ]) +
-  sum(n_H_D_conf_progress[i, , k_H_D, ]) +
-  sum(n_ICU_D_unconf_progress[i, , k_ICU_D, ]) +
-  sum(n_ICU_D_conf_progress[i, , k_ICU_D, ]) +
-  sum(n_W_D_unconf_progress[i, , k_W_D, ]) +
-  sum(n_W_D_conf_progress[i, , k_W_D, ])
+
+delta_D_hosp_disag[, ] <-
+  sum(n_H_D_unconf_progress[i, , k_H_D, j]) +
+  sum(n_H_D_conf_progress[i, , k_H_D, j]) +
+  sum(n_ICU_D_unconf_progress[i, , k_ICU_D, j]) +
+  sum(n_ICU_D_conf_progress[i, , k_ICU_D, j]) +
+  sum(n_W_D_unconf_progress[i, , k_W_D, j]) +
+  sum(n_W_D_conf_progress[i, , k_W_D, j])
+delta_D_non_hosp_disag[, ] <- sum(n_G_D_progress[i, , k_G_D, j])
+dim(delta_D_hosp_disag) <- c(n_groups, n_vacc_classes)
+dim(delta_D_non_hosp_disag) <- c(n_groups, n_vacc_classes)
+
+initial(D[, ]) <- 0
+update(D[, ]) <- D[i, j] +
+  delta_D_hosp_disag[i, j] + delta_D_non_hosp_disag[i, j]
+dim(D) <- c(n_groups, n_vacc_classes)
+
+delta_D_hosp[] <- sum(delta_D_hosp_disag[i, ])
 
 ## Work out the number of deaths in the community
-delta_D_non_hosp[] <- sum(n_G_D_progress[i, , k_G_D, ])
+delta_D_non_hosp[] <- sum(delta_D_non_hosp_disag[i, ])
 
 ## Work out the number of people entering the seroconversion flow
 n_com_to_T_sero_pre[, , 1, ] <- rbinom(
@@ -1502,6 +1528,10 @@ update(vaccine_missed_doses[, ]) <-
 dim(vaccine_missed_doses) <- c(n_groups, n_doses)
 
 vaccine_catchup_fraction <- user(0)
+
+
+## TODO: There's a divide-by-zero here causing NaNs in
+## vaccine_probability. Worth fixing
 
 ## Then fix everything based on progression at a constant rate (will
 ## be zero for the cases that have probabilities above)
