@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create GPU model — compile_gpu • sircovid</title>
+<title>Upgrade model state after change — upgrade_state • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,14 +46,8 @@
 
 
 
-<meta property="og:title" content="Create GPU model — compile_gpu" />
-<meta property="og:description" content="Create a model for the GPU. This requires a working nvcc toolchain
-and GPU device to work properly. Note that this will cache the
-compilation within a session, so if you want to change GPU options
-you will need to restart R. However, if you change the model
-(e.g., by changing the result of options like rewrite_dims) the
-model will recompile. Compilation speed is slow enough that the
-cachine will be obvious." />
+<meta property="og:title" content="Upgrade model state after change — upgrade_state" />
+<meta property="og:description" content="Upgrade model state" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -125,55 +119,42 @@ cachine will be obvious." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create GPU model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/gpu.R'><code>R/gpu.R</code></a></small>
-    <div class="hidden name"><code>compile_gpu.Rd</code></div>
+    <h1>Upgrade model state after change</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/tools.R'><code>R/tools.R</code></a></small>
+    <div class="hidden name"><code>upgrade_state.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create a model for the GPU. This requires a working nvcc toolchain
-and GPU device to work properly. Note that this will cache the
-compilation within a session, so if you want to change GPU options
-you will need to restart R. However, if you change the <em>model</em>
-(e.g., by changing the result of options like <code>rewrite_dims</code>) the
-model will recompile. Compilation speed is slow enough that the
-cachine will be obvious.</p>
+    <p>Upgrade model state</p>
     </div>
 
-    <pre class="usage"><span class='fu'>compile_gpu</span><span class='op'>(</span>model <span class='op'>=</span> <span class='st'>"carehomes"</span>, <span class='va'>...</span>, real_t <span class='op'>=</span> <span class='st'>"float"</span>, gpu <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>upgrade_state</span><span class='op'>(</span><span class='va'>state_orig</span>, <span class='va'>info_orig</span>, <span class='va'>info_new</span>, allowed <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>model</th>
-      <td><p>The name of a sircovid model, either <code>carehomes</code> or
-<code>basic</code></p></td>
+      <th>state_orig</th>
+      <td><p>Old model info</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Additional arguments passed to <a href='https://rdrr.io/pkg/odin.dust/man/odin_dust.html'>odin.dust::odin_dust_</a>
-and from there into either odin's options or the gpu options.</p></td>
+      <th>info_orig</th>
+      <td><p>Old model info</p></td>
     </tr>
     <tr>
-      <th>real_t</th>
-      <td><p>The type to use for floating point numbers. The
-default is "float" which differs from the CPU model but is
-typically what you want on the GPU.</p></td>
+      <th>info_new</th>
+      <td><p>New model info</p></td>
     </tr>
     <tr>
-      <th>gpu</th>
-      <td><p>The argument passed to <a href='https://rdrr.io/pkg/odin.dust/man/odin_dust.html'>odin.dust::odin_dust_</a> as
-<code>gpu</code>. The default here is <code>TRUE</code>, but you may want to pass the
-results of <a href='https://rdrr.io/pkg/dust/man/dust_cuda_options.html'>dust::dust_cuda_options</a> in order to control
-compilation.</p></td>
+      <th>allowed</th>
+      <td><p>Character vector of allowed states to add; new
+values will be initialised as zeros.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A model generator, like <a href='carehomes.html'>carehomes</a> that can run
-on the GPU available to this computer.</p>
+    <p>A new copy of the state</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
