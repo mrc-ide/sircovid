@@ -1329,3 +1329,81 @@ test_that("Stuck when gamma =  0 for second strain", {
 })
 
 ## Add test for cum_n_R_vaccinated
+
+test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            waning_rate = 1 / 20,
+                            strain_seed_rate = c(1, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
+  p$p_H_step <- 1
+  p$psi_H[] <- 1
+  p$p_G_D_step <- matrix(1)
+  p$psi_G_D[] <- 1
+  p$p_C[] <- 1
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+
+  ## Move initial infectives to 2nd stage sympt
+  y0 <- carehomes_initial(info, 1, p)$state
+  y0[info$index$I_C_2] <- y0[info$index$I_A]
+  y0[info$index$I_A] <- 0
+
+  mod$set_state(y0)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(any(y$I_C_2 > 0))
+  expect_true(all(y$H_R_unconf == 0))
+  expect_true(all(y$H_R_conf == 0))
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
+  expect_true(all(y$ICU_W_R_unconf == 0))
+  expect_true(all(y$ICU_W_R_conf == 0))
+  expect_true(all(y$ICU_W_D_unconf == 0))
+  expect_true(all(y$ICU_W_D_conf == 0))
+  expect_true(all(y$ICU_D_unconf == 0))
+  expect_true(all(y$ICU_D_conf == 0))
+  expect_true(all(y$ICU_pre_unconf == 0))
+  expect_true(all(y$ICU_pre_conf == 0))
+  expect_true(all(y$W_R_unconf == 0))
+  expect_true(all(y$W_R_conf == 0))
+  expect_true(all(y$W_D_unconf == 0))
+  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$R == 0))
+  expect_true(all(y$D_hosp == 0))
+})
+
+test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = c(1, 0),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
+  p$psi_G_D[, 1] <- 1
+  p$psi_G_D[, 2] <- 0
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  index_G_D <- mod$info()$index$G_D
+  index_G_D_strain_1 <- index_G_D[c(1:19, 39:57)]
+  index_G_D_strain_2 <- index_G_D[c(20:38, 58:76)]
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+
+  # Strain 1
+  expect_false(all(y[index_G_D_strain_1, , ] == 0))
+  expect_false(all(y[index_G_D_strain_1, , ] == 0))
+  # Strain 2
+  expect_true(all(y[index_G_D_strain_2, , ] == 0))
+  expect_true(all(y[index_G_D_strain_2, , ] == 0))
+})
