@@ -1240,27 +1240,29 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             strain_rel_severity = c(1, 0),
-                            strain_seed_rate = c(1, 0),
+                            strain_seed_rate = c(10, 0),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")))
+  p$psi_G_D[, 1] <- 1
   p$psi_G_D[, 2] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
+  index_G_D <- mod$info()$index$G_D
+  index_G_D_strain_1 <- index_G_D[c(1:19, 39:57)]
+  index_G_D_strain_2 <- index_G_D[c(20:38, 58:76)]
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$simulate(steps)
 
-  expect_equal(p$psi_G_D[19, ], c(1, 0))
-  expect_equal(p$psi_G_D[, 2], numeric(19))
-
-  # FIXME - These results seem backwards, need to check how G_D is flattened
-  expect_true(all(y[mod$info()$index$G_D[1:18], , ] == 0))
-  expect_true(all(y[mod$info()$index$G_D[37:54], ,] == 0))
-  expect_false(all(y[mod$info()$index$G_D[19:36], , ] == 0))
-  expect_false(all(y[mod$info()$index$G_D[55:72], , ] == 0))
+  # Strain 1
+  expect_false(all(y[index_G_D_strain_1, , ] == 0))
+  expect_false(all(y[index_G_D_strain_1, , ] == 0))
+  # Strain 2
+  expect_true(all(y[index_G_D_strain_2, , ] == 0))
+  expect_true(all(y[index_G_D_strain_2, , ] == 0))
 })
