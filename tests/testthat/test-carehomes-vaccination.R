@@ -2477,4 +2477,9 @@ test_that("Can add missing state variables", {
     upgrade_state(y_old, info_old, info, "diagnoses_admitted"),
     "Can't remap state (can't add variables 'D')",
     fixed = TRUE)
+
+  info$index$N_tot <- info$index$N_tot[-6]
+  expect_error(
+    upgrade_state(y_old, info_old, info),
+    "States are incompatible lengths for 'N_tot'")
 })
