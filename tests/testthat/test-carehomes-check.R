@@ -951,3 +951,24 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
   helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
 })
+
+
+test_that("No one is hospitalised, no-one recovers in edge case", {
+  p <- carehomes_parameters(0, "england")
+  p$p_G_D_step[] <- 0
+  p$psi_G_D[] <- 0
+  p$p_G_D[] <- 0
+
+  mod <- carehomes$new(p, 0, 1)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_G_D <- mod$info()$index$G_D
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(y[index_G_D, , ] == 0))
+})
