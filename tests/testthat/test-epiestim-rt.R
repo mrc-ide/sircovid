@@ -2,8 +2,7 @@ test_that("Can calculate EpiEstim Rt", {
   skip_if_not_installed("EpiEstim")
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             beta_value = 0.15)
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
+
   np <- 20L
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -46,15 +45,15 @@ test_that("Can calculate EpiEstim Rt", {
   expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
 
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 4.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.8,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 1.5,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.8,
                tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.1,
+    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
     tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.1,
+    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
     tolerance = .1)
 
 })
@@ -64,8 +63,6 @@ test_that("Can calculate EpiEstim Rt with predefined GT", {
   skip_if_not_installed("EpiEstim")
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             beta_value = 0.15)
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
   np <- 20L
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -110,15 +107,15 @@ test_that("Can calculate EpiEstim Rt with predefined GT", {
   expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
 
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 4.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.8,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 1.5,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.8,
                tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.1,
+    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
     tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.1,
+    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
     tolerance = .1)
 
 })
@@ -128,8 +125,6 @@ test_that("carehomes_rt_trajectories_epiestim rejects invalid input", {
   skip_if_not_installed("EpiEstim")
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             beta_value = 0.15)
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
   np <- 20L
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -181,8 +176,6 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
                             beta_value = 0.15)
   mean_N_tot <- mean(p$N_tot)
   mean_m <- mean(p$m)
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
   ## switch off transmission in carehomes
   p$m[, 18:19] <- 0
   p$m[18:19, ] <- 0
@@ -241,21 +234,21 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   ## Rt stays constant for a while but precision improves for EpiEstim
   expect_true(rt$eff_Rt_all[1] > rt_EpiEstim$Rt_summary["2.5%", 20])
   expect_true(rt$eff_Rt_all[1] < rt_EpiEstim$Rt_summary["97.5%", 20])
-  expect_true(abs(rt$eff_Rt_all[1] - rt_EpiEstim$Rt_summary["50%", 20]) < 0.1)
+  expect_true(abs(rt$eff_Rt_all[1] - rt_EpiEstim$Rt_summary["50%", 20]) < 0.2)
 
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 35]], 6.5,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 35]], 4.9,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 35]], 5.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 35]], 4.8,
                tolerance = .1)
-  expect_equal(rt$eff_Rt_all[35], 6.5,
+  expect_equal(rt$eff_Rt_all[35], 5.0,
                tolerance = .1)
 
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 45]], 0.4,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 45]], 4.2,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 45]], 0.1,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 45]], 3.6,
                tolerance = .1)
-  expect_equal(rt$eff_Rt_all[45], 0.6,
+  expect_equal(rt$eff_Rt_all[45], 4.57,
                tolerance = .1)
 
 })
@@ -264,8 +257,6 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
 test_that("gt_sample yields expected mean GT", {
   set.seed(1)
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
   gt <- gt_sample(p, n = 10000)
   ## large tolerance because of discretisation
   expect_true(abs(mean(gt) - 6.3) < 0.5) # value from Bi et al.
@@ -274,14 +265,6 @@ test_that("gt_sample yields expected mean GT", {
 
 test_that("gt_sample yields expected invalid input errors", {
   p_base <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-
-  expect_error(
-    gt_sample(p_base, n = 1000),
-    "gt_sample does not allow p_C to vary by age",
-    fixed = TRUE)
-
-  ## Fix p_C across age groups for the rest of the test
-  p_base$p_C <- rep(0.6, 19)
 
   p <- p_base
   p$I_C_2_transmission <- 0.1

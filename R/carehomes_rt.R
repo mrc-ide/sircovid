@@ -125,8 +125,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
+<<<<<<< HEAD
   mean_duration_by_strain <-
     carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
+=======
+>>>>>>> origin/master
 
   ages <- seq_len(p$n_age_groups)
   ch <- seq(p$n_age_groups + 1L, p$n_groups)
@@ -166,6 +169,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     return(ret)
   }
 
+<<<<<<< HEAD
   if (n_strains > 1L) {
     browser()
     ## TODO: make sure this returns an array where the strain dimension has been removed / basically integrated over
@@ -178,6 +182,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   {
     mean_duration <- mean_duration_by_strain[, 1, , ]
   }
+=======
+  mean_duration <-
+    carehomes_Rt_mean_duration_weighted_by_infectivity(step, p,
+                                                       prob_strain_mat)
+>>>>>>> origin/master
 
   compute_ngm <- function(S) {
     browser()
@@ -296,8 +305,13 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 }
 
 
+<<<<<<< HEAD
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
+=======
+carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
+                                                               strain_mat) {
+>>>>>>> origin/master
   dt <- pars$dt
 
   matricise <- function(vect, n_col) {
@@ -354,42 +368,73 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## Note the mean duration (in time steps) of a compartment for
   ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
 
-  mean_duration_I_A <- pars$I_A_transmission * (1 - p_C) *
-    pars$k_A / (1 - exp(- dt * pars$gamma_A))
+  ## just a helper function to calculate denominator after converting gammas
+  ## to array
+  dims <- c(dim(p_C), length(pars$gamma_A))
+  n_groups <- dims[1L]
+  n_vax <- dims[2L]
+  n_time_steps <- dims[3L]
+  n_strains <- dims[4L]
 
-  mean_duration_I_P <- pars$I_P_transmission * p_C *
-    pars$k_P / (1 - exp(- dt * pars$gamma_P))
+  denom <- function(x) array(rep(1 - exp(-dt * x), each = prod(dims[1:3])),
+                             dims)
 
-  mean_duration_I_C_1 <- pars$I_C_1_transmission * p_C *
-    pars$k_C_1 / (1 - exp(- dt * pars$gamma_C_1))
+  mean_duration_I_A <- array(pars$I_A_transmission * (1 - p_C) *
+    pars$k_A, dims) / denom(pars$gamma_A)
 
-  mean_duration_I_C_2 <- pars$I_C_2_transmission * p_C *
-    pars$k_C_2 / (1 - exp(- dt * pars$gamma_C_2))
+  mean_duration_I_P <- array(pars$I_P_transmission * p_C *
+    pars$k_P, dims) / denom(pars$gamma_P)
 
-  mean_duration_G_D <- pars$G_D_transmission * p_C * p_H *
-    p_G_D * pars$k_G_D / (1 - exp(- dt * pars$gamma_G_D))
+  mean_duration_I_C_1 <- array(pars$I_C_1_transmission * p_C *
+    pars$k_C_1, dims) / denom(pars$gamma_C_1)
 
-  mean_duration_hosp <- pars$hosp_transmission * (
-    prob_H_R * pars$k_H_R / (1 - exp(- dt * pars$gamma_H_R)) +
-      prob_H_D * pars$k_H_D / (1 - exp(- dt * pars$gamma_H_D)) +
+  mean_duration_I_C_2 <- array(pars$I_C_2_transmission * p_C *
+    pars$k_C_2, dims) / denom(pars$gamma_C_2)
+
+  mean_duration_G_D <- array(pars$G_D_transmission * p_C * p_H *
+    p_G_D * pars$k_G_D / (1 - exp(-dt * pars$gamma_G_D)), dims)
+
+  mean_duration_hosp <- array(pars$hosp_transmission * (
+    prob_H_R * pars$k_H_R / (1 - exp(-dt * pars$gamma_H_R)) +
+      prob_H_D * pars$k_H_D / (1 - exp(-dt * pars$gamma_H_D)) +
       (prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D) * pars$k_ICU_pre /
-      (1 - exp(- dt * pars$gamma_ICU_pre)))
+        (1 - exp(-dt * pars$gamma_ICU_pre))), dims)
 
-  mean_duration_icu <- pars$ICU_transmission * (
-    prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(- dt * pars$gamma_ICU_W_R)) +
-      prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(- dt * pars$gamma_ICU_W_D)) +
-      prob_ICU_D * pars$k_ICU_D / (1 - exp(- dt * pars$gamma_ICU_D)))
+  mean_duration_icu <- array(pars$ICU_transmission * (
+    prob_ICU_W_R * pars$k_ICU_W_R / (1 - exp(-dt * pars$gamma_ICU_W_R)) +
+      prob_ICU_W_D * pars$k_ICU_W_D / (1 - exp(-dt * pars$gamma_ICU_W_D)) +
+      prob_ICU_D * pars$k_ICU_D / (1 - exp(-dt * pars$gamma_ICU_D))), dims)
+  ## safety check
+  stopifnot(identical(mean_duration_icu[, , , 1],
+                      mean_duration_icu[, , , n_strains]))
 
-  mean_duration <- mean_duration_I_A + mean_duration_I_P + mean_duration_I_C_1 +
-    mean_duration_I_C_2 + mean_duration_G_D + mean_duration_hosp +
-    mean_duration_icu
+  mean_duration <- mean_duration_I_A + mean_duration_I_P +
+    mean_duration_I_C_1 + mean_duration_I_C_2 + mean_duration_G_D +
+    mean_duration_hosp + mean_duration_icu
 
   ## Account for different infectivity levels depending on vaccination stage
   mean_duration <- mean_duration *
-    outer(pars$rel_infectivity, rep(1, n_time_steps))
+    outer(outer(pars$rel_infectivity, rep(1, n_time_steps)), rep(1, n_strains))
 
   ## Multiply by dt to convert from time steps to days
   mean_duration <- dt * mean_duration
+
+  if (n_strains > 1L) {
+    weighted_strain_multiplier <- vapply(seq_len(n_time_steps), function(t)
+      matrix(strain_mat[, , t] %*% pars$strain_transmission,
+             pars$n_groups, n_vax),
+      matrix(0, pars$n_groups, n_vax))
+    mean_duration <- mean_duration * outer(weighted_strain_multiplier,
+                                           rep(1, n_strains))
+
+    mean_duration <- vapply(seq_len(n_time_steps), function(t)
+      vapply(seq_len(n_vax), function(j)
+        rowSums(strain_mat[, , t] * mean_duration[, j, t, ]),
+      numeric(dims[1L])),
+      matrix(0, pars$n_groups, n_vax))
+  } else {
+    dim(mean_duration) <- dim(mean_duration)[1:3]
+  }
 
   mean_duration
 

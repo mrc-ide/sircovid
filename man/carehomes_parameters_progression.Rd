@@ -4,7 +4,33 @@
 \alias{carehomes_parameters_progression}
 \title{Carehomes progression parameters}
 \usage{
-carehomes_parameters_progression()
+carehomes_parameters_progression(
+  rel_gamma_A,
+  rel_gamma_P,
+  rel_gamma_C_1,
+  rel_gamma_C_2
+)
+}
+\arguments{
+\item{rel_gamma_A}{Vector of relative rates of gamma_A for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
+
+\item{rel_gamma_P}{Vector of relative rates of gamma_P for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
+
+\item{rel_gamma_C_1}{Vector of relative rates of gamma_C_1 for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
+
+\item{rel_gamma_C_2}{Vector of relative rates of gamma_C_2 for each
+strain modelled. If \code{1} all strains have same rates. Otherwise vector of
+same length as \code{strain_transmission}, with entries that determines the
+relative scaling of the defaults for each strain.}
 }
 \value{
 A list of parameter values

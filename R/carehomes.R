@@ -57,18 +57,47 @@ NULL
 ##'   number of strains used in the model
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
-##'   exactly two [sircovid::sircovid_date] values corresponding to
-##'   the start and stop dates of seeding (inclusive). For example, to
-##'   seed for a single day, these two values should have the same
-##'   date
+##'   [sircovid::sircovid_date] values corresponding to
+##'   the dates that `strain_seed_rate` should change. For example, to
+##'   seed a constant rate from a given date, provide one value for each of
+##'   `strain_seed_date` and `strain_seed_rate`; or to seed with a constant rate
+##'   for a set period, provide two dates and two
+##'   rates with the second rate equal to 0.
 ##'
-##' @param strain_seed_value Either `NULL` (no seeding) or a single
-##'   integer value represending the *daily* rate of seeding. Because
-##'   each day is dividied into `1 / dt` steps, this value will be
-##'   spread out fairly evenly across the steps that occur within each
-##'   date. Seeding is not stochastic; this many individuals *will*
-##'   become infected with the new strain, unless the pool of
-##'   susceptibles has been exhausted.
+##' @param strain_seed_rate Either `NULL` (no seeding) or a vector of
+##'   values representing the *daily* rate of seeding, starting on the dates set
+##'   in `strain_seed_date`.
+##'   Seeding is drawn from Poisson(strain_seed_rate * dt)
+##'   at each **day** and so the rate is spread evenly across the steps that
+##'   occur within each date. For example, to
+##'   seed a constant rate from a given date, provide one value for each of
+##'   `strain_seed_date` and `strain_seed_rate`; or to seed with a constant rate
+##'   for a set period, provide two dates and two
+##'   rates with the second rate equal to 0.
+##'
+##' @param strain_rel_gamma_A Vector of relative rates of progression out of
+##' I_A (gamma_A) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param strain_rel_gamma_P Vector of relative rates of progression out of
+##' I_P (gamma_P) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param strain_rel_gamma_C_1 Vector of relative rates of progression out of
+##' I_C_1 (gamma_C_1) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param strain_rel_gamma_C_2 Vector of relative rates of progression out of
+##' I_C_2 (gamma_C_2) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
 ##'
 ##' @param rel_susceptibility A vector or array of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -141,6 +170,14 @@ NULL
 ##'   people to be vaccinated by group over time
 ##'
 ##' @param vaccine_index_dose2 The index to use for the second dose
+##'
+##' @param vaccine_catchup_fraction A value between 0 and 1 indicating the
+##'   proportion of doses not distributed according to schedule (e.g. because
+##'   too many people were in the I or H compartments and could not be
+##'   vaccinated at the scheduled time) that we postpone to a later date.
+##'   A value of 0 means we do not catch up at all on any missed doses; a
+##'   value of 1 means we try to catch up for all missed doses. This is set
+##'   to 1 by default
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -285,7 +322,11 @@ carehomes_parameters <- function(start_date, region,
                                  p_NC = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
-                                 strain_seed_value = NULL,
+                                 strain_seed_rate = NULL,
+                                 strain_rel_gamma_A = 1,
+                                 strain_rel_gamma_P = 1,
+                                 strain_rel_gamma_C_1 = 1,
+                                 strain_rel_gamma_C_2 = 1,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
@@ -293,6 +334,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate = NULL,
                                  vaccine_schedule = NULL,
                                  vaccine_index_dose2 = NULL,
+                                 vaccine_catchup_fraction = 1,
                                  waning_rate = 0,
                                  model_pcr_and_serology_user = 1,
                                  exp_noise = 1e6) {
@@ -342,7 +384,32 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- severity$p_star / max(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  progression <- progression %||% carehomes_parameters_progression()
+  strain_rel_gamma_A <- mcstate:::recycle(assert_relatives(strain_rel_gamma_A),
+                                          length(strain_transmission))
+  strain_rel_gamma_P <- mcstate:::recycle(assert_relatives(strain_rel_gamma_P),
+                                          length(strain_transmission))
+  strain_rel_gamma_C_1 <-
+    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_1),
+                                       length(strain_transmission))
+  strain_rel_gamma_C_2 <-
+    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_2),
+                                       length(strain_transmission))
+
+  progression <- progression %||%
+                  carehomes_parameters_progression(strain_rel_gamma_A,
+                                                   strain_rel_gamma_P,
+                                                   strain_rel_gamma_C_1,
+                                                   strain_rel_gamma_C_2)
+
+  ## implementation of time-varying progression gammas
+  progression$gamma_H_R_step <- progression$gamma_H_R
+  progression$gamma_W_R_step <- progression$gamma_W_R
+  progression$gamma_ICU_W_R_step <- progression$gamma_ICU_W_R
+  progression$gamma_H_D_step <- progression$gamma_H_D
+  progression$gamma_W_D_step <- progression$gamma_W_D
+  progression$gamma_ICU_W_D_step <- progression$gamma_ICU_W_D
+  progression$gamma_ICU_D_step <- progression$gamma_ICU_D
+  progression$gamma_ICU_pre_step <- progression$gamma_ICU_pre
 
   waning <- carehomes_parameters_waning(waning_rate)
 
@@ -392,7 +459,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## number of strains and relative transmissibility
   strain <- carehomes_parameters_strain(
-    strain_transmission, strain_seed_date, strain_seed_value, ret$dt)
+    strain_transmission, strain_seed_date, strain_seed_rate, ret$dt)
 
   ## vaccination
   vaccination <- carehomes_parameters_vaccination(ret$N_tot,
@@ -404,7 +471,8 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_progression_rate,
                                                   vaccine_schedule,
                                                   vaccine_index_dose2,
-                                                  strain$n_strains)
+                                                  strain$n_strains,
+                                                  vaccine_catchup_fraction)
   model_pcr_and_serology_user <-
     list(model_pcr_and_serology_user = model_pcr_and_serology_user)
 
@@ -500,6 +568,8 @@ carehomes_index <- function(info) {
                                paste0("cum_admit", suffix))
   index_D_hosp <- set_names(index[["D_hosp"]],
                             paste0("D_hosp", suffix))
+  index_cum_n_vaccinated <- set_names(index[["cum_n_vaccinated"]],
+                                    paste0("cum_n_vaccinated", suffix, s_type))
 
   ## prob_strain is named similarly to S, with the second suffix representing
   ## strain instead of vacc_class
@@ -512,7 +582,8 @@ carehomes_index <- function(info) {
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_cum_admit,
-                 index_D_hosp, index_I_weighted, index_prob_strain))
+                 index_D_hosp, index_I_weighted, index_prob_strain,
+                 index_cum_n_vaccinated))
 }
 
 
@@ -808,7 +879,8 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
                                              vaccine_index_dose2 = NULL,
-                                             n_strains = 1) {
+                                             n_strains = 1,
+                                             vaccine_catchup_fraction = 1) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
@@ -860,14 +932,20 @@ carehomes_parameters_vaccination <- function(N_tot,
       (vaccine_schedule$doses * dt)[, , i])
   }
 
+  ret$n_vacc_classes <- n_vacc_classes
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
     vaccine_progression_rate, n_vacc_classes, ret$index_dose)
+
+
+  assert_scalar(vaccine_catchup_fraction)
+  assert_proportion(vaccine_catchup_fraction)
+  ret$vaccine_catchup_fraction <- vaccine_catchup_fraction
 
   ret
 }
 
 carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
-                                        strain_seed_value, dt) {
+                                        strain_seed_rate, dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
   }
@@ -876,16 +954,12 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
       "Only 1 or 2 strains valid ('strain_transmission' too long)'.",
       "See 'n_S_progress' in the odin code to fix this"))
   }
-  if (any(strain_transmission < 0)) {
-    stop("'strain_transmission' must have only non-negative values")
-  }
-  if (strain_transmission[[1]] != 1) {
-    stop("'strain_transmission[1]' must be 1")
-  }
+
+  assert_relatives(strain_transmission)
 
   if (is.null(strain_seed_date)) {
-    if (!is.null(strain_seed_value)) {
-      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_value'",
+    if (!is.null(strain_seed_rate)) {
+      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_rate'",
                  "to be NULL"))
     }
     strain_seed_step <- 0
@@ -893,22 +967,29 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
     if (length(strain_transmission) == 1L) {
       stop("Can't use 'strain_seed_date' if only using one strain")
     }
-    if (length(strain_seed_date) != 2L) {
-      stop("'strain_seed_date', if given, must be exactly two elements")
+    if (length(strain_seed_date) != length(strain_seed_rate)) {
+      stop("'strain_seed_date' and 'strain_seed_rate' must be the same length")
     }
     assert_sircovid_date(strain_seed_date)
     assert_increasing(strain_seed_date, strict = FALSE)
-
-    if (length(strain_seed_value) != 1L) {
-      stop("'strain_seed_value' must be a scalar if 'strain_seed_date' is used")
-    }
-    assert_integer(strain_seed_value)
+    assert_non_negative(strain_seed_rate)
 
     ## The + 1 here prevents the start of the next day having the
-    ## seeding value
-    strain_seed_step <- numeric((strain_seed_date[[2]] + 1) / dt)
-    i <- (strain_seed_date[[1]] / dt):((strain_seed_date[[2]] + 1) / dt - 1)
-    strain_seed_step[i] <- spread_integer(strain_seed_value, 1 / dt)
+    ## same seeding value
+    strain_seed_step <-
+      numeric(strain_seed_date[[length(strain_seed_date)]] / dt)
+    for (j in seq_along(strain_seed_date)) {
+      if (j == length(strain_seed_date)) {
+        i <- length(strain_seed_step)
+      } else {
+        i <- seq.int(
+          strain_seed_date[[j]] / dt,
+          strain_seed_date[[j + 1]] / dt - 1
+        )
+      }
+      strain_seed_step[i] <- strain_seed_rate[[j]] * dt
+    }
+
   }
 
   list(n_strains = length(strain_transmission),
@@ -936,8 +1017,31 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @return A list of parameter values
 ##'
+##' @param rel_gamma_A Vector of relative rates of gamma_A for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param rel_gamma_P Vector of relative rates of gamma_P for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param rel_gamma_C_1 Vector of relative rates of gamma_C_1 for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param rel_gamma_C_2 Vector of relative rates of gamma_C_2 for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
 ##' @export
-carehomes_parameters_progression <- function() {
+carehomes_parameters_progression <- function(rel_gamma_A,
+                                             rel_gamma_P,
+                                             rel_gamma_C_1,
+                                             rel_gamma_C_2) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -961,10 +1065,10 @@ carehomes_parameters_progression <- function() {
        k_PCR_pos = 2,
 
        gamma_E = 1 / (3.42 / 2),
-       gamma_A = 1 / 2.88,
-       gamma_P = 1 / 1.68,
-       gamma_C_1 = 1 / 2.14,
-       gamma_C_2 = 1 / 1.86,
+       gamma_A = 1 / 2.88 * rel_gamma_A,
+       gamma_P = 1 / 1.68 * rel_gamma_P,
+       gamma_C_1 = 1 / 2.14 * rel_gamma_C_1,
+       gamma_C_2 = 1 / 1.86 * rel_gamma_C_2,
        gamma_G_D = 1 / (3 / 2),
        gamma_H_D = 2 / 5,
        gamma_H_R = 2 / 10,
@@ -979,7 +1083,8 @@ carehomes_parameters_progression <- function() {
        gamma_sero_pos = 1 / 25,
        gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
-       gamma_PCR_pos = 1 / 5)
+       gamma_PCR_pos = 1 / 5
+       )
 }
 
 

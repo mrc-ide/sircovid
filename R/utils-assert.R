@@ -48,3 +48,29 @@ assert_scalar <- function(x, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
+
+
+assert_non_negative <- function(x, name = deparse(substitute(x))) {
+  if (any(x < 0)) {
+    stop(sprintf("'%s' must have only non-negative values", name),
+         call. = FALSE)
+  }
+  invisible(x)
+}
+
+
+assert_proportion <- function(x, name = deparse(substitute(x))) {
+  if (any(x < 0 || x > 1)) {
+    stop(sprintf("'%s' must lie in [0, 1]", name),
+         call. = FALSE)
+  }
+  invisible(x)
+}
+  
+  assert_relatives <- function(x, name = deparse(substitute(x))) {
+    if (x[[1]] != 1) {
+      stop(sprintf("'%s[[1]]' must be 1", name), call. = FALSE)
+    }
+    assert_non_negative(x, name)
+    invisible(x)
+ }

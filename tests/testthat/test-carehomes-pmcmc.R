@@ -213,7 +213,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(110, 11, 2, 32),
+    dat$trajectories$state, c(129, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
@@ -241,7 +241,7 @@ test_that("adding incidence adds appropriate states - nested", {
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(110, 11, 2, 32),
+    dat$trajectories$state, c(129, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   v <- c("deaths", "deaths_hosp")
@@ -255,7 +255,7 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(110, 11, 2, 32),
+    dat$trajectories$state, c(129, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
@@ -339,5 +339,113 @@ test_that("Combining EpiEstim rt reject invalid inputs", {
           "in 'carehomes_EpiEstim_Rt_trajectories'?")
   expect_error(combine_rt_epiestim(list(rt, rt), list(dat, dat)),
                error_msg, fixed = TRUE)
+
+})
+
+
+test_that("get_sample_rank rejects invalid inputs", {
+  dat <- reference_data_trajectories()
+
+  expect_error(get_sample_rank(dat$state, by = "not_the_right_thing"),
+               "'sample' should be an 'mcstate_pmcmc' object",
+               fixed = TRUE)
+
+  expect_error(get_sample_rank(dat, by = "not_the_right_thing"),
+               "Unkwnown 'by' argument. Should be one of: ",
+               fixed = TRUE)
+})
+
+
+test_that("get_sample_rank returns expected output", {
+  dat <- reference_data_trajectories()
+
+  dim3 <- dim(dat$trajectories$state)[3]
+  expected <- order(dat$trajectories$state["infections", , dim3])
+  res1 <- get_sample_rank(dat, by = "infections")
+
+  expect_equal(expected, res1)
+})
+
+
+test_that("reorder_sample rejects invalid inputs", {
+  dat <- reference_data_trajectories()
+
+  expect_error(reorder_sample(dat$state, 1:3),
+               "'sample' should be an 'mcstate_pmcmc' object",
+               fixed = TRUE)
+
+  expect_error(reorder_sample(dat, 1:10),
+               "Unexpected length for 'rank': 10 ; should have length 3",
+               fixed = TRUE)
+})
+
+
+test_that("reorder_sample returns expected output", {
+  dat <- reference_data_trajectories()
+
+  ## maintaining the initial order returns the same as input
+  expect_equal(reorder_sample(dat, 1:3), dat)
+
+  ## ordering and then ordering back returns the same as input
+  # order by increasing cumulative incidence
+  rnk1 <- get_sample_rank(dat, by = "infections")
+  dat2 <- reorder_sample(dat, rnk1)
+  rnk2 <- get_sample_rank(dat2, by = "infections")
+  # check this is now ordered by increasing incidence
+  expect_equal(rnk2, 1:3)
+  # apply revert ordering
+  dat3 <- reorder_sample(dat2, match(1:3, rnk1))
+  # check we are back to initial object
+  expect_equal(dat3, dat)
+
+})
+
+
+test_that("reorder_rt_ifr rejects invalid inputs", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  expect_error(reorder_rt_ifr(rt$beta, 1:10),
+               "'x' should be an 'Rt_trajectories' or 'IFR_t_trajectories'",
+               fixed = TRUE)
+
+  expect_error(reorder_rt_ifr(rt, 1:10),
+               "Unexpected length for 'rank': 10 ; should have length 3",
+               fixed = TRUE)
+
+})
+
+
+test_that("reorder_rt_ifr returns expected output", {
+  dat <- reference_data_trajectories()
+
+  index_S <- grep("^S_", names(dat$predict$index))
+  S <- dat$trajectories$state[index_S, , , drop = FALSE]
+  pars <- lapply(seq_len(nrow(dat$pars)), function(i)
+    dat$predict$transform(dat$pars[i, ]))
+  rt <- carehomes_Rt_trajectories(
+    dat$trajectories$step, S, pars,
+    initial_step_from_parameters = TRUE,
+    shared_parameters = FALSE)
+
+  ## maintaining the initial order returns the same as input
+  expect_equal(reorder_rt_ifr(rt, 1:3), rt)
+
+  ## ordering and then ordering back returns the same as input
+  # order by increasing cumulative incidence
+  rnk1 <- get_sample_rank(dat, by = "infections")
+  rt2 <- reorder_rt_ifr(rt, rnk1)
+  # apply revert ordering
+  rt3 <- reorder_rt_ifr(rt2, match(1:3, rnk1))
+  # check we are back to initial object
+  expect_equal(rt3, rt)
 
 })
