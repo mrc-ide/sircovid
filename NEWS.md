@@ -1,3 +1,7 @@
+# sircovid 0.10.24
+
+* New set of parameter `strain_rel_gamma_` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+
 # sircovid 0.10.23
 
 * Support to allow catch up of vaccine doses that could not be delivered 
@@ -27,6 +31,7 @@
 # sircovid 0.10.16
 
 * New functions to support reordering samples in mcstate_pmcmc objects
+
 
 # sircovid 0.10.12
 

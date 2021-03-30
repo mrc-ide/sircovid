@@ -75,6 +75,30 @@ NULL
 ##'   for a set period, provide two dates and two
 ##'   rates with the second rate equal to 0.
 ##'
+##' @param strain_rel_gamma_A Vector of relative rates of progression out of
+##' I_A (gamma_A) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param strain_rel_gamma_P Vector of relative rates of progression out of
+##' I_P (gamma_P) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param strain_rel_gamma_C_1 Vector of relative rates of progression out of
+##' I_C_1 (gamma_C_1) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param strain_rel_gamma_C_2 Vector of relative rates of progression out of
+##' I_C_2 (gamma_C_2) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
 ##' @param rel_susceptibility A vector or matrix of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
@@ -290,6 +314,10 @@ carehomes_parameters <- function(start_date, region,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_rate = NULL,
+                                 strain_rel_gamma_A = 1,
+                                 strain_rel_gamma_P = 1,
+                                 strain_rel_gamma_C_1 = 1,
+                                 strain_rel_gamma_C_2 = 1,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
@@ -347,7 +375,22 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- severity$p_star / max(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  progression <- progression %||% carehomes_parameters_progression()
+  strain_rel_gamma_A <- mcstate:::recycle(assert_relatives(strain_rel_gamma_A),
+                                          length(strain_transmission))
+  strain_rel_gamma_P <- mcstate:::recycle(assert_relatives(strain_rel_gamma_P),
+                                          length(strain_transmission))
+  strain_rel_gamma_C_1 <-
+    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_1),
+                                       length(strain_transmission))
+  strain_rel_gamma_C_2 <-
+    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_2),
+                                       length(strain_transmission))
+
+  progression <- progression %||%
+                  carehomes_parameters_progression(strain_rel_gamma_A,
+                                                   strain_rel_gamma_P,
+                                                   strain_rel_gamma_C_1,
+                                                   strain_rel_gamma_C_2)
 
   ## implementation of time-varying progression gammas
   progression$gamma_H_R_step <- progression$gamma_H_R
@@ -898,11 +941,8 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
       "Only 1 or 2 strains valid ('strain_transmission' too long)'.",
       "See 'n_S_progress' in the odin code to fix this"))
   }
-  assert_non_negative(strain_transmission)
 
-  if (strain_transmission[[1]] != 1) {
-    stop("'strain_transmission[1]' must be 1")
-  }
+  assert_relatives(strain_transmission)
 
   if (is.null(strain_seed_date)) {
     if (!is.null(strain_seed_rate)) {
@@ -964,8 +1004,31 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @return A list of parameter values
 ##'
+##' @param rel_gamma_A Vector of relative rates of gamma_A for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param rel_gamma_P Vector of relative rates of gamma_P for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param rel_gamma_C_1 Vector of relative rates of gamma_C_1 for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
+##' @param rel_gamma_C_2 Vector of relative rates of gamma_C_2 for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
 ##' @export
-carehomes_parameters_progression <- function() {
+carehomes_parameters_progression <- function(rel_gamma_A,
+                                             rel_gamma_P,
+                                             rel_gamma_C_1,
+                                             rel_gamma_C_2) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -989,10 +1052,10 @@ carehomes_parameters_progression <- function() {
        k_PCR_pos = 2,
 
        gamma_E = 1 / (3.42 / 2),
-       gamma_A = 1 / 2.88,
-       gamma_P = 1 / 1.68,
-       gamma_C_1 = 1 / 2.14,
-       gamma_C_2 = 1 / 1.86,
+       gamma_A = 1 / 2.88 * rel_gamma_A,
+       gamma_P = 1 / 1.68 * rel_gamma_P,
+       gamma_C_1 = 1 / 2.14 * rel_gamma_C_1,
+       gamma_C_2 = 1 / 1.86 * rel_gamma_C_2,
        gamma_G_D = 1 / (3 / 2),
        gamma_H_D = 2 / 5,
        gamma_H_R = 2 / 10,
