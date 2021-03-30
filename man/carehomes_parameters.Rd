@@ -25,7 +25,7 @@ carehomes_parameters(
   p_NC = 0.01,
   strain_transmission = 1,
   strain_seed_date = NULL,
-  strain_seed_value = NULL,
+  strain_seed_rate = NULL,
   strain_rel_gamma_A = 1,
   strain_rel_gamma_P = 1,
   strain_rel_gamma_C_1 = 1,
@@ -38,6 +38,7 @@ carehomes_parameters(
   vaccine_progression_rate = NULL,
   vaccine_schedule = NULL,
   vaccine_index_dose2 = NULL,
+  vaccine_catchup_fraction = 1,
   waning_rate = 0,
   model_pcr_and_serology_user = 1,
   exp_noise = 1e+06
@@ -111,35 +112,44 @@ strain modelled. First element should be 1. Length will define the
 number of strains used in the model}
 
 \item{strain_seed_date}{Either \code{NULL} (no seeding) or a vector of
-exactly two \link{sircovid_date} values corresponding to
-the start and stop dates of seeding (inclusive). For example, to
-seed for a single day, these two values should have the same
-date}
+\link{sircovid_date} values corresponding to
+the dates that \code{strain_seed_rate} should change. For example, to
+seed a constant rate from a given date, provide one value for each of
+\code{strain_seed_date} and \code{strain_seed_rate}; or to seed with a constant rate
+for a set period, provide two dates and two
+rates with the second rate equal to 0.}
 
-\item{strain_seed_value}{Either \code{NULL} (no seeding) or a single
-integer value represending the \emph{daily} rate of seeding. Because
-each day is dividied into \code{1 / dt} steps, this value will be
-spread out fairly evenly across the steps that occur within each
-date. Seeding is not stochastic; this many individuals \emph{will}
-become infected with the new strain, unless the pool of
-susceptibles has been exhausted.}
+\item{strain_seed_rate}{Either \code{NULL} (no seeding) or a vector of
+values representing the \emph{daily} rate of seeding, starting on the dates set
+in \code{strain_seed_date}.
+Seeding is drawn from Poisson(strain_seed_rate * dt)
+at each \strong{day} and so the rate is spread evenly across the steps that
+occur within each date. For example, to
+seed a constant rate from a given date, provide one value for each of
+\code{strain_seed_date} and \code{strain_seed_rate}; or to seed with a constant rate
+for a set period, provide two dates and two
+rates with the second rate equal to 0.}
 
-\item{strain_rel_gamma_A}{Vector of relative rates of gamma_A for each
+\item{strain_rel_gamma_A}{Vector of relative rates of progression out of
+I_A (gamma_A) for each
 strain modelled. If \code{1} all strains have same rates. Otherwise vector of
 same length as \code{strain_transmission}, with entries that determines the
 relative scaling of the defaults for each strain.}
 
-\item{strain_rel_gamma_P}{Vector of relative rates of gamma_P for each
+\item{strain_rel_gamma_P}{Vector of relative rates of progression out of
+I_P (gamma_P) for each
 strain modelled. If \code{1} all strains have same rates. Otherwise vector of
 same length as \code{strain_transmission}, with entries that determines the
 relative scaling of the defaults for each strain.}
 
-\item{strain_rel_gamma_C_1}{Vector of relative rates of gamma_C_1 for each
+\item{strain_rel_gamma_C_1}{Vector of relative rates of progression out of
+I_C_1 (gamma_C_1) for each
 strain modelled. If \code{1} all strains have same rates. Otherwise vector of
 same length as \code{strain_transmission}, with entries that determines the
 relative scaling of the defaults for each strain.}
 
-\item{strain_rel_gamma_C_2}{Vector of relative rates of gamma_C_2 for each
+\item{strain_rel_gamma_C_2}{Vector of relative rates of progression out of
+I_C_2 (gamma_C_2) for each
 strain modelled. If \code{1} all strains have same rates. Otherwise vector of
 same length as \code{strain_transmission}, with entries that determines the
 relative scaling of the defaults for each strain.}
@@ -217,6 +227,14 @@ group i.}
 people to be vaccinated by group over time}
 
 \item{vaccine_index_dose2}{The index to use for the second dose}
+
+\item{vaccine_catchup_fraction}{A value between 0 and 1 indicating the
+proportion of doses not distributed according to schedule (e.g. because
+too many people were in the I or H compartments and could not be
+vaccinated at the scheduled time) that we postpone to a later date.
+A value of 0 means we do not catch up at all on any missed doses; a
+value of 1 means we try to catch up for all missed doses. This is set
+to 1 by default}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
