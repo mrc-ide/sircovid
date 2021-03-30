@@ -85,7 +85,7 @@ two." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.24</span>
       </span>
     </div>
 
@@ -138,8 +138,45 @@ outputs, and we will come up with a better way of coordinating the
 two.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_parameters_progression</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_parameters_progression</span><span class='op'>(</span>
+  <span class='va'>rel_gamma_A</span>,
+  <span class='va'>rel_gamma_P</span>,
+  <span class='va'>rel_gamma_C_1</span>,
+  <span class='va'>rel_gamma_C_2</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>rel_gamma_A</th>
+      <td><p>Vector of relative rates of gamma_A for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
+    </tr>
+    <tr>
+      <th>rel_gamma_P</th>
+      <td><p>Vector of relative rates of gamma_P for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
+    </tr>
+    <tr>
+      <th>rel_gamma_C_1</th>
+      <td><p>Vector of relative rates of gamma_C_1 for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
+    </tr>
+    <tr>
+      <th>rel_gamma_C_2</th>
+      <td><p>Vector of relative rates of gamma_C_2 for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 

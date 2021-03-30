@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.24</span>
       </span>
     </div>
 
@@ -150,6 +150,10 @@
   strain_transmission <span class='op'>=</span> <span class='fl'>1</span>,
   strain_seed_date <span class='op'>=</span> <span class='cn'>NULL</span>,
   strain_seed_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strain_rel_gamma_A <span class='op'>=</span> <span class='fl'>1</span>,
+  strain_rel_gamma_P <span class='op'>=</span> <span class='fl'>1</span>,
+  strain_rel_gamma_C_1 <span class='op'>=</span> <span class='fl'>1</span>,
+  strain_rel_gamma_C_2 <span class='op'>=</span> <span class='fl'>1</span>,
   rel_susceptibility <span class='op'>=</span> <span class='fl'>1</span>,
   rel_p_sympt <span class='op'>=</span> <span class='fl'>1</span>,
   rel_p_hosp_if_sympt <span class='op'>=</span> <span class='fl'>1</span>,
@@ -292,6 +296,38 @@ seed a constant rate from a given date, provide one value for each of
 <code>strain_seed_date</code> and <code>strain_seed_rate</code>; or to seed with a constant rate
 for a set period, provide two dates and two
 rates with the second rate equal to 0.</p></td>
+    </tr>
+    <tr>
+      <th>strain_rel_gamma_A</th>
+      <td><p>Vector of relative rates of progression out of
+I_A (gamma_A) for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
+    </tr>
+    <tr>
+      <th>strain_rel_gamma_P</th>
+      <td><p>Vector of relative rates of progression out of
+I_P (gamma_P) for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
+    </tr>
+    <tr>
+      <th>strain_rel_gamma_C_1</th>
+      <td><p>Vector of relative rates of progression out of
+I_C_1 (gamma_C_1) for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
+    </tr>
+    <tr>
+      <th>strain_rel_gamma_C_2</th>
+      <td><p>Vector of relative rates of progression out of
+I_C_2 (gamma_C_2) for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></td>
     </tr>
     <tr>
       <th>rel_susceptibility</th>
