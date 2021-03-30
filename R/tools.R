@@ -7,6 +7,9 @@
 ##'
 ##' @param info_new New model info
 ##'
+##' @param allowed Character vector of allowed states to add; new
+##'   values will be initialised as zeros.
+##'
 ##' @return A new copy of the state
 ##' @export
 upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {

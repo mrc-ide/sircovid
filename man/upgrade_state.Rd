@@ -12,6 +12,9 @@ upgrade_state(state_orig, info_orig, info_new, allowed = NULL)
 \item{info_orig}{Old model info}
 
 \item{info_new}{New model info}
+
+\item{allowed}{Character vector of allowed states to add; new
+values will be initialised as zeros.}
 }
 \value{
 A new copy of the state
