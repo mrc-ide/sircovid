@@ -712,7 +712,7 @@ delta_D_hosp_disag[, ] <-
   sum(n_H_D_conf_progress[i, , k_H_D, j]) +
   sum(n_ICU_D_unconf_progress[i, , k_ICU_D, j]) +
   sum(n_ICU_D_conf_progress[i, , k_ICU_D, j]) +
-  sum(n_W_D_unconf_progress[i, , k_W_D,j ]) +
+  sum(n_W_D_unconf_progress[i, , k_W_D, j]) +
   sum(n_W_D_conf_progress[i, , k_W_D, j])
 delta_D_non_hosp_disag[, ] <- sum(n_G_D_progress[i, , k_G_D, j])
 dim(delta_D_hosp_disag) <- c(n_groups, n_vacc_classes)
