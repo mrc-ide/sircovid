@@ -1,12 +1,23 @@
-# sircovid 0.10.22
+# sircovid 0.10.26
 
 * Add parameter `strain_rel_severity` for varying the probabilities of `p_G_D`, `p_H_D`, `p_W_D` and `p_ICU_D` by strain.
 
+# sircovid 0.10.25
 
-# sircovid 0.10.21
+* Add additional disaggregated outputs for deaths and diagnosed admissions
 
-* New set of parameters `strain_rel_gamma_` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+# sircovid 0.10.24
 
+* New set of parameter `strain_rel_gamma_` for varying `gamma_A`, `gamma_P`, `gamma_C_1`, and `gamma_C_2` by strain.
+
+# sircovid 0.10.23
+
+* Support to allow catch up of vaccine doses that could not be delivered 
+(e.g. when people were infected at the time they should have been vaccinated)
+
+# sircovid 0.10.22
+
+* Added support for time-varying hospital durations
 
 # sircovid 0.10.20
 
