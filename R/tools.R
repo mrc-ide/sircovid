@@ -16,6 +16,10 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
   if (!is.matrix(state_orig)) {
     stop("Expected a matrix for 'state_orig'")
   }
+  if (nrow(state_orig) != info_orig$len) {
+    stop(sprintf("Expected a matrix with %d rows for 'state_orig'",
+                 info_orig$len))
+  }
 
   extra <- setdiff(names(info_orig$index), names(info_new$index))
   if (length(extra) > 0) {

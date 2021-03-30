@@ -2478,6 +2478,10 @@ test_that("Can add missing state variables", {
     "Can't remap state (can't add variables 'D')",
     fixed = TRUE)
 
+  expect_error(
+    upgrade_state(y_old[-5, , drop = FALSE], info_old, info),
+    "Expected a matrix with [0-9]+ rows for 'state_orig'")
+
   info$index$N_tot <- info$index$N_tot[-6]
   expect_error(
     upgrade_state(y_old, info_old, info),
