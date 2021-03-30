@@ -229,6 +229,49 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
   expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
 })
 
+test_that("prob_strain sums to 1", {
+  np <- 3L
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+
+  # no waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  index_prob_strain <- mod$info()$index$prob_strain
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  prob_strain <- y[index_prob_strain,,]
+  expect_equal(prob_strain[1:19, , ], 1 - prob_strain[20:38, , ])
+
+  # with waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 1 / 20,
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  index_prob_strain <- mod$info()$index$prob_strain
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  prob_strain <- y[index_prob_strain,,]
+  expect_equal(prob_strain[1:19, , ], 1 - prob_strain[20:38, , ])
+  expect_equal(dim(prob_strain), c(38, 3, 85))
+})
+
 
 test_that("No infection after seeding of second strain with 0 transmission", {
   n_seeded_new_strain_inf <- 100
@@ -1284,3 +1327,5 @@ test_that("Stuck when gamma =  0 for second strain", {
   expect_false(all(unlist(y[index_I_C_2_strain_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_C_2_strain_2, , ]) == 0))
 })
+
+## Add test for cum_n_R_vaccinated
