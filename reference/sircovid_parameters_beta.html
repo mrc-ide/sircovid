@@ -81,7 +81,7 @@ sircovid models." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.26</span>
       </span>
     </div>
 
@@ -144,8 +144,10 @@ points. Must be provided as a <code><a href='sircovid_date.html'>sircovid_date()
     </tr>
     <tr>
       <th>value</th>
-      <td><p>A vector of values to use for beta - either a scalar
-(if <code>date</code> is <code>NULL</code>) or a vector the same length as <code>date</code>.</p></td>
+      <td><p>Either a vector of values to use for beta - either a scalar
+(if <code>date</code> is <code>NULL</code>) or a vector the same length as <code>date</code>. Or a matrix
+with number of rows equal to length of <code>date</code> and number of columns equal
+to number of strains.</p></td>
     </tr>
     <tr>
       <th>dt</th>
