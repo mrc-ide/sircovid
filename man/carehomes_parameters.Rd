@@ -30,6 +30,7 @@ carehomes_parameters(
   strain_rel_gamma_P = 1,
   strain_rel_gamma_C_1 = 1,
   strain_rel_gamma_C_2 = 1,
+  strain_rel_severity = 1,
   rel_susceptibility = 1,
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
@@ -152,6 +153,13 @@ I_C_2 (gamma_C_2) for each
 strain modelled. If \code{1} all strains have same rates. Otherwise vector of
 same length as \code{strain_transmission}, with entries that determines the
 relative scaling of the defaults for each strain.}
+
+\item{strain_rel_severity}{Vector of relative probabilities of death for
+each strain modelled. If \code{1} all strains have same
+probabilities of death. Otherwise vector of same length as
+\code{strain_transmission}, where the first value should be 1 (for the first
+strain) and subsequent values between 0 and 1. To ensure valid
+probabilities, severity is upper-truncated at 1 after scaling.}
 
 \item{rel_susceptibility}{A vector or matrix of values representing the
 relative susceptibility of individuals in different vaccination groups.

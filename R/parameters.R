@@ -27,8 +27,10 @@ sircovid_parameters_shared <- function(start_date, region,
 ##'   points. Must be provided as a [sircovid_date()], i.e., days into
 ##'   2020.
 ##'
-##' @param value A vector of values to use for beta - either a scalar
-##'   (if `date` is `NULL`) or a vector the same length as `date`.
+##' @param value Either a vector of values to use for beta - either a scalar
+##'   (if `date` is `NULL`) or a vector the same length as `date`. Or a matrix
+##'   with number of rows equal to length of `date` and number of columns equal
+##'   to number of strains.
 ##'
 ##' @param dt The timestep that will be used in the simulation. This
 ##'   must be of the form `1 / n` where `n` is an integer representing
@@ -76,13 +78,21 @@ sircovid_parameters_shared <- function(start_date, region,
 ##' plot(t, beta, type = "o", cex = 0.25)
 ##' points(date, value, pch = 19, col = "red")
 sircovid_parameters_beta <- function(date, value, dt) {
+  ## for one strain coerce numeric to matrix, will coerce back later
+  if (!inherits(value, "matrix")) {
+    value <- matrix(value, ncol = 1)
+  }
   if (is.null(date)) {
-    if (length(value) != 1L) {
+    if (nrow(value) != 1L) {
       stop("As 'date' is NULL, expected single value")
+    }
+    ## coerce back
+    if (ncol(value) == 1) {
+      value <- as.numeric(value)
     }
     return(value)
   }
-  if (length(date) != length(value)) {
+  if (length(date) != nrow(value)) {
     stop("'date' and 'value' must have the same length")
   }
   if (length(date) < 2) {
@@ -93,11 +103,19 @@ sircovid_parameters_beta <- function(date, value, dt) {
 
   if (date[[1]] != 0) {
     date <- c(0, date)
-    value <- c(value[[1]], value)
+    value <- rbind(value[1, ], value)
   }
 
-  stats::approx(date, value, seq(0, date[[length(date)]], by = dt))$y
+  value <- apply(value, 2, function(x) {
+    stats::approx(date, x, seq(0, date[[length(date)]], by = dt))$y
+  })
 
+  ## coerce back
+  if (ncol(value) == 1) {
+    value <- as.numeric(value)
+  }
+
+  value
 }
 
 

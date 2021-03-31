@@ -1,3 +1,7 @@
+# sircovid 0.10.26
+
+* Add parameter `strain_rel_severity` for varying the probabilities of `p_G_D`, `p_H_D`, `p_W_D` and `p_ICU_D` by strain.
+
 # sircovid 0.10.25
 
 * Add additional disaggregated outputs for deaths and diagnosed admissions

@@ -290,6 +290,16 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
   matricise <- function(vect, n_col) {
     matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
   }
+  matricise_combine_pD <- function(p_step, psi) {
+    apply(
+      vapply(seq(ncol(p_step)), function(i) {
+        y <- outer(psi[, i], sircovid_parameters_beta_expand(step, p_step[, i]))
+        y <- y * strain_mat[, i, ]
+        y <- aperm(outer(y, rep(1, n_vacc_classes)), c(1, 3, 2))
+        y
+      }, array(0, c(nrow(strain_mat), n_vacc_classes, length(step)))),
+      c(1, 2, 3), sum)
+  }
 
   n_vacc_classes <- ncol(pars$rel_susceptibility)
 
@@ -299,7 +309,6 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
     length(sircovid_parameters_beta_expand(step, pars$p_H_step))
 
   ## compute probabilities of different pathways
-
   p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
   p_C <- outer(p_C, rep(1, n_time_steps))
 
@@ -308,14 +317,11 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
 
   p_ICU <- outer(matricise(pars$psi_ICU, n_vacc_classes),
                  sircovid_parameters_beta_expand(step, pars$p_ICU_step))
-  p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
-                   sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
-  p_H_D <- outer(matricise(pars$psi_H_D, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_H_D_step))
-  p_W_D <- outer(matricise(pars$psi_W_D, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_W_D_step))
-  p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_G_D_step))
+
+  p_ICU_D <- matricise_combine_pD(pars$p_ICU_D_step, pars$psi_ICU_D)
+  p_H_D <- matricise_combine_pD(pars$p_H_D_step, pars$psi_H_D)
+  p_W_D <- matricise_combine_pD(pars$p_W_D_step, pars$psi_W_D)
+  p_G_D <- matricise_combine_pD(pars$p_G_D_step, pars$psi_G_D)
 
   prob_H_R <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * (1 - p_H_D)

@@ -77,6 +77,7 @@ test_that("Can compute forecasts from mcmc output without prepending", {
                     rownames(res$trajectories$state)))
 })
 
+
 test_that("Can combine trajectories of equal size", {
   dat <- reference_data_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)
