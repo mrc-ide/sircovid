@@ -421,9 +421,10 @@ test_that("Swapping strains gives identical results with different index", {
   end <- sircovid_date("2020-05-1") / p$dt
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
-  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
+  i <- c(2, 1, 4, 3)
+  y$I_A <- y$I_A[, i, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
@@ -445,7 +446,7 @@ test_that("Swapping strains gives identical results with different index", {
   z2[["cum_sympt_cases_non_variant_over25"]] <-
     z2[["cum_sympt_cases_over25"]] - z2[["cum_sympt_cases_non_variant_over25"]]
   z2$cum_infections_per_strain <-
-    z2$cum_infections_per_strain[2:1, , drop = FALSE]
+    z2$cum_infections_per_strain[i, , drop = FALSE]
   ## This one can't easily be computed as it's not quite running
   ## incidence but over a sawtooth; the calculation relative to
   ## cum_infections_per_strain is confirmed elsewhere so here just
@@ -453,7 +454,7 @@ test_that("Swapping strains gives identical results with different index", {
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
   for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
-    z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
+    z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
           "T_sero_pre", "T_sero_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
@@ -463,7 +464,7 @@ test_that("Swapping strains gives identical results with different index", {
           "ICU_D_conf", "W_R_unconf", "W_R_conf",
           "W_D_unconf", "W_D_conf")
   for (nm in v5) {
-    z2[[nm]] <- z2[[nm]][, 2:1, , , , drop = FALSE]
+    z2[[nm]] <- z2[[nm]][, i, , , , drop = FALSE]
   }
 
   expect_identical(z1, z2)

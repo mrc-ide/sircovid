@@ -395,8 +395,8 @@ n_R_progress[, , ] <- if (model_pcr_and_serology == 1)
 ## Number going from R to S
 ## In one-strain model, all progress to S only
 ## In multi-strain model, R3 and R4 progress to S only
-## In multi-strain model, number of R1 and R2 to S is
-##   Binom(n_progress, waning/(waning + lambda))
+## In multi-strain model, number of R1 and R2 to S is binomial w.p. waning over
+##  waning plus lambda
 ## TODO (RS): waning_rate should eventually be variant varying
 n_RS[, , ] <- if (n_strains == 1) n_R_progress[i, j, k] else
   (if (j == 1) rbinom(n_R_progress[i, j, k],
