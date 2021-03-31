@@ -54,7 +54,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          interpolate_critical_dates = NULL,
                          interpolate_min = NULL,
                          eigen_method = "power_iteration") {
-  browser()
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
