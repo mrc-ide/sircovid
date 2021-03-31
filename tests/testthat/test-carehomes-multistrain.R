@@ -378,9 +378,10 @@ test_that("different strains are equivalent", {
 
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
-  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
+  i <- c(2, 1, 4, 3)
+  y$I_A <- y$I_A[, i, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
 
