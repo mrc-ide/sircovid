@@ -366,25 +366,34 @@ carehomes_parameters <- function(start_date, region,
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
   ## implementation of severity parameters
   ## probability of symptomatic individual requiring hospital treatment
-  severity$psi_H <- severity$p_H / max(severity$p_H)
+
+  get_psi <- function(p){
+    if(all(p == 0)) {
+      res <- p
+    } else {
+      res <- p / max(p)
+    }
+  }
+
+  severity$psi_H <- get_psi(severity$p_H)
   severity$p_H_step <- max(severity$p_H)
   ## probability of hospitalised patient going to ICU
-  severity$psi_ICU <- severity$p_ICU / max(severity$p_ICU)
+  severity$psi_ICU <- get_psi(severity$p_ICU)
   severity$p_ICU_step <- max(severity$p_ICU)
   ## probability of ICU patient dying
-  severity$psi_ICU_D <- apply(severity$p_ICU_D, 2, function(x) x / max(x))
+  severity$psi_ICU_D <- apply(severity$p_ICU_D, 2, get_psi)
   severity$p_ICU_D_step <- matrix(apply(severity$p_ICU_D, 2, max), nrow = 1)
   ## probability of non-ICU hospital patient dying
-  severity$psi_H_D <- apply(severity$p_H_D, 2, function(x) x / max(x))
+  severity$psi_H_D <- apply(severity$p_H_D, 2, get_psi)
   severity$p_H_D_step <- matrix(apply(severity$p_H_D, 2, max), nrow = 1)
   ## probability of stepdown hospital patient dying
-  severity$psi_W_D <- apply(severity$p_W_D, 2, function(x) x / max(x))
+  severity$psi_W_D <- apply(severity$p_W_D, 2, get_psi)
   severity$p_W_D_step <- matrix(apply(severity$p_W_D, 2, max), nrow = 1)
   ## probability of patient requiring hospital treatment dying in community
-  severity$psi_G_D <- apply(severity$p_G_D, 2, function(x) x / max(x))
+  severity$psi_G_D <- apply(severity$p_G_D, 2, get_psi)
   severity$p_G_D_step <- matrix(apply(severity$p_G_D, 2, max), nrow = 1)
   ## probability of an admission already being confirmed covid
-  severity$psi_star <- severity$p_star / max(severity$p_star)
+  severity$psi_star <- get_psi(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
   strain_rel_gamma_A <- mcstate:::recycle(assert_relatives(strain_rel_gamma_A),
