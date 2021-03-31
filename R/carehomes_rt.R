@@ -45,6 +45,9 @@
 ##' @param eigen_method The eigenvalue method to use (passed to
 ##'   [eigen1::eigen1] as `method`)
 ##'
+##' @param R A (n groups x n strains x n vaccine classes) x steps matrix of "R"
+##'   compartment counts, required for multi-strain models.
+##'
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
@@ -53,7 +56,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          type = NULL, interpolate_every = NULL,
                          interpolate_critical_dates = NULL,
                          interpolate_min = NULL,
-                         eigen_method = "power_iteration") {
+                         eigen_method = "power_iteration", R = NULL) {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -96,6 +99,26 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   if (ncol(S) != length(step)) {
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
+  }
+  if (is.null(R)) {
+    if (length(p$strain_transmission) > 1) {
+      stop("Expected R input because there is more than one strain")
+    }
+  } else {
+    if (nrow(R) != ncol(p$rel_susceptibility) * nrow(p$m) *
+        length(p$strain_transmission)) {
+      stop(sprintf(
+        "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
+         classes",
+        p$n_groups * ncol(p$rel_susceptibility) *
+         length(p$strain_transmission),
+        p$n_groups, length(p$strain_transmission),
+        ncol(p$rel_susceptibility)))
+    }
+    if (ncol(R) != length(step)) {
+      stop(sprintf("Expected 'R' to have %d columns, following 'step'",
+                  length(step)))
+    }
   }
   if (is.null(prob_strain)) {
     if (length(p$strain_transmission) > 1) {
@@ -170,7 +193,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   mean_duration <-
     carehomes_Rt_mean_duration_weighted_by_infectivity(step, p,
                                                        prob_strain_mat)
-
+#browser()
   compute_ngm <- function(S) {
     len <- p$n_groups * n_vacc_classes
     Sw <- S * c(p$rel_susceptibility)
@@ -259,6 +282,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
+##' @param R A 3d ((n groups x n strains x n vaccine classes) x
+##'   n trajectories x n steps) array of "R" compartment counts, required for
+##'   multi-strain models.
+##'
 ##' @inheritParams carehomes_Rt
 ##'
 ##' @return As for [carehomes_Rt()], except that every element is a
@@ -272,7 +299,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       interpolate_every = NULL,
                                       interpolate_critical_dates = NULL,
                                       interpolate_min = NULL,
-                                      eigen_method = "power_iteration") {
+                                      eigen_method = "power_iteration",
+                                      R = NULL) {
   calculate_Rt_trajectories(
     calculate_Rt = carehomes_Rt, step = step,
     S = S, pars = pars,
@@ -283,7 +311,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
     interpolate_every = interpolate_every,
     interpolate_critical_dates = interpolate_critical_dates,
     interpolate_min = interpolate_min,
-    eigen_method = eigen_method)
+    eigen_method = eigen_method,
+    R = R)
 }
 
 
@@ -433,9 +462,13 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
 ## carehomes-specific file until we do add a new model or port it.
 calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
-                                      shared_parameters, type, ...) {
+                                      shared_parameters, type, R = NULL, ...) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
+  }
+
+  if (!is.null(R) && length(dim(R)) != 3) {
+    stop("Expected a 3d array of 'R'")
   }
 
   shared_parameters <- shared_parameters %||% !is.null(names(pars))
@@ -461,6 +494,12 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
       length(step)))
   }
 
+  if (!is.null(R) && any(dim(R)[2:3] != dim(S)[2:3])) {
+    stop(sprintf(
+      "Expected 2nd and 3rd dimension of 'R' to be the same as 'S' (%d x %d)'",
+      ncol(S), dim(S)[[3]]))
+  }
+
   if (!is.null(prob_strain)) {
     if (length(dim(prob_strain)) != 3) {
       stop("Expected a 3d array of 'prob_strain'")
@@ -482,10 +521,11 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
       step[[1L]] <- pars[[i]]$initial_step
     }
     if (is.null(prob_strain)) {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], type = type, ...)
+      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], type = type,
+                           R = R[, i, ], ...)
     } else {
       rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ],
-                           type = type, ...)
+                           type = type, R = R[, i, ], ...)
     }
     rt_1
   }

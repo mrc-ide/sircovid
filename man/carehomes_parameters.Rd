@@ -107,9 +107,10 @@ residents or workers}
 \item{p_NC}{Proportion of population who do not have
 covid but have covid-like symptoms}
 
-\item{strain_transmission}{Vector of relative transmissibility of each
-strain modelled. First element should be 1. Length will define the
-number of strains used in the model}
+\item{strain_transmission}{Vector of length two for relative
+transmissibility of each strain modelled. First element should be 1.
+Length will define the number of strains used in the model, either 1 or
+2.}
 
 \item{strain_seed_date}{Either \code{NULL} (no seeding) or a vector of
 \link{sircovid_date} values corresponding to

@@ -485,6 +485,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -493,34 +494,61 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
+  ## Check carehomes_Rt R
   expect_error(
     carehomes_Rt(steps, S[, 1, ], p),
+    "Expected R input because there is more than one strain")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[-1, 1, ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, -1]),
+    "Expected 'R' to have 85 columns")
+
+  ## Check carehomes_Rt prob_strain
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ]),
     "Expected prob_strain input because there is more than one strain")
   expect_error(
-    carehomes_Rt(steps, S[, 1, ], p, prob_strain[-1, 1, ]),
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[-1, 1, ], R = R[, 1, ]),
       "Expected 'prob_strain' to have 38 rows = 19 groups x 2 strains")
   expect_error(
-    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1]),
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1], R = R[, 1, ]),
     "Expected 'prob_strain' to have 85 columns, following 'step'")
 
+  ## Check carehomes_Rt_trajectories R
   expect_error(
     carehomes_Rt_trajectories(steps, S, p),
+    "Expected R input because there is more than one strain")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[1, , ], R = R[1, , ]),
+    "Expected a 3d array of 'R'")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R[-1, , ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R[, -1, ]),
+    "Expected 2nd and 3rd")
+
+  ## Check carehomes_Rt_trajectories prob_strain
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, R = R),
     "Expected prob_strain input because there is more than one strain")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[1, , ]),
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[1, , ], R = R),
     "Expected a 3d array of 'prob_strain'")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[-1, , ]),
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[-1, , ], R = R),
     "Expected 'prob_strain' to have 38 rows = 19 groups x 2 strains")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[, -1, ]),
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[, -1, ], R = R),
     "Expected 2nd dim of 'prob_strain' to have length 3, following 'pars'")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[, , -1]),
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[, , -1], R = R),
     "Expected 3rd dim of 'prob_strain' to have length 85, following 'step'")
-
 })
 
 

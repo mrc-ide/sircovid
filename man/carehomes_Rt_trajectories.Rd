@@ -15,7 +15,8 @@ carehomes_Rt_trajectories(
   interpolate_every = NULL,
   interpolate_critical_dates = NULL,
   interpolate_min = NULL,
-  eigen_method = "power_iteration"
+  eigen_method = "power_iteration",
+  R = NULL
 )
 }
 \arguments{
@@ -67,6 +68,10 @@ interpolation and that will not work with fewer than 3 points.}
 
 \item{eigen_method}{The eigenvalue method to use (passed to
 \link[eigen1:eigen1]{eigen1::eigen1} as \code{method})}
+
+\item{R}{A 3d ((n groups x n strains x n vaccine classes) x
+n trajectories x n steps) array of "R" compartment counts, required for
+multi-strain models.}
 }
 \value{
 As for \code{\link[=carehomes_Rt]{carehomes_Rt()}}, except that every element is a
