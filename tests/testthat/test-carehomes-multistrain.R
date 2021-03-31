@@ -611,8 +611,20 @@ test_that("Can calculate Rt with an empty second variant ", {
 
   nms <- names(rt_1)
   for (nm in nms) {
-    expect_equal(drop(rt_1[[nm]]), rt_1_single_class[[nm]])
-    expect_equal(drop(rt_all[[nm]]), rt_all_single_class[[nm]])
+    if (nm %in% nms[4:7]) {
+      x <- average_multistrain_Rt(rt_1[[nm]], prob_strain,
+                                  p$rel_susceptibility[, 1])
+      y <- rt_1_single_class[[nm]][, 1]
+      expect_equal(x, y)
+
+      x <- average_multistrain_Rt(rt_all[[nm]], prob_strain,
+                                  p$rel_susceptibility[, 1])
+      y <- rt_all_single_class[[nm]][, 1]
+      expect_equal(x, y)
+    } else {
+      expect_equal(drop(rt_1[[nm]]), rt_1_single_class[[nm]])
+      expect_equal(drop(rt_all[[nm]]), rt_all_single_class[[nm]])
+    }
   }
 })
 
