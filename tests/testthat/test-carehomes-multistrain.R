@@ -1612,6 +1612,127 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   expect_true(all(y$G_D[, 3, , , , ] == 0))
 })
 
-## Test: Can't move from S to E3/4
-## Test: Can only move from R2 to E4 and R1 to E3
-## Test: Can only move from R3/4 to S
+
+test_that("Can't move from S to E3/4", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+  expect_true(any(y$E[, 1, , , , 2] > 0))
+  expect_true(any(y$E[, 2, , , , 2] > 0))
+  expect_true(all(y$E[, 3:4, , , , 2] == 0))
+})
+
+test_that("Everyone in R1 or R3 when strain_transmission = c(1, 0)", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 0),
+                            strain_seed_rate = c(10, 0),
+                            beta_value = 1e100,
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  expect_true(all(y$S[, , , 85] == 0))
+  expect_true(all(y$R[, 2:3, , , 85] == 0))
+  expect_false(all(y$R[, 1, , , 85] == 0))
+  expect_false(all(y$R[, 4, , , 85] == 0))
+})
+
+test_that("Can only move from R3 and R4 to S", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            initial_I = 0,
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            waning_rate = 1 / 5,
+                            model_pcr_and_serology = 0,
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
+  ## Prevent anyone leaving S
+  p$rel_susceptibility[] <- 0
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+
+  initial <- carehomes_initial(info, np, p)
+  y0 <- initial$state
+  ## Empty R1 and R2
+  y0[info$index$R][1:38] <- 0
+  ## Fill R3 and R4
+  y0[info$index$R][39:76] <- 1e3
+
+  mod$set_state(y0)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  diff_S <- y$S[-4, , , 2] - y$S[-4, , , 1]
+  diff_R <- y$R[-4, 3:4, , , 1] - y$R[-4, 3:4, , , 2]
+  diff_R <- apply(diff_R, c(1, 3), sum)
+  expect_equal(diff_R, diff_S)
+  expect_true(all(y$E[-4, , , , , ] == 0))
+})
+
+
+test_that("Can only move from R2 to E4 and R1 to E3 when waning_rate = 0", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(100, 0),
+                            waning_rate = 0,
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")))
+
+  p$gamma_A[] <- 0
+  p$gamma_C_2[] <- 0
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+
+  initial <- carehomes_initial(info, np, p)
+  y0 <- initial$state
+  ## Fill R1 and R2
+  y0[info$index$R][1:38] <- 1e3
+
+  mod$set_state(y0)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  R1 <- y$R[-4, 1, , , ]
+  E3 <- y$E[-4, 3, , , , ]
+  E3 <- apply(E3, c(1, 3, 4), sum)
+
+  ## FIXME, below seems to imply losing people from R1 without appearing in
+  ##  E3 - can't go anywhere else as waning_rate = 0
+  R1[11, , 39] - R1[11, , 40]
+  E3[11, , 39] - E3[11, , 40]
+})
