@@ -12,8 +12,10 @@ all time steps, or a vector of times that will be used as change
 points. Must be provided as a \code{\link[=sircovid_date]{sircovid_date()}}, i.e., days into
 2020.}
 
-\item{value}{A vector of values to use for beta - either a scalar
-(if \code{date} is \code{NULL}) or a vector the same length as \code{date}.}
+\item{value}{Either a vector of values to use for beta - either a scalar
+(if \code{date} is \code{NULL}) or a vector the same length as \code{date}. Or a matrix
+with number of rows equal to length of \code{date} and number of columns equal
+to number of strains.}
 
 \item{dt}{The timestep that will be used in the simulation. This
 must be of the form \code{1 / n} where \code{n} is an integer representing

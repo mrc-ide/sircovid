@@ -166,7 +166,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   expect_identical(p[names(shared)], shared)
 
-  severity <- carehomes_parameters_severity(NULL, 0.7)
+  severity <- scale_severity(carehomes_parameters_severity(NULL, 0.7), 1)
   expect_identical(p[names(severity)], severity)
 
   observation <- carehomes_parameters_observation(1e6)

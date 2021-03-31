@@ -125,11 +125,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
-<<<<<<< HEAD
-  mean_duration_by_strain <-
-    carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
-=======
->>>>>>> origin/master
 
   ages <- seq_len(p$n_age_groups)
   ch <- seq(p$n_age_groups + 1L, p$n_groups)
@@ -169,24 +164,9 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     return(ret)
   }
 
-<<<<<<< HEAD
-  if (n_strains > 1L) {
-    browser()
-    ## TODO: make sure this returns an array where the strain dimension has been removed / basically integrated over
-    weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
-      matrix(prob_strain_mat[, , t] %*% p$strain_transmission,
-             p$n_groups, n_vacc_classes),
-      matrix(0, p$n_groups, n_vacc_classes))
-    mean_duration <- mean_duration * weighted_strain_multiplier
-  } else
-  {
-    mean_duration <- mean_duration_by_strain[, 1, , ]
-  }
-=======
   mean_duration <-
     carehomes_Rt_mean_duration_weighted_by_infectivity(step, p,
                                                        prob_strain_mat)
->>>>>>> origin/master
 
   compute_ngm <- function(S) {
     browser()
@@ -305,17 +285,22 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 }
 
 
-<<<<<<< HEAD
-carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
-
-=======
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
                                                                strain_mat) {
->>>>>>> origin/master
   dt <- pars$dt
 
   matricise <- function(vect, n_col) {
     matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
+  }
+  matricise_combine_pD <- function(p_step, psi) {
+    apply(
+      vapply(seq(ncol(p_step)), function(i) {
+        y <- outer(psi[, i], sircovid_parameters_beta_expand(step, p_step[, i]))
+        y <- y * strain_mat[, i, ]
+        y <- aperm(outer(y, rep(1, n_vacc_classes)), c(1, 3, 2))
+        y
+      }, array(0, c(nrow(strain_mat), n_vacc_classes, length(step)))),
+      c(1, 2, 3), sum)
   }
 
   make_3darray <- function(vect, dim2, dim3) {
@@ -331,8 +316,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
     length(sircovid_parameters_beta_expand(step, pars$p_H_step))
 
   ## compute probabilities of different pathways
-
-  p_C <- make_3darray(pars$p_C, n_strains, n_vacc_classes) * pars$rel_p_sympt
+  p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
   p_C <- outer(p_C, rep(1, n_time_steps))
 
   p_H <- make_3darray(pars$psi_H, n_strains, n_vacc_classes) *
@@ -341,14 +325,11 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
 
   p_ICU <- outer(make_3darray(pars$psi_ICU, n_strains, n_vacc_classes),
                  sircovid_parameters_beta_expand(step, pars$p_ICU_step))
-  p_ICU_D <- outer(make_3darray(pars$psi_ICU_D, n_strains, n_vacc_classes),
-                   sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
-  p_H_D <- outer(make_3darray(pars$psi_H_D, n_strains, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_H_D_step))
-  p_W_D <- outer(make_3darray(pars$psi_W_D, n_strains, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_W_D_step))
-  p_G_D <- outer(make_3darray(pars$psi_G_D, n_strains, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_G_D_step))
+
+  p_ICU_D <- matricise_combine_pD(pars$p_ICU_D_step, pars$psi_ICU_D)
+  p_H_D <- matricise_combine_pD(pars$p_H_D_step, pars$psi_H_D)
+  p_W_D <- matricise_combine_pD(pars$p_W_D_step, pars$psi_W_D)
+  p_G_D <- matricise_combine_pD(pars$p_G_D_step, pars$psi_G_D)
 
   prob_H_R <- p_C * p_H * (1 - p_G_D) *
     (1 - p_ICU) * (1 - p_H_D)

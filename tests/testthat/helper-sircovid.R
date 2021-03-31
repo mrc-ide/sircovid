@@ -106,3 +106,23 @@ skip_unless_ci <- function() {
   }
   testthat::skip("Not on CI")
 }
+
+
+create_old_info <- function(info, drop) {
+  info_old <- info
+  i <- c(sample(which(lengths(info$index) == 1)),
+         sample(which(lengths(info$index) > 1)))
+  info_old$index <- info$index[i]
+  info_old$index <- info_old$index[setdiff(names(info_old$index), drop)]
+  info_old$dim <- info_old$dim[names(info_old$index)]
+
+  at <- 0L
+  for (i in seq_along(info_old$index)) {
+    n <- length(info_old$index[[i]])
+    info_old$index[[i]] <- seq_len(n) + at
+    at <- at + n
+  }
+  info_old$len <- at
+
+  info_old
+}

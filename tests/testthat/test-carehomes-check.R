@@ -215,7 +215,7 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_H_step <- 1
   p$psi_H[] <- 1
-  p$p_G_D_step <- 1
+  p$p_G_D_step <- matrix(1)
   p$psi_G_D[] <- 1
   p$p_C[] <- 1
 
@@ -259,7 +259,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_H_step <- 1
   p$psi_H[] <- 1
-  p$p_G_D_step <- 1
+  p$p_G_D_step <- matrix(1)
   p$psi_G_D[] <- 1
   p$p_C[] <- 1
 
@@ -331,14 +331,14 @@ test_that("forcing hospital route results in correct path", {
     p$p_ICU_step <- ifelse(is.null(prob_ICU),
                                     p$p_ICU_step, 1)
     p$psi_ICU[] <- prob_ICU %||% p$psi_ICU[]
-    p$p_H_D_step <- ifelse(is.null(prob_H_D),
-                                 p$p_H_D_step, 1)
+    p$p_H_D_step <- matrix(ifelse(is.null(prob_H_D),
+                                 p$p_H_D_step, 1))
     p$psi_H_D[] <- prob_H_D %||% p$psi_H_D[]
-    p$p_ICU_D_step <- ifelse(is.null(prob_ICU_D),
-                                 p$p_ICU_D_step, 1)
+    p$p_ICU_D_step <- matrix(ifelse(is.null(prob_ICU_D),
+                                 p$p_ICU_D_step, 1))
     p$psi_ICU_D[] <- prob_ICU_D %||% p$psi_ICU_D[]
-    p$p_W_D_step <- ifelse(is.null(prob_W_D),
-                                 p$p_W_D_step, 1)
+    p$p_W_D_step <- matrix(ifelse(is.null(prob_W_D),
+                                 p$p_W_D_step, 1))
     p$psi_W_D[] <- prob_W_D %||% p$psi_W_D[]
 
     mod <- carehomes$new(p, 0, 1, seed = 1L)
@@ -952,4 +952,25 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D_step")
   helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
   helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
+})
+
+
+test_that("No one is hospitalised, no-one recovers in edge case", {
+  p <- carehomes_parameters(0, "england")
+  p$p_G_D_step[] <- 0
+  p$psi_G_D[] <- 0
+  p$p_G_D[] <- 0
+
+  mod <- carehomes$new(p, 0, 1)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_G_D <- mod$info()$index$G_D
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(y[index_G_D, , ] == 0))
 })
