@@ -2120,15 +2120,15 @@ test_that("Can vaccinate given a schedule", {
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
-                            waning_rate = 1 / 20
-                            )
+                            waning_rate = 1 / 20,
+                            vaccine_catchup_fraction = 0)
   p$index_dose <- c(1L, 2L)
   end_date <- sircovid_date("2020-06-01")
 
   start_vacc_date_1 <- sircovid_date("2020-03-01")
   delay_vacc_date_2 <- 28
   ndays_vacc <- 31
-  i <- seq(start_vacc_date_1 * 4, length.out = ndays_vacc * 4)
+  i <- seq((start_vacc_date_1 - 1) * 4 + 1, length.out = ndays_vacc * 4)
   m <- array(0, c(19, 2, (end_date + 1) * 4))
   step_doses_1 <- 10000
   step_doses_2 <- 2000
@@ -2149,7 +2149,7 @@ test_that("Can vaccinate given a schedule", {
   n_vacc_fisrt_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
 
   ## check no vaccination before wanted date
-  days_vacc_1 <- seq(start_vacc_date_1 + 1, start_vacc_date_1 + ndays_vacc)
+  days_vacc_1 <- seq(start_vacc_date_1, start_vacc_date_1 + ndays_vacc - 1)
   expect_true(
     all(n_vacc_fisrt_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
 
@@ -2157,7 +2157,8 @@ test_that("Can vaccinate given a schedule", {
   ## (which are small and therefore get vaccinated faster)
   ## we get the right number of vaccinations per day in the wanted interval
   x <- n_vacc_fisrt_dose[days_vacc_1, - (18:19)]
-  expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)))
+  expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)),
+                      rel_tol = 0.1)
 
   ## check that no vaccination after wanted date
   ## we get the right number of vaccinations per day in the wanted interval
@@ -2168,8 +2169,8 @@ test_that("Can vaccinate given a schedule", {
   n_vacc_second_dose <- apply(y$cum_n_vaccinated[, 2, 1, ], 1, diff)
 
   ## check no vaccination before wanted date
-  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2 + 1,
-                     start_vacc_date_1 + delay_vacc_date_2 + ndays_vacc)
+  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2,
+                     start_vacc_date_1 + delay_vacc_date_2 + ndays_vacc - 1)
   expect_true(
     all(n_vacc_second_dose[seq_len(days_vacc_2[1] - 1), ] == 0))
 
