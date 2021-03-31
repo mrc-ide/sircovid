@@ -717,6 +717,247 @@ test_that("Can calculate Rt with a second more infectious variant", {
 })
 
 
+test_that("Can calculate Rt with a second less letal variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = c(1, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0))
+
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+
+  ## Run model with one strain only
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+
+  ## Rt should be higher (or equal) for the two variant version
+  ## because less letal --> more people recover and they have longer
+  ## duration of infection
+  ## added the 0.001 as seems to be rounding error issues
+  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
+  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
+  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
+  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+})
+
+
+test_that("Can calculate Rt with a second variant with longer I_A", {
+  ## Seed with 10 cases on same day as other variant
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_A = c(1, 0.1),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0))
+
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+
+  ## Run model with one strain only
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+
+  ## Rt should be higher (or equal) for the two variant version
+  ## because longer duration of infection (for asymptomatics)
+  ## added the 0.001 as seems to be rounding error issues
+  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
+  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
+  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
+  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+})
+
+
+test_that("Can calculate Rt with a second variant with longer I_P", {
+  ## Seed with 10 cases on same day as other variant
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_P = c(1, 0.1),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0))
+
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+
+  ## Run model with one strain only
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+
+  ## Rt should be higher (or equal) for the two variant version
+  ## because longer duration of infection (for presymptomatics)
+  ## added the 0.001 as seems to be rounding error issues
+  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
+  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
+  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
+  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+})
+
+
+test_that("Can calculate Rt with a second variant with longer I_C_1", {
+  ## Seed with 10 cases on same day as other variant
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_gamma_C_1 = c(1, 0.1),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0))
+
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+
+  ## Run model with one strain only
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+
+  ## Rt should be higher (or equal) for the two variant version
+  ## because longer duration of infection (for I_C_1)
+  ## added the 0.001 as seems to be rounding error issues
+  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
+  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
+  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
+  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+})
+
+
 test_that("If prob_strain is NA then Rt is NA ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
@@ -1316,8 +1557,6 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
                             strain_seed_rate = c(10, 0),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")))
-  p$psi_G_D[, 1] <- 1
-  p$psi_G_D[, 2] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
