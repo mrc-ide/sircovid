@@ -141,15 +141,18 @@ test_that("Seeding of second strain generates an epidemic", {
   s_date_seeding <- sircovid_date(date_seeding)
 
   ## No cases before seeding
-  expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
+  expect_true(all(y$E[, 2:4, , , s_date < s_date_seeding] == 0))
   ## No cases on seeding day other than in 4th age group
-  expect_true(all(y$E[-4, 2, , , s_date == s_date_seeding] == 0))
+  expect_true(all(y$E[-4, 2:4, , , s_date == s_date_seeding] == 0))
   ## Some cases on seeding day in 4th age group
-  expect_true(y$E[4, 2, 1, , s_date == s_date_seeding] > 0)
+  expect_true(y$E[4, 2, 1,, s_date == s_date_seeding] > 0)
+  ## No seeding into strains 3 and 4
+  expect_true(all(y$E[4, 3:4, 1, , s_date == s_date_seeding] == 0))
   ## Some cases on all days after seeding day
 
   ## It's not guaranteed that *all* will be greater than zero, but most will be
-  expect_true(mean(colSums(y$E[, 2, 1, , s_date >= s_date_seeding]) > 0) > 0.9)
+  ## Tolerance decreased to 0.85 to account for time to get to 3 and 4
+  expect_true(mean(colSums(y$E[, 2:4, 1, , s_date >= s_date_seeding]) > 0) > 0.85)
 })
 
 
@@ -173,8 +176,8 @@ test_that("Second more virulent strain takes over", {
 
   ## cumulative infections with 2nd strain larger than with 1st strain
   ## (average over 10 runs)
-  expect_true(mean(y$cum_infections_per_strain[1, , 101]) <
-                mean(y$cum_infections_per_strain[2, , 101]))
+  expect_true(mean(y$cum_infections_per_strain[c(1, 3), , 101]) <
+                mean(y$cum_infections_per_strain[c(2, 4), , 101]))
 })
 
 
@@ -197,8 +200,8 @@ test_that("Second less virulent strain does not take over", {
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Cumulative infections with 2nd strain smaller than with 1st strain
   ## (average over 10 runs)
-  expect_true(mean(y$cum_infections_per_strain[1, , 101]) >
-                mean(y$cum_infections_per_strain[2, , 101]))
+  expect_true(mean(y$cum_infections_per_strain[c(1, 3), , 101]) >
+                mean(y$cum_infections_per_strain[c(2, 4), , 101]))
 
 })
 
@@ -296,6 +299,8 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   ## Expect the seeded cases did not infect any other people
   expect_true(y$cum_infections_per_strain[2, 101] <= max(pois_range))
   expect_true(y$cum_infections_per_strain[2, 101] >= min(pois_range))
+  expect_true(y$cum_infections_per_strain[4, 101] <= max(pois_range))
+  expect_true(y$cum_infections_per_strain[4, 101] >= min(pois_range))
 })
 
 
@@ -1603,3 +1608,7 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   expect_true(all(y$G_D[, 2, , , , ] == 0))
   expect_true(all(y$G_D[, 3, , , , ] == 0))
 })
+
+## Test: Can't move from S to E3/4
+## Test: Can only move from R2 to E4 and R1 to E3
+## Test: Can only move from R3/4 to S
