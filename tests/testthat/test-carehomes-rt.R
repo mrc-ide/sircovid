@@ -33,7 +33,7 @@ test_that("Can calculate Rt", {
 
   expect_equal(names(res), names(res_all))
   for (nm in names(res)) {
-    expect_equal(res[[nm]], res_all[[nm]][, 1, drop = TRUE])
+    expect_equal(drop(res[[nm]]), res_all[[nm]][, 1, drop = TRUE])
   }
 
   ## Date is returned

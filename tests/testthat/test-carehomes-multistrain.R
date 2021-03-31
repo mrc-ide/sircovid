@@ -559,11 +559,14 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
 })
 
 
+## FIXME: This test now fails because we return multiple Rt numbers and
+##  don't weight by prob strain.
+##  It will pass if we weight average by prob_strain.
 test_that("Can calculate Rt with an empty second variant ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1))
+                            strain_transmission = c(1, 0))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -606,8 +609,11 @@ test_that("Can calculate Rt with an empty second variant ", {
   rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
   rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
-  expect_equal(rt_1, rt_1_single_class)
-  expect_equal(rt_all, rt_all_single_class)
+  nms <- names(rt_1)
+  for (nm in nms) {
+    expect_equal(drop(rt_1[[nm]]), rt_1_single_class[[nm]])
+    expect_equal(drop(rt_all[[nm]]), rt_all_single_class[[nm]])
+  }
 })
 
 
