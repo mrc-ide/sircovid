@@ -3888,10 +3888,6 @@ public:
     }
     state_next[1] = (fmodr<real_t>(step, shared->steps_per_day) == 0 ? delta_admit_conf : admit_conf_inc + delta_admit_conf);
     state_next[4] = cum_admit_conf + delta_admit_conf;
-    state_next[3] = cum_infections + odin_sum1<real_t>(internal.n_S_progress.data(), 0, shared->dim_n_S_progress) + odin_sum1<real_t>(internal.n_RS_same_vacc_class.data(), 0, shared->dim_n_RS_same_vacc_class) + odin_sum1<real_t>(internal.n_RS_next_vacc_class.data(), 0, shared->dim_n_RS_next_vacc_class);
-    for (int i = 1; i <= shared->dim_cum_infections_per_strain; ++i) {
-      state_next[27 + i - 1] = cum_infections_per_strain[i - 1] + odin_sum3<real_t>(internal.n_S_progress.data(), 0, shared->dim_n_S_progress_1, i - 1, i, 0, shared->dim_n_S_progress_3, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12) + odin_sum3<real_t>(internal.n_RS_same_vacc_class.data(), 0, shared->dim_n_RS_same_vacc_class_1, i - 1, i, 0, shared->dim_n_RS_same_vacc_class_3, shared->dim_n_RS_same_vacc_class_1, shared->dim_n_RS_same_vacc_class_12) + odin_sum3<real_t>(internal.n_RS_next_vacc_class.data(), 0, shared->dim_n_RS_next_vacc_class_1, i - 1, i, 0, shared->dim_n_RS_next_vacc_class_3, shared->dim_n_RS_next_vacc_class_1, shared->dim_n_RS_next_vacc_class_12);
-    }
     state_next[20] = cum_sympt_cases + new_sympt_cases;
     state_next[22] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
     state_next[21] = cum_sympt_cases_over25 + new_sympt_cases_over25;
@@ -3953,6 +3949,10 @@ public:
       for (int j = 1; j <= shared->dim_S_2; ++j) {
         state_next[shared->offset_variable_S + i - 1 + shared->dim_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1];
       }
+    }
+    state_next[3] = cum_infections + odin_sum1<real_t>(internal.n_S_progress.data(), 0, shared->dim_n_S_progress) + odin_sum1<real_t>(internal.n_RE_same_vacc_class.data(), 0, shared->dim_n_RE_same_vacc_class) + odin_sum1<real_t>(internal.n_RE_next_vacc_class.data(), 0, shared->dim_n_RE_next_vacc_class);
+    for (int i = 1; i <= shared->dim_cum_infections_per_strain; ++i) {
+      state_next[27 + i - 1] = cum_infections_per_strain[i - 1] + odin_sum3<real_t>(internal.n_S_progress.data(), 0, shared->dim_n_S_progress_1, i - 1, i, 0, shared->dim_n_S_progress_3, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12) + odin_sum3<real_t>(internal.n_RE_same_vacc_class.data(), 0, shared->dim_n_RE_same_vacc_class_1, i - 1, i, 0, shared->dim_n_RE_same_vacc_class_3, shared->dim_n_RE_same_vacc_class_1, shared->dim_n_RE_same_vacc_class_12) + odin_sum3<real_t>(internal.n_RE_next_vacc_class.data(), 0, shared->dim_n_RE_next_vacc_class_1, i - 1, i, 0, shared->dim_n_RE_next_vacc_class_3, shared->dim_n_RE_next_vacc_class_1, shared->dim_n_RE_next_vacc_class_12);
     }
     state_next[10] = new_general_tot;
     state_next[11] = new_ICU_tot + new_general_tot;

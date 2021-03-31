@@ -132,7 +132,7 @@ test_that("Seeding of second strain generates an epidemic", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
-  expect_true(y$cum_infections_per_strain[2, 101] > n_seeded_new_strain_inf)
+  expect_true(all(y$cum_infections_per_strain[, 101] > n_seeded_new_strain_inf))
 
   ## Check the epidemic of the second strain starts when we expect
   steps <- seq(0, 400, by = 4)
@@ -232,6 +232,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain", {
   expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
 })
 
+
 test_that("prob_strain sums to 1", {
   np <- 3L
   n_seeded_new_strain_inf <- 100
@@ -328,7 +329,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   s_date <- sircovid_date(date)
   s_date_seeding <- sircovid_date(date_seeding[[1]])
   ## No cases before seeding
-  expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
+  expect_true(all(y$E[, 2:4, , , s_date < s_date_seeding] == 0))
 
   ## The +2 is because we need seeded individuals to get out of the first and
   ## second E compartments before they can go on to infect others
@@ -370,6 +371,7 @@ test_that("No infection with either strain with perfect vaccine", {
 
   ## Noone gets infected with either strain
   expect_true(all(y$cum_infections_per_strain == 0))
+  expect_true(all(y$cum_infections == 0))
 })
 
 
@@ -1364,21 +1366,24 @@ test_that("Stuck when gamma =  0 for second strain", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
 
+  strain_1 <- c(1:19, 58:76)
+  strain_2 <- c(20:38, 39:57)
+
   index_I_A <- mod$info()$index$I_A
-  index_I_A_strain_2 <- index_I_A[20:38]
-  index_I_A_strain_1 <- index_I_A[1:19]
+  index_I_A_strain_2 <- index_I_A[strain_2]
+  index_I_A_strain_1 <- index_I_A[strain_1]
   index_R <- mod$info()$index$R
-  index_R_strain_2 <- index_R[20:38]
-  index_R_strain_1 <- index_R[1:19]
+  index_R_strain_2 <- index_R[strain_2]
+  index_R_strain_1 <- index_R[strain_1]
   index_I_P <- mod$info()$index$I_P
-  index_I_P_strain_1 <- index_I_P[1:19]
-  index_I_P_strain_2 <- index_I_P[20:38]
+  index_I_P_strain_1 <- index_I_P[strain_1]
+  index_I_P_strain_2 <- index_I_P[strain_2]
   index_I_C_1 <- mod$info()$index$I_C_1
-  index_I_C_1_strain_1 <- index_I_C_1[1:19]
-  index_I_C_1_strain_2 <- index_I_C_1[20:38]
+  index_I_C_1_strain_1 <- index_I_C_1[strain_1]
+  index_I_C_1_strain_2 <- index_I_C_1[strain_2]
   index_I_C_2 <- mod$info()$index$I_C_2
-  index_I_C_2_strain_1 <- index_I_C_2[1:19]
-  index_I_C_2_strain_2 <- index_I_C_2[20:38]
+  index_I_C_2_strain_1 <- index_I_C_2[strain_1]
+  index_I_C_2_strain_2 <- index_I_C_2[strain_2]
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -1436,6 +1441,7 @@ test_that("Stuck when gamma =  0 for second strain", {
   expect_false(all(unlist(y[index_I_C_2_strain_2, , ]) == 0))
 })
 
+
 test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
@@ -1481,6 +1487,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   expect_true(all(y$R == 0))
   expect_true(all(y$D_hosp == 0))
 })
+
 
 test_that("carehomes_parameters_severity works as expected", {
   severity <- carehomes_parameters_severity(NULL, 0.7)
@@ -1576,6 +1583,7 @@ test_that("G_D empty when p_G_D = 0", {
   expect_true(all(y[mod$info()$index$G_D, , ] == 0))
 })
 
+
 test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   np <- 3L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1589,11 +1597,6 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
 
   initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
-  index_G_D <- mod$info()$index$G_D
-  index_G_D_strain_1 <- index_G_D[c(1:19, 39:57)]
-  index_G_D_strain_2 <- index_G_D[c(20:38, 58:76)]
-  index_G_D_strain_3 <- index_G_D[c(20:38, 58:76)]
-  index_G_D_strain_4 <- index_G_D[c(20:38, 58:76)]
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)

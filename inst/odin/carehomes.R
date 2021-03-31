@@ -480,12 +480,12 @@ n_T_PCR_pos_progress[, , , ] <-
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
 update(cum_infections) <- cum_infections + sum(n_S_progress) +
-  sum(n_RS_same_vacc_class) +  sum(n_RS_next_vacc_class)
+  sum(n_RE_same_vacc_class) +  sum(n_RE_next_vacc_class)
 
 initial(cum_infections_per_strain[]) <- 0
 update(cum_infections_per_strain[]) <-
   cum_infections_per_strain[i] + sum(n_S_progress[, i, ]) +
-  sum(n_RS_same_vacc_class[, i, ]) +  sum(n_RS_next_vacc_class[, i, ])
+  sum(n_RE_same_vacc_class[, i, ]) +  sum(n_RE_next_vacc_class[, i, ])
 dim(cum_infections_per_strain) <- n_strains
 
 ## Work out the new S (i for age, j for vaccination status)
