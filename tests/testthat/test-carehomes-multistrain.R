@@ -574,12 +574,12 @@ test_that("Can calculate Rt with an empty second variant ", {
 
 test_that("Can calculate Rt with a second less infectious variant", {
   ## seed with 10 cases on same day as other variant
-
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0.1),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            strain_rel_severity = c(1, 0.8))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)

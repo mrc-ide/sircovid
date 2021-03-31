@@ -104,6 +104,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       prob_strain <- array(1, c(p$n_groups, length(step)))
     }
   } else {
+    ## Remove pseudo-strain transmissions
+    if (length(p$strain_transmission) == 4) {
+      p$strain_transmission <- unmirror(p$strain_transmission)
+    }
     if (nrow(prob_strain) != length(p$strain_transmission) * p$n_groups) {
       stop(sprintf(
         "Expected 'prob_strain' to have %d rows = %d groups x %d strains",
@@ -285,6 +289,15 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
                                                                strain_mat) {
+
+  ## unmirror pseudo-strains value (with safety checks)
+  which <-
+   vapply(pars,
+          function(x) (length(x) == 4 && identical(x[1:2], x[4:3])) ||
+                      (inherits(x, c("matrix", "array")) && ncol(x) == 4 &&
+                       identical(x[, 1:2], x[, 4:3])), logical(1))
+  pars[which] <- lapply(pars[which], unmirror)
+
   dt <- pars$dt
 
   matricise <- function(vect, n_col) {
@@ -347,7 +360,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars,
   n_groups <- dims[1L]
   n_vax <- dims[2L]
   n_time_steps <- dims[3L]
-  n_strains <- dims[4L]
+  n_strains <- length(pars$strain_transmission)
 
   denom <- function(x) array(rep(1 - exp(-dt * x), each = prod(dims[1:3])),
                              dims)
