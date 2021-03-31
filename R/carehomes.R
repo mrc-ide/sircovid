@@ -367,8 +367,8 @@ carehomes_parameters <- function(start_date, region,
   ## implementation of severity parameters
   ## probability of symptomatic individual requiring hospital treatment
 
-  get_psi <- function(p){
-    if(all(p == 0)) {
+  get_psi <- function(p) {
+    if (all(p == 0)) {
       res <- p
     } else {
       res <- p / max(p)
