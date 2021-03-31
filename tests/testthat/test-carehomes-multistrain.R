@@ -1243,8 +1243,6 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
                             strain_seed_rate = c(10, 0),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")))
-  p$psi_G_D[, 1] <- 1
-  p$psi_G_D[, 2] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
