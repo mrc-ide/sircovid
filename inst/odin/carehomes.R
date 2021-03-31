@@ -295,7 +295,7 @@ strain_seed <- rpois(strain_rate)
 n_S_progress[4, 2:n_strains, 1] <-
   if (j < 3) min(n_S_progress[i, j, k] + strain_seed,
                  n_S_progress[i, j, k] + S[i, k] -
-                   sum(n_S_progress[i,, k])) else 0
+                   sum(n_S_progress[i, , k])) else 0
 
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[k] to E[k+1] (k vaccination class)
@@ -373,8 +373,8 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
 ##  R2 can progress tp E4 (w.p. lambda[i, 1], dep. on prob. strain 1)
 ## R3 and R4 can progress to S only (w.p. waning_rate[i])
 p_R_progress[, ] <- if (n_strains == 1) 1 - exp(-waning_rate[i] * dt) else
-  (if (j == 1) 1 - exp(-(waning_rate[i] + lambda[i, 2]) * dt) else
-    (if (j == 2) 1 - exp(-(waning_rate[i] + lambda[i, 1]) * dt) else
+  (if (j == 1) 1 - exp(- (waning_rate[i] + lambda[i, 2]) * dt) else
+    (if (j == 2) 1 - exp(- (waning_rate[i] + lambda[i, 1]) * dt) else
     (1 - exp(-waning_rate[i] * dt))))
 
 ## Total number who can possibly progress
@@ -407,10 +407,10 @@ n_RS[, , ] <- if (n_strains == 1) n_R_progress[i, j, k] else
 
 ## Numbers going from R to E
 ##   R -> E1 and E2 are always zero
-##   n_R1E3 = Number leaving R1 and not going to S;
-##     n_R2E3 = n_R3E3 = n_R4E3 = 0;
-##   n_R2E4 = Number leaving R2 and not going to S;
-##     n_R2E4 >= 0; n_R1E4 = n_R3E4 = n_R4E4 = 0;
+##   nR1E3 are Number leaving R1 and not going to S;
+##     nR2E3 eq nR3E3 eq n_R4E3 eq 0;
+##   nR2E4 is Number leaving R2 and not going to S;
+##     nR2E4 gt 0; nR1E4 eq n_R3E4 eq n_R4E4 eq 0;
 ## Total possible to E3 and E4 are from R1 and R2 respectively
 n_RE[, , ] <- if (j < 3) 0 else
   n_R_progress[i, j - 2, k] - n_RS[i, j - 2, k]
@@ -424,10 +424,10 @@ n_RS_same_vacc_class[, , ] <- n_RS[i, j, k] - n_RS_next_vacc_class[i, j, k]
 ## 2) R -> E vaccine progression
 n_RE_next_vacc_class[, , ] <- if (n_vacc_classes == 1) 0 else
   rbinom(n_RE[i, j, k], p_R_next_vacc_class[i, j, k])
-n_RE_same_vacc_class[, ,] <- n_RE[i, j, k] - n_RE_next_vacc_class[i, j, k]
+n_RE_same_vacc_class[, , ] <- n_RE[i, j, k] - n_RE_next_vacc_class[i, j, k]
 ## 3) R -> R vaccine progression
 n_RR[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
-n_RR_next_vacc_class_tmp[, , ] <- if(n_vacc_classes == 1) 0 else
+n_RR_next_vacc_class_tmp[, , ] <- if (n_vacc_classes == 1) 0 else
 rbinom(n_RR[i, j, k], p_R_next_vacc_class[i, j, k])
 
 n_RR_next_vacc_class_capped[, , ] <-
@@ -813,7 +813,6 @@ new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] +
     n_RR_next_vacc_class[i, j, k - 1])
 
 ## Work out the total number of recovery
-# n_RR_same_vacc_class = R - n_R_progress - n_RR_next_vacc_class
 new_R[, , ] <- n_RR_same_vacc_class[i, j, k] +
   n_II_A[i, j, k_A, k] +
   n_I_C_2_to_R[i, j, k] +
@@ -872,7 +871,7 @@ I_with_diff_trans[, , ] <-
 ## beta to all contacts *except* within care home contacts
 s_ij[, , ] <- m[i, j] * sum(I_with_diff_trans[j, k, ])
 s_ij[1:n_age_groups, 1:n_groups, ] <- beta * s_ij[i, j, k]
-s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups,] <- beta * s_ij[i, j, k]
+s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups, ] <- beta * s_ij[i, j, k]
 ## Set lambda to 0 for pseudo-strains 3 and 4
 ## P(Strain = 1) := P(Strain = Only 1) + P(Strain = 2->1), same for Strain = 2
 lambda[, ] <- if (n_strains == 1) sum(s_ij[i, , 1]) else

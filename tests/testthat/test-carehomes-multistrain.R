@@ -249,7 +249,7 @@ test_that("prob_strain sums to 1", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$simulate(steps)
-  prob_strain <- y[index_prob_strain,,]
+  prob_strain <- y[index_prob_strain, , ]
   expect_equal(prob_strain[1:19, , ], 1 - prob_strain[20:38, , ])
 
   # with waning immunity
@@ -267,7 +267,7 @@ test_that("prob_strain sums to 1", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$simulate(steps)
-  prob_strain <- y[index_prob_strain,,]
+  prob_strain <- y[index_prob_strain, , ]
   expect_equal(prob_strain[1:19, , ], 1 - prob_strain[20:38, , ])
   expect_equal(dim(prob_strain), c(38, 3, 85))
 })
