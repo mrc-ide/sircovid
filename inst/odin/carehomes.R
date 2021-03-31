@@ -42,7 +42,8 @@ n_I_P_vaccinated[, ] <-
   sum(n_II_P_next_vacc_class[i, , , j])
 dim(n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
 n_R_vaccinated[, ] <-
-  sum(n_RR_next_vacc_class[i, , j]) + sum(n_RS_next_vacc_class[i, , j]) +
+  sum(n_RR_next_vacc_class[i, , j]) +
+  sum(n_RS_next_vacc_class[i, , j]) +
   sum(n_RE_next_vacc_class[i, , j])
 dim(n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 

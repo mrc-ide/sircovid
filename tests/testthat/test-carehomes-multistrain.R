@@ -564,6 +564,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -572,10 +573,11 @@ test_that("Can calculate Rt with an empty second variant ", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -594,8 +596,8 @@ test_that("Can calculate Rt with an empty second variant ", {
   mod$set_index(index)
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
   expect_equal(rt_1, rt_1_single_class)
   expect_equal(rt_all, rt_all_single_class)
@@ -617,6 +619,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -625,10 +628,11 @@ test_that("Can calculate Rt with a second less infectious variant", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -648,8 +652,8 @@ test_that("Can calculate Rt with a second less infectious variant", {
   mod$set_index(index)
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
   ## Rt should be lower (or equal) for the two variant version
   eps <- 1e-7
@@ -675,6 +679,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -683,10 +688,11 @@ test_that("Can calculate Rt with a second more infectious variant", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -706,8 +712,8 @@ test_that("Can calculate Rt with a second more infectious variant", {
   mod$set_index(index)
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all))
@@ -733,6 +739,7 @@ test_that("Can calculate Rt with a second less letal variant", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -741,10 +748,11 @@ test_that("Can calculate Rt with a second less letal variant", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -764,8 +772,8 @@ test_that("Can calculate Rt with a second less letal variant", {
   mod$set_index(index)
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because less letal --> more people recover and they have longer
@@ -794,6 +802,7 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -802,10 +811,11 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -825,8 +835,8 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   mod$set_index(index)
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for asymptomatics)
@@ -854,6 +864,7 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -862,10 +873,11 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -885,8 +897,8 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   mod$set_index(index)
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for presymptomatics)
@@ -914,6 +926,7 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -922,10 +935,11 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -945,8 +959,8 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   mod$set_index(index)
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for I_C_1)
@@ -974,6 +988,7 @@ test_that("If prob_strain is NA then Rt is NA ", {
 
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -982,13 +997,14 @@ test_that("If prob_strain is NA then Rt is NA ", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
   ## all values of prob_strain after the first step should be NA
   expect_true(all(is.na(prob_strain[, , -1L])))
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## all values of Rt after the first step should be NA
   expect_true(all(is.na(rt_1$Rt_all[-1L])))
@@ -1039,6 +1055,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1047,10 +1064,11 @@ test_that("calculate Rt with both second variant and vaccination", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
   for (k in seq_len(np)) { # for each particle
-    rt <- carehomes_Rt(steps, S[, k, ], p, prob_strain[, k, ])
+    rt <- carehomes_Rt(steps, S[, k, ], p, prob_strain[, k, ], R = R[, k, ])
 
     ## Impact of variant on Rt is as expected:
     ## Rt_general should increase over time because of invasion of new
@@ -1172,6 +1190,7 @@ test_that("Lower rate variant has higher Rt", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1180,9 +1199,10 @@ test_that("Lower rate variant has higher Rt", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_15_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_15_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## rate equal to ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1198,6 +1218,7 @@ test_that("Lower rate variant has higher Rt", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1206,9 +1227,10 @@ test_that("Lower rate variant has higher Rt", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   expect_true(all(rt_1_all$Rt_all <= rt_15_all$Rt_all))

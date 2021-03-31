@@ -105,15 +105,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       stop("Expected R input because there is more than one strain")
     }
   } else {
-    if (nrow(R) != ncol(p$rel_susceptibility) * nrow(p$m) *
-        length(p$strain_transmission)) {
+    if (nrow(R) != ncol(p$rel_susceptibility) * nrow(p$m) * 4) {
       stop(sprintf(
         "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
          classes",
-        p$n_groups * ncol(p$rel_susceptibility) *
-         length(p$strain_transmission),
-        p$n_groups, length(p$strain_transmission),
-        ncol(p$rel_susceptibility)))
+        p$n_groups * ncol(p$rel_susceptibility) * 4,
+        p$n_groups, 4, ncol(p$rel_susceptibility)))
     }
     if (ncol(R) != length(step)) {
       stop(sprintf("Expected 'R' to have %d columns, following 'step'",
@@ -193,9 +190,18 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   mean_duration <-
     carehomes_Rt_mean_duration_weighted_by_infectivity(step, p,
                                                        prob_strain_mat)
-#browser()
-  compute_ngm <- function(S) {
-    len <- p$n_groups * n_vacc_classes
+
+  compute_ngm <- function(S, R) {
+    browser()
+    n_groups <- p$n_groups
+    len <- n_groups * n_vacc_classes
+    if (!is.null(R)) {
+      ## susceptible to strain 1 if currently in R2
+      susceptible_to_strain_1 <- R[seq(n_groups) + n_groups, ]
+      ## susceptible to strain 2 if currently in R1
+      susceptible_to_strain_2 <- R[seq(n_groups), ]
+    }
+
     Sw <- S * c(p$rel_susceptibility)
     mt * vapply(seq_len(n_time), function(t)
       tcrossprod(c(mean_duration[, , t]), Sw[, t]),
@@ -215,7 +221,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
               beta = beta)
 
   if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
-    ngm <- compute_ngm(S)
+    ngm <- compute_ngm(S, R)
     if ("eff_Rt_all" %in% type) {
       ret$eff_Rt_all <- eigen(ngm)
     }
@@ -233,7 +239,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                                        0 * N_tot_non_vacc)
       }
     }
-    ngm <- compute_ngm(N_tot_all_vacc_groups)
+    ngm <- compute_ngm(N_tot_all_vacc_groups, R)
     if ("Rt_all" %in% type) {
       ret$Rt_all <- eigen(ngm)
     }
