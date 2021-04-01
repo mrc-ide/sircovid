@@ -6384,7 +6384,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
      int i = 1;
      shared->initial_prob_strain[i - 1] = 1;
   }
-  for (int i = 2; i <= shared->n_strains; ++i) {
+  for (int i = 2; i <= shared->n_real_strains; ++i) {
     shared->initial_prob_strain[i - 1] = 0;
   }
   for (int i = 1; i <= shared->dim_tmp_vaccine_n_candidates_1; ++i) {
