@@ -12,7 +12,7 @@ test_that("Can calculate Rt", {
   y <- d$inputs$y
 
   res <- carehomes_Rt(steps, y[, 1, ], p)
-  expect_equal(unclass(res), d$outputs$rt_1)
+  expect_equal(unclass(res), unclass(d$outputs$rt_1))
   res_all <- carehomes_Rt_trajectories(steps, y, p)
   expect_equal(unclass(res_all), unclass(d$outputs$rt_all))
 
@@ -33,7 +33,12 @@ test_that("Can calculate Rt", {
 
   expect_equal(names(res), names(res_all))
   for (nm in names(res)) {
-    expect_equal(drop(res[[nm]]), res_all[[nm]][, 1, drop = TRUE])
+    if (nm %in% c("step", "date", "beta")) {
+      expect_equal(drop(res[[nm]]), res_all[[nm]][, 1, drop = TRUE])
+    } else
+    {
+      expect_equal(drop(res[[nm]]), res_all[[nm]][, , 1, drop = TRUE])
+    }
   }
 
   ## Date is returned
