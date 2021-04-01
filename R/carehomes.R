@@ -592,12 +592,10 @@ carehomes_index <- function(info) {
 
   ## prob_strain is named similarly to S, with the second suffix representing
   ## strain instead of vacc_class
-
-  n_strains <- info$dim$prob_strain[[2]]
-  strain_type <- rep(c("", sprintf("_%s", seq_len(n_strains - 1L))),
-                     each = length(suffix))
+  n_strains <- info$dim$prob_strain
+  strain_type <- c("", sprintf("_%s", seq_len(n_strains - 1L)))
   index_prob_strain <- set_names(index[["prob_strain"]],
-                                 paste0("prob_strain", suffix, strain_type))
+                                 paste0("prob_strain", strain_type))
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_cum_admit,
