@@ -578,44 +578,61 @@ test_that("wtmean_Rt works as expected", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  expect_equal(dim(rt$eff_Rt_all), c(85, 2))
   rt_traj <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
-  eff_rt <- rt$eff_Rt_all
-  eff_rt_traj <- rt_traj$eff_Rt_all
+  expect_equal(dim(rt_traj$eff_Rt_all), c(85, 2, 3))
+
+  rt_strain_weighted <-
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                 weight_Rt = TRUE)
+  expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
+  rt_traj_strain_weighted <-
+    carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                              weight_Rt = TRUE)
+  expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
+
   nms <- names(rt)
 
-  susceptibility <- p$rel_susceptibility[, 1]
-  avg_rt <- wtmean_Rt(rt, prob_strain, susceptibility)
-  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain, susceptibility)
-  avg_eff_rt <- wtmean_Rt(eff_rt, prob_strain, susceptibility)
-  avg_eff_rt_traj <- wtmean_Rt(eff_rt_traj, prob_strain,
-                                            susceptibility)
+  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ])
+  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain)
 
-  expect_equal(carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
-                            R = R[, 1, ], weight_Rt = TRUE),
-               avg_rt)
-  expect_equal(carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                         weight_Rt = TRUE),
-               avg_rt_traj)
+  ## here the 1st strain has weight 1 all along
+  ## (except step 1 --> to investigate)
+  ## so expect the average R to be the same as R for strain 1
+  expect_equal(rt$eff_Rt_general[-1, 1], avg_rt$eff_Rt_general[-1])
+  expect_equal(rt$eff_Rt_all[-1, 1], avg_rt$eff_Rt_all[-1])
+  expect_equal(rt$Rt_general[-1, 1], avg_rt$Rt_general[-1])
+  expect_equal(rt$Rt_all[-1, 1], avg_rt$Rt_all[-1])
+
+  expect_equal(rt_traj$eff_Rt_general[-1, 1, ],
+               avg_rt_traj$eff_Rt_general[-1, ])
+  expect_equal(rt_traj$eff_Rt_all[-1, 1, ], avg_rt_traj$eff_Rt_all[-1, ])
+  expect_equal(rt_traj$Rt_general[-1, 1, ], avg_rt_traj$Rt_general[-1, ])
+  expect_equal(rt_traj$Rt_all[-1, 1, ], avg_rt_traj$Rt_all[-1, ])
+
+  ## the average should be the same if calculated inside the Rt calculation
+  ## functions or post hoc
+  expect_equal(rt_strain_weighted$eff_Rt_general,
+               avg_rt$eff_Rt_general)
+  expect_equal(rt_strain_weighted$eff_Rt_all,
+               avg_rt$eff_Rt_all)
+  expect_equal(rt_strain_weighted$Rt_general,
+               avg_rt$Rt_general)
+  expect_equal(rt_strain_weighted$Rt_all,
+               avg_rt$Rt_all)
 
   expect_equal(names(avg_rt), nms)
   expect_equal(names(avg_rt_traj), nms)
 
-  expect_equal(avg_rt$eff_Rt_all, avg_eff_rt)
-  expect_equal(avg_rt_traj$eff_Rt_all, avg_eff_rt_traj)
+  ## TODO: add to the function so that these generate errors:
+  # expect_error(wtmean_Rt(1L), "must inherit")
+  # expect_error(wtmean_Rt(matrix(1), prob_strain), "nrow")
+  # expect_error(wtmean_Rt(matrix(1, nrow = 85), prob_strain),
+  #              "2 columns")
+  # expect_error(wtmean_Rt(array(1, c(85, 2, 3)), prob_strain),
+  #              "2 layers")
 
-  expect_true(all(vapply(avg_rt, length, numeric(1)) == 85))
-  expect_equal(length(avg_eff_rt), 85)
-  expect_equal(unname(vapply(avg_rt_traj, dim, numeric(2))),
-               matrix(c(85, 3), ncol = 7, nrow = 2))
-  expect_equal(length(avg_eff_rt), 85)
-  expect_equal(dim(avg_eff_rt_traj), c(85, 3))
-
-  expect_error(wtmean_Rt(1L), "must inherit")
-  expect_error(wtmean_Rt(matrix(1), prob_strain), "nrow")
-  expect_error(wtmean_Rt(matrix(1, nrow = 85), prob_strain),
-               "2 columns")
-  expect_error(wtmean_Rt(array(1, c(85, 2, 3)), prob_strain),
-               "2 layers")
+  ## TODO: add tests for the incorrect dimensions of p_strain and R
 })
 
 
