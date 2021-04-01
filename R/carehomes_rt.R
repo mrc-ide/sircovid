@@ -586,7 +586,8 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
 }
 
 
-## FIXME - This is probably wrong, just a placement to get tests working
+## FIXME - Needs some checks on type and dimension of inputs added
+## and corresponding tests written
 wtmean_Rt <- function(rt, prob_strain) {
 
   rt_mean <- rt

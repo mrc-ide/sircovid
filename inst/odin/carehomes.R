@@ -1526,12 +1526,12 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
 
 ## prob_strain gives probability of an infection being of strain j
-initial(prob_strain[]) <- 0
-dim(prob_strain) <- n_real_strains
 ## prob_strain is [n_real_strains] and
 ## lambda is [n_groups x n_strains] but lambda[, 3:4] = 0
+initial(prob_strain[1]) <- 1
+initial(prob_strain[2:n_strains]) <- 0
 update(prob_strain[]) <- sum(lambda[, i]) / sum(lambda[, ])
-
+dim(prob_strain) <- n_real_strains
 
 ## I_weighted used in IFR calculation
 initial(I_weighted[, ]) <- 0
