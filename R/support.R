@@ -539,10 +539,16 @@ combine_rt1 <- function(what, rt, samples, rank) {
 
   incidence <- Map(function(s, i)
     t(s$trajectories$state["infections_inc", , i]), samples, idx)
-  rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
+  if (what == "beta") {
+    rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
+  } else
+  {
+    rt_what <- Map(function(r, i) r[[what]][i, , , drop = FALSE], rt, idx)
+  }
 
   if (rank) {
     ## Calculate rank of particles by area under Rt curve
+    ## FIXME: won't work for multistrain, probably need an additional idx_strain variable
     rank_x <- lapply(rt_what, function(x) order(colSums(x)))
 
     ## Rank based on the transpose (vs when this is done in the trajectories).

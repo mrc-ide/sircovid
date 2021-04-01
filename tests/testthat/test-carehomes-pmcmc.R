@@ -132,7 +132,8 @@ test_that("Can combine trajectories with missing times", {
   expect_equal(f(res$state), f(tmp))
 })
 
-
+## FIXME: -> problem comes from combine_rt1
+# --> need to have a rule for ordering Rts that works for multistrain
 test_that("can combine rt calculations over trajectories", {
   dat <- reference_data_trajectories()
 
@@ -148,7 +149,11 @@ test_that("can combine rt calculations over trajectories", {
   res <- combine_rt(list(rt, rt), list(dat, dat))
   cmp <- rt
   for (i in setdiff(names(cmp), c("step", "date"))) {
-    cmp[[i]][1:2, ] <- NA
+    if (i == "beta") {
+      cmp[[i]][1:2, ] <- NA
+    } else {
+      cmp[[i]][1:2, , ] <- NA
+    }
   }
   ## This should pass for everything, but the effective Rt
   ## calculations are different after aggregation for reasons as-yet
@@ -210,7 +215,9 @@ test_that("can combine rt calculations over trajectories without reordering", {
   expect_equal(res$eff_Rt_all, cmp$eff_Rt_all)
 })
 
-
+## FIXME: failing I think because p_strain is now only 1 not 19
+# and the pmcmc data saved has too many dimensions so needs regenerating with
+# new p_strain dimension
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
@@ -239,6 +246,9 @@ test_that("adding incidence adds appropriate states - nested", {
 })
 
 
+## FIXME: failing I think because p_strain is now only 1 not 19
+# and the pmcmc data saved has too many dimensions so needs regenerating with
+# new p_strain dimension
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
@@ -265,6 +275,9 @@ test_that("can compute incidence for a single variable - nested", {
                    cmp$state["deaths_inc", , , ])
 })
 
+## FIXME: failing I think because p_strain is now only 1 not 19
+# and the pmcmc data saved has too many dimensions so needs regenerating with
+# new p_strain dimension
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_trajectories()
 
@@ -402,6 +415,8 @@ test_that("reorder_sample returns expected output", {
 })
 
 
+## FIXME: issue with reorder_rt_ifr which also needs to be edited to work with
+# two strains - how do we reorder? use an index of strain?
 test_that("reorder_rt_ifr rejects invalid inputs", {
   dat <- reference_data_trajectories()
 
