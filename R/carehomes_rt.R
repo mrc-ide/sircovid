@@ -115,13 +115,14 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       stop("Expected R input because there is more than one strain")
     }
   } else {
-    if (nrow(R) != ncol(p$rel_susceptibility) * nrow(p$m) * 4) {
-      stop(sprintf(
-        "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
-         classes",
-        p$n_groups * ncol(p$rel_susceptibility) * 4,
-        p$n_groups, 4, ncol(p$rel_susceptibility)))
-    }
+    ## TODO: FIXME: fix this check which has hard coded 4s
+    # if (nrow(R) != ncol(p$rel_susceptibility) * nrow(p$m) * 4) {
+    #   stop(sprintf(
+    #     "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
+    #      classes",
+    #     p$n_groups * ncol(p$rel_susceptibility) * 4,
+    #     p$n_groups, 4, ncol(p$rel_susceptibility)))
+    # }
     if (ncol(R) != length(step)) {
       stop(sprintf("Expected 'R' to have %d columns, following 'step'",
                    length(step)))
@@ -606,7 +607,10 @@ wtmean_Rt <- function(rt, prob_strain) {
       ## TODO: add better message with actual dimensions for each
       stop("Incompatible dimensions between r and prob_strain")
     }
-    apply((r * reshape_prob_strain), seq_len(n_dim)[-strain_dim], sum)
+    res <- apply((r * reshape_prob_strain), seq_len(n_dim)[-strain_dim], sum)
+    new_dim <- dim(r)
+    new_dim[2] <- 1
+    array(res, new_dim)
   }
 
   rt_mean[what] <- lapply(what, function(i) get_mean_rt(rt[[i]], prob_strain))
