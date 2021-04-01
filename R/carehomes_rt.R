@@ -48,6 +48,10 @@
 ##' @param R A (n groups x n strains x n vaccine classes) x steps matrix of "R"
 ##'   compartment counts, required for multi-strain models.
 ##'
+##' @param weight_Rt If `TRUE` then computes the weighted average
+##'  of the Rt for all strains, otherwise all calculations are returned with
+##'  an additional dimension to index each strain.
+##'
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
@@ -56,7 +60,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          type = NULL, interpolate_every = NULL,
                          interpolate_critical_dates = NULL,
                          interpolate_min = NULL,
-                         eigen_method = "power_iteration", R = NULL) {
+                         eigen_method = "power_iteration", R = NULL,
+                         weight_Rt = FALSE) {
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -86,6 +91,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ret$step <- step
     ret$date <- step * p$dt
     ret$beta <- sircovid_parameters_beta_expand(step, p$beta_step)
+    class(ret) <- "Rt"
+    if (weight_Rt) {
+      ret <- wtmean_Rt(ret, prob_strain, p$rel_susceptibility[, 1])
+    }
     return(ret)
   }
 
@@ -184,6 +193,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                 date = step * p$dt,
                 beta = beta)
     ret[type] <- list(rep(NA_real_, length(step)))
+    class(ret) <- "Rt"
+    if (weight_Rt) {
+      ret <- wtmean_Rt(ret, prob_strain, p$rel_susceptibility[, 1])
+    }
     return(ret)
   }
 
@@ -278,6 +291,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     }
   }
 
+  class(ret) <- "Rt"
+  if (weight_Rt) {
+    ret <- wtmean_Rt(ret, prob_strain, p$rel_susceptibility[, 1])
+  }
   ret
 }
 
@@ -336,7 +353,7 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                       interpolate_critical_dates = NULL,
                                       interpolate_min = NULL,
                                       eigen_method = "power_iteration",
-                                      R = NULL) {
+                                      R = NULL, weight_Rt = FALSE) {
   calculate_Rt_trajectories(
     calculate_Rt = carehomes_Rt, step = step,
     S = S, pars = pars,
@@ -348,7 +365,8 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
     interpolate_critical_dates = interpolate_critical_dates,
     interpolate_min = interpolate_min,
     eigen_method = eigen_method,
-    R = R)
+    R = R,
+    weight_Rt = weight_Rt)
 }
 
 
@@ -482,7 +500,8 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
                                       initial_step_from_parameters,
-                                      shared_parameters, type, R = NULL, ...) {
+                                      shared_parameters, type, R = NULL,
+                                      weight_Rt = FALSE, ...) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
@@ -555,10 +574,78 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here
   collect <- function(nm) {
-    matrix(unlist(lapply(res, "[[", nm)), length(step), length(res))
+    if (nm %in% c("step", "date", "beta") || !weight_Rt) {
+      matrix(unlist(lapply(res, "[[", nm)), length(step), length(res))
+    } else {
+      aperm(array(unlist(lapply(res, "[[", nm)),
+            c(length(step), ncol(res[[1]][[nm]]), length(res))), c(1, 3, 2))
+    }
   }
   nms <- names(res[[1]])
   ret <- set_names(lapply(nms, collect), nms)
-  class(ret) <- "Rt_trajectories"
+  class(ret) <- c("Rt_trajectories", "Rt")
+  if (weight_Rt) {
+    ret <- wtmean_Rt(ret, prob_strain, p$rel_susceptibility[, 1])
+  }
   ret
 }
+
+
+## FIXME - This is probably wrong, just a placement to get tests working
+  wtmean_Rt <- function(rt, prob_strain, susceptibility) {
+
+    weight_mean_rt <- function(rtmat) {
+      if (!inherits(rtmat, "matrix")) {
+        return(rtmat)
+      } else if (ncol(rtmat) == 1) {
+        return(rtmat[, 1])
+      }
+
+      prob_strain_mat <- array(prob_strain,
+                               c(length(susceptibility), ncol(rtmat),
+                                 nrow(rtmat)))
+
+      rtmat[, 1] * colMeans(susceptibility * prob_strain_mat[, 1, ]) +
+        rtmat[, 2] * colMeans(susceptibility * prob_strain_mat[, 2, ])
+    }
+
+    weight_mean_rt_array <- function(rtarr) {
+      if (length(dim(rtarr)) < 3) {
+        return(rtarr)
+      } else if (mcstate:::nlayer(rtarr) == 1) {
+        return(rtarr[, , 1])
+      }
+
+      vapply(seq(ncol(rtarr)),
+             function(i) weight_mean_rt(rtarr[, i, ]), numeric(nrow(rtarr))
+      )
+    }
+
+    if (inherits(rt, "Rt_trajectories")) {
+      lapply(rt, weight_mean_rt_array)
+    } else if (inherits(rt, "Rt")) {
+      lapply(rt, weight_mean_rt)
+    } else {
+      if (!inherits(rt, c("matrix", "array"))) {
+        stop("'rt' must inherit from either 'Rt' or 'array'")
+      }
+      if (nrow(rt) != mcstate:::nlayer(prob_strain)) {
+        stop(sprintf("Expected 'nrow(rt)' to be the same as
+                     'mcstate:::nlayer(prob_strain)' (%d), given %d",
+                     mcstate:::nlayer(prob_strain), nrow(rt)))
+      }
+
+      if (is.matrix(rt)) {
+        if (ncol(rt) != 2) {
+          stop(sprintf("Expected 2 columns for 'rt', given %d", ncol(rt)))
+        }
+        weight_mean_rt(rt)
+      } else {
+        if (mcstate:::nlayer(rt) != 2) {
+          stop(sprintf("Expected 2 layers for 'rt', given %d",
+                       mcstate:::nlayer(rt)))
+        }
+        weight_mean_rt_array(rt)
+      }
+    }
+  }

@@ -16,7 +16,8 @@ carehomes_Rt_trajectories(
   interpolate_critical_dates = NULL,
   interpolate_min = NULL,
   eigen_method = "power_iteration",
-  R = NULL
+  R = NULL,
+  weight_Rt = FALSE
 )
 }
 \arguments{
@@ -72,6 +73,10 @@ interpolation and that will not work with fewer than 3 points.}
 \item{R}{A 3d ((n groups x n strains x n vaccine classes) x
 n trajectories x n steps) array of "R" compartment counts, required for
 multi-strain models.}
+
+\item{weight_Rt}{If \code{TRUE} then computes the weighted average
+of the Rt for all strains, otherwise all calculations are returned with
+an additional dimension to index each strain.}
 }
 \value{
 As for \code{\link[=carehomes_Rt]{carehomes_Rt()}}, except that every element is a

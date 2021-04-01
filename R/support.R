@@ -628,12 +628,3 @@ collapse_prob_strain <- function(x, n_groups = 19) {
   strain_4 <- x[seq(n_groups) + n_groups * 3, , ]
 
 }
-
-## FIXME - This is probably wrong, just a placement to get tests working
-  average_multistrain_Rt <- function(rt, prob_strain, susceptibility) {
-    prob_strain_mat <- array(prob_strain,
-                             c(nrow(prob_strain) / 2, 2,
-                            dim(prob_strain)[[3L]]))
-    rt[, 1] * colMeans(susceptibility * prob_strain_mat[, 1, ]) +
-      rt[, 2] * colMeans(susceptibility * prob_strain_mat[, 2, ])
-  }

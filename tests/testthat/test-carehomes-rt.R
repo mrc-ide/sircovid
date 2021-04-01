@@ -12,9 +12,9 @@ test_that("Can calculate Rt", {
   y <- d$inputs$y
 
   res <- carehomes_Rt(steps, y[, 1, ], p)
-  expect_equal(res, d$outputs$rt_1)
+  expect_equal(unclass(res), d$outputs$rt_1)
   res_all <- carehomes_Rt_trajectories(steps, y, p)
-  expect_equal(res_all, d$outputs$rt_all)
+  expect_equal(unclass(res_all), unclass(d$outputs$rt_all))
 
   ## Beta is returned, results correct length
   expect_identical(res$beta, rep(p$beta_step, length(steps)))
