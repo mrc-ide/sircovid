@@ -483,7 +483,8 @@ initial(cum_infections_per_strain[]) <- 0
 update(cum_infections_per_strain[]) <-
   cum_infections_per_strain[i] + sum(n_S_progress[, i, ]) +
   (if(i > 2)
-    (sum(n_RE_same_vacc_class[, i, ]) +  sum(n_RE_next_vacc_class[, i, ])) else
+    (sum(n_RE_same_vacc_class[, i-2, ]) +  sum(n_RE_next_vacc_class[, i-2, ]))
+   else
       0)
 dim(cum_infections_per_strain) <- n_strains
 

@@ -133,6 +133,9 @@ test_that("Seeding of second strain generates an epidemic", {
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
   expect_true(all(y$cum_infections_per_strain[, 101] > n_seeded_new_strain_inf))
+  ## did we count infections per strain properly?
+  expect_equal(sum(y$cum_infections_per_strain[, 101]),
+               y$cum_infections[, 101])
 
   ## Check the epidemic of the second strain starts when we expect
   steps <- seq(0, 400, by = 4)
