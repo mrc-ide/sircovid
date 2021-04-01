@@ -376,7 +376,7 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
 p_R_progress[, ] <- if (n_strains == 1) 1 - exp(-waning_rate[i] * dt) else
   (if (j == 1) 1 - exp(- (waning_rate[i] + lambda[i, 2]) * dt) else
     (if (j == 2) 1 - exp(- (waning_rate[i] + lambda[i, 1]) * dt) else
-    (1 - exp(-waning_rate[i] * dt))))
+      (1 - exp(-waning_rate[i] * dt))))
 
 ## Total number who can possibly progress
 n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j])
@@ -402,19 +402,16 @@ n_R_progress[, , ] <- if (model_pcr_and_serology == 1)
 n_RS[, , ] <- if (n_strains == 1) n_R_progress[i, j, k] else
   (if (j == 1) rbinom(n_R_progress[i, j, k],
                       waning_rate[i] / (waning_rate[i] + lambda[i, 2])) else
-  (if (j == 2) rbinom(n_R_progress[i, j, k],
-                      waning_rate[i] / (waning_rate[i] + lambda[i, 1])) else
-  (n_R_progress[i, j, k])))
+                        (if (j == 2) rbinom(n_R_progress[i, j, k],
+                                            waning_rate[i] / (waning_rate[i] + lambda[i, 1])) else
+                                              (n_R_progress[i, j, k])))
 
-## Numbers going from R to E
-##   R -> E1 and E2 are always zero
-##   nR1E3 are Number leaving R1 and not going to S;
-##     nR2E3 eq nR3E3 eq n_R4E3 eq 0;
-##   nR2E4 is Number leaving R2 and not going to S;
-##     nR2E4 gt 0; nR1E4 eq n_R3E4 eq n_R4E4 eq 0;
-## Total possible to E3 and E4 are from R1 and R2 respectively
-n_RE[, , ] <- if (j < 3) 0 else
-  n_R_progress[i, j - 2, k] - n_RS[i, j - 2, k]
+## n_RE[i, j, k] is the number going from
+## R[age i, strain j, vacc class k] to
+## E[age i, strain j + 2, vacc class k]
+## Movement possible to E3 and E4 are from R1 and R2 respectively
+n_RE[, , ] <- if (n_real_strains < 2 || j > 2) 0 else
+  n_R_progress[i, j, k] - n_RS[i, j, k]
 
 ## Calculate those that change vacc class
 
@@ -429,7 +426,7 @@ n_RE_same_vacc_class[, , ] <- n_RE[i, j, k] - n_RE_next_vacc_class[i, j, k]
 ## 3) R -> R vaccine progression
 n_RR[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
 n_RR_next_vacc_class_tmp[, , ] <- if (n_vacc_classes == 1) 0 else
-rbinom(n_RR[i, j, k], p_R_next_vacc_class[i, j, k])
+  rbinom(n_RR[i, j, k], p_R_next_vacc_class[i, j, k])
 
 n_RR_next_vacc_class_capped[, , ] <-
   min(n_RR_next_vacc_class_tmp[i, j, k],
@@ -485,7 +482,9 @@ update(cum_infections) <- cum_infections + sum(n_S_progress) +
 initial(cum_infections_per_strain[]) <- 0
 update(cum_infections_per_strain[]) <-
   cum_infections_per_strain[i] + sum(n_S_progress[, i, ]) +
-  sum(n_RE_same_vacc_class[, i, ]) +  sum(n_RE_next_vacc_class[, i, ])
+  (if(i > 2)
+    (sum(n_RE_same_vacc_class[, i, ]) +  sum(n_RE_next_vacc_class[, i, ])) else
+      0)
 dim(cum_infections_per_strain) <- n_strains
 
 ## Work out the new S (i for age, j for vaccination status)
@@ -510,18 +509,30 @@ n_EI_P_next_vacc_class[, , ] <- n_EE_next_vacc_class[i, j, k_E, k] -
 
 ## Work out the S->E and E->E transitions
 aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] +
-  n_RE_same_vacc_class[i, j, l] else n_EE[i, j, k - 1, l]) -
+                    (if(j > 2) n_RE_same_vacc_class[i, j - 2, l] else 0)
+                  else n_EE[i, j, k - 1, l]) -
   n_EE[i, j, k, l] -
   n_EE_next_vacc_class[i, j, k, l] -
   n_E_next_vacc_class[i, j, k, l] +
-  (if (l == 1) n_E_next_vacc_class[i, j, k, n_vacc_classes] else
-    n_E_next_vacc_class[i, j, k, l - 1]) +
-  (if (k == 1) (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] +
-    n_RE_next_vacc_class[i, j, n_vacc_classes] else
-    n_SE_next_vacc_class[i, j, l - 1] +
-    n_RE_next_vacc_class[i, j, l - 1]) else
-      (if (l == 1) n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes] else
-        n_EE_next_vacc_class[i, j, k - 1, l - 1]))
+  (if (l == 1)
+    n_E_next_vacc_class[i, j, k, n_vacc_classes]
+   else
+     n_E_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1)
+    (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] +
+       (if(j > 2)
+         n_RE_next_vacc_class[i, j - 2, n_vacc_classes]
+        else
+          0)
+     else n_SE_next_vacc_class[i, j, l - 1] +
+       (if(j > 2)
+         n_RE_next_vacc_class[i, j - 2, l - 1]
+        else 0))
+   else
+     (if (l == 1)
+       n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes]
+      else
+       n_EE_next_vacc_class[i, j, k - 1, l - 1]))
 
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
@@ -878,8 +889,8 @@ s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups, ] <- beta * s_ij[i, j, k]
 ## Set lambda to 0 for pseudo-strains 3 and 4
 ## P(Strain = 1) := P(Strain = Only 1) + P(Strain = 2->1), same for Strain = 2
 lambda[, ] <- if (n_strains == 1) sum(s_ij[i, , 1]) else
-    (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
-      (if (j == 2) sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]) else 0))
+  (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
+    (if (j == 2) sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]) else 0))
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.
