@@ -205,6 +205,10 @@ test_that("Can interpolate Rt with step changes", {
     "2020-04-15" = future_Rt(1.5, "2020-03-10"),
     "2020-05-01" = future_Rt(0.5, "2020-03-10"),
     "2020-05-15" = future_Rt(2, "2020-03-10"))
+
+  ## FIXME: future_relative_beta needs to be edited
+  ## I think we need an extra parameter to specify which strain we use for that
+  ## of which weighing between the strains
   res <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
   baseline <- add_future_betas(dat, rt, future)
 
