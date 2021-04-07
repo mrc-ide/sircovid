@@ -83,7 +83,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                                                     interpolate_min)
     step_index <- unlist(step_index_split)
     ret <- carehomes_Rt(step[step_index], S[, step_index, drop = FALSE], p,
-                        prob_strain, type)
+                        prob_strain, type, weight_Rt = weight_Rt)
     if (!is.null(interpolate_every)) {
       ret[type] <- lapply(ret[type], interpolate_grid_expand_y,
                           step_index_split)
@@ -92,12 +92,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ret$step <- step
     ret$date <- step * p$dt
     ret$beta <- sircovid_parameters_beta_expand(step, p$beta_step)
-    class(ret) <- "Rt"
-    if (weight_Rt) {
-      ret <- wtmean_Rt(ret, prob_strain)
-    }
     return(ret)
   }
+
+  n_strains <- length(p$strain_transmission)
 
   if (nrow(S) != ncol(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
@@ -115,34 +113,42 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       stop("Expected R input because there is more than one strain")
     }
   } else {
-    ## TODO: FIXME: fix this check which has hard coded 4s
-    # if (nrow(R) != ncol(p$rel_susceptibility) * nrow(p$m) * 4) {
-    #   stop(sprintf(
-    #     "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
-    #      classes",
-    #     p$n_groups * ncol(p$rel_susceptibility) * 4,
-    #     p$n_groups, 4, ncol(p$rel_susceptibility)))
-    # }
+    if (nrow(R) != ncol(p$rel_susceptibility) * nrow(p$m) * n_strains) {
+       stop(sprintf(
+         "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
+          classes",
+         p$n_groups * ncol(p$rel_susceptibility) * n_strains,
+         p$n_groups, n_strains, ncol(p$rel_susceptibility)))
+    }
     if (ncol(R) != length(step)) {
       stop(sprintf("Expected 'R' to have %d columns, following 'step'",
                    length(step)))
     }
   }
+
   if (is.null(prob_strain)) {
-    if (length(p$strain_transmission) > 1) {
+    if (n_strains > 1) {
       stop("Expected prob_strain input because there is more than one strain")
     } else {
       prob_strain <- array(1, length(step))
     }
   } else {
     ## Remove pseudo-strain transmissions
-    if (length(p$strain_transmission) == 4) {
+    if (n_strains == 4) {
       p$strain_transmission <- unmirror(p$strain_transmission)
+      n_strains <- length(p$strain_transmission)
     }
-    if (nrow(prob_strain) != length(p$strain_transmission)) {
+
+    if (!is.matrix(prob_strain)) {
       stop(sprintf(
-        "Expected 'prob_strain' to have %d rows (number of strains)",
-        length(p$strain_transmission)))
+        "Expected a %d strains x %d step matrix for 'prob_strain'",
+        n_strains, length(step)))
+    }
+
+    if (nrow(prob_strain) != n_strains) {
+      stop(sprintf(
+        "Expected 'prob_strain' to have %d rows, following number of strains",
+        n_strains))
     }
     if (ncol(prob_strain) != length(step)) {
       stop(sprintf(
@@ -152,7 +158,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   }
 
   n_vacc_classes <- ncol(p$rel_susceptibility)
-  n_strains <- length(p$strain_transmission)
 
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
@@ -194,9 +199,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                 beta = beta)
     ret[type] <- list(rep(NA_real_, length(step)))
     class(ret) <- "Rt"
-    if (weight_Rt) {
-      ret <- wtmean_Rt(ret, prob_strain)
-    }
     return(ret)
   }
 
@@ -226,21 +228,38 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
   n_groups <- nrow(p$m)
 
-  if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
-    ngm <- vapply(seq(n_strains), function(i) {
+  ngm_computer <- function(x) {
+    vapply(seq(n_strains), function(i) {
       md <- mean_duration[, , , i, drop = FALSE]
       dim(md) <- dim(md)[1:3]
+
       if (n_strains == 1) {
-        compute_ngm(md, S)
+        compute_ngm(md, x)
       } else {
+        N <- n_groups * n_vacc_classes
+        ## in the new model set-up it can only be 4, can make a variable
+        ##  if this changes in the future
+        n_total_strains <- 4
         if (i == 1) {
-          compute_ngm(md, S, R[seq(n_groups) + n_groups, ])
+          ## get R2 (as they're susceptible to E1)
+          which <- as.numeric(vapply(
+            (seq(n_vacc_classes) - 1) * n_groups * n_total_strains,
+            function(x) x + seq.int(n_groups + 1, N), numeric(n_groups)))
+          compute_ngm(md, x, R[which, ])
         } else {
-          compute_ngm(md, S, R[seq(n_groups), ])
+          ## get R1 (as they're susceptible to E2)
+          which <- as.numeric(vapply(
+            (seq(n_vacc_classes) - 1) * n_groups * n_total_strains,
+            function(x) x + seq(n_groups), numeric(n_groups)))
+          compute_ngm(md, x, R[which, ])
         }
       }
     }, array(0, c(n_groups * n_vacc_classes, n_groups * n_vacc_classes,
                   dim(mean_duration)[[3]])))
+  }
+
+  if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
+    ngm <- ngm_computer(S)
 
     if ("eff_Rt_all" %in% type) {
       ret$eff_Rt_all <-
@@ -264,20 +283,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       }
     }
 
-    ngm <- vapply(seq(n_strains), function(i) {
-      md <- mean_duration[, , , i, drop = FALSE]
-      dim(md) <- dim(md)[1:3]
-      if (n_strains == 1) {
-        compute_ngm(md, N_tot_all_vacc_groups)
-      } else {
-        if (i == 1) {
-          compute_ngm(md, N_tot_all_vacc_groups, R[seq(n_groups) + n_groups, ])
-        } else {
-          compute_ngm(md, N_tot_all_vacc_groups, R[seq(n_groups), ])
-        }
-      }
-    }, array(0, c(n_groups * n_vacc_classes, n_groups * n_vacc_classes,
-                  dim(mean_duration)[[3]])))
+    ngm <- ngm_computer(N_tot_all_vacc_groups)
 
     if ("Rt_all" %in% type) {
       ret$Rt_all <-
@@ -291,10 +297,22 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     }
   }
 
-  class(ret) <- "Rt"
-  if (weight_Rt) {
-    ret <- wtmean_Rt(ret, prob_strain)
+  ## ensure backwards compatibility by dropping columns for single_strain and
+  ## separating classes
+  if (ncol(ret[[length(ret)]]) == 1) {
+    ret[intersect(all_types, names(ret))] <-
+      lapply(ret[intersect(all_types, names(ret))], drop)
+    class(ret) <- c("single_strain", "Rt")
+  } else {
+    if (weight_Rt) {
+      ## treat multi strain as single once weighted
+      ret <- wtmean_Rt(ret, prob_strain)
+      class(ret) <- c("single_strain", "Rt")
+    } else {
+      class(ret) <- c("multi_strain", "Rt")
+    }
   }
+
   ret
 }
 
@@ -478,8 +496,9 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
     outer(outer(pars$rel_infectivity, rep(1, n_time_steps)), rep(1, n_strains))
 
   ## Multiply by dt to convert from time steps to days
-  dt * mean_duration
+  mean_duration <- dt * mean_duration
 
+  ##
   ## FIXME (RS): I think this can be deleted now because we want to return
   ##  multiple R numbers for each strain; if so we can remove the prob_strain
   ##  parameter.
@@ -582,7 +601,18 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
   }
   nms <- names(res[[1]])
   ret <- set_names(lapply(nms, collect), nms)
-  class(ret) <- c("Rt_trajectories", "Rt")
+
+  ## ensure backwards compatibility by dropping columns for single_strain and
+  ## separating classes
+  all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
+  if (length(dim(ret[[length(ret)]])) < 3) {
+    ret[intersect(all_types, names(ret))] <-
+      lapply(ret[intersect(all_types, names(ret))], drop)
+    class(ret) <- c("single_strain", "Rt_trajectories", "Rt")
+  } else {
+    class(ret) <- c("multi_strain", "Rt_trajectories", "Rt")
+  }
+
   ret
 }
 
@@ -608,9 +638,7 @@ wtmean_Rt <- function(rt, prob_strain) {
       stop("Incompatible dimensions between r and prob_strain")
     }
     res <- apply((r * reshape_prob_strain), seq_len(n_dim)[-strain_dim], sum)
-    new_dim <- dim(r)
-    new_dim[2] <- 1
-    array(res, new_dim)
+    res
   }
 
   rt_mean[what] <- lapply(what, function(i) get_mean_rt(rt[[i]], prob_strain))

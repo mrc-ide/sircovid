@@ -306,17 +306,22 @@ test_that("Can compute initial conditions", {
                p$N_tot)
   expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 10, after = 3))
+  expect_equal(drop(initial_y$I_weighted),
+               append(rep(0, 18), p$I_A_transmission * 10, after = 3))
   expect_equal(initial_y$T_sero_pre[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
-  ## 42 here, derived from;
-  ## * 19 (S)
-  ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 64)
+  ## 46 here, derived from;
+  ## * 38 (S + N_tot)
+  ## * 1 (prob_strain)
+  ## * 1 (react_pos)
+  ## * 2 (N_tot2 + N_tot3)
+  ## * 2 (I_A[4] + I_weighted[4])
+  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 46)
 })
 
 
@@ -348,11 +353,14 @@ test_that("Can control the seeding", {
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$react_pos, 50)
 
-  ## 42 here, derived from;
-  ## * 19 (S)
-  ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 64)
+  ## 46 here, derived from;
+  ## * 38 (S + N_tot)
+  ## * 1 (prob_strain)
+  ## * 1 (react_pos)
+  ## * 2 (N_tot2 + N_tot3)
+  ## * 2 (I_A[4] + I_weighted[4])
+  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 46)
 })
 
 

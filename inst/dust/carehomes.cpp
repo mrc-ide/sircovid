@@ -2785,7 +2785,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_lambda_1; ++i) {
       for (int j = 1; j <= shared->dim_lambda_2; ++j) {
-        internal.lambda[i - 1 + shared->dim_lambda_1 * (j - 1)] = (shared->n_strains == 1 ? odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 0, 1, shared->dim_s_ij_1, shared->dim_s_ij_12) : ((j == 1 ? odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 0, 1, shared->dim_s_ij_1, shared->dim_s_ij_12) + odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 3, 4, shared->dim_s_ij_1, shared->dim_s_ij_12) : ((j == 2 ? odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 1, 2, shared->dim_s_ij_1, shared->dim_s_ij_12) + odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 2, 3, shared->dim_s_ij_1, shared->dim_s_ij_12) : 0)))));
+        internal.lambda[i - 1 + shared->dim_lambda_1 * (j - 1)] = (shared->n_real_strains == 1 ? odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 0, 1, shared->dim_s_ij_1, shared->dim_s_ij_12) : ((j == 1 ? odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 0, 1, shared->dim_s_ij_1, shared->dim_s_ij_12) + odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 3, 4, shared->dim_s_ij_1, shared->dim_s_ij_12) : odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 1, 2, shared->dim_s_ij_1, shared->dim_s_ij_12) + odin_sum3<real_t>(internal.s_ij.data(), i - 1, i, 0, shared->dim_s_ij_2, 2, 3, shared->dim_s_ij_1, shared->dim_s_ij_12))));
       }
     }
     for (int i = 1; i <= shared->dim_n_H_D_unconf_to_conf_1; ++i) {
@@ -3005,6 +3005,7 @@ public:
         internal.p_SE[i - 1 + shared->dim_p_SE_1 * (j - 1)] = 1 - std::exp(- odin_sum2<real_t>(internal.lambda.data(), i - 1, i, 0, shared->dim_lambda_2, shared->dim_lambda_1) * shared->rel_susceptibility[shared->dim_rel_susceptibility_1 * (j - 1) + i - 1] * shared->dt);
       }
     }
+    real_t tmp_prob_strain = odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, 0, 1, shared->dim_lambda_1) / (real_t) odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, 0, shared->dim_lambda_2, shared->dim_lambda_1);
     for (int i = 1; i <= shared->dim_D_hosp; ++i) {
       state_next[shared->offset_variable_D_hosp + i - 1] = D_hosp[i - 1] + internal.delta_D_hosp[i - 1];
     }
@@ -3019,9 +3020,6 @@ public:
           }
         }
       }
-    }
-    for (int i = 1; i <= shared->dim_prob_strain; ++i) {
-      state_next[shared->offset_variable_prob_strain + i - 1] = odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, i - 1, i, shared->dim_lambda_1) / (real_t) odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, 0, shared->dim_lambda_2, shared->dim_lambda_1);
     }
     for (int i = 1; i <= shared->dim_vaccine_probability_1; ++i) {
       for (int j = 1; j <= shared->dim_vaccine_probability_2; ++j) {
@@ -3202,6 +3200,9 @@ public:
     }
     for (int i = 1; i <= shared->dim_cum_admit_by_age; ++i) {
       state_next[shared->offset_variable_cum_admit_by_age + i - 1] = cum_admit_by_age[i - 1] + odin_sum3<real_t>(internal.n_I_C_2_to_hosp.data(), i - 1, i, 0, shared->dim_n_I_C_2_to_hosp_2, 0, shared->dim_n_I_C_2_to_hosp_3, shared->dim_n_I_C_2_to_hosp_1, shared->dim_n_I_C_2_to_hosp_12);
+    }
+    for (int i = 1; i <= shared->dim_prob_strain; ++i) {
+      state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? tmp_prob_strain : 1 - tmp_prob_strain);
     }
     state_next[19] = odin_sum4<real_t>(internal.new_T_sero_pos.data(), 3, 13, 0, shared->dim_new_T_sero_pos_2, 0, shared->dim_new_T_sero_pos_3, 0, shared->dim_new_T_sero_pos_4, shared->dim_new_T_sero_pos_1, shared->dim_new_T_sero_pos_12, shared->dim_new_T_sero_pos_123);
     for (int i = 1; i <= shared->dim_tmp_vaccine_probability_1; ++i) {
@@ -4779,8 +4780,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_gamma_C_1 = shared->n_strains;
   shared->dim_gamma_C_2 = shared->n_strains;
   shared->dim_gamma_P = shared->n_strains;
-  shared->dim_lambda_1 = shared->n_groups;
-  shared->dim_lambda_2 = shared->n_strains;
   shared->dim_m_1 = shared->n_groups;
   shared->dim_m_2 = shared->n_groups;
   shared->dim_n_EE_1 = shared->n_groups;
@@ -5478,7 +5477,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_delta_D_hosp_disag = shared->dim_delta_D_hosp_disag_1 * shared->dim_delta_D_hosp_disag_2;
   shared->dim_delta_D_non_hosp_disag = shared->dim_delta_D_non_hosp_disag_1 * shared->dim_delta_D_non_hosp_disag_2;
   shared->dim_diagnoses_admitted = shared->dim_diagnoses_admitted_1 * shared->dim_diagnoses_admitted_2;
-  shared->dim_lambda = shared->dim_lambda_1 * shared->dim_lambda_2;
+  shared->dim_lambda_1 = shared->n_groups;
+  shared->dim_lambda_2 = shared->n_real_strains;
   shared->dim_m = shared->dim_m_1 * shared->dim_m_2;
   shared->dim_n_EE = shared->dim_n_EE_1 * shared->dim_n_EE_2 * shared->dim_n_EE_3 * shared->dim_n_EE_4;
   shared->dim_n_EE_12 = shared->dim_n_EE_1 * shared->dim_n_EE_2;
@@ -5937,7 +5937,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_tmp_vaccine_n_candidates = std::vector<real_t>(shared->dim_tmp_vaccine_n_candidates);
   shared->initial_tmp_vaccine_probability = std::vector<real_t>(shared->dim_tmp_vaccine_probability);
   shared->initial_vaccine_missed_doses = std::vector<real_t>(shared->dim_vaccine_missed_doses);
-  internal.lambda = std::vector<real_t>(shared->dim_lambda);
   internal.n_EE = std::vector<real_t>(shared->dim_n_EE);
   internal.n_EE_next_vacc_class = std::vector<real_t>(shared->dim_n_EE_next_vacc_class);
   internal.n_EI_A = std::vector<real_t>(shared->dim_n_EI_A);
@@ -6075,6 +6074,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.vaccine_n_candidates = std::vector<real_t>(shared->dim_vaccine_n_candidates);
   internal.vaccine_probability = std::vector<real_t>(shared->dim_vaccine_probability);
   internal.vaccine_probability_doses = std::vector<real_t>(shared->dim_vaccine_probability_doses);
+  shared->dim_lambda = shared->dim_lambda_1 * shared->dim_lambda_2;
   for (int i = 1; i <= shared->dim_D_1; ++i) {
     for (int j = 1; j <= shared->dim_D_2; ++j) {
       shared->initial_D[i - 1 + shared->dim_D_1 * (j - 1)] = 0;
@@ -6380,12 +6380,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
       shared->initial_diagnoses_admitted[i - 1 + shared->dim_diagnoses_admitted_1 * (j - 1)] = 0;
     }
   }
+  for (int i = 1; i <= shared->n_real_strains; ++i) {
+    shared->initial_prob_strain[i - 1] = 0;
+  }
   {
      int i = 1;
      shared->initial_prob_strain[i - 1] = 1;
-  }
-  for (int i = 2; i <= shared->n_real_strains; ++i) {
-    shared->initial_prob_strain[i - 1] = 0;
   }
   for (int i = 1; i <= shared->dim_tmp_vaccine_n_candidates_1; ++i) {
     for (int j = 1; j <= shared->dim_tmp_vaccine_n_candidates_2; ++j) {
@@ -6466,6 +6466,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->rel_p_sympt = user_get_array_fixed<real_t, 2>(user, "rel_p_sympt", shared->rel_p_sympt, {shared->dim_rel_p_sympt_1, shared->dim_rel_p_sympt_2}, NA_REAL, NA_REAL);
   shared->rel_susceptibility = user_get_array_fixed<real_t, 2>(user, "rel_susceptibility", shared->rel_susceptibility, {shared->dim_rel_susceptibility_1, shared->dim_rel_susceptibility_2}, NA_REAL, NA_REAL);
   shared->vaccine_progression_rate_base = user_get_array_fixed<real_t, 2>(user, "vaccine_progression_rate_base", shared->vaccine_progression_rate_base, {shared->dim_vaccine_progression_rate_base_1, shared->dim_vaccine_progression_rate_base_2}, NA_REAL, NA_REAL);
+  internal.lambda = std::vector<real_t>(shared->dim_lambda);
   for (int i = 1; i <= shared->dim_p_T_sero_pre_progress_1; ++i) {
     for (int j = 1; j <= shared->dim_p_T_sero_pre_progress_2; ++j) {
       for (int k = 1; k <= shared->dim_p_T_sero_pre_progress_3; ++k) {

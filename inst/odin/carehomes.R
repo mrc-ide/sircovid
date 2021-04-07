@@ -887,11 +887,10 @@ I_with_diff_trans[, , ] <-
 s_ij[, , ] <- m[i, j] * sum(I_with_diff_trans[j, k, ])
 s_ij[1:n_age_groups, 1:n_groups, ] <- beta * s_ij[i, j, k]
 s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups, ] <- beta * s_ij[i, j, k]
-## Set lambda to 0 for pseudo-strains 3 and 4
 ## P(Strain = 1) := P(Strain = Only 1) + P(Strain = 2->1), same for Strain = 2
-lambda[, ] <- if (n_strains == 1) sum(s_ij[i, , 1]) else
-  (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
-    (if (j == 2) sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]) else 0))
+lambda[, ] <- if (n_real_strains == 1) sum(s_ij[i, , 1]) else
+                (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
+                  sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]))
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.
@@ -1386,7 +1385,7 @@ dim(psi_star) <- n_groups
 dim(cum_admit_by_age) <- n_groups
 
 ## Vectors handling the age specific heterogeneous transmission process
-dim(lambda) <- c(n_groups, n_strains)
+dim(lambda) <- c(n_groups, n_real_strains)
 dim(s_ij) <- c(n_groups, n_groups, n_strains)
 dim(m) <- c(n_groups, n_groups)
 dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1538,11 +1537,10 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
 
 ## prob_strain gives probability of an infection being of strain j
-## prob_strain is [n_real_strains] and
-## lambda is [n_groups x n_strains] but lambda[, 3:4] = 0
+initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
-initial(prob_strain[2:n_real_strains]) <- 0
-update(prob_strain[]) <- sum(lambda[, i]) / sum(lambda[, ])
+tmp_prob_strain <- sum(lambda[, 1]) / sum(lambda[, ])
+update(prob_strain[]) <- if (i == 1) tmp_prob_strain else 1 - tmp_prob_strain
 dim(prob_strain) <- n_real_strains
 
 ## I_weighted used in IFR calculation

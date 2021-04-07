@@ -252,14 +252,16 @@ test_that("prob_strain sums to 1", {
   initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
   index_prob_strain <- mod$info()$index$prob_strain
-  index_lambda <- mod$info()$index$lambda_out
+
+  expect_equal(initial$state[index_prob_strain], c(1, 0))
+
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$simulate(steps)
-  prob_strain <- y[index_prob_strain, , ]
-  ## TODO: FIXME first step had prob_strain containing only 1 and I can't fix it
-  expect_equal(prob_strain[1, , -1], 1 - prob_strain[2, , -1])
+  prob_strain <- y[index_prob_strain,,]
+
+  expect_equal(prob_strain[1, , ], 1 - prob_strain[2, , ])
 
   # with waning immunity
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -277,8 +279,8 @@ test_that("prob_strain sums to 1", {
   set.seed(1)
   y <- mod$simulate(steps)
   prob_strain <- y[index_prob_strain, , ]
-  ##TODO: FIXME: same issue
-  expect_equal(prob_strain[1, , -1], 1 - prob_strain[2, , -1])
+
+  expect_equal(prob_strain[1, , ], 1 - prob_strain[2, , ])
   expect_equal(dim(prob_strain), c(2, 3, 85))
 })
 
@@ -525,11 +527,13 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   expect_error(
     carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ]),
     "Expected prob_strain input because there is more than one strain")
-
-  ## TODO: FIXME: need a better error message
-  # expect_error(
-  #   carehomes_Rt(steps, S[, 1, ], p, prob_strain[-1, 1, ], R = R[, 1, ]),
-  #     "argument is of length zero")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[-1, 1, ], R = R[, 1, ]),
+    "Expected a 2 strains")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ][1, , drop = FALSE],
+                 R = R[, 1, ]),
+    "Expected 'prob_strain' to have 2 rows")
   expect_error(
     carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1], R = R[, 1, ]),
     "Expected 'prob_strain' to have 85 columns, following 'step'")
@@ -583,21 +587,28 @@ test_that("wtmean_Rt works as expected", {
   index_prob_strain <- mod$info()$index$prob_strain
   S <- y[index_S, , ]
   R <- y[index_R, , ]
-  prob_strain <- y[index_prob_strain, , ]
+  prob_strain <- y[index_prob_strain,,]
 
   rt <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
   expect_equal(dim(rt$eff_Rt_all), c(85, 2))
+  expect_equal(class(rt), c("multi_strain", "Rt"))
+
   rt_traj <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
   expect_equal(dim(rt_traj$eff_Rt_all), c(85, 2, 3))
+  expect_equal(class(rt_traj), c("multi_strain", "Rt_trajectories", "Rt"))
 
   rt_strain_weighted <-
     carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
                  weight_Rt = TRUE)
   expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
+  expect_equal(class(rt_strain_weighted), c("single_strain", "Rt"))
+
   rt_traj_strain_weighted <-
     carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
                               weight_Rt = TRUE)
   expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
+  expect_equal(class(rt_traj_strain_weighted),
+               c("single_strain", "Rt_trajectories", "Rt"))
 
   nms <- names(rt)
 
@@ -607,16 +618,16 @@ test_that("wtmean_Rt works as expected", {
   ## here the 1st strain has weight 1 all along
   ## (except step 1 --> to investigate)
   ## so expect the average R to be the same as R for strain 1
-  expect_equal(rt$eff_Rt_general[-1, 1], avg_rt$eff_Rt_general[-1])
-  expect_equal(rt$eff_Rt_all[-1, 1], avg_rt$eff_Rt_all[-1])
-  expect_equal(rt$Rt_general[-1, 1], avg_rt$Rt_general[-1])
-  expect_equal(rt$Rt_all[-1, 1], avg_rt$Rt_all[-1])
+  expect_equal(rt$eff_Rt_general[, 1], avg_rt$eff_Rt_general)
+  expect_equal(rt$eff_Rt_all[, 1], avg_rt$eff_Rt_all)
+  expect_equal(rt$Rt_general[, 1], avg_rt$Rt_general)
+  expect_equal(rt$Rt_all[, 1], avg_rt$Rt_all)
 
-  expect_equal(rt_traj$eff_Rt_general[-1, 1, ],
-               avg_rt_traj$eff_Rt_general[-1, ])
-  expect_equal(rt_traj$eff_Rt_all[-1, 1, ], avg_rt_traj$eff_Rt_all[-1, ])
-  expect_equal(rt_traj$Rt_general[-1, 1, ], avg_rt_traj$Rt_general[-1, ])
-  expect_equal(rt_traj$Rt_all[-1, 1, ], avg_rt_traj$Rt_all[-1, ])
+  expect_equal(rt_traj$eff_Rt_general[, 1, ],
+               avg_rt_traj$eff_Rt_general[, ])
+  expect_equal(rt_traj$eff_Rt_all[, 1, ], avg_rt_traj$eff_Rt_all[, ])
+  expect_equal(rt_traj$Rt_general[, 1, ], avg_rt_traj$Rt_general[, ])
+  expect_equal(rt_traj$Rt_all[, 1, ], avg_rt_traj$Rt_all[, ])
 
   ## the average should be the same if calculated inside the Rt calculation
   ## functions or post hoc
@@ -697,27 +708,25 @@ test_that("Can calculate Rt with an empty second variant ", {
   rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
   rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
-  ## FIXME: issue at the first time step (because of the p_strain issue)
-  ## fixing by hand for now but needs solving
   expect_equal(rt_1$step, rt_1_single_class$step)
   expect_equal(rt_1$date, rt_1_single_class$date)
   expect_equal(rt_1$beta, rt_1_single_class$beta)
-  expect_equal(rt_1$eff_Rt_all[-1, ], rt_1_single_class$eff_Rt_all[-1, ])
-  expect_equal(rt_1$eff_Rt_general[-1, ],
-               rt_1_single_class$eff_Rt_general[-1, ])
-  expect_equal(rt_1$Rt_all[-1, ], rt_1_single_class$Rt_all[-1, ])
-  expect_equal(rt_1$Rt_general[-1, ], rt_1_single_class$Rt_general[-1, ])
+  expect_equal(rt_1$eff_Rt_all, rt_1_single_class$eff_Rt_all)
+  expect_equal(rt_1$eff_Rt_general,
+               rt_1_single_class$eff_Rt_general)
+  expect_equal(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_equal(rt_1$Rt_general, rt_1_single_class$Rt_general)
 
   expect_equal(rt_all$step, rt_all_single_class$step)
   expect_equal(rt_all$date, rt_all_single_class$date)
   expect_equal(rt_all$beta, rt_all_single_class$beta)
-  expect_equal(rt_all$eff_Rt_all[-1, , ],
-               rt_all_single_class$eff_Rt_all[-1, , ])
-  expect_equal(rt_all$eff_Rt_general[-1, , ],
-               rt_all_single_class$eff_Rt_general[-1, , ])
-  expect_equal(rt_all$Rt_all[-1, , ], rt_all_single_class$Rt_all[-1, , ])
-  expect_equal(rt_all$Rt_general[-1, , ],
-               rt_all_single_class$Rt_general[-1, , ])
+  expect_equal(rt_all$eff_Rt_all,
+               rt_all_single_class$eff_Rt_all)
+  expect_equal(rt_all$eff_Rt_general,
+               rt_all_single_class$eff_Rt_general)
+  expect_equal(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_equal(rt_all$Rt_general,
+               rt_all_single_class$Rt_general)
 
 })
 
@@ -762,26 +771,22 @@ test_that("Can calculate Rt with a second less infectious variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  ## FIXME: R should be calculated against the latest y here
-  ## so you need to run the model with index of S and R
-  ## see example in previous test
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
 
-  ## Rt should be lower (or equal) for the two variant version
-  ## FIXME - Need to check if these are failing because the weighted Rt
-  ##  calculation is wrong or if it's correct and this is now expected due to
-  ##  weighting
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
+
   expect_rounded_lte(rt_1$Rt_all, rt_1_single_class$Rt_all)
   expect_rounded_lte(rt_1$Rt_general, rt_1_single_class$Rt_general)
   expect_rounded_lte(rt_all$Rt_all, rt_all_single_class$Rt_all)
@@ -829,31 +834,27 @@ test_that("Can calculate Rt with a second more infectious variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  ## FIXME: R should be calculated against the latest y here
-  ## so you need to run the model with index of S and R
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
-  ## FIXME: R should be calculated against the latest y here
-  ## so you need to run the model with index of S and R
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_true(all(round(rt_1$Rt_all, 5) >= round(rt_1_single_class$Rt_all, 5)))
-  expect_true(all(round(rt_1$Rt_general, 5) >=
-    round(rt_1_single_class$Rt_general, 5)))
-  expect_true(all(round(rt_all$Rt_all, 5) >=
-    round(rt_all_single_class$Rt_all, 5)))
-  expect_true(all(round(rt_all$Rt_general, 5) >=
-    round(rt_all_single_class$Rt_general, 5)))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -885,8 +886,10 @@ test_that("Can calculate Rt with a second less letal variant", {
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -896,31 +899,29 @@ test_that("Can calculate Rt with a second less letal variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  ## FIXME: R should be calculated against the latest y here
-  ## so you need to run the model with index of S and R
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
-  ## FIXME: R should be calculated against the latest y here
-  ## so you need to run the model with index of S and R
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because less letal --> more people recover and they have longer
   ## duration of infection
-  ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -952,8 +953,10 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -963,30 +966,29 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  ## FIXME: R should be calculated against the latest y here
-  ## so you need to run the model with index of S and R
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
-  ## FIXME: R should be calculated against the latest y here
-  ## so you need to run the model with index of S and R
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for asymptomatics)
   ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -1018,8 +1020,10 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -1029,27 +1033,29 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  ## FIXME: AS BEFORE
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for presymptomatics)
   ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -1081,8 +1087,10 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -1092,27 +1100,29 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  ## FIXME: AS BEFORE
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p, R = R[, 1, ])
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p, R = R)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for I_C_1)
   ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -1181,7 +1191,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   transm_new_variant <- 5
 
   p <- carehomes_parameters(0, region,
-                            waning_rate = 0,
+                            waning_rate = 0.1,
                             strain_transmission = c(1, transm_new_variant),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
@@ -1209,12 +1219,13 @@ test_that("calculate Rt with both second variant and vaccination", {
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
   R <- y[index_R, , ]
+
   prob_strain <- y[index_prob_strain, , ]
 
   for (k in seq_len(np)) { # for each particle
 
-    ## FIXME: Error in S + R : non-conformable arrays
-    rt <- carehomes_Rt(steps, S[, k, ], p, prob_strain[, k, ], R = R[, k, ])
+    rt <- carehomes_Rt(steps, S[, k, ], p, prob_strain[, k, ], R = R[, k, ],
+                       weight_Rt = TRUE)
 
     ## Impact of variant on Rt is as expected:
     ## Rt_general should increase over time because of invasion of new

@@ -864,7 +864,6 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_N_tot <- index[["N_tot"]]
 
   index_prob_strain <- index[["prob_strain"]]
-  index_prob_strain_original <- index_prob_strain[seq_len(pars$n_groups)]
 
   ## S0 is the population totals, minus the seeded infected
   ## individuals
@@ -880,7 +879,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
   state[index_N_tot3] <- sum(pars$N_tot)
-  state[index_prob_strain_original] <- 1
+  state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
 
   list(state = state,
        step = pars$initial_step)

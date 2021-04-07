@@ -539,16 +539,10 @@ combine_rt1 <- function(what, rt, samples, rank) {
 
   incidence <- Map(function(s, i)
     t(s$trajectories$state["infections_inc", , i]), samples, idx)
-  if (what == "beta") {
     rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
-  } else
-  {
-    rt_what <- Map(function(r, i) r[[what]][i, , , drop = FALSE], rt, idx)
-  }
 
   if (rank) {
     ## Calculate rank of particles by area under Rt curve
-    ## FIXME: won't work for multistrain, probably need an additional idx_strain variable
     rank_x <- lapply(rt_what, function(x) order(colSums(x)))
 
     ## Rank based on the transpose (vs when this is done in the trajectories).
@@ -614,23 +608,4 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
   ret <- Map(function(x, w) x * w / sum_w, x, w)
 
   Reduce(`+`, ret)
-}
-
-# x - prob_strain matrix with dim. (n_groups x n_strains) x n_particles x steps
-collapse_prob_strain <- function(x, n_groups = 19) {
-  nr <- nrow(x)
-  ## For one-strain or original two-strain (without pseudo-strains) return x
-  ## Latter is just for backward compatibility, could consider not including
-  if (nr == n_groups || nr == n_groups * 2) {
-    return(x)
-  } else if (nr != n_groups * 4) {
-    stop(sprintf(
-      "Got %d for 'nrow(x)' but must be %d, %d, or %d."
-    ), nr, n_groups, n_groups * 2, n_groups * 4)
-  }
-  strain_1 <- x[seq(n_groups), , ]
-  strain_2 <- x[seq(n_groups) + n_groups, , ]
-  strain_3 <- x[seq(n_groups) + n_groups * 2, , ]
-  strain_4 <- x[seq(n_groups) + n_groups * 3, , ]
-
 }

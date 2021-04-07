@@ -78,7 +78,7 @@ test_that("Can compute forecasts from mcmc output without prepending", {
 })
 
 
-test_that("Can combine trajectories of equal size", {
+test_that("Can combine trajectories of equal size - rank = FALSE", {
   dat <- reference_data_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)
   expect_equal(res$step, dat$trajectories$step)
@@ -149,11 +149,7 @@ test_that("can combine rt calculations over trajectories", {
   res <- combine_rt(list(rt, rt), list(dat, dat))
   cmp <- rt
   for (i in setdiff(names(cmp), c("step", "date"))) {
-    if (i == "beta") {
-      cmp[[i]][1:2, ] <- NA
-    } else {
-      cmp[[i]][1:2, , ] <- NA
-    }
+    cmp[[i]][1:2, ] <- NA
   }
   ## This should pass for everything, but the effective Rt
   ## calculations are different after aggregation for reasons as-yet
@@ -220,41 +216,30 @@ test_that("can combine rt calculations over trajectories without reordering", {
 # new p_strain dimension
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_mcmc()
-  dat$trajectories$state <- array(
-    dat$trajectories$state, c(129, 11, 2, 32),
-    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
-                 letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
   expect_true(all(c("deaths_inc", "deaths_hosp_inc") %in% rownames(res$state)))
 
-  tmp <- res$state["deaths_inc", , , ]
-  expect_true(all(is.na(tmp[, 1, 1:2])))
-  deaths <- t(apply(tmp[, 1, -c(1, 2)], 1, cumsum))
+  tmp <- res$state["deaths_inc", , ]
+  expect_true(all(is.na(tmp[, 1])))
+  deaths <- t(apply(tmp[, -c(1, 2)], 1, cumsum))
   expect_equal(
     deaths,
-    res$state["deaths", , 1,  -c(1, 2)] - res$state["deaths", , 1,  2])
+    res$state["deaths", ,  -c(1, 2)] - res$state["deaths", ,  2])
 
-  tmp <- res$state["deaths_hosp_inc", , , ]
-  expect_true(all(is.na(tmp[, 2, 1:2])))
-  deaths <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
+  tmp <- res$state["deaths_hosp_inc", , ]
+  expect_true(all(is.na(tmp[, 1:2])))
+  deaths <- t(apply(tmp[, -c(1, 2)], 1, cumsum))
   expect_equal(
     deaths,
-    res$state["deaths_hosp", , 2,  -c(1, 2)] -
-      res$state["deaths_hosp", , 2,  2])
+    res$state["deaths_hosp", , -c(1, 2)] -
+      res$state["deaths_hosp", , 2])
 
   expect_equal(drop_trajectory_incidence(res), dat$trajectories)
 })
 
 
-## FIXME: failing I think because p_strain is now only 1 not 19
-# and the pmcmc data saved has too many dimensions so needs regenerating with
-# new p_strain dimension
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_mcmc()
-  dat$trajectories$state <- array(
-    dat$trajectories$state, c(129, 11, 2, 32),
-    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
-                 letters[1:2], NULL)))
   v <- c("deaths", "deaths_hosp")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
@@ -265,14 +250,10 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_mcmc()
-  dat$trajectories$state <- array(
-    dat$trajectories$state, c(129, 11, 2, 32),
-    dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
-                 letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
   res <- add_trajectory_incidence(dat$trajectories, "deaths")
-  expect_identical(res$state["deaths_inc", , , ],
-                   cmp$state["deaths_inc", , , ])
+  expect_identical(res$state["deaths_inc", , ],
+                   cmp$state["deaths_inc", , ])
 })
 
 ## FIXME: failing I think because p_strain is now only 1 not 19
