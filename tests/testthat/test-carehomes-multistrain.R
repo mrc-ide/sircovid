@@ -1184,7 +1184,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   vaccine_schedule <- vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses = 1000, n)
 
-  reduced_susceptibility <- 0.1 # can put anything <1 here
+  reduced_susceptibility <- 1 # can put anything <1 here
   transm_new_variant <- 5
 
   p <- carehomes_parameters(0, region,
@@ -1193,15 +1193,13 @@ test_that("calculate Rt with both second variant and vaccination", {
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             strain_seed_rate = c(10, 0),
-                            rel_susceptibility = c(1, reduced_susceptibility),
-                            rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, 0),
+                            rel_susceptibility = rep(1, 3),
+                            vaccine_progression_rate = numeric(3),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- carehomes$new(p, 0, np, seed = 2L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
@@ -1212,7 +1210,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
-  set.seed(1)
+  set.seed(2)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
   R <- y[index_R, , ]

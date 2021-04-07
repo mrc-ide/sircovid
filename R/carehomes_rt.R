@@ -228,7 +228,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
   n_groups <- nrow(p$m)
 
-  ngm_computer <- function(x) {
+  ngm_computer <- function(x, effective) {
     vapply(seq(n_strains), function(i) {
       md <- mean_duration[, , , i, drop = FALSE]
       dim(md) <- dim(md)[1:3]
@@ -241,22 +241,30 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
         ##  if this changes in the future
         n_total_strains <- 4
         RR <- array(R, c(n_groups, n_total_strains, n_vacc_classes, ncol(R)))
+
         if (i == 1) {
-          ## get R2 (as they're susceptible to E1)
-          compute_ngm(md, x,
-                      matrix(RR[, 2, , ], nrow = n_groups * n_vacc_classes))
+          if (effective) {
+            ## get R2 (as they're susceptible to E1)
+            RR <- matrix(RR[, 2, , ], nrow = n_groups * n_vacc_classes)
+          } else {
+            RR <- 0
+          }
         } else {
-          ## get R1 (as they're susceptible to E2)
-          compute_ngm(md, x,
-                      matrix(RR[, 1, , ], nrow = n_groups * n_vacc_classes))
+          if (effective) {
+            ## get R1 (as they're susceptible to E2)
+            RR <- matrix(RR[, 1, , ], nrow = n_groups * n_vacc_classes)
+          } else {
+            RR <- 0
+          }
         }
+        compute_ngm(md, x, RR)
       }
     }, array(0, c(n_groups * n_vacc_classes, n_groups * n_vacc_classes,
                   dim(mean_duration)[[3]])))
   }
 
   if (any(c("eff_Rt_all", "eff_Rt_general") %in% type)) {
-    ngm <- ngm_computer(S)
+    ngm <- ngm_computer(S, effective = TRUE)
 
     if ("eff_Rt_all" %in% type) {
       ret$eff_Rt_all <-
@@ -280,7 +288,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       }
     }
 
-    ngm <- ngm_computer(N_tot_all_vacc_groups)
+    ngm <- ngm_computer(N_tot_all_vacc_groups, effective = FALSE)
 
     if ("Rt_all" %in% type) {
       ret$Rt_all <-
@@ -493,8 +501,15 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   mean_duration <- mean_duration *
     outer(outer(pars$rel_infectivity, rep(1, n_time_steps)), rep(1, n_strains))
 
+  ## Account for different infectivity levels depending on strain
+  mean_duration <-
+    aperm(aperm(mean_duration, c(4, 1, 2, 3)) * pars$strain_transmission,
+          c(2, 3, 4, 1))
+
   ## Multiply by dt to convert from time steps to days
   mean_duration <- dt * mean_duration
+
+  mean_duration
 }
 
 
