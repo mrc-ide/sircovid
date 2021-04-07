@@ -2207,3 +2207,284 @@ test_that("can create parameters with vaccination data", {
   expect_equal(dim(p$vaccine_dose_step),
                c(19, 2, (date_start_vaccination + length(daily_doses)) * 4))
 })
+
+
+test_that("Can vaccinate given a schedule with given uptake", {
+  region <- "london"
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            waning_rate = 1 / 20)
+  p$index_dose <- c(1L, 2L)
+  end_date <- sircovid_date("2020-06-01")
+
+  start_vacc_date_1 <- sircovid_date("2020-03-01")
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- seq(40000, length.out = 365, by = -50)
+  mean_days_between_doses <- 12 * 7
+
+  n <- vaccine_priority_population(region, uptake_by_age)
+
+  vacc_schedule <- vaccine_schedule_future(
+    start_vacc_date_1, daily_doses, mean_days_between_doses, n)
+
+  p$vaccine_dose_step <- vacc_schedule$doses
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+
+  #### check we reach the desired uptake in each group
+  expect_equal(y$cum_n_vaccinated[, 1, 1, 154] / p$N_tot,
+                uptake_by_age, 0.01)
+
+})
+
+
+test_that("Can catch up on uptake given previous vaccination", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+
+  p <- carehomes_parameters(sircovid_date("2021-04-10"),
+                            region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            waning_rate = 1 / 20)
+
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  mean_days_between_doses <- 30
+  doses_future <- c(
+    "2021-04-10" = 60000,
+    "2021-04-20" = 70000,
+    "2021-04-30" = 90000)
+  end_date <- "2021-08-01"
+
+  first_doses_already_given <- rowSums(past$doses[, 1, ])
+  past_uptake <- first_doses_already_given / p$N_tot
+  ## so we have vaccinated full group 19 and are currently doing group 18 or 17
+
+  ## now increase the uptake in group 19
+  uptake_by_age[19] <- 0.98
+  ## recalculate n
+  n <- vaccine_priority_population(region, uptake_by_age)
+
+  vacc_schedule <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n)
+
+  p$index_dose <- c(1L, 2L)
+  end_date <- sircovid_date(end_date)
+
+  p$vaccine_dose_step <- vacc_schedule$doses
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+
+  new_uptake <- y$cum_n_vaccinated[, 1, 1, 580] / p$N_tot
+
+  #### check we reach the desired uptake in each group including group 90
+  expect_equal(new_uptake,
+               uptake_by_age, 0.01)
+
+})
+
+
+test_that("Can catch up on doses not distributed", {
+  region <- "london"
+  end_date <- sircovid_date("2023-01-01")
+
+  mean_days_between_doses <- 12 * 7
+  doses_future <- rep(25000, end_date)
+
+  uptake_by_age <- rep(1, 19) # complete in all groups
+  n <- vaccine_priority_population(region, uptake_by_age)
+  vacc_schedule <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n)
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0.1,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            vaccine_catchup_fraction = 0,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_schedule = vacc_schedule,
+                            waning_rate = 1 / 20)
+
+  ## check we are going far enough in time that we should vaccinate everyone:
+  expect_true(all(rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot > 0.99))
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+  uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we could not reach reach the desired uptake
+  expect_lt(min(uptake), 0.8)
+
+  ### now do exactly the same with vaccine catch up fully on:
+  p$vaccine_catchup_fraction <- 1.0
+  mod2 <- carehomes$new(p, 0, 1, seed = 1L)
+  state <- carehomes_initial(info, 1, p)$state
+  mod2$set_state(state)
+  y2 <- mod2$transform_variables(mod2$simulate(steps))
+  uptake2 <- y2$cum_n_vaccinated[, 1, 1, dim(y2$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we did reach the desired uptake (100%)
+  expect_gt(min(uptake2), 0.98)
+})
+
+
+test_that("Can catch up on doses not distributed with imperfect uptake", {
+  region <- "london"
+  end_date <- sircovid_date("2023-01-01")
+
+  mean_days_between_doses <- 12 * 7
+  doses_future <- rep(25000, end_date)
+
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  vacc_schedule <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n)
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0.1,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            vaccine_catchup_fraction = 1,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_schedule = vacc_schedule,
+                            waning_rate = 1 / 20)
+
+  ## check we are going far enough in time that we should vaccinate everyone:
+  expect_true(all(abs(
+    rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot - uptake_by_age) < 0.1))
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+  uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we could not reach reach the desired uptake
+  expect_true(all(abs(uptake - uptake_by_age) < 0.05))
+})
+
+
+test_that("Collect disaggregated deaths data", {
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = 30000,
+                                            region = region,
+                                            mean_days_between_doses = 21,
+                                            uptake = 0.9)
+  p <- carehomes_parameters(0, region,
+                            waning_rate = 0, # to avoid diagonal moves out of R
+                            rel_susceptibility = c(1, 0.5),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  t <- seq(0, 400, by = 4)
+  y <- mod$transform_variables(drop(mod$simulate(t)))
+
+  n <- length(t)
+  ## Check that our cululative variables are monotonic
+  expect_true(all(y$D[, , -1] - y$D[, , -n] >= 0))
+  expect_true(all(y$diagnoses_admitted[, , -1] -
+                  y$diagnoses_admitted[, , -n] >= 0))
+
+  ## Reaggregating deaths gives the right number
+  expect_equal(apply(y$D, 3, sum), drop(y$D_tot))
+
+  expect_equal(apply(y$diagnoses_admitted, 3, sum),
+               drop(y$cum_admit_conf + y$cum_new_conf))
+})
+
+
+test_that("Can add missing state variables", {
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = 30000,
+                                            region = region,
+                                            mean_days_between_doses = 21,
+                                            uptake = 0.9)
+  p <- carehomes_parameters(0, region,
+                            waning_rate = 0, # to avoid diagonal moves out of R
+                            rel_susceptibility = c(1, 0.5),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            vaccine_progression_rate = c(0, 0),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L)
+
+  mod <- carehomes$new(p, 0, 10, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 10, p)$state
+
+  mod$set_state(state)
+  y <- mod$run(400)
+
+  drop <- c("D", "diagnoses_admitted")
+
+  info_old <- create_old_info(info, drop)
+  i <- unlist(info$index[names(info_old$index)], FALSE, FALSE)
+  y_old <- y[i, , drop = FALSE]
+
+  y_new <- upgrade_state(y_old, info_old, info)
+
+  y_cmp <- y
+  y_cmp[unlist(info$index[c("D", "diagnoses_admitted")], FALSE, FALSE), ] <- 0
+  expect_equal(y_new, y_cmp)
+
+  expect_error(upgrade_state(y_old[, 1], info_old, info),
+               "Expected a matrix for 'state_orig'")
+  expect_error(
+    upgrade_state(y_new, info, info_old),
+    "Can't downgrade state (previously had variables 'diagnoses_admitted'",
+    fixed = TRUE)
+  expect_error(
+    upgrade_state(y_old, info_old, info, "diagnoses_admitted"),
+    "Can't remap state (can't add variables 'D')",
+    fixed = TRUE)
+
+  expect_error(
+    upgrade_state(y_old[-5, , drop = FALSE], info_old, info),
+    "Expected a matrix with [0-9]+ rows for 'state_orig'")
+
+  info$index$N_tot <- info$index$N_tot[-6]
+  expect_error(
+    upgrade_state(y_old, info_old, info),
+    "States are incompatible lengths for 'N_tot'")
+})
