@@ -1046,10 +1046,10 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'   relative scaling of the defaults for each strain.
 ##'
 ##' @export
-carehomes_parameters_progression <- function(rel_gamma_A,
-                                             rel_gamma_P,
-                                             rel_gamma_C_1,
-                                             rel_gamma_C_2) {
+carehomes_parameters_progression <- function(rel_gamma_A = 1,
+                                             rel_gamma_P = 1,
+                                             rel_gamma_C_1 = 1,
+                                             rel_gamma_C_2 = 1) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
