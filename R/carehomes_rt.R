@@ -240,18 +240,15 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
         ## in the new model set-up it can only be 4, can make a variable
         ##  if this changes in the future
         n_total_strains <- 4
+        RR <- array(R, c(n_groups, n_total_strains, n_vacc_classes, ncol(R)))
         if (i == 1) {
           ## get R2 (as they're susceptible to E1)
-          which <- as.numeric(vapply(
-            (seq(n_vacc_classes) - 1) * n_groups * n_total_strains,
-            function(x) x + seq.int(n_groups + 1, N), numeric(n_groups)))
-          compute_ngm(md, x, R[which, ])
+          compute_ngm(md, x,
+                      matrix(RR[, 2, , ], nrow = n_groups * n_vacc_classes))
         } else {
           ## get R1 (as they're susceptible to E2)
-          which <- as.numeric(vapply(
-            (seq(n_vacc_classes) - 1) * n_groups * n_total_strains,
-            function(x) x + seq(n_groups), numeric(n_groups)))
-          compute_ngm(md, x, R[which, ])
+          compute_ngm(md, x,
+                      matrix(RR[, 1, , ], nrow = n_groups * n_vacc_classes))
         }
       }
     }, array(0, c(n_groups * n_vacc_classes, n_groups * n_vacc_classes,
@@ -275,7 +272,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
   if (any(c("Rt_all", "Rt_general") %in% type)) {
     N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
-    N_tot_all_vacc_groups <- N_tot_non_vacc
+     N_tot_all_vacc_groups <- N_tot_non_vacc
     if (n_vacc_classes > 1) {
       for (i in 2:n_vacc_classes) {
         N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
@@ -299,17 +296,18 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
   ## ensure backwards compatibility by dropping columns for single_strain and
   ## separating classes
+  class(ret) <- c("Rt")
   if (ncol(ret[[length(ret)]]) == 1) {
     ret[intersect(all_types, names(ret))] <-
       lapply(ret[intersect(all_types, names(ret))], drop)
-    class(ret) <- c("single_strain", "Rt")
+    class(ret) <- c("single_strain", class(ret))
   } else {
     if (weight_Rt) {
       ## treat multi strain as single once weighted
       ret <- wtmean_Rt(ret, prob_strain)
-      class(ret) <- c("single_strain", "Rt")
+      class(ret) <- c("single_strain", class(ret))
     } else {
-      class(ret) <- c("multi_strain", "Rt")
+      class(ret) <- c("multi_strain", class(ret))
     }
   }
 
@@ -497,19 +495,6 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   ## Multiply by dt to convert from time steps to days
   mean_duration <- dt * mean_duration
-
-  ##
-  ## FIXME (RS): I think this can be deleted now because we want to return
-  ##  multiple R numbers for each strain; if so we can remove the prob_strain
-  ##  parameter.
-  #
-  # if (n_strains > 1L) {
-  #   weighted_strain_multiplier <- vapply(seq_len(n_time), function(t)
-  #     matrix(prob_strain_mat[, , t] %*% p$strain_transmission,
-  #            p$n_groups, n_vacc_classes),
-  #     matrix(0, p$n_groups, n_vacc_classes))
-  #   mean_duration <- mean_duration * weighted_strain_multiplier
-  # }
 }
 
 
@@ -617,9 +602,11 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
 }
 
 
-## FIXME - Needs some checks on type and dimension of inputs added
-## and corresponding tests written
 wtmean_Rt <- function(rt, prob_strain) {
+
+  if (!inherits(rt, "Rt")) {
+    stop("'rt' must inherit from class 'Rt")
+  }
 
   rt_mean <- rt
 
@@ -634,8 +621,10 @@ wtmean_Rt <- function(rt, prob_strain) {
 
     if (length(dim(r)) != length(dim(reshape_prob_strain)) ||
                                 !all(dim(r) == dim(reshape_prob_strain))) {
-      ## TODO: add better message with actual dimensions for each
-      stop("Incompatible dimensions between r and prob_strain")
+      stop(sprintf(
+        "Expect elements of Rt to have dimensions: %d steps x %d strains x
+        %d particles", nrow(reshape_prob_strain), ncol(reshape_prob_strain),
+        mcstate:::nlayer(reshape_prob_strain)))
     }
     res <- apply((r * reshape_prob_strain), seq_len(n_dim)[-strain_dim], sum)
     res

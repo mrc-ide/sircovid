@@ -132,7 +132,8 @@ test_that("Seeding of second strain generates an epidemic", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
-  expect_true(all(y$cum_infections_per_strain[, 101] > n_seeded_new_strain_inf))
+  expect_true(
+    all(y$cum_infections_per_strain[, 101] > n_seeded_new_strain_inf))
   ## did we count infections per strain properly?
   expect_equal(sum(y$cum_infections_per_strain[, 101]),
                y$cum_infections[, 101])
@@ -155,7 +156,8 @@ test_that("Seeding of second strain generates an epidemic", {
 
   ## It's not guaranteed that *all* will be greater than zero, but most will be
   ## Tolerance decreased to 0.85 to account for time to get to 3 and 4
-  expect_true(mean(colSums(y$E[, 2:4, 1, , s_date >= s_date_seeding]) > 0) > 0.85)
+  expect_true(
+    mean(colSums(y$E[, 2:4, 1, , s_date >= s_date_seeding]) > 0) > 0.85)
 })
 
 
@@ -259,7 +261,7 @@ test_that("prob_strain sums to 1", {
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$simulate(steps)
-  prob_strain <- y[index_prob_strain,,]
+  prob_strain <- y[index_prob_strain, , ]
 
   expect_equal(prob_strain[1, , ], 1 - prob_strain[2, , ])
 
@@ -587,7 +589,7 @@ test_that("wtmean_Rt works as expected", {
   index_prob_strain <- mod$info()$index$prob_strain
   S <- y[index_S, , ]
   R <- y[index_R, , ]
-  prob_strain <- y[index_prob_strain,,]
+  prob_strain <- y[index_prob_strain, , ]
 
   rt <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
   expect_equal(dim(rt$eff_Rt_all), c(85, 2))
@@ -643,15 +645,10 @@ test_that("wtmean_Rt works as expected", {
   expect_equal(names(avg_rt), nms)
   expect_equal(names(avg_rt_traj), nms)
 
-  ## TODO: add to the function so that these generate errors:
-  # expect_error(wtmean_Rt(1L), "must inherit")
-  # expect_error(wtmean_Rt(matrix(1), prob_strain), "nrow")
-  # expect_error(wtmean_Rt(matrix(1, nrow = 85), prob_strain),
-  #              "2 columns")
-  # expect_error(wtmean_Rt(array(1, c(85, 2, 3)), prob_strain),
-  #              "2 layers")
-
-  ## TODO: add tests for the incorrect dimensions of p_strain and R
+  expect_error(wtmean_Rt(1L), "must inherit")
+  expect_error(wtmean_Rt(structure(list(Rt_all = matrix(1)), class = "Rt"),
+                         prob_strain),
+              "Expect elements of Rt to have dimensions")
 })
 
 
@@ -1219,7 +1216,6 @@ test_that("calculate Rt with both second variant and vaccination", {
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
   R <- y[index_R, , ]
-
   prob_strain <- y[index_prob_strain, , ]
 
   for (k in seq_len(np)) { # for each particle
@@ -1235,9 +1231,9 @@ test_that("calculate Rt with both second variant and vaccination", {
                         rt$Rt_general[1] * transm_new_variant)
 
     ## Impact of vaccination on Rt is as expected:
-    ## eff_Rt_general should suddenly decrease at the time at which we vaccinate
-    ## everyone
-    ## the reduction should be approximately by a factor reduced_susceptibility
+    ## eff_Rt_general should suddenly decrease at the time at which we
+    ## vaccinate everyone the reduction should be approximately by a factor
+    ## reduced_susceptibility
     expect_approx_equal(rt$eff_Rt_general[vacc_time] * reduced_susceptibility,
                         rt$eff_Rt_general[vacc_time + 1],
                         rel_tol = 0.2)
@@ -1288,8 +1284,9 @@ test_that("carehomes_parameters_progression works as expected", {
     defaults * 2
   )
   expect_equal(
-    matrix(unlist(carehomes_parameters_progression(1:4, 1:4, 1:4, 1:4)[gammas]),
-           ncol = 4),
+    matrix(
+      unlist(carehomes_parameters_progression(1:4, 1:4, 1:4, 1:4)[gammas]),
+             ncol = 4),
     vapply(defaults, function(x) x * 1:4, numeric(4))
   )
   expect_true(all(lengths(
@@ -1882,10 +1879,6 @@ test_that("Can only move from R2 to E4 and R1 to E3 when waning_rate = 0", {
   E3 <- y$E[-4, 3, , , , ]
   E3 <- apply(E3, c(1, 3, 4), sum)
 
-  ## FIXME, below seems to imply losing people from R1 without appearing in
-  ##  E3 - can't go anywhere else as waning_rate = 0
-  ## FIXED? I think this is possible if someone comes out of E (to one of the I
-  ## compartments at the same time step)
   R1[11, , 39] - R1[11, , 40]
   E3[11, , 39] - E3[11, , 40]
 })

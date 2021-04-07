@@ -2169,7 +2169,7 @@ test_that("Can vaccinate given a schedule", {
   n_vacc_second_dose <- apply(y$cum_n_vaccinated[, 2, 1, ], 1, diff)
 
   ## check no vaccination before wanted date
-  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2 ,
+  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2,
                      start_vacc_date_1 + delay_vacc_date_2 + ndays_vacc - 1)
   expect_true(
     all(n_vacc_second_dose[seq_len(days_vacc_2[1] - 1), ] == 0))

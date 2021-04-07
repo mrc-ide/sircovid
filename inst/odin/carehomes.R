@@ -269,10 +269,7 @@ n_S_progress[, , ] <- if (j == 1)
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
-## FIXME (RS): Is the below correct? Should it actually say
-##   [age, strain, stage]?
-##
-## [age, vaccine stage, strain infected with]
+## [age, strain infected with, vaccine stage]
 ##
 ## As in the model initialisation we will use the teenager category,
 ## and only infect *unvaccinated* people. For now we will model only
@@ -400,11 +397,13 @@ n_R_progress[, , ] <- if (model_pcr_and_serology == 1)
 ##  waning plus lambda
 ## TODO (RS): waning_rate should eventually be variant varying
 n_RS[, , ] <- if (n_strains == 1) n_R_progress[i, j, k] else
-  (if (j == 1) rbinom(n_R_progress[i, j, k],
-                      waning_rate[i] / (waning_rate[i] + lambda[i, 2])) else
-                        (if (j == 2) rbinom(n_R_progress[i, j, k],
-                                            waning_rate[i] / (waning_rate[i] + lambda[i, 1])) else
-                                              (n_R_progress[i, j, k])))
+  (if (j == 1)
+    rbinom(n_R_progress[i, j, k],
+            waning_rate[i] / (waning_rate[i] + lambda[i, 2])) else
+              (if (j == 2) rbinom(n_R_progress[i, j, k],
+                                  waning_rate[i] /
+                                  (waning_rate[i] + lambda[i, 1])) else
+                (n_R_progress[i, j, k])))
 
 ## n_RE[i, j, k] is the number going from
 ## R[age i, strain j, vacc class k] to
@@ -482,8 +481,9 @@ update(cum_infections) <- cum_infections + sum(n_S_progress) +
 initial(cum_infections_per_strain[]) <- 0
 update(cum_infections_per_strain[]) <-
   cum_infections_per_strain[i] + sum(n_S_progress[, i, ]) +
-  (if(i > 2)
-    (sum(n_RE_same_vacc_class[, i-2, ]) +  sum(n_RE_next_vacc_class[, i-2, ]))
+  (if (i > 2)
+    (sum(n_RE_same_vacc_class[, i - 2, ]) +
+      sum(n_RE_next_vacc_class[, i - 2, ]))
    else
       0)
 dim(cum_infections_per_strain) <- n_strains
@@ -510,7 +510,7 @@ n_EI_P_next_vacc_class[, , ] <- n_EE_next_vacc_class[i, j, k_E, k] -
 
 ## Work out the S->E and E->E transitions
 aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] +
-                    (if(j > 2) n_RE_same_vacc_class[i, j - 2, l] else 0)
+                    (if (j > 2) n_RE_same_vacc_class[i, j - 2, l] else 0)
                   else n_EE[i, j, k - 1, l]) -
   n_EE[i, j, k, l] -
   n_EE_next_vacc_class[i, j, k, l] -
@@ -521,12 +521,12 @@ aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] +
      n_E_next_vacc_class[i, j, k, l - 1]) +
   (if (k == 1)
     (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] +
-       (if(j > 2)
+       (if (j > 2)
          n_RE_next_vacc_class[i, j - 2, n_vacc_classes]
         else
           0)
      else n_SE_next_vacc_class[i, j, l - 1] +
-       (if(j > 2)
+       (if (j > 2)
          n_RE_next_vacc_class[i, j - 2, l - 1]
         else 0))
    else

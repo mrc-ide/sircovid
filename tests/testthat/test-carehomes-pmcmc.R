@@ -132,8 +132,7 @@ test_that("Can combine trajectories with missing times", {
   expect_equal(f(res$state), f(tmp))
 })
 
-## FIXME: -> problem comes from combine_rt1
-# --> need to have a rule for ordering Rts that works for multistrain
+
 test_that("can combine rt calculations over trajectories", {
   dat <- reference_data_trajectories()
 
@@ -211,9 +210,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
   expect_equal(res$eff_Rt_all, cmp$eff_Rt_all)
 })
 
-## FIXME: failing I think because p_strain is now only 1 not 19
-# and the pmcmc data saved has too many dimensions so needs regenerating with
-# new p_strain dimension
+
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_mcmc()
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
@@ -256,9 +253,7 @@ test_that("can compute incidence for a single variable - nested", {
                    cmp$state["deaths_inc", , ])
 })
 
-## FIXME: failing I think because p_strain is now only 1 not 19
-# and the pmcmc data saved has too many dimensions so needs regenerating with
-# new p_strain dimension
+
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_trajectories()
 
@@ -396,8 +391,6 @@ test_that("reorder_sample returns expected output", {
 })
 
 
-## FIXME: issue with reorder_rt_ifr which also needs to be edited to work with
-# two strains - how do we reorder? use an index of strain?
 test_that("reorder_rt_ifr rejects invalid inputs", {
   dat <- reference_data_trajectories()
 
