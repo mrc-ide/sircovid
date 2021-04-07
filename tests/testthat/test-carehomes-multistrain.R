@@ -149,7 +149,7 @@ test_that("Seeding of second strain generates an epidemic", {
   ## No cases on seeding day other than in 4th age group
   expect_true(all(y$E[-4, 2:4, , , s_date == s_date_seeding] == 0))
   ## Some cases on seeding day in 4th age group
-  expect_true(y$E[4, 2, 1,, s_date == s_date_seeding] > 0)
+  expect_true(y$E[4, 2, 1, , s_date == s_date_seeding] > 0)
   ## No seeding into strains 3 and 4
   expect_true(all(y$E[4, 3:4, 1, , s_date == s_date_seeding] == 0))
   ## Some cases on all days after seeding day
