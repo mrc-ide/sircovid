@@ -618,7 +618,6 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
 
 
 wtmean_Rt <- function(rt, prob_strain) {
-
   if (!inherits(rt, "Rt")) {
     stop("'rt' must inherit from class 'Rt")
   }
@@ -641,7 +640,10 @@ wtmean_Rt <- function(rt, prob_strain) {
         %d particles", nrow(reshape_prob_strain), ncol(reshape_prob_strain),
         mcstate:::nlayer(reshape_prob_strain)))
     }
-    res <- apply((r * reshape_prob_strain), seq_len(n_dim)[-strain_dim], sum)
+    ## catch the case when strain_transmission is 0 so r is NaN
+    x <- r * reshape_prob_strain
+    x[reshape_prob_strain == 0] <- 0
+    res <- apply(x, seq_len(n_dim)[-strain_dim], sum)
     res
   }
 
