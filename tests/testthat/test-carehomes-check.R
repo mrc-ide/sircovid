@@ -1,8 +1,24 @@
 context("carehomes (check)")
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant", {
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
+test_that("N_tot, N_tot2 and N_tot3 stay constant without waning immunity", {
+  ## waning_rate default is 0
+  p <- carehomes_parameters(0, "uk")
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
+  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+})
+
+test_that("N_tot stays constant with waning immuity, while N_tot2 and N_tot3 are
+          non-decreasing", {
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -11,16 +27,11 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  ## This is not quite correct, and I don't really know why. I think
-  ## that this is the rounding that we're doing to shuffle the
-  ## carehome residents around. However, it does mean that this is
-  ## different between runs.  Do a careful check with the sircovid
-  ## model. We are off by one! individual.
-  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(diff(y$N_tot3) >= 0))
+  expect_true(all(diff(y$N_tot2) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
 })
 
 
@@ -55,11 +66,11 @@ test_that("everyone is infected when beta is large", {
 })
 
 
-test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very
+test_that("noone stays in R if waning rate is very
           large", {
   # with a large waning rate and beta = 0,
   # people can move from R to S but not outside of S
-  # therefore R should quickly get empty (and T_sero_neg and T_PCR_neg as well)
+  # therefore R should quickly get empty
   p <- carehomes_parameters(0, "england",
                             beta_value = 0, # to forbid movement out of S
                             waning_rate = Inf) # to force movement out of R
@@ -68,14 +79,10 @@ test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very
 
   state <- carehomes_initial(info, 1, p)$state
 
-  # move everyone to R, T_sero_neg and T_PCR_neg initially
+  # move everyone to R
   index_S <- array(info$index$S, info$dim$S)
   index_R <- array(info$index$R, info$dim$R)
-  index_T_sero_neg <- array(info$index$T_sero_neg, info$dim$T_sero_neg)
-  index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
   state[index_R] <- rowSums(array(state[index_S], info$dim$S))
-  state[index_T_sero_neg] <- rowSums(array(state[index_S], info$dim$S))
-  state[index_T_PCR_neg] <- rowSums(array(state[index_S], info$dim$S))
   state[index_S] <- 0
 
   mod$set_state(state)
@@ -85,15 +92,10 @@ test_that("noone stays in R, T_sero_neg or T_PCR_neg if waning rate is very
   # other than in the 4th age group (where infections are seeded)
   # after the first day (4 times steps), R is empty
   expect_true(all(y$R[-4, , -1, ] == 0))
-  # so is T_sero_neg
-  expect_true(all(y$T_sero_neg[-4, , -1, ] == 0))
-  # so is T_PCR_neg
-  expect_true(all(y$T_PCR_neg[-4, , -1, ] == 0))
 
 })
 
-test_that("R, T_sero_neg and T_PCR_neg are all non-decreasing and S is
-          non-increasing if waning rate is 0", {
+test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
   p <- carehomes_parameters(0, "england",
                             waning_rate = 0)
   mod <- carehomes$new(p, 0, 1)
@@ -103,8 +105,6 @@ test_that("R, T_sero_neg and T_PCR_neg are all non-decreasing and S is
     mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(diff(t(drop(y$R))) >= 0))
-  expect_true(all(diff(t(drop(y$T_sero_neg))) >= 0))
-  expect_true(all(diff(t(drop(y$T_PCR_neg))) >= 0))
   expect_true(all(diff(t(y$S[, 1, ])) <= 0))
 
 })
