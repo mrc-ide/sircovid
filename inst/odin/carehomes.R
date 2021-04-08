@@ -4,11 +4,6 @@
 ## k for the progression (not exponential latent and infectious period)
 ## l for the vacc. group
 
-## Parameter to turn on or off the serology flows
-
-model_pcr_and_serology_user <- user(1)
-model_pcr_and_serology <- if (model_pcr_and_serology_user == 1) 1 else 0
-
 ## Number of classes (age & vaccination)
 
 ## Number of "groups", being the age classes, Carehome workers and
@@ -361,14 +356,7 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
 
 #### flow out of R ####
 
-n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_RS[i])
-## cap on people who can move out of R based on numbers in T_sero_neg and
-## T_PCR_neg
-n_R_progress_capped[, , ] <-
-  min(n_R_progress_tmp[i, j, k], T_sero_neg[i, j, k], T_PCR_neg[i, j, k])
-## use cap or not depending on model_pcr_and_serology value
-n_R_progress[, , ] <- if (model_pcr_and_serology == 1)
-  n_R_progress_capped[i, j, k] else n_R_progress_tmp[i, j, k]
+n_R_progress[, , ] <- rbinom(R[i, j, k], p_RS[i])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from R[j] to S[j+1]
 ## (j vaccination class)
@@ -379,14 +367,8 @@ n_RS_next_vacc_class[, , ] <-
 n_RS[, , ] <- n_R_progress[i, j, k] - n_RS_next_vacc_class[i, j, k]
 
 ## vaccine progression
-n_R_next_vacc_class_tmp[, , ] <- rbinom(
+n_R_next_vacc_class[, , ] <- rbinom(
   R[i, j, k] - n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
-n_R_next_vacc_class_capped[, , ] <-
-  min(n_R_next_vacc_class_tmp[i, j, k],
-      T_sero_neg[i, j, k] - n_R_progress[i, j, k],
-      T_PCR_neg[i, j, k] - n_R_progress[i, j, k])
-n_R_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
-  n_R_next_vacc_class_capped[i, j, k] else n_R_next_vacc_class_tmp[i, j, k]
 
 #### other transitions ####
 
@@ -752,12 +734,7 @@ new_T_sero_pos[, , , ] <- T_sero_pos[i, j, k, l] -
 
 new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] +
   sum(n_T_sero_pre_progress[i, j, , k]) - n_T_sero_pre_to_T_sero_pos[i, j, k] +
-  n_T_sero_pos_progress[i, j, k_sero_pos, k] -
-  model_pcr_and_serology * n_R_progress[i, j, k] -
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k] +
-  model_pcr_and_serology *
-  (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
-    n_R_next_vacc_class[i, j, k - 1])
+  n_T_sero_pos_progress[i, j, k_sero_pos, k]
 
 ## Work out the total number of recovery
 new_R[, , ] <- R[i, j, k] +
@@ -785,12 +762,7 @@ new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
     n_T_PCR_pos_progress[i, j, k - 1, l])
 
 new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] +
-  n_T_PCR_pos_progress[i, j, k_PCR_pos, k] -
-  model_pcr_and_serology * n_R_progress[i, j, k] -
-  model_pcr_and_serology * n_R_next_vacc_class[i, j, k] +
-  model_pcr_and_serology *
-  (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
-    n_R_next_vacc_class[i, j, k - 1])
+  n_T_PCR_pos_progress[i, j, k_PCR_pos, k]
 
 ## Compute the force of infection
 
@@ -1258,11 +1230,7 @@ dim(n_II_P_next_vacc_class) <-
 
 dim(p_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_next_vacc_class_capped) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_next_vacc_class_tmp) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_progress_capped) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_progress_tmp) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_RS_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the S->E transition where infected are split
