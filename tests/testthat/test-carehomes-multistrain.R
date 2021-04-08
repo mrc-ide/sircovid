@@ -756,7 +756,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0),
+                            strain_transmission = c(1, 1),
                             model_super_infection = 1)
 
   np <- 3L
@@ -836,7 +836,6 @@ test_that("Can calculate Rt with a second less infectious variant", {
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             strain_seed_rate = c(10, 0),
-                            strain_rel_severity = c(1, 0.8),
                             model_super_infection = 1)
 
   np <- 3L
@@ -1500,8 +1499,8 @@ test_that("Lower rate variant has higher Rt", {
                                         weight_Rt = TRUE)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_true(all(rt_1_all$Rt_all - 0.001 <= rt_15_all$Rt_all))
-  expect_true(all(rt_1_all$Rt_general - 0.001 <= rt_15_all$Rt_general))
+  expect_rounded_lte(rt_1_all$Rt_all, rt_15_all$Rt_all)
+  expect_rounded_lte(rt_1_all$Rt_general, rt_15_all$Rt_general)
 })
 
 
@@ -1905,7 +1904,7 @@ test_that("Can't move from S to E3/4", {
 })
 
 
-test_that("Everyone in R1 when strain_transmission = c(1, 0)", {
+test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
   np <- 3L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0),
@@ -1931,7 +1930,7 @@ test_that("Everyone in R1 when strain_transmission = c(1, 0)", {
 })
 
 
-test_that("Can only move from R3 and R4 to S", {
+test_that("Can only move to S from R3 and R4 to S", {
   np <- 3L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             initial_I = 0,

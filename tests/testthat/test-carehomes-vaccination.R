@@ -2146,24 +2146,24 @@ test_that("Can vaccinate given a schedule", {
   y <- mod$transform_variables(mod$simulate(steps))
 
   #### check first dose schedule
-  n_vacc_fisrt_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
+  n_vacc_first_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
 
   ## check no vaccination before wanted date
   days_vacc_1 <- seq(start_vacc_date_1, start_vacc_date_1 + ndays_vacc - 1)
   expect_true(
-    all(n_vacc_fisrt_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
+    all(n_vacc_first_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
 
   ## check that in all groups but 18:19
   ## (which are small and therefore get vaccinated faster)
   ## we get the right number of vaccinations per day in the wanted interval
-  x <- n_vacc_fisrt_dose[days_vacc_1, - (18:19)]
+  x <- n_vacc_first_dose[days_vacc_1, - (18:19)]
   expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)),
                       rel_tol = 0.1)
 
   ## check that no vaccination after wanted date
   ## we get the right number of vaccinations per day in the wanted interval
   expect_true(
-    all(n_vacc_fisrt_dose[seq(last(days_vacc_1) + 1, end_date, 1), ] == 0))
+    all(n_vacc_first_dose[seq(last(days_vacc_1) + 1, end_date, 1), ] == 0))
 
   #### check second dose schedule
   n_vacc_second_dose <- apply(y$cum_n_vaccinated[, 2, 1, ], 1, diff)
