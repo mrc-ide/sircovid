@@ -1550,10 +1550,6 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 grp_prob_strain[, ] <- lambda[i, j] / sum(lambda[i, ])
 dim(grp_prob_strain) <- c(n_groups, n_real_strains)
 
-dim(p_SE_out) <- c(n_groups, n_vacc_classes)
-initial(p_SE_out[,]) <- 1
-update(p_SE_out[,]) <- p_SE[i,j]
-
 tmp_prob_strain <- sum(lambda[, 1]) / sum(lambda[, ])
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
