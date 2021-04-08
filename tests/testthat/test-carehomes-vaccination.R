@@ -142,7 +142,9 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
   expect_true(all(s[-4, 1, ] == 0))
 
   ## Noone changes compartment within the vaccinated individuals
-  expect_true(all(s[, 2, ] == s[, 2, 1]))
+  ## except in the group where infections because of waning immunity
+  expect_true(all(s[-4, 2, ] == s[-4, 2, 1]))
+
 })
 
 
