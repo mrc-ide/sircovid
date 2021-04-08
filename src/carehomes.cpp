@@ -634,11 +634,6 @@ public:
     int dim_R_12;
     int dim_R_2;
     int dim_R_3;
-    int dim_R_out;
-    int dim_R_out_1;
-    int dim_R_out_12;
-    int dim_R_out_2;
-    int dim_R_out_3;
     int dim_S;
     int dim_S_1;
     int dim_S_2;
@@ -1262,26 +1257,11 @@ public:
     int dim_n_RE_next_vacc_class_12;
     int dim_n_RE_next_vacc_class_2;
     int dim_n_RE_next_vacc_class_3;
-    int dim_n_RE_next_vacc_class_out;
-    int dim_n_RE_next_vacc_class_out_1;
-    int dim_n_RE_next_vacc_class_out_12;
-    int dim_n_RE_next_vacc_class_out_2;
-    int dim_n_RE_next_vacc_class_out_3;
-    int dim_n_RE_out;
-    int dim_n_RE_out_1;
-    int dim_n_RE_out_12;
-    int dim_n_RE_out_2;
-    int dim_n_RE_out_3;
     int dim_n_RE_same_vacc_class;
     int dim_n_RE_same_vacc_class_1;
     int dim_n_RE_same_vacc_class_12;
     int dim_n_RE_same_vacc_class_2;
     int dim_n_RE_same_vacc_class_3;
-    int dim_n_RE_same_vacc_class_out;
-    int dim_n_RE_same_vacc_class_out_1;
-    int dim_n_RE_same_vacc_class_out_12;
-    int dim_n_RE_same_vacc_class_out_2;
-    int dim_n_RE_same_vacc_class_out_3;
     int dim_n_RR;
     int dim_n_RR_1;
     int dim_n_RR_12;
@@ -1297,31 +1277,16 @@ public:
     int dim_n_RR_next_vacc_class_capped_12;
     int dim_n_RR_next_vacc_class_capped_2;
     int dim_n_RR_next_vacc_class_capped_3;
-    int dim_n_RR_next_vacc_class_out;
-    int dim_n_RR_next_vacc_class_out_1;
-    int dim_n_RR_next_vacc_class_out_12;
-    int dim_n_RR_next_vacc_class_out_2;
-    int dim_n_RR_next_vacc_class_out_3;
     int dim_n_RR_next_vacc_class_tmp;
     int dim_n_RR_next_vacc_class_tmp_1;
     int dim_n_RR_next_vacc_class_tmp_12;
     int dim_n_RR_next_vacc_class_tmp_2;
     int dim_n_RR_next_vacc_class_tmp_3;
-    int dim_n_RR_out;
-    int dim_n_RR_out_1;
-    int dim_n_RR_out_12;
-    int dim_n_RR_out_2;
-    int dim_n_RR_out_3;
     int dim_n_RR_same_vacc_class;
     int dim_n_RR_same_vacc_class_1;
     int dim_n_RR_same_vacc_class_12;
     int dim_n_RR_same_vacc_class_2;
     int dim_n_RR_same_vacc_class_3;
-    int dim_n_RR_same_vacc_class_out;
-    int dim_n_RR_same_vacc_class_out_1;
-    int dim_n_RR_same_vacc_class_out_12;
-    int dim_n_RR_same_vacc_class_out_2;
-    int dim_n_RR_same_vacc_class_out_3;
     int dim_n_RS;
     int dim_n_RS_1;
     int dim_n_RS_12;
@@ -1332,26 +1297,11 @@ public:
     int dim_n_RS_next_vacc_class_12;
     int dim_n_RS_next_vacc_class_2;
     int dim_n_RS_next_vacc_class_3;
-    int dim_n_RS_next_vacc_class_out;
-    int dim_n_RS_next_vacc_class_out_1;
-    int dim_n_RS_next_vacc_class_out_12;
-    int dim_n_RS_next_vacc_class_out_2;
-    int dim_n_RS_next_vacc_class_out_3;
-    int dim_n_RS_out;
-    int dim_n_RS_out_1;
-    int dim_n_RS_out_12;
-    int dim_n_RS_out_2;
-    int dim_n_RS_out_3;
     int dim_n_RS_same_vacc_class;
     int dim_n_RS_same_vacc_class_1;
     int dim_n_RS_same_vacc_class_12;
     int dim_n_RS_same_vacc_class_2;
     int dim_n_RS_same_vacc_class_3;
-    int dim_n_RS_same_vacc_class_out;
-    int dim_n_RS_same_vacc_class_out_1;
-    int dim_n_RS_same_vacc_class_out_12;
-    int dim_n_RS_same_vacc_class_out_2;
-    int dim_n_RS_same_vacc_class_out_3;
     int dim_n_R_progress;
     int dim_n_R_progress_1;
     int dim_n_R_progress_12;
@@ -1362,11 +1312,6 @@ public:
     int dim_n_R_progress_capped_12;
     int dim_n_R_progress_capped_2;
     int dim_n_R_progress_capped_3;
-    int dim_n_R_progress_out;
-    int dim_n_R_progress_out_1;
-    int dim_n_R_progress_out_12;
-    int dim_n_R_progress_out_2;
-    int dim_n_R_progress_out_3;
     int dim_n_R_progress_tmp;
     int dim_n_R_progress_tmp_1;
     int dim_n_R_progress_tmp_12;
@@ -1910,7 +1855,6 @@ public:
     real_t initial_N_tot2;
     real_t initial_N_tot3;
     std::vector<real_t> initial_R;
-    std::vector<real_t> initial_R_out;
     std::vector<real_t> initial_S;
     std::vector<real_t> initial_T_PCR_neg;
     std::vector<real_t> initial_T_PCR_pos;
@@ -1941,16 +1885,6 @@ public:
     std::vector<real_t> initial_diagnoses_admitted;
     real_t initial_general_tot;
     real_t initial_hosp_tot;
-    std::vector<real_t> initial_n_RE_next_vacc_class_out;
-    std::vector<real_t> initial_n_RE_out;
-    std::vector<real_t> initial_n_RE_same_vacc_class_out;
-    std::vector<real_t> initial_n_RR_next_vacc_class_out;
-    std::vector<real_t> initial_n_RR_out;
-    std::vector<real_t> initial_n_RR_same_vacc_class_out;
-    std::vector<real_t> initial_n_RS_next_vacc_class_out;
-    std::vector<real_t> initial_n_RS_out;
-    std::vector<real_t> initial_n_RS_same_vacc_class_out;
-    std::vector<real_t> initial_n_R_progress_out;
     real_t initial_new_conf_inc;
     std::vector<real_t> initial_p_SE_out;
     std::vector<real_t> initial_prob_strain;
@@ -2025,7 +1959,6 @@ public:
     int offset_variable_I_weighted;
     int offset_variable_N_tot;
     int offset_variable_R;
-    int offset_variable_R_out;
     int offset_variable_S;
     int offset_variable_T_PCR_neg;
     int offset_variable_T_PCR_pos;
@@ -2045,16 +1978,6 @@ public:
     int offset_variable_cum_n_S_vaccinated;
     int offset_variable_cum_n_vaccinated;
     int offset_variable_diagnoses_admitted;
-    int offset_variable_n_RE_next_vacc_class_out;
-    int offset_variable_n_RE_out;
-    int offset_variable_n_RE_same_vacc_class_out;
-    int offset_variable_n_RR_next_vacc_class_out;
-    int offset_variable_n_RR_out;
-    int offset_variable_n_RR_same_vacc_class_out;
-    int offset_variable_n_RS_next_vacc_class_out;
-    int offset_variable_n_RS_out;
-    int offset_variable_n_RS_same_vacc_class_out;
-    int offset_variable_n_R_progress_out;
     int offset_variable_p_SE_out;
     int offset_variable_prob_strain;
     int offset_variable_tmp_vaccine_n_candidates;
@@ -2299,10 +2222,10 @@ public:
     shared(pars.shared), internal(pars.internal) {
   }
   size_t size() {
-    return shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+    return shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
   }
   std::vector<real_t> initial(size_t step) {
-    std::vector<real_t> state(shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27);
+    std::vector<real_t> state(shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_PCR_pos + shared->dim_T_PCR_pre + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27);
     state[0] = shared->initial_time;
     state[1] = shared->initial_admit_conf_inc;
     state[2] = shared->initial_new_conf_inc;
@@ -2350,17 +2273,6 @@ public:
     std::copy(shared->initial_vaccine_missed_doses.begin(), shared->initial_vaccine_missed_doses.end(), state.begin() + shared->offset_variable_vaccine_missed_doses);
     std::copy(shared->initial_tmp_vaccine_n_candidates.begin(), shared->initial_tmp_vaccine_n_candidates.end(), state.begin() + shared->offset_variable_tmp_vaccine_n_candidates);
     std::copy(shared->initial_tmp_vaccine_probability.begin(), shared->initial_tmp_vaccine_probability.end(), state.begin() + shared->offset_variable_tmp_vaccine_probability);
-    std::copy(shared->initial_R_out.begin(), shared->initial_R_out.end(), state.begin() + shared->offset_variable_R_out);
-    std::copy(shared->initial_n_R_progress_out.begin(), shared->initial_n_R_progress_out.end(), state.begin() + shared->offset_variable_n_R_progress_out);
-    std::copy(shared->initial_n_RS_out.begin(), shared->initial_n_RS_out.end(), state.begin() + shared->offset_variable_n_RS_out);
-    std::copy(shared->initial_n_RE_out.begin(), shared->initial_n_RE_out.end(), state.begin() + shared->offset_variable_n_RE_out);
-    std::copy(shared->initial_n_RR_out.begin(), shared->initial_n_RR_out.end(), state.begin() + shared->offset_variable_n_RR_out);
-    std::copy(shared->initial_n_RS_next_vacc_class_out.begin(), shared->initial_n_RS_next_vacc_class_out.end(), state.begin() + shared->offset_variable_n_RS_next_vacc_class_out);
-    std::copy(shared->initial_n_RS_same_vacc_class_out.begin(), shared->initial_n_RS_same_vacc_class_out.end(), state.begin() + shared->offset_variable_n_RS_same_vacc_class_out);
-    std::copy(shared->initial_n_RE_next_vacc_class_out.begin(), shared->initial_n_RE_next_vacc_class_out.end(), state.begin() + shared->offset_variable_n_RE_next_vacc_class_out);
-    std::copy(shared->initial_n_RE_same_vacc_class_out.begin(), shared->initial_n_RE_same_vacc_class_out.end(), state.begin() + shared->offset_variable_n_RE_same_vacc_class_out);
-    std::copy(shared->initial_n_RR_next_vacc_class_out.begin(), shared->initial_n_RR_next_vacc_class_out.end(), state.begin() + shared->offset_variable_n_RR_next_vacc_class_out);
-    std::copy(shared->initial_n_RR_same_vacc_class_out.begin(), shared->initial_n_RR_same_vacc_class_out.end(), state.begin() + shared->offset_variable_n_RR_same_vacc_class_out);
     std::copy(shared->initial_T_sero_neg.begin(), shared->initial_T_sero_neg.end(), state.begin() + shared->offset_variable_T_sero_neg);
     std::copy(shared->initial_R.begin(), shared->initial_R.end(), state.begin() + shared->offset_variable_R);
     std::copy(shared->initial_T_PCR_neg.begin(), shared->initial_T_PCR_neg.end(), state.begin() + shared->offset_variable_T_PCR_neg);
@@ -2502,13 +2414,6 @@ public:
     real_t strain_seed = dust::distr::rpois(rng_state, strain_rate);
     for (int i = 1; i <= shared->dim_N_tot; ++i) {
       state_next[shared->offset_variable_N_tot + i - 1] = odin_sum2<real_t>(S, i - 1, i, 0, shared->dim_S_2, shared->dim_S_1) + odin_sum3<real_t>(R, i - 1, i, 0, shared->dim_R_2, 0, shared->dim_R_3, shared->dim_R_1, shared->dim_R_12) + D_hosp[i - 1] + odin_sum4<real_t>(E, i - 1, i, 0, shared->dim_E_2, 0, shared->dim_E_3, 0, shared->dim_E_4, shared->dim_E_1, shared->dim_E_12, shared->dim_E_123) + odin_sum4<real_t>(I_A, i - 1, i, 0, shared->dim_I_A_2, 0, shared->dim_I_A_3, 0, shared->dim_I_A_4, shared->dim_I_A_1, shared->dim_I_A_12, shared->dim_I_A_123) + odin_sum4<real_t>(I_P, i - 1, i, 0, shared->dim_I_P_2, 0, shared->dim_I_P_3, 0, shared->dim_I_P_4, shared->dim_I_P_1, shared->dim_I_P_12, shared->dim_I_P_123) + odin_sum4<real_t>(I_C_1, i - 1, i, 0, shared->dim_I_C_1_2, 0, shared->dim_I_C_1_3, 0, shared->dim_I_C_1_4, shared->dim_I_C_1_1, shared->dim_I_C_1_12, shared->dim_I_C_1_123) + odin_sum4<real_t>(I_C_2, i - 1, i, 0, shared->dim_I_C_2_2, 0, shared->dim_I_C_2_3, 0, shared->dim_I_C_2_4, shared->dim_I_C_2_1, shared->dim_I_C_2_12, shared->dim_I_C_2_123) + odin_sum4<real_t>(ICU_pre_conf, i - 1, i, 0, shared->dim_ICU_pre_conf_2, 0, shared->dim_ICU_pre_conf_3, 0, shared->dim_ICU_pre_conf_4, shared->dim_ICU_pre_conf_1, shared->dim_ICU_pre_conf_12, shared->dim_ICU_pre_conf_123) + odin_sum4<real_t>(ICU_pre_unconf, i - 1, i, 0, shared->dim_ICU_pre_unconf_2, 0, shared->dim_ICU_pre_unconf_3, 0, shared->dim_ICU_pre_unconf_4, shared->dim_ICU_pre_unconf_1, shared->dim_ICU_pre_unconf_12, shared->dim_ICU_pre_unconf_123) + odin_sum4<real_t>(H_R_conf, i - 1, i, 0, shared->dim_H_R_conf_2, 0, shared->dim_H_R_conf_3, 0, shared->dim_H_R_conf_4, shared->dim_H_R_conf_1, shared->dim_H_R_conf_12, shared->dim_H_R_conf_123) + odin_sum4<real_t>(H_R_unconf, i - 1, i, 0, shared->dim_H_R_unconf_2, 0, shared->dim_H_R_unconf_3, 0, shared->dim_H_R_unconf_4, shared->dim_H_R_unconf_1, shared->dim_H_R_unconf_12, shared->dim_H_R_unconf_123) + odin_sum4<real_t>(H_D_conf, i - 1, i, 0, shared->dim_H_D_conf_2, 0, shared->dim_H_D_conf_3, 0, shared->dim_H_D_conf_4, shared->dim_H_D_conf_1, shared->dim_H_D_conf_12, shared->dim_H_D_conf_123) + odin_sum4<real_t>(H_D_unconf, i - 1, i, 0, shared->dim_H_D_unconf_2, 0, shared->dim_H_D_unconf_3, 0, shared->dim_H_D_unconf_4, shared->dim_H_D_unconf_1, shared->dim_H_D_unconf_12, shared->dim_H_D_unconf_123) + odin_sum4<real_t>(ICU_W_R_conf, i - 1, i, 0, shared->dim_ICU_W_R_conf_2, 0, shared->dim_ICU_W_R_conf_3, 0, shared->dim_ICU_W_R_conf_4, shared->dim_ICU_W_R_conf_1, shared->dim_ICU_W_R_conf_12, shared->dim_ICU_W_R_conf_123) + odin_sum4<real_t>(ICU_W_R_unconf, i - 1, i, 0, shared->dim_ICU_W_R_unconf_2, 0, shared->dim_ICU_W_R_unconf_3, 0, shared->dim_ICU_W_R_unconf_4, shared->dim_ICU_W_R_unconf_1, shared->dim_ICU_W_R_unconf_12, shared->dim_ICU_W_R_unconf_123) + odin_sum4<real_t>(ICU_W_D_conf, i - 1, i, 0, shared->dim_ICU_W_D_conf_2, 0, shared->dim_ICU_W_D_conf_3, 0, shared->dim_ICU_W_D_conf_4, shared->dim_ICU_W_D_conf_1, shared->dim_ICU_W_D_conf_12, shared->dim_ICU_W_D_conf_123) + odin_sum4<real_t>(ICU_W_D_unconf, i - 1, i, 0, shared->dim_ICU_W_D_unconf_2, 0, shared->dim_ICU_W_D_unconf_3, 0, shared->dim_ICU_W_D_unconf_4, shared->dim_ICU_W_D_unconf_1, shared->dim_ICU_W_D_unconf_12, shared->dim_ICU_W_D_unconf_123) + odin_sum4<real_t>(ICU_D_conf, i - 1, i, 0, shared->dim_ICU_D_conf_2, 0, shared->dim_ICU_D_conf_3, 0, shared->dim_ICU_D_conf_4, shared->dim_ICU_D_conf_1, shared->dim_ICU_D_conf_12, shared->dim_ICU_D_conf_123) + odin_sum4<real_t>(ICU_D_unconf, i - 1, i, 0, shared->dim_ICU_D_unconf_2, 0, shared->dim_ICU_D_unconf_3, 0, shared->dim_ICU_D_unconf_4, shared->dim_ICU_D_unconf_1, shared->dim_ICU_D_unconf_12, shared->dim_ICU_D_unconf_123) + odin_sum4<real_t>(W_R_conf, i - 1, i, 0, shared->dim_W_R_conf_2, 0, shared->dim_W_R_conf_3, 0, shared->dim_W_R_conf_4, shared->dim_W_R_conf_1, shared->dim_W_R_conf_12, shared->dim_W_R_conf_123) + odin_sum4<real_t>(W_R_unconf, i - 1, i, 0, shared->dim_W_R_unconf_2, 0, shared->dim_W_R_unconf_3, 0, shared->dim_W_R_unconf_4, shared->dim_W_R_unconf_1, shared->dim_W_R_unconf_12, shared->dim_W_R_unconf_123) + odin_sum4<real_t>(W_D_conf, i - 1, i, 0, shared->dim_W_D_conf_2, 0, shared->dim_W_D_conf_3, 0, shared->dim_W_D_conf_4, shared->dim_W_D_conf_1, shared->dim_W_D_conf_12, shared->dim_W_D_conf_123) + odin_sum4<real_t>(W_D_unconf, i - 1, i, 0, shared->dim_W_D_unconf_2, 0, shared->dim_W_D_unconf_3, 0, shared->dim_W_D_unconf_4, shared->dim_W_D_unconf_1, shared->dim_W_D_unconf_12, shared->dim_W_D_unconf_123) + odin_sum4<real_t>(G_D, i - 1, i, 0, shared->dim_G_D_2, 0, shared->dim_G_D_3, 0, shared->dim_G_D_4, shared->dim_G_D_1, shared->dim_G_D_12, shared->dim_G_D_123) + D_non_hosp[i - 1];
-    }
-    for (int i = 1; i <= shared->dim_R_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_R_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_R_out_3; ++k) {
-          state_next[shared->offset_variable_R_out + i - 1 + shared->dim_R_out_1 * (j - 1) + shared->dim_R_out_12 * (k - 1)] = R[shared->dim_R_12 * (k - 1) + shared->dim_R_1 * (j - 1) + i - 1];
-        }
-      }
     }
     state_next[6] = beta;
     for (int i = 1; i <= shared->dim_I_with_diff_trans_1; ++i) {
@@ -3894,13 +3799,6 @@ public:
         state_next[shared->offset_variable_cum_n_S_vaccinated + i - 1 + shared->dim_cum_n_S_vaccinated_1 * (j - 1)] = cum_n_S_vaccinated[shared->dim_cum_n_S_vaccinated_1 * (j - 1) + i - 1] + internal.n_S_vaccinated[shared->dim_n_S_vaccinated_1 * (j - 1) + i - 1];
       }
     }
-    for (int i = 1; i <= shared->dim_n_R_progress_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_R_progress_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_R_progress_out_3; ++k) {
-          state_next[shared->offset_variable_n_R_progress_out + i - 1 + shared->dim_n_R_progress_out_1 * (j - 1) + shared->dim_n_R_progress_out_12 * (k - 1)] = internal.n_R_progress[shared->dim_n_R_progress_12 * (k - 1) + shared->dim_n_R_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
         for (int k = 1; k <= shared->dim_aux_I_P_3; ++k) {
@@ -4003,20 +3901,6 @@ public:
         state_next[shared->offset_variable_diagnoses_admitted + i - 1 + shared->dim_diagnoses_admitted_1 * (j - 1)] = diagnoses_admitted[shared->dim_diagnoses_admitted_1 * (j - 1) + i - 1] + odin_sum3<real_t>(internal.n_I_C_2_to_H_D_conf.data(), i - 1, i, 0, shared->dim_n_I_C_2_to_H_D_conf_2, j - 1, j, shared->dim_n_I_C_2_to_H_D_conf_1, shared->dim_n_I_C_2_to_H_D_conf_12) + odin_sum3<real_t>(internal.n_I_C_2_to_H_R_conf.data(), i - 1, i, 0, shared->dim_n_I_C_2_to_H_R_conf_2, j - 1, j, shared->dim_n_I_C_2_to_H_R_conf_1, shared->dim_n_I_C_2_to_H_R_conf_12) + odin_sum3<real_t>(internal.n_I_C_2_to_ICU_pre_conf.data(), i - 1, i, 0, shared->dim_n_I_C_2_to_ICU_pre_conf_2, j - 1, j, shared->dim_n_I_C_2_to_ICU_pre_conf_1, shared->dim_n_I_C_2_to_ICU_pre_conf_12) + odin_sum4<real_t>(internal.n_H_D_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_H_D_unconf_to_conf_2, 0, shared->dim_n_H_D_unconf_to_conf_3, j - 1, j, shared->dim_n_H_D_unconf_to_conf_1, shared->dim_n_H_D_unconf_to_conf_12, shared->dim_n_H_D_unconf_to_conf_123) + odin_sum4<real_t>(internal.n_H_R_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_H_R_unconf_to_conf_2, 0, shared->dim_n_H_R_unconf_to_conf_3, j - 1, j, shared->dim_n_H_R_unconf_to_conf_1, shared->dim_n_H_R_unconf_to_conf_12, shared->dim_n_H_R_unconf_to_conf_123) + odin_sum4<real_t>(internal.n_ICU_pre_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_ICU_pre_unconf_to_conf_2, 0, shared->dim_n_ICU_pre_unconf_to_conf_3, j - 1, j, shared->dim_n_ICU_pre_unconf_to_conf_1, shared->dim_n_ICU_pre_unconf_to_conf_12, shared->dim_n_ICU_pre_unconf_to_conf_123) + odin_sum4<real_t>(internal.n_ICU_D_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_ICU_D_unconf_to_conf_2, 0, shared->dim_n_ICU_D_unconf_to_conf_3, j - 1, j, shared->dim_n_ICU_D_unconf_to_conf_1, shared->dim_n_ICU_D_unconf_to_conf_12, shared->dim_n_ICU_D_unconf_to_conf_123) + odin_sum4<real_t>(internal.n_ICU_W_R_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_ICU_W_R_unconf_to_conf_2, 0, shared->dim_n_ICU_W_R_unconf_to_conf_3, j - 1, j, shared->dim_n_ICU_W_R_unconf_to_conf_1, shared->dim_n_ICU_W_R_unconf_to_conf_12, shared->dim_n_ICU_W_R_unconf_to_conf_123) + odin_sum4<real_t>(internal.n_ICU_W_D_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_ICU_W_D_unconf_to_conf_2, 0, shared->dim_n_ICU_W_D_unconf_to_conf_3, j - 1, j, shared->dim_n_ICU_W_D_unconf_to_conf_1, shared->dim_n_ICU_W_D_unconf_to_conf_12, shared->dim_n_ICU_W_D_unconf_to_conf_123) + odin_sum4<real_t>(internal.n_W_R_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_W_R_unconf_to_conf_2, 0, shared->dim_n_W_R_unconf_to_conf_3, j - 1, j, shared->dim_n_W_R_unconf_to_conf_1, shared->dim_n_W_R_unconf_to_conf_12, shared->dim_n_W_R_unconf_to_conf_123) + odin_sum4<real_t>(internal.n_W_D_unconf_to_conf.data(), i - 1, i, 0, shared->dim_n_W_D_unconf_to_conf_2, 0, shared->dim_n_W_D_unconf_to_conf_3, j - 1, j, shared->dim_n_W_D_unconf_to_conf_1, shared->dim_n_W_D_unconf_to_conf_12, shared->dim_n_W_D_unconf_to_conf_123);
       }
     }
-    for (int i = 1; i <= shared->dim_n_RR_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RR_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RR_out_3; ++k) {
-          state_next[shared->offset_variable_n_RR_out + i - 1 + shared->dim_n_RR_out_1 * (j - 1) + shared->dim_n_RR_out_12 * (k - 1)] = internal.n_RR[shared->dim_n_RR_12 * (k - 1) + shared->dim_n_RR_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_RS_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RS_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RS_out_3; ++k) {
-          state_next[shared->offset_variable_n_RS_out + i - 1 + shared->dim_n_RS_out_1 * (j - 1) + shared->dim_n_RS_out_12 * (k - 1)] = internal.n_RS[shared->dim_n_RS_12 * (k - 1) + shared->dim_n_RS_1 * (j - 1) + i - 1];
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_RE_next_vacc_class_1; ++i) {
       for (int j = 1; j <= shared->dim_n_RE_next_vacc_class_2; ++j) {
         for (int k = 1; k <= shared->dim_n_RE_next_vacc_class_3; ++k) {
@@ -4089,20 +3973,6 @@ public:
     state_next[20] = cum_sympt_cases + new_sympt_cases;
     state_next[22] = cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25;
     state_next[21] = cum_sympt_cases_over25 + new_sympt_cases_over25;
-    for (int i = 1; i <= shared->dim_n_RE_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RE_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RE_out_3; ++k) {
-          state_next[shared->offset_variable_n_RE_out + i - 1 + shared->dim_n_RE_out_1 * (j - 1) + shared->dim_n_RE_out_12 * (k - 1)] = internal.n_RE[shared->dim_n_RE_12 * (k - 1) + shared->dim_n_RE_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_RS_next_vacc_class_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RS_next_vacc_class_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RS_next_vacc_class_out_3; ++k) {
-          state_next[shared->offset_variable_n_RS_next_vacc_class_out + i - 1 + shared->dim_n_RS_next_vacc_class_out_1 * (j - 1) + shared->dim_n_RS_next_vacc_class_out_12 * (k - 1)] = internal.n_RS_next_vacc_class[shared->dim_n_RS_next_vacc_class_12 * (k - 1) + shared->dim_n_RS_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
     state_next[23] = ((fmodr<real_t>(step, shared->steps_per_day) == 0 ? new_sympt_cases : sympt_cases_inc + new_sympt_cases));
     state_next[25] = ((fmodr<real_t>(step, shared->steps_per_day) == 0 ? new_sympt_cases_non_variant_over25 : sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25));
     state_next[24] = ((fmodr<real_t>(step, shared->steps_per_day) == 0 ? new_sympt_cases_over25 : sympt_cases_over25_inc + new_sympt_cases_over25));
@@ -4157,20 +4027,6 @@ public:
     }
     state_next[10] = new_general_tot;
     state_next[11] = new_ICU_tot + new_general_tot;
-    for (int i = 1; i <= shared->dim_n_RE_next_vacc_class_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RE_next_vacc_class_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RE_next_vacc_class_out_3; ++k) {
-          state_next[shared->offset_variable_n_RE_next_vacc_class_out + i - 1 + shared->dim_n_RE_next_vacc_class_out_1 * (j - 1) + shared->dim_n_RE_next_vacc_class_out_12 * (k - 1)] = internal.n_RE_next_vacc_class[shared->dim_n_RE_next_vacc_class_12 * (k - 1) + shared->dim_n_RE_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_RS_same_vacc_class_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RS_same_vacc_class_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RS_same_vacc_class_out_3; ++k) {
-          state_next[shared->offset_variable_n_RS_same_vacc_class_out + i - 1 + shared->dim_n_RS_same_vacc_class_out_1 * (j - 1) + shared->dim_n_RS_same_vacc_class_out_12 * (k - 1)] = internal.n_RS_same_vacc_class[shared->dim_n_RS_same_vacc_class_12 * (k - 1) + shared->dim_n_RS_same_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
     state_next[26] = odin_sum4<real_t>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
     for (int i = 1; i <= shared->dim_aux_E_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_E_2; ++j) {
@@ -4221,20 +4077,6 @@ public:
     for (int i = 1; i <= shared->dim_cum_infections_per_strain; ++i) {
       state_next[27 + i - 1] = cum_infections_per_strain[i - 1] + odin_sum3<real_t>(internal.n_S_progress.data(), 0, shared->dim_n_S_progress_1, i - 1, i, 0, shared->dim_n_S_progress_3, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12) + ((i > 2 ? (odin_sum3<real_t>(internal.n_RE_same_vacc_class.data(), 0, shared->dim_n_RE_same_vacc_class_1, i - 2 - 1, i - 2, 0, shared->dim_n_RE_same_vacc_class_3, shared->dim_n_RE_same_vacc_class_1, shared->dim_n_RE_same_vacc_class_12) + odin_sum3<real_t>(internal.n_RE_next_vacc_class.data(), 0, shared->dim_n_RE_next_vacc_class_1, i - 2 - 1, i - 2, 0, shared->dim_n_RE_next_vacc_class_3, shared->dim_n_RE_next_vacc_class_1, shared->dim_n_RE_next_vacc_class_12)) : 0));
     }
-    for (int i = 1; i <= shared->dim_n_RE_same_vacc_class_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RE_same_vacc_class_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RE_same_vacc_class_out_3; ++k) {
-          state_next[shared->offset_variable_n_RE_same_vacc_class_out + i - 1 + shared->dim_n_RE_same_vacc_class_out_1 * (j - 1) + shared->dim_n_RE_same_vacc_class_out_12 * (k - 1)] = internal.n_RE_same_vacc_class[shared->dim_n_RE_same_vacc_class_12 * (k - 1) + shared->dim_n_RE_same_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_RR_next_vacc_class_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RR_next_vacc_class_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RR_next_vacc_class_out_3; ++k) {
-          state_next[shared->offset_variable_n_RR_next_vacc_class_out + i - 1 + shared->dim_n_RR_next_vacc_class_out_1 * (j - 1) + shared->dim_n_RR_next_vacc_class_out_12 * (k - 1)] = internal.n_RR_next_vacc_class[shared->dim_n_RR_next_vacc_class_12 * (k - 1) + shared->dim_n_RR_next_vacc_class_1 * (j - 1) + i - 1];
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_n_vaccinated_1; ++i) {
       for (int j = 1; j <= shared->dim_n_vaccinated_2; ++j) {
         internal.n_vaccinated[i - 1 + shared->dim_n_vaccinated_1 * (j - 1)] = internal.n_S_vaccinated[shared->dim_n_S_vaccinated_1 * (j - 1) + i - 1] + internal.n_E_vaccinated[shared->dim_n_E_vaccinated_1 * (j - 1) + i - 1] + internal.n_I_A_vaccinated[shared->dim_n_I_A_vaccinated_1 * (j - 1) + i - 1] + internal.n_I_P_vaccinated[shared->dim_n_I_P_vaccinated_1 * (j - 1) + i - 1] + internal.n_R_vaccinated[shared->dim_n_R_vaccinated_1 * (j - 1) + i - 1];
@@ -4273,13 +4115,6 @@ public:
     for (int i = 1; i <= shared->dim_cum_n_R_vaccinated_1; ++i) {
       for (int j = 1; j <= shared->dim_cum_n_R_vaccinated_2; ++j) {
         state_next[shared->offset_variable_cum_n_R_vaccinated + i - 1 + shared->dim_cum_n_R_vaccinated_1 * (j - 1)] = cum_n_R_vaccinated[shared->dim_cum_n_R_vaccinated_1 * (j - 1) + i - 1] + internal.n_R_vaccinated[shared->dim_n_R_vaccinated_1 * (j - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_RR_same_vacc_class_out_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_RR_same_vacc_class_out_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_RR_same_vacc_class_out_3; ++k) {
-          state_next[shared->offset_variable_n_RR_same_vacc_class_out + i - 1 + shared->dim_n_RR_same_vacc_class_out_1 * (j - 1) + shared->dim_n_RR_same_vacc_class_out_12 * (k - 1)] = internal.n_RR_same_vacc_class[shared->dim_n_RR_same_vacc_class_12 * (k - 1) + shared->dim_n_RR_same_vacc_class_1 * (j - 1) + i - 1];
-        }
       }
     }
     for (int i = 1; i <= shared->dim_E_1; ++i) {
@@ -4912,9 +4747,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_R_1 = shared->n_groups;
   shared->dim_R_2 = shared->n_strains;
   shared->dim_R_3 = shared->n_vacc_classes;
-  shared->dim_R_out_1 = shared->n_groups;
-  shared->dim_R_out_2 = shared->n_strains;
-  shared->dim_R_out_3 = shared->n_vacc_classes;
   shared->dim_S_1 = shared->n_groups;
   shared->dim_S_2 = shared->n_vacc_classes;
   shared->dim_T_PCR_neg_1 = shared->n_groups;
@@ -5272,18 +5104,9 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_RE_next_vacc_class_1 = shared->n_groups;
   shared->dim_n_RE_next_vacc_class_2 = shared->n_strains;
   shared->dim_n_RE_next_vacc_class_3 = shared->n_vacc_classes;
-  shared->dim_n_RE_next_vacc_class_out_1 = shared->n_groups;
-  shared->dim_n_RE_next_vacc_class_out_2 = shared->n_strains;
-  shared->dim_n_RE_next_vacc_class_out_3 = shared->n_vacc_classes;
-  shared->dim_n_RE_out_1 = shared->n_groups;
-  shared->dim_n_RE_out_2 = shared->n_strains;
-  shared->dim_n_RE_out_3 = shared->n_vacc_classes;
   shared->dim_n_RE_same_vacc_class_1 = shared->n_groups;
   shared->dim_n_RE_same_vacc_class_2 = shared->n_strains;
   shared->dim_n_RE_same_vacc_class_3 = shared->n_vacc_classes;
-  shared->dim_n_RE_same_vacc_class_out_1 = shared->n_groups;
-  shared->dim_n_RE_same_vacc_class_out_2 = shared->n_strains;
-  shared->dim_n_RE_same_vacc_class_out_3 = shared->n_vacc_classes;
   shared->dim_n_RR_1 = shared->n_groups;
   shared->dim_n_RR_2 = shared->n_strains;
   shared->dim_n_RR_3 = shared->n_vacc_classes;
@@ -5293,48 +5116,27 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_RR_next_vacc_class_capped_1 = shared->n_groups;
   shared->dim_n_RR_next_vacc_class_capped_2 = shared->n_strains;
   shared->dim_n_RR_next_vacc_class_capped_3 = shared->n_vacc_classes;
-  shared->dim_n_RR_next_vacc_class_out_1 = shared->n_groups;
-  shared->dim_n_RR_next_vacc_class_out_2 = shared->n_strains;
-  shared->dim_n_RR_next_vacc_class_out_3 = shared->n_vacc_classes;
   shared->dim_n_RR_next_vacc_class_tmp_1 = shared->n_groups;
   shared->dim_n_RR_next_vacc_class_tmp_2 = shared->n_strains;
   shared->dim_n_RR_next_vacc_class_tmp_3 = shared->n_vacc_classes;
-  shared->dim_n_RR_out_1 = shared->n_groups;
-  shared->dim_n_RR_out_2 = shared->n_strains;
-  shared->dim_n_RR_out_3 = shared->n_vacc_classes;
   shared->dim_n_RR_same_vacc_class_1 = shared->n_groups;
   shared->dim_n_RR_same_vacc_class_2 = shared->n_strains;
   shared->dim_n_RR_same_vacc_class_3 = shared->n_vacc_classes;
-  shared->dim_n_RR_same_vacc_class_out_1 = shared->n_groups;
-  shared->dim_n_RR_same_vacc_class_out_2 = shared->n_strains;
-  shared->dim_n_RR_same_vacc_class_out_3 = shared->n_vacc_classes;
   shared->dim_n_RS_1 = shared->n_groups;
   shared->dim_n_RS_2 = shared->n_strains;
   shared->dim_n_RS_3 = shared->n_vacc_classes;
   shared->dim_n_RS_next_vacc_class_1 = shared->n_groups;
   shared->dim_n_RS_next_vacc_class_2 = shared->n_strains;
   shared->dim_n_RS_next_vacc_class_3 = shared->n_vacc_classes;
-  shared->dim_n_RS_next_vacc_class_out_1 = shared->n_groups;
-  shared->dim_n_RS_next_vacc_class_out_2 = shared->n_strains;
-  shared->dim_n_RS_next_vacc_class_out_3 = shared->n_vacc_classes;
-  shared->dim_n_RS_out_1 = shared->n_groups;
-  shared->dim_n_RS_out_2 = shared->n_strains;
-  shared->dim_n_RS_out_3 = shared->n_vacc_classes;
   shared->dim_n_RS_same_vacc_class_1 = shared->n_groups;
   shared->dim_n_RS_same_vacc_class_2 = shared->n_strains;
   shared->dim_n_RS_same_vacc_class_3 = shared->n_vacc_classes;
-  shared->dim_n_RS_same_vacc_class_out_1 = shared->n_groups;
-  shared->dim_n_RS_same_vacc_class_out_2 = shared->n_strains;
-  shared->dim_n_RS_same_vacc_class_out_3 = shared->n_vacc_classes;
   shared->dim_n_R_progress_1 = shared->n_groups;
   shared->dim_n_R_progress_2 = shared->n_strains;
   shared->dim_n_R_progress_3 = shared->n_vacc_classes;
   shared->dim_n_R_progress_capped_1 = shared->n_groups;
   shared->dim_n_R_progress_capped_2 = shared->n_strains;
   shared->dim_n_R_progress_capped_3 = shared->n_vacc_classes;
-  shared->dim_n_R_progress_out_1 = shared->n_groups;
-  shared->dim_n_R_progress_out_2 = shared->n_strains;
-  shared->dim_n_R_progress_out_3 = shared->n_vacc_classes;
   shared->dim_n_R_progress_tmp_1 = shared->n_groups;
   shared->dim_n_R_progress_tmp_2 = shared->n_strains;
   shared->dim_n_R_progress_tmp_3 = shared->n_vacc_classes;
@@ -5700,8 +5502,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_I_with_diff_trans_12 = shared->dim_I_with_diff_trans_1 * shared->dim_I_with_diff_trans_2;
   shared->dim_R = shared->dim_R_1 * shared->dim_R_2 * shared->dim_R_3;
   shared->dim_R_12 = shared->dim_R_1 * shared->dim_R_2;
-  shared->dim_R_out = shared->dim_R_out_1 * shared->dim_R_out_2 * shared->dim_R_out_3;
-  shared->dim_R_out_12 = shared->dim_R_out_1 * shared->dim_R_out_2;
   shared->dim_S = shared->dim_S_1 * shared->dim_S_2;
   shared->dim_T_PCR_neg = shared->dim_T_PCR_neg_1 * shared->dim_T_PCR_neg_2 * shared->dim_T_PCR_neg_3;
   shared->dim_T_PCR_neg_12 = shared->dim_T_PCR_neg_1 * shared->dim_T_PCR_neg_2;
@@ -5955,48 +5755,28 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_n_RE_12 = shared->dim_n_RE_1 * shared->dim_n_RE_2;
   shared->dim_n_RE_next_vacc_class = shared->dim_n_RE_next_vacc_class_1 * shared->dim_n_RE_next_vacc_class_2 * shared->dim_n_RE_next_vacc_class_3;
   shared->dim_n_RE_next_vacc_class_12 = shared->dim_n_RE_next_vacc_class_1 * shared->dim_n_RE_next_vacc_class_2;
-  shared->dim_n_RE_next_vacc_class_out = shared->dim_n_RE_next_vacc_class_out_1 * shared->dim_n_RE_next_vacc_class_out_2 * shared->dim_n_RE_next_vacc_class_out_3;
-  shared->dim_n_RE_next_vacc_class_out_12 = shared->dim_n_RE_next_vacc_class_out_1 * shared->dim_n_RE_next_vacc_class_out_2;
-  shared->dim_n_RE_out = shared->dim_n_RE_out_1 * shared->dim_n_RE_out_2 * shared->dim_n_RE_out_3;
-  shared->dim_n_RE_out_12 = shared->dim_n_RE_out_1 * shared->dim_n_RE_out_2;
   shared->dim_n_RE_same_vacc_class = shared->dim_n_RE_same_vacc_class_1 * shared->dim_n_RE_same_vacc_class_2 * shared->dim_n_RE_same_vacc_class_3;
   shared->dim_n_RE_same_vacc_class_12 = shared->dim_n_RE_same_vacc_class_1 * shared->dim_n_RE_same_vacc_class_2;
-  shared->dim_n_RE_same_vacc_class_out = shared->dim_n_RE_same_vacc_class_out_1 * shared->dim_n_RE_same_vacc_class_out_2 * shared->dim_n_RE_same_vacc_class_out_3;
-  shared->dim_n_RE_same_vacc_class_out_12 = shared->dim_n_RE_same_vacc_class_out_1 * shared->dim_n_RE_same_vacc_class_out_2;
   shared->dim_n_RR = shared->dim_n_RR_1 * shared->dim_n_RR_2 * shared->dim_n_RR_3;
   shared->dim_n_RR_12 = shared->dim_n_RR_1 * shared->dim_n_RR_2;
   shared->dim_n_RR_next_vacc_class = shared->dim_n_RR_next_vacc_class_1 * shared->dim_n_RR_next_vacc_class_2 * shared->dim_n_RR_next_vacc_class_3;
   shared->dim_n_RR_next_vacc_class_12 = shared->dim_n_RR_next_vacc_class_1 * shared->dim_n_RR_next_vacc_class_2;
   shared->dim_n_RR_next_vacc_class_capped = shared->dim_n_RR_next_vacc_class_capped_1 * shared->dim_n_RR_next_vacc_class_capped_2 * shared->dim_n_RR_next_vacc_class_capped_3;
   shared->dim_n_RR_next_vacc_class_capped_12 = shared->dim_n_RR_next_vacc_class_capped_1 * shared->dim_n_RR_next_vacc_class_capped_2;
-  shared->dim_n_RR_next_vacc_class_out = shared->dim_n_RR_next_vacc_class_out_1 * shared->dim_n_RR_next_vacc_class_out_2 * shared->dim_n_RR_next_vacc_class_out_3;
-  shared->dim_n_RR_next_vacc_class_out_12 = shared->dim_n_RR_next_vacc_class_out_1 * shared->dim_n_RR_next_vacc_class_out_2;
   shared->dim_n_RR_next_vacc_class_tmp = shared->dim_n_RR_next_vacc_class_tmp_1 * shared->dim_n_RR_next_vacc_class_tmp_2 * shared->dim_n_RR_next_vacc_class_tmp_3;
   shared->dim_n_RR_next_vacc_class_tmp_12 = shared->dim_n_RR_next_vacc_class_tmp_1 * shared->dim_n_RR_next_vacc_class_tmp_2;
-  shared->dim_n_RR_out = shared->dim_n_RR_out_1 * shared->dim_n_RR_out_2 * shared->dim_n_RR_out_3;
-  shared->dim_n_RR_out_12 = shared->dim_n_RR_out_1 * shared->dim_n_RR_out_2;
   shared->dim_n_RR_same_vacc_class = shared->dim_n_RR_same_vacc_class_1 * shared->dim_n_RR_same_vacc_class_2 * shared->dim_n_RR_same_vacc_class_3;
   shared->dim_n_RR_same_vacc_class_12 = shared->dim_n_RR_same_vacc_class_1 * shared->dim_n_RR_same_vacc_class_2;
-  shared->dim_n_RR_same_vacc_class_out = shared->dim_n_RR_same_vacc_class_out_1 * shared->dim_n_RR_same_vacc_class_out_2 * shared->dim_n_RR_same_vacc_class_out_3;
-  shared->dim_n_RR_same_vacc_class_out_12 = shared->dim_n_RR_same_vacc_class_out_1 * shared->dim_n_RR_same_vacc_class_out_2;
   shared->dim_n_RS = shared->dim_n_RS_1 * shared->dim_n_RS_2 * shared->dim_n_RS_3;
   shared->dim_n_RS_12 = shared->dim_n_RS_1 * shared->dim_n_RS_2;
   shared->dim_n_RS_next_vacc_class = shared->dim_n_RS_next_vacc_class_1 * shared->dim_n_RS_next_vacc_class_2 * shared->dim_n_RS_next_vacc_class_3;
   shared->dim_n_RS_next_vacc_class_12 = shared->dim_n_RS_next_vacc_class_1 * shared->dim_n_RS_next_vacc_class_2;
-  shared->dim_n_RS_next_vacc_class_out = shared->dim_n_RS_next_vacc_class_out_1 * shared->dim_n_RS_next_vacc_class_out_2 * shared->dim_n_RS_next_vacc_class_out_3;
-  shared->dim_n_RS_next_vacc_class_out_12 = shared->dim_n_RS_next_vacc_class_out_1 * shared->dim_n_RS_next_vacc_class_out_2;
-  shared->dim_n_RS_out = shared->dim_n_RS_out_1 * shared->dim_n_RS_out_2 * shared->dim_n_RS_out_3;
-  shared->dim_n_RS_out_12 = shared->dim_n_RS_out_1 * shared->dim_n_RS_out_2;
   shared->dim_n_RS_same_vacc_class = shared->dim_n_RS_same_vacc_class_1 * shared->dim_n_RS_same_vacc_class_2 * shared->dim_n_RS_same_vacc_class_3;
   shared->dim_n_RS_same_vacc_class_12 = shared->dim_n_RS_same_vacc_class_1 * shared->dim_n_RS_same_vacc_class_2;
-  shared->dim_n_RS_same_vacc_class_out = shared->dim_n_RS_same_vacc_class_out_1 * shared->dim_n_RS_same_vacc_class_out_2 * shared->dim_n_RS_same_vacc_class_out_3;
-  shared->dim_n_RS_same_vacc_class_out_12 = shared->dim_n_RS_same_vacc_class_out_1 * shared->dim_n_RS_same_vacc_class_out_2;
   shared->dim_n_R_progress = shared->dim_n_R_progress_1 * shared->dim_n_R_progress_2 * shared->dim_n_R_progress_3;
   shared->dim_n_R_progress_12 = shared->dim_n_R_progress_1 * shared->dim_n_R_progress_2;
   shared->dim_n_R_progress_capped = shared->dim_n_R_progress_capped_1 * shared->dim_n_R_progress_capped_2 * shared->dim_n_R_progress_capped_3;
   shared->dim_n_R_progress_capped_12 = shared->dim_n_R_progress_capped_1 * shared->dim_n_R_progress_capped_2;
-  shared->dim_n_R_progress_out = shared->dim_n_R_progress_out_1 * shared->dim_n_R_progress_out_2 * shared->dim_n_R_progress_out_3;
-  shared->dim_n_R_progress_out_12 = shared->dim_n_R_progress_out_1 * shared->dim_n_R_progress_out_2;
   shared->dim_n_R_progress_tmp = shared->dim_n_R_progress_tmp_1 * shared->dim_n_R_progress_tmp_2 * shared->dim_n_R_progress_tmp_3;
   shared->dim_n_R_progress_tmp_12 = shared->dim_n_R_progress_tmp_1 * shared->dim_n_R_progress_tmp_2;
   shared->dim_n_R_vaccinated = shared->dim_n_R_vaccinated_1 * shared->dim_n_R_vaccinated_2;
@@ -6272,7 +6052,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_I_P = std::vector<real_t>(shared->dim_I_P);
   shared->initial_I_weighted = std::vector<real_t>(shared->dim_I_weighted);
   shared->initial_R = std::vector<real_t>(shared->dim_R);
-  shared->initial_R_out = std::vector<real_t>(shared->dim_R_out);
   shared->initial_S = std::vector<real_t>(shared->dim_S);
   shared->initial_T_PCR_neg = std::vector<real_t>(shared->dim_T_PCR_neg);
   shared->initial_T_PCR_pos = std::vector<real_t>(shared->dim_T_PCR_pos);
@@ -6291,16 +6070,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_cum_n_S_vaccinated = std::vector<real_t>(shared->dim_cum_n_S_vaccinated);
   shared->initial_cum_n_vaccinated = std::vector<real_t>(shared->dim_cum_n_vaccinated);
   shared->initial_diagnoses_admitted = std::vector<real_t>(shared->dim_diagnoses_admitted);
-  shared->initial_n_RE_next_vacc_class_out = std::vector<real_t>(shared->dim_n_RE_next_vacc_class_out);
-  shared->initial_n_RE_out = std::vector<real_t>(shared->dim_n_RE_out);
-  shared->initial_n_RE_same_vacc_class_out = std::vector<real_t>(shared->dim_n_RE_same_vacc_class_out);
-  shared->initial_n_RR_next_vacc_class_out = std::vector<real_t>(shared->dim_n_RR_next_vacc_class_out);
-  shared->initial_n_RR_out = std::vector<real_t>(shared->dim_n_RR_out);
-  shared->initial_n_RR_same_vacc_class_out = std::vector<real_t>(shared->dim_n_RR_same_vacc_class_out);
-  shared->initial_n_RS_next_vacc_class_out = std::vector<real_t>(shared->dim_n_RS_next_vacc_class_out);
-  shared->initial_n_RS_out = std::vector<real_t>(shared->dim_n_RS_out);
-  shared->initial_n_RS_same_vacc_class_out = std::vector<real_t>(shared->dim_n_RS_same_vacc_class_out);
-  shared->initial_n_R_progress_out = std::vector<real_t>(shared->dim_n_R_progress_out);
   shared->initial_p_SE_out = std::vector<real_t>(shared->dim_p_SE_out);
   shared->initial_prob_strain = std::vector<real_t>(shared->dim_prob_strain);
   shared->initial_tmp_vaccine_n_candidates = std::vector<real_t>(shared->dim_tmp_vaccine_n_candidates);
@@ -6626,13 +6395,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
       }
     }
   }
-  for (int i = 1; i <= shared->dim_R_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_R_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_R_out_3; ++k) {
-        shared->initial_R_out[i - 1 + shared->dim_R_out_1 * (j - 1) + shared->dim_R_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
   for (int i = 1; i <= shared->dim_S_1; ++i) {
     for (int j = 1; j <= shared->dim_S_2; ++j) {
       shared->initial_S[i - 1 + shared->dim_S_1 * (j - 1)] = 0;
@@ -6759,76 +6521,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
       shared->initial_diagnoses_admitted[i - 1 + shared->dim_diagnoses_admitted_1 * (j - 1)] = 0;
     }
   }
-  for (int i = 1; i <= shared->dim_n_RE_next_vacc_class_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RE_next_vacc_class_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RE_next_vacc_class_out_3; ++k) {
-        shared->initial_n_RE_next_vacc_class_out[i - 1 + shared->dim_n_RE_next_vacc_class_out_1 * (j - 1) + shared->dim_n_RE_next_vacc_class_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RE_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RE_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RE_out_3; ++k) {
-        shared->initial_n_RE_out[i - 1 + shared->dim_n_RE_out_1 * (j - 1) + shared->dim_n_RE_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RE_same_vacc_class_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RE_same_vacc_class_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RE_same_vacc_class_out_3; ++k) {
-        shared->initial_n_RE_same_vacc_class_out[i - 1 + shared->dim_n_RE_same_vacc_class_out_1 * (j - 1) + shared->dim_n_RE_same_vacc_class_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RR_next_vacc_class_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RR_next_vacc_class_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RR_next_vacc_class_out_3; ++k) {
-        shared->initial_n_RR_next_vacc_class_out[i - 1 + shared->dim_n_RR_next_vacc_class_out_1 * (j - 1) + shared->dim_n_RR_next_vacc_class_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RR_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RR_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RR_out_3; ++k) {
-        shared->initial_n_RR_out[i - 1 + shared->dim_n_RR_out_1 * (j - 1) + shared->dim_n_RR_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RR_same_vacc_class_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RR_same_vacc_class_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RR_same_vacc_class_out_3; ++k) {
-        shared->initial_n_RR_same_vacc_class_out[i - 1 + shared->dim_n_RR_same_vacc_class_out_1 * (j - 1) + shared->dim_n_RR_same_vacc_class_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RS_next_vacc_class_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RS_next_vacc_class_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RS_next_vacc_class_out_3; ++k) {
-        shared->initial_n_RS_next_vacc_class_out[i - 1 + shared->dim_n_RS_next_vacc_class_out_1 * (j - 1) + shared->dim_n_RS_next_vacc_class_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RS_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RS_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RS_out_3; ++k) {
-        shared->initial_n_RS_out[i - 1 + shared->dim_n_RS_out_1 * (j - 1) + shared->dim_n_RS_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_RS_same_vacc_class_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_RS_same_vacc_class_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_RS_same_vacc_class_out_3; ++k) {
-        shared->initial_n_RS_same_vacc_class_out[i - 1 + shared->dim_n_RS_same_vacc_class_out_1 * (j - 1) + shared->dim_n_RS_same_vacc_class_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
-  for (int i = 1; i <= shared->dim_n_R_progress_out_1; ++i) {
-    for (int j = 1; j <= shared->dim_n_R_progress_out_2; ++j) {
-      for (int k = 1; k <= shared->dim_n_R_progress_out_3; ++k) {
-        shared->initial_n_R_progress_out[i - 1 + shared->dim_n_R_progress_out_1 * (j - 1) + shared->dim_n_R_progress_out_12 * (k - 1)] = 0;
-      }
-    }
-  }
   for (int i = 1; i <= shared->dim_p_SE_out_1; ++i) {
     for (int j = 1; j <= shared->dim_p_SE_out_2; ++j) {
       shared->initial_p_SE_out[i - 1 + shared->dim_p_SE_out_1 * (j - 1)] = 1;
@@ -6858,38 +6550,37 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   }
   shared->m = user_get_array_fixed<real_t, 2>(user, "m", shared->m, {shared->dim_m_1, shared->dim_m_2}, NA_REAL, NA_REAL);
   shared->offset_variable_D = shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_prob_strain + 27;
-  shared->offset_variable_E = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_G_D = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_H_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_H_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_H_R_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_H_R_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_W_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_W_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_W_R_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_W_R_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_pre_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_ICU_pre_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_I_A = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_I_C_1 = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_I_C_2 = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_I_P = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_E = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_G_D = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_H_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_H_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_H_R_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_H_R_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_W_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_W_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_W_R_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_W_R_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_pre_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_ICU_pre_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_I_A = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_I_C_1 = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_I_C_2 = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_I_P = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_I_A + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
   shared->offset_variable_I_weighted = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + 27;
-  shared->offset_variable_R = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_R_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_R = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_S + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
   shared->offset_variable_S = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_prob_strain + 27;
-  shared->offset_variable_T_PCR_neg = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_T_PCR_pos = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_PCR_pre + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_T_PCR_pre = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_T_sero_neg = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_T_sero_pos = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_T_sero_pre = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_W_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_W_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_W_R_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_W_R_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_R_out + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RR_same_vacc_class_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_T_PCR_neg = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_T_PCR_pos = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_PCR_pre + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_T_PCR_pre = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_T_sero_pos + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_T_sero_neg = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_T_sero_pos = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_T_sero_pre + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_T_sero_pre = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_D_conf + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_W_D_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_D_unconf + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_W_D_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_R_conf + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_W_R_conf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_W_R_unconf + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
+  shared->offset_variable_W_R_unconf = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_E + shared->dim_G_D + shared->dim_H_D_conf + shared->dim_H_D_unconf + shared->dim_H_R_conf + shared->dim_H_R_unconf + shared->dim_ICU_D_conf + shared->dim_ICU_D_unconf + shared->dim_ICU_W_D_conf + shared->dim_ICU_W_D_unconf + shared->dim_ICU_W_R_conf + shared->dim_ICU_W_R_unconf + shared->dim_ICU_pre_conf + shared->dim_ICU_pre_unconf + shared->dim_I_A + shared->dim_I_C_1 + shared->dim_I_C_2 + shared->dim_I_P + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R + shared->dim_S + shared->dim_T_PCR_neg + shared->dim_T_sero_neg + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
   shared->offset_variable_cum_n_E_vaccinated = shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_S_vaccinated + shared->dim_prob_strain + 27;
   shared->offset_variable_cum_n_I_A_vaccinated = shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_prob_strain + 27;
   shared->offset_variable_cum_n_I_P_vaccinated = shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_prob_strain + 27;
@@ -6897,16 +6588,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->offset_variable_cum_n_S_vaccinated = shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_prob_strain + 27;
   shared->offset_variable_cum_n_vaccinated = shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_prob_strain + 27;
   shared->offset_variable_diagnoses_admitted = shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_prob_strain + 27;
-  shared->offset_variable_n_RE_next_vacc_class_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_out + shared->dim_n_RR_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RE_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RS_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RE_same_vacc_class_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RR_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RR_next_vacc_class_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RR_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_out + shared->dim_n_RS_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RR_same_vacc_class_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_next_vacc_class_out + shared->dim_n_RE_out + shared->dim_n_RE_same_vacc_class_out + shared->dim_n_RR_next_vacc_class_out + shared->dim_n_RR_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_RS_same_vacc_class_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RS_next_vacc_class_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_out + shared->dim_n_RR_out + shared->dim_n_RS_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RS_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_RS_same_vacc_class_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_n_RE_out + shared->dim_n_RR_out + shared->dim_n_RS_next_vacc_class_out + shared->dim_n_RS_out + shared->dim_n_R_progress_out + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
-  shared->offset_variable_n_R_progress_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_R_out + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_tmp_vaccine_probability + shared->dim_vaccine_missed_doses + 27;
   shared->offset_variable_p_SE_out = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_prob_strain + 27;
   shared->offset_variable_tmp_vaccine_n_candidates = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_vaccine_missed_doses + 27;
   shared->offset_variable_tmp_vaccine_probability = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_p_SE_out + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_vaccine_missed_doses + 27;
@@ -6949,8 +6630,8 @@ template <>
 cpp11::sexp dust_info<carehomes>(const dust::pars_t<carehomes>& pars) {
   const carehomes::internal_t internal = pars.internal;
   const std::shared_ptr<const carehomes::shared_t> shared = pars.shared;
-  cpp11::writable::strings nms({"time", "admit_conf_inc", "new_conf_inc", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "N_tot3", "ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_comm_inc", "D_carehomes_tot", "D_carehomes_inc", "D_hosp_inc", "D_tot", "sero_pos", "cum_sympt_cases", "cum_sympt_cases_over25", "cum_sympt_cases_non_variant_over25", "sympt_cases_inc", "sympt_cases_over25_inc", "sympt_cases_non_variant_over25_inc", "react_pos", "cum_infections_per_strain", "D_hosp", "D_non_hosp", "cum_admit_by_age", "N_tot", "prob_strain", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_I_P_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "diagnoses_admitted", "D", "S", "p_SE_out", "I_weighted", "vaccine_missed_doses", "tmp_vaccine_n_candidates", "tmp_vaccine_probability", "R_out", "n_R_progress_out", "n_RS_out", "n_RE_out", "n_RR_out", "n_RS_next_vacc_class_out", "n_RS_same_vacc_class_out", "n_RE_next_vacc_class_out", "n_RE_same_vacc_class_out", "n_RR_next_vacc_class_out", "n_RR_same_vacc_class_out", "T_sero_neg", "R", "T_PCR_neg", "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre", "T_sero_pos", "T_PCR_pre", "T_PCR_pos"});
-  cpp11::writable::list dim(87);
+  cpp11::writable::strings nms({"time", "admit_conf_inc", "new_conf_inc", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "N_tot3", "ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_comm_inc", "D_carehomes_tot", "D_carehomes_inc", "D_hosp_inc", "D_tot", "sero_pos", "cum_sympt_cases", "cum_sympt_cases_over25", "cum_sympt_cases_non_variant_over25", "sympt_cases_inc", "sympt_cases_over25_inc", "sympt_cases_non_variant_over25_inc", "react_pos", "cum_infections_per_strain", "D_hosp", "D_non_hosp", "cum_admit_by_age", "N_tot", "prob_strain", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_I_P_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "diagnoses_admitted", "D", "S", "p_SE_out", "I_weighted", "vaccine_missed_doses", "tmp_vaccine_n_candidates", "tmp_vaccine_probability", "T_sero_neg", "R", "T_PCR_neg", "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre", "T_sero_pos", "T_PCR_pre", "T_PCR_pos"});
+  cpp11::writable::list dim(76);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});
   dim[2] = cpp11::writable::integers({1});
@@ -6998,48 +6679,37 @@ cpp11::sexp dust_info<carehomes>(const dust::pars_t<carehomes>& pars) {
   dim[44] = cpp11::writable::integers({shared->dim_vaccine_missed_doses_1, shared->dim_vaccine_missed_doses_2});
   dim[45] = cpp11::writable::integers({shared->dim_tmp_vaccine_n_candidates_1, shared->dim_tmp_vaccine_n_candidates_2});
   dim[46] = cpp11::writable::integers({shared->dim_tmp_vaccine_probability_1, shared->dim_tmp_vaccine_probability_2});
-  dim[47] = cpp11::writable::integers({shared->dim_R_out_1, shared->dim_R_out_2, shared->dim_R_out_3});
-  dim[48] = cpp11::writable::integers({shared->dim_n_R_progress_out_1, shared->dim_n_R_progress_out_2, shared->dim_n_R_progress_out_3});
-  dim[49] = cpp11::writable::integers({shared->dim_n_RS_out_1, shared->dim_n_RS_out_2, shared->dim_n_RS_out_3});
-  dim[50] = cpp11::writable::integers({shared->dim_n_RE_out_1, shared->dim_n_RE_out_2, shared->dim_n_RE_out_3});
-  dim[51] = cpp11::writable::integers({shared->dim_n_RR_out_1, shared->dim_n_RR_out_2, shared->dim_n_RR_out_3});
-  dim[52] = cpp11::writable::integers({shared->dim_n_RS_next_vacc_class_out_1, shared->dim_n_RS_next_vacc_class_out_2, shared->dim_n_RS_next_vacc_class_out_3});
-  dim[53] = cpp11::writable::integers({shared->dim_n_RS_same_vacc_class_out_1, shared->dim_n_RS_same_vacc_class_out_2, shared->dim_n_RS_same_vacc_class_out_3});
-  dim[54] = cpp11::writable::integers({shared->dim_n_RE_next_vacc_class_out_1, shared->dim_n_RE_next_vacc_class_out_2, shared->dim_n_RE_next_vacc_class_out_3});
-  dim[55] = cpp11::writable::integers({shared->dim_n_RE_same_vacc_class_out_1, shared->dim_n_RE_same_vacc_class_out_2, shared->dim_n_RE_same_vacc_class_out_3});
-  dim[56] = cpp11::writable::integers({shared->dim_n_RR_next_vacc_class_out_1, shared->dim_n_RR_next_vacc_class_out_2, shared->dim_n_RR_next_vacc_class_out_3});
-  dim[57] = cpp11::writable::integers({shared->dim_n_RR_same_vacc_class_out_1, shared->dim_n_RR_same_vacc_class_out_2, shared->dim_n_RR_same_vacc_class_out_3});
-  dim[58] = cpp11::writable::integers({shared->dim_T_sero_neg_1, shared->dim_T_sero_neg_2, shared->dim_T_sero_neg_3});
-  dim[59] = cpp11::writable::integers({shared->dim_R_1, shared->dim_R_2, shared->dim_R_3});
-  dim[60] = cpp11::writable::integers({shared->dim_T_PCR_neg_1, shared->dim_T_PCR_neg_2, shared->dim_T_PCR_neg_3});
-  dim[61] = cpp11::writable::integers({shared->dim_E_1, shared->dim_E_2, shared->dim_E_3, shared->dim_E_4});
-  dim[62] = cpp11::writable::integers({shared->dim_I_A_1, shared->dim_I_A_2, shared->dim_I_A_3, shared->dim_I_A_4});
-  dim[63] = cpp11::writable::integers({shared->dim_I_P_1, shared->dim_I_P_2, shared->dim_I_P_3, shared->dim_I_P_4});
-  dim[64] = cpp11::writable::integers({shared->dim_I_C_1_1, shared->dim_I_C_1_2, shared->dim_I_C_1_3, shared->dim_I_C_1_4});
-  dim[65] = cpp11::writable::integers({shared->dim_I_C_2_1, shared->dim_I_C_2_2, shared->dim_I_C_2_3, shared->dim_I_C_2_4});
-  dim[66] = cpp11::writable::integers({shared->dim_G_D_1, shared->dim_G_D_2, shared->dim_G_D_3, shared->dim_G_D_4});
-  dim[67] = cpp11::writable::integers({shared->dim_ICU_pre_unconf_1, shared->dim_ICU_pre_unconf_2, shared->dim_ICU_pre_unconf_3, shared->dim_ICU_pre_unconf_4});
-  dim[68] = cpp11::writable::integers({shared->dim_ICU_pre_conf_1, shared->dim_ICU_pre_conf_2, shared->dim_ICU_pre_conf_3, shared->dim_ICU_pre_conf_4});
-  dim[69] = cpp11::writable::integers({shared->dim_H_R_unconf_1, shared->dim_H_R_unconf_2, shared->dim_H_R_unconf_3, shared->dim_H_R_unconf_4});
-  dim[70] = cpp11::writable::integers({shared->dim_H_R_conf_1, shared->dim_H_R_conf_2, shared->dim_H_R_conf_3, shared->dim_H_R_conf_4});
-  dim[71] = cpp11::writable::integers({shared->dim_H_D_unconf_1, shared->dim_H_D_unconf_2, shared->dim_H_D_unconf_3, shared->dim_H_D_unconf_4});
-  dim[72] = cpp11::writable::integers({shared->dim_H_D_conf_1, shared->dim_H_D_conf_2, shared->dim_H_D_conf_3, shared->dim_H_D_conf_4});
-  dim[73] = cpp11::writable::integers({shared->dim_ICU_W_R_unconf_1, shared->dim_ICU_W_R_unconf_2, shared->dim_ICU_W_R_unconf_3, shared->dim_ICU_W_R_unconf_4});
-  dim[74] = cpp11::writable::integers({shared->dim_ICU_W_R_conf_1, shared->dim_ICU_W_R_conf_2, shared->dim_ICU_W_R_conf_3, shared->dim_ICU_W_R_conf_4});
-  dim[75] = cpp11::writable::integers({shared->dim_ICU_W_D_unconf_1, shared->dim_ICU_W_D_unconf_2, shared->dim_ICU_W_D_unconf_3, shared->dim_ICU_W_D_unconf_4});
-  dim[76] = cpp11::writable::integers({shared->dim_ICU_W_D_conf_1, shared->dim_ICU_W_D_conf_2, shared->dim_ICU_W_D_conf_3, shared->dim_ICU_W_D_conf_4});
-  dim[77] = cpp11::writable::integers({shared->dim_ICU_D_unconf_1, shared->dim_ICU_D_unconf_2, shared->dim_ICU_D_unconf_3, shared->dim_ICU_D_unconf_4});
-  dim[78] = cpp11::writable::integers({shared->dim_ICU_D_conf_1, shared->dim_ICU_D_conf_2, shared->dim_ICU_D_conf_3, shared->dim_ICU_D_conf_4});
-  dim[79] = cpp11::writable::integers({shared->dim_W_R_unconf_1, shared->dim_W_R_unconf_2, shared->dim_W_R_unconf_3, shared->dim_W_R_unconf_4});
-  dim[80] = cpp11::writable::integers({shared->dim_W_R_conf_1, shared->dim_W_R_conf_2, shared->dim_W_R_conf_3, shared->dim_W_R_conf_4});
-  dim[81] = cpp11::writable::integers({shared->dim_W_D_unconf_1, shared->dim_W_D_unconf_2, shared->dim_W_D_unconf_3, shared->dim_W_D_unconf_4});
-  dim[82] = cpp11::writable::integers({shared->dim_W_D_conf_1, shared->dim_W_D_conf_2, shared->dim_W_D_conf_3, shared->dim_W_D_conf_4});
-  dim[83] = cpp11::writable::integers({shared->dim_T_sero_pre_1, shared->dim_T_sero_pre_2, shared->dim_T_sero_pre_3, shared->dim_T_sero_pre_4});
-  dim[84] = cpp11::writable::integers({shared->dim_T_sero_pos_1, shared->dim_T_sero_pos_2, shared->dim_T_sero_pos_3, shared->dim_T_sero_pos_4});
-  dim[85] = cpp11::writable::integers({shared->dim_T_PCR_pre_1, shared->dim_T_PCR_pre_2, shared->dim_T_PCR_pre_3, shared->dim_T_PCR_pre_4});
-  dim[86] = cpp11::writable::integers({shared->dim_T_PCR_pos_1, shared->dim_T_PCR_pos_2, shared->dim_T_PCR_pos_3, shared->dim_T_PCR_pos_4});
+  dim[47] = cpp11::writable::integers({shared->dim_T_sero_neg_1, shared->dim_T_sero_neg_2, shared->dim_T_sero_neg_3});
+  dim[48] = cpp11::writable::integers({shared->dim_R_1, shared->dim_R_2, shared->dim_R_3});
+  dim[49] = cpp11::writable::integers({shared->dim_T_PCR_neg_1, shared->dim_T_PCR_neg_2, shared->dim_T_PCR_neg_3});
+  dim[50] = cpp11::writable::integers({shared->dim_E_1, shared->dim_E_2, shared->dim_E_3, shared->dim_E_4});
+  dim[51] = cpp11::writable::integers({shared->dim_I_A_1, shared->dim_I_A_2, shared->dim_I_A_3, shared->dim_I_A_4});
+  dim[52] = cpp11::writable::integers({shared->dim_I_P_1, shared->dim_I_P_2, shared->dim_I_P_3, shared->dim_I_P_4});
+  dim[53] = cpp11::writable::integers({shared->dim_I_C_1_1, shared->dim_I_C_1_2, shared->dim_I_C_1_3, shared->dim_I_C_1_4});
+  dim[54] = cpp11::writable::integers({shared->dim_I_C_2_1, shared->dim_I_C_2_2, shared->dim_I_C_2_3, shared->dim_I_C_2_4});
+  dim[55] = cpp11::writable::integers({shared->dim_G_D_1, shared->dim_G_D_2, shared->dim_G_D_3, shared->dim_G_D_4});
+  dim[56] = cpp11::writable::integers({shared->dim_ICU_pre_unconf_1, shared->dim_ICU_pre_unconf_2, shared->dim_ICU_pre_unconf_3, shared->dim_ICU_pre_unconf_4});
+  dim[57] = cpp11::writable::integers({shared->dim_ICU_pre_conf_1, shared->dim_ICU_pre_conf_2, shared->dim_ICU_pre_conf_3, shared->dim_ICU_pre_conf_4});
+  dim[58] = cpp11::writable::integers({shared->dim_H_R_unconf_1, shared->dim_H_R_unconf_2, shared->dim_H_R_unconf_3, shared->dim_H_R_unconf_4});
+  dim[59] = cpp11::writable::integers({shared->dim_H_R_conf_1, shared->dim_H_R_conf_2, shared->dim_H_R_conf_3, shared->dim_H_R_conf_4});
+  dim[60] = cpp11::writable::integers({shared->dim_H_D_unconf_1, shared->dim_H_D_unconf_2, shared->dim_H_D_unconf_3, shared->dim_H_D_unconf_4});
+  dim[61] = cpp11::writable::integers({shared->dim_H_D_conf_1, shared->dim_H_D_conf_2, shared->dim_H_D_conf_3, shared->dim_H_D_conf_4});
+  dim[62] = cpp11::writable::integers({shared->dim_ICU_W_R_unconf_1, shared->dim_ICU_W_R_unconf_2, shared->dim_ICU_W_R_unconf_3, shared->dim_ICU_W_R_unconf_4});
+  dim[63] = cpp11::writable::integers({shared->dim_ICU_W_R_conf_1, shared->dim_ICU_W_R_conf_2, shared->dim_ICU_W_R_conf_3, shared->dim_ICU_W_R_conf_4});
+  dim[64] = cpp11::writable::integers({shared->dim_ICU_W_D_unconf_1, shared->dim_ICU_W_D_unconf_2, shared->dim_ICU_W_D_unconf_3, shared->dim_ICU_W_D_unconf_4});
+  dim[65] = cpp11::writable::integers({shared->dim_ICU_W_D_conf_1, shared->dim_ICU_W_D_conf_2, shared->dim_ICU_W_D_conf_3, shared->dim_ICU_W_D_conf_4});
+  dim[66] = cpp11::writable::integers({shared->dim_ICU_D_unconf_1, shared->dim_ICU_D_unconf_2, shared->dim_ICU_D_unconf_3, shared->dim_ICU_D_unconf_4});
+  dim[67] = cpp11::writable::integers({shared->dim_ICU_D_conf_1, shared->dim_ICU_D_conf_2, shared->dim_ICU_D_conf_3, shared->dim_ICU_D_conf_4});
+  dim[68] = cpp11::writable::integers({shared->dim_W_R_unconf_1, shared->dim_W_R_unconf_2, shared->dim_W_R_unconf_3, shared->dim_W_R_unconf_4});
+  dim[69] = cpp11::writable::integers({shared->dim_W_R_conf_1, shared->dim_W_R_conf_2, shared->dim_W_R_conf_3, shared->dim_W_R_conf_4});
+  dim[70] = cpp11::writable::integers({shared->dim_W_D_unconf_1, shared->dim_W_D_unconf_2, shared->dim_W_D_unconf_3, shared->dim_W_D_unconf_4});
+  dim[71] = cpp11::writable::integers({shared->dim_W_D_conf_1, shared->dim_W_D_conf_2, shared->dim_W_D_conf_3, shared->dim_W_D_conf_4});
+  dim[72] = cpp11::writable::integers({shared->dim_T_sero_pre_1, shared->dim_T_sero_pre_2, shared->dim_T_sero_pre_3, shared->dim_T_sero_pre_4});
+  dim[73] = cpp11::writable::integers({shared->dim_T_sero_pos_1, shared->dim_T_sero_pos_2, shared->dim_T_sero_pos_3, shared->dim_T_sero_pos_4});
+  dim[74] = cpp11::writable::integers({shared->dim_T_PCR_pre_1, shared->dim_T_PCR_pre_2, shared->dim_T_PCR_pre_3, shared->dim_T_PCR_pre_4});
+  dim[75] = cpp11::writable::integers({shared->dim_T_PCR_pos_1, shared->dim_T_PCR_pos_2, shared->dim_T_PCR_pos_3, shared->dim_T_PCR_pos_4});
   dim.names() = nms;
-  cpp11::writable::list index(87);
+  cpp11::writable::list index(76);
   index[0] = cpp11::writable::integers({1});
   index[1] = cpp11::writable::integers({2});
   index[2] = cpp11::writable::integers({3});
@@ -7087,46 +6757,35 @@ cpp11::sexp dust_info<carehomes>(const dust::pars_t<carehomes>& pars) {
   index[44] = integer_sequence(shared->offset_variable_vaccine_missed_doses + 1, shared->dim_vaccine_missed_doses);
   index[45] = integer_sequence(shared->offset_variable_tmp_vaccine_n_candidates + 1, shared->dim_tmp_vaccine_n_candidates);
   index[46] = integer_sequence(shared->offset_variable_tmp_vaccine_probability + 1, shared->dim_tmp_vaccine_probability);
-  index[47] = integer_sequence(shared->offset_variable_R_out + 1, shared->dim_R_out);
-  index[48] = integer_sequence(shared->offset_variable_n_R_progress_out + 1, shared->dim_n_R_progress_out);
-  index[49] = integer_sequence(shared->offset_variable_n_RS_out + 1, shared->dim_n_RS_out);
-  index[50] = integer_sequence(shared->offset_variable_n_RE_out + 1, shared->dim_n_RE_out);
-  index[51] = integer_sequence(shared->offset_variable_n_RR_out + 1, shared->dim_n_RR_out);
-  index[52] = integer_sequence(shared->offset_variable_n_RS_next_vacc_class_out + 1, shared->dim_n_RS_next_vacc_class_out);
-  index[53] = integer_sequence(shared->offset_variable_n_RS_same_vacc_class_out + 1, shared->dim_n_RS_same_vacc_class_out);
-  index[54] = integer_sequence(shared->offset_variable_n_RE_next_vacc_class_out + 1, shared->dim_n_RE_next_vacc_class_out);
-  index[55] = integer_sequence(shared->offset_variable_n_RE_same_vacc_class_out + 1, shared->dim_n_RE_same_vacc_class_out);
-  index[56] = integer_sequence(shared->offset_variable_n_RR_next_vacc_class_out + 1, shared->dim_n_RR_next_vacc_class_out);
-  index[57] = integer_sequence(shared->offset_variable_n_RR_same_vacc_class_out + 1, shared->dim_n_RR_same_vacc_class_out);
-  index[58] = integer_sequence(shared->offset_variable_T_sero_neg + 1, shared->dim_T_sero_neg);
-  index[59] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
-  index[60] = integer_sequence(shared->offset_variable_T_PCR_neg + 1, shared->dim_T_PCR_neg);
-  index[61] = integer_sequence(shared->offset_variable_E + 1, shared->dim_E);
-  index[62] = integer_sequence(shared->offset_variable_I_A + 1, shared->dim_I_A);
-  index[63] = integer_sequence(shared->offset_variable_I_P + 1, shared->dim_I_P);
-  index[64] = integer_sequence(shared->offset_variable_I_C_1 + 1, shared->dim_I_C_1);
-  index[65] = integer_sequence(shared->offset_variable_I_C_2 + 1, shared->dim_I_C_2);
-  index[66] = integer_sequence(shared->offset_variable_G_D + 1, shared->dim_G_D);
-  index[67] = integer_sequence(shared->offset_variable_ICU_pre_unconf + 1, shared->dim_ICU_pre_unconf);
-  index[68] = integer_sequence(shared->offset_variable_ICU_pre_conf + 1, shared->dim_ICU_pre_conf);
-  index[69] = integer_sequence(shared->offset_variable_H_R_unconf + 1, shared->dim_H_R_unconf);
-  index[70] = integer_sequence(shared->offset_variable_H_R_conf + 1, shared->dim_H_R_conf);
-  index[71] = integer_sequence(shared->offset_variable_H_D_unconf + 1, shared->dim_H_D_unconf);
-  index[72] = integer_sequence(shared->offset_variable_H_D_conf + 1, shared->dim_H_D_conf);
-  index[73] = integer_sequence(shared->offset_variable_ICU_W_R_unconf + 1, shared->dim_ICU_W_R_unconf);
-  index[74] = integer_sequence(shared->offset_variable_ICU_W_R_conf + 1, shared->dim_ICU_W_R_conf);
-  index[75] = integer_sequence(shared->offset_variable_ICU_W_D_unconf + 1, shared->dim_ICU_W_D_unconf);
-  index[76] = integer_sequence(shared->offset_variable_ICU_W_D_conf + 1, shared->dim_ICU_W_D_conf);
-  index[77] = integer_sequence(shared->offset_variable_ICU_D_unconf + 1, shared->dim_ICU_D_unconf);
-  index[78] = integer_sequence(shared->offset_variable_ICU_D_conf + 1, shared->dim_ICU_D_conf);
-  index[79] = integer_sequence(shared->offset_variable_W_R_unconf + 1, shared->dim_W_R_unconf);
-  index[80] = integer_sequence(shared->offset_variable_W_R_conf + 1, shared->dim_W_R_conf);
-  index[81] = integer_sequence(shared->offset_variable_W_D_unconf + 1, shared->dim_W_D_unconf);
-  index[82] = integer_sequence(shared->offset_variable_W_D_conf + 1, shared->dim_W_D_conf);
-  index[83] = integer_sequence(shared->offset_variable_T_sero_pre + 1, shared->dim_T_sero_pre);
-  index[84] = integer_sequence(shared->offset_variable_T_sero_pos + 1, shared->dim_T_sero_pos);
-  index[85] = integer_sequence(shared->offset_variable_T_PCR_pre + 1, shared->dim_T_PCR_pre);
-  index[86] = integer_sequence(shared->offset_variable_T_PCR_pos + 1, shared->dim_T_PCR_pos);
+  index[47] = integer_sequence(shared->offset_variable_T_sero_neg + 1, shared->dim_T_sero_neg);
+  index[48] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
+  index[49] = integer_sequence(shared->offset_variable_T_PCR_neg + 1, shared->dim_T_PCR_neg);
+  index[50] = integer_sequence(shared->offset_variable_E + 1, shared->dim_E);
+  index[51] = integer_sequence(shared->offset_variable_I_A + 1, shared->dim_I_A);
+  index[52] = integer_sequence(shared->offset_variable_I_P + 1, shared->dim_I_P);
+  index[53] = integer_sequence(shared->offset_variable_I_C_1 + 1, shared->dim_I_C_1);
+  index[54] = integer_sequence(shared->offset_variable_I_C_2 + 1, shared->dim_I_C_2);
+  index[55] = integer_sequence(shared->offset_variable_G_D + 1, shared->dim_G_D);
+  index[56] = integer_sequence(shared->offset_variable_ICU_pre_unconf + 1, shared->dim_ICU_pre_unconf);
+  index[57] = integer_sequence(shared->offset_variable_ICU_pre_conf + 1, shared->dim_ICU_pre_conf);
+  index[58] = integer_sequence(shared->offset_variable_H_R_unconf + 1, shared->dim_H_R_unconf);
+  index[59] = integer_sequence(shared->offset_variable_H_R_conf + 1, shared->dim_H_R_conf);
+  index[60] = integer_sequence(shared->offset_variable_H_D_unconf + 1, shared->dim_H_D_unconf);
+  index[61] = integer_sequence(shared->offset_variable_H_D_conf + 1, shared->dim_H_D_conf);
+  index[62] = integer_sequence(shared->offset_variable_ICU_W_R_unconf + 1, shared->dim_ICU_W_R_unconf);
+  index[63] = integer_sequence(shared->offset_variable_ICU_W_R_conf + 1, shared->dim_ICU_W_R_conf);
+  index[64] = integer_sequence(shared->offset_variable_ICU_W_D_unconf + 1, shared->dim_ICU_W_D_unconf);
+  index[65] = integer_sequence(shared->offset_variable_ICU_W_D_conf + 1, shared->dim_ICU_W_D_conf);
+  index[66] = integer_sequence(shared->offset_variable_ICU_D_unconf + 1, shared->dim_ICU_D_unconf);
+  index[67] = integer_sequence(shared->offset_variable_ICU_D_conf + 1, shared->dim_ICU_D_conf);
+  index[68] = integer_sequence(shared->offset_variable_W_R_unconf + 1, shared->dim_W_R_unconf);
+  index[69] = integer_sequence(shared->offset_variable_W_R_conf + 1, shared->dim_W_R_conf);
+  index[70] = integer_sequence(shared->offset_variable_W_D_unconf + 1, shared->dim_W_D_unconf);
+  index[71] = integer_sequence(shared->offset_variable_W_D_conf + 1, shared->dim_W_D_conf);
+  index[72] = integer_sequence(shared->offset_variable_T_sero_pre + 1, shared->dim_T_sero_pre);
+  index[73] = integer_sequence(shared->offset_variable_T_sero_pos + 1, shared->dim_T_sero_pos);
+  index[74] = integer_sequence(shared->offset_variable_T_PCR_pre + 1, shared->dim_T_PCR_pre);
+  index[75] = integer_sequence(shared->offset_variable_T_PCR_pos + 1, shared->dim_T_PCR_pos);
   index.names() = nms;
   size_t len = shared->offset_variable_T_PCR_pos + shared->dim_T_PCR_pos;
   using namespace cpp11::literals;

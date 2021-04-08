@@ -1,6 +1,6 @@
-# sircovid 0.10.27
+# sircovid 0.10.28
 
-* FIXME 
+* Multi-strain model now allows for 'super-infections', after recovering from strain 1 or 2, one can now be immediately infected with the 'other' strain. This can be turned on with `model_super_infection`.
 
 # sircovid 0.10.26
 
@@ -16,7 +16,7 @@
 
 # sircovid 0.10.23
 
-* Support to allow catch up of vaccine doses that could not be delivered 
+* Support to allow catch up of vaccine doses that could not be delivered
 (e.g. when people were infected at the time they should have been vaccinated)
 
 # sircovid 0.10.22

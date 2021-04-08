@@ -193,7 +193,11 @@ NULL
 ##'
 ##' @param model_superinfection A value of 1 or 0 so switch on or off
 ##'   multi-strain 'super-infections', which are transitions from recovered
-##'   from one strain to exposed to the other. Default is no superinfection.
+##'   from one strain to exposed to the other. In a multi-strain model, the
+##'   'third' strain is now those who moved from strain one to two, and the
+##'   'fourth' strain is those who moved from strain two to one. After
+##'    recovering from strain 'three' or 'four', one can move back to S if
+##'    waning_rate > 0. Default is no superinfection.
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls

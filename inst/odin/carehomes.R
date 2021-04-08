@@ -383,7 +383,7 @@ rate_R_progress[, , ] <- waning_rate[i] +
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
 ## Total number who can possibly progress
-n_R_progress_tmp[,,] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
+n_R_progress_tmp[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 
 
 ## cap on people who can move out of R based on numbers in T_sero_neg and
@@ -441,42 +441,6 @@ n_RR_next_vacc_class_capped[, , ] <-
 n_RR_next_vacc_class[, , ] <- if (model_pcr_and_serology == 1)
   n_RR_next_vacc_class_capped[i, j, k] else n_RR_next_vacc_class_tmp[i, j, k]
 n_RR_same_vacc_class[, , ] <- n_RR[i, j, k] - n_RR_next_vacc_class[i, j, k]
-
-update(n_R_progress_out[,,]) <- n_R_progress[i, j, k]
-update(n_RS_out[,,]) <- n_RS[i, j, k]
-update(n_RE_out[,,]) <- n_RE[i, j, k]
-update(n_RR_out[,,]) <- n_RR[i, j, k]
-update(n_RS_next_vacc_class_out[,,]) <- n_RS_next_vacc_class[i, j, k]
-update(n_RS_same_vacc_class_out[,,]) <- n_RS_same_vacc_class[i, j, k]
-update(n_RE_next_vacc_class_out[,,]) <- n_RE_next_vacc_class[i, j, k]
-update(n_RE_same_vacc_class_out[,,]) <- n_RE_same_vacc_class[i, j, k]
-update(n_RR_next_vacc_class_out[,,]) <- n_RR_next_vacc_class[i, j, k]
-update(n_RR_same_vacc_class_out[,,]) <- n_RR_same_vacc_class[i, j, k]
-update(R_out[,,]) <- R[i, j, k]
-
-initial(R_out[,,]) <- 0
-initial(n_R_progress_out[,,]) <- 0
-initial(n_RS_out[,,]) <- 0
-initial(n_RE_out[,,]) <- 0
-initial(n_RR_out[,,]) <- 0
-initial(n_RS_next_vacc_class_out[,,]) <- 0
-initial(n_RS_same_vacc_class_out[,,]) <- 0
-initial(n_RE_next_vacc_class_out[,,]) <- 0
-initial(n_RE_same_vacc_class_out[,,]) <- 0
-initial(n_RR_next_vacc_class_out[,,]) <- 0
-initial(n_RR_same_vacc_class_out[,,]) <- 0
-
-dim(R_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_progress_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RS_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RE_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RR_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RS_next_vacc_class_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RS_same_vacc_class_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RE_next_vacc_class_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RE_same_vacc_class_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RR_next_vacc_class_out) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RR_same_vacc_class_out) <- c(n_groups, n_strains, n_vacc_classes)
 
 #### other transitions ####
 

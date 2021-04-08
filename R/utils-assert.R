@@ -81,4 +81,4 @@ assert_proportion <- function(x, name = deparse(substitute(x))) {
     }
 
     invisible(as.integer(x))
- }
+  }

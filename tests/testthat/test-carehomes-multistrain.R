@@ -578,6 +578,14 @@ test_that("Swapping strains gives identical results with different index", {
 })
 
 
+test_that("model_super_infection switch works", {
+  expect_error(
+    carehomes_parameters(0, "england", model_super_infection = 2),
+    "must be 0 or 1"
+  )
+})
+
+
 test_that("Cannot calculate Rt for multistrain without correct inputs", {
   ## Run model with 2 variants
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",

@@ -183,7 +183,8 @@ test_that("carehomes_parameters returns a list of parameters", {
       "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
       "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
       "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
-      "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step"))
+      "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",
+      "model_super_infection"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -622,6 +623,8 @@ test_that("the carehomes sircovid model has 19 groups", {
 
 
 test_that("model_pcr_and_serology switch works", {
+  expect_error(carehomes_parameters(0, "england", model_pcr_and_serology = 2),
+               "must be 0 or 1")
   set.seed(1)
   p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 0),
@@ -654,7 +657,7 @@ test_that("model_pcr_and_serology switch works", {
 
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
-          data stream", {
+          data stream (II)", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             class(data)[1] <- "particle_filter_data_nested"
