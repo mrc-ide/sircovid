@@ -654,15 +654,22 @@ carehomes_compare <- function(state, observed, pars) {
                                                  pars$exp_noise)
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
-  model_react_prob_pos <- test_prob_pos(model_react_pos,
-                                        pars$N_tot_react - model_react_pos,
+  ## It is possible that model_react_pos > pars$N_tot_react, so we cap it to
+  ## avoid probabilities > 1 here
+  model_react_pos_capped <- pmin(model_react_pos, pars$N_tot_react)
+  model_react_prob_pos <- test_prob_pos(model_react_pos_capped,
+                                        pars$N_tot_react -
+                                          model_react_pos_capped,
                                         pars$react_sensitivity,
                                         pars$react_specificity,
                                         pars$exp_noise)
 
   ## serology
-  model_sero_prob_pos <- test_prob_pos(model_sero_pos,
-                                       pars$N_tot_15_64 - model_sero_pos,
+  ## It is possible that model_sero_pos > pars$N_tot_15_64, so we cap it to
+  ## avoid probabilities > 1 here
+  model_sero_pos_capped <- pmin(model_sero_pos, pars$N_tot_15_64)
+  model_sero_prob_pos <- test_prob_pos(model_sero_pos_capped,
+                                       pars$N_tot_15_64 - model_sero_pos_capped,
                                        pars$sero_sensitivity,
                                        pars$sero_specificity,
                                        pars$exp_noise)

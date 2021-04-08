@@ -217,18 +217,21 @@ typename T::real_t compare(const typename T::real_t * state,
                   rng_state);
 
   const real_t N_tot_react = shared->N_tot_react; // sum(pars$N_tot[2:18])
+  const real_t model_react_pos_capped = std::min(model_react_pos, N_tot_react);
   const real_t model_react_prob_pos =
-    test_prob_pos(model_react_pos,
-                  N_tot_react - model_react_pos,
+    test_prob_pos(model_react_pos_capped,
+                  N_tot_react - model_react_pos_capped,
                   shared->react_sensitivity,
                   shared->react_specificity,
                   exp_noise,
                   rng_state);
 
   // serology
+  const real_t N_tot_15_64 = shared->N_tot_15_64;
+  const real_t model_sero_pos_capped = std::min(model_sero_pos, N_tot_15_64);
   const real_t model_sero_prob_pos =
-    test_prob_pos(model_sero_pos,
-                  shared->N_tot_15_64 - model_sero_pos,
+    test_prob_pos(model_sero_pos_capped,
+                  N_tot_15_64 - model_sero_pos_capped,
                   shared->sero_sensitivity,
                   shared->sero_specificity,
                   exp_noise,
