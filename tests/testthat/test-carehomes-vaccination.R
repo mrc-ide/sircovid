@@ -2395,6 +2395,11 @@ test_that("Can catch up on doses not distributed", {
                             vaccine_schedule = vacc_schedule,
                             waning_rate = 1 / 20)
 
+
+  ## set gamma_C_2 so individuals will spend long periods in a compartment where
+  ## they are not a vaccination candidate
+  p$gamma_C_2 <- 1 / 200
+
   ## check we are going far enough in time that we should vaccinate everyone:
   expect_true(all(rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot > 0.99))
 
