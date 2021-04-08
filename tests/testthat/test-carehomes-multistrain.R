@@ -1963,7 +1963,7 @@ test_that("Can only move from R3 and R4 to S", {
 })
 
 
-test_that("Everyone in R3 and R4 when waning_rate = 0 and transmission is very high", {
+test_that("Everyone in R3 and R4 when no waning and transmission high", {
   np <- 1L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
