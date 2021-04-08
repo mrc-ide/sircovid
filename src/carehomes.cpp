@@ -2933,11 +2933,6 @@ public:
         state_next[shared->offset_variable_D + i - 1 + shared->dim_D_1 * (j - 1)] = D[shared->dim_D_1 * (j - 1) + i - 1] + internal.delta_D_hosp_disag[shared->dim_delta_D_hosp_disag_1 * (j - 1) + i - 1] + internal.delta_D_non_hosp_disag[shared->dim_delta_D_non_hosp_disag_1 * (j - 1) + i - 1];
       }
     }
-    for (int i = 1; i <= shared->dim_D_hosp_1; ++i) {
-      for (int j = 1; j <= shared->dim_D_hosp_2; ++j) {
-        state_next[shared->offset_variable_D_hosp + i - 1 + shared->dim_D_hosp_1 * (j - 1)] = D_hosp[shared->dim_D_hosp_1 * (j - 1) + i - 1] + internal.delta_D_hosp_disag[shared->dim_delta_D_hosp_disag_1 * (j - 1) + i - 1];
-      }
-    }
     for (int i = 1; i <= shared->dim_T_PCR_pos_1; ++i) {
       for (int j = 1; j <= shared->dim_T_PCR_pos_2; ++j) {
         for (int k = 1; k <= shared->dim_T_PCR_pos_3; ++k) {
@@ -3061,6 +3056,11 @@ public:
     for (int i = 1; i <= shared->dim_p_SE_1; ++i) {
       for (int j = 1; j <= shared->dim_p_SE_2; ++j) {
         internal.p_SE[i - 1 + shared->dim_p_SE_1 * (j - 1)] = 1 - std::exp(- odin_sum2<real_t>(internal.lambda.data(), i - 1, i, 0, shared->dim_lambda_2, shared->dim_lambda_1) * shared->rel_susceptibility[shared->dim_rel_susceptibility_1 * (j - 1) + i - 1] * shared->dt);
+      }
+    }
+    for (int i = 1; i <= shared->dim_D_hosp_1; ++i) {
+      for (int j = 1; j <= shared->dim_D_hosp_2; ++j) {
+        state_next[shared->offset_variable_D_hosp + i - 1 + shared->dim_D_hosp_1 * (j - 1)] = D_hosp[shared->dim_D_hosp_1 * (j - 1) + i - 1] + internal.delta_D_hosp[shared->dim_delta_D_hosp_1 * (j - 1) + i - 1];
       }
     }
     for (int i = 1; i <= shared->dim_D_non_hosp; ++i) {
