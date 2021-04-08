@@ -232,15 +232,11 @@ test_that("block expand", {
     matrix(rep(c(rep(1:2, 10), rep(3:4, 10)), 10), 20, 20))
 })
 
-test_that("mirror/unmirror", {
-  x <- runif(100)
-  expect_equal(unmirror(mirror(x)), x)
+test_that("mirror_strain/unmirror_strain", {
+  x <- runif(2)
+  expect_equal(unmirror_strain(mirror_strain(x)), x)
   expect_equal(
-    unmirror(matrix(mirror(c(rep(1, 2), rep(2, 2))), 2, 4), 2),
+    unmirror_strain(matrix(mirror_strain(c(rep(1, 2), rep(2, 2))), 2, 4)),
     matrix(c(rep(1, 2), rep(2, 2)), 2, 2)
-  )
-  expect_equal(
-    unmirror(matrix(mirror(c(rep(1, 2), rep(2, 2))), 4, 2, TRUE), 1),
-    matrix(c(rep(1, 2), rep(2, 2)), 2, 2, TRUE)
   )
 })

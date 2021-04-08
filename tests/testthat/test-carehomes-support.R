@@ -34,6 +34,7 @@ test_that("carehomes vaccination parameters", {
       "index_dose"))
   expect_equal(nrow(p$rel_susceptibility), n_groups)
   expect_equal(ncol(p$rel_susceptibility), 1)
+  expect_equal(nlayer(p$rel_susceptibility), 1)
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate_base), 1)
 
@@ -71,15 +72,27 @@ test_that("carehomes vaccination parameters", {
       "vaccine_progression_rate_base", "vaccine_dose_step",
       "vaccine_catchup_fraction",
       "index_dose"))
+
   expect_equal(nrow(p$rel_susceptibility), n_groups)
-  expect_equal(ncol(p$rel_susceptibility), length(rel_susceptibility))
+  expect_equal(ncol(p$rel_susceptibility), 1)
+  expect_equal(nlayer(p$rel_susceptibility), length(rel_susceptibility))
+
   expect_equal(nrow(p$rel_p_sympt), n_groups)
-  expect_equal(ncol(p$rel_p_sympt), length(rel_p_sympt))
+  expect_equal(ncol(p$rel_p_sympt), 1)
+  expect_equal(dim(p$rel_p_sympt)[3], length(rel_p_sympt))
+
   expect_equal(nrow(p$rel_p_hosp_if_sympt), n_groups)
-  expect_equal(ncol(p$rel_p_hosp_if_sympt), length(rel_p_hosp_if_sympt))
+  expect_equal(ncol(p$rel_p_hosp_if_sympt), 1)
+  expect_equal(dim(p$rel_p_hosp_if_sympt)[3], length(rel_p_hosp_if_sympt))
+
+  expect_equal(nrow(p$rel_infectivity), n_groups)
+  expect_equal(ncol(p$rel_infectivity), 1)
+  expect_equal(dim(p$rel_infectivity)[3], length(rel_susceptibility))
+
   expect_equal(nrow(p$vaccine_progression_rate_base), n_groups)
   expect_equal(ncol(p$vaccine_progression_rate_base),
                length(vaccine_progression_rate))
+
   expect_equal(dim(p$vaccine_dose_step),
                c(19, 2,
                  (length(daily_doses) + vaccine_daily_doses_date[1]) * 4))

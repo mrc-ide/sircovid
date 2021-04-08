@@ -1592,24 +1592,24 @@ test_that("check_rel_param rejects out of bounds errors", {
     "All values of rel_param must lie in [0, 1]",
     fixed = TRUE)
   expect_error(
-    check_rel_param(t(c(0.9, 0.8)), "rel_param"),
+    check_rel_param(array(c(0.9, 0.8), c(1, 1, 1)), "rel_param"),
     "First value of rel_param must be 1")
 })
 
 
 test_that("check_rel_param allows sensible inputs", {
   expect_silent(
-    check_rel_param(t(c(1, 0.5, 0.7)), "rel_param"))
+    check_rel_param(array(c(1, 0.5, 0.7), c(1, 1, 3)), "rel_param"))
   expect_silent(
-    check_rel_param(t(c(1, 0.7, 0.5)), "rel_param"))
+    check_rel_param(array(c(1, 0.7, 0.5), c(1, 1, 3)), "rel_param"))
   expect_silent(
-    check_rel_param(t(1), "rel_param"))
+    check_rel_param(array(1, c(1, 1, 1)), "rel_param"))
   expect_silent(
-    check_rel_param(t(c(1, 1)), "rel_param"))
+    check_rel_param(array(c(1, 1, 1), c(1, 1, 3)), "rel_param"))
   expect_silent(
-    check_rel_param(t(c(1, 0)), "rel_param"))
+    check_rel_param(array(c(1, 0), c(1, 1, 2)), "rel_param"))
   expect_silent(
-    check_rel_param(t(c(1, 0, 1)), "rel_param"))
+    check_rel_param(array(c(1, 0, 1), c(1, 1, 3)), "rel_param"))
 })
 
 
@@ -1617,29 +1617,47 @@ test_that("build_rel_param rejects wrong dimension or out of bound inputs", {
   expect_error(
     build_rel_param(
       rel_param = matrix(c(1, 0.5, 1, 0.7), nrow = 2, byrow = TRUE),
-      n_vacc_classes = 2, "rel_param"),
+      n_strains = 1, n_vacc_classes = 2, "rel_param"),
+    paste("rel_param should be a three dimensional array with dimensions:",
+    "age groups, strains, vaccine classes"))
+  expect_error(
+    build_rel_param(
+      rel_param = array(c(1, 1, 0.5, 0.7), dim = c(2, 1, 2)),
+      n_strains = 1, n_vacc_classes = 2, "rel_param"),
     "rel_param should have as many rows as age groups")
   expect_error(
-    build_rel_param(10, n_vacc_classes = 1, "rel_param"),
+    build_rel_param(
+      rel_param = array(rep(1, 19 * 2), dim = c(19, 1, 2)),
+      n_strains = 3, n_vacc_classes = 2, "rel_param"),
+    "rel_param should have as many columns as strains")
+  expect_error(
+    build_rel_param(
+      rel_param = array(rep(1, 19 * 3), dim = c(19, 3, 1)),
+      n_strains = 3, n_vacc_classes = 2, "rel_param"),
+    "rel_param should have number of vaccine classes as 3rd dimension")
+  expect_error(
+    build_rel_param(10, n_strains = 1, n_vacc_classes = 1, "rel_param"),
     "All values of rel_param must lie in [0, 1]", fixed = TRUE)
 })
 
 
 test_that("build_rel_param works as expected", {
   expect_equal(
-    build_rel_param(1, n_vacc_classes = 1, "rel_param"),
-    matrix(1, nrow = carehomes_n_groups(), ncol = 1))
-  mat <- matrix(rep(c(1, 0.1), carehomes_n_groups()), byrow = TRUE,
-                nrow = carehomes_n_groups(), ncol = 2)
+    build_rel_param(1, n_strains = 1, n_vacc_classes = 1, "rel_param"),
+    array(1, dim = c(carehomes_n_groups(), 1, 1)))
+  mat <- array(rep(c(1, 0.1), each = carehomes_n_groups()),
+                dim = c(carehomes_n_groups(), 1, 2))
   expect_equal(
-    build_rel_param(c(1, 0.1), n_vacc_classes = 2, "rel_param"),
+    build_rel_param(c(1, 0.1), n_strains = 1, n_vacc_classes = 2, "rel_param"),
     mat)
   expect_equal(
-    build_rel_param(mat, n_vacc_classes = 2, "rel_param"),
+    build_rel_param(mat, n_strains = 1, n_vacc_classes = 2, "rel_param"),
     mat)
-  mat_rand <- cbind(rep(1, carehomes_n_groups()), runif(carehomes_n_groups()))
+  mat_rand <- array(c(rep(1, carehomes_n_groups()),
+                      runif(carehomes_n_groups())),
+                    dim = c(carehomes_n_groups(), 1, 2))
   expect_equal(
-    build_rel_param(mat_rand, n_vacc_classes = 2, "rel_param"),
+    build_rel_param(mat_rand, n_strains = 1, n_vacc_classes = 2, "rel_param"),
     mat_rand)
 })
 

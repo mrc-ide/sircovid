@@ -24,33 +24,38 @@ test_that("can run the carehomes model", {
 
   ## Regenerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu                                = c(123, 180, 130, 804, 187),
-          general                            = c(443, 796, 470, 3073, 665),
+    rbind(icu                                = c(110, 242, 119, 1268,
+                                                 156),
+          general                            = c(451, 917, 484, 4898,
+                                                 644),
           deaths_carehomes_inc               = c(0, 0, 0, 0, 0),
           deaths_comm_inc                    = c(0, 0, 0, 0, 0),
-          deaths_hosp_inc                    = c(18, 53, 24, 160, 34),
-          admitted_inc                       = c(7, 11, 4, 34, 7),
-          diagnoses_inc                      = c(23, 55, 32, 208, 30),
-          sero_pos                           = c(3621908, 4405523, 3749068,
-                                                 6604050, 4141412),
-          sympt_cases_inc                    = c(257, 519, 339, 2158, 448),
-          sympt_cases_over25_inc             = c(215, 418, 275, 1814, 363),
-          sympt_cases_non_variant_over25_inc = c(215, 418, 275, 1814, 363),
-          react_pos                          = c(21284, 40015, 24492,
-                                                 157665, 32594),
-          deaths_carehomes                   = c(23427, 23464, 23684,
-                                                 23453, 23499),
+          deaths_hosp_inc                    = c(34, 46, 23, 310, 27),
+          admitted_inc                       = c(8, 11, 9, 68, 2),
+          diagnoses_inc                      = c(21, 61, 28, 331, 31),
+          sero_pos                           = c(3626968, 4596270, 3738071,
+                                                 7600431, 4143075),
+          sympt_cases_inc                    = c(286, 567, 309, 3522,
+                                                 412),
+          sympt_cases_over25_inc             = c(234, 461, 269, 2930,
+                                                 352),
+          sympt_cases_non_variant_over25_inc = c(234, 461, 269, 2930,
+                                                 352),
+          react_pos                          = c(21635, 45733, 23727,
+                                                 265059, 32407),
+          deaths_carehomes                   = c(23527, 23212, 23611,
+                                                 23339, 23524),
           deaths_comm                        = c(0, 0, 0, 0, 0),
-          deaths_hosp                        = c(195727, 195631, 195797,
-                                                 193369, 196077),
-          admitted                           = c(89698, 89403, 89474,
-                                                 88367, 89862),
-          diagnoses                          = c(295799, 296002, 295628,
-                                                 294062, 296353),
-          sympt_cases                        = c(9764975, 9764500, 9756017,
-                                                 9734749, 9773383),
-          sympt_cases_over25                 = c(7448466, 7449511, 7442890,
-                                                 7420958, 7455078))
+          deaths_hosp                        = c(195885, 195498, 195367,
+                                                 192459, 195171),
+          admitted                           = c(88998, 89154, 89163,
+                                                 88659, 89153),
+          diagnoses                          = c(296855, 297098, 295696,
+                                                 292791, 296876),
+          sympt_cases                        = c(9761944, 9750168, 9759092,
+                                                 9722879, 9757652),
+          sympt_cases_over25                 = c(7445331, 7435447, 7442611,
+                                                 7409864, 7444334))
   expect_equal(res, expected)
 })
 
@@ -202,5 +207,5 @@ test_that("can run the particle filter on the model 2", {
   pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
-  expect_lt(abs(ll1 - ll2), 30)
+  expect_lt(abs(ll1 - ll2), 50)
 })

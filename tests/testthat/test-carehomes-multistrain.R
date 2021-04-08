@@ -581,7 +581,7 @@ test_that("Swapping strains gives identical results with different index", {
 test_that("model_super_infection switch works", {
   expect_error(
     carehomes_parameters(0, "england", model_super_infection = 2),
-    "must be 0 or 1"
+    "must be logical"
   )
 })
 
@@ -1811,8 +1811,8 @@ test_that("carehomes_parameters with rel_severity works as expected", {
   ps <- pars[c("p_G_D", "p_H_D", "p_ICU_D", "p_W_D")]
 
   expect_equal(
-    unname(lapply(ps, function(x) matrix(mirror(c(max(x[, 1]), max(x[, 2]))),
-                                         nrow = 1))),
+    unname(lapply(ps, function(x)
+      matrix(mirror_strain(c(max(x[, 1]), max(x[, 2]))), nrow = 1))),
     unname(step)
   )
 

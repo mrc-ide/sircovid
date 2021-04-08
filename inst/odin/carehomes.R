@@ -1549,10 +1549,10 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 grp_prob_strain[, , ] <- lambda_susc[i, j, k] / sum(lambda_susc[i, , k])
 dim(grp_prob_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
-tmp_prob_strain <- sum(lambda_susc[, 1, ]) / sum(lambda_susc[, , ])
+prob_strain_1 <- sum(lambda_susc[, 1, ]) / sum(lambda_susc[, , ])
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
-update(prob_strain[]) <- if (i == 1) tmp_prob_strain else 1 - tmp_prob_strain
+update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
 dim(prob_strain) <- n_real_strains
 
 ## I_weighted used in IFR calculation
