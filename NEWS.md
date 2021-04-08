@@ -1,3 +1,7 @@
+# sircovid 0.10.28
+
+* Relaxed restrictions on waning immunity - the number of recovered individuals losing immunity is no longer capped by the number of individuals in the `T_sero_neg` or `T_PCR_neg` compartments.
+
 # sircovid 0.10.26
 
 * Add parameter `strain_rel_severity` for varying the probabilities of `p_G_D`, `p_H_D`, `p_W_D` and `p_ICU_D` by strain.
