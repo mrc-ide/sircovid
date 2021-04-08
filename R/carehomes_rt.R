@@ -280,7 +280,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
   if (any(c("Rt_all", "Rt_general") %in% type)) {
     N_tot_non_vacc <- array(p$N_tot, dim = c(p$n_groups, ncol(S)))
-     N_tot_all_vacc_groups <- N_tot_non_vacc
+    N_tot_all_vacc_groups <- N_tot_non_vacc
     if (n_vacc_classes > 1) {
       for (i in 2:n_vacc_classes) {
         N_tot_all_vacc_groups <- rbind(N_tot_all_vacc_groups,
