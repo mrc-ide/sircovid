@@ -247,18 +247,18 @@ have one value per age group.}
 flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
 number of individuals leaving the R compartments}
 
-\item{exp_noise}{Rate of exponential noise used in the compare
-function - typically set to a large value so that noise is small
-but non-zero. If set to \code{Inf} then there is no noise in the
-observation process (not realistic but useful for testing).}
-
-\item{model_superinfection}{A value of 1 or 0 so switch on or off
+\item{model_super_infection}{A value of 1 or 0 so switch on or off
 multi-strain 'super-infections', which are transitions from recovered
 from one strain to exposed to the other. In a multi-strain model, the
 'third' strain is now those who moved from strain one to two, and the
 'fourth' strain is those who moved from strain two to one. After
 recovering from strain 'three' or 'four', one can move back to S if
 waning_rate > 0. Default is no superinfection.}
+
+\item{exp_noise}{Rate of exponential noise used in the compare
+function - typically set to a large value so that noise is small
+but non-zero. If set to \code{Inf} then there is no noise in the
+observation process (not realistic but useful for testing).}
 }
 \value{
 A list of inputs to the model, many of which are fixed and

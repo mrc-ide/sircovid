@@ -191,7 +191,7 @@ NULL
 ##'   flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
 ##'   number of individuals leaving the R compartments
 ##'
-##' @param model_superinfection A value of 1 or 0 so switch on or off
+##' @param model_super_infection A value of 1 or 0 so switch on or off
 ##'   multi-strain 'super-infections', which are transitions from recovered
 ##'   from one strain to exposed to the other. In a multi-strain model, the
 ##'   'third' strain is now those who moved from strain one to two, and the
