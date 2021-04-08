@@ -624,7 +624,7 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
                             vaccine_index_dose2 = 3L)
 
   ## TODO: Anne to look at tidying this parameter up:
-  p$model_pcr_and_serology_user <- 0
+  p$model_pcr_and_serology <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1790,7 +1790,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
                             vaccine_index_dose2 = 2L,
                             vaccine_catchup_fraction = 0)
   ## TODO: Anne to look at tidying this parameter up:
-  p$model_pcr_and_serology_user <- 0
+  p$model_pcr_and_serology <- 0
 
   ## Let's go:
   mod <- carehomes$new(p, 0, 1, seed = 1L)
@@ -1866,7 +1866,7 @@ test_that("run sensible vaccination schedule, catchup = 1", {
                             vaccine_index_dose2 = 2L,
                             vaccine_catchup_fraction = 1)
   ## TODO: Anne to look at tidying this parameter up:
-  p$model_pcr_and_serology_user <- 0
+  p$model_pcr_and_serology <- 0
 
   ## Let's go:
   mod <- carehomes$new(p, 0, 1, seed = 1L)

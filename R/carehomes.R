@@ -187,9 +187,13 @@ NULL
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
-##' @param model_pcr_and_serology_user A value of 1 or 0 so switch on or off the
+##' @param model_pcr_and_serology A value of 1 or 0 so switch on or off the
 ##'   flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
 ##'   number of individuals leaving the R compartments
+##'
+##' @param model_superinfection A value of 1 or 0 so switch on or off
+##'   multi-strain 'super-infections', which are transitions from recovered
+##'   from one strain to exposed to the other. Default is no superinfection.
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -336,7 +340,8 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_index_dose2 = NULL,
                                  vaccine_catchup_fraction = 1,
                                  waning_rate = 0,
-                                 model_pcr_and_serology_user = 1,
+                                 model_pcr_and_serology = 1,
+                                 model_super_infection = 0,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -492,11 +497,12 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_schedule,
                                                   vaccine_index_dose2,
                                                   vaccine_catchup_fraction)
-  model_pcr_and_serology_user <-
-    list(model_pcr_and_serology_user = model_pcr_and_serology_user)
+  model_switches <-
+    list(model_pcr_and_serology = assert_01(model_pcr_and_serology),
+         model_super_infection = assert_01(model_super_infection))
 
   c(ret, severity, progression, strain, vaccination, waning,
-    model_pcr_and_serology_user, observation)
+    model_switches, observation)
 }
 
 

@@ -339,7 +339,8 @@ carehomes <- R6::R6Class(
      gamma_sero_pos = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      gamma_sero_pre_1 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      gamma_sero_pre_2 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     model_pcr_and_serology_user = list(has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     model_pcr_and_serology = list(has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     model_super_infection = list(has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_sero_pre_1 = list(has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      vaccine_catchup_fraction = list(has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE))
   ),

@@ -168,7 +168,7 @@ test_that("carehomes_parameters returns a list of parameters", {
                    c("m", names(observation),
                      names(shared), names(progression), names(severity),
                      names(strain), names(vaccination), names(waning),
-                     "model_pcr_and_serology_user"))
+                     "model_pcr_and_serology"))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
@@ -621,13 +621,13 @@ test_that("the carehomes sircovid model has 19 groups", {
 })
 
 
-test_that("model_pcr_and_serology_user switch works", {
+test_that("model_pcr_and_serology switch works", {
   set.seed(1)
   p <- carehomes_parameters(0, "england",
                             rel_susceptibility = c(1, 0),
                             vaccine_progression_rate = c(0, 0),
                             waning_rate = 1 / 20,
-                            model_pcr_and_serology_user = 0)
+                            model_pcr_and_serology = 0)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
