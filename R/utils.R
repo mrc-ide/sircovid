@@ -209,3 +209,8 @@ unmirror <- function(x, margin = 2) {
     x[seq(length(x) / 2)]
   }
 }
+
+
+nlayer <- function(x) {
+  dim(x)[3L]
+}

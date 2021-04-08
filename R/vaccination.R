@@ -54,18 +54,30 @@ vaccine_remap_state <- function(state_orig, info_orig, info_vacc) {
 }
 
 
-build_rel_param <- function(rel_param, n_vacc_classes, name_param) {
+build_rel_param <- function(rel_param, n_strains, n_vacc_classes, name_param) {
   n_groups <- carehomes_n_groups()
   if (length(rel_param) == 1) {
-    mat_rel_param <- matrix(rel_param, n_groups, n_vacc_classes)
-  } else if (is.matrix(rel_param)) {
+    mat_rel_param <- array(rel_param, c(n_groups, n_strains, n_vacc_classes))
+  } else if (is.array(rel_param)) {
+    if (length(dim(rel_param)) != 3) {
+      stop(paste(name_param, "should be a three dimensional array with",
+                 "dimensions: age groups, strains, vaccine classes"))
+    }
     if (nrow(rel_param) != n_groups) {
       stop(paste(name_param, "should have as many rows as age groups"))
     }
+    if (ncol(rel_param) != n_strains) {
+      stop(paste(name_param, "should have as many columns as strains"))
+    }
+    if (dim(rel_param)[3] != n_vacc_classes) {
+      stop(paste(name_param,
+                 "should have number of vaccine classes as 3rd dimension"))
+    }
     mat_rel_param <- rel_param
-  } else { # create matrix by repeating rel_param for each age group
+  } else { # create array by repeating rel_param for each age group and strain
     mat_rel_param <-
-      matrix(rep(rel_param, each = n_groups), nrow = n_groups)
+      array(rep(rel_param, each = n_groups * n_strains),
+            dim = c(n_groups, n_strains, n_vacc_classes))
   }
   check_rel_param(mat_rel_param, name_param)
   mat_rel_param
@@ -79,7 +91,7 @@ check_rel_param <- function(rel_param, name_param) {
   if (any(rel_param < 0 | rel_param > 1)) {
     stop(paste("All values of", name_param, "must lie in [0, 1]"))
   }
-  if (!all(rel_param[, 1] == 1)) {
+  if (!all(rel_param[, , 1] == 1)) {
     stop(paste("First value of", name_param, "must be 1"))
   }
 }
