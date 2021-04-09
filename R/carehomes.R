@@ -195,13 +195,14 @@ NULL
 ##'
 ##' @param cross_immunity A value or vector of same length as
 ##'   `strain_transmission` that controls the amount of immunity conferred by
-##'   one strain to lower rate of moving to the other. If a scalar is given
-##'   then same amount of immunity provided by each strain. Otherwise a vector
-##'   of length two should be provided where the first value is the relative
-##'   decrease of contracting strain two immediately after contracting strain
-##'   one, and vice versa for the second value. Values of 1 (default) mean
+##'   previous infection with one strain. If a scalar is given
+##'   then same level of cross immunity is assumed between both strains.
+##'   Otherwise a vector of length two should be provided where the first value
+##'   is the relative protection against infection with strain 2
+##'   following infection with strain 1 (i.e. while in the R1 compartment),
+##'   and vice versa for the second value. Values of 1 (default) mean
 ##'   complete cross-immunity, values of 0 mean no cross-immunity. Modelling
-##'  'superinfections' (being exposed to one strain immediately after
+##'  'superinfections' (being exposed to one strain after
 ##'   recovering from another) can be turned off by setting
 ##'   `cross_immunity = 1`.
 ##'
