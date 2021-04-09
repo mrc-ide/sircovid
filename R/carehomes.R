@@ -200,8 +200,9 @@ NULL
 ##'   Otherwise a vector of length two should be provided where the first value
 ##'   is the relative protection against infection with strain 2
 ##'   following infection with strain 1 (i.e. while in the R1 compartment),
-##'   and vice versa for the second value. Values of 1 (default) mean
-##'   complete cross-immunity, values of 0 mean no cross-immunity. Modelling
+##'   and vice versa for the second value. Values between 0 and 1 are allowed
+##'   with values of 1 (default) indicating complete cross-immunity,
+##'   and values of 0 mean no cross-immunity. Modelling
 ##'  'superinfections' (being exposed to one strain after
 ##'   recovering from another) can be turned off by setting
 ##'   `cross_immunity = 1`.
