@@ -1,4 +1,51 @@
-test_that("Can calculate EpiEstim Rt", {
+test_that("Can calculate EpiEstim Rt (I)", {
+  skip_if_not_installed("EpiEstim")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            beta_value = 0.15)
+
+  np <- 20L
+  mod <- carehomes$new(p, 0, np, seed = 2L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index_cum_inf <- mod$info()$index$cum_infections
+  index_S <- mod$info()$index$S
+  index <- c(index_cum_inf, index_S)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(2)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+  inc <- apply(y[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, np), inc))
+  S <- y[-1, , ]
+
+  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p,
+                                                    sliding_window_ndays = 1)
+
+  rt <- carehomes_Rt_trajectories(steps, S, p)
+
+  #### General patterns
+  ## dimension of Rt should be 3 rows and length(steps) - 1 cols
+  ## the -1 because EpiEstim only start estimation at 2nd time step
+  expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
+  ## Rt at the end should be < 1
+  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
+  ## because of the priors with mean 1 we would expect EpiEstim Rt
+  ## at the end to be higher than eff_Rt_all
+  expect_true(
+    last(rt$eff_Rt_all) <
+      rt_EpiEstim$Rt_summary["mean_R", ncol(rt_EpiEstim$Rt_summary)])
+  ## Rt at the start should be > 1
+  ## (but there will be uncertainty so looking at the mean)
+  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
+  expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
+})
+
+test_that("Can calculate EpiEstim Rt (II)", {
   skip_if_not_installed("EpiEstim")
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             beta_value = 0.15)
@@ -28,6 +75,52 @@ test_that("Can calculate EpiEstim Rt", {
 
   rt <- carehomes_Rt_trajectories(steps, S, p)
 
+  first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
+  #### Check a few values
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.8,
+               tolerance = .1)
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.8,
+               tolerance = .1)
+  expect_equal(
+    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
+    tolerance = .1)
+  expect_equal(
+    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
+    tolerance = .1)
+})
+
+
+test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
+  skip_if_not_installed("EpiEstim")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            beta_value = 0.15)
+  np <- 20L
+  mod <- carehomes$new(p, 0, np, seed = 2L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  mod$set_index(integer(0))
+  index_cum_inf <- mod$info()$index$cum_infections
+  index_S <- mod$info()$index$S
+  index <- c(index_cum_inf, index_S)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(2)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+  inc <- apply(y[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, np), inc))
+  S <- y[-1, , ]
+
+  gt_distr <- gt_distr(p, 10000)
+
+  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p, gt_distr,
+                                                    sliding_window_ndays = 1)
+
+  rt <- carehomes_Rt_trajectories(steps, S, p)
+
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
   ## the -1 because EpiEstim only start estimation at 2nd time step
@@ -43,23 +136,10 @@ test_that("Can calculate EpiEstim Rt", {
   ## (but there will be uncertainty so looking at the mean)
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
   expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
-
-  #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.8,
-               tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.8,
-               tolerance = .1)
-  expect_equal(
-    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
-    tolerance = .1)
-  expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
-    tolerance = .1)
-
 })
 
 
-test_that("Can calculate EpiEstim Rt with predefined GT", {
+test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
   skip_if_not_installed("EpiEstim")
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             beta_value = 0.15)
@@ -90,22 +170,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT", {
 
   rt <- carehomes_Rt_trajectories(steps, S, p)
 
-  #### General patterns
-  ## dimension of Rt should be 3 rows and length(steps) - 1 cols
-  ## the -1 because EpiEstim only start estimation at 2nd time step
-  expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
-  ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
-  ## because of the priors with mean 1 we would expect EpiEstim Rt
-  ## at the end to be higher than eff_Rt_all
-  expect_true(
-    last(rt$eff_Rt_all) <
-      rt_EpiEstim$Rt_summary["mean_R", ncol(rt_EpiEstim$Rt_summary)])
-  ## Rt at the start should be > 1
-  ## (but there will be uncertainty so looking at the mean)
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
-  expect_true(rt_EpiEstim$Rt_summary["mean_R", first_non_NA_idx] > 1)
-
   #### Check a few values
   expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.8,
                tolerance = .1)
@@ -117,7 +182,6 @@ test_that("Can calculate EpiEstim Rt with predefined GT", {
   expect_equal(
     rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
     tolerance = .1)
-
 })
 
 

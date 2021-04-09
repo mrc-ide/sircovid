@@ -195,19 +195,41 @@ gamma_mucv2shapescale <- function(mu, cv) {
 }
 
 
-mirror <- function(x) {
+mirror_strain <- function(x) {
   c(x, rev(x))
 }
 
-## default margin is 2 as this corresponds better with `mirror`
-unmirror <- function(x, margin = 2) {
+
+unmirror_strain <- function(x, n_strains = 4L) {
   if (inherits(x, c("matrix", "array"))) {
-    if (margin == 1) {
-      x[seq(nrow(x) / 2), , drop = FALSE]
-    } else {
+    if (ncol(x) != n_strains) {
+      return(x)
+    } else if (length(dim(x)) == 2) {
       x[, seq(ncol(x) / 2), drop = FALSE]
+    } else {
+      x[, seq(ncol(x) / 2), , drop = FALSE]
     }
   } else {
-    x[seq(length(x) / 2)]
+    if (length(x) != n_strains) {
+      return(x)
+    } else {
+      x[seq(length(x) / 2)]
+    }
+  }
+}
+
+
+nlayer <- function(x) {
+  dim(x)[3L]
+}
+
+recycle <- function(x, n, name = deparse(substitute(x))) {
+  if (length(x) == n) {
+    x
+  } else if (length(x) == 1L) {
+    rep_len(x, n)
+  } else {
+    stop(sprintf("Invalid length for '%s', expected 1 or %d",
+         name, n))
   }
 }

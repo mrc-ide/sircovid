@@ -1,3 +1,8 @@
+# sircovid 0.10.30
+
+* Parameters describing vaccine efficacy (`rel_susceptibility`, `rel_p_sympt`, `rel_p_hosp_if_sympt` and `rel_infectivity`) can now take array values for 
+varying across age groups, vaccination classes, and pathogen strains.
+
 # sircovid 0.10.29
 
 * Multi-strain model now allows for 'super-infections', after recovering from strain 1 or 2, one can now be immediately infected with the 'other' strain. This can be turned on with `model_super_infection`.

@@ -167,8 +167,7 @@ p_I_P_next_vacc_class[, , , ] <- vaccine_probability[i, l]
 p_R_next_vacc_class[, , ] <- vaccine_probability[i, k]
 
 ## clinical progression
-p_SE[, ] <- 1 - exp(-sum(lambda[i, ]) *
-                      rel_susceptibility[i, j] * dt) # S to I age/vacc dependent
+p_SE[, ] <- 1 - exp(- sum(lambda_susc[i, , j]) * dt) # S to I age/vacc dependent
 p_E_progress <- 1 - exp(-gamma_E * dt) # progression of latent period
 p_I_A_progress[] <- 1 - exp(-gamma_A[i] * dt) # progression of infectious period
 p_I_P_progress[] <- 1 - exp(-gamma_P[i] * dt)
@@ -264,7 +263,7 @@ gamma_ICU_pre <- if (as.integer(step) >= length(gamma_ICU_pre_step))
 ## No one can move from S to E3 or E4
 n_S_progress_tot[, ] <- rbinom(S[i, j], p_SE[i, j])
 n_S_progress[, , ] <- if (j == 1 || n_real_strains == 1)
-  rbinom(n_S_progress_tot[i, k], grp_prob_strain[i, j]) else
+  rbinom(n_S_progress_tot[i, k], rel_foi_strain[i, j, k]) else
     (if (j == 2) n_S_progress_tot[i, k] - n_S_progress[i, 1, k] else 0)
 
 ## Introduction of new strains. n_S_progress is arranged as:
@@ -373,9 +372,8 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
 ##  R1 can progress to E3 (w.r. strain 2 (3 - 1))
 ##  R2 can progress tp E4 (w.r. strain 1 (3 - 2))
 rate_R_progress[, , ] <- waning_rate[i] +
-          rel_susceptibility[i, k] *
             if (n_strains == 1 || j > 2 || model_super_infection == 0) 0 else
-              lambda[i, 3 - j]
+              lambda_susc[i, 3 - j, k]
 
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
@@ -393,8 +391,7 @@ n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 ##  waning plus prob strain
 ## TODO (RS): waning_rate should eventually be variant varying
 p_RS[, , ] <- if (model_super_infection == 0 || n_strains == 1 || j > 2) 1 else
-                ((waning_rate[i] / (waning_rate[i] + lambda[i, 3 - j] *
-                                    rel_susceptibility[i, k])))
+                (waning_rate[i] / (waning_rate[i] + lambda_susc[i, 3 - j, k]))
 n_RS_tmp[, , ] <- rbinom(n_R_progress[i, j, k], p_RS[i, j, k])
 
 
@@ -482,10 +479,10 @@ new_S[, ] <- new_S[i, j] +
 
 ## Computes the number of asymptomatic
 n_EI_A[, , ] <- rbinom(n_EE[i, j, k_E, k],
-                       1 - p_C[i] * rel_p_sympt[i, k])
+                       1 - p_C[i] * rel_p_sympt[i, j, k])
 n_EI_A_next_vacc_class[, , ] <-
   rbinom(n_EE_next_vacc_class[i, j, k_E, k],
-         1 - p_C[i] * rel_p_sympt[i, k])
+         1 - p_C[i] * rel_p_sympt[i, j, k])
 
 ## Computes the number of symptomatic cases
 n_EI_P[, , ] <- n_EE[i, j, k_E, k] - n_EI_A[i, j, k]
@@ -566,7 +563,7 @@ new_I_C_2[, , , ] <- I_C_2[i, j, k, l] + aux_I_C_2[i, j, k, l]
 
 ## Work out the flow from I_C_2 -> R, G_D, hosp
 n_I_C_2_to_R[, , ] <- rbinom(n_I_C_2_progress[i, j, k_C_2, k],
-                             1 - p_H_by_age[i] * rel_p_hosp_if_sympt[i, k])
+                             1 - p_H_by_age[i] * rel_p_hosp_if_sympt[i, j, k])
 n_I_C_2_to_G_D[, , ] <-
   rbinom(n_I_C_2_progress[i, j, k_C_2, k] - n_I_C_2_to_R[i, j, k],
          p_G_D_by_age[i, j])
@@ -839,7 +836,7 @@ new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] +
 ## Compute the force of infection
 
 I_with_diff_trans[, , ] <-
-  rel_infectivity[i, k] * strain_transmission[j] * (
+  rel_infectivity[i, j, k] * strain_transmission[j] * (
     I_A_transmission * sum(I_A[i, j, , k]) +
       I_P_transmission * sum(I_P[i, j, , k]) +
       I_C_1_transmission * sum(I_C_1[i, j, , k]) +
@@ -869,6 +866,7 @@ s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups, ] <- beta * s_ij[i, j, k]
 lambda[, ] <- if (n_real_strains == 1) sum(s_ij[i, , 1]) else
                 (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
                   sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]))
+lambda_susc[, , ] <- lambda[i, j] * rel_susceptibility[i, j, k]
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.
@@ -911,15 +909,15 @@ initial(cum_admit_by_age[]) <- 0
 ## User defined parameters - default in parentheses:
 
 ## Vaccination parameters
-rel_susceptibility[, ] <- user()
-dim(rel_susceptibility) <- c(n_groups, n_vacc_classes)
 n_vacc_classes <- user()
-rel_p_sympt[, ] <- user()
-dim(rel_p_sympt) <- c(n_groups, n_vacc_classes)
-rel_p_hosp_if_sympt[, ] <- user()
-dim(rel_p_hosp_if_sympt) <- c(n_groups, n_vacc_classes)
-rel_infectivity[, ] <- user()
-dim(rel_infectivity) <- c(n_groups, n_vacc_classes)
+rel_susceptibility[, , ] <- user()
+dim(rel_susceptibility) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_sympt[, , ] <- user()
+dim(rel_p_sympt) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_hosp_if_sympt[, , ] <- user()
+dim(rel_p_hosp_if_sympt) <- c(n_groups, n_strains, n_vacc_classes)
+rel_infectivity[, , ] <- user()
+dim(rel_infectivity) <- c(n_groups, n_strains, n_vacc_classes)
 
 vaccine_progression_rate_base[, ] <- user()
 dim(vaccine_progression_rate_base) <- c(n_groups, n_vacc_classes)
@@ -1364,6 +1362,7 @@ dim(cum_admit_by_age) <- n_groups
 
 ## Vectors handling the age specific heterogeneous transmission process
 dim(lambda) <- c(n_groups, n_real_strains)
+dim(lambda_susc) <- c(n_groups, n_real_strains, n_vacc_classes)
 dim(s_ij) <- c(n_groups, n_groups, n_strains)
 dim(m) <- c(n_groups, n_groups)
 dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1509,19 +1508,19 @@ initial(react_pos) <- 0
 update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
 
-## grp_prob_strain is probability of an infection in group i being of strain j
-## prob_strain is probability of an infection being of strain j
-grp_prob_strain[, ] <- lambda[i, j] / sum(lambda[i, ])
-dim(grp_prob_strain) <- c(n_groups, n_real_strains)
+## rel_foi_strain is probability of an infection in group i, vaccination class k
+## being of strain j
+rel_foi_strain[, , ] <- lambda_susc[i, j, k] / sum(lambda_susc[i, , k])
+dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
-tmp_prob_strain <- sum(lambda[, 1]) / sum(lambda[, ])
+## prob_strain is probability of an infection being of strain j
+## irrespective of susceptibility levels
+## prob_strain_1 is prob_strain[1]
+prob_strain_1 <- sum(lambda[, 1]) / sum(lambda[, ])
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
-update(prob_strain[]) <- if (i == 1) tmp_prob_strain else 1 - tmp_prob_strain
+update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
 dim(prob_strain) <- n_real_strains
-
-
-
 
 ## I_weighted used in IFR calculation
 initial(I_weighted[, ]) <- 0

@@ -40,23 +40,23 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
   }
 
 
-  if (nrow(S) != ncol(p$rel_susceptibility) * p$n_groups) {
+  if (nrow(S) != nlayer(p$rel_susceptibility) * p$n_groups) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vacc classes",
-      p$n_groups * ncol(p$rel_susceptibility),
+      p$n_groups * nlayer(p$rel_susceptibility),
       p$n_groups,
-      ncol(p$rel_susceptibility)))
+      nlayer(p$rel_susceptibility)))
   }
   if (ncol(S) != length(step)) {
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
   }
-  if (nrow(I_weighted) != ncol(p$rel_susceptibility) * p$n_groups) {
+  if (nrow(I_weighted) != nlayer(p$rel_susceptibility) * p$n_groups) {
     stop(sprintf(
       "Expected 'I_weighted' to have %d rows = %d groups x %d vacc classes",
-      p$n_groups * ncol(p$rel_susceptibility),
+      p$n_groups * nlayer(p$rel_susceptibility),
       p$n_groups,
-      ncol(p$rel_susceptibility)))
+      nlayer(p$rel_susceptibility)))
   }
   if (ncol(I_weighted) != length(step)) {
     stop(sprintf("Expected 'I_weighted' to have %d columns, following 'step'",
@@ -66,7 +66,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
   IFR_by_group_and_vacc_class <-
     carehomes_IFR_t_by_group_and_vacc_class(step, p)
   beta <- sircovid_parameters_beta_expand(step, p$beta_step)
-  n_vacc_classes <- ncol(p$rel_susceptibility)
+  n_vacc_classes <- nlayer(p$rel_susceptibility)
 
 
   calculate_expected_infections <- function(t, no_vacc) {
@@ -113,10 +113,12 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
     if (no_vacc) {
       ## same IFR by group across all vaccine classes
-      IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, t]),
+      ## FIXME (RS): What do we do with multistrain? This selects 1st
+      ##  (same below)
+      IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t]),
                      n_vacc_classes)
     } else {
-      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, , t])
+      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, , t])
     }
 
     weighted.mean(IFR_vec[i_keep], expected_infections[i_keep, t])
@@ -215,37 +217,25 @@ carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
 
 
 carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
-  dt <- pars$dt
 
-  matricise <- function(vect, n_col) {
-    matrix(rep(vect, n_col), ncol = n_col, byrow = FALSE)
-  }
+  pars$strain_transmission <- unmirror_strain(pars$strain_transmission)
+  pars$rel_susceptibility <- unmirror_strain(pars$rel_susceptibility)
 
-  n_vacc_classes <- ncol(pars$rel_susceptibility)
+  probs <- compute_pathway_probabilities(
+    step = step,
+    pars = pars,
+    n_time_steps = length(sircovid_parameters_beta_expand(step,
+                                                          pars$p_H_step)),
+    n_strains = length(pars$strain_transmission),
+    n_vacc_classes = nlayer(pars$rel_susceptibility))
 
-  n_groups <- pars$n_groups
-
-  n_time_steps <-
-    length(sircovid_parameters_beta_expand(step, pars$p_H_step))
-
-  ## compute probabilities of different pathways
-
-  p_C <- matricise(pars$p_C, n_vacc_classes) * pars$rel_p_sympt
-  p_C <- outer(p_C, rep(1, n_time_steps))
-
-  p_H <- matricise(pars$psi_H, n_vacc_classes) * pars$rel_p_hosp_if_sympt
-  p_H <- outer(p_H, sircovid_parameters_beta_expand(step, pars$p_H_step))
-
-  p_ICU <- outer(matricise(pars$psi_ICU, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_ICU_step))
-  p_ICU_D <- outer(matricise(pars$psi_ICU_D, n_vacc_classes),
-                   sircovid_parameters_beta_expand(step, pars$p_ICU_D_step))
-  p_H_D <- outer(matricise(pars$psi_H_D, n_vacc_classes),
-                sircovid_parameters_beta_expand(step, pars$p_H_D_step))
-  p_W_D <- outer(matricise(pars$psi_W_D, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_W_D_step))
-  p_G_D <- outer(matricise(pars$psi_G_D, n_vacc_classes),
-                 sircovid_parameters_beta_expand(step, pars$p_G_D_step))
+  p_C <- probs$p_C
+  p_H <- probs$p_H
+  p_ICU <- probs$p_ICU
+  p_ICU_D <- probs$p_ICU_D
+  p_H_D <- probs$p_H_D
+  p_W_D <- probs$p_W_D
+  p_G_D <- probs$p_G_D
 
   IHR <- p_C * p_H * (1 - p_G_D) * 100
   IFR <- p_C * p_H * p_G_D * 100 +

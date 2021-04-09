@@ -107,16 +107,18 @@ NULL
 ##'   strain) and subsequent values between 0 and 1. To ensure valid
 ##'   probabilities, severity is upper-truncated at 1 after scaling.
 ##'
-##' @param rel_susceptibility A vector or matrix of values representing the
+##' @param rel_susceptibility A vector or array of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
 ##'   and subsequent values be between 0 and 1. In that case relative
 ##'   susceptibility will be the same across all age groups within one
-##'   vaccination category. Specifying a matrix instead of a vector allows
-##'   different relative susceptibilities by age (rows of the matrix) and
-##'   vaccination group (columns of the matrix); in that case, in each row of
-##'   the matrix, the first value should be 1 (for the non-vaccinated group)
-##'   and subsequent values be between 0 and 1
+##'   vaccination category, and will be the same for all pathogen strains.
+##'   Specifying an array instead of a vector allows
+##'   different relative susceptibilities by age (first dimension of the array),
+##'   pathogen strain (second dimension) and vaccination group
+##'   (third dimension); in that case, the first layer (3rd dimension) of
+##'   rel_susceptibility should be 1 (for the non-vaccinated group) and other
+##'   values be between 0 and 1
 ##'
 ##' @param rel_p_sympt A vector or matrix of values of same dimension as
 ##'   rel_susceptibility representing the
@@ -124,39 +126,43 @@ NULL
 ##'   vaccination groups. If a vector, the first value should be 1 (for the
 ##'   non-vaccinated group) and subsequent values be between 0 and 1.
 ##'   In that case the relative reduction in probability of symptomatic
-##'   infection will be the same across all age groups within one vaccination
-##'   category.
-##'   Specifying a matrix instead of a vector allows different relative
-##'   reductions in probability of symptomatic infection by age (rows of the
-##'   matrix) and vaccination group (columns of the matrix); in that case,
-##'   in each row of the matrix, the first value should be 1 (for the
-##'   non-vaccinated group) and subsequent values be between 0 and 1
+##'   infection will be the same across all age groups and all strains
+##'   within one vaccination category.
+##'   Specifying an array instead of a vector allows different relative
+##'   reductions in probability of symptomatic infection by age (first
+##'   dimension of the array), pathogen strain (second dimension) and
+##'   vaccination group (third dimension); in that case,
+##'   the first layer of rel_p_sympt should be 1 (for the non-vaccinated group)
+##'   and other values be between 0 and 1
 ##'
-##' @param rel_p_hosp_if_sympt A vector or matrix of values of same dimension as
+##' @param rel_p_hosp_if_sympt A vector or array of values of same dimension as
 ##'   rel_susceptibility representing the
 ##'   relative probability of hospitalisation for symptomatic cases in different
 ##'   vaccination groups. If a vector, the first value should be 1 (for the
 ##'   non-vaccinated group) and subsequent values be between 0 and 1.
 ##'   In that case the relative reduction in probability of hospitalisation for
-##'   symptomatic cases will be the same across all age groups within one
-##'   vaccination category.
-##'   Specifying a matrix instead of a vector allows different relative
+##'   symptomatic cases will be the same across all age groups and all strains
+##'   within one vaccination category.
+##'   Specifying an array instead of a vector allows different relative
 ##'   reductions in probability of hospitalisation for symptomatic cases by age
-##'   (rows of the matrix) and vaccination group (columns of the matrix);
-##'   in that case, in each row of the matrix, the first value should be 1
-##'   (for the non-vaccinated group) and subsequent values be between 0 and 1
+##'   (first dimension of the array), pathogen strain (second dimension) and
+##'   vaccination group (third dimension); in that case,
+##'   the first layer of rel_p_hosp_if_sympt should be 1 (for the
+##'   non-vaccinated group) and other values be between 0 and 1
 ##'
-##' @param rel_infectivity A vector or matrix of values representing the
+##' @param rel_infectivity A vector or array of values representing the
 ##'   relative infectivity of individuals in different vaccination groups,
 ##'   if they are infected.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
 ##'   and subsequent values be between 0 and 1. In that case relative
-##'   infectivity will be the same across all age groups within one
-##'   vaccination category. Specifying a matrix instead of a vector allows
-##'   different relative infectivities by age (rows of the matrix) and
-##'   vaccination group (columns of the matrix); in that case, in each row of
-##'   the matrix, the first value should be 1 (for the non-vaccinated group)
-##'   and subsequent values be between 0 and 1
+##'   infectivity will be the same across all age groups and all strains
+##'   within one vaccination category.
+##'   Specifying an array instead of a vector allows
+##'   different relative infectivities by age
+##'   (first dimension of the array), pathogen strain (second dimension) and
+##'   vaccination group (third dimension); in that case,
+##'   the first layer of rel_infectivity should be 1 (for the
+##'   non-vaccinated group) and other values be between 0 and 1
 ##'
 ##' @param vaccine_progression_rate A vector or matrix of values of same
 ##'   dimension as rel_susceptibility representing
@@ -250,7 +256,9 @@ NULL
 ##'        vaccine_schedule = schedule,
 ##'        vaccine_index_dose2 = 2)
 ##'
-##' # vaccination parameters are automatically copied across all age groups
+##' # vaccination parameters are automatically copied across all age groups#
+##' # (and across strains but here we only have 1 strain which is the 2nd
+##' # dimension here)
 ##' p$rel_susceptibility
 ##' p$rel_p_sympt
 ##' p$rel_p_hosp_if_sympt
@@ -262,28 +270,30 @@ NULL
 ##' ### same example as above BUT assume a different effect of vaccine in the
 ##' ### first age group
 ##' n_groups <- 19
+##' n_strains <- 1
 ##'
 ##' # Assumption: vaccine is twice more effective at reducing susceptibility
 ##' # in the first age group
 ##' rel_susceptibility_agegp1 <- c(1, 0.4, 0.25)
 ##' rel_susceptibility_other_agegp <- c(1, 0.8, 0.5)
-##' rel_susceptibility <- matrix(NA, nrow = n_groups, ncol = 3)
-##' rel_susceptibility[1, ] <- rel_susceptibility_agegp1
+##' rel_susceptibility <- array(NA, dim = c(n_groups, n_strains, 3))
+##' rel_susceptibility[1, , ] <- rel_susceptibility_agegp1
 ##' for (i in seq(2, n_groups)) {
-##'   rel_susceptibility[i, ] <- rel_susceptibility_other_agegp
+##'   rel_susceptibility[i, , ] <- rel_susceptibility_other_agegp
 ##' }
 ##' rel_susceptibility
 ##'
 ##' # But vaccine has the same impact on probability of symptoms and
 ##' # hospitalisation for the symptomatic across all age groups
-##' rel_p_sympt <- matrix(rep(rel_p_sympt, n_groups), nrow = n_groups,
-##'   byrow = TRUE)
+##' rel_p_sympt <- array(rep(rel_p_sympt, each = n_groups),
+##'   dim = c(n_groups, n_strains, 3))
 ##' rel_p_hosp_if_sympt <-
-##'   matrix(rep(rel_p_hosp_if_sympt, n_groups), nrow = n_groups, byrow = TRUE)
+##'   array(rep(rel_p_hosp_if_sympt, each = n_groups),
+##'   dim = c(n_groups, n_strains, 3))
 ##'
 ##' # And vaccine has the same impact on onwards infectivity across age groups
-##' rel_infectivity <- matrix(rep(rel_infectivity, n_groups), nrow = n_groups,
-##'   byrow = TRUE)
+##' rel_infectivity <- array(rep(rel_infectivity, each = n_groups),
+##'   dim = c(n_groups, n_strains, 3))
 ##'
 ##' # the period of build-up of immunity is the same for all age groups,
 ##' # lasting on average 2 weeks,
@@ -367,11 +377,11 @@ carehomes_parameters <- function(start_date, region,
   }
 
   severity <- carehomes_parameters_severity(severity, p_death_carehome)
-  strain_rel_severity <- mcstate:::recycle(
+  strain_rel_severity <- recycle(
                                  assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
   if (length(strain_transmission) > 1) {
-    strain_rel_severity <- mirror(strain_rel_severity)
+    strain_rel_severity <- mirror_strain(strain_rel_severity)
   }
   severity <- scale_severity(severity, strain_rel_severity)
 
@@ -408,16 +418,16 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- get_psi(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  strain_rel_gamma_A <- mcstate:::recycle(assert_relatives(strain_rel_gamma_A),
-                                          length(strain_transmission))
-  strain_rel_gamma_P <- mcstate:::recycle(assert_relatives(strain_rel_gamma_P),
-                                          length(strain_transmission))
+  strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
+                                length(strain_transmission))
+  strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
+                                length(strain_transmission))
   strain_rel_gamma_C_1 <-
-    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_1),
-                                       length(strain_transmission))
+    recycle(assert_relatives(strain_rel_gamma_C_1),
+            length(strain_transmission))
   strain_rel_gamma_C_2 <-
-    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_2),
-                                       length(strain_transmission))
+    recycle(assert_relatives(strain_rel_gamma_C_2),
+            length(strain_transmission))
 
   progression <- progression %||%
                   carehomes_parameters_progression(strain_rel_gamma_A,
@@ -495,9 +505,10 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_progression_rate,
                                                   vaccine_schedule,
                                                   vaccine_index_dose2,
+                                                  strain$n_strains,
                                                   vaccine_catchup_fraction)
   model_switches <-
-    list(model_super_infection = assert_01(model_super_infection))
+    list(model_super_infection = assert_logical(model_super_infection))
 
   c(ret, severity, progression, strain, vaccination, waning,
     model_switches, observation)
@@ -906,12 +917,14 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
                                              vaccine_index_dose2 = NULL,
+                                             n_strains = 1,
                                              vaccine_catchup_fraction = 1) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
-    if (is.matrix(x)) ncol(x) else length(x)
+    if (is.array(x)) nlayer(x) else length(x)
   }
+
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
                      rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
@@ -926,7 +939,8 @@ carehomes_parameters_vaccination <- function(N_tot,
   }
   n_vacc_classes <- max(n)
 
-  ret <- Map(function(value, name) build_rel_param(value, n_vacc_classes, name),
+  ret <- Map(function(value, name)
+    build_rel_param(value, n_strains, n_vacc_classes, name),
              rel_params, names(rel_params))
 
   n_doses <- 2L # fixed; see the odin code
@@ -1017,7 +1031,7 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
   }
 
   if (length(strain_transmission) == 2) {
-    strain_transmission <- mirror(strain_transmission)
+    strain_transmission <- mirror_strain(strain_transmission)
   }
 
   list(n_strains = length(strain_transmission),
@@ -1076,10 +1090,10 @@ carehomes_parameters_progression <- function(rel_gamma_A = 1,
   if (length(rel_gamma_A) == 2) {
     ## if two strains then mirror the same gammas for the pseudo-strains
     ## Note: pseudo-strain = 3/4 has same progression/rates as strain 2/1
-    rel_gamma_A <- mirror(rel_gamma_A)
-    rel_gamma_P <- mirror(rel_gamma_P)
-    rel_gamma_C_1 <- mirror(rel_gamma_C_1)
-    rel_gamma_C_2 <- mirror(rel_gamma_C_2)
+    rel_gamma_A <- mirror_strain(rel_gamma_A)
+    rel_gamma_P <- mirror_strain(rel_gamma_P)
+    rel_gamma_C_1 <- mirror_strain(rel_gamma_C_1)
+    rel_gamma_C_2 <- mirror_strain(rel_gamma_C_2)
   }
 
   ## The k_ parameters are the shape parameters for the Erlang
