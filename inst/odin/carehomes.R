@@ -416,7 +416,8 @@ n_RE_next_vacc_class[, , ] <- if (n_vacc_classes == 1) 0 else
 n_RE[, , ] <- n_RE_tmp[i, j, k] - n_RE_next_vacc_class[i, j, k]
 ## 3) R -> R vaccine progression
 n_R_tmp[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
-n_R_next_vacc_class[, , ] <- rbinom(n_R_tmp[i, j, k], p_R_next_vacc_class[i, j, k])
+n_R_next_vacc_class[, , ] <- rbinom(n_R_tmp[i, j, k],
+                                    p_R_next_vacc_class[i, j, k])
 
 #### other transitions ####
 
