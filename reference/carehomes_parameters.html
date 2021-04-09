@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.30</span>
       </span>
     </div>
 
@@ -342,16 +342,18 @@ probabilities, severity is upper-truncated at 1 after scaling.</p></td>
     </tr>
     <tr>
       <th>rel_susceptibility</th>
-      <td><p>A vector or matrix of values representing the
+      <td><p>A vector or array of values representing the
 relative susceptibility of individuals in different vaccination groups.
 If a vector, the first value should be 1 (for the non-vaccinated group)
 and subsequent values be between 0 and 1. In that case relative
 susceptibility will be the same across all age groups within one
-vaccination category. Specifying a matrix instead of a vector allows
-different relative susceptibilities by age (rows of the matrix) and
-vaccination group (columns of the matrix); in that case, in each row of
-the matrix, the first value should be 1 (for the non-vaccinated group)
-and subsequent values be between 0 and 1</p></td>
+vaccination category, and will be the same for all pathogen strains.
+Specifying an array instead of a vector allows
+different relative susceptibilities by age (first dimension of the array),
+pathogen strain (second dimension) and vaccination group
+(third dimension); in that case, the first layer (3rd dimension) of
+rel_susceptibility should be 1 (for the non-vaccinated group) and other
+values be between 0 and 1</p></td>
     </tr>
     <tr>
       <th>rel_p_sympt</th>
@@ -361,43 +363,47 @@ relative probability of symptomatic infection in different
 vaccination groups. If a vector, the first value should be 1 (for the
 non-vaccinated group) and subsequent values be between 0 and 1.
 In that case the relative reduction in probability of symptomatic
-infection will be the same across all age groups within one vaccination
-category.
-Specifying a matrix instead of a vector allows different relative
-reductions in probability of symptomatic infection by age (rows of the
-matrix) and vaccination group (columns of the matrix); in that case,
-in each row of the matrix, the first value should be 1 (for the
-non-vaccinated group) and subsequent values be between 0 and 1</p></td>
+infection will be the same across all age groups and all strains
+within one vaccination category.
+Specifying an array instead of a vector allows different relative
+reductions in probability of symptomatic infection by age (first
+dimension of the array), pathogen strain (second dimension) and
+vaccination group (third dimension); in that case,
+the first layer of rel_p_sympt should be 1 (for the non-vaccinated group)
+and other values be between 0 and 1</p></td>
     </tr>
     <tr>
       <th>rel_p_hosp_if_sympt</th>
-      <td><p>A vector or matrix of values of same dimension as
+      <td><p>A vector or array of values of same dimension as
 rel_susceptibility representing the
 relative probability of hospitalisation for symptomatic cases in different
 vaccination groups. If a vector, the first value should be 1 (for the
 non-vaccinated group) and subsequent values be between 0 and 1.
 In that case the relative reduction in probability of hospitalisation for
-symptomatic cases will be the same across all age groups within one
-vaccination category.
-Specifying a matrix instead of a vector allows different relative
+symptomatic cases will be the same across all age groups and all strains
+within one vaccination category.
+Specifying an array instead of a vector allows different relative
 reductions in probability of hospitalisation for symptomatic cases by age
-(rows of the matrix) and vaccination group (columns of the matrix);
-in that case, in each row of the matrix, the first value should be 1
-(for the non-vaccinated group) and subsequent values be between 0 and 1</p></td>
+(first dimension of the array), pathogen strain (second dimension) and
+vaccination group (third dimension); in that case,
+the first layer of rel_p_hosp_if_sympt should be 1 (for the
+non-vaccinated group) and other values be between 0 and 1</p></td>
     </tr>
     <tr>
       <th>rel_infectivity</th>
-      <td><p>A vector or matrix of values representing the
+      <td><p>A vector or array of values representing the
 relative infectivity of individuals in different vaccination groups,
 if they are infected.
 If a vector, the first value should be 1 (for the non-vaccinated group)
 and subsequent values be between 0 and 1. In that case relative
-infectivity will be the same across all age groups within one
-vaccination category. Specifying a matrix instead of a vector allows
-different relative infectivities by age (rows of the matrix) and
-vaccination group (columns of the matrix); in that case, in each row of
-the matrix, the first value should be 1 (for the non-vaccinated group)
-and subsequent values be between 0 and 1</p></td>
+infectivity will be the same across all age groups and all strains
+within one vaccination category.
+Specifying an array instead of a vector allows
+different relative infectivities by age
+(first dimension of the array), pathogen strain (second dimension) and
+vaccination group (third dimension); in that case,
+the first layer of rel_infectivity should be 1 (for the
+non-vaccinated group) and other values be between 0 and 1</p></td>
     </tr>
     <tr>
       <th>vaccine_progression_rate</th>
@@ -1028,6 +1034,8 @@ just before the model is run.</p>
 #&gt; [1] 0
 #&gt; 
 #&gt; $rel_susceptibility
+#&gt; , , 1
+#&gt; 
 #&gt;       [,1]
 #&gt;  [1,]    1
 #&gt;  [2,]    1
@@ -1048,8 +1056,11 @@ just before the model is run.</p>
 #&gt; [17,]    1
 #&gt; [18,]    1
 #&gt; [19,]    1
+#&gt; 
 #&gt; 
 #&gt; $rel_p_sympt
+#&gt; , , 1
+#&gt; 
 #&gt;       [,1]
 #&gt;  [1,]    1
 #&gt;  [2,]    1
@@ -1070,8 +1081,11 @@ just before the model is run.</p>
 #&gt; [17,]    1
 #&gt; [18,]    1
 #&gt; [19,]    1
+#&gt; 
 #&gt; 
 #&gt; $rel_p_hosp_if_sympt
+#&gt; , , 1
+#&gt; 
 #&gt;       [,1]
 #&gt;  [1,]    1
 #&gt;  [2,]    1
@@ -1093,7 +1107,10 @@ just before the model is run.</p>
 #&gt; [18,]    1
 #&gt; [19,]    1
 #&gt; 
+#&gt; 
 #&gt; $rel_infectivity
+#&gt; , , 1
+#&gt; 
 #&gt;       [,1]
 #&gt;  [1,]    1
 #&gt;  [2,]    1
@@ -1114,6 +1131,7 @@ just before the model is run.</p>
 #&gt; [17,]    1
 #&gt; [18,]    1
 #&gt; [19,]    1
+#&gt; 
 #&gt; 
 #&gt; $vaccine_dose_step
 #&gt; , , 1
@@ -1293,88 +1311,286 @@ just before the model is run.</p>
        vaccine_schedule <span class='op'>=</span> <span class='va'>schedule</span>,
        vaccine_index_dose2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 
-<span class='co'># vaccination parameters are automatically copied across all age groups</span>
+<span class='co'># vaccination parameters are automatically copied across all age groups#</span>
+<span class='co'># (and across strains but here we only have 1 strain which is the 2nd</span>
+<span class='co'># dimension here)</span>
 <span class='va'>p</span><span class='op'>$</span><span class='va'>rel_susceptibility</span>
-</div><div class='output co'>#&gt;       [,1] [,2] [,3]
-#&gt;  [1,]    1  0.8  0.5
-#&gt;  [2,]    1  0.8  0.5
-#&gt;  [3,]    1  0.8  0.5
-#&gt;  [4,]    1  0.8  0.5
-#&gt;  [5,]    1  0.8  0.5
-#&gt;  [6,]    1  0.8  0.5
-#&gt;  [7,]    1  0.8  0.5
-#&gt;  [8,]    1  0.8  0.5
-#&gt;  [9,]    1  0.8  0.5
-#&gt; [10,]    1  0.8  0.5
-#&gt; [11,]    1  0.8  0.5
-#&gt; [12,]    1  0.8  0.5
-#&gt; [13,]    1  0.8  0.5
-#&gt; [14,]    1  0.8  0.5
-#&gt; [15,]    1  0.8  0.5
-#&gt; [16,]    1  0.8  0.5
-#&gt; [17,]    1  0.8  0.5
-#&gt; [18,]    1  0.8  0.5
-#&gt; [19,]    1  0.8  0.5</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_sympt</span>
-</div><div class='output co'>#&gt;       [,1] [,2] [,3]
-#&gt;  [1,]    1  0.6  0.3
-#&gt;  [2,]    1  0.6  0.3
-#&gt;  [3,]    1  0.6  0.3
-#&gt;  [4,]    1  0.6  0.3
-#&gt;  [5,]    1  0.6  0.3
-#&gt;  [6,]    1  0.6  0.3
-#&gt;  [7,]    1  0.6  0.3
-#&gt;  [8,]    1  0.6  0.3
-#&gt;  [9,]    1  0.6  0.3
-#&gt; [10,]    1  0.6  0.3
-#&gt; [11,]    1  0.6  0.3
-#&gt; [12,]    1  0.6  0.3
-#&gt; [13,]    1  0.6  0.3
-#&gt; [14,]    1  0.6  0.3
-#&gt; [15,]    1  0.6  0.3
-#&gt; [16,]    1  0.6  0.3
-#&gt; [17,]    1  0.6  0.3
-#&gt; [18,]    1  0.6  0.3
-#&gt; [19,]    1  0.6  0.3</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_hosp_if_sympt</span>
-</div><div class='output co'>#&gt;       [,1] [,2] [,3]
-#&gt;  [1,]    1 0.95 0.95
-#&gt;  [2,]    1 0.95 0.95
-#&gt;  [3,]    1 0.95 0.95
-#&gt;  [4,]    1 0.95 0.95
-#&gt;  [5,]    1 0.95 0.95
-#&gt;  [6,]    1 0.95 0.95
-#&gt;  [7,]    1 0.95 0.95
-#&gt;  [8,]    1 0.95 0.95
-#&gt;  [9,]    1 0.95 0.95
-#&gt; [10,]    1 0.95 0.95
-#&gt; [11,]    1 0.95 0.95
-#&gt; [12,]    1 0.95 0.95
-#&gt; [13,]    1 0.95 0.95
-#&gt; [14,]    1 0.95 0.95
-#&gt; [15,]    1 0.95 0.95
-#&gt; [16,]    1 0.95 0.95
-#&gt; [17,]    1 0.95 0.95
-#&gt; [18,]    1 0.95 0.95
-#&gt; [19,]    1 0.95 0.95</div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_infectivity</span>
-</div><div class='output co'>#&gt;       [,1] [,2] [,3]
-#&gt;  [1,]    1  0.5  0.5
-#&gt;  [2,]    1  0.5  0.5
-#&gt;  [3,]    1  0.5  0.5
-#&gt;  [4,]    1  0.5  0.5
-#&gt;  [5,]    1  0.5  0.5
-#&gt;  [6,]    1  0.5  0.5
-#&gt;  [7,]    1  0.5  0.5
-#&gt;  [8,]    1  0.5  0.5
-#&gt;  [9,]    1  0.5  0.5
-#&gt; [10,]    1  0.5  0.5
-#&gt; [11,]    1  0.5  0.5
-#&gt; [12,]    1  0.5  0.5
-#&gt; [13,]    1  0.5  0.5
-#&gt; [14,]    1  0.5  0.5
-#&gt; [15,]    1  0.5  0.5
-#&gt; [16,]    1  0.5  0.5
-#&gt; [17,]    1  0.5  0.5
-#&gt; [18,]    1  0.5  0.5
-#&gt; [19,]    1  0.5  0.5</div><div class='input'><span class='co'># Note that this is only the "base" rate as we fill in the first</span>
+</div><div class='output co'>#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; , , 2
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]  0.8
+#&gt;  [2,]  0.8
+#&gt;  [3,]  0.8
+#&gt;  [4,]  0.8
+#&gt;  [5,]  0.8
+#&gt;  [6,]  0.8
+#&gt;  [7,]  0.8
+#&gt;  [8,]  0.8
+#&gt;  [9,]  0.8
+#&gt; [10,]  0.8
+#&gt; [11,]  0.8
+#&gt; [12,]  0.8
+#&gt; [13,]  0.8
+#&gt; [14,]  0.8
+#&gt; [15,]  0.8
+#&gt; [16,]  0.8
+#&gt; [17,]  0.8
+#&gt; [18,]  0.8
+#&gt; [19,]  0.8
+#&gt; 
+#&gt; , , 3
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]  0.5
+#&gt;  [2,]  0.5
+#&gt;  [3,]  0.5
+#&gt;  [4,]  0.5
+#&gt;  [5,]  0.5
+#&gt;  [6,]  0.5
+#&gt;  [7,]  0.5
+#&gt;  [8,]  0.5
+#&gt;  [9,]  0.5
+#&gt; [10,]  0.5
+#&gt; [11,]  0.5
+#&gt; [12,]  0.5
+#&gt; [13,]  0.5
+#&gt; [14,]  0.5
+#&gt; [15,]  0.5
+#&gt; [16,]  0.5
+#&gt; [17,]  0.5
+#&gt; [18,]  0.5
+#&gt; [19,]  0.5
+#&gt; </div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_sympt</span>
+</div><div class='output co'>#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; , , 2
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]  0.6
+#&gt;  [2,]  0.6
+#&gt;  [3,]  0.6
+#&gt;  [4,]  0.6
+#&gt;  [5,]  0.6
+#&gt;  [6,]  0.6
+#&gt;  [7,]  0.6
+#&gt;  [8,]  0.6
+#&gt;  [9,]  0.6
+#&gt; [10,]  0.6
+#&gt; [11,]  0.6
+#&gt; [12,]  0.6
+#&gt; [13,]  0.6
+#&gt; [14,]  0.6
+#&gt; [15,]  0.6
+#&gt; [16,]  0.6
+#&gt; [17,]  0.6
+#&gt; [18,]  0.6
+#&gt; [19,]  0.6
+#&gt; 
+#&gt; , , 3
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]  0.3
+#&gt;  [2,]  0.3
+#&gt;  [3,]  0.3
+#&gt;  [4,]  0.3
+#&gt;  [5,]  0.3
+#&gt;  [6,]  0.3
+#&gt;  [7,]  0.3
+#&gt;  [8,]  0.3
+#&gt;  [9,]  0.3
+#&gt; [10,]  0.3
+#&gt; [11,]  0.3
+#&gt; [12,]  0.3
+#&gt; [13,]  0.3
+#&gt; [14,]  0.3
+#&gt; [15,]  0.3
+#&gt; [16,]  0.3
+#&gt; [17,]  0.3
+#&gt; [18,]  0.3
+#&gt; [19,]  0.3
+#&gt; </div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_hosp_if_sympt</span>
+</div><div class='output co'>#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; , , 2
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,] 0.95
+#&gt;  [2,] 0.95
+#&gt;  [3,] 0.95
+#&gt;  [4,] 0.95
+#&gt;  [5,] 0.95
+#&gt;  [6,] 0.95
+#&gt;  [7,] 0.95
+#&gt;  [8,] 0.95
+#&gt;  [9,] 0.95
+#&gt; [10,] 0.95
+#&gt; [11,] 0.95
+#&gt; [12,] 0.95
+#&gt; [13,] 0.95
+#&gt; [14,] 0.95
+#&gt; [15,] 0.95
+#&gt; [16,] 0.95
+#&gt; [17,] 0.95
+#&gt; [18,] 0.95
+#&gt; [19,] 0.95
+#&gt; 
+#&gt; , , 3
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,] 0.95
+#&gt;  [2,] 0.95
+#&gt;  [3,] 0.95
+#&gt;  [4,] 0.95
+#&gt;  [5,] 0.95
+#&gt;  [6,] 0.95
+#&gt;  [7,] 0.95
+#&gt;  [8,] 0.95
+#&gt;  [9,] 0.95
+#&gt; [10,] 0.95
+#&gt; [11,] 0.95
+#&gt; [12,] 0.95
+#&gt; [13,] 0.95
+#&gt; [14,] 0.95
+#&gt; [15,] 0.95
+#&gt; [16,] 0.95
+#&gt; [17,] 0.95
+#&gt; [18,] 0.95
+#&gt; [19,] 0.95
+#&gt; </div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_infectivity</span>
+</div><div class='output co'>#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; , , 2
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]  0.5
+#&gt;  [2,]  0.5
+#&gt;  [3,]  0.5
+#&gt;  [4,]  0.5
+#&gt;  [5,]  0.5
+#&gt;  [6,]  0.5
+#&gt;  [7,]  0.5
+#&gt;  [8,]  0.5
+#&gt;  [9,]  0.5
+#&gt; [10,]  0.5
+#&gt; [11,]  0.5
+#&gt; [12,]  0.5
+#&gt; [13,]  0.5
+#&gt; [14,]  0.5
+#&gt; [15,]  0.5
+#&gt; [16,]  0.5
+#&gt; [17,]  0.5
+#&gt; [18,]  0.5
+#&gt; [19,]  0.5
+#&gt; 
+#&gt; , , 3
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]  0.5
+#&gt;  [2,]  0.5
+#&gt;  [3,]  0.5
+#&gt;  [4,]  0.5
+#&gt;  [5,]  0.5
+#&gt;  [6,]  0.5
+#&gt;  [7,]  0.5
+#&gt;  [8,]  0.5
+#&gt;  [9,]  0.5
+#&gt; [10,]  0.5
+#&gt; [11,]  0.5
+#&gt; [12,]  0.5
+#&gt; [13,]  0.5
+#&gt; [14,]  0.5
+#&gt; [15,]  0.5
+#&gt; [16,]  0.5
+#&gt; [17,]  0.5
+#&gt; [18,]  0.5
+#&gt; [19,]  0.5
+#&gt; </div><div class='input'><span class='co'># Note that this is only the "base" rate as we fill in the first</span>
 <span class='co'># column dynamically based on vaccine_daily_doses</span>
 <span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
 </div><div class='output co'>#&gt;       [,1] [,2]        [,3]
@@ -1400,47 +1616,98 @@ just before the model is run.</p>
 <span class='co'>### same example as above BUT assume a different effect of vaccine in the</span>
 <span class='co'>### first age group</span>
 <span class='va'>n_groups</span> <span class='op'>&lt;-</span> <span class='fl'>19</span>
+<span class='va'>n_strains</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
 
 <span class='co'># Assumption: vaccine is twice more effective at reducing susceptibility</span>
 <span class='co'># in the first age group</span>
 <span class='va'>rel_susceptibility_agegp1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.4</span>, <span class='fl'>0.25</span><span class='op'>)</span>
 <span class='va'>rel_susceptibility_other_agegp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span><span class='op'>)</span>
-<span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='cn'>NA</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>, ncol <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
-<span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='fl'>1</span>, <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_agegp1</span>
+<span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='cn'>NA</span>, dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='fl'>1</span>, , <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_agegp1</span>
 <span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='va'>n_groups</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='va'>i</span>, <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_other_agegp</span>
+  <span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='va'>i</span>, , <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_other_agegp</span>
 <span class='op'>}</span>
 <span class='va'>rel_susceptibility</span>
-</div><div class='output co'>#&gt;       [,1] [,2] [,3]
-#&gt;  [1,]    1  0.4 0.25
-#&gt;  [2,]    1  0.8 0.50
-#&gt;  [3,]    1  0.8 0.50
-#&gt;  [4,]    1  0.8 0.50
-#&gt;  [5,]    1  0.8 0.50
-#&gt;  [6,]    1  0.8 0.50
-#&gt;  [7,]    1  0.8 0.50
-#&gt;  [8,]    1  0.8 0.50
-#&gt;  [9,]    1  0.8 0.50
-#&gt; [10,]    1  0.8 0.50
-#&gt; [11,]    1  0.8 0.50
-#&gt; [12,]    1  0.8 0.50
-#&gt; [13,]    1  0.8 0.50
-#&gt; [14,]    1  0.8 0.50
-#&gt; [15,]    1  0.8 0.50
-#&gt; [16,]    1  0.8 0.50
-#&gt; [17,]    1  0.8 0.50
-#&gt; [18,]    1  0.8 0.50
-#&gt; [19,]    1  0.8 0.50</div><div class='input'>
+</div><div class='output co'>#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; , , 2
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]  0.4
+#&gt;  [2,]  0.8
+#&gt;  [3,]  0.8
+#&gt;  [4,]  0.8
+#&gt;  [5,]  0.8
+#&gt;  [6,]  0.8
+#&gt;  [7,]  0.8
+#&gt;  [8,]  0.8
+#&gt;  [9,]  0.8
+#&gt; [10,]  0.8
+#&gt; [11,]  0.8
+#&gt; [12,]  0.8
+#&gt; [13,]  0.8
+#&gt; [14,]  0.8
+#&gt; [15,]  0.8
+#&gt; [16,]  0.8
+#&gt; [17,]  0.8
+#&gt; [18,]  0.8
+#&gt; [19,]  0.8
+#&gt; 
+#&gt; , , 3
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,] 0.25
+#&gt;  [2,] 0.50
+#&gt;  [3,] 0.50
+#&gt;  [4,] 0.50
+#&gt;  [5,] 0.50
+#&gt;  [6,] 0.50
+#&gt;  [7,] 0.50
+#&gt;  [8,] 0.50
+#&gt;  [9,] 0.50
+#&gt; [10,] 0.50
+#&gt; [11,] 0.50
+#&gt; [12,] 0.50
+#&gt; [13,] 0.50
+#&gt; [14,] 0.50
+#&gt; [15,] 0.50
+#&gt; [16,] 0.50
+#&gt; [17,] 0.50
+#&gt; [18,] 0.50
+#&gt; [19,] 0.50
+#&gt; </div><div class='input'>
 <span class='co'># But vaccine has the same impact on probability of symptoms and</span>
 <span class='co'># hospitalisation for the symptomatic across all age groups</span>
-<span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_sympt</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>,
-  byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,
+  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,
+  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># And vaccine has the same impact on onwards infectivity across age groups</span>
-<span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_infectivity</span>, <span class='va'>n_groups</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='va'>n_groups</span>,
-  byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_infectivity</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,
+  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># the period of build-up of immunity is the same for all age groups,</span>
 <span class='co'># lasting on average 2 weeks,</span>
