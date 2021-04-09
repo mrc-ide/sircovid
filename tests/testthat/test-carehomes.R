@@ -196,15 +196,18 @@ test_that("Test compiled carehomes components", {
 
 test_that("can run the particle filter on the model 2", {
   skip_on_windows_gha()
+  seed <- 1
   start_date <- sircovid_date("2020-02-02")
   pars <- carehomes_parameters(start_date, "england")
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
   np <- 50
-  set.seed(1)
-  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE)
-  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE)
+  set.seed(seed)
+  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE,
+                                   seed = seed)
+  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE,
+                                   seed = seed)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
   expect_lt(abs(ll1 - ll2), 50)
