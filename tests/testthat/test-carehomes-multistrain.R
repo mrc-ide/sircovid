@@ -2036,8 +2036,6 @@ test_that("cross_immunity parameter errors when expected", {
 
 test_that("complete cross_immunity means no Strain 3/4 infections", {
   np <- 1L
-  end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
 
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
@@ -2048,6 +2046,8 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
   mod <- carehomes$new(p, 0, np)
   initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
@@ -2058,8 +2058,6 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
 test_that("some cross-immunity means less Strain 3 or 4 infections than none
            and > 0", {
   np <- 1L
-  end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
 
   ## no cross-immnunity
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -2071,6 +2069,8 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
   mod <- carehomes$new(p, 0, np)
   initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
