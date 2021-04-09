@@ -885,6 +885,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
   rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
+  ## Rt should be lower (or equal) for the two variant version
   expect_rounded_lte(rt_1$Rt_all, rt_1_single_class$Rt_all)
   expect_rounded_lte(rt_1$Rt_general, rt_1_single_class$Rt_general)
   expect_rounded_lte(rt_all$Rt_all, rt_all_single_class$Rt_all)
