@@ -474,6 +474,7 @@ test_that("No infection with either strain with perfect vaccine", {
 
 
 test_that("different strains are equivalent", {
+  set.seed(1)
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             model_super_infection = 1)
