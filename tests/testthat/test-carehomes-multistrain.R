@@ -2022,15 +2022,15 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
 test_that("cross_immunity parameter errors when expected", {
   expect_error(
     carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                         cross_immunity = 2)
+                         cross_immunity = 2), "in [0, 1]", fixed = TRUE
   )
   expect_error(
     carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                         cross_immunity = -2)
+                         cross_immunity = -2), "in [0, 1]", fixed = TRUE
   )
   expect_error(
     carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                         cross_immunity = c(1, 1))
+                         cross_immunity = c(1, 1)), "Invalid length"
   )
 })
 
