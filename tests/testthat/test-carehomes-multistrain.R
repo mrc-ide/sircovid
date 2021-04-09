@@ -1968,7 +1968,6 @@ test_that("Can only move to S from R3 and R4 to S", {
                             strain_transmission = c(1, 1),
                             strain_seed_rate = c(10, 0),
                             waning_rate = 1 / 5,
-                            model_pcr_and_serology = 0,
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             model_super_infection = 1)
@@ -2008,8 +2007,7 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
                             strain_seed_rate = c(10, 0),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            model_super_infection = 1,
-                            model_pcr_and_serology = 0)
+                            model_super_infection = 1)
   p$strain_transmission[] <- 1e8
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
