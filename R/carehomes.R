@@ -517,8 +517,7 @@ carehomes_parameters <- function(start_date, region,
                                                   strain$n_strains,
                                                   vaccine_catchup_fraction)
 
-  c(ret, severity, progression, strain, vaccination, waning,
-    model_switches, observation)
+  c(ret, severity, progression, strain, vaccination, waning, observation)
 }
 
 
