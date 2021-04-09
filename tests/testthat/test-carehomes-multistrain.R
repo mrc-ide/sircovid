@@ -339,8 +339,7 @@ test_that("No-one in strains 3 or 4 if no super infection", {
                             strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            model_super_infection = 0)
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- carehomes$new(p, 0, 1, seed = 2L)
   info <- mod$info()
@@ -608,14 +607,6 @@ test_that("Swapping strains gives identical results with different index", {
   }
 
   expect_identical(z1, z2)
-})
-
-
-test_that("model_super_infection switch works", {
-  expect_error(
-    carehomes_parameters(0, "england", model_super_infection = 2),
-    "must be logical"
-  )
 })
 
 
