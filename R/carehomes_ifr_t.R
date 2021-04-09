@@ -218,10 +218,8 @@ carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
 
 carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 
-  if (length(pars$strain_transmission) == 4) {
-    pars$strain_transmission <- unmirror_strain(pars$strain_transmission)
-    pars$rel_susceptibility <- unmirror_strain(pars$rel_susceptibility)
-  }
+  pars$strain_transmission <- unmirror_strain(pars$strain_transmission)
+  pars$rel_susceptibility <- unmirror_strain(pars$rel_susceptibility)
 
   probs <- compute_pathway_probabilities(
     step = step,

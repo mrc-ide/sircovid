@@ -202,15 +202,19 @@ mirror_strain <- function(x) {
 
 unmirror_strain <- function(x, n_strains = 4L) {
   if (inherits(x, c("matrix", "array"))) {
-    stopifnot(ncol(x) == n_strains)
-    if (length(dim(x)) == 2) {
+    if (ncol(x) != n_strains) {
+      return(x)
+    } else if (length(dim(x)) == 2) {
       x[, seq(ncol(x) / 2), drop = FALSE]
     } else {
       x[, seq(ncol(x) / 2), , drop = FALSE]
     }
   } else {
-    stopifnot(length(x) == n_strains)
-    x[seq(length(x) / 2)]
+    if (length(x) != n_strains) {
+      return(x)
+    } else {
+      x[seq(length(x) / 2)]
+    }
   }
 }
 
