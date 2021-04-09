@@ -1,6 +1,10 @@
-# sircovid 0.10.28
+# sircovid 0.10.29
 
 * Multi-strain model now allows for 'super-infections', after recovering from strain 1 or 2, one can now be immediately infected with the 'other' strain. This can be turned on with `model_super_infection`.
+
+# sircovid 0.10.28
+
+* Relaxed restrictions on waning immunity - the number of recovered individuals losing immunity is no longer capped by the number of individuals in the `T_sero_neg` or `T_PCR_neg` compartments.
 
 # sircovid 0.10.26
 

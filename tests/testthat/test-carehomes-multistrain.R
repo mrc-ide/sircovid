@@ -217,14 +217,14 @@ test_that("Second less virulent strain does not take over", {
 })
 
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
-           no superinfection", {
-  set.seed(1L)
+test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
+          waning immunity - no superinfection", {
+  ## Default for waning_rate is 0
+  set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 1 / 20,
                             strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding_end)),
@@ -245,13 +245,15 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
 })
 
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
-          superinfection", {
+test_that("N_tot, is constant with second strain and waning immunity, while
+          N_tot2 and N_tot3 are non-decreasing - superinfection", {
+  ## Default for waning_rate is 0
+  set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 0.1,
+                            waning_rate = 1 / 20,
                             strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding_end)),
@@ -265,12 +267,42 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(diff(y$N_tot3) >= 0))
+  expect_true(all(diff(y$N_tot2) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
 })
+
+test_that("N_tot, is constant with second strain and waning immunity, while
+          N_tot2 and N_tot3 are non-decreasing - no superinfection", {
+  ## Default for waning_rate is 0
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 1 / 20,
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(diff(y$N_tot3) >= 0))
+  expect_true(all(diff(y$N_tot2) >= 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+})
+
+
 
 
 test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
@@ -757,7 +789,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0),
+                            strain_transmission = c(1, 1),
                             model_super_infection = 1)
 
   np <- 3L
@@ -837,7 +869,6 @@ test_that("Can calculate Rt with a second less infectious variant", {
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             strain_seed_rate = c(10, 0),
-                            strain_rel_severity = c(1, 0.8),
                             model_super_infection = 1)
 
   np <- 3L
@@ -887,6 +918,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
   rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
+  ## Rt should be lower (or equal) for the two variant version
   expect_rounded_lte(rt_1$Rt_all, rt_1_single_class$Rt_all)
   expect_rounded_lte(rt_1$Rt_general, rt_1_single_class$Rt_general)
   expect_rounded_lte(rt_all$Rt_all, rt_all_single_class$Rt_all)
@@ -1501,8 +1533,8 @@ test_that("Lower rate variant has higher Rt", {
                                         weight_Rt = TRUE)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_true(all(rt_1_all$Rt_all - 0.001 <= rt_15_all$Rt_all))
-  expect_true(all(rt_1_all$Rt_general - 0.001 <= rt_15_all$Rt_general))
+  expect_rounded_lte(rt_1_all$Rt_all, rt_15_all$Rt_all)
+  expect_rounded_lte(rt_1_all$Rt_general, rt_15_all$Rt_general)
 })
 
 
@@ -1906,7 +1938,7 @@ test_that("Can't move from S to E3/4", {
 })
 
 
-test_that("Everyone in R1 when strain_transmission = c(1, 0)", {
+test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
   np <- 3L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0),
@@ -1932,14 +1964,13 @@ test_that("Everyone in R1 when strain_transmission = c(1, 0)", {
 })
 
 
-test_that("Can only move from R3 and R4 to S", {
+test_that("Can only move to S from R3 and R4 to S", {
   np <- 3L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             initial_I = 0,
                             strain_transmission = c(1, 1),
                             strain_seed_rate = c(10, 0),
                             waning_rate = 1 / 5,
-                            model_pcr_and_serology = 0,
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             model_super_infection = 1)
@@ -1979,8 +2010,7 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
                             strain_seed_rate = c(10, 0),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            model_super_infection = 1,
-                            model_pcr_and_serology = 0)
+                            model_super_infection = 1)
   p$strain_transmission[] <- 1e8
 
   mod <- carehomes$new(p, 0, np, seed = 1L)

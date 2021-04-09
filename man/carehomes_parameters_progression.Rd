@@ -5,10 +5,10 @@
 \title{Carehomes progression parameters}
 \usage{
 carehomes_parameters_progression(
-  rel_gamma_A,
-  rel_gamma_P,
-  rel_gamma_C_1,
-  rel_gamma_C_2
+  rel_gamma_A = 1,
+  rel_gamma_P = 1,
+  rel_gamma_C_1 = 1,
+  rel_gamma_C_2 = 1
 )
 }
 \arguments{
