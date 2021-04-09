@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.28</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.29</span>
       </span>
     </div>
 
@@ -137,7 +137,9 @@
   interpolate_every <span class='op'>=</span> <span class='cn'>NULL</span>,
   interpolate_critical_dates <span class='op'>=</span> <span class='cn'>NULL</span>,
   interpolate_min <span class='op'>=</span> <span class='cn'>NULL</span>,
-  eigen_method <span class='op'>=</span> <span class='st'>"power_iteration"</span>
+  eigen_method <span class='op'>=</span> <span class='st'>"power_iteration"</span>,
+  R <span class='op'>=</span> <span class='cn'>NULL</span>,
+  weight_Rt <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -202,6 +204,17 @@ interpolation and that will not work with fewer than 3 points.</p></td>
       <th>eigen_method</th>
       <td><p>The eigenvalue method to use (passed to
 <a href='https://rdrr.io/pkg/eigen1/man/eigen1.html'>eigen1::eigen1</a> as <code>method</code>)</p></td>
+    </tr>
+    <tr>
+      <th>R</th>
+      <td><p>A (n groups x n strains x n vaccine classes) x steps matrix of "R"
+compartment counts, required for multi-strain models.</p></td>
+    </tr>
+    <tr>
+      <th>weight_Rt</th>
+      <td><p>If <code>TRUE</code> then computes the weighted average
+of the Rt for all strains, otherwise all calculations are returned with
+an additional dimension to index each strain.</p></td>
     </tr>
     </table>
 
