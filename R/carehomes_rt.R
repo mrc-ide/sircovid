@@ -229,7 +229,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
               beta = beta)
 
   n_groups <- nrow(p$m)
-#browser()
+
   ngm_computer <- function(x, effective) {
     vapply(seq(n_strains), function(i) {
       md <- mean_duration[, i, , , drop = FALSE]
@@ -404,8 +404,9 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
               (is.matrix(x) && length(dim(x)) == 2 && ncol(x) == 4 &&
                 identical(x[, 1:2], x[, 4:3])) ||
                   (length(x) == 4 && identical(x[1:2], x[4:3])) ||
-                    (inherits(x, "array") && length(dim(x)) == 3 && ncol(x) == 4 &&
-                    identical(x[, 1:2, ], x[, 4:3, ])),
+                    (inherits(x, "array") && length(dim(x)) == 3 &&
+                     ncol(x) == 4 &&
+                     identical(x[, 1:2, ], x[, 4:3, ])),
             logical(1))
   pars[which] <- lapply(pars[which], unmirror_strain)
 

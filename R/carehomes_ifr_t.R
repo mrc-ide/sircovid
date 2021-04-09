@@ -113,7 +113,8 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
     if (no_vacc) {
       ## same IFR by group across all vaccine classes
-      ## FIXME (RS): What do we do with multistrain? This selects 1st (same below)
+      ## FIXME (RS): What do we do with multistrain? This selects 1st
+      ##  (same below)
       IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t]),
                      n_vacc_classes)
     } else {

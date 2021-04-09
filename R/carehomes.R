@@ -507,7 +507,7 @@ carehomes_parameters <- function(start_date, region,
                                                   strain$n_strains,
                                                   vaccine_catchup_fraction)
   model_switches <-
-    list(model_super_infection = assert_01(model_super_infection))
+    list(model_super_infection = assert_logical(model_super_infection))
 
   c(ret, severity, progression, strain, vaccination, waning,
     model_switches, observation)
