@@ -223,7 +223,7 @@ nlayer <- function(x) {
   dim(x)[3L]
 }
 
-recycle <- function (x, n, name = deparse(substitute(x))) {
+recycle <- function(x, n, name = deparse(substitute(x))) {
   if (length(x) == n) {
     x
   } else if (length(x) == 1L) {
