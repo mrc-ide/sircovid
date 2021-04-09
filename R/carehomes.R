@@ -193,13 +193,19 @@ NULL
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
-##' @param model_super_infection A value of 1 or 0 so switch on or off
-##'   multi-strain 'super-infections', which are transitions from recovered
-##'   from one strain to exposed to the other. In a multi-strain model, the
-##'   'third' strain is now those who moved from strain one to two, and the
-##'   'fourth' strain is those who moved from strain two to one. After
-##'    recovering from strain 'three' or 'four', one can move back to S if
-##'    waning_rate > 0. Default is no superinfection.
+##' @param cross_immunity A value or vector of same length as
+##'   `strain_transmission` that controls the amount of immunity conferred by
+##'   previous infection with one strain. If a scalar is given
+##'   then same level of cross immunity is assumed between both strains.
+##'   Otherwise a vector of length two should be provided where the first value
+##'   is the relative protection against infection with strain 2
+##'   following infection with strain 1 (i.e. while in the R1 compartment),
+##'   and vice versa for the second value. Values between 0 and 1 are allowed
+##'   with values of 1 (default) indicating complete cross-immunity,
+##'   and values of 0 mean no cross-immunity. Modelling
+##'  'superinfections' (being exposed to one strain after
+##'   recovering from another) can be turned off by setting
+##'   `cross_immunity = 1`.
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -350,8 +356,8 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_index_dose2 = NULL,
                                  vaccine_catchup_fraction = 1,
                                  waning_rate = 0,
-                                 model_super_infection = 0,
-                                 exp_noise = 1e6) {
+                                 exp_noise = 1e6,
+                                 cross_immunity = 1) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
 
@@ -454,6 +460,11 @@ carehomes_parameters <- function(start_date, region,
 
   ret$initial_I <- initial_I
 
+  ## control cross-immunity
+  ret$cross_immunity <- assert_proportion(
+    mcstate:::recycle(cross_immunity, length(strain_transmission))
+  )
+
   ## This is used to normalise the serology counts (converting them
   ## from number of positive/negative tests into a fraction). This is
   ## constant over the simulation, being the total population size of
@@ -507,11 +518,8 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_index_dose2,
                                                   strain$n_strains,
                                                   vaccine_catchup_fraction)
-  model_switches <-
-    list(model_super_infection = assert_logical(model_super_infection))
 
-  c(ret, severity, progression, strain, vaccination, waning,
-    model_switches, observation)
+  c(ret, severity, progression, strain, vaccination, waning, observation)
 }
 
 

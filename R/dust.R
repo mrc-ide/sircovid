@@ -238,6 +238,7 @@ carehomes <- R6::R6Class(
      N_tot_over25 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      N_tot_react = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      beta_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     cross_immunity = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      exp_noise = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      gamma_A = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      gamma_C_1 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
@@ -339,7 +340,6 @@ carehomes <- R6::R6Class(
      gamma_sero_pos = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      gamma_sero_pre_1 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      gamma_sero_pre_2 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     model_super_infection = list(has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_sero_pre_1 = list(has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      vaccine_catchup_fraction = list(has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE))
   ),

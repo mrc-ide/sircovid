@@ -342,6 +342,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(N_tot_over25, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_tot_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(beta_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(cross_immunity, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(exp_noise, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_A, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_C_1, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -443,7 +444,6 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(gamma_sero_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(model_super_infection, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pre_1, has_default = TRUE, default_value = 0.5, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_catchup_fraction, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class carehomes {
@@ -486,6 +486,7 @@ public:
     real_t N_tot_over25;
     real_t N_tot_react;
     std::vector<real_t> beta_step;
+    std::vector<real_t> cross_immunity;
     int dim_D;
     int dim_D_1;
     int dim_D_2;
@@ -860,6 +861,7 @@ public:
     int dim_aux_W_R_unconf_3;
     int dim_aux_W_R_unconf_4;
     int dim_beta_step;
+    int dim_cross_immunity;
     int dim_cum_admit_by_age;
     int dim_cum_infections_per_strain;
     int dim_cum_n_E_vaccinated;
@@ -1915,7 +1917,6 @@ public:
     real_t kappa_hosp;
     real_t kappa_pillar2_cases;
     std::vector<real_t> m;
-    real_t model_super_infection;
     int n_age_groups;
     int n_doses;
     int n_groups;
@@ -3204,7 +3205,7 @@ public:
     for (int i = 1; i <= shared->dim_p_RS_1; ++i) {
       for (int j = 1; j <= shared->dim_p_RS_2; ++j) {
         for (int k = 1; k <= shared->dim_p_RS_3; ++k) {
-          internal.p_RS[i - 1 + shared->dim_p_RS_1 * (j - 1) + shared->dim_p_RS_12 * (k - 1)] = (shared->model_super_infection == 0 || shared->n_strains == 1 || j > 2 ? 1 : (shared->waning_rate[i - 1] / (real_t) (shared->waning_rate[i - 1] + internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (3 - j - 1) + i - 1])));
+          internal.p_RS[i - 1 + shared->dim_p_RS_1 * (j - 1) + shared->dim_p_RS_12 * (k - 1)] = (shared->n_strains == 1 || j > 2 ? 1 : (shared->waning_rate[i - 1] / (real_t) (shared->waning_rate[i - 1] + internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (3 - j - 1) + i - 1] * (1 - shared->cross_immunity[j - 1]))));
         }
       }
     }
@@ -3229,7 +3230,7 @@ public:
     for (int i = 1; i <= shared->dim_rate_R_progress_1; ++i) {
       for (int j = 1; j <= shared->dim_rate_R_progress_2; ++j) {
         for (int k = 1; k <= shared->dim_rate_R_progress_3; ++k) {
-          internal.rate_R_progress[i - 1 + shared->dim_rate_R_progress_1 * (j - 1) + shared->dim_rate_R_progress_12 * (k - 1)] = shared->waning_rate[i - 1] + (shared->n_strains == 1 || j > 2 || shared->model_super_infection == 0 ? 0 : internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (3 - j - 1) + i - 1]);
+          internal.rate_R_progress[i - 1 + shared->dim_rate_R_progress_1 * (j - 1) + shared->dim_rate_R_progress_12 * (k - 1)] = shared->waning_rate[i - 1] + (shared->n_strains == 1 || j > 2 ? 0 : internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (3 - j - 1) + i - 1] * (1 - shared->cross_immunity[j - 1]));
         }
       }
     }
@@ -4464,7 +4465,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_sero_pos = 0.10000000000000001;
   shared->gamma_sero_pre_1 = 0.10000000000000001;
   shared->gamma_sero_pre_2 = 0.10000000000000001;
-  shared->model_super_infection = 0;
   shared->p_sero_pre_1 = 0.5;
   shared->vaccine_catchup_fraction = 0;
   shared->G_D_transmission = user_get_scalar<real_t>(user, "G_D_transmission", shared->G_D_transmission, NA_REAL, NA_REAL);
@@ -4543,7 +4543,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->kappa_general = user_get_scalar<real_t>(user, "kappa_general", shared->kappa_general, NA_REAL, NA_REAL);
   shared->kappa_hosp = user_get_scalar<real_t>(user, "kappa_hosp", shared->kappa_hosp, NA_REAL, NA_REAL);
   shared->kappa_pillar2_cases = user_get_scalar<real_t>(user, "kappa_pillar2_cases", shared->kappa_pillar2_cases, NA_REAL, NA_REAL);
-  shared->model_super_infection = user_get_scalar<real_t>(user, "model_super_infection", shared->model_super_infection, NA_REAL, NA_REAL);
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_REAL, NA_REAL);
   shared->n_groups = user_get_scalar<int>(user, "n_groups", shared->n_groups, NA_REAL, NA_REAL);
   shared->n_strains = user_get_scalar<int>(user, "n_strains", shared->n_strains, NA_REAL, NA_REAL);
@@ -5532,6 +5531,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_aux_W_R_unconf = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2 * shared->dim_aux_W_R_unconf_3 * shared->dim_aux_W_R_unconf_4;
   shared->dim_aux_W_R_unconf_12 = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2;
   shared->dim_aux_W_R_unconf_123 = shared->dim_aux_W_R_unconf_1 * shared->dim_aux_W_R_unconf_2 * shared->dim_aux_W_R_unconf_3;
+  shared->dim_cross_immunity = shared->n_real_strains;
   shared->dim_cum_n_E_vaccinated = shared->dim_cum_n_E_vaccinated_1 * shared->dim_cum_n_E_vaccinated_2;
   shared->dim_cum_n_I_A_vaccinated = shared->dim_cum_n_I_A_vaccinated_1 * shared->dim_cum_n_I_A_vaccinated_2;
   shared->dim_cum_n_I_P_vaccinated = shared->dim_cum_n_I_P_vaccinated_1 * shared->dim_cum_n_I_P_vaccinated_2;
@@ -6140,6 +6140,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.vaccine_n_candidates = std::vector<real_t>(shared->dim_vaccine_n_candidates);
   internal.vaccine_probability = std::vector<real_t>(shared->dim_vaccine_probability);
   internal.vaccine_probability_doses = std::vector<real_t>(shared->dim_vaccine_probability_doses);
+  shared->cross_immunity = user_get_array_fixed<real_t, 1>(user, "cross_immunity", shared->cross_immunity, {shared->dim_cross_immunity}, NA_REAL, NA_REAL);
   shared->dim_grp_prob_strain = shared->dim_grp_prob_strain_1 * shared->dim_grp_prob_strain_2 * shared->dim_grp_prob_strain_3;
   shared->dim_grp_prob_strain_12 = shared->dim_grp_prob_strain_1 * shared->dim_grp_prob_strain_2;
   shared->dim_lambda = shared->dim_lambda_1 * shared->dim_lambda_2;

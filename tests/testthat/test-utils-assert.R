@@ -50,3 +50,14 @@ test_that("assert_scalar", {
   expect_error(assert_scalar(1:5),
                "must be a scalar")
 })
+
+
+test_that("assert_logical", {
+  expect_equal(assert_logical(1), 1L)
+  expect_equal(assert_logical(0), 0L)
+  expect_equal(assert_logical(TRUE), 1L)
+  expect_equal(assert_logical(FALSE), 0L)
+
+  expect_error(assert_logical("a"),
+               "must be logical or in")
+})

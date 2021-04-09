@@ -40,8 +40,8 @@ carehomes_parameters(
   vaccine_index_dose2 = NULL,
   vaccine_catchup_fraction = 1,
   waning_rate = 0,
-  model_super_infection = 0,
-  exp_noise = 1e+06
+  exp_noise = 1e+06,
+  cross_immunity = 1
 )
 }
 \arguments{
@@ -248,18 +248,22 @@ rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
 have one value per age group.}
 
-\item{model_super_infection}{A value of 1 or 0 so switch on or off
-multi-strain 'super-infections', which are transitions from recovered
-from one strain to exposed to the other. In a multi-strain model, the
-'third' strain is now those who moved from strain one to two, and the
-'fourth' strain is those who moved from strain two to one. After
-recovering from strain 'three' or 'four', one can move back to S if
-waning_rate > 0. Default is no superinfection.}
-
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
 but non-zero. If set to \code{Inf} then there is no noise in the
 observation process (not realistic but useful for testing).}
+
+\item{cross_immunity}{A value or vector of same length as
+\code{strain_transmission} that controls the amount of immunity conferred by
+one strain to lower rate of moving to the other. If a scalar is given
+then same amount of immunity provided by each strain. Otherwise a vector
+of length two should be provided where the first value is the relative
+decrease of contracting strain two immediately after contracting strain
+one, and vice versa for the second value. Values of 1 (default) mean
+complete cross-immunity, values of 0 mean no cross-immunity. Modelling
+'superinfections' (being exposed to one strain immediately after
+recovering from another) can be turned off by setting
+\code{cross_immunity = 1}.}
 }
 \value{
 A list of inputs to the model, many of which are fixed and
