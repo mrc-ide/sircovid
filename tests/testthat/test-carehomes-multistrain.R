@@ -217,14 +217,14 @@ test_that("Second less virulent strain does not take over", {
 })
 
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
-           no superinfection", {
-  set.seed(1L)
+test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
+          waning immunity - no superinfection", {
+  ## Default for waning_rate is 0
+  set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 1 / 20,
                             strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding_end)),
@@ -245,8 +245,8 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
 })
 
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
-          superinfection", {
+test_that("N_tot, is constant with second strain and waning immunity, while
+          N_tot2 and N_tot3 are non-decreasing - superinfection", {
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
@@ -271,6 +271,36 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain -
   expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
   expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
 })
+
+test_that("N_tot, is constant with second strain and waning immunity, while
+          N_tot2 and N_tot3 are non-decreasing", {
+  ## Default for waning_rate is 0
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 1 / 20,
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(diff(y$N_tot3) >= 0))
+  expect_true(all(diff(y$N_tot2) >= 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+})
+
+
 
 
 test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {

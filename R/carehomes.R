@@ -187,10 +187,6 @@ NULL
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
-##' @param model_pcr_and_serology A value of 1 or 0 so switch on or off the
-##'   flows out of T_PCR_neg and T_sero_neg and the corresponding cap on the
-##'   number of individuals leaving the R compartments
-##'
 ##' @param model_super_infection A value of 1 or 0 so switch on or off
 ##'   multi-strain 'super-infections', which are transitions from recovered
 ##'   from one strain to exposed to the other. In a multi-strain model, the
@@ -344,7 +340,6 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_index_dose2 = NULL,
                                  vaccine_catchup_fraction = 1,
                                  waning_rate = 0,
-                                 model_pcr_and_serology = 1,
                                  model_super_infection = 0,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
@@ -502,8 +497,7 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_index_dose2,
                                                   vaccine_catchup_fraction)
   model_switches <-
-    list(model_pcr_and_serology = assert_01(model_pcr_and_serology),
-         model_super_infection = assert_01(model_super_infection))
+    list(model_super_infection = assert_01(model_super_infection))
 
   c(ret, severity, progression, strain, vaccination, waning,
     model_switches, observation)
@@ -678,15 +672,22 @@ carehomes_compare <- function(state, observed, pars) {
                                                  pars$exp_noise)
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
-  model_react_prob_pos <- test_prob_pos(model_react_pos,
-                                        pars$N_tot_react - model_react_pos,
+  ## It is possible that model_react_pos > pars$N_tot_react, so we cap it to
+  ## avoid probabilities > 1 here
+  model_react_pos_capped <- pmin(model_react_pos, pars$N_tot_react)
+  model_react_prob_pos <- test_prob_pos(model_react_pos_capped,
+                                        pars$N_tot_react -
+                                          model_react_pos_capped,
                                         pars$react_sensitivity,
                                         pars$react_specificity,
                                         pars$exp_noise)
 
   ## serology
-  model_sero_prob_pos <- test_prob_pos(model_sero_pos,
-                                       pars$N_tot_15_64 - model_sero_pos,
+  ## It is possible that model_sero_pos > pars$N_tot_15_64, so we cap it to
+  ## avoid probabilities > 1 here
+  model_sero_pos_capped <- pmin(model_sero_pos, pars$N_tot_15_64)
+  model_sero_prob_pos <- test_prob_pos(model_sero_pos_capped,
+                                       pars$N_tot_15_64 - model_sero_pos_capped,
                                        pars$sero_sensitivity,
                                        pars$sero_specificity,
                                        pars$exp_noise)
