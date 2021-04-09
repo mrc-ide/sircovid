@@ -1265,7 +1265,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination and no waning
 })
 
 
-test_that("N_tot stays constant with vaccination and waning immuity, while
+test_that("N_tot stays constant with vaccination and waning immunity, while
           N_tot2 and N_tot3 are non-decreasing", {
   set.seed(1)
   vaccine_schedule <- test_vaccine_schedule(500000, "london")
