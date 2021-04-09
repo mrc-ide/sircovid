@@ -482,6 +482,8 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
                                          rep(1, n_time_steps))
 
   ## Account for different infectivity levels depending on strain
+  ##  reorder to match dimensions of mean_duration and strain_transmission then
+  ##  revert back
   mean_duration <-
     aperm(aperm(mean_duration, c(2, 1, 3, 4)) * pars$strain_transmission,
           c(2, 1, 3, 4))
