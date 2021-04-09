@@ -192,7 +192,7 @@ NULL
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
-##' @param model_superinfection A value of 1 or 0 so switch on or off
+##' @param model_super_infection A value of 1 or 0 so switch on or off
 ##'   multi-strain 'super-infections', which are transitions from recovered
 ##'   from one strain to exposed to the other. In a multi-strain model, the
 ##'   'third' strain is now those who moved from strain one to two, and the
