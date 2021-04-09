@@ -2100,8 +2100,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
 test_that("cross-immunity can be separated by strain", {
   seed <- 1
   np <- 1L
-
-  set.seed(1)
+  set.seed(seed)
 
   ## complete immunity from Strain 1 means Strain 3 empty (1 -> 2)
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -2111,10 +2110,10 @@ test_that("cross-immunity can be separated by strain", {
       sircovid_date(c("2020-02-07", "2020-02-08")),
     cross_immunity = c(1, 0)
   )
+  mod <- carehomes$new(p, 0, np, seed = seed)
   initial <- carehomes_initial(mod$info(), np, p)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
-  mod <- carehomes$new(p, 0, np, seed = seed)
   mod$set_state(initial$state, initial$step)
   set.seed(1)
   y <- mod$transform_variables(
