@@ -239,4 +239,9 @@ test_that("mirror_strain/unmirror_strain", {
     unmirror_strain(matrix(mirror_strain(c(rep(1, 2), rep(2, 2))), 2, 4)),
     matrix(c(rep(1, 2), rep(2, 2)), 2, 2)
   )
+
+  x <- runif(3)
+  expect_equal(unmirror_strain(x), x)
+  expect_equal(unmirror_strain(matrix(x, ncol = 3)), matrix(x, ncol = 3))
+  expect_equal(unmirror_strain(array(x, c(1, 1, 3))), array(x, c(1, 1, 3)))
 })

@@ -133,12 +133,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       prob_strain <- array(1, length(step))
     }
   } else {
-    ## Remove pseudo-strain transmissions
-    if (n_strains == 4) {
-      p$strain_transmission <- unmirror_strain(p$strain_transmission)
-      p$rel_susceptibility <- unmirror_strain(p$rel_susceptibility)
-      n_strains <- length(p$strain_transmission)
-    }
+    ## Remove pseudo-strain transmissions (does nothing if ncol/layer < 4)
+    p$strain_transmission <- unmirror_strain(p$strain_transmission)
+    p$rel_susceptibility <- unmirror_strain(p$rel_susceptibility)
+    n_strains <- length(p$strain_transmission)
 
     if (!is.matrix(prob_strain)) {
       stop(sprintf(
