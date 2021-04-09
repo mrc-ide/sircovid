@@ -52,9 +52,10 @@ NULL
 ##' @param p_NC Proportion of population who do not have
 ##'   covid but have covid-like symptoms
 ##'
-##' @param strain_transmission Vector of relative transmissibility of each
-##'   strain modelled. First element should be 1. Length will define the
-##'   number of strains used in the model
+##' @param strain_transmission Vector of length two for relative
+##'   transmissibility of each strain modelled. First element should be 1.
+##'   Length will define the number of strains used in the model, either 1 or
+##'   2.
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
 ##'   [sircovid::sircovid_date] values corresponding to
@@ -185,6 +186,14 @@ NULL
 ##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
+##'
+##' @param model_super_infection A value of 1 or 0 so switch on or off
+##'   multi-strain 'super-infections', which are transitions from recovered
+##'   from one strain to exposed to the other. In a multi-strain model, the
+##'   'third' strain is now those who moved from strain one to two, and the
+##'   'fourth' strain is those who moved from strain two to one. After
+##'    recovering from strain 'three' or 'four', one can move back to S if
+##'    waning_rate > 0. Default is no superinfection.
 ##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
@@ -331,6 +340,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_index_dose2 = NULL,
                                  vaccine_catchup_fraction = 1,
                                  waning_rate = 0,
+                                 model_super_infection = 0,
                                  exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value)
@@ -352,10 +362,17 @@ carehomes_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
+  if (length(strain_transmission) > 2) {
+    stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
+  }
+
   severity <- carehomes_parameters_severity(severity, p_death_carehome)
   strain_rel_severity <- mcstate:::recycle(
                                  assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
+  if (length(strain_transmission) > 1) {
+    strain_rel_severity <- mirror(strain_rel_severity)
+  }
   severity <- scale_severity(severity, strain_rel_severity)
 
   ## TODO Rich, these parameters are now time-varying. We may want to rethink
@@ -479,8 +496,11 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_schedule,
                                                   vaccine_index_dose2,
                                                   vaccine_catchup_fraction)
+  model_switches <-
+    list(model_super_infection = assert_01(model_super_infection))
 
-  c(ret, severity, progression, strain, vaccination, waning, observation)
+  c(ret, severity, progression, strain, vaccination, waning,
+    model_switches, observation)
 }
 
 
@@ -576,12 +596,10 @@ carehomes_index <- function(info) {
 
   ## prob_strain is named similarly to S, with the second suffix representing
   ## strain instead of vacc_class
-
-  n_strains <- info$dim$prob_strain[[2]]
-  strain_type <- rep(c("", sprintf("_%s", seq_len(n_strains - 1L))),
-                     each = length(suffix))
+  n_strains <- info$dim$prob_strain
+  strain_type <- c("", sprintf("_%s", seq_len(n_strains - 1L)))
   index_prob_strain <- set_names(index[["prob_strain"]],
-                                 paste0("prob_strain", suffix, strain_type))
+                                 paste0("prob_strain", strain_type))
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_cum_admit,
@@ -857,7 +875,6 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_N_tot <- index[["N_tot"]]
 
   index_prob_strain <- index[["prob_strain"]]
-  index_prob_strain_original <- index_prob_strain[seq_len(pars$n_groups)]
 
   ## S0 is the population totals, minus the seeded infected
   ## individuals
@@ -873,7 +890,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
   state[index_N_tot3] <- sum(pars$N_tot)
-  state[index_prob_strain_original] <- 1
+  state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
 
   list(state = state,
        step = pars$initial_step)
@@ -999,6 +1016,10 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
 
   }
 
+  if (length(strain_transmission) == 2) {
+    strain_transmission <- mirror(strain_transmission)
+  }
+
   list(n_strains = length(strain_transmission),
        strain_transmission = strain_transmission,
        strain_seed_step = strain_seed_step)
@@ -1049,6 +1070,17 @@ carehomes_parameters_progression <- function(rel_gamma_A = 1,
                                              rel_gamma_P = 1,
                                              rel_gamma_C_1 = 1,
                                              rel_gamma_C_2 = 1) {
+
+  stopifnot(length(unique(lengths(list(rel_gamma_A, rel_gamma_P,
+                                       rel_gamma_C_1, rel_gamma_C_2)))) == 1)
+  if (length(rel_gamma_A) == 2) {
+    ## if two strains then mirror the same gammas for the pseudo-strains
+    ## Note: pseudo-strain = 3/4 has same progression/rates as strain 2/1
+    rel_gamma_A <- mirror(rel_gamma_A)
+    rel_gamma_P <- mirror(rel_gamma_P)
+    rel_gamma_C_1 <- mirror(rel_gamma_C_1)
+    rel_gamma_C_2 <- mirror(rel_gamma_C_2)
+  }
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate

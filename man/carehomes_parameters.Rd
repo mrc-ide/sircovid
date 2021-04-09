@@ -40,6 +40,7 @@ carehomes_parameters(
   vaccine_index_dose2 = NULL,
   vaccine_catchup_fraction = 1,
   waning_rate = 0,
+  model_super_infection = 0,
   exp_noise = 1e+06
 )
 }
@@ -106,9 +107,10 @@ residents or workers}
 \item{p_NC}{Proportion of population who do not have
 covid but have covid-like symptoms}
 
-\item{strain_transmission}{Vector of relative transmissibility of each
-strain modelled. First element should be 1. Length will define the
-number of strains used in the model}
+\item{strain_transmission}{Vector of length two for relative
+transmissibility of each strain modelled. First element should be 1.
+Length will define the number of strains used in the model, either 1 or
+2.}
 
 \item{strain_seed_date}{Either \code{NULL} (no seeding) or a vector of
 \link{sircovid_date} values corresponding to
@@ -239,6 +241,14 @@ to 1 by default}
 rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
 have one value per age group.}
+
+\item{model_super_infection}{A value of 1 or 0 so switch on or off
+multi-strain 'super-infections', which are transitions from recovered
+from one strain to exposed to the other. In a multi-strain model, the
+'third' strain is now those who moved from strain one to two, and the
+'fourth' strain is those who moved from strain two to one. After
+recovering from strain 'three' or 'four', one can move back to S if
+waning_rate > 0. Default is no superinfection.}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

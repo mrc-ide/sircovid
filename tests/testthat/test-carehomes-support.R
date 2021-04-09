@@ -182,7 +182,8 @@ test_that("carehomes_parameters returns a list of parameters", {
       "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
       "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
       "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
-      "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step"))
+      "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",
+      "model_super_infection"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -305,17 +306,22 @@ test_that("Can compute initial conditions", {
                p$N_tot)
   expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 10, after = 3))
+  expect_equal(drop(initial_y$I_weighted),
+               append(rep(0, 18), p$I_A_transmission * 10, after = 3))
   expect_equal(initial_y$T_sero_pre[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
-  ## 42 here, derived from;
-  ## * 19 (S)
-  ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 64)
+  ## 46 here, derived from;
+  ## * 38 (S + N_tot)
+  ## * 1 (prob_strain)
+  ## * 1 (react_pos)
+  ## * 2 (N_tot2 + N_tot3)
+  ## * 2 (I_A[4] + I_weighted[4])
+  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 46)
 })
 
 
@@ -347,11 +353,14 @@ test_that("Can control the seeding", {
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$react_pos, 50)
 
-  ## 42 here, derived from;
-  ## * 19 (S)
-  ## * 19 (N_tot)
-  ## * 4 values as N_tot2 + N_tot3 + I_A[4] + T_sero_pre[4] + T_PCR_pos[4]
-  expect_equal(sum(initial$state != 0), 64)
+  ## 46 here, derived from;
+  ## * 38 (S + N_tot)
+  ## * 1 (prob_strain)
+  ## * 1 (react_pos)
+  ## * 2 (N_tot2 + N_tot3)
+  ## * 2 (I_A[4] + I_weighted[4])
+  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 46)
 })
 
 
@@ -613,7 +622,7 @@ test_that("the carehomes sircovid model has 19 groups", {
 
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
-          data stream", {
+          data stream (II)", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             class(data)[1] <- "particle_filter_data_nested"

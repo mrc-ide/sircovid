@@ -1,5 +1,6 @@
 context("carehomes (multistrain)")
 
+
 test_that("carehomes_parameters_strain works as expected", {
   expect_error(
     carehomes_parameters_strain(NULL, NULL, NULL, 1),
@@ -9,16 +10,15 @@ test_that("carehomes_parameters_strain works as expected", {
     "'strain_transmission' must have only non-negative values",
     fixed = TRUE)
   expect_error(
+    carehomes_parameters_strain(c(1, 1, 1), NULL, NULL, 1),
+    "Only 1 or 2")
+  expect_error(
     carehomes_parameters_strain(rep(0.5, 2), NULL, NULL, 1),
     "'strain_transmission[[1]]' must be 1",
     fixed = TRUE)
   expect_error(
     carehomes_parameters_strain(rep(0.5, 1), NULL, NULL, 1),
     "'strain_transmission[[1]]' must be 1",
-    fixed = TRUE)
-  expect_error(
-    carehomes_parameters_strain(rep(0.5, 3), NULL, NULL, 1),
-    "Only 1 or 2 strains valid",
     fixed = TRUE)
   expect_equal(
     carehomes_parameters_strain(1, NULL, NULL, 1),
@@ -27,13 +27,13 @@ test_that("carehomes_parameters_strain works as expected", {
          strain_seed_step = 0))
   expect_equal(
     carehomes_parameters_strain(c(1, 1), NULL, NULL, 1),
-    list(n_strains = 2,
-         strain_transmission = c(1, 1),
+    list(n_strains = 4,
+         strain_transmission = c(1, 1, 1, 1),
          strain_seed_step = 0))
   expect_equal(
     carehomes_parameters_strain(c(1, 2), NULL, NULL, 1),
-    list(n_strains = 2,
-         strain_transmission = c(1, 2),
+    list(n_strains = 4,
+         strain_transmission = c(1, 2, 2, 1),
          strain_seed_step = 0))
 })
 
@@ -92,9 +92,11 @@ test_that("Can seed with > 2 dates", {
 test_that("Adding empty strains makes no difference", {
   p1 <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   p2 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 0))
+                             strain_transmission = c(1, 0),
+                             model_super_infection = 1)
   p3 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 0.5))
+                             strain_transmission = c(1, 0.5),
+                             model_super_infection = 1)
   np <- 10
   mod1 <- carehomes$new(p1, 0, np, seed = 1L)
   mod2 <- carehomes$new(p2, 0, np, seed = 1L)
@@ -126,7 +128,8 @@ test_that("Seeding of second strain generates an epidemic", {
                             strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 1)
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -135,7 +138,11 @@ test_that("Seeding of second strain generates an epidemic", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
-  expect_true(y$cum_infections_per_strain[2, 101] > n_seeded_new_strain_inf)
+  expect_true(
+    all(y$cum_infections_per_strain[, 101] > n_seeded_new_strain_inf))
+  ## did we count infections per strain properly?
+  expect_equal(sum(y$cum_infections_per_strain[, 101]),
+               y$cum_infections[, 101])
 
   ## Check the epidemic of the second strain starts when we expect
   steps <- seq(0, 400, by = 4)
@@ -144,15 +151,19 @@ test_that("Seeding of second strain generates an epidemic", {
   s_date_seeding <- sircovid_date(date_seeding)
 
   ## No cases before seeding
-  expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
+  expect_true(all(y$E[, 2:4, , , s_date < s_date_seeding] == 0))
   ## No cases on seeding day other than in 4th age group
-  expect_true(all(y$E[-4, 2, , , s_date == s_date_seeding] == 0))
+  expect_true(all(y$E[-4, 2:4, , , s_date == s_date_seeding] == 0))
   ## Some cases on seeding day in 4th age group
   expect_true(y$E[4, 2, 1, , s_date == s_date_seeding] > 0)
+  ## No seeding into strains 3 and 4
+  expect_true(all(y$E[4, 3:4, 1, , s_date == s_date_seeding] == 0))
   ## Some cases on all days after seeding day
 
   ## It's not guaranteed that *all* will be greater than zero, but most will be
-  expect_true(mean(colSums(y$E[, 2, 1, , s_date >= s_date_seeding]) > 0) > 0.9)
+  ## Tolerance decreased to 0.85 to account for time to get to 3 and 4
+  expect_true(
+    mean(colSums(y$E[, 2:4, 1, , s_date >= s_date_seeding]) > 0) > 0.85)
 })
 
 
@@ -176,8 +187,8 @@ test_that("Second more virulent strain takes over", {
 
   ## cumulative infections with 2nd strain larger than with 1st strain
   ## (average over 10 runs)
-  expect_true(mean(y$cum_infections_per_strain[1, , 101]) <
-                mean(y$cum_infections_per_strain[2, , 101]))
+  expect_true(mean(y$cum_infections_per_strain[c(1, 3), , 101]) <
+                mean(y$cum_infections_per_strain[c(2, 4), , 101]))
 })
 
 
@@ -200,14 +211,14 @@ test_that("Second less virulent strain does not take over", {
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Cumulative infections with 2nd strain smaller than with 1st strain
   ## (average over 10 runs)
-  expect_true(mean(y$cum_infections_per_strain[1, , 101]) >
-                mean(y$cum_infections_per_strain[2, , 101]))
+  expect_true(mean(y$cum_infections_per_strain[c(1, 3), , 101]) >
+                mean(y$cum_infections_per_strain[c(2, 4), , 101]))
 
 })
 
 
 test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
-          waning immunity", {
+          waning immunity - no superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
   n_seeded_new_strain_inf <- 100
@@ -219,7 +230,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
                               sircovid_date(c(date_seeding, date_seeding_end)),
                             strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
   mod$set_state(carehomes_initial(info, 1, p)$state)
@@ -233,8 +244,38 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
   expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
 })
 
+
 test_that("N_tot, is constant with second strain and waning immunity, while
-          N_tot2 and N_tot3 are non-decreasing", {
+          N_tot2 and N_tot3 are non-decreasing - superinfection", {
+  ## Default for waning_rate is 0
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 1 / 20,
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 1)
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(diff(y$N_tot3) >= 0))
+  expect_true(all(diff(y$N_tot2) >= 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+})
+
+test_that("N_tot, is constant with second strain and waning immunity, while
+          N_tot2 and N_tot3 are non-decreasing - no superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
   n_seeded_new_strain_inf <- 100
@@ -262,6 +303,107 @@ test_that("N_tot, is constant with second strain and waning immunity, while
 })
 
 
+
+
+test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
+  set.seed(2L)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 1e6,
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 1)
+
+  mod <- carehomes$new(p, 0, 1, seed = 2L)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(y$R[, 3:4, , ] == 0))
+})
+
+
+test_that("No-one in strains 3 or 4 if no super infection", {
+  set.seed(2L)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 0.1,
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 0)
+
+  mod <- carehomes$new(p, 0, 1, seed = 2L)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(y$R[, 3:4, , ] == 0))
+})
+
+
+test_that("prob_strain sums to 1", {
+  np <- 3L
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+
+  # no waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 1)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  expect_equal(initial$state[index_prob_strain], c(1, 0))
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  prob_strain <- y[index_prob_strain, , ]
+
+  expect_equal(prob_strain[1, , ], 1 - prob_strain[2, , ])
+
+  # with waning immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            waning_rate = 1 / 20,
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c(date_seeding, date_seeding_end)),
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 1)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  index_prob_strain <- mod$info()$index$prob_strain
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  prob_strain <- y[index_prob_strain, , ]
+
+  expect_equal(prob_strain[1, , ], 1 - prob_strain[2, , ])
+  expect_equal(dim(prob_strain), c(2, 3, 85))
+})
+
+
 test_that("No infection after seeding of second strain with 0 transmission", {
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
@@ -270,7 +412,8 @@ test_that("No infection after seeding of second strain with 0 transmission", {
                             strain_transmission = c(1, 0),
                             strain_seed_date =
                               sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 1)
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -285,6 +428,8 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   ## Expect the seeded cases did not infect any other people
   expect_true(y$cum_infections_per_strain[2, 101] <= max(pois_range))
   expect_true(y$cum_infections_per_strain[2, 101] >= min(pois_range))
+  expect_true(y$cum_infections_per_strain[4, 101] <= max(pois_range))
+  expect_true(y$cum_infections_per_strain[4, 101] >= 0)
 })
 
 
@@ -295,7 +440,8 @@ test_that("Everyone is infected when second strain transmission is large", {
                             strain_transmission = c(1, 1e9),
                             strain_seed_date =
                               sircovid_date(date_seeding),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                            model_super_infection = 1)
 
   ## set gamma_E to Inf so that seeded individuals move through each E stage
   ## in one step
@@ -312,7 +458,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   s_date <- sircovid_date(date)
   s_date_seeding <- sircovid_date(date_seeding[[1]])
   ## No cases before seeding
-  expect_true(all(y$E[, 2, , , s_date < s_date_seeding] == 0))
+  expect_true(all(y$E[, 2:4, , , s_date < s_date_seeding] == 0))
 
   ## The +2 is because we need seeded individuals to get out of the first and
   ## second E compartments before they can go on to infect others
@@ -328,7 +474,8 @@ test_that("No infection with either strain with perfect vaccine", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
-                            waning_rate = 1 / 20)
+                            waning_rate = 0.1,
+                            model_super_infection = 1)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
 
@@ -354,12 +501,14 @@ test_that("No infection with either strain with perfect vaccine", {
 
   ## Noone gets infected with either strain
   expect_true(all(y$cum_infections_per_strain == 0))
+  expect_true(all(y$cum_infections == 0))
 })
 
 
 test_that("different strains are equivalent", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1))
+                            strain_transmission = c(1, 1),
+                            model_super_infection = 1)
   np <- 10
   mod <- carehomes$new(p, 0, np, seed = 1L, n_threads = 10)
   end <- sircovid_date("2020-07-31") / p$dt
@@ -367,9 +516,10 @@ test_that("different strains are equivalent", {
 
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
-  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
+  i <- c(2, 1, 4, 3)
+  y$I_A <- y$I_A[, i, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
 
@@ -402,16 +552,18 @@ test_that("different strains are equivalent", {
 
 test_that("Swapping strains gives identical results with different index", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1))
+                            strain_transmission = c(1, 1),
+                            model_super_infection = 1)
 
   np <- 1
   mod <- carehomes$new(p, 0, np, seed = 1L)
   end <- sircovid_date("2020-05-1") / p$dt
   initial <- carehomes_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
-  y$I_A <- y$I_A[, 2:1, , , drop = FALSE]
-  y$T_PCR_pos <- y$T_PCR_pos[, 2:1, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, 2:1, , , drop = FALSE]
+  i <- c(2, 1, 4, 3)
+  y$I_A <- y$I_A[, i, , , drop = FALSE]
+  y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
+  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
@@ -429,11 +581,11 @@ test_that("Swapping strains gives identical results with different index", {
   z1 <- mod$transform_variables(res1)
   z2 <- mod2$transform_variables(res2)
 
-  z2[["prob_strain"]][, , -1] <- z2[["prob_strain"]][, 2:1, -1, drop = FALSE]
+  z2[["prob_strain"]][, -1] <- z2[["prob_strain"]][2:1, -1, drop = FALSE]
   z2[["cum_sympt_cases_non_variant_over25"]] <-
     z2[["cum_sympt_cases_over25"]] - z2[["cum_sympt_cases_non_variant_over25"]]
   z2$cum_infections_per_strain <-
-    z2$cum_infections_per_strain[2:1, , drop = FALSE]
+    z2$cum_infections_per_strain[i, , drop = FALSE]
   ## This one can't easily be computed as it's not quite running
   ## incidence but over a sawtooth; the calculation relative to
   ## cum_infections_per_strain is confirmed elsewhere so here just
@@ -441,7 +593,7 @@ test_that("Swapping strains gives identical results with different index", {
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
   for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
-    z2[[nm]] <- z2[[nm]][, 2:1, , , drop = FALSE]
+    z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
           "T_sero_pre", "T_sero_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
@@ -451,10 +603,18 @@ test_that("Swapping strains gives identical results with different index", {
           "ICU_D_conf", "W_R_unconf", "W_R_conf",
           "W_D_unconf", "W_D_conf")
   for (nm in v5) {
-    z2[[nm]] <- z2[[nm]][, 2:1, , , , drop = FALSE]
+    z2[[nm]] <- z2[[nm]][, i, , , , drop = FALSE]
   }
 
   expect_identical(z1, z2)
+})
+
+
+test_that("model_super_infection switch works", {
+  expect_error(
+    carehomes_parameters(0, "england", model_super_infection = 2),
+    "must be 0 or 1"
+  )
 })
 
 
@@ -464,7 +624,8 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
                             strain_transmission = c(1, 1),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -472,6 +633,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -480,34 +642,145 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
+  ## Check carehomes_Rt R
   expect_error(
     carehomes_Rt(steps, S[, 1, ], p),
+    "Expected R input because there is more than one strain")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[-1, 1, ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, -1]),
+    "Expected 'R' to have 85 columns")
+
+  ## Check carehomes_Rt prob_strain
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ]),
     "Expected prob_strain input because there is more than one strain")
   expect_error(
-    carehomes_Rt(steps, S[, 1, ], p, prob_strain[-1, 1, ]),
-      "Expected 'prob_strain' to have 38 rows = 19 groups x 2 strains")
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[-1, 1, ], R = R[, 1, ]),
+    "Expected a 2 strains")
   expect_error(
-    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1]),
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ][1, , drop = FALSE],
+                 R = R[, 1, ]),
+    "Expected 'prob_strain' to have 2 rows")
+  expect_error(
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1], R = R[, 1, ]),
     "Expected 'prob_strain' to have 85 columns, following 'step'")
 
+  ## Check carehomes_Rt_trajectories R
   expect_error(
     carehomes_Rt_trajectories(steps, S, p),
+    "Expected R input because there is more than one strain")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[1, , ], R = R[1, , ]),
+    "Expected a 3d array of 'R'")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R[-1, , ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R[, -1, ]),
+    "Expected 2nd and 3rd")
+
+  ## Check carehomes_Rt_trajectories prob_strain
+  expect_error(
+    carehomes_Rt_trajectories(steps, S, p, R = R),
     "Expected prob_strain input because there is more than one strain")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[1, , ]),
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[1, , ], R = R),
     "Expected a 3d array of 'prob_strain'")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[-1, , ]),
-    "Expected 'prob_strain' to have 38 rows = 19 groups x 2 strains")
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[-1, , ], R = R),
+    "Expected a 3d array of 'prob_strain'")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[, -1, ]),
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[, -1, ], R = R),
     "Expected 2nd dim of 'prob_strain' to have length 3, following 'pars'")
   expect_error(
-    carehomes_Rt_trajectories(steps, S, p, prob_strain[, , -1]),
+    carehomes_Rt_trajectories(steps, S, p, prob_strain[, , -1], R = R),
     "Expected 3rd dim of 'prob_strain' to have length 85, following 'step'")
+})
 
+## Tests for basic object properties, not analytical results from calculations
+test_that("wtmean_Rt works as expected", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            model_super_infection = 1)
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  expect_equal(dim(rt$eff_Rt_all), c(85, 2))
+  expect_equal(class(rt), c("multi_strain", "Rt"))
+
+  rt_traj <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
+  expect_equal(dim(rt_traj$eff_Rt_all), c(85, 2, 3))
+  expect_equal(class(rt_traj), c("multi_strain", "Rt_trajectories", "Rt"))
+
+  rt_strain_weighted <-
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                 weight_Rt = TRUE)
+  expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
+  expect_equal(class(rt_strain_weighted), c("single_strain", "Rt"))
+
+  rt_traj_strain_weighted <-
+    carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                              weight_Rt = TRUE)
+  expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
+  expect_equal(class(rt_traj_strain_weighted),
+               c("single_strain", "Rt_trajectories", "Rt"))
+
+  nms <- names(rt)
+
+  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ])
+  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain)
+
+  ## here the 1st strain has weight 1 all along
+  ## (except step 1 --> to investigate)
+  ## so expect the average R to be the same as R for strain 1
+  expect_equal(rt$eff_Rt_general[, 1], avg_rt$eff_Rt_general)
+  expect_equal(rt$eff_Rt_all[, 1], avg_rt$eff_Rt_all)
+  expect_equal(rt$Rt_general[, 1], avg_rt$Rt_general)
+  expect_equal(rt$Rt_all[, 1], avg_rt$Rt_all)
+
+  expect_equal(rt_traj$eff_Rt_general[, 1, ],
+               avg_rt_traj$eff_Rt_general[, ])
+  expect_equal(rt_traj$eff_Rt_all[, 1, ], avg_rt_traj$eff_Rt_all[, ])
+  expect_equal(rt_traj$Rt_general[, 1, ], avg_rt_traj$Rt_general[, ])
+  expect_equal(rt_traj$Rt_all[, 1, ], avg_rt_traj$Rt_all[, ])
+
+  ## the average should be the same if calculated inside the Rt calculation
+  ## functions or post hoc
+  expect_equal(rt_strain_weighted$eff_Rt_general,
+               avg_rt$eff_Rt_general)
+  expect_equal(rt_strain_weighted$eff_Rt_all,
+               avg_rt$eff_Rt_all)
+  expect_equal(rt_strain_weighted$Rt_general,
+               avg_rt$Rt_general)
+  expect_equal(rt_strain_weighted$Rt_all,
+               avg_rt$Rt_all)
+
+  expect_equal(names(avg_rt), nms)
+  expect_equal(names(avg_rt_traj), nms)
+
+  expect_error(wtmean_Rt(1L), "must inherit")
+  expect_error(wtmean_Rt(structure(list(Rt_all = matrix(1)), class = "Rt"),
+                         prob_strain),
+              "Expect elements of Rt to have dimensions")
 })
 
 
@@ -515,7 +788,8 @@ test_that("Can calculate Rt with an empty second variant ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1))
+                            strain_transmission = c(1, 1),
+                            model_super_infection = 1)
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -523,6 +797,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -531,10 +806,13 @@ test_that("Can calculate Rt with an empty second variant ", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -544,31 +822,53 @@ test_that("Can calculate Rt with an empty second variant ", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
 
-  expect_equal(rt_1, rt_1_single_class)
-  expect_equal(rt_all, rt_all_single_class)
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
+
+  expect_equal(rt_1$step, rt_1_single_class$step)
+  expect_equal(rt_1$date, rt_1_single_class$date)
+  expect_equal(rt_1$beta, rt_1_single_class$beta)
+  expect_equal(rt_1$eff_Rt_all, rt_1_single_class$eff_Rt_all)
+  expect_equal(rt_1$eff_Rt_general,
+               rt_1_single_class$eff_Rt_general)
+  expect_equal(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_equal(rt_1$Rt_general, rt_1_single_class$Rt_general)
+
+  expect_equal(rt_all$step, rt_all_single_class$step)
+  expect_equal(rt_all$date, rt_all_single_class$date)
+  expect_equal(rt_all$beta, rt_all_single_class$beta)
+  expect_equal(rt_all$eff_Rt_all,
+               rt_all_single_class$eff_Rt_all)
+  expect_equal(rt_all$eff_Rt_general,
+               rt_all_single_class$eff_Rt_general)
+  expect_equal(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_equal(rt_all$Rt_general,
+               rt_all_single_class$Rt_general)
+
 })
 
 
 test_that("Can calculate Rt with a second less infectious variant", {
   ## seed with 10 cases on same day as other variant
-
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0.1),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -576,6 +876,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -584,10 +885,13 @@ test_that("Can calculate Rt with a second less infectious variant", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                      weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -597,25 +901,27 @@ test_that("Can calculate Rt with a second less infectious variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be lower (or equal) for the two variant version
-  eps <- 1e-7
-  expect_true(all(rt_1$Rt_all - rt_1_single_class$Rt_all <= eps))
-  expect_true(all(rt_1$Rt_general - rt_1_single_class$Rt_general <= eps))
-  expect_true(all(rt_all$Rt_all - rt_all_single_class$Rt_all <= eps))
-  expect_true(all(rt_all$Rt_general - rt_all_single_class$Rt_general <= eps))
+  expect_rounded_lte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_lte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_lte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_lte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -625,7 +931,8 @@ test_that("Can calculate Rt with a second more infectious variant", {
                             strain_transmission = c(1, 5),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
 
   np <- 3L
@@ -634,6 +941,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -642,10 +950,13 @@ test_that("Can calculate Rt with a second more infectious variant", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                      weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -655,24 +966,27 @@ test_that("Can calculate Rt with a second more infectious variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -683,7 +997,8 @@ test_that("Can calculate Rt with a second less letal variant", {
                             strain_rel_severity = c(1, 0),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
 
   np <- 3L
@@ -692,6 +1007,7 @@ test_that("Can calculate Rt with a second less letal variant", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -700,10 +1016,13 @@ test_that("Can calculate Rt with a second less letal variant", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -713,27 +1032,29 @@ test_that("Can calculate Rt with a second less letal variant", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because less letal --> more people recover and they have longer
   ## duration of infection
-  ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -744,7 +1065,8 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
                             strain_rel_gamma_A = c(1, 0.1),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
 
   np <- 3L
@@ -753,6 +1075,7 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -761,10 +1084,13 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -774,26 +1100,29 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for asymptomatics)
   ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -804,7 +1133,8 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
                             strain_rel_gamma_P = c(1, 0.1),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
 
   np <- 3L
@@ -813,6 +1143,7 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -821,10 +1152,13 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -834,26 +1168,29 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for presymptomatics)
   ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -864,7 +1201,8 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
                             strain_rel_gamma_C_1 = c(1, 0.1),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
 
   np <- 3L
@@ -873,6 +1211,7 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -881,10 +1220,13 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                       weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
@@ -894,26 +1236,29 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
   set.seed(1)
-  mod$set_index(index)
+  mod$set_index(c(index_S, index_R))
   y <- mod$simulate(steps)
 
-  rt_1_single_class <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all_single_class <- carehomes_Rt_trajectories(steps, y, p)
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- carehomes_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for I_C_1)
   ## added the 0.001 as seems to be rounding error issues
-  expect_true(all(rt_1$Rt_all >= rt_1_single_class$Rt_all - 0.001))
-  expect_true(all(rt_1$Rt_general >= rt_1_single_class$Rt_general - 0.001))
-  expect_true(all(rt_all$Rt_all >= rt_all_single_class$Rt_all - 0.001))
-  expect_true(all(rt_all$Rt_general >= rt_all_single_class$Rt_general - 0.001))
+  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
+  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
+  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
+  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
 })
 
 
@@ -921,7 +1266,8 @@ test_that("If prob_strain is NA then Rt is NA ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1))
+                            strain_transmission = c(1, 1),
+                            model_super_infection = 1)
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -933,6 +1279,7 @@ test_that("If prob_strain is NA then Rt is NA ", {
 
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -941,13 +1288,14 @@ test_that("If prob_strain is NA then Rt is NA ", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
   ## all values of prob_strain after the first step should be NA
   expect_true(all(is.na(prob_strain[, , -1L])))
 
-  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ])
-  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## all values of Rt after the first step should be NA
   expect_true(all(is.na(rt_1$Rt_all[-1L])))
@@ -976,40 +1324,43 @@ test_that("calculate Rt with both second variant and vaccination", {
   vaccine_schedule <- vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses = 1000, n)
 
-  reduced_susceptibility <- 0.1 # can put anything <1 here
+  reduced_susceptibility <- 1 # can put anything <1 here
   transm_new_variant <- 5
 
   p <- carehomes_parameters(0, region,
-                            waning_rate = 0,
+                            waning_rate = 0.1,
                             strain_transmission = c(1, transm_new_variant),
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             strain_seed_rate = c(10, 0),
-                            rel_susceptibility = c(1, reduced_susceptibility),
-                            rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1),
-                            vaccine_progression_rate = c(0, 0),
+                            rel_susceptibility = rep(1, 3),
+                            vaccine_progression_rate = numeric(3),
                             vaccine_schedule = vaccine_schedule,
-                            vaccine_index_dose2 = 2L)
+                            vaccine_index_dose2 = 2L,
+                            model_super_infection = 1)
 
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- carehomes$new(p, 0, np, seed = 2L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
-  set.seed(1)
+  set.seed(2)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
   for (k in seq_len(np)) { # for each particle
-    rt <- carehomes_Rt(steps, S[, k, ], p, prob_strain[, k, ])
+
+    rt <- carehomes_Rt(steps, S[, k, ], p, prob_strain[, k, ], R = R[, k, ],
+                       weight_Rt = TRUE)
 
     ## Impact of variant on Rt is as expected:
     ## Rt_general should increase over time because of invasion of new
@@ -1019,9 +1370,9 @@ test_that("calculate Rt with both second variant and vaccination", {
                         rt$Rt_general[1] * transm_new_variant)
 
     ## Impact of vaccination on Rt is as expected:
-    ## eff_Rt_general should suddenly decrease at the time at which we vaccinate
-    ## everyone
-    ## the reduction should be approximately by a factor reduced_susceptibility
+    ## eff_Rt_general should suddenly decrease at the time at which we
+    ## vaccinate everyone the reduction should be approximately by a factor
+    ## reduced_susceptibility
     expect_approx_equal(rt$eff_Rt_general[vacc_time] * reduced_susceptibility,
                         rt$eff_Rt_general[vacc_time + 1],
                         rel_tol = 0.2)
@@ -1048,7 +1399,7 @@ test_that("strain_rel_gamma works as expected in carehomes_parameters", {
   expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                     strain_rel_gamma_A = c(1, 5),
                                     strain_transmission = c(1, 2, 3)),
-               "1 or 3")
+               "1 or 2")
   expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
                                     strain_transmission = c(1, 1),
                                     strain_rel_gamma_A = c(2, 5)),
@@ -1072,19 +1423,26 @@ test_that("carehomes_parameters_progression works as expected", {
     defaults * 2
   )
   expect_equal(
-    matrix(unlist(carehomes_parameters_progression(1:4, 1:4, 1:4, 1:4)[gammas]),
-           ncol = 4),
+    matrix(
+      unlist(carehomes_parameters_progression(1:4, 1:4, 1:4, 1:4)[gammas]),
+             ncol = 4),
     vapply(defaults, function(x) x * 1:4, numeric(4))
   )
+  expect_true(all(lengths(
+    carehomes_parameters_progression(1, 1, 1, 1)[gammas]) == 1))
+  expect_true(all(lengths(
+    carehomes_parameters_progression(1:2, 1:2, 1:2, 1:2)[gammas]) == 4))
 })
 
 
 test_that("Relative gamma = 1 makes no difference", {
   p1 <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   p2 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 1))
+                             strain_transmission = c(1, 1),
+                            model_super_infection = 1)
   p3 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 1))
+                             strain_transmission = c(1, 1),
+                            model_super_infection = 1)
   np <- 10
   mod1 <- carehomes$new(p1, 0, np, seed = 1L)
   mod2 <- carehomes$new(p2, 0, np, seed = 1L)
@@ -1119,7 +1477,8 @@ test_that("Lower rate variant has higher Rt", {
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -1127,6 +1486,7 @@ test_that("Lower rate variant has higher Rt", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1135,9 +1495,11 @@ test_that("Lower rate variant has higher Rt", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_15_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_15_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                         weight_Rt = TRUE)
 
   ## rate equal to ref
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1145,7 +1507,8 @@ test_that("Lower rate variant has higher Rt", {
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -1153,6 +1516,7 @@ test_that("Lower rate variant has higher Rt", {
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1161,13 +1525,15 @@ test_that("Lower rate variant has higher Rt", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_1_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain)
+  rt_1_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                        weight_Rt = TRUE)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_true(all(rt_1_all$Rt_all <= rt_15_all$Rt_all))
-  expect_true(all(rt_1_all$Rt_general <= rt_15_all$Rt_general))
+  expect_rounded_lte(rt_1_all$Rt_all, rt_15_all$Rt_all)
+  expect_rounded_lte(rt_1_all$Rt_general, rt_15_all$Rt_general)
 })
 
 
@@ -1184,7 +1550,8 @@ test_that("Stuck when gamma =  0", {
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
   p$gamma_P[] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -1215,7 +1582,8 @@ test_that("Stuck when gamma =  0", {
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
   p$gamma_C_1[] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -1285,28 +1653,32 @@ test_that("Stuck when gamma =  0 for second strain", {
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$set_state(initial$state, initial$step)
 
+  strain_1 <- c(1:19, 58:76)
+  strain_2 <- c(20:38, 39:57)
+
   index_I_A <- mod$info()$index$I_A
-  index_I_A_strain_2 <- index_I_A[20:38]
-  index_I_A_strain_1 <- index_I_A[1:19]
+  index_I_A_strain_2 <- index_I_A[strain_2]
+  index_I_A_strain_1 <- index_I_A[strain_1]
   index_R <- mod$info()$index$R
-  index_R_strain_2 <- index_R[20:38]
-  index_R_strain_1 <- index_R[1:19]
+  index_R_strain_2 <- index_R[strain_2]
+  index_R_strain_1 <- index_R[strain_1]
   index_I_P <- mod$info()$index$I_P
-  index_I_P_strain_1 <- index_I_P[1:19]
-  index_I_P_strain_2 <- index_I_P[20:38]
+  index_I_P_strain_1 <- index_I_P[strain_1]
+  index_I_P_strain_2 <- index_I_P[strain_2]
   index_I_C_1 <- mod$info()$index$I_C_1
-  index_I_C_1_strain_1 <- index_I_C_1[1:19]
-  index_I_C_1_strain_2 <- index_I_C_1[20:38]
+  index_I_C_1_strain_1 <- index_I_C_1[strain_1]
+  index_I_C_1_strain_2 <- index_I_C_1[strain_2]
   index_I_C_2 <- mod$info()$index$I_C_2
-  index_I_C_2_strain_1 <- index_I_C_2[1:19]
-  index_I_C_2_strain_2 <- index_I_C_2[20:38]
+  index_I_C_2_strain_1 <- index_I_C_2[strain_1]
+  index_I_C_2_strain_2 <- index_I_C_2[strain_2]
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -1328,7 +1700,8 @@ test_that("Stuck when gamma =  0 for second strain", {
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
   mod$set_state(initial$state, initial$step)
@@ -1350,7 +1723,8 @@ test_that("Stuck when gamma =  0 for second strain", {
                             strain_seed_date =
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                            strain_seed_rate = c(10, 0),
+                            model_super_infection = 1)
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
   mod$set_state(initial$state, initial$step)
@@ -1364,13 +1738,15 @@ test_that("Stuck when gamma =  0 for second strain", {
   expect_false(all(unlist(y[index_I_C_2_strain_2, , ]) == 0))
 })
 
+
 test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
                             waning_rate = 1 / 20,
                             strain_seed_rate = c(1, 0),
                             strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")))
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            model_super_infection = 1)
   p$p_H_step <- 1
   p$psi_H[] <- 1
   p$p_G_D_step <- matrix(1)
@@ -1409,6 +1785,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   expect_true(all(y$R == 0))
   expect_true(all(y$D_hosp == 0))
 })
+
 
 test_that("carehomes_parameters_severity works as expected", {
   severity <- carehomes_parameters_severity(NULL, 0.7)
@@ -1466,17 +1843,18 @@ test_that("carehomes_parameters with rel_severity works as expected", {
   ps <- pars[c("p_G_D", "p_H_D", "p_ICU_D", "p_W_D")]
 
   expect_equal(
-    unname(lapply(ps, function(x) matrix(c(max(x[, 1]), max(x[, 2])),
+    unname(lapply(ps, function(x) matrix(mirror(c(max(x[, 1]), max(x[, 2]))),
                                          nrow = 1))),
     unname(step)
   )
 
   expect_equal(
     unname(lapply(ps, function(x) cbind(x[, 1] / max(x[, 1]),
-                                        x[, 2] / max(x[, 2])))),
+                                        x[, 2] / max(x[, 2]),
+                                        x[, 2] / max(x[, 2]),
+                                        x[, 1] / max(x[, 1])))),
     unname(psi)
   )
-
 })
 
 
@@ -1486,7 +1864,8 @@ test_that("G_D empty when p_G_D = 0", {
                             strain_transmission = c(1, 1),
                             strain_seed_rate = c(1, 0),
                             strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")))
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            model_super_infection = 1)
   p$p_G_D[] <- 0
   p$psi_G_D[] <- 0
   p$p_G_D_step[] <- 0
@@ -1503,6 +1882,7 @@ test_that("G_D empty when p_G_D = 0", {
   expect_true(all(y[mod$info()$index$G_D, , ] == 0))
 })
 
+
 test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   np <- 3L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1510,25 +1890,138 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
                             strain_rel_severity = c(1, 0),
                             strain_seed_rate = c(10, 0),
                             strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")))
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            model_super_infection = 1)
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
-  index_G_D <- mod$info()$index$G_D
-  index_G_D_strain_1 <- index_G_D[c(1:19, 39:57)]
-  index_G_D_strain_2 <- index_G_D[c(20:38, 58:76)]
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
-  y <- mod$simulate(steps)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
 
-  # Strain 1
-  expect_false(all(y[index_G_D_strain_1, , ] == 0))
-  expect_false(all(y[index_G_D_strain_1, , ] == 0))
-  # Strain 2
-  expect_true(all(y[index_G_D_strain_2, , ] == 0))
-  expect_true(all(y[index_G_D_strain_2, , ] == 0))
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$G_D[, 1, , , , ] == 0))
+  expect_false(all(y$G_D[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$G_D[, 2, , , , ] == 0))
+  expect_true(all(y$G_D[, 3, , , , ] == 0))
+})
+
+
+test_that("Can't move from S to E3/4", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            model_super_infection = 1)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+  expect_true(any(y$E[, 1, , , , 2] > 0))
+  expect_true(any(y$E[, 2, , , , 2] > 0))
+  expect_true(all(y$E[, 3:4, , , , 2] == 0))
+})
+
+
+test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 0),
+                            strain_seed_rate = c(10, 0),
+                            beta_value = 1e100,
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            model_super_infection = 1)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  expect_true(all(y$S[, , , 85] == 0))
+  expect_true(all(y$R[, 2:4, , , 85] == 0))
+  expect_false(all(y$R[, 1, , , 85] == 0))
+})
+
+
+test_that("Can only move to S from R3 and R4 to S", {
+  np <- 3L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            initial_I = 0,
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            waning_rate = 1 / 5,
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            model_super_infection = 1)
+  ## Prevent anyone leaving S
+  p$rel_susceptibility[] <- 0
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+
+  initial <- carehomes_initial(info, np, p)
+  y0 <- initial$state
+  ## Empty R1 and R2
+  y0[info$index$R][1:38] <- 0
+  ## Fill R3 and R4
+  y0[info$index$R][39:76] <- 1e3
+
+  mod$set_state(y0)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  diff_S <- y$S[-4, , , 2] - y$S[-4, , , 1]
+  diff_R <- y$R[-4, 3:4, , , 1] - y$R[-4, 3:4, , , 2]
+  diff_R <- apply(diff_R, c(1, 3), sum)
+  expect_equal(diff_R, diff_S)
+  expect_true(all(y$E[-4, , , , , ] == 0))
+})
+
+
+test_that("Everyone in R3 and R4 when no waning and transmission high", {
+  np <- 1L
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            model_super_infection = 1)
+  p$strain_transmission[] <- 1e8
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2021-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  expect_true(all(y$R[, 1:2, , 450] == 0))
+  expect_false(all(y$R[, 3:4, , 450] == 0))
 })

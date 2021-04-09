@@ -539,7 +539,7 @@ combine_rt1 <- function(what, rt, samples, rank) {
 
   incidence <- Map(function(s, i)
     t(s$trajectories$state["infections_inc", , i]), samples, idx)
-  rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
+    rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
 
   if (rank) {
     ## Calculate rank of particles by area under Rt curve

@@ -13,7 +13,9 @@ carehomes_Rt(
   interpolate_every = NULL,
   interpolate_critical_dates = NULL,
   interpolate_min = NULL,
-  eigen_method = "power_iteration"
+  eigen_method = "power_iteration",
+  R = NULL,
+  weight_Rt = FALSE
 )
 }
 \arguments{
@@ -58,6 +60,13 @@ interpolation and that will not work with fewer than 3 points.}
 
 \item{eigen_method}{The eigenvalue method to use (passed to
 \link[eigen1:eigen1]{eigen1::eigen1} as \code{method})}
+
+\item{R}{A (n groups x n strains x n vaccine classes) x steps matrix of "R"
+compartment counts, required for multi-strain models.}
+
+\item{weight_Rt}{If \code{TRUE} then computes the weighted average
+of the Rt for all strains, otherwise all calculations are returned with
+an additional dimension to index each strain.}
 }
 \value{
 A list with elements \code{step}, \code{beta}, and any of the \code{type}

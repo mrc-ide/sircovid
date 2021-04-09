@@ -66,7 +66,7 @@ assert_proportion <- function(x, name = deparse(substitute(x))) {
   }
   invisible(x)
 }
-  
+
   assert_relatives <- function(x, name = deparse(substitute(x))) {
     if (x[[1]] != 1) {
       stop(sprintf("'%s[[1]]' must be 1", name), call. = FALSE)
@@ -74,3 +74,11 @@ assert_proportion <- function(x, name = deparse(substitute(x))) {
     assert_non_negative(x, name)
     invisible(x)
  }
+
+  assert_01 <- function(x, name = deparse(substitute(x))) {
+    if (!(x %in% 0:1)) {
+      stop(sprintf("'%s' must be 0 or 1", name), call. = FALSE)
+    }
+
+    invisible(as.integer(x))
+  }

@@ -12,9 +12,9 @@ test_that("Can calculate Rt", {
   y <- d$inputs$y
 
   res <- carehomes_Rt(steps, y[, 1, ], p)
-  expect_equal(res, d$outputs$rt_1)
+  expect_equal(unclass(res), unclass(d$outputs$rt_1))
   res_all <- carehomes_Rt_trajectories(steps, y, p)
-  expect_equal(res_all, d$outputs$rt_all)
+  expect_equal(unclass(res_all), unclass(d$outputs$rt_all))
 
   ## Beta is returned, results correct length
   expect_identical(res$beta, rep(p$beta_step, length(steps)))
@@ -33,7 +33,7 @@ test_that("Can calculate Rt", {
 
   expect_equal(names(res), names(res_all))
   for (nm in names(res)) {
-    expect_equal(res[[nm]], res_all[[nm]][, 1, drop = TRUE])
+    expect_equal(drop(res[[nm]]), res_all[[nm]][, 1, drop = TRUE])
   }
 
   ## Date is returned
@@ -200,6 +200,8 @@ test_that("Can interpolate Rt with step changes", {
     "2020-04-15" = future_Rt(1.5, "2020-03-10"),
     "2020-05-01" = future_Rt(0.5, "2020-03-10"),
     "2020-05-15" = future_Rt(2, "2020-03-10"))
+
+
   res <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
   baseline <- add_future_betas(dat, rt, future)
 

@@ -1265,7 +1265,7 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with vaccination and no waning
 })
 
 
-test_that("N_tot stays constant with vaccination and waning immuity, while
+test_that("N_tot stays constant with vaccination and waning immunity, while
           N_tot2 and N_tot3 are non-decreasing", {
   set.seed(1)
   vaccine_schedule <- test_vaccine_schedule(500000, "london")
@@ -1466,7 +1466,6 @@ test_that("Outputed S vaccination numbers are what we expect", {
   ## there are candidates in S for vaccination
   expect_true(all(y$S[, 1, 1] > 0))
   ## every initial susceptible should be vaccinated within first day
-  ## ERROR HERE
   expect_approx_equal(y$cum_n_S_vaccinated[i, 1, 2], y$S[i, 1, 1])
   ## same for the 10 initially seeded cases
   expect_true(
@@ -1840,7 +1839,7 @@ test_that("build_waning_rate works as expected", {
 ## Heading towards real-life use, let's vaccinate people at a rate of
 ## 5k/day. This does not run an epidemic beforehand though, and we'll
 ## use a "null" vaccine for now.
-test_that("run sensible vaccination schedule", {
+test_that("run sensible vaccination schedule, catchup = 0", {
   region <- "east_of_england"
   uptake <- c(rep(0, 3), rep(1, 16))
   daily_doses <- rep(50000, 120)
@@ -1914,10 +1913,7 @@ test_that("run sensible vaccination schedule", {
 })
 
 
-## Heading towards real-life use, let's vaccinate people at a rate of
-## 5k/day. This does not run an epidemic beforehand though, and we'll
-## use a "null" vaccine for now.
-test_that("run sensible vaccination schedule with catch up", {
+test_that("run sensible vaccination schedule, catchup = 1", {
   region <- "east_of_england"
   uptake <- c(rep(0, 3), rep(1, 16))
   daily_doses <- rep(50000, 120)
@@ -1970,7 +1966,7 @@ test_that("run sensible vaccination schedule with catch up", {
   ## > matplot(m, type = "l", lty = 1)
 
   tot <- rowSums(n_vaccinated)
-  expect_true(all(tot >= 45000 & tot < 51000))
+  expect_true(all(tot >= 45000 & tot < 55000))
 
   ## Vaccinate all the CHW/CHR first, then down the priority
   ## groups. This is easy to check visually but harder to describe:
@@ -2197,7 +2193,7 @@ test_that("Can vaccinate given a schedule", {
   start_vacc_date_1 <- sircovid_date("2020-03-01")
   delay_vacc_date_2 <- 28
   ndays_vacc <- 31
-  i <- seq(start_vacc_date_1 * 4 + 1, length.out = ndays_vacc * 4)
+  i <- seq((start_vacc_date_1 - 1) * 4 + 1, length.out = ndays_vacc * 4)
   m <- array(0, c(19, 2, (end_date + 1) * 4))
   step_doses_1 <- 10000
   step_doses_2 <- 2000
@@ -2218,7 +2214,7 @@ test_that("Can vaccinate given a schedule", {
   n_vacc_first_dose <- apply(y$cum_n_vaccinated[, 1, 1, ], 1, diff)
 
   ## check no vaccination before wanted date
-  days_vacc_1 <- seq(start_vacc_date_1 + 1, start_vacc_date_1 + ndays_vacc)
+  days_vacc_1 <- seq(start_vacc_date_1, start_vacc_date_1 + ndays_vacc - 1)
   expect_true(
     all(n_vacc_first_dose[seq_len(days_vacc_1[1] - 1), ] == 0))
 
@@ -2226,7 +2222,8 @@ test_that("Can vaccinate given a schedule", {
   ## (which are small and therefore get vaccinated faster)
   ## we get the right number of vaccinations per day in the wanted interval
   x <- n_vacc_first_dose[days_vacc_1, - (18:19)]
-  expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)))
+  expect_approx_equal(x, matrix(step_doses_1 * 4, nrow(x), ncol(x)),
+                      rel_tol = 0.1)
 
   ## check that no vaccination after wanted date
   ## we get the right number of vaccinations per day in the wanted interval
@@ -2237,8 +2234,8 @@ test_that("Can vaccinate given a schedule", {
   n_vacc_second_dose <- apply(y$cum_n_vaccinated[, 2, 1, ], 1, diff)
 
   ## check no vaccination before wanted date
-  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2 + 1,
-                     start_vacc_date_1 + delay_vacc_date_2 + ndays_vacc)
+  days_vacc_2 <- seq(start_vacc_date_1 + delay_vacc_date_2,
+                     start_vacc_date_1 + delay_vacc_date_2 + ndays_vacc - 1)
   expect_true(
     all(n_vacc_second_dose[seq_len(days_vacc_2[1] - 1), ] == 0))
 
@@ -2251,6 +2248,7 @@ test_that("Can vaccinate given a schedule", {
   ## we get the right number of vaccinations per day in the wanted interval
   expect_true(
     all(n_vacc_second_dose[seq(last(days_vacc_2) + 1, end_date, 1), ] == 0))
+
 })
 
 

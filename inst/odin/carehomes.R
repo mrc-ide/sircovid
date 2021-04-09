@@ -4,6 +4,10 @@
 ## k for the progression (not exponential latent and infectious period)
 ## l for the vacc. group
 
+## Parameters to turn on or off:
+##  i) super-infection
+model_super_infection <- user(0)
+
 ## Number of classes (age & vaccination)
 
 ## Number of "groups", being the age classes, Carehome workers and
@@ -37,7 +41,9 @@ n_I_P_vaccinated[, ] <-
   sum(n_II_P_next_vacc_class[i, , , j])
 dim(n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
 n_R_vaccinated[, ] <-
-  sum(n_R_next_vacc_class[i, , j]) + sum(n_RS_next_vacc_class[i, , j])
+  sum(n_R_next_vacc_class[i, , j]) +
+  sum(n_RS_next_vacc_class[i, , j]) +
+  sum(n_RE_next_vacc_class[i, , j])
 dim(n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
 initial(cum_n_S_vaccinated[, ]) <- 0
@@ -182,7 +188,6 @@ p_T_sero_pos_progress <- 1 - exp(-gamma_sero_pos * dt)
 p_test <- 1 - exp(-gamma_U * dt)
 p_T_PCR_pre_progress <- 1 - exp(-gamma_PCR_pre * dt)
 p_T_PCR_pos_progress <- 1 - exp(-gamma_PCR_pos * dt)
-p_RS[] <- 1 - exp(-waning_rate[i] * dt) # R to S age dependent
 
 dim(p_I_A_progress) <- n_strains
 dim(p_I_P_progress) <- n_strains
@@ -256,15 +261,15 @@ gamma_ICU_pre <- if (as.integer(step) >= length(gamma_ICU_pre_step))
 ## new infections
 
 ## Compute the new infections with multiple strains using nested binomials
+## No one can move from S to E3 or E4
 n_S_progress_tot[, ] <- rbinom(S[i, j], p_SE[i, j])
-n_S_progress[, , ] <- if (j == 1)
-  rbinom(n_S_progress_tot[i, k], lambda[i, 1] / sum(lambda[i, ])) else
-    rbinom(n_S_progress_tot[i, k] - sum(n_S_progress[i, 1:(j - 1), k]),
-           lambda[i, j] / sum(lambda[i, j:n_strains]))
+n_S_progress[, , ] <- if (j == 1 || n_real_strains == 1)
+  rbinom(n_S_progress_tot[i, k], grp_prob_strain[i, j]) else
+    (if (j == 2) n_S_progress_tot[i, k] - n_S_progress[i, 1, k] else 0)
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
-## [age, vaccine stage, strain infected with]
+## [age, strain infected with, vaccine stage]
 ##
 ## As in the model initialisation we will use the teenager category,
 ## and only infect *unvaccinated* people. For now we will model only
@@ -282,9 +287,13 @@ strain_seed <- rpois(strain_rate)
 ## NOTE: We *must* use the range 2:n_strains here even though only one
 ## strain variant is allowed exist, otherwise the generated code leads
 ## us to write out-of-bounds when running with a single strain.
+##
+## After setting up progress remove all transitions from S to
+## strain 3 (1.2) and 4 (2.1) (this is a safety it's handled above).
 n_S_progress[4, 2:n_strains, 1] <-
-  min(n_S_progress[i, j, k] + strain_seed,
-      n_S_progress[i, j, k] + S[i, k] - sum(n_S_progress[i, , k]))
+  if (j < 3) min(n_S_progress[i, j, k] + strain_seed,
+                 n_S_progress[i, j, k] + S[i, k] -
+                   sum(n_S_progress[i, , k])) else 0
 
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from S[k] to E[k+1] (k vaccination class)
@@ -351,24 +360,64 @@ n_II_P[, , , ] <- n_I_P_progress[i, j, k, l] -
 ## vaccine progression
 n_I_P_next_vacc_class[, , , ] <- rbinom(
   I_P[i, j, k, l] - n_I_P_progress[i, j, k, l],
-  p_I_P_next_vacc_class[i, j, k, l])
-
+  p_I_P_next_vacc_class[i, j, k, l]
+)
 
 #### flow out of R ####
 
-n_R_progress[, , ] <- rbinom(R[i, j, k], p_RS[i])
-## of those some can also be vaccinated or progress through vaccination classes
-## --> number transitioning from R[j] to S[j+1]
-## (j vaccination class)
-n_RS_next_vacc_class[, , ] <-
-  rbinom(n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
-## resulting transitions from R[j] to S[j]
-## (j vaccination class)
-n_RS[, , ] <- n_R_progress[i, j, k] - n_RS_next_vacc_class[i, j, k]
+## rate of progressing from R w/o superinfection is just waning_rate
+## if n_strains is 1 then can only go to S w.r. waning_rate
+## if in R3 or R4 then can only go to S w.r. waning_rate
+## otherwise:
+##  R1 and R2 can progress to S (w.r. waning_rate[i]) or
+##  R1 can progress to E3 (w.r. strain 2 (3 - 1))
+##  R2 can progress tp E4 (w.r. strain 1 (3 - 2))
+rate_R_progress[, , ] <- waning_rate[i] +
+          rel_susceptibility[i, k] *
+            if (n_strains == 1 || j > 2 || model_super_infection == 0) 0 else
+              lambda[i, 3 - j]
 
-## vaccine progression
-n_R_next_vacc_class[, , ] <- rbinom(
-  R[i, j, k] - n_R_progress[i, j, k], p_R_next_vacc_class[i, j, k])
+p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
+
+## n_R_progress is total number who either:
+##  - leave R for S or E and stay in same vacc class
+##  - leave R for S or E and change same vacc class
+n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
+
+## Number going from R to S
+## In one-strain model, all progress to S only
+## In multi-strain model, R3 and R4 progress to S only
+## If not modelling super infection then all progress to S only
+##
+## In multi-strain model, number of R1 and R2 to S is binomial w.p. waning over
+##  waning plus prob strain
+## TODO (RS): waning_rate should eventually be variant varying
+p_RS[, , ] <- if (model_super_infection == 0 || n_strains == 1 || j > 2) 1 else
+                ((waning_rate[i] / (waning_rate[i] + lambda[i, 3 - j] *
+                                    rel_susceptibility[i, k])))
+n_RS_tmp[, , ] <- rbinom(n_R_progress[i, j, k], p_RS[i, j, k])
+
+
+## n_RE[i, j, k] is the number going from
+## R[age i, strain j, vacc class k] to
+## E[age i, strain j + 2, vacc class k]
+## Movement possible to E3 and E4 are from R1 and R2 respectively
+n_RE_tmp[, , ] <- n_R_progress[i, j, k] - n_RS_tmp[i, j, k]
+
+## Calculate those that change vacc class
+
+## 1) R -> S vaccine progression
+n_RS_next_vacc_class[, , ] <- if (n_vacc_classes == 1) 0 else
+  rbinom(n_RS_tmp[i, j, k], p_R_next_vacc_class[i, j, k])
+n_RS[, , ] <- n_RS_tmp[i, j, k] - n_RS_next_vacc_class[i, j, k]
+## 2) R -> E vaccine progression
+n_RE_next_vacc_class[, , ] <- if (n_vacc_classes == 1) 0 else
+  rbinom(n_RE_tmp[i, j, k], p_R_next_vacc_class[i, j, k])
+n_RE[, , ] <- n_RE_tmp[i, j, k] - n_RE_next_vacc_class[i, j, k]
+## 3) R -> R vaccine progression
+n_R_tmp[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
+n_R_next_vacc_class[, , ] <- rbinom(n_R_tmp[i, j, k],
+                                    p_R_next_vacc_class[i, j, k])
 
 #### other transitions ####
 
@@ -410,16 +459,22 @@ n_T_PCR_pos_progress[, , , ] <-
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
-update(cum_infections) <- cum_infections + sum(n_S_progress)
+update(cum_infections) <- cum_infections + sum(n_S_progress) +
+  sum(n_RE) +  sum(n_RE_next_vacc_class)
 
 initial(cum_infections_per_strain[]) <- 0
 update(cum_infections_per_strain[]) <-
-  cum_infections_per_strain[i] + sum(n_S_progress[, i, ])
+  cum_infections_per_strain[i] + sum(n_S_progress[, i, ]) +
+  (if (i > 2)
+    (sum(n_RE[, i - 2, ]) +
+      sum(n_RE_next_vacc_class[, i - 2, ]))
+   else
+      0)
 dim(cum_infections_per_strain) <- n_strains
 
 ## Work out the new S (i for age, j for vaccination status)
-new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) - sum(n_S_progress[i, , j]) -
-  n_S_next_vacc_class[i, j]
+new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) -
+  sum(n_S_progress[i, , j]) - n_S_next_vacc_class[i, j]
 new_S[, ] <- new_S[i, j] +
   (if (j == 1) n_S_next_vacc_class[i, n_vacc_classes] +
      sum(n_RS_next_vacc_class[i, , n_vacc_classes]) else
@@ -438,16 +493,31 @@ n_EI_P_next_vacc_class[, , ] <- n_EE_next_vacc_class[i, j, k_E, k] -
   n_EI_A_next_vacc_class[i, j, k]
 
 ## Work out the S->E and E->E transitions
-aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] else n_EE[i, j, k - 1, l]) -
+aux_E[, , , ] <- (if (k == 1) n_SE[i, j, l] +
+                    (if (j > 2) n_RE[i, j - 2, l] else 0)
+                  else n_EE[i, j, k - 1, l]) -
   n_EE[i, j, k, l] -
   n_EE_next_vacc_class[i, j, k, l] -
   n_E_next_vacc_class[i, j, k, l] +
-  (if (l == 1) n_E_next_vacc_class[i, j, k, n_vacc_classes] else
-    n_E_next_vacc_class[i, j, k, l - 1]) +
-  (if (k == 1) (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] else
-    n_SE_next_vacc_class[i, j, l - 1]) else
-      (if (l == 1) n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes] else
-        n_EE_next_vacc_class[i, j, k - 1, l - 1]))
+  (if (l == 1)
+    n_E_next_vacc_class[i, j, k, n_vacc_classes]
+   else
+     n_E_next_vacc_class[i, j, k, l - 1]) +
+  (if (k == 1)
+    (if (l == 1) n_SE_next_vacc_class[i, j, n_vacc_classes] +
+       (if (j > 2)
+         n_RE_next_vacc_class[i, j - 2, n_vacc_classes]
+        else
+          0)
+     else n_SE_next_vacc_class[i, j, l - 1] +
+       (if (j > 2)
+         n_RE_next_vacc_class[i, j - 2, l - 1]
+        else 0))
+   else
+     (if (l == 1)
+       n_EE_next_vacc_class[i, j, k - 1, n_vacc_classes]
+      else
+       n_EE_next_vacc_class[i, j, k - 1, l - 1]))
 
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
@@ -737,15 +807,15 @@ new_T_sero_neg[, , ] <- T_sero_neg[i, j, k] +
   n_T_sero_pos_progress[i, j, k_sero_pos, k]
 
 ## Work out the total number of recovery
-new_R[, , ] <- R[i, j, k] +
+new_R[, , ] <- R[i, j, k] -
+  n_R_progress[i, j, k] -
+  n_R_next_vacc_class[i, j, k] +
   n_II_A[i, j, k_A, k] +
   n_I_C_2_to_R[i, j, k] +
   n_H_R_conf_progress[i, j, k_H_R, k] +
   n_H_R_unconf_progress[i, j, k_H_R, k] +
   n_W_R_conf_progress[i, j, k_W_R, k] +
-  n_W_R_unconf_progress[i, j, k_W_R, k] -
-  n_R_progress[i, j, k] -
-  n_R_next_vacc_class[i, j, k] +
+  n_W_R_unconf_progress[i, j, k_W_R, k] +
   (if (k == 1) n_II_A_next_vacc_class[i, j, k_A, n_vacc_classes] +
      n_R_next_vacc_class[i, j, n_vacc_classes] else
        n_II_A_next_vacc_class[i, j, k_A, k - 1] +
@@ -754,11 +824,13 @@ new_R[, , ] <- R[i, j, k] +
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
   n_T_PCR_pre_progress[i, j, k, l] +
-  (if (k == 1) n_S_progress[i, j, l] else n_T_PCR_pre_progress[i, j, k - 1, l])
+  (if (k == 1) n_S_progress[i, j, l] else
+    n_T_PCR_pre_progress[i, j, k - 1, l])
 
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
   n_T_PCR_pos_progress[i, j, k, l] +
-  (if (k == 1) n_T_PCR_pre_progress[i, j, k_PCR_pre, l] else
+  (if (k == 1) n_T_PCR_pre_progress[i, j, k_PCR_pre, l] +
+               n_RE[i, j, l] + n_RE_next_vacc_class[i, j, l] else
     n_T_PCR_pos_progress[i, j, k - 1, l])
 
 new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] +
@@ -793,7 +865,10 @@ I_with_diff_trans[, , ] <-
 s_ij[, , ] <- m[i, j] * sum(I_with_diff_trans[j, k, ])
 s_ij[1:n_age_groups, 1:n_groups, ] <- beta * s_ij[i, j, k]
 s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups, ] <- beta * s_ij[i, j, k]
-lambda[, ] <- sum(s_ij[i, , j])
+## P(Strain = 1) := P(Strain = Only 1) + P(Strain = 2->1), same for Strain = 2
+lambda[, ] <- if (n_real_strains == 1) sum(s_ij[i, , 1]) else
+                (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
+                  sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]))
 
 ## Initial states are all zerod as we will provide a state vector
 ## setting S and I based on the seeding model.
@@ -999,6 +1074,7 @@ G_D_transmission <- user()
 strain_transmission[] <- user()
 dim(strain_transmission) <- n_strains
 n_strains <- user()
+n_real_strains <- if (n_strains == 4) 2 else 1
 
 ## Dimensions of the different "vectors" here vectors stand for
 ## multi-dimensional arrays
@@ -1228,11 +1304,6 @@ dim(n_I_P_progress) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 dim(n_II_P_next_vacc_class) <-
   c(n_groups, n_strains, k_P, n_vacc_classes)
 
-dim(p_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RS_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
-
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
 dim(p_SE) <- c(n_groups, n_vacc_classes)
@@ -1292,14 +1363,26 @@ dim(psi_star) <- n_groups
 dim(cum_admit_by_age) <- n_groups
 
 ## Vectors handling the age specific heterogeneous transmission process
-dim(lambda) <- c(n_groups, n_strains)
+dim(lambda) <- c(n_groups, n_real_strains)
 dim(s_ij) <- c(n_groups, n_groups, n_strains)
 dim(m) <- c(n_groups, n_groups)
 dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
 
-## Vectors handling the loss of immunity
+## Vectors handling progress from R
+dim(p_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_RS_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_RE_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
+
+dim(n_R_tmp) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_RS) <- c(n_groups, n_strains, n_vacc_classes)
-dim(p_RS) <- n_groups
+dim(n_RS_tmp) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_RS) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_RE) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_RE_tmp) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
+dim(rate_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Total population
 initial(N_tot[]) <- 0
@@ -1426,10 +1509,18 @@ initial(react_pos) <- 0
 update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
 
-## prob_strain gives probability of an infection in group i being of strain j
-initial(prob_strain[, ]) <- 0
-dim(prob_strain) <- c(n_groups, n_strains)
-update(prob_strain[, ]) <- lambda[i, j] / sum(lambda[i, ])
+## grp_prob_strain is probability of an infection in group i being of strain j
+## prob_strain is probability of an infection being of strain j
+grp_prob_strain[, ] <- lambda[i, j] / sum(lambda[i, ])
+dim(grp_prob_strain) <- c(n_groups, n_real_strains)
+
+tmp_prob_strain <- sum(lambda[, 1]) / sum(lambda[, ])
+initial(prob_strain[1:n_real_strains]) <- 0
+initial(prob_strain[1]) <- 1
+update(prob_strain[]) <- if (i == 1) tmp_prob_strain else 1 - tmp_prob_strain
+dim(prob_strain) <- n_real_strains
+
+
 
 
 ## I_weighted used in IFR calculation

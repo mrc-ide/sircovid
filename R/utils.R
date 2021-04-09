@@ -193,3 +193,21 @@ gamma_mucv2shapescale <- function(mu, cv) {
   scale <- mu * cv^2
   list(shape = shape, scale = scale)
 }
+
+
+mirror <- function(x) {
+  c(x, rev(x))
+}
+
+## default margin is 2 as this corresponds better with `mirror`
+unmirror <- function(x, margin = 2) {
+  if (inherits(x, c("matrix", "array"))) {
+    if (margin == 1) {
+      x[seq(nrow(x) / 2), , drop = FALSE]
+    } else {
+      x[, seq(ncol(x) / 2), drop = FALSE]
+    }
+  } else {
+    x[seq(length(x) / 2)]
+  }
+}

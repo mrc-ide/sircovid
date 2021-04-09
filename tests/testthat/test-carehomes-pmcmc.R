@@ -78,7 +78,7 @@ test_that("Can compute forecasts from mcmc output without prepending", {
 })
 
 
-test_that("Can combine trajectories of equal size", {
+test_that("Can combine trajectories of equal size - rank = FALSE", {
   dat <- reference_data_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)
   expect_equal(res$step, dat$trajectories$step)
@@ -214,7 +214,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(129, 11, 2, 32),
+    dat$trajectories$state, c(111, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
@@ -239,10 +239,11 @@ test_that("adding incidence adds appropriate states - nested", {
 })
 
 
+
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(129, 11, 2, 32),
+    dat$trajectories$state, c(111, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   v <- c("deaths", "deaths_hosp")
@@ -256,7 +257,7 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(129, 11, 2, 32),
+    dat$trajectories$state, c(111, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "deaths_hosp"))
@@ -264,6 +265,7 @@ test_that("can compute incidence for a single variable - nested", {
   expect_identical(res$state["deaths_inc", , , ],
                    cmp$state["deaths_inc", , , ])
 })
+
 
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_trajectories()
