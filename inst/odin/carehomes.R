@@ -4,10 +4,6 @@
 ## k for the progression (not exponential latent and infectious period)
 ## l for the vacc. group
 
-## Parameters to turn on or off:
-##  i) super-infection
-model_super_infection <- user(0)
-
 ## Number of classes (age & vaccination)
 
 ## Number of "groups", being the age classes, Carehome workers and
@@ -372,8 +368,8 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
 ##  R1 can progress to E3 (w.r. strain 2 (3 - 1))
 ##  R2 can progress tp E4 (w.r. strain 1 (3 - 2))
 rate_R_progress[, , ] <- waning_rate[i] +
-            if (n_strains == 1 || j > 2 || model_super_infection == 0) 0 else
-              lambda_susc[i, 3 - j, k]
+            if (n_strains == 1 || j > 2) 0 else
+              lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])
 
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
@@ -390,8 +386,9 @@ n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 ## In multi-strain model, number of R1 and R2 to S is binomial w.p. waning over
 ##  waning plus prob strain
 ## TODO (RS): waning_rate should eventually be variant varying
-p_RS[, , ] <- if (model_super_infection == 0 || n_strains == 1 || j > 2) 1 else
-                (waning_rate[i] / (waning_rate[i] + lambda_susc[i, 3 - j, k]))
+p_RS[, , ] <- if (n_strains == 1 || j > 2) 1 else
+                (waning_rate[i] / (waning_rate[i] +
+                  lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])))
 n_RS_tmp[, , ] <- rbinom(n_R_progress[i, j, k], p_RS[i, j, k])
 
 
@@ -1382,6 +1379,9 @@ dim(n_RE) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_RE_tmp) <- c(n_groups, n_strains, n_vacc_classes)
 dim(p_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
 dim(rate_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
+
+dim(cross_immunity) <- n_real_strains
+cross_immunity[] <- user(1)
 
 ## Total population
 initial(N_tot[]) <- 0

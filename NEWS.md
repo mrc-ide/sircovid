@@ -1,3 +1,8 @@
+# sircovid 0.10.31
+
+* Add `cross_immunity` to control the amount of immunity conferred by one strain that decreases the probability of immediately being exposed to the other strain (ignored in single strain model).
+* Removed `model_super_infection` as `model_super_infection = 0` is equivalent to `cross_immunity = 1` (default)
+
 # sircovid 0.10.30
 
 * `rel_susceptibility` can now take array values for varying across age groups, vaccination classes, and pathogen strains.
