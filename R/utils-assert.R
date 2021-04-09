@@ -60,7 +60,7 @@ assert_non_negative <- function(x, name = deparse(substitute(x))) {
 
 
 assert_proportion <- function(x, name = deparse(substitute(x))) {
-  if (any(x < 0 || x > 1)) {
+  if (any(x < 0 | x > 1)) {
     stop(sprintf("'%s' must lie in [0, 1]", name),
          call. = FALSE)
   }
