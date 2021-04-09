@@ -618,7 +618,7 @@ wtmean_Rt <- function(rt, prob_strain) {
       stop(sprintf(
         "Expect elements of Rt to have dimensions: %d steps x %d strains x
         %d particles", nrow(reshape_prob_strain), ncol(reshape_prob_strain),
-        mcstate:::nlayer(reshape_prob_strain)))
+        nlayer(reshape_prob_strain)))
     }
     ## catch the case when strain_transmission is 0 so r is NaN
     x <- r * reshape_prob_strain

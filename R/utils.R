@@ -222,3 +222,14 @@ unmirror_strain <- function(x, n_strains = 4L) {
 nlayer <- function(x) {
   dim(x)[3L]
 }
+
+recycle <- function (x, n, name = deparse(substitute(x))) {
+  if (length(x) == n) {
+    x
+  } else if (length(x) == 1L) {
+    rep_len(x, n)
+  } else {
+    stop(sprintf("Invalid length for '%s', expected 1 or %d",
+         name, n))
+  }
+}

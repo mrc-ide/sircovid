@@ -377,7 +377,7 @@ carehomes_parameters <- function(start_date, region,
   }
 
   severity <- carehomes_parameters_severity(severity, p_death_carehome)
-  strain_rel_severity <- mcstate:::recycle(
+  strain_rel_severity <- recycle(
                                  assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
   if (length(strain_transmission) > 1) {
@@ -418,16 +418,16 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- get_psi(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  strain_rel_gamma_A <- mcstate:::recycle(assert_relatives(strain_rel_gamma_A),
-                                          length(strain_transmission))
-  strain_rel_gamma_P <- mcstate:::recycle(assert_relatives(strain_rel_gamma_P),
-                                          length(strain_transmission))
+  strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
+                                length(strain_transmission))
+  strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
+                                length(strain_transmission))
   strain_rel_gamma_C_1 <-
-    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_1),
-                                       length(strain_transmission))
+    recycle(assert_relatives(strain_rel_gamma_C_1),
+            length(strain_transmission))
   strain_rel_gamma_C_2 <-
-    mcstate:::recycle(assert_relatives(strain_rel_gamma_C_2),
-                                       length(strain_transmission))
+    recycle(assert_relatives(strain_rel_gamma_C_2),
+            length(strain_transmission))
 
   progression <- progression %||%
                   carehomes_parameters_progression(strain_rel_gamma_A,
