@@ -1381,7 +1381,7 @@ dim(p_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
 dim(rate_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
 
 dim(cross_immunity) <- n_real_strains
-cross_immunity[] <- user(1)
+cross_immunity[] <- user()
 
 ## Total population
 initial(N_tot[]) <- 0

@@ -2017,3 +2017,125 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
   expect_true(all(y$R[, 1:2, , 450] == 0))
   expect_false(all(y$R[, 3:4, , 450] == 0))
 })
+
+
+test_that("cross_immunity parameter errors when expected", {
+  expect_error(
+    carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                         cross_immunity = 2)
+  )
+  expect_error(
+    carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                         cross_immunity = -2)
+  )
+  expect_error(
+    carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                         cross_immunity = c(1, 1))
+  )
+})
+
+test_that("complete cross_immunity means no Strain 3/4 infections", {
+  np <- 1L
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            cross_immunity = 1)
+  mod <- carehomes$new(p, 0, np)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  expect_true(all(y$cum_infections_per_strain[3:4, ] == 0))
+})
+
+test_that("some cross-immunity means less Strain 3 or 4 infections than none
+           and > 0", {
+  np <- 1L
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  ## no cross-immnunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            cross_immunity = 0)
+  mod <- carehomes$new(p, 0, np)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+  infect_no_cross <- y$cum_infections_per_strain[3:4, 85]
+
+  ## some cross-immunity
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            cross_immunity = 0.5)
+  mod <- carehomes$new(p, 0, np)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+  infect_some_cross <- y$cum_infections_per_strain[3:4, 85]
+
+  expect_rounded_lte(infect_some_cross, infect_no_cross)
+  expect_true(all(infect_some_cross > 0))
+  expect_true(all(infect_no_cross > 0))
+})
+
+
+test_that("cross-immunity can be separated by strain", {
+  seed <- 1
+  np <- 1L
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+
+  ## complete immunity from Strain 1 means Strain 3 empty (1 -> 2)
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(10, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            cross_immunity = c(1, 0))
+  mod <- carehomes$new(p, 0, np, seed = seed)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  expect_equal(y$cum_infections_per_strain[3, 85], 0)
+  expect_gt(y$cum_infections_per_strain[4, 85], 0)
+
+  ## complete immunity from Strain 2 means Strain 4 empty (2 -> 1)
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_rate = c(100, 0),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            cross_immunity = c(0, 1))
+  mod <- carehomes$new(p, 0, np, seed = seed)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  expect_equal(y$cum_infections_per_strain[4, 85], 0)
+  expect_gt(y$cum_infections_per_strain[3, 85], 0)
+})
