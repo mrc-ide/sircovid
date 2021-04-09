@@ -286,6 +286,7 @@ carehomes <- R6::R6Class(
      n_age_groups = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      n_groups = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      n_strains = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_vacc_classes = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_C = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      p_G_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_H_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),

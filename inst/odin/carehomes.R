@@ -940,9 +940,9 @@ initial(cum_admit_by_age[]) <- 0
 ## User defined parameters - default in parentheses:
 
 ## Vaccination parameters
+n_vacc_classes <- user()
 rel_susceptibility[, , ] <- user()
-dim(rel_susceptibility) <- user() # use length as provided by the user
-n_vacc_classes <- dim(rel_susceptibility, 3)
+dim(rel_susceptibility) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_sympt[, , ] <- user()
 dim(rel_p_sympt) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_hosp_if_sympt[, , ] <- user()
@@ -1393,7 +1393,7 @@ dim(cum_admit_by_age) <- n_groups
 
 ## Vectors handling the age specific heterogeneous transmission process
 dim(lambda) <- c(n_groups, n_real_strains)
-dim(lambda_susc) <- c(n_groups, n_strains, n_vacc_classes)
+dim(lambda_susc) <- c(n_groups, n_real_strains, n_vacc_classes)
 dim(s_ij) <- c(n_groups, n_groups, n_strains)
 dim(m) <- c(n_groups, n_groups)
 dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
