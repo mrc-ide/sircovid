@@ -1,3 +1,7 @@
+# sircovid 0.10.30
+
+* `rel_susceptibility` can now take array values for varying across age groups, vaccination classes, and pathogen strains.
+
 # sircovid 0.10.29
 
 * Multi-strain model now allows for 'super-infections', after recovering from strain 1 or 2, one can now be immediately infected with the 'other' strain. This can be turned on with `model_super_infection`.
