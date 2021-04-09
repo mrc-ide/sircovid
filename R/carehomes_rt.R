@@ -443,7 +443,8 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## Note the mean duration (in time steps) of a compartment for
   ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
   calculate_mean <- function(par, prob, gamma) {
-    aperm(aperm(par * prob, c(2, 1, 3, 4)) / pexp(gamma, dt), c(2, 1, 3, 4))
+    aperm(aperm(par * prob, c(2, 1, 3, 4)) /
+      stats::pexp(gamma, dt), c(2, 1, 3, 4))
   }
 
   mean_duration_I_A <- calculate_mean(pars$I_A_transmission,
@@ -618,7 +619,7 @@ wtmean_Rt <- function(rt, prob_strain) {
       stop(sprintf(
         "Expect elements of Rt to have dimensions: %d steps x %d strains x
         %d particles", nrow(reshape_prob_strain), ncol(reshape_prob_strain),
-        mcstate:::nlayer(reshape_prob_strain)))
+        nlayer(reshape_prob_strain)))
     }
     ## catch the case when strain_transmission is 0 so r is NaN
     x <- r * reshape_prob_strain
