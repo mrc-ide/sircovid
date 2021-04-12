@@ -25,8 +25,8 @@ test_that("Can calculate Rt", {
   expect_true(diff(range(res$Rt_general)) < 1e-7)
 
   ## Effective Rt lower than Rt
-  expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = -1e-7)
-  expect_vector_gt(res$Rt_general, res$eff_Rt_general, tol = -1e-7)
+  expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = 1e-7)
+  expect_vector_gt(res$Rt_general, res$eff_Rt_general, tol = 1e-7)
 
   ## General population effective Rt lower than total
   expect_vector_gte(res$eff_Rt_all, res$eff_Rt_general)
@@ -139,7 +139,7 @@ test_that("Can vary beta over time", {
   ## Check the Rt calculation (from eff_Rt) - compare the first test
   expect_true(length(unique(res$Rt_all)) > 1)
   expect_true(length(unique(res$Rt_general)) > 1)
-  expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = -1e-7)
+  expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = 1e-7)
   expect_vector_gte(res$Rt_general, res$eff_Rt_general)
 })
 

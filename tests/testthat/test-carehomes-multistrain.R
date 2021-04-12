@@ -1187,10 +1187,12 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for presymptomatics)
   ## added the 0.001 as seems to be rounding error issues
-  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
-  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
-  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
-  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
+  tol = 1e-3
+  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
 })
 
 
