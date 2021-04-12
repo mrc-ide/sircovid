@@ -18,18 +18,18 @@ test_that("Can calculate Rt", {
 
   ## Beta is returned, results correct length
   expect_identical(res$beta, rep(p$beta_step, length(steps)))
-  expect_true(all(lengths(res) == length(steps)))
+  expect_vector_equal(lengths(res), length(steps))
 
   ## Check the Rt calculation (from eff_Rt)
   expect_true(diff(range(res$Rt_all)) < 1e-7)
   expect_true(diff(range(res$Rt_general)) < 1e-7)
 
   ## Effective Rt lower than Rt
-  expect_true(all(res$Rt_all - res$eff_Rt_all > -1e-7))
-  expect_true(all(res$Rt_general - res$eff_Rt_general > -1e-7))
+  expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = -1e-7)
+  expect_vector_gt(res$Rt_general, res$eff_Rt_general, tol = -1e-7)
 
   ## General population effective Rt lower than total
-  expect_true(all(res$eff_Rt_all >= res$eff_Rt_general))
+  expect_vector_gte(res$eff_Rt_all, res$eff_Rt_general)
 
   expect_equal(names(res), names(res_all))
   for (nm in names(res)) {
@@ -139,8 +139,8 @@ test_that("Can vary beta over time", {
   ## Check the Rt calculation (from eff_Rt) - compare the first test
   expect_true(length(unique(res$Rt_all)) > 1)
   expect_true(length(unique(res$Rt_general)) > 1)
-  expect_true(all(res$Rt_all - res$eff_Rt_all > -1e-7))
-  expect_true(all(res$Rt_general >= res$eff_Rt_general))
+  expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = -1e-7)
+  expect_vector_gte(res$Rt_general, res$eff_Rt_general)
 })
 
 
@@ -250,21 +250,24 @@ test_that("Can interpolate Rt with step changes", {
   ## check the error is small
   tol <- 0.05
   # for interpolation every 2 days
-  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_2$eff_Rt_all) < tol))
-  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_2$eff_Rt_general) < tol))
-  expect_true(all(abs(rt_cmp$Rt_all - rt_int_2$Rt_all) < tol))
-  expect_true(all(abs(rt_cmp$Rt_general - rt_int_2$Rt_general) < tol))
+  expect_vector_equal(rt_cmp$eff_Rt_all, rt_int_2$eff_Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$eff_Rt_general, rt_int_2$eff_Rt_general,
+                      tol = tol)
+  expect_vector_equal(rt_cmp$Rt_all, rt_int_2$Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$Rt_general, rt_int_2$Rt_general, tol = tol)
   # for interpolation every 7 days
-  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_7$eff_Rt_all) < tol))
-  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_7$eff_Rt_general) < tol))
-  expect_true(all(abs(rt_cmp$Rt_all - rt_int_7$Rt_all) < tol))
-  expect_true(all(abs(rt_cmp$Rt_general - rt_int_7$Rt_general) < tol))
+  expect_vector_equal(rt_cmp$eff_Rt_all, rt_int_7$eff_Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$eff_Rt_general,
+                      rt_int_7$eff_Rt_general, tol = tol)
+  expect_vector_equal(rt_cmp$Rt_all, rt_int_7$Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$Rt_general, rt_int_7$Rt_general, tol = tol)
   # have to increase tolerance dramatically for every 14 days
   tol2 <- 0.5
-  expect_true(all(abs(rt_cmp$eff_Rt_all - rt_int_14$eff_Rt_all) < tol2))
-  expect_true(all(abs(rt_cmp$eff_Rt_general - rt_int_14$eff_Rt_general) < tol2))
-  expect_true(all(abs(rt_cmp$Rt_all - rt_int_14$Rt_all) < tol2))
-  expect_true(all(abs(rt_cmp$Rt_general - rt_int_14$Rt_general) < tol2))
+  expect_vector_equal(rt_cmp$eff_Rt_all, rt_int_14$eff_Rt_all, tol = tol2)
+  expect_vector_equal(rt_cmp$eff_Rt_general,
+                      rt_int_14$eff_Rt_general, tol = tol2)
+  expect_vector_equal(rt_cmp$Rt_all, rt_int_14$Rt_all, tol = tol2)
+  expect_vector_equal(rt_cmp$Rt_general, rt_int_14$Rt_general, tol = tol2)
 })
 
 
@@ -308,10 +311,10 @@ test_that("Parameters affect Rt as expected", {
     p[[par_name]] <- par_value_higher_Rt
     rt_higher <- carehomes_Rt(steps, y[, 1, ], p)
 
-    expect_true(all(rt_lower$Rt_all < rt_higher$Rt_all))
-    expect_true(all(rt_lower$eff_Rt_all < rt_higher$eff_Rt_all))
-    expect_true(all(rt_lower$Rt_general < rt_higher$Rt_general))
-    expect_true(all(rt_lower$eff_Rt_general < rt_higher$eff_Rt_general))
+    expect_vector_lt(rt_lower$Rt_all, rt_higher$Rt_all)
+    expect_vector_lt(rt_lower$eff_Rt_all, rt_higher$eff_Rt_all)
+    expect_vector_lt(rt_lower$Rt_general, rt_higher$Rt_general)
+    expect_vector_lt(rt_lower$eff_Rt_general, rt_higher$eff_Rt_general)
   }
 
   helper("I_A_transmission", 0, 1)

@@ -18,7 +18,7 @@ test_that("Can calculate IFR_t", {
   expect_equal(res_all, d$outputs$ifr_t_all)
 
   ## Results correct length
-  expect_true(all(lengths(res) == length(steps)))
+  expect_vector_equal(lengths(res), length(steps))
 
   expect_equal(names(res), names(res_all))
   for (nm in names(res)) {
