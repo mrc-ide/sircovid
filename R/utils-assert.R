@@ -78,7 +78,7 @@ assert_relatives <- function(x, name = deparse(substitute(x))) {
 
 
 assert_logical <- function(x, name = deparse(substitute(x))) {
-  if (!all(x %in% 0:1 | is.logical(x))) {
+  if (!(all(x %in% 0:1) || is.logical(x))) {
     stop(sprintf("All '%s' must be logical or in {0, 1}", name), call. = FALSE)
   }
 
