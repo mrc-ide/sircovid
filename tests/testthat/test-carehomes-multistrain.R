@@ -910,10 +910,12 @@ test_that("Can calculate Rt with a second less infectious variant", {
   rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be lower (or equal) for the two variant version
-  expect_rounded_lte(rt_1$Rt_all, rt_1_single_class$Rt_all)
-  expect_rounded_lte(rt_1$Rt_general, rt_1_single_class$Rt_general)
-  expect_rounded_lte(rt_all$Rt_all, rt_all_single_class$Rt_all)
-  expect_rounded_lte(rt_all$Rt_general, rt_all_single_class$Rt_general)
+  tol <- 1e-5
+  expect_vector_lte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_lte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_lte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_lte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
 })
 
 
@@ -975,10 +977,12 @@ test_that("Can calculate Rt with a second more infectious variant", {
   rt_all_single_class <- carehomes_Rt_trajectories(steps, S, p, R = R)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
-  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
-  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
-  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
+  tol <- 1e-5
+  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
 })
 
 
@@ -1043,10 +1047,12 @@ test_that("Can calculate Rt with a second less letal variant", {
   ## Rt should be higher (or equal) for the two variant version
   ## because less letal --> more people recover and they have longer
   ## duration of infection
-  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
-  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
-  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
-  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
+  tol <- 1e-5
+  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
 })
 
 
@@ -1111,10 +1117,12 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for asymptomatics)
   ## added the 0.001 as seems to be rounding error issues
-  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
-  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
-  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
-  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
+  tol <- 1e-3
+  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
 })
 
 
@@ -1179,10 +1187,12 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for presymptomatics)
   ## added the 0.001 as seems to be rounding error issues
-  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
-  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
-  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
-  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
+  tol <- 1e-3
+  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
 })
 
 
@@ -1247,10 +1257,12 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   ## Rt should be higher (or equal) for the two variant version
   ## because longer duration of infection (for I_C_1)
   ## added the 0.001 as seems to be rounding error issues
-  expect_rounded_gte(rt_1$Rt_all, rt_1_single_class$Rt_all)
-  expect_rounded_gte(rt_1$Rt_general, rt_1_single_class$Rt_general)
-  expect_rounded_gte(rt_all$Rt_all, rt_all_single_class$Rt_all)
-  expect_rounded_gte(rt_all$Rt_general, rt_all_single_class$Rt_general)
+  tol <- 1e-3
+  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
 })
 
 
@@ -1524,8 +1536,8 @@ test_that("Lower rate variant has higher Rt", {
                                         weight_Rt = TRUE)
 
   ## Rt should be higher (or equal) for the two variant version
-  expect_rounded_lte(rt_1_all$Rt_all, rt_15_all$Rt_all)
-  expect_rounded_lte(rt_1_all$Rt_general, rt_15_all$Rt_general)
+  expect_vector_lte(rt_1_all$Rt_all, rt_15_all$Rt_all)
+  expect_vector_lte(rt_1_all$Rt_general, rt_15_all$Rt_general)
 })
 
 
@@ -2091,7 +2103,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
     drop(mod$simulate(steps)))
   infect_some_cross <- y$cum_infections_per_strain[3:4, 85]
 
-  expect_rounded_lte(infect_some_cross, infect_no_cross)
+  expect_vector_lte(infect_some_cross, infect_no_cross)
   expect_true(all(infect_some_cross > 0))
   expect_true(all(infect_no_cross > 0))
 })

@@ -48,30 +48,30 @@ test_that("vaccine_schedule_future produces consistent schedule", {
   ## and they add up to the target daily_doses
   ## not exactly equal because of some rounding
   phase1 <- seq_len(mean_days_between_doses)
-  expect_true(all(abs(
-    colSums(n_to_vaccinate1[, phase1]) - daily_doses[phase1]) < 5))
-  expect_true(all(colSums(n_to_vaccinate2[, phase1]) == 0))
+  expect_vector_equal(
+    colSums(n_to_vaccinate1[, phase1]), daily_doses[phase1], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase1]), 0)
 
   ## during phase 2 only second doses are delivered
   ## as doses are constant over time
   ## and they add up to the target daily_doses
   ## not exactly equal because of some rounding
   phase2 <- mean_days_between_doses + seq_len(mean_days_between_doses)
-  expect_true(all(abs(
-    colSums(n_to_vaccinate2[, phase2]) - daily_doses[phase2]) < 5))
-  expect_true(all(colSums(n_to_vaccinate1[, phase2]) == 0))
+  expect_vector_equal(
+    colSums(n_to_vaccinate2[, phase2]), daily_doses[phase2], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase2]), 0)
 
   ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
   ## not exactly equal because of some rounding
-  expect_true(all(abs(
-      colSums(n_to_vaccinate1 + n_to_vaccinate2) - daily_doses) < 5))
+  expect_vector_equal(
+      colSums(n_to_vaccinate1 + n_to_vaccinate2), daily_doses, tol = 5)
 })
 
 
 test_that("vaccine_priority_proportion adds up to uptake", {
   uptake_by_age <- test_example_uptake()
   p <- vaccine_priority_proportion(uptake_by_age)
-  expect_true(all(signif(rowSums(p), 5) == signif(uptake_by_age, 5)))
+  expect_vector_equal(rowSums(p), uptake_by_age, digits = 5)
 })
 
 
@@ -91,7 +91,7 @@ test_that("vaccine_priority_population adds to correct population", {
   ## check that n to vaccinate adds up to uptake * population
   pop_by_age <- carehomes_parameters(1, region)$N_tot
 
-  expect_true(all(rowSums(n) - uptake_by_age * pop_by_age <= 2))
+  expect_vector_equal(rowSums(n), uptake_by_age * pop_by_age, tol = 2)
 })
 
 
@@ -139,7 +139,7 @@ test_that("Cope with decreasing vaccination schedule", {
 
   d <- t(apply(res$doses, 2:3, sum))
   ## Daily dose schedule is followed within rounding error:
-  expect_true(all(abs(rowSums(d) - daily_doses) < 10))
+  expect_vector_equal(rowSums(d), daily_doses, tol = 10)
   tmp <- rle(apply(d, 1, which.max))
   expect_equal(tmp$values, c(1:2, 1:2))
   ## Our second window is quite a bit longer than the first

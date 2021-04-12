@@ -314,7 +314,8 @@ test_that("Can add new betas", {
   j <- i / p_new$dt
 
   ## Unchanged until the first change point
-  expect_true(all(beta_new[seq(length(beta_base), j[[1]])] == last(beta_base)))
+  expect_vector_equal(beta_new[seq(length(beta_base), j[[1]])],
+                       last(beta_base))
 
   ## Our parameters are expanded as expected:
   v <- beta_new[j[c(1, 2, 2, 4, 4, 6)] + 1L]

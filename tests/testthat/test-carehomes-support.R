@@ -97,9 +97,10 @@ test_that("carehomes vaccination parameters", {
                c(19, 2,
                  (length(daily_doses) + vaccine_daily_doses_date[1]) * 4))
   ## daily doses are as expected
-  expect_true(all(abs(round(colSums(p$vaccine_dose_step[, 1, ])) -
-                        c(rep(0, vaccine_daily_doses_date[1] * 4),
-                          round(rep(daily_doses / 4, each = 4)))) < 2))
+  expect_vector_equal(colSums(p$vaccine_dose_step[, 1, ]),
+                      c(rep(0, vaccine_daily_doses_date[1] * 4),
+                        rep(daily_doses / 4, each = 4)),
+                      digits = 0, tol = 2)
   msg1 <-
     "rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt, rel_infectivity"
   msg2 <- "should have the same dimension"
@@ -211,11 +212,10 @@ test_that("carehomes_parameters returns a list of parameters", {
 test_that("can compute severity for carehomes model", {
   population <- sircovid_population("uk")
   severity <- carehomes_parameters_severity(NULL, 0.7)
-  expect_true(all(lengths(severity) == 19))
+  expect_vector_equal(lengths(severity), 19)
   expect_setequal(names(severity), names(sircovid_parameters_severity(NULL)))
 
-  expect_true(
-    all(severity$p_serocoversion == severity$p_serocoversion[[1]]))
+  expect_vector_equal(severity$p_serocoversion, severity$p_serocoversion[[1]])
   expect_equal(
     severity$p_G_D, rep(c(0, 0.7), c(18, 1)))
   expect_equal(
@@ -471,7 +471,7 @@ test_that("carehomes_compare combines likelihood correctly", {
 
   ## Extremely light testing, though this has already flushed out some
   ## issues
-  expect_true(all(lengths(ll_parts) == 6))
+  expect_vector_equal(lengths(ll_parts), 6)
   expect_equal(
     carehomes_compare(state, observed, pars),
     rowSums(do.call(cbind, ll_parts)))
@@ -500,7 +500,7 @@ test_that("carehomes_population preserves population", {
   expect_equal(sum(res), sum(population))
   expect_equal(res[18:19], c(120, 200))
   expect_equal(res[1:5], population[1:5])
-  expect_true(all(res[6:17] < population[6:17]))
+  expect_vector_lt(res[6:17], population[6:17])
 })
 
 

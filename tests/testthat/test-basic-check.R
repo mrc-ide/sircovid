@@ -7,7 +7,7 @@ test_that("N_tot stays constant", {
   mod$set_state(basic_initial(info, 1, p)$state)
   mod$set_index(info$index$N_tot)
   n_tot <- mod$simulate(seq(0, 400, by = 4))
-  expect_true(all(n_tot == sum(p$population)))
+  expect_vector_equal(n_tot, sum(p$population))
 })
 
 
@@ -31,7 +31,7 @@ test_that("everyone is infected when beta is very high", {
   mod$set_state(basic_initial(info, 1, p)$state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
-  expect_true(all(s[, , -1] == 0))
+  expect_vector_equal(s[, , -1], 0)
 })
 
 
@@ -61,11 +61,11 @@ test_that("No one is hospitalised if p_C is 0", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$E > 0))
-  expect_true(all(y$I_C == 0))
-  expect_true(all(y$I_hosp == 0))
-  expect_true(all(y$I_ICU == 0))
-  expect_true(all(y$R_hosp == 0))
-  expect_true(all(y$D == 0))
+  expect_vector_equal(y$I_C, 0)
+  expect_vector_equal(y$I_hosp, 0)
+  expect_vector_equal(y$I_ICU, 0)
+  expect_vector_equal(y$R_hosp, 0)
+  expect_vector_equal(y$D, 0)
 })
 
 
@@ -81,9 +81,9 @@ test_that("No one goes to ICU and no deaths if p_recov_hosp is 1", {
     mod$simulate(seq(0, 400, by = 4)))
 
   expect_true(any(y$I_hosp > 0))
-  expect_true(all(y$I_ICU == 0))
-  expect_true(all(y$R_hosp == 0))
-  expect_true(all(y$D == 0))
+  expect_vector_equal(y$I_ICU, 0)
+  expect_vector_equal(y$R_hosp, 0)
+  expect_vector_equal(y$D, 0)
 })
 
 
@@ -99,8 +99,8 @@ test_that("p_death_hosp = 1, p_recov_hosp = 0: no icu, no recovery", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_hosp > 0))
-  expect_true(all(y$I_ICU == 0))
-  expect_true(all(y$R_hosp == 0))
+  expect_vector_equal(y$I_ICU, 0)
+  expect_vector_equal(y$R_hosp, 0)
   expect_true(any(y$D > 0))
 })
 
@@ -116,7 +116,7 @@ test_that("if p_recov_ICU = 0, no-one recovers in hospital", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_hosp > 0))
-  expect_true(all(y$R_hosp == 0))
+  expect_vector_equal(y$R_hosp, 0)
 })
 
 
@@ -134,7 +134,7 @@ test_that("if gamma_E is Inf, E cases must progress in 1 timestep", {
   i <- seq_len(dim(y$E)[[4]] - 1)
   j <- i + 1L
   expect_true(any(y$E > 0))
-  expect_true(all(y$E[, 2, , j] == y$E[, 1, , i]))
+  expect_vector_equal(y$E[, 2, , j], y$E[, 1, , i])
 })
 
 
@@ -153,7 +153,7 @@ test_that("if gamma_A is Inf, I_A must progress in 1 timestep", {
   i <- seq_len(dim(y$I_A)[[4]] - 1)
   j <- i + 1L
   expect_true(any(y$I_A > 0))
-  expect_true(all(y$I_A[, 2, , j] == y$I_A[, 1, , i]))
+  expect_vector_equal(y$I_A[, 2, , j], y$I_A[, 1, , i])
 })
 
 
@@ -172,7 +172,7 @@ test_that("if gamma_C is Inf, I_C cases must progress in 1 timestep", {
   i <- seq_len(dim(y$I_C)[[4]] - 1)
   j <- i + 1L
   expect_true(any(y$I_C > 0))
-  expect_true(all(y$I_C[, 2, , j] == y$I_C[, 1, , i]))
+  expect_vector_equal(y$I_C[, 2, , j], y$I_C[, 1, , i])
 })
 
 
@@ -191,7 +191,7 @@ test_that("if gamma_hosp is Inf, I_hosp cases must progress in 1 timestep", {
   i <- seq_len(dim(y$I_hosp)[[4]] - 1)
   j <- i + 1L
   expect_true(any(y$I_hosp > 0))
-  expect_true(all(y$I_hosp[, 2, , j] == y$I_hosp[, 1, , i]))
+  expect_vector_equal(y$I_hosp[, 2, , j], y$I_hosp[, 1, , i])
 })
 
 
@@ -210,7 +210,7 @@ test_that("if gamma_ICU is Inf, I_ICU cases must progress in 1 timestep", {
   i <- seq_len(dim(y$I_ICU)[[4]] - 1)
   j <- i + 1L
   expect_true(any(y$I_ICU > 0))
-  expect_true(all(y$I_ICU[, 2, , j] == y$I_ICU[, 1, , i]))
+  expect_vector_equal(y$I_ICU[, 2, , j], y$I_ICU[, 1, , i])
 })
 
 
@@ -228,7 +228,7 @@ test_that("if gamma_rec is Inf, R_hosp cases must progress in 1 time-step", {
   i <- seq_len(dim(y$R_hosp)[[4]] - 1)
   j <- i + 1L
   expect_true(any(y$R_hosp > 0))
-  expect_true(all(y$R_hosp[, 2, , j] == y$R_hosp[, 1, , i]))
+  expect_vector_equal(y$R_hosp[, 2, , j], y$R_hosp[, 1, , i])
 })
 
 
@@ -244,7 +244,7 @@ test_that("if gamma_E is 0, E stay in progression stage 1", {
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$E[, 1, , ] > 0))
-  expect_true(all(y$E[, 2, , ] == 0))
+  expect_vector_equal(y$E[, 2, , ], 0)
 })
 
 
@@ -259,7 +259,7 @@ test_that("if gamma_A is 0, I_A stay in progression stage 1", {
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_A[, 1, , ] > 0))
-  expect_true(all(y$I_A[, 2, , ] == 0))
+  expect_vector_equal(y$I_A[, 2, , ], 0)
 })
 
 
@@ -274,7 +274,7 @@ test_that("if gamma_C is 0, I_C stay in progression stage 1", {
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_C[, 1, , ] > 0))
-  expect_true(all(y$I_C[, 2, , ] == 0))
+  expect_vector_equal(y$I_C[, 2, , ], 0)
 })
 
 
@@ -288,7 +288,7 @@ test_that("if gamma_hosp is 0, I_hosp stay in progression stage 1", {
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_hosp[, 1, , ] > 0))
-  expect_true(all(y$I_hosp[, 2, , ] == 0))
+  expect_vector_equal(y$I_hosp[, 2, , ], 0)
 })
 
 
@@ -302,7 +302,7 @@ test_that("if gamma_ICU is 0, I_ICU stay in progression stage 1", {
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_ICU[, 1, , ] > 0))
-  expect_true(all(y$I_ICU[, 2, , ] == 0))
+  expect_vector_equal(y$I_ICU[, 2, , ], 0)
 })
 
 
@@ -316,5 +316,5 @@ test_that("if gamma_ICU is 0, I_ICU stay in progression stage 1", {
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$R_hosp[, 1, , ] > 0))
-  expect_true(all(y$R_hosp[, 2, , ] == 0))
+  expect_vector_equal(y$R_hosp[, 2, , ], 0)
 })

@@ -113,5 +113,5 @@ test_that("can compute initial conditions", {
 
   remaining <- initial$state[-c(info$index$N_tot, info$index$S,
                                 info$index$I_A)]
-  expect_true(all(remaining == 0))
+  expect_vector_equal(remaining, 0)
 })

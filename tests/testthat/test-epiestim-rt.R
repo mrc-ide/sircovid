@@ -33,7 +33,7 @@ test_that("Can calculate EpiEstim Rt (I)", {
   ## the -1 because EpiEstim only start estimation at 2nd time step
   expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
   ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
+  expect_vector_lt(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)], 1)
   ## because of the priors with mean 1 we would expect EpiEstim Rt
   ## at the end to be higher than eff_Rt_all
   expect_true(
@@ -126,7 +126,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
   ## the -1 because EpiEstim only start estimation at 2nd time step
   expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
   ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
+  expect_vector_lt(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)], 1)
   ## because of the priors with mean 1 we would expect EpiEstim Rt
   ## at the end to be higher than eff_Rt_all
   expect_true(
@@ -279,7 +279,7 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   ## the -1 because EpiEstim only start estimation at 2nd time step
   expect_equal(dim(rt_EpiEstim$Rt_summary), c(4, length(steps) - 1))
   ## Rt at the end should be < 1
-  expect_true(all(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)] < 1))
+  expect_vector_lt(rt_EpiEstim$Rt_summary[, ncol(rt_EpiEstim$Rt_summary)], 1)
   ## because of the priors with mean 1 we would expect EpiEstim Rt
   ## at the end to be higher than eff_Rt_all
   expect_true(

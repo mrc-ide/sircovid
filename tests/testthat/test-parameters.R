@@ -130,14 +130,13 @@ test_that("can read the default severity file", {
     sircovid_parameters_severity(severity_default()),
     data)
 
-  expect_true(all(lengths(data) == 17))
+  expect_vector_equal(lengths(data), 17)
   expect_setequal(
     names(data),
     c("p_star", "p_C", "p_G_D", "p_H_D",
       "p_ICU_D", "p_W_D", "p_ICU",
       "p_sero_pos", "p_H"))
-  expect_true(
-    all(data$p_serocoversion == data$p_serocoversion[[1]]))
+  expect_vector_equal(data$p_serocoversion, data$p_serocoversion[[1]])
   expect_equal(
     data$p_G_D, rep(0, 17))
   expect_equal(
