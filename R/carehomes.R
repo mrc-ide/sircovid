@@ -425,6 +425,7 @@ carehomes_parameters <- function(start_date, region,
   severity$p_star_step <- max(severity$p_star)
 
   severity$p_sero_pos_1 <- severity$p_sero_pos
+  severity$p_sero_pos_2 <- severity$p_sero_pos
   severity$p_sero_pos <- NULL
 
   strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
@@ -888,10 +889,12 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
   index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
   index_T_sero_pre_1 <- index[["T_sero_pre_1"]][[1L]] + seed_age_band - 1L
+  index_T_sero_pre_2 <- index[["T_sero_pre_2"]][[1L]] + seed_age_band - 1L
   index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot2 <- index[["N_tot2"]][[1L]]
   index_N_tot3 <- index[["N_tot3"]][[1L]]
+  index_N_tot4 <- index[["N_tot4"]][[1L]]
 
   index_S <- index[["S"]]
   index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
@@ -908,11 +911,13 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_I] <- initial_I
   state[index_I_weighted] <- pars$I_A_transmission * initial_I
   state[index_T_sero_pre_1] <- initial_I
+  state[index_T_sero_pre_2] <- initial_I
   state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot2] <- sum(pars$N_tot)
   state[index_N_tot3] <- sum(pars$N_tot)
+  state[index_N_tot4] <- sum(pars$N_tot)
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
 
   list(state = state,
@@ -1127,6 +1132,8 @@ carehomes_parameters_progression <- function(rel_gamma_A = 1,
        k_W_D = 2,
        k_sero_pre_1 = 2,
        k_sero_pos_1 = 2,
+       k_sero_pre_2 = 2,
+       k_sero_pos_2 = 2,
        k_PCR_pre = 2,
        k_PCR_pos = 2,
 
@@ -1146,6 +1153,8 @@ carehomes_parameters_progression <- function(rel_gamma_A = 1,
        gamma_W_D = 2 / 5,
        gamma_sero_pre_1 = 1 / 10,
        gamma_sero_pos_1 = 1 / 25,
+       gamma_sero_pre_2 = 1 / 10,
+       gamma_sero_pos_2 = 1 / 25,
        gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
        gamma_PCR_pos = 1 / 5

@@ -103,6 +103,9 @@ update(W_D_conf[, , , ]) <- new_W_D_conf[i, j, k, l]
 update(T_sero_pre_1[, , , ]) <- new_T_sero_pre_1[i, j, k, l]
 update(T_sero_pos_1[, , , ]) <- new_T_sero_pos_1[i, j, k, l]
 update(T_sero_neg_1[, , ]) <- new_T_sero_neg_1[i, j, k]
+update(T_sero_pre_2[, , , ]) <- new_T_sero_pre_2[i, j, k, l]
+update(T_sero_pos_2[, , , ]) <- new_T_sero_pos_2[i, j, k, l]
+update(T_sero_neg_2[, , ]) <- new_T_sero_neg_2[i, j, k]
 update(R[, , ]) <- new_R[i, j, k]
 update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
 update(D_non_hosp[]) <- D_non_hosp[i] + delta_D_non_hosp[i]
@@ -180,6 +183,8 @@ p_W_R_progress <- 1 - exp(-gamma_W_R * dt)
 p_W_D_progress <- 1 - exp(-gamma_W_D * dt)
 p_T_sero_pre_1_progress <- 1 - exp(-gamma_sero_pre_1 * dt)
 p_T_sero_pos_1_progress <- 1 - exp(-gamma_sero_pos_1 * dt)
+p_T_sero_pre_2_progress <- 1 - exp(-gamma_sero_pre_2 * dt)
+p_T_sero_pos_2_progress <- 1 - exp(-gamma_sero_pos_2 * dt)
 p_test <- 1 - exp(-gamma_U * dt)
 p_T_PCR_pre_progress <- 1 - exp(-gamma_PCR_pre * dt)
 p_T_PCR_pos_progress <- 1 - exp(-gamma_PCR_pos * dt)
@@ -446,6 +451,10 @@ n_T_sero_pre_1_progress[, , , ] <-
   rbinom(T_sero_pre_1[i, j, k, l], p_T_sero_pre_1_progress)
 n_T_sero_pos_1_progress[, , , ] <-
   rbinom(T_sero_pos_1[i, j, k, l], p_T_sero_pos_1_progress)
+n_T_sero_pre_2_progress[, , , ] <-
+  rbinom(T_sero_pre_2[i, j, k, l], p_T_sero_pre_2_progress)
+n_T_sero_pos_2_progress[, , , ] <-
+  rbinom(T_sero_pos_2[i, j, k, l], p_T_sero_pos_2_progress)
 n_T_PCR_pre_progress[, , , ] <-
   rbinom(T_PCR_pre[i, j, k, l], p_T_PCR_pre_progress)
 n_T_PCR_pos_progress[, , , ] <-
@@ -777,6 +786,7 @@ n_com_to_T_sero_pre[, , ] <- n_EE[i, j, k_E, k] +
     (if (k == 1) n_EE_next_vacc_class[i, j, k_E, n_vacc_classes] else
       n_EE_next_vacc_class[i, j, k_E, k - 1])
 
+## Calculate for sero flow 1
 new_T_sero_pre_1[, , , ] <- T_sero_pre_1[i, j, k, l] -
   n_T_sero_pre_1_progress[i, j, k, l] +
   (if (k == 1) n_com_to_T_sero_pre[i, j, l] else
@@ -797,6 +807,30 @@ new_T_sero_neg_1[, , ] <- T_sero_neg_1[i, j, k] +
   n_T_sero_pre_1_progress[i, j, k_sero_pre_1, k] -
   n_T_sero_pre_1_to_T_sero_pos_1[i, j, k] +
   n_T_sero_pos_1_progress[i, j, k_sero_pos_1, k]
+
+
+## Calculate for sero flow 2
+new_T_sero_pre_2[, , , ] <- T_sero_pre_2[i, j, k, l] -
+  n_T_sero_pre_2_progress[i, j, k, l] +
+  (if (k == 1) n_com_to_T_sero_pre[i, j, l] else
+    n_T_sero_pre_2_progress[i, j, k - 1, l])
+
+
+## Split the seroconversion flow between people who are going to
+## seroconvert and people who are not
+n_T_sero_pre_2_to_T_sero_pos_2[, , ] <-
+  rbinom(n_T_sero_pre_2_progress[i, j, k_sero_pre_2, k], p_sero_pos_2[i])
+
+new_T_sero_pos_2[, , , ] <- T_sero_pos_2[i, j, k, l] -
+  n_T_sero_pos_2_progress[i, j, k, l] +
+  (if (k == 1)  n_T_sero_pre_2_to_T_sero_pos_2[i, j, l] else
+    n_T_sero_pos_2_progress[i, j, k - 1, l])
+
+new_T_sero_neg_2[, , ] <- T_sero_neg_2[i, j, k] +
+  n_T_sero_pre_2_progress[i, j, k_sero_pre_2, k] -
+  n_T_sero_pre_2_to_T_sero_pos_2[i, j, k] +
+  n_T_sero_pos_2_progress[i, j, k_sero_pos_2, k]
+
 
 ## Work out the total number of recovery
 new_R[, , ] <- R[i, j, k] -
@@ -891,6 +925,9 @@ initial(W_D_conf[, , , ]) <- 0
 initial(T_sero_pre_1[, , , ]) <- 0
 initial(T_sero_pos_1[, , , ]) <- 0
 initial(T_sero_neg_1[, , ]) <- 0
+initial(T_sero_pre_2[, , , ]) <- 0
+initial(T_sero_pos_2[, , , ]) <- 0
+initial(T_sero_neg_2[, , ]) <- 0
 initial(R[, , ]) <- 0
 initial(D_hosp[]) <- 0
 initial(D_non_hosp[]) <- 0
@@ -1027,6 +1064,15 @@ p_sero_pos_1[] <- user()
 ## Parameters of the T_sero_pos_1 classes
 k_sero_pos_1 <- user()
 gamma_sero_pos_1 <- user(0.1)
+
+## Parameters of the T_sero_pre_2 classes
+k_sero_pre_2 <- user()
+gamma_sero_pre_2 <- user(0.1)
+p_sero_pos_2[] <- user()
+
+## Parameters of the T_sero_pos_2 classes
+k_sero_pos_2 <- user()
+gamma_sero_pos_2 <- user(0.1)
 
 ## Parameters relating to testing
 gamma_U <- user(0.1)
@@ -1250,6 +1296,24 @@ dim(n_T_sero_pre_1_to_T_sero_pos_1) <- c(n_groups, n_strains, n_vacc_classes)
 dim(T_sero_neg_1) <- c(n_groups, n_strains, n_vacc_classes)
 dim(new_T_sero_neg_1) <- c(n_groups, n_strains, n_vacc_classes)
 
+## Vectors handling the T_sero_pre_2 class and seroconversion
+dim(T_sero_pre_2) <- c(n_groups, n_strains, k_sero_pre_2, n_vacc_classes)
+dim(new_T_sero_pre_2) <- c(n_groups, n_strains, k_sero_pre_2, n_vacc_classes)
+dim(n_T_sero_pre_2_progress) <-
+  c(n_groups, n_strains, k_sero_pre_2, n_vacc_classes)
+dim(p_sero_pos_2) <- n_groups
+
+## Vectors handling the T_sero_pos_2 class
+dim(T_sero_pos_2) <- c(n_groups, n_strains, k_sero_pos_2, n_vacc_classes)
+dim(n_T_sero_pos_2_progress) <-
+  c(n_groups, n_strains, k_sero_pos_2, n_vacc_classes)
+dim(new_T_sero_pos_2) <- c(n_groups, n_strains, k_sero_pos_2, n_vacc_classes)
+dim(n_T_sero_pre_2_to_T_sero_pos_2) <- c(n_groups, n_strains, n_vacc_classes)
+
+## Vectors handling the T_sero_neg_2 class
+dim(T_sero_neg_2) <- c(n_groups, n_strains, n_vacc_classes)
+dim(new_T_sero_neg_2) <- c(n_groups, n_strains, n_vacc_classes)
+
 ## Vectors handling the D_hosp class
 dim(D_hosp) <- n_groups
 dim(delta_D_hosp) <- n_groups
@@ -1398,6 +1462,10 @@ initial(N_tot2) <- 0
 update(N_tot2) <- sum(S) + sum(T_sero_pre_1) +
   sum(T_sero_pos_1) + sum(T_sero_neg_1) + sum(E)
 
+initial(N_tot4) <- 0
+update(N_tot4) <- sum(S) + sum(T_sero_pre_2) +
+  sum(T_sero_pos_2) + sum(T_sero_neg_2) + sum(E)
+
 ## Total population calculated with PCR flow
 initial(N_tot3) <- 0
 update(N_tot3) <- sum(S) + sum(T_PCR_pre) + sum(T_PCR_pos) + sum(T_PCR_neg)
@@ -1463,6 +1531,9 @@ update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
 ##
 initial(sero_pos_1) <- 0
 update(sero_pos_1) <- sum(new_T_sero_pos_1[4:13, , , ])
+
+initial(sero_pos_2) <- 0
+update(sero_pos_2) <- sum(new_T_sero_pos_2[4:13, , , ])
 
 initial(cum_sympt_cases) <- 0
 new_sympt_cases <- sum(n_EI_P) + sum(n_EI_P_next_vacc_class)

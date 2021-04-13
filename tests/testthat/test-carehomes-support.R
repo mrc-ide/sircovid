@@ -6,13 +6,12 @@ test_that("carehomes progression parameters", {
     names(p),
     c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
-      "k_W_R", "k_sero_pre_1", "k_sero_pos_1",
-      "k_PCR_pos", "k_PCR_pre", "gamma_E",
-      "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D", "gamma_H_D",
-      "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
-      "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos_1",
-      "gamma_sero_pre_1", "gamma_U", "gamma_PCR_pos",
-      "gamma_PCR_pre"))
+      "k_W_R", "k_sero_pre_1", "k_sero_pos_1", "k_sero_pre_2", "k_sero_pos_2",
+      "k_PCR_pos", "k_PCR_pre", "gamma_E", "gamma_A", "gamma_P", "gamma_C_1",
+      "gamma_C_2", "gamma_G_D", "gamma_H_D", "gamma_H_R", "gamma_ICU_D",
+      "gamma_ICU_W_R", "gamma_ICU_W_D", "gamma_ICU_pre", "gamma_W_D",
+      "gamma_W_R", "gamma_sero_pos_1", "gamma_sero_pre_1", "gamma_sero_pos_2",
+      "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos", "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
@@ -195,7 +194,8 @@ test_that("carehomes_parameters returns a list of parameters", {
       "p_ICU_D_step", "psi_H_D", "p_H_D_step",
       "psi_W_D", "p_W_D_step", "psi_H",
       "p_H_step", "psi_G_D", "p_G_D_step",
-      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step", "p_sero_pos_1",
+      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
+      "p_sero_pos_1", "p_sero_pos_2",
       "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
       "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
       "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",
@@ -217,7 +217,7 @@ test_that("can compute severity for carehomes model", {
   expect_vector_equal(lengths(severity), 19)
   expect_setequal(names(severity), names(sircovid_parameters_severity(NULL)))
 
-  expect_vector_equal(severity$p_serocoversion, severity$p_serocoversion[[1]])
+  expect_vector_equal(severity$p_sero_pos, severity$p_sero_pos[[1]])
   expect_equal(
     severity$p_G_D, rep(c(0, 0.7), c(18, 1)))
   expect_equal(
@@ -313,6 +313,7 @@ test_that("Can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
 
+  expect_equal(initial_y$N_tot4, sum(p$N_tot))
   expect_equal(initial_y$N_tot3, sum(p$N_tot))
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
@@ -325,18 +326,20 @@ test_that("Can compute initial conditions", {
                append(rep(0, 18), p$I_A_transmission * 10, after = 3))
   expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
+  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
+               append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
-  ## 46 here, derived from;
+  ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 2 (N_tot2 + N_tot3)
+  ## * 3 (N_tot2 + N_tot3 + N_tot4)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre_1[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 46)
+  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 48)
 })
 
 
@@ -354,6 +357,7 @@ test_that("Can control the seeding", {
 
   initial_y <- mod$transform_variables(initial$state)
 
+  expect_equal(initial_y$N_tot4, sum(p$N_tot))
   expect_equal(initial_y$N_tot3, sum(p$N_tot))
   expect_equal(initial_y$N_tot2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
@@ -364,18 +368,20 @@ test_that("Can control the seeding", {
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
+  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
+               append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$react_pos, 50)
 
-  ## 46 here, derived from;
+  ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 2 (N_tot2 + N_tot3)
+  ## * 3 (N_tot2 + N_tot3 + Ntot4)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre_1[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 46)
+  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 48)
 })
 
 
