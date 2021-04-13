@@ -1174,7 +1174,17 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-carehomes_parameters_observation <- function(exp_noise) {
+##' Carehomes observation parameters
+##'
+##' @title Carehomes observation parameters
+##'
+##' @return A list of parameter values
+##'
+##' @param exp_noise Rate parameter for the exponentially-distributed noise used
+##'   in the likelihood calculation. Typically a large value so noise is small.
+##'
+##' @export
+carehomes_parameters_observation <- function(exp_noise = 1e6) {
   list(
     ## People currently in ICU
     phi_ICU = 1,
