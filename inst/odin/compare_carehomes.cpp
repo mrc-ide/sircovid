@@ -89,7 +89,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_admitted = odin(admit_conf_inc);
   const real_t model_diagnoses = odin(new_conf_inc);
   const real_t model_all_admission = model_admitted + model_diagnoses;
-  const real_t model_sero_pos = odin(sero_pos);
+  const real_t model_sero_pos_1 = odin(sero_pos_1);
   const real_t model_sympt_cases = odin(sympt_cases_inc);
   const real_t model_sympt_cases_over25 = odin(sympt_cases_over25_inc);
   const real_t model_sympt_cases_non_variant_over25 =
@@ -131,10 +131,10 @@ typename T::real_t compare(const typename T::real_t * state,
 
   // serology
   const real_t N_tot_15_64 = odin(N_tot_15_64);
-  const real_t model_sero_pos_capped = std::min(model_sero_pos, N_tot_15_64);
+  const real_t model_sero_pos_1_capped = std::min(model_sero_pos_1, N_tot_15_64);
   const real_t model_sero_prob_pos =
-    test_prob_pos(model_sero_pos_capped,
-                  N_tot_15_64 - model_sero_pos_capped,
+    test_prob_pos(model_sero_pos_1_capped,
+                  N_tot_15_64 - model_sero_pos_1_capped,
                   odin(sero_sensitivity),
                   odin(sero_specificity),
                   exp_noise,

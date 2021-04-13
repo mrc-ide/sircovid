@@ -6,11 +6,12 @@ test_that("carehomes progression parameters", {
     names(p),
     c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
-      "k_W_R", "k_sero_pre", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
+      "k_W_R", "k_sero_pre_1", "k_sero_pos_1",
+      "k_PCR_pos", "k_PCR_pre", "gamma_E",
       "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D", "gamma_H_D",
       "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
-      "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
-      "gamma_sero_pre", "gamma_U", "gamma_PCR_pos",
+      "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos_1",
+      "gamma_sero_pre_1", "gamma_U", "gamma_PCR_pos",
       "gamma_PCR_pre"))
 
   ## TODO: Lilith; you had said that there were some constraints
@@ -171,6 +172,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_identical(p[names(shared)], shared)
 
   severity <- scale_severity(carehomes_parameters_severity(NULL, 0.7), 1)
+  severity$p_sero_pos <- NULL
   expect_identical(p[names(severity)], severity)
 
   observation <- carehomes_parameters_observation(1e6)
@@ -193,7 +195,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "p_ICU_D_step", "psi_H_D", "p_H_D_step",
       "psi_W_D", "p_W_D_step", "psi_H",
       "p_H_step", "psi_G_D", "p_G_D_step",
-      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
+      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step", "p_sero_pos_1",
       "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
       "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
       "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",
@@ -259,7 +261,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
     names(index$run),
     c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
-      "sero_pos", "sympt_cases_inc", "sympt_cases_over25_inc",
+      "sero_pos_1", "sympt_cases_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["icu"]],
@@ -276,8 +278,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "admit_conf_inc"))
   expect_equal(index$run[["diagnoses_inc"]],
                which(names(info$index) == "new_conf_inc"))
-  expect_equal(index$run[["sero_pos"]],
-               which(names(info$index) == "sero_pos"))
+  expect_equal(index$run[["sero_pos_1"]],
+               which(names(info$index) == "sero_pos_1"))
   expect_equal(index$run[["sympt_cases_inc"]],
                which(names(info$index) == "sympt_cases_inc"))
   expect_equal(index$run[["sympt_cases_over25_inc"]],
@@ -321,7 +323,7 @@ test_that("Can compute initial conditions", {
                append(rep(0, 18), 10, after = 3))
   expect_equal(drop(initial_y$I_weighted),
                append(rep(0, 18), p$I_A_transmission * 10, after = 3))
-  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
@@ -333,7 +335,7 @@ test_that("Can compute initial conditions", {
   ## * 1 (react_pos)
   ## * 2 (N_tot2 + N_tot3)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
+  ## * 2 (T_sero_pre_1[4] + T_PCR_pos[4])
   expect_equal(sum(initial$state != 0), 46)
 })
 
@@ -360,7 +362,7 @@ test_that("Can control the seeding", {
                p$N_tot)
   expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
@@ -372,7 +374,7 @@ test_that("Can control the seeding", {
   ## * 1 (react_pos)
   ## * 2 (N_tot2 + N_tot3)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
+  ## * 2 (T_sero_pre_1[4] + T_PCR_pos[4])
   expect_equal(sum(initial$state != 0), 46)
 })
 
@@ -412,7 +414,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp_inc = 3:8,
     admitted_inc = 50:55,
     diagnoses_inc = 60:65,
-    sero_pos = 4:9,
+    sero_pos_1 = 4:9,
     sympt_cases_inc = 100:105,
     sympt_cases_over25_inc = 80:85,
     sympt_cases_non_variant_over25_inc = 60:65,

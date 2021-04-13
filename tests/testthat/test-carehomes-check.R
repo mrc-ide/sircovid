@@ -118,7 +118,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   info <- mod$info()
   y <- carehomes_initial(info, 1, p)$state
   y[info$index$I_A] <- 0
-  y[info$index$T_sero_pre] <- 0
+  y[info$index$T_sero_pre_1] <- 0
   y[info$index$T_PCR_pos] <- 0
 
   mod$set_state(y)
@@ -392,11 +392,11 @@ test_that("forcing hospital route results in correct path", {
 })
 
 
-test_that("No one seroconverts if p_sero_pos is 0", {
+test_that("No one seroconverts if p_sero_pos_1 is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_sero_pos[] <- 0
+  p$p_sero_pos_1[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -404,20 +404,20 @@ test_that("No one seroconverts if p_sero_pos is 0", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(any(y$T_sero_neg > 0))
-  expect_true(all(y$T_sero_pos == 0))
+  expect_true(any(y$T_sero_neg_1 > 0))
+  expect_true(all(y$T_sero_pos_1 == 0))
 })
 
 
 test_that("No one does not seroconvert and no one seroreverts
-          if p_sero_pos is 1 and gamma_sero_pos is 0", {
+          if p_sero_pos_1 is 1 and gamma_sero_pos_1 is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
 
-  p$p_sero_pos[] <- 1
-  ## set gamma_sero_pos to 0 so no-one seroreverts
-  p$gamma_sero_pos <- 0
+  p$p_sero_pos_1[] <- 1
+  ## set gamma_sero_pos_1 to 0 so no-one seroreverts
+  p$gamma_sero_pos_1 <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -425,8 +425,8 @@ test_that("No one does not seroconvert and no one seroreverts
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$T_sero_neg == 0))
-  expect_true(any(y$T_sero_pos > 0))
+  expect_true(all(y$T_sero_neg_1 == 0))
+  expect_true(any(y$T_sero_pos_1 > 0))
 })
 
 
@@ -491,8 +491,8 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_G_D", "k_G_D", "G_D", FALSE)
   helper("gamma_W_R_step", "k_W_R", "W_R", TRUE)
   helper("gamma_W_D_step", "k_W_D", "W_D", TRUE)
-  helper("gamma_sero_pre", "k_sero_pre", "T_sero_pre", FALSE)
-  helper("gamma_sero_pos", "k_sero_pos", "T_sero_pos", FALSE)
+  helper("gamma_sero_pre_1", "k_sero_pre_1", "T_sero_pre_1", FALSE)
+  helper("gamma_sero_pos_1", "k_sero_pos_1", "T_sero_pos_1", FALSE)
   helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "k_PCR_pos", "T_PCR_pos", FALSE)
 })
@@ -568,8 +568,8 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_G_D", "k_G_D", "G_D", FALSE)
   helper("gamma_W_R_step", "k_W_R", "W_R", TRUE)
   helper("gamma_W_D_step", "k_W_D", "W_D", TRUE)
-  helper("gamma_sero_pre", "k_sero_pre", "T_sero_pre", FALSE)
-  helper("gamma_sero_pos", "k_sero_pos", "T_sero_pos", FALSE)
+  helper("gamma_sero_pre_1", "k_sero_pre_1", "T_sero_pre_1", FALSE)
+  helper("gamma_sero_pos_1", "k_sero_pos_1", "T_sero_pos_1", FALSE)
   helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "k_PCR_pos", "T_PCR_pos", FALSE)
 })
@@ -766,7 +766,7 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_carehomes_tot + y$D_comm_tot))
 
   # check the positivity sums
-  expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
+  expect_true(all(y$sero_pos_1 == apply(y$T_sero_pos_1[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })
 

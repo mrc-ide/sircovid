@@ -519,7 +519,7 @@ test_that("different strains are equivalent", {
   i <- c(2, 1, 4, 3)
   y$I_A <- y$I_A[, i, , , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
+  y$T_sero_pre_1 <- y$T_sero_pre_1[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
 
@@ -531,7 +531,7 @@ test_that("different strains are equivalent", {
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
-                 sero_pos = index[["sero_pos"]],
+                 sero_pos_1 = index[["sero_pos_1"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                  react_pos = index[["react_pos"]],
@@ -563,7 +563,7 @@ test_that("Swapping strains gives identical results with different index", {
   i <- c(2, 1, 4, 3)
   y$I_A <- y$I_A[, i, , , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
+  y$T_sero_pre_1 <- y$T_sero_pre_1[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
@@ -592,11 +592,12 @@ test_that("Swapping strains gives identical results with different index", {
   ## move it out the way:
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
-  for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
+  for (nm in c("T_sero_neg_1", "R", "T_PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
-          "T_sero_pre", "T_sero_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
+          "T_sero_pre_1", "T_sero_pos_1",
+          "G_D", "ICU_pre_unconf", "ICU_pre_conf",
           "H_R_unconf", "H_R_conf", "H_D_unconf",
           "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf",
           "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf",

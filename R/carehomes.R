@@ -424,6 +424,9 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- get_psi(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
+  severity$p_sero_pos_1 <- severity$p_sero_pos
+  severity$p_sero_pos <- NULL
+
   strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
                                 length(strain_transmission))
   strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
@@ -561,7 +564,7 @@ carehomes_index <- function(info) {
                  deaths_hosp_inc = index[["D_hosp_inc"]],
                  admitted_inc = index[["admit_conf_inc"]],
                  diagnoses_inc = index[["new_conf_inc"]],
-                 sero_pos = index[["sero_pos"]],
+                 sero_pos_1 = index[["sero_pos_1"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                  sympt_cases_non_variant_over25 =
@@ -576,7 +579,7 @@ carehomes_index <- function(info) {
   index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
                             "deaths_comm_inc", "deaths_hosp_inc",
                             "admitted_inc", "diagnoses_inc",
-                            "sero_pos", "sympt_cases_inc",
+                            "sero_pos_1", "sympt_cases_inc",
                             "sympt_cases_over25_inc",
                             "sympt_cases_non_variant_over25_inc",
                             "react_pos")]
@@ -665,7 +668,7 @@ carehomes_compare <- function(state, observed, pars) {
   model_admitted <- state["admitted_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
-  model_sero_pos <- state["sero_pos", ]
+  model_sero_pos_1 <- state["sero_pos_1", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
   model_sympt_cases_non_variant_over25 <-
@@ -702,11 +705,12 @@ carehomes_compare <- function(state, observed, pars) {
                                         pars$exp_noise)
 
   ## serology
-  ## It is possible that model_sero_pos > pars$N_tot_15_64, so we cap it to
+  ## It is possible that model_sero_pos_1 > pars$N_tot_15_64, so we cap it to
   ## avoid probabilities > 1 here
-  model_sero_pos_capped <- pmin(model_sero_pos, pars$N_tot_15_64)
-  model_sero_prob_pos <- test_prob_pos(model_sero_pos_capped,
-                                       pars$N_tot_15_64 - model_sero_pos_capped,
+  model_sero_pos_1_capped <- pmin(model_sero_pos_1, pars$N_tot_15_64)
+  model_sero_prob_pos <- test_prob_pos(model_sero_pos_1_capped,
+                                       pars$N_tot_15_64 -
+                                         model_sero_pos_1_capped,
                                        pars$sero_sensitivity,
                                        pars$sero_specificity,
                                        pars$exp_noise)
@@ -883,7 +887,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   seed_age_band <- 4L
   index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
   index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
-  index_T_sero_pre <- index[["T_sero_pre"]][[1L]] + seed_age_band - 1L
+  index_T_sero_pre_1 <- index[["T_sero_pre_1"]][[1L]] + seed_age_band - 1L
   index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot2 <- index[["N_tot2"]][[1L]]
@@ -903,7 +907,7 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
   state[index_I_weighted] <- pars$I_A_transmission * initial_I
-  state[index_T_sero_pre] <- initial_I
+  state[index_T_sero_pre_1] <- initial_I
   state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
@@ -1121,8 +1125,8 @@ carehomes_parameters_progression <- function(rel_gamma_A = 1,
        k_ICU_pre = 2,
        k_W_R = 2,
        k_W_D = 2,
-       k_sero_pre = 2,
-       k_sero_pos = 2,
+       k_sero_pre_1 = 2,
+       k_sero_pos_1 = 2,
        k_PCR_pre = 2,
        k_PCR_pos = 2,
 
@@ -1140,8 +1144,8 @@ carehomes_parameters_progression <- function(rel_gamma_A = 1,
        gamma_ICU_pre = 2,
        gamma_W_R = 2 / 5,
        gamma_W_D = 2 / 5,
-       gamma_sero_pre = 1 / 10,
-       gamma_sero_pos = 1 / 25,
+       gamma_sero_pre_1 = 1 / 10,
+       gamma_sero_pos_1 = 1 / 25,
        gamma_U = 3 / 10,
        gamma_PCR_pre = 2 / 3,
        gamma_PCR_pos = 1 / 5
