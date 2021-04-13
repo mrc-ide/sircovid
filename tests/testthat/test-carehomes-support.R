@@ -261,7 +261,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
     names(index$run),
     c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
-      "sero_pos_1", "sympt_cases_inc", "sympt_cases_over25_inc",
+      "sero_pos_1", "sero_pos_2", "sympt_cases_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["icu"]],
@@ -280,6 +280,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "new_conf_inc"))
   expect_equal(index$run[["sero_pos_1"]],
                which(names(info$index) == "sero_pos_1"))
+  expect_equal(index$run[["sero_pos_2"]],
+               which(names(info$index) == "sero_pos_2"))
   expect_equal(index$run[["sympt_cases_inc"]],
                which(names(info$index) == "sympt_cases_inc"))
   expect_equal(index$run[["sympt_cases_over25_inc"]],
@@ -421,6 +423,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     admitted_inc = 50:55,
     diagnoses_inc = 60:65,
     sero_pos_1 = 4:9,
+    sero_pos_2 = 14:19,
     sympt_cases_inc = 100:105,
     sympt_cases_over25_inc = 80:85,
     sympt_cases_non_variant_over25_inc = 60:65,
@@ -437,8 +440,10 @@ test_that("carehomes_compare combines likelihood correctly", {
     admitted = 53,
     diagnoses = 63,
     all_admission = 116,
-    npos_15_64 = 43,
-    ntot_15_64 = 83,
+    sero_pos_15_64_1 = 43,
+    sero_tot_15_64_1 = 83,
+    sero_pos_15_64_2 = 58,
+    sero_tot_15_64_2 = 98,
     pillar2_pos = 35,
     pillar2_tot = 600,
     pillar2_cases = 35,
@@ -463,16 +468,17 @@ test_that("carehomes_compare combines likelihood correctly", {
 
   ## This function is more complicated to test than the basic model
   ## because it's not a simple sum
-  nms_sero <- c("npos_15_64", "ntot_15_64")
+  nms_sero_1 <- c("sero_pos_15_64_1", "sero_tot_15_64_1")
+  nms_sero_2 <- c("sero_pos_15_64_2", "sero_tot_15_64_2")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   parts <- c(as.list(setdiff(names(observed),
-                             c(nms_sero, nms_pillar2,
+                             c(nms_sero_1, nms_sero_2, nms_pillar2,
                                nms_pillar2_over25, nms_react, nms_strain))),
-             list(nms_sero), list(nms_pillar2), list(nms_pillar2_over25),
-             list(nms_react), list(nms_strain))
+             list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
+             list(nms_pillar2_over25), list(nms_react), list(nms_strain))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, observed_keep(x), pars))
@@ -546,8 +552,10 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$admitted <- NA
   data$diagnoses <- NA
   data$all_admission <- NA
-  data$npos_15_64 <- NA
-  data$ntot_15_64 <- NA
+  data$sero_pos_15_64_1 <- NA
+  data$sero_tot_15_64_1 <- NA
+  data$sero_pos_15_64_2 <- NA
+  data$sero_tot_15_64_2 <- NA
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
@@ -585,8 +593,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$admitted <- NA
             data$diagnoses <- NA
             data$all_admission <- NA
-            data$npos_15_64 <- NA
-            data$ntot_15_64 <- NA
+            data$sero_pos_15_64_1 <- NA
+            data$sero_tot_15_64_1 <- NA
+            data$sero_pos_15_64_2 <- NA
+            data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
             data$pillar2_cases <- NA
@@ -657,8 +667,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$admitted <- NA
             data$diagnoses <- NA
             data$all_admission <- NA
-            data$npos_15_64 <- NA
-            data$ntot_15_64 <- NA
+            data$sero_pos_15_64_1 <- NA
+            data$sero_tot_15_64_1 <- NA
+            data$sero_pos_15_64_2 <- NA
+            data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
             data$pillar2_cases <- NA

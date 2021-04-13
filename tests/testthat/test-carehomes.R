@@ -34,6 +34,8 @@ test_that("can run the carehomes model", {
           diagnoses_inc                      = c(88, 99, 163, 14, 14),
           sero_pos_1                         = c(7277659, 7549312, 8491063,
                                                  3775175, 4741837),
+          sero_pos_2                         = c(7280094, 7550425, 8493142,
+                                                 3774271, 4744492),
           sympt_cases_inc                    = c(1060, 1187, 2037, 75,
                                                  185),
           sympt_cases_over25_inc             = c(865, 979, 1664, 59,

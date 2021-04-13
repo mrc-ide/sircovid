@@ -566,6 +566,7 @@ carehomes_index <- function(info) {
                  admitted_inc = index[["admit_conf_inc"]],
                  diagnoses_inc = index[["new_conf_inc"]],
                  sero_pos_1 = index[["sero_pos_1"]],
+                 sero_pos_2 = index[["sero_pos_2"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                  sympt_cases_non_variant_over25 =
@@ -580,7 +581,7 @@ carehomes_index <- function(info) {
   index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
                             "deaths_comm_inc", "deaths_hosp_inc",
                             "admitted_inc", "diagnoses_inc",
-                            "sero_pos_1", "sympt_cases_inc",
+                            "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
                             "sympt_cases_over25_inc",
                             "sympt_cases_non_variant_over25_inc",
                             "react_pos")]
@@ -670,6 +671,7 @@ carehomes_compare <- function(state, observed, pars) {
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
   model_sero_pos_1 <- state["sero_pos_1", ]
+  model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
   model_sympt_cases_non_variant_over25 <-
@@ -705,16 +707,27 @@ carehomes_compare <- function(state, observed, pars) {
                                         pars$react_specificity,
                                         pars$exp_noise)
 
-  ## serology
+  ## serology assay 1
   ## It is possible that model_sero_pos_1 > pars$N_tot_15_64, so we cap it to
   ## avoid probabilities > 1 here
   model_sero_pos_1_capped <- pmin(model_sero_pos_1, pars$N_tot_15_64)
-  model_sero_prob_pos <- test_prob_pos(model_sero_pos_1_capped,
-                                       pars$N_tot_15_64 -
-                                         model_sero_pos_1_capped,
-                                       pars$sero_sensitivity,
-                                       pars$sero_specificity,
-                                       pars$exp_noise)
+  model_sero_prob_pos_1 <- test_prob_pos(model_sero_pos_1_capped,
+                                         pars$N_tot_15_64 -
+                                           model_sero_pos_1_capped,
+                                         pars$sero_sensitivity,
+                                         pars$sero_specificity,
+                                         pars$exp_noise)
+
+  ## serology assay 2
+  ## It is possible that model_sero_pos_2 > pars$N_tot_15_64, so we cap it to
+  ## avoid probabilities > 1 here
+  model_sero_pos_2_capped <- pmin(model_sero_pos_2, pars$N_tot_15_64)
+  model_sero_prob_pos_2 <- test_prob_pos(model_sero_pos_2_capped,
+                                         pars$N_tot_15_64 -
+                                           model_sero_pos_2_capped,
+                                         pars$sero_sensitivity,
+                                         pars$sero_specificity,
+                                         pars$exp_noise)
 
   ## Strain
   model_strain_over25_prob_pos <- test_prob_pos(
@@ -763,9 +776,13 @@ carehomes_compare <- function(state, observed, pars) {
                                pars$phi_all_admission * model_all_admission,
                                pars$kappa_all_admission, exp_noise)
 
-  ll_serology <- ll_binom(observed$npos_15_64,
-                          observed$ntot_15_64,
-                          model_sero_prob_pos)
+  ll_serology_1 <- ll_binom(observed$sero_pos_15_64_1,
+                            observed$sero_tot_15_64_1,
+                            model_sero_prob_pos_1)
+
+  ll_serology_2 <- ll_binom(observed$sero_pos_15_64_2,
+                            observed$sero_tot_15_64_2,
+                            model_sero_prob_pos_2)
 
   ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
                          observed$pillar2_tot,
@@ -796,9 +813,9 @@ carehomes_compare <- function(state, observed, pars) {
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-    ll_diagnoses + ll_all_admission + ll_serology + ll_pillar2_tests +
-    ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
-    ll_react + ll_strain_over25
+    ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
+    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
+    ll_pillar2_over25_cases + ll_react + ll_strain_over25
 }
 
 
@@ -1267,8 +1284,9 @@ carehomes_population <- function(population, carehome_workers,
 ##'   [mcstate::particle_filter_data()]. We require columns "icu",
 ##'   "general", "hosp", "deaths_hosp", "deaths_carehomes",
 ##'   "deaths_non_hosp", "deaths_comm", "deaths",
-##'   "admitted", "diagnoses", "all_admission", "npos_15_64",
-##'   "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+##'   "admitted", "diagnoses", "all_admission", "sero_pos_15_64_1",
+##'   "sero_tot_15_64_1", "sero_pos_15_64_2", "sero_tot_15_64_2",
+##'   "pillar2_pos", "pillar2_tot", "pillar2_cases",
 ##'   "pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
 ##'   "react_pos", "react_tot", though thse may be entirely `NA`
 ##'   if no data are present.
@@ -1303,7 +1321,8 @@ carehomes_particle_filter <- function(data, n_particles,
 carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
-                "diagnoses", "all_admission", "npos_15_64", "ntot_15_64",
+                "diagnoses", "all_admission", "sero_pos_15_64_1",
+                "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot")
@@ -1402,8 +1421,9 @@ carehomes_data <- function(data, start_date, dt) {
                 deaths_hosp = NA_real_, deaths_non_hosp = NA_real_,
                 deaths_comm = NA_real_, deaths_carehomes = NA_real_,
                 deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
-                all_admission = NA_real_, npos_15_64 = NA_real_,
-                ntot_15_64 = NA_real_, pillar2_pos = NA_real_,
+                all_admission = NA_real_, sero_pos_15_64_1 = NA_real_,
+                sero_tot_15_64_1 = NA_real_, sero_pos_15_64_2 = NA_real_,
+                sero_tot_15_64_2 = NA_real_, pillar2_pos = NA_real_,
                 pillar2_tot = NA_real_, pillar2_cases = NA_real_,
                 pillar2_over25_pos = NA_real_, pillar2_over25_tot = NA_real_,
                 pillar2_over25_cases = NA_real_,  react_pos = NA_real_,
