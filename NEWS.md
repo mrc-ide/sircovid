@@ -1,3 +1,8 @@
+# sircovid 0.10.33
+
+* Fixed `carehomes_rt` function to have flexibility for multiple dimensions, given strains, age categories and vaccinations classes. 
+* test-support.R updated accordingly.
+
 # sircovid 0.10.31
 
 * Add `cross_immunity` to control the amount of immunity conferred by one strain that decreases the probability of immediately being exposed to the other strain (ignored in single strain model).
