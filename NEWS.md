@@ -1,3 +1,7 @@
+# sircovid 0.10.32
+
+* Can now input a list of observation parameters into the `carehomes_parameters` function instead of taking the default observation parameters.
+
 # sircovid 0.10.31
 
 * Add `cross_immunity` to control the amount of immunity conferred by one strain that decreases the probability of immediately being exposed to the other strain (ignored in single strain model).
