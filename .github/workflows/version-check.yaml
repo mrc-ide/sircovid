@@ -1,0 +1,22 @@
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+
+name: Version Check
+
+jobs:
+  all:
+    runs-on: ${{ matrix.config.os }}
+
+    name: Version Check
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2.1.1
+
+      - name: Check version format
+        run: ./scripts/version_check
