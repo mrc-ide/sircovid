@@ -20,5 +20,5 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check version format
+      - name: Check version format and availability
         run: ./scripts/version_check
