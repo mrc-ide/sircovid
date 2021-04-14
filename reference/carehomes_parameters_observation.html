@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Remap state to include vaccination — vaccine_remap_state • sircovid</title>
+<title>Carehomes observation parameters — carehomes_parameters_observation • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,8 @@
 
 
 
-<meta property="og:title" content="Remap state to include vaccination — vaccine_remap_state" />
-<meta property="og:description" content="Remap state that was run with one stratum to support
-vaccination. This is useful where fitting was done pre-vaccination
-and the model state needs to be expanded to support vaccination
-for simulations." />
+<meta property="og:title" content="Carehomes observation parameters — carehomes_parameters_observation" />
+<meta property="og:description" content="Carehomes observation parameters" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -122,44 +119,30 @@ for simulations." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Remap state to include vaccination</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/vaccination.R'><code>R/vaccination.R</code></a></small>
-    <div class="hidden name"><code>vaccine_remap_state.Rd</code></div>
+    <h1>Carehomes observation parameters</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes.R'><code>R/carehomes.R</code></a></small>
+    <div class="hidden name"><code>carehomes_parameters_observation.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Remap state that was run with one stratum to support
-vaccination. This is useful where fitting was done pre-vaccination
-and the model state needs to be expanded to support vaccination
-for simulations.</p>
+    <p>Carehomes observation parameters</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vaccine_remap_state</span><span class='op'>(</span><span class='va'>state_orig</span>, <span class='va'>info_orig</span>, <span class='va'>info_vacc</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_parameters_observation</span><span class='op'>(</span>exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>state_orig</th>
-      <td><p>An original state matrix (rows representing
-state, columns representing particles or samples). This must be
-the complete model state.</p></td>
-    </tr>
-    <tr>
-      <th>info_orig</th>
-      <td><p>The results of <code>info()</code> from the model object
-without vaccination</p></td>
-    </tr>
-    <tr>
-      <th>info_vacc</th>
-      <td><p>The results of <code>info()</code> from the model object
-with vaccination</p></td>
+      <th>exp_noise</th>
+      <td><p>Rate parameter for the exponentially-distributed noise used
+in the likelihood calculation. Typically a large value so noise is small.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A 3d array with more rows than <code>state</code>.</p>
+    <p>A list of parameter values</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
