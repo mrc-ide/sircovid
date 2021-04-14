@@ -30,6 +30,12 @@ NULL
 ##'   `NULL`, then a list of observation parameters will be generated using
 ##'   `carehomes_parameters_observation(exp_noise)`
 ##'
+##' @param sens_and_spec Either `NULL` or a list of diagnostic test sensitivity
+##'   and specificity parameters. If `NULL`, then a list of sensitivity and
+##'   specificity parameters will be generated using
+##'   `carehomes_parameters_sens_and_spec()`
+##'
+##'
 ##' @param initial_I Initial number of infected indidviduals; these
 ##'   will enter the model as asymptomatic 15-19 year olds at
 ##'   `start_date`. The default is 10 individuals.
@@ -321,6 +327,7 @@ carehomes_parameters <- function(start_date, region,
                                  p_death_carehome = 0.7,
                                  progression = NULL,
                                  observation = NULL,
+                                 sens_and_spec = NULL,
                                  initial_I = 10,
                                  eps = 0.1,
                                  m_CHW = 4e-6,
@@ -475,6 +482,8 @@ carehomes_parameters <- function(start_date, region,
   ## All observation parameters:
   observation <- observation %||% carehomes_parameters_observation(exp_noise)
 
+  sens_and_spec <- sens_and_spec %||% carehomes_parameters_sens_and_spec()
+
   ret$n_groups <- ret$n_age_groups + 2L
 
   ## number of strains and relative transmissibility
@@ -494,7 +503,8 @@ carehomes_parameters <- function(start_date, region,
                                                   strain$n_strains,
                                                   vaccine_catchup_fraction)
 
-  c(ret, severity, progression, strain, vaccination, waning, observation)
+  c(ret, severity, progression, strain, vaccination, waning, observation,
+    sens_and_spec)
 }
 
 
@@ -1219,21 +1229,55 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
     ##
     rho_pillar2_tests = 0.1,
     ##
-    ## Specificity and sensitivity for serology tests
-    sero_specificity_1 = 0.99,
-    sero_sensitivity_1 = 1,
-    sero_specificity_2 = 0.99,
-    sero_sensitivity_2 = 1,
-    ## Specificity and sensitivity for Pillar 2 testing
-    pillar2_specificity = 1,
-    pillar2_sensitivity = 1,
-    ## Specificity and sensitivity for REACT testing
-    react_specificity = 1,
-    react_sensitivity = 1,
-    ##
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
     exp_noise = exp_noise)
+}
+
+
+##' Carehomes observation parameters
+##'
+##' @title Carehomes sensitivity and specificity parameters
+##'
+##' @return A list of parameter values
+##'
+##' @param sero_specificity_1 Specificity of the first serology test assay
+##'
+##' @param sero_sensitivity_1 Sensitivity of the first serology test assay
+##'
+##' @param sero_specificity_2 Specificity of the second serology test assay
+##'
+##' @param sero_sensitivity_2 Sensitivity of the second serology test assay
+##'
+##' @param pillar2_specificity Specificity of the Pillar 2 test
+##'
+##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
+##'
+##' @param react_specificity Specificity of the REACT test
+##'
+##' @param react_sensitivity Sensitivity of the REACT test
+##'
+##' @export
+carehomes_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
+                                               sero_sensitivity_1 = 0.99,
+                                               sero_specificity_2 = 0.9,
+                                               sero_sensitivity_2 = 0.99,
+                                               pillar2_specificity = 0.99,
+                                               pillar2_sensitivity = 0.99,
+                                               react_specificity = 0.99,
+                                               react_sensitivity = 0.99) {
+  list(
+    ## Specificity and sensitivity for serology tests
+    sero_specificity_1 = sero_specificity_1,
+    sero_sensitivity_1 = sero_sensitivity_1,
+    sero_specificity_2 = sero_specificity_2,
+    sero_sensitivity_2 = sero_sensitivity_2,
+    ## Specificity and sensitivity for Pillar 2 testing
+    pillar2_specificity = pillar2_specificity,
+    pillar2_sensitivity = pillar2_sensitivity,
+    ## Specificity and sensitivity for REACT testing
+    react_specificity = react_specificity,
+    react_sensitivity = react_sensitivity)
 }
 
 

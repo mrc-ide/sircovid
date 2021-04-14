@@ -13,6 +13,7 @@ carehomes_parameters(
   p_death_carehome = 0.7,
   progression = NULL,
   observation = NULL,
+  sens_and_spec = NULL,
   initial_I = 10,
   eps = 0.1,
   m_CHW = 4e-06,
@@ -79,6 +80,11 @@ with the progression parameters.}
 \item{observation}{Either \code{NULL} or a list of observation parameters. If
 \code{NULL}, then a list of observation parameters will be generated using
 \code{carehomes_parameters_observation(exp_noise)}}
+
+\item{sens_and_spec}{Either \code{NULL} or a list of diagnostic test sensitivity
+and specificity parameters. If \code{NULL}, then a list of sensitivity and
+specificity parameters will be generated using
+\code{carehomes_parameters_sens_and_spec()}}
 
 \item{initial_I}{Initial number of infected indidviduals; these
 will enter the model as asymptomatic 15-19 year olds at

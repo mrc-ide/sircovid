@@ -177,12 +177,16 @@ test_that("carehomes_parameters returns a list of parameters", {
   observation <- carehomes_parameters_observation(1e6)
   expect_identical(p[names(observation)], observation)
 
+  sens_and_spec <- carehomes_parameters_sens_and_spec()
+  expect_identical(p[names(sens_and_spec)], sens_and_spec)
+
   expect_equal(p$N_tot_15_64, sum(p$N_tot[4:13]))
 
   extra <- setdiff(names(p),
                    c("m", names(observation),
                      names(shared), names(progression), names(severity),
-                     names(strain), names(vaccination), names(waning)))
+                     names(strain), names(vaccination), names(waning),
+                     names(sens_and_spec)))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
