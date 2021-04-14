@@ -42,4 +42,4 @@ jobs:
 
       - name: Check version format
         run: |
-          Rscript -e "if (!grepl('^[0-9]*\\\.[0-9]*\\\.[0-9]*$', commandArgs(TRUE)[1])) stop('Format of package version must be major.minor.patch.')" ${{ env.NEW_VERSION }}
+          Rscript -e "if (!grepl('^[0-9]+\\\.[0-9]+\\\.[0-9]+$', commandArgs(TRUE)[1])) stop('Format of package version must be major.minor.patch.')" ${{ env.NEW_VERSION }}
