@@ -30,6 +30,10 @@ NULL
 ##'
 ##' @param progression Progression data
 ##'
+##' @param observation Either `NULL` or a list of observation parameters. If
+##'   `NULL`, then a list of observation parameters will be generated using
+##'   `carehomes_parameters_observation(exp_noise)`
+##'
 ##' @param initial_I Initial number of infected indidviduals; these
 ##'   will enter the model as asymptomatic 15-19 year olds at
 ##'   `start_date`. The default is 10 individuals.
@@ -330,6 +334,7 @@ carehomes_parameters <- function(start_date, region,
                                  sero_specificity = 0.9,
                                  sero_sensitivity = 0.99,
                                  progression = NULL,
+                                 observation = NULL,
                                  initial_I = 10,
                                  eps = 0.1,
                                  m_CHW = 4e-6,
@@ -498,7 +503,7 @@ carehomes_parameters <- function(start_date, region,
   ret$I_C_2_transmission <- 0
 
   ## All observation parameters:
-  observation <- carehomes_parameters_observation(exp_noise)
+  observation <- observation %||% carehomes_parameters_observation(exp_noise)
 
   ret$n_groups <- ret$n_age_groups + 2L
 
@@ -1169,7 +1174,17 @@ sircovid_carehome_beds <- function(region) {
 }
 
 
-carehomes_parameters_observation <- function(exp_noise) {
+##' Carehomes observation parameters
+##'
+##' @title Carehomes observation parameters
+##'
+##' @return A list of parameter values
+##'
+##' @param exp_noise Rate parameter for the exponentially-distributed noise used
+##'   in the likelihood calculation. Typically a large value so noise is small.
+##'
+##' @export
+carehomes_parameters_observation <- function(exp_noise = 1e6) {
   list(
     ## People currently in ICU
     phi_ICU = 1,

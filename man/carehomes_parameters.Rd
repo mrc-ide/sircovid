@@ -14,6 +14,7 @@ carehomes_parameters(
   sero_specificity = 0.9,
   sero_sensitivity = 0.99,
   progression = NULL,
+  observation = NULL,
   initial_I = 10,
   eps = 0.1,
   m_CHW = 4e-06,
@@ -84,6 +85,10 @@ with the progression parameters.}
 \item{sero_sensitivity}{Sensitivity of the serology test}
 
 \item{progression}{Progression data}
+
+\item{observation}{Either \code{NULL} or a list of observation parameters. If
+\code{NULL}, then a list of observation parameters will be generated using
+\code{carehomes_parameters_observation(exp_noise)}}
 
 \item{initial_I}{Initial number of infected indidviduals; these
 will enter the model as asymptomatic 15-19 year olds at
@@ -255,13 +260,15 @@ observation process (not realistic but useful for testing).}
 
 \item{cross_immunity}{A value or vector of same length as
 \code{strain_transmission} that controls the amount of immunity conferred by
-one strain to lower rate of moving to the other. If a scalar is given
-then same amount of immunity provided by each strain. Otherwise a vector
-of length two should be provided where the first value is the relative
-decrease of contracting strain two immediately after contracting strain
-one, and vice versa for the second value. Values of 1 (default) mean
-complete cross-immunity, values of 0 mean no cross-immunity. Modelling
-'superinfections' (being exposed to one strain immediately after
+previous infection with one strain. If a scalar is given
+then same level of cross immunity is assumed between both strains.
+Otherwise a vector of length two should be provided where the first value
+is the relative protection against infection with strain 2
+following infection with strain 1 (i.e. while in the R1 compartment),
+and vice versa for the second value. Values between 0 and 1 are allowed
+with values of 1 (default) indicating complete cross-immunity,
+and values of 0 mean no cross-immunity. Modelling
+'superinfections' (being exposed to one strain after
 recovering from another) can be turned off by setting
 \code{cross_immunity = 1}.}
 }
