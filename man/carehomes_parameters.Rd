@@ -11,20 +11,12 @@ carehomes_parameters(
   beta_value = NULL,
   severity = NULL,
   p_death_carehome = 0.7,
-  sero_specificity_1 = 0.9,
-  sero_sensitivity_1 = 0.99,
-  sero_specificity_2 = 0.9,
-  sero_sensitivity_2 = 0.99,
   progression = NULL,
   observation = NULL,
   initial_I = 10,
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
-  pillar2_specificity = 0.99,
-  pillar2_sensitivity = 0.99,
-  react_specificity = 0.99,
-  react_sensitivity = 0.99,
   p_NC = 0.01,
   strain_transmission = 1,
   strain_seed_date = NULL,
@@ -82,14 +74,6 @@ with the progression parameters.}
 \item{p_death_carehome}{Probability of death within carehomes
 (conditional on having an "inflenza-like-illness")}
 
-\item{sero_specificity_1}{Specificity of the first serology test assay}
-
-\item{sero_sensitivity_1}{Sensitivity of the first serology test assay}
-
-\item{sero_specificity_2}{Specificity of the second serology test assay}
-
-\item{sero_sensitivity_2}{Sensitivity of the second serology test assay}
-
 \item{progression}{Progression data}
 
 \item{observation}{Either \code{NULL} or a list of observation parameters. If
@@ -106,14 +90,6 @@ will enter the model as asymptomatic 15-19 year olds at
 residents or workers}
 
 \item{m_CHR}{Contact rate between carehome residents}
-
-\item{pillar2_specificity}{Specificity of the Pillar 2 test}
-
-\item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
-
-\item{react_specificity}{Specificity of the REACT test}
-
-\item{react_sensitivity}{Sensitivity of the REACT test}
 
 \item{p_NC}{Proportion of population who do not have
 covid but have covid-like symptoms}

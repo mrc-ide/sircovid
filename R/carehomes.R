@@ -24,14 +24,6 @@ NULL
 ##' @param p_death_carehome Probability of death within carehomes
 ##'   (conditional on having an "inflenza-like-illness")
 ##'
-##' @param sero_specificity_1 Specificity of the first serology test assay
-##'
-##' @param sero_sensitivity_1 Sensitivity of the first serology test assay
-##'
-##' @param sero_specificity_2 Specificity of the second serology test assay
-##'
-##' @param sero_sensitivity_2 Sensitivity of the second serology test assay
-##'
 ##' @param progression Progression data
 ##'
 ##' @param observation Either `NULL` or a list of observation parameters. If
@@ -48,14 +40,6 @@ NULL
 ##'   residents or workers
 ##'
 ##' @param m_CHR Contact rate between carehome residents
-##'
-##' @param pillar2_specificity Specificity of the Pillar 2 test
-##'
-##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
-##'
-##' @param react_specificity Specificity of the REACT test
-##'
-##' @param react_sensitivity Sensitivity of the REACT test
 ##'
 ##' @param p_NC Proportion of population who do not have
 ##'   covid but have covid-like symptoms
@@ -335,20 +319,12 @@ carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
                                  p_death_carehome = 0.7,
-                                 sero_specificity_1 = 0.9,
-                                 sero_sensitivity_1 = 0.99,
-                                 sero_specificity_2 = 0.9,
-                                 sero_sensitivity_2 = 0.99,
                                  progression = NULL,
                                  observation = NULL,
                                  initial_I = 10,
                                  eps = 0.1,
                                  m_CHW = 4e-6,
                                  m_CHR = 5e-5,
-                                 pillar2_specificity = 0.99,
-                                 pillar2_sensitivity = 0.99,
-                                 react_specificity = 0.99,
-                                 react_sensitivity = 0.99,
                                  p_NC = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
@@ -486,20 +462,6 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_all <- sum(ret$N_tot)
   ret$N_tot_over25 <- sum(ret$N_tot[6:19])
   ret$N_tot_react <- sum(ret$N_tot[2:18])
-
-  ## Specificity for serology tests
-  ret$sero_specificity_1 <- sero_specificity_1
-  ret$sero_sensitivity_1 <- sero_sensitivity_1
-  ret$sero_specificity_2 <- sero_specificity_2
-  ret$sero_sensitivity_2 <- sero_sensitivity_2
-
-  ## Specificity and sensitivity for Pillar 2 testing
-  ret$pillar2_specificity <- pillar2_specificity
-  ret$pillar2_sensitivity <- pillar2_sensitivity
-
-  ## Specificity and sensitivity for REACT testing
-  ret$react_specificity <- react_specificity
-  ret$react_sensitivity <- react_sensitivity
 
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
@@ -1256,6 +1218,18 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
     kappa_pillar2_cases = 2,
     ##
     rho_pillar2_tests = 0.1,
+    ##
+    ## Specificity and sensitivity for serology tests
+    sero_specificity_1 = 0.99,
+    sero_sensitivity_1 = 1,
+    sero_specificity_2 = 0.99,
+    sero_sensitivity_2 = 1,
+    ## Specificity and sensitivity for Pillar 2 testing
+    pillar2_specificity = 1,
+    pillar2_sensitivity = 1,
+    ## Specificity and sensitivity for REACT testing
+    react_specificity = 1,
+    react_sensitivity = 1,
     ##
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
