@@ -1,4 +1,4 @@
-# sircovid 0.10.33
+# sircovid 0.10.34
 
 * Fixed `carehomes_rt` function to have flexibility for multiple dimensions, given strains, age categories and vaccinations classes. 
 * test-support.R updated accordingly.
