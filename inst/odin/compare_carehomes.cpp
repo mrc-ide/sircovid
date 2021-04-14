@@ -139,8 +139,8 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_sero_prob_pos_1 =
     test_prob_pos(model_sero_pos_1_capped,
                   N_tot_15_64 - model_sero_pos_1_capped,
-                  odin(sero_sensitivity),
-                  odin(sero_specificity),
+                  odin(sero_sensitivity_1),
+                  odin(sero_specificity_1),
                   exp_noise,
                   rng_state);
 
@@ -150,8 +150,8 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_sero_prob_pos_2 =
     test_prob_pos(model_sero_pos_2_capped,
                   N_tot_15_64 - model_sero_pos_2_capped,
-                  odin(sero_sensitivity),
-                  odin(sero_specificity),
+                  odin(sero_sensitivity_2),
+                  odin(sero_specificity_2),
                   exp_noise,
                   rng_state);
 

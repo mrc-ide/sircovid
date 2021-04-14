@@ -1693,8 +1693,10 @@ pillar2_sensitivity <- user() # ignore.unused
 pillar2_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused
 react_specificity <- user() # ignore.unused
-sero_sensitivity <- user() # ignore.unused
-sero_specificity <- user() # ignore.unused
+sero_sensitivity_1 <- user() # ignore.unused
+sero_specificity_1 <- user() # ignore.unused
+sero_sensitivity_2 <- user() # ignore.unused
+sero_specificity_2 <- user() # ignore.unused
 exp_noise <- user() # ignore.unused
 phi_ICU <- user() # ignore.unused
 kappa_ICU <- user() # ignore.unused

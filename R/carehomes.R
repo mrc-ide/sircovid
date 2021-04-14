@@ -24,9 +24,13 @@ NULL
 ##' @param p_death_carehome Probability of death within carehomes
 ##'   (conditional on having an "inflenza-like-illness")
 ##'
-##' @param sero_specificity Specificity of the serology test
+##' @param sero_specificity_1 Specificity of the first serology test assay
 ##'
-##' @param sero_sensitivity Sensitivity of the serology test
+##' @param sero_sensitivity_1 Sensitivity of the first serology test assay
+##'
+##' @param sero_specificity_2 Specificity of the second serology test assay
+##'
+##' @param sero_sensitivity_2 Sensitivity of the second serology test assay
 ##'
 ##' @param progression Progression data
 ##'
@@ -331,8 +335,10 @@ carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
                                  p_death_carehome = 0.7,
-                                 sero_specificity = 0.9,
-                                 sero_sensitivity = 0.99,
+                                 sero_specificity_1 = 0.9,
+                                 sero_sensitivity_1 = 0.99,
+                                 sero_specificity_2 = 0.9,
+                                 sero_sensitivity_2 = 0.99,
                                  progression = NULL,
                                  observation = NULL,
                                  initial_I = 10,
@@ -429,10 +435,6 @@ carehomes_parameters <- function(start_date, region,
   severity$psi_star <- get_psi(severity$p_star)
   severity$p_star_step <- max(severity$p_star)
 
-  severity$p_sero_pos_1 <- severity$p_sero_pos
-  severity$p_sero_pos_2 <- severity$p_sero_pos
-  severity$p_sero_pos <- NULL
-
   strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
                                 length(strain_transmission))
   strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
@@ -486,8 +488,10 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_react <- sum(ret$N_tot[2:18])
 
   ## Specificity for serology tests
-  ret$sero_specificity <- sero_specificity
-  ret$sero_sensitivity <- sero_sensitivity
+  ret$sero_specificity_1 <- sero_specificity_1
+  ret$sero_sensitivity_1 <- sero_sensitivity_1
+  ret$sero_specificity_2 <- sero_specificity_2
+  ret$sero_sensitivity_2 <- sero_sensitivity_2
 
   ## Specificity and sensitivity for Pillar 2 testing
   ret$pillar2_specificity <- pillar2_specificity
@@ -719,8 +723,8 @@ carehomes_compare <- function(state, observed, pars) {
   model_sero_prob_pos_1 <- test_prob_pos(model_sero_pos_1_capped,
                                          pars$N_tot_15_64 -
                                            model_sero_pos_1_capped,
-                                         pars$sero_sensitivity,
-                                         pars$sero_specificity,
+                                         pars$sero_sensitivity_1,
+                                         pars$sero_specificity_1,
                                          pars$exp_noise)
 
   ## serology assay 2
@@ -730,8 +734,8 @@ carehomes_compare <- function(state, observed, pars) {
   model_sero_prob_pos_2 <- test_prob_pos(model_sero_pos_2_capped,
                                          pars$N_tot_15_64 -
                                            model_sero_pos_2_capped,
-                                         pars$sero_sensitivity,
-                                         pars$sero_specificity,
+                                         pars$sero_sensitivity_2,
+                                         pars$sero_specificity_2,
                                          pars$exp_noise)
 
   ## Strain

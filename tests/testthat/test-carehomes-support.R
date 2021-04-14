@@ -186,7 +186,8 @@ test_that("carehomes_parameters returns a list of parameters", {
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "sero_specificity", "sero_sensitivity", "N_tot_15_64",
+      "sero_specificity_1", "sero_sensitivity_1", "sero_specificity_2",
+      "sero_sensitivity_2", "N_tot_15_64",
       "N_tot_all", "N_tot_over25", "N_tot_react",
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
       "react_sensitivity", "p_NC", "I_A_transmission", "I_P_transmission",
@@ -195,7 +196,6 @@ test_that("carehomes_parameters returns a list of parameters", {
       "psi_W_D", "p_W_D_step", "psi_H",
       "p_H_step", "psi_G_D", "p_G_D_step",
       "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
-      "p_sero_pos_1", "p_sero_pos_2",
       "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
       "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
       "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",

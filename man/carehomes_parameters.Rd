@@ -11,8 +11,10 @@ carehomes_parameters(
   beta_value = NULL,
   severity = NULL,
   p_death_carehome = 0.7,
-  sero_specificity = 0.9,
-  sero_sensitivity = 0.99,
+  sero_specificity_1 = 0.9,
+  sero_sensitivity_1 = 0.99,
+  sero_specificity_2 = 0.9,
+  sero_sensitivity_2 = 0.99,
   progression = NULL,
   observation = NULL,
   initial_I = 10,
@@ -80,9 +82,13 @@ with the progression parameters.}
 \item{p_death_carehome}{Probability of death within carehomes
 (conditional on having an "inflenza-like-illness")}
 
-\item{sero_specificity}{Specificity of the serology test}
+\item{sero_specificity_1}{Specificity of the first serology test assay}
 
-\item{sero_sensitivity}{Sensitivity of the serology test}
+\item{sero_sensitivity_1}{Sensitivity of the first serology test assay}
+
+\item{sero_specificity_2}{Specificity of the second serology test assay}
+
+\item{sero_sensitivity_2}{Sensitivity of the second serology test assay}
 
 \item{progression}{Progression data}
 
