@@ -1,9 +1,13 @@
+# sircovid 0.10.35
+
+* Added ability to fit 2nd serology assay with different serology parameters
+
 # sircovid 0.10.34
 
 * Fixed `carehomes_rt` function to have flexibility for multiple dimensions, given strains, age categories and vaccinations classes. 
 * test-support.R updated accordingly.
 
-# sircovid 0.10.32
+# sircovid 0.10.33
 
 * Can now input a list of observation parameters into the `carehomes_parameters` function instead of taking the default observation parameters.
 
