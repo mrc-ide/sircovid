@@ -14,6 +14,7 @@ carehomes_parameters(
   sero_specificity = 0.9,
   sero_sensitivity = 0.99,
   progression = NULL,
+  observation = NULL,
   initial_I = 10,
   eps = 0.1,
   m_CHW = 4e-06,
@@ -84,6 +85,10 @@ with the progression parameters.}
 \item{sero_sensitivity}{Sensitivity of the serology test}
 
 \item{progression}{Progression data}
+
+\item{observation}{Either \code{NULL} or a list of observation parameters. If
+\code{NULL}, then a list of observation parameters will be generated using
+\code{carehomes_parameters_observation(exp_noise)}}
 
 \item{initial_I}{Initial number of infected indidviduals; these
 will enter the model as asymptomatic 15-19 year olds at
