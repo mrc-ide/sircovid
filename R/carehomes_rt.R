@@ -305,7 +305,9 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   ## ensure backwards compatibility by dropping columns for single_strain and
   ## separating classes
   class(ret) <- c("Rt")
-  if (ncol(ret[[length(ret)]]) == 1) {
+  if (is.null(ncol(ret[[length(ret)]]))) {
+    class(ret) <- c("single_strain", class(ret))
+  } else if (ncol(ret[[length(ret)]]) == 1) {
     ret[intersect(all_types, names(ret))] <-
       lapply(ret[intersect(all_types, names(ret))], drop)
     class(ret) <- c("single_strain", class(ret))
