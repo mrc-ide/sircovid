@@ -10,7 +10,7 @@ set -e
 VERSION=${1:-$(grep '^Version' DESCRIPTION  | sed 's/.*: *//')}
 TAG="v${VERSION}"
 
-echo "Got version number '$VERSION'"
+echo "Proposed version number '$VERSION'"
 
 if echo "$VERSION" | grep -Eq "[0-9]+[.][0-9]+[.][0-9]+"; then
     echo "Version number in correct format"
@@ -20,9 +20,8 @@ else
     echo "not found"
 fi
 
-MAJOR=$(echo $VERSION | cut -d. -f1)
-MINOR=$(echo $VERSION | cut -d. -f2)
-PATCH=$(echo $VERSION | cut -d. -f3)
+echo "Updating remote git data"
+git fetch
 
 if git rev-parse "$TAG" >/dev/null 2>&1; then
     echo "Tag $TAG already exists - update version number"
@@ -31,7 +30,13 @@ else
     echo "Version number not yet present as git tag"
 fi
 
-LAST_TAG=$(git describe --tags --abbrev=0)
+MAJOR=$(echo $VERSION | cut -d. -f1)
+MINOR=$(echo $VERSION | cut -d. -f2)
+PATCH=$(echo $VERSION | cut -d. -f3)
+
+## TODO: this assumes that the upstream branch is master
+## BRANCH_DEFAULT=$(git remote show origin | awk '/HEAD branch/ {print $NF}')
+LAST_TAG=$(git describe --tags --abbrev=0 origin/master)
 LAST_VERSION=$(echo "$LAST_TAG" | sed 's/^v//')
 LAST_MAJOR=$(echo $LAST_VERSION | cut -d. -f1)
 LAST_MINOR=$(echo $LAST_VERSION | cut -d. -f2)

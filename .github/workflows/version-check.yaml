@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.1.1
+        with:
+          fetch-depth: 0
 
       - name: Check version format
         run: ./scripts/version_check
