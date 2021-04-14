@@ -8,7 +8,7 @@ name: Version Check
 
 jobs:
   all:
-    runs-on: ${{ matrix.config.os }}
+    runs-on: ubuntu-20.04
 
     name: Version Check
 
