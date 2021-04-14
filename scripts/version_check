@@ -34,9 +34,8 @@ MAJOR=$(echo $VERSION | cut -d. -f1)
 MINOR=$(echo $VERSION | cut -d. -f2)
 PATCH=$(echo $VERSION | cut -d. -f3)
 
-## TODO: this assumes that the upstream branch is master
-## BRANCH_DEFAULT=$(git remote show origin | awk '/HEAD branch/ {print $NF}')
-LAST_TAG=$(git describe --tags --abbrev=0 origin/master)
+BRANCH_DEFAULT=$(git remote show origin | awk '/HEAD branch/ {print $NF}')
+LAST_TAG=$(git describe --tags --abbrev=0 "origin/${BRANCH_DEFAULT}")
 LAST_VERSION=$(echo "$LAST_TAG" | sed 's/^v//')
 LAST_MAJOR=$(echo $LAST_VERSION | cut -d. -f1)
 LAST_MINOR=$(echo $LAST_VERSION | cut -d. -f2)
