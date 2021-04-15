@@ -134,7 +134,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_C[] <- 0
+  p$p_C_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -168,12 +168,12 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
 })
 
 
-test_that("No one is hospitalised, no-one dies if psi_H is 0", {
+test_that("No one is hospitalised, no-one dies if p_H is 0", {
   set.seed(1)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_H[] <- 0
+  p$p_H_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -213,11 +213,9 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_H_step <- 1
-  p$psi_H[] <- 1
-  p$p_G_D_step <- matrix(1)
-  p$psi_G_D[] <- 1
-  p$p_C[] <- 1
+  p$p_H_step[, ] <- 1
+  p$p_G_D_step[, ] <- 1
+  p$p_C_step[, ] <- 1
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -257,11 +255,9 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_H_step <- 1
-  p$psi_H[] <- 1
-  p$p_G_D_step <- matrix(1)
-  p$psi_G_D[] <- 1
-  p$p_C[] <- 1
+  p$p_H_step[, ] <- 1
+  p$p_G_D_step[, ] <- 1
+  p$p_C_step[, ] <- 1
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -297,11 +293,11 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 })
 
 
-test_that("No one dies in the community if psi_G_D is 0", {
+test_that("No one dies in the community if p_G_D is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_G_D[] <- 0
+  p$p_G_D_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -325,18 +321,10 @@ test_that("forcing hospital route results in correct path", {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
     p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-    p$p_ICU_step <- ifelse(is.null(prob_ICU),
-                                    p$p_ICU_step, 1)
-    p$psi_ICU[] <- prob_ICU %||% p$psi_ICU[]
-    p$p_H_D_step <- matrix(ifelse(is.null(prob_H_D),
-                                 p$p_H_D_step, 1))
-    p$psi_H_D[] <- prob_H_D %||% p$psi_H_D[]
-    p$p_ICU_D_step <- matrix(ifelse(is.null(prob_ICU_D),
-                                 p$p_ICU_D_step, 1))
-    p$psi_ICU_D[] <- prob_ICU_D %||% p$psi_ICU_D[]
-    p$p_W_D_step <- matrix(ifelse(is.null(prob_W_D),
-                                 p$p_W_D_step, 1))
-    p$psi_W_D[] <- prob_W_D %||% p$psi_W_D[]
+    p$p_ICU_step[, ] <- prob_ICU %||% p$p_ICU_step
+    p$p_ICU_D_step[, ] <- prob_ICU_D %||% p$p_ICU_D_step
+    p$p_H_D_step[, ] <- prob_H_D %||% p$p_H_D_step
+    p$p_W_D_step[, ] <- prob_W_D %||% p$p_W_D_step
 
     mod <- carehomes$new(p, 0, 1, seed = 1L)
     info <- mod$info()
@@ -631,9 +619,8 @@ test_that("No one is unconfirmed, if p_star = 1", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_star_step <- 1
+  p$p_star_step[, ] <- 1
 
-  p$psi_star[] <- 1
   p$gamma_ICU_pre_step <- Inf
   p$gamma_H_R_step <- Inf
   p$gamma_H_D_step <- Inf
@@ -681,7 +668,7 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_star[] <- 0
+  p$p_star_step[, ] <- 0
   p$gamma_U <- 0
 
   mod <- carehomes$new(p, 0, 1)
@@ -714,7 +701,7 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$psi_star[] <- 0
+  p$p_star_step[, ] <- 0
 
   p$gamma_U <- Inf
   p$gamma_ICU_pre_step <- Inf
@@ -954,9 +941,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
 
 test_that("No one is hospitalised, no-one recovers in edge case", {
   p <- carehomes_parameters(0, "england")
-  p$p_G_D_step[] <- 0
-  p$psi_G_D[] <- 0
-  p$p_G_D[] <- 0
+  p$p_G_D_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, 1)
 
