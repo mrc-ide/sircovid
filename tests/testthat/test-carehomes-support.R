@@ -170,7 +170,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   expect_identical(p[names(shared)], shared)
 
-  severity <- scale_severity(carehomes_parameters_severity(NULL, 0.7), 1)
+  severity <- carehomes_parameters_severity(0.25, NULL)
   expect_identical(p[names(severity)], severity)
 
   observation <- carehomes_parameters_observation(1e6)
@@ -189,11 +189,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "N_tot_all", "N_tot_over25", "N_tot_react",
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
       "react_sensitivity", "p_NC", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "psi_ICU_D",
-      "p_ICU_D_step", "psi_H_D", "p_H_D_step",
-      "psi_W_D", "p_W_D_step", "psi_H",
-      "p_H_step", "psi_G_D", "p_G_D_step",
-      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
+      "I_C_1_transmission", "I_C_2_transmission",
       "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
       "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
       "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",
@@ -211,15 +207,12 @@ test_that("carehomes_parameters returns a list of parameters", {
 
 test_that("can compute severity for carehomes model", {
   population <- sircovid_population("uk")
-  severity <- carehomes_parameters_severity(NULL, 0.7)
-  expect_vector_equal(lengths(severity), 19)
-  expect_setequal(names(severity), names(sircovid_parameters_severity(NULL)))
+  severity <- carehomes_parameters_severity(0.25, NULL)
 
-  expect_vector_equal(severity$p_serocoversion, severity$p_serocoversion[[1]])
   expect_equal(
-    severity$p_G_D, rep(c(0, 0.7), c(18, 1)))
+    severity$p_G_D_step, array(0.05, c(1, 19)))
   expect_equal(
-    severity$p_star, rep(0.2, 19))
+    severity$p_star_step, array(0.2, c(1, 19)))
 })
 
 

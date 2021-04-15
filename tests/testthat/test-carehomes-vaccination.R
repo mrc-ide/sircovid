@@ -672,9 +672,12 @@ test_that("Clinical progression within a vaccination class works", {
     p[grep("gamma", names(p))] <- 1e9
     # make p_death zero
     p[grep("gamma\\S*_D_step", names(p))] <- 0
-    p[grep("p\\S*_D_step", names(p))] <- rep(list(matrix(0)),
-                                             length(grep("p\\S*_D_step",
+    p[grep("^p\\S*_D_step", names(p))] <- rep(list(array(0, c(1, p$n_groups))),
+                                             length(grep("^p\\S*_D_step",
                                                          names(p))))
+    p[grep("^n_p\\S*_D_step", names(p))] <- rep(list(1),
+                                              length(grep("^n_p\\S*_D_step",
+                                                          names(p))))
 
     mod <- carehomes$new(p, 0, 1, seed = 1L)
     info <- mod$info()
