@@ -10,7 +10,6 @@ carehomes_parameters(
   beta_date = NULL,
   beta_value = NULL,
   severity = NULL,
-  p_death_carehome = 0.7,
   sero_specificity = 0.9,
   sero_sensitivity = 0.99,
   progression = NULL,
@@ -76,9 +75,6 @@ data) or a list (for data that has already been processed by
 \code{sircovid} for use).  New severity data comes from Bob Verity
 via the markovid package, and needs to be carefully calibrated
 with the progression parameters.}
-
-\item{p_death_carehome}{Probability of death within carehomes
-(conditional on having an "inflenza-like-illness")}
 
 \item{sero_specificity}{Specificity of the serology test}
 

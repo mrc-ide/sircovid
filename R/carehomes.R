@@ -383,42 +383,18 @@ carehomes_parameters <- function(start_date, region,
     stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
   }
 
-  severity <- carehomes_parameters_severity(severity, p_death_carehome)
-  strain_rel_severity <- recycle(
-                                 assert_relatives(strain_rel_severity),
-                                 length(strain_transmission))
-  if (length(strain_transmission) > 1) {
-    strain_rel_severity <- mirror_strain(strain_rel_severity)
-  }
-  severity <- scale_severity(severity, strain_rel_severity)
+  severity <- severity %||% carehomes_parameters_severity(ret$dt, severity)
 
-  ## TODO Rich, these parameters are now time-varying. We may want to rethink
-  ## implementation of severity parameters
-  ## probability of symptomatic individual requiring hospital treatment
 
-  get_psi <- function(p) {
-    if (all(p == 0)) {
-      res <- p
-    } else {
-      res <- p / max(p)
-    }
-  }
+  ## TODO: sort rel_strain effects
+  # strain_rel_severity <- recycle(
+  #                                assert_relatives(strain_rel_severity),
+  #                                length(strain_transmission))
+  # if (length(strain_transmission) > 1) {
+  #   strain_rel_severity <- mirror_strain(strain_rel_severity)
+  # }
+  # severity <- scale_severity(severity, strain_rel_severity)
 
-  ## probability of ICU patient dying
-  severity$psi_ICU_D <- apply(severity$p_ICU_D, 2, get_psi)
-  severity$p_ICU_D_step <- matrix(apply(severity$p_ICU_D, 2, max), nrow = 1)
-  ## probability of non-ICU hospital patient dying
-  severity$psi_H_D <- apply(severity$p_H_D, 2, get_psi)
-  severity$p_H_D_step <- matrix(apply(severity$p_H_D, 2, max), nrow = 1)
-  ## probability of stepdown hospital patient dying
-  severity$psi_W_D <- apply(severity$p_W_D, 2, get_psi)
-  severity$p_W_D_step <- matrix(apply(severity$p_W_D, 2, max), nrow = 1)
-  ## probability of patient requiring hospital treatment dying in community
-  severity$psi_G_D <- apply(severity$p_G_D, 2, get_psi)
-  severity$p_G_D_step <- matrix(apply(severity$p_G_D, 2, max), nrow = 1)
-  ## probability of an admission already being confirmed covid
-  severity$psi_star <- get_psi(severity$p_star)
-  severity$p_star_step <- max(severity$p_star)
 
   strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
                                 length(strain_transmission))
@@ -815,7 +791,10 @@ carehomes_severity <- function(p) {
 ##' @return A list of severity parameters
 ##'
 ##' @export
-carehomes_parameters_severity <- function(severity,
+carehomes_parameters_severity <- function(dt,
+                                          severity = NULL,
+                                          p_C_date = NULL,
+                                          p_C_value = NULL,
                                           p_H_date = NULL,
                                           p_H_value = NULL,
                                           p_H_CHR_date = NULL,
@@ -826,15 +805,14 @@ carehomes_parameters_severity <- function(severity,
                                           p_H_D_value = NULL,
                                           p_ICU_D_date = NULL,
                                           p_ICU_D_value = NULL,
-                                          p_ICU_D_date = NULL,
-                                          p_ICU_D_value = NULL,
+                                          p_W_D_date = NULL,
+                                          p_W_D_value = NULL,
                                           p_G_D_date = NULL,
                                           p_G_D_value = NULL,
                                           p_G_D_CHR_date = NULL,
                                           p_G_D_CHR_value = NULL,
                                           p_star_date = NULL,
-                                          p_star_value = NULL,
-                                          dt) {
+                                          p_star_value = NULL) {
 
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
@@ -882,6 +860,11 @@ carehomes_parameters_severity <- function(severity,
   }
 
   ## probability of symptomatic individuals requiring hospitalisation
+  severity$p_C_step <- get_p_step(severity$p_C, p_C_date, p_C_value)
+  severity$n_p_C_steps <- dim(severity$p_C_step)[1]
+  severity$p_C <- NULL
+
+  ## probability of symptomatic individuals requiring hospitalisation
   severity$p_H_step <- get_p_step(severity$p_H, p_H_date, p_H_value,
                                   p_H_CHR_date, p_H_CHR_value)
   severity$n_p_H_steps <- dim(severity$p_H_step)[1]
@@ -910,7 +893,7 @@ carehomes_parameters_severity <- function(severity,
   severity$p_W_D <- NULL
 
   ## probability of dying in community/care home if requiring hospitalisation
-  p_G_D_step <- get_p_step(severity$p_G_D[1:18], p_G_D_date,
+  severity$p_G_D_step <- get_p_step(severity$p_G_D, p_G_D_date,
                            p_G_D_value, p_G_D_CHR_date, p_G_D_CHR_value)
   severity$n_p_G_D_steps <- dim(severity$p_G_D_step)[1]
   severity$p_G_D <- NULL
