@@ -190,12 +190,11 @@ dim(p_I_C_1_progress) <- n_strains
 dim(p_I_C_2_progress) <- n_strains
 
 ## Work out time-varying probabilities
-p_ICU <- if (as.integer(step) >= length(p_ICU_step))
-  p_ICU_step[length(p_ICU_step)] else p_ICU_step[step + 1]
-p_ICU_by_age[] <- p_ICU * psi_ICU[i]
-
 p_H[] <- if (as.integer(step) >= n_p_H_steps)
   p_H_step[n_p_H_steps, i] else p_H_step[step + 1, i]
+
+p_ICU[] <- if (as.integer(step) >= n_p_ICU_steps)
+  p_ICU_step[n_p_ICU_steps, i] else p_ICU_step[step + 1, i]
 
 p_ICU_D[] <- if (as.integer(step) >= dim(p_ICU_D_step, 1))
   p_ICU_D_step[dim(p_ICU_D_step, 1), i] else p_ICU_D_step[step + 1, i]
@@ -573,7 +572,7 @@ aux_G_D[, , , ] <- (if (k == 1) n_I_C_2_to_G_D[i, j, l] else
 new_G_D[, , , ] <- G_D[i, j, k, l] + aux_G_D[i, j, k, l]
 
 ## Work out the split in hospitals between H_D, H_R and ICU_pre
-n_I_C_2_to_ICU_pre[, , ] <- rbinom(n_I_C_2_to_hosp[i, j, k], p_ICU_by_age[i])
+n_I_C_2_to_ICU_pre[, , ] <- rbinom(n_I_C_2_to_hosp[i, j, k], p_ICU[i])
 n_I_C_2_to_ICU_pre_conf[, , ] <- rbinom(n_I_C_2_to_ICU_pre[i, j, k],
                                         p_star_by_age[i])
 n_hosp_non_ICU[, , ] <- n_I_C_2_to_hosp[i, j, k] - n_I_C_2_to_ICU_pre[i, j, k]
@@ -945,10 +944,12 @@ dim(gamma_C_1) <- n_strains
 k_C_2 <- user()
 gamma_C_2[] <- user()
 dim(gamma_C_2) <- n_strains
-dim(p_H) <- n_groups
-dim(p_H_step) <- c(n_p_H_steps, n_groups)
+
+## Proportion of cases requiring hospitalisation
 p_H_step[, ] <- user()
 n_p_H_steps <- user()
+dim(p_H) <- n_groups
+dim(p_H_step) <- c(n_p_H_steps, n_groups)
 
 ## Parameters of the G_D class
 k_G_D <- user()
@@ -964,9 +965,10 @@ dim(gamma_ICU_pre_step) <- user()
 gamma_ICU_pre_step[] <- user()
 
 ## Proportion of hospital cases progressing to ICU
-dim(p_ICU_step) <- user()
-p_ICU_step[] <- user()
-psi_ICU[] <- user()
+p_ICU_step[, ] <- user()
+n_p_ICU_steps <- user()
+dim(p_ICU) <- n_groups
+dim(p_ICU_step) <- c(n_p_ICU_steps, n_groups)
 
 ## Proportion of stepdown cases dying
 dim(p_W_D_step) <- user()
@@ -1130,10 +1132,6 @@ dim(n_ICU_pre_conf_progress) <-
   c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
 dim(n_ICU_pre_unconf_to_conf) <-
   c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-
-## Vector handling who progress to ICU
-dim(p_ICU_by_age) <- n_groups
-dim(psi_ICU) <- n_groups
 
 ## Vectors handling the H_R class
 dim(H_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)

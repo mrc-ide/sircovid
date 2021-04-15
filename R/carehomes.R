@@ -21,9 +21,6 @@ NULL
 ##'   via the markovid package, and needs to be carefully calibrated
 ##'   with the progression parameters.
 ##'
-##' @param p_death_carehome Probability of death within carehomes
-##'   (conditional on having an "inflenza-like-illness")
-##'
 ##' @param sero_specificity Specificity of the serology test
 ##'
 ##' @param sero_sensitivity Sensitivity of the serology test
@@ -330,7 +327,6 @@ NULL
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
-                                 p_death_carehome = 0.7,
                                  sero_specificity = 0.9,
                                  sero_sensitivity = 0.99,
                                  progression = NULL,
@@ -408,9 +404,6 @@ carehomes_parameters <- function(start_date, region,
     }
   }
 
-  ## probability of hospitalised patient going to ICU
-  severity$psi_ICU <- get_psi(severity$p_ICU)
-  severity$p_ICU_step <- max(severity$p_ICU)
   ## probability of ICU patient dying
   severity$psi_ICU_D <- apply(severity$p_ICU_D, 2, get_psi)
   severity$p_ICU_D_step <- matrix(apply(severity$p_ICU_D, 2, max), nrow = 1)
@@ -815,17 +808,44 @@ carehomes_severity <- function(p) {
 }
 
 
+##' Carehomes severity parameters
+##'
+##' @title Carehomes severity parameters
+##'
+##' @return A list of severity parameters
+##'
+##' @export
 carehomes_parameters_severity <- function(severity,
                                           p_H_date = NULL,
                                           p_H_value = NULL,
-                                          p_death_carehome,
+                                          p_H_CHR_date = NULL,
+                                          p_H_CHR_value = NULL,
+                                          p_ICU_date = NULL,
+                                          p_ICU_value = NULL,
+                                          p_H_D_date = NULL,
+                                          p_H_D_value = NULL,
+                                          p_ICU_D_date = NULL,
+                                          p_ICU_D_value = NULL,
+                                          p_ICU_D_date = NULL,
+                                          p_ICU_D_value = NULL,
+                                          p_G_D_date = NULL,
+                                          p_G_D_value = NULL,
+                                          p_G_D_CHR_date = NULL,
+                                          p_G_D_CHR_value = NULL,
+                                          p_star_date = NULL,
+                                          p_star_value = NULL,
                                           dt) {
 
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
-  severity$p_G_D[length(severity$p_G_D)] <- p_death_carehome
 
-  get_p_step <- function(p, p_date, p_value, dt) {
+  get_p_step <- function(p, p_date, p_value,
+                         p_CHR_date = NULL, p_CHR_value = NULL) {
+
+    if (!is.null(p_CHR_value)) {
+      p <- p[1:18]
+    }
+
     if (all(p == 0)) {
       psi <- p
     } else {
@@ -840,12 +860,67 @@ carehomes_parameters_severity <- function(severity,
 
     p_step <- outer(p_step, psi)
 
+    if (!is.null(p_CHR_value)) {
+      p_CHR_step <- sircovid_parameters_beta(p_CHR_date, p_CHR_value, dt)
+      n_p_steps <- dim(p_step)[1]
+      n_p_CHR_steps <- length(p_CHR_step)[1]
+      if (n_p_steps < n_p_CHR_steps) {
+        p_step <- vapply(seq_len(18),
+                         function(i) {sircovid_parameters_beta_expand(
+                           seq_len(n_p_CHR_steps),
+                           p_step[, i])},
+                         rep(0, n_p_CHR_steps))
+      } else if (n_p_steps > n_p_CHR_steps) {
+        p_CHR_step <- sircovid_parameters_beta_expand(
+          seq_len(p_step),
+          p_CHR_step)
+      }
+      p_step <- cbind(p_step, p_CHR_step)
+    }
+
     p_step
   }
 
-  severity$p_H_step <- get_p_step(severity$p_H, p_H_date, p_H_value, dt)
+  ## probability of symptomatic individuals requiring hospitalisation
+  severity$p_H_step <- get_p_step(severity$p_H, p_H_date, p_H_value,
+                                  p_H_CHR_date, p_H_CHR_value)
   severity$n_p_H_steps <- dim(severity$p_H_step)[1]
   severity$p_H <- NULL
+
+  ## probability of hospital patients going to ICU
+  severity$p_ICU_step <- get_p_step(severity$p_ICU, p_ICU_date, p_ICU_value)
+  severity$n_p_ICU_steps <- dim(severity$p_ICU_step)[1]
+  severity$p_ICU <- NULL
+
+  ## probability of non-ICU patients dying
+  severity$p_H_D_step <- get_p_step(severity$p_H_D, p_H_D_date,
+                                    p_H_D_value)
+  severity$n_p_H_D_steps <- dim(severity$p_H_D_step)[1]
+  severity$p_H_D <- NULL
+
+  ## probability of dying in ICU
+  severity$p_ICU_D_step <- get_p_step(severity$p_ICU_D, p_ICU_D_date,
+                                      p_ICU_D_value)
+  severity$n_p_ICU_D_steps <- dim(severity$p_ICU_D_step)[1]
+  severity$p_ICU_D <- NULL
+
+  ## probability of dying in stepdown
+  severity$p_W_D_step <- get_p_step(severity$p_W_D, p_W_D_date, p_W_D_value)
+  severity$n_p_W_D_steps <- dim(severity$p_W_D_step)[1]
+  severity$p_W_D <- NULL
+
+  ## probability of dying in community/care home if requiring hospitalisation
+  p_G_D_step <- get_p_step(severity$p_G_D[1:18], p_G_D_date,
+                           p_G_D_value, p_G_D_CHR_date, p_G_D_CHR_value)
+  severity$n_p_G_D_steps <- dim(severity$p_G_D_step)[1]
+  severity$p_G_D <- NULL
+
+  ## probability of being hospital patients being confirmed on admission
+  severity$p_star_step <- get_p_step(severity$p_star, p_star_date,
+                                     p_star_value, dt)
+  severity$n_p_star_steps <- dim(severity$p_star_step)[1]
+  severity$p_star <- NULL
+
 
   severity
 }

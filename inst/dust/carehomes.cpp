@@ -323,6 +323,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_p_H_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(n_p_ICU_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_strains, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_vacc_classes, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_C, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -330,7 +331,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(p_H_D_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_H_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pos, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -349,7 +350,6 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(pillar2_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_G_D, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_H_D, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(psi_ICU, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_ICU_D, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_W_D, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(psi_star, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1573,6 +1573,7 @@ public:
     int dim_p_H_step;
     int dim_p_H_step_1;
     int dim_p_H_step_2;
+    int dim_p_ICU;
     int dim_p_ICU_D;
     int dim_p_ICU_D_by_age;
     int dim_p_ICU_D_by_age_1;
@@ -1580,8 +1581,9 @@ public:
     int dim_p_ICU_D_step;
     int dim_p_ICU_D_step_1;
     int dim_p_ICU_D_step_2;
-    int dim_p_ICU_by_age;
     int dim_p_ICU_step;
+    int dim_p_ICU_step_1;
+    int dim_p_ICU_step_2;
     int dim_p_I_A_next_vacc_class;
     int dim_p_I_A_next_vacc_class_1;
     int dim_p_I_A_next_vacc_class_12;
@@ -1645,7 +1647,6 @@ public:
     int dim_psi_H_D;
     int dim_psi_H_D_1;
     int dim_psi_H_D_2;
-    int dim_psi_ICU;
     int dim_psi_ICU_D;
     int dim_psi_ICU_D_1;
     int dim_psi_ICU_D_2;
@@ -1854,6 +1855,7 @@ public:
     int n_doses;
     int n_groups;
     int n_p_H_steps;
+    int n_p_ICU_steps;
     int n_real_strains;
     int n_strains;
     int n_vacc_classes;
@@ -1940,7 +1942,6 @@ public:
     real_t pillar2_specificity;
     std::vector<real_t> psi_G_D;
     std::vector<real_t> psi_H_D;
-    std::vector<real_t> psi_ICU;
     std::vector<real_t> psi_ICU_D;
     std::vector<real_t> psi_W_D;
     std::vector<real_t> psi_star;
@@ -2113,9 +2114,9 @@ public:
     std::vector<real_t> p_H;
     std::vector<real_t> p_H_D;
     std::vector<real_t> p_H_D_by_age;
+    std::vector<real_t> p_ICU;
     std::vector<real_t> p_ICU_D;
     std::vector<real_t> p_ICU_D_by_age;
-    std::vector<real_t> p_ICU_by_age;
     std::vector<real_t> p_I_A_next_vacc_class;
     std::vector<real_t> p_I_P_next_vacc_class;
     std::vector<real_t> p_RS;
@@ -2292,7 +2293,6 @@ public:
     real_t gamma_ICU_pre = (static_cast<int>(step) >= shared->dim_gamma_ICU_pre_step ? shared->gamma_ICU_pre_step[shared->dim_gamma_ICU_pre_step - 1] : shared->gamma_ICU_pre_step[step + 1 - 1]);
     real_t gamma_W_D = (static_cast<int>(step) >= shared->dim_gamma_W_D_step ? shared->gamma_W_D_step[shared->dim_gamma_W_D_step - 1] : shared->gamma_W_D_step[step + 1 - 1]);
     real_t gamma_W_R = (static_cast<int>(step) >= shared->dim_gamma_W_R_step ? shared->gamma_W_R_step[shared->dim_gamma_W_R_step - 1] : shared->gamma_W_R_step[step + 1 - 1]);
-    real_t p_ICU = (static_cast<int>(step) >= shared->dim_p_ICU_step ? shared->p_ICU_step[shared->dim_p_ICU_step - 1] : shared->p_ICU_step[step + 1 - 1]);
     real_t p_star = (static_cast<int>(step) >= shared->dim_p_star_step ? shared->p_star_step[shared->dim_p_star_step - 1] : shared->p_star_step[step + 1 - 1]);
     real_t strain_rate = ((static_cast<int>(step) >= shared->dim_strain_seed_step ? shared->strain_seed_step[shared->dim_strain_seed_step - 1] : shared->strain_seed_step[step + 1 - 1]));
     state_next[0] = (step + 1) * shared->dt;
@@ -2310,9 +2310,6 @@ public:
     real_t p_ICU_D_progress = 1 - std::exp(- gamma_ICU_D * shared->dt);
     real_t p_ICU_W_D_progress = 1 - std::exp(- gamma_ICU_W_D * shared->dt);
     real_t p_ICU_W_R_progress = 1 - std::exp(- gamma_ICU_W_R * shared->dt);
-    for (int i = 1; i <= shared->dim_p_ICU_by_age; ++i) {
-      internal.p_ICU_by_age[i - 1] = p_ICU * shared->psi_ICU[i - 1];
-    }
     real_t p_ICU_pre_progress = 1 - std::exp(- gamma_ICU_pre * shared->dt);
     for (int i = 1; i <= shared->dim_p_W_D; ++i) {
       internal.p_W_D[i - 1] = (static_cast<int>(step) >= shared->dim_p_W_D_step_1 ? shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + shared->dim_p_W_D_step_1 - 1] : shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + step + 1 - 1]);
@@ -2571,6 +2568,9 @@ public:
       for (int j = 1; j <= shared->dim_p_H_D_by_age_2; ++j) {
         internal.p_H_D_by_age[i - 1 + shared->dim_p_H_D_by_age_1 * (j - 1)] = internal.p_H_D[j - 1] * shared->psi_H_D[shared->dim_psi_H_D_1 * (j - 1) + i - 1];
       }
+    }
+    for (int i = 1; i <= shared->dim_p_ICU; ++i) {
+      internal.p_ICU[i - 1] = (static_cast<int>(step) >= shared->n_p_ICU_steps ? shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + shared->n_p_ICU_steps - 1] : shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + step + 1 - 1]);
     }
     for (int i = 1; i <= shared->dim_p_ICU_D_by_age_1; ++i) {
       for (int j = 1; j <= shared->dim_p_ICU_D_by_age_2; ++j) {
@@ -3070,7 +3070,7 @@ public:
     for (int i = 1; i <= shared->dim_n_I_C_2_to_ICU_pre_1; ++i) {
       for (int j = 1; j <= shared->dim_n_I_C_2_to_ICU_pre_2; ++j) {
         for (int k = 1; k <= shared->dim_n_I_C_2_to_ICU_pre_3; ++k) {
-          internal.n_I_C_2_to_ICU_pre[i - 1 + shared->dim_n_I_C_2_to_ICU_pre_1 * (j - 1) + shared->dim_n_I_C_2_to_ICU_pre_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_2_to_hosp[shared->dim_n_I_C_2_to_hosp_12 * (k - 1) + shared->dim_n_I_C_2_to_hosp_1 * (j - 1) + i - 1]), internal.p_ICU_by_age[i - 1]);
+          internal.n_I_C_2_to_ICU_pre[i - 1 + shared->dim_n_I_C_2_to_ICU_pre_1 * (j - 1) + shared->dim_n_I_C_2_to_ICU_pre_12 * (k - 1)] = dust::distr::rbinom(rng_state, std::round(internal.n_I_C_2_to_hosp[shared->dim_n_I_C_2_to_hosp_12 * (k - 1) + shared->dim_n_I_C_2_to_hosp_1 * (j - 1) + i - 1]), internal.p_ICU[i - 1]);
         }
       }
     }
@@ -4369,6 +4369,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_age_groups = NA_INTEGER;
   shared->n_groups = NA_INTEGER;
   shared->n_p_H_steps = NA_INTEGER;
+  shared->n_p_ICU_steps = NA_INTEGER;
   shared->n_strains = NA_INTEGER;
   shared->n_vacc_classes = NA_INTEGER;
   shared->p_NC = NA_REAL;
@@ -4479,6 +4480,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_REAL, NA_REAL);
   shared->n_groups = user_get_scalar<int>(user, "n_groups", shared->n_groups, NA_REAL, NA_REAL);
   shared->n_p_H_steps = user_get_scalar<int>(user, "n_p_H_steps", shared->n_p_H_steps, NA_REAL, NA_REAL);
+  shared->n_p_ICU_steps = user_get_scalar<int>(user, "n_p_ICU_steps", shared->n_p_ICU_steps, NA_REAL, NA_REAL);
   shared->n_strains = user_get_scalar<int>(user, "n_strains", shared->n_strains, NA_REAL, NA_REAL);
   shared->n_vacc_classes = user_get_scalar<int>(user, "n_vacc_classes", shared->n_vacc_classes, NA_REAL, NA_REAL);
   std::array <int, 2> dim_p_G_D_step;
@@ -4496,9 +4498,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_p_ICU_D_step = shared->p_ICU_D_step.size();
   shared->dim_p_ICU_D_step_1 = dim_p_ICU_D_step[0];
   shared->dim_p_ICU_D_step_2 = dim_p_ICU_D_step[1];
-  std::array <int, 1> dim_p_ICU_step;
-  shared->p_ICU_step = user_get_array_variable<real_t, 1>(user, "p_ICU_step", shared->p_ICU_step, dim_p_ICU_step, NA_REAL, NA_REAL);
-  shared->dim_p_ICU_step = shared->p_ICU_step.size();
   shared->p_NC = user_get_scalar<real_t>(user, "p_NC", shared->p_NC, NA_REAL, NA_REAL);
   std::array <int, 2> dim_p_W_D_step;
   shared->p_W_D_step = user_get_array_variable<real_t, 2>(user, "p_W_D_step", shared->p_W_D_step, dim_p_W_D_step, NA_REAL, NA_REAL);
@@ -5201,10 +5200,12 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_p_H_D_by_age_2 = shared->n_strains;
   shared->dim_p_H_step_1 = shared->n_p_H_steps;
   shared->dim_p_H_step_2 = shared->n_groups;
+  shared->dim_p_ICU = shared->n_groups;
   shared->dim_p_ICU_D = shared->n_strains;
   shared->dim_p_ICU_D_by_age_1 = shared->n_groups;
   shared->dim_p_ICU_D_by_age_2 = shared->n_strains;
-  shared->dim_p_ICU_by_age = shared->n_groups;
+  shared->dim_p_ICU_step_1 = shared->n_p_ICU_steps;
+  shared->dim_p_ICU_step_2 = shared->n_groups;
   shared->dim_p_I_A_next_vacc_class_1 = shared->n_groups;
   shared->dim_p_I_A_next_vacc_class_2 = shared->n_strains;
   shared->dim_p_I_A_next_vacc_class_3 = shared->k_A;
@@ -5243,7 +5244,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_psi_G_D_2 = shared->n_strains;
   shared->dim_psi_H_D_1 = shared->n_groups;
   shared->dim_psi_H_D_2 = shared->n_strains;
-  shared->dim_psi_ICU = shared->n_groups;
   shared->dim_psi_ICU_D_1 = shared->n_groups;
   shared->dim_psi_ICU_D_2 = shared->n_strains;
   shared->dim_psi_W_D_1 = shared->n_groups;
@@ -5298,8 +5298,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.p_G_D = std::vector<real_t>(shared->dim_p_G_D);
   internal.p_H = std::vector<real_t>(shared->dim_p_H);
   internal.p_H_D = std::vector<real_t>(shared->dim_p_H_D);
+  internal.p_ICU = std::vector<real_t>(shared->dim_p_ICU);
   internal.p_ICU_D = std::vector<real_t>(shared->dim_p_ICU_D);
-  internal.p_ICU_by_age = std::vector<real_t>(shared->dim_p_ICU_by_age);
   shared->p_I_A_progress = std::vector<real_t>(shared->dim_p_I_A_progress);
   shared->p_I_C_1_progress = std::vector<real_t>(shared->dim_p_I_C_1_progress);
   shared->p_I_C_2_progress = std::vector<real_t>(shared->dim_p_I_C_2_progress);
@@ -5777,6 +5777,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_p_H_D_by_age = shared->dim_p_H_D_by_age_1 * shared->dim_p_H_D_by_age_2;
   shared->dim_p_H_step = shared->dim_p_H_step_1 * shared->dim_p_H_step_2;
   shared->dim_p_ICU_D_by_age = shared->dim_p_ICU_D_by_age_1 * shared->dim_p_ICU_D_by_age_2;
+  shared->dim_p_ICU_step = shared->dim_p_ICU_step_1 * shared->dim_p_ICU_step_2;
   shared->dim_p_I_A_next_vacc_class = shared->dim_p_I_A_next_vacc_class_1 * shared->dim_p_I_A_next_vacc_class_2 * shared->dim_p_I_A_next_vacc_class_3 * shared->dim_p_I_A_next_vacc_class_4;
   shared->dim_p_I_A_next_vacc_class_12 = shared->dim_p_I_A_next_vacc_class_1 * shared->dim_p_I_A_next_vacc_class_2;
   shared->dim_p_I_A_next_vacc_class_123 = shared->dim_p_I_A_next_vacc_class_1 * shared->dim_p_I_A_next_vacc_class_2 * shared->dim_p_I_A_next_vacc_class_3;
@@ -5865,7 +5866,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->p_T_sero_pos_progress = 1 - std::exp(- shared->gamma_sero_pos * shared->dt);
   shared->p_sero_pos = user_get_array_fixed<real_t, 1>(user, "p_sero_pos", shared->p_sero_pos, {shared->dim_p_sero_pos}, NA_REAL, NA_REAL);
   shared->p_test = 1 - std::exp(- shared->gamma_U * shared->dt);
-  shared->psi_ICU = user_get_array_fixed<real_t, 1>(user, "psi_ICU", shared->psi_ICU, {shared->dim_psi_ICU}, NA_REAL, NA_REAL);
   shared->psi_star = user_get_array_fixed<real_t, 1>(user, "psi_star", shared->psi_star, {shared->dim_psi_star}, NA_REAL, NA_REAL);
   shared->strain_transmission = user_get_array_fixed<real_t, 1>(user, "strain_transmission", shared->strain_transmission, {shared->dim_strain_transmission}, NA_REAL, NA_REAL);
   shared->waning_rate = user_get_array_fixed<real_t, 1>(user, "waning_rate", shared->waning_rate, {shared->dim_waning_rate}, NA_REAL, NA_REAL);
@@ -6449,6 +6449,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->offset_variable_tmp_vaccine_probability = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_prob_strain + shared->dim_tmp_vaccine_n_candidates + shared->dim_vaccine_missed_doses + 27;
   shared->offset_variable_vaccine_missed_doses = shared->dim_D + shared->dim_D_hosp + shared->dim_D_non_hosp + shared->dim_I_weighted + shared->dim_N_tot + shared->dim_S + shared->dim_cum_admit_by_age + shared->dim_cum_infections_per_strain + shared->dim_cum_n_E_vaccinated + shared->dim_cum_n_I_A_vaccinated + shared->dim_cum_n_I_P_vaccinated + shared->dim_cum_n_R_vaccinated + shared->dim_cum_n_S_vaccinated + shared->dim_cum_n_vaccinated + shared->dim_diagnoses_admitted + shared->dim_prob_strain + 27;
   shared->p_H_step = user_get_array_fixed<real_t, 2>(user, "p_H_step", shared->p_H_step, {shared->dim_p_H_step_1, shared->dim_p_H_step_2}, NA_REAL, NA_REAL);
+  shared->p_ICU_step = user_get_array_fixed<real_t, 2>(user, "p_ICU_step", shared->p_ICU_step, {shared->dim_p_ICU_step_1, shared->dim_p_ICU_step_2}, NA_REAL, NA_REAL);
   for (int i = 1; i <= shared->dim_p_I_A_progress; ++i) {
     shared->p_I_A_progress[i - 1] = 1 - std::exp(- shared->gamma_A[i - 1] * shared->dt);
   }
