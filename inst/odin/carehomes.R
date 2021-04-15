@@ -199,19 +199,24 @@ p_H[, , ] <- if (as.integer(step) >= n_p_H_steps)
     p_H_step[step + 1, i] * rel_p_hosp_if_sympt[i, j, k]
 
 p_ICU[, , ] <- if (as.integer(step) >= n_p_ICU_steps)
-  p_ICU_step[n_p_ICU_steps, i] else p_ICU_step[step + 1, i]
+  p_ICU_step[n_p_ICU_steps, i] * rel_p_ICU[i, j, k] else
+    p_ICU_step[step + 1, i] * rel_p_ICU[i, j, k]
 
 p_ICU_D[, , ] <- if (as.integer(step) >= n_p_ICU_D_steps)
-  p_ICU_D_step[n_p_ICU_D_steps, i] else p_ICU_D_step[step + 1, i]
+  p_ICU_D_step[n_p_ICU_D_steps, i] * rel_p_ICU_D[i, j, k] else
+    p_ICU_D_step[step + 1, i] * rel_p_ICU_D[i, j, k]
 
 p_H_D[, , ] <- if (as.integer(step) >= n_p_H_D_steps)
-  p_H_D_step[n_p_H_D_steps, i] else p_H_D_step[step + 1, i]
+  p_H_D_step[n_p_H_D_steps, i] * rel_p_H_D[i, j, k] else
+    p_H_D_step[step + 1, i] * rel_p_H_D[i, j, k]
 
 p_W_D[, , ] <- if (as.integer(step) >= n_p_W_D_steps)
-  p_W_D_step[n_p_W_D_steps, i] else p_W_D_step[step + 1, i]
+  p_W_D_step[n_p_W_D_steps, i] * rel_p_W_D[i, j, k] else
+    p_W_D_step[step + 1, i] * rel_p_W_D[i, j, k]
 
 p_G_D[, , ] <- if (as.integer(step) >= n_p_G_D_steps)
-  p_G_D_step[n_p_G_D_steps, i] else p_G_D_step[step + 1, i]
+  p_G_D_step[n_p_G_D_steps, i] * rel_p_G_D[i, j, k] else
+    p_G_D_step[step + 1, i] * rel_p_G_D[i, j, k]
 
 p_star[] <- if (as.integer(step) >= n_p_star_steps)
   p_star_step[n_p_star_steps, i] else p_star_step[step + 1, i]
@@ -900,7 +905,7 @@ initial(cum_admit_by_age[]) <- 0
 
 ## User defined parameters - default in parentheses:
 
-## Vaccination parameters
+## Vaccination/strain effect parameters
 n_vacc_classes <- user()
 rel_susceptibility[, , ] <- user()
 dim(rel_susceptibility) <- c(n_groups, n_strains, n_vacc_classes)
@@ -908,6 +913,16 @@ rel_p_sympt[, , ] <- user()
 dim(rel_p_sympt) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_hosp_if_sympt[, , ] <- user()
 dim(rel_p_hosp_if_sympt) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_ICU[, , ] <- user()
+dim(rel_p_ICU) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_ICU_D[, , ] <- user()
+dim(rel_p_ICU_D) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_H_D[, , ] <- user()
+dim(rel_p_H_D) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_W_D[, , ] <- user()
+dim(rel_p_W_D) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_G_D[, , ] <- user()
+dim(rel_p_G_D) <- c(n_groups, n_strains, n_vacc_classes)
 rel_infectivity[, , ] <- user()
 dim(rel_infectivity) <- c(n_groups, n_strains, n_vacc_classes)
 

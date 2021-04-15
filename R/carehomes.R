@@ -394,6 +394,11 @@ carehomes_parameters <- function(start_date, region,
   #   strain_rel_severity <- mirror_strain(strain_rel_severity)
   # }
   # severity <- scale_severity(severity, strain_rel_severity)
+  ret$rel_p_ICU <- array(1, c(19, 1, 1))
+  ret$rel_p_ICU_D <- array(1, c(19, 1, 1))
+  ret$rel_p_H_D <- array(1, c(19, 1, 1))
+  ret$rel_p_W_D <- array(1, c(19, 1, 1))
+  ret$rel_p_G_D <- array(1, c(19, 1, 1))
 
 
   strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
@@ -844,9 +849,8 @@ carehomes_parameters_severity <- function(dt,
       n_p_CHR_steps <- length(p_CHR_step)[1]
       if (n_p_steps < n_p_CHR_steps) {
         p_step <- vapply(seq_len(18),
-                         function(i) {sircovid_parameters_beta_expand(
-                           seq_len(n_p_CHR_steps),
-                           p_step[, i])},
+                         function(i) sircovid_parameters_beta_expand(
+                           seq_len(n_p_CHR_steps), p_step[, i]),
                          rep(0, n_p_CHR_steps))
       } else if (n_p_steps > n_p_CHR_steps) {
         p_CHR_step <- sircovid_parameters_beta_expand(
