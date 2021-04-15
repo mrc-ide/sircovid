@@ -408,8 +408,6 @@ carehomes_parameters <- function(start_date, region,
     }
   }
 
-  severity$psi_H <- get_psi(severity$p_H)
-  severity$p_H_step <- max(severity$p_H)
   ## probability of hospitalised patient going to ICU
   severity$psi_ICU <- get_psi(severity$p_ICU)
   severity$p_ICU_step <- max(severity$p_ICU)
@@ -817,10 +815,37 @@ carehomes_severity <- function(p) {
 }
 
 
-carehomes_parameters_severity <- function(severity, p_death_carehome) {
+carehomes_parameters_severity <- function(severity,
+                                          p_H_date = NULL,
+                                          p_H_value = NULL,
+                                          p_death_carehome,
+                                          dt) {
+
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
   severity$p_G_D[length(severity$p_G_D)] <- p_death_carehome
+
+  get_p_step <- function(p, p_date, p_value, dt) {
+    if (all(p == 0)) {
+      psi <- p
+    } else {
+      psi <- p / max(p)
+    }
+
+    if (is.null(p_value)) {
+      p_step <- max(p)
+    } else {
+      p_step <- sircovid_parameters_beta(p_date, p_value, dt)
+    }
+
+    p_step <- outer(p_step, psi)
+
+    p_step
+  }
+
+  severity$p_H_step <- get_p_step(severity$p_H, p_H_date, p_H_value, dt)
+  severity$p_H <- NULL
+
   severity
 }
 

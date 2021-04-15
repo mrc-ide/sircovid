@@ -194,9 +194,8 @@ p_ICU <- if (as.integer(step) >= length(p_ICU_step))
   p_ICU_step[length(p_ICU_step)] else p_ICU_step[step + 1]
 p_ICU_by_age[] <- p_ICU * psi_ICU[i]
 
-p_H <- if (as.integer(step) >= length(p_H_step))
-  p_H_step[length(p_H_step)] else p_H_step[step + 1]
-p_H_by_age[] <- p_H * psi_H[i]
+p_H[] <- if (as.integer(step) >= n_p_H_steps)
+  p_H_step[n_p_H_steps, i] else p_H_step[step + 1, i]
 
 p_ICU_D[] <- if (as.integer(step) >= dim(p_ICU_D_step, 1))
   p_ICU_D_step[dim(p_ICU_D_step, 1), i] else p_ICU_D_step[step + 1, i]
@@ -560,7 +559,7 @@ new_I_C_2[, , , ] <- I_C_2[i, j, k, l] + aux_I_C_2[i, j, k, l]
 
 ## Work out the flow from I_C_2 -> R, G_D, hosp
 n_I_C_2_to_R[, , ] <- rbinom(n_I_C_2_progress[i, j, k_C_2, k],
-                             1 - p_H_by_age[i] * rel_p_hosp_if_sympt[i, j, k])
+                             1 - p_H[i] * rel_p_hosp_if_sympt[i, j, k])
 n_I_C_2_to_G_D[, , ] <-
   rbinom(n_I_C_2_progress[i, j, k_C_2, k] - n_I_C_2_to_R[i, j, k],
          p_G_D_by_age[i, j])
@@ -946,9 +945,10 @@ dim(gamma_C_1) <- n_strains
 k_C_2 <- user()
 gamma_C_2[] <- user()
 dim(gamma_C_2) <- n_strains
-dim(p_H_step) <- user()
-p_H_step[] <- user()
-psi_H[] <- user()
+dim(p_H) <- n_groups
+dim(p_H_step) <- c(n_p_H_steps, n_groups)
+p_H_step[, ] <- user()
+n_p_H_steps <- user()
 
 ## Parameters of the G_D class
 k_G_D <- user()
@@ -1107,8 +1107,7 @@ dim(I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
 dim(aux_I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
 dim(new_I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
 dim(n_I_C_2_progress) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
-dim(p_H_by_age) <- n_groups
-dim(psi_H) <- n_groups
+
 
 ## Vectors handling the G_D class
 dim(G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
