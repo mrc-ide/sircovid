@@ -844,6 +844,7 @@ carehomes_parameters_severity <- function(severity,
   }
 
   severity$p_H_step <- get_p_step(severity$p_H, p_H_date, p_H_value, dt)
+  severity$n_p_H_steps <- dim(severity$p_H_step)[1]
   severity$p_H <- NULL
 
   severity
