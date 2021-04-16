@@ -1,6 +1,10 @@
+# sircovid 0.10.36
+
+* Fixed Rt calculation for multistrain so that Rt is NA only in the steps where prob_strain is NA (previously all Rt set to NA if any prob_strain was NA)
+
 # sircovid 0.10.34
 
-* Fixed `carehomes_rt` function to have flexibility for multiple dimensions, given strains, age categories and vaccinations classes. 
+* Fixed `carehomes_rt` function to have flexibility for multiple dimensions, given strains, age categories and vaccinations classes.
 * test-support.R updated accordingly.
 
 # sircovid 0.10.32
@@ -15,7 +19,7 @@
 
 # sircovid 0.10.30
 
-* Parameters describing vaccine efficacy (`rel_susceptibility`, `rel_p_sympt`, `rel_p_hosp_if_sympt` and `rel_infectivity`) can now take array values for 
+* Parameters describing vaccine efficacy (`rel_susceptibility`, `rel_p_sympt`, `rel_p_hosp_if_sympt` and `rel_infectivity`) can now take array values for
 varying across age groups, vaccination classes, and pathogen strains.
 
 # sircovid 0.10.29

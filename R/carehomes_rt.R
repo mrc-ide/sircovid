@@ -63,6 +63,39 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          eigen_method = "power_iteration", R = NULL,
                          weight_Rt = FALSE) {
 
+  ## deal with the prob_strain NA case at the beginning before any variables
+  ##  are modified
+  if (!is.null(prob_strain) && any(is.na(prob_strain))) {
+    which_nna <- !vlapply(seq(ncol(prob_strain)),
+                          function(i) any(is.na(prob_strain[, i])))
+
+    ## calculate Rt by first ignoring NA
+    ret <- carehomes_Rt(step[which_nna], S[, which_nna], p,
+                        prob_strain[, which_nna], type, interpolate_every,
+                        interpolate_critical_dates, interpolate_min,
+                        eigen_method, R[, which_nna], weight_Rt)
+
+    ## replace reduced step,date,beta with full values (no NA here)
+    ret$step <- step
+    ret$date <- step * p$dt
+    ret$beta <- beta <- sircovid_parameters_beta_expand(step, p$beta_step)
+
+    ## restore full length Rt with NAs when prob_strain is NA
+    for (i in grep("Rt_", names(ret))) {
+      if (inherits(ret[[i]], "matrix")) {
+        base <- matrix(NA, length(step), 2)
+        base[which_nna, ] <- ret[[i]]
+        ret[[i]] <- base
+      } else {
+        base <- rep(NA, length(step))
+        base[which_nna] <- ret[[i]]
+        ret[[i]] <- base
+      }
+    }
+
+    return(ret)
+  }
+
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
   if (is.null(type)) {
     type <- all_types
@@ -76,7 +109,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   }
 
   if (!is.null(interpolate_every)) {
-    interpolate_critical_index <- match(interpolate_critical_dates / p$dt, step)
+    interpolate_critical_index <- match(interpolate_critical_dates / p$dt,
+                                        step)
     step_index_split <- interpolate_grid_critical_x(seq_along(step),
                                                     interpolate_every,
                                                     interpolate_critical_index,
@@ -191,15 +225,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   mt[ch, ch, ] <- m[ch, ch]
 
   n_time <- length(step)
-
-  if (any(is.na(prob_strain))) {
-    ret <- list(step = step,
-                date = step * p$dt,
-                beta = beta)
-    ret[type] <- list(rep(NA_real_, length(step)))
-    class(ret) <- "Rt"
-    return(ret)
-  }
 
   mean_duration <-
     carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
