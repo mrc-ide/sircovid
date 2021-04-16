@@ -1248,71 +1248,31 @@ carehomes_parameters_progression <- function(dt,
               gamma_PCR_pos = 1 / 5
   )
 
-  get_gamma_step <- function(gamma, gamma_date, gamma_value) {
+  get_gamma_step <- function(x, name) {
+
+    gamma <- x[[paste0("gamma_", name)]]
+    gamma_value <- get(paste0("gamma_", name, "_value"))
+    gamma_date <- get(paste0("gamma_", name, "_date"))
+
     if (is.null(gamma_value)) {
       gamma_step <- gamma
     } else {
       gamma_step <- sircovid_parameters_beta(gamma_date, gamma_value, dt)
     }
-    gamma_step
+
+    x[[paste0("gamma_", name, "_step")]] <- gamma_step
+    x[[paste0("gamma_", name)]] <- NULL
+    x[[paste0("n_gamma_", name, "_steps")]] <- length(gamma_step)
+
+    x
   }
 
-  ## Set up time-varying gammas for hospital durations
-  ## ICU_pre
-  ret$gamma_ICU_pre_step <- get_gamma_step(ret$gamma_ICU_pre,
-                                           gamma_ICU_pre_date,
-                                           gamma_ICU_pre_value)
-  ret$n_gamma_ICU_pre_steps <- length(ret$gamma_ICU_pre_step)
-  ret$gamma_ICU_pre <- NULL
-
-  ## ICU_D
-  ret$gamma_ICU_D_step <- get_gamma_step(ret$gamma_ICU_D,
-                                           gamma_ICU_D_date,
-                                           gamma_ICU_D_value)
-  ret$n_gamma_ICU_D_steps <- length(ret$gamma_ICU_D_step)
-  ret$gamma_ICU_D <- NULL
-
-  ## ICU_W_D
-  ret$gamma_ICU_W_D_step <- get_gamma_step(ret$gamma_ICU_W_D,
-                                           gamma_ICU_W_D_date,
-                                           gamma_ICU_W_D_value)
-  ret$n_gamma_ICU_W_D_steps <- length(ret$gamma_ICU_W_D_step)
-  ret$gamma_ICU_W_D <- NULL
-
-  ## ICU_W_R
-  ret$gamma_ICU_W_R_step <- get_gamma_step(ret$gamma_ICU_W_R,
-                                           gamma_ICU_W_R_date,
-                                           gamma_ICU_W_R_value)
-  ret$n_gamma_ICU_W_R_steps <- length(ret$gamma_ICU_W_R_step)
-  ret$gamma_ICU_W_R <- NULL
-
-  ## H_D
-  ret$gamma_H_D_step <- get_gamma_step(ret$gamma_H_D,
-                                       gamma_H_D_date,
-                                       gamma_H_D_value)
-  ret$n_gamma_H_D_steps <- length(ret$gamma_H_D_step)
-  ret$gamma_H_D <- NULL
-
-  ## H_R
-  ret$gamma_H_R_step <- get_gamma_step(ret$gamma_H_R,
-                                       gamma_H_R_date,
-                                       gamma_H_R_value)
-  ret$n_gamma_H_R_steps <- length(ret$gamma_H_R_step)
-  ret$gamma_H_R <- NULL
-
-  ## W_D
-  ret$gamma_W_D_step <- get_gamma_step(ret$gamma_W_D,
-                                       gamma_W_D_date,
-                                       gamma_W_D_value)
-  ret$n_gamma_W_D_steps <- length(ret$gamma_W_D_step)
-  ret$gamma_W_D <- NULL
-
-  ## W_R
-  ret$gamma_W_R_step <- get_gamma_step(ret$gamma_W_R,
-                                       gamma_W_R_date,
-                                       gamma_W_R_value)
-  ret$n_gamma_W_R_steps <- length(ret$gamma_W_R_step)
-  ret$gamma_W_R <- NULL
+  ## Set up time-varying gammas
+  time_varying_gammas <- c("ICU_pre", "ICU_D", "ICU_W_D", "ICU_W_R",
+                           "W_D", "W_R", "H_D", "H_R")
+  for (name in time_varying_gammas) {
+    ret <- get_gamma_step(ret, name)
+  }
 
   ret
 }
