@@ -615,30 +615,26 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
 compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
                                           n_vacc_classes) {
 
-  matricise_pD <- function(p_step, psi) {
-    # groups x strains x vacc class x steps
-    aperm(vapply(seq(ncol(p_step)), function(i) {
-      outer(matrix(rep(psi[, i], n_vacc_classes),
-                   ncol = n_vacc_classes, byrow = FALSE),
-            sircovid_parameters_beta_expand(step, p_step[, i]))
-    }, array(0, c(pars$n_groups, n_vacc_classes, length(step)))), c(1, 4, 2, 3))
-  }
-
-  make_3darray <- function(vect, dim2 = n_strains, dim3 = n_vacc_classes) {
-    array(rep(vect, dim2 * dim3), dim = c(length(vect), dim2, dim3))
+  combine_steps_groups <- function(p_step, rel, beta_step) {
+    ret <- array(rep(p_step, n_strains * n_vacc_classes),
+                 dim = c(length(p_step), n_strains, n_vacc_classes))
+    outer(ret * rel, sircovid_parameters_beta_expand(step, beta_step))
   }
 
   out <- list()
-  out$p_C <- outer(make_3darray(pars$p_C) * pars$rel_p_sympt,
-               rep(1, n_time_steps))
-  out$p_H <- outer(make_3darray(pars$psi_H) * pars$rel_p_hosp_if_sympt,
-                   sircovid_parameters_beta_expand(step, pars$p_H_step))
-  out$p_ICU <- outer(make_3darray(pars$psi_ICU),
-                     sircovid_parameters_beta_expand(step, pars$p_ICU_step))
-  out$p_ICU_D <- matricise_pD(pars$p_ICU_D_step, pars$psi_ICU_D)
-  out$p_H_D <- matricise_pD(pars$p_H_D_step, pars$psi_H_D)
-  out$p_W_D <- matricise_pD(pars$p_W_D_step, pars$psi_W_D)
-  out$p_G_D <- matricise_pD(pars$p_G_D_step, pars$psi_G_D)
+  out$p_C <- combine_steps_groups(pars$p_C_step, pars$rel_p_sympt, 1)
+  out$p_H <- combine_steps_groups(
+    pars$p_H_step, pars$rel_p_hosp_if_sympt, pars$p_H_step)
+  out$p_ICU <- combine_steps_groups(
+    pars$p_ICU_step, 1, pars$p_ICU_step)
+  out$p_ICU_D <- combine_steps_groups(
+    pars$p_ICU_D_step, pars$rel_p_ICU_D, pars$p_ICU_D_step)
+  out$p_H_D <- combine_steps_groups(
+    pars$p_H_D_step, pars$rel_p_H_D, pars$p_H_D_step)
+  out$p_W_D <- combine_steps_groups(
+    pars$p_W_D_step, pars$rel_p_W_D, pars$p_W_D_step)
+  out$p_G_D <- combine_steps_groups(
+    pars$p_G_D_step, pars$rel_p_G_D, pars$p_G_D_step)
 
   out
 }
