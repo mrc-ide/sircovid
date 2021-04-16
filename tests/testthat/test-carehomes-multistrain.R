@@ -1270,16 +1270,13 @@ test_that("If prob_strain is NA then Rt is NA ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            cross_immunity = 0)
+                            strain_transmission = c(1, 1))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
-  ## Remove the initial infectives so that no-one becomes infected
   info <- mod$info()
   initial <- carehomes_initial(info, 1, p)
-  initial$state[info$index$I_A] <- 0
 
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
@@ -1295,22 +1292,42 @@ test_that("If prob_strain is NA then Rt is NA ", {
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  ## all values of prob_strain after the first step should be NA
-  expect_true(all(is.na(prob_strain[, , -1L])))
+  ## set NA for prob_strain in steps 60-70
+  prob_strain[,, 60:70] <- NA
+
+  expect_true(!any(is.na(prob_strain[, , - (60:70)])))
+  expect_true(all(is.na(prob_strain[, , 60:70])))
+
+  ## test unweighted
 
   rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
   rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
-  ## all values of Rt after the first step should be NA
-  expect_true(all(is.na(rt_1$Rt_all[-1L])))
-  expect_true(all(is.na(rt_1$Rt_general[-1L])))
-  expect_true(all(is.na(rt_1$eff_Rt_all[-1L])))
-  expect_true(all(is.na(rt_1$eff_Rt_general[-1L])))
-  expect_true(all(is.na(rt_all$Rt_all[-1L, ])))
-  expect_true(all(is.na(rt_all$Rt_general[-1L, ])))
-  expect_true(all(is.na(rt_all$eff_Rt_all[-1L, ])))
-  expect_true(all(is.na(rt_all$eff_Rt_general[-1L, ])))
+  ## all values of Rt in 60:70 to be NA and others not to be
+  expect_vector_equal(lengths(rt_1[1:3]), 85)
+  expect_true(all(is.na(simplify2array(rt_1[4:7])[60:70, , ])))
+  expect_true(!any(is.na(simplify2array(rt_1[4:7])[-(60:70),,])))
 
+  expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
+  expect_true(all(is.na(simplify2array(rt_all[4:7])[60:70, , , ])))
+  expect_true(!any(is.na(simplify2array(rt_all[4:7])[-(60:70),,,])))
+
+
+  ## test weighted
+
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                      weight_Rt = TRUE)
+
+  ## all values of Rt in 60:70 to be NA and others not to be
+  expect_vector_equal(lengths(rt_1[1:3]), 85)
+  expect_true(all(is.na(simplify2array(rt_1[4:7])[60:70, ])))
+  expect_true(!any(is.na(simplify2array(rt_1[4:7])[-(60:70), ])))
+
+  expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
+  expect_true(all(is.na(simplify2array(rt_all[4:7])[60:70, , ])))
+  expect_true(!any(is.na(simplify2array(rt_all[4:7])[-(60:70), , ])))
 })
 
 
