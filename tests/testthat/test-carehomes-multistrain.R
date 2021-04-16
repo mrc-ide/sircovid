@@ -1266,7 +1266,7 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
 })
 
 
-test_that("If prob_strain is NA then Rt is NA ", {
+test_that("If prob_strain is NA then Rt is NA only in same steps", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1293,10 +1293,11 @@ test_that("If prob_strain is NA then Rt is NA ", {
   prob_strain <- y[index_prob_strain, , ]
 
   ## set NA for prob_strain in steps 60-70
-  prob_strain[, , 60:70] <- NA
+  na_steps <- 60:70
+  prob_strain[, , na_steps] <- NA
 
-  expect_true(!any(is.na(prob_strain[, , - (60:70)])))
-  expect_true(all(is.na(prob_strain[, , 60:70])))
+  expect_true(!any(is.na(prob_strain[, , -na_steps])))
+  expect_true(all(is.na(prob_strain[, , na_steps])))
 
   ## test unweighted
 
@@ -1305,12 +1306,12 @@ test_that("If prob_strain is NA then Rt is NA ", {
 
   ## all values of Rt in 60:70 to be NA and others not to be
   expect_vector_equal(lengths(rt_1[1:3]), 85)
-  expect_true(all(is.na(simplify2array(rt_1[4:7])[60:70, , ])))
-  expect_true(!any(is.na(simplify2array(rt_1[4:7])[- (60:70), , ])))
+  expect_true(all(is.na(simplify2array(rt_1[4:7])[na_steps, , ])))
+  expect_true(!any(is.na(simplify2array(rt_1[4:7])[-na_steps, , ])))
 
   expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
-  expect_true(all(is.na(simplify2array(rt_all[4:7])[60:70, , , ])))
-  expect_true(!any(is.na(simplify2array(rt_all[4:7])[- (60:70), , , ])))
+  expect_true(all(is.na(simplify2array(rt_all[4:7])[na_steps, , , ])))
+  expect_true(!any(is.na(simplify2array(rt_all[4:7])[-na_steps, , , ])))
 
 
   ## test weighted
@@ -1322,12 +1323,12 @@ test_that("If prob_strain is NA then Rt is NA ", {
 
   ## all values of Rt in 60:70 to be NA and others not to be
   expect_vector_equal(lengths(rt_1[1:3]), 85)
-  expect_true(all(is.na(simplify2array(rt_1[4:7])[60:70, ])))
-  expect_true(!any(is.na(simplify2array(rt_1[4:7])[- (60:70), ])))
+  expect_true(all(is.na(simplify2array(rt_1[4:7])[na_steps, ])))
+  expect_true(!any(is.na(simplify2array(rt_1[4:7])[-na_steps, ])))
 
   expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
-  expect_true(all(is.na(simplify2array(rt_all[4:7])[60:70, , ])))
-  expect_true(!any(is.na(simplify2array(rt_all[4:7])[- (60:70), , ])))
+  expect_true(all(is.na(simplify2array(rt_all[4:7])[na_steps, , ])))
+  expect_true(!any(is.na(simplify2array(rt_all[4:7])[-na_steps, , ])))
 })
 
 

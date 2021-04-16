@@ -66,8 +66,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   ## deal with the prob_strain NA case at the beginning before any variables
   ##  are modified
   if (!is.null(prob_strain) && any(is.na(prob_strain))) {
-    which_nna <- !vapply(seq(ncol(prob_strain)),
-                        function(i) any(is.na(prob_strain[, i])), logical(1))
+    which_nna <- !vlapply(seq(ncol(prob_strain)),
+                          function(i) any(is.na(prob_strain[, i])))
 
     ## calculate Rt by first ignoring NA
     ret <- carehomes_Rt(step[which_nna], S[, which_nna], p,
