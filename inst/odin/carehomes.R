@@ -1017,7 +1017,7 @@ gamma_ICU_W_R_step[] <- user()
 ## Parameters of the ICU_W_D classes
 k_ICU_W_D <- user()
 n_gamma_ICU_W_D_steps <- user()
-dim(gamma_ICU_W_D_step) <- n_gamma_W_D_steps
+dim(gamma_ICU_W_D_step) <- n_gamma_ICU_W_D_steps
 gamma_ICU_W_D_step[] <- user()
 
 ## Parameters of the ICU_D classes

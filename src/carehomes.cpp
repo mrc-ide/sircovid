@@ -1971,7 +1971,7 @@ public:
     int n_gamma_H_D_steps;
     int n_gamma_H_R_steps;
     int n_gamma_ICU_D_steps;
-    real_t n_gamma_ICU_W_D_steps;
+    int n_gamma_ICU_W_D_steps;
     int n_gamma_ICU_W_R_steps;
     int n_gamma_ICU_pre_steps;
     int n_gamma_W_D_steps;
@@ -4506,7 +4506,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_gamma_H_D_steps = NA_INTEGER;
   shared->n_gamma_H_R_steps = NA_INTEGER;
   shared->n_gamma_ICU_D_steps = NA_INTEGER;
-  shared->n_gamma_ICU_W_D_steps = NA_REAL;
+  shared->n_gamma_ICU_W_D_steps = NA_INTEGER;
   shared->n_gamma_ICU_W_R_steps = NA_INTEGER;
   shared->n_gamma_ICU_pre_steps = NA_INTEGER;
   shared->n_gamma_W_D_steps = NA_INTEGER;
@@ -4607,7 +4607,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_gamma_H_D_steps = user_get_scalar<int>(user, "n_gamma_H_D_steps", shared->n_gamma_H_D_steps, NA_REAL, NA_REAL);
   shared->n_gamma_H_R_steps = user_get_scalar<int>(user, "n_gamma_H_R_steps", shared->n_gamma_H_R_steps, NA_REAL, NA_REAL);
   shared->n_gamma_ICU_D_steps = user_get_scalar<int>(user, "n_gamma_ICU_D_steps", shared->n_gamma_ICU_D_steps, NA_REAL, NA_REAL);
-  shared->n_gamma_ICU_W_D_steps = user_get_scalar<real_t>(user, "n_gamma_ICU_W_D_steps", shared->n_gamma_ICU_W_D_steps, NA_REAL, NA_REAL);
+  shared->n_gamma_ICU_W_D_steps = user_get_scalar<int>(user, "n_gamma_ICU_W_D_steps", shared->n_gamma_ICU_W_D_steps, NA_REAL, NA_REAL);
   shared->n_gamma_ICU_W_R_steps = user_get_scalar<int>(user, "n_gamma_ICU_W_R_steps", shared->n_gamma_ICU_W_R_steps, NA_REAL, NA_REAL);
   shared->n_gamma_ICU_pre_steps = user_get_scalar<int>(user, "n_gamma_ICU_pre_steps", shared->n_gamma_ICU_pre_steps, NA_REAL, NA_REAL);
   shared->n_gamma_W_D_steps = user_get_scalar<int>(user, "n_gamma_W_D_steps", shared->n_gamma_W_D_steps, NA_REAL, NA_REAL);
@@ -4897,7 +4897,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_gamma_H_D_step = shared->n_gamma_H_D_steps;
   shared->dim_gamma_H_R_step = shared->n_gamma_H_R_steps;
   shared->dim_gamma_ICU_D_step = shared->n_gamma_ICU_D_steps;
-  shared->dim_gamma_ICU_W_D_step = shared->n_gamma_W_D_steps;
+  shared->dim_gamma_ICU_W_D_step = shared->n_gamma_ICU_W_D_steps;
   shared->dim_gamma_ICU_W_R_step = shared->n_gamma_ICU_W_R_steps;
   shared->dim_gamma_ICU_pre_step = shared->n_gamma_ICU_pre_steps;
   shared->dim_gamma_P = shared->n_strains;

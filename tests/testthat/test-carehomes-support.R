@@ -1,17 +1,20 @@
 context("carehomes (support)")
 
 test_that("carehomes progression parameters", {
-  p <- carehomes_parameters_progression(1, 1, 1, 1)
+  p <- carehomes_parameters_progression(0.25, 1, 1, 1, 1)
   expect_setequal(
     names(p),
     c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
       "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
-      "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D", "gamma_H_D",
-      "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
-      "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
+      "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D",
+      "gamma_H_D_step", "gamma_H_R_step", "gamma_ICU_D_step",
+      "gamma_ICU_W_R_step", "gamma_ICU_W_D_step", "gamma_ICU_pre_step",
+      "gamma_W_D_step", "gamma_W_R_step", "gamma_sero_pos",
       "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
-      "gamma_PCR_pre"))
+      "gamma_PCR_pre", "n_gamma_H_D_steps", "n_gamma_H_R_steps",
+      "n_gamma_ICU_D_steps", "n_gamma_ICU_W_R_steps", "n_gamma_ICU_W_D_steps",
+      "n_gamma_ICU_pre_steps", "n_gamma_W_D_steps", "n_gamma_W_R_steps"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
@@ -191,10 +194,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
       "react_sensitivity", "p_NC", "I_A_transmission", "I_P_transmission",
       "I_C_1_transmission", "I_C_2_transmission",
-      "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
-      "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
-      "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",
-      "cross_immunity"))
+      "n_groups", "initial_I", "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
