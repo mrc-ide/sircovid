@@ -413,20 +413,11 @@ carehomes_parameters <- function(start_date, region,
             length(strain_transmission))
 
   progression <- progression %||%
-                  carehomes_parameters_progression(strain_rel_gamma_A,
+                  carehomes_parameters_progression(ret$dt,
+                                                   strain_rel_gamma_A,
                                                    strain_rel_gamma_P,
                                                    strain_rel_gamma_C_1,
                                                    strain_rel_gamma_C_2)
-
-  ## implementation of time-varying progression gammas
-  progression$gamma_H_R_step <- progression$gamma_H_R
-  progression$gamma_W_R_step <- progression$gamma_W_R
-  progression$gamma_ICU_W_R_step <- progression$gamma_ICU_W_R
-  progression$gamma_H_D_step <- progression$gamma_H_D
-  progression$gamma_W_D_step <- progression$gamma_W_D
-  progression$gamma_ICU_W_D_step <- progression$gamma_ICU_W_D
-  progression$gamma_ICU_D_step <- progression$gamma_ICU_D
-  progression$gamma_ICU_pre_step <- progression$gamma_ICU_pre
 
   waning <- carehomes_parameters_waning(waning_rate)
 
@@ -1181,10 +1172,27 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'   relative scaling of the defaults for each strain.
 ##'
 ##' @export
-carehomes_parameters_progression <- function(rel_gamma_A = 1,
+carehomes_parameters_progression <- function(dt,
+                                             rel_gamma_A = 1,
                                              rel_gamma_P = 1,
                                              rel_gamma_C_1 = 1,
-                                             rel_gamma_C_2 = 1) {
+                                             rel_gamma_C_2 = 1,
+                                             gamma_ICU_pre_date = NULL,
+                                             gamma_ICU_pre_value = NULL,
+                                             gamma_ICU_D_date = NULL,
+                                             gamma_ICU_D_value = NULL,
+                                             gamma_ICU_W_D_date = NULL,
+                                             gamma_ICU_W_D_value = NULL,
+                                             gamma_ICU_W_R_date = NULL,
+                                             gamma_ICU_W_R_value = NULL,
+                                             gamma_H_D_date = NULL,
+                                             gamma_H_D_value = NULL,
+                                             gamma_H_R_date = NULL,
+                                             gamma_H_R_value = NULL,
+                                             gamma_W_D_date = NULL,
+                                             gamma_W_D_value = NULL,
+                                             gamma_W_R_date = NULL,
+                                             gamma_W_R_value = NULL) {
 
   stopifnot(length(unique(lengths(list(rel_gamma_A, rel_gamma_P,
                                        rel_gamma_C_1, rel_gamma_C_2)))) == 1)
@@ -1200,45 +1208,113 @@ carehomes_parameters_progression <- function(rel_gamma_A = 1,
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
   ## parameters of that distribution.
-  list(k_E = 2,
-       k_A = 1,
-       k_P = 1,
-       k_C_1 = 1,
-       k_C_2 = 1,
-       k_G_D = 2,
-       k_H_D = 2,
-       k_H_R = 2,
-       k_ICU_D = 2,
-       k_ICU_W_R = 2,
-       k_ICU_W_D = 2,
-       k_ICU_pre = 2,
-       k_W_R = 2,
-       k_W_D = 2,
-       k_sero_pos = 2,
-       k_PCR_pre = 2,
-       k_PCR_pos = 2,
+  ret <- list(k_E = 2,
+              k_A = 1,
+              k_P = 1,
+              k_C_1 = 1,
+              k_C_2 = 1,
+              k_G_D = 2,
+              k_H_D = 2,
+              k_H_R = 2,
+              k_ICU_D = 2,
+              k_ICU_W_R = 2,
+              k_ICU_W_D = 2,
+              k_ICU_pre = 2,
+              k_W_R = 2,
+              k_W_D = 2,
+              k_sero_pos = 2,
+              k_PCR_pre = 2,
+              k_PCR_pos = 2,
 
-       gamma_E = 1 / (3.42 / 2),
-       gamma_A = 1 / 2.88 * rel_gamma_A,
-       gamma_P = 1 / 1.68 * rel_gamma_P,
-       gamma_C_1 = 1 / 2.14 * rel_gamma_C_1,
-       gamma_C_2 = 1 / 1.86 * rel_gamma_C_2,
-       gamma_G_D = 1 / (3 / 2),
-       gamma_H_D = 2 / 5,
-       gamma_H_R = 2 / 10,
-       gamma_ICU_D = 2 / 5,
-       gamma_ICU_W_R = 2 / 10,
-       gamma_ICU_W_D = 2 / 10,
-       gamma_ICU_pre = 2,
-       gamma_W_R = 2 / 5,
-       gamma_W_D = 2 / 5,
-       gamma_sero_pre_1 = 1 / 5,
-       gamma_sero_pre_2 = 1 / 10,
-       gamma_sero_pos = 1 / 25,
-       gamma_U = 3 / 10,
-       gamma_PCR_pre = 2 / 3,
-       gamma_PCR_pos = 1 / 5
-       )
+              gamma_E = 1 / (3.42 / 2),
+              gamma_A = 1 / 2.88 * rel_gamma_A,
+              gamma_P = 1 / 1.68 * rel_gamma_P,
+              gamma_C_1 = 1 / 2.14 * rel_gamma_C_1,
+              gamma_C_2 = 1 / 1.86 * rel_gamma_C_2,
+              gamma_G_D = 1 / (3 / 2),
+              gamma_H_D = 2 / 5,
+              gamma_H_R = 2 / 10,
+              gamma_ICU_D = 2 / 5,
+              gamma_ICU_W_R = 2 / 10,
+              gamma_ICU_W_D = 2 / 10,
+              gamma_ICU_pre = 2,
+              gamma_W_R = 2 / 5,
+              gamma_W_D = 2 / 5,
+              gamma_sero_pre_1 = 1 / 5,
+              gamma_sero_pre_2 = 1 / 10,
+              gamma_sero_pos = 1 / 25,
+              gamma_U = 3 / 10,
+              gamma_PCR_pre = 2 / 3,
+              gamma_PCR_pos = 1 / 5
+  )
+
+  get_gamma_step <- function(gamma, gamma_date, gamma_value) {
+    if (is.null(gamma_value)) {
+      gamma_step <- gamma
+    } else {
+      gamma_step <- sircovid_parameters_beta(gamma_date, gamma_value, dt)
+    }
+    gamma_step
+  }
+
+  ## Set up time-varying gammas for hospital durations
+  ## ICU_pre
+  ret$gamma_ICU_pre_step <- get_gamma_step(ret$gamma_ICU_pre,
+                                           gamma_ICU_pre_date,
+                                           gamma_ICU_pre_value)
+  ret$n_gamma_ICU_pre_steps <- length(ret$gamma_ICU_pre_step)
+  ret$gamma_ICU_pre <- NULL
+
+  ## ICU_D
+  ret$gamma_ICU_D_step <- get_gamma_step(ret$gamma_ICU_D,
+                                           gamma_ICU_D_date,
+                                           gamma_ICU_D_value)
+  ret$n_gamma_ICU_D_steps <- length(ret$gamma_ICU_D_step)
+  ret$gamma_ICU_D <- NULL
+
+  ## ICU_W_D
+  ret$gamma_ICU_W_D_step <- get_gamma_step(ret$gamma_ICU_W_D,
+                                           gamma_ICU_W_D_date,
+                                           gamma_ICU_W_D_value)
+  ret$n_gamma_ICU_W_D_steps <- length(ret$gamma_ICU_W_D_step)
+  ret$gamma_ICU_W_D <- NULL
+
+  ## ICU_W_R
+  ret$gamma_ICU_W_R_step <- get_gamma_step(ret$gamma_ICU_W_R,
+                                           gamma_ICU_W_R_date,
+                                           gamma_ICU_W_R_value)
+  ret$n_gamma_ICU_W_R_steps <- length(ret$gamma_ICU_W_R_step)
+  ret$gamma_ICU_W_R <- NULL
+
+  ## H_D
+  ret$gamma_H_D_step <- get_gamma_step(ret$gamma_H_D,
+                                       gamma_H_D_date,
+                                       gamma_H_D_value)
+  ret$n_gamma_H_D_steps <- length(ret$gamma_H_D_step)
+  ret$gamma_H_D <- NULL
+
+  ## H_R
+  ret$gamma_H_R_step <- get_gamma_step(ret$gamma_H_R,
+                                       gamma_H_R_date,
+                                       gamma_H_R_value)
+  ret$n_gamma_H_R_steps <- length(ret$gamma_H_R_step)
+  ret$gamma_H_R <- NULL
+
+  ## W_D
+  ret$gamma_W_D_step <- get_gamma_step(ret$gamma_W_D,
+                                       gamma_W_D_date,
+                                       gamma_W_D_value)
+  ret$n_gamma_W_D_steps <- length(ret$gamma_W_D_step)
+  ret$gamma_W_D <- NULL
+
+  ## W_R
+  ret$gamma_W_R_step <- get_gamma_step(ret$gamma_W_R,
+                                       gamma_W_R_date,
+                                       gamma_W_R_value)
+  ret$n_gamma_W_R_steps <- length(ret$gamma_W_R_step)
+  ret$gamma_W_R <- NULL
+
+  ret
 }
 
 

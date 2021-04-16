@@ -5,10 +5,27 @@
 \title{Carehomes progression parameters}
 \usage{
 carehomes_parameters_progression(
+  dt,
   rel_gamma_A = 1,
   rel_gamma_P = 1,
   rel_gamma_C_1 = 1,
-  rel_gamma_C_2 = 1
+  rel_gamma_C_2 = 1,
+  gamma_ICU_pre_date = NULL,
+  gamma_ICU_pre_value = NULL,
+  gamma_ICU_D_date = NULL,
+  gamma_ICU_D_value = NULL,
+  gamma_ICU_W_D_date = NULL,
+  gamma_ICU_W_D_value = NULL,
+  gamma_ICU_W_R_date = NULL,
+  gamma_ICU_W_R_value = NULL,
+  gamma_H_D_date = NULL,
+  gamma_H_D_value = NULL,
+  gamma_H_R_date = NULL,
+  gamma_H_R_value = NULL,
+  gamma_W_D_date = NULL,
+  gamma_W_D_value = NULL,
+  gamma_W_R_date = NULL,
+  gamma_W_R_value = NULL
 )
 }
 \arguments{
