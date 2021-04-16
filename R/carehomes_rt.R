@@ -81,7 +81,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ret$beta <- beta <- sircovid_parameters_beta_expand(step, p$beta_step)
 
     ## restore full length Rt with NAs when prob_strain is NA
-    for (i in 4:length(ret)) {
+    for (i in grep("Rt_", names(ret))) {
       if (inherits(ret[[i]], "matrix")) {
         base <- matrix(NA, length(step), 2)
         base[which_nna, ] <- ret[[i]]
