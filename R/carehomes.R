@@ -813,11 +813,20 @@ carehomes_parameters_severity <- function(dt,
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
 
-  get_p_step <- function(p, p_date, p_value,
-                         p_CHR_date = NULL, p_CHR_value = NULL) {
+  get_p_step <- function(x, name) {
 
-    if (!is.null(p_CHR_value)) {
-      p <- p[1:18]
+    p <- x[[paste0("p_", name)]]
+    p_value <- get(paste0("p_", name, "_value"))
+    p_date <- get(paste0("p_", name, "_date"))
+
+    CHR <- FALSE
+    if (exists(paste0("p_", name, "_CHR_value"))) {
+      p_CHR_value <- get(paste0("p_", name, "_CHR_value"))
+      if (!is.null(p_CHR_value)) {
+        CHR <- TRUE
+        p <- p[1:18]
+        p_CHR_date <- get(paste0("p_", name, "_CHR_date"))
+      }
     }
 
     if (all(p == 0)) {
@@ -834,7 +843,7 @@ carehomes_parameters_severity <- function(dt,
 
     p_step <- outer(p_step, psi)
 
-    if (!is.null(p_CHR_value)) {
+    if (CHR) {
       p_CHR_step <- sircovid_parameters_beta(p_CHR_date, p_CHR_value, dt)
       n_p_steps <- dim(p_step)[1]
       n_p_CHR_steps <- length(p_CHR_step)[1]
@@ -851,54 +860,19 @@ carehomes_parameters_severity <- function(dt,
       p_step <- cbind(p_step, p_CHR_step)
     }
 
-    p_step
+    x[[paste0("p_", name, "_step")]] <- p_step
+    x[[paste0("p_", name)]] <- NULL
+    x[[paste0("n_p_", name, "_steps")]] <- dim(p_step)[1]
+
+    x
   }
 
-  ## probability of symptomatic individuals requiring hospitalisation
-  severity$p_C_step <- get_p_step(severity$p_C, p_C_date, p_C_value)
-  severity$n_p_C_steps <- dim(severity$p_C_step)[1]
-  severity$p_C <- NULL
-
-  ## probability of symptomatic individuals requiring hospitalisation
-  severity$p_H_step <- get_p_step(severity$p_H, p_H_date, p_H_value,
-                                  p_H_CHR_date, p_H_CHR_value)
-  severity$n_p_H_steps <- dim(severity$p_H_step)[1]
-  severity$p_H <- NULL
-
-  ## probability of hospital patients going to ICU
-  severity$p_ICU_step <- get_p_step(severity$p_ICU, p_ICU_date, p_ICU_value)
-  severity$n_p_ICU_steps <- dim(severity$p_ICU_step)[1]
-  severity$p_ICU <- NULL
-
-  ## probability of non-ICU patients dying
-  severity$p_H_D_step <- get_p_step(severity$p_H_D, p_H_D_date,
-                                    p_H_D_value)
-  severity$n_p_H_D_steps <- dim(severity$p_H_D_step)[1]
-  severity$p_H_D <- NULL
-
-  ## probability of dying in ICU
-  severity$p_ICU_D_step <- get_p_step(severity$p_ICU_D, p_ICU_D_date,
-                                      p_ICU_D_value)
-  severity$n_p_ICU_D_steps <- dim(severity$p_ICU_D_step)[1]
-  severity$p_ICU_D <- NULL
-
-  ## probability of dying in stepdown
-  severity$p_W_D_step <- get_p_step(severity$p_W_D, p_W_D_date, p_W_D_value)
-  severity$n_p_W_D_steps <- dim(severity$p_W_D_step)[1]
-  severity$p_W_D <- NULL
-
-  ## probability of dying in community/care home if requiring hospitalisation
-  severity$p_G_D_step <- get_p_step(severity$p_G_D, p_G_D_date,
-                           p_G_D_value, p_G_D_CHR_date, p_G_D_CHR_value)
-  severity$n_p_G_D_steps <- dim(severity$p_G_D_step)[1]
-  severity$p_G_D <- NULL
-
-  ## probability of being hospital patients being confirmed on admission
-  severity$p_star_step <- get_p_step(severity$p_star, p_star_date,
-                                     p_star_value, dt)
-  severity$n_p_star_steps <- dim(severity$p_star_step)[1]
-  severity$p_star <- NULL
-
+  ## Set up time-varying severity parameters
+  time_varying_severity <- c("C", "H", "ICU", "H_D", "W_D",
+                             "ICU_D", "G_D", "star")
+  for (name in time_varying_severity) {
+    severity <- get_p_step(severity, name)
+  }
 
   severity
 }
@@ -1248,71 +1222,31 @@ carehomes_parameters_progression <- function(dt,
               gamma_PCR_pos = 1 / 5
   )
 
-  get_gamma_step <- function(gamma, gamma_date, gamma_value) {
+  get_gamma_step <- function(x, name) {
+
+    gamma <- x[[paste0("gamma_", name)]]
+    gamma_value <- get(paste0("gamma_", name, "_value"))
+    gamma_date <- get(paste0("gamma_", name, "_date"))
+
     if (is.null(gamma_value)) {
       gamma_step <- gamma
     } else {
       gamma_step <- sircovid_parameters_beta(gamma_date, gamma_value, dt)
     }
-    gamma_step
+
+    x[[paste0("gamma_", name, "_step")]] <- gamma_step
+    x[[paste0("gamma_", name)]] <- NULL
+    x[[paste0("n_gamma_", name, "_steps")]] <- length(gamma_step)
+
+    x
   }
 
-  ## Set up time-varying gammas for hospital durations
-  ## ICU_pre
-  ret$gamma_ICU_pre_step <- get_gamma_step(ret$gamma_ICU_pre,
-                                           gamma_ICU_pre_date,
-                                           gamma_ICU_pre_value)
-  ret$n_gamma_ICU_pre_steps <- length(ret$gamma_ICU_pre_step)
-  ret$gamma_ICU_pre <- NULL
-
-  ## ICU_D
-  ret$gamma_ICU_D_step <- get_gamma_step(ret$gamma_ICU_D,
-                                           gamma_ICU_D_date,
-                                           gamma_ICU_D_value)
-  ret$n_gamma_ICU_D_steps <- length(ret$gamma_ICU_D_step)
-  ret$gamma_ICU_D <- NULL
-
-  ## ICU_W_D
-  ret$gamma_ICU_W_D_step <- get_gamma_step(ret$gamma_ICU_W_D,
-                                           gamma_ICU_W_D_date,
-                                           gamma_ICU_W_D_value)
-  ret$n_gamma_ICU_W_D_steps <- length(ret$gamma_ICU_W_D_step)
-  ret$gamma_ICU_W_D <- NULL
-
-  ## ICU_W_R
-  ret$gamma_ICU_W_R_step <- get_gamma_step(ret$gamma_ICU_W_R,
-                                           gamma_ICU_W_R_date,
-                                           gamma_ICU_W_R_value)
-  ret$n_gamma_ICU_W_R_steps <- length(ret$gamma_ICU_W_R_step)
-  ret$gamma_ICU_W_R <- NULL
-
-  ## H_D
-  ret$gamma_H_D_step <- get_gamma_step(ret$gamma_H_D,
-                                       gamma_H_D_date,
-                                       gamma_H_D_value)
-  ret$n_gamma_H_D_steps <- length(ret$gamma_H_D_step)
-  ret$gamma_H_D <- NULL
-
-  ## H_R
-  ret$gamma_H_R_step <- get_gamma_step(ret$gamma_H_R,
-                                       gamma_H_R_date,
-                                       gamma_H_R_value)
-  ret$n_gamma_H_R_steps <- length(ret$gamma_H_R_step)
-  ret$gamma_H_R <- NULL
-
-  ## W_D
-  ret$gamma_W_D_step <- get_gamma_step(ret$gamma_W_D,
-                                       gamma_W_D_date,
-                                       gamma_W_D_value)
-  ret$n_gamma_W_D_steps <- length(ret$gamma_W_D_step)
-  ret$gamma_W_D <- NULL
-
-  ## W_R
-  ret$gamma_W_R_step <- get_gamma_step(ret$gamma_W_R,
-                                       gamma_W_R_date,
-                                       gamma_W_R_value)
-  ret$n_gamma_W_R_steps <- length(ret$gamma_W_R_step)
-  ret$gamma_W_R <- NULL
+  ## Set up time-varying gammas
+  time_varying_gammas <- c("ICU_pre", "ICU_D", "ICU_W_D", "ICU_W_R",
+                           "W_D", "W_R", "H_D", "H_R")
+  for (name in time_varying_gammas) {
+    ret <- get_gamma_step(ret, name)
+  }
 
   ret
 }
