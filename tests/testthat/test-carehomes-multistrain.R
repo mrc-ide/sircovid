@@ -1293,7 +1293,7 @@ test_that("If prob_strain is NA then Rt is NA ", {
   prob_strain <- y[index_prob_strain, , ]
 
   ## set NA for prob_strain in steps 60-70
-  prob_strain[,, 60:70] <- NA
+  prob_strain[, , 60:70] <- NA
 
   expect_true(!any(is.na(prob_strain[, , - (60:70)])))
   expect_true(all(is.na(prob_strain[, , 60:70])))
@@ -1306,11 +1306,11 @@ test_that("If prob_strain is NA then Rt is NA ", {
   ## all values of Rt in 60:70 to be NA and others not to be
   expect_vector_equal(lengths(rt_1[1:3]), 85)
   expect_true(all(is.na(simplify2array(rt_1[4:7])[60:70, , ])))
-  expect_true(!any(is.na(simplify2array(rt_1[4:7])[-(60:70),,])))
+  expect_true(!any(is.na(simplify2array(rt_1[4:7])[- (60:70), , ])))
 
   expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
   expect_true(all(is.na(simplify2array(rt_all[4:7])[60:70, , , ])))
-  expect_true(!any(is.na(simplify2array(rt_all[4:7])[-(60:70),,,])))
+  expect_true(!any(is.na(simplify2array(rt_all[4:7])[- (60:70), , , ])))
 
 
   ## test weighted
@@ -1323,11 +1323,11 @@ test_that("If prob_strain is NA then Rt is NA ", {
   ## all values of Rt in 60:70 to be NA and others not to be
   expect_vector_equal(lengths(rt_1[1:3]), 85)
   expect_true(all(is.na(simplify2array(rt_1[4:7])[60:70, ])))
-  expect_true(!any(is.na(simplify2array(rt_1[4:7])[-(60:70), ])))
+  expect_true(!any(is.na(simplify2array(rt_1[4:7])[- (60:70), ])))
 
   expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
   expect_true(all(is.na(simplify2array(rt_all[4:7])[60:70, , ])))
-  expect_true(!any(is.na(simplify2array(rt_all[4:7])[-(60:70), , ])))
+  expect_true(!any(is.na(simplify2array(rt_all[4:7])[- (60:70), , ])))
 })
 
 
