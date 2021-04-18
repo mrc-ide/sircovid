@@ -444,6 +444,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   probs <- compute_pathway_probabilities(step, pars, n_time_steps, n_strains,
                                          n_vacc_classes)
+
   p_C <- probs$p_C
   p_H <- probs$p_H
   p_ICU <- probs$p_ICU
@@ -469,35 +470,35 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   ## Note the mean duration (in time steps) of a compartment for
   ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
-  calculate_mean <- function(par, prob, gamma) {
-    aperm(aperm(par * prob, c(2, 1, 3, 4)) /
-      stats::pexp(gamma, dt), c(2, 1, 3, 4))
+  calculate_mean <- function(transmission, prob, name) {
+    gamma_step <-
+      sircovid_parameters_beta_expand(step,
+                                      pars[[paste0("gamma_", name, "_step")]])
+    rel_gamma <- pars[[paste0("rel_gamma_", name)]]
+    k <- pars[[paste0("k_", name)]]
+    gamma <- aperm(outer(outer(gamma_step, rel_gamma),
+                         array(1, c(pars$n_groups, pars$n_vacc_classes))),
+                   c(3, 2, 4, 1))
+    transmission * k * prob / stats::pexp(gamma, dt)
   }
 
-  mean_duration_I_A <- calculate_mean(pars$I_A_transmission,
-                                      (1 - p_C) * pars$k_A, pars$gamma_A)
-  mean_duration_I_P <- calculate_mean(pars$I_P_transmission,
-                                      p_C * pars$k_P, pars$gamma_P)
-  mean_duration_I_C_1 <- calculate_mean(pars$I_C_1_transmission,
-                                        p_C * pars$k_C_1, pars$gamma_C_1)
-  mean_duration_I_C_2 <- calculate_mean(pars$I_C_2_transmission,
-                                        p_C * pars$k_C_2, pars$gamma_C_2)
+  mean_duration_I_A <- calculate_mean(pars$I_A_transmission, (1 - p_C), "A")
+  mean_duration_I_P <- calculate_mean(pars$I_P_transmission, p_C, "P")
+  mean_duration_I_C_1 <- calculate_mean(pars$I_C_1_transmission, p_C, "C_1")
+  mean_duration_I_C_2 <- calculate_mean(pars$I_C_2_transmission, p_C, "C_2")
   mean_duration_G_D <- calculate_mean(pars$G_D_transmission,
-                                      p_C * p_H * p_G_D * pars$k_G_D,
-                                      pars$gamma_G_D)
+                                      p_C * p_H * p_G_D, "G_D")
 
   mean_duration_hosp <-
-    pars$hosp_transmission *
-    (calculate_mean(pars$k_H_R, prob_H_R, pars$gamma_H_R_step) +
-       calculate_mean(pars$k_H_D, prob_H_D, pars$gamma_H_D_step) +
-       calculate_mean(pars$k_ICU_pre, prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D,
-                      pars$gamma_ICU_pre_step))
+    calculate_mean(pars$hosp_transmission, prob_H_R, "H_R") +
+    calculate_mean(pars$hosp_transmission, prob_H_D, "H_D") +
+    calculate_mean(pars$hosp_transmission,
+                   prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D, "ICU_pre")
 
   mean_duration_icu <-
-    pars$ICU_transmission *
-    (calculate_mean(pars$k_ICU_W_R, prob_ICU_W_R, pars$gamma_ICU_W_R_step) +
-       calculate_mean(pars$k_ICU_W_D, prob_ICU_W_D, pars$gamma_ICU_W_D_step) +
-       calculate_mean(pars$k_ICU_D, prob_ICU_D, pars$gamma_ICU_D_step))
+    calculate_mean(pars$ICU_transmission, prob_ICU_W_R, "ICU_W_R") +
+    calculate_mean(pars$ICU_transmission, prob_ICU_W_D, "ICU_W_D") +
+    calculate_mean(pars$ICU_transmission, prob_ICU_D, "ICU_D")
 
   mean_duration <- mean_duration_I_A + mean_duration_I_P +
     mean_duration_I_C_1 + mean_duration_I_C_2 + mean_duration_G_D +

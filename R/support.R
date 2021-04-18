@@ -615,26 +615,24 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
 compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
                                           n_vacc_classes) {
 
-  combine_steps_groups <- function(p_step, rel, beta_step) {
-    ret <- array(rep(p_step, n_strains * n_vacc_classes),
-                 dim = c(length(p_step), n_strains, n_vacc_classes))
-    outer(ret * rel, sircovid_parameters_beta_expand(step, beta_step))
+  combine_steps_groups <- function(p_step, rel_p) {
+    ret <- vapply(seq_len(pars$n_groups),
+                  function(i) {
+                    outer(sircovid_parameters_beta_expand(step, p_step[, i]),
+                          rel_p[i, , ])
+                    },
+                  array(0, c(length(step), pars$n_strains, pars$n_vacc_classes)))
+    ret <- aperm(ret, c(4, 2, 3, 1))
   }
 
   out <- list()
-  out$p_C <- combine_steps_groups(pars$p_C_step, pars$rel_p_sympt, 1)
-  out$p_H <- combine_steps_groups(
-    pars$p_H_step, pars$rel_p_hosp_if_sympt, pars$p_H_step)
-  out$p_ICU <- combine_steps_groups(
-    pars$p_ICU_step, 1, pars$p_ICU_step)
-  out$p_ICU_D <- combine_steps_groups(
-    pars$p_ICU_D_step, pars$rel_p_ICU_D, pars$p_ICU_D_step)
-  out$p_H_D <- combine_steps_groups(
-    pars$p_H_D_step, pars$rel_p_H_D, pars$p_H_D_step)
-  out$p_W_D <- combine_steps_groups(
-    pars$p_W_D_step, pars$rel_p_W_D, pars$p_W_D_step)
-  out$p_G_D <- combine_steps_groups(
-    pars$p_G_D_step, pars$rel_p_G_D, pars$p_G_D_step)
+  out$p_C <- combine_steps_groups(pars$p_C_step, pars$rel_p_sympt)
+  out$p_H <- combine_steps_groups(pars$p_H_step, pars$rel_p_hosp_if_sympt)
+  out$p_ICU <- combine_steps_groups(pars$p_ICU_step, pars$rel_p_ICU)
+  out$p_ICU_D <- combine_steps_groups(pars$p_ICU_D_step, pars$rel_p_ICU_D)
+  out$p_H_D <- combine_steps_groups(pars$p_H_D_step, pars$rel_p_H_D)
+  out$p_W_D <- combine_steps_groups(pars$p_W_D_step, pars$rel_p_W_D)
+  out$p_G_D <- combine_steps_groups(pars$p_G_D_step, pars$rel_p_G_D)
 
   out
 }
