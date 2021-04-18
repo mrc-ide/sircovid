@@ -285,9 +285,6 @@ test_that("Parameters affect Rt as expected", {
   p$G_D_transmission <- 0.05
   p$I_C_2_transmission <- 0.5
 
-  ## allow some deaths in the community so that G_D parameters affect Rt_general
-  p$psi_G_D[15:17] <- 0.5
-
   np <- 1L
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -329,13 +326,13 @@ test_that("Parameters affect Rt as expected", {
   helper("gamma_P", Inf, 1)
   helper("gamma_C_1", Inf, 1)
   helper("gamma_C_2", Inf, 1)
-  helper("gamma_H_D", Inf, 1)
-  helper("gamma_H_R", Inf, 1)
-  helper("gamma_ICU_pre", Inf, 1)
-  helper("gamma_ICU_D", Inf, 1)
-  helper("gamma_ICU_W_D", Inf, 1)
-  helper("gamma_ICU_W_R", Inf, 1)
-  helper("gamma_G_D", Inf, 1)
+  helper("gamma_H_D_step", Inf, 1)
+  helper("gamma_H_R_step", Inf, 1)
+  helper("gamma_ICU_pre_step", Inf, 1)
+  helper("gamma_ICU_D_step", Inf, 1)
+  helper("gamma_ICU_W_D_step", Inf, 1)
+  helper("gamma_ICU_W_R_step", Inf, 1)
+  helper("gamma_G_D_step", Inf, 1)
 
   helper("k_A", 1, 2)
   helper("k_P", 1, 2)

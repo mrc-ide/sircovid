@@ -488,16 +488,16 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   mean_duration_hosp <-
     pars$hosp_transmission *
-    (calculate_mean(pars$k_H_R, prob_H_R, pars$gamma_H_R) +
-       calculate_mean(pars$k_H_D, prob_H_D, pars$gamma_H_D) +
+    (calculate_mean(pars$k_H_R, prob_H_R, pars$gamma_H_R_step) +
+       calculate_mean(pars$k_H_D, prob_H_D, pars$gamma_H_D_step) +
        calculate_mean(pars$k_ICU_pre, prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D,
-                      pars$gamma_ICU_pre))
+                      pars$gamma_ICU_pre_step))
 
   mean_duration_icu <-
     pars$ICU_transmission *
-    (calculate_mean(pars$k_ICU_W_R, prob_ICU_W_R, pars$gamma_ICU_W_R) +
-       calculate_mean(pars$k_ICU_W_D, prob_ICU_W_D, pars$gamma_ICU_W_D) +
-       calculate_mean(pars$k_ICU_D, prob_ICU_D, pars$gamma_ICU_D))
+    (calculate_mean(pars$k_ICU_W_R, prob_ICU_W_R, pars$gamma_ICU_W_R_step) +
+       calculate_mean(pars$k_ICU_W_D, prob_ICU_W_D, pars$gamma_ICU_W_D_step) +
+       calculate_mean(pars$k_ICU_D, prob_ICU_D, pars$gamma_ICU_D_step))
 
   mean_duration <- mean_duration_I_A + mean_duration_I_P +
     mean_duration_I_C_1 + mean_duration_I_C_2 + mean_duration_G_D +

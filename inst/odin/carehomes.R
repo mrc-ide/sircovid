@@ -221,7 +221,11 @@ p_G_D[, , ] <- if (as.integer(step) >= n_p_G_D_steps)
 p_star[] <- if (as.integer(step) >= n_p_star_steps)
   p_star_step[n_p_star_steps, i] else p_star_step[step + 1, i]
 
-## Work out time-varying gammas for hospital durations
+## Work out time-varying gammas
+gamma_E[] <- if (as.integer(step) >= n_gamma_E_steps)
+  gamma_E_step[n_gamma_E_steps] * rel_gamma_E[i] else
+    gamma_E_step[step + 1] * rel_gamma_E[i]
+
 gamma_H_R <- if (as.integer(step) >= n_gamma_H_R_steps)
   gamma_H_R_step[n_gamma_H_R_steps] else gamma_H_R_step[step + 1]
 
@@ -931,7 +935,10 @@ dim(vaccine_progression_rate_base) <- c(n_groups, n_vacc_classes)
 
 ## Parameters of the E classes
 k_E <- user()
-gamma_E <- user(0.1)
+gamma_E_step[] <- user()
+dim(gamma_E_step) <- n_gamma_E_steps
+rel_gamma_E[] <- user()
+dim(rel_gamma_E) <- n_strains
 
 ## Probability of transitioning from the E to the symptomatic class,
 ## the rest go into the asymptomatic class
@@ -1030,10 +1037,6 @@ n_p_ICU_D_steps <- user()
 dim(p_ICU_D) <- c(n_groups, n_strains, n_vacc_classes)
 dim(p_ICU_D_step) <- c(n_p_ICU_D_steps, n_groups)
 
-## Waning of immunity
-waning_rate[] <- user()
-dim(waning_rate) <- n_groups
-
 ## Parameters of the W_R classes
 k_W_R <- user()
 n_gamma_W_R_steps <- user()
@@ -1071,6 +1074,10 @@ k_PCR_pre <- user()
 gamma_PCR_pre <- user(0.1)
 k_PCR_pos <- user()
 gamma_PCR_pos <- user(0.1)
+
+## Waning of immunity
+waning_rate[] <- user()
+dim(waning_rate) <- n_groups
 
 ## Parameters of the age stratified transmission
 beta_step[] <- user()
