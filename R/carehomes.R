@@ -385,8 +385,7 @@ carehomes_parameters <- function(start_date, region,
 
   severity <- severity %||% carehomes_parameters_severity(ret$dt, severity)
 
-  progression <- progression %||%
-                  carehomes_parameters_progression(ret$dt)
+  progression <- progression %||% carehomes_parameters_progression(ret$dt)
 
   waning <- carehomes_parameters_waning(waning_rate)
 
@@ -457,34 +456,38 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_catchup_fraction)
 
 
-  ## TODO: sort rel_strain effects
-  # strain_rel_severity <- recycle(
-  #                                assert_relatives(strain_rel_severity),
-  #                                length(strain_transmission))
-  # if (length(strain_transmission) > 1) {
-  #   strain_rel_severity <- mirror_strain(strain_rel_severity)
-  # }
-  # severity <- scale_severity(severity, strain_rel_severity)
-  ret$rel_p_ICU <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
-  ret$rel_p_ICU_D <- array(1, c(19, strain$n_strains,
-                                vaccination$n_vacc_classes))
-  ret$rel_p_H_D <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
-  ret$rel_p_W_D <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
-  ret$rel_p_G_D <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
+  strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
+                                 length(strain_transmission))
+  if (length(strain_transmission) > 1) {
+    strain_rel_severity <- mirror_strain(strain_rel_severity)
+  }
+  rel_severity <- aperm(array(strain_rel_severity,
+                              c(strain$n_strains, ret$n_groups,
+                                vaccination$n_vacc_classes)),
+                        c(2, 1, 3))
+  ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
+                              vaccination$n_vacc_classes))
+  ret$rel_p_ICU_D <- rel_severity
+  ret$rel_p_H_D <- rel_severity
+  ret$rel_p_W_D <- rel_severity
+  ret$rel_p_G_D <- rel_severity
 
 
-  ## TODO: sort rel_strain effects
-  # strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
-  #                               length(strain_transmission))
-  # strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
-  #                               length(strain_transmission))
-  # strain_rel_gamma_C_1 <-
-  #   recycle(assert_relatives(strain_rel_gamma_C_1),
-  #           length(strain_transmission))
-  # strain_rel_gamma_C_2 <-
-  #   recycle(assert_relatives(strain_rel_gamma_C_2),
-  #           length(strain_transmission))
+  strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
+                                length(strain_transmission))
+  strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
+                                length(strain_transmission))
+  strain_rel_gamma_C_1 <- recycle(assert_relatives(strain_rel_gamma_C_1),
+                                  length(strain_transmission))
+  strain_rel_gamma_C_2 <- recycle(assert_relatives(strain_rel_gamma_C_2),
+                                  length(strain_transmission))
   ret$rel_gamma_E <- rep(1, strain$n_strains)
+  if (length(strain_rel_gamma_A) == 2) {
+    ret$rel_gamma_A <- mirror_strain(strain_rel_gamma_A)
+    ret$rel_gamma_P <- mirror_strain(strain_rel_gamma_P)
+    ret$rel_gamma_C_1 <- mirror_strain(strain_rel_gamma_C_1)
+    ret$rel_gamma_C_2 <- mirror_strain(strain_rel_gamma_C_2)
+  }
   ret$rel_gamma_A <- rep(1, strain$n_strains)
   ret$rel_gamma_P <- rep(1, strain$n_strains)
   ret$rel_gamma_C_1 <- rep(1, strain$n_strains)
