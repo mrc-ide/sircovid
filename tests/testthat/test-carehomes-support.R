@@ -1,20 +1,22 @@
 context("carehomes (support)")
 
 test_that("carehomes progression parameters", {
-  p <- carehomes_parameters_progression(0.25, 1, 1, 1, 1)
+  p <- carehomes_parameters_progression(0.25)
   expect_setequal(
     names(p),
     c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
-      "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
-      "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D",
-      "gamma_H_D_step", "gamma_H_R_step", "gamma_ICU_D_step",
+      "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E_step",
+      "gamma_A_step", "gamma_P_step", "gamma_C_1_step", "gamma_C_2_step",
+      "gamma_G_D_step", "gamma_H_D_step", "gamma_H_R_step", "gamma_ICU_D_step",
       "gamma_ICU_W_R_step", "gamma_ICU_W_D_step", "gamma_ICU_pre_step",
       "gamma_W_D_step", "gamma_W_R_step", "gamma_sero_pos",
       "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
-      "gamma_PCR_pre", "n_gamma_H_D_steps", "n_gamma_H_R_steps",
-      "n_gamma_ICU_D_steps", "n_gamma_ICU_W_R_steps", "n_gamma_ICU_W_D_steps",
-      "n_gamma_ICU_pre_steps", "n_gamma_W_D_steps", "n_gamma_W_R_steps"))
+      "gamma_PCR_pre", "n_gamma_E_steps", "n_gamma_A_steps", "n_gamma_P_steps",
+      "n_gamma_C_1_steps", "n_gamma_C_2_steps", "n_gamma_H_D_steps",
+      "n_gamma_H_R_steps", "n_gamma_ICU_D_steps", "n_gamma_ICU_W_R_steps",
+      "n_gamma_ICU_W_D_steps", "n_gamma_ICU_pre_steps", "n_gamma_W_D_steps",
+      "n_gamma_W_R_steps", "n_gamma_G_D_steps"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
@@ -153,7 +155,7 @@ test_that("carehomes_parameters returns a list of parameters", {
     p$m,
     carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk"))
 
-  progression <- carehomes_parameters_progression(1, 1, 1, 1)
+  progression <- carehomes_parameters_progression(0.25)
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(
@@ -189,6 +191,10 @@ test_that("carehomes_parameters returns a list of parameters", {
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
       "rel_p_ICU", "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D",
+      "rel_gamma_E", "rel_gamma_A", "rel_gamma_P", "rel_gamma_C_1",
+      "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R", "rel_gamma_ICU_pre",
+      "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
+      "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
       "sero_specificity", "sero_sensitivity", "N_tot_15_64",
       "N_tot_all", "N_tot_over25", "N_tot_react",
       "pillar2_specificity", "pillar2_sensitivity", "react_specificity",

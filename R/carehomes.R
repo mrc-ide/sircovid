@@ -1147,8 +1147,8 @@ carehomes_parameters_progression <- function(dt,
                                              gamma_P_value = NULL,
                                              gamma_C_1_date = NULL,
                                              gamma_C_1_value = NULL,
-                                             gamma_C_2_pre_date = NULL,
-                                             gamma_C_2_pre_value = NULL,
+                                             gamma_C_2_date = NULL,
+                                             gamma_C_2_value = NULL,
                                              gamma_ICU_pre_date = NULL,
                                              gamma_ICU_pre_value = NULL,
                                              gamma_ICU_D_date = NULL,
@@ -1164,7 +1164,9 @@ carehomes_parameters_progression <- function(dt,
                                              gamma_W_D_date = NULL,
                                              gamma_W_D_value = NULL,
                                              gamma_W_R_date = NULL,
-                                             gamma_W_R_value = NULL) {
+                                             gamma_W_R_value = NULL,
+                                             gamma_G_D_date = NULL,
+                                             gamma_G_D_value = NULL) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate

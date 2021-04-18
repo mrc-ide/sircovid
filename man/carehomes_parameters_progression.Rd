@@ -6,10 +6,16 @@
 \usage{
 carehomes_parameters_progression(
   dt,
-  rel_gamma_A = 1,
-  rel_gamma_P = 1,
-  rel_gamma_C_1 = 1,
-  rel_gamma_C_2 = 1,
+  gamma_E_date = NULL,
+  gamma_E_value = NULL,
+  gamma_A_date = NULL,
+  gamma_A_value = NULL,
+  gamma_P_date = NULL,
+  gamma_P_value = NULL,
+  gamma_C_1_date = NULL,
+  gamma_C_1_value = NULL,
+  gamma_C_2_date = NULL,
+  gamma_C_2_value = NULL,
   gamma_ICU_pre_date = NULL,
   gamma_ICU_pre_value = NULL,
   gamma_ICU_D_date = NULL,
@@ -25,29 +31,10 @@ carehomes_parameters_progression(
   gamma_W_D_date = NULL,
   gamma_W_D_value = NULL,
   gamma_W_R_date = NULL,
-  gamma_W_R_value = NULL
+  gamma_W_R_value = NULL,
+  gamma_G_D_date = NULL,
+  gamma_G_D_value = NULL
 )
-}
-\arguments{
-\item{rel_gamma_A}{Vector of relative rates of gamma_A for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
-
-\item{rel_gamma_P}{Vector of relative rates of gamma_P for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
-
-\item{rel_gamma_C_1}{Vector of relative rates of gamma_C_1 for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
-
-\item{rel_gamma_C_2}{Vector of relative rates of gamma_C_2 for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
 }
 \value{
 A list of parameter values
