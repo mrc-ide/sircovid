@@ -444,7 +444,7 @@ test_that("Everyone is infected when second strain transmission is large", {
 
   ## set gamma_E to Inf so that seeded individuals move through each E stage
   ## in one step
-  p$gamma_E <- Inf
+  p$gamma_E_step <- Inf
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1433,30 +1433,6 @@ test_that("strain_rel_gamma works as expected in carehomes_parameters", {
 })
 
 
-test_that("carehomes_parameters_progression works as expected", {
-  gammas <- c("gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2")
-  defaults <- c(1 / 2.88, 1 / 1.68, 1 / 2.14, 1 / 1.86)
-  expect_equal(
-    as.numeric(carehomes_parameters_progression(1, 1, 1, 1)[gammas]),
-    defaults
-  )
-  expect_equal(
-    as.numeric(carehomes_parameters_progression(2, 2, 2, 2)[gammas]),
-    defaults * 2
-  )
-  expect_equal(
-    matrix(
-      unlist(carehomes_parameters_progression(1:4, 1:4, 1:4, 1:4)[gammas]),
-             ncol = 4),
-    vapply(defaults, function(x) x * 1:4, numeric(4))
-  )
-  expect_true(all(lengths(
-    carehomes_parameters_progression(1, 1, 1, 1)[gammas]) == 1))
-  expect_true(all(lengths(
-    carehomes_parameters_progression(1:2, 1:2, 1:2, 1:2)[gammas]) == 4))
-})
-
-
 test_that("Relative gamma = 1 makes no difference", {
   p1 <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   p2 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1574,7 +1550,7 @@ test_that("Stuck when gamma =  0", {
                                 sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0),
                             cross_immunity = 0)
-  p$gamma_P[] <- 0
+  p$gamma_P_step <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -1606,7 +1582,7 @@ test_that("Stuck when gamma =  0", {
                                 sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0),
                             cross_immunity = 0)
-  p$gamma_C_1[] <- 0
+  p$gamma_C_1_step <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -1637,8 +1613,8 @@ test_that("Stuck when gamma =  0", {
                               c(sircovid_date("2020-02-07"),
                                 sircovid_date("2020-02-08")),
                             strain_seed_rate = c(10, 0))
-  p$gamma_A[] <- 0
-  p$gamma_C_2[] <- 0
+  p$gamma_A_step <- 0
+  p$gamma_C_2_step <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -1707,7 +1683,6 @@ test_that("Stuck when gamma =  0 for second strain", {
 
   set.seed(1)
   y <- mod$simulate(steps)
-  expect_equal(p$gamma_P[2], 0)
   expect_false(all(unlist(y[index_I_C_1_strain_1, , ]) == 0))
   expect_true(all(unlist(y[index_I_C_1_strain_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_P_strain_2, , ]) == 0))
@@ -1729,7 +1704,6 @@ test_that("Stuck when gamma =  0 for second strain", {
   mod$set_state(initial$state, initial$step)
   set.seed(1)
   y <- mod$simulate(steps)
-  expect_equal(p$gamma_C_1[2], 0)
   expect_false(all(unlist(y[index_I_C_2_strain_1, , ]) == 0))
   expect_true(all(unlist(y[index_I_C_2_strain_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_C_1_strain_2, , ]) == 0))
@@ -1752,8 +1726,6 @@ test_that("Stuck when gamma =  0 for second strain", {
   mod$set_state(initial$state, initial$step)
   set.seed(1)
   y <- mod$simulate(steps)
-  expect_equal(p$gamma_C_2[2], 0)
-  expect_equal(p$gamma_A[2], 0)
   expect_false(all(unlist(y[index_R_strain_1, , ]) == 0))
   expect_true(all(unlist(y[index_R_strain_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_C_2_strain_2, , ]) == 0))
@@ -1770,10 +1742,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             cross_immunity = 0)
   p$p_H_step <- 1
-  p$psi_H[] <- 1
-  p$p_G_D_step <- matrix(1)
-  p$psi_G_D[] <- 1
-  p$p_C[] <- 1
+  p$p_G_D_step <- 1
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()

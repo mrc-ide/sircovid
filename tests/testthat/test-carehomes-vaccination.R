@@ -197,7 +197,7 @@ test_that("Vaccination of exposed individuals works", {
                             vaccine_index_dose2 = 2L)
 
   # stop disease progression after E
-  p$gamma_E <- 0
+  p$gamma_E_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -258,7 +258,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
                             vaccine_index_dose2 = 2L)
 
   # stop disease progression after I_A
-  p$gamma_A <- 0
+  p$gamma_A_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -312,7 +312,7 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
                             vaccine_index_dose2 = 2L)
 
   # stop disease progression after I_P
-  p$gamma_P <- 0
+  p$gamma_P_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -411,7 +411,7 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
                             vaccine_progression_rate = c(0, Inf))
 
   # stop disease progression after E
-  p$gamma_E <- 0
+  p$gamma_E_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -468,7 +468,7 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
                             vaccine_progression_rate = c(0, Inf))
 
   # stop disease progression after I_A
-  p$gamma_A <- 0
+  p$gamma_A_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -518,7 +518,7 @@ test_that("Returning to unvaccinated stage works for I_P individuals", {
                             vaccine_progression_rate = c(0, Inf))
 
   # stop disease progression after I_P
-  p$gamma_P <- 0
+  p$gamma_P_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -669,9 +669,9 @@ test_that("Clinical progression within a vaccination class works", {
                                 c(0, 0, 0))
 
     # increase progression rates
-    p[grep("gamma", names(p))] <- 1e9
+    p[grep("^gamma", names(p))] <- 1e9
     # make p_death zero
-    p[grep("gamma\\S*_D_step", names(p))] <- 0
+    p[grep("^gamma\\S*_D_step", names(p))] <- 0
     p[grep("^p\\S*_D_step", names(p))] <- rep(list(array(0, c(1, p$n_groups))),
                                              length(grep("^p\\S*_D_step",
                                                          names(p))))
@@ -1494,7 +1494,7 @@ test_that("Outputed E vaccination numbers are what we expect", {
                             vaccine_index_dose2 = 2L)
 
   ## stop progression after E to avoid diagonal moves from E to I_A
-  p$gamma_E <- 0
+  p$gamma_E_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1542,7 +1542,7 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
                             vaccine_index_dose2 = 2L)
 
   ## stop progression after I_A to avoid diagonal moves from I_A to R
-  p$gamma_A <- 0
+  p$gamma_A_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1582,7 +1582,7 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
                             vaccine_index_dose2 = 2L)
 
   ## stop progression after I_P to avoid diagonal moves out of I_P
-  p$gamma_P <- 0
+  p$gamma_P_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -2417,7 +2417,7 @@ test_that("Can catch up on doses not distributed", {
 
   ## set gamma_C_2 so individuals will spend long periods in a compartment where
   ## they are not a vaccination candidate
-  p$gamma_C_2 <- 1 / 200
+  p$gamma_C_2_step <- 1 / 200
 
   ## check we are going far enough in time that we should vaccinate everyone:
   expect_true(all(rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot > 0.99))

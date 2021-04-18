@@ -487,11 +487,12 @@ carehomes_parameters <- function(start_date, region,
     ret$rel_gamma_P <- mirror_strain(strain_rel_gamma_P)
     ret$rel_gamma_C_1 <- mirror_strain(strain_rel_gamma_C_1)
     ret$rel_gamma_C_2 <- mirror_strain(strain_rel_gamma_C_2)
+  } else {
+    ret$rel_gamma_A <- rep(1, strain$n_strains)
+    ret$rel_gamma_P <- rep(1, strain$n_strains)
+    ret$rel_gamma_C_1 <- rep(1, strain$n_strains)
+    ret$rel_gamma_C_2 <- rep(1, strain$n_strains)
   }
-  ret$rel_gamma_A <- rep(1, strain$n_strains)
-  ret$rel_gamma_P <- rep(1, strain$n_strains)
-  ret$rel_gamma_C_1 <- rep(1, strain$n_strains)
-  ret$rel_gamma_C_2 <- rep(1, strain$n_strains)
   ret$rel_gamma_ICU_pre <- rep(1, strain$n_strains)
   ret$rel_gamma_H_D <- rep(1, strain$n_strains)
   ret$rel_gamma_H_R <- rep(1, strain$n_strains)

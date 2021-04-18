@@ -621,7 +621,7 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
                     outer(sircovid_parameters_beta_expand(step, p_step[, i]),
                           rel_p[i, , ])
                     },
-                  array(0, c(length(step), pars$n_strains, pars$n_vacc_classes)))
+                  array(0, c(n_time_steps, n_strains, n_vacc_classes)))
     ret <- aperm(ret, c(4, 2, 3, 1))
   }
 
