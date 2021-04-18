@@ -1741,8 +1741,9 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             cross_immunity = 0)
-  p$p_H_step <- 1
-  p$p_G_D_step <- 1
+  p$p_C_step[, ] <- 1
+  p$p_H_step[, ] <- 1
+  p$p_G_D_step[, ] <- 1
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -1775,77 +1776,6 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   expect_true(all(y$W_D_conf == 0))
   expect_true(all(y$R == 0))
   expect_true(all(y$D_hosp == 0))
-})
-
-
-test_that("carehomes_parameters_severity works as expected", {
-  severity <- carehomes_parameters_severity(NULL, 0.7)
-  names <- c("p_G_D", "p_H_D", "p_ICU_D", "p_W_D")
-  which <- match(names, names(severity))
-  expect_true(all(sapply(scale_severity(severity, 1)[which], inherits,
-                         what = "matrix")))
-  expect_true(all(sapply(scale_severity(severity, 1)[-which], inherits,
-                         what = "numeric")))
-
-  expect_equal(
-    unname(unique(sapply(scale_severity(severity, c(1, 2))[which], dim))),
-    matrix(c(19, 2), nrow = 2, ncol = 4)
-  )
-  expect_equal(
-    unname(unique(sapply(scale_severity(severity, 1)[which], dim))),
-    matrix(c(19, 1), nrow = 2, ncol = 4)
-  )
-  expect_true(
-    all(vapply(
-      scale_severity(severity, c(0.1, 0.2))[which],
-      function(x) all(x[, 2] == x[, 1] * 2), logical(1)
-    ))
-  )
-  expect_true(all(unique(unlist(
-    scale_severity(severity, 1e10)[which])) %in% c(1, 0)))
-})
-
-
-test_that("carehomes_parameters with rel_severity works as expected", {
-  expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_transmission = c(1, 1),
-                                     strain_rel_severity = 1))
-  expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_transmission = c(1, 1),
-                                     strain_rel_severity = 1:2))
-  expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_transmission = c(1, 1),
-                                     strain_rel_severity = 1:3), "1 or 2")
-  expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_transmission = c(1, 1),
-                                     strain_rel_severity = c(0, 1)),
-              "must be 1")
-  expect_error(carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_transmission = c(1, 1),
-                                     strain_rel_severity = c(1, -1)),
-              "non-negative")
-
-  pars <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                               strain_transmission = c(1, 1),
-                               strain_rel_severity = 1:2)
-
-  step <- pars[c("p_G_D_step", "p_H_D_step", "p_ICU_D_step", "p_W_D_step")]
-  psi <- pars[c("psi_G_D", "psi_H_D", "psi_ICU_D", "psi_W_D")]
-  ps <- pars[c("p_G_D", "p_H_D", "p_ICU_D", "p_W_D")]
-
-  expect_equal(
-    unname(lapply(ps, function(x)
-      matrix(mirror_strain(c(max(x[, 1]), max(x[, 2]))), nrow = 1))),
-    unname(step)
-  )
-
-  expect_equal(
-    unname(lapply(ps, function(x) cbind(x[, 1] / max(x[, 1]),
-                                        x[, 2] / max(x[, 2]),
-                                        x[, 2] / max(x[, 2]),
-                                        x[, 1] / max(x[, 1])))),
-    unname(psi)
-  )
 })
 
 
