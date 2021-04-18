@@ -853,11 +853,11 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     expect_true(all(y$I_weighted == 0))
   }
 
-  helper("I_A_transmission", "I_A", "gamma_A")
-  helper("I_P_transmission", "I_P", "gamma_P")
-  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
-  helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
-  helper("G_D_transmission", "G_D", "gamma_G_D")
+  helper("I_A_transmission", "I_A", "gamma_A_step")
+  helper("I_P_transmission", "I_P", "gamma_P_step")
+  helper("I_C_1_transmission", "I_C_1", "gamma_C_1_step")
+  helper("I_C_2_transmission", "I_C_2", "gamma_C_2_step")
+  helper("G_D_transmission", "G_D", "gamma_G_D_step")
   helper("hosp_transmission", "H_D_unconf", "gamma_H_D_step")
   helper("hosp_transmission", "H_D_conf", "gamma_H_D_step")
   helper("hosp_transmission", "H_R_unconf", "gamma_H_R_step")
@@ -919,11 +919,11 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     expect_true(all(y$I_weighted[, , 2] == y$I_weighted[, , 1]))
   }
 
-  helper("I_A_transmission", "I_A", "gamma_A")
-  helper("I_P_transmission", "I_P", "gamma_P")
-  helper("I_C_1_transmission", "I_C_1", "gamma_C_1")
-  helper("I_C_2_transmission", "I_C_2", "gamma_C_2")
-  helper("G_D_transmission", "G_D", "gamma_G_D")
+  helper("I_A_transmission", "I_A", "gamma_A_step")
+  helper("I_P_transmission", "I_P", "gamma_P_step")
+  helper("I_C_1_transmission", "I_C_1", "gamma_C_1_step")
+  helper("I_C_2_transmission", "I_C_2", "gamma_C_2_step")
+  helper("G_D_transmission", "G_D", "gamma_G_D_step")
   helper("hosp_transmission", "H_D_unconf", "gamma_H_D_step")
   helper("hosp_transmission", "H_D_conf", "gamma_H_D_step")
   helper("hosp_transmission", "H_R_unconf", "gamma_H_R_step")
