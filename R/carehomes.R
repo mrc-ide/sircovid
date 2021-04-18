@@ -385,39 +385,8 @@ carehomes_parameters <- function(start_date, region,
 
   severity <- severity %||% carehomes_parameters_severity(ret$dt, severity)
 
-
-  ## TODO: sort rel_strain effects
-  # strain_rel_severity <- recycle(
-  #                                assert_relatives(strain_rel_severity),
-  #                                length(strain_transmission))
-  # if (length(strain_transmission) > 1) {
-  #   strain_rel_severity <- mirror_strain(strain_rel_severity)
-  # }
-  # severity <- scale_severity(severity, strain_rel_severity)
-  ret$rel_p_ICU <- array(1, c(19, 1, 1))
-  ret$rel_p_ICU_D <- array(1, c(19, 1, 1))
-  ret$rel_p_H_D <- array(1, c(19, 1, 1))
-  ret$rel_p_W_D <- array(1, c(19, 1, 1))
-  ret$rel_p_G_D <- array(1, c(19, 1, 1))
-
-
-  strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
-                                length(strain_transmission))
-  strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
-                                length(strain_transmission))
-  strain_rel_gamma_C_1 <-
-    recycle(assert_relatives(strain_rel_gamma_C_1),
-            length(strain_transmission))
-  strain_rel_gamma_C_2 <-
-    recycle(assert_relatives(strain_rel_gamma_C_2),
-            length(strain_transmission))
-
   progression <- progression %||%
-                  carehomes_parameters_progression(ret$dt,
-                                                   strain_rel_gamma_A,
-                                                   strain_rel_gamma_P,
-                                                   strain_rel_gamma_C_1,
-                                                   strain_rel_gamma_C_2)
+                  carehomes_parameters_progression(ret$dt)
 
   waning <- carehomes_parameters_waning(waning_rate)
 
@@ -486,6 +455,49 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_index_dose2,
                                                   strain$n_strains,
                                                   vaccine_catchup_fraction)
+
+
+  ## TODO: sort rel_strain effects
+  # strain_rel_severity <- recycle(
+  #                                assert_relatives(strain_rel_severity),
+  #                                length(strain_transmission))
+  # if (length(strain_transmission) > 1) {
+  #   strain_rel_severity <- mirror_strain(strain_rel_severity)
+  # }
+  # severity <- scale_severity(severity, strain_rel_severity)
+  ret$rel_p_ICU <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
+  ret$rel_p_ICU_D <- array(1, c(19, strain$n_strains,
+                                vaccination$n_vacc_classes))
+  ret$rel_p_H_D <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
+  ret$rel_p_W_D <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
+  ret$rel_p_G_D <- array(1, c(19, strain$n_strains, vaccination$n_vacc_classes))
+
+
+  ## TODO: sort rel_strain effects
+  # strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
+  #                               length(strain_transmission))
+  # strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
+  #                               length(strain_transmission))
+  # strain_rel_gamma_C_1 <-
+  #   recycle(assert_relatives(strain_rel_gamma_C_1),
+  #           length(strain_transmission))
+  # strain_rel_gamma_C_2 <-
+  #   recycle(assert_relatives(strain_rel_gamma_C_2),
+  #           length(strain_transmission))
+  ret$rel_gamma_E <- rep(1, strain$n_strains)
+  ret$rel_gamma_A <- rep(1, strain$n_strains)
+  ret$rel_gamma_P <- rep(1, strain$n_strains)
+  ret$rel_gamma_C_1 <- rep(1, strain$n_strains)
+  ret$rel_gamma_C_2 <- rep(1, strain$n_strains)
+  ret$rel_gamma_ICU_pre <- rep(1, strain$n_strains)
+  ret$rel_gamma_H_D <- rep(1, strain$n_strains)
+  ret$rel_gamma_H_R <- rep(1, strain$n_strains)
+  ret$rel_gamma_ICU_D <- rep(1, strain$n_strains)
+  ret$rel_gamma_ICU_W_D <- rep(1, strain$n_strains)
+  ret$rel_gamma_ICU_W_R <- rep(1, strain$n_strains)
+  ret$rel_gamma_W_D <- rep(1, strain$n_strains)
+  ret$rel_gamma_W_R <- rep(1, strain$n_strains)
+  ret$rel_gamma_G_D <- rep(1, strain$n_strains)
 
   c(ret, severity, progression, strain, vaccination, waning, observation)
 }
@@ -1125,32 +1137,18 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @return A list of parameter values
 ##'
-##' @param rel_gamma_A Vector of relative rates of gamma_A for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
-##' @param rel_gamma_P Vector of relative rates of gamma_P for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
-##' @param rel_gamma_C_1 Vector of relative rates of gamma_C_1 for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
-##' @param rel_gamma_C_2 Vector of relative rates of gamma_C_2 for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
 ##' @export
 carehomes_parameters_progression <- function(dt,
-                                             rel_gamma_A = 1,
-                                             rel_gamma_P = 1,
-                                             rel_gamma_C_1 = 1,
-                                             rel_gamma_C_2 = 1,
+                                             gamma_E_date = NULL,
+                                             gamma_E_value = NULL,
+                                             gamma_A_date = NULL,
+                                             gamma_A_value = NULL,
+                                             gamma_P_date = NULL,
+                                             gamma_P_value = NULL,
+                                             gamma_C_1_date = NULL,
+                                             gamma_C_1_value = NULL,
+                                             gamma_C_2_pre_date = NULL,
+                                             gamma_C_2_pre_value = NULL,
                                              gamma_ICU_pre_date = NULL,
                                              gamma_ICU_pre_value = NULL,
                                              gamma_ICU_D_date = NULL,
@@ -1167,17 +1165,6 @@ carehomes_parameters_progression <- function(dt,
                                              gamma_W_D_value = NULL,
                                              gamma_W_R_date = NULL,
                                              gamma_W_R_value = NULL) {
-
-  stopifnot(length(unique(lengths(list(rel_gamma_A, rel_gamma_P,
-                                       rel_gamma_C_1, rel_gamma_C_2)))) == 1)
-  if (length(rel_gamma_A) == 2) {
-    ## if two strains then mirror the same gammas for the pseudo-strains
-    ## Note: pseudo-strain = 3/4 has same progression/rates as strain 2/1
-    rel_gamma_A <- mirror_strain(rel_gamma_A)
-    rel_gamma_P <- mirror_strain(rel_gamma_P)
-    rel_gamma_C_1 <- mirror_strain(rel_gamma_C_1)
-    rel_gamma_C_2 <- mirror_strain(rel_gamma_C_2)
-  }
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -1201,10 +1188,10 @@ carehomes_parameters_progression <- function(dt,
               k_PCR_pos = 2,
 
               gamma_E = 1 / (3.42 / 2),
-              gamma_A = 1 / 2.88 * rel_gamma_A,
-              gamma_P = 1 / 1.68 * rel_gamma_P,
-              gamma_C_1 = 1 / 2.14 * rel_gamma_C_1,
-              gamma_C_2 = 1 / 1.86 * rel_gamma_C_2,
+              gamma_A = 1 / 2.88,
+              gamma_P = 1 / 1.68,
+              gamma_C_1 = 1 / 2.14,
+              gamma_C_2 = 1 / 1.86,
               gamma_G_D = 1 / (3 / 2),
               gamma_H_D = 2 / 5,
               gamma_H_R = 2 / 10,
@@ -1242,8 +1229,9 @@ carehomes_parameters_progression <- function(dt,
   }
 
   ## Set up time-varying gammas
-  time_varying_gammas <- c("ICU_pre", "ICU_D", "ICU_W_D", "ICU_W_R",
-                           "W_D", "W_R", "H_D", "H_R")
+  time_varying_gammas <- c("E", "A", "P", "C_1", "C_2",
+                           "ICU_pre", "ICU_D", "ICU_W_D", "ICU_W_R",
+                           "W_D", "W_R", "H_D", "H_R", "G_D")
   for (name in time_varying_gammas) {
     ret <- get_gamma_step(ret, name)
   }

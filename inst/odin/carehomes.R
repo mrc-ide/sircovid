@@ -164,30 +164,41 @@ p_R_next_vacc_class[, , ] <- vaccine_probability[i, k]
 
 ## clinical progression
 p_SE[, ] <- 1 - exp(- sum(lambda_susc[i, , j]) * dt) # S to I age/vacc dependent
-p_E_progress <- 1 - exp(-gamma_E * dt) # progression of latent period
+p_E_progress[] <- 1 - exp(-gamma_E[i] * dt) # progression of latent period
 p_I_A_progress[] <- 1 - exp(-gamma_A[i] * dt) # progression of infectious period
 p_I_P_progress[] <- 1 - exp(-gamma_P[i] * dt)
 p_I_C_1_progress[] <- 1 - exp(-gamma_C_1[i] * dt)
 p_I_C_2_progress[] <- 1 - exp(-gamma_C_2[i] * dt)
-p_G_D_progress <- 1 - exp(-gamma_G_D * dt)
-p_ICU_pre_progress <- 1 - exp(-gamma_ICU_pre * dt)
-p_H_R_progress <- 1 - exp(-gamma_H_R * dt)
-p_H_D_progress <- 1 - exp(-gamma_H_D * dt)
-p_ICU_W_R_progress <- 1 - exp(-gamma_ICU_W_R * dt)
-p_ICU_W_D_progress <- 1 - exp(-gamma_ICU_W_D * dt)
-p_ICU_D_progress <- 1 - exp(-gamma_ICU_D * dt)
-p_W_R_progress <- 1 - exp(-gamma_W_R * dt)
-p_W_D_progress <- 1 - exp(-gamma_W_D * dt)
+p_G_D_progress[] <- 1 - exp(-gamma_G_D[i] * dt)
+p_ICU_pre_progress[] <- 1 - exp(-gamma_ICU_pre[i] * dt)
+p_H_R_progress[] <- 1 - exp(-gamma_H_R[i] * dt)
+p_H_D_progress[] <- 1 - exp(-gamma_H_D[i] * dt)
+p_ICU_W_R_progress[] <- 1 - exp(-gamma_ICU_W_R[i] * dt)
+p_ICU_W_D_progress[] <- 1 - exp(-gamma_ICU_W_D[i] * dt)
+p_ICU_D_progress[] <- 1 - exp(-gamma_ICU_D[i] * dt)
+p_W_R_progress[] <- 1 - exp(-gamma_W_R[i] * dt)
+p_W_D_progress[] <- 1 - exp(-gamma_W_D[i] * dt)
 p_T_sero_pre_progress[, , , ] <- 1 - exp(-gamma_sero_pre[k] * dt)
 p_T_sero_pos_progress <- 1 - exp(-gamma_sero_pos * dt)
 p_test <- 1 - exp(-gamma_U * dt)
 p_T_PCR_pre_progress <- 1 - exp(-gamma_PCR_pre * dt)
 p_T_PCR_pos_progress <- 1 - exp(-gamma_PCR_pos * dt)
 
+dim(p_E_progress) <- n_strains
 dim(p_I_A_progress) <- n_strains
 dim(p_I_P_progress) <- n_strains
 dim(p_I_C_1_progress) <- n_strains
 dim(p_I_C_2_progress) <- n_strains
+dim(p_G_D_progress) <- n_strains
+dim(p_ICU_pre_progress) <- n_strains
+dim(p_H_R_progress) <- n_strains
+dim(p_H_D_progress) <- n_strains
+dim(p_ICU_W_R_progress) <- n_strains
+dim(p_ICU_W_D_progress) <- n_strains
+dim(p_ICU_D_progress) <- n_strains
+dim(p_W_R_progress) <- n_strains
+dim(p_W_D_progress) <- n_strains
+
 
 ## Work out time-varying probabilities
 p_C[, , ] <- if (as.integer(step) >= n_p_C_steps)
@@ -226,32 +237,57 @@ gamma_E[] <- if (as.integer(step) >= n_gamma_E_steps)
   gamma_E_step[n_gamma_E_steps] * rel_gamma_E[i] else
     gamma_E_step[step + 1] * rel_gamma_E[i]
 
-gamma_H_R <- if (as.integer(step) >= n_gamma_H_R_steps)
-  gamma_H_R_step[n_gamma_H_R_steps] else gamma_H_R_step[step + 1]
+gamma_A[] <- if (as.integer(step) >= n_gamma_A_steps)
+  gamma_A_step[n_gamma_A_steps] * rel_gamma_A[i] else
+    gamma_A_step[step + 1] * rel_gamma_A[i]
 
-gamma_W_R <- if (as.integer(step) >= n_gamma_W_R_steps)
-  gamma_W_R_step[n_gamma_W_R_steps] else gamma_W_R_step[step + 1]
+gamma_P[] <- if (as.integer(step) >= n_gamma_P_steps)
+  gamma_P_step[n_gamma_P_steps] * rel_gamma_P[i] else
+    gamma_P_step[step + 1] * rel_gamma_P[i]
 
-gamma_ICU_W_R <- if (as.integer(step) >= n_gamma_ICU_W_R_steps)
-  gamma_ICU_W_R_step[n_gamma_ICU_W_R_steps] else
-    gamma_ICU_W_R_step[step + 1]
+gamma_C_1[] <- if (as.integer(step) >= n_gamma_C_1_steps)
+  gamma_C_1_step[n_gamma_C_1_steps] * rel_gamma_C_1[i] else
+    gamma_C_1_step[step + 1] * rel_gamma_C_1[i]
 
-gamma_H_D <- if (as.integer(step) >= n_gamma_H_D_steps)
-  gamma_H_D_step[n_gamma_H_D_steps] else gamma_H_D_step[step + 1]
+gamma_C_2[] <- if (as.integer(step) >= n_gamma_C_2_steps)
+  gamma_C_2_step[n_gamma_C_2_steps] * rel_gamma_C_2[i] else
+    gamma_C_2_step[step + 1] * rel_gamma_C_2[i]
 
-gamma_W_D <- if (as.integer(step) >= n_gamma_W_D_steps)
-  gamma_W_D_step[n_gamma_W_D_steps] else gamma_W_D_step[step + 1]
+gamma_G_D[] <- if (as.integer(step) >= n_gamma_G_D_steps)
+  gamma_G_D_step[n_gamma_G_D_steps] * rel_gamma_G_D[i] else
+    gamma_G_D_step[step + 1] * rel_gamma_G_D[i]
 
-gamma_ICU_W_D <- if (as.integer(step) >= n_gamma_ICU_W_D_steps)
-  gamma_ICU_W_D_step[n_gamma_ICU_W_D_steps] else
-    gamma_ICU_W_D_step[step + 1]
+gamma_ICU_pre[] <- if (as.integer(step) >= n_gamma_ICU_pre_steps)
+  gamma_ICU_pre_step[n_gamma_ICU_pre_steps] * rel_gamma_ICU_pre[i] else
+    gamma_ICU_pre_step[step + 1] * rel_gamma_ICU_pre[i]
 
-gamma_ICU_D <- if (as.integer(step) >= n_gamma_ICU_D_steps)
-  gamma_ICU_D_step[n_gamma_ICU_D_steps] else gamma_ICU_D_step[step + 1]
+gamma_H_R[] <- if (as.integer(step) >= n_gamma_H_R_steps)
+  gamma_H_R_step[n_gamma_H_R_steps] * rel_gamma_H_R[i] else
+    gamma_H_R_step[step + 1] * rel_gamma_H_R[i]
 
-gamma_ICU_pre <- if (as.integer(step) >= n_gamma_ICU_pre_steps)
-  gamma_ICU_pre_step[n_gamma_ICU_pre_steps] else
-    gamma_ICU_pre_step[step + 1]
+gamma_H_D[] <- if (as.integer(step) >= n_gamma_H_D_steps)
+  gamma_H_D_step[n_gamma_H_D_steps] * rel_gamma_H_D[i] else
+    gamma_H_D_step[step + 1] * rel_gamma_H_D[i]
+
+gamma_ICU_W_R[] <- if (as.integer(step) >= n_gamma_ICU_W_R_steps)
+  gamma_ICU_W_R_step[n_gamma_ICU_W_R_steps] * rel_gamma_ICU_W_R[i] else
+    gamma_ICU_W_R_step[step + 1] * rel_gamma_ICU_W_R[i]
+
+gamma_ICU_W_D[] <- if (as.integer(step) >= n_gamma_ICU_W_D_steps)
+  gamma_ICU_W_D_step[n_gamma_ICU_W_D_steps] * rel_gamma_ICU_W_D[i] else
+    gamma_ICU_W_D_step[step + 1] * rel_gamma_ICU_W_D[i]
+
+gamma_ICU_D[] <- if (as.integer(step) >= n_gamma_ICU_D_steps)
+  gamma_ICU_D_step[n_gamma_ICU_D_steps] * rel_gamma_ICU_D[i] else
+    gamma_ICU_D_step[step + 1] * rel_gamma_ICU_D[i]
+
+gamma_W_R[] <- if (as.integer(step) >= n_gamma_W_R_steps)
+  gamma_W_R_step[n_gamma_W_R_steps] * rel_gamma_W_R[i] else
+    gamma_W_R_step[step + 1] * rel_gamma_W_R[i]
+
+gamma_W_D[] <- if (as.integer(step) >= n_gamma_W_D_steps)
+  gamma_W_D_step[n_gamma_W_D_steps] * rel_gamma_W_D[i] else
+    gamma_W_D_step[step + 1] * rel_gamma_W_D[i]
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
@@ -312,7 +348,7 @@ n_S_next_vacc_class[, ] <- rbinom(S[i, j] - sum(n_S_progress[i, , j]),
 
 #### flow out of E ####
 
-n_E_progress[, , , ] <- rbinom(E[i, j, k, l], p_E_progress)
+n_E_progress[, , , ] <- rbinom(E[i, j, k, l], p_E_progress[j])
 ## of those some can also be vaccinated or progress through vaccination classes
 ## --> number transitioning from E[j, k] to E[j+1, k+1] (k vaccination class)
 n_EE_next_vacc_class[, , , ] <-
@@ -424,31 +460,35 @@ n_R_next_vacc_class[, , ] <- rbinom(n_R_tmp[i, j, k],
 
 n_I_C_1_progress[, , , ] <- rbinom(I_C_1[i, j, k, l], p_I_C_1_progress[j])
 n_I_C_2_progress[, , , ] <- rbinom(I_C_2[i, j, k, l], p_I_C_2_progress[j])
-n_G_D_progress[, , , ] <- rbinom(G_D[i, j, k, l], p_G_D_progress)
+n_G_D_progress[, , , ] <- rbinom(G_D[i, j, k, l], p_G_D_progress[j])
 n_ICU_pre_unconf_progress[, , , ] <-
-  rbinom(ICU_pre_unconf[i, j, k, l], p_ICU_pre_progress)
+  rbinom(ICU_pre_unconf[i, j, k, l], p_ICU_pre_progress[j])
 n_ICU_pre_conf_progress[, , , ] <-
-  rbinom(ICU_pre_conf[i, j, k, l], p_ICU_pre_progress)
-n_H_R_unconf_progress[, , , ] <- rbinom(H_R_unconf[i, j, k, l], p_H_R_progress)
-n_H_R_conf_progress[, , , ] <- rbinom(H_R_conf[i, j, k, l], p_H_R_progress)
-n_H_D_unconf_progress[, , , ] <- rbinom(H_D_unconf[i, j, k, l], p_H_D_progress)
-n_H_D_conf_progress[, , , ] <- rbinom(H_D_conf[i, j, k, l], p_H_D_progress)
+  rbinom(ICU_pre_conf[i, j, k, l], p_ICU_pre_progress[j])
+n_H_R_unconf_progress[, , , ] <-
+  rbinom(H_R_unconf[i, j, k, l], p_H_R_progress[j])
+n_H_R_conf_progress[, , , ] <- rbinom(H_R_conf[i, j, k, l], p_H_R_progress[j])
+n_H_D_unconf_progress[, , , ] <-
+  rbinom(H_D_unconf[i, j, k, l], p_H_D_progress[j])
+n_H_D_conf_progress[, , , ] <- rbinom(H_D_conf[i, j, k, l], p_H_D_progress[j])
 n_ICU_W_R_unconf_progress[, , , ] <-
-  rbinom(ICU_W_R_unconf[i, j, k, l], p_ICU_W_R_progress)
+  rbinom(ICU_W_R_unconf[i, j, k, l], p_ICU_W_R_progress[j])
 n_ICU_W_R_conf_progress[, , , ] <-
-  rbinom(ICU_W_R_conf[i, j, k, l], p_ICU_W_R_progress)
+  rbinom(ICU_W_R_conf[i, j, k, l], p_ICU_W_R_progress[j])
 n_ICU_W_D_unconf_progress[, , , ] <-
-  rbinom(ICU_W_D_unconf[i, j, k, l], p_ICU_W_D_progress)
+  rbinom(ICU_W_D_unconf[i, j, k, l], p_ICU_W_D_progress[j])
 n_ICU_W_D_conf_progress[, , , ] <-
-  rbinom(ICU_W_D_conf[i, j, k, l], p_ICU_W_D_progress)
+  rbinom(ICU_W_D_conf[i, j, k, l], p_ICU_W_D_progress[j])
 n_ICU_D_unconf_progress[, , , ] <-
-  rbinom(ICU_D_unconf[i, j, k, l], p_ICU_D_progress)
+  rbinom(ICU_D_unconf[i, j, k, l], p_ICU_D_progress[j])
 n_ICU_D_conf_progress[, , , ] <-
-  rbinom(ICU_D_conf[i, j, k, l], p_ICU_D_progress)
-n_W_R_unconf_progress[, , , ] <- rbinom(W_R_unconf[i, j, k, l], p_W_R_progress)
-n_W_R_conf_progress[, , , ] <- rbinom(W_R_conf[i, j, k, l], p_W_R_progress)
-n_W_D_unconf_progress[, , , ] <- rbinom(W_D_unconf[i, j, k, l], p_W_D_progress)
-n_W_D_conf_progress[, , , ] <- rbinom(W_D_conf[i, j, k, l], p_W_D_progress)
+  rbinom(ICU_D_conf[i, j, k, l], p_ICU_D_progress[j])
+n_W_R_unconf_progress[, , , ] <-
+  rbinom(W_R_unconf[i, j, k, l], p_W_R_progress[j])
+n_W_R_conf_progress[, , , ] <- rbinom(W_R_conf[i, j, k, l], p_W_R_progress[j])
+n_W_D_unconf_progress[, , , ] <-
+  rbinom(W_D_unconf[i, j, k, l], p_W_D_progress[j])
+n_W_D_conf_progress[, , , ] <- rbinom(W_D_conf[i, j, k, l], p_W_D_progress[j])
 n_T_sero_pre_progress[, , , ] <-
   rbinom(T_sero_pre[i, j, k, l], p_T_sero_pre_progress[i, j, k, l])
 n_T_sero_pos_progress[, , , ] <-
@@ -935,7 +975,9 @@ dim(vaccine_progression_rate_base) <- c(n_groups, n_vacc_classes)
 
 ## Parameters of the E classes
 k_E <- user()
+dim(gamma_E) <- n_strains
 gamma_E_step[] <- user()
+n_gamma_E_steps <- user()
 dim(gamma_E_step) <- n_gamma_E_steps
 rel_gamma_E[] <- user()
 dim(rel_gamma_E) <- n_strains
@@ -949,23 +991,39 @@ dim(p_C_step) <- c(n_p_C_steps, n_groups)
 
 ## Parameters of the I_A classes
 k_A <- user()
-gamma_A[] <- user()
 dim(gamma_A) <- n_strains
+gamma_A_step[] <- user()
+n_gamma_A_steps <- user()
+dim(gamma_A_step) <- n_gamma_A_steps
+rel_gamma_A[] <- user()
+dim(rel_gamma_A) <- n_strains
 
 ## Parameters of the I_P classes
 k_P <- user()
-gamma_P[] <- user()
 dim(gamma_P) <- n_strains
+gamma_P_step[] <- user()
+n_gamma_P_steps <- user()
+dim(gamma_P_step) <- n_gamma_P_steps
+rel_gamma_P[] <- user()
+dim(rel_gamma_P) <- n_strains
 
 ## Parameters of the I_C_1 classes
 k_C_1 <- user()
-gamma_C_1[] <- user()
 dim(gamma_C_1) <- n_strains
+gamma_C_1_step[] <- user()
+n_gamma_C_1_steps <- user()
+dim(gamma_C_1_step) <- n_gamma_C_1_steps
+rel_gamma_C_1[] <- user()
+dim(rel_gamma_C_1) <- n_strains
 
 ## Parameters of the I_C_2 classes
 k_C_2 <- user()
-gamma_C_2[] <- user()
 dim(gamma_C_2) <- n_strains
+gamma_C_2_step[] <- user()
+n_gamma_C_2_steps <- user()
+dim(gamma_C_2_step) <- n_gamma_C_2_steps
+rel_gamma_C_2[] <- user()
+dim(rel_gamma_C_2) <- n_strains
 
 ## Proportion of cases requiring hospitalisation
 p_H_step[, ] <- user()
@@ -975,7 +1033,12 @@ dim(p_H_step) <- c(n_p_H_steps, n_groups)
 
 ## Parameters of the G_D class
 k_G_D <- user()
-gamma_G_D <- user(0.1)
+dim(gamma_G_D) <- n_strains
+gamma_G_D_step[] <- user()
+n_gamma_G_D_steps <- user()
+dim(gamma_G_D_step) <- n_gamma_G_D_steps
+rel_gamma_G_D[] <- user()
+dim(rel_gamma_G_D) <- n_strains
 p_G_D_step[, ] <- user()
 n_p_G_D_steps <- user()
 dim(p_G_D) <- c(n_groups, n_strains, n_vacc_classes)
@@ -983,9 +1046,12 @@ dim(p_G_D_step) <- c(n_p_G_D_steps, n_groups)
 
 ## Parameters of the ICU_pre classes
 k_ICU_pre <- user()
+dim(gamma_ICU_pre) <- n_strains
+gamma_ICU_pre_step[] <- user()
 n_gamma_ICU_pre_steps <- user()
 dim(gamma_ICU_pre_step) <- n_gamma_ICU_pre_steps
-gamma_ICU_pre_step[] <- user()
+rel_gamma_ICU_pre[] <- user()
+dim(rel_gamma_ICU_pre) <- n_strains
 
 ## Proportion of hospital cases progressing to ICU
 p_ICU_step[, ] <- user()
@@ -1001,15 +1067,21 @@ dim(p_W_D_step) <- c(n_p_W_D_steps, n_groups)
 
 ## Parameters of the H_R classes
 k_H_R <- user()
+dim(gamma_H_R) <- n_strains
+gamma_H_R_step[] <- user()
 n_gamma_H_R_steps <- user()
 dim(gamma_H_R_step) <- n_gamma_H_R_steps
-gamma_H_R_step[] <- user()
+rel_gamma_H_R[] <- user()
+dim(rel_gamma_H_R) <- n_strains
 
 ## Parameters of the H_D classes
 k_H_D <- user()
+dim(gamma_H_D) <- n_strains
+gamma_H_D_step[] <- user()
 n_gamma_H_D_steps <- user()
 dim(gamma_H_D_step) <- n_gamma_H_D_steps
-gamma_H_D_step[] <- user()
+rel_gamma_H_D[] <- user()
+dim(rel_gamma_H_D) <- n_strains
 p_H_D_step[, ] <- user()
 n_p_H_D_steps <- user()
 dim(p_H_D) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1017,21 +1089,30 @@ dim(p_H_D_step) <- c(n_p_H_D_steps, n_groups)
 
 ## Parameters of the ICU_W_R classes
 k_ICU_W_R <- user()
+dim(gamma_ICU_W_R) <- n_strains
+gamma_ICU_W_R_step[] <- user()
 n_gamma_ICU_W_R_steps <- user()
 dim(gamma_ICU_W_R_step) <- n_gamma_ICU_W_R_steps
-gamma_ICU_W_R_step[] <- user()
+rel_gamma_ICU_W_R[] <- user()
+dim(rel_gamma_ICU_W_R) <- n_strains
 
 ## Parameters of the ICU_W_D classes
 k_ICU_W_D <- user()
+dim(gamma_ICU_W_D) <- n_strains
+gamma_ICU_W_D_step[] <- user()
 n_gamma_ICU_W_D_steps <- user()
 dim(gamma_ICU_W_D_step) <- n_gamma_ICU_W_D_steps
-gamma_ICU_W_D_step[] <- user()
+rel_gamma_ICU_W_D[] <- user()
+dim(rel_gamma_ICU_W_D) <- n_strains
 
 ## Parameters of the ICU_D classes
 k_ICU_D <- user()
+dim(gamma_ICU_D) <- n_strains
+gamma_ICU_D_step[] <- user()
 n_gamma_ICU_D_steps <- user()
 dim(gamma_ICU_D_step) <- n_gamma_ICU_D_steps
-gamma_ICU_D_step[] <- user()
+rel_gamma_ICU_D[] <- user()
+dim(rel_gamma_ICU_D) <- n_strains
 p_ICU_D_step[, ] <- user()
 n_p_ICU_D_steps <- user()
 dim(p_ICU_D) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1039,15 +1120,21 @@ dim(p_ICU_D_step) <- c(n_p_ICU_D_steps, n_groups)
 
 ## Parameters of the W_R classes
 k_W_R <- user()
+dim(gamma_W_R) <- n_strains
+gamma_W_R_step[] <- user()
 n_gamma_W_R_steps <- user()
 dim(gamma_W_R_step) <- n_gamma_W_R_steps
-gamma_W_R_step[] <- user()
+rel_gamma_W_R[] <- user()
+dim(rel_gamma_W_R) <- n_strains
 
 ## Parameters of the W_D classes
 k_W_D <- user()
+dim(gamma_W_D) <- n_strains
+gamma_W_D_step[] <- user()
 n_gamma_W_D_steps <- user()
 dim(gamma_W_D_step) <- n_gamma_W_D_steps
-gamma_W_D_step[] <- user()
+rel_gamma_W_D[] <- user()
+dim(rel_gamma_W_D) <- n_strains
 
 ## Parameters of the T_sero_pre classes
 gamma_sero_pre_1 <- user(0.1)
