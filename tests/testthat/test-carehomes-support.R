@@ -237,6 +237,48 @@ test_that("can input severity data for carehomes model", {
 })
 
 
+test_that("can compute time-varying severity parameters for carehomes model", {
+  dt <- 0.25
+
+  p_G_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
+  p_G_D_value <- c(0.05, 0.1)
+  p_G_D_CHR_date <- NULL
+  p_G_D_CHR_value <- 0.4
+
+  severity <-
+    carehomes_parameters_severity(dt, NULL,
+                                  p_G_D_date = p_G_D_date,
+                                  p_G_D_value = p_G_D_value,
+                                  p_G_D_CHR_date = p_G_D_CHR_date,
+                                  p_G_D_CHR_value = p_G_D_CHR_value)
+
+  p_G_D_step <-
+    sircovid_parameters_piecewise_linear(p_G_D_date,
+                                         p_G_D_value, dt)
+  expect_equal(severity$p_G_D_step[, 19],
+               rep(p_G_D_CHR_value, length(p_G_D_step)))
+  expect_equal(severity$p_G_D_step[, 6], p_G_D_step)
+})
+
+
+test_that("can compute time-varying progression parameters for carehomes model", {
+  dt <- 0.25
+
+  gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
+  gamma_H_D_value <- c(0.2, 0.5)
+
+  severity <-
+    carehomes_parameters_progression(dt,
+                                     gamma_H_D_date = gamma_H_D_date,
+                                     gamma_H_D_value = gamma_H_D_value)
+
+  gamma_H_D_step <-
+    sircovid_parameters_piecewise_linear(gamma_H_D_date,
+                                         gamma_H_D_value, dt)
+  expect_equal(severity$gamma_H_D_step, gamma_H_D_step)
+})
+
+
 test_that("Can compute transmission matrix for carehomes model", {
   m <- carehomes_transmission_matrix(0.1, 4e-5, 5e-4, "uk")
   expect_equal(rownames(m)[18:19], c("CHW", "CHR"))
