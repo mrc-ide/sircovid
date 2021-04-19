@@ -1787,9 +1787,7 @@ test_that("G_D empty when p_G_D = 0", {
                             strain_seed_date =
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             cross_immunity = 0)
-  p$p_G_D[] <- 0
-  p$psi_G_D[] <- 0
-  p$p_G_D_step[] <- 0
+  p$p_G_D_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 

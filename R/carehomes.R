@@ -913,6 +913,19 @@ carehomes_parameters_severity <- function(dt,
       p_date <- NULL
     }
 
+    if (!is.null(p_value)) {
+      if (length(p_value) == 1L) {
+        if (length(p_date) != 0) {
+          stop(sprintf(
+            "As %s has a single 'value', expected NULL or unspecified 'date'",
+            p_name))
+        }
+      } else if (length(p_date) != length(p_value)) {
+        stop(sprintf("'date' and 'value' for %s must have the same length",
+                     p_name))
+      }
+    }
+
 
     CHR <- FALSE
     if (exists(paste0(p_name, "_CHR"))) {
@@ -924,6 +937,16 @@ carehomes_parameters_severity <- function(dt,
           p_CHR_date <- get(paste0(p_name, "_CHR"))$date
         } else {
           p_CHR_date <- NULL
+        }
+        if (length(p_CHR_value) == 1L) {
+          if (length(p_CHR_date) != 0) {
+            stop(sprintf(
+              "As %s has a single 'value', expected NULL or unspecified 'date'",
+              paste0(p_name, "_CHR")))
+          }
+        } else if (length(p_CHR_date) != length(p_CHR_value)) {
+          stop(sprintf("'date' and 'value' for %s must have the same length",
+                       paste0(p_name, "_CHR")))
         }
       }
     }
@@ -1390,6 +1413,19 @@ carehomes_parameters_progression <- function(dt,
       gamma_date <- get(gamma_name)$date
     } else {
       gamma_date <- NULL
+    }
+
+    if (!is.null(gamma_value)) {
+      if (length(gamma_value) == 1L) {
+        if (length(gamma_date) != 0) {
+          stop(sprintf(
+            "As %s has a single 'value', expected NULL or unspecified 'date'",
+            gamma_name))
+        }
+      } else if (length(gamma_date) != length(gamma_value)) {
+        stop(sprintf("'date' and 'value' for %s must have the same length",
+             gamma_name))
+      }
     }
 
     if (is.null(gamma_value)) {

@@ -95,7 +95,7 @@ sircovid_parameters_piecewise_linear <- function(date, value, dt) {
     stop("'date' and 'value' must have the same length")
   }
   if (length(date) < 2) {
-    stop("Need at least two dates and betas for a varying beta")
+    stop("Need at least two dates and values for a varying piecewise linear")
   }
   assert_sircovid_date(date)
   assert_increasing(date)
@@ -198,22 +198,22 @@ sircovid_parameters_piecewise_constant <- function(date, value, dt) {
 }
 
 
-##' Expand `beta_step` based on a series of `step`s.  Use this to
+##' Expand `value_step` based on a series of `step`s.  Use this to
 ##' convert between the values passed to
-##' [sircovid_parameters_piecewise_linear()] and the actual beta
-##' values for a given set of steps.
+##' [sircovid_parameters_piecewise_linear()] and the actual values
+##' for a given set of steps.
 ##'
 ##' @title Expand beta steps
 ##'
 ##' @param step A vector of steps
 ##'
-##' @param beta_step A vector of betas
+##' @param value_step A vector of values
 ##'
 ##' @return A numeric vector the same length as `step`
 ##'
 ##' @export
-sircovid_parameters_expand_step <- function(step, beta_step) {
-  beta_step[pmin(step, length(beta_step) - 1L) + 1L]
+sircovid_parameters_expand_step <- function(step, value_step) {
+  value_step[pmin(step, length(value_step) - 1L) + 1L]
 }
 
 

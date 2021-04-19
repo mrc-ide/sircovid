@@ -4,19 +4,19 @@
 \alias{sircovid_parameters_expand_step}
 \title{Expand beta steps}
 \usage{
-sircovid_parameters_expand_step(step, beta_step)
+sircovid_parameters_expand_step(step, value_step)
 }
 \arguments{
 \item{step}{A vector of steps}
 
-\item{beta_step}{A vector of betas}
+\item{value_step}{A vector of values}
 }
 \value{
 A numeric vector the same length as \code{step}
 }
 \description{
-Expand \code{beta_step} based on a series of \code{step}s.  Use this to
+Expand \code{value_step} based on a series of \code{step}s.  Use this to
 convert between the values passed to
-\code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}} and the actual beta
-values for a given set of steps.
+\code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}} and the actual values
+for a given set of steps.
 }

@@ -271,6 +271,31 @@ test_that("can compute time-varying severity parameters for carehomes model", {
   expect_equal(severity$p_H_step[, 17],
                rep(p_H_value, length(p_H_CHR_step)))
   expect_equal(severity$p_H_step[, 19], p_H_CHR_step)
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_C = list(date = 1,
+                                             value = 3)),
+    "As p_C has a single 'value', expected NULL or unspecified 'date'")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_ICU = list(date = c(1, 4, 5),
+                                               value = c(2, 3))),
+    "'date' and 'value' for p_ICU must have the same length")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_H_CHR = list(date = 1,
+                                                 value = 3)),
+    "As p_H_CHR has a single 'value', expected NULL or unspecified 'date'")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_G_D_CHR = list(date = c(1, 4, 5),
+                                                   value = c(2, 3))),
+    "'date' and 'value' for p_G_D_CHR must have the same length")
+
 })
 
 
@@ -282,7 +307,7 @@ test_that("can compute time-varying progression parameters for carehomes
   gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
   gamma_H_D_value <- c(0.2, 0.5)
 
-  severity <-
+  progression <-
     carehomes_parameters_progression(dt,
                                      gamma_H_D = list(date = gamma_H_D_date,
                                                       value = gamma_H_D_value),
@@ -292,8 +317,22 @@ test_that("can compute time-varying progression parameters for carehomes
   gamma_H_D_step <-
     sircovid_parameters_piecewise_linear(gamma_H_D_date,
                                          gamma_H_D_value, dt)
-  expect_equal(severity$gamma_H_D_step, gamma_H_D_step)
-  expect_equal(severity$gamma_H_R_step, gamma_H_R_value)
+  expect_equal(progression$gamma_H_D_step, gamma_H_D_step)
+  expect_equal(progression$gamma_H_R_step, gamma_H_R_value)
+
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_E = list(date = 1,
+                                                    value = 3)),
+    "As gamma_E has a single 'value', expected NULL or unspecified 'date'")
+
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_ICU_pre = list(date = c(1, 4, 5),
+                                                          value = c(2, 3))),
+    "'date' and 'value' for gamma_ICU_pre must have the same length")
+
+
 })
 
 
