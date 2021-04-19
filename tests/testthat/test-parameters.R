@@ -138,7 +138,7 @@ test_that("can read the default severity file", {
       "p_sero_pos", "p_H"))
   expect_vector_equal(data$p_serocoversion, data$p_serocoversion[[1]])
   expect_equal(
-    data$p_G_D, rep(0, 17))
+    data$p_G_D, rep(0.05, 17))
   expect_equal(
     data$p_star, rep(0.2, 17))
 })
