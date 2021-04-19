@@ -78,7 +78,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ## replace reduced step,date,beta with full values (no NA here)
     ret$step <- step
     ret$date <- step * p$dt
-    ret$beta <- beta <- sircovid_parameters_step_expand(step, p$beta_step)
+    ret$beta <- beta <- sircovid_parameters_expand_step(step, p$beta_step)
 
     ## restore full length Rt with NAs when prob_strain is NA
     for (i in grep("Rt_", names(ret))) {
@@ -125,7 +125,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     ## Also need to update these
     ret$step <- step
     ret$date <- step * p$dt
-    ret$beta <- sircovid_parameters_step_expand(step, p$beta_step)
+    ret$beta <- sircovid_parameters_expand_step(step, p$beta_step)
     return(ret)
   }
 
@@ -194,7 +194,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
-  beta <- sircovid_parameters_step_expand(step, p$beta_step)
+  beta <- sircovid_parameters_expand_step(step, p$beta_step)
 
   ages <- seq_len(p$n_age_groups)
   ch <- seq(p$n_age_groups + 1L, p$n_groups)
@@ -439,7 +439,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   n_vacc_classes <- nlayer(pars$rel_susceptibility)
   n_groups <- pars$n_groups
   n_time_steps <-
-    length(sircovid_parameters_step_expand(step, pars$p_H_step))
+    length(sircovid_parameters_expand_step(step, pars$p_H_step))
   n_strains <- length(pars$strain_transmission)
 
   probs <- compute_pathway_probabilities(step, pars, n_time_steps, n_strains,
@@ -472,7 +472,7 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
   calculate_mean <- function(transmission, prob, name) {
     gamma_step <-
-      sircovid_parameters_step_expand(step,
+      sircovid_parameters_expand_step(step,
                                       pars[[paste0("gamma_", name, "_step")]])
     rel_gamma <- pars[[paste0("rel_gamma_", name)]]
     k <- pars[[paste0("k_", name)]]

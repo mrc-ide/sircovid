@@ -41,7 +41,7 @@ sircovid_parameters_shared <- function(start_date, region,
 ##'   until the values stabilise.  After this point the quantity is assumed to
 ##'   be constant.
 ##'
-##' @seealso [sircovid_parameters_step_expand()] - see examples below
+##' @seealso [sircovid_parameters_expand_step()] - see examples below
 ##'
 ##' @export
 ##' @examples
@@ -62,12 +62,12 @@ sircovid_parameters_shared <- function(start_date, region,
 ##' # After 2020-03-15, the quantity value will be fixed at 2, the value
 ##' # that it reached at that date.
 ##'
-##' # You can see this using sircovid_parameters_step_expand
+##' # You can see this using sircovid_parameters_expand_step
 ##' # If a vector of dates is provided then, it's more complex. We'll
 ##' # use dt of 1 here as it's easier to visualise
 ##' t <- seq(0, 100, by = 1)
-##' sircovid::sircovid_parameters_step_expand(t, y)
-##' plot(t, sircovid::sircovid_parameters_step_expand(t, y), type = "o")
+##' sircovid::sircovid_parameters_expand_step(t, y)
+##' plot(t, sircovid::sircovid_parameters_expand_step(t, y), type = "o")
 ##' points(date, value, pch = 19, col = "red")
 ##'
 ##' # If dt is less than 1, this is scaled, but the pattern of
@@ -160,12 +160,12 @@ sircovid_parameters_piecewise_linear <- function(date, value, dt) {
 ##' # After 2020-03-15, the quantity value will be fixed at 2, the value
 ##' # that it reached at that date.
 ##'
-##' # You can see this using sircovid_parameters_step_expand
+##' # You can see this using sircovid_parameters_expand_step
 ##' # If a vector of dates is provided then, it's more complex. We'll
 ##' # use dt of 1 here as it's easier to visualise
 ##' t <- seq(0, 100, by = 1)
-##' sircovid::sircovid_parameters_step_expand(t, y)
-##' plot(t, sircovid::sircovid_parameters_step_expand(t, y), type = "o")
+##' sircovid::sircovid_parameters_expand_step(t, y)
+##' plot(t, sircovid::sircovid_parameters_expand_step(t, y), type = "o")
 ##' points(date, value, pch = 19, col = "red")
 ##'
 ##' # If dt is less than 1, this is scaled, but the pattern of
@@ -212,7 +212,7 @@ sircovid_parameters_piecewise_constant <- function(date, value, dt) {
 ##' @return A numeric vector the same length as `step`
 ##'
 ##' @export
-sircovid_parameters_step_expand <- function(step, beta_step) {
+sircovid_parameters_expand_step <- function(step, beta_step) {
   beta_step[pmin(step, length(beta_step) - 1L) + 1L]
 }
 

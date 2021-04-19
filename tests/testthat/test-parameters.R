@@ -200,14 +200,14 @@ test_that("can expand beta", {
   t1 <- seq(0, date[[3]])
   res1 <- cbind(t1, beta, deparse.level = 0)
 
-  expect_equal(sircovid_parameters_step_expand(t1, beta), beta)
+  expect_equal(sircovid_parameters_expand_step(t1, beta), beta)
 
   t2 <- seq(0, 100, by = 1)
-  beta2 <- sircovid_parameters_step_expand(t2, beta)
+  beta2 <- sircovid_parameters_expand_step(t2, beta)
   expect_equal(beta2[seq_along(beta)], beta)
   expect_equal(beta2[-seq_along(beta)], rep(beta[length(beta)], 25))
 
   t3 <- t2[1:65]
-  beta3 <- sircovid_parameters_step_expand(t3, beta)
+  beta3 <- sircovid_parameters_expand_step(t3, beta)
   expect_equal(beta3, beta[1:65])
 })

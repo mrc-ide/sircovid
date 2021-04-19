@@ -802,21 +802,76 @@ carehomes_severity <- function(p) {
 ##'
 ##' @param dt The step size
 ##'
-##' @param severity
+##' @param severity Severity data, used to determine default severity parameter
+##'   age-scalings and to provide default severity parameter values. Can be
+##'   `NULL` (use the default bundled data version in the package), or a
+##'   [data.frame] object (for raw severity data).
 ##'
-##' @param p_C_date A vector of dates for changes in p_C (the
-##'   probability of an infected individual becoming symptomatic), or
-##'   `NULL` if a single value is used for all times (see
-##'   [sircovid_parameters_piecewise_linear()], where this is passed as `date`).
+##' @param p_C A list with `date` and `value` for changes in p_C (the
+##'   probability of an infected individual becoming symptomatic). If `value` is
+##'   `NULL` then the value from `severity` is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
 ##'
-##' @param p_C_value A vector of values for p_C (the
-##'   probability of an infected individual becoming symptomatic). If not
-##'   given, and if `p_C_date` is `NULL` then a
-##'   value of 0.08 will be used through the whole simulation,
-##'   otherwise if `beta_date` is `NULL` this must be a scalar. If
-##'   `beta_date` is given then `beta_date` and `beta_value` must have
-##'   the same length (see [sircovid_parameters_piecewise_linear()],
-##'   where this is passed as `value`).
+##' @param p_H A list with `date` and `value` for changes in p_H (the
+##'   probability of an symptomatic individual requiring hospitalisation). If
+##'   `value` is `NULL` then the value from `severity` is used. If `value` is
+##'   scalar then `date` can be `NULL` or unspecified. If `value` is a vector
+##'   then `date` must be a vector of sircovid dates of the same length as
+##'   `value`.
+##'
+##' @param p_H_CHR A list with `date` and `value` for changes in p_H (the
+##'   probability of an symptomatic individual requiring hospitalisation) for
+##'   care home residents. If `value` is `NULL` then the value for the oldest
+##'   age group is used. If `value` is scalar then `date` can be `NULL` or
+##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   sircovid dates of the same length as `value`.
+##'
+##' @param p_ICU A list with `date` and `value` for changes in p_ICU (the
+##'   probability of an hospitalised individual going to ICU). If
+##'   `value` is `NULL` then the value from `severity` is used. If `value` is
+##'   scalar then `date` can be `NULL` or unspecified. If `value` is a vector
+##'   then `date` must be a vector of sircovid dates of the same length as
+##'   `value`.
+##'
+##' @param p_H_D A list with `date` and `value` for changes in p_H_D (the
+##'   probability of death in general beds). If `value` is `NULL` then the value
+##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
+##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   sircovid dates of the same length as `value`.
+##'
+##' @param p_ICU_D A list with `date` and `value` for changes in p_ICU_D (the
+##'   probability of death in ICU). If `value` is `NULL` then the value from
+##'   `severity` is used. If `value` is scalar then `date` can be `NULL` or
+##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   sircovid dates of the same length as `value`.
+##'
+##' @param p_W_D A list with `date` and `value` for changes in p_W_D (the
+##'   probability of death in stepdown). If `value` is `NULL` then the value
+##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
+##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   sircovid dates of the same length as `value`.
+##'
+##' @param p_G_D A list with `date` and `value` for changes in p_G_D (the
+##'   probability of individuals requiring hospitalisation dying in the
+##'   community or a care home). If `value` is `NULL` then the value
+##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
+##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   sircovid dates of the same length as `value`.
+##'
+##' @param p_G_D_CHR A list with `date` and `value` for changes in p_G_D (the
+##'   probability of individuals requiring hospitalisation dying in a care home)
+##'   for care home residents. If `value` is `NULL` then the value for the
+##'   oldest age group is used. If `value` is scalar then `date` can be `NULL` or
+##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   sircovid dates of the same length as `value`.
+##'
+##' @param p_star A list with `date` and `value` for changes in p_star (the
+##'   probability of patients being confirmed as covid on admission to
+##'   hospital). If `value` is `NULL` then the value
+##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
+##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   sircovid dates of the same length as `value`.
 ##'
 ##' @return A list of severity parameters
 ##'
@@ -894,11 +949,11 @@ carehomes_parameters_severity <- function(dt,
       n_p_CHR_steps <- length(p_CHR_step)[1]
       if (n_p_steps < n_p_CHR_steps) {
         p_step <- vapply(seq_len(18),
-                         function(i) sircovid_parameters_step_expand(
+                         function(i) sircovid_parameters_expand_step(
                            seq_len(n_p_CHR_steps), p_step[, i]),
                          rep(0, n_p_CHR_steps))
       } else if (n_p_steps > n_p_CHR_steps) {
-        p_CHR_step <- sircovid_parameters_step_expand(
+        p_CHR_step <- sircovid_parameters_expand_step(
           seq_len(n_p_steps),
           p_CHR_step)
       }
