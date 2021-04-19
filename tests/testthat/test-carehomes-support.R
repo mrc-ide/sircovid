@@ -274,7 +274,8 @@ test_that("can compute time-varying severity parameters for carehomes model", {
 })
 
 
-test_that("can compute time-varying progression parameters for carehomes model", {
+test_that("can compute time-varying progression parameters for carehomes
+          model", {
   dt <- 0.25
 
   gamma_H_R_value <- 0.3
