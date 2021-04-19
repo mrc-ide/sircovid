@@ -213,13 +213,27 @@ test_that("carehomes_parameters returns a list of parameters", {
 
 
 test_that("can compute severity for carehomes model", {
-  population <- sircovid_population("uk")
   severity <- carehomes_parameters_severity(0.25, NULL)
 
   expect_equal(
     severity$p_G_D_step, array(0.05, c(1, 19)))
   expect_equal(
     severity$p_star_step, array(0.2, c(1, 19)))
+})
+
+
+test_that("can input severity data for carehomes model", {
+  data <- sircovid_parameters_severity(NULL)
+
+  data$p_G_D[] <- 0
+  data$p_star[] <- 0.5
+
+  severity <- carehomes_parameters_severity(0.25, data)
+
+  expect_equal(
+    severity$p_G_D_step, array(0, c(1, 19)))
+  expect_equal(
+    severity$p_star_step, array(0.5, c(1, 19)))
 })
 
 
