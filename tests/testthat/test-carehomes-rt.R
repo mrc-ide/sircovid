@@ -123,7 +123,8 @@ test_that("Can vary beta over time", {
   initial_date <- p$initial_step * dt
   beta_date <- initial_date + c(0, 21, 62)
   beta_value <- p$beta_step * c(1, 0.5, 0.8)
-  p$beta_step <- sircovid_parameters_beta(beta_date, beta_value, dt)
+  p$beta_step <- sircovid_parameters_beta_piecewise_linear(beta_date,
+                                                           beta_value, dt)
   p <- rep(list(p), ncol(y))
   p[[3]]$beta_step <- p[[3]]$beta_step / 2
 

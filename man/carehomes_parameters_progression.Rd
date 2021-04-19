@@ -36,6 +36,9 @@ carehomes_parameters_progression(
   gamma_G_D_value = NULL
 )
 }
+\arguments{
+\item{dt}{The step size}
+}
 \value{
 A list of parameter values
 }

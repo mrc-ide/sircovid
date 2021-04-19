@@ -29,6 +29,9 @@ carehomes_parameters_severity(
   p_star_value = NULL
 )
 }
+\arguments{
+\item{dt}{The step size}
+}
 \value{
 A list of severity parameters
 }

@@ -800,6 +800,8 @@ carehomes_severity <- function(p) {
 ##'
 ##' @title Carehomes severity parameters
 ##'
+##' @param dt The step size
+##'
 ##' @return A list of severity parameters
 ##'
 ##' @export
@@ -854,13 +856,14 @@ carehomes_parameters_severity <- function(dt,
     if (is.null(p_value)) {
       p_step <- max(p)
     } else {
-      p_step <- sircovid_parameters_beta(p_date, p_value, dt)
+      p_step <- sircovid_parameters_piecewise_linear(p_date, p_value, dt)
     }
 
     p_step <- outer(p_step, psi)
 
     if (CHR) {
-      p_CHR_step <- sircovid_parameters_beta(p_CHR_date, p_CHR_value, dt)
+      p_CHR_step <- sircovid_parameters_piecewise_linear(p_CHR_date,
+                                                         p_CHR_value, dt)
       n_p_steps <- dim(p_step)[1]
       n_p_CHR_steps <- length(p_CHR_step)[1]
       if (n_p_steps < n_p_CHR_steps) {
@@ -1139,6 +1142,8 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @title Carehomes progression parameters
 ##'
+##' @param dt The step size
+##'
 ##' @return A list of parameter values
 ##'
 ##' @export
@@ -1224,7 +1229,7 @@ carehomes_parameters_progression <- function(dt,
     if (is.null(gamma_value)) {
       gamma_step <- gamma
     } else {
-      gamma_step <- sircovid_parameters_beta(gamma_date, gamma_value, dt)
+      gamma_step <- sircovid_parameters_piecewise_linear(gamma_date, gamma_value, dt)
     }
 
     x[[paste0("gamma_", name, "_step")]] <- gamma_step
