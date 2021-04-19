@@ -49,7 +49,7 @@ test_that("piecewise linear date and value have to be the same length", {
 test_that("can't use a single piecewise linear date/value", {
   expect_error(
     sircovid_parameters_piecewise_linear(32, 1, 0.5),
-    "Need at least two dates and betas for a varying beta")
+    "Need at least two dates and values for a varying piecewise linear")
 })
 
 
