@@ -245,8 +245,17 @@ test_that("can compute time-varying severity parameters for carehomes model", {
   p_G_D_CHR_date <- NULL
   p_G_D_CHR_value <- 0.4
 
+  p_H_date <- NULL
+  p_H_value <- 0.6
+  p_H_CHR_date <- sircovid_date(c("2020-03-01", "2020-04-01"))
+  p_H_CHR_value <- c(0.7, 0.6)
+
   severity <-
     carehomes_parameters_severity(dt, NULL,
+                                  p_H_date = p_H_date,
+                                  p_H_value = p_H_value,
+                                  p_H_CHR_date = p_H_CHR_date,
+                                  p_H_CHR_value = p_H_CHR_value,
                                   p_G_D_date = p_G_D_date,
                                   p_G_D_value = p_G_D_value,
                                   p_G_D_CHR_date = p_G_D_CHR_date,
@@ -257,7 +266,15 @@ test_that("can compute time-varying severity parameters for carehomes model", {
                                          p_G_D_value, dt)
   expect_equal(severity$p_G_D_step[, 19],
                rep(p_G_D_CHR_value, length(p_G_D_step)))
-  expect_equal(severity$p_G_D_step[, 6], p_G_D_step)
+  expect_equal(severity$p_G_D_step[, 17], p_G_D_step)
+
+
+  p_H_CHR_step <-
+    sircovid_parameters_piecewise_linear(p_H_CHR_date,
+                                         p_H_CHR_value, dt)
+  expect_equal(severity$p_H_step[, 17],
+               rep(p_H_value, length(p_H_CHR_step)))
+  expect_equal(severity$p_H_step[, 19], p_H_CHR_step)
 })
 
 
