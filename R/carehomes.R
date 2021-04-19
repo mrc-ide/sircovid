@@ -1229,7 +1229,8 @@ carehomes_parameters_progression <- function(dt,
     if (is.null(gamma_value)) {
       gamma_step <- gamma
     } else {
-      gamma_step <- sircovid_parameters_piecewise_linear(gamma_date, gamma_value, dt)
+      gamma_step <- sircovid_parameters_piecewise_linear(gamma_date,
+                                                         gamma_value, dt)
     }
 
     x[[paste0("gamma_", name, "_step")]] <- gamma_step

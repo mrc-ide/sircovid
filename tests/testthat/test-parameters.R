@@ -62,7 +62,8 @@ test_that("dates must be increasing", {
 
 test_that("dates must be sircovid_dates", {
   expect_error(
-    sircovid_parameters_piecewise_linear(as_date(c("2020-02-01", "2020-02-10")), 1:2, 0.5),
+    sircovid_parameters_piecewise_linear(as_date(c("2020-02-01", "2020-02-10")),
+                                         1:2, 0.5),
     "'date' must be numeric - did you forget sircovid_date()?")
   expect_error(
     sircovid_parameters_piecewise_linear(c(-10, 41, 60), 1:3, 0.5),
