@@ -868,11 +868,11 @@ carehomes_parameters_severity <- function(dt,
       n_p_CHR_steps <- length(p_CHR_step)[1]
       if (n_p_steps < n_p_CHR_steps) {
         p_step <- vapply(seq_len(18),
-                         function(i) sircovid_parameters_beta_expand(
+                         function(i) sircovid_parameters_step_expand(
                            seq_len(n_p_CHR_steps), p_step[, i]),
                          rep(0, n_p_CHR_steps))
       } else if (n_p_steps > n_p_CHR_steps) {
-        p_CHR_step <- sircovid_parameters_beta_expand(
+        p_CHR_step <- sircovid_parameters_step_expand(
           seq_len(p_step),
           p_CHR_step)
       }

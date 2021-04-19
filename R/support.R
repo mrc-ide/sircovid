@@ -618,7 +618,7 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
   combine_steps_groups <- function(p_step, rel_p) {
     ret <- vapply(seq_len(pars$n_groups),
                   function(i) {
-                    outer(sircovid_parameters_beta_expand(step, p_step[, i]),
+                    outer(sircovid_parameters_step_expand(step, p_step[, i]),
                           rel_p[i, , ])
                     },
                   array(0, c(n_time_steps, n_strains, n_vacc_classes)))

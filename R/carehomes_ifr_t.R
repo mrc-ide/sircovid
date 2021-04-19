@@ -65,7 +65,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
   IFR_by_group_and_vacc_class <-
     carehomes_IFR_t_by_group_and_vacc_class(step, p)
-  beta <- sircovid_parameters_beta_expand(step, p$beta_step)
+  beta <- sircovid_parameters_step_expand(step, p$beta_step)
   n_vacc_classes <- nlayer(p$rel_susceptibility)
 
 
@@ -224,7 +224,7 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
   probs <- compute_pathway_probabilities(
     step = step,
     pars = pars,
-    n_time_steps = length(sircovid_parameters_beta_expand(step,
+    n_time_steps = length(sircovid_parameters_step_expand(step,
                                                           pars$p_H_step)),
     n_strains = length(pars$strain_transmission),
     n_vacc_classes = nlayer(pars$rel_susceptibility))

@@ -48,12 +48,12 @@ points(date, value, pch = 19, col = "red")
 # After 2020-03-15, the quantity value will be fixed at 2, the value
 # that it reached at that date.
 
-# You can see this using sircovid_parameters_beta_expand
+# You can see this using sircovid_parameters_step_expand
 # If a vector of dates is provided then, it's more complex. We'll
 # use dt of 1 here as it's easier to visualise
 t <- seq(0, 100, by = 1)
-sircovid::sircovid_parameters_beta_expand(t, y)
-plot(t, sircovid::sircovid_parameters_beta_expand(t, y), type = "o")
+sircovid::sircovid_parameters_step_expand(t, y)
+plot(t, sircovid::sircovid_parameters_step_expand(t, y), type = "o")
 points(date, value, pch = 19, col = "red")
 
 # If dt is less than 1, this is scaled, but the pattern of
