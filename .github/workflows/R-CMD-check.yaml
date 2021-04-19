@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - time_varying_parameters-rich
   pull_request:
     branches:
       - master
@@ -77,6 +78,9 @@ jobs:
         run: |
           install.packages("XML", type = "binary")
         shell: Rscript {0}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Check
         env:
