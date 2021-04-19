@@ -1714,17 +1714,3 @@ carehomes_data <- function(data, start_date, dt) {
   data <- sircovid_data(data, start_date, dt, expected)
   carehomes_particle_filter_data(data)
 }
-
-
-scale_severity <- function(severity, strain_rel_severity,
-                           which = c("p_G_D", "p_H_D", "p_W_D", "p_ICU_D")) {
-  severity[which] <- lapply(severity[which], function(x) {
-    x <- matrix(x, nrow = length(x), ncol = length(strain_rel_severity))
-    prob <- matrix(strain_rel_severity, nrow = nrow(x),
-                  ncol = length(strain_rel_severity), byrow = TRUE)
-    x <- x * prob
-    x[x > 1] <- 1
-    x
-  })
-  severity
-}
