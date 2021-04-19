@@ -802,48 +802,74 @@ carehomes_severity <- function(p) {
 ##'
 ##' @param dt The step size
 ##'
+##' @param severity
+##'
+##' @param p_C_date A vector of dates for changes in p_C (the
+##'   probability of an infected individual becoming symptomatic), or
+##'   `NULL` if a single value is used for all times (see
+##'   [sircovid_parameters_piecewise_linear()], where this is passed as `date`).
+##'
+##' @param p_C_value A vector of values for p_C (the
+##'   probability of an infected individual becoming symptomatic). If not
+##'   given, and if `p_C_date` is `NULL` then a
+##'   value of 0.08 will be used through the whole simulation,
+##'   otherwise if `beta_date` is `NULL` this must be a scalar. If
+##'   `beta_date` is given then `beta_date` and `beta_value` must have
+##'   the same length (see [sircovid_parameters_piecewise_linear()],
+##'   where this is passed as `value`).
+##'
 ##' @return A list of severity parameters
 ##'
 ##' @export
 carehomes_parameters_severity <- function(dt,
                                           severity = NULL,
-                                          p_C_date = NULL,
-                                          p_C_value = NULL,
-                                          p_H_date = NULL,
-                                          p_H_value = NULL,
-                                          p_H_CHR_date = NULL,
-                                          p_H_CHR_value = NULL,
-                                          p_ICU_date = NULL,
-                                          p_ICU_value = NULL,
-                                          p_H_D_date = NULL,
-                                          p_H_D_value = NULL,
-                                          p_ICU_D_date = NULL,
-                                          p_ICU_D_value = NULL,
-                                          p_W_D_date = NULL,
-                                          p_W_D_value = NULL,
-                                          p_G_D_date = NULL,
-                                          p_G_D_value = NULL,
-                                          p_G_D_CHR_date = NULL,
-                                          p_G_D_CHR_value = NULL,
-                                          p_star_date = NULL,
-                                          p_star_value = NULL) {
+                                          p_C = list(date = NULL,
+                                                     value = NULL),
+                                          p_H = list(date = NULL,
+                                                     value = NULL),
+                                          p_H_CHR = list(date = NULL,
+                                                         value = NULL),
+                                          p_ICU = list(date = NULL,
+                                                       value = NULL),
+                                          p_H_D = list(date = NULL,
+                                                       value = NULL),
+                                          p_ICU_D = list(date = NULL,
+                                                         value = NULL),
+                                          p_W_D = list(date = NULL,
+                                                       value = NULL),
+                                          p_G_D = list(date = NULL,
+                                                       value = NULL),
+                                          p_G_D_CHR = list(date = NULL,
+                                                           value = NULL),
+                                          p_star = list(date = NULL,
+                                                        value = NULL)) {
 
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
 
   get_p_step <- function(x, name) {
 
-    p <- x[[paste0("p_", name)]]
-    p_value <- get(paste0("p_", name, "_value"))
-    p_date <- get(paste0("p_", name, "_date"))
+    p_name <- paste0("p_", name)
+    p <- x[[p_name]]
+    p_value <- get(p_name)$value
+    if ("date" %in% names(get(p_name))) {
+      p_date <- get(p_name)$date
+    } else {
+      p_date <- NULL
+    }
+
 
     CHR <- FALSE
-    if (exists(paste0("p_", name, "_CHR_value"))) {
-      p_CHR_value <- get(paste0("p_", name, "_CHR_value"))
+    if (exists(paste0(p_name, "_CHR"))) {
+      p_CHR_value <- get(paste0(p_name, "_CHR"))$value
       if (!is.null(p_CHR_value)) {
         CHR <- TRUE
         p <- p[1:18]
-        p_CHR_date <- get(paste0("p_", name, "_CHR_date"))
+        if ("date" %in% names(get(paste0(p_name, "_CHR")))) {
+          p_CHR_date <- get(paste0(p_name, "_CHR"))$date
+        } else {
+          p_CHR_date <- NULL
+        }
       }
     }
 
@@ -879,9 +905,9 @@ carehomes_parameters_severity <- function(dt,
       p_step <- cbind(p_step, p_CHR_step)
     }
 
-    x[[paste0("p_", name, "_step")]] <- p_step
-    x[[paste0("p_", name)]] <- NULL
-    x[[paste0("n_p_", name, "_steps")]] <- dim(p_step)[1]
+    x[[paste0(p_name, "_step")]] <- p_step
+    x[[paste0(p_name)]] <- NULL
+    x[[paste0("n_", p_name, "_steps")]] <- dim(p_step)[1]
 
     x
   }
@@ -1148,34 +1174,34 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @export
 carehomes_parameters_progression <- function(dt,
-                                             gamma_E_date = NULL,
-                                             gamma_E_value = NULL,
-                                             gamma_A_date = NULL,
-                                             gamma_A_value = NULL,
-                                             gamma_P_date = NULL,
-                                             gamma_P_value = NULL,
-                                             gamma_C_1_date = NULL,
-                                             gamma_C_1_value = NULL,
-                                             gamma_C_2_date = NULL,
-                                             gamma_C_2_value = NULL,
-                                             gamma_ICU_pre_date = NULL,
-                                             gamma_ICU_pre_value = NULL,
-                                             gamma_ICU_D_date = NULL,
-                                             gamma_ICU_D_value = NULL,
-                                             gamma_ICU_W_D_date = NULL,
-                                             gamma_ICU_W_D_value = NULL,
-                                             gamma_ICU_W_R_date = NULL,
-                                             gamma_ICU_W_R_value = NULL,
-                                             gamma_H_D_date = NULL,
-                                             gamma_H_D_value = NULL,
-                                             gamma_H_R_date = NULL,
-                                             gamma_H_R_value = NULL,
-                                             gamma_W_D_date = NULL,
-                                             gamma_W_D_value = NULL,
-                                             gamma_W_R_date = NULL,
-                                             gamma_W_R_value = NULL,
-                                             gamma_G_D_date = NULL,
-                                             gamma_G_D_value = NULL) {
+                                             gamma_E = list(date = NULL,
+                                                            value = NULL),
+                                             gamma_A = list(date = NULL,
+                                                            value = NULL),
+                                             gamma_P = list(date = NULL,
+                                                            value = NULL),
+                                             gamma_C_1 = list(date = NULL,
+                                                              value = NULL),
+                                             gamma_C_2 = list(date = NULL,
+                                                              value = NULL),
+                                             gamma_ICU_pre = list(date = NULL,
+                                                                  value = NULL),
+                                             gamma_ICU_D = list(date = NULL,
+                                                                value = NULL),
+                                             gamma_ICU_W_D = list(date = NULL,
+                                                                  value = NULL),
+                                             gamma_ICU_W_R = list(date = NULL,
+                                                                  value = NULL),
+                                             gamma_H_D = list(date = NULL,
+                                                              value = NULL),
+                                             gamma_H_R = list(date = NULL,
+                                                              value = NULL),
+                                             gamma_W_D = list(date = NULL,
+                                                              value = NULL),
+                                             gamma_W_R = list(date = NULL,
+                                                              value = NULL),
+                                             gamma_G_D = list(date = NULL,
+                                                              value = NULL)) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -1222,9 +1248,14 @@ carehomes_parameters_progression <- function(dt,
 
   get_gamma_step <- function(x, name) {
 
-    gamma <- x[[paste0("gamma_", name)]]
-    gamma_value <- get(paste0("gamma_", name, "_value"))
-    gamma_date <- get(paste0("gamma_", name, "_date"))
+    gamma_name <- paste0("gamma_", name)
+    gamma <- x[[gamma_name]]
+    gamma_value <- get(gamma_name)$value
+    if ("date" %in% names(get(gamma_name))) {
+      gamma_date <- get(gamma_name)$date
+    } else {
+      gamma_date <- NULL
+    }
 
     if (is.null(gamma_value)) {
       gamma_step <- gamma

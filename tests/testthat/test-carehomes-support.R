@@ -242,24 +242,20 @@ test_that("can compute time-varying severity parameters for carehomes model", {
 
   p_G_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
   p_G_D_value <- c(0.05, 0.1)
-  p_G_D_CHR_date <- NULL
   p_G_D_CHR_value <- 0.4
 
-  p_H_date <- NULL
   p_H_value <- 0.6
   p_H_CHR_date <- sircovid_date(c("2020-03-01", "2020-04-01"))
   p_H_CHR_value <- c(0.7, 0.6)
 
   severity <-
     carehomes_parameters_severity(dt, NULL,
-                                  p_H_date = p_H_date,
-                                  p_H_value = p_H_value,
-                                  p_H_CHR_date = p_H_CHR_date,
-                                  p_H_CHR_value = p_H_CHR_value,
-                                  p_G_D_date = p_G_D_date,
-                                  p_G_D_value = p_G_D_value,
-                                  p_G_D_CHR_date = p_G_D_CHR_date,
-                                  p_G_D_CHR_value = p_G_D_CHR_value)
+                                  p_H = list(value = p_H_value),
+                                  p_H_CHR = list(date = p_H_CHR_date,
+                                                 value = p_H_CHR_value),
+                                  p_G_D = list(date = p_G_D_date,
+                                               value = p_G_D_value),
+                                  p_G_D_CHR = list(value = p_G_D_CHR_value))
 
   p_G_D_step <-
     sircovid_parameters_piecewise_linear(p_G_D_date,
@@ -281,18 +277,22 @@ test_that("can compute time-varying severity parameters for carehomes model", {
 test_that("can compute time-varying progression parameters for carehomes model", {
   dt <- 0.25
 
+  gamma_H_R_value <- 0.3
   gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
   gamma_H_D_value <- c(0.2, 0.5)
 
   severity <-
     carehomes_parameters_progression(dt,
-                                     gamma_H_D_date = gamma_H_D_date,
-                                     gamma_H_D_value = gamma_H_D_value)
+                                     gamma_H_D = list(date = gamma_H_D_date,
+                                                      value = gamma_H_D_value),
+                                     gamma_H_R = list(value = gamma_H_R_value)
+  )
 
   gamma_H_D_step <-
     sircovid_parameters_piecewise_linear(gamma_H_D_date,
                                          gamma_H_D_value, dt)
   expect_equal(severity$gamma_H_D_step, gamma_H_D_step)
+  expect_equal(severity$gamma_H_R_step, gamma_H_R_value)
 })
 
 

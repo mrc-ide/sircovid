@@ -7,30 +7,36 @@
 carehomes_parameters_severity(
   dt,
   severity = NULL,
-  p_C_date = NULL,
-  p_C_value = NULL,
-  p_H_date = NULL,
-  p_H_value = NULL,
-  p_H_CHR_date = NULL,
-  p_H_CHR_value = NULL,
-  p_ICU_date = NULL,
-  p_ICU_value = NULL,
-  p_H_D_date = NULL,
-  p_H_D_value = NULL,
-  p_ICU_D_date = NULL,
-  p_ICU_D_value = NULL,
-  p_W_D_date = NULL,
-  p_W_D_value = NULL,
-  p_G_D_date = NULL,
-  p_G_D_value = NULL,
-  p_G_D_CHR_date = NULL,
-  p_G_D_CHR_value = NULL,
-  p_star_date = NULL,
-  p_star_value = NULL
+  p_C = list(date = NULL, value = NULL),
+  p_H = list(date = NULL, value = NULL),
+  p_H_CHR = list(date = NULL, value = NULL),
+  p_ICU = list(date = NULL, value = NULL),
+  p_H_D = list(date = NULL, value = NULL),
+  p_ICU_D = list(date = NULL, value = NULL),
+  p_W_D = list(date = NULL, value = NULL),
+  p_G_D = list(date = NULL, value = NULL),
+  p_G_D_CHR = list(date = NULL, value = NULL),
+  p_star = list(date = NULL, value = NULL)
 )
 }
 \arguments{
 \item{dt}{The step size}
+
+\item{severity}{}
+
+\item{p_C_date}{A vector of dates for changes in p_C (the
+probability of an infected individual becoming symptomatic), or
+\code{NULL} if a single value is used for all times (see
+\code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}}, where this is passed as \code{date}).}
+
+\item{p_C_value}{A vector of values for p_C (the
+probability of an infected individual becoming symptomatic). If not
+given, and if \code{p_C_date} is \code{NULL} then a
+value of 0.08 will be used through the whole simulation,
+otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
+\code{beta_date} is given then \code{beta_date} and \code{beta_value} must have
+the same length (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}},
+where this is passed as \code{value}).}
 }
 \value{
 A list of severity parameters
