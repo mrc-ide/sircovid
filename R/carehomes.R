@@ -862,8 +862,8 @@ carehomes_severity <- function(p) {
 ##' @param p_G_D_CHR A list with `date` and `value` for changes in p_G_D (the
 ##'   probability of individuals requiring hospitalisation dying in a care home)
 ##'   for care home residents. If `value` is `NULL` then the value for the
-##'   oldest age group is used. If `value` is scalar then `date` can be `NULL` or
-##'   unspecified. If `value` is a vector then `date` must be a vector of
+##'   oldest age group is used. If `value` is scalar then `date` can be `NULL`
+##'   or unspecified. If `value` is a vector then `date` must be a vector of
 ##'   sircovid dates of the same length as `value`.
 ##'
 ##' @param p_star A list with `date` and `value` for changes in p_star (the
