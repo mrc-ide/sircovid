@@ -82,8 +82,8 @@ sircovid dates of the same length as \code{value}.}
 \item{p_G_D_CHR}{A list with \code{date} and \code{value} for changes in p_G_D (the
 probability of individuals requiring hospitalisation dying in a care home)
 for care home residents. If \code{value} is \code{NULL} then the value for the
-oldest age group is used. If \code{value} is scalar then \code{date} can be \code{NULL} or
-unspecified. If \code{value} is a vector then \code{date} must be a vector of
+oldest age group is used. If \code{value} is scalar then \code{date} can be \code{NULL}
+or unspecified. If \code{value} is a vector then \code{date} must be a vector of
 sircovid dates of the same length as \code{value}.}
 
 \item{p_star}{A list with \code{date} and \code{value} for changes in p_star (the

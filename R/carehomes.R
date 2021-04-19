@@ -1225,6 +1225,86 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @param dt The step size
 ##'
+##' @param gamma_E A list with `date` and `value` for changes in gamma_E. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_A A list with `date` and `value` for changes in gamma_A. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_P A list with `date` and `value` for changes in gamma_P. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_C_1 A list with `date` and `value` for changes in gamma_C_1. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_C_2 A list with `date` and `value` for changes in gamma_C_2. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_ICU_pre A list with `date` and `value` for changes in
+##'   gamma_ICU_pre. If `value` is `NULL` then a default value is used. If
+##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
+##'   a vector then `date` must be a vector of sircovid dates of the same length
+##'   as `value`.
+##'
+##' @param gamma_ICU_D A list with `date` and `value` for changes in
+##'   gamma_ICU_D. If `value` is `NULL` then a default value is used. If
+##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
+##'   a vector then `date` must be a vector of sircovid dates of the same length
+##'   as `value`.
+##'
+##' @param gamma_ICU_W_D A list with `date` and `value` for changes in
+##'   gamma_ICU_W_D. If `value` is `NULL` then a default value is used. If
+##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
+##'   a vector then `date` must be a vector of sircovid dates of the same length
+##'   as `value`.
+##'
+##' @param gamma_ICU_W_R A list with `date` and `value` for changes in
+##'   gamma_ICU_pre. If `value` is `NULL` then a default value is used. If
+##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
+##'   a vector then `date` must be a vector of sircovid dates of the same length
+##'   as `value`.
+##'
+##' @param gamma_H_D A list with `date` and `value` for changes in gamma_H_D. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_H_R A list with `date` and `value` for changes in gamma_H_R. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_W_D A list with `date` and `value` for changes in gamma_W_D. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_W_R A list with `date` and `value` for changes in gamma_W_R. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_H_D A list with `date` and `value` for changes in gamma_H_D. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_G_D A list with `date` and `value` for changes in gamma_G_D. If
+##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##'
 ##' @return A list of parameter values
 ##'
 ##' @export

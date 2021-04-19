@@ -24,6 +24,80 @@ carehomes_parameters_progression(
 }
 \arguments{
 \item{dt}{The step size}
+
+\item{gamma_E}{A list with \code{date} and \code{value} for changes in gamma_E. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_A}{A list with \code{date} and \code{value} for changes in gamma_A. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_P}{A list with \code{date} and \code{value} for changes in gamma_P. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_C_1}{A list with \code{date} and \code{value} for changes in gamma_C_1. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_C_2}{A list with \code{date} and \code{value} for changes in gamma_C_2. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_ICU_pre}{A list with \code{date} and \code{value} for changes in
+gamma_ICU_pre. If \code{value} is \code{NULL} then a default value is used. If
+\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
+a vector then \code{date} must be a vector of sircovid dates of the same length
+as \code{value}.}
+
+\item{gamma_ICU_D}{A list with \code{date} and \code{value} for changes in
+gamma_ICU_D. If \code{value} is \code{NULL} then a default value is used. If
+\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
+a vector then \code{date} must be a vector of sircovid dates of the same length
+as \code{value}.}
+
+\item{gamma_ICU_W_D}{A list with \code{date} and \code{value} for changes in
+gamma_ICU_W_D. If \code{value} is \code{NULL} then a default value is used. If
+\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
+a vector then \code{date} must be a vector of sircovid dates of the same length
+as \code{value}.}
+
+\item{gamma_ICU_W_R}{A list with \code{date} and \code{value} for changes in
+gamma_ICU_pre. If \code{value} is \code{NULL} then a default value is used. If
+\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
+a vector then \code{date} must be a vector of sircovid dates of the same length
+as \code{value}.}
+
+\item{gamma_H_D}{A list with \code{date} and \code{value} for changes in gamma_H_D. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_H_R}{A list with \code{date} and \code{value} for changes in gamma_H_R. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_W_D}{A list with \code{date} and \code{value} for changes in gamma_W_D. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_W_R}{A list with \code{date} and \code{value} for changes in gamma_W_R. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
+
+\item{gamma_G_D}{A list with \code{date} and \code{value} for changes in gamma_G_D. If
+\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.}
 }
 \value{
 A list of parameter values
