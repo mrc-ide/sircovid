@@ -1261,7 +1261,7 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##' @param gamma_A Time-varying parameters for the Erlang rate parameter of the
 ##'   duration in the I_A (asymptomatic) compartment. See Details.
 ##'
-##' @param gamma_E Time-varying parameters for the Erlang rate parameter of the
+##' @param gamma_P Time-varying parameters for the Erlang rate parameter of the
 ##'   duration in the I_P (presymptomatic) compartment. See Details.
 ##'
 ##' @param gamma_C_1 Time-varying parameters for the Erlang rate parameter of

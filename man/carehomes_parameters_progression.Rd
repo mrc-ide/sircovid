@@ -26,10 +26,13 @@ carehomes_parameters_progression(
 \item{dt}{The step size}
 
 \item{gamma_E}{Time-varying parameters for the Erlang rate parameter of the
-duration in the I_P (presymptomatic) compartment. See Details.}
+duration in the E (exposed) compartment. See Details.}
 
 \item{gamma_A}{Time-varying parameters for the Erlang rate parameter of the
 duration in the I_A (asymptomatic) compartment. See Details.}
+
+\item{gamma_P}{Time-varying parameters for the Erlang rate parameter of the
+duration in the I_P (presymptomatic) compartment. See Details.}
 
 \item{gamma_C_1}{Time-varying parameters for the Erlang rate parameter of
 the duration in the I_C_1 (first stage symptomatic) compartment. See
