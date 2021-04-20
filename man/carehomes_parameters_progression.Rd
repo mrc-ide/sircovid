@@ -6,98 +6,74 @@
 \usage{
 carehomes_parameters_progression(
   dt,
-  gamma_E = list(date = NULL, value = NULL),
-  gamma_A = list(date = NULL, value = NULL),
-  gamma_P = list(date = NULL, value = NULL),
-  gamma_C_1 = list(date = NULL, value = NULL),
-  gamma_C_2 = list(date = NULL, value = NULL),
-  gamma_ICU_pre = list(date = NULL, value = NULL),
-  gamma_ICU_D = list(date = NULL, value = NULL),
-  gamma_ICU_W_D = list(date = NULL, value = NULL),
-  gamma_ICU_W_R = list(date = NULL, value = NULL),
-  gamma_H_D = list(date = NULL, value = NULL),
-  gamma_H_R = list(date = NULL, value = NULL),
-  gamma_W_D = list(date = NULL, value = NULL),
-  gamma_W_R = list(date = NULL, value = NULL),
-  gamma_G_D = list(date = NULL, value = NULL)
+  gamma_E = NULL,
+  gamma_A = NULL,
+  gamma_P = NULL,
+  gamma_C_1 = NULL,
+  gamma_C_2 = NULL,
+  gamma_ICU_pre = NULL,
+  gamma_ICU_D = NULL,
+  gamma_ICU_W_D = NULL,
+  gamma_ICU_W_R = NULL,
+  gamma_H_D = NULL,
+  gamma_H_R = NULL,
+  gamma_W_D = NULL,
+  gamma_W_R = NULL,
+  gamma_G_D = NULL
 )
 }
 \arguments{
 \item{dt}{The step size}
 
-\item{gamma_E}{A list with \code{date} and \code{value} for changes in gamma_E. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_E}{Time-varying parameters for the Erlang rate parameter of the
+duration in the I_P (presymptomatic) compartment. See Details.}
 
-\item{gamma_A}{A list with \code{date} and \code{value} for changes in gamma_A. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_A}{Time-varying parameters for the Erlang rate parameter of the
+duration in the I_A (asymptomatic) compartment. See Details.}
 
-\item{gamma_P}{A list with \code{date} and \code{value} for changes in gamma_P. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_C_1}{Time-varying parameters for the Erlang rate parameter of
+the duration in the I_C_1 (first stage symptomatic) compartment. See
+Details.}
 
-\item{gamma_C_1}{A list with \code{date} and \code{value} for changes in gamma_C_1. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_C_2}{Time-varying parameters for the Erlang rate parameter of
+the duration in the I_C_2 (second stage symptomatic) compartment. See
+Details.}
 
-\item{gamma_C_2}{A list with \code{date} and \code{value} for changes in gamma_C_2. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_ICU_pre}{Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_pre (general beds stay before ICU) compartment.
+See Details.}
 
-\item{gamma_ICU_pre}{A list with \code{date} and \code{value} for changes in
-gamma_ICU_pre. If \code{value} is \code{NULL} then a default value is used. If
-\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
-a vector then \code{date} must be a vector of sircovid dates of the same length
-as \code{value}.}
+\item{gamma_ICU_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the ICU_D (ICU stay for individuals who die in ICU)
+compartment. See Details.}
 
-\item{gamma_ICU_D}{A list with \code{date} and \code{value} for changes in
-gamma_ICU_D. If \code{value} is \code{NULL} then a default value is used. If
-\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
-a vector then \code{date} must be a vector of sircovid dates of the same length
-as \code{value}.}
+\item{gamma_ICU_W_D}{Time-varying parameters for the Erlang rate parameter of
+of the duration in the ICU_W_D (ICU stay for individuals who go on to die
+in stepdown) compartment. See Details.}
 
-\item{gamma_ICU_W_D}{A list with \code{date} and \code{value} for changes in
-gamma_ICU_W_D. If \code{value} is \code{NULL} then a default value is used. If
-\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
-a vector then \code{date} must be a vector of sircovid dates of the same length
-as \code{value}.}
+\item{gamma_ICU_W_R}{Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_W_R (ICU stay for individuals who go on to
+recover in stepdown) compartment. See Details.}
 
-\item{gamma_ICU_W_R}{A list with \code{date} and \code{value} for changes in
-gamma_ICU_pre. If \code{value} is \code{NULL} then a default value is used. If
-\code{value} is scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is
-a vector then \code{date} must be a vector of sircovid dates of the same length
-as \code{value}.}
+\item{gamma_H_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the H_D (general beds stay for individuals who die in
+general beds) compartment. See Details.}
 
-\item{gamma_H_D}{A list with \code{date} and \code{value} for changes in gamma_H_D. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_H_R}{Time-varying parameters for the Erlang rate parameter of
+the duration in the H_R (general beds stay for individuals who recover in
+general beds) compartment. See Details.}
 
-\item{gamma_H_R}{A list with \code{date} and \code{value} for changes in gamma_H_R. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_W_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the W_D (stepdown for individuals who die in stepdown)
+compartment. See Details.}
 
-\item{gamma_W_D}{A list with \code{date} and \code{value} for changes in gamma_W_D. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_W_R}{Time-varying parameters for the Erlang rate parameter of
+the duration in the W_R (stepdown for individuals who recover in stepdown)
+compartment. See Details.}
 
-\item{gamma_W_R}{A list with \code{date} and \code{value} for changes in gamma_W_R. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
-
-\item{gamma_G_D}{A list with \code{date} and \code{value} for changes in gamma_G_D. If
-\code{value} is \code{NULL} then a default value is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{gamma_G_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the G_D (delay to death in the community/care homes)
+compartment. See Details.}
 }
 \value{
 A list of parameter values
@@ -110,3 +86,12 @@ distribution.  These need to be aligned with Bob's severity
 outputs, and we will come up with a better way of coordinating the
 two.
 }
+\section{Time-varying parameters}{
+
+Every time varying parameter has the same format, which can be \code{NULL} (in
+which case a default single value is used) or a list with \code{date} and
+\code{value} for changes in the parameter. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.
+}
+

@@ -1248,118 +1248,84 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @param dt The step size
 ##'
-##' @param gamma_E A list with `date` and `value` for changes in gamma_E. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
+##' @section Time-varying parameters:
+##' Every time varying parameter has the same format, which can be `NULL` (in
+##'   which case a default single value is used) or a list with `date` and
+##'   `value` for changes in the parameter. If `value` is scalar then
 ##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
 ##'   must be a vector of sircovid dates of the same length as `value`.
 ##'
-##' @param gamma_A A list with `date` and `value` for changes in gamma_A. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_E Time-varying parameters for the Erlang rate parameter of the
+##'   duration in the E (exposed) compartment. See Details.
 ##'
-##' @param gamma_P A list with `date` and `value` for changes in gamma_P. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_A Time-varying parameters for the Erlang rate parameter of the
+##'   duration in the I_A (asymptomatic) compartment. See Details.
 ##'
-##' @param gamma_C_1 A list with `date` and `value` for changes in gamma_C_1. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_E Time-varying parameters for the Erlang rate parameter of the
+##'   duration in the I_P (presymptomatic) compartment. See Details.
 ##'
-##' @param gamma_C_2 A list with `date` and `value` for changes in gamma_C_2. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_C_1 Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the I_C_1 (first stage symptomatic) compartment. See
+##'   Details.
 ##'
-##' @param gamma_ICU_pre A list with `date` and `value` for changes in
-##'   gamma_ICU_pre. If `value` is `NULL` then a default value is used. If
-##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
-##'   a vector then `date` must be a vector of sircovid dates of the same length
-##'   as `value`.
+##' @param gamma_C_2 Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the I_C_2 (second stage symptomatic) compartment. See
+##'   Details.
 ##'
-##' @param gamma_ICU_D A list with `date` and `value` for changes in
-##'   gamma_ICU_D. If `value` is `NULL` then a default value is used. If
-##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
-##'   a vector then `date` must be a vector of sircovid dates of the same length
-##'   as `value`.
+##' @param gamma_ICU_pre Time-varying parameters for the Erlang rate parameter
+##'   of the duration in the ICU_pre (general beds stay before ICU) compartment.
+##'   See Details.
 ##'
-##' @param gamma_ICU_W_D A list with `date` and `value` for changes in
-##'   gamma_ICU_W_D. If `value` is `NULL` then a default value is used. If
-##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
-##'   a vector then `date` must be a vector of sircovid dates of the same length
-##'   as `value`.
+##' @param gamma_ICU_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the ICU_D (ICU stay for individuals who die in ICU)
+##'   compartment. See Details.
 ##'
-##' @param gamma_ICU_W_R A list with `date` and `value` for changes in
-##'   gamma_ICU_pre. If `value` is `NULL` then a default value is used. If
-##'   `value` is scalar then `date` can be `NULL` or unspecified. If `value` is
-##'   a vector then `date` must be a vector of sircovid dates of the same length
-##'   as `value`.
+##' @param gamma_ICU_W_D Time-varying parameters for the Erlang rate parameter of
+##'   of the duration in the ICU_W_D (ICU stay for individuals who go on to die
+##'   in stepdown) compartment. See Details.
 ##'
-##' @param gamma_H_D A list with `date` and `value` for changes in gamma_H_D. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_ICU_W_R Time-varying parameters for the Erlang rate parameter
+##'   of the duration in the ICU_W_R (ICU stay for individuals who go on to
+##'   recover in stepdown) compartment. See Details.
 ##'
-##' @param gamma_H_R A list with `date` and `value` for changes in gamma_H_R. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_H_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the H_D (general beds stay for individuals who die in
+##'   general beds) compartment. See Details.
 ##'
-##' @param gamma_W_D A list with `date` and `value` for changes in gamma_W_D. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_H_R Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the H_R (general beds stay for individuals who recover in
+##'   general beds) compartment. See Details.
 ##'
-##' @param gamma_W_R A list with `date` and `value` for changes in gamma_W_R. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_W_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the W_D (stepdown for individuals who die in stepdown)
+##'   compartment. See Details.
 ##'
-##' @param gamma_H_D A list with `date` and `value` for changes in gamma_H_D. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
+##' @param gamma_W_R Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the W_R (stepdown for individuals who recover in stepdown)
+##'   compartment. See Details.
 ##'
-##' @param gamma_G_D A list with `date` and `value` for changes in gamma_G_D. If
-##'   `value` is `NULL` then a default value is used. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
-##'   must be a vector of sircovid dates of the same length as `value`.
-##'
+##' @param gamma_G_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the G_D (delay to death in the community/care homes)
+##'   compartment. See Details.
 ##'
 ##' @return A list of parameter values
 ##'
 ##' @export
 carehomes_parameters_progression <- function(dt,
-                                             gamma_E = list(date = NULL,
-                                                            value = NULL),
-                                             gamma_A = list(date = NULL,
-                                                            value = NULL),
-                                             gamma_P = list(date = NULL,
-                                                            value = NULL),
-                                             gamma_C_1 = list(date = NULL,
-                                                              value = NULL),
-                                             gamma_C_2 = list(date = NULL,
-                                                              value = NULL),
-                                             gamma_ICU_pre = list(date = NULL,
-                                                                  value = NULL),
-                                             gamma_ICU_D = list(date = NULL,
-                                                                value = NULL),
-                                             gamma_ICU_W_D = list(date = NULL,
-                                                                  value = NULL),
-                                             gamma_ICU_W_R = list(date = NULL,
-                                                                  value = NULL),
-                                             gamma_H_D = list(date = NULL,
-                                                              value = NULL),
-                                             gamma_H_R = list(date = NULL,
-                                                              value = NULL),
-                                             gamma_W_D = list(date = NULL,
-                                                              value = NULL),
-                                             gamma_W_R = list(date = NULL,
-                                                              value = NULL),
-                                             gamma_G_D = list(date = NULL,
-                                                              value = NULL)) {
+                                             gamma_E = NULL,
+                                             gamma_A = NULL,
+                                             gamma_P = NULL,
+                                             gamma_C_1 = NULL,
+                                             gamma_C_2 = NULL,
+                                             gamma_ICU_pre = NULL,
+                                             gamma_ICU_D = NULL,
+                                             gamma_ICU_W_D = NULL,
+                                             gamma_ICU_W_R = NULL,
+                                             gamma_H_D = NULL,
+                                             gamma_H_R = NULL,
+                                             gamma_W_D = NULL,
+                                             gamma_W_R = NULL,
+                                             gamma_G_D = NULL) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -1404,15 +1370,37 @@ carehomes_parameters_progression <- function(dt,
               gamma_PCR_pos = 1 / 5
   )
 
+  time_varying_gammas <- list(E = gamma_E,
+                              A = gamma_A,
+                              P = gamma_P,
+                              C_1 = gamma_C_1,
+                              C_2 = gamma_C_2,
+                              ICU_pre = gamma_ICU_pre,
+                              ICU_D = gamma_ICU_D,
+                              ICU_W_D = gamma_ICU_W_D,
+                              ICU_W_R = gamma_ICU_W_R,
+                              H_D = gamma_H_D,
+                              H_R = gamma_H_R,
+                              W_D = gamma_W_D,
+                              W_R = gamma_W_R,
+                              G_D = gamma_G_D)
+
   get_gamma_step <- function(x, name) {
 
     gamma_name <- paste0("gamma_", name)
     gamma <- x[[gamma_name]]
-    gamma_value <- get(gamma_name)$value
-    if ("date" %in% names(get(gamma_name))) {
-      gamma_date <- get(gamma_name)$date
-    } else {
+    time_vary <- time_varying_gammas[[name]]
+
+    if (is.null(time_vary)) {
+      gamma_value <- NULL
       gamma_date <- NULL
+    } else {
+      gamma_value <- time_vary$value
+      if ("date" %in% names(time_vary)) {
+        gamma_date <- time_vary$date
+      } else {
+        gamma_date <- NULL
+      }
     }
 
     if (!is.null(gamma_value)) {
@@ -1442,11 +1430,7 @@ carehomes_parameters_progression <- function(dt,
     x
   }
 
-  ## Set up time-varying gammas
-  time_varying_gammas <- c("E", "A", "P", "C_1", "C_2",
-                           "ICU_pre", "ICU_D", "ICU_W_D", "ICU_W_R",
-                           "W_D", "W_R", "H_D", "H_R", "G_D")
-  for (name in time_varying_gammas) {
+  for (name in names(time_varying_gammas)) {
     ret <- get_gamma_step(ret, name)
   }
 
