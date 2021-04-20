@@ -7,16 +7,16 @@
 carehomes_parameters_severity(
   dt,
   severity = NULL,
-  p_C = list(date = NULL, value = NULL),
-  p_H = list(date = NULL, value = NULL),
-  p_H_CHR = list(date = NULL, value = NULL),
-  p_ICU = list(date = NULL, value = NULL),
-  p_H_D = list(date = NULL, value = NULL),
-  p_ICU_D = list(date = NULL, value = NULL),
-  p_W_D = list(date = NULL, value = NULL),
-  p_G_D = list(date = NULL, value = NULL),
-  p_G_D_CHR = list(date = NULL, value = NULL),
-  p_star = list(date = NULL, value = NULL)
+  p_C = NULL,
+  p_H = NULL,
+  p_H_CHR = NULL,
+  p_ICU = NULL,
+  p_H_D = NULL,
+  p_ICU_D = NULL,
+  p_W_D = NULL,
+  p_G_D = NULL,
+  p_G_D_CHR = NULL,
+  p_star = NULL
 )
 }
 \arguments{
@@ -27,71 +27,39 @@ age-scalings and to provide default severity parameter values. Can be
 \code{NULL} (use the default bundled data version in the package), or a
 \link{data.frame} object (for raw severity data).}
 
-\item{p_C}{A list with \code{date} and \code{value} for changes in p_C (the
-probability of an infected individual becoming symptomatic). If \code{value} is
-\code{NULL} then the value from \code{severity} is used. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
-must be a vector of sircovid dates of the same length as \code{value}.}
+\item{p_C}{Time-varying parameters for p_C (the probability of an infected
+individual becoming symptomatic). See Details.}
 
-\item{p_H}{A list with \code{date} and \code{value} for changes in p_H (the
-probability of an symptomatic individual requiring hospitalisation). If
-\code{value} is \code{NULL} then the value from \code{severity} is used. If \code{value} is
-scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is a vector
-then \code{date} must be a vector of sircovid dates of the same length as
-\code{value}.}
+\item{p_H}{Time-varying parameters for p_H (the probability of a symptomatic
+individual requiring hospitalisation). See Details.}
 
-\item{p_H_CHR}{A list with \code{date} and \code{value} for changes in p_H (the
-probability of an symptomatic individual requiring hospitalisation) for
-care home residents. If \code{value} is \code{NULL} then the value for the oldest
-age group is used. If \code{value} is scalar then \code{date} can be \code{NULL} or
-unspecified. If \code{value} is a vector then \code{date} must be a vector of
-sircovid dates of the same length as \code{value}.}
+\item{p_H_CHR}{Time-varying parameters for p_H (the probability of a
+symptomatic individual requiring hospitalisation) for care home residents.
+If \code{NULL} then the value for the oldest age group is used. See Details.}
 
-\item{p_ICU}{A list with \code{date} and \code{value} for changes in p_ICU (the
-probability of an hospitalised individual going to ICU). If
-\code{value} is \code{NULL} then the value from \code{severity} is used. If \code{value} is
-scalar then \code{date} can be \code{NULL} or unspecified. If \code{value} is a vector
-then \code{date} must be a vector of sircovid dates of the same length as
-\code{value}.}
+\item{p_ICU}{Time-varying parameters for p_ICU (the probability of a
+hospitalised individual going to ICU). See Details.}
 
-\item{p_H_D}{A list with \code{date} and \code{value} for changes in p_H_D (the
-probability of death in general beds). If \code{value} is \code{NULL} then the value
-from \code{severity} is used. If \code{value} is scalar then \code{date} can be \code{NULL} or
-unspecified. If \code{value} is a vector then \code{date} must be a vector of
-sircovid dates of the same length as \code{value}.}
+\item{p_H_D}{Time-varying parameters for p_H_D (the probability of death in
+general beds).See Details.}
 
-\item{p_ICU_D}{A list with \code{date} and \code{value} for changes in p_ICU_D (the
-probability of death in ICU). If \code{value} is \code{NULL} then the value from
-\code{severity} is used. If \code{value} is scalar then \code{date} can be \code{NULL} or
-unspecified. If \code{value} is a vector then \code{date} must be a vector of
-sircovid dates of the same length as \code{value}.}
+\item{p_ICU_D}{Time-varying parameters for p_ICU_D (the probability of death
+in ICU). See Details.}
 
-\item{p_W_D}{A list with \code{date} and \code{value} for changes in p_W_D (the
-probability of death in stepdown). If \code{value} is \code{NULL} then the value
-from \code{severity} is used. If \code{value} is scalar then \code{date} can be \code{NULL} or
-unspecified. If \code{value} is a vector then \code{date} must be a vector of
-sircovid dates of the same length as \code{value}.}
+\item{p_W_D}{Time-varying parameters for p_W_D (the probability of death in
+stepdown). See Details.}
 
-\item{p_G_D}{A list with \code{date} and \code{value} for changes in p_G_D (the
-probability of individuals requiring hospitalisation dying in the
-community or a care home). If \code{value} is \code{NULL} then the value
-from \code{severity} is used. If \code{value} is scalar then \code{date} can be \code{NULL} or
-unspecified. If \code{value} is a vector then \code{date} must be a vector of
-sircovid dates of the same length as \code{value}.}
+\item{p_G_D}{Time-varying parameters for p_G_D (the probability of
+individuals requiring hospitalisation dying in the community or a care
+home). See Details.}
 
-\item{p_G_D_CHR}{A list with \code{date} and \code{value} for changes in p_G_D (the
-probability of individuals requiring hospitalisation dying in a care home)
-for care home residents. If \code{value} is \code{NULL} then the value for the
-oldest age group is used. If \code{value} is scalar then \code{date} can be \code{NULL}
-or unspecified. If \code{value} is a vector then \code{date} must be a vector of
-sircovid dates of the same length as \code{value}.}
+\item{p_G_D_CHR}{Time-varying parameters for p_G_D (the probability of
+individuals requiring hospitalisation dying in a care home) for care home
+residents. If \code{NULL} then the value for the oldest age group is used. See
+Details.}
 
-\item{p_star}{A list with \code{date} and \code{value} for changes in p_star (the
-probability of patients being confirmed as covid on admission to
-hospital). If \code{value} is \code{NULL} then the value
-from \code{severity} is used. If \code{value} is scalar then \code{date} can be \code{NULL} or
-unspecified. If \code{value} is a vector then \code{date} must be a vector of
-sircovid dates of the same length as \code{value}.}
+\item{p_star}{Time-varying parameters for p_star (the probability of
+patients being confirmed as covid on admission to hospital). See Details.}
 }
 \value{
 A list of severity parameters
@@ -99,3 +67,12 @@ A list of severity parameters
 \description{
 Carehomes severity parameters
 }
+\section{Time-varying parameters}{
+
+Every time varying parameter has the same format, which can be \code{NULL} (in
+which case the value from \code{severity} is used) or a list with \code{date} and
+\code{value} for changes in the parameter. If \code{value} is scalar then
+\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.
+}
+

@@ -802,115 +802,119 @@ carehomes_severity <- function(p) {
 ##'
 ##' @param dt The step size
 ##'
+##'
 ##' @param severity Severity data, used to determine default severity parameter
 ##'   age-scalings and to provide default severity parameter values. Can be
 ##'   `NULL` (use the default bundled data version in the package), or a
 ##'   [data.frame] object (for raw severity data).
 ##'
-##' @param p_C A list with `date` and `value` for changes in p_C (the
-##'   probability of an infected individual becoming symptomatic). If `value` is
-##'   `NULL` then the value from `severity` is used. If `value` is scalar then
+##' @section Time-varying parameters:
+##' Every time varying parameter has the same format, which can be `NULL` (in
+##'   which case the value from `severity` is used) or a list with `date` and
+##'   `value` for changes in the parameter. If `value` is scalar then
 ##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
 ##'   must be a vector of sircovid dates of the same length as `value`.
 ##'
-##' @param p_H A list with `date` and `value` for changes in p_H (the
-##'   probability of an symptomatic individual requiring hospitalisation). If
-##'   `value` is `NULL` then the value from `severity` is used. If `value` is
-##'   scalar then `date` can be `NULL` or unspecified. If `value` is a vector
-##'   then `date` must be a vector of sircovid dates of the same length as
-##'   `value`.
+##' @param p_C Time-varying parameters for p_C (the probability of an infected
+##'   individual becoming symptomatic). See Details.
 ##'
-##' @param p_H_CHR A list with `date` and `value` for changes in p_H (the
-##'   probability of an symptomatic individual requiring hospitalisation) for
-##'   care home residents. If `value` is `NULL` then the value for the oldest
-##'   age group is used. If `value` is scalar then `date` can be `NULL` or
-##'   unspecified. If `value` is a vector then `date` must be a vector of
-##'   sircovid dates of the same length as `value`.
+##' @param p_H Time-varying parameters for p_H (the probability of a symptomatic
+##'   individual requiring hospitalisation). See Details.
 ##'
-##' @param p_ICU A list with `date` and `value` for changes in p_ICU (the
-##'   probability of an hospitalised individual going to ICU). If
-##'   `value` is `NULL` then the value from `severity` is used. If `value` is
-##'   scalar then `date` can be `NULL` or unspecified. If `value` is a vector
-##'   then `date` must be a vector of sircovid dates of the same length as
-##'   `value`.
+##' @param p_H_CHR Time-varying parameters for p_H (the probability of a
+##'   symptomatic individual requiring hospitalisation) for care home residents.
+##'   If `NULL` then the value for the oldest age group is used. See Details.
 ##'
-##' @param p_H_D A list with `date` and `value` for changes in p_H_D (the
-##'   probability of death in general beds). If `value` is `NULL` then the value
-##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
-##'   unspecified. If `value` is a vector then `date` must be a vector of
-##'   sircovid dates of the same length as `value`.
+##' @param p_ICU Time-varying parameters for p_ICU (the probability of a
+##'   hospitalised individual going to ICU). See Details.
 ##'
-##' @param p_ICU_D A list with `date` and `value` for changes in p_ICU_D (the
-##'   probability of death in ICU). If `value` is `NULL` then the value from
-##'   `severity` is used. If `value` is scalar then `date` can be `NULL` or
-##'   unspecified. If `value` is a vector then `date` must be a vector of
-##'   sircovid dates of the same length as `value`.
+##' @param p_H_D Time-varying parameters for p_H_D (the probability of death in
+##'   general beds).See Details.
 ##'
-##' @param p_W_D A list with `date` and `value` for changes in p_W_D (the
-##'   probability of death in stepdown). If `value` is `NULL` then the value
-##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
-##'   unspecified. If `value` is a vector then `date` must be a vector of
-##'   sircovid dates of the same length as `value`.
+##' @param p_ICU_D Time-varying parameters for p_ICU_D (the probability of death
+##'   in ICU). See Details.
 ##'
-##' @param p_G_D A list with `date` and `value` for changes in p_G_D (the
-##'   probability of individuals requiring hospitalisation dying in the
-##'   community or a care home). If `value` is `NULL` then the value
-##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
-##'   unspecified. If `value` is a vector then `date` must be a vector of
-##'   sircovid dates of the same length as `value`.
+##' @param p_W_D Time-varying parameters for p_W_D (the probability of death in
+##'   stepdown). See Details.
 ##'
-##' @param p_G_D_CHR A list with `date` and `value` for changes in p_G_D (the
-##'   probability of individuals requiring hospitalisation dying in a care home)
-##'   for care home residents. If `value` is `NULL` then the value for the
-##'   oldest age group is used. If `value` is scalar then `date` can be `NULL`
-##'   or unspecified. If `value` is a vector then `date` must be a vector of
-##'   sircovid dates of the same length as `value`.
+##' @param p_G_D Time-varying parameters for p_G_D (the probability of
+##'   individuals requiring hospitalisation dying in the community or a care
+##'   home). See Details.
 ##'
-##' @param p_star A list with `date` and `value` for changes in p_star (the
-##'   probability of patients being confirmed as covid on admission to
-##'   hospital). If `value` is `NULL` then the value
-##'   from `severity` is used. If `value` is scalar then `date` can be `NULL` or
-##'   unspecified. If `value` is a vector then `date` must be a vector of
-##'   sircovid dates of the same length as `value`.
+##' @param p_G_D_CHR Time-varying parameters for p_G_D (the probability of
+##'   individuals requiring hospitalisation dying in a care home) for care home
+##'   residents. If `NULL` then the value for the oldest age group is used. See
+##'   Details.
+##'
+##' @param p_star Time-varying parameters for p_star (the probability of
+##'   patients being confirmed as covid on admission to hospital). See Details.
 ##'
 ##' @return A list of severity parameters
 ##'
 ##' @export
 carehomes_parameters_severity <- function(dt,
                                           severity = NULL,
-                                          p_C = list(date = NULL,
-                                                     value = NULL),
-                                          p_H = list(date = NULL,
-                                                     value = NULL),
-                                          p_H_CHR = list(date = NULL,
-                                                         value = NULL),
-                                          p_ICU = list(date = NULL,
-                                                       value = NULL),
-                                          p_H_D = list(date = NULL,
-                                                       value = NULL),
-                                          p_ICU_D = list(date = NULL,
-                                                         value = NULL),
-                                          p_W_D = list(date = NULL,
-                                                       value = NULL),
-                                          p_G_D = list(date = NULL,
-                                                       value = NULL),
-                                          p_G_D_CHR = list(date = NULL,
-                                                           value = NULL),
-                                          p_star = list(date = NULL,
-                                                        value = NULL)) {
+                                          p_C = NULL,
+                                          p_H = NULL,
+                                          p_H_CHR = NULL,
+                                          p_ICU = NULL,
+                                          p_H_D = NULL,
+                                          p_ICU_D = NULL,
+                                          p_W_D = NULL,
+                                          p_G_D = NULL,
+                                          p_G_D_CHR = NULL,
+                                          p_star = NULL) {
 
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
+
+  time_varying_severity <- list(C = p_C,
+                                H = p_H,
+                                ICU = p_ICU,
+                                H_D = p_H_D,
+                                ICU_D = p_ICU_D,
+                                W_D = p_W_D,
+                                G_D = p_G_D,
+                                star = p_star)
+
+  time_varying_severity_CHR <- list(C = NULL,
+                                    H = p_H_CHR,
+                                    ICU = NULL,
+                                    H_D = NULL,
+                                    ICU_D = NULL,
+                                    W_D = NULL,
+                                    G_D = p_G_D_CHR,
+                                    star = NULL)
 
   get_p_step <- function(x, name) {
 
     p_name <- paste0("p_", name)
     p <- x[[p_name]]
-    p_value <- get(p_name)$value
-    if ("date" %in% names(get(p_name))) {
-      p_date <- get(p_name)$date
-    } else {
+    time_vary <- time_varying_severity[[name]]
+    time_vary_CHR <- time_varying_severity_CHR[[name]]
+
+    if (is.null(time_vary)) {
+      p_value <- NULL
       p_date <- NULL
+    } else {
+      p_value <- time_vary$value
+      if ("date" %in% names(time_vary)) {
+        p_date <- time_vary$date
+      } else {
+        p_date <- NULL
+      }
+    }
+
+    if (is.null(time_vary_CHR)) {
+      p_CHR_value <- NULL
+      p_CHR_date <- NULL
+    } else {
+      p_CHR_value <- time_vary_CHR$value
+      if ("date" %in% names(time_vary_CHR)) {
+        p_CHR_date <- time_vary_CHR$date
+      } else {
+        p_CHR_date <- NULL
+      }
     }
 
     if (!is.null(p_value)) {
@@ -928,26 +932,23 @@ carehomes_parameters_severity <- function(dt,
 
 
     CHR <- FALSE
-    if (exists(paste0(p_name, "_CHR"))) {
-      p_CHR_value <- get(paste0(p_name, "_CHR"))$value
-      if (!is.null(p_CHR_value)) {
-        CHR <- TRUE
-        p <- p[1:18]
-        if ("date" %in% names(get(paste0(p_name, "_CHR")))) {
-          p_CHR_date <- get(paste0(p_name, "_CHR"))$date
-        } else {
-          p_CHR_date <- NULL
+    if (!is.null(p_CHR_value)) {
+      CHR <- TRUE
+      p <- p[1:18]
+      if ("date" %in% names(get(paste0(p_name, "_CHR")))) {
+        p_CHR_date <- get(paste0(p_name, "_CHR"))$date
+      } else {
+        p_CHR_date <- NULL
+      }
+      if (length(p_CHR_value) == 1L) {
+        if (length(p_CHR_date) != 0) {
+          stop(sprintf(
+            "As %s has a single 'value', expected NULL or unspecified 'date'",
+            paste0(p_name, "_CHR")))
         }
-        if (length(p_CHR_value) == 1L) {
-          if (length(p_CHR_date) != 0) {
-            stop(sprintf(
-              "As %s has a single 'value', expected NULL or unspecified 'date'",
-              paste0(p_name, "_CHR")))
-          }
-        } else if (length(p_CHR_date) != length(p_CHR_value)) {
-          stop(sprintf("'date' and 'value' for %s must have the same length",
-                       paste0(p_name, "_CHR")))
-        }
+      } else if (length(p_CHR_date) != length(p_CHR_value)) {
+        stop(sprintf("'date' and 'value' for %s must have the same length",
+                     paste0(p_name, "_CHR")))
       }
     }
 
@@ -990,10 +991,7 @@ carehomes_parameters_severity <- function(dt,
     x
   }
 
-  ## Set up time-varying severity parameters
-  time_varying_severity <- c("C", "H", "ICU", "H_D", "W_D",
-                             "ICU_D", "G_D", "star")
-  for (name in time_varying_severity) {
+  for (name in names(time_varying_severity)) {
     severity <- get_p_step(severity, name)
   }
 
