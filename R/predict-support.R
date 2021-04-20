@@ -194,7 +194,7 @@ add_future_beta <- function(p, beta_date, beta_scaling) {
   beta_last <- last(beta_step)
 
   beta_value <- beta_last * beta_scaling
-  beta_extra <- sircovid_parameters_beta(beta_date, beta_value, dt)
+  beta_extra <- sircovid_parameters_piecewise_linear(beta_date, beta_value, dt)
 
   beta_index <- seq(beta_date[[1]] / dt + 1L, length(beta_extra))
   beta_step[beta_index] <- beta_extra[beta_index]

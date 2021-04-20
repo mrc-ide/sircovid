@@ -5,32 +5,78 @@
 \title{Carehomes progression parameters}
 \usage{
 carehomes_parameters_progression(
-  rel_gamma_A = 1,
-  rel_gamma_P = 1,
-  rel_gamma_C_1 = 1,
-  rel_gamma_C_2 = 1
+  dt,
+  gamma_E = NULL,
+  gamma_A = NULL,
+  gamma_P = NULL,
+  gamma_C_1 = NULL,
+  gamma_C_2 = NULL,
+  gamma_ICU_pre = NULL,
+  gamma_ICU_D = NULL,
+  gamma_ICU_W_D = NULL,
+  gamma_ICU_W_R = NULL,
+  gamma_H_D = NULL,
+  gamma_H_R = NULL,
+  gamma_W_D = NULL,
+  gamma_W_R = NULL,
+  gamma_G_D = NULL
 )
 }
 \arguments{
-\item{rel_gamma_A}{Vector of relative rates of gamma_A for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
+\item{dt}{The step size}
 
-\item{rel_gamma_P}{Vector of relative rates of gamma_P for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
+\item{gamma_E}{Time-varying parameters for the Erlang rate parameter of the
+duration in the E (exposed) compartment. See Details.}
 
-\item{rel_gamma_C_1}{Vector of relative rates of gamma_C_1 for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
+\item{gamma_A}{Time-varying parameters for the Erlang rate parameter of the
+duration in the I_A (asymptomatic) compartment. See Details.}
 
-\item{rel_gamma_C_2}{Vector of relative rates of gamma_C_2 for each
-strain modelled. If \code{1} all strains have same rates. Otherwise vector of
-same length as \code{strain_transmission}, with entries that determines the
-relative scaling of the defaults for each strain.}
+\item{gamma_P}{Time-varying parameters for the Erlang rate parameter of the
+duration in the I_P (presymptomatic) compartment. See Details.}
+
+\item{gamma_C_1}{Time-varying parameters for the Erlang rate parameter of
+the duration in the I_C_1 (first stage symptomatic) compartment. See
+Details.}
+
+\item{gamma_C_2}{Time-varying parameters for the Erlang rate parameter of
+the duration in the I_C_2 (second stage symptomatic) compartment. See
+Details.}
+
+\item{gamma_ICU_pre}{Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_pre (general beds stay before ICU) compartment.
+See Details.}
+
+\item{gamma_ICU_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the ICU_D (ICU stay for individuals who die in ICU)
+compartment. See Details.}
+
+\item{gamma_ICU_W_D}{Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_W_D (ICU stay for individuals who go on to die
+in stepdown) compartment. See Details.}
+
+\item{gamma_ICU_W_R}{Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_W_R (ICU stay for individuals who go on to
+recover in stepdown) compartment. See Details.}
+
+\item{gamma_H_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the H_D (general beds stay for individuals who die in
+general beds) compartment. See Details.}
+
+\item{gamma_H_R}{Time-varying parameters for the Erlang rate parameter of
+the duration in the H_R (general beds stay for individuals who recover in
+general beds) compartment. See Details.}
+
+\item{gamma_W_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the W_D (stepdown for individuals who die in stepdown)
+compartment. See Details.}
+
+\item{gamma_W_R}{Time-varying parameters for the Erlang rate parameter of
+the duration in the W_R (stepdown for individuals who recover in stepdown)
+compartment. See Details.}
+
+\item{gamma_G_D}{Time-varying parameters for the Erlang rate parameter of
+the duration in the G_D (delay to death in the community/care homes)
+compartment. See Details.}
 }
 \value{
 A list of parameter values
@@ -43,3 +89,12 @@ distribution.  These need to be aligned with Bob's severity
 outputs, and we will come up with a better way of coordinating the
 two.
 }
+\section{Time-varying parameters}{
+
+Every time varying parameter has the same format, which can be \code{NULL} (in
+which case a default single value is used) or a list with \code{date} and
+\code{value} for changes in the parameter. If \code{value} is scalar then
+\code{date} can be \code{NULL} or missing. If \code{value} is a vector then \code{date}
+must be a vector of sircovid dates of the same length as \code{value}.
+}
+

@@ -24,38 +24,34 @@ test_that("can run the carehomes model", {
 
   ## Regenerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu                                = c(139, 226, 121, 763,
-                                                 167),
-          general                            = c(411, 901, 473, 2923,
-                                                 645),
+    rbind(icu                                = c(169, 469, 19, 24, 52),
+          general                            = c(701, 1672, 91, 87, 190),
           deaths_carehomes_inc               = c(0, 0, 0, 0, 0),
-          deaths_comm_inc                    = c(0, 0, 0, 0, 0),
-          deaths_hosp_inc                    = c(25, 41, 19, 173, 35),
-          admitted_inc                       = c(9, 15, 6, 37, 9),
-          diagnoses_inc                      = c(33, 63, 26, 169, 30),
-          sero_pos                           = c(3623262, 4591853, 3742872,
-                                                 6605072, 4146627),
-          sympt_cases_inc                    = c(255, 605, 314, 2021,
-                                                 422),
-          sympt_cases_over25_inc             = c(212, 490, 256, 1640,
-                                                 355),
-          sympt_cases_non_variant_over25_inc = c(212, 490, 256, 1640,
-                                                 355),
-          react_pos                          = c(21588, 45239, 23583,
-                                                 158640, 32914),
-          deaths_carehomes                   = c(23491, 23209, 23668,
-                                                 23608, 23327),
-          deaths_comm                        = c(0, 0, 0, 0, 0),
-          deaths_hosp                        = c(195228, 195676, 196012,
-                                                 194363, 196106),
-          admitted                           = c(88872, 88717, 89620,
-                                                 88779, 89771),
-          diagnoses                          = c(295899, 296458, 297262,
-                                                 294037, 296135),
-          sympt_cases                        = c(9763698, 9759680, 9760878,
-                                                 9739505, 9761196),
-          sympt_cases_over25                 = c(7446463, 7444795, 7446934,
-                                                 7426666, 7445206))
+          deaths_comm_inc                    = c(3, 9, 1, 1, 0),
+          deaths_hosp_inc                    = c(31, 97, 2, 5, 12),
+          admitted_inc                       = c(8, 19, 1, 1, 2),
+          diagnoses_inc                      = c(40, 111, 9, 7, 10),
+          sero_pos                           = c(4303164, 5730842, 2171035,
+                                                 2133902, 2805291),
+          sympt_cases_inc                    = c(427, 1214, 74, 73, 124),
+          sympt_cases_over25_inc             = c(349, 995, 62, 57, 105),
+          sympt_cases_non_variant_over25_inc = c(349, 995, 62, 57, 105),
+          react_pos                          = c(36515, 94355, 4685,
+                                                 4396, 9785),
+          deaths_carehomes                   = c(1676, 1752, 1736, 1626,
+                                                 1661),
+          deaths_comm                        = c(22433, 22493, 22561,
+                                                 22395, 22708),
+          deaths_hosp                        = c(196913, 196855, 197068,
+                                                 195775, 196412),
+          admitted                           = c(88749, 89527, 89065,
+                                                 88690, 89385),
+          diagnoses                          = c(295774, 295537, 295706,
+                                                 295223, 295247),
+          sympt_cases                        = c(9759159, 9763748, 9752261,
+                                                 9762643, 9760900),
+          sympt_cases_over25                 = c(7442622, 7449315, 7439206,
+                                                 7443762, 7443596))
   expect_equal(res, expected)
 })
 
@@ -142,8 +138,6 @@ test_that("compiled compare function is correct", {
 test_that("Test compiled carehomes components", {
   start_date <- sircovid_date("2020-02-02")
   pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
-  ## allow some deaths in the community
-  pars$psi_G_D[15:17] <- 1
   ## use a non-integer kappa for pillar 2 cases
   pars$kappa_pillar2_cases <- 2.5
   data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),

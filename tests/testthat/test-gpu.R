@@ -25,6 +25,8 @@ test_that("can generate GPU interface and pass arguments", {
 
 test_that("can run the gpu model on the cpu", {
   skip_unless_ci()
+  ## TODO; see #286
+  skip_on_os("linux")
   skip_if_not_installed("odin")
   skip_if_not_installed("odin.dust")
 

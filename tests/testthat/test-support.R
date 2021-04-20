@@ -319,7 +319,7 @@ test_that("Can add new betas", {
 
   ## Our parameters are expanded as expected:
   v <- beta_new[j[c(1, 2, 2, 4, 4, 6)] + 1L]
-  cmp <- sircovid_parameters_beta(i, v, p_new$dt)
+  cmp <- sircovid_parameters_piecewise_linear(i, v, p_new$dt)
   expect_equal(beta_new[seq(j[[1]], length(beta_new))],
                cmp[seq(j[[1]], length(cmp))])
 

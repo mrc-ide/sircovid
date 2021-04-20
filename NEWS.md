@@ -1,3 +1,8 @@
+# sircovid 0.10.37
+
+* Added ability to directly set time-varying severity and progression parameters in `carehomes_parameters_progression` and `carehomes_parameters_severity`.
+* `sircovid_parameters_beta` renamed to `sircovid_parameters_piecewise_linear` and `sircovid_parameters_beta_expand` renamed to `sircovid_parameters_expand_step`
+
 # sircovid 0.10.36
 
 * Fixed Rt calculation for multistrain so that Rt is NA only in the steps where prob_strain is NA (previously all Rt set to NA if any prob_strain was NA)
@@ -7,7 +12,7 @@
 * Fixed `carehomes_rt` function to have flexibility for multiple dimensions, given strains, age categories and vaccinations classes.
 * test-support.R updated accordingly.
 
-# sircovid 0.10.32
+# sircovid 0.10.33
 
 * Can now input a list of observation parameters into the `carehomes_parameters` function instead of taking the default observation parameters.
 
