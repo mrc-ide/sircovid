@@ -472,36 +472,35 @@ carehomes_parameters <- function(start_date, region,
   ret$rel_p_W_D <- rel_severity
   ret$rel_p_G_D <- rel_severity
 
-
-  strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
-                                length(strain_transmission))
-  strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
-                                length(strain_transmission))
-  strain_rel_gamma_C_1 <- recycle(assert_relatives(strain_rel_gamma_C_1),
-                                  length(strain_transmission))
-  strain_rel_gamma_C_2 <- recycle(assert_relatives(strain_rel_gamma_C_2),
-                                  length(strain_transmission))
-  ret$rel_gamma_E <- rep(1, strain$n_strains)
-  if (length(strain_rel_gamma_A) == 2) {
-    ret$rel_gamma_A <- mirror_strain(strain_rel_gamma_A)
-    ret$rel_gamma_P <- mirror_strain(strain_rel_gamma_P)
-    ret$rel_gamma_C_1 <- mirror_strain(strain_rel_gamma_C_1)
-    ret$rel_gamma_C_2 <- mirror_strain(strain_rel_gamma_C_2)
-  } else {
-    ret$rel_gamma_A <- rep(1, strain$n_strains)
-    ret$rel_gamma_P <- rep(1, strain$n_strains)
-    ret$rel_gamma_C_1 <- rep(1, strain$n_strains)
-    ret$rel_gamma_C_2 <- rep(1, strain$n_strains)
+ strain_rel_gammas <- list(E = NULL,
+                            A = strain_rel_gamma_A,
+                            P = strain_rel_gamma_P,
+                            C_1 = strain_rel_gamma_C_1,
+                            C_2 = strain_rel_gamma_C_2,
+                            ICU_pre = NULL,
+                            H_D = NULL,
+                            H_R = NULL,
+                            ICU_D = NULL,
+                            ICU_W_D = NULL,
+                            ICU_W_R = NULL,
+                            W_D = NULL,
+                            W_R = NULL,
+                            G_D = NULL)
+  for (name in names(strain_rel_gammas)) {
+    rel_gamma <- strain_rel_gammas[[name]]
+    rel_gamma_name <- paste0("rel_gamma_", name)
+    if (is.null(rel_gamma)) {
+      ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
+    } else {
+      rel_gamma <- recycle(assert_relatives(rel_gamma),
+                           length(strain_transmission))
+      if (length(rel_gamma) == 2) {
+        ret[[rel_gamma_name]] <- mirror_strain(rel_gamma)
+      } else {
+        ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
+      }
+    }
   }
-  ret$rel_gamma_ICU_pre <- rep(1, strain$n_strains)
-  ret$rel_gamma_H_D <- rep(1, strain$n_strains)
-  ret$rel_gamma_H_R <- rep(1, strain$n_strains)
-  ret$rel_gamma_ICU_D <- rep(1, strain$n_strains)
-  ret$rel_gamma_ICU_W_D <- rep(1, strain$n_strains)
-  ret$rel_gamma_ICU_W_R <- rep(1, strain$n_strains)
-  ret$rel_gamma_W_D <- rep(1, strain$n_strains)
-  ret$rel_gamma_W_R <- rep(1, strain$n_strains)
-  ret$rel_gamma_G_D <- rep(1, strain$n_strains)
 
   c(ret, severity, progression, strain, vaccination, waning, observation)
 }
