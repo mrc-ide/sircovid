@@ -1,11 +1,14 @@
 gt_sample <- function(p, n = 1000) {
 
+  ## Note: this function does not account for the impact of
+  ## vaccination or strains on the generation time. It also
+  ## does not account for various parameters used being
+  ## potentially time-varying, although typically we are
+  ## not varying them over time.
+
   ## Compute mean of p_C across all age groups
   ## weighted by population size of each age group
-  p_C <- weighted.mean(p$p_C, p$N_tot)
-
-  ## Note: the above does not account for the impact of
-  ## vaccination on the generation time.
+  p_C <- weighted.mean(p$p_C_step, p$N_tot)
 
   if (p$I_C_2_transmission > 0) {
     stop("gt_sample does not allow transmission from I_C_2")
@@ -29,15 +32,15 @@ gt_sample <- function(p, n = 1000) {
 
   while (i < n) {
     ## Draw exposed period
-    sample_E <- draw_from(1, p$k_E, p$gamma_E)
+    sample_E <- draw_from(1, p$k_E, p$gamma_E_step)
     ## Draw symptomatic vs asymptomatic path
     path_C <- stats::runif(1) <= p_C
     if (!path_C) {
-      sample_I <- draw_from(1, p$k_A, p$gamma_A)
+      sample_I <- draw_from(1, p$k_A, p$gamma_A_step)
       infectivity <- p$I_A_transmission
     } else {
-      sample_I <- draw_from(1, p$k_P, p$gamma_P) +
-        draw_from(1, p$k_C_1, p$gamma_C_1)
+      sample_I <- draw_from(1, p$k_P, p$gamma_P_step) +
+        draw_from(1, p$k_C_1, p$gamma_C_1_step)
       infectivity <- 1
     }
     n_secondary_cases <- stats::rpois(1, lambda = infectivity * sample_I)

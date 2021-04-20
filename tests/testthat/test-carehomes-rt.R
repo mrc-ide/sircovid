@@ -123,7 +123,8 @@ test_that("Can vary beta over time", {
   initial_date <- p$initial_step * dt
   beta_date <- initial_date + c(0, 21, 62)
   beta_value <- p$beta_step * c(1, 0.5, 0.8)
-  p$beta_step <- sircovid_parameters_beta(beta_date, beta_value, dt)
+  p$beta_step <- sircovid_parameters_piecewise_linear(beta_date,
+                                                           beta_value, dt)
   p <- rep(list(p), ncol(y))
   p[[3]]$beta_step <- p[[3]]$beta_step / 2
 
@@ -132,9 +133,9 @@ test_that("Can vary beta over time", {
 
   expect_equal(
     res$beta,
-    cbind(sircovid_parameters_beta_expand(steps, p[[1]]$beta_step),
-          sircovid_parameters_beta_expand(steps, p[[2]]$beta_step),
-          sircovid_parameters_beta_expand(steps, p[[3]]$beta_step)))
+    cbind(sircovid_parameters_expand_step(steps, p[[1]]$beta_step),
+          sircovid_parameters_expand_step(steps, p[[2]]$beta_step),
+          sircovid_parameters_expand_step(steps, p[[3]]$beta_step)))
 
   ## Check the Rt calculation (from eff_Rt) - compare the first test
   expect_true(length(unique(res$Rt_all)) > 1)
@@ -285,9 +286,6 @@ test_that("Parameters affect Rt as expected", {
   p$G_D_transmission <- 0.05
   p$I_C_2_transmission <- 0.5
 
-  ## allow some deaths in the community so that G_D parameters affect Rt_general
-  p$psi_G_D[15:17] <- 0.5
-
   np <- 1L
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
@@ -325,17 +323,17 @@ test_that("Parameters affect Rt as expected", {
   helper("ICU_transmission", 0, 1)
   helper("G_D_transmission", 0, 1)
 
-  helper("gamma_A", Inf, 1)
-  helper("gamma_P", Inf, 1)
-  helper("gamma_C_1", Inf, 1)
-  helper("gamma_C_2", Inf, 1)
-  helper("gamma_H_D", Inf, 1)
-  helper("gamma_H_R", Inf, 1)
-  helper("gamma_ICU_pre", Inf, 1)
-  helper("gamma_ICU_D", Inf, 1)
-  helper("gamma_ICU_W_D", Inf, 1)
-  helper("gamma_ICU_W_R", Inf, 1)
-  helper("gamma_G_D", Inf, 1)
+  helper("gamma_A_step", Inf, 1)
+  helper("gamma_P_step", Inf, 1)
+  helper("gamma_C_1_step", Inf, 1)
+  helper("gamma_C_2_step", Inf, 1)
+  helper("gamma_H_D_step", Inf, 1)
+  helper("gamma_H_R_step", Inf, 1)
+  helper("gamma_ICU_pre_step", Inf, 1)
+  helper("gamma_ICU_D_step", Inf, 1)
+  helper("gamma_ICU_W_D_step", Inf, 1)
+  helper("gamma_ICU_W_R_step", Inf, 1)
+  helper("gamma_G_D_step", Inf, 1)
 
   helper("k_A", 1, 2)
   helper("k_P", 1, 2)
