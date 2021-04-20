@@ -812,7 +812,7 @@ carehomes_severity <- function(p) {
 ##' Every time varying parameter has the same format, which can be `NULL` (in
 ##'   which case the value from `severity` is used) or a list with `date` and
 ##'   `value` for changes in the parameter. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   `date` can be `NULL` or missing. If `value` is a vector then `date`
 ##'   must be a vector of sircovid dates of the same length as `value`.
 ##'
 ##' @param p_C Time-varying parameters for p_C (the probability of an infected
@@ -918,10 +918,15 @@ carehomes_parameters_severity <- function(dt,
     }
 
     if (!is.null(p_value)) {
+      if (any(p_value < 0) || any(p_value > 1)) {
+        stop(sprintf(
+          "Only values between 0 and 1 allowed for %s",
+          p_name))
+      }
       if (length(p_value) == 1L) {
         if (length(p_date) != 0) {
           stop(sprintf(
-            "As %s has a single 'value', expected NULL or unspecified 'date'",
+            "As %s has a single 'value', expected NULL or missing 'date'",
             p_name))
         }
       } else if (length(p_date) != length(p_value)) {
@@ -933,12 +938,17 @@ carehomes_parameters_severity <- function(dt,
 
     CHR <- FALSE
     if (!is.null(p_CHR_value)) {
+      if (any(p_CHR_value < 0) || any(p_CHR_value > 1)) {
+        stop(sprintf(
+          "Only values between 0 and 1 allowed for %s",
+          paste0(p_name, "_CHR")))
+      }
       CHR <- TRUE
       p <- p[1:18]
       if (length(p_CHR_value) == 1L) {
         if (length(p_CHR_date) != 0) {
           stop(sprintf(
-            "As %s has a single 'value', expected NULL or unspecified 'date'",
+            "As %s has a single 'value', expected NULL or missing 'date'",
             paste0(p_name, "_CHR")))
         }
       } else if (length(p_CHR_date) != length(p_CHR_value)) {
@@ -1245,7 +1255,7 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##' Every time varying parameter has the same format, which can be `NULL` (in
 ##'   which case a default single value is used) or a list with `date` and
 ##'   `value` for changes in the parameter. If `value` is scalar then
-##'   `date` can be `NULL` or unspecified. If `value` is a vector then `date`
+##'   `date` can be `NULL` or missing. If `value` is a vector then `date`
 ##'   must be a vector of sircovid dates of the same length as `value`.
 ##'
 ##' @param gamma_E Time-varying parameters for the Erlang rate parameter of the
@@ -1397,10 +1407,14 @@ carehomes_parameters_progression <- function(dt,
     }
 
     if (!is.null(gamma_value)) {
+      if (any(gamma_value < 0)) {
+        stop(sprintf("Negative values for %s not allowed",
+                     gamma_name))
+      }
       if (length(gamma_value) == 1L) {
         if (length(gamma_date) != 0) {
           stop(sprintf(
-            "As %s has a single 'value', expected NULL or unspecified 'date'",
+            "As %s has a single 'value', expected NULL or missing 'date'",
             gamma_name))
         }
       } else if (length(gamma_date) != length(gamma_value)) {

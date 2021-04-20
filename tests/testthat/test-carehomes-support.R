@@ -275,26 +275,50 @@ test_that("can compute time-varying severity parameters for carehomes model", {
   expect_error(
     carehomes_parameters_severity(dt,
                                   p_C = list(date = 1,
-                                             value = 3)),
-    "As p_C has a single 'value', expected NULL or unspecified 'date'")
+                                             value = 0.3)),
+    "As p_C has a single 'value', expected NULL or missing 'date'")
 
   expect_error(
     carehomes_parameters_severity(dt,
                                   p_ICU = list(date = c(1, 4, 5),
-                                               value = c(2, 3))),
+                                               value = c(0.2, 0.3))),
     "'date' and 'value' for p_ICU must have the same length")
 
   expect_error(
     carehomes_parameters_severity(dt,
+                                  p_ICU_D = list(date = c(1, 4),
+                                                 value = c(-1, 0.3))),
+    "Only values between 0 and 1 allowed for p_ICU_D")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_W_D = list(date = c(1, 4),
+                                               value = c(0.2, 3))),
+    "Only values between 0 and 1 allowed for p_W_D")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
                                   p_H_CHR = list(date = 1,
-                                                 value = 3)),
-    "As p_H_CHR has a single 'value', expected NULL or unspecified 'date'")
+                                                 value = 0.3)),
+    "As p_H_CHR has a single 'value', expected NULL or missing 'date'")
 
   expect_error(
     carehomes_parameters_severity(dt,
                                   p_G_D_CHR = list(date = c(1, 4, 5),
-                                                   value = c(2, 3))),
+                                                   value = c(0.2, 0.3))),
     "'date' and 'value' for p_G_D_CHR must have the same length")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_H_CHR = list(date = c(1, 4),
+                                                 value = c(-1, 0.3))),
+    "Only values between 0 and 1 allowed for p_H_CHR")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_G_D_CHR = list(date = c(1, 4),
+                                                   value = c(0.2, 3))),
+    "Only values between 0 and 1 allowed for p_G_D_CHR")
 
 })
 
@@ -324,13 +348,19 @@ test_that("can compute time-varying progression parameters for carehomes
     carehomes_parameters_progression(dt,
                                      gamma_E = list(date = 1,
                                                     value = 3)),
-    "As gamma_E has a single 'value', expected NULL or unspecified 'date'")
+    "As gamma_E has a single 'value', expected NULL or missing 'date'")
 
   expect_error(
     carehomes_parameters_progression(dt,
                                      gamma_ICU_pre = list(date = c(1, 4, 5),
                                                           value = c(2, 3))),
     "'date' and 'value' for gamma_ICU_pre must have the same length")
+
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_H_D = list(date = c(1, 4),
+                                                      value = c(-2, 3))),
+    "Negative values for gamma_H_D not allowed")
 
 
 })

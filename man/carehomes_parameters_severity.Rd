@@ -72,7 +72,7 @@ Carehomes severity parameters
 Every time varying parameter has the same format, which can be \code{NULL} (in
 which case the value from \code{severity} is used) or a list with \code{date} and
 \code{value} for changes in the parameter. If \code{value} is scalar then
-\code{date} can be \code{NULL} or unspecified. If \code{value} is a vector then \code{date}
+\code{date} can be \code{NULL} or missing. If \code{value} is a vector then \code{date}
 must be a vector of sircovid dates of the same length as \code{value}.
 }
 
