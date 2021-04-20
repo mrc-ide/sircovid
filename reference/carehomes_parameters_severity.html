@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute Rt for a set of trajectories — carehomes_Rt_trajectories • sircovid</title>
+<title>Carehomes severity parameters — carehomes_parameters_severity • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,8 @@
 
 
 
-<meta property="og:title" content="Compute Rt for a set of trajectories — carehomes_Rt_trajectories" />
-<meta property="og:description" content="Compute &quot;Rt&quot; for a set of simulated trajectories (e.g., the result
-of the $iterate() method of carehomes, mcstate::pmcmc() or
-mcstate::pmcmc_predict(). The trajectories may or may not share
-parameters." />
+<meta property="og:title" content="Carehomes severity parameters — carehomes_parameters_severity" />
+<meta property="og:description" content="Carehomes severity parameters" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -122,126 +119,112 @@ parameters." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute Rt for a set of trajectories</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes_rt.R'><code>R/carehomes_rt.R</code></a></small>
-    <div class="hidden name"><code>carehomes_Rt_trajectories.Rd</code></div>
+    <h1>Carehomes severity parameters</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes.R'><code>R/carehomes.R</code></a></small>
+    <div class="hidden name"><code>carehomes_parameters_severity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compute "Rt" for a set of simulated trajectories (e.g., the result
-of the <code>$iterate()</code> method of <a href='carehomes.html'>carehomes</a>, <code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc.html'>mcstate::pmcmc()</a></code> or
-<code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict()</a></code>. The trajectories may or may not share
-parameters.</p>
+    <p>Carehomes severity parameters</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_Rt_trajectories</span><span class='op'>(</span>
-  <span class='va'>step</span>,
-  <span class='va'>S</span>,
-  <span class='va'>pars</span>,
-  prob_strain <span class='op'>=</span> <span class='cn'>NULL</span>,
-  initial_step_from_parameters <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  shared_parameters <span class='op'>=</span> <span class='cn'>NULL</span>,
-  type <span class='op'>=</span> <span class='cn'>NULL</span>,
-  interpolate_every <span class='op'>=</span> <span class='cn'>NULL</span>,
-  interpolate_critical_dates <span class='op'>=</span> <span class='cn'>NULL</span>,
-  interpolate_min <span class='op'>=</span> <span class='cn'>NULL</span>,
-  eigen_method <span class='op'>=</span> <span class='st'>"power_iteration"</span>,
-  R <span class='op'>=</span> <span class='cn'>NULL</span>,
-  weight_Rt <span class='op'>=</span> <span class='cn'>FALSE</span>
+    <pre class="usage"><span class='fu'>carehomes_parameters_severity</span><span class='op'>(</span>
+  <span class='va'>dt</span>,
+  severity <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_C <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_H <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_H_CHR <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_ICU <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_H_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_ICU_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_W_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_G_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_G_D_CHR <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_star <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>step</th>
-      <td><p>A vector of steps</p></td>
+      <th>dt</th>
+      <td><p>The step size</p></td>
     </tr>
     <tr>
-      <th>S</th>
-      <td><p>A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
-array of "S" compartment counts</p></td>
+      <th>severity</th>
+      <td><p>Severity data, used to determine default severity parameter
+age-scalings and to provide default severity parameter values. Can be
+<code>NULL</code> (use the default bundled data version in the package), or a
+<a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a> object (for raw severity data).</p></td>
     </tr>
     <tr>
-      <th>pars</th>
-      <td><p>Either a single <code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> object
-(shared parameters) or an unnamed list of
-<code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> objects, the same length as <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(S)</a></code>.</p></td>
+      <th>p_C</th>
+      <td><p>Time-varying parameters for p_C (the probability of an infected
+individual becoming symptomatic). See Details.</p></td>
     </tr>
     <tr>
-      <th>prob_strain</th>
-      <td><p>A 3d ((n groups x n strains) x n trajectories x n steps)
-array of "prob_strain" model outputs. Default is <code>NULL</code>, but it must be
-specified if there is more than one strain.</p></td>
+      <th>p_H</th>
+      <td><p>Time-varying parameters for p_H (the probability of a symptomatic
+individual requiring hospitalisation). See Details.</p></td>
     </tr>
     <tr>
-      <th>initial_step_from_parameters</th>
-      <td><p>If <code>TRUE</code>, then <code>step[[1]]</code> is
-replaced by the value of <code>initial_step</code> from the parameters.
-This is usually what you want.</p></td>
+      <th>p_H_CHR</th>
+      <td><p>Time-varying parameters for p_H (the probability of a
+symptomatic individual requiring hospitalisation) for care home residents.
+If <code>NULL</code> then the value for the oldest age group is used. See Details.</p></td>
     </tr>
     <tr>
-      <th>shared_parameters</th>
-      <td><p>Should <code>pars</code> be treated as a single
-shared list? Leave as <code>NULL</code> to detect automatically, set to
-<code>TRUE</code> or <code>FALSE</code> to force it to be interpreted one way or the
-other which may give more easily interpretable error messages.</p></td>
+      <th>p_ICU</th>
+      <td><p>Time-varying parameters for p_ICU (the probability of a
+hospitalised individual going to ICU). See Details.</p></td>
     </tr>
     <tr>
-      <th>type</th>
-      <td><p>A character vector of possible Rt types to
-compute. Can be any or all of <code>eff_Rt_all</code>, <code>eff_Rt_general</code>,
-<code>Rt_all</code> and <code>Rt_general</code></p></td>
+      <th>p_H_D</th>
+      <td><p>Time-varying parameters for p_H_D (the probability of death in
+general beds).See Details.</p></td>
     </tr>
     <tr>
-      <th>interpolate_every</th>
-      <td><p>Spacing (in days) to use between interpolated
-points</p></td>
+      <th>p_ICU_D</th>
+      <td><p>Time-varying parameters for p_ICU_D (the probability of death
+in ICU). See Details.</p></td>
     </tr>
     <tr>
-      <th>interpolate_critical_dates</th>
-      <td><p>Optional vector of critical sircovid
-dates to use when interpolating. Interpolation will be done in
-blocks between the first time step of these dates, with each block
-starting on the first time step of the date given.
-So if you give a <code>interpolate_critical_dates</code> of <code><a href='https://rdrr.io/r/base/c.html'>c(20, 50)</a></code> then blocks <em>start</em> on first time step of days 20 and 50,
-i.e.: <code>[1, 20)</code>, <code>[20, 50)</code>, <code>[50, end]</code>.</p></td>
+      <th>p_W_D</th>
+      <td><p>Time-varying parameters for p_W_D (the probability of death in
+stepdown). See Details.</p></td>
     </tr>
     <tr>
-      <th>interpolate_min</th>
-      <td><p>The minimum number of steps to include
-within a block. If there are fewer points than this then all
-points are used (i.e., no interpolation is done) or
-<code>interpolate_every</code> is reduced until at least this many points
-were used. This can be used to specify a lower bound on the
-error of small regions. If Rt is small it won't matter that
-much. You do need to specify something though or interpolation
-will not happen, and do not use less than 3 as we use spline
-interpolation and that will not work with fewer than 3 points.</p></td>
+      <th>p_G_D</th>
+      <td><p>Time-varying parameters for p_G_D (the probability of
+individuals requiring hospitalisation dying in the community or a care
+home). See Details.</p></td>
     </tr>
     <tr>
-      <th>eigen_method</th>
-      <td><p>The eigenvalue method to use (passed to
-<a href='https://rdrr.io/pkg/eigen1/man/eigen1.html'>eigen1::eigen1</a> as <code>method</code>)</p></td>
+      <th>p_G_D_CHR</th>
+      <td><p>Time-varying parameters for p_G_D (the probability of
+individuals requiring hospitalisation dying in a care home) for care home
+residents. If <code>NULL</code> then the value for the oldest age group is used. See
+Details.</p></td>
     </tr>
     <tr>
-      <th>R</th>
-      <td><p>A 3d ((n groups x n strains x n vaccine classes) x
-n trajectories x n steps) array of "R" compartment counts, required for
-multi-strain models.</p></td>
-    </tr>
-    <tr>
-      <th>weight_Rt</th>
-      <td><p>If <code>TRUE</code> then computes the weighted average
-of the Rt for all strains, otherwise all calculations are returned with
-an additional dimension to index each strain.</p></td>
+      <th>p_star</th>
+      <td><p>Time-varying parameters for p_star (the probability of
+patients being confirmed as covid on admission to hospital). See Details.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>As for <code><a href='carehomes_Rt.html'>carehomes_Rt()</a></code>, except that every element is a
-matrix, not a vector.</p>
+    <p>A list of severity parameters</p>
+    <h2 class="hasAnchor" id="time-varying-parameters"><a class="anchor" href="#time-varying-parameters"></a>Time-varying parameters</h2>
+
+    
+
+<p>Every time varying parameter has the same format, which can be <code>NULL</code> (in
+which case the value from <code>severity</code> is used) or a list with <code>date</code> and
+<code>value</code> for changes in the parameter. If <code>value</code> is scalar then
+<code>date</code> can be <code>NULL</code> or missing. If <code>value</code> is a vector then <code>date</code>
+must be a vector of sircovid dates of the same length as <code>value</code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

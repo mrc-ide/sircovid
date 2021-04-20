@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.37</span>
       </span>
     </div>
 
@@ -158,8 +158,8 @@ insensitive.</p></td>
       <th>beta_date</th>
       <td><p>A vector of dates for changes in beta (the
 contact rate parameter), or <code>NULL</code> if a single value is used for
-all times (see <code><a href='sircovid_parameters_beta.html'>sircovid_parameters_beta()</a></code>, where this is
-passed as <code>date</code>).</p></td>
+all times (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code>, where
+this is passed as <code>date</code>).</p></td>
     </tr>
     <tr>
       <th>beta_value</th>
@@ -168,8 +168,8 @@ parameter). If not given, and if <code>beta_date</code> is <code>NULL</code> the
 value of 0.08 will be used through the whole simulation,
 otherwise if <code>beta_date</code> is <code>NULL</code> this must be a scalar. If
 <code>beta_date</code> is given then <code>beta_date</code> and <code>beta_value</code> must have
-the same length (see <code><a href='sircovid_parameters_beta.html'>sircovid_parameters_beta()</a></code>, where this is
-passed as <code>value</code>).</p></td>
+the same length (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code>,
+where this is passed as <code>value</code>).</p></td>
     </tr>
     <tr>
       <th>severity</th>
@@ -309,7 +309,8 @@ just before the model is run.</p>
 #&gt; [11] 0.3054 0.3054 0.3546 0.3546 0.3546 0.3546 0.6456
 #&gt; 
 #&gt; $p_G_D
-#&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+#&gt;  [1] 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05
+#&gt; [16] 0.05 0.05
 #&gt; 
 #&gt; $p_H_D
 #&gt;  [1] 0.1258933 0.1226134 0.1356729 0.1526679 0.1743031 0.1941879 0.2093617

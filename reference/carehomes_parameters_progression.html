@@ -85,7 +85,7 @@ two." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.37</span>
       </span>
     </div>
 
@@ -139,48 +139,125 @@ two.</p>
     </div>
 
     <pre class="usage"><span class='fu'>carehomes_parameters_progression</span><span class='op'>(</span>
-  rel_gamma_A <span class='op'>=</span> <span class='fl'>1</span>,
-  rel_gamma_P <span class='op'>=</span> <span class='fl'>1</span>,
-  rel_gamma_C_1 <span class='op'>=</span> <span class='fl'>1</span>,
-  rel_gamma_C_2 <span class='op'>=</span> <span class='fl'>1</span>
+  <span class='va'>dt</span>,
+  gamma_E <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_A <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_P <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_C_1 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_C_2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_ICU_pre <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_ICU_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_ICU_W_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_ICU_W_R <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_H_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_H_R <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_W_D <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_W_R <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gamma_G_D <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>rel_gamma_A</th>
-      <td><p>Vector of relative rates of gamma_A for each
-strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
-same length as <code>strain_transmission</code>, with entries that determines the
-relative scaling of the defaults for each strain.</p></td>
+      <th>dt</th>
+      <td><p>The step size</p></td>
     </tr>
     <tr>
-      <th>rel_gamma_P</th>
-      <td><p>Vector of relative rates of gamma_P for each
-strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
-same length as <code>strain_transmission</code>, with entries that determines the
-relative scaling of the defaults for each strain.</p></td>
+      <th>gamma_E</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of the
+duration in the E (exposed) compartment. See Details.</p></td>
     </tr>
     <tr>
-      <th>rel_gamma_C_1</th>
-      <td><p>Vector of relative rates of gamma_C_1 for each
-strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
-same length as <code>strain_transmission</code>, with entries that determines the
-relative scaling of the defaults for each strain.</p></td>
+      <th>gamma_A</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of the
+duration in the I_A (asymptomatic) compartment. See Details.</p></td>
     </tr>
     <tr>
-      <th>rel_gamma_C_2</th>
-      <td><p>Vector of relative rates of gamma_C_2 for each
-strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
-same length as <code>strain_transmission</code>, with entries that determines the
-relative scaling of the defaults for each strain.</p></td>
+      <th>gamma_P</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of the
+duration in the I_P (presymptomatic) compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_C_1</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the I_C_1 (first stage symptomatic) compartment. See
+Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_C_2</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the I_C_2 (second stage symptomatic) compartment. See
+Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_ICU_pre</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_pre (general beds stay before ICU) compartment.
+See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_ICU_D</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the ICU_D (ICU stay for individuals who die in ICU)
+compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_ICU_W_D</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_W_D (ICU stay for individuals who go on to die
+in stepdown) compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_ICU_W_R</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter
+of the duration in the ICU_W_R (ICU stay for individuals who go on to
+recover in stepdown) compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_H_D</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the H_D (general beds stay for individuals who die in
+general beds) compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_H_R</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the H_R (general beds stay for individuals who recover in
+general beds) compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_W_D</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the W_D (stepdown for individuals who die in stepdown)
+compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_W_R</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the W_R (stepdown for individuals who recover in stepdown)
+compartment. See Details.</p></td>
+    </tr>
+    <tr>
+      <th>gamma_G_D</th>
+      <td><p>Time-varying parameters for the Erlang rate parameter of
+the duration in the G_D (delay to death in the community/care homes)
+compartment. See Details.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list of parameter values</p>
+    <h2 class="hasAnchor" id="time-varying-parameters"><a class="anchor" href="#time-varying-parameters"></a>Time-varying parameters</h2>
+
+    
+
+<p>Every time varying parameter has the same format, which can be <code>NULL</code> (in
+which case a default single value is used) or a list with <code>date</code> and
+<code>value</code> for changes in the parameter. If <code>value</code> is scalar then
+<code>date</code> can be <code>NULL</code> or missing. If <code>value</code> is a vector then <code>date</code>
+must be a vector of sircovid dates of the same length as <code>value</code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.37</span>
       </span>
     </div>
 
@@ -134,7 +134,6 @@
   beta_date <span class='op'>=</span> <span class='cn'>NULL</span>,
   beta_value <span class='op'>=</span> <span class='cn'>NULL</span>,
   severity <span class='op'>=</span> <span class='cn'>NULL</span>,
-  p_death_carehome <span class='op'>=</span> <span class='fl'>0.7</span>,
   sero_specificity <span class='op'>=</span> <span class='fl'>0.9</span>,
   sero_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
   progression <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -190,8 +189,8 @@ insensitive.</p></td>
       <th>beta_date</th>
       <td><p>A vector of dates for changes in beta (the
 contact rate parameter), or <code>NULL</code> if a single value is used for
-all times (see <code><a href='sircovid_parameters_beta.html'>sircovid_parameters_beta()</a></code>, where this is
-passed as <code>date</code>).</p></td>
+all times (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code>, where
+this is passed as <code>date</code>).</p></td>
     </tr>
     <tr>
       <th>beta_value</th>
@@ -200,8 +199,8 @@ parameter). If not given, and if <code>beta_date</code> is <code>NULL</code> the
 value of 0.08 will be used through the whole simulation,
 otherwise if <code>beta_date</code> is <code>NULL</code> this must be a scalar. If
 <code>beta_date</code> is given then <code>beta_date</code> and <code>beta_value</code> must have
-the same length (see <code><a href='sircovid_parameters_beta.html'>sircovid_parameters_beta()</a></code>, where this is
-passed as <code>value</code>).</p></td>
+the same length (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code>,
+where this is passed as <code>value</code>).</p></td>
     </tr>
     <tr>
       <th>severity</th>
@@ -212,11 +211,6 @@ data) or a list (for data that has already been processed by
 <code>sircovid</code> for use).  New severity data comes from Bob Verity
 via the markovid package, and needs to be carefully calibrated
 with the progression parameters.</p></td>
-    </tr>
-    <tr>
-      <th>p_death_carehome</th>
-      <td><p>Probability of death within carehomes
-(conditional on having an "inflenza-like-illness")</p></td>
     </tr>
     <tr>
       <th>sero_specificity</th>
@@ -664,246 +658,257 @@ just before the model is run.</p>
 #&gt; $n_groups
 #&gt; [1] 19
 #&gt; 
-#&gt; $p_star
-#&gt;  [1] 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
+#&gt; $rel_p_ICU
+#&gt; , , 1
 #&gt; 
-#&gt; $p_C
-#&gt;  [1] 0.1809000 0.1809000 0.1809000 0.1809000 0.2241000 0.2241000 0.2241000
-#&gt;  [8] 0.2241000 0.3054000 0.3054000 0.3054000 0.3054000 0.3546000 0.3546000
-#&gt; [15] 0.3546000 0.3546000 0.6456000 0.2810625 0.6456000
-#&gt; 
-#&gt; $p_G_D
 #&gt;       [,1]
-#&gt;  [1,]  0.0
-#&gt;  [2,]  0.0
-#&gt;  [3,]  0.0
-#&gt;  [4,]  0.0
-#&gt;  [5,]  0.0
-#&gt;  [6,]  0.0
-#&gt;  [7,]  0.0
-#&gt;  [8,]  0.0
-#&gt;  [9,]  0.0
-#&gt; [10,]  0.0
-#&gt; [11,]  0.0
-#&gt; [12,]  0.0
-#&gt; [13,]  0.0
-#&gt; [14,]  0.0
-#&gt; [15,]  0.0
-#&gt; [16,]  0.0
-#&gt; [17,]  0.0
-#&gt; [18,]  0.0
-#&gt; [19,]  0.7
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
 #&gt; 
-#&gt; $p_H_D
-#&gt;            [,1]
-#&gt;  [1,] 0.1258933
-#&gt;  [2,] 0.1226134
-#&gt;  [3,] 0.1356729
-#&gt;  [4,] 0.1526679
-#&gt;  [5,] 0.1743031
-#&gt;  [6,] 0.1941879
-#&gt;  [7,] 0.2093617
-#&gt;  [8,] 0.2244326
-#&gt;  [9,] 0.2370135
-#&gt; [10,] 0.2578281
-#&gt; [11,] 0.2908746
-#&gt; [12,] 0.3207640
-#&gt; [13,] 0.3625638
-#&gt; [14,] 0.3909655
-#&gt; [15,] 0.4211515
-#&gt; [16,] 0.4475459
-#&gt; [17,] 0.4820000
-#&gt; [18,] 0.2621283
-#&gt; [19,] 0.4820000
 #&gt; 
-#&gt; $p_ICU_D
-#&gt;            [,1]
-#&gt;  [1,] 0.5234896
-#&gt;  [2,] 0.5234896
-#&gt;  [3,] 0.5234896
-#&gt;  [4,] 0.5234896
-#&gt;  [5,] 0.5234896
-#&gt;  [6,] 0.5234896
-#&gt;  [7,] 0.5234896
-#&gt;  [8,] 0.5234896
-#&gt;  [9,] 0.5234896
-#&gt; [10,] 0.5234896
-#&gt; [11,] 0.5234896
-#&gt; [12,] 0.5234896
-#&gt; [13,] 0.5234896
-#&gt; [14,] 0.5234896
-#&gt; [15,] 0.5234896
-#&gt; [16,] 0.5234896
-#&gt; [17,] 0.5234896
-#&gt; [18,] 0.5234896
-#&gt; [19,] 0.5234896
+#&gt; $rel_p_ICU_D
+#&gt; , , 1
 #&gt; 
-#&gt; $p_W_D
 #&gt;       [,1]
-#&gt;  [1,] 0.05
-#&gt;  [2,] 0.05
-#&gt;  [3,] 0.05
-#&gt;  [4,] 0.05
-#&gt;  [5,] 0.05
-#&gt;  [6,] 0.05
-#&gt;  [7,] 0.05
-#&gt;  [8,] 0.05
-#&gt;  [9,] 0.05
-#&gt; [10,] 0.05
-#&gt; [11,] 0.05
-#&gt; [12,] 0.05
-#&gt; [13,] 0.05
-#&gt; [14,] 0.05
-#&gt; [15,] 0.05
-#&gt; [16,] 0.05
-#&gt; [17,] 0.05
-#&gt; [18,] 0.05
-#&gt; [19,] 0.05
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
 #&gt; 
-#&gt; $p_ICU
-#&gt;  [1] 0.11845387 0.11845387 0.11845387 0.11845387 0.11845387 0.11845387
-#&gt;  [7] 0.11845387 0.12551064 0.14091042 0.17595537 0.24437611 0.35243489
-#&gt; [13] 0.52779221 0.72404472 0.18197685 0.05439050 0.01673267 0.22548592
-#&gt; [19] 0.01673267
+#&gt; 
+#&gt; $rel_p_H_D
+#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; 
+#&gt; $rel_p_W_D
+#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; 
+#&gt; $rel_p_G_D
+#&gt; , , 1
+#&gt; 
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; 
+#&gt; 
+#&gt; $rel_gamma_E
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_A
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_P
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_C_1
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_C_2
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_ICU_pre
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_H_D
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_H_R
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_ICU_D
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_ICU_W_D
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_ICU_W_R
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_W_D
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_W_R
+#&gt; [1] 1
+#&gt; 
+#&gt; $rel_gamma_G_D
+#&gt; [1] 1
 #&gt; 
 #&gt; $p_sero_pos
 #&gt;  [1] 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394
 #&gt;  [8] 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394
 #&gt; [15] 0.8212394 0.8212394 0.8212394 0.8212394 0.8212394
 #&gt; 
-#&gt; $p_H
-#&gt;  [1] 0.000632689 0.000539148 0.000995640 0.002035807 0.004545371 0.008748134
-#&gt;  [7] 0.013802147 0.019850725 0.024607803 0.032822485 0.049084367 0.061571007
-#&gt; [13] 0.086379194 0.099452536 0.124208801 0.150169192 0.153030303 0.037108233
-#&gt; [19] 0.153030303
+#&gt; $p_C_step
+#&gt;        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]
+#&gt; [1,] 0.1809 0.1809 0.1809 0.1809 0.2241 0.2241 0.2241 0.2241 0.3054 0.3054
+#&gt;       [,11]  [,12]  [,13]  [,14]  [,15]  [,16]  [,17]     [,18]  [,19]
+#&gt; [1,] 0.3054 0.3054 0.3546 0.3546 0.3546 0.3546 0.6456 0.2810625 0.6456
 #&gt; 
-#&gt; $psi_H
-#&gt;  [1] 0.004134403 0.003523145 0.006506162 0.013303293 0.029702424 0.057166024
-#&gt;  [7] 0.090192248 0.129717609 0.160803465 0.214483565 0.320749329 0.402345194
-#&gt; [13] 0.564458100 0.649887859 0.811661472 0.981303631 1.000000000 0.242489442
-#&gt; [19] 1.000000000
+#&gt; $n_p_C_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $p_H_step
-#&gt; [1] 0.1530303
+#&gt;             [,1]        [,2]       [,3]        [,4]        [,5]        [,6]
+#&gt; [1,] 0.000632689 0.000539148 0.00099564 0.002035807 0.004545371 0.008748134
+#&gt;            [,7]       [,8]      [,9]      [,10]      [,11]      [,12]
+#&gt; [1,] 0.01380215 0.01985072 0.0246078 0.03282248 0.04908437 0.06157101
+#&gt;           [,13]      [,14]     [,15]     [,16]     [,17]      [,18]     [,19]
+#&gt; [1,] 0.08637919 0.09945254 0.1242088 0.1501692 0.1530303 0.03710823 0.1530303
 #&gt; 
-#&gt; $psi_ICU
-#&gt;  [1] 0.16360021 0.16360021 0.16360021 0.16360021 0.16360021 0.16360021
-#&gt;  [7] 0.16360021 0.17334653 0.19461564 0.24301727 0.33751521 0.48675845
-#&gt; [13] 0.72894974 1.00000000 0.25133371 0.07512036 0.02311000 0.31142541
-#&gt; [19] 0.02311000
+#&gt; $n_p_H_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $p_ICU_step
-#&gt; [1] 0.7240447
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] 0.1184539 0.1184539 0.1184539 0.1184539 0.1184539 0.1184539 0.1184539
+#&gt;           [,8]      [,9]     [,10]     [,11]     [,12]     [,13]     [,14]
+#&gt; [1,] 0.1255106 0.1409104 0.1759554 0.2443761 0.3524349 0.5277922 0.7240447
+#&gt;          [,15]     [,16]      [,17]     [,18]      [,19]
+#&gt; [1,] 0.1819768 0.0543905 0.01673267 0.2254859 0.01673267
 #&gt; 
-#&gt; $psi_ICU_D
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
-#&gt; 
-#&gt; $p_ICU_D_step
-#&gt;           [,1]
-#&gt; [1,] 0.5234896
-#&gt; 
-#&gt; $psi_H_D
-#&gt;            [,1]
-#&gt;  [1,] 0.2611893
-#&gt;  [2,] 0.2543846
-#&gt;  [3,] 0.2814790
-#&gt;  [4,] 0.3167383
-#&gt;  [5,] 0.3616246
-#&gt;  [6,] 0.4028795
-#&gt;  [7,] 0.4343604
-#&gt;  [8,] 0.4656277
-#&gt;  [9,] 0.4917293
-#&gt; [10,] 0.5349130
-#&gt; [11,] 0.6034743
-#&gt; [12,] 0.6654854
-#&gt; [13,] 0.7522070
-#&gt; [14,] 0.8111317
-#&gt; [15,] 0.8737583
-#&gt; [16,] 0.9285184
-#&gt; [17,] 1.0000000
-#&gt; [18,] 0.5438346
-#&gt; [19,] 1.0000000
+#&gt; $n_p_ICU_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $p_H_D_step
-#&gt;       [,1]
-#&gt; [1,] 0.482
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] 0.1258933 0.1226134 0.1356729 0.1526679 0.1743031 0.1941879 0.2093617
+#&gt;           [,8]      [,9]     [,10]     [,11]    [,12]     [,13]     [,14]
+#&gt; [1,] 0.2244326 0.2370135 0.2578281 0.2908746 0.320764 0.3625638 0.3909655
+#&gt;          [,15]     [,16] [,17]     [,18] [,19]
+#&gt; [1,] 0.4211515 0.4475459 0.482 0.2621283 0.482
 #&gt; 
-#&gt; $psi_W_D
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
+#&gt; $n_p_H_D_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $p_ICU_D_step
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896
+#&gt;           [,8]      [,9]     [,10]     [,11]     [,12]     [,13]     [,14]
+#&gt; [1,] 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896
+#&gt;          [,15]     [,16]     [,17]     [,18]     [,19]
+#&gt; [1,] 0.5234896 0.5234896 0.5234896 0.5234896 0.5234896
+#&gt; 
+#&gt; $n_p_ICU_D_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $p_W_D_step
-#&gt;      [,1]
-#&gt; [1,] 0.05
+#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14]
+#&gt; [1,] 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05  0.05  0.05  0.05  0.05  0.05
+#&gt;      [,15] [,16] [,17] [,18] [,19]
+#&gt; [1,]  0.05  0.05  0.05  0.05  0.05
 #&gt; 
-#&gt; $psi_G_D
-#&gt;       [,1]
-#&gt;  [1,]    0
-#&gt;  [2,]    0
-#&gt;  [3,]    0
-#&gt;  [4,]    0
-#&gt;  [5,]    0
-#&gt;  [6,]    0
-#&gt;  [7,]    0
-#&gt;  [8,]    0
-#&gt;  [9,]    0
-#&gt; [10,]    0
-#&gt; [11,]    0
-#&gt; [12,]    0
-#&gt; [13,]    0
-#&gt; [14,]    0
-#&gt; [15,]    0
-#&gt; [16,]    0
-#&gt; [17,]    0
-#&gt; [18,]    0
-#&gt; [19,]    1
+#&gt; $n_p_W_D_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $p_G_D_step
-#&gt;      [,1]
-#&gt; [1,]  0.7
+#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14]
+#&gt; [1,] 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05  0.05  0.05  0.05  0.05  0.05
+#&gt;      [,15] [,16] [,17] [,18] [,19]
+#&gt; [1,]  0.05  0.05  0.05  0.05  0.05
 #&gt; 
-#&gt; $psi_star
-#&gt;  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+#&gt; $n_p_G_D_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $p_star_step
-#&gt; [1] 0.2
+#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14]
+#&gt; [1,]  0.2  0.2  0.2  0.2  0.2  0.2  0.2  0.2  0.2   0.2   0.2   0.2   0.2   0.2
+#&gt;      [,15] [,16] [,17] [,18] [,19]
+#&gt; [1,]   0.2   0.2   0.2   0.2   0.2
+#&gt; 
+#&gt; $n_p_star_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $k_E
 #&gt; [1] 2
@@ -956,48 +961,6 @@ just before the model is run.</p>
 #&gt; $k_PCR_pos
 #&gt; [1] 2
 #&gt; 
-#&gt; $gamma_E
-#&gt; [1] 0.5847953
-#&gt; 
-#&gt; $gamma_A
-#&gt; [1] 0.3472222
-#&gt; 
-#&gt; $gamma_P
-#&gt; [1] 0.5952381
-#&gt; 
-#&gt; $gamma_C_1
-#&gt; [1] 0.4672897
-#&gt; 
-#&gt; $gamma_C_2
-#&gt; [1] 0.5376344
-#&gt; 
-#&gt; $gamma_G_D
-#&gt; [1] 0.6666667
-#&gt; 
-#&gt; $gamma_H_D
-#&gt; [1] 0.4
-#&gt; 
-#&gt; $gamma_H_R
-#&gt; [1] 0.2
-#&gt; 
-#&gt; $gamma_ICU_D
-#&gt; [1] 0.4
-#&gt; 
-#&gt; $gamma_ICU_W_R
-#&gt; [1] 0.2
-#&gt; 
-#&gt; $gamma_ICU_W_D
-#&gt; [1] 0.2
-#&gt; 
-#&gt; $gamma_ICU_pre
-#&gt; [1] 2
-#&gt; 
-#&gt; $gamma_W_R
-#&gt; [1] 0.4
-#&gt; 
-#&gt; $gamma_W_D
-#&gt; [1] 0.4
-#&gt; 
 #&gt; $gamma_sero_pre_1
 #&gt; [1] 0.2
 #&gt; 
@@ -1016,29 +979,89 @@ just before the model is run.</p>
 #&gt; $gamma_PCR_pos
 #&gt; [1] 0.2
 #&gt; 
-#&gt; $gamma_H_R_step
-#&gt; [1] 0.2
+#&gt; $gamma_E_step
+#&gt; [1] 0.5847953
 #&gt; 
-#&gt; $gamma_W_R_step
-#&gt; [1] 0.4
+#&gt; $n_gamma_E_steps
+#&gt; [1] 1
 #&gt; 
-#&gt; $gamma_ICU_W_R_step
-#&gt; [1] 0.2
+#&gt; $gamma_A_step
+#&gt; [1] 0.3472222
 #&gt; 
-#&gt; $gamma_H_D_step
-#&gt; [1] 0.4
+#&gt; $n_gamma_A_steps
+#&gt; [1] 1
 #&gt; 
-#&gt; $gamma_W_D_step
-#&gt; [1] 0.4
+#&gt; $gamma_P_step
+#&gt; [1] 0.5952381
 #&gt; 
-#&gt; $gamma_ICU_W_D_step
-#&gt; [1] 0.2
+#&gt; $n_gamma_P_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_C_1_step
+#&gt; [1] 0.4672897
+#&gt; 
+#&gt; $n_gamma_C_1_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_C_2_step
+#&gt; [1] 0.5376344
+#&gt; 
+#&gt; $n_gamma_C_2_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_ICU_pre_step
+#&gt; [1] 2
+#&gt; 
+#&gt; $n_gamma_ICU_pre_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $gamma_ICU_D_step
 #&gt; [1] 0.4
 #&gt; 
-#&gt; $gamma_ICU_pre_step
-#&gt; [1] 2
+#&gt; $n_gamma_ICU_D_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_ICU_W_D_step
+#&gt; [1] 0.2
+#&gt; 
+#&gt; $n_gamma_ICU_W_D_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_ICU_W_R_step
+#&gt; [1] 0.2
+#&gt; 
+#&gt; $n_gamma_ICU_W_R_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_H_D_step
+#&gt; [1] 0.4
+#&gt; 
+#&gt; $n_gamma_H_D_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_H_R_step
+#&gt; [1] 0.2
+#&gt; 
+#&gt; $n_gamma_H_R_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_W_D_step
+#&gt; [1] 0.4
+#&gt; 
+#&gt; $n_gamma_W_D_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_W_R_step
+#&gt; [1] 0.4
+#&gt; 
+#&gt; $n_gamma_W_R_steps
+#&gt; [1] 1
+#&gt; 
+#&gt; $gamma_G_D_step
+#&gt; [1] 0.6666667
+#&gt; 
+#&gt; $n_gamma_G_D_steps
+#&gt; [1] 1
 #&gt; 
 #&gt; $n_strains
 #&gt; [1] 1
