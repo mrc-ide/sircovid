@@ -532,7 +532,7 @@ test_that("different strains are equivalent", {
                  deaths_hosp = index[["D_hosp_tot"]],
                  admitted = index[["cum_admit_conf"]],
                  new = index[["cum_new_conf"]],
-                 sero_pos_1 = index[["sero_pos_1"]],
+                 sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                  react_pos = index[["react_pos"]],
@@ -598,7 +598,7 @@ test_that("Swapping strains gives identical results with different index", {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
-          "T_sero_pre_1", "T_sero_pos_1", "T_sero_pre_2", "T_sero_pos_2",
+          "T_sero_pre_1", "T_sero_pre_2", "T_sero_pos_1", "T_sero_pos_2",
           "G_D", "ICU_pre_unconf", "ICU_pre_conf",
           "H_R_unconf", "H_R_conf", "H_D_unconf",
           "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf",
