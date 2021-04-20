@@ -1280,7 +1280,7 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'   the duration in the ICU_D (ICU stay for individuals who die in ICU)
 ##'   compartment. See Details.
 ##'
-##' @param gamma_ICU_W_D Time-varying parameters for the Erlang rate parameter of
+##' @param gamma_ICU_W_D Time-varying parameters for the Erlang rate parameter
 ##'   of the duration in the ICU_W_D (ICU stay for individuals who go on to die
 ##'   in stepdown) compartment. See Details.
 ##'

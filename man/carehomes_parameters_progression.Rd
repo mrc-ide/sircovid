@@ -47,7 +47,7 @@ See Details.}
 the duration in the ICU_D (ICU stay for individuals who die in ICU)
 compartment. See Details.}
 
-\item{gamma_ICU_W_D}{Time-varying parameters for the Erlang rate parameter of
+\item{gamma_ICU_W_D}{Time-varying parameters for the Erlang rate parameter
 of the duration in the ICU_W_D (ICU stay for individuals who go on to die
 in stepdown) compartment. See Details.}
 
