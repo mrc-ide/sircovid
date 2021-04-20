@@ -483,7 +483,6 @@ carehomes_parameters <- function(start_date, region,
 
   c(ret, severity, progression, strain, vaccination, waning, observation,
    sens_and_spec)
-  c(ret, severity, progression, strain, vaccination, waning, observation)
 
 }
 
