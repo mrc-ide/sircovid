@@ -935,11 +935,6 @@ carehomes_parameters_severity <- function(dt,
     if (!is.null(p_CHR_value)) {
       CHR <- TRUE
       p <- p[1:18]
-      if ("date" %in% names(get(paste0(p_name, "_CHR")))) {
-        p_CHR_date <- get(paste0(p_name, "_CHR"))$date
-      } else {
-        p_CHR_date <- NULL
-      }
       if (length(p_CHR_value) == 1L) {
         if (length(p_CHR_date) != 0) {
           stop(sprintf(
