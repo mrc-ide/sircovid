@@ -2027,9 +2027,9 @@ public:
     std::vector<real_t> initial_I_P;
     std::vector<real_t> initial_I_weighted;
     std::vector<real_t> initial_N_tot;
-    real_t initial_N_tot2;
-    real_t initial_N_tot3;
-    real_t initial_N_tot4;
+    real_t initial_N_tot_PCR;
+    real_t initial_N_tot_sero_1;
+    real_t initial_N_tot_sero_2;
     std::vector<real_t> initial_R;
     std::vector<real_t> initial_S;
     std::vector<real_t> initial_T_PCR_neg;
@@ -2474,9 +2474,9 @@ public:
     state[4] = shared->initial_cum_admit_conf;
     state[5] = shared->initial_cum_new_conf;
     state[6] = shared->initial_beta_out;
-    state[7] = shared->initial_N_tot2;
-    state[8] = shared->initial_N_tot4;
-    state[9] = shared->initial_N_tot3;
+    state[7] = shared->initial_N_tot_sero_1;
+    state[8] = shared->initial_N_tot_sero_2;
+    state[9] = shared->initial_N_tot_PCR;
     state[10] = shared->initial_ICU_tot;
     state[11] = shared->initial_general_tot;
     state[12] = shared->initial_hosp_tot;
@@ -2614,8 +2614,8 @@ public:
     const real_t sympt_cases_over25_inc = state[26];
     const real_t sympt_cases_non_variant_over25_inc = state[27];
     const real_t * vaccine_missed_doses = state + shared->offset_variable_vaccine_missed_doses;
-    state_next[7] = odin_sum1<real_t>(S, 0, shared->dim_S) + odin_sum1<real_t>(T_sero_pre_1, 0, shared->dim_T_sero_pre_1) + odin_sum1<real_t>(T_sero_pos_1, 0, shared->dim_T_sero_pos_1) + odin_sum1<real_t>(T_sero_neg_1, 0, shared->dim_T_sero_neg_1) + odin_sum1<real_t>(E, 0, shared->dim_E);
     state_next[9] = odin_sum1<real_t>(S, 0, shared->dim_S) + odin_sum1<real_t>(T_PCR_pre, 0, shared->dim_T_PCR_pre) + odin_sum1<real_t>(T_PCR_pos, 0, shared->dim_T_PCR_pos) + odin_sum1<real_t>(T_PCR_neg, 0, shared->dim_T_PCR_neg);
+    state_next[7] = odin_sum1<real_t>(S, 0, shared->dim_S) + odin_sum1<real_t>(T_sero_pre_1, 0, shared->dim_T_sero_pre_1) + odin_sum1<real_t>(T_sero_pos_1, 0, shared->dim_T_sero_pos_1) + odin_sum1<real_t>(T_sero_neg_1, 0, shared->dim_T_sero_neg_1) + odin_sum1<real_t>(E, 0, shared->dim_E);
     state_next[8] = odin_sum1<real_t>(S, 0, shared->dim_S) + odin_sum1<real_t>(T_sero_pre_2, 0, shared->dim_T_sero_pre_2) + odin_sum1<real_t>(T_sero_pos_2, 0, shared->dim_T_sero_pos_2) + odin_sum1<real_t>(T_sero_neg_2, 0, shared->dim_T_sero_neg_2) + odin_sum1<real_t>(E, 0, shared->dim_E);
     real_t beta = (static_cast<int>(step) >= shared->dim_beta_step ? shared->beta_step[shared->dim_beta_step - 1] : shared->beta_step[step + 1 - 1]);
     real_t strain_rate = ((static_cast<int>(step) >= shared->dim_strain_seed_step ? shared->strain_seed_step[shared->dim_strain_seed_step - 1] : shared->strain_seed_step[step + 1 - 1]));
@@ -4781,9 +4781,9 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_D_hosp_tot = 0;
   shared->initial_D_tot = 0;
   shared->initial_ICU_tot = 0;
-  shared->initial_N_tot2 = 0;
-  shared->initial_N_tot3 = 0;
-  shared->initial_N_tot4 = 0;
+  shared->initial_N_tot_PCR = 0;
+  shared->initial_N_tot_sero_1 = 0;
+  shared->initial_N_tot_sero_2 = 0;
   shared->initial_admit_conf_inc = 0;
   shared->initial_cum_admit_conf = 0;
   shared->initial_cum_infections = 0;
@@ -7168,7 +7168,7 @@ template <>
 cpp11::sexp dust_info<carehomes>(const dust::pars_t<carehomes>& pars) {
   const carehomes::internal_t internal = pars.internal;
   const std::shared_ptr<const carehomes::shared_t> shared = pars.shared;
-  cpp11::writable::strings nms({"time", "admit_conf_inc", "new_conf_inc", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot2", "N_tot4", "N_tot3", "ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_comm_inc", "D_carehomes_tot", "D_carehomes_inc", "D_hosp_inc", "D_tot", "sero_pos_1", "sero_pos_2", "cum_sympt_cases", "cum_sympt_cases_over25", "cum_sympt_cases_non_variant_over25", "sympt_cases_inc", "sympt_cases_over25_inc", "sympt_cases_non_variant_over25_inc", "react_pos", "cum_infections_per_strain", "D_hosp", "D_non_hosp", "cum_admit_by_age", "N_tot", "prob_strain", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_I_P_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "diagnoses_admitted", "D", "S", "I_weighted", "vaccine_missed_doses", "tmp_vaccine_n_candidates", "tmp_vaccine_probability", "T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg", "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre_1", "T_sero_pos_1", "T_sero_pre_2", "T_sero_pos_2", "T_PCR_pre", "T_PCR_pos"});
+  cpp11::writable::strings nms({"time", "admit_conf_inc", "new_conf_inc", "cum_infections", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot_sero_1", "N_tot_sero_2", "N_tot_PCR", "ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_comm_tot", "D_comm_inc", "D_carehomes_tot", "D_carehomes_inc", "D_hosp_inc", "D_tot", "sero_pos_1", "sero_pos_2", "cum_sympt_cases", "cum_sympt_cases_over25", "cum_sympt_cases_non_variant_over25", "sympt_cases_inc", "sympt_cases_over25_inc", "sympt_cases_non_variant_over25_inc", "react_pos", "cum_infections_per_strain", "D_hosp", "D_non_hosp", "cum_admit_by_age", "N_tot", "prob_strain", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_I_P_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "diagnoses_admitted", "D", "S", "I_weighted", "vaccine_missed_doses", "tmp_vaccine_n_candidates", "tmp_vaccine_probability", "T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg", "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre_1", "T_sero_pos_1", "T_sero_pre_2", "T_sero_pos_2", "T_PCR_pre", "T_PCR_pos"});
   cpp11::writable::list dim(80);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});

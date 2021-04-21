@@ -217,7 +217,7 @@ test_that("Second less virulent strain does not take over", {
 })
 
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
+test_that("N_tot, N_tot_sero_1 and N_tot_PCR stay constant with second strain and no
           waning immunity - no superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
@@ -237,16 +237,16 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+  expect_true(all(y$N_tot_sero_1 - mod$transform_variables(y0)$N_tot_sero_1 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
 })
 
 
 test_that("N_tot, is constant with second strain and waning immunity, while
-          N_tot2 and N_tot3 are non-decreasing - superinfection", {
+          N_tot_sero_1 and N_tot_PCR are non-decreasing - superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
   n_seeded_new_strain_inf <- 100
@@ -267,15 +267,15 @@ test_that("N_tot, is constant with second strain and waning immunity, while
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot3) >= 0))
-  expect_true(all(diff(y$N_tot2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
 test_that("N_tot, is constant with second strain and waning immunity, while
-          N_tot2 and N_tot3 are non-decreasing - no superinfection", {
+          N_tot_sero_1 and N_tot_PCR are non-decreasing - no superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
   n_seeded_new_strain_inf <- 100
@@ -295,11 +295,11 @@ test_that("N_tot, is constant with second strain and waning immunity, while
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot3) >= 0))
-  expect_true(all(diff(y$N_tot2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
 

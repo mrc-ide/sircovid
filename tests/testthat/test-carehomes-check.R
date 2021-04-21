@@ -1,6 +1,6 @@
 context("carehomes (check)")
 
-test_that("N_tot, N_tot2, N_tot3 and N_tot4 stay constant without waning
+test_that("N_tot, N_tot_sero_1, N_tot_PCR and N_tot_sero_2 stay constant without waning
           immunity", {
   ## waning_rate default is 0
   p <- carehomes_parameters(0, "uk")
@@ -11,17 +11,17 @@ test_that("N_tot, N_tot2, N_tot3 and N_tot4 stay constant without waning
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot4 - mod$transform_variables(y0)$N_tot4 == 0))
-  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
+  expect_true(all(y$N_tot_sero_2 - mod$transform_variables(y0)$N_tot_sero_2 == 0))
+  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+  expect_true(all(y$N_tot_sero_1 - mod$transform_variables(y0)$N_tot_sero_1 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot4 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
 })
 
-test_that("N_tot stays constant with waning immuity, while N_tot2, N_tot3 and
-          N_tot4 are non-decreasing", {
+test_that("N_tot stays constant with waning immuity, while N_tot_sero_1, N_tot_PCR and
+          N_tot_sero_2 are non-decreasing", {
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -30,13 +30,13 @@ test_that("N_tot stays constant with waning immuity, while N_tot2, N_tot3 and
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot4) >= 0))
-  expect_true(all(diff(y$N_tot3) >= 0))
-  expect_true(all(diff(y$N_tot2) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot4))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
 })
 
 

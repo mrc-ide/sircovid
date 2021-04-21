@@ -1556,17 +1556,17 @@ update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + D_hosp[i] + sum(E[i, , , ]) +
 dim(N_tot) <- n_groups
 
 ## Total population calculated with seroconversion flow
-initial(N_tot2) <- 0
-update(N_tot2) <- sum(S) + sum(T_sero_pre_1) +
+initial(N_tot_sero_1) <- 0
+update(N_tot_sero_1) <- sum(S) + sum(T_sero_pre_1) +
   sum(T_sero_pos_1) + sum(T_sero_neg_1) + sum(E)
 
-initial(N_tot4) <- 0
-update(N_tot4) <- sum(S) + sum(T_sero_pre_2) +
+initial(N_tot_sero_2) <- 0
+update(N_tot_sero_2) <- sum(S) + sum(T_sero_pre_2) +
   sum(T_sero_pos_2) + sum(T_sero_neg_2) + sum(E)
 
 ## Total population calculated with PCR flow
-initial(N_tot3) <- 0
-update(N_tot3) <- sum(S) + sum(T_PCR_pre) + sum(T_PCR_pos) + sum(T_PCR_neg)
+initial(N_tot_PCR) <- 0
+update(N_tot_PCR) <- sum(S) + sum(T_PCR_pre) + sum(T_PCR_pos) + sum(T_PCR_neg)
 
 ## Aggregate our reporting statistics by summing across age (simple
 ## for everything except for seropositivity data, done last)
