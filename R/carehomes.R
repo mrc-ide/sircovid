@@ -1062,8 +1062,8 @@ carehomes_initial <- function(info, n_particles, pars) {
   index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
   index_N_tot_sero_1 <- index[["N_tot_sero_1"]][[1L]]
-  index_N_tot_PCR <- index[["N_tot_PCR"]][[1L]]
   index_N_tot_sero_2 <- index[["N_tot_sero_2"]][[1L]]
+  index_N_tot_PCR <- index[["N_tot_PCR"]][[1L]]
 
   index_S <- index[["S"]]
   index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
@@ -1085,8 +1085,8 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot_sero_1] <- sum(pars$N_tot)
-  state[index_N_tot_PCR] <- sum(pars$N_tot)
   state[index_N_tot_sero_2] <- sum(pars$N_tot)
+  state[index_N_tot_PCR] <- sum(pars$N_tot)
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
 
   list(state = state,
