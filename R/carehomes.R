@@ -1547,7 +1547,7 @@ carehomes_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
                                                pillar2_sensitivity = 0.99,
                                                react_specificity = 0.99,
                                                react_sensitivity = 0.99) {
-  list(
+  ret <- list(
     ## Specificity and sensitivity for serology tests
     sero_specificity_1 = sero_specificity_1,
     sero_sensitivity_1 = sero_sensitivity_1,
@@ -1559,6 +1559,11 @@ carehomes_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
     ## Specificity and sensitivity for REACT testing
     react_specificity = react_specificity,
     react_sensitivity = react_sensitivity)
+
+  lapply(seq_len(length(ret)),
+         function(i) assert_proportion(ret[i], names(ret)[i]))
+
+  ret
 }
 
 
