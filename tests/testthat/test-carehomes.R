@@ -199,8 +199,9 @@ test_that("can run the particle filter on the model 2", {
                          start_date, pars$dt)
 
   np <- 50
-  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE)
-  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE)
+  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE,
+                                   seed = 1)
+  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE, seed = 1)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
   expect_lt(abs(ll1 - ll2), 60)
