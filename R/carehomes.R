@@ -604,7 +604,6 @@ carehomes_index <- function(info) {
                                  paste0("prob_strain", strain_type))
 
   ## R follows age, strains, vacc_class
-  ## FIXME (RS) - ORDERING NEEDS TESTING
   suffixes <- expand.grid(
     suffix,
     c("", sprintf("_%s", seq_len(n_strains * 2 - 1L))),
