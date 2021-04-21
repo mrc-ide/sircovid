@@ -1,4 +1,4 @@
-# sircovid 0.10.38
+# sircovid 0.10.39
 
 * Added ability to fit 2nd serology assay with different serology parameters
 
