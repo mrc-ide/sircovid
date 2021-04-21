@@ -1241,8 +1241,7 @@ test_that("IFR_t modified if rel_p_hosp_if_sympt is not 1", {
 })
 
 
-test_that("N_tot, N_tot_sero_1 and N_tot_PCR stay constant with vaccination and no waning
-          immunity", {
+test_that("N_tots stay constant with vaccination and no waning immunity", {
   ## waning_rate default is 0
   set.seed(1)
   vaccine_schedule <- test_vaccine_schedule(500000, "london")
@@ -1260,16 +1259,20 @@ test_that("N_tot, N_tot_sero_1 and N_tot_PCR stay constant with vaccination and 
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
-  expect_true(all(y$N_tot_sero_1 - mod$transform_variables(y0)$N_tot_sero_1 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(y$N_tot_sero_1 -
+                    mod$transform_variables(y0)$N_tot_sero_1 == 0))
+  expect_true(all(y$N_tot_sero_2 -
+                    mod$transform_variables(y0)$N_tot_sero_2 == 0))
+  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
   expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
   expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
 })
 
 
 test_that("N_tot stays constant with vaccination and waning immunity, while
-          N_tot_sero_1 and N_tot_PCR are non-decreasing", {
+          sero and PCR N_tots are non-decreasing", {
   set.seed(1)
   vaccine_schedule <- test_vaccine_schedule(500000, "london")
   p <- carehomes_parameters(0, "london", waning_rate = 1 / 20,
@@ -1286,16 +1289,18 @@ test_that("N_tot stays constant with vaccination and waning immunity, while
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  eexpect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
   expect_true(all(diff(y$N_tot_sero_1) >= 0))
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
   expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
   expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
 
-test_that("N_tot, N_tot_sero_1, N_tot3 are constant with vaccination and k > 1, and
-          without waning immunity", {
+test_that("N_tots are constant with vaccination and k > 1, and without waning
+          immunity", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   set.seed(1)
@@ -1316,16 +1321,20 @@ test_that("N_tot, N_tot_sero_1, N_tot3 are constant with vaccination and k > 1, 
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-  expect_true(all(y$N_tot_sero_1 - mod$transform_variables(y0)$N_tot_sero_1 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(y$N_tot_sero_1 -
+                    mod$transform_variables(y0)$N_tot_sero_1 == 0))
+  expect_true(all(y$N_tot_sero_2 -
+                    mod$transform_variables(y0)$N_tot_sero_2 == 0))
+  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
   expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
 })
 
 
 test_that("N_tot stays constant with vaccination and k > 1, and with waning
-          immunity, while N_tot_sero_1 and N_tot3 are non-decreasing", {
+          immunity, while sero and PCR N_tots are non-decreasing", {
   set.seed(1)
   vaccine_schedule <- test_vaccine_schedule(500000, "london")
   p <- carehomes_parameters(0, "london", waning_rate = 1 / 20,
@@ -1344,16 +1353,17 @@ test_that("N_tot stays constant with vaccination and k > 1, and with waning
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot3) >= 0))
-  expect_true(all(diff(y$N_tot_sero_1) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
   expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
-test_that(
-  "N_tot, N_tot_sero_1 and N_tot3 stay constant with high rates of vaccination and
-  without waning immunity", {
+test_that("N_tots stay constant with high rates of vaccination and without
+          waning immunity", {
     ## waning_rate default is 0
     set.seed(1)
     ## TODO: set up a more specific set of tests to test the combined moves
@@ -1374,16 +1384,20 @@ test_that(
     mod$set_state(carehomes_initial(info, 1, p)$state)
     y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-    expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-    expect_true(all(y$N_tot_sero_1 - mod$transform_variables(y0)$N_tot_sero_1 == 0))
     expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+    expect_true(all(y$N_tot_sero_1 -
+                      mod$transform_variables(y0)$N_tot_sero_1 == 0))
+    expect_true(all(y$N_tot_sero_2 -
+                      mod$transform_variables(y0)$N_tot_sero_2 == 0))
+    expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
     expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
-    expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+    expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
+    expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
   })
 
 test_that(
   "N_tot is constant with high rates of vaccination and waning immunity, while
-  N_tot_sero_1 and N_tot3 are non-decreasing", {
+  sero and PCR N_tots are non-decreasing", {
     ## waning_rate default is 0
     set.seed(1)
     ## TODO: set up a more specific set of tests to test the combined moves
@@ -1404,11 +1418,13 @@ test_that(
     mod$set_state(carehomes_initial(info, 1, p)$state)
     y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-    expect_true(all(diff(y$N_tot3) >= 0))
-    expect_true(all(diff(y$N_tot_sero_1) >= 0))
     expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+    expect_true(all(diff(y$N_tot_sero_1) >= 0))
+    expect_true(all(diff(y$N_tot_sero_2) >= 0))
+    expect_true(all(diff(y$N_tot_PCR) >= 0))
     expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-    expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+    expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+    expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
   })
 
 test_that("Outputed vaccination numbers make sense", {

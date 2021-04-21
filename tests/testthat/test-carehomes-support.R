@@ -461,7 +461,7 @@ test_that("Can compute initial conditions", {
 
   expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
   expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
-  expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
@@ -482,7 +482,7 @@ test_that("Can compute initial conditions", {
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 3 (N_tot_sero_1 + N_tot_PCR + N_tot_sero_2)
+  ## * 3 (N_tot_sero_2 + N_tot_PCR + N_tot_sero_2)
   ## * 2 (I_A[4] + I_weighted[4])
   ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
   expect_equal(sum(initial$state != 0), 48)
@@ -505,7 +505,7 @@ test_that("Can control the seeding", {
 
   expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
   expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
-  expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
@@ -524,7 +524,7 @@ test_that("Can control the seeding", {
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 3 (N_tot_sero_1 + N_tot_PCR + Ntot4)
+  ## * 3 (N_tot_sero_2 + N_tot_PCR + Ntot4)
   ## * 2 (I_A[4] + I_weighted[4])
   ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
   expect_equal(sum(initial$state != 0), 48)
