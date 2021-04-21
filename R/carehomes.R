@@ -607,7 +607,7 @@ carehomes_index <- function(info) {
   ## FIXME (RS) - ORDERING NEEDS TESTING
   suffixes <- expand.grid(
     suffix,
-    c("", sprintf("_%s", seq_len(n_strains - 1L))),
+    c("", sprintf("_%s", seq_len(n_strains * 2 - 1L))),
     c("", sprintf("_%s", seq_len(n_vacc_classes - 1L)))
   )
   r_type <- apply(suffixes, 1,
