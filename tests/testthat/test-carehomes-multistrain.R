@@ -1941,6 +1941,8 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             cross_immunity = 0)
   p$strain_transmission[] <- 1e8
+  ## set p_C to 0 so that individuals move to R quickly
+  p$p_C_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
