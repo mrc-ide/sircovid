@@ -586,9 +586,15 @@ carehomes_index <- function(info) {
                                  paste0("prob_strain", strain_type))
 
   ## R follows age, strains, vacc_class
+  if (n_strains == 2) {
+    n_tot_strains <- 4
+  } else {
+    n_tot_strains <- 1
+  }
+
   suffixes <- expand.grid(
     suffix,
-    c("", sprintf("_%s", seq_len(n_strains * 2 - 1L))),
+    c("", sprintf("_%s", seq_len(n_tot_strains - 1L))),
     c("", sprintf("_%s", seq_len(n_vacc_classes - 1L)))
   )
   r_type <- apply(suffixes, 1,
