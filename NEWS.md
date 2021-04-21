@@ -1,3 +1,7 @@
+# sircovid 0.10.39
+
+* Added ability to fit 2nd serology assay with different serology parameters
+
 # sircovid 0.10.37
 
 * Added ability to directly set time-varying severity and progression parameters in `carehomes_parameters_progression` and `carehomes_parameters_severity`.

@@ -10,18 +10,13 @@ carehomes_parameters(
   beta_date = NULL,
   beta_value = NULL,
   severity = NULL,
-  sero_specificity = 0.9,
-  sero_sensitivity = 0.99,
   progression = NULL,
   observation = NULL,
+  sens_and_spec = NULL,
   initial_I = 10,
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
-  pillar2_specificity = 0.99,
-  pillar2_sensitivity = 0.99,
-  react_specificity = 0.99,
-  react_sensitivity = 0.99,
   p_NC = 0.01,
   strain_transmission = 1,
   strain_seed_date = NULL,
@@ -76,15 +71,16 @@ data) or a list (for data that has already been processed by
 via the markovid package, and needs to be carefully calibrated
 with the progression parameters.}
 
-\item{sero_specificity}{Specificity of the serology test}
-
-\item{sero_sensitivity}{Sensitivity of the serology test}
-
 \item{progression}{Progression data}
 
 \item{observation}{Either \code{NULL} or a list of observation parameters. If
 \code{NULL}, then a list of observation parameters will be generated using
 \code{carehomes_parameters_observation(exp_noise)}}
+
+\item{sens_and_spec}{Either \code{NULL} or a list of diagnostic test sensitivity
+and specificity parameters. If \code{NULL}, then a list of sensitivity and
+specificity parameters will be generated using
+\code{carehomes_parameters_sens_and_spec()}}
 
 \item{initial_I}{Initial number of infected indidviduals; these
 will enter the model as asymptomatic 15-19 year olds at
@@ -96,14 +92,6 @@ will enter the model as asymptomatic 15-19 year olds at
 residents or workers}
 
 \item{m_CHR}{Contact rate between carehome residents}
-
-\item{pillar2_specificity}{Specificity of the Pillar 2 test}
-
-\item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
-
-\item{react_specificity}{Specificity of the REACT test}
-
-\item{react_sensitivity}{Sensitivity of the REACT test}
 
 \item{p_NC}{Proportion of population who do not have
 covid but have covid-like symptoms}

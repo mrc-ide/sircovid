@@ -8,9 +8,9 @@ reference_data_mcmc <- function() {
     data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
                           start_date, pars$dt)
     v <- c("deaths_comm", "deaths", "deaths_carehomes", "deaths_non_hosp",
-           "general", "hosp", "admitted",
-           "diagnoses", "all_admission", "npos_15_64", "ntot_15_64",
-           "pillar2_pos", "pillar2_tot", "pillar2_cases",
+           "general", "hosp", "admitted", "diagnoses", "all_admission",
+           "sero_pos_15_64_1", "sero_tot_15_64_1", "sero_pos_15_64_2",
+           "sero_tot_15_64_2", "pillar2_pos", "pillar2_tot", "pillar2_cases",
            "pillar2_over25_pos", "pillar2_over25_tot",
            "pillar2_over25_cases", "react_pos", "react_tot",
            "strain_non_variant", "strain_tot")

@@ -6,11 +6,12 @@ test_that("carehomes progression parameters", {
     names(p),
     c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
-      "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E_step",
-      "gamma_A_step", "gamma_P_step", "gamma_C_1_step", "gamma_C_2_step",
-      "gamma_G_D_step", "gamma_H_D_step", "gamma_H_R_step", "gamma_ICU_D_step",
-      "gamma_ICU_W_R_step", "gamma_ICU_W_D_step", "gamma_ICU_pre_step",
-      "gamma_W_D_step", "gamma_W_R_step", "gamma_sero_pos",
+      "k_W_R", "k_sero_pre_1", "k_sero_pre_2", "k_sero_pos_1", "k_sero_pos_2",
+      "k_PCR_pos", "k_PCR_pre", "gamma_E_step", "gamma_A_step", "gamma_P_step",
+      "gamma_C_1_step", "gamma_C_2_step", "gamma_G_D_step", "gamma_H_D_step",
+      "gamma_H_R_step", "gamma_ICU_D_step", "gamma_ICU_W_R_step",
+      "gamma_ICU_W_D_step", "gamma_ICU_pre_step", "gamma_W_D_step",
+      "gamma_W_R_step", "gamma_sero_pos_1", "gamma_sero_pos_2",
       "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
       "gamma_PCR_pre", "n_gamma_E_steps", "n_gamma_A_steps", "n_gamma_P_steps",
       "n_gamma_C_1_steps", "n_gamma_C_2_steps", "n_gamma_H_D_steps",
@@ -181,12 +182,16 @@ test_that("carehomes_parameters returns a list of parameters", {
   observation <- carehomes_parameters_observation(1e6)
   expect_identical(p[names(observation)], observation)
 
+  sens_and_spec <- carehomes_parameters_sens_and_spec()
+  expect_identical(p[names(sens_and_spec)], sens_and_spec)
+
   expect_equal(p$N_tot_15_64, sum(p$N_tot[4:13]))
 
   extra <- setdiff(names(p),
                    c("m", names(observation),
                      names(shared), names(progression), names(severity),
-                     names(strain), names(vaccination), names(waning)))
+                     names(strain), names(vaccination), names(waning),
+                     names(sens_and_spec)))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
@@ -195,10 +200,8 @@ test_that("carehomes_parameters returns a list of parameters", {
       "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R", "rel_gamma_ICU_pre",
       "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
       "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
-      "sero_specificity", "sero_sensitivity", "N_tot_15_64",
-      "N_tot_all", "N_tot_over25", "N_tot_react",
-      "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
-      "react_sensitivity", "p_NC", "I_A_transmission", "I_P_transmission",
+      "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
+      "p_NC", "I_A_transmission", "I_P_transmission",
       "I_C_1_transmission", "I_C_2_transmission",
       "n_groups", "initial_I", "cross_immunity"))
 
@@ -402,7 +405,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
     names(index$run),
     c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
-      "sero_pos", "sympt_cases_inc", "sympt_cases_over25_inc",
+      "sero_pos_1", "sero_pos_2", "sympt_cases_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["icu"]],
@@ -419,8 +422,10 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "admit_conf_inc"))
   expect_equal(index$run[["diagnoses_inc"]],
                which(names(info$index) == "new_conf_inc"))
-  expect_equal(index$run[["sero_pos"]],
-               which(names(info$index) == "sero_pos"))
+  expect_equal(index$run[["sero_pos_1"]],
+               which(names(info$index) == "sero_pos_1"))
+  expect_equal(index$run[["sero_pos_2"]],
+               which(names(info$index) == "sero_pos_2"))
   expect_equal(index$run[["sympt_cases_inc"]],
                which(names(info$index) == "sympt_cases_inc"))
   expect_equal(index$run[["sympt_cases_over25_inc"]],
@@ -454,8 +459,9 @@ test_that("Can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
 
-  expect_equal(initial_y$N_tot3, sum(p$N_tot))
-  expect_equal(initial_y$N_tot2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
@@ -464,20 +470,22 @@ test_that("Can compute initial conditions", {
                append(rep(0, 18), 10, after = 3))
   expect_equal(drop(initial_y$I_weighted),
                append(rep(0, 18), p$I_A_transmission * 10, after = 3))
-  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
+               append(rep(0, 18), 10, after = 3))
+  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
-  ## 46 here, derived from;
+  ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 2 (N_tot2 + N_tot3)
+  ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 46)
+  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 48)
 })
 
 
@@ -495,28 +503,31 @@ test_that("Can control the seeding", {
 
   initial_y <- mod$transform_variables(initial$state)
 
-  expect_equal(initial_y$N_tot3, sum(p$N_tot))
-  expect_equal(initial_y$N_tot2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
                p$N_tot)
   expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
+               append(rep(0, 18), 50, after = 3))
+  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$react_pos, 50)
 
-  ## 46 here, derived from;
+  ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 2 (N_tot2 + N_tot3)
+  ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 46)
+  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 48)
 })
 
 
@@ -555,7 +566,8 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp_inc = 3:8,
     admitted_inc = 50:55,
     diagnoses_inc = 60:65,
-    sero_pos = 4:9,
+    sero_pos_1 = 4:9,
+    sero_pos_2 = 14:19,
     sympt_cases_inc = 100:105,
     sympt_cases_over25_inc = 80:85,
     sympt_cases_non_variant_over25_inc = 60:65,
@@ -572,8 +584,10 @@ test_that("carehomes_compare combines likelihood correctly", {
     admitted = 53,
     diagnoses = 63,
     all_admission = 116,
-    npos_15_64 = 43,
-    ntot_15_64 = 83,
+    sero_pos_15_64_1 = 43,
+    sero_tot_15_64_1 = 83,
+    sero_pos_15_64_2 = 58,
+    sero_tot_15_64_2 = 98,
     pillar2_pos = 35,
     pillar2_tot = 600,
     pillar2_cases = 35,
@@ -598,16 +612,17 @@ test_that("carehomes_compare combines likelihood correctly", {
 
   ## This function is more complicated to test than the basic model
   ## because it's not a simple sum
-  nms_sero <- c("npos_15_64", "ntot_15_64")
+  nms_sero_1 <- c("sero_pos_15_64_1", "sero_tot_15_64_1")
+  nms_sero_2 <- c("sero_pos_15_64_2", "sero_tot_15_64_2")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   parts <- c(as.list(setdiff(names(observed),
-                             c(nms_sero, nms_pillar2,
+                             c(nms_sero_1, nms_sero_2, nms_pillar2,
                                nms_pillar2_over25, nms_react, nms_strain))),
-             list(nms_sero), list(nms_pillar2), list(nms_pillar2_over25),
-             list(nms_react), list(nms_strain))
+             list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
+             list(nms_pillar2_over25), list(nms_react), list(nms_strain))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, observed_keep(x), pars))
@@ -681,8 +696,10 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$admitted <- NA
   data$diagnoses <- NA
   data$all_admission <- NA
-  data$npos_15_64 <- NA
-  data$ntot_15_64 <- NA
+  data$sero_pos_15_64_1 <- NA
+  data$sero_tot_15_64_1 <- NA
+  data$sero_pos_15_64_2 <- NA
+  data$sero_tot_15_64_2 <- NA
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
@@ -720,8 +737,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$admitted <- NA
             data$diagnoses <- NA
             data$all_admission <- NA
-            data$npos_15_64 <- NA
-            data$ntot_15_64 <- NA
+            data$sero_pos_15_64_1 <- NA
+            data$sero_tot_15_64_1 <- NA
+            data$sero_pos_15_64_2 <- NA
+            data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
             data$pillar2_cases <- NA
@@ -792,8 +811,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$admitted <- NA
             data$diagnoses <- NA
             data$all_admission <- NA
-            data$npos_15_64 <- NA
-            data$ntot_15_64 <- NA
+            data$sero_pos_15_64_1 <- NA
+            data$sero_tot_15_64_1 <- NA
+            data$sero_pos_15_64_2 <- NA
+            data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
             data$pillar2_cases <- NA

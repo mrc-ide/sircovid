@@ -1,6 +1,6 @@
 context("carehomes (check)")
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant without waning immunity", {
+test_that("N_tots stay constant without waning immunity", {
   ## waning_rate default is 0
   p <- carehomes_parameters(0, "uk")
   mod <- carehomes$new(p, 0, 1)
@@ -10,15 +10,19 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant without waning immunity", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+  expect_true(all(y$N_tot_sero_1 -
+                    mod$transform_variables(y0)$N_tot_sero_1 == 0))
+  expect_true(all(y$N_tot_sero_2 -
+                    mod$transform_variables(y0)$N_tot_sero_2 == 0))
+  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
 })
 
-test_that("N_tot stays constant with waning immuity, while N_tot2 and N_tot3 are
-          non-decreasing", {
+test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
+          are non-decreasing", {
   p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -27,11 +31,13 @@ test_that("N_tot stays constant with waning immuity, while N_tot2 and N_tot3 are
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot3) >= 0))
-  expect_true(all(diff(y$N_tot2) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
 
@@ -118,7 +124,8 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   info <- mod$info()
   y <- carehomes_initial(info, 1, p)$state
   y[info$index$I_A] <- 0
-  y[info$index$T_sero_pre] <- 0
+  y[info$index$T_sero_pre_1] <- 0
+  y[info$index$T_sero_pre_2] <- 0
   y[info$index$T_PCR_pos] <- 0
 
   mod$set_state(y)
@@ -384,7 +391,8 @@ test_that("No one seroconverts if p_sero_pos is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_sero_pos[] <- 0
+  p$p_sero_pos_1[] <- 0
+  p$p_sero_pos_2[] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -392,8 +400,10 @@ test_that("No one seroconverts if p_sero_pos is 0", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(any(y$T_sero_neg > 0))
-  expect_true(all(y$T_sero_pos == 0))
+  expect_true(any(y$T_sero_neg_1 > 0))
+  expect_true(all(y$T_sero_pos_1 == 0))
+  expect_true(any(y$T_sero_neg_2 > 0))
+  expect_true(all(y$T_sero_pos_2 == 0))
 })
 
 
@@ -403,9 +413,11 @@ test_that("No one does not seroconvert and no one seroreverts
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
 
-  p$p_sero_pos[] <- 1
-  ## set gamma_sero_pos to 0 so no-one seroreverts
-  p$gamma_sero_pos <- 0
+  p$p_sero_pos_1[] <- 1
+  p$p_sero_pos_2[] <- 1
+  ## set gamma_sero_pos_1 to 0 so no-one seroreverts
+  p$gamma_sero_pos_1 <- 0
+  p$gamma_sero_pos_2 <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -413,61 +425,10 @@ test_that("No one does not seroconvert and no one seroreverts
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$T_sero_neg == 0))
-  expect_true(any(y$T_sero_pos > 0))
-})
-
-
-test_that("T_sero_pre parameters work as expected", {
-  helper <- function(p_sero_pre_1, gamma_sero_pre_1, gamma_sero_pre_2) {
-    p <- carehomes_parameters(0, "uk")
-    p$p_sero_pre_1 <- p_sero_pre_1
-    p$gamma_sero_pre_1 <- gamma_sero_pre_1
-    p$gamma_sero_pre_2 <- gamma_sero_pre_2
-
-    mod <- carehomes$new(p, 0, 1)
-    info <- mod$info()
-
-    y0 <- carehomes_initial(info, 1, p)$state
-    y0[info$index$T_sero_pre] <- 0
-
-    mod$set_state(y0)
-    mod$transform_variables(drop(mod$simulate(0:400)))
-  }
-
-  ## p_sero_pre_1 = 1, expect no cases in T_sero_pre_2 stream
-  y <- helper(1, 1, 0.5)
-  expect_true(all(y$T_sero_pre[, , 2, , ] == 0))
-
-  ## p_sero_pre_1 = 0, expect no cases in T_sero_pre_1 stream
-  y <- helper(0, 1, 0.5)
-  expect_true(all(y$T_sero_pre[, , 1, , ] == 0))
-
-  ## gamma_sero_pre_1 = gamma_sero_pre_2 = 0, expect no cases in T_sero_pos
-  y <- helper(0.5, 0, 0)
-  expect_true(all(y$T_sero_pos == 0))
-  expect_true(all(y$T_sero_neg == 0))
-
-  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = 0, expect progression in one
-  ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_1
-  y <- helper(0.5, Inf, 0)
-  n <- length(y$time)
-  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(y$T_sero_pre[, , 1, 1, -n]))
-
-  ## gamma_sero_pre_1 = 0, gamma_sero_pre_2 = Inf, expect progression in one
-  ## time-step to T_sero_neg/T_sero_pos just from T_sero_pre_2
-  y <- helper(0.5, 0, Inf)
-  n <- length(y$time)
-  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(y$T_sero_pre[, , 2, 1, -n]))
-
-  ## gamma_sero_pre_1 = Inf, gamma_sero_pre_2 = Inf, expect progression in one
-  ## time-step to T_sero_neg/T_sero_pos from both T_sero_pre_1 and T_sero_pre_2
-  y <- helper(0.5, Inf, Inf)
-  n <- length(y$time)
-  expect_equal(diff(t(apply(y$T_sero_pos, c(1, 5), sum) + drop(y$T_sero_neg))),
-               t(apply(y$T_sero_pre[, , , 1, -n], c(1, 3), sum)))
+  expect_true(all(y$T_sero_neg_1 == 0))
+  expect_true(any(y$T_sero_pos_1 > 0))
+  expect_true(all(y$T_sero_neg_2 == 0))
+  expect_true(any(y$T_sero_pos_2 > 0))
 })
 
 
@@ -532,7 +493,10 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_G_D_step", "k_G_D", "G_D", FALSE)
   helper("gamma_W_R_step", "k_W_R", "W_R", TRUE)
   helper("gamma_W_D_step", "k_W_D", "W_D", TRUE)
-  helper("gamma_sero_pos", "k_sero_pos", "T_sero_pos", FALSE)
+  helper("gamma_sero_pre_1", "k_sero_pre_1", "T_sero_pre_1", FALSE)
+  helper("gamma_sero_pos_1", "k_sero_pos_1", "T_sero_pos_1", FALSE)
+  helper("gamma_sero_pre_2", "k_sero_pre_2", "T_sero_pre_2", FALSE)
+  helper("gamma_sero_pos_2", "k_sero_pos_2", "T_sero_pos_2", FALSE)
   helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "k_PCR_pos", "T_PCR_pos", FALSE)
 })
@@ -608,7 +572,10 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_G_D_step", "k_G_D", "G_D", FALSE)
   helper("gamma_W_R_step", "k_W_R", "W_R", TRUE)
   helper("gamma_W_D_step", "k_W_D", "W_D", TRUE)
-  helper("gamma_sero_pos", "k_sero_pos", "T_sero_pos", FALSE)
+  helper("gamma_sero_pre_1", "k_sero_pre_1", "T_sero_pre_1", FALSE)
+  helper("gamma_sero_pos_1", "k_sero_pos_1", "T_sero_pos_1", FALSE)
+  helper("gamma_sero_pre_2", "k_sero_pre_2", "T_sero_pre_2", FALSE)
+  helper("gamma_sero_pos_2", "k_sero_pos_2", "T_sero_pos_2", FALSE)
   helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos", "k_PCR_pos", "T_PCR_pos", FALSE)
 })
@@ -804,7 +771,8 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_carehomes_tot + y$D_comm_tot))
 
   # check the positivity sums
-  expect_true(all(y$sero_pos == apply(y$T_sero_pos[4:13, , , 1, ], 3, sum)))
+  expect_true(all(y$sero_pos_1 == apply(y$T_sero_pos_1[4:13, , , 1, ], 3, sum)))
+  expect_true(all(y$sero_pos_2 == apply(y$T_sero_pos_2[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })
 
