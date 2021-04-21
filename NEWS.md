@@ -1,3 +1,7 @@
+# sircovid 0.10.39
+
+* R compartment now exported as part of predicted samples
+
 # sircovid 0.10.37
 
 * Added ability to directly set time-varying severity and progression parameters in `carehomes_parameters_progression` and `carehomes_parameters_severity`.
