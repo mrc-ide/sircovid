@@ -16,7 +16,7 @@ test_that("Can calculate EpiEstim Rt (I)", {
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
-  set.seed(2)
+  set.seed(1)
   mod$set_index(index)
   y <- mod$simulate(steps)
   inc <- apply(y[1, , ], 1, diff)
@@ -77,9 +77,9 @@ test_that("Can calculate EpiEstim Rt (II)", {
 
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.1,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.9,
                tolerance = .1)
   expect_equal(
     rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
@@ -107,7 +107,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
-  set.seed(2)
+  set.seed(1)
   mod$set_index(index)
   y <- mod$simulate(steps)
   inc <- apply(y[1, , ], 1, diff)
@@ -172,9 +172,9 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
 
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.1,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.9,
                tolerance = .1)
   expect_equal(
     rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
