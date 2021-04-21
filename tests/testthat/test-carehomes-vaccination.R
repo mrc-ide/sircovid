@@ -1289,7 +1289,7 @@ test_that("N_tot stays constant with vaccination and waning immunity, while
   mod$set_state(carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  eexpect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
   expect_true(all(diff(y$N_tot_sero_1) >= 0))
   expect_true(all(diff(y$N_tot_sero_2) >= 0))
   expect_true(all(diff(y$N_tot_PCR) >= 0))
