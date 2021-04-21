@@ -1597,7 +1597,8 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
-  ## stop progression after I_P to avoid diagonal moves out of I_P
+  ## stop progression after I_A/I_P to avoid diagonal moves out of I_A/I_P
+  p$gamma_A_step <- 0
   p$gamma_P_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
@@ -1638,6 +1639,9 @@ test_that("Outputed R vaccination numbers are what we expect", {
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
+
+  ## stop progression after I_A to avoid diagonal moves from I_A to R
+  p$gamma_A_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
