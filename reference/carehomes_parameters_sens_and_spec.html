@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Combine Rt estimates from EpiEstim — combine_rt_epiestim • sircovid</title>
+<title>Carehomes sensitivity and specificity parameters — carehomes_parameters_sens_and_spec • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Combine Rt estimates from EpiEstim — combine_rt_epiestim" />
-<meta property="og:description" content="Combine Rt estimates from EpiEstim across multiple runs." />
+<meta property="og:title" content="Carehomes sensitivity and specificity parameters — carehomes_parameters_sens_and_spec" />
+<meta property="og:description" content="Carehomes observation parameters" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,47 +119,66 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Combine Rt estimates from EpiEstim</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/support.R'><code>R/support.R</code></a></small>
-    <div class="hidden name"><code>combine_rt_epiestim.Rd</code></div>
+    <h1>Carehomes sensitivity and specificity parameters</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes.R'><code>R/carehomes.R</code></a></small>
+    <div class="hidden name"><code>carehomes_parameters_sens_and_spec.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Combine Rt estimates from EpiEstim across multiple runs.</p>
+    <p>Carehomes observation parameters</p>
     </div>
 
-    <pre class="usage"><span class='fu'>combine_rt_epiestim</span><span class='op'>(</span><span class='va'>rt</span>, <span class='va'>samples</span>, q <span class='op'>=</span> <span class='cn'>NULL</span>, rank <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_parameters_sens_and_spec</span><span class='op'>(</span>
+  sero_specificity_1 <span class='op'>=</span> <span class='fl'>0.9</span>,
+  sero_sensitivity_1 <span class='op'>=</span> <span class='fl'>0.99</span>,
+  sero_specificity_2 <span class='op'>=</span> <span class='fl'>0.9</span>,
+  sero_sensitivity_2 <span class='op'>=</span> <span class='fl'>0.99</span>,
+  pillar2_specificity <span class='op'>=</span> <span class='fl'>0.99</span>,
+  pillar2_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>,
+  react_specificity <span class='op'>=</span> <span class='fl'>0.99</span>,
+  react_sensitivity <span class='op'>=</span> <span class='fl'>0.99</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>rt</th>
-      <td><p>A list of Rt calculations from
-<code><a href='carehomes_rt_trajectories_epiestim.html'>carehomes_rt_trajectories_epiestim()</a></code> (though any Rt calculation that
-confirms to this will work)</p></td>
+      <th>sero_specificity_1</th>
+      <td><p>Specificity of the first serology test assay</p></td>
     </tr>
     <tr>
-      <th>samples</th>
-      <td><p>A list of samples from <code><a href='carehomes_forecast.html'>carehomes_forecast()</a></code></p></td>
+      <th>sero_sensitivity_1</th>
+      <td><p>Sensitivity of the first serology test assay</p></td>
     </tr>
     <tr>
-      <th>q</th>
-      <td><p>A vector of quantiles to return values for</p></td>
+      <th>sero_specificity_2</th>
+      <td><p>Specificity of the second serology test assay</p></td>
     </tr>
     <tr>
-      <th>rank</th>
-      <td><p>A boolean deciding whether to rank trajectories by increasing
-incidence or not before combining Rt estimates</p></td>
+      <th>sero_sensitivity_2</th>
+      <td><p>Sensitivity of the second serology test assay</p></td>
+    </tr>
+    <tr>
+      <th>pillar2_specificity</th>
+      <td><p>Specificity of the Pillar 2 test</p></td>
+    </tr>
+    <tr>
+      <th>pillar2_sensitivity</th>
+      <td><p>Sensitivity of the Pillar 2 test</p></td>
+    </tr>
+    <tr>
+      <th>react_specificity</th>
+      <td><p>Specificity of the REACT test</p></td>
+    </tr>
+    <tr>
+      <th>react_sensitivity</th>
+      <td><p>Sensitivity of the REACT test</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of Rt output in the same structure as the first
-element of <code>rt</code>. Rt estimates will be aggregated across
-regions (or whatever else you are aggregating on) based on the
-parameters in <code>samples</code>.</p>
+    <p>A list of parameter values</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
