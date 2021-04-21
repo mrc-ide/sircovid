@@ -976,7 +976,7 @@ carehomes_parameters_severity <- function(dt,
           seq_len(n_p_steps),
           p_CHR_step)
       }
-      p_step <- cbind(p_step, p_CHR_step)
+      p_step <- cbind(p_step, p_CHR_step, deparse.level = 0)
     }
 
     x[[paste0(p_name, "_step")]] <- p_step
