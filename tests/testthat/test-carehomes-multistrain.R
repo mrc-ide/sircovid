@@ -217,8 +217,8 @@ test_that("Second less virulent strain does not take over", {
 })
 
 
-test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
-          waning immunity - no superinfection", {
+test_that("N_tots stay constant with second strain and no waning immunity - no
+          superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
   n_seeded_new_strain_inf <- 100
@@ -237,16 +237,20 @@ test_that("N_tot, N_tot2 and N_tot3 stay constant with second strain and no
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot3 - mod$transform_variables(y0)$N_tot3 == 0))
-  expect_true(all(y$N_tot2 - mod$transform_variables(y0)$N_tot2 == 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot3 == 0))
+  expect_true(all(y$N_tot_sero_1 -
+                    mod$transform_variables(y0)$N_tot_sero_1 == 0))
+  expect_true(all(y$N_tot_sero_2 -
+                    mod$transform_variables(y0)$N_tot_sero_2 == 0))
+  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
 })
 
 
-test_that("N_tot, is constant with second strain and waning immunity, while
-          N_tot2 and N_tot3 are non-decreasing - superinfection", {
+test_that("N_tot is constant with second strain and waning immunity, while
+          sero N_tots are non-decreasing - superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
   n_seeded_new_strain_inf <- 100
@@ -267,15 +271,17 @@ test_that("N_tot, is constant with second strain and waning immunity, while
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot3) >= 0))
-  expect_true(all(diff(y$N_tot2) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
-test_that("N_tot, is constant with second strain and waning immunity, while
-          N_tot2 and N_tot3 are non-decreasing - no superinfection", {
+test_that("N_tot is constant with second strain and waning immunity, while
+          sero and PCR N_tots are non-decreasing - no superinfection", {
   ## Default for waning_rate is 0
   set.seed(1)
   n_seeded_new_strain_inf <- 100
@@ -295,11 +301,13 @@ test_that("N_tot, is constant with second strain and waning immunity, while
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(diff(y$N_tot3) >= 0))
-  expect_true(all(diff(y$N_tot2) >= 0))
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot3))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
 
@@ -519,7 +527,8 @@ test_that("different strains are equivalent", {
   i <- c(2, 1, 4, 3)
   y$I_A <- y$I_A[, i, , , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
+  y$T_sero_pre_1 <- y$T_sero_pre_1[, i, , , drop = FALSE]
+  y$T_sero_pre_2 <- y$T_sero_pre_2[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
 
@@ -563,7 +572,8 @@ test_that("Swapping strains gives identical results with different index", {
   i <- c(2, 1, 4, 3)
   y$I_A <- y$I_A[, i, , , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
-  y$T_sero_pre <- y$T_sero_pre[, i, , , drop = FALSE]
+  y$T_sero_pre_1 <- y$T_sero_pre_1[, i, , , drop = FALSE]
+  y$T_sero_pre_2 <- y$T_sero_pre_2[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
   mod$set_state(initial$state, initial$step)
@@ -592,11 +602,12 @@ test_that("Swapping strains gives identical results with different index", {
   ## move it out the way:
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
-  for (nm in c("T_sero_neg", "R", "T_PCR_neg")) {
+  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg")) {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
-          "T_sero_pre", "T_sero_pos", "G_D", "ICU_pre_unconf", "ICU_pre_conf",
+          "T_sero_pre_1", "T_sero_pre_2", "T_sero_pos_1", "T_sero_pos_2",
+          "G_D", "ICU_pre_unconf", "ICU_pre_conf",
           "H_R_unconf", "H_R_conf", "H_D_unconf",
           "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf",
           "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf",
@@ -1930,6 +1941,8 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
                               sircovid_date(c("2020-02-07", "2020-02-08")),
                             cross_immunity = 0)
   p$strain_transmission[] <- 1e8
+  ## set p_C to 0 so that individuals move to R quickly
+  p$p_C_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
 

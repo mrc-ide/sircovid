@@ -18,8 +18,9 @@ carehomes_particle_filter(
 \code{\link[mcstate:particle_filter_data]{mcstate::particle_filter_data()}}. We require columns "icu",
 "general", "hosp", "deaths_hosp", "deaths_carehomes",
 "deaths_non_hosp", "deaths_comm", "deaths",
-"admitted", "diagnoses", "all_admission", "npos_15_64",
-"ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+"admitted", "diagnoses", "all_admission", "sero_pos_15_64_1",
+"sero_tot_15_64_1", "sero_pos_15_64_2", "sero_tot_15_64_2",
+"pillar2_pos", "pillar2_tot", "pillar2_cases",
 "pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
 "react_pos", "react_tot", though thse may be entirely \code{NA}
 if no data are present.}
