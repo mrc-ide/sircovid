@@ -587,8 +587,6 @@ carehomes_index <- function(info) {
 
   index_S <- set_names(index[["S"]],
                        paste0("S", suffix, s_type))
-  index_R <- set_names(index[["R"]],
-                       paste0("R", suffix, s_type))
   index_I_weighted <- set_names(index[["I_weighted"]],
                                 paste0("I_weighted", suffix, s_type))
   index_cum_admit <- set_names(index[["cum_admit_by_age"]],
@@ -604,6 +602,18 @@ carehomes_index <- function(info) {
   strain_type <- c("", sprintf("_%s", seq_len(n_strains - 1L)))
   index_prob_strain <- set_names(index[["prob_strain"]],
                                  paste0("prob_strain", strain_type))
+
+  ## R follows age, strains, vacc_class
+  ## FIXME (RS) - ORDERING NEEDS TESTING
+  suffixes <- expand.grid(
+    suffix,
+    c("", sprintf("_%s", seq_len(n_strains - 1L))),
+    c("", sprintf("_%s", seq_len(n_vacc_classes - 1L)))
+  )
+  r_type <- apply(suffixes, 1,
+                  function(x) sprintf("R%s", paste0(x, collapse = "")))
+
+  index_R <- set_names(index[["R"]], r_type)
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_R,
