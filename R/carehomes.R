@@ -580,6 +580,9 @@ carehomes_index <- function(info) {
   index_cum_infections_disag <- set_names(index[["cum_infections_disag"]],
                                           paste0("I_disag",
                                                  suffix, s_type))
+  index_diagnoses_admitted <- set_names(index[["diagnoses_admitted"]],
+                                        paste0("A_disag",
+                                               suffix, s_type))
   index_cum_n_vaccinated <- set_names(index[["cum_n_vaccinated"]],
                                     paste0("cum_n_vaccinated", suffix, s_type))
 
@@ -610,8 +613,8 @@ carehomes_index <- function(info) {
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_R,
                  index_cum_admit, index_D_hosp, index_D,
-                 index_cum_infections_disag, index_I_weighted,
-                 index_prob_strain, index_cum_n_vaccinated))
+                 index_diagnoses_admitted, index_cum_infections_disag,
+                 index_I_weighted, index_prob_strain, index_cum_n_vaccinated))
 }
 
 
