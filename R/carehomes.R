@@ -589,10 +589,27 @@ carehomes_index <- function(info) {
   index_prob_strain <- set_names(index[["prob_strain"]],
                                  paste0("prob_strain", strain_type))
 
+  ## R follows age, strains, vacc_class
+  if (n_strains == 2) {
+    n_tot_strains <- 4
+  } else {
+    n_tot_strains <- 1
+  }
+
+  suffixes <- expand.grid(
+    suffix,
+    c("", sprintf("_S%s", seq_len(n_tot_strains - 1L))),
+    c("", sprintf("_V%s", seq_len(n_vacc_classes - 1L)))
+  )
+  r_type <- apply(suffixes, 1,
+                  function(x) sprintf("R%s", paste0(x, collapse = "")))
+
+  index_R <- set_names(index[["R"]], r_type)
+
   list(run = index_run,
-       state = c(index_state_core, index_save, index_S, index_cum_admit,
-                 index_D_hosp, index_D, index_I_A, index_I_weighted,
-                 index_prob_strain, index_cum_n_vaccinated))
+       state = c(index_state_core, index_save, index_S, index_R,
+                 index_cum_admit, index_D_hosp, index_D, index_I_A,
+                 index_I_weighted, index_prob_strain, index_cum_n_vaccinated))
 }
 
 

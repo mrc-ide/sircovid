@@ -1,7 +1,11 @@
+# sircovid 0.10.41
+
+* Deaths and admissions by age and vaccination class compartments exported as
+predicted samples
+
 # sircovid 0.10.40
 
-* Added index for trajectories of all deaths and admissions by age and
-vaccination class
+* R compartment now exported as part of predicted samples
 
 # sircovid 0.10.39
 
