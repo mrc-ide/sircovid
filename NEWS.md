@@ -1,4 +1,4 @@
-# sircovid 0.10.42
+# sircovid 0.10.43
 
 * Deaths and admissions by age and vaccination class compartments exported as
 predicted samples
