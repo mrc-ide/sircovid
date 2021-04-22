@@ -594,8 +594,8 @@ carehomes_index <- function(info) {
 
   suffixes <- expand.grid(
     suffix,
-    c("", sprintf("_%s", seq_len(n_tot_strains - 1L))),
-    c("", sprintf("_%s", seq_len(n_vacc_classes - 1L)))
+    c("", sprintf("_S%s", seq_len(n_tot_strains - 1L))),
+    c("", sprintf("_V%s", seq_len(n_vacc_classes - 1L)))
   )
   r_type <- apply(suffixes, 1,
                   function(x) sprintf("R%s", paste0(x, collapse = "")))
