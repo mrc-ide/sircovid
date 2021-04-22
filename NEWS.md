@@ -1,3 +1,8 @@
+# sircovid 0.10.40
+
+* Added index for trajectories of all deaths and admissions by age and
+vaccination class
+
 # sircovid 0.10.39
 
 * Added ability to fit 2nd serology assay with different serology parameters
