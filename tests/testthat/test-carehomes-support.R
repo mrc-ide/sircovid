@@ -1,17 +1,23 @@
 context("carehomes (support)")
 
 test_that("carehomes progression parameters", {
-  p <- carehomes_parameters_progression(1, 1, 1, 1)
+  p <- carehomes_parameters_progression(0.25)
   expect_setequal(
     names(p),
     c("k_E", "k_A", "k_P", "k_C_1", "k_C_2", "k_G_D", "k_H_D", "k_H_R",
       "k_ICU_D", "k_ICU_W_R", "k_ICU_W_D", "k_ICU_pre", "k_W_D",
-      "k_W_R", "k_sero_pos", "k_PCR_pos", "k_PCR_pre", "gamma_E",
-      "gamma_A", "gamma_P", "gamma_C_1", "gamma_C_2", "gamma_G_D", "gamma_H_D",
-      "gamma_H_R", "gamma_ICU_D", "gamma_ICU_W_R", "gamma_ICU_W_D",
-      "gamma_ICU_pre", "gamma_W_D", "gamma_W_R", "gamma_sero_pos",
+      "k_W_R", "k_sero_pre_1", "k_sero_pre_2", "k_sero_pos_1", "k_sero_pos_2",
+      "k_PCR_pos", "k_PCR_pre", "gamma_E_step", "gamma_A_step", "gamma_P_step",
+      "gamma_C_1_step", "gamma_C_2_step", "gamma_G_D_step", "gamma_H_D_step",
+      "gamma_H_R_step", "gamma_ICU_D_step", "gamma_ICU_W_R_step",
+      "gamma_ICU_W_D_step", "gamma_ICU_pre_step", "gamma_W_D_step",
+      "gamma_W_R_step", "gamma_sero_pos_1", "gamma_sero_pos_2",
       "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U", "gamma_PCR_pos",
-      "gamma_PCR_pre"))
+      "gamma_PCR_pre", "n_gamma_E_steps", "n_gamma_A_steps", "n_gamma_P_steps",
+      "n_gamma_C_1_steps", "n_gamma_C_2_steps", "n_gamma_H_D_steps",
+      "n_gamma_H_R_steps", "n_gamma_ICU_D_steps", "n_gamma_ICU_W_R_steps",
+      "n_gamma_ICU_W_D_steps", "n_gamma_ICU_pre_steps", "n_gamma_W_D_steps",
+      "n_gamma_W_R_steps", "n_gamma_G_D_steps"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
@@ -150,7 +156,7 @@ test_that("carehomes_parameters returns a list of parameters", {
     p$m,
     carehomes_transmission_matrix(0.1, 4e-6, 5e-5, "uk"))
 
-  progression <- carehomes_parameters_progression(1, 1, 1, 1)
+  progression <- carehomes_parameters_progression(0.25)
   expect_identical(p[names(progression)], progression)
 
   vaccination <- carehomes_parameters_vaccination(
@@ -170,34 +176,34 @@ test_that("carehomes_parameters returns a list of parameters", {
   shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
   expect_identical(p[names(shared)], shared)
 
-  severity <- scale_severity(carehomes_parameters_severity(NULL, 0.7), 1)
+  severity <- carehomes_parameters_severity(0.25, NULL)
   expect_identical(p[names(severity)], severity)
 
   observation <- carehomes_parameters_observation(1e6)
   expect_identical(p[names(observation)], observation)
+
+  sens_and_spec <- carehomes_parameters_sens_and_spec()
+  expect_identical(p[names(sens_and_spec)], sens_and_spec)
 
   expect_equal(p$N_tot_15_64, sum(p$N_tot[4:13]))
 
   extra <- setdiff(names(p),
                    c("m", names(observation),
                      names(shared), names(progression), names(severity),
-                     names(strain), names(vaccination), names(waning)))
+                     names(strain), names(vaccination), names(waning),
+                     names(sens_and_spec)))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "sero_specificity", "sero_sensitivity", "N_tot_15_64",
-      "N_tot_all", "N_tot_over25", "N_tot_react",
-      "pillar2_specificity", "pillar2_sensitivity", "react_specificity",
-      "react_sensitivity", "p_NC", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "psi_ICU_D",
-      "p_ICU_D_step", "psi_H_D", "p_H_D_step",
-      "psi_W_D", "p_W_D_step", "psi_H",
-      "p_H_step", "psi_G_D", "p_G_D_step",
-      "psi_ICU", "p_ICU_step", "psi_star", "p_star_step",
-      "n_groups", "initial_I", "gamma_H_R_step", "gamma_W_R_step",
-      "gamma_ICU_W_R_step", "gamma_H_D_step", "gamma_W_D_step",
-      "gamma_ICU_W_D_step", "gamma_ICU_D_step", "gamma_ICU_pre_step",
-      "cross_immunity"))
+      "rel_p_ICU", "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D",
+      "rel_gamma_E", "rel_gamma_A", "rel_gamma_P", "rel_gamma_C_1",
+      "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R", "rel_gamma_ICU_pre",
+      "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
+      "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
+      "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
+      "p_NC", "I_A_transmission", "I_P_transmission",
+      "I_C_1_transmission", "I_C_2_transmission",
+      "n_groups", "initial_I", "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -210,16 +216,156 @@ test_that("carehomes_parameters returns a list of parameters", {
 
 
 test_that("can compute severity for carehomes model", {
-  population <- sircovid_population("uk")
-  severity <- carehomes_parameters_severity(NULL, 0.7)
-  expect_vector_equal(lengths(severity), 19)
-  expect_setequal(names(severity), names(sircovid_parameters_severity(NULL)))
+  severity <- carehomes_parameters_severity(0.25, NULL)
 
-  expect_vector_equal(severity$p_serocoversion, severity$p_serocoversion[[1]])
   expect_equal(
-    severity$p_G_D, rep(c(0, 0.7), c(18, 1)))
+    severity$p_G_D_step, array(0.05, c(1, 19)))
   expect_equal(
-    severity$p_star, rep(0.2, 19))
+    severity$p_star_step, array(0.2, c(1, 19)))
+})
+
+
+test_that("can input severity data for carehomes model", {
+  data <- sircovid_parameters_severity(NULL)
+
+  data$p_G_D[] <- 0
+  data$p_star[] <- 0.5
+
+  severity <- carehomes_parameters_severity(0.25, data)
+
+  expect_equal(
+    severity$p_G_D_step, array(0, c(1, 19)))
+  expect_equal(
+    severity$p_star_step, array(0.5, c(1, 19)))
+})
+
+
+test_that("can compute time-varying severity parameters for carehomes model", {
+  dt <- 0.25
+
+  p_G_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
+  p_G_D_value <- c(0.05, 0.1)
+  p_G_D_CHR_value <- 0.4
+
+  p_H_value <- 0.6
+  p_H_CHR_date <- sircovid_date(c("2020-03-01", "2020-04-01"))
+  p_H_CHR_value <- c(0.7, 0.6)
+
+  severity <-
+    carehomes_parameters_severity(dt, NULL,
+                                  p_H = list(value = p_H_value),
+                                  p_H_CHR = list(date = p_H_CHR_date,
+                                                 value = p_H_CHR_value),
+                                  p_G_D = list(date = p_G_D_date,
+                                               value = p_G_D_value),
+                                  p_G_D_CHR = list(value = p_G_D_CHR_value))
+
+  p_G_D_step <-
+    sircovid_parameters_piecewise_linear(p_G_D_date,
+                                         p_G_D_value, dt)
+  expect_equal(severity$p_G_D_step[, 19],
+               rep(p_G_D_CHR_value, length(p_G_D_step)))
+  expect_equal(severity$p_G_D_step[, 17], p_G_D_step)
+
+
+  p_H_CHR_step <-
+    sircovid_parameters_piecewise_linear(p_H_CHR_date,
+                                         p_H_CHR_value, dt)
+  expect_equal(severity$p_H_step[, 17],
+               rep(p_H_value, length(p_H_CHR_step)))
+  expect_equal(severity$p_H_step[, 19], p_H_CHR_step)
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_C = list(date = 1,
+                                             value = 0.3)),
+    "As 'p_C' has a single 'value', expected NULL or missing 'date'")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_ICU = list(date = c(1, 4, 5),
+                                               value = c(0.2, 0.3))),
+    "'date' and 'value' for 'p_ICU' must have the same length")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_ICU_D = list(date = c(1, 4),
+                                                 value = c(-1, 0.3))),
+    "'p_ICU_D' must lie in [0, 1]", fixed = TRUE)
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_W_D = list(date = c(1, 4),
+                                               value = c(0.2, 3))),
+    "'p_W_D' must lie in [0, 1]", fixed = TRUE)
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_H_CHR = list(date = 1,
+                                                 value = 0.3)),
+    "As 'p_H_CHR' has a single 'value', expected NULL or missing 'date'")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_G_D_CHR = list(date = c(1, 4, 5),
+                                                   value = c(0.2, 0.3))),
+    "'date' and 'value' for 'p_G_D_CHR' must have the same length")
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_H_CHR = list(date = c(1, 4),
+                                                 value = c(-1, 0.3))),
+    "'p_H_CHR' must lie in [0, 1]", fixed = TRUE)
+
+  expect_error(
+    carehomes_parameters_severity(dt,
+                                  p_G_D_CHR = list(date = c(1, 4),
+                                                   value = c(0.2, 3))),
+    "'p_G_D_CHR' must lie in [0, 1]", fixed = TRUE)
+
+})
+
+
+test_that("can compute time-varying progression parameters for carehomes
+          model", {
+  dt <- 0.25
+
+  gamma_H_R_value <- 0.3
+  gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
+  gamma_H_D_value <- c(0.2, 0.5)
+
+  progression <-
+    carehomes_parameters_progression(dt,
+                                     gamma_H_D = list(date = gamma_H_D_date,
+                                                      value = gamma_H_D_value),
+                                     gamma_H_R = list(value = gamma_H_R_value)
+  )
+
+  gamma_H_D_step <-
+    sircovid_parameters_piecewise_linear(gamma_H_D_date,
+                                         gamma_H_D_value, dt)
+  expect_equal(progression$gamma_H_D_step, gamma_H_D_step)
+  expect_equal(progression$gamma_H_R_step, gamma_H_R_value)
+
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_E = list(date = 1,
+                                                    value = 3)),
+    "As 'gamma_E' has a single 'value', expected NULL or missing 'date'")
+
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_ICU_pre = list(date = c(1, 4, 5),
+                                                          value = c(2, 3))),
+    "'date' and 'value' for 'gamma_ICU_pre' must have the same length")
+
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_H_D = list(date = c(1, 4),
+                                                      value = c(-2, 3))),
+    "'gamma_H_D' must have only non-negative values")
+
+
 })
 
 
@@ -259,7 +405,7 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
     names(index$run),
     c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
-      "sero_pos", "sympt_cases_inc", "sympt_cases_over25_inc",
+      "sero_pos_1", "sero_pos_2", "sympt_cases_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["icu"]],
@@ -276,8 +422,10 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "admit_conf_inc"))
   expect_equal(index$run[["diagnoses_inc"]],
                which(names(info$index) == "new_conf_inc"))
-  expect_equal(index$run[["sero_pos"]],
-               which(names(info$index) == "sero_pos"))
+  expect_equal(index$run[["sero_pos_1"]],
+               which(names(info$index) == "sero_pos_1"))
+  expect_equal(index$run[["sero_pos_2"]],
+               which(names(info$index) == "sero_pos_2"))
   expect_equal(index$run[["sympt_cases_inc"]],
                which(names(info$index) == "sympt_cases_inc"))
   expect_equal(index$run[["sympt_cases_over25_inc"]],
@@ -311,8 +459,9 @@ test_that("Can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
 
-  expect_equal(initial_y$N_tot3, sum(p$N_tot))
-  expect_equal(initial_y$N_tot2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
@@ -321,20 +470,22 @@ test_that("Can compute initial conditions", {
                append(rep(0, 18), 10, after = 3))
   expect_equal(drop(initial_y$I_weighted),
                append(rep(0, 18), p$I_A_transmission * 10, after = 3))
-  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
+               append(rep(0, 18), 10, after = 3))
+  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 10, after = 3))
   expect_equal(initial_y$react_pos, 10)
 
-  ## 46 here, derived from;
+  ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 2 (N_tot2 + N_tot3)
+  ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 46)
+  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 48)
 })
 
 
@@ -352,28 +503,31 @@ test_that("Can control the seeding", {
 
   initial_y <- mod$transform_variables(initial$state)
 
-  expect_equal(initial_y$N_tot3, sum(p$N_tot))
-  expect_equal(initial_y$N_tot2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
+  expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
                p$N_tot)
   expect_equal(drop(initial_y$I_A),
                append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_sero_pre[, 1, 1, ],
+  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
+               append(rep(0, 18), 50, after = 3))
+  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
                append(rep(0, 18), 50, after = 3))
   expect_equal(initial_y$react_pos, 50)
 
-  ## 46 here, derived from;
+  ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 1 (react_pos)
-  ## * 2 (N_tot2 + N_tot3)
+  ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
   ## * 2 (I_A[4] + I_weighted[4])
-  ## * 2 (T_sero_pre[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 46)
+  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
+  expect_equal(sum(initial$state != 0), 48)
 })
 
 
@@ -412,7 +566,8 @@ test_that("carehomes_compare combines likelihood correctly", {
     deaths_hosp_inc = 3:8,
     admitted_inc = 50:55,
     diagnoses_inc = 60:65,
-    sero_pos = 4:9,
+    sero_pos_1 = 4:9,
+    sero_pos_2 = 14:19,
     sympt_cases_inc = 100:105,
     sympt_cases_over25_inc = 80:85,
     sympt_cases_non_variant_over25_inc = 60:65,
@@ -429,8 +584,10 @@ test_that("carehomes_compare combines likelihood correctly", {
     admitted = 53,
     diagnoses = 63,
     all_admission = 116,
-    npos_15_64 = 43,
-    ntot_15_64 = 83,
+    sero_pos_15_64_1 = 43,
+    sero_tot_15_64_1 = 83,
+    sero_pos_15_64_2 = 58,
+    sero_tot_15_64_2 = 98,
     pillar2_pos = 35,
     pillar2_tot = 600,
     pillar2_cases = 35,
@@ -455,16 +612,17 @@ test_that("carehomes_compare combines likelihood correctly", {
 
   ## This function is more complicated to test than the basic model
   ## because it's not a simple sum
-  nms_sero <- c("npos_15_64", "ntot_15_64")
+  nms_sero_1 <- c("sero_pos_15_64_1", "sero_tot_15_64_1")
+  nms_sero_2 <- c("sero_pos_15_64_2", "sero_tot_15_64_2")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   parts <- c(as.list(setdiff(names(observed),
-                             c(nms_sero, nms_pillar2,
+                             c(nms_sero_1, nms_sero_2, nms_pillar2,
                                nms_pillar2_over25, nms_react, nms_strain))),
-             list(nms_sero), list(nms_pillar2), list(nms_pillar2_over25),
-             list(nms_react), list(nms_strain))
+             list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
+             list(nms_pillar2_over25), list(nms_react), list(nms_strain))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, observed_keep(x), pars))
@@ -539,8 +697,10 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$admitted <- NA
   data$diagnoses <- NA
   data$all_admission <- NA
-  data$npos_15_64 <- NA
-  data$ntot_15_64 <- NA
+  data$sero_pos_15_64_1 <- NA
+  data$sero_tot_15_64_1 <- NA
+  data$sero_pos_15_64_2 <- NA
+  data$sero_tot_15_64_2 <- NA
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
   data$pillar2_cases <- NA
@@ -578,8 +738,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$admitted <- NA
             data$diagnoses <- NA
             data$all_admission <- NA
-            data$npos_15_64 <- NA
-            data$ntot_15_64 <- NA
+            data$sero_pos_15_64_1 <- NA
+            data$sero_tot_15_64_1 <- NA
+            data$sero_pos_15_64_2 <- NA
+            data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
             data$pillar2_cases <- NA
@@ -650,8 +812,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$admitted <- NA
             data$diagnoses <- NA
             data$all_admission <- NA
-            data$npos_15_64 <- NA
-            data$ntot_15_64 <- NA
+            data$sero_pos_15_64_1 <- NA
+            data$sero_tot_15_64_1 <- NA
+            data$sero_pos_15_64_2 <- NA
+            data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
             data$pillar2_cases <- NA

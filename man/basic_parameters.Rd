@@ -26,16 +26,16 @@ insensitive.}
 
 \item{beta_date}{A vector of dates for changes in beta (the
 contact rate parameter), or \code{NULL} if a single value is used for
-all times (see \code{\link[=sircovid_parameters_beta]{sircovid_parameters_beta()}}, where this is
-passed as \code{date}).}
+all times (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}}, where
+this is passed as \code{date}).}
 
 \item{beta_value}{A vector of values for beta (the contact rate
 parameter). If not given, and if \code{beta_date} is \code{NULL} then a
 value of 0.08 will be used through the whole simulation,
 otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 \code{beta_date} is given then \code{beta_date} and \code{beta_value} must have
-the same length (see \code{\link[=sircovid_parameters_beta]{sircovid_parameters_beta()}}, where this is
-passed as \code{value}).}
+the same length (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}},
+where this is passed as \code{value}).}
 
 \item{severity}{Severity data, via Bob Verity's \code{markovid}
 package. This needs to be \code{NULL} (use the default bundled data

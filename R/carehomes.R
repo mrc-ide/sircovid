@@ -21,18 +21,17 @@ NULL
 ##'   via the markovid package, and needs to be carefully calibrated
 ##'   with the progression parameters.
 ##'
-##' @param p_death_carehome Probability of death within carehomes
-##'   (conditional on having an "inflenza-like-illness")
-##'
-##' @param sero_specificity Specificity of the serology test
-##'
-##' @param sero_sensitivity Sensitivity of the serology test
-##'
 ##' @param progression Progression data
 ##'
 ##' @param observation Either `NULL` or a list of observation parameters. If
 ##'   `NULL`, then a list of observation parameters will be generated using
 ##'   `carehomes_parameters_observation(exp_noise)`
+##'
+##' @param sens_and_spec Either `NULL` or a list of diagnostic test sensitivity
+##'   and specificity parameters. If `NULL`, then a list of sensitivity and
+##'   specificity parameters will be generated using
+##'   `carehomes_parameters_sens_and_spec()`
+##'
 ##'
 ##' @param initial_I Initial number of infected indidviduals; these
 ##'   will enter the model as asymptomatic 15-19 year olds at
@@ -44,14 +43,6 @@ NULL
 ##'   residents or workers
 ##'
 ##' @param m_CHR Contact rate between carehome residents
-##'
-##' @param pillar2_specificity Specificity of the Pillar 2 test
-##'
-##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
-##'
-##' @param react_specificity Specificity of the REACT test
-##'
-##' @param react_sensitivity Sensitivity of the REACT test
 ##'
 ##' @param p_NC Proportion of population who do not have
 ##'   covid but have covid-like symptoms
@@ -330,19 +321,13 @@ NULL
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  severity = NULL,
-                                 p_death_carehome = 0.7,
-                                 sero_specificity = 0.9,
-                                 sero_sensitivity = 0.99,
                                  progression = NULL,
                                  observation = NULL,
+                                 sens_and_spec = NULL,
                                  initial_I = 10,
                                  eps = 0.1,
                                  m_CHW = 4e-6,
                                  m_CHR = 5e-5,
-                                 pillar2_specificity = 0.99,
-                                 pillar2_sensitivity = 0.99,
-                                 react_specificity = 0.99,
-                                 react_sensitivity = 0.99,
                                  p_NC = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
@@ -387,74 +372,9 @@ carehomes_parameters <- function(start_date, region,
     stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
   }
 
-  severity <- carehomes_parameters_severity(severity, p_death_carehome)
-  strain_rel_severity <- recycle(
-                                 assert_relatives(strain_rel_severity),
-                                 length(strain_transmission))
-  if (length(strain_transmission) > 1) {
-    strain_rel_severity <- mirror_strain(strain_rel_severity)
-  }
-  severity <- scale_severity(severity, strain_rel_severity)
+  severity <- severity %||% carehomes_parameters_severity(ret$dt, severity)
 
-  ## TODO Rich, these parameters are now time-varying. We may want to rethink
-  ## implementation of severity parameters
-  ## probability of symptomatic individual requiring hospital treatment
-
-  get_psi <- function(p) {
-    if (all(p == 0)) {
-      res <- p
-    } else {
-      res <- p / max(p)
-    }
-  }
-
-  severity$psi_H <- get_psi(severity$p_H)
-  severity$p_H_step <- max(severity$p_H)
-  ## probability of hospitalised patient going to ICU
-  severity$psi_ICU <- get_psi(severity$p_ICU)
-  severity$p_ICU_step <- max(severity$p_ICU)
-  ## probability of ICU patient dying
-  severity$psi_ICU_D <- apply(severity$p_ICU_D, 2, get_psi)
-  severity$p_ICU_D_step <- matrix(apply(severity$p_ICU_D, 2, max), nrow = 1)
-  ## probability of non-ICU hospital patient dying
-  severity$psi_H_D <- apply(severity$p_H_D, 2, get_psi)
-  severity$p_H_D_step <- matrix(apply(severity$p_H_D, 2, max), nrow = 1)
-  ## probability of stepdown hospital patient dying
-  severity$psi_W_D <- apply(severity$p_W_D, 2, get_psi)
-  severity$p_W_D_step <- matrix(apply(severity$p_W_D, 2, max), nrow = 1)
-  ## probability of patient requiring hospital treatment dying in community
-  severity$psi_G_D <- apply(severity$p_G_D, 2, get_psi)
-  severity$p_G_D_step <- matrix(apply(severity$p_G_D, 2, max), nrow = 1)
-  ## probability of an admission already being confirmed covid
-  severity$psi_star <- get_psi(severity$p_star)
-  severity$p_star_step <- max(severity$p_star)
-
-  strain_rel_gamma_A <- recycle(assert_relatives(strain_rel_gamma_A),
-                                length(strain_transmission))
-  strain_rel_gamma_P <- recycle(assert_relatives(strain_rel_gamma_P),
-                                length(strain_transmission))
-  strain_rel_gamma_C_1 <-
-    recycle(assert_relatives(strain_rel_gamma_C_1),
-            length(strain_transmission))
-  strain_rel_gamma_C_2 <-
-    recycle(assert_relatives(strain_rel_gamma_C_2),
-            length(strain_transmission))
-
-  progression <- progression %||%
-                  carehomes_parameters_progression(strain_rel_gamma_A,
-                                                   strain_rel_gamma_P,
-                                                   strain_rel_gamma_C_1,
-                                                   strain_rel_gamma_C_2)
-
-  ## implementation of time-varying progression gammas
-  progression$gamma_H_R_step <- progression$gamma_H_R
-  progression$gamma_W_R_step <- progression$gamma_W_R
-  progression$gamma_ICU_W_R_step <- progression$gamma_ICU_W_R
-  progression$gamma_H_D_step <- progression$gamma_H_D
-  progression$gamma_W_D_step <- progression$gamma_W_D
-  progression$gamma_ICU_W_D_step <- progression$gamma_ICU_W_D
-  progression$gamma_ICU_D_step <- progression$gamma_ICU_D
-  progression$gamma_ICU_pre_step <- progression$gamma_ICU_pre
+  progression <- progression %||% carehomes_parameters_progression(ret$dt)
 
   waning <- carehomes_parameters_waning(waning_rate)
 
@@ -481,18 +401,6 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_over25 <- sum(ret$N_tot[6:19])
   ret$N_tot_react <- sum(ret$N_tot[2:18])
 
-  ## Specificity for serology tests
-  ret$sero_specificity <- sero_specificity
-  ret$sero_sensitivity <- sero_sensitivity
-
-  ## Specificity and sensitivity for Pillar 2 testing
-  ret$pillar2_specificity <- pillar2_specificity
-  ret$pillar2_sensitivity <- pillar2_sensitivity
-
-  ## Specificity and sensitivity for REACT testing
-  ret$react_specificity <- react_specificity
-  ret$react_sensitivity <- react_sensitivity
-
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
 
@@ -504,6 +412,8 @@ carehomes_parameters <- function(start_date, region,
 
   ## All observation parameters:
   observation <- observation %||% carehomes_parameters_observation(exp_noise)
+
+  sens_and_spec <- sens_and_spec %||% carehomes_parameters_sens_and_spec()
 
   ret$n_groups <- ret$n_age_groups + 2L
 
@@ -524,7 +434,56 @@ carehomes_parameters <- function(start_date, region,
                                                   strain$n_strains,
                                                   vaccine_catchup_fraction)
 
-  c(ret, severity, progression, strain, vaccination, waning, observation)
+
+  strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
+                                 length(strain_transmission))
+  if (length(strain_transmission) > 1) {
+    strain_rel_severity <- mirror_strain(strain_rel_severity)
+  }
+  rel_severity <- aperm(array(strain_rel_severity,
+                              c(strain$n_strains, ret$n_groups,
+                                vaccination$n_vacc_classes)),
+                        c(2, 1, 3))
+  ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
+                              vaccination$n_vacc_classes))
+  ret$rel_p_ICU_D <- rel_severity
+  ret$rel_p_H_D <- rel_severity
+  ret$rel_p_W_D <- rel_severity
+  ret$rel_p_G_D <- rel_severity
+
+ strain_rel_gammas <- list(E = NULL,
+                            A = strain_rel_gamma_A,
+                            P = strain_rel_gamma_P,
+                            C_1 = strain_rel_gamma_C_1,
+                            C_2 = strain_rel_gamma_C_2,
+                            ICU_pre = NULL,
+                            H_D = NULL,
+                            H_R = NULL,
+                            ICU_D = NULL,
+                            ICU_W_D = NULL,
+                            ICU_W_R = NULL,
+                            W_D = NULL,
+                            W_R = NULL,
+                            G_D = NULL)
+  for (name in names(strain_rel_gammas)) {
+    rel_gamma <- strain_rel_gammas[[name]]
+    rel_gamma_name <- paste0("rel_gamma_", name)
+    if (is.null(rel_gamma)) {
+      ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
+    } else {
+      rel_gamma <- recycle(assert_relatives(rel_gamma),
+                           length(strain_transmission))
+      if (length(rel_gamma) == 2) {
+        ret[[rel_gamma_name]] <- mirror_strain(rel_gamma)
+      } else {
+        ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
+      }
+    }
+  }
+
+  c(ret, severity, progression, strain, vaccination, waning, observation,
+   sens_and_spec)
+
 }
 
 
@@ -566,7 +525,8 @@ carehomes_index <- function(info) {
                  deaths_hosp_inc = index[["D_hosp_inc"]],
                  admitted_inc = index[["admit_conf_inc"]],
                  diagnoses_inc = index[["new_conf_inc"]],
-                 sero_pos = index[["sero_pos"]],
+                 sero_pos_1 = index[["sero_pos_1"]],
+                 sero_pos_2 = index[["sero_pos_2"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                  sympt_cases_non_variant_over25 =
@@ -581,7 +541,7 @@ carehomes_index <- function(info) {
   index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
                             "deaths_comm_inc", "deaths_hosp_inc",
                             "admitted_inc", "diagnoses_inc",
-                            "sero_pos", "sympt_cases_inc",
+                            "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
                             "sympt_cases_over25_inc",
                             "sympt_cases_non_variant_over25_inc",
                             "react_pos")]
@@ -672,7 +632,8 @@ carehomes_compare <- function(state, observed, pars) {
   model_admitted <- state["admitted_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
-  model_sero_pos <- state["sero_pos", ]
+  model_sero_pos_1 <- state["sero_pos_1", ]
+  model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
   model_sympt_cases_non_variant_over25 <-
@@ -708,15 +669,27 @@ carehomes_compare <- function(state, observed, pars) {
                                         pars$react_specificity,
                                         pars$exp_noise)
 
-  ## serology
-  ## It is possible that model_sero_pos > pars$N_tot_15_64, so we cap it to
+  ## serology assay 1
+  ## It is possible that model_sero_pos_1 > pars$N_tot_15_64, so we cap it to
   ## avoid probabilities > 1 here
-  model_sero_pos_capped <- pmin(model_sero_pos, pars$N_tot_15_64)
-  model_sero_prob_pos <- test_prob_pos(model_sero_pos_capped,
-                                       pars$N_tot_15_64 - model_sero_pos_capped,
-                                       pars$sero_sensitivity,
-                                       pars$sero_specificity,
-                                       pars$exp_noise)
+  model_sero_pos_1_capped <- pmin(model_sero_pos_1, pars$N_tot_15_64)
+  model_sero_prob_pos_1 <- test_prob_pos(model_sero_pos_1_capped,
+                                         pars$N_tot_15_64 -
+                                           model_sero_pos_1_capped,
+                                         pars$sero_sensitivity_1,
+                                         pars$sero_specificity_1,
+                                         pars$exp_noise)
+
+  ## serology assay 2
+  ## It is possible that model_sero_pos_2 > pars$N_tot_15_64, so we cap it to
+  ## avoid probabilities > 1 here
+  model_sero_pos_2_capped <- pmin(model_sero_pos_2, pars$N_tot_15_64)
+  model_sero_prob_pos_2 <- test_prob_pos(model_sero_pos_2_capped,
+                                         pars$N_tot_15_64 -
+                                           model_sero_pos_2_capped,
+                                         pars$sero_sensitivity_2,
+                                         pars$sero_specificity_2,
+                                         pars$exp_noise)
 
   ## Strain
   model_strain_over25_prob_pos <- test_prob_pos(
@@ -765,9 +738,13 @@ carehomes_compare <- function(state, observed, pars) {
                                pars$phi_all_admission * model_all_admission,
                                pars$kappa_all_admission, exp_noise)
 
-  ll_serology <- ll_binom(observed$npos_15_64,
-                          observed$ntot_15_64,
-                          model_sero_prob_pos)
+  ll_serology_1 <- ll_binom(observed$sero_pos_15_64_1,
+                            observed$sero_tot_15_64_1,
+                            model_sero_prob_pos_1)
+
+  ll_serology_2 <- ll_binom(observed$sero_pos_15_64_2,
+                            observed$sero_tot_15_64_2,
+                            model_sero_prob_pos_2)
 
   ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
                          observed$pillar2_tot,
@@ -798,9 +775,9 @@ carehomes_compare <- function(state, observed, pars) {
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-    ll_diagnoses + ll_all_admission + ll_serology + ll_pillar2_tests +
-    ll_pillar2_cases + ll_pillar2_over25_tests + ll_pillar2_over25_cases +
-    ll_react + ll_strain_over25
+    ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
+    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
+    ll_pillar2_over25_cases + ll_react + ll_strain_over25
 }
 
 
@@ -819,10 +796,202 @@ carehomes_severity <- function(p) {
 }
 
 
-carehomes_parameters_severity <- function(severity, p_death_carehome) {
+##' Carehomes severity parameters
+##'
+##' @title Carehomes severity parameters
+##'
+##' @param dt The step size
+##'
+##'
+##' @param severity Severity data, used to determine default severity parameter
+##'   age-scalings and to provide default severity parameter values. Can be
+##'   `NULL` (use the default bundled data version in the package), or a
+##'   [data.frame] object (for raw severity data).
+##'
+##' @section Time-varying parameters:
+##' Every time varying parameter has the same format, which can be `NULL` (in
+##'   which case the value from `severity` is used) or a list with `date` and
+##'   `value` for changes in the parameter. If `value` is scalar then
+##'   `date` can be `NULL` or missing. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param p_C Time-varying parameters for p_C (the probability of an infected
+##'   individual becoming symptomatic). See Details.
+##'
+##' @param p_H Time-varying parameters for p_H (the probability of a symptomatic
+##'   individual requiring hospitalisation). See Details.
+##'
+##' @param p_H_CHR Time-varying parameters for p_H (the probability of a
+##'   symptomatic individual requiring hospitalisation) for care home residents.
+##'   If `NULL` then the value for the oldest age group is used. See Details.
+##'
+##' @param p_ICU Time-varying parameters for p_ICU (the probability of a
+##'   hospitalised individual going to ICU). See Details.
+##'
+##' @param p_H_D Time-varying parameters for p_H_D (the probability of death in
+##'   general beds).See Details.
+##'
+##' @param p_ICU_D Time-varying parameters for p_ICU_D (the probability of death
+##'   in ICU). See Details.
+##'
+##' @param p_W_D Time-varying parameters for p_W_D (the probability of death in
+##'   stepdown). See Details.
+##'
+##' @param p_G_D Time-varying parameters for p_G_D (the probability of
+##'   individuals requiring hospitalisation dying in the community or a care
+##'   home). See Details.
+##'
+##' @param p_G_D_CHR Time-varying parameters for p_G_D (the probability of
+##'   individuals requiring hospitalisation dying in a care home) for care home
+##'   residents. If `NULL` then the value for the oldest age group is used. See
+##'   Details.
+##'
+##' @param p_star Time-varying parameters for p_star (the probability of
+##'   patients being confirmed as covid on admission to hospital). See Details.
+##'
+##' @return A list of severity parameters
+##'
+##' @export
+carehomes_parameters_severity <- function(dt,
+                                          severity = NULL,
+                                          p_C = NULL,
+                                          p_H = NULL,
+                                          p_H_CHR = NULL,
+                                          p_ICU = NULL,
+                                          p_H_D = NULL,
+                                          p_ICU_D = NULL,
+                                          p_W_D = NULL,
+                                          p_G_D = NULL,
+                                          p_G_D_CHR = NULL,
+                                          p_star = NULL) {
+
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, carehomes_severity)
-  severity$p_G_D[length(severity$p_G_D)] <- p_death_carehome
+
+  time_varying_severity <- list(C = p_C,
+                                H = p_H,
+                                ICU = p_ICU,
+                                H_D = p_H_D,
+                                ICU_D = p_ICU_D,
+                                W_D = p_W_D,
+                                G_D = p_G_D,
+                                star = p_star)
+
+  time_varying_severity_CHR <- list(C = NULL,
+                                    H = p_H_CHR,
+                                    ICU = NULL,
+                                    H_D = NULL,
+                                    ICU_D = NULL,
+                                    W_D = NULL,
+                                    G_D = p_G_D_CHR,
+                                    star = NULL)
+
+  get_p_step <- function(x, name) {
+
+    p_name <- paste0("p_", name)
+    p <- x[[p_name]]
+    time_vary <- time_varying_severity[[name]]
+    time_vary_CHR <- time_varying_severity_CHR[[name]]
+
+    if (is.null(time_vary)) {
+      p_value <- NULL
+      p_date <- NULL
+    } else {
+      p_value <- time_vary$value
+      if ("date" %in% names(time_vary)) {
+        p_date <- time_vary$date
+      } else {
+        p_date <- NULL
+      }
+    }
+
+    if (is.null(time_vary_CHR)) {
+      p_CHR_value <- NULL
+      p_CHR_date <- NULL
+    } else {
+      p_CHR_value <- time_vary_CHR$value
+      if ("date" %in% names(time_vary_CHR)) {
+        p_CHR_date <- time_vary_CHR$date
+      } else {
+        p_CHR_date <- NULL
+      }
+    }
+
+    if (!is.null(p_value)) {
+      assert_proportion(p_value, p_name)
+      if (length(p_value) == 1L) {
+        if (length(p_date) != 0) {
+          stop(sprintf(
+            "As '%s' has a single 'value', expected NULL or missing 'date'",
+            p_name))
+        }
+      } else if (length(p_date) != length(p_value)) {
+        stop(sprintf("'date' and 'value' for '%s' must have the same length",
+                     p_name))
+      }
+    }
+
+
+    CHR <- FALSE
+    if (!is.null(p_CHR_value)) {
+      assert_proportion(p_CHR_value, paste0(p_name, "_CHR"))
+      CHR <- TRUE
+      p <- p[1:18]
+      if (length(p_CHR_value) == 1L) {
+        if (length(p_CHR_date) != 0) {
+          stop(sprintf(
+            "As '%s' has a single 'value', expected NULL or missing 'date'",
+            paste0(p_name, "_CHR")))
+        }
+      } else if (length(p_CHR_date) != length(p_CHR_value)) {
+        stop(sprintf("'date' and 'value' for '%s' must have the same length",
+                     paste0(p_name, "_CHR")))
+      }
+    }
+
+    if (all(p == 0)) {
+      psi <- p
+    } else {
+      psi <- p / max(p)
+    }
+
+    if (is.null(p_value)) {
+      p_step <- max(p)
+    } else {
+      p_step <- sircovid_parameters_piecewise_linear(p_date, p_value, dt)
+    }
+
+    p_step <- outer(p_step, psi)
+
+    if (CHR) {
+      p_CHR_step <- sircovid_parameters_piecewise_linear(p_CHR_date,
+                                                         p_CHR_value, dt)
+      n_p_steps <- dim(p_step)[1]
+      n_p_CHR_steps <- length(p_CHR_step)[1]
+      if (n_p_steps < n_p_CHR_steps) {
+        p_step <- vapply(seq_len(18),
+                         function(i) sircovid_parameters_expand_step(
+                           seq_len(n_p_CHR_steps), p_step[, i]),
+                         rep(0, n_p_CHR_steps))
+      } else if (n_p_steps > n_p_CHR_steps) {
+        p_CHR_step <- sircovid_parameters_expand_step(
+          seq_len(n_p_steps),
+          p_CHR_step)
+      }
+      p_step <- cbind(p_step, p_CHR_step, deparse.level = 0)
+    }
+
+    x[[paste0(p_name, "_step")]] <- p_step
+    x[[paste0(p_name)]] <- NULL
+    x[[paste0("n_", p_name, "_steps")]] <- dim(p_step)[1]
+
+    x
+  }
+
+  for (name in names(time_varying_severity)) {
+    severity <- get_p_step(severity, name)
+  }
+
   severity
 }
 
@@ -890,11 +1059,13 @@ carehomes_initial <- function(info, n_particles, pars) {
   seed_age_band <- 4L
   index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
   index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
-  index_T_sero_pre <- index[["T_sero_pre"]][[1L]] + seed_age_band - 1L
+  index_T_sero_pre_1 <- index[["T_sero_pre_1"]][[1L]] + seed_age_band - 1L
+  index_T_sero_pre_2 <- index[["T_sero_pre_2"]][[1L]] + seed_age_band - 1L
   index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
   index_react_pos <- index[["react_pos"]][[1L]]
-  index_N_tot2 <- index[["N_tot2"]][[1L]]
-  index_N_tot3 <- index[["N_tot3"]][[1L]]
+  index_N_tot_sero_1 <- index[["N_tot_sero_1"]][[1L]]
+  index_N_tot_sero_2 <- index[["N_tot_sero_2"]][[1L]]
+  index_N_tot_PCR <- index[["N_tot_PCR"]][[1L]]
 
   index_S <- index[["S"]]
   index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
@@ -910,12 +1081,14 @@ carehomes_initial <- function(info, n_particles, pars) {
   state[index_S_no_vacc] <- initial_S
   state[index_I] <- initial_I
   state[index_I_weighted] <- pars$I_A_transmission * initial_I
-  state[index_T_sero_pre] <- initial_I
+  state[index_T_sero_pre_1] <- initial_I
+  state[index_T_sero_pre_2] <- initial_I
   state[index_T_PCR_pos] <- initial_I
   state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
-  state[index_N_tot2] <- sum(pars$N_tot)
-  state[index_N_tot3] <- sum(pars$N_tot)
+  state[index_N_tot_sero_1] <- sum(pars$N_tot)
+  state[index_N_tot_sero_2] <- sum(pars$N_tot)
+  state[index_N_tot_PCR] <- sum(pars$N_tot)
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
 
   list(state = state,
@@ -1072,87 +1245,201 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##'
 ##' @title Carehomes progression parameters
 ##'
+##' @param dt The step size
+##'
+##' @section Time-varying parameters:
+##' Every time varying parameter has the same format, which can be `NULL` (in
+##'   which case a default single value is used) or a list with `date` and
+##'   `value` for changes in the parameter. If `value` is scalar then
+##'   `date` can be `NULL` or missing. If `value` is a vector then `date`
+##'   must be a vector of sircovid dates of the same length as `value`.
+##'
+##' @param gamma_E Time-varying parameters for the Erlang rate parameter of the
+##'   duration in the E (exposed) compartment. See Details.
+##'
+##' @param gamma_A Time-varying parameters for the Erlang rate parameter of the
+##'   duration in the I_A (asymptomatic) compartment. See Details.
+##'
+##' @param gamma_P Time-varying parameters for the Erlang rate parameter of the
+##'   duration in the I_P (presymptomatic) compartment. See Details.
+##'
+##' @param gamma_C_1 Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the I_C_1 (first stage symptomatic) compartment. See
+##'   Details.
+##'
+##' @param gamma_C_2 Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the I_C_2 (second stage symptomatic) compartment. See
+##'   Details.
+##'
+##' @param gamma_ICU_pre Time-varying parameters for the Erlang rate parameter
+##'   of the duration in the ICU_pre (general beds stay before ICU) compartment.
+##'   See Details.
+##'
+##' @param gamma_ICU_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the ICU_D (ICU stay for individuals who die in ICU)
+##'   compartment. See Details.
+##'
+##' @param gamma_ICU_W_D Time-varying parameters for the Erlang rate parameter
+##'   of the duration in the ICU_W_D (ICU stay for individuals who go on to die
+##'   in stepdown) compartment. See Details.
+##'
+##' @param gamma_ICU_W_R Time-varying parameters for the Erlang rate parameter
+##'   of the duration in the ICU_W_R (ICU stay for individuals who go on to
+##'   recover in stepdown) compartment. See Details.
+##'
+##' @param gamma_H_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the H_D (general beds stay for individuals who die in
+##'   general beds) compartment. See Details.
+##'
+##' @param gamma_H_R Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the H_R (general beds stay for individuals who recover in
+##'   general beds) compartment. See Details.
+##'
+##' @param gamma_W_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the W_D (stepdown for individuals who die in stepdown)
+##'   compartment. See Details.
+##'
+##' @param gamma_W_R Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the W_R (stepdown for individuals who recover in stepdown)
+##'   compartment. See Details.
+##'
+##' @param gamma_G_D Time-varying parameters for the Erlang rate parameter of
+##'   the duration in the G_D (delay to death in the community/care homes)
+##'   compartment. See Details.
+##'
 ##' @return A list of parameter values
 ##'
-##' @param rel_gamma_A Vector of relative rates of gamma_A for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
-##' @param rel_gamma_P Vector of relative rates of gamma_P for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
-##' @param rel_gamma_C_1 Vector of relative rates of gamma_C_1 for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
-##' @param rel_gamma_C_2 Vector of relative rates of gamma_C_2 for each
-##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
-##'   same length as `strain_transmission`, with entries that determines the
-##'   relative scaling of the defaults for each strain.
-##'
 ##' @export
-carehomes_parameters_progression <- function(rel_gamma_A = 1,
-                                             rel_gamma_P = 1,
-                                             rel_gamma_C_1 = 1,
-                                             rel_gamma_C_2 = 1) {
-
-  stopifnot(length(unique(lengths(list(rel_gamma_A, rel_gamma_P,
-                                       rel_gamma_C_1, rel_gamma_C_2)))) == 1)
-  if (length(rel_gamma_A) == 2) {
-    ## if two strains then mirror the same gammas for the pseudo-strains
-    ## Note: pseudo-strain = 3/4 has same progression/rates as strain 2/1
-    rel_gamma_A <- mirror_strain(rel_gamma_A)
-    rel_gamma_P <- mirror_strain(rel_gamma_P)
-    rel_gamma_C_1 <- mirror_strain(rel_gamma_C_1)
-    rel_gamma_C_2 <- mirror_strain(rel_gamma_C_2)
-  }
+carehomes_parameters_progression <- function(dt,
+                                             gamma_E = NULL,
+                                             gamma_A = NULL,
+                                             gamma_P = NULL,
+                                             gamma_C_1 = NULL,
+                                             gamma_C_2 = NULL,
+                                             gamma_ICU_pre = NULL,
+                                             gamma_ICU_D = NULL,
+                                             gamma_ICU_W_D = NULL,
+                                             gamma_ICU_W_R = NULL,
+                                             gamma_H_D = NULL,
+                                             gamma_H_R = NULL,
+                                             gamma_W_D = NULL,
+                                             gamma_W_R = NULL,
+                                             gamma_G_D = NULL) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
   ## parameters of that distribution.
-  list(k_E = 2,
-       k_A = 1,
-       k_P = 1,
-       k_C_1 = 1,
-       k_C_2 = 1,
-       k_G_D = 2,
-       k_H_D = 2,
-       k_H_R = 2,
-       k_ICU_D = 2,
-       k_ICU_W_R = 2,
-       k_ICU_W_D = 2,
-       k_ICU_pre = 2,
-       k_W_R = 2,
-       k_W_D = 2,
-       k_sero_pos = 2,
-       k_PCR_pre = 2,
-       k_PCR_pos = 2,
+  ret <- list(k_E = 2,
+              k_A = 1,
+              k_P = 1,
+              k_C_1 = 1,
+              k_C_2 = 1,
+              k_G_D = 2,
+              k_H_D = 2,
+              k_H_R = 2,
+              k_ICU_D = 2,
+              k_ICU_W_R = 2,
+              k_ICU_W_D = 2,
+              k_ICU_pre = 2,
+              k_W_R = 2,
+              k_W_D = 2,
+              k_sero_pre_1 = 2,
+              k_sero_pos_1 = 2,
+              k_sero_pre_2 = 2,
+              k_sero_pos_2 = 2,
+              k_PCR_pre = 2,
+              k_PCR_pos = 2,
 
-       gamma_E = 1 / (3.42 / 2),
-       gamma_A = 1 / 2.88 * rel_gamma_A,
-       gamma_P = 1 / 1.68 * rel_gamma_P,
-       gamma_C_1 = 1 / 2.14 * rel_gamma_C_1,
-       gamma_C_2 = 1 / 1.86 * rel_gamma_C_2,
-       gamma_G_D = 1 / (3 / 2),
-       gamma_H_D = 2 / 5,
-       gamma_H_R = 2 / 10,
-       gamma_ICU_D = 2 / 5,
-       gamma_ICU_W_R = 2 / 10,
-       gamma_ICU_W_D = 2 / 10,
-       gamma_ICU_pre = 2,
-       gamma_W_R = 2 / 5,
-       gamma_W_D = 2 / 5,
-       gamma_sero_pre_1 = 1 / 5,
-       gamma_sero_pre_2 = 1 / 10,
-       gamma_sero_pos = 1 / 25,
-       gamma_U = 3 / 10,
-       gamma_PCR_pre = 2 / 3,
-       gamma_PCR_pos = 1 / 5
-       )
+              gamma_E = 1 / (3.42 / 2),
+              gamma_A = 1 / 2.88,
+              gamma_P = 1 / 1.68,
+              gamma_C_1 = 1 / 2.14,
+              gamma_C_2 = 1 / 1.86,
+              gamma_G_D = 1 / (3 / 2),
+              gamma_H_D = 2 / 5,
+              gamma_H_R = 2 / 10,
+              gamma_ICU_D = 2 / 5,
+              gamma_ICU_W_R = 2 / 10,
+              gamma_ICU_W_D = 2 / 10,
+              gamma_ICU_pre = 2,
+              gamma_W_R = 2 / 5,
+              gamma_W_D = 2 / 5,
+              gamma_sero_pre_1 = 1 / 10,
+              gamma_sero_pos_1 = 1 / 25,
+              gamma_sero_pre_2 = 1 / 10,
+              gamma_sero_pos_2 = 1 / 25,
+              gamma_U = 3 / 10,
+              gamma_PCR_pre = 2 / 3,
+              gamma_PCR_pos = 1 / 5
+  )
+
+  time_varying_gammas <- list(E = gamma_E,
+                              A = gamma_A,
+                              P = gamma_P,
+                              C_1 = gamma_C_1,
+                              C_2 = gamma_C_2,
+                              ICU_pre = gamma_ICU_pre,
+                              ICU_D = gamma_ICU_D,
+                              ICU_W_D = gamma_ICU_W_D,
+                              ICU_W_R = gamma_ICU_W_R,
+                              H_D = gamma_H_D,
+                              H_R = gamma_H_R,
+                              W_D = gamma_W_D,
+                              W_R = gamma_W_R,
+                              G_D = gamma_G_D)
+
+  get_gamma_step <- function(x, name) {
+
+    gamma_name <- paste0("gamma_", name)
+    gamma <- x[[gamma_name]]
+    time_vary <- time_varying_gammas[[name]]
+
+    if (is.null(time_vary)) {
+      gamma_value <- NULL
+      gamma_date <- NULL
+    } else {
+      gamma_value <- time_vary$value
+      if ("date" %in% names(time_vary)) {
+        gamma_date <- time_vary$date
+      } else {
+        gamma_date <- NULL
+      }
+    }
+
+    if (!is.null(gamma_value)) {
+      assert_non_negative(gamma_value, gamma_name)
+      if (length(gamma_value) == 1L) {
+        if (length(gamma_date) != 0) {
+          stop(sprintf(
+            "As '%s' has a single 'value', expected NULL or missing 'date'",
+            gamma_name))
+        }
+      } else if (length(gamma_date) != length(gamma_value)) {
+        stop(sprintf("'date' and 'value' for '%s' must have the same length",
+             gamma_name))
+      }
+    }
+
+    if (is.null(gamma_value)) {
+      gamma_step <- gamma
+    } else {
+      gamma_step <- sircovid_parameters_piecewise_linear(gamma_date,
+                                                         gamma_value, dt)
+    }
+
+    x[[paste0("gamma_", name, "_step")]] <- gamma_step
+    x[[paste0("gamma_", name)]] <- NULL
+    x[[paste0("n_gamma_", name, "_steps")]] <- length(gamma_step)
+
+    x
+  }
+
+  for (name in names(time_varying_gammas)) {
+    ret <- get_gamma_step(ret, name)
+  }
+
+  ret
+
 }
 
 
@@ -1231,6 +1518,57 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
 }
 
 
+##' Carehomes observation parameters
+##'
+##' @title Carehomes sensitivity and specificity parameters
+##'
+##' @return A list of parameter values
+##'
+##' @param sero_specificity_1 Specificity of the first serology test assay
+##'
+##' @param sero_sensitivity_1 Sensitivity of the first serology test assay
+##'
+##' @param sero_specificity_2 Specificity of the second serology test assay
+##'
+##' @param sero_sensitivity_2 Sensitivity of the second serology test assay
+##'
+##' @param pillar2_specificity Specificity of the Pillar 2 test
+##'
+##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
+##'
+##' @param react_specificity Specificity of the REACT test
+##'
+##' @param react_sensitivity Sensitivity of the REACT test
+##'
+##' @export
+carehomes_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
+                                               sero_sensitivity_1 = 0.99,
+                                               sero_specificity_2 = 0.9,
+                                               sero_sensitivity_2 = 0.99,
+                                               pillar2_specificity = 0.99,
+                                               pillar2_sensitivity = 0.99,
+                                               react_specificity = 0.99,
+                                               react_sensitivity = 0.99) {
+  ret <- list(
+    ## Specificity and sensitivity for serology tests
+    sero_specificity_1 = sero_specificity_1,
+    sero_sensitivity_1 = sero_sensitivity_1,
+    sero_specificity_2 = sero_specificity_2,
+    sero_sensitivity_2 = sero_sensitivity_2,
+    ## Specificity and sensitivity for Pillar 2 testing
+    pillar2_specificity = pillar2_specificity,
+    pillar2_sensitivity = pillar2_sensitivity,
+    ## Specificity and sensitivity for REACT testing
+    react_specificity = react_specificity,
+    react_sensitivity = react_sensitivity)
+
+  lapply(seq_len(length(ret)),
+         function(i) assert_proportion(ret[i], names(ret)[i]))
+
+  ret
+}
+
+
 carehomes_population <- function(population, carehome_workers,
                                  carehome_residents) {
   ## Our core S0 calculation is more complicated than the basic model
@@ -1271,8 +1609,9 @@ carehomes_population <- function(population, carehome_workers,
 ##'   [mcstate::particle_filter_data()]. We require columns "icu",
 ##'   "general", "hosp", "deaths_hosp", "deaths_carehomes",
 ##'   "deaths_non_hosp", "deaths_comm", "deaths",
-##'   "admitted", "diagnoses", "all_admission", "npos_15_64",
-##'   "ntot_15_64", "pillar2_pos", "pillar2_tot", "pillar2_cases",
+##'   "admitted", "diagnoses", "all_admission", "sero_pos_15_64_1",
+##'   "sero_tot_15_64_1", "sero_pos_15_64_2", "sero_tot_15_64_2",
+##'   "pillar2_pos", "pillar2_tot", "pillar2_cases",
 ##'   "pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
 ##'   "react_pos", "react_tot", though thse may be entirely `NA`
 ##'   if no data are present.
@@ -1307,7 +1646,8 @@ carehomes_particle_filter <- function(data, n_particles,
 carehomes_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
-                "diagnoses", "all_admission", "npos_15_64", "ntot_15_64",
+                "diagnoses", "all_admission", "sero_pos_15_64_1",
+                "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot")
@@ -1406,8 +1746,9 @@ carehomes_data <- function(data, start_date, dt) {
                 deaths_hosp = NA_real_, deaths_non_hosp = NA_real_,
                 deaths_comm = NA_real_, deaths_carehomes = NA_real_,
                 deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
-                all_admission = NA_real_, npos_15_64 = NA_real_,
-                ntot_15_64 = NA_real_, pillar2_pos = NA_real_,
+                all_admission = NA_real_, sero_pos_15_64_1 = NA_real_,
+                sero_tot_15_64_1 = NA_real_, sero_pos_15_64_2 = NA_real_,
+                sero_tot_15_64_2 = NA_real_, pillar2_pos = NA_real_,
                 pillar2_tot = NA_real_, pillar2_cases = NA_real_,
                 pillar2_over25_pos = NA_real_, pillar2_over25_tot = NA_real_,
                 pillar2_over25_cases = NA_real_,  react_pos = NA_real_,
@@ -1415,18 +1756,4 @@ carehomes_data <- function(data, start_date, dt) {
                 strain_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
   carehomes_particle_filter_data(data)
-}
-
-
-scale_severity <- function(severity, strain_rel_severity,
-                           which = c("p_G_D", "p_H_D", "p_W_D", "p_ICU_D")) {
-  severity[which] <- lapply(severity[which], function(x) {
-    x <- matrix(x, nrow = length(x), ncol = length(strain_rel_severity))
-    prob <- matrix(strain_rel_severity, nrow = nrow(x),
-                  ncol = length(strain_rel_severity), byrow = TRUE)
-    x <- x * prob
-    x[x > 1] <- 1
-    x
-  })
-  severity
 }

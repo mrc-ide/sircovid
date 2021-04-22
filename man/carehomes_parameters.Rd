@@ -10,19 +10,13 @@ carehomes_parameters(
   beta_date = NULL,
   beta_value = NULL,
   severity = NULL,
-  p_death_carehome = 0.7,
-  sero_specificity = 0.9,
-  sero_sensitivity = 0.99,
   progression = NULL,
   observation = NULL,
+  sens_and_spec = NULL,
   initial_I = 10,
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
-  pillar2_specificity = 0.99,
-  pillar2_sensitivity = 0.99,
-  react_specificity = 0.99,
-  react_sensitivity = 0.99,
   p_NC = 0.01,
   strain_transmission = 1,
   strain_seed_date = NULL,
@@ -58,16 +52,16 @@ insensitive.}
 
 \item{beta_date}{A vector of dates for changes in beta (the
 contact rate parameter), or \code{NULL} if a single value is used for
-all times (see \code{\link[=sircovid_parameters_beta]{sircovid_parameters_beta()}}, where this is
-passed as \code{date}).}
+all times (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}}, where
+this is passed as \code{date}).}
 
 \item{beta_value}{A vector of values for beta (the contact rate
 parameter). If not given, and if \code{beta_date} is \code{NULL} then a
 value of 0.08 will be used through the whole simulation,
 otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 \code{beta_date} is given then \code{beta_date} and \code{beta_value} must have
-the same length (see \code{\link[=sircovid_parameters_beta]{sircovid_parameters_beta()}}, where this is
-passed as \code{value}).}
+the same length (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}},
+where this is passed as \code{value}).}
 
 \item{severity}{Severity data, via Bob Verity's \code{markovid}
 package. This needs to be \code{NULL} (use the default bundled data
@@ -77,18 +71,16 @@ data) or a list (for data that has already been processed by
 via the markovid package, and needs to be carefully calibrated
 with the progression parameters.}
 
-\item{p_death_carehome}{Probability of death within carehomes
-(conditional on having an "inflenza-like-illness")}
-
-\item{sero_specificity}{Specificity of the serology test}
-
-\item{sero_sensitivity}{Sensitivity of the serology test}
-
 \item{progression}{Progression data}
 
 \item{observation}{Either \code{NULL} or a list of observation parameters. If
 \code{NULL}, then a list of observation parameters will be generated using
 \code{carehomes_parameters_observation(exp_noise)}}
+
+\item{sens_and_spec}{Either \code{NULL} or a list of diagnostic test sensitivity
+and specificity parameters. If \code{NULL}, then a list of sensitivity and
+specificity parameters will be generated using
+\code{carehomes_parameters_sens_and_spec()}}
 
 \item{initial_I}{Initial number of infected indidviduals; these
 will enter the model as asymptomatic 15-19 year olds at
@@ -100,14 +92,6 @@ will enter the model as asymptomatic 15-19 year olds at
 residents or workers}
 
 \item{m_CHR}{Contact rate between carehome residents}
-
-\item{pillar2_specificity}{Specificity of the Pillar 2 test}
-
-\item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
-
-\item{react_specificity}{Specificity of the REACT test}
-
-\item{react_sensitivity}{Sensitivity of the REACT test}
 
 \item{p_NC}{Proportion of population who do not have
 covid but have covid-like symptoms}
