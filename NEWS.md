@@ -1,7 +1,11 @@
-# sircovid 0.10.41
+# sircovid 0.10.42
 
 * Deaths and admissions by age and vaccination class compartments exported as
 predicted samples
+
+# sircovid 0.10.41
+
+* Fix IFR_t calculation for multi-strain models
 
 # sircovid 0.10.40
 

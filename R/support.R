@@ -636,3 +636,19 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
 
   out
 }
+
+
+unmirror_pars <- function(p) {
+  which <-
+    vapply(p,
+           function(x)
+             (is.matrix(x) && length(dim(x)) == 2 && ncol(x) == 4 &&
+                identical(x[, 1:2], x[, 4:3])) ||
+             (length(x) == 4 && identical(x[1:2], x[4:3])) ||
+             (inherits(x, "array") && length(dim(x)) == 3 &&
+                ncol(x) == 4 &&
+                identical(x[, 1:2, ], x[, 4:3, ])),
+           logical(1))
+  p[which] <- lapply(p[which], unmirror_strain)
+  p
+}
