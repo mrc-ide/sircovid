@@ -111,13 +111,17 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   if (!is.null(interpolate_every)) {
     interpolate_critical_index <- match(interpolate_critical_dates / p$dt,
                                         step)
+    interpolate_critical_index <-
+      interpolate_critical_index[!is.na(interpolate_critical_index)]
     step_index_split <- interpolate_grid_critical_x(seq_along(step),
                                                     interpolate_every,
                                                     interpolate_critical_index,
                                                     interpolate_min)
     step_index <- unlist(step_index_split)
     ret <- carehomes_Rt(step[step_index], S[, step_index, drop = FALSE], p,
-                        prob_strain, type, weight_Rt = weight_Rt)
+                        prob_strain[, step_index, drop = FALSE], type,
+                        R = R[, step_index, drop = FALSE],
+                        weight_Rt = weight_Rt)
     if (!is.null(interpolate_every)) {
       ret[type] <- lapply(ret[type], interpolate_grid_expand_y,
                           step_index_split)
