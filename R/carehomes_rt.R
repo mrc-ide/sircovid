@@ -423,17 +423,7 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## unmirror pseudo-strains value (with safety checks)
-  which <-
-    vapply(pars,
-           function(x)
-              (is.matrix(x) && length(dim(x)) == 2 && ncol(x) == 4 &&
-                identical(x[, 1:2], x[, 4:3])) ||
-                  (length(x) == 4 && identical(x[1:2], x[4:3])) ||
-                    (inherits(x, "array") && length(dim(x)) == 3 &&
-                     ncol(x) == 4 &&
-                     identical(x[, 1:2, ], x[, 4:3, ])),
-            logical(1))
-  pars[which] <- lapply(pars[which], unmirror_strain)
+  pars <- unmirror_pars(pars)
 
   dt <- pars$dt
   n_vacc_classes <- nlayer(pars$rel_susceptibility)
