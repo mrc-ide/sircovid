@@ -2079,3 +2079,77 @@ test_that("cross-immunity can be separated by strain", {
   expect_equal(y$cum_infections_per_strain[4, 85], 0)
   expect_gt(y$cum_infections_per_strain[3, 85], 0)
 })
+
+
+test_that("Can calculate ifr_t with an empty second variant ", {
+  ## Run model with 2 variants, but both have same transmissibility
+  ## no seeding for second variant so noone infected with that one
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            rel_susceptibility = c(1, 1, 1),
+                            cross_immunity = 0)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p)
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p)
+
+  ## Run model with one strain only
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(c(index_S, index_I))
+  y <- mod$simulate(steps)
+
+  S <- y[1:19, , ]
+  I <- y[20:38, , ]
+
+  ifr_t_1_single_class <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p)
+  ifr_t_all_single_class <- carehomes_ifr_t_trajectories(steps, S, I, p)
+
+  expect_equal(ifr_t_1$step, ifr_t_1_single_class$step)
+  expect_equal(ifr_t_1$date, ifr_t_1_single_class$date)
+  expect_equal(ifr_t_1$beta, ifr_t_1_single_class$beta)
+  expect_equal(ifr_t_1$eff_ifr_t_all, ifr_t_1_single_class$eff_ifr_t_all)
+  expect_equal(ifr_t_1$eff_Rt_general,
+               ifr_t_1_single_class$eff_Rt_general)
+  expect_equal(ifr_t_1$ifr_t_all, ifr_t_1_single_class$ifr_t_all)
+  expect_equal(ifr_t_1$Rt_general, ifr_t_1_single_class$Rt_general)
+
+  expect_equal(ifr_t_all$step, ifr_t_all_single_class$step)
+  expect_equal(ifr_t_all$date, ifr_t_all_single_class$date)
+  expect_equal(ifr_t_all$beta, ifr_t_all_single_class$beta)
+  expect_equal(ifr_t_all$eff_ifr_t_all,
+               ifr_t_all_single_class$eff_ifr_t_all)
+  expect_equal(ifr_t_all$eff_Rt_general,
+               ifr_t_all_single_class$eff_Rt_general)
+  expect_equal(ifr_t_all$ifr_t_all, ifr_t_all_single_class$ifr_t_all)
+  expect_equal(ifr_t_all$Rt_general,
+               ifr_t_all_single_class$Rt_general)
+
+})

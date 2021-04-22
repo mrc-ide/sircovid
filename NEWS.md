@@ -1,3 +1,7 @@
+# sircovid 0.10.41
+
+* Fix IFR_t calculation for multi-strain models
+
 # sircovid 0.10.40
 
 * R compartment now exported as part of predicted samples

@@ -87,8 +87,13 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
       prob_infection <- (1 - exp(-p$dt * (m_extended %*% I_weighted[, t])))
     } else {
       ## include vaccine effects
-      prob_infection <- (1 - exp(-p$dt * c(p$rel_susceptibility) *
-                     (m_extended %*% (I_weighted[, t] * c(p$rel_infectivity)))))
+      if (length(dim(p$rel_susceptibility)) == 3) {
+        ## as in other place only look at strain 1
+        rel_sus <- p$rel_susceptibility[, 1, , drop = FALSE]
+        rel_inf <- p$rel_infectivity[, 1, , drop = FALSE]
+      }
+      prob_infection <- (1 - exp(-p$dt * c(rel_sus) *
+                     (m_extended %*% (I_weighted[, t] * c(rel_inf)))))
     }
 
     ## expected infections in next time step by group and vaccine class
@@ -118,7 +123,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
       IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t]),
                      n_vacc_classes)
     } else {
-      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, , t])
+      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t])
     }
 
     weighted.mean(IFR_vec[i_keep], expected_infections[i_keep, t])
@@ -218,8 +223,7 @@ carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
 
 carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 
-  pars$strain_transmission <- unmirror_strain(pars$strain_transmission)
-  pars$rel_susceptibility <- unmirror_strain(pars$rel_susceptibility)
+  pars <- unmirror_pars(pars)
 
   probs <- compute_pathway_probabilities(
     step = step,
