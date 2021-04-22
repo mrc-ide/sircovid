@@ -145,6 +145,12 @@ update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
   sum(n_W_D_unconf_to_conf[i, , , j])
 dim(diagnoses_admitted) <- c(n_groups, n_vacc_classes)
 
+initial(cum_infections_disag[, ]) <- 0
+update(cum_infections_disag[, ]) <- cum_infections_disag[i, j] +
+  sum(n_EI_A[i, , j]) +
+  sum(n_EI_P[i, , j])
+dim(cum_infections_disag) <- c(n_groups, n_vacc_classes)
+
 initial(admit_conf_inc) <- 0
 update(admit_conf_inc) <- if (step %% steps_per_day == 0)
   delta_admit_conf else

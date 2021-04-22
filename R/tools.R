@@ -31,7 +31,7 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
   ## We can tolerate any vaccine-related variable that can start
   ## zero'd. This will be the case through brief windows of upgrading
   ## sircovid only (e.g., between sircovid 0.7.2 and 0.8.0)
-  allowed <- allowed %||% c("D", "diagnoses_admitted")
+  allowed <- allowed %||% c("D", "diagnoses_admitted", "cum_infections_disag")
   err <- setdiff(msg, allowed)
   if (length(err) > 0) {
     stop(sprintf("Can't remap state (can't add variables %s)",
