@@ -88,7 +88,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
     } else {
       ## include vaccine effects
       if (length(dim(p$rel_susceptibility)) == 3) {
-        ## as in other place only look at strain 1
+        ## as in other places only look at strain 1
         rel_sus <- p$rel_susceptibility[, 1, , drop = FALSE]
         rel_inf <- p$rel_infectivity[, 1, , drop = FALSE]
       }
@@ -105,7 +105,6 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
   calculate_weighted_ratio <- function(t, expected_infections,
                                        drop_carehomes, no_vacc, type) {
-
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
     if (drop_carehomes) {
@@ -123,7 +122,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
       IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t]),
                      n_vacc_classes)
     } else {
-      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t])
+      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, , t])
     }
 
     weighted.mean(IFR_vec[i_keep], expected_infections[i_keep, t])
