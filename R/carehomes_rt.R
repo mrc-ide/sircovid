@@ -148,11 +148,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     }
   } else {
     if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * n_strains) {
-       stop(sprintf(
-         "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
+      stop(sprintf(
+        "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
           classes",
-         p$n_groups * nlayer(p$rel_susceptibility) * n_strains,
-         p$n_groups, n_strains, nlayer(p$rel_susceptibility)))
+        p$n_groups * nlayer(p$rel_susceptibility) * n_strains,
+        p$n_groups, n_strains, nlayer(p$rel_susceptibility)))
     }
     if (ncol(R) != length(step)) {
       stop(sprintf("Expected 'R' to have %d columns, following 'step'",
@@ -330,9 +330,15 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   ## ensure backwards compatibility by dropping columns for single_strain and
   ## separating classes
   class(ret) <- c("Rt")
-  if (is.null(ncol(ret[[length(ret)]]))) {
+  is_single <- (inherits(last(ret), c("matrix", "array")) &&
+                  is.null(ncol(last(ret)))) ||
+    (!inherits(last(ret), c("matrix", "array")) &&
+       length(last(ret)) == 1)
+
+
+  if (is_single) {
     class(ret) <- c("single_strain", class(ret))
-  } else if (ncol(ret[[length(ret)]]) == 1) {
+  } else if (isTRUE(ncol(last(ret)) == 1)) {
     ret[intersect(all_types, names(ret))] <-
       lapply(ret[intersect(all_types, names(ret))], drop)
     class(ret) <- c("single_strain", class(ret))
@@ -632,8 +638,12 @@ wtmean_Rt <- function(rt, prob_strain) {
     reshape_prob_strain <- aperm(prob_strain,
                                  c(n_dim, seq_len(n_dim)[-n_dim]))
 
+    if (!inherits(r, c("matrix", "array"))) {
+      r <- matrix(r, nrow = 1)
+    }
+
     if (length(dim(r)) != length(dim(reshape_prob_strain)) ||
-                                !all(dim(r) == dim(reshape_prob_strain))) {
+        !all(dim(r) == dim(reshape_prob_strain))) {
       stop(sprintf(
         "Expect elements of Rt to have dimensions: %d steps x %d strains x
         %d particles", nrow(reshape_prob_strain), ncol(reshape_prob_strain),
