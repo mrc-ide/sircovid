@@ -1,3 +1,7 @@
+# sircovid 0.10.40
+
+* R compartment now exported as part of predicted samples
+
 # sircovid 0.10.39
 
 * Added ability to fit 2nd serology assay with different serology parameters
