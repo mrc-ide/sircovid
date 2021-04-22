@@ -860,8 +860,43 @@ test_that("Can calculate Rt with an empty second variant ", {
   expect_equal(rt_all$Rt_all, rt_all_single_class$Rt_all)
   expect_equal(rt_all$Rt_general,
                rt_all_single_class$Rt_general)
-
 })
+
+
+test_that("Can calculate Rt with strain_transmission (1, 0) ", {
+  ## Run model with 2 variants, but both have same transmissibility
+  ## no seeding for second variant so noone infected with that one
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 0),
+                            cross_immunity = 0)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = FALSE)
+  expect_vector_equal(rt_1$eff_Rt_all[, 2], 0)
+  expect_vector_equal(rt_1$eff_Rt_general[, 2], 0)
+  expect_vector_equal(rt_1$Rt_all[, 2], 0)
+  expect_vector_equal(rt_1$Rt_general[, 2], 0)
+})
+
+
 
 
 test_that("Can calculate Rt with a second less infectious variant", {
