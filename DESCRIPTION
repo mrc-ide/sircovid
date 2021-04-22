@@ -52,7 +52,7 @@ Language: en-GB
 Depends: R (>= 3.1.0)
 Imports:
     dust (>= 0.8.18),
-    eigen1,
+    eigen1 (>= 0.1.1),
     mcstate (>= 0.4.0),
     socialmixr
 LinkingTo:
