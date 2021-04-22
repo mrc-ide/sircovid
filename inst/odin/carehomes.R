@@ -147,8 +147,8 @@ dim(diagnoses_admitted) <- c(n_groups, n_vacc_classes)
 
 initial(cum_infections_disag[, ]) <- 0
 update(cum_infections_disag[, ]) <- cum_infections_disag[i, j] +
-  sum(n_EI_A[i, , j]) +
-  sum(n_EI_P[i, , j])
+  sum(n_S_progress[i, , j]) +
+  sum(n_RE_tmp[i, , j])
 dim(cum_infections_disag) <- c(n_groups, n_vacc_classes)
 
 initial(admit_conf_inc) <- 0

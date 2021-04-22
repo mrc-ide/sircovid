@@ -4294,7 +4294,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_cum_infections_disag_1; ++i) {
       for (int j = 1; j <= shared->dim_cum_infections_disag_2; ++j) {
-        state_next[shared->offset_variable_cum_infections_disag + i - 1 + shared->dim_cum_infections_disag_1 * (j - 1)] = cum_infections_disag[shared->dim_cum_infections_disag_1 * (j - 1) + i - 1] + odin_sum3<real_t>(internal.n_EI_A.data(), i - 1, i, 0, shared->dim_n_EI_A_2, j - 1, j, shared->dim_n_EI_A_1, shared->dim_n_EI_A_12) + odin_sum3<real_t>(internal.n_EI_P.data(), i - 1, i, 0, shared->dim_n_EI_P_2, j - 1, j, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12);
+        state_next[shared->offset_variable_cum_infections_disag + i - 1 + shared->dim_cum_infections_disag_1 * (j - 1)] = cum_infections_disag[shared->dim_cum_infections_disag_1 * (j - 1) + i - 1] + odin_sum3<real_t>(internal.n_S_progress.data(), i - 1, i, 0, shared->dim_n_S_progress_2, j - 1, j, shared->dim_n_S_progress_1, shared->dim_n_S_progress_12) + odin_sum3<real_t>(internal.n_RE_tmp.data(), i - 1, i, 0, shared->dim_n_RE_tmp_2, j - 1, j, shared->dim_n_RE_tmp_1, shared->dim_n_RE_tmp_12);
       }
     }
     for (int i = 1; i <= shared->dim_cum_n_S_vaccinated_1; ++i) {

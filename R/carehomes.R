@@ -576,12 +576,12 @@ carehomes_index <- function(info) {
   index_D_hosp <- set_names(index[["D_hosp"]],
                             paste0("D_hosp", suffix))
   index_D <- set_names(index[["D"]],
-                       paste0("D_disag", suffix, s_type))
+                       paste0("D", suffix, s_type))
   index_cum_infections_disag <- set_names(index[["cum_infections_disag"]],
-                                          paste0("I_disag",
+                                          paste0("cum_infections_disag",
                                                  suffix, s_type))
   index_diagnoses_admitted <- set_names(index[["diagnoses_admitted"]],
-                                        paste0("A_disag",
+                                        paste0("diagnoses_admitted",
                                                suffix, s_type))
   index_cum_n_vaccinated <- set_names(index[["cum_n_vaccinated"]],
                                     paste0("cum_n_vaccinated", suffix, s_type))
