@@ -1797,7 +1797,6 @@ carehomes_data <- function(data, start_date, dt) {
 ##'
 ##' @export
 carehomes_check_severity <- function(pars) {
-browser()
   check_parameters <- function(p_step, rel_p) {
     vapply(
       seq_len(pars$n_groups),
