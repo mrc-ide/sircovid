@@ -1670,18 +1670,7 @@ test_that("check_rel_param rejects out of bounds errors", {
   expect_error(
     check_rel_param(NULL, "rel_param"),
     "At least one value required for rel_param")
-  expect_error(
-    check_rel_param(-1, "rel_param"),
-    "All values of rel_param must lie in [0, 1]",
-    fixed = TRUE)
-  expect_error(
-    check_rel_param(1.1, "rel_param"),
-    "All values of rel_param must lie in [0, 1]",
-    fixed = TRUE)
-  expect_error(
-    check_rel_param(c(1, 1.8), "rel_param"),
-    "All values of rel_param must lie in [0, 1]",
-    fixed = TRUE)
+
   expect_error(
     check_rel_param(array(c(0.9, 0.8), c(1, 1, 1)), "rel_param"),
     "First value of rel_param must be 1")
@@ -1726,9 +1715,6 @@ test_that("build_rel_param rejects wrong dimension or out of bound inputs", {
       rel_param = array(rep(1, 19 * 3), dim = c(19, 3, 1)),
       n_strains = 3, n_vacc_classes = 2, "rel_param"),
     "rel_param should have number of vaccine classes as 3rd dimension")
-  expect_error(
-    build_rel_param(10, n_strains = 1, n_vacc_classes = 1, "rel_param"),
-    "All values of rel_param must lie in [0, 1]", fixed = TRUE)
 })
 
 
