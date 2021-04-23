@@ -471,3 +471,40 @@ test_that("can generate regions", {
   expect_error(regions("europe"),
                "Unknown region type 'europe'")
 })
+
+
+test_that("unmirror_pars works as expected", {
+  ## Unmirrors when expected
+
+  ## test vector
+  x <- runif(2)
+  lst <- list(mirror_strain(x))
+  expect_equal(x, unmirror_pars(lst)[[1]])
+
+  ## test matrix
+  x <- runif(2)
+  mat_x <- matrix(mirror_strain(x), ncol = 4)
+  expect_equal(mat_x[, 1:2, drop = FALSE], unmirror_pars(list(mat_x))[[1]])
+
+  ## test array
+  x <- runif(2)
+  arr_x <- array(mirror_strain(x), c(1, 4, 1))
+  expect_equal(arr_x[, 1:2, 1, drop = FALSE], unmirror_pars(list(arr_x))[[1]])
+
+  ## Doesn't unmirror anything else
+
+  ## test vector
+  x <- runif(4)
+  lst <- list(x)
+  expect_equal(x, unmirror_pars(lst)[[1]])
+
+  ## test matrix
+  x <- runif(16)
+  mat_x <- matrix(x, ncol = 4, nrow = 4)
+  expect_equal(mat_x, unmirror_pars(list(mat_x))[[1]])
+
+  ## test array
+  x <- runif(64)
+  arr_x <- array(mirror_strain(x), c(4, 4, 4))
+  expect_equal(arr_x, unmirror_pars(list(arr_x))[[1]])
+})
