@@ -1,6 +1,6 @@
 # sircovid 0.10.46
 
-* Added `carehomes_check_severity` to check all severity probabilities lie in [0, 1] after transformation
+* Added `carehomes_check_severity` to check all severity probabilities lie in [0, 1] after transformation and all relative parameters are mirrored as expected
 
 
 # sircovid 0.10.45
