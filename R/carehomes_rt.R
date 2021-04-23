@@ -178,8 +178,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   } else {
     ## unmirror pseudo-strains value (with safety checks)
     p <- unmirror_pars(p)
-    #p$strain_transmission <- unmirror_strain(p$strain_transmission)
-    #p$rel_susceptibility <- unmirror_strain(p$rel_susceptibility)
     n_real_strains <- 2
 
     if (!is.matrix(prob_strain)) {
