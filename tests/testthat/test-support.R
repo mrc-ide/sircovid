@@ -505,6 +505,6 @@ test_that("unmirror_pars works as expected", {
 
   ## test array
   x <- runif(64)
-  arr_x <- array(mirror_strain(x), c(4, 4, 4))
+  arr_x <- array(x, c(4, 4, 4))
   expect_equal(arr_x, unmirror_pars(list(arr_x))[[1]])
 })

@@ -481,9 +481,10 @@ carehomes_parameters <- function(start_date, region,
     }
   }
 
-  c(ret, severity, progression, strain, vaccination, waning, observation,
-   sens_and_spec)
+  out <- c(ret, severity, progression, strain, vaccination, waning,
+           observation, sens_and_spec)
 
+  carehomes_check_severity(out)
 }
 
 
@@ -1137,6 +1138,8 @@ carehomes_parameters_vaccination <- function(N_tot,
     if (is.array(x)) nlayer(x) else length(x)
   }
 
+  assert_proportion(rel_susceptibility)
+
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
                      rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
@@ -1780,4 +1783,62 @@ carehomes_data <- function(data, start_date, dt) {
                 strain_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
   carehomes_particle_filter_data(data)
+}
+
+
+##' Checks severity probabilities are valid
+##'
+##' @title Check severity parameters
+##'
+##' @param pars A list of probabilities from [carehomes_parameters].
+##'
+##' @return Returns `pars` invisibly if all severity probabilities lie in
+##   (0, 1), otherwise errors.
+##'
+##' @export
+carehomes_check_severity <- function(pars) {
+  check_parameters <- function(p_step, rel_p) {
+    vapply(
+      seq_len(pars$n_groups),
+      function(i) {
+        if (is.null(pars[[rel_p]])) {
+          stop(sprintf("Parameter '%s' is missing", rel_p))
+        } else if (is.null(pars[[p_step]])) {
+          stop(sprintf("Parameter '%s' is missing", p_step))
+        }
+
+        ## simple but crude checks
+        max_p <- max(pars[[rel_p]][i, , ]) * max(pars[[p_step]][, i])
+        min_p <- min(pars[[rel_p]][i, , ]) * min(pars[[p_step]][, i])
+
+        if (any(min_p < 0 | max_p > 1)) {
+          stop(sprintf("%s * %s is not in [0, 1] for group %d",
+                       rel_p, p_step, i))
+        } else {
+          if (!(ncol(pars[[rel_p]]) %in% c(1, 4))) {
+            stop(sprintf("%s should have 1 or 4 columns", rel_p))
+          } else if (!identical(mirror_strain(unmirror_strain(pars[[rel_p]])),
+                                pars[[rel_p]])) {
+            stop(sprintf("%s should be identical to
+                         mirror_strain(unmirror_strain(%s))", rel_p, rel_p))
+          }
+        }
+        TRUE
+      }, logical(1)
+    )
+  }
+
+  step_pars <- c("p_C_step", "p_H_step", "p_ICU_step", "p_ICU_D_step",
+                 "p_H_D_step", "p_W_D_step", "p_G_D_step")
+  rel_pars <- c("rel_p_sympt", "rel_p_hosp_if_sympt", "rel_p_ICU",
+                "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D")
+
+  Map(check_parameters,
+      p_step = step_pars,
+      rel_p = rel_pars
+  )
+
+
+
+  invisible(pars)
 }

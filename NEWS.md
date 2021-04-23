@@ -1,3 +1,8 @@
+# sircovid 0.10.46
+
+* Added `carehomes_check_severity` to check all severity probabilities lie in [0, 1] after transformation and all relative parameters are mirrored as expected
+
+
 # sircovid 0.10.45
 
 * Deaths and admissions by age and vaccination class compartments exported as

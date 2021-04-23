@@ -611,18 +611,22 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
 }
 
 
-## compute probabilities of different pathways
 compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
                                           n_vacc_classes) {
-
   combine_steps_groups <- function(p_step, rel_p) {
-    ret <- vapply(seq_len(pars$n_groups),
-                  function(i) {
-                    outer(sircovid_parameters_expand_step(step, p_step[, i]),
-                          rel_p[i, , ])
-                    },
-                  array(0, c(n_time_steps, n_strains, n_vacc_classes)))
+    ret <- vapply(
+      seq_len(pars$n_groups),
+      function(i) {
+        outer(
+          sircovid_parameters_expand_step(step, p_step[, i]),
+          rel_p[i, , ]
+        )
+      },
+      array(0, c(n_time_steps, n_strains, n_vacc_classes))
+    )
+
     ret <- aperm(ret, c(4, 2, 3, 1))
+
   }
 
   out <- list()
@@ -636,7 +640,6 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
 
   out
 }
-
 
 unmirror_pars <- function(p) {
   which <-
