@@ -233,11 +233,20 @@ test_that("block expand", {
 })
 
 test_that("mirror_strain/unmirror_strain", {
+  expect_error(mirror_strain(runif(3)), "length 1 or 2")
+  expect_error(mirror_strain(matrix(runif(3), 1, 3)), "length 1 or 2")
+
+  expect_equal(mirror_strain(pi), pi)
+  expect_equal(mirror_strain(array(pi, c(4, 1, 6))), array(pi, c(4, 1, 6)))
+
   x <- runif(2)
+
   expect_equal(unmirror_strain(mirror_strain(x)), x)
   expect_equal(
-    unmirror_strain(matrix(mirror_strain(c(rep(1, 2), rep(2, 2))), 2, 4)),
-    matrix(c(rep(1, 2), rep(2, 2)), 2, 2)
+    unmirror_strain(mirror_strain(matrix(x, ncol = 2))), matrix(x, ncol = 2)
+  )
+  expect_equal(
+    unmirror_strain(mirror_strain(array(x, c(1, 2, 1)))), array(x, c(1, 2, 1))
   )
 
   x <- runif(3)

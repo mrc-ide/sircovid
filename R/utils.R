@@ -196,7 +196,33 @@ gamma_mucv2shapescale <- function(mu, cv) {
 
 
 mirror_strain <- function(x) {
-  c(x, rev(x))
+  if (inherits(x, c("matrix", "array"))) {
+    if (ncol(x) > 2) {
+      stop("'mirror_strain' should only be used on length 1 or 2 numerics or
+           1- or 2-column arrays")
+    } else if (ncol(x) == 1) {
+      out <- x
+    } else if (length(dim(x)) == 3) {
+      out <- array(NA, c(nrow(x), 4, nlayer(x)))
+      out[, c(1, 4), ] <- x[, c(1, 1), ]
+      out[, c(2, 3), ] <- x[, c(2, 2), ]
+    } else {
+      out <- matrix(NA, nrow(x), 4)
+      out[, c(1, 4)] <- x[, c(1, 1)]
+      out[, c(2, 3)] <- x[, c(2, 2)]
+    }
+  } else {
+    if (length(x) > 2 || !is.numeric(x)) {
+      stop("'mirror_strain' should only be used on length 1 or 2 numerics or
+           1- or 2-column arrays")
+    } else if (length(x) == 1) {
+      out <- x
+    } else {
+      out <- c(x, rev(x))
+    }
+  }
+
+  out
 }
 
 

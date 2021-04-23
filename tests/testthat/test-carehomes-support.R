@@ -866,6 +866,27 @@ test_that("carehomes check severity works as expected", {
     "Parameter 'p_C_step' is missing"
   )
 
+  ## errors if rel_ is not 1 or 4 cols
+  expect_error(carehomes_check_severity(list(
+    n_groups = 19,
+    rel_p_sympt = array(1, c(19, 3, 3)),
+    p_C_step = matrix(1, 1, 19)
+  )), "1 or 4 columns")
+
+  ## errors if rel_ is not mirrored because unequal
+  expect_error(carehomes_check_severity(list(
+    n_groups = 19,
+    rel_p_sympt = array(runif(19 * 4 * 3), c(19, 4, 3)),
+    p_C_step = matrix(1, 1, 19)
+  )), "identical to")
+
+  ## no error if 1 col
+  expect_error(carehomes_check_severity(list(
+    n_groups = 19,
+    rel_p_sympt = array(runif(19 * 3), c(19, 1, 3)),
+    p_C_step = matrix(1, 1, 19)
+  )), "Parameter 'rel_p_hosp_if_sympt' is missing", fixed = TRUE)
+
   ## check on required parameters
   steps <- c(
     "p_C_step", "p_H_step", "p_ICU_step", "p_ICU_D_step",

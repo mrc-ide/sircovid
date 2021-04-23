@@ -1798,7 +1798,7 @@ carehomes_data <- function(data, start_date, dt) {
 ##' @export
 carehomes_check_severity <- function(pars) {
 
-  check_proportion <- function(p_step, rel_p) {
+  check_parameters <- function(p_step, rel_p) {
     vapply(
       seq_len(pars$n_groups),
       function(i) {
@@ -1814,8 +1814,15 @@ carehomes_check_severity <- function(pars) {
           stop(sprintf("%s * %s is not in [0, 1] for group %d",
                        rel_p, p_step, i))
         } else {
-          TRUE
+          if (!(ncol(pars[[rel_p]]) %in% c(1, 4))) {
+            stop(sprintf("%s should have 1 or 4 columns", rel_p))
+          } else if (!identical(mirror_strain(unmirror_strain(pars[[rel_p]])),
+                                pars[[rel_p]])) {
+            stop(sprintf("%s should be identical to
+                         mirror_strain(unmirror_strain(%s))", rel_p, rel_p))
+          }
         }
+        TRUE
       }, logical(1)
     )
   }
@@ -1825,10 +1832,12 @@ carehomes_check_severity <- function(pars) {
   rel_pars <- c("rel_p_sympt", "rel_p_hosp_if_sympt", "rel_p_ICU",
                 "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D")
 
-  Map(check_proportion,
+  Map(check_parameters,
       p_step = step_pars,
       rel_p = rel_pars
   )
+
+
 
   invisible(pars)
 }
