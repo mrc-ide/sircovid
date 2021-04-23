@@ -1,3 +1,8 @@
+# sircovid 0.10.45
+
+* Deaths and admissions by age and vaccination class compartments exported as
+predicted samples
+
 # sircovid 0.10.44
 
 * Improve efficiency of Rt calculation for single strains when supplying multistrain parameters
