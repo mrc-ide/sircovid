@@ -1,7 +1,11 @@
-# sircovid 0.10.43
+# sircovid 0.10.44
 
 * Deaths and admissions by age and vaccination class compartments exported as
 predicted samples
+
+# sircovid 0.10.43
+
+* Fix multistrain Rt calculation for single particle case
 
 # sircovid 0.10.41
 
