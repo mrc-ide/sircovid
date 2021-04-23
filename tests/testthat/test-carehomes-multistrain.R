@@ -792,7 +792,7 @@ test_that("wtmean_Rt works as expected", {
   rt_weight_F <- carehomes_Rt(1, S, p, prob_strain, R = R, weight_Rt = FALSE)
   rt_weight_T <- carehomes_Rt(1, S, p, prob_strain, R = R, weight_Rt = TRUE)
   expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all)
-  expect_approx_equal(rt_weight_F$eff_Rt_general[[1]],
+  expect_equal(rt_weight_F$eff_Rt_general[[1]],
                       rt_weight_T$eff_Rt_general)
   expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
   expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
