@@ -63,37 +63,48 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          eigen_method = "power_iteration", R = NULL,
                          weight_Rt = FALSE) {
 
-  ## deal with the prob_strain NA case at the beginning before any variables
-  ##  are modified
-  if (!is.null(prob_strain) && any(is.na(prob_strain))) {
-    which_nna <- !vlapply(seq(ncol(prob_strain)),
-                          function(i) any(is.na(prob_strain[, i])))
+  n_strains <- length(p$strain_transmission)
+  ## move prob_strain check up here and make NULL if not needed to shortcut
+  ##  checks and calculations
+  if (n_strains > 1) {
+    if (is.null(prob_strain) || is.null(R)) {
+      stop("Expected prob_strain and R input because there is more than one
+            strain")
+    ## deal with the prob_strain NA case at the beginning before any variables
+    ##  are modified
+    } else if (!is.null(prob_strain) && any(is.na(prob_strain))) {
+      which_nna <- !vlapply(seq(ncol(prob_strain)),
+                            function(i) any(is.na(prob_strain[, i])))
 
-    ## calculate Rt by first ignoring NA
-    ret <- carehomes_Rt(step[which_nna], S[, which_nna], p,
-                        prob_strain[, which_nna], type, interpolate_every,
-                        interpolate_critical_dates, interpolate_min,
-                        eigen_method, R[, which_nna], weight_Rt)
+      ## calculate Rt by first ignoring NA
+      ret <- carehomes_Rt(step[which_nna], S[, which_nna], p,
+                          prob_strain[, which_nna], type, interpolate_every,
+                          interpolate_critical_dates, interpolate_min,
+                          eigen_method, R[, which_nna], weight_Rt)
 
-    ## replace reduced step,date,beta with full values (no NA here)
-    ret$step <- step
-    ret$date <- step * p$dt
-    ret$beta <- beta <- sircovid_parameters_expand_step(step, p$beta_step)
+      ## replace reduced step,date,beta with full values (no NA here)
+      ret$step <- step
+      ret$date <- step * p$dt
+      ret$beta <- beta <- sircovid_parameters_expand_step(step, p$beta_step)
 
-    ## restore full length Rt with NAs when prob_strain is NA
-    for (i in grep("Rt_", names(ret))) {
-      if (inherits(ret[[i]], "matrix")) {
-        base <- matrix(NA, length(step), 2)
-        base[which_nna, ] <- ret[[i]]
-        ret[[i]] <- base
-      } else {
-        base <- rep(NA, length(step))
-        base[which_nna] <- ret[[i]]
-        ret[[i]] <- base
+      ## restore full length Rt with NAs when prob_strain is NA
+      for (i in grep("Rt_", names(ret))) {
+        if (inherits(ret[[i]], "matrix")) {
+          base <- matrix(NA, length(step), 2)
+          base[which_nna, ] <- ret[[i]]
+          ret[[i]] <- base
+        } else {
+          base <- rep(NA, length(step))
+          base[which_nna] <- ret[[i]]
+          ret[[i]] <- base
+        }
       }
-    }
 
-    return(ret)
+      return(ret)
+    }
+  } else {
+    prob_strain <- array(1, length(step))
+    R <- NULL
   }
 
   all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
@@ -133,8 +144,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     return(ret)
   }
 
-  n_strains <- length(p$strain_transmission)
-
   if (nrow(S) != nlayer(p$rel_susceptibility) * nrow(p$m)) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vaccine classes",
@@ -146,11 +155,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
   }
-  if (is.null(R)) {
-    if (length(p$strain_transmission) > 1) {
-      stop("Expected R input because there is more than one strain")
-    }
-  } else {
+  if (!is.null(R)) {
     if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * n_strains) {
       stop(sprintf(
         "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
@@ -164,28 +169,23 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     }
   }
 
-  if (is.null(prob_strain)) {
-    if (n_strains > 1) {
-      stop("Expected prob_strain input because there is more than one strain")
-    } else {
-      prob_strain <- array(1, length(step))
-    }
+  if (n_strains == 1) {
+    n_real_strains <- 1
   } else {
-    ## Remove pseudo-strain transmissions (does nothing if ncol/layer < 4)
-    p$strain_transmission <- unmirror_strain(p$strain_transmission)
-    p$rel_susceptibility <- unmirror_strain(p$rel_susceptibility)
-    n_strains <- length(p$strain_transmission)
+    ## unmirror pseudo-strains value (with safety checks)
+    p <- unmirror_pars(p)
+    n_real_strains <- 2
 
     if (!is.matrix(prob_strain)) {
       stop(sprintf(
         "Expected a %d strains x %d step matrix for 'prob_strain'",
-        n_strains, length(step)))
+        n_real_strains, length(step)))
     }
 
-    if (nrow(prob_strain) != n_strains) {
+    if (nrow(prob_strain) != n_real_strains) {
       stop(sprintf(
         "Expected 'prob_strain' to have %d rows, following number of strains",
-        n_strains))
+        n_real_strains))
     }
     if (ncol(prob_strain) != length(step)) {
       stop(sprintf(
@@ -258,11 +258,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   n_groups <- nrow(p$m)
 
   ngm_computer <- function(x, effective) {
-    vapply(seq(n_strains), function(i) {
+    vapply(seq(n_real_strains), function(i) {
       md <- mean_duration[, i, , , drop = FALSE]
       dim(md) <- dim(md)[c(1, 3, 4)]
 
-      if (n_strains == 1) {
+      if (n_real_strains == 1) {
         compute_ngm(md, x, p$rel_susceptibility)
       } else {
         N <- n_groups * n_vacc_classes
@@ -297,12 +297,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
     if ("eff_Rt_all" %in% type) {
       ret$eff_Rt_all <-
-        vapply(seq(n_strains), function(i) eigen(ngm[, , , i]),
+        vapply(seq(n_real_strains), function(i) eigen(ngm[, , , i]),
                numeric(dim(ngm)[[3L]]))
     }
     if ("eff_Rt_general" %in% type) {
       ret$eff_Rt_general <-
-        vapply(seq(n_strains), function(i) eigen(ngm[-ch, -ch, , i]),
+        vapply(seq(n_real_strains), function(i) eigen(ngm[-ch, -ch, , i]),
                numeric(dim(ngm)[[3L]]))
     }
   }
@@ -321,12 +321,12 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
     if ("Rt_all" %in% type) {
       ret$Rt_all <-
-        vapply(seq(n_strains), function(i) eigen(ngm[, , , i]),
+        vapply(seq(n_real_strains), function(i) eigen(ngm[, , , i]),
                numeric(dim(ngm)[[3L]]))
     }
     if ("Rt_general" %in% type) {
       ret$Rt_general <-
-        vapply(seq(n_strains), function(i) eigen(ngm[-ch, -ch, , i]),
+        vapply(seq(n_real_strains), function(i) eigen(ngm[-ch, -ch, , i]),
                numeric(dim(ngm)[[3L]]))
     }
   }
@@ -432,8 +432,6 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 
 
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
-  ## unmirror pseudo-strains value (with safety checks)
-  pars <- unmirror_pars(pars)
 
   dt <- pars$dt
   n_vacc_classes <- nlayer(pars$rel_susceptibility)
