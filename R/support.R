@@ -624,9 +624,9 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
       },
       array(0, c(n_time_steps, n_strains, n_vacc_classes))
     )
-    assert_proportion(ret)
+
     ret <- aperm(ret, c(4, 2, 3, 1))
-    assert_proportion(ret)
+
   }
 
   out <- list()
@@ -640,54 +640,6 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
 
   out
 }
-
-##' Checks severity probabilities are valid
-##'
-##' @title Check severity parameters
-##'
-##' @param pars A list of probabilities from [carehomes_parameters].
-##'
-##' @return Returns `pars` invisibly if all severity probabilities lie in
-##   (0, 1), otherwise errors.
-##'
-##' @export
-carehomes_check_severity <- function(pars) {
-
-  check_proportion <- function(p_step, rel_p) {
-    vapply(
-      seq_len(pars$n_groups),
-      function(i) {
-        if (is.null(pars[[rel_p]])) {
-          stop(sprintf("Parameter '%s' is missing", rel_p))
-        } else if (is.null(pars[[p_step]])) {
-          stop(sprintf("Parameter '%s' is missing", p_step))
-        }
-
-        new_p <- pars[[rel_p]][i, , ] * pars[[p_step]][, i]
-
-        if (any(new_p < 0 | new_p > 1)) {
-          stop(sprintf("%s * %s is not in [0, 1] for group %d",
-                       rel_p, p_step, i))
-        } else {
-          TRUE
-        }
-      }, logical(1)
-    )
-  }
-
-  step_pars <- c("p_C_step", "p_H_step", "p_ICU_step", "p_ICU_D_step",
-                 "p_H_D_step", "p_W_D_step", "p_G_D_step")
-  rel_pars <- c("rel_p_sympt", "rel_p_hosp_if_sympt", "rel_p_ICU",
-                "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D")
-
-  Map(check_proportion,
-      p_step = step_pars,
-      rel_p = rel_pars
-  )
-
-  invisible(pars)
-}
-
 
 unmirror_pars <- function(p) {
   which <-
