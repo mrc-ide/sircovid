@@ -155,11 +155,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
   }
-  if (is.null(R)) {
-    if (length(p$strain_transmission) > 1) {
-      stop("Expected R input because there is more than one strain")
-    }
-  } else {
+  if (!is.null(R)) {
     if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * n_strains) {
       stop(sprintf(
         "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
