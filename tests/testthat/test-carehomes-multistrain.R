@@ -784,6 +784,18 @@ test_that("wtmean_Rt works as expected", {
   expect_error(wtmean_Rt(structure(list(Rt_all = matrix(1)), class = "Rt"),
                          prob_strain),
               "Expect elements of Rt to have dimensions")
+
+  ## check single particle case
+  S <- mcstate::array_flatten(S, 2:3)[, 1, drop = FALSE]
+  R <- mcstate::array_flatten(R, 2:3)[, 1, drop = FALSE]
+  prob_strain <- mcstate::array_flatten(prob_strain, 2:3)[, 1, drop = FALSE]
+  rt_weight_F <- carehomes_Rt(1, S, p, prob_strain, R = R, weight_Rt = FALSE)
+  rt_weight_T <- carehomes_Rt(1, S, p, prob_strain, R = R, weight_Rt = TRUE)
+  expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all)
+  expect_equal(rt_weight_F$eff_Rt_general[[1]],
+                      rt_weight_T$eff_Rt_general)
+  expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
+  expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
 })
 
 

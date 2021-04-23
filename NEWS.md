@@ -1,3 +1,7 @@
+# sircovid 0.10.43
+
+* Fix multistrain Rt calculation for single particle case
+
 # sircovid 0.10.41
 
 * Fix IFR_t calculation for multi-strain models
