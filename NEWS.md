@@ -1,3 +1,7 @@
+# sircovid 0.10.45
+
+* Added `carehomes_check_severity` to check all severity probabilities lie in [0, 1] after transformation
+
 # sircovid 0.10.44
 
 * Improve efficiency of Rt calculation for single strains when supplying multistrain parameters

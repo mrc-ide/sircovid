@@ -88,9 +88,6 @@ check_rel_param <- function(rel_param, name_param) {
   if (length(rel_param) == 0) {
     stop(paste("At least one value required for", name_param))
   }
-  if (any(rel_param < 0 | rel_param > 1)) {
-    stop(paste("All values of", name_param, "must lie in [0, 1]"))
-  }
   if (!all(rel_param[, , 1] == 1)) {
     stop(paste("First value of", name_param, "must be 1"))
   }

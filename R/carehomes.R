@@ -481,9 +481,10 @@ carehomes_parameters <- function(start_date, region,
     }
   }
 
-  c(ret, severity, progression, strain, vaccination, waning, observation,
-   sens_and_spec)
+  out <- c(ret, severity, progression, strain, vaccination, waning,
+           observation, sens_and_spec)
 
+  carehomes_check_severity(out)
 }
 
 
@@ -1127,6 +1128,8 @@ carehomes_parameters_vaccination <- function(N_tot,
   calc_n_vacc_classes <- function(x) {
     if (is.array(x)) nlayer(x) else length(x)
   }
+
+  assert_proportion(rel_susceptibility)
 
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
