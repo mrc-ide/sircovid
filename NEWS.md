@@ -1,3 +1,7 @@
+# sircovid 0.10.44
+
+* Improve efficiency of Rt calculation for single strains when supplying multistrain parameters
+
 # sircovid 0.10.43
 
 * Fix multistrain Rt calculation for single particle case
