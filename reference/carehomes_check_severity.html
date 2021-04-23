@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Forecast the carehomes model — carehomes_forecast • sircovid</title>
+<title>Check severity parameters — carehomes_check_severity • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,8 @@
 
 
 
-<meta property="og:title" content="Forecast the carehomes model — carehomes_forecast" />
-<meta property="og:description" content="Forecast from the carehomes model; this provides a wrapper around
-mcstate::pmcmc_sample and mcstate::pmcmc_predict that samples
-the trajectories then creates samples, setting the sircovid dates
-and adding trajectories of incidence." />
+<meta property="og:title" content="Check severity parameters — carehomes_check_severity" />
+<meta property="og:description" content="Checks severity probabilities are valid" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -122,69 +119,29 @@ and adding trajectories of incidence." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Forecast the carehomes model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes.R'><code>R/carehomes.R</code></a></small>
-    <div class="hidden name"><code>carehomes_forecast.Rd</code></div>
+    <h1>Check severity parameters</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/support.R'><code>R/support.R</code></a></small>
+    <div class="hidden name"><code>carehomes_check_severity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Forecast from the carehomes model; this provides a wrapper around
-<a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_sample</a> and <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict</a> that samples
-the trajectories then creates samples, setting the sircovid dates
-and adding trajectories of incidence.</p>
+    <p>Checks severity probabilities are valid</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_forecast</span><span class='op'>(</span>
-  <span class='va'>samples</span>,
-  <span class='va'>n_sample</span>,
-  <span class='va'>burnin</span>,
-  <span class='va'>forecast_days</span>,
-  <span class='va'>incidence_states</span>,
-  prepend_trajectories <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>carehomes_check_severity</span><span class='op'>(</span><span class='va'>pars</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>samples</th>
-      <td><p>Results of running <code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc.html'>mcstate::pmcmc()</a></code></p></td>
-    </tr>
-    <tr>
-      <th>n_sample</th>
-      <td><p>Number of samples to take. If you provide a value
-of 0 then sampling is skipped (i.e., the entire set of
-parameters in <code>samples</code> will be forecasted). Otherwise this is
-passed to <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_sample</a></p></td>
-    </tr>
-    <tr>
-      <th>burnin</th>
-      <td><p>Optional integer number of iterations to discard as
-"burn-in". If given then samples <code>1:burnin</code> will be
-excluded from your results. Remember that the first sample
-represents the starting point of the chain. It is an error if
-this is not a positive integer or is greater than or equal to
-the number of samples (i.e., there must be at least one sample
-remaining after discarding burnin).</p></td>
-    </tr>
-    <tr>
-      <th>forecast_days</th>
-      <td><p>The number of days to create a forecast for</p></td>
-    </tr>
-    <tr>
-      <th>incidence_states</th>
-      <td><p>A character vector of states for which
-incidnce should be computed (from cumulative compartments, such
-as deaths). These will end up in the final trajectories object
-with the sufix <code>_inc</code> (e.g., <code>deaths</code> becomes <code>deaths_inc</code>).</p></td>
-    </tr>
-    <tr>
-      <th>prepend_trajectories</th>
-      <td><p>Prepend trajectories from the particle
-filter to the predictions created here.</p></td>
+      <th>pars</th>
+      <td><p>A list of probabilities from <a href='carehomes_parameters.html'>carehomes_parameters</a>.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Returns <code>pars</code> invisibly if all severity probabilities lie in</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
