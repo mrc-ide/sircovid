@@ -1797,7 +1797,7 @@ carehomes_data <- function(data, start_date, dt) {
 ##'
 ##' @export
 carehomes_check_severity <- function(pars) {
-
+browser()
   check_parameters <- function(p_step, rel_p) {
     vapply(
       seq_len(pars$n_groups),
@@ -1808,9 +1808,11 @@ carehomes_check_severity <- function(pars) {
           stop(sprintf("Parameter '%s' is missing", p_step))
         }
 
-        new_p <- pars[[rel_p]][i, , ] * pars[[p_step]][, i]
+        ## simple but crude checks
+        max_p <- max(pars[[rel_p]][i, , ]) * max(pars[[p_step]][, i])
+        min_p <- min(pars[[rel_p]][i, , ]) * min(pars[[p_step]][, i])
 
-        if (any(new_p < 0 | new_p > 1)) {
+        if (any(min_p < 0 | max_p > 1)) {
           stop(sprintf("%s * %s is not in [0, 1] for group %d",
                        rel_p, p_step, i))
         } else {
