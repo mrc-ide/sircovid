@@ -2239,8 +2239,8 @@ test_that("can inflate the number of strains after running with 1", {
   expect_equal(z2$T_PCR_pos[, 1, , , , drop = FALSE], z1$T_PCR_pos)
   expect_equal(z2$T_PCR_pos[, 2:4, , , , drop = FALSE],
                array(0, c(19, 3, 2, 1, 3)))
-  expect_equal(z2$T_sero_neg[, 1, , , drop = FALSE], z1$T_sero_neg)
-  expect_equal(z2$T_sero_neg[, 2:4, , , drop = FALSE],
+  expect_equal(z2$R[, 1, , , drop = FALSE], z1$R)
+  expect_equal(z2$R[, 2:4, , , drop = FALSE],
                array(0, c(19, 3, 1, 3)))
 
   expect_equal(z2$time, z1$time)

@@ -29,7 +29,6 @@ predicted samples
 * New function `sircovid::inflate_state_strains` for adding empty strain compartments to a model state that was run without multiple strains
 
 # sircovid 0.10.39
->>>>>>> Add support for inflating strains
 
 * R compartment now exported as part of predicted samples
 
