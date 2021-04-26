@@ -67,6 +67,7 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
 ##' @return An expanded model state with two strains
 ##'
 ##' @author Richard Fitzjohn
+##' @export
 inflate_state_strains <- function(state1, info1, info2) {
   if (!is.matrix(state1)) {
     stop("Expected a matrix for 'state1'")
