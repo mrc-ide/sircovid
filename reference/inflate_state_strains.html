@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute "Rt" — carehomes_Rt • sircovid</title>
+<title>Inflate model state — inflate_state_strains • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,10 @@
 
 
 
-<meta property="og:title" content="Compute "Rt" — carehomes_Rt" />
-<meta property="og:description" content="Compute &quot;Rt&quot; for a single simulated trajectory and parameter set." />
+<meta property="og:title" content="Inflate model state — inflate_state_strains" />
+<meta property="og:description" content="Inflate model state, so that additional strain compartments are
+created but zerod. Use this to run the model for a while, then set
+it up to work with new strains." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,109 +121,42 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute "Rt"</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/carehomes_rt.R'><code>R/carehomes_rt.R</code></a></small>
-    <div class="hidden name"><code>carehomes_Rt.Rd</code></div>
+    <h1>Inflate model state</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/tools.R'><code>R/tools.R</code></a></small>
+    <div class="hidden name"><code>inflate_state_strains.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compute "Rt" for a single simulated trajectory and parameter set.</p>
+    <p>Inflate model state, so that additional strain compartments are
+created but zerod. Use this to run the model for a while, then set
+it up to work with new strains.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>carehomes_Rt</span><span class='op'>(</span>
-  <span class='va'>step</span>,
-  <span class='va'>S</span>,
-  <span class='va'>p</span>,
-  prob_strain <span class='op'>=</span> <span class='cn'>NULL</span>,
-  type <span class='op'>=</span> <span class='cn'>NULL</span>,
-  interpolate_every <span class='op'>=</span> <span class='cn'>NULL</span>,
-  interpolate_critical_dates <span class='op'>=</span> <span class='cn'>NULL</span>,
-  interpolate_min <span class='op'>=</span> <span class='cn'>NULL</span>,
-  eigen_method <span class='op'>=</span> <span class='st'>"power_iteration"</span>,
-  R <span class='op'>=</span> <span class='cn'>NULL</span>,
-  weight_Rt <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>inflate_state_strains</span><span class='op'>(</span><span class='va'>state1</span>, <span class='va'>info1</span>, <span class='va'>info2</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>step</th>
-      <td><p>A vector of steps that the model was run over</p></td>
+      <th>state1</th>
+      <td><p>The state matrix with one strain</p></td>
     </tr>
     <tr>
-      <th>S</th>
-      <td><p>A (n groups x n vaccine classes) x steps matrix of "S"
-compartment counts</p></td>
+      <th>info1</th>
+      <td><p>The model info with one strain</p></td>
     </tr>
     <tr>
-      <th>p</th>
-      <td><p>A <code><a href='carehomes_parameters.html'>carehomes_parameters()</a></code> object</p></td>
-    </tr>
-    <tr>
-      <th>prob_strain</th>
-      <td><p>A (n groups x n strains) x n steps matrix of
-"prob_strain" outputs from the model. For a 2 strain model for example,
-<code>prob_strain[1, j]</code> and <code>prob_strain[n_groups + 1, j]</code> should give, for
-the j^th time step, the probabilities that new infections
-in group 1 are of strains 1 and 2 respectively.
-The default is <code>NULL</code>, but it must
-be specified if there is more than one strain</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>A character vector of possible Rt types to
-compute. Can be any or all of <code>eff_Rt_all</code>, <code>eff_Rt_general</code>,
-<code>Rt_all</code> and <code>Rt_general</code></p></td>
-    </tr>
-    <tr>
-      <th>interpolate_every</th>
-      <td><p>Spacing (in days) to use between interpolated
-points</p></td>
-    </tr>
-    <tr>
-      <th>interpolate_critical_dates</th>
-      <td><p>Optional vector of critical sircovid
-dates to use when interpolating. Interpolation will be done in
-blocks between the first time step of these dates, with each block
-starting on the first time step of the date given.
-So if you give a <code>interpolate_critical_dates</code> of <code><a href='https://rdrr.io/r/base/c.html'>c(20, 50)</a></code> then blocks <em>start</em> on first time step of days 20 and 50,
-i.e.: <code>[1, 20)</code>, <code>[20, 50)</code>, <code>[50, end]</code>.</p></td>
-    </tr>
-    <tr>
-      <th>interpolate_min</th>
-      <td><p>The minimum number of steps to include
-within a block. If there are fewer points than this then all
-points are used (i.e., no interpolation is done) or
-<code>interpolate_every</code> is reduced until at least this many points
-were used. This can be used to specify a lower bound on the
-error of small regions. If Rt is small it won't matter that
-much. You do need to specify something though or interpolation
-will not happen, and do not use less than 3 as we use spline
-interpolation and that will not work with fewer than 3 points.</p></td>
-    </tr>
-    <tr>
-      <th>eigen_method</th>
-      <td><p>The eigenvalue method to use (passed to
-<a href='https://rdrr.io/pkg/eigen1/man/eigen1.html'>eigen1::eigen1</a> as <code>method</code>)</p></td>
-    </tr>
-    <tr>
-      <th>R</th>
-      <td><p>A (n groups x n strains x n vaccine classes) x steps matrix of "R"
-compartment counts, required for multi-strain models.</p></td>
-    </tr>
-    <tr>
-      <th>weight_Rt</th>
-      <td><p>If <code>TRUE</code> then computes the weighted average
-of the Rt for all strains, otherwise all calculations are returned with
-an additional dimension to index each strain.</p></td>
+      <th>info2</th>
+      <td><p>The model info with two strains</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with elements <code>step</code>, <code>beta</code>, and any of the <code>type</code>
-values specified above.</p>
+    <p>An expanded model state with two strains</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Richard Fitzjohn</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
