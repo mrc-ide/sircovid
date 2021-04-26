@@ -1,3 +1,7 @@
+# sircovid 0.10.47
+
+* New function `sircovid::inflate_state_strains` for adding empty strain compartments to a model state that was run without multiple strains
+
 # sircovid 0.10.46
 
 * Added `carehomes_check_severity` to check all severity probabilities lie in [0, 1] after transformation and all relative parameters are mirrored as expected
@@ -21,6 +25,10 @@ predicted samples
 * Fix IFR_t calculation for multi-strain models
 
 # sircovid 0.10.40
+
+* New function `sircovid::inflate_state_strains` for adding empty strain compartments to a model state that was run without multiple strains
+
+# sircovid 0.10.39
 
 * R compartment now exported as part of predicted samples
 

@@ -2198,5 +2198,50 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   expect_equal(ifr_t_all$ifr_t_all, ifr_t_all_single_class$ifr_t_all)
   expect_equal(ifr_t_all$Rt_general,
                ifr_t_all_single_class$Rt_general)
+})
 
+
+test_that("can inflate the number of strains after running with 1", {
+  ## one strain
+  p1 <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  ## two strains
+  p2 <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                             strain_transmission = c(1, 1))
+
+  np <- 3L
+  mod1 <- carehomes$new(p1, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod1$info(), 10, p1)
+  mod1$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p1$dt
+  steps <- seq(initial$step, end, by = 1 / p1$dt)
+  y1 <- mod1$run(end)
+  info1 <- mod1$info()
+
+  mod2 <- carehomes$new(p2, 0, 1)
+  info2 <- mod2$info()
+  y2 <- inflate_state_strains(y1, info1, info2)
+
+  expect_equal(dim(y2), c(info2$len, 3))
+  expect_equal(sum(y2), sum(y1))
+
+  expect_equal(sort(y2[, 1], decreasing = TRUE)[seq_len(info1$len)],
+               sort(y1[, 1], decreasing = TRUE))
+  expect_equal(sort(y2[, 1], decreasing = TRUE)[-seq_len(info1$len)],
+               rep(0, info2$len - info1$len))
+
+  ## examples of the different types of conversions:
+  ## rank 1, length 2:
+  z1 <- mod1$transform_variables(y1)
+  z2 <- mod2$transform_variables(y2)
+  expect_equal(z2$prob_strain, matrix(c(1, 0), 2, 3))
+  expect_equal(z2$cum_infections_per_strain,
+               rbind(z1$cum_infections_per_strain, 0, 0, 0))
+  expect_equal(z2$T_PCR_pos[, 1, , , , drop = FALSE], z1$T_PCR_pos)
+  expect_equal(z2$T_PCR_pos[, 2:4, , , , drop = FALSE],
+               array(0, c(19, 3, 2, 1, 3)))
+  expect_equal(z2$R[, 1, , , drop = FALSE], z1$R)
+  expect_equal(z2$R[, 2:4, , , drop = FALSE],
+               array(0, c(19, 3, 1, 3)))
+
+  expect_equal(z2$time, z1$time)
 })
