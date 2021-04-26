@@ -51,3 +51,64 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
 
   state_new
 }
+
+
+##' Inflate model state, so that additional strain compartments are
+##' created but zerod. Use this to run the model for a while, then set
+##' it up to work with new strains.
+##'
+##' @title Inflate model state
+##' @param state1 The state matrix with one strain
+##'
+##' @param info1 The model info with one strain
+##'
+##' @param info2 The model info with two strains
+##'
+##' @return An expanded model state with two strains
+##'
+##' @author Richard Fitzjohn
+inflate_state_strains <- function(state1, info1, info2) {
+  if (!is.matrix(state1)) {
+    stop("Expected a matrix for 'state1'")
+  }
+  if (nrow(state1) != info1$len) {
+    stop(sprintf("Expected a matrix with %d rows for 'state1'",
+                 info1$len))
+  }
+
+  if (!setequal(names(info1$index), names(info2$index))) {
+    stop("Can't inflate state (try upgrading first)")
+  }
+
+  ny <- ncol(state1)
+  state2 <- matrix(0.0, info2$len, ny)
+  for (nm in names(info1$index)) {
+    d1 <- info1$dim[[nm]]
+    d2 <- info2$dim[[nm]]
+    i1 <- info1$index[[nm]]
+    i2 <- info2$index[[nm]]
+
+    if (!identical(d1, d2)) {
+      x1 <- state1[i1, ]
+      dim(x1) <- c(d1, ny)
+      x2 <- array(0, c(d2, ny))
+
+      if (length(d1) == 1) {
+        x2[1, ] <- x1
+      } else if (length(d2) == 3) {
+        x2[, 1, , ] <- x1
+      } else if (length(d2) == 4) {
+        x2[, 1, , , ] <- x1
+      } else {
+        ## This will trigger if someone adds a strain-including
+        ## compartment with rank 2 or 5+
+        stop("Unexpected dimension of output") # nocov
+      }
+      state2[i2, ] <- x2
+    } else {
+      state2[i2, ] <- state1[i1, ]
+    }
+  }
+
+  state2
+}

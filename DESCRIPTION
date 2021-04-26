@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.10.46
+Version: 0.10.47
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
