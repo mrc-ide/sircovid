@@ -44,8 +44,8 @@ dust_basic_set_pars <- function(ptr, r_pars) {
   .Call(`_sircovid_dust_basic_set_pars`, ptr, r_pars)
 }
 
-dust_basic_rng_state <- function(ptr, first_only) {
-  .Call(`_sircovid_dust_basic_rng_state`, ptr, first_only)
+dust_basic_rng_state <- function(ptr, last_only) {
+  .Call(`_sircovid_dust_basic_rng_state`, ptr, last_only)
 }
 
 dust_basic_set_rng_state <- function(ptr, rng_state) {
@@ -56,12 +56,12 @@ dust_basic_set_data <- function(ptr, data) {
   .Call(`_sircovid_dust_basic_set_data`, ptr, data)
 }
 
-dust_basic_compare_data <- function(ptr) {
-  .Call(`_sircovid_dust_basic_compare_data`, ptr)
+dust_basic_compare_data <- function(ptr, device) {
+  .Call(`_sircovid_dust_basic_compare_data`, ptr, device)
 }
 
-dust_basic_filter <- function(ptr, save_trajectories, step_snapshot) {
-  .Call(`_sircovid_dust_basic_filter`, ptr, save_trajectories, step_snapshot)
+dust_basic_filter <- function(ptr, save_trajectories, step_snapshot, device) {
+  .Call(`_sircovid_dust_basic_filter`, ptr, save_trajectories, step_snapshot, device)
 }
 
 dust_basic_capabilities <- function() {
@@ -124,8 +124,8 @@ dust_carehomes_set_pars <- function(ptr, r_pars) {
   .Call(`_sircovid_dust_carehomes_set_pars`, ptr, r_pars)
 }
 
-dust_carehomes_rng_state <- function(ptr, first_only) {
-  .Call(`_sircovid_dust_carehomes_rng_state`, ptr, first_only)
+dust_carehomes_rng_state <- function(ptr, last_only) {
+  .Call(`_sircovid_dust_carehomes_rng_state`, ptr, last_only)
 }
 
 dust_carehomes_set_rng_state <- function(ptr, rng_state) {
@@ -136,12 +136,12 @@ dust_carehomes_set_data <- function(ptr, data) {
   .Call(`_sircovid_dust_carehomes_set_data`, ptr, data)
 }
 
-dust_carehomes_compare_data <- function(ptr) {
-  .Call(`_sircovid_dust_carehomes_compare_data`, ptr)
+dust_carehomes_compare_data <- function(ptr, device) {
+  .Call(`_sircovid_dust_carehomes_compare_data`, ptr, device)
 }
 
-dust_carehomes_filter <- function(ptr, save_trajectories, step_snapshot) {
-  .Call(`_sircovid_dust_carehomes_filter`, ptr, save_trajectories, step_snapshot)
+dust_carehomes_filter <- function(ptr, save_trajectories, step_snapshot, device) {
+  .Call(`_sircovid_dust_carehomes_filter`, ptr, save_trajectories, step_snapshot, device)
 }
 
 dust_carehomes_capabilities <- function() {
