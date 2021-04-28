@@ -316,6 +316,7 @@ vaccine_priority_population <- function(region,
 ##' @param lag_groups Row indices, corresponding to age
 ##'   groups in which a lag should be added to the start time of the dose
 ##'   schedule returned by [vaccine_schedule], if NULL then no lag is added.
+##'   Ignored if `lag_groups` is NULL.
 ##'
 ##' @param lag_days If `lag_groups` is not NULL then specifies the number of
 ##'  days to add the start of the dose schedule for the given groups. Ignored
@@ -421,9 +422,9 @@ vaccine_schedule_future <- function(start,
 
   schedule <- vaccine_schedule(daily_doses_date, doses)
 
-  if (!is.null(lag_groups)) {
-    if (is.null(lag_days)) {
-      stop("'lag_days' must be non-NULL if 'lag_groups' is non_NULL")
+  if (!is.null(lag_groups) || !is.null(lag_days)) {
+    if (is.null(lag_days) || is.null(lag_groups)) {
+      stop("'lag_days' must be non-NULL iff 'lag_groups' is non_NULL")
     }
 
     ## we could do this in apply but loop is more readable

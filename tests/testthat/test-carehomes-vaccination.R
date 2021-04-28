@@ -2602,6 +2602,12 @@ test_that("Can add lag to vaccine schedule", {
     0, doses_future, mean_days_between_doses, n, lag_groups = lag_groups),
     "must be non-NULL")
 
+  expect_error(vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n, lag_groups = NULL,
+    lag_days = lag_days),
+    "must be non-NULL")
+
+
   vacc_schedule_no_lag <- vaccine_schedule_future(
     0, doses_future, mean_days_between_doses, n)
 
