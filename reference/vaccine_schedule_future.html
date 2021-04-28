@@ -81,7 +81,7 @@ daily doses." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.48</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.49</span>
       </span>
     </div>
 
@@ -134,7 +134,9 @@ daily doses.</p>
   <span class='va'>start</span>,
   <span class='va'>daily_doses_value</span>,
   <span class='va'>mean_days_between_doses</span>,
-  <span class='va'>priority_population</span>
+  <span class='va'>priority_population</span>,
+  lag_groups <span class='op'>=</span> <span class='cn'>NULL</span>,
+  lag_days <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -160,6 +162,18 @@ and two</p></td>
       <td><p>Output from
 <a href='vaccine_priority_proportion.html'>vaccine_priority_population</a>, giving the number of people
 to vaccinate in each age (row) and priority group (column)</p></td>
+    </tr>
+    <tr>
+      <th>lag_groups</th>
+      <td><p>Row indices, corresponding to age
+groups in which a lag should be added to the start time of the dose
+schedule returned by <a href='vaccine_schedule.html'>vaccine_schedule</a>, if NULL then no lag is added.</p></td>
+    </tr>
+    <tr>
+      <th>lag_days</th>
+      <td><p>If <code>lag_groups</code> is not NULL then specifies the number of
+days to add the start of the dose schedule for the given groups. Ignored
+if <code>lag_groups</code> is NULL.</p></td>
     </tr>
     </table>
 
