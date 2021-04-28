@@ -1,6 +1,6 @@
 # sircovid 0.10.49
 
-* Add `lag_groups` and `lag_days` parameters to `vaccine_schedule_future` to manually add lags for give age groups to the vaccine schedule
+* Add `lag_groups` and `lag_days` parameters to `vaccine_schedule_future` to manually add lags for given age groups to the vaccine schedule
 
 # sircovid 0.10.47
 

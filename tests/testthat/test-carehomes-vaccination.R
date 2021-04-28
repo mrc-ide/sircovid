@@ -2607,6 +2607,17 @@ test_that("Can add lag to vaccine schedule", {
     lag_days = lag_days),
     "must be non-NULL")
 
+  ## does nothing for ineligible groups
+  uptake_by_age_excl_3 <- c(numeric(3), rep(1, 16))
+  n_excl_3 <- vaccine_priority_population(region, uptake_by_age_excl_3)
+  vacc_schedule_no_lag <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n_excl_3)
+  vacc_schedule_lag <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n_excl_3, lag_groups = 1:3,
+    lag_days = lag_days)
+
+  expect_equal(vacc_schedule_no_lag, vacc_schedule_lag)
+
 
   vacc_schedule_no_lag <- vaccine_schedule_future(
     0, doses_future, mean_days_between_doses, n)

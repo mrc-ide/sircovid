@@ -436,14 +436,18 @@ vaccine_schedule_future <- function(start,
 
       ## get start of dose schedule for the group
       start <- which(old_schedule_group_i[1, ] > 0)[1]
-      ## initialize 0 array with same dimensions
-      new_schedule_group_i <- array(0, dim(old_schedule_group_i))
-      ## add dose schedule to new array after adding the given lag (also
-      ##  truncate end by lag amount)
-      new_schedule_group_i[, seq.int(start + lag_days, nc)] <-
-        old_schedule_group_i[, seq.int(start, nc - lag_days)]
-      ## save new schedule
-      schedule$doses[i, , ] <- new_schedule_group_i
+      ## catch case when groups are ineligible
+
+      if (!is.na(start)) {
+        ## initialize 0 array with same dimensions
+        new_schedule_group_i <- array(0, dim(old_schedule_group_i))
+        ## add dose schedule to new array after adding the given lag (also
+        ##  truncate end by lag amount)
+        new_schedule_group_i[, seq.int(start + lag_days, nc)] <-
+          old_schedule_group_i[, seq.int(start, nc - lag_days)]
+        ## save new schedule
+        schedule$doses[i, , ] <- new_schedule_group_i
+      }
     }
   }
 
