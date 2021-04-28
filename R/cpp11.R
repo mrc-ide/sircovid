@@ -44,8 +44,8 @@ dust_basic_set_pars <- function(ptr, r_pars) {
   .Call(`_sircovid_dust_basic_set_pars`, ptr, r_pars)
 }
 
-dust_basic_rng_state <- function(ptr, last_only) {
-  .Call(`_sircovid_dust_basic_rng_state`, ptr, last_only)
+dust_basic_rng_state <- function(ptr, first_only, last_only) {
+  .Call(`_sircovid_dust_basic_rng_state`, ptr, first_only, last_only)
 }
 
 dust_basic_set_rng_state <- function(ptr, rng_state) {
@@ -124,8 +124,8 @@ dust_carehomes_set_pars <- function(ptr, r_pars) {
   .Call(`_sircovid_dust_carehomes_set_pars`, ptr, r_pars)
 }
 
-dust_carehomes_rng_state <- function(ptr, last_only) {
-  .Call(`_sircovid_dust_carehomes_rng_state`, ptr, last_only)
+dust_carehomes_rng_state <- function(ptr, first_only, last_only) {
+  .Call(`_sircovid_dust_carehomes_rng_state`, ptr, first_only, last_only)
 }
 
 dust_carehomes_set_rng_state <- function(ptr, rng_state) {

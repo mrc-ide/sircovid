@@ -36,7 +36,7 @@ SEXP dust_carehomes_resample(SEXP ptr, cpp11::doubles r_weights);
 SEXP dust_carehomes_set_pars(SEXP ptr, cpp11::list r_pars);
 
 [[cpp11::register]]
-SEXP dust_carehomes_rng_state(SEXP ptr, bool last_only);
+SEXP dust_carehomes_rng_state(SEXP ptr, bool first_only, bool last_only);
 
 [[cpp11::register]]
 SEXP dust_carehomes_set_rng_state(SEXP ptr, cpp11::raws rng_state);
@@ -7447,8 +7447,8 @@ SEXP dust_carehomes_set_pars(SEXP ptr, cpp11::list r_pars) {
   return dust::r::dust_set_pars<carehomes>(ptr, r_pars);
 }
 
-SEXP dust_carehomes_rng_state(SEXP ptr, bool last_only) {
-  return dust::r::dust_rng_state<carehomes>(ptr, last_only);
+SEXP dust_carehomes_rng_state(SEXP ptr, bool first_only, bool last_only) {
+  return dust::r::dust_rng_state<carehomes>(ptr, first_only, last_only);
 }
 
 SEXP dust_carehomes_set_rng_state(SEXP ptr, cpp11::raws rng_state) {
