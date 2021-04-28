@@ -8,7 +8,9 @@ vaccine_schedule_future(
   start,
   daily_doses_value,
   mean_days_between_doses,
-  priority_population
+  priority_population,
+  lag_groups = NULL,
+  lag_days = NULL
 )
 }
 \arguments{
@@ -24,6 +26,14 @@ and two}
 \item{priority_population}{Output from
 \link{vaccine_priority_population}, giving the number of people
 to vaccinate in each age (row) and priority group (column)}
+
+\item{lag_groups}{Row indices, corresponding to age
+groups in which a lag should be added to the start time of the dose
+schedule returned by \link{vaccine_schedule}, if NULL then no lag is added.}
+
+\item{lag_days}{If \code{lag_groups} is not NULL then specifies the number of
+days to add the start of the dose schedule for the given groups. Ignored
+if \code{lag_groups} is NULL.}
 }
 \description{
 Create future vaccination schedule from a projected number of

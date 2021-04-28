@@ -313,11 +313,21 @@ vaccine_priority_population <- function(region,
 ##'   [vaccine_priority_population], giving the number of people
 ##'   to vaccinate in each age (row) and priority group (column)
 ##'
+##' @param lag_groups Row indices, corresponding to age
+##'   groups in which a lag should be added to the start time of the dose
+##'   schedule returned by [vaccine_schedule], if NULL then no lag is added.
+##'
+##' @param lag_days If `lag_groups` is not NULL then specifies the number of
+##'  days to add the start of the dose schedule for the given groups. Ignored
+##'  if `lag_groups` is NULL.
+##'
 ##' @export
 vaccine_schedule_future <- function(start,
                                     daily_doses_value,
                                     mean_days_between_doses,
-                                    priority_population) {
+                                    priority_population,
+                                    lag_groups = NULL,
+                                    lag_days = NULL) {
   n_groups <- nrow(priority_population)
   n_priority_groups <- ncol(priority_population)
   n_doses <- 2L
@@ -409,7 +419,34 @@ vaccine_schedule_future <- function(start,
     doses <- mcstate::array_bind(start$doses, doses)
   }
 
-  vaccine_schedule(daily_doses_date, doses)
+  schedule <- vaccine_schedule(daily_doses_date, doses)
+
+  if (!is.null(lag_groups)) {
+    if (is.null(lag_days)) {
+      stop("'lag_days' must be non-NULL if 'lag_groups' is non_NULL")
+    }
+
+    ## we could do this in apply but loop is more readable
+    for (i in lag_groups) {
+      ## original schedule for group i
+      old_schedule_group_i <- schedule$doses[i, , ]
+      nr <- nrow(old_schedule_group_i)
+      nc <- ncol(old_schedule_group_i)
+
+      ## get start of dose schedule for the group
+      start <- which(old_schedule_group_i[1, ] > 0)[1]
+      ## initialize 0 array with same dimensions
+      new_schedule_group_i <- array(0, dim(old_schedule_group_i))
+      ## add dose schedule to new array after adding the given lag (also
+      ##  truncate end by lag amount)
+      new_schedule_group_i[, seq.int(start + lag_days, nc)] <-
+        old_schedule_group_i[, seq.int(start, nc - lag_days)]
+      ## save new schedule
+      schedule$doses[i, , ] <- new_schedule_group_i
+    }
+  }
+
+  schedule
 }
 
 
@@ -625,7 +662,8 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##' @export
 vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                                       mean_days_between_doses,
-                                      priority_population) {
+                                      priority_population, lag_groups = NULL,
+                                      lag_days = NULL) {
   assert_is(schedule_past, "vaccine_schedule")
 
   date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]] - 1L
@@ -681,5 +719,7 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
   vaccine_schedule_future(schedule_past,
                           daily_doses_value,
                           mean_days_between_doses,
-                          priority_population)
+                          priority_population,
+                          lag_groups,
+                          lag_days)
 }

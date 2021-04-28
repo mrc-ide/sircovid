@@ -2584,3 +2584,86 @@ test_that("Can add missing state variables", {
     upgrade_state(y_old, info_old, info),
     "States are incompatible lengths for 'N_tot'")
 })
+
+
+test_that("Can add lag to vaccine schedule", {
+  region <- "london"
+  end_date <- sircovid_date("2023-01-01")
+
+  mean_days_between_doses <- 12 * 7
+  doses_future <- rep(25000, end_date)
+
+  uptake_by_age <- rep(1, 19) # complete in all groups
+  n <- vaccine_priority_population(region, uptake_by_age)
+  lag_days <- 7 * 4 ## 4 weeks
+  lag_groups <- 1:15 ## lag groups 1-15
+
+  expect_error(vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n, lag_groups = lag_groups),
+    "must be non-NULL")
+
+  vacc_schedule_no_lag <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n)
+
+  vacc_schedule_lag <- vaccine_schedule_future(
+    0, doses_future, mean_days_between_doses, n, lag_groups = lag_groups,
+    lag_days = lag_days)
+
+  ## check identical for groups without lag
+  expect_equal(vacc_schedule_no_lag$doses[16:19, , ],
+               vacc_schedule_lag$doses[16:19, , ])
+
+  ## check lag as expected - have to do per group as each starts at different
+  ##  times
+  nc <- nlayer(vacc_schedule_no_lag$doses)
+  for (i in seq_len(15)) {
+    start <- which(vacc_schedule_no_lag$doses[i, 1, ] > 0)[1]
+    expect_equal(vacc_schedule_no_lag$doses[i, , seq.int(start, nc - lag_days)],
+                 vacc_schedule_lag$doses[i, , seq.int(start + lag_days, nc)])
+    expect_equal(vacc_schedule_lag$doses[i, , seq.int(1, start + lag_days - 1)],
+                 matrix(0, 2, start + lag_days - 1))
+  }
+
+  ## check all previous checks pass with lag
+  vacc_schedule <- vacc_schedule_lag
+
+  p <- carehomes_parameters(0, region, rel_susceptibility = c(1, 1, 0),
+                            beta_value = 0.1,
+                            rel_p_sympt = c(1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1),
+                            vaccine_progression_rate = c(0, 0, 0),
+                            vaccine_catchup_fraction = 0,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_schedule = vacc_schedule,
+                            waning_rate = 1 / 20)
+
+  ## set gamma_C_2 so individuals will spend long periods in a compartment where
+  ## they are not a vaccination candidate
+  p$gamma_C_2_step <- 1 / 200
+
+  ## check we are going far enough in time that we should vaccinate everyone:
+  expect_true(all(rowSums(vacc_schedule$doses[, 1, ]) / p$N_tot > 0.99))
+
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+  steps <- seq(0, end_date * 4, by = 4)
+  y <- mod$transform_variables(mod$simulate(steps))
+  uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we could not reach reach the desired uptake
+  expect_lt(min(uptake), 0.8)
+
+  ### now do exactly the same with vaccine catch up fully on:
+  p$vaccine_catchup_fraction <- 1.0
+  mod2 <- carehomes$new(p, 0, 1, seed = 1L)
+  state <- carehomes_initial(info, 1, p)$state
+  mod2$set_state(state)
+  y2 <- mod2$transform_variables(mod2$simulate(steps))
+  uptake2 <- y2$cum_n_vaccinated[, 1, 1, dim(y2$cum_n_vaccinated)[4]] / p$N_tot
+
+  ## check we did reach the desired uptake (100%)
+  expect_gt(min(uptake2), 0.98)
+})

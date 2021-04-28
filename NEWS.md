@@ -1,3 +1,7 @@
+# sircovid 0.10.49
+
+* Add `lag_groups` and `lag_days` parameters to `vaccine_schedule_future` to manually add lags for give age groups to the vaccine schedule
+
 # sircovid 0.10.47
 
 * New function `sircovid::inflate_state_strains` for adding empty strain compartments to a model state that was run without multiple strains
