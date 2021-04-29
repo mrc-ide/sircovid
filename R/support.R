@@ -139,7 +139,7 @@ sircovid_transmission_matrix <- function(region, population) {
 
     max_polymod_age <- 70
 
-    population = population %||% sircovid_population(region)
+    population <- population %||% sircovid_population(region)
 
     ## Survey population in socialmixr format
     survey_pop <- data_frame(
