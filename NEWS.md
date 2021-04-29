@@ -1,3 +1,7 @@
+# sircovid 0.10.51
+
+* Can now input `population` and `carehome_beds` to `carehomes_parameters` to allow use for regions where these are not included in the package
+
 # sircovid 0.10.50
 
 * Fix Rt calculations for multistrain models with cross-immunity
