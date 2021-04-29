@@ -631,11 +631,11 @@ combine_steps_groups <- function(step, n_groups, n_time_steps, n_strains,
 compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
                                           n_vacc_classes) {
 
+  i <- 1:4
   if (n_strains == 1) {
     i <- 1
-  } else {
-    i <- 1:4
   }
+
   out <- list()
   out$p_C <- combine_steps_groups(
     step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
