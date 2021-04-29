@@ -611,32 +611,53 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
 }
 
 
+combine_steps_groups <- function(step, n_groups, n_time_steps, n_strains,
+                                 n_vacc_classes, p_step, rel_p) {
+  ret <- vapply(
+    seq_len(n_groups),
+    function(i) {
+      outer(
+        sircovid_parameters_expand_step(step, p_step[, i]),
+        rel_p[i, , ]
+      )
+    },
+    array(0, c(n_time_steps, n_strains, n_vacc_classes))
+  )
+
+  ret <- aperm(ret, c(4, 2, 3, 1))
+}
+
+
 compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
                                           n_vacc_classes) {
-  combine_steps_groups <- function(p_step, rel_p) {
-    ret <- vapply(
-      seq_len(pars$n_groups),
-      function(i) {
-        outer(
-          sircovid_parameters_expand_step(step, p_step[, i]),
-          rel_p[i, , ]
-        )
-      },
-      array(0, c(n_time_steps, n_strains, n_vacc_classes))
-    )
 
-    ret <- aperm(ret, c(4, 2, 3, 1))
-
+  if (n_strains == 1) {
+    i <- 1
+  } else {
+    i <- 1:4
   }
-
   out <- list()
-  out$p_C <- combine_steps_groups(pars$p_C_step, pars$rel_p_sympt)
-  out$p_H <- combine_steps_groups(pars$p_H_step, pars$rel_p_hosp_if_sympt)
-  out$p_ICU <- combine_steps_groups(pars$p_ICU_step, pars$rel_p_ICU)
-  out$p_ICU_D <- combine_steps_groups(pars$p_ICU_D_step, pars$rel_p_ICU_D)
-  out$p_H_D <- combine_steps_groups(pars$p_H_D_step, pars$rel_p_H_D)
-  out$p_W_D <- combine_steps_groups(pars$p_W_D_step, pars$rel_p_W_D)
-  out$p_G_D <- combine_steps_groups(pars$p_G_D_step, pars$rel_p_G_D)
+  out$p_C <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    pars$p_C_step, pars$rel_p_sympt[, i, , drop = FALSE])
+  out$p_H <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    pars$p_H_step, pars$rel_p_hosp_if_sympt[, i, , drop = FALSE])
+  out$p_ICU <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    pars$p_ICU_step, pars$rel_p_ICU[, i, , drop = FALSE])
+  out$p_ICU_D <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    pars$p_ICU_D_step, pars$rel_p_ICU_D[, i, , drop = FALSE])
+  out$p_H_D <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    pars$p_H_D_step, pars$rel_p_H_D[, i, , drop = FALSE])
+  out$p_W_D <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    pars$p_W_D_step, pars$rel_p_W_D[, i, , drop = FALSE])
+  out$p_G_D <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    pars$p_G_D_step, pars$rel_p_G_D[, i, , drop = FALSE])
 
   out
 }
