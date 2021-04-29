@@ -286,7 +286,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
           }
         }
 
-        compute_ngm(md, x, p$rel_susceptibility[, i, ], RR, 1 - p$cross_immunity[i])
+        compute_ngm(md, x, p$rel_susceptibility[, i, ], RR,
+                    1 - p$cross_immunity[i])
       }
     }, array(0, c(n_groups * n_vacc_classes, n_groups * n_vacc_classes,
                   n_time)))

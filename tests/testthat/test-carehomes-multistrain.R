@@ -2273,8 +2273,8 @@ test_that("Rt lower with perfect cross immunity", {
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_cross_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+  rt_cross_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
+                             R = R[, 1, ], weight_Rt = TRUE)
 
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 0.1),
@@ -2295,8 +2295,8 @@ test_that("Rt lower with perfect cross immunity", {
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
-  rt_cross_0 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+  rt_cross_0 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
+                             R = R[, 1, ], weight_Rt = TRUE)
 
   ## Rt should be equal for strain 1
   tol <- 1e-5
