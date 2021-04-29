@@ -873,13 +873,6 @@ test_that("carehomes check severity works as expected", {
     p_C_step = matrix(1, 1, 19)
   )), "1 or 4 columns")
 
-  ## errors if rel_ is not mirrored because unequal
-  expect_error(carehomes_check_severity(list(
-    n_groups = 19,
-    rel_p_sympt = array(runif(19 * 4 * 3), c(19, 4, 3)),
-    p_C_step = matrix(1, 1, 19)
-  )), "identical to")
-
   ## no error if 1 col
   expect_error(carehomes_check_severity(list(
     n_groups = 19,
