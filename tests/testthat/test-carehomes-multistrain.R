@@ -2245,3 +2245,64 @@ test_that("can inflate the number of strains after running with 1", {
 
   expect_equal(z2$time, z1$time)
 })
+
+
+test_that("Rt lower with perfect cross immunity", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 0.1),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0),
+                            cross_immunity = 1)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_cross_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 0.1),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0),
+                            cross_immunity = 0)
+
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_cross_0 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+
+  ## Rt should be equal for strain 1
+  tol <- 1e-5
+  expect_vector_lte(rt_cross_1$Rt_all, rt_cross_0$Rt_all, tol = tol)
+  expect_vector_lte(rt_cross_1$Rt_general, rt_cross_0$Rt_general, tol = tol)
+  expect_vector_lt(rt_cross_1$eff_Rt_all, rt_cross_0$eff_Rt_all, tol = tol)
+  expect_vector_lt(rt_cross_1$eff_Rt_general, rt_cross_0$eff_Rt_general,
+                   tol = tol)
+})

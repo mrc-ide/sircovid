@@ -1,3 +1,7 @@
+# sircovid 0.10.50
+
+* Fix Rt calculations for multistrain models with cross-immunity
+
 # sircovid 0.10.49
 
 * Add `lag_groups` and `lag_days` parameters to `vaccine_schedule_future` to manually add lags for given age groups to the vaccine schedule

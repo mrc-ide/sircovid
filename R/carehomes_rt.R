@@ -233,11 +233,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   mean_duration <-
     carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
 
-  compute_ngm <- function(x, S, rel_sus, R = 0) {
+  compute_ngm <- function(x, S, rel_sus, R = 0, cross_immunity = 1) {
     n_groups <- p$n_groups
     len <- n_groups * n_vacc_classes
-    ## FIXME (RS): Collapses rel_sus over vacc classes, is this okay Anne?
-    Sw <- (S + R) * c(rel_sus)
+    Sw <- (S + R * cross_immunity) * c(rel_sus)
     mt * vapply(seq_len(n_time), function(t)
       tcrossprod(c(x[, , t]), Sw[, t]),
       matrix(0, len, len))
@@ -286,7 +285,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
             RR <- 0
           }
         }
-        compute_ngm(md, x, p$rel_susceptibility[, i, ], RR)
+
+        compute_ngm(md, x, p$rel_susceptibility[, i, ], RR, 1 - p$cross_immunity[i])
       }
     }, array(0, c(n_groups * n_vacc_classes, n_groups * n_vacc_classes,
                   n_time)))
