@@ -233,10 +233,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   mean_duration <-
     carehomes_Rt_mean_duration_weighted_by_infectivity(step, p)
 
-  compute_ngm <- function(x, S, rel_sus, R = 0, cross_immunity = 1) {
+  compute_ngm <- function(x, S, rel_sus, R = 0, rel_sus_strain = 1) {
     n_groups <- p$n_groups
     len <- n_groups * n_vacc_classes
-    Sw <- (S + R * cross_immunity) * c(rel_sus)
+    Sw <- (S + R * rel_sus_strain) * c(rel_sus)
     mt * vapply(seq_len(n_time), function(t)
       tcrossprod(c(x[, , t]), Sw[, t]),
       matrix(0, len, len))
