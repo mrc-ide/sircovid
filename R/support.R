@@ -130,7 +130,7 @@ test_prob_pos <- function(pos, neg, sensitivity, specificity, exp_noise) {
 }
 
 
-sircovid_transmission_matrix <- function(region, population) {
+sircovid_transmission_matrix <- function(region, population = NULL) {
   if (is.null(cache$transmission_matrix[[region]])) {
     if (is.null(cache$transmission_matrix)) {
       cache$transmission_matrix <- list()
