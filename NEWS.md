@@ -1,11 +1,10 @@
 # sircovid 0.10.51
 
-* Fix Rt calculations for multistrain models with cross-immunity
+* rel vacc params can now be less than one in unvaccinated classes for second infections (strains 3 and 4)
 
 # sircovid 0.10.50
 
-* rel vacc params can now be less than one in unvaccinated classes for second infections (strains 3 and 4)
-
+* Fix Rt calculations for multistrain models with cross-immunity
 
 # sircovid 0.10.49
 
