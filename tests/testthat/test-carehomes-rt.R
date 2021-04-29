@@ -281,9 +281,6 @@ test_that("Parameters affect Rt as expected", {
 
   ## set the following parameters to non-zero values to allow related parameters
   ## to have an effect on Rt
-  p$hosp_transmission <- 0.05
-  p$ICU_transmission <- 0.05
-  p$G_D_transmission <- 0.05
   p$I_C_2_transmission <- 0.5
 
   np <- 1L
@@ -330,48 +327,6 @@ test_that("Parameters affect Rt as expected", {
   helper("k_C_1", 1, 2)
   helper("k_C_2", 1, 2)
 })
-
-
-test_that("Can calculate Rt", {
-  ## This does not really require that we have run the real model, as
-  ## everything is deterministic. So here we'll generate some data
-  ## from the model and use it so that we can compare against some
-  ## exact numbers.
-  d <- reference_data_rt()
-
-  p <- d$inputs$p
-  steps <- d$inputs$steps
-  y <- d$inputs$y
-
-  res <- carehomes_Rt(steps, y[, 1, ], p)
-  expect_equal(unclass(res), unclass(d$outputs$rt_1))
-  res_all <- carehomes_Rt_trajectories(steps, y, p)
-  expect_equal(unclass(res_all), unclass(d$outputs$rt_all))
-
-  ## Beta is returned, results correct length
-  expect_identical(res$beta, rep(p$beta_step, length(steps)))
-  expect_vector_equal(lengths(res), length(steps))
-
-  ## Check the Rt calculation (from eff_Rt)
-  expect_true(diff(range(res$Rt_all)) < 1e-7)
-  expect_true(diff(range(res$Rt_general)) < 1e-7)
-
-  ## Effective Rt lower than Rt
-  expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = 1e-7)
-  expect_vector_gt(res$Rt_general, res$eff_Rt_general, tol = 1e-7)
-
-  ## General population effective Rt lower than total
-  expect_vector_gte(res$eff_Rt_all, res$eff_Rt_general)
-
-  expect_equal(names(res), names(res_all))
-  for (nm in names(res)) {
-    expect_equal(drop(res[[nm]]), res_all[[nm]][, 1, drop = TRUE])
-  }
-
-  ## Date is returned
-  expect_equal(res$date, res$step * p$dt)
-})
-
 
 
 test_that("Cannot calculate Rt for non-zero transmissions", {
