@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.50</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.51</span>
       </span>
     </div>
 
@@ -331,8 +331,9 @@ Specifying an array instead of a vector allows
 different relative susceptibilities by age (first dimension of the array),
 pathogen strain (second dimension) and vaccination group
 (third dimension); in that case, the first layer (3rd dimension) of
-rel_susceptibility should be 1 (for the non-vaccinated group) and other
-values be between 0 and 1</p></td>
+rel_susceptibility should be 1 (for the non-vaccinated group) for the
+first two columns (first infection with either strain) and other values
+between 0 and 1</p></td>
     </tr>
     <tr>
       <th>rel_p_sympt</th>
@@ -349,7 +350,8 @@ reductions in probability of symptomatic infection by age (first
 dimension of the array), pathogen strain (second dimension) and
 vaccination group (third dimension); in that case,
 the first layer of rel_p_sympt should be 1 (for the non-vaccinated group)
-and other values be between 0 and 1</p></td>
+for the first two columns (first infection with either strain) and other
+values between 0 and 1</p></td>
     </tr>
     <tr>
       <th>rel_p_hosp_if_sympt</th>
@@ -366,7 +368,8 @@ reductions in probability of hospitalisation for symptomatic cases by age
 (first dimension of the array), pathogen strain (second dimension) and
 vaccination group (third dimension); in that case,
 the first layer of rel_p_hosp_if_sympt should be 1 (for the
-non-vaccinated group) and other values be between 0 and 1</p></td>
+non-vaccinated group) for the first two columns (first infection with
+either strain) and other values between 0 and 1</p></td>
     </tr>
     <tr>
       <th>rel_infectivity</th>
@@ -382,7 +385,8 @@ different relative infectivities by age
 (first dimension of the array), pathogen strain (second dimension) and
 vaccination group (third dimension); in that case,
 the first layer of rel_infectivity should be 1 (for the
-non-vaccinated group) and other values be between 0 and 1</p></td>
+non-vaccinated group) for the first two columns (first infection with
+either strain) and other values between 0 and 1</p></td>
     </tr>
     <tr>
       <th>vaccine_progression_rate</th>
