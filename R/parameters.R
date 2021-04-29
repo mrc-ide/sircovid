@@ -1,11 +1,15 @@
 ## These could be moved to be defaults within the models
 sircovid_parameters_shared <- function(start_date, region,
-                                       beta_date, beta_value) {
+                                       beta_date, beta_value,
+                                       population = NULL) {
   steps_per_day <- 4
   dt <- 1 / steps_per_day
   assert_sircovid_date(start_date)
   beta_step <- sircovid_parameters_piecewise_linear(beta_date,
                                                     beta_value %||% 0.08, dt)
+
+  population <- population %||% sircovid_population(region)
+
   list(hosp_transmission = 0,
        ICU_transmission = 0,
        G_D_transmission = 0,
@@ -14,7 +18,7 @@ sircovid_parameters_shared <- function(start_date, region,
        initial_step = start_date / dt,
        n_age_groups = length(sircovid_age_bins()$start),
        beta_step = beta_step,
-       population = sircovid_population(region))
+       population = population)
 }
 
 

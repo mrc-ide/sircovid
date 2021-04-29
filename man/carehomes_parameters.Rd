@@ -9,6 +9,8 @@ carehomes_parameters(
   region,
   beta_date = NULL,
   beta_value = NULL,
+  population = NULL,
+  carehome_beds = NULL,
   severity = NULL,
   progression = NULL,
   observation = NULL,
@@ -62,6 +64,15 @@ otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 \code{beta_date} is given then \code{beta_date} and \code{beta_value} must have
 the same length (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}},
 where this is passed as \code{value}).}
+
+\item{population}{Population data. A vector of length 17 for the population
+size for age groups 0-4, 5-9, ..., 75-79, 80+. If \code{NULL}, the population
+data will be sourced within the package for the specified \code{region} (only
+if available).}
+
+\item{carehome_beds}{The number of care home beds in the region. If \code{NULL},
+this will be sourced within the package for the specified \code{region} (only
+if available).}
 
 \item{severity}{Severity data, via Bob Verity's \code{markovid}
 package. This needs to be \code{NULL} (use the default bundled data
