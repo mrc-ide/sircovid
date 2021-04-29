@@ -342,7 +342,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
 
   if (is_single) {
-    class(ret) <- c("single_strain", class(ret))
+    ## adding 'nocov' as this is a safety check that should never be hit
+    class(ret) <- c("single_strain", class(ret)) # nocov
   } else if (isTRUE(ncol(last(ret)) == 1)) {
     ret[intersect(all_types, names(ret))] <-
       lapply(ret[intersect(all_types, names(ret))], drop)
