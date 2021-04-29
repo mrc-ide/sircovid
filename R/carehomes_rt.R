@@ -65,7 +65,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
   if (sum(p$hosp_transmission, p$ICU_transmission, p$G_D_transmission) > 0) {
     stop("Cannot currently compute Rt if any of 'hosp_transmission',
-    'ICU_transmission', 'G_D_transmission")
+    'ICU_transmission' or 'G_D_transmission' are non-zero")
   }
 
   n_strains <- length(p$strain_transmission)
