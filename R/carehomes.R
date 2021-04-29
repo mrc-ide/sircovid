@@ -1820,10 +1820,6 @@ carehomes_check_severity <- function(pars) {
         } else {
           if (!(ncol(pars[[rel_p]]) %in% c(1, 4))) {
             stop(sprintf("%s should have 1 or 4 columns", rel_p))
-          } else if (!identical(mirror_strain(unmirror_strain(pars[[rel_p]])),
-                                pars[[rel_p]])) {
-            stop(sprintf("%s should be identical to
-                         mirror_strain(unmirror_strain(%s))", rel_p, rel_p))
           }
         }
         TRUE
