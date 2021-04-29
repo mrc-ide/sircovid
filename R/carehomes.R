@@ -112,8 +112,8 @@ NULL
 ##'   different relative susceptibilities by age (first dimension of the array),
 ##'   pathogen strain (second dimension) and vaccination group
 ##'   (third dimension); in that case, the first layer (3rd dimension) of
-##'   rel_susceptibility should be 1 (for the non-vaccinated group) and other
-##'   values be between 0 and 1
+##'   rel_susceptibility should be 1 (for the non-vaccinated group) for the
+##'   first two columns (first infection) and other values between 0 and 1
 ##'
 ##' @param rel_p_sympt A vector or matrix of values of same dimension as
 ##'   rel_susceptibility representing the
@@ -128,7 +128,8 @@ NULL
 ##'   dimension of the array), pathogen strain (second dimension) and
 ##'   vaccination group (third dimension); in that case,
 ##'   the first layer of rel_p_sympt should be 1 (for the non-vaccinated group)
-##'   and other values be between 0 and 1
+##'   for the first two columns (first infection) and other values between 0
+##'   and 1
 ##'
 ##' @param rel_p_hosp_if_sympt A vector or array of values of same dimension as
 ##'   rel_susceptibility representing the
@@ -143,7 +144,8 @@ NULL
 ##'   (first dimension of the array), pathogen strain (second dimension) and
 ##'   vaccination group (third dimension); in that case,
 ##'   the first layer of rel_p_hosp_if_sympt should be 1 (for the
-##'   non-vaccinated group) and other values be between 0 and 1
+##'   non-vaccinated group) for the first two columns (first infection) and
+##'   other values between 0 and 1
 ##'
 ##' @param rel_infectivity A vector or array of values representing the
 ##'   relative infectivity of individuals in different vaccination groups,
@@ -157,7 +159,8 @@ NULL
 ##'   (first dimension of the array), pathogen strain (second dimension) and
 ##'   vaccination group (third dimension); in that case,
 ##'   the first layer of rel_infectivity should be 1 (for the
-##'   non-vaccinated group) and other values be between 0 and 1
+##'   non-vaccinated group) for the first two columns (first infection) and
+##'   other values between 0 and 1
 ##'
 ##' @param vaccine_progression_rate A vector or matrix of values of same
 ##'   dimension as rel_susceptibility representing

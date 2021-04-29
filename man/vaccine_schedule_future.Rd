@@ -29,7 +29,8 @@ to vaccinate in each age (row) and priority group (column)}
 
 \item{lag_groups}{Row indices, corresponding to age
 groups in which a lag should be added to the start time of the dose
-schedule returned by \link{vaccine_schedule}, if NULL then no lag is added.}
+schedule returned by \link{vaccine_schedule}, if NULL then no lag is added.
+Ignored if \code{lag_groups} is NULL.}
 
 \item{lag_days}{If \code{lag_groups} is not NULL then specifies the number of
 days to add the start of the dose schedule for the given groups. Ignored
