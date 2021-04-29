@@ -63,6 +63,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          eigen_method = "power_iteration", R = NULL,
                          weight_Rt = FALSE) {
 
+  if (sum(p$hosp_transmission, p$ICU_transmission, p$G_D_transmission) > 0) {
+    stop("Cannot currently compute Rt if any of 'hosp_transmission',
+    'ICU_transmission', 'G_D_transmission")
+  }
+
   n_strains <- length(p$strain_transmission)
   ## move prob_strain check up here and make NULL if not needed to shortcut
   ##  checks and calculations
