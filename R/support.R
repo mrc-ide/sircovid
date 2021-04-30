@@ -130,7 +130,7 @@ test_prob_pos <- function(pos, neg, sensitivity, specificity, exp_noise) {
 }
 
 
-sircovid_transmission_matrix <- function(region) {
+sircovid_transmission_matrix <- function(region, population = NULL) {
   if (is.null(cache$transmission_matrix[[region]])) {
     if (is.null(cache$transmission_matrix)) {
       cache$transmission_matrix <- list()
@@ -139,10 +139,12 @@ sircovid_transmission_matrix <- function(region) {
 
     max_polymod_age <- 70
 
+    population <- population %||% sircovid_population(region)
+
     ## Survey population in socialmixr format
     survey_pop <- data_frame(
       "lower.age.limit" = sircovid_age_bins()$start,
-      population = sircovid_population(region))
+      population = population)
 
     ## Get the contact matrix from socialmixr; polymod only
     ## goes up to age 70

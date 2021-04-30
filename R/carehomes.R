@@ -13,6 +13,15 @@ NULL
 ##'
 ##' @inheritParams basic_parameters
 ##'
+##' @param population Population data. A vector of length 17 for the population
+##'   size for age groups 0-4, 5-9, ..., 75-79, 80+. If `NULL`, the population
+##'   data will be sourced within the package for the specified `region` (only
+##'   if available).
+##'
+##' @param carehome_beds The number of care home beds in the region. If `NULL`,
+##'   this will be sourced within the package for the specified `region` (only
+##'   if available).
+##'
 ##' @param severity Severity data, via Bob Verity's `markovid`
 ##'   package. This needs to be `NULL` (use the default bundled data
 ##'   version in the package), a [data.frame] object (for raw severity
@@ -324,6 +333,8 @@ NULL
 ##'
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
+                                 population = NULL,
+                                 carehome_beds = NULL,
                                  severity = NULL,
                                  progression = NULL,
                                  observation = NULL,
@@ -352,15 +363,25 @@ carehomes_parameters <- function(start_date, region,
                                  waning_rate = 0,
                                  exp_noise = 1e6,
                                  cross_immunity = 1) {
+
+  if (!is.null(population)) {
+    if (!is.null(dim(population)) || length(population) != 17L) {
+      stop("If population is specified it must be a vector of length 17")
+    }
+    population <- assert_integer(population)
+    population <- assert_non_negative(population)
+  }
+
   ret <- sircovid_parameters_shared(start_date, region,
-                                    beta_date, beta_value)
+                                    beta_date, beta_value,
+                                    population)
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
   carehome_workers_per_resident <- 1
 
   ## These are used in constructing the initial population vectors (S0)
-  carehome_beds <- sircovid_carehome_beds(region)
+  carehome_beds <- carehome_beds %||% sircovid_carehome_beds(region)
   carehome_residents <- round(carehome_beds * carehome_occupancy)
   carehome_workers <- round(carehome_residents * carehome_workers_per_resident)
 
@@ -382,7 +403,7 @@ carehomes_parameters <- function(start_date, region,
 
   waning <- carehomes_parameters_waning(waning_rate)
 
-  ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region)
+  ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region, population)
 
   ret$N_tot <- carehomes_population(ret$population, carehome_workers,
                                     carehome_residents)
@@ -1031,9 +1052,10 @@ carehomes_index_workers <- function() {
 }
 
 
-carehomes_transmission_matrix <- function(eps, m_CHW, m_CHR, region) {
+carehomes_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
+                                          population) {
   index_workers <- carehomes_index_workers()
-  m <- sircovid_transmission_matrix(region)
+  m <- sircovid_transmission_matrix(region, population)
   n_age_groups <- nrow(m)
 
   m_gen_chw <- apply(m[seq_len(n_age_groups), index_workers], 1, mean)

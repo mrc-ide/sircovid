@@ -916,3 +916,27 @@ test_that("carehomes check severity works as expected", {
     p[[rels[[i]]]][] <- 1
   }
 })
+
+
+test_that("Can input population data", {
+
+  pop <- sircovid_population("uk")
+  p <- carehomes_parameters(1, "Unknown", population = pop, carehome_beds = 0)
+  expect_equal(p$population, pop)
+  expect_equal(p$N_tot, c(pop, 0, 0))
+
+  expect_error(
+    carehomes_parameters(1, "Unknown", population = pop[-1L],
+                         carehome_beds = 0),
+    "If population is specified it must be a vector of length 17")
+
+  pop[1L] <- 0.5
+  expect_error(
+    carehomes_parameters(1, "Unknown", population = pop, carehome_beds = 0),
+    "'population' must be an integer")
+
+  pop[1L] <- -1
+  expect_error(
+    carehomes_parameters(1, "Unknown", population = pop, carehome_beds = 0),
+    "'population' must have only non-negative values")
+})

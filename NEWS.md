@@ -1,3 +1,7 @@
+# sircovid 0.10.52
+
+* Can now input `population` and `carehome_beds` to `carehomes_parameters` to allow use for regions where these are not included in the package
+
 # sircovid 0.10.51
 
 * rel vacc params can now be less than one in unvaccinated classes for second infections (strains 3 and 4)
