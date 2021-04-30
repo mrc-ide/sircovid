@@ -990,62 +990,6 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
 })
 
 
-test_that("Effective Rt modified if rel_p_hosp_if_sympt is not 1", {
-  rel_p_hosp_if_sympt <- 0.2 # can put anything <1 here
-
-  ## run model with unvaccinated & vaccinated (with susceptibility halved)
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            rel_susceptibility = c(1, 1),
-                            rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, rel_p_hosp_if_sympt),
-                            waning_rate = 1 / 20)
-
-  ## set these to non-zero values so that hospitalisation affects R
-  p$hosp_transmission <- 0.1
-  p$ICU_transmission <- 0.05
-  p$G_D_transmission <- 0.05
-
-  np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
-
-  initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
-  mod$set_index(integer(0))
-  index <- mod$info()$index$S
-
-  end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
-
-  set.seed(1)
-  mod$set_index(index)
-  y <- mod$simulate(steps)
-
-  rt_1 <- carehomes_Rt(steps, y[, 1, ], p)
-  rt_all <- carehomes_Rt_trajectories(steps, y, p)
-
-  ## move all individuals to vaccinated
-  y_with_vacc <- y
-  y_with_vacc[seq(p$n_groups + 1, 2 * p$n_groups), , ] <-
-    y_with_vacc[seq_len(p$n_groups), , ]
-  y_with_vacc[seq_len(p$n_groups), , ] <- 0
-
-  rt_1_vacc <- carehomes_Rt(steps, y_with_vacc[, 1, ], p)
-  rt_all_vacc <- carehomes_Rt_trajectories(steps, y_with_vacc, p)
-
-  # check that the ratio between the Rt with and witout vaccination
-  # is constant
-  expect_true(all(abs(diff(rt_1_vacc$Rt_all / rt_1$Rt_all)) < 1e-7))
-
-  ## Given mean duration is shorter for asymptomatic individuals, we expect
-  ## Rt to be reduced when rel_p_sympt is not 1
-  expect_true(all(rt_1_vacc$eff_Rt_all < rt_1$eff_Rt_all))
-  expect_true(all(rt_1_vacc$eff_Rt_general < rt_1$eff_Rt_general))
-
-})
-
-
 test_that("Can calculate IFR_t with an (empty) vaccination class", {
   ## run model with unvaccinated & vaccinated, but both have same susceptibility
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1690,6 +1634,15 @@ test_that("check_rel_param allows sensible inputs", {
     check_rel_param(array(c(1, 0), c(1, 1, 2)), "rel_param"))
   expect_silent(
     check_rel_param(array(c(1, 0, 1), c(1, 1, 3)), "rel_param"))
+})
+
+
+test_that("check_rel_param allows <1 probs for second infection", {
+  expect_silent(
+    check_rel_param(array(c(1, 1, 0.5, 0.5), c(1, 4, 1)), "rel_param"))
+  expect_error(
+    check_rel_param(array(c(1, 0.5, 0.5, 0.5), c(1, 4, 1)), "rel_param"),
+                    "must be 1 for first infection")
 })
 
 

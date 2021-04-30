@@ -117,11 +117,11 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
     if (no_vacc) {
       ## same IFR by group across all vaccine classes
-      ## FIXME (RS): What do we do with multistrain? This selects 1st
-      ##  (same below)
+      ## Selects strain 1 and vacc class 1
       IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t]),
                      n_vacc_classes)
     } else {
+      ## Selects strain 1
       IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, , t])
     }
 
@@ -222,14 +222,12 @@ carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
 
 carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 
-  pars <- unmirror_pars(pars)
-
   probs <- compute_pathway_probabilities(
     step = step,
     pars = pars,
     n_time_steps = length(sircovid_parameters_expand_step(step,
                                                           pars$p_H_step)),
-    n_strains = length(pars$strain_transmission),
+    n_strains = 1,
     n_vacc_classes = nlayer(pars$rel_susceptibility))
 
   p_C <- probs$p_C

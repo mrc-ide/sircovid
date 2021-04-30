@@ -63,6 +63,11 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                          eigen_method = "power_iteration", R = NULL,
                          weight_Rt = FALSE) {
 
+  if (sum(p$hosp_transmission, p$ICU_transmission, p$G_D_transmission) > 0) {
+    stop("Cannot currently compute Rt if any of 'hosp_transmission',
+    'ICU_transmission' or 'G_D_transmission' are non-zero")
+  }
+
   n_strains <- length(p$strain_transmission)
   ## move prob_strain check up here and make NULL if not needed to shortcut
   ##  checks and calculations
@@ -342,7 +347,8 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
 
   if (is_single) {
-    class(ret) <- c("single_strain", class(ret))
+    ## adding 'nocov' as this is a safety check that should never be hit
+    class(ret) <- c("single_strain", class(ret)) # nocov
   } else if (isTRUE(ncol(last(ret)) == 1)) {
     ret[intersect(all_types, names(ret))] <-
       lapply(ret[intersect(all_types, names(ret))], drop)
@@ -435,33 +441,14 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   dt <- pars$dt
-  n_vacc_classes <- nlayer(pars$rel_susceptibility)
-  n_groups <- pars$n_groups
   n_time_steps <-
     length(sircovid_parameters_expand_step(step, pars$p_H_step))
-  n_strains <- length(pars$strain_transmission)
 
-  probs <- compute_pathway_probabilities(step, pars, n_time_steps, n_strains,
-                                         n_vacc_classes)
-
-  p_C <- probs$p_C
-  p_H <- probs$p_H
-  p_ICU <- probs$p_ICU
-  p_ICU_D <- probs$p_ICU_D
-  p_H_D <- probs$p_H_D
-  p_W_D <- probs$p_W_D
-  p_G_D <- probs$p_G_D
-
-  prob_H_R <- p_C * p_H * (1 - p_G_D) *
-    (1 - p_ICU) * (1 - p_H_D)
-  prob_H_D <- p_C * p_H * (1 - p_G_D) *
-    (1 - p_ICU) * p_H_D
-  prob_ICU_W_R <- p_C * p_H * (1 - p_G_D) *
-    p_ICU * (1 - p_ICU_D) * (1 - p_W_D)
-  prob_ICU_W_D <- p_C * p_H * (1 - p_G_D) *
-    p_ICU * (1 - p_ICU_D) * p_W_D
-  prob_ICU_D <- p_C * p_H * (1 - p_G_D) *
-    p_ICU * p_ICU_D
+  p_C <- combine_steps_groups(
+    step, pars$n_groups, n_time_steps,
+    n_strains = length(pars$strain_transmission),
+    n_vacc_classes = pars$n_vacc_classes, pars$p_C_step, pars$rel_p_sympt
+  )
 
   ## Compute mean duration (in time steps) of each stage of infection,
   ## weighed by probability of going through that stage
@@ -485,23 +472,9 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   mean_duration_I_P <- calculate_mean(pars$I_P_transmission, p_C, "P")
   mean_duration_I_C_1 <- calculate_mean(pars$I_C_1_transmission, p_C, "C_1")
   mean_duration_I_C_2 <- calculate_mean(pars$I_C_2_transmission, p_C, "C_2")
-  mean_duration_G_D <- calculate_mean(pars$G_D_transmission,
-                                      p_C * p_H * p_G_D, "G_D")
-
-  mean_duration_hosp <-
-    calculate_mean(pars$hosp_transmission, prob_H_R, "H_R") +
-    calculate_mean(pars$hosp_transmission, prob_H_D, "H_D") +
-    calculate_mean(pars$hosp_transmission,
-                   prob_ICU_W_R + prob_ICU_W_D + prob_ICU_D, "ICU_pre")
-
-  mean_duration_icu <-
-    calculate_mean(pars$ICU_transmission, prob_ICU_W_R, "ICU_W_R") +
-    calculate_mean(pars$ICU_transmission, prob_ICU_W_D, "ICU_W_D") +
-    calculate_mean(pars$ICU_transmission, prob_ICU_D, "ICU_D")
 
   mean_duration <- mean_duration_I_A + mean_duration_I_P +
-    mean_duration_I_C_1 + mean_duration_I_C_2 + mean_duration_G_D +
-    mean_duration_hosp + mean_duration_icu
+    mean_duration_I_C_1 + mean_duration_I_C_2
 
   ## Account for different infectivity levels depending on vaccination stage
   mean_duration <- mean_duration * outer(pars$rel_infectivity,
@@ -519,7 +492,6 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 
   mean_duration
 }
-
 
 ## This part holds over all possible Rt calculations, so I've factored
 ## it out here; when we implement this for the basic model this will
