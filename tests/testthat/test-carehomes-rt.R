@@ -281,9 +281,6 @@ test_that("Parameters affect Rt as expected", {
 
   ## set the following parameters to non-zero values to allow related parameters
   ## to have an effect on Rt
-  p$hosp_transmission <- 0.05
-  p$ICU_transmission <- 0.05
-  p$G_D_transmission <- 0.05
   p$I_C_2_transmission <- 0.5
 
   np <- 1L
@@ -319,32 +316,33 @@ test_that("Parameters affect Rt as expected", {
   helper("I_P_transmission", 0, 1)
   helper("I_C_1_transmission", 0, 1)
   helper("I_C_2_transmission", 0, 1)
-  helper("hosp_transmission", 0, 1)
-  helper("ICU_transmission", 0, 1)
-  helper("G_D_transmission", 0, 1)
 
   helper("gamma_A_step", Inf, 1)
   helper("gamma_P_step", Inf, 1)
   helper("gamma_C_1_step", Inf, 1)
   helper("gamma_C_2_step", Inf, 1)
-  helper("gamma_H_D_step", Inf, 1)
-  helper("gamma_H_R_step", Inf, 1)
-  helper("gamma_ICU_pre_step", Inf, 1)
-  helper("gamma_ICU_D_step", Inf, 1)
-  helper("gamma_ICU_W_D_step", Inf, 1)
-  helper("gamma_ICU_W_R_step", Inf, 1)
-  helper("gamma_G_D_step", Inf, 1)
 
   helper("k_A", 1, 2)
   helper("k_P", 1, 2)
   helper("k_C_1", 1, 2)
   helper("k_C_2", 1, 2)
-  helper("k_H_D", 1, 2)
-  helper("k_H_R", 1, 2)
-  helper("k_ICU_pre", 1, 2)
-  helper("k_ICU_D", 1, 2)
-  helper("k_ICU_W_D", 1, 2)
-  helper("k_ICU_W_R", 1, 2)
-  helper("k_G_D", 1, 2)
+})
 
+
+test_that("Cannot calculate Rt for non-zero transmissions", {
+  d <- reference_data_rt()
+  steps <- d$inputs$steps
+  y <- d$inputs$y
+
+  p <- d$inputs$p
+  p$hosp_transmission <- 1
+  expect_error(carehomes_Rt(steps, y[, 1, ], p), "Cannot currently compute")
+
+  p <- d$inputs$p
+  p$G_D_transmission <- 1
+  expect_error(carehomes_Rt(steps, y[, 1, ], p), "Cannot currently compute")
+
+  p <- d$inputs$p
+  p$ICU_transmission <- 1
+  expect_error(carehomes_Rt(steps, y[, 1, ], p), "Cannot currently compute")
 })
