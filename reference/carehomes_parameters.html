@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.51</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.52</span>
       </span>
     </div>
 
@@ -133,6 +133,8 @@
   <span class='va'>region</span>,
   beta_date <span class='op'>=</span> <span class='cn'>NULL</span>,
   beta_value <span class='op'>=</span> <span class='cn'>NULL</span>,
+  population <span class='op'>=</span> <span class='cn'>NULL</span>,
+  carehome_beds <span class='op'>=</span> <span class='cn'>NULL</span>,
   severity <span class='op'>=</span> <span class='cn'>NULL</span>,
   progression <span class='op'>=</span> <span class='cn'>NULL</span>,
   observation <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -196,6 +198,19 @@ otherwise if <code>beta_date</code> is <code>NULL</code> this must be a scalar. 
 <code>beta_date</code> is given then <code>beta_date</code> and <code>beta_value</code> must have
 the same length (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code>,
 where this is passed as <code>value</code>).</p></td>
+    </tr>
+    <tr>
+      <th>population</th>
+      <td><p>Population data. A vector of length 17 for the population
+size for age groups 0-4, 5-9, ..., 75-79, 80+. If <code>NULL</code>, the population
+data will be sourced within the package for the specified <code>region</code> (only
+if available).</p></td>
+    </tr>
+    <tr>
+      <th>carehome_beds</th>
+      <td><p>The number of care home beds in the region. If <code>NULL</code>,
+this will be sourced within the package for the specified <code>region</code> (only
+if available).</p></td>
     </tr>
     <tr>
       <th>severity</th>
