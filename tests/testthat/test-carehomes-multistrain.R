@@ -1362,13 +1362,13 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
   rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
   rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
-  ## all values of Rt in 60:70 to be NA and others not to be
+  ## not all NA as weight_Rt = FALSE
   expect_vector_equal(lengths(rt_1[1:3]), 85)
-  expect_true(all(is.na(simplify2array(rt_1[4:7])[na_steps, , ])))
+  expect_true(!any(is.na(simplify2array(rt_1[4:7])[na_steps, , ])))
   expect_true(!any(is.na(simplify2array(rt_1[4:7])[-na_steps, , ])))
 
   expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
-  expect_true(all(is.na(simplify2array(rt_all[4:7])[na_steps, , , ])))
+  expect_true(!any(is.na(simplify2array(rt_all[4:7])[na_steps, , , ])))
   expect_true(!any(is.na(simplify2array(rt_all[4:7])[-na_steps, , , ])))
 
 
