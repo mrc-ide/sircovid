@@ -77,7 +77,7 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
             strain")
     ## deal with the prob_strain NA case at the beginning before any variables
     ##  are modified
-    } else if (!is.null(prob_strain) && any(is.na(prob_strain))) {
+    } else if (!is.null(prob_strain) && any(is.na(prob_strain)) && weight_Rt) {
       which_nna <- !vlapply(seq(ncol(prob_strain)),
                             function(i) any(is.na(prob_strain[, i])))
 
