@@ -1,3 +1,7 @@
+# sircovid 0.10.53
+
+* carehomes_Rt now only returns NA when prob_strain is NA and weight_Rt is TRUE
+
 # sircovid 0.10.52
 
 * Can now input `population` and `carehome_beds` to `carehomes_parameters` to allow use for regions where these are not included in the package
