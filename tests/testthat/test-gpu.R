@@ -30,7 +30,7 @@ test_that("can run the gpu model on the cpu", {
   skip_if_not_installed("odin")
   skip_if_not_installed("odin.dust")
 
-  gen <- compile_gpu(gpu = FALSE, gpu_generate = TRUE, verbose = FALSE)
+  gen <- compile_gpu(gpu = FALSE, gpu_generate = TRUE, verbose = TRUE)
   expect_equal(gen$public_methods$name(), "carehomes")
 
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")

@@ -99,9 +99,6 @@ typename T::real_t compare(const typename T::real_t * state,
     odin(sympt_cases_non_variant_over25_inc);
   const real_t model_react_pos = odin(react_pos);
 
-  // This is used over and over
-  const real_t exp_noise = odin(exp_noise);
-
   const real_t pillar2_negs =
     odin(p_NC) * (odin(N_tot_all) - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
@@ -109,7 +106,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   pillar2_negs,
                   odin(pillar2_sensitivity),
                   odin(pillar2_specificity),
-                  exp_noise,
+                  odin(exp_noise),
                   rng_state);
 
   const real_t pillar2_over25_negs =
@@ -119,40 +116,39 @@ typename T::real_t compare(const typename T::real_t * state,
                   pillar2_over25_negs,
                   odin(pillar2_sensitivity),
                   odin(pillar2_specificity),
-                  exp_noise,
+                  odin(exp_noise),
                   rng_state);
 
-  const real_t N_tot_react = odin(N_tot_react); // sum(pars$N_tot[2:18])
-  const real_t model_react_pos_capped = std::min(model_react_pos, N_tot_react);
+  const real_t model_react_pos_capped =
+    std::min(model_react_pos, odin(N_tot_react));
   const real_t model_react_prob_pos =
     test_prob_pos(model_react_pos_capped,
-                  N_tot_react - model_react_pos_capped,
+                  odin(N_tot_react) - model_react_pos_capped,
                   odin(react_sensitivity),
                   odin(react_specificity),
-                  exp_noise,
+                  odin(exp_noise),
                   rng_state);
 
   // serology assay 1
-  const real_t N_tot_15_64 = odin(N_tot_15_64);
   const real_t model_sero_pos_1_capped =
-    std::min(model_sero_pos_1, N_tot_15_64);
+    std::min(model_sero_pos_1, odin(N_tot_15_64));
   const real_t model_sero_prob_pos_1 =
     test_prob_pos(model_sero_pos_1_capped,
-                  N_tot_15_64 - model_sero_pos_1_capped,
+                  odin(N_tot_15_64) - model_sero_pos_1_capped,
                   odin(sero_sensitivity_1),
                   odin(sero_specificity_1),
-                  exp_noise,
+                  odin(exp_noise),
                   rng_state);
 
   // serology assay 2
   const real_t model_sero_pos_2_capped =
-    std::min(model_sero_pos_2, N_tot_15_64);
+    std::min(model_sero_pos_2, odin(N_tot_15_64));
   const real_t model_sero_prob_pos_2 =
     test_prob_pos(model_sero_pos_2_capped,
-                  N_tot_15_64 - model_sero_pos_2_capped,
+                  odin(N_tot_15_64) - model_sero_pos_2_capped,
                   odin(sero_sensitivity_2),
                   odin(sero_specificity_2),
-                  exp_noise,
+                  odin(exp_noise),
                   rng_state);
 
   // Strain
@@ -164,7 +160,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   model_sympt_cases_non_variant_over25,
                   strain_sensitivity,
                   strain_specificity,
-                  exp_noise,
+                  odin(exp_noise),
                   rng_state);
 
   // Note that in ll_nbinom, the purpose of exp_noise is to allow a
@@ -172,13 +168,13 @@ typename T::real_t compare(const typename T::real_t * state,
   // value is non-zero (i.e. there is overreporting)
   const real_t ll_icu =
     ll_nbinom(data.icu, odin(phi_ICU) * model_icu,
-              odin(kappa_ICU), exp_noise, rng_state);
+              odin(kappa_ICU), odin(exp_noise), rng_state);
   const real_t ll_general =
     ll_nbinom(data.general, odin(phi_general) * model_general,
-              odin(kappa_general), exp_noise, rng_state);
+              odin(kappa_general), odin(exp_noise), rng_state);
   const real_t ll_hosp =
     ll_nbinom(data.hosp, odin(phi_hosp) * model_hosp,
-              odin(kappa_hosp), exp_noise, rng_state);
+              odin(kappa_hosp), odin(exp_noise), rng_state);
 
   // We will compute one of the following:
   // 1. ll_deaths_hosp, ll_deaths_carehomes and ll_deaths_comm
@@ -186,35 +182,35 @@ typename T::real_t compare(const typename T::real_t * state,
   // 3. ll_deaths
   const real_t ll_deaths_hosp =
     ll_nbinom(data.deaths_hosp, odin(phi_death_hosp) * model_deaths_hosp,
-              odin(kappa_death_hosp), exp_noise, rng_state);
+              odin(kappa_death_hosp), odin(exp_noise), rng_state);
   const real_t ll_deaths_carehomes =
     ll_nbinom(data.deaths_carehomes,
               odin(phi_death_carehomes) * model_deaths_carehomes,
-              odin(kappa_death_carehomes), exp_noise, rng_state);
+              odin(kappa_death_carehomes), odin(exp_noise), rng_state);
   const real_t ll_deaths_comm =
     ll_nbinom(data.deaths_comm, odin(phi_death_comm) * model_deaths_comm,
-              odin(kappa_death_comm), exp_noise, rng_state);
+              odin(kappa_death_comm), odin(exp_noise), rng_state);
   const real_t ll_deaths_non_hosp =
     ll_nbinom(data.deaths_non_hosp,
               odin(phi_death_carehomes) * model_deaths_carehomes +
                 odin(phi_death_comm) * model_deaths_comm,
-              odin(kappa_death_non_hosp), exp_noise, rng_state);
+              odin(kappa_death_non_hosp), odin(exp_noise), rng_state);
   const real_t ll_deaths =
     ll_nbinom(data.deaths,
               odin(phi_death_hosp) * model_deaths_hosp +
                 odin(phi_death_carehomes) * model_deaths_carehomes +
                 odin(phi_death_comm) * model_deaths_comm,
-              odin(kappa_death), exp_noise, rng_state);
+              odin(kappa_death), odin(exp_noise), rng_state);
 
   const real_t ll_admitted =
     ll_nbinom(data.admitted, odin(phi_admitted) * model_admitted,
-              odin(kappa_admitted), exp_noise, rng_state);
+              odin(kappa_admitted), odin(exp_noise), rng_state);
   const real_t ll_diagnoses =
     ll_nbinom(data.diagnoses, odin(phi_diagnoses) * model_diagnoses,
-              odin(kappa_diagnoses), exp_noise, rng_state);
+              odin(kappa_diagnoses), odin(exp_noise), rng_state);
   const real_t ll_all_admission =
     ll_nbinom(data.all_admission, odin(phi_all_admission) * model_all_admission,
-              odin(kappa_all_admission), exp_noise, rng_state);
+              odin(kappa_all_admission), odin(exp_noise), rng_state);
 
   const real_t ll_serology_1 =
     ll_binom(data.sero_pos_15_64_1, data.sero_tot_15_64_1,
@@ -229,7 +225,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
               odin(phi_pillar2_cases) * model_sympt_cases,
-              odin(kappa_pillar2_cases), exp_noise, rng_state);
+              odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
 
   const real_t ll_pillar2_over25_tests =
     ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
@@ -237,7 +233,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
               odin(phi_pillar2_cases) * model_sympt_cases_over25,
-              odin(kappa_pillar2_cases), exp_noise, rng_state);
+              odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
 
   const real_t ll_react =
     ll_binom(data.react_pos, data.react_tot,
