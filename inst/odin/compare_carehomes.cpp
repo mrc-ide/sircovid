@@ -1,4 +1,11 @@
+// Can't use std::min on GPU
+template <typename T>
+T min(const T& a, const T&b) {
+  return a < b ? a : b;
+}
+
 template <typename real_t>
+HOSTDEVICE
 real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
                  dust::rng_state_t<real_t>& rng_state) {
   if (std::isnan(data)) {
@@ -9,6 +16,7 @@ real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
 }
 
 template <typename real_t>
+HOSTDEVICE
 real_t ll_binom(real_t data_x, real_t data_size, real_t model_prob) {
   if (std::isnan(data_x) || std::isnan(data_size)) {
     return 0;
@@ -17,6 +25,7 @@ real_t ll_binom(real_t data_x, real_t data_size, real_t model_prob) {
 }
 
 template <typename real_t>
+HOSTDEVICE
 real_t ll_betabinom(real_t data_x, real_t data_size, real_t model_prob,
                     real_t rho) {
   if (std::isnan(data_x) || std::isnan(data_size)) {
@@ -26,6 +35,7 @@ real_t ll_betabinom(real_t data_x, real_t data_size, real_t model_prob,
 }
 
 template <typename real_t>
+HOSTDEVICE
 real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
                      real_t specificity, real_t exp_noise,
                      dust::rng_state_t<real_t>& rng_state) {
@@ -120,7 +130,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   rng_state);
 
   const real_t model_react_pos_capped =
-    std::min(model_react_pos, odin(N_tot_react));
+    min(model_react_pos, odin(N_tot_react));
   const real_t model_react_prob_pos =
     test_prob_pos(model_react_pos_capped,
                   odin(N_tot_react) - model_react_pos_capped,
@@ -131,7 +141,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   // serology assay 1
   const real_t model_sero_pos_1_capped =
-    std::min(model_sero_pos_1, odin(N_tot_15_64));
+    min(model_sero_pos_1, odin(N_tot_15_64));
   const real_t model_sero_prob_pos_1 =
     test_prob_pos(model_sero_pos_1_capped,
                   odin(N_tot_15_64) - model_sero_pos_1_capped,
@@ -142,7 +152,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   // serology assay 2
   const real_t model_sero_pos_2_capped =
-    std::min(model_sero_pos_2, odin(N_tot_15_64));
+    min(model_sero_pos_2, odin(N_tot_15_64));
   const real_t model_sero_prob_pos_2 =
     test_prob_pos(model_sero_pos_2_capped,
                   odin(N_tot_15_64) - model_sero_pos_2_capped,
