@@ -78,6 +78,9 @@ jobs:
           install.packages("XML", type = "binary")
         shell: Rscript {0}
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
