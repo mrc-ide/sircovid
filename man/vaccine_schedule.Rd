@@ -4,7 +4,7 @@
 \alias{vaccine_schedule}
 \title{Create vaccine schedule}
 \usage{
-vaccine_schedule(date, doses)
+vaccine_schedule(date, doses, n_doses = 2L)
 }
 \arguments{
 \item{date}{A single date, representing the first day that
@@ -16,6 +16,10 @@ vaccines will be given}
 represent the number of vaccine doses in that group for that
 dose for that day. So for \code{doses[i, j, k]} then it is for the
 ith group, the number of jth doses on day \code{(k - 1) + date}}
+
+\item{n_doses}{The number of doses in the schedule. Typically (and
+by default) this will be 2, but if using booster doses 3 (and in
+future we may extend further).}
 }
 \value{
 A \code{vaccine_schedule} object

@@ -1857,6 +1857,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
   index <- unlist(lapply(info$index[keep], "[", 1:19), FALSE, FALSE)
 
   mod$set_index(index)
+
   y <- mod$simulate(seq(0, 380, by = 4)[-1])
   s <- array(y, c(19, 5, dim(y)[3]))
 
@@ -2636,4 +2637,56 @@ test_that("Can add lag to vaccine schedule", {
 
   ## check we did reach the desired uptake (100%)
   expect_gt(min(uptake2), 0.98)
+})
+
+
+## TODO: This *really* needs a test where n_vacc_classes does not
+## equal n_doses, due to a dummy class 2
+
+## S is n_groups, n_vacc_classes
+##
+## Dose 1 moves you from 1->2
+## Dose 2 moves you from 2->3
+## Dose 3 moves you from 3->4
+test_that("run sensible vaccination schedule with boosters", {
+  region <- "east_of_england"
+  uptake <- c(rep(0, 3), rep(1, 16))
+  daily_doses <- rep(100000, 120)
+  booster_daily_doses <- c(rep(0, 150), rep(20000, 50))
+  n <- vaccine_priority_population(region, uptake,
+                                   prop_hcw = rep(0, 19),
+                                   prop_very_vulnerable = rep(0, 19),
+                                   prop_underlying_condition = rep(0, 19))
+  vaccine_schedule <- vaccine_schedule_future(
+    0, daily_doses, 14, n,
+    booster_daily_doses_value = booster_daily_doses)
+
+  expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
+  expect_gt(sum(vaccine_schedule$doses[, 3, ]), 0)
+
+  p <- carehomes_parameters(0, "east_of_england",
+                            rel_susceptibility = c(1, 1, 1, 1),
+                            rel_p_sympt = c(1, 1, 1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1, 1, 1),
+                            vaccine_schedule = vaccine_schedule,
+                            vaccine_index_dose2 = 2L,
+                            vaccine_index_booster = 3L,
+                            vaccine_catchup_fraction = 0,
+                            n_doses = 3,
+                            initial_I = 0)
+
+  ## Let's go:
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  mod$set_state(state)
+
+  y <- mod$simulate((1:220) * 4)
+  y <- mod$transform_variables(y)
+
+  ## Check that cum_n_S_vaccinated shows correct pattern with booster
+  ## doses being given.
+  y$cum_n_S_vaccinated
 })

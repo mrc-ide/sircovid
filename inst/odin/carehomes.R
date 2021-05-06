@@ -1723,6 +1723,9 @@ n_doses <- user(2)
 index_dose[] <- user(integer = TRUE)
 dim(index_dose) <- n_doses
 
+index_dose_inverse[] <- user(integer = TRUE)
+dim(index_dose_inverse) <- n_vacc_classes
+
 vaccine_dose_step[, , ] <- user() # n_groups, n_doses, n_time
 dim(vaccine_dose_step) <- user()
 
@@ -1761,17 +1764,14 @@ vaccine_catchup_fraction <- user(0)
 ## TODO: There's a divide-by-zero here causing NaNs in
 ## vaccine_probability. Worth fixing
 
-## Then fix everything based on progression at a constant rate (will
-## be zero for the cases that have probabilities above)
-vaccine_probability[, ] <-
-  1 - exp(-vaccine_progression_rate_base[i, j] * dt)
+## Then either fix everything based on progression at a constant rate,
+## or take from the supplied time-varying probabilities.
+vaccine_probability[, ] <- (
+  if (index_dose_inverse[j] > 0)
+    vaccine_probability_doses[i, index_dose_inverse[j]]
+  else
+    1 - exp(-vaccine_progression_rate_base[i, j] * dt))
 dim(vaccine_probability) <- c(n_groups, n_vacc_classes)
-
-## This can't be automatically driven from the number of doses, so we
-## have to unroll it here and write both out manually. This is the
-## reason why n_doses is fixed as 2 rather than being user-supplied.
-vaccine_probability[, index_dose[1]] <- vaccine_probability_doses[i, 1]
-vaccine_probability[, index_dose[2]] <- vaccine_probability_doses[i, 2]
 
 initial(tmp_vaccine_n_candidates[, ]) <- 0
 update(tmp_vaccine_n_candidates[, ]) <- vaccine_n_candidates[i, j]

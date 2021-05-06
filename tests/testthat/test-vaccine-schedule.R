@@ -364,6 +364,10 @@ test_that("prevent impossible scenarios", {
 })
 
 
+## TODO: we need a test showing that this works as expected after
+## binding onto an existing schedule with both 2 and 3 doses.
+##
+## TODO: catch the stop for the lag parameters.
 test_that("vaccine_schedule_future functions with 3 doses", {
   region <- "london"
   uptake_by_age <- test_example_uptake()

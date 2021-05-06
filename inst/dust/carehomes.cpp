@@ -318,6 +318,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(gamma_W_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(index_dose, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(index_dose_inverse, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_A, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_C_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_C_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -443,6 +444,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(gamma_sero_pos_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(n_doses, has_default = TRUE, default_value = 2L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_catchup_fraction, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class carehomes {
 public:
@@ -944,6 +946,7 @@ public:
     int dim_gamma_W_R;
     int dim_gamma_W_R_step;
     int dim_index_dose;
+    int dim_index_dose_inverse;
     int dim_lambda;
     int dim_lambda_1;
     int dim_lambda_2;
@@ -1938,6 +1941,7 @@ public:
     real_t gamma_sero_pre_2;
     real_t hosp_transmission;
     std::vector<int> index_dose;
+    std::vector<int> index_dose_inverse;
     std::vector<real_t> initial_D;
     real_t initial_D_carehomes_inc;
     real_t initial_D_carehomes_tot;
@@ -3350,16 +3354,8 @@ public:
     state_next[21] = odin_sum4<real_t>(internal.new_T_sero_pos_2.data(), 3, 13, 0, shared->dim_new_T_sero_pos_2_2, 0, shared->dim_new_T_sero_pos_2_3, 0, shared->dim_new_T_sero_pos_2_4, shared->dim_new_T_sero_pos_2_1, shared->dim_new_T_sero_pos_2_12, shared->dim_new_T_sero_pos_2_123);
     for (int i = 1; i <= shared->dim_vaccine_probability_1; ++i) {
       for (int j = 1; j <= shared->dim_vaccine_probability_2; ++j) {
-        internal.vaccine_probability[i - 1 + shared->dim_vaccine_probability_1 * (j - 1)] = 1 - std::exp(- shared->vaccine_progression_rate_base[shared->dim_vaccine_progression_rate_base_1 * (j - 1) + i - 1] * shared->dt);
+        internal.vaccine_probability[i - 1 + shared->dim_vaccine_probability_1 * (j - 1)] = ((shared->index_dose_inverse[j - 1] > 0 ? internal.vaccine_probability_doses[shared->dim_vaccine_probability_doses_1 * (shared->index_dose_inverse[j - 1] - 1) + i - 1] : 1 - std::exp(- shared->vaccine_progression_rate_base[shared->dim_vaccine_progression_rate_base_1 * (j - 1) + i - 1] * shared->dt)));
       }
-    }
-    for (int i = 1; i <= shared->dim_vaccine_probability_1; ++i) {
-      int j = shared->index_dose[0];
-      internal.vaccine_probability[i - 1 + shared->dim_vaccine_probability_1 * (j - 1)] = internal.vaccine_probability_doses[shared->dim_vaccine_probability_doses_1 * 0 + i - 1];
-    }
-    for (int i = 1; i <= shared->dim_vaccine_probability_1; ++i) {
-      int j = shared->index_dose[1];
-      internal.vaccine_probability[i - 1 + shared->dim_vaccine_probability_1 * (j - 1)] = internal.vaccine_probability_doses[shared->dim_vaccine_probability_doses_1 * 1 + i - 1];
     }
     for (int i = 1; i <= shared->dim_aux_G_D_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_G_D_2; ++j) {
@@ -4752,8 +4748,6 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->initial_sympt_cases_non_variant_over25_inc = 0;
   shared->initial_sympt_cases_over25_inc = 0;
   shared->initial_time = 0;
-  shared->n_doses = 2;
-  shared->dim_index_dose = shared->n_doses;
   shared->G_D_transmission = NA_REAL;
   shared->ICU_transmission = NA_REAL;
   shared->I_A_transmission = NA_REAL;
@@ -4852,6 +4846,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_sero_pos_2 = 0.10000000000000001;
   shared->gamma_sero_pre_1 = 0.10000000000000001;
   shared->gamma_sero_pre_2 = 0.10000000000000001;
+  shared->n_doses = 2;
   shared->vaccine_catchup_fraction = 0;
   shared->G_D_transmission = user_get_scalar<real_t>(user, "G_D_transmission", shared->G_D_transmission, NA_REAL, NA_REAL);
   shared->ICU_transmission = user_get_scalar<real_t>(user, "ICU_transmission", shared->ICU_transmission, NA_REAL, NA_REAL);
@@ -4908,6 +4903,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->kappa_hosp = user_get_scalar<real_t>(user, "kappa_hosp", shared->kappa_hosp, NA_REAL, NA_REAL);
   shared->kappa_pillar2_cases = user_get_scalar<real_t>(user, "kappa_pillar2_cases", shared->kappa_pillar2_cases, NA_REAL, NA_REAL);
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_REAL, NA_REAL);
+  shared->n_doses = user_get_scalar<int>(user, "n_doses", shared->n_doses, NA_REAL, NA_REAL);
   shared->n_gamma_A_steps = user_get_scalar<int>(user, "n_gamma_A_steps", shared->n_gamma_A_steps, NA_REAL, NA_REAL);
   shared->n_gamma_C_1_steps = user_get_scalar<int>(user, "n_gamma_C_1_steps", shared->n_gamma_C_1_steps, NA_REAL, NA_REAL);
   shared->n_gamma_C_2_steps = user_get_scalar<int>(user, "n_gamma_C_2_steps", shared->n_gamma_C_2_steps, NA_REAL, NA_REAL);
@@ -5243,6 +5239,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_gamma_W_D_step = shared->n_gamma_W_D_steps;
   shared->dim_gamma_W_R = shared->n_strains;
   shared->dim_gamma_W_R_step = shared->n_gamma_W_R_steps;
+  shared->dim_index_dose = shared->n_doses;
+  shared->dim_index_dose_inverse = shared->n_vacc_classes;
   shared->dim_m_1 = shared->n_groups;
   shared->dim_m_2 = shared->n_groups;
   shared->dim_n_EE_1 = shared->n_groups;
@@ -6432,6 +6430,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->gamma_W_D_step = user_get_array_fixed<real_t, 1>(user, "gamma_W_D_step", shared->gamma_W_D_step, {shared->dim_gamma_W_D_step}, NA_REAL, NA_REAL);
   shared->gamma_W_R_step = user_get_array_fixed<real_t, 1>(user, "gamma_W_R_step", shared->gamma_W_R_step, {shared->dim_gamma_W_R_step}, NA_REAL, NA_REAL);
   shared->index_dose = user_get_array_fixed<int, 1>(user, "index_dose", shared->index_dose, {shared->dim_index_dose}, NA_REAL, NA_REAL);
+  shared->index_dose_inverse = user_get_array_fixed<int, 1>(user, "index_dose_inverse", shared->index_dose_inverse, {shared->dim_index_dose_inverse}, NA_REAL, NA_REAL);
   for (int i = 1; i <= shared->dim_D_hosp; ++i) {
     shared->initial_D_hosp[i - 1] = 0;
   }

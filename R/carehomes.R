@@ -188,6 +188,8 @@ NULL
 ##'
 ##' @param vaccine_index_dose2 The index to use for the second dose
 ##'
+##' @param vaccine_index_booster The index to use for the booster dose
+##'
 ##' @param vaccine_catchup_fraction A value between 0 and 1 indicating the
 ##'   proportion of doses not distributed according to schedule (e.g. because
 ##'   too many people were in the I or H compartments and could not be
@@ -359,6 +361,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate = NULL,
                                  vaccine_schedule = NULL,
                                  vaccine_index_dose2 = NULL,
+                                 vaccine_index_booster = NULL,
                                  vaccine_catchup_fraction = 1,
                                  n_doses = 2,
                                  waning_rate = 0,
@@ -457,6 +460,7 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_progression_rate,
                                                   vaccine_schedule,
                                                   vaccine_index_dose2,
+                                                  vaccine_index_booster,
                                                   strain$n_strains,
                                                   vaccine_catchup_fraction,
                                                   n_doses)
@@ -1158,6 +1162,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
                                              vaccine_index_dose2 = NULL,
+                                             vaccine_index_booster = NULL,
                                              n_strains = 1,
                                              vaccine_catchup_fraction = 1,
                                              n_doses = 2L) {
@@ -1192,7 +1197,7 @@ carehomes_parameters_vaccination <- function(N_tot,
       stop("'vaccine_index_dose2' set without schedule")
     }
     ret$vaccine_dose_step <- array(0, c(n_groups, n_doses, 1))
-    ret$index_dose <- c(1L, 1L)
+    ret$index_dose <- rep(1L, n_doses)
   } else {
     assert_is(vaccine_schedule, "vaccine_schedule")
     vaccine_index_dose2 <- vaccine_index_dose2 %||% 1L
@@ -1201,16 +1206,35 @@ carehomes_parameters_vaccination <- function(N_tot,
         "Invalid value for 'vaccine_index_dose2', must be in [1, %d]",
         n_vacc_classes))
     }
+    stopifnot(vaccine_schedule$n_doses == n_doses)
+
+    if (is.null(vaccine_index_booster)) {
+      if (n_doses != 2L) {
+        stop("'n_doses' must be 2 as boosters not used")
+      }
+    } else {
+      if (n_doses != 3L) {
+        stop("'n_doses' must be 3 as boosters are used")
+      }
+      if (vaccine_index_booster > n_vacc_classes) {
+        stop(sprintf(
+          "Invalid value for 'booster', must be in [1, %d]",
+          n_vacc_classes))
+      }
+    }
 
     n_days <- dim(vaccine_schedule$doses)[[3]]
     i <- rep(seq_len(n_days), each = 1 / dt)
     len <- vaccine_schedule$date / dt
-    ret$index_dose <- c(1L, vaccine_index_dose2)
+    ret$index_dose <- c(1L, vaccine_index_dose2, vaccine_index_booster)
 
     ret$vaccine_dose_step <- mcstate::array_bind(
       array(0, c(n_groups, n_doses, len)),
       (vaccine_schedule$doses * dt)[, , i])
   }
+
+  ret$index_dose_inverse <- integer(n_vacc_classes)
+  ret$index_dose_inverse[ret$index_dose] <- seq_along(ret$index_dose)
 
   ret$n_vacc_classes <- n_vacc_classes
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
