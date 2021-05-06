@@ -331,17 +331,11 @@ vaccine_schedule_future <- function(start,
                                     mean_days_between_doses,
                                     priority_population,
                                     lag_groups = NULL,
-                                    lag_days = NULL,
-                                    n_doses = 2L,
-                                    mean_days_to_booster = NULL) {
-#browser()
+                                    lag_days = NULL) {
   n_groups <- nrow(priority_population)
   n_priority_groups <- ncol(priority_population)
+  n_doses <- 2L
   n_days <- length(daily_doses_value)
-
-  if (n_doses > 3) {
-    stop("Currently only 2 doses + 1 booster supported")
-  }
 
   population_to_vaccinate_mat <-
     array(0, c(n_groups, n_priority_groups, n_doses, n_days))
@@ -371,45 +365,26 @@ vaccine_schedule_future <- function(start,
   daily_doses_tt <- cbind(daily_doses_prev, matrix(0, n_doses, n_days))
 
   for (t in seq_along(daily_doses_value)) {
-    for (d in seq.int(1, n_doses - 1)) {
-      tt <- t + n_prev
-      if (d == 1) {
-        tt_dose_d <- tt - mean_days_between_doses
-      } else {
-        tt_dose_d <- tt - mean_days_to_booster
+    tt <- t + n_prev
+    tt_dose_1 <- tt - mean_days_between_doses
+    if (tt_dose_1 >= 1) {
+      ## If we have promised more 2nd doses than we can deliver, we
+      ## move our debt forward in time by one day. If doses fluctuate
+      ## this will eventually be paid off.
+      if (daily_doses_tt[1, tt_dose_1] > daily_doses_value[t]) {
+        daily_doses_tt[1, tt_dose_1 + 1] <-
+          daily_doses_tt[1, tt_dose_1 + 1] +
+          (daily_doses_tt[1, tt_dose_1] - daily_doses_value[t])
       }
-      if (tt == 301) browser()
-      if (tt_dose_d >= 1) {
-        ## If we have promised more 2nd doses than we can deliver, we
-        ## move our debt forward in time by one day. If doses fluctuate
-        ## this will eventually be paid off.
-        if (daily_doses_tt[d, tt_dose_d] > daily_doses_value[t]) {
-          daily_doses_tt[d, tt_dose_d + 1] <-
-          daily_doses_tt[d, tt_dose_d + 1] +
-          (daily_doses_tt[d, tt_dose_d] - daily_doses_value[t])
-        }
-
-        if (d == 1) {
-          ## doses depend on first
-          daily_doses_tt[d + 1, tt] <- min(daily_doses_value[t],
-                                    daily_doses_tt[d, tt_dose_d])
-          daily_doses_tt[d, tt] <- daily_doses_value[t] -
-                                    daily_doses_tt[d + 1, tt]
-        } else {
-          ## assume both doses given
-          daily_doses_tt[d + 1, tt] <- daily_doses_tt[d, tt_dose_d]
-          daily_doses_tt[d, tt] <- 0
-        }
-      } else {
-        ## Only distribute first doses
-        if (d == 1 || (d == 2 && tt > mean_days_between_doses)) {
-          daily_doses_tt[d, tt] <- daily_doses_value[t]
-        } else {
-          daily_doses_tt[d:(d + 1), tt] <- 0
-        }
-      }
-      daily_doses_today <- daily_doses_tt[, tt]
+      daily_doses_tt[2, tt] <- min(daily_doses_value[t],
+                                   daily_doses_tt[1, tt_dose_1])
+      daily_doses_tt[1, tt] <- daily_doses_value[t] - daily_doses_tt[2, tt]
+    } else {
+      ## Only distribute first doses
+      daily_doses_tt[2, tt] <- 0
+      daily_doses_tt[1, tt] <- daily_doses_value[t]
     }
+    daily_doses_today <- daily_doses_tt[, tt]
 
     for (dose in seq_len(n_doses)) {
       eligible <- colSums(population_left[, , dose])
@@ -448,7 +423,7 @@ vaccine_schedule_future <- function(start,
     doses <- mcstate::array_bind(start$doses, doses)
   }
 
-  schedule <- vaccine_schedule(daily_doses_date, doses, n_doses)
+  schedule <- vaccine_schedule(daily_doses_date, doses)
 
   if (!is.null(lag_groups) || !is.null(lag_days)) {
     if (is.null(lag_days) || is.null(lag_groups)) {
@@ -499,11 +474,12 @@ vaccine_schedule_future <- function(start,
 ##'
 ##' @return A `vaccine_schedule` object
 ##' @export
-vaccine_schedule <- function(date, doses, n_doses = 2L) {
+vaccine_schedule <- function(date, doses) {
   assert_sircovid_date(date)
   assert_scalar(date)
 
   n_groups <- carehomes_n_groups()
+  n_doses <- 2L
 
   if (length(dim(doses)) != 3L) {
     stop("Expected a 3d array for 'doses'")
