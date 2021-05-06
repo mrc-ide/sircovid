@@ -96,7 +96,15 @@ template <typename T>
 HOSTDEVICE T odin_max(T x, T y) {
   return x > y ? x : y;
 }
+// Can't use std::min on GPU
+template <typename T>
+HOSTDEVICE
+T min(const T& a, const T&b) {
+  return a < b ? a : b;
+}
+
 template <typename real_t>
+HOSTDEVICE
 real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
                  dust::rng_state_t<real_t>& rng_state) {
   if (std::isnan(data)) {
@@ -107,6 +115,7 @@ real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
 }
 
 template <typename real_t>
+HOSTDEVICE
 real_t ll_binom(real_t data_x, real_t data_size, real_t model_prob) {
   if (std::isnan(data_x) || std::isnan(data_size)) {
     return 0;
@@ -115,6 +124,7 @@ real_t ll_binom(real_t data_x, real_t data_size, real_t model_prob) {
 }
 
 template <typename real_t>
+HOSTDEVICE
 real_t ll_betabinom(real_t data_x, real_t data_size, real_t model_prob,
                     real_t rho) {
   if (std::isnan(data_x) || std::isnan(data_size)) {
@@ -124,6 +134,7 @@ real_t ll_betabinom(real_t data_x, real_t data_size, real_t model_prob,
 }
 
 template <typename real_t>
+HOSTDEVICE
 real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
                      real_t specificity, real_t exp_noise,
                      dust::rng_state_t<real_t>& rng_state) {
@@ -197,9 +208,6 @@ typename T::real_t compare(const typename T::real_t * state,
     state[27];
   const real_t model_react_pos = state[28];
 
-  // This is used over and over
-  const real_t exp_noise = shared->exp_noise;
-
   const real_t pillar2_negs =
     shared->p_NC * (shared->N_tot_all - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
@@ -207,7 +215,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   pillar2_negs,
                   shared->pillar2_sensitivity,
                   shared->pillar2_specificity,
-                  exp_noise,
+                  shared->exp_noise,
                   rng_state);
 
   const real_t pillar2_over25_negs =
@@ -217,40 +225,39 @@ typename T::real_t compare(const typename T::real_t * state,
                   pillar2_over25_negs,
                   shared->pillar2_sensitivity,
                   shared->pillar2_specificity,
-                  exp_noise,
+                  shared->exp_noise,
                   rng_state);
 
-  const real_t N_tot_react = shared->N_tot_react; // sum(pars$N_tot[2:18])
-  const real_t model_react_pos_capped = std::min(model_react_pos, N_tot_react);
+  const real_t model_react_pos_capped =
+    min(model_react_pos, shared->N_tot_react);
   const real_t model_react_prob_pos =
     test_prob_pos(model_react_pos_capped,
-                  N_tot_react - model_react_pos_capped,
+                  shared->N_tot_react - model_react_pos_capped,
                   shared->react_sensitivity,
                   shared->react_specificity,
-                  exp_noise,
+                  shared->exp_noise,
                   rng_state);
 
   // serology assay 1
-  const real_t N_tot_15_64 = shared->N_tot_15_64;
   const real_t model_sero_pos_1_capped =
-    std::min(model_sero_pos_1, N_tot_15_64);
+    min(model_sero_pos_1, shared->N_tot_15_64);
   const real_t model_sero_prob_pos_1 =
     test_prob_pos(model_sero_pos_1_capped,
-                  N_tot_15_64 - model_sero_pos_1_capped,
+                  shared->N_tot_15_64 - model_sero_pos_1_capped,
                   shared->sero_sensitivity_1,
                   shared->sero_specificity_1,
-                  exp_noise,
+                  shared->exp_noise,
                   rng_state);
 
   // serology assay 2
   const real_t model_sero_pos_2_capped =
-    std::min(model_sero_pos_2, N_tot_15_64);
+    min(model_sero_pos_2, shared->N_tot_15_64);
   const real_t model_sero_prob_pos_2 =
     test_prob_pos(model_sero_pos_2_capped,
-                  N_tot_15_64 - model_sero_pos_2_capped,
+                  shared->N_tot_15_64 - model_sero_pos_2_capped,
                   shared->sero_sensitivity_2,
                   shared->sero_specificity_2,
-                  exp_noise,
+                  shared->exp_noise,
                   rng_state);
 
   // Strain
@@ -262,7 +269,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   model_sympt_cases_non_variant_over25,
                   strain_sensitivity,
                   strain_specificity,
-                  exp_noise,
+                  shared->exp_noise,
                   rng_state);
 
   // Note that in ll_nbinom, the purpose of exp_noise is to allow a
@@ -270,13 +277,13 @@ typename T::real_t compare(const typename T::real_t * state,
   // value is non-zero (i.e. there is overreporting)
   const real_t ll_icu =
     ll_nbinom(data.icu, shared->phi_ICU * model_icu,
-              shared->kappa_ICU, exp_noise, rng_state);
+              shared->kappa_ICU, shared->exp_noise, rng_state);
   const real_t ll_general =
     ll_nbinom(data.general, shared->phi_general * model_general,
-              shared->kappa_general, exp_noise, rng_state);
+              shared->kappa_general, shared->exp_noise, rng_state);
   const real_t ll_hosp =
     ll_nbinom(data.hosp, shared->phi_hosp * model_hosp,
-              shared->kappa_hosp, exp_noise, rng_state);
+              shared->kappa_hosp, shared->exp_noise, rng_state);
 
   // We will compute one of the following:
   // 1. ll_deaths_hosp, ll_deaths_carehomes and ll_deaths_comm
@@ -284,35 +291,35 @@ typename T::real_t compare(const typename T::real_t * state,
   // 3. ll_deaths
   const real_t ll_deaths_hosp =
     ll_nbinom(data.deaths_hosp, shared->phi_death_hosp * model_deaths_hosp,
-              shared->kappa_death_hosp, exp_noise, rng_state);
+              shared->kappa_death_hosp, shared->exp_noise, rng_state);
   const real_t ll_deaths_carehomes =
     ll_nbinom(data.deaths_carehomes,
               shared->phi_death_carehomes * model_deaths_carehomes,
-              shared->kappa_death_carehomes, exp_noise, rng_state);
+              shared->kappa_death_carehomes, shared->exp_noise, rng_state);
   const real_t ll_deaths_comm =
     ll_nbinom(data.deaths_comm, shared->phi_death_comm * model_deaths_comm,
-              shared->kappa_death_comm, exp_noise, rng_state);
+              shared->kappa_death_comm, shared->exp_noise, rng_state);
   const real_t ll_deaths_non_hosp =
     ll_nbinom(data.deaths_non_hosp,
               shared->phi_death_carehomes * model_deaths_carehomes +
                 shared->phi_death_comm * model_deaths_comm,
-              shared->kappa_death_non_hosp, exp_noise, rng_state);
+              shared->kappa_death_non_hosp, shared->exp_noise, rng_state);
   const real_t ll_deaths =
     ll_nbinom(data.deaths,
               shared->phi_death_hosp * model_deaths_hosp +
                 shared->phi_death_carehomes * model_deaths_carehomes +
                 shared->phi_death_comm * model_deaths_comm,
-              shared->kappa_death, exp_noise, rng_state);
+              shared->kappa_death, shared->exp_noise, rng_state);
 
   const real_t ll_admitted =
     ll_nbinom(data.admitted, shared->phi_admitted * model_admitted,
-              shared->kappa_admitted, exp_noise, rng_state);
+              shared->kappa_admitted, shared->exp_noise, rng_state);
   const real_t ll_diagnoses =
     ll_nbinom(data.diagnoses, shared->phi_diagnoses * model_diagnoses,
-              shared->kappa_diagnoses, exp_noise, rng_state);
+              shared->kappa_diagnoses, shared->exp_noise, rng_state);
   const real_t ll_all_admission =
     ll_nbinom(data.all_admission, shared->phi_all_admission * model_all_admission,
-              shared->kappa_all_admission, exp_noise, rng_state);
+              shared->kappa_all_admission, shared->exp_noise, rng_state);
 
   const real_t ll_serology_1 =
     ll_binom(data.sero_pos_15_64_1, data.sero_tot_15_64_1,
@@ -327,7 +334,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
               shared->phi_pillar2_cases * model_sympt_cases,
-              shared->kappa_pillar2_cases, exp_noise, rng_state);
+              shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
 
   const real_t ll_pillar2_over25_tests =
     ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
@@ -335,7 +342,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
               shared->phi_pillar2_cases * model_sympt_cases_over25,
-              shared->kappa_pillar2_cases, exp_noise, rng_state);
+              shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
 
   const real_t ll_react =
     ll_binom(data.react_pos, data.react_tot,
@@ -509,7 +516,7 @@ typename T::real_t compare(const typename T::real_t * state,
 class carehomes {
 public:
   typedef double real_t;
-  struct data_t {
+  struct ALIGN(16) data_t {
     real_t icu;
     real_t general;
     real_t hosp;

@@ -85,7 +85,7 @@ typename T::real_t compare(const typename T::real_t * state,
 class basic {
 public:
   typedef double real_t;
-  struct data_t {
+  struct ALIGN(16) data_t {
     real_t icu;
     real_t deaths;
   };
