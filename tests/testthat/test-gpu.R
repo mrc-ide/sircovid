@@ -33,13 +33,17 @@ test_that("can run the gpu model on the cpu", {
   gen <- compile_gpu(gpu = FALSE, gpu_generate = TRUE, verbose = TRUE)
   expect_equal(gen$public_methods$name(), "carehomes")
 
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            initial_I = 20)
 
   mod_cpu <- gen$new(p, 0, 5, seed = 1L)
   mod_gpu <- gen$new(p, 0, 5, seed = 1L, device_id = 0)
 
   end <- sircovid_date("2020-07-31") / p$dt
   info <- mod_cpu$info()
+
+  expect_equal(mod_gpu$info(), mod_cpu$info())
+
   initial <- carehomes_initial(info, 10, p)
   index <- c(carehomes_index(info)$run,
              deaths_carehomes = info$index[["D_carehomes_tot"]],
