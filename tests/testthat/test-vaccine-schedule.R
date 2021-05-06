@@ -362,3 +362,56 @@ test_that("prevent impossible scenarios", {
           "but was 2021-03-01"),
     fixed = TRUE)
 })
+
+
+test_that("vaccine_schedule_future functions with 3 doses", {
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- rep(20000, 500) # a vector of number of doses to give each day
+  mean_days_between_doses <- 12 * 7
+
+  n <- vaccine_priority_population(region, uptake_by_age)
+  dose_schedule <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n, n_doses = 3,
+    mean_days_to_booster = 300)
+
+  doses <- dose_schedule$doses
+  n_to_vaccinate1 <- dose_schedule$doses[, 1, ]
+  n_to_vaccinate2 <- dose_schedule$doses[, 2, ]
+  n_to_vaccinate3 <- dose_schedule$doses[, 3, ]
+
+  ## initially only first doses are delivered
+  ## and they add up to the target daily_doses
+  ## not exactly equal because of some rounding
+  phase1 <- seq_len(mean_days_between_doses)
+  expect_vector_equal(
+    colSums(n_to_vaccinate1[, phase1]), daily_doses[phase1], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase1]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase1]), 0)
+
+  ## during phase 2 only second doses are delivered
+  ## as doses are constant over time
+  ## and they add up to the target daily_doses
+  ## not exactly equal because of some rounding
+  phase2 <- mean_days_between_doses + seq_len(mean_days_between_doses)
+  expect_vector_equal(
+    colSums(n_to_vaccinate2[, phase2]), daily_doses[phase2], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase2]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase2]), 0)
+
+  ## during phase 3 only boosters are delivered
+  ## as doses are constant over time
+  ## and they add up to the target daily_doses
+  ## not exactly equal because of some rounding
+  phase3 <- 300:500
+  expect_vector_equal(
+    colSums(n_to_vaccinate3[, phase3]), daily_doses[phase3], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase3]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase3]), 0)
+
+  ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
+  ## not exactly equal because of some rounding
+  expect_vector_equal(
+      colSums(n_to_vaccinate1 + n_to_vaccinate2 + n_to_vaccinate3),
+      daily_doses, tol = 5)
+})

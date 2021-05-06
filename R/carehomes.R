@@ -360,6 +360,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_schedule = NULL,
                                  vaccine_index_dose2 = NULL,
                                  vaccine_catchup_fraction = 1,
+                                 n_doses = 2,
                                  waning_rate = 0,
                                  exp_noise = 1e6,
                                  cross_immunity = 1) {
@@ -457,7 +458,8 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_schedule,
                                                   vaccine_index_dose2,
                                                   strain$n_strains,
-                                                  vaccine_catchup_fraction)
+                                                  vaccine_catchup_fraction,
+                                                  n_doses)
 
 
   strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
@@ -1157,7 +1159,8 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_schedule = NULL,
                                              vaccine_index_dose2 = NULL,
                                              n_strains = 1,
-                                             vaccine_catchup_fraction = 1) {
+                                             vaccine_catchup_fraction = 1,
+                                             n_doses = 2L) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
@@ -1183,8 +1186,6 @@ carehomes_parameters_vaccination <- function(N_tot,
   ret <- Map(function(value, name)
     build_rel_param(value, n_strains, n_vacc_classes, name),
              rel_params, names(rel_params))
-
-  n_doses <- 2L # fixed; see the odin code
 
   if (is.null(vaccine_schedule)) {
     if (!is.null(vaccine_index_dose2) && vaccine_index_dose2 != 1L) {
@@ -1219,6 +1220,8 @@ carehomes_parameters_vaccination <- function(N_tot,
   assert_scalar(vaccine_catchup_fraction)
   assert_proportion(vaccine_catchup_fraction)
   ret$vaccine_catchup_fraction <- vaccine_catchup_fraction
+
+  ret$n_doses <- n_doses
 
   ret
 }
