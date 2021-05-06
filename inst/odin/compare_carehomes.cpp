@@ -1,5 +1,6 @@
 // Can't use std::min on GPU
 template <typename T>
+HOSTDEVICE
 T min(const T& a, const T&b) {
   return a < b ? a : b;
 }
