@@ -22,5 +22,6 @@ RUN install2.r --error \
         socialmixr
 
 RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust", "mrc-ide/mcstate", "mrc-ide/eigen1", "mrc-ide/odin", "mrc-ide/odin.dust"))'
+RUN Rscript -e 'remotes::install_github("mrc-ide/dust@cuda-simulate")'
 COPY . /src
 RUN R CMD INSTALL --install-tests /src && rm -rf /src
