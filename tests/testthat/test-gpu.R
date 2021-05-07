@@ -33,13 +33,17 @@ test_that("can run the gpu model on the cpu", {
   gen <- compile_gpu(gpu = FALSE, gpu_generate = TRUE, verbose = FALSE)
   expect_equal(gen$public_methods$name(), "carehomes")
 
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            initial_I = 20)
 
   mod_cpu <- gen$new(p, 0, 5, seed = 1L)
   mod_gpu <- gen$new(p, 0, 5, seed = 1L, device_id = 0)
 
   end <- sircovid_date("2020-07-31") / p$dt
   info <- mod_cpu$info()
+
+  expect_equal(mod_gpu$info(), mod_cpu$info())
+
   initial <- carehomes_initial(info, 10, p)
   index <- c(carehomes_index(info)$run,
              deaths_carehomes = info$index[["D_carehomes_tot"]],
@@ -59,4 +63,37 @@ test_that("can run the gpu model on the cpu", {
   res_gpu <- mod_gpu$run(end, device = TRUE)
 
   expect_equal(res_gpu, res_cpu)
+})
+
+
+test_that("Can run the gpu compare on the cpu", {
+  skip_unless_ci()
+  ## TODO; see #286
+  skip_on_os("linux")
+  skip_if_not_installed("odin")
+  skip_if_not_installed("odin.dust")
+
+  gen <- compile_gpu(gpu = FALSE, gpu_generate = TRUE, verbose = FALSE)
+
+  start_date <- sircovid_date("2020-02-02")
+  pars <- carehomes_parameters(start_date, "england",
+                               initial_I = 20)
+  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+                         start_date, pars$dt)
+
+  np <- 10
+  mod_cpu <- gen$new(pars, 0, np, seed = 1L)
+  mod_gpu <- gen$new(pars, 0, np, seed = 1L, device_id = 0)
+
+  initial <- carehomes_initial(mod_cpu$info(), np, pars)
+  mod_cpu$set_state(initial$state, initial$step)
+  mod_gpu$set_state(initial$state, initial$step)
+
+  mod_cpu$set_data(dust::dust_data(data, "step_end"))
+  mod_gpu$set_data(dust::dust_data(data, "step_end"))
+
+  i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
+  y_cpu <- mod_cpu$run(data$step_end[[i]])
+  y_gpu <- mod_gpu$run(data$step_end[[i]])
+  expect_equal(mod_cpu$compare_data(), mod_gpu$compare_data())
 })
