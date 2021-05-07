@@ -35,7 +35,9 @@ carehomes_parameters(
   vaccine_progression_rate = NULL,
   vaccine_schedule = NULL,
   vaccine_index_dose2 = NULL,
+  vaccine_index_booster = NULL,
   vaccine_catchup_fraction = 1,
+  n_doses = 2,
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1
@@ -238,6 +240,8 @@ group i.}
 people to be vaccinated by group over time}
 
 \item{vaccine_index_dose2}{The index to use for the second dose}
+
+\item{vaccine_index_booster}{The index to use for the booster dose}
 
 \item{vaccine_catchup_fraction}{A value between 0 and 1 indicating the
 proportion of doses not distributed according to schedule (e.g. because

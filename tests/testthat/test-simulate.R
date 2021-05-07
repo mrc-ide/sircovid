@@ -100,7 +100,7 @@ test_that("Basic simulation", {
 
   res <- sircovid_simulate(basic, state, p_base, events, seed = 1L)
   expect_equal(dim(attr(res, "state")), dim(state))
-  expect_length(attr(res, "rng_state"), np * 32)
+  expect_length(attr(res, "rng_state"), (np + 1) * 32)
 
   ## Change the beta directly in the model and we should see this agree:
   p_cmp <- basic_parameters(

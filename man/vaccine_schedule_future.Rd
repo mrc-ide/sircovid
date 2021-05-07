@@ -10,7 +10,8 @@ vaccine_schedule_future(
   mean_days_between_doses,
   priority_population,
   lag_groups = NULL,
-  lag_days = NULL
+  lag_days = NULL,
+  booster_daily_doses_value = NULL
 )
 }
 \arguments{

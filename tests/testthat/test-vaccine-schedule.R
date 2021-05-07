@@ -364,16 +364,22 @@ test_that("prevent impossible scenarios", {
 })
 
 
+## TODO: we need a test showing that this works as expected after
+## binding onto an existing schedule with both 2 and 3 doses.
+##
+## TODO: catch the stop for the lag parameters.
 test_that("vaccine_schedule_future functions with 3 doses", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
-  daily_doses <- rep(20000, 500) # a vector of number of doses to give each day
+  daily_doses <- rep(20000, 100) # a vector of number of doses to give each day
   mean_days_between_doses <- 12 * 7
+
+  booster_doses <- c(rep(0, 150), rep(10000, 50))
 
   n <- vaccine_priority_population(region, uptake_by_age)
   dose_schedule <- vaccine_schedule_future(
-    0, daily_doses, mean_days_between_doses, n, n_doses = 3,
-    mean_days_to_booster = 300)
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses)
 
   doses <- dose_schedule$doses
   n_to_vaccinate1 <- dose_schedule$doses[, 1, ]
