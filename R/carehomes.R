@@ -1233,8 +1233,8 @@ carehomes_parameters_vaccination <- function(N_tot,
       (vaccine_schedule$doses * dt)[, , i])
   }
 
-  ret$index_dose_inverse <- integer(n_vacc_classes)
-  ret$index_dose_inverse[ret$index_dose] <- seq_along(ret$index_dose)
+  ret$index_dose_inverse <- create_index_dose_inverse(n_vacc_classes,
+                                                      ret$index_dose)
 
   ret$n_vacc_classes <- n_vacc_classes
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
@@ -1891,3 +1891,10 @@ carehomes_check_severity <- function(pars) {
 
   invisible(pars)
 }
+
+
+  create_index_dose_inverse <- function(n_vacc_classes, index_dose) {
+    index_dose_inverse <- integer(n_vacc_classes)
+    index_dose_inverse[index_dose] <- seq_along(index_dose)
+    index_dose_inverse
+  }

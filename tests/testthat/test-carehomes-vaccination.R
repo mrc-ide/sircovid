@@ -2168,6 +2168,9 @@ test_that("Can vaccinate given a schedule", {
                             waning_rate = 1 / 20,
                             vaccine_catchup_fraction = 0)
   p$index_dose <- c(1L, 2L)
+  p$index_dose_inverse <- create_index_dose_inverse(p$n_vacc_classes,
+                                                    p$index_dose)
+
   end_date <- sircovid_date("2020-06-01")
 
   start_vacc_date_1 <- sircovid_date("2020-03-01")
@@ -2263,6 +2266,9 @@ test_that("Can vaccinate given a schedule with given uptake", {
                             vaccine_progression_rate = c(0, 0, 0),
                             waning_rate = 1 / 20)
   p$index_dose <- c(1L, 2L)
+  p$index_dose_inverse <- create_index_dose_inverse(p$n_vacc_classes,
+                                                    p$index_dose)
+
   end_date <- sircovid_date("2020-06-01")
 
   start_vacc_date_1 <- sircovid_date("2020-03-01")
@@ -2330,6 +2336,8 @@ test_that("Can catch up on uptake given previous vaccination", {
                                    mean_days_between_doses, n)
 
   p$index_dose <- c(1L, 2L)
+  p$index_dose_inverse <- create_index_dose_inverse(p$n_vacc_classes,
+                                                    p$index_dose)
   end_date <- sircovid_date(end_date)
 
   p$vaccine_dose_step <- vacc_schedule$doses
