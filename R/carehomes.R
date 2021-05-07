@@ -363,7 +363,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_index_dose2 = NULL,
                                  vaccine_index_booster = NULL,
                                  vaccine_catchup_fraction = 1,
-                                 n_doses = 2,
+                                 n_doses = 2L,
                                  waning_rate = 0,
                                  exp_noise = 1e6,
                                  cross_immunity = 1) {
