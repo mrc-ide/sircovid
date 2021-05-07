@@ -1,3 +1,7 @@
+# sircovid 0.11.1
+
+* Booster doses can now be added to a vaccine schedule
+
 # sircovid 0.10.53
 
 * carehomes_Rt now only returns NA when prob_strain is NA and weight_Rt is TRUE
