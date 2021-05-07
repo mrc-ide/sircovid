@@ -1,4 +1,4 @@
-# sircovid 0.11.1
+# sircovid 0.11.3
 
 * Booster doses can now be added to a vaccine schedule
 
