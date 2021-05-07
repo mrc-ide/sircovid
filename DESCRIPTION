@@ -73,7 +73,7 @@ RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
-    mrc-ide/dust@cuda-simulate,
+    mrc-ide/dust,
     mrc-ide/eigen1,
     mrc-ide/mcstate,
     mrc-ide/odin,
