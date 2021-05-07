@@ -371,6 +371,12 @@ vaccine_schedule_future <- function(start,
     daily_doses_date <- start
   }
 
+  if (nrow(daily_doses_prev) < n_doses) {
+    daily_doses_prev <-
+      rbind(daily_doses_prev,
+            matrix(0, n_doses - nrow(daily_doses_prev),
+                   ncol(daily_doses_prev)))
+  }
   daily_doses_tt <- cbind(daily_doses_prev, matrix(0, n_doses, n_days))
 
   population_to_vaccinate_mat <- vaccination_schedule_exec(
@@ -385,7 +391,17 @@ vaccine_schedule_future <- function(start,
   doses <- apply(population_to_vaccinate_mat, c(1, 3, 4), sum)
 
   if (inherits(start, "vaccine_schedule")) {
-    doses <- mcstate::array_bind(start$doses, doses)
+    if (ncol(start$doses) < n_doses) {
+      sdoses <- abind::abind(start$doses,
+                             array(0, c(nrow(start$doses),
+                                        n_doses - ncol(start$doses),
+                                        nlayer(start$doses))),
+                             along = 2)
+    } else {
+      sdoses <- start$doses
+    }
+    doses <- mcstate::array_bind(sdoses, doses)
+    dimnames(doses) <- NULL
   }
 
   schedule <- vaccine_schedule(daily_doses_date, doses, n_doses)

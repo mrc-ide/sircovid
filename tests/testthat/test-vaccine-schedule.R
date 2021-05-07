@@ -364,11 +364,7 @@ test_that("prevent impossible scenarios", {
 })
 
 
-## TODO: we need a test showing that this works as expected after
-## binding onto an existing schedule with both 2 and 3 doses.
-##
-## TODO: catch the stop for the lag parameters.
-test_that("vaccine_schedule_future functions with 3 doses", {
+test_that("vaccine_schedule_future functions with boosters", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   daily_doses <- rep(20000, 100) # a vector of number of doses to give each day
@@ -380,6 +376,11 @@ test_that("vaccine_schedule_future functions with 3 doses", {
   dose_schedule <- vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses, n,
     booster_daily_doses_value = booster_doses)
+
+  ## errors when trying to add a lag
+  expect_error(vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses, lag_days = 1))
 
   doses <- dose_schedule$doses
   n_to_vaccinate1 <- dose_schedule$doses[, 1, ]
@@ -399,25 +400,64 @@ test_that("vaccine_schedule_future functions with 3 doses", {
   ## as doses are constant over time
   ## and they add up to the target daily_doses
   ## not exactly equal because of some rounding
-  phase2 <- mean_days_between_doses + seq_len(mean_days_between_doses)
+  phase2 <- 85:100
   expect_vector_equal(
     colSums(n_to_vaccinate2[, phase2]), daily_doses[phase2], tol = 5)
   expect_vector_equal(colSums(n_to_vaccinate1[, phase2]), 0)
   expect_vector_equal(colSums(n_to_vaccinate3[, phase2]), 0)
 
-  ## during phase 3 only boosters are delivered
-  ## as doses are constant over time
-  ## and they add up to the target daily_doses
-  ## not exactly equal because of some rounding
-  phase3 <- 300:500
-  expect_vector_equal(
-    colSums(n_to_vaccinate3[, phase3]), daily_doses[phase3], tol = 5)
+  ## during phase 3, no doses or boosters
+  phase3 <- 101:150
   expect_vector_equal(colSums(n_to_vaccinate1[, phase3]), 0)
   expect_vector_equal(colSums(n_to_vaccinate2[, phase3]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase3]), 0)
+
+  ## during phase 4 only boosters are delivered
+  phase4 <- 151:200
+  expect_vector_equal(
+    colSums(n_to_vaccinate3[, phase4]), booster_doses[phase4], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase4]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase4]), 0)
 
   ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
   ## not exactly equal because of some rounding
   expect_vector_equal(
-      colSums(n_to_vaccinate1 + n_to_vaccinate2 + n_to_vaccinate3),
-      daily_doses, tol = 5)
+      colSums(n_to_vaccinate1 + n_to_vaccinate2)[1:100],
+      daily_doses[1:100], tol = 5)
+
+  ## check that n_to_vaccinate3 = booster_doses
+  ## not exactly equal because of some rounding
+  expect_vector_equal(
+      colSums(n_to_vaccinate3), booster_doses, tol = 5)
+})
+
+
+test_that("Can add boosters to schedule", {
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- rep(20000, 100) # a vector of number of doses to give each day
+  mean_days_between_doses <- 12 * 7
+
+  booster_doses <- c(rep(0, 150), rep(10000, 50))
+
+  n <- vaccine_priority_population(region, uptake_by_age)
+
+  ## schedule with doses and boosters
+  expected_schedule <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses)
+
+  ## schedule with doses only
+  dose_schedule <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n)
+
+  ## schedule with doses only
+  daily_doses <- numeric(100)
+  booster_doses <- c(rep(0, 50), rep(10000, 50))
+
+  complete_schedule <- vaccine_schedule_future(
+    dose_schedule, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses)
+
+  expect_equal(expected_schedule, complete_schedule)
 })
