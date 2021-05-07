@@ -37,7 +37,7 @@ carehomes_parameters(
   vaccine_index_dose2 = NULL,
   vaccine_index_booster = NULL,
   vaccine_catchup_fraction = 1,
-  n_doses = 2,
+  n_doses = 2L,
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1
@@ -250,6 +250,9 @@ vaccinated at the scheduled time) that we postpone to a later date.
 A value of 0 means we do not catch up at all on any missed doses; a
 value of 1 means we try to catch up for all missed doses. This is set
 to 1 by default}
+
+\item{n_doses}{Number of doses given out, including boosters. Default is
+2.}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same

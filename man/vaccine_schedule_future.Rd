@@ -36,6 +36,8 @@ Ignored if \code{lag_groups} is NULL.}
 \item{lag_days}{If \code{lag_groups} is not NULL then specifies the number of
 days to add the start of the dose schedule for the given groups. Ignored
 if \code{lag_groups} is NULL.}
+
+\item{booster_daily_doses_value}{A vector of booster doses per day.}
 }
 \description{
 Create future vaccination schedule from a projected number of

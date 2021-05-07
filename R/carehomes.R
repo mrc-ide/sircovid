@@ -198,6 +198,9 @@ NULL
 ##'   value of 1 means we try to catch up for all missed doses. This is set
 ##'   to 1 by default
 ##'
+##' @param n_doses Number of doses given out, including boosters. Default is
+##'   2.
+##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
 ##'   rate is used for all age groups; if a vector of values if used it should
@@ -416,7 +419,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## control cross-immunity
   ret$cross_immunity <- assert_proportion(
-    mcstate:::recycle(cross_immunity, length(strain_transmission))
+    recycle(cross_immunity, length(strain_transmission))
   )
 
   ## This is used to normalise the serology counts (converting them

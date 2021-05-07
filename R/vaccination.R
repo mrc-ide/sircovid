@@ -325,6 +325,8 @@ vaccine_priority_population <- function(region,
 ##'  days to add the start of the dose schedule for the given groups. Ignored
 ##'  if `lag_groups` is NULL.
 ##'
+##' @param booster_daily_doses_value A vector of booster doses per day.
+##'
 ##' @export
 vaccine_schedule_future <- function(start,
                                     daily_doses_value,
