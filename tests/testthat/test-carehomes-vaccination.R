@@ -2639,12 +2639,10 @@ test_that("Can add lag to vaccine schedule", {
   expect_gt(min(uptake2), 0.98)
 })
 
+## FIXME (RS): Is this correct? Below column 4 is always empty. I think
+##   cum_n_S_vaccinated is total number who move *out of* not *into* that vacc
+##   class so the test is correct but the comment below is confusing.
 
-## TODO: This *really* needs a test where n_vacc_classes does not
-## equal n_doses, due to a dummy class 2
-
-## S is n_groups, n_vacc_classes
-##
 ## Dose 1 moves you from 1->2
 ## Dose 2 moves you from 2->3
 ## Dose 3 moves you from 3->4
@@ -2688,5 +2686,24 @@ test_that("run sensible vaccination schedule with boosters", {
 
   ## Check that cum_n_S_vaccinated shows correct pattern with booster
   ## doses being given.
-  y$cum_n_S_vaccinated
+
+  expect_vector_equal(y$cum_n_S_vaccinated[, 4, , ], 0)
+
+  ## dose 1
+  phase1 <- 1:14
+  expect_vector_equal(y$cum_n_S_vaccinated[, 2:4, , phase1], 0)
+  expect_false(all(y$cum_n_S_vaccinated[, 1, , phase1] == 0))
+
+  ## dose 2
+  phase2 <- 15:120
+  expect_vector_equal(y$cum_n_S_vaccinated[, 3:4, , phase2], 0)
+  expect_false(all(y$cum_n_S_vaccinated[, 2, , phase2] == 0))
+
+  ## no doses
+  expect_equal(sum(y$cum_n_S_vaccinated[, , , 150]),
+               sum(y$cum_n_S_vaccinated[, , , 119]))
+
+  ## booster
+  phase4 <- 150:200
+  expect_false(all(y$cum_n_S_vaccinated[, 3, , phase4] == 0))
 })
