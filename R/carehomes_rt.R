@@ -94,15 +94,9 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
 
       ## restore full length Rt with NAs when prob_strain is NA
       for (i in grep("Rt_", names(ret))) {
-        if (inherits(ret[[i]], "matrix")) {
-          base <- matrix(NA, length(step), 2)
-          base[which_nna, ] <- ret[[i]]
-          ret[[i]] <- base
-        } else {
-          base <- rep(NA, length(step))
-          base[which_nna] <- ret[[i]]
-          ret[[i]] <- base
-        }
+        base <- rep(NA, length(step))
+        base[which_nna] <- ret[[i]]
+        ret[[i]] <- base
       }
 
       return(ret)
