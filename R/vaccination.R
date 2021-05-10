@@ -682,6 +682,7 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
         sircovid_date_as_date(end_date)))
     }
     date_future <- end_date
+    booster_daily_doses_value <- NULL
   } else {
     if (length(doses_future) > 0) {
       tmp <- check_doses_boosters_future(doses_future, end_date,
@@ -784,19 +785,20 @@ vaccination_schedule_exec <- function(daily_doses_tt, daily_doses_value,
 
 check_doses_boosters_future <- function(doses, end, end_past) {
   if (is.null(names(doses))) {
-    stop(sprintf("'%s' must be named", substitute(doses)))
+    stop(sprintf("'%s' must be named", deparse(substitute(doses))))
   }
-  assert_date_string(names(doses))
+  assert_date_string(names(doses), name = sprintf("names(%s)",
+                                   deparse(substitute(doses))))
   doses_future_date <- sircovid_date(names(doses))
   assert_increasing(doses_future_date,
                     name = sprintf("names(%s)",
-                                   substitute(doses)))
+                                   deparse(substitute(doses))))
 
       if (last(doses_future_date) > end) {
         stop(sprintf(
           "'end_date' must be at least %s (last %s date) but was %s",
           last(names(doses)),
-          substitute(doses),
+          deparse(substitute(doses)),
           sircovid_date_as_date(end)))
       }
 
