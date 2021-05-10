@@ -57,7 +57,7 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
 ##' created but zerod. Use this to run the model for a while, then set
 ##' it up to work with new strains.
 ##'
-##' @title Inflate model state
+##' @title Inflate strains in model state
 ##' @param state1 The state matrix with one strain
 ##'
 ##' @param info1 The model info with one strain
@@ -69,6 +69,63 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
 ##' @author Richard Fitzjohn
 ##' @export
 inflate_state_strains <- function(state1, info1, info2) {
+
+  fn <- function(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2) {
+    if (length(d1) == 1) {
+      x2[1, ] <- x1
+    } else if (length(d2) == 3) {
+      x2[, 1, , ] <- x1
+    } else if (length(d2) == 4) {
+      x2[, 1, , , ] <- x1
+    } else {
+      ## This will trigger if someone adds a strain-including
+      ## compartment with rank 2 or 5+
+      stop("Unexpected dimension of output") # nocov
+    }
+
+    x2
+  }
+
+  inflate_state(state1, info1, info2, fn)
+}
+
+
+##' Inflate model state, so that additional vacc class compartments are
+##' created but zerod. Use this to run the model for a while, then set
+##' it up to work with new vacc classes (e.g. booster doses).
+##'
+##' @title Inflate vacc classes in model state
+##'
+##' @param state1 The state matrix with X vacc classes
+##' @param info1 The model info with X vacc classes
+##' @param info2 The model info with Y > X vacc classes
+##'
+##' @return An expanded model state with Y > X vacc classes
+##'
+##' @export
+inflate_state_vacc_classes <- function(state1, info1, info2) {
+
+  fn <- function(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2) {
+    if (length(d2) == 2) {
+      x2[, seq_len(d1[2L]), ] <- x1
+    } else if (length(d2) == 3) {
+      x2[, , seq(d1[3L]), ] <- x1
+    } else if (length(d2) == 4) {
+      x2[, , , seq(d1[4L]), ] <- x1
+    } else {
+      ## This will trigger if someone adds a vacc-including
+      ## compartment with rank 1 or 4+
+      stop("Unexpected dimension of output") # nocov
+    }
+
+    x2
+  }
+
+  inflate_state(state1, info1, info2, fn)
+}
+
+
+inflate_state <- function(state1, info1, info2, fn) {
   if (!is.matrix(state1)) {
     stop("Expected a matrix for 'state1'")
   }
@@ -93,19 +150,7 @@ inflate_state_strains <- function(state1, info1, info2) {
       x1 <- state1[i1, ]
       dim(x1) <- c(d1, ny)
       x2 <- array(0, c(d2, ny))
-
-      if (length(d1) == 1) {
-        x2[1, ] <- x1
-      } else if (length(d2) == 3) {
-        x2[, 1, , ] <- x1
-      } else if (length(d2) == 4) {
-        x2[, 1, , , ] <- x1
-      } else {
-        ## This will trigger if someone adds a strain-including
-        ## compartment with rank 2 or 5+
-        stop("Unexpected dimension of output") # nocov
-      }
-      state2[i2, ] <- x2
+      state2[i2, ] <- fn(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2)
     } else {
       state2[i2, ] <- state1[i1, ]
     }
