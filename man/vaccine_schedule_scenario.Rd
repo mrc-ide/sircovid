@@ -11,7 +11,8 @@ vaccine_schedule_scenario(
   mean_days_between_doses,
   priority_population,
   lag_groups = NULL,
-  lag_days = NULL
+  lag_days = NULL,
+  boosters_future = NULL
 )
 }
 \arguments{
@@ -40,6 +41,9 @@ Ignored if \code{lag_groups} is NULL.}
 \item{lag_days}{If \code{lag_groups} is not NULL then specifies the number of
 days to add the start of the dose schedule for the given groups. Ignored
 if \code{lag_groups} is NULL.}
+
+\item{boosters_future}{Optional named vector of booster doses to give in
+the future. Names must be in ISO date format.}
 }
 \value{
 A \link{vaccine_schedule} object

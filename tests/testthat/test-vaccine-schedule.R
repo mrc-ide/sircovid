@@ -461,3 +461,88 @@ test_that("Can add boosters to schedule", {
 
   expect_equal(expected_schedule, complete_schedule)
 })
+
+
+test_that("create schedule scenario with doses and boosters", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  doses_future <- c(
+    "2021-04-10" = 6000,
+    "2021-04-20" = 7000,
+    "2021-04-30" = 9000,
+    "2021-05-10" = 0)
+
+  boosters_future <- c(
+    "2021-03-29" = 0,
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+  end_date <- "2021-08-01"
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future)
+
+  i <- seq_len(dim(past$doses)[[3]])
+  expect_equal(res$doses[, 1:2, i], past$doses)
+  doses_future <- res$doses[, , -i]
+  expect_equal(dim(doses_future), c(19, 3, 125))
+
+  n <- apply(doses_future, 3, sum)
+  expect_equal(
+    signif(n, 1),
+    rep(c(5000, 6000, 7000, 9000, 0, 600, 700, 900),
+        c(12, 10, 10, 10, 31, 10, 10, 32)))
+  expect_lt(max(abs(n - signif(n, 1))[-seq_len(12)]), 10)
+
+  expect_vector_equal(doses_future[, 3, 1:73], 0)
+  expect_false(all(doses_future[, 3, 74] == 0))
+})
+
+
+test_that("create schedule scenario with boosters only", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  boosters_future <- c(
+    "2021-03-29" = 0,
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900
+  )
+  end_date <- "2021-08-01"
+
+  res <- vaccine_schedule_scenario(past, doses_future = NULL, end_date,
+    mean_days_between_doses, n,
+    boosters_future = boosters_future
+  )
+
+  i <- seq_len(dim(past$doses)[[3]])
+  expect_equal(res$doses[, 1:2, i], past$doses)
+  doses_future <- res$doses[, , -i]
+  expect_equal(dim(doses_future), c(19, 3, 125))
+
+  n <- apply(doses_future, 3, sum)
+  expect_equal(
+    signif(n, 1),
+    rep(c(5000, 6000), c(73, 52))
+  )
+
+  expect_vector_equal(doses_future[, 3, 1:73], 0)
+  expect_false(all(doses_future[, 3, 74] == 0))
+})

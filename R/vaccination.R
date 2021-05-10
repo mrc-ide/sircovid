@@ -652,6 +652,9 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##' @param doses_future A named vector of vaccine doses to give in the
 ##'   future. Names must be in ISO date format.
 ##'
+##' @param boosters_future Optional named vector of booster doses to give in
+##'   the future. Names must be in ISO date format.
+##'
 ##' @inheritParams vaccine_schedule_future
 ##' @inheritParams vaccine_schedule_data_future
 ##'
@@ -660,7 +663,9 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                                       mean_days_between_doses,
                                       priority_population, lag_groups = NULL,
-                                      lag_days = NULL) {
+                                      lag_days = NULL,
+                                      boosters_future = NULL) {
+
   assert_is(schedule_past, "vaccine_schedule")
 
   date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]] - 1L
@@ -669,37 +674,7 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
 
   end_date <- as_sircovid_date(end_date)
 
-  if (length(doses_future) > 0) {
-    if (is.null(names(doses_future))) {
-      stop("'doses_future' must be named")
-    }
-    assert_date_string(names(doses_future))
-    doses_future_date <- sircovid_date(names(doses_future))
-    assert_increasing(doses_future_date, name = "names(doses_future)")
-
-    if (last(doses_future_date) > end_date) {
-      stop(sprintf(
-        "'end_date' must be at least %s (last doses_future date) but was %s",
-        last(names(doses_future)),
-        sircovid_date_as_date(end_date)))
-    }
-
-    if (doses_future_date[[1]] < date_end_past) {
-      message("Trimming vaccination schedule as overlaps with past")
-      i <- max(which(doses_future_date < date_end_past))
-      j <- seq(i, length(doses_future_date))
-      doses_future_date <- doses_future_date[j]
-      doses_future <- doses_future[j]
-      doses_future_date[[1]] <- date_end_past
-    }
-
-    stopifnot(
-      all(!is.na(doses_future)),
-      all(doses_future > 0))
-
-    date_future <- c(doses_future_date, end_date)
-    names(doses_future) <- NULL
-  } else {
+  if (length(doses_future) == 0 && length(boosters_future) == 0) {
     if (end_date < date_end_past) {
       stop(sprintf(
         "'end_date' must be at least %s (previous end date) but was %s",
@@ -707,6 +682,25 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
         sircovid_date_as_date(end_date)))
     }
     date_future <- end_date
+  } else {
+    if (length(doses_future) > 0) {
+      tmp <- check_doses_boosters_future(doses_future, end_date,
+                                         date_end_past)
+      date_future <- tmp$date
+      doses_future <- tmp$doses
+    } else {
+      date_future <- end_date
+    }
+    if (length(boosters_future) > 0) {
+      tmp <- check_doses_boosters_future(boosters_future, end_date,
+                                         date_end_past)
+
+      booster_daily_doses_value <- c(
+        rep(mean_doses_last, tmp$date[[1]] - date_end_past),
+        rep(unname(tmp$doses), diff(tmp$date)))
+    } else {
+      booster_daily_doses_value <- NULL
+    }
   }
 
   daily_doses_value <- c(
@@ -718,7 +712,8 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                           mean_days_between_doses,
                           priority_population,
                           lag_groups,
-                          lag_days)
+                          lag_days,
+                          booster_daily_doses_value)
 }
 
 
@@ -784,4 +779,40 @@ vaccination_schedule_exec <- function(daily_doses_tt, daily_doses_value,
   }
 
   population_to_vaccinate_mat
+}
+
+
+check_doses_boosters_future <- function(doses, end, end_past) {
+  if (is.null(names(doses))) {
+    stop(sprintf("'%s' must be named", substitute(doses)))
+  }
+  assert_date_string(names(doses))
+  doses_future_date <- sircovid_date(names(doses))
+  assert_increasing(doses_future_date,
+                    name = sprintf("names(%s)",
+                                   substitute(doses)))
+
+      if (last(doses_future_date) > end) {
+        stop(sprintf(
+          "'end_date' must be at least %s (last %s date) but was %s",
+          last(names(doses)),
+          substitute(doses),
+          sircovid_date_as_date(end)))
+      }
+
+      if (doses_future_date[[1]] < end_past) {
+        message("Trimming vaccination schedule as overlaps with past")
+        i <- max(which(doses_future_date < end_past))
+        j <- seq(i, length(doses_future_date))
+        doses_future_date <- doses_future_date[j]
+        doses <- doses[j]
+        doses_future_date[[1]] <- end_past
+      }
+
+      stopifnot(all(!is.na(doses)))
+
+      date_future <- c(doses_future_date, end)
+      names(doses) <- NULL
+
+      list(date = date_future, doses = doses)
 }
