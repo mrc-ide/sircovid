@@ -76,6 +76,17 @@ initial(cum_n_vaccinated[, ]) <- 0
 update(cum_n_vaccinated[, ]) <- cum_n_vaccinated[i, j] + n_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
+initial(cum_diagonal[, ]) <- 0
+update(cum_diagonal[, ]) <- 0
+update(cum_diagonal[, ]) <- cum_diagonal[i, j] +
+  sum(n_SE_next_vacc_class[i, , j]) +
+  sum(n_EE_next_vacc_class[i, , , j]) +
+  sum(n_II_A_next_vacc_class[i, , , j]) +
+  sum(n_II_P_next_vacc_class[i, , , j]) +
+  sum(n_RS_next_vacc_class[i, , j]) +
+  sum(n_RE_next_vacc_class[i, , j])
+dim(cum_diagonal) <- c(n_groups, n_vacc_classes)
+
 ## Core equations for transitions between compartments:
 update(S[, ]) <- new_S[i, j]
 update(E[, , , ]) <- new_E[i, j, k, l]
