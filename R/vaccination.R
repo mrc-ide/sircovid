@@ -121,7 +121,7 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
       mat_vaccine_progression_rate <- vaccine_progression_rate
     } else { # vaccine_progression_rate vector of length n_vacc_classes
       if (!is.vector(vaccine_progression_rate) ||
-           length(vaccine_progression_rate) != n_vacc_classes) {
+          length(vaccine_progression_rate) != n_vacc_classes) {
         m1 <- "'vaccine_progression_rate' must be either:"
         m2 <- "a vector of length 'n_vacc_classes' or"
         m3 <- "a matrix with 'n_groups' rows and 'n_vacc_classes' columns"
@@ -739,7 +739,7 @@ vaccination_schedule_exec <- function(daily_doses_tt, daily_doses_value,
           (daily_doses_tt[i1, tt_dose_1] - daily_doses_value[t])
       }
       daily_doses_tt[i2, tt] <- min(daily_doses_value[t],
-                                   daily_doses_tt[i1, tt_dose_1])
+                                    daily_doses_tt[i1, tt_dose_1])
       daily_doses_tt[i1, tt] <- daily_doses_value[t] - daily_doses_tt[i2, tt]
     } else {
       ## Only distribute first doses
@@ -771,7 +771,7 @@ vaccination_schedule_exec <- function(daily_doses_tt, daily_doses_value,
         ## Split remaining doses according to age
         population_to_vaccinate_mat[, i_vacc, dose, t] <-
           round(remaining_eligible * population_left[, i_vacc, dose] /
-                sum(population_left[, i_vacc, dose]))
+                  sum(population_left[, i_vacc, dose]))
       }
 
       population_left[, , dose] <- population_left[, , dose] -
@@ -788,33 +788,33 @@ check_doses_boosters_future <- function(doses, end, end_past) {
     stop(sprintf("'%s' must be named", deparse(substitute(doses))))
   }
   assert_date_string(names(doses), name = sprintf("names(%s)",
-                                   deparse(substitute(doses))))
+                                                  deparse(substitute(doses))))
   doses_future_date <- sircovid_date(names(doses))
   assert_increasing(doses_future_date,
                     name = sprintf("names(%s)",
                                    deparse(substitute(doses))))
 
-      if (last(doses_future_date) > end) {
-        stop(sprintf(
-          "'end_date' must be at least %s (last %s date) but was %s",
-          last(names(doses)),
-          deparse(substitute(doses)),
-          sircovid_date_as_date(end)))
-      }
+  if (last(doses_future_date) > end) {
+    stop(sprintf(
+      "'end_date' must be at least %s (last %s date) but was %s",
+      last(names(doses)),
+      deparse(substitute(doses)),
+      sircovid_date_as_date(end)))
+  }
 
-      if (doses_future_date[[1]] < end_past) {
-        message("Trimming vaccination schedule as overlaps with past")
-        i <- max(which(doses_future_date < end_past))
-        j <- seq(i, length(doses_future_date))
-        doses_future_date <- doses_future_date[j]
-        doses <- doses[j]
-        doses_future_date[[1]] <- end_past
-      }
+  if (doses_future_date[[1]] < end_past) {
+    message("Trimming vaccination schedule as overlaps with past")
+    i <- max(which(doses_future_date < end_past))
+    j <- seq(i, length(doses_future_date))
+    doses_future_date <- doses_future_date[j]
+    doses <- doses[j]
+    doses_future_date[[1]] <- end_past
+  }
 
-      stopifnot(all(!is.na(doses)))
+  stopifnot(all(!is.na(doses)))
 
-      date_future <- c(doses_future_date, end)
-      names(doses) <- NULL
+  date_future <- c(doses_future_date, end)
+  names(doses) <- NULL
 
-      list(date = date_future, doses = doses)
+  list(date = date_future, doses = doses)
 }

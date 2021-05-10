@@ -64,7 +64,7 @@ test_that("vaccine_schedule_future produces consistent schedule", {
   ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
   ## not exactly equal because of some rounding
   expect_vector_equal(
-      colSums(n_to_vaccinate1 + n_to_vaccinate2), daily_doses, tol = 5)
+    colSums(n_to_vaccinate1 + n_to_vaccinate2), daily_doses, tol = 5)
 })
 
 
@@ -422,13 +422,13 @@ test_that("vaccine_schedule_future functions with boosters", {
   ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
   ## not exactly equal because of some rounding
   expect_vector_equal(
-      colSums(n_to_vaccinate1 + n_to_vaccinate2)[1:100],
-      daily_doses[1:100], tol = 5)
+    colSums(n_to_vaccinate1 + n_to_vaccinate2)[1:100],
+    daily_doses[1:100], tol = 5)
 
   ## check that n_to_vaccinate3 = booster_doses
   ## not exactly equal because of some rounding
   expect_vector_equal(
-      colSums(n_to_vaccinate3), booster_doses, tol = 5)
+    colSums(n_to_vaccinate3), booster_doses, tol = 5)
 })
 
 
@@ -528,8 +528,8 @@ test_that("create schedule scenario with boosters only", {
   end_date <- "2021-08-01"
 
   res <- vaccine_schedule_scenario(past, doses_future = NULL, end_date,
-    mean_days_between_doses, n,
-    boosters_future = boosters_future
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future
   )
 
   i <- seq_len(dim(past$doses)[[3]])
