@@ -619,7 +619,8 @@ carehomes_index <- function(info) {
                                         paste0("diagnoses_admitted",
                                                suffix, s_type))
   index_cum_n_vaccinated <- set_names(index[["cum_n_vaccinated"]],
-                                      paste0("cum_n_vaccinated", suffix, s_type))
+                                      paste0("cum_n_vaccinated", suffix,
+                                             s_type))
 
   ## prob_strain is named similarly to S, with the second suffix representing
   ## strain instead of vacc_class
@@ -1749,12 +1750,13 @@ carehomes_particle_filter_data <- function(data) {
          homes/community")
   }
 
-  check_pillar2_streams <- function(df) sum(c(any(!is.na(df$pillar2_pos)) |
-                                                any(!is.na(df$pillar2_tot)),
-                                              any(!is.na(df$pillar2_cases)),
-                                              any(!is.na(df$pillar2_over25_pos)) |
-                                                any(!is.na(df$pillar2_over25_tot)),
-                                              any(!is.na(df$pillar2_over25_cases))))
+  check_pillar2_streams <- function(df)
+    sum(c(any(!is.na(df$pillar2_pos)) |
+            any(!is.na(df$pillar2_tot)),
+          any(!is.na(df$pillar2_cases)),
+          any(!is.na(df$pillar2_over25_pos)) |
+            any(!is.na(df$pillar2_over25_tot)),
+          any(!is.na(df$pillar2_over25_cases))))
 
   if (is.null(data$population)) {
     if (check_pillar2_streams(data) > 1) {

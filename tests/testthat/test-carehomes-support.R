@@ -329,45 +329,45 @@ test_that("can compute time-varying severity parameters for carehomes model", {
 
 test_that("can compute time-varying progression parameters for carehomes
           model", {
-            dt <- 0.25
+  dt <- 0.25
 
-            gamma_H_R_value <- 0.3
-            gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
-            gamma_H_D_value <- c(0.2, 0.5)
+  gamma_H_R_value <- 0.3
+  gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
+  gamma_H_D_value <- c(0.2, 0.5)
 
-            progression <-
-              carehomes_parameters_progression(dt,
-                                               gamma_H_D = list(date = gamma_H_D_date,
-                                                                value = gamma_H_D_value),
-                                               gamma_H_R = list(value = gamma_H_R_value)
-              )
+  progression <-
+    carehomes_parameters_progression(dt,
+                                     gamma_H_D = list(date = gamma_H_D_date,
+                                                      value = gamma_H_D_value),
+                                     gamma_H_R = list(value = gamma_H_R_value)
+    )
 
-            gamma_H_D_step <-
-              sircovid_parameters_piecewise_linear(gamma_H_D_date,
-                                                   gamma_H_D_value, dt)
-            expect_equal(progression$gamma_H_D_step, gamma_H_D_step)
-            expect_equal(progression$gamma_H_R_step, gamma_H_R_value)
+  gamma_H_D_step <-
+    sircovid_parameters_piecewise_linear(gamma_H_D_date,
+                                         gamma_H_D_value, dt)
+  expect_equal(progression$gamma_H_D_step, gamma_H_D_step)
+  expect_equal(progression$gamma_H_R_step, gamma_H_R_value)
 
-            expect_error(
-              carehomes_parameters_progression(dt,
-                                               gamma_E = list(date = 1,
-                                                              value = 3)),
-              "As 'gamma_E' has a single 'value', expected NULL or missing 'date'")
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_E = list(date = 1,
+                                                    value = 3)),
+    "As 'gamma_E' has a single 'value', expected NULL or missing 'date'")
 
-            expect_error(
-              carehomes_parameters_progression(dt,
-                                               gamma_ICU_pre = list(date = c(1, 4, 5),
-                                                                    value = c(2, 3))),
-              "'date' and 'value' for 'gamma_ICU_pre' must have the same length")
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_ICU_pre = list(date = c(1, 4, 5),
+                                                          value = c(2, 3))),
+    "'date' and 'value' for 'gamma_ICU_pre' must have the same length")
 
-            expect_error(
-              carehomes_parameters_progression(dt,
-                                               gamma_H_D = list(date = c(1, 4),
-                                                                value = c(-2, 3))),
-              "'gamma_H_D' must have only non-negative values")
+  expect_error(
+    carehomes_parameters_progression(dt,
+                                     gamma_H_D = list(date = c(1, 4),
+                                                      value = c(-2, 3))),
+    "'gamma_H_D' must have only non-negative values")
 
 
-          })
+})
 
 
 test_that("Can compute transmission matrix for carehomes model", {
