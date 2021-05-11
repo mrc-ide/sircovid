@@ -371,7 +371,6 @@ test_that("vaccine_schedule_future functions with boosters", {
   mean_days_between_doses <- 12 * 7
 
   booster_doses <- c(rep(0, 150), rep(10000, 50))
-  booster_doses <- rep(10000, 50))
 
   n <- vaccine_priority_population(region, uptake_by_age)
   dose_schedule <- vaccine_schedule_future(
