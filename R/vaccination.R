@@ -655,6 +655,14 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##' @param boosters_future Optional named vector of booster doses to give in
 ##'   the future. Names must be in ISO date format.
 ##'
+##' @param boosters_preappend_zero If TRUE (default) and `boosters_future` is
+##'   not NULL then adds sets booster doses to zero before the first date in
+##'   `boosters_future`. This is in contrast to when it is FALSE and the
+##'   previous value in `schedule_past` is replicated until the first date in
+##'   boosters_future. Note that this should rarely be FALSE as this will
+##'   likely lead to duplicating daily doses that are already replicated in
+##'   `doses_future`.
+##'
 ##' @inheritParams vaccine_schedule_future
 ##' @inheritParams vaccine_schedule_data_future
 ##'
@@ -664,7 +672,8 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                                       mean_days_between_doses,
                                       priority_population, lag_groups = NULL,
                                       lag_days = NULL,
-                                      boosters_future = NULL) {
+                                      boosters_future = NULL,
+                                      boosters_preappend_zero = TRUE) {
 
   assert_is(schedule_past, "vaccine_schedule")
 
@@ -693,6 +702,12 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
       date_future <- end_date
     }
     if (length(boosters_future) > 0) {
+      if (boosters_preappend_zero) {
+        boosters_future <- c(0, boosters_future)
+        names(boosters_future)[1] <-
+          as.character(sircovid_date_as_date(date_end_past))
+        boosters_future <- boosters_future[!duplicated(boosters_future)]
+      }
       tmp <- check_doses_boosters_future(boosters_future, end_date,
                                          date_end_past)
 

@@ -371,6 +371,7 @@ test_that("vaccine_schedule_future functions with boosters", {
   mean_days_between_doses <- 12 * 7
 
   booster_doses <- c(rep(0, 150), rep(10000, 50))
+  booster_doses <- rep(10000, 50))
 
   n <- vaccine_priority_population(region, uptake_by_age)
   dose_schedule <- vaccine_schedule_future(
@@ -463,6 +464,90 @@ test_that("Can add boosters to schedule", {
 })
 
 
+
+test_that("check schedule scenario preappends zeros when needed", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  doses_future <- c(
+    "2021-04-10" = 6000,
+    "2021-04-20" = 7000,
+    "2021-04-30" = 9000,
+    "2021-05-10" = 0)
+
+  end_date <- "2021-08-01"
+
+  expect_zeros <- rep(c(5000, 6000, 7000, 9000, 0, 600, 700, 900),
+                      c(12, 10, 10, 10, 31, 10, 10, 32))
+  i <- seq_len(dim(past$doses)[[3]])
+
+  ## 1. manually and automatically add zeros
+  boosters_future <- c(
+    "2021-03-29" = 0,
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_preappend_zero = TRUE)
+
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
+
+  ## 2. automatically add zeros
+  boosters_future <- c(
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_preappend_zero = TRUE)
+
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
+
+  ## 3. manually add zeros
+  boosters_future <- c(
+    "2021-03-29" = 0,
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_preappend_zero = FALSE)
+
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
+
+  ## 4. no zeros
+  boosters_future <- c(
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_preappend_zero = FALSE)
+
+  ## 5000 booster doses are being added to everything before 2021-06-10
+  expect_no_zeros <- rep(c(10000, 5000, 600, 700, 900),
+                      c(42, 31, 10, 10, 32))
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_no_zeros)
+})
+
+
 test_that("create schedule scenario with doses and boosters", {
   data <- test_vaccine_data()
 
@@ -481,7 +566,6 @@ test_that("create schedule scenario with doses and boosters", {
     "2021-05-10" = 0)
 
   boosters_future <- c(
-    "2021-03-29" = 0,
     "2021-06-10" = 600,
     "2021-06-20" = 700,
     "2021-06-30" = 900)
@@ -520,7 +604,6 @@ test_that("create schedule scenario with boosters only", {
 
   mean_days_between_doses <- 30
   boosters_future <- c(
-    "2021-03-29" = 0,
     "2021-06-10" = 600,
     "2021-06-20" = 700,
     "2021-06-30" = 900
