@@ -502,6 +502,12 @@ test_that("check schedule scenario preappends zeros when needed", {
 
   expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
 
+  ## manual check
+  # par(mfrow = c(3, 1))
+  # image(t(res$doses[, 1, ]))
+  # image(t(res$doses[, 2, ]))
+  # image(t(res$doses[, 3, ]))
+
   ## 2. automatically add zeros
   boosters_future <- c(
     "2021-06-10" = 600,
@@ -544,6 +550,12 @@ test_that("check schedule scenario preappends zeros when needed", {
   expect_no_zeros <- rep(c(10000, 5000, 600, 700, 900),
                       c(42, 31, 10, 10, 32))
   expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_no_zeros)
+
+  ## manual check
+  #  par(mfrow = c(3, 1))
+  #  image(t(res$doses[, 1, ]))
+  #  image(t(res$doses[, 2, ]))
+  #  image(t(res$doses[, 3, ]))
 })
 
 
