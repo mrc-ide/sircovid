@@ -464,7 +464,7 @@ test_that("Can add boosters to schedule", {
 
 
 
-test_that("check schedule scenario preappends zeros when needed", {
+test_that("check schedule scenario prepends zeros when needed", {
   data <- test_vaccine_data()
 
   region <- "london"
@@ -498,7 +498,7 @@ test_that("check schedule scenario preappends zeros when needed", {
   res <- vaccine_schedule_scenario(past, doses_future, end_date,
                                    mean_days_between_doses, n,
                                    boosters_future = boosters_future,
-                                   boosters_preappend_zero = TRUE)
+                                   boosters_prepend_zero = TRUE)
 
   expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
 
@@ -511,7 +511,7 @@ test_that("check schedule scenario preappends zeros when needed", {
   res <- vaccine_schedule_scenario(past, doses_future, end_date,
                                    mean_days_between_doses, n,
                                    boosters_future = boosters_future,
-                                   boosters_preappend_zero = TRUE)
+                                   boosters_prepend_zero = TRUE)
 
   expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
 
@@ -525,7 +525,7 @@ test_that("check schedule scenario preappends zeros when needed", {
   res <- vaccine_schedule_scenario(past, doses_future, end_date,
                                    mean_days_between_doses, n,
                                    boosters_future = boosters_future,
-                                   boosters_preappend_zero = FALSE)
+                                   boosters_prepend_zero = FALSE)
 
   expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
 
@@ -538,7 +538,7 @@ test_that("check schedule scenario preappends zeros when needed", {
   res <- vaccine_schedule_scenario(past, doses_future, end_date,
                                    mean_days_between_doses, n,
                                    boosters_future = boosters_future,
-                                   boosters_preappend_zero = FALSE)
+                                   boosters_prepend_zero = FALSE)
 
   ## 5000 booster doses are being added to everything before 2021-06-10
   expect_no_zeros <- rep(c(10000, 5000, 600, 700, 900),
