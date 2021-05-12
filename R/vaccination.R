@@ -327,6 +327,11 @@ vaccine_priority_population <- function(region,
 ##'
 ##' @param booster_daily_doses_value A vector of booster doses per day.
 ##'
+##' @param booster_groups Which groups of the `priority_population` should be
+##'  given a booster, default is all groups; ignored if
+##'  `booster_daily_doses_value` is NULL. Sets all rows not corresponding
+##'  to given indices to 0.
+##'
 ##' @export
 vaccine_schedule_future <- function(start,
                                     daily_doses_value,
@@ -334,7 +339,9 @@ vaccine_schedule_future <- function(start,
                                     priority_population,
                                     lag_groups = NULL,
                                     lag_days = NULL,
-                                    booster_daily_doses_value = NULL) {
+                                    booster_daily_doses_value = NULL,
+                                    booster_groups = 1:19) {
+
   has_booster <- !is.null(booster_daily_doses_value)
 
   n_groups <- nrow(priority_population)
@@ -385,8 +392,12 @@ vaccine_schedule_future <- function(start,
     daily_doses_tt, daily_doses_value, population_left,
     population_to_vaccinate_mat, mean_days_between_doses, n_prev, 1:2)
   if (has_booster) {
+    ## crude method to zero out any groups not given booster
+    booster_population_left <- population_left
+    booster_population_left[-booster_groups, , ] <- 0
+
     population_to_vaccinate_mat <- vaccination_schedule_exec(
-      daily_doses_tt, booster_daily_doses_value, population_left,
+      daily_doses_tt, booster_daily_doses_value, booster_population_left,
       population_to_vaccinate_mat, Inf, n_prev, 3)
   }
 
@@ -673,7 +684,8 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                                       priority_population, lag_groups = NULL,
                                       lag_days = NULL,
                                       boosters_future = NULL,
-                                      boosters_prepend_zero = TRUE) {
+                                      boosters_prepend_zero = TRUE,
+                                      booster_groups = 1:19) {
 
   assert_is(schedule_past, "vaccine_schedule")
 
@@ -729,7 +741,8 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                           priority_population,
                           lag_groups,
                           lag_days,
-                          booster_daily_doses_value)
+                          booster_daily_doses_value,
+                          booster_groups)
 }
 
 

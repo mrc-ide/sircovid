@@ -1,3 +1,7 @@
+# sircovid 0.11.4
+
+* Adds parameter `booster_groups` to control which age groups get booster doses
+
 # sircovid 0.11.3
 
 * Booster doses can now be added to a vaccine schedule

@@ -11,7 +11,8 @@ vaccine_schedule_future(
   priority_population,
   lag_groups = NULL,
   lag_days = NULL,
-  booster_daily_doses_value = NULL
+  booster_daily_doses_value = NULL,
+  booster_groups = 1:19
 )
 }
 \arguments{
@@ -38,6 +39,11 @@ days to add the start of the dose schedule for the given groups. Ignored
 if \code{lag_groups} is NULL.}
 
 \item{booster_daily_doses_value}{A vector of booster doses per day.}
+
+\item{booster_groups}{Which groups of the \code{priority_population} should be
+given a booster, default is all groups; ignored if
+\code{booster_daily_doses_value} is NULL. Sets all rows not corresponding
+to given indices to 0.}
 }
 \description{
 Create future vaccination schedule from a projected number of

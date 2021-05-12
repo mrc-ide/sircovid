@@ -13,7 +13,8 @@ vaccine_schedule_scenario(
   lag_groups = NULL,
   lag_days = NULL,
   boosters_future = NULL,
-  boosters_prepend_zero = TRUE
+  boosters_prepend_zero = TRUE,
+  booster_groups = 1:19
 )
 }
 \arguments{
@@ -53,6 +54,11 @@ previous value in \code{schedule_past} is replicated until the first date in
 boosters_future. Note that this should rarely be FALSE as this will
 likely lead to duplicating daily doses that are already replicated in
 \code{doses_future}.}
+
+\item{booster_groups}{Which groups of the \code{priority_population} should be
+given a booster, default is all groups; ignored if
+\code{booster_daily_doses_value} is NULL. Sets all rows not corresponding
+to given indices to 0.}
 }
 \value{
 A \link{vaccine_schedule} object
