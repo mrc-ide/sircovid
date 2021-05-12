@@ -1,6 +1,11 @@
-# sircovid 0.11.3
+# sircovid 0.11.4
 
 * Booster doses can now be added to a vaccine schedule
+
+# sircovid 0.11.3
+
+* For simplicity, it is now assumed that individuals that progress through model compartments at a given time step cannot also move vaccine classes in that same step
+
 
 # sircovid 0.10.53
 

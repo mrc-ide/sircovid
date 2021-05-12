@@ -1417,6 +1417,9 @@ test_that("Outputed S vaccination numbers are what we expect", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
+  ## stop progression in I_A to avoid moves from I_A to R for initial infectives
+  p$gamma_A_step <- 0
+
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -1430,8 +1433,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
   ## every initial susceptible should be vaccinated within first day
   expect_approx_equal(y$cum_n_S_vaccinated[i, 1, 2], y$S[i, 1, 1])
   ## same for the 10 initially seeded cases
-  expect_true(
-    all(abs(y$cum_n_I_A_vaccinated[i, 1, 2] - y$I_A[i, 1, 1, 1, 1]) <= 1))
+  expect_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , , 1])
 
   ## Noone in the first 3 groups vaccinated:
   expect_true(all(y$cum_n_S_vaccinated[1:3, 1, ] == 0))
@@ -1452,8 +1454,10 @@ test_that("Outputed E vaccination numbers are what we expect", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
-  ## stop progression after E to avoid diagonal moves from E to I_A
+  ## stop progression after E to avoid moves from E to I_A
   p$gamma_E_step <- 0
+  ## stop progression in I_A to avoid moves from I_A to R for initial infectives
+  p$gamma_A_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1480,8 +1484,7 @@ test_that("Outputed E vaccination numbers are what we expect", {
                       rel_tol = 0.15)
 
   ## same for the 10 initially seeded cases
-  expect_true(abs(y$cum_n_I_A_vaccinated[4, 1, 2] -
-                    y$I_A[4, , , 1, 1]) <= 3)
+  expect_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , , 1])
 
 })
 
@@ -1500,7 +1503,7 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
-  ## stop progression after I_A to avoid diagonal moves from I_A to R
+  ## stop progression after I_A to avoid moves from I_A to R
   p$gamma_A_step <- 0
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
@@ -1540,7 +1543,7 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
-  ## stop progression after I_A/I_P to avoid diagonal moves out of I_A/I_P
+  ## stop progression after I_A/I_P to avoid moves out of I_A/I_P
   p$gamma_A_step <- 0
   p$gamma_P_step <- 0
 

@@ -2292,18 +2292,6 @@ test_that("Rt lower with perfect cross immunity", {
                             strain_seed_rate = c(10, 0),
                             cross_immunity = 0)
 
-  mod <- carehomes$new(p, 0, np, seed = 1L)
-  initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
-  end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
-
-  set.seed(1)
-  y <- mod$simulate(steps)
-  S <- y[index_S, , ]
-  R <- y[index_R, , ]
-  prob_strain <- y[index_prob_strain, , ]
-
   rt_cross_0 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
                              R = R[, 1, ], weight_Rt = TRUE)
 
