@@ -13,7 +13,7 @@ vaccine_schedule_scenario(
   lag_groups = NULL,
   lag_days = NULL,
   boosters_future = NULL,
-  boosters_preappend_zero = TRUE
+  boosters_prepend_zero = TRUE
 )
 }
 \arguments{
@@ -46,7 +46,7 @@ if \code{lag_groups} is NULL.}
 \item{boosters_future}{Optional named vector of booster doses to give in
 the future. Names must be in ISO date format.}
 
-\item{boosters_preappend_zero}{If TRUE (default) and \code{boosters_future} is
+\item{boosters_prepend_zero}{If TRUE (default) and \code{boosters_future} is
 not NULL then adds sets booster doses to zero before the first date in
 \code{boosters_future}. This is in contrast to when it is FALSE and the
 previous value in \code{schedule_past} is replicated until the first date in
