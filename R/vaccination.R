@@ -391,7 +391,7 @@ vaccine_schedule_future <- function(start,
 
   if (inherits(start, "vaccine_schedule")) {
     if (ncol(start$doses) < n_doses) {
-      sdoses <- abind::abind(start$doses,
+      sdoses <- abind2(start$doses,
                              array(0, c(nrow(start$doses),
                                         n_doses - ncol(start$doses),
                                         nlayer(start$doses))),
