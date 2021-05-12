@@ -211,11 +211,8 @@ vaccine_priority_proportion <- function(uptake,
 
   if (is.null(uptake)) {
     uptake <- rep(1, n_groups)
-  } else if (length(uptake) == 1L) {
-    uptake <- rep(uptake, n_groups)
-  } else if (length(uptake) != n_groups) {
-    stop(sprintf("Invalid length %d for 'uptake', must be 1 or %d",
-                 length(uptake), n_groups))
+  } else {
+    uptake <- recycle(uptake, n_groups)
   }
 
   prop_hcw <- prop_hcw %||%
@@ -405,7 +402,7 @@ vaccine_schedule_future <- function(start,
 
   if (inherits(start, "vaccine_schedule")) {
     if (ncol(start$doses) < n_doses) {
-      sdoses <- abind::abind(start$doses,
+      sdoses <- abind2(start$doses,
                              array(0, c(nrow(start$doses),
                                         n_doses - ncol(start$doses),
                                         nlayer(start$doses))),

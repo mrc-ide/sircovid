@@ -1608,7 +1608,7 @@ I_weighted_strain[, , ] <-
 update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 ## Vaccination engine
-n_doses <- user(2)
+n_doses <- user()
 index_dose[] <- user(integer = TRUE)
 dim(index_dose) <- n_doses
 

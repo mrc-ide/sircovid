@@ -2020,7 +2020,7 @@ test_that("can add vaccination to a set of model state", {
 test_that("vaccine_uptake must be the correct length", {
   expect_error(
     vaccine_priority_proportion(uptake = c(0, 0, 0)),
-    "Invalid length 3 for 'uptake', must be 1 or 19")
+    "Invalid length for 'uptake', expected 1 or 19")
 })
 
 

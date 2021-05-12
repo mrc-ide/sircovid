@@ -10,6 +10,7 @@
 
 * For simplicity, it is now assumed that individuals that progress through model compartments at a given time step cannot also move vaccine classes in that same step
 
+
 # sircovid 0.10.53
 
 * carehomes_Rt now only returns NA when prob_strain is NA and weight_Rt is TRUE
