@@ -95,6 +95,14 @@ test_that("vaccine_priority_population adds to correct population", {
 })
 
 
+test_that("vaccine_priority_population adds to correct pop - full uptake", {
+  region <- "london"
+  n <- vaccine_priority_population(region, NULL)
+  pop_by_age <- carehomes_parameters(1, region)$N_tot
+  expect_vector_equal(rowSums(n), pop_by_age, tol = 2)
+})
+
+
 test_that("Can append a schedule", {
   region <- "london"
   uptake_by_age <- test_example_uptake()

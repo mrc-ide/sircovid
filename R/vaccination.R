@@ -211,11 +211,8 @@ vaccine_priority_proportion <- function(uptake,
 
   if (is.null(uptake)) {
     uptake <- rep(1, n_groups)
-  } else if (length(uptake) == 1L) {
-    uptake <- rep(uptake, n_groups)
-  } else if (length(uptake) != n_groups) {
-    stop(sprintf("Invalid length %d for 'uptake', must be 1 or %d",
-                 length(uptake), n_groups))
+  } else {
+    uptake <- recycle(uptake)
   }
 
   prop_hcw <- prop_hcw %||%
