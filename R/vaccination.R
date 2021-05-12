@@ -394,8 +394,7 @@ vaccine_schedule_future <- function(start,
       sdoses <- abind2(start$doses,
                              array(0, c(nrow(start$doses),
                                         n_doses - ncol(start$doses),
-                                        nlayer(start$doses))),
-                             along = 2)
+                                        nlayer(start$doses))))
     } else {
       sdoses <- start$doses
     }
