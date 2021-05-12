@@ -212,7 +212,7 @@ vaccine_priority_proportion <- function(uptake,
   if (is.null(uptake)) {
     uptake <- rep(1, n_groups)
   } else {
-    uptake <- recycle(uptake)
+    uptake <- recycle(uptake, n_groups)
   }
 
   prop_hcw <- prop_hcw %||%
