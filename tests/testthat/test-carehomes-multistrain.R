@@ -2303,3 +2303,185 @@ test_that("Rt lower with perfect cross immunity", {
   expect_vector_lt(rt_cross_1$eff_Rt_general, rt_cross_0$eff_Rt_general,
                    tol = tol)
 })
+
+
+test_that("Can interpolate multistrain Rt", {
+  dat <- reference_data_mcmc()
+  rt <- local({
+    p <- lapply(seq_len(nrow(dat$pars)), function(i)
+      dat$predict$transform(dat$pars[i, ]))
+    i <- grep("S_", rownames(dat$trajectories$state))
+    S <- dat$trajectories$state[i, , ]
+    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+  })
+
+  future <- list(
+    "2020-04-15" = future_Rt(1.5, "2020-03-10"),
+    "2020-05-01" = future_Rt(0.5, "2020-03-10"),
+    "2020-05-15" = future_Rt(2, "2020-03-10"))
+
+
+  res <- future_relative_beta(future, rt$date[, 1], rt$Rt_general)
+  baseline <- add_future_betas(dat, rt, future)
+
+  events <- sircovid_simulate_events("2020-03-30", "2020-06-01", NULL)
+  p <- lapply(seq_len(nrow(baseline$pars)), function(i)
+    baseline$predict$transform(baseline$pars[i, ]))
+  ans <- sircovid_simulate(carehomes, baseline$state, p, events,
+                           index = dat$predict$index)
+
+  ## Work out our critical dates so that we can start interpolation:
+  step <- attr(ans, "step")
+  S <- ans[grep("S_", rownames(ans)), , ]
+
+  crit_dates <- sircovid_date(names(future))
+
+  set.seed(1)
+  rt_cmp <- carehomes_Rt_trajectories(step, S, p,
+                                      initial_step_from_parameters = FALSE)
+
+  ## Only interpolate if "every" is given:
+  set.seed(1)
+  expect_identical(
+    carehomes_Rt_trajectories(step, S, p,
+                              initial_step_from_parameters = FALSE,
+                              interpolate_min = 3),
+    rt_cmp)
+
+
+  ## Then compute the Rt values with interpolation
+  rt_int_2 <- carehomes_Rt_trajectories(step, S, p,
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 2,
+                                        interpolate_min = 3,
+                                        interpolate_critical_dates = crit_dates)
+  rt_int_7 <- carehomes_Rt_trajectories(step, S, p,
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 7,
+                                        interpolate_min = 3,
+                                        interpolate_critical_dates = crit_dates)
+  rt_int_14 <- carehomes_Rt_trajectories(step, S, p,
+                                         initial_step_from_parameters = FALSE,
+                                         interpolate_every = 14,
+                                         interpolate_min = 1,
+                                         interpolate_critical_dates =
+                                           crit_dates)
+  ## check the error is small
+  tol <- 0.05
+  # for interpolation every 2 days
+  expect_vector_equal(rt_cmp$eff_Rt_all, rt_int_2$eff_Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$eff_Rt_general, rt_int_2$eff_Rt_general,
+                      tol = tol)
+  expect_vector_equal(rt_cmp$Rt_all, rt_int_2$Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$Rt_general, rt_int_2$Rt_general, tol = tol)
+  # for interpolation every 7 days
+  expect_vector_equal(rt_cmp$eff_Rt_all, rt_int_7$eff_Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$eff_Rt_general,
+                      rt_int_7$eff_Rt_general, tol = tol)
+  expect_vector_equal(rt_cmp$Rt_all, rt_int_7$Rt_all, tol = tol)
+  expect_vector_equal(rt_cmp$Rt_general, rt_int_7$Rt_general, tol = tol)
+  # have to increase tolerance dramatically for every 14 days
+  tol2 <- 0.5
+  expect_vector_equal(rt_cmp$eff_Rt_all, rt_int_14$eff_Rt_all, tol = tol2)
+  expect_vector_equal(rt_cmp$eff_Rt_general,
+                      rt_int_14$eff_Rt_general, tol = tol2)
+  expect_vector_equal(rt_cmp$Rt_all, rt_int_14$Rt_all, tol = tol2)
+  expect_vector_equal(rt_cmp$Rt_general, rt_int_14$Rt_general, tol = tol2)
+})
+
+
+
+test_that("wtmean_Rt works as expected with interpolation", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            cross_immunity = 0)
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+  initial <- carehomes_initial(mod$info(), np, p)
+  mod$set_state(initial$state, initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+  interpolate_every <- 7
+  interpolate_min <- 3
+
+  rt <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                     interpolate_every = interpolate_every,
+                     interpolate_min = interpolate_min)
+  expect_equal(dim(rt$eff_Rt_all), c(85, 2))
+  expect_equal(class(rt), c("multi_strain", "Rt"))
+
+  rt_traj <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                       interpolate_every = interpolate_every,
+                                       interpolate_min = interpolate_min)
+  expect_equal(dim(rt_traj$eff_Rt_all), c(85, 2, 3))
+  expect_equal(class(rt_traj), c("multi_strain", "Rt_trajectories", "Rt"))
+
+  rt_strain_weighted <-
+    carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                 weight_Rt = TRUE, interpolate_every = interpolate_every,
+                 interpolate_min = interpolate_min)
+  expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
+  expect_equal(class(rt_strain_weighted), c("single_strain", "Rt"))
+
+  rt_traj_strain_weighted <-
+    carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                              weight_Rt = TRUE,
+                              interpolate_every = interpolate_every,
+                              interpolate_min = interpolate_min)
+  expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
+  expect_equal(class(rt_traj_strain_weighted),
+               c("single_strain", "Rt_trajectories", "Rt"))
+
+  nms <- names(rt)
+
+  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ])
+  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain)
+
+  ## here the 1st strain has weight 1 all along
+  ## (except step 1 --> to investigate)
+  ## so expect the average R to be the same as R for strain 1
+  expect_equal(rt$eff_Rt_general[, 1], avg_rt$eff_Rt_general)
+  expect_equal(rt$eff_Rt_all[, 1], avg_rt$eff_Rt_all)
+  expect_equal(rt$Rt_general[, 1], avg_rt$Rt_general)
+  expect_equal(rt$Rt_all[, 1], avg_rt$Rt_all)
+
+  expect_equal(rt_traj$eff_Rt_general[, 1, ],
+               avg_rt_traj$eff_Rt_general[, ])
+  expect_equal(rt_traj$eff_Rt_all[, 1, ], avg_rt_traj$eff_Rt_all[, ])
+  expect_equal(rt_traj$Rt_general[, 1, ], avg_rt_traj$Rt_general[, ])
+  expect_equal(rt_traj$Rt_all[, 1, ], avg_rt_traj$Rt_all[, ])
+
+  ## the average should be the same if calculated inside the Rt calculation
+  ## functions or post hoc
+  expect_equal(rt_strain_weighted$eff_Rt_general,
+               avg_rt$eff_Rt_general)
+  expect_equal(rt_strain_weighted$eff_Rt_all,
+               avg_rt$eff_Rt_all)
+  expect_equal(rt_strain_weighted$Rt_general,
+               avg_rt$Rt_general)
+  expect_equal(rt_strain_weighted$Rt_all,
+               avg_rt$Rt_all)
+
+  expect_equal(names(avg_rt), nms)
+  expect_equal(names(avg_rt_traj), nms)
+
+  ## check single particle case
+  S <- mcstate::array_flatten(S, 2:3)[, 1, drop = FALSE]
+  R <- mcstate::array_flatten(R, 2:3)[, 1, drop = FALSE]
+  prob_strain <- mcstate::array_flatten(prob_strain, 2:3)[, 1, drop = FALSE]
+  rt_weight_F <- carehomes_Rt(1, S, p, prob_strain, R = R, weight_Rt = FALSE)
+  rt_weight_T <- carehomes_Rt(1, S, p, prob_strain, R = R, weight_Rt = TRUE)
+  expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all)
+  expect_equal(rt_weight_F$eff_Rt_general[[1]],
+                      rt_weight_T$eff_Rt_general)
+  expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
+  expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
+})
