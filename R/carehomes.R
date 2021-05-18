@@ -593,64 +593,44 @@ carehomes_index <- function(info) {
   ## right.
 
   n_vacc_classes <- info$dim$S[[2]]
-
-  ## To name our S categories following age and vaccine classes, we
-  ## use two suffixes. The first vaccination class is special and so
-  ## has an empty suffix so that we retain our model without
-  ## vaccination if needed.
-  ## S_0, S_5, ..., S_CHW, S_CHR, S_0_1, S_5_1, ..., S_CHW_1, S_CHR_1, ...
-  s_type <- rep(c("", sprintf("_%s", seq_len(n_vacc_classes - 1L))),
-                each = length(suffix))
-
-  index_S <- set_names(index[["S"]],
-                       paste0("S", suffix, s_type))
-  index_I_weighted <- set_names(index[["I_weighted"]],
-                                paste0("I_weighted", suffix, s_type))
-  index_cum_admit <- set_names(index[["cum_admit_by_age"]],
-                               paste0("cum_admit", suffix))
-  index_D_hosp <- set_names(index[["D_hosp"]],
-                            paste0("D_hosp", suffix))
-  index_D <- set_names(index[["D"]],
-                       paste0("D_all", suffix, s_type))
-  index_cum_infections_disag <- set_names(index[["cum_infections_disag"]],
-                                          paste0("cum_infections_disag",
-                                                 suffix, s_type))
-  index_diagnoses_admitted <- set_names(index[["diagnoses_admitted"]],
-                                        paste0("diagnoses_admitted",
-                                               suffix, s_type))
-  index_cum_n_vaccinated <- set_names(index[["cum_n_vaccinated"]],
-                                      paste0("cum_n_vaccinated", suffix,
-                                             s_type))
-
-  ## prob_strain is named similarly to S, with the second suffix representing
-  ## strain instead of vacc_class
   n_strains <- info$dim$prob_strain
-  strain_type <- c("", sprintf("_%s", seq_len(n_strains - 1L)))
-  index_prob_strain <- set_names(index[["prob_strain"]],
-                                 paste0("prob_strain", strain_type))
-
-  ## R follows age, strains, vacc_class
   if (n_strains == 2) {
     n_tot_strains <- 4
   } else {
     n_tot_strains <- 1
   }
 
-  suffixes <- expand.grid(
-    suffix,
-    c("", sprintf("_S%s", seq_len(n_tot_strains - 1L))),
-    c("", sprintf("_V%s", seq_len(n_vacc_classes - 1L)))
-  )
-  r_type <- apply(suffixes, 1,
-                  function(x) sprintf("R%s", paste0(x, collapse = "")))
+  ## age varying only
+  index_D_hosp <- calculate_index(index, "D_hosp", list(), suffix)
+  index_cum_admit <- calculate_index(index, "cum_admit_by_age",
+                                     list(), suffix, "cum_admit")
 
-  index_R <- set_names(index[["R"]], r_type)
+  ## age x vacc class
+  index_S <- calculate_index(index, "S", list(n_vacc_classes), suffix)
+  index_I_weighted <- calculate_index(index, "I_weighted",
+                                      list(n_vacc_classes), suffix)
+  index_diagnoses_admitted <- calculate_index(index, "diagnoses_admitted",
+                                              list(n_vacc_classes), suffix)
+  index_cum_infections_disag <- calculate_index(index, "cum_infections_disag",
+                                                list(n_vacc_classes), suffix)
+  index_cum_n_vaccinated <- calculate_index(index, "cum_n_vaccinated",
+                                            list(n_vacc_classes), suffix)
+  index_D <- calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all")
+
+  ## (real) strain only
+  index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
+
+  ## age x (total) strain x vacc class
+  index_R <- calculate_index(index, "R",
+                             list(S = n_tot_strains, V = n_vacc_classes),
+                             suffix)
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_R,
                  index_cum_admit, index_D_hosp, index_D,
                  index_diagnoses_admitted, index_cum_infections_disag,
-                 index_I_weighted, index_prob_strain, index_cum_n_vaccinated))
+                 index_I_weighted, index_prob_strain, index_cum_n_vaccinated
+  ))
 }
 
 
@@ -1902,4 +1882,28 @@ create_index_dose_inverse <- function(n_vacc_classes, index_dose) {
   index_dose_inverse <- integer(n_vacc_classes)
   index_dose_inverse[index_dose] <- seq_along(index_dose)
   index_dose_inverse
+}
+
+
+calculate_index <- function(index, state, suffix_list, suffix0 = NULL,
+                            state_name = state) {
+  if (is.null(suffix0)) {
+    suffixes <- list()
+  } else {
+    suffixes <- list(suffix0)
+  }
+  for (i in seq_along(suffix_list)) {
+    nm <- names(suffix_list)[[i]]
+    if (length(nm) == 0) {
+      nm <- ""
+    }
+    suffixes <- c(suffixes,
+                  list(c("", sprintf("_%s%s", nm,
+                                     seq_len(suffix_list[[i]] - 1L)))))
+  }
+  suffixes <- expand.grid(suffixes)
+  nms <- apply(suffixes, 1,
+               function(x) sprintf("%s%s",
+                                   state_name, paste0(x, collapse = "")))
+  set_names(index[[state]], nms)
 }
