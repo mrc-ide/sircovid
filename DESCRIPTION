@@ -67,7 +67,7 @@ Suggests:
     distcrete,
     mockery,
     odin (>= 1.1.12),
-    odin.dust (>= 0.2.6),
+    odin.dust (>= 0.2.7),
     testthat
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
