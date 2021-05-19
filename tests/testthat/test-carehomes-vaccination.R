@@ -2733,24 +2733,28 @@ test_that("run sensible vaccination schedule with boosters", {
 
   ## Check that cum_n_S_vaccinated shows correct pattern with booster
   ## doses being given.
+  ## Never vaccinating anyone who has already received a booster.
 
   expect_vector_equal(y$cum_n_S_vaccinated[, 4, , ], 0)
 
   ## dose 1
+  ## In phase one never give any doses apart from first doses
   phase1 <- 1:14
   expect_vector_equal(y$cum_n_S_vaccinated[, 2:4, , phase1], 0)
   expect_false(all(y$cum_n_S_vaccinated[, 1, , phase1] == 0))
 
   ## dose 2
+  ## In phase two never give any doses apart from second doses (and perhaps first)
+
   phase2 <- 15:120
   expect_vector_equal(y$cum_n_S_vaccinated[, 3:4, , phase2], 0)
   expect_false(all(y$cum_n_S_vaccinated[, 2, , phase2] == 0))
 
-  ## no doses
+  ## No doses at all in phase 3
   expect_equal(sum(y$cum_n_S_vaccinated[, , , 150]),
                sum(y$cum_n_S_vaccinated[, , , 119]))
 
-  ## booster
+  ## Some boosters distributed in phase 4
   phase4 <- 150:200
   expect_false(all(y$cum_n_S_vaccinated[, 3, , phase4] == 0))
 })

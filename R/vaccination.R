@@ -359,7 +359,7 @@ vaccine_schedule_future <- function(start,
                            c(n_groups, n_priority_groups, n_doses))
 
   if (inherits(start, "vaccine_schedule")) {
-    for (dose in min(seq_len(n_doses), ncol(start$doses))) {
+    for (dose in seq_len(min(n_doses, ncol(start$doses)))) {
       n <- rowSums(start$doses[, dose, ])
       for (i in seq_len(n_priority_groups)) {
         m <- pmin(n, population_left[, i, dose])
