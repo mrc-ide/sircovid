@@ -179,14 +179,22 @@ interpolate_grid_critical_x <- function(x, every, critical, min) {
 
 
 interpolate_grid_expand_y <- function(y, step_split) {
-  f <- function(i) {
-    x <- step_split[[i]]
-    stats::spline(x, y_split[[i]], xout = seq_range(x))$y
+  interpolate <- function(y, step_split) {
+    f <- function(i) {
+      x <- step_split[[i]]
+      stats::spline(x, y_split[[i]], xout = seq_range(x))$y
+    }
+    n <- lengths(step_split)
+    y_split <- Map(function(len, to) y[seq(length.out = len, to = to)],
+                  n, cumsum(n))
+    unlist(lapply(seq_along(step_split), f))
   }
-  n <- lengths(step_split)
-  y_split <- Map(function(len, to) y[seq(length.out = len, to = to)],
-                 n, cumsum(n))
-  unlist(lapply(seq_along(step_split), f))
+
+  if (!is.null(dim(y))) {
+    apply(y, 2, interpolate, step_split = step_split)
+  } else {
+    interpolate(y, step_split)
+  }
 }
 
 

@@ -1,10 +1,10 @@
 # sircovid 0.11.5
 
-* Adds parameter `booster_groups` to control which age groups get booster doses
+* Booster doses can now be added to a vaccine schedule with parameters to determine which groups get boosters
 
 # sircovid 0.11.4
 
-* Booster doses can now be added to a vaccine schedule
+* Fix Rt calculations for multistrain models when including interpolation
 
 # sircovid 0.11.3
 
