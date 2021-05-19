@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.5</span>
       </span>
     </div>
 
@@ -159,7 +159,9 @@
   vaccine_progression_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_schedule <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_index_dose2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vaccine_index_booster <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_catchup_fraction <span class='op'>=</span> <span class='fl'>1</span>,
+  n_doses <span class='op'>=</span> <span class='fl'>2L</span>,
   waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>,
   cross_immunity <span class='op'>=</span> <span class='fl'>1</span>
@@ -426,6 +428,10 @@ people to be vaccinated by group over time</p></td>
       <td><p>The index to use for the second dose</p></td>
     </tr>
     <tr>
+      <th>vaccine_index_booster</th>
+      <td><p>The index to use for the booster dose</p></td>
+    </tr>
+    <tr>
       <th>vaccine_catchup_fraction</th>
       <td><p>A value between 0 and 1 indicating the
 proportion of doses not distributed according to schedule (e.g. because
@@ -434,6 +440,11 @@ vaccinated at the scheduled time) that we postpone to a later date.
 A value of 0 means we do not catch up at all on any missed doses; a
 value of 1 means we try to catch up for all missed doses. This is set
 to 1 by default</p></td>
+    </tr>
+    <tr>
+      <th>n_doses</th>
+      <td><p>Number of doses given out, including boosters. Default is
+2.</p></td>
     </tr>
     <tr>
       <th>waning_rate</th>

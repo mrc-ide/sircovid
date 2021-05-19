@@ -81,7 +81,7 @@ daily doses." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.5</span>
       </span>
     </div>
 
@@ -136,7 +136,9 @@ daily doses.</p>
   <span class='va'>mean_days_between_doses</span>,
   <span class='va'>priority_population</span>,
   lag_groups <span class='op'>=</span> <span class='cn'>NULL</span>,
-  lag_days <span class='op'>=</span> <span class='cn'>NULL</span>
+  lag_days <span class='op'>=</span> <span class='cn'>NULL</span>,
+  booster_daily_doses_value <span class='op'>=</span> <span class='cn'>NULL</span>,
+  booster_groups <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>19</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -175,6 +177,17 @@ Ignored if <code>lag_groups</code> is NULL.</p></td>
       <td><p>If <code>lag_groups</code> is not NULL then specifies the number of
 days to add the start of the dose schedule for the given groups. Ignored
 if <code>lag_groups</code> is NULL.</p></td>
+    </tr>
+    <tr>
+      <th>booster_daily_doses_value</th>
+      <td><p>A vector of booster doses per day.</p></td>
+    </tr>
+    <tr>
+      <th>booster_groups</th>
+      <td><p>Which groups of the <code>priority_population</code> should be
+given a booster, default is all groups; ignored if
+<code>booster_daily_doses_value</code> is NULL. Sets all rows not corresponding
+to given indices to 0.</p></td>
     </tr>
     </table>
 

@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.5</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
     <p>Create a vaccine schedule for use with <a href='carehomes_parameters.html'>carehomes_parameters</a></p>
     </div>
 
-    <pre class="usage"><span class='fu'>vaccine_schedule</span><span class='op'>(</span><span class='va'>date</span>, <span class='va'>doses</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>vaccine_schedule</span><span class='op'>(</span><span class='va'>date</span>, <span class='va'>doses</span>, n_doses <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,6 +146,12 @@ vaccines will be given</p></td>
 represent the number of vaccine doses in that group for that
 dose for that day. So for <code>doses[i, j, k]</code> then it is for the
 ith group, the number of jth doses on day <code>(k - 1) + date</code></p></td>
+    </tr>
+    <tr>
+      <th>n_doses</th>
+      <td><p>The number of doses in the schedule. Typically (and
+by default) this will be 2, but if using booster doses 3 (and in
+future we may extend further).</p></td>
     </tr>
     </table>
 
