@@ -121,7 +121,7 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
       mat_vaccine_progression_rate <- vaccine_progression_rate
     } else { # vaccine_progression_rate vector of length n_vacc_classes
       if (!is.vector(vaccine_progression_rate) ||
-           length(vaccine_progression_rate) != n_vacc_classes) {
+          length(vaccine_progression_rate) != n_vacc_classes) {
         m1 <- "'vaccine_progression_rate' must be either:"
         m2 <- "a vector of length 'n_vacc_classes' or"
         m3 <- "a matrix with 'n_groups' rows and 'n_vacc_classes' columns"
@@ -211,11 +211,8 @@ vaccine_priority_proportion <- function(uptake,
 
   if (is.null(uptake)) {
     uptake <- rep(1, n_groups)
-  } else if (length(uptake) == 1L) {
-    uptake <- rep(uptake, n_groups)
-  } else if (length(uptake) != n_groups) {
-    stop(sprintf("Invalid length %d for 'uptake', must be 1 or %d",
-                 length(uptake), n_groups))
+  } else {
+    uptake <- recycle(uptake, n_groups)
   }
 
   prop_hcw <- prop_hcw %||%
@@ -325,17 +322,35 @@ vaccine_priority_population <- function(region,
 ##'  days to add the start of the dose schedule for the given groups. Ignored
 ##'  if `lag_groups` is NULL.
 ##'
+##' @param booster_daily_doses_value A vector of booster doses per day.
+##'
+##' @param booster_groups Which groups of the `priority_population` should be
+##'  given a booster, default is all groups; ignored if
+##'  `booster_daily_doses_value` is NULL. Sets all rows not corresponding
+##'  to given indices to 0.
+##'
 ##' @export
 vaccine_schedule_future <- function(start,
                                     daily_doses_value,
                                     mean_days_between_doses,
                                     priority_population,
                                     lag_groups = NULL,
-                                    lag_days = NULL) {
+                                    lag_days = NULL,
+                                    booster_daily_doses_value = NULL,
+                                    booster_groups = 1:19) {
+
+  has_booster <- !is.null(booster_daily_doses_value)
+
   n_groups <- nrow(priority_population)
   n_priority_groups <- ncol(priority_population)
-  n_doses <- 2L
-  n_days <- length(daily_doses_value)
+
+  if (has_booster) {
+    n_doses <- 3L
+    n_days <- max(length(daily_doses_value), length(booster_daily_doses_value))
+  } else {
+    n_doses <- 2L
+    n_days <- length(daily_doses_value)
+  }
 
   population_to_vaccinate_mat <-
     array(0, c(n_groups, n_priority_groups, n_doses, n_days))
@@ -344,7 +359,7 @@ vaccine_schedule_future <- function(start,
                            c(n_groups, n_priority_groups, n_doses))
 
   if (inherits(start, "vaccine_schedule")) {
-    for (dose in seq_len(n_doses)) {
+    for (dose in seq_len(min(n_doses, ncol(start$doses)))) {
       n <- rowSums(start$doses[, dose, ])
       for (i in seq_len(n_priority_groups)) {
         m <- pmin(n, population_left[, i, dose])
@@ -362,70 +377,48 @@ vaccine_schedule_future <- function(start,
     daily_doses_date <- start
   }
 
+  if (nrow(daily_doses_prev) < n_doses) {
+    daily_doses_prev <-
+      rbind(daily_doses_prev,
+            matrix(0, n_doses - nrow(daily_doses_prev),
+                   ncol(daily_doses_prev)))
+  }
   daily_doses_tt <- cbind(daily_doses_prev, matrix(0, n_doses, n_days))
 
-  for (t in seq_along(daily_doses_value)) {
-    tt <- t + n_prev
-    tt_dose_1 <- tt - mean_days_between_doses
-    if (tt_dose_1 >= 1) {
-      ## If we have promised more 2nd doses than we can deliver, we
-      ## move our debt forward in time by one day. If doses fluctuate
-      ## this will eventually be paid off.
-      if (daily_doses_tt[1, tt_dose_1] > daily_doses_value[t]) {
-        daily_doses_tt[1, tt_dose_1 + 1] <-
-          daily_doses_tt[1, tt_dose_1 + 1] +
-          (daily_doses_tt[1, tt_dose_1] - daily_doses_value[t])
-      }
-      daily_doses_tt[2, tt] <- min(daily_doses_value[t],
-                                   daily_doses_tt[1, tt_dose_1])
-      daily_doses_tt[1, tt] <- daily_doses_value[t] - daily_doses_tt[2, tt]
-    } else {
-      ## Only distribute first doses
-      daily_doses_tt[2, tt] <- 0
-      daily_doses_tt[1, tt] <- daily_doses_value[t]
-    }
-    daily_doses_today <- daily_doses_tt[, tt]
+  population_to_vaccinate_mat <- vaccination_schedule_exec(
+    daily_doses_tt, daily_doses_value, population_left,
+    population_to_vaccinate_mat, mean_days_between_doses, n_prev, 1:2)
+  if (has_booster) {
+    ## crude method to zero out any groups not given booster
+    booster_population_left <- population_left
+    booster_population_left[-booster_groups, , ] <- 0
 
-    for (dose in seq_len(n_doses)) {
-      eligible <- colSums(population_left[, , dose])
-      ## Vaccinate the entire of the top priority groups
-      n_full_vacc <- findInterval(daily_doses_today[dose], cumsum(eligible))
-      if (n_full_vacc > 0) {
-        i_full_vacc <- seq_len(n_full_vacc)
-        population_to_vaccinate_mat[, i_full_vacc, dose, t] <-
-          population_left[, i_full_vacc, dose]
-      }
-
-      ## Then partially vaccinate the next priority group, if possible
-      if (n_full_vacc < n_priority_groups) {
-        if (n_full_vacc == 0) {
-          remaining_eligible <- daily_doses_today[dose]
-        } else {
-          remaining_eligible <- daily_doses_today[dose] -
-            cumsum(eligible)[n_full_vacc]
-        }
-        i_vacc <- n_full_vacc + 1L
-
-        ## Split remaining doses according to age
-        population_to_vaccinate_mat[, i_vacc, dose, t] <-
-          round(remaining_eligible * population_left[, i_vacc, dose] /
-                sum(population_left[, i_vacc, dose]))
-      }
-
-      population_left[, , dose] <- population_left[, , dose] -
-        population_to_vaccinate_mat[, , dose, t]
-    }
+    population_to_vaccinate_mat <- vaccination_schedule_exec(
+      daily_doses_tt, booster_daily_doses_value, booster_population_left,
+      population_to_vaccinate_mat, Inf, n_prev, 3)
   }
 
   doses <- apply(population_to_vaccinate_mat, c(1, 3, 4), sum)
 
   if (inherits(start, "vaccine_schedule")) {
-    doses <- mcstate::array_bind(start$doses, doses)
+    if (ncol(start$doses) < n_doses) {
+      sdoses <- abind2(start$doses,
+                             array(0, c(nrow(start$doses),
+                                        n_doses - ncol(start$doses),
+                                        nlayer(start$doses))))
+    } else {
+      sdoses <- start$doses
+    }
+    doses <- mcstate::array_bind(sdoses, doses)
+    dimnames(doses) <- NULL
   }
 
-  schedule <- vaccine_schedule(daily_doses_date, doses)
+  schedule <- vaccine_schedule(daily_doses_date, doses, n_doses)
 
   if (!is.null(lag_groups) || !is.null(lag_days)) {
+    if (has_booster) {
+      stop("Someone should think about how boost and lag interact")
+    }
     if (is.null(lag_days) || is.null(lag_groups)) {
       stop("'lag_days' must be non-NULL iff 'lag_groups' is non_NULL")
     }
@@ -472,14 +465,17 @@ vaccine_schedule_future <- function(start,
 ##'   dose for that day. So for `doses[i, j, k]` then it is for the
 ##'   ith group, the number of jth doses on day `(k - 1) + date`
 ##'
+##' @param n_doses The number of doses in the schedule. Typically (and
+##'   by default) this will be 2, but if using booster doses 3 (and in
+##'   future we may extend further).
+##'
 ##' @return A `vaccine_schedule` object
 ##' @export
-vaccine_schedule <- function(date, doses) {
+vaccine_schedule <- function(date, doses, n_doses = 2L) {
   assert_sircovid_date(date)
   assert_scalar(date)
 
   n_groups <- carehomes_n_groups()
-  n_doses <- 2L
 
   if (length(dim(doses)) != 3L) {
     stop("Expected a 3d array for 'doses'")
@@ -663,6 +659,17 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##' @param doses_future A named vector of vaccine doses to give in the
 ##'   future. Names must be in ISO date format.
 ##'
+##' @param boosters_future Optional named vector of booster doses to give in
+##'   the future. Names must be in ISO date format.
+##'
+##' @param boosters_prepend_zero If TRUE (default) and `boosters_future` is
+##'   not NULL then adds sets booster doses to zero before the first date in
+##'   `boosters_future`. This is in contrast to when it is FALSE and the
+##'   previous value in `schedule_past` is replicated until the first date in
+##'   boosters_future. Note that this should rarely be FALSE as this will
+##'   likely lead to duplicating daily doses that are already replicated in
+##'   `doses_future`.
+##'
 ##' @inheritParams vaccine_schedule_future
 ##' @inheritParams vaccine_schedule_data_future
 ##'
@@ -671,7 +678,11 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                                       mean_days_between_doses,
                                       priority_population, lag_groups = NULL,
-                                      lag_days = NULL) {
+                                      lag_days = NULL,
+                                      boosters_future = NULL,
+                                      boosters_prepend_zero = TRUE,
+                                      booster_groups = 1:19) {
+
   assert_is(schedule_past, "vaccine_schedule")
 
   date_end_past <- schedule_past$date + dim(schedule_past$doses)[[3]] - 1L
@@ -680,37 +691,7 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
 
   end_date <- as_sircovid_date(end_date)
 
-  if (length(doses_future) > 0) {
-    if (is.null(names(doses_future))) {
-      stop("'doses_future' must be named")
-    }
-    assert_date_string(names(doses_future))
-    doses_future_date <- sircovid_date(names(doses_future))
-    assert_increasing(doses_future_date, name = "names(doses_future)")
-
-    if (last(doses_future_date) > end_date) {
-      stop(sprintf(
-        "'end_date' must be at least %s (last doses_future date) but was %s",
-        last(names(doses_future)),
-        sircovid_date_as_date(end_date)))
-    }
-
-    if (doses_future_date[[1]] < date_end_past) {
-      message("Trimming vaccination schedule as overlaps with past")
-      i <- max(which(doses_future_date < date_end_past))
-      j <- seq(i, length(doses_future_date))
-      doses_future_date <- doses_future_date[j]
-      doses_future <- doses_future[j]
-      doses_future_date[[1]] <- date_end_past
-    }
-
-    stopifnot(
-      all(!is.na(doses_future)),
-      all(doses_future > 0))
-
-    date_future <- c(doses_future_date, end_date)
-    names(doses_future) <- NULL
-  } else {
+  if (length(doses_future) == 0 && length(boosters_future) == 0) {
     if (end_date < date_end_past) {
       stop(sprintf(
         "'end_date' must be at least %s (previous end date) but was %s",
@@ -718,6 +699,32 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
         sircovid_date_as_date(end_date)))
     }
     date_future <- end_date
+    booster_daily_doses_value <- NULL
+  } else {
+    if (length(doses_future) > 0) {
+      tmp <- check_doses_boosters_future(doses_future, end_date,
+                                         date_end_past)
+      date_future <- tmp$date
+      doses_future <- tmp$doses
+    } else {
+      date_future <- end_date
+    }
+    if (length(boosters_future) > 0) {
+      if (boosters_prepend_zero) {
+        boosters_future <- c(0, boosters_future)
+        names(boosters_future)[1] <-
+          as.character(sircovid_date_as_date(date_end_past))
+        boosters_future <- boosters_future[!duplicated(boosters_future)]
+      }
+      tmp <- check_doses_boosters_future(boosters_future, end_date,
+                                         date_end_past)
+
+      booster_daily_doses_value <- c(
+        rep(mean_doses_last, tmp$date[[1]] - date_end_past),
+        rep(unname(tmp$doses), diff(tmp$date)))
+    } else {
+      booster_daily_doses_value <- NULL
+    }
   }
 
   daily_doses_value <- c(
@@ -729,5 +736,109 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                           mean_days_between_doses,
                           priority_population,
                           lag_groups,
-                          lag_days)
+                          lag_days,
+                          booster_daily_doses_value,
+                          booster_groups)
+}
+
+
+vaccination_schedule_exec <- function(daily_doses_tt, daily_doses_value,
+                                      population_left,
+                                      population_to_vaccinate_mat,
+                                      mean_days_between_doses,
+                                      n_prev, dose_index) {
+  n_priority_groups <- ncol(population_left)
+  i1 <- dose_index[[1]]
+  i2 <- if (length(dose_index) == 2) dose_index[[2]] else dose_index[[1]]
+  for (t in seq_along(daily_doses_value)) {
+    tt <- t + n_prev
+    tt_dose_1 <- tt - mean_days_between_doses
+    if (tt_dose_1 >= 1) {
+      ## If we have promised more 2nd doses than we can deliver, we
+      ## move our debt forward in time by one day. If doses fluctuate
+      ## this will eventually be paid off.
+      if (daily_doses_tt[i1, tt_dose_1] > daily_doses_value[t]) {
+        daily_doses_tt[i1, tt_dose_1 + 1] <-
+          daily_doses_tt[i1, tt_dose_1 + 1] +
+          (daily_doses_tt[i1, tt_dose_1] - daily_doses_value[t])
+      }
+      daily_doses_tt[i2, tt] <- min(daily_doses_value[t],
+                                    daily_doses_tt[i1, tt_dose_1])
+      daily_doses_tt[i1, tt] <- daily_doses_value[t] - daily_doses_tt[i2, tt]
+    } else {
+      ## Only distribute first doses
+      daily_doses_tt[i2, tt] <- 0
+      daily_doses_tt[i1, tt] <- daily_doses_value[t]
+    }
+    daily_doses_today <- daily_doses_tt[, tt]
+
+    for (dose in dose_index) {
+      eligible <- colSums(population_left[, , dose])
+      ## Vaccinate the entire of the top priority groups
+      n_full_vacc <- findInterval(daily_doses_today[dose], cumsum(eligible))
+      if (n_full_vacc > 0) {
+        i_full_vacc <- seq_len(n_full_vacc)
+        population_to_vaccinate_mat[, i_full_vacc, dose, t] <-
+          population_left[, i_full_vacc, dose]
+      }
+
+      ## Then partially vaccinate the next priority group, if possible
+      if (n_full_vacc < n_priority_groups) {
+        if (n_full_vacc == 0) {
+          remaining_eligible <- daily_doses_today[dose]
+        } else {
+          remaining_eligible <- daily_doses_today[dose] -
+            cumsum(eligible)[n_full_vacc]
+        }
+        i_vacc <- n_full_vacc + 1L
+
+        ## Split remaining doses according to age
+        population_to_vaccinate_mat[, i_vacc, dose, t] <-
+          round(remaining_eligible * population_left[, i_vacc, dose] /
+                  sum(population_left[, i_vacc, dose]))
+      }
+
+      population_left[, , dose] <- population_left[, , dose] -
+        population_to_vaccinate_mat[, , dose, t]
+    }
+  }
+
+  population_to_vaccinate_mat
+}
+
+
+check_doses_boosters_future <- function(doses, end, end_past) {
+  if (is.null(names(doses))) {
+    stop(sprintf("'%s' must be named", deparse(substitute(doses))))
+  }
+  assert_date_string(names(doses), name = sprintf("names(%s)",
+                                                  deparse(substitute(doses))))
+  doses_future_date <- sircovid_date(names(doses))
+  assert_increasing(doses_future_date,
+                    name = sprintf("names(%s)",
+                                   deparse(substitute(doses))))
+
+  if (last(doses_future_date) > end) {
+    stop(sprintf(
+      "'end_date' must be at least %s (last %s date) but was %s",
+      last(names(doses)),
+      deparse(substitute(doses)),
+      sircovid_date_as_date(end)))
+  }
+
+  if (doses_future_date[[1]] < end_past) {
+    message("Trimming vaccination schedule as overlaps with past")
+    i <- max(which(doses_future_date < end_past))
+    j <- seq(i, length(doses_future_date))
+    doses_future_date <- doses_future_date[j]
+    doses <- doses[j]
+    doses_future_date[[1]] <- end_past
+  }
+
+  stopifnot(all(!is.na(doses)))
+
+  date_future <- c(doses_future_date, end)
+  names(doses) <- NULL
+
+  list(date = date_future, doses = doses)
 }

@@ -35,7 +35,9 @@ carehomes_parameters(
   vaccine_progression_rate = NULL,
   vaccine_schedule = NULL,
   vaccine_index_dose2 = NULL,
+  vaccine_index_booster = NULL,
   vaccine_catchup_fraction = 1,
+  n_doses = 2L,
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1
@@ -239,6 +241,8 @@ people to be vaccinated by group over time}
 
 \item{vaccine_index_dose2}{The index to use for the second dose}
 
+\item{vaccine_index_booster}{The index to use for the booster dose}
+
 \item{vaccine_catchup_fraction}{A value between 0 and 1 indicating the
 proportion of doses not distributed according to schedule (e.g. because
 too many people were in the I or H compartments and could not be
@@ -246,6 +250,9 @@ vaccinated at the scheduled time) that we postpone to a later date.
 A value of 0 means we do not catch up at all on any missed doses; a
 value of 1 means we try to catch up for all missed doses. This is set
 to 1 by default}
+
+\item{n_doses}{Number of doses given out, including boosters. Default is
+2.}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same

@@ -64,7 +64,7 @@ test_that("vaccine_schedule_future produces consistent schedule", {
   ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
   ## not exactly equal because of some rounding
   expect_vector_equal(
-      colSums(n_to_vaccinate1 + n_to_vaccinate2), daily_doses, tol = 5)
+    colSums(n_to_vaccinate1 + n_to_vaccinate2), daily_doses, tol = 5)
 })
 
 
@@ -92,6 +92,14 @@ test_that("vaccine_priority_population adds to correct population", {
   pop_by_age <- carehomes_parameters(1, region)$N_tot
 
   expect_vector_equal(rowSums(n), uptake_by_age * pop_by_age, tol = 2)
+})
+
+
+test_that("vaccine_priority_population adds to correct pop - full uptake", {
+  region <- "london"
+  n <- vaccine_priority_population(region, NULL)
+  pop_by_age <- carehomes_parameters(1, region)$N_tot
+  expect_vector_equal(rowSums(n), pop_by_age, tol = 2)
 })
 
 
@@ -361,4 +369,393 @@ test_that("prevent impossible scenarios", {
     paste("'end_date' must be at least 2021-03-29 (previous end date)",
           "but was 2021-03-01"),
     fixed = TRUE)
+})
+
+
+test_that("vaccine_schedule_future functions with boosters", {
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- rep(20000, 100) # a vector of number of doses to give each day
+  mean_days_between_doses <- 12 * 7
+
+  booster_doses <- c(rep(0, 150), rep(10000, 50))
+
+  n <- vaccine_priority_population(region, uptake_by_age)
+  dose_schedule <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses)
+
+  ## errors when trying to add a lag
+  expect_error(vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses, lag_days = 1))
+
+  doses <- dose_schedule$doses
+  n_to_vaccinate1 <- dose_schedule$doses[, 1, ]
+  n_to_vaccinate2 <- dose_schedule$doses[, 2, ]
+  n_to_vaccinate3 <- dose_schedule$doses[, 3, ]
+
+  ## initially only first doses are delivered
+  ## and they add up to the target daily_doses
+  ## not exactly equal because of some rounding
+  phase1 <- seq_len(mean_days_between_doses)
+  expect_vector_equal(
+    colSums(n_to_vaccinate1[, phase1]), daily_doses[phase1], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase1]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase1]), 0)
+
+  ## during phase 2 only second doses are delivered
+  ## as doses are constant over time
+  ## and they add up to the target daily_doses
+  ## not exactly equal because of some rounding
+  phase2 <- 85:100
+  expect_vector_equal(
+    colSums(n_to_vaccinate2[, phase2]), daily_doses[phase2], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase2]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase2]), 0)
+
+  ## during phase 3, no doses or boosters
+  phase3 <- 101:150
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase3]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase3]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase3]), 0)
+
+  ## during phase 4 only boosters are delivered
+  phase4 <- 151:200
+  expect_vector_equal(
+    colSums(n_to_vaccinate3[, phase4]), booster_doses[phase4], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase4]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase4]), 0)
+
+  ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
+  ## not exactly equal because of some rounding
+  expect_vector_equal(
+    colSums(n_to_vaccinate1 + n_to_vaccinate2)[1:100],
+    daily_doses[1:100], tol = 5)
+
+  ## check that n_to_vaccinate3 = booster_doses
+  ## not exactly equal because of some rounding
+  expect_vector_equal(
+    colSums(n_to_vaccinate3), booster_doses, tol = 5)
+})
+
+
+test_that("Can add boosters to schedule", {
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- rep(20000, 100) # a vector of number of doses to give each day
+  mean_days_between_doses <- 12 * 7
+
+  booster_doses <- c(rep(0, 150), rep(10000, 50))
+
+  n <- vaccine_priority_population(region, uptake_by_age)
+
+  ## schedule with doses and boosters
+  expected_schedule <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses)
+
+  ## schedule with doses only
+  dose_schedule <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n)
+
+  ## schedule with doses only
+  daily_doses <- numeric(100)
+  booster_doses <- c(rep(0, 50), rep(10000, 50))
+
+  complete_schedule <- vaccine_schedule_future(
+    dose_schedule, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses)
+
+  expect_equal(expected_schedule, complete_schedule)
+})
+
+
+
+test_that("check schedule scenario prepends zeros when needed", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  doses_future <- c(
+    "2021-04-10" = 6000,
+    "2021-04-20" = 7000,
+    "2021-04-30" = 9000,
+    "2021-05-10" = 0)
+
+  end_date <- "2021-08-01"
+
+  expect_zeros <- rep(c(5000, 6000, 7000, 9000, 0, 600, 700, 900),
+                      c(12, 10, 10, 10, 31, 10, 10, 32))
+  i <- seq_len(dim(past$doses)[[3]])
+
+  ## 1. manually and automatically add zeros
+  boosters_future <- c(
+    "2021-03-29" = 0,
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_prepend_zero = TRUE)
+
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
+
+  ## 2. automatically add zeros
+  boosters_future <- c(
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_prepend_zero = TRUE)
+
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
+
+  ## 3. manually add zeros
+  boosters_future <- c(
+    "2021-03-29" = 0,
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_prepend_zero = FALSE)
+
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_zeros)
+
+  ## 4. no zeros
+  boosters_future <- c(
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   boosters_prepend_zero = FALSE)
+
+  ## 5000 booster doses are being added to everything before 2021-06-10
+  expect_no_zeros <- rep(c(10000, 5000, 600, 700, 900),
+                      c(42, 31, 10, 10, 32))
+  expect_equal(signif(apply(res$doses[, , -i], 3, sum), 1), expect_no_zeros)
+})
+
+
+test_that("create schedule scenario with doses and boosters", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  doses_future <- c(
+    "2021-04-10" = 6000,
+    "2021-04-20" = 7000,
+    "2021-04-30" = 9000,
+    "2021-05-10" = 0)
+
+  boosters_future <- c(
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900)
+  end_date <- "2021-08-01"
+
+  res <- vaccine_schedule_scenario(past, doses_future, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future)
+
+  i <- seq_len(dim(past$doses)[[3]])
+  expect_equal(res$doses[, 1:2, i], past$doses)
+  doses_future <- res$doses[, , -i]
+  expect_equal(dim(doses_future), c(19, 3, 125))
+
+  n <- apply(doses_future, 3, sum)
+  expect_equal(
+    signif(n, 1),
+    rep(c(5000, 6000, 7000, 9000, 0, 600, 700, 900),
+        c(12, 10, 10, 10, 31, 10, 10, 32)))
+  expect_lt(max(abs(n - signif(n, 1))[-seq_len(12)]), 10)
+
+  expect_vector_equal(doses_future[, 3, 1:73], 0)
+  expect_false(all(doses_future[, 3, 74] == 0))
+})
+
+
+test_that("create schedule scenario with boosters only", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  boosters_future <- c(
+    "2021-06-10" = 600,
+    "2021-06-20" = 700,
+    "2021-06-30" = 900
+  )
+  end_date <- "2021-08-01"
+
+  res <- vaccine_schedule_scenario(past, doses_future = NULL, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future
+  )
+
+  i <- seq_len(dim(past$doses)[[3]])
+  expect_equal(res$doses[, 1:2, i], past$doses)
+  doses_future <- res$doses[, , -i]
+  expect_equal(dim(doses_future), c(19, 3, 125))
+
+  n <- apply(doses_future, 3, sum)
+  expect_equal(
+    signif(n, 1),
+    rep(c(5000, 6000), c(73, 52))
+  )
+
+  expect_vector_equal(doses_future[, 3, 1:73], 0)
+  expect_false(all(doses_future[, 3, 74] == 0))
+})
+
+
+test_that("can exclude groups from vaccine_schedule_future", {
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  daily_doses <- rep(20000, 100) # a vector of number of doses to give each day
+  mean_days_between_doses <- 12 * 7
+
+  booster_doses <- c(rep(0, 150), rep(10000, 50))
+
+  n <- vaccine_priority_population(region, uptake_by_age)
+  dose_schedule_all <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses)
+
+  dose_schedule_ch <- vaccine_schedule_future(
+    0, daily_doses, mean_days_between_doses, n,
+    booster_daily_doses_value = booster_doses,
+    booster_groups = 18:19)
+
+  expect_equal(dose_schedule_all$date, dose_schedule_ch$date)
+  expect_equal(dose_schedule_all$n_doses, dose_schedule_ch$n_doses)
+
+  doses_all <- dose_schedule_all$doses
+  doses_ch <- dose_schedule_ch$doses
+
+  ## check 0 when expected
+  expect_vector_gte(doses_all, doses_ch)
+  expect_equal(doses_all[18:19, , ], doses_ch[18:19, , ])
+  expect_vector_equal(doses_ch[1:17, 3, ], 0)
+  expect_false(all(doses_ch[18:19, 3, ] == 0))
+
+  ## check totals still as expected
+  n_to_vaccinate1 <- doses_ch[, 1, ]
+  n_to_vaccinate2 <- doses_ch[, 2, ]
+  n_to_vaccinate3 <- doses_ch[, 3, ]
+
+  ## initially only first doses are delivered
+  ## and they add up to the target daily_doses
+  ## not exactly equal because of some rounding
+  phase1 <- seq_len(mean_days_between_doses)
+  expect_vector_equal(
+    colSums(n_to_vaccinate1[, phase1]), daily_doses[phase1], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase1]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase1]), 0)
+
+  ## during phase 2 only second doses are delivered
+  ## as doses are constant over time
+  ## and they add up to the target daily_doses
+  ## not exactly equal because of some rounding
+  phase2 <- 85:100
+  expect_vector_equal(
+    colSums(n_to_vaccinate2[, phase2]), daily_doses[phase2], tol = 5)
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase2]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase2]), 0)
+
+  ## during phase 3, no doses or boosters
+  phase3 <- 101:150
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase3]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase3]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate3[, phase3]), 0)
+
+  ## during phase 4 only boosters are delivered
+  phase4 <- 151:200
+  ## expect not to be equal because not all doses given once 18/19 filled
+  expect_vector_nequal(
+    colSums(n_to_vaccinate3[, phase4]), booster_doses[phase4], tol = 5)
+  expect_equal(sum(n_to_vaccinate3[, phase4]), sum(n[18:19, ]))
+  expect_vector_equal(colSums(n_to_vaccinate1[, phase4]), 0)
+  expect_vector_equal(colSums(n_to_vaccinate2[, phase4]), 0)
+
+  ## check that n_to_vaccinate1 + n_to_vaccinate2 = daily_doses
+  ## not exactly equal because of some rounding
+  expect_vector_equal(
+    colSums(n_to_vaccinate1 + n_to_vaccinate2)[1:100],
+    daily_doses[1:100], tol = 5)
+
+  ## check that n_to_vaccinate3 = booster_doses
+  ## not exactly equal because of some rounding
+  expect_vector_nequal(
+    colSums(n_to_vaccinate3), booster_doses, tol = 5)
+  expect_equal(
+    sum(n_to_vaccinate3), sum(n[18:19, ]), tol = 5)
+})
+
+
+test_that("can exclude booster groups from schedule scenario", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  boosters_future <- c(
+    "2021-06-10" = 6000,
+    "2021-06-20" = 7000,
+    "2021-06-30" = 9000
+  )
+  end_date <- "2021-08-01"
+
+  doses_all <- vaccine_schedule_scenario(past, doses_future = NULL, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future)$doses
+
+  doses_ch <- vaccine_schedule_scenario(past, doses_future = NULL, end_date,
+                                   mean_days_between_doses, n,
+                                   boosters_future = boosters_future,
+                                   booster_groups = 18:19)$doses
+
+  expect_vector_nequal(doses_all, doses_ch)
+
+  i <- seq_len(dim(past$doses)[[3]])
+  expect_equal(doses_ch[, 1:2, i], past$doses)
+  doses_future <- doses_ch[, , -i]
+  expect_equal(dim(doses_future), c(19, 3, 125))
+
+  expect_vector_equal(doses_future[1:17, 3, ], 0)
+  expect_vector_nequal(doses_future[18:19, 3, ], 0)
 })

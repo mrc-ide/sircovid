@@ -188,6 +188,8 @@ NULL
 ##'
 ##' @param vaccine_index_dose2 The index to use for the second dose
 ##'
+##' @param vaccine_index_booster The index to use for the booster dose
+##'
 ##' @param vaccine_catchup_fraction A value between 0 and 1 indicating the
 ##'   proportion of doses not distributed according to schedule (e.g. because
 ##'   too many people were in the I or H compartments and could not be
@@ -195,6 +197,9 @@ NULL
 ##'   A value of 0 means we do not catch up at all on any missed doses; a
 ##'   value of 1 means we try to catch up for all missed doses. This is set
 ##'   to 1 by default
+##'
+##' @param n_doses Number of doses given out, including boosters. Default is
+##'   2.
 ##'
 ##' @param waning_rate A single value or a vector of values representing the
 ##'   rates of waning of immunity after infection; if a single value the same
@@ -359,7 +364,9 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_progression_rate = NULL,
                                  vaccine_schedule = NULL,
                                  vaccine_index_dose2 = NULL,
+                                 vaccine_index_booster = NULL,
                                  vaccine_catchup_fraction = 1,
+                                 n_doses = 2L,
                                  waning_rate = 0,
                                  exp_noise = 1e6,
                                  cross_immunity = 1) {
@@ -412,7 +419,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## control cross-immunity
   ret$cross_immunity <- assert_proportion(
-    mcstate:::recycle(cross_immunity, length(strain_transmission))
+    recycle(cross_immunity, length(strain_transmission))
   )
 
   ## This is used to normalise the serology counts (converting them
@@ -456,8 +463,10 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_progression_rate,
                                                   vaccine_schedule,
                                                   vaccine_index_dose2,
+                                                  vaccine_index_booster,
                                                   strain$n_strains,
-                                                  vaccine_catchup_fraction)
+                                                  vaccine_catchup_fraction,
+                                                  n_doses)
 
 
   strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
@@ -476,7 +485,7 @@ carehomes_parameters <- function(start_date, region,
   ret$rel_p_W_D <- rel_severity
   ret$rel_p_G_D <- rel_severity
 
- strain_rel_gammas <- list(E = NULL,
+  strain_rel_gammas <- list(E = NULL,
                             A = strain_rel_gamma_A,
                             P = strain_rel_gamma_P,
                             C_1 = strain_rel_gamma_C_1,
@@ -540,28 +549,28 @@ carehomes_index <- function(info) {
 
   ## Variables required for the particle filter to run:
   index_core <- c(icu = index[["ICU_tot"]],
-                 general = index[["general_tot"]],
-                 deaths_comm = index[["D_comm_tot"]],
-                 deaths_carehomes = index[["D_carehomes_tot"]],
-                 deaths_hosp = index[["D_hosp_tot"]],
-                 admitted = index[["cum_admit_conf"]],
-                 diagnoses = index[["cum_new_conf"]],
-                 deaths_carehomes_inc = index[["D_carehomes_inc"]],
-                 deaths_comm_inc = index[["D_comm_inc"]],
-                 deaths_hosp_inc = index[["D_hosp_inc"]],
-                 admitted_inc = index[["admit_conf_inc"]],
-                 diagnoses_inc = index[["new_conf_inc"]],
-                 sero_pos_1 = index[["sero_pos_1"]],
-                 sero_pos_2 = index[["sero_pos_2"]],
-                 sympt_cases = index[["cum_sympt_cases"]],
-                 sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
-                 sympt_cases_non_variant_over25 =
-                 index[["cum_sympt_cases_non_variant_over25"]],
-                 sympt_cases_inc = index[["sympt_cases_inc"]],
-                 sympt_cases_over25_inc = index[["sympt_cases_over25_inc"]],
-                 sympt_cases_non_variant_over25_inc =
-                   index[["sympt_cases_non_variant_over25_inc"]],
-                 react_pos = index[["react_pos"]])
+                  general = index[["general_tot"]],
+                  deaths_comm = index[["D_comm_tot"]],
+                  deaths_carehomes = index[["D_carehomes_tot"]],
+                  deaths_hosp = index[["D_hosp_tot"]],
+                  admitted = index[["cum_admit_conf"]],
+                  diagnoses = index[["cum_new_conf"]],
+                  deaths_carehomes_inc = index[["D_carehomes_inc"]],
+                  deaths_comm_inc = index[["D_comm_inc"]],
+                  deaths_hosp_inc = index[["D_hosp_inc"]],
+                  admitted_inc = index[["admit_conf_inc"]],
+                  diagnoses_inc = index[["new_conf_inc"]],
+                  sero_pos_1 = index[["sero_pos_1"]],
+                  sero_pos_2 = index[["sero_pos_2"]],
+                  sympt_cases = index[["cum_sympt_cases"]],
+                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
+                  sympt_cases_non_variant_over25 =
+                    index[["cum_sympt_cases_non_variant_over25"]],
+                  sympt_cases_inc = index[["sympt_cases_inc"]],
+                  sympt_cases_over25_inc = index[["sympt_cases_over25_inc"]],
+                  sympt_cases_non_variant_over25_inc =
+                    index[["sympt_cases_non_variant_over25_inc"]],
+                  react_pos = index[["react_pos"]])
 
   ## Only incidence versions for the likelihood now:
   index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
@@ -584,63 +593,44 @@ carehomes_index <- function(info) {
   ## right.
 
   n_vacc_classes <- info$dim$S[[2]]
-
-  ## To name our S categories following age and vaccine classes, we
-  ## use two suffixes. The first vaccination class is special and so
-  ## has an empty suffix so that we retain our model without
-  ## vaccination if needed.
-  ## S_0, S_5, ..., S_CHW, S_CHR, S_0_1, S_5_1, ..., S_CHW_1, S_CHR_1, ...
-  s_type <- rep(c("", sprintf("_%s", seq_len(n_vacc_classes - 1L))),
-                each = length(suffix))
-
-  index_S <- set_names(index[["S"]],
-                       paste0("S", suffix, s_type))
-  index_I_weighted <- set_names(index[["I_weighted"]],
-                                paste0("I_weighted", suffix, s_type))
-  index_cum_admit <- set_names(index[["cum_admit_by_age"]],
-                               paste0("cum_admit", suffix))
-  index_D_hosp <- set_names(index[["D_hosp"]],
-                            paste0("D_hosp", suffix))
-  index_D <- set_names(index[["D"]],
-                       paste0("D_all", suffix, s_type))
-  index_cum_infections_disag <- set_names(index[["cum_infections_disag"]],
-                                          paste0("cum_infections_disag",
-                                                 suffix, s_type))
-  index_diagnoses_admitted <- set_names(index[["diagnoses_admitted"]],
-                                        paste0("diagnoses_admitted",
-                                               suffix, s_type))
-  index_cum_n_vaccinated <- set_names(index[["cum_n_vaccinated"]],
-                                    paste0("cum_n_vaccinated", suffix, s_type))
-
-  ## prob_strain is named similarly to S, with the second suffix representing
-  ## strain instead of vacc_class
   n_strains <- info$dim$prob_strain
-  strain_type <- c("", sprintf("_%s", seq_len(n_strains - 1L)))
-  index_prob_strain <- set_names(index[["prob_strain"]],
-                                 paste0("prob_strain", strain_type))
-
-  ## R follows age, strains, vacc_class
   if (n_strains == 2) {
     n_tot_strains <- 4
   } else {
     n_tot_strains <- 1
   }
 
-  suffixes <- expand.grid(
-    suffix,
-    c("", sprintf("_S%s", seq_len(n_tot_strains - 1L))),
-    c("", sprintf("_V%s", seq_len(n_vacc_classes - 1L)))
-  )
-  r_type <- apply(suffixes, 1,
-                  function(x) sprintf("R%s", paste0(x, collapse = "")))
+  ## age varying only
+  index_D_hosp <- calculate_index(index, "D_hosp", list(), suffix)
+  index_cum_admit <- calculate_index(index, "cum_admit_by_age",
+                                     list(), suffix, "cum_admit")
 
-  index_R <- set_names(index[["R"]], r_type)
+  ## age x vacc class
+  index_S <- calculate_index(index, "S", list(n_vacc_classes), suffix)
+  index_I_weighted <- calculate_index(index, "I_weighted",
+                                      list(n_vacc_classes), suffix)
+  index_diagnoses_admitted <- calculate_index(index, "diagnoses_admitted",
+                                              list(n_vacc_classes), suffix)
+  index_cum_infections_disag <- calculate_index(index, "cum_infections_disag",
+                                                list(n_vacc_classes), suffix)
+  index_cum_n_vaccinated <- calculate_index(index, "cum_n_vaccinated",
+                                            list(n_vacc_classes), suffix)
+  index_D <- calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all")
+
+  ## (real) strain only
+  index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
+
+  ## age x (total) strain x vacc class
+  index_R <- calculate_index(index, "R",
+                             list(S = n_tot_strains, V = n_vacc_classes),
+                             suffix)
 
   list(run = index_run,
        state = c(index_state_core, index_save, index_S, index_R,
                  index_cum_admit, index_D_hosp, index_D,
                  index_diagnoses_admitted, index_cum_infections_disag,
-                 index_I_weighted, index_prob_strain, index_cum_n_vaccinated))
+                 index_I_weighted, index_prob_strain, index_cum_n_vaccinated
+  ))
 }
 
 
@@ -701,7 +691,7 @@ carehomes_compare <- function(state, observed, pars) {
 
   ## Pillar 2 over 25s
   pillar2_over25_negs <- pars$p_NC * (pars$N_tot_over25 -
-                                      model_sympt_cases_over25)
+                                        model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
                                                  pars$pillar2_sensitivity,
@@ -785,8 +775,8 @@ carehomes_compare <- function(state, observed, pars) {
                             pars$phi_diagnoses * model_diagnoses,
                             pars$kappa_diagnoses, exp_noise)
   ll_all_admission <- ll_nbinom(observed$all_admission,
-                               pars$phi_all_admission * model_all_admission,
-                               pars$kappa_all_admission, exp_noise)
+                                pars$phi_all_admission * model_all_admission,
+                                pars$kappa_all_admission, exp_noise)
 
   ll_serology_1 <- ll_binom(observed$sero_pos_15_64_1,
                             observed$sero_tot_15_64_1,
@@ -797,9 +787,9 @@ carehomes_compare <- function(state, observed, pars) {
                             model_sero_prob_pos_2)
 
   ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
-                         observed$pillar2_tot,
-                         model_pillar2_prob_pos,
-                         pars$rho_pillar2_tests)
+                                   observed$pillar2_tot,
+                                   model_pillar2_prob_pos,
+                                   pars$rho_pillar2_tests)
 
   ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
                                 pars$phi_pillar2_cases * model_sympt_cases,
@@ -1156,8 +1146,10 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
                                              vaccine_index_dose2 = NULL,
+                                             vaccine_index_booster = NULL,
                                              n_strains = 1,
-                                             vaccine_catchup_fraction = 1) {
+                                             vaccine_catchup_fraction = 1,
+                                             n_doses = 2L) {
   n_groups <- carehomes_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
@@ -1182,16 +1174,14 @@ carehomes_parameters_vaccination <- function(N_tot,
 
   ret <- Map(function(value, name)
     build_rel_param(value, n_strains, n_vacc_classes, name),
-             rel_params, names(rel_params))
-
-  n_doses <- 2L # fixed; see the odin code
+    rel_params, names(rel_params))
 
   if (is.null(vaccine_schedule)) {
     if (!is.null(vaccine_index_dose2) && vaccine_index_dose2 != 1L) {
       stop("'vaccine_index_dose2' set without schedule")
     }
     ret$vaccine_dose_step <- array(0, c(n_groups, n_doses, 1))
-    ret$index_dose <- c(1L, 1L)
+    ret$index_dose <- rep(1L, n_doses)
   } else {
     assert_is(vaccine_schedule, "vaccine_schedule")
     vaccine_index_dose2 <- vaccine_index_dose2 %||% 1L
@@ -1200,16 +1190,35 @@ carehomes_parameters_vaccination <- function(N_tot,
         "Invalid value for 'vaccine_index_dose2', must be in [1, %d]",
         n_vacc_classes))
     }
+    stopifnot(vaccine_schedule$n_doses == n_doses)
+
+    if (is.null(vaccine_index_booster)) {
+      if (n_doses != 2L) {
+        stop("'n_doses' must be 2 as boosters not used")
+      }
+    } else {
+      if (n_doses != 3L) {
+        stop("'n_doses' must be 3 as boosters are used")
+      }
+      if (vaccine_index_booster > n_vacc_classes) {
+        stop(sprintf(
+          "Invalid value for 'vaccine_index_booster', must be in [1, %d]",
+          n_vacc_classes))
+      }
+    }
 
     n_days <- dim(vaccine_schedule$doses)[[3]]
     i <- rep(seq_len(n_days), each = 1 / dt)
     len <- vaccine_schedule$date / dt
-    ret$index_dose <- c(1L, vaccine_index_dose2)
+    ret$index_dose <- c(1L, vaccine_index_dose2, vaccine_index_booster)
 
     ret$vaccine_dose_step <- mcstate::array_bind(
       array(0, c(n_groups, n_doses, len)),
       (vaccine_schedule$doses * dt)[, , i])
   }
+
+  ret$index_dose_inverse <- create_index_dose_inverse(n_vacc_classes,
+                                                      ret$index_dose)
 
   ret$n_vacc_classes <- n_vacc_classes
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
@@ -1219,6 +1228,8 @@ carehomes_parameters_vaccination <- function(N_tot,
   assert_scalar(vaccine_catchup_fraction)
   assert_proportion(vaccine_catchup_fraction)
   ret$vaccine_catchup_fraction <- vaccine_catchup_fraction
+
+  ret$n_doses <- n_doses
 
   ret
 }
@@ -1469,7 +1480,7 @@ carehomes_parameters_progression <- function(dt,
         }
       } else if (length(gamma_date) != length(gamma_value)) {
         stop(sprintf("'date' and 'value' for '%s' must have the same length",
-             gamma_name))
+                     gamma_name))
       }
     }
 
@@ -1708,8 +1719,8 @@ carehomes_particle_filter_data <- function(data) {
   verify_names(data, required, allow_extra = TRUE)
 
   if (any(!is.na(data$deaths) &
-           (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp) |
-            !is.na(data$deaths_carehomes) | !is.na(data$deaths_non_hosp)))) {
+          (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp) |
+           !is.na(data$deaths_carehomes) | !is.na(data$deaths_non_hosp)))) {
     stop("Deaths are not consistently split into total vs hospital/non-hospital
           or hospital/care homes/community")
   }
@@ -1719,12 +1730,13 @@ carehomes_particle_filter_data <- function(data) {
          homes/community")
   }
 
-  check_pillar2_streams <- function(df) sum(c(any(!is.na(df$pillar2_pos)) |
-                             any(!is.na(df$pillar2_tot)),
-                           any(!is.na(df$pillar2_cases)),
-                           any(!is.na(df$pillar2_over25_pos)) |
-                             any(!is.na(df$pillar2_over25_tot)),
-                           any(!is.na(df$pillar2_over25_cases))))
+  check_pillar2_streams <- function(df)
+    sum(c(any(!is.na(df$pillar2_pos)) |
+            any(!is.na(df$pillar2_tot)),
+          any(!is.na(df$pillar2_cases)),
+          any(!is.na(df$pillar2_over25_pos)) |
+            any(!is.na(df$pillar2_over25_tot)),
+          any(!is.na(df$pillar2_over25_cases))))
 
   if (is.null(data$population)) {
     if (check_pillar2_streams(data) > 1) {
@@ -1863,4 +1875,35 @@ carehomes_check_severity <- function(pars) {
 
 
   invisible(pars)
+}
+
+
+create_index_dose_inverse <- function(n_vacc_classes, index_dose) {
+  index_dose_inverse <- integer(n_vacc_classes)
+  index_dose_inverse[index_dose] <- seq_along(index_dose)
+  index_dose_inverse
+}
+
+
+calculate_index <- function(index, state, suffix_list, suffix0 = NULL,
+                            state_name = state) {
+  if (is.null(suffix0)) {
+    suffixes <- list()
+  } else {
+    suffixes <- list(suffix0)
+  }
+  for (i in seq_along(suffix_list)) {
+    nm <- names(suffix_list)[[i]]
+    if (length(nm) == 0) {
+      nm <- ""
+    }
+    suffixes <- c(suffixes,
+                  list(c("", sprintf("_%s%s", nm,
+                                     seq_len(suffix_list[[i]] - 1L)))))
+  }
+  suffixes <- expand.grid(suffixes)
+  nms <- apply(suffixes, 1,
+               function(x) sprintf("%s%s",
+                                   state_name, paste0(x, collapse = "")))
+  set_names(index[[state]], nms)
 }

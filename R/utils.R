@@ -99,6 +99,17 @@ abind1 <- function(a, b) {
 }
 
 
+abind2 <- function(a, b) {
+  na <- dim(a)[2]
+  nb <- dim(b)[2]
+  nab <- dim(a)[c(1, 3)]
+  ret <- array(NA_real_, c(nab[1L], na + nb, nab[2L]))
+  ret[, seq_len(na), ] <- a
+  ret[, seq_len(nb) + na, ] <- b
+  colnames(ret) <- c(colnames(a), colnames(b))
+  ret
+}
+
 ## calculates the nth power of a matrix
 matrix_pow <- function(x, n) {
   if (!is_integer(n)) {

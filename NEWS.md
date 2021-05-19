@@ -1,9 +1,15 @@
+# sircovid 0.11.5
+
+* Booster doses can now be added to a vaccine schedule with parameters to determine which groups get boosters
+
 # sircovid 0.11.4
 
 * Fix Rt calculations for multistrain models when including interpolation
+
 # sircovid 0.11.3
 
 * For simplicity, it is now assumed that individuals that progress through model compartments at a given time step cannot also move vaccine classes in that same step
+
 
 # sircovid 0.10.53
 

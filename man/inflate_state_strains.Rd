@@ -2,7 +2,7 @@
 % Please edit documentation in R/tools.R
 \name{inflate_state_strains}
 \alias{inflate_state_strains}
-\title{Inflate model state}
+\title{Inflate strains in model state}
 \usage{
 inflate_state_strains(state1, info1, info2)
 }
