@@ -2689,10 +2689,6 @@ test_that("Can add lag to vaccine schedule", {
   expect_gt(min(uptake2), 0.98)
 })
 
-## FIXME (RS): Is this correct? Below column 4 is always empty. I think
-##   cum_n_S_vaccinated is total number who move *out of* not *into* that vacc
-##   class so the test is correct but the comment below is confusing.
-
 ## Dose 1 moves you from 1->2
 ## Dose 2 moves you from 2->3
 ## Dose 3 moves you from 3->4
@@ -2701,6 +2697,7 @@ test_that("run sensible vaccination schedule with boosters", {
   uptake <- c(rep(0, 3), rep(1, 16))
   daily_doses <- rep(100000, 120)
   booster_daily_doses <- c(rep(0, 150), rep(20000, 50))
+  np <- 3
   n <- vaccine_priority_population(region, uptake,
                                    prop_hcw = rep(0, 19),
                                    prop_very_vulnerable = rep(0, 19),
@@ -2724,7 +2721,7 @@ test_that("run sensible vaccination schedule with boosters", {
                             initial_I = 0)
 
   ## Let's go:
-  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
   info <- mod$info()
 
   state <- carehomes_initial(info, 1, p)$state
@@ -2732,7 +2729,7 @@ test_that("run sensible vaccination schedule with boosters", {
   mod$set_state(state)
 
   y <- mod$simulate((1:220) * 4)
-  y <- mod$transform_variables(y)
+  y <- mod$transform_variables(drop(y))
 
   ## Check that cum_n_S_vaccinated shows correct pattern with booster
   ## doses being given.
