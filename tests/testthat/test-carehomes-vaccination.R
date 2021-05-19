@@ -2744,7 +2744,8 @@ test_that("run sensible vaccination schedule with boosters", {
   expect_false(all(y$cum_n_S_vaccinated[, 1, , phase1] == 0))
 
   ## dose 2
-  ## In phase two never give any doses apart from second doses (and perhaps first)
+  ## In phase two never give any doses apart from second doses
+  ##  (and perhaps first)
 
   phase2 <- 15:120
   expect_vector_equal(y$cum_n_S_vaccinated[, 3:4, , phase2], 0)
