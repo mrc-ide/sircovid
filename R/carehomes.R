@@ -1202,7 +1202,7 @@ carehomes_parameters_vaccination <- function(N_tot,
       }
       if (vaccine_index_booster > n_vacc_classes) {
         stop(sprintf(
-          "Invalid value for 'booster', must be in [1, %d]",
+          "Invalid value for 'vaccine_index_booster', must be in [1, %d]",
           n_vacc_classes))
       }
     }

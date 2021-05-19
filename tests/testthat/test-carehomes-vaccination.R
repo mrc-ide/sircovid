@@ -1766,6 +1766,45 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       vaccine_schedule = schedule),
     "Column 3 of 'vaccine_progression_rate' must be zero (dose 2)",
     fixed = TRUE)
+
+  expect_error(
+    carehomes_parameters_vaccination(
+      ntot,
+      dt,
+      rel_susceptibility = c(1, 1, 1, 1),
+      vaccine_progression_rate = c(0, 1, 0, 1),
+      vaccine_index_dose2 = 3,
+      vaccine_index_booster = 4,
+      vaccine_schedule = schedule),
+    "'n_doses' must be 3 as boosters are used",
+    fixed = TRUE)
+
+  schedule <- vaccine_schedule(date = 1L,
+                               doses = array(0, c(19, 3, 5)), 3)
+  expect_error(
+    carehomes_parameters_vaccination(
+      ntot,
+      dt,
+      rel_susceptibility = c(1, 1, 1, 1),
+      vaccine_progression_rate = c(0, 1, 0, 1),
+      n_doses = 3,
+      vaccine_index_dose2 = 3,
+      vaccine_schedule = schedule),
+    "'n_doses' must be 2 as boosters not used",
+    fixed = TRUE)
+
+  expect_error(
+    carehomes_parameters_vaccination(
+      ntot,
+      dt,
+      rel_susceptibility = c(1, 1, 1, 1),
+      vaccine_progression_rate = c(0, 1, 0, 1),
+      n_doses = 3,
+      vaccine_index_booster = 10,
+      vaccine_index_dose2 = 3,
+      vaccine_schedule = schedule),
+    "Invalid value for 'vaccine_index_booster'",
+    fixed = TRUE)
 })
 
 
