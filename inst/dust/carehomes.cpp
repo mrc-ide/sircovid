@@ -3438,8 +3438,8 @@ public:
       }
     }
     real_t new_sympt_cases = odin_sum1<real_t>(internal.n_EI_P.data(), 0, shared->dim_n_EI_P);
-    real_t new_sympt_cases_non_variant = odin_sum3<real_t>(internal.n_EI_P.data(), 0, shared->dim_n_EI_P_1, 0, 1, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + odin_sum3<real_t>(internal.n_EI_P.data(), 0, shared->dim_n_EI_P_1, 3, 4, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12);
-    real_t new_sympt_cases_non_variant_over25 = odin_sum3<real_t>(internal.n_EI_P.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + odin_sum3<real_t>(internal.n_EI_P.data(), 5, shared->n_groups, 3, 4, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12);
+    real_t new_sympt_cases_non_variant = odin_sum3<real_t>(internal.n_EI_P.data(), 0, shared->dim_n_EI_P_1, 0, 1, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + ((shared->n_real_strains == 2 ? odin_sum3<real_t>(internal.n_EI_P.data(), 0, shared->dim_n_EI_P_1, 3, 4, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) : 0));
+    real_t new_sympt_cases_non_variant_over25 = odin_sum3<real_t>(internal.n_EI_P.data(), 5, shared->n_groups, 0, 1, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) + ((shared->n_real_strains == 2 ? odin_sum3<real_t>(internal.n_EI_P.data(), 5, shared->n_groups, 3, 4, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12) : 0));
     real_t new_sympt_cases_over25 = odin_sum3<real_t>(internal.n_EI_P.data(), 5, shared->n_groups, 0, shared->dim_n_EI_P_2, 0, shared->dim_n_EI_P_3, shared->dim_n_EI_P_1, shared->dim_n_EI_P_12);
     for (int i = 1; i <= shared->dim_p_E_next_vacc_class_1; ++i) {
       for (int j = 1; j <= shared->dim_p_E_next_vacc_class_2; ++j) {

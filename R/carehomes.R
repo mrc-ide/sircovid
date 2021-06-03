@@ -581,6 +581,7 @@ carehomes_index <- function(info) {
                             "deaths_comm_inc", "deaths_hosp_inc",
                             "admitted_inc", "diagnoses_inc",
                             "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+                            "sympt_cases_non_variant_inc",
                             "sympt_cases_over25_inc",
                             "sympt_cases_non_variant_over25_inc",
                             "react_pos")]

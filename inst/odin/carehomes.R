@@ -1535,7 +1535,9 @@ new_sympt_cases <- sum(n_EI_P)
 update(cum_sympt_cases) <- cum_sympt_cases + new_sympt_cases
 
 initial(cum_sympt_cases_non_variant) <- 0
-new_sympt_cases_non_variant <- sum(n_EI_P[, 1, ]) + sum(n_EI_P[, 4, ])
+new_sympt_cases_non_variant <-
+  sum(n_EI_P[, 1, ]) +
+  (if (n_real_strains == 2) sum(n_EI_P[, 4, ]) else 0)
 update(cum_sympt_cases_non_variant) <-
   cum_sympt_cases_non_variant + new_sympt_cases_non_variant
 
@@ -1547,7 +1549,8 @@ update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
 
 initial(cum_sympt_cases_non_variant_over25) <- 0
 new_sympt_cases_non_variant_over25 <-
-  sum(n_EI_P[6:n_groups, 1, ]) + sum(n_EI_P[6:n_groups, 4, ])
+  sum(n_EI_P[6:n_groups, 1, ]) +
+  (if (n_real_strains == 2) sum(n_EI_P[6:n_groups, 4, ]) else 0)
 update(cum_sympt_cases_non_variant_over25) <-
   cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25
 
