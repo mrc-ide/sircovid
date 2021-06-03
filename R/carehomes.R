@@ -822,7 +822,7 @@ carehomes_compare <- function(state, observed, pars) {
 
   ll_strain <- ll_binom(observed$strain_non_variant,
                         observed$strain_tot,
-                        model_strain_over25_prob_pos)
+                        model_strain_prob_pos)
 
   ll_strain_over25 <- ll_binom(observed$strain_over25_non_variant,
                                observed$strain_over25_tot,
