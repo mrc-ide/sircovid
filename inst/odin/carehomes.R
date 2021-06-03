@@ -1534,6 +1534,11 @@ initial(cum_sympt_cases) <- 0
 new_sympt_cases <- sum(n_EI_P)
 update(cum_sympt_cases) <- cum_sympt_cases + new_sympt_cases
 
+initial(cum_sympt_cases_non_variant) <- 0
+new_sympt_cases_non_variant <- sum(n_EI_P[, 1, ]) + sum(n_EI_P[, 4, ])
+update(cum_sympt_cases_non_variant) <-
+  cum_sympt_cases_non_variant + new_sympt_cases_non_variant
+
 ## only over 25s (exclude groups 1 to 5)
 initial(cum_sympt_cases_over25) <- 0
 new_sympt_cases_over25 <- sum(n_EI_P[6:n_groups, , ])
@@ -1541,7 +1546,8 @@ update(cum_sympt_cases_over25) <- cum_sympt_cases_over25 +
   new_sympt_cases_over25
 
 initial(cum_sympt_cases_non_variant_over25) <- 0
-new_sympt_cases_non_variant_over25 <- sum(n_EI_P[6:n_groups, 1, ])
+new_sympt_cases_non_variant_over25 <-
+  sum(n_EI_P[6:n_groups, 1, ]) + sum(n_EI_P[6:n_groups, 4, ])
 update(cum_sympt_cases_non_variant_over25) <-
   cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25
 
@@ -1550,6 +1556,11 @@ initial(sympt_cases_inc) <- 0
 update(sympt_cases_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases
   else sympt_cases_inc + new_sympt_cases)
+
+initial(sympt_cases_non_variant_inc) <- 0
+update(sympt_cases_non_variant_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_non_variant
+  else sympt_cases_non_variant_inc + new_sympt_cases_non_variant)
 
 initial(sympt_cases_over25_inc) <- 0
 update(sympt_cases_over25_inc) <- (

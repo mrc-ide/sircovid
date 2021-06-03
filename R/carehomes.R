@@ -563,10 +563,14 @@ carehomes_index <- function(info) {
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
                   sympt_cases = index[["cum_sympt_cases"]],
+                  sympt_cases_non_variant =
+                    index[["cum_sympt_cases_non_variant"]],
                   sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                   sympt_cases_non_variant_over25 =
                     index[["cum_sympt_cases_non_variant_over25"]],
                   sympt_cases_inc = index[["sympt_cases_inc"]],
+                  sympt_cases_non_variant_inc =
+                    index[["sympt_cases_non_variant_inc"]],
                   sympt_cases_over25_inc = index[["sympt_cases_over25_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
@@ -675,6 +679,7 @@ carehomes_compare <- function(state, observed, pars) {
   model_sero_pos_1 <- state["sero_pos_1", ]
   model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
+  model_sympt_cases_non_variant <- state["sympt_cases_non_variant_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
   model_sympt_cases_non_variant_over25 <-
     state["sympt_cases_non_variant_over25_inc", ]
@@ -732,6 +737,11 @@ carehomes_compare <- function(state, observed, pars) {
                                          pars$exp_noise)
 
   ## Strain
+  model_strain_prob_pos <- test_prob_pos(
+    model_sympt_cases_non_variant,
+    model_sympt_cases - model_sympt_cases_non_variant,
+    1, 1, pars$exp_noise)
+
   model_strain_over25_prob_pos <- test_prob_pos(
     model_sympt_cases_non_variant_over25,
     model_sympt_cases_over25 - model_sympt_cases_non_variant_over25,
@@ -809,15 +819,19 @@ carehomes_compare <- function(state, observed, pars) {
                        observed$react_tot,
                        model_react_prob_pos)
 
-  ll_strain_over25 <- ll_binom(observed$strain_non_variant,
-                               observed$strain_tot,
+  ll_strain <- ll_binom(observed$strain_non_variant,
+                        observed$strain_tot,
+                        model_strain_over25_prob_pos)
+
+  ll_strain_over25 <- ll_binom(observed$strain_over25_non_variant,
+                               observed$strain_over25_tot,
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
-    ll_pillar2_over25_cases + ll_react + ll_strain_over25
+    ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25
 }
 
 
