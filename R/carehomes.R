@@ -1729,7 +1729,9 @@ carehomes_particle_filter_data <- function(data) {
                 "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
-                "pillar2_over25_cases", "react_pos", "react_tot")
+                "pillar2_over25_cases", "react_pos", "react_tot",
+                "strain_non_variant", "strain_tot", "strain_over25_non_variant",
+                "strain_over25_tot")
 
   verify_names(data, required, allow_extra = TRUE)
 
@@ -1753,14 +1755,27 @@ carehomes_particle_filter_data <- function(data) {
             any(!is.na(df$pillar2_over25_tot)),
           any(!is.na(df$pillar2_over25_cases))))
 
+  check_strain_streams <- function(df)
+    sum(c(any(!is.na(df$strain_non_variant)) |
+            any(!is.na(df$strain_tot)),
+          any(!is.na(df$strain_over25_non_varaint)) |
+            any(!is.na(df$strain_over25_tot))))
+
   if (is.null(data$population)) {
     if (check_pillar2_streams(data) > 1) {
       stop("Cannot fit to more than one pillar 2 data stream")
+    }
+    if (check_strain_streams(data) > 1) {
+      stop("Cannot fit to more than one strain data stream")
     }
   } else {
     lapply(split(data, data$population), function(x) {
       if (check_pillar2_streams(x) > 1) {
         stop(sprintf("Cannot fit to more than one pillar 2 data stream for
+                      region %s", x$population[[1]]))
+      }
+      if (check_strain_streams(x) > 1) {
+        stop(sprintf("Cannot fit to more than one strain data stream for
                       region %s", x$population[[1]]))
       }
     })

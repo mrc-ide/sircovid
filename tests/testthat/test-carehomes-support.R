@@ -720,6 +720,10 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
+  data$strain_non_variant <- NA
+  data$strain_tot <- NA
+  data$strain_over25_non_variant <- NA
+  data$strain_over25_tot <- NA
   expect_error(
     carehomes_particle_filter(data),
     "Deaths are not consistently split into total vs hospital/non-hospital
@@ -736,7 +740,7 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
 
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
-          data stream", {
+          or strain data stream", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             ## Add additional columns
@@ -761,10 +765,16 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$pillar2_over25_cases <- NA
             data$react_pos <- NA
             data$react_tot <- NA
+            data$strain_non_variant <- NA
+            data$strain_tot <- NA
+            data$strain_over25_non_variant <- NA
+            data$strain_over25_tot <- NA
 
             ## Example that should not cause error
             data$pillar2_pos <- 3
             data$pillar2_tot <- 6
+            data$strain_non_variant <- 8
+            data$strain_tot <- 10
             pf <- carehomes_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
 
@@ -800,6 +810,16 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             expect_error(
               carehomes_particle_filter(data),
               "Cannot fit to more than one pillar 2 data stream")
+
+            data$pillar2_over25_cases <- NA
+            data$strain_non_variant <- 8
+            data$strain_tot <- 10
+            data$strain_over25_non_variant <- 6
+            data$strain_over25_tot <- 9
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one strain data stream")
+
           })
 
 
@@ -809,7 +829,7 @@ test_that("the carehomes sircovid model has 19 groups", {
 
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
-          data stream (II)", {
+          or strain data stream (II)", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             class(data)[1] <- "particle_filter_data_nested"
@@ -835,6 +855,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$pillar2_over25_cases <- NA
             data$react_pos <- NA
             data$react_tot <- NA
+            data$strain_non_variant <- NA
+            data$strain_tot <- NA
+            data$strain_over25_non_variant <- NA
+            data$strain_over25_tot <- NA
 
             ## Example that should not cause error
             data$pillar2_pos <- 3
@@ -854,10 +878,23 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
               carehomes_particle_filter(data),
               "Cannot fit to more than one pillar 2 data stream")
 
+            data$pillar2_cases <- NA
+            data$strain_non_variant <- 8
+            data$strain_tot <- 10
+            data$strain_over25_non_variant <- 6
+            data$strain_over25_tot <- 9
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one strain data stream")
+
             ## Don't error if two regions have different streams
             data[1:31, "pillar2_cases"] <- NA
             data[32:62, "pillar2_pos"] <- NA
             data[32:62, "pillar2_tot"] <- NA
+            data[1:31, "strain_non_variant"] <- NA
+            data[1:31, "strain_tot"] <- NA
+            data[32:62, "strain_over25_non_variant"] <- NA
+            data[32:62, "strain_over25_tot"] <- NA
             pf <- carehomes_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
           })
