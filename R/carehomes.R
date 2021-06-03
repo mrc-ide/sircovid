@@ -1833,7 +1833,8 @@ carehomes_data <- function(data, start_date, dt) {
                 pillar2_over25_pos = NA_real_, pillar2_over25_tot = NA_real_,
                 pillar2_over25_cases = NA_real_,  react_pos = NA_real_,
                 react_tot = NA_real_, strain_non_variant = NA_real_,
-                strain_tot = NA_real_)
+                strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
+                strain_over25_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
   carehomes_particle_filter_data(data)
 }

@@ -38,6 +38,8 @@ test_that("can run the carehomes model", {
                                                  4428952, 3632824),
           sympt_cases_inc                    = c(174, 595, 549, 163,
                                                  74),
+          sympt_cases_non_variant_inc        = c(174, 595, 549, 163,
+                                                 74),
           sympt_cases_over25_inc             = c(141, 481, 442, 128,
                                                  64),
           sympt_cases_non_variant_over25_inc = c(141, 481, 442, 128,
