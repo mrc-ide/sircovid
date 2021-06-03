@@ -1758,7 +1758,7 @@ carehomes_particle_filter_data <- function(data) {
   check_strain_streams <- function(df)
     sum(c(any(!is.na(df$strain_non_variant)) |
             any(!is.na(df$strain_tot)),
-          any(!is.na(df$strain_over25_non_varaint)) |
+          any(!is.na(df$strain_over25_non_variant)) |
             any(!is.na(df$strain_over25_tot))))
 
   if (is.null(data$population)) {
