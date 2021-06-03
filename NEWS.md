@@ -1,3 +1,7 @@
+# sircovid 0.11.6
+
+* Can now fit to variant data for all ages (previously just for over 25s)
+
 # sircovid 0.11.5
 
 * Booster doses can now be added to a vaccine schedule with parameters to determine which groups get boosters

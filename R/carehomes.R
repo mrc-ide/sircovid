@@ -563,10 +563,14 @@ carehomes_index <- function(info) {
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
                   sympt_cases = index[["cum_sympt_cases"]],
+                  sympt_cases_non_variant =
+                    index[["cum_sympt_cases_non_variant"]],
                   sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
                   sympt_cases_non_variant_over25 =
                     index[["cum_sympt_cases_non_variant_over25"]],
                   sympt_cases_inc = index[["sympt_cases_inc"]],
+                  sympt_cases_non_variant_inc =
+                    index[["sympt_cases_non_variant_inc"]],
                   sympt_cases_over25_inc = index[["sympt_cases_over25_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
@@ -577,6 +581,7 @@ carehomes_index <- function(info) {
                             "deaths_comm_inc", "deaths_hosp_inc",
                             "admitted_inc", "diagnoses_inc",
                             "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+                            "sympt_cases_non_variant_inc",
                             "sympt_cases_over25_inc",
                             "sympt_cases_non_variant_over25_inc",
                             "react_pos")]
@@ -675,6 +680,7 @@ carehomes_compare <- function(state, observed, pars) {
   model_sero_pos_1 <- state["sero_pos_1", ]
   model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
+  model_sympt_cases_non_variant <- state["sympt_cases_non_variant_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
   model_sympt_cases_non_variant_over25 <-
     state["sympt_cases_non_variant_over25_inc", ]
@@ -732,6 +738,11 @@ carehomes_compare <- function(state, observed, pars) {
                                          pars$exp_noise)
 
   ## Strain
+  model_strain_prob_pos <- test_prob_pos(
+    model_sympt_cases_non_variant,
+    model_sympt_cases - model_sympt_cases_non_variant,
+    1, 1, pars$exp_noise)
+
   model_strain_over25_prob_pos <- test_prob_pos(
     model_sympt_cases_non_variant_over25,
     model_sympt_cases_over25 - model_sympt_cases_non_variant_over25,
@@ -809,15 +820,19 @@ carehomes_compare <- function(state, observed, pars) {
                        observed$react_tot,
                        model_react_prob_pos)
 
-  ll_strain_over25 <- ll_binom(observed$strain_non_variant,
-                               observed$strain_tot,
+  ll_strain <- ll_binom(observed$strain_non_variant,
+                        observed$strain_tot,
+                        model_strain_prob_pos)
+
+  ll_strain_over25 <- ll_binom(observed$strain_over25_non_variant,
+                               observed$strain_over25_tot,
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
-    ll_pillar2_over25_cases + ll_react + ll_strain_over25
+    ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25
 }
 
 
@@ -1714,7 +1729,9 @@ carehomes_particle_filter_data <- function(data) {
                 "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
-                "pillar2_over25_cases", "react_pos", "react_tot")
+                "pillar2_over25_cases", "react_pos", "react_tot",
+                "strain_non_variant", "strain_tot", "strain_over25_non_variant",
+                "strain_over25_tot")
 
   verify_names(data, required, allow_extra = TRUE)
 
@@ -1738,14 +1755,27 @@ carehomes_particle_filter_data <- function(data) {
             any(!is.na(df$pillar2_over25_tot)),
           any(!is.na(df$pillar2_over25_cases))))
 
+  check_strain_streams <- function(df)
+    sum(c(any(!is.na(df$strain_non_variant)) |
+            any(!is.na(df$strain_tot)),
+          any(!is.na(df$strain_over25_non_varaint)) |
+            any(!is.na(df$strain_over25_tot))))
+
   if (is.null(data$population)) {
     if (check_pillar2_streams(data) > 1) {
       stop("Cannot fit to more than one pillar 2 data stream")
+    }
+    if (check_strain_streams(data) > 1) {
+      stop("Cannot fit to more than one strain data stream")
     }
   } else {
     lapply(split(data, data$population), function(x) {
       if (check_pillar2_streams(x) > 1) {
         stop(sprintf("Cannot fit to more than one pillar 2 data stream for
+                      region %s", x$population[[1]]))
+      }
+      if (check_strain_streams(x) > 1) {
+        stop(sprintf("Cannot fit to more than one strain data stream for
                       region %s", x$population[[1]]))
       }
     })
@@ -1818,7 +1848,8 @@ carehomes_data <- function(data, start_date, dt) {
                 pillar2_over25_pos = NA_real_, pillar2_over25_tot = NA_real_,
                 pillar2_over25_cases = NA_real_,  react_pos = NA_real_,
                 react_tot = NA_real_, strain_non_variant = NA_real_,
-                strain_tot = NA_real_)
+                strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
+                strain_over25_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
   carehomes_particle_filter_data(data)
 }

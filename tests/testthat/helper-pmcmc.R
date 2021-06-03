@@ -13,7 +13,8 @@ reference_data_mcmc <- function() {
            "sero_tot_15_64_2", "pillar2_pos", "pillar2_tot", "pillar2_cases",
            "pillar2_over25_pos", "pillar2_over25_tot",
            "pillar2_over25_cases", "react_pos", "react_tot",
-           "strain_non_variant", "strain_tot")
+           "strain_non_variant", "strain_tot",
+           "strain_over25_non_variant", "strain_over25_tot")
     for (i in v) {
       data[[i]] <- NA
     }

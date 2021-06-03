@@ -406,7 +406,8 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
     names(index$run),
     c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
-      "sero_pos_1", "sero_pos_2", "sympt_cases_inc", "sympt_cases_over25_inc",
+      "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+      "sympt_cases_non_variant_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["icu"]],
@@ -570,6 +571,7 @@ test_that("carehomes_compare combines likelihood correctly", {
     sero_pos_1 = 4:9,
     sero_pos_2 = 14:19,
     sympt_cases_inc = 100:105,
+    sympt_cases_non_variant_inc = 70:75,
     sympt_cases_over25_inc = 80:85,
     sympt_cases_non_variant_over25_inc = 60:65,
     react_pos = 2:7)
@@ -597,8 +599,10 @@ test_that("carehomes_compare combines likelihood correctly", {
     pillar2_over25_cases = 25,
     react_pos = 3,
     react_tot = 500,
-    strain_non_variant = 20,
-    strain_tot = 25)
+    strain_non_variant = 40,
+    strain_tot = 50,
+    strain_over25_non_variant = 20,
+    strain_over25_tot = 25)
   date <- sircovid_date("2020-01-01")
   pars <- carehomes_parameters(date, "uk", exp_noise = Inf)
 
@@ -619,11 +623,14 @@ test_that("carehomes_compare combines likelihood correctly", {
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
+  nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
                              c(nms_sero_1, nms_sero_2, nms_pillar2,
-                               nms_pillar2_over25, nms_react, nms_strain))),
+                               nms_pillar2_over25, nms_react, nms_strain,
+                               nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
-             list(nms_pillar2_over25), list(nms_react), list(nms_strain))
+             list(nms_pillar2_over25), list(nms_react), list(nms_strain),
+             list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, observed_keep(x), pars))
@@ -713,6 +720,10 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
+  data$strain_non_variant <- NA
+  data$strain_tot <- NA
+  data$strain_over25_non_variant <- NA
+  data$strain_over25_tot <- NA
   expect_error(
     carehomes_particle_filter(data),
     "Deaths are not consistently split into total vs hospital/non-hospital
@@ -729,7 +740,7 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
 
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
-          data stream", {
+          or strain data stream", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             ## Add additional columns
@@ -754,10 +765,16 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$pillar2_over25_cases <- NA
             data$react_pos <- NA
             data$react_tot <- NA
+            data$strain_non_variant <- NA
+            data$strain_tot <- NA
+            data$strain_over25_non_variant <- NA
+            data$strain_over25_tot <- NA
 
             ## Example that should not cause error
             data$pillar2_pos <- 3
             data$pillar2_tot <- 6
+            data$strain_non_variant <- 8
+            data$strain_tot <- 10
             pf <- carehomes_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
 
@@ -793,6 +810,16 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             expect_error(
               carehomes_particle_filter(data),
               "Cannot fit to more than one pillar 2 data stream")
+
+            data$pillar2_over25_cases <- NA
+            data$strain_non_variant <- 8
+            data$strain_tot <- 10
+            data$strain_over25_non_variant <- 6
+            data$strain_over25_tot <- 9
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one strain data stream")
+
           })
 
 
@@ -802,7 +829,7 @@ test_that("the carehomes sircovid model has 19 groups", {
 
 
 test_that("carehomes_particle_filter_data does not allow more than one pillar 2
-          data stream (II)", {
+          or strain data stream (II)", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             class(data)[1] <- "particle_filter_data_nested"
@@ -828,6 +855,10 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$pillar2_over25_cases <- NA
             data$react_pos <- NA
             data$react_tot <- NA
+            data$strain_non_variant <- NA
+            data$strain_tot <- NA
+            data$strain_over25_non_variant <- NA
+            data$strain_over25_tot <- NA
 
             ## Example that should not cause error
             data$pillar2_pos <- 3
@@ -847,10 +878,23 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
               carehomes_particle_filter(data),
               "Cannot fit to more than one pillar 2 data stream")
 
+            data$pillar2_cases <- NA
+            data$strain_non_variant <- 8
+            data$strain_tot <- 10
+            data$strain_over25_non_variant <- 6
+            data$strain_over25_tot <- 9
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to more than one strain data stream")
+
             ## Don't error if two regions have different streams
             data[1:31, "pillar2_cases"] <- NA
             data[32:62, "pillar2_pos"] <- NA
             data[32:62, "pillar2_tot"] <- NA
+            data[1:31, "strain_non_variant"] <- NA
+            data[1:31, "strain_tot"] <- NA
+            data[32:62, "strain_over25_non_variant"] <- NA
+            data[32:62, "strain_over25_tot"] <- NA
             pf <- carehomes_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
           })

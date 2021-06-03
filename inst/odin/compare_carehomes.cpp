@@ -83,6 +83,8 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
 // [[odin.dust::compare_data(react_tot = real_t)]]
 // [[odin.dust::compare_data(strain_non_variant = real_t)]]
 // [[odin.dust::compare_data(strain_tot = real_t)]]
+// [[odin.dust::compare_data(strain_over25_non_variant = real_t)]]
+// [[odin.dust::compare_data(strain_over25_tot = real_t)]]
 // [[odin.dust::compare_function]]
 template <typename T>
 typename T::real_t compare(const typename T::real_t * state,
@@ -105,6 +107,8 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_sero_pos_1 = odin(sero_pos_1);
   const real_t model_sero_pos_2 = odin(sero_pos_2);
   const real_t model_sympt_cases = odin(sympt_cases_inc);
+  const real_t model_sympt_cases_non_variant =
+    odin(sympt_cases_non_variant_inc);
   const real_t model_sympt_cases_over25 = odin(sympt_cases_over25_inc);
   const real_t model_sympt_cases_non_variant_over25 =
     odin(sympt_cases_non_variant_over25_inc);
@@ -165,6 +169,14 @@ typename T::real_t compare(const typename T::real_t * state,
   // Strain
   real_t strain_sensitivity = 1.0;
   real_t strain_specificity = 1.0;
+  const real_t model_strain_prob_pos =
+    test_prob_pos(model_sympt_cases_non_variant,
+                  model_sympt_cases -
+                    model_sympt_cases_non_variant,
+                    strain_sensitivity,
+                    strain_specificity,
+                    odin(exp_noise),
+                    rng_state);
   const real_t model_strain_over25_prob_pos =
     test_prob_pos(model_sympt_cases_non_variant_over25,
                   model_sympt_cases_over25 -
@@ -249,13 +261,16 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_react =
     ll_binom(data.react_pos, data.react_tot,
              model_react_prob_pos);
-  const real_t ll_strain_over25 =
+  const real_t ll_strain =
     ll_binom(data.strain_non_variant, data.strain_tot,
+             model_strain_prob_pos);
+  const real_t ll_strain_over25 =
+    ll_binom(data.strain_over25_non_variant, data.strain_over25_tot,
              model_strain_over25_prob_pos);
 
   return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
-    ll_pillar2_over25_cases + ll_react + ll_strain_over25;
+    ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25;
 }
