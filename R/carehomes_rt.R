@@ -68,6 +68,18 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
     'ICU_transmission' or 'G_D_transmission' are non-zero")
   }
 
+  all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
+  if (is.null(type)) {
+    type <- all_types
+  } else {
+    err <- setdiff(type, all_types)
+    if (length(err) > 0) {
+      stop(sprintf("Unknown R type %s, must match %s",
+                   paste(squote(err), collapse = ", "),
+                   paste(squote(all_types), collapse = ", ")))
+    }
+  }
+
   n_strains <- length(p$strain_transmission)
   ## move prob_strain check up here and make NULL if not needed to shortcut
   ##  checks and calculations
@@ -82,10 +94,17 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
                             function(i) any(is.na(prob_strain[, i])))
 
       ## calculate Rt by first ignoring NA
-      ret <- carehomes_Rt(step[which_nna], S[, which_nna], p,
-                          prob_strain[, which_nna], type, interpolate_every,
-                          interpolate_critical_dates, interpolate_min,
-                          eigen_method, R[, which_nna], weight_Rt)
+      if (any(which_nna)) {
+        ret <- carehomes_Rt(
+          step[which_nna], S[, which_nna], p,
+          prob_strain[, which_nna], type, interpolate_every,
+          interpolate_critical_dates, interpolate_min,
+          eigen_method, R[, which_nna], weight_Rt
+        )
+      } else {
+        ret <- vector("list", 3 + length(type))
+        names(ret) <- c("step", "date", "beta", type)
+      }
 
       ## replace reduced step,date,beta with full values (no NA here)
       ret$step <- step
@@ -104,18 +123,6 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
   } else {
     prob_strain <- array(1, length(step))
     R <- NULL
-  }
-
-  all_types <- c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")
-  if (is.null(type)) {
-    type <- all_types
-  } else {
-    err <- setdiff(type, all_types)
-    if (length(err) > 0) {
-      stop(sprintf("Unknown R type %s, must match %s",
-                   paste(squote(err), collapse = ", "),
-                   paste(squote(all_types), collapse = ", ")))
-    }
   }
 
   if (!is.null(interpolate_every)) {

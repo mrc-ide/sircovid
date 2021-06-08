@@ -1,3 +1,7 @@
+# 0.11.8
+
+* Fixes bug in calculating Rt for multiple strains when the prob_strain matrix is all NA
+
 # sircovid 0.11.6
 
 * Can now fit to variant data for all ages (previously just for over 25s)
