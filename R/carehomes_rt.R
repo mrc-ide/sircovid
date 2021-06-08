@@ -96,10 +96,10 @@ carehomes_Rt <- function(step, S, p, prob_strain = NULL,
       ## calculate Rt by first ignoring NA
       if (any(which_nna)) {
         ret <- carehomes_Rt(
-          step[which_nna], S[, which_nna], p,
-          prob_strain[, which_nna], type, interpolate_every,
+          step[which_nna], S[, which_nna, drop = FALSE], p,
+          prob_strain[, which_nna, drop = FALSE], type, interpolate_every,
           interpolate_critical_dates, interpolate_min,
-          eigen_method, R[, which_nna], weight_Rt
+          eigen_method, R[, which_nna, drop = FALSE], weight_Rt
         )
       } else {
         ret <- vector("list", 3 + length(type))

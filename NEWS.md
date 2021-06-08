@@ -1,4 +1,8 @@
-# 0.11.8
+# sircovid 0.11.9
+
+* Fixes bug in calculating Rt when only one time-point is non-NA in prob_strain
+
+# sircovid 0.11.8
 
 * Fixes bug in calculating Rt for multiple strains when the prob_strain matrix is all NA
 
