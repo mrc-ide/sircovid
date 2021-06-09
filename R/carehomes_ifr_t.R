@@ -251,6 +251,7 @@ carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
 
 
 carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
+
   probs <- compute_pathway_probabilities(
     step = step,
     pars = pars,

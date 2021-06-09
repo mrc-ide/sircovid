@@ -440,7 +440,7 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 
 
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
-  browser()
+
   dt <- pars$dt
   n_time_steps <-
     length(sircovid_parameters_expand_step(step, pars$p_H_step))
