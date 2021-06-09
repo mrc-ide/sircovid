@@ -664,6 +664,21 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
   out
 }
 
+
+calculate_mean_duration <- function(pars, name) {
+  ## Note the mean duration (in time steps) of a compartment for
+  ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
+  gamma_step <-
+    sircovid_parameters_expand_step(step,
+                                    pars[[paste0("gamma_", name, "_step")]])
+  rel_gamma <- pars[[paste0("rel_gamma_", name)]]
+  k <- pars[[paste0("k_", name)]]
+  gamma <- aperm(outer(outer(gamma_step, rel_gamma),
+                       array(1, c(pars$n_groups, pars$n_vacc_classes))),
+                 c(3, 2, 4, 1))
+  k / stats::pexp(gamma, dt)
+}
+
 unmirror_pars <- function(p) {
   which <-
     vapply(p,
