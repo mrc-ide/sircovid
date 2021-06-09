@@ -27,7 +27,8 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
   all_types <- c("IFR_t_all", "IFR_t_general", "IHR_t_all", "IHR_t_general",
                  "IFR_t_all_no_vacc", "IFR_t_general_no_vacc",
-                 "IHR_t_all_no_vacc", "IHR_t_general_no_vacc", "ALOS")
+                 "IHR_t_all_no_vacc", "IHR_t_general_no_vacc",
+                 "ALOS", "ALOS_no_vacc")
   if (is.null(type)) {
     type <- all_types
   } else {
