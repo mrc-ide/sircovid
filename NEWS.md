@@ -1,3 +1,7 @@
+# sircovid 0.11.10
+
+* Can now also output ALOS (average length of stay) from carehomes_ifr_t
+
 # sircovid 0.11.9
 
 * Fixes bug in calculating Rt when only one time-point is non-NA in prob_strain
