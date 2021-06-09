@@ -440,7 +440,7 @@ carehomes_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 
 
 carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
-
+  browser()
   dt <- pars$dt
   n_time_steps <-
     length(sircovid_parameters_expand_step(step, pars$p_H_step))
@@ -455,15 +455,27 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## weighed by probability of going through that stage
   ## and by relative infectivity of that stage
 
-  mean_duration_I_A <- calculate_mean_duration(pars, "A")
-  mean_duration_I_P <- calculate_mean_duration(pars, "P")
-  mean_duration_I_C_1 <- calculate_mean_duration(pars, "C_1")
-  mean_duration_I_C_2 <- calculate_mean_duration(pars, "C_2")
+  ## Note the mean duration (in time steps) of a compartment for
+  ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
+  calculate_mean <- function(transmission, prob, name) {
+    gamma_step <-
+      sircovid_parameters_expand_step(step,
+                                      pars[[paste0("gamma_", name, "_step")]])
+    rel_gamma <- pars[[paste0("rel_gamma_", name)]]
+    k <- pars[[paste0("k_", name)]]
+    gamma <- aperm(outer(outer(gamma_step, rel_gamma),
+                         array(1, c(pars$n_groups, pars$n_vacc_classes))),
+                   c(3, 2, 4, 1))
+    transmission * k * prob / stats::pexp(gamma, dt)
+  }
 
-  mean_duration <- (1 - p_C) * pars$I_A_transmission * mean_duration_I_A +
-    p_C * (pars$I_P_transmission * mean_duration_I_P +
-             pars$I_C_1_transmission * mean_duration_I_C_1 +
-             pars$I_C_2_transmission * mean_duration_I_C_2)
+  mean_duration_I_A <- calculate_mean(pars$I_A_transmission, (1 - p_C), "A")
+  mean_duration_I_P <- calculate_mean(pars$I_P_transmission, p_C, "P")
+  mean_duration_I_C_1 <- calculate_mean(pars$I_C_1_transmission, p_C, "C_1")
+  mean_duration_I_C_2 <- calculate_mean(pars$I_C_2_transmission, p_C, "C_2")
+
+  mean_duration <- mean_duration_I_A + mean_duration_I_P +
+    mean_duration_I_C_1 + mean_duration_I_C_2
 
   ## Account for different infectivity levels depending on vaccination stage
   mean_duration <- mean_duration * outer(pars$rel_infectivity,
@@ -475,6 +487,9 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   mean_duration <-
     aperm(aperm(mean_duration, c(2, 1, 3, 4)) * pars$strain_transmission,
           c(2, 1, 3, 4))
+
+  ## Multiply by dt to convert from time steps to days
+  mean_duration <- dt * mean_duration
 
   mean_duration
 }

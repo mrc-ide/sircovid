@@ -27,7 +27,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
   all_types <- c("IFR_t_all", "IFR_t_general", "IHR_t_all", "IHR_t_general",
                  "IFR_t_all_no_vacc", "IFR_t_general_no_vacc",
-                 "IHR_t_all_no_vacc", "IHR_t_general_no_vacc")
+                 "IHR_t_all_no_vacc", "IHR_t_general_no_vacc", "ALOS")
   if (is.null(type)) {
     type <- all_types
   } else {
@@ -61,6 +61,15 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
   if (ncol(I_weighted) != length(step)) {
     stop(sprintf("Expected 'I_weighted' to have %d columns, following 'step'",
                  length(step)))
+  }
+
+  n_strains <- length(p$strain_transmission)
+  if (n_strains == 1) {
+    n_real_strains <- 1
+  } else {
+    ## unmirror pseudo-strains value (with safety checks)
+    p <- unmirror_pars(p)
+    n_real_strains <- 2
   }
 
   IFR_by_group_and_vacc_class <-
@@ -125,7 +134,22 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
       IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, , t])
     }
 
-    weighted.mean(IFR_vec[i_keep], expected_infections[i_keep, t])
+    if (type != "ALOS") {
+      out <- weighted.mean(IFR_vec[i_keep], expected_infections[i_keep, t])
+    } else {
+      if (no_vacc) {
+        ## same IHR by group across all vaccine classes
+        ## Selects strain 1 and vacc class 1
+        IHR_vec <- rep(c(IFR_by_group_and_vacc_class[["IHR"]][, 1, 1, t]),
+                       n_vacc_classes)
+      } else {
+        ## Selects strain 1
+        IHR_vec <- c(IFR_by_group_and_vacc_class[["IHR"]][, 1, , t])
+      }
+      out <- weighted.mean(IFR_vec[i_keep],
+                           expected_infections[i_keep, t] * IHR_vec)
+    }
+    out
   }
 
 
@@ -158,7 +182,9 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
                                         type = "IHR"),
                IHR_t_general_no_vacc = list(e_inf = expected_infections_no_vacc,
                                             general = TRUE, no_vacc = TRUE,
-                                            type = "IHR"))
+                                            type = "IHR"),
+               ALOS = list(e_inf = expected_infections_vacc,
+                           general = FALSE, no_vacc = FALSE, type = "ALOS"))
 
   ret <- list(step = step,
               date = step * p$dt)
@@ -221,13 +247,12 @@ carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
 
 
 carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
-
   probs <- compute_pathway_probabilities(
     step = step,
     pars = pars,
     n_time_steps = length(sircovid_parameters_expand_step(step,
                                                           pars$p_H_step)),
-    n_strains = 1,
+    n_strains = length(pars$strain_transmission),
     n_vacc_classes = nlayer(pars$rel_susceptibility))
 
   p_C <- probs$p_C
@@ -238,13 +263,45 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
   p_W_D <- probs$p_W_D
   p_G_D <- probs$p_G_D
 
+  dt <- pars$dt
+
+  ## Note the mean duration (in time steps) of a compartment for
+  ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
+  calculate_mean <- function(name) {
+    gamma_step <-
+      sircovid_parameters_expand_step(step,
+                                      pars[[paste0("gamma_", name, "_step")]])
+    rel_gamma <- pars[[paste0("rel_gamma_", name)]]
+    k <- pars[[paste0("k_", name)]]
+    gamma <- aperm(outer(outer(gamma_step, rel_gamma),
+                         array(1, c(pars$n_groups, pars$n_vacc_classes))),
+                   c(3, 2, 4, 1))
+    k / stats::pexp(gamma, dt)
+  }
+
+  duration_ICU_pre <- calculate_mean("ICU_pre")
+  duration_ICU_D <- calculate_mean("ICU_D")
+  duration_ICU_W_D <- calculate_mean("ICU_W_D")
+  duration_ICU_W_R <- calculate_mean("ICU_W_R")
+  duration_H_D <- calculate_mean("H_D")
+  duration_H_R <- calculate_mean("H_R")
+  duration_W_D <- calculate_mean("W_D")
+  duration_W_R <- calculate_mean("W_R")
+
   IHR <- p_C * p_H * (1 - p_G_D) * 100
   IFR <- p_C * p_H * p_G_D * 100 +
     IHR * (p_ICU * (p_ICU_D + (1 - p_ICU_D) * p_W_D) +
              (1 - p_ICU) * p_H_D)
 
+  ALOS <- (1 - p_ICU) * (p_H_D * duration_H_D + (1 - p_H_D) * duration_H_R) +
+    p_ICU * (duration_ICU_pre + (1 - p_ICU_D) * duration_ICU_D +
+               p_W_D * (duration_ICU_W_D + duration_W_D) +
+               (1 - p_W_D) * (duration_ICU_W_R + duration_W_R))
+  ALOS <- dt * ALOS
+
   out <- list(IFR = IFR,
-              IHR = IHR)
+              IHR = IHR,
+              ALOS = ALOS)
 
   out
 }
