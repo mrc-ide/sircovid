@@ -184,7 +184,10 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
                                             general = TRUE, no_vacc = TRUE,
                                             type = "IHR"),
                ALOS = list(e_inf = expected_infections_vacc,
-                           general = FALSE, no_vacc = FALSE, type = "ALOS"))
+                           general = FALSE, no_vacc = FALSE, type = "ALOS"),
+               ALOS_no_vacc = list(e_inf = expected_infections_no_vacc,
+                                   general = FALSE, no_vacc = TRUE,
+                                   type = "ALOS"))
 
   ret <- list(step = step,
               date = step * p$dt)
