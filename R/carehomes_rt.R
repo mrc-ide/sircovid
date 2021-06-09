@@ -476,9 +476,6 @@ carehomes_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
     aperm(aperm(mean_duration, c(2, 1, 3, 4)) * pars$strain_transmission,
           c(2, 1, 3, 4))
 
-  ## Multiply by dt to convert from time steps to days
-  mean_duration <- dt * mean_duration
-
   mean_duration
 }
 
