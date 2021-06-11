@@ -2185,23 +2185,37 @@ test_that("Can calculate ifr_t with an empty second variant ", {
 
   expect_equal(ifr_t_1$step, ifr_t_1_single_class$step)
   expect_equal(ifr_t_1$date, ifr_t_1_single_class$date)
-  expect_equal(ifr_t_1$beta, ifr_t_1_single_class$beta)
-  expect_equal(ifr_t_1$eff_ifr_t_all, ifr_t_1_single_class$eff_ifr_t_all)
-  expect_equal(ifr_t_1$eff_Rt_general,
-               ifr_t_1_single_class$eff_Rt_general)
-  expect_equal(ifr_t_1$ifr_t_all, ifr_t_1_single_class$ifr_t_all)
-  expect_equal(ifr_t_1$Rt_general, ifr_t_1_single_class$Rt_general)
+  expect_equal(ifr_t_1$IFR_t_all, ifr_t_1_single_class$IFR_t_all)
+  expect_equal(ifr_t_1$IFR_t_general, ifr_t_1_single_class$IFR_t_general)
+  expect_equal(ifr_t_1$IHR_t_all, ifr_t_1_single_class$IHR_t_all)
+  expect_equal(ifr_t_1$IHR_t_general, ifr_t_1_single_class$IHR_t_general)
+  expect_equal(ifr_t_1$IFR_t_all_no_vacc,
+               ifr_t_1_single_class$IFR_t_all_no_vacc)
+  expect_equal(ifr_t_1$IFR_t_general_no_vacc,
+               ifr_t_1_single_class$IFR_t_general_no_vacc)
+  expect_equal(ifr_t_1$IHR_t_all_no_vacc,
+               ifr_t_1_single_class$IHR_t_all_no_vacc)
+  expect_equal(ifr_t_1$IHR_t_general_no_vacc,
+               ifr_t_1_single_class$IHR_t_general_no_vacc)
+  expect_equal(ifr_t_1$ALOS, ifr_t_1_single_class$ALOS)
+  expect_equal(ifr_t_1$ALOS_no_vacc, ifr_t_1_single_class$ALOS_no_vacc)
 
   expect_equal(ifr_t_all$step, ifr_t_all_single_class$step)
   expect_equal(ifr_t_all$date, ifr_t_all_single_class$date)
-  expect_equal(ifr_t_all$beta, ifr_t_all_single_class$beta)
-  expect_equal(ifr_t_all$eff_ifr_t_all,
-               ifr_t_all_single_class$eff_ifr_t_all)
-  expect_equal(ifr_t_all$eff_Rt_general,
-               ifr_t_all_single_class$eff_Rt_general)
-  expect_equal(ifr_t_all$ifr_t_all, ifr_t_all_single_class$ifr_t_all)
-  expect_equal(ifr_t_all$Rt_general,
-               ifr_t_all_single_class$Rt_general)
+  expect_equal(ifr_t_all$IFR_t_all, ifr_t_all_single_class$IFR_t_all)
+  expect_equal(ifr_t_all$IFR_t_general, ifr_t_all_single_class$IFR_t_general)
+  expect_equal(ifr_t_all$IHR_t_all, ifr_t_all_single_class$IHR_t_all)
+  expect_equal(ifr_t_all$IHR_t_general, ifr_t_all_single_class$IHR_t_general)
+  expect_equal(ifr_t_all$IFR_t_all_no_vacc,
+               ifr_t_all_single_class$IFR_t_all_no_vacc)
+  expect_equal(ifr_t_all$IFR_t_general_no_vacc,
+               ifr_t_all_single_class$IFR_t_general_no_vacc)
+  expect_equal(ifr_t_all$IHR_t_all_no_vacc,
+               ifr_t_all_single_class$IHR_t_all_no_vacc)
+  expect_equal(ifr_t_all$IHR_t_general_no_vacc,
+               ifr_t_all_single_class$IHR_t_general_no_vacc)
+  expect_equal(ifr_t_all$ALOS, ifr_t_all_single_class$ALOS)
+  expect_equal(ifr_t_all$ALOS_no_vacc, ifr_t_all_single_class$ALOS_no_vacc)
 })
 
 
