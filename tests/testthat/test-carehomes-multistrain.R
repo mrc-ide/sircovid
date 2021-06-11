@@ -1394,6 +1394,57 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
 })
 
 
+test_that("Can compute Rt if all prob_strain is NA", {
+  ## Run model with 2 variants, but both have same transmissibility
+  ## no seeding for second variant so noone infected with that one
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1))
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  info <- mod$info()
+  initial <- carehomes_initial(info, 1, p)
+
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  ## set all NA for prob_strain
+  prob_strain[] <- NA
+
+  ## test unweighted
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R)
+
+  ## No NA as weight_Rt = FALSE
+  expect_vector_equal(vlapply(rt_1, function(x) any(is.na(x))), FALSE)
+  expect_vector_equal(vlapply(rt_all, function(x) any(is.na(x))), FALSE)
+
+  ## test weighted
+  rt_1 <- carehomes_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                       weight_Rt = TRUE)
+  rt_all <- carehomes_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                      weight_Rt = TRUE)
+
+  ## All NA as weight_Rt = TRUE
+  expect_vector_equal(vlapply(rt_1[1:3], function(x) any(is.na(x))), FALSE)
+  expect_vector_equal(vlapply(rt_1[4:7], function(x) all(is.na(x))), TRUE)
+  expect_vector_equal(vlapply(rt_all[1:3], function(x) any(is.na(x))), FALSE)
+  expect_vector_equal(vlapply(rt_all[4:7], function(x) all(is.na(x))), TRUE)
+})
+
+
 test_that("calculate Rt with both second variant and vaccination", {
   ## Seed with rate of 10 cases on same day as other variant
   ##
