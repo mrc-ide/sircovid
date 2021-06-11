@@ -585,11 +585,6 @@ carehomes_index <- function(info) {
                             "sympt_cases_over25_inc",
                             "sympt_cases_non_variant_over25_inc",
                             "react_pos")]
-  ## Save cumulative and incidence versions:
-  cum_state_names <- setdiff(sub("_inc$", "", names(index_run)),
-                             names(index_run))
-  index_state_core <- c(index_run, index_core[cum_state_names])
-  index_inc <- index_core
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -634,7 +629,7 @@ carehomes_index <- function(info) {
                              suffix)
 
   list(run = index_run,
-       state = c(index_state_core, index_save, index_S, index_R,
+       state = c(index_core, index_save, index_S, index_R,
                  index_cum_admit, index_D_hosp, index_D,
                  index_diagnoses_admitted, index_cum_infections_disag,
                  index_I_weighted, index_prob_strain, index_cum_n_vaccinated
