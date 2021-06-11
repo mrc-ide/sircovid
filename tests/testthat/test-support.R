@@ -470,6 +470,17 @@ test_that("can generate regions", {
   expect_length(regions("all"), 10)
   expect_error(regions("europe"),
                "Unknown region type 'europe'")
+
+  expect_equal(regions("nations"),
+               c("england", "scotland", "wales", "northern_ireland"))
+  expect_equal(regions("nations", "lower"),
+               c("england", "scotland", "wales", "northern ireland"))
+  expect_equal(regions("nations", "upper"),
+               c("ENGLAND", "SCOTLAND", "WALES", "NORTHERN IRELAND"))
+  expect_equal(regions("nations", "ab"),
+               c("ENG", "SCOT", "WAL", "NI"))
+  expect_error(regions("nations", "low"),
+               "Unknown style, 'low'")
 })
 
 

@@ -7,11 +7,15 @@
 ##' @param type The name of a region type; must be one of "all",
 ##'   "england", or "nations"
 ##'
+##' @param style The style the character vector should bd returned as, one of:
+##'  "snake" - snake case; "lower" - lower case; "upper" - upper case;
+##'  "ab" - abbreviations.
+##'
 ##' @return A character vector
 ##' @export
 ##' @examples
 ##' sircovid::regions("england")
-regions <- function(type) {
+regions <- function(type, style = "snake") {
   regions_england <- c("east_of_england",
                        "midlands",
                        "london",
@@ -21,11 +25,45 @@ regions <- function(type) {
                        "south_west")
   celtic_nations <- c("scotland", "wales", "northern_ireland")
 
-  switch(type,
+  out <- switch(type,
          "all" = c(regions_england, celtic_nations),
          "england" = regions_england,
          "nations" = c("england", celtic_nations),
          stop(sprintf("Unknown region type '%s'", type)))
+
+  if (style == "snake") {
+    out
+  } else {
+    new_region <- gsub("_", " ", out)
+    if (style == "lower") {
+      new_region
+    } else if (style == "upper") {
+      toupper(new_region)
+    } else if (style == "title") {
+      vapply(lapply(new_region,
+            function(x) paste(vapply(strsplit(x, " ")[[1]],
+                                      toproper, character(1)), collapse = " ")),
+            identity,
+            character(1))
+    } else if (style == "ab") {
+      vapply(new_region,
+            function(x) switch(x,
+                                "east of england" = "EE",
+                                "midlands" = "MID",
+                                "london" = "LON",
+                                "north east and yorkshire" = "NE",
+                                "north west" = "NW",
+                                "south east" = "SE",
+                                "south west" = "SW",
+                                "scotland" = "SCOT",
+                                "wales" = "WAL",
+                                "northern ireland" = "NI",
+                                "england" = "ENG"),
+            character(1), USE.NAMES = FALSE)
+    } else {
+      stop(sprintf("Unknown style, '%s'", style))
+    }
+  }
 }
 
 

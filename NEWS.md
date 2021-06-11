@@ -1,3 +1,7 @@
+# sircovid 0.11.10
+
+* Added parameter `style` to `sircovid::regions` to specify a print style for regions.
+
 # sircovid 0.11.9
 
 * Fixes bug in calculating Rt when only one time-point is non-NA in prob_strain

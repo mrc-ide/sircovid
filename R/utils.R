@@ -278,3 +278,8 @@ recycle <- function(x, n, name = deparse(substitute(x))) {
          name, n))
   }
 }
+
+
+toproper <- function(str) {
+  paste0(toupper(substr(str, 1, 1)), substr(str, 2, 1000))
+}
