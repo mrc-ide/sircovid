@@ -1,6 +1,10 @@
-# sircovid 0.11.10
+# sircovid 0.11.11
 
 * Can now also output ALOS (average length of stay) from carehomes_ifr_t
+
+# sircovid 0.11.10
+
+* Fix coverage hole in Rt
 
 # sircovid 0.11.9
 
