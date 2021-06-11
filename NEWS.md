@@ -1,3 +1,6 @@
+# sircovid 0.11.10
+
+* Fix coverage hole in Rt
 # sircovid 0.11.9
 
 * Fixes bug in calculating Rt when only one time-point is non-NA in prob_strain
