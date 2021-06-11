@@ -197,3 +197,78 @@ test_that("can't compute IFR_t for unknown types", {
                     type = c("IFR_t_all", "ifr_t_general")),
     "Unknown IFR/IHR type 'ifr_t_general', must match '")
 })
+
+
+test_that("Parameters affect IFR/IHR/ALOS as expected", {
+
+  ## Note that m_CHW and m_CHR have been changed from defaults to avoid
+  ## having all care home residents infected
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            m_CHW = 3e-6, m_CHR = 3e-6)
+
+  np <- 1L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+
+  helper <- function(type, par_name, par_value_lower_ifr,
+                     par_value_higher_ifr) {
+
+    if (grepl("^p_", par_name)) {
+      p[[par_name]][, ] <- par_value_lower_ifr
+    } else {
+      p[[par_name]] <- par_value_lower_ifr
+    }
+    ifr_lower <- carehomes_ifr_t(steps, S, I, p)
+
+    if (grepl("^p_", par_name)) {
+      p[[par_name]][, ] <- par_value_higher_ifr
+    } else {
+      p[[par_name]] <- par_value_higher_ifr
+    }
+    ifr_higher <- carehomes_ifr_t(steps, S, I, p)
+
+    expect_vector_lt(ifr_lower[[type]], ifr_higher[[type]])
+  }
+
+  helper("IFR_t_all", "p_C_step", 0, 1)
+  helper("IFR_t_all", "p_H_step", 0, 1)
+  helper("IFR_t_all", "p_G_D_step", 0, 1)
+  helper("IFR_t_all", "p_H_D_step", 0, 1)
+  helper("IFR_t_all", "p_ICU_D_step", 0, 1)
+  helper("IFR_t_all", "p_W_D_step", 0, 1)
+
+  helper("IHR_t_all", "p_C_step", 0, 1)
+  helper("IHR_t_all", "p_H_step", 0, 1)
+  helper("IHR_t_all", "p_G_D_step", 1, 0)
+
+  helper("ALOS", "gamma_ICU_pre_step", Inf, 1)
+  helper("ALOS", "gamma_ICU_D_step", Inf, 1)
+  helper("ALOS", "gamma_ICU_W_D_step", Inf, 1)
+  helper("ALOS", "gamma_ICU_W_R_step", Inf, 1)
+  helper("ALOS", "gamma_H_D_step", Inf, 1)
+  helper("ALOS", "gamma_H_R_step", Inf, 1)
+  helper("ALOS", "gamma_W_D_step", Inf, 1)
+  helper("ALOS", "gamma_W_R_step", Inf, 1)
+
+  helper("ALOS", "k_ICU_pre", 1, 2)
+  helper("ALOS", "k_ICU_D", 1, 2)
+  helper("ALOS", "k_ICU_W_D", 1, 2)
+  helper("ALOS", "k_ICU_W_R", 1, 2)
+  helper("ALOS", "k_H_D", 1, 2)
+  helper("ALOS", "k_H_R", 1, 2)
+  helper("ALOS", "k_W_D", 1, 2)
+  helper("ALOS", "k_W_R", 1, 2)
+})
