@@ -589,7 +589,8 @@ carehomes_index <- function(info) {
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
                   deaths = index[["D_tot"]],
-                  infections = index[["cum_infections"]])
+                  infections = index[["cum_infections"]],
+                  infections_inc = index[["infections_inc"]])
   suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
   ## NOTE: We do use the S category for the Rt calculation in some
   ## downstream work, so this is going to require some work to get
