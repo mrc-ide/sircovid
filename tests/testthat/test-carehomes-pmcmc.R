@@ -2,8 +2,8 @@ context("pmcmc")
 
 test_that("adding incidence adds appropriate states", {
   dat <- reference_data_mcmc()
-  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "infections"))
-  expect_true(all(c("deaths_inc", "infections_inc") %in% rownames(res$state)))
+  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
+  expect_true(all(c("deaths_inc", "icu_inc") %in% rownames(res$state)))
 
   tmp <- res$state["deaths_inc", , ]
   expect_true(all(is.na(tmp[, 1:2])))
@@ -19,7 +19,7 @@ test_that("adding incidence adds appropriate states", {
 
 test_that("can add and remove trajectories from mcstate_pmcmc objects", {
   dat <- reference_data_mcmc()
-  v <- c("deaths", "infections")
+  v <- c("deaths", "icu")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
                    add_trajectory_incidence(dat$trajectories, v))
@@ -30,7 +30,7 @@ test_that("can add and remove trajectories from mcstate_pmcmc objects", {
 
 test_that("can compute incidence for a single variable", {
   dat <- reference_data_mcmc()
-  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "infections"))
+  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
   res <- add_trajectory_incidence(dat$trajectories, "deaths")
   expect_identical(res$state["deaths_inc", , ],
                    cmp$state["deaths_inc", , ])
@@ -52,7 +52,7 @@ test_that("Can drop predictions from trajectories", {
 
 test_that("Can compute forecasts from mcmc output", {
   dat <- reference_data_mcmc()
-  res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "infections"))
+  res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "icu"))
 
   expect_equal(dim(res$pars), c(3, 2))
   expect_equal(dim(res$probabilities), c(3, 3))
@@ -60,14 +60,14 @@ test_that("Can compute forecasts from mcmc output", {
   expect_equal(dim(res$trajectories$state),
                dim(dat$trajectories$state) + c(2, -8, 10))
 
-  expect_true(all(c("deaths_inc", "infections_inc") %in%
+  expect_true(all(c("deaths_inc", "icu_inc") %in%
                     rownames(res$trajectories$state)))
 })
 
 
 test_that("Can compute forecasts from mcmc output without prepending", {
   dat <- reference_data_mcmc()
-  res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "infections"),
+  res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "icu"),
                             FALSE)
 
   expect_equal(dim(res$pars), c(3, 2))
@@ -75,7 +75,7 @@ test_that("Can compute forecasts from mcmc output without prepending", {
   expect_equal(dim(res$state), c(nrow(dat$state), 3))
   expect_equal(dim(res$trajectories$state),
                c(nrow(dat$trajectories$state) + 2, 3, 11))
-  expect_true(all(c("deaths_inc", "infections_inc") %in%
+  expect_true(all(c("deaths_inc", "icu_inc") %in%
                     rownames(res$trajectories$state)))
 })
 
@@ -150,7 +150,7 @@ test_that("can combine rt calculations over trajectories", {
   res <- combine_rt(list(rt, rt), list(dat, dat))
   cmp <- rt
   for (i in setdiff(names(cmp), c("step", "date"))) {
-    cmp[[i]][1:2, ] <- NA
+    cmp[[i]][1, ] <- NA
   }
   ## This should pass for everything, but the effective Rt
   ## calculations are different after aggregation for reasons as-yet
@@ -176,7 +176,7 @@ test_that("when combining rt calculations the output has the expected order", {
   res <- combine_rt(list(rt, rt), list(dat, dat))
   cmp <- rt
   for (i in setdiff(names(cmp), c("step", "date"))) {
-    cmp[[i]][1:2, ] <- NA
+    cmp[[i]][1, ] <- NA
   }
 
   for (what in c("eff_Rt_all", "eff_Rt_general", "Rt_all", "Rt_general")) {
@@ -203,7 +203,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
   res <- combine_rt(list(rt, rt), list(dat, dat), rank = FALSE)
   cmp <- rt
   for (i in setdiff(names(cmp), c("step", "date"))) {
-    cmp[[i]][1:2, ] <- NA
+    cmp[[i]][1, ] <- NA
   }
 
   expect_equal(res$Rt_general, cmp$Rt_general)
@@ -216,11 +216,11 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(198, 11, 2, 32),
+    dat$trajectories$state, c(199, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
-  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "infections"))
-  expect_true(all(c("deaths_inc", "infections_inc") %in% rownames(res$state)))
+  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
+  expect_true(all(c("deaths_inc", "icu_inc") %in% rownames(res$state)))
 
   tmp <- res$state["deaths_inc", , , ]
   expect_true(all(is.na(tmp[, 1, 1:2])))
@@ -229,13 +229,13 @@ test_that("adding incidence adds appropriate states - nested", {
     deaths,
     res$state["deaths", , 1,  -c(1, 2)] - res$state["deaths", , 1,  2])
 
-  tmp <- res$state["infections_inc", , , ]
+  tmp <- res$state["icu_inc", , , ]
   expect_true(all(is.na(tmp[, 2, 1:2])))
   deaths <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
   expect_equal(
     deaths,
-    res$state["infections", , 2,  -c(1, 2)] -
-      res$state["infections", , 2,  2])
+    res$state["icu", , 2,  -c(1, 2)] -
+      res$state["icu", , 2,  2])
 
   expect_equal(drop_trajectory_incidence(res),
                drop_trajectory_incidence(dat$trajectories))
@@ -246,10 +246,10 @@ test_that("adding incidence adds appropriate states - nested", {
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(198, 11, 2, 32),
+    dat$trajectories$state, c(199, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
-  v <- c("deaths", "infections")
+  v <- c("deaths", "icu")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
                    add_trajectory_incidence(dat$trajectories, v))
@@ -261,10 +261,10 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(198, 11, 2, 32),
+    dat$trajectories$state, c(199, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
-  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "infections"))
+  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
   res <- add_trajectory_incidence(dat$trajectories, "deaths")
   expect_identical(res$state["deaths_inc", , , ],
                    cmp$state["deaths_inc", , , ])

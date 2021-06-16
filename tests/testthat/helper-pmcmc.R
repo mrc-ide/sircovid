@@ -41,7 +41,7 @@ reference_data_mcmc <- function() {
 reference_data_trajectories <- function() {
   load_reference("data/trajectories.rds", {
     dat <- reference_data_mcmc()
-    incidence <- c("deaths", "deaths_hosp", "infections")
+    incidence <- "deaths"
     carehomes_forecast(dat, 3, 5, 10, incidence, TRUE)
   })
 }
