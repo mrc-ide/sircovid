@@ -289,8 +289,8 @@ test_that("can combine EpiEstim rt calculations over trajectories", {
 
   res <- combine_rt_epiestim(list(rt, rt), list(dat, dat))
   cmp <- rt
-  cmp$Rt[, 1:2] <- NA
-  cmp$Rt_summary[, 1:2] <- NA
+  cmp$Rt[, 1] <- NA
+  cmp$Rt_summary[, 1] <- NA
 
   ## Rts are ordered differently
   expect_equal(sort(as.vector(res$Rt)), sort(as.vector(cmp$Rt)))
@@ -316,8 +316,8 @@ test_that("can combine EpiEstim rt over trajectories without reordering", {
 
   res <- combine_rt_epiestim(list(rt, rt), list(dat, dat), rank = FALSE)
   cmp <- rt
-  cmp$Rt[, 1:2] <- NA
-  cmp$Rt_summary[, 1:2] <- NA
+  cmp$Rt[, 1] <- NA
+  cmp$Rt_summary[, 1] <- NA
 
   ## Rts are ordered differently
   expect_equal(res$Rt, cmp$Rt)
