@@ -677,8 +677,16 @@ test_that("carehomes_index returns S compartments", {
   info <- mod$info()
   i <- seq_along(index$run)
   expect_equal(
-    unname(index$state[-i]),
-    c(unname(index$run[-i]),
+    unname(index$state[!names(index$state) %in% names(index$run)]),
+    c(info$index$D_comm_tot,
+      info$index$D_carehomes_tot,
+      info$index$D_hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$cum_sympt_cases,
+      info$index$cum_sympt_cases_non_variant,
+      info$index$cum_sympt_cases_over25,
+      info$index$cum_sympt_cases_non_variant_over25,
       info$index$hosp_tot,
       info$index$D_tot,
       info$index$cum_infections,
