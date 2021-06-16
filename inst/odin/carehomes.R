@@ -1485,6 +1485,42 @@ initial(D_hosp_tot) <- 0
 delta_D_hosp_tot <- sum(delta_D_hosp)
 update(D_hosp_tot) <- D_hosp_tot + delta_D_hosp_tot
 
+## hospital deaths in under 55 year olds (groups 1 to 11 + 0.75 of 18)
+initial(D_hosp_tot_0) <- 0
+delta_D_hosp_tot_0 <- sum(delta_D_hosp[1:11]) + delta_D_hosp[18] * 0.75
+update(D_hosp_tot_0) <- D_hosp_tot_0 + delta_D_hosp_tot_0
+
+initial(D_hosp_inc_0) <- 0
+update(D_hosp_inc_0) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_0 else D_hosp_inc_0 + delta_D_hosp_tot_0
+
+## hospital deaths in 55 to 64 year olds (groups 12 and 13 + 0.25 of 18)
+initial(D_hosp_tot_55) <- 0
+delta_D_hosp_tot_55 <- sum(delta_D_hosp[12:13]) + delta_D_hosp[18] * 0.25
+update(D_hosp_tot_55) <- D_hosp_tot_55 + delta_D_hosp_tot_55
+
+initial(D_hosp_inc_55) <- 0
+update(D_hosp_inc_55) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_55 else D_hosp_inc_55 + delta_D_hosp_tot_55
+
+## hospital deaths in 65 to 74 year olds (groups 14 and 15 + 0.1 of 19)
+initial(D_hosp_tot_65) <- 0
+delta_D_hosp_tot_65 <- sum(delta_D_hosp[14:15]) + delta_D_hosp[19] * 0.1
+update(D_hosp_tot_65) <- D_hosp_tot_65 + delta_D_hosp_tot_65
+
+initial(D_hosp_inc_65) <- 0
+update(D_hosp_inc_65) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_65 else D_hosp_inc_65 + delta_D_hosp_tot_65
+
+## hospital deaths in 75+ year olds (groups 16 and 17 + 0.9 of 19)
+initial(D_hosp_tot_75) <- 0
+delta_D_hosp_tot_75 <- sum(delta_D_hosp[16:17]) + delta_D_hosp[19] * 0.9
+update(D_hosp_tot_75) <- D_hosp_tot_75 + delta_D_hosp_tot_75
+
+initial(D_hosp_inc_75) <- 0
+update(D_hosp_inc_75) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_75 else D_hosp_inc_75 + delta_D_hosp_tot_75
+
 ## community deaths are non-hospital deaths in groups 1 to 18
 initial(D_comm_tot) <- 0
 delta_D_comm_tot <- sum(delta_D_non_hosp[1:18])
@@ -1508,8 +1544,11 @@ update(D_hosp_inc) <- if (step %% steps_per_day == 0)
   delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
 
 initial(D_tot) <- 0
-update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
+update(D_tot) <- D_tot + delta_D_hosp_tot_0 + delta_D_hosp_tot_55 +
+  delta_D_hosp_tot_65 + delta_D_hosp_tot_75 + delta_D_comm_tot +
   delta_D_carehomes_tot
+# update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
+#   delta_D_carehomes_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
