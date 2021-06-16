@@ -86,7 +86,7 @@ test_that("incidence calculation is correct", {
   mod$set_state(initial$state, initial$step)
 
   ## We have interesting values by time 60, step 240
-  ## There are 8 incidence variables, so we want to pull 16 variables
+  ## There are 10 incidence variables, so we want to pull 20 variables
   index <- c(deaths_comm = info$index$D_comm_tot,
              deaths_comm_inc = info$index$D_comm_inc,
              deaths_carehomes = info$index$D_carehomes_tot,
@@ -101,18 +101,24 @@ test_that("incidence calculation is correct", {
              sympt_cases_inc = info$index$sympt_cases_inc,
              sympt_cases_over25 = info$index$cum_sympt_cases_over25,
              sympt_cases_over25_inc = info$index$sympt_cases_over25_inc,
+             sympt_cases_non_variant =
+               info$index$cum_sympt_cases_non_variant,
+             sympt_cases_non_variant_inc =
+               info$index$sympt_cases_non_variant_inc,
              sympt_cases_non_variant_over25 =
                info$index$cum_sympt_cases_non_variant_over25,
              sympt_cases_non_variant_over25_inc =
-               info$index$sympt_cases_non_variant_over25_inc)
-  expect_length(index, 16) # guard against name changes
+               info$index$sympt_cases_non_variant_over25_inc,
+             infections = info$index$cum_infections,
+             infections_inc = info$index$infections_inc)
+  expect_length(index, 20) # guard against name changes
 
   steps <- seq(initial$step, length.out = 60 * 4 + 1)
   mod$set_index(index)
   y <- mod$simulate(steps)
 
   i <- which(steps %% pars$steps_per_day == 0)
-  j <- seq(1, 16, by = 2)
+  j <- seq(1, 20, by = 2)
   y0 <- y[, , i[-length(i)]]
   y1 <- y[, , i[-1]]
   yd <- y1[j, , ] - y0[j, , ]
