@@ -1,3 +1,7 @@
+# sircovid 0.11.13
+
+* Added support to allow fitting to age-specific hospital deaths
+
 # sircovid 0.11.11
 
 * Can now also output ALOS (average length of stay) from carehomes_ifr_t

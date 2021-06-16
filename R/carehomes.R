@@ -1729,7 +1729,8 @@ carehomes_particle_filter_data <- function(data) {
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot",
                 "strain_non_variant", "strain_tot", "strain_over25_non_variant",
-                "strain_over25_tot")
+                "strain_over25_tot", "death_0", "death_55", "death_65",
+                "death_75")
 
   verify_names(data, required, allow_extra = TRUE)
 
