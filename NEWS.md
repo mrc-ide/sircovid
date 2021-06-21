@@ -1,3 +1,7 @@
+# sircovid 0.11.14
+
+* Can now account for vaccine efficacy against death
+
 # sircovid 0.11.11
 
 * Can now also output ALOS (average length of stay) from carehomes_ifr_t
