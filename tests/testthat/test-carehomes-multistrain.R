@@ -1526,10 +1526,10 @@ test_that("strain_rel_severity works as expected in carehomes_parameters", {
   expect_equal(p$rel_p_ICU_D[, 1:2, ], p$rel_p_ICU_D[, 4:3, ])
   expect_equal(p$rel_p_ICU_D[, 2, ],
                p$rel_p_ICU_D[, 1, ] * strain_rel_severity[2])
-  expect_equal(p$rel_p_ICU_D[, ,2],
-               p$rel_p_ICU_D[, ,1] * rel_p_death[2])
-  expect_equal(p$rel_p_ICU_D[, ,3],
-               p$rel_p_ICU_D[, ,1] * rel_p_death[3])
+  expect_equal(p$rel_p_ICU_D[, , 2],
+               p$rel_p_ICU_D[, , 1] * rel_p_death[2])
+  expect_equal(p$rel_p_ICU_D[, , 3],
+               p$rel_p_ICU_D[, , 1] * rel_p_death[3])
 
 })
 
