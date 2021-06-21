@@ -10,6 +10,7 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
   p <- carehomes_parameters(0, "england", rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -47,6 +48,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 0),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -81,6 +83,7 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 0),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
   mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -147,6 +150,45 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
 
 })
 
+test_that("No deaths with perfect vaccine wrt rel_p_death", {
+  ## i.e. if everyone is vaccinated with a vaccine preventing
+  ## 100% of deaths
+
+  p <- carehomes_parameters(0, "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 0),
+                            waning_rate = 1 / 20)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_S[, 2]] <- state[index_S[, 1]]
+  state[index_S[, 1]] <- 0
+
+  mod$set_state(state)
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
+
+  ## No-one moves into D compartments ever
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
+  expect_true(all(y$ICU_D_unconf == 0))
+  expect_true(all(y$ICU_D_conf == 0))
+  expect_true(all(y$W_D_unconf == 0))
+  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$G_D == 0))
+  expect_true(all(y$D_hosp == 0))
+  expect_true(all(y$D_non_hosp == 0))
+  expect_true(all(y$D == 0))
+  expect_true(all(y$D_hosp_tot == 0))
+  expect_true(all(y$D_comm_tot == 0))
+  expect_true(all(y$D_carehomes_tot == 0))
+  expect_true(all(y$D_tot == 0))
+})
+
 
 test_that("Vaccination of susceptibles works", {
   ## Tests that:
@@ -163,6 +205,7 @@ test_that("Vaccination of susceptibles works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
@@ -193,6 +236,7 @@ test_that("Vaccination of exposed individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
@@ -254,6 +298,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
@@ -308,6 +353,7 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
@@ -363,6 +409,7 @@ test_that("Vaccination of recovered individuals works", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
 
@@ -408,6 +455,7 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
   # stop disease progression after E
@@ -465,6 +513,7 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
   # stop disease progression after I_A
@@ -515,6 +564,7 @@ test_that("Returning to unvaccinated stage works for I_P individuals", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
   # stop disease progression after I_P
@@ -564,6 +614,7 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
@@ -611,6 +662,7 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
                             rel_susceptibility = c(1, 0, 0),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, Inf, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 3L)
@@ -639,6 +691,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
                             rel_susceptibility = c(1, rep(0, 10), 0),
                             rel_p_sympt = rep(1, 12),
                             rel_p_hosp_if_sympt = rep(1, 12),
+                            rel_p_death = rep(1, 12),
                             vaccine_progression_rate =
                               c(0, rep(Inf, 10), 0),
                             vaccine_schedule = vaccine_schedule,
@@ -665,6 +718,7 @@ test_that("Clinical progression within a vaccination class works", {
                               rel_susceptibility = c(1, 1, 1),
                               rel_p_sympt = c(1, 1, 1),
                               rel_p_hosp_if_sympt = c(1, 1, 1),
+                              rel_p_death = c(1, 1, 1),
                               vaccine_progression_rate =
                                 c(0, 0, 0))
 
@@ -721,6 +775,7 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
                             rel_susceptibility = c(1, 0),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, Inf))
 
   mod <- carehomes$new(p, 0, 1, seed = 1L)
@@ -774,7 +829,8 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1))
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -798,7 +854,8 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1))
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -833,6 +890,7 @@ test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
                             rel_susceptibility = c(1, reduced_susceptibility),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
 
   np <- 3L
@@ -885,6 +943,7 @@ test_that("Effective Rt reduced by rel_infectivity if all vaccinated", {
                             rel_infectivity = c(1, reduced_infectivity),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
 
   np <- 3L
@@ -937,6 +996,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, reduced_p_C),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
 
   ## These are the same as the default values, but setting them again here in
@@ -995,7 +1055,8 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1))
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -1023,7 +1084,8 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1))
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -1063,6 +1125,7 @@ test_that("IFR_t modified if rel_p_sympt is not 1", {
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, reduced_p_C),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
 
   np <- 3L
@@ -1128,6 +1191,7 @@ test_that("IFR_t modified if rel_p_hosp_if_sympt is not 1", {
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, rel_p_hosp_if_sympt),
+                            rel_p_death = c(1, 1),
                             waning_rate = 1 / 20)
 
   np <- 3L
@@ -1192,6 +1256,7 @@ test_that("N_tots stay constant with vaccination and no waning immunity", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0.01),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1222,6 +1287,7 @@ test_that("N_tot stays constant with vaccination and waning immunity, while
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0.01),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1252,6 +1318,7 @@ test_that("N_tots are constant with vaccination and k > 1, and without waning
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0.01),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1284,6 +1351,7 @@ test_that("N_tot stays constant with vaccination and k > 1, and with waning
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0.01),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1317,6 +1385,7 @@ test_that("N_tots stay constant with high rates of vaccination and without
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 50),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1351,6 +1420,7 @@ test_that(
                               rel_susceptibility = c(1, 0.5, 0.1),
                               rel_p_sympt = c(1, 1, 1),
                               rel_p_hosp_if_sympt = c(1, 1, 1),
+                              rel_p_death = c(1, 1, 1),
                               vaccine_progression_rate = c(0, 0, 50),
                               vaccine_schedule = vaccine_schedule,
                               vaccine_index_dose2 = 2L)
@@ -1376,6 +1446,7 @@ test_that("Outputed vaccination numbers make sense", {
                             rel_susceptibility = c(1, 0.5, 0.1),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0.01),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1413,6 +1484,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1450,6 +1522,7 @@ test_that("Outputed E vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1499,6 +1572,7 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1539,6 +1613,7 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1582,6 +1657,7 @@ test_that("Outputed R vaccination numbers are what we expect", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -1876,6 +1952,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L,
                             vaccine_catchup_fraction = 0)
@@ -1951,6 +2028,7 @@ test_that("run sensible vaccination schedule, catchup = 1", {
                             rel_susceptibility = c(1, 1),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L,
                             vaccine_catchup_fraction = 1)
@@ -2023,6 +2101,7 @@ test_that("can add vaccination to a set of model state", {
                                  rel_susceptibility = c(1, 1),
                                  rel_p_sympt = c(1, 1),
                                  rel_p_hosp_if_sympt = c(1, 1),
+                                 rel_p_death = c(1, 1),
                                  vaccine_schedule = vaccine_schedule,
                                  vaccine_index_dose2 = 2L)
 
@@ -2138,6 +2217,7 @@ test_that("can upgrade model state", {
                                  rel_susceptibility = c(1, 1),
                                  rel_p_sympt = c(1, 1),
                                  rel_p_hosp_if_sympt = c(1, 1),
+                                 rel_p_death = c(1, 1),
                                  vaccine_schedule = vaccine_schedule,
                                  vaccine_index_dose2 = 2L)
 
@@ -2185,6 +2265,7 @@ test_that("Refuse to upgrade impossible model state", {
                                  rel_susceptibility = c(1, 1),
                                  rel_p_sympt = c(1, 1),
                                  rel_p_hosp_if_sympt = c(1, 1),
+                                 rel_p_death = c(1, 1),
                                  vaccine_schedule = vaccine_schedule,
                                  vaccine_index_dose2 = 2L)
 
@@ -2206,6 +2287,7 @@ test_that("Can vaccinate given a schedule", {
                             beta_value = 0,
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
                             waning_rate = 1 / 20,
                             vaccine_catchup_fraction = 0)
@@ -2291,6 +2373,7 @@ test_that("can create parameters with vaccination data", {
                             rel_susceptibility = c(1, 1, 0),
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             waning_rate = 1 / 20,
                             vaccine_index_dose2 = 2L,
                             vaccine_schedule = schedule)
@@ -2305,6 +2388,7 @@ test_that("Can vaccinate given a schedule with given uptake", {
                             beta_value = 0,
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
                             waning_rate = 1 / 20)
   p$index_dose <- c(1L, 2L)
@@ -2351,6 +2435,7 @@ test_that("Can catch up on uptake given previous vaccination", {
                             beta_value = 0,
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
                             waning_rate = 1 / 20)
 
@@ -2417,6 +2502,7 @@ test_that("Can catch up on doses not distributed", {
                             beta_value = 0.1,
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
                             vaccine_catchup_fraction = 0,
                             vaccine_index_dose2 = 2L,
@@ -2471,6 +2557,7 @@ test_that("Can catch up on doses not distributed with imperfect uptake", {
                             beta_value = 0.1,
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
                             vaccine_catchup_fraction = 1,
                             vaccine_index_dose2 = 2L,
@@ -2506,6 +2593,7 @@ test_that("Collect disaggregated deaths data", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -2544,6 +2632,7 @@ test_that("Can add missing state variables", {
                             rel_susceptibility = c(1, 0.5),
                             rel_p_sympt = c(1, 1),
                             rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 1),
                             vaccine_progression_rate = c(0, 0),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L)
@@ -2652,6 +2741,7 @@ test_that("Can add lag to vaccine schedule", {
                             beta_value = 0.1,
                             rel_p_sympt = c(1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1),
+                            rel_p_death = c(1, 1, 1),
                             vaccine_progression_rate = c(0, 0, 0),
                             vaccine_catchup_fraction = 0,
                             vaccine_index_dose2 = 2L,
@@ -2713,6 +2803,7 @@ test_that("run sensible vaccination schedule with boosters", {
                             rel_susceptibility = c(1, 1, 1, 1),
                             rel_p_sympt = c(1, 1, 1, 1),
                             rel_p_hosp_if_sympt = c(1, 1, 1, 1),
+                            rel_p_death = c(1, 1, 1, 1),
                             vaccine_schedule = vaccine_schedule,
                             vaccine_index_dose2 = 2L,
                             vaccine_index_booster = 3L,
