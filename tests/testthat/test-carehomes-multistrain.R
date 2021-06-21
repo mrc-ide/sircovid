@@ -1515,6 +1515,23 @@ test_that("calculate Rt with both second variant and vaccination", {
 
 })
 
+test_that("strain_rel_severity works as expected in carehomes_parameters", {
+  strain_rel_severity <- c(1, 0.5)
+  rel_p_death <- c(1, 0.6, 0.7)
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = strain_rel_severity,
+                            rel_p_death = rel_p_death)
+  # check strains are mirrored
+  expect_equal(p$rel_p_ICU_D[, 1:2 , ], p$rel_p_ICU_D[, 4:3 , ])
+  expect_equal(p$rel_p_ICU_D[, 2 , ],
+               p$rel_p_ICU_D[, 1 , ] * strain_rel_severity[2])
+  expect_equal(p$rel_p_ICU_D[,  , 2],
+               p$rel_p_ICU_D[,  , 1] * rel_p_death[2])
+  expect_equal(p$rel_p_ICU_D[,  , 3],
+               p$rel_p_ICU_D[,  , 1] * rel_p_death[3])
+
+})
 
 test_that("strain_rel_gamma works as expected in carehomes_parameters", {
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",

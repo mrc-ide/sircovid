@@ -150,6 +150,45 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
 
 })
 
+test_that("No deaths with perfect vaccine wrt rel_p_death", {
+  ## i.e. if everyone is vaccinated with a vaccine preventing
+  ## 100% of deaths
+
+  p <- carehomes_parameters(0, "england",
+                            rel_susceptibility = c(1, 1),
+                            rel_p_sympt = c(1, 1),
+                            rel_p_hosp_if_sympt = c(1, 1),
+                            rel_p_death = c(1, 0),
+                            waning_rate = 1 / 20)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+
+  state <- carehomes_initial(info, 1, p)$state
+
+  index_S <- array(info$index$S, info$dim$S)
+  state[index_S[, 2]] <- state[index_S[, 1]]
+  state[index_S[, 1]] <- 0
+
+  mod$set_state(state)
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
+
+  ## No-one moves into D compartments ever
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
+  expect_true(all(y$ICU_D_unconf == 0))
+  expect_true(all(y$ICU_D_conf == 0))
+  expect_true(all(y$W_D_unconf == 0))
+  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$G_D == 0))
+  expect_true(all(y$D_hosp == 0))
+  expect_true(all(y$D_non_hosp == 0))
+  expect_true(all(y$D == 0))
+  expect_true(all(y$D_hosp_tot == 0))
+  expect_true(all(y$D_comm_tot == 0))
+  expect_true(all(y$D_carehomes_tot == 0))
+  expect_true(all(y$D_tot == 0))
+})
+
 
 test_that("Vaccination of susceptibles works", {
   ## Tests that:
