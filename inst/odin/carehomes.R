@@ -459,8 +459,12 @@ n_T_PCR_pos_progress[, , , ] <-
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
-update(cum_infections) <- cum_infections + sum(n_S_progress) +
-  sum(n_RE)
+delta_infections <- sum(n_S_progress) + sum(n_RE)
+update(cum_infections) <- cum_infections + delta_infections
+
+initial(infections_inc) <- 0
+update(infections_inc) <- if (step %% steps_per_day == 0)
+  delta_infections else infections_inc + delta_infections
 
 initial(cum_infections_per_strain[]) <- 0
 update(cum_infections_per_strain[]) <-
@@ -1547,8 +1551,10 @@ initial(D_tot) <- 0
 update(D_tot) <- D_tot + delta_D_hosp_tot_0 + delta_D_hosp_tot_55 +
   delta_D_hosp_tot_65 + delta_D_hosp_tot_75 + delta_D_comm_tot +
   delta_D_carehomes_tot
-# update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
-#   delta_D_carehomes_tot
+
+## hospital deaths in all age groups
+update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
+  delta_D_carehomes_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
