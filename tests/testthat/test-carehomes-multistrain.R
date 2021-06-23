@@ -571,6 +571,7 @@ test_that("Swapping strains gives identical results with different index", {
   y <- mod$transform_variables(initial$state)
   i <- c(2, 1, 4, 3)
   y$I_A <- y$I_A[, i, , , drop = FALSE]
+  y$I_weighted <- y$I_weighted[, i, , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
   y$T_sero_pre_1 <- y$T_sero_pre_1[, i, , , drop = FALSE]
   y$T_sero_pre_2 <- y$T_sero_pre_2[, i, , , drop = FALSE]
@@ -606,7 +607,8 @@ test_that("Swapping strains gives identical results with different index", {
     z1[["sympt_cases_non_variant_inc"]]
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
-  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg")) {
+  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg",
+               "I_weighted")) {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
@@ -2215,6 +2217,7 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -2223,9 +2226,10 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
   I <- y[index_I, , ]
+  R <- y[index_R, , ]
 
-  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p)
-  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p)
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
 
   ## Run model with one strain only
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
