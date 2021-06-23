@@ -552,22 +552,18 @@ carehomes_index <- function(info) {
                   general = index[["general_tot"]],
                   deaths_comm = index[["D_comm_tot"]],
                   deaths_carehomes = index[["D_carehomes_tot"]],
-                  # deaths_hosp = index[["D_hosp_tot"]],
-                  deaths_hosp_0 = index[["D_hosp_tot_0"]],
-                  deaths_hosp_55 = index[["D_hosp_tot_55"]],
-                  deaths_hosp_65 = index[["D_hosp_tot_65"]],
-                  deaths_hosp_75 = index[["D_hosp_tot_75"]],
-                  #
+                  deaths_hosp = index[["D_hosp_tot"]],
+                  deaths_hosp_0_64 = index[["D_hosp_tot_0_64"]],
+                  deaths_hosp_65_84 = index[["D_hosp_tot_65_84"]],
+                  deaths_hosp_85_plus = index[["D_hosp_tot_85_plus"]],
                   admitted = index[["cum_admit_conf"]],
                   diagnoses = index[["cum_new_conf"]],
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
-                  # deaths_hosp_inc = index[["D_hosp_inc"]],
-                  deaths_hosp_inc_0 = index[["D_hosp_inc_0"]],
-                  deaths_hosp_inc_55 = index[["D_hosp_inc_55"]],
-                  deaths_hosp_inc_65 = index[["D_hosp_inc_65"]],
-                  deaths_hosp_inc_75 = index[["D_hosp_inc_75"]],
-                  #
+                  deaths_hosp_inc = index[["D_hosp_inc"]],
+                  deaths_hosp_inc_0_64 = index[["D_hosp_inc_0_64"]],
+                  deaths_hosp_inc_65_84 = index[["D_hosp_inc_65_84"]],
+                  deaths_hosp_inc_85_plus = index[["D_hosp_inc_85_plus"]],
                   admitted_inc = index[["admit_conf_inc"]],
                   diagnoses_inc = index[["new_conf_inc"]],
                   sero_pos_1 = index[["sero_pos_1"]],
@@ -588,9 +584,9 @@ carehomes_index <- function(info) {
 
   ## Only incidence versions for the likelihood now:
   index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
-                            "deaths_comm_inc", # "deaths_hosp_inc",
-                            "deaths_hosp_inc_0", "deaths_hosp_inc_55",
-                            "deaths_hosp_inc_65", "deaths_hosp_inc_75",
+                            "deaths_comm_inc", "deaths_hosp_inc",
+                            "deaths_hosp_inc_0_64", "deaths_hosp_inc_65_84",
+                            "deaths_hosp_inc_85_plus",
                             "admitted_inc", "diagnoses_inc",
                             "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
                             "sympt_cases_non_variant_inc",
@@ -684,12 +680,10 @@ carehomes_compare <- function(state, observed, pars) {
   model_hosp <- model_icu + model_general
   model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
-  # model_deaths_hosp <- state["deaths_hosp_inc", ]
-  model_deaths_hosp_0 <- state["deaths_hosp_inc_0", ]
-  model_deaths_hosp_55 <- state["deaths_hosp_inc_55", ]
-  model_deaths_hosp_65 <- state["deaths_hosp_inc_65", ]
-  model_deaths_hosp_75 <- state["deaths_hosp_inc_75", ]
-  #
+  model_deaths_hosp <- state["deaths_hosp_inc", ]
+  model_deaths_hosp_0_64 <- state["deaths_hosp_inc_0_64", ]
+  model_deaths_hosp_65_84 <- state["deaths_hosp_inc_65_84", ]
+  model_deaths_hosp_85_plus <- state["deaths_hosp_inc_85_plus", ]
   model_admitted <- state["admitted_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
@@ -775,22 +769,20 @@ carehomes_compare <- function(state, observed, pars) {
                           pars$kappa_general, exp_noise)
   ll_hosp <- ll_nbinom(observed$hosp, pars$phi_hosp * model_hosp,
                        pars$kappa_hosp, exp_noise)
-  # ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
-  #                             pars$phi_death_hosp * model_deaths_hosp,
-  #                             pars$kappa_death_hosp, exp_noise)
-  ll_deaths_hosp_0 <- ll_nbinom(observed$death_0,
-                                pars$phi_death_hosp * model_deaths_hosp_0,
-                                pars$kappa_death_hosp, exp_noise)
-  ll_deaths_hosp_55 <- ll_nbinom(observed$death_55,
-                                 pars$phi_death_hosp * model_deaths_hosp_55,
-                                 pars$kappa_death_hosp, exp_noise)
-  ll_deaths_hosp_65 <- ll_nbinom(observed$death_65,
-                                 pars$phi_death_hosp * model_deaths_hosp_65,
-                                 pars$kappa_death_hosp, exp_noise)
-  ll_deaths_hosp_75 <- ll_nbinom(observed$death_75,
-                                 pars$phi_death_hosp * model_deaths_hosp_75,
-                                 pars$kappa_death_hosp, exp_noise)
-  #
+  ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
+                              pars$phi_death_hosp * model_deaths_hosp,
+                              pars$kappa_death_hosp, exp_noise)
+  ll_deaths_hosp_0_64 <- ll_nbinom(observed$death_0,
+                                   pars$phi_death_hosp * model_deaths_hosp_0_64,
+                                   pars$kappa_death_hosp, exp_noise)
+  ll_deaths_hosp_65_84 <- ll_nbinom(observed$death_65,
+                                    pars$phi_death_hosp *
+                                      model_deaths_hosp_65_84,
+                                    pars$kappa_death_hosp, exp_noise)
+  ll_deaths_hosp_85_plus <- ll_nbinom(observed$death_85,
+                                      pars$phi_death_hosp *
+                                        model_deaths_hosp_85_plus,
+                                      pars$kappa_death_hosp, exp_noise)
   ll_deaths_carehomes <- ll_nbinom(observed$deaths_carehomes,
                                    pars$phi_death_carehomes *
                                      model_deaths_carehomes,
@@ -804,11 +796,10 @@ carehomes_compare <- function(state, observed, pars) {
                                     model_deaths_carehomes,
                                   pars$kappa_death_non_hosp, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths,
-                         # pars$phi_death_hosp * model_deaths_hosp +
-                         pars$phi_death_hosp * model_deaths_hosp_0 +
-                           pars$phi_death_hosp * model_deaths_hosp_55 +
-                           pars$phi_death_hosp * model_deaths_hosp_65 +
-                           pars$phi_death_hosp * model_deaths_hosp_75 +
+                         pars$phi_death_hosp * model_deaths_hosp +
+                         pars$phi_death_hosp * model_deaths_hosp_0_64 +
+                           pars$phi_death_hosp * model_deaths_hosp_65_84 +
+                           pars$phi_death_hosp * model_deaths_hosp_85_plus +
                            pars$phi_death_carehomes * model_deaths_carehomes +
                            pars$phi_death_comm * model_deaths_comm,
                          pars$kappa_death, exp_noise)
@@ -861,14 +852,13 @@ carehomes_compare <- function(state, observed, pars) {
                                observed$strain_over25_tot,
                                model_strain_over25_prob_pos)
 
-  ll_icu + ll_general + ll_hosp + # ll_deaths_hosp +
-    ll_deaths_hosp_0 + ll_deaths_hosp_55 + ll_deaths_hosp_65 +
-    ll_deaths_hosp_75 +
-    ll_deaths_carehomes +
-    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-    ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
-    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
-    ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25
+  ll_icu + ll_general + ll_hosp + ll_deaths_hosp +
+    ll_deaths_hosp_0_64 + ll_deaths_hosp_65_84 + ll_deaths_hosp_85_plus +
+    ll_deaths_carehomes + ll_deaths_comm + ll_deaths_non_hosp + ll_deaths +
+    ll_admitted + ll_diagnoses + ll_all_admission + ll_serology_1 +
+    ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
+    ll_pillar2_over25_tests + ll_pillar2_over25_cases + ll_react + ll_strain +
+    ll_strain_over25
 }
 
 
@@ -1767,8 +1757,7 @@ carehomes_particle_filter_data <- function(data) {
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot",
                 "strain_non_variant", "strain_tot", "strain_over25_non_variant",
-                "strain_over25_tot", "death_0", "death_55", "death_65",
-                "death_75")
+                "strain_over25_tot", "death_0", "death_65", "death_85")
 
   verify_names(data, required, allow_extra = TRUE)
 
