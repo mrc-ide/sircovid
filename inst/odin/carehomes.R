@@ -1599,10 +1599,9 @@ update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
 dim(prob_strain) <- n_real_strains
 
 ## I_weighted used in IFR calculation
-initial(I_weighted[, ]) <- 0
-dim(I_weighted) <- c(n_groups, n_vacc_classes)
-dim(I_weighted_strain) <- c(n_groups, n_strains, n_vacc_classes)
-I_weighted_strain[, , ] <-
+initial(I_weighted[, , ]) <- 0
+dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+update(I_weighted[, , ]) <-
   strain_transmission[j] * (
     I_A_transmission * sum(new_I_A[i, j, , k]) +
       I_P_transmission * sum(new_I_P[i, j, , k]) +
@@ -1623,7 +1622,6 @@ I_weighted_strain[, , ] <-
           sum(new_ICU_D_unconf[i, j, , k]) +
           sum(new_ICU_D_conf[i, j, , k])) +
       G_D_transmission * sum(new_G_D[i, j, , k]))
-update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 ## Vaccination engine
 n_doses <- user()
