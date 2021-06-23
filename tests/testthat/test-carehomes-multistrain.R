@@ -712,6 +712,60 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 3rd dim of 'prob_strain' to have length 85, following 'step'")
 })
 
+test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
+  ## Run model with 2 variants
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0),
+                            cross_immunity = 0)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ## Check carehomes_ifr_t R
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p),
+    "Expected R input because")
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[-1, 1, ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, -1]),
+    "Expected 'R' to have 85 columns")
+
+  ## Check carehomes_ifr_t_trajectories R
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p),
+    "Expected R input because")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[1, , ]),
+    "Expected a 3d array of 'R'")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[-1, , ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[, -1, ]),
+    "Expected 'S' and 'R' to have same length of 2nd dim")
+
+})
+
 ## Tests for basic object properties, not analytical results from calculations
 test_that("wtmean_Rt works as expected", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
