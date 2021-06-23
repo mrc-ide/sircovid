@@ -1543,8 +1543,8 @@ update(D_tot) <- D_tot + delta_D_hosp_tot_0_64 + delta_D_hosp_tot_65_84 +
   delta_D_hosp_tot_85_plus + delta_D_comm_tot + delta_D_carehomes_tot
 
 ## hospital deaths in all age groups
-update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
-  delta_D_carehomes_tot
+# update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
+#   delta_D_carehomes_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
