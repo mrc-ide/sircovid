@@ -2232,7 +2232,8 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
 
   ## Run model with one strain only
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1, 1))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -2249,8 +2250,8 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   mod$set_index(c(index_S, index_I))
   y <- mod$simulate(steps)
 
-  S <- y[1:19, , ]
-  I <- y[20:38, , ]
+  S <- y[1:57, , ]
+  I <- y[58:114, , ]
 
   ifr_t_1_single_class <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p)
   ifr_t_all_single_class <- carehomes_ifr_t_trajectories(steps, S, I, p)

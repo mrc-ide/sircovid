@@ -105,54 +105,49 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
-    m_extended <-
-      matrix(t(matrix(m, n_groups,
-                      n_groups * n_real_strains *  n_vacc_classes)),
-             n_groups * n_real_strains * n_vacc_classes,
-             n_groups * n_real_strains * n_vacc_classes,
-             byrow = TRUE)
+    m_extended <- matrix(t(matrix(m, n_groups, n_groups *  n_vacc_classes)),
+                         n_groups * n_vacc_classes,
+                         n_groups * n_vacc_classes,
+                         byrow = TRUE)
 
     ## probability of infection in next time step by group and vaccine class
-    II <- array(I_weighted[, t], c(n_groups, n_strains, n_vacc_classes))
-    strain_transmission <-
-      array(1, c(n_groups, n_real_strains, n_vacc_classes))
-    if (n_strains > 1) {
-      II_tmp <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
-      II_tmp[, 1, ] <- II[, 1, ] + II[, 4, ]
-      II_tmp[, 2, ] <- II[, 2, ] + II[, 3, ]
-      II <- II_tmp
-      strain_transmission[, 1, ] <- p$strain_transmission[1]
-      strain_transmission[, 2, ] <- p$strain_transmission[2]
-    }
-
+    rel_sus <- p$rel_susceptibility
+    rel_inf <- p$rel_infectivity
     if (no_vacc) {
-      rel_sus <- 1
-      rel_inf <- 1
-    } else {
-      rel_sus <- p$rel_susceptibility
-      rel_inf <- p$rel_infectivity
+      rel_sus[, , ] <- 1
+      rel_inf[, , ] <- 1
     }
-
-    force_of_infection <-
-      c(rel_sus) * (m_extended %*%
-                      (c(II) * c(strain_transmission) * c(rel_inf)))
 
     ## expected infections in next time step by group and vaccine class
     if (n_strains == 1) {
-      prob_infection <- (1 - exp(-p$dt * force_of_infection))
+      foi <- c(rel_sus) * (m_extended %*% (I_weighted[, t] * c(rel_inf)))
+      prob_infection <- (1 - exp(-p$dt * foi))
       expected_infections <- S[, t] * prob_infection
     } else {
+
+      II <- array(I_weighted[, t], c(n_groups, n_strains, n_vacc_classes))
+      II[, 1, ] <- II[, 1, ] + II[, 4, ]
+      II[, 2, ] <- II[, 2, ] + II[, 3, ]
+      II <- II[, -(3:4), ]
+
+      foi <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
+
+      for (i in 1:2) {
+        foi_strain <- c(rel_sus[, i, ]) *
+          (m_extended %*% (c(II[, i, ]) *
+                             c(p$strain_transmission[i]) * c(rel_inf[, i, ])))
+        foi[, i, ] <- array(foi_strain, c(n_groups, n_vacc_classes))
+      }
+
       SS <- array(S[, t], c(n_groups, n_vacc_classes))
       RR <- array(R[, t], c(n_groups, n_strains, n_vacc_classes))
-      ff <- array(force_of_infection,
-                  c(n_groups, n_real_strains, n_vacc_classes))
-      total_ff <- apply(ff, c(1, 3), sum)
+      total_foi <- apply(foi, c(1, 3), sum)
       ee <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
       for (i in 1:2) {
         other_strain <- ifelse(i == 1, 2, 1)
-        ee[, i, ] <- SS * (1 - exp(-p$dt * total_ff)) * ff[, i, ] / total_ff +
-          RR[, other_strain, ] *
-          (1 - exp(-p$dt * ff[, i, ] * (1 - p$cross_immunity[other_strain])))
+        ee[, i, ] <- SS * (1 - exp(-p$dt * total_foi)) *
+          foi[, i, ] / total_foi + RR[, other_strain, ] *
+          (1 - exp(-p$dt * foi[, i, ] * (1 - p$cross_immunity[other_strain])))
       }
       expected_infections <- c(ee)
     }
@@ -162,6 +157,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
 
   calculate_weighted_ratio <- function(t, expected_infections,
                                        drop_carehomes, no_vacc, type) {
+
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
     if (drop_carehomes) {
@@ -176,12 +172,10 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
 
     if (no_vacc) {
       ## same IFR by group across all vaccine classes
-      ## Selects strain 1 and vacc class 1
-      IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t]),
+      IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, , 1, t]),
                      n_vacc_classes)
     } else {
-      ## Selects strain 1
-      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, , t])
+      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, , , t])
     }
 
     if (type != "ALOS") {
@@ -189,15 +183,13 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
     } else {
       if (no_vacc) {
         ## same IHR by group across all vaccine classes
-        ## Selects strain 1 and vacc class 1
-        IHR_vec <- rep(c(IFR_by_group_and_vacc_class[["IHR"]][, 1, 1, t]),
+        IHR_vec <- rep(c(IFR_by_group_and_vacc_class[["IHR"]][, , 1, t]),
                        n_vacc_classes)
       } else {
-        ## Selects strain 1
-        IHR_vec <- c(IFR_by_group_and_vacc_class[["IHR"]][, 1, , t])
+        IHR_vec <- c(IFR_by_group_and_vacc_class[["IHR"]][, , , t])
       }
       out <- weighted.mean(IFR_vec[i_keep],
-                           expected_infections[i_keep, t] * IHR_vec)
+                           expected_infections[i_keep, t] * IHR_vec[i_keep])
     }
     out
   }
