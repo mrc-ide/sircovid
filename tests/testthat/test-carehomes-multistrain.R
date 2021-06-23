@@ -763,6 +763,13 @@ test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
   expect_error(
     carehomes_ifr_t_trajectories(steps, S, I, p, R = R[, -1, ]),
     "Expected 'S' and 'R' to have same length of 2nd dim")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[, , -1]),
+    "Expected 3rd dim of 'R' to have length 85, given 'step'")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S[, 1, , drop = FALSE],
+                                 I[, 1, , drop = FALSE], list(p), R = R),
+    "Expected 2nd dim of 'R' to have length 1, given 'pars'")
 
 })
 
