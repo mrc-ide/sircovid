@@ -120,18 +120,22 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
 
     ## expected infections in next time step by group and vaccine class
     if (n_strains == 1) {
+      ## force of infection by group and vaccine class (as a vector)
       foi <- c(rel_sus) * (m_extended %*% (I_weighted[, t] * c(rel_inf)))
+      ## probability of infection by group and vaccine class
       prob_infection <- (1 - exp(-p$dt * foi))
+      ## expected infections by group and vaccine class
       expected_infections <- S[, t] * prob_infection
     } else {
-
+      ## need to sum over metastrains
       II <- array(I_weighted[, t], c(n_groups, n_strains, n_vacc_classes))
       II[, 1, ] <- II[, 1, ] + II[, 4, ]
       II[, 2, ] <- II[, 2, ] + II[, 3, ]
       II <- II[, -c(3, 4), ]
 
+      ## foi[i, j, k] is force of infection on a susceptible in group i/vaccine
+      ## class k from strain j
       foi <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
-
       for (i in 1:2) {
         foi_strain <- c(rel_sus[, i, ]) *
           (m_extended %*% (c(II[, i, ]) *
@@ -141,15 +145,18 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
 
       SS <- array(S[, t], c(n_groups, n_vacc_classes))
       RR <- array(R[, t], c(n_groups, n_strains, n_vacc_classes))
+      ## total force of infection across strains
       total_foi <- apply(foi, c(1, 3), sum)
-      ee <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
+      ## calculate expected infections by group, strain and vaccine classes
+      ## accounting for cross immunity
+      e_inf <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
       for (i in 1:2) {
         other_strain <- ifelse(i == 1, 2, 1)
-        ee[, i, ] <- SS * (1 - exp(-p$dt * total_foi)) *
+        e_inf[, i, ] <- SS * (1 - exp(-p$dt * total_foi)) *
           foi[, i, ] / total_foi + RR[, other_strain, ] *
           (1 - exp(-p$dt * foi[, i, ] * (1 - p$cross_immunity[other_strain])))
       }
-      expected_infections <- c(ee)
+      expected_infections <- c(e_inf)
     }
     expected_infections
   }
