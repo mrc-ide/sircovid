@@ -1,4 +1,4 @@
-# sircovid 0.11.13
+# sircovid 0.11.15
 
 * Added support to allow fitting to age-specific hospital deaths
 
