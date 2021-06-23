@@ -565,7 +565,13 @@ carehomes_index <- function(info) {
                   deaths_hosp_inc_65_84 = index[["D_hosp_inc_65_84"]],
                   deaths_hosp_inc_85_plus = index[["D_hosp_inc_85_plus"]],
                   admitted_inc = index[["admit_conf_inc"]],
+                  admitted_inc_0_64 = index[["admit_conf_inc_0_64"]],
+                  admitted_inc_65_84 = index[["admit_conf_inc_65_84"]],
+                  admitted_inc_85_plus = index[["admit_conf_inc_85_plus"]],
                   diagnoses_inc = index[["new_conf_inc"]],
+                  diagnoses_inc_0_64 = index[["new_conf_inc_0_64"]],
+                  diagnoses_inc_65_84 = index[["new_conf_inc_65_84"]],
+                  diagnoses_inc_85_plus = index[["new_conf_inc_85_plus"]],
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
                   sympt_cases = index[["cum_sympt_cases"]],
@@ -587,7 +593,10 @@ carehomes_index <- function(info) {
                             "deaths_comm_inc", "deaths_hosp_inc",
                             "deaths_hosp_inc_0_64", "deaths_hosp_inc_65_84",
                             "deaths_hosp_inc_85_plus",
-                            "admitted_inc", "diagnoses_inc",
+                            "admitted_inc", "admitted_inc_0_64",
+                            "admitted_inc_65_84", "admitted_inc_85_plus",
+                            "diagnoses_inc", "diagnoses_inc_0_64",
+                            "diagnoses_inc_65_84", "diagnoses_inc_85_plus",
                             "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
                             "sympt_cases_non_variant_inc",
                             "sympt_cases_over25_inc",
@@ -687,6 +696,16 @@ carehomes_compare <- function(state, observed, pars) {
   model_admitted <- state["admitted_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
+  model_admitted_0_64 <- state["admitted_inc_0_64", ]
+  model_diagnoses_0_64 <- state["diagnoses_inc_0_64", ]
+  model_all_admission_0_64 <- model_admitted_0_64 + model_diagnoses_0_64
+  model_admitted_65_84 <- state["admitted_inc_65_84", ]
+  model_diagnoses_65_84 <- state["diagnoses_inc_65_84", ]
+  model_all_admission_65_84 <- model_admitted_65_84 + model_diagnoses_65_84
+  model_admitted_85_plus <- state["admitted_inc_85_plus", ]
+  model_diagnoses_85_plus <- state["diagnoses_inc_85_plus", ]
+  model_all_admission_85_plus <- model_admitted_85_plus +
+    model_diagnoses_85_plus
   model_sero_pos_1 <- state["sero_pos_1", ]
   model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
@@ -803,6 +822,7 @@ carehomes_compare <- function(state, observed, pars) {
                            pars$phi_death_carehomes * model_deaths_carehomes +
                            pars$phi_death_comm * model_deaths_comm,
                          pars$kappa_death, exp_noise)
+
   ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * model_admitted,
                            pars$kappa_admitted, exp_noise)
@@ -812,6 +832,21 @@ carehomes_compare <- function(state, observed, pars) {
   ll_all_admission <- ll_nbinom(observed$all_admission,
                                 pars$phi_all_admission * model_all_admission,
                                 pars$kappa_all_admission, exp_noise)
+
+  ll_all_admission_0_64 <- ll_nbinom(observed$all_admission_0_64,
+                                pars$phi_all_admission *
+                                  model_all_admission_0_64,
+                                pars$kappa_all_admission, exp_noise)
+
+  ll_all_admission65_84 <- ll_nbinom(observed$all_admission65_84,
+                                     pars$phi_all_admission *
+                                       model_all_admission65_84,
+                                     pars$kappa_all_admission, exp_noise)
+
+  ll_all_admission_85_plus <- ll_nbinom(observed$all_admission_85_plus,
+                                     pars$phi_all_admission *
+                                       model_all_admission_85_plus,
+                                     pars$kappa_all_admission, exp_noise)
 
   ll_serology_1 <- ll_binom(observed$sero_pos_15_64_1,
                             observed$sero_tot_15_64_1,
@@ -855,7 +890,8 @@ carehomes_compare <- function(state, observed, pars) {
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp +
     ll_deaths_hosp_0_64 + ll_deaths_hosp_65_84 + ll_deaths_hosp_85_plus +
     ll_deaths_carehomes + ll_deaths_comm + ll_deaths_non_hosp + ll_deaths +
-    ll_admitted + ll_diagnoses + ll_all_admission + ll_serology_1 +
+    ll_admitted + ll_diagnoses + ll_all_admission + ll_all_admission_0_65 +
+    ll_all_admission_65_84 + ll_all_admission_85_plus + ll_serology_1 +
     ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
     ll_pillar2_over25_tests + ll_pillar2_over25_cases + ll_react + ll_strain +
     ll_strain_over25
