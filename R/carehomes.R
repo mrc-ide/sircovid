@@ -829,6 +829,7 @@ carehomes_compare <- function(state, observed, pars) {
   ll_diagnoses <- ll_nbinom(observed$diagnoses,
                             pars$phi_diagnoses * model_diagnoses,
                             pars$kappa_diagnoses, exp_noise)
+
   ll_all_admission <- ll_nbinom(observed$all_admission,
                                 pars$phi_all_admission * model_all_admission,
                                 pars$kappa_all_admission, exp_noise)
@@ -890,7 +891,7 @@ carehomes_compare <- function(state, observed, pars) {
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp +
     ll_deaths_hosp_0_64 + ll_deaths_hosp_65_84 + ll_deaths_hosp_85_plus +
     ll_deaths_carehomes + ll_deaths_comm + ll_deaths_non_hosp + ll_deaths +
-    ll_admitted + ll_diagnoses + ll_all_admission + ll_all_admission_0_65 +
+    ll_admitted + ll_diagnoses + ll_all_admission + ll_all_admission_0_64 +
     ll_all_admission_65_84 + ll_all_admission_85_plus + ll_serology_1 +
     ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
     ll_pillar2_over25_tests + ll_pillar2_over25_cases + ll_react + ll_strain +
