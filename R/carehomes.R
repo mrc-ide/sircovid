@@ -838,9 +838,9 @@ carehomes_compare <- function(state, observed, pars) {
                                   model_all_admission_0_64,
                                 pars$kappa_all_admission, exp_noise)
 
-  ll_all_admission65_84 <- ll_nbinom(observed$all_admission65_84,
+  ll_all_admission_65_84 <- ll_nbinom(observed$all_admission_65_84,
                                      pars$phi_all_admission *
-                                       model_all_admission65_84,
+                                       model_all_admission_65_84,
                                      pars$kappa_all_admission, exp_noise)
 
   ll_all_admission_85_plus <- ll_nbinom(observed$all_admission_85_plus,
