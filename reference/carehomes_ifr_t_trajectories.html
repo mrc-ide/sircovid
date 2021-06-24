@@ -83,7 +83,7 @@ parameters." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.16</span>
       </span>
     </div>
 
@@ -141,7 +141,8 @@ parameters.</p>
   <span class='va'>pars</span>,
   initial_step_from_parameters <span class='op'>=</span> <span class='cn'>TRUE</span>,
   shared_parameters <span class='op'>=</span> <span class='cn'>NULL</span>,
-  type <span class='op'>=</span> <span class='cn'>NULL</span>
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
+  R <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -158,8 +159,8 @@ x n steps) array of "S" compartment counts</p></td>
     </tr>
     <tr>
       <th>I_weighted</th>
-      <td><p>A 3d ((n groups x n vaccine classes) x n trajectories
-x n steps) array of "I_weighted" compartment counts</p></td>
+      <td><p>A 3d ((n groups x n strains x n vaccine classes) x
+n trajectories x n steps) array of "I_weighted" compartment counts</p></td>
     </tr>
     <tr>
       <th>pars</th>
@@ -186,6 +187,12 @@ other which may give more easily interpretable error messages.</p></td>
 compute. Can be any or all of <code>IFR_t_all</code>, <code>IFR_t_general</code>,
 <code>IHR_t_all</code>, <code>IHR_t_general</code>, <code>IFR_t_all_no_vacc</code>,
 <code>IFR_t_general_no_vacc</code>, <code>IHR_t_all_no_vacc</code> and <code>IHR_t_general_no_vacc</code>,</p></td>
+    </tr>
+    <tr>
+      <th>R</th>
+      <td><p>A 3d ((n groups x n strains x n vaccine classes) x
+n trajectories x n steps) array of "R" compartment counts, required for
+multi-strain models.</p></td>
     </tr>
     </table>
 
