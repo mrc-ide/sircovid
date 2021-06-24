@@ -1615,7 +1615,7 @@ initial(I_weighted[, , ]) <- 0
 dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
 update(I_weighted[, , ]) <- new_I_weighted[i, j, k]
 
-## prob_strain is proportion of total I_weighted_strain in each strain
+## prob_strain is proportion of total I_weighted in each strain
 prob_strain_1 <- if (n_real_strains == 1) 1 else
   (sum(new_I_weighted[, 1, ]) + sum(new_I_weighted[, 4, ])) /
   sum(new_I_weighted)
