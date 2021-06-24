@@ -1602,26 +1602,25 @@ dim(prob_strain) <- n_real_strains
 initial(I_weighted[, , ]) <- 0
 dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
 update(I_weighted[, , ]) <-
-  strain_transmission[j] * (
-    I_A_transmission * sum(new_I_A[i, j, , k]) +
-      I_P_transmission * sum(new_I_P[i, j, , k]) +
-      I_C_1_transmission * sum(new_I_C_1[i, j, , k]) +
-      I_C_2_transmission * sum(new_I_C_2[i, j, , k]) +
-      hosp_transmission * (
-        sum(new_ICU_pre_unconf[i, j, , k]) +
-          sum(new_ICU_pre_conf[i, j, , k]) +
-          sum(new_H_R_unconf[i, j, , k]) +
-          sum(new_H_R_conf[i, j, , k]) +
-          sum(new_H_D_unconf[i, j, , k]) +
-          sum(new_H_D_conf[i, j, , k])) +
-      ICU_transmission * (
-        sum(new_ICU_W_R_unconf[i, j, , k]) +
-          sum(new_ICU_W_R_conf[i, j, , k]) +
-          sum(new_ICU_W_D_unconf[i, j, , k]) +
-          sum(new_ICU_W_D_conf[i, j, , k]) +
-          sum(new_ICU_D_unconf[i, j, , k]) +
-          sum(new_ICU_D_conf[i, j, , k])) +
-      G_D_transmission * sum(new_G_D[i, j, , k]))
+  I_A_transmission * sum(new_I_A[i, j, , k]) +
+  I_P_transmission * sum(new_I_P[i, j, , k]) +
+  I_C_1_transmission * sum(new_I_C_1[i, j, , k]) +
+  I_C_2_transmission * sum(new_I_C_2[i, j, , k]) +
+  hosp_transmission * (
+    sum(new_ICU_pre_unconf[i, j, , k]) +
+      sum(new_ICU_pre_conf[i, j, , k]) +
+      sum(new_H_R_unconf[i, j, , k]) +
+      sum(new_H_R_conf[i, j, , k]) +
+      sum(new_H_D_unconf[i, j, , k]) +
+      sum(new_H_D_conf[i, j, , k])) +
+  ICU_transmission * (
+    sum(new_ICU_W_R_unconf[i, j, , k]) +
+      sum(new_ICU_W_R_conf[i, j, , k]) +
+      sum(new_ICU_W_D_unconf[i, j, , k]) +
+      sum(new_ICU_W_D_conf[i, j, , k]) +
+      sum(new_ICU_D_unconf[i, j, , k]) +
+      sum(new_ICU_D_conf[i, j, , k])) +
+  G_D_transmission * sum(new_G_D[i, j, , k])
 
 ## Vaccination engine
 n_doses <- user()
