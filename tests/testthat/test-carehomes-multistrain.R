@@ -942,6 +942,95 @@ test_that("Can calculate Rt with an empty second variant ", {
 })
 
 
+test_that("Can calculate IFR with an empty second variant ", {
+  ## Run model with 2 variants, but both have same transmissibility
+  ## no seeding for second variant so noone infected with that one
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            cross_immunity = 0)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## Run model with one strain only
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(c(index_S, index_I, index_R))
+  y <- mod$simulate(steps)
+
+  S <- y[1:19, , ]
+  I <- y[20:38, , ]
+  R <- y[39:57, , ]
+
+  ifr_t_1_single_class <-
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all_single_class <- carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  expect_equal(ifr_t_1$step, ifr_t_1_single_class$step)
+  expect_equal(ifr_t_1$date, ifr_t_1_single_class$date)
+  expect_equal(ifr_t_1$IFR_t_all, ifr_t_1_single_class$IFR_t_all)
+  expect_equal(ifr_t_1$IFR_t_general,
+               ifr_t_1_single_class$IFR_t_general)
+  expect_equal(ifr_t_1$IHR_t_all, ifr_t_1_single_class$IHR_t_all)
+  expect_equal(ifr_t_1$IHR_t_general, ifr_t_1_single_class$IHR_t_general)
+  expect_equal(ifr_t_1$IFR_t_all_no_vacc,
+               ifr_t_1_single_class$IFR_t_all_no_vacc)
+  expect_equal(ifr_t_1$IFR_t_general_no_vacc,
+               ifr_t_1_single_class$IFR_t_general_no_vacc)
+  expect_equal(ifr_t_1$IHR_t_all_no_vacc,
+               ifr_t_1_single_class$IHR_t_all_no_vacc)
+  expect_equal(ifr_t_1$IHR_t_general_no_vacc,
+               ifr_t_1_single_class$IHR_t_general_no_vacc)
+
+  expect_equal(ifr_t_all$step, ifr_t_all_single_class$step)
+  expect_equal(ifr_t_all$date, ifr_t_all_single_class$date)
+  expect_equal(ifr_t_all$IFR_t_all, ifr_t_all_single_class$IFR_t_all)
+  expect_equal(ifr_t_all$IFR_t_general,
+               ifr_t_all_single_class$IFR_t_general)
+  expect_equal(ifr_t_all$IHR_t_all, ifr_t_all_single_class$IHR_t_all)
+  expect_equal(ifr_t_all$IHR_t_general, ifr_t_all_single_class$IHR_t_general)
+  expect_equal(ifr_t_all$IFR_t_all_no_vacc,
+               ifr_t_all_single_class$IFR_t_all_no_vacc)
+  expect_equal(ifr_t_all$IFR_t_general_no_vacc,
+               ifr_t_all_single_class$IFR_t_general_no_vacc)
+  expect_equal(ifr_t_all$IHR_t_all_no_vacc,
+               ifr_t_all_single_class$IHR_t_all_no_vacc)
+  expect_equal(ifr_t_all$IHR_t_general_no_vacc,
+               ifr_t_all_single_class$IHR_t_general_no_vacc)
+})
+
+
 test_that("Can calculate Rt with strain_transmission (1, 0) ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
@@ -1111,7 +1200,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
 })
 
 
-test_that("Can calculate Rt with a second less letal variant", {
+test_that("Can calculate Rt with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
@@ -1178,6 +1267,63 @@ test_that("Can calculate Rt with a second less letal variant", {
   expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
   expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
                     tol = tol)
+})
+
+
+test_that("Can calculate IFR with a second less lethal variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = c(1, 0.5),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0),
+                            cross_immunity = 1)
+
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## move everyone into first strain
+  I[1:19, , ] <- I[1:19, , ] + I[20:38, , ] + I[39:57, , ] + I[58:76, , ]
+  I[20:76, , ] <- 0
+  R[1:19, , ] <- R[1:19, , ] + R[20:38, , ] + R[39:57, , ] + R[58:76, , ]
+  R[20:76, , ] <- 0
+
+  ifr_t_1_empty_strain2 <-
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all_empty_strain2 <-
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## Rt should be lower (or equal) for the two variant version
+  ## because less lethal
+  tol <- 1e-5
+  expect_vector_lte(ifr_t_1$IFR_t_all, ifr_t_1_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_1$IFR_t_general, ifr_t_1_empty_strain2$IFR_t_general,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_all, ifr_t_all_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_general,
+                    ifr_t_all_empty_strain2$IFR_t_general, tol = tol)
 })
 
 
@@ -1545,6 +1691,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
+  index_I <- mod$info()$index$I_weighted
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -1552,6 +1699,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   set.seed(2)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  I <- y[index_I, , ]
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
@@ -1574,6 +1722,9 @@ test_that("calculate Rt with both second variant and vaccination", {
     expect_approx_equal(rt$eff_Rt_general[vacc_time] * reduced_susceptibility,
                         rt$eff_Rt_general[vacc_time + 1],
                         rel_tol = 0.2)
+
+    ## Not sure how we want to test results here yet, but just make sure it runs
+    ifr_t <- carehomes_ifr_t(steps, S[, k, ], I[, k, ], p, R = R[, k, ])
   }
 
 })

@@ -131,7 +131,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
       II <- array(I_weighted[, t], c(n_groups, n_strains, n_vacc_classes))
       II[, 1, ] <- II[, 1, ] + II[, 4, ]
       II[, 2, ] <- II[, 2, ] + II[, 3, ]
-      II <- II[, -c(3, 4), ]
+      II <- II[, -c(3, 4), , drop = FALSE]
 
       ## foi[i, j, k] is force of infection on a susceptible in group i/vaccine
       ## class k from strain j
