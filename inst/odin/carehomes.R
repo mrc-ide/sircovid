@@ -1589,6 +1589,15 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 rel_foi_strain[, , ] <- lambda_susc[i, j, k] / sum(lambda_susc[i, , k])
 dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
+## prob_strain is probability of an infection being of strain j
+## irrespective of susceptibility levels
+## prob_strain_1 is prob_strain[1]
+prob_strain_1 <- sum(lambda[, 1]) / sum(lambda[, ])
+initial(prob_strain[1:n_real_strains]) <- 0
+initial(prob_strain[1]) <- 1
+update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
+dim(prob_strain) <- n_real_strains
+
 ## I_weighted used in IFR calculation
 initial(I_weighted[, ]) <- 0
 dim(I_weighted) <- c(n_groups, n_vacc_classes)
@@ -1615,15 +1624,6 @@ I_weighted_strain[, , ] <-
           sum(new_ICU_D_conf[i, j, , k])) +
       G_D_transmission * sum(new_G_D[i, j, , k]))
 update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
-
-## prob_strain is proportion of total I_weighted_strain in each strain
-prob_strain_1 <- if (n_real_strains == 1) 1 else
-  (sum(I_weighted_strain[, 1, ]) + sum(I_weighted_strain[, 4, ])) /
-  sum(I_weighted_strain)
-initial(prob_strain[1:n_real_strains]) <- 0
-initial(prob_strain[1]) <- 1
-update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
-dim(prob_strain) <- n_real_strains
 
 ## Vaccination engine
 n_doses <- user()
