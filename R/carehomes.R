@@ -644,8 +644,6 @@ carehomes_index <- function(info) {
 
   ## age x vacc class
   index_S <- calculate_index(index, "S", list(n_vacc_classes), suffix)
-  index_I_weighted <- calculate_index(index, "I_weighted",
-                                      list(n_vacc_classes), suffix)
   index_diagnoses_admitted <- calculate_index(index, "diagnoses_admitted",
                                               list(n_vacc_classes), suffix)
   index_cum_infections_disag <- calculate_index(index, "cum_infections_disag",
@@ -658,6 +656,10 @@ carehomes_index <- function(info) {
   index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
 
   ## age x (total) strain x vacc class
+  index_I_weighted <- calculate_index(index, "I_weighted",
+                                      list(S = n_tot_strains,
+                                           V = n_vacc_classes),
+                                      suffix)
   index_R <- calculate_index(index, "R",
                              list(S = n_tot_strains, V = n_vacc_classes),
                              suffix)

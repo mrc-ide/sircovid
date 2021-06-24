@@ -1,7 +1,11 @@
-# sircovid 0.11.16
+# sircovid 0.11.17
 
 * Relax checks on relative vaccination parameters so only first vacc class
 of first strain needs to be `1` for all age groups
+
+# sircovid 0.11.16
+
+* IFR calculation now works fully for a multistrain model
 
 # sircovid 0.11.14
 
