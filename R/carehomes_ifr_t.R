@@ -7,8 +7,8 @@
 ##' @param S A (n groups x n vaccine classes) x steps matrix of
 ##'   "S" compartment counts
 ##'
-##' @param I_weighted A (n groups x n vaccine classes) x steps matrix of
-##'   "I_weighted" compartment counts
+##' @param I_weighted A (n groups x n strains x n vaccine classes) x steps
+##'   matrix of "I_weighted" compartment counts
 ##'
 ##' @param p A [carehomes_parameters()] object
 ##'
@@ -17,14 +17,17 @@
 ##'   `IHR_t_all`, `IHR_t_general`, `IFR_t_all_no_vacc`,
 ##'   `IFR_t_general_no_vacc`, `IHR_t_all_no_vacc` and `IHR_t_general_no_vacc`,
 ##'
+##' @param R A (n groups x n strains x n vaccine classes) x steps matrix of "R"
+##'   compartment counts, required for multi-strain models.
+##'
+##'
 ##' @return A list with elements `step`, `date`, and any of the `type`
 ##'   values specified above.
 ##'
 ##' @importFrom stats weighted.mean
 ##'
 ##' @export
-carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
-
+carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
   all_types <- c("IFR_t_all", "IFR_t_general", "IHR_t_all", "IHR_t_general",
                  "IFR_t_all_no_vacc", "IFR_t_general_no_vacc",
                  "IHR_t_all_no_vacc", "IHR_t_general_no_vacc",
@@ -40,31 +43,52 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
     }
   }
 
+  n_groups <- p$n_groups
+  n_strains <- p$n_strains
+  n_vacc_classes <- p$n_vacc_classes
 
-  if (nrow(S) != nlayer(p$rel_susceptibility) * p$n_groups) {
+  if (n_strains > 1) {
+    if (n_strains != 4) {
+      stop("Multstrain IFR currently only works if n_strains is 4")
+    }
+    if (is.null(R)) {
+      stop("Expected R input because there is more than one
+            strain")
+    }
+    if (nrow(R) != n_groups * n_strains * n_vacc_classes) {
+      stop(sprintf(
+        "Expected 'R' to have %d rows = %d groups x %d strains x %d
+          vaccine classes",
+        n_groups * n_strains * n_vacc_classes,
+        n_groups, n_strains, n_vacc_classes))
+    }
+    if (ncol(R) != length(step)) {
+      stop(sprintf("Expected 'R' to have %d columns, following 'step'",
+                   length(step)))
+    }
+  }
+
+  if (nrow(S) != n_groups * n_vacc_classes) {
     stop(sprintf(
       "Expected 'S' to have %d rows = %d groups x %d vacc classes",
-      p$n_groups * nlayer(p$rel_susceptibility),
-      p$n_groups,
-      nlayer(p$rel_susceptibility)))
+      n_groups * n_vacc_classes, n_groups, n_vacc_classes))
   }
   if (ncol(S) != length(step)) {
     stop(sprintf("Expected 'S' to have %d columns, following 'step'",
                  length(step)))
   }
-  if (nrow(I_weighted) != nlayer(p$rel_susceptibility) * p$n_groups) {
+  if (nrow(I_weighted) != n_groups * n_strains * n_vacc_classes) {
     stop(sprintf(
-      "Expected 'I_weighted' to have %d rows = %d groups x %d vacc classes",
-      p$n_groups * nlayer(p$rel_susceptibility),
-      p$n_groups,
-      nlayer(p$rel_susceptibility)))
+      "Expected 'I_weighted' to have %d rows = %d groups x %d strains x %d
+          vaccine classes",
+      n_groups * n_strains * n_vacc_classes,
+      n_groups, n_strains, n_vacc_classes))
   }
   if (ncol(I_weighted) != length(step)) {
     stop(sprintf("Expected 'I_weighted' to have %d columns, following 'step'",
                  length(step)))
   }
 
-  n_strains <- length(p$strain_transmission)
   if (n_strains == 1) {
     n_real_strains <- 1
   } else {
@@ -76,63 +100,92 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
   IFR_by_group_and_vacc_class <-
     carehomes_IFR_t_by_group_and_vacc_class(step, p)
   beta <- sircovid_parameters_expand_step(step, p$beta_step)
-  n_vacc_classes <- nlayer(p$rel_susceptibility)
-
 
   calculate_expected_infections <- function(t, no_vacc) {
     m <- p$m
     ages <- seq_len(p$n_age_groups)
-    ch <- seq(to = p$n_groups, length.out = 2)
+    ch <- seq(to = n_groups, length.out = 2)
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
-    m_extended <- matrix(t(matrix(m, p$n_groups, p$n_groups * n_vacc_classes)),
-                         p$n_groups * n_vacc_classes,
-                         p$n_groups * n_vacc_classes,
+    m_extended <- matrix(t(matrix(m, n_groups, n_groups * n_vacc_classes)),
+                         n_groups * n_vacc_classes,
+                         n_groups * n_vacc_classes,
                          byrow = TRUE)
 
     ## probability of infection in next time step by group and vaccine class
+    rel_sus <- p$rel_susceptibility
+    rel_inf <- p$rel_infectivity
     if (no_vacc) {
-      ## exclude vaccine effects
-      prob_infection <- (1 - exp(-p$dt * (m_extended %*% I_weighted[, t])))
-    } else {
-      ## include vaccine effects
-      if (length(dim(p$rel_susceptibility)) == 3) {
-        ## as in other places only look at strain 1
-        rel_sus <- p$rel_susceptibility[, 1, , drop = FALSE]
-        rel_inf <- p$rel_infectivity[, 1, , drop = FALSE]
-      }
-      prob_infection <- (1 - exp(-p$dt * c(rel_sus) *
-                     (m_extended %*% (I_weighted[, t] * c(rel_inf)))))
+      rel_sus[, , ] <- 1
+      rel_inf[, , ] <- 1
     }
 
     ## expected infections in next time step by group and vaccine class
-    expected_infections <-  S[, t] * prob_infection
+    if (n_strains == 1) {
+      ## force of infection by group and vaccine class (as a vector)
+      foi <- c(rel_sus) * (m_extended %*% (I_weighted[, t] * c(rel_inf)))
+      ## probability of infection by group and vaccine class
+      prob_infection <- (1 - exp(-p$dt * foi))
+      ## expected infections by group and vaccine class
+      expected_infections <- S[, t] * prob_infection
+    } else {
+      ## need to sum over metastrains
+      II <- array(I_weighted[, t], c(n_groups, n_strains, n_vacc_classes))
+      II[, 1, ] <- II[, 1, ] + II[, 4, ]
+      II[, 2, ] <- II[, 2, ] + II[, 3, ]
+      II <- II[, -c(3, 4), , drop = FALSE]
 
+      ## foi[i, j, k] is force of infection on a susceptible in group i/vaccine
+      ## class k from strain j
+      foi <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
+      for (i in 1:2) {
+        foi_strain <- c(rel_sus[, i, ]) *
+          (m_extended %*% (c(II[, i, ]) *
+                             c(p$strain_transmission[i]) * c(rel_inf[, i, ])))
+        foi[, i, ] <- array(foi_strain, c(n_groups, n_vacc_classes))
+      }
+
+      SS <- array(S[, t], c(n_groups, n_vacc_classes))
+      RR <- array(R[, t], c(n_groups, n_strains, n_vacc_classes))
+      ## total force of infection across strains
+      total_foi <- apply(foi, c(1, 3), sum)
+      ## calculate expected infections by group, strain and vaccine classes
+      ## accounting for cross immunity
+      e_inf <- array(0, c(n_groups, n_real_strains, n_vacc_classes))
+      for (i in 1:2) {
+        other_strain <- ifelse(i == 1, 2, 1)
+        e_inf[, i, ] <- SS * (1 - exp(-p$dt * total_foi)) *
+          foi[, i, ] / total_foi + RR[, other_strain, ] *
+          (1 - exp(-p$dt * foi[, i, ] * (1 - p$cross_immunity[other_strain])))
+      }
+      expected_infections <- c(e_inf)
+    }
     expected_infections
   }
 
 
   calculate_weighted_ratio <- function(t, expected_infections,
                                        drop_carehomes, no_vacc, type) {
+
     ## Care home workers (CHW) and residents (CHR) in last two rows
     ## and columns, remove for each vaccine class
     if (drop_carehomes) {
-      i_CHR <- seq(p$n_groups, dim(S)[1], by = p$n_groups)
+      i_CHR <- seq(n_groups, n_groups * n_real_strains * n_vacc_classes,
+                   by = n_groups)
       i_CHW <- i_CHR - 1
-      i_keep <- seq_len(dim(S)[1])[-c(i_CHW, i_CHR)]
+      i_keep <-
+        seq_len(n_groups * n_real_strains * n_vacc_classes)[-c(i_CHW, i_CHR)]
     } else {
-      i_keep <- seq_len(dim(S)[1])
+      i_keep <- seq_len(n_groups * n_real_strains * n_vacc_classes)
     }
 
     if (no_vacc) {
       ## same IFR by group across all vaccine classes
-      ## Selects strain 1 and vacc class 1
-      IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, 1, 1, t]),
+      IFR_vec <- rep(c(IFR_by_group_and_vacc_class[[type]][, , 1, t]),
                      n_vacc_classes)
     } else {
-      ## Selects strain 1
-      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, 1, , t])
+      IFR_vec <- c(IFR_by_group_and_vacc_class[[type]][, , , t])
     }
 
     if (type != "ALOS") {
@@ -140,15 +193,13 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
     } else {
       if (no_vacc) {
         ## same IHR by group across all vaccine classes
-        ## Selects strain 1 and vacc class 1
-        IHR_vec <- rep(c(IFR_by_group_and_vacc_class[["IHR"]][, 1, 1, t]),
+        IHR_vec <- rep(c(IFR_by_group_and_vacc_class[["IHR"]][, , 1, t]),
                        n_vacc_classes)
       } else {
-        ## Selects strain 1
-        IHR_vec <- c(IFR_by_group_and_vacc_class[["IHR"]][, 1, , t])
+        IHR_vec <- c(IFR_by_group_and_vacc_class[["IHR"]][, , , t])
       }
       out <- weighted.mean(IFR_vec[i_keep],
-                           expected_infections[i_keep, t] * IHR_vec)
+                           expected_infections[i_keep, t] * IHR_vec[i_keep])
     }
     out
   }
@@ -156,9 +207,13 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 
   t <- seq_along(step)
   expected_infections_vacc <- vapply(t, calculate_expected_infections,
-                                     numeric(dim(S)[1]), no_vacc = FALSE)
+                                     numeric(n_groups * n_real_strains *
+                                               n_vacc_classes),
+                                     no_vacc = FALSE)
   expected_infections_no_vacc <- vapply(t, calculate_expected_infections,
-                                        numeric(dim(S)[1]), no_vacc = TRUE)
+                                        numeric(n_groups * n_real_strains *
+                                                  n_vacc_classes),
+                                        no_vacc = TRUE)
 
   opts <- list(IFR_t_all = list(e_inf = expected_infections_vacc,
                                 general = FALSE, no_vacc = FALSE,
@@ -219,8 +274,8 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 ##' @param S A 3d ((n groups x n vaccine classes) x n trajectories
 ##'   x n steps) array of "S" compartment counts
 ##'
-##' @param I_weighted A 3d ((n groups x n vaccine classes) x n trajectories
-##'   x n steps) array of "I_weighted" compartment counts
+##' @param I_weighted A 3d ((n groups x n strains x n vaccine classes) x
+##'   n trajectories x n steps) array of "I_weighted" compartment counts
 ##'
 ##' @param pars Either a single [carehomes_parameters()] object
 ##'   (shared parameters) or an unnamed list of
@@ -235,6 +290,10 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 ##'   `TRUE` or `FALSE` to force it to be interpreted one way or the
 ##'   other which may give more easily interpretable error messages.
 ##'
+##' @param R A 3d ((n groups x n strains x n vaccine classes) x
+##'   n trajectories x n steps) array of "R" compartment counts, required for
+##'   multi-strain models.
+##'
 ##' @inheritParams carehomes_ifr_t
 ##'
 ##' @return As for [carehomes_ifr_t()], except that every element is a
@@ -243,10 +302,11 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL) {
 ##' @export
 carehomes_ifr_t_trajectories <- function(step, S, I_weighted, pars,
                                       initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL, type = NULL) {
+                                      shared_parameters = NULL, type = NULL,
+                                      R = NULL) {
   calculate_ifr_t_trajectories(carehomes_ifr_t, step, S, I_weighted, pars,
                             initial_step_from_parameters, shared_parameters,
-                            type)
+                            type, R)
 }
 
 
@@ -318,12 +378,15 @@ carehomes_IFR_t_by_group_and_vacc_class <- function(step, pars) {
 ## carehomes-specific file until we do add a new model or port it.
 calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
                                          pars, initial_step_from_parameters,
-                                         shared_parameters, type) {
+                                         shared_parameters, type, R = NULL) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
   }
   if (length(dim(I_weighted)) != 3) {
     stop("Expected a 3d array of 'I_weighted'")
+  }
+  if (!is.null(R) && length(dim(R)) != 3) {
+    stop("Expected a 3d array of 'R'")
   }
 
   shared_parameters <- shared_parameters %||% !is.null(names(pars))
@@ -333,6 +396,9 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
     }
     if (dim(I_weighted)[[2]] != dim(S)[[2]]) {
       stop("Expected 'S' and 'I_weighted' to have same length of 2nd dim")
+    }
+    if (!is.null(R) && dim(R)[[2]] != dim(S)[[2]]) {
+      stop("Expected 'S' and 'R' to have same length of 2nd dim")
     }
     pars <- rep(list(pars), ncol(S))
   } else {
@@ -349,6 +415,11 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
         "Expected 2nd dim of 'I_weighted' to have length %d, given 'pars'",
         length(pars)))
     }
+    if (!is.null(R) && length(pars) != ncol(R)) {
+      stop(sprintf(
+        "Expected 2nd dim of 'R' to have length %d, given 'pars'",
+        length(pars)))
+    }
   }
 
   if (dim(S)[[3]] != length(step)) {
@@ -361,13 +432,25 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
       "Expected 3rd dim of 'I_weighted' to have length %d, given 'step'",
       length(step)))
   }
+  if (!is.null(R) && dim(R)[[3]] != length(step)) {
+    stop(sprintf(
+      "Expected 3rd dim of 'R' to have length %d, given 'step'",
+      length(step)))
+  }
 
   calculate_ifr_t_one_trajectory <- function(i) {
     if (initial_step_from_parameters) {
       step[[1L]] <- pars[[i]]$initial_step
     }
-    ifr_t_1 <- calculate_ifr_t(step, S[, i, ], I_weighted[, i, ], pars[[i]],
-                               type = type)
+    if (is.null(R)) {
+      ifr_t_1 <- calculate_ifr_t(step, S[, i, ], I_weighted[, i, ], pars[[i]],
+                                 type = type)
+    } else {
+      ifr_t_1 <- calculate_ifr_t(step, S[, i, ], I_weighted[, i, ], pars[[i]],
+                                 type = type, R = R[, i, ])
+    }
+
+    ifr_t_1
   }
 
   res <- lapply(seq_along(pars), calculate_ifr_t_one_trajectory)

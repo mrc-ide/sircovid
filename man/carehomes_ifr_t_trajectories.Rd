@@ -11,7 +11,8 @@ carehomes_ifr_t_trajectories(
   pars,
   initial_step_from_parameters = TRUE,
   shared_parameters = NULL,
-  type = NULL
+  type = NULL,
+  R = NULL
 )
 }
 \arguments{
@@ -20,8 +21,8 @@ carehomes_ifr_t_trajectories(
 \item{S}{A 3d ((n groups x n vaccine classes) x n trajectories
 x n steps) array of "S" compartment counts}
 
-\item{I_weighted}{A 3d ((n groups x n vaccine classes) x n trajectories
-x n steps) array of "I_weighted" compartment counts}
+\item{I_weighted}{A 3d ((n groups x n strains x n vaccine classes) x
+n trajectories x n steps) array of "I_weighted" compartment counts}
 
 \item{pars}{Either a single \code{\link[=carehomes_parameters]{carehomes_parameters()}} object
 (shared parameters) or an unnamed list of
@@ -40,6 +41,10 @@ other which may give more easily interpretable error messages.}
 compute. Can be any or all of \code{IFR_t_all}, \code{IFR_t_general},
 \code{IHR_t_all}, \code{IHR_t_general}, \code{IFR_t_all_no_vacc},
 \code{IFR_t_general_no_vacc}, \code{IHR_t_all_no_vacc} and \code{IHR_t_general_no_vacc},}
+
+\item{R}{A 3d ((n groups x n strains x n vaccine classes) x
+n trajectories x n steps) array of "R" compartment counts, required for
+multi-strain models.}
 }
 \value{
 As for \code{\link[=carehomes_ifr_t]{carehomes_ifr_t()}}, except that every element is a
