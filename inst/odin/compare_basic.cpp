@@ -1,4 +1,5 @@
 template <typename real_t>
+HOSTDEVICE
 real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
                  dust::rng_state_t<real_t>& rng_state) {
   if (std::isnan(data)) {
