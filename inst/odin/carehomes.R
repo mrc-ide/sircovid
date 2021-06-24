@@ -115,19 +115,12 @@ delta_admit_conf_0_64 <-
   sum(n_I_C_2_to_ICU_pre_conf[1:13, ,]) + sum(n_I_C_2_to_ICU_pre_conf[18, ,])
 update(cum_admit_conf_0_64) <- cum_admit_conf_0_64 + delta_admit_conf_0_64
 
-delta_admit_conf_65_84 <-
-  sum(n_I_C_2_to_H_D_conf[14:17, ,]) + sum(n_I_C_2_to_H_D_conf[19, ,]) * 0.1 +
-  sum(n_I_C_2_to_H_R_conf[14:17, ,]) + sum(n_I_C_2_to_H_R_conf[19, ,]) * 0.1  +
-  sum(n_I_C_2_to_ICU_pre_conf[14:17, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[19, ,]) * 0.1
-update(cum_admit_conf_65_84) <- cum_admit_conf_65_84 + delta_admit_conf_65_84
-
-delta_admit_conf_85_plus <-
-  sum(n_I_C_2_to_H_D_conf[19, ,]) * 0.9 +
-  sum(n_I_C_2_to_H_R_conf[19, ,]) * 0.9  +
-  sum(n_I_C_2_to_ICU_pre_conf[19, ,]) * 0.9
-update(cum_admit_conf_85_plus) <- cum_admit_conf_85_plus +
-  delta_admit_conf_85_plus
+delta_admit_conf_65_plus <-
+  sum(n_I_C_2_to_H_D_conf[14:17, ,]) + sum(n_I_C_2_to_H_D_conf[19, ,]) +
+  sum(n_I_C_2_to_H_R_conf[14:17, ,]) + sum(n_I_C_2_to_H_R_conf[19, ,]) +
+  sum(n_I_C_2_to_ICU_pre_conf[14:17, ,]) + sum(n_I_C_2_to_ICU_pre_conf[19, ,])
+update(cum_admit_conf_65_plus) <- cum_admit_conf_65_plus +
+  delta_admit_conf_65_plus
 
 
 delta_new_conf <-
@@ -156,35 +149,20 @@ delta_new_conf_0_64 <-
   sum(n_W_D_unconf_to_conf[1:13, , ,]) + sum(n_W_D_unconf_to_conf[18, , ,])
 update(cum_new_conf_0_64) <- cum_new_conf_0_64 + delta_new_conf_0_64
 
-delta_new_conf_65_84 <-
-  sum(n_H_D_unconf_to_conf[14:17, , ,]) +
-  sum(n_H_D_unconf_to_conf[19, , ,]) * 0.1 +
-  sum(n_H_R_unconf_to_conf[14:17, , ,]) +
-  sum(n_H_R_unconf_to_conf[19, , ,]) * 0.1 +
+delta_new_conf_65_plus <-
+  sum(n_H_D_unconf_to_conf[14:17, , ,]) + sum(n_H_D_unconf_to_conf[19, , ,]) +
+  sum(n_H_R_unconf_to_conf[14:17, , ,]) + sum(n_H_R_unconf_to_conf[19, , ,]) +
   sum(n_ICU_pre_unconf_to_conf[14:17, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[19, , ,]) * 0.1 +
+  sum(n_ICU_pre_unconf_to_conf[19, , ,]) +
   sum(n_ICU_D_unconf_to_conf[14:17, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[19, , ,]) * 0.1 +
+  sum(n_ICU_D_unconf_to_conf[19, , ,]) +
   sum(n_ICU_W_R_unconf_to_conf[14:17, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[19, , ,]) * 0.1 +
+  sum(n_ICU_W_R_unconf_to_conf[19, , ,]) +
   sum(n_ICU_W_D_unconf_to_conf[14:17, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[19, , ,]) * 0.1 +
-  sum(n_W_R_unconf_to_conf[14:17, , ,]) +
-  sum(n_W_R_unconf_to_conf[19, , ,]) * 0.1 +
-  sum(n_W_D_unconf_to_conf[14:17, , ,]) +
-  sum(n_W_D_unconf_to_conf[19, , ,]) * 0.1
-update(cum_new_conf_65_84) <- cum_new_conf_65_84 + delta_new_conf_65_84
-
-delta_new_conf_85_plus <-
-  sum(n_H_D_unconf_to_conf[19, , ,]) * 0.9 +
-  sum(n_H_R_unconf_to_conf[19, , ,]) * 0.9 +
-  sum(n_ICU_pre_unconf_to_conf[19, , ,]) * 0.9 +
-  sum(n_ICU_D_unconf_to_conf[19, , ,]) * 0.9 +
-  sum(n_ICU_W_R_unconf_to_conf[19, , ,]) * 0.9 +
-  sum(n_ICU_W_D_unconf_to_conf[19, , ,]) * 0.9 +
-  sum(n_W_R_unconf_to_conf[19, , ,]) * 0.9 +
-  sum(n_W_D_unconf_to_conf[19, , ,]) * 0.9
-update(cum_new_conf_85_plus) <- cum_new_conf_85_plus + delta_new_conf_85_plus
+  sum(n_ICU_W_D_unconf_to_conf[19, , ,]) +
+  sum(n_W_R_unconf_to_conf[14:17, , ,]) + sum(n_W_R_unconf_to_conf[19, , ,]) +
+  sum(n_W_D_unconf_to_conf[14:17, , ,]) + sum(n_W_D_unconf_to_conf[19, , ,])
+update(cum_new_conf_65_plus) <- cum_new_conf_65_plus + delta_new_conf_65_plus
 
 initial(diagnoses_admitted[, ]) <- 0
 update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
@@ -215,15 +193,10 @@ initial(admit_conf_inc_0_64) <- 0
 update(admit_conf_inc_0_64) <- if (step %% steps_per_day == 0)
   delta_admit_conf_0_64 else admit_conf_inc_0_64 + delta_admit_conf_0_64
 
-initial(admit_conf_inc_65_84) <- 0
-update(admit_conf_inc_65_84) <- if (step %% steps_per_day == 0)
-  delta_admit_conf_65_84 else admit_conf_inc_65_84 + delta_admit_conf_65_84
-
-initial(admit_conf_inc_85_plus) <- 0
-update(admit_conf_inc_85_plus) <- if (step %% steps_per_day == 0)
-  delta_admit_conf_85_plus else
-    admit_conf_inc_85_plus + delta_admit_conf_85_plus
-
+initial(admit_conf_inc_65_plus) <- 0
+update(admit_conf_inc_65_plus) <- if (step %% steps_per_day == 0)
+  delta_admit_conf_65_plus else
+    admit_conf_inc_65_plus + delta_admit_conf_65_plus
 
 initial(new_conf_inc) <- 0
 update(new_conf_inc) <- if (step %% steps_per_day == 0)
@@ -233,14 +206,9 @@ initial(new_conf_inc_0_64) <- 0
 update(new_conf_inc_0_64) <- if (step %% steps_per_day == 0)
   delta_new_conf_0_64 else new_conf_inc_0_64 + delta_new_conf_0_64
 
-initial(new_conf_inc_65_84) <- 0
-update(new_conf_inc_65_84) <- if (step %% steps_per_day == 0)
-  delta_new_conf_65_84 else new_conf_inc_65_84 + delta_new_conf_65_84
-
-initial(new_conf_inc_85_plus) <- 0
-update(new_conf_inc_85_plus) <- if (step %% steps_per_day == 0)
-  delta_new_conf_85_plus else
-    new_conf_inc_85_plus + delta_new_conf_85_plus
+initial(new_conf_inc_65_plus) <- 0
+update(new_conf_inc_65_plus) <- if (step %% steps_per_day == 0)
+  delta_new_conf_65_plus else new_conf_inc_65_plus + delta_new_conf_65_plus
 
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_2_to_hosp[i, , ])
 
@@ -991,11 +959,9 @@ initial(cum_admit_conf) <- 0
 initial(cum_new_conf) <- 0
 initial(cum_admit_by_age[]) <- 0
 initial(cum_admit_conf_0_64) <- 0
-initial(cum_admit_conf_65_84) <- 0
-initial(cum_admit_conf_85_plus) <- 0
+initial(cum_admit_conf_65_plus) <- 0
 initial(cum_new_conf_0_64) <- 0
-initial(cum_new_conf_65_84) <- 0
-initial(cum_new_conf_85_plus) <- 0
+initial(cum_new_conf_65_plus) <- 0
 
 ## User defined parameters - default in parentheses:
 
@@ -1596,23 +1562,14 @@ initial(D_hosp_inc_0_64) <- 0
 update(D_hosp_inc_0_64) <- if (step %% steps_per_day == 0)
   delta_D_hosp_tot_0_64 else D_hosp_inc_0_64 + delta_D_hosp_tot_0_64
 
-## hospital deaths in 65 to 84 year olds (groups 14 to 17 + assumes 0.1 of 19)
-initial(D_hosp_tot_65_84) <- 0
-delta_D_hosp_tot_65_84 <- sum(delta_D_hosp[14:17]) + delta_D_hosp[19] * 0.1
-update(D_hosp_tot_65_84) <- D_hosp_tot_65_84 + delta_D_hosp_tot_65_84
+## hospital deaths in 65 plus year olds
+initial(D_hosp_tot_65_plus) <- 0
+delta_D_hosp_tot_65_plus <- sum(delta_D_hosp[14:17]) + delta_D_hosp[19]
+update(D_hosp_tot_65_plus) <- D_hosp_tot_65_plus + delta_D_hosp_tot_65_plus
 
-initial(D_hosp_inc_65_84) <- 0
-update(D_hosp_inc_65_84) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_65_84 else D_hosp_inc_65_84 + delta_D_hosp_tot_65_84
-
-## hospital deaths in 85+ (assumes 0.9 of 19)
-initial(D_hosp_tot_85_plus) <- 0
-delta_D_hosp_tot_85_plus <- delta_D_hosp[19] * 0.9
-update(D_hosp_tot_85_plus) <- D_hosp_tot_85_plus + delta_D_hosp_tot_85_plus
-
-initial(D_hosp_inc_85_plus) <- 0
-update(D_hosp_inc_85_plus) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_85_plus else D_hosp_inc_85_plus + delta_D_hosp_tot_85_plus
+initial(D_hosp_inc_65_plus) <- 0
+update(D_hosp_inc_65_plus) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_65_plus else D_hosp_inc_65_plus + delta_D_hosp_tot_65_plus
 
 ## community deaths are non-hospital deaths in groups 1 to 18
 initial(D_comm_tot) <- 0
@@ -1636,13 +1593,10 @@ initial(D_hosp_inc) <- 0
 update(D_hosp_inc) <- if (step %% steps_per_day == 0)
   delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
 
-initial(D_tot) <- 0
-update(D_tot) <- D_tot + delta_D_hosp_tot_0_64 + delta_D_hosp_tot_65_84 +
-  delta_D_hosp_tot_85_plus + delta_D_comm_tot + delta_D_carehomes_tot
-
 ## hospital deaths in all age groups
-# update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
-#   delta_D_carehomes_tot
+initial(D_tot) <- 0
+update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
+  delta_D_carehomes_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
