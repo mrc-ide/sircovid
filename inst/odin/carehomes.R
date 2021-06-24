@@ -1590,9 +1590,8 @@ rel_foi_strain[, , ] <- lambda_susc[i, j, k] / sum(lambda_susc[i, , k])
 dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
 ## I_weighted used in IFR calculation
-initial(I_weighted[, , ]) <- 0
-dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
-update(I_weighted[, , ]) <-
+dim(new_I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+new_I_weighted[, , ] <-
   I_A_transmission * sum(new_I_A[i, j, , k]) +
   I_P_transmission * sum(new_I_P[i, j, , k]) +
   I_C_1_transmission * sum(new_I_C_1[i, j, , k]) +
@@ -1612,11 +1611,13 @@ update(I_weighted[, , ]) <-
       sum(new_ICU_D_unconf[i, j, , k]) +
       sum(new_ICU_D_conf[i, j, , k])) +
   G_D_transmission * sum(new_G_D[i, j, , k])
+initial(I_weighted[, , ]) <- 0
+dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+update(I_weighted[, , ]) <- new_I_weighted[i, j, k]
 
 ## prob_strain is proportion of total I_weighted_strain in each strain
 prob_strain_1 <- if (n_real_strains == 1) 1 else
-  (sum(I_weighted_strain[, 1, ]) + sum(I_weighted_strain[, 4, ])) /
-  sum(I_weighted_strain)
+  (sum(I_weighted[, 1, ]) + sum(I_weighted[, 4, ])) / sum(I_weighted)
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
 update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
