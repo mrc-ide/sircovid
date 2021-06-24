@@ -3368,7 +3368,6 @@ public:
         }
       }
     }
-    real_t prob_strain_1 = odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, 0, 1, shared->dim_lambda_1) / (real_t) odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, 0, shared->dim_lambda_2, shared->dim_lambda_1);
     for (int i = 1; i <= shared->dim_D_1; ++i) {
       for (int j = 1; j <= shared->dim_D_2; ++j) {
         state_next[shared->offset_variable_D + i - 1 + shared->dim_D_1 * (j - 1)] = D[shared->dim_D_1 * (j - 1) + i - 1] + internal.delta_D_hosp_disag[shared->dim_delta_D_hosp_disag_1 * (j - 1) + i - 1] + internal.delta_D_non_hosp_disag[shared->dim_delta_D_non_hosp_disag_1 * (j - 1) + i - 1];
@@ -3619,9 +3618,6 @@ public:
           }
         }
       }
-    }
-    for (int i = 1; i <= shared->dim_prob_strain; ++i) {
-      state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
     }
     for (int i = 1; i <= shared->dim_tmp_vaccine_probability_1; ++i) {
       for (int j = 1; j <= shared->dim_tmp_vaccine_probability_2; ++j) {
@@ -4338,6 +4334,7 @@ public:
         state_next[shared->offset_variable_vaccine_missed_doses + i - 1 + shared->dim_vaccine_missed_doses_1 * (j - 1)] = shared->vaccine_catchup_fraction * std::max(internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] - internal.n_vaccinated[shared->dim_n_vaccinated_1 * (shared->index_dose[j - 1] - 1) + i - 1], static_cast<real_t>(0));
       }
     }
+    real_t prob_strain_1 = (shared->n_real_strains == 1 ? 1 : (odin_sum3<real_t>(internal.I_weighted_strain.data(), 0, shared->dim_I_weighted_strain_1, 0, 1, 0, shared->dim_I_weighted_strain_3, shared->dim_I_weighted_strain_1, shared->dim_I_weighted_strain_12) + odin_sum3<real_t>(internal.I_weighted_strain.data(), 0, shared->dim_I_weighted_strain_1, 3, 4, 0, shared->dim_I_weighted_strain_3, shared->dim_I_weighted_strain_1, shared->dim_I_weighted_strain_12)) / (real_t) odin_sum1<real_t>(internal.I_weighted_strain.data(), 0, shared->dim_I_weighted_strain));
     for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
       for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
         state_next[shared->offset_variable_I_weighted + i - 1 + shared->dim_I_weighted_1 * (j - 1)] = odin_sum3<real_t>(internal.I_weighted_strain.data(), i - 1, i, 0, shared->dim_I_weighted_strain_2, j - 1, j, shared->dim_I_weighted_strain_1, shared->dim_I_weighted_strain_12);
@@ -4345,6 +4342,9 @@ public:
     }
     state_next[12] = new_general_tot;
     state_next[13] = new_ICU_tot + new_general_tot;
+    for (int i = 1; i <= shared->dim_prob_strain; ++i) {
+      state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
+    }
   }
   real_t compare_data(const real_t * state, const data_t& data, dust::rng_state_t<real_t>& rng_state) {
     return compare<carehomes>(state, data, internal, shared, rng_state);
