@@ -48,6 +48,10 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
   n_vacc_classes <- p$n_vacc_classes
 
   if (n_strains > 1) {
+    if (n_strains != 4  || p$n_real_strains !=2) {
+      stop("Multstrain IFR currently only works if n_strains is 4 and
+           n_real_strains is 2")
+    }
     if (is.null(R)) {
       stop("Expected R input because there is more than one
             strain")

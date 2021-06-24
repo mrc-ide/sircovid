@@ -750,6 +750,17 @@ test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
     carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, -1]),
     "Expected 'R' to have 85 columns")
 
+  p1 <- p
+  p1$n_strains <- 3
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p1, R = R[, 1, ]),
+    "Expected R input because")
+  p1 <- p
+  p1$n_real_strains <- 3
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p1, R = R[, 1, ]),
+    "Expected 'R' to have 85 columns")
+
   ## Check carehomes_ifr_t_trajectories R
   expect_error(
     carehomes_ifr_t_trajectories(steps, S, I, p),
