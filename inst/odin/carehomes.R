@@ -1617,7 +1617,9 @@ I_weighted_strain[, , ] <-
 update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 ## prob_strain is proportion of total I_weighted_strain in each strain
-prob_strain_1 <- sum(I_weighted_strain[, 1, ]) / sum(I_weighted_strain)
+prob_strain_1 <-
+  (sum(I_weighted_strain[, 1, ]) + sum(I_weighted_strain[, 4, ])) /
+  sum(I_weighted_strain)
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
 update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1

@@ -1,5 +1,9 @@
 # sircovid 0.11.14
 
+* prob_strain now measures the proportion of total I_weighted (the number of infectives weighted by the infectivity of their compartment) for each strain
+
+# sircovid 0.11.14
+
 * Can now account for vaccine efficacy against death
 
 # sircovid 0.11.11
