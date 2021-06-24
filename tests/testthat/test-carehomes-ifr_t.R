@@ -59,7 +59,7 @@ test_that("validate inputs in ifr_t calculation", {
     fixed = TRUE)
   expect_error(
     carehomes_ifr_t(steps, S[, 1, ], I_weighted[-1, 1, ], p),
-    "Expected 'I_weighted' to have 19 rows = 19 groups x 1 vacc classes",
+    "Expected 'I_weighted' to have 19 rows",
     fixed = TRUE)
   expect_error(
     carehomes_ifr_t(steps, S[, 1, ], I_weighted[, 1, -1], p),

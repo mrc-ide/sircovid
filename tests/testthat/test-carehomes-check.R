@@ -884,7 +884,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     ## Susceptible population is immediately infected:
     expect_true(all(y$S[, , 2] == 0))
     ## I_weighted calculated as expected
-    expect_true(all(y$I_weighted[, , 2] == y$I_weighted[, , 1]))
+    expect_true(all(y$I_weighted[, , , 2] == y$I_weighted[, , , 1]))
   }
 
   helper("I_A_transmission", "I_A", "gamma_A_step")

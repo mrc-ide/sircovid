@@ -4,7 +4,7 @@
 \alias{carehomes_ifr_t}
 \title{Compute "IFR_t"}
 \usage{
-carehomes_ifr_t(step, S, I_weighted, p, type = NULL)
+carehomes_ifr_t(step, S, I_weighted, p, type = NULL, R = NULL)
 }
 \arguments{
 \item{step}{A vector of steps that the model was run over}
@@ -12,8 +12,8 @@ carehomes_ifr_t(step, S, I_weighted, p, type = NULL)
 \item{S}{A (n groups x n vaccine classes) x steps matrix of
 "S" compartment counts}
 
-\item{I_weighted}{A (n groups x n vaccine classes) x steps matrix of
-"I_weighted" compartment counts}
+\item{I_weighted}{A (n groups x n strains x n vaccine classes) x steps
+matrix of "I_weighted" compartment counts}
 
 \item{p}{A \code{\link[=carehomes_parameters]{carehomes_parameters()}} object}
 
@@ -21,6 +21,9 @@ carehomes_ifr_t(step, S, I_weighted, p, type = NULL)
 compute. Can be any or all of \code{IFR_t_all}, \code{IFR_t_general},
 \code{IHR_t_all}, \code{IHR_t_general}, \code{IFR_t_all_no_vacc},
 \code{IFR_t_general_no_vacc}, \code{IHR_t_all_no_vacc} and \code{IHR_t_general_no_vacc},}
+
+\item{R}{A (n groups x n strains x n vaccine classes) x steps matrix of "R"
+compartment counts, required for multi-strain models.}
 }
 \value{
 A list with elements \code{step}, \code{date}, and any of the \code{type}
