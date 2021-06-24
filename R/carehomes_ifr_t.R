@@ -105,7 +105,7 @@ carehomes_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
     m[ages, ] <- beta[t] * m[ages, ]
     m[ch, ages] <- beta[t] * m[ch, ages]
 
-    m_extended <- matrix(t(matrix(m, n_groups, n_groups *  n_vacc_classes)),
+    m_extended <- matrix(t(matrix(m, n_groups, n_groups * n_vacc_classes)),
                          n_groups * n_vacc_classes,
                          n_groups * n_vacc_classes,
                          byrow = TRUE)
