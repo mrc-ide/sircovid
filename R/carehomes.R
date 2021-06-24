@@ -785,10 +785,10 @@ carehomes_compare <- function(state, observed, pars) {
   ll_deaths_hosp <- ll_nbinom(observed$deaths_hosp,
                               pars$phi_death_hosp * model_deaths_hosp,
                               pars$kappa_death_hosp, exp_noise)
-  ll_deaths_hosp_0_64 <- ll_nbinom(observed$death_0,
+  ll_deaths_hosp_0_64 <- ll_nbinom(observed$deaths_hosp_0_64,
                                    pars$phi_death_hosp * model_deaths_hosp_0_64,
                                    pars$kappa_death_hosp, exp_noise)
-  ll_deaths_hosp_65_plus <- ll_nbinom(observed$death_65,
+  ll_deaths_hosp_65_plus <- ll_nbinom(observed$deaths_hosp_65_plus,
                                       pars$phi_death_hosp *
                                         model_deaths_hosp_65_plus,
                                       pars$kappa_death_hosp, exp_noise)
