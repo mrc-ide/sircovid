@@ -1,3 +1,7 @@
+# sircovid 0.11.16
+
+* IFR calculation now works fully for a multistrain model
+
 # sircovid 0.11.14
 
 * Can now account for vaccine efficacy against death
