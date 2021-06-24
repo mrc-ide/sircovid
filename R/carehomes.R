@@ -558,6 +558,12 @@ carehomes_index <- function(info) {
                   deaths_hosp_85_plus = index[["D_hosp_tot_85_plus"]],
                   admitted = index[["cum_admit_conf"]],
                   diagnoses = index[["cum_new_conf"]],
+                  admitted_0_64 = index[["cum_admit_conf_0_64"]],
+                  diagnoses_0_64 = index[["cum_new_conf_0_64"]],
+                  admitted_65_84 = index[["cum_admit_conf_65_84"]],
+                  diagnoses_65_84 = index[["cum_new_conf_65_84"]],
+                  admitted_85_plus = index[["cum_admit_conf_85_plus"]],
+                  diagnoses_85_plus = index[["cum_new_conf_85_plus"]],
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
                   deaths_hosp_inc = index[["D_hosp_inc"]],
@@ -824,10 +830,16 @@ carehomes_compare <- function(state, observed, pars) {
                          pars$kappa_death, exp_noise)
 
   ll_admitted <- ll_nbinom(observed$admitted,
-                           pars$phi_admitted * model_admitted,
+                           pars$phi_admitted * model_admitted +
+                             pars$phi_admitted * model_admitted_0_64 +
+                             pars$phi_admitted * model_admitted_65_84 +
+                             pars$phi_admitted * model_admitted_85_plus,
                            pars$kappa_admitted, exp_noise)
   ll_diagnoses <- ll_nbinom(observed$diagnoses,
-                            pars$phi_diagnoses * model_diagnoses,
+                            pars$phi_diagnoses * model_diagnoses +
+                              pars$phi_diagnoses * model_diagnoses_0_64 +
+                              pars$phi_diagnoses * model_diagnoses_65_84 +
+                              pars$phi_diagnoses * model_diagnoses_85_plus,
                             pars$kappa_diagnoses, exp_noise)
 
   ll_all_admission <- ll_nbinom(observed$all_admission,

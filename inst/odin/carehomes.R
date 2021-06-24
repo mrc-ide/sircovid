@@ -118,7 +118,7 @@ update(cum_admit_conf_0_64) <- cum_admit_conf_0_64 + delta_admit_conf_0_64
 delta_admit_conf_65_84 <-
   sum(n_I_C_2_to_H_D_conf[14:17, ,]) + sum(n_I_C_2_to_H_D_conf[19, ,]) * 0.1 +
   sum(n_I_C_2_to_H_R_conf[14:17, ,]) + sum(n_I_C_2_to_H_R_conf[19, ,]) * 0.1  +
-  sum(n_I_C_2_to_ICU_pre_conf[14:17 , ,]) +
+  sum(n_I_C_2_to_ICU_pre_conf[14:17, ,]) +
   sum(n_I_C_2_to_ICU_pre_conf[19, ,]) * 0.1
 update(cum_admit_conf_65_84) <- cum_admit_conf_65_84 + delta_admit_conf_65_84
 
