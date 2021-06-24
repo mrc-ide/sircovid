@@ -1,3 +1,8 @@
+# sircovid 0.11.16
+
+* Relax checks on relative vaccination parameters so only first vacc class
+of first strain needs to be `1` for all age groups
+
 # sircovid 0.11.14
 
 * Can now account for vaccine efficacy against death

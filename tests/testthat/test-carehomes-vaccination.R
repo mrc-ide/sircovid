@@ -1719,9 +1719,9 @@ test_that("check_rel_param allows sensible inputs", {
 test_that("check_rel_param allows <1 probs for second infection", {
   expect_silent(
     check_rel_param(array(c(1, 1, 0.5, 0.5), c(1, 4, 1)), "rel_param"))
-  expect_error(
-    check_rel_param(array(c(1, 0.5, 0.5, 0.5), c(1, 4, 1)), "rel_param"),
-    "must be 1 for first infection")
+  expect_silent(
+    check_rel_param(array(c(1, 0.5, 0.5, 0.5), c(1, 4, 1)), "rel_param")
+  )
 })
 
 

@@ -91,9 +91,10 @@ check_rel_param <- function(rel_param, name_param) {
   }
   if (ncol(rel_param) == 1 && !all(rel_param[, , 1] == 1)) {
     stop(paste("First value of", name_param, "must be 1"))
-  } else if (ncol(rel_param) > 1 && !all(rel_param[, 1:2, 1] == 1)) {
+  } else if (ncol(rel_param) > 1 &&
+             !all(rel_param[, 1, 1, drop = FALSE] == 1)) {
     stop(paste("First value of", name_param,
-               "must be 1 for first infection with either strain"))
+               "must be 1 for first infection with strain one"))
   }
 }
 
