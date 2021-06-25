@@ -1,6 +1,7 @@
 # sircovid 0.11.19
 
 * Add `multiply_odds` to multiply a probability with a given multiplier on an odds scale
+
 # sircovid 0.11.18
 
 * Relax checks on relative vaccination parameters so only first vacc class
