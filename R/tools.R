@@ -158,3 +158,19 @@ inflate_state <- function(state1, info1, info2, fn) {
 
   state2
 }
+
+
+##' Multiply a probability on the odds scale with a given multiplier.
+##' @title Multiply probability on odds scale
+##' @param prob Probability to multiply
+##' @param multiplier Multiplier
+##' @export
+multiply_odds <- function(prob, multiplier) {
+  if (prob %in% c(0, 1)) {
+    return(prob)
+  }
+
+  OR <- prob / (1 - prob)
+  OR_new <- OR * multiplier
+  OR_new / (1 + OR_new)
+}

@@ -506,7 +506,7 @@ carehomes_parameters <- function(start_date, region,
 
   rel_p_death <- build_rel_param(rel_p_death, strain$n_strains,
                                   vaccination$n_vacc_classes, "rel_p_death")
-  rel_severity <- sweep(rel_p_death, 2, strain_rel_severity, "*")
+  rel_severity <- sweep(rel_p_death, 2, strain_rel_severity, multiply_odds)
 
 
 
