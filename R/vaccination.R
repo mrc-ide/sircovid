@@ -845,16 +845,17 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 }
 
 ##' Applies a modifier to severity and transmission parameters
-##' @title Modify severity and transmission of VOC
+##' @title Modify severity and transmission of variants
 ##' @param efficacy,efficacy_strain_2 Vaccine efficacy parameters for strains
 ##'  1 and 2 respectively. Expects a list
 ##'  with names rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt,
-##'  rel_infectivity, rel_p_death. Columns correspond to vaccine strata and
-##'  rows to age groups.
+##'  rel_infectivity, rel_p_death. Element columns correspond to vaccine strata
+##'  and rows to age groups.
 ##' @param strain_severity_modifier List of modifiers to be applied to efficacy
 ##'  variables; length should correspond to number of strains and each element
 ##'  should be a list with same names as `efficacy`
-##' @return Returns an array with same dimensions and names as `efficacy`
+##' @return Returns a list with same length and names as `efficacy` and where
+##'  each element has dimensions [n_groups x n_strains x n_vacc_strata]
 ##' @export
 modify_severity <- function(efficacy, efficacy_strain_2,
                             strain_severity_modifier) {
@@ -862,9 +863,9 @@ modify_severity <- function(efficacy, efficacy_strain_2,
   expected <- c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
                 "rel_infectivity", "rel_p_death")
   stopifnot(
-    identical(names(strain1), expected),
-    identical(names(strain1), names(strain2)),
-    identical(lapply(strain1, dim), lapply(strain2, dim)))
+    identical(names(efficacy), expected),
+    identical(names(efficacy), names(efficacy_strain_2)),
+    identical(lapply(efficacy, dim), lapply(efficacy_strain_2, dim)))
 
   n_strain <- if (length(efficacy_strain_2) == 0) 1 else 4
   n_vacc_strata <- ncol(efficacy[[1]])

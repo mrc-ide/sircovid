@@ -2,7 +2,7 @@
 % Please edit documentation in R/vaccination.R
 \name{modify_severity}
 \alias{modify_severity}
-\title{Modify severity and transmission of VOC}
+\title{Modify severity and transmission of variants}
 \usage{
 modify_severity(efficacy, efficacy_strain_2, strain_severity_modifier)
 }
@@ -10,9 +10,16 @@ modify_severity(efficacy, efficacy_strain_2, strain_severity_modifier)
 \item{efficacy, efficacy_strain_2}{Vaccine efficacy parameters for strains
 1 and 2 respectively. Expects a list
 with names rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt,
-rel_infectivity, rel_p_death. Columns correspond to vaccine strata and
-rows to age groups.
-'}
+rel_infectivity, rel_p_death. Element columns correspond to vaccine strata
+and rows to age groups.}
+
+\item{strain_severity_modifier}{List of modifiers to be applied to efficacy
+variables; length should correspond to number of strains and each element
+should be a list with same names as \code{efficacy}}
+}
+\value{
+Returns a list with same length and names as \code{efficacy} and where
+each element has dimensions \link{n_groups x n_strains x n_vacc_strata}
 }
 \description{
 Applies a modifier to severity and transmission parameters
