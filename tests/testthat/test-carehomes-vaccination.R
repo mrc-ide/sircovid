@@ -1697,6 +1697,10 @@ test_that("check_rel_param rejects out of bounds errors", {
   expect_error(
     check_rel_param(array(c(0.9, 0.8), c(1, 1, 1)), "rel_param"),
     "First value of rel_param must be 1")
+
+  expect_error(
+    check_rel_param(array(c(0.1, 0.5, 0.5, 0.5), c(1, 4, 1)), "rel_param"),
+    "First value of rel_param must be 1")
 })
 
 
@@ -1719,9 +1723,9 @@ test_that("check_rel_param allows sensible inputs", {
 test_that("check_rel_param allows <1 probs for second infection", {
   expect_silent(
     check_rel_param(array(c(1, 1, 0.5, 0.5), c(1, 4, 1)), "rel_param"))
-  expect_error(
-    check_rel_param(array(c(1, 0.5, 0.5, 0.5), c(1, 4, 1)), "rel_param"),
-    "must be 1 for first infection")
+  expect_silent(
+    check_rel_param(array(c(1, 0.5, 0.5, 0.5), c(1, 4, 1)), "rel_param")
+  )
 })
 
 

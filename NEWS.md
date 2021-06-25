@@ -1,3 +1,8 @@
+# sircovid 0.11.18
+
+* Relax checks on relative vaccination parameters so only first vacc class
+of first strain needs to be `1` for all age groups
+
 # sircovid 0.11.17
 
 * prob_strain now measures the proportion of total I_weighted (the number of infectives weighted by the infectivity of their compartment) for each strain
