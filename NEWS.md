@@ -1,3 +1,7 @@
+# sircovid 0.11.17
+
+* prob_strain now measures the proportion of total I_weighted (the number of infectives weighted by the infectivity of their compartment) for each strain
+
 # sircovid 0.11.16
 
 * IFR calculation now works fully for a multistrain model

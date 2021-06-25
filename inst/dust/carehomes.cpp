@@ -1530,6 +1530,11 @@ public:
     int dim_new_I_P_2;
     int dim_new_I_P_3;
     int dim_new_I_P_4;
+    int dim_new_I_weighted;
+    int dim_new_I_weighted_1;
+    int dim_new_I_weighted_12;
+    int dim_new_I_weighted_2;
+    int dim_new_I_weighted_3;
     int dim_new_R;
     int dim_new_R_1;
     int dim_new_R_12;
@@ -2274,6 +2279,7 @@ public:
     std::vector<real_t> new_I_C_1;
     std::vector<real_t> new_I_C_2;
     std::vector<real_t> new_I_P;
+    std::vector<real_t> new_I_weighted;
     std::vector<real_t> new_R;
     std::vector<real_t> new_S;
     std::vector<real_t> new_T_PCR_neg;
@@ -3295,7 +3301,6 @@ public:
         }
       }
     }
-    real_t prob_strain_1 = odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, 0, 1, shared->dim_lambda_1) / (real_t) odin_sum2<real_t>(internal.lambda.data(), 0, shared->dim_lambda_1, 0, shared->dim_lambda_2, shared->dim_lambda_1);
     for (int i = 1; i <= shared->dim_D_1; ++i) {
       for (int j = 1; j <= shared->dim_D_2; ++j) {
         state_next[shared->offset_variable_D + i - 1 + shared->dim_D_1 * (j - 1)] = D[shared->dim_D_1 * (j - 1) + i - 1] + internal.delta_D_hosp_disag[shared->dim_delta_D_hosp_disag_1 * (j - 1) + i - 1] + internal.delta_D_non_hosp_disag[shared->dim_delta_D_non_hosp_disag_1 * (j - 1) + i - 1];
@@ -3546,9 +3551,6 @@ public:
           }
         }
       }
-    }
-    for (int i = 1; i <= shared->dim_prob_strain; ++i) {
-      state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
     }
     for (int i = 1; i <= shared->dim_tmp_vaccine_probability_1; ++i) {
       for (int j = 1; j <= shared->dim_tmp_vaccine_probability_2; ++j) {
@@ -4218,6 +4220,13 @@ public:
     }
     state_next[4] = (fmodr<real_t>(step, shared->steps_per_day) == 0 ? delta_infections : infections_inc + delta_infections);
     state_next[31] = odin_sum4<real_t>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
+    for (int i = 1; i <= shared->dim_new_I_weighted_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_I_weighted_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_I_weighted_3; ++k) {
+          internal.new_I_weighted[i - 1 + shared->dim_new_I_weighted_1 * (j - 1) + shared->dim_new_I_weighted_12 * (k - 1)] = shared->I_A_transmission * odin_sum4<real_t>(internal.new_I_A.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_A_3, k - 1, k, shared->dim_new_I_A_1, shared->dim_new_I_A_12, shared->dim_new_I_A_123) + shared->I_P_transmission * odin_sum4<real_t>(internal.new_I_P.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_P_3, k - 1, k, shared->dim_new_I_P_1, shared->dim_new_I_P_12, shared->dim_new_I_P_123) + shared->I_C_1_transmission * odin_sum4<real_t>(internal.new_I_C_1.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_C_1_3, k - 1, k, shared->dim_new_I_C_1_1, shared->dim_new_I_C_1_12, shared->dim_new_I_C_1_123) + shared->I_C_2_transmission * odin_sum4<real_t>(internal.new_I_C_2.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_C_2_3, k - 1, k, shared->dim_new_I_C_2_1, shared->dim_new_I_C_2_12, shared->dim_new_I_C_2_123) + shared->hosp_transmission * (odin_sum4<real_t>(internal.new_ICU_pre_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_pre_unconf_3, k - 1, k, shared->dim_new_ICU_pre_unconf_1, shared->dim_new_ICU_pre_unconf_12, shared->dim_new_ICU_pre_unconf_123) + odin_sum4<real_t>(internal.new_ICU_pre_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_pre_conf_3, k - 1, k, shared->dim_new_ICU_pre_conf_1, shared->dim_new_ICU_pre_conf_12, shared->dim_new_ICU_pre_conf_123) + odin_sum4<real_t>(internal.new_H_R_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_R_unconf_3, k - 1, k, shared->dim_new_H_R_unconf_1, shared->dim_new_H_R_unconf_12, shared->dim_new_H_R_unconf_123) + odin_sum4<real_t>(internal.new_H_R_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_R_conf_3, k - 1, k, shared->dim_new_H_R_conf_1, shared->dim_new_H_R_conf_12, shared->dim_new_H_R_conf_123) + odin_sum4<real_t>(internal.new_H_D_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_D_unconf_3, k - 1, k, shared->dim_new_H_D_unconf_1, shared->dim_new_H_D_unconf_12, shared->dim_new_H_D_unconf_123) + odin_sum4<real_t>(internal.new_H_D_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_D_conf_3, k - 1, k, shared->dim_new_H_D_conf_1, shared->dim_new_H_D_conf_12, shared->dim_new_H_D_conf_123)) + shared->ICU_transmission * (odin_sum4<real_t>(internal.new_ICU_W_R_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_R_unconf_3, k - 1, k, shared->dim_new_ICU_W_R_unconf_1, shared->dim_new_ICU_W_R_unconf_12, shared->dim_new_ICU_W_R_unconf_123) + odin_sum4<real_t>(internal.new_ICU_W_R_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_R_conf_3, k - 1, k, shared->dim_new_ICU_W_R_conf_1, shared->dim_new_ICU_W_R_conf_12, shared->dim_new_ICU_W_R_conf_123) + odin_sum4<real_t>(internal.new_ICU_W_D_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_D_unconf_3, k - 1, k, shared->dim_new_ICU_W_D_unconf_1, shared->dim_new_ICU_W_D_unconf_12, shared->dim_new_ICU_W_D_unconf_123) + odin_sum4<real_t>(internal.new_ICU_W_D_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_D_conf_3, k - 1, k, shared->dim_new_ICU_W_D_conf_1, shared->dim_new_ICU_W_D_conf_12, shared->dim_new_ICU_W_D_conf_123) + odin_sum4<real_t>(internal.new_ICU_D_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_D_unconf_3, k - 1, k, shared->dim_new_ICU_D_unconf_1, shared->dim_new_ICU_D_unconf_12, shared->dim_new_ICU_D_unconf_123) + odin_sum4<real_t>(internal.new_ICU_D_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_D_conf_3, k - 1, k, shared->dim_new_ICU_D_conf_1, shared->dim_new_ICU_D_conf_12, shared->dim_new_ICU_D_conf_123)) + shared->G_D_transmission * odin_sum4<real_t>(internal.new_G_D.data(), i - 1, i, j - 1, j, 0, shared->dim_new_G_D_3, k - 1, k, shared->dim_new_G_D_1, shared->dim_new_G_D_12, shared->dim_new_G_D_123);
+        }
+      }
+    }
     real_t new_general_tot = odin_sum1<real_t>(internal.new_ICU_pre_conf.data(), 0, shared->dim_new_ICU_pre_conf) + odin_sum1<real_t>(internal.new_H_R_conf.data(), 0, shared->dim_new_H_R_conf) + odin_sum1<real_t>(internal.new_H_D_conf.data(), 0, shared->dim_new_H_D_conf) + odin_sum1<real_t>(internal.new_W_R_conf.data(), 0, shared->dim_new_W_R_conf) + odin_sum1<real_t>(internal.new_W_D_conf.data(), 0, shared->dim_new_W_D_conf);
     for (int i = 1; i <= shared->dim_E_1; ++i) {
       for (int j = 1; j <= shared->dim_E_2; ++j) {
@@ -4246,13 +4255,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
-      for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
-        for (int k = 1; k <= shared->dim_I_weighted_3; ++k) {
-          state_next[shared->offset_variable_I_weighted + i - 1 + shared->dim_I_weighted_1 * (j - 1) + shared->dim_I_weighted_12 * (k - 1)] = shared->strain_transmission[j - 1] * (shared->I_A_transmission * odin_sum4<real_t>(internal.new_I_A.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_A_3, k - 1, k, shared->dim_new_I_A_1, shared->dim_new_I_A_12, shared->dim_new_I_A_123) + shared->I_P_transmission * odin_sum4<real_t>(internal.new_I_P.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_P_3, k - 1, k, shared->dim_new_I_P_1, shared->dim_new_I_P_12, shared->dim_new_I_P_123) + shared->I_C_1_transmission * odin_sum4<real_t>(internal.new_I_C_1.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_C_1_3, k - 1, k, shared->dim_new_I_C_1_1, shared->dim_new_I_C_1_12, shared->dim_new_I_C_1_123) + shared->I_C_2_transmission * odin_sum4<real_t>(internal.new_I_C_2.data(), i - 1, i, j - 1, j, 0, shared->dim_new_I_C_2_3, k - 1, k, shared->dim_new_I_C_2_1, shared->dim_new_I_C_2_12, shared->dim_new_I_C_2_123) + shared->hosp_transmission * (odin_sum4<real_t>(internal.new_ICU_pre_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_pre_unconf_3, k - 1, k, shared->dim_new_ICU_pre_unconf_1, shared->dim_new_ICU_pre_unconf_12, shared->dim_new_ICU_pre_unconf_123) + odin_sum4<real_t>(internal.new_ICU_pre_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_pre_conf_3, k - 1, k, shared->dim_new_ICU_pre_conf_1, shared->dim_new_ICU_pre_conf_12, shared->dim_new_ICU_pre_conf_123) + odin_sum4<real_t>(internal.new_H_R_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_R_unconf_3, k - 1, k, shared->dim_new_H_R_unconf_1, shared->dim_new_H_R_unconf_12, shared->dim_new_H_R_unconf_123) + odin_sum4<real_t>(internal.new_H_R_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_R_conf_3, k - 1, k, shared->dim_new_H_R_conf_1, shared->dim_new_H_R_conf_12, shared->dim_new_H_R_conf_123) + odin_sum4<real_t>(internal.new_H_D_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_D_unconf_3, k - 1, k, shared->dim_new_H_D_unconf_1, shared->dim_new_H_D_unconf_12, shared->dim_new_H_D_unconf_123) + odin_sum4<real_t>(internal.new_H_D_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_H_D_conf_3, k - 1, k, shared->dim_new_H_D_conf_1, shared->dim_new_H_D_conf_12, shared->dim_new_H_D_conf_123)) + shared->ICU_transmission * (odin_sum4<real_t>(internal.new_ICU_W_R_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_R_unconf_3, k - 1, k, shared->dim_new_ICU_W_R_unconf_1, shared->dim_new_ICU_W_R_unconf_12, shared->dim_new_ICU_W_R_unconf_123) + odin_sum4<real_t>(internal.new_ICU_W_R_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_R_conf_3, k - 1, k, shared->dim_new_ICU_W_R_conf_1, shared->dim_new_ICU_W_R_conf_12, shared->dim_new_ICU_W_R_conf_123) + odin_sum4<real_t>(internal.new_ICU_W_D_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_D_unconf_3, k - 1, k, shared->dim_new_ICU_W_D_unconf_1, shared->dim_new_ICU_W_D_unconf_12, shared->dim_new_ICU_W_D_unconf_123) + odin_sum4<real_t>(internal.new_ICU_W_D_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_W_D_conf_3, k - 1, k, shared->dim_new_ICU_W_D_conf_1, shared->dim_new_ICU_W_D_conf_12, shared->dim_new_ICU_W_D_conf_123) + odin_sum4<real_t>(internal.new_ICU_D_unconf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_D_unconf_3, k - 1, k, shared->dim_new_ICU_D_unconf_1, shared->dim_new_ICU_D_unconf_12, shared->dim_new_ICU_D_unconf_123) + odin_sum4<real_t>(internal.new_ICU_D_conf.data(), i - 1, i, j - 1, j, 0, shared->dim_new_ICU_D_conf_3, k - 1, k, shared->dim_new_ICU_D_conf_1, shared->dim_new_ICU_D_conf_12, shared->dim_new_ICU_D_conf_123)) + shared->G_D_transmission * odin_sum4<real_t>(internal.new_G_D.data(), i - 1, i, j - 1, j, 0, shared->dim_new_G_D_3, k - 1, k, shared->dim_new_G_D_1, shared->dim_new_G_D_12, shared->dim_new_G_D_123));
-        }
-      }
-    }
     state_next[1] = (fmodr<real_t>(step, shared->steps_per_day) == 0 ? delta_admit_conf : admit_conf_inc + delta_admit_conf);
     state_next[5] = cum_admit_conf + delta_admit_conf;
     for (int i = 1; i <= shared->dim_cum_n_vaccinated_1; ++i) {
@@ -4265,8 +4267,19 @@ public:
         state_next[shared->offset_variable_vaccine_missed_doses + i - 1 + shared->dim_vaccine_missed_doses_1 * (j - 1)] = shared->vaccine_catchup_fraction * std::max(internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] - internal.n_vaccinated[shared->dim_n_vaccinated_1 * (shared->index_dose[j - 1] - 1) + i - 1], static_cast<real_t>(0));
       }
     }
+    real_t prob_strain_1 = (shared->n_real_strains == 1 ? 1 : (odin_sum3<real_t>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted_1, 0, 1, 0, shared->dim_new_I_weighted_3, shared->dim_new_I_weighted_1, shared->dim_new_I_weighted_12) + odin_sum3<real_t>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted_1, 3, 4, 0, shared->dim_new_I_weighted_3, shared->dim_new_I_weighted_1, shared->dim_new_I_weighted_12)) / (real_t) odin_sum1<real_t>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted));
+    for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
+      for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
+        for (int k = 1; k <= shared->dim_I_weighted_3; ++k) {
+          state_next[shared->offset_variable_I_weighted + i - 1 + shared->dim_I_weighted_1 * (j - 1) + shared->dim_I_weighted_12 * (k - 1)] = internal.new_I_weighted[shared->dim_new_I_weighted_12 * (k - 1) + shared->dim_new_I_weighted_1 * (j - 1) + i - 1];
+        }
+      }
+    }
     state_next[12] = new_general_tot;
     state_next[13] = new_ICU_tot + new_general_tot;
+    for (int i = 1; i <= shared->dim_prob_strain; ++i) {
+      state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
+    }
   }
   real_t compare_data(const real_t * state, const data_t& data, dust::rng_state_t<real_t>& rng_state) {
     return compare<carehomes>(state, data, internal, shared, rng_state);
@@ -5385,6 +5398,9 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_new_I_P_2 = shared->n_strains;
   shared->dim_new_I_P_3 = shared->k_P;
   shared->dim_new_I_P_4 = shared->n_vacc_classes;
+  shared->dim_new_I_weighted_1 = shared->n_groups;
+  shared->dim_new_I_weighted_2 = shared->n_strains;
+  shared->dim_new_I_weighted_3 = shared->n_vacc_classes;
   shared->dim_new_R_1 = shared->n_groups;
   shared->dim_new_R_2 = shared->n_strains;
   shared->dim_new_R_3 = shared->n_vacc_classes;
@@ -6036,6 +6052,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_new_I_P = shared->dim_new_I_P_1 * shared->dim_new_I_P_2 * shared->dim_new_I_P_3 * shared->dim_new_I_P_4;
   shared->dim_new_I_P_12 = shared->dim_new_I_P_1 * shared->dim_new_I_P_2;
   shared->dim_new_I_P_123 = shared->dim_new_I_P_1 * shared->dim_new_I_P_2 * shared->dim_new_I_P_3;
+  shared->dim_new_I_weighted = shared->dim_new_I_weighted_1 * shared->dim_new_I_weighted_2 * shared->dim_new_I_weighted_3;
+  shared->dim_new_I_weighted_12 = shared->dim_new_I_weighted_1 * shared->dim_new_I_weighted_2;
   shared->dim_new_R = shared->dim_new_R_1 * shared->dim_new_R_2 * shared->dim_new_R_3;
   shared->dim_new_R_12 = shared->dim_new_R_1 * shared->dim_new_R_2;
   shared->dim_new_S = shared->dim_new_S_1 * shared->dim_new_S_2;
@@ -6374,6 +6392,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   internal.new_I_C_1 = std::vector<real_t>(shared->dim_new_I_C_1);
   internal.new_I_C_2 = std::vector<real_t>(shared->dim_new_I_C_2);
   internal.new_I_P = std::vector<real_t>(shared->dim_new_I_P);
+  internal.new_I_weighted = std::vector<real_t>(shared->dim_new_I_weighted);
   internal.new_R = std::vector<real_t>(shared->dim_new_R);
   internal.new_S = std::vector<real_t>(shared->dim_new_S);
   internal.new_T_PCR_neg = std::vector<real_t>(shared->dim_new_T_PCR_neg);
