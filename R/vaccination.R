@@ -865,8 +865,8 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 modify_severity <- function(efficacy, efficacy_strain_2,
                             strain_severity_modifier) {
 
-  expected <- c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
-                "rel_infectivity", "rel_p_death")
+  expected <- rel_severity_params()
+
   stopifnot(
     identical(names(efficacy), expected),
     identical(names(efficacy), names(efficacy_strain_2)),
@@ -897,4 +897,18 @@ modify_severity <- function(efficacy, efficacy_strain_2,
   }
 
   rel_list
+}
+
+
+##' Return relative severity parameters in a specified order
+##'
+##' @title Print relative severity parameters
+##'
+##' @return A character vector with the names of the relative severity
+##'  parameters
+##'
+##' @export
+rel_severity_params <- function() {
+  c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+    "rel_p_death", "rel_infectivity")
 }
