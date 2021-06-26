@@ -19,7 +19,7 @@ should be a list with same names as \code{efficacy}}
 }
 \value{
 Returns a list with same length and names as \code{efficacy} and where
-each element has dimensions \link{n_groups x n_strains x n_vacc_strata}
+each element has dimensions n_groups x n_strains x n_vacc_strata
 }
 \description{
 Applies a modifier to severity and transmission parameters
