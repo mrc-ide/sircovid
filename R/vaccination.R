@@ -890,10 +890,7 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           ##  by strains. Strains: 1 (=1), 2(=2), 3(=1->2), 4(=2->1)
           es <- if (is.null(efficacy_strain_2) || s %in% c(1, 4)) efficacy else
             efficacy_strain_2
-          rel_list[[rel]][g, s, v_s] <- es[[rel]][g, v_s] * mod
-          if (rel_list[[rel]][g, s, v_s] >= 1) {
-            rel_list[[rel]][g, s, v_s] <- 1
-          }
+          rel_list[[rel]][g, s, v_s] <- min(1, es[[rel]][g, v_s] * mod)
         }
       }
     }
