@@ -891,6 +891,10 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           es <- if (is.null(efficacy_strain_2) || s %in% c(1, 4)) efficacy else
             efficacy_strain_2
           rel_list[[rel]][g, s, v_s] <- es[[rel]][g, v_s] * mod
+          if ((rel_list[[rel]][g, s, v_s] - 1) < 1e-8) {
+            rel_list[[rel]][g, s, v_s] <- 1
+          }
+          if (rel_list[[rel]][g, s, v_s] > 1) browser()
         }
       }
     }
