@@ -890,7 +890,19 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           ##  by strains. Strains: 1 (=1), 2(=2), 3(=1->2), 4(=2->1)
           es <- if (is.null(efficacy_strain_2) || s %in% c(1, 4)) efficacy else
             efficacy_strain_2
-          rel_list[[rel]][g, s, v_s] <- min(1, es[[rel]][g, v_s] * mod)
+          new_prob <- es[[rel]][g, v_s] * mod
+          ## FIXME - Temporary fixes for when p > 1
+          if (new_prob > 1) {
+            ## if difference very small or in a class where vaccine hasn't taken
+            ##  effect yet, cap at 1
+            if (abs(new_prob - 1) < 1e-10 || v_s <= 2) {
+              new_prob <- 1
+              ## otherwise this is a problem
+            } else if (v_s <= 2) {
+              browser()
+            }
+          }
+          rel_list[[rel]][g, s, v_s] <- new_prob
         }
       }
     }
