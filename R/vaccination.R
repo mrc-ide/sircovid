@@ -859,7 +859,7 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 ##'  should be a list with same names as `efficacy`
 ##'
 ##' @return Returns a list with same length and names as `efficacy` and where
-##'  each element has dimensions [n_groups x n_strains x n_vacc_strata]
+##'  each element has dimensions n_groups x n_strains x n_vacc_strata
 ##'
 ##' @export
 modify_severity <- function(efficacy, efficacy_strain_2,
