@@ -843,3 +843,70 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 
   list(date = date_future, doses = doses)
 }
+
+##' Applies a modifier to severity and transmission parameters
+##'
+##' @title Modify severity and transmission of variants
+##'
+##' @param efficacy,efficacy_strain_2 Vaccine efficacy parameters for strains
+##'  1 and 2 respectively. Expects a list
+##'  with names rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt,
+##'  rel_infectivity, rel_p_death. Element columns correspond to vaccine strata
+##'  and rows to age groups.
+##'
+##' @param strain_severity_modifier List of modifiers to be applied to efficacy
+##'  variables; length should correspond to number of strains and each element
+##'  should be a list with same names as `efficacy`
+##'
+##' @return Returns a list with same length and names as `efficacy` and where
+##'  each element has dimensions n_groups x n_strains x n_vacc_strata
+##'
+##' @export
+modify_severity <- function(efficacy, efficacy_strain_2,
+                            strain_severity_modifier) {
+
+  expected <- c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
+                "rel_infectivity", "rel_p_death")
+  stopifnot(
+    setequal(names(efficacy), expected),
+    identical(names(efficacy), names(efficacy_strain_2)),
+    identical(lapply(efficacy, dim), lapply(efficacy_strain_2, dim)))
+
+  n_strain <- if (length(efficacy_strain_2) == 0) 1 else 4
+  n_vacc_strata <- ncol(efficacy[[1]])
+  n_groups <- nrow(efficacy[[1]])
+
+  dim <- c(n_groups, n_strain, n_vacc_strata)
+  rel_list <- rep(list(array(rep(NA_integer_), dim = dim)), length(expected))
+  names(rel_list) <- expected
+
+  for (rel in names(rel_list)) {
+    for (s in seq_len(n_strain)) {
+      mod <- if (is.null(strain_severity_modifier)) 1 else
+        strain_severity_modifier[[s]][[rel]]
+      for (v_s in seq_len(n_vacc_strata)) {
+        for (g in seq_len(n_groups)) {
+          ## If not multistrain then all use same params, otherwise split
+          ##  by strains. Strains: 1 (=1), 2(=2), 3(=1->2), 4(=2->1)
+          es <- if (is.null(efficacy_strain_2) || s %in% c(1, 4)) efficacy else
+            efficacy_strain_2
+          new_prob <- es[[rel]][g, v_s] * mod
+          ## FIXME - Temporary fixes for when p > 1
+          if (new_prob > 1) {
+            ## if difference very small or in a class where vaccine hasn't taken
+            ##  effect yet, cap at 1
+            if (abs(new_prob - 1) < 1e-10 || v_s <= 2) {
+              new_prob <- 1
+              ## otherwise this is a problem
+            } else if (v_s <= 2) {
+              browser()
+            }
+          }
+          rel_list[[rel]][g, s, v_s] <- new_prob
+        }
+      }
+    }
+  }
+
+  rel_list
+}

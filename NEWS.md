@@ -1,3 +1,7 @@
+# sircovid 0.11.19
+
+* Add `modify_severity` function to modify severity and transmission params of a VOC from VE assumptions
+
 # sircovid 0.11.18
 
 * Relax checks on relative vaccination parameters so only first vacc class

@@ -2916,3 +2916,53 @@ test_that("can inflate the number of vacc classes after running with 2", {
                                list(len = 2, index = list(b = 1))),
     "Can't inflate state")
 })
+
+test_that("modify_severity works as expected", {
+  nms <- c("rel_susceptibility", "rel_p_sympt",
+           "rel_p_hosp_if_sympt", "rel_infectivity", "rel_p_death")
+  ve1 <- set_names(rep(list(matrix(0.2, 19, 3)), 5), nms)
+  ve2 <- set_names(rep(list(matrix(0.1, 19, 3)), 5), nms)
+  mod <- rep(list(set_names(rep(list(1), 5), nms)), 4)
+  mod[[2]][] <- 2
+  mod[[3]][] <- 3
+  mod[[4]][] <- 4
+
+  out <- modify_severity(ve1, ve2, mod)
+  expect_equal(length(out), 5)
+  # age x strain x vacc
+  expect_equal(rowMeans(vapply(out, dim, numeric(3))), c(19, 4, 3))
+
+  expect_vector_lte(unlist(out), 1)
+
+  tol <- 1e-15
+  lapply(out, function(x) expect_vector_equal(x[, 1, ], 0.2, tol))
+  lapply(out, function(x) expect_vector_equal(x[, 2, ], 0.2, tol))
+  lapply(out, function(x) expect_vector_equal(x[, 3, ], 0.3, tol))
+  lapply(out, function(x) expect_vector_equal(x[, 4, ], 0.8, tol))
+})
+
+
+test_that("modify_severity errors as expected", {
+  nms <- c("rel_susceptibility", "rel_p_sympt",
+           "rel_p_hosp_if_sympt", "rel_infectivity", "rel_p_death")
+
+  ve1 <- set_names(rep(list(matrix(1, 19, 3)), 5), nms)
+  ve2 <- set_names(rep(list(matrix(0.5, 19, 3)), 5), nms)
+  names(ve1)[1] <- "a"
+
+  expect_error(modify_severity(ve1, ve2, mod), "names(efficacy), expected",
+               fixed = TRUE)
+
+  ve1 <- set_names(rep(list(matrix(1, 19, 3)), 5), nms)
+  ve2 <- set_names(rep(list(matrix(0.5, 19, 3)), 5), nms)
+  names(ve2)[1] <- "a"
+
+  expect_error(modify_severity(ve1, ve2, mod), "names(efficacy_strain_2)",
+               fixed = TRUE)
+
+  ve1 <- set_names(rep(list(matrix(1, 18, 3)), 5), nms)
+  ve2 <- set_names(rep(list(matrix(0.5, 19, 3)), 5), nms)
+
+  expect_error(modify_severity(ve1, ve2, mod), "identical(lapply",
+               fixed = TRUE)
+})
