@@ -875,7 +875,7 @@ modify_severity <- function(efficacy, efficacy_strain_2,
     stopifnot(
       setequal(names(efficacy), expected),
       setequal(names(efficacy), names(efficacy_strain_2)),
-      setequal(lapply(efficacy, dim), lapply(efficacy_strain_2, dim)))
+      identical(lapply(efficacy, dim), lapply(efficacy_strain_2, dim)))
     n_strain <- 4
   }
 
