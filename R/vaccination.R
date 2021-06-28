@@ -867,12 +867,18 @@ modify_severity <- function(efficacy, efficacy_strain_2,
 
   expected <- c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
                 "rel_infectivity", "rel_p_death")
-  stopifnot(
-    setequal(names(efficacy), expected),
-    identical(names(efficacy), names(efficacy_strain_2)),
-    identical(lapply(efficacy, dim), lapply(efficacy_strain_2, dim)))
 
-  n_strain <- if (length(efficacy_strain_2) == 0) 1 else 4
+  if (length(efficacy_strain_2) == 0) {
+    stopifnot(setequal(names(efficacy), expected))
+    n_strain <- 1
+  } else {
+    stopifnot(
+      setequal(names(efficacy), expected),
+      setequal(names(efficacy), names(efficacy_strain_2)),
+      setequal(lapply(efficacy, dim), lapply(efficacy_strain_2, dim)))
+    n_strain <- 4
+  }
+
   n_vacc_strata <- ncol(efficacy[[1]])
   n_groups <- nrow(efficacy[[1]])
 
@@ -888,7 +894,7 @@ modify_severity <- function(efficacy, efficacy_strain_2,
         for (g in seq_len(n_groups)) {
           ## If not multistrain then all use same params, otherwise split
           ##  by strains. Strains: 1 (=1), 2(=2), 3(=1->2), 4(=2->1)
-          es <- if (is.null(efficacy_strain_2) || s %in% c(1, 4)) efficacy else
+          es <- if (n_strain == 1 || s %in% c(1, 4)) efficacy else
             efficacy_strain_2
           new_prob <- es[[rel]][g, v_s] * mod
           ## FIXME - Temporary fixes for when p > 1
