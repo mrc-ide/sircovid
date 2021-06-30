@@ -571,6 +571,7 @@ test_that("Swapping strains gives identical results with different index", {
   y <- mod$transform_variables(initial$state)
   i <- c(2, 1, 4, 3)
   y$I_A <- y$I_A[, i, , , drop = FALSE]
+  y$I_weighted <- y$I_weighted[, i, , drop = FALSE]
   y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
   y$T_sero_pre_1 <- y$T_sero_pre_1[, i, , , drop = FALSE]
   y$T_sero_pre_2 <- y$T_sero_pre_2[, i, , , drop = FALSE]
@@ -606,7 +607,8 @@ test_that("Swapping strains gives identical results with different index", {
     z1[["sympt_cases_non_variant_inc"]]
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
-  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg")) {
+  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg",
+               "I_weighted")) {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
@@ -708,6 +710,73 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   expect_error(
     carehomes_Rt_trajectories(steps, S, p, prob_strain[, , -1], R = R),
     "Expected 3rd dim of 'prob_strain' to have length 85, following 'step'")
+})
+
+test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
+  ## Run model with 2 variants
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0),
+                            cross_immunity = 0)
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ## Check carehomes_ifr_t R
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p),
+    "Expected R input because")
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[-1, 1, ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, -1]),
+    "Expected 'R' to have 85 columns")
+
+  p1 <- p
+  p1$n_strains <- 3
+  expect_error(
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p1, R = R[, 1, ]),
+    "Multstrain IFR currently only works if n_strains is 4")
+
+  ## Check carehomes_ifr_t_trajectories R
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p),
+    "Expected R input because")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[1, , ]),
+    "Expected a 3d array of 'R'")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[-1, , ]),
+    "Expected 'R' to have 76 rows")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[, -1, ]),
+    "Expected 'S' and 'R' to have same length of 2nd dim")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R[, , -1]),
+    "Expected 3rd dim of 'R' to have length 85, given 'step'")
+  expect_error(
+    carehomes_ifr_t_trajectories(steps, S[, 1, , drop = FALSE],
+                                 I[, 1, , drop = FALSE], list(p), R = R),
+    "Expected 2nd dim of 'R' to have length 1, given 'pars'")
+
 })
 
 ## Tests for basic object properties, not analytical results from calculations
@@ -913,8 +982,6 @@ test_that("Can calculate Rt with strain_transmission (1, 0) ", {
 })
 
 
-
-
 test_that("Can calculate Rt with a second less infectious variant", {
   ## seed with 10 cases on same day as other variant
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -1048,7 +1115,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
 })
 
 
-test_that("Can calculate Rt with a second less letal variant", {
+test_that("Can calculate Rt with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
@@ -1482,6 +1549,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
+  index_I <- mod$info()$index$I_weighted
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -1489,6 +1557,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   set.seed(2)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
+  I <- y[index_I, , ]
   R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
@@ -1511,10 +1580,30 @@ test_that("calculate Rt with both second variant and vaccination", {
     expect_approx_equal(rt$eff_Rt_general[vacc_time] * reduced_susceptibility,
                         rt$eff_Rt_general[vacc_time + 1],
                         rel_tol = 0.2)
+
+    ## Not sure how we want to test results here yet, but just make sure it runs
+    ifr_t <- carehomes_ifr_t(steps, S[, k, ], I[, k, ], p, R = R[, k, ])
   }
 
 })
 
+test_that("strain_rel_severity works as expected in carehomes_parameters", {
+  strain_rel_severity <- c(1, 0.5)
+  rel_p_death <- c(1, 0.6, 0.7)
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = strain_rel_severity,
+                            rel_p_death = rel_p_death)
+  # check strains are mirrored
+  expect_equal(p$rel_p_ICU_D[, 1:2, ], p$rel_p_ICU_D[, 4:3, ])
+  expect_equal(p$rel_p_ICU_D[, 2, ],
+               p$rel_p_ICU_D[, 1, ] * strain_rel_severity[2])
+  expect_equal(p$rel_p_ICU_D[, , 2],
+               p$rel_p_ICU_D[, , 1] * rel_p_death[2])
+  expect_equal(p$rel_p_ICU_D[, , 3],
+               p$rel_p_ICU_D[, , 1] * rel_p_death[3])
+
+})
 
 test_that("strain_rel_gamma works as expected in carehomes_parameters", {
   expect_silent(carehomes_parameters(sircovid_date("2020-02-07"), "england",
@@ -2198,6 +2287,7 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   mod$set_state(initial$state, initial$step)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -2206,12 +2296,14 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
   I <- y[index_I, , ]
+  R <- y[index_R, , ]
 
-  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p)
-  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p)
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
 
   ## Run model with one strain only
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            rel_susceptibility = c(1, 1, 1))
 
   np <- 3L
   mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -2228,8 +2320,8 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   mod$set_index(c(index_S, index_I))
   y <- mod$simulate(steps)
 
-  S <- y[1:19, , ]
-  I <- y[20:38, , ]
+  S <- y[1:57, , ]
+  I <- y[58:114, , ]
 
   ifr_t_1_single_class <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p)
   ifr_t_all_single_class <- carehomes_ifr_t_trajectories(steps, S, I, p)
@@ -2267,6 +2359,63 @@ test_that("Can calculate ifr_t with an empty second variant ", {
                ifr_t_all_single_class$IHR_t_general_no_vacc)
   expect_equal(ifr_t_all$ALOS, ifr_t_all_single_class$ALOS)
   expect_equal(ifr_t_all$ALOS_no_vacc, ifr_t_all_single_class$ALOS_no_vacc)
+})
+
+
+test_that("Can calculate ifr_t with a second less lethal variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            strain_transmission = c(1, 1),
+                            strain_rel_severity = c(1, 0.5),
+                            strain_seed_date =
+                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                            strain_seed_rate = c(10, 0),
+                            cross_immunity = 1)
+
+
+  np <- 3L
+  mod <- carehomes$new(p, 0, np, seed = 1L)
+
+  initial <- carehomes_initial(mod$info(), 10, p)
+  mod$set_state(initial$state, initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ifr_t_1 <- carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## move everyone into first strain
+  I[1:19, , ] <- I[1:19, , ] + I[20:38, , ] + I[39:57, , ] + I[58:76, , ]
+  I[20:76, , ] <- 0
+  R[1:19, , ] <- R[1:19, , ] + R[20:38, , ] + R[39:57, , ] + R[58:76, , ]
+  R[20:76, , ] <- 0
+
+  ifr_t_1_empty_strain2 <-
+    carehomes_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all_empty_strain2 <-
+    carehomes_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## Rt should be lower (or equal) for the two variant version
+  ## because less lethal
+  tol <- 1e-5
+  expect_vector_lte(ifr_t_1$IFR_t_all, ifr_t_1_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_1$IFR_t_general, ifr_t_1_empty_strain2$IFR_t_general,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_all, ifr_t_all_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_general,
+                    ifr_t_all_empty_strain2$IFR_t_general, tol = tol)
 })
 
 

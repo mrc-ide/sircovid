@@ -121,9 +121,9 @@ NULL
 ##'   different relative susceptibilities by age (first dimension of the array),
 ##'   pathogen strain (second dimension) and vaccination group
 ##'   (third dimension); in that case, the first layer (3rd dimension) of
-##'   rel_susceptibility should be 1 (for the non-vaccinated group) for the
-##'   first two columns (first infection with either strain) and other values
-##'   between 0 and 1
+##'   rel_susceptibility should be 1 (for the non-vaccinated group)
+##'   for the first column (first infection with first strain) and other
+##'   values between 0 and 1
 ##'
 ##' @param rel_p_sympt A vector or matrix of values of same dimension as
 ##'   rel_susceptibility representing the
@@ -138,7 +138,7 @@ NULL
 ##'   dimension of the array), pathogen strain (second dimension) and
 ##'   vaccination group (third dimension); in that case,
 ##'   the first layer of rel_p_sympt should be 1 (for the non-vaccinated group)
-##'   for the first two columns (first infection with either strain) and other
+##'   for the first column (first infection with first strain) and other
 ##'   values between 0 and 1
 ##'
 ##' @param rel_p_hosp_if_sympt A vector or array of values of same dimension as
@@ -154,8 +154,24 @@ NULL
 ##'   (first dimension of the array), pathogen strain (second dimension) and
 ##'   vaccination group (third dimension); in that case,
 ##'   the first layer of rel_p_hosp_if_sympt should be 1 (for the
-##'   non-vaccinated group) for the first two columns (first infection with
-##'   either strain) and other values between 0 and 1
+##'   non-vaccinated group) for the first column
+##'   (first infection with first strain) and other values between 0 and 1
+##'
+##' @param rel_p_death A vector or array of values of same dimension as
+##'   rel_susceptibility representing the relative probability of death for
+##'    severe cases (either in hospital or the community) in different
+##'   vaccination groups. If a vector, the first value should be 1 (for the
+##'   non-vaccinated group) and subsequent values be between 0 and 1.
+##'   In that case the relative reduction in probability of death for
+##'   severe cases will be the same across all age groups and all strains
+##'   within one vaccination category.
+##'   Specifying an array instead of a vector allows different relative
+##'   reductions in probability of death for severe cases by age
+##'   (first dimension of the array), pathogen strain (second dimension) and
+##'   vaccination group (third dimension); in that case,
+##'   the first layer of rel_p_death should be 1 (for the non-vaccinated group)
+##'   for the first column (first infection with first strain) and other
+##'   values between 0 and 1
 ##'
 ##' @param rel_infectivity A vector or array of values representing the
 ##'   relative infectivity of individuals in different vaccination groups,
@@ -169,8 +185,9 @@ NULL
 ##'   (first dimension of the array), pathogen strain (second dimension) and
 ##'   vaccination group (third dimension); in that case,
 ##'   the first layer of rel_infectivity should be 1 (for the
-##'   non-vaccinated group) for the first two columns (first infection with
-##'   either strain) and other values between 0 and 1
+##'   non-vaccinated group)
+##'   for the first column (first infection with first strain) and other
+##'   values between 0 and 1
 ##'
 ##' @param vaccine_progression_rate A vector or matrix of values of same
 ##'   dimension as rel_susceptibility representing
@@ -247,6 +264,8 @@ NULL
 ##' rel_p_sympt <- c(1, 0.6, 0.3)
 ##' # and the risk of hospitalisation for those with symptoms
 ##' rel_p_hosp_if_sympt <- c(1, 0.95, 0.95)
+##' # and the risk of death for those with severe disease
+##' rel_p_death <- c(1, 0.9, 0.9)
 ##'
 ##' # The vaccine also reduces infectivity of infected individuals by half
 ##' rel_infectivity <- c(1, 0.5, 0.5)
@@ -270,6 +289,7 @@ NULL
 ##'        rel_susceptibility = rel_susceptibility,
 ##'        rel_p_sympt = rel_p_sympt,
 ##'        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+##'        rel_p_death = rel_p_death,
 ##'        rel_infectivity = rel_infectivity,
 ##'        vaccine_progression_rate = vaccine_progression_rate,
 ##'        vaccine_schedule = schedule,
@@ -281,6 +301,7 @@ NULL
 ##' p$rel_susceptibility
 ##' p$rel_p_sympt
 ##' p$rel_p_hosp_if_sympt
+##' p$rel_p_death
 ##' p$rel_infectivity
 ##' # Note that this is only the "base" rate as we fill in the first
 ##' # column dynamically based on vaccine_daily_doses
@@ -309,6 +330,9 @@ NULL
 ##' rel_p_hosp_if_sympt <-
 ##'   array(rep(rel_p_hosp_if_sympt, each = n_groups),
 ##'   dim = c(n_groups, n_strains, 3))
+##' rel_p_death <-
+##'   array(rep(rel_p_hosp_if_sympt, each = n_groups),
+##'   dim = c(n_groups, n_strains, 3))
 ##'
 ##' # And vaccine has the same impact on onwards infectivity across age groups
 ##' rel_infectivity <- array(rep(rel_infectivity, each = n_groups),
@@ -329,6 +353,7 @@ NULL
 ##'        rel_susceptibility = rel_susceptibility,
 ##'        rel_p_sympt = rel_p_sympt,
 ##'        rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+##'        rel_p_death = rel_p_death,
 ##'        rel_infectivity = rel_infectivity,
 ##'        vaccine_progression_rate = vaccine_progression_rate,
 ##'        vaccine_schedule = schedule,
@@ -360,6 +385,7 @@ carehomes_parameters <- function(start_date, region,
                                  rel_susceptibility = 1,
                                  rel_p_sympt = 1,
                                  rel_p_hosp_if_sympt = 1,
+                                 rel_p_death = 1,
                                  rel_infectivity = 1,
                                  vaccine_progression_rate = NULL,
                                  vaccine_schedule = NULL,
@@ -459,6 +485,7 @@ carehomes_parameters <- function(start_date, region,
                                                   rel_susceptibility,
                                                   rel_p_sympt,
                                                   rel_p_hosp_if_sympt,
+                                                  rel_p_death,
                                                   rel_infectivity,
                                                   vaccine_progression_rate,
                                                   vaccine_schedule,
@@ -468,18 +495,24 @@ carehomes_parameters <- function(start_date, region,
                                                   vaccine_catchup_fraction,
                                                   n_doses)
 
-
   strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
   if (length(strain_transmission) > 1) {
     strain_rel_severity <- mirror_strain(strain_rel_severity)
   }
-  rel_severity <- aperm(array(strain_rel_severity,
-                              c(strain$n_strains, ret$n_groups,
-                                vaccination$n_vacc_classes)),
-                        c(2, 1, 3))
+
+  # combine strain-specific relative severity with vaccination reduction in
+  # probability of death
+
+  rel_p_death <- build_rel_param(rel_p_death, strain$n_strains,
+                                  vaccination$n_vacc_classes, "rel_p_death")
+  rel_severity <- sweep(rel_p_death, 2, strain_rel_severity, "*")
+
+
+
   ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
                               vaccination$n_vacc_classes))
+
   ret$rel_p_ICU_D <- rel_severity
   ret$rel_p_H_D <- rel_severity
   ret$rel_p_W_D <- rel_severity
@@ -659,8 +692,6 @@ carehomes_index <- function(info) {
 
   ## age x vacc class
   index_S <- calculate_index(index, "S", list(n_vacc_classes), suffix)
-  index_I_weighted <- calculate_index(index, "I_weighted",
-                                      list(n_vacc_classes), suffix)
   index_diagnoses_admitted <- calculate_index(index, "diagnoses_admitted",
                                               list(n_vacc_classes), suffix)
   index_cum_infections_disag <- calculate_index(index, "cum_infections_disag",
@@ -673,6 +704,10 @@ carehomes_index <- function(info) {
   index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
 
   ## age x (total) strain x vacc class
+  index_I_weighted <- calculate_index(index, "I_weighted",
+                                      list(S = n_tot_strains,
+                                           V = n_vacc_classes),
+                                      suffix)
   index_R <- calculate_index(index, "R",
                              list(S = n_tot_strains, V = n_vacc_classes),
                              suffix)
@@ -1305,6 +1340,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              rel_susceptibility = 1,
                                              rel_p_sympt = 1,
                                              rel_p_hosp_if_sympt = 1,
+                                             rel_p_death = 1,
                                              rel_infectivity = 1,
                                              vaccine_progression_rate = NULL,
                                              vaccine_schedule = NULL,
@@ -1324,6 +1360,7 @@ carehomes_parameters_vaccination <- function(N_tot,
   rel_params <- list(rel_susceptibility = rel_susceptibility,
                      rel_p_sympt = rel_p_sympt,
                      rel_p_hosp_if_sympt = rel_p_hosp_if_sympt,
+                     rel_p_death = rel_p_death,
                      rel_infectivity = rel_infectivity)
 
   n <- vnapply(rel_params, calc_n_vacc_classes)

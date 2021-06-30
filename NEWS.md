@@ -1,6 +1,31 @@
-# sircovid 0.11.15
+# sircovid 0.12.0
 
 * Added support to allow fitting to age-specific hospital admissions and deaths
+
+# sircovid 0.11.20
+
+* Fix bug in `modify_severity` for single strain model
+
+# sircovid 0.11.19
+
+* Add `modify_severity` function to modify severity and transmission params of a VOC from VE assumptions
+
+# sircovid 0.11.18
+
+* Relax checks on relative vaccination parameters so only first vacc class
+of first strain needs to be `1` for all age groups
+
+# sircovid 0.11.17
+
+* prob_strain now measures the proportion of total I_weighted (the number of infectives weighted by the infectivity of their compartment) for each strain
+
+# sircovid 0.11.16
+
+* IFR calculation now works fully for a multistrain model
+
+# sircovid 0.11.14
+
+* Can now account for vaccine efficacy against death
 
 # sircovid 0.11.11
 

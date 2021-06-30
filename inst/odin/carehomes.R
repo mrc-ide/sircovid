@@ -1882,41 +1882,40 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 rel_foi_strain[, , ] <- lambda_susc[i, j, k] / sum(lambda_susc[i, , k])
 dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
-## prob_strain is probability of an infection being of strain j
-## irrespective of susceptibility levels
-## prob_strain_1 is prob_strain[1]
-prob_strain_1 <- sum(lambda[, 1]) / sum(lambda[, ])
+## I_weighted used in IFR calculation
+dim(new_I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+new_I_weighted[, , ] <-
+  I_A_transmission * sum(new_I_A[i, j, , k]) +
+  I_P_transmission * sum(new_I_P[i, j, , k]) +
+  I_C_1_transmission * sum(new_I_C_1[i, j, , k]) +
+  I_C_2_transmission * sum(new_I_C_2[i, j, , k]) +
+  hosp_transmission * (
+    sum(new_ICU_pre_unconf[i, j, , k]) +
+      sum(new_ICU_pre_conf[i, j, , k]) +
+      sum(new_H_R_unconf[i, j, , k]) +
+      sum(new_H_R_conf[i, j, , k]) +
+      sum(new_H_D_unconf[i, j, , k]) +
+      sum(new_H_D_conf[i, j, , k])) +
+  ICU_transmission * (
+    sum(new_ICU_W_R_unconf[i, j, , k]) +
+      sum(new_ICU_W_R_conf[i, j, , k]) +
+      sum(new_ICU_W_D_unconf[i, j, , k]) +
+      sum(new_ICU_W_D_conf[i, j, , k]) +
+      sum(new_ICU_D_unconf[i, j, , k]) +
+      sum(new_ICU_D_conf[i, j, , k])) +
+  G_D_transmission * sum(new_G_D[i, j, , k])
+initial(I_weighted[, , ]) <- 0
+dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+update(I_weighted[, , ]) <- new_I_weighted[i, j, k]
+
+## prob_strain is proportion of total I_weighted in each strain
+prob_strain_1 <- if (n_real_strains == 1) 1 else
+  (sum(new_I_weighted[, 1, ]) + sum(new_I_weighted[, 4, ])) /
+  sum(new_I_weighted)
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
 update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
 dim(prob_strain) <- n_real_strains
-
-## I_weighted used in IFR calculation
-initial(I_weighted[, ]) <- 0
-dim(I_weighted) <- c(n_groups, n_vacc_classes)
-dim(I_weighted_strain) <- c(n_groups, n_strains, n_vacc_classes)
-I_weighted_strain[, , ] <-
-  strain_transmission[j] * (
-    I_A_transmission * sum(new_I_A[i, j, , k]) +
-      I_P_transmission * sum(new_I_P[i, j, , k]) +
-      I_C_1_transmission * sum(new_I_C_1[i, j, , k]) +
-      I_C_2_transmission * sum(new_I_C_2[i, j, , k]) +
-      hosp_transmission * (
-        sum(new_ICU_pre_unconf[i, j, , k]) +
-          sum(new_ICU_pre_conf[i, j, , k]) +
-          sum(new_H_R_unconf[i, j, , k]) +
-          sum(new_H_R_conf[i, j, , k]) +
-          sum(new_H_D_unconf[i, j, , k]) +
-          sum(new_H_D_conf[i, j, , k])) +
-      ICU_transmission * (
-        sum(new_ICU_W_R_unconf[i, j, , k]) +
-          sum(new_ICU_W_R_conf[i, j, , k]) +
-          sum(new_ICU_W_D_unconf[i, j, , k]) +
-          sum(new_ICU_W_D_conf[i, j, , k]) +
-          sum(new_ICU_D_unconf[i, j, , k]) +
-          sum(new_ICU_D_conf[i, j, , k])) +
-      G_D_transmission * sum(new_G_D[i, j, , k]))
-update(I_weighted[, ]) <- sum(I_weighted_strain[i, , j])
 
 ## Vaccination engine
 n_doses <- user()
