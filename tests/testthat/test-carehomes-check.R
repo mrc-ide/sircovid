@@ -40,6 +40,24 @@ test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
   expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
+test_that("N_tot stays constant when p_infection_immunity < 1, while
+          sero and PCR N_tots are non-decreasing", {
+  p <- carehomes_parameters(0, "uk", p_infection_immunity = 0.5)
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+})
 
 test_that("there are no infections when beta is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
@@ -299,6 +317,60 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   expect_true(all(y$D_hosp == 0))
 })
 
+test_that("No-one recovers if p_infection_immunity = 0", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20,
+                            p_infection_immunity = 0)
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(any(y$I_A > 0))
+  expect_true(any(y$I_C_2 > 0))
+  expect_true(any(y$H_R_unconf > 0))
+  expect_true(any(y$H_R_conf > 0))
+  expect_true(any(y$W_R_unconf > 0))
+  expect_true(any(y$W_R_conf > 0))
+  expect_true(all(y$R == 0))
+})
+
+test_that("Everyone recovers in edge case", {
+  ## This test is primarily to test the behaviour for p_infection_immunity = 1
+  p <- carehomes_parameters(0, "england", beta_value = 1e9,
+                            p_infection_immunity = 1)
+  p$p_G_D_step[, ] <- 0
+  p$p_ICU_D_step[, ] <- 0
+  p$p_H_D_step[, ] <- 0
+  p$p_W_D_step[, ] <- 0
+
+  mod <- carehomes$new(p, 0, 1)
+  info <- mod$info()
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(any(y$I_A > 0))
+  expect_true(any(y$I_C_2 > 0))
+  expect_true(any(y$H_R_unconf > 0))
+  expect_true(any(y$H_R_conf > 0))
+  expect_true(any(y$W_R_unconf > 0))
+  expect_true(any(y$W_R_conf > 0))
+  expect_true(all(y$H_D_unconf == 0))
+  expect_true(all(y$H_D_conf == 0))
+  expect_true(all(y$W_D_unconf == 0))
+  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$W_D_unconf == 0))
+  expect_true(all(y$ICU_D_conf == 0))
+  expect_true(all(y$ICU_D_unconf == 0))
+  expect_true(all(y$G_D == 0))
+  expect_true(any(y$R > 0))
+
+  expect_true(all(apply(y$S, c(1, 2), diff) <= 0))
+})
 
 test_that("No one dies in the community if p_G_D is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
@@ -904,23 +976,4 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D_step")
   helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
   helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
-})
-
-
-test_that("No one is hospitalised, no-one recovers in edge case", {
-  p <- carehomes_parameters(0, "england")
-  p$p_G_D_step[, ] <- 0
-
-  mod <- carehomes$new(p, 0, 1)
-
-  initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
-  index_G_D <- mod$info()$index$G_D
-
-  end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
-
-  set.seed(1)
-  y <- mod$simulate(steps)
-  expect_true(all(y[index_G_D, , ] == 0))
 })
