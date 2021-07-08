@@ -1,12 +1,21 @@
 ## These could be moved to be defaults within the models
 sircovid_parameters_shared <- function(start_date, region,
-                                       beta_date, beta_value,
+                                       beta_date, beta_value, beta_type,
                                        population = NULL) {
   steps_per_day <- 4
   dt <- 1 / steps_per_day
   assert_sircovid_date(start_date)
-  beta_step <- sircovid_parameters_piecewise_linear(beta_date,
-                                                    beta_value %||% 0.08, dt)
+  if (beta_type == "piecewise-linear") {
+    beta_step <- sircovid_parameters_piecewise_linear(beta_date,
+                                                      beta_value %||% 0.08, dt)
+  } else if (beta_type == "piecewise-constant") {
+    beta_step <- sircovid_parameters_piecewise_constant(beta_date,
+                                                        beta_value %||% 0.08,
+                                                        dt)
+  } else {
+    stop("'beta_type' must be 'piecewise-linear' or 'piecewise-constant'")
+  }
+
 
   population <- population %||% sircovid_population(region)
 

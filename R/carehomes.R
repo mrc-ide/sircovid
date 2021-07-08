@@ -363,6 +363,7 @@ NULL
 ##'
 carehomes_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
+                                 beta_type = "piecewise-linear",
                                  population = NULL,
                                  carehome_beds = NULL,
                                  severity = NULL,
@@ -406,7 +407,7 @@ carehomes_parameters <- function(start_date, region,
   }
 
   ret <- sircovid_parameters_shared(start_date, region,
-                                    beta_date, beta_value,
+                                    beta_date, beta_value, beta_type,
                                     population)
 
   ## These are only used here, and are fixed
