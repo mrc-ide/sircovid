@@ -9,6 +9,7 @@ basic_parameters(
   region,
   beta_date = NULL,
   beta_value = NULL,
+  beta_type = "piecewise-linear",
   severity = NULL,
   exp_noise = 1e+06
 )
@@ -24,18 +25,26 @@ package and is limited to "uk", the four constituent nations
 NHS regions (e.g., "midlands"). These names are case
 insensitive.}
 
-\item{beta_date}{A vector of dates for changes in beta (the
-contact rate parameter), or \code{NULL} if a single value is used for
-all times (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}}, where
-this is passed as \code{date}).}
+\item{beta_date}{A vector of dates (each as a \code{\link[=sircovid_date]{sircovid_date()}})
+for changes in beta (the contact rate parameter), or \code{NULL} if
+a single value is used for all times (see
+\code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}} or
+\code{\link[=sircovid_parameters_piecewise_constant]{sircovid_parameters_piecewise_constant()}}, where
+this is passed as \code{date}). If \code{beta_type = "piecewise-constant"},
+then the first date must be 0.}
 
 \item{beta_value}{A vector of values for beta (the contact rate
 parameter). If not given, and if \code{beta_date} is \code{NULL} then a
 value of 0.08 will be used through the whole simulation,
 otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 \code{beta_date} is given then \code{beta_date} and \code{beta_value} must have
-the same length (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}},
-where this is passed as \code{value}).}
+the same length (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}} or
+\code{\link[=sircovid_parameters_piecewise_constant]{sircovid_parameters_piecewise_constant()}}, where this is passed
+as \code{value}).}
+
+\item{beta_type}{The type of form used for beta (the contact rate
+parameter), which currently can be \code{"piecewise-linear"} or
+\code{"piecewise-constant"}}
 
 \item{severity}{Severity data, via Bob Verity's \code{markovid}
 package. This needs to be \code{NULL} (use the default bundled data
