@@ -1,6 +1,7 @@
 ## These could be moved to be defaults within the models
 sircovid_parameters_shared <- function(start_date, region,
-                                       beta_date, beta_value, beta_type,
+                                       beta_date, beta_value,
+                                       beta_type = 'piecewise-linear',
                                        population = NULL) {
   steps_per_day <- 4
   dt <- 1 / steps_per_day
