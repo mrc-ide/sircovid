@@ -223,6 +223,10 @@ NULL
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
+##' @param p_infection_immunity Proportion of non-fatal infections that gain
+##'   immunity post-infection by moving into the R compartment. The remainder
+##'   move directly back to the S compartment.
+##'
 ##' @param cross_immunity A value or vector of same length as
 ##'   `strain_transmission` that controls the amount of immunity conferred by
 ##'   previous infection with one strain. If a scalar is given
@@ -394,6 +398,7 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_catchup_fraction = 1,
                                  n_doses = 2L,
                                  waning_rate = 0,
+                                 p_infection_immunity = 1,
                                  exp_noise = 1e6,
                                  cross_immunity = 1) {
 
@@ -435,6 +440,7 @@ carehomes_parameters <- function(start_date, region,
   progression <- progression %||% carehomes_parameters_progression(ret$dt)
 
   waning <- carehomes_parameters_waning(waning_rate)
+  ret$p_infection_immunity <- p_infection_immunity
 
   ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region, population)
 
