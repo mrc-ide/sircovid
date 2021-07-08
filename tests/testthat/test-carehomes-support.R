@@ -206,7 +206,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
       "p_NC", "I_A_transmission", "I_P_transmission",
       "I_C_1_transmission", "I_C_2_transmission",
-      "n_groups", "initial_I", "cross_immunity"))
+      "n_groups", "initial_I", "cross_immunity", "p_infection_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
