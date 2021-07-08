@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.21</span>
       </span>
     </div>
 
@@ -133,6 +133,7 @@
   <span class='va'>region</span>,
   beta_date <span class='op'>=</span> <span class='cn'>NULL</span>,
   beta_value <span class='op'>=</span> <span class='cn'>NULL</span>,
+  beta_type <span class='op'>=</span> <span class='st'>"piecewise-linear"</span>,
   population <span class='op'>=</span> <span class='cn'>NULL</span>,
   carehome_beds <span class='op'>=</span> <span class='cn'>NULL</span>,
   severity <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -187,10 +188,13 @@ insensitive.</p></td>
     </tr>
     <tr>
       <th>beta_date</th>
-      <td><p>A vector of dates for changes in beta (the
-contact rate parameter), or <code>NULL</code> if a single value is used for
-all times (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code>, where
-this is passed as <code>date</code>).</p></td>
+      <td><p>A vector of dates (each as a <code><a href='sircovid_date.html'>sircovid_date()</a></code>)
+for changes in beta (the contact rate parameter), or <code>NULL</code> if
+a single value is used for all times (see
+<code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code> or
+<code><a href='sircovid_parameters_piecewise_constant.html'>sircovid_parameters_piecewise_constant()</a></code>, where
+this is passed as <code>date</code>). If <code>beta_type = "piecewise-constant"</code>,
+then the first date must be 0.</p></td>
     </tr>
     <tr>
       <th>beta_value</th>
@@ -199,8 +203,15 @@ parameter). If not given, and if <code>beta_date</code> is <code>NULL</code> the
 value of 0.08 will be used through the whole simulation,
 otherwise if <code>beta_date</code> is <code>NULL</code> this must be a scalar. If
 <code>beta_date</code> is given then <code>beta_date</code> and <code>beta_value</code> must have
-the same length (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code>,
-where this is passed as <code>value</code>).</p></td>
+the same length (see <code><a href='sircovid_parameters_piecewise_linear.html'>sircovid_parameters_piecewise_linear()</a></code> or
+<code><a href='sircovid_parameters_piecewise_constant.html'>sircovid_parameters_piecewise_constant()</a></code>, where this is passed
+as <code>value</code>).</p></td>
+    </tr>
+    <tr>
+      <th>beta_type</th>
+      <td><p>The type of form used for beta (the contact rate
+parameter), which currently can be <code>"piecewise-linear"</code> or
+<code>"piecewise-constant"</code></p></td>
     </tr>
     <tr>
       <th>population</th>
