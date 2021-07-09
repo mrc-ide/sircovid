@@ -1,3 +1,7 @@
+# sircovid 0.11.21
+
+* Added `beta_type` option to `carehomes_parameters`, now allowing it to be `"piecewise-linear"` or `"piecewise-constant"`
+
 # sircovid 0.11.20
 
 * Fix bug in `modify_severity` for single strain model
