@@ -41,7 +41,6 @@ carehomes_parameters(
   vaccine_catchup_fraction = 1,
   n_doses = 2L,
   waning_rate = 0,
-  p_infection_immunity = 1,
   exp_noise = 1e+06,
   cross_immunity = 1
 )
@@ -286,10 +285,6 @@ to 1 by default}
 rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
 have one value per age group.}
-
-\item{p_infection_immunity}{Proportion of non-fatal infections that gain
-immunity post-infection by moving into the R compartment. The remainder
-move directly back to the S compartment.}
 
 \item{exp_noise}{Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small

@@ -16,6 +16,7 @@ carehomes_parameters_severity(
   p_W_D = NULL,
   p_G_D = NULL,
   p_G_D_CHR = NULL,
+  p_R = NULL,
   p_star = NULL
 )
 }
@@ -57,6 +58,9 @@ home). See Details.}
 individuals requiring hospitalisation dying in a care home) for care home
 residents. If \code{NULL} then the value for the oldest age group is used. See
 Details.}
+
+\item{p_R}{Time-varying parameters for p_R (the probability of an non-
+fatally infected individual having immunity post-infection). See Details.}
 
 \item{p_star}{Time-varying parameters for p_star (the probability of
 patients being confirmed as covid on admission to hospital). See Details.}
