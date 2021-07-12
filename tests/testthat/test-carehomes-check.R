@@ -40,9 +40,10 @@ test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
   expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
 })
 
-test_that("N_tot stays constant when p_infection_immunity < 1, while
+test_that("N_tot stays constant when p_R < 1, while
           sero and PCR N_tots are non-decreasing", {
-  p <- carehomes_parameters(0, "uk", p_infection_immunity = 0.5)
+  p <- carehomes_parameters(0, "uk")
+  p$p_R_step[, ] <- 0.5
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
@@ -317,11 +318,11 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   expect_true(all(y$D_hosp == 0))
 })
 
-test_that("No-one recovers if p_infection_immunity = 0", {
+test_that("No-one recovers if p_R = 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20,
-                            p_infection_immunity = 0)
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p$p_R_step[, ]<- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
@@ -339,9 +340,9 @@ test_that("No-one recovers if p_infection_immunity = 0", {
 })
 
 test_that("Everyone recovers in edge case", {
-  ## This test is primarily to test the behaviour for p_infection_immunity = 1
-  p <- carehomes_parameters(0, "england", beta_value = 1e9,
-                            p_infection_immunity = 1)
+  ## This test is primarily to test the behaviour for p_R = 1
+  p <- carehomes_parameters(0, "england", beta_value = 1e9)
+  p$p_G_D_step[, ] <- 1
   p$p_G_D_step[, ] <- 0
   p$p_ICU_D_step[, ] <- 0
   p$p_H_D_step[, ] <- 0
