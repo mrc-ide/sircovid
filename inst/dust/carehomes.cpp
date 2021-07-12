@@ -2050,7 +2050,7 @@ public:
     int n_p_H_steps;
     int n_p_ICU_D_steps;
     int n_p_ICU_steps;
-    real_t n_p_R_steps;
+    int n_p_R_steps;
     int n_p_W_D_steps;
     int n_p_star_steps;
     int n_real_strains;
@@ -4713,7 +4713,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_p_H_steps = NA_INTEGER;
   shared->n_p_ICU_D_steps = NA_INTEGER;
   shared->n_p_ICU_steps = NA_INTEGER;
-  shared->n_p_R_steps = NA_REAL;
+  shared->n_p_R_steps = NA_INTEGER;
   shared->n_p_W_D_steps = NA_INTEGER;
   shared->n_p_star_steps = NA_INTEGER;
   shared->n_strains = NA_INTEGER;
@@ -4824,7 +4824,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_p_H_steps = user_get_scalar<int>(user, "n_p_H_steps", shared->n_p_H_steps, NA_REAL, NA_REAL);
   shared->n_p_ICU_D_steps = user_get_scalar<int>(user, "n_p_ICU_D_steps", shared->n_p_ICU_D_steps, NA_REAL, NA_REAL);
   shared->n_p_ICU_steps = user_get_scalar<int>(user, "n_p_ICU_steps", shared->n_p_ICU_steps, NA_REAL, NA_REAL);
-  shared->n_p_R_steps = user_get_scalar<real_t>(user, "n_p_R_steps", shared->n_p_R_steps, NA_REAL, NA_REAL);
+  shared->n_p_R_steps = user_get_scalar<int>(user, "n_p_R_steps", shared->n_p_R_steps, NA_REAL, NA_REAL);
   shared->n_p_W_D_steps = user_get_scalar<int>(user, "n_p_W_D_steps", shared->n_p_W_D_steps, NA_REAL, NA_REAL);
   shared->n_p_star_steps = user_get_scalar<int>(user, "n_p_star_steps", shared->n_p_star_steps, NA_REAL, NA_REAL);
   shared->n_strains = user_get_scalar<int>(user, "n_strains", shared->n_strains, NA_REAL, NA_REAL);
@@ -5598,7 +5598,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->dim_p_R_progress_1 = shared->n_groups;
   shared->dim_p_R_progress_2 = shared->n_strains;
   shared->dim_p_R_progress_3 = shared->n_vacc_classes;
-  shared->dim_p_R_step_1 = shared->n_p_C_steps;
+  shared->dim_p_R_step_1 = shared->n_p_R_steps;
   shared->dim_p_R_step_2 = shared->n_groups;
   shared->dim_p_SE_1 = shared->n_groups;
   shared->dim_p_SE_2 = shared->n_vacc_classes;

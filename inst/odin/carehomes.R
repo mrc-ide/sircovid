@@ -1432,7 +1432,7 @@ dim(n_infected_to_S) <- c(n_groups, n_strains, n_vacc_classes)
 p_R_step[, ] <- user()
 n_p_R_steps <- user()
 dim(p_R) <- c(n_groups, n_strains, n_vacc_classes)
-dim(p_R_step) <- c(n_p_C_steps, n_groups)
+dim(p_R_step) <- c(n_p_R_steps, n_groups)
 
 ## Vectors handling the serology flow
 dim(n_com_to_T_sero_pre) <- c(n_groups, n_strains, n_vacc_classes)
