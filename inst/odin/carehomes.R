@@ -230,6 +230,10 @@ p_G_D[, , ] <- if (as.integer(step) >= n_p_G_D_steps)
   p_G_D_step[n_p_G_D_steps, i] * rel_p_G_D[i, j, k] else
     p_G_D_step[step + 1, i] * rel_p_G_D[i, j, k]
 
+p_R[, , ] <- if (as.integer(step) >= n_p_R_steps)
+  p_R_step[n_p_R_steps, i] * rel_p_R[i, j, k] else
+    p_R_step[step + 1, i] * rel_p_R[i, j, k]
+
 p_star[] <- if (as.integer(step) >= n_p_star_steps)
   p_star_step[n_p_star_steps, i] else p_star_step[step + 1, i]
 
@@ -802,7 +806,7 @@ n_infection_end[, , ] <- n_I_A_progress[i, j, k_A, k] +
   n_W_R_conf_progress[i, j, k_W_R, k] +
   n_W_R_unconf_progress[i, j, k_W_R, k]
 
-n_infected_to_R[, , ] <- rbinom(n_infection_end[i, j, k], p_infection_immunity)
+n_infected_to_R[, , ] <- rbinom(n_infection_end[i, j, k], p_R[i, j, k])
 
 n_infected_to_S[, , ] <- n_infection_end[i, j, k] - n_infected_to_R[i, j, k]
 
@@ -925,6 +929,8 @@ rel_p_W_D[, , ] <- user()
 dim(rel_p_W_D) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_G_D[, , ] <- user()
 dim(rel_p_G_D) <- c(n_groups, n_strains, n_vacc_classes)
+rel_p_R[, , ] <- user()
+dim(rel_p_R) <- c(n_groups, n_strains, n_vacc_classes)
 rel_infectivity[, , ] <- user()
 dim(rel_infectivity) <- c(n_groups, n_strains, n_vacc_classes)
 
@@ -1423,7 +1429,10 @@ dim(n_ICU_pre_conf_to_ICU_W_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_infection_end) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_infected_to_R) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_infected_to_S) <- c(n_groups, n_strains, n_vacc_classes)
-p_infection_immunity <- user()
+p_R_step[, ] <- user()
+n_p_R_steps <- user()
+dim(p_R) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_R_step) <- c(n_p_C_steps, n_groups)
 
 ## Vectors handling the serology flow
 dim(n_com_to_T_sero_pre) <- c(n_groups, n_strains, n_vacc_classes)

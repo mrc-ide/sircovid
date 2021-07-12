@@ -223,10 +223,6 @@ NULL
 ##'   rate is used for all age groups; if a vector of values if used it should
 ##'   have one value per age group.
 ##'
-##' @param p_infection_immunity Proportion of non-fatal infections that gain
-##'   immunity post-infection by moving into the R compartment. The remainder
-##'   move directly back to the S compartment.
-##'
 ##' @param cross_immunity A value or vector of same length as
 ##'   `strain_transmission` that controls the amount of immunity conferred by
 ##'   previous infection with one strain. If a scalar is given
@@ -399,7 +395,6 @@ carehomes_parameters <- function(start_date, region,
                                  vaccine_catchup_fraction = 1,
                                  n_doses = 2L,
                                  waning_rate = 0,
-                                 p_infection_immunity = 1,
                                  exp_noise = 1e6,
                                  cross_immunity = 1) {
 
@@ -441,7 +436,6 @@ carehomes_parameters <- function(start_date, region,
   progression <- progression %||% carehomes_parameters_progression(ret$dt)
 
   waning <- carehomes_parameters_waning(waning_rate)
-  ret$p_infection_immunity <- p_infection_immunity
 
   ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region, population)
 
@@ -942,6 +936,10 @@ carehomes_severity <- function(p) {
 ##'   residents. If `NULL` then the value for the oldest age group is used. See
 ##'   Details.
 ##'
+##' @param p_R Time-varying parameters for p_R (the probability of an non-
+##'   fatally infected individual having immunity post-infection). See Details.
+##'
+##'
 ##' @param p_star Time-varying parameters for p_star (the probability of
 ##'   patients being confirmed as covid on admission to hospital). See Details.
 ##'
@@ -959,6 +957,7 @@ carehomes_parameters_severity <- function(dt,
                                           p_W_D = NULL,
                                           p_G_D = NULL,
                                           p_G_D_CHR = NULL,
+                                          p_R = NULL,
                                           p_star = NULL) {
 
   severity <- sircovid_parameters_severity(severity)
@@ -971,6 +970,7 @@ carehomes_parameters_severity <- function(dt,
                                 ICU_D = p_ICU_D,
                                 W_D = p_W_D,
                                 G_D = p_G_D,
+                                R = p_R,
                                 star = p_star)
 
   time_varying_severity_CHR <- list(C = NULL,
@@ -980,6 +980,7 @@ carehomes_parameters_severity <- function(dt,
                                     ICU_D = NULL,
                                     W_D = NULL,
                                     G_D = p_G_D_CHR,
+                                    R = NULL,
                                     star = NULL)
 
   get_p_step <- function(x, name) {
@@ -1937,7 +1938,7 @@ carehomes_check_severity <- function(pars) {
   }
 
   step_pars <- c("p_C_step", "p_H_step", "p_ICU_step", "p_ICU_D_step",
-                 "p_H_D_step", "p_W_D_step", "p_G_D_step")
+                 "p_H_D_step", "p_W_D_step", "p_G_D_step", "p_R_step")
   rel_pars <- c("rel_p_sympt", "rel_p_hosp_if_sympt", "rel_p_ICU",
                 "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D")
 
