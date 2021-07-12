@@ -322,7 +322,7 @@ test_that("No-one recovers if p_R = 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_R_step[, ]<- 0
+  p$p_R_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
