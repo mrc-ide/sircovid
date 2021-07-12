@@ -514,6 +514,9 @@ carehomes_parameters <- function(start_date, region,
   ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
                               vaccination$n_vacc_classes))
 
+  ret$rel_p_R <- array(1, c(ret$n_groups, strain$n_strains,
+                              vaccination$n_vacc_classes))
+
   ret$rel_p_ICU_D <- rel_severity
   ret$rel_p_H_D <- rel_severity
   ret$rel_p_W_D <- rel_severity
@@ -1940,7 +1943,7 @@ carehomes_check_severity <- function(pars) {
   step_pars <- c("p_C_step", "p_H_step", "p_ICU_step", "p_ICU_D_step",
                  "p_H_D_step", "p_W_D_step", "p_G_D_step", "p_R_step")
   rel_pars <- c("rel_p_sympt", "rel_p_hosp_if_sympt", "rel_p_ICU",
-                "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D")
+                "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D", "rel_p_R")
 
   Map(check_parameters,
       p_step = step_pars,

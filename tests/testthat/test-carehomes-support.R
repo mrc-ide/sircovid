@@ -199,14 +199,14 @@ test_that("carehomes_parameters returns a list of parameters", {
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
       "rel_p_ICU", "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D",
-      "rel_gamma_E", "rel_gamma_A", "rel_gamma_P", "rel_gamma_C_1",
+      "rel_p_R", "rel_gamma_E", "rel_gamma_A", "rel_gamma_P", "rel_gamma_C_1",
       "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R", "rel_gamma_ICU_pre",
       "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
       "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
       "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
       "p_NC", "I_A_transmission", "I_P_transmission",
       "I_C_1_transmission", "I_C_2_transmission",
-      "n_groups", "initial_I", "cross_immunity", "p_infection_immunity"))
+      "n_groups", "initial_I", "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -939,19 +939,19 @@ test_that("carehomes check severity works as expected", {
   ## check on required parameters
   steps <- c(
     "p_C_step", "p_H_step", "p_ICU_step", "p_ICU_D_step",
-    "p_H_D_step", "p_W_D_step", "p_G_D_step"
+    "p_H_D_step", "p_W_D_step", "p_G_D_step", "p_R_step"
   )
   rels <- c(
     "rel_p_sympt",
     "rel_p_hosp_if_sympt", "rel_p_ICU", "rel_p_ICU_D",
-    "rel_p_H_D", "rel_p_W_D", "rel_p_G_D"
+    "rel_p_H_D", "rel_p_W_D", "rel_p_G_D", "rel_p_R"
   )
 
-  p <- vector("list", 14)
+  p <- vector("list", 16)
   names(p) <- c(steps, rels)
   ## 19 groups, 4 strains, 3 vacc classes
-  p[1:7] <- list(matrix(0.5, ncol = 19))
-  p[8:14] <- list(array(1, c(19, 4, 3)))
+  p[1:8] <- list(matrix(0.5, ncol = 19))
+  p[9:16] <- list(array(1, c(19, 4, 3)))
 
   p$n_groups <- 19
 
