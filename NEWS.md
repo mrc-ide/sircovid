@@ -1,3 +1,7 @@
+# sircovid 0.11.23
+
+* NHS regions populations updated to ONS mid-2020 estimates
+
 # sircovid 0.11.22
 
 * Added `p_R`, the probability a non-fatal infection leads to post-infection immunity, otherwise the individual instantly becomes susceptible again post-infection

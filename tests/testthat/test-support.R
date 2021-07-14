@@ -42,9 +42,9 @@ test_that("read population", {
   clear_cache()
   n <- sircovid_population("south_west")
   expect_s3_class(cache$population, "data.frame")
-  expected <- c(291398, 327144, 315257, 301314, 334799, 333793, 331146,
-                329784, 311350, 364178, 400541, 390889, 345340, 329389,
-                340193, 237565, 347034)
+  expected <- c(284532, 325900, 323347, 302674, 335721, 331115, 335803,
+                330189, 315572, 353452, 396146, 400238, 354153, 326291,
+                343893, 249321, 350796)
   expect_equal(n, expected)
 })
 
@@ -252,7 +252,7 @@ test_that("transmission matrix", {
 
   ## Be notified when this changes
   skip_on_cran()
-  expect_equal(sum(m), 4.4980269728090259e-05)
+  expect_equal(sum(m), 4.478667972174154e-05)
 })
 
 
