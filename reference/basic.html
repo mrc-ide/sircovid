@@ -85,7 +85,7 @@ The &quot;basic&quot; sircovid model. This is a dust model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.23</span>
       </span>
     </div>
 
@@ -157,24 +157,24 @@ The "basic" sircovid model. This is a dust model.</h1>
 <span class='co'># The filtered state is returned at the end of the run</span>
 <span class='va'>mod</span><span class='op'>$</span><span class='fu'>run</span><span class='op'>(</span><span class='va'>step_end</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;            [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-#&gt; icu          38   21   24   27   10   14   14    8   13    14
-#&gt; deaths      102   83   92  117   36   18   47   19   67    49
-#&gt; deaths_inc   15   13    9   12    3    0    5    1    7    11</div><div class='input'>
+#&gt; icu          29   24   10   29   11   12   14   16   19    12
+#&gt; deaths      136  106   75   98   32   45   51   71   59    44
+#&gt; deaths_inc   19   22   11   16    5    9    7   10    6     4</div><div class='input'>
 <span class='co'># More state can be retrieved using the "state" method</span>
 <span class='va'>mod</span><span class='op'>$</span><span class='fu'>state</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
 #&gt; [1,]       91.00       91.00       91.00       91.00       91.00       91.00
-#&gt; [2,] 56286961.00 56286961.00 56286961.00 56286961.00 56286961.00 56286961.00
-#&gt; [3,]       38.00       21.00       24.00       27.00       10.00       14.00
-#&gt; [4,]      102.00       83.00       92.00      117.00       36.00       18.00
-#&gt; [5,]       15.00       13.00        9.00       12.00        3.00        0.00
+#&gt; [2,] 56550138.00 56550138.00 56550138.00 56550138.00 56550138.00 56550138.00
+#&gt; [3,]       29.00       24.00       10.00       29.00       11.00       12.00
+#&gt; [4,]      136.00      106.00       75.00       98.00       32.00       45.00
+#&gt; [5,]       19.00       22.00       11.00       16.00        5.00        9.00
 #&gt; [6,]        0.08        0.08        0.08        0.08        0.08        0.08
 #&gt;             [,7]        [,8]        [,9]       [,10]
 #&gt; [1,]       91.00       91.00       91.00       91.00
-#&gt; [2,] 56286961.00 56286961.00 56286961.00 56286961.00
-#&gt; [3,]       14.00        8.00       13.00       14.00
-#&gt; [4,]       47.00       19.00       67.00       49.00
-#&gt; [5,]        5.00        1.00        7.00       11.00
+#&gt; [2,] 56550138.00 56550138.00 56550138.00 56550138.00
+#&gt; [3,]       14.00       16.00       19.00       12.00
+#&gt; [4,]       51.00       71.00       59.00       44.00
+#&gt; [5,]        7.00       10.00        6.00        4.00
 #&gt; [6,]        0.08        0.08        0.08        0.08</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
