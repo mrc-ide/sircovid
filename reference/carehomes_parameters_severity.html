@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.22</span>
       </span>
     </div>
 
@@ -140,6 +140,7 @@
   p_W_D <span class='op'>=</span> <span class='cn'>NULL</span>,
   p_G_D <span class='op'>=</span> <span class='cn'>NULL</span>,
   p_G_D_CHR <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_R <span class='op'>=</span> <span class='cn'>NULL</span>,
   p_star <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
@@ -205,6 +206,11 @@ home). See Details.</p></td>
 individuals requiring hospitalisation dying in a care home) for care home
 residents. If <code>NULL</code> then the value for the oldest age group is used. See
 Details.</p></td>
+    </tr>
+    <tr>
+      <th>p_R</th>
+      <td><p>Time-varying parameters for p_R (the probability of an non-
+fatally infected individual having immunity post-infection). See Details.</p></td>
     </tr>
     <tr>
       <th>p_star</th>
