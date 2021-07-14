@@ -250,7 +250,7 @@ sircovid_parameters_severity <- function(params) {
   } else if (!is.data.frame(params)) {
     expected <- c("p_star", "p_C", "p_G_D",
                   "p_H_D", "p_ICU_D", "p_W_D",
-                  "p_ICU", "p_H",
+                  "p_ICU", "p_H", "p_R",
                   "p_sero_pos_1", "p_sero_pos_2")
     verify_names(params, expected)
     return(params)
@@ -274,6 +274,7 @@ sircovid_parameters_severity <- function(params) {
     p_sero_pos_1 = "p_sero_pos_1",
     p_sero_pos_2 = "p_sero_pos_2",
     p_G_D = "p_G_D",
+    p_R = "p_R",
     p_star = "p_star")
   data <- rename(data, required, names(required))
 
@@ -287,5 +288,6 @@ sircovid_parameters_severity <- function(params) {
     p_ICU = data[["p_ICU"]],
     p_sero_pos_1 = data[["p_sero_pos_1"]],
     p_sero_pos_2 = data[["p_sero_pos_2"]],
-    p_H = data[["p_H"]])
+    p_H = data[["p_H"]],
+    p_R = data[["p_R"]])
 }
