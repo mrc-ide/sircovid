@@ -73,8 +73,8 @@ RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
-    mrc-ide/dust@i245-shared-int,
+    mrc-ide/dust,
     mrc-ide/eigen1,
-    mrc-ide/mcstate@dust-0.9.10,
+    mrc-ide/mcstate,
     mrc-ide/odin,
     mrc-ide/odin.dust
