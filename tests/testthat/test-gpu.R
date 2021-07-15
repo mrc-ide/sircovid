@@ -37,7 +37,7 @@ test_that("can run the gpu model on the cpu", {
                             initial_I = 20)
 
   mod_cpu <- gen$new(p, 0, 5, seed = 1L)
-  mod_gpu <- gen$new(p, 0, 5, seed = 1L, device_id = 0)
+  mod_gpu <- gen$new(p, 0, 5, seed = 1L, device_config = 0)
 
   end <- sircovid_date("2020-07-31") / p$dt
   info <- mod_cpu$info()
@@ -83,7 +83,7 @@ test_that("Can run the gpu compare on the cpu", {
 
   np <- 10
   mod_cpu <- gen$new(pars, 0, np, seed = 1L)
-  mod_gpu <- gen$new(pars, 0, np, seed = 1L, device_id = 0)
+  mod_gpu <- gen$new(pars, 0, np, seed = 1L, device_config = 0)
 
   initial <- carehomes_initial(mod_cpu$info(), np, pars)
   mod_cpu$set_state(initial$state, initial$step)
