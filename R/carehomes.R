@@ -53,8 +53,11 @@ NULL
 ##'
 ##' @param m_CHR Contact rate between carehome residents
 ##'
-##' @param p_NC Proportion of population who do not have
-##'   covid but have covid-like symptoms
+##' @param p_NC Proportion of population who do not have covid but have
+##'   covid-like symptoms that would lead to getting a PCR test
+##'
+##' @param p_NC_weekend Proportion of population who do not have covid but have
+##'   covid-like symptoms that would lead to getting a PCR test on a weekend
 ##'
 ##' @param strain_transmission Vector of length two for relative
 ##'   transmissibility of each strain modelled. First element should be 1.
@@ -375,6 +378,7 @@ carehomes_parameters <- function(start_date, region,
                                  m_CHW = 4e-6,
                                  m_CHR = 5e-5,
                                  p_NC = 0.01,
+                                 p_NC_weekend = 0.01,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_rate = NULL,
@@ -462,6 +466,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
+  ret$p_NC_weekend <- p_NC_weekend
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.363
@@ -733,6 +738,14 @@ carehomes_compare <- function(state, observed, pars) {
                                           pars$pillar2_specificity,
                                           pars$exp_noise)
 
+  pillar2_negs_weekend <-
+    pars$p_NC_weekend * (pars$N_tot_all - model_sympt_cases)
+  model_pillar2_prob_pos_weekend <- test_prob_pos(model_sympt_cases,
+                                                  pillar2_negs_weekend,
+                                                  pars$pillar2_sensitivity,
+                                                  pars$pillar2_specificity,
+                                                  pars$exp_noise)
+
   ## Pillar 2 over 25s
   pillar2_over25_negs <- pars$p_NC * (pars$N_tot_over25 -
                                         model_sympt_cases_over25)
@@ -741,6 +754,15 @@ carehomes_compare <- function(state, observed, pars) {
                                                  pars$pillar2_sensitivity,
                                                  pars$pillar2_specificity,
                                                  pars$exp_noise)
+
+  pillar2_over25_negs_weekend <-
+    pars$p_NC_weekend * (pars$N_tot_over25 - model_sympt_cases_over25)
+  model_pillar2_over25_prob_pos_weekend <-
+    test_prob_pos(model_sympt_cases_over25,
+                  pillar2_over25_negs_weekend,
+                  pars$pillar2_sensitivity,
+                  pars$pillar2_specificity,
+                   pars$exp_noise)
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
   ## It is possible that model_react_pos > pars$N_tot_react, so we cap it to
@@ -840,6 +862,11 @@ carehomes_compare <- function(state, observed, pars) {
                                    model_pillar2_prob_pos,
                                    pars$rho_pillar2_tests)
 
+  ll_pillar2_tests_weekend <- ll_betabinom(observed$pillar2_pos_weekend,
+                                           observed$pillar2_tot_weekend,
+                                           model_pillar2_prob_pos_weekend,
+                                           pars$rho_pillar2_tests)
+
   ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
                                 pars$phi_pillar2_cases * model_sympt_cases,
                                 pars$kappa_pillar2_cases, exp_noise)
@@ -848,6 +875,11 @@ carehomes_compare <- function(state, observed, pars) {
                                           observed$pillar2_over25_tot,
                                           model_pillar2_over25_prob_pos,
                                           pars$rho_pillar2_tests)
+  ll_pillar2_over25_tests_weekend <-
+    ll_betabinom(observed$pillar2_over25_pos_weekend,
+                 observed$pillar2_over25_tot_weekend,
+                 model_pillar2_over25_prob_pos_weekend,
+                 pars$rho_pillar2_tests)
 
   ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
                                        pars$phi_pillar2_cases *
@@ -869,7 +901,8 @@ carehomes_compare <- function(state, observed, pars) {
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
-    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
+    ll_pillar2_tests + ll_pillar2_tests_weekend + ll_pillar2_cases +
+    ll_pillar2_over25_tests + ll_pillar2_tests_weekend +
     ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25
 }
 
@@ -1776,6 +1809,7 @@ carehomes_particle_filter_data <- function(data) {
                 "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
+                "pillar2_over25_pos_weekend", "pillar2_over25_tot_weekend",
                 "pillar2_over25_cases", "react_pos", "react_tot",
                 "strain_non_variant", "strain_tot", "strain_over25_non_variant",
                 "strain_over25_tot")

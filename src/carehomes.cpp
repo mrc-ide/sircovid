@@ -3,7 +3,7 @@
 [[cpp11::register]]
 SEXP dust_carehomes_alloc(cpp11::list r_pars, bool pars_multi, size_t step,
                          cpp11::sexp r_n_particles, size_t n_threads,
-                         cpp11::sexp r_seed, cpp11::sexp device_id);
+                         cpp11::sexp r_seed, cpp11::sexp device_config);
 
 [[cpp11::register]]
 SEXP dust_carehomes_run(SEXP ptr, size_t step_end, bool device);
@@ -7256,9 +7256,9 @@ carehomes::data_t dust_data<carehomes>(cpp11::list data) {
 
 SEXP dust_carehomes_alloc(cpp11::list r_pars, bool pars_multi, size_t step,
                          cpp11::sexp r_n_particles, size_t n_threads,
-                         cpp11::sexp r_seed, cpp11::sexp device_id) {
+                         cpp11::sexp r_seed, cpp11::sexp device_config) {
   return dust::r::dust_alloc<carehomes>(r_pars, pars_multi, step, r_n_particles,
-                                        n_threads, r_seed, device_id);
+                                        n_threads, r_seed, device_config);
 }
 
 SEXP dust_carehomes_run(SEXP ptr, size_t step_end, bool device) {
