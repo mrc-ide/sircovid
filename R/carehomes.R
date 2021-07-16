@@ -902,7 +902,7 @@ carehomes_compare <- function(state, observed, pars) {
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
     ll_pillar2_tests + ll_pillar2_tests_weekend + ll_pillar2_cases +
-    ll_pillar2_over25_tests + ll_pillar2_tests_weekend +
+    ll_pillar2_over25_tests + ll_pillar2_over25_tests_weekend +
     ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25
 }
 
@@ -1807,7 +1807,8 @@ carehomes_particle_filter_data <- function(data) {
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
                 "diagnoses", "all_admission", "sero_pos_15_64_1",
                 "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
-                "pillar2_pos", "pillar2_tot", "pillar2_cases",
+                "pillar2_pos", "pillar2_tot", "pillar2_pos_weekend",
+                "pillar2_tot_weekend", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_pos_weekend", "pillar2_over25_tot_weekend",
                 "pillar2_over25_cases", "react_pos", "react_tot",

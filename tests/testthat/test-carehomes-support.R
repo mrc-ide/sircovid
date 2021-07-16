@@ -204,7 +204,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
       "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
       "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
-      "p_NC", "I_A_transmission", "I_P_transmission",
+      "p_NC", "p_NC_weekend", "I_A_transmission", "I_P_transmission",
       "I_C_1_transmission", "I_C_2_transmission",
       "n_groups", "initial_I", "cross_immunity"))
 
@@ -595,9 +595,13 @@ test_that("carehomes_compare combines likelihood correctly", {
     sero_tot_15_64_2 = 98,
     pillar2_pos = 35,
     pillar2_tot = 600,
+    pillar2_pos_weekend = 25,
+    pillar2_tot_weekend = 400,
     pillar2_cases = 35,
     pillar2_over25_pos = 25,
     pillar2_over25_tot = 500,
+    pillar2_over25_pos_weekend = 15,
+    pillar2_over25_tot_weekend = 300,
     pillar2_over25_cases = 25,
     react_pos = 3,
     react_tot = 500,
@@ -622,17 +626,22 @@ test_that("carehomes_compare combines likelihood correctly", {
   nms_sero_1 <- c("sero_pos_15_64_1", "sero_tot_15_64_1")
   nms_sero_2 <- c("sero_pos_15_64_2", "sero_tot_15_64_2")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
+  nms_pillar2_weekend <- c("pillar2_pos_weekend", "pillar2_tot_weekend")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
+  nms_pillar2_over25_weekend <-
+    c("pillar2_over25_pos_weekend", "pillar2_over25_tot_weekend")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
                              c(nms_sero_1, nms_sero_2, nms_pillar2,
-                               nms_pillar2_over25, nms_react, nms_strain,
-                               nms_strain_over25))),
+                               nms_pillar2_over25, nms_pillar2_weekend,
+                               nms_pillar2_over25_weekend, nms_react,
+                               nms_strain, nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
-             list(nms_pillar2_over25), list(nms_react), list(nms_strain),
-             list(nms_strain_over25))
+             list(nms_pillar2_over25), list(nms_pillar2_weekend),
+             list(nms_pillar2_over25_weekend), list(nms_react),
+             list(nms_strain), list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, observed_keep(x), pars))
@@ -725,9 +734,13 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$sero_tot_15_64_2 <- NA
   data$pillar2_pos <- NA
   data$pillar2_tot <- NA
+  data$pillar2_pos_weekend <- NA
+  data$pillar2_tot_weekend <- NA
   data$pillar2_cases <- NA
   data$pillar2_over25_pos <- NA
   data$pillar2_over25_tot <- NA
+  data$pillar2_over25_pos_weekend <- NA
+  data$pillar2_over25_tot_weekend <- NA
   data$pillar2_over25_cases <- NA
   data$react_pos <- NA
   data$react_tot <- NA
@@ -770,9 +783,13 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
+            data$pillar2_pos_weekend <- NA
+            data$pillar2_tot_weekend <- NA
             data$pillar2_cases <- NA
             data$pillar2_over25_pos <- NA
             data$pillar2_over25_tot <- NA
+            data$pillar2_over25_pos_weekend <- NA
+            data$pillar2_over25_tot_weekend <- NA
             data$pillar2_over25_cases <- NA
             data$react_pos <- NA
             data$react_tot <- NA
@@ -860,9 +877,13 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$sero_tot_15_64_2 <- NA
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
+            data$pillar2_pos_weekend <- NA
+            data$pillar2_tot_weekend <- NA
             data$pillar2_cases <- NA
             data$pillar2_over25_pos <- NA
             data$pillar2_over25_tot <- NA
+            data$pillar2_over25_pos_weekend <- NA
+            data$pillar2_over25_tot_weekend <- NA
             data$pillar2_over25_cases <- NA
             data$react_pos <- NA
             data$react_tot <- NA
