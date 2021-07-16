@@ -1720,6 +1720,7 @@ N_tot_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
 p_NC <- user() # ignore.unused
+p_NC_weekend <- user() # ignore.unused
 pillar2_sensitivity <- user() # ignore.unused
 pillar2_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused

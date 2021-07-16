@@ -75,9 +75,13 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
 // [[odin.dust::compare_data(sero_tot_15_64_2 = real_t)]]
 // [[odin.dust::compare_data(pillar2_pos = real_t)]]
 // [[odin.dust::compare_data(pillar2_tot = real_t)]]
+// [[odin.dust::compare_data(pillar2_pos_weekend = real_t)]]
+// [[odin.dust::compare_data(pillar2_tot_weekend = real_t)]]
 // [[odin.dust::compare_data(pillar2_cases = real_t)]]
 // [[odin.dust::compare_data(pillar2_over25_pos = real_t)]]
 // [[odin.dust::compare_data(pillar2_over25_tot = real_t)]]
+// [[odin.dust::compare_data(pillar2_over25_pos_weekend = real_t)]]
+// [[odin.dust::compare_data(pillar2_over25_tot_weekend = real_t)]]
 // [[odin.dust::compare_data(pillar2_over25_cases = real_t)]]
 // [[odin.dust::compare_data(react_pos = real_t)]]
 // [[odin.dust::compare_data(react_tot = real_t)]]
@@ -124,11 +128,31 @@ typename T::real_t compare(const typename T::real_t * state,
                   odin(exp_noise),
                   rng_state);
 
+  const real_t pillar2_negs_weekend =
+    odin(p_NC_weekend) * (odin(N_tot_all) - model_sympt_cases);
+  const real_t model_pillar2_prob_pos_weekend =
+    test_prob_pos(model_sympt_cases,
+                  pillar2_negs_weekend,
+                  odin(pillar2_sensitivity),
+                  odin(pillar2_specificity),
+                  odin(exp_noise),
+                  rng_state);
+
   const real_t pillar2_over25_negs =
     odin(p_NC) * (odin(N_tot_over25) - model_sympt_cases_over25);
   const real_t model_pillar2_over25_prob_pos =
     test_prob_pos(model_sympt_cases_over25,
                   pillar2_over25_negs,
+                  odin(pillar2_sensitivity),
+                  odin(pillar2_specificity),
+                  odin(exp_noise),
+                  rng_state);
+
+  const real_t pillar2_over25_negs_weekend =
+    odin(p_NC_weekend) * (odin(N_tot_over25) - model_sympt_cases_over25);
+  const real_t model_pillar2_over25_prob_pos_weekend =
+    test_prob_pos(model_sympt_cases_over25,
+                  pillar2_over25_negs_weekend,
                   odin(pillar2_sensitivity),
                   odin(pillar2_specificity),
                   odin(exp_noise),
@@ -245,6 +269,9 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_pillar2_tests =
     ll_betabinom(data.pillar2_pos, data.pillar2_tot,
                  model_pillar2_prob_pos, odin(rho_pillar2_tests));
+  const real_t ll_pillar2_tests_weekend =
+    ll_betabinom(data.pillar2_pos_weekend, data.pillar2_tot_weekend,
+                 model_pillar2_prob_pos_weekend, odin(rho_pillar2_tests));
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
               odin(phi_pillar2_cases) * model_sympt_cases,
@@ -253,6 +280,11 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t ll_pillar2_over25_tests =
     ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
                  model_pillar2_over25_prob_pos, odin(rho_pillar2_tests));
+  const real_t ll_pillar2_over25_tests_weekend =
+    ll_betabinom(data.pillar2_over25_pos_weekend,
+                 data.pillar2_over25_tot_weekend,
+                 model_pillar2_over25_prob_pos_weekend,
+                 odin(rho_pillar2_tests));
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
               odin(phi_pillar2_cases) * model_sympt_cases_over25,
@@ -271,6 +303,7 @@ typename T::real_t compare(const typename T::real_t * state,
   return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
-    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
+    ll_pillar2_tests + ll_pillar2_tests_weekend + ll_pillar2_cases +
+    ll_pillar2_over25_tests + ll_pillar2_over25_tests_weekend +
     ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25;
 }
