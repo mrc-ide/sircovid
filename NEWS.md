@@ -1,5 +1,9 @@
 # sircovid 0.11.23
 
+* Can now use a separate `p_NC` for weekends 
+
+# sircovid 0.11.23
+
 * NHS regions populations updated to ONS mid-2020 estimates
 
 # sircovid 0.11.22
