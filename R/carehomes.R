@@ -466,6 +466,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
+  ret$p_NC_weekend <- p_NC_weekend
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.363
