@@ -3565,7 +3565,7 @@ public:
     for (int i = 1; i <= shared->dim_rel_foi_strain_1; ++i) {
       for (int j = 1; j <= shared->dim_rel_foi_strain_2; ++j) {
         for (int k = 1; k <= shared->dim_rel_foi_strain_3; ++k) {
-          internal.rel_foi_strain[i - 1 + shared->dim_rel_foi_strain_1 * (j - 1) + shared->dim_rel_foi_strain_12 * (k - 1)] = internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (j - 1) + i - 1] / (real_t) odin_sum3<real_t>(internal.lambda_susc.data(), i - 1, i, 0, shared->dim_lambda_susc_2, k - 1, k, shared->dim_lambda_susc_1, shared->dim_lambda_susc_12);
+          internal.rel_foi_strain[i - 1 + shared->dim_rel_foi_strain_1 * (j - 1) + shared->dim_rel_foi_strain_12 * (k - 1)] = std::min(internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (j - 1) + i - 1] / (real_t) odin_sum3<real_t>(internal.lambda_susc.data(), i - 1, i, 0, shared->dim_lambda_susc_2, k - 1, k, shared->dim_lambda_susc_1, shared->dim_lambda_susc_12), static_cast<real_t>(1));
         }
       }
     }
