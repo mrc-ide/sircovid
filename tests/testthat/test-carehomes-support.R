@@ -650,6 +650,20 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## Test that there are non-zero values for each log-likelihood part.
   ## This helps make sure all parts contribute to the log-likelihood.
   expect_true(all(sapply(ll_parts, function(x) any(x != 0))))
+
+
+  ## Check that p_NC and p_NC_weekend work as expected. For each day
+  ## use same state values except time
+  state <- state[, rep(1, 7)]
+  state["time", ] <- seq(20, 26, 1)
+  ll_time <- carehomes_compare(state, observed, pars)
+
+  expect_true(pars$p_NC != pars$p_NC_weekend)
+  expect_equal(grepl("^S", weekdays(sircovid_date_as_date(state["time", ]))),
+               c(rep(FALSE, 5), rep(TRUE, 2)))
+  expect_equal(ll_time[2:5], rep(ll_time[1], 4))
+  expect_equal(ll_time[6], ll_time[7])
+  expect_true(ll_time[1] != ll_time[6])
 })
 
 

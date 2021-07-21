@@ -732,14 +732,11 @@ carehomes_compare <- function(state, observed, pars) {
 
   ## calculate test positive probabilities for the various test data streams
   ## Pillar 2
-  time <- state["time", 1L]
-  if (grepl("^S", weekdays(sircovid_date_as_date(time)))) {
-    p_NC <- pars$p_NC_weekend
-  } else {
-    p_NC <- pars$p_NC
-  }
+  time <- state["time", ]
+  p_NC <- ifelse(grepl("^S", weekdays(sircovid_date_as_date(time))),
+                 pars$p_NC_weekend, pars$p_NC)
 
-  pillar2_negs <- pars$p_NC * (pars$N_tot_all - model_sympt_cases)
+  pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
                                           pillar2_negs,
                                           pars$pillar2_sensitivity,
@@ -747,8 +744,7 @@ carehomes_compare <- function(state, observed, pars) {
                                           pars$exp_noise)
 
   ## Pillar 2 over 25s
-  pillar2_over25_negs <- pars$p_NC * (pars$N_tot_over25 -
-                                        model_sympt_cases_over25)
+  pillar2_over25_negs <- p_NC * (pars$N_tot_over25 - model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
                                                  pars$pillar2_sensitivity,
