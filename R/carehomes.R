@@ -712,7 +712,6 @@ carehomes_compare <- function(state, observed, pars) {
   ## touch faster and data copying smaller. This requires a bit of a
   ## rethink though as it affects how we do index functions too.
 
-  time <- state["time", ]
   model_icu <- state["icu", ]
   model_general <- state["general", ]
   model_hosp <- model_icu + model_general
@@ -733,6 +732,7 @@ carehomes_compare <- function(state, observed, pars) {
 
   ## calculate test positive probabilities for the various test data streams
   ## Pillar 2
+  time <- state["time", 1L]
   if (grepl("^S", weekdays(sircovid_date_as_date(time)))) {
     p_NC <- pars$p_NC_weekend
   } else {

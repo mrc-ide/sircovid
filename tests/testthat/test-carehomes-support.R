@@ -406,12 +406,14 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
+    c("time", "icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
       "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
       "sympt_cases_non_variant_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
+  expect_equal(index$run[["time"]],
+               which(names(info$index) == "time"))
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "ICU_tot"))
   expect_equal(index$run[["general"]],
@@ -563,6 +565,7 @@ test_that("sircovid_carehome_beds caches data", {
 ## a function generator given a data set.
 test_that("carehomes_compare combines likelihood correctly", {
   state <- rbind(
+    time = 45:50,
     icu = 10:15,
     general = 20:25,
     deaths_carehomes_inc = 2:7,
