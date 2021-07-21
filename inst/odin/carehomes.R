@@ -1607,7 +1607,13 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
 ## rel_foi_strain is probability of an infection in group i, vaccination class k
 ## being of strain j
-rel_foi_strain[, , ] <- lambda_susc[i, j, k] / sum(lambda_susc[i, , k])
+##
+## NOTE: the min(x / sum(x), 1) is required here because with floats,
+## on a GPU, and with fast math, the sum can include sufficient
+## rounding error that x / sum(x) can be > 1 by a very small amount;
+## this keeps us bounded correctly.
+rel_foi_strain[, , ] <- min(lambda_susc[i, j, k] / sum(lambda_susc[i, , k]),
+                            as.numeric(1))
 dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
 ## I_weighted used in IFR calculation
