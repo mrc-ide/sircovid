@@ -53,8 +53,11 @@ NULL
 ##'
 ##' @param m_CHR Contact rate between carehome residents
 ##'
-##' @param p_NC Proportion of population who do not have
-##'   covid but have covid-like symptoms
+##' @param p_NC Proportion of population who do not have covid but have
+##'   covid-like symptoms that would lead to getting a PCR test on a weekday
+##'
+##' @param p_NC_weekend Proportion of population who do not have covid but have
+##'   covid-like symptoms that would lead to getting a PCR test on a weekend
 ##'
 ##' @param strain_transmission Vector of length two for relative
 ##'   transmissibility of each strain modelled. First element should be 1.
@@ -375,6 +378,7 @@ carehomes_parameters <- function(start_date, region,
                                  m_CHW = 4e-6,
                                  m_CHR = 5e-5,
                                  p_NC = 0.01,
+                                 p_NC_weekend = 0.005,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_rate = NULL,
@@ -614,14 +618,15 @@ carehomes_index <- function(info) {
                   react_pos = index[["react_pos"]])
 
   ## Only incidence versions for the likelihood now:
-  index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
-                            "deaths_comm_inc", "deaths_hosp_inc",
-                            "admitted_inc", "diagnoses_inc",
-                            "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
-                            "sympt_cases_non_variant_inc",
-                            "sympt_cases_over25_inc",
-                            "sympt_cases_non_variant_over25_inc",
-                            "react_pos")]
+  index_run <- c(time = index[["time"]],
+                 index_core[c("icu", "general", "deaths_carehomes_inc",
+                              "deaths_comm_inc", "deaths_hosp_inc",
+                              "admitted_inc", "diagnoses_inc",
+                              "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+                              "sympt_cases_non_variant_inc",
+                              "sympt_cases_over25_inc",
+                              "sympt_cases_non_variant_over25_inc",
+                              "react_pos")])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -706,6 +711,7 @@ carehomes_compare <- function(state, observed, pars) {
   ## touch faster and data copying smaller. This requires a bit of a
   ## rethink though as it affects how we do index functions too.
 
+  time <- state["time", ]
   model_icu <- state["icu", ]
   model_general <- state["general", ]
   model_hosp <- model_icu + model_general
@@ -726,6 +732,12 @@ carehomes_compare <- function(state, observed, pars) {
 
   ## calculate test positive probabilities for the various test data streams
   ## Pillar 2
+  if (grepl("^S", weekdays(sircovid_date_as_date(time)))) {
+    p_NC <- pars$p_NC_weekend
+  } else {
+    p_NC <- pars$p_NC
+  }
+
   pillar2_negs <- pars$p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
                                           pillar2_negs,
