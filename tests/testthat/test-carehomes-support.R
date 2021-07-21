@@ -204,7 +204,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
       "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
       "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
-      "p_NC", "I_A_transmission", "I_P_transmission",
+      "p_NC", "p_NC_weekend", "I_A_transmission", "I_P_transmission",
       "I_C_1_transmission", "I_C_2_transmission",
       "n_groups", "initial_I", "cross_immunity"))
 
