@@ -3,7 +3,7 @@
 [[cpp11::register]]
 SEXP dust_carehomes_alloc(cpp11::list r_pars, bool pars_multi, size_t step,
                          cpp11::sexp r_n_particles, size_t n_threads,
-                         cpp11::sexp r_seed, cpp11::sexp device_id);
+                         cpp11::sexp r_seed, cpp11::sexp device_config);
 
 [[cpp11::register]]
 SEXP dust_carehomes_run(SEXP ptr, size_t step_end, bool device);
@@ -3634,7 +3634,7 @@ public:
     for (int i = 1; i <= shared->dim_rel_foi_strain_1; ++i) {
       for (int j = 1; j <= shared->dim_rel_foi_strain_2; ++j) {
         for (int k = 1; k <= shared->dim_rel_foi_strain_3; ++k) {
-          internal.rel_foi_strain[i - 1 + shared->dim_rel_foi_strain_1 * (j - 1) + shared->dim_rel_foi_strain_12 * (k - 1)] = internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (j - 1) + i - 1] / (real_t) odin_sum3<real_t>(internal.lambda_susc.data(), i - 1, i, 0, shared->dim_lambda_susc_2, k - 1, k, shared->dim_lambda_susc_1, shared->dim_lambda_susc_12);
+          internal.rel_foi_strain[i - 1 + shared->dim_rel_foi_strain_1 * (j - 1) + shared->dim_rel_foi_strain_12 * (k - 1)] = std::min(internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (j - 1) + i - 1] / (real_t) odin_sum3<real_t>(internal.lambda_susc.data(), i - 1, i, 0, shared->dim_lambda_susc_2, k - 1, k, shared->dim_lambda_susc_1, shared->dim_lambda_susc_12), static_cast<real_t>(1));
         }
       }
     }
@@ -7256,9 +7256,9 @@ carehomes::data_t dust_data<carehomes>(cpp11::list data) {
 
 SEXP dust_carehomes_alloc(cpp11::list r_pars, bool pars_multi, size_t step,
                          cpp11::sexp r_n_particles, size_t n_threads,
-                         cpp11::sexp r_seed, cpp11::sexp device_id) {
+                         cpp11::sexp r_seed, cpp11::sexp device_config) {
   return dust::r::dust_alloc<carehomes>(r_pars, pars_multi, step, r_n_particles,
-                                        n_threads, r_seed, device_id);
+                                        n_threads, r_seed, device_config);
 }
 
 SEXP dust_carehomes_run(SEXP ptr, size_t step_end, bool device) {
