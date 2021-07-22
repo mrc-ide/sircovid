@@ -659,8 +659,11 @@ test_that("carehomes_compare combines likelihood correctly", {
   ll_time <- carehomes_compare(state, observed, pars)
 
   expect_true(pars$p_NC != pars$p_NC_weekend)
+  ## First 5 days are weekdays, last 2 are weekend
   expect_equal(grepl("^S", weekdays(sircovid_date_as_date(state["time", ]))),
                c(rep(FALSE, 5), rep(TRUE, 2)))
+  ## Weekdays should yield the same values. Weekends should yield the same
+  ## values, but different to weekdays
   expect_equal(ll_time[2:5], rep(ll_time[1], 4))
   expect_equal(ll_time[6], ll_time[7])
   expect_true(ll_time[1] != ll_time[6])

@@ -54,10 +54,10 @@ NULL
 ##' @param m_CHR Contact rate between carehome residents
 ##'
 ##' @param p_NC Proportion of population who do not have covid but have
-##'   covid-like symptoms that would lead to getting a PCR test on a weekday
+##'   covid-like symptoms that could lead to getting a PCR test on a weekday
 ##'
 ##' @param p_NC_weekend Proportion of population who do not have covid but have
-##'   covid-like symptoms that would lead to getting a PCR test on a weekend
+##'   covid-like symptoms that could lead to getting a PCR test on a weekend
 ##'
 ##' @param strain_transmission Vector of length two for relative
 ##'   transmissibility of each strain modelled. First element should be 1.
@@ -733,7 +733,7 @@ carehomes_compare <- function(state, observed, pars) {
   ## calculate test positive probabilities for the various test data streams
   ## Pillar 2
   time <- state["time", ]
-  p_NC <- ifelse(grepl("^S", weekdays(sircovid_date_as_date(time))),
+  p_NC <- ifelse((time + 3) %% 7 < 2,
                  pars$p_NC_weekend, pars$p_NC)
 
   pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
