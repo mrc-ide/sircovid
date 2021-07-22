@@ -212,8 +212,12 @@ typename T::real_t compare(const typename T::real_t * state,
     state[30];
   const real_t model_react_pos = state[31];
 
+  const real_t time = state[0];
+  const double p_NC =
+    ((time + 3) % 7 < 2) ? shared->p_NC_weekend : shared->p_NC;
+
   const real_t pillar2_negs =
-    shared->p_NC * (shared->N_tot_all - model_sympt_cases);
+    p_NC * (shared->N_tot_all - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
     test_prob_pos(model_sympt_cases,
                   pillar2_negs,
@@ -223,7 +227,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   rng_state);
 
   const real_t pillar2_over25_negs =
-    shared->p_NC * (shared->N_tot_over25 - model_sympt_cases_over25);
+    p_NC * (shared->N_tot_over25 - model_sympt_cases_over25);
   const real_t model_pillar2_over25_prob_pos =
     test_prob_pos(model_sympt_cases_over25,
                   pillar2_over25_negs,
@@ -471,6 +475,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(p_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_NC_weekend, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_R_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pos_1, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2183,6 +2188,7 @@ public:
     std::vector<real_t> p_ICU_D_step;
     std::vector<real_t> p_ICU_step;
     real_t p_NC;
+    real_t p_NC_weekend;
     std::vector<real_t> p_R_step;
     real_t p_T_PCR_pos_progress;
     real_t p_T_PCR_pre_progress;
@@ -4788,6 +4794,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_strains = NA_INTEGER;
   shared->n_vacc_classes = NA_INTEGER;
   shared->p_NC = NA_REAL;
+  shared->p_NC_weekend = NA_REAL;
   shared->phi_ICU = NA_REAL;
   shared->phi_admitted = NA_REAL;
   shared->phi_all_admission = NA_REAL;
@@ -4899,6 +4906,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->n_strains = user_get_scalar<int>(user, "n_strains", shared->n_strains, NA_REAL, NA_REAL);
   shared->n_vacc_classes = user_get_scalar<int>(user, "n_vacc_classes", shared->n_vacc_classes, NA_REAL, NA_REAL);
   shared->p_NC = user_get_scalar<real_t>(user, "p_NC", shared->p_NC, NA_REAL, NA_REAL);
+  shared->p_NC_weekend = user_get_scalar<real_t>(user, "p_NC_weekend", shared->p_NC_weekend, NA_REAL, NA_REAL);
   shared->phi_ICU = user_get_scalar<real_t>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
   shared->phi_admitted = user_get_scalar<real_t>(user, "phi_admitted", shared->phi_admitted, NA_REAL, NA_REAL);
   shared->phi_all_admission = user_get_scalar<real_t>(user, "phi_all_admission", shared->phi_all_admission, NA_REAL, NA_REAL);

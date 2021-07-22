@@ -329,6 +329,7 @@ carehomes <- R6::R6Class(
      p_ICU_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_ICU_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_NC = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_R_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_W_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_sero_pos_1 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
