@@ -212,12 +212,12 @@ typename T::real_t compare(const typename T::real_t * state,
     state[30];
   const real_t model_react_pos = state[31];
 
-  const int time = state[0];
-  const double p_NC =
-    ((time + 3) % 7 < 2) ? shared->p_NC_weekend : shared->p_NC;
+  const double p_NC_today =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->p_NC_weekend : shared->p_NC;
 
   const real_t pillar2_negs =
-    p_NC * (shared->N_tot_all - model_sympt_cases);
+    p_NC_today * (shared->N_tot_all - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
     test_prob_pos(model_sympt_cases,
                   pillar2_negs,
@@ -227,7 +227,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   rng_state);
 
   const real_t pillar2_over25_negs =
-    p_NC * (shared->N_tot_over25 - model_sympt_cases_over25);
+    p_NC_today * (shared->N_tot_over25 - model_sympt_cases_over25);
   const real_t model_pillar2_over25_prob_pos =
     test_prob_pos(model_sympt_cases_over25,
                   pillar2_over25_negs,

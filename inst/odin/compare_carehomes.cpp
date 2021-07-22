@@ -114,12 +114,12 @@ typename T::real_t compare(const typename T::real_t * state,
     odin(sympt_cases_non_variant_over25_inc);
   const real_t model_react_pos = odin(react_pos);
 
-  const int time = odin(time);
-  const double p_NC =
-    ((time + 3) % 7 < 2) ? odin(p_NC_weekend) : odin(p_NC);
+  const double p_NC_today =
+    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    odin(p_NC_weekend) : odin(p_NC);
 
   const real_t pillar2_negs =
-    p_NC * (odin(N_tot_all) - model_sympt_cases);
+    p_NC_today * (odin(N_tot_all) - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
     test_prob_pos(model_sympt_cases,
                   pillar2_negs,
@@ -129,7 +129,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   rng_state);
 
   const real_t pillar2_over25_negs =
-    p_NC * (odin(N_tot_over25) - model_sympt_cases_over25);
+    p_NC_today * (odin(N_tot_over25) - model_sympt_cases_over25);
   const real_t model_pillar2_over25_prob_pos =
     test_prob_pos(model_sympt_cases_over25,
                   pillar2_over25_negs,
