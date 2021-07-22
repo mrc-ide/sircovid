@@ -53,8 +53,11 @@ NULL
 ##'
 ##' @param m_CHR Contact rate between carehome residents
 ##'
-##' @param p_NC Proportion of population who do not have
-##'   covid but have covid-like symptoms
+##' @param p_NC Proportion of population who do not have covid but have
+##'   covid-like symptoms that could lead to getting a PCR test on a weekday
+##'
+##' @param p_NC_weekend Proportion of population who do not have covid but have
+##'   covid-like symptoms that could lead to getting a PCR test on a weekend
 ##'
 ##' @param strain_transmission Vector of length two for relative
 ##'   transmissibility of each strain modelled. First element should be 1.
@@ -375,6 +378,7 @@ carehomes_parameters <- function(start_date, region,
                                  m_CHW = 4e-6,
                                  m_CHR = 5e-5,
                                  p_NC = 0.01,
+                                 p_NC_weekend = 0.005,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_rate = NULL,
@@ -462,6 +466,7 @@ carehomes_parameters <- function(start_date, region,
 
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
+  ret$p_NC_weekend <- p_NC_weekend
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.363
@@ -613,15 +618,17 @@ carehomes_index <- function(info) {
                     index[["sympt_cases_non_variant_over25_inc"]],
                   react_pos = index[["react_pos"]])
 
-  ## Only incidence versions for the likelihood now:
-  index_run <- index_core[c("icu", "general", "deaths_carehomes_inc",
-                            "deaths_comm_inc", "deaths_hosp_inc",
-                            "admitted_inc", "diagnoses_inc",
-                            "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
-                            "sympt_cases_non_variant_inc",
-                            "sympt_cases_over25_inc",
-                            "sympt_cases_non_variant_over25_inc",
-                            "react_pos")]
+  ## Only incidence versions for the likelihood now. We add time here so it
+  ## can be used in the compare, without having to save it
+  index_run <- c(time = index[["time"]],
+                 index_core[c("icu", "general", "deaths_carehomes_inc",
+                              "deaths_comm_inc", "deaths_hosp_inc",
+                              "admitted_inc", "diagnoses_inc",
+                              "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+                              "sympt_cases_non_variant_inc",
+                              "sympt_cases_over25_inc",
+                              "sympt_cases_non_variant_over25_inc",
+                              "react_pos")])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -725,8 +732,15 @@ carehomes_compare <- function(state, observed, pars) {
   model_react_pos <- state["react_pos", ]
 
   ## calculate test positive probabilities for the various test data streams
+
   ## Pillar 2
-  pillar2_negs <- pars$p_NC * (pars$N_tot_all - model_sympt_cases)
+  ## First determine which value is used for p_NC based on whether it is
+  ## a weekday or a weekend. Note all values of the time state will be
+  ## the same so we can just use the first value
+  time <- state["time", 1L]
+  p_NC <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend else pars$p_NC
+
+  pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
                                           pillar2_negs,
                                           pars$pillar2_sensitivity,
@@ -734,8 +748,7 @@ carehomes_compare <- function(state, observed, pars) {
                                           pars$exp_noise)
 
   ## Pillar 2 over 25s
-  pillar2_over25_negs <- pars$p_NC * (pars$N_tot_over25 -
-                                        model_sympt_cases_over25)
+  pillar2_over25_negs <- p_NC * (pars$N_tot_over25 - model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
                                                  pars$pillar2_sensitivity,

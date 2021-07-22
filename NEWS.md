@@ -1,3 +1,7 @@
+# sircovid 0.11.27
+
+* Introduced `p_NC_weekend`, which is used instead of `p_NC` on weekends 
+
 # sircovid 0.11.26
 
 * Increase code coverage

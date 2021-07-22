@@ -24,7 +24,8 @@ test_that("can run the carehomes model", {
 
   ## Regenerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu                                = c(111, 299, 340, 59, 42),
+    rbind(time                               = c(213, 213, 213, 213, 213),
+          icu                                = c(111, 299, 340, 59, 42),
           general                            = c(396, 1133, 1277, 303,
                                                  135),
           deaths_carehomes_inc               = c(0, 0, 0, 0, 0),

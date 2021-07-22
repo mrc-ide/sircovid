@@ -204,7 +204,7 @@ test_that("carehomes_parameters returns a list of parameters", {
       "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
       "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
       "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
-      "p_NC", "I_A_transmission", "I_P_transmission",
+      "p_NC", "p_NC_weekend", "I_A_transmission", "I_P_transmission",
       "I_C_1_transmission", "I_C_2_transmission",
       "n_groups", "initial_I", "cross_immunity"))
 
@@ -406,12 +406,14 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
 
   expect_equal(
     names(index$run),
-    c("icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
+    c("time", "icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
       "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
       "sympt_cases_non_variant_inc", "sympt_cases_over25_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
+  expect_equal(index$run[["time"]],
+               which(names(info$index) == "time"))
   expect_equal(index$run[["icu"]],
                which(names(info$index) == "ICU_tot"))
   expect_equal(index$run[["general"]],
@@ -563,6 +565,7 @@ test_that("sircovid_carehome_beds caches data", {
 ## a function generator given a data set.
 test_that("carehomes_compare combines likelihood correctly", {
   state <- rbind(
+    time = 45,
     icu = 10:15,
     general = 20:25,
     deaths_carehomes_inc = 2:7,
@@ -647,6 +650,26 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## Test that there are non-zero values for each log-likelihood part.
   ## This helps make sure all parts contribute to the log-likelihood.
   expect_true(all(sapply(ll_parts, function(x) any(x != 0))))
+
+
+  ## Check that p_NC and p_NC_weekend work as expected. For each day
+  ## use same state values except time
+  state <- state[, 1, drop = FALSE]
+  time <- seq(20, 26, 1)
+  ll_time <- vnapply(time, function(x) {
+    state["time", ] <- x
+    carehomes_compare(state, observed, pars)
+  })
+
+  expect_true(pars$p_NC != pars$p_NC_weekend)
+  ## First 5 days are weekdays, last 2 are weekend
+  expect_equal(grepl("^S", weekdays(sircovid_date_as_date(time))),
+               c(rep(FALSE, 5), rep(TRUE, 2)))
+  ## Weekdays should yield the same values. Weekends should yield the same
+  ## values, but different to weekdays
+  expect_equal(ll_time[2:5], rep(ll_time[1], 4))
+  expect_equal(ll_time[6], ll_time[7])
+  expect_true(ll_time[1] != ll_time[6])
 })
 
 
