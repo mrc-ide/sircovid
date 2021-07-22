@@ -904,8 +904,8 @@ modify_severity <- function(efficacy, efficacy_strain_2,
             if (abs(new_prob - 1) < 1e-10 || v_s <= 2) {
               new_prob <- 1
               ## otherwise this is a problem
-            } else if (v_s <= 2) {
-              browser()
+            } else if (v_s > 2) {
+              stop("new_prob > 1 and v_s > 2")
             }
           }
           rel_list[[rel]][g, s, v_s] <- new_prob

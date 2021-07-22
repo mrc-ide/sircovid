@@ -1,3 +1,7 @@
+# sircovid 0.11.26
+
+* Increase code coverage
+
 # sircovid 0.11.23
 
 * NHS regions populations updated to ONS mid-2020 estimates
