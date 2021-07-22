@@ -656,7 +656,7 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## use same state values except time
   state <- state[, 1, drop = FALSE]
   time <- seq(20, 26, 1)
-  ll_time <- vnapply(time, function (x) {
+  ll_time <- vnapply(time, function(x) {
     state["time", ] <- x
     carehomes_compare(state, observed, pars)
   })
