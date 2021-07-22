@@ -565,7 +565,7 @@ test_that("sircovid_carehome_beds caches data", {
 ## a function generator given a data set.
 test_that("carehomes_compare combines likelihood correctly", {
   state <- rbind(
-    time = 45:50,
+    time = 45,
     icu = 10:15,
     general = 20:25,
     deaths_carehomes_inc = 2:7,
@@ -654,13 +654,16 @@ test_that("carehomes_compare combines likelihood correctly", {
 
   ## Check that p_NC and p_NC_weekend work as expected. For each day
   ## use same state values except time
-  state <- state[, rep(1, 7)]
-  state["time", ] <- seq(20, 26, 1)
-  ll_time <- carehomes_compare(state, observed, pars)
+  state <- state[, 1, drop = FALSE]
+  time <- seq(20, 26, 1)
+  ll_time <- vnapply(time, function (x) {
+    state["time", ] <- x
+    carehomes_compare(state, observed, pars)
+  })
 
   expect_true(pars$p_NC != pars$p_NC_weekend)
   ## First 5 days are weekdays, last 2 are weekend
-  expect_equal(grepl("^S", weekdays(sircovid_date_as_date(state["time", ]))),
+  expect_equal(grepl("^S", weekdays(sircovid_date_as_date(time))),
                c(rep(FALSE, 5), rep(TRUE, 2)))
   ## Weekdays should yield the same values. Weekends should yield the same
   ## values, but different to weekdays

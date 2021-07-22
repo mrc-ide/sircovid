@@ -118,10 +118,10 @@ residents or workers}
 \item{m_CHR}{Contact rate between carehome residents}
 
 \item{p_NC}{Proportion of population who do not have covid but have
-covid-like symptoms that would lead to getting a PCR test on a weekday}
+covid-like symptoms that could lead to getting a PCR test on a weekday}
 
 \item{p_NC_weekend}{Proportion of population who do not have covid but have
-covid-like symptoms that would lead to getting a PCR test on a weekend}
+covid-like symptoms that could lead to getting a PCR test on a weekend}
 
 \item{strain_transmission}{Vector of length two for relative
 transmissibility of each strain modelled. First element should be 1.

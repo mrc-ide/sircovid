@@ -731,10 +731,13 @@ carehomes_compare <- function(state, observed, pars) {
   model_react_pos <- state["react_pos", ]
 
   ## calculate test positive probabilities for the various test data streams
+
   ## Pillar 2
-  time <- state["time", ]
-  p_NC <- ifelse((time + 3) %% 7 < 2,
-                 pars$p_NC_weekend, pars$p_NC)
+  ## First determine which value is used for p_NC based on whether it is
+  ## a weekday or a weekend. Note all values of the time state will be
+  ## the same so we can just use the first value
+  time <- state["time", 1L]
+  p_NC <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend else pars$p_NC
 
   pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
