@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.27</span>
       </span>
     </div>
 
@@ -145,6 +145,7 @@
   m_CHW <span class='op'>=</span> <span class='fl'>4e-06</span>,
   m_CHR <span class='op'>=</span> <span class='fl'>5e-05</span>,
   p_NC <span class='op'>=</span> <span class='fl'>0.01</span>,
+  p_NC_weekend <span class='op'>=</span> <span class='fl'>0.005</span>,
   strain_transmission <span class='op'>=</span> <span class='fl'>1</span>,
   strain_seed_date <span class='op'>=</span> <span class='cn'>NULL</span>,
   strain_seed_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -274,8 +275,13 @@ residents or workers</p></td>
     </tr>
     <tr>
       <th>p_NC</th>
-      <td><p>Proportion of population who do not have
-covid but have covid-like symptoms</p></td>
+      <td><p>Proportion of population who do not have covid but have
+covid-like symptoms that could lead to getting a PCR test on a weekday</p></td>
+    </tr>
+    <tr>
+      <th>p_NC_weekend</th>
+      <td><p>Proportion of population who do not have covid but have
+covid-like symptoms that could lead to getting a PCR test on a weekend</p></td>
     </tr>
     <tr>
       <th>strain_transmission</th>
