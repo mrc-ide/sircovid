@@ -114,9 +114,9 @@ typename T::real_t compare(const typename T::real_t * state,
     odin(sympt_cases_non_variant_over25_inc);
   const real_t model_react_pos = odin(react_pos);
 
-  const real_t time = odin(time);
+  const int time = odin(time);
   const double p_NC =
-    ((time[1] + 3) % 7 < 2) ? odin(p_NC_weekend) : odin(p_NC);
+    ((time + 3) % 7 < 2) ? odin(p_NC_weekend) : odin(p_NC);
 
   const real_t pillar2_negs =
     p_NC * (odin(N_tot_all) - model_sympt_cases);

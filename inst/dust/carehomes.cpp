@@ -143,9 +143,9 @@ typename T::real_t compare(const typename T::real_t * state,
     state[30];
   const real_t model_react_pos = state[31];
 
-  const real_t time = state[0];
+  const int time = state[0];
   const double p_NC =
-    ((time[1] + 3) % 7 < 2) ? shared->p_NC_weekend : shared->p_NC;
+    ((time + 3) % 7 < 2) ? shared->p_NC_weekend : shared->p_NC;
 
   const real_t pillar2_negs =
     p_NC * (shared->N_tot_all - model_sympt_cases);
