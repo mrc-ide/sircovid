@@ -1,3 +1,7 @@
+# sircovid 0.11.28
+
+* Can now choose between a random sample or thinned sample in `carehomes_forecast` via the `random_sample` logical input
+
 # sircovid 0.11.27
 
 * Introduced `p_NC_weekend`, which is used instead of `p_NC` on weekends 
