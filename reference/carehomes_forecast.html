@@ -48,8 +48,9 @@
 
 <meta property="og:title" content="Forecast the carehomes model — carehomes_forecast" />
 <meta property="og:description" content="Forecast from the carehomes model; this provides a wrapper around
-mcstate::pmcmc_sample and mcstate::pmcmc_predict that samples
-the trajectories then creates samples, setting the sircovid dates
+mcstate::pmcmc_sample (or mcstate::pmcmc_thin if
+random_sample = FALSE) and mcstate::pmcmc_predict that samples
+the trajectories then creates forecast, setting the sircovid dates
 and adding trajectories of incidence." />
 <meta property="og:image" content="/logo.png" />
 
@@ -83,7 +84,7 @@ and adding trajectories of incidence." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.28</span>
       </span>
     </div>
 
@@ -129,8 +130,9 @@ and adding trajectories of incidence." />
 
     <div class="ref-description">
     <p>Forecast from the carehomes model; this provides a wrapper around
-<a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_sample</a> and <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict</a> that samples
-the trajectories then creates samples, setting the sircovid dates
+<a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_sample</a> (or <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_thin</a> if
+<code>random_sample = FALSE</code>) and <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict</a> that samples
+the trajectories then creates forecast, setting the sircovid dates
 and adding trajectories of incidence.</p>
     </div>
 
@@ -140,7 +142,9 @@ and adding trajectories of incidence.</p>
   <span class='va'>burnin</span>,
   <span class='va'>forecast_days</span>,
   <span class='va'>incidence_states</span>,
-  prepend_trajectories <span class='op'>=</span> <span class='cn'>TRUE</span>
+  prepend_trajectories <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  random_sample <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  thin <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -182,6 +186,18 @@ with the sufix <code>_inc</code> (e.g., <code>deaths</code> becomes <code>deaths
       <th>prepend_trajectories</th>
       <td><p>Prepend trajectories from the particle
 filter to the predictions created here.</p></td>
+    </tr>
+    <tr>
+      <th>random_sample</th>
+      <td><p>Logical, whether to obtain the samples randomly
+(using <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_sample</a>) or not (in which case the samples
+are created via thinning with <a href='https://rdrr.io/pkg/mcstate/man/pmcmc_thin.html'>mcstate::pmcmc_thin</a>)</p></td>
+    </tr>
+    <tr>
+      <th>thin</th>
+      <td><p>Optional integer thinning factor, used if
+<code>random_sample = FALSE</code>. After removal of burn-in, every <code>thin</code>'th
+sample is retained</p></td>
     </tr>
     </table>
 
