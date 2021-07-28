@@ -1850,8 +1850,9 @@ carehomes_n_groups <- function() {
 
 
 ##' Forecast from the carehomes model; this provides a wrapper around
-##' [mcstate::pmcmc_sample] and [mcstate::pmcmc_predict] that samples
-##' the trajectories then creates samples, setting the sircovid dates
+##' [mcstate::pmcmc_sample] (or [mcstate::pmcmc_thin] if
+##' `random_sample = FALSE`) and [mcstate::pmcmc_predict] that samples
+##' the trajectories then creates forecast, setting the sircovid dates
 ##' and adding trajectories of incidence.
 ##'
 ##' @title Forecast the carehomes model
@@ -1873,21 +1874,37 @@ carehomes_n_groups <- function() {
 ##'   as deaths). These will end up in the final trajectories object
 ##'   with the sufix `_inc` (e.g., `deaths` becomes `deaths_inc`).
 ##'
+##' @param random_sample Logical, whether to obtain the samples randomly
+##'   (using [mcstate::pmcmc_sample]) or not (in which case the samples
+##'   are created via thinning with [mcstate::pmcmc_thin])
+##'
+##' @param thin Optional integer thinning factor, used if
+##'   `random_sample = FALSE`. After removal of burn-in, every `thin`'th
+##'   sample is retained
+##'
 ##' @export
 carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
-                               incidence_states,
-                               prepend_trajectories = TRUE) {
+                               incidence_states, prepend_trajectories = TRUE,
+                               random_sample = TRUE, thin = NULL) {
   if (n_sample == 0) {
     ret <- samples
   } else {
-    ret <- mcstate::pmcmc_sample(samples, n_sample, burnin)
+    if (random_sample) {
+      ret <- mcstate::pmcmc_sample(samples, n_sample, burnin)
+    } else {
+      ret <- mcstate::pmcmc_thin(samples, burnin, thin)
+    }
+
   }
-  steps_predict <- seq(ret$predict$step,
-                       length.out = forecast_days + 1L,
-                       by = ret$predict$rate)
-  ret$trajectories <- mcstate::pmcmc_predict(
-    ret, steps_predict,
-    prepend_trajectories = prepend_trajectories)
+
+  if (forecast_days > 0) {
+    steps_predict <- seq(ret$predict$step,
+                         length.out = forecast_days + 1L,
+                         by = ret$predict$rate)
+    ret$trajectories <- mcstate::pmcmc_predict(
+      ret, steps_predict,
+      prepend_trajectories = prepend_trajectories)
+  }
 
   ret$trajectories$date <- ret$trajectories$step / ret$trajectories$rate
   ret$trajectories <- add_trajectory_incidence(
