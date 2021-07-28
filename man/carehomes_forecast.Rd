@@ -10,6 +10,8 @@ carehomes_forecast(
   burnin,
   forecast_days,
   incidence_states,
+  random_sample = TRUE,
+  thin = NULL,
   prepend_trajectories = TRUE
 )
 }
@@ -36,12 +38,21 @@ incidnce should be computed (from cumulative compartments, such
 as deaths). These will end up in the final trajectories object
 with the sufix \verb{_inc} (e.g., \code{deaths} becomes \code{deaths_inc}).}
 
+\item{random_sample}{Logical, whether to obtain the samples randomly
+(using \link[mcstate:pmcmc_thin]{mcstate::pmcmc_sample}) or not (in which case the samples
+are created via thinning with \link[mcstate:pmcmc_thin]{mcstate::pmcmc_thin})}
+
+\item{thin}{Optional integer thinning factor, used if
+\code{random_sample = FALSE}. After removal of burn-in, every \code{thin}'th
+sample is retained}
+
 \item{prepend_trajectories}{Prepend trajectories from the particle
 filter to the predictions created here.}
 }
 \description{
 Forecast from the carehomes model; this provides a wrapper around
-\link[mcstate:pmcmc_thin]{mcstate::pmcmc_sample} and \link[mcstate:pmcmc_predict]{mcstate::pmcmc_predict} that samples
-the trajectories then creates samples, setting the sircovid dates
+\link[mcstate:pmcmc_thin]{mcstate::pmcmc_sample} (or \link[mcstate:pmcmc_thin]{mcstate::pmcmc_thin} if
+\code{random_sample = FALSE}) and \link[mcstate:pmcmc_predict]{mcstate::pmcmc_predict} that samples
+the trajectories then creates forecast, setting the sircovid dates
 and adding trajectories of incidence.
 }
