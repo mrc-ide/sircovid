@@ -10,9 +10,9 @@ carehomes_forecast(
   burnin,
   forecast_days,
   incidence_states,
+  prepend_trajectories = TRUE,
   random_sample = TRUE,
-  thin = NULL,
-  prepend_trajectories = TRUE
+  thin = NULL
 )
 }
 \arguments{
@@ -38,6 +38,9 @@ incidnce should be computed (from cumulative compartments, such
 as deaths). These will end up in the final trajectories object
 with the sufix \verb{_inc} (e.g., \code{deaths} becomes \code{deaths_inc}).}
 
+\item{prepend_trajectories}{Prepend trajectories from the particle
+filter to the predictions created here.}
+
 \item{random_sample}{Logical, whether to obtain the samples randomly
 (using \link[mcstate:pmcmc_thin]{mcstate::pmcmc_sample}) or not (in which case the samples
 are created via thinning with \link[mcstate:pmcmc_thin]{mcstate::pmcmc_thin})}
@@ -45,9 +48,6 @@ are created via thinning with \link[mcstate:pmcmc_thin]{mcstate::pmcmc_thin})}
 \item{thin}{Optional integer thinning factor, used if
 \code{random_sample = FALSE}. After removal of burn-in, every \code{thin}'th
 sample is retained}
-
-\item{prepend_trajectories}{Prepend trajectories from the particle
-filter to the predictions created here.}
 }
 \description{
 Forecast from the carehomes model; this provides a wrapper around

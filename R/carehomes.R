@@ -1884,9 +1884,8 @@ carehomes_n_groups <- function() {
 ##'
 ##' @export
 carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
-                               incidence_states, random_sample = TRUE,
-                               thin = NULL,
-                               prepend_trajectories = TRUE) {
+                               incidence_states, prepend_trajectories = TRUE,
+                               random_sample = TRUE, thin = NULL) {
   if (n_sample == 0) {
     ret <- samples
   } else {
