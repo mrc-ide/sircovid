@@ -1674,7 +1674,8 @@ dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 ## Work out the vaccination probability via doses, driven by the
 ## schedule
 vaccine_probability_doses[, ] <- min(
-  vaccine_attempted_doses[i, j] / vaccine_n_candidates[i, j],
+  if (vaccine_n_candidates[i, j] > 0)
+    vaccine_attempted_doses[i, j] / vaccine_n_candidates[i, j] else 0,
   as.numeric(1))
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
