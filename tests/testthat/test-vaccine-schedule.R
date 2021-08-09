@@ -203,7 +203,7 @@ test_that("can create a schedule that covers past and future", {
   expect_equal(dim(doses_future), c(19, 2, 14))
 
   mean_doses <- round(sum(cmp$doses[, , 19:25]) / 7)
-  expect_equal(apply(doses_future, 3, sum), rep(mean_doses, 14))
+  expect_approx_equal(apply(doses_future, 3, sum), rep(mean_doses, 14))
 
   d <- seq(schedule$date, length.out = dim(schedule$doses)[[3]])
   expect_equal(last(d), end_date)

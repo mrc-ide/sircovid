@@ -80,6 +80,33 @@ test_that("Can compute forecasts from mcmc output without prepending", {
 })
 
 
+test_that("Can compute forecasts from mcmc output with thinned sample", {
+  dat <- reference_data_mcmc()
+
+  res_thin <- carehomes_forecast(dat, 3, 2, 10, c("deaths", "icu"),
+                                 FALSE, random_sample = FALSE, thin = 3)
+  expect_equal(res_thin$iteration, c(2, 5, 8))
+
+
+  ## For comparison, typically would not expect random sampling to produce
+  ## same samples as thinned sampling
+  set.seed(1)
+  res_random <- carehomes_forecast(dat, 3, 2, 10, c("deaths", "icu"),
+                                   FALSE, random_sample = TRUE)
+  expect_false(all(res_random$iteration == c(2, 5, 8)))
+})
+
+
+test_that("Can compute forecasts from mcmc output with forecast_days = 0", {
+  dat <- reference_data_mcmc()
+  res <- carehomes_forecast(dat, 3, 5, 0, c("deaths", "icu"),
+                            FALSE)
+
+  ## with forecast_days = 0, we will have no forecasting
+  expect_true(all(!res$trajectories$predicted))
+})
+
+
 test_that("Can combine trajectories of equal size - rank = FALSE", {
   dat <- reference_data_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)

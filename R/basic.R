@@ -39,18 +39,26 @@ NULL
 ##'   NHS regions (e.g., "midlands"). These names are case
 ##'   insensitive.
 ##'
-##' @param beta_date A vector of dates for changes in beta (the
-##'   contact rate parameter), or `NULL` if a single value is used for
-##'   all times (see [sircovid_parameters_piecewise_linear()], where
-##'   this is passed as `date`).
+##' @param beta_date A vector of dates (each as a [sircovid_date()])
+##'   for changes in beta (the contact rate parameter), or `NULL` if
+##'   a single value is used for all times (see
+##'   [sircovid_parameters_piecewise_linear()] or
+##'   [sircovid_parameters_piecewise_constant()], where
+##'   this is passed as `date`). If `beta_type = "piecewise-constant"`,
+##'   then the first date must be 0.
 ##'
 ##' @param beta_value A vector of values for beta (the contact rate
 ##'   parameter). If not given, and if `beta_date` is `NULL` then a
 ##'   value of 0.08 will be used through the whole simulation,
 ##'   otherwise if `beta_date` is `NULL` this must be a scalar. If
 ##'   `beta_date` is given then `beta_date` and `beta_value` must have
-##'   the same length (see [sircovid_parameters_piecewise_linear()],
-##'   where this is passed as `value`).
+##'   the same length (see [sircovid_parameters_piecewise_linear()] or
+##'   [sircovid_parameters_piecewise_constant()], where this is passed
+##'   as `value`).
+##'
+##' @param beta_type The type of form used for beta (the contact rate
+##'   parameter), which currently can be `"piecewise-linear"` or
+##'   `"piecewise-constant"`
 ##'
 ##' @param severity Severity data, via Bob Verity's `markovid`
 ##'   package. This needs to be `NULL` (use the default bundled data
@@ -75,10 +83,11 @@ NULL
 ##' basic_parameters(sircovid_date("2020-02-01"), "uk")
 basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
+                             beta_type = "piecewise-linear",
                              severity = NULL,
                              exp_noise = 1e6) {
   ret <- sircovid_parameters_shared(start_date, region,
-                                    beta_date, beta_value)
+                                    beta_date, beta_value, beta_type)
   ret$m <- sircovid_transmission_matrix(region)
   observation <- basic_parameters_observation(exp_noise)
   severity <- sircovid_parameters_severity(severity)

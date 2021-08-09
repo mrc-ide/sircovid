@@ -138,7 +138,7 @@ test_that("can read the default severity file", {
   expect_setequal(
     names(data),
     c("p_star", "p_C", "p_G_D", "p_H_D",
-      "p_ICU_D", "p_W_D", "p_ICU",
+      "p_ICU_D", "p_W_D", "p_ICU", "p_R",
       "p_sero_pos_1", "p_sero_pos_2", "p_H"))
   expect_vector_equal(data$p_serocoversion, data$p_serocoversion[[1]])
   expect_equal(
@@ -171,10 +171,24 @@ test_that("shared parameters accepts a beta vector", {
   date <- sircovid_date("2020-02-01")
   beta_date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
   beta_value <- c(3, 1, 2)
-  pars <- sircovid_parameters_shared(date, "england", beta_date, beta_value)
+  pars <- sircovid_parameters_shared(date, "england", beta_date, beta_value,
+                                     "piecewise-linear")
   expect_equal(
     pars$beta_step,
     sircovid_parameters_piecewise_linear(beta_date, beta_value, 0.25))
+
+  beta_date <- sircovid_date(c("2019-12-31", "2020-02-14", "2020-03-15"))
+  beta_value <- c(3, 1, 2)
+  pars <- sircovid_parameters_shared(date, "england", beta_date, beta_value,
+                                     "piecewise-constant")
+  expect_equal(
+    pars$beta_step,
+    sircovid_parameters_piecewise_constant(beta_date, beta_value, 0.25))
+
+  expect_error(pars <- sircovid_parameters_shared(date, "england", beta_date,
+                                                  beta_value,
+                                                  "quadratic"),
+               "'beta_type' must be 'piecewise-linear' or 'piecewise-constant'")
 })
 
 

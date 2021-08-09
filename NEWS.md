@@ -2,6 +2,30 @@
 
 * Added support to allow fitting to age-specific hospital admissions and deaths
 
+# sircovid 0.11.28
+
+* Can now choose between a random sample or thinned sample in `carehomes_forecast` via the `random_sample` logical input
+
+# sircovid 0.11.27
+
+* Introduced `p_NC_weekend`, which is used instead of `p_NC` on weekends 
+
+# sircovid 0.11.26
+
+* Increase code coverage
+
+# sircovid 0.11.23
+
+* NHS regions populations updated to ONS mid-2020 estimates
+
+# sircovid 0.11.22
+
+* Added `p_R`, the probability a non-fatal infection leads to post-infection immunity, otherwise the individual instantly becomes susceptible again post-infection
+
+# sircovid 0.11.21
+
+* Added `beta_type` option to `carehomes_parameters`, now allowing it to be `"piecewise-linear"` or `"piecewise-constant"`
+
 # sircovid 0.11.20
 
 * Fix bug in `modify_severity` for single strain model
