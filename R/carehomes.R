@@ -853,14 +853,14 @@ carehomes_compare <- function(state, observed, pars) {
                                    model_pillar2_prob_pos,
                                    pars$rho_pillar2_tests)
 
-  ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
-                                pars$phi_pillar2_cases * model_sympt_cases,
-                                pars$kappa_pillar2_cases, exp_noise)
-
   ll_pillar2_over25_tests <- ll_betabinom(observed$pillar2_over25_pos,
                                           observed$pillar2_over25_tot,
                                           model_pillar2_over25_prob_pos,
                                           pars$rho_pillar2_tests)
+
+  ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
+                                pars$phi_pillar2_cases * model_sympt_cases,
+                                pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
                                        pars$phi_pillar2_cases *

@@ -1579,6 +1579,38 @@ new_sympt_cases_non_variant_over25 <-
 update(cum_sympt_cases_non_variant_over25) <-
   cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25
 
+## new pillar 2 by age
+initial(cum_sympt_cases_under15) <- 0
+new_sympt_cases_under15 <- sum(n_EI_P[1:3, , ])
+update(cum_sympt_cases_under15) <- cum_sympt_cases_under15 +
+  new_sympt_cases_under15
+
+initial(cum_sympt_cases_15_25) <- 0
+new_sympt_cases_15_25 <- sum(n_EI_P[4:5, , ])
+update(cum_sympt_cases_15_25) <- cum_sympt_cases_15_25 +
+  new_sympt_cases_15_25
+
+initial(cum_sympt_cases_25_50) <- 0
+new_sympt_cases_25_50 <- sum(n_EI_P[6:10, , ]) + (n_EI_P[18, , ] / 7) * 5
+update(cum_sympt_cases_25_50) <- cum_sympt_cases_25_50 +
+  new_sympt_cases_25_50
+
+initial(cum_sympt_cases_50_65) <- 0
+new_sympt_cases_50_65 <- sum(n_EI_P[11:13, , ]) + (n_EI_P[18, , ] / 7) * 2
+update(cum_sympt_cases_50_65) <- cum_sympt_cases_50_65 +
+  new_sympt_cases_50_65
+
+initial(cum_sympt_cases_65_80) <- 0
+new_sympt_cases_65_80 <- sum(n_EI_P[14:16, , ]) +
+  n_EI_P[19, , ] * c(0.05, 0.05, 0.15)
+update(cum_sympt_cases_65_80) <- cum_sympt_cases_65_80 +
+  new_sympt_cases_65_80
+
+initial(cum_sympt_cases_80_plus) <- 0
+new_sympt_cases_80_plus <- n_EI_P[17, , ] + n_EI_P[19, , ] * 0.75
+update(cum_sympt_cases_80_plus) <- cum_sympt_cases_80_plus +
+  new_sympt_cases_80_plus
+
 ## And incidence:
 initial(sympt_cases_inc) <- 0
 update(sympt_cases_inc) <- (
@@ -1594,6 +1626,12 @@ initial(sympt_cases_over25_inc) <- 0
 update(sympt_cases_over25_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases_over25
   else sympt_cases_over25_inc + new_sympt_cases_over25)
+
+initial(sympt_cases_under15_inc) <- 0
+update(sympt_cases_under15_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_under15
+  else sympt_cases_under15_inc + new_sympt_cases_under15
+)
 
 initial(sympt_cases_non_variant_over25_inc) <- 0
 update(sympt_cases_non_variant_over25_inc) <- (
