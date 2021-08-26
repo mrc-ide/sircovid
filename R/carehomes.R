@@ -463,6 +463,12 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_all <- sum(ret$N_tot)
   ret$N_tot_over25 <- sum(ret$N_tot[6:19])
   ret$N_tot_react <- sum(ret$N_tot[2:18])
+  ret$N_tot_under15 <- sum(ret$N_tot[1:3])
+  ret$N_tot_15_25 <- sum(ret$N_tot[4:5])
+  ret$N_tot_25_50 <- sum(ret$N_tot[6:10]) + (sum(ret$N_tot[18]) / 7) * 5
+  ret$N_tot_50_65 <- sum(ret$N_tot[11:13]) + (sum(ret$N_tot[18]) / 7) * 2
+  ret$N_tot_65_80 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
+  ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
 
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
@@ -727,6 +733,12 @@ carehomes_compare <- function(state, observed, pars) {
   model_sympt_cases <- state["sympt_cases_inc", ]
   model_sympt_cases_non_variant <- state["sympt_cases_non_variant_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
+  # model_sympt_cases_under15 <- state["sympt_cases_under15_inc", ]
+  # model_sympt_cases_15_25 <- state["sympt_cases_15_25_inc", ]
+  # model_sympt_cases_25_50 <- state["sympt_cases_25_50_inc", ]
+  # model_sympt_cases_50_65 <- state["sympt_cases_50_65_inc", ]
+  # model_sympt_cases_65_80 <- state["sympt_cases_65_80_inc", ]
+  # model_sympt_cases_80_plus <- state["sympt_cases_80_plus_inc", ]
   model_sympt_cases_non_variant_over25 <-
     state["sympt_cases_non_variant_over25_inc", ]
   model_react_pos <- state["react_pos", ]
@@ -754,6 +766,49 @@ carehomes_compare <- function(state, observed, pars) {
                                                  pars$pillar2_sensitivity,
                                                  pars$pillar2_specificity,
                                                  pars$exp_noise)
+
+  ## New pillar 2 by age
+  # pillar2_under15_negs <- p_NC * (pars$N_tot_under15 - model_sympt_cases_under15)
+  # model_pillar2_under15_prob_pos <- test_prob_pos(model_sympt_cases_under15,
+  #                                                pillar2_under15_negs,
+  #                                                pars$pillar2_sensitivity,
+  #                                                pars$pillar2_specificity,
+  #                                                pars$exp_noise)
+  #
+  # pillar2_15_25_negs <- p_NC * (pars$N_tot_15_25 - model_sympt_cases_15_25)
+  # model_pillar2_15_25_prob_pos <- test_prob_pos(model_sympt_cases_15_25,
+  #                                                 pillar2_15_25_negs,
+  #                                                 pars$pillar2_sensitivity,
+  #                                                 pars$pillar2_specificity,
+  #                                                 pars$exp_noise)
+  #
+  # pillar2_25_50_negs <- p_NC * (pars$N_tot_25_50 - model_sympt_cases_25_50)
+  # model_pillar2_25_50_prob_pos <- test_prob_pos(model_sympt_cases_25_50,
+  #                                                 pillar2_25_50_negs,
+  #                                                 pars$pillar2_sensitivity,
+  #                                                 pars$pillar2_specificity,
+  #                                                 pars$exp_noise)
+  #
+  # pillar2_50_65_negs <- p_NC * (pars$N_tot_50_65 - model_sympt_cases_50_65)
+  # model_pillar2_50_65_prob_pos <- test_prob_pos(model_sympt_cases_50_65,
+  #                                                 pillar2_50_65_negs,
+  #                                                 pars$pillar2_sensitivity,
+  #                                                 pars$pillar2_specificity,
+  #                                                 pars$exp_noise)
+  #
+  # pillar2_65_80_negs <- p_NC * (pars$N_tot_65_80 - model_sympt_cases_65_80)
+  # model_pillar2_65_80_prob_pos <- test_prob_pos(model_sympt_cases_65_80,
+  #                                                 pillar2_65_80_negs,
+  #                                                 pars$pillar2_sensitivity,
+  #                                                 pars$pillar2_specificity,
+  #                                                 pars$exp_noise)
+  #
+  # pillar2_80_plus_negs <- p_NC * (pars$N_tot_80_plus - model_sympt_cases_80_plus)
+  # model_pillar2_80_plus_prob_pos <- test_prob_pos(model_sympt_cases_80_plus,
+  #                                                 pillar2_80_plus_negs,
+  #                                                 pars$pillar2_sensitivity,
+  #                                                 pars$pillar2_specificity,
+  #                                                 pars$exp_noise)
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
   ## It is possible that model_react_pos > pars$N_tot_react, so we cap it to
