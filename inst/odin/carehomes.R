@@ -1627,16 +1627,40 @@ update(sympt_cases_over25_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases_over25
   else sympt_cases_over25_inc + new_sympt_cases_over25)
 
-initial(sympt_cases_under15_inc) <- 0
-update(sympt_cases_under15_inc) <- (
-  if (step %% steps_per_day == 0) new_sympt_cases_under15
-  else sympt_cases_under15_inc + new_sympt_cases_under15
-)
-
 initial(sympt_cases_non_variant_over25_inc) <- 0
 update(sympt_cases_non_variant_over25_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases_non_variant_over25
   else sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25)
+
+initial(sympt_cases_under15_inc) <- 0
+update(sympt_cases_under15_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_under15
+  else sympt_cases_under15_inc + new_sympt_cases_under15)
+
+initial(sympt_cases_15_25_inc) <- 0
+update(sympt_cases_15_25_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_15_25
+  else sympt_cases_15_25_inc + new_sympt_cases_15_25)
+
+initial(sympt_cases_25_50_inc) <- 0
+update(sympt_cases_25_50_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_25_50
+  else sympt_cases_25_50_inc + new_sympt_cases_25_50)
+
+initial(sympt_cases_50_65_inc) <- 0
+update(sympt_cases_50_65_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_50_65
+  else sympt_cases_50_65_inc + new_sympt_cases_50_65)
+
+initial(sympt_cases_65_80_inc) <- 0
+update(sympt_cases_65_80_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_65_80
+  else sympt_cases_65_80_inc + new_sympt_cases_65_80)
+
+initial(sympt_cases_80_plus_inc) <- 0
+update(sympt_cases_80_plus_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_80_plus
+  else sympt_cases_80_plus_inc + new_sympt_cases_80_plus)
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
