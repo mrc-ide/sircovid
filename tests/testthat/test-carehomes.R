@@ -24,7 +24,8 @@ test_that("can run the carehomes model", {
 
   ## Regenerate with: dput_named_matrix(res)
   expected <-
-    rbind(time                               = c(213, 213, 213, 213, 213),
+    rbind(time                               = c(213, 213, 213, 213,
+                                                 213),
           icu                                = c(111, 299, 340, 59, 42),
           general                            = c(396, 1133, 1277, 303,
                                                  135),
@@ -43,6 +44,12 @@ test_that("can run the carehomes model", {
                                                  86),
           sympt_cases_over25_inc             = c(247, 675, 757, 180,
                                                  65),
+          sympt_cases_under15_inc            = c(28, 75, 87, 12, 11),
+          sympt_cases_15_25_inc              = c(19, 76, 74, 17, 10),
+          sympt_cases_25_50_inc              = c(95, 257, 267, 54, 21),
+          sympt_cases_50_65_inc              = c(73, 204, 212, 59, 20),
+          sympt_cases_65_80_inc              = c(47, 143, 164, 46, 15),
+          sympt_cases_80_plus_inc            = c(32, 71, 114, 21, 9),
           sympt_cases_non_variant_over25_inc = c(247, 675, 757, 180,
                                                  65),
           react_pos                          = c(20534, 61844, 68919,
