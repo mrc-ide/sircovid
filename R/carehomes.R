@@ -778,7 +778,8 @@ carehomes_compare <- function(state, observed, pars) {
                                                  pars$exp_noise)
 
   ## New pillar 2 by age
-  pillar2_under15_negs <- p_NC * (pars$N_tot_under15 - model_sympt_cases_under15)
+  pillar2_under15_negs <- p_NC * (pars$N_tot_under15 -
+                                    model_sympt_cases_under15)
   model_pillar2_under15_prob_pos <- test_prob_pos(model_sympt_cases_under15,
                                                   pillar2_under15_negs,
                                                   pars$pillar2_sensitivity,
@@ -813,7 +814,8 @@ carehomes_compare <- function(state, observed, pars) {
                                                 pars$pillar2_specificity,
                                                 pars$exp_noise)
 
-  pillar2_80_plus_negs <- p_NC * (pars$N_tot_80_plus - model_sympt_cases_80_plus)
+  pillar2_80_plus_negs <- p_NC * (pars$N_tot_80_plus -
+                                    model_sympt_cases_80_plus)
   model_pillar2_80_plus_prob_pos <- test_prob_pos(model_sympt_cases_80_plus,
                                                   pillar2_80_plus_negs,
                                                   pars$pillar2_sensitivity,
@@ -1011,7 +1013,7 @@ carehomes_compare <- function(state, observed, pars) {
     ll_pillar2_under15_tests + ll_pillar2_15_25_tests +
     ll_pillar2_25_50_tests + ll_pillar2_50_65_tests + ll_pillar2_65_80_tests +
     ll_pillar2_80_plus_tests + ll_pillar2_over25_cases +
-    ll_pillar2_under15_cases + ll_pillar2_15_25_cases +ll_pillar2_25_50_cases +
+    ll_pillar2_under15_cases + ll_pillar2_15_25_cases + ll_pillar2_25_50_cases +
     ll_pillar2_50_65_cases + ll_pillar2_65_80_cases + ll_pillar2_80_plus_cases +
     ll_react + ll_strain + ll_strain_over25
 }
