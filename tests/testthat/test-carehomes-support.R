@@ -202,10 +202,11 @@ test_that("carehomes_parameters returns a list of parameters", {
       "rel_p_R", "rel_gamma_E", "rel_gamma_A", "rel_gamma_P", "rel_gamma_C_1",
       "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R", "rel_gamma_ICU_pre",
       "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
-      "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
-      "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_react",
-      "p_NC", "p_NC_weekend", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission",
+      "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D", "N_tot_under15",
+      "N_tot_15_25", "N_tot_25_50", "N_tot_50_65", "N_tot_65_80",
+      "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
+      "N_tot_react", "p_NC", "p_NC_weekend", "I_A_transmission",
+      "I_P_transmission", "I_C_1_transmission", "I_C_2_transmission",
       "n_groups", "initial_I", "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
@@ -410,6 +411,9 @@ test_that("carehomes_index identifies ICU and D_tot in real model", {
       "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
       "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
       "sympt_cases_non_variant_inc", "sympt_cases_over25_inc",
+      "sympt_cases_under15_inc", "sympt_cases_15_25_inc",
+      "sympt_cases_25_50_inc", "sympt_cases_50_65_inc",
+      "sympt_cases_65_80_inc", "sympt_cases_80_plus_inc",
       "sympt_cases_non_variant_over25_inc", "react_pos"))
 
   expect_equal(index$run[["time"]],
@@ -578,6 +582,12 @@ test_that("carehomes_compare combines likelihood correctly", {
     sympt_cases_inc = 100:105,
     sympt_cases_non_variant_inc = 70:75,
     sympt_cases_over25_inc = 80:85,
+    sympt_cases_under15_inc = 5:10,
+    sympt_cases_15_25_inc = 5:10,
+    sympt_cases_25_50_inc = 19:24,
+    sympt_cases_50_65_inc = 19:24,
+    sympt_cases_65_80_inc = 19:24,
+    sympt_cases_80_plus_inc = 19:24,
     sympt_cases_non_variant_over25_inc = 60:65,
     react_pos = 2:7)
   observed <- list(
@@ -602,6 +612,24 @@ test_that("carehomes_compare combines likelihood correctly", {
     pillar2_over25_pos = 25,
     pillar2_over25_tot = 500,
     pillar2_over25_cases = 25,
+    pillar2_under15_cases = 8,
+    pillar2_15_25_cases = 8,
+    pillar2_25_50_cases = 20,
+    pillar2_50_65_cases = 20,
+    pillar2_65_80_cases = 20,
+    pillar2_80_plus_cases = 20,
+    pillar2_under15_pos = 8,
+    pillar2_15_25_pos = 8,
+    pillar2_25_50_pos = 20,
+    pillar2_50_65_pos = 20,
+    pillar2_65_80_pos = 20,
+    pillar2_80_plus_pos = 20,
+    pillar2_under15_tot = 160,
+    pillar2_15_25_tot = 160,
+    pillar2_25_50_tot = 400,
+    pillar2_50_65_tot = 400,
+    pillar2_65_80_tot = 400,
+    pillar2_80_plus_tot = 400,
     react_pos = 3,
     react_tot = 500,
     strain_non_variant = 40,
@@ -626,16 +654,22 @@ test_that("carehomes_compare combines likelihood correctly", {
   nms_sero_2 <- c("sero_pos_15_64_2", "sero_tot_15_64_2")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
+  nms_pillar2_age <- c("pillar2_under15_pos", "pillar2_under15_tot",
+                       "pillar2_15_25_pos", "pillar2_15_25_tot",
+                       "pillar2_25_50_pos", "pillar2_25_50_tot",
+                       "pillar2_50_65_pos", "pillar2_50_65_tot",
+                       "pillar2_65_80_pos", "pillar2_65_80_tot",
+                       "pillar2_80_plus_pos", "pillar2_80_plus_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
                              c(nms_sero_1, nms_sero_2, nms_pillar2,
-                               nms_pillar2_over25, nms_react, nms_strain,
-                               nms_strain_over25))),
+                               nms_pillar2_over25, nms_pillar2_age, nms_react,
+                               nms_strain, nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
-             list(nms_pillar2_over25), list(nms_react), list(nms_strain),
-             list(nms_strain_over25))
+             list(nms_pillar2_over25), list(nms_pillar2_age),
+             list(nms_react), list(nms_strain), list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, observed_keep(x), pars))
