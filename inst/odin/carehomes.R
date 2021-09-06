@@ -1591,12 +1591,12 @@ update(cum_sympt_cases_15_25) <- cum_sympt_cases_15_25 +
   new_sympt_cases_15_25
 
 initial(cum_sympt_cases_25_50) <- 0
-new_sympt_cases_25_50 <- sum(n_EI_P[6:10, , ]) + (sum(n_EI_P[18, , ]) / 7) * 5
+new_sympt_cases_25_50 <- sum(n_EI_P[6:10, , ]) + (sum(n_EI_P[18, , ]) / 8) * 5
 update(cum_sympt_cases_25_50) <- cum_sympt_cases_25_50 +
   new_sympt_cases_25_50
 
 initial(cum_sympt_cases_50_65) <- 0
-new_sympt_cases_50_65 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 7) * 2
+new_sympt_cases_50_65 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 8) * 3
 update(cum_sympt_cases_50_65) <- cum_sympt_cases_50_65 +
   new_sympt_cases_50_65
 
