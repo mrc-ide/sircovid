@@ -465,8 +465,8 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_react <- sum(ret$N_tot[2:18])
   ret$N_tot_under15 <- sum(ret$N_tot[1:3])
   ret$N_tot_15_25 <- sum(ret$N_tot[4:5])
-  ret$N_tot_25_50 <- sum(ret$N_tot[6:10]) + (sum(ret$N_tot[18]) / 7) * 5
-  ret$N_tot_50_65 <- sum(ret$N_tot[11:13]) + (sum(ret$N_tot[18]) / 7) * 2
+  ret$N_tot_25_50 <- sum(ret$N_tot[6:10]) + (sum(ret$N_tot[18]) / 8) * 5
+  ret$N_tot_50_65 <- sum(ret$N_tot[11:13]) + (sum(ret$N_tot[18]) / 8) * 3
   ret$N_tot_65_80 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
 
