@@ -347,7 +347,7 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_binom(data.sero_pos_15_64_2, data.sero_tot_15_64_2,
              model_sero_prob_pos_2);
 
-  const double phi_pillar2_cases_today =
+  const real_t phi_pillar2_cases_today =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend : shared->phi_pillar2_cases;
 
