@@ -918,42 +918,42 @@ carehomes_compare <- function(state, observed, pars) {
   ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
                                    observed$pillar2_tot,
                                    model_pillar2_prob_pos,
-                                   pars$rho_pillar2_tests)
+                                   pars$rho_pillar2_tests_under65)
 
   ll_pillar2_over25_tests <- ll_betabinom(observed$pillar2_over25_pos,
                                           observed$pillar2_over25_tot,
                                           model_pillar2_over25_prob_pos,
-                                          pars$rho_pillar2_tests)
+                                          pars$rho_pillar2_tests_under65)
 
   ll_pillar2_under15_tests <- ll_betabinom(observed$pillar2_under15_pos,
                                            observed$pillar2_under15_tot,
                                            model_pillar2_under15_prob_pos,
-                                           pars$rho_pillar2_tests)
+                                           pars$rho_pillar2_tests_under65)
 
   ll_pillar2_15_25_tests <- ll_betabinom(observed$pillar2_15_25_pos,
                                          observed$pillar2_15_25_tot,
                                          model_pillar2_15_25_prob_pos,
-                                         pars$rho_pillar2_tests)
+                                         pars$rho_pillar2_tests_under65)
 
   ll_pillar2_25_50_tests <- ll_betabinom(observed$pillar2_25_50_pos,
                                          observed$pillar2_25_50_tot,
                                          model_pillar2_25_50_prob_pos,
-                                         pars$rho_pillar2_tests)
+                                         pars$rho_pillar2_tests_under65)
 
   ll_pillar2_50_65_tests <- ll_betabinom(observed$pillar2_50_65_pos,
                                          observed$pillar2_50_65_tot,
                                          model_pillar2_50_65_prob_pos,
-                                         pars$rho_pillar2_tests)
+                                         pars$rho_pillar2_tests_under65)
 
   ll_pillar2_65_80_tests <- ll_betabinom(observed$pillar2_65_80_pos,
                                          observed$pillar2_65_80_tot,
                                          model_pillar2_65_80_prob_pos,
-                                         pars$rho_pillar2_tests)
+                                         pars$rho_pillar2_tests_65plus)
 
   ll_pillar2_80_plus_tests <- ll_betabinom(observed$pillar2_80_plus_pos,
                                            observed$pillar2_80_plus_tot,
                                            model_pillar2_80_plus_prob_pos,
-                                           pars$rho_pillar2_tests)
+                                           pars$rho_pillar2_tests_65plus)
 
   ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
                                 pars$phi_pillar2_cases * model_sympt_cases,
@@ -1781,7 +1781,8 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
     phi_pillar2_cases = 1,
     kappa_pillar2_cases = 2,
     ##
-    rho_pillar2_tests = 0.1,
+    rho_pillar2_tests_under65 = 0.1,
+    rho_pillar2_tests_65plus = 0.1,
     ##
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))

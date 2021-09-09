@@ -277,7 +277,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   const real_t ll_pillar2_tests =
     ll_betabinom(data.pillar2_pos, data.pillar2_tot,
-                 model_pillar2_prob_pos, shared->rho_pillar2_tests);
+                 model_pillar2_prob_pos, shared->rho_pillar2_tests_under65);
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
               shared->phi_pillar2_cases * model_sympt_cases,
@@ -285,7 +285,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   const real_t ll_pillar2_over25_tests =
     ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
-                 model_pillar2_over25_prob_pos, shared->rho_pillar2_tests);
+                 model_pillar2_over25_prob_pos, shared->rho_pillar2_tests_under65);
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
               shared->phi_pillar2_cases * model_sympt_cases_over25,
@@ -450,7 +450,8 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(rel_p_hosp_if_sympt, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_p_sympt, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_susceptibility, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(rho_pillar2_tests, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(rho_pillar2_tests_65plus, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(rho_pillar2_tests_under65, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(sero_sensitivity_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(sero_sensitivity_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(sero_specificity_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2182,7 +2183,8 @@ public:
     std::vector<real_t> rel_p_hosp_if_sympt;
     std::vector<real_t> rel_p_sympt;
     std::vector<real_t> rel_susceptibility;
-    real_t rho_pillar2_tests;
+    real_t rho_pillar2_tests_65plus;
+    real_t rho_pillar2_tests_under65;
     real_t sero_sensitivity_1;
     real_t sero_sensitivity_2;
     real_t sero_specificity_1;
@@ -4806,7 +4808,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->pillar2_specificity = NA_REAL;
   shared->react_sensitivity = NA_REAL;
   shared->react_specificity = NA_REAL;
-  shared->rho_pillar2_tests = NA_REAL;
+  shared->rho_pillar2_tests_65plus = NA_REAL;
+  shared->rho_pillar2_tests_under65 = NA_REAL;
   shared->sero_sensitivity_1 = NA_REAL;
   shared->sero_sensitivity_2 = NA_REAL;
   shared->sero_specificity_1 = NA_REAL;
@@ -4918,7 +4921,8 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->pillar2_specificity = user_get_scalar<real_t>(user, "pillar2_specificity", shared->pillar2_specificity, NA_REAL, NA_REAL);
   shared->react_sensitivity = user_get_scalar<real_t>(user, "react_sensitivity", shared->react_sensitivity, NA_REAL, NA_REAL);
   shared->react_specificity = user_get_scalar<real_t>(user, "react_specificity", shared->react_specificity, NA_REAL, NA_REAL);
-  shared->rho_pillar2_tests = user_get_scalar<real_t>(user, "rho_pillar2_tests", shared->rho_pillar2_tests, NA_REAL, NA_REAL);
+  shared->rho_pillar2_tests_65plus = user_get_scalar<real_t>(user, "rho_pillar2_tests_65plus", shared->rho_pillar2_tests_65plus, NA_REAL, NA_REAL);
+  shared->rho_pillar2_tests_under65 = user_get_scalar<real_t>(user, "rho_pillar2_tests_under65", shared->rho_pillar2_tests_under65, NA_REAL, NA_REAL);
   shared->sero_sensitivity_1 = user_get_scalar<real_t>(user, "sero_sensitivity_1", shared->sero_sensitivity_1, NA_REAL, NA_REAL);
   shared->sero_sensitivity_2 = user_get_scalar<real_t>(user, "sero_sensitivity_2", shared->sero_sensitivity_2, NA_REAL, NA_REAL);
   shared->sero_specificity_1 = user_get_scalar<real_t>(user, "sero_specificity_1", shared->sero_specificity_1, NA_REAL, NA_REAL);

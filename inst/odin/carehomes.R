@@ -1818,6 +1818,7 @@ phi_diagnoses <- user() # ignore.unused
 kappa_diagnoses <- user() # ignore.unused
 phi_all_admission <- user() # ignore.unused
 kappa_all_admission <- user() # ignore.unused
-rho_pillar2_tests <- user() # ignore.unused
+rho_pillar2_tests_under65 <- user() # ignore.unused
+rho_pillar2_tests_65plus <- user() # ignore.unused
 phi_pillar2_cases <- user() # ignore.unused
 kappa_pillar2_cases <- user() # ignore.unused

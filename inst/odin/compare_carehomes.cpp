@@ -248,7 +248,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   const real_t ll_pillar2_tests =
     ll_betabinom(data.pillar2_pos, data.pillar2_tot,
-                 model_pillar2_prob_pos, odin(rho_pillar2_tests));
+                 model_pillar2_prob_pos, odin(rho_pillar2_tests_under65));
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
               odin(phi_pillar2_cases) * model_sympt_cases,
@@ -256,7 +256,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   const real_t ll_pillar2_over25_tests =
     ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
-                 model_pillar2_over25_prob_pos, odin(rho_pillar2_tests));
+                 model_pillar2_over25_prob_pos, odin(rho_pillar2_tests_under65));
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
               odin(phi_pillar2_cases) * model_sympt_cases_over25,
