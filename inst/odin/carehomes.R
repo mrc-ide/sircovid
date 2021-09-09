@@ -1585,25 +1585,25 @@ new_sympt_cases_under15 <- sum(n_EI_P[1:3, , ])
 update(cum_sympt_cases_under15) <- cum_sympt_cases_under15 +
   new_sympt_cases_under15
 
-initial(cum_sympt_cases_15_25) <- 0
-new_sympt_cases_15_25 <- sum(n_EI_P[4:5, , ])
-update(cum_sympt_cases_15_25) <- cum_sympt_cases_15_25 +
-  new_sympt_cases_15_25
+initial(cum_sympt_cases_15_24) <- 0
+new_sympt_cases_15_24 <- sum(n_EI_P[4:5, , ])
+update(cum_sympt_cases_15_24) <- cum_sympt_cases_15_24 +
+  new_sympt_cases_15_24
 
-initial(cum_sympt_cases_25_50) <- 0
-new_sympt_cases_25_50 <- sum(n_EI_P[6:10, , ]) + (sum(n_EI_P[18, , ]) / 8) * 5
-update(cum_sympt_cases_25_50) <- cum_sympt_cases_25_50 +
-  new_sympt_cases_25_50
+initial(cum_sympt_cases_25_49) <- 0
+new_sympt_cases_25_49 <- sum(n_EI_P[6:10, , ]) + (sum(n_EI_P[18, , ]) / 8) * 5
+update(cum_sympt_cases_25_49) <- cum_sympt_cases_25_49 +
+  new_sympt_cases_25_49
 
-initial(cum_sympt_cases_50_65) <- 0
-new_sympt_cases_50_65 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 8) * 3
-update(cum_sympt_cases_50_65) <- cum_sympt_cases_50_65 +
-  new_sympt_cases_50_65
+initial(cum_sympt_cases_50_64) <- 0
+new_sympt_cases_50_64 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 8) * 3
+update(cum_sympt_cases_50_64) <- cum_sympt_cases_50_64 +
+  new_sympt_cases_50_64
 
-initial(cum_sympt_cases_65_80) <- 0
-new_sympt_cases_65_80 <- sum(n_EI_P[14:16, , ]) + (sum(n_EI_P[19, , ]) * 0.25)
-update(cum_sympt_cases_65_80) <- cum_sympt_cases_65_80 +
-  new_sympt_cases_65_80
+initial(cum_sympt_cases_65_79) <- 0
+new_sympt_cases_65_79 <- sum(n_EI_P[14:16, , ]) + (sum(n_EI_P[19, , ]) * 0.25)
+update(cum_sympt_cases_65_79) <- cum_sympt_cases_65_79 +
+  new_sympt_cases_65_79
 
 initial(cum_sympt_cases_80_plus) <- 0
 new_sympt_cases_80_plus <- sum(n_EI_P[17, , ]) + (sum(n_EI_P[19, , ]) * 0.75)
@@ -1636,25 +1636,25 @@ update(sympt_cases_under15_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases_under15
   else sympt_cases_under15_inc + new_sympt_cases_under15)
 
-initial(sympt_cases_15_25_inc) <- 0
-update(sympt_cases_15_25_inc) <- (
-  if (step %% steps_per_day == 0) new_sympt_cases_15_25
-  else sympt_cases_15_25_inc + new_sympt_cases_15_25)
+initial(sympt_cases_15_24_inc) <- 0
+update(sympt_cases_15_24_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_15_24
+  else sympt_cases_15_24_inc + new_sympt_cases_15_24)
 
-initial(sympt_cases_25_50_inc) <- 0
-update(sympt_cases_25_50_inc) <- (
-  if (step %% steps_per_day == 0) new_sympt_cases_25_50
-  else sympt_cases_25_50_inc + new_sympt_cases_25_50)
+initial(sympt_cases_25_49_inc) <- 0
+update(sympt_cases_25_49_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_25_49
+  else sympt_cases_25_49_inc + new_sympt_cases_25_49)
 
-initial(sympt_cases_50_65_inc) <- 0
-update(sympt_cases_50_65_inc) <- (
-  if (step %% steps_per_day == 0) new_sympt_cases_50_65
-  else sympt_cases_50_65_inc + new_sympt_cases_50_65)
+initial(sympt_cases_50_64_inc) <- 0
+update(sympt_cases_50_64_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_50_64
+  else sympt_cases_50_64_inc + new_sympt_cases_50_64)
 
-initial(sympt_cases_65_80_inc) <- 0
-update(sympt_cases_65_80_inc) <- (
-  if (step %% steps_per_day == 0) new_sympt_cases_65_80
-  else sympt_cases_65_80_inc + new_sympt_cases_65_80)
+initial(sympt_cases_65_79_inc) <- 0
+update(sympt_cases_65_79_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_65_79
+  else sympt_cases_65_79_inc + new_sympt_cases_65_79)
 
 initial(sympt_cases_80_plus_inc) <- 0
 update(sympt_cases_80_plus_inc) <- (
