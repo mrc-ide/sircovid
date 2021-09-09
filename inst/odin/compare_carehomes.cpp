@@ -246,12 +246,16 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_binom(data.sero_pos_15_64_2, data.sero_tot_15_64_2,
              model_sero_prob_pos_2);
 
+  const double phi_pillar2_cases_today =
+    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    odin(phi_pillar2_cases_weekend) : odin(phi_pillar2_cases);
+
   const real_t ll_pillar2_tests =
     ll_betabinom(data.pillar2_pos, data.pillar2_tot,
                  model_pillar2_prob_pos, odin(rho_pillar2_tests));
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
-              odin(phi_pillar2_cases) * model_sympt_cases,
+              phi_pillar2_cases_today * model_sympt_cases,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
 
   const real_t ll_pillar2_over25_tests =
@@ -259,7 +263,7 @@ typename T::real_t compare(const typename T::real_t * state,
                  model_pillar2_over25_prob_pos, odin(rho_pillar2_tests));
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
-              odin(phi_pillar2_cases) * model_sympt_cases_over25,
+              phi_pillar2_cases_today * model_sympt_cases_over25,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
 
   const real_t ll_react =
