@@ -20,8 +20,10 @@ carehomes_parameters(
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
-  p_NC = 0.01,
-  p_NC_weekend = 0.005,
+  p_NC_under65 = 0.01,
+  p_NC_weekend_under65 = 0.005,
+  p_NC_65plus = 0.01,
+  p_NC_weekend_65plus = 0.005,
   strain_transmission = 1,
   strain_seed_date = NULL,
   strain_seed_rate = NULL,
@@ -117,11 +119,21 @@ residents or workers}
 
 \item{m_CHR}{Contact rate between carehome residents}
 
-\item{p_NC}{Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekday}
+\item{p_NC_under65}{Proportion of population under 65 who do not have covid
+but have covid-like symptoms that could lead to getting a PCR test on a
+weekday}
 
-\item{p_NC_weekend}{Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekend}
+\item{p_NC_weekend_under65}{Proportion of population under 65 who do not
+have covid but have covid-like symptoms that could lead to getting a PCR
+test on a weekend}
+
+\item{p_NC_65plus}{Proportion of population 65 plus who do not have covid
+but have covid-like symptoms that could lead to getting a PCR test on a
+weekday}
+
+\item{p_NC_weekend_65plus}{Proportion of population 65 plus who do not
+have covid but have covid-like symptoms that could lead to getting a PCR
+test on a weekend}
 
 \item{strain_transmission}{Vector of length two for relative
 transmissibility of each strain modelled. First element should be 1.

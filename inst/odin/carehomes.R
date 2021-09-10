@@ -1787,8 +1787,10 @@ N_tot_over25 <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
-p_NC <- user() # ignore.unused
-p_NC_weekend <- user() # ignore.unused
+p_NC_under65 <- user() # ignore.unused
+p_NC_weekend_under65 <- user() # ignore.unused
+p_NC_65plus <- user() # ignore.unused
+p_NC_weekend_65plus <- user() # ignore.unused
 pillar2_sensitivity <- user() # ignore.unused
 pillar2_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused
@@ -1818,7 +1820,6 @@ phi_diagnoses <- user() # ignore.unused
 kappa_diagnoses <- user() # ignore.unused
 phi_all_admission <- user() # ignore.unused
 kappa_all_admission <- user() # ignore.unused
-rho_pillar2_tests_under65 <- user() # ignore.unused
-rho_pillar2_tests_65plus <- user() # ignore.unused
+rho_pillar2_tests <- user() # ignore.unused
 phi_pillar2_cases <- user() # ignore.unused
 kappa_pillar2_cases <- user() # ignore.unused

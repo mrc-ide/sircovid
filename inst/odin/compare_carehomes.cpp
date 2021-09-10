@@ -114,12 +114,16 @@ typename T::real_t compare(const typename T::real_t * state,
     odin(sympt_cases_non_variant_over25_inc);
   const real_t model_react_pos = odin(react_pos);
 
-  const double p_NC_today =
+  const double p_NC_today_under65 =
     ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(p_NC_weekend) : odin(p_NC);
+    odin(p_NC_weekend_under65) : odin(p_NC_under65);
+
+  const double p_NC_today_65plus =
+    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    odin(p_NC_weekend_65plus) : odin(p_NC_65plus);
 
   const real_t pillar2_negs =
-    p_NC_today * (odin(N_tot_all) - model_sympt_cases);
+    p_NC_today_under65 * (odin(N_tot_all) - model_sympt_cases);
   const real_t model_pillar2_prob_pos =
     test_prob_pos(model_sympt_cases,
                   pillar2_negs,
@@ -129,7 +133,7 @@ typename T::real_t compare(const typename T::real_t * state,
                   rng_state);
 
   const real_t pillar2_over25_negs =
-    p_NC_today * (odin(N_tot_over25) - model_sympt_cases_over25);
+    p_NC_today_under65 * (odin(N_tot_over25) - model_sympt_cases_over25);
   const real_t model_pillar2_over25_prob_pos =
     test_prob_pos(model_sympt_cases_over25,
                   pillar2_over25_negs,
@@ -248,7 +252,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   const real_t ll_pillar2_tests =
     ll_betabinom(data.pillar2_pos, data.pillar2_tot,
-                 model_pillar2_prob_pos, odin(rho_pillar2_tests_under65));
+                 model_pillar2_prob_pos, odin(rho_pillar2_tests));
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
               odin(phi_pillar2_cases) * model_sympt_cases,
@@ -256,7 +260,7 @@ typename T::real_t compare(const typename T::real_t * state,
 
   const real_t ll_pillar2_over25_tests =
     ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
-                 model_pillar2_over25_prob_pos, odin(rho_pillar2_tests_under65));
+                 model_pillar2_over25_prob_pos, odin(rho_pillar2_tests));
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
               odin(phi_pillar2_cases) * model_sympt_cases_over25,
