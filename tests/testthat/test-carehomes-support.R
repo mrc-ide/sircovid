@@ -656,6 +656,7 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## use same state values except time
   state <- state[, 1, drop = FALSE]
   time <- seq(20, 26, 1)
+  pars$phi_pillar2_cases_weekend <- pars$phi_pillar2_cases
   ll_time <- vnapply(time, function(x) {
     state["time", ] <- x
     carehomes_compare(state, observed, pars)
@@ -665,6 +666,23 @@ test_that("carehomes_compare combines likelihood correctly", {
   ## First 5 days are weekdays, last 2 are weekend
   expect_equal(grepl("^S", weekdays(sircovid_date_as_date(time))),
                c(rep(FALSE, 5), rep(TRUE, 2)))
+  ## Weekdays should yield the same values. Weekends should yield the same
+  ## values, but different to weekdays
+  expect_equal(ll_time[2:5], rep(ll_time[1], 4))
+  expect_equal(ll_time[6], ll_time[7])
+  expect_true(ll_time[1] != ll_time[6])
+
+
+  ## Now check that phi_pillar2_cases and phi_pillar2_cases_weekend work as
+  ## expected
+  pars$phi_pillar2_cases_weekend <- 0.8 * pars$phi_pillar2_cases
+  pars$p_NC_weekend <- pars$p_NC
+  ll_time <- vnapply(time, function(x) {
+    state["time", ] <- x
+    carehomes_compare(state, observed, pars)
+  })
+
+  expect_true(pars$phi_pillar2_cases != pars$phi_pillar2_cases_weekend)
   ## Weekdays should yield the same values. Weekends should yield the same
   ## values, but different to weekdays
   expect_equal(ll_time[2:5], rep(ll_time[1], 4))
