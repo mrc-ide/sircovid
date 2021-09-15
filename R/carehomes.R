@@ -53,19 +53,57 @@ NULL
 ##'
 ##' @param m_CHR Contact rate between carehome residents
 ##'
-##' @param p_NC_under65 Proportion of population under 65 who do not have covid
+##' @param p_NC Proportion of population who do not have covid but have
+##'   covid-like symptoms that could lead to getting a PCR test on a weekday
+##'
+##' @param p_NC_weekend Proportion of population who do not have covid but have
+##'   covid-like symptoms that could lead to getting a PCR test on a weekend
+##'
+##' @param p_NC_under15 Proportion of population under 15 who do not have covid
 ##'   but have covid-like symptoms that could lead to getting a PCR test on a
 ##'   weekday
 ##'
-##' @param p_NC_65plus Proportion of population 65 plus who do not have covid
-##'   but have covid-like symptoms that could lead to getting a PCR test on a
-##'   weekday
-##'
-##' @param p_NC_weekend_under65 Proportion of population under 65 who do not
+##' @param p_NC_weekend_under15 Proportion of population under 15 who do not
 ##'   have covid but have covid-like symptoms that could lead to getting a PCR
 ##'   test on a weekend
 ##'
-##' @param p_NC_weekend_65plus Proportion of population 65 plus who do not
+##' @param p_NC_15_24 Proportion of population 15 to 24 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_15_24 Proportion of population 15 to 24 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_25_49 Proportion of population 25 to 49 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_25_49 Proportion of population 25 to 49 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_50_64 Proportion of population 50 to 64 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_50_64 Proportion of population 50 to 64 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_65_79 Proportion of population 65 to 79 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_65_79 Proportion of population 65 to 79 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_80plus Proportion of population 80 plus who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_80plus Proportion of population 80 plus who do not
 ##'   have covid but have covid-like symptoms that could lead to getting a PCR
 ##'   test on a weekend
 ##'
@@ -387,10 +425,20 @@ carehomes_parameters <- function(start_date, region,
                                  eps = 0.1,
                                  m_CHW = 4e-6,
                                  m_CHR = 5e-5,
-                                 p_NC_under65 = 0.01,
-                                 p_NC_weekend_under65 = 0.005,
-                                 p_NC_65plus = 0.01,
-                                 p_NC_weekend_65plus = 0.005,
+                                 p_NC = 0.01,
+                                 p_NC_weekend = 0.005,
+                                 p_NC_under15 = 0.01,
+                                 p_NC_weekend_under15 = 0.005,
+                                 p_NC_15_24 = 0.01,
+                                 p_NC_weekend_15_24 = 0.005,
+                                 p_NC_25_49 = 0.01,
+                                 p_NC_weekend_25_49 = 0.005,
+                                 p_NC_50_64 = 0.01,
+                                 p_NC_weekend_50_64 = 0.005,
+                                 p_NC_65_79 = 0.01,
+                                 p_NC_weekend_65_79 = 0.005,
+                                 p_NC_80plus = 0.01,
+                                 p_NC_weekend_80plus = 0.005,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_rate = NULL,
@@ -483,10 +531,20 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
 
   ## Proportion of population with covid-like symptoms without covid
-  ret$p_NC_under65 <- p_NC_under65
-  ret$p_NC_weekend_under65 <- p_NC_weekend_under65
-  ret$p_NC_65plus <- p_NC_65plus
-  ret$p_NC_weekend_65plus <- p_NC_weekend_65plus
+  ret$p_NC <- p_NC
+  ret$p_NC_weekend <- p_NC_weekend
+  ret$p_NC_under15 <- p_NC_under15
+  ret$p_NC_weekend_under15 <- p_NC_weekend_under15
+  ret$p_NC_15_24 <- p_NC_15_24
+  ret$p_NC_weekend_15_24 <- p_NC_weekend_15_24
+  ret$p_NC_25_49 <- p_NC_25_49
+  ret$p_NC_weekend_25_49 <- p_NC_weekend_25_49
+  ret$p_NC_50_64 <- p_NC_50_64
+  ret$p_NC_weekend_50_64 <- p_NC_weekend_50_64
+  ret$p_NC_65_79 <- p_NC_65_79
+  ret$p_NC_weekend_65_79 <- p_NC_weekend_65_79
+  ret$p_NC_80plus <- p_NC_80plus
+  ret$p_NC_weekend_80plus <- p_NC_weekend_80plus
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.363
@@ -774,12 +832,22 @@ carehomes_compare <- function(state, observed, pars) {
   ## a weekday or a weekend and age band. Note all values of the time state
   ## will be the same so we can just use the first value
   time <- state["time", 1L]
-  p_NC_under65 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_under65 else
-    pars$p_NC_under65
-  p_NC_65plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_65plus else
-    pars$p_NC_65plus
+  p_NC <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend else
+    pars$p_NC
+  p_NC_under15 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_under15 else
+    pars$p_NC_under15
+  p_NC_15_24 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_15_24 else
+    pars$p_NC_15_24
+  p_NC_25_49 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_25_49 else
+    pars$p_NC_25_49
+  p_NC_50_64 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_50_64 else
+    pars$p_NC_50_64
+  p_NC_65_79 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_65_79 else
+    pars$p_NC_65_79
+  p_NC_80plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80plus else
+    pars$p_NC_80plus
 
-  pillar2_negs <- p_NC_under65 * (pars$N_tot_all - model_sympt_cases)
+  pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
                                           pillar2_negs,
                                           pars$pillar2_sensitivity,
@@ -787,7 +855,7 @@ carehomes_compare <- function(state, observed, pars) {
                                           pars$exp_noise)
 
   ## Pillar 2 over 25s
-  pillar2_over25_negs <- p_NC_under65 * (pars$N_tot_over25 -
+  pillar2_over25_negs <- p_NC * (pars$N_tot_over25 -
                                            model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
@@ -796,7 +864,7 @@ carehomes_compare <- function(state, observed, pars) {
                                                  pars$exp_noise)
 
   ## New pillar 2 by age
-  pillar2_under15_negs <- p_NC_under65 * (pars$N_tot_under15 -
+  pillar2_under15_negs <- p_NC_under15 * (pars$N_tot_under15 -
                                     model_sympt_cases_under15)
   model_pillar2_under15_prob_pos <- test_prob_pos(model_sympt_cases_under15,
                                                   pillar2_under15_negs,
@@ -804,7 +872,7 @@ carehomes_compare <- function(state, observed, pars) {
                                                   pars$pillar2_specificity,
                                                   pars$exp_noise)
 
-  pillar2_15_24_negs <- p_NC_under65 * (pars$N_tot_15_24 -
+  pillar2_15_24_negs <- p_NC_15_24 * (pars$N_tot_15_24 -
                                           model_sympt_cases_15_24)
   model_pillar2_15_24_prob_pos <- test_prob_pos(model_sympt_cases_15_24,
                                                 pillar2_15_24_negs,
@@ -812,7 +880,7 @@ carehomes_compare <- function(state, observed, pars) {
                                                 pars$pillar2_specificity,
                                                 pars$exp_noise)
 
-  pillar2_25_49_negs <- p_NC_under65 * (pars$N_tot_25_49 -
+  pillar2_25_49_negs <- p_NC_25_49 * (pars$N_tot_25_49 -
                                           model_sympt_cases_25_49)
   model_pillar2_25_49_prob_pos <- test_prob_pos(model_sympt_cases_25_49,
                                                 pillar2_25_49_negs,
@@ -820,7 +888,7 @@ carehomes_compare <- function(state, observed, pars) {
                                                 pars$pillar2_specificity,
                                                 pars$exp_noise)
 
-  pillar2_50_64_negs <- p_NC_under65 * (pars$N_tot_50_64 -
+  pillar2_50_64_negs <- p_NC_50_64 * (pars$N_tot_50_64 -
                                           model_sympt_cases_50_64)
   model_pillar2_50_64_prob_pos <- test_prob_pos(model_sympt_cases_50_64,
                                                 pillar2_50_64_negs,
@@ -828,7 +896,7 @@ carehomes_compare <- function(state, observed, pars) {
                                                 pars$pillar2_specificity,
                                                 pars$exp_noise)
 
-  pillar2_65_79_negs <- p_NC_65plus * (pars$N_tot_65_79 -
+  pillar2_65_79_negs <- p_NC_65_79 * (pars$N_tot_65_79 -
                                          model_sympt_cases_65_79)
   model_pillar2_65_79_prob_pos <- test_prob_pos(model_sympt_cases_65_79,
                                                 pillar2_65_79_negs,
@@ -836,7 +904,7 @@ carehomes_compare <- function(state, observed, pars) {
                                                 pars$pillar2_specificity,
                                                 pars$exp_noise)
 
-  pillar2_80_plus_negs <- p_NC_65plus * (pars$N_tot_80_plus -
+  pillar2_80_plus_negs <- p_NC_80plus * (pars$N_tot_80_plus -
                                     model_sympt_cases_80_plus)
   model_pillar2_80_plus_prob_pos <- test_prob_pos(model_sympt_cases_80_plus,
                                                   pillar2_80_plus_negs,
@@ -936,6 +1004,18 @@ carehomes_compare <- function(state, observed, pars) {
   ll_serology_2 <- ll_binom(observed$sero_pos_15_64_2,
                             observed$sero_tot_15_64_2,
                             model_sero_prob_pos_2)
+
+  ## stop if observed has passed both non-age disaggregated and age
+  ## disaggregated pillar 2 data for the log-likelihood calculation
+  # if (all(is.na(ret$pillar2_over25_tot)) &&
+  #     all(is.na(ret$pillar2_tot)) &&
+  #     all(is.na(ret$pillar2_over25_cases))) {
+  #   stopifnot(all(is.na(ret$pillar2_tot)),
+  #             any(!is.na(ret$pillar2_25_49_tot)),
+  #             any(!is.na(ret$pillar2_50_64_tot)),
+  #             any(!is.na(ret$pillar2_65_79_tot)),
+  #             any(!is.na(ret$pillar2_80_plus_tot)))
+  # }
 
   ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
                                    observed$pillar2_tot,

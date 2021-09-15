@@ -1787,10 +1787,20 @@ N_tot_over25 <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
-p_NC_under65 <- user() # ignore.unused
-p_NC_weekend_under65 <- user() # ignore.unused
-p_NC_65plus <- user() # ignore.unused
-p_NC_weekend_65plus <- user() # ignore.unused
+p_NC <- user() # ignore.unused
+p_NC_weekend <- user() # ignore.unused
+p_NC_under15 <- user() # ignore.unused
+p_NC_weekend_under15 <- user() # ignore.unused
+p_NC_15_24 <- user() # ignore.unused
+p_NC_weekend_15_24 <- user() # ignore.unused
+p_NC_25_49 <- user() # ignore.unused
+p_NC_weekend_25_49 <- user() # ignore.unused
+p_NC_50_64 <- user() # ignore.unused
+p_NC_weekend_50_64 <- user() # ignore.unused
+p_NC_65_79 <- user() # ignore.unused
+p_NC_weekend_65_79 <- user() # ignore.unused
+p_NC_80plus <- user() # ignore.unused
+p_NC_weekend_80plus <- user() # ignore.unused
 pillar2_sensitivity <- user() # ignore.unused
 pillar2_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused

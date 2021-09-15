@@ -205,10 +205,12 @@ test_that("carehomes_parameters returns a list of parameters", {
       "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D", "N_tot_under15",
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
       "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
-      "N_tot_react", "p_NC_under65", "p_NC_weekend_under65", "p_NC_65plus",
-      "p_NC_weekend_65plus", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "n_groups", "initial_I",
-      "cross_immunity"))
+      "N_tot_react", "p_NC", "p_NC_weekend",  "p_NC_under15", "p_NC_15_24",
+      "p_NC_25_49", "p_NC_50_64", "p_NC_65_79", "p_NC_80plus",
+      "p_NC_weekend_under15", "p_NC_weekend_15_24", "p_NC_weekend_25_49",
+      "p_NC_weekend_50_64", "p_NC_weekend_65_79", "p_NC_weekend_80plus",
+      "I_A_transmission", "I_P_transmission", "I_C_1_transmission",
+      "I_C_2_transmission", "n_groups", "initial_I", "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -696,8 +698,13 @@ test_that("carehomes_compare combines likelihood correctly", {
     carehomes_compare(state, observed, pars)
   })
 
-  expect_true(pars$p_NC_under65 != pars$p_NC_weekend_under65)
-  expect_true(pars$p_NC_65plus != pars$p_NC_weekend_65plus)
+  expect_true(pars$p_NC != pars$p_NC_weekend)
+  expect_true(pars$p_NC_under15 != pars$p_NC_weekend_under15)
+  expect_true(pars$p_NC_15_24 != pars$p_NC_weekend_15_24)
+  expect_true(pars$p_NC_25_49 != pars$p_NC_weekend_25_49)
+  expect_true(pars$p_NC_50_64 != pars$p_NC_weekend_50_64)
+  expect_true(pars$p_NC_65_79 != pars$p_NC_weekend_65_79)
+  expect_true(pars$p_NC_80plus != pars$p_NC_weekend_80plus)
   ## First 5 days are weekdays, last 2 are weekend
   expect_equal(grepl("^S", weekdays(sircovid_date_as_date(time))),
                c(rep(FALSE, 5), rep(TRUE, 2)))
