@@ -1008,17 +1008,20 @@ carehomes_compare <- function(state, observed, pars) {
                             observed$sero_tot_15_64_2,
                             model_sero_prob_pos_2)
 
-  ## stop if observed has passed both non-age disaggregated and age
-  ## disaggregated pillar 2 data for the log-likelihood calculation
-  # if (all(is.na(ret$pillar2_over25_tot)) &&
-  #     all(is.na(ret$pillar2_tot)) &&
-  #     all(is.na(ret$pillar2_over25_cases))) {
-  #   stopifnot(all(is.na(ret$pillar2_tot)),
-  #             any(!is.na(ret$pillar2_25_49_tot)),
-  #             any(!is.na(ret$pillar2_50_64_tot)),
-  #             any(!is.na(ret$pillar2_65_79_tot)),
-  #             any(!is.na(ret$pillar2_80_plus_tot)))
-  # }
+  ## Stop if both age-specific and aggregated pillar 2 data will be passed to
+  ## log-likelihood calculation!
+  if (any(!is.na(observed$pillar2_over25_tot)) &&
+      any(!is.na(observed$pillar2_25_49_tot)) &&
+      all(is.na(observed$pillar2_over25_cases)) &&
+      all(is.na(observed$pillar2_25_49_cases))) {
+    stop("Cannot double fit age-specific and aggregated pillar 2")
+  }
+  if (any(!is.na(observed$pillar2_over25_cases)) &&
+      any(!is.na(observed$pillar2_25_49_cases)) &&
+      all(is.na(observed$pillar2_over25_tot)) &&
+      all(is.na(observed$pillar2_25_49_tot))) {
+    stop("Cannot double fit age-specific and aggregated pillar 2")
+  }
 
   ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
                                    observed$pillar2_tot,
