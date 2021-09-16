@@ -347,12 +347,16 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_binom(data.sero_pos_15_64_2, data.sero_tot_15_64_2,
              model_sero_prob_pos_2);
 
+  const real_t phi_pillar2_cases_today =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->phi_pillar2_cases_weekend : shared->phi_pillar2_cases;
+
   const real_t ll_pillar2_tests =
     ll_betabinom(data.pillar2_pos, data.pillar2_tot,
                  model_pillar2_prob_pos, shared->rho_pillar2_tests);
   const real_t ll_pillar2_cases =
     ll_nbinom(data.pillar2_cases,
-              shared->phi_pillar2_cases * model_sympt_cases,
+              phi_pillar2_cases_today * model_sympt_cases,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
 
   const real_t ll_pillar2_over25_tests =
@@ -360,7 +364,7 @@ typename T::real_t compare(const typename T::real_t * state,
                  model_pillar2_over25_prob_pos, shared->rho_pillar2_tests);
   const real_t ll_pillar2_over25_cases =
     ll_nbinom(data.pillar2_over25_cases,
-              shared->phi_pillar2_cases * model_sympt_cases_over25,
+              phi_pillar2_cases_today * model_sympt_cases_over25,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
 
   const real_t ll_react =
@@ -506,6 +510,7 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(phi_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(phi_pillar2_cases_weekend, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(pillar2_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(pillar2_specificity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(react_sensitivity, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2250,6 +2255,7 @@ public:
     real_t phi_general;
     real_t phi_hosp;
     real_t phi_pillar2_cases;
+    real_t phi_pillar2_cases_weekend;
     real_t pillar2_sensitivity;
     real_t pillar2_specificity;
     real_t react_sensitivity;
@@ -4910,6 +4916,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->phi_general = NA_REAL;
   shared->phi_hosp = NA_REAL;
   shared->phi_pillar2_cases = NA_REAL;
+  shared->phi_pillar2_cases_weekend = NA_REAL;
   shared->pillar2_sensitivity = NA_REAL;
   shared->pillar2_specificity = NA_REAL;
   shared->react_sensitivity = NA_REAL;
@@ -5034,6 +5041,7 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->phi_general = user_get_scalar<real_t>(user, "phi_general", shared->phi_general, NA_REAL, NA_REAL);
   shared->phi_hosp = user_get_scalar<real_t>(user, "phi_hosp", shared->phi_hosp, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases = user_get_scalar<real_t>(user, "phi_pillar2_cases", shared->phi_pillar2_cases, NA_REAL, NA_REAL);
+  shared->phi_pillar2_cases_weekend = user_get_scalar<real_t>(user, "phi_pillar2_cases_weekend", shared->phi_pillar2_cases_weekend, NA_REAL, NA_REAL);
   shared->pillar2_sensitivity = user_get_scalar<real_t>(user, "pillar2_sensitivity", shared->pillar2_sensitivity, NA_REAL, NA_REAL);
   shared->pillar2_specificity = user_get_scalar<real_t>(user, "pillar2_specificity", shared->pillar2_specificity, NA_REAL, NA_REAL);
   shared->react_sensitivity = user_get_scalar<real_t>(user, "react_sensitivity", shared->react_sensitivity, NA_REAL, NA_REAL);
