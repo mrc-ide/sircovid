@@ -1799,8 +1799,8 @@ p_NC_50_64 <- user() # ignore.unused
 p_NC_weekend_50_64 <- user() # ignore.unused
 p_NC_65_79 <- user() # ignore.unused
 p_NC_weekend_65_79 <- user() # ignore.unused
-p_NC_80plus <- user() # ignore.unused
-p_NC_weekend_80plus <- user() # ignore.unused
+p_NC_80_plus <- user() # ignore.unused
+p_NC_weekend_80_plus <- user() # ignore.unused
 pillar2_sensitivity <- user() # ignore.unused
 pillar2_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused

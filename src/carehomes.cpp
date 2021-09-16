@@ -486,14 +486,14 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(p_NC_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_65_79, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_NC_80plus, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_NC_80_plus, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_under15, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_65_79, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_NC_weekend_80plus, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_NC_weekend_80_plus, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_under15, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_R_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_W_D_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2224,14 +2224,14 @@ public:
     real_t p_NC_25_49;
     real_t p_NC_50_64;
     real_t p_NC_65_79;
-    real_t p_NC_80plus;
+    real_t p_NC_80_plus;
     real_t p_NC_under15;
     real_t p_NC_weekend;
     real_t p_NC_weekend_15_24;
     real_t p_NC_weekend_25_49;
     real_t p_NC_weekend_50_64;
     real_t p_NC_weekend_65_79;
-    real_t p_NC_weekend_80plus;
+    real_t p_NC_weekend_80_plus;
     real_t p_NC_weekend_under15;
     std::vector<real_t> p_R_step;
     real_t p_T_PCR_pos_progress;
@@ -4897,14 +4897,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->p_NC_25_49 = NA_REAL;
   shared->p_NC_50_64 = NA_REAL;
   shared->p_NC_65_79 = NA_REAL;
-  shared->p_NC_80plus = NA_REAL;
+  shared->p_NC_80_plus = NA_REAL;
   shared->p_NC_under15 = NA_REAL;
   shared->p_NC_weekend = NA_REAL;
   shared->p_NC_weekend_15_24 = NA_REAL;
   shared->p_NC_weekend_25_49 = NA_REAL;
   shared->p_NC_weekend_50_64 = NA_REAL;
   shared->p_NC_weekend_65_79 = NA_REAL;
-  shared->p_NC_weekend_80plus = NA_REAL;
+  shared->p_NC_weekend_80_plus = NA_REAL;
   shared->p_NC_weekend_under15 = NA_REAL;
   shared->phi_ICU = NA_REAL;
   shared->phi_admitted = NA_REAL;
@@ -5022,14 +5022,14 @@ dust::pars_t<carehomes> dust_pars<carehomes>(cpp11::list user) {
   shared->p_NC_25_49 = user_get_scalar<real_t>(user, "p_NC_25_49", shared->p_NC_25_49, NA_REAL, NA_REAL);
   shared->p_NC_50_64 = user_get_scalar<real_t>(user, "p_NC_50_64", shared->p_NC_50_64, NA_REAL, NA_REAL);
   shared->p_NC_65_79 = user_get_scalar<real_t>(user, "p_NC_65_79", shared->p_NC_65_79, NA_REAL, NA_REAL);
-  shared->p_NC_80plus = user_get_scalar<real_t>(user, "p_NC_80plus", shared->p_NC_80plus, NA_REAL, NA_REAL);
+  shared->p_NC_80_plus = user_get_scalar<real_t>(user, "p_NC_80_plus", shared->p_NC_80_plus, NA_REAL, NA_REAL);
   shared->p_NC_under15 = user_get_scalar<real_t>(user, "p_NC_under15", shared->p_NC_under15, NA_REAL, NA_REAL);
   shared->p_NC_weekend = user_get_scalar<real_t>(user, "p_NC_weekend", shared->p_NC_weekend, NA_REAL, NA_REAL);
   shared->p_NC_weekend_15_24 = user_get_scalar<real_t>(user, "p_NC_weekend_15_24", shared->p_NC_weekend_15_24, NA_REAL, NA_REAL);
   shared->p_NC_weekend_25_49 = user_get_scalar<real_t>(user, "p_NC_weekend_25_49", shared->p_NC_weekend_25_49, NA_REAL, NA_REAL);
   shared->p_NC_weekend_50_64 = user_get_scalar<real_t>(user, "p_NC_weekend_50_64", shared->p_NC_weekend_50_64, NA_REAL, NA_REAL);
   shared->p_NC_weekend_65_79 = user_get_scalar<real_t>(user, "p_NC_weekend_65_79", shared->p_NC_weekend_65_79, NA_REAL, NA_REAL);
-  shared->p_NC_weekend_80plus = user_get_scalar<real_t>(user, "p_NC_weekend_80plus", shared->p_NC_weekend_80plus, NA_REAL, NA_REAL);
+  shared->p_NC_weekend_80_plus = user_get_scalar<real_t>(user, "p_NC_weekend_80_plus", shared->p_NC_weekend_80_plus, NA_REAL, NA_REAL);
   shared->p_NC_weekend_under15 = user_get_scalar<real_t>(user, "p_NC_weekend_under15", shared->p_NC_weekend_under15, NA_REAL, NA_REAL);
   shared->phi_ICU = user_get_scalar<real_t>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
   shared->phi_admitted = user_get_scalar<real_t>(user, "phi_admitted", shared->phi_admitted, NA_REAL, NA_REAL);

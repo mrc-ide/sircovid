@@ -99,11 +99,11 @@ NULL
 ##'   have covid but have covid-like symptoms that could lead to getting a PCR
 ##'   test on a weekend
 ##'
-##' @param p_NC_80plus Proportion of population 80 plus who do not have covid
+##' @param p_NC_80_plus Proportion of population 80 plus who do not have covid
 ##'   but have covid-like symptoms that could lead to getting a PCR test on a
 ##'   weekday
 ##'
-##' @param p_NC_weekend_80plus Proportion of population 80 plus who do not
+##' @param p_NC_weekend_80_plus Proportion of population 80 plus who do not
 ##'   have covid but have covid-like symptoms that could lead to getting a PCR
 ##'   test on a weekend
 ##'
@@ -437,8 +437,8 @@ carehomes_parameters <- function(start_date, region,
                                  p_NC_weekend_50_64 = 0.005,
                                  p_NC_65_79 = 0.01,
                                  p_NC_weekend_65_79 = 0.005,
-                                 p_NC_80plus = 0.01,
-                                 p_NC_weekend_80plus = 0.005,
+                                 p_NC_80_plus = 0.01,
+                                 p_NC_weekend_80_plus = 0.005,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_rate = NULL,
@@ -543,8 +543,8 @@ carehomes_parameters <- function(start_date, region,
   ret$p_NC_weekend_50_64 <- p_NC_weekend_50_64
   ret$p_NC_65_79 <- p_NC_65_79
   ret$p_NC_weekend_65_79 <- p_NC_weekend_65_79
-  ret$p_NC_80plus <- p_NC_80plus
-  ret$p_NC_weekend_80plus <- p_NC_weekend_80plus
+  ret$p_NC_80_plus <- p_NC_80_plus
+  ret$p_NC_weekend_80_plus <- p_NC_weekend_80_plus
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.363
@@ -844,8 +844,8 @@ carehomes_compare <- function(state, observed, pars) {
     pars$p_NC_50_64
   p_NC_65_79 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_65_79 else
     pars$p_NC_65_79
-  p_NC_80plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80plus else
-    pars$p_NC_80plus
+  p_NC_80_plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80_plus else
+    pars$p_NC_80_plus
 
   pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
@@ -904,7 +904,7 @@ carehomes_compare <- function(state, observed, pars) {
                                                 pars$pillar2_specificity,
                                                 pars$exp_noise)
 
-  pillar2_80_plus_negs <- p_NC_80plus * (pars$N_tot_80_plus -
+  pillar2_80_plus_negs <- p_NC_80_plus * (pars$N_tot_80_plus -
                                     model_sympt_cases_80_plus)
   model_pillar2_80_plus_prob_pos <- test_prob_pos(model_sympt_cases_80_plus,
                                                   pillar2_80_plus_negs,

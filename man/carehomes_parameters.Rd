@@ -32,8 +32,8 @@ carehomes_parameters(
   p_NC_weekend_50_64 = 0.005,
   p_NC_65_79 = 0.01,
   p_NC_weekend_65_79 = 0.005,
-  p_NC_80plus = 0.01,
-  p_NC_weekend_80plus = 0.005,
+  p_NC_80_plus = 0.01,
+  p_NC_weekend_80_plus = 0.005,
   strain_transmission = 1,
   strain_seed_date = NULL,
   strain_seed_rate = NULL,
@@ -175,11 +175,11 @@ weekday}
 have covid but have covid-like symptoms that could lead to getting a PCR
 test on a weekend}
 
-\item{p_NC_80plus}{Proportion of population 80 plus who do not have covid
+\item{p_NC_80_plus}{Proportion of population 80 plus who do not have covid
 but have covid-like symptoms that could lead to getting a PCR test on a
 weekday}
 
-\item{p_NC_weekend_80plus}{Proportion of population 80 plus who do not
+\item{p_NC_weekend_80_plus}{Proportion of population 80 plus who do not
 have covid but have covid-like symptoms that could lead to getting a PCR
 test on a weekend}
 
