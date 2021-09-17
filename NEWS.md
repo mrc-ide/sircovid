@@ -1,3 +1,7 @@
+# sircovid 0.11.32
+
+* Introduced `p_NC` and `p_NC_weekend` parameters by age groups. These are used for age-specific fits to pillar 2 positivity
+
 # sircovid 0.11.27
 
 * Introduced `phi_pillar2_cases_weekend`, which is used instead of `phi_pillar2_cases` on weekends 
