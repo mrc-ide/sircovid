@@ -9,7 +9,8 @@ vaccine_schedule_data_future(
   region,
   uptake,
   end_date,
-  mean_days_between_doses
+  mean_days_between_doses,
+  booster_daily_doses_value
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ so an overestimate is probably better than an underestimate.}
 
 \item{mean_days_between_doses}{Assumed mean days between doses one
 and two}
+
+\item{booster_daily_doses_value}{A vector of booster doses per day.}
 }
 \value{
 A \link{vaccine_schedule} object
