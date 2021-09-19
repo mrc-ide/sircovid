@@ -70,7 +70,7 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
 ##' @export
 inflate_state_strains <- function(state1, info1, info2) {
 
-  fn <- function(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2) {
+  fn <- function(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2, nm) {
     if (length(d1) == 1) {
       x2[1, ] <- x1
     } else if (length(d2) == 3) {
@@ -105,7 +105,7 @@ inflate_state_strains <- function(state1, info1, info2) {
 ##' @export
 inflate_state_vacc_classes <- function(state1, info1, info2) {
 
-  fn <- function(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2) {
+  fn <- function(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2, nm) {
     if (length(d2) == 2) {
       x2[, seq_len(d1[2L]), ] <- x1
     } else if (length(d2) == 3) {
@@ -150,7 +150,10 @@ inflate_state <- function(state1, info1, info2, fn) {
       x1 <- state1[i1, ]
       dim(x1) <- c(d1, ny)
       x2 <- array(0, c(d2, ny))
-      state2[i2, ] <- fn(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2)
+      x <- readline(sprintf("Inflate? nm=%s, d1=%s, d2=%s   ", nm,
+        paste0(d1, collapse = ","), paste0(d2, collapse = ",")))
+      if (x == 1)
+        state2[i2, ] <- fn(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2, nm)
     } else {
       state2[i2, ] <- state1[i1, ]
     }
