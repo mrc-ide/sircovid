@@ -689,48 +689,40 @@ test_that("carehomes_compare combines likelihood correctly", {
   expect_true(all(sapply(ll_parts, function(x) any(x != 0))))
 
 
-  ## Check that p_NC and p_NC_weekend work as expected. For each day
+  ## Check that weekend effect parameters work as expected. For each day
   ## use same state values except time
   state <- state[, 1, drop = FALSE]
   time <- seq(20, 26, 1)
+  age_nms <- c("", "_under15", "_15_24", "_25_49",
+               "_50_64", "_65_79", "_80_plus")
   pars$phi_pillar2_cases_weekend <- pars$phi_pillar2_cases
-  ll_time <- vnapply(time, function(x) {
-    state["time", ] <- x
-    carehomes_compare(state, observed, pars)
-  })
+  for (i in age_nms) {
+    pars[[paste0("p_NC_weekend", i)]] <- pars[[paste0("p_NC", i)]]
+  }
 
-  expect_true(pars$p_NC != pars$p_NC_weekend)
-  expect_true(pars$p_NC_under15 != pars$p_NC_weekend_under15)
-  expect_true(pars$p_NC_15_24 != pars$p_NC_weekend_15_24)
-  expect_true(pars$p_NC_25_49 != pars$p_NC_weekend_25_49)
-  expect_true(pars$p_NC_50_64 != pars$p_NC_weekend_50_64)
-  expect_true(pars$p_NC_65_79 != pars$p_NC_weekend_65_79)
-  expect_true(pars$p_NC_80_plus != pars$p_NC_weekend_80_plus)
-  ## First 5 days are weekdays, last 2 are weekend
-  expect_equal(grepl("^S", weekdays(sircovid_date_as_date(time))),
-               c(rep(FALSE, 5), rep(TRUE, 2)))
-  ## Weekdays should yield the same values. Weekends should yield the same
-  ## values, but different to weekdays
-  expect_equal(ll_time[2:5], rep(ll_time[1], 4))
-  expect_equal(ll_time[6], ll_time[7])
-  expect_true(ll_time[1] != ll_time[6])
+  helper <- function(parameter, age_nm) {
 
+    pars[[paste0(parameter, "_weekend", age_nm)]] <-
+      0.5 * pars[[paste0(parameter, age_nm)]]
 
-  ## Now check that phi_pillar2_cases and phi_pillar2_cases_weekend work as
-  ## expected
-  pars$phi_pillar2_cases_weekend <- 0.8 * pars$phi_pillar2_cases
-  pars$p_NC_weekend <- pars$p_NC
-  ll_time <- vnapply(time, function(x) {
-    state["time", ] <- x
-    carehomes_compare(state, observed, pars)
-  })
+    ll_time <- vnapply(time, function(x) {
+      state["time", ] <- x
+      carehomes_compare(state, observed, pars)
+    })
 
-  expect_true(pars$phi_pillar2_cases != pars$phi_pillar2_cases_weekend)
-  ## Weekdays should yield the same values. Weekends should yield the same
-  ## values, but different to weekdays
-  expect_equal(ll_time[2:5], rep(ll_time[1], 4))
-  expect_equal(ll_time[6], ll_time[7])
-  expect_true(ll_time[1] != ll_time[6])
+    ## First 5 days are weekdays, last 2 are weekend
+    expect_equal(grepl("^S", weekdays(sircovid_date_as_date(time))),
+                 c(rep(FALSE, 5), rep(TRUE, 2)))
+    ## Weekdays should yield the same values. Weekends should yield the same
+    ## values, but different to weekdays
+    expect_equal(ll_time[2:5], rep(ll_time[1], 4))
+    expect_equal(ll_time[6], ll_time[7])
+    expect_true(ll_time[1] != ll_time[6])
+  }
+
+  lapply(age_nms, function(x) helper("p_NC", x))
+  helper("phi_pillar2_cases", "")
+
 })
 
 
