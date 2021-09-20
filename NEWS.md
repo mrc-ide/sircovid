@@ -1,4 +1,4 @@
-# sircovid 0.11.32
+# sircovid 0.12.0
 
 * Introduced `p_NC` and `p_NC_weekend` parameters by age groups. These are used for age-specific fits to pillar 2 positivity
 
