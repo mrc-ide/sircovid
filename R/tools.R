@@ -150,10 +150,7 @@ inflate_state <- function(state1, info1, info2, fn) {
       x1 <- state1[i1, ]
       dim(x1) <- c(d1, ny)
       x2 <- array(0, c(d2, ny))
-      x <- readline(sprintf("Inflate? nm=%s, d1=%s, d2=%s   ", nm,
-        paste0(d1, collapse = ","), paste0(d2, collapse = ",")))
-      if (x == 1)
-        state2[i2, ] <- fn(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2, nm)
+      state2[i2, ] <- fn(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2, nm)
     } else {
       state2[i2, ] <- state1[i1, ]
     }
