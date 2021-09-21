@@ -1,5 +1,6 @@
 context("carehomes")
 
+
 test_that("can run the carehomes model", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
   mod <- carehomes$new(p, 0, 5, seed = 1L)
@@ -225,4 +226,38 @@ test_that("can run the particle filter on the model 2", {
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
   expect_lt(abs(ll1 - ll2), 60)
+})
+
+
+test_that("Test cases trajectories by age add up", {
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  mod <- carehomes$new(p, 0, 5, seed = 1L)
+  end <- sircovid_date("2020-07-31") / p$dt
+
+  info <- mod$info()
+  initial <- carehomes_initial(info, 10, p)
+  mod$set_state(initial$state, initial$step)
+
+  index <- c(carehomes_index(info)$run,
+             deaths_carehomes = info$index[["D_carehomes_tot"]],
+             deaths_comm = info$index[["D_comm_tot"]],
+             deaths_hosp = info$index[["D_hosp_tot"]],
+             admitted = info$index[["cum_admit_conf"]],
+             diagnoses = info$index[["cum_new_conf"]],
+             sympt_cases = info$index[["cum_sympt_cases"]],
+             sympt_cases_over25 = info$index[["cum_sympt_cases_over25"]]
+  )
+
+  mod$set_index(index)
+  res <- mod$run(end)
+
+  nms_sympt_cases_inc <- c("_", "_under15_", "_15_24_", "_25_49_",
+                           "_50_64_", "_65_79_", "_80_plus_")
+
+  sum_sympt_cases_inc <- NULL
+  for (i in nms_sympt_cases_inc) {
+    sum_sympt_cases_inc[paste0("sympt_cases", i , "inc")] <-
+      sum(res[paste0("sympt_cases", i , "inc"), ])
+  }
+  expect_equal(sum_sympt_cases_inc[[1]], sum(tail(sum_sympt_cases_inc, -1)))
 })
