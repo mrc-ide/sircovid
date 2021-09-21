@@ -42,9 +42,9 @@ test_that("read population", {
   clear_cache()
   n <- sircovid_population("south_west")
   expect_s3_class(cache$population, "data.frame")
-  expected <- c(284532, 325900, 323347, 302674, 335721, 331115, 335803,
-                330189, 315572, 353452, 396146, 400238, 354153, 326291,
-                343893, 249321, 350796)
+  expected <- c(285026, 326416, 323789, 302978, 335943, 331375, 336297,
+                330721, 316135, 354004, 396614, 400677, 354426, 326585,
+                344192, 249576, 351045)
   expect_equal(n, expected)
 })
 
