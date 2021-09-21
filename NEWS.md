@@ -1,6 +1,10 @@
 # sircovid 0.12.0
 
-* Introduced `p_NC` and `p_NC_weekend` parameters by age groups. These are used for age-specific fits to pillar 2 positivity
+* Introduced `p_NC`, `p_NC_weekend`, `phi` and `phi_weekend` parameters by age groups. These are used for age-specific fits to pillar 2 positivity and cases, respectively
+
+# sircovid 0.11.32
+
+* England NHS region populations now obtained directly from mid-2020 ONS CCG-level estimates
 
 # sircovid 0.11.27
 
