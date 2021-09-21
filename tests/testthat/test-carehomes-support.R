@@ -695,9 +695,11 @@ test_that("carehomes_compare combines likelihood correctly", {
   time <- seq(20, 26, 1)
   age_nms <- c("", "_under15", "_15_24", "_25_49",
                "_50_64", "_65_79", "_80_plus")
-  pars$phi_pillar2_cases_weekend <- pars$phi_pillar2_cases
+
   for (i in age_nms) {
     pars[[paste0("p_NC_weekend", i)]] <- pars[[paste0("p_NC", i)]]
+    pars[[paste0("phi_pillar2_cases_weekend", i)]] <-
+      pars[[paste0("phi_pillar2_cases", i)]]
   }
 
   helper <- function(parameter, age_nm) {
@@ -721,7 +723,7 @@ test_that("carehomes_compare combines likelihood correctly", {
   }
 
   lapply(age_nms, function(x) helper("p_NC", x))
-  helper("phi_pillar2_cases", "")
+  lapply(age_nms, function(x) helper("phi_pillar2_cases", x))
 
 })
 

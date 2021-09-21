@@ -828,10 +828,11 @@ carehomes_compare <- function(state, observed, pars) {
   ## calculate test positive probabilities for the various test data streams
 
   ## Pillar 2
-  ## First determine which value is used for p_NC based on whether it is
-  ## a weekday or a weekend and age band. Note all values of the time state
-  ## will be the same so we can just use the first value
+  ## First determine which value is used for p_NC or phi_pillar2, based on
+  ## whether it is a weekday or a weekend and age band. Note all values of the
+  ## time state will be the same so we can just use the first value
   time <- state["time", 1L]
+
   p_NC <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend else
     pars$p_NC
   p_NC_under15 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_under15 else
@@ -846,6 +847,21 @@ carehomes_compare <- function(state, observed, pars) {
     pars$p_NC_65_79
   p_NC_80_plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80_plus else
     pars$p_NC_80_plus
+
+  phi_pillar2_cases <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend else pars$phi_pillar2_cases
+  phi_pillar2_cases_under15 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_under15 else pars$phi_pillar2_cases_under15
+  phi_pillar2_cases_15_24 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_15_24 else pars$phi_pillar2_cases_15_24
+  phi_pillar2_cases_25_49 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_25_49 else pars$phi_pillar2_cases_25_49
+  phi_pillar2_cases_50_64 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_50_64 else pars$phi_pillar2_cases_50_64
+  phi_pillar2_cases_65_79 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_65_79 else pars$phi_pillar2_cases_65_79
+  phi_pillar2_cases_80_plus <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_80_plus else pars$phi_pillar2_cases_80_plus
 
   pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
@@ -911,9 +927,6 @@ carehomes_compare <- function(state, observed, pars) {
                                                   pars$pillar2_sensitivity,
                                                   pars$pillar2_specificity,
                                                   pars$exp_noise)
-
-  phi_pillar2_cases <- if ((time + 3) %% 7 < 2)
-    pars$phi_pillar2_cases_weekend else pars$phi_pillar2_cases
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
   ## It is possible that model_react_pos > pars$N_tot_react, so we cap it to
@@ -1073,32 +1086,32 @@ carehomes_compare <- function(state, observed, pars) {
                                        pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_under15_cases <- ll_nbinom(observed$pillar2_under15_cases,
-                                        phi_pillar2_cases *
+                                        phi_pillar2_cases_under15 *
                                           model_sympt_cases_under15,
                                         pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_15_24_cases <- ll_nbinom(observed$pillar2_15_24_cases,
-                                      phi_pillar2_cases *
+                                      phi_pillar2_cases_15_24 *
                                         model_sympt_cases_15_24,
                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_25_49_cases <- ll_nbinom(observed$pillar2_25_49_cases,
-                                      phi_pillar2_cases *
+                                      phi_pillar2_cases_25_49 *
                                         model_sympt_cases_25_49,
                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_50_64_cases <- ll_nbinom(observed$pillar2_50_64_cases,
-                                      phi_pillar2_cases *
+                                      phi_pillar2_cases_50_64 *
                                         model_sympt_cases_50_64,
                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_65_79_cases <- ll_nbinom(observed$pillar2_65_79_cases,
-                                      phi_pillar2_cases *
+                                      phi_pillar2_cases_65_79 *
                                         model_sympt_cases_65_79,
                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_80_plus_cases <- ll_nbinom(observed$pillar2_80_plus_cases,
-                                        phi_pillar2_cases *
+                                        phi_pillar2_cases_80_plus *
                                           model_sympt_cases_80_plus,
                                         pars$kappa_pillar2_cases, exp_noise)
 
@@ -1886,9 +1899,21 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
     phi_all_admission = 1,
     kappa_all_admission = 2,
     ## Pillar 2 testing
+    kappa_pillar2_cases = 2,
     phi_pillar2_cases = 1,
     phi_pillar2_cases_weekend = 0.8,
-    kappa_pillar2_cases = 2,
+    phi_pillar2_cases_under15 = 1,
+    phi_pillar2_cases_weekend_under15 = 0.8,
+    phi_pillar2_cases_15_24 = 1,
+    phi_pillar2_cases_weekend_15_24 = 0.8,
+    phi_pillar2_cases_25_49 = 1,
+    phi_pillar2_cases_weekend_25_49 = 0.8,
+    phi_pillar2_cases_50_64 = 1,
+    phi_pillar2_cases_weekend_50_64 = 0.8,
+    phi_pillar2_cases_65_79 = 1,
+    phi_pillar2_cases_weekend_65_79 = 0.8,
+    phi_pillar2_cases_80_plus = 1,
+    phi_pillar2_cases_weekend_80_plus = 0.8,
     ##
     rho_pillar2_tests = 0.1,
     ##
