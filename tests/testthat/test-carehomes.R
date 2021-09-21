@@ -256,8 +256,8 @@ test_that("Test cases trajectories by age add up", {
 
   sum_sympt_cases_inc <- NULL
   for (i in nms_sympt_cases_inc) {
-    sum_sympt_cases_inc[paste0("sympt_cases", i , "inc")] <-
-      sum(res[paste0("sympt_cases", i , "inc"), ])
+    sum_sympt_cases_inc[paste0("sympt_cases", i, "inc")] <-
+      sum(res[paste0("sympt_cases", i, "inc"), ])
   }
   expect_equal(sum_sympt_cases_inc[[1]], sum(tail(sum_sympt_cases_inc, -1)))
 })
