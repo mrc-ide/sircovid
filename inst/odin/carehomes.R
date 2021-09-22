@@ -1590,6 +1590,7 @@ new_sympt_cases_15_24 <- sum(n_EI_P[4:5, , ])
 update(cum_sympt_cases_15_24) <- cum_sympt_cases_15_24 +
   new_sympt_cases_15_24
 
+## assume HCW [18] are equally distributed amongst 25-64 age bands
 initial(cum_sympt_cases_25_49) <- 0
 new_sympt_cases_25_49 <- sum(n_EI_P[6:10, , ]) + (sum(n_EI_P[18, , ]) / 8) * 5
 update(cum_sympt_cases_25_49) <- cum_sympt_cases_25_49 +
@@ -1600,6 +1601,7 @@ new_sympt_cases_50_64 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 8) * 3
 update(cum_sympt_cases_50_64) <- cum_sympt_cases_50_64 +
   new_sympt_cases_50_64
 
+## assume HCR [19] are 1/3 aged 65-79 and 2/3 80 plus
 initial(cum_sympt_cases_65_79) <- 0
 new_sympt_cases_65_79 <- sum(n_EI_P[14:16, , ]) + (sum(n_EI_P[19, , ]) * 0.25)
 update(cum_sympt_cases_65_79) <- cum_sympt_cases_65_79 +

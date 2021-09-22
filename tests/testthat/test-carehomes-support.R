@@ -335,45 +335,45 @@ test_that("can compute time-varying severity parameters for carehomes model", {
 
 test_that("can compute time-varying progression parameters for carehomes
           model", {
-  dt <- 0.25
+            dt <- 0.25
 
-  gamma_H_R_value <- 0.3
-  gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
-  gamma_H_D_value <- c(0.2, 0.5)
+            gamma_H_R_value <- 0.3
+            gamma_H_D_date <- sircovid_date(c("2020-02-01", "2020-05-01"))
+            gamma_H_D_value <- c(0.2, 0.5)
 
-  progression <-
-    carehomes_parameters_progression(dt,
-                                     gamma_H_D = list(date = gamma_H_D_date,
-                                                      value = gamma_H_D_value),
-                                     gamma_H_R = list(value = gamma_H_R_value)
-    )
+            progression <-
+              carehomes_parameters_progression(dt,
+                                               gamma_H_D = list(date = gamma_H_D_date,
+                                                                value = gamma_H_D_value),
+                                               gamma_H_R = list(value = gamma_H_R_value)
+              )
 
-  gamma_H_D_step <-
-    sircovid_parameters_piecewise_linear(gamma_H_D_date,
-                                         gamma_H_D_value, dt)
-  expect_equal(progression$gamma_H_D_step, gamma_H_D_step)
-  expect_equal(progression$gamma_H_R_step, gamma_H_R_value)
+            gamma_H_D_step <-
+              sircovid_parameters_piecewise_linear(gamma_H_D_date,
+                                                   gamma_H_D_value, dt)
+            expect_equal(progression$gamma_H_D_step, gamma_H_D_step)
+            expect_equal(progression$gamma_H_R_step, gamma_H_R_value)
 
-  expect_error(
-    carehomes_parameters_progression(dt,
-                                     gamma_E = list(date = 1,
-                                                    value = 3)),
-    "As 'gamma_E' has a single 'value', expected NULL or missing 'date'")
+            expect_error(
+              carehomes_parameters_progression(dt,
+                                               gamma_E = list(date = 1,
+                                                              value = 3)),
+              "As 'gamma_E' has a single 'value', expected NULL or missing 'date'")
 
-  expect_error(
-    carehomes_parameters_progression(dt,
-                                     gamma_ICU_pre = list(date = c(1, 4, 5),
-                                                          value = c(2, 3))),
-    "'date' and 'value' for 'gamma_ICU_pre' must have the same length")
+            expect_error(
+              carehomes_parameters_progression(dt,
+                                               gamma_ICU_pre = list(date = c(1, 4, 5),
+                                                                    value = c(2, 3))),
+              "'date' and 'value' for 'gamma_ICU_pre' must have the same length")
 
-  expect_error(
-    carehomes_parameters_progression(dt,
-                                     gamma_H_D = list(date = c(1, 4),
-                                                      value = c(-2, 3))),
-    "'gamma_H_D' must have only non-negative values")
+            expect_error(
+              carehomes_parameters_progression(dt,
+                                               gamma_H_D = list(date = c(1, 4),
+                                                                value = c(-2, 3))),
+              "'gamma_H_D' must have only non-negative values")
 
 
-})
+          })
 
 
 test_that("Can compute transmission matrix for carehomes model", {
@@ -657,22 +657,24 @@ test_that("carehomes_compare combines likelihood correctly", {
   nms_sero_2 <- c("sero_pos_15_64_2", "sero_tot_15_64_2")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
-  nms_pillar2_age <- c("pillar2_under15_pos", "pillar2_under15_tot",
-                       "pillar2_15_24_pos", "pillar2_15_24_tot",
-                       "pillar2_25_49_pos", "pillar2_25_49_tot",
-                       "pillar2_50_64_pos", "pillar2_50_64_tot",
-                       "pillar2_65_79_pos", "pillar2_65_79_tot",
-                       "pillar2_80_plus_pos", "pillar2_80_plus_tot")
+  nms_pillar2_age_under25 <- c("pillar2_under15_pos", "pillar2_under15_tot",
+                               "pillar2_15_24_pos", "pillar2_15_24_tot")
+  nms_pillar2_age_over25 <- c("pillar2_25_49_pos", "pillar2_25_49_tot",
+                              "pillar2_50_64_pos", "pillar2_50_64_tot",
+                              "pillar2_65_79_pos", "pillar2_65_79_tot",
+                              "pillar2_80_plus_pos", "pillar2_80_plus_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
                              c(nms_sero_1, nms_sero_2, nms_pillar2,
-                               nms_pillar2_over25, nms_pillar2_age, nms_react,
+                               nms_pillar2_over25, nms_pillar2_age_under25,
+                               nms_pillar2_age_over25, nms_react,
                                nms_strain, nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
-             list(nms_pillar2_over25), list(nms_pillar2_age),
-             list(nms_react), list(nms_strain), list(nms_strain_over25))
+             list(nms_pillar2_over25), list(nms_pillar2_age_under25),
+             list(nms_pillar2_age_over25), list(nms_react), list(nms_strain),
+             list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
     carehomes_compare(state, observed_keep(x), pars))
@@ -813,6 +815,24 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
   data$strain_tot <- NA
   data$strain_over25_non_variant <- NA
   data$strain_over25_tot <- NA
+  data$pillar2_under15_cases <- NA
+  data$pillar2_15_24_cases <- NA
+  data$pillar2_25_49_cases <- NA
+  data$pillar2_50_64_cases <- NA
+  data$pillar2_65_79_cases <- NA
+  data$pillar2_80_plus_cases <- NA
+  data$pillar2_under15_tot <- NA
+  data$pillar2_15_24_tot <- NA
+  data$pillar2_25_49_tot <- NA
+  data$pillar2_50_64_tot <- NA
+  data$pillar2_65_79_tot <- NA
+  data$pillar2_80_plus_tot <- NA
+  data$pillar2_under15_pos <- NA
+  data$pillar2_15_24_pos <- NA
+  data$pillar2_25_49_pos <- NA
+  data$pillar2_50_64_pos <- NA
+  data$pillar2_65_79_pos <- NA
+  data$pillar2_80_plus_pos <- NA
   expect_error(
     carehomes_particle_filter(data),
     "Deaths are not consistently split into total vs hospital/non-hospital
@@ -858,6 +878,24 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$strain_tot <- NA
             data$strain_over25_non_variant <- NA
             data$strain_over25_tot <- NA
+            data$pillar2_under15_cases <- NA
+            data$pillar2_15_24_cases <- NA
+            data$pillar2_25_49_cases <- NA
+            data$pillar2_50_64_cases <- NA
+            data$pillar2_65_79_cases <- NA
+            data$pillar2_80_plus_cases <- NA
+            data$pillar2_under15_tot <- NA
+            data$pillar2_15_24_tot <- NA
+            data$pillar2_25_49_tot <- NA
+            data$pillar2_50_64_tot <- NA
+            data$pillar2_65_79_tot <- NA
+            data$pillar2_80_plus_tot <- NA
+            data$pillar2_under15_pos <- NA
+            data$pillar2_15_24_pos <- NA
+            data$pillar2_25_49_pos <- NA
+            data$pillar2_50_64_pos <- NA
+            data$pillar2_65_79_pos <- NA
+            data$pillar2_80_plus_pos <- NA
 
             ## Example that should not cause error
             data$pillar2_pos <- 3
@@ -948,6 +986,24 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$strain_tot <- NA
             data$strain_over25_non_variant <- NA
             data$strain_over25_tot <- NA
+            data$pillar2_under15_cases <- NA
+            data$pillar2_15_24_cases <- NA
+            data$pillar2_25_49_cases <- NA
+            data$pillar2_50_64_cases <- NA
+            data$pillar2_65_79_cases <- NA
+            data$pillar2_80_plus_cases <- NA
+            data$pillar2_under15_tot <- NA
+            data$pillar2_15_24_tot <- NA
+            data$pillar2_25_49_tot <- NA
+            data$pillar2_50_64_tot <- NA
+            data$pillar2_65_79_tot <- NA
+            data$pillar2_80_plus_tot <- NA
+            data$pillar2_under15_pos <- NA
+            data$pillar2_15_24_pos <- NA
+            data$pillar2_25_49_pos <- NA
+            data$pillar2_50_64_pos <- NA
+            data$pillar2_65_79_pos <- NA
+            data$pillar2_80_plus_pos <- NA
 
             ## Example that should not cause error
             data$pillar2_pos <- 3

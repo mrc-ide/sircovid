@@ -525,8 +525,10 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_react <- sum(ret$N_tot[2:18])
   ret$N_tot_under15 <- sum(ret$N_tot[1:3])
   ret$N_tot_15_24 <- sum(ret$N_tot[4:5])
+  ## assume HCW [18] are equally distributed amongst 25-64 age bands
   ret$N_tot_25_49 <- sum(ret$N_tot[6:10]) + (sum(ret$N_tot[18]) / 8) * 5
   ret$N_tot_50_64 <- sum(ret$N_tot[11:13]) + (sum(ret$N_tot[18]) / 8) * 3
+  ## assume HCR [19] are 1/3 aged 65-79 and 2/3 80 plus
   ret$N_tot_65_79 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
 
@@ -1020,21 +1022,6 @@ carehomes_compare <- function(state, observed, pars) {
   ll_serology_2 <- ll_binom(observed$sero_pos_15_64_2,
                             observed$sero_tot_15_64_2,
                             model_sero_prob_pos_2)
-
-  ## Stop if both age-specific and aggregated pillar 2 data will be passed to
-  ## log-likelihood calculation!
-  if (any(!is.na(observed$pillar2_over25_tot)) &&
-      any(!is.na(observed$pillar2_25_49_tot)) &&
-      all(is.na(observed$pillar2_over25_cases)) &&
-      all(is.na(observed$pillar2_25_49_cases))) {
-    stop("Cannot double fit age-specific and aggregated pillar 2")
-  }
-  if (any(!is.na(observed$pillar2_over25_cases)) &&
-      any(!is.na(observed$pillar2_25_49_cases)) &&
-      all(is.na(observed$pillar2_over25_tot)) &&
-      all(is.na(observed$pillar2_25_49_tot))) {
-    stop("Cannot double fit age-specific and aggregated pillar 2")
-  }
 
   ll_pillar2_tests <- ll_betabinom(observed$pillar2_pos,
                                    observed$pillar2_tot,
@@ -2057,7 +2044,14 @@ carehomes_particle_filter_data <- function(data) {
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot",
                 "strain_non_variant", "strain_tot", "strain_over25_non_variant",
-                "strain_over25_tot")
+                "strain_over25_tot",
+                "pillar2_under15_cases", "pillar2_15_24_cases",
+                "pillar2_25_49_cases", "pillar2_50_64_cases",
+                "pillar2_65_79_cases", "pillar2_80_plus_cases",
+                "pillar2_under15_tot", "pillar2_15_24_tot", "pillar2_25_49_tot",
+                "pillar2_50_64_tot", "pillar2_65_79_tot", "pillar2_80_plus_tot",
+                "pillar2_under15_pos", "pillar2_15_24_pos", "pillar2_25_49_pos",
+                "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos")
 
   verify_names(data, required, allow_extra = TRUE)
 
@@ -2071,6 +2065,26 @@ carehomes_particle_filter_data <- function(data) {
           (!is.na(data$deaths_comm) | !is.na(data$deaths_carehomes)))) {
     stop("Non-hospital deaths are not consistently split into total vs care
          homes/community")
+  }
+  if (## aggregated and stratified pillar 2 positivity data passed by mistake
+    (any(!is.na(data$pillar2_over25_tot)) || (any(!is.na(data$pillar2_tot)))) &&
+    (any(!is.na(data$pillar2_under15_tot)) ||
+     any(!is.na(data$pillar2_15_24_tot)) ||
+     any(!is.na(data$pillar2_25_49_tot)) ||
+     any(!is.na(data$pillar2_50_64_tot)) ||
+     any(!is.na(data$pillar2_65_79_tot)) ||
+     any(!is.na(data$pillar2_80_plus_tot)))) {
+    stop("Cannot double fit age-specific and aggregated pillar 2 positivity!")
+  }
+  if (## aggregated and stratified pillar 2 cases data passed by mistake
+    (any(!is.na(data$pillar2_over25_cases)) || (any(!is.na(data$pillar2_cases)))) &&
+    (any(!is.na(data$pillar2_under15_cases)) ||
+     any(!is.na(data$pillar2_15_24_cases)) ||
+     any(!is.na(data$pillar2_25_49_cases)) ||
+     any(!is.na(data$pillar2_50_64_cases)) ||
+     any(!is.na(data$pillar2_65_79_cases)) ||
+     any(!is.na(data$pillar2_80_plus_cases)))) {
+    stop("Cannot double fit age-specific and aggregated pillar 2 cases!")
   }
 
   check_pillar2_streams <- function(df)
