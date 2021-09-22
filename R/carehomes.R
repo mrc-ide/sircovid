@@ -2077,7 +2077,8 @@ carehomes_particle_filter_data <- function(data) {
     stop("Cannot double fit age-specific and aggregated pillar 2 positivity!")
   }
   if (## aggregated and stratified pillar 2 cases data passed by mistake
-    (any(!is.na(data$pillar2_over25_cases)) || (any(!is.na(data$pillar2_cases)))) &&
+    (any(!is.na(data$pillar2_over25_cases)) ||
+     (any(!is.na(data$pillar2_cases)))) &&
     (any(!is.na(data$pillar2_under15_cases)) ||
      any(!is.na(data$pillar2_15_24_cases)) ||
      any(!is.na(data$pillar2_25_49_cases)) ||

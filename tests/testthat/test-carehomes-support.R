@@ -343,9 +343,11 @@ test_that("can compute time-varying progression parameters for carehomes
 
             progression <-
               carehomes_parameters_progression(dt,
-                                               gamma_H_D = list(date = gamma_H_D_date,
-                                                                value = gamma_H_D_value),
-                                               gamma_H_R = list(value = gamma_H_R_value)
+                                               gamma_H_D =
+                                                 list(date = gamma_H_D_date,
+                                                      value = gamma_H_D_value),
+                                               gamma_H_R =
+                                                 list(value = gamma_H_R_value)
               )
 
             gamma_H_D_step <-
@@ -358,18 +360,20 @@ test_that("can compute time-varying progression parameters for carehomes
               carehomes_parameters_progression(dt,
                                                gamma_E = list(date = 1,
                                                               value = 3)),
-              "As 'gamma_E' has a single 'value', expected NULL or missing 'date'")
+              "'gamma_E' has a single 'value', expected NULL or missing 'date'")
 
             expect_error(
               carehomes_parameters_progression(dt,
-                                               gamma_ICU_pre = list(date = c(1, 4, 5),
-                                                                    value = c(2, 3))),
-              "'date' and 'value' for 'gamma_ICU_pre' must have the same length")
+                                               gamma_ICU_pre =
+                                                 list(date = c(1, 4, 5),
+                                                      value = c(2, 3))),
+              "'date' and 'value' for 'gamma_ICU_pre' must have same length")
 
             expect_error(
               carehomes_parameters_progression(dt,
-                                               gamma_H_D = list(date = c(1, 4),
-                                                                value = c(-2, 3))),
+                                               gamma_H_D =
+                                                 list(date = c(1, 4),
+                                                      value = c(-2, 3))),
               "'gamma_H_D' must have only non-negative values")
 
 
