@@ -851,37 +851,25 @@ test_that("tots all summed correctly ", {
 })
 
 
-test_that("Test cases trajectories by age add up", {
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-  mod <- carehomes$new(p, 0, 5, seed = 1L)
-  end <- sircovid_date("2020-07-31") / p$dt
-
+test_that("Symptomatic cases by age add up correctly", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  initial <- carehomes_initial(info, 10, p)
-  mod$set_state(initial$state, initial$step)
+  y0 <- carehomes_initial(info, 1, p)$state
+  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
-  index <- c(carehomes_index(info)$run,
-             deaths_carehomes = info$index[["D_carehomes_tot"]],
-             deaths_comm = info$index[["D_comm_tot"]],
-             deaths_hosp = info$index[["D_hosp_tot"]],
-             admitted = info$index[["cum_admit_conf"]],
-             diagnoses = info$index[["cum_new_conf"]],
-             sympt_cases = info$index[["cum_sympt_cases"]],
-             sympt_cases_over25 = info$index[["cum_sympt_cases_over25"]]
-  )
+  expect_true(all(y$sympt_cases_inc ==
+                    y$sympt_cases_under15_inc + y$sympt_cases_15_24_inc +
+                    y$sympt_cases_25_49_inc + y$sympt_cases_50_64_inc +
+                    y$sympt_cases_65_79_inc + y$sympt_cases_80_plus_inc))
 
-  mod$set_index(index)
-  res <- mod$run(end)
-
-  nms_sympt_cases_inc <- c("_", "_under15_", "_15_24_", "_25_49_",
-                           "_50_64_", "_65_79_", "_80_plus_")
-
-  sum_sympt_cases_inc <- NULL
-  for (i in nms_sympt_cases_inc) {
-    sum_sympt_cases_inc[paste0("sympt_cases", i, "inc")] <-
-      sum(res[paste0("sympt_cases", i, "inc"), ])
-  }
-  expect_equal(sum_sympt_cases_inc[[1]], sum(tail(sum_sympt_cases_inc, -1)))
+  expect_true(all(y$sympt_cases_over25_inc ==
+                    y$sympt_cases_25_49_inc + y$sympt_cases_50_64_inc +
+                    y$sympt_cases_65_79_inc + y$sympt_cases_80_plus_inc))
 })
 
 
