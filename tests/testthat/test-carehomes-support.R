@@ -853,8 +853,8 @@ test_that("carehomes_particle_filter_data requires consistent deaths", {
 })
 
 
-test_that("carehomes_particle_filter_data does not allow more than one pillar 2
-          or strain data stream", {
+test_that("carehomes_particle_filter_data does not allow more than one pillar 2,
+          strain data stream or pillar 2 double fitting", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             ## Add additional columns
@@ -952,7 +952,19 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
               carehomes_particle_filter(data),
               "Cannot fit to more than one strain data stream")
 
-          })
+            data$pillar2_over25_cases <- 8
+            data$pillar2_25_49_cases <- 8
+            expect_error(
+              carehomes_particle_filter_data(data),
+              "Cannot double fit age-specific and aggregated pillar 2 cases!")
+
+            data$pillar2_over25_tot <- 8
+            data$pillar2_25_49_tot <- 8
+            expect_error(
+              carehomes_particle_filter_data(data),
+            "Cannot double fit age-specific and aggregated pillar 2 positivity!"
+            )
+})
 
 
 test_that("the carehomes sircovid model has 19 groups", {
