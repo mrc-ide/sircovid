@@ -528,7 +528,7 @@ carehomes_parameters <- function(start_date, region,
   ## assume HCW [18] are equally distributed amongst 25-64 age bands
   ret$N_tot_25_49 <- sum(ret$N_tot[6:10]) + (sum(ret$N_tot[18]) / 8) * 5
   ret$N_tot_50_64 <- sum(ret$N_tot[11:13]) + (sum(ret$N_tot[18]) / 8) * 3
-  ## assume HCR [19] are 1/3 aged 65-79 and 2/3 80 plus
+  ## assume HCR [19] are 1/4 aged 65-79 and 3/4 80 plus
   ret$N_tot_65_79 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
 
@@ -2066,27 +2066,31 @@ carehomes_particle_filter_data <- function(data) {
     stop("Non-hospital deaths are not consistently split into total vs care
          homes/community")
   }
-  if (## aggregated and stratified pillar 2 positivity data passed by mistake
-    (any(!is.na(data$pillar2_over25_tot)) || (any(!is.na(data$pillar2_tot)))) &&
-    (any(!is.na(data$pillar2_under15_tot)) ||
-     any(!is.na(data$pillar2_15_24_tot)) ||
-     any(!is.na(data$pillar2_25_49_tot)) ||
-     any(!is.na(data$pillar2_50_64_tot)) ||
-     any(!is.na(data$pillar2_65_79_tot)) ||
-     any(!is.na(data$pillar2_80_plus_tot)))) {
-    stop("Cannot double fit age-specific and aggregated pillar 2 positivity!")
-  }
-  if (## aggregated and stratified pillar 2 cases data passed by mistake
-    (any(!is.na(data$pillar2_over25_cases)) ||
-     (any(!is.na(data$pillar2_cases)))) &&
-    (any(!is.na(data$pillar2_under15_cases)) ||
-     any(!is.na(data$pillar2_15_24_cases)) ||
-     any(!is.na(data$pillar2_25_49_cases)) ||
-     any(!is.na(data$pillar2_50_64_cases)) ||
-     any(!is.na(data$pillar2_65_79_cases)) ||
-     any(!is.na(data$pillar2_80_plus_cases)))) {
-    stop("Cannot double fit age-specific and aggregated pillar 2 cases!")
-  }
+
+  check_pillar2_age <- function(df, a)
+    sum(c(any(!is.na(data[, paste0("pillar2_", a, "_pos")])) |
+            any(!is.na(data[, paste0("pillar2_", a, "_tot")])),
+          any(!is.na(data[, paste0("pillar2_", a, "_cases")]))))
+
+  check_pillar2_age_v_agg_pos_over25 <- function(df, a)
+    sum(c(any(!is.na(data[, paste0("pillar2_", a, "_pos")])) |
+            any(!is.na(data[, paste0("pillar2_", a, "_tot")])),
+          any(!is.na(data$pillar2_over25_pos)) |
+            any(!is.na(data$pillar2_over25_tot))))
+
+  check_pillar2_age_v_agg_cases_over25 <- function(df, a)
+    sum(c(any(!is.na(data[, paste0("pillar2_", a, "_cases")])),
+          any(!is.na(data$pillar2_over25_cases))))
+
+  check_pillar2_age_v_agg_pos_all <- function(df, a)
+    sum(c(any(!is.na(data[, paste0("pillar2_", a, "_pos")])) |
+            any(!is.na(data[, paste0("pillar2_", a, "_tot")])),
+          any(!is.na(data$pillar2_pos)) |
+            any(!is.na(data$pillar2_tot))))
+
+  check_pillar2_age_v_agg_cases_all <- function(df, a)
+    sum(c(any(!is.na(data[, paste0("pillar2_", a, "_cases")])),
+          any(!is.na(data$pillar2_cases))))
 
   check_pillar2_streams <- function(df)
     sum(c(any(!is.na(df$pillar2_pos)) |
@@ -2102,12 +2106,35 @@ carehomes_particle_filter_data <- function(data) {
           any(!is.na(df$strain_over25_non_variant)) |
             any(!is.na(df$strain_over25_tot))))
 
+  age_bands_over25 <- c("25_49", "50_64", "65_79", "80_plus")
+  all_age_bands <- c("under15", "15_24", age_bands_over25)
+
   if (is.null(data$population)) {
     if (check_pillar2_streams(data) > 1) {
       stop("Cannot fit to more than one pillar 2 data stream")
     }
     if (check_strain_streams(data) > 1) {
       stop("Cannot fit to more than one strain data stream")
+    }
+    for (a in age_bands_over25) {
+      if (check_pillar2_age(data, a) > 1) {
+        stop(paste(
+          "Cannot fit to more than one pillar 2 data stream for age band", a))
+      }
+      if (check_pillar2_age_v_agg_pos_over25(data, a) > 1 ||
+          check_pillar2_age_v_agg_cases_over25(data, a) > 1) {
+        stop("Cannot double fit to aggregated and stratified pillar 2 data")
+      }
+    }
+    for (a in all_age_bands) {
+      if (check_pillar2_age(data, a) > 1) {
+        stop(paste(
+          "Cannot fit to more than one pillar 2 data stream for age band", a))
+      }
+      if (check_pillar2_age_v_agg_pos_all(data, a) > 1 ||
+          check_pillar2_age_v_agg_cases_all(data, a) > 1) {
+        stop("Cannot double fit to aggregated and stratified pillar 2 data")
+      }
     }
   } else {
     lapply(split(data, data$population), function(x) {
@@ -2118,6 +2145,28 @@ carehomes_particle_filter_data <- function(data) {
       if (check_strain_streams(x) > 1) {
         stop(sprintf("Cannot fit to more than one strain data stream for
                       region %s", x$population[[1]]))
+      }
+      for (a in age_bands_over25) {
+        if (check_pillar2_age(x, a) > 1) {
+          stop(sprintf("Cannot fit to more than one stratified pillar 2 data
+                       stream for region %s", x$population[[1]]))
+        }
+        if (check_pillar2_age_v_agg_pos_over25(x, a) > 1 ||
+            check_pillar2_age_v_agg_cases_over25(x, a) > 1) {
+          stop(sprintf("Cannot double fit to aggregated and stratified pillar 2
+                       data for region %s", x$population[[1]]))
+        }
+      }
+      for (a in all_age_bands) {
+        if (check_pillar2_age(x, a) > 1) {
+          stop(sprintf("Cannot fit to more than one stratified pillar 2 data
+                       stream for region %s", x$population[[1]]))
+        }
+        if (check_pillar2_age_v_agg_pos_all(x, a) > 1 ||
+            check_pillar2_age_v_agg_cases_all(x, a) > 1) {
+          stop(sprintf("Cannot double fit to aggregated and stratified pillar 2
+                       data for region %s", x$population[[1]]))
+        }
       }
     })
   }

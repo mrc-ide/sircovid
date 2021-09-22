@@ -662,23 +662,27 @@ test_that("carehomes_compare combines likelihood correctly", {
   nms_sero_2 <- c("sero_pos_15_64_2", "sero_tot_15_64_2")
   nms_pillar2 <- c("pillar2_pos", "pillar2_tot")
   nms_pillar2_over25 <- c("pillar2_over25_pos", "pillar2_over25_tot")
-  nms_pillar2_age_under25 <- c("pillar2_under15_pos", "pillar2_under15_tot",
-                               "pillar2_15_24_pos", "pillar2_15_24_tot")
-  nms_pillar2_age_over25 <- c("pillar2_25_49_pos", "pillar2_25_49_tot",
-                              "pillar2_50_64_pos", "pillar2_50_64_tot",
-                              "pillar2_65_79_pos", "pillar2_65_79_tot",
-                              "pillar2_80_plus_pos", "pillar2_80_plus_tot")
+  nms_pillar2_under15 <- c("pillar2_under15_pos", "pillar2_under15_tot")
+  nms_pillar2_15_24 <- c("pillar2_15_24_pos", "pillar2_15_24_tot")
+  nms_pillar2_25_49 <- c("pillar2_25_49_pos", "pillar2_25_49_tot")
+  nms_pillar2_50_64 <- c("pillar2_50_64_pos", "pillar2_50_64_tot")
+  nms_pillar2_65_79 <- c("pillar2_65_79_pos", "pillar2_65_79_tot")
+  nms_pillar2_80_plus <- c("pillar2_80_plus_pos", "pillar2_80_plus_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
                              c(nms_sero_1, nms_sero_2, nms_pillar2,
-                               nms_pillar2_over25, nms_pillar2_age_under25,
-                               nms_pillar2_age_over25, nms_react,
-                               nms_strain, nms_strain_over25))),
+                               nms_pillar2_over25, nms_pillar2_under15,
+                               nms_pillar2_15_24, nms_pillar2_25_49,
+                               nms_pillar2_50_64, nms_pillar2_65_79,
+                               nms_pillar2_80_plus, nms_react, nms_strain,
+                               nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
-             list(nms_pillar2_over25), list(nms_pillar2_age_under25),
-             list(nms_pillar2_age_over25), list(nms_react), list(nms_strain),
+             list(nms_pillar2_over25), list(nms_pillar2_under15),
+             list(nms_pillar2_15_24), list(nms_pillar2_25_49),
+             list(nms_pillar2_50_64), list(nms_pillar2_65_79),
+             list(nms_pillar2_80_plus), list(nms_react), list(nms_strain),
              list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
@@ -952,18 +956,30 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2,
               carehomes_particle_filter(data),
               "Cannot fit to more than one strain data stream")
 
+            data$strain_non_variant <- NA
+            data$strain_tot <- NA
+            data$strain_over25_non_variant <- NA
+            data$strain_over25_tot <- NA
+
+            data$pillar2_over25_tot <- NA
+            data$pillar2_over25_pos <- NA
             data$pillar2_over25_cases <- 8
+            data$pillar2_tot <- NA
+            data$pillar2_pos <- NA
+            data$pillar2_cases <- NA
+            data$pillar2_25_49_tot <- NA
+            data$pillar2_25_49_pos <- NA
             data$pillar2_25_49_cases <- 8
             expect_error(
               carehomes_particle_filter_data(data),
-              "Cannot double fit age-specific and aggregated pillar 2 cases!")
+              "Cannot double fit to aggregated and stratified pillar 2 data")
 
-            data$pillar2_over25_tot <- 8
+            data$pillar2_over25_cases <- NA
             data$pillar2_25_49_tot <- 8
+            data$pillar2_25_49_pos <- 8
             expect_error(
               carehomes_particle_filter_data(data),
-            "Cannot double fit age-specific and aggregated pillar 2 positivity!"
-            )
+          "Cannot fit to more than one pillar 2 data stream for age band 25_49")
 })
 
 

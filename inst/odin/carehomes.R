@@ -1601,7 +1601,7 @@ new_sympt_cases_50_64 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 8) * 3
 update(cum_sympt_cases_50_64) <- cum_sympt_cases_50_64 +
   new_sympt_cases_50_64
 
-## assume HCR [19] are 1/3 aged 65-79 and 2/3 80 plus
+## assume HCR [19] are 1/4 aged 65-79 and 3/4 80 plus
 initial(cum_sympt_cases_65_79) <- 0
 new_sympt_cases_65_79 <- sum(n_EI_P[14:16, , ]) + (sum(n_EI_P[19, , ]) * 0.25)
 update(cum_sympt_cases_65_79) <- cum_sympt_cases_65_79 +
