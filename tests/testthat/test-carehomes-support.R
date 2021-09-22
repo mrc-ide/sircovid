@@ -367,7 +367,8 @@ test_that("can compute time-varying progression parameters for carehomes
                                                gamma_ICU_pre =
                                                  list(date = c(1, 4, 5),
                                                       value = c(2, 3))),
-              "'date' and 'value' for 'gamma_ICU_pre' must have same length")
+              "'date' and 'value' for 'gamma_ICU_pre' must have the same length"
+              )
 
             expect_error(
               carehomes_parameters_progression(dt,
