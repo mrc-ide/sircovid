@@ -919,35 +919,37 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2,
             data$pillar2_cases <- 5
             expect_error(
               carehomes_particle_filter(data),
-              "Cannot fit to more than one pillar 2 data stream")
+              "Cannot fit to pillar 2 cases and positivity together")
 
             data$pillar2_pos <- 3
             data$pillar2_tot <- 6
             data$pillar2_cases <- NA
-            data$pillar2_over25_cases <- 5
+            data$pillar2_25_49_cases <- 5
             expect_error(
               carehomes_particle_filter(data),
-              "Cannot fit to more than one pillar 2 data stream")
+              "Cannot fit to pillar 2 cases and positivity together")
 
             data$pillar2_pos <- 3
             data$pillar2_tot <- 6
-            data$pillar2_over25_cases <- 5
-            data$pillar2_over25_pos <- 3
-            data$pillar2_over25_tot <- 6
+            data$pillar2_25_49_cases <- NA
+            data$pillar2_under15_pos <- 3
+            data$pillar2_under15_tot <- 6
             expect_error(
               carehomes_particle_filter(data),
-              "Cannot fit to more than one pillar 2 data stream")
+              "Cannot fit to all ages aggregated for pillar 2 if fitting to")
 
             data$pillar2_pos <- NA
             data$pillar2_tot <- NA
             data$pillar2_over25_cases <- 5
-            data$pillar2_over25_pos <- 3
-            data$pillar2_over25_tot <- 6
+            data$pillar2_65_79_cases <- 4
+            data$pillar2_under15_pos <- NA
+            data$pillar2_under15_tot <- NA
             expect_error(
               carehomes_particle_filter(data),
-              "Cannot fit to more than one pillar 2 data stream")
+              "Cannot fit to over 25s for pillar 2 if fitting to any over 25")
 
             data$pillar2_over25_cases <- NA
+            data$pillar2_65_79_cases <- NA
             data$strain_non_variant <- 8
             data$strain_tot <- 10
             data$strain_over25_non_variant <- 6
@@ -956,45 +958,6 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2,
               carehomes_particle_filter(data),
               "Cannot fit to more than one strain data stream")
 
-            data$strain_non_variant <- NA
-            data$strain_tot <- NA
-            data$strain_over25_non_variant <- NA
-            data$strain_over25_tot <- NA
-
-            data$pillar2_over25_tot <- NA
-            data$pillar2_over25_pos <- NA
-            data$pillar2_over25_cases <- 8
-            data$pillar2_tot <- NA
-            data$pillar2_pos <- NA
-            data$pillar2_cases <- NA
-            data$pillar2_25_49_tot <- NA
-            data$pillar2_25_49_pos <- NA
-            data$pillar2_25_49_cases <- 8
-            expect_error(
-              carehomes_particle_filter_data(data),
-              "Cannot double fit to aggregated and stratified pillar 2 data")
-
-            data$pillar2_over25_cases <- NA
-            data$pillar2_25_49_tot <- 8
-            data$pillar2_25_49_pos <- 8
-            expect_error(
-              carehomes_particle_filter_data(data),
-          "Cannot fit to more than one pillar 2 data stream for age band 25_49")
-
-            data$pillar2_25_49_tot <- NA
-            data$pillar2_25_49_pos <- NA
-            data$pillar2_under15_tot <- 8
-            data$pillar2_under15_pos <- 8
-            data$pillar2_under15_cases <- 8
-            expect_error(
-              carehomes_particle_filter_data(data),
-        "Cannot fit to more than one pillar 2 data stream for age band under15")
-
-            data$pillar2_under15_cases <- NA
-            data$pillar2_cases <- 8
-            expect_error(
-              carehomes_particle_filter_data(data),
-              "Cannot double fit to aggregated and stratified pillar 2 data")
 })
 
 
@@ -1069,9 +1032,37 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
             data$pillar2_cases <- 5
             expect_error(
               carehomes_particle_filter(data),
-              "Cannot fit to more than one pillar 2 data stream")
+              "Cannot fit to pillar 2 cases and positivity together")
 
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
             data$pillar2_cases <- NA
+            data$pillar2_25_49_cases <- 5
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to pillar 2 cases and positivity together")
+
+            data$pillar2_pos <- 3
+            data$pillar2_tot <- 6
+            data$pillar2_25_49_cases <- NA
+            data$pillar2_under15_pos <- 3
+            data$pillar2_under15_tot <- 6
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to all ages aggregated for pillar 2 if fitting")
+
+            data$pillar2_pos <- NA
+            data$pillar2_tot <- NA
+            data$pillar2_over25_cases <- 5
+            data$pillar2_65_79_cases <- 4
+            data$pillar2_under15_pos <- NA
+            data$pillar2_under15_tot <- NA
+            expect_error(
+              carehomes_particle_filter(data),
+              "Cannot fit to over 25s for pillar 2 if fitting to any over")
+
+            data$pillar2_over25_cases <- NA
+            data$pillar2_65_79_cases <- NA
             data$strain_non_variant <- 8
             data$strain_tot <- 10
             data$strain_over25_non_variant <- 6
@@ -1081,9 +1072,9 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2
               "Cannot fit to more than one strain data stream")
 
             ## Don't error if two regions have different streams
-            data[1:31, "pillar2_cases"] <- NA
-            data[32:62, "pillar2_pos"] <- NA
-            data[32:62, "pillar2_tot"] <- NA
+            data[1:31, "pillar2_cases"] <- 3
+            data[32:62, "pillar2_pos"] <- 3
+            data[32:62, "pillar2_tot"] <- 5
             data[1:31, "strain_non_variant"] <- NA
             data[1:31, "strain_tot"] <- NA
             data[32:62, "strain_over25_non_variant"] <- NA
