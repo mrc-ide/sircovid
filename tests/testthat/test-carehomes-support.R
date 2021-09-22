@@ -980,6 +980,21 @@ test_that("carehomes_particle_filter_data does not allow more than one pillar 2,
             expect_error(
               carehomes_particle_filter_data(data),
           "Cannot fit to more than one pillar 2 data stream for age band 25_49")
+
+            data$pillar2_25_49_tot <- NA
+            data$pillar2_25_49_pos <- NA
+            data$pillar2_under15_tot <- 8
+            data$pillar2_under15_pos <- 8
+            data$pillar2_under15_cases <- 8
+            expect_error(
+              carehomes_particle_filter_data(data),
+        "Cannot fit to more than one pillar 2 data stream for age band under15")
+
+            data$pillar2_under15_cases <- NA
+            data$pillar2_cases <- 8
+            expect_error(
+              carehomes_particle_filter_data(data),
+              "Cannot double fit to aggregated and stratified pillar 2 data")
 })
 
 
