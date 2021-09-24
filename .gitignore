@@ -28,3 +28,4 @@ data/rt.rds
 data/trajectories.rds
 
 tests/testthat/data/ifr_t.rds
+.vscode
