@@ -83,7 +83,7 @@ vaccine_schedule_future). This function is subject to change." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.11.33</span>
       </span>
     </div>
 
@@ -139,7 +139,8 @@ week of vaccination (based on JCVI order using
   <span class='va'>region</span>,
   <span class='va'>uptake</span>,
   <span class='va'>end_date</span>,
-  <span class='va'>mean_days_between_doses</span>
+  <span class='va'>mean_days_between_doses</span>,
+  booster_daily_doses_value <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -170,6 +171,10 @@ so an overestimate is probably better than an underestimate.</p></td>
       <th>mean_days_between_doses</th>
       <td><p>Assumed mean days between doses one
 and two</p></td>
+    </tr>
+    <tr>
+      <th>booster_daily_doses_value</th>
+      <td><p>A vector of booster doses per day.</p></td>
     </tr>
     </table>
 
