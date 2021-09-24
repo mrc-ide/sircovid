@@ -589,7 +589,7 @@ vaccine_schedule_from_data <- function(data, n_carehomes) {
 ##' @export
 vaccine_schedule_data_future <- function(data, region, uptake, end_date,
                                          mean_days_between_doses,
-                                         booster_daily_doses_value) {
+                                         booster_daily_doses_value = NULL) {
 
   priority_population <- vaccine_priority_population(region, uptake)
   n_carehomes <- priority_population[18:19, 1]

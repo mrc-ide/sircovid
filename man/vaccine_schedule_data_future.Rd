@@ -10,7 +10,7 @@ vaccine_schedule_data_future(
   uptake,
   end_date,
   mean_days_between_doses,
-  booster_daily_doses_value
+  booster_daily_doses_value = NULL
 )
 }
 \arguments{
