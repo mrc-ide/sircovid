@@ -1,3 +1,11 @@
+# sircovid 0.11.32
+
+* England NHS region populations now obtained directly from mid-2020 ONS CCG-level estimates
+
+# sircovid 0.11.27
+
+* Introduced `phi_pillar2_cases_weekend`, which is used instead of `phi_pillar2_cases` on weekends 
+
 # sircovid 0.11.28
 
 * Can now choose between a random sample or thinned sample in `carehomes_forecast` via the `random_sample` logical input
