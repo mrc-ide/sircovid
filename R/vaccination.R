@@ -102,6 +102,7 @@ check_rel_param <- function(rel_param, name_param) {
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            n_vacc_classes,
                                            index_dose) {
+
   n_groups <- carehomes_n_groups()
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
@@ -587,7 +588,9 @@ vaccine_schedule_from_data <- function(data, n_carehomes) {
 ##' @return A [vaccine_schedule] object
 ##' @export
 vaccine_schedule_data_future <- function(data, region, uptake, end_date,
-                                         mean_days_between_doses) {
+                                         mean_days_between_doses,
+                                         booster_daily_doses_value = NULL) {
+
   priority_population <- vaccine_priority_population(region, uptake)
   n_carehomes <- priority_population[18:19, 1]
   schedule_past <- vaccine_schedule_from_data(data, n_carehomes)
@@ -600,10 +603,12 @@ vaccine_schedule_data_future <- function(data, region, uptake, end_date,
   n_days_future <- end_date -
     (schedule_past$date + dim(schedule_past$doses)[[3]]) + 1L
   daily_doses_future <- rep(round(mean_doses_last), n_days_future)
-  vaccine_schedule_future(schedule_past,
-                          daily_doses_future,
-                          mean_days_between_doses,
-                          priority_population)
+  vaccine_schedule_future(
+    schedule_past,
+    daily_doses_future,
+    mean_days_between_doses,
+    priority_population,
+    booster_daily_doses_value = booster_daily_doses_value)
 }
 
 
@@ -748,6 +753,7 @@ vaccination_schedule_exec <- function(daily_doses_tt, daily_doses_value,
                                       population_to_vaccinate_mat,
                                       mean_days_between_doses,
                                       n_prev, dose_index) {
+
   n_priority_groups <- ncol(population_left)
   i1 <- dose_index[[1]]
   i2 <- if (length(dose_index) == 2) dose_index[[2]] else dose_index[[1]]
@@ -901,7 +907,7 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           if (new_prob > 1) {
             ## if difference very small or in a class where vaccine hasn't taken
             ##  effect yet, cap at 1
-            if (abs(new_prob - 1) < 1e-10 || v_s <= 2) {
+            if (abs(new_prob - 1) < 1e-10 || v_s <= 2 || v_s == 5) {
               new_prob <- 1
               ## otherwise this is a problem
             } else if (v_s > 2) {
