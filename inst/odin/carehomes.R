@@ -1786,6 +1786,12 @@ config(compare) <- "compare_carehomes.cpp"
 ## it.
 N_tot_all <- user() # ignore.unused
 N_tot_over25 <- user() # ignore.unused
+N_tot_under15 <- user() # ignore.unused
+N_tot_15_24 <- user() # ignore.unused
+N_tot_25_49 <- user() # ignore.unused
+N_tot_50_64 <- user() # ignore.unused
+N_tot_65_79 <- user() # ignore.unused
+N_tot_80_plus <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
