@@ -1,6 +1,6 @@
 ## Create and update rt data set
 reference_data_lancelot_rt <- function() {
-  load_reference("data/rt.rds", {
+  load_reference("data/lancelot_rt.rds", {
     p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
     np <- 3L
     mod <- lancelot$new(p, 0, np, seed = 1L)

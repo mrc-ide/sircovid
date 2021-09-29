@@ -1,5 +1,5 @@
 reference_data_lancelot_mcmc <- function() {
-  load_reference("data/pmcmc.rds", {
+  load_reference("data/lancelot_pmcmc.rds", {
     start_date <- sircovid_date("2020-02-02")
     pars <- lancelot_parameters(
       start_date, "england",
@@ -45,7 +45,7 @@ reference_data_lancelot_mcmc <- function() {
 
 
 reference_data_lancelot_trajectories <- function() {
-  load_reference("data/trajectories.rds", {
+  load_reference("data/lancelot_trajectories.rds", {
     dat <- reference_data_lancelot_mcmc()
     incidence <- "deaths"
     lancelot_forecast(dat, 3, 5, 10, incidence, TRUE)

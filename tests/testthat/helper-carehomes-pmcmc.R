@@ -1,5 +1,5 @@
 reference_data_carehomes_mcmc <- function() {
-  load_reference("data/pmcmc.rds", {
+  load_reference("data/carehomes_pmcmc.rds", {
     start_date <- sircovid_date("2020-02-02")
     pars <- carehomes_parameters(
       start_date, "england",
@@ -45,7 +45,7 @@ reference_data_carehomes_mcmc <- function() {
 
 
 reference_data_carehomes_trajectories <- function() {
-  load_reference("data/trajectories.rds", {
+  load_reference("data/carehomes_trajectories.rds", {
     dat <- reference_data_carehomes_mcmc()
     incidence <- "deaths"
     carehomes_forecast(dat, 3, 5, 10, incidence, TRUE)

@@ -1,6 +1,6 @@
 ## Create and update rt data set
 reference_data_carehomes_ifr_t <- function() {
-  load_reference("data/ifr_t.rds", {
+  load_reference("data/carehomes_ifr_t.rds", {
     p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
     np <- 3L
     mod <- carehomes$new(p, 0, np, seed = 1L)
