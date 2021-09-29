@@ -1226,7 +1226,7 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$update_state(srtate = initial$state, step = initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 

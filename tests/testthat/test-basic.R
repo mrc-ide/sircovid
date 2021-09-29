@@ -6,7 +6,7 @@ test_that("can run the basic model", {
   end <- sircovid_date("2020-07-31") / p$dt
 
   initial <- basic_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
