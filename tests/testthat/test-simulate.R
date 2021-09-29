@@ -112,7 +112,7 @@ test_that("Basic simulation", {
 
   obj <- basic$new(rep(list(p_cmp), np), step[[1]], 1L,
                    seed = 1L, pars_multi = TRUE)
-  obj$set_state(array(state, c(nrow(state), 1, ncol(state))))
+  obj$update_state(state = array(state, c(nrow(state), 1, ncol(state))))
   cmp <- obj$simulate(step)
   dim(cmp) <- dim(cmp)[-2]
   expect_equal(res, cmp, check.attributes = FALSE)

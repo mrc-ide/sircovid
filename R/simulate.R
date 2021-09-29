@@ -69,7 +69,7 @@ sircovid_simulate <- function(mod, state, p, events,
                  seed = seed, pars_multi = TRUE)
   ## TODO: update to mcstate::array_reshape(state, 2, c(1, length(p)))
   dim(state) <- c(nrow(state), 1, length(p))
-  obj$set_state(state)
+  obj$update_state(state = state)
   if (!is.null(index)) {
     obj$set_index(index)
   }
@@ -80,7 +80,7 @@ sircovid_simulate <- function(mod, state, p, events,
     for (j in seq_along(p_i)) {
       p_i[[j]][names(p_new)] <- p_new
     }
-    obj$set_pars(p_i)
+    obj$update_state(pars = p_i, set_initial_state = FALSE)
     i_step <- steps >= step_from[[i]] & steps <= step_to[[i]]
     res[, , i_step] <- obj$simulate(steps[i_step])
   }

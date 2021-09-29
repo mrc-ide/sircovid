@@ -4,7 +4,7 @@ test_that("N_tot stays constant", {
   p <- basic_parameters(0, "england")
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   mod$set_index(info$index$N_tot)
   n_tot <- mod$simulate(seq(0, 400, by = 4))
   expect_vector_equal(n_tot, sum(p$population))
@@ -15,7 +15,7 @@ test_that("there are no infections when beta is 0", {
   p <- basic_parameters(0, "england", beta_value = 0)
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -28,7 +28,7 @@ test_that("everyone is infected when beta is very high", {
   p <- basic_parameters(0, "england", beta_value = 1e100)
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
   expect_vector_equal(s[, , -1], 0)
@@ -41,7 +41,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   info <- mod$info()
   y <- basic_initial(info, 1, p)$state
   y[info$index$I_A] <- 0
-  mod$set_state(y)
+  mod$update_state(state = y)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -56,7 +56,7 @@ test_that("No one is hospitalised if p_C is 0", {
   mod <- basic$new(p, 0, 1)
 
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -76,7 +76,7 @@ test_that("No one goes to ICU and no deaths if p_recov_hosp is 1", {
   mod <- basic$new(p, 0, 1)
 
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     mod$simulate(seq(0, 400, by = 4)))
 
@@ -94,7 +94,7 @@ test_that("p_death_hosp = 1, p_recov_hosp = 0: no icu, no recovery", {
   mod <- basic$new(p, 0, 1)
 
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -111,7 +111,7 @@ test_that("if p_recov_ICU = 0, no-one recovers in hospital", {
   mod <- basic$new(p, 0, 1)
 
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -126,7 +126,7 @@ test_that("if gamma_E is Inf, E cases must progress in 1 timestep", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   ## NOTE: movement is in one *timestep* not one *day*, so can't use
   ## "by = 4" here to get daily output (and in similar tests below)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
@@ -147,7 +147,7 @@ test_that("if gamma_A is Inf, I_A must progress in 1 timestep", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <-  mod$transform_variables(drop(mod$simulate(0:400)))
 
   i <- seq_len(dim(y$I_A)[[4]] - 1)
@@ -166,7 +166,7 @@ test_that("if gamma_C is Inf, I_C cases must progress in 1 timestep", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   i <- seq_len(dim(y$I_C)[[4]] - 1)
@@ -185,7 +185,7 @@ test_that("if gamma_hosp is Inf, I_hosp cases must progress in 1 timestep", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   i <- seq_len(dim(y$I_hosp)[[4]] - 1)
@@ -204,7 +204,7 @@ test_that("if gamma_ICU is Inf, I_ICU cases must progress in 1 timestep", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   i <- seq_len(dim(y$I_ICU)[[4]] - 1)
@@ -222,7 +222,7 @@ test_that("if gamma_rec is Inf, R_hosp cases must progress in 1 time-step", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   i <- seq_len(dim(y$R_hosp)[[4]] - 1)
@@ -238,7 +238,7 @@ test_that("if gamma_E is 0, E stay in progression stage 1", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   ## NOTE: movement is in one *timestep* not one *day*, so can't use
   ## "by = 4" here to get daily output (and in similar tests below)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
@@ -255,7 +255,7 @@ test_that("if gamma_A is 0, I_A stay in progression stage 1", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_A[, 1, , ] > 0))
@@ -270,7 +270,7 @@ test_that("if gamma_C is 0, I_C stay in progression stage 1", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_C[, 1, , ] > 0))
@@ -284,7 +284,7 @@ test_that("if gamma_hosp is 0, I_hosp stay in progression stage 1", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_hosp[, 1, , ] > 0))
@@ -298,7 +298,7 @@ test_that("if gamma_ICU is 0, I_ICU stay in progression stage 1", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$I_ICU[, 1, , ] > 0))
@@ -312,7 +312,7 @@ test_that("if gamma_ICU is 0, I_ICU stay in progression stage 1", {
 
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(basic_initial(info, 1, p)$state)
+  mod$update_state(state = basic_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$R_hosp[, 1, , ] > 0))

@@ -210,7 +210,7 @@ test_that("Parameters affect IFR/IHR/ALOS as expected", {
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
 
