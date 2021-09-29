@@ -167,25 +167,25 @@ typename T::real_t compare(const typename T::real_t * state,
     state[36];
   const real_t model_react_pos = state[43];
 
-  const double p_NC_today =
+  const real_t p_NC_today =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend : shared->p_NC;
-  const double p_NC_today_under15 =
+  const real_t p_NC_today_under15 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_under15 : shared->p_NC_under15;
-  const double p_NC_today_15_24 =
+  const real_t p_NC_today_15_24 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_15_24 : shared->p_NC_15_24;
-  const double p_NC_today_25_49 =
+  const real_t p_NC_today_25_49 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_25_49 : shared->p_NC_25_49;
-  const double p_NC_today_50_64 =
+  const real_t p_NC_today_50_64 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_50_64 : shared->p_NC_50_64;
-  const double p_NC_today_65_79 =
+  const real_t p_NC_today_65_79 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_65_79 : shared->p_NC_65_79;
-  const double p_NC_today_80_plus =
+  const real_t p_NC_today_80_plus =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_80_plus : shared->p_NC_80_plus;
 
@@ -406,22 +406,22 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t phi_pillar2_cases_today =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend : shared->phi_pillar2_cases;
-  const double phi_pillar2_cases_today_under15 =
+  const real_t phi_pillar2_cases_today_under15 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_under15 : shared->phi_pillar2_cases_under15;
-  const double phi_pillar2_cases_today_15_24 =
+  const real_t phi_pillar2_cases_today_15_24 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_15_24 : shared->phi_pillar2_cases_15_24;
-  const double phi_pillar2_cases_today_25_49 =
+  const real_t phi_pillar2_cases_today_25_49 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_25_49 : shared->phi_pillar2_cases_25_49;
-  const double phi_pillar2_cases_today_50_64 =
+  const real_t phi_pillar2_cases_today_50_64 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_50_64 : shared->phi_pillar2_cases_50_64;
-  const double phi_pillar2_cases_today_65_79 =
+  const real_t phi_pillar2_cases_today_65_79 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_65_79 : shared->phi_pillar2_cases_65_79;
-  const double phi_pillar2_cases_today_80_plus =
+  const real_t phi_pillar2_cases_today_80_plus =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_80_plus : shared->phi_pillar2_cases_80_plus;
 
