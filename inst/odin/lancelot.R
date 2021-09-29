@@ -1579,6 +1579,39 @@ new_sympt_cases_non_variant_over25 <-
 update(cum_sympt_cases_non_variant_over25) <-
   cum_sympt_cases_non_variant_over25 + new_sympt_cases_non_variant_over25
 
+## new pillar 2 by age
+initial(cum_sympt_cases_under15) <- 0
+new_sympt_cases_under15 <- sum(n_EI_P[1:3, , ])
+update(cum_sympt_cases_under15) <- cum_sympt_cases_under15 +
+  new_sympt_cases_under15
+
+initial(cum_sympt_cases_15_24) <- 0
+new_sympt_cases_15_24 <- sum(n_EI_P[4:5, , ])
+update(cum_sympt_cases_15_24) <- cum_sympt_cases_15_24 +
+  new_sympt_cases_15_24
+
+## assume CHW [18] are equally distributed amongst 25-64 age bands
+initial(cum_sympt_cases_25_49) <- 0
+new_sympt_cases_25_49 <- sum(n_EI_P[6:10, , ]) + (sum(n_EI_P[18, , ]) / 8) * 5
+update(cum_sympt_cases_25_49) <- cum_sympt_cases_25_49 +
+  new_sympt_cases_25_49
+
+initial(cum_sympt_cases_50_64) <- 0
+new_sympt_cases_50_64 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 8) * 3
+update(cum_sympt_cases_50_64) <- cum_sympt_cases_50_64 +
+  new_sympt_cases_50_64
+
+## assume CHR [19] are 1/4 aged 65-79 and 3/4 80 plus
+initial(cum_sympt_cases_65_79) <- 0
+new_sympt_cases_65_79 <- sum(n_EI_P[14:16, , ]) + (sum(n_EI_P[19, , ]) * 0.25)
+update(cum_sympt_cases_65_79) <- cum_sympt_cases_65_79 +
+  new_sympt_cases_65_79
+
+initial(cum_sympt_cases_80_plus) <- 0
+new_sympt_cases_80_plus <- sum(n_EI_P[17, , ]) + (sum(n_EI_P[19, , ]) * 0.75)
+update(cum_sympt_cases_80_plus) <- cum_sympt_cases_80_plus +
+  new_sympt_cases_80_plus
+
 ## And incidence:
 initial(sympt_cases_inc) <- 0
 update(sympt_cases_inc) <- (
@@ -1599,6 +1632,36 @@ initial(sympt_cases_non_variant_over25_inc) <- 0
 update(sympt_cases_non_variant_over25_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases_non_variant_over25
   else sympt_cases_non_variant_over25_inc + new_sympt_cases_non_variant_over25)
+
+initial(sympt_cases_under15_inc) <- 0
+update(sympt_cases_under15_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_under15
+  else sympt_cases_under15_inc + new_sympt_cases_under15)
+
+initial(sympt_cases_15_24_inc) <- 0
+update(sympt_cases_15_24_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_15_24
+  else sympt_cases_15_24_inc + new_sympt_cases_15_24)
+
+initial(sympt_cases_25_49_inc) <- 0
+update(sympt_cases_25_49_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_25_49
+  else sympt_cases_25_49_inc + new_sympt_cases_25_49)
+
+initial(sympt_cases_50_64_inc) <- 0
+update(sympt_cases_50_64_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_50_64
+  else sympt_cases_50_64_inc + new_sympt_cases_50_64)
+
+initial(sympt_cases_65_79_inc) <- 0
+update(sympt_cases_65_79_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_65_79
+  else sympt_cases_65_79_inc + new_sympt_cases_65_79)
+
+initial(sympt_cases_80_plus_inc) <- 0
+update(sympt_cases_80_plus_inc) <- (
+  if (step %% steps_per_day == 0) new_sympt_cases_80_plus
+  else sympt_cases_80_plus_inc + new_sympt_cases_80_plus)
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
@@ -1715,7 +1778,7 @@ initial(tmp_vaccine_probability[, ]) <- 0
 update(tmp_vaccine_probability[, ]) <- vaccine_probability[i, j]
 dim(tmp_vaccine_probability) <- c(n_groups, n_vacc_classes)
 
-config(compare) <- "compare_carehomes.cpp"
+config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
 ## do not appear in any odin equation we mark them as "ignore.unused"
 ## so that odin doesn't complain that they appear redundant. This
@@ -1723,11 +1786,29 @@ config(compare) <- "compare_carehomes.cpp"
 ## it.
 N_tot_all <- user() # ignore.unused
 N_tot_over25 <- user() # ignore.unused
+N_tot_under15 <- user() # ignore.unused
+N_tot_15_24 <- user() # ignore.unused
+N_tot_25_49 <- user() # ignore.unused
+N_tot_50_64 <- user() # ignore.unused
+N_tot_65_79 <- user() # ignore.unused
+N_tot_80_plus <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
 p_NC <- user() # ignore.unused
 p_NC_weekend <- user() # ignore.unused
+p_NC_under15 <- user() # ignore.unused
+p_NC_weekend_under15 <- user() # ignore.unused
+p_NC_15_24 <- user() # ignore.unused
+p_NC_weekend_15_24 <- user() # ignore.unused
+p_NC_25_49 <- user() # ignore.unused
+p_NC_weekend_25_49 <- user() # ignore.unused
+p_NC_50_64 <- user() # ignore.unused
+p_NC_weekend_50_64 <- user() # ignore.unused
+p_NC_65_79 <- user() # ignore.unused
+p_NC_weekend_65_79 <- user() # ignore.unused
+p_NC_80_plus <- user() # ignore.unused
+p_NC_weekend_80_plus <- user() # ignore.unused
 pillar2_sensitivity <- user() # ignore.unused
 pillar2_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused
@@ -1758,6 +1839,18 @@ kappa_diagnoses <- user() # ignore.unused
 phi_all_admission <- user() # ignore.unused
 kappa_all_admission <- user() # ignore.unused
 rho_pillar2_tests <- user() # ignore.unused
+kappa_pillar2_cases <- user() # ignore.unused
 phi_pillar2_cases <- user() # ignore.unused
 phi_pillar2_cases_weekend <- user() # ignore.unused
-kappa_pillar2_cases <- user() # ignore.unused
+phi_pillar2_cases_under15 <- user() # ignore.unused
+phi_pillar2_cases_weekend_under15 <- user() # ignore.unused
+phi_pillar2_cases_15_24 <- user() # ignore.unused
+phi_pillar2_cases_weekend_15_24 <- user() # ignore.unused
+phi_pillar2_cases_25_49 <- user() # ignore.unused
+phi_pillar2_cases_weekend_25_49 <- user() # ignore.unused
+phi_pillar2_cases_50_64 <- user() # ignore.unused
+phi_pillar2_cases_weekend_50_64 <- user() # ignore.unused
+phi_pillar2_cases_65_79 <- user() # ignore.unused
+phi_pillar2_cases_weekend_65_79 <- user() # ignore.unused
+phi_pillar2_cases_80_plus <- user() # ignore.unused
+phi_pillar2_cases_weekend_80_plus <- user() # ignore.unused

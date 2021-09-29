@@ -1,7 +1,7 @@
 context("pmcmc")
 
 test_that("adding incidence adds appropriate states", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
   expect_true(all(c("deaths_inc", "icu_inc") %in% rownames(res$state)))
 
@@ -18,7 +18,7 @@ test_that("adding incidence adds appropriate states", {
 
 
 test_that("can add and remove trajectories from mcstate_pmcmc objects", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   v <- c("deaths", "icu")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
@@ -29,7 +29,7 @@ test_that("can add and remove trajectories from mcstate_pmcmc objects", {
 
 
 test_that("can compute incidence for a single variable", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
   res <- add_trajectory_incidence(dat$trajectories, "deaths")
   expect_identical(res$state["deaths_inc", , ],
@@ -38,9 +38,9 @@ test_that("can compute incidence for a single variable", {
 
 
 test_that("Can drop predictions from trajectories", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   dat$trajectories$date <- dat$trajectories$step / 4
-  res <- carehomes_forecast(dat, 0, 0, 10, NULL)
+  res <- lancelot_forecast(dat, 0, 0, 10, NULL)
   ans <- drop_trajectory_predicted(res)
 
   expect_equal(drop_trajectory_predicted(res), dat)
@@ -51,8 +51,8 @@ test_that("Can drop predictions from trajectories", {
 
 
 test_that("Can compute forecasts from mcmc output", {
-  dat <- reference_data_carehomes_mcmc()
-  res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "icu"))
+  dat <- reference_data_lancelot_mcmc()
+  res <- lancelot_forecast(dat, 3, 5, 10, c("deaths", "icu"))
 
   expect_equal(dim(res$pars), c(3, 2))
   expect_equal(dim(res$probabilities), c(3, 3))
@@ -66,8 +66,8 @@ test_that("Can compute forecasts from mcmc output", {
 
 
 test_that("Can compute forecasts from mcmc output without prepending", {
-  dat <- reference_data_carehomes_mcmc()
-  res <- carehomes_forecast(dat, 3, 5, 10, c("deaths", "icu"),
+  dat <- reference_data_lancelot_mcmc()
+  res <- lancelot_forecast(dat, 3, 5, 10, c("deaths", "icu"),
                             FALSE)
 
   expect_equal(dim(res$pars), c(3, 2))
@@ -81,9 +81,9 @@ test_that("Can compute forecasts from mcmc output without prepending", {
 
 
 test_that("Can compute forecasts from mcmc output with thinned sample", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
 
-  res_thin <- carehomes_forecast(dat, 3, 2, 10, c("deaths", "icu"),
+  res_thin <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
                                  FALSE, random_sample = FALSE, thin = 3)
   expect_equal(res_thin$iteration, c(2, 5, 8))
 
@@ -91,15 +91,15 @@ test_that("Can compute forecasts from mcmc output with thinned sample", {
   ## For comparison, typically would not expect random sampling to produce
   ## same samples as thinned sampling
   set.seed(1)
-  res_random <- carehomes_forecast(dat, 3, 2, 10, c("deaths", "icu"),
+  res_random <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
                                    FALSE, random_sample = TRUE)
   expect_false(all(res_random$iteration == c(2, 5, 8)))
 })
 
 
 test_that("Can compute forecasts from mcmc output with forecast_days = 0", {
-  dat <- reference_data_carehomes_mcmc()
-  res <- carehomes_forecast(dat, 3, 5, 0, c("deaths", "icu"),
+  dat <- reference_data_lancelot_mcmc()
+  res <- lancelot_forecast(dat, 3, 5, 0, c("deaths", "icu"),
                             FALSE)
 
   ## with forecast_days = 0, we will have no forecasting
@@ -108,7 +108,7 @@ test_that("Can compute forecasts from mcmc output with forecast_days = 0", {
 
 
 test_that("Can combine trajectories of equal size - rank = FALSE", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)
   expect_equal(res$step, dat$trajectories$step)
   expect_equal(res$rate, dat$trajectories$rate)
@@ -119,7 +119,7 @@ test_that("Can combine trajectories of equal size - rank = FALSE", {
 
 
 test_that("Can combine trajectories of equal size", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
   res <- combine_trajectories(list(dat, dat))
   expect_equal(res$step, dat$trajectories$step)
   expect_equal(res$rate, dat$trajectories$rate)
@@ -135,7 +135,7 @@ test_that("Can combine trajectories of equal size", {
 
 
 test_that("Can combine trajectories with missing times", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   ## Create a set where the first "real" data point is missing,
   ## shifting predictions back one day but keeping the same total
@@ -163,13 +163,13 @@ test_that("Can combine trajectories with missing times", {
 
 
 test_that("can combine rt calculations over trajectories", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   index_S <- grep("^S_", names(dat$predict$index))
   S <- dat$trajectories$state[index_S, , , drop = FALSE]
   pars <- lapply(seq_len(nrow(dat$pars)), function(i)
     dat$predict$transform(dat$pars[i, ]))
-  rt <- carehomes_Rt_trajectories(
+  rt <- lancelot_Rt_trajectories(
     dat$trajectories$step, S, pars,
     initial_step_from_parameters = TRUE,
     shared_parameters = FALSE)
@@ -189,13 +189,13 @@ test_that("can combine rt calculations over trajectories", {
 
 
 test_that("when combining rt calculations the output has the expected order", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   index_S <- grep("^S_", names(dat$predict$index))
   S <- dat$trajectories$state[index_S, , , drop = FALSE]
   pars <- lapply(seq_len(nrow(dat$pars)), function(i)
     dat$predict$transform(dat$pars[i, ]))
-  rt <- carehomes_Rt_trajectories(
+  rt <- lancelot_Rt_trajectories(
     dat$trajectories$step, S, pars,
     initial_step_from_parameters = TRUE,
     shared_parameters = FALSE)
@@ -216,13 +216,13 @@ test_that("when combining rt calculations the output has the expected order", {
 
 
 test_that("can combine rt calculations over trajectories without reordering", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   index_S <- grep("^S_", names(dat$predict$index))
   S <- dat$trajectories$state[index_S, , , drop = FALSE]
   pars <- lapply(seq_len(nrow(dat$pars)), function(i)
     dat$predict$transform(dat$pars[i, ]))
-  rt <- carehomes_Rt_trajectories(
+  rt <- lancelot_Rt_trajectories(
     dat$trajectories$step, S, pars,
     initial_step_from_parameters = TRUE,
     shared_parameters = FALSE)
@@ -241,9 +241,9 @@ test_that("can combine rt calculations over trajectories without reordering", {
 
 
 test_that("adding incidence adds appropriate states - nested", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(199, 11, 2, 32),
+    dat$trajectories$state, c(205, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
@@ -271,9 +271,9 @@ test_that("adding incidence adds appropriate states - nested", {
 
 
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(199, 11, 2, 32),
+    dat$trajectories$state, c(205, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   v <- c("deaths", "icu")
@@ -286,9 +286,9 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 
 
 test_that("can compute incidence for a single variable - nested", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(199, 11, 2, 32),
+    dat$trajectories$state, c(205, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                  letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
@@ -298,87 +298,8 @@ test_that("can compute incidence for a single variable - nested", {
 })
 
 
-test_that("can combine EpiEstim rt calculations over trajectories", {
-  dat <- reference_data_carehomes_trajectories()
-
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
-
-  p <- dat$predict$transform(dat$pars[1, ])
-
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
-
-  rt <- carehomes_rt_trajectories_epiestim(
-    dat$trajectories$step, inc, p)
-
-  res <- combine_rt_epiestim(list(rt, rt), list(dat, dat))
-  cmp <- rt
-  cmp$Rt[, 1] <- NA
-  cmp$Rt_summary[, 1] <- NA
-
-  ## Rts are ordered differently
-  expect_equal(sort(as.vector(res$Rt)), sort(as.vector(cmp$Rt)))
-  expect_equal(res$Rt_summary, cmp$Rt_summary)
-})
-
-
-test_that("can combine EpiEstim rt over trajectories without reordering", {
-  dat <- reference_data_carehomes_trajectories()
-
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
-
-  p <- dat$predict$transform(dat$pars[1, ])
-
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
-
-  rt <- carehomes_rt_trajectories_epiestim(
-    dat$trajectories$step, inc, p)
-
-  res <- combine_rt_epiestim(list(rt, rt), list(dat, dat), rank = FALSE)
-  cmp <- rt
-  cmp$Rt[, 1] <- NA
-  cmp$Rt_summary[, 1] <- NA
-
-  ## Rts are ordered differently
-  expect_equal(res$Rt, cmp$Rt)
-  expect_equal(res$Rt_summary, cmp$Rt_summary)
-})
-
-
-test_that("Combining EpiEstim rt reject invalid inputs", {
-  dat <- reference_data_carehomes_trajectories()
-
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
-
-  p <- dat$predict$transform(dat$pars[1, ])
-
-  ## Fix p_C across age groups for the rest of the test
-  p$p_C <- rep(0.6, 19)
-
-  rt <- carehomes_rt_trajectories_epiestim(
-    dat$trajectories$step, inc, p, save_all_Rt_sample = FALSE)
-
-  error_msg <-
-    paste("rt$Rt missing. Did you forget 'save_all_Rt_sample = TRUE'",
-          "in 'carehomes_EpiEstim_Rt_trajectories'?")
-  expect_error(combine_rt_epiestim(list(rt, rt), list(dat, dat)),
-               error_msg, fixed = TRUE)
-
-})
-
-
 test_that("get_sample_rank rejects invalid inputs", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   expect_error(get_sample_rank(dat$state, by = "not_the_right_thing"),
                "'sample' should be an 'mcstate_pmcmc' object",
@@ -391,7 +312,7 @@ test_that("get_sample_rank rejects invalid inputs", {
 
 
 test_that("get_sample_rank returns expected output", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   dim3 <- dim(dat$trajectories$state)[3]
   expected <- order(dat$trajectories$state["infections", , dim3])
@@ -402,7 +323,7 @@ test_that("get_sample_rank returns expected output", {
 
 
 test_that("reorder_sample rejects invalid inputs", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   expect_error(reorder_sample(dat$state, 1:3),
                "'sample' should be an 'mcstate_pmcmc' object",
@@ -415,7 +336,7 @@ test_that("reorder_sample rejects invalid inputs", {
 
 
 test_that("reorder_sample returns expected output", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   ## maintaining the initial order returns the same as input
   expect_equal(reorder_sample(dat, 1:3), dat)
@@ -436,13 +357,13 @@ test_that("reorder_sample returns expected output", {
 
 
 test_that("reorder_rt_ifr rejects invalid inputs", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   index_S <- grep("^S_", names(dat$predict$index))
   S <- dat$trajectories$state[index_S, , , drop = FALSE]
   pars <- lapply(seq_len(nrow(dat$pars)), function(i)
     dat$predict$transform(dat$pars[i, ]))
-  rt <- carehomes_Rt_trajectories(
+  rt <- lancelot_Rt_trajectories(
     dat$trajectories$step, S, pars,
     initial_step_from_parameters = TRUE,
     shared_parameters = FALSE)
@@ -459,13 +380,13 @@ test_that("reorder_rt_ifr rejects invalid inputs", {
 
 
 test_that("reorder_rt_ifr returns expected output", {
-  dat <- reference_data_carehomes_trajectories()
+  dat <- reference_data_lancelot_trajectories()
 
   index_S <- grep("^S_", names(dat$predict$index))
   S <- dat$trajectories$state[index_S, , , drop = FALSE]
   pars <- lapply(seq_len(nrow(dat$pars)), function(i)
     dat$predict$transform(dat$pars[i, ]))
-  rt <- carehomes_Rt_trajectories(
+  rt <- lancelot_Rt_trajectories(
     dat$trajectories$step, S, pars,
     initial_step_from_parameters = TRUE,
     shared_parameters = FALSE)

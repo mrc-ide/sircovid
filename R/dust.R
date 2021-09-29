@@ -237,16 +237,10 @@ carehomes <- R6::R6Class(
      I_C_1_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      I_C_2_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      I_P_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     N_tot_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      N_tot_15_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     N_tot_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     N_tot_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     N_tot_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     N_tot_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      N_tot_all = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      N_tot_over25 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      N_tot_react = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     N_tot_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      beta_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      cross_immunity = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      exp_noise = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
@@ -335,19 +329,7 @@ carehomes <- R6::R6Class(
      p_ICU_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_ICU_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_NC = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_weekend = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_weekend_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_weekend_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_weekend_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_weekend_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_weekend_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_weekend_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_R_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_W_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_sero_pos_1 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
@@ -363,19 +345,7 @@ carehomes <- R6::R6Class(
      phi_general = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_hosp = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_weekend = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_weekend_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_weekend_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_weekend_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_weekend_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_weekend_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_weekend_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      pillar2_sensitivity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      pillar2_specificity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      react_sensitivity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
@@ -596,7 +566,387 @@ carehomes <- R6::R6Class(
     }
   ))
 class(carehomes) <- c("dust_generator", class(carehomes))
-## Generated by odin.dust (version 0.2.9) - do not edit
+lancelot <- R6::R6Class(
+  "dust",
+  cloneable = FALSE,
+
+  private = list(
+    pars_ = NULL,
+    pars_multi_ = NULL,
+    index_ = NULL,
+    info_ = NULL,
+    n_threads_ = NULL,
+    n_particles_ = NULL,
+    n_particles_each_ = NULL,
+    shape_ = NULL,
+    ptr_ = NULL,
+    device_config_ = NULL,
+    param_ = list(G_D_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     ICU_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     I_A_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     I_C_1_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     I_C_2_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     I_P_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_15_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_all = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_over25 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_react = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     N_tot_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     beta_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     cross_immunity = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     exp_noise = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     gamma_A_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_C_1_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_C_2_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_E_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_G_D_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_H_D_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_H_R_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_ICU_D_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_ICU_W_D_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_ICU_W_R_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_ICU_pre_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_P_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_W_D_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_W_R_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     hosp_transmission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     index_dose = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     index_dose_inverse = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     k_A = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_C_1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_C_2 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_E = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_G_D = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_H_D = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_H_R = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_ICU_D = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_ICU_W_D = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_ICU_W_R = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_ICU_pre = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_P = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_PCR_pos = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_PCR_pre = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_W_D = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_W_R = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_sero_pos_1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_sero_pos_2 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_sero_pre_1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     k_sero_pre_2 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_ICU = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_admitted = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_all_admission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_death = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_death_carehomes = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_death_comm = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_death_hosp = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_death_non_hosp = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_diagnoses = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_general = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_hosp = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     kappa_pillar2_cases = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     m = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     n_age_groups = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_doses = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_A_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_C_1_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_C_2_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_E_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_G_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_H_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_H_R_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_ICU_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_ICU_W_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_ICU_W_R_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_ICU_pre_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_P_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_W_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_gamma_W_R_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_groups = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_C_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_G_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_H_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_H_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_ICU_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_ICU_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_R_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_W_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_p_star_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_strains = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_vacc_classes = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_C_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_G_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_H_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_H_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_ICU_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_ICU_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_NC = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_NC_weekend_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_R_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_W_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     p_sero_pos_1 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     p_sero_pos_2 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     p_star_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     phi_ICU = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_admitted = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_all_admission = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_death_carehomes = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_death_comm = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_death_hosp = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_diagnoses = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_general = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_hosp = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_weekend = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_weekend_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_weekend_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_weekend_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_weekend_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_weekend_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     phi_pillar2_cases_weekend_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     pillar2_sensitivity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     pillar2_specificity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     react_sensitivity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     react_specificity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_A = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_C_1 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_C_2 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_E = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_G_D = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_H_D = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_H_R = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_ICU_D = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_ICU_W_D = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_ICU_W_R = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_ICU_pre = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_P = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_W_D = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_gamma_W_R = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     rel_infectivity = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_G_D = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_H_D = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_ICU = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_ICU_D = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_R = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_W_D = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_hosp_if_sympt = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_p_sympt = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rel_susceptibility = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     rho_pillar2_tests = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     sero_sensitivity_1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     sero_sensitivity_2 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     sero_specificity_1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     sero_specificity_2 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     steps_per_day = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     strain_seed_step = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     strain_transmission = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     vaccine_dose_step = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     vaccine_progression_rate_base = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     waning_rate = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     gamma_PCR_pos = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     gamma_PCR_pre = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     gamma_U = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     gamma_sero_pos_1 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     gamma_sero_pos_2 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     gamma_sero_pre_1 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     gamma_sero_pre_2 = list(has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     vaccine_catchup_fraction = list(has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE))
+  ),
+
+  public = list(
+    initialize = function(pars, step, n_particles, n_threads = 1L,
+                          seed = NULL, pars_multi = FALSE,
+                          device_config = NULL) {
+      res <- dust_lancelot_alloc(pars, pars_multi, step, n_particles,
+                        n_threads, seed, device_config)
+      private$pars_ <- pars
+      private$pars_multi_ <- pars_multi
+      private$n_threads_ <- n_threads
+      private$ptr_ <- res[[1L]]
+      private$info_ <- res[[2L]]
+      private$shape_ <- res[[3L]]
+      private$device_config_ <- res[[4L]]
+      private$n_particles_ <- prod(private$shape_)
+      if (pars_multi) {
+        private$n_particles_each_ <- private$n_particles_ / length(pars)
+      } else {
+        private$n_particles_each_ <- private$n_particles_
+      }
+    },
+
+    name = function() {
+      "lancelot"
+    },
+
+    param = function() {
+      private$param_
+    },
+
+    run = function(step_end, device = FALSE, deterministic = FALSE) {
+      m <- dust_lancelot_run(private$ptr_, step_end, device, deterministic)
+      rownames(m) <- names(private$index_)
+      m
+    },
+
+    simulate = function(step_end, device = FALSE, deterministic = FALSE) {
+      m <- dust_lancelot_simulate(private$ptr_, step_end, device, deterministic)
+      rownames(m) <- names(private$index_)
+      m
+    },
+
+    set_index = function(index) {
+      dust_lancelot_set_index(private$ptr_, index)
+      private$index_ <- index
+      invisible()
+    },
+
+    index = function() {
+      private$index_
+    },
+
+    n_threads = function() {
+      private$n_threads_
+    },
+
+    n_state = function() {
+      dust_lancelot_n_state(private$ptr_)
+    },
+
+    n_particles = function() {
+      private$n_particles_
+    },
+
+    n_particles_each = function() {
+      private$n_particles_each_
+    },
+
+    shape = function() {
+      private$shape_
+    },
+
+    set_state = function(state, step = NULL, deterministic = FALSE) {
+      dust_lancelot_set_state(private$ptr_, state, step, deterministic)
+      invisible()
+    },
+
+    reset = function(pars, step) {
+      private$info_ <- dust_lancelot_reset(private$ptr_, pars, step)
+      private$pars_ <- pars
+      invisible()
+    },
+
+    set_pars = function(pars) {
+      private$info_ <- dust_lancelot_set_pars(private$ptr_, pars)
+      private$pars_ <- pars
+    },
+
+    state = function(index = NULL) {
+      m <- dust_lancelot_state(private$ptr_, index)
+      rownames(m) <- names(index)
+      m
+    },
+
+    step = function() {
+      dust_lancelot_step(private$ptr_)
+    },
+
+    reorder = function(index) {
+      storage.mode(index) <- "integer"
+      dust_lancelot_reorder(private$ptr_, index)
+      invisible()
+    },
+
+    resample = function(weights) {
+      invisible(dust_lancelot_resample(private$ptr_, weights))
+    },
+
+    info = function() {
+      private$info_
+    },
+
+    pars = function() {
+      private$pars_
+    },
+
+    rng_state = function(first_only = FALSE, last_only = FALSE) {
+      dust_lancelot_rng_state(private$ptr_, first_only, last_only)
+    },
+
+    set_rng_state = function(rng_state) {
+      dust_lancelot_set_rng_state(private$ptr_, rng_state)
+      invisible()
+    },
+
+    has_openmp = function() {
+      dust_lancelot_capabilities()[["openmp"]]
+    },
+
+    has_cuda = function() {
+      dust_lancelot_capabilities()[["cuda"]]
+    },
+
+    n_pars = function() {
+      if (private$pars_multi_) length(private$pars_) else 0L
+    },
+
+    set_n_threads = function(n_threads) {
+      prev <- private$n_threads_
+      dust_lancelot_set_n_threads(private$ptr_, n_threads)
+      private$n_threads_ <- n_threads
+      invisible(prev)
+    },
+
+    has_compare = function() {
+      dust_lancelot_capabilities()[["compare"]]
+    },
+
+    set_data = function(data) {
+      dust_lancelot_set_data(private$ptr_, data)
+    },
+
+    compare_data = function(device = FALSE) {
+      dust_lancelot_compare_data(private$ptr_, device)
+    },
+
+    filter = function(save_trajectories = FALSE, step_snapshot = NULL,
+                      device = FALSE) {
+      dust_lancelot_filter(private$ptr_, save_trajectories,
+                           step_snapshot, device)
+    },
+
+    device_info = function() {
+      ret <- dust_lancelot_device_info()
+      parent <- parent.env(environment())
+      if (ret$has_cuda && exists("private", parent, inherits = FALSE)) {
+        ret$config <- private$device_config_
+      }
+      ret
+    }
+  ))
+class(lancelot) <- c("dust_generator", class(lancelot))
+## Generated by odin.dust (version 0.2.10) - do not edit
 basic$set("public", "transform_variables", function(y) {
     info <- self$info()
     set_dim <- function(x, dimx) {
@@ -618,6 +968,26 @@ basic$set("public", "transform_variables", function(y) {
     }
 })
 carehomes$set("public", "transform_variables", function(y) {
+    info <- self$info()
+    set_dim <- function(x, dimx) {
+        if (length(dimx) > 1L) {
+            dim(x) <- dimx
+        }
+        x
+    }
+    if (is.matrix(y)) {
+        n <- ncol(y)
+        Map(function(i, d) set_dim(y[i, , drop = FALSE], c(d,
+            n)), info$index, info$dim)
+    } else if (is.array(y)) {
+        n <- dim(y)[2:3]
+        Map(function(i, d) set_dim(y[i, , , drop = FALSE], c(d,
+            n)), info$index, info$dim)
+    } else {
+        Map(function(i, d) set_dim(y[i], d), info$index, info$dim)
+    }
+})
+lancelot$set("public", "transform_variables", function(y) {
     info <- self$info()
     set_dim <- function(x, dimx) {
         if (length(dimx) > 1L) {

@@ -1,15 +1,16 @@
-context("carehomes")
+context("lancelot")
 
-test_that("can run the carehomes model", {
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-  mod <- carehomes$new(p, 0, 5, seed = 1L)
+
+test_that("can run the lancelot model", {
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+  mod <- lancelot$new(p, 0, 5, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
 
   info <- mod$info()
-  initial <- carehomes_initial(info, 10, p)
+  initial <- lancelot_initial(info, 10, p)
   mod$set_state(initial$state, initial$step)
 
-  index <- c(carehomes_index(info)$run,
+  index <- c(lancelot_index(info)$run,
              deaths_carehomes = info$index[["D_carehomes_tot"]],
              deaths_comm = info$index[["D_comm_tot"]],
              deaths_hosp = info$index[["D_hosp_tot"]],
@@ -24,7 +25,8 @@ test_that("can run the carehomes model", {
 
   ## Regenerate with: dput_named_matrix(res)
   expected <-
-    rbind(time                               = c(213, 213, 213, 213, 213),
+    rbind(time                               = c(213, 213, 213, 213,
+                                                 213),
           icu                                = c(111, 299, 340, 59, 42),
           general                            = c(396, 1133, 1277, 303,
                                                  135),
@@ -43,6 +45,12 @@ test_that("can run the carehomes model", {
                                                  86),
           sympt_cases_over25_inc             = c(247, 675, 757, 180,
                                                  65),
+          sympt_cases_under15_inc            = c(28, 75, 87, 12, 11),
+          sympt_cases_15_24_inc              = c(19, 76, 74, 17, 10),
+          sympt_cases_25_49_inc              = c(95, 257, 267, 54, 21),
+          sympt_cases_50_64_inc              = c(73, 204, 212, 59, 20),
+          sympt_cases_65_79_inc              = c(47, 143, 164, 46, 15),
+          sympt_cases_80_plus_inc            = c(32, 71, 114, 21, 9),
           sympt_cases_non_variant_over25_inc = c(247, 675, 757, 180,
                                                  65),
           react_pos                          = c(20534, 61844, 68919,
@@ -67,11 +75,11 @@ test_that("can run the carehomes model", {
 
 test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
-  pars <- carehomes_parameters(start_date, "england")
-  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+  pars <- lancelot_parameters(start_date, "england")
+  data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
-  pf <- carehomes_particle_filter(data, 10)
+  pf <- lancelot_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")
 
   pf$run(pars)
@@ -80,10 +88,10 @@ test_that("can run the particle filter on the model", {
 
 test_that("incidence calculation is correct", {
   start_date <- sircovid_date("2020-02-02")
-  pars <- carehomes_parameters(start_date, "england")
-  mod <- carehomes$new(pars, 0, 10, n_threads = 10)
+  pars <- lancelot_parameters(start_date, "england")
+  mod <- lancelot$new(pars, 0, 10, n_threads = 10)
   info <- mod$info()
-  initial <- carehomes_initial(info, 10, pars)
+  initial <- lancelot_initial(info, 10, pars)
   mod$set_state(initial$state, initial$step)
 
   ## We have interesting values by time 60, step 240
@@ -131,38 +139,38 @@ test_that("incidence calculation is correct", {
 
 test_that("compiled compare function is correct", {
   start_date <- sircovid_date("2020-02-02")
-  pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
-  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+  pars <- lancelot_parameters(start_date, "england", exp_noise = Inf)
+  data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
   np <- 1
-  mod <- carehomes$new(pars, 0, np, seed = 1L)
-  initial <- carehomes_initial(mod$info(), np, pars)
+  mod <- lancelot$new(pars, 0, np, seed = 1L)
+  initial <- lancelot_initial(mod$info(), np, pars)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(carehomes_index(mod$info())$run)
+  mod$set_index(lancelot_index(mod$info())$run)
 
   mod$set_data(dust::dust_data(data, "step_end"))
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
   y <- mod$run(data$step_end[[i]])
   expect_equal(mod$compare_data(),
-               carehomes_compare(y, data[i, ], pars))
+               lancelot_compare(y, data[i, ], pars))
 })
 
 
-test_that("Test compiled carehomes components", {
+test_that("Test compiled lancelot components", {
   start_date <- sircovid_date("2020-02-02")
-  pars <- carehomes_parameters(start_date, "england", exp_noise = Inf)
+  pars <- lancelot_parameters(start_date, "england", exp_noise = Inf)
   ## use a non-integer kappa for pillar 2 cases
   pars$kappa_pillar2_cases <- 2.5
-  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+  data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
   np <- 10
-  mod <- carehomes$new(pars, 0, np, seed = 1L)
-  initial <- carehomes_initial(mod$info(), np, pars)
+  mod <- lancelot$new(pars, 0, np, seed = 1L)
+  initial <- lancelot_initial(mod$info(), np, pars)
   mod$set_state(initial$state, initial$step)
-  mod$set_index(carehomes_index(mod$info())$run)
+  mod$set_index(lancelot_index(mod$info())$run)
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
   step <- data$step_end[[i]]
@@ -188,9 +196,21 @@ test_that("Test compiled carehomes components", {
     c(new_all_admissions = 50),
     c(npos_15_64 = 10, ntot_15_64 = 50),
     c(pillar2_pos = 10, pillar2_tot = 50),
-    c(pillar2_cases = 50),
     c(pillar2_over25_pos = 10, pillar2_over25_tot = 50),
+    c(pillar2_under15_pos = 10, pillar2_under15_tot = 50),
+    c(pillar2_15_24_pos = 10, pillar2_15_24_tot = 50),
+    c(pillar2_25_49_pos = 10, pillar2_25_49_tot = 50),
+    c(pillar2_50_64_pos = 10, pillar2_50_64_tot = 50),
+    c(pillar2_65_79_pos = 10, pillar2_65_79_tot = 50),
+    c(pillar2_80_plus_pos = 10, pillar2_80_plus_tot = 50),
+    c(pillar2_cases = 50),
     c(pillar2_over25_cases = 50),
+    c(pillar2_under15_cases = 50),
+    c(pillar2_15_24_cases = 50),
+    c(pillar2_25_49_cases = 50),
+    c(pillar2_50_64_cases = 50),
+    c(pillar2_65_79_cases = 50),
+    c(pillar2_80_plus_cases = 50),
     c(react_pos = 10, react_tot = 50),
     c(strain_non_variant = 10, strain_tot = 50))
 
@@ -198,7 +218,7 @@ test_that("Test compiled carehomes components", {
     d_test <- update_data(p)
     mod$set_data(dust::dust_data(d_test, "step_end"))
     expect_equal(mod$compare_data(),
-                 unname(carehomes_compare(y, d_test, pars)))
+                 unname(lancelot_compare(y, d_test, pars)))
   }
 })
 
@@ -207,14 +227,14 @@ test_that("can run the particle filter on the model 2", {
   skip_on_windows_gha()
   set.seed(2)
   start_date <- sircovid_date("2020-02-02")
-  pars <- carehomes_parameters(start_date, "england")
-  data <- carehomes_data(read_csv(sircovid_file("extdata/example.csv")),
+  pars <- lancelot_parameters(start_date, "england")
+  data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
                          start_date, pars$dt)
 
   np <- 50
-  pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE,
+  pf1 <- lancelot_particle_filter(data, np, compiled_compare = FALSE,
                                    seed = 2)
-  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE, seed = 2)
+  pf2 <- lancelot_particle_filter(data, np, compiled_compare = TRUE, seed = 2)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
   expect_lt(abs(ll1 - ll2), 60)

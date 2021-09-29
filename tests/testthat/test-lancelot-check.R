@@ -1,12 +1,12 @@
-context("carehomes (check)")
+context("lancelot (check)")
 
 test_that("N_tots stay constant without waning immunity", {
   ## waning_rate default is 0
-  p <- carehomes_parameters(0, "uk")
-  mod <- carehomes$new(p, 0, 1)
+  p <- lancelot_parameters(0, "uk")
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -23,11 +23,11 @@ test_that("N_tots stay constant without waning immunity", {
 
 test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
           are non-decreasing", {
-  p <- carehomes_parameters(0, "uk", waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  p <- lancelot_parameters(0, "uk", waning_rate = 1 / 20)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -42,12 +42,12 @@ test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
 
 test_that("N_tot stays constant when p_R < 1, while
           sero and PCR N_tots are non-decreasing", {
-  p <- carehomes_parameters(0, "uk")
+  p <- lancelot_parameters(0, "uk")
   p$p_R_step[, ] <- 0.5
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -67,11 +67,11 @@ test_that("there are no infections when beta is 0", {
   waning_rate[4] <- 0 # no waning in group with seeded infections
   # otherwise S can go up as these infected individuals loose immunity
 
-  p <- carehomes_parameters(0, "england", beta_value = 0,
+  p <- lancelot_parameters(0, "england", beta_value = 0,
                             waning_rate = waning_rate)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -81,10 +81,10 @@ test_that("there are no infections when beta is 0", {
 
 
 test_that("everyone is infected when beta is large", {
-  p <- carehomes_parameters(0, "england", beta_value = 1e9)
-  mod <- carehomes$new(p, 0, 1)
+  p <- lancelot_parameters(0, "england", beta_value = 1e9)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(
     mod$simulate(seq(0, 400, by = 4))))
   expect_true(all(y$S[, 1, -1] == 0))
@@ -96,13 +96,13 @@ test_that("noone stays in R if waning rate is very
   # with a large waning rate and beta = 0,
   # people can move from R to S but not outside of S
   # therefore R should quickly get empty
-  p <- carehomes_parameters(0, "england",
+  p <- lancelot_parameters(0, "england",
                             beta_value = 0, # to forbid movement out of S
                             waning_rate = Inf) # to force movement out of R
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
 
-  state <- carehomes_initial(info, 1, p)$state
+  state <- lancelot_initial(info, 1, p)$state
 
   # move everyone to R
   index_S <- array(info$index$S, info$dim$S)
@@ -121,11 +121,11 @@ test_that("noone stays in R if waning rate is very
 })
 
 test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
-  p <- carehomes_parameters(0, "england",
+  p <- lancelot_parameters(0, "england",
                             waning_rate = 0)
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(
     mod$simulate(seq(0, 400, by = 4))))
 
@@ -138,10 +138,10 @@ test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
 test_that("No one is infected if I and E are 0 at t = 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y <- carehomes_initial(info, 1, p)$state
+  y <- lancelot_initial(info, 1, p)$state
   y[info$index$I_A] <- 0
   y[info$index$T_sero_pre_1] <- 0
   y[info$index$T_sero_pre_2] <- 0
@@ -159,12 +159,12 @@ test_that("No one is infected if I and E are 0 at t = 0", {
 test_that("No one is hospitalised, no-one dies if p_C is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_C_step[, ] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -198,12 +198,12 @@ test_that("No one is hospitalised, no-one dies if p_H is 0", {
   set.seed(1)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_H_step[, ] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -238,16 +238,16 @@ test_that("No one is hospitalised, no-one dies if p_H is 0", {
 test_that("No one is hospitalised, no-one recovers in edge case", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_H_step[, ] <- 1
   p$p_G_D_step[, ] <- 1
   p$p_C_step[, ] <- 1
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
 
   ## Move initial infectives to 2nd stage sympt
-  y0 <- carehomes_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)$state
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
@@ -280,16 +280,16 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
 test_that("No one is hospitalised, no-one recovers in edge case 2", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_H_step[, ] <- 1
   p$p_G_D_step[, ] <- 1
   p$p_C_step[, ] <- 1
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
 
   ## Move initial infectives to 2nd stage sympt
-  y0 <- carehomes_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)$state
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
@@ -321,12 +321,12 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
 test_that("No-one recovers if p_R = 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_R_step[, ] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -341,16 +341,16 @@ test_that("No-one recovers if p_R = 0", {
 
 test_that("Everyone recovers in edge case", {
   ## This test is primarily to test the behaviour for p_R = 1
-  p <- carehomes_parameters(0, "england", beta_value = 1e9)
+  p <- lancelot_parameters(0, "england", beta_value = 1e9)
   p$p_G_D_step[, ] <- 1
   p$p_G_D_step[, ] <- 0
   p$p_ICU_D_step[, ] <- 0
   p$p_H_D_step[, ] <- 0
   p$p_W_D_step[, ] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -376,12 +376,12 @@ test_that("Everyone recovers in edge case", {
 test_that("No one dies in the community if p_G_D is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_G_D_step[, ] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -400,15 +400,15 @@ test_that("forcing hospital route results in correct path", {
                      prob_W_D, expect_cases, expect_zero) {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
-    p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+    p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
     p$p_ICU_step[, ] <- prob_ICU %||% p$p_ICU_step
     p$p_ICU_D_step[, ] <- prob_ICU_D %||% p$p_ICU_D_step
     p$p_H_D_step[, ] <- prob_H_D %||% p$p_H_D_step
     p$p_W_D_step[, ] <- prob_W_D %||% p$p_W_D_step
 
-    mod <- carehomes$new(p, 0, 1, seed = 1L)
+    mod <- lancelot$new(p, 0, 1, seed = 1L)
     info <- mod$info()
-    mod$set_state(carehomes_initial(info, 1, p)$state)
+    mod$set_state(lancelot_initial(info, 1, p)$state)
     y <- mod$transform_variables(
       drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -463,13 +463,13 @@ test_that("forcing hospital route results in correct path", {
 test_that("No one seroconverts if p_sero_pos is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_sero_pos_1[] <- 0
   p$p_sero_pos_2[] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -484,7 +484,7 @@ test_that("No one does not seroconvert and no one seroreverts
           if p_sero_pos is 1 and gamma_sero_pos is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
 
   p$p_sero_pos_1[] <- 1
   p$p_sero_pos_2[] <- 1
@@ -492,9 +492,9 @@ test_that("No one does not seroconvert and no one seroreverts
   p$gamma_sero_pos_1 <- 0
   p$gamma_sero_pos_2 <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -510,14 +510,14 @@ test_that("setting a gamma to Inf results immediate progression", {
                      hosp_compartment) {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
-    p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+    p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
     p[[gamma_name]] <- Inf
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
-    mod <- carehomes$new(p, 0, 1)
+    mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    state <- carehomes_initial(info, 1, p)$state
+    state <- lancelot_initial(info, 1, p)$state
 
     # add individuals into the compartment
     if (hosp_compartment) {
@@ -580,14 +580,14 @@ test_that("setting a gamma to 0 results in no progression", {
                      hosp_compartment) {
     ## waning_rate default is 0, setting to a non-zero value so that this test
     ## passes with waning immunity
-    p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+    p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
     p[[gamma_name]] <- 0
     p[[progression_name]] <- max(p[[progression_name]], 2)
 
-    mod <- carehomes$new(p, 0, 1)
+    mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    state <- carehomes_initial(info, 1, p)$state
+    state <- lancelot_initial(info, 1, p)$state
 
     # add individuals into the compartment (only the first progression stage)
     if (hosp_compartment) {
@@ -630,7 +630,7 @@ test_that("setting a gamma to 0 results in no progression", {
     }
   }
 
-  p <- carehomes_parameters(0, "england")
+  p <- lancelot_parameters(0, "england")
   helper("gamma_E_step", "k_E", "E", FALSE)
   helper("gamma_A_step", "k_A", "I_A", FALSE)
   helper("gamma_P_step", "k_P", "I_P", FALSE)
@@ -658,7 +658,7 @@ test_that("No one is unconfirmed, if p_star = 1", {
   set.seed(1)
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step[, ] <- 1
 
   p$gamma_ICU_pre_step <- Inf
@@ -670,9 +670,9 @@ test_that("No one is unconfirmed, if p_star = 1", {
   p$gamma_W_R_step <- Inf
   p$gamma_W_D_step <- Inf
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+  mod$set_state(lancelot_initial(info, 1, p)$state, 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(all(y$H_R_unconf == 0))
@@ -707,13 +707,13 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
   skip_on_mac_gha()
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step[, ] <- 0
   p$gamma_U <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+  mod$set_state(lancelot_initial(info, 1, p)$state, 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$H_R_unconf > 0))
@@ -740,7 +740,7 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
 test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step[, ] <- 0
 
   p$gamma_U <- Inf
@@ -753,9 +753,9 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   p$gamma_W_R_step <- Inf
   p$gamma_W_D_step <- Inf
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- carehomes_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)$state
 
   ## We want to set ICU_W_R_unconf[, 1, ], ICU_W_D_unconf[, 1, ] and
   ## ICU_D_unconf[, 1, ] to 50
@@ -819,14 +819,15 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   expect_true(all(y$cum_admit_conf == 0))
 })
 
+
 test_that("tots all summed correctly ", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
-  mod <- carehomes$new(p, 0, 1)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   expect_true(all(y$general_tot == apply(y$ICU_pre_conf, 5, sum) +
@@ -840,8 +841,8 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$hosp_tot == y$ICU_tot + y$general_tot))
   expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
   expect_true(all(y$D_comm_tot == apply(y$D_non_hosp[1:18, ], 2, sum)))
-  expect_true(all(y$D_carehomes_tot == y$D_non_hosp[19, ]))
-  expect_true(all(y$D_tot == y$D_hosp_tot + y$D_carehomes_tot + y$D_comm_tot))
+  expect_true(all(y$D_lancelot_tot == y$D_non_hosp[19, ]))
+  expect_true(all(y$D_tot == y$D_hosp_tot + y$D_lancelot_tot + y$D_comm_tot))
 
   # check the positivity sums
   expect_true(all(y$sero_pos_1 == apply(y$T_sero_pos_1[4:13, , , 1, ], 3, sum)))
@@ -850,10 +851,32 @@ test_that("tots all summed correctly ", {
 })
 
 
+test_that("Symptomatic cases by age add up correctly", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(y$sympt_cases_inc ==
+                    y$sympt_cases_under15_inc + y$sympt_cases_15_24_inc +
+                    y$sympt_cases_25_49_inc + y$sympt_cases_50_64_inc +
+                    y$sympt_cases_65_79_inc + y$sympt_cases_80_plus_inc))
+
+  expect_true(all(y$sympt_cases_over25_inc ==
+                    y$sympt_cases_25_49_inc + y$sympt_cases_50_64_inc +
+                    y$sympt_cases_65_79_inc + y$sympt_cases_80_plus_inc))
+})
+
+
 test_that("Individuals cannot infect in compartment with zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
-    p <- carehomes_parameters(0, "england", beta_value = 1e9)
+    p <- lancelot_parameters(0, "england", beta_value = 1e9)
 
     ## set all transmission parameters to 1
     p$I_A_transmission <- 1
@@ -870,10 +893,10 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
 
-    mod <- carehomes$new(p, 0, 1)
+    mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    y0 <- carehomes_initial(info, 1, p)$state
+    y0 <- lancelot_initial(info, 1, p)$state
 
     ## remove initial asymptomatic individuals
     index_I_A <- info$index$I_A
@@ -917,7 +940,7 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
 test_that("Individuals can infect in compartment with non-zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
-    p <- carehomes_parameters(0, "england", beta_value = 1e9)
+    p <- lancelot_parameters(0, "england", beta_value = 1e9)
 
     ## set all transmission parameters to 0
     p$I_A_transmission <- 0
@@ -934,10 +957,10 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     ## set relevant gamma to 0 so no progression
     p[[gamma_name]] <- 0
 
-    mod <- carehomes$new(p, 0, 1)
+    mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    y0 <- carehomes_initial(info, 1, p)$state
+    y0 <- lancelot_initial(info, 1, p)$state
 
     ## remove initial asymptomatic individuals
     index_I_A <- info$index$I_A

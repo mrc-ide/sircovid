@@ -1,15 +1,15 @@
-##' @name carehomes
-##' @title The carehomes sircovid model
+##' @name lancelot
+##' @title The lancelot sircovid model
 ##'
 ##' Our "current" sircovid model. This is a dust model.
 ##'
-##' @export carehomes
+##' @export lancelot
 NULL
 
 
-##' Parameters for the "[carehomes]" model.
+##' Parameters for the "[lancelot]" model.
 ##'
-##' @title Parameters for the carehomes model
+##' @title Parameters for the lancelot model
 ##'
 ##' @inheritParams basic_parameters
 ##'
@@ -34,12 +34,12 @@ NULL
 ##'
 ##' @param observation Either `NULL` or a list of observation parameters. If
 ##'   `NULL`, then a list of observation parameters will be generated using
-##'   `carehomes_parameters_observation(exp_noise)`
+##'   `lancelot_parameters_observation(exp_noise)`
 ##'
 ##' @param sens_and_spec Either `NULL` or a list of diagnostic test sensitivity
 ##'   and specificity parameters. If `NULL`, then a list of sensitivity and
 ##'   specificity parameters will be generated using
-##'   `carehomes_parameters_sens_and_spec()`
+##'   `lancelot_parameters_sens_and_spec()`
 ##'
 ##'
 ##' @param initial_I Initial number of infected indidviduals; these
@@ -58,6 +58,54 @@ NULL
 ##'
 ##' @param p_NC_weekend Proportion of population who do not have covid but have
 ##'   covid-like symptoms that could lead to getting a PCR test on a weekend
+##'
+##' @param p_NC_under15 Proportion of population under 15 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_under15 Proportion of population under 15 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_15_24 Proportion of population 15 to 24 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_15_24 Proportion of population 15 to 24 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_25_49 Proportion of population 25 to 49 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_25_49 Proportion of population 25 to 49 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_50_64 Proportion of population 50 to 64 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_50_64 Proportion of population 50 to 64 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_65_79 Proportion of population 65 to 79 who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_65_79 Proportion of population 65 to 79 who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
+##'
+##' @param p_NC_80_plus Proportion of population 80 plus who do not have covid
+##'   but have covid-like symptoms that could lead to getting a PCR test on a
+##'   weekday
+##'
+##' @param p_NC_weekend_80_plus Proportion of population 80 plus who do not
+##'   have covid but have covid-like symptoms that could lead to getting a PCR
+##'   test on a weekend
 ##'
 ##' @param strain_transmission Vector of length two for relative
 ##'   transmissibility of each strain modelled. First element should be 1.
@@ -249,7 +297,7 @@ NULL
 ##' @examples
 ##'
 ##' region <- "london"
-##' carehomes_parameters(sircovid_date("2020-02-01"), region)
+##' lancelot_parameters(sircovid_date("2020-02-01"), region)
 ##'
 ##' # example set up of vaccination parameters independent of age
 ##' # 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity
@@ -287,7 +335,7 @@ NULL
 ##'   0, daily_doses, mean_days_between_doses, n)
 ##'
 ##' # generate model parameters
-##' p <- carehomes_parameters(
+##' p <- lancelot_parameters(
 ##'        sircovid_date("2020-02-01"), region,
 ##'        rel_susceptibility = rel_susceptibility,
 ##'        rel_p_sympt = rel_p_sympt,
@@ -351,7 +399,7 @@ NULL
 ##'                                   rep( 1 / (26 * 7), n_groups - 1)))
 ##'
 ##' # generate model parameters
-##' p <- carehomes_parameters(
+##' p <- lancelot_parameters(
 ##'        sircovid_date("2020-02-01"), region,
 ##'        rel_susceptibility = rel_susceptibility,
 ##'        rel_p_sympt = rel_p_sympt,
@@ -364,7 +412,7 @@ NULL
 ##'
 ##' # TODO: add an example of manually set up vaccine schedule
 ##'
-carehomes_parameters <- function(start_date, region,
+lancelot_parameters <- function(start_date, region,
                                  beta_date = NULL, beta_value = NULL,
                                  beta_type = "piecewise-linear",
                                  population = NULL,
@@ -379,6 +427,18 @@ carehomes_parameters <- function(start_date, region,
                                  m_CHR = 5e-5,
                                  p_NC = 0.01,
                                  p_NC_weekend = 0.005,
+                                 p_NC_under15 = 0.01,
+                                 p_NC_weekend_under15 = 0.005,
+                                 p_NC_15_24 = 0.01,
+                                 p_NC_weekend_15_24 = 0.005,
+                                 p_NC_25_49 = 0.01,
+                                 p_NC_weekend_25_49 = 0.005,
+                                 p_NC_50_64 = 0.01,
+                                 p_NC_weekend_50_64 = 0.005,
+                                 p_NC_65_79 = 0.01,
+                                 p_NC_weekend_65_79 = 0.005,
+                                 p_NC_80_plus = 0.01,
+                                 p_NC_weekend_80_plus = 0.005,
                                  strain_transmission = 1,
                                  strain_seed_date = NULL,
                                  strain_seed_rate = NULL,
@@ -435,15 +495,15 @@ carehomes_parameters <- function(start_date, region,
     stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
   }
 
-  severity <- severity %||% carehomes_parameters_severity(ret$dt, severity)
+  severity <- severity %||% lancelot_parameters_severity(ret$dt, severity)
 
-  progression <- progression %||% carehomes_parameters_progression(ret$dt)
+  progression <- progression %||% lancelot_parameters_progression(ret$dt)
 
-  waning <- carehomes_parameters_waning(waning_rate)
+  waning <- lancelot_parameters_waning(waning_rate)
 
-  ret$m <- carehomes_transmission_matrix(eps, m_CHW, m_CHR, region, population)
+  ret$m <- lancelot_transmission_matrix(eps, m_CHW, m_CHR, region, population)
 
-  ret$N_tot <- carehomes_population(ret$population, carehome_workers,
+  ret$N_tot <- lancelot_population(ret$population, carehome_workers,
                                     carehome_residents)
 
   ret$initial_I <- initial_I
@@ -463,10 +523,30 @@ carehomes_parameters <- function(start_date, region,
   ret$N_tot_all <- sum(ret$N_tot)
   ret$N_tot_over25 <- sum(ret$N_tot[6:19])
   ret$N_tot_react <- sum(ret$N_tot[2:18])
+  ret$N_tot_under15 <- sum(ret$N_tot[1:3])
+  ret$N_tot_15_24 <- sum(ret$N_tot[4:5])
+  ## assume CHW [18] are equally distributed amongst 25-64 age bands
+  ret$N_tot_25_49 <- sum(ret$N_tot[6:10]) + (sum(ret$N_tot[18]) / 8) * 5
+  ret$N_tot_50_64 <- sum(ret$N_tot[11:13]) + (sum(ret$N_tot[18]) / 8) * 3
+  ## assume CHR [19] are 1/4 aged 65-79 and 3/4 80 plus
+  ret$N_tot_65_79 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
+  ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
 
   ## Proportion of population with covid-like symptoms without covid
   ret$p_NC <- p_NC
   ret$p_NC_weekend <- p_NC_weekend
+  ret$p_NC_under15 <- p_NC_under15
+  ret$p_NC_weekend_under15 <- p_NC_weekend_under15
+  ret$p_NC_15_24 <- p_NC_15_24
+  ret$p_NC_weekend_15_24 <- p_NC_weekend_15_24
+  ret$p_NC_25_49 <- p_NC_25_49
+  ret$p_NC_weekend_25_49 <- p_NC_weekend_25_49
+  ret$p_NC_50_64 <- p_NC_50_64
+  ret$p_NC_weekend_50_64 <- p_NC_weekend_50_64
+  ret$p_NC_65_79 <- p_NC_65_79
+  ret$p_NC_weekend_65_79 <- p_NC_weekend_65_79
+  ret$p_NC_80_plus <- p_NC_80_plus
+  ret$p_NC_weekend_80_plus <- p_NC_weekend_80_plus
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.363
@@ -475,18 +555,18 @@ carehomes_parameters <- function(start_date, region,
   ret$I_C_2_transmission <- 0
 
   ## All observation parameters:
-  observation <- observation %||% carehomes_parameters_observation(exp_noise)
+  observation <- observation %||% lancelot_parameters_observation(exp_noise)
 
-  sens_and_spec <- sens_and_spec %||% carehomes_parameters_sens_and_spec()
+  sens_and_spec <- sens_and_spec %||% lancelot_parameters_sens_and_spec()
 
   ret$n_groups <- ret$n_age_groups + 2L
 
   ## number of strains and relative transmissibility
-  strain <- carehomes_parameters_strain(
+  strain <- lancelot_parameters_strain(
     strain_transmission, strain_seed_date, strain_seed_rate, ret$dt)
 
   ## vaccination
-  vaccination <- carehomes_parameters_vaccination(ret$N_tot,
+  vaccination <- lancelot_parameters_vaccination(ret$N_tot,
                                                   ret$dt,
                                                   rel_susceptibility,
                                                   rel_p_sympt,
@@ -511,7 +591,7 @@ carehomes_parameters <- function(start_date, region,
   # probability of death
 
   rel_p_death <- build_rel_param(rel_p_death, strain$n_strains,
-                                  vaccination$n_vacc_classes, "rel_p_death")
+                                 vaccination$n_vacc_classes, "rel_p_death")
   rel_severity <- sweep(rel_p_death, 2, strain_rel_severity, "*")
 
 
@@ -520,7 +600,7 @@ carehomes_parameters <- function(start_date, region,
                               vaccination$n_vacc_classes))
 
   ret$rel_p_R <- array(1, c(ret$n_groups, strain$n_strains,
-                              vaccination$n_vacc_classes))
+                            vaccination$n_vacc_classes))
 
   ret$rel_p_ICU_D <- rel_severity
   ret$rel_p_H_D <- rel_severity
@@ -560,14 +640,14 @@ carehomes_parameters <- function(start_date, region,
   out <- c(ret, severity, progression, strain, vaccination, waning,
            observation, sens_and_spec)
 
-  carehomes_check_severity(out)
+  lancelot_check_severity(out)
 }
 
 
-##' Index of "interesting" elements for the carehomes model. This function
+##' Index of "interesting" elements for the lancelot model. This function
 ##' conforms to the mcstate interface.
 ##'
-##' @title Index of carehomes model
+##' @title Index of lancelot model
 ##'
 ##' @inheritParams basic_index
 ##'
@@ -583,10 +663,10 @@ carehomes_parameters <- function(start_date, region,
 ##'
 ##' @export
 ##' @examples
-##' p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-##' mod <- carehomes$new(p, 0, 10)
-##' carehomes_index(mod$info())
-carehomes_index <- function(info) {
+##' p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+##' mod <- lancelot$new(p, 0, 10)
+##' lancelot_index(mod$info())
+lancelot_index <- function(info) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -614,6 +694,12 @@ carehomes_index <- function(info) {
                   sympt_cases_non_variant_inc =
                     index[["sympt_cases_non_variant_inc"]],
                   sympt_cases_over25_inc = index[["sympt_cases_over25_inc"]],
+                  sympt_cases_under15_inc = index[["sympt_cases_under15_inc"]],
+                  sympt_cases_15_24_inc = index[["sympt_cases_15_24_inc"]],
+                  sympt_cases_25_49_inc = index[["sympt_cases_25_49_inc"]],
+                  sympt_cases_50_64_inc = index[["sympt_cases_50_64_inc"]],
+                  sympt_cases_65_79_inc = index[["sympt_cases_65_79_inc"]],
+                  sympt_cases_80_plus_inc = index[["sympt_cases_80_plus_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
                   react_pos = index[["react_pos"]])
@@ -627,6 +713,10 @@ carehomes_index <- function(info) {
                               "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
                               "sympt_cases_non_variant_inc",
                               "sympt_cases_over25_inc",
+                              "sympt_cases_under15_inc",
+                              "sympt_cases_15_24_inc", "sympt_cases_25_49_inc",
+                              "sympt_cases_50_64_inc", "sympt_cases_65_79_inc",
+                              "sympt_cases_80_plus_inc",
                               "sympt_cases_non_variant_over25_inc",
                               "react_pos")])
 
@@ -680,17 +770,17 @@ carehomes_index <- function(info) {
                  index_cum_admit, index_D_hosp, index_D,
                  index_diagnoses_admitted, index_cum_infections_disag,
                  index_I_weighted, index_prob_strain, index_cum_n_vaccinated
-  ))
+       ))
 }
 
 
-##' Compare observed and modelled data from the [carehomes] model. This
+##' Compare observed and modelled data from the [lancelot] model. This
 ##' conforms to the mcstate interface.
 ##'
-##' @title Compare observed and modelled data for the carehomes model
+##' @title Compare observed and modelled data for the lancelot model
 ##'
 ##' @param state State vector for the end of the current day. This is
-##'   assumed to be filtered following [carehomes_index()] so contains
+##'   assumed to be filtered following [lancelot_index()] so contains
 ##'   10 rows corresponding to ICU, general beds, admissions, deaths and
 ##'   seroconversion compartments.
 ##'
@@ -699,14 +789,14 @@ carehomes_index <- function(info) {
 ##'   may be removed in future).
 ##'
 ##' @param pars A list of parameters, as created by
-##'   [carehomes_parameters()]
+##'   [lancelot_parameters()]
 ##'
 ##' @return A vector of log likelihoods, the same length as the number
 ##'   of particles (the number of columns in the modelled state)
 ##'
 ##' @export
 ##' @importFrom stats dbinom
-carehomes_compare <- function(state, observed, pars) {
+lancelot_compare <- function(state, observed, pars) {
   ## TODO: we might refactor this to produce a subset of comparisons
   ## (and indices above) to suit either the SPI-M or paper fits as
   ## we're using different streams; that will make the comparisons a
@@ -727,6 +817,12 @@ carehomes_compare <- function(state, observed, pars) {
   model_sympt_cases <- state["sympt_cases_inc", ]
   model_sympt_cases_non_variant <- state["sympt_cases_non_variant_inc", ]
   model_sympt_cases_over25 <- state["sympt_cases_over25_inc", ]
+  model_sympt_cases_under15 <- state["sympt_cases_under15_inc", ]
+  model_sympt_cases_15_24 <- state["sympt_cases_15_24_inc", ]
+  model_sympt_cases_25_49 <- state["sympt_cases_25_49_inc", ]
+  model_sympt_cases_50_64 <- state["sympt_cases_50_64_inc", ]
+  model_sympt_cases_65_79 <- state["sympt_cases_65_79_inc", ]
+  model_sympt_cases_80_plus <- state["sympt_cases_80_plus_inc", ]
   model_sympt_cases_non_variant_over25 <-
     state["sympt_cases_non_variant_over25_inc", ]
   model_react_pos <- state["react_pos", ]
@@ -734,11 +830,40 @@ carehomes_compare <- function(state, observed, pars) {
   ## calculate test positive probabilities for the various test data streams
 
   ## Pillar 2
-  ## First determine which value is used for p_NC based on whether it is
-  ## a weekday or a weekend. Note all values of the time state will be
-  ## the same so we can just use the first value
+  ## First determine which value is used for p_NC or phi_pillar2, based on
+  ## whether it is a weekday or a weekend and age band. Note all values of the
+  ## time state will be the same so we can just use the first value
   time <- state["time", 1L]
-  p_NC <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend else pars$p_NC
+
+  p_NC <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend else
+    pars$p_NC
+  p_NC_under15 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_under15 else
+    pars$p_NC_under15
+  p_NC_15_24 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_15_24 else
+    pars$p_NC_15_24
+  p_NC_25_49 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_25_49 else
+    pars$p_NC_25_49
+  p_NC_50_64 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_50_64 else
+    pars$p_NC_50_64
+  p_NC_65_79 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_65_79 else
+    pars$p_NC_65_79
+  p_NC_80_plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80_plus else
+    pars$p_NC_80_plus
+
+  phi_pillar2_cases <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend else pars$phi_pillar2_cases
+  phi_pillar2_cases_under15 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_under15 else pars$phi_pillar2_cases_under15
+  phi_pillar2_cases_15_24 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_15_24 else pars$phi_pillar2_cases_15_24
+  phi_pillar2_cases_25_49 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_25_49 else pars$phi_pillar2_cases_25_49
+  phi_pillar2_cases_50_64 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_50_64 else pars$phi_pillar2_cases_50_64
+  phi_pillar2_cases_65_79 <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_65_79 else pars$phi_pillar2_cases_65_79
+  phi_pillar2_cases_80_plus <- if ((time + 3) %% 7 < 2)
+    pars$phi_pillar2_cases_weekend_80_plus else pars$phi_pillar2_cases_80_plus
 
   pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
   model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
@@ -748,15 +873,62 @@ carehomes_compare <- function(state, observed, pars) {
                                           pars$exp_noise)
 
   ## Pillar 2 over 25s
-  pillar2_over25_negs <- p_NC * (pars$N_tot_over25 - model_sympt_cases_over25)
+  pillar2_over25_negs <- p_NC * (pars$N_tot_over25 -
+                                           model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
                                                  pars$pillar2_sensitivity,
                                                  pars$pillar2_specificity,
                                                  pars$exp_noise)
 
-  phi_pillar2_cases <- if ((time + 3) %% 7 < 2)
-    pars$phi_pillar2_cases_weekend else pars$phi_pillar2_cases
+  ## New pillar 2 by age
+  pillar2_under15_negs <- p_NC_under15 * (pars$N_tot_under15 -
+                                    model_sympt_cases_under15)
+  model_pillar2_under15_prob_pos <- test_prob_pos(model_sympt_cases_under15,
+                                                  pillar2_under15_negs,
+                                                  pars$pillar2_sensitivity,
+                                                  pars$pillar2_specificity,
+                                                  pars$exp_noise)
+
+  pillar2_15_24_negs <- p_NC_15_24 * (pars$N_tot_15_24 -
+                                          model_sympt_cases_15_24)
+  model_pillar2_15_24_prob_pos <- test_prob_pos(model_sympt_cases_15_24,
+                                                pillar2_15_24_negs,
+                                                pars$pillar2_sensitivity,
+                                                pars$pillar2_specificity,
+                                                pars$exp_noise)
+
+  pillar2_25_49_negs <- p_NC_25_49 * (pars$N_tot_25_49 -
+                                          model_sympt_cases_25_49)
+  model_pillar2_25_49_prob_pos <- test_prob_pos(model_sympt_cases_25_49,
+                                                pillar2_25_49_negs,
+                                                pars$pillar2_sensitivity,
+                                                pars$pillar2_specificity,
+                                                pars$exp_noise)
+
+  pillar2_50_64_negs <- p_NC_50_64 * (pars$N_tot_50_64 -
+                                          model_sympt_cases_50_64)
+  model_pillar2_50_64_prob_pos <- test_prob_pos(model_sympt_cases_50_64,
+                                                pillar2_50_64_negs,
+                                                pars$pillar2_sensitivity,
+                                                pars$pillar2_specificity,
+                                                pars$exp_noise)
+
+  pillar2_65_79_negs <- p_NC_65_79 * (pars$N_tot_65_79 -
+                                         model_sympt_cases_65_79)
+  model_pillar2_65_79_prob_pos <- test_prob_pos(model_sympt_cases_65_79,
+                                                pillar2_65_79_negs,
+                                                pars$pillar2_sensitivity,
+                                                pars$pillar2_specificity,
+                                                pars$exp_noise)
+
+  pillar2_80_plus_negs <- p_NC_80_plus * (pars$N_tot_80_plus -
+                                    model_sympt_cases_80_plus)
+  model_pillar2_80_plus_prob_pos <- test_prob_pos(model_sympt_cases_80_plus,
+                                                  pillar2_80_plus_negs,
+                                                  pars$pillar2_sensitivity,
+                                                  pars$pillar2_specificity,
+                                                  pars$exp_noise)
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
   ## It is possible that model_react_pos > pars$N_tot_react, so we cap it to
@@ -856,19 +1028,79 @@ carehomes_compare <- function(state, observed, pars) {
                                    model_pillar2_prob_pos,
                                    pars$rho_pillar2_tests)
 
-  ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
-                                phi_pillar2_cases * model_sympt_cases,
-                                pars$kappa_pillar2_cases, exp_noise)
-
   ll_pillar2_over25_tests <- ll_betabinom(observed$pillar2_over25_pos,
                                           observed$pillar2_over25_tot,
                                           model_pillar2_over25_prob_pos,
                                           pars$rho_pillar2_tests)
 
+  ll_pillar2_under15_tests <- ll_betabinom(observed$pillar2_under15_pos,
+                                           observed$pillar2_under15_tot,
+                                           model_pillar2_under15_prob_pos,
+                                           pars$rho_pillar2_tests)
+
+  ll_pillar2_15_24_tests <- ll_betabinom(observed$pillar2_15_24_pos,
+                                         observed$pillar2_15_24_tot,
+                                         model_pillar2_15_24_prob_pos,
+                                         pars$rho_pillar2_tests)
+
+  ll_pillar2_25_49_tests <- ll_betabinom(observed$pillar2_25_49_pos,
+                                         observed$pillar2_25_49_tot,
+                                         model_pillar2_25_49_prob_pos,
+                                         pars$rho_pillar2_tests)
+
+  ll_pillar2_50_64_tests <- ll_betabinom(observed$pillar2_50_64_pos,
+                                         observed$pillar2_50_64_tot,
+                                         model_pillar2_50_64_prob_pos,
+                                         pars$rho_pillar2_tests)
+
+  ll_pillar2_65_79_tests <- ll_betabinom(observed$pillar2_65_79_pos,
+                                         observed$pillar2_65_79_tot,
+                                         model_pillar2_65_79_prob_pos,
+                                         pars$rho_pillar2_tests)
+
+  ll_pillar2_80_plus_tests <- ll_betabinom(observed$pillar2_80_plus_pos,
+                                           observed$pillar2_80_plus_tot,
+                                           model_pillar2_80_plus_prob_pos,
+                                           pars$rho_pillar2_tests)
+
+  ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
+                                phi_pillar2_cases * model_sympt_cases,
+                                pars$kappa_pillar2_cases, exp_noise)
+
   ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
                                        phi_pillar2_cases *
                                          model_sympt_cases_over25,
                                        pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_under15_cases <- ll_nbinom(observed$pillar2_under15_cases,
+                                        phi_pillar2_cases_under15 *
+                                          model_sympt_cases_under15,
+                                        pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_15_24_cases <- ll_nbinom(observed$pillar2_15_24_cases,
+                                      phi_pillar2_cases_15_24 *
+                                        model_sympt_cases_15_24,
+                                      pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_25_49_cases <- ll_nbinom(observed$pillar2_25_49_cases,
+                                      phi_pillar2_cases_25_49 *
+                                        model_sympt_cases_25_49,
+                                      pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_50_64_cases <- ll_nbinom(observed$pillar2_50_64_cases,
+                                      phi_pillar2_cases_50_64 *
+                                        model_sympt_cases_50_64,
+                                      pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_65_79_cases <- ll_nbinom(observed$pillar2_65_79_cases,
+                                      phi_pillar2_cases_65_79 *
+                                        model_sympt_cases_65_79,
+                                      pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_80_plus_cases <- ll_nbinom(observed$pillar2_80_plus_cases,
+                                        phi_pillar2_cases_80_plus *
+                                          model_sympt_cases_80_plus,
+                                        pars$kappa_pillar2_cases, exp_noise)
 
   ll_react <- ll_binom(observed$react_pos,
                        observed$react_tot,
@@ -886,7 +1118,12 @@ carehomes_compare <- function(state, observed, pars) {
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
     ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
-    ll_pillar2_over25_cases + ll_react + ll_strain + ll_strain_over25
+    ll_pillar2_under15_tests + ll_pillar2_15_24_tests +
+    ll_pillar2_25_49_tests + ll_pillar2_50_64_tests + ll_pillar2_65_79_tests +
+    ll_pillar2_80_plus_tests + ll_pillar2_over25_cases +
+    ll_pillar2_under15_cases + ll_pillar2_15_24_cases + ll_pillar2_25_49_cases +
+    ll_pillar2_50_64_cases + ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases +
+    ll_react + ll_strain + ll_strain_over25
 }
 
 
@@ -897,17 +1134,17 @@ carehomes_compare <- function(state, observed, pars) {
 ##
 ## so we have length of n_groups = n_age_groups + 2
 ##
-carehomes_severity <- function(p) {
-  index_workers <- carehomes_index_workers()
+lancelot_severity <- function(p) {
+  index_workers <- lancelot_index_workers()
   p_workers <- mean(p[index_workers])
   p_residents <- p[length(p)]
   c(p, p_workers, p_residents)
 }
 
 
-##' Carehomes severity parameters
+##' Lancelot severity parameters
 ##'
-##' @title Carehomes severity parameters
+##' @title Lancelot severity parameters
 ##'
 ##' @param dt The step size
 ##'
@@ -965,7 +1202,7 @@ carehomes_severity <- function(p) {
 ##' @return A list of severity parameters
 ##'
 ##' @export
-carehomes_parameters_severity <- function(dt,
+lancelot_parameters_severity <- function(dt,
                                           severity = NULL,
                                           p_C = NULL,
                                           p_H = NULL,
@@ -980,7 +1217,7 @@ carehomes_parameters_severity <- function(dt,
                                           p_star = NULL) {
 
   severity <- sircovid_parameters_severity(severity)
-  severity <- lapply(severity, carehomes_severity)
+  severity <- lapply(severity, lancelot_severity)
 
   time_varying_severity <- list(C = p_C,
                                 H = p_H,
@@ -1112,15 +1349,15 @@ carehomes_parameters_severity <- function(dt,
 }
 
 
-carehomes_index_workers <- function() {
+lancelot_index_workers <- function() {
   age_bins <- sircovid_age_bins()
   which(age_bins$start >= 25 & age_bins$start < 65)
 }
 
 
-carehomes_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
+lancelot_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
                                           population) {
-  index_workers <- carehomes_index_workers()
+  index_workers <- lancelot_index_workers()
   m <- sircovid_transmission_matrix(region, population)
   n_age_groups <- nrow(m)
 
@@ -1150,20 +1387,20 @@ carehomes_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
 }
 
 
-##' Create initial conditions for the carehomes model. This matches the
+##' Create initial conditions for the lancelot model. This matches the
 ##' interface required for mcstate
 ##'
-##' @title Initial conditions for the carehomes model
+##' @title Initial conditions for the lancelot model
 ##'
 ##' @inheritParams basic_initial
 ##'
 ##' @return A numeric vector of initial conditions
 ##' @export
 ##' @examples
-##' p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
-##' mod <- carehomes$new(p, 0, 10)
-##' carehomes_initial(mod$info(), 10, p)
-carehomes_initial <- function(info, n_particles, pars) {
+##' p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+##' mod <- lancelot$new(p, 0, 10)
+##' lancelot_initial(mod$info(), 10, p)
+lancelot_initial <- function(info, n_particles, pars) {
   index <- info$index
   state <- numeric(info$len)
 
@@ -1213,7 +1450,7 @@ carehomes_initial <- function(info, n_particles, pars) {
 }
 
 
-carehomes_parameters_vaccination <- function(N_tot,
+lancelot_parameters_vaccination <- function(N_tot,
                                              dt,
                                              rel_susceptibility = 1,
                                              rel_p_sympt = 1,
@@ -1227,7 +1464,7 @@ carehomes_parameters_vaccination <- function(N_tot,
                                              n_strains = 1,
                                              vaccine_catchup_fraction = 1,
                                              n_doses = 2L) {
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
     if (is.array(x)) nlayer(x) else length(x)
@@ -1312,7 +1549,7 @@ carehomes_parameters_vaccination <- function(N_tot,
   ret
 }
 
-carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
+lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
                                         strain_seed_rate, dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
@@ -1370,7 +1607,7 @@ carehomes_parameters_strain <- function(strain_transmission, strain_seed_date,
 }
 
 
-carehomes_parameters_waning <- function(waning_rate) {
+lancelot_parameters_waning <- function(waning_rate) {
   waning_rate <- build_waning_rate(waning_rate)
   list(
     waning_rate = waning_rate
@@ -1378,14 +1615,14 @@ carehomes_parameters_waning <- function(waning_rate) {
 }
 
 
-##' Carehomes progression parameters.  The `s_` parameters are the
+##' Lancelot progression parameters.  The `s_` parameters are the
 ##' scaling parameters for the Erlang distibution (a.k.a 'k'), while
 ##' the `gamma_` parameters are the gamma parameters of that
 ##' distribution.  These need to be aligned with Bob's severity
 ##' outputs, and we will come up with a better way of coordinating the
 ##' two.
 ##'
-##' @title Carehomes progression parameters
+##' @title Lancelot progression parameters
 ##'
 ##' @param dt The step size
 ##'
@@ -1452,7 +1689,7 @@ carehomes_parameters_waning <- function(waning_rate) {
 ##' @return A list of parameter values
 ##'
 ##' @export
-carehomes_parameters_progression <- function(dt,
+lancelot_parameters_progression <- function(dt,
                                              gamma_E = NULL,
                                              gamma_A = NULL,
                                              gamma_P = NULL,
@@ -1585,29 +1822,9 @@ carehomes_parameters_progression <- function(dt,
 }
 
 
-sircovid_carehome_beds <- function(region) {
-  if (is.null(region)) {
-    stop("'region' must not be NULL")
-  }
-
-  if (is.null(cache$carehomes)) {
-    cache$carehomes <- read_csv(sircovid_file("extdata/carehomes.csv"))
-  }
-
-  i <- match(tolower(region), cache$carehomes$region)
-  if (is.na(i)) {
-    valid <- paste(squote(cache$carehomes$region), collapse = ", ")
-    stop(sprintf("Carehome beds not found for '%s': must be one of %s",
-                 region, valid))
-  }
-
-  cache$carehomes$carehome_beds[[i]]
-}
-
-
-##' Carehomes observation parameters
+##' Lancelot observation parameters
 ##'
-##' @title Carehomes observation parameters
+##' @title Lancelot observation parameters
 ##'
 ##' @return A list of parameter values
 ##'
@@ -1615,7 +1832,7 @@ sircovid_carehome_beds <- function(region) {
 ##'   in the likelihood calculation. Typically a large value so noise is small.
 ##'
 ##' @export
-carehomes_parameters_observation <- function(exp_noise = 1e6) {
+lancelot_parameters_observation <- function(exp_noise = 1e6) {
   list(
     ## People currently in ICU
     phi_ICU = 1,
@@ -1649,9 +1866,21 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
     phi_all_admission = 1,
     kappa_all_admission = 2,
     ## Pillar 2 testing
+    kappa_pillar2_cases = 2,
     phi_pillar2_cases = 1,
     phi_pillar2_cases_weekend = 0.8,
-    kappa_pillar2_cases = 2,
+    phi_pillar2_cases_under15 = 1,
+    phi_pillar2_cases_weekend_under15 = 0.8,
+    phi_pillar2_cases_15_24 = 1,
+    phi_pillar2_cases_weekend_15_24 = 0.8,
+    phi_pillar2_cases_25_49 = 1,
+    phi_pillar2_cases_weekend_25_49 = 0.8,
+    phi_pillar2_cases_50_64 = 1,
+    phi_pillar2_cases_weekend_50_64 = 0.8,
+    phi_pillar2_cases_65_79 = 1,
+    phi_pillar2_cases_weekend_65_79 = 0.8,
+    phi_pillar2_cases_80_plus = 1,
+    phi_pillar2_cases_weekend_80_plus = 0.8,
     ##
     rho_pillar2_tests = 0.1,
     ##
@@ -1661,9 +1890,9 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
 }
 
 
-##' Carehomes observation parameters
+##' Lancelot observation parameters
 ##'
-##' @title Carehomes sensitivity and specificity parameters
+##' @title Lancelot sensitivity and specificity parameters
 ##'
 ##' @return A list of parameter values
 ##'
@@ -1684,7 +1913,7 @@ carehomes_parameters_observation <- function(exp_noise = 1e6) {
 ##' @param react_sensitivity Sensitivity of the REACT test
 ##'
 ##' @export
-carehomes_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
+lancelot_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
                                                sero_sensitivity_1 = 0.99,
                                                sero_specificity_2 = 0.9,
                                                sero_sensitivity_2 = 0.99,
@@ -1712,7 +1941,7 @@ carehomes_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
 }
 
 
-carehomes_population <- function(population, carehome_workers,
+lancelot_population <- function(population, carehome_workers,
                                  carehome_residents) {
   ## Our core S0 calculation is more complicated than the basic model
   ## because we have to add the carehome workers and residents, *and*
@@ -1722,7 +1951,7 @@ carehomes_population <- function(population, carehome_workers,
   ## working ages, extracting equal amounts from those age groups.
   N_tot <- c(population, carehome_workers, carehome_residents)
 
-  index_workers <- carehomes_index_workers()
+  index_workers <- lancelot_index_workers()
   index_residents <- which(sircovid_age_bins()$start >= 65)
   weights_residents <- c(0.05, 0.05, 0.15, 0.75)
 
@@ -1741,11 +1970,11 @@ carehomes_population <- function(population, carehome_workers,
 }
 
 
-##' Construct a particle filter using the [`carehomes`] model. This is
+##' Construct a particle filter using the [`lancelot`] model. This is
 ##' a convenience function, ensuring that compatible functions are
 ##' used together.
 ##'
-##' @title Carehomes particle filter
+##' @title Lancelot particle filter
 ##'
 ##' @param data Data suitable for use with with the
 ##'   [`mcstate::particle_filter`], created by created by
@@ -1771,22 +2000,22 @@ carehomes_population <- function(population, carehome_workers,
 ##'
 ##' @return A [`mcstate::particle_filter`] object
 ##' @export
-carehomes_particle_filter <- function(data, n_particles,
+lancelot_particle_filter <- function(data, n_particles,
                                       n_threads = 1L, seed = NULL,
                                       compiled_compare = FALSE) {
   mcstate::particle_filter$new(
-    carehomes_particle_filter_data(data),
-    carehomes,
+    lancelot_particle_filter_data(data),
+    lancelot,
     n_particles,
-    if (compiled_compare) NULL else carehomes_compare,
-    carehomes_index,
-    carehomes_initial,
+    if (compiled_compare) NULL else lancelot_compare,
+    lancelot_index,
+    lancelot_initial,
     n_threads,
     seed)
 }
 
 
-carehomes_particle_filter_data <- function(data) {
+lancelot_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
                 "diagnoses", "all_admission", "sero_pos_15_64_1",
@@ -1795,7 +2024,14 @@ carehomes_particle_filter_data <- function(data) {
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot",
                 "strain_non_variant", "strain_tot", "strain_over25_non_variant",
-                "strain_over25_tot")
+                "strain_over25_tot",
+                "pillar2_under15_cases", "pillar2_15_24_cases",
+                "pillar2_25_49_cases", "pillar2_50_64_cases",
+                "pillar2_65_79_cases", "pillar2_80_plus_cases",
+                "pillar2_under15_tot", "pillar2_15_24_tot", "pillar2_25_49_tot",
+                "pillar2_50_64_tot", "pillar2_65_79_tot", "pillar2_80_plus_tot",
+                "pillar2_under15_pos", "pillar2_15_24_pos", "pillar2_25_49_pos",
+                "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos")
 
   verify_names(data, required, allow_extra = TRUE)
 
@@ -1811,13 +2047,30 @@ carehomes_particle_filter_data <- function(data) {
          homes/community")
   }
 
-  check_pillar2_streams <- function(df)
-    sum(c(any(!is.na(df$pillar2_pos)) |
-            any(!is.na(df$pillar2_tot)),
-          any(!is.na(df$pillar2_cases)),
+  P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
+  P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
+  P2_all <- c("", P2_all_ages)
+
+  check_pillar2 <- function(df)
+    sum(c(any(!is.na(df[, paste0("pillar2", P2_all, "_pos")])) |
+            any(!is.na(df[, paste0("pillar2", P2_all, "_tot")])),
+          any(!is.na(df[, paste0("pillar2", P2_all, "_cases")]))))
+
+  check_pillar2_over25_ages <- function(df)
+    sum(c(any(!is.na(df[, paste0("pillar2", P2_over25_ages, "_pos")])) |
+            any(!is.na(df[, paste0("pillar2", P2_over25_ages, "_tot")])) |
+            any(!is.na(df[, paste0("pillar2", P2_over25_ages, "_cases")])),
           any(!is.na(df$pillar2_over25_pos)) |
-            any(!is.na(df$pillar2_over25_tot)),
-          any(!is.na(df$pillar2_over25_cases))))
+            any(!is.na(df$pillar2_over25_tot)) |
+            any(!is.na(df$pillar2_over25_cases))))
+
+  check_pillar2_all_ages <- function(df)
+    sum(c(any(!is.na(df[, paste0("pillar2", P2_all_ages, "_pos")])) |
+            any(!is.na(df[, paste0("pillar2", P2_all_ages, "_tot")])) |
+            any(!is.na(df[, paste0("pillar2", P2_all_ages, "_cases")])),
+          any(!is.na(df$pillar2_pos)) |
+            any(!is.na(df$pillar2_tot)) |
+            any(!is.na(df$pillar2_cases))))
 
   check_strain_streams <- function(df)
     sum(c(any(!is.na(df$strain_non_variant)) |
@@ -1826,21 +2079,39 @@ carehomes_particle_filter_data <- function(data) {
             any(!is.na(df$strain_over25_tot))))
 
   if (is.null(data$population)) {
-    if (check_pillar2_streams(data) > 1) {
-      stop("Cannot fit to more than one pillar 2 data stream")
+    if (check_pillar2(data) > 1) {
+      stop("Cannot fit to pillar 2 cases and positivity together")
     }
     if (check_strain_streams(data) > 1) {
       stop("Cannot fit to more than one strain data stream")
     }
+    if (check_pillar2_over25_ages(data) > 1) {
+      stop(paste(
+        "Cannot fit to over 25s for pillar 2 if fitting to any over 25
+        sub-groups"))
+    }
+    if (check_pillar2_all_ages(data) > 1) {
+      stop(paste(
+        "Cannot fit to all ages aggregated for pillar 2 if fitting to any
+        sub-groups"))
+    }
   } else {
     lapply(split(data, data$population), function(x) {
-      if (check_pillar2_streams(x) > 1) {
-        stop(sprintf("Cannot fit to more than one pillar 2 data stream for
+      if (check_pillar2(x) > 1) {
+        stop(sprintf("Cannot fit to pillar 2 cases and positivity together for
                       region %s", x$population[[1]]))
       }
       if (check_strain_streams(x) > 1) {
         stop(sprintf("Cannot fit to more than one strain data stream for
                       region %s", x$population[[1]]))
+      }
+      if (check_pillar2_over25_ages(x) > 1) {
+        stop(sprintf("Cannot fit to over 25s for pillar 2 if fitting to any over
+                     25 sub-groups for region %s", x$population[[1]]))
+      }
+      if (check_pillar2_all_ages(x) > 1) {
+        stop(sprintf("Cannot fit to all ages aggregated for pillar 2 if fitting
+                     to any sub-groups for region %s", x$population[[1]]))
       }
     })
   }
@@ -1848,18 +2119,18 @@ carehomes_particle_filter_data <- function(data) {
   data
 }
 
-carehomes_n_groups <- function() {
+lancelot_n_groups <- function() {
   length(sircovid_age_bins()$start) + 2L
 }
 
 
-##' Forecast from the carehomes model; this provides a wrapper around
+##' Forecast from the lancelot model; this provides a wrapper around
 ##' [mcstate::pmcmc_sample] (or [mcstate::pmcmc_thin] if
 ##' `random_sample = FALSE`) and [mcstate::pmcmc_predict] that samples
 ##' the trajectories then creates forecast, setting the sircovid dates
 ##' and adding trajectories of incidence.
 ##'
-##' @title Forecast the carehomes model
+##' @title Forecast the lancelot model
 ##'
 ##' @inheritParams mcstate::pmcmc_sample
 ##' @inheritParams mcstate::pmcmc_predict
@@ -1887,7 +2158,7 @@ carehomes_n_groups <- function() {
 ##'   sample is retained
 ##'
 ##' @export
-carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
+lancelot_forecast <- function(samples, n_sample, burnin, forecast_days,
                                incidence_states, prepend_trajectories = TRUE,
                                random_sample = TRUE, thin = NULL) {
   if (n_sample == 0) {
@@ -1917,22 +2188,32 @@ carehomes_forecast <- function(samples, n_sample, burnin, forecast_days,
 }
 
 
-carehomes_data <- function(data, start_date, dt) {
-  expected <- c(icu = NA_real_, general = NA_real_, hosp = NA_real_,
-                deaths_hosp = NA_real_, deaths_non_hosp = NA_real_,
-                deaths_comm = NA_real_, deaths_carehomes = NA_real_,
+lancelot_data <- function(data, start_date, dt) {
+  expected <- c(deaths_hosp = NA_real_, deaths_comm = NA_real_,
+                deaths_carehomes = NA_real_, deaths_non_hosp = NA_real_,
+                icu = NA_real_, general = NA_real_, hosp = NA_real_,
                 deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
                 all_admission = NA_real_, sero_pos_15_64_1 = NA_real_,
                 sero_tot_15_64_1 = NA_real_, sero_pos_15_64_2 = NA_real_,
-                sero_tot_15_64_2 = NA_real_, pillar2_pos = NA_real_,
-                pillar2_tot = NA_real_, pillar2_cases = NA_real_,
-                pillar2_over25_pos = NA_real_, pillar2_over25_tot = NA_real_,
-                pillar2_over25_cases = NA_real_,  react_pos = NA_real_,
+                sero_tot_15_64_2 = NA_real_, pillar2_tot = NA_real_,
+                pillar2_pos = NA_real_, pillar2_cases = NA_real_,
+                pillar2_over25_tot = NA_real_, pillar2_under15_tot = NA_real_,
+                pillar2_15_24_tot = NA_real_, pillar2_25_49_tot = NA_real_,
+                pillar2_50_64_tot = NA_real_, pillar2_65_79_tot = NA_real_,
+                pillar2_80_plus_tot = NA_real_, pillar2_over25_pos = NA_real_,
+                pillar2_under15_pos = NA_real_, pillar2_15_24_pos = NA_real_,
+                pillar2_25_49_pos = NA_real_, pillar2_50_64_pos = NA_real_,
+                pillar2_65_79_pos = NA_real_, pillar2_80_plus_pos = NA_real_,
+                pillar2_over25_cases = NA_real_,
+                pillar2_under15_cases = NA_real_,
+                pillar2_15_24_cases = NA_real_, pillar2_25_49_cases = NA_real_,
+                pillar2_50_64_cases = NA_real_, pillar2_65_79_cases = NA_real_,
+                pillar2_80_plus_cases = NA_real_, react_pos = NA_real_,
                 react_tot = NA_real_, strain_non_variant = NA_real_,
                 strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
                 strain_over25_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
-  carehomes_particle_filter_data(data)
+  lancelot_particle_filter_data(data)
 }
 
 
@@ -1940,13 +2221,13 @@ carehomes_data <- function(data, start_date, dt) {
 ##'
 ##' @title Check severity parameters
 ##'
-##' @param pars A list of probabilities from [carehomes_parameters].
+##' @param pars A list of probabilities from [lancelot_parameters].
 ##'
 ##' @return Returns `pars` invisibly if all severity probabilities lie in
 ##   (0, 1), otherwise errors.
 ##'
 ##' @export
-carehomes_check_severity <- function(pars) {
+lancelot_check_severity <- function(pars) {
   check_parameters <- function(p_step, rel_p) {
     vapply(
       seq_len(pars$n_groups),
@@ -1987,35 +2268,4 @@ carehomes_check_severity <- function(pars) {
 
 
   invisible(pars)
-}
-
-
-create_index_dose_inverse <- function(n_vacc_classes, index_dose) {
-  index_dose_inverse <- integer(n_vacc_classes)
-  index_dose_inverse[index_dose] <- seq_along(index_dose)
-  index_dose_inverse
-}
-
-
-calculate_index <- function(index, state, suffix_list, suffix0 = NULL,
-                            state_name = state) {
-  if (is.null(suffix0)) {
-    suffixes <- list()
-  } else {
-    suffixes <- list(suffix0)
-  }
-  for (i in seq_along(suffix_list)) {
-    nm <- names(suffix_list)[[i]]
-    if (length(nm) == 0) {
-      nm <- ""
-    }
-    suffixes <- c(suffixes,
-                  list(c("", sprintf("_%s%s", nm,
-                                     seq_len(suffix_list[[i]] - 1L)))))
-  }
-  suffixes <- expand.grid(suffixes)
-  nms <- apply(suffixes, 1,
-               function(x) sprintf("%s%s",
-                                   state_name, paste0(x, collapse = "")))
-  set_names(index[[state]], nms)
 }
