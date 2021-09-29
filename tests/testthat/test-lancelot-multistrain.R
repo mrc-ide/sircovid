@@ -219,98 +219,96 @@ test_that("Second less virulent strain does not take over", {
 
 test_that("N_tots stay constant with second strain and no waning immunity - no
           superinfection", {
-            ## Default for waning_rate is 0
-            set.seed(1)
-            n_seeded_new_strain_inf <- 100
-            date_seeding <- "2020-03-07"
-            date_seeding_end <- "2020-03-08"
-            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_transmission = c(1, 1),
-                                     strain_seed_date =
-                                       sircovid_date(c(date_seeding, date_seeding_end)),
-                                     strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+  ## Default for waning_rate is 0
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
-            mod <- lancelot$new(p, 0, 1, seed = 1L)
-            info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)$state
-            mod$set_state(lancelot_initial(info, 1, p)$state)
-            y <- mod$transform_variables(
-              drop(mod$simulate(seq(0, 400, by = 4))))
+  mod <- lancelot$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
-            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-            expect_true(all(y$N_tot_sero_1 -
-                              mod$transform_variables(y0)$N_tot_sero_1 == 0))
-            expect_true(all(y$N_tot_sero_2 -
-                              mod$transform_variables(y0)$N_tot_sero_2 == 0))
-            expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
-            expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
-            expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
-            expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
-          })
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(y$N_tot_sero_1 -
+                    mod$transform_variables(y0)$N_tot_sero_1 == 0))
+  expect_true(all(y$N_tot_sero_2 -
+                    mod$transform_variables(y0)$N_tot_sero_2 == 0))
+  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
+  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
+})
 
 
 test_that("N_tot is constant with second strain and waning immunity, while
           sero N_tots are non-decreasing - superinfection", {
-            ## Default for waning_rate is 0
-            set.seed(1)
-            n_seeded_new_strain_inf <- 100
-            date_seeding <- "2020-03-07"
-            date_seeding_end <- "2020-03-08"
-            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     waning_rate = 1 / 20,
-                                     strain_transmission = c(1, 1),
-                                     strain_seed_date =
-                                       sircovid_date(c(date_seeding, date_seeding_end)),
-                                     strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                                     cross_immunity = 0)
+  ## Default for waning_rate is 0
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           waning_rate = 1 / 20,
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           cross_immunity = 0)
 
-            mod <- lancelot$new(p, 0, 1)
-            info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)$state
-            mod$set_state(lancelot_initial(info, 1, p)$state)
-            y <- mod$transform_variables(
-              drop(mod$simulate(seq(0, 400, by = 4))))
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
-            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-            expect_true(all(diff(y$N_tot_sero_1) >= 0))
-            expect_true(all(diff(y$N_tot_sero_2) >= 0))
-            expect_true(all(diff(y$N_tot_PCR) >= 0))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-          })
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+})
 
 test_that("N_tot is constant with second strain and waning immunity, while
           sero and PCR N_tots are non-decreasing - no superinfection", {
             ## Default for waning_rate is 0
-            set.seed(1)
-            n_seeded_new_strain_inf <- 100
-            date_seeding <- "2020-03-07"
-            date_seeding_end <- "2020-03-08"
-            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     waning_rate = 1 / 20,
-                                     strain_transmission = c(1, 1),
-                                     strain_seed_date =
-                                       sircovid_date(c(date_seeding, date_seeding_end)),
-                                     strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  date_seeding_end <- "2020-03-08"
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           waning_rate = 1 / 20,
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
-            mod <- lancelot$new(p, 0, 1)
-            info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)$state
-            mod$set_state(lancelot_initial(info, 1, p)$state)
-            y <- mod$transform_variables(
-              drop(mod$simulate(seq(0, 400, by = 4))))
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
-            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-            expect_true(all(diff(y$N_tot_sero_1) >= 0))
-            expect_true(all(diff(y$N_tot_sero_2) >= 0))
-            expect_true(all(diff(y$N_tot_PCR) >= 0))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-          })
-
-
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+})
 
 
 test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
@@ -2188,44 +2186,44 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
 
 test_that("some cross-immunity means less Strain 3 or 4 infections than none
            and > 0", {
-             np <- 1L
+ np <- 1L
 
-             ## no cross-immnunity
-             p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                      strain_transmission = c(1, 1),
-                                      strain_seed_rate = c(10, 0),
-                                      strain_seed_date =
-                                        sircovid_date(c("2020-02-07", "2020-02-08")),
-                                      cross_immunity = 0)
-             mod <- lancelot$new(p, 0, np)
-             initial <- lancelot_initial(mod$info(), np, p)
-             mod$set_state(initial$state, initial$step)
-             end <- sircovid_date("2020-05-01") / p$dt
-             steps <- seq(initial$step, end, by = 1 / p$dt)
-             set.seed(1)
-             y <- mod$transform_variables(
-               drop(mod$simulate(steps)))
-             infect_no_cross <- y$cum_infections_per_strain[3:4, 85]
+ ## no cross-immnunity
+ p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                          strain_transmission = c(1, 1),
+                          strain_seed_rate = c(10, 0),
+                          strain_seed_date =
+                            sircovid_date(c("2020-02-07", "2020-02-08")),
+                          cross_immunity = 0)
+ mod <- lancelot$new(p, 0, np)
+ initial <- lancelot_initial(mod$info(), np, p)
+ mod$set_state(initial$state, initial$step)
+ end <- sircovid_date("2020-05-01") / p$dt
+ steps <- seq(initial$step, end, by = 1 / p$dt)
+ set.seed(1)
+ y <- mod$transform_variables(
+   drop(mod$simulate(steps)))
+ infect_no_cross <- y$cum_infections_per_strain[3:4, 85]
 
-             ## some cross-immunity
-             p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                      strain_transmission = c(1, 1),
-                                      strain_seed_rate = c(10, 0),
-                                      strain_seed_date =
-                                        sircovid_date(c("2020-02-07", "2020-02-08")),
-                                      cross_immunity = 0.5)
-             mod <- lancelot$new(p, 0, np)
-             initial <- lancelot_initial(mod$info(), np, p)
-             mod$set_state(initial$state, initial$step)
-             set.seed(1)
-             y <- mod$transform_variables(
-               drop(mod$simulate(steps)))
-             infect_some_cross <- y$cum_infections_per_strain[3:4, 85]
+ ## some cross-immunity
+ p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                          strain_transmission = c(1, 1),
+                          strain_seed_rate = c(10, 0),
+                          strain_seed_date =
+                            sircovid_date(c("2020-02-07", "2020-02-08")),
+                          cross_immunity = 0.5)
+ mod <- lancelot$new(p, 0, np)
+ initial <- lancelot_initial(mod$info(), np, p)
+ mod$set_state(initial$state, initial$step)
+ set.seed(1)
+ y <- mod$transform_variables(
+   drop(mod$simulate(steps)))
+ infect_some_cross <- y$cum_infections_per_strain[3:4, 85]
 
-             expect_vector_lte(infect_some_cross, infect_no_cross)
-             expect_true(all(infect_some_cross > 0))
-             expect_true(all(infect_no_cross > 0))
-           })
+ expect_vector_lte(infect_some_cross, infect_no_cross)
+ expect_true(all(infect_some_cross > 0))
+ expect_true(all(infect_no_cross > 0))
+})
 
 
 test_that("cross-immunity can be separated by strain", {

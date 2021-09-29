@@ -93,32 +93,32 @@ test_that("everyone is infected when beta is large", {
 
 test_that("noone stays in R if waning rate is very
           large", {
-            # with a large waning rate and beta = 0,
-            # people can move from R to S but not outside of S
-            # therefore R should quickly get empty
-            p <- lancelot_parameters(0, "england",
-                                     beta_value = 0, # to forbid movement out of S
-                                     waning_rate = Inf) # to force movement out of R
-            mod <- lancelot$new(p, 0, 1)
-            info <- mod$info()
+  # with a large waning rate and beta = 0,
+  # people can move from R to S but not outside of S
+  # therefore R should quickly get empty
+  p <- lancelot_parameters(0, "england",
+                           beta_value = 0, # to forbid movement out of S
+                           waning_rate = Inf) # to force movement out of R
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
 
-            state <- lancelot_initial(info, 1, p)$state
+  state <- lancelot_initial(info, 1, p)$state
 
-            # move everyone to R
-            index_S <- array(info$index$S, info$dim$S)
-            index_R <- array(info$index$R, info$dim$R)
-            state[index_R] <- rowSums(array(state[index_S], info$dim$S))
-            state[index_S] <- 0
+  # move everyone to R
+  index_S <- array(info$index$S, info$dim$S)
+  index_R <- array(info$index$R, info$dim$R)
+  state[index_R] <- rowSums(array(state[index_S], info$dim$S))
+  state[index_S] <- 0
 
-            mod$set_state(state)
-            y <- mod$transform_variables(drop(
-              mod$simulate(seq(0, 400, by = 4))))
+  mod$set_state(state)
+  y <- mod$transform_variables(drop(
+    mod$simulate(seq(0, 400, by = 4))))
 
-            # other than in the 4th age group (where infections are seeded)
-            # after the first day (4 times steps), R is empty
-            expect_true(all(y$R[-4, , -1, ] == 0))
+  # other than in the 4th age group (where infections are seeded)
+  # after the first day (4 times steps), R is empty
+  expect_true(all(y$R[-4, , -1, ] == 0))
 
-          })
+})
 
 test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
   p <- lancelot_parameters(0, "england",
@@ -482,27 +482,27 @@ test_that("No one seroconverts if p_sero_pos is 0", {
 
 test_that("No one does not seroconvert and no one seroreverts
           if p_sero_pos is 1 and gamma_sero_pos is 0", {
-            ## waning_rate default is 0, setting to a non-zero value so that this test
-            ## passes with waning immunity
-            p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
 
-            p$p_sero_pos_1[] <- 1
-            p$p_sero_pos_2[] <- 1
-            ## set gamma_sero_pos_1 to 0 so no-one seroreverts
-            p$gamma_sero_pos_1 <- 0
-            p$gamma_sero_pos_2 <- 0
+  p$p_sero_pos_1[] <- 1
+  p$p_sero_pos_2[] <- 1
+  ## set gamma_sero_pos_1 to 0 so no-one seroreverts
+  p$gamma_sero_pos_1 <- 0
+  p$gamma_sero_pos_2 <- 0
 
-            mod <- lancelot$new(p, 0, 1)
-            info <- mod$info()
-            mod$set_state(lancelot_initial(info, 1, p)$state)
-            y <- mod$transform_variables(
-              drop(mod$simulate(seq(0, 400, by = 4))))
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  mod$set_state(lancelot_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
-            expect_true(all(y$T_sero_neg_1 == 0))
-            expect_true(any(y$T_sero_pos_1 > 0))
-            expect_true(all(y$T_sero_neg_2 == 0))
-            expect_true(any(y$T_sero_pos_2 > 0))
-          })
+  expect_true(all(y$T_sero_neg_1 == 0))
+  expect_true(any(y$T_sero_pos_1 > 0))
+  expect_true(all(y$T_sero_neg_2 == 0))
+  expect_true(any(y$T_sero_pos_2 > 0))
+})
 
 
 test_that("setting a gamma to Inf results immediate progression", {
