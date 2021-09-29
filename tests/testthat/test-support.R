@@ -271,7 +271,7 @@ test_that("read default severity", {
 
 
 test_that("Can add new betas", {
-  dat <- reference_data_mcmc()
+  dat <- reference_data_carehomes_mcmc()
 
   ## In order to be able to update future beta values we need to
   ## compute Rt for this simulation. This should probably be
@@ -328,7 +328,7 @@ test_that("Can add new betas", {
 })
 
 test_that("Compute relative betas", {
-  dat <- reference_data_mcmc()
+  dat <- reference_data_carehomes_mcmc()
   rt <- local({
     p <- lapply(seq_len(nrow(dat$pars)), function(i)
       dat$predict$transform(dat$pars[i, ]))
@@ -368,11 +368,11 @@ test_that("Compute relative betas", {
 
 
 test_that("strip projections", {
-  dat1 <- reference_data_mcmc()
-  rt1 <- calculate_rt_simple(dat1)
+  dat1 <- reference_data_carehomes_mcmc()
+  rt1 <- calculate_carehomes_rt_simple(dat1)
 
   dat2 <- carehomes_forecast(dat1, 0, 0, 10, NULL)
-  rt2 <- calculate_rt_simple(dat2)
+  rt2 <- calculate_carehomes_rt_simple(dat2)
 
   future <- list(
     "2020-04-01" = future_Rt(1.5),
@@ -386,8 +386,8 @@ test_that("strip projections", {
 
 
 test_that("validate future beta values", {
-  dat <- reference_data_mcmc()
-  rt <- calculate_rt_simple(dat)
+  dat <- reference_data_carehomes_mcmc()
+  rt <- calculate_carehomes_rt_simple(dat)
 
   f1 <- future_Rt(1.5)
   f2 <- future_Rt(1.5)
@@ -430,8 +430,8 @@ test_that("Can add new betas with incomplete Rt calculation", {
   ## Due to staggered start dates, we may end up with Rt calculations
   ## that miss off the first few dates. This test checks that we can
   ## handle these appropriately.
-  dat <- reference_data_mcmc()
-  rt1 <- calculate_rt_simple(dat)
+  dat <- reference_data_carehomes_mcmc()
+  rt1 <- calculate_carehomes_rt_simple(dat)
   rt2 <- rt1
 
   ## Then we remove some rt calculations:

@@ -33,7 +33,7 @@ real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
     return 0;
   }
   real_t mu = model + dust::distr::rexp(rng_state, exp_noise);
-  return dust::dnbinom(data, kappa, mu, true);
+  return dust::dnbinom_mu(data, kappa, mu, true);
 }
 
 // [[odin.dust::compare_data(icu = real_t, deaths = real_t)]]

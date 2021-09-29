@@ -1,6 +1,6 @@
 ## Create and update rt data set
-reference_data_rt <- function() {
-  load_reference("data/rt.rds", {
+reference_data_carehomes_rt <- function() {
+  load_reference("data/carehomes_rt.rds", {
     p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
     np <- 3L
     mod <- carehomes$new(p, 0, np, seed = 1L)
@@ -25,7 +25,7 @@ reference_data_rt <- function() {
 }
 
 
-calculate_rt_simple <- function(dat) {
+calculate_carehomes_rt_simple <- function(dat) {
   p <- lapply(seq_len(nrow(dat$pars)), function(i)
     dat$predict$transform(dat$pars[i, ]))
   i <- grep("S_", rownames(dat$trajectories$state))
