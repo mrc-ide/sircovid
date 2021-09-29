@@ -23,42 +23,42 @@ test_that("N_tots stay constant without waning immunity", {
 
 test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
           are non-decreasing", {
-  p <- lancelot_parameters(0, "uk", waning_rate = 1 / 20)
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            p <- lancelot_parameters(0, "uk", waning_rate = 1 / 20)
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)$state
+            mod$set_state(lancelot_initial(info, 1, p)$state)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(diff(y$N_tot_sero_1) >= 0))
-  expect_true(all(diff(y$N_tot_sero_2) >= 0))
-  expect_true(all(diff(y$N_tot_PCR) >= 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
 
 test_that("N_tot stays constant when p_R < 1, while
           sero and PCR N_tots are non-decreasing", {
-  p <- lancelot_parameters(0, "uk")
-  p$p_R_step[, ] <- 0.5
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            p <- lancelot_parameters(0, "uk")
+            p$p_R_step[, ] <- 0.5
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)$state
+            mod$set_state(lancelot_initial(info, 1, p)$state)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(diff(y$N_tot_sero_1) >= 0))
-  expect_true(all(diff(y$N_tot_sero_2) >= 0))
-  expect_true(all(diff(y$N_tot_PCR) >= 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
 
 test_that("there are no infections when beta is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
@@ -68,7 +68,7 @@ test_that("there are no infections when beta is 0", {
   # otherwise S can go up as these infected individuals loose immunity
 
   p <- lancelot_parameters(0, "england", beta_value = 0,
-                            waning_rate = waning_rate)
+                           waning_rate = waning_rate)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(lancelot_initial(info, 1, p)$state)
@@ -93,36 +93,36 @@ test_that("everyone is infected when beta is large", {
 
 test_that("noone stays in R if waning rate is very
           large", {
-  # with a large waning rate and beta = 0,
-  # people can move from R to S but not outside of S
-  # therefore R should quickly get empty
-  p <- lancelot_parameters(0, "england",
-                            beta_value = 0, # to forbid movement out of S
-                            waning_rate = Inf) # to force movement out of R
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
+            # with a large waning rate and beta = 0,
+            # people can move from R to S but not outside of S
+            # therefore R should quickly get empty
+            p <- lancelot_parameters(0, "england",
+                                     beta_value = 0, # to forbid movement out of S
+                                     waning_rate = Inf) # to force movement out of R
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
 
-  state <- lancelot_initial(info, 1, p)$state
+            state <- lancelot_initial(info, 1, p)$state
 
-  # move everyone to R
-  index_S <- array(info$index$S, info$dim$S)
-  index_R <- array(info$index$R, info$dim$R)
-  state[index_R] <- rowSums(array(state[index_S], info$dim$S))
-  state[index_S] <- 0
+            # move everyone to R
+            index_S <- array(info$index$S, info$dim$S)
+            index_R <- array(info$index$R, info$dim$R)
+            state[index_R] <- rowSums(array(state[index_S], info$dim$S))
+            state[index_S] <- 0
 
-  mod$set_state(state)
-  y <- mod$transform_variables(drop(
-    mod$simulate(seq(0, 400, by = 4))))
+            mod$set_state(state)
+            y <- mod$transform_variables(drop(
+              mod$simulate(seq(0, 400, by = 4))))
 
-  # other than in the 4th age group (where infections are seeded)
-  # after the first day (4 times steps), R is empty
-  expect_true(all(y$R[-4, , -1, ] == 0))
+            # other than in the 4th age group (where infections are seeded)
+            # after the first day (4 times steps), R is empty
+            expect_true(all(y$R[-4, , -1, ] == 0))
 
-})
+          })
 
 test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
   p <- lancelot_parameters(0, "england",
-                            waning_rate = 0)
+                           waning_rate = 0)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   mod$set_state(lancelot_initial(info, 1, p)$state)
@@ -482,27 +482,27 @@ test_that("No one seroconverts if p_sero_pos is 0", {
 
 test_that("No one does not seroconvert and no one seroreverts
           if p_sero_pos is 1 and gamma_sero_pos is 0", {
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
-  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+            ## waning_rate default is 0, setting to a non-zero value so that this test
+            ## passes with waning immunity
+            p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
 
-  p$p_sero_pos_1[] <- 1
-  p$p_sero_pos_2[] <- 1
-  ## set gamma_sero_pos_1 to 0 so no-one seroreverts
-  p$gamma_sero_pos_1 <- 0
-  p$gamma_sero_pos_2 <- 0
+            p$p_sero_pos_1[] <- 1
+            p$p_sero_pos_2[] <- 1
+            ## set gamma_sero_pos_1 to 0 so no-one seroreverts
+            p$gamma_sero_pos_1 <- 0
+            p$gamma_sero_pos_2 <- 0
 
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  mod$set_state(lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            mod$set_state(lancelot_initial(info, 1, p)$state)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$T_sero_neg_1 == 0))
-  expect_true(any(y$T_sero_pos_1 > 0))
-  expect_true(all(y$T_sero_neg_2 == 0))
-  expect_true(any(y$T_sero_pos_2 > 0))
-})
+            expect_true(all(y$T_sero_neg_1 == 0))
+            expect_true(any(y$T_sero_pos_1 > 0))
+            expect_true(all(y$T_sero_neg_2 == 0))
+            expect_true(any(y$T_sero_pos_2 > 0))
+          })
 
 
 test_that("setting a gamma to Inf results immediate progression", {
@@ -693,8 +693,8 @@ test_that("No one is unconfirmed, if p_star = 1", {
   expect_true(any(y$W_D_conf > 0))
 
   admit_conf <- apply(y$H_R_conf[, 1, , , ] +
-                      y$H_D_conf[, 1, , , ] +
-                      y$ICU_pre_conf[, 1, , , ], 1, sum)
+                        y$H_D_conf[, 1, , , ] +
+                        y$ICU_pre_conf[, 1, , , ], 1, sum)
 
   expect_true(all(diff(y$cum_admit_conf) == admit_conf[-1]))
   expect_true(all(y$cum_new_conf == 0))
@@ -806,14 +806,14 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   expect_true(all(y$W_D_unconf[, , 2, , ] == 0))
 
   new_conf <- apply(y$H_R_conf[, , 2, , ] +
-                    y$H_D_conf[, , 2, , ] +
-                    y$ICU_pre_conf[, , 2, , ], 2, sum)
+                      y$H_D_conf[, , 2, , ] +
+                      y$ICU_pre_conf[, , 2, , ], 2, sum)
   new_conf[2] <- new_conf[2] +
     sum(y$ICU_W_R_conf[, , 2, , 2] +
-        y$ICU_W_D_conf[, , 2, , 2] +
-        y$ICU_D_conf[, , 2, , 2] +
-        y$R_stepdown_conf[, , 2, , 2] +
-        y$W_R_conf[, , 2, , 2])
+          y$ICU_W_D_conf[, , 2, , 2] +
+          y$ICU_D_conf[, , 2, , 2] +
+          y$R_stepdown_conf[, , 2, , 2] +
+          y$W_R_conf[, , 2, , 2])
   expect_true(all(diff(y$cum_new_conf) == new_conf[-1]))
 
   expect_true(all(y$cum_admit_conf == 0))

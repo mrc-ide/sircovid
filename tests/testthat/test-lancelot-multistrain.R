@@ -92,11 +92,11 @@ test_that("Can seed with > 2 dates", {
 test_that("Adding empty strains makes no difference", {
   p1 <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
   p2 <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 0),
-                             cross_immunity = 0)
+                            strain_transmission = c(1, 0),
+                            cross_immunity = 0)
   p3 <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 0.5),
-                             cross_immunity = 0)
+                            strain_transmission = c(1, 0.5),
+                            cross_immunity = 0)
   np <- 10
   mod1 <- lancelot$new(p1, 0, np, seed = 1L)
   mod2 <- lancelot$new(p2, 0, np, seed = 1L)
@@ -125,11 +125,11 @@ test_that("Seeding of second strain generates an epidemic", {
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -173,10 +173,10 @@ test_that("Second more virulent strain takes over", {
   start_date <- sircovid_date("2020-02-07")
   date_seeding <- start_date # seed both strains on same day
   p <- lancelot_parameters(start_date, "england",
-                            strain_transmission = c(1, 10),
-                            strain_seed_date = c(date_seeding,
-                                                 date_seeding + 1),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           strain_transmission = c(1, 10),
+                           strain_seed_date = c(date_seeding,
+                                                date_seeding + 1),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -198,10 +198,10 @@ test_that("Second less virulent strain does not take over", {
   start_date <- sircovid_date("2020-02-07")
   date_seeding <- start_date # seed both strains on same day
   p <- lancelot_parameters(start_date, "england",
-                            strain_transmission = c(1, 0.1),
-                            strain_seed_date = c(date_seeding,
-                                                 date_seeding + 1),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           strain_transmission = c(1, 0.1),
+                           strain_seed_date = c(date_seeding,
+                                                date_seeding + 1),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -219,96 +219,96 @@ test_that("Second less virulent strain does not take over", {
 
 test_that("N_tots stay constant with second strain and no waning immunity - no
           superinfection", {
-  ## Default for waning_rate is 0
-  set.seed(1)
-  n_seeded_new_strain_inf <- 100
-  date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+            ## Default for waning_rate is 0
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+            date_seeding_end <- "2020-03-08"
+            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                                     strain_transmission = c(1, 1),
+                                     strain_seed_date =
+                                       sircovid_date(c(date_seeding, date_seeding_end)),
+                                     strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
-  mod <- lancelot$new(p, 0, 1, seed = 1L)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            mod <- lancelot$new(p, 0, 1, seed = 1L)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)$state
+            mod$set_state(lancelot_initial(info, 1, p)$state)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(y$N_tot_sero_1 -
-                    mod$transform_variables(y0)$N_tot_sero_1 == 0))
-  expect_true(all(y$N_tot_sero_2 -
-                    mod$transform_variables(y0)$N_tot_sero_2 == 0))
-  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(y$N_tot_sero_1 -
+                              mod$transform_variables(y0)$N_tot_sero_1 == 0))
+            expect_true(all(y$N_tot_sero_2 -
+                              mod$transform_variables(y0)$N_tot_sero_2 == 0))
+            expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+            expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+            expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
+            expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
+          })
 
 
 test_that("N_tot is constant with second strain and waning immunity, while
           sero N_tots are non-decreasing - superinfection", {
-  ## Default for waning_rate is 0
-  set.seed(1)
-  n_seeded_new_strain_inf <- 100
-  date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 1 / 20,
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            cross_immunity = 0)
+            ## Default for waning_rate is 0
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+            date_seeding_end <- "2020-03-08"
+            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                                     waning_rate = 1 / 20,
+                                     strain_transmission = c(1, 1),
+                                     strain_seed_date =
+                                       sircovid_date(c(date_seeding, date_seeding_end)),
+                                     strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                                     cross_immunity = 0)
 
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)$state
+            mod$set_state(lancelot_initial(info, 1, p)$state)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(diff(y$N_tot_sero_1) >= 0))
-  expect_true(all(diff(y$N_tot_sero_2) >= 0))
-  expect_true(all(diff(y$N_tot_PCR) >= 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
 
 test_that("N_tot is constant with second strain and waning immunity, while
           sero and PCR N_tots are non-decreasing - no superinfection", {
-  ## Default for waning_rate is 0
-  set.seed(1)
-  n_seeded_new_strain_inf <- 100
-  date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 1 / 20,
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+            ## Default for waning_rate is 0
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+            date_seeding_end <- "2020-03-08"
+            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                                     waning_rate = 1 / 20,
+                                     strain_transmission = c(1, 1),
+                                     strain_seed_date =
+                                       sircovid_date(c(date_seeding, date_seeding_end)),
+                                     strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)$state
+            mod$set_state(lancelot_initial(info, 1, p)$state)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(diff(y$N_tot_sero_1) >= 0))
-  expect_true(all(diff(y$N_tot_sero_2) >= 0))
-  expect_true(all(diff(y$N_tot_PCR) >= 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
 
 
 
@@ -319,12 +319,12 @@ test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 1e6,
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            cross_immunity = 0)
+                           waning_rate = 1e6,
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, 1, seed = 2L)
   info <- mod$info()
@@ -343,11 +343,11 @@ test_that("No-one in strains 3 or 4 if no super infection", {
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 0.1,
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           waning_rate = 0.1,
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
 
   mod <- lancelot$new(p, 0, 1, seed = 2L)
   info <- mod$info()
@@ -368,11 +368,11 @@ test_that("prob_strain sums to 1", {
 
   # no waning immunity
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           cross_immunity = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
@@ -390,12 +390,12 @@ test_that("prob_strain sums to 1", {
 
   # with waning immunity
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            waning_rate = 1 / 20,
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            cross_immunity = 0)
+                           waning_rate = 1 / 20,
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           cross_immunity = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
@@ -416,11 +416,11 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   date_seeding <- "2020-03-07"
   date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0),
-                            strain_seed_date =
-                              sircovid_date(c(date_seeding, date_seeding_end)),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 0),
+                           strain_seed_date =
+                             sircovid_date(c(date_seeding, date_seeding_end)),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -444,11 +444,11 @@ test_that("Everyone is infected when second strain transmission is large", {
   n_seeded_new_strain_inf <- 10
   date_seeding <- c("2020-03-07", "2020-03-08")
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1e9),
-                            strain_seed_date =
-                              sircovid_date(date_seeding),
-                            strain_seed_rate = c(n_seeded_new_strain_inf, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1e9),
+                           strain_seed_date =
+                             sircovid_date(date_seeding),
+                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           cross_immunity = 0)
 
   ## set gamma_E to Inf so that seeded individuals move through each E stage
   ## in one step
@@ -477,12 +477,12 @@ test_that("No infection with either strain with perfect vaccine", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- lancelot_parameters(0, "england",
-                            strain_transmission = c(1, 1),
-                            rel_susceptibility = c(1, 0),
-                            rel_p_sympt = c(1, 1),
-                            rel_p_hosp_if_sympt = c(1, 1),
-                            waning_rate = 0.1,
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           rel_susceptibility = c(1, 0),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           waning_rate = 0.1,
+                           cross_immunity = 0)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
 
@@ -515,8 +515,8 @@ test_that("No infection with either strain with perfect vaccine", {
 test_that("different strains are equivalent", {
   set.seed(1)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           cross_immunity = 0)
   np <- 10
   mod <- lancelot$new(p, 0, np, seed = 1L, n_threads = 10)
   end <- sircovid_date("2020-07-31") / p$dt
@@ -561,8 +561,8 @@ test_that("different strains are equivalent", {
 
 test_that("Swapping strains gives identical results with different index", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           cross_immunity = 0)
 
   np <- 1
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -630,11 +630,11 @@ test_that("Swapping strains gives identical results with different index", {
 test_that("Cannot calculate Rt for multistrain without correct inputs", {
   ## Run model with 2 variants
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -674,7 +674,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected a 2 strains")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ][1, , drop = FALSE],
-                 R = R[, 1, ]),
+                R = R[, 1, ]),
     "Expected 'prob_strain' to have 2 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1], R = R[, 1, ]),
@@ -715,11 +715,11 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
 test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
   ## Run model with 2 variants
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -774,7 +774,7 @@ test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
     "Expected 3rd dim of 'R' to have length 85, given 'step'")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, 1, , drop = FALSE],
-                                 I[, 1, , drop = FALSE], list(p), R = R),
+                                I[, 1, , drop = FALSE], list(p), R = R),
     "Expected 2nd dim of 'R' to have length 1, given 'pars'")
 
 })
@@ -782,8 +782,8 @@ test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
 ## Tests for basic object properties, not analytical results from calculations
 test_that("wtmean_Rt works as expected", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           cross_immunity = 0)
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
@@ -809,13 +809,13 @@ test_that("wtmean_Rt works as expected", {
 
   rt_strain_weighted <-
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                 weight_Rt = TRUE)
+                weight_Rt = TRUE)
   expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
   expect_equal(class(rt_strain_weighted), c("single_strain", "Rt"))
 
   rt_traj_strain_weighted <-
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                              weight_Rt = TRUE)
+                             weight_Rt = TRUE)
   expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
   expect_equal(class(rt_traj_strain_weighted),
                c("single_strain", "Rt_trajectories", "Rt"))
@@ -856,7 +856,7 @@ test_that("wtmean_Rt works as expected", {
   expect_error(wtmean_Rt(1L), "must inherit")
   expect_error(wtmean_Rt(structure(list(Rt_all = matrix(1)), class = "Rt"),
                          prob_strain),
-              "Expect elements of Rt to have dimensions")
+               "Expect elements of Rt to have dimensions")
 
   ## check single particle case
   S <- mcstate::array_flatten(S, 2:3)[, 1, drop = FALSE]
@@ -866,7 +866,7 @@ test_that("wtmean_Rt works as expected", {
   rt_weight_T <- lancelot_Rt(1, S, p, prob_strain, R = R, weight_Rt = TRUE)
   expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all)
   expect_equal(rt_weight_F$eff_Rt_general[[1]],
-                      rt_weight_T$eff_Rt_general)
+               rt_weight_T$eff_Rt_general)
   expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
   expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
 })
@@ -876,8 +876,8 @@ test_that("Can calculate Rt with an empty second variant ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -898,9 +898,9 @@ test_that("Can calculate Rt with an empty second variant ", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                       weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
@@ -952,8 +952,8 @@ test_that("Can calculate Rt with strain_transmission (1, 0) ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 0),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -974,7 +974,7 @@ test_that("Can calculate Rt with strain_transmission (1, 0) ", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = FALSE)
+                      weight_Rt = FALSE)
   expect_vector_equal(rt_1$eff_Rt_all[, 2], 0)
   expect_vector_equal(rt_1$eff_Rt_general[, 2], 0)
   expect_vector_equal(rt_1$Rt_all[, 2], 0)
@@ -985,11 +985,11 @@ test_that("Can calculate Rt with strain_transmission (1, 0) ", {
 test_that("Can calculate Rt with a second less infectious variant", {
   ## seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0.1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 0.1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1010,9 +1010,9 @@ test_that("Can calculate Rt with a second less infectious variant", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                      weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
@@ -1051,11 +1051,11 @@ test_that("Can calculate Rt with a second less infectious variant", {
 test_that("Can calculate Rt with a second more infectious variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 5),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 5),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
 
   np <- 3L
@@ -1077,9 +1077,9 @@ test_that("Can calculate Rt with a second more infectious variant", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                      weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
@@ -1118,12 +1118,12 @@ test_that("Can calculate Rt with a second more infectious variant", {
 test_that("Can calculate Rt with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_severity = c(1, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_severity = c(1, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
 
   np <- 3L
@@ -1145,9 +1145,9 @@ test_that("Can calculate Rt with a second less lethal variant", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                       weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
@@ -1188,12 +1188,12 @@ test_that("Can calculate Rt with a second less lethal variant", {
 test_that("Can calculate Rt with a second variant with longer I_A", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = c(1, 0.1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = c(1, 0.1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
 
   np <- 3L
@@ -1215,9 +1215,9 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                       weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
@@ -1258,12 +1258,12 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
 test_that("Can calculate Rt with a second variant with longer I_P", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_P = c(1, 0.1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_P = c(1, 0.1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
 
   np <- 3L
@@ -1285,9 +1285,9 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                       weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
@@ -1328,12 +1328,12 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
 test_that("Can calculate Rt with a second variant with longer I_C_1", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_C_1 = c(1, 0.1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_C_1 = c(1, 0.1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
 
   np <- 3L
@@ -1355,9 +1355,9 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                       weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
@@ -1399,7 +1399,7 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1))
+                           strain_transmission = c(1, 1))
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1446,9 +1446,9 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
   ## test weighted
 
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                      weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## all values of Rt in 60:70 to be NA and others not to be
   expect_vector_equal(lengths(rt_1[1:3]), 85)
@@ -1465,7 +1465,7 @@ test_that("Can compute Rt if all prob_strain is NA", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1))
+                           strain_transmission = c(1, 1))
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1500,9 +1500,9 @@ test_that("Can compute Rt if all prob_strain is NA", {
 
   ## test weighted
   rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                      weight_Rt = TRUE)
+                                     weight_Rt = TRUE)
 
   ## All NA as weight_Rt = TRUE
   expect_vector_equal(vlapply(rt_1[1:3], function(x) any(is.na(x))), FALSE)
@@ -1530,16 +1530,16 @@ test_that("calculate Rt with both second variant and vaccination", {
   transm_new_variant <- 5
 
   p <- lancelot_parameters(0, region,
-                            waning_rate = 0.1,
-                            strain_transmission = c(1, transm_new_variant),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            rel_susceptibility = rep(1, 3),
-                            vaccine_progression_rate = numeric(3),
-                            vaccine_schedule = vaccine_schedule,
-                            vaccine_index_dose2 = 2L,
-                            cross_immunity = 0)
+                           waning_rate = 0.1,
+                           strain_transmission = c(1, transm_new_variant),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           rel_susceptibility = rep(1, 3),
+                           vaccine_progression_rate = numeric(3),
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L,
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 2L)
@@ -1564,7 +1564,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   for (k in seq_len(np)) { # for each particle
 
     rt <- lancelot_Rt(steps, S[, k, ], p, prob_strain[, k, ], R = R[, k, ],
-                       weight_Rt = TRUE)
+                      weight_Rt = TRUE)
 
     ## Impact of variant on Rt is as expected:
     ## Rt_general should increase over time because of invasion of new
@@ -1591,9 +1591,9 @@ test_that("strain_rel_severity works as expected in lancelot_parameters", {
   strain_rel_severity <- c(1, 0.5)
   rel_p_death <- c(1, 0.6, 0.7)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_severity = strain_rel_severity,
-                            rel_p_death = rel_p_death)
+                           strain_transmission = c(1, 1),
+                           strain_rel_severity = strain_rel_severity,
+                           rel_p_death = rel_p_death)
   # check strains are mirrored
   expect_equal(p$rel_p_ICU_D[, 1:2, ], p$rel_p_ICU_D[, 4:3, ])
   expect_equal(p$rel_p_ICU_D[, 2, ],
@@ -1607,30 +1607,30 @@ test_that("strain_rel_severity works as expected in lancelot_parameters", {
 
 test_that("strain_rel_gamma works as expected in lancelot_parameters", {
   expect_silent(lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma_A = 1,
-                                     strain_rel_gamma_P = 1,
-                                     strain_rel_gamma_C_1 = 1,
-                                     strain_rel_gamma_C_2 = 1))
+                                    strain_rel_gamma_A = 1,
+                                    strain_rel_gamma_P = 1,
+                                    strain_rel_gamma_C_1 = 1,
+                                    strain_rel_gamma_C_2 = 1))
   expect_silent(lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_rel_gamma_A = 1:2,
-                                     strain_rel_gamma_P = 1:2,
-                                     strain_rel_gamma_C_1 = 1:2,
-                                     strain_rel_gamma_C_2 = 1:2,
-                                     strain_transmission = c(1, 1)))
+                                    strain_rel_gamma_A = 1:2,
+                                    strain_rel_gamma_P = 1:2,
+                                    strain_rel_gamma_C_1 = 1:2,
+                                    strain_rel_gamma_C_2 = 1:2,
+                                    strain_transmission = c(1, 1)))
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                    strain_rel_gamma_A = c(1, 5)),
+                                   strain_rel_gamma_A = c(1, 5)),
                "1 or 1")
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                    strain_rel_gamma_A = c(1, 5),
-                                    strain_transmission = c(1, 2, 3)),
+                                   strain_rel_gamma_A = c(1, 5),
+                                   strain_transmission = c(1, 2, 3)),
                "1 or 2")
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                    strain_transmission = c(1, 1),
-                                    strain_rel_gamma_A = c(2, 5)),
+                                   strain_transmission = c(1, 1),
+                                   strain_rel_gamma_A = c(2, 5)),
                "must be 1")
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                    strain_transmission = c(1, 1),
-                                    strain_rel_gamma_A = c(1, -1)),
+                                   strain_transmission = c(1, 1),
+                                   strain_rel_gamma_A = c(1, -1)),
                "non-negative")
 })
 
@@ -1638,10 +1638,10 @@ test_that("strain_rel_gamma works as expected in lancelot_parameters", {
 test_that("Relative gamma = 1 makes no difference", {
   p1 <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
   p2 <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 1),
+                            strain_transmission = c(1, 1),
                             cross_immunity = 0)
   p3 <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 1),
+                            strain_transmission = c(1, 1),
                             cross_immunity = 0)
   np <- 10
   mod1 <- lancelot$new(p1, 0, np, seed = 1L)
@@ -1669,16 +1669,16 @@ test_that("Relative gamma = 1 makes no difference", {
 test_that("Lower rate variant has higher Rt", {
   ## rate is .1 times ref
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = c(1, .1),
-                            strain_rel_gamma_P = c(1, .1),
-                            strain_rel_gamma_C_1 = c(1, .1),
-                            strain_rel_gamma_C_2 = c(1, .1),
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = c(1, .1),
+                           strain_rel_gamma_P = c(1, .1),
+                           strain_rel_gamma_C_1 = c(1, .1),
+                           strain_rel_gamma_C_2 = c(1, .1),
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1699,16 +1699,16 @@ test_that("Lower rate variant has higher Rt", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_15_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                         weight_Rt = TRUE)
+                                        weight_Rt = TRUE)
 
   ## rate equal to ref
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1729,7 +1729,7 @@ test_that("Lower rate variant has higher Rt", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_1_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                        weight_Rt = TRUE)
+                                       weight_Rt = TRUE)
 
   ## Rt should be higher (or equal) for the two variant version
   expect_vector_lte(rt_1_all$Rt_all, rt_15_all$Rt_all)
@@ -1742,16 +1742,16 @@ test_that("Stuck when gamma =  0", {
 
   ## gammaP is 0 so IC1 is 0
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = 1,
-                            strain_rel_gamma_P = 1,
-                            strain_rel_gamma_C_1 = 1,
-                            strain_rel_gamma_C_2 = 1,
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = 1,
+                           strain_rel_gamma_P = 1,
+                           strain_rel_gamma_C_1 = 1,
+                           strain_rel_gamma_C_2 = 1,
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
   p$gamma_P_step <- 0
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1774,16 +1774,16 @@ test_that("Stuck when gamma =  0", {
 
   ## gammaC1 is 0 so IC2 is 0
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = 1,
-                            strain_rel_gamma_P = 1,
-                            strain_rel_gamma_C_1 = 1,
-                            strain_rel_gamma_C_2 = 1,
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = 1,
+                           strain_rel_gamma_P = 1,
+                           strain_rel_gamma_C_1 = 1,
+                           strain_rel_gamma_C_2 = 1,
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
   p$gamma_C_1_step <- 0
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1806,15 +1806,15 @@ test_that("Stuck when gamma =  0", {
 
   ## gammaA is 0 & gammaC2 is 0 so R is 0
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = 1,
-                            strain_rel_gamma_P = 1,
-                            strain_rel_gamma_C_1 = 1,
-                            strain_rel_gamma_C_2 = 1,
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0))
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = 1,
+                           strain_rel_gamma_P = 1,
+                           strain_rel_gamma_C_1 = 1,
+                           strain_rel_gamma_C_2 = 1,
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0))
   p$gamma_A_step <- 0
   p$gamma_C_2_step <- 0
 
@@ -1845,16 +1845,16 @@ test_that("Stuck when gamma =  0 for second strain", {
 
   ## gammaP is 0 so IC1 is 0 for second strain
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = c(1, 1),
-                            strain_rel_gamma_P = c(1, 0),
-                            strain_rel_gamma_C_1 = c(1, 1),
-                            strain_rel_gamma_C_2 = c(1, 1),
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = c(1, 1),
+                           strain_rel_gamma_P = c(1, 0),
+                           strain_rel_gamma_C_1 = c(1, 1),
+                           strain_rel_gamma_C_2 = c(1, 1),
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
@@ -1891,16 +1891,16 @@ test_that("Stuck when gamma =  0 for second strain", {
 
   ## gammaC1 is 0 so IC2 is 0 for second strain
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = c(1, 1),
-                            strain_rel_gamma_P = c(1, 1),
-                            strain_rel_gamma_C_1 = c(1, 0),
-                            strain_rel_gamma_C_2 = c(1, 1),
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = c(1, 1),
+                           strain_rel_gamma_P = c(1, 1),
+                           strain_rel_gamma_C_1 = c(1, 0),
+                           strain_rel_gamma_C_2 = c(1, 1),
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   mod$set_state(initial$state, initial$step)
@@ -1913,16 +1913,16 @@ test_that("Stuck when gamma =  0 for second strain", {
 
   ## gammaA is 0 & gammaC2 is 0 so R is 0
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_gamma_A = c(1, 0),
-                            strain_rel_gamma_P = c(1, 1),
-                            strain_rel_gamma_C_1 = c(1, 1),
-                            strain_rel_gamma_C_2 = c(1, 0),
-                            strain_seed_date =
-                              c(sircovid_date("2020-02-07"),
-                                sircovid_date("2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_A = c(1, 0),
+                           strain_rel_gamma_P = c(1, 1),
+                           strain_rel_gamma_C_1 = c(1, 1),
+                           strain_rel_gamma_C_2 = c(1, 0),
+                           strain_seed_date =
+                             c(sircovid_date("2020-02-07"),
+                               sircovid_date("2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   mod$set_state(initial$state, initial$step)
@@ -1937,12 +1937,12 @@ test_that("Stuck when gamma =  0 for second strain", {
 
 test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            waning_rate = 1 / 20,
-                            strain_seed_rate = c(1, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           waning_rate = 1 / 20,
+                           strain_seed_rate = c(1, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 0)
   p$p_C_step[, ] <- 1
   p$p_H_step[, ] <- 1
   p$p_G_D_step[, ] <- 1
@@ -1984,11 +1984,11 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
 test_that("G_D empty when p_G_D = 0", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(1, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_rate = c(1, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 0)
   p$p_G_D_step[, ] <- 0
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2007,12 +2007,12 @@ test_that("G_D empty when p_G_D = 0", {
 test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_severity = c(1, 0),
-                            strain_seed_rate = c(10, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_rel_severity = c(1, 0),
+                           strain_seed_rate = c(10, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
@@ -2037,11 +2037,11 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
 test_that("Can't move from S to E3/4", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(10, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_rate = c(10, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
@@ -2061,12 +2061,12 @@ test_that("Can't move from S to E3/4", {
 test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0),
-                            strain_seed_rate = c(10, 0),
-                            beta_value = 1e100,
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 0),
+                           strain_seed_rate = c(10, 0),
+                           beta_value = 1e100,
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
@@ -2087,13 +2087,13 @@ test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
 test_that("Can only move to S from R3 and R4 to S", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            initial_I = 0,
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(10, 0),
-                            waning_rate = 1 / 5,
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
+                           initial_I = 0,
+                           strain_transmission = c(1, 1),
+                           strain_seed_rate = c(10, 0),
+                           waning_rate = 1 / 5,
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 0)
   ## Prevent anyone leaving S
   p$rel_susceptibility[] <- 0
 
@@ -2126,11 +2126,11 @@ test_that("Can only move to S from R3 and R4 to S", {
 test_that("Everyone in R3 and R4 when no waning and transmission high", {
   np <- 1L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(10, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_rate = c(10, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 0)
   p$strain_transmission[] <- 1e8
   ## set p_C to 0 so that individuals move to R quickly
   p$p_C_step[, ] <- 0
@@ -2153,15 +2153,15 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
 test_that("cross_immunity parameter errors when expected", {
   expect_error(
     lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                         cross_immunity = 2), "in [0, 1]", fixed = TRUE
+                        cross_immunity = 2), "in [0, 1]", fixed = TRUE
   )
   expect_error(
     lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                         cross_immunity = -2), "in [0, 1]", fixed = TRUE
+                        cross_immunity = -2), "in [0, 1]", fixed = TRUE
   )
   expect_error(
     lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                         cross_immunity = c(1, 1)), "Invalid length"
+                        cross_immunity = c(1, 1)), "Invalid length"
   )
 })
 
@@ -2169,11 +2169,11 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
   np <- 1L
 
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(10, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 1)
+                           strain_transmission = c(1, 1),
+                           strain_seed_rate = c(10, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = 1)
   mod <- lancelot$new(p, 0, np)
   initial <- lancelot_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
@@ -2188,44 +2188,44 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
 
 test_that("some cross-immunity means less Strain 3 or 4 infections than none
            and > 0", {
-  np <- 1L
+             np <- 1L
 
-  ## no cross-immnunity
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(10, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0)
-  mod <- lancelot$new(p, 0, np)
-  initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
-  end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
-  set.seed(1)
-  y <- mod$transform_variables(
-    drop(mod$simulate(steps)))
-  infect_no_cross <- y$cum_infections_per_strain[3:4, 85]
+             ## no cross-immnunity
+             p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                                      strain_transmission = c(1, 1),
+                                      strain_seed_rate = c(10, 0),
+                                      strain_seed_date =
+                                        sircovid_date(c("2020-02-07", "2020-02-08")),
+                                      cross_immunity = 0)
+             mod <- lancelot$new(p, 0, np)
+             initial <- lancelot_initial(mod$info(), np, p)
+             mod$set_state(initial$state, initial$step)
+             end <- sircovid_date("2020-05-01") / p$dt
+             steps <- seq(initial$step, end, by = 1 / p$dt)
+             set.seed(1)
+             y <- mod$transform_variables(
+               drop(mod$simulate(steps)))
+             infect_no_cross <- y$cum_infections_per_strain[3:4, 85]
 
-  ## some cross-immunity
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(10, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = 0.5)
-  mod <- lancelot$new(p, 0, np)
-  initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
-  set.seed(1)
-  y <- mod$transform_variables(
-    drop(mod$simulate(steps)))
-  infect_some_cross <- y$cum_infections_per_strain[3:4, 85]
+             ## some cross-immunity
+             p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                                      strain_transmission = c(1, 1),
+                                      strain_seed_rate = c(10, 0),
+                                      strain_seed_date =
+                                        sircovid_date(c("2020-02-07", "2020-02-08")),
+                                      cross_immunity = 0.5)
+             mod <- lancelot$new(p, 0, np)
+             initial <- lancelot_initial(mod$info(), np, p)
+             mod$set_state(initial$state, initial$step)
+             set.seed(1)
+             y <- mod$transform_variables(
+               drop(mod$simulate(steps)))
+             infect_some_cross <- y$cum_infections_per_strain[3:4, 85]
 
-  expect_vector_lte(infect_some_cross, infect_no_cross)
-  expect_true(all(infect_some_cross > 0))
-  expect_true(all(infect_no_cross > 0))
-})
+             expect_vector_lte(infect_some_cross, infect_no_cross)
+             expect_true(all(infect_some_cross > 0))
+             expect_true(all(infect_no_cross > 0))
+           })
 
 
 test_that("cross-immunity can be separated by strain", {
@@ -2235,11 +2235,11 @@ test_that("cross-immunity can be separated by strain", {
 
   ## complete immunity from Strain 1 means Strain 3 empty (1 -> 2)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-    strain_transmission = c(1, 1),
-    strain_seed_rate = c(10, 0),
-    strain_seed_date =
-      sircovid_date(c("2020-02-07", "2020-02-08")),
-    cross_immunity = c(1, 0)
+                           strain_transmission = c(1, 1),
+                           strain_seed_rate = c(10, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = c(1, 0)
   )
   mod <- lancelot$new(p, 0, np, seed = seed)
   initial <- lancelot_initial(mod$info(), np, p)
@@ -2255,11 +2255,11 @@ test_that("cross-immunity can be separated by strain", {
 
   ## complete immunity from Strain 2 means Strain 4 empty (2 -> 1)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_seed_rate = c(100, 0),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            cross_immunity = c(0, 1))
+                           strain_transmission = c(1, 1),
+                           strain_seed_rate = c(100, 0),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           cross_immunity = c(0, 1))
   mod <- lancelot$new(p, 0, np, seed = seed)
   initial <- lancelot_initial(mod$info(), np, p)
   mod$set_state(initial$state, initial$step)
@@ -2276,9 +2276,9 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   ## Run model with 2 variants, but both have same transmissibility
   ## no seeding for second variant so noone infected with that one
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            rel_susceptibility = c(1, 1, 1),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           rel_susceptibility = c(1, 1, 1),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2303,7 +2303,7 @@ test_that("Can calculate ifr_t with an empty second variant ", {
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            rel_susceptibility = c(1, 1, 1))
+                           rel_susceptibility = c(1, 1, 1))
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2365,12 +2365,12 @@ test_that("Can calculate ifr_t with an empty second variant ", {
 test_that("Can calculate ifr_t with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            strain_rel_severity = c(1, 0.5),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 1)
+                           strain_transmission = c(1, 1),
+                           strain_rel_severity = c(1, 0.5),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 1)
 
 
   np <- 3L
@@ -2424,7 +2424,7 @@ test_that("can inflate the number of strains after running with 1", {
   p1 <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
   ## two strains
   p2 <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                             strain_transmission = c(1, 1))
+                            strain_transmission = c(1, 1))
 
   np <- 3L
   mod1 <- lancelot$new(p1, 0, np, seed = 1L)
@@ -2476,11 +2476,11 @@ test_that("can inflate the number of strains after running with 1", {
 
 test_that("Rt lower with perfect cross immunity", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0.1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 1)
+                           strain_transmission = c(1, 0.1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 1)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2501,17 +2501,17 @@ test_that("Rt lower with perfect cross immunity", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt_cross_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
-                             R = R[, 1, ], weight_Rt = TRUE)
+                            R = R[, 1, ], weight_Rt = TRUE)
 
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 0.1),
-                            strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
-                            strain_seed_rate = c(10, 0),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 0.1),
+                           strain_seed_date =
+                             sircovid_date(c("2020-02-07", "2020-02-08")),
+                           strain_seed_rate = c(10, 0),
+                           cross_immunity = 0)
 
   rt_cross_0 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
-                             R = R[, 1, ], weight_Rt = TRUE)
+                            R = R[, 1, ], weight_Rt = TRUE)
 
   ## Rt should be equal for strain 1
   tol <- 1e-5
@@ -2556,34 +2556,34 @@ test_that("Can interpolate multistrain Rt", {
 
   set.seed(1)
   rt_cmp <- lancelot_Rt_trajectories(step, S, p,
-                                      initial_step_from_parameters = FALSE)
+                                     initial_step_from_parameters = FALSE)
 
   ## Only interpolate if "every" is given:
   set.seed(1)
   expect_identical(
     lancelot_Rt_trajectories(step, S, p,
-                              initial_step_from_parameters = FALSE,
-                              interpolate_min = 3),
+                             initial_step_from_parameters = FALSE,
+                             interpolate_min = 3),
     rt_cmp)
 
 
   ## Then compute the Rt values with interpolation
   rt_int_2 <- lancelot_Rt_trajectories(step, S, p,
-                                        initial_step_from_parameters = FALSE,
-                                        interpolate_every = 2,
-                                        interpolate_min = 3,
-                                        interpolate_critical_dates = crit_dates)
+                                       initial_step_from_parameters = FALSE,
+                                       interpolate_every = 2,
+                                       interpolate_min = 3,
+                                       interpolate_critical_dates = crit_dates)
   rt_int_7 <- lancelot_Rt_trajectories(step, S, p,
-                                        initial_step_from_parameters = FALSE,
-                                        interpolate_every = 7,
-                                        interpolate_min = 3,
-                                        interpolate_critical_dates = crit_dates)
+                                       initial_step_from_parameters = FALSE,
+                                       interpolate_every = 7,
+                                       interpolate_min = 3,
+                                       interpolate_critical_dates = crit_dates)
   rt_int_14 <- lancelot_Rt_trajectories(step, S, p,
-                                         initial_step_from_parameters = FALSE,
-                                         interpolate_every = 14,
-                                         interpolate_min = 1,
-                                         interpolate_critical_dates =
-                                           crit_dates)
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 14,
+                                        interpolate_min = 1,
+                                        interpolate_critical_dates =
+                                          crit_dates)
   ## check the error is small
   tol <- 0.05
   # for interpolation every 2 days
@@ -2611,8 +2611,8 @@ test_that("Can interpolate multistrain Rt", {
 
 test_that("wtmean_Rt works as expected with interpolation", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            strain_transmission = c(1, 1),
-                            cross_immunity = 0)
+                           strain_transmission = c(1, 1),
+                           cross_immunity = 0)
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
@@ -2631,29 +2631,29 @@ test_that("wtmean_Rt works as expected with interpolation", {
   interpolate_min <- 3
 
   rt <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                     interpolate_every = interpolate_every,
-                     interpolate_min = interpolate_min)
+                    interpolate_every = interpolate_every,
+                    interpolate_min = interpolate_min)
   expect_equal(dim(rt$eff_Rt_all), c(85, 2))
   expect_equal(class(rt), c("multi_strain", "Rt"))
 
   rt_traj <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                                       interpolate_every = interpolate_every,
-                                       interpolate_min = interpolate_min)
+                                      interpolate_every = interpolate_every,
+                                      interpolate_min = interpolate_min)
   expect_equal(dim(rt_traj$eff_Rt_all), c(85, 2, 3))
   expect_equal(class(rt_traj), c("multi_strain", "Rt_trajectories", "Rt"))
 
   rt_strain_weighted <-
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
-                 weight_Rt = TRUE, interpolate_every = interpolate_every,
-                 interpolate_min = interpolate_min)
+                weight_Rt = TRUE, interpolate_every = interpolate_every,
+                interpolate_min = interpolate_min)
   expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
   expect_equal(class(rt_strain_weighted), c("single_strain", "Rt"))
 
   rt_traj_strain_weighted <-
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
-                              weight_Rt = TRUE,
-                              interpolate_every = interpolate_every,
-                              interpolate_min = interpolate_min)
+                             weight_Rt = TRUE,
+                             interpolate_every = interpolate_every,
+                             interpolate_min = interpolate_min)
   expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
   expect_equal(class(rt_traj_strain_weighted),
                c("single_strain", "Rt_trajectories", "Rt"))
@@ -2699,7 +2699,7 @@ test_that("wtmean_Rt works as expected with interpolation", {
   rt_weight_T <- lancelot_Rt(1, S, p, prob_strain, R = R, weight_Rt = TRUE)
   expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all)
   expect_equal(rt_weight_F$eff_Rt_general[[1]],
-                      rt_weight_T$eff_Rt_general)
+               rt_weight_T$eff_Rt_general)
   expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
   expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
 })

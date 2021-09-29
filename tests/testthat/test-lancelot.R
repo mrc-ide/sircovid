@@ -77,7 +77,7 @@ test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england")
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                         start_date, pars$dt)
+                        start_date, pars$dt)
 
   pf <- lancelot_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")
@@ -141,7 +141,7 @@ test_that("compiled compare function is correct", {
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england", exp_noise = Inf)
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                         start_date, pars$dt)
+                        start_date, pars$dt)
 
   np <- 1
   mod <- lancelot$new(pars, 0, np, seed = 1L)
@@ -164,7 +164,7 @@ test_that("Test compiled lancelot components", {
   ## use a non-integer kappa for pillar 2 cases
   pars$kappa_pillar2_cases <- 2.5
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                         start_date, pars$dt)
+                        start_date, pars$dt)
 
   np <- 10
   mod <- lancelot$new(pars, 0, np, seed = 1L)
@@ -229,11 +229,11 @@ test_that("can run the particle filter on the model 2", {
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england")
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                         start_date, pars$dt)
+                        start_date, pars$dt)
 
   np <- 50
   pf1 <- lancelot_particle_filter(data, np, compiled_compare = FALSE,
-                                   seed = 2)
+                                  seed = 2)
   pf2 <- lancelot_particle_filter(data, np, compiled_compare = TRUE, seed = 2)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)

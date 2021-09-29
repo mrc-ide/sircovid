@@ -94,23 +94,23 @@ test_that("validate inputs in rt trajectories calculation", {
     fixed = TRUE)
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, , ],
-                                 I_weighted[, 1, , drop = FALSE], list(p)),
+                                I_weighted[, 1, , drop = FALSE], list(p)),
     "Expected 2nd dim of 'S' to have length 1, given 'pars'")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, 1, , drop = FALSE],
-                                 I_weighted[, , ], list(p)),
+                                I_weighted[, , ], list(p)),
     "Expected 2nd dim of 'I_weighted' to have length 1, given 'pars'")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, , ], I_weighted,
-                                 p, shared_parameters = FALSE),
+                                p, shared_parameters = FALSE),
     "If not using shared parameters, expected a unnamed list for 'pars'")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, , ], I_weighted, list(p),
-                              shared_parameters = TRUE),
+                                shared_parameters = TRUE),
     "If using shared parameters, expected a named list for 'pars'")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, 1, , drop = FALSE], I_weighted, p,
-                                 shared_parameters = TRUE),
+                                shared_parameters = TRUE),
     "Expected 'S' and 'I_weighted' to have same length of 2nd dim")
 })
 
@@ -131,11 +131,11 @@ test_that("Can set initial time", {
   }
 
   res1 <- lancelot_ifr_t_trajectories(steps, S, I_weighted, p,
-                                       initial_step_from_parameters = FALSE)
+                                      initial_step_from_parameters = FALSE)
   expect_equal(res1$step, matrix(steps, length(steps), ncol(S)))
 
   res2 <- lancelot_ifr_t_trajectories(steps, S, I_weighted, p,
-                                       initial_step_from_parameters = TRUE)
+                                      initial_step_from_parameters = TRUE)
   expect_equal(res2$step[1, ], step0)
   expect_equal(res2$step[-1, ], res1$step[-1, ])
 })
@@ -151,25 +151,25 @@ test_that("can filter IFR_t to wanted types", {
 
   expect_mapequal(
     lancelot_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
-                    type = "IFR_t_general"),
+                   type = "IFR_t_general"),
     d$outputs$ifr_t_1[c("step", "date", "IFR_t_general")])
   expect_mapequal(
     lancelot_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
-                    type = c("IFR_t_all", "IHR_t_all",
-                             "IFR_t_general", "IHR_t_general")),
+                   type = c("IFR_t_all", "IHR_t_all",
+                            "IFR_t_general", "IHR_t_general")),
     d$outputs$ifr_t_1[c("step", "date", "IFR_t_all", "IHR_t_all",
-                     "IFR_t_general", "IHR_t_general")])
+                        "IFR_t_general", "IHR_t_general")])
 
   expect_mapequal(
     lancelot_ifr_t_trajectories(steps, S, I_weighted, p,
-                                 type = "IFR_t_general_no_vacc"),
+                                type = "IFR_t_general_no_vacc"),
     d$outputs$ifr_t_all[c("step", "date", "IFR_t_general_no_vacc")])
   expect_mapequal(
     lancelot_ifr_t_trajectories(steps, S, I_weighted, p,
-                                 type = c("IFR_t_all_no_vacc",
-                                          "IHR_t_all_no_vacc",
-                                          "IFR_t_general_no_vacc",
-                                          "IHR_t_general_no_vacc")),
+                                type = c("IFR_t_all_no_vacc",
+                                         "IHR_t_all_no_vacc",
+                                         "IFR_t_general_no_vacc",
+                                         "IHR_t_general_no_vacc")),
     d$outputs$ifr_t_all[c("step", "date", "IFR_t_all_no_vacc",
                           "IHR_t_all_no_vacc", "IFR_t_general_no_vacc",
                           "IHR_t_general_no_vacc")])
@@ -186,15 +186,15 @@ test_that("can't compute IFR_t for unknown types", {
 
   expect_error(
     lancelot_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
-                    type = "max_IFR_t_general"),
+                   type = "max_IFR_t_general"),
     "Unknown IFR/IHR type 'max_IFR_t_general', must match '")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S, I_weighted, p,
-                              type = "max_IFR_t_general"),
+                                type = "max_IFR_t_general"),
     "Unknown IFR/IHR type 'max_IFR_t_general', must match '")
   expect_error(
     lancelot_ifr_t(steps, S[, 1, ], I_weighted[, 1, ], p,
-                    type = c("IFR_t_all", "ifr_t_general")),
+                   type = c("IFR_t_all", "ifr_t_general")),
     "Unknown IFR/IHR type 'ifr_t_general', must match '")
 })
 
@@ -204,7 +204,7 @@ test_that("Parameters affect IFR/IHR/ALOS as expected", {
   ## Note that m_CHW and m_CHR have been changed from defaults to avoid
   ## having all care home residents infected
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            m_CHW = 3e-6, m_CHR = 3e-6)
+                           m_CHW = 3e-6, m_CHR = 3e-6)
 
   np <- 1L
   mod <- lancelot$new(p, 0, np, seed = 1L)

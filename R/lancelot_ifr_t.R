@@ -301,12 +301,12 @@ lancelot_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
 ##'
 ##' @export
 lancelot_ifr_t_trajectories <- function(step, S, I_weighted, pars,
-                                      initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL, type = NULL,
-                                      R = NULL) {
+                                        initial_step_from_parameters = TRUE,
+                                        shared_parameters = NULL, type = NULL,
+                                        R = NULL) {
   calculate_ifr_t_trajectories(lancelot_ifr_t, step, S, I_weighted, pars,
-                            initial_step_from_parameters, shared_parameters,
-                            type, R)
+                               initial_step_from_parameters, shared_parameters,
+                               type, R)
 }
 
 

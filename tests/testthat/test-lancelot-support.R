@@ -62,15 +62,15 @@ test_that("lancelot vaccination parameters", {
     vaccine_daily_doses_date[1], daily_doses, 1e6, n)
 
   p <- lancelot_parameters_vaccination(ntot,
-                                        dt = 0.25,
-                                        rel_susceptibility = rel_susceptibility,
-                                        rel_p_sympt = rel_p_sympt,
-                                        rel_p_hosp_if_sympt =
-                                          rel_p_hosp_if_sympt,
-                                        vaccine_progression_rate =
-                                          vaccine_progression_rate,
-                                        vaccine_schedule = vaccine_schedule,
-                                        vaccine_index_dose2 = 3L)
+                                       dt = 0.25,
+                                       rel_susceptibility = rel_susceptibility,
+                                       rel_p_sympt = rel_p_sympt,
+                                       rel_p_hosp_if_sympt =
+                                         rel_p_hosp_if_sympt,
+                                       vaccine_progression_rate =
+                                         vaccine_progression_rate,
+                                       vaccine_schedule = vaccine_schedule,
+                                       vaccine_index_dose2 = 3L)
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt", "rel_p_death",
@@ -112,37 +112,37 @@ test_that("lancelot vaccination parameters", {
   msg2 <- "rel_infectivity should have the same dimension"
   expect_error(
     lancelot_parameters_vaccination(ntot,
-                                     rel_susceptibility = 1,
-                                     rel_p_sympt = c(1, 0.5, 0.25),
-                                     rel_p_hosp_if_sympt = c(1, 0.1),
-                                     rel_p_death = c(1, 0.2),
-                                     rel_infectivity = 1),
+                                    rel_susceptibility = 1,
+                                    rel_p_sympt = c(1, 0.5, 0.25),
+                                    rel_p_hosp_if_sympt = c(1, 0.1),
+                                    rel_p_death = c(1, 0.2),
+                                    rel_infectivity = 1),
     paste(msg1, msg2))
   expect_error(lancelot_parameters_vaccination(ntot,
-                                                rel_susceptibility = c(1, 1),
-                                                rel_p_sympt = c(1, 0.5, 0.25),
-                                                rel_p_hosp_if_sympt = 1,
-                                                rel_p_death = 1,
-                                                rel_infectivity = 1),
+                                               rel_susceptibility = c(1, 1),
+                                               rel_p_sympt = c(1, 0.5, 0.25),
+                                               rel_p_hosp_if_sympt = 1,
+                                               rel_p_death = 1,
+                                               rel_infectivity = 1),
                paste(msg1, msg2))
   expect_error(lancelot_parameters_vaccination(ntot,
-                                                rel_susceptibility = c(1, 1),
-                                                rel_p_sympt = c(1, 0.5),
-                                                rel_p_hosp_if_sympt = c(1, 1),
-                                                rel_p_death = c(1, 0.2),
-                                                rel_infectivity = c(1, 1, 0.5)),
+                                               rel_susceptibility = c(1, 1),
+                                               rel_p_sympt = c(1, 0.5),
+                                               rel_p_hosp_if_sympt = c(1, 1),
+                                               rel_p_death = c(1, 0.2),
+                                               rel_infectivity = c(1, 1, 0.5)),
                paste(msg1, msg2))
   expect_error(lancelot_parameters_vaccination(ntot,
-                                                vaccine_catchup_fraction = -1),
+                                               vaccine_catchup_fraction = -1),
                "'vaccine_catchup_fraction' must lie in [0, 1]",
                fixed = TRUE)
   expect_error(lancelot_parameters_vaccination(ntot,
-                                                vaccine_catchup_fraction = 1.5),
+                                               vaccine_catchup_fraction = 1.5),
                "'vaccine_catchup_fraction' must lie in [0, 1]",
                fixed = TRUE)
   expect_error(
     lancelot_parameters_vaccination(ntot,
-                                     vaccine_catchup_fraction = c(1, 1)),
+                                    vaccine_catchup_fraction = c(1, 1)),
     "'vaccine_catchup_fraction' must be a scalar")
 })
 
@@ -169,9 +169,9 @@ test_that("lancelot_parameters returns a list of parameters", {
   expect_identical(p[names(vaccination)], vaccination)
 
   strain <- lancelot_parameters_strain(p$strain_transmission,
-                                        strain_seed_date = NULL,
-                                        strain_seed_rate = NULL,
-                                        dt = 1 / 4)
+                                       strain_seed_date = NULL,
+                                       strain_seed_rate = NULL,
+                                       dt = 1 / 4)
 
   waning <- lancelot_parameters_waning(0)
   expect_identical(p[names(waning)], waning)
@@ -260,12 +260,12 @@ test_that("can compute time-varying severity parameters for lancelot model", {
 
   severity <-
     lancelot_parameters_severity(dt, NULL,
-                                  p_H = list(value = p_H_value),
-                                  p_H_CHR = list(date = p_H_CHR_date,
-                                                 value = p_H_CHR_value),
-                                  p_G_D = list(date = p_G_D_date,
-                                               value = p_G_D_value),
-                                  p_G_D_CHR = list(value = p_G_D_CHR_value))
+                                 p_H = list(value = p_H_value),
+                                 p_H_CHR = list(date = p_H_CHR_date,
+                                                value = p_H_CHR_value),
+                                 p_G_D = list(date = p_G_D_date,
+                                              value = p_G_D_value),
+                                 p_G_D_CHR = list(value = p_G_D_CHR_value))
 
   p_G_D_step <-
     sircovid_parameters_piecewise_linear(p_G_D_date,
@@ -284,50 +284,50 @@ test_that("can compute time-varying severity parameters for lancelot model", {
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_C = list(date = 1,
-                                             value = 0.3)),
+                                 p_C = list(date = 1,
+                                            value = 0.3)),
     "As 'p_C' has a single 'value', expected NULL or missing 'date'")
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_ICU = list(date = c(1, 4, 5),
-                                               value = c(0.2, 0.3))),
+                                 p_ICU = list(date = c(1, 4, 5),
+                                              value = c(0.2, 0.3))),
     "'date' and 'value' for 'p_ICU' must have the same length")
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_ICU_D = list(date = c(1, 4),
-                                                 value = c(-1, 0.3))),
+                                 p_ICU_D = list(date = c(1, 4),
+                                                value = c(-1, 0.3))),
     "'p_ICU_D' must lie in [0, 1]", fixed = TRUE)
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_W_D = list(date = c(1, 4),
-                                               value = c(0.2, 3))),
+                                 p_W_D = list(date = c(1, 4),
+                                              value = c(0.2, 3))),
     "'p_W_D' must lie in [0, 1]", fixed = TRUE)
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_H_CHR = list(date = 1,
-                                                 value = 0.3)),
+                                 p_H_CHR = list(date = 1,
+                                                value = 0.3)),
     "As 'p_H_CHR' has a single 'value', expected NULL or missing 'date'")
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_G_D_CHR = list(date = c(1, 4, 5),
-                                                   value = c(0.2, 0.3))),
+                                 p_G_D_CHR = list(date = c(1, 4, 5),
+                                                  value = c(0.2, 0.3))),
     "'date' and 'value' for 'p_G_D_CHR' must have the same length")
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_H_CHR = list(date = c(1, 4),
-                                                 value = c(-1, 0.3))),
+                                 p_H_CHR = list(date = c(1, 4),
+                                                value = c(-1, 0.3))),
     "'p_H_CHR' must lie in [0, 1]", fixed = TRUE)
 
   expect_error(
     lancelot_parameters_severity(dt,
-                                  p_G_D_CHR = list(date = c(1, 4),
-                                                   value = c(0.2, 3))),
+                                 p_G_D_CHR = list(date = c(1, 4),
+                                                  value = c(0.2, 3))),
     "'p_G_D_CHR' must lie in [0, 1]", fixed = TRUE)
 
 })
@@ -343,11 +343,11 @@ test_that("can compute time-varying progression parameters for lancelot
 
             progression <-
               lancelot_parameters_progression(dt,
-                                               gamma_H_D =
-                                                 list(date = gamma_H_D_date,
-                                                      value = gamma_H_D_value),
-                                               gamma_H_R =
-                                                 list(value = gamma_H_R_value)
+                                              gamma_H_D =
+                                                list(date = gamma_H_D_date,
+                                                     value = gamma_H_D_value),
+                                              gamma_H_R =
+                                                list(value = gamma_H_R_value)
               )
 
             gamma_H_D_step <-
@@ -358,23 +358,23 @@ test_that("can compute time-varying progression parameters for lancelot
 
             expect_error(
               lancelot_parameters_progression(dt,
-                                               gamma_E = list(date = 1,
-                                                              value = 3)),
+                                              gamma_E = list(date = 1,
+                                                             value = 3)),
               "'gamma_E' has a single 'value', expected NULL or missing 'date'")
 
             expect_error(
               lancelot_parameters_progression(dt,
-                                               gamma_ICU_pre =
-                                                 list(date = c(1, 4, 5),
-                                                      value = c(2, 3))),
+                                              gamma_ICU_pre =
+                                                list(date = c(1, 4, 5),
+                                                     value = c(2, 3))),
               "'date' and 'value' for 'gamma_ICU_pre' must have the same length"
-              )
+            )
 
             expect_error(
               lancelot_parameters_progression(dt,
-                                               gamma_H_D =
-                                                 list(date = c(1, 4),
-                                                      value = c(-2, 3))),
+                                              gamma_H_D =
+                                                list(date = c(1, 4),
+                                                     value = c(-2, 3))),
               "'gamma_H_D' must have only non-negative values")
 
 
@@ -509,7 +509,7 @@ test_that("Can compute initial conditions", {
 
 test_that("Can control the seeding", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "london",
-                            initial_I = 50)
+                           initial_I = 50)
   expect_equal(p$initial_I, 50)
 
   mod <- lancelot$new(p, 0, 10)
@@ -934,7 +934,7 @@ test_that("lancelot_particle_filter_data does not allow more than one pillar 2,
               lancelot_particle_filter(data),
               "Cannot fit to more than one strain data stream")
 
-})
+          })
 
 
 test_that("the lancelot sircovid model has 19 groups", {
@@ -1132,7 +1132,7 @@ test_that("Can input population data", {
 
   expect_error(
     lancelot_parameters(1, "Unknown", population = pop[-1L],
-                         carehome_beds = 0),
+                        carehome_beds = 0),
     "If population is specified it must be a vector of length 17")
 
   pop[1L] <- 0.5

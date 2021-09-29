@@ -413,54 +413,54 @@ NULL
 ##' # TODO: add an example of manually set up vaccine schedule
 ##'
 lancelot_parameters <- function(start_date, region,
-                                 beta_date = NULL, beta_value = NULL,
-                                 beta_type = "piecewise-linear",
-                                 population = NULL,
-                                 carehome_beds = NULL,
-                                 severity = NULL,
-                                 progression = NULL,
-                                 observation = NULL,
-                                 sens_and_spec = NULL,
-                                 initial_I = 10,
-                                 eps = 0.1,
-                                 m_CHW = 4e-6,
-                                 m_CHR = 5e-5,
-                                 p_NC = 0.01,
-                                 p_NC_weekend = 0.005,
-                                 p_NC_under15 = 0.01,
-                                 p_NC_weekend_under15 = 0.005,
-                                 p_NC_15_24 = 0.01,
-                                 p_NC_weekend_15_24 = 0.005,
-                                 p_NC_25_49 = 0.01,
-                                 p_NC_weekend_25_49 = 0.005,
-                                 p_NC_50_64 = 0.01,
-                                 p_NC_weekend_50_64 = 0.005,
-                                 p_NC_65_79 = 0.01,
-                                 p_NC_weekend_65_79 = 0.005,
-                                 p_NC_80_plus = 0.01,
-                                 p_NC_weekend_80_plus = 0.005,
-                                 strain_transmission = 1,
-                                 strain_seed_date = NULL,
-                                 strain_seed_rate = NULL,
-                                 strain_rel_gamma_A = 1,
-                                 strain_rel_gamma_P = 1,
-                                 strain_rel_gamma_C_1 = 1,
-                                 strain_rel_gamma_C_2 = 1,
-                                 strain_rel_severity = 1,
-                                 rel_susceptibility = 1,
-                                 rel_p_sympt = 1,
-                                 rel_p_hosp_if_sympt = 1,
-                                 rel_p_death = 1,
-                                 rel_infectivity = 1,
-                                 vaccine_progression_rate = NULL,
-                                 vaccine_schedule = NULL,
-                                 vaccine_index_dose2 = NULL,
-                                 vaccine_index_booster = NULL,
-                                 vaccine_catchup_fraction = 1,
-                                 n_doses = 2L,
-                                 waning_rate = 0,
-                                 exp_noise = 1e6,
-                                 cross_immunity = 1) {
+                                beta_date = NULL, beta_value = NULL,
+                                beta_type = "piecewise-linear",
+                                population = NULL,
+                                carehome_beds = NULL,
+                                severity = NULL,
+                                progression = NULL,
+                                observation = NULL,
+                                sens_and_spec = NULL,
+                                initial_I = 10,
+                                eps = 0.1,
+                                m_CHW = 4e-6,
+                                m_CHR = 5e-5,
+                                p_NC = 0.01,
+                                p_NC_weekend = 0.005,
+                                p_NC_under15 = 0.01,
+                                p_NC_weekend_under15 = 0.005,
+                                p_NC_15_24 = 0.01,
+                                p_NC_weekend_15_24 = 0.005,
+                                p_NC_25_49 = 0.01,
+                                p_NC_weekend_25_49 = 0.005,
+                                p_NC_50_64 = 0.01,
+                                p_NC_weekend_50_64 = 0.005,
+                                p_NC_65_79 = 0.01,
+                                p_NC_weekend_65_79 = 0.005,
+                                p_NC_80_plus = 0.01,
+                                p_NC_weekend_80_plus = 0.005,
+                                strain_transmission = 1,
+                                strain_seed_date = NULL,
+                                strain_seed_rate = NULL,
+                                strain_rel_gamma_A = 1,
+                                strain_rel_gamma_P = 1,
+                                strain_rel_gamma_C_1 = 1,
+                                strain_rel_gamma_C_2 = 1,
+                                strain_rel_severity = 1,
+                                rel_susceptibility = 1,
+                                rel_p_sympt = 1,
+                                rel_p_hosp_if_sympt = 1,
+                                rel_p_death = 1,
+                                rel_infectivity = 1,
+                                vaccine_progression_rate = NULL,
+                                vaccine_schedule = NULL,
+                                vaccine_index_dose2 = NULL,
+                                vaccine_index_booster = NULL,
+                                vaccine_catchup_fraction = 1,
+                                n_doses = 2L,
+                                waning_rate = 0,
+                                exp_noise = 1e6,
+                                cross_immunity = 1) {
 
   if (!is.null(population)) {
     if (!is.null(dim(population)) || length(population) != 17L) {
@@ -504,7 +504,7 @@ lancelot_parameters <- function(start_date, region,
   ret$m <- lancelot_transmission_matrix(eps, m_CHW, m_CHR, region, population)
 
   ret$N_tot <- lancelot_population(ret$population, carehome_workers,
-                                    carehome_residents)
+                                   carehome_residents)
 
   ret$initial_I <- initial_I
 
@@ -567,19 +567,19 @@ lancelot_parameters <- function(start_date, region,
 
   ## vaccination
   vaccination <- lancelot_parameters_vaccination(ret$N_tot,
-                                                  ret$dt,
-                                                  rel_susceptibility,
-                                                  rel_p_sympt,
-                                                  rel_p_hosp_if_sympt,
-                                                  rel_p_death,
-                                                  rel_infectivity,
-                                                  vaccine_progression_rate,
-                                                  vaccine_schedule,
-                                                  vaccine_index_dose2,
-                                                  vaccine_index_booster,
-                                                  strain$n_strains,
-                                                  vaccine_catchup_fraction,
-                                                  n_doses)
+                                                 ret$dt,
+                                                 rel_susceptibility,
+                                                 rel_p_sympt,
+                                                 rel_p_hosp_if_sympt,
+                                                 rel_p_death,
+                                                 rel_infectivity,
+                                                 vaccine_progression_rate,
+                                                 vaccine_schedule,
+                                                 vaccine_index_dose2,
+                                                 vaccine_index_booster,
+                                                 strain$n_strains,
+                                                 vaccine_catchup_fraction,
+                                                 n_doses)
 
   strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
@@ -874,7 +874,7 @@ lancelot_compare <- function(state, observed, pars) {
 
   ## Pillar 2 over 25s
   pillar2_over25_negs <- p_NC * (pars$N_tot_over25 -
-                                           model_sympt_cases_over25)
+                                   model_sympt_cases_over25)
   model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
                                                  pillar2_over25_negs,
                                                  pars$pillar2_sensitivity,
@@ -883,7 +883,7 @@ lancelot_compare <- function(state, observed, pars) {
 
   ## New pillar 2 by age
   pillar2_under15_negs <- p_NC_under15 * (pars$N_tot_under15 -
-                                    model_sympt_cases_under15)
+                                            model_sympt_cases_under15)
   model_pillar2_under15_prob_pos <- test_prob_pos(model_sympt_cases_under15,
                                                   pillar2_under15_negs,
                                                   pars$pillar2_sensitivity,
@@ -891,7 +891,7 @@ lancelot_compare <- function(state, observed, pars) {
                                                   pars$exp_noise)
 
   pillar2_15_24_negs <- p_NC_15_24 * (pars$N_tot_15_24 -
-                                          model_sympt_cases_15_24)
+                                        model_sympt_cases_15_24)
   model_pillar2_15_24_prob_pos <- test_prob_pos(model_sympt_cases_15_24,
                                                 pillar2_15_24_negs,
                                                 pars$pillar2_sensitivity,
@@ -899,7 +899,7 @@ lancelot_compare <- function(state, observed, pars) {
                                                 pars$exp_noise)
 
   pillar2_25_49_negs <- p_NC_25_49 * (pars$N_tot_25_49 -
-                                          model_sympt_cases_25_49)
+                                        model_sympt_cases_25_49)
   model_pillar2_25_49_prob_pos <- test_prob_pos(model_sympt_cases_25_49,
                                                 pillar2_25_49_negs,
                                                 pars$pillar2_sensitivity,
@@ -907,7 +907,7 @@ lancelot_compare <- function(state, observed, pars) {
                                                 pars$exp_noise)
 
   pillar2_50_64_negs <- p_NC_50_64 * (pars$N_tot_50_64 -
-                                          model_sympt_cases_50_64)
+                                        model_sympt_cases_50_64)
   model_pillar2_50_64_prob_pos <- test_prob_pos(model_sympt_cases_50_64,
                                                 pillar2_50_64_negs,
                                                 pars$pillar2_sensitivity,
@@ -915,7 +915,7 @@ lancelot_compare <- function(state, observed, pars) {
                                                 pars$exp_noise)
 
   pillar2_65_79_negs <- p_NC_65_79 * (pars$N_tot_65_79 -
-                                         model_sympt_cases_65_79)
+                                        model_sympt_cases_65_79)
   model_pillar2_65_79_prob_pos <- test_prob_pos(model_sympt_cases_65_79,
                                                 pillar2_65_79_negs,
                                                 pars$pillar2_sensitivity,
@@ -923,7 +923,7 @@ lancelot_compare <- function(state, observed, pars) {
                                                 pars$exp_noise)
 
   pillar2_80_plus_negs <- p_NC_80_plus * (pars$N_tot_80_plus -
-                                    model_sympt_cases_80_plus)
+                                            model_sympt_cases_80_plus)
   model_pillar2_80_plus_prob_pos <- test_prob_pos(model_sympt_cases_80_plus,
                                                   pillar2_80_plus_negs,
                                                   pars$pillar2_sensitivity,
@@ -1203,18 +1203,18 @@ lancelot_severity <- function(p) {
 ##'
 ##' @export
 lancelot_parameters_severity <- function(dt,
-                                          severity = NULL,
-                                          p_C = NULL,
-                                          p_H = NULL,
-                                          p_H_CHR = NULL,
-                                          p_ICU = NULL,
-                                          p_H_D = NULL,
-                                          p_ICU_D = NULL,
-                                          p_W_D = NULL,
-                                          p_G_D = NULL,
-                                          p_G_D_CHR = NULL,
-                                          p_R = NULL,
-                                          p_star = NULL) {
+                                         severity = NULL,
+                                         p_C = NULL,
+                                         p_H = NULL,
+                                         p_H_CHR = NULL,
+                                         p_ICU = NULL,
+                                         p_H_D = NULL,
+                                         p_ICU_D = NULL,
+                                         p_W_D = NULL,
+                                         p_G_D = NULL,
+                                         p_G_D_CHR = NULL,
+                                         p_R = NULL,
+                                         p_star = NULL) {
 
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, lancelot_severity)
@@ -1356,7 +1356,7 @@ lancelot_index_workers <- function() {
 
 
 lancelot_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
-                                          population) {
+                                         population) {
   index_workers <- lancelot_index_workers()
   m <- sircovid_transmission_matrix(region, population)
   n_age_groups <- nrow(m)
@@ -1451,19 +1451,19 @@ lancelot_initial <- function(info, n_particles, pars) {
 
 
 lancelot_parameters_vaccination <- function(N_tot,
-                                             dt,
-                                             rel_susceptibility = 1,
-                                             rel_p_sympt = 1,
-                                             rel_p_hosp_if_sympt = 1,
-                                             rel_p_death = 1,
-                                             rel_infectivity = 1,
-                                             vaccine_progression_rate = NULL,
-                                             vaccine_schedule = NULL,
-                                             vaccine_index_dose2 = NULL,
-                                             vaccine_index_booster = NULL,
-                                             n_strains = 1,
-                                             vaccine_catchup_fraction = 1,
-                                             n_doses = 2L) {
+                                            dt,
+                                            rel_susceptibility = 1,
+                                            rel_p_sympt = 1,
+                                            rel_p_hosp_if_sympt = 1,
+                                            rel_p_death = 1,
+                                            rel_infectivity = 1,
+                                            vaccine_progression_rate = NULL,
+                                            vaccine_schedule = NULL,
+                                            vaccine_index_dose2 = NULL,
+                                            vaccine_index_booster = NULL,
+                                            n_strains = 1,
+                                            vaccine_catchup_fraction = 1,
+                                            n_doses = 2L) {
   n_groups <- lancelot_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
@@ -1550,7 +1550,7 @@ lancelot_parameters_vaccination <- function(N_tot,
 }
 
 lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
-                                        strain_seed_rate, dt) {
+                                       strain_seed_rate, dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
   }
@@ -1690,20 +1690,20 @@ lancelot_parameters_waning <- function(waning_rate) {
 ##'
 ##' @export
 lancelot_parameters_progression <- function(dt,
-                                             gamma_E = NULL,
-                                             gamma_A = NULL,
-                                             gamma_P = NULL,
-                                             gamma_C_1 = NULL,
-                                             gamma_C_2 = NULL,
-                                             gamma_ICU_pre = NULL,
-                                             gamma_ICU_D = NULL,
-                                             gamma_ICU_W_D = NULL,
-                                             gamma_ICU_W_R = NULL,
-                                             gamma_H_D = NULL,
-                                             gamma_H_R = NULL,
-                                             gamma_W_D = NULL,
-                                             gamma_W_R = NULL,
-                                             gamma_G_D = NULL) {
+                                            gamma_E = NULL,
+                                            gamma_A = NULL,
+                                            gamma_P = NULL,
+                                            gamma_C_1 = NULL,
+                                            gamma_C_2 = NULL,
+                                            gamma_ICU_pre = NULL,
+                                            gamma_ICU_D = NULL,
+                                            gamma_ICU_W_D = NULL,
+                                            gamma_ICU_W_R = NULL,
+                                            gamma_H_D = NULL,
+                                            gamma_H_R = NULL,
+                                            gamma_W_D = NULL,
+                                            gamma_W_R = NULL,
+                                            gamma_G_D = NULL) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -1914,13 +1914,13 @@ lancelot_parameters_observation <- function(exp_noise = 1e6) {
 ##'
 ##' @export
 lancelot_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
-                                               sero_sensitivity_1 = 0.99,
-                                               sero_specificity_2 = 0.9,
-                                               sero_sensitivity_2 = 0.99,
-                                               pillar2_specificity = 0.99,
-                                               pillar2_sensitivity = 0.99,
-                                               react_specificity = 0.99,
-                                               react_sensitivity = 0.99) {
+                                              sero_sensitivity_1 = 0.99,
+                                              sero_specificity_2 = 0.9,
+                                              sero_sensitivity_2 = 0.99,
+                                              pillar2_specificity = 0.99,
+                                              pillar2_sensitivity = 0.99,
+                                              react_specificity = 0.99,
+                                              react_sensitivity = 0.99) {
   ret <- list(
     ## Specificity and sensitivity for serology tests
     sero_specificity_1 = sero_specificity_1,
@@ -1942,7 +1942,7 @@ lancelot_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
 
 
 lancelot_population <- function(population, carehome_workers,
-                                 carehome_residents) {
+                                carehome_residents) {
   ## Our core S0 calculation is more complicated than the basic model
   ## because we have to add the carehome workers and residents, *and*
   ## remove them from the core population. This extracts carehome
@@ -2001,8 +2001,8 @@ lancelot_population <- function(population, carehome_workers,
 ##' @return A [`mcstate::particle_filter`] object
 ##' @export
 lancelot_particle_filter <- function(data, n_particles,
-                                      n_threads = 1L, seed = NULL,
-                                      compiled_compare = FALSE) {
+                                     n_threads = 1L, seed = NULL,
+                                     compiled_compare = FALSE) {
   mcstate::particle_filter$new(
     lancelot_particle_filter_data(data),
     lancelot,
@@ -2159,8 +2159,8 @@ lancelot_n_groups <- function() {
 ##'
 ##' @export
 lancelot_forecast <- function(samples, n_sample, burnin, forecast_days,
-                               incidence_states, prepend_trajectories = TRUE,
-                               random_sample = TRUE, thin = NULL) {
+                              incidence_states, prepend_trajectories = TRUE,
+                              random_sample = TRUE, thin = NULL) {
   if (n_sample == 0) {
     ret <- samples
   } else {

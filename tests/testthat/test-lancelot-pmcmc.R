@@ -68,7 +68,7 @@ test_that("Can compute forecasts from mcmc output", {
 test_that("Can compute forecasts from mcmc output without prepending", {
   dat <- reference_data_lancelot_mcmc()
   res <- lancelot_forecast(dat, 3, 5, 10, c("deaths", "icu"),
-                            FALSE)
+                           FALSE)
 
   expect_equal(dim(res$pars), c(3, 2))
   expect_equal(dim(res$probabilities), c(3, 3))
@@ -84,7 +84,7 @@ test_that("Can compute forecasts from mcmc output with thinned sample", {
   dat <- reference_data_lancelot_mcmc()
 
   res_thin <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
-                                 FALSE, random_sample = FALSE, thin = 3)
+                                FALSE, random_sample = FALSE, thin = 3)
   expect_equal(res_thin$iteration, c(2, 5, 8))
 
 
@@ -92,7 +92,7 @@ test_that("Can compute forecasts from mcmc output with thinned sample", {
   ## same samples as thinned sampling
   set.seed(1)
   res_random <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
-                                   FALSE, random_sample = TRUE)
+                                  FALSE, random_sample = TRUE)
   expect_false(all(res_random$iteration == c(2, 5, 8)))
 })
 
@@ -100,7 +100,7 @@ test_that("Can compute forecasts from mcmc output with thinned sample", {
 test_that("Can compute forecasts from mcmc output with forecast_days = 0", {
   dat <- reference_data_lancelot_mcmc()
   res <- lancelot_forecast(dat, 3, 5, 0, c("deaths", "icu"),
-                            FALSE)
+                           FALSE)
 
   ## with forecast_days = 0, we will have no forecasting
   expect_true(all(!res$trajectories$predicted))
@@ -245,7 +245,7 @@ test_that("adding incidence adds appropriate states - nested", {
   dat$trajectories$state <- array(
     dat$trajectories$state, c(205, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
-                 letters[1:2], NULL)))
+                      letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
   expect_true(all(c("deaths_inc", "icu_inc") %in% rownames(res$state)))
 
@@ -275,7 +275,7 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat$trajectories$state <- array(
     dat$trajectories$state, c(205, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
-                 letters[1:2], NULL)))
+                      letters[1:2], NULL)))
   v <- c("deaths", "icu")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
@@ -290,7 +290,7 @@ test_that("can compute incidence for a single variable - nested", {
   dat$trajectories$state <- array(
     dat$trajectories$state, c(205, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
-                 letters[1:2], NULL)))
+                      letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
   res <- add_trajectory_incidence(dat$trajectories, "deaths")
   expect_identical(res$state["deaths_inc", , , ],

@@ -1,6 +1,6 @@
 # sircovid 0.12.0
 
-* Introduced flexibility to fit to positivity or cases (pillar 2) by age. Respectively, `p_NC` and `phi_pillar2_cases` parameters can be generic or age-specific for fitting to aggregate or age stratified data.
+* Introduce `lancelot` model. Initially a clone of the `carehomes` model with the added flexibility to fit to positivity or cases (pillar 2) by age. Respectively, `p_NC` and `phi_pillar2_cases` parameters can be generic or age-specific for fitting to aggregate or age stratified data.
 
 # sircovid 0.11.32
 

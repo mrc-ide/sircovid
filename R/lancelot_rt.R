@@ -57,11 +57,11 @@
 ##'
 ##' @export
 lancelot_Rt <- function(step, S, p, prob_strain = NULL,
-                         type = NULL, interpolate_every = NULL,
-                         interpolate_critical_dates = NULL,
-                         interpolate_min = NULL,
-                         eigen_method = "power_iteration", R = NULL,
-                         weight_Rt = FALSE) {
+                        type = NULL, interpolate_every = NULL,
+                        interpolate_critical_dates = NULL,
+                        interpolate_min = NULL,
+                        eigen_method = "power_iteration", R = NULL,
+                        weight_Rt = FALSE) {
 
   if (sum(p$hosp_transmission, p$ICU_transmission, p$G_D_transmission) > 0) {
     stop("Cannot currently compute Rt if any of 'hosp_transmission',
@@ -87,8 +87,8 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
     if (is.null(prob_strain) || is.null(R)) {
       stop("Expected prob_strain and R input because there is more than one
             strain")
-    ## deal with the prob_strain NA case at the beginning before any variables
-    ##  are modified
+      ## deal with the prob_strain NA case at the beginning before any variables
+      ##  are modified
     } else if (!is.null(prob_strain) && any(is.na(prob_strain)) && weight_Rt) {
       which_nna <- !vlapply(seq(ncol(prob_strain)),
                             function(i) any(is.na(prob_strain[, i])))
@@ -136,9 +136,9 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
                                                     interpolate_min)
     step_index <- unlist(step_index_split)
     ret <- lancelot_Rt(step[step_index], S[, step_index, drop = FALSE], p,
-                        prob_strain[, step_index, drop = FALSE], type,
-                        R = R[, step_index, drop = FALSE],
-                        weight_Rt = weight_Rt)
+                       prob_strain[, step_index, drop = FALSE], type,
+                       R = R[, step_index, drop = FALSE],
+                       weight_Rt = weight_Rt)
     if (!is.null(interpolate_every)) {
       ret[type] <- lapply(ret[type], interpolate_grid_expand_y,
                           step_index_split)
@@ -415,14 +415,14 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
 ##'
 ##' @export
 lancelot_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
-                                      initial_step_from_parameters = TRUE,
-                                      shared_parameters = NULL,
-                                      type = NULL,
-                                      interpolate_every = NULL,
-                                      interpolate_critical_dates = NULL,
-                                      interpolate_min = NULL,
-                                      eigen_method = "power_iteration",
-                                      R = NULL, weight_Rt = FALSE) {
+                                     initial_step_from_parameters = TRUE,
+                                     shared_parameters = NULL,
+                                     type = NULL,
+                                     interpolate_every = NULL,
+                                     interpolate_critical_dates = NULL,
+                                     interpolate_min = NULL,
+                                     eigen_method = "power_iteration",
+                                     R = NULL, weight_Rt = FALSE) {
   calculate_Rt_trajectories(
     calculate_Rt = lancelot_Rt, step = step,
     S = S, pars = pars,

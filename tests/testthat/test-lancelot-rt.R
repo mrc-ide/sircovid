@@ -82,7 +82,7 @@ test_that("validate inputs in Rt trajectories calculation", {
     "If not using shared parameters, expected a unnamed list for 'pars'")
   expect_error(
     lancelot_Rt_trajectories(steps, y[, , ], list(p),
-                              shared_parameters = TRUE),
+                             shared_parameters = TRUE),
     "If using shared parameters, expected a named list for 'pars'")
 })
 
@@ -102,11 +102,11 @@ test_that("Can set initial time", {
   }
 
   res1 <- lancelot_Rt_trajectories(steps, y, p,
-                                    initial_step_from_parameters = FALSE)
+                                   initial_step_from_parameters = FALSE)
   expect_equal(res1$step, matrix(steps, length(steps), ncol(y)))
 
   res2 <- lancelot_Rt_trajectories(steps, y, p,
-                                    initial_step_from_parameters = TRUE)
+                                   initial_step_from_parameters = TRUE)
   expect_equal(res2$step[1, ], step0)
   expect_equal(res2$step[-1, ], res1$step[-1, ])
 })
@@ -124,12 +124,12 @@ test_that("Can vary beta over time", {
   beta_date <- initial_date + c(0, 21, 62)
   beta_value <- p$beta_step * c(1, 0.5, 0.8)
   p$beta_step <- sircovid_parameters_piecewise_linear(beta_date,
-                                                           beta_value, dt)
+                                                      beta_value, dt)
   p <- rep(list(p), ncol(y))
   p[[3]]$beta_step <- p[[3]]$beta_step / 2
 
   res <- lancelot_Rt_trajectories(steps, y, p,
-                                   initial_step_from_parameters = FALSE)
+                                  initial_step_from_parameters = FALSE)
 
   expect_equal(
     res$beta,
@@ -220,34 +220,34 @@ test_that("Can interpolate Rt with step changes", {
 
   set.seed(1)
   rt_cmp <- lancelot_Rt_trajectories(step, S, p,
-                                      initial_step_from_parameters = FALSE)
+                                     initial_step_from_parameters = FALSE)
 
   ## Only interpolate if "every" is given:
   set.seed(1)
   expect_identical(
     lancelot_Rt_trajectories(step, S, p,
-                              initial_step_from_parameters = FALSE,
-                              interpolate_min = 3),
+                             initial_step_from_parameters = FALSE,
+                             interpolate_min = 3),
     rt_cmp)
 
 
   ## Then compute the Rt values with interpolation
   rt_int_2 <- lancelot_Rt_trajectories(step, S, p,
-                                        initial_step_from_parameters = FALSE,
-                                        interpolate_every = 2,
-                                        interpolate_min = 3,
-                                        interpolate_critical_dates = crit_dates)
+                                       initial_step_from_parameters = FALSE,
+                                       interpolate_every = 2,
+                                       interpolate_min = 3,
+                                       interpolate_critical_dates = crit_dates)
   rt_int_7 <- lancelot_Rt_trajectories(step, S, p,
-                                        initial_step_from_parameters = FALSE,
-                                        interpolate_every = 7,
-                                        interpolate_min = 3,
-                                        interpolate_critical_dates = crit_dates)
+                                       initial_step_from_parameters = FALSE,
+                                       interpolate_every = 7,
+                                       interpolate_min = 3,
+                                       interpolate_critical_dates = crit_dates)
   rt_int_14 <- lancelot_Rt_trajectories(step, S, p,
-                                         initial_step_from_parameters = FALSE,
-                                         interpolate_every = 14,
-                                         interpolate_min = 1,
-                                         interpolate_critical_dates =
-                                           crit_dates)
+                                        initial_step_from_parameters = FALSE,
+                                        interpolate_every = 14,
+                                        interpolate_min = 1,
+                                        interpolate_critical_dates =
+                                          crit_dates)
   ## check the error is small
   tol <- 0.05
   # for interpolation every 2 days
@@ -277,7 +277,7 @@ test_that("Parameters affect Rt as expected", {
   ## Note that m_CHW and m_CHR have been changed from defaults to avoid
   ## having all care home residents infected
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                            m_CHW = 3e-6, m_CHR = 3e-6)
+                           m_CHW = 3e-6, m_CHR = 3e-6)
 
   ## set the following parameters to non-zero values to allow related parameters
   ## to have an effect on Rt
