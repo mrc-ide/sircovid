@@ -3,6 +3,7 @@
 
 
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // basic.cpp
 SEXP dust_basic_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, cpp11::sexp device_config);
@@ -290,48 +291,6 @@ extern "C" SEXP _sircovid_dust_carehomes_device_info() {
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _sircovid_dust_basic_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_capabilities();
-extern SEXP _sircovid_dust_basic_compare_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_device_info();
-extern SEXP _sircovid_dust_basic_filter(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_n_state(SEXP);
-extern SEXP _sircovid_dust_basic_reorder(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_resample(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_reset(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_rng_state(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_run(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_set_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_set_index(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_set_n_threads(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_set_pars(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_set_rng_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_set_state(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_simulate(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_basic_step(SEXP);
-extern SEXP _sircovid_dust_carehomes_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_capabilities();
-extern SEXP _sircovid_dust_carehomes_compare_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_device_info();
-extern SEXP _sircovid_dust_carehomes_filter(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_n_state(SEXP);
-extern SEXP _sircovid_dust_carehomes_reorder(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_resample(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_reset(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_rng_state(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_run(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_set_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_set_index(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_set_n_threads(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_set_pars(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_set_rng_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_set_state(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_simulate(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_carehomes_step(SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_basic_alloc",             (DL_FUNC) &_sircovid_dust_basic_alloc,             7},
     {"_sircovid_dust_basic_capabilities",      (DL_FUNC) &_sircovid_dust_basic_capabilities,      0},
@@ -377,7 +336,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
-extern "C" void R_init_sircovid(DllInfo* dll){
+extern "C" attribute_visible void R_init_sircovid(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
