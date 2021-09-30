@@ -536,8 +536,7 @@ test_that("different strains are equivalent", {
                  general = index[["general_tot"]],
                  deaths_comm = index[["D_comm_tot"]],
                  deaths_hosp = index[["D_hosp_tot"]],
-                 admitted = index[["cum_admit_conf"]],
-                 new = index[["cum_new_conf"]],
+                 all_admission = index[["cum_all_admission"]],
                  sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
@@ -611,12 +610,8 @@ test_that("Swapping strains gives identical results with different index", {
   }
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
           "T_sero_pre_1", "T_sero_pre_2", "T_sero_pos_1", "T_sero_pos_2",
-          "G_D", "ICU_pre_unconf", "ICU_pre_conf",
-          "H_R_unconf", "H_R_conf", "H_D_unconf",
-          "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf",
-          "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf",
-          "ICU_D_conf", "W_R_unconf", "W_R_conf",
-          "W_D_unconf", "W_D_conf")
+          "G_D", "ICU_pre", "H_R", "H_D", "ICU_W_R",
+          "ICU_W_D", "ICU_D", "W_R", "W_D")
   for (nm in v5) {
     z2[[nm]] <- z2[[nm]][, i, , , , drop = FALSE]
   }
@@ -1958,22 +1953,14 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C_2 > 0))
-  expect_true(all(y$H_R_unconf == 0))
-  expect_true(all(y$H_R_conf == 0))
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(all(y$ICU_W_R_unconf == 0))
-  expect_true(all(y$ICU_W_R_conf == 0))
-  expect_true(all(y$ICU_W_D_unconf == 0))
-  expect_true(all(y$ICU_W_D_conf == 0))
-  expect_true(all(y$ICU_D_unconf == 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(all(y$ICU_pre_unconf == 0))
-  expect_true(all(y$ICU_pre_conf == 0))
-  expect_true(all(y$W_R_unconf == 0))
-  expect_true(all(y$W_R_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$H_R == 0))
+  expect_true(all(y$H_D == 0))
+  expect_true(all(y$ICU_W_R == 0))
+  expect_true(all(y$ICU_W_D == 0))
+  expect_true(all(y$ICU_D == 0))
+  expect_true(all(y$ICU_pre == 0))
+  expect_true(all(y$W_R == 0))
+  expect_true(all(y$W_D == 0))
   expect_true(all(y$R == 0))
   expect_true(all(y$D_hosp == 0))
 })

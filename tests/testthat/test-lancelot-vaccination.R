@@ -102,10 +102,8 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in hospital upon reinfection
   expect_true(all(y$D_hosp[-4, ] == 0))
-  expect_true(all(y$H_R_unconf[-4, , , , ] == 0))
-  expect_true(all(y$H_R_conf[-4, , , , ] == 0))
-  expect_true(all(y$H_D_unconf[-4, , , , ] == 0))
-  expect_true(all(y$H_D_conf[-4, , , , ] == 0))
+  expect_true(all(y$H_R[-4, , , , ] == 0))
+  expect_true(all(y$H_D[-4, , , , ] == 0))
 })
 
 
@@ -173,19 +171,16 @@ test_that("No deaths with perfect vaccine wrt rel_p_death", {
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## No-one moves into D compartments ever
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(all(y$ICU_D_unconf == 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$H_D == 0))
+  expect_true(all(y$ICU_D == 0))
+  expect_true(all(y$W_D == 0))
   expect_true(all(y$G_D == 0))
   expect_true(all(y$D_hosp == 0))
   expect_true(all(y$D_non_hosp == 0))
   expect_true(all(y$D == 0))
   expect_true(all(y$D_hosp_tot == 0))
   expect_true(all(y$D_comm_tot == 0))
-  expect_true(all(y$D_lancelot_tot == 0))
+  expect_true(all(y$D_carehomes_tot == 0))
   expect_true(all(y$D_tot == 0))
 })
 
@@ -2621,7 +2616,7 @@ test_that("Collect disaggregated deaths data", {
   expect_equal(apply(y$D, 3, sum), drop(y$D_tot))
 
   expect_equal(apply(y$diagnoses_admitted, 3, sum),
-               drop(y$cum_admit_conf + y$cum_new_conf))
+               drop(y$cum_all_admission))
 })
 
 
