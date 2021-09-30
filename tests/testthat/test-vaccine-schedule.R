@@ -744,10 +744,11 @@ test_that("can exclude booster groups from schedule scenario", {
                                    mean_days_between_doses, n,
                                    boosters_future = boosters_future)$doses
 
-  doses_ch <- vaccine_schedule_scenario(past, doses_future = NULL, end_date,
-                                   mean_days_between_doses, n,
-                                   boosters_future = boosters_future,
-                                   booster_proportion = c(numeric(17), 1, 1))$doses
+  doses_ch <- vaccine_schedule_scenario(
+    past, doses_future = NULL, end_date,
+    mean_days_between_doses, n,
+    boosters_future = boosters_future,
+    booster_proportion = c(numeric(17), 1, 1))$doses
 
   expect_vector_nequal(doses_all, doses_ch)
 
