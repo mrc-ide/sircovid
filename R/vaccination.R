@@ -863,12 +863,19 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 ##'  variables; length should correspond to number of strains and each element
 ##'  should be a list with same names as `efficacy`
 ##'
+##' @param model If `carehomes` then upper-truncates VE at 1 for first two
+##'  vaccine strata, otherwise if `lancelot' then upper-truncates VE at 1
+##'  for first and penultimate vaccine strata.
+##'
 ##' @return Returns a list with same length and names as `efficacy` and where
 ##'  each element has dimensions n_groups x n_strains x n_vacc_strata
 ##'
 ##' @export
 modify_severity <- function(efficacy, efficacy_strain_2,
-                            strain_severity_modifier) {
+                            strain_severity_modifier,
+                            model = "carehomes") {
+
+  check_sircovid_model(model)
 
   expected <- c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
                 "rel_infectivity", "rel_p_death")
@@ -904,13 +911,16 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           new_prob <- es[[rel]][g, v_s] * mod
           ## FIXME - Temporary fixes for when p > 1
           if (new_prob > 1) {
-            ## if difference very small or in a class where vaccine hasn't taken
-            ##  effect yet, cap at 1
-            if (abs(new_prob - 1) < 1e-10 || v_s == 1) {
+            ## Cap at 1 if: difference very small or in a class where
+            ## vaccine hasn't taken effect or has waned
+            ok <- (abs(new_prob - 1) < 1e-10) ||
+              (model == "carehomes" && v_s <= 2) ||
+              (model == "lancelot" && v_s %in% c(1, 4))
+            if (ok) {
               new_prob <- 1
               ## otherwise this is a problem
-            } else if (v_s > 2) {
-              stop("new_prob > 1 and v_s > 2")
+            } else {
+              stop("new_prob > 1 and VE has full effect")
             }
           }
           rel_list[[rel]][g, s, v_s] <- new_prob
