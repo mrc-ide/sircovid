@@ -508,30 +508,21 @@ n_I_C_2_to_H_D[, , ] <- rbinom(n_hosp_non_ICU[i, j, k], p_H_D[i, j, k])
 n_I_C_2_to_H_R[, , ] <- n_hosp_non_ICU[i, j, k] - n_I_C_2_to_H_D[i, j, k]
 
 ## Work out the ICU_pre -> ICU_pre transitions
-aux_ICU_pre[, , , ] <- ICU_pre[i, j, k, l] +
+new_ICU_pre[, , , ] <- ICU_pre[i, j, k, l] +
   (if (k > 1) n_ICU_pre_progress[i, j, k - 1, l] else 0) -
-  n_ICU_pre_progress[i, j, k, l]
-
-new_ICU_pre[, , , ] <-
-  aux_ICU_pre[i, j, k, l] +
+  n_ICU_pre_progress[i, j, k, l] +
   (if (k == 1) n_I_C_2_to_ICU_pre[i, j, l] else 0)
 
 ## Work out the H_R->H_R transitions
-aux_H_R[, , , ] <- H_R[i, j, k, l] +
+new_H_R[, , , ] <- H_R[i, j, k, l] +
   (if (k > 1) n_H_R_progress[i, j, k - 1, l] else 0) -
-  n_H_R_progress[i, j, k, l]
-
-new_H_R[, , , ] <-
-  aux_H_R[i, j, k, l] +
+  n_H_R_progress[i, j, k, l] +
   (if (k == 1) n_I_C_2_to_H_R[i, j, l] else 0)
 
 ## Work out the H_D->H_D transitions
-aux_H_D[, , , ] <- H_D[i, j, k, l] +
+new_H_D[, , , ] <- H_D[i, j, k, l] +
   (if (k > 1) n_H_D_progress[i, j, k - 1, l] else 0) -
-  n_H_D_progress[i, j, k, l]
-
-new_H_D[, , , ] <-
-  aux_H_D[i, j, k, l] +
+  n_H_D_progress[i, j, k, l] +
   (if (k == 1) n_I_C_2_to_H_D[i, j, l] else 0)
 
 ## Work out the ICU_pre to ICU_D, ICU_W_R and ICU_W_D splits
@@ -547,44 +538,34 @@ n_ICU_pre_to_ICU_W_R[, , ] <-
 
 
 ## Work out the ICU_W_R->ICU_W_R transitions
-aux_ICU_W_R[, , , ] <- ICU_W_R[i, j, k, l] +
+new_ICU_W_R[, , , ] <- ICU_W_R[i, j, k, l] +
   (if (k == 1) n_ICU_pre_to_ICU_W_R[i, j, l] else
     n_ICU_W_R_progress[i, j, k - 1, l]) -
   n_ICU_W_R_progress[i, j, k, l]
 
-new_ICU_W_R[, , , ] <- aux_ICU_W_R[i, j, k, l]
-
 ## Work out the ICU_W_D->ICU_W_D transitions
-aux_ICU_W_D[, , , ] <- ICU_W_D[i, j, k, l] +
+new_ICU_W_D[, , , ] <- ICU_W_D[i, j, k, l] +
   (if (k == 1) n_ICU_pre_to_ICU_W_D[i, j, l] else
     n_ICU_W_D_progress[i, j, k - 1, l]) -
   n_ICU_W_D_progress[i, j, k, l]
 
-new_ICU_W_D[, , , ] <- aux_ICU_W_D[i, j, k, l]
-
 ## Work out the ICU_D->ICU_D transitions
-aux_ICU_D[, , , ] <- ICU_D[i, j, k, l] +
+new_ICU_D[, , , ] <- ICU_D[i, j, k, l] +
   (if (k == 1) n_ICU_pre_to_ICU_D[i, j, l] else
     n_ICU_D_progress[i, j, k - 1, l]) -
   n_ICU_D_progress[i, j, k, l]
 
-new_ICU_D[, , , ] <- aux_ICU_D[i, j, k, l]
-
 ## Work out the W_R->W_R transitions
-aux_W_R[, , , ] <- W_R[i, j, k, l] +
+new_W_R[, , , ] <- W_R[i, j, k, l] +
   (if (k == 1) n_ICU_W_R_progress[i, j, k_ICU_W_R, l] else
     n_W_R_progress[i, j, k - 1, l]) -
   n_W_R_progress[i, j, k, l]
 
-new_W_R[, , , ] <- aux_W_R[i, j, k, l]
-
 ## Work out the W_D->W_D transitions
-aux_W_D[, , , ] <- W_D[i, j, k, l] +
+new_W_D[, , , ] <- W_D[i, j, k, l] +
   (if (k == 1) n_ICU_W_D_progress[i, j, k_ICU_W_D, l] else
     n_W_D_progress[i, j, k - 1, l]) -
   n_W_D_progress[i, j, k, l]
-
-new_W_D[, , , ] <- aux_W_D[i, j, k, l]
 
 ## Work out the number of deaths in hospital
 
@@ -1034,52 +1015,41 @@ dim(n_G_D_progress) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 
 ## Vectors handling the ICU_pre class
 dim(ICU_pre) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(aux_ICU_pre) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
 dim(new_ICU_pre) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(n_ICU_pre_progress) <-
-  c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
+dim(n_ICU_pre_progress) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
 
 ## Vectors handling the H_R class
 dim(H_R) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(aux_H_R) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
 dim(new_H_R) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
 dim(n_H_R_progress) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
 
 ## Vectors handling the H_D class
 dim(H_D) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(aux_H_D) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
 dim(new_H_D) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
 dim(n_H_D_progress) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
 
 ## Vectors handling the ICU_W_R class
 dim(ICU_W_R) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(aux_ICU_W_R) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
 dim(new_ICU_W_R) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(n_ICU_W_R_progress) <-
-  c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
+dim(n_ICU_W_R_progress) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
 
 ## Vectors handling the ICU_W_D class
 dim(ICU_W_D) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(aux_ICU_W_D) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
 dim(new_ICU_W_D) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(n_ICU_W_D_progress) <-
-  c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
+dim(n_ICU_W_D_progress) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
 
 ## Vectors handling the ICU_D class
 dim(ICU_D) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(aux_ICU_D) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
 dim(new_ICU_D) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
 dim(n_ICU_D_progress) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
 
 ## Vectors handling the W_R class
 dim(W_R) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(aux_W_R) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(new_W_R) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
 dim(n_W_R_progress) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
 
 ## Vectors handling the W_D class
 dim(W_D) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(aux_W_D) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(new_W_D) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
 dim(n_W_D_progress) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
 
@@ -1228,14 +1198,10 @@ initial(N_tot[]) <- 0
 update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + D_hosp[i] + sum(E[i, , , ]) +
   sum(I_A[i, , , ]) + sum(I_P[i, , , ]) +
   sum(I_C_1[i, , , ]) + sum(I_C_2[i, , , ]) +
-  sum(ICU_pre[i, , , ]) +
-  sum(H_R[i, , , ]) +
-  sum(H_D[i, , , ]) +
-  sum(ICU_W_R[i, , , ]) +
-  sum(ICU_W_D[i, , , ]) +
-  sum(ICU_D[i, , , ]) +
-  sum(W_R[i, , , ]) +
-  sum(W_D[i, , , ]) +
+  sum(H_R[i, , , ]) + sum(H_D[i, , , ]) +
+  sum(ICU_pre[i, , , ]) + sum(ICU_W_R[i, , , ]) +
+  sum(ICU_W_D[i, , , ]) + sum(ICU_D[i, , , ]) +
+  sum(W_R[i, , , ]) + sum(W_D[i, , , ]) +
   sum(G_D[i, , , ]) + D_non_hosp[i]
 dim(N_tot) <- n_groups
 
