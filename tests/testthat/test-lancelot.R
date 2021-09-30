@@ -14,8 +14,7 @@ test_that("can run the lancelot model", {
              deaths_carehomes = info$index[["D_carehomes_tot"]],
              deaths_comm = info$index[["D_comm_tot"]],
              deaths_hosp = info$index[["D_hosp_tot"]],
-             admitted = info$index[["cum_admit_conf"]],
-             diagnoses = info$index[["cum_new_conf"]],
+             all_admission = info$index[["cum_all_admission"]],
              sympt_cases = info$index[["cum_sympt_cases"]],
              sympt_cases_over25 = info$index[["cum_sympt_cases_over25"]]
   )
@@ -27,48 +26,45 @@ test_that("can run the lancelot model", {
   expected <-
     rbind(time                               = c(213, 213, 213, 213,
                                                  213),
-          icu                                = c(111, 299, 340, 59, 42),
-          general                            = c(396, 1133, 1277, 303,
-                                                 135),
+          icu                                = c(114, 400, 272, 76, 45),
+          general                            = c(442, 1756, 985, 337,
+                                                 134),
           deaths_carehomes_inc               = c(0, 0, 0, 0, 0),
-          deaths_comm_inc                    = c(2, 6, 1, 1, 0),
-          deaths_hosp_inc                    = c(29, 74, 85, 19, 6),
-          admitted_inc                       = c(16, 10, 11, 5, 1),
-          diagnoses_inc                      = c(24, 73, 76, 26, 5),
-          sero_pos_1                         = c(5197368, 6910920, 7089785,
-                                                 4716406, 3652078),
-          sero_pos_2                         = c(5196882, 6913766, 7095050,
-                                                 4717892, 3651559),
-          sympt_cases_inc                    = c(294, 826, 918, 209,
-                                                 86),
-          sympt_cases_non_variant_inc        = c(294, 826, 918, 209,
-                                                 86),
-          sympt_cases_over25_inc             = c(247, 675, 757, 180,
+          deaths_comm_inc                    = c(3, 9, 0, 0, 0),
+          deaths_hosp_inc                    = c(31, 77, 49, 23, 8),
+          all_admission_inc                  = c(34, 123, 63, 22, 12),
+          sero_pos_1                         = c(5196621, 7338502, 6426135,
+                                                 4706995, 3632879),
+          sero_pos_2                         = c(5197954, 7336944, 6432145,
+                                                 4704353, 3633934),
+          sympt_cases_inc                    = c(266, 992, 571, 181,
+                                                 77),
+          sympt_cases_non_variant_inc        = c(266, 992, 571, 181,
+                                                 77),
+          sympt_cases_over25_inc             = c(215, 805, 476, 153,
                                                  65),
-          sympt_cases_under15_inc            = c(28, 75, 87, 12, 11),
-          sympt_cases_15_24_inc              = c(19, 76, 74, 17, 10),
-          sympt_cases_25_49_inc              = c(95, 257, 267, 54, 21),
-          sympt_cases_50_64_inc              = c(73, 204, 212, 59, 20),
-          sympt_cases_65_79_inc              = c(47, 143, 164, 46, 15),
-          sympt_cases_80_plus_inc            = c(32, 71, 114, 21, 9),
-          sympt_cases_non_variant_over25_inc = c(247, 675, 757, 180,
+          sympt_cases_under15_inc            = c(28, 113, 55, 15, 9),
+          sympt_cases_15_24_inc              = c(23, 74, 40, 13, 3),
+          sympt_cases_25_49_inc              = c(78, 271, 164, 62, 17),
+          sympt_cases_50_64_inc              = c(60, 244, 135, 45, 23),
+          sympt_cases_65_79_inc              = c(51, 165, 112, 30, 15),
+          sympt_cases_80_plus_inc            = c(26, 125, 65, 16, 10),
+          sympt_cases_non_variant_over25_inc = c(215, 805, 476, 153,
                                                  65),
-          react_pos                          = c(20534, 61844, 68919,
-                                                 15064, 6328),
-          deaths_carehomes                   = c(1683, 1663, 1639, 1705,
-                                                 1722),
-          deaths_comm                        = c(22849, 22627, 22434,
-                                                 22845, 22594),
-          deaths_hosp                        = c(198907, 197449, 198075,
-                                                 198348, 197756),
-          admitted                           = c(89732, 88887, 89875,
-                                                 89461, 89478),
-          diagnoses                          = c(297454, 296304, 297181,
-                                                 297138, 297675),
-          sympt_cases                        = c(9802437, 9799220, 9792545,
-                                                 9799207, 9809255),
-          sympt_cases_over25                 = c(7479954, 7475585, 7471847,
-                                                 7475980, 7484963))
+          react_pos                          = c(21039, 79104, 45801,
+                                                 14807, 6286),
+          deaths_carehomes                   = c(1735, 1754, 1609, 1617,
+                                                 1706),
+          deaths_comm                        = c(22849, 22500, 22680,
+                                                 22528, 22787),
+          deaths_hosp                        = c(197777, 198305, 198223,
+                                                 198552, 198178),
+          all_admission                      = c(463627, 463990, 463660,
+                                                 464490, 463641),
+          sympt_cases                        = c(9807206, 9802506, 9794172,
+                                                 9803463, 9813121),
+          sympt_cases_over25                 = c(7483748, 7480192, 7472728,
+                                                 7481975, 7485904))
   expect_equal(res, expected)
 })
 
@@ -102,10 +98,8 @@ test_that("incidence calculation is correct", {
              deaths_carehomes_inc = info$index$D_carehomes_inc,
              deaths_hosp = info$index$D_hosp_tot,
              deaths_hosp_inc = info$index$D_hosp_inc,
-             admitted = info$index$cum_admit_conf,
-             admitted_inc = info$index$admit_conf_inc,
-             diagnoses = info$index$cum_new_conf,
-             diagnoses_inc = info$index$new_conf_inc,
+             all_admission = info$index$cum_all_admission,
+             all_admission_inc = info$index$all_admission_inc,
              sympt_cases = info$index$cum_sympt_cases,
              sympt_cases_inc = info$index$sympt_cases_inc,
              sympt_cases_over25 = info$index$cum_sympt_cases_over25,
@@ -120,14 +114,14 @@ test_that("incidence calculation is correct", {
                info$index$sympt_cases_non_variant_over25_inc,
              infections = info$index$cum_infections,
              infections_inc = info$index$infections_inc)
-  expect_length(index, 20) # guard against name changes
+  expect_length(index, 18) # guard against name changes
 
   steps <- seq(initial$step, length.out = 60 * 4 + 1)
   mod$set_index(index)
   y <- mod$simulate(steps)
 
   i <- which(steps %% pars$steps_per_day == 0)
-  j <- seq(1, 20, by = 2)
+  j <- seq(1, 18, by = 2)
   y0 <- y[, , i[-length(i)]]
   y1 <- y[, , i[-1]]
   yd <- y1[j, , ] - y0[j, , ]
@@ -191,10 +185,9 @@ test_that("Test compiled lancelot components", {
     c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 10),
     c(deaths_hosp = 30, deaths_non_hosp = 20),
     c(deaths = 50),
-    c(admitted = 50),
-    c(new_diagnoses = 50),
-    c(new_all_admissions = 50),
-    c(npos_15_64 = 10, ntot_15_64 = 50),
+    c(all_admission = 50),
+    c(sero_pos_15_64_1 = 10, sero_tot_15_64_1 = 50),
+    c(sero_pos_15_64_2 = 10, sero_tot_15_64_2 = 50),
     c(pillar2_pos = 10, pillar2_tot = 50),
     c(pillar2_over25_pos = 10, pillar2_over25_tot = 50),
     c(pillar2_under15_pos = 10, pillar2_under15_tot = 50),

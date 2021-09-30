@@ -66,8 +66,6 @@ real_t test_prob_pos(real_t pos, real_t neg, real_t sensitivity,
 // [[odin.dust::compare_data(deaths_carehomes = real_t)]]
 // [[odin.dust::compare_data(deaths = real_t)]]
 // [[odin.dust::compare_data(deaths_non_hosp = real_t)]]
-// [[odin.dust::compare_data(admitted = real_t)]]
-// [[odin.dust::compare_data(diagnoses = real_t)]]
 // [[odin.dust::compare_data(all_admission = real_t)]]
 // [[odin.dust::compare_data(sero_pos_15_64_1 = real_t)]]
 // [[odin.dust::compare_data(sero_tot_15_64_1 = real_t)]]
@@ -119,9 +117,7 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t model_deaths_carehomes = odin(D_carehomes_inc);
   const real_t model_deaths_comm = odin(D_comm_inc);
   const real_t model_deaths_hosp = odin(D_hosp_inc);
-  const real_t model_admitted = odin(admit_conf_inc);
-  const real_t model_diagnoses = odin(new_conf_inc);
-  const real_t model_all_admission = model_admitted + model_diagnoses;
+  const real_t model_all_admission = odin(all_admission_inc);
   const real_t model_sero_pos_1 = odin(sero_pos_1);
   const real_t model_sero_pos_2 = odin(sero_pos_2);
   const real_t model_sympt_cases = odin(sympt_cases_inc);
@@ -331,12 +327,6 @@ typename T::real_t compare(const typename T::real_t * state,
                 odin(phi_death_comm) * model_deaths_comm,
               odin(kappa_death), odin(exp_noise), rng_state);
 
-  const real_t ll_admitted =
-    ll_nbinom(data.admitted, odin(phi_admitted) * model_admitted,
-              odin(kappa_admitted), odin(exp_noise), rng_state);
-  const real_t ll_diagnoses =
-    ll_nbinom(data.diagnoses, odin(phi_diagnoses) * model_diagnoses,
-              odin(kappa_diagnoses), odin(exp_noise), rng_state);
   const real_t ll_all_admission =
     ll_nbinom(data.all_admission, odin(phi_all_admission) * model_all_admission,
               odin(kappa_all_admission), odin(exp_noise), rng_state);
@@ -440,8 +430,8 @@ typename T::real_t compare(const typename T::real_t * state,
              model_strain_over25_prob_pos);
 
   return ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
-    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-    ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
+    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_all_admission +
+    ll_serology_1 + ll_serology_2 +
     ll_pillar2_tests + ll_pillar2_over25_tests + ll_pillar2_under15_tests +
     ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
     ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +

@@ -16,8 +16,7 @@ lancelot_parameters_severity(
   p_W_D = NULL,
   p_G_D = NULL,
   p_G_D_CHR = NULL,
-  p_R = NULL,
-  p_star = NULL
+  p_R = NULL
 )
 }
 \arguments{
@@ -61,9 +60,6 @@ Details.}
 
 \item{p_R}{Time-varying parameters for p_R (the probability of an non-
 fatally infected individual having immunity post-infection). See Details.}
-
-\item{p_star}{Time-varying parameters for p_star (the probability of
-patients being confirmed as covid on admission to hospital). See Details.}
 }
 \value{
 A list of severity parameters

@@ -23,42 +23,42 @@ test_that("N_tots stay constant without waning immunity", {
 
 test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
           are non-decreasing", {
-            p <- lancelot_parameters(0, "uk", waning_rate = 1 / 20)
-            mod <- lancelot$new(p, 0, 1)
-            info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)$state
-            mod$set_state(lancelot_initial(info, 1, p)$state)
-            y <- mod$transform_variables(
-              drop(mod$simulate(seq(0, 400, by = 4))))
+  p <- lancelot_parameters(0, "uk", waning_rate = 1 / 20)
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
-            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-            expect_true(all(diff(y$N_tot_sero_1) >= 0))
-            expect_true(all(diff(y$N_tot_sero_2) >= 0))
-            expect_true(all(diff(y$N_tot_PCR) >= 0))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-          })
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+})
 
 test_that("N_tot stays constant when p_R < 1, while
           sero and PCR N_tots are non-decreasing", {
-            p <- lancelot_parameters(0, "uk")
-            p$p_R_step[, ] <- 0.5
-            mod <- lancelot$new(p, 0, 1)
-            info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)$state
-            mod$set_state(lancelot_initial(info, 1, p)$state)
-            y <- mod$transform_variables(
-              drop(mod$simulate(seq(0, 400, by = 4))))
+  p <- lancelot_parameters(0, "uk")
+  p$p_R_step[, ] <- 0.5
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$set_state(lancelot_initial(info, 1, p)$state)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
 
-            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-            expect_true(all(diff(y$N_tot_sero_1) >= 0))
-            expect_true(all(diff(y$N_tot_sero_2) >= 0))
-            expect_true(all(diff(y$N_tot_PCR) >= 0))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-          })
+  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+  expect_true(all(diff(y$N_tot_sero_1) >= 0))
+  expect_true(all(diff(y$N_tot_sero_2) >= 0))
+  expect_true(all(diff(y$N_tot_PCR) >= 0))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+})
 
 test_that("there are no infections when beta is 0", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
@@ -172,22 +172,14 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
   expect_true(all(y$I_P == 0))
   expect_true(all(y$I_C_1 == 0))
   expect_true(all(y$I_C_2 == 0))
-  expect_true(all(y$H_R_unconf == 0))
-  expect_true(all(y$H_R_conf == 0))
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(all(y$ICU_W_R_unconf == 0))
-  expect_true(all(y$ICU_W_R_conf == 0))
-  expect_true(all(y$ICU_W_D_unconf == 0))
-  expect_true(all(y$ICU_W_D_conf == 0))
-  expect_true(all(y$ICU_D_unconf == 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(all(y$ICU_pre_unconf == 0))
-  expect_true(all(y$ICU_pre_conf == 0))
-  expect_true(all(y$W_R_unconf == 0))
-  expect_true(all(y$W_R_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$H_R == 0))
+  expect_true(all(y$H_D == 0))
+  expect_true(all(y$ICU_W_R == 0))
+  expect_true(all(y$ICU_W_D == 0))
+  expect_true(all(y$ICU_D == 0))
+  expect_true(all(y$ICU_pre == 0))
+  expect_true(all(y$W_R == 0))
+  expect_true(all(y$W_D == 0))
   expect_true(all(y$D_hosp == 0))
   expect_true(all(y$G_D == 0))
   expect_true(all(y$D_non_hosp == 0))
@@ -211,24 +203,15 @@ test_that("No one is hospitalised, no-one dies if p_H is 0", {
   expect_true(any(y$I_P > 0))
   expect_true(any(y$I_C_1 > 0))
   expect_true(any(y$I_C_2 > 0))
-  expect_true(all(y$H_R_unconf == 0))
-  expect_true(all(y$H_R_conf == 0))
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(all(y$I_ICU_R_unconf == 0))
-  expect_true(all(y$I_ICU_R_conf == 0))
-  expect_true(all(y$ICU_W_R_unconf == 0))
-  expect_true(all(y$ICU_W_R_conf == 0))
-  expect_true(all(y$ICU_W_D_unconf == 0))
-  expect_true(all(y$ICU_W_D_conf == 0))
-  expect_true(all(y$ICU_D_unconf == 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(all(y$ICU_pre_unconf == 0))
-  expect_true(all(y$ICU_pre_conf == 0))
-  expect_true(all(y$W_R_unconf == 0))
-  expect_true(all(y$W_R_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$H_R == 0))
+  expect_true(all(y$H_D == 0))
+  expect_true(all(y$I_ICU_R == 0))
+  expect_true(all(y$ICU_W_R == 0))
+  expect_true(all(y$ICU_W_D == 0))
+  expect_true(all(y$ICU_D == 0))
+  expect_true(all(y$ICU_pre == 0))
+  expect_true(all(y$W_R == 0))
+  expect_true(all(y$W_D == 0))
   expect_true(all(y$D_hosp == 0))
   expect_true(all(y$G_D == 0))
   expect_true(all(y$D_non_hosp == 0))
@@ -256,22 +239,14 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C_2 > 0))
-  expect_true(all(y$H_R_unconf == 0))
-  expect_true(all(y$H_R_conf == 0))
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(all(y$ICU_W_R_unconf == 0))
-  expect_true(all(y$ICU_W_R_conf == 0))
-  expect_true(all(y$ICU_W_D_unconf == 0))
-  expect_true(all(y$ICU_W_D_conf == 0))
-  expect_true(all(y$ICU_D_unconf == 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(all(y$ICU_pre_unconf == 0))
-  expect_true(all(y$ICU_pre_conf == 0))
-  expect_true(all(y$W_R_unconf == 0))
-  expect_true(all(y$W_R_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$H_R == 0))
+  expect_true(all(y$H_D == 0))
+  expect_true(all(y$ICU_W_R == 0))
+  expect_true(all(y$ICU_W_D == 0))
+  expect_true(all(y$ICU_D == 0))
+  expect_true(all(y$ICU_pre == 0))
+  expect_true(all(y$W_R == 0))
+  expect_true(all(y$W_D == 0))
   expect_true(all(y$R == 0))
   expect_true(all(y$D_hosp == 0))
 })
@@ -298,22 +273,14 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
     drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(any(y$I_C_2 > 0))
-  expect_true(all(y$H_R_unconf == 0))
-  expect_true(all(y$H_R_conf == 0))
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(all(y$ICU_W_R_unconf == 0))
-  expect_true(all(y$ICU_W_R_conf == 0))
-  expect_true(all(y$ICU_W_D_unconf == 0))
-  expect_true(all(y$ICU_W_D_conf == 0))
-  expect_true(all(y$ICU_D_unconf == 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(all(y$ICU_pre_unconf == 0))
-  expect_true(all(y$ICU_pre_conf == 0))
-  expect_true(all(y$W_R_unconf == 0))
-  expect_true(all(y$W_R_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$W_D_conf == 0))
+  expect_true(all(y$H_R == 0))
+  expect_true(all(y$H_D == 0))
+  expect_true(all(y$ICU_W_R == 0))
+  expect_true(all(y$ICU_W_D == 0))
+  expect_true(all(y$ICU_D == 0))
+  expect_true(all(y$ICU_pre == 0))
+  expect_true(all(y$W_R == 0))
+  expect_true(all(y$W_D == 0))
   expect_true(all(y$R == 0))
   expect_true(all(y$D_hosp == 0))
 })
@@ -332,10 +299,8 @@ test_that("No-one recovers if p_R = 0", {
 
   expect_true(any(y$I_A > 0))
   expect_true(any(y$I_C_2 > 0))
-  expect_true(any(y$H_R_unconf > 0))
-  expect_true(any(y$H_R_conf > 0))
-  expect_true(any(y$W_R_unconf > 0))
-  expect_true(any(y$W_R_conf > 0))
+  expect_true(any(y$H_R > 0))
+  expect_true(any(y$W_R > 0))
   expect_true(all(y$R == 0))
 })
 
@@ -356,17 +321,11 @@ test_that("Everyone recovers in edge case", {
 
   expect_true(any(y$I_A > 0))
   expect_true(any(y$I_C_2 > 0))
-  expect_true(any(y$H_R_unconf > 0))
-  expect_true(any(y$H_R_conf > 0))
-  expect_true(any(y$W_R_unconf > 0))
-  expect_true(any(y$W_R_conf > 0))
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$W_D_conf == 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(all(y$ICU_D_unconf == 0))
+  expect_true(any(y$H_R > 0))
+  expect_true(any(y$W_R > 0))
+  expect_true(all(y$H_D == 0))
+  expect_true(all(y$W_D == 0))
+  expect_true(all(y$ICU_D == 0))
   expect_true(all(y$G_D == 0))
   expect_true(any(y$R > 0))
 
@@ -411,16 +370,6 @@ test_that("forcing hospital route results in correct path", {
     mod$set_state(lancelot_initial(info, 1, p)$state)
     y <- mod$transform_variables(
       drop(mod$simulate(seq(0, 400, by = 4))))
-
-    ## Save some work by using the total of confirmed and unconfirmed
-    y$H_R <- y$H_R_unconf + y$H_R_conf
-    y$H_D <- y$H_D_unconf + y$H_D_conf
-    y$ICU_pre <- y$ICU_pre_unconf + y$ICU_pre_conf
-    y$ICU_W_R <- y$ICU_W_R_unconf + y$ICU_W_R_conf
-    y$ICU_W_D <- y$ICU_W_D_unconf + y$ICU_W_D_conf
-    y$ICU_D <- y$ICU_D_unconf + y$ICU_D_conf
-    y$W_R <- y$W_R_unconf + y$W_R_conf
-    y$W_D <- y$W_D_unconf + y$W_D_conf
 
     for (i in expect_cases) {
       expect_true(any(y[[i]] > 0), label = sprintf("Expected cases in %s", i))
@@ -520,25 +469,12 @@ test_that("setting a gamma to Inf results immediate progression", {
     state <- lancelot_initial(info, 1, p)$state
 
     # add individuals into the compartment
-    if (hosp_compartment) {
-      name_conf <- paste0(compartment_name, "_conf")
-      name_unconf <- paste0(compartment_name, "_unconf")
-      index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
-      index_unconf <- array(info$index[[name_unconf]], info$dim[[name_unconf]])
-      state[index_conf] <- 50
-      state[index_unconf] <- 50
-    } else {
-      index <- array(info$index[[compartment_name]],
-                     info$dim[[compartment_name]])
-      state[index] <- 50
-    }
+    index <- array(info$index[[compartment_name]],
+                   info$dim[[compartment_name]])
+    state[index] <- 50
 
     mod$set_state(state)
     y <- mod$transform_variables(drop(mod$simulate(0:400)))
-
-    if (hosp_compartment) {
-      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
-    }
 
     z <- y[[compartment_name]]
 
@@ -590,34 +526,17 @@ test_that("setting a gamma to 0 results in no progression", {
     state <- lancelot_initial(info, 1, p)$state
 
     # add individuals into the compartment (only the first progression stage)
-    if (hosp_compartment) {
-      name_conf <- paste0(compartment_name, "_conf")
-      name_unconf <- paste0(compartment_name, "_unconf")
-      index_conf <- array(info$index[[name_conf]], info$dim[[name_conf]])
-      index_unconf <- array(info$index[[name_unconf]], info$dim[[name_unconf]])
-      if (length(dim(index_conf)) == 4) {
-        state[index_conf[, , 1, ]] <- 50
-        state[index_unconf[, , 1, ]] <- 50
-      } else {
-        state[index_conf[, , 1]] <- 50
-        state[index_unconf[, , 1]] <- 50
-      }
+    index <- array(info$index[[compartment_name]],
+                   info$dim[[compartment_name]])
+    if (length(dim(index)) == 4) {
+      state[index[, , 1, ]] <- 50
     } else {
-      index <- array(info$index[[compartment_name]],
-                     info$dim[[compartment_name]])
-      if (length(dim(index)) == 4) {
-        state[index[, , 1, ]] <- 50
-      } else {
-        state[index[, , 1]] <- 50
-      }
+      state[index[, , 1]] <- 50
     }
+
 
     mod$set_state(state)
     y <- mod$transform_variables(drop(mod$simulate(0:400)))
-
-    if (hosp_compartment) {
-      y[[compartment_name]] <- y[[name_conf]] + y[[name_unconf]]
-    }
 
     z <- y[[compartment_name]]
 
@@ -654,172 +573,6 @@ test_that("setting a gamma to 0 results in no progression", {
 })
 
 
-test_that("No one is unconfirmed, if p_star = 1", {
-  set.seed(1)
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
-  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_star_step[, ] <- 1
-
-  p$gamma_ICU_pre_step <- Inf
-  p$gamma_H_R_step <- Inf
-  p$gamma_H_D_step <- Inf
-  p$gamma_ICU_W_R_step <- Inf
-  p$gamma_ICU_W_D_step <- Inf
-  p$gamma_ICU_D_step <- Inf
-  p$gamma_W_R_step <- Inf
-  p$gamma_W_D_step <- Inf
-
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  mod$set_state(lancelot_initial(info, 1, p)$state, 0)
-  y <- mod$transform_variables(drop(mod$simulate(0:400)))
-
-  expect_true(all(y$H_R_unconf == 0))
-  expect_true(any(y$H_R_conf > 0))
-  expect_true(all(y$H_D_unconf == 0))
-  expect_true(any(y$H_D_conf > 0))
-  expect_true(all(y$ICU_pre_unconf == 0))
-  expect_true(any(y$ICU_pre_conf > 0))
-  expect_true(all(y$ICU_W_R_unconf == 0))
-  expect_true(any(y$ICU_W_R_conf > 0))
-  expect_true(all(y$ICU_W_D_unconf == 0))
-  expect_true(any(y$ICU_W_D_conf > 0))
-  expect_true(all(y$ICU_D_unconf == 0))
-  expect_true(any(y$ICU_D_conf > 0))
-  expect_true(all(y$W_R_unconf == 0))
-  expect_true(any(y$W_R_conf > 0))
-  expect_true(all(y$W_D_unconf == 0))
-  expect_true(any(y$W_D_conf > 0))
-
-  admit_conf <- apply(y$H_R_conf[, 1, , , ] +
-                        y$H_D_conf[, 1, , , ] +
-                        y$ICU_pre_conf[, 1, , , ], 1, sum)
-
-  expect_true(all(diff(y$cum_admit_conf) == admit_conf[-1]))
-  expect_true(all(y$cum_new_conf == 0))
-})
-
-
-test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
-  ## RGF: I cannot replicate this failure on either of the Mac systems
-  ## I have access to.
-  skip_on_mac_gha()
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
-  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_star_step[, ] <- 0
-  p$gamma_U <- 0
-
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  mod$set_state(lancelot_initial(info, 1, p)$state, 0)
-  y <- mod$transform_variables(drop(mod$simulate(0:400)))
-
-  expect_true(any(y$H_R_unconf > 0))
-  expect_true(all(y$H_R_conf == 0))
-  expect_true(any(y$H_D_unconf > 0))
-  expect_true(all(y$H_D_conf == 0))
-  expect_true(any(y$ICU_pre_unconf > 0))
-  expect_true(all(y$ICU_pre_conf == 0))
-  expect_true(any(y$ICU_W_R_unconf > 0))
-  expect_true(all(y$ICU_W_R_conf == 0))
-  expect_true(any(y$ICU_W_D_unconf > 0))
-  expect_true(all(y$ICU_W_D_conf == 0))
-  expect_true(any(y$ICU_D_unconf > 0))
-  expect_true(all(y$ICU_D_conf == 0))
-  expect_true(any(y$W_R_unconf > 0))
-  expect_true(all(y$W_R_conf == 0))
-  expect_true(any(y$W_D_unconf > 0))
-  expect_true(all(y$W_D_conf == 0))
-  expect_true(all(y$admit_new_conf == 0))
-  expect_true(all(y$cum_new_conf == 0))
-})
-
-
-test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
-  ## waning_rate default is 0, setting to a non-zero value so that this test
-  ## passes with waning immunity
-  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
-  p$p_star_step[, ] <- 0
-
-  p$gamma_U <- Inf
-  p$gamma_ICU_pre_step <- Inf
-  p$gamma_H_R_step <- Inf
-  p$gamma_H_D_step <- Inf
-  p$gamma_ICU_W_R_step <- Inf
-  p$gamma_ICU_W_D_step <- Inf
-  p$gamma_ICU_D_step <- Inf
-  p$gamma_W_R_step <- Inf
-  p$gamma_W_D_step <- Inf
-
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-
-  ## We want to set ICU_W_R_unconf[, 1, ], ICU_W_D_unconf[, 1, ] and
-  ## ICU_D_unconf[, 1, ] to 50
-  y0[info$index$ICU_W_R_unconf[1:19]] <- 50
-  y0[info$index$ICU_W_D_unconf[1:19]] <- 50
-  y0[info$index$ICU_D_unconf[1:19]] <- 50
-
-  mod$set_state(y0, 0)
-  y <- mod$transform_variables(drop(mod$simulate(0:400)))
-  n <- length(y$time)
-
-  ## Check hosp_R
-  expect_true(all(y$H_R_conf[, , 1, , ] == 0))
-  expect_equal(y$H_R_conf[, , 2, , -1], y$H_R_unconf[, , 1, , -n])
-  expect_true(all(y$H_R_unconf[, , 2, , ] == 0))
-
-  ## Check hosp_D
-  expect_true(all(y$H_D_conf[, , 1, , ] == 0))
-  expect_equal(y$H_D_conf[, , 2, , -1], y$H_D_unconf[, , 1, , -n])
-  expect_true(all(y$H_D_unconf[, , 2, , ] == 0))
-
-  ## Check ICU_pre
-  expect_true(all(y$ICU_pre_conf[, , 1, , ] == 0))
-  expect_equal(y$ICU_pre_conf[, , 2, , -1], y$ICU_pre_unconf[, , 1, , -n])
-  expect_true(all(y$ICU_pre_unconf[, , 2, , ] == 0))
-
-  ## Check ICU_D/ICU_S_R/ICU_S_D
-  expect_equal(y$ICU_D_conf[, , 2, , 2], y$ICU_D_unconf[, , 1, , 1])
-  expect_true(all(y$ICU_D_unconf[, , 2, , ] == 0))
-  expect_equal(y$ICU_W_R_conf[, , 2, , 2], y$ICU_W_R_unconf[, , 1, , 1])
-  expect_true(all(y$ICU_W_R_unconf[, , 2, , ] == 0))
-  expect_true(all(y$ICU_W_D_unconf[, , 2, , ] == 0))
-  expect_equal(y$ICU_W_D_conf[, , 2, , 2], y$ICU_W_D_unconf[, , 1, , 1])
-  expect_equal(y$ICU_D_conf[, , 1, , -1] + y$ICU_W_R_conf[, , 1, , -1] +
-                 y$ICU_W_D_conf[, , 1, , -1], y$ICU_pre_conf[, , 2, , -n])
-
-  ## Check stepdown_R
-  expect_equal(y$W_R_conf[, , 2, , 2],
-               y$W_R_unconf[, , 1, , 1])
-  expect_equal(y$W_R_conf[, , 1, , -1],
-               y$ICU_W_R_conf[, , 2, , -n])
-  expect_true(all(y$W_R_unconf[, , 2, , ] == 0))
-
-  ## Check stepdown_D
-  expect_equal(y$W_D_conf[, , 2, , 2],
-               y$W_D_unconf[, , 1, , 1])
-  expect_equal(y$W_D_conf[, , 1, , -1], y$ICU_W_D_conf[, , 2, , -n])
-  expect_true(all(y$W_D_unconf[, , 2, , ] == 0))
-
-  new_conf <- apply(y$H_R_conf[, , 2, , ] +
-                      y$H_D_conf[, , 2, , ] +
-                      y$ICU_pre_conf[, , 2, , ], 2, sum)
-  new_conf[2] <- new_conf[2] +
-    sum(y$ICU_W_R_conf[, , 2, , 2] +
-          y$ICU_W_D_conf[, , 2, , 2] +
-          y$ICU_D_conf[, , 2, , 2] +
-          y$R_stepdown_conf[, , 2, , 2] +
-          y$W_R_conf[, , 2, , 2])
-  expect_true(all(diff(y$cum_new_conf) == new_conf[-1]))
-
-  expect_true(all(y$cum_admit_conf == 0))
-})
-
-
 test_that("tots all summed correctly ", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
@@ -830,14 +583,14 @@ test_that("tots all summed correctly ", {
   mod$set_state(lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
-  expect_true(all(y$general_tot == apply(y$ICU_pre_conf, 5, sum) +
-                    apply(y$H_R_conf, 5, sum) +
-                    apply(y$H_D_conf, 5, sum) +
-                    apply(y$W_R_conf, 5, sum) +
-                    apply(y$W_D_conf, 5, sum)))
-  expect_true(all(y$ICU_tot == apply(y$ICU_W_R_conf, 5, sum) +
-                    apply(y$ICU_W_D_conf, 5, sum) +
-                    apply(y$ICU_D_conf, 5, sum)))
+  expect_true(all(y$general_tot == apply(y$ICU_pre, 5, sum) +
+                    apply(y$H_R, 5, sum) +
+                    apply(y$H_D, 5, sum) +
+                    apply(y$W_R, 5, sum) +
+                    apply(y$W_D, 5, sum)))
+  expect_true(all(y$ICU_tot == apply(y$ICU_W_R, 5, sum) +
+                    apply(y$ICU_W_D, 5, sum) +
+                    apply(y$ICU_D, 5, sum)))
   expect_true(all(y$hosp_tot == y$ICU_tot + y$general_tot))
   expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
   expect_true(all(y$D_comm_tot == apply(y$D_non_hosp[1:18, ], 2, sum)))
@@ -922,18 +675,12 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
   helper("I_C_1_transmission", "I_C_1", "gamma_C_1_step")
   helper("I_C_2_transmission", "I_C_2", "gamma_C_2_step")
   helper("G_D_transmission", "G_D", "gamma_G_D_step")
-  helper("hosp_transmission", "H_D_unconf", "gamma_H_D_step")
-  helper("hosp_transmission", "H_D_conf", "gamma_H_D_step")
-  helper("hosp_transmission", "H_R_unconf", "gamma_H_R_step")
-  helper("hosp_transmission", "H_R_conf", "gamma_H_R_step")
-  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre_step")
-  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre_step")
-  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D_step")
-  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D_step")
-  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D_step")
-  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D_step")
-  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
-  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
+  helper("hosp_transmission", "H_D", "gamma_H_D_step")
+  helper("hosp_transmission", "H_R", "gamma_H_R_step")
+  helper("hosp_transmission", "ICU_pre", "gamma_ICU_pre_step")
+  helper("ICU_transmission", "ICU_D", "gamma_ICU_D_step")
+  helper("ICU_transmission", "ICU_W_D", "gamma_ICU_W_D_step")
+  helper("ICU_transmission", "ICU_W_R", "gamma_ICU_W_R_step")
 })
 
 
@@ -988,16 +735,10 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper("I_C_1_transmission", "I_C_1", "gamma_C_1_step")
   helper("I_C_2_transmission", "I_C_2", "gamma_C_2_step")
   helper("G_D_transmission", "G_D", "gamma_G_D_step")
-  helper("hosp_transmission", "H_D_unconf", "gamma_H_D_step")
-  helper("hosp_transmission", "H_D_conf", "gamma_H_D_step")
-  helper("hosp_transmission", "H_R_unconf", "gamma_H_R_step")
-  helper("hosp_transmission", "H_R_conf", "gamma_H_R_step")
-  helper("hosp_transmission", "ICU_pre_unconf", "gamma_ICU_pre_step")
-  helper("hosp_transmission", "ICU_pre_conf", "gamma_ICU_pre_step")
-  helper("ICU_transmission", "ICU_D_unconf", "gamma_ICU_D_step")
-  helper("ICU_transmission", "ICU_D_conf", "gamma_ICU_D_step")
-  helper("ICU_transmission", "ICU_W_D_unconf", "gamma_ICU_W_D_step")
-  helper("ICU_transmission", "ICU_W_D_conf", "gamma_ICU_W_D_step")
-  helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
-  helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
+  helper("hosp_transmission", "H_D", "gamma_H_D_step")
+  helper("hosp_transmission", "H_R", "gamma_H_R_step")
+  helper("hosp_transmission", "ICU_pre", "gamma_ICU_pre_step")
+  helper("ICU_transmission", "ICU_D", "gamma_ICU_D_step")
+  helper("ICU_transmission", "ICU_W_D", "gamma_ICU_W_D_step")
+  helper("ICU_transmission", "ICU_W_R", "gamma_ICU_W_R_step")
 })

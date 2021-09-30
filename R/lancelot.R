@@ -675,13 +675,11 @@ lancelot_index <- function(info) {
                   deaths_comm = index[["D_comm_tot"]],
                   deaths_carehomes = index[["D_carehomes_tot"]],
                   deaths_hosp = index[["D_hosp_tot"]],
-                  admitted = index[["cum_admit_conf"]],
-                  diagnoses = index[["cum_new_conf"]],
+                  all_admission = index[["cum_all_admission"]],
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
                   deaths_hosp_inc = index[["D_hosp_inc"]],
-                  admitted_inc = index[["admit_conf_inc"]],
-                  diagnoses_inc = index[["new_conf_inc"]],
+                  all_admission_inc = index[["all_admission_inc"]],
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
                   sympt_cases = index[["cum_sympt_cases"]],
@@ -709,8 +707,8 @@ lancelot_index <- function(info) {
   index_run <- c(time = index[["time"]],
                  index_core[c("icu", "general", "deaths_carehomes_inc",
                               "deaths_comm_inc", "deaths_hosp_inc",
-                              "admitted_inc", "diagnoses_inc",
-                              "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+                              "all_admission_inc", "sero_pos_1",
+                              "sero_pos_2", "sympt_cases_inc",
                               "sympt_cases_non_variant_inc",
                               "sympt_cases_over25_inc",
                               "sympt_cases_under15_inc",
@@ -809,9 +807,7 @@ lancelot_compare <- function(state, observed, pars) {
   model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
-  model_admitted <- state["admitted_inc", ]
-  model_diagnoses <- state["diagnoses_inc", ]
-  model_all_admission <- model_admitted + model_diagnoses
+  model_all_admission <- state["all_admission_inc", ]
   model_sero_pos_1 <- state["sero_pos_1", ]
   model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
@@ -1005,12 +1001,6 @@ lancelot_compare <- function(state, observed, pars) {
                            pars$phi_death_carehomes * model_deaths_carehomes +
                            pars$phi_death_comm * model_deaths_comm,
                          pars$kappa_death, exp_noise)
-  ll_admitted <- ll_nbinom(observed$admitted,
-                           pars$phi_admitted * model_admitted,
-                           pars$kappa_admitted, exp_noise)
-  ll_diagnoses <- ll_nbinom(observed$diagnoses,
-                            pars$phi_diagnoses * model_diagnoses,
-                            pars$kappa_diagnoses, exp_noise)
   ll_all_admission <- ll_nbinom(observed$all_admission,
                                 pars$phi_all_admission * model_all_admission,
                                 pars$kappa_all_admission, exp_noise)
@@ -1115,8 +1105,8 @@ lancelot_compare <- function(state, observed, pars) {
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
-    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-    ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
+    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_all_admission +
+    ll_serology_1 + ll_serology_2 +
     ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
     ll_pillar2_under15_tests + ll_pillar2_15_24_tests +
     ll_pillar2_25_49_tests + ll_pillar2_50_64_tests + ll_pillar2_65_79_tests +
@@ -1196,9 +1186,6 @@ lancelot_severity <- function(p) {
 ##'   fatally infected individual having immunity post-infection). See Details.
 ##'
 ##'
-##' @param p_star Time-varying parameters for p_star (the probability of
-##'   patients being confirmed as covid on admission to hospital). See Details.
-##'
 ##' @return A list of severity parameters
 ##'
 ##' @export
@@ -1213,8 +1200,7 @@ lancelot_parameters_severity <- function(dt,
                                          p_W_D = NULL,
                                          p_G_D = NULL,
                                          p_G_D_CHR = NULL,
-                                         p_R = NULL,
-                                         p_star = NULL) {
+                                         p_R = NULL) {
 
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, lancelot_severity)
@@ -1226,8 +1212,7 @@ lancelot_parameters_severity <- function(dt,
                                 ICU_D = p_ICU_D,
                                 W_D = p_W_D,
                                 G_D = p_G_D,
-                                R = p_R,
-                                star = p_star)
+                                R = p_R)
 
   time_varying_severity_CHR <- list(C = NULL,
                                     H = p_H_CHR,
@@ -1747,7 +1732,6 @@ lancelot_parameters_progression <- function(dt,
               gamma_sero_pos_1 = 1 / 25,
               gamma_sero_pre_2 = 1 / 10,
               gamma_sero_pos_2 = 1 / 25,
-              gamma_U = 3 / 10,
               gamma_PCR_pre = 2 / 3,
               gamma_PCR_pos = 1 / 5
   )
@@ -1856,12 +1840,6 @@ lancelot_parameters_observation <- function(exp_noise = 1e6) {
     kappa_death_non_hosp = 2,
     ## Daily total deaths (if not split)
     kappa_death = 2,
-    ## Daily new confirmed admissions
-    phi_admitted = 1,
-    kappa_admitted = 2,
-    ## Daily new inpatient diagnoses
-    phi_diagnoses = 1,
-    kappa_diagnoses = 2,
     ## Daily combined new confirmed admissions and new inpatient diagnoses
     phi_all_admission = 1,
     kappa_all_admission = 2,
@@ -2017,8 +1995,8 @@ lancelot_particle_filter <- function(data, n_particles,
 
 lancelot_particle_filter_data <- function(data) {
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
-                "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
-                "diagnoses", "all_admission", "sero_pos_15_64_1",
+                "deaths_comm", "deaths_non_hosp", "deaths",
+                "all_admission", "sero_pos_15_64_1",
                 "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
@@ -2192,19 +2170,18 @@ lancelot_data <- function(data, start_date, dt) {
   expected <- c(deaths_hosp = NA_real_, deaths_comm = NA_real_,
                 deaths_carehomes = NA_real_, deaths_non_hosp = NA_real_,
                 icu = NA_real_, general = NA_real_, hosp = NA_real_,
-                deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
-                all_admission = NA_real_, sero_pos_15_64_1 = NA_real_,
-                sero_tot_15_64_1 = NA_real_, sero_pos_15_64_2 = NA_real_,
-                sero_tot_15_64_2 = NA_real_, pillar2_tot = NA_real_,
-                pillar2_pos = NA_real_, pillar2_cases = NA_real_,
-                pillar2_over25_tot = NA_real_, pillar2_under15_tot = NA_real_,
-                pillar2_15_24_tot = NA_real_, pillar2_25_49_tot = NA_real_,
-                pillar2_50_64_tot = NA_real_, pillar2_65_79_tot = NA_real_,
-                pillar2_80_plus_tot = NA_real_, pillar2_over25_pos = NA_real_,
-                pillar2_under15_pos = NA_real_, pillar2_15_24_pos = NA_real_,
-                pillar2_25_49_pos = NA_real_, pillar2_50_64_pos = NA_real_,
-                pillar2_65_79_pos = NA_real_, pillar2_80_plus_pos = NA_real_,
-                pillar2_over25_cases = NA_real_,
+                deaths = NA_real_, all_admission = NA_real_,
+                sero_pos_15_64_1 = NA_real_, sero_tot_15_64_1 = NA_real_,
+                sero_pos_15_64_2 = NA_real_, sero_tot_15_64_2 = NA_real_,
+                pillar2_tot = NA_real_, pillar2_pos = NA_real_,
+                pillar2_cases = NA_real_, pillar2_over25_tot = NA_real_,
+                pillar2_under15_tot = NA_real_, pillar2_15_24_tot = NA_real_,
+                pillar2_25_49_tot = NA_real_, pillar2_50_64_tot = NA_real_,
+                pillar2_65_79_tot = NA_real_, pillar2_80_plus_tot = NA_real_,
+                pillar2_over25_pos = NA_real_, pillar2_under15_pos = NA_real_,
+                pillar2_15_24_pos = NA_real_, pillar2_25_49_pos = NA_real_,
+                pillar2_50_64_pos = NA_real_, pillar2_65_79_pos = NA_real_,
+                pillar2_80_plus_pos = NA_real_, pillar2_over25_cases = NA_real_,
                 pillar2_under15_cases = NA_real_,
                 pillar2_15_24_cases = NA_real_, pillar2_25_49_cases = NA_real_,
                 pillar2_50_64_cases = NA_real_, pillar2_65_79_cases = NA_real_,
