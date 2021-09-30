@@ -12,7 +12,7 @@ vaccine_schedule_future(
   lag_groups = NULL,
   lag_days = NULL,
   booster_daily_doses_value = NULL,
-  booster_groups = 1:19
+  booster_proportion = rep(1L, 19)
 )
 }
 \arguments{
@@ -40,10 +40,9 @@ if \code{lag_groups} is NULL.}
 
 \item{booster_daily_doses_value}{A vector of booster doses per day.}
 
-\item{booster_groups}{Which groups of the \code{priority_population} should be
-given a booster, default is all groups; ignored if
-\code{booster_daily_doses_value} is NULL. Sets all rows not corresponding
-to given indices to 0.}
+\item{booster_proportion}{Proportion of the groups in
+\code{priority_population} to boost, default is all groups; ignored if
+\code{booster_daily_doses_value} is NULL.}
 }
 \description{
 Create future vaccination schedule from a projected number of

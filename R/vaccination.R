@@ -326,10 +326,9 @@ vaccine_priority_population <- function(region,
 ##'
 ##' @param booster_daily_doses_value A vector of booster doses per day.
 ##'
-##' @param booster_groups Which groups of the `priority_population` should be
-##'  given a booster, default is all groups; ignored if
-##'  `booster_daily_doses_value` is NULL. Sets all rows not corresponding
-##'  to given indices to 0.
+##' @param booster_proportion Proportion of the groups in
+##'  `priority_population` to boost, default is all groups; ignored if
+##'  `booster_daily_doses_value` is NULL.
 ##'
 ##' @export
 vaccine_schedule_future <- function(start,
@@ -339,7 +338,7 @@ vaccine_schedule_future <- function(start,
                                     lag_groups = NULL,
                                     lag_days = NULL,
                                     booster_daily_doses_value = NULL,
-                                    booster_groups = 1:19) {
+                                    booster_proportion = rep(1L, 19)) {
 
   has_booster <- !is.null(booster_daily_doses_value)
 
@@ -391,9 +390,7 @@ vaccine_schedule_future <- function(start,
     daily_doses_tt, daily_doses_value, population_left,
     population_to_vaccinate_mat, mean_days_between_doses, n_prev, 1:2)
   if (has_booster) {
-    ## crude method to zero out any groups not given booster
-    booster_population_left <- population_left
-    booster_population_left[-booster_groups, , ] <- 0
+    booster_population_left <- population_left * booster_proportion
 
     population_to_vaccinate_mat <- vaccination_schedule_exec(
       daily_doses_tt, booster_daily_doses_value, booster_population_left,
@@ -589,7 +586,8 @@ vaccine_schedule_from_data <- function(data, n_carehomes) {
 ##' @export
 vaccine_schedule_data_future <- function(data, region, uptake, end_date,
                                          mean_days_between_doses,
-                                         booster_daily_doses_value = NULL) {
+                                         booster_daily_doses_value = NULL,
+                                         booster_proportion = rep(1L, 19)) {
 
   priority_population <- vaccine_priority_population(region, uptake)
   n_carehomes <- priority_population[18:19, 1]
@@ -608,7 +606,8 @@ vaccine_schedule_data_future <- function(data, region, uptake, end_date,
     daily_doses_future,
     mean_days_between_doses,
     priority_population,
-    booster_daily_doses_value = booster_daily_doses_value)
+    booster_daily_doses_value = booster_daily_doses_value,
+    booster_proportion = booster_proportion)
 }
 
 
@@ -669,7 +668,7 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##'   the future. Names must be in ISO date format.
 ##'
 ##' @param boosters_prepend_zero If TRUE (default) and `boosters_future` is
-##'   not NULL then adds sets booster doses to zero before the first date in
+##'   not NULL then sets booster doses to zero before the first date in
 ##'   `boosters_future`. This is in contrast to when it is FALSE and the
 ##'   previous value in `schedule_past` is replicated until the first date in
 ##'   boosters_future. Note that this should rarely be FALSE as this will
@@ -687,7 +686,7 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                                       lag_days = NULL,
                                       boosters_future = NULL,
                                       boosters_prepend_zero = TRUE,
-                                      booster_groups = 1:19) {
+                                      booster_proportion = rep(1L, 19)) {
 
   assert_is(schedule_past, "vaccine_schedule")
 
@@ -744,7 +743,7 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
                           lag_groups,
                           lag_days,
                           booster_daily_doses_value,
-                          booster_groups)
+                          booster_proportion)
 }
 
 
@@ -907,7 +906,7 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           if (new_prob > 1) {
             ## if difference very small or in a class where vaccine hasn't taken
             ##  effect yet, cap at 1
-            if (abs(new_prob - 1) < 1e-10 || v_s <= 2 || v_s == 5) {
+            if (abs(new_prob - 1) < 1e-10 || v_s == 1) {
               new_prob <- 1
               ## otherwise this is a problem
             } else if (v_s > 2) {
