@@ -6,7 +6,7 @@ test_that("N_tots stay constant without waning immunity", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -27,7 +27,7 @@ test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -47,7 +47,7 @@ test_that("N_tot stays constant when p_R < 1, while
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -71,7 +71,7 @@ test_that("there are no infections when beta is 0", {
                             waning_rate = waning_rate)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -84,7 +84,7 @@ test_that("everyone is infected when beta is large", {
   p <- carehomes_parameters(0, "england", beta_value = 1e9)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(
     mod$simulate(seq(0, 400, by = 4))))
   expect_true(all(y$S[, 1, -1] == 0))
@@ -110,7 +110,7 @@ test_that("noone stays in R if waning rate is very
   state[index_R] <- rowSums(array(state[index_S], info$dim$S))
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(
     mod$simulate(seq(0, 400, by = 4))))
 
@@ -125,7 +125,7 @@ test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
                             waning_rate = 0)
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(
     mod$simulate(seq(0, 400, by = 4))))
 
@@ -147,7 +147,7 @@ test_that("No one is infected if I and E are 0 at t = 0", {
   y[info$index$T_sero_pre_2] <- 0
   y[info$index$T_PCR_pos] <- 0
 
-  mod$set_state(y)
+  mod$update_state(state = y)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -164,7 +164,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -203,7 +203,7 @@ test_that("No one is hospitalised, no-one dies if p_H is 0", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -251,7 +251,7 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
-  mod$set_state(y0)
+  mod$update_state(state = y0)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -293,7 +293,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
-  mod$set_state(y0)
+  mod$update_state(state = y0)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -326,7 +326,7 @@ test_that("No-one recovers if p_R = 0", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -350,7 +350,7 @@ test_that("Everyone recovers in edge case", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -381,7 +381,7 @@ test_that("No one dies in the community if p_G_D is 0", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -408,7 +408,7 @@ test_that("forcing hospital route results in correct path", {
 
     mod <- carehomes$new(p, 0, 1, seed = 1L)
     info <- mod$info()
-    mod$set_state(carehomes_initial(info, 1, p)$state)
+    mod$update_state(state = carehomes_initial(info, 1, p)$state)
     y <- mod$transform_variables(
       drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -469,7 +469,7 @@ test_that("No one seroconverts if p_sero_pos is 0", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -494,7 +494,7 @@ test_that("No one does not seroconvert and no one seroreverts
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -533,7 +533,7 @@ test_that("setting a gamma to Inf results immediate progression", {
       state[index] <- 50
     }
 
-    mod$set_state(state)
+    mod$update_state(state = state)
     y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
     if (hosp_compartment) {
@@ -612,7 +612,7 @@ test_that("setting a gamma to 0 results in no progression", {
       }
     }
 
-    mod$set_state(state)
+    mod$update_state(state = state)
     y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
     if (hosp_compartment) {
@@ -672,7 +672,7 @@ test_that("No one is unconfirmed, if p_star = 1", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state, step = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(all(y$H_R_unconf == 0))
@@ -713,7 +713,7 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$set_state(carehomes_initial(info, 1, p)$state, 0)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state, step = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$H_R_unconf > 0))
@@ -763,7 +763,7 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   y0[info$index$ICU_W_D_unconf[1:19]] <- 50
   y0[info$index$ICU_D_unconf[1:19]] <- 50
 
-  mod$set_state(y0, 0)
+  mod$update_state(state = y0, step = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
   n <- length(y$time)
 
@@ -826,7 +826,7 @@ test_that("tots all summed correctly ", {
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
   y0 <- carehomes_initial(info, 1, p)$state
-  mod$set_state(carehomes_initial(info, 1, p)$state)
+  mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   expect_true(all(y$general_tot == apply(y$ICU_pre_conf, 5, sum) +
@@ -885,7 +885,7 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     index <- info$index[[compartment_name]]
     y0[index] <- 50
 
-    mod$set_state(y0)
+    mod$update_state(state = y0)
     y <- mod$transform_variables(
       drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -950,7 +950,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     y0[index_I_weighted] <- p[[transmission_name]] * 50 *
       info$dim[[compartment_name]][[3]]
 
-    mod$set_state(y0)
+    mod$update_state(state = y0)
     y <- mod$transform_variables(
       drop(mod$simulate(c(0, 1))))
 

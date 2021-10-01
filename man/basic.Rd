@@ -19,7 +19,7 @@ mod <- basic$new(p, 0, 10)
 # Set the initial state and index as we would us for a run
 # (without setting an initial state there is no seeding)
 initial <- basic_initial(mod$info(), 10, p)
-mod$set_state(initial$state, initial$step)
+mod$update_state(state = initial$state, step = initial$step)
 mod$set_index(basic_index(mod$info())$run)
 
 # Run the model up to the end of march
