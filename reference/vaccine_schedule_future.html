@@ -81,7 +81,7 @@ daily doses." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.2</span>
       </span>
     </div>
 
@@ -138,7 +138,7 @@ daily doses.</p>
   lag_groups <span class='op'>=</span> <span class='cn'>NULL</span>,
   lag_days <span class='op'>=</span> <span class='cn'>NULL</span>,
   booster_daily_doses_value <span class='op'>=</span> <span class='cn'>NULL</span>,
-  booster_groups <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>19</span>
+  booster_proportion <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1L</span>, <span class='fl'>19</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -183,11 +183,10 @@ if <code>lag_groups</code> is NULL.</p></td>
       <td><p>A vector of booster doses per day.</p></td>
     </tr>
     <tr>
-      <th>booster_groups</th>
-      <td><p>Which groups of the <code>priority_population</code> should be
-given a booster, default is all groups; ignored if
-<code>booster_daily_doses_value</code> is NULL. Sets all rows not corresponding
-to given indices to 0.</p></td>
+      <th>booster_proportion</th>
+      <td><p>Proportion of the groups in
+<code>priority_population</code> to boost, default is all groups; ignored if
+<code>booster_daily_doses_value</code> is NULL.</p></td>
     </tr>
     </table>
 
