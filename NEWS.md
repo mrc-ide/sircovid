@@ -1,4 +1,4 @@
-# sircovid 0.12.1
+# sircovid 0.12.2
 
 * `booster_groups` renamed to `boosters_proportion` and now allows partial exclusion of age groups. For backward compatibility defaults have the same effect on the priority population.
 * Added `sircovid_models` and `check_sircovid_model` to list and check sircovid models respectively
