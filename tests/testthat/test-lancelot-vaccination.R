@@ -2921,9 +2921,18 @@ test_that("modify_severity works as expected", {
   nms <- c("rel_susceptibility", "rel_p_sympt",
            "rel_p_hosp_if_sympt", "rel_infectivity", "rel_p_death")
 
-  ve1 <- set_names(rep(list(matrix(2, 19, 2)), 5), nms)
+  ve1 <- set_names(rep(list(matrix(2, 19, 5)), 5), nms)
   mod <- rep(list(set_names(rep(list(1), 5), nms)), 4)
-  expect_vector_equal(unname(unlist(modify_severity(ve1, NULL, mod))), 1)
+  expect_error(modify_severity(ve1, NULL, mod, "lancelot"), "VE has full")
+
+  ve1 <- lapply(ve1, function(x) {
+    x[, c(2, 3, 5)] <- 1
+    x
+  })
+
+  expect_vector_equal(
+    unname(unlist(modify_severity(ve1, NULL, mod, "lancelot"))), 1
+  )
 
   ve1 <- set_names(rep(list(matrix(0.2, 19, 3)), 5), nms)
   ve2 <- set_names(rep(list(matrix(0.1, 19, 3)), 5), nms)
@@ -2955,7 +2964,7 @@ test_that("modify_severity errors as expected", {
 
   ve1 <- set_names(rep(list(matrix(2, 19, 3)), 5), nms)
   mod <- rep(list(set_names(rep(list(1), 5), nms)), 4)
-  expect_error(modify_severity(ve1, NULL, mod), "new_prob > 1 and v_s > 2")
+  expect_error(modify_severity(ve1, NULL, mod), "VE has full effect")
 
   ve1 <- set_names(rep(list(matrix(1, 19, 3)), 5), nms)
   ve2 <- set_names(rep(list(matrix(0.5, 19, 3)), 5), nms)
@@ -2978,4 +2987,234 @@ test_that("modify_severity errors as expected", {
 
   expect_error(modify_severity(ve1, ve2, mod), "identical(lapply",
                fixed = TRUE)
+})
+
+
+test_that("can't wane or boost without second dose", {
+  region <- "east_of_england"
+  uptake <- c(rep(0, 3), rep(1, 16))
+  daily_doses <- rep(100000, 120)
+  booster_daily_doses <- c(rep(0, 150), rep(20000, 50))
+  np <- 3
+  n <- vaccine_priority_population(region, uptake,
+                                   prop_hcw = rep(0, 19),
+                                   prop_very_vulnerable = rep(0, 19),
+                                   prop_underlying_condition = rep(0, 19))
+  vaccine_schedule <- vaccine_schedule_future(
+    0, daily_doses, Inf, n,
+    booster_daily_doses_value = booster_daily_doses)
+
+  expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
+  expect_gt(sum(vaccine_schedule$doses[, 3, ]), 0)
+
+  rel <- c(1, 0.9, 0.5, 0.8, 0.5)
+
+  p <- lancelot_parameters(0, "east_of_england",
+                           rel_susceptibility = rel,
+                           rel_p_sympt = rel,
+                           rel_p_hosp_if_sympt = rel,
+                           rel_p_death = rel,
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L,
+                           vaccine_index_booster = 4L,
+                           vaccine_catchup_fraction = 0,
+                           vaccine_progression_rate = c(0, 0, 1, 0, 0),
+                           n_doses = 3,
+                           initial_I = 0)
+
+  ## Let's go:
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+
+  state <- lancelot_initial(info, 1, p)$state
+
+  mod$set_state(state)
+
+  y <- mod$simulate((1:220) * 4)
+  y <- mod$transform_variables(drop(y))
+
+  ## Only first doses
+  expect_false(all(y$cum_n_S_vaccinated[, 1, , ] == 0))
+  expect_vector_equal(y$cum_n_S_vaccinated[, 2:5, , ], 0)
+})
+
+test_that("boosting and waning work as expected", {
+  region <- "east_of_england"
+  uptake <- c(rep(0, 3), rep(1, 16))
+  daily_doses <- rep(100000, 120)
+  booster_daily_doses <- c(rep(0, 150), rep(20000, 50))
+  np <- 3
+  n <- vaccine_priority_population(region, uptake,
+                                   prop_hcw = rep(0, 19),
+                                   prop_very_vulnerable = rep(0, 19),
+                                   prop_underlying_condition = rep(0, 19))
+  vaccine_schedule <- vaccine_schedule_future(
+    0, daily_doses, 14, n,
+    booster_daily_doses_value = booster_daily_doses)
+
+  expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
+  expect_gt(sum(vaccine_schedule$doses[, 3, ]), 0)
+
+  rel <- c(1, 0.9, 0.5, 0.8, 0.5)
+
+  ## Scenario 1: no-one wanes or boosts
+  progress <- c(0, 0, 0, 0, 0)
+
+  p <- lancelot_parameters(0, "east_of_england",
+                           rel_susceptibility = rel,
+                           rel_p_sympt = rel,
+                           rel_p_hosp_if_sympt = rel,
+                           rel_p_death = rel,
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L,
+                           vaccine_index_booster = 4L,
+                           vaccine_catchup_fraction = 0,
+                           vaccine_progression_rate = progress,
+                           n_doses = 3,
+                           initial_I = 0)
+
+  ## Let's go:
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+
+  state <- lancelot_initial(info, 1, p)$state
+
+  mod$set_state(state)
+
+  y <- mod$simulate((1:220) * 4)
+  y <- mod$transform_variables(drop(y))
+
+  ## Check that no-one wanes or is boosted
+  expect_vector_equal(y$cum_n_S_vaccinated[, 3:5, , ], 0)
+
+  ## Scenario 2: instant waning then boosting
+  progress <- c(0, 0, Inf, 0, 0)
+
+  p <- lancelot_parameters(0, "east_of_england",
+                           rel_susceptibility = rel,
+                           rel_p_sympt = rel,
+                           rel_p_hosp_if_sympt = rel,
+                           rel_p_death = rel,
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L,
+                           vaccine_index_booster = 4L,
+                           vaccine_catchup_fraction = 0,
+                           vaccine_progression_rate = progress,
+                           n_doses = 3,
+                           initial_I = 0)
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+  state <- lancelot_initial(info, 1, p)$state
+  mod$set_state(state)
+  y <- mod$simulate((1:220) * 4)
+  y <- mod$transform_variables(drop(y))
+
+  expect_false(all(y$cum_n_S_vaccinated[, 1, , ] == 0)) # first dose
+  expect_false(all(y$cum_n_S_vaccinated[, 2, , ] == 0)) # second dose
+  expect_false(all(y$cum_n_S_vaccinated[, 3, , ] == 0)) # waning
+  expect_false(all(y$cum_n_S_vaccinated[, 4, , ] == 0)) # boosting
+  expect_vector_equal(y$cum_n_S_vaccinated[, 5, , ], 0) # no progress
+
+  ## Scenario 3: waning within steps but misses boosting schedule
+  progress <- c(0, 0, 1 / 20, 0, 0)
+  p <- lancelot_parameters(0, "east_of_england",
+                           rel_susceptibility = rel,
+                           rel_p_sympt = rel,
+                           rel_p_hosp_if_sympt = rel,
+                           rel_p_death = rel,
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L,
+                           vaccine_index_booster = 4L,
+                           vaccine_catchup_fraction = 0,
+                           vaccine_progression_rate = progress,
+                           n_doses = 3,
+                           initial_I = 0)
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+  state <- lancelot_initial(info, 1, p)$state
+  mod$set_state(state)
+  y <- mod$simulate((1:150) * 4)
+  y <- mod$transform_variables(drop(y))
+
+  expect_false(all(y$cum_n_S_vaccinated[, 1, , ] == 0)) # first dose
+  expect_false(all(y$cum_n_S_vaccinated[, 2, , ] == 0)) # second dose
+  expect_false(all(y$cum_n_S_vaccinated[, 3, , ] == 0)) # waning
+  expect_vector_equal(y$cum_n_S_vaccinated[, 4:5, , ], 0) # no boosting
+})
+
+## Dose 1 moves you from 1->2
+## Dose 2 moves you from 2->3
+## Waning moves you from 3->4
+## Dose 3 moves you from 4->5
+test_that("run sensible vaccination schedule with waning and boosters", {
+  region <- "east_of_england"
+  uptake <- c(rep(0, 3), rep(1, 16))
+  daily_doses <- rep(100000, 120)
+  booster_daily_doses <- c(rep(0, 150), rep(20000, 50))
+  np <- 3
+  n <- vaccine_priority_population(region, uptake,
+                                   prop_hcw = rep(0, 19),
+                                   prop_very_vulnerable = rep(0, 19),
+                                   prop_underlying_condition = rep(0, 19))
+  vaccine_schedule <- vaccine_schedule_future(
+    0, daily_doses, 14, n,
+    booster_daily_doses_value = booster_daily_doses)
+
+  expect_equal(sum(vaccine_schedule$doses[1:3, , ]), 0)
+  expect_gt(sum(vaccine_schedule$doses[, 3, ]), 0)
+
+  rel <- c(1, 0.9, 0.5, 0.8, 0.5)
+
+  p <- lancelot_parameters(0, "east_of_england",
+                           rel_susceptibility = rel,
+                           rel_p_sympt = rel,
+                           rel_p_hosp_if_sympt = rel,
+                           rel_p_death = rel,
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L,
+                           vaccine_index_booster = 4L,
+                           vaccine_catchup_fraction = 0,
+                           vaccine_progression_rate = c(0, 0, 1 / 20, 0, 0),
+                           n_doses = 3,
+                           initial_I = 0)
+
+  ## Let's go:
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+
+  state <- lancelot_initial(info, 1, p)$state
+
+  mod$set_state(state)
+
+  set.seed(1)
+  y <- mod$simulate((1:220) * 4)
+  y <- mod$transform_variables(drop(y))
+
+  ## Check that cum_n_S_vaccinated shows correct pattern with booster
+  ## doses being given.
+  ## Never vaccinating anyone who has boosted.
+  expect_vector_equal(y$cum_n_S_vaccinated[, 5, , ], 0)
+
+  ## dose 1
+  ## In phase one never give any doses apart from first doses
+  phase1 <- 1:14
+  expect_vector_equal(y$cum_n_S_vaccinated[, 2:5, , phase1], 0)
+  expect_false(all(y$cum_n_S_vaccinated[, 1, , phase1] == 0))
+
+  ## dose 2
+  ## In phase two never give any doses apart from second doses
+  ##  (and perhaps first and waning)
+  phase2 <- 15:120
+  expect_vector_equal(y$cum_n_S_vaccinated[, 4:5, , phase2], 0)
+  expect_false(all(y$cum_n_S_vaccinated[, 2, , phase2] == 0))
+
+  ## Only waning in phase 3
+  expect_equal(sum(y$cum_n_S_vaccinated[, c(1:2, 4:5), , 150]),
+               sum(y$cum_n_S_vaccinated[, c(1:2, 4:5), , 119]))
+  expect_false(sum(y$cum_n_S_vaccinated[, 3, , 150]) ==
+               sum(y$cum_n_S_vaccinated[, 3, , 119]))
+
+  ## Some boosters distributed in phase 4
+  phase4 <- 150:200
+  expect_false(all(y$cum_n_S_vaccinated[, 4, , phase4] == 0))
 })

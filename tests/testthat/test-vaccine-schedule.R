@@ -654,7 +654,7 @@ test_that("can exclude groups from vaccine_schedule_future", {
   dose_schedule_ch <- vaccine_schedule_future(
     0, daily_doses, mean_days_between_doses, n,
     booster_daily_doses_value = booster_doses,
-    booster_groups = 18:19)
+    booster_proportion = c(numeric(17), 1, 1))
 
   expect_equal(dose_schedule_all$date, dose_schedule_ch$date)
   expect_equal(dose_schedule_all$n_doses, dose_schedule_ch$n_doses)
@@ -744,10 +744,11 @@ test_that("can exclude booster groups from schedule scenario", {
                                    mean_days_between_doses, n,
                                    boosters_future = boosters_future)$doses
 
-  doses_ch <- vaccine_schedule_scenario(past, doses_future = NULL, end_date,
-                                   mean_days_between_doses, n,
-                                   boosters_future = boosters_future,
-                                   booster_groups = 18:19)$doses
+  doses_ch <- vaccine_schedule_scenario(
+    past, doses_future = NULL, end_date,
+    mean_days_between_doses, n,
+    boosters_future = boosters_future,
+    booster_proportion = c(numeric(17), 1, 1))$doses
 
   expect_vector_nequal(doses_all, doses_ch)
 
@@ -758,4 +759,43 @@ test_that("can exclude booster groups from schedule scenario", {
 
   expect_vector_equal(doses_future[1:17, 3, ], 0)
   expect_vector_nequal(doses_future[18:19, 3, ], 0)
+})
+
+
+
+test_that("can partially exclude booster groups from schedule scenario", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n <- vaccine_priority_population(region, uptake_by_age)
+  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+
+  sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
+
+  mean_days_between_doses <- 30
+  boosters_future <- c(
+    "2021-06-10" = 6000,
+    "2021-06-20" = 7000,
+    "2021-06-30" = 9000
+  )
+  end_date <- "2021-08-01"
+
+  doses_half <- vaccine_schedule_scenario(
+    past, doses_future = NULL, end_date, mean_days_between_doses, n,
+    boosters_future = boosters_future,
+    booster_proportion = c(numeric(17), 0.5, 0.5))$doses
+
+  doses_full <- vaccine_schedule_scenario(
+    past, doses_future = NULL, end_date, mean_days_between_doses, n,
+    boosters_future = boosters_future,
+    booster_proportion = c(numeric(17), 1, 1))$doses
+
+  expect_vector_equal(doses_half[1:17, 3, ], 0)
+  expect_vector_equal(doses_full[1:17, 3, ], 0)
+
+  ## Check that double the number of 18:19 are vaccinated in doses_full than
+  ##  doses_half
+  expect_equal(sum(colSums(doses_full[18:19, 3, ]) > 0),
+               sum(colSums(doses_half[18:19, 3, ]) > 0) * 2)
 })

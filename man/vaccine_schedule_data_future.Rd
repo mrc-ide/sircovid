@@ -10,7 +10,8 @@ vaccine_schedule_data_future(
   uptake,
   end_date,
   mean_days_between_doses,
-  booster_daily_doses_value = NULL
+  booster_daily_doses_value = NULL,
+  booster_proportion = rep(1L, 19)
 )
 }
 \arguments{
@@ -31,6 +32,10 @@ so an overestimate is probably better than an underestimate.}
 and two}
 
 \item{booster_daily_doses_value}{A vector of booster doses per day.}
+
+\item{booster_proportion}{Proportion of the groups in
+\code{priority_population} to boost, default is all groups; ignored if
+\code{booster_daily_doses_value} is NULL.}
 }
 \value{
 A \link{vaccine_schedule} object
