@@ -7,7 +7,7 @@ test_that("Can calculate EpiEstim Rt (I)", {
   mod <- carehomes$new(p, 0, np, seed = 2L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -54,7 +54,7 @@ test_that("Can calculate EpiEstim Rt (II)", {
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -98,7 +98,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
   mod <- carehomes$new(p, 0, np, seed = 2L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -147,7 +147,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -193,7 +193,7 @@ test_that("carehomes_rt_trajectories_epiestim rejects invalid input", {
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -253,7 +253,7 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S

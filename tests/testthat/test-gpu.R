@@ -54,8 +54,8 @@ test_that("can run the gpu model on the cpu", {
              sympt_cases = info$index[["cum_sympt_cases"]],
              sympt_cases_over25 = info$index[["cum_sympt_cases_over25"]])
 
-  mod_cpu$set_state(initial$state, initial$step)
-  mod_gpu$set_state(initial$state, initial$step)
+  mod_cpu$update_state(state = initial$state, step = initial$step)
+  mod_gpu$update_state(state = initial$state, step = initial$step)
   mod_cpu$set_index(index)
   mod_gpu$set_index(index)
 
@@ -86,8 +86,8 @@ test_that("Can run the gpu compare on the cpu", {
   mod_gpu <- gen$new(pars, 0, np, seed = 1L, device_config = 0)
 
   initial <- carehomes_initial(mod_cpu$info(), np, pars)
-  mod_cpu$set_state(initial$state, initial$step)
-  mod_gpu$set_state(initial$state, initial$step)
+  mod_cpu$update_state(state = initial$state, step = initial$step)
+  mod_gpu$update_state(state = initial$state, step = initial$step)
 
   mod_cpu$set_data(dust::dust_data(data, "step_end"))
   mod_gpu$set_data(dust::dust_data(data, "step_end"))
