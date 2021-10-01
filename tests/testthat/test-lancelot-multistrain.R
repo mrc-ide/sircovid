@@ -134,7 +134,7 @@ test_that("Seeding of second strain generates an epidemic", {
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
@@ -181,7 +181,7 @@ test_that("Second more virulent strain takes over", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -206,7 +206,7 @@ test_that("Second less virulent strain does not take over", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Cumulative infections with 2nd strain smaller than with 1st strain
@@ -233,7 +233,7 @@ test_that("N_tots stay constant with second strain and no waning immunity - no
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -267,7 +267,7 @@ test_that("N_tot is constant with second strain and waning immunity, while
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -297,7 +297,7 @@ test_that("N_tot is constant with second strain and waning immunity, while
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -327,7 +327,7 @@ test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
   mod <- lancelot$new(p, 0, 1, seed = 2L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -350,7 +350,7 @@ test_that("No-one in strains 3 or 4 if no super infection", {
   mod <- lancelot$new(p, 0, 1, seed = 2L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -373,7 +373,7 @@ test_that("prob_strain sums to 1", {
                            cross_immunity = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_prob_strain <- mod$info()$index$prob_strain
 
   expect_equal(initial$state[index_prob_strain], c(1, 0))
@@ -396,7 +396,7 @@ test_that("prob_strain sums to 1", {
                            cross_immunity = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_prob_strain <- mod$info()$index$prob_strain
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -423,7 +423,7 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -455,7 +455,7 @@ test_that("Everyone is infected when second strain transmission is large", {
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   steps <- seq(0, 400, by = 4)
@@ -493,7 +493,7 @@ test_that("No infection with either strain with perfect vaccine", {
   index_E <- array(info$index$E, info$dim$E)
   state[index_E[4, 2, 1, 1]] <- 10 # seed infections with second strain
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -530,7 +530,7 @@ test_that("different strains are equivalent", {
 
   initial2_state <- unlist(y)
 
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index <- mod$info()$index
   index_run <- c(icu = index[["ICU_tot"]],
                  general = index[["general_tot"]],
@@ -548,7 +548,7 @@ test_that("different strains are equivalent", {
   res1 <- mod$simulate(steps)
 
   mod2 <- lancelot$new(p, 0, np, seed = 1L, n_threads = 10)
-  mod2$set_state(initial2_state, initial$step)
+  mod2$update_state(state = initial2_state, step = initial$step)
   mod2$set_index(index_run)
   res2 <- mod2$simulate(steps)
 
@@ -574,7 +574,7 @@ test_that("Swapping strains gives identical results with different index", {
   y$T_sero_pre_2 <- y$T_sero_pre_2[, i, , , drop = FALSE]
 
   initial2_state <- unlist(y)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index <- mod$info()$index
 
   steps <- seq(initial$step, end, by = 1)
@@ -583,7 +583,7 @@ test_that("Swapping strains gives identical results with different index", {
 
   mod2 <- lancelot$new(p, 0, np, seed = 1L)
 
-  mod2$set_state(initial2_state, initial$step)
+  mod2$update_state(state = initial2_state, step = initial$step)
   res2 <- drop(mod2$simulate(steps))
 
   z1 <- mod$transform_variables(res1)
@@ -633,7 +633,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -718,7 +718,7 @@ test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
   index_R <- mod$info()$index$R
@@ -780,7 +780,7 @@ test_that("wtmean_Rt works as expected", {
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
@@ -876,7 +876,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -902,7 +902,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -952,7 +952,7 @@ test_that("Can calculate Rt with strain_transmission (1, 0) ", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -988,7 +988,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1014,7 +1014,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -1055,7 +1055,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1081,7 +1081,7 @@ test_that("Can calculate Rt with a second more infectious variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -1123,7 +1123,7 @@ test_that("Can calculate Rt with a second less lethal variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1149,7 +1149,7 @@ test_that("Can calculate Rt with a second less lethal variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -1193,7 +1193,7 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1219,7 +1219,7 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -1263,7 +1263,7 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1289,7 +1289,7 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -1333,7 +1333,7 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1359,7 +1359,7 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -1400,7 +1400,7 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
   info <- mod$info()
   initial <- lancelot_initial(info, 1, p)
 
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1466,7 +1466,7 @@ test_that("Can compute Rt if all prob_strain is NA", {
   info <- mod$info()
   initial <- lancelot_initial(info, 1, p)
 
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1538,7 +1538,7 @@ test_that("calculate Rt with both second variant and vaccination", {
   mod <- lancelot$new(p, 0, np, seed = 2L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1677,7 +1677,7 @@ test_that("Lower rate variant has higher Rt", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1707,7 +1707,7 @@ test_that("Lower rate variant has higher Rt", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1750,7 +1750,7 @@ test_that("Stuck when gamma =  0", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   index_I_A <- mod$info()$index$I_A
   index_I_P <- mod$info()$index$I_P
@@ -1782,7 +1782,7 @@ test_that("Stuck when gamma =  0", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   index_I_A <- mod$info()$index$I_A
   index_I_P <- mod$info()$index$I_P
@@ -1814,7 +1814,7 @@ test_that("Stuck when gamma =  0", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   index_I_A <- mod$info()$index$I_A
   index_I_P <- mod$info()$index$I_P
@@ -1852,7 +1852,7 @@ test_that("Stuck when gamma =  0 for second strain", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   strain_1 <- c(1:19, 58:76)
   strain_2 <- c(20:38, 39:57)
@@ -1896,7 +1896,7 @@ test_that("Stuck when gamma =  0 for second strain", {
                            cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   set.seed(1)
   y <- mod$simulate(steps)
   expect_false(all(unlist(y[index_I_C_2_strain_1, , ]) == 0))
@@ -1918,7 +1918,7 @@ test_that("Stuck when gamma =  0 for second strain", {
                            cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   set.seed(1)
   y <- mod$simulate(steps)
   expect_false(all(unlist(y[index_R_strain_1, , ]) == 0))
@@ -1948,7 +1948,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2 - multi", {
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
-  mod$set_state(y0)
+  mod$update_state(state = y0)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -1979,7 +1979,7 @@ test_that("G_D empty when p_G_D = 0", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
@@ -2002,7 +2002,7 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -2031,7 +2031,7 @@ test_that("Can't move from S to E3/4", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
@@ -2056,7 +2056,7 @@ test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
@@ -2092,7 +2092,7 @@ test_that("Can only move to S from R3 and R4 to S", {
   ## Fill R3 and R4
   y0[info$index$R][39:76] <- 1e3
 
-  mod$set_state(y0)
+  mod$update_state(state = y0)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
@@ -2123,7 +2123,7 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2021-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
@@ -2161,7 +2161,7 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
                            cross_immunity = 1)
   mod <- lancelot$new(p, 0, np)
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
@@ -2184,7 +2184,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
                           cross_immunity = 0)
  mod <- lancelot$new(p, 0, np)
  initial <- lancelot_initial(mod$info(), np, p)
- mod$set_state(initial$state, initial$step)
+ mod$update_state(state = initial$state, step = initial$step)
  end <- sircovid_date("2020-05-01") / p$dt
  steps <- seq(initial$step, end, by = 1 / p$dt)
  set.seed(1)
@@ -2201,7 +2201,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
                           cross_immunity = 0.5)
  mod <- lancelot$new(p, 0, np)
  initial <- lancelot_initial(mod$info(), np, p)
- mod$set_state(initial$state, initial$step)
+ mod$update_state(state = initial$state, step = initial$step)
  set.seed(1)
  y <- mod$transform_variables(
    drop(mod$simulate(steps)))
@@ -2230,7 +2230,7 @@ test_that("cross-immunity can be separated by strain", {
   initial <- lancelot_initial(mod$info(), np, p)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
@@ -2247,7 +2247,7 @@ test_that("cross-immunity can be separated by strain", {
                            cross_immunity = c(0, 1))
   mod <- lancelot$new(p, 0, np, seed = seed)
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
@@ -2269,7 +2269,7 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
   index_R <- mod$info()$index$R
@@ -2294,7 +2294,7 @@ test_that("Can calculate ifr_t with an empty second variant ", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
 
@@ -2362,7 +2362,7 @@ test_that("Can calculate ifr_t with a second less lethal variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
   index_R <- mod$info()$index$R
@@ -2414,7 +2414,7 @@ test_that("can inflate the number of strains after running with 1", {
   np <- 3L
   mod1 <- lancelot$new(p1, 0, np, seed = 1L)
   initial <- lancelot_initial(mod1$info(), 10, p1)
-  mod1$set_state(initial$state, initial$step)
+  mod1$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p1$dt
   steps <- seq(initial$step, end, by = 1 / p1$dt)
   y1 <- mod1$run(end)
@@ -2471,7 +2471,7 @@ test_that("Rt lower with perfect cross immunity", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -2601,7 +2601,7 @@ test_that("wtmean_Rt works as expected with interpolation", {
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)

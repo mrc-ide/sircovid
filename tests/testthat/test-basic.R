@@ -6,7 +6,7 @@ test_that("can run the basic model", {
   end <- sircovid_date("2020-07-31") / p$dt
 
   initial <- basic_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
@@ -47,7 +47,7 @@ test_that("incidence calculation is correct", {
   mod <- basic$new(pars, 0, 10, n_threads = 10)
   info <- mod$info()
   initial <- basic_initial(info, 10, pars)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   index <- c(D = info$index$D_tot,
              D_inc = info$index$D_inc)
@@ -73,7 +73,7 @@ test_that("compiled compare function is correct", {
   np <- 10
   mod <- basic$new(pars, 0, np, seed = 1L)
   initial <- basic_initial(mod$info(), np, pars)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(basic_index(mod$info())$run)
 
   mod$set_data(dust::dust_data(data, "step_end"))

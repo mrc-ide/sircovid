@@ -6,7 +6,7 @@ reference_data_lancelot_ifr_t <- function() {
     mod <- lancelot$new(p, 0, np, seed = 1L)
 
     initial <- lancelot_initial(mod$info(), 10, p)
-    mod$set_state(initial$state, initial$step)
+    mod$update_state(state = initial$state, step = initial$step)
     mod$set_index(integer(0))
     index_S <- mod$info()$index$S
     index_I_weighted <- mod$info()$index$I_weighted

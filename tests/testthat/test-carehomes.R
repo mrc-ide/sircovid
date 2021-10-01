@@ -7,7 +7,7 @@ test_that("can run the carehomes model", {
 
   info <- mod$info()
   initial <- carehomes_initial(info, 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   index <- c(carehomes_index(info)$run,
              deaths_carehomes = info$index[["D_carehomes_tot"]],
@@ -84,7 +84,7 @@ test_that("incidence calculation is correct", {
   mod <- carehomes$new(pars, 0, 10, n_threads = 10)
   info <- mod$info()
   initial <- carehomes_initial(info, 10, pars)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
 
   ## We have interesting values by time 60, step 240
   ## There are 10 incidence variables, so we want to pull 20 variables
@@ -138,7 +138,7 @@ test_that("compiled compare function is correct", {
   np <- 1
   mod <- carehomes$new(pars, 0, np, seed = 1L)
   initial <- carehomes_initial(mod$info(), np, pars)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(carehomes_index(mod$info())$run)
 
   mod$set_data(dust::dust_data(data, "step_end"))
@@ -161,7 +161,7 @@ test_that("Test compiled carehomes components", {
   np <- 10
   mod <- carehomes$new(pars, 0, np, seed = 1L)
   initial <- carehomes_initial(mod$info(), np, pars)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(carehomes_index(mod$info())$run)
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]

@@ -21,7 +21,7 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -59,7 +59,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## Noone moves into I_P, I_C_1 or I_C_2 ever
@@ -94,7 +94,7 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## Noone moves into hospitalised compartments ever
@@ -130,7 +130,7 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
   state[index_I_A[, 1, 1, 2]] <- state[index_I_A[, 1, 1, 1]]
   state[index_I_A[, 1, 1, 1]] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -167,7 +167,7 @@ test_that("No deaths with perfect vaccine wrt rel_p_death", {
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## No-one moves into D compartments ever
@@ -206,7 +206,7 @@ test_that("Vaccination of susceptibles works", {
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
   i <- 4:lancelot_n_groups()
 
@@ -249,7 +249,7 @@ test_that("Vaccination of exposed individuals works", {
   state[index_E[, , 2, ]] <- round(state[index_S] / 2)
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$E)
   e <- mod$simulate(seq(0, 400, by = 4))
 
@@ -310,7 +310,7 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
   state[index_I_A[, 1, 1, ]] <- state[index_S]
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$I_A)
   i_A <- mod$simulate(seq(0, 400, by = 4))
 
@@ -365,7 +365,7 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
   state[index_I_P[, 1, 1, ]] <- state[index_S]
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$I_P)
   i_P <- mod$simulate(seq(0, 400, by = 4))
 
@@ -420,7 +420,7 @@ test_that("Vaccination of recovered individuals works", {
   state[index_S] <- 0
   state[index_I_A] <- 0 # remove seeded infections
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$R)
   r <- mod$simulate(seq(0, 400, by = 4))
 
@@ -469,7 +469,7 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
   state[index_E[, 1, 2, 1]] <- 0
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$E)
   e <- mod$simulate(seq(0, 400, by = 4))
 
@@ -525,7 +525,7 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
   state[index_I_A[, 1, 1, 1]] <- 0
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$I_A)
   i_A <- mod$simulate(seq(0, 400, by = 4))
 
@@ -576,7 +576,7 @@ test_that("Returning to unvaccinated stage works for I_P individuals", {
   state[index_I_P[, 1, 1, 1]] <- 0
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$I_P)
   i_P <- mod$simulate(seq(0, 400, by = 4))
 
@@ -625,7 +625,7 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
   state[index_S] <- 0
   state[index_I_A] <- 0 # remove seeded infections
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$R)
   r <- mod$simulate(seq(0, 400, by = 4))
 
@@ -664,7 +664,7 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   i <- 4:lancelot_n_groups()
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
   expect_approx_equal(y$S[i, 1, 1], y$S[i, 3, 3])
@@ -694,7 +694,7 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 12))))
   i <- 4:lancelot_n_groups()
   expect_approx_equal(y$S[i, 1, 1], y$S[i, 12, 12])
@@ -743,7 +743,7 @@ test_that("Clinical progression within a vaccination class works", {
     state[index_S[, 1]] <- state[index_S[, 1]] - state[index_S[, 2]] -
       state[index_S[, 3]]
 
-    mod$set_state(state)
+    mod$update_state(state = state)
     mod$set_index(index)
     y <- mod$simulate(seq(0, 400, by = 4))
 
@@ -782,7 +782,7 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
   state[index_S[, 2]] <- state[index_S[, 1]]
   state[index_S[, 1]] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -809,7 +809,7 @@ test_that("there are no vaccinated susceptibles when vaccination rate is 0", {
                            waning_rate = waning_rate)
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -831,7 +831,7 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
@@ -856,7 +856,7 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
@@ -892,7 +892,7 @@ test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
@@ -945,7 +945,7 @@ test_that("Effective Rt reduced by rel_infectivity if all vaccinated", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
@@ -1010,7 +1010,7 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
@@ -1057,7 +1057,7 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_I_weighted <- mod$info()$index$I_weighted
@@ -1086,7 +1086,7 @@ test_that("Can calculate IFR_t with an (empty) vaccination class", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_I_weighted <- mod$info()$index$I_weighted
@@ -1127,7 +1127,7 @@ test_that("IFR_t modified if rel_p_sympt is not 1", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_I_weighted <- mod$info()$index$I_weighted
@@ -1193,7 +1193,7 @@ test_that("IFR_t modified if rel_p_hosp_if_sympt is not 1", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$set_state(initial$state, initial$step)
+  mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_S <- mod$info()$index$S
   index_I_weighted <- mod$info()$index$I_weighted
@@ -1259,7 +1259,7 @@ test_that("N_tots stay constant with vaccination and no waning immunity", {
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
@@ -1290,7 +1290,7 @@ test_that("N_tot stays constant with vaccination and waning immunity, while
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
@@ -1323,7 +1323,7 @@ test_that("N_tots are constant with vaccination and k > 1, and without waning
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
@@ -1356,7 +1356,7 @@ test_that("N_tot stays constant with vaccination and k > 1, and with waning
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
@@ -1388,7 +1388,7 @@ test_that("N_tots stay constant with high rates of vaccination and without
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
@@ -1423,7 +1423,7 @@ test_that(
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
@@ -1449,7 +1449,7 @@ test_that("Outputed vaccination numbers make sense", {
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   ## check outputed objects have correct dimension
@@ -1490,7 +1490,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   y0 <- lancelot_initial(info, 1, p)$state
-  mod$set_state(lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   i <- 4:lancelot_n_groups()
@@ -1539,7 +1539,7 @@ test_that("Outputed E vaccination numbers are what we expect", {
   state[index_E[, , 2, ]] <- round(state[index_S] / 2)
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   i <- 4:lancelot_n_groups()
@@ -1586,7 +1586,7 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
   state[index_I_A[, 1, 1, ]] <- state[index_S]
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   i <- 4:lancelot_n_groups()
@@ -1628,7 +1628,7 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
   state[index_I_P[, 1, , ]] <- state[index_S]
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   i <- 4:lancelot_n_groups()
@@ -1671,7 +1671,7 @@ test_that("Outputed R vaccination numbers are what we expect", {
   state[index_R[, , ]] <- state[index_S]
   state[index_S] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
   i <- 4:lancelot_n_groups()
@@ -1964,7 +1964,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
   ## Remove seed, so that we have no infection process here:
   state[state == 10] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(integer(0))
 
   keep <- c("cum_n_S_vaccinated",
@@ -2040,7 +2040,7 @@ test_that("run sensible vaccination schedule, catchup = 1", {
   ## Remove seed, so that we have no infection process here:
   state[state == 10] <- 0
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   mod$set_index(integer(0))
 
   keep <- c("cum_n_S_vaccinated",
@@ -2312,7 +2312,7 @@ test_that("Can vaccinate given a schedule", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   steps <- seq(0, end_date * 4, by = 4)
   y <- mod$transform_variables(mod$simulate(steps))
 
@@ -2413,7 +2413,7 @@ test_that("Can vaccinate given a schedule with given uptake", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   steps <- seq(0, end_date * 4, by = 4)
   y <- mod$transform_variables(mod$simulate(steps))
 
@@ -2473,7 +2473,7 @@ test_that("Can catch up on uptake given previous vaccination", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   steps <- seq(0, end_date * 4, by = 4)
   y <- mod$transform_variables(mod$simulate(steps))
 
@@ -2520,7 +2520,7 @@ test_that("Can catch up on doses not distributed", {
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   steps <- seq(0, end_date * 4, by = 4)
   y <- mod$transform_variables(mod$simulate(steps))
   uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
@@ -2532,7 +2532,7 @@ test_that("Can catch up on doses not distributed", {
   p$vaccine_catchup_fraction <- 1.0
   mod2 <- lancelot$new(p, 0, 1, seed = 1L)
   state <- lancelot_initial(info, 1, p)$state
-  mod2$set_state(state)
+  mod2$update_state(state = state)
   y2 <- mod2$transform_variables(mod2$simulate(steps))
   uptake2 <- y2$cum_n_vaccinated[, 1, 1, dim(y2$cum_n_vaccinated)[4]] / p$N_tot
 
@@ -2571,7 +2571,7 @@ test_that("Can catch up on doses not distributed with imperfect uptake", {
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   steps <- seq(0, end_date * 4, by = 4)
   y <- mod$transform_variables(mod$simulate(steps))
   uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
@@ -2602,7 +2602,7 @@ test_that("Collect disaggregated deaths data", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   t <- seq(0, 400, by = 4)
   y <- mod$transform_variables(drop(mod$simulate(t)))
 
@@ -2641,7 +2641,7 @@ test_that("Can add missing state variables", {
 
   state <- lancelot_initial(info, 10, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$run(400)
 
   drop <- c("D", "diagnoses_admitted")
@@ -2758,7 +2758,7 @@ test_that("Can add lag to vaccine schedule", {
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
   steps <- seq(0, end_date * 4, by = 4)
   y <- mod$transform_variables(mod$simulate(steps))
   uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
@@ -2770,7 +2770,7 @@ test_that("Can add lag to vaccine schedule", {
   p$vaccine_catchup_fraction <- 1.0
   mod2 <- lancelot$new(p, 0, 1, seed = 1L)
   state <- lancelot_initial(info, 1, p)$state
-  mod2$set_state(state)
+  mod2$update_state(state = state)
   y2 <- mod2$transform_variables(mod2$simulate(steps))
   uptake2 <- y2$cum_n_vaccinated[, 1, 1, dim(y2$cum_n_vaccinated)[4]] / p$N_tot
 
@@ -2816,7 +2816,7 @@ test_that("run sensible vaccination schedule with boosters", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
 
   y <- mod$simulate((1:220) * 4)
   y <- mod$transform_variables(drop(y))
@@ -2862,7 +2862,7 @@ test_that("can inflate the number of vacc classes after running with 2", {
   np <- 4L
   mod1 <- lancelot$new(p1, 0, np, seed = 1L)
   initial <- lancelot_initial(mod1$info(), 10, p1)
-  mod1$set_state(initial$state, initial$step)
+  mod1$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p1$dt
   steps <- seq(initial$step, end, by = 1 / p1$dt)
   y1 <- mod1$run(end)
