@@ -85,7 +85,7 @@ The &quot;basic&quot; sircovid model. This is a dust model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
       </span>
     </div>
 
@@ -148,7 +148,7 @@ The "basic" sircovid model. This is a dust model.</h1>
 <span class='co'># Set the initial state and index as we would us for a run</span>
 <span class='co'># (without setting an initial state there is no seeding)</span>
 <span class='va'>initial</span> <span class='op'>&lt;-</span> <span class='fu'><a href='basic_initial.html'>basic_initial</a></span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>10</span>, <span class='va'>p</span><span class='op'>)</span>
-<span class='va'>mod</span><span class='op'>$</span><span class='fu'>set_state</span><span class='op'>(</span><span class='va'>initial</span><span class='op'>$</span><span class='va'>state</span>, <span class='va'>initial</span><span class='op'>$</span><span class='va'>step</span><span class='op'>)</span>
+<span class='va'>mod</span><span class='op'>$</span><span class='fu'>update_state</span><span class='op'>(</span>state <span class='op'>=</span> <span class='va'>initial</span><span class='op'>$</span><span class='va'>state</span>, step <span class='op'>=</span> <span class='va'>initial</span><span class='op'>$</span><span class='va'>step</span><span class='op'>)</span>
 <span class='va'>mod</span><span class='op'>$</span><span class='fu'>set_index</span><span class='op'>(</span><span class='fu'><a href='basic_index.html'>basic_index</a></span><span class='op'>(</span><span class='va'>mod</span><span class='op'>$</span><span class='fu'>info</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>$</span><span class='va'>run</span><span class='op'>)</span>
 
 <span class='co'># Run the model up to the end of march</span>
