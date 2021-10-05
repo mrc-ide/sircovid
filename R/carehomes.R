@@ -469,7 +469,7 @@ carehomes_parameters <- function(start_date, region,
   ret$p_NC_weekend <- p_NC_weekend
 
   ## relative transmissibility of various I compartments
-  ret$I_A_transmission <- 0.363
+  ret$I_A_transmission <- 0.223
   ret$I_P_transmission <- 1
   ret$I_C_1_transmission <- 1
   ret$I_C_2_transmission <- 0
