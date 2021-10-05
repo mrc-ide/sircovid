@@ -232,7 +232,7 @@ test_that("Test compiled lancelot components", {
 
 test_that("can run the particle filter on the model 2", {
   skip_on_windows_gha()
-  set.seed(2)
+  set.seed(1)
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england")
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
@@ -240,8 +240,8 @@ test_that("can run the particle filter on the model 2", {
 
   np <- 50
   pf1 <- lancelot_particle_filter(data, np, compiled_compare = FALSE,
-                                  seed = 2)
-  pf2 <- lancelot_particle_filter(data, np, compiled_compare = TRUE, seed = 2)
+                                  seed = 1)
+  pf2 <- lancelot_particle_filter(data, np, compiled_compare = TRUE, seed = 1)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
   expect_lt(abs(ll1 - ll2), 60)
