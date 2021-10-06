@@ -27,55 +27,48 @@ test_that("can run the lancelot model", {
   expected <-
     rbind(time                               = c(213, 213, 213, 213,
                                                  213),
-          icu                                = c(1535, 0, 2703, 3388,
-                                                 6854),
-          general                            = c(5510, 0, 9458, 12583,
-                                                 23105),
+          icu                                = c(111, 299, 340, 59, 42),
+          general                            = c(396, 1133, 1277, 303,
+                                                 135),
           deaths_carehomes_inc               = c(0, 0, 0, 0, 0),
-          deaths_comm_inc                    = c(39, 0, 84, 116, 227),
-          deaths_hosp_inc                    = c(356, 0, 724, 918, 1897),
-          admitted_inc                       = c(109, 0, 198, 269, 806),
-          diagnoses_inc                      = c(447, 0, 889, 1206, 2857),
-          sero_pos_1                         = c(6407196, 0, 7100152,
-                                                 7277473, 4987206),
-          sero_pos_2                         = c(6404058, 0, 7101380,
-                                                 7280331, 4992673),
-          sympt_cases_inc                    = c(9178, 0, 17567, 24393,
-                                                 91356),
-          sympt_cases_non_variant_inc        = c(9178, 0, 17567, 24393,
-                                                 91356),
-          sympt_cases_over25_inc             = c(7269, 0, 13753, 19154,
-                                                 69200),
-          sympt_cases_under15_inc            = c(1075, 0, 2121, 2920,
-                                                 12477),
-          sympt_cases_15_24_inc              = c(834, 0, 1693, 2319,
-                                                 9679),
-          sympt_cases_25_49_inc              = c(3101, 0, 5971, 8370,
-                                                 32220),
-          sympt_cases_50_64_inc              = c(2055, 0, 3859, 5338,
-                                                 18822),
-          sympt_cases_65_79_inc              = c(1303, 0, 2484, 3432,
-                                                 11462),
-          sympt_cases_80_plus_inc            = c(810, 0, 1439, 2014,
-                                                 6696),
-          sympt_cases_non_variant_over25_inc = c(7269, 0, 13753, 19154,
-                                                 69200),
-          react_pos                          = c(502549, 0, 931340, 1254377,
-                                                 3696470),
-          deaths_carehomes                   = c(1797, 0, 1644, 1746,
-                                                 1645),
-          deaths_comm                        = c(15454, 0, 14773, 14644,
-                                                 8626),
-          deaths_hosp                        = c(139049, 0, 133247, 128431,
-                                                 78561),
-          admitted                           = c(62566, 0, 60824, 59192,
-                                                 39503),
-          diagnoses                          = c(212402, 0, 204795, 198469,
-                                                 127928),
-          sympt_cases                        = c(7228257, 1, 7084065,
-                                                 6961383, 5149412),
-          sympt_cases_over25                 = c(5462998, 1, 5349826,
-                                                 5253863, 3858759))
+          deaths_comm_inc                    = c(2, 6, 1, 1, 0),
+          deaths_hosp_inc                    = c(29, 74, 85, 19, 6),
+          admitted_inc                       = c(16, 10, 11, 5, 1),
+          diagnoses_inc                      = c(24, 73, 76, 26, 5),
+          sero_pos_1                         = c(5197368, 6910920, 7089785,
+                                                 4716406, 3652078),
+          sero_pos_2                         = c(5196882, 6913766, 7095050,
+                                                 4717892, 3651559),
+          sympt_cases_inc                    = c(294, 826, 918, 209,
+                                                 86),
+          sympt_cases_non_variant_inc        = c(294, 826, 918, 209,
+                                                 86),
+          sympt_cases_over25_inc             = c(247, 675, 757, 180,
+                                                 65),
+          sympt_cases_under15_inc            = c(28, 75, 87, 12, 11),
+          sympt_cases_15_24_inc              = c(19, 76, 74, 17, 10),
+          sympt_cases_25_49_inc              = c(95, 257, 267, 54, 21),
+          sympt_cases_50_64_inc              = c(73, 204, 212, 59, 20),
+          sympt_cases_65_79_inc              = c(47, 143, 164, 46, 15),
+          sympt_cases_80_plus_inc            = c(32, 71, 114, 21, 9),
+          sympt_cases_non_variant_over25_inc = c(247, 675, 757, 180,
+                                                 65),
+          react_pos                          = c(20534, 61844, 68919,
+                                                 15064, 6328),
+          deaths_carehomes                   = c(1683, 1663, 1639, 1705,
+                                                 1722),
+          deaths_comm                        = c(22849, 22627, 22434,
+                                                 22845, 22594),
+          deaths_hosp                        = c(198907, 197449, 198075,
+                                                 198348, 197756),
+          admitted                           = c(89732, 88887, 89875,
+                                                 89461, 89478),
+          diagnoses                          = c(297454, 296304, 297181,
+                                                 297138, 297675),
+          sympt_cases                        = c(9802437, 9799220, 9792545,
+                                                 9799207, 9809255),
+          sympt_cases_over25                 = c(7479954, 7475585, 7471847,
+                                                 7475980, 7484963))
   expect_equal(res, expected)
 })
 
@@ -232,7 +225,7 @@ test_that("Test compiled lancelot components", {
 
 test_that("can run the particle filter on the model 2", {
   skip_on_windows_gha()
-  set.seed(1)
+  set.seed(2)
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england")
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
@@ -240,8 +233,8 @@ test_that("can run the particle filter on the model 2", {
 
   np <- 50
   pf1 <- lancelot_particle_filter(data, np, compiled_compare = FALSE,
-                                  seed = 1)
-  pf2 <- lancelot_particle_filter(data, np, compiled_compare = TRUE, seed = 1)
+                                  seed = 2)
+  pf2 <- lancelot_particle_filter(data, np, compiled_compare = TRUE, seed = 2)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
   expect_lt(abs(ll1 - ll2), 60)

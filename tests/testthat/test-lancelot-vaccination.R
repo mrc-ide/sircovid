@@ -2531,7 +2531,7 @@ test_that("Can catch up on doses not distributed", {
   uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
 
   ## check we could not reach reach the desired uptake
-  expect_lt(min(uptake), 0.85)
+  expect_lt(min(uptake), 0.8)
 
   ### now do exactly the same with vaccine catch up fully on:
   p$vaccine_catchup_fraction <- 1.0
@@ -2769,7 +2769,7 @@ test_that("Can add lag to vaccine schedule", {
   uptake <- y$cum_n_vaccinated[, 1, 1, dim(y$cum_n_vaccinated)[4]] / p$N_tot
 
   ## check we could not reach reach the desired uptake
-  expect_lt(min(uptake), 0.85)
+  expect_lt(min(uptake), 0.8)
 
   ### now do exactly the same with vaccine catch up fully on:
   p$vaccine_catchup_fraction <- 1.0
