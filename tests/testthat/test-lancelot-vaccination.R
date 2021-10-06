@@ -2503,7 +2503,7 @@ test_that("Can catch up on doses not distributed", {
   vacc_schedule <- vaccine_schedule_future(
     0, doses_future, mean_days_between_doses, n)
   p <- lancelot_parameters(0, region, rel_susceptibility = c(1, 1, 0),
-                           beta_value = 0.1,
+                           beta_value = 0.12,
                            rel_p_sympt = c(1, 1, 1),
                            rel_p_hosp_if_sympt = c(1, 1, 1),
                            rel_p_death = c(1, 1, 1),
@@ -2742,7 +2742,7 @@ test_that("Can add lag to vaccine schedule", {
   vacc_schedule <- vacc_schedule_lag
 
   p <- lancelot_parameters(0, region, rel_susceptibility = c(1, 1, 0),
-                           beta_value = 0.1,
+                           beta_value = 0.12,
                            rel_p_sympt = c(1, 1, 1),
                            rel_p_hosp_if_sympt = c(1, 1, 1),
                            rel_p_death = c(1, 1, 1),
