@@ -49,7 +49,7 @@ NULL
 ##'
 ##' @param beta_value A vector of values for beta (the contact rate
 ##'   parameter). If not given, and if `beta_date` is `NULL` then a
-##'   value of 0.09 will be used through the whole simulation,
+##'   value of 0.1 will be used through the whole simulation,
 ##'   otherwise if `beta_date` is `NULL` this must be a scalar. If
 ##'   `beta_date` is given then `beta_date` and `beta_value` must have
 ##'   the same length (see [sircovid_parameters_piecewise_linear()] or
