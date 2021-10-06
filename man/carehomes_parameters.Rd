@@ -67,7 +67,7 @@ then the first date must be 0.}
 
 \item{beta_value}{A vector of values for beta (the contact rate
 parameter). If not given, and if \code{beta_date} is \code{NULL} then a
-value of 0.08 will be used through the whole simulation,
+value of 0.1 will be used through the whole simulation,
 otherwise if \code{beta_date} is \code{NULL} this must be a scalar. If
 \code{beta_date} is given then \code{beta_date} and \code{beta_value} must have
 the same length (see \code{\link[=sircovid_parameters_piecewise_linear]{sircovid_parameters_piecewise_linear()}} or

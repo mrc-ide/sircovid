@@ -151,7 +151,7 @@ test_that("carehomes_parameters returns a list of parameters", {
   p <- carehomes_parameters(date, "uk")
 
   expect_type(p, "list")
-  expect_equal(p$beta_step, 0.08)
+  expect_equal(p$beta_step, 0.1)
 
   ## Transmission matrix is more complicated - see below
   expect_identical(p$m[1:17, 1:17], sircovid_transmission_matrix("uk"))
