@@ -85,7 +85,7 @@ The &quot;basic&quot; sircovid model. This is a dust model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.3</span>
       </span>
     </div>
 
@@ -157,25 +157,25 @@ The "basic" sircovid model. This is a dust model.</h1>
 <span class='co'># The filtered state is returned at the end of the run</span>
 <span class='va'>mod</span><span class='op'>$</span><span class='fu'>run</span><span class='op'>(</span><span class='va'>step_end</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;            [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-#&gt; icu          29   24   10   29   11   12   14   16   19    12
-#&gt; deaths      136  106   75   98   32   45   51   71   59    44
-#&gt; deaths_inc   19   22   11   16    5    9    7   10    6     4</div><div class='input'>
+#&gt; icu         123  104  119  214  169  124   56  107  215   115
+#&gt; deaths      274  296  416  648  484  383  191  318  696   354
+#&gt; deaths_inc   47   40   77  124   92   61   28   52  112    57</div><div class='input'>
 <span class='co'># More state can be retrieved using the "state" method</span>
 <span class='va'>mod</span><span class='op'>$</span><span class='fu'>state</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             [,1]        [,2]        [,3]        [,4]        [,5]        [,6]
-#&gt; [1,]       91.00       91.00       91.00       91.00       91.00       91.00
-#&gt; [2,] 56550138.00 56550138.00 56550138.00 56550138.00 56550138.00 56550138.00
-#&gt; [3,]       29.00       24.00       10.00       29.00       11.00       12.00
-#&gt; [4,]      136.00      106.00       75.00       98.00       32.00       45.00
-#&gt; [5,]       19.00       22.00       11.00       16.00        5.00        9.00
-#&gt; [6,]        0.08        0.08        0.08        0.08        0.08        0.08
-#&gt;             [,7]        [,8]        [,9]       [,10]
-#&gt; [1,]       91.00       91.00       91.00       91.00
-#&gt; [2,] 56550138.00 56550138.00 56550138.00 56550138.00
-#&gt; [3,]       14.00       16.00       19.00       12.00
-#&gt; [4,]       51.00       71.00       59.00       44.00
-#&gt; [5,]        7.00       10.00        6.00        4.00
-#&gt; [6,]        0.08        0.08        0.08        0.08</div></pre>
+</div><div class='output co'>#&gt;            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
+#&gt; [1,]       91.0       91.0       91.0       91.0       91.0       91.0
+#&gt; [2,] 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0
+#&gt; [3,]      123.0      104.0      119.0      214.0      169.0      124.0
+#&gt; [4,]      274.0      296.0      416.0      648.0      484.0      383.0
+#&gt; [5,]       47.0       40.0       77.0      124.0       92.0       61.0
+#&gt; [6,]        0.1        0.1        0.1        0.1        0.1        0.1
+#&gt;            [,7]       [,8]       [,9]      [,10]
+#&gt; [1,]       91.0       91.0       91.0       91.0
+#&gt; [2,] 56550138.0 56550138.0 56550138.0 56550138.0
+#&gt; [3,]       56.0      107.0      215.0      115.0
+#&gt; [4,]      191.0      318.0      696.0      354.0
+#&gt; [5,]       28.0       52.0      112.0       57.0
+#&gt; [6,]        0.1        0.1        0.1        0.1</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
