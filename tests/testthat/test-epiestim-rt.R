@@ -79,13 +79,13 @@ test_that("Can calculate EpiEstim Rt (II)", {
   #### Check a few values
   expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.1,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.7,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.4,
                tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
+    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
     tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
+    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
     tolerance = .1)
 })
 
@@ -174,13 +174,13 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
   #### Check a few values
   expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.1,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.7,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.4,
                tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
+    rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
     tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.2,
+    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
     tolerance = .1)
 })
 
@@ -301,11 +301,11 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   expect_true(abs(rt$eff_Rt_all[1] - rt_EpiEstim$Rt_summary["50%", 20]) < 0.2)
 
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 35]], 4.9,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 35]], 4.1,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 35]], 4.8,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", 35]], 4.1,
                tolerance = .1)
-  expect_equal(rt$eff_Rt_all[35], 5.0,
+  expect_equal(rt$eff_Rt_all[35], 4.2,
                tolerance = .1)
 
   expect_equal(rt_EpiEstim$Rt_summary[["mean_R", 45]], 4.2,
