@@ -45,14 +45,6 @@ test_that("can run the carehomes model", {
                                                  620),
           sympt_cases_over25_inc             = c(493, 526, 571, 453,
                                                  520),
-          sympt_cases_under15_inc            = c(63, 76, 69, 63, 58),
-          sympt_cases_15_24_inc              = c(36, 54, 41, 48, 42),
-          sympt_cases_25_49_inc              = c(175, 176, 187, 159,
-                                                 170),
-          sympt_cases_50_64_inc              = c(135, 152, 161, 130,
-                                                 152),
-          sympt_cases_65_79_inc              = c(111, 114, 134, 92, 112),
-          sympt_cases_80_plus_inc            = c(72, 84, 89, 72, 86),
           sympt_cases_non_variant_over25_inc = c(493, 526, 571, 453,
                                                  520),
           react_pos                          = c(48251, 54250, 52632,
@@ -223,8 +215,8 @@ test_that("can run the particle filter on the model 2", {
 
   np <- 50
   pf1 <- carehomes_particle_filter(data, np, compiled_compare = FALSE,
-                                   seed = 2)
-  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE, seed = 2)
+                                   seed = 1)
+  pf2 <- carehomes_particle_filter(data, np, compiled_compare = TRUE, seed = 1)
   ll1 <- pf1$run(pars)
   ll2 <- pf2$run(pars)
   expect_lt(abs(ll1 - ll2), 60)
