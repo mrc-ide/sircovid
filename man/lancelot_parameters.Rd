@@ -20,8 +20,6 @@ lancelot_parameters(
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
-  p_NC = 0.01,
-  p_NC_weekend = 0.005,
   p_NC_under15 = 0.01,
   p_NC_weekend_under15 = 0.005,
   p_NC_15_24 = 0.01,
@@ -128,12 +126,6 @@ will enter the model as asymptomatic 15-19 year olds at
 residents or workers}
 
 \item{m_CHR}{Contact rate between carehome residents}
-
-\item{p_NC}{Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekday}
-
-\item{p_NC_weekend}{Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekend}
 
 \item{p_NC_under15}{Proportion of population under 15 who do not have covid
 but have covid-like symptoms that could lead to getting a PCR test on a

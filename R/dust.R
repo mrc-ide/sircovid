@@ -135,7 +135,7 @@ basic <- R6::R6Class(
     },
 
     set_pars = function(pars) {
-      .Deprecated("$update_state(pars = pars, set_initial_state = FALSE)",
+      .Deprecated("$update_state(pars = pars)",
                   old = "$set_pars(pars)")
       self$update_state(pars = pars, set_initial_state = FALSE)
     },
@@ -504,7 +504,7 @@ carehomes <- R6::R6Class(
     },
 
     set_pars = function(pars) {
-      .Deprecated("$update_state(pars = pars, set_initial_state = FALSE)",
+      .Deprecated("$update_state(pars = pars)",
                   old = "$set_pars(pars)")
       self$update_state(pars = pars, set_initial_state = FALSE)
     },
@@ -722,14 +722,12 @@ lancelot <- R6::R6Class(
      p_H_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_ICU_D_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
      p_ICU_step = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
-     p_NC = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     p_NC_weekend = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_weekend_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_weekend_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      p_NC_weekend_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
@@ -750,14 +748,12 @@ lancelot <- R6::R6Class(
      phi_diagnoses = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_general = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_hosp = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_65_79 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_80_plus = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_under15 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     phi_pillar2_cases_weekend = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_weekend_15_24 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_weekend_25_49 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      phi_pillar2_cases_weekend_50_64 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
@@ -903,7 +899,7 @@ lancelot <- R6::R6Class(
     },
 
     set_pars = function(pars) {
-      .Deprecated("$update_state(pars = pars, set_initial_state = FALSE)",
+      .Deprecated("$update_state(pars = pars)",
                   old = "$set_pars(pars)")
       self$update_state(pars = pars, set_initial_state = FALSE)
     },

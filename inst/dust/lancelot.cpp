@@ -167,9 +167,6 @@ typename T::real_t compare(const typename T::real_t * state,
     state[36];
   const real_t model_react_pos = state[43];
 
-  const real_t p_NC_today =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->p_NC_weekend : shared->p_NC;
   const real_t p_NC_today_under15 =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_under15 : shared->p_NC_under15;
@@ -188,26 +185,6 @@ typename T::real_t compare(const typename T::real_t * state,
   const real_t p_NC_today_80_plus =
     ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
     shared->p_NC_weekend_80_plus : shared->p_NC_80_plus;
-
-  const real_t pillar2_negs =
-    p_NC_today * (shared->N_tot_all - model_sympt_cases);
-  const real_t model_pillar2_prob_pos =
-    test_prob_pos(model_sympt_cases,
-                  pillar2_negs,
-                  shared->pillar2_sensitivity,
-                  shared->pillar2_specificity,
-                  shared->exp_noise,
-                  rng_state);
-
-  const real_t pillar2_over25_negs =
-    p_NC_today * (shared->N_tot_over25 - model_sympt_cases_over25);
-  const real_t model_pillar2_over25_prob_pos =
-    test_prob_pos(model_sympt_cases_over25,
-                  pillar2_over25_negs,
-                  shared->pillar2_sensitivity,
-                  shared->pillar2_specificity,
-                  shared->exp_noise,
-                  rng_state);
 
   const real_t pillar2_under15_negs =
     p_NC_today_under15 * (shared->N_tot_under15 - model_sympt_cases_under15);
@@ -268,6 +245,65 @@ typename T::real_t compare(const typename T::real_t * state,
                   shared->pillar2_specificity,
                   shared->exp_noise,
                   rng_state);
+
+  const real_t pillar2_over25_negs =
+    pillar2_25_49_negs + pillar2_50_64_negs +
+    pillar2_65_79_negs + pillar2_80_plus_negs;
+  const real_t model_pillar2_over25_prob_pos =
+    test_prob_pos(model_sympt_cases_over25,
+                  pillar2_over25_negs,
+                  shared->pillar2_sensitivity,
+                  shared->pillar2_specificity,
+                  shared->exp_noise,
+                  rng_state);
+
+  const real_t pillar2_negs =
+    pillar2_under15_negs + pillar2_15_24_negs + pillar2_over25_negs;
+  const real_t model_pillar2_prob_pos =
+    test_prob_pos(model_sympt_cases,
+                  pillar2_negs,
+                  shared->pillar2_sensitivity,
+                  shared->pillar2_specificity,
+                  shared->exp_noise,
+                  rng_state);
+
+  const real_t phi_pillar2_cases_today_under15 =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->phi_pillar2_cases_weekend_under15 : shared->phi_pillar2_cases_under15;
+  const real_t phi_pillar2_cases_today_15_24 =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->phi_pillar2_cases_weekend_15_24 : shared->phi_pillar2_cases_15_24;
+  const real_t phi_pillar2_cases_today_25_49 =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->phi_pillar2_cases_weekend_25_49 : shared->phi_pillar2_cases_25_49;
+  const real_t phi_pillar2_cases_today_50_64 =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->phi_pillar2_cases_weekend_50_64 : shared->phi_pillar2_cases_50_64;
+  const real_t phi_pillar2_cases_today_65_79 =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->phi_pillar2_cases_weekend_65_79 : shared->phi_pillar2_cases_65_79;
+  const real_t phi_pillar2_cases_today_80_plus =
+    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
+    shared->phi_pillar2_cases_weekend_80_plus : shared->phi_pillar2_cases_80_plus;
+
+  const real_t model_pillar2_under15_cases =
+    phi_pillar2_cases_today_under15 * model_sympt_cases_under15;
+  const real_t model_pillar2_15_24_cases =
+    phi_pillar2_cases_today_15_24 * model_sympt_cases_15_24;
+  const real_t model_pillar2_25_49_cases =
+    phi_pillar2_cases_today_25_49 * model_sympt_cases_25_49;
+  const real_t model_pillar2_50_64_cases =
+    phi_pillar2_cases_today_50_64 * model_sympt_cases_50_64;
+  const real_t model_pillar2_65_79_cases =
+    phi_pillar2_cases_today_65_79 * model_sympt_cases_65_79;
+  const real_t model_pillar2_80_plus_cases =
+    phi_pillar2_cases_today_80_plus * model_sympt_cases_80_plus;
+  const real_t model_pillar2_over25_cases =
+    model_pillar2_25_49_cases + model_pillar2_50_64_cases +
+    model_pillar2_65_79_cases + model_pillar2_80_plus_cases;
+  const real_t model_pillar2_cases =
+    model_pillar2_under15_cases + model_pillar2_15_24_cases +
+    model_pillar2_over25_cases;
 
   const real_t model_react_pos_capped =
     min(model_react_pos, shared->N_tot_react);
@@ -402,60 +438,37 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_betabinom(data.pillar2_80_plus_pos, data.pillar2_80_plus_tot,
                  model_pillar2_80_plus_prob_pos, shared->rho_pillar2_tests);
 
-
-  const real_t phi_pillar2_cases_today =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->phi_pillar2_cases_weekend : shared->phi_pillar2_cases;
-  const real_t phi_pillar2_cases_today_under15 =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->phi_pillar2_cases_weekend_under15 : shared->phi_pillar2_cases_under15;
-  const real_t phi_pillar2_cases_today_15_24 =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->phi_pillar2_cases_weekend_15_24 : shared->phi_pillar2_cases_15_24;
-  const real_t phi_pillar2_cases_today_25_49 =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->phi_pillar2_cases_weekend_25_49 : shared->phi_pillar2_cases_25_49;
-  const real_t phi_pillar2_cases_today_50_64 =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->phi_pillar2_cases_weekend_50_64 : shared->phi_pillar2_cases_50_64;
-  const real_t phi_pillar2_cases_today_65_79 =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->phi_pillar2_cases_weekend_65_79 : shared->phi_pillar2_cases_65_79;
-  const real_t phi_pillar2_cases_today_80_plus =
-    ((static_cast<int>(state[0]) + 3) % 7 < 2) ?
-    shared->phi_pillar2_cases_weekend_80_plus : shared->phi_pillar2_cases_80_plus;
-
-  const real_t ll_pillar2_cases =
-    ll_nbinom(data.pillar2_cases,
-              phi_pillar2_cases_today * model_sympt_cases,
-              shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-  const real_t ll_pillar2_over25_cases =
-    ll_nbinom(data.pillar2_over25_cases,
-              phi_pillar2_cases_today * model_sympt_cases_over25,
-              shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
   const real_t ll_pillar2_under15_cases =
     ll_nbinom(data.pillar2_under15_cases,
-              phi_pillar2_cases_today_under15 * model_sympt_cases_under15,
+              model_pillar2_under15_cases,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
   const real_t ll_pillar2_15_24_cases =
     ll_nbinom(data.pillar2_15_24_cases,
-              phi_pillar2_cases_today_15_24 * model_sympt_cases_15_24,
+              model_pillar2_15_24_cases,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
   const real_t ll_pillar2_25_49_cases =
     ll_nbinom(data.pillar2_25_49_cases,
-              phi_pillar2_cases_today_25_49 * model_sympt_cases_25_49,
+              model_pillar2_25_49_cases,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
   const real_t ll_pillar2_50_64_cases =
     ll_nbinom(data.pillar2_50_64_cases,
-              phi_pillar2_cases_today_50_64 * model_sympt_cases_50_64,
+              model_pillar2_50_64_cases,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
   const real_t ll_pillar2_65_79_cases =
     ll_nbinom(data.pillar2_65_79_cases,
-              phi_pillar2_cases_today_65_79 * model_sympt_cases_65_79,
+              model_pillar2_65_79_cases,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
   const real_t ll_pillar2_80_plus_cases =
     ll_nbinom(data.pillar2_80_plus_cases,
-              phi_pillar2_cases_today_80_plus * model_sympt_cases_80_plus,
+              model_pillar2_80_plus_cases,
+              shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
+  const real_t ll_pillar2_over25_cases =
+    ll_nbinom(data.pillar2_over25_cases,
+              model_pillar2_over25_cases,
+              shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
+  const real_t ll_pillar2_cases =
+    ll_nbinom(data.pillar2_cases,
+              model_pillar2_cases,
               shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
 
   const real_t ll_react =
@@ -583,14 +596,12 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(p_H_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_D_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_ICU_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_NC, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_65_79, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_80_plus, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_under15, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_NC_weekend, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_NC_weekend_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -611,14 +622,12 @@ typename T::real_t compare(const typename T::real_t * state,
 // [[dust::param(phi_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_65_79, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_80_plus, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_under15, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_pillar2_cases_weekend, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_weekend_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_weekend_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_weekend_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2357,14 +2366,12 @@ public:
     std::vector<real_t> p_H_step;
     std::vector<real_t> p_ICU_D_step;
     std::vector<real_t> p_ICU_step;
-    real_t p_NC;
     real_t p_NC_15_24;
     real_t p_NC_25_49;
     real_t p_NC_50_64;
     real_t p_NC_65_79;
     real_t p_NC_80_plus;
     real_t p_NC_under15;
-    real_t p_NC_weekend;
     real_t p_NC_weekend_15_24;
     real_t p_NC_weekend_25_49;
     real_t p_NC_weekend_50_64;
@@ -2392,14 +2399,12 @@ public:
     real_t phi_diagnoses;
     real_t phi_general;
     real_t phi_hosp;
-    real_t phi_pillar2_cases;
     real_t phi_pillar2_cases_15_24;
     real_t phi_pillar2_cases_25_49;
     real_t phi_pillar2_cases_50_64;
     real_t phi_pillar2_cases_65_79;
     real_t phi_pillar2_cases_80_plus;
     real_t phi_pillar2_cases_under15;
-    real_t phi_pillar2_cases_weekend;
     real_t phi_pillar2_cases_weekend_15_24;
     real_t phi_pillar2_cases_weekend_25_49;
     real_t phi_pillar2_cases_weekend_50_64;
@@ -5048,14 +5053,12 @@ dust::pars_t<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->n_p_star_steps = NA_INTEGER;
   shared->n_strains = NA_INTEGER;
   shared->n_vacc_classes = NA_INTEGER;
-  shared->p_NC = NA_REAL;
   shared->p_NC_15_24 = NA_REAL;
   shared->p_NC_25_49 = NA_REAL;
   shared->p_NC_50_64 = NA_REAL;
   shared->p_NC_65_79 = NA_REAL;
   shared->p_NC_80_plus = NA_REAL;
   shared->p_NC_under15 = NA_REAL;
-  shared->p_NC_weekend = NA_REAL;
   shared->p_NC_weekend_15_24 = NA_REAL;
   shared->p_NC_weekend_25_49 = NA_REAL;
   shared->p_NC_weekend_50_64 = NA_REAL;
@@ -5071,14 +5074,12 @@ dust::pars_t<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->phi_diagnoses = NA_REAL;
   shared->phi_general = NA_REAL;
   shared->phi_hosp = NA_REAL;
-  shared->phi_pillar2_cases = NA_REAL;
   shared->phi_pillar2_cases_15_24 = NA_REAL;
   shared->phi_pillar2_cases_25_49 = NA_REAL;
   shared->phi_pillar2_cases_50_64 = NA_REAL;
   shared->phi_pillar2_cases_65_79 = NA_REAL;
   shared->phi_pillar2_cases_80_plus = NA_REAL;
   shared->phi_pillar2_cases_under15 = NA_REAL;
-  shared->phi_pillar2_cases_weekend = NA_REAL;
   shared->phi_pillar2_cases_weekend_15_24 = NA_REAL;
   shared->phi_pillar2_cases_weekend_25_49 = NA_REAL;
   shared->phi_pillar2_cases_weekend_50_64 = NA_REAL;
@@ -5191,14 +5192,12 @@ dust::pars_t<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->n_p_star_steps = user_get_scalar<int>(user, "n_p_star_steps", shared->n_p_star_steps, NA_REAL, NA_REAL);
   shared->n_strains = user_get_scalar<int>(user, "n_strains", shared->n_strains, NA_REAL, NA_REAL);
   shared->n_vacc_classes = user_get_scalar<int>(user, "n_vacc_classes", shared->n_vacc_classes, NA_REAL, NA_REAL);
-  shared->p_NC = user_get_scalar<real_t>(user, "p_NC", shared->p_NC, NA_REAL, NA_REAL);
   shared->p_NC_15_24 = user_get_scalar<real_t>(user, "p_NC_15_24", shared->p_NC_15_24, NA_REAL, NA_REAL);
   shared->p_NC_25_49 = user_get_scalar<real_t>(user, "p_NC_25_49", shared->p_NC_25_49, NA_REAL, NA_REAL);
   shared->p_NC_50_64 = user_get_scalar<real_t>(user, "p_NC_50_64", shared->p_NC_50_64, NA_REAL, NA_REAL);
   shared->p_NC_65_79 = user_get_scalar<real_t>(user, "p_NC_65_79", shared->p_NC_65_79, NA_REAL, NA_REAL);
   shared->p_NC_80_plus = user_get_scalar<real_t>(user, "p_NC_80_plus", shared->p_NC_80_plus, NA_REAL, NA_REAL);
   shared->p_NC_under15 = user_get_scalar<real_t>(user, "p_NC_under15", shared->p_NC_under15, NA_REAL, NA_REAL);
-  shared->p_NC_weekend = user_get_scalar<real_t>(user, "p_NC_weekend", shared->p_NC_weekend, NA_REAL, NA_REAL);
   shared->p_NC_weekend_15_24 = user_get_scalar<real_t>(user, "p_NC_weekend_15_24", shared->p_NC_weekend_15_24, NA_REAL, NA_REAL);
   shared->p_NC_weekend_25_49 = user_get_scalar<real_t>(user, "p_NC_weekend_25_49", shared->p_NC_weekend_25_49, NA_REAL, NA_REAL);
   shared->p_NC_weekend_50_64 = user_get_scalar<real_t>(user, "p_NC_weekend_50_64", shared->p_NC_weekend_50_64, NA_REAL, NA_REAL);
@@ -5214,14 +5213,12 @@ dust::pars_t<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->phi_diagnoses = user_get_scalar<real_t>(user, "phi_diagnoses", shared->phi_diagnoses, NA_REAL, NA_REAL);
   shared->phi_general = user_get_scalar<real_t>(user, "phi_general", shared->phi_general, NA_REAL, NA_REAL);
   shared->phi_hosp = user_get_scalar<real_t>(user, "phi_hosp", shared->phi_hosp, NA_REAL, NA_REAL);
-  shared->phi_pillar2_cases = user_get_scalar<real_t>(user, "phi_pillar2_cases", shared->phi_pillar2_cases, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_15_24 = user_get_scalar<real_t>(user, "phi_pillar2_cases_15_24", shared->phi_pillar2_cases_15_24, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_25_49 = user_get_scalar<real_t>(user, "phi_pillar2_cases_25_49", shared->phi_pillar2_cases_25_49, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_50_64 = user_get_scalar<real_t>(user, "phi_pillar2_cases_50_64", shared->phi_pillar2_cases_50_64, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_65_79 = user_get_scalar<real_t>(user, "phi_pillar2_cases_65_79", shared->phi_pillar2_cases_65_79, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_80_plus = user_get_scalar<real_t>(user, "phi_pillar2_cases_80_plus", shared->phi_pillar2_cases_80_plus, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_under15 = user_get_scalar<real_t>(user, "phi_pillar2_cases_under15", shared->phi_pillar2_cases_under15, NA_REAL, NA_REAL);
-  shared->phi_pillar2_cases_weekend = user_get_scalar<real_t>(user, "phi_pillar2_cases_weekend", shared->phi_pillar2_cases_weekend, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_weekend_15_24 = user_get_scalar<real_t>(user, "phi_pillar2_cases_weekend_15_24", shared->phi_pillar2_cases_weekend_15_24, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_weekend_25_49 = user_get_scalar<real_t>(user, "phi_pillar2_cases_weekend_25_49", shared->phi_pillar2_cases_weekend_25_49, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_weekend_50_64 = user_get_scalar<real_t>(user, "phi_pillar2_cases_weekend_50_64", shared->phi_pillar2_cases_weekend_50_64, NA_REAL, NA_REAL);
