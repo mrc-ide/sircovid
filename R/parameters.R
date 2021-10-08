@@ -8,10 +8,10 @@ sircovid_parameters_shared <- function(start_date, region,
   assert_sircovid_date(start_date)
   if (beta_type == "piecewise-linear") {
     beta_step <- sircovid_parameters_piecewise_linear(beta_date,
-                                                      beta_value %||% 0.08, dt)
+                                                      beta_value %||% 0.1, dt)
   } else if (beta_type == "piecewise-constant") {
     beta_step <- sircovid_parameters_piecewise_constant(beta_date,
-                                                        beta_value %||% 0.08,
+                                                        beta_value %||% 0.1,
                                                         dt)
   } else {
     stop("'beta_type' must be 'piecewise-linear' or 'piecewise-constant'")

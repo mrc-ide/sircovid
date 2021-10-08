@@ -13,10 +13,10 @@ test_that("can run the basic model", {
 
   ## Regnerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu        = c(75, 20, 91, 65, 74, 94, 60, 51, 14, 118),
-          deaths     = c(270870, 271290, 271266, 269612, 269550, 269695,
-                         270705, 270987, 270618, 270334),
-          deaths_inc = c(21, 10, 32, 20, 22, 36, 25, 12, 9, 43))
+    rbind(icu        = c(0, 1, 0, 1, 0, 0, 0, 1, 2, 1),
+          deaths     = c(311499, 310699, 310295, 309570, 310404, 309983,
+                         310010, 309520, 310794, 311039),
+          deaths_inc = c(0, 0, 3, 0, 0, 0, 1, 0, 1, 0))
   expect_equal(res, expected)
 })
 

@@ -1,3 +1,12 @@
+# sircovid 0.12.3
+
+* Default value of `I_A_transmission` updated to actual value currently used
+
+# sircovid 0.12.2
+
+* `booster_groups` renamed to `boosters_proportion` and now allows partial exclusion of age groups. For backward compatibility defaults have the same effect on the priority population.
+* Added `sircovid_models` and `check_sircovid_model` to list and check sircovid models respectively
+
 # sircovid 0.12.0
 
 * Introduce `lancelot` model. Initially a clone of the `carehomes` model with the added flexibility to fit to positivity or cases (pillar 2) by age. Respectively, `p_NC` and `phi_pillar2_cases` parameters can be generic or age-specific for fitting to aggregate or age stratified data.
@@ -8,7 +17,7 @@
 
 # sircovid 0.11.27
 
-* Introduced `phi_pillar2_cases_weekend`, which is used instead of `phi_pillar2_cases` on weekends 
+* Introduced `phi_pillar2_cases_weekend`, which is used instead of `phi_pillar2_cases` on weekends
 
 # sircovid 0.11.28
 
@@ -16,7 +25,7 @@
 
 # sircovid 0.11.27
 
-* Introduced `p_NC_weekend`, which is used instead of `p_NC` on weekends 
+* Introduced `p_NC_weekend`, which is used instead of `p_NC` on weekends
 
 # sircovid 0.11.26
 

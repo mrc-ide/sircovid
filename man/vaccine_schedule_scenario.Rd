@@ -14,7 +14,7 @@ vaccine_schedule_scenario(
   lag_days = NULL,
   boosters_future = NULL,
   boosters_prepend_zero = TRUE,
-  booster_groups = 1:19
+  booster_proportion = rep(1L, 19)
 )
 }
 \arguments{
@@ -48,17 +48,16 @@ if \code{lag_groups} is NULL.}
 the future. Names must be in ISO date format.}
 
 \item{boosters_prepend_zero}{If TRUE (default) and \code{boosters_future} is
-not NULL then adds sets booster doses to zero before the first date in
+not NULL then sets booster doses to zero before the first date in
 \code{boosters_future}. This is in contrast to when it is FALSE and the
 previous value in \code{schedule_past} is replicated until the first date in
 boosters_future. Note that this should rarely be FALSE as this will
 likely lead to duplicating daily doses that are already replicated in
 \code{doses_future}.}
 
-\item{booster_groups}{Which groups of the \code{priority_population} should be
-given a booster, default is all groups; ignored if
-\code{booster_daily_doses_value} is NULL. Sets all rows not corresponding
-to given indices to 0.}
+\item{booster_proportion}{Proportion of the groups in
+\code{priority_population} to boost, default is all groups; ignored if
+\code{booster_daily_doses_value} is NULL.}
 }
 \value{
 A \link{vaccine_schedule} object

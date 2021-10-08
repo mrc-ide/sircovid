@@ -158,3 +158,27 @@ inflate_state <- function(state1, info1, info2, fn) {
 
   state2
 }
+
+##' List the models available in this package
+##'
+##' @title Available sircovid Models
+##' @export
+sircovid_models <- function() {
+  c("basic", "carehomes", "lancelot")
+}
+
+
+##' Check that a model type is valid (i.e. in [sircovid_models])
+##'
+##' @title Check a model type
+##' @param sircovid_model String
+##' @export
+check_sircovid_model <- function(sircovid_model) {
+  assert_scalar(sircovid_model)
+  if (!(sircovid_model %in% sircovid_models())) {
+    stop(sprintf("Expected '%s' to be one of %s",
+                 sircovid_model,
+                 sprintf("{%s}", paste0(sircovid_models(), collapse = ", "))),
+         call. = FALSE)
+  }
+}

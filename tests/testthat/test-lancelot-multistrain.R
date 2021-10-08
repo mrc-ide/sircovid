@@ -985,7 +985,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
                            cross_immunity = 0)
 
   np <- 3L
-  mod <- lancelot$new(p, 0, np, seed = 1L)
+  mod <- lancelot$new(p, 0, np, seed = 2L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -1011,7 +1011,7 @@ test_that("Can calculate Rt with a second less infectious variant", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
 
   np <- 3L
-  mod <- lancelot$new(p, 0, np, seed = 1L)
+  mod <- lancelot$new(p, 0, np, seed = 2L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
