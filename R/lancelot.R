@@ -925,10 +925,11 @@ lancelot_compare <- function(state, observed, pars) {
   model_pillar2_65_79_cases <- phi_pillar2_cases_65_79 * model_sympt_cases_65_79
   model_pillar2_80_plus_cases <-
     phi_pillar2_cases_80_plus * model_sympt_cases_80_plus
-  model_pillar2_over25_cases <- pillar2_25_49_cases + pillar2_50_64_cases +
-    pillar2_65_79_cases + pillar2_80_plus_cases
-  model_pillar2_cases <- pillar2_under15_cases + pillar2_15_24_cases +
-    pillar2_over25_cases
+  model_pillar2_over25_cases <-
+    model_pillar2_25_49_cases + model_pillar2_50_64_cases +
+    model_pillar2_65_79_cases + model_pillar2_80_plus_cases
+  model_pillar2_cases <- model_pillar2_under15_cases +
+    model_pillar2_15_24_cases + model_pillar2_over25_cases
 
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
