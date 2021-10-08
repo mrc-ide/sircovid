@@ -2468,7 +2468,7 @@ test_that("Rt lower with perfect cross immunity", {
                            cross_immunity = 1)
 
   np <- 3L
-  mod <- lancelot$new(p, 0, np, seed = 1L)
+  mod <- lancelot$new(p, 0, np, seed = 2L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -2479,7 +2479,7 @@ test_that("Rt lower with perfect cross immunity", {
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
 
-  set.seed(1)
+  set.seed(2)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
   R <- y[index_R, , ]
