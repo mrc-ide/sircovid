@@ -14,7 +14,7 @@
 ##' @param ... Additional arguments passed to [odin.dust::odin_dust_]
 ##'   and from there into either odin's options or the gpu options.
 ##'
-##' @param real_t The type to use for floating point numbers. The
+##' @param real_type The type to use for floating point numbers. The
 ##'   default is "float" which differs from the CPU model but is
 ##'   typically what you want on the GPU.
 ##'
@@ -27,8 +27,8 @@
 ##'   on the GPU available to this computer.
 ##'
 ##' @export
-compile_gpu <- function(model = "carehomes", ..., real_t = "float",
+compile_gpu <- function(model = "carehomes", ..., real_type = "float",
                         gpu = TRUE) {
   path <- sircovid_file(sprintf("odin/%s.R", model))
-  odin.dust::odin_dust_(path, real_t = real_t, gpu = gpu, ...)
+  odin.dust::odin_dust_(path, real_type = real_type, gpu = gpu, ...)
 }

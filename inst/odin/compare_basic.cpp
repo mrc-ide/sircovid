@@ -1,27 +1,30 @@
-template <typename real_t>
+template <typename real_type, typename rng_state_type>
 HOSTDEVICE
-real_t ll_nbinom(real_t data, real_t model, real_t kappa, real_t exp_noise,
-                 dust::rng_state_t<real_t>& rng_state) {
+real_type ll_nbinom(real_type data, real_type model, real_type kappa,
+                    real_type exp_noise,
+                    rng_state_type& rng_state) {
   if (std::isnan(data)) {
     return 0;
   }
-  real_t mu = model + dust::distr::rexp(rng_state, exp_noise);
-  return dust::dnbinom_mu(data, kappa, mu, true);
+  real_type mu = model +
+    dust::random::exponential<real_type>(rng_state, exp_noise);
+  return dust::density::negative_binomial_mu(data, kappa, mu, true);
 }
 
-// [[odin.dust::compare_data(icu = real_t, deaths = real_t)]]
+// [[odin.dust::compare_data(icu = real_type, deaths = real_type)]]
 // [[odin.dust::compare_function]]
 template <typename T>
-typename T::real_t compare(const typename T::real_t * state,
-                           const typename T::data_t& data,
-                           const typename T::internal_t internal,
-                           std::shared_ptr<const typename T::shared_t> shared,
-                           dust::rng_state_t<typename T::real_t>& rng_state) {
-  typedef typename T::real_t real_t;
-  real_t ll_icu = ll_nbinom(data.icu, odin(phi_ICU) * odin(I_ICU_tot),
+typename T::real_type
+compare(const typename T::real_type * state,
+        const typename T::data_type& data,
+        const typename T::internal_type internal,
+        std::shared_ptr<const typename T::shared_type> shared,
+        typename T::rng_state_type& rng_state) {
+  typedef typename T::real_type real_type;
+  real_type ll_icu = ll_nbinom(data.icu, odin(phi_ICU) * odin(I_ICU_tot),
                             odin(kappa_ICU), odin(exp_noise),
                             rng_state);
-  real_t ll_deaths = ll_nbinom(data.deaths, odin(phi_death) * odin(D_inc),
+  real_type ll_deaths = ll_nbinom(data.deaths, odin(phi_death) * odin(D_inc),
                                odin(kappa_death), odin(exp_noise),
                                rng_state);
   return ll_icu + ll_deaths;

@@ -718,7 +718,7 @@ test_that("can exclude groups from vaccine_schedule_future", {
   expect_vector_nequal(
     colSums(n_to_vaccinate3), booster_doses, tol = 5)
   expect_equal(
-    sum(n_to_vaccinate3), sum(n[18:19, ]), tol = 5)
+    sum(n_to_vaccinate3), sum(n[18:19, ]), tolerance = 5)
 })
 
 
