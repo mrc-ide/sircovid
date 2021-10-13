@@ -3028,7 +3028,7 @@ test_that("can't wane or boost without second dose", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
 
   y <- mod$simulate((1:220) * 4)
   y <- mod$transform_variables(drop(y))
@@ -3079,7 +3079,7 @@ test_that("boosting and waning work as expected", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
 
   y <- mod$simulate((1:220) * 4)
   y <- mod$transform_variables(drop(y))
@@ -3105,7 +3105,7 @@ test_that("boosting and waning work as expected", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)$state
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$simulate((1:220) * 4)
   y <- mod$transform_variables(drop(y))
 
@@ -3132,7 +3132,7 @@ test_that("boosting and waning work as expected", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)$state
-  mod$set_state(state)
+  mod$update_state(state = state)
   y <- mod$simulate((1:150) * 4)
   y <- mod$transform_variables(drop(y))
 
@@ -3184,7 +3184,7 @@ test_that("run sensible vaccination schedule with waning and boosters", {
 
   state <- lancelot_initial(info, 1, p)$state
 
-  mod$set_state(state)
+  mod$update_state(state = state)
 
   set.seed(1)
   y <- mod$simulate((1:220) * 4)
