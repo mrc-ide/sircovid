@@ -4,7 +4,8 @@ if (packageVersion("odin.dust") < "0.2.11") {
 }
 
 options <- odin.dust::odin_dust_options(
-  rng_state_type = "dust::random::xoshiro256starstar_state")
+  rng_state_type = "dust::random::xoshiro256plus_state"
+)
 withr::with_options(
   list(odin.no_check_naked_index = TRUE),
   withr::with_collate(

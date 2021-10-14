@@ -324,7 +324,7 @@ test_that("No-one recovers if p_R = 0", {
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_R_step[, ] <- 0
 
-  mod <- carehomes$new(p, 0, 1)
+  mod <- carehomes$new(p, 0, 1, seed = 1L)
   info <- mod$info()
   mod$update_state(state = carehomes_initial(info, 1, p)$state)
   y <- mod$transform_variables(

@@ -785,7 +785,10 @@ test_that("wtmean_Rt works as expected", {
                             strain_transmission = c(1, 1),
                             cross_immunity = 0)
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  ## Some seed tweaking needed here to avoid stochastic extinction
+  ## (leading to NaNs in prob_strain)
+  ## xoshoro256+: not 1, 7, 11, 13, 16, 23, 29, 30, 33, 36, 38, 42, 46
+  mod <- carehomes$new(p, 0, np, seed = 2L)
   initial <- carehomes_initial(mod$info(), np, p)
   mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
@@ -880,7 +883,10 @@ test_that("Can calculate Rt with an empty second variant ", {
                             cross_immunity = 0)
 
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  ## Some seed tweaking needed here to avoid stochastic extinction
+  ## (leading to NaNs in prob_strain)
+  ## xoshoro256+: not 1, 7, 11, 13, 16, 23, 29, 30, 33, 36, 38, 42, 46
+  mod <- carehomes$new(p, 0, np, seed = 2L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -906,7 +912,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
 
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- carehomes$new(p, 0, np, seed = 2L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -991,8 +997,9 @@ test_that("Can calculate Rt with a second less infectious variant", {
                             strain_seed_rate = c(10, 0),
                             cross_immunity = 0)
 
+  ## xoshiro256+: not 2, 10, 12, 28, 32, 36, 41, 44, 49
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- carehomes$new(p, 0, np, seed = 3L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -2614,7 +2621,7 @@ test_that("wtmean_Rt works as expected with interpolation", {
                             strain_transmission = c(1, 1),
                             cross_immunity = 0)
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- carehomes$new(p, 0, np, seed = 2L)
   initial <- carehomes_initial(mod$info(), np, p)
   mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
