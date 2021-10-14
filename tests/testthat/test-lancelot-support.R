@@ -205,12 +205,9 @@ test_that("lancelot_parameters returns a list of parameters", {
       "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D", "N_tot_under15",
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
       "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
-      "N_tot_react", "p_NC", "p_NC_weekend",  "p_NC_under15", "p_NC_15_24",
-      "p_NC_25_49", "p_NC_50_64", "p_NC_65_79", "p_NC_80_plus",
-      "p_NC_weekend_under15", "p_NC_weekend_15_24", "p_NC_weekend_25_49",
-      "p_NC_weekend_50_64", "p_NC_weekend_65_79", "p_NC_weekend_80_plus",
-      "I_A_transmission", "I_P_transmission", "I_C_1_transmission",
-      "I_C_2_transmission", "n_groups", "initial_I", "cross_immunity"))
+      "N_tot_react", "I_A_transmission", "I_P_transmission",
+      "I_C_1_transmission", "I_C_2_transmission", "n_groups", "initial_I",
+      "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -680,7 +677,7 @@ test_that("lancelot_compare combines likelihood correctly", {
   ## use same state values except time
   state <- state[, 1, drop = FALSE]
   time <- seq(20, 26, 1)
-  age_nms <- c("", "_under15", "_15_24", "_25_49",
+  age_nms <- c("_under15", "_15_24", "_25_49",
                "_50_64", "_65_79", "_80_plus")
 
   for (i in age_nms) {

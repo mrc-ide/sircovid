@@ -138,47 +138,26 @@ typename T::real_t compare(const typename T::real_t * state,
     odin(sympt_cases_non_variant_over25_inc);
   const real_t model_react_pos = odin(react_pos);
 
-  const real_t p_NC_today =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(p_NC_weekend) : odin(p_NC);
+  const int time = static_cast<int>(odin(time));
+
   const real_t p_NC_today_under15 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    ((time + 3) % 7 < 2) ?
     odin(p_NC_weekend_under15) : odin(p_NC_under15);
   const real_t p_NC_today_15_24 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    ((time + 3) % 7 < 2) ?
     odin(p_NC_weekend_15_24) : odin(p_NC_15_24);
   const real_t p_NC_today_25_49 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    ((time + 3) % 7 < 2) ?
     odin(p_NC_weekend_25_49) : odin(p_NC_25_49);
   const real_t p_NC_today_50_64 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    ((time + 3) % 7 < 2) ?
     odin(p_NC_weekend_50_64) : odin(p_NC_50_64);
   const real_t p_NC_today_65_79 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    ((time + 3) % 7 < 2) ?
     odin(p_NC_weekend_65_79) : odin(p_NC_65_79);
   const real_t p_NC_today_80_plus =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
+    ((time + 3) % 7 < 2) ?
     odin(p_NC_weekend_80_plus) : odin(p_NC_80_plus);
-
-  const real_t pillar2_negs =
-    p_NC_today * (odin(N_tot_all) - model_sympt_cases);
-  const real_t model_pillar2_prob_pos =
-    test_prob_pos(model_sympt_cases,
-                  pillar2_negs,
-                  odin(pillar2_sensitivity),
-                  odin(pillar2_specificity),
-                  odin(exp_noise),
-                  rng_state);
-
-  const real_t pillar2_over25_negs =
-    p_NC_today * (odin(N_tot_over25) - model_sympt_cases_over25);
-  const real_t model_pillar2_over25_prob_pos =
-    test_prob_pos(model_sympt_cases_over25,
-                  pillar2_over25_negs,
-                  odin(pillar2_sensitivity),
-                  odin(pillar2_specificity),
-                  odin(exp_noise),
-                  rng_state);
 
   const real_t pillar2_under15_negs =
     p_NC_today_under15 * (odin(N_tot_under15) - model_sympt_cases_under15);
@@ -239,6 +218,65 @@ typename T::real_t compare(const typename T::real_t * state,
                   odin(pillar2_specificity),
                   odin(exp_noise),
                   rng_state);
+
+  const real_t pillar2_over25_negs =
+    pillar2_25_49_negs + pillar2_50_64_negs +
+    pillar2_65_79_negs + pillar2_80_plus_negs;
+  const real_t model_pillar2_over25_prob_pos =
+    test_prob_pos(model_sympt_cases_over25,
+                  pillar2_over25_negs,
+                  odin(pillar2_sensitivity),
+                  odin(pillar2_specificity),
+                  odin(exp_noise),
+                  rng_state);
+
+  const real_t pillar2_negs =
+    pillar2_under15_negs + pillar2_15_24_negs + pillar2_over25_negs;
+  const real_t model_pillar2_prob_pos =
+    test_prob_pos(model_sympt_cases,
+                  pillar2_negs,
+                  odin(pillar2_sensitivity),
+                  odin(pillar2_specificity),
+                  odin(exp_noise),
+                  rng_state);
+
+  const real_t phi_pillar2_cases_today_under15 =
+    ((time + 3) % 7 < 2) ?
+    odin(phi_pillar2_cases_weekend_under15) : odin(phi_pillar2_cases_under15);
+  const real_t phi_pillar2_cases_today_15_24 =
+    ((time + 3) % 7 < 2) ?
+    odin(phi_pillar2_cases_weekend_15_24) : odin(phi_pillar2_cases_15_24);
+  const real_t phi_pillar2_cases_today_25_49 =
+    ((time + 3) % 7 < 2) ?
+    odin(phi_pillar2_cases_weekend_25_49) : odin(phi_pillar2_cases_25_49);
+  const real_t phi_pillar2_cases_today_50_64 =
+    ((time + 3) % 7 < 2) ?
+    odin(phi_pillar2_cases_weekend_50_64) : odin(phi_pillar2_cases_50_64);
+  const real_t phi_pillar2_cases_today_65_79 =
+    ((time + 3) % 7 < 2) ?
+    odin(phi_pillar2_cases_weekend_65_79) : odin(phi_pillar2_cases_65_79);
+  const real_t phi_pillar2_cases_today_80_plus =
+    ((time + 3) % 7 < 2) ?
+    odin(phi_pillar2_cases_weekend_80_plus) : odin(phi_pillar2_cases_80_plus);
+
+  const real_t model_pillar2_under15_cases =
+    phi_pillar2_cases_today_under15 * model_sympt_cases_under15;
+  const real_t model_pillar2_15_24_cases =
+    phi_pillar2_cases_today_15_24 * model_sympt_cases_15_24;
+  const real_t model_pillar2_25_49_cases =
+    phi_pillar2_cases_today_25_49 * model_sympt_cases_25_49;
+  const real_t model_pillar2_50_64_cases =
+    phi_pillar2_cases_today_50_64 * model_sympt_cases_50_64;
+  const real_t model_pillar2_65_79_cases =
+    phi_pillar2_cases_today_65_79 * model_sympt_cases_65_79;
+  const real_t model_pillar2_80_plus_cases =
+    phi_pillar2_cases_today_80_plus * model_sympt_cases_80_plus;
+  const real_t model_pillar2_over25_cases =
+    model_pillar2_25_49_cases + model_pillar2_50_64_cases +
+    model_pillar2_65_79_cases + model_pillar2_80_plus_cases;
+  const real_t model_pillar2_cases =
+    model_pillar2_under15_cases + model_pillar2_15_24_cases +
+    model_pillar2_over25_cases;
 
   const real_t model_react_pos_capped =
     min(model_react_pos, odin(N_tot_react));
@@ -373,60 +411,37 @@ typename T::real_t compare(const typename T::real_t * state,
     ll_betabinom(data.pillar2_80_plus_pos, data.pillar2_80_plus_tot,
                  model_pillar2_80_plus_prob_pos, odin(rho_pillar2_tests));
 
-
-  const real_t phi_pillar2_cases_today =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(phi_pillar2_cases_weekend) : odin(phi_pillar2_cases);
-  const real_t phi_pillar2_cases_today_under15 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(phi_pillar2_cases_weekend_under15) : odin(phi_pillar2_cases_under15);
-  const real_t phi_pillar2_cases_today_15_24 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(phi_pillar2_cases_weekend_15_24) : odin(phi_pillar2_cases_15_24);
-  const real_t phi_pillar2_cases_today_25_49 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(phi_pillar2_cases_weekend_25_49) : odin(phi_pillar2_cases_25_49);
-  const real_t phi_pillar2_cases_today_50_64 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(phi_pillar2_cases_weekend_50_64) : odin(phi_pillar2_cases_50_64);
-  const real_t phi_pillar2_cases_today_65_79 =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(phi_pillar2_cases_weekend_65_79) : odin(phi_pillar2_cases_65_79);
-  const real_t phi_pillar2_cases_today_80_plus =
-    ((static_cast<int>(odin(time)) + 3) % 7 < 2) ?
-    odin(phi_pillar2_cases_weekend_80_plus) : odin(phi_pillar2_cases_80_plus);
-
-  const real_t ll_pillar2_cases =
-    ll_nbinom(data.pillar2_cases,
-              phi_pillar2_cases_today * model_sympt_cases,
-              odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
-  const real_t ll_pillar2_over25_cases =
-    ll_nbinom(data.pillar2_over25_cases,
-              phi_pillar2_cases_today * model_sympt_cases_over25,
-              odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
   const real_t ll_pillar2_under15_cases =
     ll_nbinom(data.pillar2_under15_cases,
-              phi_pillar2_cases_today_under15 * model_sympt_cases_under15,
+              model_pillar2_under15_cases,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
   const real_t ll_pillar2_15_24_cases =
     ll_nbinom(data.pillar2_15_24_cases,
-              phi_pillar2_cases_today_15_24 * model_sympt_cases_15_24,
+              model_pillar2_15_24_cases,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
   const real_t ll_pillar2_25_49_cases =
     ll_nbinom(data.pillar2_25_49_cases,
-              phi_pillar2_cases_today_25_49 * model_sympt_cases_25_49,
+              model_pillar2_25_49_cases,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
   const real_t ll_pillar2_50_64_cases =
     ll_nbinom(data.pillar2_50_64_cases,
-              phi_pillar2_cases_today_50_64 * model_sympt_cases_50_64,
+              model_pillar2_50_64_cases,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
   const real_t ll_pillar2_65_79_cases =
     ll_nbinom(data.pillar2_65_79_cases,
-              phi_pillar2_cases_today_65_79 * model_sympt_cases_65_79,
+              model_pillar2_65_79_cases,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
   const real_t ll_pillar2_80_plus_cases =
     ll_nbinom(data.pillar2_80_plus_cases,
-              phi_pillar2_cases_today_80_plus * model_sympt_cases_80_plus,
+              model_pillar2_80_plus_cases,
+              odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
+  const real_t ll_pillar2_over25_cases =
+    ll_nbinom(data.pillar2_over25_cases,
+              model_pillar2_over25_cases,
+              odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
+  const real_t ll_pillar2_cases =
+    ll_nbinom(data.pillar2_cases,
+              model_pillar2_cases,
               odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
 
   const real_t ll_react =

@@ -53,60 +53,6 @@ NULL
 ##'
 ##' @param m_CHR Contact rate between carehome residents
 ##'
-##' @param p_NC Proportion of population who do not have covid but have
-##'   covid-like symptoms that could lead to getting a PCR test on a weekday
-##'
-##' @param p_NC_weekend Proportion of population who do not have covid but have
-##'   covid-like symptoms that could lead to getting a PCR test on a weekend
-##'
-##' @param p_NC_under15 Proportion of population under 15 who do not have covid
-##'   but have covid-like symptoms that could lead to getting a PCR test on a
-##'   weekday
-##'
-##' @param p_NC_weekend_under15 Proportion of population under 15 who do not
-##'   have covid but have covid-like symptoms that could lead to getting a PCR
-##'   test on a weekend
-##'
-##' @param p_NC_15_24 Proportion of population 15 to 24 who do not have covid
-##'   but have covid-like symptoms that could lead to getting a PCR test on a
-##'   weekday
-##'
-##' @param p_NC_weekend_15_24 Proportion of population 15 to 24 who do not
-##'   have covid but have covid-like symptoms that could lead to getting a PCR
-##'   test on a weekend
-##'
-##' @param p_NC_25_49 Proportion of population 25 to 49 who do not have covid
-##'   but have covid-like symptoms that could lead to getting a PCR test on a
-##'   weekday
-##'
-##' @param p_NC_weekend_25_49 Proportion of population 25 to 49 who do not
-##'   have covid but have covid-like symptoms that could lead to getting a PCR
-##'   test on a weekend
-##'
-##' @param p_NC_50_64 Proportion of population 50 to 64 who do not have covid
-##'   but have covid-like symptoms that could lead to getting a PCR test on a
-##'   weekday
-##'
-##' @param p_NC_weekend_50_64 Proportion of population 50 to 64 who do not
-##'   have covid but have covid-like symptoms that could lead to getting a PCR
-##'   test on a weekend
-##'
-##' @param p_NC_65_79 Proportion of population 65 to 79 who do not have covid
-##'   but have covid-like symptoms that could lead to getting a PCR test on a
-##'   weekday
-##'
-##' @param p_NC_weekend_65_79 Proportion of population 65 to 79 who do not
-##'   have covid but have covid-like symptoms that could lead to getting a PCR
-##'   test on a weekend
-##'
-##' @param p_NC_80_plus Proportion of population 80 plus who do not have covid
-##'   but have covid-like symptoms that could lead to getting a PCR test on a
-##'   weekday
-##'
-##' @param p_NC_weekend_80_plus Proportion of population 80 plus who do not
-##'   have covid but have covid-like symptoms that could lead to getting a PCR
-##'   test on a weekend
-##'
 ##' @param strain_transmission Vector of length two for relative
 ##'   transmissibility of each strain modelled. First element should be 1.
 ##'   Length will define the number of strains used in the model, either 1 or
@@ -425,20 +371,6 @@ lancelot_parameters <- function(start_date, region,
                                 eps = 0.1,
                                 m_CHW = 4e-6,
                                 m_CHR = 5e-5,
-                                p_NC = 0.01,
-                                p_NC_weekend = 0.005,
-                                p_NC_under15 = 0.01,
-                                p_NC_weekend_under15 = 0.005,
-                                p_NC_15_24 = 0.01,
-                                p_NC_weekend_15_24 = 0.005,
-                                p_NC_25_49 = 0.01,
-                                p_NC_weekend_25_49 = 0.005,
-                                p_NC_50_64 = 0.01,
-                                p_NC_weekend_50_64 = 0.005,
-                                p_NC_65_79 = 0.01,
-                                p_NC_weekend_65_79 = 0.005,
-                                p_NC_80_plus = 0.01,
-                                p_NC_weekend_80_plus = 0.005,
                                 strain_transmission = 1,
                                 strain_seed_date = NULL,
                                 strain_seed_rate = NULL,
@@ -531,22 +463,6 @@ lancelot_parameters <- function(start_date, region,
   ## assume CHR [19] are 1/4 aged 65-79 and 3/4 80 plus
   ret$N_tot_65_79 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
-
-  ## Proportion of population with covid-like symptoms without covid
-  ret$p_NC <- p_NC
-  ret$p_NC_weekend <- p_NC_weekend
-  ret$p_NC_under15 <- p_NC_under15
-  ret$p_NC_weekend_under15 <- p_NC_weekend_under15
-  ret$p_NC_15_24 <- p_NC_15_24
-  ret$p_NC_weekend_15_24 <- p_NC_weekend_15_24
-  ret$p_NC_25_49 <- p_NC_25_49
-  ret$p_NC_weekend_25_49 <- p_NC_weekend_25_49
-  ret$p_NC_50_64 <- p_NC_50_64
-  ret$p_NC_weekend_50_64 <- p_NC_weekend_50_64
-  ret$p_NC_65_79 <- p_NC_65_79
-  ret$p_NC_weekend_65_79 <- p_NC_weekend_65_79
-  ret$p_NC_80_plus <- p_NC_80_plus
-  ret$p_NC_weekend_80_plus <- p_NC_weekend_80_plus
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.223
@@ -835,8 +751,6 @@ lancelot_compare <- function(state, observed, pars) {
   ## time state will be the same so we can just use the first value
   time <- state["time", 1L]
 
-  p_NC <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend else
-    pars$p_NC
   p_NC_under15 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_under15 else
     pars$p_NC_under15
   p_NC_15_24 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_15_24 else
@@ -850,8 +764,6 @@ lancelot_compare <- function(state, observed, pars) {
   p_NC_80_plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80_plus else
     pars$p_NC_80_plus
 
-  phi_pillar2_cases <- if ((time + 3) %% 7 < 2)
-    pars$phi_pillar2_cases_weekend else pars$phi_pillar2_cases
   phi_pillar2_cases_under15 <- if ((time + 3) %% 7 < 2)
     pars$phi_pillar2_cases_weekend_under15 else pars$phi_pillar2_cases_under15
   phi_pillar2_cases_15_24 <- if ((time + 3) %% 7 < 2)
@@ -865,23 +777,7 @@ lancelot_compare <- function(state, observed, pars) {
   phi_pillar2_cases_80_plus <- if ((time + 3) %% 7 < 2)
     pars$phi_pillar2_cases_weekend_80_plus else pars$phi_pillar2_cases_80_plus
 
-  pillar2_negs <- p_NC * (pars$N_tot_all - model_sympt_cases)
-  model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
-                                          pillar2_negs,
-                                          pars$pillar2_sensitivity,
-                                          pars$pillar2_specificity,
-                                          pars$exp_noise)
-
-  ## Pillar 2 over 25s
-  pillar2_over25_negs <- p_NC * (pars$N_tot_over25 -
-                                   model_sympt_cases_over25)
-  model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
-                                                 pillar2_over25_negs,
-                                                 pars$pillar2_sensitivity,
-                                                 pars$pillar2_specificity,
-                                                 pars$exp_noise)
-
-  ## New pillar 2 by age
+  ## Calculate Pillar 2 probability of positive test
   pillar2_under15_negs <- p_NC_under15 * (pars$N_tot_under15 -
                                             model_sympt_cases_under15)
   model_pillar2_under15_prob_pos <- test_prob_pos(model_sympt_cases_under15,
@@ -929,6 +825,38 @@ lancelot_compare <- function(state, observed, pars) {
                                                   pars$pillar2_sensitivity,
                                                   pars$pillar2_specificity,
                                                   pars$exp_noise)
+
+  ## Pillar 2 over 25s
+  pillar2_over25_negs <- pillar2_25_49_negs + pillar2_50_64_negs +
+    pillar2_65_79_negs + pillar2_80_plus_negs
+  model_pillar2_over25_prob_pos <- test_prob_pos(model_sympt_cases_over25,
+                                                 pillar2_over25_negs,
+                                                 pars$pillar2_sensitivity,
+                                                 pars$pillar2_specificity,
+                                                 pars$exp_noise)
+
+  pillar2_negs <- pillar2_under15_negs + pillar2_15_24_negs +
+    pillar2_over25_negs
+  model_pillar2_prob_pos <- test_prob_pos(model_sympt_cases,
+                                          pillar2_negs,
+                                          pars$pillar2_sensitivity,
+                                          pars$pillar2_specificity,
+                                          pars$exp_noise)
+
+  model_pillar2_under15_cases <-
+    phi_pillar2_cases_under15 * model_sympt_cases_under15
+  model_pillar2_15_24_cases <- phi_pillar2_cases_15_24 * model_sympt_cases_15_24
+  model_pillar2_25_49_cases <- phi_pillar2_cases_25_49 * model_sympt_cases_25_49
+  model_pillar2_50_64_cases <- phi_pillar2_cases_50_64 * model_sympt_cases_50_64
+  model_pillar2_65_79_cases <- phi_pillar2_cases_65_79 * model_sympt_cases_65_79
+  model_pillar2_80_plus_cases <-
+    phi_pillar2_cases_80_plus * model_sympt_cases_80_plus
+  model_pillar2_over25_cases <-
+    model_pillar2_25_49_cases + model_pillar2_50_64_cases +
+    model_pillar2_65_79_cases + model_pillar2_80_plus_cases
+  model_pillar2_cases <- model_pillar2_under15_cases +
+    model_pillar2_15_24_cases + model_pillar2_over25_cases
+
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
   ## It is possible that model_react_pos > pars$N_tot_react, so we cap it to
@@ -1063,44 +991,38 @@ lancelot_compare <- function(state, observed, pars) {
                                            model_pillar2_80_plus_prob_pos,
                                            pars$rho_pillar2_tests)
 
-  ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
-                                phi_pillar2_cases * model_sympt_cases,
-                                pars$kappa_pillar2_cases, exp_noise)
-
-  ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
-                                       phi_pillar2_cases *
-                                         model_sympt_cases_over25,
-                                       pars$kappa_pillar2_cases, exp_noise)
-
   ll_pillar2_under15_cases <- ll_nbinom(observed$pillar2_under15_cases,
-                                        phi_pillar2_cases_under15 *
-                                          model_sympt_cases_under15,
+                                        model_pillar2_under15_cases,
                                         pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_15_24_cases <- ll_nbinom(observed$pillar2_15_24_cases,
-                                      phi_pillar2_cases_15_24 *
-                                        model_sympt_cases_15_24,
+                                      model_pillar2_15_24_cases,
                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_25_49_cases <- ll_nbinom(observed$pillar2_25_49_cases,
-                                      phi_pillar2_cases_25_49 *
-                                        model_sympt_cases_25_49,
+                                      model_pillar2_25_49_cases,
                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_50_64_cases <- ll_nbinom(observed$pillar2_50_64_cases,
-                                      phi_pillar2_cases_50_64 *
-                                        model_sympt_cases_50_64,
+                                      model_pillar2_50_64_cases,
                                       pars$kappa_pillar2_cases, exp_noise)
 
   ll_pillar2_65_79_cases <- ll_nbinom(observed$pillar2_65_79_cases,
-                                      phi_pillar2_cases_65_79 *
-                                        model_sympt_cases_65_79,
+                                      model_pillar2_65_79_cases,
                                       pars$kappa_pillar2_cases, exp_noise)
 
+
   ll_pillar2_80_plus_cases <- ll_nbinom(observed$pillar2_80_plus_cases,
-                                        phi_pillar2_cases_80_plus *
-                                          model_sympt_cases_80_plus,
+                                        model_pillar2_80_plus_cases,
                                         pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_over25_cases <- ll_nbinom(observed$pillar2_over25_cases,
+                                       model_pillar2_over25_cases,
+                                       pars$kappa_pillar2_cases, exp_noise)
+
+  ll_pillar2_cases <- ll_nbinom(observed$pillar2_cases,
+                                model_pillar2_cases,
+                                pars$kappa_pillar2_cases, exp_noise)
 
   ll_react <- ll_binom(observed$react_pos,
                        observed$react_tot,
@@ -1867,8 +1789,6 @@ lancelot_parameters_observation <- function(exp_noise = 1e6) {
     kappa_all_admission = 2,
     ## Pillar 2 testing
     kappa_pillar2_cases = 2,
-    phi_pillar2_cases = 1,
-    phi_pillar2_cases_weekend = 0.8,
     phi_pillar2_cases_under15 = 1,
     phi_pillar2_cases_weekend_under15 = 0.8,
     phi_pillar2_cases_15_24 = 1,
@@ -1883,6 +1803,18 @@ lancelot_parameters_observation <- function(exp_noise = 1e6) {
     phi_pillar2_cases_weekend_80_plus = 0.8,
     ##
     rho_pillar2_tests = 0.1,
+    p_NC_under15 = 0.01,
+    p_NC_weekend_under15 = 0.005,
+    p_NC_15_24 = 0.01,
+    p_NC_weekend_15_24 = 0.005,
+    p_NC_25_49 = 0.01,
+    p_NC_weekend_25_49 = 0.005,
+    p_NC_50_64 = 0.01,
+    p_NC_weekend_50_64 = 0.005,
+    p_NC_65_79 = 0.01,
+    p_NC_weekend_65_79 = 0.005,
+    p_NC_80_plus = 0.01,
+    p_NC_weekend_80_plus = 0.005,
     ##
     ## rate for exponential noise, generally something big so noise is
     ## small (but non-zero))
