@@ -155,7 +155,7 @@ compare(const typename T::real_type * state,
 class basic {
 public:
   typedef double real_type;
-  typedef dust::random::xoshiro256plus_state rng_state_type;
+  typedef dust::random::generator<real_type> rng_state_type;
   struct ALIGN(16) data_type {
     real_type icu;
     real_type deaths;

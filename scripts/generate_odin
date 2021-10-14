@@ -3,11 +3,8 @@ if (packageVersion("odin.dust") < "0.2.11") {
   stop("Please upgrade odin.dust to at least 0.2.11")
 }
 
-options <- odin.dust::odin_dust_options(
-  rng_state_type = "dust::random::xoshiro256plus_state"
-)
 withr::with_options(
   list(odin.no_check_naked_index = TRUE),
   withr::with_collate(
     "C",
-    odin.dust::odin_dust_package(here::here(), options)))
+    odin.dust::odin_dust_package(here::here())))
