@@ -1,3 +1,7 @@
+# sircovid 0.12.4
+
+* `p_NC` and `phi_pillar2_cases` now must be age-specific for `lancelot` model, including when fitting to aggregated Pillar 2 data.
+
 # sircovid 0.12.3
 
 * Default value of `I_A_transmission` updated to actual value currently used

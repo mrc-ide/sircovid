@@ -20,20 +20,6 @@ lancelot_parameters(
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
-  p_NC = 0.01,
-  p_NC_weekend = 0.005,
-  p_NC_under15 = 0.01,
-  p_NC_weekend_under15 = 0.005,
-  p_NC_15_24 = 0.01,
-  p_NC_weekend_15_24 = 0.005,
-  p_NC_25_49 = 0.01,
-  p_NC_weekend_25_49 = 0.005,
-  p_NC_50_64 = 0.01,
-  p_NC_weekend_50_64 = 0.005,
-  p_NC_65_79 = 0.01,
-  p_NC_weekend_65_79 = 0.005,
-  p_NC_80_plus = 0.01,
-  p_NC_weekend_80_plus = 0.005,
   strain_transmission = 1,
   strain_seed_date = NULL,
   strain_seed_rate = NULL,
@@ -128,60 +114,6 @@ will enter the model as asymptomatic 15-19 year olds at
 residents or workers}
 
 \item{m_CHR}{Contact rate between carehome residents}
-
-\item{p_NC}{Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekday}
-
-\item{p_NC_weekend}{Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekend}
-
-\item{p_NC_under15}{Proportion of population under 15 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday}
-
-\item{p_NC_weekend_under15}{Proportion of population under 15 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend}
-
-\item{p_NC_15_24}{Proportion of population 15 to 24 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday}
-
-\item{p_NC_weekend_15_24}{Proportion of population 15 to 24 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend}
-
-\item{p_NC_25_49}{Proportion of population 25 to 49 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday}
-
-\item{p_NC_weekend_25_49}{Proportion of population 25 to 49 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend}
-
-\item{p_NC_50_64}{Proportion of population 50 to 64 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday}
-
-\item{p_NC_weekend_50_64}{Proportion of population 50 to 64 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend}
-
-\item{p_NC_65_79}{Proportion of population 65 to 79 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday}
-
-\item{p_NC_weekend_65_79}{Proportion of population 65 to 79 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend}
-
-\item{p_NC_80_plus}{Proportion of population 80 plus who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday}
-
-\item{p_NC_weekend_80_plus}{Proportion of population 80 plus who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend}
 
 \item{strain_transmission}{Vector of length two for relative
 transmissibility of each strain modelled. First element should be 1.
