@@ -12,13 +12,13 @@ test_that("can generate GPU interface and pass arguments", {
   mockery::expect_called(mock_odin_dust, 1L)
   expect_equal(
     mockery::mock_args(mock_odin_dust)[[1]],
-    list(sircovid_file("odin/carehomes.R"), real_t = "float", gpu = TRUE))
+    list(sircovid_file("odin/carehomes.R"), real_type = "float", gpu = TRUE))
 
-  compile_gpu(real_t = "double", rewrite_dims = TRUE,
+  compile_gpu(real_type = "double", rewrite_dims = TRUE,
               gpu = FALSE, gpu_generate = TRUE)
   expect_equal(
     mockery::mock_args(mock_odin_dust)[[2]],
-    list(sircovid_file("odin/carehomes.R"), real_t = "double", gpu = FALSE,
+    list(sircovid_file("odin/carehomes.R"), real_type = "double", gpu = FALSE,
          rewrite_dims = TRUE, gpu_generate = TRUE))
 })
 
