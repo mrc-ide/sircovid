@@ -1959,8 +1959,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
                            vaccine_index_dose2 = 2L,
-                           vaccine_catchup_fraction = 0,
-                           initial_I = 20)
+                           vaccine_catchup_fraction = 0)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, 1, seed = 1L)
