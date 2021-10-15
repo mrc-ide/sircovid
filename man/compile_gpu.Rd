@@ -4,7 +4,7 @@
 \alias{compile_gpu}
 \title{Create GPU model}
 \usage{
-compile_gpu(model = "carehomes", ..., real_t = "float", gpu = TRUE)
+compile_gpu(model = "carehomes", ..., real_type = "float", gpu = TRUE)
 }
 \arguments{
 \item{model}{The name of a sircovid model, either \code{carehomes} or
@@ -13,7 +13,7 @@ compile_gpu(model = "carehomes", ..., real_t = "float", gpu = TRUE)
 \item{...}{Additional arguments passed to \link[odin.dust:odin_dust]{odin.dust::odin_dust_}
 and from there into either odin's options or the gpu options.}
 
-\item{real_t}{The type to use for floating point numbers. The
+\item{real_type}{The type to use for floating point numbers. The
 default is "float" which differs from the CPU model but is
 typically what you want on the GPU.}
 

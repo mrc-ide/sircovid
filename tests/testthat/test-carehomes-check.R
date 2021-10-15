@@ -324,9 +324,19 @@ test_that("No-one recovers if p_R = 0", {
   p <- carehomes_parameters(0, "england", waning_rate = 1 / 20)
   p$p_R_step[, ] <- 0
 
-  mod <- carehomes$new(p, 0, 1, seed = 1L)
+  mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = carehomes_initial(info, 1, p)$state)
+
+  ## Add initial individuals into compartments that feed into R
+  y0 <- carehomes_initial(info, 1, p)$state
+  y0[info$index$I_A] <- 50
+  y0[info$index$I_C_2] <- 50
+  y0[info$index$H_R_unconf] <- 50
+  y0[info$index$H_R_conf] <- 50
+  y0[info$index$W_R_unconf] <- 50
+  y0[info$index$W_R_conf] <- 50
+
+  mod$update_state(state = y0)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -342,7 +352,7 @@ test_that("No-one recovers if p_R = 0", {
 test_that("Everyone recovers in edge case", {
   ## This test is primarily to test the behaviour for p_R = 1
   p <- carehomes_parameters(0, "england", beta_value = 1e9)
-  p$p_G_D_step[, ] <- 1
+  p$p_R_step[, ] <- 1
   p$p_G_D_step[, ] <- 0
   p$p_ICU_D_step[, ] <- 0
   p$p_H_D_step[, ] <- 0
@@ -350,7 +360,17 @@ test_that("Everyone recovers in edge case", {
 
   mod <- carehomes$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = carehomes_initial(info, 1, p)$state)
+
+  ## Add initial individuals into compartments that feed into R
+  y0 <- carehomes_initial(info, 1, p)$state
+  y0[info$index$I_A] <- 50
+  y0[info$index$I_C_2] <- 50
+  y0[info$index$H_R_unconf] <- 50
+  y0[info$index$H_R_conf] <- 50
+  y0[info$index$W_R_unconf] <- 50
+  y0[info$index$W_R_conf] <- 50
+
+  mod$update_state(state = y0)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
