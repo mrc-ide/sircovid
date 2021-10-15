@@ -785,10 +785,7 @@ test_that("wtmean_Rt works as expected", {
                             strain_transmission = c(1, 1),
                             cross_immunity = 0)
   np <- 3L
-  ## Some seed tweaking needed here to avoid stochastic extinction
-  ## (leading to NaNs in prob_strain)
-  ## xoshoro256+: not 1, 7, 11, 13, 16, 23, 29, 30, 33, 36, 38, 42, 46
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
   initial <- carehomes_initial(mod$info(), np, p)
   mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt
@@ -883,10 +880,7 @@ test_that("Can calculate Rt with an empty second variant ", {
                             cross_immunity = 0)
 
   np <- 3L
-  ## Some seed tweaking needed here to avoid stochastic extinction
-  ## (leading to NaNs in prob_strain)
-  ## xoshoro256+: not 1, 7, 11, 13, 16, 23, 29, 30, 33, 36, 38, 42, 46
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -912,7 +906,7 @@ test_that("Can calculate Rt with an empty second variant ", {
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
 
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -997,9 +991,8 @@ test_that("Can calculate Rt with a second less infectious variant", {
                             strain_seed_rate = c(10, 0),
                             cross_immunity = 0)
 
-  ## xoshiro256+: not 2, 10, 12, 28, 32, 36, 41, 44, 49
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 3L)
+  mod <- carehomes$new(p, 0, np, seed = 2L)
 
   initial <- carehomes_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
@@ -1409,7 +1402,7 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
                             strain_transmission = c(1, 1))
 
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
 
   info <- mod$info()
   initial <- carehomes_initial(info, 1, p)
@@ -2107,16 +2100,17 @@ test_that("Can only move to S from R3 and R4 to S", {
   mod <- carehomes$new(p, 0, np, seed = 1L)
   info <- mod$info()
 
-  initial <- carehomes_initial(info, np, p)
+  initial <- lancelot_initial(mod$info(), np, p)
   y0 <- initial$state
-  ## Empty R1 and R2
-  y0[info$index$R][1:38] <- 0
-  ## Fill R3 and R4
-  y0[info$index$R][39:76] <- 1e3
 
-  mod$update_state(state = y0)
+  ## split the initial infectives between the two strains
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  y0[c(index_I_A[4,1,1,1], index_I_A[4,2,1,1])] <-
+    round(y0[index_I_A[4,1,1,1]] / 2)
 
-  end <- sircovid_date("2020-05-01") / p$dt
+
+  mod$update_state(state = y0, step = initial$step)
+  end <- sircovid_date("2021-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$transform_variables(
@@ -2134,18 +2128,27 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
   np <- 1L
   p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
                             strain_transmission = c(1, 1),
-                            strain_seed_rate = c(10, 0),
+                            strain_seed_rate = c(0, 0),
                             strain_seed_date =
-                              sircovid_date(c("2020-02-07", "2020-02-08")),
+                              sircovid_date(c("2020-02-07", "2020-02-14")),
                             cross_immunity = 0)
   p$strain_transmission[] <- 1e8
   ## set p_C to 0 so that individuals move to R quickly
   p$p_C_step[, ] <- 0
 
   mod <- carehomes$new(p, 0, np, seed = 1L)
+  info <- mod$info()
 
   initial <- carehomes_initial(mod$info(), np, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  y0 <- initial$state
+
+  ## split the initial infectives between the two strains
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  y0[c(index_I_A[4,1,1,1], index_I_A[4,2,1,1])] <-
+    round(y0[index_I_A[4,1,1,1]] / 2)
+
+
+  mod$update_state(state = y0, step = initial$step)
   end <- sircovid_date("2021-05-01") / p$dt
   steps <- seq(initial$step, end, by = 1 / p$dt)
   set.seed(1)
@@ -2531,14 +2534,6 @@ test_that("Rt lower with perfect cross immunity", {
 
 
 test_that("Can interpolate multistrain Rt", {
-  ## TODO: Ed
-  ##
-  ## This one is, I think, doing the right thing. But the Rt_all
-  ## crashes from ~50 to 0.7) on a couple of traces very quickly (over
-  ## ~6 points) and so the interpolation does not do very well with
-  ## visible oscillation.
-  skip("Ed to fix")
-
   dat <- reference_data_carehomes_mcmc()
   rt <- local({
     p <- lapply(seq_len(nrow(dat$pars)), function(i)
@@ -2629,7 +2624,7 @@ test_that("wtmean_Rt works as expected with interpolation", {
                             strain_transmission = c(1, 1),
                             cross_immunity = 0)
   np <- 3L
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- carehomes$new(p, 0, np, seed = 1L)
   initial <- carehomes_initial(mod$info(), np, p)
   mod$update_state(state = initial$state, step = initial$step)
   end <- sircovid_date("2020-05-01") / p$dt

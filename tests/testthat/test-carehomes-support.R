@@ -455,7 +455,8 @@ test_that("carehomes_index is properly named", {
 
 
 test_that("Can compute initial conditions", {
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+                            initial_I = 10)
   mod <- carehomes$new(p, 0, 10)
   info <- mod$info()
 
