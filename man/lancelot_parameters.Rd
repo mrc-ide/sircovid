@@ -16,7 +16,7 @@ lancelot_parameters(
   progression = NULL,
   observation = NULL,
   sens_and_spec = NULL,
-  initial_I = 10,
+  initial_I = 30,
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,
@@ -106,7 +106,7 @@ specificity parameters will be generated using
 
 \item{initial_I}{Initial number of infected indidviduals; these
 will enter the model as asymptomatic 15-19 year olds at
-\code{start_date}. The default is 10 individuals.}
+\code{start_date}. The default is 30 individuals.}
 
 \item{eps}{Change in contact rate for carehome residents}
 

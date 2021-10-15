@@ -1505,7 +1505,7 @@ test_that("Outputed S vaccination numbers are what we expect", {
   ## every initial susceptible should be vaccinated within first day
   expect_approx_equal(y$cum_n_S_vaccinated[i, 1, 2], y$S[i, 1, 1])
   ## same for the 10 initially seeded cases
-  expect_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , , 1])
+  expect_approx_equal(y$cum_n_I_A_vaccinated[i, , 2], y$I_A[i, , , , 1])
 
   ## Noone in the first 3 groups vaccinated:
   expect_true(all(y$cum_n_S_vaccinated[1:3, 1, ] == 0))
@@ -1959,7 +1959,8 @@ test_that("run sensible vaccination schedule, catchup = 0", {
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
                            vaccine_index_dose2 = 2L,
-                           vaccine_catchup_fraction = 0)
+                           vaccine_catchup_fraction = 0,
+                           initial_I = 20)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, 1, seed = 1L)
@@ -1967,6 +1968,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
 
   state <- lancelot_initial(info, 1, p)$state
   ## Remove seed, so that we have no infection process here:
+  ## 10 here because initial_I = 10
   state[state == 10] <- 0
 
   mod$update_state(state = state)
@@ -1995,7 +1997,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
   ## > matplot(m, type = "l", lty = 1)
 
   tot <- rowSums(n_vaccinated)
-  expect_true(all(tot >= 49000 & tot < 51000))
+  expect_true(all(tot >= 48000 & tot < 51000))
 
   ## Vaccinate all the CHW/CHR first, then down the priority
   ## groups. This is easy to check visually but harder to describe:

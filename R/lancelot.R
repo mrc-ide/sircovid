@@ -44,7 +44,7 @@ NULL
 ##'
 ##' @param initial_I Initial number of infected indidviduals; these
 ##'   will enter the model as asymptomatic 15-19 year olds at
-##'   `start_date`. The default is 10 individuals.
+##'   `start_date`. The default is 30 individuals.
 ##'
 ##' @param eps Change in contact rate for carehome residents
 ##'
@@ -367,7 +367,7 @@ lancelot_parameters <- function(start_date, region,
                                 progression = NULL,
                                 observation = NULL,
                                 sens_and_spec = NULL,
-                                initial_I = 10,
+                                initial_I = 30,
                                 eps = 0.1,
                                 m_CHW = 4e-6,
                                 m_CHR = 5e-5,
