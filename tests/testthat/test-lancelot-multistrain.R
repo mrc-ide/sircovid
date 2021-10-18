@@ -2195,6 +2195,7 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
 
 test_that("some cross-immunity means less Strain 3 or 4 infections than none
            and > 0", {
+ skip_on_windows_gha() # see #356
  np <- 1L
 
  ## no cross-immnunity
