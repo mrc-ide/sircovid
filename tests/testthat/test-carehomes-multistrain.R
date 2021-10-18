@@ -2105,8 +2105,8 @@ test_that("Can only move to S from R3 and R4 to S", {
 
   ## split the initial infectives between the two strains
   index_I_A <- array(info$index$I_A, info$dim$I_A)
-  y0[c(index_I_A[4,1,1,1], index_I_A[4,2,1,1])] <-
-    round(y0[index_I_A[4,1,1,1]] / 2)
+  y0[c(index_I_A[4, 1, 1, 1], index_I_A[4, 2, 1, 1])] <-
+    round(y0[index_I_A[4, 1, 1, 1]] / 2)
 
 
   mod$update_state(state = y0, step = initial$step)
@@ -2144,8 +2144,8 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
 
   ## split the initial infectives between the two strains
   index_I_A <- array(info$index$I_A, info$dim$I_A)
-  y0[c(index_I_A[4,1,1,1], index_I_A[4,2,1,1])] <-
-    round(y0[index_I_A[4,1,1,1]] / 2)
+  y0[c(index_I_A[4, 1, 1, 1], index_I_A[4, 2, 1, 1])] <-
+    round(y0[index_I_A[4, 1, 1, 1]] / 2)
 
 
   mod$update_state(state = y0, step = initial$step)
