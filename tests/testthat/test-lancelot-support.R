@@ -464,7 +464,8 @@ test_that("lancelot_index is properly named", {
 
 
 test_that("Can compute initial conditions", {
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           initial_I = 10)
   mod <- lancelot$new(p, 0, 10)
   info <- mod$info()
 
