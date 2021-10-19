@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.5</span>
       </span>
     </div>
 
@@ -140,24 +140,10 @@
   progression <span class='op'>=</span> <span class='cn'>NULL</span>,
   observation <span class='op'>=</span> <span class='cn'>NULL</span>,
   sens_and_spec <span class='op'>=</span> <span class='cn'>NULL</span>,
-  initial_I <span class='op'>=</span> <span class='fl'>10</span>,
+  initial_I <span class='op'>=</span> <span class='fl'>30</span>,
   eps <span class='op'>=</span> <span class='fl'>0.1</span>,
   m_CHW <span class='op'>=</span> <span class='fl'>4e-06</span>,
   m_CHR <span class='op'>=</span> <span class='fl'>5e-05</span>,
-  p_NC <span class='op'>=</span> <span class='fl'>0.01</span>,
-  p_NC_weekend <span class='op'>=</span> <span class='fl'>0.005</span>,
-  p_NC_under15 <span class='op'>=</span> <span class='fl'>0.01</span>,
-  p_NC_weekend_under15 <span class='op'>=</span> <span class='fl'>0.005</span>,
-  p_NC_15_24 <span class='op'>=</span> <span class='fl'>0.01</span>,
-  p_NC_weekend_15_24 <span class='op'>=</span> <span class='fl'>0.005</span>,
-  p_NC_25_49 <span class='op'>=</span> <span class='fl'>0.01</span>,
-  p_NC_weekend_25_49 <span class='op'>=</span> <span class='fl'>0.005</span>,
-  p_NC_50_64 <span class='op'>=</span> <span class='fl'>0.01</span>,
-  p_NC_weekend_50_64 <span class='op'>=</span> <span class='fl'>0.005</span>,
-  p_NC_65_79 <span class='op'>=</span> <span class='fl'>0.01</span>,
-  p_NC_weekend_65_79 <span class='op'>=</span> <span class='fl'>0.005</span>,
-  p_NC_80_plus <span class='op'>=</span> <span class='fl'>0.01</span>,
-  p_NC_weekend_80_plus <span class='op'>=</span> <span class='fl'>0.005</span>,
   strain_transmission <span class='op'>=</span> <span class='fl'>1</span>,
   strain_seed_date <span class='op'>=</span> <span class='cn'>NULL</span>,
   strain_seed_rate <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -270,7 +256,7 @@ specificity parameters will be generated using
       <th>initial_I</th>
       <td><p>Initial number of infected indidviduals; these
 will enter the model as asymptomatic 15-19 year olds at
-<code>start_date</code>. The default is 10 individuals.</p></td>
+<code>start_date</code>. The default is 30 individuals.</p></td>
     </tr>
     <tr>
       <th>eps</th>
@@ -284,88 +270,6 @@ residents or workers</p></td>
     <tr>
       <th>m_CHR</th>
       <td><p>Contact rate between carehome residents</p></td>
-    </tr>
-    <tr>
-      <th>p_NC</th>
-      <td><p>Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekday</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_weekend</th>
-      <td><p>Proportion of population who do not have covid but have
-covid-like symptoms that could lead to getting a PCR test on a weekend</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_under15</th>
-      <td><p>Proportion of population under 15 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_weekend_under15</th>
-      <td><p>Proportion of population under 15 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_15_24</th>
-      <td><p>Proportion of population 15 to 24 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_weekend_15_24</th>
-      <td><p>Proportion of population 15 to 24 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_25_49</th>
-      <td><p>Proportion of population 25 to 49 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_weekend_25_49</th>
-      <td><p>Proportion of population 25 to 49 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_50_64</th>
-      <td><p>Proportion of population 50 to 64 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_weekend_50_64</th>
-      <td><p>Proportion of population 50 to 64 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_65_79</th>
-      <td><p>Proportion of population 65 to 79 who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_weekend_65_79</th>
-      <td><p>Proportion of population 65 to 79 who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_80_plus</th>
-      <td><p>Proportion of population 80 plus who do not have covid
-but have covid-like symptoms that could lead to getting a PCR test on a
-weekday</p></td>
-    </tr>
-    <tr>
-      <th>p_NC_weekend_80_plus</th>
-      <td><p>Proportion of population 80 plus who do not
-have covid but have covid-like symptoms that could lead to getting a PCR
-test on a weekend</p></td>
     </tr>
     <tr>
       <th>strain_transmission</th>
