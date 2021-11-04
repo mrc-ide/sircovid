@@ -4,7 +4,7 @@ dust::dust_cuda_configuration(quiet = FALSE)
 message("Compiling...")
 gen <- sircovid::compile_gpu(gpu = TRUE, verbose = TRUE)
 message("Initialising...")
-p <- sircovid::carehomes_parameters(
+p <- sircovid::lancelot_parameters(
   sircovid::sircovid_date("2020-02-07"), "england")
 mod <- gen$new(p, 0, 10, seed = 1L)
 message("Running (CPU)...") # just on the CPU of course

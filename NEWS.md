@@ -1,3 +1,7 @@
+# sircovid 0.12.6
+
+* `carehomes` model removed from the package
+
 # sircovid 0.12.4
 
 * `p_NC` and `phi_pillar2_cases` now must be age-specific for `lancelot` model, including when fitting to aggregated Pillar 2 data.
