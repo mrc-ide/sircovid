@@ -258,11 +258,10 @@ test_that("mirror_strain/unmirror_strain", {
 
 test_that("check_sircovid_model", {
   expect_silent(check_sircovid_model("basic"))
-  expect_silent(check_sircovid_model("carehomes"))
   expect_silent(check_sircovid_model("lancelot"))
   expect_error(check_sircovid_model("camelot"),
-              "Expected 'camelot' to be one of {basic, carehomes, lancelot}",
+              "Expected 'camelot' to be one of {basic, lancelot}",
                 fixed = TRUE)
-  expect_error(check_sircovid_model(c("basic", "carehomes")),
+  expect_error(check_sircovid_model(c("basic", "lancelot")),
               "'sircovid_model' must be a scalar")
 })

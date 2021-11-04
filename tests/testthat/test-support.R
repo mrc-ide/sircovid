@@ -62,6 +62,29 @@ test_that("Downcase region name", {
 })
 
 
+test_that("sircovid_carehome_beds can get carehome beds", {
+  expect_equal(sircovid_carehome_beds("uk"), 537521)
+  expect_equal(sircovid_carehome_beds("UK"), 537521)
+})
+
+
+test_that("sircovid_carehome_beds throws sensible error on invalid input", {
+  expect_error(sircovid_carehome_beds(NULL), "'region' must not be NULL")
+  expect_error(
+    sircovid_carehome_beds("oxfordshire"),
+    "Carehome beds not found for 'oxfordshire': must be one of 'east_of_")
+})
+
+
+test_that("sircovid_carehome_beds caches data", {
+  clear_cache()
+  n <- sircovid_carehome_beds("uk")
+  expect_s3_class(cache$carehomes, "data.frame")
+  expect_equal(cache$carehomes$carehome_beds[cache$carehomes$region == "uk"],
+               n)
+})
+
+
 test_that("Use constant age bins", {
   expect_equal(
     sircovid_age_bins(),
@@ -271,7 +294,7 @@ test_that("read default severity", {
 
 
 test_that("Can add new betas", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
 
   ## In order to be able to update future beta values we need to
   ## compute Rt for this simulation. This should probably be
@@ -281,7 +304,7 @@ test_that("Can add new betas", {
       dat$predict$transform(dat$pars[i, ]))
     i <- grep("S_", rownames(dat$trajectories$state))
     S <- dat$trajectories$state[i, , ]
-    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+    lancelot_Rt_trajectories(dat$trajectories$step, S, p)
   })
 
   n_par <- ncol(rt$eff_Rt_all)
@@ -328,13 +351,13 @@ test_that("Can add new betas", {
 })
 
 test_that("Compute relative betas", {
-  dat <- reference_data_carehomes_mcmc()
+  dat <- reference_data_lancelot_mcmc()
   rt <- local({
     p <- lapply(seq_len(nrow(dat$pars)), function(i)
       dat$predict$transform(dat$pars[i, ]))
     i <- grep("S_", rownames(dat$trajectories$state))
     S <- dat$trajectories$state[i, , ]
-    carehomes_Rt_trajectories(dat$trajectories$step, S, p)
+    lancelot_Rt_trajectories(dat$trajectories$step, S, p)
   })
 
   ## NOTE: inject a bit of wobble to the numbers here so that it's
@@ -368,11 +391,11 @@ test_that("Compute relative betas", {
 
 
 test_that("strip projections", {
-  dat1 <- reference_data_carehomes_mcmc()
-  rt1 <- calculate_carehomes_rt_simple(dat1)
+  dat1 <- reference_data_lancelot_mcmc()
+  rt1 <- calculate_lancelot_rt_simple(dat1)
 
-  dat2 <- carehomes_forecast(dat1, 0, 0, 10, NULL)
-  rt2 <- calculate_carehomes_rt_simple(dat2)
+  dat2 <- lancelot_forecast(dat1, 0, 0, 10, NULL)
+  rt2 <- calculate_lancelot_rt_simple(dat2)
 
   future <- list(
     "2020-04-01" = future_Rt(1.5),
@@ -386,8 +409,8 @@ test_that("strip projections", {
 
 
 test_that("validate future beta values", {
-  dat <- reference_data_carehomes_mcmc()
-  rt <- calculate_carehomes_rt_simple(dat)
+  dat <- reference_data_lancelot_mcmc()
+  rt <- calculate_lancelot_rt_simple(dat)
 
   f1 <- future_Rt(1.5)
   f2 <- future_Rt(1.5)
@@ -430,8 +453,8 @@ test_that("Can add new betas with incomplete Rt calculation", {
   ## Due to staggered start dates, we may end up with Rt calculations
   ## that miss off the first few dates. This test checks that we can
   ## handle these appropriately.
-  dat <- reference_data_carehomes_mcmc()
-  rt1 <- calculate_carehomes_rt_simple(dat)
+  dat <- reference_data_lancelot_mcmc()
+  rt1 <- calculate_lancelot_rt_simple(dat)
   rt2 <- rt1
 
   ## Then we remove some rt calculations:

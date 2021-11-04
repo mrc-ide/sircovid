@@ -56,7 +56,7 @@ vaccine_remap_state <- function(state_orig, info_orig, info_vacc) {
 
 
 build_rel_param <- function(rel_param, n_strains, n_vacc_classes, name_param) {
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
   if (length(rel_param) == 1) {
     mat_rel_param <- array(rel_param, c(n_groups, n_strains, n_vacc_classes))
   } else if (is.array(rel_param)) {
@@ -863,17 +863,12 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 ##'  variables; length should correspond to number of strains and each element
 ##'  should be a list with same names as `efficacy`
 ##'
-##' @param model If `carehomes` then upper-truncates VE at 1 for first two
-##'  vaccine strata, otherwise if `lancelot' then upper-truncates VE at 1
-##'  for first and penultimate vaccine strata.
-##'
 ##' @return Returns a list with same length and names as `efficacy` and where
 ##'  each element has dimensions n_groups x n_strains x n_vacc_strata
 ##'
 ##' @export
 modify_severity <- function(efficacy, efficacy_strain_2,
-                            strain_severity_modifier,
-                            model = "lancelot") {
+                            strain_severity_modifier) {
 
   check_sircovid_model(model)
 
@@ -913,9 +908,7 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           if (new_prob > 1) {
             ## Cap at 1 if: difference very small or in a class where
             ## vaccine hasn't taken effect or has waned
-            ok <- (abs(new_prob - 1) < 1e-10) ||
-              (model == "carehomes" && v_s <= 2) ||
-              (model == "lancelot" && v_s %in% c(1, 4))
+            ok <- (abs(new_prob - 1) < 1e-10) || v_s %in% c(1, 4)
             if (ok) {
               new_prob <- 1
               ## otherwise this is a problem

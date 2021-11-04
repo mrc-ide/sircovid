@@ -1,12 +1,12 @@
 test_that("Can calculate EpiEstim Rt (I)", {
   skip_if_not_installed("EpiEstim")
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            beta_value = 0.15)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           beta_value = 0.15)
 
   np <- 20L
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- lancelot$new(p, 0, np, seed = 2L)
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
@@ -23,10 +23,10 @@ test_that("Can calculate EpiEstim Rt (I)", {
   inc <- t(rbind(rep(0, np), inc))
   S <- y[-1, , ]
 
-  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p,
-                                                    sliding_window_ndays = 1)
+  rt_EpiEstim <- lancelot_rt_trajectories_epiestim(steps, inc, p,
+                                                   sliding_window_ndays = 1)
 
-  rt <- carehomes_Rt_trajectories(steps, S, p)
+  rt <- lancelot_Rt_trajectories(steps, S, p)
 
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
@@ -47,13 +47,13 @@ test_that("Can calculate EpiEstim Rt (I)", {
 
 test_that("Can calculate EpiEstim Rt (II)", {
   skip_if_not_installed("EpiEstim")
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            beta_value = 0.15)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           beta_value = 0.15)
 
   np <- 20L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
@@ -70,10 +70,10 @@ test_that("Can calculate EpiEstim Rt (II)", {
   inc <- t(rbind(rep(0, np), inc))
   S <- y[-1, , ]
 
-  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p,
-                                                    sliding_window_ndays = 1)
+  rt_EpiEstim <- lancelot_rt_trajectories_epiestim(steps, inc, p,
+                                                   sliding_window_ndays = 1)
 
-  rt <- carehomes_Rt_trajectories(steps, S, p)
+  rt <- lancelot_Rt_trajectories(steps, S, p)
 
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
   #### Check a few values
@@ -92,12 +92,12 @@ test_that("Can calculate EpiEstim Rt (II)", {
 
 test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
   skip_if_not_installed("EpiEstim")
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            beta_value = 0.15)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           beta_value = 0.15)
   np <- 20L
-  mod <- carehomes$new(p, 0, np, seed = 2L)
+  mod <- lancelot$new(p, 0, np, seed = 2L)
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
@@ -116,10 +116,10 @@ test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
 
   gt_distr <- gt_distr(p, 10000)
 
-  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p, gt_distr,
-                                                    sliding_window_ndays = 1)
+  rt_EpiEstim <- lancelot_rt_trajectories_epiestim(steps, inc, p, gt_distr,
+                                                   sliding_window_ndays = 1)
 
-  rt <- carehomes_Rt_trajectories(steps, S, p)
+  rt <- lancelot_Rt_trajectories(steps, S, p)
 
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
@@ -141,12 +141,12 @@ test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
 
 test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
   skip_if_not_installed("EpiEstim")
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            beta_value = 0.15)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           beta_value = 0.15)
   np <- 20L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
@@ -165,10 +165,10 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
 
   gt_distr <- gt_distr(p, 10000)
 
-  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p, gt_distr,
-                                                    sliding_window_ndays = 1)
+  rt_EpiEstim <- lancelot_rt_trajectories_epiestim(steps, inc, p, gt_distr,
+                                                   sliding_window_ndays = 1)
 
-  rt <- carehomes_Rt_trajectories(steps, S, p)
+  rt <- lancelot_Rt_trajectories(steps, S, p)
 
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
   #### Check a few values
@@ -185,14 +185,14 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
 })
 
 
-test_that("carehomes_rt_trajectories_epiestim rejects invalid input", {
+test_that("lancelot_rt_trajectories_epiestim rejects invalid input", {
   skip_if_not_installed("EpiEstim")
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
-                            beta_value = 0.15)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           beta_value = 0.15)
   np <- 20L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
@@ -216,19 +216,19 @@ test_that("carehomes_rt_trajectories_epiestim rejects invalid input", {
 
   gt_distr_not_sum_to_1 <- gt_distr * 2
 
-  expect_error(carehomes_rt_trajectories_epiestim(steps, inc, p,
-                                                    gt_distr_mat,
-                                                    sliding_window_ndays = 1),
+  expect_error(lancelot_rt_trajectories_epiestim(steps, inc, p,
+                                                 gt_distr_mat,
+                                                 sliding_window_ndays = 1),
                "Expecting a vector for 'gt_distr'")
 
-  expect_error(carehomes_rt_trajectories_epiestim(steps, inc, p,
-                                                  gt_distr_not_zero,
-                                                  sliding_window_ndays = 1),
+  expect_error(lancelot_rt_trajectories_epiestim(steps, inc, p,
+                                                 gt_distr_not_zero,
+                                                 sliding_window_ndays = 1),
                "The first value of 'gt_distr' should be zero.")
 
-  expect_error(carehomes_rt_trajectories_epiestim(steps, inc, p,
-                                                  gt_distr_not_sum_to_1,
-                                                  sliding_window_ndays = 1),
+  expect_error(lancelot_rt_trajectories_epiestim(steps, inc, p,
+                                                 gt_distr_not_sum_to_1,
+                                                 sliding_window_ndays = 1),
                "'gt_distr' should sum to 1.")
 
 })
@@ -236,7 +236,7 @@ test_that("carehomes_rt_trajectories_epiestim rejects invalid input", {
 
 test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   skip_if_not_installed("EpiEstim")
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england",
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                             beta_value = 0.15)
   mean_N_tot <- mean(p$N_tot)
   mean_m <- mean(p$m)
@@ -250,9 +250,9 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   p$N_tot <- c(rep(mean_N_tot, 17), 0, 0)
 
   np <- 20L
-  mod <- carehomes$new(p, 0, np, seed = 1L)
+  mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- carehomes_initial(mod$info(), 10, p)
+  initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial$state, step = initial$step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
@@ -269,10 +269,10 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   inc <- t(rbind(rep(0, np), inc))
   S <- y[-1, , ]
 
-  rt_EpiEstim <- carehomes_rt_trajectories_epiestim(steps, inc, p,
-                                                    sliding_window_ndays = 1)
+  rt_EpiEstim <- lancelot_rt_trajectories_epiestim(steps, inc, p,
+                                                   sliding_window_ndays = 1)
 
-  rt <- carehomes_Rt_trajectories(steps, S, p)
+  rt <- lancelot_Rt_trajectories(steps, S, p)
 
   #### General patterns
   ## dimension of Rt should be 3 rows and length(steps) - 1 cols
@@ -320,7 +320,7 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
 
 test_that("gt_sample yields expected mean GT", {
   set.seed(1)
-  p <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
   gt <- gt_sample(p, n = 10000)
   ## large tolerance because of discretisation
   expect_true(abs(mean(gt) - 6.3) < 0.5) # value from Bi et al.
@@ -328,7 +328,7 @@ test_that("gt_sample yields expected mean GT", {
 
 
 test_that("gt_sample yields expected invalid input errors", {
-  p_base <- carehomes_parameters(sircovid_date("2020-02-07"), "england")
+  p_base <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
 
   p <- p_base
   p$I_C_2_transmission <- 0.1
