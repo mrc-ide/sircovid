@@ -60,7 +60,7 @@ test_that("can run the gpu model on the cpu", {
   mod_gpu$set_index(index)
 
   res_cpu <- mod_cpu$run(end)
-  res_gpu <- mod_gpu$run(end, device = TRUE)
+  res_gpu <- mod_gpu$run(end)
 
   expect_equal(res_gpu, res_cpu)
 })
