@@ -82,7 +82,7 @@ correspond to changes in parameters." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.6</span>
       </span>
     </div>
 
@@ -152,7 +152,7 @@ date or <a href='sircovid_date.html'>sircovid_date</a></p></td>
       <td><p>Events data; this must be a named list, with each name
 being in ISO 8601 (YYYY-MM-DD) format, and value being a named
 set of parameters to apply to our base set. So a value of
-<code><a href='https://rdrr.io/r/base/list.html'>list("2021-03-01" = list(vaccine_daily_doses = 10000))</a></code> would
+<code>list("2021-03-01" = list(vaccine_daily_doses = 10000))</code> would
 represent a change to the <code>vaccine_daily_doses</code> parameter from
 the 1st of March 2021.  Each entry can change as many parameters
 as wanted. These changes are <em>not cumulative</em>, so if you want a

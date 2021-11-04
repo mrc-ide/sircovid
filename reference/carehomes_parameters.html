@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.6</span>
       </span>
     </div>
 
@@ -245,7 +245,7 @@ with the progression parameters.</p></td>
       <th>observation</th>
       <td><p>Either <code>NULL</code> or a list of observation parameters. If
 <code>NULL</code>, then a list of observation parameters will be generated using
-<code><a href='carehomes_parameters_observation.html'>carehomes_parameters_observation(exp_noise)</a></code></p></td>
+<code>carehomes_parameters_observation(exp_noise)</code></p></td>
     </tr>
     <tr>
       <th>sens_and_spec</th>
@@ -523,551 +523,558 @@ within the odin code, though some are also used in processing
 just before the model is run.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='va'>region</span> <span class='op'>&lt;-</span> <span class='st'>"london"</span>
-<span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span><span class='op'>)</span>
-
-<span class='co'># example set up of vaccination parameters independent of age</span>
-<span class='co'># 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span>
-<span class='co'># 3) fully vaccinated (but with an imperfect vaccine). People return</span>
-<span class='co'># to group 1 after a period of time in group 3 to mirror waning immunity</span>
-
-<span class='co'># Assumption: immediately after vaccination susceptibility is reduced by</span>
-<span class='co'># 20%, and then by 50% when you reach full effect of the vaccination,</span>
-<span class='co'># then susceptibility returns to 100% upon waning of vaccine=induced</span>
-<span class='co'># immunity</span>
-<span class='co'># effect of vaccination similar across all age groups</span>
-<span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span><span class='op'>)</span>
-
-<span class='co'># The vaccine also reduces the risk of symptoms</span>
-<span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.6</span>, <span class='fl'>0.3</span><span class='op'>)</span>
-<span class='co'># and the risk of hospitalisation for those with symptoms</span>
-<span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.95</span>, <span class='fl'>0.95</span><span class='op'>)</span>
-<span class='co'># and the risk of death for those with severe disease</span>
-<span class='va'>rel_p_death</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.9</span>, <span class='fl'>0.9</span><span class='op'>)</span>
-
-<span class='co'># The vaccine also reduces infectivity of infected individuals by half</span>
-<span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span><span class='op'>)</span>
-
-<span class='co'># On average 10000 first doses of vaccine are given every day</span>
-<span class='co'># Second doses are given on average 12 weeks after the first dose</span>
-<span class='co'># vaccine-induced immunity wanes after a period which is exponentially</span>
-<span class='co'># distributed and lasts on average 26 weeks (half a year);</span>
-<span class='co'># they are similar across all age groups</span>
-<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>26</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='va'>daily_doses</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>10000</span>, <span class='fl'>365</span><span class='op'>)</span>
-<span class='va'>mean_days_between_doses</span> <span class='op'>&lt;-</span> <span class='fl'>12</span> <span class='op'>*</span> <span class='fl'>7</span>
-<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vaccine_priority_proportion.html'>vaccine_priority_population</a></span><span class='op'>(</span><span class='va'>region</span>, uptake <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-<span class='va'>schedule</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vaccine_schedule_future.html'>vaccine_schedule_future</a></span><span class='op'>(</span>
-  <span class='fl'>0</span>, <span class='va'>daily_doses</span>, <span class='va'>mean_days_between_doses</span>, <span class='va'>n</span><span class='op'>)</span>
-
-<span class='co'># generate model parameters</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
-       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span>,
-       rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
-       rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
-       rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
-       rel_p_death <span class='op'>=</span> <span class='va'>rel_p_death</span>,
-       rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,
-       vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
-       vaccine_schedule <span class='op'>=</span> <span class='va'>schedule</span>,
-       vaccine_index_dose2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-
-<span class='co'># vaccination parameters are automatically copied across all age groups#</span>
-<span class='co'># (and across strains but here we only have 1 strain which is the 2nd</span>
-<span class='co'># dimension here)</span>
-<span class='va'>p</span><span class='op'>$</span><span class='va'>rel_susceptibility</span>
-</div><div class='output co'>#&gt; , , 1
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
-#&gt; 
-#&gt; , , 2
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.8
-#&gt;  [2,]  0.8
-#&gt;  [3,]  0.8
-#&gt;  [4,]  0.8
-#&gt;  [5,]  0.8
-#&gt;  [6,]  0.8
-#&gt;  [7,]  0.8
-#&gt;  [8,]  0.8
-#&gt;  [9,]  0.8
-#&gt; [10,]  0.8
-#&gt; [11,]  0.8
-#&gt; [12,]  0.8
-#&gt; [13,]  0.8
-#&gt; [14,]  0.8
-#&gt; [15,]  0.8
-#&gt; [16,]  0.8
-#&gt; [17,]  0.8
-#&gt; [18,]  0.8
-#&gt; [19,]  0.8
-#&gt; 
-#&gt; , , 3
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.5
-#&gt;  [2,]  0.5
-#&gt;  [3,]  0.5
-#&gt;  [4,]  0.5
-#&gt;  [5,]  0.5
-#&gt;  [6,]  0.5
-#&gt;  [7,]  0.5
-#&gt;  [8,]  0.5
-#&gt;  [9,]  0.5
-#&gt; [10,]  0.5
-#&gt; [11,]  0.5
-#&gt; [12,]  0.5
-#&gt; [13,]  0.5
-#&gt; [14,]  0.5
-#&gt; [15,]  0.5
-#&gt; [16,]  0.5
-#&gt; [17,]  0.5
-#&gt; [18,]  0.5
-#&gt; [19,]  0.5
-#&gt; </div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_sympt</span>
-</div><div class='output co'>#&gt; , , 1
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
-#&gt; 
-#&gt; , , 2
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.6
-#&gt;  [2,]  0.6
-#&gt;  [3,]  0.6
-#&gt;  [4,]  0.6
-#&gt;  [5,]  0.6
-#&gt;  [6,]  0.6
-#&gt;  [7,]  0.6
-#&gt;  [8,]  0.6
-#&gt;  [9,]  0.6
-#&gt; [10,]  0.6
-#&gt; [11,]  0.6
-#&gt; [12,]  0.6
-#&gt; [13,]  0.6
-#&gt; [14,]  0.6
-#&gt; [15,]  0.6
-#&gt; [16,]  0.6
-#&gt; [17,]  0.6
-#&gt; [18,]  0.6
-#&gt; [19,]  0.6
-#&gt; 
-#&gt; , , 3
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.3
-#&gt;  [2,]  0.3
-#&gt;  [3,]  0.3
-#&gt;  [4,]  0.3
-#&gt;  [5,]  0.3
-#&gt;  [6,]  0.3
-#&gt;  [7,]  0.3
-#&gt;  [8,]  0.3
-#&gt;  [9,]  0.3
-#&gt; [10,]  0.3
-#&gt; [11,]  0.3
-#&gt; [12,]  0.3
-#&gt; [13,]  0.3
-#&gt; [14,]  0.3
-#&gt; [15,]  0.3
-#&gt; [16,]  0.3
-#&gt; [17,]  0.3
-#&gt; [18,]  0.3
-#&gt; [19,]  0.3
-#&gt; </div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_hosp_if_sympt</span>
-</div><div class='output co'>#&gt; , , 1
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
-#&gt; 
-#&gt; , , 2
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,] 0.95
-#&gt;  [2,] 0.95
-#&gt;  [3,] 0.95
-#&gt;  [4,] 0.95
-#&gt;  [5,] 0.95
-#&gt;  [6,] 0.95
-#&gt;  [7,] 0.95
-#&gt;  [8,] 0.95
-#&gt;  [9,] 0.95
-#&gt; [10,] 0.95
-#&gt; [11,] 0.95
-#&gt; [12,] 0.95
-#&gt; [13,] 0.95
-#&gt; [14,] 0.95
-#&gt; [15,] 0.95
-#&gt; [16,] 0.95
-#&gt; [17,] 0.95
-#&gt; [18,] 0.95
-#&gt; [19,] 0.95
-#&gt; 
-#&gt; , , 3
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,] 0.95
-#&gt;  [2,] 0.95
-#&gt;  [3,] 0.95
-#&gt;  [4,] 0.95
-#&gt;  [5,] 0.95
-#&gt;  [6,] 0.95
-#&gt;  [7,] 0.95
-#&gt;  [8,] 0.95
-#&gt;  [9,] 0.95
-#&gt; [10,] 0.95
-#&gt; [11,] 0.95
-#&gt; [12,] 0.95
-#&gt; [13,] 0.95
-#&gt; [14,] 0.95
-#&gt; [15,] 0.95
-#&gt; [16,] 0.95
-#&gt; [17,] 0.95
-#&gt; [18,] 0.95
-#&gt; [19,] 0.95
-#&gt; </div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_death</span>
-</div><div class='output co'>#&gt; , , 1
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
-#&gt; 
-#&gt; , , 2
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.9
-#&gt;  [2,]  0.9
-#&gt;  [3,]  0.9
-#&gt;  [4,]  0.9
-#&gt;  [5,]  0.9
-#&gt;  [6,]  0.9
-#&gt;  [7,]  0.9
-#&gt;  [8,]  0.9
-#&gt;  [9,]  0.9
-#&gt; [10,]  0.9
-#&gt; [11,]  0.9
-#&gt; [12,]  0.9
-#&gt; [13,]  0.9
-#&gt; [14,]  0.9
-#&gt; [15,]  0.9
-#&gt; [16,]  0.9
-#&gt; [17,]  0.9
-#&gt; [18,]  0.9
-#&gt; [19,]  0.9
-#&gt; 
-#&gt; , , 3
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.9
-#&gt;  [2,]  0.9
-#&gt;  [3,]  0.9
-#&gt;  [4,]  0.9
-#&gt;  [5,]  0.9
-#&gt;  [6,]  0.9
-#&gt;  [7,]  0.9
-#&gt;  [8,]  0.9
-#&gt;  [9,]  0.9
-#&gt; [10,]  0.9
-#&gt; [11,]  0.9
-#&gt; [12,]  0.9
-#&gt; [13,]  0.9
-#&gt; [14,]  0.9
-#&gt; [15,]  0.9
-#&gt; [16,]  0.9
-#&gt; [17,]  0.9
-#&gt; [18,]  0.9
-#&gt; [19,]  0.9
-#&gt; </div><div class='input'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_infectivity</span>
-</div><div class='output co'>#&gt; , , 1
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
-#&gt; 
-#&gt; , , 2
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.5
-#&gt;  [2,]  0.5
-#&gt;  [3,]  0.5
-#&gt;  [4,]  0.5
-#&gt;  [5,]  0.5
-#&gt;  [6,]  0.5
-#&gt;  [7,]  0.5
-#&gt;  [8,]  0.5
-#&gt;  [9,]  0.5
-#&gt; [10,]  0.5
-#&gt; [11,]  0.5
-#&gt; [12,]  0.5
-#&gt; [13,]  0.5
-#&gt; [14,]  0.5
-#&gt; [15,]  0.5
-#&gt; [16,]  0.5
-#&gt; [17,]  0.5
-#&gt; [18,]  0.5
-#&gt; [19,]  0.5
-#&gt; 
-#&gt; , , 3
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.5
-#&gt;  [2,]  0.5
-#&gt;  [3,]  0.5
-#&gt;  [4,]  0.5
-#&gt;  [5,]  0.5
-#&gt;  [6,]  0.5
-#&gt;  [7,]  0.5
-#&gt;  [8,]  0.5
-#&gt;  [9,]  0.5
-#&gt; [10,]  0.5
-#&gt; [11,]  0.5
-#&gt; [12,]  0.5
-#&gt; [13,]  0.5
-#&gt; [14,]  0.5
-#&gt; [15,]  0.5
-#&gt; [16,]  0.5
-#&gt; [17,]  0.5
-#&gt; [18,]  0.5
-#&gt; [19,]  0.5
-#&gt; </div><div class='input'><span class='co'># Note that this is only the "base" rate as we fill in the first</span>
-<span class='co'># column dynamically based on vaccine_daily_doses</span>
-<span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span>
-</div><div class='output co'>#&gt;       [,1] [,2]        [,3]
-#&gt;  [1,]    0    0 0.005494505
-#&gt;  [2,]    0    0 0.005494505
-#&gt;  [3,]    0    0 0.005494505
-#&gt;  [4,]    0    0 0.005494505
-#&gt;  [5,]    0    0 0.005494505
-#&gt;  [6,]    0    0 0.005494505
-#&gt;  [7,]    0    0 0.005494505
-#&gt;  [8,]    0    0 0.005494505
-#&gt;  [9,]    0    0 0.005494505
-#&gt; [10,]    0    0 0.005494505
-#&gt; [11,]    0    0 0.005494505
-#&gt; [12,]    0    0 0.005494505
-#&gt; [13,]    0    0 0.005494505
-#&gt; [14,]    0    0 0.005494505
-#&gt; [15,]    0    0 0.005494505
-#&gt; [16,]    0    0 0.005494505
-#&gt; [17,]    0    0 0.005494505
-#&gt; [18,]    0    0 0.005494505
-#&gt; [19,]    0    0 0.005494505</div><div class='input'>
-<span class='co'>### same example as above BUT assume a different effect of vaccine in the</span>
-<span class='co'>### first age group</span>
-<span class='va'>n_groups</span> <span class='op'>&lt;-</span> <span class='fl'>19</span>
-<span class='va'>n_strains</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-
-<span class='co'># Assumption: vaccine is twice more effective at reducing susceptibility</span>
-<span class='co'># in the first age group</span>
-<span class='va'>rel_susceptibility_agegp1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.4</span>, <span class='fl'>0.25</span><span class='op'>)</span>
-<span class='va'>rel_susceptibility_other_agegp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span><span class='op'>)</span>
-<span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='cn'>NA</span>, dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='fl'>1</span>, , <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_agegp1</span>
-<span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='va'>n_groups</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='va'>i</span>, , <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_other_agegp</span>
-<span class='op'>}</span>
-<span class='va'>rel_susceptibility</span>
-</div><div class='output co'>#&gt; , , 1
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]    1
-#&gt;  [2,]    1
-#&gt;  [3,]    1
-#&gt;  [4,]    1
-#&gt;  [5,]    1
-#&gt;  [6,]    1
-#&gt;  [7,]    1
-#&gt;  [8,]    1
-#&gt;  [9,]    1
-#&gt; [10,]    1
-#&gt; [11,]    1
-#&gt; [12,]    1
-#&gt; [13,]    1
-#&gt; [14,]    1
-#&gt; [15,]    1
-#&gt; [16,]    1
-#&gt; [17,]    1
-#&gt; [18,]    1
-#&gt; [19,]    1
-#&gt; 
-#&gt; , , 2
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,]  0.4
-#&gt;  [2,]  0.8
-#&gt;  [3,]  0.8
-#&gt;  [4,]  0.8
-#&gt;  [5,]  0.8
-#&gt;  [6,]  0.8
-#&gt;  [7,]  0.8
-#&gt;  [8,]  0.8
-#&gt;  [9,]  0.8
-#&gt; [10,]  0.8
-#&gt; [11,]  0.8
-#&gt; [12,]  0.8
-#&gt; [13,]  0.8
-#&gt; [14,]  0.8
-#&gt; [15,]  0.8
-#&gt; [16,]  0.8
-#&gt; [17,]  0.8
-#&gt; [18,]  0.8
-#&gt; [19,]  0.8
-#&gt; 
-#&gt; , , 3
-#&gt; 
-#&gt;       [,1]
-#&gt;  [1,] 0.25
-#&gt;  [2,] 0.50
-#&gt;  [3,] 0.50
-#&gt;  [4,] 0.50
-#&gt;  [5,] 0.50
-#&gt;  [6,] 0.50
-#&gt;  [7,] 0.50
-#&gt;  [8,] 0.50
-#&gt;  [9,] 0.50
-#&gt; [10,] 0.50
-#&gt; [11,] 0.50
-#&gt; [12,] 0.50
-#&gt; [13,] 0.50
-#&gt; [14,] 0.50
-#&gt; [15,] 0.50
-#&gt; [16,] 0.50
-#&gt; [17,] 0.50
-#&gt; [18,] 0.50
-#&gt; [19,] 0.50
-#&gt; </div><div class='input'>
-<span class='co'># But vaccine has the same impact on probability of symptoms and</span>
-<span class='co'># hospitalisation for the symptomatic across all age groups</span>
-<span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,
-  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,
-  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>rel_p_death</span> <span class='op'>&lt;-</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,
-  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># And vaccine has the same impact on onwards infectivity across age groups</span>
-<span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_infectivity</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,
-  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># the period of build-up of immunity is the same for all age groups,</span>
-<span class='co'># lasting on average 2 weeks,</span>
-<span class='co'># but the first age group loses immunity more quickly</span>
-<span class='co'># (on average after 3 months) than the other age groups</span>
-<span class='co'># (on average after 6 months)</span>
-<span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span>,
-                                  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>13</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>,
-                                  <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>26</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>, <span class='va'>n_groups</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># generate model parameters</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span>
-       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span>,
-       rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,
-       rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,
-       rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,
-       rel_p_death <span class='op'>=</span> <span class='va'>rel_p_death</span>,
-       rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,
-       vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,
-       vaccine_schedule <span class='op'>=</span> <span class='va'>schedule</span>,
-       vaccine_index_dose2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-
-<span class='co'># TODO: add an example of manually set up vaccine schedule</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='va'>region</span> <span class='op'>&lt;-</span> <span class='st'>"london"</span></span>
+<span class='r-in'><span class='fu'>carehomes_parameters</span><span class='op'>(</span><span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># example set up of vaccination parameters independent of age</span></span>
+<span class='r-in'><span class='co'># 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span></span>
+<span class='r-in'><span class='co'># 3) fully vaccinated (but with an imperfect vaccine). People return</span></span>
+<span class='r-in'><span class='co'># to group 1 after a period of time in group 3 to mirror waning immunity</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Assumption: immediately after vaccination susceptibility is reduced by</span></span>
+<span class='r-in'><span class='co'># 20%, and then by 50% when you reach full effect of the vaccination,</span></span>
+<span class='r-in'><span class='co'># then susceptibility returns to 100% upon waning of vaccine=induced</span></span>
+<span class='r-in'><span class='co'># immunity</span></span>
+<span class='r-in'><span class='co'># effect of vaccination similar across all age groups</span></span>
+<span class='r-in'><span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># The vaccine also reduces the risk of symptoms</span></span>
+<span class='r-in'><span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.6</span>, <span class='fl'>0.3</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># and the risk of hospitalisation for those with symptoms</span></span>
+<span class='r-in'><span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.95</span>, <span class='fl'>0.95</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># and the risk of death for those with severe disease</span></span>
+<span class='r-in'><span class='va'>rel_p_death</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.9</span>, <span class='fl'>0.9</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># The vaccine also reduces infectivity of infected individuals by half</span></span>
+<span class='r-in'><span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># On average 10000 first doses of vaccine are given every day</span></span>
+<span class='r-in'><span class='co'># Second doses are given on average 12 weeks after the first dose</span></span>
+<span class='r-in'><span class='co'># vaccine-induced immunity wanes after a period which is exponentially</span></span>
+<span class='r-in'><span class='co'># distributed and lasts on average 26 weeks (half a year);</span></span>
+<span class='r-in'><span class='co'># they are similar across all age groups</span></span>
+<span class='r-in'><span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='fl'>26</span><span class='op'>*</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>daily_doses</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>10000</span>, <span class='fl'>365</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>mean_days_between_doses</span> <span class='op'>&lt;-</span> <span class='fl'>12</span> <span class='op'>*</span> <span class='fl'>7</span></span>
+<span class='r-in'><span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vaccine_priority_proportion.html'>vaccine_priority_population</a></span><span class='op'>(</span><span class='va'>region</span>, uptake <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>schedule</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vaccine_schedule_future.html'>vaccine_schedule_future</a></span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='fl'>0</span>, <span class='va'>daily_doses</span>, <span class='va'>mean_days_between_doses</span>, <span class='va'>n</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># generate model parameters</span></span>
+<span class='r-in'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span></span>
+<span class='r-in'>       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span>,</span>
+<span class='r-in'>       rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,</span>
+<span class='r-in'>       rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,</span>
+<span class='r-in'>       rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,</span>
+<span class='r-in'>       rel_p_death <span class='op'>=</span> <span class='va'>rel_p_death</span>,</span>
+<span class='r-in'>       rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,</span>
+<span class='r-in'>       vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,</span>
+<span class='r-in'>       vaccine_schedule <span class='op'>=</span> <span class='va'>schedule</span>,</span>
+<span class='r-in'>       vaccine_index_dose2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># vaccination parameters are automatically copied across all age groups#</span></span>
+<span class='r-in'><span class='co'># (and across strains but here we only have 1 strain which is the 2nd</span></span>
+<span class='r-in'><span class='co'># dimension here)</span></span>
+<span class='r-in'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_susceptibility</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_sympt</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_hosp_if_sympt</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,] 0.95</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_p_death</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='va'>p</span><span class='op'>$</span><span class='va'>rel_infectivity</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='co'># Note that this is only the "base" rate as we fill in the first</span></span>
+<span class='r-in'><span class='co'># column dynamically based on vaccine_daily_doses</span></span>
+<span class='r-in'><span class='va'>p</span><span class='op'>$</span><span class='va'>vaccine_progression_rate</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1] [,2]        [,3]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]    0    0 0.005494505</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]    0    0 0.005494505</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### same example as above BUT assume a different effect of vaccine in the</span></span>
+<span class='r-in'><span class='co'>### first age group</span></span>
+<span class='r-in'><span class='va'>n_groups</span> <span class='op'>&lt;-</span> <span class='fl'>19</span></span>
+<span class='r-in'><span class='va'>n_strains</span> <span class='op'>&lt;-</span> <span class='fl'>1</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Assumption: vaccine is twice more effective at reducing susceptibility</span></span>
+<span class='r-in'><span class='co'># in the first age group</span></span>
+<span class='r-in'><span class='va'>rel_susceptibility_agegp1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.4</span>, <span class='fl'>0.25</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rel_susceptibility_other_agegp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rel_susceptibility</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='cn'>NA</span>, dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='fl'>1</span>, , <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_agegp1</span></span>
+<span class='r-in'><span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='va'>n_groups</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>  <span class='va'>rel_susceptibility</span><span class='op'>[</span><span class='va'>i</span>, , <span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>rel_susceptibility_other_agegp</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'><span class='va'>rel_susceptibility</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,]  0.4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,]  0.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       [,1]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,] 0.25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19,] 0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># But vaccine has the same impact on probability of symptoms and</span></span>
+<span class='r-in'><span class='co'># hospitalisation for the symptomatic across all age groups</span></span>
+<span class='r-in'><span class='va'>rel_p_sympt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,</span>
+<span class='r-in'>  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rel_p_hosp_if_sympt</span> <span class='op'>&lt;-</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,</span>
+<span class='r-in'>  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rel_p_death</span> <span class='op'>&lt;-</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_p_hosp_if_sympt</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,</span>
+<span class='r-in'>  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># And vaccine has the same impact on onwards infectivity across age groups</span></span>
+<span class='r-in'><span class='va'>rel_infectivity</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>rel_infectivity</span>, each <span class='op'>=</span> <span class='va'>n_groups</span><span class='op'>)</span>,</span>
+<span class='r-in'>  dim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n_groups</span>, <span class='va'>n_strains</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># the period of build-up of immunity is the same for all age groups,</span></span>
+<span class='r-in'><span class='co'># lasting on average 2 weeks,</span></span>
+<span class='r-in'><span class='co'># but the first age group loses immunity more quickly</span></span>
+<span class='r-in'><span class='co'># (on average after 3 months) than the other age groups</span></span>
+<span class='r-in'><span class='co'># (on average after 6 months)</span></span>
+<span class='r-in'><span class='va'>vaccine_progression_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span>,</span>
+<span class='r-in'>                                  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>13</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>,</span>
+<span class='r-in'>                                  <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>26</span> <span class='op'>*</span> <span class='fl'>7</span><span class='op'>)</span>, <span class='va'>n_groups</span> <span class='op'>-</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># generate model parameters</span></span>
+<span class='r-in'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>carehomes_parameters</span><span class='op'>(</span></span>
+<span class='r-in'>       <span class='fu'><a href='sircovid_date.html'>sircovid_date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>, <span class='va'>region</span>,</span>
+<span class='r-in'>       rel_susceptibility <span class='op'>=</span> <span class='va'>rel_susceptibility</span>,</span>
+<span class='r-in'>       rel_p_sympt <span class='op'>=</span> <span class='va'>rel_p_sympt</span>,</span>
+<span class='r-in'>       rel_p_hosp_if_sympt <span class='op'>=</span> <span class='va'>rel_p_hosp_if_sympt</span>,</span>
+<span class='r-in'>       rel_p_death <span class='op'>=</span> <span class='va'>rel_p_death</span>,</span>
+<span class='r-in'>       rel_infectivity <span class='op'>=</span> <span class='va'>rel_infectivity</span>,</span>
+<span class='r-in'>       vaccine_progression_rate <span class='op'>=</span> <span class='va'>vaccine_progression_rate</span>,</span>
+<span class='r-in'>       vaccine_schedule <span class='op'>=</span> <span class='va'>schedule</span>,</span>
+<span class='r-in'>       vaccine_index_dose2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># TODO: add an example of manually set up vaccine schedule</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

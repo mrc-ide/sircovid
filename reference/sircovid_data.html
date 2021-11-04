@@ -84,7 +84,7 @@ changes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.6</span>
       </span>
     </div>
 
@@ -170,48 +170,49 @@ the value where missing.</p></td>
 such as <code><a href='https://rdrr.io/pkg/mcstate/man/particle_filter.html'>mcstate::particle_filter()</a></code> and <code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc.html'>mcstate::pmcmc()</a></code></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># A data sert that has data from the first of February to the first of</span>
-<span class='co'># March (one column of data called 'x')</span>
-<span class='va'>from</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span>
-<span class='va'>to</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2020-03-01"</span><span class='op'>)</span>
-<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>from</span>, <span class='va'>to</span>, by <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
-                x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>to</span> <span class='op'>-</span> <span class='va'>from</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span>,
-                stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'># Get this ready for sircovid/mcstate assuming the seeding starts on</span>
-<span class='co'># the 15th of January and we take 4 steps per day.</span>
-<span class='fu'>sircovid_data</span><span class='op'>(</span><span class='va'>d</span>, start_date <span class='op'>=</span> <span class='st'>"2020-01-15"</span>, <span class='fl'>1</span> <span class='op'>/</span> <span class='fl'>4</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    date_start date_end step_start step_end          x
-#&gt; 1          15       32         60      128 0.17467589
-#&gt; 2          32       33        128      132 0.53157354
-#&gt; 3          33       34        132      136 0.49363702
-#&gt; 4          34       35        136      140 0.77930863
-#&gt; 5          35       36        140      144 0.20417834
-#&gt; 6          36       37        144      148 0.71339728
-#&gt; 7          37       38        148      152 0.06521611
-#&gt; 8          38       39        152      156 0.35420680
-#&gt; 9          39       40        156      160 0.82519942
-#&gt; 10         40       41        160      164 0.27381825
-#&gt; 11         41       42        164      168 0.57004495
-#&gt; 12         42       43        168      172 0.33571908
-#&gt; 13         43       44        172      176 0.59626279
-#&gt; 14         44       45        176      180 0.19151803
-#&gt; 15         45       46        180      184 0.94776394
-#&gt; 16         46       47        184      188 0.54248041
-#&gt; 17         47       48        188      192 0.54460339
-#&gt; 18         48       49        192      196 0.27859715
-#&gt; 19         49       50        196      200 0.44670247
-#&gt; 20         50       51        200      204 0.37151118
-#&gt; 21         51       52        204      208 0.02806097
-#&gt; 22         52       53        208      212 0.46598719
-#&gt; 23         53       54        212      216 0.39003139
-#&gt; 24         54       55        216      220 0.02006522
-#&gt; 25         55       56        220      224 0.37697093
-#&gt; 26         56       57        224      228 0.55991284
-#&gt; 27         57       58        228      232 0.85708359
-#&gt; 28         58       59        232      236 0.38480971
-#&gt; 29         59       60        236      240 0.52791704
-#&gt; 30         60       61        240      244 0.60063752</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># A data sert that has data from the first of February to the first of</span></span>
+<span class='r-in'><span class='co'># March (one column of data called 'x')</span></span>
+<span class='r-in'><span class='va'>from</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2020-02-01"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>to</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2020-03-01"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='va'>from</span>, <span class='va'>to</span>, by <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,</span>
+<span class='r-in'>                x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>to</span> <span class='op'>-</span> <span class='va'>from</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>)</span>,</span>
+<span class='r-in'>                stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Get this ready for sircovid/mcstate assuming the seeding starts on</span></span>
+<span class='r-in'><span class='co'># the 15th of January and we take 4 steps per day.</span></span>
+<span class='r-in'><span class='fu'>sircovid_data</span><span class='op'>(</span><span class='va'>d</span>, start_date <span class='op'>=</span> <span class='st'>"2020-01-15"</span>, <span class='fl'>1</span> <span class='op'>/</span> <span class='fl'>4</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    date_start date_end step_start step_end          x</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1          15       32         60      128 0.17467589</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2          32       33        128      132 0.53157354</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3          33       34        132      136 0.49363702</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4          34       35        136      140 0.77930863</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5          35       36        140      144 0.20417834</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6          36       37        144      148 0.71339728</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7          37       38        148      152 0.06521611</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8          38       39        152      156 0.35420680</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9          39       40        156      160 0.82519942</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10         40       41        160      164 0.27381825</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11         41       42        164      168 0.57004495</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12         42       43        168      172 0.33571908</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13         43       44        172      176 0.59626279</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14         44       45        176      180 0.19151803</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15         45       46        180      184 0.94776394</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16         46       47        184      188 0.54248041</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17         47       48        188      192 0.54460339</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18         48       49        192      196 0.27859715</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19         49       50        196      200 0.44670247</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20         50       51        200      204 0.37151118</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21         51       52        204      208 0.02806097</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22         52       53        208      212 0.46598719</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23         53       54        212      216 0.39003139</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24         54       55        216      220 0.02006522</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25         55       56        220      224 0.37697093</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26         56       57        224      228 0.55991284</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27         57       58        228      232 0.85708359</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28         58       59        232      236 0.38480971</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29         59       60        236      240 0.52791704</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30         60       61        240      244 0.60063752</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
