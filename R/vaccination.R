@@ -870,8 +870,6 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 modify_severity <- function(efficacy, efficacy_strain_2,
                             strain_severity_modifier) {
 
-  check_sircovid_model(model)
-
   expected <- c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
                 "rel_infectivity", "rel_p_death")
 
