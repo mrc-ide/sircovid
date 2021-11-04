@@ -4,12 +4,7 @@
 \alias{modify_severity}
 \title{Modify severity and transmission of variants}
 \usage{
-modify_severity(
-  efficacy,
-  efficacy_strain_2,
-  strain_severity_modifier,
-  model = "carehomes"
-)
+modify_severity(efficacy, efficacy_strain_2, strain_severity_modifier)
 }
 \arguments{
 \item{efficacy, efficacy_strain_2}{Vaccine efficacy parameters for strains
@@ -21,10 +16,6 @@ and rows to age groups.}
 \item{strain_severity_modifier}{List of modifiers to be applied to efficacy
 variables; length should correspond to number of strains and each element
 should be a list with same names as \code{efficacy}}
-
-\item{model}{If \code{carehomes} then upper-truncates VE at 1 for first two
-vaccine strata, otherwise if `lancelot' then upper-truncates VE at 1
-for first and penultimate vaccine strata.}
 }
 \value{
 Returns a list with same length and names as \code{efficacy} and where

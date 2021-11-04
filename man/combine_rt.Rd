@@ -8,10 +8,10 @@ combine_rt(rt, samples, rank = TRUE)
 }
 \arguments{
 \item{rt}{A list of Rt calculations from
-\code{\link[=carehomes_Rt_trajectories]{carehomes_Rt_trajectories()}} (though any Rt calculation that
+\code{\link[=lancelot_Rt_trajectories]{lancelot_Rt_trajectories()}} (though any Rt calculation that
 confirms to this will work)}
 
-\item{samples}{A list of samples from \code{\link[=carehomes_forecast]{carehomes_forecast()}}}
+\item{samples}{A list of samples from \code{\link[=lancelot_forecast]{lancelot_forecast()}}}
 
 \item{rank}{A boolean deciding whether to rank trajectories by increasing
 incidence or not before combining Rt estimates}

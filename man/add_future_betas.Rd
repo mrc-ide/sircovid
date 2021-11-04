@@ -12,7 +12,7 @@ future_Rt(value, relative_to = NULL)
 \arguments{
 \item{sample}{A \code{mcstate_pmcmc} object}
 
-\item{rt}{The results of \link{carehomes_Rt_trajectories}
+\item{rt}{The results of \link{lancelot_Rt_trajectories}
 with matrix elements \code{Rt_general} and \code{date} which will be used to
 calculate relative Rt values.}
 
