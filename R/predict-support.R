@@ -29,7 +29,7 @@
 ##'
 ##' @param sample A `mcstate_pmcmc` object
 ##'
-##' @param rt The results of [sircovid::carehomes_Rt_trajectories]
+##' @param rt The results of [sircovid::lancelot_Rt_trajectories]
 ##'   with matrix elements `Rt_general` and `date` which will be used to
 ##'   calculate relative Rt values.
 ##'

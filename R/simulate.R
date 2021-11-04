@@ -1,4 +1,4 @@
-##' Simulate from a sircovid model ([basic] or [carehomes]) given a
+##' Simulate from a sircovid model ([basic] or [lancelot]) given a
 ##' set of starting positions and parameters. This forms the core of
 ##' our projections support, and is typically used after fitting a
 ##' model.

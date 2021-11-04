@@ -103,7 +103,7 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            n_vacc_classes,
                                            index_dose) {
 
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
     mat_vaccine_progression_rate <- matrix(0, n_groups, n_vacc_classes)
@@ -209,7 +209,7 @@ vaccine_priority_proportion <- function(uptake,
                                         prop_hcw = NULL,
                                         prop_very_vulnerable = NULL,
                                         prop_underlying_condition = NULL) {
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
 
   if (is.null(uptake)) {
     uptake <- rep(1, n_groups)
@@ -291,7 +291,7 @@ vaccine_priority_population <- function(region,
                                    prop_very_vulnerable,
                                    prop_underlying_condition)
   ## TODO: it would be nice to make this easier
-  pop <- carehomes_parameters(1, region)$N_tot
+  pop <- lancelot_parameters(1, region)$N_tot
   pop_mat <- matrix(rep(pop, ncol(p)), nrow = nrow(p))
   round(p * pop_mat)
 }
@@ -450,7 +450,7 @@ vaccine_schedule_future <- function(start,
 }
 
 
-##' Create a vaccine schedule for use with [carehomes_parameters]
+##' Create a vaccine schedule for use with [lancelot_parameters]
 ##'
 ##' @title Create vaccine schedule
 ##'
@@ -458,7 +458,7 @@ vaccine_schedule_future <- function(start,
 ##'   vaccines will be given
 ##'
 ##' @param doses A 3d array of doses representing (1) the model group
-##'   (19 rows for the carehomes model), (2) the dose (must be length
+##'   (19 rows for the lancelot model), (2) the dose (must be length
 ##'   2 at present) and (3) time (can be anything nonzero). The values
 ##'   represent the number of vaccine doses in that group for that
 ##'   dose for that day. So for `doses[i, j, k]` then it is for the
@@ -474,7 +474,7 @@ vaccine_schedule <- function(date, doses, n_doses = 2L) {
   assert_sircovid_date(date)
   assert_scalar(date)
 
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
 
   if (length(dim(doses)) != 3L) {
     stop("Expected a 3d array for 'doses'")
@@ -873,7 +873,7 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 ##' @export
 modify_severity <- function(efficacy, efficacy_strain_2,
                             strain_severity_modifier,
-                            model = "carehomes") {
+                            model = "lancelot") {
 
   check_sircovid_model(model)
 

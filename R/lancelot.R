@@ -2201,3 +2201,34 @@ lancelot_check_severity <- function(pars) {
 
   invisible(pars)
 }
+
+
+create_index_dose_inverse <- function(n_vacc_classes, index_dose) {
+  index_dose_inverse <- integer(n_vacc_classes)
+  index_dose_inverse[index_dose] <- seq_along(index_dose)
+  index_dose_inverse
+}
+
+
+calculate_index <- function(index, state, suffix_list, suffix0 = NULL,
+                            state_name = state) {
+  if (is.null(suffix0)) {
+    suffixes <- list()
+  } else {
+    suffixes <- list(suffix0)
+  }
+  for (i in seq_along(suffix_list)) {
+    nm <- names(suffix_list)[[i]]
+    if (length(nm) == 0) {
+      nm <- ""
+    }
+    suffixes <- c(suffixes,
+                  list(c("", sprintf("_%s%s", nm,
+                                     seq_len(suffix_list[[i]] - 1L)))))
+  }
+  suffixes <- expand.grid(suffixes)
+  nms <- apply(suffixes, 1,
+               function(x) sprintf("%s%s",
+                                   state_name, paste0(x, collapse = "")))
+  set_names(index[[state]], nms)
+}

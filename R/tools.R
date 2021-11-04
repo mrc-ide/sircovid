@@ -164,7 +164,7 @@ inflate_state <- function(state1, info1, info2, fn) {
 ##' @title Available sircovid Models
 ##' @export
 sircovid_models <- function() {
-  c("basic", "carehomes", "lancelot")
+  c("basic", "lancelot")
 }
 
 

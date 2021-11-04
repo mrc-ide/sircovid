@@ -6,8 +6,8 @@ build_waning_rate <- function(waning_rate) {
     stop("'waning_rate' must have only non-negative values")
   }
   if (length(waning_rate) == 1) {
-    waning_rate <- rep(waning_rate, carehomes_n_groups())
-  } else if (length(waning_rate) != carehomes_n_groups()) {
+    waning_rate <- rep(waning_rate, lancelot_n_groups())
+  } else if (length(waning_rate) != lancelot_n_groups()) {
     stop(
       "'waning_rate' should have as many elements as age groups or be a scalar")
   }

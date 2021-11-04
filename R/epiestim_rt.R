@@ -73,7 +73,7 @@ gt_distr <- function(p, n = 1000) {
 ## We expect 'step' to be a vector along step
 
 ##' Compute "Rt" using EpiEtim for a set of simulated trajectories (e.g., the
-##' result of the `$iterate()` method of [carehomes], [mcstate::pmcmc()] or
+##' result of the `$iterate()` method of [lancelot], [mcstate::pmcmc()] or
 ##' [mcstate::pmcmc_predict()]. The trajectories should share
 ##' parameters.
 ##'
@@ -83,7 +83,7 @@ gt_distr <- function(p, n = 1000) {
 ##'
 ##' @param incidence A matrix (n trajectories x n steps) of incidence counts
 ##'
-##' @param p A single [carehomes_parameters()] object.
+##' @param p A single [lancelot_parameters()] object.
 ##'
 ##' @param gt_distr A vector giving the discrete (daily) distribution of the
 ##' generation time. The first value must be zero. If NULL, the generation time
@@ -123,7 +123,7 @@ gt_distr <- function(p, n = 1000) {
 ##' generation time
 ##'
 ##' @export
-carehomes_rt_trajectories_epiestim <- function(step, incidence, p,
+lancelot_rt_trajectories_epiestim <- function(step, incidence, p,
                                                gt_distr = NULL,
                                                sliding_window_ndays = 7,
                                                mean_prior = 1,

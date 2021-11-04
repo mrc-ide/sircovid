@@ -70,6 +70,26 @@ sircovid_population <- function(region) {
 }
 
 
+sircovid_carehome_beds <- function(region) {
+  if (is.null(region)) {
+    stop("'region' must not be NULL")
+  }
+
+  if (is.null(cache$carehomes)) {
+    cache$carehomes <- read_csv(sircovid_file("extdata/carehomes.csv"))
+  }
+
+  i <- match(tolower(region), cache$carehomes$region)
+  if (is.na(i)) {
+    valid <- paste(squote(cache$carehomes$region), collapse = ", ")
+    stop(sprintf("Carehome beds not found for '%s': must be one of %s",
+                 region, valid))
+  }
+
+  cache$carehomes$carehome_beds[[i]]
+}
+
+
 ##' @importFrom stats dnbinom rexp
 ll_nbinom <- function(data, model, kappa, exp_noise) {
   if (is.na(data)) {
@@ -315,7 +335,7 @@ drop_trajectory_predicted <- function(obj) {
 ##'
 ##' @title Combine trajectories
 ##'
-##' @param samples A list of samples from [carehomes_forecast()]
+##' @param samples A list of samples from [lancelot_forecast()]
 ##'
 ##' @param rank Logical, indicating if trajectories should be ranked
 ##'   before combination.
@@ -439,7 +459,7 @@ reorder_sample <- function(sample, rank) {
 ##' @title Reorder Rt or IFR trajectories
 ##'
 ##' @param x An `Rt_trajectories` or `IFR_t_trajectories` object, as returned
-##'   by [carehomes_Rt_trajectories()] or [carehomes_ifr_t_trajectories]
+##'   by [lancelot_Rt_trajectories()] or [lancelot_ifr_t_trajectories]
 ##'   respectively.
 ##'
 ##' @param rank A vector of ranks to reorder by
@@ -469,10 +489,10 @@ reorder_rt_ifr <- function(x, rank) {
 ##' @title Combine Rt estimates
 ##'
 ##' @param rt A list of Rt calculations from
-##'   [carehomes_Rt_trajectories()] (though any Rt calculation that
+##'   [lancelot_Rt_trajectories()] (though any Rt calculation that
 ##'   confirms to this will work)
 ##'
-##' @param samples A list of samples from [carehomes_forecast()]
+##' @param samples A list of samples from [lancelot_forecast()]
 ##'
 ##' @param rank A boolean deciding whether to rank trajectories by increasing
 ##' incidence or not before combining Rt estimates
@@ -496,10 +516,10 @@ combine_rt <- function(rt, samples, rank = TRUE) {
 ##' @title Combine Rt estimates from EpiEstim
 ##'
 ##' @param rt A list of Rt calculations from
-##'   [carehomes_rt_trajectories_epiestim()] (though any Rt calculation that
+##'   [lancelot_rt_trajectories_epiestim()] (though any Rt calculation that
 ##'   confirms to this will work)
 ##'
-##' @param samples A list of samples from [carehomes_forecast()]
+##' @param samples A list of samples from [lancelot_forecast()]
 ##'
 ##' @param q A vector of quantiles to return values for
 ##'
@@ -518,7 +538,7 @@ combine_rt_epiestim <- function(rt, samples, q = NULL, rank = TRUE) {
   ret <- rt[[1L]]
   if (!("Rt" %in% names(ret))) {
     stop(paste("rt$Rt missing. Did you forget 'save_all_Rt_sample = TRUE'",
-               "in 'carehomes_EpiEstim_Rt_trajectories'?"))
+               "in 'lancelot_EpiEstim_Rt_trajectories'?"))
   }
   ret$Rt <- combine_rt1_epiestim("Rt", rt, samples, rank)
   summary_R <- apply(ret$Rt, 2,
