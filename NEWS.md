@@ -1,6 +1,10 @@
-# sircovid 0.12.6
+# sircovid 0.12.8
 
 * `carehomes` model removed from the package
+
+# sircovid 0.12.7
+
+* `D_inc` now returned as a state from odin for daily deaths (`deaths_inc`)
 
 # sircovid 0.12.4
 
