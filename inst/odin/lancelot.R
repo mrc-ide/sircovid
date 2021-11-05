@@ -1533,8 +1533,12 @@ update(D_hosp_inc) <- if (step %% steps_per_day == 0)
   delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
 
 initial(D_tot) <- 0
-update(D_tot) <- D_tot + delta_D_hosp_tot + delta_D_comm_tot +
-  delta_D_carehomes_tot
+delta_D_tot <- delta_D_hosp_tot + delta_D_comm_tot + delta_D_carehomes_tot
+update(D_tot) <- D_tot + delta_D_tot
+
+initial(D_inc) <- 0
+update(D_inc) <- if (step %% steps_per_day == 0)
+  delta_D_tot else D_inc + delta_D_tot
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
