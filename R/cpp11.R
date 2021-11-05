@@ -4,12 +4,12 @@ dust_basic_capabilities <- function() {
   .Call(`_sircovid_dust_basic_capabilities`)
 }
 
-dust_basic_device_info <- function() {
-  .Call(`_sircovid_dust_basic_device_info`)
+dust_basic_gpu_info <- function() {
+  .Call(`_sircovid_dust_basic_gpu_info`)
 }
 
-dust_cpu_basic_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, device_config) {
-  .Call(`_sircovid_dust_cpu_basic_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, device_config)
+dust_cpu_basic_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_sircovid_dust_cpu_basic_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
 dust_cpu_basic_run <- function(ptr, step_end) {
@@ -76,12 +76,12 @@ dust_lancelot_capabilities <- function() {
   .Call(`_sircovid_dust_lancelot_capabilities`)
 }
 
-dust_lancelot_device_info <- function() {
-  .Call(`_sircovid_dust_lancelot_device_info`)
+dust_lancelot_gpu_info <- function() {
+  .Call(`_sircovid_dust_lancelot_gpu_info`)
 }
 
-dust_cpu_lancelot_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, device_config) {
-  .Call(`_sircovid_dust_cpu_lancelot_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, device_config)
+dust_cpu_lancelot_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_sircovid_dust_cpu_lancelot_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
 dust_cpu_lancelot_run <- function(ptr, step_end) {
