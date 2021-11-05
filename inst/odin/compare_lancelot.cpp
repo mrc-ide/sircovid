@@ -141,25 +141,25 @@ compare(const typename T::real_type * state,
     odin(sympt_cases_non_variant_over25_inc);
   const real_type model_react_pos = odin(react_pos);
 
-  const int time = static_cast<int>(odin(time));
+  const int time_p_3 = static_cast<int>(odin(time) + 3);
 
   const real_type p_NC_today_under15 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(p_NC_weekend_under15) : odin(p_NC_under15);
   const real_type p_NC_today_15_24 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(p_NC_weekend_15_24) : odin(p_NC_15_24);
   const real_type p_NC_today_25_49 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(p_NC_weekend_25_49) : odin(p_NC_25_49);
   const real_type p_NC_today_50_64 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(p_NC_weekend_50_64) : odin(p_NC_50_64);
   const real_type p_NC_today_65_79 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(p_NC_weekend_65_79) : odin(p_NC_65_79);
   const real_type p_NC_today_80_plus =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(p_NC_weekend_80_plus) : odin(p_NC_80_plus);
 
   const real_type pillar2_under15_negs =
@@ -244,22 +244,22 @@ compare(const typename T::real_type * state,
                   rng_state);
 
   const real_type phi_pillar2_cases_today_under15 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(phi_pillar2_cases_weekend_under15) : odin(phi_pillar2_cases_under15);
   const real_type phi_pillar2_cases_today_15_24 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(phi_pillar2_cases_weekend_15_24) : odin(phi_pillar2_cases_15_24);
   const real_type phi_pillar2_cases_today_25_49 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(phi_pillar2_cases_weekend_25_49) : odin(phi_pillar2_cases_25_49);
   const real_type phi_pillar2_cases_today_50_64 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(phi_pillar2_cases_weekend_50_64) : odin(phi_pillar2_cases_50_64);
   const real_type phi_pillar2_cases_today_65_79 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(phi_pillar2_cases_weekend_65_79) : odin(phi_pillar2_cases_65_79);
   const real_type phi_pillar2_cases_today_80_plus =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     odin(phi_pillar2_cases_weekend_80_plus) : odin(phi_pillar2_cases_80_plus);
 
   const real_type model_pillar2_under15_cases =
