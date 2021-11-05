@@ -102,6 +102,8 @@ test_that("incidence calculation is correct", {
              deaths_carehomes_inc = info$index$D_carehomes_inc,
              deaths_hosp = info$index$D_hosp_tot,
              deaths_hosp_inc = info$index$D_hosp_inc,
+             deaths = info$index$D_tot,
+             deaths_inc = info$index$D_inc,
              admitted = info$index$cum_admit_conf,
              admitted_inc = info$index$admit_conf_inc,
              diagnoses = info$index$cum_new_conf,
@@ -120,14 +122,14 @@ test_that("incidence calculation is correct", {
                info$index$sympt_cases_non_variant_over25_inc,
              infections = info$index$cum_infections,
              infections_inc = info$index$infections_inc)
-  expect_length(index, 20) # guard against name changes
+  expect_length(index, 22) # guard against name changes
 
   steps <- seq(initial$step, length.out = 60 * 4 + 1)
   mod$set_index(index)
   y <- mod$simulate(steps)
 
   i <- which(steps %% pars$steps_per_day == 0)
-  j <- seq(1, 20, by = 2)
+  j <- seq(1, 22, by = 2)
   y0 <- y[, , i[-length(i)]]
   y1 <- y[, , i[-1]]
   yd <- y1[j, , ] - y0[j, , ]

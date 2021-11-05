@@ -754,6 +754,7 @@ test_that("lancelot_index returns S compartments", {
       info$index$cum_sympt_cases_non_variant_over25,
       info$index$hosp_tot,
       info$index$D_tot,
+      info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
       info$index$S,
