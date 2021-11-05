@@ -2,15 +2,15 @@ context("pmcmc")
 
 test_that("adding incidence adds appropriate states", {
   dat <- reference_data_lancelot_mcmc()
-  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
-  expect_true(all(c("deaths_inc", "icu_inc") %in% rownames(res$state)))
+  res <- add_trajectory_incidence(dat$trajectories, "icu")
+  expect_true("icu_inc" %in% rownames(res$state))
 
-  tmp <- res$state["deaths_inc", , ]
+  tmp <- res$state["icu_inc", , ]
   expect_true(all(is.na(tmp[, 1:2])))
-  deaths <- t(apply(tmp[, -c(1, 2)], 1, cumsum))
+  icu <- t(apply(tmp[, -c(1, 2)], 1, cumsum))
   expect_equal(
-    deaths,
-    res$state["deaths", , -c(1, 2)] - res$state["deaths", , 2])
+    icu,
+    res$state["icu", , -c(1, 2)] - res$state["icu", , 2])
 
   expect_equal(drop_trajectory_incidence(res),
                drop_trajectory_incidence(dat$trajectories))
@@ -243,18 +243,11 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(205, 11, 2, 32),
+    dat$trajectories$state, c(206, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
-  res <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
-  expect_true(all(c("deaths_inc", "icu_inc") %in% rownames(res$state)))
-
-  tmp <- res$state["deaths_inc", , , ]
-  expect_true(all(is.na(tmp[, 1, 1:2])))
-  deaths <- t(apply(tmp[, 1, -c(1, 2)], 1, cumsum))
-  expect_equal(
-    deaths,
-    res$state["deaths", , 1,  -c(1, 2)] - res$state["deaths", , 1,  2])
+  res <- add_trajectory_incidence(dat$trajectories, "icu")
+  expect_true("icu_inc" %in% rownames(res$state))
 
   tmp <- res$state["icu_inc", , , ]
   expect_true(all(is.na(tmp[, 2, 1:2])))
@@ -273,10 +266,10 @@ test_that("adding incidence adds appropriate states - nested", {
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(205, 11, 2, 32),
+    dat$trajectories$state, c(206, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
-  v <- c("deaths", "icu")
+  v <- "icu"
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
                    add_trajectory_incidence(dat$trajectories, v))
@@ -288,13 +281,13 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(205, 11, 2, 32),
+    dat$trajectories$state, c(206, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
-  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
-  res <- add_trajectory_incidence(dat$trajectories, "deaths")
-  expect_identical(res$state["deaths_inc", , , ],
-                   cmp$state["deaths_inc", , , ])
+  cmp <- add_trajectory_incidence(dat$trajectories, "icu")
+  res <- add_trajectory_incidence(dat$trajectories, "icu")
+  expect_identical(res$state["icu_inc", , , ],
+                   cmp$state["icu_inc", , , ])
 })
 
 
