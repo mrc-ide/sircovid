@@ -83,7 +83,7 @@ test_that("Can run the gpu compare on the cpu", {
 
   np <- 10
   mod_cpu <- gen$new(pars, 0, np, seed = 1L)
-  mod_gpu <- gen$new(pars, 0, np, seed = 1L, device_config = 0)
+  mod_gpu <- gen$new(pars, 0, np, seed = 1L, gpu_config = 0)
 
   initial <- lancelot_initial(mod_cpu$info(), np, pars)
   mod_cpu$update_state(state = initial$state, step = initial$step)
