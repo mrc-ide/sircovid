@@ -1,12 +1,12 @@
 // Can't use std::min on GPU
 template <typename T>
-HOSTDEVICE
+__host__ __device__
 T min(const T& a, const T&b) {
   return a < b ? a : b;
 }
 
 template <typename real_type, typename rng_state_type>
-HOSTDEVICE
+__host__ __device__
 real_type ll_nbinom(real_type data, real_type model, real_type kappa,
                     real_type exp_noise, rng_state_type& rng_state) {
   if (std::isnan(data)) {
@@ -18,7 +18,7 @@ real_type ll_nbinom(real_type data, real_type model, real_type kappa,
 }
 
 template <typename real_type>
-HOSTDEVICE
+__host__ __device__
 real_type ll_binom(real_type data_x, real_type data_size,
                    real_type model_prob) {
   if (std::isnan(data_x) || std::isnan(data_size)) {
@@ -28,7 +28,7 @@ real_type ll_binom(real_type data_x, real_type data_size,
 }
 
 template <typename real_type>
-HOSTDEVICE
+__host__ __device__
 real_type ll_betabinom(real_type data_x, real_type data_size,
                        real_type model_prob, real_type rho) {
   if (std::isnan(data_x) || std::isnan(data_size)) {
@@ -38,7 +38,7 @@ real_type ll_betabinom(real_type data_x, real_type data_size,
 }
 
 template <typename real_type, typename rng_state_type>
-HOSTDEVICE
+__host__ __device__
 real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
                      real_type specificity, real_type exp_noise,
                      rng_state_type& rng_state) {

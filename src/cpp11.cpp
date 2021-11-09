@@ -3,6 +3,7 @@
 
 
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // basic.cpp
 cpp11::sexp dust_basic_capabilities();
@@ -12,17 +13,17 @@ extern "C" SEXP _sircovid_dust_basic_capabilities() {
   END_CPP11
 }
 // basic.cpp
-cpp11::sexp dust_basic_device_info();
-extern "C" SEXP _sircovid_dust_basic_device_info() {
+cpp11::sexp dust_basic_gpu_info();
+extern "C" SEXP _sircovid_dust_basic_gpu_info() {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_basic_device_info());
+    return cpp11::as_sexp(dust_basic_gpu_info());
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp device_config);
-extern "C" SEXP _sircovid_dust_cpu_basic_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP device_config) {
+SEXP dust_cpu_basic_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
+extern "C" SEXP _sircovid_dust_cpu_basic_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(device_config)));
+    return cpp11::as_sexp(dust_cpu_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
   END_CPP11
 }
 // basic.cpp
@@ -140,17 +141,17 @@ extern "C" SEXP _sircovid_dust_carehomes_capabilities() {
   END_CPP11
 }
 // carehomes.cpp
-cpp11::sexp dust_carehomes_device_info();
-extern "C" SEXP _sircovid_dust_carehomes_device_info() {
+cpp11::sexp dust_carehomes_gpu_info();
+extern "C" SEXP _sircovid_dust_carehomes_gpu_info() {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_carehomes_device_info());
+    return cpp11::as_sexp(dust_carehomes_gpu_info());
   END_CPP11
 }
 // carehomes.cpp
-SEXP dust_cpu_carehomes_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp device_config);
-extern "C" SEXP _sircovid_dust_cpu_carehomes_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP device_config) {
+SEXP dust_cpu_carehomes_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
+extern "C" SEXP _sircovid_dust_cpu_carehomes_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_carehomes_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(device_config)));
+    return cpp11::as_sexp(dust_cpu_carehomes_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
   END_CPP11
 }
 // carehomes.cpp
@@ -268,17 +269,17 @@ extern "C" SEXP _sircovid_dust_lancelot_capabilities() {
   END_CPP11
 }
 // lancelot.cpp
-cpp11::sexp dust_lancelot_device_info();
-extern "C" SEXP _sircovid_dust_lancelot_device_info() {
+cpp11::sexp dust_lancelot_gpu_info();
+extern "C" SEXP _sircovid_dust_lancelot_gpu_info() {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_lancelot_device_info());
+    return cpp11::as_sexp(dust_lancelot_gpu_info());
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp device_config);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP device_config) {
+SEXP dust_cpu_lancelot_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(device_config)));
+    return cpp11::as_sexp(dust_cpu_lancelot_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
   END_CPP11
 }
 // lancelot.cpp
@@ -390,67 +391,11 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_n_state(SEXP ptr) {
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _sircovid_dust_basic_capabilities();
-extern SEXP _sircovid_dust_basic_device_info();
-extern SEXP _sircovid_dust_carehomes_capabilities();
-extern SEXP _sircovid_dust_carehomes_device_info();
-extern SEXP _sircovid_dust_cpu_basic_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_compare_data(SEXP);
-extern SEXP _sircovid_dust_cpu_basic_filter(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_n_state(SEXP);
-extern SEXP _sircovid_dust_cpu_basic_reorder(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_resample(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_rng_state(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_run(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_index(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_n_threads(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_rng_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_simulate(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_step(SEXP);
-extern SEXP _sircovid_dust_cpu_basic_update_state(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_compare_data(SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_filter(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_n_state(SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_reorder(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_resample(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_rng_state(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_run(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_set_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_set_index(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_set_n_threads(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_set_rng_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_simulate(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_step(SEXP);
-extern SEXP _sircovid_dust_cpu_carehomes_update_state(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_compare_data(SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_filter(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_n_state(SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_reorder(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_resample(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_rng_state(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_run(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_index(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_n_threads(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_rng_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_simulate(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_step(SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_update_state(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_lancelot_capabilities();
-extern SEXP _sircovid_dust_lancelot_device_info();
-
 static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_basic_capabilities",          (DL_FUNC) &_sircovid_dust_basic_capabilities,          0},
-    {"_sircovid_dust_basic_device_info",           (DL_FUNC) &_sircovid_dust_basic_device_info,           0},
+    {"_sircovid_dust_basic_gpu_info",              (DL_FUNC) &_sircovid_dust_basic_gpu_info,              0},
     {"_sircovid_dust_carehomes_capabilities",      (DL_FUNC) &_sircovid_dust_carehomes_capabilities,      0},
-    {"_sircovid_dust_carehomes_device_info",       (DL_FUNC) &_sircovid_dust_carehomes_device_info,       0},
+    {"_sircovid_dust_carehomes_gpu_info",          (DL_FUNC) &_sircovid_dust_carehomes_gpu_info,          0},
     {"_sircovid_dust_cpu_basic_alloc",             (DL_FUNC) &_sircovid_dust_cpu_basic_alloc,             8},
     {"_sircovid_dust_cpu_basic_compare_data",      (DL_FUNC) &_sircovid_dust_cpu_basic_compare_data,      1},
     {"_sircovid_dust_cpu_basic_filter",            (DL_FUNC) &_sircovid_dust_cpu_basic_filter,            3},
@@ -500,12 +445,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_cpu_lancelot_step",           (DL_FUNC) &_sircovid_dust_cpu_lancelot_step,           1},
     {"_sircovid_dust_cpu_lancelot_update_state",   (DL_FUNC) &_sircovid_dust_cpu_lancelot_update_state,   5},
     {"_sircovid_dust_lancelot_capabilities",       (DL_FUNC) &_sircovid_dust_lancelot_capabilities,       0},
-    {"_sircovid_dust_lancelot_device_info",        (DL_FUNC) &_sircovid_dust_lancelot_device_info,        0},
+    {"_sircovid_dust_lancelot_gpu_info",           (DL_FUNC) &_sircovid_dust_lancelot_gpu_info,           0},
     {NULL, NULL, 0}
 };
 }
 
-extern "C" void R_init_sircovid(DllInfo* dll){
+extern "C" attribute_visible void R_init_sircovid(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
