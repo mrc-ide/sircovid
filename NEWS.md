@@ -1,4 +1,4 @@
-# sircovid 0.12.8
+# sircovid 0.12.9
 
 * `carehomes` model removed from the package
 
