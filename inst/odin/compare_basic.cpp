@@ -1,5 +1,5 @@
 template <typename real_type, typename rng_state_type>
-HOSTDEVICE
+__host__ __device__
 real_type ll_nbinom(real_type data, real_type model, real_type kappa,
                     real_type exp_noise,
                     rng_state_type& rng_state) {
