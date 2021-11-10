@@ -11,7 +11,7 @@ vaccine_schedule(date, doses, n_doses = 2L)
 vaccines will be given}
 
 \item{doses}{A 3d array of doses representing (1) the model group
-(19 rows for the carehomes model), (2) the dose (must be length
+(19 rows for the lancelot model), (2) the dose (must be length
 2 at present) and (3) time (can be anything nonzero). The values
 represent the number of vaccine doses in that group for that
 dose for that day. So for \code{doses[i, j, k]} then it is for the
@@ -25,5 +25,5 @@ future we may extend further).}
 A \code{vaccine_schedule} object
 }
 \description{
-Create a vaccine schedule for use with \link{carehomes_parameters}
+Create a vaccine schedule for use with \link{lancelot_parameters}
 }

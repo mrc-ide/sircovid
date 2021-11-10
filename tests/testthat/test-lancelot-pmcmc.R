@@ -291,6 +291,85 @@ test_that("can compute incidence for a single variable - nested", {
 })
 
 
+test_that("can combine EpiEstim rt calculations over trajectories", {
+  dat <- reference_data_lancelot_trajectories()
+
+  index_cum_inc <- grep("infections", names(dat$predict$index))
+  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
+  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+
+  p <- dat$predict$transform(dat$pars[1, ])
+
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
+
+  rt <- lancelot_rt_trajectories_epiestim(
+    dat$trajectories$step, inc, p)
+
+  res <- combine_rt_epiestim(list(rt, rt), list(dat, dat))
+  cmp <- rt
+  cmp$Rt[, 1] <- NA
+  cmp$Rt_summary[, 1] <- NA
+
+  ## Rts are ordered differently
+  expect_equal(sort(as.vector(res$Rt)), sort(as.vector(cmp$Rt)))
+  expect_equal(res$Rt_summary, cmp$Rt_summary)
+})
+
+
+test_that("can combine EpiEstim rt over trajectories without reordering", {
+  dat <- reference_data_lancelot_trajectories()
+
+  index_cum_inc <- grep("infections", names(dat$predict$index))
+  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
+  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+
+  p <- dat$predict$transform(dat$pars[1, ])
+
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
+
+  rt <- lancelot_rt_trajectories_epiestim(
+    dat$trajectories$step, inc, p)
+
+  res <- combine_rt_epiestim(list(rt, rt), list(dat, dat), rank = FALSE)
+  cmp <- rt
+  cmp$Rt[, 1] <- NA
+  cmp$Rt_summary[, 1] <- NA
+
+  ## Rts are ordered differently
+  expect_equal(res$Rt, cmp$Rt)
+  expect_equal(res$Rt_summary, cmp$Rt_summary)
+})
+
+
+test_that("Combining EpiEstim rt reject invalid inputs", {
+  dat <- reference_data_lancelot_trajectories()
+
+  index_cum_inc <- grep("infections", names(dat$predict$index))
+  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
+  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
+  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+
+  p <- dat$predict$transform(dat$pars[1, ])
+
+  ## Fix p_C across age groups for the rest of the test
+  p$p_C <- rep(0.6, 19)
+
+  rt <- lancelot_rt_trajectories_epiestim(
+    dat$trajectories$step, inc, p, save_all_Rt_sample = FALSE)
+
+  error_msg <-
+    paste("rt$Rt missing. Did you forget 'save_all_Rt_sample = TRUE'",
+          "in 'lancelot_EpiEstim_Rt_trajectories'?")
+  expect_error(combine_rt_epiestim(list(rt, rt), list(dat, dat)),
+               error_msg, fixed = TRUE)
+
+})
+
+
 test_that("get_sample_rank rejects invalid inputs", {
   dat <- reference_data_lancelot_trajectories()
 

@@ -56,7 +56,7 @@ vaccine_remap_state <- function(state_orig, info_orig, info_vacc) {
 
 
 build_rel_param <- function(rel_param, n_strains, n_vacc_classes, name_param) {
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
   if (length(rel_param) == 1) {
     mat_rel_param <- array(rel_param, c(n_groups, n_strains, n_vacc_classes))
   } else if (is.array(rel_param)) {
@@ -103,7 +103,7 @@ build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            n_vacc_classes,
                                            index_dose) {
 
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
     mat_vaccine_progression_rate <- matrix(0, n_groups, n_vacc_classes)
@@ -209,7 +209,7 @@ vaccine_priority_proportion <- function(uptake,
                                         prop_hcw = NULL,
                                         prop_very_vulnerable = NULL,
                                         prop_underlying_condition = NULL) {
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
 
   if (is.null(uptake)) {
     uptake <- rep(1, n_groups)
@@ -291,7 +291,7 @@ vaccine_priority_population <- function(region,
                                    prop_very_vulnerable,
                                    prop_underlying_condition)
   ## TODO: it would be nice to make this easier
-  pop <- carehomes_parameters(1, region)$N_tot
+  pop <- lancelot_parameters(1, region)$N_tot
   pop_mat <- matrix(rep(pop, ncol(p)), nrow = nrow(p))
   round(p * pop_mat)
 }
@@ -450,7 +450,7 @@ vaccine_schedule_future <- function(start,
 }
 
 
-##' Create a vaccine schedule for use with [carehomes_parameters]
+##' Create a vaccine schedule for use with [lancelot_parameters]
 ##'
 ##' @title Create vaccine schedule
 ##'
@@ -458,7 +458,7 @@ vaccine_schedule_future <- function(start,
 ##'   vaccines will be given
 ##'
 ##' @param doses A 3d array of doses representing (1) the model group
-##'   (19 rows for the carehomes model), (2) the dose (must be length
+##'   (19 rows for the lancelot model), (2) the dose (must be length
 ##'   2 at present) and (3) time (can be anything nonzero). The values
 ##'   represent the number of vaccine doses in that group for that
 ##'   dose for that day. So for `doses[i, j, k]` then it is for the
@@ -474,7 +474,7 @@ vaccine_schedule <- function(date, doses, n_doses = 2L) {
   assert_sircovid_date(date)
   assert_scalar(date)
 
-  n_groups <- carehomes_n_groups()
+  n_groups <- lancelot_n_groups()
 
   if (length(dim(doses)) != 3L) {
     stop("Expected a 3d array for 'doses'")
@@ -863,19 +863,12 @@ check_doses_boosters_future <- function(doses, end, end_past) {
 ##'  variables; length should correspond to number of strains and each element
 ##'  should be a list with same names as `efficacy`
 ##'
-##' @param model If `carehomes` then upper-truncates VE at 1 for first two
-##'  vaccine strata, otherwise if `lancelot' then upper-truncates VE at 1
-##'  for first and penultimate vaccine strata.
-##'
 ##' @return Returns a list with same length and names as `efficacy` and where
 ##'  each element has dimensions n_groups x n_strains x n_vacc_strata
 ##'
 ##' @export
 modify_severity <- function(efficacy, efficacy_strain_2,
-                            strain_severity_modifier,
-                            model = "carehomes") {
-
-  check_sircovid_model(model)
+                            strain_severity_modifier) {
 
   expected <- c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt",
                 "rel_infectivity", "rel_p_death")
@@ -913,9 +906,7 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           if (new_prob > 1) {
             ## Cap at 1 if: difference very small or in a class where
             ## vaccine hasn't taken effect or has waned
-            ok <- (abs(new_prob - 1) < 1e-10) ||
-              (model == "carehomes" && v_s <= 2) ||
-              (model == "lancelot" && v_s %in% c(1, 4))
+            ok <- (abs(new_prob - 1) < 1e-10) || v_s %in% c(1, 4)
             if (ok) {
               new_prob <- 1
               ## otherwise this is a problem

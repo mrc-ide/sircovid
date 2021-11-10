@@ -2924,7 +2924,7 @@ test_that("modify_severity works as expected", {
 
   ve1 <- set_names(rep(list(matrix(2, 19, 5)), 5), nms)
   mod <- rep(list(set_names(rep(list(1), 5), nms)), 4)
-  expect_error(modify_severity(ve1, NULL, mod, "lancelot"), "VE has full")
+  expect_error(modify_severity(ve1, NULL, mod), "VE has full")
 
   ve1 <- lapply(ve1, function(x) {
     x[, c(2, 3, 5)] <- 1
@@ -2932,7 +2932,7 @@ test_that("modify_severity works as expected", {
   })
 
   expect_vector_equal(
-    unname(unlist(modify_severity(ve1, NULL, mod, "lancelot"))), 1
+    unname(unlist(modify_severity(ve1, NULL, mod))), 1
   )
 
   ve1 <- set_names(rep(list(matrix(0.2, 19, 3)), 5), nms)

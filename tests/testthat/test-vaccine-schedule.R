@@ -89,7 +89,7 @@ test_that("vaccine_priority_population adds to correct population", {
   n <- vaccine_priority_population(region, uptake_by_age)
 
   ## check that n to vaccinate adds up to uptake * population
-  pop_by_age <- carehomes_parameters(1, region)$N_tot
+  pop_by_age <- lancelot_parameters(1, region)$N_tot
 
   expect_vector_equal(rowSums(n), uptake_by_age * pop_by_age, tol = 2)
 })
@@ -98,7 +98,7 @@ test_that("vaccine_priority_population adds to correct population", {
 test_that("vaccine_priority_population adds to correct pop - full uptake", {
   region <- "london"
   n <- vaccine_priority_population(region, NULL)
-  pop_by_age <- carehomes_parameters(1, region)$N_tot
+  pop_by_age <- lancelot_parameters(1, region)$N_tot
   expect_vector_equal(rowSums(n), pop_by_age, tol = 2)
 })
 

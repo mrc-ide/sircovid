@@ -8,7 +8,7 @@ reorder_rt_ifr(x, rank)
 }
 \arguments{
 \item{x}{An \code{Rt_trajectories} or \code{IFR_t_trajectories} object, as returned
-by \code{\link[=carehomes_Rt_trajectories]{carehomes_Rt_trajectories()}} or \link{carehomes_ifr_t_trajectories}
+by \code{\link[=lancelot_Rt_trajectories]{lancelot_Rt_trajectories()}} or \link{lancelot_ifr_t_trajectories}
 respectively.}
 
 \item{rank}{A vector of ranks to reorder by}

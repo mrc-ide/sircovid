@@ -4,10 +4,10 @@
 \alias{compile_gpu}
 \title{Create GPU model}
 \usage{
-compile_gpu(model = "carehomes", ..., real_type = "float", gpu = TRUE)
+compile_gpu(model = "lancelot", ..., real_type = "float", gpu = TRUE)
 }
 \arguments{
-\item{model}{The name of a sircovid model, either \code{carehomes} or
+\item{model}{The name of a sircovid model, either \code{lancelot} or
 \code{basic}}
 
 \item{...}{Additional arguments passed to \link[odin.dust:odin_dust]{odin.dust::odin_dust_}
@@ -23,7 +23,7 @@ results of \link[dust:dust_cuda_options]{dust::dust_cuda_options} in order to co
 compilation.}
 }
 \value{
-A model generator, like \link{carehomes} that can run
+A model generator, like \link{lancelot} that can run
 on the GPU available to this computer.
 }
 \description{

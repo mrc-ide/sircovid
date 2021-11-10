@@ -46,7 +46,7 @@ attributes \code{step} and \code{date} corresponding to the step (relative
 to 2020-01-01) and date.
 }
 \description{
-Simulate from a sircovid model (\link{basic} or \link{carehomes}) given a
+Simulate from a sircovid model (\link{basic} or \link{lancelot}) given a
 set of starting positions and parameters. This forms the core of
 our projections support, and is typically used after fitting a
 model.

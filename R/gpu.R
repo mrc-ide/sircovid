@@ -8,7 +8,7 @@
 ##'
 ##' @title Create GPU model
 ##'
-##' @param model The name of a sircovid model, either `carehomes` or
+##' @param model The name of a sircovid model, either `lancelot` or
 ##'   `basic`
 ##'
 ##' @param ... Additional arguments passed to [odin.dust::odin_dust_]
@@ -23,11 +23,11 @@
 ##'   results of [dust::dust_cuda_options] in order to control
 ##'   compilation.
 ##'
-##' @return A model generator, like [sircovid::carehomes] that can run
+##' @return A model generator, like [sircovid::lancelot] that can run
 ##'   on the GPU available to this computer.
 ##'
 ##' @export
-compile_gpu <- function(model = "carehomes", ..., real_type = "float",
+compile_gpu <- function(model = "lancelot", ..., real_type = "float",
                         gpu = TRUE) {
   path <- sircovid_file(sprintf("odin/%s.R", model))
   odin.dust::odin_dust_(path, real_type = real_type, gpu = gpu, ...)

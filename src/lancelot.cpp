@@ -233,25 +233,25 @@ compare(const typename T::real_type * state,
     state[37];
   const real_type model_react_pos = state[44];
 
-  const int time = static_cast<int>(state[0]);
+  const int time_p_3 = static_cast<int>(state[0] + 3);
 
   const real_type p_NC_today_under15 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->p_NC_weekend_under15 : shared->p_NC_under15;
   const real_type p_NC_today_15_24 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->p_NC_weekend_15_24 : shared->p_NC_15_24;
   const real_type p_NC_today_25_49 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->p_NC_weekend_25_49 : shared->p_NC_25_49;
   const real_type p_NC_today_50_64 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->p_NC_weekend_50_64 : shared->p_NC_50_64;
   const real_type p_NC_today_65_79 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->p_NC_weekend_65_79 : shared->p_NC_65_79;
   const real_type p_NC_today_80_plus =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->p_NC_weekend_80_plus : shared->p_NC_80_plus;
 
   const real_type pillar2_under15_negs =
@@ -336,22 +336,22 @@ compare(const typename T::real_type * state,
                   rng_state);
 
   const real_type phi_pillar2_cases_today_under15 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_under15 : shared->phi_pillar2_cases_under15;
   const real_type phi_pillar2_cases_today_15_24 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_15_24 : shared->phi_pillar2_cases_15_24;
   const real_type phi_pillar2_cases_today_25_49 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_25_49 : shared->phi_pillar2_cases_25_49;
   const real_type phi_pillar2_cases_today_50_64 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_50_64 : shared->phi_pillar2_cases_50_64;
   const real_type phi_pillar2_cases_today_65_79 =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_65_79 : shared->phi_pillar2_cases_65_79;
   const real_type phi_pillar2_cases_today_80_plus =
-    ((time + 3) % 7 < 2) ?
+    (time_p_3 % 7 < 2) ?
     shared->phi_pillar2_cases_weekend_80_plus : shared->phi_pillar2_cases_80_plus;
 
   const real_type model_pillar2_under15_cases =
