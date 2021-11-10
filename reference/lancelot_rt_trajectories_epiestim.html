@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Lancelot progression parameters — lancelot_parameters_progression • sircovid</title>
+<title>Compute Rt using EpiEstim for a set of trajectories — lancelot_rt_trajectories_epiestim • sircovid</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,13 +46,11 @@
 
 
 
-<meta property="og:title" content="Lancelot progression parameters — lancelot_parameters_progression" />
-<meta property="og:description" content="Lancelot progression parameters.  The s_ parameters are the
-scaling parameters for the Erlang distibution (a.k.a 'k'), while
-the gamma_ parameters are the gamma parameters of that
-distribution.  These need to be aligned with Bob's severity
-outputs, and we will come up with a better way of coordinating the
-two." />
+<meta property="og:title" content="Compute Rt using EpiEstim for a set of trajectories — lancelot_rt_trajectories_epiestim" />
+<meta property="og:description" content="Compute &quot;Rt&quot; using EpiEtim for a set of simulated trajectories (e.g., the
+result of the $iterate() method of lancelot, mcstate::pmcmc() or
+mcstate::pmcmc_predict(). The trajectories should share
+parameters." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -124,140 +122,103 @@ two." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Lancelot progression parameters</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/lancelot.R'><code>R/lancelot.R</code></a></small>
-    <div class="hidden name"><code>lancelot_parameters_progression.Rd</code></div>
+    <h1>Compute Rt using EpiEstim for a set of trajectories</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrc-ide/sircovid/blob/master/R/epiestim_rt.R'><code>R/epiestim_rt.R</code></a></small>
+    <div class="hidden name"><code>lancelot_rt_trajectories_epiestim.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Lancelot progression parameters.  The <code>s_</code> parameters are the
-scaling parameters for the Erlang distibution (a.k.a 'k'), while
-the <code>gamma_</code> parameters are the gamma parameters of that
-distribution.  These need to be aligned with Bob's severity
-outputs, and we will come up with a better way of coordinating the
-two.</p>
+    <p>Compute "Rt" using EpiEtim for a set of simulated trajectories (e.g., the
+result of the <code>$iterate()</code> method of <a href='lancelot.html'>lancelot</a>, <code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc.html'>mcstate::pmcmc()</a></code> or
+<code><a href='https://rdrr.io/pkg/mcstate/man/pmcmc_predict.html'>mcstate::pmcmc_predict()</a></code>. The trajectories should share
+parameters.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lancelot_parameters_progression</span><span class='op'>(</span>
-  <span class='va'>dt</span>,
-  gamma_E <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_A <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_P <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_C_1 <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_C_2 <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_ICU_pre <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_ICU_D <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_ICU_W_D <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_ICU_W_R <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_H_D <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_H_R <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_W_D <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_W_R <span class='op'>=</span> <span class='cn'>NULL</span>,
-  gamma_G_D <span class='op'>=</span> <span class='cn'>NULL</span>
+    <pre class="usage"><span class='fu'>lancelot_rt_trajectories_epiestim</span><span class='op'>(</span>
+  <span class='va'>step</span>,
+  <span class='va'>incidence</span>,
+  <span class='va'>p</span>,
+  gt_distr <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sliding_window_ndays <span class='op'>=</span> <span class='fl'>7</span>,
+  mean_prior <span class='op'>=</span> <span class='fl'>1</span>,
+  sd_prior <span class='op'>=</span> <span class='fl'>1</span>,
+  n_GT <span class='op'>=</span> <span class='fl'>10000</span>,
+  n_R <span class='op'>=</span> <span class='fl'>1000</span>,
+  save_all_Rt_sample <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  q <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>dt</th>
-      <td><p>The step size</p></td>
+      <th>step</th>
+      <td><p>A vector of steps</p></td>
     </tr>
     <tr>
-      <th>gamma_E</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of the
-duration in the E (exposed) compartment. See Details.</p></td>
+      <th>incidence</th>
+      <td><p>A matrix (n trajectories x n steps) of incidence counts</p></td>
     </tr>
     <tr>
-      <th>gamma_A</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of the
-duration in the I_A (asymptomatic) compartment. See Details.</p></td>
+      <th>p</th>
+      <td><p>A single <code><a href='lancelot_parameters.html'>lancelot_parameters()</a></code> object.</p></td>
     </tr>
     <tr>
-      <th>gamma_P</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of the
-duration in the I_P (presymptomatic) compartment. See Details.</p></td>
+      <th>gt_distr</th>
+      <td><p>A vector giving the discrete (daily) distribution of the
+generation time. The first value must be zero. If NULL, the generation time
+distribution will be determined automatically from <code>p</code>.</p></td>
     </tr>
     <tr>
-      <th>gamma_C_1</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the I_C_1 (first stage symptomatic) compartment. See
-Details.</p></td>
+      <th>sliding_window_ndays</th>
+      <td><p>An integer giving the length of the sliding
+window on which Rt will be estimated</p></td>
     </tr>
     <tr>
-      <th>gamma_C_2</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the I_C_2 (second stage symptomatic) compartment. See
-Details.</p></td>
+      <th>mean_prior</th>
+      <td><p>The mean prior for Rt</p></td>
     </tr>
     <tr>
-      <th>gamma_ICU_pre</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter
-of the duration in the ICU_pre (general beds stay before ICU) compartment.
-See Details.</p></td>
+      <th>sd_prior</th>
+      <td><p>The standard deviation of the prior for Rt</p></td>
     </tr>
     <tr>
-      <th>gamma_ICU_D</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the ICU_D (ICU stay for individuals who die in ICU)
-compartment. See Details.</p></td>
+      <th>n_GT</th>
+      <td><p>An integer giving the number of generation times to be drawn to
+construct the discrete distribution of the generation time</p></td>
     </tr>
     <tr>
-      <th>gamma_ICU_W_D</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter
-of the duration in the ICU_W_D (ICU stay for individuals who go on to die
-in stepdown) compartment. See Details.</p></td>
+      <th>n_R</th>
+      <td><p>An integer giving the number of Rt values to sample from for each
+incidence trajectory. These will then be aggregated across all incidence
+trajectories.</p></td>
     </tr>
     <tr>
-      <th>gamma_ICU_W_R</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter
-of the duration in the ICU_W_R (ICU stay for individuals who go on to
-recover in stepdown) compartment. See Details.</p></td>
+      <th>save_all_Rt_sample</th>
+      <td><p>A boolean determining whether to save all samples
+of Rt estimated or only a summary</p></td>
     </tr>
     <tr>
-      <th>gamma_H_D</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the H_D (general beds stay for individuals who die in
-general beds) compartment. See Details.</p></td>
-    </tr>
-    <tr>
-      <th>gamma_H_R</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the H_R (general beds stay for individuals who recover in
-general beds) compartment. See Details.</p></td>
-    </tr>
-    <tr>
-      <th>gamma_W_D</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the W_D (stepdown for individuals who die in stepdown)
-compartment. See Details.</p></td>
-    </tr>
-    <tr>
-      <th>gamma_W_R</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the W_R (stepdown for individuals who recover in stepdown)
-compartment. See Details.</p></td>
-    </tr>
-    <tr>
-      <th>gamma_G_D</th>
-      <td><p>Time-varying parameters for the Erlang rate parameter of
-the duration in the G_D (delay to death in the community/care homes)
-compartment. See Details.</p></td>
+      <th>q</th>
+      <td><p>A vector of quantiles to return values for</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of parameter values</p>
-    <h2 class="hasAnchor" id="time-varying-parameters"><a class="anchor" href="#time-varying-parameters"></a>Time-varying parameters</h2>
-
-    
-
-<p>Every time varying parameter has the same format, which can be <code>NULL</code> (in
-which case a default single value is used) or a list with <code>date</code> and
-<code>value</code> for changes in the parameter. If <code>value</code> is scalar then
-<code>date</code> can be <code>NULL</code> or missing. If <code>value</code> is a vector then <code>date</code>
-must be a vector of sircovid dates of the same length as <code>value</code>.</p>
+    <p>A list with elements
+<code>t_start</code> (vector of first days of the sliding windows over which Rt is
+estimated),
+<code>t_end</code> (vector of last days of the sliding windows over which Rt is
+estimated),
+<code>Rt</code> a matrix (only present if <code>save_all = TRUE</code>) containing for each
+sliding window (each col in the matrix) a sample of n_R * nrow(inc) values
+of Rt for that sliding window (rows of the matrix)
+<code>Rt_summary</code> a matrix containing for each sliding window (each col in the
+matrix) the quantiles (<code>q</code>) and the mean of Rt for that sliding
+window (rows of the matrix)
+<code> gt_distr</code> a vector giving the discrete (daily) distribution of the
+generation time</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

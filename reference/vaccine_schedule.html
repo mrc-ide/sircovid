@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Create vaccine schedule — vaccine_schedule" />
-<meta property="og:description" content="Create a vaccine schedule for use with carehomes_parameters" />
+<meta property="og:description" content="Create a vaccine schedule for use with lancelot_parameters" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.9</span>
       </span>
     </div>
 
@@ -125,7 +125,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Create a vaccine schedule for use with <a href='carehomes_parameters.html'>carehomes_parameters</a></p>
+    <p>Create a vaccine schedule for use with <a href='lancelot_parameters.html'>lancelot_parameters</a></p>
     </div>
 
     <pre class="usage"><span class='fu'>vaccine_schedule</span><span class='op'>(</span><span class='va'>date</span>, <span class='va'>doses</span>, n_doses <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></pre>
@@ -141,7 +141,7 @@ vaccines will be given</p></td>
     <tr>
       <th>doses</th>
       <td><p>A 3d array of doses representing (1) the model group
-(19 rows for the carehomes model), (2) the dose (must be length
+(19 rows for the lancelot model), (2) the dose (must be length
 2 at present) and (3) time (can be anything nonzero). The values
 represent the number of vaccine doses in that group for that
 dose for that day. So for <code>doses[i, j, k]</code> then it is for the

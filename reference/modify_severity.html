@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.9</span>
       </span>
     </div>
 
@@ -128,12 +128,7 @@
     <p>Applies a modifier to severity and transmission parameters</p>
     </div>
 
-    <pre class="usage"><span class='fu'>modify_severity</span><span class='op'>(</span>
-  <span class='va'>efficacy</span>,
-  <span class='va'>efficacy_strain_2</span>,
-  <span class='va'>strain_severity_modifier</span>,
-  model <span class='op'>=</span> <span class='st'>"carehomes"</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>modify_severity</span><span class='op'>(</span><span class='va'>efficacy</span>, <span class='va'>efficacy_strain_2</span>, <span class='va'>strain_severity_modifier</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,12 +146,6 @@ and rows to age groups.</p></td>
       <td><p>List of modifiers to be applied to efficacy
 variables; length should correspond to number of strains and each element
 should be a list with same names as <code>efficacy</code></p></td>
-    </tr>
-    <tr>
-      <th>model</th>
-      <td><p>If <code>carehomes</code> then upper-truncates VE at 1 for first two
-vaccine strata, otherwise if `lancelot' then upper-truncates VE at 1
-for first and penultimate vaccine strata.</p></td>
     </tr>
     </table>
 
