@@ -4,14 +4,11 @@
 \alias{vaccine_schedule_from_data}
 \title{Create historical vaccine schedule}
 \usage{
-vaccine_schedule_from_data(data, n_carehomes)
+vaccine_schedule_from_data(data, region, uptake)
 }
 \arguments{
 \item{data}{A data.frame with columns \code{date}, \code{age_band_min},
 \code{dose1} and \code{dose2}.}
-
-\item{n_carehomes}{A vector of length 2 with the number of
-carehome workers and residents.}
 }
 \value{
 A \link{vaccine_schedule} object
