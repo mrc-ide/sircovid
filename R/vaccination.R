@@ -506,7 +506,14 @@ vaccine_schedule <- function(date, doses, n_doses = 2L) {
 ##' @title Create historical vaccine schedule
 ##'
 ##' @param data A data.frame with columns `date`, `age_band_min`,
-##'   `dose1` and `dose2`.
+##'   and numbered doses columns, e.g. if there are three doses
+##'   these should be `dose1`, `dose2` and `dose3`.
+##'
+##' @param region Region to use to get total population numbers
+##'
+##' @param uptake A matrix of 19 rows, and number of columns equal to
+##'   number of doses. The (i,j)th entry gives the fractional uptake
+##'   of dose j for group i
 ##'
 ##' @return A [vaccine_schedule] object
 ##' @export
@@ -514,27 +521,30 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
   assert_is(data, "data.frame")
   dose_cols <- grep("dose[0-9]", names(data), value = TRUE)
   n_doses <- length(dose_cols)
-  # required <- c("age_band_min", "date", "dose1", "dose2")
-  # msg <- setdiff(required, names(data))
-  # if (length(msg) > 0) {
-  #   stop("Required columns missing from 'data': ",
-  #        paste(squote(msg), collapse = ", "))
-  # }
-  # if (length(n_carehomes) != 2) {
-  #   stop("Expected a vector of length 2 for n_carehomes")
-  # }
-  # err <- is.na(data$age_band_min) | data$age_band_min %% 5 != 0
-  # if (any(err)) {
-  #   stop("Invalid values for data$age_band_min: ",
-  #        paste(unique(data$age_band_min[err]), collapse = ", "))
-  # }
-  # ## TODO: tidy up later:
-  # stopifnot(
-  #   all(!is.na(n_carehomes)),
-  #   all(n_carehomes >= 0),
-  #   !is.na(data$date),
-  #   all(data$dose1 >= 0 | is.na(data$dose1)),
-  #   all(data$dose2 >= 0 | is.na(data$dose2)))
+
+  required <- c("age_band_min", "date")
+  msg <- setdiff(required, names(data))
+  if (length(msg) > 0) {
+    stop("Required columns missing from 'data': ",
+         paste(squote(msg), collapse = ", "))
+  }
+
+  dose_expected <- paste0("dose", seq_len(n_doses))
+  dose_msg <- setdiff(dose_expected, names(data))
+  if (length(dose_msg) > 0) {
+    stop(sprintf("There are %s dose columns so expected column names %s)",
+                 n_doses, paste(squote(dose_expected), collapse = ", ")))
+  }
+
+  err <- data$age_band_min[!is.na(data$age_band_min)] %% 5 != 0
+  if (any(err)) {
+    stop("Invalid values for data$age_band_min: ",
+         paste(unique(data$age_band_min[err]), collapse = ", "))
+  }
+  ## TODO: tidy up later:
+  stopifnot(!is.na(data$date),
+    all(data[, dose_cols] >= 0 | is.na(data[, dose_cols])),
+    all(data[, dose_cols] >= 0 | is.na(data[, dose_cols])))
 
   ## First aggregate all the 80+ into one group
   data$date <- as_sircovid_date(data$date)
@@ -551,7 +561,9 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
     stats::reshape(data[c("date", "age_band_min", i)],
                    direction = "wide", timevar = "date",
                    idvar = "age_band_min"))
-  # stopifnot(identical(dim(doses[[1]]), dim(doses[[2]])))
+  for (i in seq_len(n_doses)) {
+    stopifnot(identical(dim(doses[[1]]), dim(doses[[i]])))
+  }
 
   i_agg <- which(doses[[1]]$age_band_min == Inf)
   j <- match(dates, sub("^dose[12]\\.", "", names(doses[[1]])))

@@ -185,31 +185,6 @@ test_that("Can add carehome residents to vaccine data", {
 })
 
 
-test_that("can create a schedule that covers past and future", {
-  set.seed(1)
-  data <- test_vaccine_data()
-  uptake <- test_example_uptake()
-  n_carehomes <-
-    vaccine_priority_population("london", uptake)[18:19, 1]
-  set.seed(1)
-  cmp <- vaccine_schedule_from_data(data, n_carehomes)
-  set.seed(1) # we use rmultinom so be exactly the same
-  end_date <- cmp$date + 24 + 14
-  schedule <- vaccine_schedule_data_future(data, "london", uptake, end_date, 90)
-
-  i <- seq_len(dim(cmp$doses)[[3]])
-  expect_equal(schedule$doses[, , i], cmp$doses)
-  doses_future <- schedule$doses[, , -i]
-  expect_equal(dim(doses_future), c(19, 2, 14))
-
-  mean_doses <- round(sum(cmp$doses[, , 19:25]) / 7)
-  expect_approx_equal(apply(doses_future, 3, sum), rep(mean_doses, 14))
-
-  d <- seq(schedule$date, length.out = dim(schedule$doses)[[3]])
-  expect_equal(last(d), end_date)
-})
-
-
 test_that("Validate inputs in vaccine_schedule_from_data", {
   data <- test_vaccine_data()
   expect_error(
