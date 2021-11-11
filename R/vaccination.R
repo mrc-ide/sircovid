@@ -508,106 +508,89 @@ vaccine_schedule <- function(date, doses, n_doses = 2L) {
 ##' @param data A data.frame with columns `date`, `age_band_min`,
 ##'   `dose1` and `dose2`.
 ##'
-##' @param n_carehomes A vector of length 2 with the number of
-##'   carehome workers and residents.
-##'
 ##' @return A [vaccine_schedule] object
 ##' @export
-vaccine_schedule_from_data <- function(data, n_carehomes) {
+vaccine_schedule_from_data <- function(data, region, uptake) {
   assert_is(data, "data.frame")
-  required <- c("age_band_min", "date", "dose1", "dose2")
-  msg <- setdiff(required, names(data))
-  if (length(msg) > 0) {
-    stop("Required columns missing from 'data': ",
-         paste(squote(msg), collapse = ", "))
-  }
-  if (length(n_carehomes) != 2) {
-    stop("Expected a vector of length 2 for n_carehomes")
-  }
-  err <- is.na(data$age_band_min) | data$age_band_min %% 5 != 0
-  if (any(err)) {
-    stop("Invalid values for data$age_band_min: ",
-         paste(unique(data$age_band_min[err]), collapse = ", "))
-  }
-  ## TODO: tidy up later:
-  stopifnot(
-    all(!is.na(n_carehomes)),
-    all(n_carehomes >= 0),
-    !is.na(data$date),
-    all(data$dose1 >= 0 | is.na(data$dose1)),
-    all(data$dose2 >= 0 | is.na(data$dose2)))
+  dose_cols <- grep("dose[0-9]", names(data), value = TRUE)
+  n_doses <- length(dose_cols)
+  # required <- c("age_band_min", "date", "dose1", "dose2")
+  # msg <- setdiff(required, names(data))
+  # if (length(msg) > 0) {
+  #   stop("Required columns missing from 'data': ",
+  #        paste(squote(msg), collapse = ", "))
+  # }
+  # if (length(n_carehomes) != 2) {
+  #   stop("Expected a vector of length 2 for n_carehomes")
+  # }
+  # err <- is.na(data$age_band_min) | data$age_band_min %% 5 != 0
+  # if (any(err)) {
+  #   stop("Invalid values for data$age_band_min: ",
+  #        paste(unique(data$age_band_min[err]), collapse = ", "))
+  # }
+  # ## TODO: tidy up later:
+  # stopifnot(
+  #   all(!is.na(n_carehomes)),
+  #   all(n_carehomes >= 0),
+  #   !is.na(data$date),
+  #   all(data$dose1 >= 0 | is.na(data$dose1)),
+  #   all(data$dose2 >= 0 | is.na(data$dose2)))
 
   ## First aggregate all the 80+ into one group
   data$date <- as_sircovid_date(data$date)
   data$age_band_min <- pmin(data$age_band_min, 80)
-  data <- stats::aggregate(data[c("dose1", "dose2")],
+  data$age_band_min[is.na(data$age_band_min)] <- Inf
+  data <- stats::aggregate(data[dose_cols],
                            data[c("age_band_min", "date")],
                            sum)
 
   dates <- seq(min(data$date), max(data$date), by = 1)
   age_start <- sircovid_age_bins()$start
 
-  doses <- lapply(c("dose1", "dose2"), function(i)
+  doses <- lapply(dose_cols, function(i)
     stats::reshape(data[c("date", "age_band_min", i)],
                    direction = "wide", timevar = "date",
                    idvar = "age_band_min"))
-  stopifnot(identical(dim(doses[[1]]), dim(doses[[2]])))
+  # stopifnot(identical(dim(doses[[1]]), dim(doses[[2]])))
+
+  i_agg <- which(doses[[1]]$age_band_min == Inf)
+  j <- match(dates, sub("^dose[12]\\.", "", names(doses[[1]])))
+
+  agg_doses <- array(
+    unlist(lapply(doses, function (d) unname(as.matrix(d)[i_agg, j]))),
+    c(length(dates), n_doses))
+  agg_doses <- aperm(agg_doses, c(2, 1))
 
   ## TODO: add a test for missing days
   i <- match(age_start, doses[[1]]$age_band_min)
-  j <- match(dates, sub("^dose[12]\\.", "", names(doses[[1]])))
+
   doses <- array(
     unlist(lapply(doses, function(d) unname(as.matrix(d)[i, j]))),
-    c(length(age_start), length(dates), 2))
+    c(length(age_start), length(dates), n_doses))
   doses <- aperm(doses, c(1, 3, 2))
   doses[is.na(doses)] <- 0
 
+  ## We have 19 groups, 12 priority groups
+  priority_population <-
+    vapply(seq_len(n_doses),
+           function (j) vaccine_priority_population(region, uptake[, j]),
+           array(0, c(19, 12)))
+  n_carehomes <- priority_population[18:19, 1, ]
+
   doses <- vaccine_schedule_add_carehomes(doses, n_carehomes)
-  vaccine_schedule(dates[[1]], doses)
-}
 
+  ## Now distribute age-aggregated doses and add in
+  population_left <- priority_population
+  doses_given <- apply(doses, c(1, 2), sum)
+  for (j in seq_len(dim(priority_population)[2])) {
+    vaccinated <- pmin(population_left[, j, ], doses_given)
+    population_left[, j, ] <- population_left[, j, ] - vaccinated
+    doses_given <- doses_given - vaccinated
+  }
+  doses <- doses + vaccine_schedule_exec2(agg_doses,
+                                          population_left)
 
-##' Helper function to create a vaccination schedule that covers data
-##' from the past and projects doses into the future based on the last
-##' week of vaccination (based on JCVI order using
-##' [vaccine_schedule_future]). This function is subject to change.
-##'
-##' @title Vaccination schedule using data and future
-##'
-##' @inheritParams vaccine_schedule_from_data
-##' @inheritParams vaccine_schedule_future
-##' @inheritParams vaccine_priority_population
-##'
-##' @param end_date The final day in the future to create a schedule
-##'   for. After this date the model will assume 0 vaccine doses given
-##'   so an overestimate is probably better than an underestimate.
-##'
-##' @return A [vaccine_schedule] object
-##' @export
-vaccine_schedule_data_future <- function(data, region, uptake, end_date,
-                                         mean_days_between_doses,
-                                         booster_daily_doses_value = NULL,
-                                         booster_proportion = rep(1L, 19)) {
-
-  priority_population <- vaccine_priority_population(region, uptake)
-  n_carehomes <- priority_population[18:19, 1]
-  schedule_past <- vaccine_schedule_from_data(data, n_carehomes)
-  ## then average out last 7 days and project forward by n days
-  ## future; we will probably change this to avoid backfill by taking
-  ## the days -14..-8
-  i <- utils::tail(seq_len(dim(schedule_past$doses)[[3]]), 7)
-  mean_doses_last <- sum(schedule_past$doses[, , i], na.rm = TRUE) / length(i)
-  end_date <- as_sircovid_date(end_date)
-  n_days_future <- end_date -
-    (schedule_past$date + dim(schedule_past$doses)[[3]]) + 1L
-  daily_doses_future <- rep(round(mean_doses_last), n_days_future)
-  vaccine_schedule_future(
-    schedule_past,
-    daily_doses_future,
-    mean_days_between_doses,
-    priority_population,
-    booster_daily_doses_value = booster_daily_doses_value,
-    booster_proportion = booster_proportion)
+  vaccine_schedule(dates[[1]], doses, n_doses)
 }
 
 
@@ -616,6 +599,8 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
   doses <- doses[c(seq_len(nrow(doses)), NA, NA), , ]
   doses[is.na(doses)] <- 0
 
+  n_doses <- dim(doses)[2]
+
   if (all(n_carehomes == 0)) {
     return(doses)
   }
@@ -623,17 +608,17 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
   ## Impute CHW / CHR - these will be the first vaccinated people
   ## below and above 65 respectively.
   f <- function(target, i_from, i_to) {
-    for (i_dose in 1:2) {
+    for (i_dose in seq_len(n_doses)) {
       n_t <- colSums(doses[i_from, i_dose, ])
       n <- cumsum(n_t)
-      i <- n >= target
+      i <- n >= target[i_dose]
       if (!any(i)) {
         k <- length(i)
       } else {
         j <- which(i)[[1]] # the interval that switches
         k <- j - 1
-        n_general <- n[[j]] - target
-        doses[i_to, i_dose, j] <- target - sum(n_t[seq_len(k)])
+        n_general <- n[[j]] - target[i_dose]
+        doses[i_to, i_dose, j] <- target[i_dose] - sum(n_t[seq_len(k)])
         doses[i_from, i_dose, j] <-
           drop(rmultinom(1, n_general, doses[i_from, i_dose, j]))
       }
@@ -648,9 +633,56 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
   i_chr_from <- which(age_start >= 65)
   i_chw_to <- 18
   i_chr_to <- 19
-  doses <- f(n_carehomes[[1]], i_chw_from, i_chw_to)
-  doses <- f(n_carehomes[[2]], i_chr_from, i_chr_to)
+  doses <- f(n_carehomes[1, ], i_chw_from, i_chw_to)
+  doses <- f(n_carehomes[2, ], i_chr_from, i_chr_to)
   doses
+}
+
+
+vaccine_schedule_exec2 <- function(daily_doses, population_left) {
+
+  n_groups <- dim(population_left)[1]
+  n_priority_groups <- dim(population_left)[2]
+  n_doses <- dim(population_left)[3]
+  n_days <- dim(daily_doses)[2]
+
+  population_to_vaccinate_mat <- array(0, c(n_groups, n_priority_groups,
+                                            n_doses, n_days))
+
+  for (t in seq_len(n_days)) {
+    daily_doses_today <- daily_doses[, t]
+    for (dose in seq_len(n_doses)) {
+      eligible <- colSums(population_left[, , dose])
+      ## Vaccinate the entire of the top priority groups
+      n_full_vacc <- findInterval(daily_doses_today[dose], cumsum(eligible))
+      if (n_full_vacc > 0) {
+        i_full_vacc <- seq_len(n_full_vacc)
+        population_to_vaccinate_mat[, i_full_vacc, dose, t] <-
+          population_left[, i_full_vacc, dose]
+      }
+
+      ## Then partially vaccinate the next priority group, if possible
+      if (n_full_vacc < n_priority_groups) {
+        if (n_full_vacc == 0) {
+          remaining_eligible <- daily_doses_today[dose]
+        } else {
+          remaining_eligible <- daily_doses_today[dose] -
+            cumsum(eligible)[n_full_vacc]
+        }
+        i_vacc <- n_full_vacc + 1L
+
+        ## Split remaining doses according to age
+        population_to_vaccinate_mat[, i_vacc, dose, t] <-
+          round(remaining_eligible * population_left[, i_vacc, dose] /
+                  sum(population_left[, i_vacc, dose]))
+      }
+
+      population_left[, , dose] <- population_left[, , dose] -
+        population_to_vaccinate_mat[, , dose, t]
+    }
+  }
+
+  apply(population_to_vaccinate_mat, c(1, 3, 4), sum)
 }
 
 
@@ -811,6 +843,8 @@ vaccination_schedule_exec <- function(daily_doses_tt, daily_doses_value,
 
   population_to_vaccinate_mat
 }
+
+
 
 
 check_doses_boosters_future <- function(doses, end, end_past) {
