@@ -591,16 +591,38 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
 
   doses <- vaccine_schedule_add_carehomes(doses, n_carehomes)
 
-  ## Now distribute age-aggregated doses and add in
-  population_left <- priority_population
-  doses_given <- apply(doses, c(1, 2), sum)
-  for (j in seq_len(dim(priority_population)[2])) {
-    vaccinated <- pmin(population_left[, j, ], doses_given)
-    population_left[, j, ] <- population_left[, j, ] - vaccinated
-    doses_given <- doses_given - vaccinated
+  ## Now distribute age-aggregated doses (if any) and add in
+  if (any(agg_doses > 0)){
+    population_left <- priority_population
+    doses_given <- apply(doses, c(1, 2), sum)
+
+    for (j in seq_len(dim(priority_population)[2])) {
+      vaccinated <- pmin(population_left[, j, ], doses_given)
+      population_left[, j, ] <- population_left[, j, ] - vaccinated
+      doses_given <- doses_given - vaccinated
+    }
+
+    n_groups <- dim(population_left)[1]
+    n_priority_groups <- dim(population_left)[2]
+    n_doses <- dim(population_left)[3]
+    n_days <- dim(agg_doses)[2]
+
+    population_to_vaccinate_mat <- array(0, c(n_groups, n_priority_groups,
+                                              n_doses, n_days))
+    daily_doses_tt <- array(0, dim(agg_doses))
+
+    f <- function(dose) {
+      vaccination_schedule_exec(daily_doses_tt, agg_doses[dose, ],
+                                population_left,
+                                population_to_vaccinate_mat,
+                                Inf,
+                                0L, dose)
+    }
+
+    doses <- doses +
+      apply(Reduce('+' , lapply(seq_len(n_doses), f)), c(1, 3, 4), sum)
   }
-  doses <- doses + vaccine_schedule_exec2(agg_doses,
-                                          population_left)
+
 
   vaccine_schedule(dates[[1]], doses, n_doses)
 }
@@ -648,53 +670,6 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
   doses <- f(n_carehomes[1, ], i_chw_from, i_chw_to)
   doses <- f(n_carehomes[2, ], i_chr_from, i_chr_to)
   doses
-}
-
-
-vaccine_schedule_exec2 <- function(daily_doses, population_left) {
-
-  n_groups <- dim(population_left)[1]
-  n_priority_groups <- dim(population_left)[2]
-  n_doses <- dim(population_left)[3]
-  n_days <- dim(daily_doses)[2]
-
-  population_to_vaccinate_mat <- array(0, c(n_groups, n_priority_groups,
-                                            n_doses, n_days))
-
-  for (t in seq_len(n_days)) {
-    daily_doses_today <- daily_doses[, t]
-    for (dose in seq_len(n_doses)) {
-      eligible <- colSums(population_left[, , dose])
-      ## Vaccinate the entire of the top priority groups
-      n_full_vacc <- findInterval(daily_doses_today[dose], cumsum(eligible))
-      if (n_full_vacc > 0) {
-        i_full_vacc <- seq_len(n_full_vacc)
-        population_to_vaccinate_mat[, i_full_vacc, dose, t] <-
-          population_left[, i_full_vacc, dose]
-      }
-
-      ## Then partially vaccinate the next priority group, if possible
-      if (n_full_vacc < n_priority_groups) {
-        if (n_full_vacc == 0) {
-          remaining_eligible <- daily_doses_today[dose]
-        } else {
-          remaining_eligible <- daily_doses_today[dose] -
-            cumsum(eligible)[n_full_vacc]
-        }
-        i_vacc <- n_full_vacc + 1L
-
-        ## Split remaining doses according to age
-        population_to_vaccinate_mat[, i_vacc, dose, t] <-
-          round(remaining_eligible * population_left[, i_vacc, dose] /
-                  sum(population_left[, i_vacc, dose]))
-      }
-
-      population_left[, , dose] <- population_left[, , dose] -
-        population_to_vaccinate_mat[, , dose, t]
-    }
-  }
-
-  apply(population_to_vaccinate_mat, c(1, 3, 4), sum)
 }
 
 
