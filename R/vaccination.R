@@ -507,7 +507,11 @@ vaccine_schedule <- function(date, doses, n_doses = 2L) {
 ##'
 ##' @param data A data.frame with columns `date`, `age_band_min`,
 ##'   and numbered doses columns, e.g. if there are three doses
-##'   these should be `dose1`, `dose2` and `dose3`.
+##'   these should be `dose1`, `dose2` and `dose3`. Values of
+##'   `age_band_min` should be either multiples of 5 or NA - the
+##'   latter means those doses are not age-specific and will be
+##'   distributed across all ages according to priority after
+##'   all age-specific doses have already been dealt with
 ##'
 ##' @param region Region to use to get total population numbers
 ##'
@@ -569,7 +573,7 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
   j <- match(dates, sub("^dose[12]\\.", "", names(doses[[1]])))
 
   agg_doses <- array(
-    unlist(lapply(doses, function (d) unname(as.matrix(d)[i_agg, j]))),
+    unlist(lapply(doses, function(d) unname(as.matrix(d)[i_agg, j]))),
     c(length(dates), n_doses))
   agg_doses <- aperm(agg_doses, c(2, 1))
 
@@ -585,14 +589,14 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
   ## We have 19 groups, 12 priority groups
   priority_population <-
     vapply(seq_len(n_doses),
-           function (j) vaccine_priority_population(region, uptake[, j]),
+           function(j) vaccine_priority_population(region, uptake[, j]),
            array(0, c(19, 12)))
   n_carehomes <- priority_population[18:19, 1, ]
 
   doses <- vaccine_schedule_add_carehomes(doses, n_carehomes)
 
   ## Now distribute age-aggregated doses (if any) and add in
-  if (any(agg_doses > 0)){
+  if (any(agg_doses > 0)) {
     population_left <- priority_population
     doses_given <- apply(doses, c(1, 2), sum)
 
@@ -620,7 +624,7 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
     }
 
     doses <- doses +
-      apply(Reduce('+' , lapply(seq_len(n_doses), f)), c(1, 3, 4), sum)
+      apply(Reduce("+", lapply(seq_len(n_doses), f)), c(1, 3, 4), sum)
   }
 
 
