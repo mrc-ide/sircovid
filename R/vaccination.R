@@ -576,6 +576,7 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
     unlist(lapply(doses, function(d) unname(as.matrix(d)[i_agg, j]))),
     c(length(dates), n_doses))
   agg_doses <- aperm(agg_doses, c(2, 1))
+  agg_doses[is.na(agg_doses)] <- 0
 
   ## TODO: add a test for missing days
   i <- match(age_start, doses[[1]]$age_band_min)
