@@ -9,7 +9,11 @@ vaccine_schedule_from_data(data, region, uptake)
 \arguments{
 \item{data}{A data.frame with columns \code{date}, \code{age_band_min},
 and numbered doses columns, e.g. if there are three doses
-these should be \code{dose1}, \code{dose2} and \code{dose3}.}
+these should be \code{dose1}, \code{dose2} and \code{dose3}. Values of
+\code{age_band_min} should be either multiples of 5 or NA - the
+latter means those doses are not age-specific and will be
+distributed across all ages according to priority after
+all age-specific doses have already been dealt with}
 
 \item{region}{Region to use to get total population numbers}
 

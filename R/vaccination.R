@@ -687,6 +687,10 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##' @param doses_future A named vector of vaccine doses to give in the
 ##'   future. Names must be in ISO date format.
 ##'
+##' @param end_date The final day in the future to create a schedule
+##'   for. After this date the model will assume 0 vaccine doses given
+##'   so an overestimate is probably better than an underestimate.
+##'
 ##' @param boosters_future Optional named vector of booster doses to give in
 ##'   the future. Names must be in ISO date format.
 ##'
@@ -699,7 +703,6 @@ vaccine_schedule_add_carehomes <- function(doses, n_carehomes) {
 ##'   `doses_future`.
 ##'
 ##' @inheritParams vaccine_schedule_future
-##' @inheritParams vaccine_schedule_data_future
 ##'
 ##' @return A [vaccine_schedule] object
 ##' @export
