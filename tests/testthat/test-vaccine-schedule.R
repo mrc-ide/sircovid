@@ -380,9 +380,9 @@ test_that("create schedule scenario with no extra dose info", {
   ## cmp <- vaccine_schedule_data_future(data, region, uptake_by_age,
   ##                                     end_date, mean_days_between_doses)
 
-  # expect_equal(dim(res$doses), dim(cmp$doses))
+  ## expect_equal(dim(res$doses), dim(cmp$doses))
   # ## rounding error nightmare, even with making the above deterministic
-  # expect_lt(max(abs(res$doses - cmp$doses)), 5)
+  ## expect_lt(max(abs(res$doses - cmp$doses)), 5)
 
   d <- seq(res$date, length.out = dim(res$doses)[[3]])
   expect_equal(last(d), sircovid_date(end_date))
