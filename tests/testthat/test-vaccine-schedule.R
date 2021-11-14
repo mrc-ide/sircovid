@@ -164,13 +164,18 @@ test_that("Can add carehome residents to vaccine data", {
   data <- test_vaccine_data()
 
   uptake_by_age <- test_example_uptake()
-  region <- "london"
-  n_carehomes <-
-    vaccine_priority_population(region, uptake_by_age)[18:19, 1]
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
 
-  sched1 <- vaccine_schedule_from_data(data, c(0, 0))
-  sched2 <- vaccine_schedule_from_data(data, c(1, 1))
-  sched3 <- vaccine_schedule_from_data(data, n_carehomes)
+  uptake_by_age1 <- uptake_by_age
+  uptake_by_age1[18:19, ] <- 0
+  uptake_by_age2 <- uptake_by_age
+  uptake_by_age2[18:19, ] <- 1
+
+  region <- "london"
+
+  sched1 <- vaccine_schedule_from_data(data, region, uptake_by_age1)
+  sched2 <- vaccine_schedule_from_data(data, region, uptake_by_age2)
+  sched3 <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   expect_equal(dim(sched1$doses), c(19, 2, 25))
   expect_equal(apply(sched1$doses, 2, sum),
@@ -208,7 +213,8 @@ test_that("create schedule scenario", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   mean_days_between_doses <- 30
   doses_future <- c(
@@ -239,7 +245,8 @@ test_that("create schedule scenario where future doses drift into past", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   ## Our schedule runs from 2021-03-05..2021-03-29
   mean_days_between_doses <- 30
@@ -265,40 +272,14 @@ test_that("create schedule scenario where future doses drift into past", {
 })
 
 
-test_that("create schedule scenario with no extra dose info", {
-  set.seed(10)
-  data <- test_vaccine_data()
-
-  region <- "london"
-  uptake_by_age <- test_example_uptake()
-  n <- vaccine_priority_population(region, uptake_by_age)
-  set.seed(1)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
-
-  mean_days_between_doses <- 30
-  end_date <- "2021-06-01"
-
-  res <- vaccine_schedule_scenario(past, NULL, end_date,
-                                   mean_days_between_doses, n)
-  set.seed(1)
-  cmp <- vaccine_schedule_data_future(data, region, uptake_by_age,
-                                      end_date, mean_days_between_doses)
-  expect_equal(dim(res$doses), dim(cmp$doses))
-  ## rounding error nightmare, even with making the above deterministic
-  expect_lt(max(abs(res$doses - cmp$doses)), 5)
-
-  d <- seq(res$date, length.out = dim(res$doses)[[3]])
-  expect_equal(last(d), sircovid_date(end_date))
-})
-
-
 test_that("prevent impossible scenarios", {
   data <- test_vaccine_data()
 
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   mean_days_between_doses <- 30
   doses_future <- c(
@@ -447,7 +428,8 @@ test_that("check schedule scenario prepends zeros when needed", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
 
@@ -530,7 +512,8 @@ test_that("create schedule scenario with doses and boosters", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
 
@@ -574,7 +557,8 @@ test_that("create schedule scenario with boosters only", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
 
@@ -697,7 +681,8 @@ test_that("can exclude booster groups from schedule scenario", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
 
@@ -738,7 +723,8 @@ test_that("can partially exclude booster groups from schedule scenario", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age)
 
   sircovid_date_as_date(past$date + dim(past$doses)[[3]] - 1L)
 
