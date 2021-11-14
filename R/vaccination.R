@@ -536,7 +536,7 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
   dose_expected <- paste0("dose", seq_len(n_doses))
   dose_msg <- setdiff(dose_expected, names(data))
   if (length(dose_msg) > 0) {
-    stop(sprintf("There are %s dose columns so expected column names %s)",
+    stop(sprintf("There are %s dose columns so expected dose column names: %s)",
                  n_doses, paste(squote(dose_expected), collapse = ", ")))
   }
 
@@ -545,6 +545,17 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
     stop("Invalid values for data$age_band_min: ",
          paste(unique(data$age_band_min[err]), collapse = ", "))
   }
+
+  age_start <- sircovid_age_bins()$start
+  if (nrow(uptake) != length(age_start) + 2) {
+    stop(sprintf("Expected uptake to have %s rows as there are %s groups",
+                 length(age_start) + 2, length(age_start) + 2))
+  }
+  if (ncol(uptake) != n_doses) {
+    stop(sprintf("Data has %s dose columns so expected uptake to have %s
+                 columns", n_doses, n_doses))
+  }
+
   ## TODO: tidy up later:
   stopifnot(!is.na(data$date),
     all(data[, dose_cols] >= 0 | is.na(data[, dose_cols])),
@@ -559,7 +570,6 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
                            sum)
 
   dates <- seq(min(data$date), max(data$date), by = 1)
-  age_start <- sircovid_age_bins()$start
 
   doses <- lapply(dose_cols, function(i)
     stats::reshape(data[c("date", "age_band_min", i)],

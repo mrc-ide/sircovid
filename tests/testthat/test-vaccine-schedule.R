@@ -259,18 +259,37 @@ test_that("can create data with age-aggregated doses", {
 
 test_that("Validate inputs in vaccine_schedule_from_data", {
   data <- test_vaccine_data()
+  uptake_by_age <- test_example_uptake()
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  region <- "london"
+
   expect_error(
-    vaccine_schedule_from_data(data[-1], c(0, 0)),
+    vaccine_schedule_from_data(data[-1], region, uptake_by_age),
     "Required columns missing from 'data': 'date'")
   expect_error(
-    vaccine_schedule_from_data(data[-seq_len(2)], c(0, 0)),
+    vaccine_schedule_from_data(data[-seq_len(2)], region, uptake_by_age),
     "Required columns missing from 'data': 'age_band_min', 'date'")
 
   data$age_band_min <- data$age_band_min + 1
   expect_error(
-    vaccine_schedule_from_data(data, c(0, 0)),
+    vaccine_schedule_from_data(data, region, uptake_by_age),
     "Invalid values for data$age_band_min: 16, 21, 26, 31, 36, 41,",
     fixed = TRUE)
+
+  data$age_band_min <- data$age_band_min - 1
+  names(data)[names(data) == "dose2"] <- "dose3"
+  expect_error(
+    vaccine_schedule_from_data(data, region, uptake_by_age),
+    "There are 2 dose columns so expected dose column names: 'dose1', 'dose2'")
+
+  data$dose2 <- data$dose3
+  expect_error(
+    vaccine_schedule_from_data(data, region, uptake_by_age),
+    "Data has 3 dose columns so expected uptake to have 3")
+
+  expect_error(
+    vaccine_schedule_from_data(data, region, uptake_by_age[-19, ]),
+    "Expected uptake to have 19 rows as there are 19 groups")
 })
 
 
