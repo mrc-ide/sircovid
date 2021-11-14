@@ -190,6 +190,73 @@ test_that("Can add carehome residents to vaccine data", {
 })
 
 
+test_that("can input data with 3 doses", {
+  data <- test_vaccine_data()
+
+  data$dose3 <- rpois(nrow(data), 50)
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 3))
+
+  data_schedule <- vaccine_schedule_from_data(data, region, uptake_by_age)
+
+  expect_equal(data_schedule$n_doses, 3)
+  expect_equal(dim(data_schedule$doses), c(19, 3, 25))
+})
+
+
+test_that("can create data with age-aggregated doses", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+
+  data_schedule <- vaccine_schedule_from_data(data, region, uptake_by_age)
+
+  ## Only age-aggregated data
+  agg_data <- data
+  agg_data$age_band_min <- 0
+  agg_data <- stats::aggregate(agg_data[c("dose1", "dose2")],
+                               agg_data[c("age_band_min", "date")],
+                               sum)
+  agg_data$age_band_min <- NA
+
+  data_schedule2 <- vaccine_schedule_from_data(agg_data, region, uptake_by_age)
+
+
+  ## Mixed age-specific and age-aggregated
+  ## Aggregate half of all doses
+  agg_data2 <- data.frame(
+    date = data$date,
+    age_band_min = 0,
+    dose1 = round(0.5 * data$dose1),
+    dose2 = round(0.5 * data$dose2)
+  )
+  mixed_data <- data
+  mixed_data[, c("dose1", "dose2")] <-
+    mixed_data[, c("dose1", "dose2")] - agg_data2[, c("dose1", "dose2")]
+  agg_data2 <- stats::aggregate(agg_data2[c("dose1", "dose2")],
+                                agg_data2[c("age_band_min", "date")],
+                                sum)
+  agg_data2$age_band_min <- NA
+  mixed_data <- rbind(mixed_data, agg_data2)
+
+  data_schedule3 <-
+    vaccine_schedule_from_data(mixed_data, region, uptake_by_age)
+
+  ## Total doses will not be exact but should be close
+  expect_equal(dim(data_schedule$doses), dim(data_schedule2$doses))
+  expect_equal(dim(data_schedule$doses), dim(data_schedule3$doses))
+  expect_approx_equal(apply(data_schedule$doses, 2, sum),
+                      apply(data_schedule2$doses, 2, sum), 10)
+  expect_approx_equal(apply(data_schedule$doses, 2, sum),
+                      apply(data_schedule3$doses, 2, sum), 10)
+
+})
+
+
 test_that("Validate inputs in vaccine_schedule_from_data", {
   data <- test_vaccine_data()
   expect_error(
