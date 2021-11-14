@@ -193,12 +193,6 @@ test_that("Validate inputs in vaccine_schedule_from_data", {
   expect_error(
     vaccine_schedule_from_data(data[-seq_len(2)], c(0, 0)),
     "Required columns missing from 'data': 'age_band_min', 'date'")
-  expect_error(
-    vaccine_schedule_from_data(data, NULL),
-    "Expected a vector of length 2 for n_carehomes")
-  expect_error(
-    vaccine_schedule_from_data(data, 1),
-    "Expected a vector of length 2 for n_carehomes")
 
   data$age_band_min <- data$age_band_min + 1
   expect_error(
