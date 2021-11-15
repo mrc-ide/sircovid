@@ -358,37 +358,6 @@ test_that("create schedule scenario where future doses drift into past", {
 })
 
 
-test_that("create schedule scenario with no extra dose info", {
-  set.seed(10)
-  data <- test_vaccine_data()
-
-  region <- "london"
-  uptake_by_age <- test_example_uptake()
-  n <- vaccine_priority_population(region, uptake_by_age)
-  set.seed(1)
-  past <- vaccine_schedule_from_data(data, region,
-                                     array(uptake_by_age,
-                                           c(length(uptake_by_age), 2)))
-
-  mean_days_between_doses <- 30
-  end_date <- "2021-06-01"
-
-  res <- vaccine_schedule_scenario(past, NULL, end_date,
-                                   mean_days_between_doses, n)
-  set.seed(1)
-  ## Commenting this out for the moment
-  ## cmp <- vaccine_schedule_data_future(data, region, uptake_by_age,
-  ##                                     end_date, mean_days_between_doses)
-
-  ## expect_equal(dim(res$doses), dim(cmp$doses))
-  # ## rounding error nightmare, even with making the above deterministic
-  ## expect_lt(max(abs(res$doses - cmp$doses)), 5)
-
-  d <- seq(res$date, length.out = dim(res$doses)[[3]])
-  expect_equal(last(d), sircovid_date(end_date))
-})
-
-
 test_that("prevent impossible scenarios", {
   data <- test_vaccine_data()
 
