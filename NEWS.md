@@ -1,3 +1,7 @@
+# sircovid 0.12.10
+
+* `vaccine_schedule_from_data` function refactored to deal with flexible number of doses
+
 # sircovid 0.12.9
 
 * `carehomes` model removed from the package
