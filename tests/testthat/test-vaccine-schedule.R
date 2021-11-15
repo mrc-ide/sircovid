@@ -405,6 +405,10 @@ test_that("prevent impossible scenarios", {
     paste("'end_date' must be at least 2021-03-29 (previous end date)",
           "but was 2021-03-01"),
     fixed = TRUE)
+  expect_error(
+    vaccine_schedule_scenario(past, NULL, "2021-04-29",
+                              mean_days_between_doses, n),
+    "Does not support 'doses_future' and 'boosters_future' both being")
 })
 
 

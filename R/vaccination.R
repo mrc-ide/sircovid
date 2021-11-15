@@ -740,8 +740,8 @@ vaccine_schedule_scenario <- function(schedule_past, doses_future, end_date,
         sircovid_date_as_date(date_end_past),
         sircovid_date_as_date(end_date)))
     }
-    date_future <- end_date
-    booster_daily_doses_value <- NULL
+    stop("Does not support 'doses_future' and 'boosters_future' both being
+         NULL")
   } else {
     if (length(doses_future) > 0) {
       tmp <- check_doses_boosters_future(doses_future, end_date,
