@@ -517,7 +517,7 @@ vaccine_schedule <- function(date, doses, n_doses = 2L) {
 ##'
 ##' @param uptake A matrix of 19 rows, and number of columns equal to
 ##'   number of doses. The (i,j)th entry gives the fractional uptake
-##'   of dose j for group i
+##'   of dose j for group i. Should be non-increasing across rows
 ##'
 ##' @return A [vaccine_schedule] object
 ##' @export
@@ -554,6 +554,11 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
   if (ncol(uptake) != n_doses) {
     stop(sprintf("Data has %s dose columns so expected uptake to have %s
                  columns", n_doses, n_doses))
+  }
+
+  assert_proportion(uptake)
+  if (any(apply(uptake, 1, diff) > 0)) {
+    stop("Uptake should not increase with dose number for any group")
   }
 
   ## TODO: tidy up later:

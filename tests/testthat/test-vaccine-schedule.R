@@ -290,6 +290,18 @@ test_that("Validate inputs in vaccine_schedule_from_data", {
   expect_error(
     vaccine_schedule_from_data(data, region, uptake_by_age[-19, ]),
     "Expected uptake to have 19 rows as there are 19 groups")
+
+  data$dose3 <- NULL
+  uptake_by_age[1, 1] <- 1.3
+  expect_error(
+    vaccine_schedule_from_data(data, region, uptake_by_age),
+    "'uptake' must lie in [0, 1]")
+
+  uptake_by_age[1, 1] <- 0.2
+  uptake_by_age[1, 2] <- 0.5
+  expect_error(
+    vaccine_schedule_from_data(data, region, uptake_by_age),
+    "Uptake should not increase with dose number for any group")
 })
 
 
