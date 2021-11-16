@@ -2446,7 +2446,8 @@ test_that("Can catch up on uptake given previous vaccination", {
 
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
-  past <- vaccine_schedule_from_data(data, n[18:19, 1])
+  uptake_by_age_dose <- array(uptake_by_age, c(length(uptake_by_age), 2))
+  past <- vaccine_schedule_from_data(data, region, uptake_by_age_dose)
 
   mean_days_between_doses <- 30
   doses_future <- c(
