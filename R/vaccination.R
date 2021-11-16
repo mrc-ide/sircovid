@@ -390,7 +390,7 @@ vaccine_schedule_future <- function(start,
     daily_doses_tt, daily_doses_value, population_left,
     population_to_vaccinate_mat, mean_days_between_doses, n_prev, 1:2)
   if (has_booster) {
-    booster_population_left <- population_left * booster_proportion
+    booster_population_left <- round(population_left * booster_proportion)
 
     population_to_vaccinate_mat <- vaccination_schedule_exec(
       daily_doses_tt, booster_daily_doses_value, booster_population_left,
