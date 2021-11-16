@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.10</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
     <p>Create a historical vaccine schedule from data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vaccine_schedule_from_data</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>n_carehomes</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>vaccine_schedule_from_data</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>region</span>, <span class='va'>uptake</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -136,12 +136,22 @@
     <tr>
       <th>data</th>
       <td><p>A data.frame with columns <code>date</code>, <code>age_band_min</code>,
-<code>dose1</code> and <code>dose2</code>.</p></td>
+and numbered doses columns, e.g. if there are three doses
+these should be <code>dose1</code>, <code>dose2</code> and <code>dose3</code>. Values of
+<code>age_band_min</code> should be either multiples of 5 or NA - the
+latter means those doses are not age-specific and will be
+distributed across all ages according to priority after
+all age-specific doses have already been dealt with</p></td>
     </tr>
     <tr>
-      <th>n_carehomes</th>
-      <td><p>A vector of length 2 with the number of
-carehome workers and residents.</p></td>
+      <th>region</th>
+      <td><p>Region to use to get total population numbers</p></td>
+    </tr>
+    <tr>
+      <th>uptake</th>
+      <td><p>A matrix of 19 rows, and number of columns equal to
+number of doses. The (i,j)th entry gives the fractional uptake
+of dose j for group i</p></td>
     </tr>
     </table>
 
