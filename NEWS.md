@@ -1,3 +1,7 @@
+# sircovid 0.12.11
+
+* Ensure `booster_population_left` is rounded in `vaccine_schedule_future`
+
 # sircovid 0.12.10
 
 * `vaccine_schedule_from_data` function refactored to deal with flexible number of doses
