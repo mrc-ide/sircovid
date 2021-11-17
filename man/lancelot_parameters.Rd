@@ -39,6 +39,11 @@ lancelot_parameters(
   vaccine_index_booster = NULL,
   vaccine_catchup_fraction = 1,
   n_doses = 2L,
+  vacc_skip_progression_rate = 0,
+  vacc_skip_from = 1,
+  vacc_skip_to = 1,
+  vacc_skip_weight = 1,
+  vacc_skip_dose = 0,
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1

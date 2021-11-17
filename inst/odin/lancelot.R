@@ -1894,9 +1894,9 @@ dim(vacc_skip_probability) <- n_groups
 vacc_skip_progression_rate_base[] <- user()
 dim(vacc_skip_progression_rate_base) <- n_groups
 
-vacc_skip_from <- user()
-vacc_skip_to <- user()
-vacc_skip_dose <- user()
+vacc_skip_from <- user(integer = TRUE)
+vacc_skip_to <- user(integer = TRUE)
+vacc_skip_dose <- user(integer = TRUE)
 vacc_skip_weight <- user()
 
 config(compare) <- "compare_lancelot.cpp"
