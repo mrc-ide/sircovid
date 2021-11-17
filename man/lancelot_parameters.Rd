@@ -299,7 +299,7 @@ skip move". Must be greater than or equal to \code{vacc_skip_from}. Must be 1
 from \code{vacc_skip_to - 1} is controlled by doses, then the "vaccine skip
 move" is too, and the weight represents how much those in \code{vacc_skip_from}
 are weighted in dose distribution relative to those in \code{vacc_skip_to - 1}.
-Must be in \link{0, 1}.}
+Must be between 0 and 1}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same

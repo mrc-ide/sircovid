@@ -230,7 +230,7 @@ NULL
 ##'   from `vacc_skip_to - 1` is controlled by doses, then the "vaccine skip
 ##'   move" is too, and the weight represents how much those in `vacc_skip_from`
 ##'   are weighted in dose distribution relative to those in `vacc_skip_to - 1`.
-##'   Must be in [0, 1].
+##'   Must be between 0 and 1
 ##'
 ##' @param n_doses Number of doses given out, including boosters. Default is
 ##'   2.
