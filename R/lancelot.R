@@ -402,9 +402,13 @@ lancelot_parameters <- function(start_date, region,
     population <- assert_non_negative(population)
   }
 
+  ## TODO: expose initial_seed_pattern as an argument, but doing that
+  ## practically requires fixing the initial conditions :)
+  initial_seed_pattern <- NULL
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value, beta_type,
-                                    population)
+                                    population,
+                                    initial_seed_pattern, initial_I)
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742

@@ -85,9 +85,14 @@ basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
                              beta_type = "piecewise-linear",
                              severity = NULL,
-                             exp_noise = 1e6) {
+                             exp_noise = 1e6,
+                             initial_seed_pattern = 1) {
+  population <- NULL
+  initial_I <- 10
   ret <- sircovid_parameters_shared(start_date, region,
-                                    beta_date, beta_value, beta_type)
+                                    beta_date, beta_value, beta_type,
+                                    population,
+                                    initial_seed_pattern, initial_I)
   ret$m <- sircovid_transmission_matrix(region)
   observation <- basic_parameters_observation(exp_noise)
   severity <- sircovid_parameters_severity(severity)
@@ -207,28 +212,13 @@ basic_initial <- function(info, n_particles, pars) {
   index <- info$index
   state <- numeric(info$len)
 
-  ## Always start with 10, again for compatibility
-  initial_I <- 10
-
-  ## This corresponds to the 15-19y age bracket for compatibility with
-  ## our first version, will be replaced by better seeding model, but
-  ## probably has limited impact.
-  seed_age_band <- 4L
-  index_I <- index[["I_A"]][[1]] + seed_age_band - 1L
-
-  ## ONS populations, subtracting the seed for pedantry.
   index_S <- index[["S"]]
-  initial_S <- pars$population
-  initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
-
   index_N_tot <- index[["N_tot"]]
 
-  state[index_S] <- initial_S
-  state[index_I] <- initial_I
+  state[index_S] <- pars$population
   state[index_N_tot] <- sum(pars$population)
 
-  list(state = state,
-       step = pars$initial_step)
+  state
 }
 
 

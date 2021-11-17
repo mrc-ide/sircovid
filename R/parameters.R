@@ -1,8 +1,9 @@
 ## These could be moved to be defaults within the models
 sircovid_parameters_shared <- function(start_date, region,
-                                       beta_date, beta_value,
-                                       beta_type = "piecewise-linear",
-                                       population = NULL) {
+                                       beta_date, beta_value, beta_type,
+                                       population,
+                                       initial_seed_pattern,
+                                       initial_seed_size) {
   steps_per_day <- 4
   dt <- 1 / steps_per_day
   assert_sircovid_date(start_date)
@@ -17,18 +18,30 @@ sircovid_parameters_shared <- function(start_date, region,
     stop("'beta_type' must be 'piecewise-linear' or 'piecewise-constant'")
   }
 
-
   population <- population %||% sircovid_population(region)
 
+  if (is.null(initial_seed_pattern)) {
+    initial_seed_pattern <- 1.0
+  }
+
+  start_step <- start_date * steps_per_day
+  initial_seed_step <- floor(start_step)
+  initial_seed_value <-
+    seed_over_steps(start_step, initial_seed_pattern) * initial_seed_size
+
+  ## TODO: initial_step can come out here once lancelot updated, no
+  ## longer used in basic model.
   list(hosp_transmission = 0,
        ICU_transmission = 0,
        G_D_transmission = 0,
        dt = dt,
        steps_per_day = steps_per_day,
-       initial_step = start_date / dt,
+       initial_step = floor(start_date) / dt,
        n_age_groups = length(sircovid_age_bins()$start),
        beta_step = beta_step,
-       population = population)
+       population = population,
+       seed_step_start = initial_seed_step,
+       seed_value = initial_seed_value)
 }
 
 
@@ -290,4 +303,17 @@ sircovid_parameters_severity <- function(params) {
     p_sero_pos_2 = data[["p_sero_pos_2"]],
     p_H = data[["p_H"]],
     p_R = data[["p_R"]])
+}
+
+
+seed_over_steps <- function(start_step, weights) {
+  ## The weights vector must over steps, not dates
+  weights <- weights / sum(weights)
+  p <- start_step %% 1
+  if (p == 0) {
+    ret <- weights
+  } else{
+    ret <- p * c(0, weights) + (1 - p) * c(weights, 0)
+  }
+  ret
 }

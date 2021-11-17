@@ -13,8 +13,19 @@ dt <- 1 / steps_per_day
 initial(time) <- 0
 update(time) <- (step + 1) * dt
 
+## Seeding of first wave; this will happen on the S->E flow
+seed_step_end <- seed_step_start + length(seed_value)
+seed <- if (step >= seed_step_start && step < seed_step_end)
+          seed_value[as.integer(step - seed_step_start + 1)] else 0
+seed_age_band <- as.integer(4) # 15-19y band
+
+seed_step_start <- user()
+seed_value[] <- user()
+dim(seed_value) <- user()
+
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
+
 update(E[, , ]) <- E[i, j, k] + delta_E[i, j, k]
 update(I_A[, , ]) <- I_A[i, j, k] + delta_I_A[i, j, k]
 update(I_C[, , ]) <- I_C[i, j, k] + delta_I_C[i, j, k]
@@ -40,6 +51,8 @@ p_R_hosp <- 1 - exp(-gamma_rec * dt)
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
 n_SE[] <- rbinom(S[i], p_SE[i])
+n_SE[seed_age_band] <- rpois(seed)
+
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_A[, , ] <- rbinom(I_A[i, j, k], p_II_A)
 n_II_C[, , ] <- rbinom(I_C[i, j, k], p_II_C)
