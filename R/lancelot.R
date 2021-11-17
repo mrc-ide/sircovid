@@ -390,6 +390,11 @@ lancelot_parameters <- function(start_date, region,
                                 vaccine_index_booster = NULL,
                                 vaccine_catchup_fraction = 1,
                                 n_doses = 2L,
+                                vacc_skip_progression_rate = 0,
+                                vacc_skip_from = 1,
+                                vacc_skip_to = 1,
+                                vacc_skip_weight = 1,
+                                vacc_skip_dose = 0,
                                 waning_rate = 0,
                                 exp_noise = 1e6,
                                 cross_immunity = 1) {
@@ -496,6 +501,29 @@ lancelot_parameters <- function(start_date, region,
                                                  strain$n_strains,
                                                  vaccine_catchup_fraction,
                                                  n_doses)
+
+  ## vacc_skip parameters
+  ret$vacc_skip_progression_base_rate <- vacc_skip_progression_rate
+  if (vaccination$n_vacc_classes == 1) {
+    if (vacc_skip_from != 1) {
+      stop("n_vacc_classes = 1 so require vacc_skip_from = 1")
+    }
+    if (vacc_skip_to != 1) {
+      stop("n_vacc_classes = 1 so require vacc_skip_to = 1")
+    }
+  } else {
+    if (vacc_skip_to < vacc_skip_from) {
+      stop("Require vacc_skip_from <= vacc_skip_to")
+    }
+  }
+  ret$vacc_skip_to <- vacc_skip_to
+  ret$vacc_skip_from <- vacc_skip_from
+  ret$vacc_skip_weight <- assert_proportion(vacc_skip_weight)
+  if (vacc_skip_dose > n_doses) {
+    stop("vacc_skip_dose cannot be more than n_doses")
+  }
+  ret$vacc_skip_dose <- vacc_skip_dose
+
 
   strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
