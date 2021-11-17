@@ -21,15 +21,25 @@ update(time) <- (step + 1) * dt
 ## For example, for E, we sum over n_E_next_vacc_class (those moving vaccine
 ## stage without progressing disease stages)
 ## vaccinated S
-n_S_vaccinated[, ] <- n_S_next_vacc_class[i, j]
+n_S_vaccinated[, ] <- n_S_next_vacc_class[i, j] +
+  (if (j >= vacc_skip_from && j < vacc_skip_to) n_S_vacc_skip[i]
+   else 0)
 dim(n_S_vaccinated) <- c(n_groups, n_vacc_classes)
-n_E_vaccinated[, ] <- sum(n_E_next_vacc_class[i, , , j])
+n_E_vaccinated[, ] <- sum(n_E_next_vacc_class[i, , , j]) +
+  (if (j >= vacc_skip_from && j < vacc_skip_to) sum(n_E_vacc_skip[i, , ])
+   else 0)
 dim(n_E_vaccinated) <- c(n_groups, n_vacc_classes)
-n_I_A_vaccinated[, ] <- sum(n_I_A_next_vacc_class[i, , , j])
+n_I_A_vaccinated[, ] <- sum(n_I_A_next_vacc_class[i, , , j]) +
+  (if (j >= vacc_skip_from && j < vacc_skip_to) sum(n_I_A_vacc_skip[i, , ])
+   else 0)
 dim(n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
-n_I_P_vaccinated[, ] <- sum(n_I_P_next_vacc_class[i, , , j])
+n_I_P_vaccinated[, ] <- sum(n_I_P_next_vacc_class[i, , , j]) +
+  (if (j >= vacc_skip_from && j < vacc_skip_to) sum(n_I_P_vacc_skip[i, , ])
+   else 0)
 dim(n_I_P_vaccinated) <- c(n_groups, n_vacc_classes)
-n_R_vaccinated[, ] <- sum(n_R_next_vacc_class[i, , j])
+n_R_vaccinated[, ] <- sum(n_R_next_vacc_class[i, , j]) +
+  (if (j >= vacc_skip_from && j < vacc_skip_to) sum(n_R_vacc_skip[i, ])
+   else 0)
 dim(n_R_vaccinated) <- c(n_groups, n_vacc_classes)
 
 initial(cum_n_S_vaccinated[, ]) <- 0
@@ -65,6 +75,19 @@ dim(n_vaccinated) <- c(n_groups, n_vacc_classes)
 initial(cum_n_vaccinated[, ]) <- 0
 update(cum_n_vaccinated[, ]) <- cum_n_vaccinated[i, j] + n_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
+
+
+n_vacc_skip[] <-
+  n_S_vacc_skip[i] +
+  sum(n_E_vacc_skip[i, , ]) +
+  sum(n_I_A_vacc_skip[i, , ]) +
+  sum(n_I_P_vacc_skip[i, , ]) +
+  sum(n_R_vacc_skip[i, ])
+dim(n_vacc_skip) <- n_groups
+
+initial(cum_n_vacc_skip[]) <- 0
+update(cum_n_vacc_skip[]) <- cum_n_vacc_skip[i] + n_vacc_skip[i]
+dim(cum_n_vacc_skip) <- n_groups
 
 ## Core equations for transitions between compartments:
 update(S[, ]) <- new_S[i, j]
