@@ -1417,8 +1417,8 @@ dim(new_T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
 ## Vectors handling the S->S transitions i.e. moving between vaccination classes
 dim(p_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
 dim(n_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
-dim(p_S_vacc_skip) <- c(n_groups)
-dim(n_S_vacc_skip) <- c(n_groups)
+dim(p_S_vacc_skip) <- n_groups
+dim(n_S_vacc_skip) <- n_groups
 
 dim(p_E_next_vacc_class) <- c(n_groups, n_strains, k_E, n_vacc_classes)
 dim(n_E_next_vacc_class) <- c(n_groups, n_strains, k_E, n_vacc_classes)
@@ -1791,6 +1791,14 @@ vaccine_n_candidates[, ] <-
   sum(R[i, , index_dose[j]])
 dim(vaccine_n_candidates) <- c(n_groups, n_doses)
 
+vacc_skip_n_candidates[] <-
+  S[i, vacc_skip_from] +
+  sum(E[i, , , vacc_skip_from]) +
+  sum(I_A[i, , , vacc_skip_from]) +
+  sum(I_P[i, , , vacc_skip_from]) +
+  sum(R[i, , vacc_skip_from])
+dim(vacc_skip_n_candidates) <- n_groups
+
 ## Work out the vaccination probability via doses, driven by the
 ## schedule
 vaccine_probability_doses[, ] <- min(
@@ -1799,16 +1807,31 @@ vaccine_probability_doses[, ] <- min(
   as.numeric(1))
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
-vaccine_attempted_doses[, ] <- vaccine_missed_doses[i, j] + (
-  if (as.integer(step) >= dim(vaccine_dose_step, 3) ||
-      vaccine_n_candidates[i, j] == 0) 0
+tmp_attempted_doses[, ] <- vaccine_missed_doses[i, j] + (
+  if (as.integer(step) >= dim(vaccine_dose_step, 3)) 0
   else vaccine_dose_step[i, j, step + 1])
+dim(tmp_attempted_doses) <- c(n_groups, n_doses)
+
+vaccine_attempted_doses[, ] <-
+  (if (j == vacc_skip_dose)
+    min(vaccine_n_candidates[i, j] /
+          (vaccine_n_candidates[i, j] +
+             vacc_skip_weight * vacc_skip_n_candidates[i])
+        * tmp_attempted_doses[i, j],
+        vaccine_n_candidates[i, j])
+    else tmp_attempted_doses[i, j])
 dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
+
+vacc_skip_attempted_doses[] <-
+  (if (vacc_skip_weight > 0)
+    tmp_attempted_doses[i, vacc_skip_dose] -
+     vaccine_attempted_doses[i, vacc_skip_dose] else 0)
+dim(vacc_skip_attempted_doses) <- n_groups
 
 initial(vaccine_missed_doses[, ]) <- 0
 update(vaccine_missed_doses[, ]) <-
   vaccine_catchup_fraction *
-  max(vaccine_attempted_doses[i, j] - n_vaccinated[i, index_dose[j]],
+  max(tmp_attempted_doses[i, j] - n_vaccinated[i, index_dose[j]],
       as.numeric(0))
 dim(vaccine_missed_doses) <- c(n_groups, n_doses)
 
@@ -1836,18 +1859,22 @@ update(tmp_vaccine_probability[, ]) <- vaccine_probability[i, j]
 dim(tmp_vaccine_probability) <- c(n_groups, n_vacc_classes)
 
 vacc_skip_probability[] <- (
-  if (vacc_skip_to_dose > 0)
-    0
+  if (vacc_skip_dose > 0) (
+    if (vacc_skip_n_candidates[i] > 0)
+      min(vacc_skip_attempted_doses[i] / vacc_skip_n_candidates[i],
+          as.numeric(1))
+    else 0)
   else
     1 - exp(-vacc_skip_progression_rate_base[i] * dt))
-dim(vacc_skip_probability) <- c(n_groups)
+dim(vacc_skip_probability) <- n_groups
 
 vacc_skip_progression_rate_base[] <- user()
-dim(vacc_skip_progression_rate_base) <- c(n_groups)
+dim(vacc_skip_progression_rate_base) <- n_groups
 
 vacc_skip_from <- user()
 vacc_skip_to <- user()
-vacc_skip_to_dose <- user()
+vacc_skip_dose <- user()
+vacc_skip_weight <- user()
 
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
