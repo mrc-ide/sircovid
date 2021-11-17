@@ -43,7 +43,6 @@ lancelot_parameters(
   vacc_skip_from = 1,
   vacc_skip_to = 1,
   vacc_skip_weight = 1,
-  vacc_skip_dose = 0,
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1
@@ -281,6 +280,26 @@ to 1 by default}
 
 \item{n_doses}{Number of doses given out, including boosters. Default is
 2.}
+
+\item{vacc_skip_progression_rate}{Either a vector of length 19 representing
+the base progression rate for "vaccine skip moves" for each group, or a
+scalar representing the base progression rate for all groups}
+
+\item{vacc_skip_from}{A single vaccine stratum index from which we allow a
+"vaccine skip move", which enables individuals to progress through more
+than one vaccine class in a single step. Must be 1 (which is the default)
+if there is only one vaccine stratum}
+
+\item{vacc_skip_to}{A single vaccine stratum index representing the vaccine
+strata an individual in strata \code{vacc_skip_from} can move to in a "vaccine
+skip move". Must be greater than or equal to \code{vacc_skip_from}. Must be 1
+(which is the default) if there is only one vaccine stratum}
+
+\item{vacc_skip_weight}{A scalar weight. If movement into \code{vacc_skip_to}
+from \code{vacc_skip_to - 1} is controlled by doses, then the "vaccine skip
+move" is too, and the weight represents how much those in \code{vacc_skip_from}
+are weighted in dose distribution relative to those in \code{vacc_skip_to - 1}.
+Must be in \link{0, 1}.}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same

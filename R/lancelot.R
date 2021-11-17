@@ -212,6 +212,26 @@ NULL
 ##'   value of 1 means we try to catch up for all missed doses. This is set
 ##'   to 1 by default
 ##'
+##' @param vacc_skip_from A single vaccine stratum index from which we allow a
+##'   "vaccine skip move", which enables individuals to progress through more
+##'   than one vaccine class in a single step. Must be 1 (which is the default)
+##'   if there is only one vaccine stratum
+##'
+##' @param vacc_skip_to A single vaccine stratum index representing the vaccine
+##'   strata an individual in strata `vacc_skip_from` can move to in a "vaccine
+##'   skip move". Must be greater than or equal to `vacc_skip_from`. Must be 1
+##'   (which is the default) if there is only one vaccine stratum
+##'
+##' @param vacc_skip_progression_rate Either a vector of length 19 representing
+##'   the base progression rate for "vaccine skip moves" for each group, or a
+##'   scalar representing the base progression rate for all groups
+##'
+##' @param vacc_skip_weight A scalar weight. If movement into `vacc_skip_to`
+##'   from `vacc_skip_to - 1` is controlled by doses, then the "vaccine skip
+##'   move" is too, and the weight represents how much those in `vacc_skip_from`
+##'   are weighted in dose distribution relative to those in `vacc_skip_to - 1`.
+##'   Must be in [0, 1].
+##'
 ##' @param n_doses Number of doses given out, including boosters. Default is
 ##'   2.
 ##'
@@ -394,7 +414,6 @@ lancelot_parameters <- function(start_date, region,
                                 vacc_skip_from = 1,
                                 vacc_skip_to = 1,
                                 vacc_skip_weight = 1,
-                                vacc_skip_dose = 0,
                                 waning_rate = 0,
                                 exp_noise = 1e6,
                                 cross_immunity = 1) {
@@ -520,10 +539,11 @@ lancelot_parameters <- function(start_date, region,
   ret$vacc_skip_to <- vacc_skip_to
   ret$vacc_skip_from <- vacc_skip_from
   ret$vacc_skip_weight <- assert_proportion(vacc_skip_weight)
-  if (vacc_skip_dose > n_doses) {
-    stop("vacc_skip_dose cannot be more than n_doses")
+  if (vacc_skip_to == 1) {
+    ret$vacc_skip_dose <- 0
+  } else {
+    ret$vacc_skip_dose <- vaccination$index_dose_inverse[vacc_skip_to - 1]
   }
-  ret$vacc_skip_dose <- vacc_skip_dose
 
 
   strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
