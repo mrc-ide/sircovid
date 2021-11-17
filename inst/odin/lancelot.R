@@ -161,6 +161,12 @@ p_I_A_next_vacc_class[, , , ] <- vaccine_probability[i, l]
 p_I_P_next_vacc_class[, , , ] <- vaccine_probability[i, l]
 p_R_next_vacc_class[, , ] <- vaccine_probability[i, k]
 
+p_S_vacc_skip[] <- vacc_skip_probability[i]
+p_E_vacc_skip[, , ] <- vacc_skip_probability[i]
+p_I_A_vacc_skip[, , ] <- vacc_skip_probability[i]
+p_I_P_vacc_skip[, , ] <- vacc_skip_probability[i]
+p_R_vacc_skip[, ] <- vacc_skip_probability[i]
+
 ## clinical progression
 p_SE[, ] <- 1 - exp(- sum(lambda_susc[i, , j]) * dt) # S to I age/vacc dependent
 p_E_progress[] <- 1 - exp(-gamma_E[i] * dt) # progression of latent period
@@ -342,6 +348,11 @@ n_S_progress[4, 2:n_strains, 1] <-
 n_S_next_vacc_class[, ] <- rbinom(S[i, j] - sum(n_S_progress[i, , j]),
                                   p_S_next_vacc_class[i, j])
 
+n_S_vacc_skip[] <-
+  rbinom(S[i, vacc_skip_from] - sum(n_S_progress[i, , vacc_skip_from]) -
+           n_S_next_vacc_class[i, vacc_skip_from],
+         p_S_vacc_skip[i])
+
 #### flow out of E ####
 
 n_E_progress[, , , ] <- rbinom(E[i, j, k, l], p_E_progress[j])
@@ -349,6 +360,11 @@ n_E_progress[, , , ] <- rbinom(E[i, j, k, l], p_E_progress[j])
 ## vaccine progression
 n_E_next_vacc_class[, , , ] <- rbinom(E[i, j, k, l] - n_E_progress[i, j, k, l],
                                       p_E_next_vacc_class[i, j, k, l])
+
+n_E_vacc_skip[, , ] <-
+  rbinom(E[i, j, k, vacc_skip_from] - n_E_progress[i, j, k, vacc_skip_from] -
+           n_E_next_vacc_class[i, j, k, vacc_skip_from],
+         p_E_vacc_skip[i, j, k])
 
 #### flow out of I_A ####
 
@@ -360,6 +376,12 @@ n_I_A_next_vacc_class[, , , ] <- rbinom(
   p_I_A_next_vacc_class[i, j, k, l])
 
 
+n_I_A_vacc_skip[, , ] <-
+  rbinom(I_A[i, j, k, vacc_skip_from] -
+           n_I_A_progress[i, j, k, vacc_skip_from] -
+           n_I_A_next_vacc_class[i, j, k, vacc_skip_from],
+         p_I_A_vacc_skip[i, j, k])
+
 #### flow out of I_P ####
 
 n_I_P_progress[, , , ] <- rbinom(I_P[i, j, k, l], p_I_P_progress[j])
@@ -369,6 +391,12 @@ n_I_P_next_vacc_class[, , , ] <- rbinom(
   I_P[i, j, k, l] - n_I_P_progress[i, j, k, l],
   p_I_P_next_vacc_class[i, j, k, l]
 )
+
+n_I_P_vacc_skip[, , ] <-
+  rbinom(I_P[i, j, k, vacc_skip_from] -
+           n_I_P_progress[i, j, k, vacc_skip_from] -
+           n_I_P_next_vacc_class[i, j, k, vacc_skip_from],
+         p_I_P_vacc_skip[i, j, k])
 
 #### flow out of R ####
 
@@ -414,6 +442,11 @@ n_RE[, , ] <- n_R_progress[i, j, k] - n_RS[i, j, k]
 n_R_tmp[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
 n_R_next_vacc_class[, , ] <- rbinom(n_R_tmp[i, j, k],
                                     p_R_next_vacc_class[i, j, k])
+
+n_R_vacc_skip[, ] <-
+  rbinom(n_R_tmp[i, j, vacc_skip_from] -
+           n_R_next_vacc_class[i, j, vacc_skip_from],
+         p_R_vacc_skip[i, j])
 
 #### other transitions ####
 
@@ -484,7 +517,9 @@ new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) + sum(n_infected_to_S[i, , j]) -
   sum(n_S_progress[i, , j]) - n_S_next_vacc_class[i, j]
 new_S[, ] <- new_S[i, j] +
   (if (j == 1) n_S_next_vacc_class[i, n_vacc_classes] else
-       n_S_next_vacc_class[i, j - 1])
+       n_S_next_vacc_class[i, j - 1]) -
+  (if (j == vacc_skip_from) n_S_vacc_skip[i] else 0) +
+  (if (j == vacc_skip_to) n_S_vacc_skip[i] else 0)
 
 ## Computes the number of asymptomatic
 n_EI_A[, , ] <- rbinom(n_E_progress[i, j, k_E, k], 1 - p_C[i, j, k])
@@ -501,7 +536,9 @@ aux_E[, , , ] <- (if (k == 1) n_S_progress[i, j, l] +
   (if (l == 1)
     n_E_next_vacc_class[i, j, k, n_vacc_classes]
    else
-     n_E_next_vacc_class[i, j, k, l - 1])
+     n_E_next_vacc_class[i, j, k, l - 1]) -
+  (if (l == vacc_skip_from) n_E_vacc_skip[i, j, k] else 0) +
+  (if (l == vacc_skip_to) n_E_vacc_skip[i, j, k] else 0)
 
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
@@ -511,7 +548,9 @@ aux_I_A[, , , ] <- (if (k == 1) n_EI_A[i, j, l] else
   n_I_A_progress[i, j, k, l] -
   n_I_A_next_vacc_class[i, j, k, l] +
   (if (l == 1) n_I_A_next_vacc_class[i, j, k, n_vacc_classes] else
-    n_I_A_next_vacc_class[i, j, k, l - 1])
+    n_I_A_next_vacc_class[i, j, k, l - 1]) -
+  (if (l == vacc_skip_from) n_I_A_vacc_skip[i, j, k] else 0) +
+  (if (l == vacc_skip_to) n_I_A_vacc_skip[i, j, k] else 0)
 
 new_I_A[, , , ] <- I_A[i, j, k, l] + aux_I_A[i, j, k, l]
 
@@ -521,7 +560,9 @@ aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else
   n_I_P_progress[i, j, k, l] -
   n_I_P_next_vacc_class[i, j, k, l] +
   (if (l == 1) n_I_P_next_vacc_class[i, j, k, n_vacc_classes] else
-    n_I_P_next_vacc_class[i, j, k, l - 1])
+    n_I_P_next_vacc_class[i, j, k, l - 1]) -
+  (if (l == vacc_skip_from) n_I_P_vacc_skip[i, j, k] else 0) +
+  (if (l == vacc_skip_to) n_I_P_vacc_skip[i, j, k] else 0)
 
 new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
 
@@ -816,7 +857,9 @@ new_R[, , ] <- R[i, j, k] -
   n_R_next_vacc_class[i, j, k] +
   n_infected_to_R[i, j, k] +
   (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
-     n_R_next_vacc_class[i, j, k - 1])
+     n_R_next_vacc_class[i, j, k - 1])  -
+  (if (k == vacc_skip_from) n_R_vacc_skip[i, j] else 0) +
+  (if (k == vacc_skip_to) n_R_vacc_skip[i, j] else 0)
 
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
@@ -1374,21 +1417,29 @@ dim(new_T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
 ## Vectors handling the S->S transitions i.e. moving between vaccination classes
 dim(p_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
 dim(n_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
+dim(p_S_vacc_skip) <- c(n_groups)
+dim(n_S_vacc_skip) <- c(n_groups)
 
 dim(p_E_next_vacc_class) <- c(n_groups, n_strains, k_E, n_vacc_classes)
 dim(n_E_next_vacc_class) <- c(n_groups, n_strains, k_E, n_vacc_classes)
+dim(p_E_vacc_skip) <- c(n_groups, n_strains, k_E)
+dim(n_E_vacc_skip) <- c(n_groups, n_strains, k_E)
 dim(n_E_progress) <- c(n_groups, n_strains, k_E, n_vacc_classes)
 
 dim(p_I_A_next_vacc_class) <-
   c(n_groups, n_strains, k_A, n_vacc_classes)
 dim(n_I_A_next_vacc_class) <-
   c(n_groups, n_strains, k_A, n_vacc_classes)
+dim(p_I_A_vacc_skip) <- c(n_groups, n_strains, k_A)
+dim(n_I_A_vacc_skip) <- c(n_groups, n_strains, k_A)
 dim(n_I_A_progress) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 
 dim(p_I_P_next_vacc_class) <-
   c(n_groups, n_strains, k_P, n_vacc_classes)
 dim(n_I_P_next_vacc_class) <-
   c(n_groups, n_strains, k_P, n_vacc_classes)
+dim(p_I_P_vacc_skip) <- c(n_groups, n_strains, k_P)
+dim(n_I_P_vacc_skip) <- c(n_groups, n_strains, k_P)
 dim(n_I_P_progress) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 
 ## Vectors handling the S->E transition where infected are split
@@ -1449,6 +1500,8 @@ dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
 ## Vectors handling progress from R
 dim(p_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
 dim(n_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_R_vacc_skip) <- c(n_groups, n_strains)
+dim(n_R_vacc_skip) <- c(n_groups, n_strains)
 dim(n_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
 
 dim(n_R_tmp) <- c(n_groups, n_strains, n_vacc_classes)
@@ -1781,6 +1834,20 @@ dim(tmp_vaccine_n_candidates) <- c(n_groups, n_doses)
 initial(tmp_vaccine_probability[, ]) <- 0
 update(tmp_vaccine_probability[, ]) <- vaccine_probability[i, j]
 dim(tmp_vaccine_probability) <- c(n_groups, n_vacc_classes)
+
+vacc_skip_probability[] <- (
+  if (vacc_skip_to_dose > 0)
+    0
+  else
+    1 - exp(-vacc_skip_progression_rate_base[i] * dt))
+dim(vacc_skip_probability) <- c(n_groups)
+
+vacc_skip_progression_rate_base[] <- user()
+dim(vacc_skip_progression_rate_base) <- c(n_groups)
+
+vacc_skip_from <- user()
+vacc_skip_to <- user()
+vacc_skip_to_dose <- user()
 
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
