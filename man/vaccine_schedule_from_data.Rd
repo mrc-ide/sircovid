@@ -19,7 +19,7 @@ all age-specific doses have already been dealt with}
 
 \item{uptake}{A matrix of 19 rows, and number of columns equal to
 number of doses. The (i,j)th entry gives the fractional uptake
-of dose j for group i}
+of dose j for group i. Should be non-increasing across rows}
 }
 \value{
 A \link{vaccine_schedule} object
