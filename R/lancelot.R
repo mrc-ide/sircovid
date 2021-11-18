@@ -230,7 +230,7 @@ NULL
 ##'   from `vacc_skip_to - 1` is controlled by doses, then the "vaccine skip
 ##'   move" is too, and the weight represents how much those in `vacc_skip_from`
 ##'   are weighted in dose distribution relative to those in `vacc_skip_to - 1`.
-##'   Must be between 0 and 1
+##'   Must be between 0 and 1. Default is 0
 ##'
 ##' @param n_doses Number of doses given out, including boosters. Default is
 ##'   2.
@@ -413,7 +413,7 @@ lancelot_parameters <- function(start_date, region,
                                 vacc_skip_progression_rate = 0,
                                 vacc_skip_from = 1,
                                 vacc_skip_to = 1,
-                                vacc_skip_weight = 1,
+                                vacc_skip_weight = 0,
                                 waning_rate = 0,
                                 exp_noise = 1e6,
                                 cross_immunity = 1) {
