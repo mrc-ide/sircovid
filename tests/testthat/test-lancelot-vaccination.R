@@ -3220,3 +3220,26 @@ test_that("run sensible vaccination schedule with waning and boosters", {
   phase4 <- 150:200
   expect_false(all(y$cum_n_S_vaccinated[, 4, , phase4] == 0))
 })
+
+
+test_that("Can validate vaccine skip move inputs", {
+  expect_error(lancelot_parameters(1, "london", vacc_skip_from = 2),
+               "n_vacc_classes = 1 so require vacc_skip_from = 1")
+
+  expect_error(lancelot_parameters(1, "london", vacc_skip_to = 3),
+               "n_vacc_classes = 1 so require vacc_skip_to = 1")
+
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
+                                   vacc_skip_from = 3, vacc_skip_to = 2),
+               "Require vacc_skip_from <= vacc_skip_to")
+
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
+                                   vacc_skip_from = 1, vacc_skip_to = 3,
+                                   vacc_skip_weight = 1.4),
+               "'vacc_skip_weight' must lie in")
+
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
+                                   vacc_skip_from = 1, vacc_skip_to = 3,
+                                   vacc_skip_weight = -1),
+               "'vacc_skip_weight' must lie in")
+})
