@@ -1847,8 +1847,11 @@ dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
 
 vacc_skip_attempted_doses[] <-
   (if (vacc_skip_weight > 0)
-    tmp_attempted_doses[i, vacc_skip_dose] -
-     vaccine_attempted_doses[i, vacc_skip_dose] else 0)
+    (if (vacc_skip_dose > 0)
+      tmp_attempted_doses[i, vacc_skip_dose] -
+       vaccine_attempted_doses[i, vacc_skip_dose]
+     else 0)
+   else 0)
 dim(vacc_skip_attempted_doses) <- n_groups
 
 initial(vaccine_missed_doses[, ]) <- 0
