@@ -522,8 +522,17 @@ lancelot_parameters <- function(start_date, region,
                                                  n_doses)
 
   ## vacc_skip parameters
-  ret$vacc_skip_progression_rate_base <-
-    rep(vacc_skip_progression_rate, ret$n_groups)
+  if (length(vacc_skip_progression_rate) == 1) {
+    ret$vacc_skip_progression_rate_base <-
+      rep(vacc_skip_progression_rate, ret$n_groups)
+  } else {
+    if (length(vacc_skip_progression_rate) != ret$n_groups) {
+      stop(sprintf("vacc_skip_progression_rate must be a scalar or a vector of
+                   length %s", ret$n_groups))
+    } else {
+      ret$vacc_skip_progression_rate_base <- vacc_skip_progression_rate
+    }
+  }
   if (vaccination$n_vacc_classes == 1) {
     if (vacc_skip_from != 1) {
       stop("n_vacc_classes = 1 so require vacc_skip_from = 1")
