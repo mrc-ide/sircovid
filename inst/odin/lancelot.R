@@ -20,7 +20,8 @@ update(time) <- (step + 1) * dt
 ## output number of individuals vaccinated by age and vaccine stage
 ## For example, for E, we sum over n_E_next_vacc_class (those moving vaccine
 ## stage without progressing disease stages)
-## vaccinated S
+## Note that individuals making vaccine skip moves are counted in all classes
+## they skip over
 n_S_vaccinated[, ] <- n_S_next_vacc_class[i, j] +
   (if (j >= vacc_skip_from && j < vacc_skip_to) n_S_vacc_skip[i]
    else 0)
@@ -77,6 +78,7 @@ update(cum_n_vaccinated[, ]) <- cum_n_vaccinated[i, j] + n_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 
+## Output the number of individuals making vaccine skip moves
 initial(cum_n_S_vacc_skip[]) <- 0
 update(cum_n_S_vacc_skip[]) <- cum_n_S_vacc_skip[i] + n_S_vacc_skip[i]
 dim(cum_n_S_vacc_skip) <- n_groups
@@ -1853,6 +1855,8 @@ tmp_attempted_doses[, ] <- vaccine_missed_doses[i, j] + (
   else vaccine_dose_step[i, j, step + 1])
 dim(tmp_attempted_doses) <- c(n_groups, n_doses)
 
+## Note attempted doses for those competing with a vaccine skip are weighted
+## here, with remaining doses made available to the vaccine skip move below
 vaccine_attempted_doses[, ] <-
   (if (j == vacc_skip_dose)
     min(vaccine_n_candidates[i, j] /
