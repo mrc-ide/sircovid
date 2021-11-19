@@ -77,6 +77,24 @@ update(cum_n_vaccinated[, ]) <- cum_n_vaccinated[i, j] + n_vaccinated[i, j]
 dim(cum_n_vaccinated) <- c(n_groups, n_vacc_classes)
 
 
+initial(cum_n_S_vacc_skip[]) <- 0
+update(cum_n_S_vacc_skip[]) <- cum_n_S_vacc_skip[i] + n_S_vacc_skip[i]
+dim(cum_n_S_vacc_skip) <- n_groups
+initial(cum_n_E_vacc_skip[]) <- 0
+update(cum_n_E_vacc_skip[]) <- cum_n_E_vacc_skip[i] + sum(n_E_vacc_skip[i, , ])
+dim(cum_n_E_vacc_skip) <- n_groups
+initial(cum_n_I_A_vacc_skip[]) <- 0
+update(cum_n_I_A_vacc_skip[]) <- cum_n_I_A_vacc_skip[i] +
+  sum(n_I_A_vacc_skip[i, , ])
+dim(cum_n_I_A_vacc_skip) <- n_groups
+initial(cum_n_I_P_vacc_skip[]) <- 0
+update(cum_n_I_P_vacc_skip[]) <- cum_n_I_P_vacc_skip[i] +
+  sum(n_I_P_vacc_skip[i, , ])
+dim(cum_n_I_P_vacc_skip) <- n_groups
+initial(cum_n_R_vacc_skip[]) <- 0
+update(cum_n_R_vacc_skip[]) <- cum_n_R_vacc_skip[i] + sum(n_R_vacc_skip[i, ])
+dim(cum_n_R_vacc_skip) <- n_groups
+
 n_vacc_skip[] <-
   n_S_vacc_skip[i] +
   sum(n_E_vacc_skip[i, , ]) +
