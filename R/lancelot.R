@@ -212,15 +212,15 @@ NULL
 ##'   value of 1 means we try to catch up for all missed doses. This is set
 ##'   to 1 by default
 ##'
-##' @param vacc_skip_from A single vaccine stratum index from which we allow a
-##'   "vaccine skip move", which enables individuals to progress through more
-##'   than one vaccine class in a single step. Must be 1 (which is the default)
-##'   if there is only one vaccine stratum
+##' @param vacc_skip_from An integer, the vaccine stratum index from which we
+##'   allow a "vaccine skip move", which enables individuals to progress through
+##'   more than one vaccine class in a single step. Must be 1 (which is the
+##'   default) if there is only one vaccine stratum
 ##'
-##' @param vacc_skip_to A single vaccine stratum index representing the vaccine
-##'   strata an individual in strata `vacc_skip_from` can move to in a "vaccine
-##'   skip move". Must be greater than or equal to `vacc_skip_from`. Must be 1
-##'   (which is the default) if there is only one vaccine stratum
+##' @param vacc_skip_to An integer, the vaccine stratum index representing the
+##'   vaccine stratum an individual in stratum `vacc_skip_from` can move to in a
+##'   "vaccine skip move". Must be greater than or equal to `vacc_skip_from`.
+##'   Must be 1 (which is the default) if there is only one vaccine stratum
 ##'
 ##' @param vacc_skip_progression_rate Either a vector of length 19 representing
 ##'   the base progression rate for "vaccine skip moves" for each group, or a
@@ -411,8 +411,8 @@ lancelot_parameters <- function(start_date, region,
                                 vaccine_catchup_fraction = 1,
                                 n_doses = 2L,
                                 vacc_skip_progression_rate = 0,
-                                vacc_skip_from = 1,
-                                vacc_skip_to = 1,
+                                vacc_skip_from = 1L,
+                                vacc_skip_to = 1L,
                                 vacc_skip_weight = 0,
                                 waning_rate = 0,
                                 exp_noise = 1e6,
