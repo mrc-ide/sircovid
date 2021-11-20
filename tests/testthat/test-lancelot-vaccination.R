@@ -3246,10 +3246,6 @@ test_that("Can validate vaccine skip move inputs", {
                                    vacc_skip_from = 1L, vacc_skip_to = 3L,
                                    vacc_skip_weight = -1),
                "'vacc_skip_weight' must lie in")
-  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
-                                   vacc_skip_from = 1L, vacc_skip_to = 3L,
-                                   vacc_skip_weight = -1),
-               "'vacc_skip_weight' must lie in")
 })
 
 test_that("vacc_skip_dose calculated correctly", {
