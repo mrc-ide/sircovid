@@ -3433,11 +3433,11 @@ test_that("Everyone vaccine skips if there is no waning", {
   index_I_P <- array(info$index$I_P, info$dim$I_P)
   index_R <- array(info$index$R, info$dim$R)
 
-  state[index_S[, 3:4]] <- 50000
-  state[index_E[, , , 3:4]] <- 50000
-  state[index_I_A[, , , 3:4]] <- 50000
-  state[index_I_P[, , , 3:4]] <- 50000
-  state[index_R[, , 3:4]] <- 50000
+  state[index_S[, 3]] <- 50000
+  state[index_E[, , , 3]] <- 50000
+  state[index_I_A[, , , 3]] <- 50000
+  state[index_I_P[, , , 3]] <- 50000
+  state[index_R[, , 3]] <- 50000
 
   mod$update_state(state = state)
 
@@ -3446,7 +3446,7 @@ test_that("Everyone vaccine skips if there is no waning", {
   y <- mod$transform_variables(drop(y))
 
   ## All booster moves are via vaccine skip
-  expect_true(any(y$ncum_n_vacc_skip > 0))
+  expect_true(any(y$cum_n_vacc_skip > 0))
   expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 3, , ])
   expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 4, , ])
 })
