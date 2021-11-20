@@ -1850,27 +1850,38 @@ vaccine_probability_doses[, ] <- min(
   as.numeric(1))
 dim(vaccine_probability_doses) <- c(n_groups, n_doses)
 
-tmp_attempted_doses[, ] <- vaccine_missed_doses[i, j] + (
+## Work out the total attempted doses
+total_attempted_doses[, ] <- vaccine_missed_doses[i, j] + (
   if (as.integer(step) >= dim(vaccine_dose_step, 3)) 0
   else vaccine_dose_step[i, j, step + 1])
-dim(tmp_attempted_doses) <- c(n_groups, n_doses)
+dim(total_attempted_doses) <- c(n_groups, n_doses)
 
-## Note attempted doses for those competing with a vaccine skip are weighted
-## here, with remaining doses made available to the vaccine skip move below
+## Now we work out the split of the total attempted doses, firstly for the
+## next vaccine class moves, then for the vaccine skip moves.
+##
+## Note attempted doses for next vaccine class moves competing with a vaccine
+## skip are weighted here, with remaining doses made available to the vaccine
+## skip move below.
+##
+## Note that since we require vacc_skip_weight <= 1, it is not possible for
+## there to be an excess of doses for vaccine skip moves while having not
+## enough doses for the next vaccine class candidates.
 vaccine_attempted_doses[, ] <-
   (if (j == vacc_skip_dose)
-    min(vaccine_n_candidates[i, j] /
-          (vaccine_n_candidates[i, j] +
-             vacc_skip_weight * vacc_skip_n_candidates[i])
-        * tmp_attempted_doses[i, j],
-        vaccine_n_candidates[i, j])
-    else tmp_attempted_doses[i, j])
+    (if (vaccine_n_candidates[i, j] == 0) 0
+     else
+       min(vaccine_n_candidates[i, j] /
+             (vaccine_n_candidates[i, j] +
+                vacc_skip_weight * vacc_skip_n_candidates[i])
+           * total_attempted_doses[i, j],
+           vaccine_n_candidates[i, j]))
+    else total_attempted_doses[i, j])
 dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
 
 vacc_skip_attempted_doses[] <-
   (if (vacc_skip_weight > 0)
     (if (vacc_skip_dose > 0)
-      tmp_attempted_doses[i, vacc_skip_dose] -
+      total_attempted_doses[i, vacc_skip_dose] -
        vaccine_attempted_doses[i, vacc_skip_dose]
      else 0)
    else 0)
@@ -1879,7 +1890,7 @@ dim(vacc_skip_attempted_doses) <- n_groups
 initial(vaccine_missed_doses[, ]) <- 0
 update(vaccine_missed_doses[, ]) <-
   vaccine_catchup_fraction *
-  max(tmp_attempted_doses[i, j] - n_vaccinated[i, index_dose[j]],
+  max(total_attempted_doses[i, j] - n_vaccinated[i, index_dose[j]],
       as.numeric(0))
 dim(vaccine_missed_doses) <- c(n_groups, n_doses)
 
