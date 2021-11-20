@@ -3340,6 +3340,73 @@ test_that("No vaccine skip moves when expected", {
 })
 
 
+test_that("Vaccine skip works in all compartments", {
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = 0,
+                                            booster_daily_doses = 10000)
+
+  ## no vaccine_progression, no infection, no waning
+  p <- lancelot_parameters(1, "london", beta_value = 0,
+                           m_CHR = 0, m_CHW = 0,
+                           waning_rate = 0,
+                           rel_susceptibility = rep(1, 5),
+                           vaccine_index_dose2 = 2L,
+                           vaccine_index_booster = 4L,
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_progression_rate = c(0, 0, 0, 0, 0),
+                           n_doses = 3,
+                           vacc_skip_from = 3L,
+                           vacc_skip_to = 5L,
+                           vacc_skip_weight = 1,
+                           vacc_skip_progression_rate = 0)
+
+  p$gamma_E_step <- 0
+  p$gamma_A_step <- 0
+  p$gamma_P_step <- 0
+  p$waning_rate[] <- 0
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+
+  state <- lancelot_initial(info, 1, p)$state
+
+  index_S <- array(info$index$S, info$dim$S)
+  index_E <- array(info$index$E, info$dim$E)
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  index_I_P <- array(info$index$I_P, info$dim$I_P)
+  index_R <- array(info$index$R, info$dim$R)
+
+  state[index_S[, 3]] <- 50000
+  state[index_E[, , , 3]] <- 50000
+  state[index_I_A[, , , 3]] <- 50000
+  state[index_I_P[, , , 3]] <- 50000
+  state[index_R[, , 3]] <- 50000
+
+  mod$update_state(state = state)
+
+  set.seed(1)
+  y <- mod$simulate(1:200 * 4)
+  y <- mod$transform_variables(drop(y))
+
+  ## cum_n_X_vacc_skip should be equal to the totals in vaccine class 5
+  expect_true(any(y$cum_n_S_vacc_skip > 0))
+  expect_equal(y$cum_n_S_vacc_skip,
+               apply(y$S[, 5, , , drop = FALSE], c(1, 3, 4), sum))
+  expect_true(any(y$cum_n_E_vacc_skip > 0))
+  expect_equal(y$cum_n_E_vacc_skip,
+               apply(y$E[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
+  expect_true(any(y$cum_n_I_A_vacc_skip > 0))
+  expect_equal(y$cum_n_I_A_vacc_skip,
+               apply(y$I_A[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
+  expect_true(any(y$cum_n_I_P_vacc_skip > 0))
+  expect_equal(y$cum_n_I_P_vacc_skip,
+               apply(y$I_P[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
+  expect_true(any(y$cum_n_R_vacc_skip > 0))
+  expect_equal(y$cum_n_R_vacc_skip,
+               apply(y$R[, , 5, , , drop = FALSE], c(1, 4, 5), sum))
+})
+
+
 test_that("Everyone vaccine skips if there is no waning", {
   vaccine_schedule <- test_vaccine_schedule(booster_daily_doses = 10000)
 
@@ -3360,6 +3427,18 @@ test_that("Everyone vaccine skips if there is no waning", {
 
   state <- lancelot_initial(info, 1, p)$state
 
+  index_S <- array(info$index$S, info$dim$S)
+  index_E <- array(info$index$E, info$dim$E)
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  index_I_P <- array(info$index$I_P, info$dim$I_P)
+  index_R <- array(info$index$R, info$dim$R)
+
+  state[index_S[, 3:4]] <- 50000
+  state[index_E[, , , 3:4]] <- 50000
+  state[index_I_A[, , , 3:4]] <- 50000
+  state[index_I_P[, , , 3:4]] <- 50000
+  state[index_R[, , 3:4]] <- 50000
+
   mod$update_state(state = state)
 
   set.seed(1)
@@ -3367,6 +3446,7 @@ test_that("Everyone vaccine skips if there is no waning", {
   y <- mod$transform_variables(drop(y))
 
   ## All booster moves are via vaccine skip
+  expect_true(any(y$ncum_n_vacc_skip > 0))
   expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 3, , ])
   expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 4, , ])
 })
@@ -3394,15 +3474,15 @@ test_that("Equal vaccine skip weighting leads to equal distribution", {
   state <- lancelot_initial(info, 1, p)$state
 
   index_S <- array(info$index$S, info$dim$S)
-  index_E <- array(info$index$S, info$dim$E)
+  index_E <- array(info$index$E, info$dim$E)
   index_I_A <- array(info$index$I_A, info$dim$I_A)
-  index_I_P <- array(info$index$I_A, info$dim$I_P)
+  index_I_P <- array(info$index$I_P, info$dim$I_P)
   index_R <- array(info$index$R, info$dim$R)
 
   state[index_S[, 3:4]] <- 50000
   state[index_E[, , , 3:4]] <- 50000
   state[index_I_A[, , , 3:4]] <- 50000
-  state[index_I_A[, , , 3:4]] <- 50000
+  state[index_I_P[, , , 3:4]] <- 50000
   state[index_R[, , 3:4]] <- 50000
 
   mod$update_state(state = state)
