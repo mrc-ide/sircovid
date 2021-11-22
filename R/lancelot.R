@@ -550,7 +550,7 @@ lancelot_parameters <- function(start_date, region,
   if (vacc_skip_to == vacc_skip_from && vacc_skip_weight != 0) {
     stop("Require vacc_skip_weight = 0 as vacc_skip_to = vacc_skip_from")
   }
-  if (vacc_skip_to == vacc_skip_from && vacc_skip_progression_rate != 0) {
+  if (vacc_skip_to == vacc_skip_from && any(vacc_skip_progression_rate != 0)) {
     stop("Require vacc_skip_progression_rate = 0 as vacc_skip_to =
          vacc_skip_from")
   }
