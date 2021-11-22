@@ -3223,10 +3223,11 @@ test_that("run sensible vaccination schedule with waning and boosters", {
 
 test_that("Can validate vaccine skip move inputs", {
   expect_error(lancelot_parameters(1, "london", vacc_skip_from = 2),
-               "n_vacc_classes = 1 so require vacc_skip_from = 1")
+               "There are 1 vaccine classes so 'vacc_skip_from' and")
 
-  expect_error(lancelot_parameters(1, "london", vacc_skip_to = 3),
-               "n_vacc_classes = 1 so require vacc_skip_to = 1")
+  expect_error(lancelot_parameters(1, "london", vacc_skip_to = 4,
+                                   rel_susceptibility = c(1, 1, 1)),
+               "There are 3 vaccine classes so 'vacc_skip_from' and")
 
   expect_error(lancelot_parameters(1, "london",
                                    vacc_skip_progression_rate = c(1, 2)),
@@ -3235,7 +3236,18 @@ test_that("Can validate vaccine skip move inputs", {
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_progression_rate = rep(0, 19),
                                    vacc_skip_from = 3L, vacc_skip_to = 2L),
-               "Require vacc_skip_from <= vacc_skip_to")
+               "Require vacc_skip_to = vacc_skip_from or vacc_skip_to >=")
+
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
+                                   vacc_skip_progression_rate = rep(1, 19),
+                                   vacc_skip_from = 2L, vacc_skip_to = 2L),
+               "Require vacc_skip_progression_rate = 0 as vacc_skip_to =")
+
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
+                                   vacc_skip_progression_rate = rep(0, 19),
+                                   vacc_skip_weight = 1,
+                                   vacc_skip_from = 2L, vacc_skip_to = 2L),
+               "Require vacc_skip_weight = 0 as vacc_skip_to =")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_from = 1L, vacc_skip_to = 3L,

@@ -283,23 +283,26 @@ to 1 by default}
 
 \item{vacc_skip_progression_rate}{Either a vector of length 19 representing
 the base progression rate for "vaccine skip moves" for each group, or a
-scalar representing the base progression rate for all groups}
+scalar representing the base progression rate for all groups. Must be 0
+(which is the default) if \code{vacc_skip_to == vacc_skip_from}}
 
 \item{vacc_skip_from}{An integer, the vaccine stratum index from which we
 allow a "vaccine skip move", which enables individuals to progress through
-more than one vaccine class in a single step. Must be 1 (which is the
-default) if there is only one vaccine stratum}
+more than one vaccine class in a single step. Default is 1}
 
 \item{vacc_skip_to}{An integer, the vaccine stratum index representing the
 vaccine stratum an individual in stratum \code{vacc_skip_from} can move to in a
-"vaccine skip move". Must be greater than or equal to \code{vacc_skip_from}.
-Must be 1 (which is the default) if there is only one vaccine stratum}
+"vaccine skip move". Must be either equal to \code{vacc_skip_from} (to allow
+the vaccine skip move to be switched "off"), or greater than or equal to
+\code{vacc_skip_from + 2} (we already account for moves between successive
+vaccine strata). Default is 1}
 
 \item{vacc_skip_weight}{A scalar weight. If movement into \code{vacc_skip_to}
 from \code{vacc_skip_to - 1} is controlled by doses, then the "vaccine skip
 move" is too, and the weight represents how much those in \code{vacc_skip_from}
 are weighted in dose distribution relative to those in \code{vacc_skip_to - 1}.
-Must be between 0 and 1. Default is 0}
+Must be between 0 and 1. Must be 0 (which is the default) if
+\code{vacc_skip_to == vacc_skip_from}}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
