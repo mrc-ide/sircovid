@@ -3229,10 +3229,6 @@ test_that("Can validate vaccine skip move inputs", {
                                    rel_susceptibility = c(1, 1, 1)),
                "There are 3 vaccine classes so 'vacc_skip_from' and")
 
-  expect_error(lancelot_parameters(1, "london",
-                                   vacc_skip_progression_rate = c(1, 2)),
-               "'vacc_skip_progression_rate' must be a scalar or a vector")
-
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_progression_rate = rep(0, 19),
                                    vacc_skip_from = 3L, vacc_skip_to = 2L),
@@ -3248,6 +3244,12 @@ test_that("Can validate vaccine skip move inputs", {
                                    vacc_skip_weight = 1,
                                    vacc_skip_from = 2L, vacc_skip_to = 2L),
                "Require vacc_skip_weight = 0 as vacc_skip_to =")
+
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
+                                   vacc_skip_progression_rate = c(1, 1),
+                                   vacc_skip_weight = 1,
+                                   vacc_skip_from = 1L, vacc_skip_to = 3L),
+               "'vacc_skip_progression_rate' must be a scalar or a vector")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_from = 1L, vacc_skip_to = 3L,
