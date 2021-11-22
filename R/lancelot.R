@@ -525,17 +525,6 @@ lancelot_parameters <- function(start_date, region,
                                                  n_doses)
 
   ## vacc_skip parameters
-  if (length(vacc_skip_progression_rate) == 1) {
-    ret$vacc_skip_progression_rate_base <-
-      rep(vacc_skip_progression_rate, ret$n_groups)
-  } else {
-    if (length(vacc_skip_progression_rate) != ret$n_groups) {
-      stop(sprintf("'vacc_skip_progression_rate' must be a scalar or a vector of
-                   length %s", ret$n_groups))
-    } else {
-      ret$vacc_skip_progression_rate_base <- vacc_skip_progression_rate
-    }
-  }
   vacc_classes <- seq_len(vaccination$n_vacc_classes)
   if (!vacc_skip_from %in% vacc_classes || !vacc_skip_to %in% vacc_classes) {
     stop(sprintf("There are %s vaccine classes so 'vacc_skip_from' and
@@ -553,6 +542,17 @@ lancelot_parameters <- function(start_date, region,
   if (vacc_skip_to == vacc_skip_from && any(vacc_skip_progression_rate != 0)) {
     stop("Require vacc_skip_progression_rate = 0 as vacc_skip_to =
          vacc_skip_from")
+  }
+  if (length(vacc_skip_progression_rate) == 1) {
+    ret$vacc_skip_progression_rate_base <-
+      rep(vacc_skip_progression_rate, ret$n_groups)
+  } else {
+    if (length(vacc_skip_progression_rate) != ret$n_groups) {
+      stop(sprintf("'vacc_skip_progression_rate' must be a scalar or a vector of
+                   length %s", ret$n_groups))
+    } else {
+      ret$vacc_skip_progression_rate_base <- vacc_skip_progression_rate
+    }
   }
   ret$vacc_skip_to <- vacc_skip_to
   ret$vacc_skip_from <- vacc_skip_from
