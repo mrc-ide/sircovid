@@ -212,6 +212,29 @@ NULL
 ##'   value of 1 means we try to catch up for all missed doses. This is set
 ##'   to 1 by default
 ##'
+##' @param vacc_skip_from An integer, the vaccine stratum index from which we
+##'   allow a "vaccine skip move", which enables individuals to progress through
+##'   more than one vaccine class in a single step. Default is 1
+##'
+##' @param vacc_skip_to An integer, the vaccine stratum index representing the
+##'   vaccine stratum an individual in stratum `vacc_skip_from` can move to in a
+##'   "vaccine skip move". Must be either equal to `vacc_skip_from` (to allow
+##'   the vaccine skip move to be switched "off"), or greater than or equal to
+##'   `vacc_skip_from + 2` (we already account for moves between successive
+##'   vaccine strata). Default is 1
+##'
+##' @param vacc_skip_progression_rate Either a vector of length 19 representing
+##'   the base progression rate for "vaccine skip moves" for each group, or a
+##'   scalar representing the base progression rate for all groups. Must be 0
+##'   (which is the default) if `vacc_skip_to == vacc_skip_from`
+##'
+##' @param vacc_skip_weight A scalar weight. If movement into `vacc_skip_to`
+##'   from `vacc_skip_to - 1` is controlled by doses, then the "vaccine skip
+##'   move" is too, and the weight represents how much those in `vacc_skip_from`
+##'   are weighted in dose distribution relative to those in `vacc_skip_to - 1`.
+##'   Must be between 0 and 1. Must be 0 (which is the default) if
+##'   `vacc_skip_to == vacc_skip_from`
+##'
 ##' @param n_doses Number of doses given out, including boosters. Default is
 ##'   2.
 ##'
@@ -390,6 +413,10 @@ lancelot_parameters <- function(start_date, region,
                                 vaccine_index_booster = NULL,
                                 vaccine_catchup_fraction = 1,
                                 n_doses = 2L,
+                                vacc_skip_progression_rate = 0,
+                                vacc_skip_from = 1L,
+                                vacc_skip_to = 1L,
+                                vacc_skip_weight = 0,
                                 waning_rate = 0,
                                 exp_noise = 1e6,
                                 cross_immunity = 1) {
@@ -496,6 +523,46 @@ lancelot_parameters <- function(start_date, region,
                                                  strain$n_strains,
                                                  vaccine_catchup_fraction,
                                                  n_doses)
+
+  ## vacc_skip parameters
+  vacc_classes <- seq_len(vaccination$n_vacc_classes)
+  if (!vacc_skip_from %in% vacc_classes || !vacc_skip_to %in% vacc_classes) {
+    stop(sprintf("There are %s vaccine classes so 'vacc_skip_from' and
+                 'vacc_skip_to' must each be one of: %s",
+                 vaccination$n_vacc_classes,
+                 paste(vacc_classes, collapse = ", ")))
+  }
+  if (vacc_skip_to != vacc_skip_from && vacc_skip_to < vacc_skip_from + 2) {
+    stop("Require vacc_skip_to = vacc_skip_from or vacc_skip_to >=
+         vacc_skip_from + 2")
+  }
+  if (vacc_skip_to == vacc_skip_from && vacc_skip_weight != 0) {
+    stop("Require vacc_skip_weight = 0 as vacc_skip_to = vacc_skip_from")
+  }
+  if (vacc_skip_to == vacc_skip_from && any(vacc_skip_progression_rate != 0)) {
+    stop("Require vacc_skip_progression_rate = 0 as vacc_skip_to =
+         vacc_skip_from")
+  }
+  if (length(vacc_skip_progression_rate) == 1) {
+    ret$vacc_skip_progression_rate_base <-
+      rep(vacc_skip_progression_rate, ret$n_groups)
+  } else {
+    if (length(vacc_skip_progression_rate) != ret$n_groups) {
+      stop(sprintf("'vacc_skip_progression_rate' must be a scalar or a vector of
+                   length %s", ret$n_groups))
+    } else {
+      ret$vacc_skip_progression_rate_base <- vacc_skip_progression_rate
+    }
+  }
+  ret$vacc_skip_to <- vacc_skip_to
+  ret$vacc_skip_from <- vacc_skip_from
+  ret$vacc_skip_weight <- assert_proportion(vacc_skip_weight)
+  if (vacc_skip_to == 1) {
+    ret$vacc_skip_dose <- 0
+  } else {
+    ret$vacc_skip_dose <- vaccination$index_dose_inverse[vacc_skip_to - 1]
+  }
+
 
   strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
                                  length(strain_transmission))
