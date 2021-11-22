@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.12</span>
       </span>
     </div>
 
@@ -163,6 +163,10 @@
   vaccine_index_booster <span class='op'>=</span> <span class='cn'>NULL</span>,
   vaccine_catchup_fraction <span class='op'>=</span> <span class='fl'>1</span>,
   n_doses <span class='op'>=</span> <span class='fl'>2L</span>,
+  vacc_skip_progression_rate <span class='op'>=</span> <span class='fl'>0</span>,
+  vacc_skip_from <span class='op'>=</span> <span class='fl'>1L</span>,
+  vacc_skip_to <span class='op'>=</span> <span class='fl'>1L</span>,
+  vacc_skip_weight <span class='op'>=</span> <span class='fl'>0</span>,
   waning_rate <span class='op'>=</span> <span class='fl'>0</span>,
   exp_noise <span class='op'>=</span> <span class='fl'>1e+06</span>,
   cross_immunity <span class='op'>=</span> <span class='fl'>1</span>
@@ -470,6 +474,37 @@ to 1 by default</p></td>
       <th>n_doses</th>
       <td><p>Number of doses given out, including boosters. Default is
 2.</p></td>
+    </tr>
+    <tr>
+      <th>vacc_skip_progression_rate</th>
+      <td><p>Either a vector of length 19 representing
+the base progression rate for "vaccine skip moves" for each group, or a
+scalar representing the base progression rate for all groups. Must be 0
+(which is the default) if <code>vacc_skip_to == vacc_skip_from</code></p></td>
+    </tr>
+    <tr>
+      <th>vacc_skip_from</th>
+      <td><p>An integer, the vaccine stratum index from which we
+allow a "vaccine skip move", which enables individuals to progress through
+more than one vaccine class in a single step. Default is 1</p></td>
+    </tr>
+    <tr>
+      <th>vacc_skip_to</th>
+      <td><p>An integer, the vaccine stratum index representing the
+vaccine stratum an individual in stratum <code>vacc_skip_from</code> can move to in a
+"vaccine skip move". Must be either equal to <code>vacc_skip_from</code> (to allow
+the vaccine skip move to be switched "off"), or greater than or equal to
+<code>vacc_skip_from + 2</code> (we already account for moves between successive
+vaccine strata). Default is 1</p></td>
+    </tr>
+    <tr>
+      <th>vacc_skip_weight</th>
+      <td><p>A scalar weight. If movement into <code>vacc_skip_to</code>
+from <code>vacc_skip_to - 1</code> is controlled by doses, then the "vaccine skip
+move" is too, and the weight represents how much those in <code>vacc_skip_from</code>
+are weighted in dose distribution relative to those in <code>vacc_skip_to - 1</code>.
+Must be between 0 and 1. Must be 0 (which is the default) if
+<code>vacc_skip_to == vacc_skip_from</code></p></td>
     </tr>
     <tr>
       <th>waning_rate</th>
