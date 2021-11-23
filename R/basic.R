@@ -218,7 +218,8 @@ basic_initial <- function(info, n_particles, pars) {
   state[index_S] <- pars$population
   state[index_N_tot] <- sum(pars$population)
 
-  state
+  list(state = state,
+       step = pars$steps_per_day)
 }
 
 

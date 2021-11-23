@@ -6,17 +6,17 @@ test_that("can run the basic model", {
   end <- sircovid_date("2020-07-31") / p$dt
 
   initial <- basic_initial(mod$info(), 10, p)
-  mod$update_state(state = initial)
+  mod$update_state(state = initial$state, step = initial$step)
 
   mod$set_index(basic_index(mod$info())$run)
   res <- mod$run(end)
 
   ## Regnerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu        = c(0, 2, 1, 2, 0, 0, 1, 0, 0, 0),
-          deaths     = c(310178, 310871, 310280, 308829, 309890, 309425,
-                         310307, 310720, 310154, 309521),
-          deaths_inc = c(0, 0, 1, 1, 1, 1, 0, 0, 0, 0))
+    rbind(icu        = c(11, 3, 42, 9, 10, 7, 18, 5, 10, 15),
+          deaths     = c(300234, 301289, 299224, 300030, 300298, 301237,
+                         300527, 300765, 300462, 301154),
+          deaths_inc = c(2, 1, 16, 2, 2, 4, 6, 2, 5, 2))
   expect_equal(res, expected)
 })
 
@@ -29,7 +29,7 @@ test_that("initial seeding in one big lump", {
   end <- sircovid_date("2020-02-28") / p$dt
 
   initial <- basic_initial(mod$info(), n_particles, p)
-  mod$update_state(state = initial)
+  mod$update_state(state = initial$state, step = initial$step)
 
   t <- seq(4, end)
   res <- mod$simulate(t)
@@ -62,7 +62,7 @@ test_that("initial seeding spread out", {
   end <- sircovid_date("2020-02-28") / p$dt
 
   initial <- basic_initial(mod$info(), n_particles, p)
-  mod$update_state(state = initial)
+  mod$update_state(state = initial$state, step = initial$step)
 
   t <- seq(4, end)
   res <- mod$simulate(t)
@@ -79,7 +79,7 @@ test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england")
   data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
-                     start_date, pars$dt)
+                     1, pars$dt)
 
   n_particles <- 100
   pf <- mcstate::particle_filter$new(
