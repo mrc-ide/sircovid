@@ -51,7 +51,7 @@ p_R_hosp <- 1 - exp(-gamma_rec * dt)
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
 n_SE[] <- rbinom(S[i], p_SE[i])
-n_SE[seed_age_band] <- rpois(seed)
+n_SE[seed_age_band] <- min(S[i], n_SE[i] + rpois(seed))
 
 n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
 n_II_A[, , ] <- rbinom(I_A[i, j, k], p_II_A)

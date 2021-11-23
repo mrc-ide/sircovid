@@ -684,7 +684,7 @@ public:
     }
     {
        int i = shared->seed_age_band;
-       internal.n_SE[i - 1] = dust::random::poisson<real_type>(rng_state, seed);
+       internal.n_SE[i - 1] = std::min(S[i - 1], internal.n_SE[i - 1] + dust::random::poisson<real_type>(rng_state, seed));
     }
     for (int i = 1; i <= shared->dim_new_I_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_new_I_ICU_2; ++j) {

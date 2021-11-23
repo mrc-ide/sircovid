@@ -27,7 +27,8 @@ test_that("basic_parameters returns a list of parameters", {
   progression <- basic_parameters_progression()
   expect_identical(p[names(progression)], progression)
 
-  shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
+  shared <- sircovid_parameters_shared(date, "uk", NULL, NULL,
+                                       "piecewise-linear", NULL, 1, 10)
   expect_identical(p[names(shared)], shared)
 })
 
@@ -108,10 +109,8 @@ test_that("can compute initial conditions", {
 
   initial_y <- mod$transform_variables(initial$state)
   expect_equal(initial_y$N_tot, sum(p$population))
-  expect_equal(initial_y$S + drop(initial_y$I_A), p$population)
-  expect_equal(drop(initial_y$I_A), append(rep(0, 16), 10, after = 3))
+  expect_equal(initial_y$S, p$population)
 
-  remaining <- initial$state[-c(info$index$N_tot, info$index$S,
-                                info$index$I_A)]
+  remaining <- initial$state[-c(info$index$N_tot, info$index$S)]
   expect_vector_equal(remaining, 0)
 })

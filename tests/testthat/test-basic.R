@@ -13,10 +13,10 @@ test_that("can run the basic model", {
 
   ## Regnerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu        = c(11, 3, 42, 9, 10, 7, 18, 5, 10, 15),
-          deaths     = c(300234, 301289, 299224, 300030, 300298, 301237,
-                         300527, 300765, 300462, 301154),
-          deaths_inc = c(2, 1, 16, 2, 2, 4, 6, 2, 5, 2))
+    rbind(icu        = c(2, 2, 3, 0, 1, 3, 4, 1, 2, 2),
+          deaths     = c(309783, 310019, 310791, 308704, 309705, 310307,
+                         309895, 309622, 310298, 309750),
+          deaths_inc = c(0, 1, 0, 0, 1, 1, 0, 0, 0, 2))
   expect_equal(res, expected)
 })
 
@@ -79,7 +79,7 @@ test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england")
   data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
-                     1, pars$dt)
+                     0, pars$dt)
 
   n_particles <- 100
   pf <- mcstate::particle_filter$new(
@@ -122,7 +122,7 @@ test_that("compiled compare function is correct", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england", exp_noise = Inf)
   data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
-                     start_date, pars$dt)
+                     0, pars$dt)
 
   np <- 10
   mod <- basic$new(pars, 0, np, seed = 1L)
