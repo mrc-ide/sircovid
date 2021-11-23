@@ -355,7 +355,7 @@ gamma_W_D[] <- if (as.integer(step) >= n_gamma_W_D_steps)
 
 ## modelling infections and vaccine progression, which can happen simultaneously
 
-#### flow out of S ####
+#### flow out of S ###
 
 ## new infections
 
@@ -365,6 +365,21 @@ n_S_progress_tot[, ] <- rbinom(S[i, j], p_SE[i, j])
 n_S_progress[, , ] <- if (j == 1 || n_real_strains == 1)
   rbinom(n_S_progress_tot[i, k], rel_foi_strain[i, j, k]) else
     (if (j == 2) n_S_progress_tot[i, k] - n_S_progress[i, 1, k] else 0)
+
+## Seeding of first wave, we seed in group 4, strain 1, vaccine stratum 1
+##
+seed_step_end <- seed_step_start + length(seed_value)
+seed <- if (step >= seed_step_start && step < seed_step_end)
+  seed_value[as.integer(step - seed_step_start + 1)] else 0
+seed_age_band <- as.integer(4) # 15-19y band
+
+seed_step_start <- user()
+seed_value[] <- user()
+dim(seed_value) <- user()
+
+n_S_progress[seed_age_band, 1, 1] <-
+  n_S_progress[seed_age_band, 1, 1] +
+  min(S[seed_age_band, 1] - n_S_progress_tot[seed_age_band, 1], rpois(seed))
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##

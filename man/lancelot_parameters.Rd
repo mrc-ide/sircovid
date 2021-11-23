@@ -17,6 +17,7 @@ lancelot_parameters(
   observation = NULL,
   sens_and_spec = NULL,
   initial_I = 30,
+  initial_seed_pattern = 1,
   eps = 0.1,
   m_CHW = 4e-06,
   m_CHR = 5e-05,

@@ -669,6 +669,8 @@ compare(const typename T::real_type * state,
 // [[dust::param(rel_p_sympt, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_susceptibility, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rho_pillar2_tests, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(seed_step_start, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(seed_value, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(sero_sensitivity_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(sero_sensitivity_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(sero_specificity_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2150,6 +2152,7 @@ public:
     int dim_s_ij_12;
     int dim_s_ij_2;
     int dim_s_ij_3;
+    int dim_seed_value;
     int dim_strain_seed_step;
     int dim_strain_transmission;
     int dim_tmp_vaccine_n_candidates;
@@ -2517,6 +2520,10 @@ public:
     std::vector<real_type> rel_p_sympt;
     std::vector<real_type> rel_susceptibility;
     real_type rho_pillar2_tests;
+    int seed_age_band;
+    real_type seed_step_end;
+    real_type seed_step_start;
+    std::vector<real_type> seed_value;
     real_type sero_sensitivity_1;
     real_type sero_sensitivity_2;
     real_type sero_specificity_1;
@@ -2992,6 +2999,7 @@ public:
     for (int i = 1; i <= shared->dim_gamma_W_R; ++i) {
       internal.gamma_W_R[i - 1] = (static_cast<int>(step) >= shared->n_gamma_W_R_steps ? shared->gamma_W_R_step[shared->n_gamma_W_R_steps - 1] * shared->rel_gamma_W_R[i - 1] : shared->gamma_W_R_step[step + 1 - 1] * shared->rel_gamma_W_R[i - 1]);
     }
+    real_type seed = (step >= shared->seed_step_start && step < shared->seed_step_end ? shared->seed_value[static_cast<int>(step - shared->seed_step_start + 1) - 1] : 0);
     real_type strain_seed = dust::random::poisson<real_type>(rng_state, strain_rate);
     for (int i = 1; i <= shared->dim_N_tot; ++i) {
       state_next[shared->offset_variable_N_tot + i - 1] = odin_sum2<real_type>(S, i - 1, i, 0, shared->dim_S_2, shared->dim_S_1) + odin_sum3<real_type>(R, i - 1, i, 0, shared->dim_R_2, 0, shared->dim_R_3, shared->dim_R_1, shared->dim_R_12) + D_hosp[i - 1] + odin_sum4<real_type>(E, i - 1, i, 0, shared->dim_E_2, 0, shared->dim_E_3, 0, shared->dim_E_4, shared->dim_E_1, shared->dim_E_12, shared->dim_E_123) + odin_sum4<real_type>(I_A, i - 1, i, 0, shared->dim_I_A_2, 0, shared->dim_I_A_3, 0, shared->dim_I_A_4, shared->dim_I_A_1, shared->dim_I_A_12, shared->dim_I_A_123) + odin_sum4<real_type>(I_P, i - 1, i, 0, shared->dim_I_P_2, 0, shared->dim_I_P_3, 0, shared->dim_I_P_4, shared->dim_I_P_1, shared->dim_I_P_12, shared->dim_I_P_123) + odin_sum4<real_type>(I_C_1, i - 1, i, 0, shared->dim_I_C_1_2, 0, shared->dim_I_C_1_3, 0, shared->dim_I_C_1_4, shared->dim_I_C_1_1, shared->dim_I_C_1_12, shared->dim_I_C_1_123) + odin_sum4<real_type>(I_C_2, i - 1, i, 0, shared->dim_I_C_2_2, 0, shared->dim_I_C_2_3, 0, shared->dim_I_C_2_4, shared->dim_I_C_2_1, shared->dim_I_C_2_12, shared->dim_I_C_2_123) + odin_sum4<real_type>(ICU_pre_conf, i - 1, i, 0, shared->dim_ICU_pre_conf_2, 0, shared->dim_ICU_pre_conf_3, 0, shared->dim_ICU_pre_conf_4, shared->dim_ICU_pre_conf_1, shared->dim_ICU_pre_conf_12, shared->dim_ICU_pre_conf_123) + odin_sum4<real_type>(ICU_pre_unconf, i - 1, i, 0, shared->dim_ICU_pre_unconf_2, 0, shared->dim_ICU_pre_unconf_3, 0, shared->dim_ICU_pre_unconf_4, shared->dim_ICU_pre_unconf_1, shared->dim_ICU_pre_unconf_12, shared->dim_ICU_pre_unconf_123) + odin_sum4<real_type>(H_R_conf, i - 1, i, 0, shared->dim_H_R_conf_2, 0, shared->dim_H_R_conf_3, 0, shared->dim_H_R_conf_4, shared->dim_H_R_conf_1, shared->dim_H_R_conf_12, shared->dim_H_R_conf_123) + odin_sum4<real_type>(H_R_unconf, i - 1, i, 0, shared->dim_H_R_unconf_2, 0, shared->dim_H_R_unconf_3, 0, shared->dim_H_R_unconf_4, shared->dim_H_R_unconf_1, shared->dim_H_R_unconf_12, shared->dim_H_R_unconf_123) + odin_sum4<real_type>(H_D_conf, i - 1, i, 0, shared->dim_H_D_conf_2, 0, shared->dim_H_D_conf_3, 0, shared->dim_H_D_conf_4, shared->dim_H_D_conf_1, shared->dim_H_D_conf_12, shared->dim_H_D_conf_123) + odin_sum4<real_type>(H_D_unconf, i - 1, i, 0, shared->dim_H_D_unconf_2, 0, shared->dim_H_D_unconf_3, 0, shared->dim_H_D_unconf_4, shared->dim_H_D_unconf_1, shared->dim_H_D_unconf_12, shared->dim_H_D_unconf_123) + odin_sum4<real_type>(ICU_W_R_conf, i - 1, i, 0, shared->dim_ICU_W_R_conf_2, 0, shared->dim_ICU_W_R_conf_3, 0, shared->dim_ICU_W_R_conf_4, shared->dim_ICU_W_R_conf_1, shared->dim_ICU_W_R_conf_12, shared->dim_ICU_W_R_conf_123) + odin_sum4<real_type>(ICU_W_R_unconf, i - 1, i, 0, shared->dim_ICU_W_R_unconf_2, 0, shared->dim_ICU_W_R_unconf_3, 0, shared->dim_ICU_W_R_unconf_4, shared->dim_ICU_W_R_unconf_1, shared->dim_ICU_W_R_unconf_12, shared->dim_ICU_W_R_unconf_123) + odin_sum4<real_type>(ICU_W_D_conf, i - 1, i, 0, shared->dim_ICU_W_D_conf_2, 0, shared->dim_ICU_W_D_conf_3, 0, shared->dim_ICU_W_D_conf_4, shared->dim_ICU_W_D_conf_1, shared->dim_ICU_W_D_conf_12, shared->dim_ICU_W_D_conf_123) + odin_sum4<real_type>(ICU_W_D_unconf, i - 1, i, 0, shared->dim_ICU_W_D_unconf_2, 0, shared->dim_ICU_W_D_unconf_3, 0, shared->dim_ICU_W_D_unconf_4, shared->dim_ICU_W_D_unconf_1, shared->dim_ICU_W_D_unconf_12, shared->dim_ICU_W_D_unconf_123) + odin_sum4<real_type>(ICU_D_conf, i - 1, i, 0, shared->dim_ICU_D_conf_2, 0, shared->dim_ICU_D_conf_3, 0, shared->dim_ICU_D_conf_4, shared->dim_ICU_D_conf_1, shared->dim_ICU_D_conf_12, shared->dim_ICU_D_conf_123) + odin_sum4<real_type>(ICU_D_unconf, i - 1, i, 0, shared->dim_ICU_D_unconf_2, 0, shared->dim_ICU_D_unconf_3, 0, shared->dim_ICU_D_unconf_4, shared->dim_ICU_D_unconf_1, shared->dim_ICU_D_unconf_12, shared->dim_ICU_D_unconf_123) + odin_sum4<real_type>(W_R_conf, i - 1, i, 0, shared->dim_W_R_conf_2, 0, shared->dim_W_R_conf_3, 0, shared->dim_W_R_conf_4, shared->dim_W_R_conf_1, shared->dim_W_R_conf_12, shared->dim_W_R_conf_123) + odin_sum4<real_type>(W_R_unconf, i - 1, i, 0, shared->dim_W_R_unconf_2, 0, shared->dim_W_R_unconf_3, 0, shared->dim_W_R_unconf_4, shared->dim_W_R_unconf_1, shared->dim_W_R_unconf_12, shared->dim_W_R_unconf_123) + odin_sum4<real_type>(W_D_conf, i - 1, i, 0, shared->dim_W_D_conf_2, 0, shared->dim_W_D_conf_3, 0, shared->dim_W_D_conf_4, shared->dim_W_D_conf_1, shared->dim_W_D_conf_12, shared->dim_W_D_conf_123) + odin_sum4<real_type>(W_D_unconf, i - 1, i, 0, shared->dim_W_D_unconf_2, 0, shared->dim_W_D_unconf_3, 0, shared->dim_W_D_unconf_4, shared->dim_W_D_unconf_1, shared->dim_W_D_unconf_12, shared->dim_W_D_unconf_123) + odin_sum4<real_type>(G_D, i - 1, i, 0, shared->dim_G_D_2, 0, shared->dim_G_D_3, 0, shared->dim_G_D_4, shared->dim_G_D_1, shared->dim_G_D_12, shared->dim_G_D_123) + D_non_hosp[i - 1];
@@ -4300,6 +4308,12 @@ public:
       }
     }
     {
+       int i = shared->seed_age_band;
+       int j = 1;
+       int k = 1;
+       internal.n_S_progress[i - 1 + shared->dim_n_S_progress_1 * (j - 1) + shared->dim_n_S_progress_12 * (k - 1)] = internal.n_S_progress[shared->dim_n_S_progress_12 * 0 + shared->dim_n_S_progress_1 * 0 + shared->seed_age_band - 1] + std::min(S[shared->dim_S_1 * 0 + shared->seed_age_band - 1] - internal.n_S_progress_tot[shared->dim_n_S_progress_tot_1 * 0 + shared->seed_age_band - 1], dust::random::poisson<real_type>(rng_state, seed));
+    }
+    {
        int i = 4;
        for (int j = 2; j <= shared->n_strains; ++j) {
          int k = 1;
@@ -5183,6 +5197,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->initial_sympt_cases_over25_inc = 0;
   shared->initial_sympt_cases_under15_inc = 0;
   shared->initial_time = 0;
+  shared->seed_age_band = static_cast<int>(4);
   shared->G_D_transmission = NA_REAL;
   shared->ICU_transmission = NA_REAL;
   shared->I_A_transmission = NA_REAL;
@@ -5299,6 +5314,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->react_sensitivity = NA_REAL;
   shared->react_specificity = NA_REAL;
   shared->rho_pillar2_tests = NA_REAL;
+  shared->seed_step_start = NA_REAL;
   shared->sero_sensitivity_1 = NA_REAL;
   shared->sero_sensitivity_2 = NA_REAL;
   shared->sero_specificity_1 = NA_REAL;
@@ -5442,6 +5458,10 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->react_sensitivity = user_get_scalar<real_type>(user, "react_sensitivity", shared->react_sensitivity, NA_REAL, NA_REAL);
   shared->react_specificity = user_get_scalar<real_type>(user, "react_specificity", shared->react_specificity, NA_REAL, NA_REAL);
   shared->rho_pillar2_tests = user_get_scalar<real_type>(user, "rho_pillar2_tests", shared->rho_pillar2_tests, NA_REAL, NA_REAL);
+  shared->seed_step_start = user_get_scalar<real_type>(user, "seed_step_start", shared->seed_step_start, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_seed_value;
+  shared->seed_value = user_get_array_variable<real_type, 1>(user, "seed_value", shared->seed_value, dim_seed_value, NA_REAL, NA_REAL);
+  shared->dim_seed_value = shared->seed_value.size();
   shared->sero_sensitivity_1 = user_get_scalar<real_type>(user, "sero_sensitivity_1", shared->sero_sensitivity_1, NA_REAL, NA_REAL);
   shared->sero_sensitivity_2 = user_get_scalar<real_type>(user, "sero_sensitivity_2", shared->sero_sensitivity_2, NA_REAL, NA_REAL);
   shared->sero_specificity_1 = user_get_scalar<real_type>(user, "sero_specificity_1", shared->sero_specificity_1, NA_REAL, NA_REAL);
@@ -7011,6 +7031,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->rel_gamma_P = user_get_array_fixed<real_type, 1>(user, "rel_gamma_P", shared->rel_gamma_P, {shared->dim_rel_gamma_P}, NA_REAL, NA_REAL);
   shared->rel_gamma_W_D = user_get_array_fixed<real_type, 1>(user, "rel_gamma_W_D", shared->rel_gamma_W_D, {shared->dim_rel_gamma_W_D}, NA_REAL, NA_REAL);
   shared->rel_gamma_W_R = user_get_array_fixed<real_type, 1>(user, "rel_gamma_W_R", shared->rel_gamma_W_R, {shared->dim_rel_gamma_W_R}, NA_REAL, NA_REAL);
+  shared->seed_step_end = shared->seed_step_start + shared->dim_seed_value;
   shared->strain_transmission = user_get_array_fixed<real_type, 1>(user, "strain_transmission", shared->strain_transmission, {shared->dim_strain_transmission}, NA_REAL, NA_REAL);
   shared->vacc_skip_progression_rate_base = user_get_array_fixed<real_type, 1>(user, "vacc_skip_progression_rate_base", shared->vacc_skip_progression_rate_base, {shared->dim_vacc_skip_progression_rate_base}, NA_REAL, NA_REAL);
   shared->waning_rate = user_get_array_fixed<real_type, 1>(user, "waning_rate", shared->waning_rate, {shared->dim_waning_rate}, NA_REAL, NA_REAL);

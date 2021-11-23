@@ -75,8 +75,8 @@ test_that("there are no infections when beta is 0", {
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
-  ## Susceptible population is never drawn down:
-  expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
+  ## Susceptible population is never drawn down after initial seeding:
+  expect_equal(s[, , -1, drop = FALSE], array(s[, , 2], c(19, 1, 100)))
 })
 
 
@@ -85,9 +85,13 @@ test_that("everyone is infected when beta is large", {
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   mod$update_state(state = lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(drop(
-    mod$simulate(seq(0, 400, by = 4))))
-  expect_true(all(y$S[, 1, -1] == 0))
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
+
+  ## work out when the first infections are after initial seeding
+  i_infect <- which(rowSums(apply(s, c(1, 2), diff))[-1] < 0) + 1
+
+  expect_vector_equal(s[, , -seq_len(i_infect)], 0)
 })
 
 
@@ -135,10 +139,10 @@ test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
 })
 
 
-test_that("No one is infected if I and E are 0 at t = 0", {
+test_that("No one is infected if there is no seeding", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20, initial_I = 0)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   y <- lancelot_initial(info, 1, p)$state
@@ -896,7 +900,8 @@ test_that("Symptomatic cases by age add up correctly", {
 test_that("Individuals cannot infect in compartment with zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
-    p <- lancelot_parameters(0, "england", beta_value = 1e9)
+    ## No seeding
+    p <- lancelot_parameters(0, "england", beta_value = 1e9, initial_I = 0)
 
     ## set all transmission parameters to 1
     p$I_A_transmission <- 1
@@ -917,12 +922,6 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
 
     info <- mod$info()
     y0 <- lancelot_initial(info, 1, p)$state
-
-    ## remove initial asymptomatic individuals
-    index_I_A <- info$index$I_A
-    y0[index_I_A] <- 0
-    index_I_weighted <- info$index$I_weighted
-    y0[index_I_weighted] <- 0
 
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
@@ -960,7 +959,8 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
 test_that("Individuals can infect in compartment with non-zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
-    p <- lancelot_parameters(0, "england", beta_value = 1e9)
+    ## No seeding
+    p <- lancelot_parameters(0, "england", beta_value = 1e9, initial_I = 0)
 
     ## set all transmission parameters to 0
     p$I_A_transmission <- 0
@@ -981,10 +981,6 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
 
     info <- mod$info()
     y0 <- lancelot_initial(info, 1, p)$state
-
-    ## remove initial asymptomatic individuals
-    index_I_A <- info$index$I_A
-    y0[index_I_A] <- 0
 
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]

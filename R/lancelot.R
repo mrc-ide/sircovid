@@ -391,6 +391,7 @@ lancelot_parameters <- function(start_date, region,
                                 observation = NULL,
                                 sens_and_spec = NULL,
                                 initial_I = 30,
+                                initial_seed_pattern = 1,
                                 eps = 0.1,
                                 m_CHW = 4e-6,
                                 m_CHR = 5e-5,
@@ -429,9 +430,6 @@ lancelot_parameters <- function(start_date, region,
     population <- assert_non_negative(population)
   }
 
-  ## TODO: expose initial_seed_pattern as an argument, but doing that
-  ## practically requires fixing the initial conditions :)
-  initial_seed_pattern <- NULL
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value, beta_type,
                                     population,
@@ -1398,41 +1396,19 @@ lancelot_initial <- function(info, n_particles, pars) {
   index <- info$index
   state <- numeric(info$len)
 
-  ## Default will be to start with 10 individuals, but this is tuneable
-  initial_I <- pars$initial_I
-
-  ## This corresponds to the 15-19y age bracket for compatibility with
-  ## our first version, will be replaced by better seeding model, but
-  ## probably has limited impact.
-  seed_age_band <- 4L
-  index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
-  index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
-  index_T_sero_pre_1 <- index[["T_sero_pre_1"]][[1L]] + seed_age_band - 1L
-  index_T_sero_pre_2 <- index[["T_sero_pre_2"]][[1L]] + seed_age_band - 1L
-  index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
-  index_react_pos <- index[["react_pos"]][[1L]]
+  index_S <- index[["S"]]
+  index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
+  index_N_tot <- index[["N_tot"]]
   index_N_tot_sero_1 <- index[["N_tot_sero_1"]][[1L]]
   index_N_tot_sero_2 <- index[["N_tot_sero_2"]][[1L]]
   index_N_tot_PCR <- index[["N_tot_PCR"]][[1L]]
 
-  index_S <- index[["S"]]
-  index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
-  index_N_tot <- index[["N_tot"]]
-
   index_prob_strain <- index[["prob_strain"]]
 
-  ## S0 is the population totals, minus the seeded infected
-  ## individuals
+  ## S0 is the population totals
   initial_S <- pars$N_tot
-  initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
 
   state[index_S_no_vacc] <- initial_S
-  state[index_I] <- initial_I
-  state[index_I_weighted] <- pars$I_A_transmission * initial_I
-  state[index_T_sero_pre_1] <- initial_I
-  state[index_T_sero_pre_2] <- initial_I
-  state[index_T_PCR_pos] <- initial_I
-  state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot_sero_1] <- sum(pars$N_tot)
   state[index_N_tot_sero_2] <- sum(pars$N_tot)

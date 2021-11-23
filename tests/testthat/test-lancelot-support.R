@@ -176,7 +176,8 @@ test_that("lancelot_parameters returns a list of parameters", {
   waning <- lancelot_parameters_waning(0)
   expect_identical(p[names(waning)], waning)
 
-  shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
+  shared <- sircovid_parameters_shared(date, "uk", NULL, NULL,
+                                       "piecewise-linear", NULL, 1, 30)
   expect_identical(p[names(shared)], shared)
 
   severity <- lancelot_parameters_severity(0.25, NULL)
@@ -481,28 +482,14 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
-  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
+  expect_equal(rowSums(initial_y$S),
                p$N_tot)
-  expect_equal(drop(initial_y$I_A),
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(drop(initial_y$I_weighted),
-               append(rep(0, 18), p$I_A_transmission * 10, after = 3))
-  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$react_pos, 10)
 
   ## 48 here, derived from;
   ## * 38 (S + N_tot)
-  ## * 1 (prob_strain)
   ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  ## * 2 (I_A[4] + I_weighted[4])
-  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 48)
+  expect_equal(sum(initial$state != 0), 42)
 })
 
 
@@ -527,24 +514,12 @@ test_that("Can control the seeding", {
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
                p$N_tot)
-  expect_equal(drop(initial_y$I_A),
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$react_pos, 50)
 
   ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
-  ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  ## * 2 (I_A[4] + I_weighted[4])
-  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 48)
+  expect_equal(sum(initial$state != 0), 42)
 })
 
 ## TODO: Ed - you had said that you had ideas for some more systematic
