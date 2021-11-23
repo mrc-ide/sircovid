@@ -1823,14 +1823,15 @@ new_I_weighted[, , ] <-
       sum(new_ICU_D_unconf[i, j, , k]) +
       sum(new_ICU_D_conf[i, j, , k])) +
   G_D_transmission * sum(new_G_D[i, j, , k])
+sum_new_I_weighted <- sum(new_I_weighted)
 initial(I_weighted[, , ]) <- 0
 dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
 update(I_weighted[, , ]) <- new_I_weighted[i, j, k]
 
 ## prob_strain is proportion of total I_weighted in each strain
-prob_strain_1 <- if (n_real_strains == 1) 1 else
+prob_strain_1 <- if (n_real_strains == 1 || sum_new_I_weighted == 0) 1 else
   (sum(new_I_weighted[, 1, ]) + sum(new_I_weighted[, 4, ])) /
-  sum(new_I_weighted)
+  sum_new_I_weighted
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
 update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1

@@ -54,7 +54,7 @@ test_that("validate inputs in Rt calculation", {
     fixed = TRUE)
   expect_error(
     lancelot_Rt(steps, y[, 1, -1], p),
-    "Expected 'S' to have 85 columns, following 'step'",
+    "Expected 'S' to have 123 columns, following 'step'",
     fixed = TRUE)
 })
 
@@ -72,7 +72,7 @@ test_that("validate inputs in Rt trajectories calculation", {
     fixed = TRUE)
   expect_error(
     lancelot_Rt_trajectories(steps, y[, , -1], p),
-    "Expected 3rd dimension of 'S' to have length 85, following 'step'",
+    "Expected 3rd dimension of 'S' to have length 123, following 'step'",
     fixed = TRUE)
   expect_error(
     lancelot_Rt_trajectories(steps, y[, , ], list(p)),
@@ -141,7 +141,7 @@ test_that("Can vary beta over time", {
   expect_true(length(unique(res$Rt_all)) > 1)
   expect_true(length(unique(res$Rt_general)) > 1)
   expect_vector_gt(res$Rt_all, res$eff_Rt_all, tol = 1e-7)
-  expect_vector_gte(res$Rt_general, res$eff_Rt_general)
+  expect_vector_gte(res$Rt_general, res$eff_Rt_general, tol = 1e-7)
 })
 
 

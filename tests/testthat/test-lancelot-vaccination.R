@@ -279,8 +279,8 @@ test_that("Vaccination of exposed individuals works", {
   expect_approx_equal(e[i, , E_compartment_idx, unvacc_idx, 1],
                       e[i, , E_compartment_idx, vacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(e[i, , E_compartment_idx, vacc_idx, 2],
-               e[i, , E_compartment_idx, vacc_idx, 101])
+  expect_approx_equal(e[i, , E_compartment_idx, vacc_idx, 2],
+                      e[i, , E_compartment_idx, vacc_idx, 101])
 })
 
 
