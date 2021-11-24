@@ -389,12 +389,15 @@ n_S_progress[seed_age_band, 1, 1] <-
 ## and only infect *unvaccinated* people. For now we will model only
 ## movement into the second compartment as that represents our "new"
 ## strain.
-strain_seed_step[] <- user()
-dim(strain_seed_step) <- user()
-strain_rate <- (if (as.integer(step) >= length(strain_seed_step))
-  strain_seed_step[length(strain_seed_step)]
-  else strain_seed_step[step + 1])
-strain_seed <- rpois(strain_rate)
+strain_seed_step_end <- strain_seed_step_start + length(strain_seed_value)
+strain_seed <-
+  if (step >= strain_seed_step_start && step < strain_seed_step_end)
+    strain_seed_value[as.integer(step - strain_seed_step_start + 1)] else 0
+
+strain_seed_step_start <- user()
+strain_seed_value[] <- user()
+dim(strain_seed_value) <- user()
+
 ## We must never try to move more individuals from this S category
 ## than are available, so need to do this with a min()
 ##
@@ -405,7 +408,7 @@ strain_seed <- rpois(strain_rate)
 ## After setting up progress remove all transitions from S to
 ## strain 3 (1.2) and 4 (2.1) (this is a safety it's handled above).
 n_S_progress[4, 2:n_strains, 1] <-
-  if (j < 3) min(n_S_progress[i, j, k] + strain_seed,
+  if (j < 3) min(n_S_progress[i, j, k] + rpois(strain_seed),
                  n_S_progress[i, j, k] + S[i, k] -
                    sum(n_S_progress[i, , k])) else 0
 

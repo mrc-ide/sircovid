@@ -1540,7 +1540,8 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
       stop(paste("As 'strain_seed_date' is NULL, expected",
                   "'strain_seed_pattern' to be NULL"))
     }
-    strain_seed_step <- 0
+    strain_seed_step_start <- 0
+    strain_seed_value <- 0
   } else {
     if (length(strain_transmission) == 1L) {
       stop("Can't use 'strain_seed_date' if only using one strain")
@@ -1549,15 +1550,12 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
     assert_non_negative(strain_seed_size)
     assert_positive(strain_seed_pattern)
 
-    initial_strain_seed_step <- strain_seed_date * 4
+    strain_seed_step <- strain_seed_date / dt
 
-    ## This gives us zeroes until the start of seeding, then the seeding period,
-    ## and finally a 0 at the end (no seeding after the seeding period)
-    strain_seed_step <-
-      c(strain_seed_step <- numeric(floor(initial_strain_seed_step)),
-        strain_seed_size *
-          seed_over_steps(initial_strain_seed_step, strain_seed_pattern), 0)
+    strain_seed_value <- strain_seed_size *
+      seed_over_steps(strain_seed_step, strain_seed_pattern)
 
+    strain_seed_step_start <- floor(strain_seed_step)
   }
 
   if (length(strain_transmission) == 2) {
@@ -1566,7 +1564,8 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
 
   list(n_strains = length(strain_transmission),
        strain_transmission = strain_transmission,
-       strain_seed_step = strain_seed_step)
+       strain_seed_step_start = strain_seed_step_start,
+       strain_seed_value = strain_seed_value)
 }
 
 
