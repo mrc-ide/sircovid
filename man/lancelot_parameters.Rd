@@ -23,7 +23,7 @@ lancelot_parameters(
   m_CHR = 5e-05,
   strain_transmission = 1,
   strain_seed_date = NULL,
-  strain_seed_value = NULL,
+  strain_seed_size = NULL,
   strain_seed_pattern = NULL,
   strain_rel_gamma_A = 1,
   strain_rel_gamma_P = 1,
@@ -51,7 +51,7 @@ lancelot_parameters(
 )
 }
 \arguments{
-\item{start_date}{Thee start date, as a \code{\link[=sircovid_date]{sircovid_date()}} (i.e.,
+\item{start_date}{The start date, as a \code{\link[=sircovid_date]{sircovid_date()}} (i.e.,
 the number of days into 2020)}
 
 \item{region}{The region to run the model for. This will bee used
@@ -110,9 +110,17 @@ and specificity parameters. If \code{NULL}, then a list of sensitivity and
 specificity parameters will be generated using
 \code{lancelot_parameters_sens_and_spec()}}
 
-\item{initial_seed_size}{Initial number of infected indidviduals; these
-will enter the model as asymptomatic 15-19 year olds at
-\code{start_date}. The default is 30 individuals.}
+\item{initial_seed_size}{Initial size of seeding from the S to E
+compartment; all seeding is in the 15-19 year old group from
+\code{start_date} according to \code{initial_seed_pattern}. The default is 30.}
+
+\item{initial_seed_pattern}{A vector of seeding weights for the initial
+seeding. The length represents the number of steps to seed over from the
+\code{start_date}, and the \code{initial_seed_size} is split over these steps
+according to those weights. If \code{start_date} is not a multiple of the step
+size (and thus falls between two steps) then we weight over an additional
+step and adjust the weights according to how far the \code{start_date} is from
+the previous full step.}
 
 \item{eps}{Change in contact rate for carehome residents}
 
@@ -126,13 +134,21 @@ transmissibility of each strain modelled. First element should be 1.
 Length will define the number of strains used in the model, either 1 or
 2.}
 
-\item{strain_seed_date}{Either \code{NULL} (no seeding) or a vector of
-\link{sircovid_date} values corresponding to
-the dates that \code{strain_seed_rate} should change. For example, to
-seed a constant rate from a given date, provide one value for each of
-\code{strain_seed_date} and \code{strain_seed_rate}; or to seed with a constant rate
-for a set period, provide two dates and two
-rates with the second rate equal to 0.}
+\item{strain_seed_date}{Either \code{NULL} (no seeding) or a
+\link{sircovid_date} corresponding to the date the seeding of strain
+2 begins.}
+
+\item{strain_seed_size}{Either \code{NULL} (no seeding) or the size of strain 2
+seeding from the S to E compartment; all seeding is in the 15-19 year old
+group from \code{strain_seed_date} according to \code{strain_seed_pattern}.}
+
+\item{strain_seed_pattern}{Either \code{NULL} (no seeding) or a vector of seeding
+weights for the initial seeding. The length represents the number of steps
+to seed over from the \code{start_date}, and the \code{strain_seed_size} is split
+over these steps according to those weights. If \code{start_seed_date} is not a
+multiple of the step size (and thus falls between two steps) then we
+weight over an additional step and adjust the weights according to how far
+the \code{strain_seed_date} is from the previous full step.}
 
 \item{strain_rel_gamma_A}{Vector of relative rates of progression out of
 I_A (gamma_A) for each
@@ -318,17 +334,6 @@ and values of 0 mean no cross-immunity. Modelling
 'superinfections' (being exposed to one strain after
 recovering from another) can be turned off by setting
 \code{cross_immunity = 1}.}
-
-\item{strain_seed_rate}{Either \code{NULL} (no seeding) or a vector of
-values representing the \emph{daily} rate of seeding, starting on the dates set
-in \code{strain_seed_date}.
-Seeding is drawn from Poisson(strain_seed_rate * dt)
-at each \strong{day} and so the rate is spread evenly across the steps that
-occur within each date. For example, to
-seed a constant rate from a given date, provide one value for each of
-\code{strain_seed_date} and \code{strain_seed_rate}; or to seed with a constant rate
-for a set period, provide two dates and two
-rates with the second rate equal to 0.}
 }
 \value{
 A list of inputs to the model, many of which are fixed and
