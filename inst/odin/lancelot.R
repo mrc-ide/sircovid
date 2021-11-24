@@ -369,8 +369,9 @@ n_S_progress[, , ] <- if (j == 1 || n_real_strains == 1)
 ## Seeding of first wave, we seed in group 4, strain 1, vaccine stratum 1
 ##
 seed_step_end <- seed_step_start + length(seed_value)
-seed <- if (step >= seed_step_start && step < seed_step_end)
+seed_rate <- if (step >= seed_step_start && step < seed_step_end)
   seed_value[as.integer(step - seed_step_start + 1)] else 0
+seed <- rpois(seed_rate)
 seed_age_band <- as.integer(4) # 15-19y band
 
 seed_step_start <- user()
@@ -379,7 +380,7 @@ dim(seed_value) <- user()
 
 n_S_progress[seed_age_band, 1, 1] <-
   n_S_progress[seed_age_band, 1, 1] +
-  min(S[seed_age_band, 1] - n_S_progress_tot[seed_age_band, 1], rpois(seed))
+  min(S[seed_age_band, 1] - n_S_progress_tot[seed_age_band, 1], seed)
 
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
@@ -390,9 +391,10 @@ n_S_progress[seed_age_band, 1, 1] <-
 ## movement into the second compartment as that represents our "new"
 ## strain.
 strain_seed_step_end <- strain_seed_step_start + length(strain_seed_value)
-strain_seed <-
+strain_seed_rate <-
   if (step >= strain_seed_step_start && step < strain_seed_step_end)
     strain_seed_value[as.integer(step - strain_seed_step_start + 1)] else 0
+strain_seed <- rpois(strain_seed_rate)
 
 strain_seed_step_start <- user()
 strain_seed_value[] <- user()
@@ -408,7 +410,7 @@ dim(strain_seed_value) <- user()
 ## After setting up progress remove all transitions from S to
 ## strain 3 (1.2) and 4 (2.1) (this is a safety it's handled above).
 n_S_progress[4, 2:n_strains, 1] <-
-  if (j < 3) min(n_S_progress[i, j, k] + rpois(strain_seed),
+  if (j < 3) min(n_S_progress[i, j, k] + strain_seed,
                  n_S_progress[i, j, k] + S[i, k] -
                    sum(n_S_progress[i, , k])) else 0
 
