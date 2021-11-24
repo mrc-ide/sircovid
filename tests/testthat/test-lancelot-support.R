@@ -489,7 +489,7 @@ test_that("Can compute initial conditions", {
   ## * 38 (S + N_tot)
   ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial$state != 0), 42)
+  expect_equal(sum(initial$state != 0), 43)
 })
 
 
@@ -519,7 +519,7 @@ test_that("Can control the seeding", {
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial$state != 0), 42)
+  expect_equal(sum(initial$state != 0), 43)
 })
 
 ## TODO: Ed - you had said that you had ideas for some more systematic
