@@ -1,7 +1,8 @@
 context("basic")
 
 test_that("can run the basic model", {
-  p <- basic_parameters(sircovid_date("2020-02-07"), "england")
+  p <- basic_parameters(sircovid_date("2020-02-07"), "england",
+                        initial_seed_size = 10)
   mod <- basic$new(p, 0, 10, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
 
@@ -24,7 +25,7 @@ test_that("can run the basic model", {
 test_that("initial seeding in one big lump", {
   start_date <- sircovid_date("2020-02-07")
   n_particles <- 20
-  p <- basic_parameters(start_date, "england")
+  p <- basic_parameters(start_date, "england", initial_seed_size = 10)
   mod <- basic$new(p, 4, n_particles, seed = 1L)
   end <- sircovid_date("2020-02-28") / p$dt
 
@@ -53,7 +54,8 @@ test_that("initial seeding spread out", {
   start_date <- sircovid_date("2020-02-07") + 0.123
   n_particles <- 20
   pattern <- rep(1, 4) # over a 1 day window
-  p <- basic_parameters(start_date, "england", initial_seed_pattern = pattern)
+  p <- basic_parameters(start_date, "england", initial_seed_size = 10,
+                        initial_seed_pattern = pattern)
 
   expect_equal(p$seed_step_start, 152)
   expect_equal(p$seed_value, c(1.27, 2.5, 2.5, 2.5, 1.23))
