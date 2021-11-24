@@ -95,8 +95,9 @@ test_that("Can seed with date which is not a multiple of step size", {
                                   pattern, 1 / 4)
   expect_equal(sum(p$strain_seed_step), 100)
   expect_equal(tail(p$strain_seed_step, 6), c(5, 25, 25, 25, 20, 0))
-  ## plus 1 here to account for step 0
-  expect_equal(length(p$strain_seed_step), ceiling(date * 4) + 1)
+  ## first plus 1 to account for the whole day of seeding
+  ## second plus 1 to account for step 0
+  expect_equal(length(p$strain_seed_step), ceiling((date + 1) * 4) + 1)
 })
 
 
@@ -134,12 +135,11 @@ test_that("Adding empty strains makes no difference", {
 test_that("Seeding of second strain generates an epidemic", {
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
@@ -161,14 +161,15 @@ test_that("Seeding of second strain generates an epidemic", {
   s_date <- sircovid_date(date)
   s_date_seeding <- sircovid_date(date_seeding)
 
+  ## Expect to see cases recorded after seeding
   ## No cases before seeding
-  expect_true(all(y$E[, 2:4, , , s_date < s_date_seeding] == 0))
+  expect_true(all(y$E[, 2:4, , , s_date < s_date_seeding + 1] == 0))
   ## No cases on seeding day other than in 4th age group
-  expect_true(all(y$E[-4, 2:4, , , s_date == s_date_seeding] == 0))
+  expect_true(all(y$E[-4, 2:4, , , s_date == s_date_seeding + 1] == 0))
   ## Some cases on seeding day in 4th age group
-  expect_true(y$E[4, 2, 1, , s_date == s_date_seeding] > 0)
+  expect_true(y$E[4, 2, 1, , s_date == s_date_seeding + 1] > 0)
   ## No seeding into strains 3 and 4
-  expect_true(all(y$E[4, 3:4, 1, , s_date == s_date_seeding] == 0))
+  expect_true(all(y$E[4, 3:4, 1, , s_date == s_date_seeding + 1] == 0))
   ## Some cases on all days after seeding day
 
   ## It's not guaranteed that *all* will be greater than zero, but most will be
@@ -185,9 +186,9 @@ test_that("Second more virulent strain takes over", {
   date_seeding <- start_date # seed both strains on same day
   p <- lancelot_parameters(start_date, "england",
                            strain_transmission = c(1, 10),
-                           strain_seed_date = c(date_seeding,
-                                                date_seeding + 1),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           strain_seed_date = date_seeding,
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -210,9 +211,9 @@ test_that("Second less virulent strain does not take over", {
   date_seeding <- start_date # seed both strains on same day
   p <- lancelot_parameters(start_date, "england",
                            strain_transmission = c(1, 0.1),
-                           strain_seed_date = c(date_seeding,
-                                                date_seeding + 1),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           strain_seed_date = date_seeding,
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -234,12 +235,11 @@ test_that("N_tots stay constant with second strain and no waning immunity - no
   set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -266,13 +266,12 @@ test_that("N_tot is constant with second strain and waning immunity, while
   set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            waning_rate = 1 / 20,
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, 1)
@@ -297,13 +296,12 @@ test_that("N_tot is constant with second strain and waning immunity, while
   set.seed(1)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            waning_rate = 1 / 20,
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
@@ -326,13 +324,12 @@ test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
   set.seed(2L)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            waning_rate = 1e6,
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
 
   mod <- lancelot$new(p, 0, 1, seed = 2L)
@@ -350,13 +347,12 @@ test_that("No-one in strains 3 or 4 if no super infection", {
   set.seed(2L)
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            waning_rate = 0.1,
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0))
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
 
   mod <- lancelot$new(p, 0, 1, seed = 2L)
   info <- mod$info()
@@ -373,14 +369,13 @@ test_that("prob_strain sums to 1", {
   np <- 3L
   n_seeded_new_strain_inf <- 100
   date_seeding <- "2020-03-07"
-  date_seeding_end <- "2020-03-08"
 
   # no waning immunity
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
@@ -401,9 +396,9 @@ test_that("prob_strain sums to 1", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            waning_rate = 1 / 20,
                            strain_transmission = c(1, 1),
-                           strain_seed_date =
-                             sircovid_date(c(date_seeding, date_seeding_end)),
-                           strain_seed_rate = c(n_seeded_new_strain_inf, 0),
+                           strain_seed_date = sircovid_date(date_seeding),
+                           strain_seed_value = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, p)
