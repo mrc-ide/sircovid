@@ -2243,7 +2243,7 @@ test_that("cross-immunity can be separated by strain", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
-                           strain_seed_value = 10,
+                           strain_seed_value = 100,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = c(1, 0)
   )
