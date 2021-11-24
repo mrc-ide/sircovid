@@ -1541,12 +1541,12 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
 
   if (is.null(strain_seed_date)) {
     if (!is.null(strain_seed_value)) {
-      stop("As 'strain_seed_date' is NULL, expected 'strain_seed_value' to be
-           NULL")
+      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_value'",
+                 "to be NULL"))
     }
     if (!is.null(strain_seed_pattern)) {
-      stop("As 'strain_seed_date' is NULL, expected 'strain_seed_pattern' to be
-           NULL")
+      stop(paste("As 'strain_seed_date' is NULL, expected",
+                  "'strain_seed_pattern' to be NULL"))
     }
     strain_seed_step <- 0
   } else {
@@ -1559,10 +1559,12 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
 
     initial_strain_seed_step <- strain_seed_date * 4
 
+    ## This gives us zeroes until the start of seeding, then the seeding period,
+    ## and finally a 0 at the end (no seeding after the seeding period)
     strain_seed_step <-
       c(strain_seed_step <- numeric(floor(initial_strain_seed_step)),
         strain_seed_value *
-          seed_over_steps(initial_strain_seed_step, strain_seed_pattern))
+          seed_over_steps(initial_strain_seed_step, strain_seed_pattern), 0)
 
   }
 

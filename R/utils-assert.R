@@ -60,8 +60,8 @@ assert_non_negative <- function(x, name = deparse(substitute(x))) {
 
 
 assert_positive <- function(x, name = deparse(substitute(x))) {
-  if (any(x < 0)) {
-    stop(sprintf("'%s' must have only non-negative values", name),
+  if (any(x <= 0)) {
+    stop(sprintf("'%s' must have only positive values", name),
          call. = FALSE)
   }
   invisible(x)

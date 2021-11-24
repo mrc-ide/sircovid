@@ -3,35 +3,35 @@ context("lancelot (multistrain)")
 
 test_that("lancelot_parameters_strain works as expected", {
   expect_error(
-    lancelot_parameters_strain(NULL, NULL, NULL, 1),
+    lancelot_parameters_strain(NULL, NULL, NULL, NULL, 1),
     "At least one value required for 'strain_transmission'")
   expect_error(
-    lancelot_parameters_strain(c(1, -1), NULL, NULL, 1),
+    lancelot_parameters_strain(c(1, -1), NULL, NULL, NULL, 1),
     "'strain_transmission' must have only non-negative values",
     fixed = TRUE)
   expect_error(
-    lancelot_parameters_strain(c(1, 1, 1), NULL, NULL, 1),
+    lancelot_parameters_strain(c(1, 1, 1), NULL, NULL, NULL, 1),
     "Only 1 or 2")
   expect_error(
-    lancelot_parameters_strain(rep(0.5, 2), NULL, NULL, 1),
+    lancelot_parameters_strain(rep(0.5, 2), NULL, NULL, NULL, 1),
     "'strain_transmission[[1]]' must be 1",
     fixed = TRUE)
   expect_error(
-    lancelot_parameters_strain(rep(0.5, 1), NULL, NULL, 1),
+    lancelot_parameters_strain(rep(0.5, 1), NULL, NULL, NULL, 1),
     "'strain_transmission[[1]]' must be 1",
     fixed = TRUE)
   expect_equal(
-    lancelot_parameters_strain(1, NULL, NULL, 1),
+    lancelot_parameters_strain(1, NULL, NULL, NULL, 1),
     list(n_strains = 1,
          strain_transmission = 1,
          strain_seed_step = 0))
   expect_equal(
-    lancelot_parameters_strain(c(1, 1), NULL, NULL, 1),
+    lancelot_parameters_strain(c(1, 1), NULL, NULL, NULL, 1),
     list(n_strains = 4,
          strain_transmission = c(1, 1, 1, 1),
          strain_seed_step = 0))
   expect_equal(
-    lancelot_parameters_strain(c(1, 2), NULL, NULL, 1),
+    lancelot_parameters_strain(c(1, 2), NULL, NULL, NULL, 1),
     list(n_strains = 4,
          strain_transmission = c(1, 2, 2, 1),
          strain_seed_step = 0))
@@ -40,52 +40,63 @@ test_that("lancelot_parameters_strain works as expected", {
 
 test_that("Prevent impossible seedings", {
   expect_error(
-    lancelot_parameters_strain(c(1, 1), NULL, 1, 0.25),
-    "As 'strain_seed_date' is NULL, expected 'strain_seed_rate' to be NULL")
+    lancelot_parameters_strain(c(1, 1), NULL, 1, NULL, 0.25),
+    "As 'strain_seed_date' is NULL, expected 'strain_seed_value' to be NULL")
   expect_error(
-    lancelot_parameters_strain(1, c(10, 20), 1, 0.25),
+    lancelot_parameters_strain(c(1, 1), NULL, NULL, 1, 0.25),
+    "As 'strain_seed_date' is NULL, expected 'strain_seed_pattern' to be NULL")
+  expect_error(
+    lancelot_parameters_strain(1, 10, NULL, NULL, 0.25),
     "Can't use 'strain_seed_date' if only using one strain")
   expect_error(
-    lancelot_parameters_strain(c(1, 1), c(10, 20), c(-1, 0), 1),
-    "'strain_seed_rate' must have only non-negative values",
+    lancelot_parameters_strain(c(1, 1), 10, -1, 1,  1),
+    "'strain_seed_value' must have only non-negative values",
     fixed = TRUE)
   expect_error(
-    lancelot_parameters_strain(c(1, 1), c(10, 20, 30), 1, 0.25),
-    "'strain_seed_date' and 'strain_seed_rate' must be the same length")
+    lancelot_parameters_strain(c(1, 1), 10, 1, 0,  1),
+    "'strain_seed_pattern' must have only positive values",
+    fixed = TRUE)
 })
 
 
 test_that("Can seed with one-day window", {
-  date <- c("2020-03-01", "2020-03-02")
-  rate <- c(100, 0)
-  p <- lancelot_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
+  date <- "2020-03-01"
+  value <- 100
+  pattern <- rep(1, 4)
+  p <- lancelot_parameters_strain(c(1, 1), sircovid_date(date), value,
+                                  pattern, 1 / 4)
   expect_equal(sum(p$strain_seed_step), 100)
   expect_equal(tail(p$strain_seed_step, 6), c(0, 25, 25, 25, 25, 0))
-  expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
+  ## minus 1 here to account for step 0
+  expect_equal(sircovid_date_as_date((length(p$strain_seed_step) - 1)/ 4),
                as.Date("2020-03-02"))
 })
 
 
 test_that("Can seed with ten-day window", {
-  date <- c("2020-03-01", "2020-03-11")
-  rate <- c(100, 0)
-  p <- lancelot_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
-  expect_equal(sum(p$strain_seed_step), 100 * 10)
-  expect_equal(tail(p$strain_seed_step, 6), c(25, 25, 25, 25, 25, 0))
-  expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
+  date <- "2020-03-01"
+  value <- 100
+  pattern <- rep(1, 40)
+  p <- lancelot_parameters_strain(c(1, 1), sircovid_date(date), value,
+                                  pattern, 1 / 4)
+  expect_equal(sum(p$strain_seed_step), 100)
+  expect_equal(tail(p$strain_seed_step, 6), c(2.5, 2.5, 2.5, 2.5, 2.5, 0))
+  ## minus 1 here to account for step 0
+  expect_equal(sircovid_date_as_date((length(p$strain_seed_step) - 1) / 4),
                as.Date("2020-03-11"))
 })
 
 
-test_that("Can seed with > 2 dates", {
-  date <- c("2020-03-01", "2020-03-10", "2020-03-20", "2020-03-21")
-  rate <- c(100, 5, 20, 1)
-  p <- lancelot_parameters_strain(c(1, 1), sircovid_date(date), rate, 1 / 4)
-  expect_equal(as.numeric(table(p$strain_seed_step)),
-               c(sircovid_date("2020-03-01") * 4 - 1, 1,  40, 4, 36))
-  expect_equal(tail(p$strain_seed_step, 6), c(1.25, 5, 5, 5, 5, 0.25))
-  expect_equal(sircovid_date_as_date(length(p$strain_seed_step) / 4),
-               as.Date("2020-03-21"))
+test_that("Can seed with date which is not a multiple of step size", {
+  date <- 10.2
+  value <- 100
+  pattern <- rep(1, 4)
+  p <- lancelot_parameters_strain(c(1, 1), date, value,
+                                  pattern, 1 / 4)
+  expect_equal(sum(p$strain_seed_step), 100)
+  expect_equal(tail(p$strain_seed_step, 6), c(5, 25, 25, 25, 20, 0))
+  ## plus 1 here to account for step 0
+  expect_equal(length(p$strain_seed_step), ceiling(date * 4) + 1)
 })
 
 
