@@ -25,7 +25,8 @@ test_that("can run the basic model", {
 test_that("initial seeding in one big lump", {
   start_date <- sircovid_date("2020-02-07")
   n_particles <- 20
-  p <- basic_parameters(start_date, "england", initial_seed_size = 10)
+  p <- basic_parameters(start_date, "england", initial_seed_size = 10,
+                        initial_seed_pattern = NULL)
   mod <- basic$new(p, 4, n_particles, seed = 1L)
   end <- sircovid_date("2020-02-28") / p$dt
 
