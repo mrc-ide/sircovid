@@ -933,7 +933,8 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
 
     ## Susceptible population is never drawn down:
     expect_equal(y$S, array(y$S[, , 1], c(nrow(y$S), 1, 101)))
-    expect_true(all(y$I_weighted == 0))
+    ## Ignore group 4 where we weight 1 if all are 0
+    expect_true(all(y$I_weighted[-4, , , ] == 0))
   }
 
   helper("I_A_transmission", "I_A", "gamma_A_step")
