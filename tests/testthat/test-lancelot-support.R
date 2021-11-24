@@ -208,8 +208,8 @@ test_that("lancelot_parameters returns a list of parameters", {
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
       "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
       "N_tot_react", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "n_groups", "initial_seed_size",
-      "cross_immunity", "vacc_skip_from", "vacc_skip_to",
+      "I_C_1_transmission", "I_C_2_transmission", "n_groups",
+      "initial_seed_size", "cross_immunity", "vacc_skip_from", "vacc_skip_to",
       "vacc_skip_dose", "vacc_skip_progression_rate_base", "vacc_skip_weight"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
