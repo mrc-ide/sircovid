@@ -1,3 +1,7 @@
+# sircovid 0.12.13
+
+* Fixed initial seeding of the epidemic replace by a Poisson seeding
+
 # sircovid 0.12.12
 
 * Add an extra vaccination move between vaccine strata `vacc_skip_from` and `vacc_skip_to`, for the purpose of allowing boosting before waning
