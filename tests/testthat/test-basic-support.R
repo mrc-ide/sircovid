@@ -19,7 +19,7 @@ test_that("basic_parameters returns a list of parameters", {
   beta_date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
   beta_value <- c(3, 1, 2)
 
-  p <- basic_parameters(date, "uk")
+  p <- basic_parameters(date, "uk", initial_seed_size = 10)
   expect_type(p, "list")
   expect_length(p$beta_step, 1)
   expect_identical(p$m, sircovid_transmission_matrix("uk"))
