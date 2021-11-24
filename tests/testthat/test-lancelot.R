@@ -106,7 +106,7 @@ test_that("initial seeding spread out", {
   n_particles <- 20
   pattern <- rep(1, 4) # over a 1 day window
   p <- lancelot_parameters(start_date, "england",
-                           initial_I = 10,
+                           initial_seed_size = 10,
                            initial_seed_pattern = pattern)
 
   expect_equal(p$seed_step_start, 152)

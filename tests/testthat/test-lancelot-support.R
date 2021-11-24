@@ -208,7 +208,7 @@ test_that("lancelot_parameters returns a list of parameters", {
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
       "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
       "N_tot_react", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "n_groups", "initial_I",
+      "I_C_1_transmission", "I_C_2_transmission", "n_groups", "initial_seed_size",
       "cross_immunity", "vacc_skip_from", "vacc_skip_to",
       "vacc_skip_dose", "vacc_skip_progression_rate_base", "vacc_skip_weight"))
 
@@ -468,7 +468,7 @@ test_that("lancelot_index is properly named", {
 
 test_that("Can compute initial conditions", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           initial_I = 10)
+                           initial_seed_size = 10)
   mod <- lancelot$new(p, 0, 10)
   info <- mod$info()
 
@@ -496,8 +496,8 @@ test_that("Can compute initial conditions", {
 
 test_that("Can control the seeding", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "london",
-                           initial_I = 50)
-  expect_equal(p$initial_I, 50)
+                           initial_seed_size = 50)
+  expect_equal(p$initial_seed_size, 50)
 
   mod <- lancelot$new(p, 0, 10)
   info <- mod$info()

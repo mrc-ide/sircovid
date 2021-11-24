@@ -564,7 +564,7 @@ test_that("different strains are equivalent", {
 
 test_that("Swapping strains gives identical results with different index", {
   p <- lancelot_parameters(0, "england",
-                           initial_I = 0,
+                           initial_seed_size = 0,
                            strain_transmission = c(1, 1),
                            cross_immunity = 0)
 
@@ -2088,7 +2088,7 @@ test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
 test_that("Can only move to S from R3 and R4 to S", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           initial_I = 0,
+                           initial_seed_size = 0,
                            strain_transmission = c(1, 1),
                            waning_rate = 1 / 5,
                            strain_seed_date = sircovid_date("2020-02-07"),
@@ -2127,7 +2127,7 @@ test_that("Can only move to S from R3 and R4 to S", {
 test_that("Everyone in R3 and R4 when no waning and transmission high", {
   np <- 1L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           initial_I = 30,
+                           initial_seed_size = 30,
                            strain_transmission = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_value = 30,

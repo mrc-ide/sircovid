@@ -12,6 +12,7 @@ basic_parameters(
   beta_type = "piecewise-linear",
   severity = NULL,
   exp_noise = 1e+06,
+  initial_seed_size = 10,
   initial_seed_pattern = 1
 )
 }

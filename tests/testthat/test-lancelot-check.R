@@ -142,7 +142,7 @@ test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
 test_that("No one is infected if there is no seeding", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20, initial_I = 0)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20, initial_seed_size = 0)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   y <- lancelot_initial(info, 1, p)$state
@@ -901,7 +901,7 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
     ## No seeding
-    p <- lancelot_parameters(0, "england", beta_value = 1e9, initial_I = 0)
+    p <- lancelot_parameters(0, "england", beta_value = 1e9, initial_seed_size = 0)
 
     ## set all transmission parameters to 1
     p$I_A_transmission <- 1
@@ -961,7 +961,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
     ## No seeding
-    p <- lancelot_parameters(0, "england", beta_value = 1e9, initial_I = 0)
+    p <- lancelot_parameters(0, "england", beta_value = 1e9, initial_seed_size = 0)
 
     ## set all transmission parameters to 0
     p$I_A_transmission <- 0

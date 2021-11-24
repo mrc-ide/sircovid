@@ -86,13 +86,13 @@ basic_parameters <- function(start_date, region,
                              beta_type = "piecewise-linear",
                              severity = NULL,
                              exp_noise = 1e6,
+                             initial_seed_size = 10,
                              initial_seed_pattern = 1) {
   population <- NULL
-  initial_I <- 10
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value, beta_type,
                                     population,
-                                    initial_seed_pattern, initial_I)
+                                    initial_seed_pattern, initial_seed_size)
   ret$m <- sircovid_transmission_matrix(region)
   observation <- basic_parameters_observation(exp_noise)
   severity <- sircovid_parameters_severity(severity)

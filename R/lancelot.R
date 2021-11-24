@@ -42,7 +42,7 @@ NULL
 ##'   `lancelot_parameters_sens_and_spec()`
 ##'
 ##'
-##' @param initial_I Initial number of infected indidviduals; these
+##' @param initial_seed_size Initial number of infected indidviduals; these
 ##'   will enter the model as asymptomatic 15-19 year olds at
 ##'   `start_date`. The default is 30 individuals.
 ##'
@@ -390,7 +390,7 @@ lancelot_parameters <- function(start_date, region,
                                 progression = NULL,
                                 observation = NULL,
                                 sens_and_spec = NULL,
-                                initial_I = 30,
+                                initial_seed_size = 30,
                                 initial_seed_pattern = 1,
                                 eps = 0.1,
                                 m_CHW = 4e-6,
@@ -434,7 +434,7 @@ lancelot_parameters <- function(start_date, region,
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value, beta_type,
                                     population,
-                                    initial_seed_pattern, initial_I)
+                                    initial_seed_pattern, initial_seed_size)
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
@@ -468,7 +468,7 @@ lancelot_parameters <- function(start_date, region,
   ret$N_tot <- lancelot_population(ret$population, carehome_workers,
                                    carehome_residents)
 
-  ret$initial_I <- initial_I
+  ret$initial_seed_size <- initial_seed_size
 
   ## control cross-immunity
   ret$cross_immunity <- assert_proportion(
