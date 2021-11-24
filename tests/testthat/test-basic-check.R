@@ -28,14 +28,18 @@ test_that("everyone is infected when beta is very high", {
   p <- basic_parameters(0, "england", beta_value = 1e100)
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = basic_initial(info, 1, p)$state)
+
+  state <- basic_initial(info, 1, p)$state
+
+  ## seed directly into I_A
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  state[index_I_A] <- 5
+
+  mod$update_state(state = state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
-  ## work out when the first infections are after initial seeding
-  i_infect <- which(rowSums(apply(s, c(1, 2), diff))[-1] < 0) + 1
-
-  expect_vector_equal(s[, , -seq_len(i_infect)], 0)
+  expect_vector_equal(s[, , -1], 0)
 })
 
 
