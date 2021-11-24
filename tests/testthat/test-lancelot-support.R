@@ -170,7 +170,8 @@ test_that("lancelot_parameters returns a list of parameters", {
 
   strain <- lancelot_parameters_strain(p$strain_transmission,
                                        strain_seed_date = NULL,
-                                       strain_seed_rate = NULL,
+                                       strain_seed_value = NULL,
+                                       strain_seed_pattern = NULL,
                                        dt = 1 / 4)
 
   waning <- lancelot_parameters_waning(0)

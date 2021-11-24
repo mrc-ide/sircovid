@@ -397,7 +397,8 @@ lancelot_parameters <- function(start_date, region,
                                 m_CHR = 5e-5,
                                 strain_transmission = 1,
                                 strain_seed_date = NULL,
-                                strain_seed_rate = NULL,
+                                strain_seed_value = NULL,
+                                strain_seed_pattern = NULL,
                                 strain_rel_gamma_A = 1,
                                 strain_rel_gamma_P = 1,
                                 strain_rel_gamma_C_1 = 1,
@@ -508,7 +509,8 @@ lancelot_parameters <- function(start_date, region,
 
   ## number of strains and relative transmissibility
   strain <- lancelot_parameters_strain(
-    strain_transmission, strain_seed_date, strain_seed_rate, ret$dt)
+    strain_transmission, strain_seed_date, strain_seed_value,
+    strain_seed_pattern, ret$dt)
 
   ## vaccination
   vaccination <- lancelot_parameters_vaccination(ret$N_tot,
@@ -1524,7 +1526,8 @@ lancelot_parameters_vaccination <- function(N_tot,
 }
 
 lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
-                                       strain_seed_rate, dt) {
+                                       strain_seed_value, strain_seed_pattern,
+                                       dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
   }
@@ -1537,37 +1540,29 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
   assert_relatives(strain_transmission)
 
   if (is.null(strain_seed_date)) {
-    if (!is.null(strain_seed_rate)) {
-      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_rate'",
-                 "to be NULL"))
+    if (!is.null(strain_seed_value)) {
+      stop("As 'strain_seed_date' is NULL, expected 'strain_seed_value' to be
+           NULL")
+    }
+    if (!is.null(strain_seed_pattern)) {
+      stop("As 'strain_seed_date' is NULL, expected 'strain_seed_pattern' to be
+           NULL")
     }
     strain_seed_step <- 0
   } else {
     if (length(strain_transmission) == 1L) {
       stop("Can't use 'strain_seed_date' if only using one strain")
     }
-    if (length(strain_seed_date) != length(strain_seed_rate)) {
-      stop("'strain_seed_date' and 'strain_seed_rate' must be the same length")
-    }
     assert_sircovid_date(strain_seed_date)
-    assert_increasing(strain_seed_date, strict = FALSE)
-    assert_non_negative(strain_seed_rate)
+    assert_non_negative(strain_seed_value)
+    assert_positive(strain_seed_pattern)
 
-    ## The + 1 here prevents the start of the next day having the
-    ## same seeding value
+    initial_strain_seed_step <- strain_seed_date * 4
+
     strain_seed_step <-
-      numeric(strain_seed_date[[length(strain_seed_date)]] / dt)
-    for (j in seq_along(strain_seed_date)) {
-      if (j == length(strain_seed_date)) {
-        i <- length(strain_seed_step)
-      } else {
-        i <- seq.int(
-          strain_seed_date[[j]] / dt,
-          strain_seed_date[[j + 1]] / dt - 1
-        )
-      }
-      strain_seed_step[i] <- strain_seed_rate[[j]] * dt
-    }
+      c(strain_seed_step <- numeric(floor(initial_strain_seed_step)),
+        strain_seed_value *
+          seed_over_steps(initial_strain_seed_step, strain_seed_pattern))
 
   }
 

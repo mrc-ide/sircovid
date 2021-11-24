@@ -73,6 +73,62 @@ test_that("can run the lancelot model", {
 })
 
 
+test_that("initial seeding in one big lump", {
+  start_date <- sircovid_date("2020-02-07")
+  n_particles <- 20
+  p <- lancelot_parameters(start_date, "england")
+  mod <- lancelot$new(p, 4, n_particles, seed = 1L)
+  end <- sircovid_date("2020-02-28") / p$dt
+
+  initial <- lancelot_initial(mod$info(), n_particles, p)
+  mod$update_state(state = initial$state, step = initial$step)
+
+  t <- seq(4, end)
+  res <- mod$simulate(t)
+
+  info <- mod$info()
+  n_E <- res[info$index$E, , ]
+  i <- apply(n_E[4, , ] > 0, 1, function(x) min(which(x)))
+  expect_equal(t[i],
+               rep(start_date * p$steps_per_day + 1, n_particles))
+
+  ## Total infections through seeding are plausible
+  n <- mean(n_E[4, , i[[1]]])
+  expect_gt(ppois(n, 10), 0.05)
+
+  ## No natural infections in this period:
+  expect_true(all(n_E[-4, , seq_len(i[[1]])] == 0))
+})
+
+
+test_that("initial seeding spread out", {
+  start_date <- sircovid_date("2020-02-07") + 0.123
+  n_particles <- 20
+  pattern <- rep(1, 4) # over a 1 day window
+  p <- lancelot_parameters(start_date, "england",
+                           initial_I = 10,
+                           initial_seed_pattern = pattern)
+
+  expect_equal(p$seed_step_start, 152)
+  expect_equal(p$seed_value, c(1.27, 2.5, 2.5, 2.5, 1.23))
+
+  mod <- lancelot$new(p, 4, n_particles, seed = 1L)
+  end <- sircovid_date("2020-02-28") / p$dt
+
+  initial <- lancelot_initial(mod$info(), n_particles, p)
+  mod$update_state(state = initial$state, step = initial$step)
+
+  t <- seq(4, end)
+  res <- mod$simulate(t)
+
+  info <- mod$info()
+  n_E <- res[info$index$E, , ]
+  i <- apply(n_E[4, , ] > 0, 1, function(x) min(which(x)))
+  expect_equal(min(t[i]), floor(start_date * p$steps_per_day) + 1)
+  expect_gte(diff(range(t[i])), 1)
+})
+
+
 test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england")

@@ -23,7 +23,8 @@ lancelot_parameters(
   m_CHR = 5e-05,
   strain_transmission = 1,
   strain_seed_date = NULL,
-  strain_seed_rate = NULL,
+  strain_seed_value = NULL,
+  strain_seed_pattern = NULL,
   strain_rel_gamma_A = 1,
   strain_rel_gamma_P = 1,
   strain_rel_gamma_C_1 = 1,
@@ -128,17 +129,6 @@ Length will define the number of strains used in the model, either 1 or
 \item{strain_seed_date}{Either \code{NULL} (no seeding) or a vector of
 \link{sircovid_date} values corresponding to
 the dates that \code{strain_seed_rate} should change. For example, to
-seed a constant rate from a given date, provide one value for each of
-\code{strain_seed_date} and \code{strain_seed_rate}; or to seed with a constant rate
-for a set period, provide two dates and two
-rates with the second rate equal to 0.}
-
-\item{strain_seed_rate}{Either \code{NULL} (no seeding) or a vector of
-values representing the \emph{daily} rate of seeding, starting on the dates set
-in \code{strain_seed_date}.
-Seeding is drawn from Poisson(strain_seed_rate * dt)
-at each \strong{day} and so the rate is spread evenly across the steps that
-occur within each date. For example, to
 seed a constant rate from a given date, provide one value for each of
 \code{strain_seed_date} and \code{strain_seed_rate}; or to seed with a constant rate
 for a set period, provide two dates and two
@@ -328,6 +318,17 @@ and values of 0 mean no cross-immunity. Modelling
 'superinfections' (being exposed to one strain after
 recovering from another) can be turned off by setting
 \code{cross_immunity = 1}.}
+
+\item{strain_seed_rate}{Either \code{NULL} (no seeding) or a vector of
+values representing the \emph{daily} rate of seeding, starting on the dates set
+in \code{strain_seed_date}.
+Seeding is drawn from Poisson(strain_seed_rate * dt)
+at each \strong{day} and so the rate is spread evenly across the steps that
+occur within each date. For example, to
+seed a constant rate from a given date, provide one value for each of
+\code{strain_seed_date} and \code{strain_seed_rate}; or to seed with a constant rate
+for a set period, provide two dates and two
+rates with the second rate equal to 0.}
 }
 \value{
 A list of inputs to the model, many of which are fixed and
