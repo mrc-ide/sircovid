@@ -563,7 +563,8 @@ test_that("different strains are equivalent", {
 
 
 test_that("Swapping strains gives identical results with different index", {
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  p <- lancelot_parameters(0, "england",
+                           initial_I = 0,
                            strain_transmission = c(1, 1),
                            cross_immunity = 0)
 
@@ -572,15 +573,17 @@ test_that("Swapping strains gives identical results with different index", {
   end <- sircovid_date("2020-05-1") / p$dt
   initial <- lancelot_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial$state)
+  ## force some seeding
+  y$I_A[4, 1, 1, 1] <- 10
+  initial_state <- unlist(y)
+
   i <- c(2, 1, 4, 3)
   y$I_A <- y$I_A[, i, , , drop = FALSE]
   y$I_weighted <- y$I_weighted[, i, , drop = FALSE]
-  y$T_PCR_pos <- y$T_PCR_pos[, i, , , drop = FALSE]
-  y$T_sero_pre_1 <- y$T_sero_pre_1[, i, , , drop = FALSE]
-  y$T_sero_pre_2 <- y$T_sero_pre_2[, i, , , drop = FALSE]
+  y$prob_strain <- y$prob_strain[c(2, 1)]
 
   initial2_state <- unlist(y)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial_state, step = initial$step)
   index <- mod$info()$index
 
   steps <- seq(initial$step, end, by = 1)
@@ -595,7 +598,7 @@ test_that("Swapping strains gives identical results with different index", {
   z1 <- mod$transform_variables(res1)
   z2 <- mod2$transform_variables(res2)
 
-  z2[["prob_strain"]][, -1] <- z2[["prob_strain"]][2:1, -1, drop = FALSE]
+  z2[["prob_strain"]] <- z2[["prob_strain"]][2:1, , drop = FALSE]
   z2[["cum_sympt_cases_non_variant"]] <-
     z2[["cum_sympt_cases"]] - z2[["cum_sympt_cases_non_variant"]]
   z2[["cum_sympt_cases_non_variant_over25"]] <-
@@ -1842,7 +1845,7 @@ test_that("Stuck when gamma =  0 for second strain", {
   np <- 3L
 
   ## gammaP is 0 so IC1 is 0 for second strain
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "egland",
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
                            strain_rel_gamma_A = c(1, 1),
                            strain_rel_gamma_P = c(1, 0),
@@ -2124,9 +2127,10 @@ test_that("Can only move to S from R3 and R4 to S", {
 test_that("Everyone in R3 and R4 when no waning and transmission high", {
   np <- 1L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           initial_I = 30,
                            strain_transmission = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
-                           strain_seed_value = 0,
+                           strain_seed_value = 30,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
   p$strain_transmission[] <- 1e8
@@ -2138,12 +2142,6 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
 
   initial <- lancelot_initial(mod$info(), np, p)
   y0 <- initial$state
-
-  ## split the initial infectives between the two strains
-  index_I_A <- array(info$index$I_A, info$dim$I_A)
-  y0[c(index_I_A[4, 1, 1, 1], index_I_A[4, 2, 1, 1])] <-
-    round(y0[index_I_A[4, 1, 1, 1]] / 2)
-
 
   mod$update_state(state = y0, step = initial$step)
   end <- sircovid_date("2021-05-01") / p$dt
@@ -2218,9 +2216,9 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
  ## some cross-immunity
  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                           strain_transmission = c(1, 1),
-                          strain_seed_rate = c(10, 0),
-                          strain_seed_date =
-                            sircovid_date(c("2020-02-07", "2020-02-08")),
+                          strain_seed_date = sircovid_date("2020-02-07"),
+                          strain_seed_value = 10,
+                          strain_seed_pattern = rep(1, 4),
                           cross_immunity = 0.5)
  mod <- lancelot$new(p, 0, np)
  initial <- lancelot_initial(mod$info(), np, p)
