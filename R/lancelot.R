@@ -1405,6 +1405,9 @@ lancelot_initial <- function(info, n_particles, pars) {
 
   index_prob_strain <- index[["prob_strain"]]
 
+  seed_age_band <- 4L
+  index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
+
   ## S0 is the population totals
   initial_S <- pars$N_tot
 
@@ -1414,6 +1417,7 @@ lancelot_initial <- function(info, n_particles, pars) {
   state[index_N_tot_sero_2] <- sum(pars$N_tot)
   state[index_N_tot_PCR] <- sum(pars$N_tot)
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
+  state[index_I_weighted] <- 1
 
   list(state = state,
        step = pars$initial_step)

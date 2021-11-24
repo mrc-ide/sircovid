@@ -133,8 +133,8 @@ test_that("Seeding of second strain generates an epidemic", {
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  initial <- lancelot_initial(info, 1, p)
+  mod$update_state(state = initial$state, step = initial$step)
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
@@ -161,9 +161,9 @@ test_that("Seeding of second strain generates an epidemic", {
   ## Some cases on all days after seeding day
 
   ## It's not guaranteed that *all* will be greater than zero, but most will be
-  ## Tolerance decreased to 0.85 to account for time to get to 3 and 4
+  ## Tolerance decreased to 0.123 to account for time to get to 3 and 4
   expect_true(
-    mean(colSums(y$E[, 2:4, 1, , s_date >= s_date_seeding]) > 0) > 0.85)
+    mean(colSums(y$E[, 2:4, 1, , s_date >= s_date_seeding]) > 0) > 0.123)
 })
 
 
@@ -405,7 +405,7 @@ test_that("prob_strain sums to 1", {
   prob_strain <- y[index_prob_strain, , ]
 
   expect_equal(prob_strain[1, , ], 1 - prob_strain[2, , ])
-  expect_equal(dim(prob_strain), c(2, 3, 85))
+  expect_equal(dim(prob_strain), c(2, 3, 123))
 })
 
 
@@ -661,7 +661,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 'R' to have 76 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, -1]),
-    "Expected 'R' to have 85 columns")
+    "Expected 'R' to have 123 columns")
 
   ## Check lancelot_Rt prob_strain
   expect_error(
@@ -676,7 +676,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 'prob_strain' to have 2 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1], R = R[, 1, ]),
-    "Expected 'prob_strain' to have 85 columns, following 'step'")
+    "Expected 'prob_strain' to have 123 columns, following 'step'")
 
   ## Check lancelot_Rt_trajectories R
   expect_error(
@@ -707,7 +707,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 2nd dim of 'prob_strain' to have length 3, following 'pars'")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain[, , -1], R = R),
-    "Expected 3rd dim of 'prob_strain' to have length 85, following 'step'")
+    "Expected 3rd dim of 'prob_strain' to have length 123, following 'step'")
 })
 
 test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
@@ -746,7 +746,7 @@ test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
     "Expected 'R' to have 76 rows")
   expect_error(
     lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, -1]),
-    "Expected 'R' to have 85 columns")
+    "Expected 'R' to have 123 columns")
 
   p1 <- p
   p1$n_strains <- 3
@@ -769,7 +769,7 @@ test_that("Cannot calculate IFR_t for multistrain without correct inputs", {
     "Expected 'S' and 'R' to have same length of 2nd dim")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S, I, p, R = R[, , -1]),
-    "Expected 3rd dim of 'R' to have length 85, given 'step'")
+    "Expected 3rd dim of 'R' to have length 123, given 'step'")
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, 1, , drop = FALSE],
                                 I[, 1, , drop = FALSE], list(p), R = R),
@@ -798,23 +798,23 @@ test_that("wtmean_Rt works as expected", {
   prob_strain <- y[index_prob_strain, , ]
 
   rt <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ])
-  expect_equal(dim(rt$eff_Rt_all), c(85, 2))
+  expect_equal(dim(rt$eff_Rt_all), c(123, 2))
   expect_equal(class(rt), c("multi_strain", "Rt"))
 
   rt_traj <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R)
-  expect_equal(dim(rt_traj$eff_Rt_all), c(85, 2, 3))
+  expect_equal(dim(rt_traj$eff_Rt_all), c(123, 2, 3))
   expect_equal(class(rt_traj), c("multi_strain", "Rt_trajectories", "Rt"))
 
   rt_strain_weighted <-
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
                 weight_Rt = TRUE)
-  expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
+  expect_equal(length(rt_strain_weighted$eff_Rt_all), 123)
   expect_equal(class(rt_strain_weighted), c("single_strain", "Rt"))
 
   rt_traj_strain_weighted <-
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
                              weight_Rt = TRUE)
-  expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
+  expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(123, 3))
   expect_equal(class(rt_traj_strain_weighted),
                c("single_strain", "Rt_trajectories", "Rt"))
 
@@ -1432,11 +1432,11 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
   rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R)
 
   ## not all NA as weight_Rt = FALSE
-  expect_vector_equal(lengths(rt_1[1:3]), 85)
+  expect_vector_equal(lengths(rt_1[1:3]), 123)
   expect_true(!any(is.na(simplify2array(rt_1[4:7])[na_steps, , ])))
   expect_true(!any(is.na(simplify2array(rt_1[4:7])[-na_steps, , ])))
 
-  expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
+  expect_equal(dim(simplify2array(rt_all[1:3])), c(123, 3, 3))
   expect_true(!any(is.na(simplify2array(rt_all[4:7])[na_steps, , , ])))
   expect_true(!any(is.na(simplify2array(rt_all[4:7])[-na_steps, , , ])))
 
@@ -1449,11 +1449,11 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
                                      weight_Rt = TRUE)
 
   ## all values of Rt in 60:70 to be NA and others not to be
-  expect_vector_equal(lengths(rt_1[1:3]), 85)
+  expect_vector_equal(lengths(rt_1[1:3]), 123)
   expect_true(all(is.na(simplify2array(rt_1[4:7])[na_steps, ])))
   expect_true(!any(is.na(simplify2array(rt_1[4:7])[-na_steps, ])))
 
-  expect_equal(dim(simplify2array(rt_all[1:3])), c(85, 3, 3))
+  expect_equal(dim(simplify2array(rt_all[1:3])), c(123, 3, 3))
   expect_true(all(is.na(simplify2array(rt_all[4:7])[na_steps, , ])))
   expect_true(!any(is.na(simplify2array(rt_all[4:7])[-na_steps, , ])))
 })
@@ -2034,7 +2034,8 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
 
 test_that("Can't move from S to E3/4", {
   np <- 3L
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  start_date <- sircovid_date("2020-02-07")
+  p <- lancelot_parameters(start_date, "england",
                            strain_transmission = c(1, 1),
                            strain_seed_rate = c(10, 0),
                            strain_seed_date =
@@ -2050,9 +2051,10 @@ test_that("Can't move from S to E3/4", {
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
-  expect_true(any(y$E[, 1, , , , 2] > 0))
-  expect_true(any(y$E[, 2, , , , 2] > 0))
-  expect_true(all(y$E[, 3:4, , , , 2] == 0))
+  ## we are seeding
+  expect_true(any(y$E[, 1, , , , start_date + 2] > 0))
+  expect_true(any(y$E[, 2, , , , start_date + 2] > 0))
+  expect_true(all(y$E[, 3:4, , , , start_date + 2] == 0))
 })
 
 
@@ -2076,9 +2078,10 @@ test_that("Nobody in R2-R4 when strain_transmission = c(1, 0)", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_true(all(y$S[, , , 85] == 0))
-  expect_true(all(y$R[, 2:4, , , 85] == 0))
-  expect_false(all(y$R[, 1, , , 85] == 0))
+  expect_true(all(y$S[, , , 123] == 0))
+  ## there will be the seeded individuals in the 15-19 age band
+  expect_true(all(y$R[-4, 2:4, , , 123] == 0))
+  expect_false(all(y$R[, 1, , , 123] == 0))
 })
 
 
@@ -2213,7 +2216,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
  set.seed(1)
  y <- mod$transform_variables(
    drop(mod$simulate(steps)))
- infect_no_cross <- y$cum_infections_per_strain[3:4, 85]
+ infect_no_cross <- y$cum_infections_per_strain[3:4, 123]
 
  ## some cross-immunity
  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
@@ -2228,7 +2231,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
  set.seed(1)
  y <- mod$transform_variables(
    drop(mod$simulate(steps)))
- infect_some_cross <- y$cum_infections_per_strain[3:4, 85]
+ infect_some_cross <- y$cum_infections_per_strain[3:4, 123]
 
  expect_vector_lte(infect_some_cross, infect_no_cross)
  expect_true(all(infect_some_cross > 0))
@@ -2258,8 +2261,8 @@ test_that("cross-immunity can be separated by strain", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_equal(y$cum_infections_per_strain[3, 85], 0)
-  expect_gt(y$cum_infections_per_strain[4, 85], 0)
+  expect_equal(y$cum_infections_per_strain[3, 123], 0)
+  expect_gt(y$cum_infections_per_strain[4, 123], 0)
 
   ## complete immunity from Strain 2 means Strain 4 empty (2 -> 1)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
@@ -2275,8 +2278,8 @@ test_that("cross-immunity can be separated by strain", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_equal(y$cum_infections_per_strain[4, 85], 0)
-  expect_gt(y$cum_infections_per_strain[3, 85], 0)
+  expect_equal(y$cum_infections_per_strain[4, 123], 0)
+  expect_gt(y$cum_infections_per_strain[3, 123], 0)
 })
 
 
@@ -2641,20 +2644,20 @@ test_that("wtmean_Rt works as expected with interpolation", {
   rt <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
                     interpolate_every = interpolate_every,
                     interpolate_min = interpolate_min)
-  expect_equal(dim(rt$eff_Rt_all), c(85, 2))
+  expect_equal(dim(rt$eff_Rt_all), c(123, 2))
   expect_equal(class(rt), c("multi_strain", "Rt"))
 
   rt_traj <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
                                       interpolate_every = interpolate_every,
                                       interpolate_min = interpolate_min)
-  expect_equal(dim(rt_traj$eff_Rt_all), c(85, 2, 3))
+  expect_equal(dim(rt_traj$eff_Rt_all), c(123, 2, 3))
   expect_equal(class(rt_traj), c("multi_strain", "Rt_trajectories", "Rt"))
 
   rt_strain_weighted <-
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
                 weight_Rt = TRUE, interpolate_every = interpolate_every,
                 interpolate_min = interpolate_min)
-  expect_equal(length(rt_strain_weighted$eff_Rt_all), 85)
+  expect_equal(length(rt_strain_weighted$eff_Rt_all), 123)
   expect_equal(class(rt_strain_weighted), c("single_strain", "Rt"))
 
   rt_traj_strain_weighted <-
@@ -2662,7 +2665,7 @@ test_that("wtmean_Rt works as expected with interpolation", {
                              weight_Rt = TRUE,
                              interpolate_every = interpolate_every,
                              interpolate_min = interpolate_min)
-  expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(85, 3))
+  expect_equal(dim(rt_traj_strain_weighted$eff_Rt_all), c(123, 3))
   expect_equal(class(rt_traj_strain_weighted),
                c("single_strain", "Rt_trajectories", "Rt"))
 

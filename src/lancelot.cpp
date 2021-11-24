@@ -4923,13 +4923,6 @@ public:
       state_next[shared->offset_variable_cum_n_vacc_skip + i - 1] = cum_n_vacc_skip[i - 1] + internal.n_vacc_skip[i - 1];
     }
     real_type sum_new_I_weighted = odin_sum1<real_type>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted);
-    for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
-      for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
-        for (int k = 1; k <= shared->dim_I_weighted_3; ++k) {
-          state_next[shared->offset_variable_I_weighted + i - 1 + shared->dim_I_weighted_1 * (j - 1) + shared->dim_I_weighted_12 * (k - 1)] = internal.new_I_weighted[shared->dim_new_I_weighted_12 * (k - 1) + shared->dim_new_I_weighted_1 * (j - 1) + i - 1];
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_cum_n_vaccinated_1; ++i) {
       for (int j = 1; j <= shared->dim_cum_n_vaccinated_2; ++j) {
         state_next[shared->offset_variable_cum_n_vaccinated + i - 1 + shared->dim_cum_n_vaccinated_1 * (j - 1)] = cum_n_vaccinated[shared->dim_cum_n_vaccinated_1 * (j - 1) + i - 1] + internal.n_vaccinated[shared->dim_n_vaccinated_1 * (j - 1) + i - 1];
@@ -4943,6 +4936,13 @@ public:
       }
     }
     real_type prob_strain_1 = (shared->n_real_strains == 1 || sum_new_I_weighted == 0 ? 1 : (odin_sum3<real_type>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted_1, 0, 1, 0, shared->dim_new_I_weighted_3, shared->dim_new_I_weighted_1, shared->dim_new_I_weighted_12) + odin_sum3<real_type>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted_1, 3, 4, 0, shared->dim_new_I_weighted_3, shared->dim_new_I_weighted_1, shared->dim_new_I_weighted_12)) / (real_type) sum_new_I_weighted);
+    for (int i = 1; i <= shared->dim_I_weighted_1; ++i) {
+      for (int j = 1; j <= shared->dim_I_weighted_2; ++j) {
+        for (int k = 1; k <= shared->dim_I_weighted_3; ++k) {
+          state_next[shared->offset_variable_I_weighted + i - 1 + shared->dim_I_weighted_1 * (j - 1) + shared->dim_I_weighted_12 * (k - 1)] = ((sum_new_I_weighted == 0 ? ((i == shared->seed_age_band && j == 1 && k == 1 ? 1 : 0)) : internal.new_I_weighted[shared->dim_new_I_weighted_12 * (k - 1) + shared->dim_new_I_weighted_1 * (j - 1) + i - 1]));
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_prob_strain; ++i) {
       state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
     }

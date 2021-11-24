@@ -1826,9 +1826,16 @@ new_I_weighted[, , ] <-
 sum_new_I_weighted <- sum(new_I_weighted)
 initial(I_weighted[, , ]) <- 0
 dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
-update(I_weighted[, , ]) <- new_I_weighted[i, j, k]
+## If there are zero infectives we will just default to putting weight
+## in group 4/strain 1/vaccine stratum 1. This will avoid NAs in IFR
+update(I_weighted[, , ]) <-
+  (if (sum_new_I_weighted == 0)
+    (if (i == seed_age_band && j == 1 && k == 1) 1 else 0)
+   else new_I_weighted[i, j, k])
 
 ## prob_strain is proportion of total I_weighted in each strain
+## If there are zero infectives, we default to full weight on strain 1
+## to avoid NAs in Rt
 prob_strain_1 <- if (n_real_strains == 1 || sum_new_I_weighted == 0) 1 else
   (sum(new_I_weighted[, 1, ]) + sum(new_I_weighted[, 4, ])) /
   sum_new_I_weighted
