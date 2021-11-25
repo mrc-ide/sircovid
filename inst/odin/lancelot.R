@@ -355,7 +355,7 @@ gamma_W_D[] <- if (as.integer(step) >= n_gamma_W_D_steps)
 
 ## modelling infections and vaccine progression, which can happen simultaneously
 
-#### flow out of S ###
+#### flow out of S ####
 
 ## new infections
 

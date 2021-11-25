@@ -29,8 +29,6 @@ sircovid_parameters_shared <- function(start_date, region,
   initial_seed_value <-
     seed_over_steps(start_step, initial_seed_pattern) * initial_seed_size
 
-  ## TODO: initial_step can come out here once lancelot updated, no
-  ## longer used in basic model.
   list(hosp_transmission = 0,
        ICU_transmission = 0,
        G_D_transmission = 0,
