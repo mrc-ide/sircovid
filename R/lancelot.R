@@ -1546,6 +1546,12 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
     if (length(strain_transmission) == 1L) {
       stop("Can't use 'strain_seed_date' if only using one strain")
     }
+    if (length(strain_seed_date) != 1L) {
+      stop("'strain_seed_date' must be a single date")
+    }
+    if (length(strain_seed_size) != 1L) {
+      stop("'strain_seed_size' must be a single value")
+    }
     assert_sircovid_date(strain_seed_date)
     assert_non_negative(strain_seed_size)
     assert_positive(strain_seed_pattern)

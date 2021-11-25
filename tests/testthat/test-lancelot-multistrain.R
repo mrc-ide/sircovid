@@ -52,6 +52,14 @@ test_that("Prevent impossible seedings", {
     lancelot_parameters_strain(1, 10, NULL, NULL, 0.25),
     "Can't use 'strain_seed_date' if only using one strain")
   expect_error(
+    lancelot_parameters_strain(c(1, 1), c(10, 11), 1, 1,  1),
+    "'strain_seed_date' must be a single date",
+    fixed = TRUE)
+  expect_error(
+    lancelot_parameters_strain(c(1, 1), 10, c(1, 1), 1,  1),
+    "'strain_seed_size' must be a single value",
+    fixed = TRUE)
+  expect_error(
     lancelot_parameters_strain(c(1, 1), 10, -1, 1,  1),
     "'strain_seed_size' must have only non-negative values",
     fixed = TRUE)
