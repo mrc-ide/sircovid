@@ -4059,7 +4059,7 @@ public:
     for (int i = 1; i <= shared->dim_p_RS_1; ++i) {
       for (int j = 1; j <= shared->dim_p_RS_2; ++j) {
         for (int k = 1; k <= shared->dim_p_RS_3; ++k) {
-          internal.p_RS[i - 1 + shared->dim_p_RS_1 * (j - 1) + shared->dim_p_RS_12 * (k - 1)] = (shared->n_strains == 1 || j > 2 ? 1 : (shared->waning_rate[i - 1] / (real_type) (shared->waning_rate[i - 1] + internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (3 - j - 1) + i - 1] * (1 - shared->cross_immunity[j - 1]))));
+          internal.p_RS[i - 1 + shared->dim_p_RS_1 * (j - 1) + shared->dim_p_RS_12 * (k - 1)] = (shared->n_strains == 1 || j > 2 ? 1 : ((shared->waning_rate[i - 1] == 0 ? 0 : (shared->waning_rate[i - 1] / (real_type) (shared->waning_rate[i - 1] + internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (3 - j - 1) + i - 1] * (1 - shared->cross_immunity[j - 1]))))));
         }
       }
     }
@@ -4098,7 +4098,7 @@ public:
     for (int i = 1; i <= shared->dim_rel_foi_strain_1; ++i) {
       for (int j = 1; j <= shared->dim_rel_foi_strain_2; ++j) {
         for (int k = 1; k <= shared->dim_rel_foi_strain_3; ++k) {
-          internal.rel_foi_strain[i - 1 + shared->dim_rel_foi_strain_1 * (j - 1) + shared->dim_rel_foi_strain_12 * (k - 1)] = std::min(internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (j - 1) + i - 1] / (real_type) odin_sum3<real_type>(internal.lambda_susc.data(), i - 1, i, 0, shared->dim_lambda_susc_2, k - 1, k, shared->dim_lambda_susc_1, shared->dim_lambda_susc_12), static_cast<real_type>(1));
+          internal.rel_foi_strain[i - 1 + shared->dim_rel_foi_strain_1 * (j - 1) + shared->dim_rel_foi_strain_12 * (k - 1)] = ((odin_sum3<real_type>(internal.lambda_susc.data(), i - 1, i, 0, shared->dim_lambda_susc_2, k - 1, k, shared->dim_lambda_susc_1, shared->dim_lambda_susc_12) == 0 ? ((j == 1 ? 1 : 0)) : std::min(internal.lambda_susc[shared->dim_lambda_susc_12 * (k - 1) + shared->dim_lambda_susc_1 * (j - 1) + i - 1] / (real_type) odin_sum3<real_type>(internal.lambda_susc.data(), i - 1, i, 0, shared->dim_lambda_susc_2, k - 1, k, shared->dim_lambda_susc_1, shared->dim_lambda_susc_12), static_cast<real_type>(1))));
         }
       }
     }

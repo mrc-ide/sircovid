@@ -497,8 +497,9 @@ n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 ##  waning plus prob strain
 ## TODO (RS): waning_rate should eventually be variant varying
 p_RS[, , ] <- if (n_strains == 1 || j > 2) 1 else
-                (waning_rate[i] / (waning_rate[i] +
-                  lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])))
+  (if (waning_rate[i] == 0) 0 else
+    (waning_rate[i] /
+       (waning_rate[i] + lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j]))))
 n_RS[, , ] <- rbinom(n_R_progress[i, j, k], p_RS[i, j, k])
 
 
@@ -1802,8 +1803,11 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 ## on a GPU, and with fast math, the sum can include sufficient
 ## rounding error that x / sum(x) can be > 1 by a very small amount;
 ## this keeps us bounded correctly.
-rel_foi_strain[, , ] <- min(lambda_susc[i, j, k] / sum(lambda_susc[i, , k]),
-                            as.numeric(1))
+rel_foi_strain[, , ] <-
+  (if (sum(lambda_susc[i, , k]) == 0)
+    (if (j == 1) 1 else 0) else
+    min(lambda_susc[i, j, k] / sum(lambda_susc[i, , k]),
+        as.numeric(1)))
 dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
 ## I_weighted used in IFR calculation
