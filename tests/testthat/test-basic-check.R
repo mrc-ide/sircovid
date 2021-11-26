@@ -19,8 +19,8 @@ test_that("there are no infections when beta is 0", {
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
-  ## Susceptible population is never drawn down:
-  expect_equal(s, array(s[, , 1], c(17, 1, 101)))
+  ## Susceptible population is never drawn down after initial seeding:
+  expect_equal(s[, , -1, drop = FALSE], array(s[, , 2], c(17, 1, 100)))
 })
 
 
@@ -28,19 +28,27 @@ test_that("everyone is infected when beta is very high", {
   p <- basic_parameters(0, "england", beta_value = 1e100)
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = basic_initial(info, 1, p)$state)
+
+  state <- basic_initial(info, 1, p)$state
+
+  ## seed directly into I_A
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  state[index_I_A] <- 5
+
+  mod$update_state(state = state)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
+
   expect_vector_equal(s[, , -1], 0)
 })
 
 
-test_that("No one is infected if I and E are 0 at t = 0", {
+test_that("No one is infected if there is no seeding", {
   p <- basic_parameters(0, "england")
+  p$seed_value <- 0
   mod <- basic$new(p, 0, 1)
   info <- mod$info()
   y <- basic_initial(info, 1, p)$state
-  y[info$index$I_A] <- 0
   mod$update_state(state = y)
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))

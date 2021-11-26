@@ -55,7 +55,7 @@ test_that("validate inputs in ifr_t calculation", {
     fixed = TRUE)
   expect_error(
     lancelot_ifr_t(steps, S[, 1, -1], I_weighted[, 1, ], p),
-    "Expected 'S' to have 85 columns, following 'step'",
+    "Expected 'S' to have 123 columns, following 'step'",
     fixed = TRUE)
   expect_error(
     lancelot_ifr_t(steps, S[, 1, ], I_weighted[-1, 1, ], p),
@@ -63,12 +63,12 @@ test_that("validate inputs in ifr_t calculation", {
     fixed = TRUE)
   expect_error(
     lancelot_ifr_t(steps, S[, 1, ], I_weighted[, 1, -1], p),
-    "Expected 'I_weighted' to have 85 columns, following 'step'",
+    "Expected 'I_weighted' to have 123 columns, following 'step'",
     fixed = TRUE)
 })
 
 
-test_that("validate inputs in rt trajectories calculation", {
+test_that("validate inputs in ifr_t trajectories calculation", {
   d <- reference_data_lancelot_ifr_t()
 
   p <- d$inputs$p
@@ -86,11 +86,11 @@ test_that("validate inputs in rt trajectories calculation", {
     fixed = TRUE)
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, , -1], I_weighted, p),
-    "Expected 3rd dim of 'S' to have length 85, given 'step'",
+    "Expected 3rd dim of 'S' to have length 123, given 'step'",
     fixed = TRUE)
   expect_error(
     lancelot_ifr_t_trajectories(steps, S, I_weighted[, , -1], p),
-    "Expected 3rd dim of 'I_weighted' to have length 85, given 'step'",
+    "Expected 3rd dim of 'I_weighted' to have length 123, given 'step'",
     fixed = TRUE)
   expect_error(
     lancelot_ifr_t_trajectories(steps, S[, , ],

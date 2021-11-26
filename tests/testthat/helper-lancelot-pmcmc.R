@@ -6,7 +6,7 @@ reference_data_lancelot_mcmc <- function() {
       beta_date = sircovid_date(c("2020-03-10", "2020-03-20")),
       beta_value = c(0.08, 0.04))
     data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                          start_date, pars$dt)
+                          0, pars$dt)
     v <- c("deaths_comm", "deaths", "deaths_carehomes", "deaths_non_hosp",
            "general", "hosp", "admitted", "diagnoses", "all_admission",
            "sero_pos_15_64_1", "sero_tot_15_64_1", "sero_pos_15_64_2",

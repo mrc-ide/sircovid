@@ -41,11 +41,6 @@ NULL
 ##'   specificity parameters will be generated using
 ##'   `lancelot_parameters_sens_and_spec()`
 ##'
-##'
-##' @param initial_I Initial number of infected indidviduals; these
-##'   will enter the model as asymptomatic 15-19 year olds at
-##'   `start_date`. The default is 30 individuals.
-##'
 ##' @param eps Change in contact rate for carehome residents
 ##'
 ##' @param m_CHW Contact rate between carehome workers and either
@@ -58,24 +53,21 @@ NULL
 ##'   Length will define the number of strains used in the model, either 1 or
 ##'   2.
 ##'
-##' @param strain_seed_date Either `NULL` (no seeding) or a vector of
-##'   [sircovid::sircovid_date] values corresponding to
-##'   the dates that `strain_seed_rate` should change. For example, to
-##'   seed a constant rate from a given date, provide one value for each of
-##'   `strain_seed_date` and `strain_seed_rate`; or to seed with a constant rate
-##'   for a set period, provide two dates and two
-##'   rates with the second rate equal to 0.
+##' @param strain_seed_date Either `NULL` (no seeding) or a
+##'   [sircovid::sircovid_date] corresponding to the date the seeding of strain
+##'   2 begins.
 ##'
-##' @param strain_seed_rate Either `NULL` (no seeding) or a vector of
-##'   values representing the *daily* rate of seeding, starting on the dates set
-##'   in `strain_seed_date`.
-##'   Seeding is drawn from Poisson(strain_seed_rate * dt)
-##'   at each **day** and so the rate is spread evenly across the steps that
-##'   occur within each date. For example, to
-##'   seed a constant rate from a given date, provide one value for each of
-##'   `strain_seed_date` and `strain_seed_rate`; or to seed with a constant rate
-##'   for a set period, provide two dates and two
-##'   rates with the second rate equal to 0.
+##' @param strain_seed_size Either `NULL` (no seeding) or the size of strain 2
+##'   seeding from the S to E compartment; all seeding is in the 15-19 year old
+##'   group from `strain_seed_date` according to `strain_seed_pattern`.
+##'
+##' @param strain_seed_pattern Either `NULL` (no seeding) or a vector of seeding
+##'   weights for the initial seeding. The length represents the number of steps
+##'   to seed over from the `start_date`, and the `strain_seed_size` is split
+##'   over these steps according to those weights. If `start_seed_date` is not a
+##'   multiple of the step size (and thus falls between two steps) then we
+##'   weight over an additional step and adjust the weights according to how far
+##'   the `strain_seed_date` is from the previous full step.
 ##'
 ##' @param strain_rel_gamma_A Vector of relative rates of progression out of
 ##' I_A (gamma_A) for each
@@ -390,13 +382,15 @@ lancelot_parameters <- function(start_date, region,
                                 progression = NULL,
                                 observation = NULL,
                                 sens_and_spec = NULL,
-                                initial_I = 30,
+                                initial_seed_size = 30,
+                                initial_seed_pattern = 1,
                                 eps = 0.1,
                                 m_CHW = 4e-6,
                                 m_CHR = 5e-5,
                                 strain_transmission = 1,
                                 strain_seed_date = NULL,
-                                strain_seed_rate = NULL,
+                                strain_seed_size = NULL,
+                                strain_seed_pattern = NULL,
                                 strain_rel_gamma_A = 1,
                                 strain_rel_gamma_P = 1,
                                 strain_rel_gamma_C_1 = 1,
@@ -431,7 +425,8 @@ lancelot_parameters <- function(start_date, region,
 
   ret <- sircovid_parameters_shared(start_date, region,
                                     beta_date, beta_value, beta_type,
-                                    population)
+                                    population,
+                                    initial_seed_pattern, initial_seed_size)
 
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
@@ -465,7 +460,7 @@ lancelot_parameters <- function(start_date, region,
   ret$N_tot <- lancelot_population(ret$population, carehome_workers,
                                    carehome_residents)
 
-  ret$initial_I <- initial_I
+  ret$initial_seed_size <- initial_seed_size
 
   ## control cross-immunity
   ret$cross_immunity <- assert_proportion(
@@ -506,7 +501,8 @@ lancelot_parameters <- function(start_date, region,
 
   ## number of strains and relative transmissibility
   strain <- lancelot_parameters_strain(
-    strain_transmission, strain_seed_date, strain_seed_rate, ret$dt)
+    strain_transmission, strain_seed_date, strain_seed_size,
+    strain_seed_pattern, ret$dt)
 
   ## vaccination
   vaccination <- lancelot_parameters_vaccination(ret$N_tot,
@@ -1394,46 +1390,28 @@ lancelot_initial <- function(info, n_particles, pars) {
   index <- info$index
   state <- numeric(info$len)
 
-  ## Default will be to start with 10 individuals, but this is tuneable
-  initial_I <- pars$initial_I
-
-  ## This corresponds to the 15-19y age bracket for compatibility with
-  ## our first version, will be replaced by better seeding model, but
-  ## probably has limited impact.
-  seed_age_band <- 4L
-  index_I <- index[["I_A"]][[1L]] + seed_age_band - 1L
-  index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
-  index_T_sero_pre_1 <- index[["T_sero_pre_1"]][[1L]] + seed_age_band - 1L
-  index_T_sero_pre_2 <- index[["T_sero_pre_2"]][[1L]] + seed_age_band - 1L
-  index_T_PCR_pos <- index[["T_PCR_pos"]][[1L]] + seed_age_band - 1L
-  index_react_pos <- index[["react_pos"]][[1L]]
+  index_S <- index[["S"]]
+  index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
+  index_N_tot <- index[["N_tot"]]
   index_N_tot_sero_1 <- index[["N_tot_sero_1"]][[1L]]
   index_N_tot_sero_2 <- index[["N_tot_sero_2"]][[1L]]
   index_N_tot_PCR <- index[["N_tot_PCR"]][[1L]]
 
-  index_S <- index[["S"]]
-  index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
-  index_N_tot <- index[["N_tot"]]
-
   index_prob_strain <- index[["prob_strain"]]
 
-  ## S0 is the population totals, minus the seeded infected
-  ## individuals
+  seed_age_band <- 4L
+  index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
+
+  ## S0 is the population totals
   initial_S <- pars$N_tot
-  initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
 
   state[index_S_no_vacc] <- initial_S
-  state[index_I] <- initial_I
-  state[index_I_weighted] <- pars$I_A_transmission * initial_I
-  state[index_T_sero_pre_1] <- initial_I
-  state[index_T_sero_pre_2] <- initial_I
-  state[index_T_PCR_pos] <- initial_I
-  state[index_react_pos] <- initial_I
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot_sero_1] <- sum(pars$N_tot)
   state[index_N_tot_sero_2] <- sum(pars$N_tot)
   state[index_N_tot_PCR] <- sum(pars$N_tot)
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
+  state[index_I_weighted] <- 1
 
   list(state = state,
        step = pars$initial_step)
@@ -1540,7 +1518,8 @@ lancelot_parameters_vaccination <- function(N_tot,
 }
 
 lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
-                                       strain_seed_rate, dt) {
+                                       strain_seed_size, strain_seed_pattern,
+                                       dt) {
   if (length(strain_transmission) == 0) {
     stop("At least one value required for 'strain_transmission'")
   }
@@ -1553,38 +1532,36 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
   assert_relatives(strain_transmission)
 
   if (is.null(strain_seed_date)) {
-    if (!is.null(strain_seed_rate)) {
-      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_rate'",
+    if (!is.null(strain_seed_size)) {
+      stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_size'",
                  "to be NULL"))
     }
-    strain_seed_step <- 0
+    if (!is.null(strain_seed_pattern)) {
+      stop(paste("As 'strain_seed_date' is NULL, expected",
+                  "'strain_seed_pattern' to be NULL"))
+    }
+    strain_seed_step_start <- 0
+    strain_seed_value <- 0
   } else {
     if (length(strain_transmission) == 1L) {
       stop("Can't use 'strain_seed_date' if only using one strain")
     }
-    if (length(strain_seed_date) != length(strain_seed_rate)) {
-      stop("'strain_seed_date' and 'strain_seed_rate' must be the same length")
+    if (length(strain_seed_date) != 1L) {
+      stop("'strain_seed_date' must be a single date")
+    }
+    if (length(strain_seed_size) != 1L) {
+      stop("'strain_seed_size' must be a single value")
     }
     assert_sircovid_date(strain_seed_date)
-    assert_increasing(strain_seed_date, strict = FALSE)
-    assert_non_negative(strain_seed_rate)
+    assert_non_negative(strain_seed_size)
+    assert_positive(strain_seed_pattern)
 
-    ## The + 1 here prevents the start of the next day having the
-    ## same seeding value
-    strain_seed_step <-
-      numeric(strain_seed_date[[length(strain_seed_date)]] / dt)
-    for (j in seq_along(strain_seed_date)) {
-      if (j == length(strain_seed_date)) {
-        i <- length(strain_seed_step)
-      } else {
-        i <- seq.int(
-          strain_seed_date[[j]] / dt,
-          strain_seed_date[[j + 1]] / dt - 1
-        )
-      }
-      strain_seed_step[i] <- strain_seed_rate[[j]] * dt
-    }
+    strain_seed_step <- strain_seed_date / dt
 
+    strain_seed_value <- strain_seed_size *
+      seed_over_steps(strain_seed_step, strain_seed_pattern)
+
+    strain_seed_step_start <- floor(strain_seed_step)
   }
 
   if (length(strain_transmission) == 2) {
@@ -1593,7 +1570,8 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
 
   list(n_strains = length(strain_transmission),
        strain_transmission = strain_transmission,
-       strain_seed_step = strain_seed_step)
+       strain_seed_step_start = strain_seed_step_start,
+       strain_seed_value = strain_seed_value)
 }
 
 

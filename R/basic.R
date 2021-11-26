@@ -29,7 +29,7 @@ NULL
 ##'
 ##' @title Parameters for the basic model
 ##'
-##' @param start_date Thee start date, as a [sircovid_date()] (i.e.,
+##' @param start_date The start date, as a [sircovid_date()] (i.e.,
 ##'   the number of days into 2020)
 ##'
 ##' @param region The region to run the model for. This will bee used
@@ -73,6 +73,18 @@ NULL
 ##'   but non-zero. If set to `Inf` then there is no noise in the
 ##'   observation process (not realistic but useful for testing).
 ##'
+##' @param initial_seed_size Initial size of seeding from the S to E
+##'   compartment; all seeding is in the 15-19 year old group from
+##'   `start_date` according to `initial_seed_pattern`. The default is 30.
+##'
+##' @param initial_seed_pattern A vector of seeding weights for the initial
+##'   seeding. The length represents the number of steps to seed over from the
+##'   `start_date`, and the `initial_seed_size` is split over these steps
+##'   according to those weights. If `start_date` is not a multiple of the step
+##'   size (and thus falls between two steps) then we weight over an additional
+##'   step and adjust the weights according to how far the `start_date` is from
+##'   the previous full step.
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
@@ -85,9 +97,14 @@ basic_parameters <- function(start_date, region,
                              beta_date = NULL, beta_value = NULL,
                              beta_type = "piecewise-linear",
                              severity = NULL,
-                             exp_noise = 1e6) {
+                             exp_noise = 1e6,
+                             initial_seed_size = 30,
+                             initial_seed_pattern = 1) {
+  population <- NULL
   ret <- sircovid_parameters_shared(start_date, region,
-                                    beta_date, beta_value, beta_type)
+                                    beta_date, beta_value, beta_type,
+                                    population,
+                                    initial_seed_pattern, initial_seed_size)
   ret$m <- sircovid_transmission_matrix(region)
   observation <- basic_parameters_observation(exp_noise)
   severity <- sircovid_parameters_severity(severity)
@@ -207,24 +224,10 @@ basic_initial <- function(info, n_particles, pars) {
   index <- info$index
   state <- numeric(info$len)
 
-  ## Always start with 10, again for compatibility
-  initial_I <- 10
-
-  ## This corresponds to the 15-19y age bracket for compatibility with
-  ## our first version, will be replaced by better seeding model, but
-  ## probably has limited impact.
-  seed_age_band <- 4L
-  index_I <- index[["I_A"]][[1]] + seed_age_band - 1L
-
-  ## ONS populations, subtracting the seed for pedantry.
   index_S <- index[["S"]]
-  initial_S <- pars$population
-  initial_S[seed_age_band] <- initial_S[seed_age_band] - initial_I
-
   index_N_tot <- index[["N_tot"]]
 
-  state[index_S] <- initial_S
-  state[index_I] <- initial_I
+  state[index_S] <- pars$population
   state[index_N_tot] <- sum(pars$population)
 
   list(state = state,

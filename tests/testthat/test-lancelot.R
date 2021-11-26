@@ -27,49 +27,105 @@ test_that("can run the lancelot model", {
   expected <-
     rbind(time                               = c(213, 213, 213, 213,
                                                  213),
-          icu                                = c(76, 159, 136, 132, 45),
-          general                            = c(385, 710, 421, 516,
-                                                 194),
+          icu                                = c(102, 179, 49, 103, 61),
+          general                            = c(366, 720, 187, 356,
+                                                 246),
           deaths_carehomes_inc               = c(0, 0, 0, 0, 0),
-          deaths_comm_inc                    = c(3, 2, 0, 0, 0),
-          deaths_hosp_inc                    = c(30, 26, 27, 24, 17),
-          admitted_inc                       = c(6, 7, 3, 7, 5),
-          diagnoses_inc                      = c(23, 41, 27, 26, 11),
-          sero_pos_1                         = c(5498837, 6508204, 5786791,
-                                                 5967995, 4695573),
-          sero_pos_2                         = c(5495138, 6507964, 5787847,
-                                                 5970704, 4698306),
-          sympt_cases_inc                    = c(215, 401, 266, 307,
-                                                 137),
-          sympt_cases_non_variant_inc        = c(215, 401, 266, 307,
-                                                 137),
-          sympt_cases_over25_inc             = c(184, 329, 210, 259,
-                                                 117),
-          sympt_cases_under15_inc            = c(21, 40, 32, 25, 14),
-          sympt_cases_15_24_inc              = c(10, 32, 24, 23, 6),
-          sympt_cases_25_49_inc              = c(76, 119, 69, 89, 51),
-          sympt_cases_50_64_inc              = c(42, 100, 52, 79, 24),
-          sympt_cases_65_79_inc              = c(34, 70, 57, 55, 27),
-          sympt_cases_80_plus_inc            = c(32, 40, 32, 36, 15),
-          sympt_cases_non_variant_over25_inc = c(184, 329, 210, 259,
-                                                 117),
-          react_pos                          = c(17877, 34201, 21826,
-                                                 24172, 10394),
-          deaths_carehomes                   = c(1716, 1680, 1723, 1726,
-                                                 1714),
-          deaths_comm                        = c(24437, 24340, 24168,
-                                                 24246, 24371),
-          deaths_hosp                        = c(211844, 211143, 212044,
-                                                 211910, 211537),
-          admitted                           = c(95618, 95259, 95887,
-                                                 95869, 96005),
-          diagnoses                          = c(316518, 315985, 317071,
-                                                 315932, 316491),
-          sympt_cases                        = c(10264097, 10250997,
-                                                 10262040, 10263770, 10248694),
-          sympt_cases_over25                 = c(7884872, 7875072, 7881907,
-                                                 7885215, 7868986))
+          deaths_comm_inc                    = c(2, 2, 0, 2, 3),
+          deaths_hosp_inc                    = c(25, 34, 9, 16, 13),
+          admitted_inc                       = c(4, 8, 2, 4, 2),
+          diagnoses_inc                      = c(21, 35, 13, 19, 12),
+          sero_pos_1                         = c(5486055, 6511760, 4432346,
+                                                 5349829, 5017412),
+          sero_pos_2                         = c(5487698, 6510353, 4434378,
+                                                 5349904, 5019052),
+          sympt_cases_inc                    = c(244, 389, 114, 222,
+                                                 140),
+          sympt_cases_non_variant_inc        = c(244, 389, 114, 222,
+                                                 140),
+          sympt_cases_over25_inc             = c(205, 324, 103, 176,
+                                                 119),
+          sympt_cases_under15_inc            = c(24, 44, 5, 24, 12),
+          sympt_cases_15_24_inc              = c(15, 21, 6, 22, 9),
+          sympt_cases_25_49_inc              = c(65, 112, 38, 48, 39),
+          sympt_cases_50_64_inc              = c(61, 99, 30, 56, 40),
+          sympt_cases_65_79_inc              = c(41, 66, 19, 47, 24),
+          sympt_cases_80_plus_inc            = c(38, 47, 16, 25, 16),
+          sympt_cases_non_variant_over25_inc = c(205, 324, 103, 176,
+                                                 119),
+          react_pos                          = c(17991, 34665, 8306,
+                                                 16312, 12742),
+          deaths_carehomes                   = c(1578, 1710, 1631, 1667,
+                                                 1638),
+          deaths_comm                        = c(24416, 24268, 24286,
+                                                 24320, 24418),
+          deaths_hosp                        = c(211606, 211169, 211371,
+                                                 211287, 212224),
+          admitted                           = c(95681, 95928, 95499,
+                                                 96117, 96310),
+          diagnoses                          = c(316560, 316418, 316622,
+                                                 316407, 315945),
+          sympt_cases                        = c(10260026, 10257280,
+                                                 10257985, 10262426, 10263935),
+          sympt_cases_over25                 = c(7879490, 7882363, 7880146,
+                                                 7882792, 7884763))
   expect_equal(res, expected)
+})
+
+
+test_that("initial seeding in one big lump", {
+  start_date <- sircovid_date("2020-02-07")
+  n_particles <- 20
+  p <- lancelot_parameters(start_date, "england")
+  mod <- lancelot$new(p, 4, n_particles, seed = 1L)
+  end <- sircovid_date("2020-02-28") / p$dt
+
+  initial <- lancelot_initial(mod$info(), n_particles, p)
+  mod$update_state(state = initial$state, step = initial$step)
+
+  t <- seq(4, end)
+  res <- mod$simulate(t)
+
+  info <- mod$info()
+  n_E <- res[info$index$E, , ]
+  i <- apply(n_E[4, , ] > 0, 1, function(x) min(which(x)))
+  expect_equal(t[i],
+               rep(start_date * p$steps_per_day + 1, n_particles))
+
+  ## Total infections through seeding are plausible
+  n <- mean(n_E[4, , i[[1]]])
+  expect_gt(ppois(n, 10), 0.05)
+
+  ## No natural infections in this period:
+  expect_true(all(n_E[-4, , seq_len(i[[1]])] == 0))
+})
+
+
+test_that("initial seeding spread out", {
+  start_date <- sircovid_date("2020-02-07") + 0.123
+  n_particles <- 20
+  pattern <- rep(1, 4) # over a 1 day window
+  p <- lancelot_parameters(start_date, "england",
+                           initial_seed_size = 10,
+                           initial_seed_pattern = pattern)
+
+  expect_equal(p$seed_step_start, 152)
+  expect_equal(p$seed_value, c(1.27, 2.5, 2.5, 2.5, 1.23))
+
+  mod <- lancelot$new(p, 4, n_particles, seed = 1L)
+  end <- sircovid_date("2020-02-28") / p$dt
+
+  initial <- lancelot_initial(mod$info(), n_particles, p)
+  mod$update_state(state = initial$state, step = initial$step)
+
+  t <- seq(4, end)
+  res <- mod$simulate(t)
+
+  info <- mod$info()
+  n_E <- res[info$index$E, , ]
+  i <- apply(n_E[4, , ] > 0, 1, function(x) min(which(x)))
+  expect_equal(min(t[i]), floor(start_date * p$steps_per_day) + 1)
+  expect_gte(diff(range(t[i])), 1)
 })
 
 
@@ -77,7 +133,7 @@ test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england")
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                        start_date, pars$dt)
+                        0, pars$dt)
 
   pf <- lancelot_particle_filter(data, 10)
   expect_s3_class(pf, "particle_filter")
@@ -143,7 +199,7 @@ test_that("compiled compare function is correct", {
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england", exp_noise = Inf)
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                        start_date, pars$dt)
+                        0, pars$dt)
 
   np <- 1
   mod <- lancelot$new(pars, 0, np, seed = 1L)
@@ -166,7 +222,7 @@ test_that("Test compiled lancelot components", {
   ## use a non-integer kappa for pillar 2 cases
   pars$kappa_pillar2_cases <- 2.5
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                        start_date, pars$dt)
+                        0, pars$dt)
 
   np <- 10
   mod <- lancelot$new(pars, 0, np, seed = 1L)
@@ -231,7 +287,7 @@ test_that("can run the particle filter on the model 2", {
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england")
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                        start_date, pars$dt)
+                        0, pars$dt)
 
   np <- 50
   pf1 <- lancelot_particle_filter(data, np, compiled_compare = FALSE,

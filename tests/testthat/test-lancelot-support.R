@@ -170,13 +170,15 @@ test_that("lancelot_parameters returns a list of parameters", {
 
   strain <- lancelot_parameters_strain(p$strain_transmission,
                                        strain_seed_date = NULL,
-                                       strain_seed_rate = NULL,
+                                       strain_seed_size = NULL,
+                                       strain_seed_pattern = NULL,
                                        dt = 1 / 4)
 
   waning <- lancelot_parameters_waning(0)
   expect_identical(p[names(waning)], waning)
 
-  shared <- sircovid_parameters_shared(date, "uk", NULL, NULL)
+  shared <- sircovid_parameters_shared(date, "uk", NULL, NULL,
+                                       "piecewise-linear", NULL, 1, 30)
   expect_identical(p[names(shared)], shared)
 
   severity <- lancelot_parameters_severity(0.25, NULL)
@@ -206,8 +208,8 @@ test_that("lancelot_parameters returns a list of parameters", {
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
       "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
       "N_tot_react", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "n_groups", "initial_I",
-      "cross_immunity", "vacc_skip_from", "vacc_skip_to",
+      "I_C_1_transmission", "I_C_2_transmission", "n_groups",
+      "initial_seed_size", "cross_immunity", "vacc_skip_from", "vacc_skip_to",
       "vacc_skip_dose", "vacc_skip_progression_rate_base", "vacc_skip_weight"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
@@ -466,7 +468,7 @@ test_that("lancelot_index is properly named", {
 
 test_that("Can compute initial conditions", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           initial_I = 10)
+                           initial_seed_size = 10)
   mod <- lancelot$new(p, 0, 10)
   info <- mod$info()
 
@@ -481,35 +483,21 @@ test_that("Can compute initial conditions", {
   expect_equal(initial_y$N_tot_PCR, sum(p$N_tot))
   expect_equal(initial_y$N_tot, p$N_tot)
 
-  expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
+  expect_equal(rowSums(initial_y$S),
                p$N_tot)
-  expect_equal(drop(initial_y$I_A),
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(drop(initial_y$I_weighted),
-               append(rep(0, 18), p$I_A_transmission * 10, after = 3))
-  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
-               append(rep(0, 18), 10, after = 3))
-  expect_equal(initial_y$react_pos, 10)
 
   ## 48 here, derived from;
   ## * 38 (S + N_tot)
-  ## * 1 (prob_strain)
   ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  ## * 2 (I_A[4] + I_weighted[4])
-  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 48)
+  expect_equal(sum(initial$state != 0), 43)
 })
 
 
 test_that("Can control the seeding", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "london",
-                           initial_I = 50)
-  expect_equal(p$initial_I, 50)
+                           initial_seed_size = 50)
+  expect_equal(p$initial_seed_size, 50)
 
   mod <- lancelot$new(p, 0, 10)
   info <- mod$info()
@@ -527,24 +515,12 @@ test_that("Can control the seeding", {
 
   expect_equal(rowSums(initial_y$S) + drop(initial_y$I_A),
                p$N_tot)
-  expect_equal(drop(initial_y$I_A),
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_sero_pre_1[, 1, 1, ],
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_sero_pre_2[, 1, 1, ],
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$T_PCR_pos[, 1, 1, ],
-               append(rep(0, 18), 50, after = 3))
-  expect_equal(initial_y$react_pos, 50)
 
   ## 48 here, derived from;
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
-  ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  ## * 2 (I_A[4] + I_weighted[4])
-  ## * 3 (T_sero_pre_1[4] + T_sero_pre_2[4] + T_PCR_pos[4])
-  expect_equal(sum(initial$state != 0), 48)
+  expect_equal(sum(initial$state != 0), 43)
 })
 
 ## TODO: Ed - you had said that you had ideas for some more systematic
