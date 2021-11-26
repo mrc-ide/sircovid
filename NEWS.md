@@ -1,4 +1,4 @@
-# sircovid 0.12.14
+# sircovid 0.12.15
 
 * Fixed issue #365 and simulation to the UK level is now restored
 
