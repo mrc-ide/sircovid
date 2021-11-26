@@ -366,6 +366,22 @@ n_S_progress[, , ] <- if (j == 1 || n_real_strains == 1)
   rbinom(n_S_progress_tot[i, k], rel_foi_strain[i, j, k]) else
     (if (j == 2) n_S_progress_tot[i, k] - n_S_progress[i, 1, k] else 0)
 
+## Seeding of first wave, we seed in group 4, strain 1, vaccine stratum 1
+##
+seed_step_end <- seed_step_start + length(seed_value)
+seed_rate <- if (step >= seed_step_start && step < seed_step_end)
+  seed_value[as.integer(step - seed_step_start + 1)] else 0
+seed <- rpois(seed_rate)
+seed_age_band <- as.integer(4) # 15-19y band
+
+seed_step_start <- user()
+seed_value[] <- user()
+dim(seed_value) <- user()
+
+n_S_progress[seed_age_band, 1, 1] <-
+  n_S_progress[seed_age_band, 1, 1] +
+  min(S[seed_age_band, 1] - n_S_progress_tot[seed_age_band, 1], seed)
+
 ## Introduction of new strains. n_S_progress is arranged as:
 ##
 ## [age, strain infected with, vaccine stage]
@@ -374,12 +390,16 @@ n_S_progress[, , ] <- if (j == 1 || n_real_strains == 1)
 ## and only infect *unvaccinated* people. For now we will model only
 ## movement into the second compartment as that represents our "new"
 ## strain.
-strain_seed_step[] <- user()
-dim(strain_seed_step) <- user()
-strain_rate <- (if (as.integer(step) >= length(strain_seed_step))
-  strain_seed_step[length(strain_seed_step)]
-  else strain_seed_step[step + 1])
-strain_seed <- rpois(strain_rate)
+strain_seed_step_end <- strain_seed_step_start + length(strain_seed_value)
+strain_seed_rate <-
+  if (step >= strain_seed_step_start && step < strain_seed_step_end)
+    strain_seed_value[as.integer(step - strain_seed_step_start + 1)] else 0
+strain_seed <- rpois(strain_seed_rate)
+
+strain_seed_step_start <- user()
+strain_seed_value[] <- user()
+dim(strain_seed_value) <- user()
+
 ## We must never try to move more individuals from this S category
 ## than are available, so need to do this with a min()
 ##
@@ -477,8 +497,9 @@ n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 ##  waning plus prob strain
 ## TODO (RS): waning_rate should eventually be variant varying
 p_RS[, , ] <- if (n_strains == 1 || j > 2) 1 else
-                (waning_rate[i] / (waning_rate[i] +
-                  lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])))
+  (if (waning_rate[i] == 0) 0 else
+    (waning_rate[i] /
+       (waning_rate[i] + lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j]))))
 n_RS[, , ] <- rbinom(n_R_progress[i, j, k], p_RS[i, j, k])
 
 
@@ -1782,8 +1803,11 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 ## on a GPU, and with fast math, the sum can include sufficient
 ## rounding error that x / sum(x) can be > 1 by a very small amount;
 ## this keeps us bounded correctly.
-rel_foi_strain[, , ] <- min(lambda_susc[i, j, k] / sum(lambda_susc[i, , k]),
-                            as.numeric(1))
+rel_foi_strain[, , ] <-
+  (if (sum(lambda_susc[i, , k]) == 0)
+    (if (j == 1) 1 else 0) else
+    min(lambda_susc[i, j, k] / sum(lambda_susc[i, , k]),
+        as.numeric(1)))
 dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
 ## I_weighted used in IFR calculation
@@ -1808,14 +1832,22 @@ new_I_weighted[, , ] <-
       sum(new_ICU_D_unconf[i, j, , k]) +
       sum(new_ICU_D_conf[i, j, , k])) +
   G_D_transmission * sum(new_G_D[i, j, , k])
+sum_new_I_weighted <- sum(new_I_weighted)
 initial(I_weighted[, , ]) <- 0
 dim(I_weighted) <- c(n_groups, n_strains, n_vacc_classes)
-update(I_weighted[, , ]) <- new_I_weighted[i, j, k]
+## If there are zero infectives we will just default to putting weight
+## in group 4/strain 1/vaccine stratum 1. This will avoid NAs in IFR
+update(I_weighted[, , ]) <-
+  (if (sum_new_I_weighted == 0)
+    (if (i == seed_age_band && j == 1 && k == 1) 1 else 0)
+   else new_I_weighted[i, j, k])
 
 ## prob_strain is proportion of total I_weighted in each strain
-prob_strain_1 <- if (n_real_strains == 1) 1 else
+## If there are zero infectives, we default to full weight on strain 1
+## to avoid NAs in Rt
+prob_strain_1 <- if (n_real_strains == 1 || sum_new_I_weighted == 0) 1 else
   (sum(new_I_weighted[, 1, ]) + sum(new_I_weighted[, 4, ])) /
-  sum(new_I_weighted)
+  sum_new_I_weighted
 initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
 update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1

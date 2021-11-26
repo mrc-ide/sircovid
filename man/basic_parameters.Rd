@@ -11,11 +11,13 @@ basic_parameters(
   beta_value = NULL,
   beta_type = "piecewise-linear",
   severity = NULL,
-  exp_noise = 1e+06
+  exp_noise = 1e+06,
+  initial_seed_size = 30,
+  initial_seed_pattern = 1
 )
 }
 \arguments{
-\item{start_date}{Thee start date, as a \code{\link[=sircovid_date]{sircovid_date()}} (i.e.,
+\item{start_date}{The start date, as a \code{\link[=sircovid_date]{sircovid_date()}} (i.e.,
 the number of days into 2020)}
 
 \item{region}{The region to run the model for. This will bee used
@@ -58,6 +60,18 @@ with the progression parameters.}
 function - typically set to a large value so that noise is small
 but non-zero. If set to \code{Inf} then there is no noise in the
 observation process (not realistic but useful for testing).}
+
+\item{initial_seed_size}{Initial size of seeding from the S to E
+compartment; all seeding is in the 15-19 year old group from
+\code{start_date} according to \code{initial_seed_pattern}. The default is 30.}
+
+\item{initial_seed_pattern}{A vector of seeding weights for the initial
+seeding. The length represents the number of steps to seed over from the
+\code{start_date}, and the \code{initial_seed_size} is split over these steps
+according to those weights. If \code{start_date} is not a multiple of the step
+size (and thus falls between two steps) then we weight over an additional
+step and adjust the weights according to how far the \code{start_date} is from
+the previous full step.}
 }
 \value{
 A list of inputs to the model, many of which are fixed and

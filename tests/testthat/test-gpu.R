@@ -34,7 +34,7 @@ test_that("can run the gpu model on the cpu", {
   expect_equal(gen$public_methods$name(), "lancelot")
 
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           initial_I = 20)
+                           initial_seed_size = 20)
 
   mod_cpu <- gen$new(p, 0, 5, seed = 1L)
   mod_gpu <- gen$new(p, 0, 5, seed = 1L, gpu_config = 0)
@@ -77,7 +77,7 @@ test_that("Can run the gpu compare on the cpu", {
 
   start_date <- sircovid_date("2020-02-02")
   pars <- lancelot_parameters(start_date, "england",
-                              initial_I = 20)
+                              initial_seed_size = 20)
   data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
                         start_date, pars$dt)
 

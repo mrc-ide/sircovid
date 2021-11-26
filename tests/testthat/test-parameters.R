@@ -172,7 +172,7 @@ test_that("shared parameters accepts a beta vector", {
   beta_date <- sircovid_date(c("2020-02-01", "2020-02-14", "2020-03-15"))
   beta_value <- c(3, 1, 2)
   pars <- sircovid_parameters_shared(date, "england", beta_date, beta_value,
-                                     "piecewise-linear")
+                                     "piecewise-linear", NULL, 1, 10)
   expect_equal(
     pars$beta_step,
     sircovid_parameters_piecewise_linear(beta_date, beta_value, 0.25))
@@ -180,28 +180,29 @@ test_that("shared parameters accepts a beta vector", {
   beta_date <- sircovid_date(c("2019-12-31", "2020-02-14", "2020-03-15"))
   beta_value <- c(3, 1, 2)
   pars <- sircovid_parameters_shared(date, "england", beta_date, beta_value,
-                                     "piecewise-constant")
+                                     "piecewise-constant", NULL, 1, 10)
   expect_equal(
     pars$beta_step,
     sircovid_parameters_piecewise_constant(beta_date, beta_value, 0.25))
 
   expect_error(pars <- sircovid_parameters_shared(date, "england", beta_date,
                                                   beta_value,
-                                                  "quadratic"),
+                                                  "quadratic", NULL, 1, 10),
                "'beta_type' must be 'piecewise-linear' or 'piecewise-constant'")
 })
 
 
 test_that("shared parameters", {
   date <- sircovid_date("2020-02-01")
-  pars <- sircovid_parameters_shared(date, "england", NULL, 0.1)
+  pars <- sircovid_parameters_shared(date, "england", NULL, 0.1,
+                                     "piecewise-linear", NULL, 1, 10)
   expect_setequal(
     names(pars),
     c("hosp_transmission", "ICU_transmission", "G_D_transmission",
       "dt", "steps_per_day", "initial_step", "n_age_groups",
-      "beta_step", "population"))
+      "beta_step", "population", "seed_step_start", "seed_value"))
   expect_equal(pars$beta_step, 0.1)
-  expect_equal(pars$initial_step, date * 4)
+  expect_equal(pars$initial_step, 0)
 })
 
 

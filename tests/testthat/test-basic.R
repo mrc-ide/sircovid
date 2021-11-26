@@ -1,7 +1,8 @@
 context("basic")
 
 test_that("can run the basic model", {
-  p <- basic_parameters(sircovid_date("2020-02-07"), "england")
+  p <- basic_parameters(sircovid_date("2020-02-07"), "england",
+                        initial_seed_size = 10)
   mod <- basic$new(p, 0, 10, seed = 1L)
   end <- sircovid_date("2020-07-31") / p$dt
 
@@ -13,11 +14,67 @@ test_that("can run the basic model", {
 
   ## Regnerate with: dput_named_matrix(res)
   expected <-
-    rbind(icu        = c(0, 2, 1, 2, 0, 0, 1, 0, 0, 0),
-          deaths     = c(310178, 310871, 310280, 308829, 309890, 309425,
-                         310307, 310720, 310154, 309521),
-          deaths_inc = c(0, 0, 1, 1, 1, 1, 0, 0, 0, 0))
+    rbind(icu        = c(2, 2, 3, 0, 1, 3, 4, 1, 2, 2),
+          deaths     = c(309783, 310019, 310791, 308704, 309705, 310307,
+                         309895, 309622, 310298, 309750),
+          deaths_inc = c(0, 1, 0, 0, 1, 1, 0, 0, 0, 2))
   expect_equal(res, expected)
+})
+
+
+test_that("initial seeding in one big lump", {
+  start_date <- sircovid_date("2020-02-07")
+  n_particles <- 20
+  p <- basic_parameters(start_date, "england", initial_seed_size = 10,
+                        initial_seed_pattern = NULL)
+  mod <- basic$new(p, 4, n_particles, seed = 1L)
+  end <- sircovid_date("2020-02-28") / p$dt
+
+  initial <- basic_initial(mod$info(), n_particles, p)
+  mod$update_state(state = initial$state, step = initial$step)
+
+  t <- seq(4, end)
+  res <- mod$simulate(t)
+
+  info <- mod$info()
+  n_E <- res[info$index$E, , ]
+  i <- apply(n_E[4, , ] > 0, 1, function(x) min(which(x)))
+  expect_equal(t[i],
+               rep(start_date * p$steps_per_day + 1, n_particles))
+
+  ## Total infections through seeding are plausible
+  n <- mean(n_E[4, , i[[1]]])
+  expect_gt(ppois(n, 10), 0.05)
+
+  ## No natural infections in this period:
+  expect_true(all(n_E[-4, , seq_len(i[[1]])] == 0))
+})
+
+
+test_that("initial seeding spread out", {
+  start_date <- sircovid_date("2020-02-07") + 0.123
+  n_particles <- 20
+  pattern <- rep(1, 4) # over a 1 day window
+  p <- basic_parameters(start_date, "england", initial_seed_size = 10,
+                        initial_seed_pattern = pattern)
+
+  expect_equal(p$seed_step_start, 152)
+  expect_equal(p$seed_value, c(1.27, 2.5, 2.5, 2.5, 1.23))
+
+  mod <- basic$new(p, 4, n_particles, seed = 1L)
+  end <- sircovid_date("2020-02-28") / p$dt
+
+  initial <- basic_initial(mod$info(), n_particles, p)
+  mod$update_state(state = initial$state, step = initial$step)
+
+  t <- seq(4, end)
+  res <- mod$simulate(t)
+
+  info <- mod$info()
+  n_E <- res[info$index$E, , ]
+  i <- apply(n_E[4, , ] > 0, 1, function(x) min(which(x)))
+  expect_equal(min(t[i]), floor(start_date * p$steps_per_day) + 1)
+  expect_gte(diff(range(t[i])), 1)
 })
 
 
@@ -25,7 +82,7 @@ test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england")
   data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
-                     start_date, pars$dt)
+                     0, pars$dt)
 
   n_particles <- 100
   pf <- mcstate::particle_filter$new(
@@ -68,7 +125,7 @@ test_that("compiled compare function is correct", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england", exp_noise = Inf)
   data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
-                     start_date, pars$dt)
+                     0, pars$dt)
 
   np <- 10
   mod <- basic$new(pars, 0, np, seed = 1L)

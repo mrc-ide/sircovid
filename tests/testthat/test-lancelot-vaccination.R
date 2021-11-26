@@ -279,8 +279,8 @@ test_that("Vaccination of exposed individuals works", {
   expect_approx_equal(e[i, , E_compartment_idx, unvacc_idx, 1],
                       e[i, , E_compartment_idx, vacc_idx, 2])
   ## then they don't move anymore
-  expect_equal(e[i, , E_compartment_idx, vacc_idx, 2],
-               e[i, , E_compartment_idx, vacc_idx, 101])
+  expect_approx_equal(e[i, , E_compartment_idx, vacc_idx, 2],
+                      e[i, , E_compartment_idx, vacc_idx, 101])
 })
 
 
@@ -1967,7 +1967,7 @@ test_that("run sensible vaccination schedule, catchup = 0", {
 
   state <- lancelot_initial(info, 1, p)$state
   ## Remove seed, so that we have no infection process here:
-  ## 10 here because initial_I = 10
+  ## 10 here because initial_seed_size = 10
   state[state == 10] <- 0
 
   mod$update_state(state = state)
@@ -2815,7 +2815,7 @@ test_that("run sensible vaccination schedule with boosters", {
                            vaccine_index_booster = 3L,
                            vaccine_catchup_fraction = 0,
                            n_doses = 3,
-                           initial_I = 0)
+                           initial_seed_size = 0)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -3022,7 +3022,7 @@ test_that("can't wane or boost without second dose", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = c(0, 0, 1, 0, 0),
                            n_doses = 3,
-                           initial_I = 0)
+                           initial_seed_size = 0)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -3073,7 +3073,7 @@ test_that("boosting and waning work as expected", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = progress,
                            n_doses = 3,
-                           initial_I = 0)
+                           initial_seed_size = 0)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -3103,7 +3103,7 @@ test_that("boosting and waning work as expected", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = progress,
                            n_doses = 3,
-                           initial_I = 0)
+                           initial_seed_size = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)$state
@@ -3130,7 +3130,7 @@ test_that("boosting and waning work as expected", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = progress,
                            n_doses = 3,
-                           initial_I = 0)
+                           initial_seed_size = 0)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)$state
@@ -3178,7 +3178,7 @@ test_that("run sensible vaccination schedule with waning and boosters", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = c(0, 0, 1 / 20, 0, 0),
                            n_doses = 3,
-                           initial_I = 0)
+                           initial_seed_size = 0)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -3434,7 +3434,7 @@ test_that("Everyone vaccine skips if there is no waning", {
                            vacc_skip_from = 3L,
                            vacc_skip_to = 5L,
                            vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_progression_rate = rep(0, 19))
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()

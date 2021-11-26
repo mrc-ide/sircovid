@@ -75,8 +75,8 @@ test_that("there are no infections when beta is 0", {
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
-  ## Susceptible population is never drawn down:
-  expect_equal(s, array(s[, , 1], c(nrow(s), 1, 101)))
+  ## Susceptible population is never drawn down after initial seeding:
+  expect_equal(s[, , -1, drop = FALSE], array(s[, , 2], c(19, 1, 100)))
 })
 
 
@@ -84,10 +84,18 @@ test_that("everyone is infected when beta is large", {
   p <- lancelot_parameters(0, "england", beta_value = 1e9)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
-  y <- mod$transform_variables(drop(
-    mod$simulate(seq(0, 400, by = 4))))
-  expect_true(all(y$S[, 1, -1] == 0))
+
+  state <- lancelot_initial(info, 1, p)$state
+
+  ## seed directly into I_A
+  index_I_A <- array(info$index$I_A, info$dim$I_A)
+  state[index_I_A] <- 5
+
+  mod$update_state(state = state)
+  mod$set_index(info$index$S)
+  s <- mod$simulate(seq(0, 400, by = 4))
+
+  expect_vector_equal(s[, , -1], 0)
 })
 
 
@@ -135,10 +143,11 @@ test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
 })
 
 
-test_that("No one is infected if I and E are 0 at t = 0", {
+test_that("No one is infected if there is no seeding", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
-  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20,
+                           initial_seed_size = 0)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
   y <- lancelot_initial(info, 1, p)$state
@@ -896,7 +905,9 @@ test_that("Symptomatic cases by age add up correctly", {
 test_that("Individuals cannot infect in compartment with zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
-    p <- lancelot_parameters(0, "england", beta_value = 1e9)
+    ## No seeding
+    p <- lancelot_parameters(0, "england", beta_value = 1e9,
+                             initial_seed_size = 0)
 
     ## set all transmission parameters to 1
     p$I_A_transmission <- 1
@@ -918,12 +929,6 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     info <- mod$info()
     y0 <- lancelot_initial(info, 1, p)$state
 
-    ## remove initial asymptomatic individuals
-    index_I_A <- info$index$I_A
-    y0[index_I_A] <- 0
-    index_I_weighted <- info$index$I_weighted
-    y0[index_I_weighted] <- 0
-
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
     y0[index] <- 50
@@ -934,7 +939,8 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
 
     ## Susceptible population is never drawn down:
     expect_equal(y$S, array(y$S[, , 1], c(nrow(y$S), 1, 101)))
-    expect_true(all(y$I_weighted == 0))
+    ## Ignore group 4 where we weight 1 if all are 0
+    expect_true(all(y$I_weighted[-4, , , ] == 0))
   }
 
   helper("I_A_transmission", "I_A", "gamma_A_step")
@@ -960,7 +966,9 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
 test_that("Individuals can infect in compartment with non-zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate
-    p <- lancelot_parameters(0, "england", beta_value = 1e9)
+    ## No seeding
+    p <- lancelot_parameters(0, "england", beta_value = 1e9,
+                             initial_seed_size = 0)
 
     ## set all transmission parameters to 0
     p$I_A_transmission <- 0
@@ -981,10 +989,6 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
 
     info <- mod$info()
     y0 <- lancelot_initial(info, 1, p)$state
-
-    ## remove initial asymptomatic individuals
-    index_I_A <- info$index$I_A
-    y0[index_I_A] <- 0
 
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]

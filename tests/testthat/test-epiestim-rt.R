@@ -1,20 +1,22 @@
 test_that("Can calculate EpiEstim Rt (I)", {
   skip_if_not_installed("EpiEstim")
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  start_date <- sircovid_date("2020-02-07")
+  p <- lancelot_parameters(start_date, "england",
                            beta_value = 0.15)
 
   np <- 20L
   mod <- lancelot$new(p, 0, np, seed = 2L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  initial_step <- start_date / p$dt
+  mod$update_state(state = initial$state, step = initial_step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
   index <- c(index_cum_inf, index_S)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(initial_step, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
@@ -47,21 +49,23 @@ test_that("Can calculate EpiEstim Rt (I)", {
 
 test_that("Can calculate EpiEstim Rt (II)", {
   skip_if_not_installed("EpiEstim")
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  start_date <- sircovid_date("2020-02-07")
+  p <- lancelot_parameters(start_date, "england",
                            beta_value = 0.15)
 
   np <- 20L
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  initial_step <- start_date / p$dt
+  mod$update_state(state = initial$state, step = initial_step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
   index <- c(index_cum_inf, index_S)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(initial_step, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
@@ -77,7 +81,7 @@ test_that("Can calculate EpiEstim Rt (II)", {
 
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.1,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 2.7,
                tolerance = .1)
   expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 1.2,
                tolerance = .1)
@@ -92,20 +96,22 @@ test_that("Can calculate EpiEstim Rt (II)", {
 
 test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
   skip_if_not_installed("EpiEstim")
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  start_date <- sircovid_date("2020-02-07")
+  p <- lancelot_parameters(start_date, "england",
                            beta_value = 0.15)
   np <- 20L
   mod <- lancelot$new(p, 0, np, seed = 2L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  initial_step <- start_date / p$dt
+  mod$update_state(state = initial$state, step = initial_step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
   index <- c(index_cum_inf, index_S)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(initial_step, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
@@ -141,20 +147,22 @@ test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
 
 test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
   skip_if_not_installed("EpiEstim")
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  start_date <- sircovid_date("2020-02-07")
+  p <- lancelot_parameters(start_date, "england",
                            beta_value = 0.15)
   np <- 20L
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  initial_step <- start_date / p$dt
+  mod$update_state(state = initial$state, step = initial_step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
   index <- c(index_cum_inf, index_S)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(initial_step, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
@@ -172,7 +180,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
 
   first_non_NA_idx <- min(which(!is.na(rt_EpiEstim$Rt_summary["mean_R", ])))
   #### Check a few values
-  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 3.1,
+  expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 2.7,
                tolerance = .1)
   expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 1.2,
                tolerance = .1)
@@ -187,20 +195,22 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
 
 test_that("lancelot_rt_trajectories_epiestim rejects invalid input", {
   skip_if_not_installed("EpiEstim")
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  start_date <- sircovid_date("2020-02-07")
+  p <- lancelot_parameters(start_date, "england",
                            beta_value = 0.15)
   np <- 20L
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  initial_step <- start_date / p$dt
+  mod$update_state(state = initial$state, step = initial_step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
   index <- c(index_cum_inf, index_S)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(initial_step, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
@@ -236,7 +246,8 @@ test_that("lancelot_rt_trajectories_epiestim rejects invalid input", {
 
 test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   skip_if_not_installed("EpiEstim")
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+  start_date <- sircovid_date("2020-02-07")
+  p <- lancelot_parameters(start_date, "england",
                             beta_value = 0.15)
   mean_N_tot <- mean(p$N_tot)
   mean_m <- mean(p$m)
@@ -253,14 +264,15 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  initial_step <- start_date / p$dt
+  mod$update_state(state = initial$state, step = initial_step)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
   index <- c(index_cum_inf, index_S)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(initial_step, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)

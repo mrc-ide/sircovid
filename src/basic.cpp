@@ -141,6 +141,8 @@ compare(const typename T::real_type * state,
 // [[dust::param(p_recov_sympt, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_death, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(seed_step_start, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(seed_value, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(steps_per_day, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_A, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_C, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -331,6 +333,7 @@ public:
     int dim_s_ij;
     int dim_s_ij_1;
     int dim_s_ij_2;
+    int dim_seed_value;
     int dim_trans_increase;
     int dim_trans_increase_1;
     int dim_trans_increase_2;
@@ -393,6 +396,10 @@ public:
     std::vector<real_type> p_recov_sympt;
     real_type phi_ICU;
     real_type phi_death;
+    int seed_age_band;
+    real_type seed_step_end;
+    real_type seed_step_start;
+    std::vector<real_type> seed_value;
     int steps_per_day;
     std::vector<real_type> trans_increase;
     std::vector<real_type> trans_profile;
@@ -472,6 +479,7 @@ public:
     state_next[1] = odin_sum1<real_type>(S, 0, shared->dim_S) + odin_sum1<real_type>(R, 0, shared->dim_R) + odin_sum1<real_type>(D, 0, shared->dim_D) + odin_sum1<real_type>(E, 0, shared->dim_E) + odin_sum1<real_type>(I_A, 0, shared->dim_I_A) + odin_sum1<real_type>(I_C, 0, shared->dim_I_C) + odin_sum1<real_type>(I_hosp, 0, shared->dim_I_hosp) + odin_sum1<real_type>(I_ICU, 0, shared->dim_I_ICU) + odin_sum1<real_type>(R_hosp, 0, shared->dim_R_hosp);
     real_type beta = (static_cast<int>(step) >= shared->dim_beta_step ? shared->beta_step[shared->dim_beta_step - 1] : shared->beta_step[step + 1 - 1]);
     state_next[0] = (step + 1) * shared->dt;
+    real_type seed = (step >= shared->seed_step_start && step < shared->seed_step_end ? shared->seed_value[static_cast<int>(step - shared->seed_step_start + 1) - 1] : 0);
     state_next[5] = beta;
     for (int i = 1; i <= shared->dim_n_EE_1; ++i) {
       for (int j = 1; j <= shared->dim_n_EE_2; ++j) {
@@ -735,6 +743,10 @@ public:
     }
     for (int i = 1; i <= shared->dim_n_SE; ++i) {
       internal.n_SE[i - 1] = dust::random::binomial<real_type>(rng_state, S[i - 1], internal.p_SE[i - 1]);
+    }
+    {
+       int i = shared->seed_age_band;
+       internal.n_SE[i - 1] = std::min(S[i - 1], internal.n_SE[i - 1] + dust::random::poisson<real_type>(rng_state, seed));
     }
     for (int i = 1; i <= shared->dim_new_I_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_new_I_ICU_2; ++j) {
@@ -1065,6 +1077,7 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
   shared->initial_I_ICU_tot = 0;
   shared->initial_N_tot = 0;
   shared->initial_time = 0;
+  shared->seed_age_band = static_cast<int>(4);
   shared->ICU_transmission = NA_REAL;
   shared->exp_noise = NA_REAL;
   shared->hosp_transmission = NA_REAL;
@@ -1079,6 +1092,7 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
   shared->n_age_groups = NA_INTEGER;
   shared->phi_ICU = NA_REAL;
   shared->phi_death = NA_REAL;
+  shared->seed_step_start = NA_REAL;
   shared->steps_per_day = NA_INTEGER;
   shared->gamma_A = 0.10000000000000001;
   shared->gamma_C = 0.10000000000000001;
@@ -1111,6 +1125,10 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
   shared->n_trans_classes = user_get_scalar<int>(user, "n_trans_classes", shared->n_trans_classes, NA_REAL, NA_REAL);
   shared->phi_ICU = user_get_scalar<real_type>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
   shared->phi_death = user_get_scalar<real_type>(user, "phi_death", shared->phi_death, NA_REAL, NA_REAL);
+  shared->seed_step_start = user_get_scalar<real_type>(user, "seed_step_start", shared->seed_step_start, NA_REAL, NA_REAL);
+  std::array <int, 1> dim_seed_value;
+  shared->seed_value = user_get_array_variable<real_type, 1>(user, "seed_value", shared->seed_value, dim_seed_value, NA_REAL, NA_REAL);
+  shared->dim_seed_value = shared->seed_value.size();
   shared->steps_per_day = user_get_scalar<int>(user, "steps_per_day", shared->steps_per_day, NA_REAL, NA_REAL);
   shared->dim_D = shared->n_age_groups;
   shared->dim_E_1 = shared->n_age_groups;
@@ -1321,6 +1339,7 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
   shared->p_recov_ICU = user_get_array_fixed<real_type, 1>(user, "p_recov_ICU", shared->p_recov_ICU, {shared->dim_p_recov_ICU}, NA_REAL, NA_REAL);
   shared->p_recov_hosp = user_get_array_fixed<real_type, 1>(user, "p_recov_hosp", shared->p_recov_hosp, {shared->dim_p_recov_hosp}, NA_REAL, NA_REAL);
   shared->p_recov_sympt = user_get_array_fixed<real_type, 1>(user, "p_recov_sympt", shared->p_recov_sympt, {shared->dim_p_recov_sympt}, NA_REAL, NA_REAL);
+  shared->seed_step_end = shared->seed_step_start + shared->dim_seed_value;
   internal.I_with_diff_trans = std::vector<real_type>(shared->dim_I_with_diff_trans);
   internal.aux_EE = std::vector<real_type>(shared->dim_aux_EE);
   internal.aux_II_A = std::vector<real_type>(shared->dim_aux_II_A);
