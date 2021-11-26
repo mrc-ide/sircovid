@@ -128,8 +128,13 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
   if (!is.null(interpolate_every)) {
     interpolate_critical_index <- match(interpolate_critical_dates / p$dt,
                                         step)
+    # remove NA values and ensure vector order is decreasing
     interpolate_critical_index <-
       interpolate_critical_index[!is.na(interpolate_critical_index)]
+    interpolate_critical_index <-
+      interpolate_critical_index[order(interpolate_critical_index,
+                                       decreasing = FALSE)]
+
     step_index_split <- interpolate_grid_critical_x(seq_along(step),
                                                     interpolate_every,
                                                     interpolate_critical_index,
