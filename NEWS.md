@@ -1,7 +1,3 @@
-# sircovid 0.12.15
-
-* Fixed issue #365 and simulation to the UK level is now restored
-
 # sircovid 0.12.13
 
 * Fixed initial seeding of the epidemic replace by a Poisson seeding
