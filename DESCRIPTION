@@ -41,7 +41,11 @@ Authors@R:
       person(given = "Raphael",
            family = "Sonabend",
            role = c("aut"),
-           email = "r.sonabend@imperial.ac.uk"))
+           email = "r.sonabend@imperial.ac.uk"),
+      person(given = "Yasin",
+           family = "Elmaci",
+           role = c("aut"),
+           email = "yasin.elmaci20@imperial.ac.uk"))
 Description: Mechanistic models of transmission of the SARS-Cov-2 (COVID-19)
     virus implemented as stochastic compartmental models in odin and
     dust. Uses mcstate to perfom Bayesian evidence synthesis from
