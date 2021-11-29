@@ -2534,6 +2534,67 @@ test_that("Rt lower with perfect cross immunity", {
 })
 
 
+test_that("Strain 1 Rt lower with perfect cross immunity to strain 2", {
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           initial_seed_size = 10,
+                           initial_seed_pattern = rep(1, 4),
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = c(1, 1))
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial$state, step = initial$step)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_cross_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
+                            R = R[, 1, ], weight_Rt = FALSE)
+
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           initial_seed_size = 10,
+                           initial_seed_pattern = rep(1, 4),
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = c(1, 0))
+
+  rt_cross_0 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
+                            R = R[, 1, ], weight_Rt = FALSE)
+
+  ## Rt should be equal
+  tol <- 1e-5
+  expect_equal(rt_cross_1$Rt_all, rt_cross_0$Rt_all)
+  expect_equal(rt_cross_1$Rt_general, rt_cross_0$Rt_general)
+  ## eff_Rt should be equal for strain 2, lower for strain 1
+  expect_equal(rt_cross_1$eff_Rt_all[, 2], rt_cross_0$eff_Rt_all[, 2],
+               tol = tol)
+  expect_equal(rt_cross_1$eff_Rt_general[, 2], rt_cross_0$eff_Rt_general[, 2],
+               tol = tol)
+  expect_vector_lt(rt_cross_1$eff_Rt_all[, 1], rt_cross_0$eff_Rt_all[, 1],
+                   tol = tol)
+  expect_vector_lt(rt_cross_1$eff_Rt_general[, 1],
+                   rt_cross_0$eff_Rt_general[, 1],
+                   tol = tol)
+
+})
+
+
 test_that("Can interpolate multistrain Rt", {
   dat <- reference_data_lancelot_mcmc()
   rt <- local({
