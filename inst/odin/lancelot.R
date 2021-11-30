@@ -477,6 +477,10 @@ n_I_P_vacc_skip[, , ] <-
 ##  R1 and R2 can progress to S (w.r. waning_rate[i]) or
 ##  R1 can progress to E3 (w.r. strain 2 (3 - 1))
 ##  R2 can progress tp E4 (w.r. strain 1 (3 - 2))
+##
+## Note that (if n_strains > 2)
+## cross_immunity[1] is the cross immunity of strain 1 against strain 2
+## cross_immunity[2] is the cross immunity of strain 2 against strain 1
 rate_R_progress[, , ] <- waning_rate[i] +
             if (n_strains == 1 || j > 2) 0 else
               lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])
