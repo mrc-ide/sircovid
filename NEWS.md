@@ -1,3 +1,7 @@
+# sircovid 0.12.16
+
+* Corrected implementation of cross immunity in effective Rt calculation
+
 # sircovid 0.12.15
 
 * Fixed issue #365 and simulation to the UK level is now restored
