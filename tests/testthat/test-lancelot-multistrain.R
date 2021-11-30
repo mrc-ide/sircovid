@@ -2534,6 +2534,90 @@ test_that("Rt lower with perfect cross immunity", {
 })
 
 
+test_that("Can calculate Rt with asymmetric cross immunity", {
+  ## Run with perfect cross immunity for both strains first
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           initial_seed_size = 10,
+                           initial_seed_pattern = rep(1, 4),
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = c(1, 1))
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial$state, step = initial$step)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
+                    R = R[, 1, ], weight_Rt = FALSE)
+
+  ## Now calculate where strain 1 gives perfect immunity to strain 2,
+  ## and strain 2 gives no immunity to strain 1
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           initial_seed_size = 10,
+                           initial_seed_pattern = rep(1, 4),
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = c(1, 0))
+
+  rt1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
+                     R = R[, 1, ], weight_Rt = FALSE)
+
+  ## Rt should be unaffected
+  tol <- 1e-5
+  expect_equal(rt1$Rt_all, rt$Rt_all)
+  expect_equal(rt1$Rt_general, rt$Rt_general)
+  ## eff_Rt should be unaffected for strain 2, increased for strain 1
+  expect_equal(rt1$eff_Rt_all[, 2], rt$eff_Rt_all[, 2], tol = tol)
+  expect_equal(rt1$eff_Rt_general[, 2], rt$eff_Rt_general[, 2], tol = tol)
+  expect_vector_gt(rt1$eff_Rt_all[, 1], rt$eff_Rt_all[, 1], tol = tol)
+  expect_vector_gt(rt1$eff_Rt_general[, 1], rt$eff_Rt_general[, 1], tol = tol)
+
+
+  ## Now calculate the other way round; where strain 2 gives perfect immunity
+  ## to strain 1, and strain 1 gives no immunity to strain 2
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           initial_seed_size = 10,
+                           initial_seed_pattern = rep(1, 4),
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = c(0, 1))
+
+  rt2 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
+                     R = R[, 1, ], weight_Rt = FALSE)
+
+  ## Rt should be unaffected
+  tol <- 1e-5
+  expect_equal(rt2$Rt_all, rt$Rt_all)
+  expect_equal(rt2$Rt_general, rt$Rt_general)
+  ## eff_Rt should be unaffected for strain 1, increased for strain 2
+  expect_equal(rt2$eff_Rt_all[, 1], rt$eff_Rt_all[, 1], tol = tol)
+  expect_equal(rt2$eff_Rt_general[, 1], rt$eff_Rt_general[, 1], tol = tol)
+  expect_vector_gt(rt2$eff_Rt_all[, 2], rt$eff_Rt_all[, 2], tol = tol)
+  expect_vector_gt(rt2$eff_Rt_general[, 2], rt$eff_Rt_general[, 2], tol = tol)
+
+})
+
+
 test_that("Can interpolate multistrain Rt", {
   dat <- reference_data_lancelot_mcmc()
   rt <- local({
