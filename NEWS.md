@@ -1,3 +1,7 @@
+# sircovid 0.12.17
+
+* `modify_severity` now caps at 1 for all vaccine strata
+
 # sircovid 0.12.16
 
 * Corrected implementation of cross immunity in effective Rt calculation
