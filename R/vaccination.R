@@ -948,15 +948,8 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           new_prob <- es[[rel]][g, v_s] * mod
           ## FIXME - Temporary fixes for when p > 1
           if (new_prob > 1) {
-            ## Cap at 1 if: difference very small or in a class where
-            ## vaccine hasn't taken effect or has waned
-            ok <- (abs(new_prob - 1) < 1e-10) || v_s %in% c(1, 4)
-            if (ok) {
-              new_prob <- 1
-              ## otherwise this is a problem
-            } else {
-              stop("new_prob > 1 and VE has full effect")
-            }
+            ## Cap at 1
+            new_prob <- 1
           }
           rel_list[[rel]][g, s, v_s] <- new_prob
         }
